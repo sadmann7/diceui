@@ -124,6 +124,17 @@ const TagsInputInput = React.forwardRef<
           handleAdd(event.currentTarget.value);
           event.currentTarget.value = "";
           event.preventDefault();
+        } else if (
+          (event.key === "Backspace" || event.key === "Delete") &&
+          !event.currentTarget.value &&
+          context.value.length > 0
+        ) {
+          // Remove last tag when backspace is pressed with empty input
+          const lastValue = context.value[context.value.length - 1];
+          if (lastValue) {
+            context.onItemDelete(lastValue);
+            event.preventDefault();
+          }
         } else if (event.key === "ArrowLeft" && !event.currentTarget.value) {
           const items = document.querySelectorAll("[data-tag-item]");
           const lastItem = items[items.length - 1] as HTMLElement;
