@@ -140,6 +140,13 @@ TagsInputInput.displayName = CONTROL_NAME;
 
 const ITEM_NAME = "TagsInputItem";
 
+type TagsInputItemContextValue = {
+  value: string;
+};
+
+const [TagsInputItemProvider, useTagsInputItemContext] =
+  createTagsInputContext<TagsInputItemContextValue>(ITEM_NAME);
+
 interface TagsInputItemProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
   value: string;
@@ -150,16 +157,16 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
     const { __scopeTagsInput, value, children, ...itemProps } = props;
     const context = useTagsInputContext(ITEM_NAME, __scopeTagsInput);
 
-    console.log(context);
-
     return (
-      <Primitive.div
-        {...itemProps}
-        ref={forwardedRef}
-        data-disabled={context.disabled ? "" : undefined}
-      >
-        {children}
-      </Primitive.div>
+      <TagsInputItemProvider scope={__scopeTagsInput} value={value}>
+        <Primitive.div
+          {...itemProps}
+          ref={forwardedRef}
+          data-disabled={context.disabled ? "" : undefined}
+        >
+          {children}
+        </Primitive.div>
+      </TagsInputItemProvider>
     );
   },
 );
@@ -194,15 +201,19 @@ const ITEM_DELETE_NAME = "TagsInputItemDelete";
 
 interface TagInputItemDeleteProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.button> {
-  value: string;
+  // removed value prop
 }
 
 const TagsInputItemDelete = React.forwardRef<
   HTMLButtonElement,
   TagInputItemDeleteProps
 >((props: ScopedProps<TagInputItemDeleteProps>, forwardedRef) => {
-  const { __scopeTagsInput, value, ...triggerProps } = props;
+  const { __scopeTagsInput, ...triggerProps } = props;
   const context = useTagsInputContext(ITEM_DELETE_NAME, __scopeTagsInput);
+  const itemContext = useTagsInputItemContext(
+    ITEM_DELETE_NAME,
+    __scopeTagsInput,
+  );
 
   return (
     <Primitive.button
@@ -210,7 +221,7 @@ const TagsInputItemDelete = React.forwardRef<
       {...triggerProps}
       ref={forwardedRef}
       disabled={context.disabled}
-      onClick={() => context.onItemDelete(value)}
+      onClick={() => context.onItemDelete(itemContext.value)}
     />
   );
 });

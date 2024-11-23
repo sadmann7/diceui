@@ -17,7 +17,7 @@ export default function IndexPage() {
       {value.map((item) => (
         <TagsInputItem key={item} value={item}>
           <TagsInputItemText>{item}</TagsInputItemText>
-          <TagsInputItemDelete value={item}>×</TagsInputItemDelete>
+          <TagsInputItemDelete>×</TagsInputItemDelete>
         </TagsInputItem>
       ))}
       <TagsInputInput placeholder="Add item..." />
