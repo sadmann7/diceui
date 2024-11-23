@@ -1,11 +1,11 @@
-import { siteConfig } from "@/lib/config";
+import { siteConfig } from "@/config/site";
 import { fontHeading, fontMono, fontSans } from "@/lib/fonts";
 import { RootProvider } from "fumadocs-ui/provider";
 import type { Metadata, Viewport } from "next";
+import "@/app/global.css";
+import { cn } from "@/lib/utils";
 import type * as React from "react";
 import { twMerge } from "tailwind-merge";
-
-import "@/app/global.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://sadmn.com"),
@@ -28,15 +28,15 @@ export const viewport: Viewport = {
   ],
 };
 
-interface LayoutProps {
+interface RootLayoutProps {
   children: React.ReactNode;
 }
 
-export default function Layout({ children }: LayoutProps) {
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={twMerge(
+        className={cn(
           "min-h-screen font-sans antialiased",
           fontHeading.variable,
           fontSans.variable,

@@ -2,7 +2,7 @@ import { HomeLayout } from "fumadocs-ui/layouts/home";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { siteConfig } from "@/lib/config";
+import { siteConfig } from "@/config/site";
 
 export default function IndexPage() {
   return (
@@ -11,7 +11,7 @@ export default function IndexPage() {
         title: siteConfig.name,
         url: siteConfig.links.github,
       }}
-      links={[{ text: "Docs", url: siteConfig.links.docs }]}
+      links={[{ text: "Docs", url: "/docs" }]}
     >
       <section className="container flex flex-col items-center justify-center gap-6 pt-6 pb-8 md:py-10">
         <div className="max-w-5xl space-y-8">
@@ -32,7 +32,7 @@ export default function IndexPage() {
             style={{ animationDelay: "0.40s", animationFillMode: "forwards" }}
           >
             <Button asChild>
-              <Link href={siteConfig.links.docs}>Documentation</Link>
+              <Link href="/docs">Documentation</Link>
             </Button>
             <Button variant="outline" asChild>
               <Link

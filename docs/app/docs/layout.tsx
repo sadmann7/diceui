@@ -1,9 +1,12 @@
-import { siteConfig } from "@/lib/config";
+import { siteConfig } from "@/config/site";
 import { source } from "@/lib/source";
 import { DocsLayout } from "fumadocs-ui/layouts/docs";
-import type { ReactNode } from "react";
 
-export default function RootDocsLayout({ children }: { children: ReactNode }) {
+interface DocsLayoutProps {
+  children: React.ReactNode;
+}
+
+export default function RootDocsLayout({ children }: DocsLayoutProps) {
   return (
     <DocsLayout
       tree={source.pageTree}
