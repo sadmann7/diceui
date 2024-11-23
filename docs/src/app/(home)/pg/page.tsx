@@ -10,6 +10,7 @@ import {
 import * as React from "react";
 
 import { Shell } from "@/components/shell";
+import { X } from "lucide-react";
 
 export default function PlaygroundPage() {
   const [value, setValue] = React.useState<string[]>([]);
@@ -19,15 +20,24 @@ export default function PlaygroundPage() {
       <TagsInputRoot
         value={value}
         onValueChange={setValue}
-        className="w-40 border"
+        className="flex w-full max-w-[480px] flex-wrap items-center gap-2 rounded-md border p-2 focus-within:border-primary"
       >
         {value.map((item) => (
-          <TagsInputItem key={item} value={item}>
-            <TagsInputItemText>{item}</TagsInputItemText>
-            <TagsInputItemDelete>×</TagsInputItemDelete>
+          <TagsInputItem
+            key={item}
+            value={item}
+            className="flex h-7 items-center justify-center gap-1.5 rounded bg-accent px-2 py-1"
+          >
+            <TagsInputItemText className="text-sm">{item}</TagsInputItemText>
+            <TagsInputItemDelete>
+              <X className="size-3" aria-hidden="true" />
+            </TagsInputItemDelete>
           </TagsInputItem>
         ))}
-        <TagsInputInput placeholder="Add item..." />
+        <TagsInputInput
+          placeholder="Add item..."
+          className="flex-1 rounded bg-transparent px-1 text-sm placeholder:text-muted-foreground focus:outline-none"
+        />
       </TagsInputRoot>
     </Shell>
   );

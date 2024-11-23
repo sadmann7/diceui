@@ -76,16 +76,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputProps>(
         disabled={disabled}
         onItemDelete={onItemDelete}
       >
-        <Primitive.div
-          {...tagInputProps}
-          ref={forwardedRef}
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "0.5rem",
-            ...tagInputProps.style,
-          }}
-        >
+        <Primitive.div {...tagInputProps} ref={forwardedRef}>
           {children}
         </Primitive.div>
       </TagsInputProvider>
