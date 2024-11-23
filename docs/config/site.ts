@@ -5,7 +5,7 @@ export const siteConfig = {
   url: "https://diceui.com",
   ogImage: "https://diceui.com/opengraph-image.png",
   links: {
-    twitter: "https://x.com/sadmann7",
+    x: "https://x.com/sadmann7",
     github: "https://github.com/sadmann7/diceui",
   },
 };

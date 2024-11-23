@@ -46,6 +46,9 @@ tmp/
 temp/
 .docusaurus
 
+# TYPESCRIPT
+*.tsbuildinfo
+
 # MAC
 ._*
 .DS_Store

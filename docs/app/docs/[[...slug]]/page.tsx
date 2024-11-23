@@ -1,5 +1,5 @@
 import { source } from "@/lib/source";
-import defaultMdxComponents from "fumadocs-ui/mdx";
+import { useMDXComponents } from "@/mdx-components";
 import {
   DocsBody,
   DocsDescription,
@@ -9,11 +9,31 @@ import {
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-interface PageParams {
+interface DocPageParams {
   params: Promise<{ slug?: string[] }>;
 }
 
-export default async function Page(props: PageParams) {
+export async function generateStaticParams() {
+  return source.getPages().map((page) => ({
+    slug: page.slugs,
+  }));
+}
+
+export async function generateMetadata(
+  props: DocPageParams,
+): Promise<Metadata> {
+  const params = await props.params;
+  const page = source.getPage(params.slug);
+
+  if (page == null) return {};
+
+  return {
+    title: page.data.title,
+    description: page.data.description,
+  };
+}
+
+export default async function DocPage(props: DocPageParams) {
   const params = await props.params;
   const page = source.getPage(params.slug);
 
@@ -26,26 +46,8 @@ export default async function Page(props: PageParams) {
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
       <DocsBody>
-        <MDX components={{ ...defaultMdxComponents }} />
+        <MDX components={{ ...useMDXComponents({}) }} />
       </DocsBody>
     </DocsPage>
   );
-}
-
-export async function generateStaticParams() {
-  return source.getPages().map((page) => ({
-    slug: page.slugs,
-  }));
-}
-
-export async function generateMetadata(props: PageParams): Promise<Metadata> {
-  const params = await props.params;
-  const page = source.getPage(params.slug);
-
-  if (page == null) notFound();
-
-  return {
-    title: page.data.title,
-    description: page.data.description,
-  };
 }

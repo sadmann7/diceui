@@ -6,7 +6,16 @@
   "formatter": {
     "enabled": true,
     "indentWidth": 2,
-    "indentStyle": "space"
+    "indentStyle": "space",
+    "ignore": [
+      "**/node_modules",
+      "**/dist",
+      "**/build",
+      "**/public",
+      "**/.turbo",
+      "**/.next",
+      "**/.source"
+    ]
   },
   "linter": {
     "enabled": true,
@@ -19,11 +28,11 @@
         "useKeyWithClickEvents": "off",
         "useSemanticElements": "off"
       },
+      "correctness": {
+        "noUnusedVariables": "warn"
+      },
       "complexity": {
         "noBannedTypes": "off"
-      },
-      "nursery": {
-        "useSortedClasses": "warn"
       },
       "style": {
         "useImportType": "warn"
@@ -33,8 +42,20 @@
       },
       "suspicious": {
         "noAssignInExpressions": "off"
+      },
+      "nursery": {
+        "useSortedClasses": "warn"
       }
-    }
+    },
+    "ignore": [
+      "**/node_modules",
+      "**/dist",
+      "**/build",
+      "**/public",
+      "**/.turbo",
+      "**/.next",
+      "**/.source"
+    ]
   },
   "overrides": [
     {

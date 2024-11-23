@@ -1,5 +1,4 @@
-import { siteConfig } from "@/config/site";
-import { source } from "@/lib/source";
+import { docsOptions } from "@/config/layout";
 import { DocsLayout } from "fumadocs-ui/layouts/docs";
 
 interface DocsLayoutProps {
@@ -7,16 +6,5 @@ interface DocsLayoutProps {
 }
 
 export default function RootDocsLayout({ children }: DocsLayoutProps) {
-  return (
-    <DocsLayout
-      tree={source.pageTree}
-      nav={{
-        title: siteConfig.name,
-        url: siteConfig.links.github,
-      }}
-      links={[{ text: "Docs", url: "/docs" }]}
-    >
-      {children}
-    </DocsLayout>
-  );
+  return <DocsLayout {...docsOptions}>{children}</DocsLayout>;
 }

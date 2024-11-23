@@ -1,11 +1,10 @@
+import "@/app/global.css";
+import { Providers } from "@/components/providers";
 import { siteConfig } from "@/config/site";
 import { fontHeading, fontMono, fontSans } from "@/lib/fonts";
-import { RootProvider } from "fumadocs-ui/provider";
-import type { Metadata, Viewport } from "next";
-import "@/app/global.css";
 import { cn } from "@/lib/utils";
+import type { Metadata, Viewport } from "next";
 import type * as React from "react";
-import { twMerge } from "tailwind-merge";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://sadmn.com"),
@@ -43,7 +42,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           fontMono.variable,
         )}
       >
-        <RootProvider>{children}</RootProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
