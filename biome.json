@@ -41,8 +41,7 @@
         "noDangerouslySetInnerHtml": "off"
       },
       "suspicious": {
-        "noAssignInExpressions": "off",
-        "noExplicitAny": "off"
+        "noAssignInExpressions": "off"
       },
       "nursery": {
         "useSortedClasses": "warn"

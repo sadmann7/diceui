@@ -4,6 +4,7 @@ import { Primitive } from "@radix-ui/react-primitive";
 import { useCallbackRef } from "@radix-ui/react-use-callback-ref";
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import * as React from "react";
+import { composeRefs } from "./compose-refs";
 
 /* -------------------------------------------------------------------------------------------------
  * TagsInput
@@ -12,6 +13,7 @@ import * as React from "react";
 const TAGS_INPUT_NAME = "TagsInput";
 
 type Scope = {
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   [key: string]: any;
 };
 
@@ -57,7 +59,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputProps>(
       onChange: onValueChange,
     });
 
-    const handleItemDelete = React.useCallback(
+    const onItemDelete = React.useCallback(
       (itemValue: string) => {
         if (!disabled) {
           setValue(value.filter((v) => v !== itemValue));
@@ -72,7 +74,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputProps>(
         value={value}
         onValueChange={setValue}
         disabled={disabled}
-        onItemDelete={handleItemDelete}
+        onItemDelete={onItemDelete}
       >
         <Primitive.div
           {...tagInputProps}
@@ -110,6 +112,8 @@ const TagsInputInput = React.forwardRef<
 >((props: ScopedProps<TagsInputControlProps>, forwardedRef) => {
   const { __scopeTagsInput, onAdd, onKeyDown, ...controlProps } = props;
   const context = useTagsInputContext(CONTROL_NAME, __scopeTagsInput);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
   const handleAdd = useCallbackRef((value: string) => {
     const trimmedValue = value.trim();
     if (trimmedValue && !context.disabled) {
@@ -123,12 +127,19 @@ const TagsInputInput = React.forwardRef<
   return (
     <Primitive.input
       {...controlProps}
-      ref={forwardedRef}
+      ref={composeRefs(forwardedRef, inputRef)}
       onKeyDown={composeEventHandlers(onKeyDown, (event) => {
         if (event.key === "Enter" && event.currentTarget.value) {
           handleAdd(event.currentTarget.value);
           event.currentTarget.value = "";
           event.preventDefault();
+        } else if (event.key === "ArrowLeft" && !event.currentTarget.value) {
+          const items = document.querySelectorAll("[data-tag-item]");
+          const lastItem = items[items.length - 1] as HTMLElement;
+          if (lastItem) {
+            lastItem.focus();
+            event.preventDefault();
+          }
         }
       })}
     />
@@ -159,13 +170,35 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
   (props: ScopedProps<TagsInputItemProps>, forwardedRef) => {
     const { __scopeTagsInput, value, children, ...itemProps } = props;
     const context = useTagsInputContext(ITEM_NAME, __scopeTagsInput);
+    const inputRef = React.useRef<HTMLInputElement | null>(null);
 
     return (
       <TagsInputItemProvider scope={__scopeTagsInput} value={value}>
         <Primitive.div
           {...itemProps}
           ref={forwardedRef}
+          data-tag-item=""
+          tabIndex={0}
           data-disabled={context.disabled ? "" : undefined}
+          onKeyDown={(event) => {
+            if (event.key === "Backspace" || event.key === "Delete") {
+              context.onItemDelete(value);
+              const items = Array.from(
+                document.querySelectorAll("[data-tag-item]"),
+              );
+              const currentIndex = items.indexOf(event.currentTarget);
+              const prevItem = items[currentIndex - 1] as HTMLElement;
+              if (prevItem) {
+                prevItem.focus();
+              } else if (inputRef.current) {
+                inputRef.current.focus();
+              }
+              event.preventDefault();
+            } else if (event.key === "Enter") {
+              // Enter edit mode (if implemented)
+              // This would require additional state management
+            }
+          }}
         >
           {children}
         </Primitive.div>

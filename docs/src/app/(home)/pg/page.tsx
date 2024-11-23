@@ -16,7 +16,11 @@ export default function PlaygroundPage() {
 
   return (
     <Shell>
-      <TagsInputRoot value={value} onValueChange={setValue}>
+      <TagsInputRoot
+        value={value}
+        onValueChange={setValue}
+        className="w-40 border"
+      >
         {value.map((item) => (
           <TagsInputItem key={item} value={item}>
             <TagsInputItemText>{item}</TagsInputItemText>
