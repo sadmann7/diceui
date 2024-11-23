@@ -22,6 +22,6 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["*.ts"],
+  "include": ["packages/**/*.ts"],
   "exclude": ["node_modules"]
 }

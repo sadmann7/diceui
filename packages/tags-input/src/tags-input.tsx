@@ -1,0 +1,268 @@
+import { composeEventHandlers } from "@radix-ui/primitive";
+import { createContextScope } from "@radix-ui/react-context";
+import { Primitive } from "@radix-ui/react-primitive";
+import { useCallbackRef } from "@radix-ui/react-use-callback-ref";
+import { useControllableState } from "@radix-ui/react-use-controllable-state";
+import * as React from "react";
+
+/* -------------------------------------------------------------------------------------------------
+ * TagsInput
+ * -----------------------------------------------------------------------------------------------*/
+
+const TAGS_INPUT_NAME = "TagsInput";
+
+type Scope = {
+  [key: string]: any;
+};
+
+type ScopedProps<P> = P & { __scopeTagsInput?: Scope };
+
+const [createTagsInputContext, createTagsInputScope] =
+  createContextScope(TAGS_INPUT_NAME);
+
+type TagsInputContextValue = {
+  value: string[];
+  onValueChange(value: string[]): void;
+  disabled?: boolean;
+  onItemDelete(value: string): void;
+};
+
+const [TagsInputProvider, useTagsInputContext] =
+  createTagsInputContext<TagsInputContextValue>(TAGS_INPUT_NAME);
+
+interface TagsInputProps
+  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
+  value?: string[];
+  defaultValue?: string[];
+  onValueChange?(value: string[]): void;
+  disabled?: boolean;
+  children?: React.ReactNode;
+}
+
+const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputProps>(
+  (props: ScopedProps<TagsInputProps>, forwardedRef) => {
+    const {
+      __scopeTagsInput,
+      value: valueProp,
+      defaultValue,
+      onValueChange,
+      disabled = false,
+      children,
+      ...tagInputProps
+    } = props;
+
+    const [value = [], setValue] = useControllableState({
+      prop: valueProp,
+      defaultProp: defaultValue,
+      onChange: onValueChange,
+    });
+
+    const handleItemDelete = React.useCallback(
+      (itemValue: string) => {
+        if (!disabled) {
+          setValue(value.filter((v) => v !== itemValue));
+        }
+      },
+      [disabled, setValue, value],
+    );
+
+    return (
+      <TagsInputProvider
+        scope={__scopeTagsInput}
+        value={value}
+        onValueChange={setValue}
+        disabled={disabled}
+        onItemDelete={handleItemDelete}
+      >
+        <Primitive.div
+          {...tagInputProps}
+          ref={forwardedRef}
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "0.5rem",
+            ...tagInputProps.style,
+          }}
+        >
+          {children}
+        </Primitive.div>
+      </TagsInputProvider>
+    );
+  },
+);
+
+TagsInputRoot.displayName = TAGS_INPUT_NAME;
+
+/* -------------------------------------------------------------------------------------------------
+ * TagsInputInput
+ * -----------------------------------------------------------------------------------------------*/
+
+const CONTROL_NAME = "TagsInputInput";
+
+interface TagsInputControlProps
+  extends React.ComponentPropsWithoutRef<typeof Primitive.input> {
+  onAdd?(value: string): void;
+}
+
+const TagsInputInput = React.forwardRef<
+  HTMLInputElement,
+  TagsInputControlProps
+>((props: ScopedProps<TagsInputControlProps>, forwardedRef) => {
+  const { __scopeTagsInput, onAdd, onKeyDown, ...controlProps } = props;
+  const context = useTagsInputContext(CONTROL_NAME, __scopeTagsInput);
+  const handleAdd = useCallbackRef((value: string) => {
+    if (value.trim() && !context.disabled) {
+      context.onValueChange([...context.value, value.trim()]);
+      onAdd?.(value);
+    }
+  });
+
+  return (
+    <Primitive.input
+      {...controlProps}
+      ref={forwardedRef}
+      onKeyDown={composeEventHandlers(onKeyDown, (event) => {
+        if (event.key === "Enter" && event.currentTarget.value) {
+          handleAdd(event.currentTarget.value);
+          event.currentTarget.value = "";
+          event.preventDefault();
+        }
+      })}
+    />
+  );
+});
+
+TagsInputInput.displayName = CONTROL_NAME;
+
+/* -------------------------------------------------------------------------------------------------
+ * TagsInputItem
+ * -----------------------------------------------------------------------------------------------*/
+
+const ITEM_NAME = "TagsInputItem";
+
+interface TagsInputItemProps
+  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
+  value: string;
+}
+
+const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
+  (props: ScopedProps<TagsInputItemProps>, forwardedRef) => {
+    const { __scopeTagsInput, value, children, ...itemProps } = props;
+    const context = useTagsInputContext(ITEM_NAME, __scopeTagsInput);
+
+    console.log(context);
+
+    return (
+      <Primitive.div
+        {...itemProps}
+        ref={forwardedRef}
+        data-disabled={context.disabled ? "" : undefined}
+      >
+        {children}
+      </Primitive.div>
+    );
+  },
+);
+
+TagsInputItem.displayName = ITEM_NAME;
+
+/* -------------------------------------------------------------------------------------------------
+ * TagsInputItemText
+ * -----------------------------------------------------------------------------------------------*/
+
+const ITEM_TEXT_NAME = "TagsInputItemText";
+
+interface TagsInputItemTextProps
+  extends React.ComponentPropsWithoutRef<typeof Primitive.span> {}
+
+const TagsInputItemText = React.forwardRef<
+  HTMLSpanElement,
+  TagsInputItemTextProps
+>((props: ScopedProps<TagsInputItemTextProps>, forwardedRef) => {
+  const { __scopeTagsInput, ...textProps } = props;
+
+  return <Primitive.span {...textProps} ref={forwardedRef} />;
+});
+
+TagsInputItemText.displayName = ITEM_TEXT_NAME;
+
+/* -------------------------------------------------------------------------------------------------
+ * TagsInputItemDelete
+ * -----------------------------------------------------------------------------------------------*/
+
+const ITEM_DELETE_NAME = "TagsInputItemDelete";
+
+interface TagInputItemDeleteProps
+  extends React.ComponentPropsWithoutRef<typeof Primitive.button> {
+  value: string;
+}
+
+const TagsInputItemDelete = React.forwardRef<
+  HTMLButtonElement,
+  TagInputItemDeleteProps
+>((props: ScopedProps<TagInputItemDeleteProps>, forwardedRef) => {
+  const { __scopeTagsInput, value, ...triggerProps } = props;
+  const context = useTagsInputContext(ITEM_DELETE_NAME, __scopeTagsInput);
+
+  return (
+    <Primitive.button
+      type="button"
+      {...triggerProps}
+      ref={forwardedRef}
+      disabled={context.disabled}
+      onClick={() => context.onItemDelete(value)}
+    />
+  );
+});
+
+TagsInputItemDelete.displayName = ITEM_DELETE_NAME;
+
+/* -------------------------------------------------------------------------------------------------
+ * TagsInputClear
+ * -----------------------------------------------------------------------------------------------*/
+
+const CLEAR_NAME = "TagsInputClear";
+
+interface TagsInputClearProps
+  extends React.ComponentPropsWithoutRef<typeof Primitive.button> {}
+
+const TagsInputClear = React.forwardRef<HTMLButtonElement, TagsInputClearProps>(
+  (props: ScopedProps<TagsInputClearProps>, forwardedRef) => {
+    const { __scopeTagsInput, ...clearProps } = props;
+    const context = useTagsInputContext(CLEAR_NAME, __scopeTagsInput);
+
+    return (
+      <Primitive.button
+        type="button"
+        {...clearProps}
+        ref={forwardedRef}
+        disabled={context.disabled}
+        onClick={() => context.onValueChange([])}
+      />
+    );
+  },
+);
+
+TagsInputClear.displayName = CLEAR_NAME;
+
+/* -------------------------------------------------------------------------------------------------
+ * Export
+ * -----------------------------------------------------------------------------------------------*/
+
+export {
+  TagsInputRoot,
+  TagsInputInput,
+  TagsInputItem,
+  TagsInputItemText,
+  TagsInputItemDelete,
+  TagsInputClear,
+  createTagsInputScope,
+};
+export type {
+  TagsInputProps,
+  TagsInputControlProps,
+  TagsInputItemProps,
+  TagsInputItemTextProps,
+  TagInputItemDeleteProps,
+  TagsInputClearProps,
+};

@@ -41,7 +41,8 @@
         "noDangerouslySetInnerHtml": "off"
       },
       "suspicious": {
-        "noAssignInExpressions": "off"
+        "noAssignInExpressions": "off",
+        "noExplicitAny": "off"
       },
       "nursery": {
         "useSortedClasses": "warn"
@@ -59,14 +60,7 @@
   },
   "overrides": [
     {
-      "include": ["**/*.test.ts"],
-      "linter": {
-        "rules": {
-          "suspicious": {
-            "noExplicitAny": "off"
-          }
-        }
-      }
+      "include": ["**/*.test.ts"]
     }
   ],
   "vcs": {

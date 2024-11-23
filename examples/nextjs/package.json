@@ -13,7 +13,8 @@
     "react-dom": "^18.2.0",
     "react": "^18.2.0",
     "next": "^14.1.0",
-    "@diceui/faceted-filter": "workspace:*"
+    "@diceui/faceted-filter": "workspace:*",
+    "@diceui/tags-input": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
