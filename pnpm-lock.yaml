@@ -26,6 +26,9 @@ importers:
 
   docs:
     dependencies:
+      '@diceui/tags-input':
+        specifier: workspace:*
+        version: link:../packages/tags-input
       '@radix-ui/react-icons':
         specifier: ^1.3.2
         version: 1.3.2(react@18.3.1)
@@ -99,9 +102,6 @@ importers:
 
   examples/nextjs:
     dependencies:
-      '@diceui/faceted-filter':
-        specifier: workspace:*
-        version: link:../../packages/faceted-filter
       '@diceui/tags-input':
         specifier: workspace:*
         version: link:../../packages/tags-input

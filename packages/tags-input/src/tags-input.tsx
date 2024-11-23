@@ -111,9 +111,12 @@ const TagsInputInput = React.forwardRef<
   const { __scopeTagsInput, onAdd, onKeyDown, ...controlProps } = props;
   const context = useTagsInputContext(CONTROL_NAME, __scopeTagsInput);
   const handleAdd = useCallbackRef((value: string) => {
-    if (value.trim() && !context.disabled) {
-      context.onValueChange([...context.value, value.trim()]);
-      onAdd?.(value);
+    const trimmedValue = value.trim();
+    if (trimmedValue && !context.disabled) {
+      if (!context.value.includes(trimmedValue)) {
+        context.onValueChange([...context.value, trimmedValue]);
+        onAdd?.(trimmedValue);
+      }
     }
   });
 
