@@ -1,5 +1,3 @@
-import type { LinkItemType } from "fumadocs-ui/layouts/links";
-
 export const siteConfig = {
   name: "Dice UI",
   description:
@@ -10,10 +8,4 @@ export const siteConfig = {
     twitter: "https://x.com/sadmann7",
     github: "https://github.com/sadmann7/diceui",
   },
-  mainNav: [
-    {
-      text: "Docs",
-      url: "/docs",
-    },
-  ] satisfies LinkItemType[],
 };
