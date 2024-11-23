@@ -1,1 +1,1 @@
-# `faceted-filter`
+# `DiceUI`
