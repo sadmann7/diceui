@@ -1,7 +1,6 @@
 export const siteConfig = {
   name: "Dice UI",
-  description:
-    "Dice UI is a simple and modern ui library for your next project",
+  description: "A primitive ui component library for your design systems.",
   url: "https://diceui.com",
   ogImage: "https://diceui.com/opengraph-image.png",
   links: {

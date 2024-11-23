@@ -9,5 +9,5 @@ export default defineConfig({
 });
 
 export const { docs, meta } = defineDocs({
-  dir: "content/docs",
+  dir: "src/content/docs",
 });
