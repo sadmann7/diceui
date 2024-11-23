@@ -1,5 +1,5 @@
+import { useMDXComponents } from "@/components/mdx-components";
 import { source } from "@/lib/source";
-import { useMDXComponents } from "@/mdx-components";
 import {
   DocsBody,
   DocsDescription,

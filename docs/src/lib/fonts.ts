@@ -6,6 +6,6 @@ export const fontSans = GeistSans;
 export const fontMono = GeistMono;
 
 export const fontHeading = localFont({
-  src: "./../app/calsans.ttf",
+  src: "./../assets/fonts/calsans.ttf",
   variable: "--font-heading",
 });
