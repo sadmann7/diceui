@@ -14,17 +14,14 @@ export default function PlaygroundPage() {
       <TagsInputPrimitive.Root
         value={value}
         onValueChange={setValue}
-        delimiter=","
-        addOnPaste
-        addOnTab
-        addOnBlur
-        className="flex w-full max-w-[420px] flex-wrap items-center gap-2 rounded-md border p-2"
+        className="flex w-full max-w-[420px] flex-wrap items-center gap-2 rounded-md border p-2 focus-within:border-primary focus-within:outline-none"
       >
-        {value.map((item) => (
+        {value.map((item, index) => (
           <TagsInputPrimitive.Item
             key={item}
             value={item}
-            className="flex h-7 items-center justify-center gap-1.5 rounded bg-accent px-2 py-1"
+            index={index}
+            className="flex h-7 items-center justify-center gap-1.5 rounded border bg-transparent px-2 py-1 data-[selected]:bg-accent data-[selected]:text-accent-foreground data-[disabled]:opacity-50"
           >
             <TagsInputPrimitive.Text className="text-sm">
               {item}

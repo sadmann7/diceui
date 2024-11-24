@@ -1,9 +1,9 @@
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
-import { useControllableState } from "../hooks/use-controllable-state";
-import { useDirection } from "../hooks/use-direction";
+import { useControllableState } from "./hooks/use-controllable-state";
+import { useDirection } from "./hooks/use-direction";
 
-export type AcceptableInputValue = string | Record<string, unknown>;
+type AcceptableInputValue = string;
 
 interface TagsInputRootContextValue {
   value: AcceptableInputValue[];
@@ -308,4 +308,4 @@ const Root = TagsInputRoot;
 
 export { TagsInputRoot, Root };
 
-export type { TagsInputRootProps };
+export type { TagsInputRootProps, AcceptableInputValue };

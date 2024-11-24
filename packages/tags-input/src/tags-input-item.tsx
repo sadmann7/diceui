@@ -53,9 +53,10 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
         <Primitive.div
           ref={ref}
           data-tag-item=""
+          aria-current={isSelected}
+          data-state={isSelected ? "active" : "inactive"}
           data-selected={isSelected ? "" : undefined}
           data-disabled={itemDisabled ? "" : undefined}
-          data-state={isSelected ? "active" : "inactive"}
           onClick={() => {
             context.inputRef.current?.focus();
           }}
