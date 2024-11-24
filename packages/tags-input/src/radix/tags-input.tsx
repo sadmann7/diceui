@@ -1,10 +1,11 @@
 import { composeEventHandlers } from "@radix-ui/primitive";
+import { createCollection } from "@radix-ui/react-collection";
+import { composeRefs, useComposedRefs } from "@radix-ui/react-compose-refs";
 import { createContextScope } from "@radix-ui/react-context";
 import { Primitive } from "@radix-ui/react-primitive";
 import { useCallbackRef } from "@radix-ui/react-use-callback-ref";
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import * as React from "react";
-import { composeRefs } from "../compose-refs";
 
 /* -------------------------------------------------------------------------------------------------
  * TagsInput

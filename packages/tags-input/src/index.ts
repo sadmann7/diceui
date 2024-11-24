@@ -1,3 +1,3 @@
 "use client";
 
-export * from "./tags-input";
+export * from "./group";

@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  TagsInputInput,
-  TagsInputItem,
-  TagsInputItemDelete,
-  TagsInputItemText,
-  TagsInputRoot,
-} from "@diceui/tags-input";
+import * as TagsInputPrimitive from "@diceui/tags-input";
 import * as React from "react";
 
 import { Shell } from "@/components/shell";
@@ -17,29 +11,34 @@ export default function PlaygroundPage() {
 
   return (
     <Shell>
-      <TagsInputRoot
+      <TagsInputPrimitive.Root
         value={value}
         onValueChange={setValue}
+        delimiter=","
+        addOnPaste
+        addOnTab
+        addOnBlur
         className="flex w-full max-w-[420px] flex-wrap items-center gap-2 rounded-md border p-2"
       >
         {value.map((item) => (
-          <TagsInputItem
+          <TagsInputPrimitive.Item
             key={item}
             value={item}
             className="flex h-7 items-center justify-center gap-1.5 rounded bg-accent px-2 py-1"
-            tabIndex={0}
           >
-            <TagsInputItemText className="text-sm">{item}</TagsInputItemText>
-            <TagsInputItemDelete>
+            <TagsInputPrimitive.Text className="text-sm">
+              {item}
+            </TagsInputPrimitive.Text>
+            <TagsInputPrimitive.Delete>
               <X className="size-3" aria-hidden="true" />
-            </TagsInputItemDelete>
-          </TagsInputItem>
+            </TagsInputPrimitive.Delete>
+          </TagsInputPrimitive.Item>
         ))}
-        <TagsInputInput
+        <TagsInputPrimitive.Input
           placeholder="Add item..."
           className="flex-1 rounded bg-transparent px-1 text-sm placeholder:text-muted-foreground focus:outline-none"
         />
-      </TagsInputRoot>
+      </TagsInputPrimitive.Root>
     </Shell>
   );
 }
