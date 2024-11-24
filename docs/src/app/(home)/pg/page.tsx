@@ -20,7 +20,7 @@ export default function PlaygroundPage() {
       <TagsInputRoot
         value={value}
         onValueChange={setValue}
-        className="flex w-full max-w-[420px] flex-wrap items-center gap-2 rounded-md border p-2 focus-within:border-primary"
+        className="flex w-full max-w-[420px] flex-wrap items-center gap-2 rounded-md border p-2"
       >
         {value.map((item) => (
           <TagsInputItem
