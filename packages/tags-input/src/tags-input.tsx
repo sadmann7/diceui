@@ -113,7 +113,6 @@ export const TagsInputItem = React.forwardRef<
         ref={forwardedRef}
         className={className}
         data-value={value}
-        tabIndex={0}
         data-selected={isSelected ? "" : undefined}
         onKeyDown={handleKeyDown}
         onClick={handleClick}
