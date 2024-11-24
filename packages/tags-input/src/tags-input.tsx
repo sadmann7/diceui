@@ -1,11 +1,16 @@
+import { composeEventHandlers } from "@radix-ui/primitive";
 import { createContextScope } from "@radix-ui/react-context";
-import { useDirection } from "@radix-ui/react-direction";
 import { Primitive } from "@radix-ui/react-primitive";
+import { useCallbackRef } from "@radix-ui/react-use-callback-ref";
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import * as React from "react";
 import { composeRefs } from "./compose-refs";
 
-type Direction = "ltr" | "rtl";
+/* -------------------------------------------------------------------------------------------------
+ * TagsInput
+ * -----------------------------------------------------------------------------------------------*/
+
+const TAGS_INPUT_NAME = "TagsInput";
 
 type Scope = {
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -13,12 +18,6 @@ type Scope = {
 };
 
 type ScopedProps<P> = P & { __scopeTagsInput?: Scope };
-
-/* -------------------------------------------------------------------------------------------------
- * TagsInput
- * -----------------------------------------------------------------------------------------------*/
-
-const TAGS_INPUT_NAME = "TagsInput";
 
 const [createTagsInputContext, createTagsInputScope] =
   createContextScope(TAGS_INPUT_NAME);
@@ -28,7 +27,6 @@ type TagsInputContextValue = {
   onValueChange(value: string[]): void;
   disabled?: boolean;
   onItemDelete(value: string): void;
-  dir?: Direction;
 };
 
 const [TagsInputProvider, useTagsInputContext] =
@@ -39,7 +37,6 @@ interface TagsInputProps
   value?: string[];
   defaultValue?: string[];
   onValueChange?(value: string[]): void;
-  dir?: Direction;
   disabled?: boolean;
   children?: React.ReactNode;
 }
@@ -51,12 +48,11 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputProps>(
       value: valueProp,
       defaultValue,
       onValueChange,
-      dir,
       disabled = false,
       children,
       ...tagInputProps
     } = props;
-    const direction = useDirection(dir);
+
     const [value = [], setValue] = useControllableState({
       prop: valueProp,
       defaultProp: defaultValue,
@@ -77,9 +73,8 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputProps>(
         scope={__scopeTagsInput}
         value={value}
         onValueChange={setValue}
-        onItemDelete={onItemDelete}
-        dir={direction}
         disabled={disabled}
+        onItemDelete={onItemDelete}
       >
         <Primitive.div {...tagInputProps} ref={forwardedRef}>
           {children}
@@ -95,22 +90,47 @@ TagsInputRoot.displayName = TAGS_INPUT_NAME;
  * TagsInputInput
  * -----------------------------------------------------------------------------------------------*/
 
-const INPUT_NAME = "TagsInputInput";
+const CONTROL_NAME = "TagsInputInput";
 
-interface TagsInputInputProps
+interface TagsInputControlProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.input> {
   onAdd?(value: string): void;
 }
 
-const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
-  (props: ScopedProps<TagsInputInputProps>, forwardedRef) => {
-    const { __scopeTagsInput, onAdd, onKeyDown, ...controlProps } = props;
+const TagsInputInput = React.forwardRef<
+  HTMLInputElement,
+  TagsInputControlProps
+>((props: ScopedProps<TagsInputControlProps>, forwardedRef) => {
+  const { __scopeTagsInput, onAdd, onKeyDown, ...controlProps } = props;
+  const context = useTagsInputContext(CONTROL_NAME, __scopeTagsInput);
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
-    return <Primitive.input {...controlProps} ref={forwardedRef} />;
-  },
-);
+  const handleAdd = useCallbackRef((value: string) => {
+    const trimmedValue = value.trim();
+    if (trimmedValue && !context.disabled) {
+      if (!context.value.includes(trimmedValue)) {
+        context.onValueChange([...context.value, trimmedValue]);
+        onAdd?.(trimmedValue);
+      }
+    }
+  });
 
-TagsInputInput.displayName = INPUT_NAME;
+  return (
+    <Primitive.input
+      {...controlProps}
+      ref={composeRefs(forwardedRef, inputRef)}
+      onKeyDown={composeEventHandlers(onKeyDown, (event) => {
+        if (event.key === "Enter" && event.currentTarget.value) {
+          handleAdd(event.currentTarget.value);
+          event.currentTarget.value = "";
+          event.preventDefault();
+        }
+      })}
+    />
+  );
+});
+
+TagsInputInput.displayName = CONTROL_NAME;
 
 /* -------------------------------------------------------------------------------------------------
  * TagsInputItem
@@ -261,19 +281,19 @@ TagsInputClear.displayName = CLEAR_NAME;
  * -----------------------------------------------------------------------------------------------*/
 
 export {
-  createTagsInputScope,
-  TagsInputClear,
+  TagsInputRoot,
   TagsInputInput,
   TagsInputItem,
-  TagsInputItemDelete,
   TagsInputItemText,
-  TagsInputRoot,
+  TagsInputItemDelete,
+  TagsInputClear,
+  createTagsInputScope,
 };
 export type {
-  TagInputItemDeleteProps,
-  TagsInputClearProps,
-  TagsInputInputProps,
+  TagsInputProps,
+  TagsInputControlProps,
   TagsInputItemProps,
   TagsInputItemTextProps,
-  TagsInputProps,
+  TagInputItemDeleteProps,
+  TagsInputClearProps,
 };
