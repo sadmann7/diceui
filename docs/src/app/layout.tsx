@@ -1,4 +1,4 @@
-import "@/app/global.css";
+import "@/styles/globals.css";
 import { Providers } from "@/components/providers";
 import { siteConfig } from "@/config/site";
 import { fontHeading, fontMono, fontSans } from "@/lib/fonts";
