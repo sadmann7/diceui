@@ -15,7 +15,7 @@ export default function PlaygroundPage() {
 
   return (
     <Shell>
-      <TagsInput value={value} onValueChange={setValue}>
+      <TagsInput value={value} onValueChange={setValue} editable>
         {value.map((item) => (
           <TagsInputItem key={item} value={item}>
             {item}

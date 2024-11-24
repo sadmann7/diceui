@@ -1,6 +1,7 @@
-import { composeRefs } from "@radix-ui/react-compose-refs";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
+import { composeEventHandlers } from "./lib/compose-event-handlers";
+import { composeRefs } from "./lib/compose-refs";
 import { useTagsInput } from "./tags-input-root";
 
 interface TagsInputInputProps
@@ -32,10 +33,10 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
 
     function onTab(event: React.KeyboardEvent<HTMLInputElement>) {
       if (!context.addOnTab) return;
-      onCustomKeydown(event);
+      onKeyDown(event);
     }
 
-    function onCustomKeydown(event: React.KeyboardEvent<HTMLInputElement>) {
+    function onKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
       if (event.defaultPrevented) return;
 
       const value = event.currentTarget.value;
@@ -48,7 +49,9 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
     }
 
     function onInputChange(event: React.FormEvent<HTMLInputElement>) {
-      const target = event.target as HTMLInputElement;
+      const target = event.target;
+      if (!(target instanceof HTMLInputElement)) return;
+
       const delimiter = context.delimiter;
 
       if (delimiter === target.value.slice(-1)) {
@@ -93,14 +96,24 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
         disabled={context.disabled}
         className={className}
         data-invalid={context.isInvalidInput ? "" : undefined}
-        onInput={onInputChange}
-        onKeyDown={(event) => {
-          if (event.key === "Enter") onCustomKeydown(event);
-          if (event.key === "Tab") onTab(event);
-          context.onInputKeydown(event);
-        }}
-        onBlur={onBlur}
-        onPaste={onPaste}
+        onInput={composeEventHandlers(
+          tagsInputInputProps.onInput,
+          onInputChange,
+        )}
+        onKeyDown={composeEventHandlers(
+          tagsInputInputProps.onKeyDown,
+          (event) => {
+            if (event.key === "Enter") onKeyDown(event);
+            if (event.key === "Tab") onTab(event);
+            context.onInputKeydown(event);
+          },
+        )}
+        onBlur={composeEventHandlers(tagsInputInputProps.onBlur, onBlur, {
+          checkForDefaultPrevented: false,
+        })}
+        onPaste={composeEventHandlers(tagsInputInputProps.onPaste, onPaste, {
+          checkForDefaultPrevented: false,
+        })}
         {...tagsInputInputProps}
       />
     );

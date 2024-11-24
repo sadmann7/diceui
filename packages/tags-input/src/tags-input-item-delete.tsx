@@ -26,8 +26,8 @@ const TagsInputItemDelete = React.forwardRef<
       type="button"
       tabIndex={-1}
       aria-labelledby={itemContext.textId}
-      aria-current={itemContext.isSelected}
-      data-state={itemContext.isSelected ? "active" : "inactive"}
+      aria-current={itemContext.focused ? "true" : "false"}
+      data-state={itemContext.focused ? "active" : "inactive"}
       data-disabled={disabled ? "" : undefined}
       onClick={onItemDelete}
       {...props}

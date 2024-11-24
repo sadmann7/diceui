@@ -12,6 +12,9 @@ const TagsInputClear = React.forwardRef<HTMLButtonElement, TagsInputClearProps>(
     function onClear() {
       if (context.disabled) return;
       context.onValueChange([]);
+      requestAnimationFrame(() => {
+        context.inputRef.current?.focus();
+      });
     }
 
     return (

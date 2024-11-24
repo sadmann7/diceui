@@ -16,6 +16,7 @@ interface TagsInputRootContextValue {
   addOnPaste: boolean;
   addOnTab: boolean;
   addOnBlur: boolean;
+  editable: boolean;
   disabled: boolean;
   delimiter: string;
   dir: "ltr" | "rtl";
@@ -23,6 +24,12 @@ interface TagsInputRootContextValue {
   id?: string;
   displayValue: (value: AcceptableInputValue) => string;
   inputRef: React.RefObject<HTMLInputElement>;
+  editingValue: AcceptableInputValue | null;
+  setEditingValue: (value: AcceptableInputValue | null) => void;
+  onValueEdit: (
+    oldValue: AcceptableInputValue,
+    newValue: AcceptableInputValue,
+  ) => void;
 }
 
 const TagsInputContext = React.createContext<
@@ -50,6 +57,7 @@ interface TagsInputRootProps
   addOnTab?: boolean;
   addOnBlur?: boolean;
   duplicate?: boolean;
+  editable?: boolean;
   disabled?: boolean;
   delimiter?: string;
   dir?: "ltr" | "rtl";
@@ -72,6 +80,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
       addOnTab = false,
       addOnBlur = false,
       duplicate = false,
+      editable = false,
       disabled = false,
       delimiter = ",",
       dir: dirProp,
@@ -98,6 +107,8 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
     const containerRef = React.useRef<HTMLDivElement>(null);
     const inputRef = React.useRef<HTMLInputElement>(null);
     const dir = useDirection(dirProp);
+    const [editingValue, setEditingValue] =
+      React.useState<AcceptableInputValue | null>(null);
 
     const onAddValue = React.useCallback(
       (payload: string) => {
@@ -137,7 +148,13 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
 
         setIsInvalidInput(true);
 
+        // rest input if it's invalid
+        if (inputRef.current) {
+          inputRef.current.value = "";
+        }
+
         onInvalid?.(newValue);
+
         return false;
       },
       [value, max, duplicate, convertValue, setValue, onInvalid, defaultValue],
@@ -231,9 +248,16 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
             target.setSelectionRange(0, 0);
             break;
           }
+          case "Enter": {
+            if (selectedValue !== null && editable) {
+              setEditingValue(selectedValue);
+              event.preventDefault();
+            }
+            break;
+          }
         }
       },
-      [selectedValue, value, onRemoveValue, dir],
+      [selectedValue, value, onRemoveValue, dir, editable],
     );
 
     // Handle clicks outside of tags to focus input
@@ -254,6 +278,21 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
       return () => document.removeEventListener("click", handleClick);
     }, []);
 
+    const onValueEdit = React.useCallback(
+      (oldValue: AcceptableInputValue, newValue: AcceptableInputValue) => {
+        if (oldValue === newValue || !newValue.trim()) return;
+
+        const index = value.indexOf(oldValue);
+        if (index === -1) return;
+
+        const newValues = [...value];
+        newValues[index] = newValue;
+        setValue(newValues);
+        setEditingValue(null);
+      },
+      [value, setValue],
+    );
+
     const contextValue: TagsInputRootContextValue = {
       value,
       onValueChange: setValue,
@@ -265,6 +304,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
       addOnPaste,
       addOnTab,
       addOnBlur,
+      editable,
       disabled,
       delimiter,
       dir,
@@ -272,6 +312,13 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
       id,
       displayValue,
       inputRef,
+      editingValue,
+      setEditingValue: (value) => {
+        if (editable) {
+          setEditingValue(value);
+        }
+      },
+      onValueEdit,
     };
 
     return (
