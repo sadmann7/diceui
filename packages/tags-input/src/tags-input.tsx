@@ -27,6 +27,18 @@ type TagsInputContextValue = {
   onValueChange(value: string[]): void;
   disabled?: boolean;
   onItemDelete(value: string): void;
+  selectedElement: React.MutableRefObject<HTMLElement | null>;
+  isInvalidInput: boolean;
+  setIsInvalidInput(value: boolean): void;
+  addOnPaste: boolean;
+  addOnTab: boolean;
+  addOnBlur: boolean;
+  delimiter: string;
+  dir: "ltr" | "rtl";
+  max: number;
+  duplicate: boolean;
+  displayValue(value: string): string;
+  handleInputKeydown(event: KeyboardEvent): void;
 };
 
 const [TagsInputProvider, useTagsInputContext] =
@@ -38,7 +50,23 @@ interface TagsInputProps
   defaultValue?: string[];
   onValueChange?(value: string[]): void;
   disabled?: boolean;
+  addOnPaste?: boolean;
+  addOnTab?: boolean;
+  addOnBlur?: boolean;
+  delimiter?: string;
+  dir?: "ltr" | "rtl";
+  max?: number;
+  duplicate?: boolean;
+  displayValue?: (value: string) => string;
   children?: React.ReactNode;
+}
+
+// Add utility function for array navigation
+function getNextIndex(current: number, total: number, delta: number) {
+  const next = current + delta;
+  if (next < 0) return total - 1;
+  if (next >= total) return 0;
+  return next;
 }
 
 const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputProps>(
@@ -49,6 +77,14 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputProps>(
       defaultValue,
       onValueChange,
       disabled = false,
+      addOnPaste = false,
+      addOnTab = false,
+      addOnBlur = false,
+      delimiter = ",",
+      dir = "ltr",
+      max = 0,
+      duplicate = false,
+      displayValue = (v) => v,
       children,
       ...tagInputProps
     } = props;
@@ -59,6 +95,10 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputProps>(
       onChange: onValueChange,
     });
 
+    const [isInvalidInput, setIsInvalidInput] = React.useState(false);
+    const selectedElement = React.useRef<HTMLElement | null>(null);
+    const rootRef = React.useRef<HTMLDivElement>(null);
+
     const onItemDelete = React.useCallback(
       (itemValue: string) => {
         if (!disabled) {
@@ -68,6 +108,84 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputProps>(
       [disabled, setValue, value],
     );
 
+    const handleInputKeydown = React.useCallback(
+      (event: KeyboardEvent) => {
+        const target = event.target as HTMLInputElement;
+        const tagItems = Array.from(
+          rootRef.current?.querySelectorAll(
+            "[data-tag-item]:not([data-disabled])",
+          ) || [],
+        ) as HTMLElement[];
+
+        if (!tagItems.length) return;
+
+        const lastTag = tagItems[tagItems.length - 1];
+        const isRTL = dir === "rtl";
+
+        switch (event.key) {
+          case "Delete":
+          case "Backspace": {
+            if (target.selectionStart !== 0 || target.selectionEnd !== 0) break;
+
+            if (selectedElement.current) {
+              const index = tagItems.indexOf(selectedElement.current);
+              if (value[index]) {
+                onItemDelete(value[index]);
+                selectedElement.current =
+                  (selectedElement.current === lastTag
+                    ? tagItems[index - 1]
+                    : tagItems[index + 1]) ?? null;
+                event.preventDefault();
+              }
+            } else if (event.key === "Backspace") {
+              selectedElement.current = lastTag ?? null;
+              event.preventDefault();
+            }
+            break;
+          }
+          case "Home":
+          case "End":
+          case "ArrowRight":
+          case "ArrowLeft": {
+            const isArrowRight =
+              (event.key === "ArrowRight" && !isRTL) ||
+              (event.key === "ArrowLeft" && isRTL);
+            const isArrowLeft = !isArrowRight;
+
+            if (target.selectionStart !== 0 || target.selectionEnd !== 0) break;
+
+            if (isArrowLeft && !selectedElement.current) {
+              selectedElement.current = lastTag ?? null;
+              event.preventDefault();
+            } else if (isArrowRight && selectedElement.current === lastTag) {
+              selectedElement.current = null;
+              event.preventDefault();
+            } else if (selectedElement.current) {
+              const currentIndex = tagItems.indexOf(selectedElement.current);
+              const delta = isArrowRight ? 1 : -1;
+              const nextIndex = getNextIndex(
+                currentIndex,
+                tagItems.length,
+                delta,
+              );
+              selectedElement.current = tagItems[nextIndex] ?? null;
+              event.preventDefault();
+            }
+            break;
+          }
+          case "ArrowUp":
+          case "ArrowDown": {
+            if (selectedElement.current) event.preventDefault();
+            break;
+          }
+          default: {
+            selectedElement.current = null;
+          }
+        }
+      },
+      [dir, onItemDelete, value],
+    );
+
     return (
       <TagsInputProvider
         scope={__scopeTagsInput}
@@ -75,8 +193,25 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputProps>(
         onValueChange={setValue}
         disabled={disabled}
         onItemDelete={onItemDelete}
+        selectedElement={selectedElement}
+        isInvalidInput={isInvalidInput}
+        setIsInvalidInput={setIsInvalidInput}
+        addOnPaste={addOnPaste}
+        addOnTab={addOnTab}
+        addOnBlur={addOnBlur}
+        delimiter={delimiter}
+        dir={dir}
+        max={max}
+        duplicate={duplicate}
+        displayValue={displayValue}
+        handleInputKeydown={handleInputKeydown}
       >
-        <Primitive.div {...tagInputProps} ref={forwardedRef}>
+        <Primitive.div
+          {...tagInputProps}
+          ref={composeRefs(forwardedRef, rootRef)}
+          data-invalid={isInvalidInput ? "" : undefined}
+          data-disabled={disabled ? "" : undefined}
+        >
           {children}
         </Primitive.div>
       </TagsInputProvider>
@@ -101,31 +236,92 @@ const TagsInputInput = React.forwardRef<
   HTMLInputElement,
   TagsInputControlProps
 >((props: ScopedProps<TagsInputControlProps>, forwardedRef) => {
-  const { __scopeTagsInput, onAdd, onKeyDown, ...controlProps } = props;
+  const {
+    __scopeTagsInput,
+    onAdd,
+    onKeyDown,
+    onBlur,
+    onPaste,
+    ...controlProps
+  } = props;
+
   const context = useTagsInputContext(CONTROL_NAME, __scopeTagsInput);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const handleAdd = useCallbackRef((value: string) => {
     const trimmedValue = value.trim();
     if (trimmedValue && !context.disabled) {
-      if (!context.value.includes(trimmedValue)) {
+      if (context.max && context.value.length >= context.max) {
+        context.setIsInvalidInput(true);
+        return false;
+      }
+
+      if (context.duplicate || !context.value.includes(trimmedValue)) {
         context.onValueChange([...context.value, trimmedValue]);
         onAdd?.(trimmedValue);
+        context.setIsInvalidInput(false);
+        return true;
       }
+      context.setIsInvalidInput(true);
     }
+    return false;
   });
+
+  const handleBlur = React.useCallback(
+    (event: React.FocusEvent<HTMLInputElement>) => {
+      if (!context.addOnBlur) return;
+
+      const target = event.target;
+      if (!target.value) return;
+
+      const isAdded = handleAdd(target.value);
+      if (isAdded) target.value = "";
+    },
+    [context.addOnBlur, handleAdd],
+  );
+
+  const handlePaste = React.useCallback(
+    (event: React.ClipboardEvent<HTMLInputElement>) => {
+      if (!context.addOnPaste) return;
+
+      event.preventDefault();
+      const value = event.clipboardData.getData("text");
+
+      if (context.delimiter) {
+        for (const v of value.split(context.delimiter)) {
+          if (v.trim()) handleAdd(v);
+        }
+      } else {
+        handleAdd(value);
+      }
+    },
+    [context.addOnPaste, context.delimiter, handleAdd],
+  );
 
   return (
     <Primitive.input
       {...controlProps}
       ref={composeRefs(forwardedRef, inputRef)}
       onKeyDown={composeEventHandlers(onKeyDown, (event) => {
+        context.handleInputKeydown(event.nativeEvent);
+
         if (event.key === "Enter" && event.currentTarget.value) {
-          handleAdd(event.currentTarget.value);
-          event.currentTarget.value = "";
+          const isAdded = handleAdd(event.currentTarget.value);
+          if (isAdded) event.currentTarget.value = "";
           event.preventDefault();
+        } else if (
+          event.key === "Tab" &&
+          context.addOnTab &&
+          event.currentTarget.value
+        ) {
+          const isAdded = handleAdd(event.currentTarget.value);
+          if (isAdded) event.currentTarget.value = "";
         }
       })}
+      onBlur={composeEventHandlers(onBlur, handleBlur)}
+      onPaste={composeEventHandlers(onPaste, handlePaste)}
+      disabled={context.disabled}
+      data-invalid={context.isInvalidInput ? "" : undefined}
     />
   );
 });
@@ -154,35 +350,20 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
   (props: ScopedProps<TagsInputItemProps>, forwardedRef) => {
     const { __scopeTagsInput, value, children, ...itemProps } = props;
     const context = useTagsInputContext(ITEM_NAME, __scopeTagsInput);
-    const inputRef = React.useRef<HTMLInputElement | null>(null);
+    const itemRef = React.useRef<HTMLDivElement>(null);
+
+    const isSelected = context.selectedElement.current === itemRef.current;
 
     return (
       <TagsInputItemProvider scope={__scopeTagsInput} value={value}>
         <Primitive.div
           {...itemProps}
-          ref={forwardedRef}
+          ref={composeRefs(forwardedRef, itemRef)}
           data-tag-item=""
           tabIndex={0}
           data-disabled={context.disabled ? "" : undefined}
-          onKeyDown={(event) => {
-            if (event.key === "Backspace" || event.key === "Delete") {
-              context.onItemDelete(value);
-              const items = Array.from(
-                document.querySelectorAll("[data-tag-item]"),
-              );
-              const currentIndex = items.indexOf(event.currentTarget);
-              const prevItem = items[currentIndex - 1] as HTMLElement;
-              if (prevItem) {
-                prevItem.focus();
-              } else if (inputRef.current) {
-                inputRef.current.focus();
-              }
-              event.preventDefault();
-            } else if (event.key === "Enter") {
-              // Enter edit mode (if implemented)
-              // This would require additional state management
-            }
-          }}
+          data-selected={isSelected ? "" : undefined}
+          aria-selected={isSelected}
         >
           {children}
         </Primitive.div>
