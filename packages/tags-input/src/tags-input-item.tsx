@@ -27,17 +27,16 @@ interface TagsInputItemProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
   value: AcceptableInputValue;
   disabled?: boolean;
-  index?: number;
 }
 
 const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
   (props, ref) => {
-    const { value, disabled, index, ...tagsInputItemProps } = props;
+    const { value, disabled, ...tagsInputItemProps } = props;
 
     const context = useTagsInput();
-    const isSelected = index === context.selectedIndex;
+    const isSelected = value === context.selectedValue;
     const itemDisabled = disabled || context.disabled;
-    const textId = `tags-input-item-${index}`;
+    const textId = `tags-input-item-${value}`;
     const displayValue = context.displayValue(value);
 
     const itemContext: TagsInputItemContextValue = {

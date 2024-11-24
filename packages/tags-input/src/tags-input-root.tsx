@@ -11,7 +11,7 @@ interface TagsInputRootContextValue {
   onAddValue: (payload: string) => boolean;
   onRemoveValue: (index: number) => void;
   onInputKeydown: (event: React.KeyboardEvent) => void;
-  selectedIndex: number;
+  selectedValue: AcceptableInputValue | null;
   isInvalidInput: boolean;
   addOnPaste: boolean;
   addOnTab: boolean;
@@ -92,7 +92,8 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
       onChange: onValueChange,
     });
 
-    const [selectedIndex, setSelectedIndex] = React.useState<number>(-1);
+    const [selectedValue, setSelectedValue] =
+      React.useState<AcceptableInputValue | null>(null);
     const [isInvalidInput, setIsInvalidInput] = React.useState(false);
     const containerRef = React.useRef<HTMLDivElement>(null);
     const inputRef = React.useRef<HTMLInputElement>(null);
@@ -148,7 +149,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
           const newValues = [...value];
           newValues.splice(index, 1);
           setValue(newValues);
-          setSelectedIndex(-1);
+          setSelectedValue(null);
         }
       },
       [value, setValue],
@@ -169,16 +170,18 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
           case "Backspace": {
             if (target.selectionStart !== 0 || target.selectionEnd !== 0) break;
 
-            if (selectedIndex !== -1) {
-              const newIndex =
-                selectedIndex === value.length - 1
-                  ? selectedIndex - 1
-                  : selectedIndex;
-              onRemoveValue(selectedIndex);
-              setSelectedIndex(newIndex);
+            if (selectedValue !== null) {
+              const currentIndex = value.indexOf(selectedValue);
+              const newValue =
+                currentIndex === value.length - 1
+                  ? value[currentIndex - 1]
+                  : value[currentIndex + 1];
+
+              onRemoveValue(currentIndex);
+              setSelectedValue(newValue ?? null);
               event.preventDefault();
             } else if (event.key === "Backspace" && value.length > 0) {
-              setSelectedIndex(value.length - 1);
+              setSelectedValue(value[value.length - 1] ?? null);
               event.preventDefault();
             }
             break;
@@ -188,20 +191,21 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
             if (
               target.selectionStart === 0 &&
               isArrowLeft &&
-              selectedIndex === -1 &&
+              selectedValue === null &&
               value.length > 0
             ) {
-              setSelectedIndex(value.length - 1);
+              setSelectedValue(value[value.length - 1] ?? null);
               event.preventDefault();
-            } else if (selectedIndex !== -1) {
-              if (isArrowLeft && selectedIndex > 0) {
-                setSelectedIndex(selectedIndex - 1);
+            } else if (selectedValue !== null) {
+              const currentIndex = value.indexOf(selectedValue);
+              if (isArrowLeft && currentIndex > 0) {
+                setSelectedValue(value[currentIndex - 1] ?? null);
                 event.preventDefault();
-              } else if (isArrowRight && selectedIndex < value.length - 1) {
-                setSelectedIndex(selectedIndex + 1);
+              } else if (isArrowRight && currentIndex < value.length - 1) {
+                setSelectedValue(value[currentIndex + 1] ?? null);
                 event.preventDefault();
-              } else if (isArrowRight && selectedIndex === value.length - 1) {
-                setSelectedIndex(-1);
+              } else if (isArrowRight && currentIndex === value.length - 1) {
+                setSelectedValue(null);
                 target.setSelectionRange(0, 0);
                 event.preventDefault();
               }
@@ -209,27 +213,27 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
             break;
           }
           case "Home": {
-            if (selectedIndex !== -1) {
-              setSelectedIndex(0);
+            if (selectedValue !== null && value.length > 0) {
+              setSelectedValue(value[0] ?? null);
               event.preventDefault();
             }
             break;
           }
           case "End": {
-            if (selectedIndex !== -1) {
-              setSelectedIndex(value.length - 1);
+            if (selectedValue !== null && value.length > 0) {
+              setSelectedValue(value[value.length - 1] ?? null);
               event.preventDefault();
             }
             break;
           }
           case "Escape": {
-            setSelectedIndex(-1);
+            setSelectedValue(null);
             target.setSelectionRange(0, 0);
             break;
           }
         }
       },
-      [selectedIndex, value.length, onRemoveValue, dir],
+      [selectedValue, value, onRemoveValue, dir],
     );
 
     // Handle clicks outside of tags to focus input
@@ -242,7 +246,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
           target.tagName !== "INPUT"
         ) {
           inputRef.current?.focus();
-          setSelectedIndex(-1);
+          setSelectedValue(null);
         }
       };
 
@@ -256,7 +260,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
       onAddValue,
       onRemoveValue,
       onInputKeydown,
-      selectedIndex,
+      selectedValue,
       isInvalidInput,
       addOnPaste,
       addOnTab,
@@ -281,7 +285,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
           onClick={(e) => {
             if (e.target === containerRef.current) {
               inputRef.current?.focus();
-              setSelectedIndex(-1);
+              setSelectedValue(null);
             }
           }}
           {...tagsInputProps}
