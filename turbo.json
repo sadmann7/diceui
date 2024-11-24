@@ -12,14 +12,22 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**", ".nuxt"]
     },
-    "lint": { "cache": false },
-    "lint:fix": { "cache": false },
+    "lint": {
+      "cache": false,
+      "outputs": []
+    },
+    "lint:fix": {
+      "cache": false,
+      "outputs": []
+    },
     "typecheck": {
       "dependsOn": ["^topo", "^build"],
       "outputs": []
     },
     "check": {
-      "cache": false
+      "dependsOn": ["^lint", "^typecheck"],
+      "cache": false,
+      "outputs": []
     }
   }
 }
