@@ -1,10 +1,12 @@
 import { Primitive } from "@radix-ui/react-primitive";
+import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import * as React from "react";
 
 interface TagsInputContextProps {
-  tags: string[];
-  addTag: (tag: string) => void;
-  removeTag: (tag: string) => void;
+  value: string[];
+  onValueChange(value: string[]): void;
+  onCreateTag: (tag: string) => void;
+  onDeleteTag: (tag: string) => void;
   selectedIndex: number | null;
   setSelectedIndex: (index: number | null) => void;
 }
@@ -15,38 +17,55 @@ const TagsInputContext = React.createContext<TagsInputContextProps | undefined>(
 
 interface TagsInputRootProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
-  value: string[];
-  onValueChange: (value: string[]) => void;
+  defaultValue?: string[];
+  value?: string[];
+  onValueChange?: (value: string[]) => void;
 }
 
 export const TagsInputRoot = React.forwardRef<
   HTMLDivElement,
   TagsInputRootProps
->(({ value, onValueChange, children, className, ...props }, forwardedRef) => {
+>((rootProps, forwardedRef) => {
+  const {
+    value: valueProp,
+    defaultValue,
+    onValueChange,
+    className,
+    children,
+    ...props
+  } = rootProps;
+
+  const [value = [], setValue] = useControllableState({
+    defaultProp: defaultValue,
+    prop: valueProp,
+    onChange: onValueChange,
+  });
+
   const [selectedIndex, setSelectedIndex] = React.useState<number | null>(null);
 
-  const addTag = React.useCallback(
+  const onCreateTag = React.useCallback(
     (tag: string) => {
       if (!value.includes(tag)) {
-        onValueChange([...value, tag]);
+        setValue([...value, tag]);
       }
     },
-    [value, onValueChange],
+    [value, setValue],
   );
 
-  const removeTag = React.useCallback(
+  const onDeleteTag = React.useCallback(
     (tag: string) => {
-      onValueChange(value.filter((t) => t !== tag));
+      setValue(value.filter((t) => t !== tag));
     },
-    [value, onValueChange],
+    [value, setValue],
   );
 
   return (
     <TagsInputContext.Provider
       value={{
-        tags: value,
-        addTag,
-        removeTag,
+        value,
+        onValueChange: setValue,
+        onCreateTag,
+        onDeleteTag,
         selectedIndex,
         setSelectedIndex,
       }}
@@ -57,6 +76,64 @@ export const TagsInputRoot = React.forwardRef<
     </TagsInputContext.Provider>
   );
 });
+
+TagsInputRoot.displayName = "TagsInputRoot";
+
+interface TagsInputInputProps
+  extends React.ComponentPropsWithoutRef<typeof Primitive.input> {
+  onBlurAdd?: boolean;
+  onKeyDownAdd?: boolean;
+}
+
+export const TagsInputInput = React.forwardRef<
+  HTMLInputElement,
+  TagsInputInputProps
+>((props, forwardedRef) => {
+  const {
+    placeholder,
+    onBlurAdd = true,
+    onKeyDownAdd = true,
+    className,
+    ...inputProps
+  } = props;
+  const context = useTagsInputContext();
+  const [inputValue, setInputValue] = React.useState("");
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter" || event.key === "," || event.key === "Tab") {
+      event.preventDefault();
+      if (inputValue.trim()) {
+        context.onCreateTag(inputValue.trim());
+        setInputValue("");
+      }
+    }
+    if (event.key === "Backspace" && inputValue === "") {
+      context.setSelectedIndex(null);
+    }
+  };
+
+  const handleBlur = () => {
+    if (onBlurAdd && inputValue.trim()) {
+      context.onCreateTag(inputValue.trim());
+      setInputValue("");
+    }
+  };
+
+  return (
+    <Primitive.input
+      ref={forwardedRef}
+      className={className}
+      placeholder={placeholder}
+      value={inputValue}
+      onChange={(e) => setInputValue(e.target.value)}
+      onKeyDown={onKeyDownAdd ? handleKeyDown : undefined}
+      onBlur={onBlurAdd ? handleBlur : undefined}
+      {...inputProps}
+    />
+  );
+});
+
+TagsInputInput.displayName = "TagsInputInput";
 
 const useTagsInputContext = () => {
   const context = React.useContext(TagsInputContext);
@@ -83,28 +160,30 @@ const TagsInputItemContext = React.createContext<
 export const TagsInputItem = React.forwardRef<
   HTMLDivElement,
   TagsInputItemProps
->(({ value, children, className, ...props }, forwardedRef) => {
-  const { tags, removeTag, selectedIndex, setSelectedIndex } =
-    useTagsInputContext();
-  const index = tags.indexOf(value);
-  const isSelected = selectedIndex === index;
+>((props, forwardedRef) => {
+  const { value, children, className, ...itemProps } = props;
+  const context = useTagsInputContext();
+  const index = context.value.indexOf(value);
+  const isSelected = context.selectedIndex === index;
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Backspace" && isSelected) {
       event.preventDefault();
-      removeTag(value);
-      setSelectedIndex(index > 0 ? index - 1 : null);
+      context.onDeleteTag(value);
+      context.setSelectedIndex(index > 0 ? index - 1 : null);
     } else if (event.key === "ArrowLeft") {
       event.preventDefault();
-      setSelectedIndex(index > 0 ? index - 1 : null);
+      context.setSelectedIndex(index > 0 ? index - 1 : null);
     } else if (event.key === "ArrowRight") {
       event.preventDefault();
-      setSelectedIndex(index < tags.length - 1 ? index + 1 : null);
+      context.setSelectedIndex(
+        index < context.value.length - 1 ? index + 1 : null,
+      );
     }
   };
 
   const handleClick = () => {
-    setSelectedIndex(index);
+    context.setSelectedIndex(index);
   };
 
   return (
@@ -116,13 +195,15 @@ export const TagsInputItem = React.forwardRef<
         data-selected={isSelected ? "" : undefined}
         onKeyDown={handleKeyDown}
         onClick={handleClick}
-        {...props}
+        {...itemProps}
       >
         {children}
       </Primitive.div>
     </TagsInputItemContext.Provider>
   );
 });
+
+TagsInputItem.displayName = "TagsInputItem";
 
 const useTagsInputItemContext = () => {
   const context = React.useContext(TagsInputItemContext);
@@ -140,6 +221,8 @@ export const TagsInputItemText = React.forwardRef<
   TagsInputItemTextProps
 >((props, forwardedRef) => <Primitive.span ref={forwardedRef} {...props} />);
 
+TagsInputItemText.displayName = "TagsInputItemText";
+
 interface TagsInputItemDeleteProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.button> {}
 
@@ -147,7 +230,7 @@ export const TagsInputItemDelete = React.forwardRef<
   HTMLButtonElement,
   TagsInputItemDeleteProps
 >((props, forwardedRef) => {
-  const { removeTag } = useTagsInputContext();
+  const context = useTagsInputContext();
   const { value } = useTagsInputItemContext();
 
   return (
@@ -155,68 +238,11 @@ export const TagsInputItemDelete = React.forwardRef<
       ref={forwardedRef}
       type="button"
       tabIndex={-1}
-      onClick={() => removeTag(value)}
+      onClick={() => context.onDeleteTag(value)}
       aria-label={`Remove ${value}`}
       {...props}
     />
   );
 });
 
-interface TagsInputInputProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.input> {
-  onBlurAdd?: boolean;
-  onKeyDownAdd?: boolean;
-}
-
-export const TagsInputInput = React.forwardRef<
-  HTMLInputElement,
-  TagsInputInputProps
->(
-  (
-    { placeholder, onBlurAdd = true, onKeyDownAdd = true, className, ...props },
-    forwardedRef,
-  ) => {
-    const { addTag, setSelectedIndex } = useTagsInputContext();
-    const [inputValue, setInputValue] = React.useState("");
-
-    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-      if (event.key === "Enter" || event.key === "," || event.key === "Tab") {
-        event.preventDefault();
-        if (inputValue.trim()) {
-          addTag(inputValue.trim());
-          setInputValue("");
-        }
-      }
-      if (event.key === "Backspace" && inputValue === "") {
-        setSelectedIndex(null);
-      }
-    };
-
-    const handleBlur = () => {
-      if (onBlurAdd && inputValue.trim()) {
-        addTag(inputValue.trim());
-        setInputValue("");
-      }
-    };
-
-    return (
-      <Primitive.input
-        ref={forwardedRef}
-        className={className}
-        placeholder={placeholder}
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        onKeyDown={onKeyDownAdd ? handleKeyDown : undefined}
-        onBlur={onBlurAdd ? handleBlur : undefined}
-        {...props}
-      />
-    );
-  },
-);
-
-// Add display names
-TagsInputRoot.displayName = "TagsInputRoot";
-TagsInputItem.displayName = "TagsInputItem";
-TagsInputItemText.displayName = "TagsInputItemText";
 TagsInputItemDelete.displayName = "TagsInputItemDelete";
-TagsInputInput.displayName = "TagsInputInput";
