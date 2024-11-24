@@ -1,3 +1,5 @@
+export type SiteConfig = typeof siteConfig;
+
 export const siteConfig = {
   name: "Dice UI",
   description: "A primitive ui component library for your design systems.",
