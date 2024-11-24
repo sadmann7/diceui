@@ -7,8 +7,6 @@ interface TagsInputContextProps {
   onValueChange(value: string[]): void;
   onCreateTag: (tag: string) => void;
   onDeleteTag: (tag: string) => void;
-  selectedIndex: number | null;
-  setSelectedIndex: (index: number | null) => void;
 }
 
 const TagsInputContext = React.createContext<TagsInputContextProps | undefined>(
@@ -41,8 +39,6 @@ export const TagsInputRoot = React.forwardRef<
     onChange: onValueChange,
   });
 
-  const [selectedIndex, setSelectedIndex] = React.useState<number | null>(null);
-
   const onCreateTag = React.useCallback(
     (tag: string) => {
       if (!value.includes(tag)) {
@@ -66,8 +62,6 @@ export const TagsInputRoot = React.forwardRef<
         onValueChange: setValue,
         onCreateTag,
         onDeleteTag,
-        selectedIndex,
-        setSelectedIndex,
       }}
     >
       <Primitive.div ref={forwardedRef} className={className} {...props}>
@@ -107,9 +101,6 @@ export const TagsInputInput = React.forwardRef<
         setInputValue("");
       }
     }
-    if (event.key === "Backspace" && inputValue === "") {
-      context.setSelectedIndex(null);
-    }
   };
 
   const handleBlur = () => {
@@ -146,11 +137,13 @@ const useTagsInputContext = () => {
 interface TagsInputItemProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
   value: string;
+  disabled?: boolean;
 }
 
 interface TagsInputItemContextProps {
   value: string;
   index: number;
+  disabled: boolean;
 }
 
 const TagsInputItemContext = React.createContext<
@@ -161,40 +154,19 @@ export const TagsInputItem = React.forwardRef<
   HTMLDivElement,
   TagsInputItemProps
 >((props, forwardedRef) => {
-  const { value, children, className, ...itemProps } = props;
+  const { value, children, disabled = false, className, ...itemProps } = props;
   const context = useTagsInputContext();
   const index = context.value.indexOf(value);
-  const isSelected = context.selectedIndex === index;
-
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "Backspace" && isSelected) {
-      event.preventDefault();
-      context.onDeleteTag(value);
-      context.setSelectedIndex(index > 0 ? index - 1 : null);
-    } else if (event.key === "ArrowLeft") {
-      event.preventDefault();
-      context.setSelectedIndex(index > 0 ? index - 1 : null);
-    } else if (event.key === "ArrowRight") {
-      event.preventDefault();
-      context.setSelectedIndex(
-        index < context.value.length - 1 ? index + 1 : null,
-      );
-    }
-  };
-
-  const handleClick = () => {
-    context.setSelectedIndex(index);
-  };
+  const currentValue = context.value[index];
+  const isSelected = currentValue === value;
 
   return (
-    <TagsInputItemContext.Provider value={{ value, index }}>
+    <TagsInputItemContext.Provider value={{ value, index, disabled }}>
       <Primitive.div
         ref={forwardedRef}
         className={className}
         data-value={value}
         data-selected={isSelected ? "" : undefined}
-        onKeyDown={handleKeyDown}
-        onClick={handleClick}
         {...itemProps}
       >
         {children}

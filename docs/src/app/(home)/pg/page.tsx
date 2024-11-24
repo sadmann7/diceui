@@ -27,6 +27,7 @@ export default function PlaygroundPage() {
             key={item}
             value={item}
             className="flex h-7 items-center justify-center gap-1.5 rounded bg-accent px-2 py-1"
+            tabIndex={0}
           >
             <TagsInputItemText className="text-sm">{item}</TagsInputItemText>
             <TagsInputItemDelete>
