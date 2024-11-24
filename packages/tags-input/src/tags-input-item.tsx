@@ -5,7 +5,7 @@ import { type AcceptableInputValue, useTagsInput } from "./tags-input-root";
 
 interface TagsInputItemContextValue {
   value: AcceptableInputValue;
-  isSelected: boolean;
+  focused: boolean;
   disabled?: boolean;
   textId: string;
   displayValue: string;
@@ -34,14 +34,14 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
     const { value, disabled, ...tagsInputItemProps } = props;
 
     const context = useTagsInput();
-    const isSelected = value === context.selectedValue;
+    const focused = value === context.selectedValue;
     const itemDisabled = disabled || context.disabled;
     const textId = `tags-input-item-${value}`;
     const displayValue = context.displayValue(value);
 
     const itemContext: TagsInputItemContextValue = {
       value,
-      isSelected,
+      focused,
       disabled: itemDisabled,
       textId,
       displayValue,
@@ -52,9 +52,9 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
         <Primitive.div
           ref={ref}
           data-tag-item=""
-          aria-current={isSelected}
-          data-state={isSelected ? "active" : "inactive"}
-          data-selected={isSelected ? "" : undefined}
+          aria-current={focused ? "true" : "false"}
+          data-state={focused ? "active" : "inactive"}
+          data-focused={focused ? "" : undefined}
           data-disabled={itemDisabled ? "" : undefined}
           onClick={() => {
             context.inputRef.current?.focus();
