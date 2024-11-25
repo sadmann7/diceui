@@ -63,14 +63,14 @@ const TagsInputItem = React.forwardRef<
   <TagsInputPrimitive.Item
     ref={ref}
     className={cn(
-      "group inline-flex items-center gap-1 rounded border bg-transparent py-1 pr-0.5 pl-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[focused]:bg-accent data-[focused]:text-accent-foreground",
+      "group inline-flex items-center gap-1.5 rounded border bg-transparent py-1 pr-0.5 pl-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[focused]:bg-accent data-[focused]:text-accent-foreground",
       className,
     )}
     {...props}
   >
     <TagsInputPrimitive.Text />
     <TagsInputPrimitive.Delete className="h-4 w-4 rounded-sm opacity-50 ring-offset-background transition-opacity hover:opacity-100 group-focus:opacity-100">
-      <X className="h-3 w-3" />
+      <X className="size-3.5" />
     </TagsInputPrimitive.Delete>
   </TagsInputPrimitive.Item>
 ));
