@@ -5,7 +5,7 @@ import { type AcceptableInputValue, useTagsInput } from "./tags-input-root";
 
 interface TagsInputItemContextValue {
   value: AcceptableInputValue;
-  focused: boolean;
+  isFocused: boolean;
   disabled?: boolean;
   textId: string;
   displayValue: string;
@@ -33,7 +33,7 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
   (props, ref) => {
     const { value, disabled, ...tagsInputItemProps } = props;
     const context = useTagsInput();
-    const focused = value === context.selectedValue;
+    const isFocused = value === context.selectedValue;
     const isEditing = value === context.editingValue;
     const itemDisabled = disabled || context.disabled;
     const textId = `tags-input-item-${value}`;
@@ -46,7 +46,7 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
     }
 
     function onKeyDown(event: React.KeyboardEvent) {
-      if (event.key === "Enter" && focused && !isEditing) {
+      if (event.key === "Enter" && isFocused && !isEditing) {
         context.setEditingValue(value);
         event.preventDefault();
       }
@@ -54,7 +54,7 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
 
     const itemContext: TagsInputItemContextValue = {
       value,
-      focused,
+      isFocused,
       disabled: itemDisabled,
       textId,
       displayValue,
@@ -65,9 +65,9 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
         <Primitive.div
           ref={ref}
           data-tag-item={itemContext.value}
-          aria-current={focused}
-          data-state={focused ? "active" : "inactive"}
-          data-focused={focused ? "" : undefined}
+          aria-current={isFocused}
+          data-state={isFocused ? "active" : "inactive"}
+          data-focused={isFocused ? "" : undefined}
           data-disabled={itemDisabled ? "" : undefined}
           data-editing={isEditing ? "" : undefined}
           onDoubleClick={onDoubleClick}
