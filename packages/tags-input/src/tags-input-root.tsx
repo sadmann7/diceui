@@ -15,18 +15,18 @@ interface TagsInputRootContextValue {
   displayValue: (value: InputValue) => string;
   editingValue: InputValue | null;
   setEditingValue: (value: InputValue | null) => void;
-  dir: "ltr" | "rtl";
+  inputRef: React.RefObject<HTMLInputElement>;
+  id: string | undefined;
   delimiter: string | undefined;
+  dir: "ltr" | "rtl";
   focusedValue: InputValue | null;
+  max: number;
   isInvalidInput: boolean;
-  addOnPaste: boolean;
-  addOnTab: boolean;
-  addOnBlur: boolean;
+  createOnPaste: boolean;
+  createOnTab: boolean;
+  createOnBlur: boolean;
   editable: boolean;
   disabled: boolean;
-  max: number;
-  id?: string;
-  inputRef: React.RefObject<HTMLInputElement>;
 }
 
 const TagsInputContext = React.createContext<
@@ -58,12 +58,12 @@ interface TagsInputRootProps
   id?: string;
   delimiter?: string;
   dir?: "ltr" | "rtl";
-  addOnPaste?: boolean;
-  addOnTab?: boolean;
-  addOnBlur?: boolean;
+  loop?: boolean;
   duplicate?: boolean;
   editable?: boolean;
-  loop?: boolean;
+  createOnPaste?: boolean;
+  createOnTab?: boolean;
+  createOnBlur?: boolean;
   disabled?: boolean;
 }
 
@@ -74,9 +74,9 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
       defaultValue = [],
       onValueChange,
       onInvalid,
-      addOnPaste = false,
-      addOnTab = false,
-      addOnBlur = false,
+      createOnPaste = false,
+      createOnTab = false,
+      createOnBlur = false,
       duplicate = false,
       editable = false,
       disabled = false,
@@ -112,7 +112,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
 
     const onItemCreate = React.useCallback(
       (textValue: string) => {
-        if (addOnPaste) {
+        if (createOnPaste) {
           const splitValue = textValue
             .split(delimiter)
             .map((v) => v.trim())
@@ -181,7 +181,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
         setValue,
         onInvalid,
         defaultValue,
-        addOnPaste,
+        createOnPaste,
         delimiter,
       ],
     );
@@ -337,9 +337,9 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
       onInputKeydown,
       focusedValue,
       isInvalidInput,
-      addOnPaste,
-      addOnTab,
-      addOnBlur,
+      createOnPaste,
+      createOnTab,
+      createOnBlur,
       editable,
       disabled,
       delimiter,

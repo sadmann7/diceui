@@ -20,7 +20,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
     const context = useTagsInput();
 
     function onBlur(event: React.FocusEvent<HTMLInputElement>) {
-      if (!context.addOnBlur) return;
+      if (!context.createOnBlur) return;
 
       const value = event.target.value;
       if (!value) return;
@@ -30,7 +30,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
     }
 
     function onTab(event: React.KeyboardEvent<HTMLInputElement>) {
-      if (!context.addOnTab) return;
+      if (!context.createOnTab) return;
       onKeyDown(event);
     }
 
@@ -60,7 +60,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
     }
 
     function onPaste(event: React.ClipboardEvent<HTMLInputElement>) {
-      if (context.addOnPaste) {
+      if (context.createOnPaste) {
         event.preventDefault();
         const value = event.clipboardData.getData("text");
 
