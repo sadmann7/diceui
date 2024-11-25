@@ -5,9 +5,7 @@ import { composeRefs } from "./lib/compose-refs";
 import { useTagsInput } from "./tags-input-root";
 
 interface TagsInputInputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
-  autoFocus?: boolean;
-}
+  extends React.ComponentPropsWithoutRef<typeof Primitive.input> {}
 
 const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
   (props, ref) => {
@@ -27,7 +25,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
       const value = event.target.value;
       if (!value) return;
 
-      const isAdded = context.onAddValue(value);
+      const isAdded = context.onValueAdd(value);
       if (isAdded) event.target.value = "";
     }
 
@@ -42,7 +40,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
       const value = event.currentTarget.value;
       if (!value) return;
 
-      const isAdded = context.onAddValue(value);
+      const isAdded = context.onValueAdd(value);
       if (isAdded) event.currentTarget.value = "";
 
       event.preventDefault();
@@ -57,7 +55,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
       if (delimiter === target.value.slice(-1)) {
         const value = target.value.slice(0, -1);
         target.value = "";
-        context.onAddValue(value);
+        context.onValueAdd(value);
       }
     }
 
@@ -69,10 +67,10 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
         if (context.delimiter) {
           const splitValue = value.split(context.delimiter);
           for (const v of splitValue) {
-            context.onAddValue(v.trim());
+            context.onValueAdd(v.trim());
           }
         } else {
-          context.onAddValue(value);
+          context.onValueAdd(value);
         }
       }
     }

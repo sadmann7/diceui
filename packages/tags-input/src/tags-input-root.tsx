@@ -8,7 +8,7 @@ type AcceptableInputValue = string;
 interface TagsInputRootContextValue {
   value: AcceptableInputValue[];
   onValueChange: (value: AcceptableInputValue[]) => void;
-  onAddValue: (payload: string) => boolean;
+  onValueAdd: (payload: string) => boolean;
   onRemoveValue: (index: number) => void;
   onInputKeydown: (event: React.KeyboardEvent) => void;
   selectedValue: AcceptableInputValue | null;
@@ -110,7 +110,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
     const [editingValue, setEditingValue] =
       React.useState<AcceptableInputValue | null>(null);
 
-    const onAddValue = React.useCallback(
+    const onValueAdd = React.useCallback(
       (payload: string) => {
         const modelValueIsObject =
           value.length > 0 && typeof value[0] === "object";
@@ -296,7 +296,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
     const contextValue: TagsInputRootContextValue = {
       value,
       onValueChange: setValue,
-      onAddValue,
+      onValueAdd,
       onRemoveValue,
       onInputKeydown,
       selectedValue,

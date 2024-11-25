@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import * as TagsInputPrimitive from "@diceui/tags-input";
 import { X } from "lucide-react";
 import * as React from "react";
+import { Button } from "./button";
 
 const TagsInput = React.forwardRef<
   React.ElementRef<typeof TagsInputPrimitive.Root>,
@@ -11,14 +12,34 @@ const TagsInput = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <TagsInputPrimitive.Root
     ref={ref}
+    className={cn("flex max-w-[420px] flex-col gap-2", className)}
+    {...props}
+  />
+));
+TagsInput.displayName = TagsInputPrimitive.Root.displayName;
+
+const TagsInputLabel = React.forwardRef<
+  React.ElementRef<typeof TagsInputPrimitive.Label>,
+  React.ComponentPropsWithoutRef<typeof TagsInputPrimitive.Label>
+>(({ className, ...props }, ref) => (
+  <TagsInputPrimitive.Label ref={ref} className={cn(className)} {...props} />
+));
+TagsInputLabel.displayName = TagsInputPrimitive.Label.displayName;
+
+const TagsInputContent = React.forwardRef<
+  React.ElementRef<typeof TagsInputPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof TagsInputPrimitive.Content>
+>(({ className, ...props }, ref) => (
+  <TagsInputPrimitive.Content
+    ref={ref}
     className={cn(
-      "flex min-h-10 w-full max-w-[420px] flex-wrap items-center gap-1.5 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:ring-1 focus-within:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+      "flex min-h-10 w-full flex-wrap items-center gap-1.5 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:ring-1 focus-within:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
       className,
     )}
     {...props}
   />
 ));
-TagsInput.displayName = TagsInputPrimitive.Root.displayName;
+TagsInputContent.displayName = TagsInputPrimitive.Content.displayName;
 
 const TagsInputInput = React.forwardRef<
   React.ElementRef<typeof TagsInputPrimitive.Input>,
@@ -59,17 +80,27 @@ const TagsInputClear = React.forwardRef<
   React.ElementRef<typeof TagsInputPrimitive.Clear>,
   React.ComponentPropsWithoutRef<typeof TagsInputPrimitive.Clear>
 >(({ className, ...props }, ref) => (
-  <TagsInputPrimitive.Clear
-    ref={ref}
-    className={cn(
-      "rounded-sm opacity-50 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none",
-      className,
-    )}
-    {...props}
-  >
-    <X className="h-4 w-4" />
+  <TagsInputPrimitive.Clear ref={ref} asChild>
+    <Button
+      variant="outline"
+      className={cn(
+        "data-[state=visible]:fade-in-0 data-[state=visible]:slide-in-from-bottom-2 data-[state=hidden]:fade-out-0 data-[state=hidden]:slide-out-to-bottom-2 w-full data-[state=visible]:visible data-[state=hidden]:invisible data-[state=hidden]:animate-out data-[state=visible]:animate-in",
+        className,
+      )}
+      {...props}
+    >
+      <X className="h-4 w-4" />
+      Clear
+    </Button>
   </TagsInputPrimitive.Clear>
 ));
 TagsInputClear.displayName = TagsInputPrimitive.Clear.displayName;
 
-export { TagsInput, TagsInputInput, TagsInputItem, TagsInputClear };
+export {
+  TagsInput,
+  TagsInputClear,
+  TagsInputContent,
+  TagsInputInput,
+  TagsInputItem,
+  TagsInputLabel,
+};

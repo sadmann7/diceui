@@ -3,7 +3,7 @@ import * as React from "react";
 import { useTagsInput } from "./tags-input-root";
 
 interface TagsInputClearProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
+  extends React.ComponentPropsWithoutRef<typeof Primitive.button> {}
 
 const TagsInputClear = React.forwardRef<HTMLButtonElement, TagsInputClearProps>(
   (props, ref) => {
@@ -21,6 +21,7 @@ const TagsInputClear = React.forwardRef<HTMLButtonElement, TagsInputClearProps>(
       <Primitive.button
         ref={ref}
         type="button"
+        data-state={context.value.length > 0 ? "visible" : "hidden"}
         data-disabled={context.disabled ? "" : undefined}
         onClick={onClear}
         {...props}
@@ -33,6 +34,6 @@ TagsInputClear.displayName = "TagsInputClear";
 
 const Clear = TagsInputClear;
 
-export { TagsInputClear, Clear };
+export { Clear, TagsInputClear };
 
 export type { TagsInputClearProps };

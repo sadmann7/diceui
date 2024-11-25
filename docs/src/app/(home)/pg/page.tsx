@@ -5,25 +5,30 @@ import * as React from "react";
 import {
   TagsInput,
   TagsInputClear,
+  TagsInputContent,
   TagsInputInput,
   TagsInputItem,
+  TagsInputLabel,
 } from "@/components/ui/tags-input";
 
 import { Shell } from "@/components/shell";
 
 export default function PlaygroundPage() {
-  const [value, setValue] = React.useState<string[]>([]);
+  const [fruits, setFruits] = React.useState<string[]>([]);
 
   return (
     <Shell>
-      <TagsInput value={value} onValueChange={setValue} editable>
-        {value.map((item) => (
-          <TagsInputItem key={item} value={item}>
-            {item}
-          </TagsInputItem>
-        ))}
-        <TagsInputInput placeholder="Add item..." />
-        {value.length > 0 && <TagsInputClear />}
+      <TagsInput value={fruits} onValueChange={setFruits} addOnPaste editable>
+        <TagsInputLabel>Fruits</TagsInputLabel>
+        <TagsInputContent>
+          {fruits.map((fruit) => (
+            <TagsInputItem key={fruit} value={fruit}>
+              {fruit}
+            </TagsInputItem>
+          ))}
+          <TagsInputInput placeholder="Add fruit..." />
+        </TagsInputContent>
+        <TagsInputClear />
       </TagsInput>
     </Shell>
   );
