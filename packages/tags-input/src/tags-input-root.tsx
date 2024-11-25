@@ -8,13 +8,13 @@ type InputValue = string;
 interface TagsInputRootContextValue {
   value: InputValue[];
   onValueChange: (value: InputValue[]) => void;
-  onValueAdd: (textValue: string) => boolean;
-  onValueRemove: (index: number) => void;
+  onItemCreate: (textValue: string) => boolean;
+  onItemUpdate: (oldValue: InputValue, newValue: InputValue) => void;
+  onItemDelete: (index: number) => void;
   onInputKeydown: (event: React.KeyboardEvent) => void;
   displayValue: (value: InputValue) => string;
   editingValue: InputValue | null;
   setEditingValue: (value: InputValue | null) => void;
-  onValueEdit: (oldValue: InputValue, newValue: InputValue) => void;
   dir: "ltr" | "rtl";
   delimiter: string | undefined;
   focusedValue: InputValue | null;
@@ -110,7 +110,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
       null,
     );
 
-    const onValueAdd = React.useCallback(
+    const onItemCreate = React.useCallback(
       (textValue: string) => {
         if (addOnPaste) {
           const splitValue = textValue
@@ -186,7 +186,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
       ],
     );
 
-    const onValueRemove = React.useCallback(
+    const onItemDelete = React.useCallback(
       (index: number) => {
         if (index !== -1) {
           const newValues = [...value];
@@ -222,7 +222,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
                   ? value[currentIndex - 1]
                   : value[currentIndex + 1];
 
-              onValueRemove(currentIndex);
+              onItemDelete(currentIndex);
               setFocusedValue(newValue ?? null);
               event.preventDefault();
             } else if (event.key === "Backspace" && value.length > 0) {
@@ -292,7 +292,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
           }
         }
       },
-      [focusedValue, value, onValueRemove, dir, editable, loop],
+      [focusedValue, value, onItemDelete, dir, editable, loop],
     );
 
     // Handle clicks outside of tags to focus input
@@ -313,7 +313,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
       return () => document.removeEventListener("click", handleClick);
     }, []);
 
-    const onValueEdit = React.useCallback(
+    const onItemUpdate = React.useCallback(
       (oldValue: InputValue, newValue: InputValue) => {
         if (oldValue === newValue || !newValue.toString().trim()) return;
 
@@ -331,8 +331,9 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
     const contextValue: TagsInputRootContextValue = {
       value,
       onValueChange: setValue,
-      onValueAdd,
-      onValueRemove,
+      onItemCreate,
+      onItemDelete,
+      onItemUpdate,
       onInputKeydown,
       focusedValue,
       isInvalidInput,
@@ -353,7 +354,6 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
           setEditingValue(value);
         }
       },
-      onValueEdit,
     };
 
     return (

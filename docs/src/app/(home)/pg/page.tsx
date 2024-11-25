@@ -5,9 +5,9 @@ import * as React from "react";
 import {
   TagsInput,
   TagsInputClear,
+  TagsInputContent,
   TagsInputInput,
   TagsInputItem,
-  TagsInputItemList,
   TagsInputLabel,
 } from "@/components/ui/tags-input";
 
@@ -20,14 +20,14 @@ export default function PlaygroundPage() {
     <Shell>
       <TagsInput value={fruits} onValueChange={setFruits} addOnPaste>
         <TagsInputLabel>Fruits</TagsInputLabel>
-        <TagsInputItemList>
+        <TagsInputContent>
           {fruits.map((fruit, index) => (
             <TagsInputItem key={index.toString()} value={fruit}>
               {fruit}
             </TagsInputItem>
           ))}
           <TagsInputInput placeholder="Add fruit..." />
-        </TagsInputItemList>
+        </TagsInputContent>
         <TagsInputClear />
       </TagsInput>
     </Shell>

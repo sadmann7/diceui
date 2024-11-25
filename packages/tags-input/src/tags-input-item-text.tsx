@@ -27,7 +27,7 @@ const TagsInputItemText = React.forwardRef<
 
         if (event.key === "Enter") {
           event.preventDefault();
-          context.onValueEdit(
+          context.onItemUpdate(
             itemContext.value,
             event.currentTarget.textContent || "",
           );
@@ -38,7 +38,7 @@ const TagsInputItemText = React.forwardRef<
       }}
       onBlur={(event) => {
         if (context.editable) {
-          context.onValueEdit(
+          context.onItemUpdate(
             itemContext.value,
             event.currentTarget.textContent || "",
           );
