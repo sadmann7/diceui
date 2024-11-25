@@ -9,7 +9,7 @@ interface TagsInputRootContextValue {
   value: AcceptableInputValue[];
   onValueChange: (value: AcceptableInputValue[]) => void;
   onValueAdd: (payload: string) => boolean;
-  onRemoveValue: (index: number) => void;
+  onValueRemove: (index: number) => void;
   onInputKeydown: (event: React.KeyboardEvent) => void;
   selectedValue: AcceptableInputValue | null;
   isInvalidInput: boolean;
@@ -160,7 +160,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
       [value, max, duplicate, convertValue, setValue, onInvalid, defaultValue],
     );
 
-    const onRemoveValue = React.useCallback(
+    const onValueRemove = React.useCallback(
       (index: number) => {
         if (index !== -1) {
           const newValues = [...value];
@@ -194,7 +194,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
                   ? value[currentIndex - 1]
                   : value[currentIndex + 1];
 
-              onRemoveValue(currentIndex);
+              onValueRemove(currentIndex);
               setSelectedValue(newValue ?? null);
               event.preventDefault();
             } else if (event.key === "Backspace" && value.length > 0) {
@@ -257,7 +257,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
           }
         }
       },
-      [selectedValue, value, onRemoveValue, dir, editable],
+      [selectedValue, value, onValueRemove, dir, editable],
     );
 
     // Handle clicks outside of tags to focus input
@@ -297,7 +297,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
       value,
       onValueChange: setValue,
       onValueAdd,
-      onRemoveValue,
+      onValueRemove,
       onInputKeydown,
       selectedValue,
       isInvalidInput,
