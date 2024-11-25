@@ -26,11 +26,11 @@ const TagsInputLabel = React.forwardRef<
 ));
 TagsInputLabel.displayName = TagsInputPrimitive.Label.displayName;
 
-const TagsInputContent = React.forwardRef<
-  React.ElementRef<typeof TagsInputPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof TagsInputPrimitive.Content>
+const TagsInputItemList = React.forwardRef<
+  React.ElementRef<typeof TagsInputPrimitive.ItemList>,
+  React.ComponentPropsWithoutRef<typeof TagsInputPrimitive.ItemList>
 >(({ className, ...props }, ref) => (
-  <TagsInputPrimitive.Content
+  <TagsInputPrimitive.ItemList
     ref={ref}
     className={cn(
       "flex min-h-10 w-full flex-wrap items-center gap-1.5 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:ring-1 focus-within:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
@@ -39,7 +39,7 @@ const TagsInputContent = React.forwardRef<
     {...props}
   />
 ));
-TagsInputContent.displayName = TagsInputPrimitive.Content.displayName;
+TagsInputItemList.displayName = TagsInputPrimitive.ItemList.displayName;
 
 const TagsInputInput = React.forwardRef<
   React.ElementRef<typeof TagsInputPrimitive.Input>,
@@ -99,7 +99,7 @@ TagsInputClear.displayName = TagsInputPrimitive.Clear.displayName;
 export {
   TagsInput,
   TagsInputLabel,
-  TagsInputContent,
+  TagsInputItemList,
   TagsInputInput,
   TagsInputItem,
   TagsInputClear,

@@ -7,4 +7,4 @@ export * from "./tags-input-item-delete";
 export * from "./tags-input-item-text";
 export * from "./tags-input-clear";
 export * from "./tags-input-label";
-export * from "./tags-input-content";
+export * from "./tags-input-item-list";

@@ -61,12 +61,11 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
 
     function onPaste(event: React.ClipboardEvent<HTMLInputElement>) {
       if (context.addOnPaste) {
-        // event.preventDefault();
+        event.preventDefault();
         const value = event.clipboardData.getData("text");
 
         if (context.delimiter) {
           const splitValue = value.split(context.delimiter);
-          console.log({ splitValue });
           for (const v of splitValue) {
             context.onValueAdd(v.trim());
           }

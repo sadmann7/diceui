@@ -2,12 +2,12 @@ import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { useTagsInput } from "./tags-input-root";
 
-interface TagsInputContentProps
+interface TagsInputItemListProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {}
 
-const TagsInputContent = React.forwardRef<
+const TagsInputItemList = React.forwardRef<
   HTMLDivElement,
-  TagsInputContentProps
+  TagsInputItemListProps
 >((props, ref) => {
   const context = useTagsInput();
 
@@ -20,10 +20,10 @@ const TagsInputContent = React.forwardRef<
   );
 });
 
-TagsInputContent.displayName = "TagsInputContent";
+TagsInputItemList.displayName = "TagsInputItemList";
 
-const Content = TagsInputContent;
+const ItemList = TagsInputItemList;
 
-export { Content, TagsInputContent };
+export { ItemList, TagsInputItemList };
 
-export type { TagsInputContentProps };
+export type { TagsInputItemListProps };
