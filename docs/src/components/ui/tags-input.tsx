@@ -1,10 +1,10 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import * as TagsInputPrimitive from "@diceui/tags-input";
 import { X } from "lucide-react";
 import * as React from "react";
-import { Button } from "./button";
 
 const TagsInput = React.forwardRef<
   React.ElementRef<typeof TagsInputPrimitive.Root>,
@@ -63,7 +63,7 @@ const TagsInputItem = React.forwardRef<
   <TagsInputPrimitive.Item
     ref={ref}
     className={cn(
-      "group inline-flex h-7 items-center gap-1 rounded border bg-transparent pr-0.5 pl-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[focused]:bg-accent data-[focused]:text-accent-foreground",
+      "group inline-flex items-center gap-1 rounded border bg-transparent py-1 pr-0.5 pl-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[focused]:bg-accent data-[focused]:text-accent-foreground",
       className,
     )}
     {...props}
@@ -98,9 +98,9 @@ TagsInputClear.displayName = TagsInputPrimitive.Clear.displayName;
 
 export {
   TagsInput,
-  TagsInputClear,
+  TagsInputLabel,
   TagsInputContent,
   TagsInputInput,
   TagsInputItem,
-  TagsInputLabel,
+  TagsInputClear,
 };
