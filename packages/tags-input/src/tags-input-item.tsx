@@ -33,7 +33,7 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
   (props, ref) => {
     const { value, disabled, ...tagsInputItemProps } = props;
     const context = useTagsInput();
-    const isFocused = value === context.selectedValue;
+    const isFocused = value === context.focusedValue;
     const isEditing = value === context.editingValue;
     const itemDisabled = disabled || context.disabled;
     const textId = `tags-input-item-${value}`;

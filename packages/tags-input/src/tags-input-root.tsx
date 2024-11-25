@@ -11,7 +11,7 @@ interface TagsInputRootContextValue {
   onValueAdd: (payload: string) => boolean;
   onValueRemove: (index: number) => void;
   onInputKeydown: (event: React.KeyboardEvent) => void;
-  selectedValue: AcceptableInputValue | null;
+  focusedValue: AcceptableInputValue | null;
   isInvalidInput: boolean;
   addOnPaste: boolean;
   addOnTab: boolean;
@@ -103,7 +103,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
       onChange: onValueChange,
     });
 
-    const [selectedValue, setSelectedValue] =
+    const [focusedValue, setFocusedValue] =
       React.useState<AcceptableInputValue | null>(null);
     const [isInvalidInput, setIsInvalidInput] = React.useState(false);
     const containerRef = React.useRef<HTMLDivElement>(null);
@@ -167,7 +167,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
           const newValues = [...value];
           newValues.splice(index, 1);
           setValue(newValues);
-          setSelectedValue(null);
+          setFocusedValue(null);
         }
       },
       [value, setValue],
@@ -190,18 +190,18 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
           case "Backspace": {
             if (target.selectionStart !== 0 || target.selectionEnd !== 0) break;
 
-            if (selectedValue !== null) {
-              const currentIndex = value.indexOf(selectedValue);
+            if (focusedValue !== null) {
+              const currentIndex = value.indexOf(focusedValue);
               const newValue =
                 currentIndex === value.length - 1
                   ? value[currentIndex - 1]
                   : value[currentIndex + 1];
 
               onValueRemove(currentIndex);
-              setSelectedValue(newValue ?? null);
+              setFocusedValue(newValue ?? null);
               event.preventDefault();
             } else if (event.key === "Backspace" && value.length > 0) {
-              setSelectedValue(value[value.length - 1] ?? null);
+              setFocusedValue(value[value.length - 1] ?? null);
               event.preventDefault();
             }
             break;
@@ -211,27 +211,27 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
             if (
               target.selectionStart === 0 &&
               isArrowLeft &&
-              selectedValue === null &&
+              focusedValue === null &&
               value.length > 0
             ) {
-              setSelectedValue(value[value.length - 1] ?? null);
+              setFocusedValue(value[value.length - 1] ?? null);
               event.preventDefault();
-            } else if (selectedValue !== null) {
-              const currentIndex = value.indexOf(selectedValue);
+            } else if (focusedValue !== null) {
+              const currentIndex = value.indexOf(focusedValue);
               if (isArrowLeft) {
                 if (currentIndex > 0) {
-                  setSelectedValue(value[currentIndex - 1] ?? null);
+                  setFocusedValue(value[currentIndex - 1] ?? null);
                 } else if (loop) {
-                  setSelectedValue(value[value.length - 1] ?? null);
+                  setFocusedValue(value[value.length - 1] ?? null);
                 }
                 event.preventDefault();
               } else if (isArrowRight) {
                 if (currentIndex < value.length - 1) {
-                  setSelectedValue(value[currentIndex + 1] ?? null);
+                  setFocusedValue(value[currentIndex + 1] ?? null);
                 } else if (loop && currentIndex === value.length - 1) {
-                  setSelectedValue(value[0] ?? null);
+                  setFocusedValue(value[0] ?? null);
                 } else if (!loop && currentIndex === value.length - 1) {
-                  setSelectedValue(null);
+                  setFocusedValue(null);
                   target.setSelectionRange(0, 0);
                 }
                 event.preventDefault();
@@ -240,34 +240,34 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
             break;
           }
           case "Home": {
-            if (selectedValue !== null && value.length > 0) {
-              setSelectedValue(value[0] ?? null);
+            if (focusedValue !== null && value.length > 0) {
+              setFocusedValue(value[0] ?? null);
               event.preventDefault();
             }
             break;
           }
           case "End": {
-            if (selectedValue !== null && value.length > 0) {
-              setSelectedValue(value[value.length - 1] ?? null);
+            if (focusedValue !== null && value.length > 0) {
+              setFocusedValue(value[value.length - 1] ?? null);
               event.preventDefault();
             }
             break;
           }
           case "Escape": {
-            setSelectedValue(null);
+            setFocusedValue(null);
             target.setSelectionRange(0, 0);
             break;
           }
           case "Enter": {
-            if (selectedValue !== null && editable) {
-              setEditingValue(selectedValue);
+            if (focusedValue !== null && editable) {
+              setEditingValue(focusedValue);
               event.preventDefault();
             }
             break;
           }
         }
       },
-      [selectedValue, value, onValueRemove, dir, editable, loop],
+      [focusedValue, value, onValueRemove, dir, editable, loop],
     );
 
     // Handle clicks outside of tags to focus input
@@ -280,7 +280,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
           target.tagName !== "INPUT"
         ) {
           inputRef.current?.focus();
-          setSelectedValue(null);
+          setFocusedValue(null);
         }
       };
 
@@ -309,7 +309,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
       onValueAdd,
       onValueRemove,
       onInputKeydown,
-      selectedValue,
+      focusedValue,
       isInvalidInput,
       addOnPaste,
       addOnTab,
@@ -342,7 +342,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
           onClick={(e) => {
             if (e.target === containerRef.current) {
               inputRef.current?.focus();
-              setSelectedValue(null);
+              setFocusedValue(null);
             }
           }}
           {...tagsInputProps}
