@@ -64,13 +64,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
         event.preventDefault();
         const value = event.clipboardData.getData("text");
 
-        if (context.delimiter) {
-          const splitValue = value.split(context.delimiter);
-          const values = splitValue.map((v) => v.trim());
-          context.onValueChange([...context.value, ...values]);
-        } else {
-          context.onValueAdd(value);
-        }
+        context.onValueAdd(value);
       }
     }
 

@@ -21,8 +21,8 @@ export default function PlaygroundPage() {
       <TagsInput value={fruits} onValueChange={setFruits} addOnPaste>
         <TagsInputLabel>Fruits</TagsInputLabel>
         <TagsInputItemList>
-          {fruits.map((fruit) => (
-            <TagsInputItem key={fruit} value={fruit}>
+          {fruits.map((fruit, index) => (
+            <TagsInputItem key={index.toString()} value={fruit}>
               {fruit}
             </TagsInputItem>
           ))}

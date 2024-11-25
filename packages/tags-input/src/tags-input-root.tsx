@@ -8,9 +8,15 @@ type InputValue = string;
 interface TagsInputRootContextValue {
   value: InputValue[];
   onValueChange: (value: InputValue[]) => void;
-  onValueAdd: (payload: string) => boolean;
+  onValueAdd: (textValue: string) => boolean;
   onValueRemove: (index: number) => void;
   onInputKeydown: (event: React.KeyboardEvent) => void;
+  displayValue: (value: InputValue) => string;
+  editingValue: InputValue | null;
+  setEditingValue: (value: InputValue | null) => void;
+  onValueEdit: (oldValue: InputValue, newValue: InputValue) => void;
+  dir: "ltr" | "rtl";
+  delimiter: string | undefined;
   focusedValue: InputValue | null;
   isInvalidInput: boolean;
   addOnPaste: boolean;
@@ -18,15 +24,9 @@ interface TagsInputRootContextValue {
   addOnBlur: boolean;
   editable: boolean;
   disabled: boolean;
-  delimiter: string;
-  dir: "ltr" | "rtl";
   max: number;
   id?: string;
-  displayValue: (value: InputValue) => string;
   inputRef: React.RefObject<HTMLInputElement>;
-  editingValue: InputValue | null;
-  setEditingValue: (value: InputValue | null) => void;
-  onValueEdit: (oldValue: InputValue, newValue: InputValue) => void;
 }
 
 const TagsInputContext = React.createContext<
@@ -50,21 +50,21 @@ interface TagsInputRootProps
   defaultValue?: InputValue[];
   onValueChange?: (value: InputValue[]) => void;
   onInvalid?: (value: InputValue) => void;
+  convertValue?: (value: string) => InputValue;
+  displayValue?: (value: InputValue) => string;
+  max?: number;
+  required?: boolean;
+  name?: string;
+  id?: string;
+  delimiter?: string;
+  dir?: "ltr" | "rtl";
   addOnPaste?: boolean;
   addOnTab?: boolean;
   addOnBlur?: boolean;
   duplicate?: boolean;
   editable?: boolean;
-  disabled?: boolean;
-  delimiter?: string;
-  dir?: "ltr" | "rtl";
-  max?: number;
-  required?: boolean;
-  name?: string;
-  id?: string;
-  convertValue?: (value: string) => InputValue;
-  displayValue?: (value: InputValue) => string;
   loop?: boolean;
+  disabled?: boolean;
 }
 
 const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
@@ -90,7 +90,6 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
       displayValue = (value: InputValue) => value.toString(),
       loop = false,
       children,
-      className,
       ...tagsInputProps
     } = props;
 
@@ -112,7 +111,25 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
     );
 
     const onValueAdd = React.useCallback(
-      (payload: string) => {
+      (textValue: string) => {
+        if (addOnPaste) {
+          const splitValue = textValue
+            .split(delimiter)
+            .map((v) => v.trim())
+            .filter(Boolean);
+
+          if (value.length + splitValue.length > max && max > 0) {
+            onInvalid?.(textValue);
+            return false;
+          }
+
+          const newValue = duplicate ? splitValue : [...new Set(splitValue)];
+
+          setValue([...value, ...newValue]);
+
+          return true;
+        }
+
         const valueIsObject = value.length > 0 && typeof value[0] === "object";
         const defaultValueIsObject =
           defaultValue.length > 0 && typeof defaultValue[0] === "object";
@@ -126,7 +143,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
           );
         }
 
-        const newValue = convertValue ? convertValue(payload) : payload;
+        const newValue = convertValue ? convertValue(textValue) : textValue;
 
         if (value.length >= max && max > 0) {
           onInvalid?.(newValue);
@@ -156,7 +173,17 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
 
         return false;
       },
-      [value, max, duplicate, convertValue, setValue, onInvalid, defaultValue],
+      [
+        value,
+        max,
+        duplicate,
+        convertValue,
+        setValue,
+        onInvalid,
+        defaultValue,
+        addOnPaste,
+        delimiter,
+      ],
     );
 
     const onValueRemove = React.useCallback(
@@ -333,7 +360,6 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
       <TagsInputContext.Provider value={contextValue}>
         <Primitive.div
           ref={ref}
-          className={className}
           dir={dir}
           data-invalid={isInvalidInput ? "" : undefined}
           data-disabled={disabled ? "" : undefined}

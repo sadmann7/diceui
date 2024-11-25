@@ -1,6 +1,5 @@
 import { composeEventHandlers } from "@radix-ui/primitive";
-import { createCollection } from "@radix-ui/react-collection";
-import { composeRefs, useComposedRefs } from "@radix-ui/react-compose-refs";
+import { composeRefs } from "@radix-ui/react-compose-refs";
 import { createContextScope } from "@radix-ui/react-context";
 import { Primitive } from "@radix-ui/react-primitive";
 import { useCallbackRef } from "@radix-ui/react-use-callback-ref";
@@ -62,7 +61,6 @@ interface TagsInputProps
   children?: React.ReactNode;
 }
 
-// Add utility function for array navigation
 function getNextIndex(current: number, total: number, delta: number) {
   const next = current + delta;
   if (next < 0) return total - 1;
@@ -463,19 +461,19 @@ TagsInputClear.displayName = CLEAR_NAME;
  * -----------------------------------------------------------------------------------------------*/
 
 export {
-  TagsInputRoot,
+  createTagsInputScope,
+  TagsInputClear,
   TagsInputInput,
   TagsInputItem,
-  TagsInputItemText,
   TagsInputItemDelete,
-  TagsInputClear,
-  createTagsInputScope,
+  TagsInputItemText,
+  TagsInputRoot,
 };
 export type {
-  TagsInputProps,
+  TagInputItemDeleteProps,
+  TagsInputClearProps,
   TagsInputControlProps,
   TagsInputItemProps,
   TagsInputItemTextProps,
-  TagInputItemDeleteProps,
-  TagsInputClearProps,
+  TagsInputProps,
 };
