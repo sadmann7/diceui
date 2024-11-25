@@ -4,6 +4,7 @@ import * as React from "react";
 
 import {
   TagsInput,
+  TagsInputClear,
   TagsInputInput,
   TagsInputItem,
 } from "@/components/ui/tags-input";
@@ -22,6 +23,7 @@ export default function PlaygroundPage() {
           </TagsInputItem>
         ))}
         <TagsInputInput placeholder="Add item..." />
+        {value.length > 0 && <TagsInputClear />}
       </TagsInput>
     </Shell>
   );

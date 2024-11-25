@@ -18,6 +18,9 @@ const TagsInputItemDelete = React.forwardRef<
     if (disabled) return;
     const index = context.value.findIndex((i) => i === itemContext.value);
     context.onRemoveValue(index);
+    requestAnimationFrame(() => {
+      context.inputRef.current?.focus();
+    });
   }
 
   return (
