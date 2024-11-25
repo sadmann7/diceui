@@ -1,10 +1,10 @@
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { createContext, useContext } from "react";
-import { type AcceptableInputValue, useTagsInput } from "./tags-input-root";
+import { type InputValue, useTagsInput } from "./tags-input-root";
 
 interface TagsInputItemContextValue {
-  value: AcceptableInputValue;
+  value: InputValue;
   isFocused: boolean;
   disabled?: boolean;
   textId: string;
@@ -25,7 +25,7 @@ export function useTagsInputItem() {
 
 interface TagsInputItemProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
-  value: AcceptableInputValue;
+  value: InputValue;
   disabled?: boolean;
 }
 

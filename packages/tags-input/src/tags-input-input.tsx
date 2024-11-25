@@ -66,9 +66,8 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
 
         if (context.delimiter) {
           const splitValue = value.split(context.delimiter);
-          for (const v of splitValue) {
-            context.onValueAdd(v.trim());
-          }
+          const values = splitValue.map((v) => v.trim());
+          context.onValueChange([...context.value, ...values]);
         } else {
           context.onValueAdd(value);
         }

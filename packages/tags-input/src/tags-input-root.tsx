@@ -3,15 +3,15 @@ import * as React from "react";
 import { useControllableState } from "./hooks/use-controllable-state";
 import { useDirection } from "./hooks/use-direction";
 
-type AcceptableInputValue = string;
+type InputValue = string;
 
 interface TagsInputRootContextValue {
-  value: AcceptableInputValue[];
-  onValueChange: (value: AcceptableInputValue[]) => void;
+  value: InputValue[];
+  onValueChange: (value: InputValue[]) => void;
   onValueAdd: (payload: string) => boolean;
   onValueRemove: (index: number) => void;
   onInputKeydown: (event: React.KeyboardEvent) => void;
-  focusedValue: AcceptableInputValue | null;
+  focusedValue: InputValue | null;
   isInvalidInput: boolean;
   addOnPaste: boolean;
   addOnTab: boolean;
@@ -22,14 +22,11 @@ interface TagsInputRootContextValue {
   dir: "ltr" | "rtl";
   max: number;
   id?: string;
-  displayValue: (value: AcceptableInputValue) => string;
+  displayValue: (value: InputValue) => string;
   inputRef: React.RefObject<HTMLInputElement>;
-  editingValue: AcceptableInputValue | null;
-  setEditingValue: (value: AcceptableInputValue | null) => void;
-  onValueEdit: (
-    oldValue: AcceptableInputValue,
-    newValue: AcceptableInputValue,
-  ) => void;
+  editingValue: InputValue | null;
+  setEditingValue: (value: InputValue | null) => void;
+  onValueEdit: (oldValue: InputValue, newValue: InputValue) => void;
 }
 
 const TagsInputContext = React.createContext<
@@ -49,10 +46,10 @@ interface TagsInputRootProps
     React.ComponentPropsWithoutRef<typeof Primitive.div>,
     "value" | "defaultValue" | "onValueChange" | "onInvalid"
   > {
-  value?: AcceptableInputValue[];
-  defaultValue?: AcceptableInputValue[];
-  onValueChange?: (value: AcceptableInputValue[]) => void;
-  onInvalid?: (value: AcceptableInputValue) => void;
+  value?: InputValue[];
+  defaultValue?: InputValue[];
+  onValueChange?: (value: InputValue[]) => void;
+  onInvalid?: (value: InputValue) => void;
   addOnPaste?: boolean;
   addOnTab?: boolean;
   addOnBlur?: boolean;
@@ -65,8 +62,8 @@ interface TagsInputRootProps
   required?: boolean;
   name?: string;
   id?: string;
-  convertValue?: (value: string) => AcceptableInputValue;
-  displayValue?: (value: AcceptableInputValue) => string;
+  convertValue?: (value: string) => InputValue;
+  displayValue?: (value: InputValue) => string;
   loop?: boolean;
 }
 
@@ -90,7 +87,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
       name,
       id,
       convertValue,
-      displayValue = (value: AcceptableInputValue) => value.toString(),
+      displayValue = (value: InputValue) => value.toString(),
       loop = false,
       children,
       className,
@@ -103,24 +100,25 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
       onChange: onValueChange,
     });
 
-    const [focusedValue, setFocusedValue] =
-      React.useState<AcceptableInputValue | null>(null);
+    const [focusedValue, setFocusedValue] = React.useState<InputValue | null>(
+      null,
+    );
     const [isInvalidInput, setIsInvalidInput] = React.useState(false);
     const containerRef = React.useRef<HTMLDivElement>(null);
     const inputRef = React.useRef<HTMLInputElement>(null);
     const dir = useDirection(dirProp);
-    const [editingValue, setEditingValue] =
-      React.useState<AcceptableInputValue | null>(null);
+    const [editingValue, setEditingValue] = React.useState<InputValue | null>(
+      null,
+    );
 
     const onValueAdd = React.useCallback(
       (payload: string) => {
-        const modelValueIsObject =
-          value.length > 0 && typeof value[0] === "object";
+        const valueIsObject = value.length > 0 && typeof value[0] === "object";
         const defaultValueIsObject =
           defaultValue.length > 0 && typeof defaultValue[0] === "object";
 
         if (
-          (modelValueIsObject || defaultValueIsObject) &&
+          (valueIsObject || defaultValueIsObject) &&
           typeof convertValue !== "function"
         ) {
           throw new Error(
@@ -289,8 +287,8 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
     }, []);
 
     const onValueEdit = React.useCallback(
-      (oldValue: AcceptableInputValue, newValue: AcceptableInputValue) => {
-        if (oldValue === newValue || !newValue.trim()) return;
+      (oldValue: InputValue, newValue: InputValue) => {
+        if (oldValue === newValue || !newValue.toString().trim()) return;
 
         const index = value.indexOf(oldValue);
         if (index === -1) return;
@@ -367,6 +365,6 @@ TagsInputRoot.displayName = "TagsInputRoot";
 
 const Root = TagsInputRoot;
 
-export { TagsInputRoot, Root };
+export { Root, TagsInputRoot };
 
-export type { TagsInputRootProps, AcceptableInputValue };
+export type { InputValue, TagsInputRootProps };

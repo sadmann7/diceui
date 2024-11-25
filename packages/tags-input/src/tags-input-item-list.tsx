@@ -1,13 +1,13 @@
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
-import { useTagsInput } from "./tags-input-root";
+import { type InputValue, useTagsInput } from "./tags-input-root";
 
 interface TagsInputItemListProps
   extends Omit<
     React.ComponentPropsWithoutRef<typeof Primitive.div>,
     "children"
   > {
-  children?: ((value: string[]) => React.ReactNode) | React.ReactNode;
+  children?: ((value: InputValue[]) => React.ReactNode) | React.ReactNode;
 }
 
 const TagsInputItemList = React.forwardRef<
