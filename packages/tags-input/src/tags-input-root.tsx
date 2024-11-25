@@ -67,6 +67,7 @@ interface TagsInputRootProps
   id?: string;
   convertValue?: (value: string) => AcceptableInputValue;
   displayValue?: (value: AcceptableInputValue) => string;
+  loop?: boolean;
 }
 
 const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
@@ -90,6 +91,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
       id,
       convertValue,
       displayValue = (value: AcceptableInputValue) => value.toString(),
+      loop = false,
       children,
       className,
       ...tagsInputProps
@@ -148,7 +150,6 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
 
         setIsInvalidInput(true);
 
-        // rest input if it's invalid
         if (inputRef.current) {
           inputRef.current.value = "";
         }
@@ -174,7 +175,9 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
 
     const onInputKeydown = React.useCallback(
       (event: React.KeyboardEvent) => {
-        const target = event.target as HTMLInputElement;
+        const target = event.target;
+        if (!(target instanceof HTMLInputElement)) return;
+
         const isArrowLeft =
           (event.key === "ArrowLeft" && dir === "ltr") ||
           (event.key === "ArrowRight" && dir === "rtl");
@@ -215,15 +218,22 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
               event.preventDefault();
             } else if (selectedValue !== null) {
               const currentIndex = value.indexOf(selectedValue);
-              if (isArrowLeft && currentIndex > 0) {
-                setSelectedValue(value[currentIndex - 1] ?? null);
+              if (isArrowLeft) {
+                if (currentIndex > 0) {
+                  setSelectedValue(value[currentIndex - 1] ?? null);
+                } else if (loop) {
+                  setSelectedValue(value[value.length - 1] ?? null);
+                }
                 event.preventDefault();
-              } else if (isArrowRight && currentIndex < value.length - 1) {
-                setSelectedValue(value[currentIndex + 1] ?? null);
-                event.preventDefault();
-              } else if (isArrowRight && currentIndex === value.length - 1) {
-                setSelectedValue(null);
-                target.setSelectionRange(0, 0);
+              } else if (isArrowRight) {
+                if (currentIndex < value.length - 1) {
+                  setSelectedValue(value[currentIndex + 1] ?? null);
+                } else if (loop && currentIndex === value.length - 1) {
+                  setSelectedValue(value[0] ?? null);
+                } else if (!loop && currentIndex === value.length - 1) {
+                  setSelectedValue(null);
+                  target.setSelectionRange(0, 0);
+                }
                 event.preventDefault();
               }
             }
@@ -257,7 +267,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
           }
         }
       },
-      [selectedValue, value, onValueRemove, dir, editable],
+      [selectedValue, value, onValueRemove, dir, editable, loop],
     );
 
     // Handle clicks outside of tags to focus input
