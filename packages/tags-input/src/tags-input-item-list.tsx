@@ -3,20 +3,32 @@ import * as React from "react";
 import { useTagsInput } from "./tags-input-root";
 
 interface TagsInputItemListProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {}
+  extends Omit<
+    React.ComponentPropsWithoutRef<typeof Primitive.div>,
+    "children"
+  > {
+  children?: ((value: string[]) => React.ReactNode) | React.ReactNode;
+}
 
 const TagsInputItemList = React.forwardRef<
   HTMLDivElement,
   TagsInputItemListProps
 >((props, ref) => {
+  const { children, ...tagsInputItemListProps } = props;
   const context = useTagsInput();
 
   return (
     <Primitive.div
       ref={ref}
       data-disabled={context.disabled ? "" : undefined}
-      {...props}
-    />
+      {...tagsInputItemListProps}
+    >
+      {typeof children === "function" ? (
+        <>{children(context.value)}</>
+      ) : (
+        children
+      )}
+    </Primitive.div>
   );
 });
 
