@@ -14,11 +14,10 @@ const TagsInputItemText = React.forwardRef<
   const { children, ...tagsInputTextProps } = props;
   const context = useTagsInput();
   const itemContext = useTagsInputItem();
-  const isEditing = itemContext.value === context.editingValue;
 
   return (
     <Primitive.span ref={ref} id={itemContext.textId} {...tagsInputTextProps}>
-      {isEditing && context.editable ? (
+      {context.editable && itemContext.isEditing ? (
         <Primitive.input
           defaultValue={itemContext.displayValue}
           onKeyDown={(event) => {
@@ -28,9 +27,9 @@ const TagsInputItemText = React.forwardRef<
               context.onItemUpdate(itemContext.value, newValue);
               context.setEditingValue(null);
               context.inputRef.current?.focus();
-              // if (isEditing) {
-              //   context.setFocusedValue(newValue);
-              // }
+              if (itemContext.isEditing) {
+                context.setFocusedValue(newValue);
+              }
             } else if (event.key === "Escape") {
               context.setEditingValue(null);
               event.currentTarget.focus();
@@ -43,13 +42,11 @@ const TagsInputItemText = React.forwardRef<
           }}
           autoComplete="off"
           autoCorrect="off"
+          autoCapitalize="off"
           autoFocus
           style={{
             outline: "none",
             background: "inherit",
-            border: "none",
-            padding: 0,
-            margin: 0,
           }}
         />
       ) : (

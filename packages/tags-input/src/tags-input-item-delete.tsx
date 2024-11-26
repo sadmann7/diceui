@@ -12,7 +12,6 @@ const TagsInputItemDelete = React.forwardRef<
 >((props, ref) => {
   const context = useTagsInput();
   const itemContext = useTagsInputItem();
-  const isEditing = itemContext.value === context.editingValue;
   const disabled = itemContext.disabled || context.disabled;
 
   function onItemDelete() {
@@ -24,7 +23,7 @@ const TagsInputItemDelete = React.forwardRef<
     });
   }
 
-  if (isEditing && context.editable) return null;
+  if (context.editable && itemContext.isEditing) return null;
 
   return (
     <Primitive.button

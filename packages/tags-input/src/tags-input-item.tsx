@@ -6,6 +6,7 @@ import { type InputValue, useTagsInput } from "./tags-input-root";
 interface TagsInputItemContextValue {
   value: InputValue;
   isFocused: boolean;
+  isEditing: boolean;
   disabled?: boolean;
   textId: string;
   displayValue: string;
@@ -55,6 +56,7 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
     const itemContext: TagsInputItemContextValue = {
       value,
       isFocused,
+      isEditing,
       disabled: itemDisabled,
       textId,
       displayValue,
