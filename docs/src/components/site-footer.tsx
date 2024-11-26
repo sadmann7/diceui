@@ -7,7 +7,7 @@ export function SiteFooter() {
         <p className="text-muted-foreground text-sm">
           Built by{" "}
           <a
-            href={siteConfig.links.github}
+            href={siteConfig.links.x}
             rel="noreferrer noopener"
             target="_blank"
             className="font-medium underline underline-offset-4 transition-colors hover:text-foreground/80"

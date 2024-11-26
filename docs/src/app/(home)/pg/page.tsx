@@ -18,7 +18,7 @@ export default function PlaygroundPage() {
 
   return (
     <Shell>
-      <TagsInput value={fruits} onValueChange={setFruits}>
+      <TagsInput value={fruits} onValueChange={setFruits} editable>
         <TagsInputLabel>Fruits</TagsInputLabel>
         <TagsInputContent>
           {fruits.map((fruit, index) => (

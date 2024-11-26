@@ -15,11 +15,12 @@ interface TagsInputRootContextValue {
   displayValue: (value: InputValue) => string;
   editingValue: InputValue | null;
   setEditingValue: (value: InputValue | null) => void;
+  focusedValue: InputValue | null;
+  setFocusedValue: (value: InputValue | null) => void;
   inputRef: React.RefObject<HTMLInputElement>;
   id: string | undefined;
   delimiter: string | undefined;
   dir: "ltr" | "rtl";
-  focusedValue: InputValue | null;
   max: number;
   isInvalidInput: boolean;
   disabled: boolean;
@@ -123,11 +124,13 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
             return false;
           }
 
-          let newValues;
+          let newValues: InputValue[] = [];
           if (duplicate) {
-            newValues = splitValue; 
+            newValues = splitValue;
           } else {
-            newValues = [...new Set(splitValue.filter(v => !value.includes(v)))];
+            newValues = [
+              ...new Set(splitValue.filter((v) => !value.includes(v))),
+            ];
           }
 
           setValue([...value, ...newValues]);
@@ -341,6 +344,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
       onItemUpdate,
       onInputKeydown,
       focusedValue,
+      setFocusedValue,
       isInvalidInput,
       createOnPaste,
       createOnTab,
