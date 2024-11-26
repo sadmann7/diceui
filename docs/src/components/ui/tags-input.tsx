@@ -33,7 +33,7 @@ const TagsInputContent = React.forwardRef<
   <TagsInputPrimitive.Content
     ref={ref}
     className={cn(
-      "flex min-h-10 w-full flex-wrap items-center gap-1.5 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:ring-1 focus-within:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+      "flex min-h-10 w-full flex-wrap items-center gap-1.5 rounded-md border border-input bg-background px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50",
       className,
     )}
     {...props}
@@ -63,7 +63,7 @@ const TagsInputItem = React.forwardRef<
   <TagsInputPrimitive.Item
     ref={ref}
     className={cn(
-      "group inline-flex max-w-[calc(100%-8px)] items-center gap-1.5 rounded border bg-transparent py-1 pr-0.5 pl-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[focused]:bg-accent data-[focused]:text-accent-foreground",
+      "group inline-flex max-w-[calc(100%-8px)] items-center gap-1.5 rounded border bg-transparent py-1 pr-0.5 pl-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 data-[disabled]:cursor-not-allowed data-[focused]:bg-accent data-[focused]:text-accent-foreground data-[disabled]:opacity-50",
       className,
     )}
     {...props}

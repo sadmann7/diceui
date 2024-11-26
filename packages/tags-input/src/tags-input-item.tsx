@@ -77,7 +77,10 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
           data-focused={isFocused ? "" : undefined}
           data-disabled={itemDisabled ? "" : undefined}
           data-editing={isEditing ? "" : undefined}
-          onClick={() => context.setFocusedValue(value)}
+          onClick={() => {
+            context.inputRef.current?.focus();
+            context.setFocusedValue(value);
+          }}
           onDoubleClick={onDoubleClick}
           onKeyDown={onKeyDown}
           {...tagsInputItemProps}

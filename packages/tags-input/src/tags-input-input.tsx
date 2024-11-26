@@ -105,6 +105,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
         onPaste={composeEventHandlers(tagsInputInputProps.onPaste, onPaste, {
           checkForDefaultPrevented: false,
         })}
+        autoFocus
         {...tagsInputInputProps}
       />
     );
