@@ -2,6 +2,7 @@ import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { createContext, useContext } from "react";
 import { type InputValue, useTagsInput } from "./tags-input-root";
+import { VisuallyHidden } from "./visually-hidden";
 
 interface TagsInputItemContextValue {
   value: InputValue;
@@ -40,10 +41,12 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
     const textId = `tags-input-item-${value}`;
     const displayValue = context.displayValue(value);
 
-    function onDoubleClick() {
-      if (!itemDisabled) {
-        context.setEditingValue(value);
+    function onDoubleClick(event: React.MouseEvent) {
+      if (event.target === event.currentTarget || itemDisabled) {
+        return;
       }
+
+      context.setEditingValue(value);
     }
 
     function onKeyDown(event: React.KeyboardEvent) {
@@ -62,9 +65,11 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
       displayValue,
     };
 
+    const Comp = context.editable && isEditing ? VisuallyHidden : Primitive.div;
+
     return (
       <TagsInputItemContext.Provider value={itemContext}>
-        <Primitive.div
+        <Comp
           ref={ref}
           data-tag-item={itemContext.value}
           aria-current={isFocused}
@@ -72,10 +77,48 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
           data-focused={isFocused ? "" : undefined}
           data-disabled={itemDisabled ? "" : undefined}
           data-editing={isEditing ? "" : undefined}
+          onClick={() => context.setFocusedValue(value)}
           onDoubleClick={onDoubleClick}
           onKeyDown={onKeyDown}
           {...tagsInputItemProps}
         />
+        {context.editable && isEditing && (
+          <Primitive.input
+            defaultValue={itemContext.displayValue}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                const newValue = event.currentTarget.value.trim();
+                event.preventDefault();
+                context.onItemUpdate(itemContext.value, newValue);
+                context.setEditingValue(null);
+                context.inputRef.current?.focus();
+                // if (itemContext.isEditing) {
+                //   context.setFocusedValue(newValue);
+                // }
+              } else if (event.key === "Escape") {
+                context.setEditingValue(null);
+                event.currentTarget.focus();
+              }
+            }}
+            onFocus={(event) => event.currentTarget.select()}
+            onBlur={(event) => {
+              context.onItemUpdate(
+                itemContext.value,
+                event.currentTarget.value,
+              );
+              context.setEditingValue(null);
+            }}
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            autoFocus
+            style={{
+              outline: "none",
+              background: "inherit",
+              width: document.getElementById(textId)?.clientWidth,
+            }}
+          />
+        )}
       </TagsInputItemContext.Provider>
     );
   },

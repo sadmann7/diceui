@@ -23,8 +23,6 @@ const TagsInputItemDelete = React.forwardRef<
     });
   }
 
-  if (context.editable && itemContext.isEditing) return null;
-
   return (
     <Primitive.button
       ref={ref}
@@ -44,6 +42,6 @@ TagsInputItemDelete.displayName = "TagsInputItemDelete";
 
 const Delete = TagsInputItemDelete;
 
-export { TagsInputItemDelete, Delete };
+export { Delete, TagsInputItemDelete };
 
 export type { TagsInputItemDeleteProps };
