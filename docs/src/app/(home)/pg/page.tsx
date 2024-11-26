@@ -21,9 +21,9 @@ export default function PlaygroundPage() {
       <TagsInput
         value={fruits}
         onValueChange={setFruits}
+        loop
+        duplicate
         createOnPaste
-        createOnTab
-        createOnBlur
       >
         <TagsInputLabel>Fruits</TagsInputLabel>
         <TagsInputContent>

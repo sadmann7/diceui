@@ -22,11 +22,11 @@ interface TagsInputRootContextValue {
   focusedValue: InputValue | null;
   max: number;
   isInvalidInput: boolean;
+  disabled: boolean;
   createOnPaste: boolean;
   createOnTab: boolean;
   createOnBlur: boolean;
   editable: boolean;
-  disabled: boolean;
 }
 
 const TagsInputContext = React.createContext<
@@ -52,19 +52,19 @@ interface TagsInputRootProps
   onInvalid?: (value: InputValue) => void;
   convertValue?: (value: string) => InputValue;
   displayValue?: (value: InputValue) => string;
-  max?: number;
-  required?: boolean;
-  name?: string;
   id?: string;
   delimiter?: string;
   dir?: "ltr" | "rtl";
+  max?: number;
+  name?: string;
+  required?: boolean;
+  disabled?: boolean;
   loop?: boolean;
   duplicate?: boolean;
   editable?: boolean;
   createOnPaste?: boolean;
   createOnTab?: boolean;
   createOnBlur?: boolean;
-  disabled?: boolean;
 }
 
 const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
@@ -74,21 +74,21 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
       defaultValue = [],
       onValueChange,
       onInvalid,
-      createOnPaste = false,
-      createOnTab = false,
-      createOnBlur = false,
-      duplicate = false,
-      editable = false,
-      disabled = false,
+      convertValue,
+      displayValue = (value: InputValue) => value.toString(),
+      id,
       delimiter = ",",
       dir: dirProp,
       max = 0,
-      required = false,
       name,
-      id,
-      convertValue,
-      displayValue = (value: InputValue) => value.toString(),
+      required = false,
+      disabled = false,
       loop = false,
+      duplicate = false,
+      editable = false,
+      createOnPaste = false,
+      createOnTab = false,
+      createOnBlur = false,
       children,
       ...tagsInputProps
     } = props;
@@ -123,9 +123,14 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
             return false;
           }
 
-          const newValue = duplicate ? splitValue : [...new Set(splitValue)];
+          let newValues;
+          if (duplicate) {
+            newValues = splitValue; 
+          } else {
+            newValues = [...new Set(splitValue.filter(v => !value.includes(v)))];
+          }
 
-          setValue([...value, ...newValue]);
+          setValue([...value, ...newValues]);
 
           return true;
         }

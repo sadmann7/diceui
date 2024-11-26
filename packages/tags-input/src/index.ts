@@ -7,6 +7,12 @@ export {
   TagsInputRoot,
 } from "./tags-input-root";
 export {
+  type TagsInputLabelProps,
+  Label,
+  TagsInputLabel,
+} from "./tags-input-label";
+
+export {
   type TagsInputContentProps,
   Content,
   TagsInputContent,
@@ -32,8 +38,3 @@ export {
   Clear,
   TagsInputClear,
 } from "./tags-input-clear";
-export {
-  type TagsInputLabelProps,
-  Label,
-  TagsInputLabel,
-} from "./tags-input-label";
