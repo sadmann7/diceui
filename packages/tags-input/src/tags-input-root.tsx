@@ -206,6 +206,8 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
       [value, setValue],
     );
 
+    console.log({ focusedValue });
+
     const onInputKeydown = React.useCallback(
       (event: React.KeyboardEvent) => {
         const target = event.target;
@@ -294,6 +296,7 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
           case "Enter": {
             if (focusedValue !== null && editable) {
               setEditingValue(focusedValue);
+              setFocusedValue(null);
               event.preventDefault();
             }
             break;
@@ -328,12 +331,18 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
         const index = value.indexOf(oldValue);
         if (index === -1) return;
 
+        if (!duplicate && value.some((v) => v === newValue)) {
+          onInvalid?.(newValue);
+          setIsInvalidInput(true);
+          return;
+        }
+
         const newValues = [...value];
         newValues[index] = newValue;
         setValue(newValues);
         setEditingValue(null);
       },
-      [value, setValue],
+      [value, setValue, duplicate, onInvalid],
     );
 
     const contextValue: TagsInputRootContextValue = {

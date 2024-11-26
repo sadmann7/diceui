@@ -17,36 +17,43 @@ const TagsInputItemText = React.forwardRef<
   const isEditing = itemContext.value === context.editingValue;
 
   return (
-    <Primitive.span
-      ref={ref}
-      id={itemContext.textId}
-      contentEditable={isEditing && context.editable}
-      suppressContentEditableWarning
-      onKeyDown={(event) => {
-        if (!context.editable) return;
-
-        if (event.key === "Enter") {
-          event.preventDefault();
-          context.onItemUpdate(
-            itemContext.value,
-            event.currentTarget.textContent || "",
-          );
-          context.setEditingValue(null);
-        } else if (event.key === "Escape") {
-          context.setEditingValue(null);
-        }
-      }}
-      onBlur={(event) => {
-        if (context.editable) {
-          context.onItemUpdate(
-            itemContext.value,
-            event.currentTarget.textContent || "",
-          );
-        }
-      }}
-      {...tagsInputTextProps}
-    >
-      {children ?? itemContext.displayValue}
+    <Primitive.span ref={ref} id={itemContext.textId} {...tagsInputTextProps}>
+      {isEditing && context.editable ? (
+        <Primitive.input
+          defaultValue={itemContext.displayValue}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              const newValue = event.currentTarget.value.trim();
+              event.preventDefault();
+              context.onItemUpdate(itemContext.value, newValue);
+              context.setEditingValue(null);
+              context.inputRef.current?.focus();
+              // if (isEditing) {
+              //   context.setFocusedValue(newValue);
+              // }
+            } else if (event.key === "Escape") {
+              context.setEditingValue(null);
+            }
+          }}
+          onFocus={(event) => event.currentTarget.select()}
+          onBlur={(event) => {
+            context.onItemUpdate(itemContext.value, event.currentTarget.value);
+            context.setEditingValue(null);
+          }}
+          autoComplete="off"
+          autoCorrect="off"
+          autoFocus
+          style={{
+            outline: "none",
+            background: "inherit",
+            border: "none",
+            padding: 0,
+            margin: 0,
+          }}
+        />
+      ) : (
+        (children ?? itemContext.displayValue)
+      )}
     </Primitive.span>
   );
 });
