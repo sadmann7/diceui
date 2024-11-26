@@ -33,6 +33,7 @@ const TagsInputItemText = React.forwardRef<
               // }
             } else if (event.key === "Escape") {
               context.setEditingValue(null);
+              event.currentTarget.focus();
             }
           }}
           onFocus={(event) => event.currentTarget.select()}
