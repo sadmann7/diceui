@@ -18,13 +18,7 @@ export default function PlaygroundPage() {
 
   return (
     <Shell>
-      <TagsInput
-        value={fruits}
-        onValueChange={setFruits}
-        loop
-        duplicate
-        createOnPaste
-      >
+      <TagsInput value={fruits} onValueChange={setFruits}>
         <TagsInputLabel>Fruits</TagsInputLabel>
         <TagsInputContent>
           {fruits.map((fruit, index) => (
