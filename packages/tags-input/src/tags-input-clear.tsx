@@ -11,7 +11,7 @@ const TagsInputClear = React.forwardRef<HTMLButtonElement, TagsInputClearProps>(
 
     function onClear() {
       if (context.disabled) return;
-      context.onValueChange([]);
+      context.onValuesChange([]);
       context.inputRef.current?.focus();
     }
 
@@ -19,7 +19,7 @@ const TagsInputClear = React.forwardRef<HTMLButtonElement, TagsInputClearProps>(
       <Primitive.button
         ref={ref}
         type="button"
-        data-state={context.value.length > 0 ? "visible" : "hidden"}
+        data-state={context.values.length > 0 ? "visible" : "hidden"}
         data-disabled={context.disabled ? "" : undefined}
         onClick={onClear}
         {...props}
@@ -32,6 +32,4 @@ TagsInputClear.displayName = "TagsInputClear";
 
 const Clear = TagsInputClear;
 
-export { Clear, TagsInputClear };
-
-export type { TagsInputClearProps };
+export { Clear, TagsInputClear, type TagsInputClearProps };

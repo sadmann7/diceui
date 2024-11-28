@@ -2,7 +2,6 @@
 
 export {
   type TagsInputRootProps,
-  type InputValue,
   Root,
   TagsInputRoot,
 } from "./tags-input-root";

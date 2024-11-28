@@ -1,11 +1,14 @@
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { createContext, useContext } from "react";
-import { type InputValue, useTagsInput } from "./tags-input-root";
-import { VisuallyHidden } from "./visually-hidden";
+import {
+  type InputValue,
+  type TagValue,
+  useTagsInput,
+} from "./tags-input-root";
 
 interface TagsInputItemContextValue {
-  value: InputValue;
+  value: TagValue<InputValue>;
   isFocused: boolean;
   isEditing: boolean;
   disabled?: boolean;
@@ -27,7 +30,7 @@ export function useTagsInputItem() {
 
 interface TagsInputItemProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
-  value: InputValue;
+  value: TagValue<InputValue>;
   disabled?: boolean;
 }
 
@@ -35,26 +38,14 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
   (props, ref) => {
     const { value, disabled, ...tagsInputItemProps } = props;
     const context = useTagsInput();
-    const isFocused = value === context.focusedValue;
-    const isEditing = value === context.editingValue;
+    const index = context.values.indexOf(value);
+    const isFocused = index === context.focusedIndex;
+    const isEditing = index === context.editingIndex;
     const itemDisabled = disabled || context.disabled;
-    const textId = `tags-input-item-${value}`;
+    const id =
+      typeof value === "object" && "id" in value ? value.id : value.toString();
+    const textId = `tags-input-item-${id}`;
     const displayValue = context.displayValue(value);
-
-    function onDoubleClick(event: React.MouseEvent) {
-      if (event.target === event.currentTarget || itemDisabled) {
-        return;
-      }
-
-      context.setEditingValue(value);
-    }
-
-    function onKeyDown(event: React.KeyboardEvent) {
-      if (event.key === "Enter" && isFocused && !isEditing) {
-        context.setEditingValue(value);
-        event.preventDefault();
-      }
-    }
 
     const itemContext: TagsInputItemContextValue = {
       value,
@@ -65,63 +56,30 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
       displayValue,
     };
 
-    const Comp = context.editable && isEditing ? VisuallyHidden : Primitive.div;
-
     return (
       <TagsInputItemContext.Provider value={itemContext}>
-        <Comp
+        <Primitive.div
           ref={ref}
-          data-tag-item={itemContext.value}
-          aria-current={isFocused}
-          data-state={isFocused ? "active" : "inactive"}
+          data-tag-item=""
           data-focused={isFocused ? "" : undefined}
-          data-disabled={itemDisabled ? "" : undefined}
           data-editing={isEditing ? "" : undefined}
-          onClick={() => {
-            context.inputRef.current?.focus();
-            context.setFocusedValue(value);
+          data-state={isFocused ? "active" : "inactive"}
+          data-disabled={itemDisabled ? "" : undefined}
+          data-id={id}
+          onClick={(event) => {
+            event.stopPropagation();
+            if (!isEditing) {
+              context.setFocusedIndex(index);
+              context.inputRef.current?.focus();
+            }
           }}
-          onDoubleClick={onDoubleClick}
-          onKeyDown={onKeyDown}
+          onDoubleClick={() => {
+            if (context.editable && !itemDisabled) {
+              context.setEditingIndex(index);
+            }
+          }}
           {...tagsInputItemProps}
         />
-        {context.editable && isEditing && (
-          <Primitive.input
-            defaultValue={itemContext.displayValue}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") {
-                const newValue = event.currentTarget.value.trim();
-                event.preventDefault();
-                context.onItemUpdate(itemContext.value, newValue);
-                context.setEditingValue(null);
-                context.inputRef.current?.focus();
-                // if (itemContext.isEditing) {
-                //   context.setFocusedValue(newValue);
-                // }
-              } else if (event.key === "Escape") {
-                context.setEditingValue(null);
-                event.currentTarget.focus();
-              }
-            }}
-            onFocus={(event) => event.currentTarget.select()}
-            onBlur={(event) => {
-              context.onItemUpdate(
-                itemContext.value,
-                event.currentTarget.value,
-              );
-              context.setEditingValue(null);
-            }}
-            autoComplete="off"
-            autoCorrect="off"
-            autoCapitalize="off"
-            autoFocus
-            style={{
-              outline: "none",
-              background: "inherit",
-              width: document.getElementById(textId)?.clientWidth,
-            }}
-          />
-        )}
       </TagsInputItemContext.Provider>
     );
   },
@@ -131,6 +89,4 @@ TagsInputItem.displayName = "TagsInputItem";
 
 const Item = TagsInputItem;
 
-export { Item, TagsInputItem };
-
-export type { TagsInputItemProps };
+export { Item, TagsInputItem, type TagsInputItemProps };
