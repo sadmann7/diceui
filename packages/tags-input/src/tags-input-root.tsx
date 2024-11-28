@@ -2,6 +2,7 @@ import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { useControllableState } from "./hooks/use-controllable-state";
 import { useDirection } from "./hooks/use-direction";
+import { composeRefs } from "./lib/compose-refs";
 
 type InputValue = string;
 
@@ -369,12 +370,16 @@ const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
     return (
       <TagsInputContext.Provider value={contextValue}>
         <Primitive.div
-          ref={ref}
+          ref={composeRefs(ref, containerRef)}
           dir={dir}
           data-invalid={isInvalidInput ? "" : undefined}
           data-disabled={disabled ? "" : undefined}
-          onClick={(e) => {
-            if (e.target === containerRef.current) {
+          onClick={(event) => {
+            const target = event.target;
+
+            if (!(target instanceof HTMLElement)) return;
+
+            if (target === containerRef.current) {
               inputRef.current?.focus();
               setFocusedValue(null);
             }
