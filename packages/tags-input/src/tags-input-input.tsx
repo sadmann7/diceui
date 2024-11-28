@@ -61,20 +61,6 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
         event.preventDefault();
         const value = event.clipboardData.getData("text");
 
-        // if (context.delimiter) {
-        //   const splitValue = value.split(context.delimiter);
-        //   for (const v of splitValue) {
-        //     const trimmedValue = v.trim();
-        //     if (trimmedValue) {
-        //       context.onAddValue(trimmedValue);
-        //       context.setFocusedIndex(-1);
-        //     }
-        //   }
-        // } else {
-        //   context.onAddValue(value);
-        //   context.setFocusedIndex(-1);
-        // }
-
         context.onAddValue(value);
         context.setFocusedIndex(-1);
       }
@@ -82,9 +68,6 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
 
     React.useEffect(() => {
       if (autoFocus) {
-        // setTimeout(() => {
-        //   context.inputRef.current?.focus();
-        // }, 1);
         requestAnimationFrame(() => {
           context.inputRef.current?.focus();
         });

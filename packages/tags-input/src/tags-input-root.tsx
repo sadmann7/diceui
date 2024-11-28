@@ -1,8 +1,10 @@
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
+import { BubbleInput } from "./bubble-input";
 import { useControllableState } from "./hooks/use-controllable-state";
 import { useDirection } from "./hooks/use-direction";
-import { composeRefs } from "./lib/compose-refs";
+import { useFormControl } from "./hooks/use-form-control";
+import { useComposedRefs } from "./lib/compose-refs";
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 type InputValue = string | Record<string, any>;
@@ -123,6 +125,10 @@ const TagsInputRoot = React.forwardRef<
   const containerRef = React.useRef<HTMLDivElement>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const dir = useDirection(dirProp);
+  const { isFormControl, onTriggerChange } = useFormControl();
+  const composedRefs = useComposedRefs(ref, containerRef, (node) => {
+    onTriggerChange(node);
+  });
 
   const createTagValue = React.useCallback(
     (payload: string): TagValue<InputValue> => {
@@ -364,7 +370,7 @@ const TagsInputRoot = React.forwardRef<
   return (
     <TagsInputContext.Provider value={contextValue}>
       <Primitive.div
-        ref={composeRefs(ref, containerRef)}
+        ref={composedRefs}
         dir={dir}
         data-invalid={isInvalidInput ? "" : undefined}
         data-disabled={disabled ? "" : undefined}
@@ -386,11 +392,11 @@ const TagsInputRoot = React.forwardRef<
         {...tagInputProps}
       >
         {children}
-        {name && (
-          <input
-            type="hidden"
+        {isFormControl && name && (
+          <BubbleInput
+            control={containerRef.current}
             name={name}
-            value={JSON.stringify(values)}
+            value={values.map((v) => displayValue(v))}
             required={required}
             disabled={disabled}
           />
@@ -406,4 +412,4 @@ const Root = TagsInputRoot;
 
 export { Root, TagsInputRoot };
 
-export type { TagsInputRootProps, InputValue, TagItem, TagValue };
+export type { InputValue, TagItem, TagsInputRootProps, TagValue };
