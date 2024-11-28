@@ -14,13 +14,10 @@ const TagsInputItemDelete = React.forwardRef<
   const itemContext = useTagsInputItem();
   const disabled = itemContext.disabled || context.disabled;
 
-  function onItemDelete() {
+  function onTagDelete() {
     if (disabled) return;
-    const index = context.value.findIndex((i) => i === itemContext.value);
-    context.onItemDelete(index);
-    requestAnimationFrame(() => {
-      context.inputRef.current?.focus();
-    });
+    const index = context.values.findIndex((i) => i === itemContext.value);
+    context.onRemoveValue(index);
   }
 
   if (itemContext.isEditing) return null;
@@ -34,7 +31,7 @@ const TagsInputItemDelete = React.forwardRef<
       aria-current={itemContext.isFocused}
       data-state={itemContext.isFocused ? "active" : "inactive"}
       data-disabled={disabled ? "" : undefined}
-      onClick={onItemDelete}
+      onClick={onTagDelete}
       {...props}
     />
   );
@@ -44,6 +41,4 @@ TagsInputItemDelete.displayName = "TagsInputItemDelete";
 
 const Delete = TagsInputItemDelete;
 
-export { Delete, TagsInputItemDelete };
-
-export type { TagsInputItemDeleteProps };
+export { Delete, TagsInputItemDelete, type TagsInputItemDeleteProps };

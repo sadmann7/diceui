@@ -4,35 +4,45 @@ import { useControllableState } from "./hooks/use-controllable-state";
 import { useDirection } from "./hooks/use-direction";
 import { composeRefs } from "./lib/compose-refs";
 
-type InputValue = string;
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+type InputValue = string | Record<string, any>;
 
-interface TagsInputRootContextValue {
-  value: InputValue[];
-  onValueChange: (value: InputValue[]) => void;
-  onItemCreate: (textValue: string) => boolean;
-  onItemUpdate: (oldValue: InputValue, newValue: InputValue) => void;
-  onItemDelete: (index: number) => void;
+interface TagItem {
+  id: string;
+  value: string;
+}
+
+type TagValue<T> = T extends string ? T | TagItem : T;
+
+interface TagsInputContextValue<T extends InputValue> {
+  values: TagValue<T>[];
+  onValuesChange: (value: TagValue<T>[]) => void;
+  onAddValue: (payload: string) => boolean;
+  onRemoveValue: (index: number) => void;
+  onUpdateValue: (index: number, newValue: string) => void;
   onInputKeydown: (event: React.KeyboardEvent) => void;
-  displayValue: (value: InputValue) => string;
-  editingValue: InputValue | null;
-  setEditingValue: (value: InputValue | null) => void;
-  focusedValue: InputValue | null;
-  setFocusedValue: (value: InputValue | null) => void;
-  inputRef: React.RefObject<HTMLInputElement>;
-  id: string | undefined;
-  delimiter: string | undefined;
+  focusedIndex: number;
+  setFocusedIndex: (index: number) => void;
+  editingIndex: number;
+  setEditingIndex: (index: number) => void;
+  isInvalidInput: boolean;
+  addOnPaste: boolean;
+  addOnTab: boolean;
+  addOnBlur: boolean;
+  disabled: boolean;
+  editable: boolean;
+  delimiter: string;
   dir: "ltr" | "rtl";
   max: number;
-  isInvalidInput: boolean;
-  disabled: boolean;
-  createOnPaste: boolean;
-  createOnTab: boolean;
-  createOnBlur: boolean;
-  editable: boolean;
+  id?: string;
+  displayValue: (value: TagValue<T>) => string;
+  inputRef: React.RefObject<HTMLInputElement>;
+  duplicate: boolean;
+  loop: boolean;
 }
 
 const TagsInputContext = React.createContext<
-  TagsInputRootContextValue | undefined
+  TagsInputContextValue<InputValue> | undefined
 >(undefined);
 
 export function useTagsInput() {
@@ -43,364 +53,352 @@ export function useTagsInput() {
   return context;
 }
 
-interface TagsInputRootProps
+interface TagsInputRootProps<T extends InputValue>
   extends Omit<
     React.ComponentPropsWithoutRef<typeof Primitive.div>,
     "value" | "defaultValue" | "onValueChange" | "onInvalid"
   > {
-  value?: InputValue[];
-  defaultValue?: InputValue[];
-  onValueChange?: (value: InputValue[]) => void;
-  onInvalid?: (value: InputValue) => void;
-  convertValue?: (value: string) => InputValue;
-  displayValue?: (value: InputValue) => string;
-  id?: string;
+  value?: TagValue<T>[];
+  defaultValue?: TagValue<T>[];
+  onValueChange?: (value: TagValue<T>[]) => void;
+  onInvalid?: (value: TagValue<T>) => void;
+  addOnPaste?: boolean;
+  addOnTab?: boolean;
+  addOnBlur?: boolean;
+  duplicate?: boolean;
+  disabled?: boolean;
+  editable?: boolean;
   delimiter?: string;
   dir?: "ltr" | "rtl";
   max?: number;
-  name?: string;
   required?: boolean;
-  disabled?: boolean;
+  name?: string;
   loop?: boolean;
-  duplicate?: boolean;
-  editable?: boolean;
-  createOnPaste?: boolean;
-  createOnTab?: boolean;
-  createOnBlur?: boolean;
+  id?: string;
+  convertValue?: (value: string) => T;
+  displayValue?: (value: TagValue<T>) => string;
 }
 
-const TagsInputRoot = React.forwardRef<HTMLDivElement, TagsInputRootProps>(
-  (props, ref) => {
-    const {
-      value: valueProp,
-      defaultValue = [],
-      onValueChange,
-      onInvalid,
-      convertValue,
-      displayValue = (value: InputValue) => value.toString(),
-      id,
-      delimiter = ",",
-      dir: dirProp,
-      max = 0,
-      name,
-      required = false,
-      disabled = false,
-      loop = false,
-      duplicate = false,
-      editable = false,
-      createOnPaste = false,
-      createOnTab = false,
-      createOnBlur = false,
-      children,
-      ...tagsInputProps
-    } = props;
+const TagsInputRoot = React.forwardRef<
+  HTMLDivElement,
+  TagsInputRootProps<InputValue>
+>((props, ref) => {
+  const {
+    value: valueProp,
+    defaultValue,
+    onValueChange,
+    onInvalid,
+    addOnPaste = false,
+    addOnTab = false,
+    addOnBlur = false,
+    duplicate = false,
+    disabled = false,
+    editable = false,
+    delimiter = ",",
+    dir: dirProp,
+    max = 0,
+    required = false,
+    name,
+    id,
+    loop = false,
+    convertValue,
+    displayValue = (value: TagValue<InputValue>) => {
+      if (typeof value === "object" && "value" in value) {
+        return value.value;
+      }
+      return value.toString();
+    },
+    children,
+    ...tagInputProps
+  } = props;
 
-    const [value = [], setValue] = useControllableState({
-      prop: valueProp,
-      defaultProp: defaultValue,
-      onChange: onValueChange,
-    });
+  const [values = [], setValues] = useControllableState({
+    prop: valueProp,
+    defaultProp: defaultValue,
+    onChange: onValueChange,
+  });
+  const [focusedIndex, setFocusedIndex] = React.useState<number>(-1);
+  const [editingIndex, setEditingIndex] = React.useState<number>(-1);
+  const [isInvalidInput, setIsInvalidInput] = React.useState(false);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  const dir = useDirection(dirProp);
 
-    const [focusedValue, setFocusedValue] = React.useState<InputValue | null>(
-      null,
-    );
-    const [isInvalidInput, setIsInvalidInput] = React.useState(false);
-    const containerRef = React.useRef<HTMLDivElement>(null);
-    const inputRef = React.useRef<HTMLInputElement>(null);
-    const dir = useDirection(dirProp);
-    const [editingValue, setEditingValue] = React.useState<InputValue | null>(
-      null,
-    );
+  const createTagValue = React.useCallback(
+    (payload: string): TagValue<InputValue> => {
+      if (duplicate) {
+        const tagItem: TagItem = {
+          id: crypto.randomUUID(),
+          value: payload,
+        };
+        return tagItem;
+      }
 
-    const onItemCreate = React.useCallback(
-      (textValue: string) => {
-        if (createOnPaste) {
-          const splitValue = textValue
-            .split(delimiter)
-            .map((v) => v.trim())
-            .filter(Boolean);
+      return convertValue ? convertValue(payload) : payload;
+    },
+    [duplicate, convertValue],
+  );
 
-          if (value.length + splitValue.length > max && max > 0) {
-            onInvalid?.(textValue);
-            return false;
-          }
+  const onAddValue = React.useCallback(
+    (payload: string) => {
+      if (addOnPaste) {
+        const splitValues = payload
+          .split(delimiter)
+          .map((v) => v.trim())
+          .filter(Boolean);
 
-          let newValues: InputValue[] = [];
-          if (duplicate) {
-            newValues = splitValue;
-          } else {
-            newValues = [
-              ...new Set(splitValue.filter((v) => !value.includes(v))),
-            ];
-          }
-
-          setValue([...value, ...newValues]);
-
-          return true;
-        }
-
-        const valueIsObject = value.length > 0 && typeof value[0] === "object";
-        const defaultValueIsObject =
-          defaultValue.length > 0 && typeof defaultValue[0] === "object";
-
-        if (
-          (valueIsObject || defaultValueIsObject) &&
-          typeof convertValue !== "function"
-        ) {
-          throw new Error(
-            "You must provide a convertValue function when using objects as values.",
-          );
-        }
-
-        const newValue = convertValue ? convertValue(textValue) : textValue;
-
-        if (value.length >= max && max > 0) {
-          onInvalid?.(newValue);
+        if (values.length + splitValues.length > max && max > 0) {
+          onInvalid?.(payload);
           return false;
         }
 
+        let newValues: InputValue[] = [];
         if (duplicate) {
-          const newValues = [...value, newValue];
-          setValue(newValues);
-          return true;
+          newValues = splitValues;
+        } else {
+          newValues = [
+            ...new Set(splitValues.filter((v) => !values.includes(v))),
+          ];
         }
 
-        const exists = value.includes(newValue);
-        if (!exists) {
-          const newValues = [...value, newValue];
-          setValue(newValues);
-          return true;
-        }
+        setValues([...values, ...newValues]);
 
-        setIsInvalidInput(true);
+        return true;
+      }
 
-        if (inputRef.current) {
-          inputRef.current.value = "";
-        }
-
-        onInvalid?.(newValue);
-
+      if (values.length >= max && max > 0) {
+        onInvalid?.(payload);
         return false;
-      },
-      [
-        value,
-        max,
-        duplicate,
-        convertValue,
-        setValue,
-        onInvalid,
-        defaultValue,
-        createOnPaste,
-        delimiter,
-      ],
-    );
+      }
 
-    const onItemDelete = React.useCallback(
-      (index: number) => {
-        if (index !== -1) {
-          const newValues = [...value];
-          newValues.splice(index, 1);
-          setValue(newValues);
-          setFocusedValue(null);
+      if (!duplicate) {
+        const exists = values.some((v) => {
+          const valueToCompare =
+            typeof v === "object" && "value" in v ? v.value : v;
+          return valueToCompare === payload;
+        });
+
+        if (exists) {
+          setIsInvalidInput(true);
+          onInvalid?.(payload);
+          return true;
         }
-      },
-      [value, setValue],
-    );
+      }
 
-    const onInputKeydown = React.useCallback(
-      (event: React.KeyboardEvent) => {
-        const target = event.target;
-        if (!(target instanceof HTMLInputElement)) return;
-
-        const isArrowLeft =
-          (event.key === "ArrowLeft" && dir === "ltr") ||
-          (event.key === "ArrowRight" && dir === "rtl");
-        const isArrowRight =
-          (event.key === "ArrowRight" && dir === "ltr") ||
-          (event.key === "ArrowLeft" && dir === "rtl");
-
-        switch (event.key) {
-          case "Delete":
-          case "Backspace": {
-            if (target.selectionStart !== 0 || target.selectionEnd !== 0) break;
-
-            if (focusedValue !== null) {
-              const currentIndex = value.indexOf(focusedValue);
-              const newValue =
-                currentIndex === value.length - 1
-                  ? value[currentIndex - 1]
-                  : value[currentIndex + 1];
-
-              onItemDelete(currentIndex);
-              setFocusedValue(newValue ?? null);
-              event.preventDefault();
-            } else if (event.key === "Backspace" && value.length > 0) {
-              setFocusedValue(value[value.length - 1] ?? null);
-              event.preventDefault();
-            }
-            break;
-          }
-          case "ArrowLeft":
-          case "ArrowRight": {
-            if (
-              target.selectionStart === 0 &&
-              isArrowLeft &&
-              focusedValue === null &&
-              value.length > 0
-            ) {
-              setFocusedValue(value[value.length - 1] ?? null);
-              event.preventDefault();
-            } else if (focusedValue !== null) {
-              const currentIndex = value.indexOf(focusedValue);
-              if (isArrowLeft) {
-                if (currentIndex > 0) {
-                  setFocusedValue(value[currentIndex - 1] ?? null);
-                } else if (loop) {
-                  setFocusedValue(value[value.length - 1] ?? null);
-                }
-                event.preventDefault();
-              } else if (isArrowRight) {
-                if (currentIndex < value.length - 1) {
-                  setFocusedValue(value[currentIndex + 1] ?? null);
-                } else if (loop && currentIndex === value.length - 1) {
-                  setFocusedValue(value[0] ?? null);
-                } else if (!loop && currentIndex === value.length - 1) {
-                  setFocusedValue(null);
-                  target.setSelectionRange(0, 0);
-                }
-                event.preventDefault();
-              }
-            }
-            break;
-          }
-          case "Home": {
-            if (focusedValue !== null && value.length > 0) {
-              setFocusedValue(value[0] ?? null);
-              event.preventDefault();
-            }
-            break;
-          }
-          case "End": {
-            if (focusedValue !== null && value.length > 0) {
-              setFocusedValue(value[value.length - 1] ?? null);
-              event.preventDefault();
-            }
-            break;
-          }
-          case "Escape": {
-            setFocusedValue(null);
-            target.setSelectionRange(0, 0);
-            break;
-          }
-          case "Enter": {
-            if (focusedValue !== null && editable) {
-              setEditingValue(focusedValue);
-              setFocusedValue(null);
-              event.preventDefault();
-            }
-            break;
-          }
-        }
-      },
-      [focusedValue, value, onItemDelete, dir, editable, loop],
-    );
-
-    // Handle clicks outside of tags to focus input
-    React.useEffect(() => {
-      const handleClick = (event: MouseEvent) => {
-        const target = event.target as HTMLElement;
-        if (
-          containerRef.current?.contains(target) &&
-          !target.hasAttribute("data-tag-item") &&
-          target.tagName !== "INPUT"
-        ) {
-          inputRef.current?.focus();
-          setFocusedValue(null);
-        }
-      };
-
-      document.addEventListener("click", handleClick);
-      return () => document.removeEventListener("click", handleClick);
-    }, []);
-
-    const onItemUpdate = React.useCallback(
-      (oldValue: InputValue, newValue: InputValue) => {
-        if (oldValue === newValue || !newValue.toString().trim()) return;
-
-        const index = value.indexOf(oldValue);
-        if (index === -1) return;
-
-        const newValues = [...value];
-        newValues[index] = newValue;
-        setValue(newValues);
-        setEditingValue(null);
-      },
-      [value, setValue],
-    );
-
-    const contextValue: TagsInputRootContextValue = {
-      value,
-      onValueChange: setValue,
-      onItemCreate,
-      onItemDelete,
-      onItemUpdate,
-      onInputKeydown,
-      focusedValue,
-      setFocusedValue,
-      isInvalidInput,
-      createOnPaste,
-      createOnTab,
-      createOnBlur,
-      editable,
-      disabled,
-      delimiter,
-      dir,
+      const newValue = createTagValue(payload);
+      const newValues = [...values, newValue];
+      setValues(newValues);
+      setFocusedIndex(-1);
+      setEditingIndex(-1);
+      setIsInvalidInput(false);
+      return true;
+    },
+    [
+      values,
       max,
-      id,
-      displayValue,
-      inputRef,
-      editingValue,
-      setEditingValue: (value) => {
-        if (editable) {
-          setEditingValue(value);
+      duplicate,
+      addOnPaste,
+      delimiter,
+      setValues,
+      onInvalid,
+      createTagValue,
+    ],
+  );
+
+  const onRemoveValue = React.useCallback(
+    (index: number) => {
+      if (index !== -1) {
+        const newValues = [...values];
+        newValues.splice(index, 1);
+        setValues(newValues);
+        setFocusedIndex(-1);
+        setEditingIndex(-1);
+        inputRef.current?.focus();
+      }
+    },
+    [values, setValues],
+  );
+
+  const onUpdateValue = React.useCallback(
+    (index: number, newValue: string) => {
+      if (index !== -1) {
+        const updatedValue = createTagValue(newValue);
+        const newValues = [...values];
+        newValues[index] = updatedValue;
+        setValues(newValues);
+        setFocusedIndex(index);
+        setEditingIndex(-1);
+        inputRef.current?.focus();
+      }
+    },
+    [values, setValues, createTagValue],
+  );
+
+  const onInputKeydown = React.useCallback(
+    (event: React.KeyboardEvent) => {
+      const target = event.target as HTMLInputElement;
+      const isArrowLeft =
+        (event.key === "ArrowLeft" && dir === "ltr") ||
+        (event.key === "ArrowRight" && dir === "rtl");
+      const isArrowRight =
+        (event.key === "ArrowRight" && dir === "ltr") ||
+        (event.key === "ArrowLeft" && dir === "rtl");
+
+      if (target.value) {
+        setFocusedIndex(-1);
+        setEditingIndex(-1);
+        return;
+      }
+
+      switch (event.key) {
+        case "Delete":
+        case "Backspace": {
+          if (target.selectionStart !== 0 || target.selectionEnd !== 0) break;
+
+          if (focusedIndex !== -1) {
+            const newIndex =
+              focusedIndex === values.length - 1
+                ? focusedIndex - 1
+                : focusedIndex;
+            onRemoveValue(focusedIndex);
+            setFocusedIndex(newIndex);
+            event.preventDefault();
+          } else if (event.key === "Backspace" && values.length > 0) {
+            setFocusedIndex(values.length - 1);
+            event.preventDefault();
+          }
+          break;
         }
-      },
-    };
-
-    return (
-      <TagsInputContext.Provider value={contextValue}>
-        <Primitive.div
-          ref={composeRefs(ref, containerRef)}
-          dir={dir}
-          data-invalid={isInvalidInput ? "" : undefined}
-          data-disabled={disabled ? "" : undefined}
-          onClick={(event) => {
-            const target = event.target;
-
-            if (!(target instanceof HTMLElement)) return;
-
-            if (target === containerRef.current) {
-              inputRef.current?.focus();
-              setFocusedValue(null);
+        case "Enter": {
+          if (focusedIndex !== -1 && editable && !disabled) {
+            setEditingIndex(focusedIndex);
+            event.preventDefault();
+            return;
+          }
+          break;
+        }
+        case "ArrowLeft":
+        case "ArrowRight": {
+          if (
+            target.selectionStart === 0 &&
+            isArrowLeft &&
+            focusedIndex === -1 &&
+            values.length > 0
+          ) {
+            setFocusedIndex(values.length - 1);
+            event.preventDefault();
+          } else if (focusedIndex !== -1) {
+            if (isArrowLeft) {
+              if (focusedIndex > 0) {
+                setFocusedIndex(focusedIndex - 1);
+              } else if (loop) {
+                setFocusedIndex(values.length - 1);
+              }
+              event.preventDefault();
+            } else if (isArrowRight) {
+              if (focusedIndex < values.length - 1) {
+                setFocusedIndex(focusedIndex + 1);
+              } else if (loop) {
+                setFocusedIndex(0);
+              } else {
+                setFocusedIndex(-1);
+                target.setSelectionRange(0, 0);
+              }
+              event.preventDefault();
             }
-          }}
-          {...tagsInputProps}
-        >
-          {children}
-          {name && (
-            <Primitive.input
-              type="hidden"
-              name={name}
-              value={JSON.stringify(value)}
-              required={required}
-              disabled={disabled}
-            />
-          )}
-        </Primitive.div>
-      </TagsInputContext.Provider>
-    );
-  },
-);
+          }
+          break;
+        }
+        case "Home": {
+          if (focusedIndex !== -1) {
+            setFocusedIndex(0);
+            event.preventDefault();
+          }
+          break;
+        }
+        case "End": {
+          if (focusedIndex !== -1) {
+            setFocusedIndex(values.length - 1);
+            event.preventDefault();
+          }
+          break;
+        }
+        case "Escape": {
+          setFocusedIndex(-1);
+          setEditingIndex(-1);
+          target.setSelectionRange(0, 0);
+          break;
+        }
+      }
+    },
+    [focusedIndex, values.length, onRemoveValue, dir, editable, disabled, loop],
+  );
+
+  const contextValue: TagsInputContextValue<InputValue> = {
+    values,
+    onValuesChange: setValues,
+    onAddValue,
+    onRemoveValue,
+    onUpdateValue,
+    onInputKeydown,
+    focusedIndex,
+    setFocusedIndex,
+    editingIndex,
+    setEditingIndex,
+    isInvalidInput,
+    addOnPaste,
+    addOnTab,
+    addOnBlur,
+    disabled,
+    editable,
+    delimiter,
+    dir,
+    max,
+    id,
+    displayValue,
+    inputRef,
+    duplicate,
+    loop,
+  };
+
+  return (
+    <TagsInputContext.Provider value={contextValue}>
+      <Primitive.div
+        ref={composeRefs(ref, containerRef)}
+        dir={dir}
+        data-invalid={isInvalidInput ? "" : undefined}
+        data-disabled={disabled ? "" : undefined}
+        onClick={(event) => {
+          const target = event.target;
+
+          if (!(target instanceof HTMLElement)) return;
+
+          if (
+            containerRef.current?.contains(target) &&
+            !target.hasAttribute("data-tag-item") &&
+            target.tagName !== "INPUT"
+          ) {
+            inputRef.current?.focus();
+            setFocusedIndex(-1);
+            setEditingIndex(-1);
+          }
+        }}
+        {...tagInputProps}
+      >
+        {children}
+        {name && (
+          <input
+            type="hidden"
+            name={name}
+            value={JSON.stringify(values)}
+            required={required}
+            disabled={disabled}
+          />
+        )}
+      </Primitive.div>
+    </TagsInputContext.Provider>
+  );
+});
 
 TagsInputRoot.displayName = "TagsInputRoot";
 
@@ -408,4 +406,4 @@ const Root = TagsInputRoot;
 
 export { Root, TagsInputRoot };
 
-export type { InputValue, TagsInputRootProps };
+export type { TagsInputRootProps, InputValue, TagItem, TagValue };
