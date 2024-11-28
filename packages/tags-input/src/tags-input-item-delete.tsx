@@ -23,6 +23,8 @@ const TagsInputItemDelete = React.forwardRef<
     });
   }
 
+  if (itemContext.isEditing) return null;
+
   return (
     <Primitive.button
       ref={ref}
