@@ -24,6 +24,12 @@ const TagsInputItemText = React.forwardRef<
         autoCapitalize="off"
         type="text"
         value={editValue}
+        onInput={(event) => {
+          const target = event.target;
+          if (!(target instanceof HTMLInputElement)) return;
+          target.style.width = "0";
+          target.style.width = `${target.scrollWidth + 4}px`;
+        }}
         onChange={(event) => setEditValue(event.target.value)}
         onKeyDown={(event) => {
           if (event.key === "Enter") {
@@ -38,7 +44,11 @@ const TagsInputItemText = React.forwardRef<
           }
           event.stopPropagation();
         }}
-        onFocus={(event) => event.target.select()}
+        onFocus={(event) => {
+          event.target.select();
+          event.target.style.width = "0";
+          event.target.style.width = `${event.target.scrollWidth + 4}px`;
+        }}
         onBlur={() => {
           setEditValue(itemContext.displayValue);
           context.setEditingIndex(-1);
@@ -50,6 +60,7 @@ const TagsInputItemText = React.forwardRef<
           font: "inherit",
           color: "inherit",
           padding: 0,
+          minWidth: "1ch",
         }}
       />
     );

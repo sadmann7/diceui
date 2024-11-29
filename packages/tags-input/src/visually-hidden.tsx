@@ -23,6 +23,7 @@ const VisuallyHidden = React.forwardRef<
     <Primitive.span
       {...props}
       ref={forwardedRef}
+      aria-hidden="true"
       style={{
         // See: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden.scss
         position: "absolute",

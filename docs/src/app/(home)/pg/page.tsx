@@ -21,11 +21,12 @@ export default function PlaygroundPage() {
       <TagsInput
         value={fruits}
         onValueChange={(value) => setFruits(value as string[])}
+        editable
       >
         <TagsInputLabel>Fruits</TagsInputLabel>
         <TagsInputContent>
-          {fruits.map((fruit, index) => (
-            <TagsInputItem key={index.toString()} value={fruit}>
+          {fruits.map((fruit) => (
+            <TagsInputItem key={fruit} value={fruit}>
               {fruit}
             </TagsInputItem>
           ))}
