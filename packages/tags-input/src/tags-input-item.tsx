@@ -65,7 +65,6 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
           data-editing={isEditing ? "" : undefined}
           data-state={isFocused ? "active" : "inactive"}
           data-disabled={itemDisabled ? "" : undefined}
-          data-id={id}
           onClick={(event) => {
             event.stopPropagation();
             if (!isEditing) {

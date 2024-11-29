@@ -21,12 +21,14 @@ export default function PlaygroundPage() {
       <TagsInput
         value={fruits}
         onValueChange={(value) => setFruits(value as string[])}
+        duplicate
         editable
       >
         <TagsInputLabel>Fruits</TagsInputLabel>
         <TagsInputContent>
-          {fruits.map((fruit) => (
-            <TagsInputItem key={fruit} value={fruit}>
+          {fruits.map((fruit, index) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+            <TagsInputItem key={index} value={fruit}>
               {fruit}
             </TagsInputItem>
           ))}

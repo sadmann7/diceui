@@ -12,7 +12,7 @@ const TagsInput = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <TagsInputPrimitive.Root
     ref={ref}
-    className={cn("flex max-w-[420px] flex-col gap-2", className)}
+    className={cn("flex max-w-[380px] flex-col gap-2", className)}
     {...props}
   />
 ));

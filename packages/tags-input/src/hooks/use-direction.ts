@@ -3,7 +3,7 @@ import * as React from "react";
 type Direction = "ltr" | "rtl";
 
 export function useDirection(dirProp?: Direction): Direction {
-  const [dir, setDir] = React.useState<"ltr" | "rtl">(dirProp || "ltr");
+  const [dir, setDir] = React.useState<Direction>(dirProp || "ltr");
 
   React.useEffect(() => {
     if (dirProp) {
