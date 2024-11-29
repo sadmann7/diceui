@@ -19,7 +19,7 @@ type TagValue<T> = T extends string ? T | TagItem : T;
 interface TagsInputContextValue<T extends InputValue> {
   values: TagValue<T>[];
   onValuesChange: (value: TagValue<T>[]) => void;
-  onAddValue: (payload: string) => boolean;
+  onAddValue: (textValue: string) => boolean;
   onRemoveValue: (index: number) => void;
   onUpdateValue: (index: number, newValue: string) => void;
   onInputKeydown: (event: React.KeyboardEvent) => void;
@@ -131,30 +131,30 @@ const TagsInputRoot = React.forwardRef<
   });
 
   const createTagValue = React.useCallback(
-    (payload: string): TagValue<InputValue> => {
+    (textValue: string): TagValue<InputValue> => {
       if (duplicate) {
         const tagItem: TagItem = {
           id: crypto.randomUUID(),
-          value: payload,
+          value: textValue,
         };
         return tagItem;
       }
 
-      return convertValue ? convertValue(payload) : payload;
+      return convertValue ? convertValue(textValue) : textValue;
     },
     [duplicate, convertValue],
   );
 
   const onAddValue = React.useCallback(
-    (payload: string) => {
+    (textValue: string) => {
       if (addOnPaste) {
-        const splitValues = payload
+        const splitValues = textValue
           .split(delimiter)
           .map((v) => v.trim())
           .filter(Boolean);
 
         if (values.length + splitValues.length > max && max > 0) {
-          onInvalid?.(payload);
+          onInvalid?.(textValue);
           return false;
         }
 
@@ -173,25 +173,27 @@ const TagsInputRoot = React.forwardRef<
       }
 
       if (values.length >= max && max > 0) {
-        onInvalid?.(payload);
+        onInvalid?.(textValue);
         return false;
       }
+
+      const trimmedValue = textValue.trim();
 
       if (!duplicate) {
         const exists = values.some((v) => {
           const valueToCompare =
             typeof v === "object" && "value" in v ? v.value : v;
-          return valueToCompare === payload;
+          return valueToCompare === trimmedValue;
         });
 
         if (exists) {
           setIsInvalidInput(true);
-          onInvalid?.(payload);
+          onInvalid?.(trimmedValue);
           return true;
         }
       }
 
-      const newValue = createTagValue(payload);
+      const newValue = createTagValue(trimmedValue);
       const newValues = [...values, newValue];
       setValues(newValues);
       setFocusedIndex(-1);
