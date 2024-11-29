@@ -7,7 +7,7 @@ import { X } from "lucide-react";
 import * as React from "react";
 
 const TagsInput = React.forwardRef<
-  React.ElementRef<typeof TagsInputPrimitive.Root>,
+  React.ComponentRef<typeof TagsInputPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof TagsInputPrimitive.Root>
 >(({ className, ...props }, ref) => (
   <TagsInputPrimitive.Root
@@ -19,7 +19,7 @@ const TagsInput = React.forwardRef<
 TagsInput.displayName = TagsInputPrimitive.Root.displayName;
 
 const TagsInputLabel = React.forwardRef<
-  React.ElementRef<typeof TagsInputPrimitive.Label>,
+  React.ComponentRef<typeof TagsInputPrimitive.Label>,
   React.ComponentPropsWithoutRef<typeof TagsInputPrimitive.Label>
 >(({ className, ...props }, ref) => (
   <TagsInputPrimitive.Label ref={ref} className={cn(className)} {...props} />
@@ -27,7 +27,7 @@ const TagsInputLabel = React.forwardRef<
 TagsInputLabel.displayName = TagsInputPrimitive.Label.displayName;
 
 const TagsInputContent = React.forwardRef<
-  React.ElementRef<typeof TagsInputPrimitive.Content>,
+  React.ComponentRef<typeof TagsInputPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof TagsInputPrimitive.Content>
 >(({ className, ...props }, ref) => (
   <TagsInputPrimitive.Content
@@ -42,7 +42,7 @@ const TagsInputContent = React.forwardRef<
 TagsInputContent.displayName = TagsInputPrimitive.Content.displayName;
 
 const TagsInputInput = React.forwardRef<
-  React.ElementRef<typeof TagsInputPrimitive.Input>,
+  React.ComponentRef<typeof TagsInputPrimitive.Input>,
   React.ComponentPropsWithoutRef<typeof TagsInputPrimitive.Input>
 >(({ className, ...props }, ref) => (
   <TagsInputPrimitive.Input
@@ -57,19 +57,19 @@ const TagsInputInput = React.forwardRef<
 TagsInputInput.displayName = TagsInputPrimitive.Input.displayName;
 
 const TagsInputItem = React.forwardRef<
-  React.ElementRef<typeof TagsInputPrimitive.Item>,
+  React.ComponentRef<typeof TagsInputPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof TagsInputPrimitive.Item>
 >(({ className, ...props }, ref) => (
   <TagsInputPrimitive.Item
     ref={ref}
     className={cn(
-      "group inline-flex max-w-[calc(100%-8px)] items-center gap-1.5 rounded border bg-transparent px-2.5 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 data-[disabled]:cursor-not-allowed data-[editing]:bg-transparent data-[disabled]:opacity-50 data-[editing]:ring-1 data-[editing]:ring-ring [&:not([data-editing])]:pr-1.5 [&[data-focused]:not([data-editing])]:bg-accent [&[data-focused]:not([data-editing])]:text-accent-foreground",
+      "inline-flex max-w-[calc(100%-8px)] items-center gap-1.5 rounded border bg-transparent px-2.5 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 data-[disabled]:cursor-not-allowed data-[editable]:select-none data-[editing]:bg-transparent data-[disabled]:opacity-50 data-[editing]:ring-1 data-[editing]:ring-ring [&:not([data-editing])]:pr-1.5 [&[data-focused]:not([data-editing])]:bg-accent [&[data-focused]:not([data-editing])]:text-accent-foreground",
       className,
     )}
     {...props}
   >
     <TagsInputPrimitive.Text className="truncate" />
-    <TagsInputPrimitive.Delete className="h-4 w-4 flex-shrink-0 rounded-sm opacity-50 ring-offset-background transition-opacity hover:opacity-100 group-focus:opacity-100">
+    <TagsInputPrimitive.Delete className="h-4 w-4 flex-shrink-0 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100">
       <X className="size-3.5" />
     </TagsInputPrimitive.Delete>
   </TagsInputPrimitive.Item>
@@ -77,7 +77,7 @@ const TagsInputItem = React.forwardRef<
 TagsInputItem.displayName = TagsInputPrimitive.Item.displayName;
 
 const TagsInputClear = React.forwardRef<
-  React.ElementRef<typeof TagsInputPrimitive.Clear>,
+  React.ComponentRef<typeof TagsInputPrimitive.Clear>,
   React.ComponentPropsWithoutRef<typeof TagsInputPrimitive.Clear>
 >(({ className, ...props }, ref) => (
   <TagsInputPrimitive.Clear ref={ref} asChild>

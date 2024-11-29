@@ -66,6 +66,7 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
           data-dice-collection-item=""
           data-focused={isFocused ? "" : undefined}
           data-editing={isEditing ? "" : undefined}
+          data-editable={context.editable ? "" : undefined}
           data-state={isFocused ? "active" : "inactive"}
           data-disabled={itemDisabled ? "" : undefined}
           onClick={composeEventHandlers(
@@ -74,7 +75,7 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
               event.stopPropagation();
               if (!isEditing) {
                 context.setFocusedIndex(index);
-                context.inputRef.current?.focus();
+                requestAnimationFrame(() => context.inputRef.current?.focus());
               }
             },
             { checkForDefaultPrevented: false },
