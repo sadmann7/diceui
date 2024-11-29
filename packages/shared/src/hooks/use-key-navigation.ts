@@ -56,7 +56,7 @@ export function useKeyNavigation({
 
       return -1;
     },
-    [containerRef, itemCount, loop, itemSelector]
+    [containerRef, itemCount, loop, itemSelector],
   );
 
   const onKeyNavigation = React.useCallback(
@@ -96,7 +96,7 @@ export function useKeyNavigation({
           if (currentIndex !== -1) {
             nextIndex = findNextEnabledIndex(
               currentIndex,
-              isArrowLeft ? "prev" : "next"
+              isArrowLeft ? "prev" : "next",
             );
             if (nextIndex !== -1) {
               onIndexChange(nextIndex);
@@ -144,7 +144,7 @@ export function useKeyNavigation({
       focus,
       itemSelector,
       containerRef,
-    ]
+    ],
   );
 
   return {
