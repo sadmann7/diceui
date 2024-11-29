@@ -60,7 +60,7 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
       <TagsInputItemContext.Provider value={itemContext}>
         <Primitive.div
           ref={ref}
-          data-tag-item=""
+          data-dice-collection-item=""
           data-focused={isFocused ? "" : undefined}
           data-editing={isEditing ? "" : undefined}
           data-state={isFocused ? "active" : "inactive"}

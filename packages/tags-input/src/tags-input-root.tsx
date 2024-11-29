@@ -247,7 +247,9 @@ const TagsInputRoot = React.forwardRef<
 
   const onInputKeydown = React.useCallback(
     (event: React.KeyboardEvent) => {
-      const target = event.target as HTMLInputElement;
+      const target = event.target;
+      if (!(target instanceof HTMLInputElement)) return;
+
       const isArrowLeft =
         (event.key === "ArrowLeft" && dir === "ltr") ||
         (event.key === "ArrowRight" && dir === "rtl");
@@ -269,7 +271,7 @@ const TagsInputRoot = React.forwardRef<
         if (!containerElement) return -1;
 
         const tagItems = Array.from(
-          containerElement.querySelectorAll("[data-tag-item]"),
+          containerElement.querySelectorAll("[data-dice-collection-item]"),
         );
         let nextIndex = currentIndex;
 
@@ -424,7 +426,7 @@ const TagsInputRoot = React.forwardRef<
 
           if (
             containerRef.current?.contains(target) &&
-            !target.hasAttribute("data-tag-item") &&
+            !target.hasAttribute("data-dice-collection-item") &&
             target.tagName !== "INPUT"
           ) {
             inputRef.current?.focus();

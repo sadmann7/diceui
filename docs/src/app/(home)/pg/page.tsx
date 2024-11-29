@@ -1,7 +1,14 @@
 "use client";
 
-import * as React from "react";
-
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   TagsInput,
   TagsInputClear,
@@ -10,6 +17,7 @@ import {
   TagsInputItem,
   TagsInputLabel,
 } from "@/components/ui/tags-input";
+import * as React from "react";
 
 import { Shell } from "@/components/shell";
 
@@ -21,14 +29,12 @@ export default function PlaygroundPage() {
       <TagsInput
         value={fruits}
         onValueChange={(value) => setFruits(value as string[])}
-        duplicate
         editable
       >
         <TagsInputLabel>Fruits</TagsInputLabel>
         <TagsInputContent>
-          {fruits.map((fruit, index) => (
-            // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-            <TagsInputItem key={index} value={fruit} disabled={index % 2 === 0}>
+          {fruits.map((fruit) => (
+            <TagsInputItem key={fruit} value={fruit}>
               {fruit}
             </TagsInputItem>
           ))}
@@ -36,6 +42,21 @@ export default function PlaygroundPage() {
         </TagsInputContent>
         <TagsInputClear />
       </TagsInput>
+      <Select>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Select a fruit" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>Fruits</SelectLabel>
+            <SelectItem value="apple">Apple</SelectItem>
+            <SelectItem value="banana">Banana</SelectItem>
+            <SelectItem value="blueberry">Blueberry</SelectItem>
+            <SelectItem value="grapes">Grapes</SelectItem>
+            <SelectItem value="pineapple">Pineapple</SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select>
     </Shell>
   );
 }
