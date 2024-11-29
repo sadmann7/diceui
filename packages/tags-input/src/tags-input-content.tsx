@@ -22,7 +22,7 @@ const TagsInputContent = React.forwardRef<
 >((props, ref) => {
   const { children, ...tagsInputItemListProps } = props;
   const context = useTagsInput();
-  const id = `${context.id}-content`;
+  const id = `${context.id}content`;
 
   return (
     <Primitive.div

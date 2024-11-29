@@ -130,9 +130,9 @@ const TagsInputRoot = React.forwardRef<
   const [isInvalidInput, setIsInvalidInput] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const id = idProp ?? useId();
-  const inputId = `${id}-input`;
-  const labelId = `${id}-label`;
+  const id = useId();
+  const inputId = `${id}input`;
+  const labelId = `${id}label`;
   const dir = useDirection(dirProp);
   const { isFormControl, onTriggerChange } = useFormControl();
   const composedRefs = useComposedRefs(ref, containerRef, (node) => {
