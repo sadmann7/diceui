@@ -1,7 +1,6 @@
+import { composeEventHandlers, composeRefs } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
-import { composeEventHandlers } from "./lib/compose-event-handlers";
-import { composeRefs } from "./lib/compose-refs";
 import { useTagsInput } from "./tags-input-root";
 
 interface TagsInputInputProps

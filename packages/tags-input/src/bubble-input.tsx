@@ -2,9 +2,8 @@
  * @see https://github.com/radix-ui/primitives/blob/main/packages/react/checkbox/src/Checkbox.tsx
  */
 
+import { usePrevious, useSize } from "@diceui/shared";
 import * as React from "react";
-import { usePrevious } from "./hooks/use-previous";
-import { useSize } from "./hooks/use-size";
 
 interface BubbleInputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "value"> {

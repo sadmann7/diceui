@@ -13,7 +13,7 @@ let count = 0;
 
 function useId(deterministicId?: string): string {
   const [id, setId] = React.useState<string | undefined>(
-    typeof useReactId === "function" ? useReactId() : undefined
+    typeof useReactId === "function" ? useReactId() : undefined,
   );
   // React versions older than 18 will have client-side ids only.
   useLayoutEffect(() => {

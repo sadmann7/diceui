@@ -1,5 +1,5 @@
-import { useLayoutEffect } from "@radix-ui/react-use-layout-effect";
 import * as React from "react";
+import { useLayoutEffect } from "./use-layout-effect";
 
 /**
  * @see https://github.com/radix-ui/primitives/blob/main/packages/react/use-size/src/useSize.tsx

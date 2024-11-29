@@ -1,10 +1,13 @@
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { BubbleInput } from "./bubble-input";
-import { useControllableState } from "./hooks/use-controllable-state";
-import { useDirection } from "./hooks/use-direction";
-import { useFormControl } from "./hooks/use-form-control";
-import { useComposedRefs } from "./lib/compose-refs";
+
+import {
+  useComposedRefs,
+  useControllableState,
+  useDirection,
+  useFormControl,
+} from "@diceui/shared";
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 type InputValue = string | Record<string, any>;
