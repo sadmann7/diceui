@@ -239,16 +239,35 @@ const TagsInputRoot = React.forwardRef<
   const onUpdateValue = React.useCallback(
     (index: number, newValue: string) => {
       if (index !== -1) {
-        const updatedValue = createTagValue(newValue);
+        const trimmedValue = newValue.trim();
+
+        if (!duplicate) {
+          const exists = values.some((v, i) => {
+            if (i === index) return false;
+            const valueToCompare =
+              typeof v === "object" && "value" in v ? v.value : v;
+            return valueToCompare === trimmedValue;
+          });
+
+          if (exists) {
+            setIsInvalidInput(true);
+            onInvalid?.(trimmedValue);
+            return;
+          }
+        }
+
+        const updatedValue = createTagValue(trimmedValue);
         const newValues = [...values];
         newValues[index] = updatedValue;
+
         setValues(newValues);
         setFocusedIndex(index);
         setEditingIndex(-1);
+        setIsInvalidInput(false);
         inputRef.current?.focus();
       }
     },
-    [values, setValues, createTagValue],
+    [values, setValues, createTagValue, duplicate, onInvalid],
   );
 
   const onInputKeydown = React.useCallback(
