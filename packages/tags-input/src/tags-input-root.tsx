@@ -25,7 +25,7 @@ interface TagsInputContextValue<T extends InputValue> {
   onValuesChange: (value: TagValue<T>[]) => void;
   onAddValue: (textValue: string) => boolean;
   onRemoveValue: (index: number) => void;
-  onUpdateValue: (index: number, newValue: string) => void;
+  onUpdateValue: (index: number, newTextValue: string) => void;
   onInputKeydown: (event: React.KeyboardEvent) => void;
   focusedIndex: number;
   setFocusedIndex: (index: number) => void;
@@ -237,9 +237,9 @@ const TagsInputRoot = React.forwardRef<
   );
 
   const onUpdateValue = React.useCallback(
-    (index: number, newValue: string) => {
+    (index: number, newTextValue: string) => {
       if (index !== -1) {
-        const trimmedValue = newValue.trim();
+        const trimmedValue = newTextValue.trim();
 
         if (!duplicate) {
           const exists = values.some((v, i) => {
@@ -264,7 +264,8 @@ const TagsInputRoot = React.forwardRef<
         setFocusedIndex(index);
         setEditingIndex(-1);
         setIsInvalidInput(false);
-        inputRef.current?.focus();
+
+        requestAnimationFrame(() => inputRef.current?.focus());
       }
     },
     [values, setValues, createTagValue, duplicate, onInvalid],
