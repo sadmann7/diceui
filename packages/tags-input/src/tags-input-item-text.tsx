@@ -22,6 +22,7 @@ const TagsInputItemText = React.forwardRef<
         autoComplete="off"
         autoCorrect="off"
         autoCapitalize="off"
+        aria-describedby={itemContext.textId}
         type="text"
         value={editValue}
         onInput={(event) => {

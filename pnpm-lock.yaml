@@ -29,6 +29,9 @@ importers:
       '@diceui/tags-input':
         specifier: workspace:*
         version: link:../packages/tags-input
+      '@radix-ui/react-dropdown-menu':
+        specifier: ^2.1.2
+        version: 2.1.2(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-select':
         specifier: ^2.1.2
         version: 2.1.2(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -966,6 +969,19 @@ packages:
 
   '@radix-ui/react-dismissable-layer@1.1.1':
     resolution: {integrity: sha512-QSxg29lfr/xcev6kSz7MAlmDnzbP1eI/Dwn3Tp1ip0KT5CUELsxkekFEMVBEoykI3oV39hKT4TKZzBNMbcTZYQ==}
+    peerDependencies:
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+      react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+
+  '@radix-ui/react-dropdown-menu@2.1.2':
+    resolution: {integrity: sha512-GVZMR+eqK8/Kes0a36Qrv+i20bAPXSn8rCBTHx30w+3ECnR5o3xixAlqcVaYvLeyKUsm0aqyhWfmUcqufM8nYA==}
     peerDependencies:
       '@types/react': '*'
       '@types/react-dom': '*'
@@ -3360,6 +3376,21 @@ snapshots:
       '@radix-ui/react-primitive': 2.0.0(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-use-callback-ref': 1.1.0(@types/react@18.3.12)(react@18.3.1)
       '@radix-ui/react-use-escape-keydown': 1.1.0(@types/react@18.3.12)(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+    optionalDependencies:
+      '@types/react': 18.3.12
+      '@types/react-dom': 18.3.1
+
+  '@radix-ui/react-dropdown-menu@2.1.2(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@radix-ui/primitive': 1.1.0
+      '@radix-ui/react-compose-refs': 1.1.0(@types/react@18.3.12)(react@18.3.1)
+      '@radix-ui/react-context': 1.1.1(@types/react@18.3.12)(react@18.3.1)
+      '@radix-ui/react-id': 1.1.0(@types/react@18.3.12)(react@18.3.1)
+      '@radix-ui/react-menu': 2.1.2(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-primitive': 2.0.0(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-use-controllable-state': 1.1.0(@types/react@18.3.12)(react@18.3.1)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
     optionalDependencies:

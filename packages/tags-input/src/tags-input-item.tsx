@@ -1,3 +1,4 @@
+import { composeEventHandlers, useId } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { createContext, useContext } from "react";
@@ -8,6 +9,7 @@ import {
 } from "./tags-input-root";
 
 interface TagsInputItemContextValue {
+  id: string;
   value: TagValue<InputValue>;
   isFocused: boolean;
   isEditing: boolean;
@@ -42,12 +44,12 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
     const isFocused = index === context.focusedIndex;
     const isEditing = index === context.editingIndex;
     const itemDisabled = disabled || context.disabled;
-    const id =
-      typeof value === "object" && "id" in value ? value.id : value.toString();
-    const textId = `tags-input-item-${id}`;
     const displayValue = context.displayValue(value);
+    const id = useId();
+    const textId = `${id}-text`;
 
     const itemContext: TagsInputItemContextValue = {
+      id,
       value,
       isFocused,
       isEditing,
@@ -60,23 +62,31 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
       <TagsInputItemContext.Provider value={itemContext}>
         <Primitive.div
           ref={ref}
+          id={id}
           data-dice-collection-item=""
           data-focused={isFocused ? "" : undefined}
           data-editing={isEditing ? "" : undefined}
           data-state={isFocused ? "active" : "inactive"}
           data-disabled={itemDisabled ? "" : undefined}
-          onClick={(event) => {
-            event.stopPropagation();
-            if (!isEditing) {
-              context.setFocusedIndex(index);
-              context.inputRef.current?.focus();
-            }
-          }}
-          onDoubleClick={() => {
-            if (context.editable && !itemDisabled) {
-              context.setEditingIndex(index);
-            }
-          }}
+          onClick={composeEventHandlers(
+            tagsInputItemProps.onClick,
+            (event) => {
+              event.stopPropagation();
+              if (!isEditing) {
+                context.setFocusedIndex(index);
+                context.inputRef.current?.focus();
+              }
+            },
+            { checkForDefaultPrevented: false },
+          )}
+          onDoubleClick={composeEventHandlers(
+            tagsInputItemProps.onDoubleClick,
+            () => {
+              if (context.editable && !itemDisabled) {
+                context.setEditingIndex(index);
+              }
+            },
+          )}
           {...tagsInputItemProps}
         />
       </TagsInputItemContext.Provider>

@@ -7,6 +7,7 @@ import {
   useControllableState,
   useDirection,
   useFormControl,
+  useId,
 } from "@diceui/shared";
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -43,7 +44,9 @@ interface TagsInputContextValue<T extends InputValue> {
   loop: boolean;
   dir: "ltr" | "rtl";
   max: number;
-  id?: string;
+  id: string;
+  inputId: string;
+  labelId: string;
 }
 
 const TagsInputContext = React.createContext<
@@ -104,7 +107,7 @@ const TagsInputRoot = React.forwardRef<
     max = 0,
     required = false,
     name,
-    id,
+    id: idProp,
     loop = false,
     convertValue,
     displayValue = (value: TagValue<InputValue>) => {
@@ -127,6 +130,9 @@ const TagsInputRoot = React.forwardRef<
   const [isInvalidInput, setIsInvalidInput] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const id = idProp ?? useId();
+  const inputId = `${id}-input`;
+  const labelId = `${id}-label`;
   const dir = useDirection(dirProp);
   const { isFormControl, onTriggerChange } = useFormControl();
   const composedRefs = useComposedRefs(ref, containerRef, (node) => {
@@ -410,6 +416,8 @@ const TagsInputRoot = React.forwardRef<
     dir,
     max,
     id,
+    inputId,
+    labelId,
   };
 
   return (
@@ -421,7 +429,6 @@ const TagsInputRoot = React.forwardRef<
         data-disabled={disabled ? "" : undefined}
         onClick={(event) => {
           const target = event.target;
-
           if (!(target instanceof HTMLElement)) return;
 
           if (

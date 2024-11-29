@@ -11,16 +11,6 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
     const { autoFocus, ...tagsInputInputProps } = props;
     const context = useTagsInput();
 
-    function onBlur(event: React.FocusEvent<HTMLInputElement>) {
-      if (!context.addOnBlur) return;
-
-      const value = event.target.value;
-      if (!value) return;
-
-      const isAdded = context.onAddValue(value);
-      if (isAdded) event.target.value = "";
-    }
-
     function onTab(event: React.KeyboardEvent<HTMLInputElement>) {
       if (!context.addOnTab) return;
       onCustomKeydown(event);
@@ -55,16 +45,6 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
       }
     }
 
-    function onPaste(event: React.ClipboardEvent<HTMLInputElement>) {
-      if (context.addOnPaste) {
-        event.preventDefault();
-        const value = event.clipboardData.getData("text");
-
-        context.onAddValue(value);
-        context.setFocusedIndex(-1);
-      }
-    }
-
     React.useEffect(() => {
       if (autoFocus) {
         requestAnimationFrame(() => {
@@ -76,11 +56,13 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
     return (
       <Primitive.input
         ref={composeRefs(context.inputRef, ref)}
+        id={context.inputId}
+        aria-labelledby={context.labelId}
         autoFocus={autoFocus}
-        type="text"
         autoComplete="off"
         autoCorrect="off"
         autoCapitalize="off"
+        type="text"
         disabled={context.disabled}
         data-invalid={context.isInvalidInput ? "" : undefined}
         onInput={composeEventHandlers(tagsInputInputProps.onInput, onInput)}
@@ -94,9 +76,30 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
               context.setFocusedIndex(-1);
             }
           },
+          { checkForDefaultPrevented: false },
         )}
-        onBlur={composeEventHandlers(tagsInputInputProps.onBlur, onBlur)}
-        onPaste={composeEventHandlers(tagsInputInputProps.onPaste, onPaste)}
+        onBlur={composeEventHandlers(tagsInputInputProps.onBlur, (event) => {
+          if (!context.addOnBlur) return;
+
+          const value = event.target.value;
+          if (!value) return;
+
+          const isAdded = context.onAddValue(value);
+          if (isAdded) event.target.value = "";
+        })}
+        onPaste={composeEventHandlers(
+          tagsInputInputProps.onPaste,
+          (event) => {
+            if (context.addOnPaste) {
+              event.preventDefault();
+              const value = event.clipboardData.getData("text");
+
+              context.onAddValue(value);
+              context.setFocusedIndex(-1);
+            }
+          },
+          { checkForDefaultPrevented: false },
+        )}
         {...tagsInputInputProps}
       />
     );
