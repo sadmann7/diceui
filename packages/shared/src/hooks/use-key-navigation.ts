@@ -8,7 +8,7 @@ interface UseKeyNavigationProps {
   itemSelector?: string;
   dir?: "ltr" | "rtl";
   loop?: boolean;
-  arrowKeyOptions?: "horizontal" | "vertical" | "both";
+  orientation?: "horizontal" | "vertical" | "both";
   preventScroll?: boolean;
   focus?: boolean;
 }
@@ -21,7 +21,7 @@ export function useKeyNavigation({
   itemSelector = "[data-dice-collection-item]",
   dir = "ltr",
   loop = false,
-  arrowKeyOptions = "both",
+  orientation = "both",
   preventScroll = true,
   focus = false,
 }: UseKeyNavigationProps) {
@@ -70,8 +70,8 @@ export function useKeyNavigation({
         (!event.key.startsWith("Arrow") &&
           event.key !== "Home" &&
           event.key !== "End") ||
-        (arrowKeyOptions === "vertical" && goingHorizontal) ||
-        (arrowKeyOptions === "horizontal" && goingVertical)
+        (orientation === "vertical" && goingHorizontal) ||
+        (orientation === "horizontal" && goingVertical)
       ) {
         return;
       }
@@ -139,7 +139,7 @@ export function useKeyNavigation({
       findNextEnabledIndex,
       itemCount,
       onIndexChange,
-      arrowKeyOptions,
+      orientation,
       preventScroll,
       focus,
       itemSelector,
