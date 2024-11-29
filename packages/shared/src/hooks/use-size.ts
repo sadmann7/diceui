@@ -1,9 +1,9 @@
-import * as React from "react";
-import { useLayoutEffect } from "./use-layout-effect";
-
 /**
  * @see https://github.com/radix-ui/primitives/blob/main/packages/react/use-size/src/useSize.tsx
  */
+
+import * as React from "react";
+import { useLayoutEffect } from "./use-layout-effect";
 
 function useSize(element: HTMLElement | null) {
   const [size, setSize] = React.useState<

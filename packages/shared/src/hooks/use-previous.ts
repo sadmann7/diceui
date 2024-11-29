@@ -1,8 +1,8 @@
-import * as React from "react";
-
 /**
  * @see https://github.com/radix-ui/primitives/blob/main/packages/react/use-previous/src/usePrevious.tsx
  */
+
+import * as React from "react";
 
 function usePrevious<T>(value: T) {
   const ref = React.useRef({ value, previous: value });

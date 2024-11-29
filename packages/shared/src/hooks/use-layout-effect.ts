@@ -1,8 +1,8 @@
-import * as React from "react";
-
 /**
  * @see https://github.com/radix-ui/primitives/blob/main/packages/react/use-layout-effect/src/useLayoutEffect.tsx
  */
+
+import * as React from "react";
 
 /**
  * On the server, React emits a warning when calling `useLayoutEffect`.

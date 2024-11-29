@@ -1,10 +1,10 @@
-import * as React from "react";
-
-import { useCallbackRef } from "./use-callback-ref";
-
 /**
  * @see https://github.com/radix-ui/primitives/blob/main/packages/react/use-controllable-state/src/useControllableState.tsx
  */
+
+import * as React from "react";
+
+import { useCallbackRef } from "./use-callback-ref";
 
 type UseControllableStateParams<T> = {
   prop?: T | undefined;
@@ -39,7 +39,7 @@ function useControllableState<T>({
           setUncontrolledProp(nextValue);
         }
       },
-      [isControlled, prop, setUncontrolledProp, handleChange],
+      [isControlled, prop, setUncontrolledProp, handleChange]
     );
 
   return [value, setValue] as const;
