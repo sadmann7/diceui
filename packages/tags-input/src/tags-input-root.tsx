@@ -30,6 +30,8 @@ interface TagsInputContextValue<T extends InputValue> {
   setFocusedIndex: (index: number) => void;
   editingIndex: number;
   setEditingIndex: (index: number) => void;
+  displayValue: (value: TagValue<T>) => string;
+  inputRef: React.RefObject<HTMLInputElement>;
   isInvalidInput: boolean;
   addOnPaste: boolean;
   addOnTab: boolean;
@@ -37,13 +39,11 @@ interface TagsInputContextValue<T extends InputValue> {
   disabled: boolean;
   editable: boolean;
   delimiter: string;
+  duplicate: boolean;
+  loop: boolean;
   dir: "ltr" | "rtl";
   max: number;
   id?: string;
-  displayValue: (value: TagValue<T>) => string;
-  inputRef: React.RefObject<HTMLInputElement>;
-  duplicate: boolean;
-  loop: boolean;
 }
 
 const TagsInputContext = React.createContext<
@@ -261,21 +261,57 @@ const TagsInputRoot = React.forwardRef<
         return;
       }
 
+      const findNextEnabledIndex = (
+        currentIndex: number,
+        direction: "next" | "prev",
+      ): number => {
+        const containerElement = containerRef.current;
+        if (!containerElement) return -1;
+
+        const tagItems = Array.from(
+          containerElement.querySelectorAll("[data-tag-item]"),
+        );
+        let nextIndex = currentIndex;
+
+        do {
+          if (direction === "next") {
+            nextIndex =
+              nextIndex >= values.length - 1 ? (loop ? 0 : -1) : nextIndex + 1;
+          } else {
+            nextIndex =
+              nextIndex <= 0 ? (loop ? values.length - 1 : -1) : nextIndex - 1;
+          }
+
+          if (nextIndex === -1) break;
+
+          const tagItem = tagItems[nextIndex];
+          if (tagItem && !tagItem.hasAttribute("data-disabled")) {
+            return nextIndex;
+          }
+        } while (
+          nextIndex !== currentIndex &&
+          (loop || (nextIndex >= 0 && nextIndex < values.length))
+        );
+
+        return -1;
+      };
+
       switch (event.key) {
         case "Delete":
         case "Backspace": {
           if (target.selectionStart !== 0 || target.selectionEnd !== 0) break;
 
           if (focusedIndex !== -1) {
-            const newIndex =
-              focusedIndex === values.length - 1
-                ? focusedIndex - 1
-                : focusedIndex;
+            const newIndex = findNextEnabledIndex(focusedIndex, "prev");
             onRemoveValue(focusedIndex);
             setFocusedIndex(newIndex);
             event.preventDefault();
           } else if (event.key === "Backspace" && values.length > 0) {
-            setFocusedIndex(values.length - 1);
+            const lastEnabledIndex = findNextEnabledIndex(
+              values.length,
+              "prev",
+            );
+            setFocusedIndex(lastEnabledIndex);
             event.preventDefault();
           }
           break;
@@ -296,40 +332,42 @@ const TagsInputRoot = React.forwardRef<
             focusedIndex === -1 &&
             values.length > 0
           ) {
-            setFocusedIndex(values.length - 1);
+            const lastEnabledIndex = findNextEnabledIndex(
+              values.length,
+              "prev",
+            );
+            setFocusedIndex(lastEnabledIndex);
             event.preventDefault();
           } else if (focusedIndex !== -1) {
-            if (isArrowLeft) {
-              if (focusedIndex > 0) {
-                setFocusedIndex(focusedIndex - 1);
-              } else if (loop) {
-                setFocusedIndex(values.length - 1);
-              }
+            const nextIndex = findNextEnabledIndex(
+              focusedIndex,
+              isArrowLeft ? "prev" : "next",
+            );
+            if (nextIndex !== -1) {
+              setFocusedIndex(nextIndex);
               event.preventDefault();
             } else if (isArrowRight) {
-              if (focusedIndex < values.length - 1) {
-                setFocusedIndex(focusedIndex + 1);
-              } else if (loop) {
-                setFocusedIndex(0);
-              } else {
-                setFocusedIndex(-1);
-                target.setSelectionRange(0, 0);
-              }
-              event.preventDefault();
+              setFocusedIndex(-1);
+              target.setSelectionRange(0, 0);
             }
           }
           break;
         }
         case "Home": {
           if (focusedIndex !== -1) {
-            setFocusedIndex(0);
+            const firstEnabledIndex = findNextEnabledIndex(-1, "next");
+            setFocusedIndex(firstEnabledIndex);
             event.preventDefault();
           }
           break;
         }
         case "End": {
           if (focusedIndex !== -1) {
-            setFocusedIndex(values.length - 1);
+            const lastEnabledIndex = findNextEnabledIndex(
+              values.length,
+              "prev",
+            );
+            setFocusedIndex(lastEnabledIndex);
             event.preventDefault();
           }
           break;
@@ -356,6 +394,8 @@ const TagsInputRoot = React.forwardRef<
     setFocusedIndex,
     editingIndex,
     setEditingIndex,
+    displayValue,
+    inputRef,
     isInvalidInput,
     addOnPaste,
     addOnTab,
@@ -363,13 +403,11 @@ const TagsInputRoot = React.forwardRef<
     disabled,
     editable,
     delimiter,
+    duplicate,
+    loop,
     dir,
     max,
     id,
-    displayValue,
-    inputRef,
-    duplicate,
-    loop,
   };
 
   return (

@@ -28,7 +28,7 @@ export default function PlaygroundPage() {
         <TagsInputContent>
           {fruits.map((fruit, index) => (
             // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-            <TagsInputItem key={index} value={fruit}>
+            <TagsInputItem key={index} value={fruit} disabled={index % 2 === 0}>
               {fruit}
             </TagsInputItem>
           ))}
