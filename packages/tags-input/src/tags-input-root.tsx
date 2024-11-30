@@ -169,17 +169,17 @@ const TagsInputRoot = React.forwardRef<
   const [focusedIndex, setFocusedIndex] = React.useState<number>(-1);
   const [editingIndex, setEditingIndex] = React.useState<number>(-1);
   const [isInvalidInput, setIsInvalidInput] = React.useState(false);
-  const containerRef = React.useRef<HTMLDivElement>(null);
+  const collectionRef = React.useRef<HTMLDivElement>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const id = useId();
   const inputId = `${id}input`;
   const labelId = `${id}label`;
   const dir = useDirection(dirProp);
   const { isFormControl, onTriggerChange } = useFormControl();
-  const composedRefs = useComposedRefs(ref, containerRef, (node) => {
+  const composedRefs = useComposedRefs(ref, collectionRef, (node) => {
     onTriggerChange(node);
   });
-  const { getItems } = useCollection({ ref: containerRef });
+  const { getItems } = useCollection({ ref: collectionRef });
 
   const onAddValue = React.useCallback(
     (textValue: string) => {
@@ -309,8 +309,8 @@ const TagsInputRoot = React.forwardRef<
         currentIndex: number,
         direction: "next" | "prev",
       ): number => {
-        const containerElement = containerRef.current;
-        if (!containerElement) return -1;
+        const collectionElement = collectionRef.current;
+        if (!collectionElement) return -1;
 
         const enabledItems = getItems().filter(
           (item) => !item.hasAttribute("data-disabled"),
@@ -475,7 +475,7 @@ const TagsInputRoot = React.forwardRef<
           if (!(target instanceof HTMLElement)) return;
 
           if (
-            containerRef.current?.contains(target) &&
+            collectionRef.current?.contains(target) &&
             !target.hasAttribute("data-dice-collection-item") &&
             target.tagName !== "INPUT"
           ) {
@@ -489,7 +489,7 @@ const TagsInputRoot = React.forwardRef<
         {children}
         {isFormControl && name && (
           <BubbleInput
-            control={containerRef.current}
+            control={collectionRef.current}
             name={name}
             value={values.map((v) => displayValue(v))}
             required={required}
