@@ -1,16 +1,12 @@
-import { composeEventHandlers, useId } from "@diceui/shared";
+import { composeEventHandlers, composeRefs, useId } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { createContext, useContext } from "react";
-import {
-  type InputValue,
-  type TagValue,
-  useTagsInput,
-} from "./tags-input-root";
+import { type InputValue, useTagsInput } from "./tags-input-root";
 
 interface TagsInputItemContextValue {
   id: string;
-  value: TagValue<InputValue>;
+  value: InputValue;
   isFocused: boolean;
   isEditing: boolean;
   disabled?: boolean;
@@ -32,7 +28,7 @@ export function useTagsInputItem() {
 
 interface TagsInputItemProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
-  value: TagValue<InputValue>;
+  value: InputValue;
   disabled?: boolean;
 }
 
@@ -40,13 +36,13 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
   (props, ref) => {
     const { value, disabled, ...tagsInputItemProps } = props;
     const context = useTagsInput();
+    const id = useId();
+    const textId = `${id}text`;
     const index = context.values.indexOf(value);
     const isFocused = index === context.focusedIndex;
     const isEditing = index === context.editingIndex;
     const itemDisabled = disabled || context.disabled;
     const displayValue = context.displayValue(value);
-    const id = useId();
-    const textId = `${id}text`;
 
     const itemContext: TagsInputItemContextValue = {
       id,

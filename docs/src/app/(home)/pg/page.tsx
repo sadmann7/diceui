@@ -40,16 +40,9 @@ import {
 export default function PlaygroundPage() {
   const [fruits, setFruits] = React.useState<string[]>([]);
 
-  console.log({ fruits });
-
   return (
     <Shell>
-      <TagsInput
-        value={fruits}
-        onValueChange={(value) => setFruits(value as string[])}
-        duplicate
-        editable
-      >
+      <TagsInput value={fruits} onValueChange={setFruits} duplicate editable>
         <TagsInputLabel>Fruits</TagsInputLabel>
         <TagsInputContent>
           {fruits.map((fruit, index) => (

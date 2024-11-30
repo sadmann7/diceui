@@ -3,6 +3,7 @@ import * as React from "react";
 import { BubbleInput } from "./bubble-input";
 
 import {
+  useCollection,
   useComposedRefs,
   useControllableState,
   useDirection,
@@ -10,19 +11,11 @@ import {
   useId,
 } from "@diceui/shared";
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-type InputValue = string | Record<string, any>;
+type InputValue = string;
 
-interface TagItem {
-  id: string;
-  value: string;
-}
-
-type TagValue<T> = T extends string ? T | TagItem : T;
-
-interface TagsInputContextValue<T extends InputValue> {
-  values: TagValue<T>[];
-  onValuesChange: (value: TagValue<T>[]) => void;
+interface TagsInputContextValue<T = InputValue> {
+  values: T[];
+  onValuesChange: (value: T[]) => void;
   onAddValue: (textValue: string) => boolean;
   onRemoveValue: (index: number) => void;
   onUpdateValue: (index: number, newTextValue: string) => void;
@@ -31,7 +24,7 @@ interface TagsInputContextValue<T extends InputValue> {
   setFocusedIndex: (index: number) => void;
   editingIndex: number;
   setEditingIndex: (index: number) => void;
-  displayValue: (value: TagValue<T>) => string;
+  displayValue: (value: T) => string;
   inputRef: React.RefObject<HTMLInputElement>;
   isInvalidInput: boolean;
   addOnPaste: boolean;
@@ -61,21 +54,21 @@ export function useTagsInput() {
   return context;
 }
 
-interface TagsInputRootProps<T extends InputValue>
+interface TagsInputRootProps<T = InputValue>
   extends Omit<
     React.ComponentPropsWithoutRef<typeof Primitive.div>,
     "value" | "defaultValue" | "onValueChange" | "onInvalid"
   > {
-  value?: TagValue<T>[];
-  defaultValue?: TagValue<T>[];
-  onValueChange?: (value: TagValue<T>[]) => void;
-  onInvalid?: (value: TagValue<T>) => void;
+  value?: T[];
+  defaultValue?: T[];
+  onValueChange?: (value: T[]) => void;
+  onInvalid?: (value: T) => void;
   addOnPaste?: boolean;
   addOnTab?: boolean;
   addOnBlur?: boolean;
   duplicate?: boolean;
-  disabled?: boolean;
   editable?: boolean;
+  disabled?: boolean;
   delimiter?: string;
   dir?: "ltr" | "rtl";
   max?: number;
@@ -83,8 +76,7 @@ interface TagsInputRootProps<T extends InputValue>
   name?: string;
   loop?: boolean;
   id?: string;
-  convertValue?: (value: string) => T;
-  displayValue?: (value: TagValue<T>) => string;
+  displayValue?: (value: T) => string;
 }
 
 const TagsInputRoot = React.forwardRef<
@@ -100,8 +92,8 @@ const TagsInputRoot = React.forwardRef<
     addOnTab = false,
     addOnBlur = false,
     duplicate = false,
-    disabled = false,
     editable = false,
+    disabled = false,
     delimiter = ",",
     dir: dirProp,
     max = 0,
@@ -109,13 +101,7 @@ const TagsInputRoot = React.forwardRef<
     name,
     id: idProp,
     loop = false,
-    convertValue,
-    displayValue = (value: TagValue<InputValue>) => {
-      if (typeof value === "object" && "value" in value) {
-        return value.value;
-      }
-      return value.toString();
-    },
+    displayValue = (value: InputValue) => value.toString(),
     children,
     ...tagInputProps
   } = props;
@@ -138,20 +124,17 @@ const TagsInputRoot = React.forwardRef<
   const composedRefs = useComposedRefs(ref, containerRef, (node) => {
     onTriggerChange(node);
   });
+  const { getEnabledItems } = useCollection({ ref: containerRef });
 
   const createTagValue = React.useCallback(
-    (textValue: string): TagValue<InputValue> => {
+    (textValue: string): InputValue => {
       if (duplicate) {
-        const tagItem: TagItem = {
-          id: crypto.randomUUID(),
-          value: textValue,
-        };
-        return tagItem;
+        return textValue;
       }
 
-      return convertValue ? convertValue(textValue) : textValue;
+      return textValue;
     },
-    [duplicate, convertValue],
+    [duplicate],
   );
 
   const onAddValue = React.useCallback(
@@ -190,8 +173,7 @@ const TagsInputRoot = React.forwardRef<
 
       if (!duplicate) {
         const exists = values.some((v) => {
-          const valueToCompare =
-            typeof v === "object" && "value" in v ? v.value : v;
+          const valueToCompare = v;
           return valueToCompare === trimmedValue;
         });
 
@@ -230,8 +212,7 @@ const TagsInputRoot = React.forwardRef<
         if (!duplicate) {
           const exists = values.some((v, i) => {
             if (i === index) return false;
-            const valueToCompare =
-              typeof v === "object" && "value" in v ? v.value : v;
+            const valueToCompare = v;
             return valueToCompare === trimmedValue;
           });
 
@@ -296,9 +277,7 @@ const TagsInputRoot = React.forwardRef<
         const containerElement = containerRef.current;
         if (!containerElement) return -1;
 
-        const tagItems = Array.from(
-          containerElement.querySelectorAll("[data-dice-collection-item]"),
-        );
+        const enabledItems = getEnabledItems();
         let nextIndex = currentIndex;
 
         do {
@@ -312,8 +291,8 @@ const TagsInputRoot = React.forwardRef<
 
           if (nextIndex === -1) break;
 
-          const tagItem = tagItems[nextIndex];
-          if (tagItem && !tagItem.hasAttribute("data-disabled")) {
+          const item = enabledItems[nextIndex];
+          if (item && !item.hasAttribute("data-disabled")) {
             return nextIndex;
           }
         } while (
@@ -408,7 +387,16 @@ const TagsInputRoot = React.forwardRef<
         }
       }
     },
-    [focusedIndex, values.length, onRemoveValue, dir, editable, disabled, loop],
+    [
+      focusedIndex,
+      values.length,
+      onRemoveValue,
+      dir,
+      editable,
+      disabled,
+      loop,
+      getEnabledItems,
+    ],
   );
 
   const contextValue: TagsInputContextValue<InputValue> = {
@@ -428,8 +416,8 @@ const TagsInputRoot = React.forwardRef<
     addOnPaste,
     addOnTab,
     addOnBlur,
-    disabled,
     editable,
+    disabled,
     delimiter,
     duplicate,
     loop,
@@ -484,4 +472,4 @@ const Root = TagsInputRoot;
 
 export { Root, TagsInputRoot };
 
-export type { InputValue, TagItem, TagsInputRootProps, TagValue };
+export type { InputValue, TagsInputRootProps };

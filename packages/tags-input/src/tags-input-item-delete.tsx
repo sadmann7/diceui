@@ -1,3 +1,4 @@
+import { composeEventHandlers } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { useTagsInputItem } from "./tags-input-item";
@@ -14,12 +15,6 @@ const TagsInputItemDelete = React.forwardRef<
   const itemContext = useTagsInputItem();
   const disabled = itemContext.disabled || context.disabled;
 
-  function onTagDelete() {
-    if (disabled) return;
-    const index = context.values.findIndex((i) => i === itemContext.value);
-    context.onRemoveValue(index);
-  }
-
   if (itemContext.isEditing) return null;
 
   return (
@@ -32,7 +27,11 @@ const TagsInputItemDelete = React.forwardRef<
       aria-current={itemContext.isFocused}
       data-state={itemContext.isFocused ? "active" : "inactive"}
       data-disabled={disabled ? "" : undefined}
-      onClick={onTagDelete}
+      onClick={composeEventHandlers(props.onClick, () => {
+        if (disabled) return;
+        const index = context.values.findIndex((i) => i === itemContext.value);
+        context.onRemoveValue(index);
+      })}
       {...props}
     />
   );
