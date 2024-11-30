@@ -126,17 +126,6 @@ const TagsInputRoot = React.forwardRef<
   });
   const { getEnabledItems } = useCollection({ ref: containerRef });
 
-  const createTagValue = React.useCallback(
-    (textValue: string): InputValue => {
-      if (duplicate) {
-        return textValue;
-      }
-
-      return textValue;
-    },
-    [duplicate],
-  );
-
   const onAddValue = React.useCallback(
     (textValue: string) => {
       if (addOnPaste) {
@@ -184,7 +173,7 @@ const TagsInputRoot = React.forwardRef<
         }
       }
 
-      const newValue = createTagValue(trimmedValue);
+      const newValue = trimmedValue;
       const newValues = [...values, newValue];
       setValues(newValues);
       setFocusedIndex(-1);
@@ -192,16 +181,7 @@ const TagsInputRoot = React.forwardRef<
       setIsInvalidInput(false);
       return true;
     },
-    [
-      values,
-      max,
-      duplicate,
-      addOnPaste,
-      delimiter,
-      setValues,
-      onInvalid,
-      createTagValue,
-    ],
+    [values, max, duplicate, addOnPaste, delimiter, setValues, onInvalid],
   );
 
   const onUpdateValue = React.useCallback(
@@ -223,7 +203,7 @@ const TagsInputRoot = React.forwardRef<
           }
         }
 
-        const updatedValue = createTagValue(trimmedValue);
+        const updatedValue = displayValue(trimmedValue);
         const newValues = [...values];
         newValues[index] = updatedValue;
 
@@ -235,7 +215,7 @@ const TagsInputRoot = React.forwardRef<
         requestAnimationFrame(() => inputRef.current?.focus());
       }
     },
-    [values, setValues, createTagValue, duplicate, onInvalid],
+    [values, setValues, displayValue, duplicate, onInvalid],
   );
 
   const onRemoveValue = React.useCallback(
