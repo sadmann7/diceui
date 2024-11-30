@@ -25,6 +25,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import { Sortable, SortableItem } from "@/components/ui/sortable";
+
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
@@ -42,18 +44,26 @@ export default function PlaygroundPage() {
 
   return (
     <Shell>
-      <TagsInput value={fruits} onValueChange={setFruits} editable>
-        <TagsInputLabel>Fruits</TagsInputLabel>
-        <TagsInputContent>
-          {fruits.map((fruit) => (
-            <TagsInputItem key={fruit} value={fruit}>
-              {fruit}
-            </TagsInputItem>
-          ))}
-          <TagsInputInput placeholder="Add fruit..." />
-        </TagsInputContent>
-        <TagsInputClear />
-      </TagsInput>
+      <Sortable
+        value={fruits.map((fruit) => ({ id: fruit }))}
+        onValueChange={(value) => setFruits(value.map((item) => item.id))}
+        orientation="horizontal"
+      >
+        <TagsInput value={fruits} onValueChange={setFruits} editable>
+          <TagsInputLabel>Fruits</TagsInputLabel>
+          <TagsInputContent>
+            {fruits.map((fruit) => (
+              <SortableItem key={fruit} value={fruit} asTrigger>
+                <TagsInputItem key={fruit} value={fruit}>
+                  {fruit}
+                </TagsInputItem>
+              </SortableItem>
+            ))}
+            <TagsInputInput placeholder="Add fruit..." />
+          </TagsInputContent>
+          <TagsInputClear />
+        </TagsInput>
+      </Sortable>
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="w-fit">
