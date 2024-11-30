@@ -59,7 +59,7 @@ interface TagsInputRootProps<T = InputValue>
   /** Initial array of tag values when uncontrolled. */
   defaultValue?: T[];
 
-  /** Callback function to handle changes in the tag values */
+  /** Callback function to handle changes in the tag values. */
   onValueChange?: (value: T[]) => void;
 
   /** Callback function to handle invalid input. */
@@ -69,25 +69,25 @@ interface TagsInputRootProps<T = InputValue>
   displayValue?: (value: T) => string;
 
   /**
-   * Enables adding tags by pasting text, which will be split by the delimiter.
+   * Enable adding tags by pasting text, which will be split by the delimiter.
    * @default false
    */
   addOnPaste?: boolean;
 
   /**
-   * Enables adding tags when Tab key is pressed
+   * Enable adding tags when Tab key is pressed.
    * @default false
    */
   addOnTab?: boolean;
 
   /**
-   * Enables adding tags when input loses focus.
+   * Enable adding tags when input loses focus.
    * @default false
    */
   addOnBlur?: boolean;
 
   /**
-   * Allows editing of existing tags
+   * Allow editing of existing tags
    * @default false
    */
   editable?: boolean;
@@ -99,7 +99,7 @@ interface TagsInputRootProps<T = InputValue>
   disabled?: boolean;
 
   /**
-   * Character used to split pasted text into multiple tags
+   * Character used to split pasted text into multiple tags.
    * @default ","
    */
   delimiter?: string;
@@ -116,19 +116,19 @@ interface TagsInputRootProps<T = InputValue>
    */
   max?: number;
 
-  /** Whether the field is required in a form context */
+  /** Whether the field is required in a form context. */
   required?: boolean;
 
-  /** Name of the form field when used in a form */
+  /** Name of the form field when used in a form. */
   name?: string;
 
   /**
-   * Enables wrapping focus from last to first tag and vice versa
+   * Enable wrapping focus from last to first tag and vice versa.
    * @default false
    */
   loop?: boolean;
 
-  /** Custom ID for the component */
+  /** Unique identifier for the tags input. */
   id?: string;
 }
 
@@ -391,9 +391,7 @@ const TagsInputRoot = React.forwardRef<
               event.preventDefault();
             } else if (isArrowRight) {
               setFocusedValue(null);
-              requestAnimationFrame(() => {
-                target.setSelectionRange(0, 0);
-              });
+              requestAnimationFrame(() => target.setSelectionRange(0, 0));
             }
           }
           break;
@@ -417,7 +415,7 @@ const TagsInputRoot = React.forwardRef<
         case "Escape": {
           setFocusedValue(null);
           setEditingValue(null);
-          target.setSelectionRange(0, 0);
+          requestAnimationFrame(() => target.setSelectionRange(0, 0));
           break;
         }
       }
