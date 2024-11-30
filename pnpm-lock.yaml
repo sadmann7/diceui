@@ -142,84 +142,21 @@ importers:
       '@diceui/shared':
         specifier: workspace:*
         version: link:../shared
-      '@radix-ui/number':
-        specifier: ^1.1.0
-        version: 1.1.0
-      '@radix-ui/primitive':
-        specifier: ^1.1.0
-        version: 1.1.0
-      '@radix-ui/react-collection':
-        specifier: ^1.1.0
-        version: 1.1.0(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@radix-ui/react-compose-refs':
-        specifier: ^1.1.0
-        version: 1.1.0(@types/react@18.3.12)(react@18.3.1)
-      '@radix-ui/react-context':
-        specifier: ^1.1.1
-        version: 1.1.1(@types/react@18.3.12)(react@18.3.1)
-      '@radix-ui/react-direction':
-        specifier: ^1.1.0
-        version: 1.1.0(@types/react@18.3.12)(react@18.3.1)
-      '@radix-ui/react-dismissable-layer':
-        specifier: ^1.1.1
-        version: 1.1.1(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@radix-ui/react-focus-guards':
-        specifier: ^1.1.1
-        version: 1.1.1(@types/react@18.3.12)(react@18.3.1)
-      '@radix-ui/react-focus-scope':
-        specifier: ^1.1.0
-        version: 1.1.0(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@radix-ui/react-id':
-        specifier: ^1.1.0
-        version: 1.1.0(@types/react@18.3.12)(react@18.3.1)
-      '@radix-ui/react-menu':
-        specifier: ^2.1.2
-        version: 2.1.2(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@radix-ui/react-popper':
-        specifier: ^1.2.0
-        version: 1.2.0(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@radix-ui/react-portal':
-        specifier: ^1.1.2
-        version: 1.1.2(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-primitive':
         specifier: ^2.0.0
         version: 2.0.0(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@radix-ui/react-slot':
-        specifier: ^1.1.0
-        version: 1.1.0(@types/react@18.3.12)(react@18.3.1)
-      '@radix-ui/react-use-callback-ref':
-        specifier: ^1.1.0
-        version: 1.1.0(@types/react@18.3.12)(react@18.3.1)
-      '@radix-ui/react-use-controllable-state':
-        specifier: ^1.1.0
-        version: 1.1.0(@types/react@18.3.12)(react@18.3.1)
-      '@radix-ui/react-use-layout-effect':
-        specifier: ^1.1.0
-        version: 1.1.0(@types/react@18.3.12)(react@18.3.1)
-      '@radix-ui/react-use-previous':
-        specifier: ^1.1.0
-        version: 1.1.0(@types/react@18.3.12)(react@18.3.1)
-      '@radix-ui/react-visually-hidden':
-        specifier: ^1.1.0
-        version: 1.1.0(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/react':
         specifier: '*'
         version: 18.3.12
       '@types/react-dom':
         specifier: '*'
         version: 18.3.1
-      aria-hidden:
-        specifier: ^1.2.4
-        version: 1.2.4
       react:
         specifier: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
         version: 18.3.1
       react-dom:
         specifier: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
         version: 18.3.1(react@18.3.1)
-      react-remove-scroll:
-        specifier: ^2.6.0
-        version: 2.6.0(@types/react@18.3.12)(react@18.3.1)
     devDependencies:
       '@types/node':
         specifier: ^22.7.4

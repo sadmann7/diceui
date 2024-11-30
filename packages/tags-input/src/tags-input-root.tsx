@@ -63,6 +63,7 @@ interface TagsInputRootProps<T = InputValue>
   defaultValue?: T[];
   onValueChange?: (value: T[]) => void;
   onInvalid?: (value: T) => void;
+  displayValue?: (value: T) => string;
   addOnPaste?: boolean;
   addOnTab?: boolean;
   addOnBlur?: boolean;
@@ -76,7 +77,6 @@ interface TagsInputRootProps<T = InputValue>
   name?: string;
   loop?: boolean;
   id?: string;
-  displayValue?: (value: T) => string;
 }
 
 const TagsInputRoot = React.forwardRef<
