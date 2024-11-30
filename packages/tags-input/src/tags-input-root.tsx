@@ -222,20 +222,6 @@ const TagsInputRoot = React.forwardRef<
     ],
   );
 
-  const onRemoveValue = React.useCallback(
-    (index: number) => {
-      if (index !== -1) {
-        const newValues = [...values];
-        newValues.splice(index, 1);
-        setValues(newValues);
-        setFocusedIndex(-1);
-        setEditingIndex(-1);
-        inputRef.current?.focus();
-      }
-    },
-    [values, setValues],
-  );
-
   const onUpdateValue = React.useCallback(
     (index: number, newTextValue: string) => {
       if (index !== -1) {
@@ -269,6 +255,20 @@ const TagsInputRoot = React.forwardRef<
       }
     },
     [values, setValues, createTagValue, duplicate, onInvalid],
+  );
+
+  const onRemoveValue = React.useCallback(
+    (index: number) => {
+      if (index !== -1) {
+        const newValues = [...values];
+        newValues.splice(index, 1);
+        setValues(newValues);
+        setFocusedIndex(-1);
+        setEditingIndex(-1);
+        inputRef.current?.focus();
+      }
+    },
+    [values, setValues],
   );
 
   const onInputKeydown = React.useCallback(
