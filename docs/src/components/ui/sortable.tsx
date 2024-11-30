@@ -289,13 +289,13 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
     return (
       <SortableItemContext.Provider value={context}>
         <Comp
+          ref={composeRefs(ref, (node) => setNodeRef(node))}
           data-state={isDragging ? "dragging" : undefined}
           className={cn(
             "data-[state=dragging]:cursor-grabbing",
             { "cursor-grab": !isDragging && asTrigger },
             className,
           )}
-          ref={composeRefs(ref, setNodeRef as React.Ref<HTMLDivElement>)}
           style={style}
           {...(asTrigger ? attributes : {})}
           {...(asTrigger ? listeners : {})}

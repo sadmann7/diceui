@@ -3,13 +3,15 @@ import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { useTagsInput } from "./tags-input-root";
 
+const INPUT_NAME = "TagsInputInput";
+
 interface TagsInputInputProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.input> {}
 
 const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
   (props, ref) => {
     const { autoFocus, ...tagsInputInputProps } = props;
-    const context = useTagsInput();
+    const context = useTagsInput(INPUT_NAME);
 
     function onTab(event: React.KeyboardEvent<HTMLInputElement>) {
       if (!context.addOnTab) return;
@@ -100,7 +102,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
   },
 );
 
-TagsInputInput.displayName = "TagsInputInput";
+TagsInputInput.displayName = INPUT_NAME;
 
 const Input = TagsInputInput;
 

@@ -1,8 +1,9 @@
-import { composeEventHandlers, composeRefs, useId } from "@diceui/shared";
+import { composeEventHandlers, createContext, useId } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
-import { createContext, useContext } from "react";
 import { type InputValue, useTagsInput } from "./tags-input-root";
+
+const ITEM_NAME = "TagsInputItem";
 
 interface TagsInputItemContextValue {
   id: string;
@@ -14,17 +15,8 @@ interface TagsInputItemContextValue {
   displayValue: string;
 }
 
-const TagsInputItemContext = createContext<
-  TagsInputItemContextValue | undefined
->(undefined);
-
-export function useTagsInputItem() {
-  const context = useContext(TagsInputItemContext);
-  if (!context) {
-    throw new Error("useTagsInputItem must be used within a TagsInputItem");
-  }
-  return context;
-}
+const [TagsInputItemProvider, useTagsInputItem] =
+  createContext<TagsInputItemContextValue>(ITEM_NAME);
 
 interface TagsInputItemProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
@@ -35,7 +27,7 @@ interface TagsInputItemProps
 const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
   (props, ref) => {
     const { value, disabled, ...tagsInputItemProps } = props;
-    const context = useTagsInput();
+    const context = useTagsInput(ITEM_NAME);
     const id = useId();
     const textId = `${id}text`;
     const index = context.values.indexOf(value);
@@ -44,18 +36,16 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
     const itemDisabled = disabled || context.disabled;
     const displayValue = context.displayValue(value);
 
-    const itemContext: TagsInputItemContextValue = {
-      id,
-      value,
-      isFocused,
-      isEditing,
-      disabled: itemDisabled,
-      textId,
-      displayValue,
-    };
-
     return (
-      <TagsInputItemContext.Provider value={itemContext}>
+      <TagsInputItemProvider
+        id={id}
+        value={value}
+        isFocused={isFocused}
+        isEditing={isEditing}
+        disabled={itemDisabled}
+        textId={textId}
+        displayValue={displayValue}
+      >
         <Primitive.div
           ref={ref}
           id={id}
@@ -86,13 +76,13 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
           )}
           {...tagsInputItemProps}
         />
-      </TagsInputItemContext.Provider>
+      </TagsInputItemProvider>
     );
   },
 );
 
-TagsInputItem.displayName = "TagsInputItem";
+TagsInputItem.displayName = ITEM_NAME;
 
 const Item = TagsInputItem;
 
-export { Item, TagsInputItem, type TagsInputItemProps };
+export { Item, TagsInputItem, useTagsInputItem, type TagsInputItemProps };

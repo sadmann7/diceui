@@ -4,6 +4,8 @@ import * as React from "react";
 import { useTagsInputItem } from "./tags-input-item";
 import { useTagsInput } from "./tags-input-root";
 
+const ITEM_DELETE_NAME = "TagsInputItemDelete";
+
 interface TagsInputItemDeleteProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.button> {}
 
@@ -11,8 +13,8 @@ const TagsInputItemDelete = React.forwardRef<
   HTMLButtonElement,
   TagsInputItemDeleteProps
 >((props, ref) => {
-  const context = useTagsInput();
-  const itemContext = useTagsInputItem();
+  const context = useTagsInput(ITEM_DELETE_NAME);
+  const itemContext = useTagsInputItem(ITEM_DELETE_NAME);
   const disabled = itemContext.disabled || context.disabled;
 
   if (itemContext.isEditing) return null;
@@ -37,7 +39,7 @@ const TagsInputItemDelete = React.forwardRef<
   );
 });
 
-TagsInputItemDelete.displayName = "TagsInputItemDelete";
+TagsInputItemDelete.displayName = ITEM_DELETE_NAME;
 
 const Delete = TagsInputItemDelete;
 

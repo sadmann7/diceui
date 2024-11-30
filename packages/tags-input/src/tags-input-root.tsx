@@ -3,6 +3,7 @@ import * as React from "react";
 import { BubbleInput } from "./bubble-input";
 
 import {
+  createContext,
   useCollection,
   useComposedRefs,
   useControllableState,
@@ -42,17 +43,8 @@ interface TagsInputContextValue<T = InputValue> {
   labelId: string;
 }
 
-const TagsInputContext = React.createContext<
-  TagsInputContextValue<InputValue> | undefined
->(undefined);
-
-export function useTagsInput() {
-  const context = React.useContext(TagsInputContext);
-  if (!context) {
-    throw new Error("useTagsInput must be used within a TagsInput provider");
-  }
-  return context;
-}
+const [TagsInputProvider, useTagsInput] =
+  createContext<TagsInputContextValue<InputValue>>("TagsInput");
 
 /**
  * Props for the TagsInputRoot component.
@@ -189,7 +181,7 @@ const TagsInputRoot = React.forwardRef<
   const composedRefs = useComposedRefs(ref, containerRef, (node) => {
     onTriggerChange(node);
   });
-  const { getEnabledItems } = useCollection({ ref: containerRef });
+  const { getItems } = useCollection({ ref: containerRef });
 
   const onAddValue = React.useCallback(
     (textValue: string) => {
@@ -322,7 +314,9 @@ const TagsInputRoot = React.forwardRef<
         const containerElement = containerRef.current;
         if (!containerElement) return -1;
 
-        const enabledItems = getEnabledItems();
+        const enabledItems = getItems().filter(
+          (item) => !item.hasAttribute("data-disabled"),
+        );
         let nextIndex = currentIndex;
 
         do {
@@ -440,41 +434,39 @@ const TagsInputRoot = React.forwardRef<
       editable,
       disabled,
       loop,
-      getEnabledItems,
+      getItems,
     ],
   );
 
-  const contextValue: TagsInputContextValue<InputValue> = {
-    values,
-    onValuesChange: setValues,
-    onAddValue,
-    onRemoveValue,
-    onUpdateValue,
-    onInputKeydown,
-    focusedIndex,
-    setFocusedIndex,
-    editingIndex,
-    setEditingIndex,
-    displayValue,
-    inputRef,
-    isInvalidInput,
-    addOnPaste,
-    addOnTab,
-    addOnBlur,
-    editable,
-    disabled,
-    delimiter,
-    duplicate,
-    loop,
-    dir,
-    max,
-    id,
-    inputId,
-    labelId,
-  };
-
   return (
-    <TagsInputContext.Provider value={contextValue}>
+    <TagsInputProvider
+      values={values}
+      onValuesChange={setValues}
+      onAddValue={onAddValue}
+      onRemoveValue={onRemoveValue}
+      onUpdateValue={onUpdateValue}
+      onInputKeydown={onInputKeydown}
+      focusedIndex={focusedIndex}
+      setFocusedIndex={setFocusedIndex}
+      editingIndex={editingIndex}
+      setEditingIndex={setEditingIndex}
+      displayValue={displayValue}
+      inputRef={inputRef}
+      isInvalidInput={isInvalidInput}
+      addOnPaste={addOnPaste}
+      addOnTab={addOnTab}
+      addOnBlur={addOnBlur}
+      editable={editable}
+      disabled={disabled}
+      delimiter={delimiter}
+      duplicate={duplicate}
+      loop={loop}
+      dir={dir}
+      max={max}
+      id={id}
+      inputId={inputId}
+      labelId={labelId}
+    >
       <Primitive.div
         ref={composedRefs}
         dir={dir}
@@ -507,7 +499,7 @@ const TagsInputRoot = React.forwardRef<
           />
         )}
       </Primitive.div>
-    </TagsInputContext.Provider>
+    </TagsInputProvider>
   );
 });
 
@@ -515,6 +507,6 @@ TagsInputRoot.displayName = "TagsInputRoot";
 
 const Root = TagsInputRoot;
 
-export { Root, TagsInputRoot };
+export { Root, TagsInputRoot, useTagsInput };
 
 export type { InputValue, TagsInputRootProps };

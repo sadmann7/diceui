@@ -3,12 +3,14 @@ import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { useTagsInput } from "./tags-input-root";
 
+const CLEAR_NAME = "TagsInputClear";
+
 interface TagsInputClearProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.button> {}
 
 const TagsInputClear = React.forwardRef<HTMLButtonElement, TagsInputClearProps>(
   (props, ref) => {
-    const context = useTagsInput();
+    const context = useTagsInput(CLEAR_NAME);
 
     return (
       <Primitive.button
@@ -27,7 +29,7 @@ const TagsInputClear = React.forwardRef<HTMLButtonElement, TagsInputClearProps>(
   },
 );
 
-TagsInputClear.displayName = "TagsInputClear";
+TagsInputClear.displayName = CLEAR_NAME;
 
 const Clear = TagsInputClear;
 

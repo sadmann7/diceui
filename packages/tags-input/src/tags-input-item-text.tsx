@@ -3,6 +3,8 @@ import * as React from "react";
 import { useTagsInputItem } from "./tags-input-item";
 import { useTagsInput } from "./tags-input-root";
 
+const ITEM_TEXT_NAME = "TagsInputItemText";
+
 interface TagsInputItemTextProps
   extends React.ComponentPropsWithoutRef<"span"> {}
 
@@ -11,8 +13,8 @@ const TagsInputItemText = React.forwardRef<
   TagsInputItemTextProps
 >((props, ref) => {
   const { children, ...tagsInputItemTextProps } = props;
-  const context = useTagsInput();
-  const itemContext = useTagsInputItem();
+  const context = useTagsInput(ITEM_TEXT_NAME);
+  const itemContext = useTagsInputItem(ITEM_TEXT_NAME);
   const [editValue, setEditValue] = React.useState(itemContext.displayValue);
 
   if (itemContext.isEditing && context.editable && !itemContext.disabled) {
