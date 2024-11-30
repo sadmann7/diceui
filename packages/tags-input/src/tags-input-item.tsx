@@ -46,7 +46,7 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
     const itemDisabled = disabled || context.disabled;
     const displayValue = context.displayValue(value);
     const id = useId();
-    const textId = `${id}-text`;
+    const textId = `${id}text`;
 
     const itemContext: TagsInputItemContextValue = {
       id,

@@ -40,6 +40,8 @@ import {
 export default function PlaygroundPage() {
   const [fruits, setFruits] = React.useState<string[]>([]);
 
+  console.log({ fruits });
+
   return (
     <Shell>
       <TagsInput
