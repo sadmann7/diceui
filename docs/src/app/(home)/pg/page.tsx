@@ -60,7 +60,7 @@ export default function PlaygroundPage() {
           <TagsInputContent>
             <SortableContent>
               {fruits.map((fruit) => (
-                <SortableItem key={fruit} value={fruit} asChild asDragHandle>
+                <SortableItem key={fruit} value={fruit} asDragHandle>
                   <TagsInputItem key={fruit} value={fruit}>
                     {fruit}
                   </TagsInputItem>

@@ -65,7 +65,9 @@ interface SortableProps<TData extends { id: UniqueIdentifier }>
 }
 
 interface SortableProviderContext<TData extends { id: UniqueIdentifier }> {
+  id: string;
   items: TData[];
+  modifiers: DndContextProps["modifiers"];
   strategy: SortableContextProps["strategy"];
   activeId: UniqueIdentifier | null;
   setActiveId: (id: UniqueIdentifier | null) => void;
@@ -88,6 +90,7 @@ function useSortableRoot() {
 function Sortable<TData extends { id: UniqueIdentifier }>(
   props: SortableProps<TData>,
 ) {
+  const id = React.useId();
   const {
     value,
     onValueChange,
@@ -110,17 +113,28 @@ function Sortable<TData extends { id: UniqueIdentifier }>(
 
   const contextValue = React.useMemo(
     () => ({
+      id,
       items: value,
-      strategy: config.strategy,
+      modifiers: modifiers ?? config.modifiers,
+      strategy: strategy ?? config.strategy,
       activeId,
       setActiveId,
     }),
-    [value, config.strategy, activeId],
+    [
+      id,
+      value,
+      modifiers,
+      strategy,
+      config.modifiers,
+      config.strategy,
+      activeId,
+    ],
   );
 
   return (
     <SortableRoot.Provider value={contextValue}>
       <DndContext
+        id={id}
         modifiers={modifiers ?? config.modifiers}
         sensors={sensors}
         onDragStart={composeEventHandlers(
@@ -164,10 +178,14 @@ function SortableContent({
   strategy: strategyProp,
   children,
 }: SortableContentProps) {
-  const { items, strategy } = useSortableRoot();
+  const { id, items, strategy } = useSortableRoot();
 
   return (
-    <SortableContext items={items} strategy={strategyProp ?? strategy}>
+    <SortableContext
+      id={`${id}content`}
+      items={items}
+      strategy={strategyProp ?? strategy}
+    >
       {children}
     </SortableContext>
   );
@@ -195,10 +213,11 @@ const SortableOverlay = React.forwardRef<HTMLDivElement, SortableOverlayProps>(
       autoScale,
       ...overlayProps
     } = props;
-    const { activeId } = useSortableRoot();
+    const { activeId, modifiers } = useSortableRoot();
 
     return (
       <DragOverlay
+        modifiers={modifiers}
         dropAnimation={dropAnimationProp ?? dropAnimation}
         {...overlayProps}
       >
@@ -217,12 +236,14 @@ const SortableOverlay = React.forwardRef<HTMLDivElement, SortableOverlayProps>(
 SortableOverlay.displayName = "SortableOverlay";
 
 interface SortableItemContextProps {
+  id: string;
   attributes: React.HTMLAttributes<HTMLElement>;
   listeners: DraggableSyntheticListeners | undefined;
   isDragging?: boolean;
 }
 
 const SortableItemContext = React.createContext<SortableItemContextProps>({
+  id: "",
   attributes: {},
   listeners: undefined,
   isDragging: false,
@@ -254,7 +275,6 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
       className,
       ...itemProps
     } = props;
-
     const {
       attributes,
       listeners,
@@ -263,6 +283,7 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
       transition,
       isDragging,
     } = useSortable({ id: value });
+    const id = React.useId();
 
     const style: React.CSSProperties = {
       opacity: isDragging ? 0.5 : 1,
@@ -275,16 +296,18 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
 
     const itemContext = React.useMemo<SortableItemContextProps>(
       () => ({
+        id,
         attributes,
         listeners,
         isDragging,
       }),
-      [attributes, listeners, isDragging],
+      [id, attributes, listeners, isDragging],
     );
 
     return (
       <SortableItemContext.Provider value={itemContext}>
         <Comp
+          id={id}
           data-sortable-item=""
           data-dragging={isDragging ? "" : undefined}
           className={cn(
@@ -313,11 +336,12 @@ const SortableDragHandle = React.forwardRef<
   SortableDragHandleProps
 >((props, ref) => {
   const { className, ...dragHandleProps } = props;
-  const { attributes, listeners, isDragging } = useSortableItem();
+  const { id, attributes, listeners, isDragging } = useSortableItem();
 
   return (
     <Button
-      ref={composeRefs(ref)}
+      ref={ref}
+      aria-controls={id}
       data-dragging={isDragging ? "" : undefined}
       className={cn("cursor-grab data-[dragging]:cursor-grabbing", className)}
       {...attributes}
