@@ -54,28 +54,91 @@ export function useTagsInput() {
   return context;
 }
 
+/**
+ * Props for the TagsInputRoot component.
+ * @template T - The type of values in the tags input. Defaults to string (InputValue).
+ */
 interface TagsInputRootProps<T = InputValue>
   extends Omit<
     React.ComponentPropsWithoutRef<typeof Primitive.div>,
     "value" | "defaultValue" | "onValueChange" | "onInvalid"
   > {
+  /** Controlled array of tag values. */
   value?: T[];
+
+  /** Initial array of tag values when uncontrolled. */
   defaultValue?: T[];
+
+  /** Callback function to handle changes in the tag values */
   onValueChange?: (value: T[]) => void;
+
+  /** Callback function to handle invalid input. */
   onInvalid?: (value: T) => void;
+
+  /** Function to convert a tag value to its display string representation. */
   displayValue?: (value: T) => string;
+
+  /**
+   * Enables adding tags by pasting text, which will be split by the delimiter.
+   * @default false
+   */
   addOnPaste?: boolean;
+
+  /**
+   * Enables adding tags when Tab key is pressed
+   * @default false
+   */
   addOnTab?: boolean;
+
+  /**
+   * Enables adding tags when input loses focus.
+   * @default false
+   */
   addOnBlur?: boolean;
-  duplicate?: boolean;
+
+  /**
+   * Allows editing of existing tags
+   * @default false
+   */
   editable?: boolean;
+
+  /**
+   * Disables the entire tags input.
+   * @default false
+   */
   disabled?: boolean;
+
+  /**
+   * Character used to split pasted text into multiple tags
+   * @default ","
+   */
   delimiter?: string;
+
+  /**
+   * Text direction for the input.
+   * @default "ltr"
+   */
   dir?: "ltr" | "rtl";
+
+  /**
+   * Maximum number of tags allowed.
+   * @default Number.POSITIVE_INFINITY
+   */
   max?: number;
+
+  /** Whether the field is required in a form context */
   required?: boolean;
+
+  /** Name of the form field when used in a form */
   name?: string;
+
+  /**
+   * Enables wrapping focus from last to first tag and vice versa
+   * @default false
+   */
   loop?: boolean;
+
+  /** Custom ID for the component */
   id?: string;
 }
 
@@ -91,12 +154,11 @@ const TagsInputRoot = React.forwardRef<
     addOnPaste = false,
     addOnTab = false,
     addOnBlur = false,
-    duplicate = false,
     editable = false,
     disabled = false,
     delimiter = ",",
     dir: dirProp,
-    max = 0,
+    max = Number.POSITIVE_INFINITY,
     required = false,
     name,
     id: idProp,
@@ -105,6 +167,9 @@ const TagsInputRoot = React.forwardRef<
     children,
     ...tagInputProps
   } = props;
+
+  // TODO: add duplicate
+  const duplicate = false;
 
   const [values = [], setValues] = useControllableState({
     prop: valueProp,
@@ -181,7 +246,7 @@ const TagsInputRoot = React.forwardRef<
       setIsInvalidInput(false);
       return true;
     },
-    [values, max, duplicate, addOnPaste, delimiter, setValues, onInvalid],
+    [values, max, addOnPaste, delimiter, setValues, onInvalid],
   );
 
   const onUpdateValue = React.useCallback(
@@ -215,7 +280,7 @@ const TagsInputRoot = React.forwardRef<
         requestAnimationFrame(() => inputRef.current?.focus());
       }
     },
-    [values, setValues, displayValue, duplicate, onInvalid],
+    [values, setValues, displayValue, onInvalid],
   );
 
   const onRemoveValue = React.useCallback(
