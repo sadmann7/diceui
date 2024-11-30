@@ -30,9 +30,8 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
     const context = useTagsInput(ITEM_NAME);
     const id = useId();
     const textId = `${id}text`;
-    const index = context.values.indexOf(value);
-    const isFocused = index === context.focusedIndex;
-    const isEditing = index === context.editingIndex;
+    const isFocused = value === context.focusedValue;
+    const isEditing = value === context.editingValue;
     const itemDisabled = disabled || context.disabled;
     const displayValue = context.displayValue(value);
 
@@ -60,7 +59,7 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
             (event) => {
               event.stopPropagation();
               if (!isEditing) {
-                context.setFocusedIndex(index);
+                context.setFocusedValue(value);
                 requestAnimationFrame(() => context.inputRef.current?.focus());
               }
             },
@@ -70,7 +69,7 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
             tagsInputItemProps.onDoubleClick,
             () => {
               if (context.editable && !itemDisabled) {
-                context.setEditingIndex(index);
+                context.setEditingValue(value);
               }
             },
           )}

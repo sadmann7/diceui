@@ -44,34 +44,54 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 
 export default function PlaygroundPage() {
   const [fruits, setFruits] = React.useState<string[]>([]);
 
+  const sensors = useSensors(
+    useSensor(MouseSensor, {
+      activationConstraint: { distance: 8 },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 250, tolerance: 5 },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+      keyboardCodes: { start: ["Space"], cancel: ["Escape"], end: ["Space"] },
+    }),
+  );
+
   return (
     <Shell>
       <Sortable
+        sensors={sensors}
         value={fruits.map((fruit) => ({ id: fruit }))}
         onValueChange={(items) => setFruits(items.map((item) => item.id))}
         orientation="both"
       >
         <TagsInput value={fruits} onValueChange={setFruits} editable>
           <TagsInputLabel>Fruits</TagsInputLabel>
-          <TagsInputContent>
-            <SortableContent>
+          <SortableContent>
+            <TagsInputContent>
               {fruits.map((fruit) => (
-                <SortableItem key={fruit} value={fruit} asDragHandle>
-                  <TagsInputItem key={fruit} value={fruit}>
-                    {fruit}
-                  </TagsInputItem>
+                <SortableItem key={fruit} value={fruit} asChild asDragHandle>
+                  <TagsInputItem value={fruit}>{fruit}</TagsInputItem>
                 </SortableItem>
               ))}
-            </SortableContent>
-            <SortableOverlay adjustScale>
-              <Skeleton className="h-10 w-full" />
-            </SortableOverlay>
-            <TagsInputInput placeholder="Add fruit..." />
-          </TagsInputContent>
+              <TagsInputInput placeholder="Add fruit..." />
+            </TagsInputContent>
+          </SortableContent>
+          <SortableOverlay adjustScale>
+            <Skeleton className="size-full" />
+          </SortableOverlay>
           <TagsInputClear />
         </TagsInput>
       </Sortable>

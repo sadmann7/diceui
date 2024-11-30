@@ -27,7 +27,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
       const isAdded = context.onAddValue(value);
       if (isAdded) {
         event.currentTarget.value = "";
-        context.setFocusedIndex(-1);
+        context.setFocusedValue(null);
       }
 
       event.preventDefault();
@@ -60,7 +60,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
             target.value = "";
             if (value) {
               context.onAddValue(value);
-              context.setFocusedIndex(-1);
+              context.setFocusedValue(null);
             }
           }
         })}
@@ -70,7 +70,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
             if (event.key === "Enter") onCustomKeydown(event);
             if (event.key === "Tab") onTab(event);
             context.onInputKeydown(event);
-            if (event.key.length === 1) context.setFocusedIndex(-1);
+            if (event.key.length === 1) context.setFocusedValue(null);
           },
           { checkForDefaultPrevented: false },
         )}
@@ -91,7 +91,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
               const value = event.clipboardData.getData("text");
 
               context.onAddValue(value);
-              context.setFocusedIndex(-1);
+              context.setFocusedValue(null);
             }
           },
           { checkForDefaultPrevented: false },

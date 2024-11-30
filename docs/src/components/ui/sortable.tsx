@@ -27,6 +27,7 @@ import {
   type SortableContextProps,
   arrayMove,
   horizontalListSortingStrategy,
+  sortableKeyboardCoordinates,
   useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
@@ -108,7 +109,9 @@ function Sortable<TData extends { id: UniqueIdentifier }>(
   const sensors = useSensors(
     useSensor(MouseSensor),
     useSensor(TouchSensor),
-    useSensor(KeyboardSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
   );
   const config = orientationConfig[orientation];
 
@@ -205,6 +208,7 @@ const dropAnimation: DropAnimation = {
 interface SortableOverlayProps
   extends React.ComponentPropsWithRef<typeof DragOverlay> {
   children?: React.ReactNode;
+  autoSize?: boolean;
 }
 
 const SortableOverlay = React.forwardRef<HTMLDivElement, SortableOverlayProps>(
@@ -212,13 +216,10 @@ const SortableOverlay = React.forwardRef<HTMLDivElement, SortableOverlayProps>(
     const {
       dropAnimation: dropAnimationProp,
       children,
+      autoSize,
       ...overlayProps
     } = props;
-
     const { activeId, modifiers } = useSortableRoot();
-
-    const items = document.querySelectorAll("[data-sortable-item]");
-    console.log({ items });
 
     return (
       <DragOverlay
@@ -315,7 +316,6 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
       <SortableItemContext.Provider value={itemContext}>
         <ItemSlot
           id={id}
-          data-sortable-item=""
           data-dragging={isDragging ? "" : undefined}
           className={cn(
             "data-[dragging]:cursor-grabbing",

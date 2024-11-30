@@ -23,10 +23,10 @@ interface TagsInputContextValue<T = InputValue> {
   onRemoveValue: (index: number) => void;
   onUpdateValue: (index: number, newTextValue: string) => void;
   onInputKeydown: (event: React.KeyboardEvent) => void;
-  focusedIndex: number;
-  setFocusedIndex: (index: number) => void;
-  editingIndex: number;
-  setEditingIndex: (index: number) => void;
+  focusedValue: T | null;
+  setFocusedValue: (value: T | null) => void;
+  editingValue: T | null;
+  setEditingValue: (value: T | null) => void;
   displayValue: (value: T) => string;
   inputRef: React.RefObject<HTMLInputElement>;
   isInvalidInput: boolean;
@@ -166,8 +166,12 @@ const TagsInputRoot = React.forwardRef<
     defaultProp: defaultValue,
     onChange: onValueChange,
   });
-  const [focusedIndex, setFocusedIndex] = React.useState<number>(-1);
-  const [editingIndex, setEditingIndex] = React.useState<number>(-1);
+  const [focusedValue, setFocusedValue] = React.useState<InputValue | null>(
+    null,
+  );
+  const [editingValue, setEditingValue] = React.useState<InputValue | null>(
+    null,
+  );
   const [isInvalidInput, setIsInvalidInput] = React.useState(false);
   const collectionRef = React.useRef<HTMLDivElement>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -231,8 +235,8 @@ const TagsInputRoot = React.forwardRef<
       const newValue = trimmedValue;
       const newValues = [...values, newValue];
       setValues(newValues);
-      setFocusedIndex(-1);
-      setEditingIndex(-1);
+      setFocusedValue(null);
+      setEditingValue(null);
       setIsInvalidInput(false);
       return true;
     },
@@ -263,8 +267,8 @@ const TagsInputRoot = React.forwardRef<
         newValues[index] = updatedValue;
 
         setValues(newValues);
-        setFocusedIndex(index);
-        setEditingIndex(-1);
+        setFocusedValue(updatedValue);
+        setEditingValue(null);
         setIsInvalidInput(false);
 
         requestAnimationFrame(() => inputRef.current?.focus());
@@ -279,14 +283,13 @@ const TagsInputRoot = React.forwardRef<
         const newValues = [...values];
         newValues.splice(index, 1);
         setValues(newValues);
-        setFocusedIndex(-1);
-        setEditingIndex(-1);
+        setFocusedValue(null);
+        setEditingValue(null);
         inputRef.current?.focus();
       }
     },
     [values, setValues],
   );
-
   const onInputKeydown = React.useCallback(
     (event: React.KeyboardEvent) => {
       const target = event.target;
@@ -300,44 +303,45 @@ const TagsInputRoot = React.forwardRef<
         (event.key === "ArrowLeft" && dir === "rtl");
 
       if (target.value) {
-        setFocusedIndex(-1);
-        setEditingIndex(-1);
+        setFocusedValue(null);
+        setEditingValue(null);
         return;
       }
 
-      const findNextEnabledIndex = (
-        currentIndex: number,
+      const findNextEnabledValue = (
+        currentValue: InputValue | null,
         direction: "next" | "prev",
-      ): number => {
+      ): InputValue | null => {
         const collectionElement = collectionRef.current;
-        if (!collectionElement) return -1;
+        if (!collectionElement) return null;
 
         const enabledItems = getItems().filter(
           (item) => !item.hasAttribute("data-disabled"),
         );
-        let nextIndex = currentIndex;
+        const enabledValues = enabledItems.map((_, index) => values[index]);
 
-        do {
-          if (direction === "next") {
-            nextIndex =
-              nextIndex >= values.length - 1 ? (loop ? 0 : -1) : nextIndex + 1;
-          } else {
-            nextIndex =
-              nextIndex <= 0 ? (loop ? values.length - 1 : -1) : nextIndex - 1;
-          }
+        if (enabledValues.length === 0) return null;
 
-          if (nextIndex === -1) break;
+        if (currentValue === null) {
+          return direction === "prev"
+            ? (enabledValues[enabledValues.length - 1] ?? null)
+            : (enabledValues[0] ?? null);
+        }
 
-          const item = enabledItems[nextIndex];
-          if (item && !item.hasAttribute("data-disabled")) {
-            return nextIndex;
-          }
-        } while (
-          nextIndex !== currentIndex &&
-          (loop || (nextIndex >= 0 && nextIndex < values.length))
-        );
+        const currentIndex = enabledValues.indexOf(currentValue);
+        if (direction === "next") {
+          return currentIndex >= enabledValues.length - 1
+            ? loop
+              ? (enabledValues[0] ?? null)
+              : null
+            : (enabledValues[currentIndex + 1] ?? null);
+        }
 
-        return -1;
+        return currentIndex <= 0
+          ? loop
+            ? (enabledValues[enabledValues.length - 1] ?? null)
+            : null
+          : (enabledValues[currentIndex - 1] ?? null);
       };
 
       switch (event.key) {
@@ -345,24 +349,22 @@ const TagsInputRoot = React.forwardRef<
         case "Backspace": {
           if (target.selectionStart !== 0 || target.selectionEnd !== 0) break;
 
-          if (focusedIndex !== -1) {
-            const newIndex = findNextEnabledIndex(focusedIndex, "prev");
-            onRemoveValue(focusedIndex);
-            setFocusedIndex(newIndex);
+          if (focusedValue !== null) {
+            const index = values.indexOf(focusedValue);
+            const newValue = findNextEnabledValue(focusedValue, "prev");
+            onRemoveValue(index);
+            setFocusedValue(newValue);
             event.preventDefault();
           } else if (event.key === "Backspace" && values.length > 0) {
-            const lastEnabledIndex = findNextEnabledIndex(
-              values.length,
-              "prev",
-            );
-            setFocusedIndex(lastEnabledIndex);
+            const lastValue = findNextEnabledValue(null, "prev");
+            setFocusedValue(lastValue);
             event.preventDefault();
           }
           break;
         }
         case "Enter": {
-          if (focusedIndex !== -1 && editable && !disabled) {
-            setEditingIndex(focusedIndex);
+          if (focusedValue !== null && editable && !disabled) {
+            setEditingValue(focusedValue);
             event.preventDefault();
             return;
           }
@@ -373,60 +375,54 @@ const TagsInputRoot = React.forwardRef<
           if (
             target.selectionStart === 0 &&
             isArrowLeft &&
-            focusedIndex === -1 &&
+            focusedValue === null &&
             values.length > 0
           ) {
-            const lastEnabledIndex = findNextEnabledIndex(
-              values.length,
-              "prev",
-            );
-            setFocusedIndex(lastEnabledIndex);
+            const lastValue = findNextEnabledValue(null, "prev");
+            setFocusedValue(lastValue);
             event.preventDefault();
-          } else if (focusedIndex !== -1) {
-            const nextIndex = findNextEnabledIndex(
-              focusedIndex,
+          } else if (focusedValue !== null) {
+            const nextValue = findNextEnabledValue(
+              focusedValue,
               isArrowLeft ? "prev" : "next",
             );
-            if (nextIndex !== -1) {
-              setFocusedIndex(nextIndex);
+            if (nextValue !== null) {
+              setFocusedValue(nextValue);
               event.preventDefault();
             } else if (isArrowRight) {
-              setFocusedIndex(-1);
+              setFocusedValue(null);
               target.setSelectionRange(0, 0);
             }
           }
           break;
         }
         case "Home": {
-          if (focusedIndex !== -1) {
-            const firstEnabledIndex = findNextEnabledIndex(-1, "next");
-            setFocusedIndex(firstEnabledIndex);
+          if (focusedValue !== null) {
+            const firstValue = findNextEnabledValue(null, "next");
+            setFocusedValue(firstValue);
             event.preventDefault();
           }
           break;
         }
         case "End": {
-          if (focusedIndex !== -1) {
-            const lastEnabledIndex = findNextEnabledIndex(
-              values.length,
-              "prev",
-            );
-            setFocusedIndex(lastEnabledIndex);
+          if (focusedValue !== null) {
+            const lastValue = findNextEnabledValue(null, "prev");
+            setFocusedValue(lastValue);
             event.preventDefault();
           }
           break;
         }
         case "Escape": {
-          setFocusedIndex(-1);
-          setEditingIndex(-1);
+          setFocusedValue(null);
+          setEditingValue(null);
           target.setSelectionRange(0, 0);
           break;
         }
       }
     },
     [
-      focusedIndex,
-      values.length,
+      focusedValue,
+      values,
       onRemoveValue,
       dir,
       editable,
@@ -444,10 +440,10 @@ const TagsInputRoot = React.forwardRef<
       onRemoveValue={onRemoveValue}
       onUpdateValue={onUpdateValue}
       onInputKeydown={onInputKeydown}
-      focusedIndex={focusedIndex}
-      setFocusedIndex={setFocusedIndex}
-      editingIndex={editingIndex}
-      setEditingIndex={setEditingIndex}
+      focusedValue={focusedValue}
+      setFocusedValue={setFocusedValue}
+      editingValue={editingValue}
+      setEditingValue={setEditingValue}
       displayValue={displayValue}
       inputRef={inputRef}
       isInvalidInput={isInvalidInput}
@@ -480,8 +476,8 @@ const TagsInputRoot = React.forwardRef<
             target.tagName !== "INPUT"
           ) {
             inputRef.current?.focus();
-            setFocusedIndex(-1);
-            setEditingIndex(-1);
+            setFocusedValue(null);
+            setEditingValue(null);
           }
         }}
         {...tagInputProps}
