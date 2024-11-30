@@ -53,17 +53,6 @@ const orientationConfig = {
   },
 };
 
-interface SortableProps<TData extends { id: UniqueIdentifier }>
-  extends DndContextProps {
-  value: TData[];
-  onValueChange?: (items: TData[]) => void;
-  onMove?: (event: { activeIndex: number; overIndex: number }) => void;
-  collisionDetection?: DndContextProps["collisionDetection"];
-  modifiers?: DndContextProps["modifiers"];
-  strategy?: SortableContextProps["strategy"];
-  orientation?: "vertical" | "horizontal" | "both";
-}
-
 interface SortableProviderContext<TData extends { id: UniqueIdentifier }> {
   id: string;
   items: TData[];
@@ -87,6 +76,18 @@ function useSortableRoot() {
   return context;
 }
 
+interface SortableProps<TData extends { id: UniqueIdentifier }>
+  extends DndContextProps {
+  value: TData[];
+  onValueChange?: (items: TData[]) => void;
+  onMove?: (event: { activeIndex: number; overIndex: number }) => void;
+  collisionDetection?: DndContextProps["collisionDetection"];
+  modifiers?: DndContextProps["modifiers"];
+  sensors?: DndContextProps["sensors"];
+  strategy?: SortableContextProps["strategy"];
+  orientation?: "vertical" | "horizontal" | "both";
+}
+
 function Sortable<TData extends { id: UniqueIdentifier }>(
   props: SortableProps<TData>,
 ) {
@@ -96,6 +97,7 @@ function Sortable<TData extends { id: UniqueIdentifier }>(
     onValueChange,
     collisionDetection = closestCenter,
     modifiers,
+    sensors: sensorsProp,
     strategy,
     onMove,
     orientation = "vertical",
@@ -108,7 +110,6 @@ function Sortable<TData extends { id: UniqueIdentifier }>(
     useSensor(TouchSensor),
     useSensor(KeyboardSensor),
   );
-
   const config = orientationConfig[orientation];
 
   const contextValue = React.useMemo(
@@ -136,7 +137,7 @@ function Sortable<TData extends { id: UniqueIdentifier }>(
       <DndContext
         id={id}
         modifiers={modifiers ?? config.modifiers}
-        sensors={sensors}
+        sensors={sensorsProp ?? sensors}
         onDragStart={composeEventHandlers(
           sortableProps.onDragStart,
           ({ active }) => setActiveId(active.id),
@@ -203,17 +204,21 @@ const dropAnimation: DropAnimation = {
 
 interface SortableOverlayProps
   extends React.ComponentPropsWithRef<typeof DragOverlay> {
-  autoScale?: boolean;
+  children?: React.ReactNode;
 }
 
 const SortableOverlay = React.forwardRef<HTMLDivElement, SortableOverlayProps>(
   (props, ref) => {
     const {
       dropAnimation: dropAnimationProp,
-      autoScale,
+      children,
       ...overlayProps
     } = props;
+
     const { activeId, modifiers } = useSortableRoot();
+
+    const items = document.querySelectorAll("[data-sortable-item]");
+    console.log({ items });
 
     return (
       <DragOverlay
@@ -227,7 +232,9 @@ const SortableOverlay = React.forwardRef<HTMLDivElement, SortableOverlayProps>(
             value={activeId}
             className="cursor-grabbing"
             asChild
-          />
+          >
+            {children}
+          </SortableItem>
         ) : null}
       </DragOverlay>
     );
@@ -275,6 +282,7 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
       className,
       ...itemProps
     } = props;
+    const id = React.useId();
     const {
       attributes,
       listeners,
@@ -283,7 +291,6 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
       transition,
       isDragging,
     } = useSortable({ id: value });
-    const id = React.useId();
 
     const style: React.CSSProperties = {
       opacity: isDragging ? 0.5 : 1,
@@ -292,7 +299,7 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
       ...styleProp,
     };
 
-    const Comp = asChild ? Slot : "div";
+    const ItemSlot = asChild ? Slot : "div";
 
     const itemContext = React.useMemo<SortableItemContextProps>(
       () => ({
@@ -306,7 +313,7 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
 
     return (
       <SortableItemContext.Provider value={itemContext}>
-        <Comp
+        <ItemSlot
           id={id}
           data-sortable-item=""
           data-dragging={isDragging ? "" : undefined}

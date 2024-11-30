@@ -52,7 +52,7 @@ export default function PlaygroundPage() {
     <Shell>
       <Sortable
         value={fruits.map((fruit) => ({ id: fruit }))}
-        onValueChange={(value) => setFruits(value.map((item) => item.id))}
+        onValueChange={(items) => setFruits(items.map((item) => item.id))}
         orientation="both"
       >
         <TagsInput value={fruits} onValueChange={setFruits} editable>
@@ -67,7 +67,7 @@ export default function PlaygroundPage() {
                 </SortableItem>
               ))}
             </SortableContent>
-            <SortableOverlay>
+            <SortableOverlay adjustScale>
               <Skeleton className="h-10 w-full" />
             </SortableOverlay>
             <TagsInputInput placeholder="Add fruit..." />
