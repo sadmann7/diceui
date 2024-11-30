@@ -25,7 +25,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { Sortable, SortableItem } from "@/components/ui/sortable";
+import {
+  Sortable,
+  SortableContent,
+  SortableItem,
+  SortableOverlay,
+} from "@/components/ui/sortable";
 
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
@@ -38,6 +43,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function PlaygroundPage() {
   const [fruits, setFruits] = React.useState<string[]>([]);
@@ -52,13 +58,18 @@ export default function PlaygroundPage() {
         <TagsInput value={fruits} onValueChange={setFruits} editable>
           <TagsInputLabel>Fruits</TagsInputLabel>
           <TagsInputContent>
-            {fruits.map((fruit) => (
-              <SortableItem key={fruit} value={fruit} asTrigger>
-                <TagsInputItem key={fruit} value={fruit}>
-                  {fruit}
-                </TagsInputItem>
-              </SortableItem>
-            ))}
+            <SortableContent>
+              {fruits.map((fruit) => (
+                <SortableItem key={fruit} value={fruit} asDragHandle>
+                  <TagsInputItem key={fruit} value={fruit}>
+                    {fruit}
+                  </TagsInputItem>
+                </SortableItem>
+              ))}
+            </SortableContent>
+            <SortableOverlay>
+              <Skeleton className="h-10 w-full" />
+            </SortableOverlay>
             <TagsInputInput placeholder="Add fruit..." />
           </TagsInputContent>
           <TagsInputClear />
