@@ -1,18 +1,16 @@
 "use client";
 
-import type {
-  DndContextProps,
-  DragEndEvent,
-  DraggableSyntheticListeners,
-  DropAnimation,
-  UniqueIdentifier,
-} from "@dnd-kit/core";
 import {
   DndContext,
+  type DndContextProps,
+  type DragEndEvent,
   DragOverlay,
+  type DraggableSyntheticListeners,
+  type DropAnimation,
   KeyboardSensor,
   MouseSensor,
   TouchSensor,
+  type UniqueIdentifier,
   closestCenter,
   closestCorners,
   defaultDropAnimationSideEffects,
@@ -59,7 +57,8 @@ const orientationConfig = {
   },
 };
 
-interface SortableProviderContext<TData extends { id: UniqueIdentifier }> {
+type UniqueItem = { id: UniqueIdentifier };
+interface SortableProviderContext<TData extends UniqueItem> {
   id: string;
   items: TData[];
   modifiers: DndContextProps["modifiers"];
@@ -76,15 +75,12 @@ const SortableRoot = React.createContext<
 function useSortableRoot() {
   const context = React.useContext(SortableRoot);
   if (!context) {
-    throw new Error(
-      "useSortableContext must be used within a SortableProvider",
-    );
+    throw new Error("useSortableRoot must be used within a SortableProvider");
   }
   return context;
 }
 
-interface SortableProps<TData extends { id: UniqueIdentifier }>
-  extends DndContextProps {
+interface SortableProps<TData extends UniqueItem> extends DndContextProps {
   value: TData[];
   onValueChange?: (items: TData[]) => void;
   onMove?: (event: DragEndEvent) => void;
@@ -95,9 +91,7 @@ interface SortableProps<TData extends { id: UniqueIdentifier }>
   disableGrabCursor?: boolean;
 }
 
-function Sortable<TData extends { id: UniqueIdentifier }>(
-  props: SortableProps<TData>,
-) {
+function Sortable<TData extends UniqueItem>(props: SortableProps<TData>) {
   const id = React.useId();
   const {
     value,
@@ -110,7 +104,6 @@ function Sortable<TData extends { id: UniqueIdentifier }>(
     disableGrabCursor = false,
     ...sortableProps
   } = props;
-
   const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null);
   const sensors = useSensors(
     useSensor(MouseSensor),
@@ -123,7 +116,6 @@ function Sortable<TData extends { id: UniqueIdentifier }>(
     () => orientationConfig[orientation],
     [orientation],
   );
-
   const contextValue = React.useMemo(
     () => ({
       id,
@@ -192,13 +184,13 @@ function SortableContent({
   strategy: strategyProp,
   children,
 }: SortableContentProps) {
-  const { id, items, strategy } = useSortableRoot();
+  const context = useSortableRoot();
 
   return (
     <SortableContext
-      id={`${id}content`}
-      items={items}
-      strategy={strategyProp ?? strategy}
+      id={`${context.id}content`}
+      items={context.items}
+      strategy={strategyProp ?? context.strategy}
     >
       {children}
     </SortableContext>
@@ -227,17 +219,17 @@ const SortableOverlay = React.forwardRef<HTMLDivElement, SortableOverlayProps>(
       children,
       ...overlayProps
     } = props;
-    const { activeId, modifiers, disableGrabCursor } = useSortableRoot();
+    const context = useSortableRoot();
 
     return (
       <DragOverlay
-        modifiers={modifiers}
+        modifiers={context.modifiers}
         dropAnimation={dropAnimationProp ?? dropAnimation}
-        className={cn(!disableGrabCursor && "cursor-grabbing")}
+        className={cn(!context.disableGrabCursor && "cursor-grabbing")}
         {...overlayProps}
       >
-        {activeId ? (
-          <SortableItem ref={ref} value={activeId} asChild>
+        {context.activeId ? (
+          <SortableItem ref={ref} value={context.activeId} asChild>
             {children}
           </SortableItem>
         ) : null}
@@ -287,8 +279,8 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
       className,
       ...itemProps
     } = props;
+    const context = useSortableRoot();
     const id = React.useId();
-    const { disableGrabCursor } = useSortableRoot();
     const {
       attributes,
       listeners,
@@ -324,9 +316,10 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
           data-dragging={isDragging ? "" : undefined}
           className={cn(
             {
-              "cursor-default": disableGrabCursor,
-              "data-[dragging]:cursor-grabbing": !disableGrabCursor,
-              "cursor-grab": !isDragging && asDragHandle && !disableGrabCursor,
+              "cursor-default": context.disableGrabCursor,
+              "data-[dragging]:cursor-grabbing": !context.disableGrabCursor,
+              "cursor-grab":
+                !isDragging && asDragHandle && !context.disableGrabCursor,
             },
             className,
           )}
@@ -351,22 +344,22 @@ const SortableDragHandle = React.forwardRef<
   SortableDragHandleProps
 >((props, ref) => {
   const { className, ...dragHandleProps } = props;
-  const { disableGrabCursor } = useSortableRoot();
-  const { id, attributes, listeners, isDragging } = useSortableItem();
+  const context = useSortableRoot();
+  const itemContext = useSortableItem();
 
   return (
     <Button
       ref={ref}
-      aria-controls={id}
-      data-dragging={isDragging ? "" : undefined}
+      aria-controls={itemContext.id}
+      data-dragging={itemContext.isDragging ? "" : undefined}
       className={cn(
-        disableGrabCursor
+        context.disableGrabCursor
           ? "cursor-default"
           : "cursor-grab data-[dragging]:cursor-grabbing",
         className,
       )}
-      {...attributes}
-      {...listeners}
+      {...itemContext.attributes}
+      {...itemContext.listeners}
       {...dragHandleProps}
     />
   );

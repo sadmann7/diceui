@@ -302,7 +302,7 @@ const TagsInputRoot = React.forwardRef<
         (event.key === "ArrowRight" && dir === "ltr") ||
         (event.key === "ArrowLeft" && dir === "rtl");
 
-      if (target.value) {
+      if (target.value && target.selectionStart !== 0) {
         setFocusedValue(null);
         setEditingValue(null);
         return;
@@ -391,7 +391,9 @@ const TagsInputRoot = React.forwardRef<
               event.preventDefault();
             } else if (isArrowRight) {
               setFocusedValue(null);
-              target.setSelectionRange(0, 0);
+              requestAnimationFrame(() => {
+                target.setSelectionRange(0, 0);
+              });
             }
           }
           break;
