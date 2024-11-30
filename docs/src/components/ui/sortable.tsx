@@ -2,6 +2,7 @@
 
 import type {
   DndContextProps,
+  DragEndEvent,
   DraggableSyntheticListeners,
   DropAnimation,
   UniqueIdentifier,
@@ -13,6 +14,7 @@ import {
   MouseSensor,
   TouchSensor,
   closestCenter,
+  closestCorners,
   defaultDropAnimationSideEffects,
   useSensor,
   useSensors,
@@ -43,14 +45,17 @@ const orientationConfig = {
   vertical: {
     modifiers: [restrictToVerticalAxis, restrictToParentElement],
     strategy: verticalListSortingStrategy,
+    collisionDetection: closestCenter,
   },
   horizontal: {
     modifiers: [restrictToHorizontalAxis, restrictToParentElement],
     strategy: horizontalListSortingStrategy,
+    collisionDetection: closestCenter,
   },
   both: {
     modifiers: [restrictToParentElement],
     strategy: undefined,
+    collisionDetection: closestCorners,
   },
 };
 
@@ -61,6 +66,7 @@ interface SortableProviderContext<TData extends { id: UniqueIdentifier }> {
   strategy: SortableContextProps["strategy"];
   activeId: UniqueIdentifier | null;
   setActiveId: (id: UniqueIdentifier | null) => void;
+  disableGrabCursor: boolean;
 }
 
 const SortableRoot = React.createContext<
@@ -81,12 +87,12 @@ interface SortableProps<TData extends { id: UniqueIdentifier }>
   extends DndContextProps {
   value: TData[];
   onValueChange?: (items: TData[]) => void;
-  onMove?: (event: { activeIndex: number; overIndex: number }) => void;
+  onMove?: (event: DragEndEvent) => void;
   collisionDetection?: DndContextProps["collisionDetection"];
   modifiers?: DndContextProps["modifiers"];
   sensors?: DndContextProps["sensors"];
-  strategy?: SortableContextProps["strategy"];
   orientation?: "vertical" | "horizontal" | "both";
+  disableGrabCursor?: boolean;
 }
 
 function Sortable<TData extends { id: UniqueIdentifier }>(
@@ -96,12 +102,12 @@ function Sortable<TData extends { id: UniqueIdentifier }>(
   const {
     value,
     onValueChange,
-    collisionDetection = closestCenter,
+    collisionDetection,
     modifiers,
     sensors: sensorsProp,
-    strategy,
     onMove,
     orientation = "vertical",
+    disableGrabCursor = false,
     ...sortableProps
   } = props;
 
@@ -113,25 +119,29 @@ function Sortable<TData extends { id: UniqueIdentifier }>(
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   );
-  const config = orientationConfig[orientation];
+  const config = React.useMemo(
+    () => orientationConfig[orientation],
+    [orientation],
+  );
 
   const contextValue = React.useMemo(
     () => ({
       id,
       items: value,
       modifiers: modifiers ?? config.modifiers,
-      strategy: strategy ?? config.strategy,
+      strategy: config.strategy,
       activeId,
       setActiveId,
+      disableGrabCursor,
     }),
     [
       id,
       value,
       modifiers,
-      strategy,
       config.modifiers,
       config.strategy,
       activeId,
+      disableGrabCursor,
     ],
   );
 
@@ -147,7 +157,7 @@ function Sortable<TData extends { id: UniqueIdentifier }>(
         )}
         onDragEnd={composeEventHandlers(
           sortableProps.onDragEnd,
-          ({ active, over }) => {
+          ({ active, over, activatorEvent, collisions, delta }) => {
             if (over && active.id !== over?.id) {
               const activeIndex = value.findIndex(
                 (item) => item.id === active.id,
@@ -155,7 +165,7 @@ function Sortable<TData extends { id: UniqueIdentifier }>(
               const overIndex = value.findIndex((item) => item.id === over.id);
 
               if (onMove) {
-                onMove({ activeIndex, overIndex });
+                onMove({ active, over, activatorEvent, collisions, delta });
               } else {
                 onValueChange?.(arrayMove(value, activeIndex, overIndex));
               }
@@ -166,7 +176,7 @@ function Sortable<TData extends { id: UniqueIdentifier }>(
         onDragCancel={composeEventHandlers(sortableProps.onDragCancel, () =>
           setActiveId(null),
         )}
-        collisionDetection={collisionDetection}
+        collisionDetection={closestCorners}
         {...sortableProps}
       />
     </SortableRoot.Provider>
@@ -208,7 +218,6 @@ const dropAnimation: DropAnimation = {
 interface SortableOverlayProps
   extends React.ComponentPropsWithRef<typeof DragOverlay> {
   children?: React.ReactNode;
-  autoSize?: boolean;
 }
 
 const SortableOverlay = React.forwardRef<HTMLDivElement, SortableOverlayProps>(
@@ -216,24 +225,19 @@ const SortableOverlay = React.forwardRef<HTMLDivElement, SortableOverlayProps>(
     const {
       dropAnimation: dropAnimationProp,
       children,
-      autoSize,
       ...overlayProps
     } = props;
-    const { activeId, modifiers } = useSortableRoot();
+    const { activeId, modifiers, disableGrabCursor } = useSortableRoot();
 
     return (
       <DragOverlay
         modifiers={modifiers}
         dropAnimation={dropAnimationProp ?? dropAnimation}
+        className={cn(!disableGrabCursor && "cursor-grabbing")}
         {...overlayProps}
       >
         {activeId ? (
-          <SortableItem
-            ref={ref}
-            value={activeId}
-            className="cursor-grabbing"
-            asChild
-          >
+          <SortableItem ref={ref} value={activeId} asChild>
             {children}
           </SortableItem>
         ) : null}
@@ -284,6 +288,7 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
       ...itemProps
     } = props;
     const id = React.useId();
+    const { disableGrabCursor } = useSortableRoot();
     const {
       attributes,
       listeners,
@@ -318,8 +323,11 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
           id={id}
           data-dragging={isDragging ? "" : undefined}
           className={cn(
-            "data-[dragging]:cursor-grabbing",
-            { "cursor-grab": !isDragging && asDragHandle },
+            {
+              "cursor-default": disableGrabCursor,
+              "data-[dragging]:cursor-grabbing": !disableGrabCursor,
+              "cursor-grab": !isDragging && asDragHandle && !disableGrabCursor,
+            },
             className,
           )}
           ref={composeRefs(ref, (node) => setNodeRef(node))}
@@ -343,6 +351,7 @@ const SortableDragHandle = React.forwardRef<
   SortableDragHandleProps
 >((props, ref) => {
   const { className, ...dragHandleProps } = props;
+  const { disableGrabCursor } = useSortableRoot();
   const { id, attributes, listeners, isDragging } = useSortableItem();
 
   return (
@@ -350,7 +359,12 @@ const SortableDragHandle = React.forwardRef<
       ref={ref}
       aria-controls={id}
       data-dragging={isDragging ? "" : undefined}
-      className={cn("cursor-grab data-[dragging]:cursor-grabbing", className)}
+      className={cn(
+        disableGrabCursor
+          ? "cursor-default"
+          : "cursor-grab data-[dragging]:cursor-grabbing",
+        className,
+      )}
       {...attributes}
       {...listeners}
       {...dragHandleProps}

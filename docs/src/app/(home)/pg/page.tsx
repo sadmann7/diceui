@@ -71,15 +71,28 @@ export default function PlaygroundPage() {
 
   return (
     <Shell>
+      <TagsInput value={fruits} onValueChange={setFruits} editable>
+        <TagsInputLabel>Default</TagsInputLabel>
+        <TagsInputContent>
+          {fruits.map((fruit) => (
+            <TagsInputItem key={fruit} value={fruit}>
+              {fruit}
+            </TagsInputItem>
+          ))}
+          <TagsInputInput placeholder="Add fruit..." />
+        </TagsInputContent>
+        <TagsInputClear />
+      </TagsInput>
       <Sortable
         sensors={sensors}
         value={fruits.map((fruit) => ({ id: fruit }))}
         onValueChange={(items) => setFruits(items.map((item) => item.id))}
         orientation="both"
+        disableGrabCursor
       >
         <TagsInput value={fruits} onValueChange={setFruits} editable>
-          <TagsInputLabel>Fruits</TagsInputLabel>
-          <SortableContent>
+          <TagsInputLabel>Sortable</TagsInputLabel>
+          <SortableContent strategy={undefined}>
             <TagsInputContent>
               {fruits.map((fruit) => (
                 <SortableItem key={fruit} value={fruit} asChild asDragHandle>
@@ -89,7 +102,7 @@ export default function PlaygroundPage() {
               <TagsInputInput placeholder="Add fruit..." />
             </TagsInputContent>
           </SortableContent>
-          <SortableOverlay adjustScale>
+          <SortableOverlay>
             <Skeleton className="size-full" />
           </SortableOverlay>
           <TagsInputClear />
