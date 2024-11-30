@@ -53,14 +53,14 @@ export default function PlaygroundPage() {
       <Sortable
         value={fruits.map((fruit) => ({ id: fruit }))}
         onValueChange={(value) => setFruits(value.map((item) => item.id))}
-        orientation="horizontal"
+        orientation="both"
       >
         <TagsInput value={fruits} onValueChange={setFruits} editable>
           <TagsInputLabel>Fruits</TagsInputLabel>
           <TagsInputContent>
             <SortableContent>
               {fruits.map((fruit) => (
-                <SortableItem key={fruit} value={fruit} asDragHandle>
+                <SortableItem key={fruit} value={fruit} asChild asDragHandle>
                   <TagsInputItem key={fruit} value={fruit}>
                     {fruit}
                   </TagsInputItem>

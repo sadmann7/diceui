@@ -47,7 +47,7 @@ const orientationConfig = {
     modifiers: [restrictToHorizontalAxis, restrictToParentElement],
     strategy: horizontalListSortingStrategy,
   },
-  mixed: {
+  both: {
     modifiers: [restrictToParentElement],
     strategy: undefined,
   },
@@ -61,7 +61,7 @@ interface SortableProps<TData extends { id: UniqueIdentifier }>
   collisionDetection?: DndContextProps["collisionDetection"];
   modifiers?: DndContextProps["modifiers"];
   strategy?: SortableContextProps["strategy"];
-  orientation?: "vertical" | "horizontal" | "mixed";
+  orientation?: "vertical" | "horizontal" | "both";
 }
 
 interface SortableProviderContext<TData extends { id: UniqueIdentifier }> {
@@ -184,11 +184,17 @@ const dropAnimation: DropAnimation = {
 };
 
 interface SortableOverlayProps
-  extends React.ComponentPropsWithRef<typeof DragOverlay> {}
+  extends React.ComponentPropsWithRef<typeof DragOverlay> {
+  autoScale?: boolean;
+}
 
 const SortableOverlay = React.forwardRef<HTMLDivElement, SortableOverlayProps>(
   (props, ref) => {
-    const { dropAnimation: dropAnimationProp, ...overlayProps } = props;
+    const {
+      dropAnimation: dropAnimationProp,
+      autoScale,
+      ...overlayProps
+    } = props;
     const { activeId } = useSortableRoot();
 
     return (
@@ -279,6 +285,7 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
     return (
       <SortableItemContext.Provider value={itemContext}>
         <Comp
+          data-sortable-item=""
           data-dragging={isDragging ? "" : undefined}
           className={cn(
             "data-[dragging]:cursor-grabbing",
