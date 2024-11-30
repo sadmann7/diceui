@@ -14,6 +14,8 @@ import {
 
 type InputValue = string;
 
+const ROOT_NAME = "TagsInputRoot";
+
 interface TagsInputContextValue<T = InputValue> {
   values: T[];
   onValuesChange: (value: T[]) => void;
@@ -44,12 +46,8 @@ interface TagsInputContextValue<T = InputValue> {
 }
 
 const [TagsInputProvider, useTagsInput] =
-  createContext<TagsInputContextValue<InputValue>>("TagsInput");
+  createContext<TagsInputContextValue<InputValue>>(ROOT_NAME);
 
-/**
- * Props for the TagsInputRoot component.
- * @template T - The type of values in the tags input. Defaults to string (InputValue).
- */
 interface TagsInputRootProps<T = InputValue>
   extends Omit<
     React.ComponentPropsWithoutRef<typeof Primitive.div>,
@@ -503,7 +501,7 @@ const TagsInputRoot = React.forwardRef<
   );
 });
 
-TagsInputRoot.displayName = "TagsInputRoot";
+TagsInputRoot.displayName = ROOT_NAME;
 
 const Root = TagsInputRoot;
 

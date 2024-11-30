@@ -1,3 +1,7 @@
+/**
+ * @see https://github.com/radix-ui/primitives/blob/main/packages/react/context/src/createContext.tsx
+ */
+
 import * as React from "react";
 
 /**
@@ -7,11 +11,11 @@ import * as React from "react";
  * @param defaultValue Optional default value for the context
  */
 function createContext<T extends object | null>(
-  name: string,
+  rootComponentName: string,
   defaultValue?: T,
 ) {
   const Context = React.createContext<T | undefined>(defaultValue);
-  Context.displayName = name;
+  Context.displayName = rootComponentName;
 
   function Provider(props: T & { children: React.ReactNode }) {
     const { children, ...contextValue } = props;
@@ -26,7 +30,7 @@ function createContext<T extends object | null>(
     return <Context.Provider value={value}>{children}</Context.Provider>;
   }
 
-  Provider.displayName = `${name}Provider`;
+  Provider.displayName = `${rootComponentName}Provider`;
 
   function useContext(consumerName: string): T {
     const context = React.useContext(Context);
@@ -34,7 +38,9 @@ function createContext<T extends object | null>(
     if (context) return context;
     if (defaultValue !== undefined) return defaultValue;
 
-    throw new Error(`\`${consumerName}\` must be used within \`${name}\``);
+    throw new Error(
+      `\`${consumerName}\` must be used within \`${rootComponentName}\``,
+    );
   }
 
   return [Provider, useContext] as const;
