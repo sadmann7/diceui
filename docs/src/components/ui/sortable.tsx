@@ -207,36 +207,35 @@ const dropAnimation: DropAnimation = {
 };
 
 interface SortableOverlayProps
-  extends React.ComponentPropsWithRef<typeof DragOverlay> {
-  children?: React.ReactNode;
+  extends Omit<React.ComponentPropsWithoutRef<typeof DragOverlay>, "children"> {
+  children?:
+    | ((params: { value: UniqueIdentifier }) => React.ReactNode)
+    | React.ReactNode;
 }
 
-const SortableOverlay = React.forwardRef<HTMLDivElement, SortableOverlayProps>(
-  (props, ref) => {
-    const {
-      dropAnimation: dropAnimationProp,
-      children,
-      ...overlayProps
-    } = props;
-    const context = useSortableRoot();
+function SortableOverlay(props: SortableOverlayProps) {
+  const { dropAnimation: dropAnimationProp, children, ...overlayProps } = props;
+  const context = useSortableRoot();
 
-    return (
-      <DragOverlay
-        modifiers={context.modifiers}
-        dropAnimation={dropAnimationProp ?? dropAnimation}
-        className={cn(!context.disableGrabCursor && "cursor-grabbing")}
-        {...overlayProps}
-      >
-        {context.activeId ? (
-          <SortableItem ref={ref} value={context.activeId} asChild>
+  return (
+    <DragOverlay
+      modifiers={context.modifiers}
+      dropAnimation={dropAnimationProp ?? dropAnimation}
+      className={cn(!context.disableGrabCursor && "cursor-grabbing")}
+      {...overlayProps}
+    >
+      {context.activeId ? (
+        typeof children === "function" ? (
+          children({ value: context.activeId })
+        ) : (
+          <SortableItem value={context.activeId} asChild>
             {children}
           </SortableItem>
-        ) : null}
-      </DragOverlay>
-    );
-  },
-);
-SortableOverlay.displayName = "SortableOverlay";
+        )
+      ) : null}
+    </DragOverlay>
+  );
+}
 
 interface SortableItemContextProps {
   id: string;
@@ -310,6 +309,7 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
       <SortableItemContext.Provider value={itemContext}>
         <ItemSlot
           id={id}
+          ref={composeRefs(ref, (node) => setNodeRef(node))}
           data-sortable-item=""
           data-dragging={isDragging ? "" : undefined}
           className={cn(
@@ -321,7 +321,6 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
             },
             className,
           )}
-          ref={composeRefs(ref, (node) => setNodeRef(node))}
           style={style}
           {...(asDragHandle ? attributes : {})}
           {...(asDragHandle ? listeners : {})}

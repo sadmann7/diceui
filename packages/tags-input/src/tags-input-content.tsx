@@ -9,7 +9,9 @@ interface TagsInputContentProps
     React.ComponentPropsWithoutRef<typeof Primitive.div>,
     "children"
   > {
-  children?: ((value: InputValue[]) => React.ReactNode) | React.ReactNode;
+  children?:
+    | ((params: { value: InputValue[] }) => React.ReactNode)
+    | React.ReactNode;
 }
 
 const TagsInputContent = React.forwardRef<
@@ -28,7 +30,7 @@ const TagsInputContent = React.forwardRef<
       {...contentProps}
     >
       {typeof children === "function" ? (
-        <>{children(context.values)}</>
+        <>{children({ value: context.values })}</>
       ) : (
         children
       )}
