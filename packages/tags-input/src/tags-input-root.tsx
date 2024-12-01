@@ -3,6 +3,8 @@ import * as React from "react";
 import { BubbleInput } from "./bubble-input";
 
 import {
+  DATA_DISABLED_ATTR,
+  ITEM_DATA_ATTR,
   createContext,
   useCollection,
   useComposedRefs,
@@ -316,7 +318,7 @@ const TagsInputRoot = React.forwardRef<
         if (!collectionElement) return null;
 
         const enabledItems = getItems().filter(
-          (item) => !item.hasAttribute("data-disabled"),
+          (item) => !item.hasAttribute(DATA_DISABLED_ATTR),
         );
         const enabledValues = enabledItems.map((_, index) => values[index]);
 
@@ -472,12 +474,10 @@ const TagsInputRoot = React.forwardRef<
 
           if (
             collectionRef.current?.contains(target) &&
-            !target.hasAttribute("data-dice-collection-item") &&
+            !target.hasAttribute(ITEM_DATA_ATTR) &&
             target.tagName !== "INPUT"
           ) {
             inputRef.current?.focus();
-            setFocusedValue(null);
-            setEditingValue(null);
           }
         }}
         {...tagInputProps}

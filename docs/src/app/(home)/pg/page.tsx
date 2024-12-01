@@ -160,7 +160,7 @@ export default function PlaygroundPage() {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <Select>
+      <Select open>
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="Select a fruit" />
         </SelectTrigger>

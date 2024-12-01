@@ -1,4 +1,9 @@
-import { composeEventHandlers, createContext, useId } from "@diceui/shared";
+import {
+  ITEM_DATA_ATTR,
+  composeEventHandlers,
+  createContext,
+  useId,
+} from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { type InputValue, useTagsInput } from "./tags-input-root";
@@ -34,7 +39,7 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
     const isEditing = value === context.editingValue;
     const itemDisabled = disabled || context.disabled;
     const displayValue = context.displayValue(value);
-
+    ITEM_DATA_ATTR;
     return (
       <TagsInputItemProvider
         id={id}
@@ -48,7 +53,7 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
         <Primitive.div
           ref={ref}
           id={id}
-          data-dice-collection-item=""
+          {...{ [ITEM_DATA_ATTR]: "" }}
           data-focused={isFocused ? "" : undefined}
           data-editing={isEditing ? "" : undefined}
           data-editable={context.editable ? "" : undefined}
