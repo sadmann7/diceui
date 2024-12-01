@@ -133,6 +133,12 @@ interface TagsInputRootProps<T = InputValue>
 
   /** Unique identifier for the tags input. */
   id?: string;
+
+  /**
+   * Callback function to validate tags before they're added.
+   * Return true to allow the tag, false to reject it.
+   */
+  onValidate?: (value: T) => boolean;
 }
 
 const TagsInputRoot = React.forwardRef<
@@ -158,6 +164,7 @@ const TagsInputRoot = React.forwardRef<
     loop = false,
     displayValue = (value: InputValue) => value.toString(),
     children,
+    onValidate,
     ...rootProps
   } = props;
 
@@ -210,8 +217,13 @@ const TagsInputRoot = React.forwardRef<
           ];
         }
 
-        setValues([...values, ...newValues]);
+        const validValues = newValues.filter(
+          (v) => !onValidate || onValidate(v),
+        );
 
+        if (validValues.length === 0) return false;
+
+        setValues([...values, ...validValues]);
         return true;
       }
 
@@ -221,6 +233,12 @@ const TagsInputRoot = React.forwardRef<
       }
 
       const trimmedValue = textValue.trim();
+
+      if (onValidate && !onValidate(trimmedValue)) {
+        setIsInvalidInput(true);
+        onInvalid?.(trimmedValue);
+        return false;
+      }
 
       if (!duplicate) {
         const exists = values.some((v) => {
@@ -243,7 +261,7 @@ const TagsInputRoot = React.forwardRef<
       setIsInvalidInput(false);
       return true;
     },
-    [values, max, addOnPaste, delimiter, setValues, onInvalid],
+    [values, max, addOnPaste, delimiter, setValues, onInvalid, onValidate],
   );
 
   const onUpdateValue = React.useCallback(
@@ -265,6 +283,12 @@ const TagsInputRoot = React.forwardRef<
           }
         }
 
+        if (onValidate && !onValidate(trimmedValue)) {
+          setIsInvalidInput(true);
+          onInvalid?.(trimmedValue);
+          return;
+        }
+
         const updatedValue = displayValue(trimmedValue);
         const newValues = [...values];
         newValues[index] = updatedValue;
@@ -277,7 +301,7 @@ const TagsInputRoot = React.forwardRef<
         requestAnimationFrame(() => inputRef.current?.focus());
       }
     },
-    [values, setValues, displayValue, onInvalid],
+    [values, setValues, displayValue, onInvalid, onValidate],
   );
 
   const onRemoveValue = React.useCallback(
@@ -510,6 +534,15 @@ const TagsInputRoot = React.forwardRef<
             }
           },
         )}
+        onBlur={composeEventHandlers(rootProps.onBlur, (event) => {
+          if (
+            !collectionRef.current?.contains(event.relatedTarget as Node) &&
+            document.activeElement !== inputRef.current
+          ) {
+            setFocusedValue(null);
+            setEditingValue(null);
+          }
+        })}
         {...rootProps}
       >
         {children}
