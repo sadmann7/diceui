@@ -1,0 +1,13 @@
+{
+  "name": "tags-input-demo",
+  "type": "registry:example",
+  "registryDependencies": ["tags-input"],
+  "files": [
+    {
+      "path": "example/tags-input-demo.tsx",
+      "content": "import { TagsInput } from \"@/registry/new-york/ui/tags-input\"\n\nexport default function TagsInputDemo() {\n  return <TagsInput />\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}
