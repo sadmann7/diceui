@@ -32,7 +32,7 @@ const TagsInputItemDelete = React.forwardRef<
       onClick={composeEventHandlers(props.onClick, () => {
         if (disabled) return;
         const index = context.values.findIndex((i) => i === itemContext.value);
-        context.onRemoveValue(index);
+        context.onItemRemove(index);
       })}
       {...props}
     />

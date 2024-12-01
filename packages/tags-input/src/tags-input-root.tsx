@@ -22,9 +22,9 @@ const ROOT_NAME = "TagsInputRoot";
 interface TagsInputContextValue<T = InputValue> {
   values: T[];
   onValuesChange: (value: T[]) => void;
-  onAddValue: (textValue: string) => boolean;
-  onRemoveValue: (index: number) => void;
-  onUpdateValue: (index: number, newTextValue: string) => void;
+  onItemAdd: (textValue: string) => boolean;
+  onItemRemove: (index: number) => void;
+  onItemUpdate: (index: number, newTextValue: string) => void;
   onInputKeydown: (event: React.KeyboardEvent) => void;
   focusedValue: T | null;
   setFocusedValue: (value: T | null) => void;
@@ -65,6 +65,9 @@ interface TagsInputRootProps<T = InputValue>
 
   /** Callback function to handle changes in the tag values. */
   onValueChange?: (value: T[]) => void;
+
+  /** Callback function to validate tags before they're added. */
+  onValidate?: (value: T) => boolean;
 
   /** Callback function to handle invalid input. */
   onInvalid?: (value: T) => void;
@@ -136,12 +139,6 @@ interface TagsInputRootProps<T = InputValue>
 
   /** Unique identifier for the tags input. */
   id?: string;
-
-  /**
-   * Callback function to validate tags before they're added.
-   * Return true to allow the tag, false to reject it.
-   */
-  onValidate?: (value: T) => boolean;
 }
 
 const TagsInputRoot = React.forwardRef<
@@ -152,6 +149,7 @@ const TagsInputRoot = React.forwardRef<
     value: valueProp,
     defaultValue,
     onValueChange,
+    onValidate,
     onInvalid,
     addOnPaste = false,
     addOnTab = false,
@@ -167,7 +165,6 @@ const TagsInputRoot = React.forwardRef<
     loop = false,
     displayValue = (value: InputValue) => value.toString(),
     children,
-    onValidate,
     ...rootProps
   } = props;
 
@@ -198,7 +195,7 @@ const TagsInputRoot = React.forwardRef<
   });
   const { getItems } = useCollection({ ref: collectionRef });
 
-  const onAddValue = React.useCallback(
+  const onItemAdd = React.useCallback(
     (textValue: string) => {
       if (addOnPaste) {
         const splitValues = textValue
@@ -272,7 +269,7 @@ const TagsInputRoot = React.forwardRef<
     [values, max, addOnPaste, delimiter, setValues, onInvalid, onValidate],
   );
 
-  const onUpdateValue = React.useCallback(
+  const onItemUpdate = React.useCallback(
     (index: number, newTextValue: string) => {
       if (index !== -1) {
         const trimmedValue = newTextValue.trim();
@@ -312,7 +309,12 @@ const TagsInputRoot = React.forwardRef<
     [values, setValues, displayValue, onInvalid, onValidate],
   );
 
-  const onRemoveValue = React.useCallback(
+  const onItemLeave = React.useCallback(() => {
+    setFocusedValue(null);
+    setEditingValue(null);
+  }, []);
+
+  const onItemRemove = React.useCallback(
     (index: number) => {
       if (index !== -1) {
         const newValues = [...values];
@@ -387,7 +389,7 @@ const TagsInputRoot = React.forwardRef<
           if (focusedValue !== null) {
             const index = values.indexOf(focusedValue);
             const newValue = findNextEnabledValue(focusedValue, "prev");
-            onRemoveValue(index);
+            onItemRemove(index);
             setFocusedValue(newValue);
             event.preventDefault();
           } else if (event.key === "Backspace" && values.length > 0) {
@@ -458,7 +460,7 @@ const TagsInputRoot = React.forwardRef<
     [
       focusedValue,
       values,
-      onRemoveValue,
+      onItemRemove,
       dir,
       editable,
       disabled,
@@ -467,18 +469,13 @@ const TagsInputRoot = React.forwardRef<
     ],
   );
 
-  const onItemLeave = React.useCallback(() => {
-    setFocusedValue(null);
-    setEditingValue(null);
-  }, []);
-
   return (
     <TagsInputProvider
       values={values}
       onValuesChange={setValues}
-      onAddValue={onAddValue}
-      onRemoveValue={onRemoveValue}
-      onUpdateValue={onUpdateValue}
+      onItemAdd={onItemAdd}
+      onItemRemove={onItemRemove}
+      onItemUpdate={onItemUpdate}
       onInputKeydown={onInputKeydown}
       focusedValue={focusedValue}
       setFocusedValue={setFocusedValue}

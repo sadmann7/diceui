@@ -39,7 +39,7 @@ const TagsInputItemText = React.forwardRef<
             const index = context.values.findIndex(
               (v) => v === itemContext.value,
             );
-            context.onUpdateValue(index, editValue);
+            context.onItemUpdate(index, editValue);
           } else if (event.key === "Escape") {
             setEditValue(itemContext.displayValue);
             context.setEditingValue(null);

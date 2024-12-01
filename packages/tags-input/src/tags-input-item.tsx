@@ -87,9 +87,7 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
           })}
           onPointerDown={composeEventHandlers(
             itemProps.onPointerDown,
-            (event) => {
-              pointerTypeRef.current = event.pointerType;
-            },
+            (event) => (pointerTypeRef.current = event.pointerType),
           )}
           onPointerMove={composeEventHandlers(
             itemProps.onPointerMove,
