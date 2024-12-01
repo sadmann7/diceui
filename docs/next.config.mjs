@@ -3,7 +3,7 @@ import { createMDX } from "fumadocs-mdx/next";
 const withMDX = createMDX();
 
 /** @type {import('next').NextConfig} */
-const config = {
+const nextConfig = {
   reactStrictMode: true,
   redirects: async () => [
     {
@@ -17,4 +17,4 @@ const config = {
   typescript: { ignoreBuildErrors: true },
 };
 
-export default withMDX(config);
+export default withMDX(nextConfig);

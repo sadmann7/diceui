@@ -43,8 +43,10 @@ export default async function DocPage(props: DocPageParams) {
 
   return (
     <DocsPage toc={page.data.toc} full={page.data.full}>
-      <DocsTitle>{page.data.title}</DocsTitle>
-      <DocsDescription>{page.data.description}</DocsDescription>
+      <div className="flex flex-col gap-2">
+        <DocsTitle>{page.data.title}</DocsTitle>
+        <DocsDescription>{page.data.description}</DocsDescription>
+      </div>
       <DocsBody>
         <MDX components={{ ...useMDXComponents({}) }} />
       </DocsBody>

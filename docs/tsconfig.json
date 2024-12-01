@@ -37,5 +37,5 @@
     "tailwind.config.ts",
     "next.config.mjs"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "scripts/build-registry.ts", "__registry__"]
 }

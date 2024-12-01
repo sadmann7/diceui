@@ -7,16 +7,37 @@ import type { Metadata, Viewport } from "next";
 import type * as React from "react";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://sadmn.com"),
+  metadataBase: new URL(siteConfig.url),
   title: {
     default: siteConfig.name,
     template: `%s - ${siteConfig.name}`,
   },
   description: siteConfig.description,
+  keywords: ["nextjs", "react", "diceui", "ui", "shadcn/ui"],
+  authors: [
+    {
+      name: "sadmann7",
+      url: "https://www.sadmn.com",
+    },
+  ],
+  creator: "sadmann7",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: siteConfig.url,
+    title: siteConfig.name,
+    description: siteConfig.description,
+    siteName: siteConfig.name,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.name,
+    description: siteConfig.description,
+    images: [`${siteConfig.url}/og.jpg`],
+    creator: "@sadmann17",
+  },
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon-1e6x16.png",
-    apple: "/apple-touch-icon.png",
+    icon: "/icon.png",
   },
 };
 

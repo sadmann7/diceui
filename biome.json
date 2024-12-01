@@ -14,7 +14,8 @@
       "**/public",
       "**/.turbo",
       "**/.next",
-      "**/.source"
+      "**/.source",
+      "__registry__"
     ]
   },
   "linter": {
@@ -54,7 +55,8 @@
       "**/public",
       "**/.turbo",
       "**/.next",
-      "**/.source"
+      "**/.source",
+      "__registry__"
     ]
   },
   "overrides": [

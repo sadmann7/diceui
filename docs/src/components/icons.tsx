@@ -1,4 +1,4 @@
-import { Dice4 } from "lucide-react";
+import { Dice4, Loader } from "lucide-react";
 
 export type IconProps = React.HTMLAttributes<SVGElement>;
 
@@ -12,4 +12,5 @@ export const Icons = {
       />
     </svg>
   ),
+  spinner: Loader,
 };

@@ -61,14 +61,24 @@ export default function PlaygroundPage() {
 
   return (
     <Shell>
-      <TagsInput
-        value={fruits}
-        onValueChange={setFruits}
-        onInvalid={(value) => console.log({ value })}
-        addOnPaste
-        editable
-      >
-        <TagsInputLabel>Default</TagsInputLabel>
+      <TagsInput>
+        <TagsInputLabel>Uncontrolled</TagsInputLabel>
+        <TagsInputContent>
+          {({ value }) => (
+            <>
+              {value.map((item) => (
+                <TagsInputItem key={item} value={item}>
+                  {item}
+                </TagsInputItem>
+              ))}
+              <TagsInputInput placeholder="Add fruit..." />
+            </>
+          )}
+        </TagsInputContent>
+        <TagsInputClear />
+      </TagsInput>
+      <TagsInput value={fruits} onValueChange={setFruits} addOnPaste editable>
+        <TagsInputLabel>Controlled</TagsInputLabel>
         <TagsInputContent>
           {fruits.map((fruit) => (
             <TagsInputItem key={fruit} value={fruit}>
@@ -110,7 +120,6 @@ export default function PlaygroundPage() {
               <TagsInputInput placeholder="Add fruit..." />
             </TagsInputContent>
           </SortableContent>
-          <SortableContent />
           <SortableOverlay>
             <Skeleton className="size-full" />
           </SortableOverlay>
