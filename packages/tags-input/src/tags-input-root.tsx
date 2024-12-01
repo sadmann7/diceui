@@ -487,6 +487,15 @@ const TagsInputRoot = React.forwardRef<
           tagInputProps.onPointerDown,
           (event) => {
             // @see https://github.com/radix-ui/primitives/blob/main/packages/react/select/src/Select.tsx
+
+            // prevent implicit pointer capture
+            // https://www.w3.org/TR/pointerevents3/#implicit-pointer-capture
+            const target = event.target;
+            if (!(target instanceof HTMLElement)) return;
+            if (target.hasPointerCapture(event.pointerId)) {
+              target.releasePointerCapture(event.pointerId);
+            }
+
             // only call handler if it's the left button (mousedown gets triggered by all mouse buttons)
             // but not when the control key is pressed (avoiding MacOS right click); also not for touch
             // devices because that would open the menu on scroll. (pen devices behave as touch on iOS).
