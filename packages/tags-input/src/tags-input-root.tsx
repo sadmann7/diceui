@@ -330,6 +330,7 @@ const TagsInputRoot = React.forwardRef<
   const onItemLeave = React.useCallback(() => {
     setHighlightedValue(null);
     setEditingValue(null);
+    inputRef.current?.focus();
   }, []);
 
   const onInputKeydown = React.useCallback(
