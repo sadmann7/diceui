@@ -26,8 +26,8 @@ interface TagsInputContextValue<T = InputValue> {
   onItemRemove: (index: number) => void;
   onItemUpdate: (index: number, newTextValue: string) => void;
   onInputKeydown: (event: React.KeyboardEvent) => void;
-  focusedValue: T | null;
-  setFocusedValue: (value: T | null) => void;
+  highlightedValue: T | null;
+  setHighlightedValue: (value: T | null) => void;
   editingValue: T | null;
   setEditingValue: (value: T | null) => void;
   displayValue: (value: T) => string;
@@ -176,9 +176,8 @@ const TagsInputRoot = React.forwardRef<
     defaultProp: defaultValue,
     onChange: onValueChange,
   });
-  const [focusedValue, setFocusedValue] = React.useState<InputValue | null>(
-    null,
-  );
+  const [highlightedValue, setHighlightedValue] =
+    React.useState<InputValue | null>(null);
   const [editingValue, setEditingValue] = React.useState<InputValue | null>(
     null,
   );
@@ -261,7 +260,7 @@ const TagsInputRoot = React.forwardRef<
       const newValue = trimmedValue;
       const newValues = [...values, newValue];
       setValues(newValues);
-      setFocusedValue(null);
+      setHighlightedValue(null);
       setEditingValue(null);
       setIsInvalidInput(false);
       return true;
@@ -299,7 +298,7 @@ const TagsInputRoot = React.forwardRef<
         newValues[index] = updatedValue;
 
         setValues(newValues);
-        setFocusedValue(updatedValue);
+        setHighlightedValue(updatedValue);
         setEditingValue(null);
         setIsInvalidInput(false);
 
@@ -309,24 +308,25 @@ const TagsInputRoot = React.forwardRef<
     [values, setValues, displayValue, onInvalid, onValidate],
   );
 
-  const onItemLeave = React.useCallback(() => {
-    setFocusedValue(null);
-    setEditingValue(null);
-  }, []);
-
   const onItemRemove = React.useCallback(
     (index: number) => {
       if (index !== -1) {
         const newValues = [...values];
         newValues.splice(index, 1);
         setValues(newValues);
-        setFocusedValue(null);
+        setHighlightedValue(null);
         setEditingValue(null);
         inputRef.current?.focus();
       }
     },
     [values, setValues],
   );
+
+  const onItemLeave = React.useCallback(() => {
+    setHighlightedValue(null);
+    setEditingValue(null);
+  }, []);
+
   const onInputKeydown = React.useCallback(
     (event: React.KeyboardEvent) => {
       const target = event.target;
@@ -340,7 +340,7 @@ const TagsInputRoot = React.forwardRef<
         (event.key === "ArrowLeft" && dir === "rtl");
 
       if (target.value && target.selectionStart !== 0) {
-        setFocusedValue(null);
+        setHighlightedValue(null);
         setEditingValue(null);
         return;
       }
@@ -386,22 +386,22 @@ const TagsInputRoot = React.forwardRef<
         case "Backspace": {
           if (target.selectionStart !== 0 || target.selectionEnd !== 0) break;
 
-          if (focusedValue !== null) {
-            const index = values.indexOf(focusedValue);
-            const newValue = findNextEnabledValue(focusedValue, "prev");
+          if (highlightedValue !== null) {
+            const index = values.indexOf(highlightedValue);
+            const newValue = findNextEnabledValue(highlightedValue, "prev");
             onItemRemove(index);
-            setFocusedValue(newValue);
+            setHighlightedValue(newValue);
             event.preventDefault();
           } else if (event.key === "Backspace" && values.length > 0) {
             const lastValue = findNextEnabledValue(null, "prev");
-            setFocusedValue(lastValue);
+            setHighlightedValue(lastValue);
             event.preventDefault();
           }
           break;
         }
         case "Enter": {
-          if (focusedValue !== null && editable && !disabled) {
-            setEditingValue(focusedValue);
+          if (highlightedValue !== null && editable && !disabled) {
+            setEditingValue(highlightedValue);
             event.preventDefault();
             return;
           }
@@ -412,45 +412,45 @@ const TagsInputRoot = React.forwardRef<
           if (
             target.selectionStart === 0 &&
             isArrowLeft &&
-            focusedValue === null &&
+            highlightedValue === null &&
             values.length > 0
           ) {
             const lastValue = findNextEnabledValue(null, "prev");
-            setFocusedValue(lastValue);
+            setHighlightedValue(lastValue);
             event.preventDefault();
-          } else if (focusedValue !== null) {
+          } else if (highlightedValue !== null) {
             const nextValue = findNextEnabledValue(
-              focusedValue,
+              highlightedValue,
               isArrowLeft ? "prev" : "next",
             );
             if (nextValue !== null) {
-              setFocusedValue(nextValue);
+              setHighlightedValue(nextValue);
               event.preventDefault();
             } else if (isArrowRight) {
-              setFocusedValue(null);
+              setHighlightedValue(null);
               requestAnimationFrame(() => target.setSelectionRange(0, 0));
             }
           }
           break;
         }
         case "Home": {
-          if (focusedValue !== null) {
+          if (highlightedValue !== null) {
             const firstValue = findNextEnabledValue(null, "next");
-            setFocusedValue(firstValue);
+            setHighlightedValue(firstValue);
             event.preventDefault();
           }
           break;
         }
         case "End": {
-          if (focusedValue !== null) {
+          if (highlightedValue !== null) {
             const lastValue = findNextEnabledValue(null, "prev");
-            setFocusedValue(lastValue);
+            setHighlightedValue(lastValue);
             event.preventDefault();
           }
           break;
         }
         case "Escape": {
-          setFocusedValue(null);
+          setHighlightedValue(null);
           setEditingValue(null);
           requestAnimationFrame(() => target.setSelectionRange(0, 0));
           break;
@@ -458,7 +458,7 @@ const TagsInputRoot = React.forwardRef<
       }
     },
     [
-      focusedValue,
+      highlightedValue,
       values,
       onItemRemove,
       dir,
@@ -477,8 +477,8 @@ const TagsInputRoot = React.forwardRef<
       onItemRemove={onItemRemove}
       onItemUpdate={onItemUpdate}
       onInputKeydown={onInputKeydown}
-      focusedValue={focusedValue}
-      setFocusedValue={setFocusedValue}
+      highlightedValue={highlightedValue}
+      setHighlightedValue={setHighlightedValue}
       editingValue={editingValue}
       setEditingValue={setEditingValue}
       displayValue={displayValue}

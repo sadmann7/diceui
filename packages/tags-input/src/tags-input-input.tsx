@@ -27,7 +27,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
       const isAdded = context.onItemAdd(value);
       if (isAdded) {
         event.currentTarget.value = "";
-        context.setFocusedValue(null);
+        context.setHighlightedValue(null);
       }
 
       event.preventDefault();
@@ -60,7 +60,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
             target.value = "";
             if (value) {
               context.onItemAdd(value);
-              context.setFocusedValue(null);
+              context.setHighlightedValue(null);
             }
           }
         })}
@@ -68,7 +68,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
           if (event.key === "Enter") onCustomKeydown(event);
           if (event.key === "Tab") onTab(event);
           context.onInputKeydown(event);
-          if (event.key.length === 1) context.setFocusedValue(null);
+          if (event.key.length === 1) context.setHighlightedValue(null);
         })}
         onBlur={composeEventHandlers(inputProps.onBlur, (event) => {
           if (context.blurBehavior === "add") {
@@ -85,7 +85,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
 
           requestAnimationFrame(() => {
             if (!context.editingValue) {
-              context.setFocusedValue(null);
+              context.setHighlightedValue(null);
             }
           });
         })}
@@ -95,7 +95,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
             const value = event.clipboardData.getData("text");
 
             context.onItemAdd(value);
-            context.setFocusedValue(null);
+            context.setHighlightedValue(null);
           }
         })}
         {...inputProps}

@@ -13,7 +13,7 @@ const ITEM_NAME = "TagsInputItem";
 interface TagsInputItemContextValue {
   id: string;
   value: InputValue;
-  isFocused: boolean;
+  isHighlighted: boolean;
   isEditing: boolean;
   disabled?: boolean;
   textId: string;
@@ -37,13 +37,13 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
     const context = useTagsInput(ITEM_NAME);
     const id = useId();
     const textId = `${id}text`;
-    const isFocused = value === context.focusedValue;
+    const isHighlighted = value === context.highlightedValue;
     const isEditing = value === context.editingValue;
     const itemDisabled = disabled || context.disabled;
     const displayValue = context.displayValue(value);
 
     function onSelect() {
-      context.setFocusedValue(value);
+      context.setHighlightedValue(value);
       context.inputRef.current?.focus();
     }
 
@@ -51,7 +51,7 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
       <TagsInputItemProvider
         id={id}
         value={value}
-        isFocused={isFocused}
+        isHighlighted={isHighlighted}
         isEditing={isEditing}
         disabled={itemDisabled}
         textId={textId}
@@ -62,12 +62,12 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
           id={id}
           {...{ [ITEM_DATA_ATTR]: "" }}
           aria-labelledby={textId}
-          aria-current={isFocused}
+          aria-current={isHighlighted}
           aria-disabled={itemDisabled}
-          data-focused={isFocused ? "" : undefined}
+          data-highlighted={isHighlighted ? "" : undefined}
           data-editing={isEditing ? "" : undefined}
           data-editable={context.editable ? "" : undefined}
-          data-state={isFocused ? "active" : "inactive"}
+          data-state={isHighlighted ? "active" : "inactive"}
           data-disabled={itemDisabled ? "" : undefined}
           onClick={composeEventHandlers(itemProps.onClick, (event) => {
             event.stopPropagation();
@@ -95,7 +95,7 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
               // Remember pointer type when sliding over to this item from another one
               pointerTypeRef.current = event.pointerType;
               if (disabled) {
-                context.onItemLeave?.();
+                context.onItemLeave();
               } else if (pointerTypeRef.current === "mouse") {
                 // even though safari doesn't support this option, it's acceptable
                 // as it only means it might scroll a few pixels when using the pointer.
@@ -107,7 +107,7 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
             itemProps.onPointerLeave,
             (event) => {
               if (event.currentTarget === document.activeElement) {
-                context.onItemLeave?.();
+                context.onItemLeave();
               }
             },
           )}
