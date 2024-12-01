@@ -214,6 +214,11 @@ const TagsInputRoot = React.forwardRef<
         if (duplicate) {
           newValues = splitValues;
         } else {
+          for (const value of splitValues) {
+            if (values.includes(value)) {
+              onInvalid?.(value);
+            }
+          }
           newValues = [
             ...new Set(splitValues.filter((v) => !values.includes(v))),
           ];
