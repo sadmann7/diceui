@@ -158,7 +158,7 @@ const TagsInputRoot = React.forwardRef<
     loop = false,
     displayValue = (value: InputValue) => value.toString(),
     children,
-    ...tagInputProps
+    ...rootProps
   } = props;
 
   // TODO: add duplicate
@@ -469,7 +469,7 @@ const TagsInputRoot = React.forwardRef<
         dir={dir}
         data-invalid={isInvalidInput ? "" : undefined}
         data-disabled={disabled ? "" : undefined}
-        onClick={composeEventHandlers(tagInputProps.onClick, (event) => {
+        onClick={composeEventHandlers(rootProps.onClick, (event) => {
           const target = event.target;
           if (!(target instanceof HTMLElement)) return;
 
@@ -484,7 +484,7 @@ const TagsInputRoot = React.forwardRef<
           }
         })}
         onPointerDown={composeEventHandlers(
-          tagInputProps.onPointerDown,
+          rootProps.onPointerDown,
           (event) => {
             // @see https://github.com/radix-ui/primitives/blob/main/packages/react/select/src/Select.tsx
 
@@ -510,7 +510,7 @@ const TagsInputRoot = React.forwardRef<
             }
           },
         )}
-        {...tagInputProps}
+        {...rootProps}
       >
         {children}
         {isFormControl && name && (

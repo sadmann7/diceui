@@ -58,9 +58,9 @@ const orientationConfig = {
 };
 
 type UniqueItem = { id: UniqueIdentifier };
-interface SortableProviderContext<TData extends UniqueItem> {
+interface SortableProviderContext<T extends UniqueItem> {
   id: string;
-  items: TData[];
+  items: T[];
   modifiers: DndContextProps["modifiers"];
   strategy: SortableContextProps["strategy"];
   activeId: UniqueIdentifier | null;
@@ -80,9 +80,9 @@ function useSortableRoot() {
   return context;
 }
 
-interface SortableProps<TData extends UniqueItem> extends DndContextProps {
-  value: TData[];
-  onValueChange?: (items: TData[]) => void;
+interface SortableProps<T extends UniqueItem> extends DndContextProps {
+  value: T[];
+  onValueChange?: (items: T[]) => void;
   onMove?: (event: DragEndEvent) => void;
   collisionDetection?: DndContextProps["collisionDetection"];
   modifiers?: DndContextProps["modifiers"];
@@ -91,7 +91,7 @@ interface SortableProps<TData extends UniqueItem> extends DndContextProps {
   disableGrabCursor?: boolean;
 }
 
-function Sortable<TData extends UniqueItem>(props: SortableProps<TData>) {
+function Sortable<T extends UniqueItem>(props: SortableProps<T>) {
   const id = React.useId();
   const {
     value,
@@ -188,7 +188,7 @@ function SortableContent({
 
   return (
     <SortableContext
-      id={`${context.id}content`}
+      id={`${context.id}context`}
       items={context.items}
       strategy={strategyProp ?? context.strategy}
     >
@@ -255,11 +255,9 @@ const SortableItemContext = React.createContext<SortableItemContextProps>({
 
 function useSortableItem() {
   const context = React.useContext(SortableItemContext);
-
   if (!context) {
     throw new Error("useSortableItem must be used within a SortableItem");
   }
-
   return context;
 }
 

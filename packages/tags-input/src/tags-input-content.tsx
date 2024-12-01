@@ -16,7 +16,7 @@ const TagsInputContent = React.forwardRef<
   HTMLDivElement,
   TagsInputContentProps
 >((props, ref) => {
-  const { children, ...tagsInputItemListProps } = props;
+  const { children, ...contentProps } = props;
   const context = useTagsInput(CONTENT_NAME);
   const id = `${context.id}content`;
 
@@ -25,7 +25,7 @@ const TagsInputContent = React.forwardRef<
       ref={ref}
       id={id}
       data-disabled={context.disabled ? "" : undefined}
-      {...tagsInputItemListProps}
+      {...contentProps}
     >
       {typeof children === "function" ? (
         <>{children(context.values)}</>

@@ -12,7 +12,7 @@ const TagsInputItemText = React.forwardRef<
   HTMLSpanElement,
   TagsInputItemTextProps
 >((props, ref) => {
-  const { children, ...tagsInputItemTextProps } = props;
+  const { children, ...itemTextProps } = props;
   const context = useTagsInput(ITEM_TEXT_NAME);
   const itemContext = useTagsInputItem(ITEM_TEXT_NAME);
   const [editValue, setEditValue] = React.useState(itemContext.displayValue);
@@ -70,11 +70,7 @@ const TagsInputItemText = React.forwardRef<
   }
 
   return (
-    <Primitive.span
-      ref={ref}
-      id={itemContext.textId}
-      {...tagsInputItemTextProps}
-    >
+    <Primitive.span ref={ref} id={itemContext.textId} {...itemTextProps}>
       {children ?? itemContext.displayValue}
     </Primitive.span>
   );

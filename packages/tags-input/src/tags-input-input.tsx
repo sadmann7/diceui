@@ -10,7 +10,7 @@ interface TagsInputInputProps
 
 const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
   (props, ref) => {
-    const { autoFocus, ...tagsInputInputProps } = props;
+    const { autoFocus, ...inputProps } = props;
     const context = useTagsInput(INPUT_NAME);
 
     function onTab(event: React.KeyboardEvent<HTMLInputElement>) {
@@ -51,7 +51,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
         type="text"
         data-invalid={context.isInvalidInput ? "" : undefined}
         disabled={context.disabled}
-        onInput={composeEventHandlers(tagsInputInputProps.onInput, (event) => {
+        onInput={composeEventHandlers(inputProps.onInput, (event) => {
           const target = event.target as HTMLInputElement;
           const delimiter = context.delimiter;
 
@@ -64,16 +64,13 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
             }
           }
         })}
-        onKeyDown={composeEventHandlers(
-          tagsInputInputProps.onKeyDown,
-          (event) => {
-            if (event.key === "Enter") onCustomKeydown(event);
-            if (event.key === "Tab") onTab(event);
-            context.onInputKeydown(event);
-            if (event.key.length === 1) context.setFocusedValue(null);
-          },
-        )}
-        onBlur={composeEventHandlers(tagsInputInputProps.onBlur, (event) => {
+        onKeyDown={composeEventHandlers(inputProps.onKeyDown, (event) => {
+          if (event.key === "Enter") onCustomKeydown(event);
+          if (event.key === "Tab") onTab(event);
+          context.onInputKeydown(event);
+          if (event.key.length === 1) context.setFocusedValue(null);
+        })}
+        onBlur={composeEventHandlers(inputProps.onBlur, (event) => {
           if (!context.addOnBlur) return;
 
           const value = event.target.value;
@@ -82,7 +79,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
           const isAdded = context.onAddValue(value);
           if (isAdded) event.target.value = "";
         })}
-        onPaste={composeEventHandlers(tagsInputInputProps.onPaste, (event) => {
+        onPaste={composeEventHandlers(inputProps.onPaste, (event) => {
           if (context.addOnPaste) {
             event.preventDefault();
             const value = event.clipboardData.getData("text");
@@ -91,7 +88,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
             context.setFocusedValue(null);
           }
         })}
-        {...tagsInputInputProps}
+        {...inputProps}
       />
     );
   },

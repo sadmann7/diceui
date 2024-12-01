@@ -31,7 +31,7 @@ interface TagsInputItemProps
 
 const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
   (props, ref) => {
-    const { value, disabled, ...tagsInputItemProps } = props;
+    const { value, disabled, ...itemProps } = props;
     const context = useTagsInput(ITEM_NAME);
     const id = useId();
     const textId = `${id}text`;
@@ -59,22 +59,19 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
           data-editable={context.editable ? "" : undefined}
           data-state={isFocused ? "active" : "inactive"}
           data-disabled={itemDisabled ? "" : undefined}
-          onClick={composeEventHandlers(tagsInputItemProps.onClick, (event) => {
+          onClick={composeEventHandlers(itemProps.onClick, (event) => {
             event.stopPropagation();
             if (!isEditing) {
               context.setFocusedValue(value);
               requestAnimationFrame(() => context.inputRef.current?.focus());
             }
           })}
-          onDoubleClick={composeEventHandlers(
-            tagsInputItemProps.onDoubleClick,
-            () => {
-              if (context.editable && !itemDisabled) {
-                context.setEditingValue(value);
-              }
-            },
-          )}
-          {...tagsInputItemProps}
+          onDoubleClick={composeEventHandlers(itemProps.onDoubleClick, () => {
+            if (context.editable && !itemDisabled) {
+              context.setEditingValue(value);
+            }
+          })}
+          {...itemProps}
         />
       </TagsInputItemProvider>
     );
