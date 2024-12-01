@@ -108,6 +108,7 @@ export default function PlaygroundPage() {
               <TagsInputInput placeholder="Add fruit..." />
             </TagsInputContent>
           </SortableContent>
+          <SortableContent />
           <SortableOverlay>
             <Skeleton className="size-full" />
           </SortableOverlay>

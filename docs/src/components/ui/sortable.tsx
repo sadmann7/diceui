@@ -188,7 +188,6 @@ function SortableContent({
 
   return (
     <SortableContext
-      id={`${context.id}context`}
       items={context.items}
       strategy={strategyProp ?? context.strategy}
     >
