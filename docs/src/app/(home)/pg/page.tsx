@@ -44,14 +44,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  KeyboardSensor,
-  MouseSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { MouseSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
 
 export default function PlaygroundPage() {
   const [fruits, setFruits] = React.useState<string[]>([]);
@@ -62,14 +55,6 @@ export default function PlaygroundPage() {
     }),
     useSensor(TouchSensor, {
       activationConstraint: { delay: 250, tolerance: 5 },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-      keyboardCodes: {
-        start: ["ArrowUp"],
-        cancel: ["Escape"],
-        end: ["ArrowDown"],
-      },
     }),
   );
 
@@ -99,7 +84,13 @@ export default function PlaygroundPage() {
           <SortableContent strategy={undefined}>
             <TagsInputContent>
               {fruits.map((fruit) => (
-                <SortableItem key={fruit} value={fruit} asChild asDragHandle>
+                <SortableItem
+                  key={fruit}
+                  value={fruit}
+                  asChild
+                  asDragHandle
+                  tabIndex={-1}
+                >
                   <TagsInputItem value={fruit}>{fruit}</TagsInputItem>
                 </SortableItem>
               ))}
