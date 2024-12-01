@@ -1,6 +1,6 @@
 "use client";
 
-// import { Index } from "__registry__";
+import { Index } from "__registry__";
 import * as React from "react";
 
 import { CopyButton } from "@/components/copy-button";
@@ -9,7 +9,6 @@ import { ThemeWrapper } from "@/components/theme-wrapper";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useConfig } from "@/hooks/use-config";
 import { cn } from "@/lib/utils";
-import { TagsInputDemo } from "@/registry/default/tags-input-demo";
 import { styles } from "@/registry/registry-styles";
 
 interface ComponentPreviewProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -40,10 +39,9 @@ export function ComponentPreview({
   const Codes = React.Children.toArray(children) as React.ReactElement[];
   const Code = Codes[index];
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   const Preview = React.useMemo(() => {
-    // const Component = Index[config.style][name]?.component
-    const Component = TagsInputDemo;
+    // Get the component from the Index
+    const Component = Index[config.style][name]?.component;
 
     if (!Component) {
       return (
@@ -57,7 +55,12 @@ export function ComponentPreview({
       );
     }
 
-    return <Component />;
+    // Ensure Component is a valid React component before rendering
+    if (typeof Component === "function" || React.isValidElement(Component)) {
+      return <Component />;
+    }
+
+    return null;
   }, [name, config.style]);
 
   const codeString = React.useMemo(() => {

@@ -59,11 +59,11 @@ export const Index: Record<string, any> = {
       type: "registry:hook",
       registryDependencies: undefined,
       files: [{
-        path: "registry/new-york/hooks/use-mobile.tsx",
+        path: "registry/new-york/hooks/use-mobile.ts",
         type: "registry:hook",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/new-york/hooks/use-mobile.tsx")),
+      component: React.lazy(() => import("@/registry/new-york/hooks/use-mobile.ts")),
       source: "",
       category: "",
       subcategory: "",
@@ -124,11 +124,11 @@ export const Index: Record<string, any> = {
       type: "registry:hook",
       registryDependencies: undefined,
       files: [{
-        path: "registry/default/hooks/use-mobile.tsx",
+        path: "registry/default/hooks/use-mobile.ts",
         type: "registry:hook",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/hooks/use-mobile.tsx")),
+      component: React.lazy(() => import("@/registry/default/hooks/use-mobile.ts")),
       source: "",
       category: "",
       subcategory: "",

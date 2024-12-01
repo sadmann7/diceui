@@ -6,7 +6,7 @@ export const hooks: Registry = [
     type: "registry:hook",
     files: [
       {
-        path: "hooks/use-mobile.tsx",
+        path: "hooks/use-mobile.ts",
         type: "registry:hook",
       },
     ],

@@ -1,7 +1,8 @@
 {
   "name": "tags-input-demo",
   "type": "registry:example",
-  "registryDependencies": ["tags-input"],
+  "dependencies": ["@diceui/tags-input"],
+  "registryDependencies": ["button"],
   "files": [
     {
       "path": "example/tags-input-demo.tsx",
