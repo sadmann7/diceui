@@ -96,14 +96,12 @@ export function ComponentPreview({
           )}
         </div>
         <TabsContent value="preview" className="relative rounded-md border">
-          <div className="flex items-center justify-between p-4">
-            <div className="flex items-center gap-2">
-              <CopyButton
-                value={codeString}
-                variant="outline"
-                className="h-7 w-7 text-foreground opacity-100 hover:bg-muted hover:text-foreground [&_svg]:h-3.5 [&_svg]:w-3.5"
-              />
-            </div>
+          <div className="flex items-center justify-end gap-2 p-4">
+            <CopyButton
+              value={codeString}
+              variant="outline"
+              className="h-7 w-7 text-foreground opacity-100 hover:bg-muted hover:text-foreground [&_svg]:h-3.5 [&_svg]:w-3.5"
+            />
           </div>
           <ThemeWrapper defaultTheme="zinc">
             <div
