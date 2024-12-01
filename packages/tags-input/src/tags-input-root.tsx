@@ -31,6 +31,7 @@ interface TagsInputContextValue<T = InputValue> {
   editingValue: T | null;
   setEditingValue: (value: T | null) => void;
   displayValue: (value: T) => string;
+  onItemLeave: () => void;
   inputRef: React.RefObject<HTMLInputElement>;
   isInvalidInput: boolean;
   addOnPaste: boolean;
@@ -466,6 +467,11 @@ const TagsInputRoot = React.forwardRef<
     ],
   );
 
+  const onItemLeave = React.useCallback(() => {
+    setFocusedValue(null);
+    setEditingValue(null);
+  }, []);
+
   return (
     <TagsInputProvider
       values={values}
@@ -479,6 +485,7 @@ const TagsInputRoot = React.forwardRef<
       editingValue={editingValue}
       setEditingValue={setEditingValue}
       displayValue={displayValue}
+      onItemLeave={onItemLeave}
       inputRef={inputRef}
       isInvalidInput={isInvalidInput}
       addOnPaste={addOnPaste}
@@ -533,7 +540,8 @@ const TagsInputRoot = React.forwardRef<
             if (
               event.button === 0 &&
               event.ctrlKey === false &&
-              event.pointerType === "mouse"
+              event.pointerType === "mouse" &&
+              !target.closest("[data-sortable-item]")
             ) {
               // prevent container from stealing focus from the input.
               event.preventDefault();

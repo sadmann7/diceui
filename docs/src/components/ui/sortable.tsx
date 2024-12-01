@@ -311,6 +311,7 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
       <SortableItemContext.Provider value={itemContext}>
         <ItemSlot
           id={id}
+          data-sortable-item=""
           data-dragging={isDragging ? "" : undefined}
           className={cn(
             {

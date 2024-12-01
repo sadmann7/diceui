@@ -16,6 +16,7 @@ const TagsInputClear = React.forwardRef<HTMLButtonElement, TagsInputClearProps>(
       <Primitive.button
         ref={ref}
         type="button"
+        aria-disabled={context.disabled}
         data-state={context.values.length > 0 ? "visible" : "hidden"}
         data-disabled={context.disabled ? "" : undefined}
         onClick={composeEventHandlers(props.onClick, () => {

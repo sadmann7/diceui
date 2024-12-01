@@ -23,12 +23,12 @@ const TagsInputItemDelete = React.forwardRef<
     <Primitive.button
       ref={ref}
       type="button"
-      tabIndex={-1}
       aria-labelledby={itemContext.textId}
       aria-controls={itemContext.id}
       aria-current={itemContext.isFocused}
       data-state={itemContext.isFocused ? "active" : "inactive"}
       data-disabled={disabled ? "" : undefined}
+      tabIndex={-1}
       onClick={composeEventHandlers(props.onClick, () => {
         if (disabled) return;
         const index = context.values.findIndex((i) => i === itemContext.value);

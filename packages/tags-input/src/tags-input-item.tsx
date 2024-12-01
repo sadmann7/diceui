@@ -32,6 +32,8 @@ interface TagsInputItemProps
 const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
   (props, ref) => {
     const { value, disabled, ...itemProps } = props;
+    const pointerTypeRef =
+      React.useRef<React.PointerEvent["pointerType"]>("touch");
     const context = useTagsInput(ITEM_NAME);
     const id = useId();
     const textId = `${id}text`;
@@ -39,6 +41,11 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
     const isEditing = value === context.editingValue;
     const itemDisabled = disabled || context.disabled;
     const displayValue = context.displayValue(value);
+
+    function onSelect() {
+      context.setFocusedValue(value);
+      context.inputRef.current?.focus();
+    }
 
     return (
       <TagsInputItemProvider
@@ -54,6 +61,9 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
           ref={ref}
           id={id}
           {...{ [ITEM_DATA_ATTR]: "" }}
+          aria-labelledby={textId}
+          aria-current={isFocused}
+          aria-disabled={itemDisabled}
           data-focused={isFocused ? "" : undefined}
           data-editing={isEditing ? "" : undefined}
           data-editable={context.editable ? "" : undefined}
@@ -61,11 +71,8 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
           data-disabled={itemDisabled ? "" : undefined}
           onClick={composeEventHandlers(itemProps.onClick, (event) => {
             event.stopPropagation();
-            if (!isEditing) {
-              requestAnimationFrame(() => {
-                context.setFocusedValue(value);
-                context.inputRef.current?.focus();
-              });
+            if (!isEditing && pointerTypeRef.current !== "mouse") {
+              onSelect();
             }
           })}
           onDoubleClick={composeEventHandlers(itemProps.onDoubleClick, () => {
@@ -73,6 +80,39 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
               requestAnimationFrame(() => context.setEditingValue(value));
             }
           })}
+          onPointerUp={composeEventHandlers(itemProps.onPointerUp, () => {
+            // Using a mouse you should be able to do pointer down, move through
+            // the list, and release the pointer over the item to select it.
+            if (pointerTypeRef.current === "mouse") onSelect();
+          })}
+          onPointerDown={composeEventHandlers(
+            itemProps.onPointerDown,
+            (event) => {
+              pointerTypeRef.current = event.pointerType;
+            },
+          )}
+          onPointerMove={composeEventHandlers(
+            itemProps.onPointerMove,
+            (event) => {
+              // Remember pointer type when sliding over to this item from another one
+              pointerTypeRef.current = event.pointerType;
+              if (disabled) {
+                context.onItemLeave?.();
+              } else if (pointerTypeRef.current === "mouse") {
+                // even though safari doesn't support this option, it's acceptable
+                // as it only means it might scroll a few pixels when using the pointer.
+                event.currentTarget.focus({ preventScroll: true });
+              }
+            },
+          )}
+          onPointerLeave={composeEventHandlers(
+            itemProps.onPointerLeave,
+            (event) => {
+              if (event.currentTarget === document.activeElement) {
+                context.onItemLeave?.();
+              }
+            },
+          )}
           {...itemProps}
         />
       </TagsInputItemProvider>
