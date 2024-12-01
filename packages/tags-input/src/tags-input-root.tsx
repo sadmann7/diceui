@@ -534,15 +534,6 @@ const TagsInputRoot = React.forwardRef<
             }
           },
         )}
-        onBlur={composeEventHandlers(rootProps.onBlur, (event) => {
-          if (
-            !collectionRef.current?.contains(event.relatedTarget) &&
-            document.activeElement !== inputRef.current
-          ) {
-            setFocusedValue(null);
-            setEditingValue(null);
-          }
-        })}
         {...rootProps}
       >
         {children}
