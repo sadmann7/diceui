@@ -31,6 +31,7 @@ import {
   SortableItem,
   SortableOverlay,
 } from "@/components/ui/sortable";
+import { pointerWithin } from "@dnd-kit/core";
 
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
@@ -81,6 +82,7 @@ export default function PlaygroundPage() {
       <Sortable
         sensors={sensors}
         value={fruits.map((fruit) => ({ id: fruit }))}
+        collisionDetection={pointerWithin}
         onValueChange={(items) => setFruits(items.map((item) => item.id))}
         orientation="both"
         disableGrabCursor
@@ -92,7 +94,7 @@ export default function PlaygroundPage() {
           editable
         >
           <TagsInputLabel>Sortable</TagsInputLabel>
-          <SortableContent strategy={undefined}>
+          <SortableContent>
             <TagsInputContent>
               {fruits.map((fruit) => (
                 <SortableItem

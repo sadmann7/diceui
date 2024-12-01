@@ -168,7 +168,7 @@ function Sortable<T extends UniqueItem>(props: SortableProps<T>) {
         onDragCancel={composeEventHandlers(sortableProps.onDragCancel, () =>
           setActiveId(null),
         )}
-        collisionDetection={closestCorners}
+        collisionDetection={collisionDetection ?? config.collisionDetection}
         {...sortableProps}
       />
     </SortableRoot.Provider>
