@@ -65,7 +65,11 @@ export default function PlaygroundPage() {
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-      keyboardCodes: { start: ["Space"], cancel: ["Escape"], end: ["Space"] },
+      keyboardCodes: {
+        start: ["ArrowUp"],
+        cancel: ["Escape"],
+        end: ["ArrowDown"],
+      },
     }),
   );
 
