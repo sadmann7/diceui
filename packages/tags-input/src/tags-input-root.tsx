@@ -44,6 +44,7 @@ interface TagsInputContextValue<T = InputValue> {
   blurBehavior: "add" | "clear" | undefined;
   dir: "ltr" | "rtl";
   max: number;
+  excludePointerAttr: string | undefined;
   id: string;
   inputId: string;
   labelId: string;
@@ -94,6 +95,12 @@ interface TagsInputRootProps<T = InputValue>
   editable?: boolean;
 
   /**
+   * Enable wrapping focus from last to first tag and vice versa.
+   * @default false
+   */
+  loop?: boolean;
+
+  /**
    * Disables the entire tags input.
    * @default false
    */
@@ -131,11 +138,8 @@ interface TagsInputRootProps<T = InputValue>
   /** Name of the form field when used in a form. */
   name?: string;
 
-  /**
-   * Enable wrapping focus from last to first tag and vice versa.
-   * @default false
-   */
-  loop?: boolean;
+  /** Attribute to exclude from pointer events. Can be used to make items sortable. */
+  excludePointerAttr?: string;
 
   /** Unique identifier for the tags input. */
   id?: string;
@@ -152,8 +156,10 @@ const TagsInputRoot = React.forwardRef<
     onValidate,
     onInvalid,
     addOnPaste = false,
+    displayValue = (value: InputValue) => value.toString(),
     addOnTab = false,
     editable = false,
+    loop = false,
     disabled = false,
     blurBehavior,
     delimiter = ",",
@@ -161,9 +167,8 @@ const TagsInputRoot = React.forwardRef<
     max = Number.POSITIVE_INFINITY,
     required = false,
     name,
+    excludePointerAttr,
     id: idProp,
-    loop = false,
-    displayValue = (value: InputValue) => value.toString(),
     children,
     ...rootProps
   } = props;
@@ -495,6 +500,7 @@ const TagsInputRoot = React.forwardRef<
       loop={loop}
       dir={dir}
       max={max}
+      excludePointerAttr={excludePointerAttr}
       id={id}
       inputId={inputId}
       labelId={labelId}
@@ -538,14 +544,24 @@ const TagsInputRoot = React.forwardRef<
               event.button === 0 &&
               event.ctrlKey === false &&
               event.pointerType === "mouse" &&
-              !target.closest("[data-sortable-item]")
+              (!excludePointerAttr ||
+                !target.closest(`[${excludePointerAttr}]`))
             ) {
               // prevent container from stealing focus from the input.
               event.preventDefault();
-              inputRef.current?.focus();
             }
+
+            inputRef.current?.focus();
           },
         )}
+        onBlur={composeEventHandlers(rootProps.onBlur, (event) => {
+          if (
+            event.relatedTarget !== inputRef.current &&
+            !collectionRef.current?.contains(event.relatedTarget)
+          ) {
+            requestAnimationFrame(() => setHighlightedValue(null));
+          }
+        })}
         {...rootProps}
       >
         {children}

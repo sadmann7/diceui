@@ -82,12 +82,6 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
           if (context.blurBehavior === "clear") {
             event.target.value = "";
           }
-
-          requestAnimationFrame(() => {
-            if (!context.editingValue) {
-              context.setHighlightedValue(null);
-            }
-          });
         })}
         onPaste={composeEventHandlers(inputProps.onPaste, (event) => {
           if (context.addOnPaste) {

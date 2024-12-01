@@ -44,7 +44,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { values } from "@/lib/playground";
 import { MouseSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
 
 export default function PlaygroundPage() {
@@ -86,7 +85,12 @@ export default function PlaygroundPage() {
         orientation="both"
         disableGrabCursor
       >
-        <TagsInput value={fruits} onValueChange={setFruits} editable>
+        <TagsInput
+          value={fruits}
+          onValueChange={setFruits}
+          excludePointerAttr="data-sortable-item"
+          editable
+        >
           <TagsInputLabel>Sortable</TagsInputLabel>
           <SortableContent strategy={undefined}>
             <TagsInputContent>

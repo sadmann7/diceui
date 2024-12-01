@@ -96,7 +96,10 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
               pointerTypeRef.current = event.pointerType;
               if (disabled) {
                 context.onItemLeave();
-              } else if (pointerTypeRef.current === "mouse") {
+              } else if (
+                pointerTypeRef.current === "mouse" &&
+                !context.excludePointerAttr
+              ) {
                 // even though safari doesn't support this option, it's acceptable
                 // as it only means it might scroll a few pixels when using the pointer.
                 event.currentTarget.focus({ preventScroll: true });
