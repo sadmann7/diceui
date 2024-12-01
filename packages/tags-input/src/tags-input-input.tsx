@@ -71,13 +71,23 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
           if (event.key.length === 1) context.setFocusedValue(null);
         })}
         onBlur={composeEventHandlers(inputProps.onBlur, (event) => {
-          if (!context.addOnBlur) return;
+          if (context.blurBehavior === "add") {
+            const value = event.target.value;
+            if (value) {
+              const isAdded = context.onAddValue(value);
+              if (isAdded) event.target.value = "";
+            }
+          }
 
-          const value = event.target.value;
-          if (!value) return;
+          if (context.blurBehavior === "clear") {
+            event.target.value = "";
+          }
 
-          const isAdded = context.onAddValue(value);
-          if (isAdded) event.target.value = "";
+          requestAnimationFrame(() => {
+            if (!context.editingValue) {
+              context.setFocusedValue(null);
+            }
+          });
         })}
         onPaste={composeEventHandlers(inputProps.onPaste, (event) => {
           if (context.addOnPaste) {

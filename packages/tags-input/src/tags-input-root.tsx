@@ -35,12 +35,12 @@ interface TagsInputContextValue<T = InputValue> {
   isInvalidInput: boolean;
   addOnPaste: boolean;
   addOnTab: boolean;
-  addOnBlur: boolean;
   disabled: boolean;
   editable: boolean;
   delimiter: string;
   duplicate: boolean;
   loop: boolean;
+  blurBehavior: "add" | "clear" | undefined;
   dir: "ltr" | "rtl";
   max: number;
   id: string;
@@ -84,12 +84,6 @@ interface TagsInputRootProps<T = InputValue>
   addOnTab?: boolean;
 
   /**
-   * Enable adding tags when input loses focus.
-   * @default false
-   */
-  addOnBlur?: boolean;
-
-  /**
    * Allow editing of existing tags
    * @default false
    */
@@ -100,6 +94,14 @@ interface TagsInputRootProps<T = InputValue>
    * @default false
    */
   disabled?: boolean;
+
+  /**
+   * Behavior when the input loses focus.
+   * - "add": Add the current input value as a new tag.
+   * - "clear": Reset the input field, removing its value.
+   * Can be overridden by the preventDefault() call in the input's onBlur handler.
+   */
+  blurBehavior?: "add" | "clear";
 
   /**
    * Character used to split pasted text into multiple tags.
@@ -152,9 +154,9 @@ const TagsInputRoot = React.forwardRef<
     onInvalid,
     addOnPaste = false,
     addOnTab = false,
-    addOnBlur = false,
     editable = false,
     disabled = false,
+    blurBehavior,
     delimiter = ",",
     dir: dirProp,
     max = Number.POSITIVE_INFINITY,
@@ -476,9 +478,9 @@ const TagsInputRoot = React.forwardRef<
       isInvalidInput={isInvalidInput}
       addOnPaste={addOnPaste}
       addOnTab={addOnTab}
-      addOnBlur={addOnBlur}
       editable={editable}
       disabled={disabled}
+      blurBehavior={blurBehavior}
       delimiter={delimiter}
       duplicate={duplicate}
       loop={loop}

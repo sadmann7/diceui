@@ -60,7 +60,12 @@ export default function PlaygroundPage() {
 
   return (
     <Shell>
-      <TagsInput value={fruits} onValueChange={setFruits} editable>
+      <TagsInput
+        value={fruits}
+        onValueChange={setFruits}
+        blurBehavior="clear"
+        editable
+      >
         <TagsInputLabel>Default</TagsInputLabel>
         <TagsInputContent>
           {fruits.map((fruit) => (

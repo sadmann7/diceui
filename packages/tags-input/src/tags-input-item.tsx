@@ -40,8 +40,6 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
     const itemDisabled = disabled || context.disabled;
     const displayValue = context.displayValue(value);
 
-    console.log({ editingValue: context.editingValue });
-
     return (
       <TagsInputItemProvider
         id={id}
