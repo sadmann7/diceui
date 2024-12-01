@@ -72,7 +72,6 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
             context.onInputKeydown(event);
             if (event.key.length === 1) context.setFocusedValue(null);
           },
-          { checkForDefaultPrevented: false },
         )}
         onBlur={composeEventHandlers(tagsInputInputProps.onBlur, (event) => {
           if (!context.addOnBlur) return;
@@ -83,19 +82,15 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
           const isAdded = context.onAddValue(value);
           if (isAdded) event.target.value = "";
         })}
-        onPaste={composeEventHandlers(
-          tagsInputInputProps.onPaste,
-          (event) => {
-            if (context.addOnPaste) {
-              event.preventDefault();
-              const value = event.clipboardData.getData("text");
+        onPaste={composeEventHandlers(tagsInputInputProps.onPaste, (event) => {
+          if (context.addOnPaste) {
+            event.preventDefault();
+            const value = event.clipboardData.getData("text");
 
-              context.onAddValue(value);
-              context.setFocusedValue(null);
-            }
-          },
-          { checkForDefaultPrevented: false },
-        )}
+            context.onAddValue(value);
+            context.setFocusedValue(null);
+          }
+        })}
         {...tagsInputInputProps}
       />
     );

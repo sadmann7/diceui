@@ -5,6 +5,7 @@ import { BubbleInput } from "./bubble-input";
 import {
   DATA_DISABLED_ATTR,
   ITEM_DATA_ATTR,
+  composeEventHandlers,
   createContext,
   useCollection,
   useComposedRefs,
@@ -468,18 +469,38 @@ const TagsInputRoot = React.forwardRef<
         dir={dir}
         data-invalid={isInvalidInput ? "" : undefined}
         data-disabled={disabled ? "" : undefined}
-        onClick={(event) => {
+        onClick={composeEventHandlers(tagInputProps.onClick, (event) => {
           const target = event.target;
           if (!(target instanceof HTMLElement)) return;
 
           if (
             collectionRef.current?.contains(target) &&
             !target.hasAttribute(ITEM_DATA_ATTR) &&
-            target.tagName !== "INPUT"
+            target.tagName !== "INPUT" &&
+            document.activeElement !== inputRef.current
           ) {
+            event.currentTarget.focus();
             inputRef.current?.focus();
           }
-        }}
+        })}
+        onPointerDown={composeEventHandlers(
+          tagInputProps.onPointerDown,
+          (event) => {
+            // @see https://github.com/radix-ui/primitives/blob/main/packages/react/select/src/Select.tsx
+            // only call handler if it's the left button (mousedown gets triggered by all mouse buttons)
+            // but not when the control key is pressed (avoiding MacOS right click); also not for touch
+            // devices because that would open the menu on scroll. (pen devices behave as touch on iOS).
+            if (
+              event.button === 0 &&
+              event.ctrlKey === false &&
+              event.pointerType === "mouse"
+            ) {
+              // prevent container from stealing focus from the input.
+              event.preventDefault();
+              inputRef.current?.focus();
+            }
+          },
+        )}
         {...tagInputProps}
       >
         {children}

@@ -2,7 +2,12 @@
   "name": "@diceui/tags-input",
   "version": "0.0.1",
   "type": "module",
-  "keywords": ["tags-input", "tag-input", "ui", "react"],
+  "keywords": [
+    "tags-input",
+    "tag-input",
+    "ui",
+    "react"
+  ],
   "author": "Sadman Sakib",
   "license": "MIT",
   "repository": {
@@ -20,7 +25,12 @@
       "require": "./dist/index.cjs"
     }
   },
-  "files": ["dist", "package.json", "LICENSE", "README.md"],
+  "files": [
+    "dist",
+    "package.json",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
     "clean": "rimrraf dist",
     "dev": "tsup --format esm --watch --external=react",
