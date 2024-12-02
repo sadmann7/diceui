@@ -1,6 +1,6 @@
 "use client";
 
-import { Index } from "__registry__";
+import { Index } from "@/__registry__";
 import * as React from "react";
 
 import { CopyButton } from "@/components/copy-button";
@@ -40,7 +40,6 @@ export function ComponentPreview({
   const Code = Codes[index];
 
   const Preview = React.useMemo(() => {
-    // Get the component from the Index
     const Component = Index[config.style][name]?.component;
 
     if (!Component) {
@@ -55,12 +54,7 @@ export function ComponentPreview({
       );
     }
 
-    // Ensure Component is a valid React component before rendering
-    if (typeof Component === "function" || React.isValidElement(Component)) {
-      return <Component />;
-    }
-
-    return null;
+    return <Component />;
   }, [name, config.style]);
 
   const codeString = React.useMemo(() => {

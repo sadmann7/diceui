@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { promises as fs, existsSync, readFileSync } from "node:fs";
+import { promises as fs, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { cwd } from "node:process";
@@ -43,7 +42,7 @@ async function createTempSourceFile(filename: string) {
 }
 
 // ----------------------------------------------------------------------------
-// Build __registry__/index.tsx.
+// Build src/__registry__/index.tsx.
 // ----------------------------------------------------------------------------
 async function buildRegistry(registry: Registry) {
   let index = `// @ts-nocheck
@@ -105,14 +104,16 @@ export const Index: Record<string, any> = {
             isDefault?: boolean;
           }
         >();
-        for (const node of sourceFile.getImportDeclarations()) {
+        // biome-ignore lint/complexity/noForEach: <explanation>
+        sourceFile.getImportDeclarations().forEach((node) => {
           const module = node.getModuleSpecifier().getLiteralValue();
-          for (const item of node.getNamedImports()) {
+          // biome-ignore lint/complexity/noForEach: <explanation>
+          node.getNamedImports().forEach((item) => {
             imports.set(item.getText(), {
               module,
               text: node.getText(),
             });
-          }
+          });
 
           const defaultImport = node.getDefaultImport();
           if (defaultImport) {
@@ -122,7 +123,7 @@ export const Index: Record<string, any> = {
               isDefault: true,
             });
           }
-        }
+        });
 
         // Find all opening tags with x-chunk attribute.
         const components = sourceFile
@@ -188,7 +189,8 @@ export const Index: Record<string, any> = {
               string,
               string | string[] | Set<string>
             >();
-            for (const child of children) {
+            // biome-ignore lint/complexity/noForEach: <explanation>
+            children.forEach((child) => {
               const importLine = imports.get(child);
               if (importLine) {
                 const imports = componentImports.get(importLine.module) || [];
@@ -202,7 +204,7 @@ export const Index: Record<string, any> = {
                   importLine?.isDefault ? newImports : Array.from(newImports),
                 );
               }
-            }
+            });
 
             const componnetImportLines = Array.from(
               componentImports.keys(),
@@ -247,7 +249,7 @@ export const Index: Record<string, any> = {
         );
 
         // // Write the source file for blocks only.
-        sourceFilename = `__registry__/${style.name}/${type}/${item.name}.tsx`;
+        sourceFilename = `src/__registry__/${style.name}/${type}/${item.name}.tsx`;
 
         if (item.files) {
           const files = item.files.map((file) =>
@@ -256,7 +258,7 @@ export const Index: Record<string, any> = {
               : file,
           );
           if (files?.length) {
-            sourceFilename = `__registry__/${style.name}/${files[0].path}`;
+            sourceFilename = `src/__registry__/${style.name}/${files[0].path}`;
           }
         }
 
@@ -357,8 +359,11 @@ export const Index: Record<string, any> = {
   );
 
   // Write style index.
-  rimraf.sync(path.join(process.cwd(), "__registry__/index.tsx"));
-  await fs.writeFile(path.join(process.cwd(), "__registry__/index.tsx"), index);
+  rimraf.sync(path.join(process.cwd(), "src/__registry__/index.tsx"));
+  await fs.writeFile(
+    path.join(process.cwd(), "src/__registry__/index.tsx"),
+    index,
+  );
 }
 
 // ----------------------------------------------------------------------------
@@ -378,7 +383,8 @@ async function buildStyles(registry: Registry) {
         continue;
       }
 
-      let files: Awaited<ReturnType<typeof Promise.all>>;
+      // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
+      let files;
       if (item.files) {
         files = await Promise.all(
           item.files.map(async (_file) => {
@@ -453,10 +459,8 @@ async function buildStyles(registry: Registry) {
 
       const payload = registryEntrySchema
         .omit({
-          source: true,
           category: true,
           subcategory: true,
-          chunks: true,
         })
         .safeParse({
           ...item,
@@ -659,18 +663,22 @@ async function buildThemes() {
       cssVars: {},
     };
     for (const [mode, values] of Object.entries(colorMapping)) {
-      base.inlineColors[mode] = {};
-      base.cssVars[mode] = {};
+      // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+      base["inlineColors"][mode] = {};
+      // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+      base["cssVars"][mode] = {};
       for (const [key, value] of Object.entries(values)) {
         if (typeof value === "string") {
           // Chart colors do not have a 1-to-1 mapping with tailwind colors.
           if (key.startsWith("chart-")) {
-            base.cssVars[mode][key] = value;
+            // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+            base["cssVars"][mode][key] = value;
             continue;
           }
 
           const resolvedColor = value.replace(/{{base}}-/g, `${baseColor}-`);
-          base.inlineColors[mode][key] = resolvedColor;
+          // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+          base["inlineColors"][mode][key] = resolvedColor;
 
           const [resolvedBase, scale] = resolvedColor.split("-");
           const color = scale
@@ -680,16 +688,20 @@ async function buildThemes() {
               )
             : colorsData[resolvedBase];
           if (color) {
-            base.cssVars[mode][key] = color.hslChannel;
+            // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+            base["cssVars"][mode][key] = color.hslChannel;
           }
         }
       }
     }
 
     // Build css vars.
-    base.inlineColorsTemplate = template(BASE_STYLES)({});
-    base.cssVarsTemplate = template(BASE_STYLES_WITH_VARIABLES)({
-      colors: base.cssVars,
+    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+    base["inlineColorsTemplate"] = template(BASE_STYLES)({});
+    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+    base["cssVarsTemplate"] = template(BASE_STYLES_WITH_VARIABLES)({
+      // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+      colors: base["cssVars"],
     });
 
     await fs.writeFile(
@@ -809,7 +821,8 @@ async function buildThemes() {
                 )
               : colorsData[resolvedBase];
             if (color) {
-              payload.cssVars[mode][key] = color.hslChannel;
+              // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+              payload["cssVars"][mode][key] = color.hslChannel;
             }
           }
         }
@@ -851,7 +864,7 @@ async function buildIcons() {
 }
 
 // ----------------------------------------------------------------------------
-// Build __registry__/icons.tsx.
+// Build src/__registry__/icons.tsx.
 // ----------------------------------------------------------------------------
 async function buildRegistryIcons() {
   let index = `// @ts-nocheck
@@ -882,9 +895,9 @@ export const Icons = {
 `;
 
   // Write style index.
-  rimraf.sync(path.join(process.cwd(), "__registry__/icons.tsx"));
+  rimraf.sync(path.join(process.cwd(), "src/__registry__/icons.tsx"));
   await fs.writeFile(
-    path.join(process.cwd(), "__registry__/icons.tsx"),
+    path.join(process.cwd(), "src/__registry__/icons.tsx"),
     index,
     "utf8",
   );

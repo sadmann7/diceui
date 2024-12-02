@@ -11,7 +11,7 @@ import {
   TagsInputLabel,
 } from "@/components/ui/tags-input";
 
-export function TagsInputEditableDemo() {
+export default function TagsInputEditableDemo() {
   const [fruits, setFruits] = React.useState(["Apple", "Banana", "Cherry"]);
 
   return (

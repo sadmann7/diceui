@@ -3,7 +3,7 @@ import type { Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
 
 export default {
-  darkMode: ["class", "class"],
+  darkMode: ["class"],
   presets: [createPreset()],
   content: [
     "./node_modules/fumadocs-ui/dist/**/*.js",

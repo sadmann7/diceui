@@ -9,7 +9,7 @@ export const Index: Record<string, any> = {
       name: "tags-input",
       description: "",
       type: "registry:ui",
-      registryDependencies: ["button"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/new-york/ui/tags-input.tsx",
         type: "registry:ui",
@@ -25,7 +25,7 @@ export const Index: Record<string, any> = {
       name: "tags-input-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["tags-input"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/new-york/example/tags-input-demo.tsx",
         type: "registry:example",
@@ -53,28 +53,12 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
-    "use-mobile": {
-      name: "use-mobile",
-      description: "",
-      type: "registry:hook",
-      registryDependencies: undefined,
-      files: [{
-        path: "registry/new-york/hooks/use-mobile.ts",
-        type: "registry:hook",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/new-york/hooks/use-mobile.ts")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
   },  "default": {
     "tags-input": {
       name: "tags-input",
       description: "",
       type: "registry:ui",
-      registryDependencies: ["button"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/ui/tags-input.tsx",
         type: "registry:ui",
@@ -90,7 +74,7 @@ export const Index: Record<string, any> = {
       name: "tags-input-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["tags-input"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/example/tags-input-demo.tsx",
         type: "registry:example",
@@ -113,22 +97,6 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/lib/utils.ts")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
-    "use-mobile": {
-      name: "use-mobile",
-      description: "",
-      type: "registry:hook",
-      registryDependencies: undefined,
-      files: [{
-        path: "registry/default/hooks/use-mobile.ts",
-        type: "registry:hook",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/hooks/use-mobile.ts")),
       source: "",
       category: "",
       subcategory: "",

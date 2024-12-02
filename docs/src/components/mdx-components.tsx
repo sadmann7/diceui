@@ -1,15 +1,15 @@
-import { Heading } from "fumadocs-ui/components/heading";
-import defaultComponents from "fumadocs-ui/mdx";
-import type { MDXComponents } from "mdx/types";
-
 import { ComponentPreview } from "@/components/component-preview";
+import { ComponentSource } from "@/components/component-source";
 import { ComponentTabs } from "@/components/component-tabs";
 import { Table, TableCell, TableHead, TableRow } from "@/components/ui/table";
 import * as TabsPrimitive from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import type { NpmCommands } from "@/types/unist";
 import { CodeBlock, Pre } from "fumadocs-ui/components/codeblock";
+import { Heading } from "fumadocs-ui/components/heading";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
+import defaultComponents from "fumadocs-ui/mdx";
+import type { MDXComponents } from "mdx/types";
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
@@ -143,5 +143,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     ),
     ComponentPreview,
     ComponentTabs,
+    ComponentSource,
   };
 }
