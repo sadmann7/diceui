@@ -36,15 +36,15 @@ interface TagsInputContextValue<T = InputValue> {
   isInvalidInput: boolean;
   addOnPaste: boolean;
   addOnTab: boolean;
-  disabled: boolean;
   editable: boolean;
+  sortable: boolean;
+  disabled: boolean;
   delimiter: string;
   duplicate: boolean;
   loop: boolean;
   blurBehavior: "add" | "clear" | undefined;
   dir: "ltr" | "rtl";
   max: number;
-  excludePointerAttr: string | undefined;
   id: string;
   inputId: string;
   labelId: string;
@@ -95,6 +95,12 @@ interface TagsInputRootProps<T = InputValue>
   editable?: boolean;
 
   /**
+   * Enable pointer interaction for sortable items.
+   * @default false
+   */
+  sortable?: boolean;
+
+  /**
    * Enable wrapping focus from last to first tag and vice versa.
    * @default false
    */
@@ -138,9 +144,6 @@ interface TagsInputRootProps<T = InputValue>
   /** Name of the form field when used in a form. */
   name?: string;
 
-  /** Attribute to exclude from pointer events. Can be used to make items sortable. */
-  excludePointerAttr?: string;
-
   /** Unique identifier for the tags input. */
   id?: string;
 }
@@ -159,6 +162,7 @@ const TagsInputRoot = React.forwardRef<
     displayValue = (value: InputValue) => value.toString(),
     addOnTab = false,
     editable = false,
+    sortable = false,
     loop = false,
     disabled = false,
     blurBehavior,
@@ -167,7 +171,6 @@ const TagsInputRoot = React.forwardRef<
     max = Number.POSITIVE_INFINITY,
     required = false,
     name,
-    excludePointerAttr,
     id: idProp,
     children,
     ...rootProps
@@ -494,14 +497,14 @@ const TagsInputRoot = React.forwardRef<
       addOnPaste={addOnPaste}
       addOnTab={addOnTab}
       editable={editable}
+      sortable={sortable}
+      loop={loop}
       disabled={disabled}
       blurBehavior={blurBehavior}
       delimiter={delimiter}
       duplicate={duplicate}
-      loop={loop}
       dir={dir}
       max={max}
-      excludePointerAttr={excludePointerAttr}
       id={id}
       inputId={inputId}
       labelId={labelId}
@@ -545,8 +548,7 @@ const TagsInputRoot = React.forwardRef<
               event.button === 0 &&
               event.ctrlKey === false &&
               event.pointerType === "mouse" &&
-              (!excludePointerAttr ||
-                !target.closest(`[${excludePointerAttr}]`))
+              !sortable
             ) {
               // prevent container from stealing focus from the input.
               event.preventDefault();

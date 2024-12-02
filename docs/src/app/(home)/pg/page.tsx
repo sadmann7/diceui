@@ -97,12 +97,7 @@ export default function PlaygroundPage() {
         orientation="both"
         disableGrabCursor
       >
-        <TagsInput
-          value={fruits}
-          onValueChange={setFruits}
-          excludePointerAttr="data-sortable-item"
-          editable
-        >
+        <TagsInput value={fruits} onValueChange={setFruits} sortable editable>
           <TagsInputLabel>Sortable</TagsInputLabel>
           <SortableContent>
             <TagsInputContent>

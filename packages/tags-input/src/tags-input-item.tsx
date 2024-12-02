@@ -98,7 +98,7 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
                 context.onItemLeave();
               } else if (
                 pointerTypeRef.current === "mouse" &&
-                !context.excludePointerAttr
+                !context.sortable
               ) {
                 // even though safari doesn't support this option, it's acceptable
                 // as it only means it might scroll a few pixels when using the pointer.
