@@ -4,56 +4,7 @@
 import * as React from "react"
 
 export const Index: Record<string, any> = {
-  "new-york": {
-    "tags-input": {
-      name: "tags-input",
-      description: "",
-      type: "registry:ui",
-      registryDependencies: ["button"],
-      files: [{
-        path: "registry/new-york/ui/tags-input.tsx",
-        type: "registry:ui",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/new-york/ui/tags-input.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
-    "tags-input-demo": {
-      name: "tags-input-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: undefined,
-      files: [{
-        path: "registry/new-york/example/tags-input-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/new-york/example/tags-input-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
-    "utils": {
-      name: "utils",
-      description: "",
-      type: "registry:lib",
-      registryDependencies: undefined,
-      files: [{
-        path: "registry/new-york/lib/utils.ts",
-        type: "registry:lib",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/new-york/lib/utils.ts")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
-  },  "default": {
+  "default": {
     "tags-input": {
       name: "tags-input",
       description: "",
@@ -81,6 +32,22 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/example/tags-input-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "tags-input-editable-demo": {
+      name: "tags-input-editable-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/example/tags-input-editable-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/example/tags-input-editable-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",

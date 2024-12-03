@@ -22,7 +22,14 @@ const TagsInputLabel = React.forwardRef<
   React.ComponentRef<typeof TagsInputPrimitive.Label>,
   React.ComponentPropsWithoutRef<typeof TagsInputPrimitive.Label>
 >(({ className, ...props }, ref) => (
-  <TagsInputPrimitive.Label ref={ref} className={cn(className)} {...props} />
+  <TagsInputPrimitive.Label
+    ref={ref}
+    className={cn(
+      "font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+      className,
+    )}
+    {...props}
+  />
 ));
 TagsInputLabel.displayName = TagsInputPrimitive.Label.displayName;
 
@@ -59,7 +66,7 @@ TagsInputInput.displayName = TagsInputPrimitive.Input.displayName;
 const TagsInputItem = React.forwardRef<
   React.ComponentRef<typeof TagsInputPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof TagsInputPrimitive.Item>
->(({ className, ...props }, ref) => (
+>(({ className, children, ...props }, ref) => (
   <TagsInputPrimitive.Item
     ref={ref}
     className={cn(
@@ -68,8 +75,10 @@ const TagsInputItem = React.forwardRef<
     )}
     {...props}
   >
-    <TagsInputPrimitive.Text className="truncate" />
-    <TagsInputPrimitive.Delete className="h-4 w-4 flex-shrink-0 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100">
+    <TagsInputPrimitive.Text className="truncate">
+      {children}
+    </TagsInputPrimitive.Text>
+    <TagsInputPrimitive.Delete className="h-4 w-4 shrink-0 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100">
       <X className="size-3.5" />
     </TagsInputPrimitive.Delete>
   </TagsInputPrimitive.Item>
@@ -80,7 +89,7 @@ const TagsInputClear = React.forwardRef<
   React.ComponentRef<typeof TagsInputPrimitive.Clear>,
   React.ComponentPropsWithoutRef<typeof TagsInputPrimitive.Clear>
 >(({ className, ...props }, ref) => (
-  <TagsInputPrimitive.Clear ref={ref} asChild>
+  <TagsInputPrimitive.Clear ref={ref} manual asChild>
     <Button
       variant="outline"
       className={cn(

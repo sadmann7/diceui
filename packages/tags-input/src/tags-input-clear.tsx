@@ -7,15 +7,15 @@ const CLEAR_NAME = "TagsInputClear";
 
 interface TagsInputClearProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.button> {
-  dynamic?: boolean;
+  manual?: boolean;
 }
 
 const TagsInputClear = React.forwardRef<HTMLButtonElement, TagsInputClearProps>(
   (props, ref) => {
-    const { dynamic, ...clearProps } = props;
+    const { manual, ...clearProps } = props;
     const context = useTagsInput(CLEAR_NAME);
 
-    if (dynamic && context.values.length === 0) return null;
+    if (!manual && context.values.length === 0) return null;
 
     return (
       <Primitive.button
