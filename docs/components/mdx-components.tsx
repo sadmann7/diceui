@@ -6,11 +6,14 @@ import { Table, TableCell, TableHead, TableRow } from "@/components/ui/table";
 import * as TabsPrimitive from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import type { NpmCommands } from "@/types/unist";
+import { createTypeTable } from "fumadocs-typescript/ui";
 import { CodeBlock, Pre } from "fumadocs-ui/components/codeblock";
 import { Heading } from "fumadocs-ui/components/heading";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import defaultComponents from "fumadocs-ui/mdx";
 import type { MDXComponents } from "mdx/types";
+
+const { AutoTypeTable } = createTypeTable();
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
@@ -62,27 +65,11 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       className,
       ...props
     }: React.HTMLAttributes<HTMLTableElement>) => (
-      <Table className={cn("rounded-md", className)} {...props} />
+      <Table className={cn(className)} mdx {...props} />
     ),
-    tr: ({
-      className,
-      ...props
-    }: React.HTMLAttributes<HTMLTableRowElement>) => (
-      <TableRow
-        className={cn("bg-transparent hover:bg-transparent", className)}
-        {...props}
-      />
-    ),
-    th: ({
-      className,
-      ...props
-    }: React.HTMLAttributes<HTMLTableCellElement>) => (
-      <TableHead className={cn("bg-accent/50", className)} {...props} />
-    ),
-    td: ({
-      className,
-      ...props
-    }: React.HTMLAttributes<HTMLTableCellElement>) => <TableCell {...props} />,
+    tr: TableRow,
+    th: TableHead,
+    td: TableCell,
     ShadcnTabs: ({
       className,
       ...props
@@ -145,6 +132,11 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     ComponentPreview,
     ComponentTabs,
     ComponentSource,
+    AutoTypeTable: ({ path, name, type }) => (
+      <div className="auto-type-table">
+        <AutoTypeTable path={path} name={name} type={type} />
+      </div>
+    ),
     DataAttributesTable,
   };
 }

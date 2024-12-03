@@ -16,25 +16,22 @@ interface DataAttributesTableProps {
 
 export function DataAttributesTable({ attributes }: DataAttributesTableProps) {
   return (
-    <Table className="rounded-md">
+    <Table mdx>
       <TableHeader>
-        <TableRow className="bg-transparent hover:bg-transparent">
-          <TableHead className="w-[45%] bg-accent/50">Data Attribute</TableHead>
-          <TableHead className="w-[55%] bg-accent/50">Value</TableHead>
+        <TableRow>
+          <TableHead>Data Attribute</TableHead>
+          <TableHead>Value</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {attributes.map((attribute, index) => (
-          <TableRow
-            key={`${attribute.title}-${index}`}
-            className="bg-transparent hover:bg-transparent"
-          >
+          <TableRow key={`${attribute.title}-${index}`}>
             <TableCell>
               <code className="text-[13px]">{attribute.title}</code>
             </TableCell>
             <TableCell>
               {Array.isArray(attribute.value) ? (
-                <code className="text-secondary">
+                <code className="text-foreground/80">
                   {attribute.value.map((item, idx) => (
                     <span key={item}>
                       {idx + 1 !== attribute.value.length

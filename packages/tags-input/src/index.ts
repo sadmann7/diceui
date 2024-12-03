@@ -31,7 +31,11 @@ export {
   Delete,
   TagsInputItemDelete,
 } from "./tags-input-item-delete";
-export { Text, TagsInputItemText } from "./tags-input-item-text";
+export {
+  Text,
+  TagsInputItemText,
+  type TagsInputItemTextProps,
+} from "./tags-input-item-text";
 export {
   type TagsInputClearProps,
   Clear,

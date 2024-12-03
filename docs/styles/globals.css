@@ -64,3 +64,29 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .mdx table {
+    @apply rounded-md;
+  }
+
+  .mdx table tr {
+    @apply bg-transparent hover:bg-transparent;
+  }
+
+  .mdx table th {
+    @apply bg-accent/50;
+  }
+
+  .auto-type-table table {
+    @apply rounded-md;
+  }
+
+  .auto-type-table table tr {
+    @apply bg-transparent hover:bg-transparent;
+  }
+
+  .auto-type-table table th {
+    @apply bg-accent/50;
+  }
+}

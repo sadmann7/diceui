@@ -114,62 +114,21 @@ description: Display a list of tags in an input field with the ability to add, e
 
 ### Root
 
-Container for the tags input component.
+Container for the tags input.
 
-
-
-
-
-| Prop            | Type                          | Default               |
-|-----------------|-------------------------------|-----------------------|
-| `value`         | `string[]`                    | -         |
-|                 | Controlled array of tag values. |
-| `defaultValue`  | `string[]`                    | `undefined`           |
-|                 | Initial array of tag values when uncontrolled. |
-| `onValueChange` | `(value: string[]) => void`   | `undefined`           |
-|                 | Callback function to handle changes in the tag values. |
-| `onValidate`    | `(value: string) => boolean`  | `undefined`           |
-|                 | Callback function to validate tags before they're added. |
-| `onInvalid`     | `(value: T) => void`          | `undefined`           |
-|                 | Callback function to handle invalid input. |
-| `displayValue`  | `(value: T) => string`        | `(value) => value.toString()` |
-|                 | Function to convert a tag value to its display string representation. |
-| `addOnPaste`    | `boolean`                    | `false`               |
-|                 | Enable adding tags by pasting text, which will be split by the delimiter. |
-| `addOnTab`      | `boolean`                    | `false`               |
-|                 | Enable adding tags when Tab key is pressed. |
-| `editable`      | `boolean`                    | `false`               |
-|                 | Allow editing of existing tags. |
-| `sortable`      | `boolean`                    | `false`               |
-|                 | Enable pointer interaction for sortable items. |
-| `loop`          | `boolean`                    | `false`               |
-|                 | Enable wrapping focus from last to first tag and vice versa. |
-| `disabled`      | `boolean`                    | `false`               |
-|                 | Disables the entire tags input. |
-| `blurBehavior`  | `"add" \| "clear"`           | `undefined`           |
-|                 | Behavior when the input loses focus. "add" adds current input value as a new tag, "clear" resets the input field. |
-| `delimiter`     | `string`                     | `","`                 |
-|                 | Character used to split pasted text into multiple tags. |
-| `dir`           | `"ltr" \| "rtl"`             | `"ltr"`               |
-|                 | Text direction for the input. |
-| `max`           | `number`                     | `Number.POSITIVE_INFINITY` |
-|                 | Maximum number of tags allowed. |
-| `required`      | `boolean`                    | `false`               |
-|                 | Whether the field is required in a form context. |
-| `name`          | `string`                     | `undefined`           |
-|                 | Name of the form field when used in a form. |
-| `id`            | `string`                     | `undefined`           |
-|                 | Unique identifier for the tags input. |
-
+<AutoTypeTable
+  path="./types/doc/tags-input.ts"
+  name="RootProps"
+/>
 
 <DataAttributesTable
   attributes={[
     {
-      title: "data-invalid",
+      title: "[data-invalid]",
       value: "Present when invalid",
     },
     {
-      title: "data-disabled",
+      title: "[data-disabled]",
       value: "Present when disabled",
     },
   ]}
