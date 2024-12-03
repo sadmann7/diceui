@@ -1,6 +1,7 @@
 {
   "name": "theme-midnight",
   "type": "registry:theme",
+  "files": [],
   "cssVars": {
     "light": {
       "background": "240 5% 6%",

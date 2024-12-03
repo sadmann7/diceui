@@ -1,6 +1,7 @@
 {
   "name": "theme-emerald",
   "type": "registry:theme",
+  "files": [],
   "cssVars": {
     "light": {
       "background": "0 0% 100%",

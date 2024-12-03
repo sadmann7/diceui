@@ -1,4 +1,4 @@
-import { promises as fs, existsSync } from "node:fs";
+import { promises as fs, existsSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { cwd } from "node:process";
@@ -104,16 +104,14 @@ export const Index: Record<string, any> = {
             isDefault?: boolean;
           }
         >();
-        // biome-ignore lint/complexity/noForEach: <explanation>
-        sourceFile.getImportDeclarations().forEach((node) => {
+        for (const node of sourceFile.getImportDeclarations()) {
           const module = node.getModuleSpecifier().getLiteralValue();
-          // biome-ignore lint/complexity/noForEach: <explanation>
-          node.getNamedImports().forEach((item) => {
+          for (const item of node.getNamedImports()) {
             imports.set(item.getText(), {
               module,
               text: node.getText(),
             });
-          });
+          }
 
           const defaultImport = node.getDefaultImport();
           if (defaultImport) {
@@ -123,7 +121,7 @@ export const Index: Record<string, any> = {
               isDefault: true,
             });
           }
-        });
+        }
 
         // Find all opening tags with x-chunk attribute.
         const components = sourceFile
@@ -189,8 +187,7 @@ export const Index: Record<string, any> = {
               string,
               string | string[] | Set<string>
             >();
-            // biome-ignore lint/complexity/noForEach: <explanation>
-            children.forEach((child) => {
+            for (const child of children) {
               const importLine = imports.get(child);
               if (importLine) {
                 const imports = componentImports.get(importLine.module) || [];
@@ -204,7 +201,7 @@ export const Index: Record<string, any> = {
                   importLine?.isDefault ? newImports : Array.from(newImports),
                 );
               }
-            });
+            }
 
             const componnetImportLines = Array.from(
               componentImports.keys(),
@@ -380,8 +377,8 @@ async function buildStyles(registry: Registry) {
         continue;
       }
 
-      // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
-      let files;
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      let files: any[] = [];
       if (item.files) {
         files = await Promise.all(
           item.files.map(async (_file) => {
@@ -564,8 +561,6 @@ async function buildThemes() {
           "$1 $2 $3",
         ),
       };
-      // biome-ignore lint/correctness/noUnnecessaryContinue: <explanation>
-      continue;
     }
   }
 
@@ -660,22 +655,18 @@ async function buildThemes() {
       cssVars: {},
     };
     for (const [mode, values] of Object.entries(colorMapping)) {
-      // biome-ignore lint/complexity/useLiteralKeys: <explanation>
-      base["inlineColors"][mode] = {};
-      // biome-ignore lint/complexity/useLiteralKeys: <explanation>
-      base["cssVars"][mode] = {};
+      base.inlineColors[mode] = {};
+      base.cssVars[mode] = {};
       for (const [key, value] of Object.entries(values)) {
         if (typeof value === "string") {
           // Chart colors do not have a 1-to-1 mapping with tailwind colors.
           if (key.startsWith("chart-")) {
-            // biome-ignore lint/complexity/useLiteralKeys: <explanation>
-            base["cssVars"][mode][key] = value;
+            base.cssVars[mode][key] = value;
             continue;
           }
 
           const resolvedColor = value.replace(/{{base}}-/g, `${baseColor}-`);
-          // biome-ignore lint/complexity/useLiteralKeys: <explanation>
-          base["inlineColors"][mode][key] = resolvedColor;
+          base.inlineColors[mode][key] = resolvedColor;
 
           const [resolvedBase, scale] = resolvedColor.split("-");
           const color = scale
@@ -685,20 +676,16 @@ async function buildThemes() {
               )
             : colorsData[resolvedBase];
           if (color) {
-            // biome-ignore lint/complexity/useLiteralKeys: <explanation>
-            base["cssVars"][mode][key] = color.hslChannel;
+            base.cssVars[mode][key] = color.hslChannel;
           }
         }
       }
     }
 
     // Build css vars.
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
-    base["inlineColorsTemplate"] = template(BASE_STYLES)({});
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
-    base["cssVarsTemplate"] = template(BASE_STYLES_WITH_VARIABLES)({
-      // biome-ignore lint/complexity/useLiteralKeys: <explanation>
-      colors: base["cssVars"],
+    base.inlineColorsTemplate = template(BASE_STYLES)({});
+    base.cssVarsTemplate = template(BASE_STYLES_WITH_VARIABLES)({
+      colors: base.cssVars,
     });
 
     await fs.writeFile(
@@ -818,8 +805,7 @@ async function buildThemes() {
                 )
               : colorsData[resolvedBase];
             if (color) {
-              // biome-ignore lint/complexity/useLiteralKeys: <explanation>
-              payload["cssVars"][mode][key] = color.hslChannel;
+              payload.cssVars[mode][key] = color.hslChannel;
             }
           }
         }

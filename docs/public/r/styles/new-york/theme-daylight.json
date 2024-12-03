@@ -1,6 +1,7 @@
 {
   "name": "theme-daylight",
   "type": "registry:theme",
+  "files": [],
   "cssVars": {
     "light": {
       "background": "36 39% 88%",

@@ -141,7 +141,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         <Pre>{props.children}</Pre>
       </CodeBlock>
     ),
-    ComponentPreview,
     ComponentTabs,
     ComponentSource,
   };
