@@ -282,3 +282,40 @@ Button to clear all tags.
     },
   ]}
 />
+
+## Accessibility
+
+### Keyboard Interactions
+
+<ShortcutsTable
+  shortcuts={[
+    {
+      keys: ["Backspace", "Delete"],
+      description: "When cursor is at start, removes the highlighted tag or the last tag if no tag is highlighted"
+    },
+    {
+      keys: ["←", "→"],
+      description: "Navigates between tags. When cursor is at start, moves focus to previous/next tag"
+    },
+    {
+      keys: ["Home"],
+      description: "When a tag is highlighted, moves focus to the first tag"
+    },
+    {
+      keys: ["End"], 
+      description: "When a tag is highlighted, moves focus to the last tag"
+    },
+    {
+      keys: ["Enter"],
+      description: "When input has text, adds a new tag. When a tag is highlighted and editable is enabled, enters edit mode"
+    },
+    {
+      keys: ["Escape"],
+      description: "Clears tag highlight and edit mode, resets cursor to start"
+    },
+    {
+      keys: ["Tab"],
+      description: "When `addOnTab` is enabled and input has text, adds a new tag"
+    }
+  ]}
+/>

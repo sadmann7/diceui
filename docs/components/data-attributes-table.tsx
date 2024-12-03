@@ -31,7 +31,7 @@ export function DataAttributesTable({ attributes }: DataAttributesTableProps) {
             </TableCell>
             <TableCell>
               {Array.isArray(attribute.value) ? (
-                <code className="text-foreground/80">
+                <code className="font-mono text-foreground/80">
                   {attribute.value.map((item, idx) => (
                     <span key={item}>
                       {idx + 1 !== attribute.value.length

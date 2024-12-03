@@ -2,6 +2,8 @@ import { ComponentPreview } from "@/components/component-preview";
 import { ComponentSource } from "@/components/component-source";
 import { ComponentTabs } from "@/components/component-tabs";
 import { DataAttributesTable } from "@/components/data-attributes-table";
+import { Kbd } from "@/components/kbd";
+import { ShortcutsTable } from "@/components/shortcuts-table";
 import { Table, TableCell, TableHead, TableRow } from "@/components/ui/table";
 import * as TabsPrimitive from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
@@ -129,6 +131,9 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         <Pre>{props.children}</Pre>
       </CodeBlock>
     ),
+    kbd: ({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) => (
+      <Kbd variant="outline" className={cn(className)} {...props} />
+    ),
     ComponentPreview,
     ComponentTabs,
     ComponentSource,
@@ -138,5 +143,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       </div>
     ),
     DataAttributesTable,
+    ShortcutsTable,
   };
 }
