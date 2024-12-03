@@ -42,7 +42,7 @@ async function createTempSourceFile(filename: string) {
 }
 
 // ----------------------------------------------------------------------------
-// Build src/__registry__/index.tsx.
+// Build __registry__/index.tsx.
 // ----------------------------------------------------------------------------
 async function buildRegistry(registry: Registry) {
   let index = `// @ts-nocheck
@@ -249,7 +249,7 @@ export const Index: Record<string, any> = {
         );
 
         // // Write the source file for blocks only.
-        sourceFilename = `src/__registry__/${style.name}/${type}/${item.name}.tsx`;
+        sourceFilename = `__registry__/${style.name}/${type}/${item.name}.tsx`;
 
         if (item.files) {
           const files = item.files.map((file) =>
@@ -258,7 +258,7 @@ export const Index: Record<string, any> = {
               : file,
           );
           if (files?.length) {
-            sourceFilename = `src/__registry__/${style.name}/${files[0].path}`;
+            sourceFilename = `__registry__/${style.name}/${files[0].path}`;
           }
         }
 
@@ -359,11 +359,8 @@ export const Index: Record<string, any> = {
   );
 
   // Write style index.
-  rimraf.sync(path.join(process.cwd(), "src/__registry__/index.tsx"));
-  await fs.writeFile(
-    path.join(process.cwd(), "src/__registry__/index.tsx"),
-    index,
-  );
+  rimraf.sync(path.join(process.cwd(), "__registry__/index.tsx"));
+  await fs.writeFile(path.join(process.cwd(), "__registry__/index.tsx"), index);
 }
 
 // ----------------------------------------------------------------------------
@@ -864,7 +861,7 @@ async function buildIcons() {
 }
 
 // ----------------------------------------------------------------------------
-// Build src/__registry__/icons.tsx.
+// Build __registry__/icons.tsx.
 // ----------------------------------------------------------------------------
 async function buildRegistryIcons() {
   let index = `// @ts-nocheck
@@ -895,9 +892,9 @@ export const Icons = {
 `;
 
   // Write style index.
-  rimraf.sync(path.join(process.cwd(), "src/__registry__/icons.tsx"));
+  rimraf.sync(path.join(process.cwd(), "__registry__/icons.tsx"));
   await fs.writeFile(
-    path.join(process.cwd(), "src/__registry__/icons.tsx"),
+    path.join(process.cwd(), "__registry__/icons.tsx"),
     index,
     "utf8",
   );

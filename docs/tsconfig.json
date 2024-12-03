@@ -23,8 +23,7 @@
     /* Path Aliases */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@/.source": ["./.source"]
+      "@/*": ["./*"]
     }
   },
   "include": [
@@ -37,9 +36,5 @@
     "tailwind.config.ts",
     "next.config.mjs"
   ],
-  "exclude": [
-    "node_modules",
-    "src/scripts/build-registry.mts",
-    "src/__registry__"
-  ]
+  "exclude": ["node_modules", "scripts/build-registry.mts", "__registry__"]
 }

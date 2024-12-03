@@ -5,6 +5,9 @@
     "dependencies": [
       "@diceui/tags-input"
     ],
+    "registryDependencies": [
+      "button"
+    ],
     "files": [
       {
         "path": "ui/tags-input.tsx",

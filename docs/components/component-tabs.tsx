@@ -1,7 +1,6 @@
 "use client";
 
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
-import type * as React from "react";
 
 interface ComponentTabsProps {
   preview: React.ReactNode;

@@ -9,7 +9,7 @@ export const Index: Record<string, any> = {
       name: "tags-input",
       description: "",
       type: "registry:ui",
-      registryDependencies: undefined,
+      registryDependencies: ["button"],
       files: [{
         path: "registry/new-york/ui/tags-input.tsx",
         type: "registry:ui",
@@ -58,7 +58,7 @@ export const Index: Record<string, any> = {
       name: "tags-input",
       description: "",
       type: "registry:ui",
-      registryDependencies: undefined,
+      registryDependencies: ["button"],
       files: [{
         path: "registry/default/ui/tags-input.tsx",
         type: "registry:ui",
