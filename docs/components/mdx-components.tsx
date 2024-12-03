@@ -1,6 +1,7 @@
 import { ComponentPreview } from "@/components/component-preview";
 import { ComponentSource } from "@/components/component-source";
 import { ComponentTabs } from "@/components/component-tabs";
+import { DataAttributesTable } from "@/components/data-attributes-table";
 import { Table, TableCell, TableHead, TableRow } from "@/components/ui/table";
 import * as TabsPrimitive from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
@@ -61,7 +62,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       className,
       ...props
     }: React.HTMLAttributes<HTMLTableElement>) => (
-      <Table className={cn("rounded-sm", className)} {...props} />
+      <Table className={cn("rounded-md", className)} {...props} />
     ),
     tr: ({
       className,
@@ -128,7 +129,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       />
     ),
     Tabs: ({ className, ...props }: React.ComponentProps<typeof Tabs>) => (
-      <Tabs className={cn("rounded-sm", className)} {...props} />
+      <Tabs className={cn("rounded-md", className)} {...props} />
     ),
     Tab,
     pre: ({
@@ -144,5 +145,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     ComponentPreview,
     ComponentTabs,
     ComponentSource,
+    DataAttributesTable,
   };
 }
