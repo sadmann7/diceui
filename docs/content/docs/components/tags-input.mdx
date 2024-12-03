@@ -117,7 +117,7 @@ description: Display a list of tags in an input field with the ability to add, e
 Container for the tags input.
 
 <AutoTypeTable
-  path="./types/doc/tags-input.ts"
+  path="./types/docs/tags-input.ts"
   name="RootProps"
 />
 
@@ -130,6 +130,155 @@ Container for the tags input.
     {
       title: "[data-disabled]",
       value: "Present when disabled",
+    },
+  ]}
+/>
+
+### Label
+
+Label element for the tags input.
+
+<AutoTypeTable
+  path="./types/docs/tags-input.ts"
+  name="LabelProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the tags input is disabled",
+    },
+  ]}
+/>
+
+### Content
+
+Container for the tags and input element.
+
+<AutoTypeTable
+  path="./types/docs/tags-input.ts"
+  name="ContentProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when disabled",
+    },
+  ]}
+/>
+
+
+### Input
+
+Text input for adding new tags.
+
+<AutoTypeTable
+  path="./types/docs/tags-input.ts"
+  name="InputProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-invalid]",
+      value: "Present when the input value is invalid",
+    },
+    {
+      title: "[data-disabled]",
+      value: "Present when disabled",
+    },
+  ]}
+/>
+
+### Item
+
+Individual tag item.
+
+<AutoTypeTable
+  path="./types/docs/tags-input.ts"
+  name="ItemProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-state]",
+      value: ["active", "inactive"],
+    },
+    {
+      title: "[data-highlighted]",
+      value: "Present when the tag is highlighted",
+    },
+    {
+      title: "[data-disabled]",
+      value: "Present when the tag is disabled",
+    },
+    {
+      title: "[data-editing]",
+      value: "Present when the tag is being edited",
+    },
+    {
+      title: "[data-editable]",
+      value: "Present when the tags input is editable",
+    },
+  ]}
+/>
+
+
+### Text
+
+Text content of a tag.
+
+<AutoTypeTable
+  path="./types/docs/tags-input.ts"
+  name="ItemTextProps"
+/>
+
+
+### Delete
+
+Button to remove a tag.
+
+<AutoTypeTable
+  path="./types/docs/tags-input.ts"
+  name="ItemDeleteProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the delete button is disabled",
+    },
+    {
+      title: "[data-state]",
+      value: "'active' when highlighted, 'inactive' when not",
+    },
+  ]}
+/>
+
+
+### Clear
+
+Button to clear all tags.
+
+<AutoTypeTable
+  path="./types/docs/tags-input.ts"
+  name="ClearProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the clear button is disabled",
+    },
+    {
+      title: "[data-state]",
+      value: "'visible' when there are tags, 'hidden' when empty",
     },
   ]}
 />

@@ -64,10 +64,10 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
           aria-labelledby={textId}
           aria-current={isHighlighted}
           aria-disabled={itemDisabled}
+          data-state={isHighlighted ? "active" : "inactive"}
           data-highlighted={isHighlighted ? "" : undefined}
           data-editing={isEditing ? "" : undefined}
           data-editable={context.editable ? "" : undefined}
-          data-state={isHighlighted ? "active" : "inactive"}
           data-disabled={itemDisabled ? "" : undefined}
           onClick={composeEventHandlers(itemProps.onClick, (event) => {
             event.stopPropagation();
