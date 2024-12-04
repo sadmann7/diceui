@@ -13,18 +13,23 @@ export default function SortableDemo() {
   const [items, setItems] = React.useState([
     { id: "1", content: "Kickflip" },
     { id: "2", content: "Heelflip" },
-    { id: "3", content: "Pop Shove-it" },
-    { id: "4", content: "Ollie" },
+    { id: "5", content: "360 flip" },
+    { id: "6", content: "Varial flip" },
+    { id: "7", content: "Hardflip" },
+    { id: "8", content: "Backside 180" },
   ]);
 
   return (
-    <Sortable value={items} onValueChange={setItems}>
-      <SortableContent className="flex flex-col gap-4">
+    <Sortable value={items} onValueChange={setItems} orientation="both">
+      <SortableContent className="grid grid-cols-3 gap-4 p-4">
         {items.map((item) => (
-          <SortableItem key={item.id} value={item.id} asGrip>
-            <div className="flex items-center gap-2 rounded-md border p-4">
-              {item.content}
-            </div>
+          <SortableItem
+            key={item.id}
+            value={item.id}
+            className="flex aspect-square size-full items-center justify-center border border-zinc-400 p-4 dark:border-zinc-700"
+            asGrip
+          >
+            {item.content}
           </SortableItem>
         ))}
       </SortableContent>

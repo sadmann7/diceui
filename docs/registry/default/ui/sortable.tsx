@@ -242,9 +242,7 @@ function SortableContent({
       !child.type ||
       (typeof child.type === "function" && child.type.name !== "SortableItem")
     ) {
-      throw new Error(
-        "SortableContent children must be SortableItem components",
-      );
+      throw new Error(SORTABLE_ERROR.item);
     }
   });
 
@@ -381,6 +379,7 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
           data-dragging={isDragging ? "" : undefined}
           className={cn(
             {
+              "touch-none select-none": asGrip,
               "cursor-default": context.disableGrabCursor,
               "data-[dragging]:cursor-grabbing": !context.disableGrabCursor,
               "cursor-grab":
