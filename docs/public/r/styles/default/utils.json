@@ -14,7 +14,7 @@
     },
     {
       "path": "lib/compose-event-handlers.ts",
-      "content": "export function composeEventHandlers<E>(\r\n  originalEventHandler?: (event: E) => void,\r\n  ourEventHandler?: (event: E) => void,\r\n  { checkForDefaultPrevented = true } = {}\r\n) {\r\n  return function handleEvent(event: E) {\r\n    originalEventHandler?.(event);\r\n\r\n    if (\r\n      checkForDefaultPrevented === false ||\r\n      !(event as unknown as Event).defaultPrevented\r\n    ) {\r\n      return ourEventHandler?.(event);\r\n    }\r\n  };\r\n}\r\n",
+      "content": "export function composeEventHandlers<E>(\n  originalEventHandler?: (event: E) => void,\n  ourEventHandler?: (event: E) => void,\n  { checkForDefaultPrevented = true } = {},\n) {\n  return function handleEvent(event: E) {\n    originalEventHandler?.(event);\n\n    if (\n      checkForDefaultPrevented === false ||\n      !(event as unknown as Event).defaultPrevented\n    ) {\n      return ourEventHandler?.(event);\n    }\n  };\n}\n",
       "type": "registry:lib",
       "target": ""
     },
