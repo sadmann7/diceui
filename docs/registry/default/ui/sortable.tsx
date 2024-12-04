@@ -228,38 +228,38 @@ interface SortableContentProps extends SlotProps {
   asChild?: boolean;
 }
 
-function SortableContent({
-  strategy: strategyProp,
-  children,
-  asChild,
-  ...props
-}: SortableContentProps) {
-  const context = React.useContext(SortableRoot);
-  if (!context) {
-    throw new Error(SORTABLE_ERROR.content);
-  }
-
-  React.Children.forEach(children, (child) => {
-    if (
-      !React.isValidElement(child) ||
-      !child.type ||
-      (typeof child.type === "function" && child.type.name !== "SortableItem")
-    ) {
-      throw new Error(SORTABLE_ERROR.item);
+const SortableContent = React.forwardRef<HTMLDivElement, SortableContentProps>(
+  ({ strategy: strategyProp, children, asChild, ...props }, ref) => {
+    const context = React.useContext(SortableRoot);
+    if (!context) {
+      throw new Error(SORTABLE_ERROR.content);
     }
-  });
 
-  const ContentSlot = asChild ? Slot : "div";
+    React.Children.forEach(children, (child) => {
+      if (
+        !React.isValidElement(child) ||
+        !child.type ||
+        (typeof child.type === "function" && child.type.name !== "SortableItem")
+      ) {
+        throw new Error(SORTABLE_ERROR.item);
+      }
+    });
 
-  return (
-    <SortableContext
-      items={context.items}
-      strategy={strategyProp ?? context.strategy}
-    >
-      <ContentSlot {...props}>{children}</ContentSlot>
-    </SortableContext>
-  );
-}
+    const ContentSlot = asChild ? Slot : "div";
+
+    return (
+      <SortableContext
+        items={context.items}
+        strategy={strategyProp ?? context.strategy}
+      >
+        <ContentSlot ref={ref} {...props}>
+          {children}
+        </ContentSlot>
+      </SortableContext>
+    );
+  },
+);
+SortableContent.displayName = SORTABLE_CONTENT_NAME;
 
 const dropAnimation: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
@@ -280,7 +280,10 @@ interface SortableOverlayProps
 
 function SortableOverlay(props: SortableOverlayProps) {
   const { dropAnimation: dropAnimationProp, children, ...overlayProps } = props;
-  const context = useSortableRoot();
+  const context = React.useContext(SortableRoot);
+  if (!context) {
+    throw new Error(SORTABLE_ERROR.overlay);
+  }
 
   return (
     <DragOverlay

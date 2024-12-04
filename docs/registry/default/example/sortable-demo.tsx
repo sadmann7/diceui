@@ -21,7 +21,7 @@ export default function SortableDemo() {
 
   return (
     <Sortable value={tricks} onValueChange={setTricks} orientation="both">
-      <SortableContent className="grid grid-cols-3 gap-2.5">
+      <div className="grid grid-cols-3 gap-2.5">
         {tricks.map((trick) => (
           <SortableItem
             key={trick.id}
@@ -33,7 +33,7 @@ export default function SortableDemo() {
             <div className="text-sm text-zinc-500">{trick.points}</div>
           </SortableItem>
         ))}
-      </SortableContent>
+      </div>
       <SortableOverlay>
         {({ value }) => (
           <SortableItem key={value} value={value} asChild>
