@@ -1,27 +1,706 @@
 ---
 title: Sortable
-description: Sortable
+description: A drag and drop sortable component for reordering items.
+links:
+ doc: https://docs.dndkit.com/presets/sortable
+ api: https://docs.dndkit.com/presets/sortable
 ---
 
-import { Card, Cards } from "fumadocs-ui/components/card";
 
-## Code Block
+<ComponentTabs name="sortable-demo">
+```tsx
+"use client";
 
-```js
-console.log("Hello World");
+import { Sortable, SortableContent, SortableItem } from "@/components/ui/sortable";
+
+export default function SortableDemo() {
+  const [items, setItems] = React.useState([
+    { id: '1', content: 'Item 1' },
+    { id: '2', content: 'Item 2' },
+    { id: '3', content: 'Item 3' },
+  ]);
+
+  return (
+    <Sortable value={items} onValueChange={setItems}>
+      <SortableContent>
+        {items.map((item) => (
+          <SortableItem key={item.id} value={item.id}>
+            <div className="flex items-center gap-2 rounded-md border p-4">
+              {item.content}
+            </div>
+          </SortableItem>
+        ))}
+      </SortableContent>
+    </Sortable>
+  );
+}
+```
+</ComponentTabs>
+
+
+
+## Integratation with shadcn/ui
+
+
+### CLI
+
+
+```package-install
+shadcn@latest add "https://diceui.com/r/sortable"
+
 ```
 
-## Cards
 
-<Cards>
-  <Card
-    title="Learn more about Next.js"
-    href="https://nextjs.org/docs"
-    description=""
-  />
-  <Card
-    title="Learn more about Fumadocs"
-    href="https://fumadocs.vercel.app"
-    description=""
-  />
-</Cards>
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @dnd-kit/core @dnd-kit/modifiers @dnd-kit/sortable @dnd-kit/utilities
+     ```
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    ```tsx
+    "use client";
+
+    import {
+      DndContext,
+      type DndContextProps,
+      type DragEndEvent,
+      DragOverlay,
+      type DraggableSyntheticListeners,
+      type DropAnimation,
+      KeyboardSensor,
+      MouseSensor,
+      TouchSensor,
+      type UniqueIdentifier,
+      closestCenter,
+      closestCorners,
+      defaultDropAnimationSideEffects,
+      useSensor,
+      useSensors,
+    } from "@dnd-kit/core";
+    import {
+      restrictToHorizontalAxis,
+      restrictToParentElement,
+      restrictToVerticalAxis,
+    } from "@dnd-kit/modifiers";
+    import {
+      SortableContext,
+      type SortableContextProps,
+      arrayMove,
+      horizontalListSortingStrategy,
+      sortableKeyboardCoordinates,
+      useSortable,
+      verticalListSortingStrategy,
+    } from "@dnd-kit/sortable";
+    import { CSS } from "@dnd-kit/utilities";
+    import { Slot, type SlotProps } from "@radix-ui/react-slot";
+    import * as React from "react";
+
+    import { Button, type ButtonProps } from "@/components/ui/button";
+    import { composeRefs } from "@/lib/compose-refs";
+    import { cn, composeEventHandlers } from "@/lib/utils";
+
+    const orientationConfig = {
+      vertical: {
+        modifiers: [restrictToVerticalAxis, restrictToParentElement],
+        strategy: verticalListSortingStrategy,
+        collisionDetection: closestCenter,
+      },
+      horizontal: {
+        modifiers: [restrictToHorizontalAxis, restrictToParentElement],
+        strategy: horizontalListSortingStrategy,
+        collisionDetection: closestCenter,
+      },
+      both: {
+        modifiers: [restrictToParentElement],
+        strategy: undefined,
+        collisionDetection: closestCorners,
+      },
+    };
+
+    type UniqueItem = { id: UniqueIdentifier };
+    interface SortableProviderContext<T extends UniqueItem> {
+      id: string;
+      items: T[];
+      modifiers: DndContextProps["modifiers"];
+      strategy: SortableContextProps["strategy"];
+      activeId: UniqueIdentifier | null;
+      setActiveId: (id: UniqueIdentifier | null) => void;
+      disableGrabCursor: boolean;
+    }
+
+    const SortableRoot = React.createContext<
+      SortableProviderContext<{ id: UniqueIdentifier }> | undefined
+    >(undefined);
+
+    function useSortableRoot() {
+      const context = React.useContext(SortableRoot);
+      if (!context) {
+        throw new Error("useSortableRoot must be used within a SortableProvider");
+      }
+      return context;
+    }
+
+    interface SortableProps<T extends UniqueItem> extends DndContextProps {
+      value: T[];
+      onValueChange?: (items: T[]) => void;
+      onMove?: (event: DragEndEvent) => void;
+      collisionDetection?: DndContextProps["collisionDetection"];
+      modifiers?: DndContextProps["modifiers"];
+      sensors?: DndContextProps["sensors"];
+      orientation?: "vertical" | "horizontal" | "both";
+      disableGrabCursor?: boolean;
+    }
+
+    function Sortable<T extends UniqueItem>(props: SortableProps<T>) {
+      const id = React.useId();
+      const {
+        value,
+        onValueChange,
+        collisionDetection,
+        modifiers,
+        sensors: sensorsProp,
+        onMove,
+        orientation = "vertical",
+        disableGrabCursor = false,
+        ...sortableProps
+      } = props;
+      const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null);
+      const sensors = useSensors(
+        useSensor(MouseSensor),
+        useSensor(TouchSensor),
+        useSensor(KeyboardSensor, {
+          coordinateGetter: sortableKeyboardCoordinates,
+        }),
+      );
+      const config = React.useMemo(
+        () => orientationConfig[orientation],
+        [orientation],
+      );
+      const contextValue = React.useMemo(
+        () => ({
+          id,
+          items: value,
+          modifiers: modifiers ?? config.modifiers,
+          strategy: config.strategy,
+          activeId,
+          setActiveId,
+          disableGrabCursor,
+        }),
+        [
+          id,
+          value,
+          modifiers,
+          config.modifiers,
+          config.strategy,
+          activeId,
+          disableGrabCursor,
+        ],
+      );
+
+      return (
+        <SortableRoot.Provider value={contextValue}>
+          <DndContext
+            id={id}
+            modifiers={modifiers ?? config.modifiers}
+            sensors={sensorsProp ?? sensors}
+            onDragStart={composeEventHandlers(
+              sortableProps.onDragStart,
+              ({ active }) => setActiveId(active.id),
+            )}
+            onDragEnd={composeEventHandlers(
+              sortableProps.onDragEnd,
+              ({ active, over, activatorEvent, collisions, delta }) => {
+                if (over && active.id !== over?.id) {
+                  const activeIndex = value.findIndex(
+                    (item) => item.id === active.id,
+                  );
+                  const overIndex = value.findIndex((item) => item.id === over.id);
+
+                  if (onMove) {
+                    onMove({ active, over, activatorEvent, collisions, delta });
+                  } else {
+                    onValueChange?.(arrayMove(value, activeIndex, overIndex));
+                  }
+                }
+                setActiveId(null);
+              },
+            )}
+            onDragCancel={composeEventHandlers(sortableProps.onDragCancel, () =>
+              setActiveId(null),
+            )}
+            collisionDetection={collisionDetection ?? config.collisionDetection}
+            accessibility={{
+              announcements: {
+                onDragStart({ active }) {
+                  return `Picked up sortable item ${active.id}. Use arrow keys to move, space to drop.`;
+                },
+                onDragOver({ active, over }) {
+                  if (over) {
+                    return `Sortable item ${active.id} was moved over position ${over.id}`;
+                  }
+                  return `Sortable item ${active.id} is no longer over a droppable area`;
+                },
+                onDragEnd({ active, over }) {
+                  if (over) {
+                    return `Sortable item ${active.id} was dropped over position ${over.id}`;
+                  }
+                  return `Sortable item ${active.id} was dropped`;
+                },
+                onDragCancel({ active }) {
+                  return `Sorting was cancelled. Sortable item ${active.id} was dropped.`;
+                },
+                onDragMove({ active, over }) {
+                  if (over) {
+                    return `Sortable item ${active.id} was moved over position ${over.id}`;
+                  }
+                  return `Sortable item ${active.id} is no longer over a droppable area`;
+                },
+              },
+              ...sortableProps.accessibility,
+            }}
+            {...sortableProps}
+          />
+        </SortableRoot.Provider>
+      );
+    }
+
+    interface SortableContentProps {
+      strategy?: SortableContextProps["strategy"];
+      children: React.ReactNode;
+    }
+
+    function SortableContent({
+      strategy: strategyProp,
+      children,
+    }: SortableContentProps) {
+      const context = useSortableRoot();
+
+      return (
+        <SortableContext
+          items={context.items}
+          strategy={strategyProp ?? context.strategy}
+        >
+          {children}
+        </SortableContext>
+      );
+    }
+
+    const dropAnimation: DropAnimation = {
+      sideEffects: defaultDropAnimationSideEffects({
+        styles: {
+          active: {
+            opacity: "0.4",
+          },
+        },
+      }),
+    };
+
+    interface SortableOverlayProps
+      extends Omit<React.ComponentPropsWithoutRef<typeof DragOverlay>, "children"> {
+      children?:
+        | ((params: { value: UniqueIdentifier }) => React.ReactNode)
+        | React.ReactNode;
+    }
+
+    function SortableOverlay(props: SortableOverlayProps) {
+      const { dropAnimation: dropAnimationProp, children, ...overlayProps } = props;
+      const context = useSortableRoot();
+
+      return (
+        <DragOverlay
+          modifiers={context.modifiers}
+          dropAnimation={dropAnimationProp ?? dropAnimation}
+          className={cn(!context.disableGrabCursor && "cursor-grabbing")}
+          {...overlayProps}
+        >
+          {context.activeId ? (
+            typeof children === "function" ? (
+              children({ value: context.activeId })
+            ) : (
+              <SortableItem value={context.activeId} asChild>
+                {children}
+              </SortableItem>
+            )
+          ) : null}
+        </DragOverlay>
+      );
+    }
+
+    interface SortableItemContextProps {
+      id: string;
+      attributes: React.HTMLAttributes<HTMLElement>;
+      listeners: DraggableSyntheticListeners | undefined;
+      isDragging?: boolean;
+    }
+
+    const SortableItemContext = React.createContext<SortableItemContextProps>({
+      id: "",
+      attributes: {},
+      listeners: undefined,
+      isDragging: false,
+    });
+
+    function useSortableItem() {
+      const context = React.useContext(SortableItemContext);
+      if (!context) {
+        throw new Error("useSortableItem must be used within a SortableItem");
+      }
+      return context;
+    }
+
+    interface SortableItemProps extends SlotProps {
+      value: UniqueIdentifier;
+      asGrip?: boolean;
+      asChild?: boolean;
+    }
+
+    const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
+      (props, ref) => {
+        const {
+          value,
+          style: styleProp,
+          asGrip,
+          asChild,
+          className,
+          ...itemProps
+        } = props;
+        const context = useSortableRoot();
+        const id = React.useId();
+        const {
+          attributes,
+          listeners,
+          setNodeRef,
+          transform,
+          transition,
+          isDragging,
+        } = useSortable({ id: value });
+
+        const style: React.CSSProperties = {
+          opacity: isDragging ? 0.5 : 1,
+          transform: CSS.Translate.toString(transform),
+          transition,
+          ...styleProp,
+        };
+
+        const ItemSlot = asChild ? Slot : "div";
+
+        const itemContext = React.useMemo<SortableItemContextProps>(
+          () => ({
+            id,
+            attributes,
+            listeners,
+            isDragging,
+          }),
+          [id, attributes, listeners, isDragging],
+        );
+
+        return (
+          <SortableItemContext.Provider value={itemContext}>
+            <ItemSlot
+              id={id}
+              ref={composeRefs(ref, (node) => setNodeRef(node))}
+              data-sortable-item=""
+              data-dragging={isDragging ? "" : undefined}
+              className={cn(
+                {
+                  "cursor-default": context.disableGrabCursor,
+                  "data-[dragging]:cursor-grabbing": !context.disableGrabCursor,
+                  "cursor-grab":
+                    !isDragging && asGrip && !context.disableGrabCursor,
+                },
+                className,
+              )}
+              style={style}
+              {...(asGrip ? attributes : {})}
+              {...(asGrip ? listeners : {})}
+              {...itemProps}
+            />
+          </SortableItemContext.Provider>
+        );
+      },
+    );
+    SortableItem.displayName = "SortableItem";
+
+    interface SortableItemGripProps extends ButtonProps {}
+
+    const SortableItemGrip = React.forwardRef<
+      HTMLButtonElement,
+      SortableItemGripProps
+    >((props, ref) => {
+      const { className, ...dragHandleProps } = props;
+      const context = useSortableRoot();
+      const itemContext = useSortableItem();
+
+      return (
+        <Button
+          ref={ref}
+          aria-controls={itemContext.id}
+          data-dragging={itemContext.isDragging ? "" : undefined}
+          className={cn(
+            context.disableGrabCursor
+              ? "cursor-default"
+              : "cursor-grab data-[dragging]:cursor-grabbing",
+            className,
+          )}
+          {...itemContext.attributes}
+          {...itemContext.listeners}
+          {...dragHandleProps}
+        />
+      );
+    });
+    SortableItemGrip.displayName = "SortableItemGrip";
+
+    export {
+      Sortable,
+      SortableContent,
+      SortableItemGrip,
+      SortableItem,
+      SortableOverlay,
+    };
+    ```
+  </Step>
+</Steps>
+
+
+
+## Examples
+
+### With Drag Handle
+
+<ComponentTabs name="sortable-handle-demo">
+```tsx
+"use client";
+
+import { GripVertical } from "lucide-react";
+import { Sortable, SortableContent, SortableItem, SortableDragHandle } from "@/components/ui/sortable";
+
+export default function SortableWithHandleDemo() {
+  const [items, setItems] = React.useState([
+    { id: '1', content: 'Item 1' },
+    { id: '2', content: 'Item 2' },
+    { id: '3', content: 'Item 3' },
+  ]);
+
+  return (
+    <Sortable value={items} onValueChange={setItems}>
+      <SortableContent>
+        {items.map((item) => (
+          <SortableItem key={item.id} value={item.id}>
+            <div className="flex items-center gap-2 rounded-md border p-4">
+              <SortableDragHandle>
+                <GripVertical className="h-4 w-4" />
+              </SortableDragHandle>
+              {item.content}
+            </div>
+          </SortableItem>
+        ))}
+      </SortableContent>
+    </Sortable>
+  );
+}
+```
+</ComponentTabs>
+
+### Horizontal Sorting
+
+<ComponentTabs name="sortable-horizontal-demo">
+```tsx
+"use client";
+
+import { Sortable, SortableContent, SortableItem } from "@/components/ui/sortable";
+
+export default function SortableHorizontalDemo() {
+  const [items, setItems] = React.useState([
+    { id: '1', content: 'Item 1' },
+    { id: '2', content: 'Item 2' },
+    { id: '3', content: 'Item 3' },
+  ]);
+
+  return (
+    <Sortable 
+      value={items} 
+      onValueChange={setItems}
+      orientation="horizontal"
+    >
+      <SortableContent className="flex gap-4">
+        {items.map((item) => (
+          <SortableItem key={item.id} value={item.id}>
+            <div className="flex h-24 w-24 items-center justify-center rounded-md border">
+              {item.content}
+            </div>
+          </SortableItem>
+        ))}
+      </SortableContent>
+    </Sortable>
+  );
+}
+```
+</ComponentTabs>
+
+## API Reference
+
+### Sortable
+
+The main container component for sortable functionality.
+
+<AutoTypeTable
+  path="./types/docs/sortable.ts"
+  name="SortableProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-dragging]",
+      value: "Present when an item is being dragged",
+    },
+  ]}
+/>
+
+### SortableContent
+
+Container for sortable items.
+
+<AutoTypeTable
+  path="./types/docs/sortable.ts"
+  name="SortableContentProps"
+/>
+
+### SortableItem
+
+Individual sortable item component.
+
+<AutoTypeTable
+  path="./types/docs/sortable.ts"
+  name="SortableItemProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-dragging]",
+      value: "Present when the item is being dragged",
+    },
+    {
+      title: "[data-sortable-item]",
+      value: "Present on all sortable items",
+    },
+  ]}
+/>
+
+### SortableItemGrip
+
+A button component that acts as a drag handle for sortable items.
+
+<ComponentTabs name="sortable-grip-demo">
+```tsx
+"use client";
+
+import { GripVertical } from "lucide-react";
+import { Sortable, SortableContent, SortableItem, SortableItemGrip } from "@/components/ui/sortable";
+
+export default function SortableGripDemo() {
+  const [items, setItems] = React.useState([
+    { id: '1', content: 'Item 1' },
+    { id: '2', content: 'Item 2' },
+    { id: '3', content: 'Item 3' },
+  ]);
+
+  return (
+    <Sortable value={items} onValueChange={setItems}>
+      <SortableContent>
+        {items.map((item) => (
+          <SortableItem key={item.id} value={item.id}>
+            <div className="flex items-center gap-2 rounded-md border p-4">
+              <SortableItemGrip>
+                <GripVertical className="h-4 w-4" />
+              </SortableItemGrip>
+              {item.content}
+            </div>
+          </SortableItem>
+        ))}
+      </SortableContent>
+    </Sortable>
+  );
+}
+```
+</ComponentTabs>
+
+#### Props
+
+<AutoTypeTable
+  path="./types/docs/sortable.ts"
+  name="SortableItemGripProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-dragging]",
+      value: "Present when the parent sortable item is being dragged",
+    }
+  ]}
+/>
+
+#### CSS
+
+The component extends the base Button component and adds the following styles:
+
+- `cursor-grab` when not dragging (unless `disableGrabCursor` is true)
+- `cursor-grabbing` when dragging (unless `disableGrabCursor` is true)
+- `cursor-default` when `disableGrabCursor` is true
+
+#### Accessibility
+
+- Has `aria-controls` pointing to the parent sortable item's ID
+- Inherits ARIA attributes from the sortable context for drag and drop operations
+- Can be activated using keyboard navigation
+
+## Accessibility
+
+### Keyboard Interactions
+
+<ShortcutsTable
+  shortcuts={[
+    {
+      keys: ["Enter", "Space"],
+      description: "Picks up the sortable item for reordering.",
+    },
+    {
+      keys: ["↑", "↓"],
+      description: "Moves the sortable item up or down in vertical orientation.",
+    },
+    {
+      keys: ["←", "→"],
+      description: "Moves the sortable item left or right in horizontal orientation",
+    },
+    {
+      keys: ["Enter", "Space"],
+      description: "Drops the sortable item in its new position.",
+    },
+    {
+      keys: ["Esc"],
+      description: "Cancels the sort operation and returns the item to its original position.",
+    },
+  ]}
+/>
+
+### ARIA Roles
+
+- The sortable container has `role="list"`
+- Each sortable item has `role="listitem"`
+- Drag handles have `aria-label="Drag handle"`
+- Live announcements are made during drag and drop operations
+
+### Focus Management
+
+- Drag handles are focusable and can be activated using the keyboard
+- Focus is maintained on the dragged item throughout the sorting operation
+- Focus returns to the drag handle when sorting is complete

@@ -169,6 +169,35 @@ function Sortable<T extends UniqueItem>(props: SortableProps<T>) {
           setActiveId(null),
         )}
         collisionDetection={collisionDetection ?? config.collisionDetection}
+        accessibility={{
+          announcements: {
+            onDragStart({ active }) {
+              return `Picked up sortable item ${active.id}. Use arrow keys to move, space to drop.`;
+            },
+            onDragOver({ active, over }) {
+              if (over) {
+                return `Sortable item ${active.id} was moved over position ${over.id}`;
+              }
+              return `Sortable item ${active.id} is no longer over a droppable area`;
+            },
+            onDragEnd({ active, over }) {
+              if (over) {
+                return `Sortable item ${active.id} was dropped over position ${over.id}`;
+              }
+              return `Sortable item ${active.id} was dropped`;
+            },
+            onDragCancel({ active }) {
+              return `Sorting was cancelled. Sortable item ${active.id} was dropped.`;
+            },
+            onDragMove({ active, over }) {
+              if (over) {
+                return `Sortable item ${active.id} was moved over position ${over.id}`;
+              }
+              return `Sortable item ${active.id} is no longer over a droppable area`;
+            },
+          },
+          ...sortableProps.accessibility,
+        }}
         {...sortableProps}
       />
     </SortableRoot.Provider>
@@ -261,7 +290,7 @@ function useSortableItem() {
 
 interface SortableItemProps extends SlotProps {
   value: UniqueIdentifier;
-  asDragHandle?: boolean;
+  asGrip?: boolean;
   asChild?: boolean;
 }
 
@@ -270,7 +299,7 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
     const {
       value,
       style: styleProp,
-      asDragHandle,
+      asGrip,
       asChild,
       className,
       ...itemProps
@@ -317,13 +346,13 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
               "cursor-default": context.disableGrabCursor,
               "data-[dragging]:cursor-grabbing": !context.disableGrabCursor,
               "cursor-grab":
-                !isDragging && asDragHandle && !context.disableGrabCursor,
+                !isDragging && asGrip && !context.disableGrabCursor,
             },
             className,
           )}
           style={style}
-          {...(asDragHandle ? attributes : {})}
-          {...(asDragHandle ? listeners : {})}
+          {...(asGrip ? attributes : {})}
+          {...(asGrip ? listeners : {})}
           {...itemProps}
         />
       </SortableItemContext.Provider>
@@ -332,13 +361,11 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
 );
 SortableItem.displayName = "SortableItem";
 
-interface SortableDragHandleProps extends ButtonProps {
-  withHandle?: boolean;
-}
+interface SortableItemGripProps extends ButtonProps {}
 
-const SortableDragHandle = React.forwardRef<
+const SortableItemGrip = React.forwardRef<
   HTMLButtonElement,
-  SortableDragHandleProps
+  SortableItemGripProps
 >((props, ref) => {
   const { className, ...dragHandleProps } = props;
   const context = useSortableRoot();
@@ -361,12 +388,12 @@ const SortableDragHandle = React.forwardRef<
     />
   );
 });
-SortableDragHandle.displayName = "SortableDragHandle";
+SortableItemGrip.displayName = "SortableItemGrip";
 
 export {
   Sortable,
   SortableContent,
-  SortableDragHandle,
+  SortableItemGrip,
   SortableItem,
   SortableOverlay,
 };

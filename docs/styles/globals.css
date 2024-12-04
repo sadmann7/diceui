@@ -89,4 +89,12 @@
   .auto-type-table table th {
     @apply bg-accent/50;
   }
+
+  .auto-type-table table td {
+    @apply align-top whitespace-pre-wrap;
+  }
+
+  .auto-type-table table td:nth-child(2) {
+    @apply w-full;
+  }
 }

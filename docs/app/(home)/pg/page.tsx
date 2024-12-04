@@ -106,7 +106,7 @@ export default function PlaygroundPage() {
                   key={fruit}
                   value={fruit}
                   asChild
-                  asDragHandle
+                  asGrip
                   tabIndex={-1}
                 >
                   <TagsInputItem value={fruit}>{fruit}</TagsInputItem>
