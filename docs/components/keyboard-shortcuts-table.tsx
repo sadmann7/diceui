@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-interface ShortcutsTableProps {
+interface KeyboardShortcutsTableProps {
   shortcuts: {
     keys: string[];
     description: string;
@@ -16,7 +16,9 @@ interface ShortcutsTableProps {
   }[];
 }
 
-export function ShortcutsTable({ shortcuts }: ShortcutsTableProps) {
+export function KeyboardShortcutsTable({
+  shortcuts,
+}: KeyboardShortcutsTableProps) {
   return (
     <Table mdx>
       <TableHeader>

@@ -3,7 +3,7 @@ import { ComponentSource } from "@/components/component-source";
 import { ComponentTabs } from "@/components/component-tabs";
 import { DataAttributesTable } from "@/components/data-attributes-table";
 import { Kbd } from "@/components/kbd";
-import { ShortcutsTable } from "@/components/shortcuts-table";
+import { KeyboardShortcutsTable } from "@/components/keyboard-shortcuts-table";
 import { Table, TableCell, TableHead, TableRow } from "@/components/ui/table";
 import * as TabsPrimitive from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
@@ -146,6 +146,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       </div>
     ),
     DataAttributesTable,
-    ShortcutsTable,
+    KeyboardShortcutsTable,
   };
 }
