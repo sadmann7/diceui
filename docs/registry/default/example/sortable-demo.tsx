@@ -10,26 +10,27 @@ import {
 import * as React from "react";
 
 export default function SortableDemo() {
-  const [items, setItems] = React.useState([
-    { id: "1", content: "Kickflip" },
-    { id: "2", content: "Heelflip" },
-    { id: "5", content: "360 flip" },
-    { id: "6", content: "Varial flip" },
-    { id: "7", content: "Hardflip" },
-    { id: "8", content: "Backside 180" },
+  const [tricks, setTricks] = React.useState([
+    { id: "1", title: "The 900", points: 9000 },
+    { id: "2", title: "Indy Backflip", points: 4000 },
+    { id: "3", title: "Pizza Guy", points: 1500 },
+    { id: "4", title: "360 Varial McTwist", points: 5000 },
+    { id: "5", title: "Kickflip Backflip", points: 3000 },
+    { id: "6", title: "FS 540", points: 4500 },
   ]);
 
   return (
-    <Sortable value={items} onValueChange={setItems} orientation="both">
-      <SortableContent className="grid grid-cols-3 gap-4 p-4">
-        {items.map((item) => (
+    <Sortable value={tricks} onValueChange={setTricks} orientation="both">
+      <SortableContent className="grid grid-cols-3 gap-2.5">
+        {tricks.map((trick) => (
           <SortableItem
-            key={item.id}
-            value={item.id}
-            className="flex aspect-square size-full items-center justify-center border border-zinc-400 p-4 dark:border-zinc-700"
+            key={trick.id}
+            value={trick.id}
+            className="flex aspect-video size-full flex-col items-center justify-center border border-zinc-500 p-6 text-center dark:border-zinc-800"
             asGrip
           >
-            {item.content}
+            <div className="font-medium">{trick.title}</div>
+            <div className="text-sm text-zinc-500">{trick.points}</div>
           </SortableItem>
         ))}
       </SortableContent>

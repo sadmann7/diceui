@@ -73,7 +73,7 @@ interface SortableProviderContext<T extends UniqueItem> {
   strategy: SortableContextProps["strategy"];
   activeId: UniqueIdentifier | null;
   setActiveId: (id: UniqueIdentifier | null) => void;
-  disableGrabCursor: boolean;
+  flatCursor: boolean;
 }
 
 const SortableRoot = React.createContext<SortableProviderContext<{
@@ -103,7 +103,7 @@ interface SortableProps<T extends UniqueItem> extends DndContextProps {
   modifiers?: DndContextProps["modifiers"];
   sensors?: DndContextProps["sensors"];
   orientation?: "vertical" | "horizontal" | "both";
-  disableGrabCursor?: boolean;
+  flatCursor?: boolean;
 }
 
 function Sortable<T extends UniqueItem>(props: SortableProps<T>) {
@@ -116,7 +116,7 @@ function Sortable<T extends UniqueItem>(props: SortableProps<T>) {
     sensors: sensorsProp,
     onMove,
     orientation = "vertical",
-    disableGrabCursor = false,
+    flatCursor = false,
     ...sortableProps
   } = props;
   const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null);
@@ -139,7 +139,7 @@ function Sortable<T extends UniqueItem>(props: SortableProps<T>) {
       strategy: config.strategy,
       activeId,
       setActiveId,
-      disableGrabCursor,
+      flatCursor,
     }),
     [
       id,
@@ -148,7 +148,7 @@ function Sortable<T extends UniqueItem>(props: SortableProps<T>) {
       config.modifiers,
       config.strategy,
       activeId,
-      disableGrabCursor,
+      flatCursor,
     ],
   );
 
@@ -285,7 +285,7 @@ function SortableOverlay(props: SortableOverlayProps) {
     <DragOverlay
       modifiers={context.modifiers}
       dropAnimation={dropAnimationProp ?? dropAnimation}
-      className={cn(!context.disableGrabCursor && "cursor-grabbing")}
+      className={cn(!context.flatCursor && "cursor-grabbing")}
       {...overlayProps}
     >
       <SortableOverlayContext.Provider value={true}>
@@ -380,10 +380,9 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
           className={cn(
             {
               "touch-none select-none": asGrip,
-              "cursor-default": context.disableGrabCursor,
-              "data-[dragging]:cursor-grabbing": !context.disableGrabCursor,
-              "cursor-grab":
-                !isDragging && asGrip && !context.disableGrabCursor,
+              "cursor-default": context.flatCursor,
+              "data-[dragging]:cursor-grabbing": !context.flatCursor,
+              "cursor-grab": !isDragging && asGrip && !context.flatCursor,
             },
             className,
           )}
@@ -418,7 +417,8 @@ const SortableItemGrip = React.forwardRef<
       aria-controls={itemContext.id}
       data-dragging={itemContext.isDragging ? "" : undefined}
       className={cn(
-        context.disableGrabCursor
+        "touch-none select-none",
+        context.flatCursor
           ? "cursor-default"
           : "cursor-grab data-[dragging]:cursor-grabbing",
         className,
