@@ -5,24 +5,28 @@ import { X } from "lucide-react";
 import * as React from "react";
 
 export default function TagsInputEditableDemo() {
-  const [fruits, setFruits] = React.useState<string[]>(["Apple", "Orange"]);
+  const [tricks, setTricks] = React.useState<string[]>([
+    "Kickflip",
+    "Heelflip",
+    "FS 540",
+  ]);
 
   return (
     <TagsInputPrimitive.Root
       className="flex w-[380px] flex-col gap-2"
-      value={fruits}
-      onValueChange={setFruits}
+      value={tricks}
+      onValueChange={setTricks}
       editable
       addOnPaste
     >
       <TagsInputPrimitive.Label className="font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-        Fruits
+        Tricks
       </TagsInputPrimitive.Label>
       <TagsInputPrimitive.Content className="flex min-h-10 w-full flex-wrap items-center gap-1.5 rounded-md border border-input bg-background px-3 py-2 text-sm focus-within:ring-1 focus-within:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:focus-within:ring-zinc-400">
-        {fruits.map((fruit) => (
+        {tricks.map((trick) => (
           <TagsInputPrimitive.Item
-            key={fruit}
-            value={fruit}
+            key={trick}
+            value={trick}
             className="inline-flex max-w-[calc(100%-8px)] items-center gap-1.5 rounded border bg-transparent px-2.5 py-1 text-sm focus:outline-none data-[disabled]:cursor-not-allowed data-[editable]:select-none data-[editing]:bg-transparent data-[disabled]:opacity-50 data-[editing]:ring-1 data-[editing]:ring-zinc-500 dark:data-[editing]:ring-zinc-400 [&:not([data-editing])]:pr-1.5 [&[data-highlighted]:not([data-editing])]:bg-zinc-200 [&[data-highlighted]:not([data-editing])]:text-black dark:[&[data-highlighted]:not([data-editing])]:bg-zinc-800 dark:[&[data-highlighted]:not([data-editing])]:text-white"
           >
             <TagsInputPrimitive.Text className="truncate" />
@@ -32,7 +36,7 @@ export default function TagsInputEditableDemo() {
           </TagsInputPrimitive.Item>
         ))}
         <TagsInputPrimitive.Input
-          placeholder="Add fruit..."
+          placeholder="Add trick..."
           className="flex-1 bg-transparent outline-none placeholder:text-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder:text-zinc-400"
         />
       </TagsInputPrimitive.Content>

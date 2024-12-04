@@ -5,7 +5,7 @@ export default function TagsInputDemo() {
   return (
     <TagsInputPrimitive.Root className="flex w-[380px] flex-col gap-2">
       <TagsInputPrimitive.Label className="font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-        Fruits
+        Tricks
       </TagsInputPrimitive.Label>
       <TagsInputPrimitive.Content className="flex min-h-10 w-full flex-wrap items-center gap-1.5 rounded-md border border-input bg-background px-3 py-2 text-sm focus-within:ring-1 focus-within:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:focus-within:ring-zinc-400">
         {({ value }) => (
@@ -23,7 +23,7 @@ export default function TagsInputDemo() {
               </TagsInputPrimitive.Item>
             ))}
             <TagsInputPrimitive.Input
-              placeholder="Add fruit..."
+              placeholder="Add trick..."
               className="flex-1 bg-transparent outline-none placeholder:text-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder:text-zinc-400"
             />
           </>
