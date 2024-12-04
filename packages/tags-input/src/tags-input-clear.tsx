@@ -7,15 +7,19 @@ const CLEAR_NAME = "TagsInputClear";
 
 interface TagsInputClearProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.button> {
-  manual?: boolean;
+  /**
+   * If `true`, the clear button will only be shown when there are values in the input.
+   * @default false
+   */
+  forceVisible?: boolean;
 }
 
 const TagsInputClear = React.forwardRef<HTMLButtonElement, TagsInputClearProps>(
   (props, ref) => {
-    const { manual, ...clearProps } = props;
+    const { forceVisible, ...clearProps } = props;
     const context = useTagsInput(CLEAR_NAME);
 
-    if (!manual && context.values.length === 0) return null;
+    if (!forceVisible && context.values.length === 0) return null;
 
     return (
       <Primitive.button

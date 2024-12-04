@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import * as TagsInputPrimitive from "@diceui/tags-input";
@@ -89,7 +87,7 @@ const TagsInputClear = React.forwardRef<
   React.ComponentRef<typeof TagsInputPrimitive.Clear>,
   React.ComponentPropsWithoutRef<typeof TagsInputPrimitive.Clear>
 >(({ className, ...props }, ref) => (
-  <TagsInputPrimitive.Clear ref={ref} manual asChild>
+  <TagsInputPrimitive.Clear ref={ref} asChild>
     <Button
       variant="outline"
       className={cn(
