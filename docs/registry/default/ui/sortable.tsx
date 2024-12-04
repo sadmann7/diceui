@@ -57,11 +57,18 @@ const orientationConfig = {
   },
 };
 
+const SORTABLE_NAME = "Sortable";
+const SORTABLE_CONTENT_NAME = "SortableContent";
+const SORTABLE_ITEM_NAME = "SortableItem";
+const SORTABLE_ITEM_GRIP_NAME = "SortableItemGrip";
+const SORTABLE_OVERLAY_NAME = "SortableOverlay";
+
 const SORTABLE_ERROR = {
-  root: "Sortable components must be within Sortable",
-  content: "SortableContent must be within Sortable",
-  item: "SortableItem must be within SortableContent",
-  grip: "SortableItemGrip must be within SortableItem",
+  root: `${SORTABLE_NAME} components must be within ${SORTABLE_NAME}`,
+  content: `${SORTABLE_CONTENT_NAME} must be within ${SORTABLE_NAME}`,
+  item: `${SORTABLE_ITEM_NAME} must be within ${SORTABLE_CONTENT_NAME}`,
+  grip: `${SORTABLE_ITEM_GRIP_NAME} must be within ${SORTABLE_ITEM_NAME}`,
+  overlay: `${SORTABLE_OVERLAY_NAME} must be within ${SORTABLE_NAME}`,
 } as const;
 
 type UniqueItem = { id: UniqueIdentifier };
@@ -395,7 +402,7 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
     );
   },
 );
-SortableItem.displayName = "SortableItem";
+SortableItem.displayName = SORTABLE_ITEM_NAME;
 
 interface SortableItemGripProps extends ButtonProps {}
 
