@@ -110,6 +110,14 @@ export const Index: Record<string, any> = {
         path: "registry/default/lib/utils.ts",
         type: "registry:lib",
         target: ""
+      },{
+        path: "registry/default/lib/compose-event-handlers.ts",
+        type: "registry:lib",
+        target: ""
+      },{
+        path: "registry/default/lib/compose-refs.ts",
+        type: "registry:lib",
+        target: ""
       }],
       component: React.lazy(() => import("@/registry/default/lib/utils.ts")),
       source: "",

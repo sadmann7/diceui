@@ -6,7 +6,7 @@ import { Kbd } from "@/components/kbd";
 import { KeyboardShortcutsTable } from "@/components/keyboard-shortcuts-table";
 import { Table, TableCell, TableHead, TableRow } from "@/components/ui/table";
 import * as TabsPrimitive from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
+import { cn } from "@/registry/default/lib/utils";
 import type { NpmCommands } from "@/types/unist";
 import { createTypeTable } from "fumadocs-typescript/ui";
 import { CodeBlock, Pre } from "fumadocs-ui/components/codeblock";

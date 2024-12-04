@@ -10,6 +10,14 @@ export const lib: Registry = [
         path: "lib/utils.ts",
         type: "registry:lib",
       },
+      {
+        path: "lib/compose-event-handlers.ts",
+        type: "registry:lib",
+      },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
+      },
     ],
   },
 ];

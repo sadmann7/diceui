@@ -36,8 +36,9 @@ import { Slot, type SlotProps } from "@radix-ui/react-slot";
 import * as React from "react";
 
 import { Button, type ButtonProps } from "@/components/ui/button";
-import { composeRefs } from "@/lib/compose-refs";
-import { cn, composeEventHandlers } from "@/lib/utils";
+import { composeEventHandlers } from "@/registry/default/lib/compose-event-handlers";
+import { composeRefs } from "@/registry/default/lib/compose-refs";
+import { cn } from "@/registry/default/lib/utils";
 
 const orientationConfig = {
   vertical: {

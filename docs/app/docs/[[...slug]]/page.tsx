@@ -1,7 +1,7 @@
 import { useMDXComponents } from "@/components/mdx-components";
 import { buttonVariants } from "@/components/ui/button";
 import { source } from "@/lib/source";
-import { cn } from "@/lib/utils";
+import { cn } from "@/registry/default/lib/utils";
 import {
   DocsBody,
   DocsDescription,

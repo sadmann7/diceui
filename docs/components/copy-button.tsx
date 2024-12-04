@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { type Event, trackEvent } from "@/lib/events";
-import { cn } from "@/lib/utils";
+import { cn } from "@/registry/default/lib/utils";
 
 interface CopyButtonProps extends ButtonProps {
   value: string;

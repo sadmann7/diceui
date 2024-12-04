@@ -8,7 +8,7 @@ import { Icons } from "@/components/icons";
 import { ThemeWrapper } from "@/components/theme-wrapper";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useConfig } from "@/hooks/use-config";
-import { cn } from "@/lib/utils";
+import { cn } from "@/registry/default/lib/utils";
 import { styles } from "@/registry/registry-styles";
 
 interface ComponentPreviewProps extends React.HTMLAttributes<HTMLDivElement> {
