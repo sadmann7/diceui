@@ -57,7 +57,15 @@ const orientationConfig = {
   },
 };
 
+const SORTABLE_ERROR = {
+  root: "Sortable components must be within Sortable",
+  content: "SortableContent must be within Sortable",
+  item: "SortableItem must be within SortableContent",
+  grip: "SortableItemGrip must be within SortableItem",
+} as const;
+
 type UniqueItem = { id: UniqueIdentifier };
+
 interface SortableProviderContext<T extends UniqueItem> {
   id: string;
   items: T[];
@@ -68,14 +76,21 @@ interface SortableProviderContext<T extends UniqueItem> {
   disableGrabCursor: boolean;
 }
 
-const SortableRoot = React.createContext<
-  SortableProviderContext<{ id: UniqueIdentifier }> | undefined
->(undefined);
+const SortableRoot = React.createContext<SortableProviderContext<{
+  id: UniqueIdentifier;
+}> | null>(null);
+SortableRoot.displayName = "Sortable";
+
+const SortableContentContext = React.createContext<boolean>(false);
+SortableContentContext.displayName = "SortableContent";
+
+const SortableOverlayContext = React.createContext(false);
+SortableOverlayContext.displayName = "SortableOverlay";
 
 function useSortableRoot() {
   const context = React.useContext(SortableRoot);
   if (!context) {
-    throw new Error("useSortableRoot must be used within a SortableProvider");
+    throw new Error(SORTABLE_ERROR.root);
   }
   return context;
 }
@@ -204,24 +219,46 @@ function Sortable<T extends UniqueItem>(props: SortableProps<T>) {
   );
 }
 
-interface SortableContentProps {
+interface SortableContentProps extends SlotProps {
   strategy?: SortableContextProps["strategy"];
   children: React.ReactNode;
+  asChild?: boolean;
 }
 
 function SortableContent({
   strategy: strategyProp,
   children,
+  asChild,
+  ...props
 }: SortableContentProps) {
-  const context = useSortableRoot();
+  const context = React.useContext(SortableRoot);
+  if (!context) {
+    throw new Error(SORTABLE_ERROR.content);
+  }
+
+  React.Children.forEach(children, (child) => {
+    if (
+      !React.isValidElement(child) ||
+      !child.type ||
+      (typeof child.type === "function" && child.type.name !== "SortableItem")
+    ) {
+      throw new Error(
+        "SortableContent children must be SortableItem components",
+      );
+    }
+  });
+
+  const ContentSlot = asChild ? Slot : "div";
 
   return (
-    <SortableContext
-      items={context.items}
-      strategy={strategyProp ?? context.strategy}
-    >
-      {children}
-    </SortableContext>
+    <SortableContentContext.Provider value={true}>
+      <SortableContext
+        items={context.items}
+        strategy={strategyProp ?? context.strategy}
+      >
+        <ContentSlot {...props}>{children}</ContentSlot>
+      </SortableContext>
+    </SortableContentContext.Provider>
   );
 }
 
@@ -253,15 +290,17 @@ function SortableOverlay(props: SortableOverlayProps) {
       className={cn(!context.disableGrabCursor && "cursor-grabbing")}
       {...overlayProps}
     >
-      {context.activeId ? (
-        typeof children === "function" ? (
-          children({ value: context.activeId })
-        ) : (
-          <SortableItem value={context.activeId} asChild>
-            {children}
-          </SortableItem>
-        )
-      ) : null}
+      <SortableOverlayContext.Provider value={true}>
+        {context.activeId ? (
+          typeof children === "function" ? (
+            children({ value: context.activeId })
+          ) : (
+            <SortableItem value={context.activeId} asChild>
+              {children}
+            </SortableItem>
+          )
+        ) : null}
+      </SortableOverlayContext.Provider>
     </DragOverlay>
   );
 }
@@ -280,14 +319,6 @@ const SortableItemContext = React.createContext<SortableItemContextProps>({
   isDragging: false,
 });
 
-function useSortableItem() {
-  const context = React.useContext(SortableItemContext);
-  if (!context) {
-    throw new Error("useSortableItem must be used within a SortableItem");
-  }
-  return context;
-}
-
 interface SortableItemProps extends SlotProps {
   value: UniqueIdentifier;
   asGrip?: boolean;
@@ -296,6 +327,13 @@ interface SortableItemProps extends SlotProps {
 
 const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
   (props, ref) => {
+    const inSortableContent = React.useContext(SortableContentContext);
+    const inSortableOverlay = React.useContext(SortableOverlayContext);
+
+    if (!inSortableContent && !inSortableOverlay) {
+      throw new Error(SORTABLE_ERROR.item);
+    }
+
     const {
       value,
       style: styleProp,
@@ -367,9 +405,13 @@ const SortableItemGrip = React.forwardRef<
   HTMLButtonElement,
   SortableItemGripProps
 >((props, ref) => {
+  const itemContext = React.useContext(SortableItemContext);
+  if (!itemContext) {
+    throw new Error(SORTABLE_ERROR.grip);
+  }
+
   const { className, ...dragHandleProps } = props;
   const context = useSortableRoot();
-  const itemContext = useSortableItem();
 
   return (
     <Button

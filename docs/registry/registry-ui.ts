@@ -13,4 +13,21 @@ export const ui: Registry = [
       },
     ],
   },
+  {
+    name: "sortable",
+    type: "registry:ui",
+    dependencies: [
+      "@dnd-kit/core",
+      "@dnd-kit/modifiers",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+    ],
+    registryDependencies: ["button"],
+    files: [
+      {
+        path: "ui/sortable.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
 ];

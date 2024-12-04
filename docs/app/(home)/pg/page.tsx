@@ -7,7 +7,7 @@ import {
   TagsInputInput,
   TagsInputItem,
   TagsInputLabel,
-} from "@/components/ui/tags-input";
+} from "@/registry/default/ui/tags-input";
 import * as React from "react";
 
 import {
@@ -30,7 +30,7 @@ import {
   SortableContent,
   SortableItem,
   SortableOverlay,
-} from "@/components/ui/sortable";
+} from "@/registry/default/ui/sortable";
 import { pointerWithin } from "@dnd-kit/core";
 
 import { Shell } from "@/components/shell";

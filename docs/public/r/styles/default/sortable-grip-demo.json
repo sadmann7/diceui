@@ -1,0 +1,19 @@
+{
+  "name": "sortable-grip-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@dnd-kit/core",
+    "@dnd-kit/modifiers",
+    "@dnd-kit/sortable",
+    "@dnd-kit/utilities",
+    "lucide-react"
+  ],
+  "files": [
+    {
+      "path": "example/sortable-grip-demo.tsx",
+      "content": "\"use client\";\r\n\r\nimport * as React from \"react\";\r\nimport { GripVertical } from \"lucide-react\";\r\nimport { Sortable, SortableContent, SortableItem, SortableItemGrip } from \"@/registry/default/ui/sortable\";\r\n\r\nexport default function SortableGripDemo() {\r\n  const [items, setItems] = React.useState([\r\n    { id: \"1\", content: \"Item 1\" },\r\n    { id: \"2\", content: \"Item 2\" },\r\n    { id: \"3\", content: \"Item 3\" },\r\n  ]);\r\n\r\n  return (\r\n    <Sortable value={items} onValueChange={setItems}>\r\n      <SortableContent>\r\n        {items.map((item) => (\r\n          <SortableItem key={item.id} value={item.id}>\r\n            <div className=\"flex items-center gap-2 rounded-md border p-4\">\r\n              <SortableItemGrip>\r\n                <GripVertical className=\"h-4 w-4\" />\r\n              </SortableItemGrip>\r\n              {item.content}\r\n            </div>\r\n          </SortableItem>\r\n        ))}\r\n      </SortableContent>\r\n    </Sortable>\r\n  );\r\n}",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}
