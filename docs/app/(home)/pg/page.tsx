@@ -95,7 +95,7 @@ export default function PlaygroundPage() {
         collisionDetection={pointerWithin}
         onValueChange={(items) => setFruits(items.map((item) => item.id))}
         orientation="both"
-        disableGrabCursor
+        flatCursor
       >
         <TagsInput value={fruits} onValueChange={setFruits} sortable editable>
           <TagsInputLabel>Sortable</TagsInputLabel>

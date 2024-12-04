@@ -86,13 +86,7 @@ interface SortableProviderContext<T extends UniqueItem> {
 const SortableRoot = React.createContext<SortableProviderContext<{
   id: UniqueIdentifier;
 }> | null>(null);
-SortableRoot.displayName = "Sortable";
-
-const SortableContentContext = React.createContext<boolean>(false);
-SortableContentContext.displayName = "SortableContent";
-
-const SortableOverlayContext = React.createContext(false);
-SortableOverlayContext.displayName = "SortableOverlay";
+SortableRoot.displayName = SORTABLE_NAME;
 
 function useSortableRoot() {
   const context = React.useContext(SortableRoot);
@@ -226,6 +220,8 @@ function Sortable<T extends UniqueItem>(props: SortableProps<T>) {
   );
 }
 
+Sortable.displayName = SORTABLE_NAME;
+
 interface SortableContentProps extends SlotProps {
   strategy?: SortableContextProps["strategy"];
   children: React.ReactNode;
@@ -256,14 +252,12 @@ function SortableContent({
   const ContentSlot = asChild ? Slot : "div";
 
   return (
-    <SortableContentContext.Provider value={true}>
-      <SortableContext
-        items={context.items}
-        strategy={strategyProp ?? context.strategy}
-      >
-        <ContentSlot {...props}>{children}</ContentSlot>
-      </SortableContext>
-    </SortableContentContext.Provider>
+    <SortableContext
+      items={context.items}
+      strategy={strategyProp ?? context.strategy}
+    >
+      <ContentSlot {...props}>{children}</ContentSlot>
+    </SortableContext>
   );
 }
 
@@ -295,17 +289,15 @@ function SortableOverlay(props: SortableOverlayProps) {
       className={cn(!context.flatCursor && "cursor-grabbing")}
       {...overlayProps}
     >
-      <SortableOverlayContext.Provider value={true}>
-        {context.activeId ? (
-          typeof children === "function" ? (
-            children({ value: context.activeId })
-          ) : (
-            <SortableItem value={context.activeId} asChild>
-              {children}
-            </SortableItem>
-          )
-        ) : null}
-      </SortableOverlayContext.Provider>
+      {context.activeId ? (
+        typeof children === "function" ? (
+          children({ value: context.activeId })
+        ) : (
+          <SortableItem value={context.activeId} asChild>
+            {children}
+          </SortableItem>
+        )
+      ) : null}
     </DragOverlay>
   );
 }
@@ -332,10 +324,8 @@ interface SortableItemProps extends SlotProps {
 
 const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
   (props, ref) => {
-    const inSortableContent = React.useContext(SortableContentContext);
-    const inSortableOverlay = React.useContext(SortableOverlayContext);
-
-    if (!inSortableContent && !inSortableOverlay) {
+    const inSortableContent = React.useContext(SortableRoot);
+    if (!inSortableContent) {
       throw new Error(SORTABLE_ERROR.item);
     }
 
