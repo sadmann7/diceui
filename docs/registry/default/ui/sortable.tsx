@@ -86,13 +86,6 @@ interface SortableProviderContext<T extends UniqueItem> {
 const SortableRoot = React.createContext<SortableProviderContext<{
   id: UniqueIdentifier;
 }> | null>(null);
-SortableRoot.displayName = SORTABLE_NAME;
-
-const SortableContentContext = React.createContext<boolean>(false);
-SortableContentContext.displayName = SORTABLE_CONTENT_NAME;
-
-const SortableOverlayContext = React.createContext(false);
-SortableOverlayContext.displayName = SORTABLE_OVERLAY_NAME;
 
 function useSortableRoot() {
   const context = React.useContext(SortableRoot);
@@ -226,47 +219,46 @@ function Sortable<T extends UniqueItem>(props: SortableProps<T>) {
   );
 }
 
+const SortableContentContext = React.createContext<boolean>(false);
+
 interface SortableContentProps extends SlotProps {
   strategy?: SortableContextProps["strategy"];
   children: React.ReactNode;
   asChild?: boolean;
 }
 
-function SortableContent({
-  strategy: strategyProp,
-  children,
-  asChild,
-  ...props
-}: SortableContentProps) {
-  const context = React.useContext(SortableRoot);
-  if (!context) {
-    throw new Error(SORTABLE_ERROR.content);
-  }
-
-  React.Children.forEach(children, (child) => {
-    if (
-      !React.isValidElement(child) ||
-      !child.type ||
-      (typeof child.type === "function" &&
-        child.type.displayName !== SORTABLE_ITEM_NAME)
-    ) {
-      throw new Error(SORTABLE_ERROR.item);
+const SortableContent = React.forwardRef<HTMLDivElement, SortableContentProps>(
+  (props, ref) => {
+    const {
+      strategy: strategyProp,
+      children,
+      asChild,
+      ...contentProps
+    } = props;
+    const context = React.useContext(SortableRoot);
+    if (!context) {
+      throw new Error(SORTABLE_ERROR.content);
     }
-  });
 
-  const ContentSlot = asChild ? Slot : "div";
+    const ContentSlot = asChild ? Slot : "div";
 
-  return (
-    <SortableContentContext.Provider value={true}>
-      <SortableContext
-        items={context.items}
-        strategy={strategyProp ?? context.strategy}
-      >
-        <ContentSlot {...props}>{children}</ContentSlot>
-      </SortableContext>
-    </SortableContentContext.Provider>
-  );
-}
+    return (
+      <SortableContentContext.Provider value={true}>
+        <SortableContext
+          items={context.items}
+          strategy={strategyProp ?? context.strategy}
+        >
+          <ContentSlot ref={ref} {...contentProps}>
+            {children}
+          </ContentSlot>
+        </SortableContext>
+      </SortableContentContext.Provider>
+    );
+  },
+);
+SortableContent.displayName = SORTABLE_CONTENT_NAME;
+
+const SortableOverlayContext = React.createContext(false);
 
 const dropAnimation: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
@@ -440,7 +432,7 @@ const SortableItemGrip = React.forwardRef<
     />
   );
 });
-SortableItemGrip.displayName = SORTABLE_ITEM_GRIP_NAME;
+SortableItemGrip.displayName = "SortableItemGrip";
 
 export {
   Sortable,
