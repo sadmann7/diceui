@@ -1,6 +1,5 @@
 "use client";
 
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Sortable,
   SortableContent,
@@ -20,29 +19,32 @@ export default function SortableDemo() {
   ]);
 
   return (
-    <div>
-      <Sortable value={tricks} onValueChange={setTricks} orientation="both">
-        <SortableContent className="grid grid-cols-3 gap-2.5">
-          {tricks.map((trick) => (
-            <SortableItem
-              key={trick.id}
-              value={trick.id}
-              className="flex aspect-video size-full flex-col items-center justify-center border border-zinc-500 p-6 text-center dark:border-zinc-800"
-              asGrip
-            >
+    <Sortable value={tricks} onValueChange={setTricks} orientation="both">
+      <SortableContent className="grid grid-cols-3 gap-2.5">
+        {tricks.map((trick) => (
+          <SortableItem key={trick.id} value={trick.id} asChild asGrip>
+            <div className="flex aspect-video size-full flex-col items-center justify-center border border-zinc-500 p-6 text-center dark:border-zinc-800">
               <div className="font-medium">{trick.title}</div>
               <div className="text-sm text-zinc-500">{trick.points}</div>
+            </div>
+          </SortableItem>
+        ))}
+      </SortableContent>
+      <SortableOverlay>
+        {({ value }) => {
+          const trick = tricks.find((trick) => trick.id === value);
+          if (!trick) return null;
+
+          return (
+            <SortableItem value={trick.id} asChild>
+              <div className="flex aspect-video size-full flex-col items-center justify-center border border-zinc-500 p-6 text-center dark:border-zinc-800">
+                <div className="font-medium">{trick.title}</div>
+                <div className="text-sm text-zinc-500">{trick.points}</div>
+              </div>
             </SortableItem>
-          ))}
-        </SortableContent>
-        <SortableOverlay>
-          {({ value }) => (
-            <SortableItem key={value} value={value} asChild>
-              <Skeleton className="size-full" />
-            </SortableItem>
-          )}
-        </SortableOverlay>
-      </Sortable>
-    </div>
+          );
+        }}
+      </SortableOverlay>
+    </Sortable>
   );
 }

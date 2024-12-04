@@ -1,5 +1,6 @@
 import type {
   DndContextProps,
+  DragEndEvent,
   DragOverlay,
   DropAnimation,
   UniqueIdentifier,
@@ -31,12 +32,10 @@ interface SortableProps<TData extends { id: UniqueIdentifier }>
 
   /**
    * An optional callback function that is called when an item is moved.
-   * It receives an event object with `activeIndex` and `overIndex` properties, representing the original and new positions of the moved item.
+   * It receives the full DragEndEvent object from @dnd-kit/core.
    * This will override the default behavior of updating the order of the data items.
-   * @example
-   * onMove={(event) => console.log(`Item moved from index ${event.activeIndex} to index ${event.overIndex}`)}
    */
-  onMove?: (event: { activeIndex: number; overIndex: number }) => void;
+  onMove?: (event: DragEndEvent) => void;
 
   /**
    * The array of modifiers that will be used to modify the behavior of the sortable component.
@@ -116,13 +115,14 @@ interface SortableProps<TData extends { id: UniqueIdentifier }>
   onDragCancel?: DndContextProps["onDragCancel"];
 
   /**
-   * Specifies whether the grab cursor should be disabled.
+   * Specifies whether to use a flat cursor style instead of grab/grabbing.
    * @default false
    */
-  disableGrabCursor?: boolean;
+  flatCursor?: boolean;
 }
 
-interface SortableContentProps {
+interface SortableContentProps
+  extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"div">> {
   /**
    * The strategy to use for sorting the items.
    * @default
@@ -135,6 +135,12 @@ interface SortableContentProps {
 
   /** The children of the sortable component. */
   children: React.ReactNode;
+
+  /**
+   * Merges the content's props into its immediate child.
+   * @default false
+   */
+  asChild?: boolean;
 }
 
 interface SortableOverlayProps
@@ -188,9 +194,9 @@ interface SortableItemGripProps
   extends Omit<ButtonProps, keyof React.ComponentPropsWithoutRef<"button">> {}
 
 export type {
-  SortableContentProps,
-  SortableItemProps,
-  SortableOverlayProps,
   SortableProps,
+  SortableContentProps,
+  SortableOverlayProps,
+  SortableItemProps,
   SortableItemGripProps,
 };

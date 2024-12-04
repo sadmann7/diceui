@@ -28,7 +28,11 @@ export function ComponentTabs({ name, children }: ComponentTabsProps) {
       );
     }
 
-    return <Component />;
+    return (
+      <div className="preview size-full">
+        <Component />
+      </div>
+    );
   }, [name, config.style]);
 
   return (

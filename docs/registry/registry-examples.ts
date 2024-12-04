@@ -32,6 +32,7 @@ export const examples: Registry = [
       "@dnd-kit/sortable",
       "@dnd-kit/utilities",
     ],
+    registryDependencies: ["button"],
     files: [
       {
         path: "example/sortable-demo.tsx",
@@ -49,6 +50,7 @@ export const examples: Registry = [
       "@dnd-kit/utilities",
       "lucide-react",
     ],
+    registryDependencies: ["button", "table"],
     files: [
       {
         path: "example/sortable-grip-demo.tsx",

@@ -287,6 +287,8 @@ function SortableOverlay(props: SortableOverlayProps) {
     throw new Error(SORTABLE_ERROR.overlay);
   }
 
+  const activeItem = context.items.find((item) => item.id === context.activeId);
+
   return (
     <DragOverlay
       modifiers={context.modifiers}
@@ -295,11 +297,11 @@ function SortableOverlay(props: SortableOverlayProps) {
       {...overlayProps}
     >
       <SortableOverlayContext.Provider value={true}>
-        {context.activeId ? (
+        {activeItem ? (
           typeof children === "function" ? (
-            children({ value: context.activeId })
+            children({ value: activeItem.id })
           ) : (
-            <SortableItem value={context.activeId} asChild>
+            <SortableItem value={activeItem.id} asChild>
               {children}
             </SortableItem>
           )
