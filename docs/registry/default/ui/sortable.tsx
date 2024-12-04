@@ -88,6 +88,12 @@ const SortableRoot = React.createContext<SortableProviderContext<{
 }> | null>(null);
 SortableRoot.displayName = SORTABLE_NAME;
 
+const SortableContentContext = React.createContext<boolean>(false);
+SortableContentContext.displayName = SORTABLE_CONTENT_NAME;
+
+const SortableOverlayContext = React.createContext(false);
+SortableOverlayContext.displayName = SORTABLE_OVERLAY_NAME;
+
 function useSortableRoot() {
   const context = React.useContext(SortableRoot);
   if (!context) {
@@ -220,46 +226,47 @@ function Sortable<T extends UniqueItem>(props: SortableProps<T>) {
   );
 }
 
-Sortable.displayName = SORTABLE_NAME;
-
 interface SortableContentProps extends SlotProps {
   strategy?: SortableContextProps["strategy"];
   children: React.ReactNode;
   asChild?: boolean;
 }
 
-const SortableContent = React.forwardRef<HTMLDivElement, SortableContentProps>(
-  ({ strategy: strategyProp, children, asChild, ...props }, ref) => {
-    const context = React.useContext(SortableRoot);
-    if (!context) {
-      throw new Error(SORTABLE_ERROR.content);
+function SortableContent({
+  strategy: strategyProp,
+  children,
+  asChild,
+  ...props
+}: SortableContentProps) {
+  const context = React.useContext(SortableRoot);
+  if (!context) {
+    throw new Error(SORTABLE_ERROR.content);
+  }
+
+  React.Children.forEach(children, (child) => {
+    if (
+      !React.isValidElement(child) ||
+      !child.type ||
+      (typeof child.type === "function" &&
+        child.type.displayName !== SORTABLE_ITEM_NAME)
+    ) {
+      throw new Error(SORTABLE_ERROR.item);
     }
+  });
 
-    React.Children.forEach(children, (child) => {
-      if (
-        !React.isValidElement(child) ||
-        !child.type ||
-        (typeof child.type === "function" && child.type.name !== "SortableItem")
-      ) {
-        throw new Error(SORTABLE_ERROR.item);
-      }
-    });
+  const ContentSlot = asChild ? Slot : "div";
 
-    const ContentSlot = asChild ? Slot : "div";
-
-    return (
+  return (
+    <SortableContentContext.Provider value={true}>
       <SortableContext
         items={context.items}
         strategy={strategyProp ?? context.strategy}
       >
-        <ContentSlot ref={ref} {...props}>
-          {children}
-        </ContentSlot>
+        <ContentSlot {...props}>{children}</ContentSlot>
       </SortableContext>
-    );
-  },
-);
-SortableContent.displayName = SORTABLE_CONTENT_NAME;
+    </SortableContentContext.Provider>
+  );
+}
 
 const dropAnimation: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
@@ -292,15 +299,17 @@ function SortableOverlay(props: SortableOverlayProps) {
       className={cn(!context.flatCursor && "cursor-grabbing")}
       {...overlayProps}
     >
-      {context.activeId ? (
-        typeof children === "function" ? (
-          children({ value: context.activeId })
-        ) : (
-          <SortableItem value={context.activeId} asChild>
-            {children}
-          </SortableItem>
-        )
-      ) : null}
+      <SortableOverlayContext.Provider value={true}>
+        {context.activeId ? (
+          typeof children === "function" ? (
+            children({ value: context.activeId })
+          ) : (
+            <SortableItem value={context.activeId} asChild>
+              {children}
+            </SortableItem>
+          )
+        ) : null}
+      </SortableOverlayContext.Provider>
     </DragOverlay>
   );
 }
@@ -327,8 +336,10 @@ interface SortableItemProps extends SlotProps {
 
 const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
   (props, ref) => {
-    const inSortableContent = React.useContext(SortableRoot);
-    if (!inSortableContent) {
+    const inSortableContent = React.useContext(SortableContentContext);
+    const inSortableOverlay = React.useContext(SortableOverlayContext);
+
+    if (!inSortableContent && !inSortableOverlay) {
       throw new Error(SORTABLE_ERROR.item);
     }
 
@@ -429,7 +440,7 @@ const SortableItemGrip = React.forwardRef<
     />
   );
 });
-SortableItemGrip.displayName = "SortableItemGrip";
+SortableItemGrip.displayName = SORTABLE_ITEM_GRIP_NAME;
 
 export {
   Sortable,

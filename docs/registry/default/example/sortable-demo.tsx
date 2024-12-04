@@ -20,27 +20,29 @@ export default function SortableDemo() {
   ]);
 
   return (
-    <Sortable value={tricks} onValueChange={setTricks} orientation="both">
-      <div className="grid grid-cols-3 gap-2.5">
-        {tricks.map((trick) => (
-          <SortableItem
-            key={trick.id}
-            value={trick.id}
-            className="flex aspect-video size-full flex-col items-center justify-center border border-zinc-500 p-6 text-center dark:border-zinc-800"
-            asGrip
-          >
-            <div className="font-medium">{trick.title}</div>
-            <div className="text-sm text-zinc-500">{trick.points}</div>
-          </SortableItem>
-        ))}
-      </div>
-      <SortableOverlay>
-        {({ value }) => (
-          <SortableItem key={value} value={value} asChild>
-            <Skeleton className="size-full" />
-          </SortableItem>
-        )}
-      </SortableOverlay>
-    </Sortable>
+    <div>
+      <Sortable value={tricks} onValueChange={setTricks} orientation="both">
+        <SortableContent className="grid grid-cols-3 gap-2.5">
+          {tricks.map((trick) => (
+            <SortableItem
+              key={trick.id}
+              value={trick.id}
+              className="flex aspect-video size-full flex-col items-center justify-center border border-zinc-500 p-6 text-center dark:border-zinc-800"
+              asGrip
+            >
+              <div className="font-medium">{trick.title}</div>
+              <div className="text-sm text-zinc-500">{trick.points}</div>
+            </SortableItem>
+          ))}
+        </SortableContent>
+        <SortableOverlay>
+          {({ value }) => (
+            <SortableItem key={value} value={value} asChild>
+              <Skeleton className="size-full" />
+            </SortableItem>
+          )}
+        </SortableOverlay>
+      </Sortable>
+    </div>
   );
 }
