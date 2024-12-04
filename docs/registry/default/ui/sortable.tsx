@@ -86,6 +86,7 @@ interface SortableProviderContext<T extends UniqueItem> {
 const SortableRoot = React.createContext<SortableProviderContext<{
   id: UniqueIdentifier;
 }> | null>(null);
+SortableRoot.displayName = SORTABLE_NAME;
 
 function useSortableRoot() {
   const context = React.useContext(SortableRoot);
@@ -107,7 +108,6 @@ interface SortableProps<T extends UniqueItem> extends DndContextProps {
 }
 
 function Sortable<T extends UniqueItem>(props: SortableProps<T>) {
-  const id = React.useId();
   const {
     value,
     onValueChange,
@@ -119,6 +119,7 @@ function Sortable<T extends UniqueItem>(props: SortableProps<T>) {
     flatCursor = false,
     ...sortableProps
   } = props;
+  const id = React.useId();
   const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null);
   const sensors = useSensors(
     useSensor(MouseSensor),
@@ -220,6 +221,7 @@ function Sortable<T extends UniqueItem>(props: SortableProps<T>) {
 }
 
 const SortableContentContext = React.createContext<boolean>(false);
+SortableContentContext.displayName = SORTABLE_CONTENT_NAME;
 
 interface SortableContentProps extends SlotProps {
   strategy?: SortableContextProps["strategy"];
@@ -259,6 +261,7 @@ const SortableContent = React.forwardRef<HTMLDivElement, SortableContentProps>(
 SortableContent.displayName = SORTABLE_CONTENT_NAME;
 
 const SortableOverlayContext = React.createContext(false);
+SortableOverlayContext.displayName = SORTABLE_OVERLAY_NAME;
 
 const dropAnimation: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
@@ -319,6 +322,7 @@ const SortableItemContext = React.createContext<SortableItemContextProps>({
   listeners: undefined,
   isDragging: false,
 });
+SortableItemContext.displayName = SORTABLE_ITEM_NAME;
 
 interface SortableItemProps extends SlotProps {
   value: UniqueIdentifier;
@@ -437,7 +441,7 @@ SortableItemGrip.displayName = "SortableItemGrip";
 export {
   Sortable,
   SortableContent,
-  SortableItemGrip,
   SortableItem,
+  SortableItemGrip,
   SortableOverlay,
 };
