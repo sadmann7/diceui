@@ -90,6 +90,9 @@ shadcn@latest add "https://diceui.com/r/sortable"
   Copy the `composeEventHandlers` utility into your project.
 
   ```tsx
+  /**
+ * @see https://github.com/radix-ui/primitives/blob/main/packages/core/primitive/src/primitive.tsx
+ */
   export function composeEventHandlers<E>(
     originalEventHandler?: (event: E) => void,
     ourEventHandler?: (event: E) => void,
@@ -112,6 +115,10 @@ shadcn@latest add "https://diceui.com/r/sortable"
   Copy the `composeRefs` utility into your project.
 
   ```tsx
+  /**
+ * @see https://github.com/radix-ui/primitives/blob/main/packages/react/compose-refs/src/composeRefs.tsx
+ */
+
   import * as React from "react";
 
   type PossibleRef<T> = React.Ref<T> | undefined;
