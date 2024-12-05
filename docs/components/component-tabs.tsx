@@ -2,6 +2,7 @@
 
 import { Index } from "@/__registry__";
 import { useConfig } from "@/hooks/use-config";
+import { styles } from "@/registry/registry-styles";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import * as React from "react";
 
@@ -12,6 +13,12 @@ interface ComponentTabsProps {
 
 export function ComponentTabs({ name, children }: ComponentTabsProps) {
   const [config] = useConfig();
+  const index = styles.findIndex((style) => style.name === config.style);
+
+  const Codes = React.Children.toArray(children) as React.ReactElement[];
+  const Code = Codes[index];
+
+  console;
 
   const Preview = React.useMemo(() => {
     const Component = Index[config.style][name]?.component;
@@ -38,7 +45,7 @@ export function ComponentTabs({ name, children }: ComponentTabsProps) {
           {Preview}
         </div>
       </Tab>
-      <Tab value="Code">{children}</Tab>
+      <Tab value="Code">{Code}</Tab>
     </Tabs>
   );
 }
