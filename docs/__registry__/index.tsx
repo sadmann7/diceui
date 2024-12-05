@@ -57,13 +57,29 @@ export const Index: Record<string, any> = {
       name: "tags-input-editable-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: undefined,
+      registryDependencies: ["tags-input","button"],
       files: [{
         path: "registry/default/example/tags-input-editable-demo.tsx",
         type: "registry:example",
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/example/tags-input-editable-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "tags-input-sortable-demo": {
+      name: "tags-input-sortable-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["tags-input","sortable","button"],
+      files: [{
+        path: "registry/default/example/tags-input-sortable-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/example/tags-input-sortable-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",
@@ -111,11 +127,7 @@ export const Index: Record<string, any> = {
         type: "registry:lib",
         target: ""
       },{
-        path: "registry/default/lib/compose-event-handlers.ts",
-        type: "registry:lib",
-        target: ""
-      },{
-        path: "registry/default/lib/compose-refs.ts",
+        path: "registry/default/lib/composition.ts",
         type: "registry:lib",
         target: ""
       }],

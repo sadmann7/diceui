@@ -16,9 +16,30 @@ export const examples: Registry = [
     name: "tags-input-editable-demo",
     type: "registry:example",
     dependencies: ["@diceui/tags-input", "lucide-react"],
+    registryDependencies: ["tags-input", "button"],
     files: [
       {
         path: "example/tags-input-editable-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "tags-input-sortable-demo",
+    type: "registry:example",
+    dependencies: [
+      "@diceui/tags-input",
+      "@dnd-kit/core",
+      "@dnd-kit/modifiers",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+      "@radix-ui/react-slot",
+      "lucide-react",
+    ],
+    registryDependencies: ["tags-input", "sortable", "button"],
+    files: [
+      {
+        path: "example/tags-input-sortable-demo.tsx",
         type: "registry:example",
       },
     ],

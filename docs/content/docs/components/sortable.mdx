@@ -83,20 +83,22 @@ shadcn@latest add "https://diceui.com/r/sortable"
      Install the following dependencies:
 
      ```package-install
-     @dnd-kit/core @dnd-kit/modifiers @dnd-kit/sortable @dnd-kit/utilities
+     @dnd-kit/core @dnd-kit/modifiers @dnd-kit/sortable @dnd-kit/utilities @radix-ui/react-slot
      ```
   </Step>
   <Step>
-  Copy the `composeEventHandlers` utility into your project.
+  Copy the composition utilities into your `lib/composition.ts` file.
 
   ```tsx
+ import * as React from "react";
+
   /**
- * @see https://github.com/radix-ui/primitives/blob/main/packages/core/primitive/src/primitive.tsx
- */
-  export function composeEventHandlers<E>(
+   * @see https://github.com/radix-ui/primitives/blob/main/packages/core/primitive/src/primitive.tsx
+   */
+  function composeEventHandlers<E>(
     originalEventHandler?: (event: E) => void,
     ourEventHandler?: (event: E) => void,
-    { checkForDefaultPrevented = true } = {},
+    { checkForDefaultPrevented = true } = {}
   ) {
     return function handleEvent(event: E) {
       originalEventHandler?.(event);
@@ -109,17 +111,10 @@ shadcn@latest add "https://diceui.com/r/sortable"
       }
     };
   }
-  ```
-  </Step>
-  <Step>
-  Copy the `composeRefs` utility into your project.
 
-  ```tsx
   /**
- * @see https://github.com/radix-ui/primitives/blob/main/packages/react/compose-refs/src/composeRefs.tsx
- */
-
-  import * as React from "react";
+   * @see https://github.com/radix-ui/primitives/blob/main/packages/react/compose-refs/src/composeRefs.tsx
+   */
 
   type PossibleRef<T> = React.Ref<T> | undefined;
 
@@ -156,7 +151,7 @@ shadcn@latest add "https://diceui.com/r/sortable"
     return React.useCallback(composeRefs(...refs), refs);
   }
 
-  export { composeRefs, useComposedRefs };
+  export { composeEventHandlers, composeRefs, useComposedRefs };
   ```
   </Step>
   <Step>

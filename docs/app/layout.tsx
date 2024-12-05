@@ -2,7 +2,7 @@ import "@/styles/globals.css";
 import { Providers } from "@/components/providers";
 import { siteConfig } from "@/config/site";
 import { fontHeading, fontMono, fontSans } from "@/lib/fonts";
-import { cn } from "@/registry/default/lib/utils";
+import { cn } from "@/lib/utils";
 import type { Metadata, Viewport } from "next";
 import type * as React from "react";
 

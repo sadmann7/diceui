@@ -4,7 +4,7 @@
     "type": "registry:ui",
     "dependencies": [
       "@diceui/tags-input",
-      "lucide-react"
+      "@radix-ui/react-slot"
     ],
     "registryDependencies": [
       "button"
@@ -23,7 +23,8 @@
       "@dnd-kit/core",
       "@dnd-kit/modifiers",
       "@dnd-kit/sortable",
-      "@dnd-kit/utilities"
+      "@dnd-kit/utilities",
+      "@radix-ui/react-slot"
     ],
     "registryDependencies": [
       "button"

@@ -4,7 +4,7 @@
 
 import { type VariantProps, cva } from "class-variance-authority";
 
-import { cn } from "@/registry/default/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface PageHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   as?: React.ElementType;

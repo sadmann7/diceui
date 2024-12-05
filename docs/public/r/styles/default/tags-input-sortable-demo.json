@@ -1,0 +1,26 @@
+{
+  "name": "tags-input-sortable-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@diceui/tags-input",
+    "@dnd-kit/core",
+    "@dnd-kit/modifiers",
+    "@dnd-kit/sortable",
+    "@dnd-kit/utilities",
+    "@radix-ui/react-slot",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "tags-input",
+    "sortable",
+    "button"
+  ],
+  "files": [
+    {
+      "path": "example/tags-input-sortable-demo.tsx",
+      "content": "\"use client\";\r\n\r\nimport {\r\n  TagsInput,\r\n  TagsInputClear,\r\n  TagsInputContent,\r\n  TagsInputInput,\r\n  TagsInputItem,\r\n  TagsInputLabel,\r\n} from \"@/registry/default/ui/tags-input\";\r\nimport * as React from \"react\";\r\n\r\nimport {\r\n  Sortable,\r\n  SortableContent,\r\n  SortableItem,\r\n  SortableOverlay,\r\n} from \"@/registry/default/ui/sortable\";\r\n\r\nimport { MouseSensor, TouchSensor, useSensor, useSensors } from \"@dnd-kit/core\";\r\n\r\nexport default function TagsInputSortableDemo() {\r\n  const [fruits, setFruits] = React.useState<string[]>([]);\r\n\r\n  const sensors = useSensors(\r\n    useSensor(MouseSensor, {\r\n      activationConstraint: { distance: 8 },\r\n    }),\r\n    useSensor(TouchSensor, {\r\n      activationConstraint: { delay: 250, tolerance: 5 },\r\n    }),\r\n  );\r\n\r\n  return (\r\n    <Sortable\r\n      sensors={sensors}\r\n      value={fruits.map((fruit) => ({ id: fruit }))}\r\n      onValueChange={(items) => setFruits(items.map((item) => item.id))}\r\n      orientation=\"both\"\r\n      flatCursor\r\n    >\r\n      <TagsInput value={fruits} onValueChange={setFruits} sortable editable>\r\n        <TagsInputLabel>Sortable</TagsInputLabel>\r\n        <SortableContent>\r\n          <TagsInputContent>\r\n            {fruits.map((fruit) => (\r\n              <SortableItem\r\n                key={fruit}\r\n                value={fruit}\r\n                asChild\r\n                asGrip\r\n                tabIndex={-1}\r\n              >\r\n                <TagsInputItem value={fruit}>{fruit}</TagsInputItem>\r\n              </SortableItem>\r\n            ))}\r\n            <TagsInputInput placeholder=\"Add fruit...\" />\r\n          </TagsInputContent>\r\n        </SortableContent>\r\n        <SortableOverlay>\r\n          <div className=\"size-full animate-pulse rounded-sm bg-primary/10\" />\r\n        </SortableOverlay>\r\n        <TagsInputClear />\r\n      </TagsInput>\r\n    </Sortable>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

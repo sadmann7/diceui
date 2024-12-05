@@ -36,9 +36,8 @@ import { Slot, type SlotProps } from "@radix-ui/react-slot";
 import * as React from "react";
 
 import { Button, type ButtonProps } from "@/components/ui/button";
-import { composeEventHandlers } from "@/registry/default/lib/compose-event-handlers";
-import { composeRefs } from "@/registry/default/lib/compose-refs";
-import { cn } from "@/registry/default/lib/utils";
+import { composeEventHandlers, composeRefs } from "@/lib/composition";
+import { cn } from "@/lib/utils";
 
 const orientationConfig = {
   vertical: {
@@ -72,7 +71,9 @@ const SORTABLE_ERROR = {
   overlay: `${SORTABLE_OVERLAY_NAME} must be within ${SORTABLE_NAME}`,
 } as const;
 
-type UniqueItem = { id: UniqueIdentifier };
+interface UniqueItem {
+  id: UniqueIdentifier;
+}
 
 interface SortableProviderContext<T extends UniqueItem> {
   id: string;

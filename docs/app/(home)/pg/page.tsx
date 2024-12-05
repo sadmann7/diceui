@@ -1,16 +1,6 @@
 "use client";
 
 import {
-  TagsInput,
-  TagsInputClear,
-  TagsInputContent,
-  TagsInputInput,
-  TagsInputItem,
-  TagsInputLabel,
-} from "@/registry/default/ui/tags-input";
-import * as React from "react";
-
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -25,14 +15,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import {
-  Sortable,
-  SortableContent,
-  SortableItem,
-  SortableOverlay,
-} from "@/registry/default/ui/sortable";
-import { pointerWithin } from "@dnd-kit/core";
-
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
@@ -44,83 +26,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
-import { MouseSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
 
 export default function PlaygroundPage() {
-  const [fruits, setFruits] = React.useState<string[]>([]);
-
-  const sensors = useSensors(
-    useSensor(MouseSensor, {
-      activationConstraint: { distance: 8 },
-    }),
-    useSensor(TouchSensor, {
-      activationConstraint: { delay: 250, tolerance: 5 },
-    }),
-  );
-
   return (
     <Shell>
-      <TagsInput>
-        <TagsInputLabel>Uncontrolled</TagsInputLabel>
-        <TagsInputContent>
-          {({ value }) => (
-            <>
-              {value.map((item) => (
-                <TagsInputItem key={item} value={item}>
-                  {item}
-                </TagsInputItem>
-              ))}
-              <TagsInputInput placeholder="Add fruit..." />
-            </>
-          )}
-        </TagsInputContent>
-        <TagsInputClear />
-      </TagsInput>
-      <TagsInput value={fruits} onValueChange={setFruits} addOnPaste editable>
-        <TagsInputLabel>Controlled</TagsInputLabel>
-        <TagsInputContent>
-          {fruits.map((fruit) => (
-            <TagsInputItem key={fruit} value={fruit}>
-              {fruit}
-            </TagsInputItem>
-          ))}
-          <TagsInputInput placeholder="Add fruit..." />
-        </TagsInputContent>
-        <TagsInputClear />
-      </TagsInput>
-      <Sortable
-        sensors={sensors}
-        value={fruits.map((fruit) => ({ id: fruit }))}
-        collisionDetection={pointerWithin}
-        onValueChange={(items) => setFruits(items.map((item) => item.id))}
-        orientation="both"
-        flatCursor
-      >
-        <TagsInput value={fruits} onValueChange={setFruits} sortable editable>
-          <TagsInputLabel>Sortable</TagsInputLabel>
-          <SortableContent>
-            <TagsInputContent>
-              {fruits.map((fruit) => (
-                <SortableItem
-                  key={fruit}
-                  value={fruit}
-                  asChild
-                  asGrip
-                  tabIndex={-1}
-                >
-                  <TagsInputItem value={fruit}>{fruit}</TagsInputItem>
-                </SortableItem>
-              ))}
-              <TagsInputInput placeholder="Add fruit..." />
-            </TagsInputContent>
-          </SortableContent>
-          <SortableOverlay>
-            <Skeleton className="size-full" />
-          </SortableOverlay>
-          <TagsInputClear />
-        </TagsInput>
-      </Sortable>
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="w-fit">

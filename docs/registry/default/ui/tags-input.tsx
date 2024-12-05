@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { cn } from "@/registry/default/lib/utils";
+import { cn } from "@/lib/utils";
 import * as TagsInputPrimitive from "@diceui/tags-input";
 import { X } from "lucide-react";
 import * as React from "react";

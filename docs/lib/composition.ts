@@ -1,8 +1,28 @@
+import * as React from "react";
+
+/**
+ * @see https://github.com/radix-ui/primitives/blob/main/packages/core/primitive/src/primitive.tsx
+ */
+function composeEventHandlers<E>(
+  originalEventHandler?: (event: E) => void,
+  ourEventHandler?: (event: E) => void,
+  { checkForDefaultPrevented = true } = {},
+) {
+  return function handleEvent(event: E) {
+    originalEventHandler?.(event);
+
+    if (
+      checkForDefaultPrevented === false ||
+      !(event as unknown as Event).defaultPrevented
+    ) {
+      return ourEventHandler?.(event);
+    }
+  };
+}
+
 /**
  * @see https://github.com/radix-ui/primitives/blob/main/packages/react/compose-refs/src/composeRefs.tsx
  */
-
-import * as React from "react";
 
 type PossibleRef<T> = React.Ref<T> | undefined;
 
@@ -39,4 +59,4 @@ function useComposedRefs<T>(...refs: PossibleRef<T>[]) {
   return React.useCallback(composeRefs(...refs), refs);
 }
 
-export { composeRefs, useComposedRefs };
+export { composeEventHandlers, composeRefs, useComposedRefs };

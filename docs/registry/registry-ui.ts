@@ -4,7 +4,7 @@ export const ui: Registry = [
   {
     name: "tags-input",
     type: "registry:ui",
-    dependencies: ["@diceui/tags-input", "lucide-react"],
+    dependencies: ["@diceui/tags-input", "@radix-ui/react-slot"],
     registryDependencies: ["button"],
     files: [
       {
@@ -21,6 +21,7 @@ export const ui: Registry = [
       "@dnd-kit/modifiers",
       "@dnd-kit/sortable",
       "@dnd-kit/utilities",
+      "@radix-ui/react-slot",
     ],
     registryDependencies: ["button"],
     files: [

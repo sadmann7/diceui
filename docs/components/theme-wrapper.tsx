@@ -1,7 +1,7 @@
 "use client";
 
 import { useConfig } from "@/hooks/use-config";
-import { cn } from "@/registry/default/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface ThemeWrapperProps extends React.ComponentProps<"div"> {
   defaultTheme?: string;
