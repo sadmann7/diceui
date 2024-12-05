@@ -28,6 +28,7 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+   
   }
   .dark {
     --background: 240 10% 3.9%;
@@ -66,6 +67,7 @@
 }
 
 @layer components {
+
   .mdx table {
     @apply rounded-md;
   }
@@ -96,5 +98,14 @@
 
   .auto-type-table table td:nth-child(2) {
     @apply w-full;
+  }
+
+  
+  [data-rehype-pretty-code-figure] figure {
+    @apply border-none !bg-secondary/50 rounded-none m-0;
+  }
+
+  [data-line] span {
+    @apply text-[var(--shiki-light)] dark:text-[var(--shiki-dark)];
   }
 }

@@ -43,17 +43,23 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@shikijs/compat": "^1.24.0",
     "@types/mdx": "^2.0.13",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "autoprefixer": "^10.4.20",
     "lodash.template": "^4.5.0",
     "postcss": "^8.4.49",
+    "rehype-pretty-code": "^0.14.0",
+    "rehype-slug": "^6.0.0",
+    "remark-code-import": "^1.2.0",
     "remark-math": "^6.0.0",
+    "shiki": "^1.24.0",
     "tailwindcss": "^3.4.15",
     "ts-morph": "^24.0.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
-    "unist-builder": "^4.0.0"
+    "unist-builder": "^4.0.0",
+    "unist-util-visit": "^5.0.0"
   }
 }

@@ -1,3 +1,7 @@
+interface Node {
+  type: string;
+}
+
 export interface UnistNode extends Node {
   type: string;
   name?: string;
