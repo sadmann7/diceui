@@ -10,7 +10,7 @@ interface TagsInputContentProps
     "children"
   > {
   children?:
-    | ((params: { value: InputValue[] }) => React.ReactNode)
+    | ((context: { value: InputValue[] }) => React.ReactNode)
     | React.ReactNode;
 }
 

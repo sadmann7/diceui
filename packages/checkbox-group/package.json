@@ -1,0 +1,54 @@
+{
+  "name": "@diceui/checkbox-group",
+  "version": "0.0.1",
+  "type": "module",
+  "keywords": ["checkbox-group", "checkbox-group", "ui", "react"],
+  "author": "Sadman Sakib",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sadmann7/diceui",
+    "directory": "packages/checkbox-group"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": ["dist", "package.json", "LICENSE", "README.md"],
+  "scripts": {
+    "clean": "rimrraf dist",
+    "dev": "tsup --format esm --watch --external=react",
+    "build": "tsup --clean --external=react",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@types/react": "*",
+    "@types/react-dom": "*",
+    "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
+    "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
+  },
+  "peerDependenciesMeta": {
+    "@types/react": {
+      "optional": true
+    },
+    "@types/react-dom": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.4",
+    "rimraf": "^6.0.1",
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.2"
+  },
+  "dependencies": {
+    "@diceui/shared": "workspace:*",
+    "@radix-ui/react-primitive": "^2.0.0"
+  }
+}
