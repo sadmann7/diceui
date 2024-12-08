@@ -18,7 +18,7 @@ export default function TagsInputDemo() {
               >
                 <TagsInputPrimitive.Text className="truncate" />
                 <TagsInputPrimitive.Delete className="h-4 w-4 shrink-0 rounded-sm opacity-70 ring-offset-zinc-950 transition-opacity hover:opacity-100">
-                  <X className="size-3.5" />
+                  <X className="h-3.5 w-3.5" />
                 </TagsInputPrimitive.Delete>
               </TagsInputPrimitive.Item>
             ))}

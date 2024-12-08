@@ -88,7 +88,7 @@ export default async function DocPage(props: DocPageParams) {
         </div>
       </div>
       <DocsBody>
-        <MDX components={{ ...useMDXComponents({}) }} />
+        <MDX components={useMDXComponents({})} />
       </DocsBody>
     </DocsPage>
   );

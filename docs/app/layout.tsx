@@ -60,7 +60,16 @@ export default function RootLayout({ children }: RootLayoutProps) {
           fontMono.variable,
         )}
       >
-        <Providers>{children}</Providers>
+        <Providers
+          theme={{
+            attribute: "class",
+            defaultTheme: "system",
+            enableSystem: true,
+            disableTransitionOnChange: true,
+          }}
+        >
+          {children}
+        </Providers>
       </body>
     </html>
   );

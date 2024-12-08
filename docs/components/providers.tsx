@@ -1,11 +1,15 @@
 "use client";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { RootProvider } from "fumadocs-ui/provider";
+import { RootProvider, type RootProviderProps } from "fumadocs-ui/provider";
 
-export function Providers({ children }: { children: React.ReactNode }) {
+interface ProvidersProps extends RootProviderProps {
+  children: React.ReactNode;
+}
+
+export function Providers({ children, ...props }: ProvidersProps) {
   return (
-    <RootProvider>
+    <RootProvider {...props}>
       <TooltipProvider>{children}</TooltipProvider>
     </RootProvider>
   );

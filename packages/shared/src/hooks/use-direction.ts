@@ -2,17 +2,9 @@ import * as React from "react";
 
 type Direction = "ltr" | "rtl";
 
+const DirectionContext = React.createContext<Direction | undefined>(undefined);
+
 export function useDirection(dirProp?: Direction): Direction {
-  const [dir, setDir] = React.useState<Direction>(dirProp || "ltr");
-
-  React.useEffect(() => {
-    if (dirProp) {
-      setDir(dirProp);
-    } else {
-      const htmlDir = document.documentElement.dir;
-      setDir((htmlDir as Direction) || "ltr");
-    }
-  }, [dirProp]);
-
-  return dir;
+  const contextDir = React.useContext(DirectionContext);
+  return dirProp ?? contextDir ?? "ltr";
 }
