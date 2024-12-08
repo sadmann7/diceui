@@ -197,9 +197,9 @@ const TagsInputRoot = React.forwardRef<
   const labelId = `${id}label`;
   const dir = useDirection(dirProp);
   const { isFormControl, onTriggerChange } = useFormControl();
-  const composedRefs = useComposedRefs(ref, collectionRef, (node) => {
-    onTriggerChange(node);
-  });
+  const composedRefs = useComposedRefs(ref, collectionRef, (node) =>
+    onTriggerChange(node),
+  );
   const { getItems } = useCollection({ ref: collectionRef });
 
   const onItemAdd = React.useCallback(

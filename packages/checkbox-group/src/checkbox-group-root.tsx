@@ -1,8 +1,17 @@
-import { createContext, useControllableState, useId } from "@diceui/shared";
+import {
+  createContext,
+  useComposedRefs,
+  useControllableState,
+  useFormControl,
+  useId,
+} from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
+import { BubbleInput } from "./bubble-input";
 
 type CheckboxValue = string;
+
+export type CheckedState = boolean | "indeterminate";
 
 const ROOT_NAME = "CheckboxGroupRoot";
 
@@ -59,7 +68,13 @@ const CheckboxGroupRoot = React.forwardRef<
   });
 
   const id = useId();
-  const labelId = `${id}-label`;
+  const labelId = `${id}label`;
+  const collectionRef = React.useRef<HTMLDivElement>(null);
+
+  const { isFormControl, onTriggerChange } = useFormControl();
+  const composedRefs = useComposedRefs(ref, collectionRef, (node) =>
+    onTriggerChange(node),
+  );
 
   return (
     <CheckboxGroupProvider
@@ -71,20 +86,23 @@ const CheckboxGroupRoot = React.forwardRef<
       labelId={labelId}
     >
       <Primitive.div
-        ref={ref}
+        ref={composedRefs}
         role="group"
         aria-labelledby={labelId}
         data-disabled={disabled ? "" : undefined}
         {...rootProps}
       >
         {children}
-        {name && (
-          <input
-            type="hidden"
+        {isFormControl && name && (
+          <BubbleInput
+            control={collectionRef.current}
             name={name}
-            value={values.join(",")}
-            disabled={disabled}
+            value={values}
+            checked={values.length > 0}
+            defaultChecked={values.length > 0}
             required={required}
+            disabled={disabled}
+            style={{ transform: "translateY(-100%)" }}
           />
         )}
       </Primitive.div>
@@ -96,9 +114,23 @@ CheckboxGroupRoot.displayName = ROOT_NAME;
 
 const Root = CheckboxGroupRoot;
 
+function isIndeterminate(checked?: CheckedState): checked is "indeterminate" {
+  return checked === "indeterminate";
+}
+
+function getState(checked: CheckedState) {
+  return isIndeterminate(checked)
+    ? "indeterminate"
+    : checked
+      ? "checked"
+      : "unchecked";
+}
+
 export {
   Root,
   CheckboxGroupRoot,
   useCheckboxGroup,
+  isIndeterminate,
+  getState,
   type CheckboxGroupRootProps,
 };
