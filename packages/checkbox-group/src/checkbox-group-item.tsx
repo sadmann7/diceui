@@ -1,25 +1,22 @@
 import { composeEventHandlers, useId } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
-import { type CheckedState, useCheckboxGroup } from "./checkbox-group-root";
+import { useCheckboxGroup } from "./checkbox-group-root";
 
 const ITEM_NAME = "CheckboxGroupItem";
 
 interface CheckboxGroupItemProps
-  extends Omit<
-    React.ComponentPropsWithoutRef<typeof Primitive.button>,
-    "defaultChecked"
-  > {
+  extends React.ComponentPropsWithoutRef<typeof Primitive.button> {
   /** Value of the checkbox */
   value: string;
   /** Whether the checkbox is disabled */
   disabled?: boolean;
   /** Whether the checkbox is checked */
-  checked?: CheckedState;
+  checked?: boolean;
   /** Default checked state when uncontrolled */
-  defaultChecked?: CheckedState;
+  defaultChecked?: boolean;
   /** Callback when checked state changes */
-  onCheckedChange?: (checked: CheckedState) => void;
+  onCheckedChange?: (checked: boolean) => void;
 }
 
 const CheckboxGroupItem = React.forwardRef<
@@ -29,7 +26,7 @@ const CheckboxGroupItem = React.forwardRef<
   const {
     value,
     disabled,
-    checked: checkedProp = false,
+    checked: checkedProp,
     defaultChecked,
     onCheckedChange,
     ...itemProps
@@ -48,8 +45,9 @@ const CheckboxGroupItem = React.forwardRef<
       id={id}
       aria-checked={isChecked}
       aria-disabled={isDisabled}
-      data-state={checkedProp}
+      data-state={isChecked ? "checked" : "unchecked"}
       data-disabled={isDisabled ? "" : undefined}
+      disabled={isDisabled}
       onClick={composeEventHandlers(itemProps.onClick, () => {
         if (isDisabled) return;
         const newValues = isChecked
@@ -58,11 +56,6 @@ const CheckboxGroupItem = React.forwardRef<
         context.onValuesChange(newValues);
         onCheckedChange?.(!isChecked);
       })}
-      onKeyDown={composeEventHandlers(itemProps.onKeyDown, (event) => {
-        // According to WAI ARIA, Checkboxes don't activate on enter keypress
-        if (event.key === "Enter") event.preventDefault();
-      })}
-      disabled={isDisabled}
       {...itemProps}
     />
   );
@@ -72,4 +65,4 @@ CheckboxGroupItem.displayName = ITEM_NAME;
 
 const Item = CheckboxGroupItem;
 
-export { CheckboxGroupItem, Item, type CheckboxGroupItemProps };
+export { Item, CheckboxGroupItem, type CheckboxGroupItemProps };

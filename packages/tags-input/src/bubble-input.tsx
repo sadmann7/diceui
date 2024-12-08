@@ -13,7 +13,7 @@ interface BubbleInputProps
 }
 
 export function BubbleInput(props: BubbleInputProps) {
-  const { control, value, bubbles = true, defaultValue, ...inputProps } = props;
+  const { control, value, bubbles = true, ...inputProps } = props;
   const ref = React.useRef<HTMLInputElement>(null);
   const prevValue = usePrevious(value);
   const controlSize = useSize(control);

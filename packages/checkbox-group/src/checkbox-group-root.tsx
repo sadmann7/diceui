@@ -11,8 +11,6 @@ import { BubbleInput } from "./bubble-input";
 
 type CheckboxValue = string;
 
-export type CheckedState = boolean | "indeterminate";
-
 const ROOT_NAME = "CheckboxGroupRoot";
 
 interface CheckboxGroupContextValue {
@@ -114,23 +112,9 @@ CheckboxGroupRoot.displayName = ROOT_NAME;
 
 const Root = CheckboxGroupRoot;
 
-function isIndeterminate(checked?: CheckedState): checked is "indeterminate" {
-  return checked === "indeterminate";
-}
-
-function getState(checked: CheckedState) {
-  return isIndeterminate(checked)
-    ? "indeterminate"
-    : checked
-      ? "checked"
-      : "unchecked";
-}
-
 export {
-  Root,
   CheckboxGroupRoot,
+  Root,
   useCheckboxGroup,
-  isIndeterminate,
-  getState,
   type CheckboxGroupRootProps,
 };
