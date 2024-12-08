@@ -54,7 +54,7 @@ export function CodeBlockWrapper({
         )}
       >
         <CollapsibleTrigger asChild>
-          <Button className="h-[2.1rem] bg-background px-3 text-foreground hover:bg-background/70">
+          <Button className="h-[2.15rem] bg-background px-3.5 text-foreground hover:bg-background/70">
             {open ? "Collapse" : expandButtonTitle} code
           </Button>
         </CollapsibleTrigger>
