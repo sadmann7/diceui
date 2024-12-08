@@ -25,7 +25,7 @@ export default function SortableDemo() {
           <SortableItem key={trick.id} value={trick.id} asChild asGrip>
             <div className="flex aspect-video size-full flex-col items-center justify-center border border-zinc-500 p-6 text-center dark:border-zinc-800">
               <div className="font-medium">{trick.title}</div>
-              <div className="text-sm text-zinc-500">{trick.points}</div>
+              <div className="text-sm text-zinc-500">{trick.points} points</div>
             </div>
           </SortableItem>
         ))}
@@ -39,7 +39,9 @@ export default function SortableDemo() {
             <SortableItem value={trick.id} asChild>
               <div className="flex aspect-video size-full flex-col items-center justify-center border border-zinc-500 p-6 text-center dark:border-zinc-800">
                 <div className="font-medium">{trick.title}</div>
-                <div className="text-sm text-zinc-500">{trick.points}</div>
+                <div className="text-sm text-zinc-500">
+                  {trick.points} points
+                </div>
               </div>
             </SortableItem>
           );
