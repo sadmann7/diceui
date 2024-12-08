@@ -44,12 +44,12 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <div className="flex items-center space-x-2">
-        <Checkbox id="regular" />
+        <Checkbox id="game-mode" />
         <label
-          htmlFor="regular"
+          htmlFor="game-mode"
           className="font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
         >
-          Regular checkbox
+          Game mode
         </label>
       </div>
       <CheckboxGroup
