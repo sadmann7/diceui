@@ -27,9 +27,32 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import * as React from "react";
+
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  CheckboxGroup,
+  CheckboxGroupItem,
+  CheckboxGroupLabel,
+} from "@/components/ui/checkbox-group";
+
 export default function PlaygroundPage() {
+  const [values, setValues] = React.useState<string[]>([]);
+
+  console.log({ values });
+
   return (
     <Shell>
+      <CheckboxGroup
+        value={values}
+        onValueChange={setValues}
+        className="flex flex-col gap-2.5"
+      >
+        <CheckboxGroupLabel>Favorite Fruits</CheckboxGroupLabel>
+        <CheckboxGroupItem value="apple">Apple</CheckboxGroupItem>
+        <CheckboxGroupItem value="orange">Orange</CheckboxGroupItem>
+        <CheckboxGroupItem value="banana">Banana</CheckboxGroupItem>
+      </CheckboxGroup>
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="w-fit">
