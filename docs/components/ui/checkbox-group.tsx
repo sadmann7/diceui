@@ -35,21 +35,30 @@ CheckboxGroupLabel.displayName = CheckboxGroupPrimitive.Label.displayName;
 const CheckboxGroupItem = React.forwardRef<
   React.ElementRef<typeof CheckboxGroupPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof CheckboxGroupPrimitive.Item>
->(({ className, children, ...props }, ref) => (
-  <CheckboxGroupPrimitive.Item
-    ref={ref}
-    className={cn("flex items-center gap-2", className)}
-    {...props}
+>(({ className, children, disabled, ...props }, ref) => (
+  // biome-ignore lint/a11y/noLabelWithoutControl: <explanation>
+  <label
+    className="flex items-center gap-2 text-sm leading-none data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50"
+    data-disabled={disabled}
   >
-    <div className="peer h-4 w-4 shrink-0 rounded-sm border border-primary shadow focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground">
-      <CheckboxGroupPrimitive.Indicator className="flex items-center justify-center text-current">
+    <CheckboxGroupPrimitive.Item
+      ref={ref}
+      className={cn(
+        "h-4 w-4 shrink-0 rounded-sm border border-primary shadow focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",
+        className,
+      )}
+      disabled={disabled}
+      {...props}
+    >
+      <CheckboxGroupPrimitive.Indicator
+        className="flex items-center justify-center text-current"
+        asChild
+      >
         <Check className="h-4 w-4" />
       </CheckboxGroupPrimitive.Indicator>
-    </div>
-    <CheckboxGroupPrimitive.Label className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-      {children}
-    </CheckboxGroupPrimitive.Label>
-  </CheckboxGroupPrimitive.Item>
+    </CheckboxGroupPrimitive.Item>
+    {children}
+  </label>
 ));
 CheckboxGroupItem.displayName = CheckboxGroupPrimitive.Item.displayName;
 
