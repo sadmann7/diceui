@@ -511,10 +511,11 @@ const TagsInputRoot = React.forwardRef<
       labelId={labelId}
     >
       <Primitive.div
-        ref={composedRefs}
-        dir={dir}
         data-invalid={isInvalidInput ? "" : undefined}
         data-disabled={disabled ? "" : undefined}
+        dir={dir}
+        {...rootProps}
+        ref={composedRefs}
         onClick={composeEventHandlers(rootProps.onClick, (event) => {
           const target = event.target;
           if (!(target instanceof HTMLElement)) return;
@@ -566,7 +567,6 @@ const TagsInputRoot = React.forwardRef<
             requestAnimationFrame(() => setHighlightedValue(null));
           }
         })}
-        {...rootProps}
       >
         {children}
         {isFormControl && name && (

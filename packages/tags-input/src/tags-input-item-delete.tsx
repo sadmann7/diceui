@@ -21,20 +21,20 @@ const TagsInputItemDelete = React.forwardRef<
 
   return (
     <Primitive.button
-      ref={ref}
       type="button"
+      tabIndex={-1}
       aria-labelledby={itemContext.textId}
       aria-controls={itemContext.id}
       aria-current={itemContext.isHighlighted}
       data-state={itemContext.isHighlighted ? "active" : "inactive"}
       data-disabled={disabled ? "" : undefined}
-      tabIndex={-1}
+      {...props}
+      ref={ref}
       onClick={composeEventHandlers(props.onClick, () => {
         if (disabled) return;
         const index = context.value.findIndex((i) => i === itemContext.value);
         context.onItemRemove(index);
       })}
-      {...props}
     />
   );
 });

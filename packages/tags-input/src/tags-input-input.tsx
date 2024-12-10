@@ -35,24 +35,30 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
 
     React.useEffect(() => {
       if (autoFocus) {
-        requestAnimationFrame(() => context.inputRef.current?.focus());
+        const animationFrameId = requestAnimationFrame(() =>
+          context.inputRef.current?.focus(),
+        );
+        return () => cancelAnimationFrame(animationFrameId);
       }
     }, [autoFocus, context.inputRef]);
 
     return (
       <Primitive.input
-        ref={composeRefs(context.inputRef, ref)}
-        id={context.inputId}
-        aria-labelledby={context.labelId}
-        autoFocus={autoFocus}
+        type="text"
+        autoCapitalize="off"
         autoComplete="off"
         autoCorrect="off"
-        autoCapitalize="off"
-        type="text"
+        autoFocus={autoFocus}
+        aria-labelledby={context.labelId}
         data-invalid={context.isInvalidInput ? "" : undefined}
+        id={context.inputId}
         disabled={context.disabled}
+        {...inputProps}
+        ref={composeRefs(context.inputRef, ref)}
         onInput={composeEventHandlers(inputProps.onInput, (event) => {
-          const target = event.target as HTMLInputElement;
+          const target = event.target;
+          if (!(target instanceof HTMLInputElement)) return;
+
           const delimiter = context.delimiter;
 
           if (delimiter === target.value.slice(-1)) {
@@ -92,7 +98,6 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
             context.setHighlightedValue(null);
           }
         })}
-        {...inputProps}
       />
     );
   },

@@ -13,10 +13,10 @@ const TagsInputLabel = React.forwardRef<HTMLLabelElement, TagsInputLabelProps>(
 
     return (
       <Primitive.label
-        ref={ref}
         id={context.labelId}
         htmlFor={context.inputId}
         {...props}
+        ref={ref}
       />
     );
   },

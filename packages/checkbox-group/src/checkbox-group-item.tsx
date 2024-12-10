@@ -60,13 +60,14 @@ const CheckboxGroupItem = React.forwardRef<
       <Primitive.button
         type="button"
         role="checkbox"
-        id={id}
         aria-checked={isChecked}
         aria-disabled={isDisabled}
         data-state={getState(isChecked)}
         data-disabled={isDisabled ? "" : undefined}
         data-orientation={context.orientation}
         disabled={isDisabled}
+        id={id}
+        {...itemProps}
         ref={composedRefs}
         onClick={composeEventHandlers(props.onClick, (event) => {
           if (isFormControl) {
@@ -82,7 +83,6 @@ const CheckboxGroupItem = React.forwardRef<
             context.onItemCheckedChange(value, !isChecked);
           }
         })}
-        {...itemProps}
       />
       {isFormControl && (
         <BubbleInput

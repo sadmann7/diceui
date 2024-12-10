@@ -4,12 +4,10 @@ import {
   useComposedRefs,
   useControllableState,
   useDirection,
-  useFormControl,
   useId,
 } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
-import { BubbleInput } from "./bubble-input";
 
 const ROOT_NAME = "CheckboxGroupRoot";
 
@@ -86,10 +84,7 @@ const CheckboxGroupRoot = React.forwardRef<
   const labelId = `${id}label`;
   const collectionRef = React.useRef<HTMLDivElement>(null);
 
-  const { isFormControl, onTriggerChange } = useFormControl();
-  const composedRefs = useComposedRefs(ref, collectionRef, (node) =>
-    onTriggerChange(node),
-  );
+  const composedRefs = useComposedRefs(ref, collectionRef);
 
   const onItemCheckedChange = React.useCallback(
     (value: string, checked: boolean) => {
@@ -113,7 +108,6 @@ const CheckboxGroupRoot = React.forwardRef<
       dir={dir}
     >
       <Primitive.div
-        ref={composedRefs}
         role="group"
         aria-labelledby={labelId}
         aria-orientation={orientation}
@@ -121,20 +115,9 @@ const CheckboxGroupRoot = React.forwardRef<
         data-orientation={orientation}
         dir={dir}
         {...rootProps}
+        ref={composedRefs}
       >
         {children}
-        {isFormControl && name && (
-          <BubbleInput
-            control={collectionRef.current}
-            name={name}
-            value={value}
-            checked={value.length > 0}
-            defaultChecked={value.length > 0}
-            required={required}
-            disabled={disabled}
-            style={{ transform: "translateY(-100%)" }}
-          />
-        )}
       </Primitive.div>
     </CheckboxGroupProvider>
   );

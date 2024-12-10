@@ -15,10 +15,10 @@ const CheckboxGroupLabel = React.forwardRef<
 
   return (
     <Primitive.label
-      ref={ref}
-      id={context.labelId}
       data-disabled={context.disabled ? "" : undefined}
+      id={context.labelId}
       {...props}
+      ref={ref}
     />
   );
 });

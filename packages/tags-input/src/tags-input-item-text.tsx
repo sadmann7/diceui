@@ -20,12 +20,12 @@ const TagsInputItemText = React.forwardRef<
   if (itemContext.isEditing && context.editable && !itemContext.disabled) {
     return (
       <Primitive.input
-        autoFocus
+        type="text"
         autoComplete="off"
         autoCorrect="off"
         autoCapitalize="off"
+        autoFocus
         aria-describedby={itemContext.textId}
-        type="text"
         value={editValue}
         onInput={(event) => {
           const target = event.target;
@@ -70,7 +70,7 @@ const TagsInputItemText = React.forwardRef<
   }
 
   return (
-    <Primitive.span ref={ref} id={itemContext.textId} {...itemTextProps}>
+    <Primitive.span id={itemContext.textId} {...itemTextProps} ref={ref}>
       {children ?? itemContext.displayValue}
     </Primitive.span>
   );

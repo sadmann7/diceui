@@ -24,10 +24,10 @@ const TagsInputContent = React.forwardRef<
 
   return (
     <Primitive.div
-      ref={ref}
-      id={id}
       data-disabled={context.disabled ? "" : undefined}
+      id={id}
       {...contentProps}
+      ref={ref}
     >
       {typeof children === "function" ? (
         <>{children({ value: context.value })}</>

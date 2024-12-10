@@ -58,8 +58,6 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
         displayValue={displayValue}
       >
         <Primitive.div
-          ref={ref}
-          id={id}
           {...{ [ITEM_DATA_ATTR]: "" }}
           aria-labelledby={textId}
           aria-current={isHighlighted}
@@ -69,6 +67,9 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
           data-editing={isEditing ? "" : undefined}
           data-editable={context.editable ? "" : undefined}
           data-disabled={itemDisabled ? "" : undefined}
+          id={id}
+          {...itemProps}
+          ref={ref}
           onClick={composeEventHandlers(itemProps.onClick, (event) => {
             event.stopPropagation();
             if (!isEditing && pointerTypeRef.current !== "mouse") {
@@ -114,7 +115,6 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
               }
             },
           )}
-          {...itemProps}
         />
       </TagsInputItemProvider>
     );
