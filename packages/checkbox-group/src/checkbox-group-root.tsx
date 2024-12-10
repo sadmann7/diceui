@@ -12,8 +12,8 @@ import { BubbleInput } from "./bubble-input";
 const ROOT_NAME = "CheckboxGroupRoot";
 
 interface CheckboxGroupContextValue {
-  values: string[];
-  onValuesChange: (values: string[]) => void;
+  value: string[];
+  onValueChange: (value: string[]) => void;
   onItemCheckedChange: (value: string, checked: boolean) => void;
   disabled?: boolean;
   required?: boolean;
@@ -58,7 +58,7 @@ const CheckboxGroupRoot = React.forwardRef<
     ...rootProps
   } = props;
 
-  const [values = [], setValues] = useControllableState({
+  const [value = [], setValue] = useControllableState({
     prop: valueProp,
     defaultProp: defaultValue,
     onChange: onValueChange,
@@ -75,17 +75,17 @@ const CheckboxGroupRoot = React.forwardRef<
 
   const onItemCheckedChange = React.useCallback(
     (value: string, checked: boolean) => {
-      setValues((prev = []) =>
+      setValue((prev = []) =>
         checked ? [...prev, value] : prev.filter((v) => v !== value),
       );
     },
-    [setValues],
+    [setValue],
   );
 
   return (
     <CheckboxGroupProvider
-      values={values}
-      onValuesChange={setValues}
+      value={value}
+      onValueChange={setValue}
       onItemCheckedChange={onItemCheckedChange}
       disabled={disabled}
       required={required}
@@ -104,9 +104,9 @@ const CheckboxGroupRoot = React.forwardRef<
           <BubbleInput
             control={collectionRef.current}
             name={name}
-            value={values}
-            checked={values.length > 0}
-            defaultChecked={values.length > 0}
+            value={value}
+            checked={value.length > 0}
+            defaultChecked={value.length > 0}
             required={required}
             disabled={disabled}
             style={{ transform: "translateY(-100%)" }}

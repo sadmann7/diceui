@@ -36,7 +36,7 @@ const TagsInputItemText = React.forwardRef<
         onChange={(event) => setEditValue(event.target.value)}
         onKeyDown={(event) => {
           if (event.key === "Enter") {
-            const index = context.values.findIndex(
+            const index = context.value.findIndex(
               (v) => v === itemContext.value,
             );
             context.onItemUpdate(index, editValue);

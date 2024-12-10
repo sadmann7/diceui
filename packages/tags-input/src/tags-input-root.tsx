@@ -20,8 +20,8 @@ type InputValue = string;
 const ROOT_NAME = "TagsInputRoot";
 
 interface TagsInputContextValue<T = InputValue> {
-  values: T[];
-  onValuesChange: (value: T[]) => void;
+  value: T[];
+  onValueChange: (value: T[]) => void;
   onItemAdd: (textValue: string) => boolean;
   onItemRemove: (index: number) => void;
   onItemUpdate: (index: number, newTextValue: string) => void;
@@ -179,7 +179,7 @@ const TagsInputRoot = React.forwardRef<
   // TODO: add duplicate
   const duplicate = false;
 
-  const [values = [], setValues] = useControllableState({
+  const [value = [], setValue] = useControllableState({
     prop: valueProp,
     defaultProp: defaultValue,
     onChange: onValueChange,
@@ -210,7 +210,7 @@ const TagsInputRoot = React.forwardRef<
           .map((v) => v.trim())
           .filter(Boolean);
 
-        if (values.length + splitValues.length > max && max > 0) {
+        if (value.length + splitValues.length > max && max > 0) {
           onInvalid?.(textValue);
           return false;
         }
@@ -220,12 +220,12 @@ const TagsInputRoot = React.forwardRef<
           newValues = splitValues;
         } else {
           for (const value of splitValues) {
-            if (values.includes(value)) {
+            if (value.includes(value)) {
               onInvalid?.(value);
             }
           }
           newValues = [
-            ...new Set(splitValues.filter((v) => !values.includes(v))),
+            ...new Set(splitValues.filter((v) => !value.includes(v))),
           ];
         }
 
@@ -235,11 +235,11 @@ const TagsInputRoot = React.forwardRef<
 
         if (validValues.length === 0) return false;
 
-        setValues([...values, ...validValues]);
+        setValue([...value, ...validValues]);
         return true;
       }
 
-      if (values.length >= max && max > 0) {
+      if (value.length >= max && max > 0) {
         onInvalid?.(textValue);
         return false;
       }
@@ -253,7 +253,7 @@ const TagsInputRoot = React.forwardRef<
       }
 
       if (!duplicate) {
-        const exists = values.some((v) => {
+        const exists = value.some((v) => {
           const valueToCompare = v;
           return valueToCompare === trimmedValue;
         });
@@ -266,14 +266,14 @@ const TagsInputRoot = React.forwardRef<
       }
 
       const newValue = trimmedValue;
-      const newValues = [...values, newValue];
-      setValues(newValues);
+      const newValues = [...value, newValue];
+      setValue(newValues);
       setHighlightedValue(null);
       setEditingValue(null);
       setIsInvalidInput(false);
       return true;
     },
-    [values, max, addOnPaste, delimiter, setValues, onInvalid, onValidate],
+    [value, max, addOnPaste, delimiter, setValue, onInvalid, onValidate],
   );
 
   const onItemUpdate = React.useCallback(
@@ -282,7 +282,7 @@ const TagsInputRoot = React.forwardRef<
         const trimmedValue = newTextValue.trim();
 
         if (!duplicate) {
-          const exists = values.some((v, i) => {
+          const exists = value.some((v, i) => {
             if (i === index) return false;
             const valueToCompare = v;
             return valueToCompare === trimmedValue;
@@ -302,10 +302,10 @@ const TagsInputRoot = React.forwardRef<
         }
 
         const updatedValue = displayValue(trimmedValue);
-        const newValues = [...values];
+        const newValues = [...value];
         newValues[index] = updatedValue;
 
-        setValues(newValues);
+        setValue(newValues);
         setHighlightedValue(updatedValue);
         setEditingValue(null);
         setIsInvalidInput(false);
@@ -313,21 +313,21 @@ const TagsInputRoot = React.forwardRef<
         requestAnimationFrame(() => inputRef.current?.focus());
       }
     },
-    [values, setValues, displayValue, onInvalid, onValidate],
+    [value, setValue, displayValue, onInvalid, onValidate],
   );
 
   const onItemRemove = React.useCallback(
     (index: number) => {
       if (index !== -1) {
-        const newValues = [...values];
+        const newValues = [...value];
         newValues.splice(index, 1);
-        setValues(newValues);
+        setValue(newValues);
         setHighlightedValue(null);
         setEditingValue(null);
         inputRef.current?.focus();
       }
     },
-    [values, setValues],
+    [value, setValue],
   );
 
   const onItemLeave = React.useCallback(() => {
@@ -364,7 +364,7 @@ const TagsInputRoot = React.forwardRef<
         const enabledItems = getItems().filter(
           (item) => !item.hasAttribute(DATA_DISABLED_ATTR),
         );
-        const enabledValues = enabledItems.map((_, index) => values[index]);
+        const enabledValues = enabledItems.map((_, index) => value[index]);
 
         if (enabledValues.length === 0) return null;
 
@@ -396,12 +396,12 @@ const TagsInputRoot = React.forwardRef<
           if (target.selectionStart !== 0 || target.selectionEnd !== 0) break;
 
           if (highlightedValue !== null) {
-            const index = values.indexOf(highlightedValue);
+            const index = value.indexOf(highlightedValue);
             const newValue = findNextEnabledValue(highlightedValue, "prev");
             onItemRemove(index);
             setHighlightedValue(newValue);
             event.preventDefault();
-          } else if (event.key === "Backspace" && values.length > 0) {
+          } else if (event.key === "Backspace" && value.length > 0) {
             const lastValue = findNextEnabledValue(null, "prev");
             setHighlightedValue(lastValue);
             event.preventDefault();
@@ -422,7 +422,7 @@ const TagsInputRoot = React.forwardRef<
             target.selectionStart === 0 &&
             isArrowLeft &&
             highlightedValue === null &&
-            values.length > 0
+            value.length > 0
           ) {
             const lastValue = findNextEnabledValue(null, "prev");
             setHighlightedValue(lastValue);
@@ -468,7 +468,7 @@ const TagsInputRoot = React.forwardRef<
     },
     [
       highlightedValue,
-      values,
+      value,
       onItemRemove,
       dir,
       editable,
@@ -480,8 +480,8 @@ const TagsInputRoot = React.forwardRef<
 
   return (
     <TagsInputProvider
-      values={values}
-      onValuesChange={setValues}
+      value={value}
+      onValueChange={setValue}
       onItemAdd={onItemAdd}
       onItemRemove={onItemRemove}
       onItemUpdate={onItemUpdate}
@@ -572,7 +572,7 @@ const TagsInputRoot = React.forwardRef<
           <BubbleInput
             control={collectionRef.current}
             name={name}
-            value={values.map((v) => displayValue(v))}
+            value={value.map((v) => displayValue(v))}
             required={required}
             disabled={disabled}
           />

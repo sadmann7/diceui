@@ -30,7 +30,7 @@ const TagsInputContent = React.forwardRef<
       {...contentProps}
     >
       {typeof children === "function" ? (
-        <>{children({ value: context.values })}</>
+        <>{children({ value: context.value })}</>
       ) : (
         children
       )}

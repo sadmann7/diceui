@@ -38,7 +38,7 @@ const CheckboxGroupItem = React.forwardRef<
   const context = useCheckboxGroup(ITEM_NAME);
   const id = useId();
   const isDisabled = disabled || context.disabled || false;
-  const isChecked = context.values.includes(value);
+  const isChecked = context.value.includes(value);
 
   return (
     <CheckboxGroupItemProvider
