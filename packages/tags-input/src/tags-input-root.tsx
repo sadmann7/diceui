@@ -1,8 +1,8 @@
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
-import { BubbleInput } from "./bubble-input";
 
 import {
+  BubbleInput,
   DATA_DISABLED_ATTR,
   type Direction,
   ITEM_DATA_ATTR,
@@ -571,9 +571,10 @@ const TagsInputRoot = React.forwardRef<
         {children}
         {isFormControl && name && (
           <BubbleInput
+            type="hidden"
             control={collectionRef.current}
             name={name}
-            value={value.map((v) => displayValue(v))}
+            value={value}
             required={required}
             disabled={disabled}
           />
