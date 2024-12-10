@@ -32,24 +32,27 @@ import * as React from "react";
 import {
   CheckboxGroup,
   CheckboxGroupItem,
+  CheckboxGroupItems,
   CheckboxGroupLabel,
 } from "@/components/ui/checkbox-group";
 
 export default function PlaygroundPage() {
   const [values, setValues] = React.useState<string[]>([]);
 
-  console.log({ values });
-
   return (
     <Shell>
-      <form>
-        <CheckboxGroup value={values} onValueChange={setValues}>
-          <CheckboxGroupLabel>Favorite tricks</CheckboxGroupLabel>
+      <CheckboxGroup
+        value={values}
+        onValueChange={setValues}
+        orientation="horizontal"
+      >
+        <CheckboxGroupLabel>Favorite tricks</CheckboxGroupLabel>
+        <CheckboxGroupItems>
           <CheckboxGroupItem value="ollie">Ollie</CheckboxGroupItem>
           <CheckboxGroupItem value="kickflip">Kickflip</CheckboxGroupItem>
           <CheckboxGroupItem value="heelflip">Heelflip</CheckboxGroupItem>
-        </CheckboxGroup>
-      </form>
+        </CheckboxGroupItems>
+      </CheckboxGroup>
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="w-fit">

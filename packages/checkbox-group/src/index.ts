@@ -11,6 +11,11 @@ export {
   CheckboxGroupLabel,
 } from "./checkbox-group-label";
 export {
+  type CheckboxGroupItemsProps,
+  Items,
+  CheckboxGroupItems,
+} from "./checkbox-group-items";
+export {
   type CheckboxGroupItemProps,
   Item,
   CheckboxGroupItem,
