@@ -69,9 +69,7 @@ const CheckboxGroupItem = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
   <label
     className={cn(
-      "flex w-fit select-none items-center gap-2 text-sm leading-none",
-      "has-[[data-disabled]]:cursor-not-allowed has-[[data-disabled]]:opacity-50",
-      "has-[[data-invalid]]:text-destructive",
+      "flex w-fit select-none items-center gap-2 text-sm leading-none has-[[data-disabled]]:cursor-not-allowed has-[[data-invalid]]:text-destructive has-[[data-disabled]]:opacity-50",
     )}
   >
     <CheckboxGroupPrimitive.Item
@@ -80,7 +78,7 @@ const CheckboxGroupItem = React.forwardRef<
         "h-4 w-4 shrink-0 rounded-sm border border-primary shadow",
         "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
         "data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",
-        "data-[invalid]:border-destructive data-[invalid]:focus-visible:ring-destructive",
+        "data-[invalid]:border-destructive data-[invalid]:bg-transparent data-[invalid]:focus-visible:ring-destructive",
         className,
       )}
       {...props}

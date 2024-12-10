@@ -19,6 +19,7 @@
     "@dnd-kit/modifiers": "^9.0.0",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-checkbox": "^1.1.2",
     "@radix-ui/react-collapsible": "^1.1.1",
     "@radix-ui/react-dropdown-menu": "^2.1.2",
@@ -41,6 +42,7 @@
     "next": "^15.0.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-hook-form": "^7.54.0",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.23.8"

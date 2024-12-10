@@ -32,18 +32,23 @@ interface CheckboxGroupItemProps
   > {
   /** Value of the checkbox */
   value: string;
+
   /** Whether the checkbox is disabled */
   disabled?: boolean;
+
+  /** Whether the checkbox is required */
+  required?: boolean;
 }
 
 const CheckboxGroupItem = React.forwardRef<
   HTMLButtonElement,
   CheckboxGroupItemProps
 >((props, ref) => {
-  const { value, disabled, name, ...itemProps } = props;
+  const { value, disabled, required, name, ...itemProps } = props;
   const context = useCheckboxGroup(ITEM_NAME);
   const id = useId();
   const isDisabled = disabled || context.disabled || false;
+  const isRequired = required || context.required || false;
   const isChecked = context.value.includes(value);
   const { isFormControl, trigger, onTriggerChange } =
     useFormControl<HTMLButtonElement>();
@@ -96,7 +101,7 @@ const CheckboxGroupItem = React.forwardRef<
           value={value}
           checked={isChecked}
           disabled={isDisabled}
-          required={context.required}
+          required={isRequired}
         />
       )}
     </CheckboxGroupItemProvider>

@@ -35,25 +35,34 @@ interface CheckboxGroupRootProps
   > {
   /** Controlled value. */
   value?: string[];
+
   /** Initial value when uncontrolled. */
   defaultValue?: string[];
+
   /** Callback when value changes. */
   onValueChange?: (value: string[]) => void;
+
   /** Callback function to validate values before they're added. */
   onValidate?: (value: string[]) => boolean;
+
   /** Callback function to handle invalid input. */
   onInvalid?: (value: string[]) => void;
+
   /** Whether the checkbox group is disabled. */
   disabled?: boolean;
+
   /** Whether the checkbox group is required. */
   required?: boolean;
+
   /** Name for form submission. */
   name?: string;
+
   /**
    * Text direction for the checkbox group.
    * @default "ltr"
    */
   dir?: Direction;
+
   /**
    * The orientation of the checkbox group.
    * @default "vertical"

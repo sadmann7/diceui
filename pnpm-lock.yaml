@@ -44,6 +44,9 @@ importers:
       '@dnd-kit/utilities':
         specifier: ^3.2.2
         version: 3.2.2(react@18.3.1)
+      '@hookform/resolvers':
+        specifier: ^3.9.1
+        version: 3.9.1(react-hook-form@7.54.0(react@18.3.1))
       '@radix-ui/react-checkbox':
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -110,6 +113,9 @@ importers:
       react-dom:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
+      react-hook-form:
+        specifier: ^7.54.0
+        version: 7.54.0(react@18.3.1)
       tailwind-merge:
         specifier: ^2.5.5
         version: 2.5.5
@@ -672,6 +678,11 @@ packages:
 
   '@formatjs/intl-localematcher@0.5.8':
     resolution: {integrity: sha512-I+WDNWWJFZie+jkfkiK5Mp4hEDyRSEvmyfYadflOno/mmKJKcB17fEpEH0oJu/OWhhCJ8kJBDz2YMd/6cDl7Mg==}
+
+  '@hookform/resolvers@3.9.1':
+    resolution: {integrity: sha512-ud2HqmGBM0P0IABqoskKWI6PEf6ZDDBZkFqe2Vnl+mTHCEHzr3ISjjZyCwTjC/qpL25JC9aIDkloQejvMeq0ug==}
+    peerDependencies:
+      react-hook-form: ^7.0.0
 
   '@img/sharp-darwin-arm64@0.33.5':
     resolution: {integrity: sha512-UT4p+iz/2H4twwAoLCqfA9UH5pI6DggwKEGuaPy7nCVQ8ZsiY5PIcrRvD1DzuY3qYL07NtIQcWnBSY/heikIFQ==}
@@ -2543,6 +2554,12 @@ packages:
     peerDependencies:
       react: ^18.3.1
 
+  react-hook-form@7.54.0:
+    resolution: {integrity: sha512-PS05+UQy/IdSbJNojBypxAo9wllhHgGmyr8/dyGQcPoiMf3e7Dfb9PWYVRco55bLbxH9S+1yDDJeTdlYCSxO3A==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      react: ^16.8.0 || ^17 || ^18 || ^19
+
   react-medium-image-zoom@5.2.11:
     resolution: {integrity: sha512-K3REdn96k2H+6iQlRSl7C7O5lMhdhRx3W1NFJXRar6wMeHpOwp5wI/6N0SfuF/NiKu+HIPxY0FSdvMIJwynTCw==}
     peerDependencies:
@@ -3289,6 +3306,10 @@ snapshots:
   '@formatjs/intl-localematcher@0.5.8':
     dependencies:
       tslib: 2.8.1
+
+  '@hookform/resolvers@3.9.1(react-hook-form@7.54.0(react@18.3.1))':
+    dependencies:
+      react-hook-form: 7.54.0(react@18.3.1)
 
   '@img/sharp-darwin-arm64@0.33.5':
     optionalDependencies:
@@ -5520,6 +5541,10 @@ snapshots:
       loose-envify: 1.4.0
       react: 18.3.1
       scheduler: 0.23.2
+
+  react-hook-form@7.54.0(react@18.3.1):
+    dependencies:
+      react: 18.3.1
 
   react-medium-image-zoom@5.2.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:

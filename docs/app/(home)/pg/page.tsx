@@ -42,22 +42,34 @@ export default function PlaygroundPage() {
 
   return (
     <Shell>
-      <CheckboxGroup
-        value={values}
-        onValueChange={setValues}
-        onValidate={(value) => value.length < 4}
+      <form
+        className="flex flex-col gap-4"
+        onSubmit={(event) => {
+          event.preventDefault();
+          console.log(values);
+        }}
       >
-        <CheckboxGroupLabel>Favorite tricks</CheckboxGroupLabel>
-        <CheckboxGroupItems>
-          <CheckboxGroupItem value="ollie">Ollie</CheckboxGroupItem>
-          <CheckboxGroupItem value="kickflip">Kickflip</CheckboxGroupItem>
-          <CheckboxGroupItem value="heelflip">Heelflip</CheckboxGroupItem>
-          <CheckboxGroupItem value="hardflip">Hardflip</CheckboxGroupItem>
-        </CheckboxGroupItems>
-        <CheckboxGroupDescription>
-          Select at least 3 tricks
-        </CheckboxGroupDescription>
-      </CheckboxGroup>
+        <CheckboxGroup value={values} onValueChange={setValues}>
+          <CheckboxGroupLabel>Favorite tricks</CheckboxGroupLabel>
+          <CheckboxGroupItems>
+            <CheckboxGroupItem value="ollie">Ollie</CheckboxGroupItem>
+            <CheckboxGroupItem value="kickflip">Kickflip</CheckboxGroupItem>
+            <CheckboxGroupItem value="heelflip">Heelflip</CheckboxGroupItem>
+            <CheckboxGroupItem value="hardflip">Hardflip</CheckboxGroupItem>
+          </CheckboxGroupItems>
+          <CheckboxGroupDescription>
+            Select at least 3 tricks
+          </CheckboxGroupDescription>
+        </CheckboxGroup>
+        <div className="flex items-center gap-2">
+          <Button type="reset" variant="outline" size="sm">
+            Reset
+          </Button>
+          <Button type="submit" size="sm">
+            Submit
+          </Button>
+        </div>
+      </form>
       <DropdownMenu modal={false} dir="rtl">
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="w-fit" dir="rtl">
