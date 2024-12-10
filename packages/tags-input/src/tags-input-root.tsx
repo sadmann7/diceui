@@ -4,6 +4,7 @@ import { BubbleInput } from "./bubble-input";
 
 import {
   DATA_DISABLED_ATTR,
+  type Direction,
   ITEM_DATA_ATTR,
   composeEventHandlers,
   createContext,
@@ -43,7 +44,7 @@ interface TagsInputContextValue<T = InputValue> {
   duplicate: boolean;
   loop: boolean;
   blurBehavior: "add" | "clear" | undefined;
-  dir: "ltr" | "rtl";
+  dir: Direction;
   max: number;
   id: string;
   inputId: string;

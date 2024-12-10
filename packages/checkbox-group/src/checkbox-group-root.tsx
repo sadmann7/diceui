@@ -1,7 +1,9 @@
 import {
+  type Direction,
   createContext,
   useComposedRefs,
   useControllableState,
+  useDirection,
   useFormControl,
   useId,
 } from "@diceui/shared";
@@ -17,6 +19,8 @@ interface CheckboxGroupContextValue {
   onItemCheckedChange: (value: string, checked: boolean) => void;
   disabled?: boolean;
   required?: boolean;
+  dir: Direction;
+  orientation: "horizontal" | "vertical";
   id: string;
   labelId: string;
 }
@@ -29,18 +33,28 @@ interface CheckboxGroupRootProps
     React.ComponentPropsWithoutRef<typeof Primitive.div>,
     "value" | "defaultValue" | "onChange"
   > {
-  /** Controlled values */
+  /** Controlled value. */
   value?: string[];
-  /** Initial values when uncontrolled */
+  /** Initial value when uncontrolled. */
   defaultValue?: string[];
-  /** Callback when values change */
+  /** Callback when value changes. */
   onValueChange?: (value: string[]) => void;
-  /** Whether the checkbox group is disabled */
+  /** Whether the checkbox group is disabled. */
   disabled?: boolean;
-  /** Whether the checkbox group is required */
+  /** Whether the checkbox group is required. */
   required?: boolean;
-  /** Name for form submission */
+  /** Name for form submission. */
   name?: string;
+  /**
+   * Text direction for the checkbox group.
+   * @default "ltr"
+   */
+  dir?: Direction;
+  /**
+   * The orientation of the checkbox group.
+   * @default "vertical"
+   */
+  orientation?: "horizontal" | "vertical";
 }
 
 const CheckboxGroupRoot = React.forwardRef<
@@ -53,10 +67,14 @@ const CheckboxGroupRoot = React.forwardRef<
     onValueChange,
     disabled = false,
     required = false,
+    dir: dirProp,
+    orientation = "vertical",
     name,
     children,
     ...rootProps
   } = props;
+
+  const dir = useDirection(dirProp);
 
   const [value = [], setValue] = useControllableState({
     prop: valueProp,
@@ -89,14 +107,19 @@ const CheckboxGroupRoot = React.forwardRef<
       onItemCheckedChange={onItemCheckedChange}
       disabled={disabled}
       required={required}
+      orientation={orientation}
       id={id}
       labelId={labelId}
+      dir={dir}
     >
       <Primitive.div
         ref={composedRefs}
         role="group"
         aria-labelledby={labelId}
+        aria-orientation={orientation}
         data-disabled={disabled ? "" : undefined}
+        data-orientation={orientation}
+        dir={dir}
         {...rootProps}
       >
         {children}

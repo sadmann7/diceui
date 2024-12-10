@@ -54,6 +54,7 @@ const CheckboxGroupItem = React.forwardRef<
         aria-disabled={isDisabled}
         data-state={getState(isChecked)}
         data-disabled={isDisabled ? "" : undefined}
+        data-orientation={context.orientation}
         disabled={isDisabled}
         onClick={composeEventHandlers(itemProps.onClick, () => {
           if (isDisabled) return;
