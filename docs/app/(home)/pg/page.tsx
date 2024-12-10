@@ -42,16 +42,14 @@ export default function PlaygroundPage() {
 
   return (
     <Shell>
-      <CheckboxGroup
-        value={values}
-        onValueChange={setValues}
-        className="flex flex-col gap-2.5"
-      >
-        <CheckboxGroupLabel>Favorite Fruits</CheckboxGroupLabel>
-        <CheckboxGroupItem value="apple">Apple</CheckboxGroupItem>
-        <CheckboxGroupItem value="orange">Orange</CheckboxGroupItem>
-        <CheckboxGroupItem value="banana">Banana</CheckboxGroupItem>
-      </CheckboxGroup>
+      <form>
+        <CheckboxGroup value={values} onValueChange={setValues}>
+          <CheckboxGroupLabel>Favorite tricks</CheckboxGroupLabel>
+          <CheckboxGroupItem value="ollie">Ollie</CheckboxGroupItem>
+          <CheckboxGroupItem value="kickflip">Kickflip</CheckboxGroupItem>
+          <CheckboxGroupItem value="heelflip">Heelflip</CheckboxGroupItem>
+        </CheckboxGroup>
+      </form>
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="w-fit">

@@ -12,7 +12,6 @@ const TagsInputLabel = React.forwardRef<HTMLLabelElement, TagsInputLabelProps>(
     const context = useTagsInput(LABEL_NAME);
 
     return (
-      // biome-ignore lint/a11y/noLabelWithoutControl: <explanation>
       <Primitive.label
         ref={ref}
         id={context.labelId}

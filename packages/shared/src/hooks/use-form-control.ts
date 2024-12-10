@@ -10,5 +10,5 @@ export function useFormControl<TElement extends HTMLElement>(form?: string) {
 
   const isFormControl = trigger ? form || !!trigger.closest("form") : true;
 
-  return { isFormControl, onTriggerChange: setTrigger };
+  return { isFormControl, trigger, onTriggerChange: setTrigger };
 }

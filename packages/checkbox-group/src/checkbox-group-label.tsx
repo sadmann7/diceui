@@ -14,7 +14,6 @@ const CheckboxGroupLabel = React.forwardRef<
   const context = useCheckboxGroup(LABEL_NAME);
 
   return (
-    // biome-ignore lint/a11y/noLabelWithoutControl: <explanation>
     <Primitive.label
       ref={ref}
       id={context.labelId}
@@ -28,4 +27,4 @@ CheckboxGroupLabel.displayName = LABEL_NAME;
 
 const Label = CheckboxGroupLabel;
 
-export { Label, CheckboxGroupLabel, type CheckboxGroupLabelProps };
+export { CheckboxGroupLabel, Label, type CheckboxGroupLabelProps };

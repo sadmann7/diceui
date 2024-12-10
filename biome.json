@@ -27,7 +27,8 @@
         "useButtonType": "off",
         "useAltText": "off",
         "useKeyWithClickEvents": "off",
-        "useSemanticElements": "off"
+        "useSemanticElements": "off",
+        "noLabelWithoutControl": "off"
       },
       "correctness": {
         "noUnusedVariables": "warn"

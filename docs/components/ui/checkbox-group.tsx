@@ -11,7 +11,10 @@ const CheckboxGroup = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <CheckboxGroupPrimitive.Root
     ref={ref}
-    className={cn("flex flex-col gap-2", className)}
+    className={cn(
+      "flex gap-2 data-[orientation=horizontal]:flex-row data-[orientation=vertical]:flex-col",
+      className,
+    )}
     {...props}
   />
 ));
@@ -36,12 +39,19 @@ const CheckboxGroupItem = React.forwardRef<
   React.ElementRef<typeof CheckboxGroupPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof CheckboxGroupPrimitive.Item>
 >(({ className, children, ...props }, ref) => (
-  // biome-ignore lint/a11y/noLabelWithoutControl: <explanation>
-  <label className="flex w-fit select-none items-center gap-2 text-sm leading-none data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50">
+  <label
+    className={cn(
+      "flex select-none items-center gap-2 text-sm leading-none",
+      "data-[orientation=horizontal]:flex-row data-[orientation=vertical]:flex-row",
+      "data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
+    )}
+  >
     <CheckboxGroupPrimitive.Item
       ref={ref}
       className={cn(
-        "h-4 w-4 shrink-0 rounded-sm border border-primary shadow focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",
+        "h-4 w-4 shrink-0 rounded-sm border border-primary shadow",
+        "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+        "data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",
         className,
       )}
       {...props}
