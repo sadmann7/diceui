@@ -31,6 +31,7 @@ import * as React from "react";
 
 import {
   CheckboxGroup,
+  CheckboxGroupDescription,
   CheckboxGroupItem,
   CheckboxGroupItems,
   CheckboxGroupLabel,
@@ -44,18 +45,22 @@ export default function PlaygroundPage() {
       <CheckboxGroup
         value={values}
         onValueChange={setValues}
-        orientation="horizontal"
+        onValidate={(value) => value.length < 4}
       >
         <CheckboxGroupLabel>Favorite tricks</CheckboxGroupLabel>
         <CheckboxGroupItems>
           <CheckboxGroupItem value="ollie">Ollie</CheckboxGroupItem>
           <CheckboxGroupItem value="kickflip">Kickflip</CheckboxGroupItem>
           <CheckboxGroupItem value="heelflip">Heelflip</CheckboxGroupItem>
+          <CheckboxGroupItem value="hardflip">Hardflip</CheckboxGroupItem>
         </CheckboxGroupItems>
+        <CheckboxGroupDescription>
+          Select at least 3 tricks
+        </CheckboxGroupDescription>
       </CheckboxGroup>
-      <DropdownMenu modal={false}>
+      <DropdownMenu modal={false} dir="rtl">
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="w-fit">
+          <Button variant="outline" className="w-fit" dir="rtl">
             Open
           </Button>
         </DropdownMenuTrigger>

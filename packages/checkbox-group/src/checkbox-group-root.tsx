@@ -19,8 +19,10 @@ interface CheckboxGroupContextValue {
   required?: boolean;
   dir: Direction;
   orientation: "horizontal" | "vertical";
+  isInvalid: boolean;
   id: string;
   labelId: string;
+  descriptionId: string;
 }
 
 const [CheckboxGroupProvider, useCheckboxGroup] =
@@ -29,7 +31,7 @@ const [CheckboxGroupProvider, useCheckboxGroup] =
 interface CheckboxGroupRootProps
   extends Omit<
     React.ComponentPropsWithoutRef<typeof Primitive.div>,
-    "value" | "defaultValue" | "onChange"
+    "value" | "defaultValue" | "onChange" | "onInvalid"
   > {
   /** Controlled value. */
   value?: string[];
@@ -37,6 +39,10 @@ interface CheckboxGroupRootProps
   defaultValue?: string[];
   /** Callback when value changes. */
   onValueChange?: (value: string[]) => void;
+  /** Callback function to validate values before they're added. */
+  onValidate?: (value: string[]) => boolean;
+  /** Callback function to handle invalid input. */
+  onInvalid?: (value: string[]) => void;
   /** Whether the checkbox group is disabled. */
   disabled?: boolean;
   /** Whether the checkbox group is required. */
@@ -63,6 +69,8 @@ const CheckboxGroupRoot = React.forwardRef<
     value: valueProp,
     defaultValue,
     onValueChange,
+    onValidate,
+    onInvalid,
     disabled = false,
     required = false,
     dir: dirProp,
@@ -72,27 +80,35 @@ const CheckboxGroupRoot = React.forwardRef<
     ...rootProps
   } = props;
 
-  const dir = useDirection(dirProp);
-
   const [value = [], setValue] = useControllableState({
     prop: valueProp,
     defaultProp: defaultValue,
     onChange: onValueChange,
   });
-
+  const [isInvalid, setIsInvalid] = React.useState(false);
+  const dir = useDirection(dirProp);
   const id = useId();
   const labelId = `${id}label`;
+  const descriptionId = `${id}description`;
   const collectionRef = React.useRef<HTMLDivElement>(null);
-
   const composedRefs = useComposedRefs(ref, collectionRef);
 
   const onItemCheckedChange = React.useCallback(
     (value: string, checked: boolean) => {
-      setValue((prev = []) =>
-        checked ? [...prev, value] : prev.filter((v) => v !== value),
-      );
+      const newValue = checked
+        ? [...(valueProp || []), value]
+        : (valueProp || []).filter((v) => v !== value);
+
+      if (onValidate && !onValidate(newValue)) {
+        setIsInvalid(true);
+        onInvalid?.(newValue);
+        return;
+      }
+
+      setIsInvalid(false);
+      setValue(newValue);
     },
-    [setValue],
+    [setValue, onValidate, onInvalid, valueProp],
   );
 
   return (
@@ -102,17 +118,21 @@ const CheckboxGroupRoot = React.forwardRef<
       onItemCheckedChange={onItemCheckedChange}
       disabled={disabled}
       required={required}
+      dir={dir}
       orientation={orientation}
+      isInvalid={isInvalid}
       id={id}
       labelId={labelId}
-      dir={dir}
+      descriptionId={descriptionId}
     >
       <Primitive.div
         role="group"
         aria-labelledby={labelId}
+        aria-describedby={descriptionId}
         aria-orientation={orientation}
-        data-disabled={disabled ? "" : undefined}
         data-orientation={orientation}
+        data-disabled={disabled ? "" : undefined}
+        data-invalid={isInvalid ? "" : undefined}
         dir={dir}
         {...rootProps}
         ref={composedRefs}

@@ -61,8 +61,10 @@ const CheckboxGroupItem = React.forwardRef<
         role="checkbox"
         aria-checked={isChecked}
         aria-disabled={isDisabled}
+        aria-invalid={context.isInvalid}
         data-state={getState(isChecked)}
         data-disabled={isDisabled ? "" : undefined}
+        data-invalid={context.isInvalid ? "" : undefined}
         data-orientation={context.orientation}
         disabled={isDisabled}
         id={id}
@@ -81,6 +83,9 @@ const CheckboxGroupItem = React.forwardRef<
               event.stopPropagation();
           }
         })}
+        onKeyDown={composeEventHandlers(props.onKeyDown, (event) => {
+          if (event.key === "Enter") event.preventDefault();
+        })}
       />
       {isFormControl && (
         <BubbleInput
@@ -91,6 +96,7 @@ const CheckboxGroupItem = React.forwardRef<
           value={value}
           checked={isChecked}
           disabled={isDisabled}
+          required={context.required}
         />
       )}
     </CheckboxGroupItemProvider>

@@ -16,6 +16,8 @@ const CheckboxGroupItems = React.forwardRef<
   return (
     <Primitive.div
       data-orientation={context.orientation}
+      data-dir={context.dir}
+      data-invalid={context.isInvalid ? "" : undefined}
       {...props}
       ref={ref}
     />
