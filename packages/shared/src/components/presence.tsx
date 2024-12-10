@@ -2,6 +2,8 @@
 
 import * as React from "react";
 import { useLayoutEffect } from "../hooks";
+import { useComposedRefs } from "../lib";
+import { getElementRef } from "../lib/get-element-ref";
 
 interface PresenceProps {
   children:
@@ -56,15 +58,15 @@ const Presence: React.FC<PresenceProps> = ({ present, children }) => {
     typeof children === "function"
       ? children({ present: presence.isPresent })
       : React.Children.only(children)
-  ) as React.ReactElement;
+  ) satisfies React.ReactElement;
 
   const forceMount = typeof children === "function";
 
-  if (!forceMount && !presence.isPresent) {
-    return null;
-  }
+  if (!forceMount && !presence.isPresent) return null;
 
-  return React.cloneElement(child, { ref: presence.ref });
+  const composedRef = useComposedRefs(presence.ref, getElementRef(child));
+
+  return React.cloneElement(child, { ref: composedRef });
 };
 
 Presence.displayName = "Presence";

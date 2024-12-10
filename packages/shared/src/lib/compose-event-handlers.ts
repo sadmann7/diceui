@@ -1,10 +1,10 @@
 /**
  * @see https://github.com/radix-ui/primitives/blob/main/packages/core/primitive/src/primitive.tsx
  */
-export function composeEventHandlers<E>(
+function composeEventHandlers<E>(
   originalEventHandler?: (event: E) => void,
   ourEventHandler?: (event: E) => void,
-  { checkForDefaultPrevented = true } = {},
+  { checkForDefaultPrevented = true } = {}
 ) {
   return function handleEvent(event: E) {
     originalEventHandler?.(event);
@@ -17,3 +17,5 @@ export function composeEventHandlers<E>(
     }
   };
 }
+
+export { composeEventHandlers };

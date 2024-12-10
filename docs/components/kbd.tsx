@@ -4,7 +4,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const kbdVariants = cva(
-  "select-none rounded border whitespace-nowrap px-1.5 py-0.5 font-mono text-[13.2px] shadow-sm font-normal shadow-sm disabled:opacity-50",
+  "select-none whitespace-nowrap rounded border px-1.5 py-0.5 font-mono font-normal text-[13.2px] shadow-sm shadow-sm disabled:opacity-50",
   {
     variants: {
       variant: {

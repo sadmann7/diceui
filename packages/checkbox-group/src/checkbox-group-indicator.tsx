@@ -16,7 +16,6 @@ const CheckboxGroupIndicator = React.forwardRef<
   CheckboxGroupIndicatorProps
 >((props, ref) => {
   const { forceMount, ...indicatorProps } = props;
-
   const itemContext = useCheckboxGroupItem(INDICATOR_NAME);
 
   return (

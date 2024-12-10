@@ -35,19 +35,15 @@ CheckboxGroupLabel.displayName = CheckboxGroupPrimitive.Label.displayName;
 const CheckboxGroupItem = React.forwardRef<
   React.ElementRef<typeof CheckboxGroupPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof CheckboxGroupPrimitive.Item>
->(({ className, children, disabled, ...props }, ref) => (
+>(({ className, children, ...props }, ref) => (
   // biome-ignore lint/a11y/noLabelWithoutControl: <explanation>
-  <label
-    className="flex items-center gap-2 text-sm leading-none data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50"
-    data-disabled={disabled}
-  >
+  <label className="flex w-fit select-none items-center gap-2 text-sm leading-none data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50">
     <CheckboxGroupPrimitive.Item
       ref={ref}
       className={cn(
         "h-4 w-4 shrink-0 rounded-sm border border-primary shadow focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",
         className,
       )}
-      disabled={disabled}
       {...props}
     >
       <CheckboxGroupPrimitive.Indicator
