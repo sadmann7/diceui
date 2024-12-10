@@ -5,7 +5,7 @@ import { useCheckboxGroup } from "./checkbox-group-root";
 const DESCRIPTION_NAME = "CheckboxGroupDescription";
 
 interface CheckboxGroupDescriptionProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
+  extends React.ComponentPropsWithoutRef<typeof Primitive.p> {
   /** Whether the description should be announced by screen readers immediately upon rendering. */
   announce?: boolean;
 }
@@ -18,7 +18,7 @@ const CheckboxGroupDescription = React.forwardRef<
   const context = useCheckboxGroup(DESCRIPTION_NAME);
 
   return (
-    <Primitive.div
+    <Primitive.p
       id={context.descriptionId}
       // Use aria-live to announce changes to screen readers
       aria-live={announce ? "polite" : "off"}

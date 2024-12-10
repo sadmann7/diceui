@@ -29,26 +29,24 @@ import {
 
 import {
   CheckboxGroup,
+  CheckboxGroupDescription,
   CheckboxGroupItem,
   CheckboxGroupItems,
   CheckboxGroupLabel,
 } from "@/components/ui/checkbox-group";
-import { toast } from "sonner";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <CheckboxGroup
-        onValidate={(value) => value.length <= 3}
-        onInvalid={() => toast.error("Only select upto 3 tricks")}
-      >
-        <CheckboxGroupLabel>Favorite tricks</CheckboxGroupLabel>
+      <CheckboxGroup>
+        <CheckboxGroupLabel>Tricks</CheckboxGroupLabel>
         <CheckboxGroupItems>
           <CheckboxGroupItem value="ollie">Ollie</CheckboxGroupItem>
           <CheckboxGroupItem value="kickflip">Kickflip</CheckboxGroupItem>
           <CheckboxGroupItem value="heelflip">Heelflip</CheckboxGroupItem>
           <CheckboxGroupItem value="hardflip">Hardflip</CheckboxGroupItem>
         </CheckboxGroupItems>
+        <CheckboxGroupDescription>Select flip tricks</CheckboxGroupDescription>
       </CheckboxGroup>
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
