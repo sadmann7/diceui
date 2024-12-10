@@ -1,4 +1,9 @@
+/**
+ * @see https://github.com/radix-ui/primitives/blob/main/packages/react/presence/src/Presence.tsx
+ */
+
 import * as React from "react";
+
 import { useComposedRefs } from "../lib";
 
 import { useLayoutEffect, useStateMachine } from "../hooks";
@@ -29,10 +34,6 @@ const Presence: React.FC<PresenceProps> = (props) => {
 };
 
 Presence.displayName = "Presence";
-
-/* -------------------------------------------------------------------------------------------------
- * usePresence
- * -----------------------------------------------------------------------------------------------*/
 
 function usePresence(present: boolean) {
   const [node, setNode] = React.useState<HTMLElement>();
@@ -171,8 +172,8 @@ function usePresence(present: boolean) {
   };
 }
 
-export { Presence, type PresenceProps };
-
 function getAnimationName(styles?: CSSStyleDeclaration) {
   return styles?.animationName || "none";
 }
+
+export { Presence, type PresenceProps };
