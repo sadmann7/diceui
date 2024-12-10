@@ -103,10 +103,10 @@ const CheckboxGroupRoot = React.forwardRef<
   const composedRefs = useComposedRefs(ref, collectionRef);
 
   const onItemCheckedChange = React.useCallback(
-    (value: string, checked: boolean) => {
+    (payload: string, checked: boolean) => {
       const newValue = checked
-        ? [...(valueProp || []), value]
-        : (valueProp || []).filter((v) => v !== value);
+        ? [...value, payload]
+        : value.filter((v) => v !== payload);
 
       if (onValidate && !onValidate(newValue)) {
         setIsInvalid(true);
@@ -117,7 +117,7 @@ const CheckboxGroupRoot = React.forwardRef<
       setIsInvalid(false);
       setValue(newValue);
     },
-    [setValue, onValidate, onInvalid, valueProp],
+    [setValue, onValidate, onInvalid, value],
   );
 
   return (

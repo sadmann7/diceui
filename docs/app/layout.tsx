@@ -1,5 +1,6 @@
 import "@/styles/globals.css";
 import { Providers } from "@/components/providers";
+import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/config/site";
 import { fontHeading, fontMono, fontSans } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
@@ -70,6 +71,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         >
           {children}
         </Providers>
+        <Toaster />
       </body>
     </html>
   );

@@ -62,12 +62,17 @@ export default {
             height: "0",
           },
         },
+        "stroke-dashoffset": {
+          "0%": { strokeDashoffset: "100%" },
+          "100%": { strokeDashoffset: "0" },
+        },
       },
       animation: {
         "fade-up": "fade-up 0.5s",
         "fade-down": "fade-down 0.5s",
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "stroke-dashoffset": "stroke-dashoffset 0.2s ease-in-out forwards",
       },
       borderRadius: {
         lg: "var(--radius)",

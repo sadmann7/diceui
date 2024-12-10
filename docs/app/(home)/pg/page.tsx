@@ -27,52 +27,32 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import * as React from "react";
-
 import {
   CheckboxGroup,
-  CheckboxGroupDescription,
   CheckboxGroupItem,
   CheckboxGroupItems,
   CheckboxGroupLabel,
 } from "@/components/ui/checkbox-group";
+import { toast } from "sonner";
 
 export default function PlaygroundPage() {
-  const [values, setValues] = React.useState<string[]>([]);
-
   return (
     <Shell>
-      <form
-        className="flex flex-col gap-4"
-        onSubmit={(event) => {
-          event.preventDefault();
-          console.log(values);
-        }}
+      <CheckboxGroup
+        onValidate={(value) => value.length <= 3}
+        onInvalid={() => toast.error("Only select upto 3 tricks")}
       >
-        <CheckboxGroup value={values} onValueChange={setValues}>
-          <CheckboxGroupLabel>Favorite tricks</CheckboxGroupLabel>
-          <CheckboxGroupItems>
-            <CheckboxGroupItem value="ollie">Ollie</CheckboxGroupItem>
-            <CheckboxGroupItem value="kickflip">Kickflip</CheckboxGroupItem>
-            <CheckboxGroupItem value="heelflip">Heelflip</CheckboxGroupItem>
-            <CheckboxGroupItem value="hardflip">Hardflip</CheckboxGroupItem>
-          </CheckboxGroupItems>
-          <CheckboxGroupDescription>
-            Select at least 3 tricks
-          </CheckboxGroupDescription>
-        </CheckboxGroup>
-        <div className="flex items-center gap-2">
-          <Button type="reset" variant="outline" size="sm">
-            Reset
-          </Button>
-          <Button type="submit" size="sm">
-            Submit
-          </Button>
-        </div>
-      </form>
-      <DropdownMenu modal={false} dir="rtl">
+        <CheckboxGroupLabel>Favorite tricks</CheckboxGroupLabel>
+        <CheckboxGroupItems>
+          <CheckboxGroupItem value="ollie">Ollie</CheckboxGroupItem>
+          <CheckboxGroupItem value="kickflip">Kickflip</CheckboxGroupItem>
+          <CheckboxGroupItem value="heelflip">Heelflip</CheckboxGroupItem>
+          <CheckboxGroupItem value="hardflip">Hardflip</CheckboxGroupItem>
+        </CheckboxGroupItems>
+      </CheckboxGroup>
+      <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="w-fit" dir="rtl">
+          <Button variant="outline" className="w-fit">
             Open
           </Button>
         </DropdownMenuTrigger>
@@ -128,7 +108,7 @@ export default function PlaygroundPage() {
         </DropdownMenuContent>
       </DropdownMenu>
       <Select>
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-[11.25rem]">
           <SelectValue placeholder="Select a fruit" />
         </SelectTrigger>
         <SelectContent>
