@@ -3,44 +3,37 @@ import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { useCheckboxGroup } from "./checkbox-group-root";
 
+function getState(checked: boolean) {
+  return checked ? "checked" : "unchecked";
+}
+
 const ITEM_NAME = "CheckboxGroupItem";
 
 interface CheckboxGroupItemContext {
   value: string;
   disabled: boolean;
   checked: boolean;
-  id: string;
 }
 
 const [CheckboxGroupItemProvider, useCheckboxGroupItem] =
   createContext<CheckboxGroupItemContext>(ITEM_NAME);
 
 interface CheckboxGroupItemProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.button> {
+  extends Omit<
+    React.ComponentPropsWithoutRef<typeof Primitive.button>,
+    "checked" | "defaultChecked" | "onCheckedChange"
+  > {
   /** Value of the checkbox */
   value: string;
   /** Whether the checkbox is disabled */
   disabled?: boolean;
-  /** Whether the checkbox is checked */
-  checked?: boolean;
-  /** Default checked state when uncontrolled */
-  defaultChecked?: boolean;
-  /** Callback when checked state changes */
-  onCheckedChange?: (checked: boolean) => void;
 }
 
 const CheckboxGroupItem = React.forwardRef<
   HTMLButtonElement,
   CheckboxGroupItemProps
 >((props, ref) => {
-  const {
-    value,
-    disabled,
-    checked: checkedProp,
-    defaultChecked,
-    onCheckedChange,
-    ...itemProps
-  } = props;
+  const { value, disabled, ...itemProps } = props;
 
   const context = useCheckboxGroup(ITEM_NAME);
   const id = useId();
@@ -52,7 +45,6 @@ const CheckboxGroupItem = React.forwardRef<
       value={value}
       checked={isChecked}
       disabled={isDisabled}
-      id={id}
     >
       <Primitive.button
         type="button"
@@ -60,16 +52,12 @@ const CheckboxGroupItem = React.forwardRef<
         id={id}
         aria-checked={isChecked}
         aria-disabled={isDisabled}
-        data-state={isChecked ? "checked" : "unchecked"}
+        data-state={getState(isChecked)}
         data-disabled={isDisabled ? "" : undefined}
         disabled={isDisabled}
         onClick={composeEventHandlers(itemProps.onClick, () => {
           if (isDisabled) return;
-          const newValues = isChecked
-            ? context.values.filter((v) => v !== value)
-            : [...context.values, value];
-          context.onValuesChange(newValues);
-          onCheckedChange?.(!isChecked);
+          context.onItemCheckedChange(value, !isChecked);
         })}
         onKeyDown={composeEventHandlers(itemProps.onKeyDown, (event) => {
           if (event.key === "Enter") event.preventDefault();
@@ -86,8 +74,9 @@ CheckboxGroupItem.displayName = ITEM_NAME;
 const Item = CheckboxGroupItem;
 
 export {
-  Item,
   CheckboxGroupItem,
+  getState,
+  Item,
   useCheckboxGroupItem,
   type CheckboxGroupItemProps,
 };

@@ -9,13 +9,12 @@ import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { BubbleInput } from "./bubble-input";
 
-type CheckboxValue = string;
-
 const ROOT_NAME = "CheckboxGroupRoot";
 
 interface CheckboxGroupContextValue {
-  values: CheckboxValue[];
-  onValuesChange: (values: CheckboxValue[]) => void;
+  values: string[];
+  onValuesChange: (values: string[]) => void;
+  onItemCheckedChange: (value: string, checked: boolean) => void;
   disabled?: boolean;
   required?: boolean;
   id: string;
@@ -31,11 +30,11 @@ interface CheckboxGroupRootProps
     "value" | "defaultValue" | "onChange"
   > {
   /** Controlled values */
-  value?: CheckboxValue[];
+  value?: string[];
   /** Initial values when uncontrolled */
-  defaultValue?: CheckboxValue[];
+  defaultValue?: string[];
   /** Callback when values change */
-  onValueChange?: (value: CheckboxValue[]) => void;
+  onValueChange?: (value: string[]) => void;
   /** Whether the checkbox group is disabled */
   disabled?: boolean;
   /** Whether the checkbox group is required */
@@ -74,10 +73,20 @@ const CheckboxGroupRoot = React.forwardRef<
     onTriggerChange(node),
   );
 
+  const onItemCheckedChange = React.useCallback(
+    (value: string, checked: boolean) => {
+      setValues((prev = []) =>
+        checked ? [...prev, value] : prev.filter((v) => v !== value),
+      );
+    },
+    [setValues],
+  );
+
   return (
     <CheckboxGroupProvider
       values={values}
       onValuesChange={setValues}
+      onItemCheckedChange={onItemCheckedChange}
       disabled={disabled}
       required={required}
       id={id}
