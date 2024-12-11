@@ -84,7 +84,8 @@
       "**/public",
       "**/.turbo",
       "**/.next",
-      "**/.source"
+      "**/.source",
+      "__registry__"
     ]
   }
 }

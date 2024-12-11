@@ -35,7 +35,6 @@ import { CSS } from "@dnd-kit/utilities";
 import { Slot, type SlotProps } from "@radix-ui/react-slot";
 import * as React from "react";
 
-import { Button, type ButtonProps } from "@/components/ui/button";
 import { composeEventHandlers, composeRefs } from "@/lib/composition";
 import { cn } from "@/lib/utils";
 
@@ -75,7 +74,7 @@ interface UniqueItem {
   id: UniqueIdentifier;
 }
 
-interface SortableProviderContext<T extends UniqueItem> {
+interface SortableProviderContextValue<T extends UniqueItem> {
   id: string;
   items: T[];
   modifiers: DndContextProps["modifiers"];
@@ -85,7 +84,7 @@ interface SortableProviderContext<T extends UniqueItem> {
   flatCursor: boolean;
 }
 
-const SortableRoot = React.createContext<SortableProviderContext<{
+const SortableRoot = React.createContext<SortableProviderContextValue<{
   id: UniqueIdentifier;
 }> | null>(null);
 SortableRoot.displayName = SORTABLE_NAME;
@@ -233,12 +232,7 @@ interface SortableContentProps extends SlotProps {
 
 const SortableContent = React.forwardRef<HTMLDivElement, SortableContentProps>(
   (props, ref) => {
-    const {
-      strategy: strategyProp,
-      children,
-      asChild,
-      ...contentProps
-    } = props;
+    const { strategy: strategyProp, asChild, ...contentProps } = props;
     const context = React.useContext(SortableRoot);
     if (!context) {
       throw new Error(SORTABLE_ERROR.content);
@@ -252,9 +246,7 @@ const SortableContent = React.forwardRef<HTMLDivElement, SortableContentProps>(
           items={context.items}
           strategy={strategyProp ?? context.strategy}
         >
-          <ContentSlot ref={ref} {...contentProps}>
-            {children}
-          </ContentSlot>
+          <ContentSlot {...contentProps} ref={ref} />
         </SortableContext>
       </SortableContentContext.Provider>
     );
@@ -313,14 +305,14 @@ function SortableOverlay(props: SortableOverlayProps) {
   );
 }
 
-interface SortableItemContextProps {
+interface SortableItemContextValue {
   id: string;
   attributes: React.HTMLAttributes<HTMLElement>;
   listeners: DraggableSyntheticListeners | undefined;
   isDragging?: boolean;
 }
 
-const SortableItemContext = React.createContext<SortableItemContextProps>({
+const SortableItemContext = React.createContext<SortableItemContextValue>({
   id: "",
   attributes: {},
   listeners: undefined,
@@ -371,7 +363,7 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
 
     const ItemSlot = asChild ? Slot : "div";
 
-    const itemContext = React.useMemo<SortableItemContextProps>(
+    const itemContext = React.useMemo<SortableItemContextValue>(
       () => ({
         id,
         attributes,
@@ -385,7 +377,6 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
       <SortableItemContext.Provider value={itemContext}>
         <ItemSlot
           id={id}
-          ref={composeRefs(ref, (node) => setNodeRef(node))}
           data-sortable-item=""
           data-dragging={isDragging ? "" : undefined}
           className={cn(
@@ -400,6 +391,7 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
           style={style}
           {...(asGrip ? attributes : {})}
           {...(asGrip ? listeners : {})}
+          ref={composeRefs(ref, (node) => setNodeRef(node))}
           {...itemProps}
         />
       </SortableItemContext.Provider>
@@ -408,7 +400,10 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
 );
 SortableItem.displayName = SORTABLE_ITEM_NAME;
 
-interface SortableItemGripProps extends ButtonProps {}
+interface SortableItemGripProps
+  extends React.ComponentPropsWithoutRef<"button"> {
+  asChild?: boolean;
+}
 
 const SortableItemGrip = React.forwardRef<
   HTMLButtonElement,
@@ -419,16 +414,17 @@ const SortableItemGrip = React.forwardRef<
     throw new Error(SORTABLE_ERROR.grip);
   }
 
-  const { className, ...dragHandleProps } = props;
+  const { asChild, className, ...dragHandleProps } = props;
   const context = useSortableRoot();
 
+  const GripSlot = asChild ? Slot : "button";
+
   return (
-    <Button
-      ref={ref}
+    <GripSlot
       aria-controls={itemContext.id}
       data-dragging={itemContext.isDragging ? "" : undefined}
       className={cn(
-        "touch-none select-none",
+        "select-none",
         context.flatCursor
           ? "cursor-default"
           : "cursor-grab data-[dragging]:cursor-grabbing",
@@ -436,6 +432,7 @@ const SortableItemGrip = React.forwardRef<
       )}
       {...itemContext.attributes}
       {...itemContext.listeners}
+      ref={ref}
       {...dragHandleProps}
     />
   );

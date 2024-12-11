@@ -7,8 +7,7 @@ import type {
 } from "@dnd-kit/core";
 import type { SlotProps } from "@radix-ui/react-slot";
 
-import type { ButtonProps } from "@/components/ui/button";
-import type { SortableContext, SortableContextProps } from "@dnd-kit/sortable";
+import type { SortableContextProps } from "@dnd-kit/sortable";
 
 interface SortableProps<TData extends { id: UniqueIdentifier }>
   extends DndContextProps {
@@ -191,12 +190,18 @@ interface SortableItemProps
 }
 
 interface SortableItemGripProps
-  extends Omit<ButtonProps, keyof React.ComponentPropsWithoutRef<"button">> {}
+  extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"button">> {
+  /**
+   * Merges the item's props into its immediate child.
+   * @default false
+   */
+  asChild?: boolean;
+}
 
 export type {
-  SortableProps,
   SortableContentProps,
-  SortableOverlayProps,
-  SortableItemProps,
   SortableItemGripProps,
+  SortableItemProps,
+  SortableOverlayProps,
+  SortableProps,
 };

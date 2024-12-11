@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -49,12 +50,10 @@ export default function SortableGripDemo() {
               <SortableItem key={trick.id} value={trick.id} asChild>
                 <TableRow>
                   <TableCell className="w-[50px]">
-                    <SortableItemGrip
-                      variant="ghost"
-                      size="icon"
-                      className="size-8"
-                    >
-                      <GripVertical className="h-4 w-4" />
+                    <SortableItemGrip asChild>
+                      <Button variant="ghost" size="icon" className="size-8">
+                        <GripVertical className="h-4 w-4" />
+                      </Button>
                     </SortableItemGrip>
                   </TableCell>
                   <TableCell className="font-medium">{trick.title}</TableCell>

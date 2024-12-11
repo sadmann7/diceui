@@ -45,6 +45,22 @@ shadcn@latest add "https://diceui.com/r/sortable"
 </Steps>
 
 
+## Anatomy
+
+```tsx
+import {Sortable, SortableContent, SortableItem, SortableItemGrip, SortableOverlay} from "@/components/ui/sortable";
+
+<Sortable>
+  <SortableContent>
+    <SortableItem >
+      <SortableItemGrip />
+    </SortableItem>
+    <SortableItem />
+  </SortableContent>
+  <SortableOverlay />
+</Sortable>;
+```
+
 
 ## Examples
 
@@ -128,9 +144,9 @@ A button component that acts as a drag handle for sortable items.
 
 The component extends the base Button component and adds the following styles:
 
-- `cursor-grab` when not dragging (unless `disableGrabCursor` is true)
-- `cursor-grabbing` when dragging (unless `disableGrabCursor` is true)
-- `cursor-default` when `disableGrabCursor` is true
+- `cursor-grab` when not dragging (unless `flatCursor` is true)
+- `cursor-grabbing` when dragging (unless `flatCursor` is true)
+- `cursor-default` when `flatCursor` is true
 
 #### Accessibility
 
@@ -167,15 +183,9 @@ The component extends the base Button component and adds the following styles:
   ]}
 />
 
-### ARIA Roles
-
-- The sortable container has `role="list"`
-- Each sortable item has `role="listitem"`
-- Drag handles have `aria-label="Drag handle"`
-- Live announcements are made during drag and drop operations
-
-### Focus Management
+### Features
 
 - Drag handles are focusable and can be activated using the keyboard
 - Focus is maintained on the dragged item throughout the sorting operation
 - Focus returns to the drag handle when sorting is complete
+- Live announcements are made during drag and drop operations
