@@ -17,11 +17,11 @@ const CheckboxGroup = React.forwardRef<
 ));
 CheckboxGroup.displayName = CheckboxGroupPrimitive.Root.displayName;
 
-const CheckboxGroupItems = React.forwardRef<
-  React.ElementRef<typeof CheckboxGroupPrimitive.Items>,
-  React.ComponentPropsWithoutRef<typeof CheckboxGroupPrimitive.Items>
+const CheckboxGroupList = React.forwardRef<
+  React.ElementRef<typeof CheckboxGroupPrimitive.List>,
+  React.ComponentPropsWithoutRef<typeof CheckboxGroupPrimitive.List>
 >(({ className, ...props }, ref) => (
-  <CheckboxGroupPrimitive.Items
+  <CheckboxGroupPrimitive.List
     ref={ref}
     className={cn(
       "flex gap-3 data-[orientation=horizontal]:flex-row data-[orientation=vertical]:flex-col",
@@ -30,7 +30,7 @@ const CheckboxGroupItems = React.forwardRef<
     {...props}
   />
 ));
-CheckboxGroupItems.displayName = CheckboxGroupPrimitive.Items.displayName;
+CheckboxGroupList.displayName = CheckboxGroupPrimitive.List.displayName;
 
 const CheckboxGroupLabel = React.forwardRef<
   React.ElementRef<typeof CheckboxGroupPrimitive.Label>,
@@ -92,6 +92,6 @@ export {
   CheckboxGroup,
   CheckboxGroupDescription,
   CheckboxGroupItem,
-  CheckboxGroupItems,
+  CheckboxGroupList,
   CheckboxGroupLabel,
 };

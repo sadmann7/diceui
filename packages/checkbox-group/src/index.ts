@@ -16,10 +16,10 @@ export {
   CheckboxGroupDescription,
 } from "./checkbox-group-description";
 export {
-  type CheckboxGroupItemsProps,
-  Items,
-  CheckboxGroupItems,
-} from "./checkbox-group-items";
+  type CheckboxGroupListProps,
+  List,
+  CheckboxGroupList,
+} from "./checkbox-group-list";
 export {
   type CheckboxGroupItemProps,
   Item,

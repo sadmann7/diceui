@@ -31,8 +31,8 @@ import {
   CheckboxGroup,
   CheckboxGroupDescription,
   CheckboxGroupItem,
-  CheckboxGroupItems,
   CheckboxGroupLabel,
+  CheckboxGroupList,
 } from "@/components/ui/checkbox-group";
 
 export default function PlaygroundPage() {
@@ -40,12 +40,12 @@ export default function PlaygroundPage() {
     <Shell>
       <CheckboxGroup>
         <CheckboxGroupLabel>Tricks</CheckboxGroupLabel>
-        <CheckboxGroupItems>
+        <CheckboxGroupList>
           <CheckboxGroupItem value="ollie">Ollie</CheckboxGroupItem>
           <CheckboxGroupItem value="kickflip">Kickflip</CheckboxGroupItem>
           <CheckboxGroupItem value="heelflip">Heelflip</CheckboxGroupItem>
           <CheckboxGroupItem value="hardflip">Hardflip</CheckboxGroupItem>
-        </CheckboxGroupItems>
+        </CheckboxGroupList>
         <CheckboxGroupDescription>Select flip tricks</CheckboxGroupDescription>
       </CheckboxGroup>
       <DropdownMenu modal={false}>

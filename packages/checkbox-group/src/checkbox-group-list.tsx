@@ -2,16 +2,16 @@ import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { useCheckboxGroup } from "./checkbox-group-root";
 
-const ITEMS_NAME = "CheckboxGroupItems";
+const LIST_NAME = "CheckboxGroupList";
 
-interface CheckboxGroupItemsProps
+interface CheckboxGroupListProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {}
 
-const CheckboxGroupItems = React.forwardRef<
+const CheckboxGroupList = React.forwardRef<
   HTMLDivElement,
-  CheckboxGroupItemsProps
+  CheckboxGroupListProps
 >((props, ref) => {
-  const context = useCheckboxGroup(ITEMS_NAME);
+  const context = useCheckboxGroup(LIST_NAME);
 
   return (
     <Primitive.div
@@ -24,8 +24,8 @@ const CheckboxGroupItems = React.forwardRef<
   );
 });
 
-CheckboxGroupItems.displayName = ITEMS_NAME;
+CheckboxGroupList.displayName = LIST_NAME;
 
-const Items = CheckboxGroupItems;
+const List = CheckboxGroupList;
 
-export { CheckboxGroupItems, Items, type CheckboxGroupItemsProps };
+export { CheckboxGroupList, List, type CheckboxGroupListProps };
