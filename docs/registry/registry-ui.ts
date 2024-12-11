@@ -31,4 +31,15 @@ export const ui: Registry = [
       },
     ],
   },
+  {
+    name: "checkbox-group",
+    type: "registry:ui",
+    dependencies: ["@diceui/checkbox-group"],
+    files: [
+      {
+        path: "ui/checkbox-group.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
 ];

@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  Sortable,
-  SortableContent,
-  SortableItem,
-  SortableOverlay,
-} from "@/registry/default/ui/sortable";
+import * as Sortable from "@/registry/default/ui/sortable";
 import * as React from "react";
 
 export default function SortableDemo() {
@@ -19,34 +14,34 @@ export default function SortableDemo() {
   ]);
 
   return (
-    <Sortable value={tricks} onValueChange={setTricks} orientation="both">
-      <SortableContent className="grid grid-cols-3 gap-2.5">
+    <Sortable.Root value={tricks} onValueChange={setTricks} orientation="both">
+      <Sortable.Content className="grid grid-cols-3 gap-2.5">
         {tricks.map((trick) => (
-          <SortableItem key={trick.id} value={trick.id} asChild asGrip>
+          <Sortable.Item key={trick.id} value={trick.id} asChild asGrip>
             <div className="flex aspect-video size-full flex-col items-center justify-center border border-zinc-500 p-6 text-center dark:border-zinc-800">
               <div className="font-medium">{trick.title}</div>
               <div className="text-sm text-zinc-500">{trick.points} points</div>
             </div>
-          </SortableItem>
+          </Sortable.Item>
         ))}
-      </SortableContent>
-      <SortableOverlay>
+      </Sortable.Content>
+      <Sortable.Overlay>
         {({ value }) => {
           const trick = tricks.find((trick) => trick.id === value);
           if (!trick) return null;
 
           return (
-            <SortableItem value={trick.id} asChild>
+            <Sortable.Item value={trick.id} asChild>
               <div className="flex aspect-video size-full flex-col items-center justify-center border border-zinc-500 p-6 text-center dark:border-zinc-800">
                 <div className="font-medium">{trick.title}</div>
                 <div className="text-sm text-zinc-500">
                   {trick.points} points
                 </div>
               </div>
-            </SortableItem>
+            </Sortable.Item>
           );
         }}
-      </SortableOverlay>
-    </Sortable>
+      </Sortable.Overlay>
+    </Sortable.Root>
   );
 }

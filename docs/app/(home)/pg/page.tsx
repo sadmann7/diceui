@@ -27,30 +27,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import {
-  CheckboxGroup,
-  CheckboxGroupDescription,
-  CheckboxGroupItem,
-  CheckboxGroupLabel,
-  CheckboxGroupList,
-} from "@/components/ui/checkbox-group";
-import * as React from "react";
-
 export default function PlaygroundPage() {
-  const [tricks, setTricks] = React.useState<string[]>([]);
-
   return (
     <Shell>
-      <CheckboxGroup value={tricks} onValueChange={setTricks}>
-        <CheckboxGroupLabel>Tricks</CheckboxGroupLabel>
-        <CheckboxGroupList>
-          <CheckboxGroupItem value="ollie">Ollie</CheckboxGroupItem>
-          <CheckboxGroupItem value="kickflip">Kickflip</CheckboxGroupItem>
-          <CheckboxGroupItem value="heelflip">Heelflip</CheckboxGroupItem>
-          <CheckboxGroupItem value="hardflip">Hardflip</CheckboxGroupItem>
-        </CheckboxGroupList>
-        <CheckboxGroupDescription>Select flip tricks</CheckboxGroupDescription>
-      </CheckboxGroup>
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="w-fit">

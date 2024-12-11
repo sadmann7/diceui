@@ -48,6 +48,7 @@ const CheckboxGroupItem = React.forwardRef<
   const context = useCheckboxGroup(ITEM_NAME);
   const id = useId();
   const isDisabled = disabled || context.disabled || false;
+  const isRequired = required || context.required || false;
   const isChecked = context.value.includes(value);
   const { isFormControl, trigger, onTriggerChange } =
     useFormControl<HTMLButtonElement>();
@@ -100,7 +101,7 @@ const CheckboxGroupItem = React.forwardRef<
           value={value}
           checked={isChecked}
           disabled={isDisabled}
-          required={context.required}
+          required={isRequired}
         />
       )}
     </CheckboxGroupItemProvider>

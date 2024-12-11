@@ -1,7 +1,6 @@
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import * as TagsInputPrimitive from "@diceui/tags-input";
-import { RefreshCcw, X } from "lucide-react";
+import { X } from "lucide-react";
 import * as React from "react";
 
 const TagsInput = React.forwardRef<
@@ -83,31 +82,13 @@ const TagsInputItem = React.forwardRef<
 ));
 TagsInputItem.displayName = TagsInputPrimitive.Item.displayName;
 
-const TagsInputClear = React.forwardRef<
-  React.ComponentRef<typeof TagsInputPrimitive.Clear>,
-  React.ComponentPropsWithoutRef<typeof TagsInputPrimitive.Clear>
->(({ className, children, ...props }, ref) => (
-  <TagsInputPrimitive.Clear ref={ref} asChild>
-    <Button
-      variant="outline"
-      className={cn(
-        "data-[state=visible]:fade-in-0 data-[state=visible]:slide-in-from-bottom-2 data-[state=hidden]:fade-out-0 data-[state=hidden]:slide-out-to-bottom-2 w-full data-[state=visible]:visible data-[state=hidden]:invisible data-[state=hidden]:animate-out data-[state=visible]:animate-in",
-        className,
-      )}
-      {...props}
-    >
-      <RefreshCcw className="h-4 w-4" />
-      {children}
-    </Button>
-  </TagsInputPrimitive.Clear>
-));
-TagsInputClear.displayName = TagsInputPrimitive.Clear.displayName;
+const TagsInputClear = TagsInputPrimitive.Clear;
 
 export {
   TagsInput,
+  TagsInputLabel,
   TagsInputClear,
   TagsInputContent,
   TagsInputInput,
   TagsInputItem,
-  TagsInputLabel,
 };

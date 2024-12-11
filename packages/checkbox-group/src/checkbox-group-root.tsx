@@ -16,10 +16,10 @@ interface CheckboxGroupContextValue {
   onValueChange: (value: string[]) => void;
   onItemCheckedChange: (value: string, checked: boolean) => void;
   disabled?: boolean;
+  isInvalid: boolean;
   required?: boolean;
   dir: Direction;
   orientation: "horizontal" | "vertical";
-  isInvalid: boolean;
   id: string;
   labelId: string;
   descriptionId: string;
@@ -99,7 +99,10 @@ const CheckboxGroupRoot = React.forwardRef<
     defaultProp: defaultValue,
     onChange: onValueChange,
   });
-  const [isInvalid, setIsInvalid] = React.useState(invalid);
+  const [isInvalid = false, setIsInvalid] = useControllableState({
+    prop: invalid,
+    defaultProp: false,
+  });
 
   const dir = useDirection(dirProp);
   const id = useId();
@@ -116,7 +119,7 @@ const CheckboxGroupRoot = React.forwardRef<
         ? [...value, payload]
         : value.filter((v) => v !== payload);
 
-      if (onValidate && !onValidate(newValue)) {
+      if (checked && onValidate && !onValidate(newValue)) {
         setIsInvalid(true);
         onInvalid?.(newValue);
         return;
@@ -125,7 +128,7 @@ const CheckboxGroupRoot = React.forwardRef<
       setIsInvalid(false);
       setValue(newValue);
     },
-    [setValue, onValidate, onInvalid, value],
+    [setValue, onValidate, onInvalid, value, setIsInvalid],
   );
 
   return (

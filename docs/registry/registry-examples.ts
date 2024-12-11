@@ -79,4 +79,48 @@ export const examples: Registry = [
       },
     ],
   },
+  {
+    name: "checkbox-group-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/checkbox-group", "lucide-react"],
+    files: [
+      {
+        path: "example/checkbox-group-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "checkbox-group-animated-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/checkbox-group", "lucide-react"],
+    files: [
+      {
+        path: "example/checkbox-group-animated-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "checkbox-group-horizontal-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/checkbox-group", "lucide-react"],
+    files: [
+      {
+        path: "example/checkbox-group-horizontal-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "checkbox-group-validation-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/checkbox-group", "lucide-react"],
+    files: [
+      {
+        path: "example/checkbox-group-validation-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
 ];

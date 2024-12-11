@@ -11,7 +11,7 @@ const CheckboxGroup = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <CheckboxGroupPrimitive.Root
     ref={ref}
-    className={cn("flex flex-col gap-3.5", className)}
+    className={cn("peer flex flex-col gap-3.5", className)}
     {...props}
   />
 ));
@@ -39,7 +39,7 @@ const CheckboxGroupLabel = React.forwardRef<
   <CheckboxGroupPrimitive.Label
     ref={ref}
     className={cn(
-      "font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+      "text-foreground/70 text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
       className,
     )}
     {...props}
@@ -54,7 +54,7 @@ const CheckboxGroupDescription = React.forwardRef<
   <CheckboxGroupPrimitive.Description
     ref={ref}
     className={cn(
-      "text-[0.8rem] leading-none data-[invalid]:text-destructive",
+      "text-[0.8rem] text-muted-foreground leading-none data-[invalid]:text-destructive",
       className,
     )}
     {...props}
@@ -62,6 +62,21 @@ const CheckboxGroupDescription = React.forwardRef<
 ));
 CheckboxGroupDescription.displayName =
   CheckboxGroupPrimitive.Description.displayName;
+
+const CheckboxGroupMessage = React.forwardRef<
+  React.ElementRef<typeof CheckboxGroupPrimitive.Message>,
+  React.ComponentPropsWithoutRef<typeof CheckboxGroupPrimitive.Message>
+>(({ className, ...props }, ref) => (
+  <CheckboxGroupPrimitive.Message
+    ref={ref}
+    className={cn(
+      "text-[0.8rem] text-muted-foreground leading-none data-[invalid]:text-destructive",
+      className,
+    )}
+    {...props}
+  />
+));
+CheckboxGroupMessage.displayName = CheckboxGroupPrimitive.Message.displayName;
 
 const CheckboxGroupItem = React.forwardRef<
   React.ElementRef<typeof CheckboxGroupPrimitive.Item>,
@@ -90,8 +105,9 @@ CheckboxGroupItem.displayName = CheckboxGroupPrimitive.Item.displayName;
 
 export {
   CheckboxGroup,
-  CheckboxGroupDescription,
-  CheckboxGroupItem,
   CheckboxGroupLabel,
+  CheckboxGroupDescription,
+  CheckboxGroupMessage,
   CheckboxGroupList,
+  CheckboxGroupItem,
 };
