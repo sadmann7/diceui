@@ -44,7 +44,7 @@ interface CheckboxGroupRootProps
   onValueChange?: (value: string[]) => void;
 
   /** Callback function to validate values before they're added. */
-  onValidate?: (value: string[]) => boolean;
+  onValidate?: (value: string[]) => boolean | string;
 
   /** Callback function to handle invalid input. */
   onInvalid?: (value: string[]) => void;

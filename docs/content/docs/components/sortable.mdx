@@ -50,17 +50,17 @@ shadcn@latest add "https://diceui.com/r/sortable"
 Import the parts, and compose them together.
 
 ```tsx
-import {Sortable, SortableContent, SortableItem, SortableItemGrip, SortableOverlay} from "@/components/ui/sortable";
+import * as Sortable from "@/components/ui/sortable";
 
-<Sortable>
-  <SortableContent>
-    <SortableItem >
-      <SortableItemGrip />
-    </SortableItem>
-    <SortableItem />
-  </SortableContent>
-  <SortableOverlay />
-</Sortable>;
+<Sortable.Root>
+  <Sortable.Content>
+    <Sortable.Item >
+      <Sortable.ItemGrip />
+    </Sortable.Item>
+    <Sortable.Item />
+  </Sortable.Content>
+  <Sortable.Overlay />
+</Sortable.Root>;
 ```
 
 
@@ -73,13 +73,13 @@ import {Sortable, SortableContent, SortableItem, SortableItemGrip, SortableOverl
 
 ## API Reference
 
-### Sortable
+### Root
 
 The main container component for sortable functionality.
 
 <AutoTypeTable
   path="./types/docs/sortable.ts"
-  name="SortableProps"
+  name="RootProps"
 />
 
 <DataAttributesTable
@@ -91,22 +91,22 @@ The main container component for sortable functionality.
   ]}
 />
 
-### SortableContent
+### Content
 
 Container for sortable items. Multiple `SortableContent` components can be used within a `Sortable` component.
 
 <AutoTypeTable
   path="./types/docs/sortable.ts"
-  name="SortableContentProps"
+  name="ContentProps"
 />
 
-### SortableItem
+### Item
 
 Individual sortable item component.
 
 <AutoTypeTable
   path="./types/docs/sortable.ts"
-  name="SortableItemProps"
+  name="ItemProps"
 />
 
 <DataAttributesTable
@@ -122,7 +122,7 @@ Individual sortable item component.
   ]}
 />
 
-### SortableItemGrip
+### ItemGrip
 
 A button component that acts as a drag handle for sortable items.
 
@@ -130,7 +130,7 @@ A button component that acts as a drag handle for sortable items.
 
 <AutoTypeTable
   path="./types/docs/sortable.ts"
-  name="SortableItemGripProps"
+  name="ItemGripProps"
 />
 
 <DataAttributesTable
@@ -155,6 +155,16 @@ The component extends the base Button component and adds the following styles:
 - Has `aria-controls` pointing to the parent sortable item's ID
 - Inherits ARIA attributes from the sortable context for drag and drop operations
 - Can be activated using keyboard navigation
+
+
+### Overlay
+
+The overlay component that appears when an item is being dragged.
+
+<AutoTypeTable
+  path="./types/docs/sortable.ts"
+  name="OverlayProps"
+/>
 
 ## Accessibility
 

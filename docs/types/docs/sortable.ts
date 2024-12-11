@@ -9,7 +9,7 @@ import type { SlotProps } from "@radix-ui/react-slot";
 
 import type { SortableContextProps } from "@dnd-kit/sortable";
 
-interface SortableProps<TData extends { id: UniqueIdentifier }>
+export interface RootProps<TData extends { id: UniqueIdentifier }>
   extends DndContextProps {
   /**
    * An array of data items that the sortable component will render.
@@ -120,7 +120,7 @@ interface SortableProps<TData extends { id: UniqueIdentifier }>
   flatCursor?: boolean;
 }
 
-interface SortableContentProps
+export interface ContentProps
   extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"div">> {
   /**
    * The strategy to use for sorting the items.
@@ -142,8 +142,41 @@ interface SortableContentProps
   asChild?: boolean;
 }
 
-interface SortableOverlayProps
-  extends Omit<React.ComponentPropsWithoutRef<typeof DragOverlay>, "children"> {
+export interface ItemProps
+  extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"div">> {
+  /**
+   * The unique identifier of the item.
+   * @example "item-1"
+   */
+  value: UniqueIdentifier;
+
+  /**
+   * Specifies whether the item should act as a grip for dragging.
+   * @default false
+   */
+  asGrip?: boolean;
+
+  /**
+   * Merges the item's props into its immediate child.
+   * @default false
+   */
+  asChild?: boolean;
+}
+
+export interface ItemGripProps
+  extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"button">> {
+  /**
+   * Merges the item's props into its immediate child.
+   * @default false
+   */
+  asChild?: boolean;
+}
+
+export interface OverlayProps
+  extends Omit<
+    React.ComponentPropsWithoutRef<typeof DragOverlay>,
+    keyof React.ComponentPropsWithoutRef<"div">
+  > {
   /**
    * The drop animation to use for the sortable component.
    * @default
@@ -167,41 +200,3 @@ interface SortableOverlayProps
     | ((params: { value: UniqueIdentifier }) => React.ReactNode)
     | React.ReactNode;
 }
-
-interface SortableItemProps
-  extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"div">> {
-  /**
-   * The unique identifier of the item.
-   * @example "item-1"
-   */
-  value: UniqueIdentifier;
-
-  /**
-   * Specifies whether the item should act as a grip for dragging.
-   * @default false
-   */
-  asGrip?: boolean;
-
-  /**
-   * Merges the item's props into its immediate child.
-   * @default false
-   */
-  asChild?: boolean;
-}
-
-interface SortableItemGripProps
-  extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"button">> {
-  /**
-   * Merges the item's props into its immediate child.
-   * @default false
-   */
-  asChild?: boolean;
-}
-
-export type {
-  SortableContentProps,
-  SortableItemGripProps,
-  SortableItemProps,
-  SortableOverlayProps,
-  SortableProps,
-};

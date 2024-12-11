@@ -63,18 +63,6 @@ const CheckboxGroupDescription = React.forwardRef<
 CheckboxGroupDescription.displayName =
   CheckboxGroupPrimitive.Description.displayName;
 
-const CheckboxGroupMessage = React.forwardRef<
-  React.ElementRef<typeof CheckboxGroupPrimitive.Message>,
-  React.ComponentPropsWithoutRef<typeof CheckboxGroupPrimitive.Message>
->(({ className, ...props }, ref) => (
-  <CheckboxGroupPrimitive.Message
-    ref={ref}
-    className={cn("text-[0.8rem] text-destructive leading-none", className)}
-    {...props}
-  />
-));
-CheckboxGroupMessage.displayName = CheckboxGroupPrimitive.Message.displayName;
-
 const CheckboxGroupItem = React.forwardRef<
   React.ElementRef<typeof CheckboxGroupPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof CheckboxGroupPrimitive.Item>
@@ -102,9 +90,8 @@ CheckboxGroupItem.displayName = CheckboxGroupPrimitive.Item.displayName;
 
 export {
   CheckboxGroup,
-  CheckboxGroupLabel,
   CheckboxGroupDescription,
-  CheckboxGroupMessage,
-  CheckboxGroupList,
   CheckboxGroupItem,
+  CheckboxGroupLabel,
+  CheckboxGroupList,
 };

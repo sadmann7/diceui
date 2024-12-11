@@ -1,0 +1,239 @@
+---
+title: Checkbox Group
+description: A group of checkboxes that allows multiple selections with support for validation and accessibility.
+---
+
+<ComponentTabs name="checkbox-group-demo" />
+
+## Integration with shadcn/ui
+
+### CLI
+
+```package-install
+shadcn@latest add "https://diceui.com/r/checkbox-group"
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @diceui/checkbox-group
+     ```
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource name="checkbox-group" />
+  </Step>
+</Steps>
+
+## Examples
+
+### Basic Usage
+
+<ComponentTabs name="checkbox-group-basic-demo" />
+
+### With Validation
+
+<ComponentTabs name="checkbox-group-validation-demo" />
+
+## API Reference
+
+### Root
+
+Container for the checkbox group.
+
+<AutoTypeTable
+  path="./types/docs/checkbox-group.ts"
+  name="RootProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-invalid]",
+      value: "Present when invalid",
+    },
+    {
+      title: "[data-disabled]",
+      value: "Present when disabled",
+    },
+    {
+      title: "[data-orientation]",
+      value: "vertical | horizontal",
+    },
+  ]}
+/>
+
+### Label
+
+Label for the checkbox group.
+
+<AutoTypeTable
+  path="./types/docs/checkbox-group.ts"
+  name="LabelProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when disabled",
+    },
+  ]}
+/>
+
+### Description
+
+Optional description text for the checkbox group.
+
+<AutoTypeTable
+  path="./types/docs/checkbox-group.ts"
+  name="DescriptionProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when disabled",
+    },
+    {
+      title: "[data-invalid]",
+      value: "Present when invalid",
+    },
+  ]}
+/>
+
+### Message
+
+Error or validation message for the checkbox group.
+
+<AutoTypeTable
+  path="./types/docs/checkbox-group.ts"
+  name="MessageProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when disabled",
+    },
+    {
+      title: "[data-invalid]",
+      value: "Present when invalid",
+    },
+  ]}
+/>
+
+### List
+
+Container for checkbox items.
+
+<AutoTypeTable
+  path="./types/docs/checkbox-group.ts"
+  name="ListProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-orientation]",
+      value: ["vertical", "horizontal"],
+    },
+    {
+      title: "[data-invalid]",
+      value: "Present when invalid",
+    },
+  ]}
+/>
+
+### Item
+
+Individual checkbox item.
+
+<AutoTypeTable
+  path="./types/docs/checkbox-group.ts"
+  name="ItemProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-state]",
+      value: ["checked", "unchecked"],
+    },
+    {
+      title: "[data-disabled]",
+      value: "Present when disabled",
+    },
+    {
+      title: "[data-invalid]",
+      value: "Present when invalid",
+    },
+    {
+      title: "[data-orientation]",
+      value: ["vertical", "horizontal"],
+    },
+  ]}
+/>
+
+### Indicator
+
+Visual indicator for the checkbox state.
+
+<AutoTypeTable
+  path="./types/docs/checkbox-group.ts"
+  name="IndicatorProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-state]",
+      value: ["checked", "unchecked"],
+    },
+    {
+      title: "[data-disabled]",
+      value: "Present when disabled",
+    },
+  ]}
+/>
+
+## Accessibility
+
+### Keyboard Interactions
+
+<KeyboardShortcutsTable
+  shortcuts={[
+    {
+      keys: ["Space"],
+      description: "Toggles the focused checkbox."
+    },
+    {
+      keys: ["Tab"],
+      description: "Moves focus to the next focusable element."
+    },
+    {
+      keys: ["Shift + Tab"],
+      description: "Moves focus to the previous focusable element.",
+    },
+  ]}
+/>
+
+## Features
+
+- Support for controlled and uncontrolled states
+- Custom validation with error handling
+- Keyboard navigation
+- Accessible by default with ARIA attributes
+- Support for horizontal and vertical orientations
+- Form integration with name support
+- Disabled state support
+- Required field support
+- RTL support
+- Orientation support

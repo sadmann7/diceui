@@ -439,10 +439,21 @@ const SortableItemGrip = React.forwardRef<
 });
 SortableItemGrip.displayName = "SortableItemGrip";
 
+const Root = Sortable;
+const Content = SortableContent;
+const Item = SortableItem;
+const ItemGrip = SortableItemGrip;
+const Overlay = SortableOverlay;
+
 export {
   Sortable,
   SortableContent,
   SortableItem,
   SortableItemGrip,
   SortableOverlay,
+  Root,
+  Content,
+  Item,
+  ItemGrip,
+  Overlay,
 };

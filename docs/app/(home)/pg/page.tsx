@@ -37,9 +37,11 @@ import {
 import * as React from "react";
 
 export default function PlaygroundPage() {
+  const [tricks, setTricks] = React.useState<string[]>([]);
+
   return (
     <Shell>
-      <CheckboxGroup>
+      <CheckboxGroup value={tricks} onValueChange={setTricks}>
         <CheckboxGroupLabel>Tricks</CheckboxGroupLabel>
         <CheckboxGroupList>
           <CheckboxGroupItem value="ollie">Ollie</CheckboxGroupItem>
