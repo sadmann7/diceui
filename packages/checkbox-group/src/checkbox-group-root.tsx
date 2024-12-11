@@ -23,6 +23,7 @@ interface CheckboxGroupContextValue {
   id: string;
   labelId: string;
   descriptionId: string;
+  messageId: string;
 }
 
 const [CheckboxGroupProvider, useCheckboxGroup] =
@@ -50,6 +51,9 @@ interface CheckboxGroupRootProps
 
   /** Whether the checkbox group is disabled. */
   disabled?: boolean;
+
+  /** Whether the checkbox group is invalid. */
+  invalid?: boolean;
 
   /** Whether the checkbox group is required. */
   required?: boolean;
@@ -81,6 +85,7 @@ const CheckboxGroupRoot = React.forwardRef<
     onValidate,
     onInvalid,
     disabled = false,
+    invalid = false,
     required = false,
     dir: dirProp,
     orientation = "vertical",
@@ -94,11 +99,14 @@ const CheckboxGroupRoot = React.forwardRef<
     defaultProp: defaultValue,
     onChange: onValueChange,
   });
-  const [isInvalid, setIsInvalid] = React.useState(false);
+  const [isInvalid, setIsInvalid] = React.useState(invalid);
+
   const dir = useDirection(dirProp);
   const id = useId();
   const labelId = `${id}label`;
   const descriptionId = `${id}description`;
+  const messageId = `${id}message`;
+
   const collectionRef = React.useRef<HTMLDivElement>(null);
   const composedRefs = useComposedRefs(ref, collectionRef);
 
@@ -133,11 +141,12 @@ const CheckboxGroupRoot = React.forwardRef<
       id={id}
       labelId={labelId}
       descriptionId={descriptionId}
+      messageId={messageId}
     >
       <Primitive.div
         role="group"
         aria-labelledby={labelId}
-        aria-describedby={descriptionId}
+        aria-describedby={`${descriptionId} ${isInvalid ? messageId : ""}`}
         aria-orientation={orientation}
         data-orientation={orientation}
         data-disabled={disabled ? "" : undefined}

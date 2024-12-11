@@ -16,6 +16,11 @@ export {
   CheckboxGroupDescription,
 } from "./checkbox-group-description";
 export {
+  type CheckboxGroupMessageProps,
+  Message,
+  CheckboxGroupMessage,
+} from "./checkbox-group-message";
+export {
   type CheckboxGroupListProps,
   List,
   CheckboxGroupList,

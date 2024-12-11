@@ -34,6 +34,7 @@ import {
   CheckboxGroupLabel,
   CheckboxGroupList,
 } from "@/components/ui/checkbox-group";
+import * as React from "react";
 
 export default function PlaygroundPage() {
   return (
