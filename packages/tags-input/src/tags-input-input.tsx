@@ -34,12 +34,12 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
     }
 
     React.useEffect(() => {
-      if (autoFocus) {
-        const animationFrameId = requestAnimationFrame(() =>
-          context.inputRef.current?.focus(),
-        );
-        return () => cancelAnimationFrame(animationFrameId);
-      }
+      if (!autoFocus) return;
+
+      const animationFrameId = requestAnimationFrame(() =>
+        context.inputRef.current?.focus(),
+      );
+      return () => cancelAnimationFrame(animationFrameId);
     }, [autoFocus, context.inputRef]);
 
     return (
@@ -94,7 +94,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
             event.preventDefault();
             const value = event.clipboardData.getData("text");
 
-            context.onItemAdd(value);
+            context.onItemAdd(value, { viaPaste: true });
             context.setHighlightedValue(null);
           }
         })}

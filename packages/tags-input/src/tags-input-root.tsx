@@ -23,7 +23,7 @@ const ROOT_NAME = "TagsInputRoot";
 interface TagsInputContextValue<T = InputValue> {
   value: T[];
   onValueChange: (value: T[]) => void;
-  onItemAdd: (textValue: string) => boolean;
+  onItemAdd: (textValue: string, options?: { viaPaste?: boolean }) => boolean;
   onItemRemove: (index: number) => void;
   onItemUpdate: (index: number, newTextValue: string) => void;
   onInputKeydown: (event: React.KeyboardEvent) => void;
@@ -41,7 +41,6 @@ interface TagsInputContextValue<T = InputValue> {
   sortable: boolean;
   disabled: boolean;
   delimiter: string;
-  duplicate: boolean;
   loop: boolean;
   blurBehavior: "add" | "clear" | undefined;
   dir: Direction;
@@ -163,8 +162,8 @@ const TagsInputRoot = React.forwardRef<
     onValueChange,
     onValidate,
     onInvalid,
-    addOnPaste = false,
     displayValue = (value: InputValue) => value.toString(),
+    addOnPaste = false,
     addOnTab = false,
     editable = false,
     sortable = false,
@@ -180,9 +179,6 @@ const TagsInputRoot = React.forwardRef<
     children,
     ...rootProps
   } = props;
-
-  // TODO: add duplication support
-  const duplicate = false;
 
   const [value = [], setValue] = useControllableState({
     prop: valueProp,
@@ -208,8 +204,8 @@ const TagsInputRoot = React.forwardRef<
   const { getItems } = useCollection({ ref: collectionRef });
 
   const onItemAdd = React.useCallback(
-    (textValue: string) => {
-      if (addOnPaste) {
+    (textValue: string, options?: { viaPaste?: boolean }) => {
+      if (addOnPaste && options?.viaPaste) {
         const splitValues = textValue
           .split(delimiter)
           .map((v) => v.trim())
@@ -221,18 +217,14 @@ const TagsInputRoot = React.forwardRef<
         }
 
         let newValues: InputValue[] = [];
-        if (duplicate) {
-          newValues = splitValues;
-        } else {
-          for (const v of splitValues) {
-            if (value.includes(v)) {
-              onInvalid?.(v);
-            }
+        for (const v of splitValues) {
+          if (value.includes(v)) {
+            onInvalid?.(v);
           }
-          newValues = [
-            ...new Set(splitValues.filter((v) => !value.includes(v))),
-          ];
         }
+        newValues = [...new Set(splitValues.filter((v) => !value.includes(v)))];
+
+        console.log({ value });
 
         const validValues = newValues.filter(
           (v) => !onValidate || onValidate(v),
@@ -257,17 +249,15 @@ const TagsInputRoot = React.forwardRef<
         return false;
       }
 
-      if (!duplicate) {
-        const exists = value.some((v) => {
-          const valueToCompare = v;
-          return valueToCompare === trimmedValue;
-        });
+      const exists = value.some((v) => {
+        const valueToCompare = v;
+        return valueToCompare === trimmedValue;
+      });
 
-        if (exists) {
-          setIsInvalidInput(true);
-          onInvalid?.(trimmedValue);
-          return true;
-        }
+      if (exists) {
+        setIsInvalidInput(true);
+        onInvalid?.(trimmedValue);
+        return true;
       }
 
       const newValue = trimmedValue;
@@ -286,18 +276,16 @@ const TagsInputRoot = React.forwardRef<
       if (index !== -1) {
         const trimmedValue = newTextValue.trim();
 
-        if (!duplicate) {
-          const exists = value.some((v, i) => {
-            if (i === index) return false;
-            const valueToCompare = v;
-            return valueToCompare === trimmedValue;
-          });
+        const exists = value.some((v, i) => {
+          if (i === index) return false;
+          const valueToCompare = v;
+          return valueToCompare === trimmedValue;
+        });
 
-          if (exists) {
-            setIsInvalidInput(true);
-            onInvalid?.(trimmedValue);
-            return;
-          }
+        if (exists) {
+          setIsInvalidInput(true);
+          onInvalid?.(trimmedValue);
+          return;
         }
 
         if (onValidate && !onValidate(trimmedValue)) {
@@ -507,7 +495,6 @@ const TagsInputRoot = React.forwardRef<
       disabled={disabled}
       blurBehavior={blurBehavior}
       delimiter={delimiter}
-      duplicate={duplicate}
       dir={dir}
       max={max}
       id={id}
