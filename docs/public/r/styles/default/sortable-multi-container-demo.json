@@ -1,0 +1,23 @@
+{
+  "name": "sortable-multi-container-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@dnd-kit/core",
+    "@dnd-kit/modifiers",
+    "@dnd-kit/sortable",
+    "@dnd-kit/utilities"
+  ],
+  "registryDependencies": [
+    "card",
+    "button",
+    "skeleton"
+  ],
+  "files": [
+    {
+      "path": "example/sortable-multi-container-demo.tsx",
+      "content": "\"use client\";\r\n\r\nimport { Button } from \"@/components/ui/button\";\r\nimport { Card } from \"@/components/ui/card\";\r\nimport { Skeleton } from \"@/components/ui/skeleton\";\r\nimport {\r\n  Sortable,\r\n  SortableContent,\r\n  SortableItem,\r\n  SortableItemGrip,\r\n  SortableOverlay,\r\n} from \"@/registry/default/ui/sortable\";\r\nimport { GripVertical, Plus } from \"lucide-react\";\r\nimport * as React from \"react\";\r\n\r\ninterface Task {\r\n  id: string;\r\n  title: string;\r\n  status: \"todo\" | \"in-progress\" | \"done\";\r\n}\r\n\r\nexport default function SortableMultiContainerDemo() {\r\n  const [tasks, setTasks] = React.useState<Task[]>([\r\n    { id: \"1\", title: \"Research new features\", status: \"todo\" },\r\n    { id: \"2\", title: \"Design system updates\", status: \"todo\" },\r\n    { id: \"3\", title: \"API integration\", status: \"in-progress\" },\r\n    { id: \"4\", title: \"Documentation\", status: \"in-progress\" },\r\n    { id: \"5\", title: \"Unit tests\", status: \"done\" },\r\n  ]);\r\n\r\n  const columns = {\r\n    todo: tasks.filter((task) => task.status === \"todo\"),\r\n    \"in-progress\": tasks.filter((task) => task.status === \"in-progress\"),\r\n    done: tasks.filter((task) => task.status === \"done\"),\r\n  };\r\n\r\n  function handleDrop(items: Task[], containerId: string) {\r\n    setTasks((prevTasks) =>\r\n      prevTasks.map((task) =>\r\n        items.find((item) => item.id === task.id)\r\n          ? { ...task, status: containerId as Task[\"status\"] }\r\n          : task,\r\n      ),\r\n    );\r\n  }\r\n\r\n  return (\r\n    <div className=\"grid grid-cols-1 gap-4 md:grid-cols-3\">\r\n      {(Object.entries(columns) as [Task[\"status\"], Task[]][]).map(\r\n        ([status, items]) => (\r\n          <Sortable\r\n            key={status}\r\n            value={items}\r\n            onValueChange={(newItems) => handleDrop(newItems, status)}\r\n          >\r\n            <div className=\"flex flex-col gap-4\">\r\n              <div className=\"flex items-center justify-between\">\r\n                <h3 className=\"font-semibold capitalize\">\r\n                  {status.replace(\"-\", \" \")}\r\n                </h3>\r\n                <Button variant=\"ghost\" size=\"icon\" className=\"size-8\">\r\n                  <Plus className=\"h-4 w-4\" />\r\n                </Button>\r\n              </div>\r\n\r\n              <SortableContent className=\"flex flex-col gap-2\">\r\n                {items.map((task) => (\r\n                  <SortableItem key={task.id} value={task.id}>\r\n                    <Card className=\"flex items-center gap-2 p-3\">\r\n                      <SortableItemGrip asChild>\r\n                        <Button variant=\"ghost\" size=\"icon\" className=\"size-8\">\r\n                          <GripVertical className=\"h-4 w-4\" />\r\n                        </Button>\r\n                      </SortableItemGrip>\r\n                      <span>{task.title}</span>\r\n                    </Card>\r\n                  </SortableItem>\r\n                ))}\r\n              </SortableContent>\r\n            </div>\r\n            <SortableOverlay>\r\n              <Skeleton className=\"h-[52px] w-full rounded-lg\" />\r\n            </SortableOverlay>\r\n          </Sortable>\r\n        ),\r\n      )}\r\n    </div>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

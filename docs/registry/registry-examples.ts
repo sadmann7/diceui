@@ -92,6 +92,23 @@ export const examples: Registry = [
     ],
   },
   {
+    name: "sortable-multi-container-demo",
+    type: "registry:example",
+    dependencies: [
+      "@dnd-kit/core",
+      "@dnd-kit/modifiers",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+    ],
+    registryDependencies: ["card", "button", "skeleton"],
+    files: [
+      {
+        path: "example/sortable-multi-container-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "checkbox-group-demo",
     type: "registry:example",
     dependencies: ["@diceui/checkbox-group", "lucide-react"],

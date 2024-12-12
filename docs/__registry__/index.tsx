@@ -149,6 +149,22 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "sortable-multi-container-demo": {
+      name: "sortable-multi-container-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["card","button","skeleton"],
+      files: [{
+        path: "registry/default/example/sortable-multi-container-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/example/sortable-multi-container-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "checkbox-group-demo": {
       name: "checkbox-group-demo",
       description: "",
