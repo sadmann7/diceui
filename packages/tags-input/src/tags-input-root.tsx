@@ -57,7 +57,7 @@ const [TagsInputProvider, useTagsInput] =
 interface TagsInputRootProps<T = InputValue>
   extends Omit<
     React.ComponentPropsWithoutRef<typeof Primitive.div>,
-    "value" | "defaultValue" | "onValueChange" | "onInvalid"
+    "value" | "defaultValue" | "onValueChange" | "onInvalid" | "children"
   > {
   /** Controlled array of tag values. */
   value?: T[];
@@ -147,6 +147,10 @@ interface TagsInputRootProps<T = InputValue>
 
   /** Unique identifier for the tags input. */
   id?: string;
+
+  children?:
+    | ((context: { value: InputValue[] }) => React.ReactNode)
+    | React.ReactNode;
 }
 
 const TagsInputRoot = React.forwardRef<
@@ -177,7 +181,7 @@ const TagsInputRoot = React.forwardRef<
     ...rootProps
   } = props;
 
-  // TODO: add duplicate
+  // TODO: add duplication support
   const duplicate = false;
 
   const [value = [], setValue] = useControllableState({
@@ -220,9 +224,9 @@ const TagsInputRoot = React.forwardRef<
         if (duplicate) {
           newValues = splitValues;
         } else {
-          for (const value of splitValues) {
-            if (value.includes(value)) {
-              onInvalid?.(value);
+          for (const v of splitValues) {
+            if (value.includes(v)) {
+              onInvalid?.(v);
             }
           }
           newValues = [
@@ -568,7 +572,7 @@ const TagsInputRoot = React.forwardRef<
           }
         })}
       >
-        {children}
+        {typeof children === "function" ? <>{children({ value })}</> : children}
         {isFormControl && name && (
           <BubbleInput
             type="hidden"

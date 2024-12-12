@@ -4,12 +4,12 @@ import { RefreshCcw, X } from "lucide-react";
 export default function TagsInputDemo() {
   return (
     <TagsInput.Root className="flex w-[380px] flex-col gap-2">
-      <TagsInput.Label className="font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-        Tricks
-      </TagsInput.Label>
-      <TagsInput.Content className="flex min-h-10 w-full flex-wrap items-center gap-1.5 rounded-md border border-input bg-background px-3 py-2 text-sm focus-within:ring-1 focus-within:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:focus-within:ring-zinc-400">
-        {({ value }) => (
-          <>
+      {({ value }) => (
+        <>
+          <TagsInput.Label className="font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            Tricks
+          </TagsInput.Label>
+          <div className="flex min-h-10 w-full flex-wrap items-center gap-1.5 rounded-md border border-input bg-background px-3 py-2 text-sm focus-within:ring-1 focus-within:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:focus-within:ring-zinc-400">
             {value.map((item) => (
               <TagsInput.Item
                 key={item}
@@ -26,13 +26,13 @@ export default function TagsInputDemo() {
               placeholder="Add trick..."
               className="flex-1 bg-transparent outline-none placeholder:text-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder:text-zinc-400"
             />
-          </>
-        )}
-      </TagsInput.Content>
-      <TagsInput.Clear className="flex h-9 items-center justify-center gap-2 rounded-sm border border-input bg-transparent text-black shadow-sm hover:bg-zinc-100 dark:text-white dark:hover:bg-zinc-800">
-        <RefreshCcw className="h-4 w-4" />
-        Clear
-      </TagsInput.Clear>
+          </div>
+          <TagsInput.Clear className="flex h-9 items-center justify-center gap-2 rounded-sm border border-input bg-transparent text-black shadow-sm hover:bg-zinc-100 dark:text-white dark:hover:bg-zinc-800">
+            <RefreshCcw className="h-4 w-4" />
+            Clear
+          </TagsInput.Clear>
+        </>
+      )}
     </TagsInput.Root>
   );
 }

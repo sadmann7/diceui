@@ -12,10 +12,10 @@ export {
 } from "./tags-input-label";
 
 export {
-  type TagsInputContentProps,
-  Content,
-  TagsInputContent,
-} from "./tags-input-content";
+  type TagsInputListProps,
+  List,
+  TagsInputList,
+} from "./tags-input-list";
 export {
   type TagsInputItemProps,
   Item,

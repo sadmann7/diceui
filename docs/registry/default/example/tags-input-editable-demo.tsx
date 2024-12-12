@@ -2,14 +2,16 @@
 
 import * as React from "react";
 
+import { Button } from "@/components/ui/button";
 import {
   TagsInput,
   TagsInputClear,
-  TagsInputContent,
   TagsInputInput,
   TagsInputItem,
   TagsInputLabel,
+  TagsInputList,
 } from "@/registry/default/ui/tags-input";
+import { RefreshCcw } from "lucide-react";
 
 export default function TagsInputEditableDemo() {
   const [tricks, setTricks] = React.useState([
@@ -21,15 +23,20 @@ export default function TagsInputEditableDemo() {
   return (
     <TagsInput value={tricks} onValueChange={setTricks} editable addOnPaste>
       <TagsInputLabel>Tricks</TagsInputLabel>
-      <TagsInputContent>
+      <TagsInputList>
         {tricks.map((trick) => (
           <TagsInputItem key={trick} value={trick}>
             {trick}
           </TagsInputItem>
         ))}
         <TagsInputInput placeholder="Add trick..." />
-      </TagsInputContent>
-      <TagsInputClear>Clear</TagsInputClear>
+      </TagsInputList>
+      <TagsInputClear asChild>
+        <Button variant="outline">
+          <RefreshCcw className="h-4 w-4" />
+          Clear
+        </Button>
+      </TagsInputClear>
     </TagsInput>
   );
 }

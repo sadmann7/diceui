@@ -1,11 +1,11 @@
 import type {
   TagsInputClearProps,
-  TagsInputContentProps,
   TagsInputInputProps,
   TagsInputItemDeleteProps,
   TagsInputItemProps,
   TagsInputItemTextProps,
   TagsInputLabelProps,
+  TagsInputListProps,
   TagsInputRootProps,
 } from "@diceui/tags-input";
 import type * as React from "react";
@@ -20,8 +20,8 @@ export type LabelProps = Omit<
   keyof React.ComponentPropsWithoutRef<"label">
 >;
 
-export type ContentProps = Omit<
-  TagsInputContentProps,
+export type ListProps = Omit<
+  TagsInputListProps,
   keyof React.ComponentPropsWithoutRef<"div">
 >;
 

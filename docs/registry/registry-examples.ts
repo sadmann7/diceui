@@ -45,6 +45,18 @@ export const examples: Registry = [
     ],
   },
   {
+    name: "tags-input-validation-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/tags-input", "lucide-react"],
+    registryDependencies: ["tags-input", "button"],
+    files: [
+      {
+        path: "example/tags-input-validation-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "sortable-demo",
     type: "registry:example",
     dependencies: [

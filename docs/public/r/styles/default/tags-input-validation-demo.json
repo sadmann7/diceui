@@ -1,0 +1,20 @@
+{
+  "name": "tags-input-validation-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@diceui/tags-input",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "tags-input",
+    "button"
+  ],
+  "files": [
+    {
+      "path": "example/tags-input-validation-demo.tsx",
+      "content": "\"use client\";\r\n\r\nimport * as React from \"react\";\r\n\r\nimport { Button } from \"@/components/ui/button\";\r\nimport {\r\n  TagsInput,\r\n  TagsInputClear,\r\n  TagsInputInput,\r\n  TagsInputItem,\r\n  TagsInputLabel,\r\n  TagsInputList,\r\n} from \"@/registry/default/ui/tags-input\";\r\nimport { RefreshCcw } from \"lucide-react\";\r\n\r\nexport default function TagsInputValidationDemo() {\r\n  const [tricks, setTricks] = React.useState([\r\n    \"Kickflip\",\r\n    \"Heelflip\",\r\n    \"FS 540\",\r\n  ]);\r\n\r\n  return (\r\n    <TagsInput\r\n      value={tricks}\r\n      onValueChange={setTricks}\r\n      onValidate={(value) => value.length > 3}\r\n    >\r\n      <TagsInputLabel>Tricks</TagsInputLabel>\r\n      <TagsInputList>\r\n        {tricks.map((trick) => (\r\n          <TagsInputItem key={trick} value={trick}>\r\n            {trick}\r\n          </TagsInputItem>\r\n        ))}\r\n        <TagsInputInput placeholder=\"Add trick...\" />\r\n      </TagsInputList>\r\n      <TagsInputClear asChild>\r\n        <Button variant=\"outline\">\r\n          <RefreshCcw className=\"h-4 w-4\" />\r\n          Clear\r\n        </Button>\r\n      </TagsInputClear>\r\n    </TagsInput>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

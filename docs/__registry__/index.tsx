@@ -101,6 +101,22 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "tags-input-validation-demo": {
+      name: "tags-input-validation-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["tags-input","button"],
+      files: [{
+        path: "registry/default/example/tags-input-validation-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/example/tags-input-validation-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "sortable-demo": {
       name: "sortable-demo",
       description: "",

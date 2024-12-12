@@ -2,11 +2,10 @@
 
 import {
   TagsInput,
-  TagsInputClear,
-  TagsInputContent,
   TagsInputInput,
   TagsInputItem,
   TagsInputLabel,
+  TagsInputList,
 } from "@/registry/default/ui/tags-input";
 import * as React from "react";
 
@@ -42,7 +41,7 @@ export default function TagsInputSortableDemo() {
       <TagsInput value={fruits} onValueChange={setFruits} sortable editable>
         <TagsInputLabel>Sortable</TagsInputLabel>
         <SortableContent>
-          <TagsInputContent>
+          <TagsInputList>
             {fruits.map((fruit) => (
               <SortableItem
                 key={fruit}
@@ -55,12 +54,11 @@ export default function TagsInputSortableDemo() {
               </SortableItem>
             ))}
             <TagsInputInput placeholder="Add fruit..." />
-          </TagsInputContent>
+          </TagsInputList>
         </SortableContent>
         <SortableOverlay>
           <div className="size-full animate-pulse rounded-sm bg-primary/10" />
         </SortableOverlay>
-        <TagsInputClear />
       </TagsInput>
     </Sortable>
   );
