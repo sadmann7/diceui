@@ -43,12 +43,6 @@ interface CheckboxGroupRootProps
   /** Callback when value changes. */
   onValueChange?: (value: string[]) => void;
 
-  /** Callback function to validate values before they're added. */
-  onValidate?: (value: string[]) => boolean | string;
-
-  /** Callback function to handle invalid input. */
-  onInvalid?: (value: string[]) => void;
-
   /** Whether the checkbox group is disabled. */
   disabled?: boolean;
 
@@ -82,8 +76,6 @@ const CheckboxGroupRoot = React.forwardRef<
     value: valueProp,
     defaultValue,
     onValueChange,
-    onValidate,
-    onInvalid,
     disabled = false,
     invalid = false,
     required = false,
@@ -98,10 +90,6 @@ const CheckboxGroupRoot = React.forwardRef<
     prop: valueProp,
     defaultProp: defaultValue,
     onChange: onValueChange,
-  });
-  const [isInvalid = false, setIsInvalid] = useControllableState({
-    prop: invalid,
-    defaultProp: false,
   });
 
   const dir = useDirection(dirProp);
@@ -119,16 +107,9 @@ const CheckboxGroupRoot = React.forwardRef<
         ? [...value, payload]
         : value.filter((v) => v !== payload);
 
-      if (checked && onValidate && !onValidate(newValue)) {
-        setIsInvalid(true);
-        onInvalid?.(newValue);
-        return;
-      }
-
-      setIsInvalid(false);
       setValue(newValue);
     },
-    [setValue, onValidate, onInvalid, value, setIsInvalid],
+    [setValue, value],
   );
 
   return (
@@ -140,7 +121,7 @@ const CheckboxGroupRoot = React.forwardRef<
       required={required}
       dir={dir}
       orientation={orientation}
-      isInvalid={isInvalid}
+      isInvalid={invalid}
       id={id}
       labelId={labelId}
       descriptionId={descriptionId}
@@ -149,11 +130,11 @@ const CheckboxGroupRoot = React.forwardRef<
       <Primitive.div
         role="group"
         aria-labelledby={labelId}
-        aria-describedby={`${descriptionId} ${isInvalid ? messageId : ""}`}
+        aria-describedby={`${descriptionId} ${invalid ? messageId : ""}`}
         aria-orientation={orientation}
         data-orientation={orientation}
         data-disabled={disabled ? "" : undefined}
-        data-invalid={isInvalid ? "" : undefined}
+        data-invalid={invalid ? "" : undefined}
         dir={dir}
         {...rootProps}
         ref={composedRefs}
