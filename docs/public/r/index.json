@@ -6,9 +6,6 @@
       "@diceui/tags-input",
       "@radix-ui/react-slot"
     ],
-    "registryDependencies": [
-      "button"
-    ],
     "files": [
       {
         "path": "ui/tags-input.tsx",
@@ -25,9 +22,6 @@
       "@dnd-kit/sortable",
       "@dnd-kit/utilities",
       "@radix-ui/react-slot"
-    ],
-    "registryDependencies": [
-      "button"
     ],
     "files": [
       {

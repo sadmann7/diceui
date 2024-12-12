@@ -11,8 +11,9 @@ interface CheckboxGroupDescriptionProps
    * @default false
    */
   announce?: boolean;
+
   /**
-   * Hide the description when the checkbox group is in an error state
+   * Hide the description when the checkbox group is in an error state.
    * @default false
    */
   hideOnError?: boolean;

@@ -53,6 +53,9 @@ interface CheckboxGroupRootProps
   /** Whether the checkbox group is invalid. */
   invalid?: boolean;
 
+  /** Whether the checkbox group is read-only. */
+  readOnly?: boolean;
+
   /** Whether the checkbox group is required. */
   required?: boolean;
 
@@ -83,6 +86,7 @@ const CheckboxGroupRoot = React.forwardRef<
     onValidate,
     disabled = false,
     invalid = false,
+    readOnly = false,
     required = false,
     dir: dirProp,
     orientation = "vertical",
@@ -126,13 +130,15 @@ const CheckboxGroupRoot = React.forwardRef<
 
   const onItemCheckedChange = React.useCallback(
     (payload: string, checked: boolean) => {
+      if (readOnly) return;
+
       const newValue = checked
         ? [...value, payload]
         : value.filter((v) => v !== payload);
 
       setValue(newValue);
     },
-    [setValue, value],
+    [setValue, value, readOnly],
   );
 
   return (

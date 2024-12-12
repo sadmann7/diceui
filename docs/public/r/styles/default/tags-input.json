@@ -5,9 +5,6 @@
     "@diceui/tags-input",
     "@radix-ui/react-slot"
   ],
-  "registryDependencies": [
-    "button"
-  ],
   "files": [
     {
       "path": "ui/tags-input.tsx",

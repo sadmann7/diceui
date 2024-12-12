@@ -9,7 +9,7 @@ export const Index: Record<string, any> = {
       name: "tags-input",
       description: "",
       type: "registry:ui",
-      registryDependencies: ["button"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/ui/tags-input.tsx",
         type: "registry:ui",
@@ -25,7 +25,7 @@ export const Index: Record<string, any> = {
       name: "sortable",
       description: "",
       type: "registry:ui",
-      registryDependencies: ["button"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/ui/sortable.tsx",
         type: "registry:ui",
@@ -149,6 +149,22 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "checkbox-group-animated-demo": {
+      name: "checkbox-group-animated-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/example/checkbox-group-animated-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/example/checkbox-group-animated-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "checkbox-group-horizontal-demo": {
       name: "checkbox-group-horizontal-demo",
       description: "",
@@ -176,22 +192,6 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/example/checkbox-group-validation-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
-    "checkbox-group-animated-demo": {
-      name: "checkbox-group-animated-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: undefined,
-      files: [{
-        path: "registry/default/example/checkbox-group-animated-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/example/checkbox-group-animated-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",

@@ -8,9 +8,6 @@
     "@dnd-kit/utilities",
     "@radix-ui/react-slot"
   ],
-  "registryDependencies": [
-    "button"
-  ],
   "files": [
     {
       "path": "ui/sortable.tsx",

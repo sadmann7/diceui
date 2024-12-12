@@ -17,12 +17,9 @@ export default function CheckboxGroupValidationDemo() {
     <CheckboxGroup
       value={tricks}
       onValueChange={setTricks}
-      onValidate={(value) => {
-        if (value.includes("indy")) {
-          return "Indy is not allowed";
-        }
-        return null;
-      }}
+      onValidate={(value) =>
+        value.includes("indy") ? "Indy is not allowed" : null
+      }
     >
       <CheckboxGroupLabel>Tricks</CheckboxGroupLabel>
       <CheckboxGroupList>
