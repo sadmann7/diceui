@@ -1,6 +1,7 @@
 ---
 title: Tags Input
 description: Display a list of tags in an input field with the ability to add, edit, and remove them.
+preview: true
 ---
 
 
@@ -43,6 +44,23 @@ npx shadcn@latest add "https://diceui.com/r/tags-input"
   </Step>
 </Steps>
 
+## Anatomy
+
+Import the parts, and compose them together.
+
+```tsx
+import * as TagsInput from "@diceui/tags-input";
+
+<TagsInput.Root>
+  <TagsInput.Label/>
+  <TagsInput.Item >
+    <TagsInput.Text />
+    <TagsInput.Delete />
+  </TagsInput.Item>
+  <TagsInput.Input />
+  <TagsInput.Clear />
+</TagsInput.Root>
+```
 
 ## Examples
 

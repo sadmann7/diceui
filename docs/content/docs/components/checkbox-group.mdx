@@ -1,6 +1,7 @@
 ---
 title: Checkbox Group
 description: A group of checkboxes that allows multiple selections with support for validation and accessibility.
+preview: true
 ---
 
 <ComponentTabs name="checkbox-group-demo" />
@@ -49,10 +50,8 @@ import * as CheckboxGroup from "@diceui/checkbox-group";
 </CheckboxGroup.Root>
 ```
 
-## Examples
 
-
-### Animated Checkbox
+## Animated Checkbox
 
 <Steps>
   <Step>
@@ -76,9 +75,15 @@ import * as CheckboxGroup from "@diceui/checkbox-group";
     }
     ```
   </Step>
+  <Step>
+    Copy and paste the `CheckboxGroup.Indicator` block from the following example into your project.
+
+    <ComponentTabs name="checkbox-group-animated-demo" />
+  </Step>
 </Steps>
 
-<ComponentTabs name="checkbox-group-animated-demo" />
+
+## Examples
 
 
 ### Horizontal Orientation
@@ -87,6 +92,8 @@ import * as CheckboxGroup from "@diceui/checkbox-group";
 
 
 ### With Validation
+
+Validate the group with `onValidate` or `required` prop. Can be used for native form validation.
 
 <ComponentTabs name="checkbox-group-validation-demo" />
 
