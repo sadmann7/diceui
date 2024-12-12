@@ -11,21 +11,28 @@ interface CheckboxGroupDescriptionProps
    * @default false
    */
   announce?: boolean;
+  /**
+   * Hide the description when the checkbox group is in an error state
+   * @default false
+   */
+  hideOnError?: boolean;
 }
 
 const CheckboxGroupDescription = React.forwardRef<
   HTMLDivElement,
   CheckboxGroupDescriptionProps
 >((props, ref) => {
-  const { announce = false, ...descriptionProps } = props;
+  const { announce = false, hideOnError = false, ...descriptionProps } = props;
   const context = useCheckboxGroup(DESCRIPTION_NAME);
+
+  if (hideOnError && context.isInvalid) {
+    return null;
+  }
 
   return (
     <Primitive.div
       id={context.descriptionId}
-      // Use aria-live to announce changes to screen readers
       aria-live={announce ? "polite" : "off"}
-      // Associate with the checkbox group using aria-describedby
       aria-describedby={context.labelId}
       aria-invalid={context.isInvalid}
       data-disabled={context.disabled ? "" : undefined}

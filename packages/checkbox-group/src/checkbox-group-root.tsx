@@ -24,6 +24,7 @@ interface CheckboxGroupContextValue {
   labelId: string;
   descriptionId: string;
   messageId: string;
+  validationMessage?: string | string[];
 }
 
 const [CheckboxGroupProvider, useCheckboxGroup] =
@@ -42,6 +43,9 @@ interface CheckboxGroupRootProps
 
   /** Callback when value changes. */
   onValueChange?: (value: string[]) => void;
+
+  /** Callback when value is validated. */
+  onValidate?: (value: string[]) => string | string[] | true | null | undefined;
 
   /** Whether the checkbox group is disabled. */
   disabled?: boolean;
@@ -76,6 +80,7 @@ const CheckboxGroupRoot = React.forwardRef<
     value: valueProp,
     defaultValue,
     onValueChange,
+    onValidate,
     disabled = false,
     invalid = false,
     required = false,
@@ -86,10 +91,28 @@ const CheckboxGroupRoot = React.forwardRef<
     ...rootProps
   } = props;
 
+  const [validationMessage, setValidationMessage] = React.useState<
+    string | string[]
+  >();
+  const isInvalid = invalid || !!validationMessage;
+
   const [value = [], setValue] = useControllableState({
     prop: valueProp,
     defaultProp: defaultValue,
-    onChange: onValueChange,
+    onChange: (newValue) => {
+      if (onValidate) {
+        const validationResult = onValidate(newValue);
+        if (
+          typeof validationResult === "string" ||
+          Array.isArray(validationResult)
+        ) {
+          setValidationMessage(validationResult);
+        } else if (validationResult === true || validationResult == null) {
+          setValidationMessage(undefined);
+        }
+      }
+      onValueChange?.(newValue);
+    },
   });
 
   const dir = useDirection(dirProp);
@@ -121,20 +144,21 @@ const CheckboxGroupRoot = React.forwardRef<
       required={required}
       dir={dir}
       orientation={orientation}
-      isInvalid={invalid}
+      isInvalid={isInvalid}
       id={id}
       labelId={labelId}
       descriptionId={descriptionId}
       messageId={messageId}
+      validationMessage={validationMessage}
     >
       <Primitive.div
         role="group"
         aria-labelledby={labelId}
-        aria-describedby={`${descriptionId} ${invalid ? messageId : ""}`}
+        aria-describedby={`${descriptionId} ${isInvalid ? messageId : ""}`}
         aria-orientation={orientation}
         data-orientation={orientation}
         data-disabled={disabled ? "" : undefined}
-        data-invalid={invalid ? "" : undefined}
+        data-invalid={isInvalid ? "" : undefined}
         dir={dir}
         {...rootProps}
         ref={composedRefs}

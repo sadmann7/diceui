@@ -17,10 +17,13 @@ const CheckboxGroupMessage = React.forwardRef<
   HTMLDivElement,
   CheckboxGroupMessageProps
 >((props, ref) => {
-  const { announce = false, ...messageProps } = props;
+  const { announce = false, children, ...messageProps } = props;
   const context = useCheckboxGroup(MESSAGE_NAME);
 
   if (!context.isInvalid) return null;
+
+  const message = context.validationMessage || children;
+  const messageContent = Array.isArray(message) ? message.join(" ") : message;
 
   return (
     <Primitive.div
@@ -30,7 +33,9 @@ const CheckboxGroupMessage = React.forwardRef<
       data-invalid={context.isInvalid ? "" : undefined}
       {...messageProps}
       ref={ref}
-    />
+    >
+      {messageContent}
+    </Primitive.div>
   );
 });
 
