@@ -22,7 +22,7 @@
   },
   "files": ["dist", "package.json", "LICENSE", "README.md"],
   "scripts": {
-    "clean": "rimrraf dist",
+    "clean": "rimraf dist",
     "dev": "tsup --format esm --watch --external=react",
     "build": "tsup --clean --external=react",
     "typecheck": "tsc --noEmit"
