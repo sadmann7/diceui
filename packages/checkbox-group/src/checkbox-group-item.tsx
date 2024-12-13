@@ -112,10 +112,6 @@ CheckboxGroupItem.displayName = ITEM_NAME;
 
 const Item = CheckboxGroupItem;
 
-export {
-  CheckboxGroupItem,
-  getState,
-  Item,
-  useCheckboxGroupItem,
-  type CheckboxGroupItemProps,
-};
+export { CheckboxGroupItem, Item, getState, useCheckboxGroupItem };
+
+export type { CheckboxGroupItemContext, CheckboxGroupItemProps };

@@ -78,4 +78,6 @@ const TagsInputItemText = React.forwardRef<
 
 const Text = TagsInputItemText;
 
-export { TagsInputItemText, Text, type TagsInputItemTextProps };
+export { TagsInputItemText, Text };
+
+export type { TagsInputItemTextProps };

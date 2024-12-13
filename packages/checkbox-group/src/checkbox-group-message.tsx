@@ -43,4 +43,6 @@ CheckboxGroupMessage.displayName = MESSAGE_NAME;
 
 const Message = CheckboxGroupMessage;
 
-export { CheckboxGroupMessage, Message, type CheckboxGroupMessageProps };
+export { CheckboxGroupMessage, Message };
+
+export type { CheckboxGroupMessageProps };

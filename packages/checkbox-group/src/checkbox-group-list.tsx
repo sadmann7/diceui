@@ -27,4 +27,6 @@ CheckboxGroupList.displayName = LIST_NAME;
 
 const List = CheckboxGroupList;
 
-export { CheckboxGroupList, List, type CheckboxGroupListProps };
+export { CheckboxGroupList, List };
+
+export type { CheckboxGroupListProps };

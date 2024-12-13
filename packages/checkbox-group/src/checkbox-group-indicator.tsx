@@ -34,4 +34,6 @@ CheckboxGroupIndicator.displayName = INDICATOR_NAME;
 
 const Indicator = CheckboxGroupIndicator;
 
-export { CheckboxGroupIndicator, Indicator, type CheckboxGroupIndicatorProps };
+export { CheckboxGroupIndicator, Indicator };
+
+export type { CheckboxGroupIndicatorProps };

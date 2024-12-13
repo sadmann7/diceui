@@ -1,43 +1,25 @@
 "use client";
 
-export {
-  type TagsInputRootProps,
-  Root,
-  TagsInputRoot,
-} from "./tags-input-root";
-export {
-  type TagsInputLabelProps,
-  Label,
-  TagsInputLabel,
-} from "./tags-input-label";
+export { Root, TagsInputRoot } from "./tags-input-root";
+export type { TagsInputRootProps } from "./tags-input-root";
 
-export {
-  type TagsInputListProps,
-  List,
-  TagsInputList,
-} from "./tags-input-list";
-export {
-  type TagsInputItemProps,
-  Item,
-  TagsInputItem,
-} from "./tags-input-item";
-export {
-  type TagsInputInputProps,
-  Input,
-  TagsInputInput,
-} from "./tags-input-input";
-export {
-  type TagsInputItemDeleteProps,
-  Delete,
-  TagsInputItemDelete,
-} from "./tags-input-item-delete";
-export {
-  Text,
-  TagsInputItemText,
-  type TagsInputItemTextProps,
-} from "./tags-input-item-text";
-export {
-  type TagsInputClearProps,
-  Clear,
-  TagsInputClear,
-} from "./tags-input-clear";
+export { Label, TagsInputLabel } from "./tags-input-label";
+export type { TagsInputLabelProps } from "./tags-input-label";
+
+export { List, TagsInputList } from "./tags-input-list";
+export type { TagsInputListProps } from "./tags-input-list";
+
+export { Item, TagsInputItem } from "./tags-input-item";
+export type { TagsInputItemProps } from "./tags-input-item";
+
+export { Input, TagsInputInput } from "./tags-input-input";
+export type { TagsInputInputProps } from "./tags-input-input";
+
+export { Delete, TagsInputItemDelete } from "./tags-input-item-delete";
+export type { TagsInputItemDeleteProps } from "./tags-input-item-delete";
+
+export { Text, TagsInputItemText } from "./tags-input-item-text";
+export type { TagsInputItemTextProps } from "./tags-input-item-text";
+
+export { Clear, TagsInputClear } from "./tags-input-clear";
+export type { TagsInputClearProps } from "./tags-input-clear";

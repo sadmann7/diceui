@@ -125,4 +125,6 @@ TagsInputItem.displayName = ITEM_NAME;
 
 const Item = TagsInputItem;
 
-export { Item, TagsInputItem, useTagsInputItem, type TagsInputItemProps };
+export { Item, TagsInputItem, useTagsInputItem };
+
+export type { TagsInputItemProps };
