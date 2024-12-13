@@ -33,7 +33,7 @@ interface TagsInputContextValue<T = InputValue> {
   setEditingValue: (value: T | null) => void;
   displayValue: (value: T) => string;
   onItemLeave: () => void;
-  inputRef: React.RefObject<HTMLInputElement>;
+  inputRef: React.RefObject<HTMLInputElement | null>;
   isInvalidInput: boolean;
   addOnPaste: boolean;
   addOnTab: boolean;
@@ -201,7 +201,7 @@ const TagsInputRoot = React.forwardRef<
   const composedRefs = useComposedRefs(ref, collectionRef, (node) =>
     onTriggerChange(node),
   );
-  const { getItems } = useCollection({ ref: collectionRef });
+  const { getItems } = useCollection<HTMLDivElement>({ ref: collectionRef });
 
   const onItemAdd = React.useCallback(
     (textValue: string, options?: { viaPaste?: boolean }) => {

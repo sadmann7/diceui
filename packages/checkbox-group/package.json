@@ -22,7 +22,6 @@
   },
   "files": ["dist", "package.json", "LICENSE", "README.md"],
   "scripts": {
-    "clean": "rimraf dist",
     "dev": "tsup --format esm --watch --external=react",
     "build": "tsup --clean --external=react",
     "typecheck": "tsc --noEmit"
@@ -42,13 +41,11 @@
     }
   },
   "devDependencies": {
-    "@types/node": "^22.7.4",
-    "rimraf": "^6.0.1",
-    "tsup": "^8.3.0",
-    "typescript": "^5.6.2"
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
   },
   "dependencies": {
     "@diceui/shared": "workspace:*",
-    "@radix-ui/react-primitive": "^2.0.0"
+    "@radix-ui/react-primitive": "^2.0.1"
   }
 }

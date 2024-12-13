@@ -2,7 +2,7 @@ import * as React from "react";
 import { ITEM_DATA_ATTR } from "../constants";
 
 interface UseCollectionProps {
-  ref: React.RefObject<HTMLElement>;
+  ref: React.RefObject<HTMLElement | null>;
   attribute?: string;
 }
 

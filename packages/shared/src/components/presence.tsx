@@ -4,15 +4,13 @@
 
 import * as React from "react";
 
-import { useComposedRefs } from "../lib";
-
 import { useLayoutEffect, useStateMachine } from "../hooks";
-import { getElementRef } from "../lib";
 
 interface PresenceProps {
-  children:
-    | React.ReactElement
-    | ((props: { present: boolean }) => React.ReactElement);
+  children: (props: {
+    present: boolean;
+    presenceRef: React.RefCallback<HTMLElement>;
+  }) => React.ReactElement;
   present: boolean;
 }
 
@@ -20,17 +18,10 @@ const Presence: React.FC<PresenceProps> = (props) => {
   const { present, children } = props;
   const presence = usePresence(present);
 
-  const child = (
-    typeof children === "function"
-      ? children({ present: presence.isPresent })
-      : React.Children.only(children)
-  ) as React.ReactElement;
-
-  const ref = useComposedRefs(presence.ref, getElementRef(child));
-  const forceMount = typeof children === "function";
-  return forceMount || presence.isPresent
-    ? React.cloneElement(child, { ref })
-    : null;
+  return children({
+    present: presence.isPresent,
+    presenceRef: presence.ref,
+  });
 };
 
 Presence.displayName = "Presence";

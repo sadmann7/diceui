@@ -1,4 +1,4 @@
-import { Presence } from "@diceui/shared";
+import { Presence, composeRefs } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { getState, useCheckboxGroupItem } from "./checkbox-group-item";
@@ -20,12 +20,18 @@ const CheckboxGroupIndicator = React.forwardRef<
 
   return (
     <Presence present={forceMount || itemContext.checked}>
-      <Primitive.span
-        data-state={getState(itemContext.checked)}
-        data-disabled={itemContext.disabled ? "" : undefined}
-        {...indicatorProps}
-        ref={ref}
-      />
+      {({ present, presenceRef }) =>
+        present ? (
+          <Primitive.span
+            data-state={getState(itemContext.checked)}
+            data-disabled={itemContext.disabled ? "" : undefined}
+            {...indicatorProps}
+            ref={composeRefs(presenceRef, ref)}
+          />
+        ) : (
+          <></>
+        )
+      }
     </Presence>
   );
 });
