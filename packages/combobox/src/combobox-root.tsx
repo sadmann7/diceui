@@ -16,12 +16,13 @@ interface ComboboxContextValue {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   disabled: boolean;
-  contentId: string;
   inputRef: React.RefObject<HTMLInputElement | null>;
+  contentRef: React.RefObject<HTMLDivElement | null>;
   selectedValue: string | null;
   setSelectedValue: (value: string | null) => void;
   id: string;
   labelId: string;
+  contentId: string;
 }
 
 const ROOT_NAME = "Combobox";
@@ -61,6 +62,16 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxRootProps>(
 
     const id = useId();
     const labelId = `${id}label`;
+    const contentId = `${id}content`;
+
+    const collectionRef = React.useRef<HTMLDivElement | null>(null);
+    const inputRef = React.useRef<HTMLInputElement | null>(null);
+    const contentRef = React.useRef<HTMLDivElement | null>(null);
+
+    const { getItems } = useCollection({ ref: collectionRef });
+    const items = getItems();
+
+    console.log({ items });
 
     const [value, setValue] = useControllableState({
       prop: controlledValue,
@@ -77,17 +88,11 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxRootProps>(
     const [selectedValue, setSelectedValue] = React.useState<string | null>(
       null,
     );
-    const inputRef = React.useRef<HTMLInputElement | null>(null);
-    const contentId = useId();
-    const collectionRef = React.useRef<HTMLDivElement | null>(null);
+
     const { isFormControl, onTriggerChange } = useFormControl();
     const composedRefs = useComposedRefs(forwardedRef, collectionRef, (node) =>
       onTriggerChange(node),
     );
-    const { getItems } = useCollection({ ref: collectionRef });
-    const items = getItems();
-
-    console.log({ items });
 
     return (
       <ComboboxProvider
@@ -96,12 +101,13 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxRootProps>(
         open={open}
         onOpenChange={setOpen}
         disabled={disabled}
-        contentId={contentId}
         inputRef={inputRef}
+        contentRef={contentRef}
         selectedValue={selectedValue}
         setSelectedValue={setSelectedValue}
         id={id}
         labelId={labelId}
+        contentId={contentId}
       >
         <Primitive.div
           id={id}
