@@ -3,14 +3,13 @@
  */
 
 import * as React from "react";
-
 import { useLayoutEffect, useStateMachine } from "../hooks";
+import { useComposedRefs } from "../lib";
 
 interface PresenceProps {
-  children: (props: {
-    present: boolean;
-    presenceRef: React.RefCallback<HTMLElement>;
-  }) => React.ReactElement;
+  children:
+    | React.ReactElement
+    | ((props: { present: boolean }) => React.ReactElement);
   present: boolean;
 }
 
@@ -18,10 +17,17 @@ const Presence: React.FC<PresenceProps> = (props) => {
   const { present, children } = props;
   const presence = usePresence(present);
 
-  return children({
-    present: presence.isPresent,
-    presenceRef: presence.ref,
-  });
+  const child = (
+    typeof children === "function"
+      ? children({ present: presence.isPresent })
+      : React.Children.only(children)
+  ) as React.ReactElement<{ ref?: React.Ref<HTMLElement> }>;
+
+  const ref = useComposedRefs(presence.ref, getElementRef(child));
+  const forceMount = typeof children === "function";
+  return forceMount || presence.isPresent
+    ? React.cloneElement(child, { ref })
+    : null;
 };
 
 Presence.displayName = "Presence";
@@ -29,7 +35,7 @@ Presence.displayName = "Presence";
 function usePresence(present: boolean) {
   const [node, setNode] = React.useState<HTMLElement>();
   const stylesRef = React.useRef<CSSStyleDeclaration>(
-    {} as CSSStyleDeclaration,
+    {} as unknown as CSSStyleDeclaration,
   );
   const prevPresentRef = React.useRef(present);
   const prevAnimationNameRef = React.useRef<string>("none");
@@ -149,6 +155,7 @@ function usePresence(present: boolean) {
         node.removeEventListener("animationend", onAnimationEnd);
       };
     }
+
     // Transition to the unmounted state if the node is removed prematurely.
     // We avoid doing so during cleanup as the node may change but still exist.
     send("ANIMATION_END");
@@ -167,4 +174,31 @@ function getAnimationName(styles?: CSSStyleDeclaration) {
   return styles?.animationName || "none";
 }
 
-export { Presence, type PresenceProps };
+// Before React 19 accessing `element.props.ref` will throw a warning and suggest using `element.ref`
+// After React 19 accessing `element.ref` does the opposite.
+// https://github.com/facebook/react/pull/28348
+//
+// Access the ref using the method that doesn't yield a warning.
+function getElementRef(
+  element: React.ReactElement<{ ref?: React.Ref<unknown> }>,
+) {
+  // React <=18 in DEV
+  let getter = Object.getOwnPropertyDescriptor(element.props, "ref")?.get;
+  let mayWarn = getter && "isReactWarning" in getter && getter.isReactWarning;
+  if (mayWarn) {
+    return (element as unknown as { ref?: React.Ref<unknown> }).ref;
+  }
+
+  // React 19 in DEV
+  getter = Object.getOwnPropertyDescriptor(element, "ref")?.get;
+  mayWarn = getter && "isReactWarning" in getter && getter.isReactWarning;
+  if (mayWarn) {
+    return element.props.ref;
+  }
+
+  // Not DEV
+  return element.props.ref || (element as { ref?: React.Ref<unknown> }).ref;
+}
+
+export { Presence };
+export type { PresenceProps };
