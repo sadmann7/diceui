@@ -10,52 +10,80 @@ import {
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 
+const ROOT_NAME = "ComboboxRoot";
+
 interface ComboboxContextValue {
-  value: string | undefined;
+  value: string | string[];
   onValueChange: (value: string) => void;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  disabled: boolean;
-  inputRef: React.RefObject<HTMLInputElement | null>;
+  searchTerm: string;
+  setSearchTerm: (value: string) => void;
+  isUserInputted: boolean;
+  filteredOptions: string[];
+  selectedValue: string | undefined;
+  selectedValueChange: (value: string | undefined) => void;
+  filterFunction?: (options: string[], term: string) => string[];
+  displayValue: (value: string) => string;
+  collectionRef: React.RefObject<HTMLDivElement | null>;
   contentRef: React.RefObject<HTMLDivElement | null>;
-  selectedValue: string | null;
-  setSelectedValue: (value: string | null) => void;
+  inputRef: React.RefObject<HTMLInputElement | null>;
+  multiple: boolean;
+  disabled: boolean;
+  loop: boolean;
+  resetSearchTermOnBlur: boolean;
   id: string;
   labelId: string;
   contentId: string;
 }
 
-const ROOT_NAME = "Combobox";
-
 const [ComboboxProvider, useComboboxContext] =
   createContext<ComboboxContextValue>(ROOT_NAME);
 
 interface ComboboxRootProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
-  value?: string;
-  defaultValue?: string;
-  onValueChange?: (value: string) => void;
+  extends Omit<
+    React.ComponentPropsWithoutRef<typeof Primitive.div>,
+    "value" | "defaultValue" | "onValueChange"
+  > {
+  value?: string | string[];
+  defaultValue?: string | string[];
+  onValueChange?: (value: string | string[]) => void;
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  searchTerm?: string;
+  onSearchTermChange?: (value: string) => void;
+  selectedValue?: string;
+  onSelectedValueChange?: (value: string | undefined) => void;
+  filterFunction?: (options: string[], term: string) => string[];
+  displayValue?: (value: string) => string;
+  multiple?: boolean;
   disabled?: boolean;
+  loop?: boolean;
   name?: string;
-  required?: boolean;
-  id?: string;
+  resetSearchTermOnBlur?: boolean;
 }
 
 const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxRootProps>(
   (props, forwardedRef) => {
     const {
-      value: controlledValue,
+      value: valueProp,
       defaultValue,
-      onValueChange,
+      onValueChange: onValueChangeProp,
       open: openProp,
       defaultOpen = false,
       onOpenChange,
+      searchTerm: searchTermProp,
+      onSearchTermChange,
+      selectedValue: selectedValueProp,
+      onSelectedValueChange,
+      displayValue = (value: string) => value,
+      filterFunction,
+      multiple = false,
       disabled = false,
+      loop = false,
+      resetSearchTermOnBlur = true,
       name,
-      required,
       children,
       ...rootProps
     } = props;
@@ -63,20 +91,24 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxRootProps>(
     const id = useId();
     const labelId = `${id}label`;
     const contentId = `${id}content`;
-
     const collectionRef = React.useRef<HTMLDivElement | null>(null);
-    const inputRef = React.useRef<HTMLInputElement | null>(null);
     const contentRef = React.useRef<HTMLDivElement | null>(null);
+    const inputRef = React.useRef<HTMLInputElement | null>(null);
 
     const { getItems } = useCollection({ ref: collectionRef });
-    const items = getItems();
 
-    console.log({ items });
+    const { isFormControl, onTriggerChange } = useFormControl<HTMLDivElement>();
 
-    const [value, setValue] = useControllableState({
-      prop: controlledValue,
+    const composedRef = useComposedRefs(forwardedRef, collectionRef, (node) =>
+      onTriggerChange(node),
+    );
+
+    const [options, setOptions] = React.useState<string[]>([]);
+
+    const [value = multiple ? [] : "", setValue] = useControllableState({
+      prop: valueProp,
       defaultProp: defaultValue,
-      onChange: onValueChange,
+      onChange: onValueChangeProp,
     });
 
     const [open = false, setOpen] = useControllableState({
@@ -85,44 +117,93 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxRootProps>(
       onChange: onOpenChange,
     });
 
-    const [selectedValue, setSelectedValue] = React.useState<string | null>(
-      null,
+    const [searchTerm = "", setSearchTerm] = useControllableState({
+      prop: searchTermProp,
+      defaultProp: "",
+      onChange: onSearchTermChange,
+    });
+
+    const [selectedValue, setSelectedValue] = useControllableState({
+      prop: selectedValueProp,
+      defaultProp: undefined,
+      onChange: onSelectedValueChange,
+    });
+
+    const [isUserInputted, setIsUserInputted] = React.useState(false);
+
+    const filteredOptions = React.useMemo(() => {
+      if (!isUserInputted) return options;
+
+      if (filterFunction) return filterFunction(options, searchTerm);
+
+      return options.filter((option) =>
+        option.toLowerCase().includes(searchTerm.toLowerCase()),
+      );
+    }, [options, searchTerm, isUserInputted, filterFunction]);
+
+    const onValueChange = React.useCallback(
+      (newValue: string) => {
+        if (multiple) {
+          const currentValues = Array.isArray(value) ? value : [];
+          const updatedValues = currentValues.includes(newValue)
+            ? currentValues.filter((v) => v !== newValue)
+            : [...currentValues, newValue];
+          setValue(updatedValues);
+        } else {
+          setValue(newValue);
+          setOpen(false);
+        }
+      },
+      [multiple, setValue, setOpen, value],
     );
 
-    const { isFormControl, onTriggerChange } = useFormControl();
-    const composedRefs = useComposedRefs(forwardedRef, collectionRef, (node) =>
-      onTriggerChange(node),
-    );
+    const resetSearchTerm = React.useCallback(() => {
+      if (!multiple && typeof value === "string") {
+        setSearchTerm(displayValue(value));
+      } else {
+        setSearchTerm("");
+      }
+    }, [multiple, value, displayValue, setSearchTerm]);
+
+    React.useEffect(() => {
+      if (!open && resetSearchTermOnBlur) {
+        resetSearchTerm();
+      }
+    }, [open, resetSearchTermOnBlur, resetSearchTerm]);
 
     return (
       <ComboboxProvider
         value={value}
-        onValueChange={setValue}
-        open={open}
+        onValueChange={onValueChange}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
         onOpenChange={setOpen}
-        disabled={disabled}
-        inputRef={inputRef}
-        contentRef={contentRef}
+        isUserInputted={isUserInputted}
+        filteredOptions={filteredOptions}
         selectedValue={selectedValue}
-        setSelectedValue={setSelectedValue}
+        selectedValueChange={setSelectedValue}
+        displayValue={displayValue}
+        filterFunction={filterFunction}
+        multiple={multiple}
+        disabled={disabled}
+        loop={loop}
+        open={open}
+        resetSearchTermOnBlur={resetSearchTermOnBlur}
+        collectionRef={collectionRef}
+        contentRef={contentRef}
+        inputRef={inputRef}
         id={id}
         labelId={labelId}
         contentId={contentId}
       >
-        <Primitive.div
-          id={id}
-          aria-labelledby={labelId}
-          {...rootProps}
-          ref={composedRefs}
-        >
+        <Primitive.div ref={composedRef} {...rootProps}>
           {children}
           {isFormControl && name && (
             <BubbleInput
               type="hidden"
-              name={name}
               control={collectionRef.current}
-              value={value}
-              required={required}
+              name={name}
+              value={JSON.stringify(value)}
               disabled={disabled}
             />
           )}
@@ -135,5 +216,4 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxRootProps>(
 ComboboxRoot.displayName = ROOT_NAME;
 
 export { ComboboxRoot, useComboboxContext };
-
 export type { ComboboxRootProps };
