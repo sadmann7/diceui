@@ -1,20 +1,20 @@
 import * as React from "react";
 import { usePrevious, useSize } from "../hooks";
 
-type InputValue = string[] | boolean | string;
+type InputValue = string[] | string;
 
-interface BubbleInputProps<T extends InputValue>
+interface BubbleInputProps<T = InputValue>
   extends Omit<
     React.InputHTMLAttributes<HTMLInputElement>,
     "value" | "checked"
   > {
-  value?: T extends string[] | string ? T : never;
+  value?: T;
   checked?: boolean;
   control: HTMLElement | null;
   bubbles?: boolean;
 }
 
-export function BubbleInput<T extends InputValue>(props: BubbleInputProps<T>) {
+export function BubbleInput<T = InputValue>(props: BubbleInputProps<T>) {
   const {
     control,
     value,

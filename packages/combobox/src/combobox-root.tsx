@@ -1,9 +1,11 @@
 import {
   BubbleInput,
+  type Direction,
   createContext,
   useCollection,
   useComposedRefs,
   useControllableState,
+  useDirection,
   useFormControl,
   useId,
 } from "@diceui/shared";
@@ -17,21 +19,24 @@ interface ComboboxContextValue {
   onValueChange: (value: string) => void;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  searchTerm: string;
-  setSearchTerm: (value: string) => void;
+  inputValue: string;
+  onInputValueChange: (value: string) => void;
   isUserInputted: boolean;
   filteredOptions: string[];
   selectedValue: string | undefined;
   selectedValueChange: (value: string | undefined) => void;
-  filterFunction?: (options: string[], term: string) => string[];
+  onFilter?: (options: string[], term: string) => string[];
   displayValue: (value: string) => string;
+  onInputKeyDown: (direction: "up" | "down" | "home" | "end") => Promise<void>;
   collectionRef: React.RefObject<HTMLDivElement | null>;
   contentRef: React.RefObject<HTMLDivElement | null>;
   inputRef: React.RefObject<HTMLInputElement | null>;
+  selectedItem: HTMLElement | null;
   multiple: boolean;
   disabled: boolean;
   loop: boolean;
-  resetSearchTermOnBlur: boolean;
+  blurBehavior: "reset" | "accept";
+  dir: Direction;
   id: string;
   labelId: string;
   contentId: string;
@@ -51,17 +56,18 @@ interface ComboboxRootProps
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
-  searchTerm?: string;
-  onSearchTermChange?: (value: string) => void;
+  inputValue?: string;
+  onInputValueChange?: (value: string) => void;
   selectedValue?: string;
   onSelectedValueChange?: (value: string | undefined) => void;
-  filterFunction?: (options: string[], term: string) => string[];
+  onFilter?: (options: string[], inputValue: string) => string[];
   displayValue?: (value: string) => string;
   multiple?: boolean;
   disabled?: boolean;
   loop?: boolean;
+  blurBehavior?: "reset" | "accept";
+  dir?: Direction;
   name?: string;
-  resetSearchTermOnBlur?: boolean;
 }
 
 const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxRootProps>(
@@ -73,16 +79,17 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxRootProps>(
       open: openProp,
       defaultOpen = false,
       onOpenChange,
-      searchTerm: searchTermProp,
-      onSearchTermChange,
+      inputValue: inputValueProp,
+      onInputValueChange,
       selectedValue: selectedValueProp,
       onSelectedValueChange,
       displayValue = (value: string) => value,
-      filterFunction,
+      onFilter,
       multiple = false,
       disabled = false,
       loop = false,
-      resetSearchTermOnBlur = true,
+      blurBehavior = "reset",
+      dir: dirProp,
       name,
       children,
       ...rootProps
@@ -94,11 +101,9 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxRootProps>(
     const collectionRef = React.useRef<HTMLDivElement | null>(null);
     const contentRef = React.useRef<HTMLDivElement | null>(null);
     const inputRef = React.useRef<HTMLInputElement | null>(null);
-
-    const { getItems } = useCollection({ ref: collectionRef });
-
-    const { isFormControl, onTriggerChange } = useFormControl<HTMLDivElement>();
-
+    const dir = useDirection(dirProp);
+    const { getEnabledItems } = useCollection({ ref: collectionRef });
+    const { isFormControl, onTriggerChange } = useFormControl();
     const composedRef = useComposedRefs(forwardedRef, collectionRef, (node) =>
       onTriggerChange(node),
     );
@@ -117,10 +122,9 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxRootProps>(
       onChange: onOpenChange,
     });
 
-    const [searchTerm = "", setSearchTerm] = useControllableState({
-      prop: searchTermProp,
-      defaultProp: "",
-      onChange: onSearchTermChange,
+    const [inputValue = "", setInputValue] = useControllableState({
+      prop: inputValueProp,
+      onChange: onInputValueChange,
     });
 
     const [selectedValue, setSelectedValue] = useControllableState({
@@ -134,12 +138,21 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxRootProps>(
     const filteredOptions = React.useMemo(() => {
       if (!isUserInputted) return options;
 
-      if (filterFunction) return filterFunction(options, searchTerm);
+      if (onFilter) return onFilter(options, inputValue);
 
       return options.filter((option) =>
-        option.toLowerCase().includes(searchTerm.toLowerCase()),
+        option.toLowerCase().includes(inputValue.toLowerCase()),
       );
-    }, [options, searchTerm, isUserInputted, filterFunction]);
+    }, [options, inputValue, isUserInputted, onFilter]);
+
+    const selectedIndex = filteredOptions.findIndex(
+      (option) => option === selectedValueProp,
+    );
+
+    const selectedItem = React.useMemo(() => {
+      if (selectedIndex === -1) return null;
+      return getEnabledItems()[selectedIndex] ?? null;
+    }, [selectedIndex, getEnabledItems]);
 
     const onValueChange = React.useCallback(
       (newValue: string) => {
@@ -159,39 +172,87 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxRootProps>(
 
     const resetSearchTerm = React.useCallback(() => {
       if (!multiple && typeof value === "string") {
-        setSearchTerm(displayValue(value));
+        setInputValue(displayValue(value));
       } else {
-        setSearchTerm("");
+        setInputValue("");
       }
-    }, [multiple, value, displayValue, setSearchTerm]);
+    }, [multiple, value, displayValue, setInputValue]);
+
+    const onInputKeyDown = React.useCallback(
+      async (direction: "up" | "down" | "home" | "end") => {
+        const currentIndex = selectedIndex;
+        const itemsLength = filteredOptions.length;
+
+        if (!itemsLength) return;
+
+        let nextIndex: number;
+
+        // Handle edge cases first
+        if (currentIndex === -1 || direction === "home") {
+          nextIndex = 0;
+        } else if (direction === "end") {
+          nextIndex = itemsLength - 1;
+        } else if (direction === "up") {
+          // Don't navigate up if already at first item
+          if (currentIndex === 0) return;
+          nextIndex = currentIndex - 1;
+        } else {
+          // Don't navigate down if already at last item
+          if (currentIndex === itemsLength - 1) return;
+          nextIndex = currentIndex + 1;
+        }
+
+        // Update selected value
+        const nextValue = filteredOptions[nextIndex];
+        setSelectedValue(nextValue);
+
+        // Wait for DOM update
+        await new Promise((resolve) => setTimeout(resolve, 0));
+
+        // Scroll selected item into view
+        if (selectedItem) {
+          selectedItem.scrollIntoView({ block: "nearest" });
+          selectedItem.focus();
+        }
+
+        // Return focus to input while preventing scroll
+        if (inputRef.current) {
+          inputRef.current.focus({ preventScroll: true });
+        }
+      },
+      [selectedIndex, filteredOptions, selectedItem, setSelectedValue],
+    );
 
     React.useEffect(() => {
-      if (!open && resetSearchTermOnBlur) {
+      if (!open && blurBehavior === "reset") {
         resetSearchTerm();
       }
-    }, [open, resetSearchTermOnBlur, resetSearchTerm]);
+    }, [open, blurBehavior, resetSearchTerm]);
 
     return (
       <ComboboxProvider
         value={value}
         onValueChange={onValueChange}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
+        inputValue={inputValue}
+        onInputValueChange={setInputValue}
         onOpenChange={setOpen}
         isUserInputted={isUserInputted}
         filteredOptions={filteredOptions}
         selectedValue={selectedValue}
         selectedValueChange={setSelectedValue}
         displayValue={displayValue}
-        filterFunction={filterFunction}
+        onFilter={onFilter}
+        onInputKeyDown={onInputKeyDown}
+        collectionRef={collectionRef}
+        contentRef={contentRef}
+        inputRef={inputRef}
+        selectedItem={selectedItem}
         multiple={multiple}
         disabled={disabled}
         loop={loop}
         open={open}
-        resetSearchTermOnBlur={resetSearchTermOnBlur}
-        collectionRef={collectionRef}
-        contentRef={contentRef}
-        inputRef={inputRef}
+        blurBehavior={blurBehavior}
+        dir={dir}
         id={id}
         labelId={labelId}
         contentId={contentId}
@@ -203,7 +264,7 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxRootProps>(
               type="hidden"
               control={collectionRef.current}
               name={name}
-              value={JSON.stringify(value)}
+              value={value}
               disabled={disabled}
             />
           )}
@@ -216,4 +277,5 @@ const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxRootProps>(
 ComboboxRoot.displayName = ROOT_NAME;
 
 export { ComboboxRoot, useComboboxContext };
+
 export type { ComboboxRootProps };

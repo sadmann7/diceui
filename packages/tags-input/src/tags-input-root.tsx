@@ -3,7 +3,6 @@ import * as React from "react";
 
 import {
   BubbleInput,
-  DATA_DISABLED_ATTR,
   type Direction,
   ITEM_DATA_ATTR,
   composeEventHandlers,
@@ -197,11 +196,13 @@ const TagsInputRoot = React.forwardRef<
   const inputId = `${id}input`;
   const labelId = `${id}label`;
   const dir = useDirection(dirProp);
+  const { getEnabledItems } = useCollection<HTMLDivElement>({
+    ref: collectionRef,
+  });
   const { isFormControl, onTriggerChange } = useFormControl();
   const composedRefs = useComposedRefs(ref, collectionRef, (node) =>
     onTriggerChange(node),
   );
-  const { getItems } = useCollection<HTMLDivElement>({ ref: collectionRef });
 
   const onItemAdd = React.useCallback(
     (textValue: string, options?: { viaPaste?: boolean }) => {
@@ -223,8 +224,6 @@ const TagsInputRoot = React.forwardRef<
           }
         }
         newValues = [...new Set(splitValues.filter((v) => !value.includes(v)))];
-
-        console.log({ value });
 
         const validValues = newValues.filter(
           (v) => !onValidate || onValidate(v),
@@ -354,9 +353,7 @@ const TagsInputRoot = React.forwardRef<
         const collectionElement = collectionRef.current;
         if (!collectionElement) return null;
 
-        const enabledItems = getItems().filter(
-          (item) => !item.hasAttribute(DATA_DISABLED_ATTR),
-        );
+        const enabledItems = getEnabledItems();
         const enabledValues = enabledItems.map((_, index) => value[index]);
 
         if (enabledValues.length === 0) return null;
@@ -467,7 +464,7 @@ const TagsInputRoot = React.forwardRef<
       editable,
       disabled,
       loop,
-      getItems,
+      getEnabledItems,
     ],
   );
 

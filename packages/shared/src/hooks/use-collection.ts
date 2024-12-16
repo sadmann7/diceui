@@ -1,14 +1,16 @@
 import * as React from "react";
-import { ITEM_DATA_ATTR } from "../constants";
+import { DATA_DISABLED_ATTR, ITEM_DATA_ATTR } from "../constants";
 
 interface UseCollectionProps {
   ref: React.RefObject<HTMLElement | null>;
   attribute?: string;
+  disabledAttribute?: string;
 }
 
 export function useCollection<T extends HTMLElement>({
   ref,
   attribute = ITEM_DATA_ATTR,
+  disabledAttribute = DATA_DISABLED_ATTR,
 }: UseCollectionProps) {
   const getItems = React.useCallback(() => {
     const collectionNode = ref.current;
@@ -25,5 +27,10 @@ export function useCollection<T extends HTMLElement>({
     return orderedItems as T[];
   }, [ref, attribute]);
 
-  return { getItems };
+  const getEnabledItems = React.useCallback(() => {
+    const items = getItems();
+    return items.filter((item) => !item.hasAttribute(disabledAttribute));
+  }, [getItems, disabledAttribute]);
+
+  return { getItems, getEnabledItems };
 }
