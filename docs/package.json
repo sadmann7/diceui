@@ -13,6 +13,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@diceui/combobox": "workspace:*",
     "@diceui/checkbox-group": "workspace:*",
     "@diceui/tags-input": "workspace:*",
     "@dnd-kit/core": "^6.3.1",

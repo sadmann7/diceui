@@ -18,6 +18,8 @@ const ComboboxAnchor = React.forwardRef<HTMLDivElement, ComboboxAnchorProps>(
 
 ComboboxAnchor.displayName = ANCHOR_NAME;
 
-export { ComboboxAnchor };
+const Anchor = ComboboxAnchor;
+
+export { ComboboxAnchor, Anchor };
 
 export type { ComboboxAnchorProps };

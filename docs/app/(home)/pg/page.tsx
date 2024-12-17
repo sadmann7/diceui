@@ -26,10 +26,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Combobox,
+  ComboboxAnchor,
+  ComboboxContent,
+  ComboboxInput,
+  ComboboxItem,
+} from "@/registry/default/ui/combobox";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
+      <Combobox className="max-w-[12rem]">
+        <ComboboxAnchor>
+          <ComboboxInput placeholder="Search tricks..." />
+        </ComboboxAnchor>
+        <ComboboxContent>
+          <ComboboxItem value="kickflip">Kickflip</ComboboxItem>
+          <ComboboxItem value="heelflip">Heelflip</ComboboxItem>
+          <ComboboxItem value="tre-flip">Tre Flip</ComboboxItem>
+          <ComboboxItem value="fs-540">FS 540</ComboboxItem>
+        </ComboboxContent>
+      </Combobox>
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="w-fit">

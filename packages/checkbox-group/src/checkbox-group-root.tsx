@@ -119,13 +119,14 @@ const CheckboxGroupRoot = React.forwardRef<
     },
   });
 
-  const dir = useDirection(dirProp);
+  const collectionRef = React.useRef<HTMLDivElement>(null);
+
   const id = useId();
   const labelId = `${id}label`;
   const descriptionId = `${id}description`;
   const messageId = `${id}message`;
 
-  const collectionRef = React.useRef<HTMLDivElement>(null);
+  const dir = useDirection(dirProp);
   const composedRefs = useComposedRefs(ref, collectionRef);
 
   const onItemCheckedChange = React.useCallback(

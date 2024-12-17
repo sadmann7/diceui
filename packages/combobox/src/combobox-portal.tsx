@@ -9,7 +9,7 @@ interface PortalProps
   container?: HTMLElement | DocumentFragment | null;
 }
 
-const Portal = React.forwardRef<HTMLDivElement, PortalProps>(
+const PortalImpl = React.forwardRef<HTMLDivElement, PortalProps>(
   (props, forwardedRef) => {
     const { container, ...portalProps } = props;
     const [mounted, setMounted] = React.useState(false);
@@ -30,18 +30,19 @@ const Portal = React.forwardRef<HTMLDivElement, PortalProps>(
   },
 );
 
-Portal.displayName = "Portal";
+PortalImpl.displayName = "Portal";
 
 const PORTAL_NAME = "ComboboxPortal";
 
-interface ComboboxPortalProps extends Pick<PortalProps, "container"> {}
+interface ComboboxPortalProps
+  extends Pick<PortalProps, "container" | "children"> {}
 
 const ComboboxPortal = React.forwardRef<HTMLDivElement, ComboboxPortalProps>(
   (props, forwardedRef) => {
     const { container, ...portalProps } = props;
 
     return (
-      <Portal
+      <PortalImpl
         container={container}
         {...portalProps}
         ref={forwardedRef}
@@ -53,6 +54,8 @@ const ComboboxPortal = React.forwardRef<HTMLDivElement, ComboboxPortalProps>(
 
 ComboboxPortal.displayName = PORTAL_NAME;
 
-export { ComboboxPortal };
+const Portal = ComboboxPortal;
+
+export { ComboboxPortal, Portal };
 
 export type { ComboboxPortalProps };

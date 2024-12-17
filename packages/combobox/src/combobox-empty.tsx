@@ -24,6 +24,8 @@ const ComboboxEmpty = React.forwardRef<HTMLDivElement, ComboboxEmptyProps>(
 
 ComboboxEmpty.displayName = EMPTY_NAME;
 
-export { ComboboxEmpty };
+const Empty = ComboboxEmpty;
+
+export { ComboboxEmpty, Empty };
 
 export type { ComboboxEmptyProps };

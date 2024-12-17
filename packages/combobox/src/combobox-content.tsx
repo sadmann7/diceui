@@ -31,6 +31,8 @@ const ComboboxContent = React.forwardRef<HTMLDivElement, ComboboxContentProps>(
 
 ComboboxContent.displayName = CONTENT_NAME;
 
-export { ComboboxContent };
+const Content = ComboboxContent;
+
+export { ComboboxContent, Content };
 
 export type { ComboboxContentProps };

@@ -21,4 +21,8 @@ const ComboboxItemIndicator = React.forwardRef<
 
 ComboboxItemIndicator.displayName = ITEM_INDICATOR_NAME;
 
-export { ComboboxItemIndicator, type ComboboxItemIndicatorProps };
+const ItemIndicator = ComboboxItemIndicator;
+
+export { ComboboxItemIndicator, ItemIndicator };
+
+export type { ComboboxItemIndicatorProps };

@@ -24,6 +24,7 @@ const ComboboxTrigger = React.forwardRef<
       aria-controls={context.contentId}
       data-state={context.open ? "open" : "closed"}
       disabled={context.disabled}
+      tabIndex={context.disabled ? undefined : -1}
       {...triggerProps}
       ref={forwardedRef}
       onClick={composeEventHandlers(triggerProps.onClick, () => {
@@ -35,6 +36,8 @@ const ComboboxTrigger = React.forwardRef<
 
 ComboboxTrigger.displayName = TRIGGER_NAME;
 
-export { ComboboxTrigger };
+const Trigger = ComboboxTrigger;
+
+export { ComboboxTrigger, Trigger };
 
 export type { ComboboxTriggerProps };

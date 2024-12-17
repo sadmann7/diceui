@@ -35,6 +35,8 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
 
 ComboboxInput.displayName = INPUT_NAME;
 
-export { ComboboxInput };
+const Input = ComboboxInput;
+
+export { ComboboxInput, Input };
 
 export type { ComboboxInputProps };

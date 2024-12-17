@@ -18,6 +18,7 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
 
     const id = useId();
     const isSelected = value === context.value;
+    const isDisabled = disabled || context.disabled || false;
 
     if (value === "") {
       throw new Error("ComboboxItem value cannot be an empty string.");
@@ -28,14 +29,15 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
         role="option"
         id={id}
         aria-selected={isSelected}
-        data-highlighted={isSelected ? "" : undefined}
+        aria-disabled={isDisabled}
         data-state={isSelected ? "checked" : "unchecked"}
-        aria-disabled={disabled || undefined}
-        data-disabled={disabled ? "" : undefined}
+        data-highlighted={isSelected ? "" : undefined}
+        data-disabled={isDisabled ? "" : undefined}
+        tabIndex={disabled ? undefined : -1}
         {...itemProps}
         ref={forwardedRef}
         onClick={composeEventHandlers(itemProps.onClick, () => {
-          if (disabled) return;
+          if (isDisabled) return;
           context.onValueChange(value);
           context.onOpenChange(false);
         })}
@@ -46,6 +48,8 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
 
 ComboboxItem.displayName = ITEM_NAME;
 
-export { ComboboxItem };
+const Item = ComboboxItem;
+
+export { ComboboxItem, Item };
 
 export type { ComboboxItemProps };

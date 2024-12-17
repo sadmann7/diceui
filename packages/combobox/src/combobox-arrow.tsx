@@ -28,6 +28,8 @@ const ComboboxArrow = React.forwardRef<SVGSVGElement, ComboboxArrowProps>(
 
 ComboboxArrow.displayName = ARROW_NAME;
 
-export { ComboboxArrow };
+const Arrow = ComboboxArrow;
+
+export { ComboboxArrow, Arrow };
 
 export type { ComboboxArrowProps };

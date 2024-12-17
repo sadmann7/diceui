@@ -22,6 +22,8 @@ const ComboboxSeparator = React.forwardRef<
 
 ComboboxSeparator.displayName = SEPARATOR_NAME;
 
-export { ComboboxSeparator };
+const Separator = ComboboxSeparator;
+
+export { ComboboxSeparator, Separator };
 
 export type { ComboboxSeparatorProps };

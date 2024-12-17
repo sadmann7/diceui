@@ -28,6 +28,8 @@ const ComboboxCancel = React.forwardRef<HTMLButtonElement, ComboboxCancelProps>(
 
 ComboboxCancel.displayName = CANCEL_NAME;
 
-export { ComboboxCancel };
+const Cancel = ComboboxCancel;
+
+export { ComboboxCancel, Cancel };
 
 export type { ComboboxCancelProps };

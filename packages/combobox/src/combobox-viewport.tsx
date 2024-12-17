@@ -26,6 +26,8 @@ const ComboboxViewport = React.forwardRef<
 
 ComboboxViewport.displayName = VIEWPORT_NAME;
 
-export { ComboboxViewport };
+const Viewport = ComboboxViewport;
+
+export { ComboboxViewport, Viewport };
 
 export type { ComboboxViewportProps };

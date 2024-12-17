@@ -107,6 +107,6 @@ TagsInputInput.displayName = INPUT_NAME;
 
 const Input = TagsInputInput;
 
-export { Input, TagsInputInput };
+export { TagsInputInput, Input };
 
 export type { TagsInputInputProps };

@@ -24,4 +24,8 @@ const ComboboxLabel = React.forwardRef<HTMLLabelElement, ComboboxLabelProps>(
 
 ComboboxLabel.displayName = LABEL_NAME;
 
-export { ComboboxLabel, type ComboboxLabelProps };
+const Label = ComboboxLabel;
+
+export { ComboboxLabel, Label };
+
+export type { ComboboxLabelProps };

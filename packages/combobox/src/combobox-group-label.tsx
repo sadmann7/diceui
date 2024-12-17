@@ -27,6 +27,8 @@ const ComboboxGroupLabel = React.forwardRef<
 
 ComboboxGroupLabel.displayName = GROUP_LABEL_NAME;
 
-export { ComboboxGroupLabel };
+const GroupLabel = ComboboxGroupLabel;
+
+export { ComboboxGroupLabel, GroupLabel };
 
 export type { ComboboxGroupLabelProps };

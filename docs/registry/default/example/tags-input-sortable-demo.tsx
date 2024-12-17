@@ -19,7 +19,7 @@ import {
 import { MouseSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
 
 export default function TagsInputSortableDemo() {
-  const [fruits, setFruits] = React.useState<string[]>([]);
+  const [tricks, setTricks] = React.useState(["The 900", "FS 540"]);
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -33,27 +33,28 @@ export default function TagsInputSortableDemo() {
   return (
     <Sortable
       sensors={sensors}
-      value={fruits.map((fruit) => ({ id: fruit }))}
-      onValueChange={(items) => setFruits(items.map((item) => item.id))}
+      value={tricks.map((trick) => ({ id: trick }))}
+      onValueChange={(items) => setTricks(items.map((item) => item.id))}
       orientation="both"
       flatCursor
     >
-      <TagsInput value={fruits} onValueChange={setFruits} sortable editable>
+      <TagsInput value={tricks} onValueChange={setTricks} editable>
         <TagsInputLabel>Sortable</TagsInputLabel>
         <SortableContent>
           <TagsInputList>
-            {fruits.map((fruit) => (
+            {tricks.map((trick) => (
               <SortableItem
-                key={fruit}
-                value={fruit}
+                key={trick}
+                value={trick}
+                // to prevent tag item from being tabbable
+                tabIndex={-1}
                 asChild
                 asGrip
-                tabIndex={-1}
               >
-                <TagsInputItem value={fruit}>{fruit}</TagsInputItem>
+                <TagsInputItem value={trick}>{trick}</TagsInputItem>
               </SortableItem>
             ))}
-            <TagsInputInput placeholder="Add fruit..." />
+            <TagsInputInput placeholder="Add trick..." />
           </TagsInputList>
         </SortableContent>
         <SortableOverlay>

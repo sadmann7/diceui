@@ -37,7 +37,6 @@ interface TagsInputContextValue<T = InputValue> {
   addOnPaste: boolean;
   addOnTab: boolean;
   editable: boolean;
-  sortable: boolean;
   disabled: boolean;
   delimiter: string;
   loop: boolean;
@@ -94,12 +93,6 @@ interface TagsInputRootProps<T = InputValue>
   editable?: boolean;
 
   /**
-   * Enable pointer interaction for sortable items.
-   * @default false
-   */
-  sortable?: boolean;
-
-  /**
    * Enable wrapping focus from last to first tag and vice versa.
    * @default false
    */
@@ -115,6 +108,7 @@ interface TagsInputRootProps<T = InputValue>
    * Behavior when the input loses focus.
    * - "add": Add the current input value as a new tag.
    * - "clear": Reset the input field, removing its value.
+   * By default, the input value will stay in the input field.
    * Can be overridden by the preventDefault() call in the input's onBlur handler.
    */
   blurBehavior?: "add" | "clear";
@@ -165,7 +159,6 @@ const TagsInputRoot = React.forwardRef<
     addOnPaste = false,
     addOnTab = false,
     editable = false,
-    sortable = false,
     loop = false,
     disabled = false,
     blurBehavior,
@@ -192,9 +185,11 @@ const TagsInputRoot = React.forwardRef<
   const [isInvalidInput, setIsInvalidInput] = React.useState(false);
   const collectionRef = React.useRef<HTMLDivElement>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
+
   const id = useId();
   const inputId = `${id}input`;
   const labelId = `${id}label`;
+
   const dir = useDirection(dirProp);
   const { getEnabledItems } = useCollection<HTMLDivElement>({
     ref: collectionRef,
@@ -468,6 +463,14 @@ const TagsInputRoot = React.forwardRef<
     ],
   );
 
+  const getIsClickedInEmptyRoot = React.useCallback((target: HTMLElement) => {
+    return (
+      collectionRef.current?.contains(target) &&
+      !target.hasAttribute(ITEM_DATA_ATTR) &&
+      target.tagName !== "INPUT"
+    );
+  }, []);
+
   return (
     <TagsInputProvider
       value={value}
@@ -487,7 +490,6 @@ const TagsInputRoot = React.forwardRef<
       addOnPaste={addOnPaste}
       addOnTab={addOnTab}
       editable={editable}
-      sortable={sortable}
       loop={loop}
       disabled={disabled}
       blurBehavior={blurBehavior}
@@ -509,44 +511,23 @@ const TagsInputRoot = React.forwardRef<
           if (!(target instanceof HTMLElement)) return;
 
           if (
-            collectionRef.current?.contains(target) &&
-            !target.hasAttribute(ITEM_DATA_ATTR) &&
-            target.tagName !== "INPUT" &&
+            getIsClickedInEmptyRoot(target) &&
             document.activeElement !== inputRef.current
           ) {
             event.currentTarget.focus();
             inputRef.current?.focus();
           }
         })}
-        onPointerDown={composeEventHandlers(
-          rootProps.onPointerDown,
-          (event) => {
-            // @see https://github.com/radix-ui/primitives/blob/main/packages/react/select/src/Select.tsx
+        onMouseDown={composeEventHandlers(rootProps.onMouseDown, (event) => {
+          const target = event.target;
+          if (!(target instanceof HTMLElement)) return;
 
-            // prevent implicit pointer capture
-            // https://www.w3.org/TR/pointerevents3/#implicit-pointer-capture
-            const target = event.target;
-            if (!(target instanceof HTMLElement)) return;
-            if (target.hasPointerCapture(event.pointerId)) {
-              target.releasePointerCapture(event.pointerId);
-            }
-
-            // only call handler if it's the left button (mousedown gets triggered by all mouse buttons)
-            // but not when the control key is pressed (avoiding MacOS right click); also not for touch
-            // devices because that would open the menu on scroll. (pen devices behave as touch on iOS).
-            if (
-              event.button === 0 &&
-              event.ctrlKey === false &&
-              event.pointerType === "mouse" &&
-              !sortable
-            ) {
-              // prevent container from stealing focus from the input.
-              event.preventDefault();
-            }
-
+          if (getIsClickedInEmptyRoot(target)) {
+            // prevent default for prevent collection from stealing focus from the input
+            event.preventDefault();
             inputRef.current?.focus();
-          },
-        )}
+          }
+        })}
         onBlur={composeEventHandlers(rootProps.onBlur, (event) => {
           if (
             event.relatedTarget !== inputRef.current &&

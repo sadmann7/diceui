@@ -41,6 +41,6 @@ TagsInputList.displayName = LIST_NAME;
 
 const List = TagsInputList;
 
-export { List, TagsInputList };
+export { TagsInputList, List };
 
 export type { TagsInputListProps };

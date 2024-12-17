@@ -35,4 +35,8 @@ const ComboboxGroup = React.forwardRef<HTMLDivElement, ComboboxGroupProps>(
 
 ComboboxGroup.displayName = GROUP_NAME;
 
-export { ComboboxGroup, useComboboxGroupContext, type ComboboxGroupProps };
+const Group = ComboboxGroup;
+
+export { ComboboxGroup, Group, useComboboxGroupContext };
+
+export type { ComboboxGroupProps };

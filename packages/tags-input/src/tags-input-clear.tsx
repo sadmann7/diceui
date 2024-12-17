@@ -43,6 +43,6 @@ TagsInputClear.displayName = CLEAR_NAME;
 
 const Clear = TagsInputClear;
 
-export { Clear, TagsInputClear };
+export { TagsInputClear, Clear };
 
 export type { TagsInputClearProps };

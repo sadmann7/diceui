@@ -46,7 +46,6 @@
   },
   "dependencies": {
     "@diceui/shared": "workspace:*",
-    "@radix-ui/react-primitive": "^2.0.1",
-    "@radix-ui/react-slot": "^1.1.1"
+    "@radix-ui/react-primitive": "^2.0.1"
   }
 }
