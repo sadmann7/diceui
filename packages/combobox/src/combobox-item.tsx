@@ -1,6 +1,7 @@
 import {
   ITEM_DATA_ATTR,
   composeEventHandlers,
+  useComposedRefs,
   useId,
   useLayoutEffect,
 } from "@diceui/shared";
@@ -20,12 +21,14 @@ interface ComboboxItemProps
 
 const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
   (props, forwardedRef) => {
-    const { value, disabled, ...itemProps } = props;
+    const { value, disabled, children, ...itemProps } = props;
     const context = useComboboxContext(ITEM_NAME);
     const contentContext = useComboboxContentContext(ITEM_NAME);
     const groupContext = React.useContext(ComboboxGroupContext);
-
+    const itemRef = React.useRef<HTMLDivElement>(null);
+    const composedRefs = useComposedRefs(forwardedRef, itemRef);
     const id = useId();
+
     const isSelected = Array.isArray(context.value)
       ? context.value.includes(value)
       : context.value === value;
@@ -36,8 +39,8 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
         throw new Error("ComboboxItem value cannot be an empty string.");
       }
 
-      return context.registerItem(id, value, groupContext?.id);
-    }, [id, value, context.registerItem, groupContext?.id]);
+      return context.onRegisterItem(id, value, groupContext?.id);
+    }, [id, value, context.onRegisterItem, groupContext?.id]);
 
     const shouldRender =
       contentContext.forceMount ||
@@ -55,17 +58,30 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
         aria-selected={isSelected}
         aria-disabled={isDisabled}
         data-state={isSelected ? "checked" : "unchecked"}
-        data-highlighted={isSelected ? "" : undefined}
+        data-highlighted={context.highlightedItem?.id === id ? "" : undefined}
+        data-value={value}
         data-disabled={isDisabled ? "" : undefined}
         tabIndex={disabled ? undefined : -1}
         {...itemProps}
-        ref={forwardedRef}
+        ref={composedRefs}
+        onMouseEnter={composeEventHandlers(itemProps.onMouseEnter, () => {
+          if (!isDisabled) return;
+          context.onMoveHighlight("next");
+        })}
+        onMouseLeave={composeEventHandlers(itemProps.onMouseLeave, () => {
+          if (!isDisabled) return;
+          context.onHighlightedItemChange(null);
+        })}
         onClick={composeEventHandlers(itemProps.onClick, () => {
           if (isDisabled) return;
           context.onValueChange(value);
           context.onOpenChange(false);
+          context.onHighlightedItemChange(null);
+          context.onInputValueChange(itemRef.current?.textContent ?? "");
         })}
-      />
+      >
+        {children}
+      </Primitive.div>
     );
   },
 );

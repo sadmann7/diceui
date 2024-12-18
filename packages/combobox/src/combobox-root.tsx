@@ -31,23 +31,25 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   collectionRef: React.RefObject<HTMLDivElement | null>;
   contentRef: React.RefObject<HTMLDivElement | null>;
   inputRef: React.RefObject<HTMLInputElement | null>;
-  highlightedItem: HTMLElement | null;
-  multiple: Multiple;
-  disabled: boolean;
-  loop: boolean;
-  allowCustomValue: boolean;
-  dir: Direction;
-  id: string;
-  labelId: string;
-  contentId: string;
   filterStore: {
     search: string;
     itemCount: number;
     items: Map<string, number>;
     groups: Map<string, Set<string>>;
   };
-  registerItem: (id: string, value: string, groupId?: string) => () => void;
-  filterItems: () => void;
+  highlightedItem: HTMLElement | null;
+  onHighlightedItemChange: (item: HTMLElement | null) => void;
+  onRegisterItem: (id: string, value: string, groupId?: string) => () => void;
+  onFilterItems: () => void;
+  onMoveHighlight: (direction: "next" | "prev" | "first" | "last") => void;
+  multiple: Multiple;
+  disabled: boolean;
+  loop: boolean;
+  resetOnBlur: boolean;
+  dir: Direction;
+  id: string;
+  labelId: string;
+  contentId: string;
 }
 
 const [ComboboxProvider, useComboboxContext] =
@@ -67,12 +69,13 @@ interface ComboboxRootProps<Multiple extends boolean = false>
   inputValue?: string;
   onInputValueChange?: (value: string) => void;
   onFilter?: (options: string[], inputValue: string) => string[];
+  dir?: Direction;
   multiple?: Multiple;
   disabled?: boolean;
   loop?: boolean;
-  allowCustomValue?: boolean;
+  resetOnBlur?: boolean;
   fuzzy?: boolean;
-  dir?: Direction;
+  required?: boolean;
   name?: string;
 }
 
@@ -90,12 +93,13 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     inputValue: inputValueProp,
     onInputValueChange,
     onFilter,
+    dir: dirProp,
     multiple = false,
     disabled = false,
     loop = false,
-    allowCustomValue = false,
+    resetOnBlur = true,
     fuzzy = true,
-    dir: dirProp,
+    required = false,
     name,
     children,
     ...rootProps
@@ -116,39 +120,32 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     onTriggerChange(node),
   );
 
-  const enabledItems = getEnabledItems();
-
-  const selectedItems = enabledItems.filter(
-    (item) => item.ariaSelected === "true",
-  );
-
-  console.log({ enabledItems, selectedItems });
-
   const [value = multiple ? [""] : "", setValue] = useControllableState({
     prop: valueProp,
     defaultProp: defaultValue,
     onChange: onValueChangeProp,
   });
-
   const [open = false, setOpen] = useControllableState({
     prop: openProp,
     defaultProp: defaultOpen,
     onChange: onOpenChangeProp,
   });
-
   const [inputValue = "", setInputValue] = useControllableState({
     prop: inputValueProp,
     onChange: onInputValueChange,
   });
 
+  const [highlightedItem, setHighlightedItem] =
+    React.useState<HTMLElement | null>(null);
+
+  const items = React.useRef(new Map<string, string>()).current;
+  const groups = React.useRef(new Map<string, Set<string>>()).current;
   const filterStore = React.useRef<ComboboxContextValue["filterStore"]>({
     search: "",
     itemCount: 0,
     items: new Map<string, number>(),
     groups: new Map<string, Set<string>>(),
   }).current;
-  const allItems = React.useRef(new Map<string, string>()).current;
-  const allGroups = React.useRef(new Map<string, Set<string>>()).current;
 
   const filter = useFilter({ sensitivity: "base" });
   const currentFilter = fuzzy ? filter.fuzzy : filter.contains;
@@ -160,7 +157,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       .trim();
   }, []);
 
-  const filterItems = React.useCallback(() => {
+  const onFilterItems = React.useCallback(() => {
     filterStore.groups.clear();
     filterStore.items.clear();
 
@@ -178,14 +175,14 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     }
 
     let itemCount = 0;
-    for (const [id, value] of allItems.entries()) {
+    for (const [id, value] of items.entries()) {
       itemCount += processItem(id, value);
     }
     filterStore.itemCount = itemCount;
 
     // Only process groups if there are any
-    if (allGroups.size) {
-      for (const [groupId, group] of allGroups.entries()) {
+    if (groups.size) {
+      for (const [groupId, group] of groups.entries()) {
         const hasMatchingItem = Array.from(group).some((itemId) =>
           filterStore.items.get(itemId),
         );
@@ -194,14 +191,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
         }
       }
     }
-  }, [
-    filterStore,
-    allItems,
-    allGroups,
-    onFilter,
-    currentFilter,
-    normalizeString,
-  ]);
+  }, [filterStore, items, groups, onFilter, currentFilter, normalizeString]);
 
   const onOpenChange = React.useCallback(
     async (open: boolean) => {
@@ -230,29 +220,67 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     [multiple, setValue, setOpen, value],
   );
 
-  const registerItem = React.useCallback(
+  const onRegisterItem = React.useCallback(
     (id: string, value: string, groupId?: string) => {
-      allItems.set(id, value);
+      items.set(id, value);
 
       if (groupId) {
-        if (!allGroups.has(groupId)) {
-          allGroups.set(groupId, new Set());
+        if (!groups.has(groupId)) {
+          groups.set(groupId, new Set());
         }
-        allGroups.get(groupId)?.add(id);
+        groups.get(groupId)?.add(id);
       }
 
       return () => {
-        allItems.delete(id);
+        items.delete(id);
         if (groupId) {
-          const group = allGroups.get(groupId);
+          const group = groups.get(groupId);
           group?.delete(id);
           if (group?.size === 0) {
-            allGroups.delete(groupId);
+            groups.delete(groupId);
           }
         }
       };
     },
-    [allItems, allGroups],
+    [items, groups],
+  );
+
+  const onMoveHighlight = React.useCallback(
+    (direction: "next" | "prev" | "first" | "last") => {
+      const items = getEnabledItems();
+      if (!items.length) return;
+
+      const currentIndex = items.indexOf(highlightedItem as HTMLElement);
+      let nextIndex: number;
+
+      switch (direction) {
+        case "next":
+          nextIndex = currentIndex + 1;
+          if (nextIndex >= items.length) {
+            nextIndex = loop ? 0 : items.length - 1;
+          }
+          break;
+        case "prev":
+          nextIndex = currentIndex - 1;
+          if (nextIndex < 0) {
+            nextIndex = loop ? items.length - 1 : 0;
+          }
+          break;
+        case "first":
+          nextIndex = 0;
+          break;
+        case "last":
+          nextIndex = items.length - 1;
+          break;
+      }
+
+      const nextItem = items[nextIndex];
+      if (nextItem) {
+        nextItem.scrollIntoView({ block: "nearest" });
+        setHighlightedItem(nextItem);
+      }
+    },
+    [loop, highlightedItem, getEnabledItems],
   );
 
   return (
@@ -267,18 +295,20 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       collectionRef={collectionRef}
       contentRef={contentRef}
       inputRef={inputRef}
-      highlightedItem={null}
+      filterStore={filterStore}
+      highlightedItem={highlightedItem}
+      onHighlightedItemChange={setHighlightedItem}
+      onRegisterItem={onRegisterItem}
+      onFilterItems={onFilterItems}
+      onMoveHighlight={onMoveHighlight}
+      dir={dir}
       multiple={multiple}
       disabled={disabled}
       loop={loop}
-      allowCustomValue={allowCustomValue}
-      dir={dir}
+      resetOnBlur={resetOnBlur}
       id={id}
       labelId={labelId}
       contentId={contentId}
-      filterStore={filterStore}
-      registerItem={registerItem}
-      filterItems={filterItems}
     >
       <Primitive.div {...rootProps} ref={composedRef}>
         {children}
@@ -289,6 +319,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
             name={name}
             value={value}
             disabled={disabled}
+            required={required}
           />
         )}
       </Primitive.div>

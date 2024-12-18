@@ -25,7 +25,6 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-  CommandShortcut,
 } from "@/components/ui/command";
 import {
   Select,
@@ -37,14 +36,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import * as Combobox from "@diceui/combobox";
-import {
-  Calculator,
-  Calendar,
-  CreditCard,
-  Settings,
-  Smile,
-  User,
-} from "lucide-react";
 import * as React from "react";
 
 export default function PlaygroundPage() {
@@ -68,7 +59,11 @@ export default function PlaygroundPage() {
             <Combobox.Item value="kickflip">Kickflip</Combobox.Item>
             <Combobox.Item value="heelflip">Heelflip</Combobox.Item>
             <Combobox.Item value="tre-flip">Tre Flip</Combobox.Item>
-            <Combobox.Item value="fs-540">FS 540</Combobox.Item>
+            <Combobox.Item value="fs-f40">FS 540</Combobox.Item>
+            <Combobox.Item value="flip-1">Flip 1</Combobox.Item>
+            <Combobox.Item value="flip-2">Flip 2</Combobox.Item>
+            <Combobox.Item value="flip-3">Flip 3</Combobox.Item>
+            <Combobox.Item value="flip-4">Flip 4</Combobox.Item>
           </Combobox.Viewport>
         </Combobox.Content>
       </Combobox.Root>
@@ -76,36 +71,33 @@ export default function PlaygroundPage() {
         <CommandInput placeholder="Type a command or search..." />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="Suggestions">
-            <CommandItem value="calendar">
-              <Calendar />
-              <span>Calendar</span>
+          <CommandGroup heading="Basic Tricks">
+            <CommandItem value="kickflip">
+              <span>Kickflip</span>
             </CommandItem>
-            <CommandItem value="search-emoji">
-              <Smile />
-              <span>Search Emoji</span>
+            <CommandItem value="heelflip">
+              <span>Heelflip</span>
             </CommandItem>
-            <CommandItem disabled>
-              <Calculator />
-              <span>Calculator</span>
+            <CommandItem value="tre-flip">
+              <span>Tre Flip</span>
+            </CommandItem>
+            <CommandItem value="fs-f40">
+              <span>FS 540</span>
             </CommandItem>
           </CommandGroup>
           <CommandSeparator />
-          <CommandGroup heading="Settings">
-            <CommandItem>
-              <User />
-              <span>Profile</span>
-              <CommandShortcut>⌘P</CommandShortcut>
+          <CommandGroup heading="Flip Tricks">
+            <CommandItem value="flip-1">
+              <span>Flip 1</span>
             </CommandItem>
-            <CommandItem>
-              <CreditCard />
-              <span>Billing</span>
-              <CommandShortcut>⌘B</CommandShortcut>
+            <CommandItem value="flip-2">
+              <span>Flip 2</span>
             </CommandItem>
-            <CommandItem>
-              <Settings />
-              <span>Settings</span>
-              <CommandShortcut>⌘S</CommandShortcut>
+            <CommandItem value="flip-3">
+              <span>Flip 3</span>
+            </CommandItem>
+            <CommandItem value="flip-4">
+              <span>Flip 4</span>
             </CommandItem>
           </CommandGroup>
         </CommandList>

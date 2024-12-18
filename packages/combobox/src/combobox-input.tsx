@@ -24,22 +24,75 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
         context.onInputValueChange(value);
         context.filterStore.search = value;
 
-        context.filterItems();
+        context.onFilterItems();
       },
       [context],
     );
 
     const onKeyDown = React.useCallback(
       (event: React.KeyboardEvent) => {
-        if (
-          !context.open &&
-          (event.key === "ArrowDown" || event.key === "ArrowUp")
-        ) {
+        const isArrowKey = [
+          "ArrowDown",
+          "ArrowUp",
+          "Home",
+          "End",
+          "Enter",
+          "Escape",
+        ].includes(event.key);
+
+        if (isArrowKey) {
           event.preventDefault();
-          context.onOpenChange(true);
+        }
+
+        switch (event.key) {
+          case "ArrowDown":
+            if (!context.open) {
+              context.onOpenChange(true);
+              context.onMoveHighlight("first");
+            } else {
+              context.onMoveHighlight("next");
+            }
+            break;
+          case "ArrowUp":
+            if (!context.open) {
+              context.onOpenChange(true);
+              context.onMoveHighlight("last");
+            } else {
+              context.onMoveHighlight("prev");
+            }
+            break;
+          case "Home":
+            if (context.open) {
+              context.onMoveHighlight("first");
+            }
+            break;
+          case "End":
+            if (context.open) {
+              context.onMoveHighlight("last");
+            }
+            break;
+          case "Enter":
+            if (context.open && context.highlightedItem) {
+              const value = context.highlightedItem.getAttribute("data-value");
+              if (value) {
+                context.onInputValueChange(
+                  context.highlightedItem.textContent ?? "",
+                );
+                context.onValueChange(value);
+                context.onHighlightedItemChange(null);
+                context.onOpenChange(false);
+              }
+            }
+            break;
+          case "Escape":
+            if (context.open) {
+              context.onOpenChange(false);
+              context.onHighlightedItemChange(null);
+            }
+            break;
         }
       },
-      [context.open, context.onOpenChange],
+      [context],
     );
 
     return (
@@ -49,6 +102,7 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
         aria-expanded={context.open}
         aria-controls={context.contentId}
         aria-autocomplete="list"
+        aria-activedescendant={context.highlightedItem?.id}
         aria-disabled={context.disabled}
         disabled={context.disabled}
         {...inputProps}
@@ -56,6 +110,16 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
         value={context.inputValue}
         onChange={composeEventHandlers(inputProps.onChange, onChange)}
         onKeyDown={composeEventHandlers(inputProps.onKeyDown, onKeyDown)}
+        onBlur={composeEventHandlers(inputProps.onBlur, () => {
+          if (
+            context.resetOnBlur &&
+            context.open &&
+            !context.highlightedItem &&
+            context.value.length === 0
+          ) {
+            context.onInputValueChange("");
+          }
+        })}
       />
     );
   },
