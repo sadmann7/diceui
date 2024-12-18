@@ -2,10 +2,12 @@ import {
   BubbleInput,
   type Direction,
   createContext,
+  forwardRef,
   useCollection,
   useComposedRefs,
   useControllableState,
   useDirection,
+  useFilter,
   useFormControl,
   useId,
 } from "@diceui/shared";
@@ -14,317 +16,296 @@ import * as React from "react";
 
 const ROOT_NAME = "ComboboxRoot";
 
-interface ComboboxContextValue {
-  value: string | string[];
-  onValueChange: (value: string) => void;
+type ComboboxValue<Multiple extends boolean = false> = Multiple extends true
+  ? string[]
+  : string;
+
+interface ComboboxContextValue<Multiple extends boolean = false> {
+  value: ComboboxValue<Multiple>;
+  onValueChange: (value: ComboboxValue<Multiple>) => void;
   open: boolean;
   onOpenChange: (open: boolean) => Promise<void>;
   inputValue: string;
   onInputValueChange: (value: string) => void;
-  isUserInputted: boolean;
-  filteredOptions: string[];
-  selectedValue: string | undefined;
-  selectedValueChange: (value: string | undefined) => void;
   onFilter?: (options: string[], term: string) => string[];
-  displayValue: (value: string) => string;
-  onInputKeyDown: (direction: "up" | "down" | "home" | "end") => Promise<void>;
   collectionRef: React.RefObject<HTMLDivElement | null>;
   contentRef: React.RefObject<HTMLDivElement | null>;
   inputRef: React.RefObject<HTMLInputElement | null>;
-  selectedItem: HTMLElement | null;
-  multiple: boolean;
+  highlightedItem: HTMLElement | null;
+  multiple: Multiple;
   disabled: boolean;
   loop: boolean;
-  allowCustomValues: boolean;
+  allowCustomValue: boolean;
   dir: Direction;
   id: string;
   labelId: string;
   contentId: string;
+  filterStore: {
+    search: string;
+    itemCount: number;
+    items: Map<string, number>;
+    groups: Map<string, Set<string>>;
+  };
+  registerItem: (id: string, value: string, groupId?: string) => () => void;
+  filterItems: () => void;
 }
 
 const [ComboboxProvider, useComboboxContext] =
-  createContext<ComboboxContextValue>(ROOT_NAME);
+  createContext<ComboboxContextValue<boolean>>(ROOT_NAME);
 
-interface ComboboxRootProps
+interface ComboboxRootProps<Multiple extends boolean = false>
   extends Omit<
     React.ComponentPropsWithoutRef<typeof Primitive.div>,
     "value" | "defaultValue" | "onValueChange"
   > {
-  value?: string | string[];
-  defaultValue?: string | string[];
-  onValueChange?: (value: string | string[]) => void;
+  value?: ComboboxValue<Multiple>;
+  defaultValue?: ComboboxValue<Multiple>;
+  onValueChange?: (value: ComboboxValue<Multiple>) => void;
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   inputValue?: string;
   onInputValueChange?: (value: string) => void;
-  selectedValue?: string;
-  onSelectedValueChange?: (value: string | undefined) => void;
   onFilter?: (options: string[], inputValue: string) => string[];
-  displayValue?: (value: string) => string;
-  multiple?: boolean;
+  multiple?: Multiple;
   disabled?: boolean;
   loop?: boolean;
-  allowCustomValues?: boolean;
+  allowCustomValue?: boolean;
+  fuzzy?: boolean;
   dir?: Direction;
   name?: string;
 }
 
-const ComboboxRoot = React.forwardRef<HTMLDivElement, ComboboxRootProps>(
-  (props, forwardedRef) => {
-    const {
-      value: valueProp,
-      defaultValue,
-      onValueChange: onValueChangeProp,
-      open: openProp,
-      defaultOpen = false,
-      onOpenChange: onOpenChangeProp,
-      inputValue: inputValueProp,
-      onInputValueChange,
-      selectedValue: selectedValueProp,
-      onSelectedValueChange,
-      displayValue = (value: string) => value,
-      onFilter,
-      multiple = false,
-      disabled = false,
-      loop = false,
-      allowCustomValues = false,
-      dir: dirProp,
-      name,
-      children,
-      ...rootProps
-    } = props;
+function ComboboxRootImpl<Multiple extends boolean = false>(
+  props: ComboboxRootProps<Multiple>,
+  forwardedRef: React.ForwardedRef<HTMLDivElement>,
+) {
+  const {
+    value: valueProp,
+    defaultValue,
+    onValueChange: onValueChangeProp,
+    open: openProp,
+    defaultOpen = false,
+    onOpenChange: onOpenChangeProp,
+    inputValue: inputValueProp,
+    onInputValueChange,
+    onFilter,
+    multiple = false,
+    disabled = false,
+    loop = false,
+    allowCustomValue = false,
+    fuzzy = true,
+    dir: dirProp,
+    name,
+    children,
+    ...rootProps
+  } = props;
 
-    const collectionRef = React.useRef<HTMLDivElement | null>(null);
-    const contentRef = React.useRef<HTMLDivElement | null>(null);
-    const inputRef = React.useRef<HTMLInputElement | null>(null);
+  const collectionRef = React.useRef<HTMLDivElement | null>(null);
+  const contentRef = React.useRef<HTMLDivElement | null>(null);
+  const inputRef = React.useRef<HTMLInputElement | null>(null);
 
-    const id = useId();
-    const labelId = `${id}label`;
-    const contentId = `${id}content`;
+  const id = useId();
+  const labelId = `${id}label`;
+  const contentId = `${id}content`;
 
-    const dir = useDirection(dirProp);
-    const { getEnabledItems } = useCollection({ ref: collectionRef });
-    const { isFormControl, onTriggerChange } = useFormControl();
-    const composedRef = useComposedRefs(forwardedRef, collectionRef, (node) =>
-      onTriggerChange(node),
-    );
+  const dir = useDirection(dirProp);
+  const { getEnabledItems } = useCollection({ ref: collectionRef });
+  const { isFormControl, onTriggerChange } = useFormControl();
+  const composedRef = useComposedRefs(forwardedRef, collectionRef, (node) =>
+    onTriggerChange(node),
+  );
 
-    const [options, setOptions] = React.useState<string[]>([]);
+  const enabledItems = getEnabledItems();
 
-    const [value = multiple ? [] : "", setValue] = useControllableState({
-      prop: valueProp,
-      defaultProp: defaultValue,
-      onChange: onValueChangeProp,
-    });
+  const selectedItems = enabledItems.filter(
+    (item) => item.ariaSelected === "true",
+  );
 
-    const [open = false, setOpen] = useControllableState({
-      prop: openProp,
-      defaultProp: defaultOpen,
-      onChange: onOpenChangeProp,
-    });
+  console.log({ enabledItems, selectedItems });
 
-    const [inputValue = "", setInputValue] = useControllableState({
-      prop: inputValueProp,
-      onChange: onInputValueChange,
-    });
+  const [value = multiple ? [""] : "", setValue] = useControllableState({
+    prop: valueProp,
+    defaultProp: defaultValue,
+    onChange: onValueChangeProp,
+  });
 
-    const [selectedValue, setSelectedValue] = useControllableState({
-      prop: selectedValueProp,
-      defaultProp: undefined,
-      onChange: onSelectedValueChange,
-    });
+  const [open = false, setOpen] = useControllableState({
+    prop: openProp,
+    defaultProp: defaultOpen,
+    onChange: onOpenChangeProp,
+  });
 
-    const [isUserInputted, setIsUserInputted] = React.useState(false);
+  const [inputValue = "", setInputValue] = useControllableState({
+    prop: inputValueProp,
+    onChange: onInputValueChange,
+  });
 
-    const filteredOptions = React.useMemo(() => {
-      if (!isUserInputted) return options;
+  const filterStore = React.useRef<ComboboxContextValue["filterStore"]>({
+    search: "",
+    itemCount: 0,
+    items: new Map<string, number>(),
+    groups: new Map<string, Set<string>>(),
+  }).current;
+  const allItems = React.useRef(new Map<string, string>()).current;
+  const allGroups = React.useRef(new Map<string, Set<string>>()).current;
 
-      if (onFilter) return onFilter(options, inputValue);
+  const filter = useFilter({ sensitivity: "base" });
+  const currentFilter = fuzzy ? filter.fuzzy : filter.contains;
 
-      return options.filter((option) =>
-        option.toLowerCase().includes(inputValue.toLowerCase()),
-      );
-    }, [options, inputValue, isUserInputted, onFilter]);
+  const normalizeString = React.useCallback((str: string) => {
+    return str
+      .toLowerCase()
+      .replace(/[-_\s]+/g, " ")
+      .trim();
+  }, []);
 
-    const selectedIndex = filteredOptions.findIndex(
-      (option) => option === selectedValueProp,
-    );
+  const filterItems = React.useCallback(() => {
+    filterStore.groups.clear();
+    filterStore.items.clear();
 
-    const selectedItem = React.useMemo(() => {
-      if (selectedIndex === -1) return null;
-      return getEnabledItems()[selectedIndex] ?? null;
-    }, [selectedIndex, getEnabledItems]);
+    function processItem(id: string, value: string) {
+      const normalizedValue = normalizeString(value);
+      const normalizedSearch = normalizeString(filterStore.search);
 
-    const onOpenChange = React.useCallback(
-      async (open: boolean) => {
-        setOpen(open);
+      if (normalizedSearch.trim() === "") return 0;
 
-        if (open) {
-          // If there's a value, set it as selected when opening
-          if (value) {
-            if (multiple && Array.isArray(value)) {
-              // For multiple selection, find first checked item
-              const checkedOption = filteredOptions.find((option) =>
-                value.includes(option),
-              );
-              setSelectedValue(checkedOption);
-            } else {
-              // For single selection, use current value
-              setSelectedValue(value as string);
-            }
-          }
+      const score = onFilter
+        ? Number(onFilter([value], filterStore.search).length > 0)
+        : Number(currentFilter(normalizedValue, normalizedSearch));
+      filterStore.items.set(id, score);
+      return score;
+    }
 
-          await new Promise((resolve) => setTimeout(resolve, 0));
+    let itemCount = 0;
+    for (const [id, value] of allItems.entries()) {
+      itemCount += processItem(id, value);
+    }
+    filterStore.itemCount = itemCount;
 
-          // Focus input after state updates
-          if (inputRef.current) {
-            inputRef.current.focus();
-          }
-
-          // Scroll selected item into view if exists
-          if (selectedItem) {
-            selectedItem.scrollIntoView({ block: "nearest" });
-          }
-        } else {
-          // Reset user input state when closing
-          setIsUserInputted(false);
-
-          // Reset search term if configured (could be added as prop)
-          if (allowCustomValues) {
-            onResetInputValue();
-          }
+    // Only process groups if there are any
+    if (allGroups.size) {
+      for (const [groupId, group] of allGroups.entries()) {
+        const hasMatchingItem = Array.from(group).some((itemId) =>
+          filterStore.items.get(itemId),
+        );
+        if (hasMatchingItem) {
+          filterStore.groups.set(groupId, new Set());
         }
-      },
-      [
-        value,
-        multiple,
-        filteredOptions,
-        setSelectedValue,
-        selectedItem,
-        setOpen,
-        allowCustomValues,
-      ],
-    );
-
-    const onValueChange = React.useCallback(
-      (newValue: string) => {
-        if (multiple) {
-          const currentValues = Array.isArray(value) ? value : [];
-          const updatedValues = currentValues.includes(newValue)
-            ? currentValues.filter((v) => v !== newValue)
-            : [...currentValues, newValue];
-          setValue(updatedValues);
-        } else {
-          setValue(newValue);
-          setOpen(false);
-        }
-      },
-      [multiple, setValue, setOpen, value],
-    );
-
-    const onResetInputValue = React.useCallback(() => {
-      if (!multiple && typeof value === "string") {
-        setInputValue(displayValue(value));
-      } else {
-        setInputValue("");
       }
-    }, [multiple, value, displayValue, setInputValue]);
+    }
+  }, [
+    filterStore,
+    allItems,
+    allGroups,
+    onFilter,
+    currentFilter,
+    normalizeString,
+  ]);
 
-    const onInputKeyDown = React.useCallback(
-      async (direction: "up" | "down" | "home" | "end") => {
-        const currentIndex = selectedIndex;
-        const itemCount = filteredOptions.length;
-
-        if (itemCount === 0) return;
-
-        let nextIndex: number;
-
-        // Handle edge cases first
-        if (currentIndex === -1 || direction === "home") {
-          nextIndex = 0;
-        } else if (direction === "end") {
-          nextIndex = itemCount - 1;
-        } else if (direction === "up") {
-          // Don't navigate up if already at first item
-          if (currentIndex === 0) return;
-          nextIndex = currentIndex - 1;
-        } else {
-          // Don't navigate down if already at last item
-          if (currentIndex === itemCount - 1) return;
-          nextIndex = currentIndex + 1;
-        }
-
-        // Update selected value
-        const nextValue = filteredOptions[nextIndex];
-        setSelectedValue(nextValue);
-
-        // Wait for DOM update
+  const onOpenChange = React.useCallback(
+    async (open: boolean) => {
+      setOpen(open);
+      if (open) {
         await new Promise((resolve) => setTimeout(resolve, 0));
+        inputRef.current?.focus();
+      }
+    },
+    [setOpen],
+  );
 
-        // Scroll selected item into view
-        if (selectedItem) {
-          selectedItem.scrollIntoView({ block: "nearest" });
-          selectedItem.focus();
+  const onValueChange = React.useCallback(
+    (newValue: string | string[]) => {
+      if (multiple && typeof newValue === "string") {
+        const currentValue = (value as string[]) || [];
+        const newValues = currentValue.includes(newValue)
+          ? currentValue.filter((v) => v !== newValue)
+          : [...currentValue, newValue];
+        setValue(newValues as ComboboxValue<Multiple>);
+      } else {
+        setValue(newValue as ComboboxValue<Multiple>);
+        setOpen(false);
+      }
+    },
+    [multiple, setValue, setOpen, value],
+  );
+
+  const registerItem = React.useCallback(
+    (id: string, value: string, groupId?: string) => {
+      allItems.set(id, value);
+
+      if (groupId) {
+        if (!allGroups.has(groupId)) {
+          allGroups.set(groupId, new Set());
         }
+        allGroups.get(groupId)?.add(id);
+      }
 
-        // Return focus to input while preventing scroll
-        if (inputRef.current) {
-          inputRef.current.focus({ preventScroll: true });
+      return () => {
+        allItems.delete(id);
+        if (groupId) {
+          const group = allGroups.get(groupId);
+          group?.delete(id);
+          if (group?.size === 0) {
+            allGroups.delete(groupId);
+          }
         }
-      },
-      [selectedIndex, filteredOptions, selectedItem, setSelectedValue],
-    );
+      };
+    },
+    [allItems, allGroups],
+  );
 
-    return (
-      <ComboboxProvider
-        value={value}
-        onValueChange={onValueChange}
-        open={open}
-        onOpenChange={onOpenChange}
-        inputValue={inputValue}
-        onInputValueChange={setInputValue}
-        isUserInputted={isUserInputted}
-        filteredOptions={filteredOptions}
-        selectedValue={selectedValue}
-        selectedValueChange={setSelectedValue}
-        displayValue={displayValue}
-        onFilter={onFilter}
-        onInputKeyDown={onInputKeyDown}
-        collectionRef={collectionRef}
-        contentRef={contentRef}
-        inputRef={inputRef}
-        selectedItem={selectedItem}
-        multiple={multiple}
-        disabled={disabled}
-        loop={loop}
-        allowCustomValues={allowCustomValues}
-        dir={dir}
-        id={id}
-        labelId={labelId}
-        contentId={contentId}
-      >
-        <Primitive.div {...rootProps} ref={composedRef}>
-          {children}
-          {isFormControl && name && (
-            <BubbleInput
-              type="hidden"
-              control={collectionRef.current}
-              name={name}
-              value={value}
-              disabled={disabled}
-            />
-          )}
-        </Primitive.div>
-      </ComboboxProvider>
-    );
-  },
-);
+  return (
+    <ComboboxProvider
+      value={value}
+      onValueChange={onValueChange}
+      open={open}
+      onOpenChange={onOpenChange}
+      inputValue={inputValue}
+      onInputValueChange={setInputValue}
+      onFilter={onFilter}
+      collectionRef={collectionRef}
+      contentRef={contentRef}
+      inputRef={inputRef}
+      highlightedItem={null}
+      multiple={multiple}
+      disabled={disabled}
+      loop={loop}
+      allowCustomValue={allowCustomValue}
+      dir={dir}
+      id={id}
+      labelId={labelId}
+      contentId={contentId}
+      filterStore={filterStore}
+      registerItem={registerItem}
+      filterItems={filterItems}
+    >
+      <Primitive.div {...rootProps} ref={composedRef}>
+        {children}
+        {isFormControl && name && (
+          <BubbleInput
+            type="hidden"
+            control={collectionRef.current}
+            name={name}
+            value={value}
+            disabled={disabled}
+          />
+        )}
+      </Primitive.div>
+    </ComboboxProvider>
+  );
+}
+
+type ComboboxRootComponent = (<Multiple extends boolean = false>(
+  props: ComboboxRootProps<Multiple> & { ref?: React.Ref<HTMLDivElement> },
+) => React.ReactElement) & { displayName: string };
+
+const ComboboxRoot = forwardRef(ComboboxRootImpl) as ComboboxRootComponent;
 
 ComboboxRoot.displayName = ROOT_NAME;
 
 const Root = ComboboxRoot;
 
-export { Root, ComboboxRoot, useComboboxContext };
+export { ComboboxRoot, Root, useComboboxContext };
 
 export type { ComboboxRootProps };

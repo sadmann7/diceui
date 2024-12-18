@@ -43,7 +43,7 @@ function createContext<T extends object | null>(
     );
   }
 
-  return [Provider, useContext] as const;
+  return [Provider, useContext, Context] as const;
 }
 
 export { createContext };

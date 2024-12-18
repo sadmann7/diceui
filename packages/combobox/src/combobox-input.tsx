@@ -14,20 +14,48 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
     const context = useComboboxContext(INPUT_NAME);
     const composedRefs = useComposedRefs(forwardedRef, context.inputRef);
 
+    const onChange = React.useCallback(
+      (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (!context.open) {
+          context.onOpenChange(true);
+        }
+
+        const value = event.target.value;
+        context.onInputValueChange(value);
+        context.filterStore.search = value;
+
+        context.filterItems();
+      },
+      [context],
+    );
+
+    const onKeyDown = React.useCallback(
+      (event: React.KeyboardEvent) => {
+        if (
+          !context.open &&
+          (event.key === "ArrowDown" || event.key === "ArrowUp")
+        ) {
+          event.preventDefault();
+          context.onOpenChange(true);
+        }
+      },
+      [context.open, context.onOpenChange],
+    );
+
     return (
       <Primitive.input
-        ref={composedRefs}
         role="combobox"
+        autoComplete="off"
         aria-expanded={context.open}
         aria-controls={context.contentId}
+        aria-autocomplete="list"
         aria-disabled={context.disabled}
         disabled={context.disabled}
-        value={context.value}
-        onChange={composeEventHandlers(inputProps.onChange, (e) => {
-          context.onValueChange(e.target.value);
-          if (!context.open) context.onOpenChange(true);
-        })}
         {...inputProps}
+        ref={composedRefs}
+        value={context.inputValue}
+        onChange={composeEventHandlers(inputProps.onChange, onChange)}
+        onKeyDown={composeEventHandlers(inputProps.onKeyDown, onKeyDown)}
       />
     );
   },

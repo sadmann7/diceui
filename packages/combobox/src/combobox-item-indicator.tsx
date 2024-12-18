@@ -14,7 +14,7 @@ const ComboboxItemIndicator = React.forwardRef<
   const { ...indicatorProps } = props;
   const context = useComboboxContext(ITEM_INDICATOR_NAME);
 
-  if (!context.selectedValue) return null;
+  if (!context.value) return null;
 
   return <Primitive.span ref={forwardedRef} {...indicatorProps} />;
 });

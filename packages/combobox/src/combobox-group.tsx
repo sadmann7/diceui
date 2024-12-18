@@ -9,7 +9,7 @@ interface ComboboxGroupContextValue {
   labelId: string;
 }
 
-const [ComboboxGroupProvider, useComboboxGroupContext] =
+const [ComboboxGroupProvider, useComboboxGroupContext, ComboboxGroupContext] =
   createContext<ComboboxGroupContextValue>(GROUP_NAME);
 
 interface ComboboxGroupProps
@@ -37,6 +37,6 @@ ComboboxGroup.displayName = GROUP_NAME;
 
 const Group = ComboboxGroup;
 
-export { ComboboxGroup, Group, useComboboxGroupContext };
+export { ComboboxGroup, Group, useComboboxGroupContext, ComboboxGroupContext };
 
 export type { ComboboxGroupProps };
