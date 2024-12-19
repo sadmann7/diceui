@@ -48,7 +48,9 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
           case "ArrowDown":
             if (!context.open) {
               context.onOpenChange(true);
-              context.onMoveHighlight("first");
+              requestAnimationFrame(() => {
+                context.onMoveHighlight("first");
+              });
             } else {
               context.onMoveHighlight("next");
             }
@@ -56,7 +58,9 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
           case "ArrowUp":
             if (!context.open) {
               context.onOpenChange(true);
-              context.onMoveHighlight("last");
+              requestAnimationFrame(() => {
+                context.onMoveHighlight("last");
+              });
             } else {
               context.onMoveHighlight("prev");
             }

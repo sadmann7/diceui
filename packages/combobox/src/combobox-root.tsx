@@ -245,6 +245,8 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     [items, groups],
   );
 
+  console.log({ highlightedItem });
+
   const onMoveHighlight = React.useCallback(
     (direction: "next" | "prev" | "first" | "last") => {
       const items = getEnabledItems();
