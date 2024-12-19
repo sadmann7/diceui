@@ -41,7 +41,9 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   onHighlightedItemChange: (item: HTMLElement | null) => void;
   onRegisterItem: (id: string, value: string, groupId?: string) => () => void;
   onFilterItems: () => void;
-  onMoveHighlight: (direction: "next" | "prev" | "first" | "last") => void;
+  onMoveHighlight: (
+    direction: "next" | "prev" | "first" | "last" | "selected",
+  ) => void;
   multiple: Multiple;
   disabled: boolean;
   loop: boolean;
@@ -248,7 +250,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
   console.log({ highlightedItem });
 
   const onMoveHighlight = React.useCallback(
-    (direction: "next" | "prev" | "first" | "last") => {
+    (direction: "next" | "prev" | "first" | "last" | "selected") => {
       const items = getEnabledItems();
       if (!items.length) return;
 
@@ -274,6 +276,14 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
         case "last":
           nextIndex = items.length - 1;
           break;
+        case "selected": {
+          const selectedValue = Array.isArray(value) ? value[0] : value;
+          nextIndex = items.findIndex(
+            (item) => item.getAttribute("data-value") === selectedValue,
+          );
+          if (nextIndex === -1) nextIndex = 0;
+          break;
+        }
       }
 
       const nextItem = items[nextIndex];
@@ -282,7 +292,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
         setHighlightedItem(nextItem);
       }
     },
-    [loop, highlightedItem, getEnabledItems],
+    [loop, highlightedItem, getEnabledItems, value],
   );
 
   return (
