@@ -63,7 +63,11 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
             if (!context.open) {
               context.onOpenChange(true);
               requestAnimationFrame(() => {
-                context.onMoveHighlight("last");
+                if (context.value.length > 0) {
+                  context.onMoveHighlight("selected");
+                } else {
+                  context.onMoveHighlight("last");
+                }
               });
             } else {
               context.onMoveHighlight("prev");

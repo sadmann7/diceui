@@ -42,7 +42,7 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   onRegisterItem: (id: string, value: string, groupId?: string) => () => void;
   onFilterItems: () => void;
   onMoveHighlight: (
-    direction: "next" | "prev" | "first" | "last" | "selected",
+    target: "next" | "prev" | "first" | "last" | "selected",
   ) => void;
   multiple: Multiple;
   disabled: boolean;
@@ -247,17 +247,15 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     [items, groups],
   );
 
-  console.log({ highlightedItem });
-
   const onMoveHighlight = React.useCallback(
-    (direction: "next" | "prev" | "first" | "last" | "selected") => {
+    (target: Parameters<ComboboxContextValue["onMoveHighlight"]>[0]) => {
       const items = getEnabledItems();
       if (!items.length) return;
 
       const currentIndex = items.indexOf(highlightedItem as HTMLElement);
       let nextIndex: number;
 
-      switch (direction) {
+      switch (target) {
         case "next":
           nextIndex = currentIndex + 1;
           if (nextIndex >= items.length) {
@@ -281,6 +279,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
           nextIndex = items.findIndex(
             (item) => item.getAttribute("data-value") === selectedValue,
           );
+
           if (nextIndex === -1) nextIndex = 0;
           break;
         }
