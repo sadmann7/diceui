@@ -13,7 +13,7 @@ const ComboboxViewport = React.forwardRef<
   return (
     <Primitive.div
       ref={forwardedRef}
-      data-radix-combobox-viewport=""
+      data-dice-combobox-viewport=""
       style={{
         position: "relative",
         flex: 1,

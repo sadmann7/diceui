@@ -39,6 +39,10 @@ export function isIOS(): boolean | undefined {
   return isIPhone() || isIPad();
 }
 
+export function isPinchZoomActive(): boolean {
+  return (window.visualViewport?.scale ?? 1) !== 1;
+}
+
 export function getPlatform(): string | undefined {
   return typeof window !== "undefined" && window.navigator != null
     ? window.navigator.platform

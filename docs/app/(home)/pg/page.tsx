@@ -18,15 +18,6 @@ import {
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from "@/components/ui/command";
-import {
   Select,
   SelectContent,
   SelectGroup,
@@ -35,8 +26,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import * as Combobox from "@diceui/combobox";
+import {
+  Combobox,
+  ComboboxAnchor,
+  ComboboxContent,
+  ComboboxInput,
+  ComboboxItem,
+} from "@/registry/default/ui/combobox";
+import * as ComboboxPrimitive from "@diceui/combobox";
 import * as React from "react";
+
+const tricks = [
+  { label: "Kickflip", value: "kickflip" },
+  { label: "Heelflip", value: "heelflip" },
+  { label: "Tre Flip", value: "tre-flip" },
+  { label: "FS 540", value: "fs-f40" },
+  { label: "Casper flip 360 flip", value: "casper-flip-360-flip" },
+  { label: "Kickflip Backflip", value: "kickflip-backflip" },
+  { label: "360 Varial McTwist", value: "360-vari-al-mc-twist" },
+  { label: "The 900", value: "the-900" },
+  { label: "Indy Backflip", value: "indy-backflip" },
+  { label: "Pizza Guy", value: "pizza-guy" },
+];
 
 export default function PlaygroundPage() {
   const [selectedTrick, setSelectedTrick] = React.useState<string | undefined>(
@@ -46,62 +57,40 @@ export default function PlaygroundPage() {
 
   return (
     <Shell>
-      <Combobox.Root
+      <ComboboxPrimitive.Root
         className="max-w-[12rem]"
         value={selectedTrick}
         onValueChange={setSelectedTrick}
       >
-        <Combobox.Anchor>
-          <Combobox.Input placeholder="Search tricks..." />
-        </Combobox.Anchor>
-        <Combobox.Content>
-          <Combobox.Viewport>
-            <Combobox.Item value="kickflip">Kickflip</Combobox.Item>
-            <Combobox.Item value="heelflip">Heelflip</Combobox.Item>
-            <Combobox.Item value="tre-flip">Tre Flip</Combobox.Item>
-            <Combobox.Item value="fs-f40">FS 540</Combobox.Item>
-            <Combobox.Item value="flip-1">Flip 1</Combobox.Item>
-            <Combobox.Item value="flip-2">Flip 2</Combobox.Item>
-            <Combobox.Item value="flip-3">Flip 3</Combobox.Item>
-            <Combobox.Item value="flip-4">Flip 4</Combobox.Item>
-          </Combobox.Viewport>
-        </Combobox.Content>
-      </Combobox.Root>
-      <Command className="max-w-xs rounded-lg border shadow-md">
-        <CommandInput placeholder="Type a command or search..." />
-        <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="Basic Tricks">
-            <CommandItem value="kickflip">
-              <span>Kickflip</span>
-            </CommandItem>
-            <CommandItem value="heelflip">
-              <span>Heelflip</span>
-            </CommandItem>
-            <CommandItem value="tre-flip">
-              <span>Tre Flip</span>
-            </CommandItem>
-            <CommandItem value="fs-f40">
-              <span>FS 540</span>
-            </CommandItem>
-          </CommandGroup>
-          <CommandSeparator />
-          <CommandGroup heading="Flip Tricks">
-            <CommandItem value="flip-1">
-              <span>Flip 1</span>
-            </CommandItem>
-            <CommandItem value="flip-2">
-              <span>Flip 2</span>
-            </CommandItem>
-            <CommandItem value="flip-3">
-              <span>Flip 3</span>
-            </CommandItem>
-            <CommandItem value="flip-4">
-              <span>Flip 4</span>
-            </CommandItem>
-          </CommandGroup>
-        </CommandList>
-      </Command>
+        <ComboboxPrimitive.Anchor>
+          <ComboboxPrimitive.Input placeholder="Search tricks..." />
+        </ComboboxPrimitive.Anchor>
+        <ComboboxPrimitive.Positioner>
+          <ComboboxPrimitive.Content>
+            <ComboboxPrimitive.Viewport>
+              {tricks.map((trick) => (
+                <ComboboxPrimitive.Item key={trick.value} value={trick.value}>
+                  {trick.label}
+                </ComboboxPrimitive.Item>
+              ))}
+            </ComboboxPrimitive.Viewport>
+          </ComboboxPrimitive.Content>
+        </ComboboxPrimitive.Positioner>
+      </ComboboxPrimitive.Root>
+      <Combobox className="w-full max-w-xs">
+        <Combobox>
+          <ComboboxAnchor>
+            <ComboboxInput placeholder="Search tricks..." />
+          </ComboboxAnchor>
+          <ComboboxContent className="w-full">
+            {tricks.map((trick) => (
+              <ComboboxItem key={trick.value} value={trick.value}>
+                {trick.label}
+              </ComboboxItem>
+            ))}
+          </ComboboxContent>
+        </Combobox>
+      </Combobox>
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="w-fit">

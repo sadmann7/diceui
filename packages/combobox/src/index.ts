@@ -28,8 +28,8 @@ export type { ComboboxContentProps } from "./combobox-content";
 export { ComboboxViewport, Viewport } from "./combobox-viewport";
 export type { ComboboxViewportProps } from "./combobox-viewport";
 
-export { ComboboxPortal, Portal } from "./combobox-portal";
-export type { ComboboxPortalProps } from "./combobox-portal";
+export { ComboboxPositioner, Positioner } from "./combobox-positioner";
+export type { ComboboxPositionerProps } from "./combobox-positioner";
 
 export { ComboboxGroup, Group } from "./combobox-group";
 export type { ComboboxGroupProps } from "./combobox-group";

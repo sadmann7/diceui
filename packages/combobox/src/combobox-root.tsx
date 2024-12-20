@@ -48,6 +48,7 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   disabled: boolean;
   loop: boolean;
   resetOnBlur: boolean;
+  modal: boolean;
   dir: Direction;
   id: string;
   labelId: string;
@@ -77,6 +78,7 @@ interface ComboboxRootProps<Multiple extends boolean = false>
   loop?: boolean;
   resetOnBlur?: boolean;
   fuzzy?: boolean;
+  modal?: boolean;
   required?: boolean;
   name?: string;
 }
@@ -95,13 +97,14 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     inputValue: inputValueProp,
     onInputValueChange,
     onFilter,
-    dir: dirProp,
     multiple = false,
     disabled = false,
     loop = false,
     resetOnBlur = true,
     fuzzy = true,
+    modal = false,
     required = false,
+    dir: dirProp,
     name,
     children,
     ...rootProps
@@ -312,11 +315,12 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       onRegisterItem={onRegisterItem}
       onFilterItems={onFilterItems}
       onMoveHighlight={onMoveHighlight}
-      dir={dir}
       multiple={multiple}
       disabled={disabled}
       loop={loop}
       resetOnBlur={resetOnBlur}
+      modal={modal}
+      dir={dir}
       id={id}
       labelId={labelId}
       contentId={contentId}
