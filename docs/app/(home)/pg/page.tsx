@@ -60,7 +60,7 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <ComboboxPrimitive.Root
-        className="max-w-[12rem]"
+        className="w-full max-w-[15rem]"
         value={selectedTrick}
         onValueChange={setSelectedTrick}
       >
@@ -68,7 +68,7 @@ export default function PlaygroundPage() {
           <ComboboxPrimitive.Input placeholder="Search tricks..." />
         </ComboboxPrimitive.Anchor>
         <ComboboxPrimitive.Positioner>
-          <ComboboxPrimitive.Content>
+          <ComboboxPrimitive.Content className="w-full max-w-[15rem]">
             <ComboboxPrimitive.Viewport>
               <ComboboxPrimitive.Empty>No tricks found</ComboboxPrimitive.Empty>
               {tricks.map((trick) => (
@@ -83,20 +83,18 @@ export default function PlaygroundPage() {
           </ComboboxPrimitive.Content>
         </ComboboxPrimitive.Positioner>
       </ComboboxPrimitive.Root>
-      <Combobox className="w-full max-w-xs">
-        <Combobox>
-          <ComboboxAnchor>
-            <ComboboxInput placeholder="Search tricks..." />
-          </ComboboxAnchor>
-          <ComboboxContent className="w-full">
-            <ComboboxEmpty>No tricks found</ComboboxEmpty>
-            {tricks.map((trick) => (
-              <ComboboxItem key={trick.value} value={trick.value}>
-                {trick.label}
-              </ComboboxItem>
-            ))}
-          </ComboboxContent>
-        </Combobox>
+      <Combobox className="w-full max-w-[15rem]">
+        <ComboboxAnchor>
+          <ComboboxInput placeholder="Search tricks..." />
+        </ComboboxAnchor>
+        <ComboboxContent className="w-full max-w-[15rem]">
+          <ComboboxEmpty>No tricks found</ComboboxEmpty>
+          {tricks.map((trick) => (
+            <ComboboxItem key={trick.value} value={trick.value}>
+              {trick.label}
+            </ComboboxItem>
+          ))}
+        </ComboboxContent>
       </Combobox>
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>

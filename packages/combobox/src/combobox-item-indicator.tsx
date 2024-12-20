@@ -16,7 +16,7 @@ const ComboboxItemIndicator = React.forwardRef<
 
   if (!itemContext.isSelected) return null;
 
-  return <Primitive.span {...indicatorProps} ref={forwardedRef} />;
+  return <Primitive.span aria-hidden {...indicatorProps} ref={forwardedRef} />;
 });
 
 ComboboxItemIndicator.displayName = ITEM_INDICATOR_NAME;
