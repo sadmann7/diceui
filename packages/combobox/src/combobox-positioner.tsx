@@ -68,10 +68,10 @@ const ComboboxPositioner = React.forwardRef<
 
   return (
     <Primitive.div
+      data-state={context.open ? "open" : "closed"}
       {...positionerProps}
       ref={composedRef}
       style={composedStyles}
-      data-state={context.open ? "open" : "closed"}
     />
   );
 });

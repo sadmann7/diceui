@@ -90,11 +90,24 @@ const ComboboxItem = React.forwardRef<
 ));
 ComboboxItem.displayName = ComboboxPrimitive.Item.displayName;
 
+const ComboboxEmpty = React.forwardRef<
+  React.ElementRef<typeof ComboboxPrimitive.Empty>,
+  React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.Empty>
+>(({ className, ...props }, ref) => (
+  <ComboboxPrimitive.Empty
+    ref={ref}
+    className={cn("py-6 text-center text-sm", className)}
+    {...props}
+  />
+));
+ComboboxEmpty.displayName = ComboboxPrimitive.Empty.displayName;
+
 export {
   Combobox,
   ComboboxAnchor,
   ComboboxContent,
   ComboboxInput,
   ComboboxItem,
+  ComboboxEmpty,
   ComboboxTrigger,
 };

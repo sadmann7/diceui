@@ -9,16 +9,15 @@ interface ComboboxEmptyProps
 
 const ComboboxEmpty = React.forwardRef<HTMLDivElement, ComboboxEmptyProps>(
   (props, forwardedRef) => {
-    const { children = "No results found", ...emptyProps } = props;
     const context = useComboboxContext(EMPTY_NAME);
 
-    if (context.value === undefined) return null;
+    const shouldRender =
+      context.filterStore.itemCount === 0 &&
+      context.filterStore.search.trim() !== "";
 
-    return (
-      <Primitive.div ref={forwardedRef} {...emptyProps}>
-        {children}
-      </Primitive.div>
-    );
+    if (!shouldRender) return null;
+
+    return <Primitive.div {...props} ref={forwardedRef} />;
   },
 );
 

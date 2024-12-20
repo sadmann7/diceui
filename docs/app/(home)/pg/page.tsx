@@ -30,6 +30,7 @@ import {
   Combobox,
   ComboboxAnchor,
   ComboboxContent,
+  ComboboxEmpty,
   ComboboxInput,
   ComboboxItem,
 } from "@/registry/default/ui/combobox";
@@ -68,6 +69,7 @@ export default function PlaygroundPage() {
         <ComboboxPrimitive.Positioner>
           <ComboboxPrimitive.Content>
             <ComboboxPrimitive.Viewport>
+              <ComboboxPrimitive.Empty>No tricks found</ComboboxPrimitive.Empty>
               {tricks.map((trick) => (
                 <ComboboxPrimitive.Item key={trick.value} value={trick.value}>
                   {trick.label}
@@ -83,6 +85,7 @@ export default function PlaygroundPage() {
             <ComboboxInput placeholder="Search tricks..." />
           </ComboboxAnchor>
           <ComboboxContent className="w-full">
+            <ComboboxEmpty>No tricks found</ComboboxEmpty>
             {tricks.map((trick) => (
               <ComboboxItem key={trick.value} value={trick.value}>
                 {trick.label}
