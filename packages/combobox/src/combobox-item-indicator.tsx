@@ -1,6 +1,6 @@
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
-import { useComboboxContext } from "./combobox-root";
+import { useComboboxItemContext } from "./combobox-item";
 
 const ITEM_INDICATOR_NAME = "ComboboxItemIndicator";
 
@@ -12,11 +12,11 @@ const ComboboxItemIndicator = React.forwardRef<
   ComboboxItemIndicatorProps
 >((props, forwardedRef) => {
   const { ...indicatorProps } = props;
-  const context = useComboboxContext(ITEM_INDICATOR_NAME);
+  const itemContext = useComboboxItemContext(ITEM_INDICATOR_NAME);
 
-  if (!context.value) return null;
+  if (!itemContext.isSelected) return null;
 
-  return <Primitive.span ref={forwardedRef} {...indicatorProps} />;
+  return <Primitive.span {...indicatorProps} ref={forwardedRef} />;
 });
 
 ComboboxItemIndicator.displayName = ITEM_INDICATOR_NAME;

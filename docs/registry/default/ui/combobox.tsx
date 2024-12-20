@@ -1,7 +1,7 @@
 "use client";
 
 import * as ComboboxPrimitive from "@diceui/combobox";
-import { ChevronDown } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
@@ -86,6 +86,11 @@ const ComboboxItem = React.forwardRef<
     {...props}
   >
     {children}
+    <span className="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">
+      <ComboboxPrimitive.ComboboxItemIndicator>
+        <Check className="h-4 w-4" />
+      </ComboboxPrimitive.ComboboxItemIndicator>
+    </span>
   </ComboboxPrimitive.Item>
 ));
 ComboboxItem.displayName = ComboboxPrimitive.Item.displayName;

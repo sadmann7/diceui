@@ -35,6 +35,7 @@ import {
   ComboboxItem,
 } from "@/registry/default/ui/combobox";
 import * as ComboboxPrimitive from "@diceui/combobox";
+import { Check } from "lucide-react";
 import * as React from "react";
 
 const tricks = [
@@ -73,6 +74,9 @@ export default function PlaygroundPage() {
               {tricks.map((trick) => (
                 <ComboboxPrimitive.Item key={trick.value} value={trick.value}>
                   {trick.label}
+                  <ComboboxPrimitive.ItemIndicator>
+                    <Check className="h-4 w-4" />
+                  </ComboboxPrimitive.ItemIndicator>
                 </ComboboxPrimitive.Item>
               ))}
             </ComboboxPrimitive.Viewport>
