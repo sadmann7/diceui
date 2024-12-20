@@ -26,6 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { tricks } from "@/lib/data";
 import {
   Combobox,
   ComboboxAnchor,
@@ -37,19 +38,6 @@ import {
 import * as ComboboxPrimitive from "@diceui/combobox";
 import { Check } from "lucide-react";
 import * as React from "react";
-
-const tricks = [
-  { label: "Kickflip", value: "kickflip" },
-  { label: "Heelflip", value: "heelflip" },
-  { label: "Tre Flip", value: "tre-flip" },
-  { label: "FS 540", value: "fs-f40" },
-  { label: "Casper flip 360 flip", value: "casper-flip-360-flip" },
-  { label: "Kickflip Backflip", value: "kickflip-backflip" },
-  { label: "360 Varial McTwist", value: "360-vari-al-mc-twist" },
-  { label: "The 900", value: "the-900" },
-  { label: "Indy Backflip", value: "indy-backflip" },
-  { label: "Pizza Guy", value: "pizza-guy" },
-];
 
 export default function PlaygroundPage() {
   const [selectedTrick, setSelectedTrick] = React.useState<string | undefined>(
@@ -72,18 +60,28 @@ export default function PlaygroundPage() {
             <ComboboxPrimitive.Viewport>
               <ComboboxPrimitive.Empty>No tricks found</ComboboxPrimitive.Empty>
               {tricks.map((trick) => (
-                <ComboboxPrimitive.Item key={trick.value} value={trick.value}>
+                <ComboboxPrimitive.Item
+                  key={trick.value}
+                  value={trick.value}
+                  className="flex items-center gap-2 pr-2 pl-8"
+                >
+                  <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+                    <ComboboxPrimitive.ItemIndicator>
+                      <Check className="h-4 w-4" />
+                    </ComboboxPrimitive.ItemIndicator>
+                  </span>
                   {trick.label}
-                  <ComboboxPrimitive.ItemIndicator>
-                    <Check className="h-4 w-4" />
-                  </ComboboxPrimitive.ItemIndicator>
                 </ComboboxPrimitive.Item>
               ))}
             </ComboboxPrimitive.Viewport>
           </ComboboxPrimitive.Content>
         </ComboboxPrimitive.Positioner>
       </ComboboxPrimitive.Root>
-      <Combobox className="w-full max-w-[15rem]">
+      <Combobox
+        value={selectedTrick}
+        onValueChange={setSelectedTrick}
+        className="w-full max-w-[15rem]"
+      >
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
         </ComboboxAnchor>
