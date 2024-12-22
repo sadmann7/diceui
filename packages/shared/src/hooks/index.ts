@@ -12,3 +12,4 @@ export * from "./use-previous";
 export * from "./use-scroll-lock";
 export * from "./use-size";
 export * from "./use-state-machine";
+export * from "./use-typeahead";

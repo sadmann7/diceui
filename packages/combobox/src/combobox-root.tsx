@@ -52,6 +52,7 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   disabled: boolean;
   loop: boolean;
   resetOnBlur: boolean;
+  readOnly: boolean;
   modal: boolean;
   dir: Direction;
   id: string;
@@ -136,6 +137,12 @@ interface ComboboxRootProps<Multiple extends boolean = false>
   modal?: boolean;
 
   /**
+   * Whether the combobox is read-only.
+   * @default false
+   */
+  readOnly?: boolean;
+
+  /**
    * Whether the combobox is required in a form context.
    * @default false
    */
@@ -165,6 +172,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     resetOnBlur = true,
     fuzzy = true,
     modal = false,
+    readOnly = false,
     required = false,
     dir: dirProp,
     name,
@@ -405,6 +413,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       disabled={disabled}
       loop={loop}
       resetOnBlur={resetOnBlur}
+      readOnly={readOnly}
       modal={modal}
       dir={dir}
       id={id}
