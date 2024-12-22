@@ -79,13 +79,9 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
           tabIndex={disabled ? undefined : -1}
           {...itemProps}
           ref={composedRefs}
-          onMouseEnter={composeEventHandlers(itemProps.onMouseEnter, () => {
-            if (!isDisabled) return;
-            context.onMoveHighlight("next");
-          })}
-          onMouseLeave={composeEventHandlers(itemProps.onMouseLeave, () => {
-            if (!isDisabled) return;
-            context.onHighlightedItemChange(null);
+          onPointerMove={composeEventHandlers(itemProps.onPointerMove, () => {
+            if (isDisabled) return;
+            context.onHighlightedItemChange(itemRef.current);
           })}
           onClick={composeEventHandlers(itemProps.onClick, () => {
             if (isDisabled) return;

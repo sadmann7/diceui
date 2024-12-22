@@ -27,8 +27,22 @@ const ComboboxTrigger = React.forwardRef<
       tabIndex={context.disabled ? undefined : -1}
       {...triggerProps}
       ref={forwardedRef}
-      onClick={composeEventHandlers(triggerProps.onClick, () => {
-        context.onOpenChange(!context.open);
+      onClick={composeEventHandlers(triggerProps.onClick, async (event) => {
+        event.preventDefault();
+        const newOpenState = !context.open;
+        await context.onOpenChange(newOpenState);
+
+        if (newOpenState) {
+          requestAnimationFrame(() => {
+            if (context.value.length > 0) {
+              context.onMoveHighlight("selected");
+            }
+          });
+        }
+
+        if (!newOpenState) {
+          context.inputRef.current?.focus();
+        }
       })}
     />
   );
