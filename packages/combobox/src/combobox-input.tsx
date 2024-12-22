@@ -56,10 +56,48 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
     const onKeyDown = React.useCallback(
       (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (context.readOnly) {
-          if (event.key === "Enter" || event.key === " ") {
+          if (
+            event.key === "Enter" ||
+            event.key === " " ||
+            event.key === "ArrowDown" ||
+            event.key === "ArrowUp"
+          ) {
             event.preventDefault();
             if (!context.open) {
               context.onOpenChange(true);
+              if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+                requestAnimationFrame(() => {
+                  if (context.value.length > 0) {
+                    context.onHighlightMove("selected");
+                  } else {
+                    context.onHighlightMove(
+                      event.key === "ArrowDown" ? "first" : "last",
+                    );
+                  }
+                });
+              }
+            } else {
+              if (event.key === "ArrowDown") {
+                context.onHighlightMove("next");
+              } else if (event.key === "ArrowUp") {
+                context.onHighlightMove("prev");
+              } else if (event.key === "Enter" && context.highlightedItem) {
+                const value =
+                  context.highlightedItem.getAttribute("data-value");
+                if (value) {
+                  context.onInputValueChange(
+                    context.highlightedItem.textContent ?? "",
+                  );
+                  context.onHighlightedItemChange(null);
+                  context.onOpenChange(false);
+                }
+              }
+            }
+          } else if (event.key === "Escape") {
+            event.preventDefault();
+            if (context.open) {
+              context.onOpenChange(false);
+              context.onHighlightedItemChange(null);
             }
           }
           return;

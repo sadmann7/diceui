@@ -171,7 +171,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     defaultOpen = false,
     onOpenChange: onOpenChangeProp,
     inputValue: inputValueProp,
-    onInputValueChange,
+    onInputValueChange: onInputValueChangeProp,
     onFilter,
     multiple = false,
     disabled = false,
@@ -216,7 +216,11 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
   });
   const [inputValue = "", setInputValue] = useControllableState({
     prop: inputValueProp,
-    onChange: onInputValueChange,
+    onChange: (value) => {
+      if (!readOnly) {
+        onInputValueChangeProp?.(value);
+      }
+    },
   });
 
   const [hasCustomAnchor, setHasCustomAnchor] = React.useState(false);
@@ -278,6 +282,16 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     }
   }, [filterStore, items, groups, onFilter, currentFilter, normalizeString]);
 
+  const onCustomAnchorAdd = React.useCallback(
+    () => setHasCustomAnchor(true),
+    [],
+  );
+
+  const onCustomAnchorRemove = React.useCallback(
+    () => setHasCustomAnchor(false),
+    [],
+  );
+
   const onOpenChange = React.useCallback(
     async (open: boolean) => {
       setOpen(open);
@@ -294,8 +308,19 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     [setOpen],
   );
 
+  const onInputValueChange = React.useCallback(
+    (value: string) => {
+      if (!readOnly) {
+        setInputValue(value);
+      }
+    },
+    [readOnly, setInputValue],
+  );
+
   const onValueChange = React.useCallback(
     (newValue: string | string[]) => {
+      if (readOnly) return;
+
       if (multiple) {
         const currentValue = Array.isArray(value) ? value : [];
         const typedNewValue = typeof newValue === "string" ? newValue : "";
@@ -309,7 +334,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       setValue(newValue as ComboboxValue<Multiple>);
       setOpen(false);
     },
-    [multiple, setValue, setOpen, value],
+    [multiple, setValue, setOpen, value, readOnly],
   );
 
   const onRegisterItem = React.useCallback(
@@ -384,16 +409,6 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     [loop, highlightedItem, getEnabledItems, value],
   );
 
-  const onCustomAnchorAdd = React.useCallback(
-    () => setHasCustomAnchor(true),
-    [],
-  );
-
-  const onCustomAnchorRemove = React.useCallback(
-    () => setHasCustomAnchor(false),
-    [],
-  );
-
   return (
     <ComboboxProvider
       value={value}
@@ -401,7 +416,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       open={open}
       onOpenChange={onOpenChange}
       inputValue={inputValue}
-      onInputValueChange={setInputValue}
+      onInputValueChange={onInputValueChange}
       onFilter={onFilter}
       collectionRef={collectionRef}
       listRef={listRef}
