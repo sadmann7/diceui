@@ -70,7 +70,7 @@ export default function PlaygroundPage() {
             <ChevronDown className="h-4 w-4" />
           </ComboboxTrigger>
         </ComboboxAnchor>
-        <ComboboxContent>
+        <ComboboxContent className="w-[20rem]">
           <ComboboxEmpty>No tricks found</ComboboxEmpty>
           {tricks.map((trick) => (
             <ComboboxItem key={trick.value} value={trick.value}>

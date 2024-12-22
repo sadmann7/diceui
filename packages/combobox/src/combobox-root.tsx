@@ -3,6 +3,7 @@ import {
   type Direction,
   createContext,
   forwardRef,
+  useAnchor,
   useCollection,
   useComposedRefs,
   useControllableState,
@@ -11,7 +12,6 @@ import {
   useFormControl,
   useId,
 } from "@diceui/shared";
-import { useListNavigation, useTypeahead } from "@floating-ui/react";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 
@@ -195,13 +195,18 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
   const collectionRef = React.useRef<HTMLDivElement | null>(null);
   const listRef = React.useRef<HTMLDivElement | null>(null);
   const inputRef = React.useRef<HTMLInputElement | null>(null);
-  const anchorRef = React.useRef<HTMLDivElement | null>(null);
 
   const id = useId();
   const labelId = `${id}label`;
   const contentId = `${id}content`;
 
   const dir = useDirection(dirProp);
+  const {
+    anchorRef,
+    hasCustomAnchor,
+    onCustomAnchorAdd,
+    onCustomAnchorRemove,
+  } = useAnchor<HTMLDivElement>();
   const { getEnabledItems } = useCollection({ ref: collectionRef });
   const { isFormControl, onTriggerChange } = useFormControl();
   const composedRef = useComposedRefs(forwardedRef, collectionRef, (node) =>
@@ -226,8 +231,6 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       }
     },
   });
-
-  const [hasCustomAnchor, setHasCustomAnchor] = React.useState(false);
 
   const [highlightedItem, setHighlightedItem] =
     React.useState<HTMLElement | null>(null);
@@ -285,16 +288,6 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       }
     }
   }, [filterStore, items, groups, onFilter, currentFilter, normalizeString]);
-
-  const onCustomAnchorAdd = React.useCallback(
-    () => setHasCustomAnchor(true),
-    [],
-  );
-
-  const onCustomAnchorRemove = React.useCallback(
-    () => setHasCustomAnchor(false),
-    [],
-  );
 
   const onOpenChange = React.useCallback(
     async (open: boolean) => {
