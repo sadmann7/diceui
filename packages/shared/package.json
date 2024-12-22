@@ -11,6 +11,12 @@
       "require": "./src/index.ts"
     }
   },
+  "files": ["dist", "package.json", "LICENSE", "README.md"],
+  "scripts": {
+    "dev": "tsup --format esm --watch --external=react",
+    "build": "tsup --clean --external=react",
+    "typecheck": "tsc --noEmit"
+  },
   "peerDependencies": {
     "@types/react": "*",
     "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
@@ -19,5 +25,9 @@
     "@types/react": {
       "optional": true
     }
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
   }
 }
