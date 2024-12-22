@@ -1,14 +1,44 @@
-export * from "./combobox-root";
-export * from "./combobox-anchor";
-export * from "./combobox-arrow";
-export * from "./combobox-content";
-export * from "./combobox-empty";
-export * from "./combobox-group";
-export * from "./combobox-input";
-export * from "./combobox-item";
-export * from "./combobox-item-indicator";
-export * from "./combobox-item-text";
-export * from "./combobox-portal";
-export * from "./combobox-positioner";
-export * from "./combobox-separator";
-export * from "./combobox-trigger";
+export { ComboboxRoot, Root } from "./combobox-root";
+export type { ComboboxRootProps } from "./combobox-root";
+
+export { ComboboxAnchor, Anchor } from "./combobox-anchor";
+export type { ComboboxAnchorProps } from "./combobox-anchor";
+
+export { ComboboxArrow, Arrow } from "./combobox-arrow";
+export type { ComboboxArrowProps } from "./combobox-arrow";
+
+export { ComboboxContent, Content } from "./combobox-content";
+export type { ComboboxContentProps } from "./combobox-content";
+
+export { ComboboxEmpty, Empty } from "./combobox-empty";
+export type { ComboboxEmptyProps } from "./combobox-empty";
+
+export { ComboboxGroup, Group } from "./combobox-group";
+export type { ComboboxGroupProps } from "./combobox-group";
+
+export { ComboboxInput, Input } from "./combobox-input";
+export type { ComboboxInputProps } from "./combobox-input";
+
+export { ComboboxItem, Item } from "./combobox-item";
+export type { ComboboxItemProps } from "./combobox-item";
+
+export {
+  ComboboxItemIndicator,
+  ItemIndicator,
+} from "./combobox-item-indicator";
+export type { ComboboxItemIndicatorProps } from "./combobox-item-indicator";
+
+export { ComboboxItemText, ItemText } from "./combobox-item-text";
+export type { ComboboxItemTextProps } from "./combobox-item-text";
+
+export { ComboboxPortal, Portal } from "./combobox-portal";
+export type { ComboboxPortalProps } from "./combobox-portal";
+
+export { ComboboxPositioner, Positioner } from "./combobox-positioner";
+export type { ComboboxPositionerProps } from "./combobox-positioner";
+
+export { ComboboxSeparator, Separator } from "./combobox-separator";
+export type { ComboboxSeparatorProps } from "./combobox-separator";
+
+export { ComboboxTrigger, Trigger } from "./combobox-trigger";
+export type { ComboboxTriggerProps } from "./combobox-trigger";
