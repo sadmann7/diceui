@@ -29,7 +29,7 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   onInputValueChange: (value: string) => void;
   onFilter?: (options: string[], term: string) => string[];
   collectionRef: React.RefObject<HTMLDivElement | null>;
-  contentRef: React.RefObject<HTMLDivElement | null>;
+  listRef: React.RefObject<HTMLDivElement | null>;
   inputRef: React.RefObject<HTMLInputElement | null>;
   anchorRef: React.RefObject<HTMLDivElement | null>;
   filterStore: {
@@ -110,6 +110,7 @@ interface ComboboxRootProps<Multiple extends boolean = false>
 
   /** Whether the combobox is disabled. */
   disabled?: boolean;
+
   /**
    * Whether the combobox loops through items.
    * @default false
@@ -172,7 +173,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
   } = props;
 
   const collectionRef = React.useRef<HTMLDivElement | null>(null);
-  const contentRef = React.useRef<HTMLDivElement | null>(null);
+  const listRef = React.useRef<HTMLDivElement | null>(null);
   const inputRef = React.useRef<HTMLInputElement | null>(null);
   const anchorRef = React.useRef<HTMLDivElement | null>(null);
 
@@ -280,18 +281,18 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
 
   const onValueChange = React.useCallback(
     (newValue: string | string[]) => {
-      if (multiple && typeof newValue === "string") {
-        const currentValue = (value as string[]) || [];
-        const newValues = currentValue.includes(newValue)
+      if (multiple) {
+        const currentValue = Array.isArray(value) ? value : [];
+        const typedNewValue = typeof newValue === "string" ? newValue : "";
+        const newValues = currentValue.includes(typedNewValue)
           ? currentValue.filter((v) => v !== newValue)
           : [...currentValue, newValue];
         setValue(newValues as ComboboxValue<Multiple>);
-      } else {
-        setValue(newValue as ComboboxValue<Multiple>);
-        if (!multiple) {
-          setOpen(false);
-        }
+        return;
       }
+
+      setValue(newValue as ComboboxValue<Multiple>);
+      setOpen(false);
     },
     [multiple, setValue, setOpen, value],
   );
@@ -388,7 +389,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       onInputValueChange={setInputValue}
       onFilter={onFilter}
       collectionRef={collectionRef}
-      contentRef={contentRef}
+      listRef={listRef}
       inputRef={inputRef}
       anchorRef={anchorRef}
       filterStore={filterStore}

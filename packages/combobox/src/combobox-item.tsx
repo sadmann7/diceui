@@ -91,12 +91,14 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
             itemProps.onPointerDown,
             (event) => {
               if (isDisabled) return;
+
               // prevent implicit pointer capture
               const target = event.target;
               if (!(target instanceof HTMLElement)) return;
               if (target.hasPointerCapture(event.pointerId)) {
                 target.releasePointerCapture(event.pointerId);
               }
+
               // prevent focus only for multiple selection mode
               if (context.multiple) {
                 event.preventDefault();
@@ -105,8 +107,8 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
           )}
           onClick={composeEventHandlers(itemProps.onClick, (event) => {
             if (isDisabled) return;
-            event.currentTarget.focus();
 
+            event.currentTarget.focus();
             context.onValueChange(value);
 
             if (context.multiple) {

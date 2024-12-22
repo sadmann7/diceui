@@ -66,10 +66,8 @@ const ComboboxPositioner = React.forwardRef<
     forceMount,
   });
 
-  const composedRef = useComposedRefs(
-    forwardedRef,
-    context.contentRef,
-    (node) => refs.setFloating(node),
+  const composedRef = useComposedRefs(forwardedRef, context.listRef, (node) =>
+    refs.setFloating(node),
   );
 
   const composedStyle = React.useMemo<React.CSSProperties>(() => {
@@ -82,7 +80,7 @@ const ComboboxPositioner = React.forwardRef<
 
   useScrollLock({
     enabled: context.open && context.modal,
-    referenceElement: context.contentRef.current,
+    referenceElement: context.listRef.current,
   });
 
   if (!forceMount && !context.open) {
