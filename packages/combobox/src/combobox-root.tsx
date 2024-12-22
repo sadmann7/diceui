@@ -31,6 +31,7 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   collectionRef: React.RefObject<HTMLDivElement | null>;
   contentRef: React.RefObject<HTMLDivElement | null>;
   inputRef: React.RefObject<HTMLInputElement | null>;
+  anchorRef: React.RefObject<HTMLDivElement | null>;
   filterStore: {
     search: string;
     itemCount: number;
@@ -116,6 +117,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
   const collectionRef = React.useRef<HTMLDivElement | null>(null);
   const contentRef = React.useRef<HTMLDivElement | null>(null);
   const inputRef = React.useRef<HTMLInputElement | null>(null);
+  const anchorRef = React.useRef<HTMLDivElement | null>(null);
 
   const id = useId();
   const labelId = `${id}label`;
@@ -324,6 +326,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       collectionRef={collectionRef}
       contentRef={contentRef}
       inputRef={inputRef}
+      anchorRef={anchorRef}
       filterStore={filterStore}
       highlightedItem={highlightedItem}
       onHighlightedItemChange={setHighlightedItem}

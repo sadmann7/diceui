@@ -1,6 +1,7 @@
 import { useDirection } from "@diceui/shared";
 import {
   type Boundary,
+  type FloatingContext,
   type Middleware,
   type Placement,
   type VirtualElement,
@@ -19,13 +20,13 @@ import * as React from "react";
 
 interface UseComboboxPositionerParams {
   open: boolean;
-  onOpenChange?: (open: boolean) => void;
+  onOpenChange: (open: boolean) => void;
   side?: "top" | "right" | "bottom" | "left";
   sideOffset?: number;
   align?: "start" | "center" | "end";
   alignOffset?: number;
   avoidCollisions?: boolean;
-  collisionBoundary?: Element | Array<Element>;
+  collisionBoundary?: Element | Element[] | null;
   collisionPadding?:
     | number
     | Partial<Record<"top" | "right" | "bottom" | "left", number>>;
@@ -35,6 +36,11 @@ interface UseComboboxPositionerParams {
   fitViewport?: boolean;
   strategy?: "absolute" | "fixed";
   arrowRef?: React.RefObject<HTMLDivElement | null>;
+  forceMount?: boolean;
+  trackAnchor?: boolean;
+  anchorRef?: React.RefObject<HTMLElement | null>;
+  inputRef?: React.RefObject<HTMLElement | null>;
+  hasCustomAnchor?: boolean;
 }
 
 interface UseComboboxPositionerReturn {
@@ -51,9 +57,16 @@ interface UseComboboxPositionerReturn {
       hide?: { referenceHidden?: boolean };
       size?: { availableWidth?: number; availableHeight?: number };
     };
+    elements: {
+      reference: Element | VirtualElement | null;
+      floating: HTMLElement | null;
+      domReference: Element | null;
+    };
+    update: () => void;
+    context: FloatingContext;
   };
   getFloatingProps: (
-    userProps?: React.HTMLAttributes<HTMLElement>,
+    userProps?: React.HTMLAttributes<HTMLElement>
   ) => Record<string, unknown>;
   getStyles: () => React.CSSProperties & {
     "--dice-combobox-content-transform-origin": string;
@@ -80,6 +93,11 @@ export function useComboboxPositioner({
   fitViewport = false,
   strategy = "absolute",
   arrowRef,
+  forceMount = false,
+  trackAnchor = true,
+  anchorRef,
+  inputRef,
+  hasCustomAnchor,
 }: UseComboboxPositionerParams): UseComboboxPositionerReturn {
   const direction = useDirection();
 
@@ -90,8 +108,8 @@ export function useComboboxPositioner({
         ? align === "start"
           ? "end"
           : align === "end"
-            ? "start"
-            : "center"
+          ? "start"
+          : "center"
         : align;
     return `${side}-${rtlAlign}` as Placement;
   }, [align, direction, side]);
@@ -113,7 +131,7 @@ export function useComboboxPositioner({
           padding: collisionPadding || 0,
           fallbackStrategy:
             sticky === "partial" ? "bestFit" : "initialPlacement",
-        }),
+        })
       );
 
       middleware.push(
@@ -121,7 +139,7 @@ export function useComboboxPositioner({
           boundary: collisionBoundary as Boundary | undefined,
           padding: collisionPadding || 0,
           limiter: sticky === "partial" ? limitShift() : undefined,
-        }),
+        })
       );
 
       if (fitViewport) {
@@ -134,7 +152,7 @@ export function useComboboxPositioner({
                 maxWidth: `${availableWidth}px`,
               });
             },
-          }),
+          })
         );
       }
     }
@@ -148,7 +166,7 @@ export function useComboboxPositioner({
         arrow({
           element: arrowRef.current,
           padding: arrowPadding,
-        }),
+        })
       );
     }
 
@@ -166,16 +184,61 @@ export function useComboboxPositioner({
     arrowRef,
   ]);
 
+  const autoUpdateOptions = React.useMemo(
+    () => ({
+      ancestorScroll: trackAnchor,
+      ancestorResize: true,
+      elementResize: trackAnchor && typeof ResizeObserver !== "undefined",
+      layoutShift: trackAnchor && typeof IntersectionObserver !== "undefined",
+    }),
+    [trackAnchor]
+  );
+
   const floating = useFloating({
     open,
     onOpenChange,
     placement,
     middleware,
-    whileElementsMounted: autoUpdate,
+    whileElementsMounted: forceMount
+      ? undefined
+      : (...args) => autoUpdate(...args, autoUpdateOptions),
     strategy,
   });
 
-  const { placement: placementProp, middlewareData } = floating;
+  const {
+    placement: placementProp,
+    middlewareData,
+    elements,
+    update,
+  } = floating;
+
+  // Handle anchor positioning
+  React.useEffect(() => {
+    if (!open) return;
+
+    const reference =
+      hasCustomAnchor && anchorRef?.current
+        ? anchorRef.current
+        : inputRef?.current;
+
+    if (reference) {
+      floating.refs.setReference(reference);
+      update();
+    }
+  }, [open, hasCustomAnchor, anchorRef, inputRef, floating.refs, update]);
+
+  // Handle auto-update for force mounted elements
+  React.useEffect(() => {
+    if (forceMount && open && elements.reference && elements.floating) {
+      return autoUpdate(
+        elements.reference,
+        elements.floating,
+        update,
+        autoUpdateOptions
+      );
+    }
+    return undefined;
+  }, [forceMount, open, elements, update, autoUpdateOptions]);
 
   // Calculate transform origin based on placement
   const [placementSide, placementAlign] = placementProp.split("-");
@@ -193,8 +256,8 @@ export function useComboboxPositioner({
       placementAlign === "end"
         ? "start"
         : placementAlign === "start"
-          ? "end"
-          : "center";
+        ? "end"
+        : "center";
 
     return `${oppositeAlign} ${oppositeSide}`;
   }, [placementSide, placementAlign]);
@@ -205,7 +268,7 @@ export function useComboboxPositioner({
       "data-side": placementSide,
       "data-align": placementAlign,
     }),
-    [placementSide, placementAlign],
+    [placementSide, placementAlign]
   );
 
   const getStyles = React.useCallback(() => {
@@ -223,8 +286,9 @@ export function useComboboxPositioner({
       styles["--dice-combobox-content-available-width"] = `${availableWidth}px`;
     }
     if (availableHeight) {
-      styles["--dice-combobox-content-available-height"] =
-        `${availableHeight}px`;
+      styles[
+        "--dice-combobox-content-available-height"
+      ] = `${availableHeight}px`;
     }
     if (anchorWidth) {
       styles["--dice-combobox-content-anchor-width"] = `${anchorWidth}px`;
@@ -237,7 +301,12 @@ export function useComboboxPositioner({
   }, [floating.floatingStyles, transformOrigin, middlewareData]);
 
   return {
-    floating,
+    floating: {
+      ...floating,
+      elements,
+      update,
+      context: floating.context,
+    },
     getFloatingProps,
     getStyles,
   };
