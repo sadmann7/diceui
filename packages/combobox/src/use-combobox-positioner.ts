@@ -3,6 +3,7 @@ import {
   VAR_ANCHOR_WIDTH,
   VAR_AVAILABLE_HEIGHT,
   VAR_AVAILABLE_WIDTH,
+  VAR_TRANSFORM_ORIGIN,
   useDirection,
 } from "@diceui/shared";
 import {
@@ -277,7 +278,7 @@ function useComboboxPositioner({
         position: floatingStrategy,
         top: y ?? 0,
         left: x ?? 0,
-        "--dice-combobox-content-transform-origin": transformOrigin,
+        [VAR_TRANSFORM_ORIGIN]: transformOrigin,
       }) as const,
     [floatingStrategy, x, y, transformOrigin],
   );
