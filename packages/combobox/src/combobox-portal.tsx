@@ -9,7 +9,7 @@ interface PortalProps
   container?: HTMLElement | DocumentFragment | null;
 }
 
-const PortalImpl = React.forwardRef<HTMLDivElement, PortalProps>(
+const ComboboxPortalImpl = React.forwardRef<HTMLDivElement, PortalProps>(
   (props, forwardedRef) => {
     const { container, ...portalProps } = props;
     const [mounted, setMounted] = React.useState(false);
@@ -30,7 +30,7 @@ const PortalImpl = React.forwardRef<HTMLDivElement, PortalProps>(
   },
 );
 
-PortalImpl.displayName = "Portal";
+ComboboxPortalImpl.displayName = "ComboboxPortalImpl";
 
 const PORTAL_NAME = "ComboboxPortal";
 
@@ -42,7 +42,7 @@ const ComboboxPortal = React.forwardRef<HTMLDivElement, ComboboxPortalProps>(
     const { container, ...portalProps } = props;
 
     return (
-      <PortalImpl
+      <ComboboxPortalImpl
         container={container}
         {...portalProps}
         ref={forwardedRef}

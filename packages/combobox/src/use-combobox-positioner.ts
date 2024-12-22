@@ -5,6 +5,7 @@ import {
   VAR_AVAILABLE_WIDTH,
   VAR_TRANSFORM_ORIGIN,
   useDirection,
+  useIsomorphicLayoutEffect,
 } from "@diceui/shared";
 import {
   type Boundary,
@@ -216,7 +217,7 @@ function useComboboxPositioner({
     strategy,
   });
 
-  React.useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!open) return;
 
     const reference =

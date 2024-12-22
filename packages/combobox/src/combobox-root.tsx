@@ -7,7 +7,6 @@ import {
   useComposedRefs,
   useControllableState,
   useDirection,
-  useDismiss,
   useFilter,
   useFormControl,
   useId,
@@ -268,7 +267,12 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       setOpen(open);
       if (open) {
         await new Promise((resolve) => requestAnimationFrame(resolve));
-        inputRef.current?.focus();
+        const input = inputRef.current;
+        if (input) {
+          input.focus();
+          const length = input.value.length;
+          input.setSelectionRange(length, length);
+        }
       }
     },
     [setOpen],
