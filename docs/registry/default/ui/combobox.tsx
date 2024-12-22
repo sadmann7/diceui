@@ -88,7 +88,7 @@ const ComboboxItem = React.forwardRef<
         <Check className="h-4 w-4" />
       </ComboboxPrimitive.ItemIndicator>
     </span>
-    {children}
+    <ComboboxPrimitive.ItemText>{children}</ComboboxPrimitive.ItemText>
   </ComboboxPrimitive.Item>
 ));
 ComboboxItem.displayName = ComboboxPrimitive.Item.displayName;

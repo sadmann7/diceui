@@ -6,7 +6,6 @@ import {
   useId,
   useLayoutEffect,
 } from "@diceui/shared";
-import { useTypeahead } from "@floating-ui/react";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { useComboboxContentContext } from "./combobox-content";
@@ -19,6 +18,7 @@ interface ComboboxItemContextValue {
   value: string;
   isSelected: boolean;
   disabled?: boolean;
+  textId: string;
 }
 
 const [ComboboxItemProvider, useComboboxItemContext] =
@@ -42,6 +42,7 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
     const itemRef = React.useRef<HTMLDivElement>(null);
     const composedRefs = useComposedRefs(forwardedRef, itemRef);
     const id = useId();
+    const textId = `${id}text`;
 
     const isSelected = Array.isArray(context.value)
       ? context.value.includes(value)
@@ -69,6 +70,7 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
         value={value}
         isSelected={isSelected}
         disabled={disabled}
+        textId={textId}
       >
         <Primitive.div
           {...{ [ITEM_DATA_ATTR]: "" }}
@@ -76,6 +78,7 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
           id={id}
           aria-selected={isSelected}
           aria-disabled={isDisabled}
+          aria-labelledby={textId}
           data-state={isSelected ? "checked" : "unchecked"}
           data-highlighted={context.highlightedItem?.id === id ? "" : undefined}
           data-value={value}

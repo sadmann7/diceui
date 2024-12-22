@@ -53,7 +53,9 @@ export default function PlaygroundPage() {
                     <Check className="h-4 w-4" />
                   </ComboboxPrimitive.ItemIndicator>
                 </span>
-                {trick.label}
+                <ComboboxPrimitive.ItemText>
+                  {trick.label}
+                </ComboboxPrimitive.ItemText>
               </ComboboxPrimitive.Item>
             ))}
           </ComboboxPrimitive.Content>
