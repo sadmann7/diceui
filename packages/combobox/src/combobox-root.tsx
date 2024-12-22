@@ -288,7 +288,9 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
         setValue(newValues as ComboboxValue<Multiple>);
       } else {
         setValue(newValue as ComboboxValue<Multiple>);
-        setOpen(false);
+        if (!multiple) {
+          setOpen(false);
+        }
       }
     },
     [multiple, setValue, setOpen, value],

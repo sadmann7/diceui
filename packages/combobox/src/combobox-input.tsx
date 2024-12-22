@@ -86,12 +86,14 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
             if (context.open && context.highlightedItem) {
               const value = context.highlightedItem.getAttribute("data-value");
               if (value) {
-                context.onInputValueChange(
-                  context.highlightedItem.textContent ?? "",
-                );
+                if (!context.multiple) {
+                  context.onInputValueChange(
+                    context.highlightedItem.textContent ?? "",
+                  );
+                  context.onHighlightedItemChange(null);
+                  context.onOpenChange(false);
+                }
                 context.onValueChange(value);
-                context.onHighlightedItemChange(null);
-                context.onOpenChange(false);
               }
             }
             break;
@@ -133,6 +135,7 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
         onKeyDown={composeEventHandlers(inputProps.onKeyDown, onKeyDown)}
         onBlur={composeEventHandlers(inputProps.onBlur, () => {
           if (
+            !context.multiple &&
             context.resetOnBlur &&
             context.open &&
             !context.highlightedItem &&

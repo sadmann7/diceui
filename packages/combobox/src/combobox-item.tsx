@@ -6,6 +6,7 @@ import {
   useId,
   useLayoutEffect,
 } from "@diceui/shared";
+import { useTypeahead } from "@floating-ui/react";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { useComboboxContentContext } from "./combobox-content";
@@ -86,12 +87,34 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
             if (isDisabled) return;
             context.onHighlightedItemChange(itemRef.current);
           })}
-          onClick={composeEventHandlers(itemProps.onClick, () => {
+          onPointerDown={composeEventHandlers(
+            itemProps.onPointerDown,
+            (event) => {
+              if (isDisabled) return;
+              // prevent implicit pointer capture
+              const target = event.target;
+              if (!(target instanceof HTMLElement)) return;
+              if (target.hasPointerCapture(event.pointerId)) {
+                target.releasePointerCapture(event.pointerId);
+              }
+              // prevent focus only for multiple selection mode
+              if (context.multiple) {
+                event.preventDefault();
+              }
+            },
+          )}
+          onClick={composeEventHandlers(itemProps.onClick, (event) => {
             if (isDisabled) return;
+            event.currentTarget.focus();
+
             context.onValueChange(value);
-            context.onOpenChange(false);
-            context.onHighlightedItemChange(null);
-            context.onInputValueChange(itemRef.current?.textContent ?? "");
+
+            if (context.multiple) {
+              context.inputRef.current?.focus();
+            } else {
+              context.onHighlightedItemChange(null);
+              context.onInputValueChange(itemRef.current?.textContent ?? "");
+            }
           })}
         />
       </ComboboxItemProvider>

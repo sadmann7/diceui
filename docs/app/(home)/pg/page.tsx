@@ -28,7 +28,8 @@ export default function PlaygroundPage() {
   const [selectedTrick, setSelectedTrick] = React.useState<string | undefined>(
     undefined,
   );
-  // console.log({ selectedTrick });
+  const [selectedTricks, setSelectedTricks] = React.useState<string[]>([]);
+  console.log({ selectedTricks });
 
   return (
     <Shell>
@@ -61,8 +62,9 @@ export default function PlaygroundPage() {
         </ComboboxPrimitive.Positioner>
       </ComboboxPrimitive.Root>
       <Combobox
-        value={selectedTrick}
-        onValueChange={setSelectedTrick}
+        value={selectedTricks}
+        onValueChange={setSelectedTricks}
+        multiple
         className="w-[15rem]"
       >
         <ComboboxAnchor>
