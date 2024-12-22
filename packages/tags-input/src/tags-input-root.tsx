@@ -33,16 +33,16 @@ interface TagsInputContextValue<T = InputValue> {
   displayValue: (value: T) => string;
   onItemLeave: () => void;
   inputRef: React.RefObject<HTMLInputElement | null>;
-  isInvalidInput: boolean;
   addOnPaste: boolean;
   addOnTab: boolean;
-  editable: boolean;
-  disabled: boolean;
   delimiter: string;
+  disabled: boolean;
+  editable: boolean;
   loop: boolean;
+  isInvalidInput: boolean;
   blurBehavior: "add" | "clear" | undefined;
-  dir: Direction;
   max: number;
+  dir: Direction;
   id: string;
   inputId: string;
   labelId: string;
@@ -87,6 +87,12 @@ interface TagsInputRootProps<T = InputValue>
   addOnTab?: boolean;
 
   /**
+   * Disables the entire tags input.
+   * @default false
+   */
+  disabled?: boolean;
+
+  /**
    * Allow editing of existing tags
    * @default false
    */
@@ -97,12 +103,6 @@ interface TagsInputRootProps<T = InputValue>
    * @default false
    */
   loop?: boolean;
-
-  /**
-   * Disables the entire tags input.
-   * @default false
-   */
-  disabled?: boolean;
 
   /**
    * Behavior when the input loses focus.
@@ -120,12 +120,6 @@ interface TagsInputRootProps<T = InputValue>
   delimiter?: string;
 
   /**
-   * Text direction for the input.
-   * @default "ltr"
-   */
-  dir?: "ltr" | "rtl";
-
-  /**
    * Maximum number of tags allowed.
    * @default Number.POSITIVE_INFINITY
    */
@@ -137,12 +131,24 @@ interface TagsInputRootProps<T = InputValue>
   /** Name of the form field when used in a form. */
   name?: string;
 
-  /** Unique identifier for the tags input. */
-  id?: string;
-
+  /**
+   * The content of the tags input.
+   * Can be a function that receives the current value as an argument,
+   * or a React node.
+   * @default undefined
+   */
   children?:
     | ((context: { value: InputValue[] }) => React.ReactNode)
     | React.ReactNode;
+
+  /**
+   * The reading direction of the tags input.
+   * @default "ltr"
+   */
+  dir?: Direction;
+
+  /** Unique identifier for the tags input. */
+  id?: string;
 }
 
 const TagsInputRoot = React.forwardRef<
@@ -158,17 +164,17 @@ const TagsInputRoot = React.forwardRef<
     displayValue = (value: InputValue) => value.toString(),
     addOnPaste = false,
     addOnTab = false,
+    disabled = false,
     editable = false,
     loop = false,
-    disabled = false,
     blurBehavior,
     delimiter = ",",
-    dir: dirProp,
     max = Number.POSITIVE_INFINITY,
     required = false,
     name,
-    id: idProp,
     children,
+    dir: dirProp,
+    id: idProp,
     ...rootProps
   } = props;
 
@@ -489,13 +495,13 @@ const TagsInputRoot = React.forwardRef<
       isInvalidInput={isInvalidInput}
       addOnPaste={addOnPaste}
       addOnTab={addOnTab}
+      disabled={disabled}
       editable={editable}
       loop={loop}
-      disabled={disabled}
       blurBehavior={blurBehavior}
       delimiter={delimiter}
-      dir={dir}
       max={max}
+      dir={dir}
       id={id}
       inputId={inputId}
       labelId={labelId}

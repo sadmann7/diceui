@@ -11,6 +11,7 @@ import {
   useFormControl,
   useId,
 } from "@diceui/shared";
+import { useListNavigation, useTypeahead } from "@floating-ui/react";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 
@@ -101,7 +102,10 @@ interface ComboboxRootProps<Multiple extends boolean = false>
    */
   onFilter?: (options: string[], inputValue: string) => string[];
 
-  /** The direction of the combobox. */
+  /**
+   * The reading direction of the combobox.
+   * @default "ltr"
+   */
   dir?: Direction;
 
   /** Whether the combobox is disabled. */

@@ -63,7 +63,7 @@ interface CheckboxGroupRootProps
   name?: string;
 
   /**
-   * Text direction for the checkbox group.
+   * The reading direction of the checkbox group.
    * @default "ltr"
    */
   dir?: Direction;

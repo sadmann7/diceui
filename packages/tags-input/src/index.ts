@@ -6,9 +6,6 @@ export type { TagsInputRootProps } from "./tags-input-root";
 export { Label, TagsInputLabel } from "./tags-input-label";
 export type { TagsInputLabelProps } from "./tags-input-label";
 
-export { List, TagsInputList } from "./tags-input-list";
-export type { TagsInputListProps } from "./tags-input-list";
-
 export { Item, TagsInputItem } from "./tags-input-item";
 export type { TagsInputItemProps } from "./tags-input-item";
 
@@ -18,7 +15,7 @@ export type { TagsInputInputProps } from "./tags-input-input";
 export { Delete, TagsInputItemDelete } from "./tags-input-item-delete";
 export type { TagsInputItemDeleteProps } from "./tags-input-item-delete";
 
-export { Text, TagsInputItemText } from "./tags-input-item-text";
+export { TagsInputItemText, Text } from "./tags-input-item-text";
 export type { TagsInputItemTextProps } from "./tags-input-item-text";
 
 export { Clear, TagsInputClear } from "./tags-input-clear";
