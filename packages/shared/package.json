@@ -11,7 +11,7 @@
       "require": "./src/index.ts"
     }
   },
-  "files": ["dist", "package.json", "LICENSE", "README.md"],
+  "files": ["dist", "package.json", "README.md"],
   "scripts": {
     "dev": "tsup --format esm --watch --external=react",
     "build": "tsup --clean --external=react",
