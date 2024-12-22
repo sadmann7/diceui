@@ -71,9 +71,7 @@ export default function PlaygroundPage() {
             <ChevronDown className="h-4 w-4" />
           </ComboboxTrigger>
         </ComboboxAnchor>
-        <ComboboxContent
-          onPointerDownOutside={(event) => event.preventDefault()}
-        >
+        <ComboboxContent>
           <ComboboxEmpty>No tricks found</ComboboxEmpty>
           {tricks.map((trick) => (
             <ComboboxItem key={trick.value} value={trick.value}>

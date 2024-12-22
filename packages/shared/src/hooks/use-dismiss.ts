@@ -107,7 +107,15 @@ function useDismiss(params: UseDismissParameters) {
           onEscapeKeyDown(event);
           if (event.defaultPrevented) return;
         }
-        onDismiss(event);
+        onInteractOutside?.({
+          currentTarget: event.currentTarget as Node,
+          target: event.target as Node,
+          preventDefault: () => event.preventDefault(),
+          defaultPrevented: event.defaultPrevented,
+        });
+        if (!event.defaultPrevented) {
+          onDismiss(event);
+        }
       }
     }
 
@@ -131,7 +139,7 @@ function useDismiss(params: UseDismissParameters) {
         onPointerDownOutside?.(outsideEvent);
         onInteractOutside?.(outsideEvent);
 
-        if (!outsideEvent.defaultPrevented) {
+        if (!event.defaultPrevented && !outsideEvent.defaultPrevented) {
           onDismiss(event);
         }
       }
@@ -153,7 +161,7 @@ function useDismiss(params: UseDismissParameters) {
         onFocusOutside?.(outsideEvent);
         onInteractOutside?.(outsideEvent);
 
-        if (!outsideEvent.defaultPrevented) {
+        if (!event.defaultPrevented && !outsideEvent.defaultPrevented) {
           onDismiss(event);
         }
       }
