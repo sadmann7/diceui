@@ -47,13 +47,14 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   ) => void;
   onCustomAnchorAdd: () => void;
   onCustomAnchorRemove: () => void;
-  hasCustomAnchor: boolean;
-  multiple: Multiple;
   disabled: boolean;
+  hasCustomAnchor: boolean;
   loop: boolean;
-  resetOnBlur: boolean;
-  readOnly: boolean;
   modal: boolean;
+  multiple: Multiple;
+  openOnFocus: boolean;
+  readOnly: boolean;
+  resetOnBlur: boolean;
   dir: Direction;
   id: string;
   labelId: string;
@@ -103,14 +104,14 @@ interface ComboboxRootProps<Multiple extends boolean = false>
   /** The direction of the combobox. */
   dir?: Direction;
 
-  /**
-   * Whether the combobox allows multiple values.
-   * @default false
-   */
-  multiple?: Multiple;
-
   /** Whether the combobox is disabled. */
   disabled?: boolean;
+
+  /**
+   * Whether the combobox uses fuzzy filtering.
+   * @default true
+   */
+  fuzzy?: boolean;
 
   /**
    * Whether the combobox loops through items.
@@ -119,28 +120,34 @@ interface ComboboxRootProps<Multiple extends boolean = false>
   loop?: boolean;
 
   /**
-   * Whether the combobox resets the value on blur.
-   * @default true
-   */
-  resetOnBlur?: boolean;
-
-  /**
-   * Whether the combobox uses fuzzy filtering.
-   * @default true
-   */
-  fuzzy?: boolean;
-  /**
    * Whether the combobox is modal.
    * @default false
    */
-
   modal?: boolean;
+
+  /**
+   * Whether the combobox allows multiple values.
+   * @default false
+   */
+  multiple?: Multiple;
+
+  /**
+   * Whether the combobox opens on input focus.
+   * @default false
+   */
+  openOnFocus?: boolean;
 
   /**
    * Whether the combobox is read-only.
    * @default false
    */
   readOnly?: boolean;
+
+  /**
+   * Whether the combobox resets the value on blur.
+   * @default true
+   */
+  resetOnBlur?: boolean;
 
   /**
    * Whether the combobox is required in a form context.
@@ -168,11 +175,12 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     onFilter,
     multiple = false,
     disabled = false,
-    loop = false,
-    resetOnBlur = true,
     fuzzy = true,
+    loop = false,
     modal = false,
+    openOnFocus = false,
     readOnly = false,
+    resetOnBlur = true,
     required = false,
     dir: dirProp,
     name,
@@ -258,7 +266,6 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     }
     filterStore.itemCount = itemCount;
 
-    // Only process groups if there are any
     if (groups.size) {
       for (const [groupId, group] of groups.entries()) {
         const hasMatchingItem = Array.from(group).some((itemId) =>
@@ -408,13 +415,14 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       onHighlightMove={onHighlightMove}
       onCustomAnchorAdd={onCustomAnchorAdd}
       onCustomAnchorRemove={onCustomAnchorRemove}
-      hasCustomAnchor={hasCustomAnchor}
-      multiple={multiple}
       disabled={disabled}
+      hasCustomAnchor={hasCustomAnchor}
       loop={loop}
-      resetOnBlur={resetOnBlur}
-      readOnly={readOnly}
       modal={modal}
+      multiple={multiple}
+      openOnFocus={openOnFocus}
+      readOnly={readOnly}
+      resetOnBlur={resetOnBlur}
       dir={dir}
       id={id}
       labelId={labelId}

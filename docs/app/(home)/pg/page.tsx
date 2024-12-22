@@ -63,7 +63,6 @@ export default function PlaygroundPage() {
         value={selectedTrick}
         onValueChange={setSelectedTrick}
         className="w-[15rem]"
-        fuzzy={false}
       >
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />

@@ -16,6 +16,8 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
 
     const onChange = React.useCallback(
       (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (context.readOnly) return;
+
         const value = event.target.value;
 
         if (!context.open) {
@@ -34,8 +36,35 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
       [context],
     );
 
+    const onFocus = React.useCallback(() => {
+      if (context.openOnFocus && !context.open && !context.readOnly) {
+        context.onOpenChange(true);
+      }
+    }, [context]);
+
+    const onBlur = React.useCallback(() => {
+      if (
+        context.resetOnBlur &&
+        context.open &&
+        !context.highlightedItem &&
+        context.value.length === 0
+      ) {
+        context.onInputValueChange("");
+      }
+    }, [context]);
+
     const onKeyDown = React.useCallback(
-      (event: React.KeyboardEvent) => {
+      (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (context.readOnly) {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            if (!context.open) {
+              context.onOpenChange(true);
+            }
+          }
+          return;
+        }
+
         const isNavigationKey = [
           "ArrowDown",
           "ArrowUp",
@@ -132,22 +161,16 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
         aria-autocomplete="list"
         aria-activedescendant={context.highlightedItem?.id}
         aria-disabled={context.disabled}
+        aria-readonly={context.readOnly}
         disabled={context.disabled}
+        readOnly={context.readOnly}
         {...inputProps}
         ref={composedRefs}
         value={context.inputValue}
         onChange={composeEventHandlers(inputProps.onChange, onChange)}
+        onFocus={composeEventHandlers(inputProps.onFocus, onFocus)}
         onKeyDown={composeEventHandlers(inputProps.onKeyDown, onKeyDown)}
-        onBlur={composeEventHandlers(inputProps.onBlur, () => {
-          if (
-            context.resetOnBlur &&
-            context.open &&
-            !context.highlightedItem &&
-            context.value.length === 0
-          ) {
-            context.onInputValueChange("");
-          }
-        })}
+        onBlur={composeEventHandlers(inputProps.onBlur, onBlur)}
       />
     );
   },
