@@ -41,7 +41,7 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   onHighlightedItemChange: (item: HTMLElement | null) => void;
   onRegisterItem: (id: string, value: string, groupId?: string) => () => void;
   onFilterItems: () => void;
-  onMoveHighlight: (
+  onHighlightMove: (
     target: "next" | "prev" | "first" | "last" | "selected",
   ) => void;
   onCustomAnchorAdd: () => void;
@@ -255,8 +255,8 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     [items, groups],
   );
 
-  const onMoveHighlight = React.useCallback(
-    (target: Parameters<ComboboxContextValue["onMoveHighlight"]>[0]) => {
+  const onHighlightMove = React.useCallback(
+    (target: Parameters<ComboboxContextValue["onHighlightMove"]>[0]) => {
       const items = getEnabledItems();
       if (!items.length) return;
 
@@ -329,7 +329,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       onHighlightedItemChange={setHighlightedItem}
       onRegisterItem={onRegisterItem}
       onFilterItems={onFilterItems}
-      onMoveHighlight={onMoveHighlight}
+      onHighlightMove={onHighlightMove}
       onCustomAnchorAdd={onCustomAnchorAdd}
       onCustomAnchorRemove={onCustomAnchorRemove}
       hasCustomAnchor={hasCustomAnchor}

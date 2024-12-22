@@ -33,7 +33,7 @@ const ComboboxTrigger = React.forwardRef<
 
         if (newOpenState && context.value.length > 0) {
           requestAnimationFrame(() => {
-            context.onMoveHighlight("selected");
+            context.onHighlightMove("selected");
           });
         }
 

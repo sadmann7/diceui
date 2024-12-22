@@ -46,6 +46,7 @@
   },
   "dependencies": {
     "@diceui/shared": "workspace:*",
-    "@radix-ui/react-primitive": "^2.0.1"
+    "@radix-ui/react-primitive": "^2.0.1",
+    "lucide-react": "^0.468.0"
   }
 }

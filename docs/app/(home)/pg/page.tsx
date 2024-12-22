@@ -58,23 +58,21 @@ export default function PlaygroundPage() {
         </ComboboxPrimitive.Anchor>
         <ComboboxPrimitive.Positioner>
           <ComboboxPrimitive.Content className="w-full max-w-[15rem]">
-            <ComboboxPrimitive.Viewport>
-              <ComboboxPrimitive.Empty>No tricks found</ComboboxPrimitive.Empty>
-              {tricks.map((trick) => (
-                <ComboboxPrimitive.Item
-                  key={trick.value}
-                  value={trick.value}
-                  className="flex items-center gap-2 pr-2 pl-8"
-                >
-                  <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-                    <ComboboxPrimitive.ItemIndicator>
-                      <Check className="h-4 w-4" />
-                    </ComboboxPrimitive.ItemIndicator>
-                  </span>
-                  {trick.label}
-                </ComboboxPrimitive.Item>
-              ))}
-            </ComboboxPrimitive.Viewport>
+            <ComboboxPrimitive.Empty>No tricks found</ComboboxPrimitive.Empty>
+            {tricks.map((trick) => (
+              <ComboboxPrimitive.Item
+                key={trick.value}
+                value={trick.value}
+                className="flex items-center gap-2 pr-2 pl-8"
+              >
+                <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+                  <ComboboxPrimitive.ItemIndicator>
+                    <Check className="h-4 w-4" />
+                  </ComboboxPrimitive.ItemIndicator>
+                </span>
+                {trick.label}
+              </ComboboxPrimitive.Item>
+            ))}
           </ComboboxPrimitive.Content>
         </ComboboxPrimitive.Positioner>
       </ComboboxPrimitive.Root>

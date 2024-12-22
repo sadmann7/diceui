@@ -49,13 +49,13 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
               context.onOpenChange(true);
               requestAnimationFrame(() => {
                 if (context.value.length > 0) {
-                  context.onMoveHighlight("selected");
+                  context.onHighlightMove("selected");
                 } else {
-                  context.onMoveHighlight("first");
+                  context.onHighlightMove("first");
                 }
               });
             } else {
-              context.onMoveHighlight("next");
+              context.onHighlightMove("next");
             }
             break;
           case "ArrowUp":
@@ -63,23 +63,23 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
               context.onOpenChange(true);
               requestAnimationFrame(() => {
                 if (context.value.length > 0) {
-                  context.onMoveHighlight("selected");
+                  context.onHighlightMove("selected");
                 } else {
-                  context.onMoveHighlight("last");
+                  context.onHighlightMove("last");
                 }
               });
             } else {
-              context.onMoveHighlight("prev");
+              context.onHighlightMove("prev");
             }
             break;
           case "Home":
             if (context.open) {
-              context.onMoveHighlight("first");
+              context.onHighlightMove("first");
             }
             break;
           case "End":
             if (context.open) {
-              context.onMoveHighlight("last");
+              context.onHighlightMove("last");
             }
             break;
           case "Enter":
@@ -103,12 +103,12 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
             break;
           case "PageUp":
             if (context.modal && context.open) {
-              context.onMoveHighlight("prev");
+              context.onHighlightMove("prev");
             }
             break;
           case "PageDown":
             if (context.modal && context.open) {
-              context.onMoveHighlight("next");
+              context.onHighlightMove("next");
             }
             break;
         }
