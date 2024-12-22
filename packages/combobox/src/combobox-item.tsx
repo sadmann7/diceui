@@ -111,10 +111,10 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
           onClick={composeEventHandlers(itemProps.onClick, (event) => {
             if (isDisabled || context.readOnly) return;
 
-            event.currentTarget.focus();
             context.onValueChange(value);
 
             if (context.multiple) {
+              event.currentTarget.focus();
               context.inputRef.current?.focus();
             } else {
               context.onHighlightedItemChange(null);

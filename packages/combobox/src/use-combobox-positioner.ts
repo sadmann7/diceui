@@ -28,28 +28,121 @@ import {
 import * as React from "react";
 
 interface UseComboboxPositionerParams {
+  /** Whether the combobox is open. */
   open: boolean;
+
+  /** Event handler called when the combobox is opened or closed. */
   onOpenChange: (open: boolean) => void;
+
+  /**
+   * The side of the combobox.
+   * @default "bottom"
+   */
   side?: "top" | "right" | "bottom" | "left";
+
+  /**
+   * The offset of the combobox from the trigger.
+   * @default 4
+   */
   sideOffset?: number;
+
+  /**
+   * The alignment of the combobox.
+   * @default "start"
+   */
   align?: "start" | "center" | "end";
+
+  /**
+   * The offset of the combobox from the trigger.
+   * @default 0
+   */
   alignOffset?: number;
+
+  /**
+   * The boundary of the collision.
+   * @default undefined
+   */
   collisionBoundary?: Element | Element[] | null;
+
+  /**
+   * The padding of the collision.
+   * @default 0
+   */
   collisionPadding?:
     | number
     | Partial<Record<"top" | "right" | "bottom" | "left", number>>;
+
+  /**
+   * The padding of the arrow.
+   * @default 0
+   */
   arrowPadding?: number;
+
+  /**
+   * Whether the combobox should be sticky.
+   * @default "partial"
+   */
   sticky?: "partial" | "always";
-  fitViewport?: boolean;
+
+  /**
+   * The strategy of the combobox.
+   * @default "absolute"
+   */
   strategy?: Strategy;
-  arrowRef?: React.RefObject<HTMLDivElement | null>;
-  anchorRef?: React.RefObject<HTMLElement | null>;
-  triggerRef?: React.RefObject<HTMLElement | null>;
+
+  /**
+   * Whether the combobox should avoid collisions.
+   * @default true
+   */
   avoidCollisions?: boolean;
+
+  /**
+   * Whether the combobox should fit the viewport.
+   * @default false
+   */
+  fitViewport?: boolean;
+
+  /**
+   * Whether the combobox should be force mounted.
+   * @default false
+   */
   forceMount?: boolean;
+
+  /**
+   * Whether the combobox has a custom anchor.
+   * @default false
+   */
   hasCustomAnchor?: boolean;
+
+  /**
+   * Whether the combobox should be hidden when detached.
+   * @default false
+   */
   hideWhenDetached?: boolean;
+
+  /**
+   * Whether the combobox should track the anchor.
+   * @default true
+   */
   trackAnchor?: boolean;
+
+  /**
+   * The ref of the arrow.
+   * @default undefined
+   */
+  arrowRef?: React.RefObject<HTMLDivElement | null>;
+
+  /**
+   * The ref of the anchor.
+   * @default undefined
+   */
+  anchorRef?: React.RefObject<HTMLElement | null>;
+
+  /**
+   * The ref of the trigger.
+   * @default undefined
+   */
+  triggerRef?: React.RefObject<HTMLElement | null>;
 }
 
 interface UseComboboxPositionerReturn {
@@ -78,15 +171,15 @@ function useComboboxPositioner({
   arrowPadding = 0,
   sticky = "partial",
   strategy = "absolute",
-  arrowRef,
-  anchorRef,
-  triggerRef,
   avoidCollisions = false,
   fitViewport = false,
   forceMount = false,
   hasCustomAnchor = false,
   hideWhenDetached = false,
   trackAnchor = true,
+  arrowRef,
+  anchorRef,
+  triggerRef,
 }: UseComboboxPositionerParams): UseComboboxPositionerReturn {
   const direction = useDirection();
 

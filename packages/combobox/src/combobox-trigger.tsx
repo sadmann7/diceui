@@ -27,6 +27,21 @@ const ComboboxTrigger = React.forwardRef<
       tabIndex={context.disabled ? undefined : -1}
       {...triggerProps}
       ref={forwardedRef}
+      onPointerDown={composeEventHandlers(
+        triggerProps.onPointerDown,
+        (event) => {
+          if (context.disabled) return;
+
+          // prevent implicit pointer capture
+          const target = event.target as HTMLElement;
+
+          if (target.hasPointerCapture(event.pointerId)) {
+            target.releasePointerCapture(event.pointerId);
+          }
+
+          event.preventDefault();
+        },
+      )}
       onClick={composeEventHandlers(triggerProps.onClick, async () => {
         const newOpenState = !context.open;
         await context.onOpenChange(newOpenState);
