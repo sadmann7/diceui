@@ -1,22 +1,6 @@
 "use client";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
 import { Shell } from "@/components/shell";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -49,7 +33,7 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <ComboboxPrimitive.Root
-        className="w-full max-w-[15rem]"
+        className="max-w-[15rem]"
         value={selectedTrick}
         onValueChange={setSelectedTrick}
       >
@@ -57,7 +41,7 @@ export default function PlaygroundPage() {
           <ComboboxPrimitive.Input placeholder="Search tricks..." />
         </ComboboxPrimitive.Anchor>
         <ComboboxPrimitive.Positioner>
-          <ComboboxPrimitive.Content className="w-full max-w-[15rem]">
+          <ComboboxPrimitive.Content className="max-w-[15rem]">
             <ComboboxPrimitive.Empty>No tricks found</ComboboxPrimitive.Empty>
             {tricks.map((trick) => (
               <ComboboxPrimitive.Item
@@ -79,7 +63,7 @@ export default function PlaygroundPage() {
       <Combobox
         value={selectedTrick}
         onValueChange={setSelectedTrick}
-        className="w-full max-w-[15rem]"
+        className="w-[15rem]"
       >
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
@@ -87,7 +71,9 @@ export default function PlaygroundPage() {
             <ChevronDown className="h-4 w-4" />
           </ComboboxTrigger>
         </ComboboxAnchor>
-        <ComboboxContent className="w-full max-w-[15rem]">
+        <ComboboxContent
+          onPointerDownOutside={(event) => event.preventDefault()}
+        >
           <ComboboxEmpty>No tricks found</ComboboxEmpty>
           {tricks.map((trick) => (
             <ComboboxItem key={trick.value} value={trick.value}>
@@ -96,63 +82,6 @@ export default function PlaygroundPage() {
           ))}
         </ComboboxContent>
       </Combobox>
-      <DropdownMenu modal={false}>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="w-fit">
-            Open
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem>
-              Profile
-              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              Billing
-              <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              Settings
-              <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              Keyboard shortcuts
-              <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem>Team</DropdownMenuItem>
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger>Invite users</DropdownMenuSubTrigger>
-              <DropdownMenuPortal>
-                <DropdownMenuSubContent>
-                  <DropdownMenuItem>Email</DropdownMenuItem>
-                  <DropdownMenuItem>Message</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>More...</DropdownMenuItem>
-                </DropdownMenuSubContent>
-              </DropdownMenuPortal>
-            </DropdownMenuSub>
-            <DropdownMenuItem>
-              New Team
-              <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>GitHub</DropdownMenuItem>
-          <DropdownMenuItem>Support</DropdownMenuItem>
-          <DropdownMenuItem disabled>API</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            Log out
-            <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
       <Select>
         <SelectTrigger className="w-[11.25rem]">
           <SelectValue placeholder="Select a fruit" />

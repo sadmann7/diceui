@@ -2,13 +2,16 @@ import { useComposedRefs, useScrollLock } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { useComboboxContext } from "./combobox-root";
-import { useComboboxPositioner } from "./use-combobox-positioner";
 import type { UseComboboxPositionerParams } from "./use-combobox-positioner";
+import { useComboboxPositioner } from "./use-combobox-positioner";
 
 const POSITIONER_NAME = "ComboboxPositioner";
 
 interface ComboboxPositionerProps
-  extends Omit<UseComboboxPositionerParams, "open" | "onOpenChange">,
+  extends Omit<
+      UseComboboxPositionerParams,
+      "open" | "onOpenChange" | "triggerRef"
+    >,
     React.ComponentPropsWithoutRef<typeof Primitive.div> {
   /**
    * Whether the positioner should be force mounted.
@@ -43,34 +46,42 @@ const ComboboxPositioner = React.forwardRef<
   const context = useComboboxContext(POSITIONER_NAME);
   const arrowRef = React.useRef<HTMLDivElement | null>(null);
 
-  const { floating, getFloatingProps, getStyles } = useComboboxPositioner({
+  const { refs, floatingStyles, getFloatingProps } = useComboboxPositioner({
     open: context.open,
     onOpenChange: context.onOpenChange,
     side,
     sideOffset,
     align,
     alignOffset,
-    avoidCollisions,
     collisionBoundary,
     collisionPadding,
     arrowPadding,
     sticky,
-    hideWhenDetached,
-    fitViewport,
     strategy,
     arrowRef,
-    forceMount,
     trackAnchor,
     anchorRef: context.anchorRef,
-    inputRef: context.inputRef,
+    triggerRef: context.inputRef,
+    avoidCollisions,
+    hideWhenDetached,
     hasCustomAnchor: context.hasCustomAnchor,
+    fitViewport,
+    forceMount,
   });
 
   const composedRef = useComposedRefs(
     forwardedRef,
     context.contentRef,
-    (node) => floating.refs.setFloating(node),
+    (node) => refs.setFloating(node),
   );
+
+  const composedStyle = React.useMemo<React.CSSProperties>(() => {
+    return {
+      ...style,
+      ...floatingStyles,
+      ...(!context.open && forceMount ? { visibility: "hidden" } : {}),
+    };
+  }, [style, floatingStyles, context.open, forceMount]);
 
   useScrollLock({
     enabled: context.open && context.modal,
@@ -86,12 +97,7 @@ const ComboboxPositioner = React.forwardRef<
       {...getFloatingProps(positionerProps)}
       data-state={context.open ? "open" : "closed"}
       ref={composedRef}
-      style={{
-        ...style,
-        ...getStyles(),
-        // Hide the element if it's not open and force mounted
-        ...(!context.open && forceMount ? { visibility: "hidden" } : {}),
-      }}
+      style={composedStyle}
     />
   );
 });

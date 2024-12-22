@@ -1,5 +1,4 @@
 import {
-  type FocusOutsideEvent,
   type PointerDownOutsideEvent,
   Presence,
   composeEventHandlers,
@@ -27,54 +26,23 @@ interface ComboboxContentProps
    */
   forceMount?: boolean;
 
-  /** Event handler called when the escape key is down. */
-  onEscapeKeyDown?: (event: KeyboardEvent) => void;
-
-  /** Event handler called when the focus moves outside of the dismissable layer. */
-  onFocusOutside?: (event: FocusOutsideEvent) => void;
-
-  /** Event handler called when an interaction happens outside the dismissable layer. */
-  onInteractOutside?: (
-    event: PointerDownOutsideEvent | FocusOutsideEvent,
-  ) => void;
-
-  /** Event handler called when a `pointerdown` event happens outside of the dismissable layer. */
+  /** Event handler called when a `pointerdown` event happens outside of the content. */
   onPointerDownOutside?: (event: PointerDownOutsideEvent) => void;
 }
 
 const ComboboxContent = React.forwardRef<HTMLDivElement, ComboboxContentProps>(
   (props, forwardedRef) => {
-    const {
-      forceMount = false,
-      onEscapeKeyDown,
-      onFocusOutside,
-      onInteractOutside,
-      onPointerDownOutside,
-      ...contentProps
-    } = props;
+    const { forceMount = false, onPointerDownOutside, ...contentProps } = props;
     const context = useComboboxContext(CONTENT_NAME);
 
     useDismiss({
       open: context.open,
       onDismiss: () => context.onOpenChange(false),
       refs: [context.anchorRef, context.contentRef],
-      onEscapeKeyDown: composeEventHandlers(onEscapeKeyDown, () =>
-        context.onOpenChange(false),
-      ),
-      onFocusOutside: composeEventHandlers(onFocusOutside, () =>
-        context.onOpenChange(false),
-      ),
-      onInteractOutside: composeEventHandlers(onInteractOutside, () =>
-        context.onOpenChange(false),
-      ),
-      onPointerDownOutside: composeEventHandlers(
-        onPointerDownOutside,
-        (event) => {
-          if (event.currentTarget === context.contentRef.current) {
-            context.onOpenChange(false);
-          }
-        },
-      ),
+      onFocusOutside: (event) => event.preventDefault(),
+      onPointerDownOutside,
+      disableOutsidePointerEvents:
+        context.open && context.modal && !context.disabled,
     });
 
     return (

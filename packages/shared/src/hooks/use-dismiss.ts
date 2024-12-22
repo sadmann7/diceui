@@ -1,4 +1,8 @@
-import { getOwnerDocument } from "@diceui/shared";
+import {
+  DATA_DISMISSABLE_LAYER_ATTR,
+  DATA_DISMISSABLE_LAYER_STYLE_ATTR,
+  getOwnerDocument,
+} from "@diceui/shared";
 import * as React from "react";
 
 interface FocusOutsideEvent {
@@ -61,6 +65,18 @@ interface UseDismissParameters {
    * @default 0
    */
   delay?: number;
+
+  /**
+   * Attribute to add to the dismissable layer
+   * @default DATA_DISMISSABLE_LAYER_ATTR
+   */
+  layerAttr?: string;
+
+  /**
+   * Attribute to add to the dismissable layer style
+   * @default DATA_DISMISSABLE_LAYER_STYLE_ATTR
+   */
+  layerStyleAttr?: string;
 }
 
 function useDismiss(params: UseDismissParameters) {
@@ -74,6 +90,8 @@ function useDismiss(params: UseDismissParameters) {
     onInteractOutside,
     disableOutsidePointerEvents = false,
     delay = 0,
+    layerAttr = DATA_DISMISSABLE_LAYER_ATTR,
+    layerStyleAttr = DATA_DISMISSABLE_LAYER_STYLE_ATTR,
   } = params;
 
   const shouldTriggerEvents = React.useRef(true);
@@ -145,14 +163,13 @@ function useDismiss(params: UseDismissParameters) {
       const elements = refs.map((ref) => ref.current).filter(Boolean);
       for (const el of elements) {
         if (el) {
-          el.setAttribute("data-dice-dismissable-layer", "");
+          el.setAttribute(layerAttr, "");
         }
       }
 
       const style = doc.createElement("style");
-      style.setAttribute("data-dice-dismissable-layer-style", "");
-      style.textContent =
-        "[data-dice-dismissable-layer] ~ *:not([data-dice-dismissable-layer]) { pointer-events: none !important; }";
+      style.setAttribute(layerStyleAttr, "");
+      style.textContent = `[${layerAttr}] ~ *:not([${layerAttr}]) { pointer-events: none !important; }`;
       doc.head.appendChild(style);
     }
 
@@ -171,10 +188,10 @@ function useDismiss(params: UseDismissParameters) {
       if (disableOutsidePointerEvents) {
         for (const ref of refs) {
           if (ref.current) {
-            ref.current.removeAttribute("data-dice-dismissable-layer");
+            ref.current.removeAttribute(layerAttr);
           }
         }
-        doc.querySelector("[data-dice-dismissable-layer-style]")?.remove();
+        doc.querySelector(`[${layerStyleAttr}]`)?.remove();
       }
     };
   }, [
@@ -187,6 +204,8 @@ function useDismiss(params: UseDismissParameters) {
     onInteractOutside,
     disableOutsidePointerEvents,
     delay,
+    layerAttr,
+    layerStyleAttr,
   ]);
 }
 

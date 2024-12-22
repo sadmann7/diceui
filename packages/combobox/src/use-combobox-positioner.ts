@@ -4,7 +4,8 @@ import {
   type FloatingContext,
   type Middleware,
   type Placement,
-  type VirtualElement,
+  type Strategy,
+  type UseFloatingReturn,
   arrow,
   autoUpdate,
   flip,
@@ -25,83 +26,62 @@ interface UseComboboxPositionerParams {
   sideOffset?: number;
   align?: "start" | "center" | "end";
   alignOffset?: number;
-  avoidCollisions?: boolean;
   collisionBoundary?: Element | Element[] | null;
   collisionPadding?:
     | number
     | Partial<Record<"top" | "right" | "bottom" | "left", number>>;
   arrowPadding?: number;
   sticky?: "partial" | "always";
-  hideWhenDetached?: boolean;
   fitViewport?: boolean;
-  strategy?: "absolute" | "fixed";
+  strategy?: Strategy;
   arrowRef?: React.RefObject<HTMLDivElement | null>;
-  forceMount?: boolean;
-  trackAnchor?: boolean;
   anchorRef?: React.RefObject<HTMLElement | null>;
-  inputRef?: React.RefObject<HTMLElement | null>;
+  triggerRef?: React.RefObject<HTMLElement | null>;
+  avoidCollisions?: boolean;
+  forceMount?: boolean;
   hasCustomAnchor?: boolean;
+  hideWhenDetached?: boolean;
+  trackAnchor?: boolean;
 }
 
 interface UseComboboxPositionerReturn {
-  floating: {
-    refs: {
-      setFloating: (node: HTMLElement | null) => void;
-      setReference: (node: Element | VirtualElement | null) => void;
-    };
-    floatingStyles: React.CSSProperties;
-    placement: Placement;
-    isPositioned: boolean;
-    middlewareData: {
-      arrow?: { x?: number; y?: number };
-      hide?: { referenceHidden?: boolean };
-      size?: { availableWidth?: number; availableHeight?: number };
-    };
-    elements: {
-      reference: Element | VirtualElement | null;
-      floating: HTMLElement | null;
-      domReference: Element | null;
-    };
-    update: () => void;
-    context: FloatingContext;
-  };
+  refs: UseFloatingReturn["refs"];
+  floatingStyles: React.CSSProperties;
+  placement: Placement;
+  isPositioned: boolean;
+  middlewareData: UseFloatingReturn["middlewareData"];
+  elements: UseFloatingReturn["elements"];
+  update: () => void;
+  context: FloatingContext;
   getFloatingProps: (
-    userProps?: React.HTMLAttributes<HTMLElement>,
+    floatingProps?: React.HTMLAttributes<HTMLElement>,
   ) => Record<string, unknown>;
-  getStyles: () => React.CSSProperties & {
-    "--dice-combobox-content-transform-origin": string;
-    "--dice-combobox-content-available-width"?: string;
-    "--dice-combobox-content-available-height"?: string;
-    "--dice-combobox-content-anchor-width"?: string;
-    "--dice-combobox-content-anchor-height"?: string;
-  };
 }
 
-export function useComboboxPositioner({
+function useComboboxPositioner({
   open,
   onOpenChange,
   side = "bottom",
   sideOffset = 4,
   align = "start",
   alignOffset = 0,
-  avoidCollisions = true,
   collisionBoundary,
   collisionPadding,
   arrowPadding = 0,
   sticky = "partial",
-  hideWhenDetached = false,
-  fitViewport = false,
   strategy = "absolute",
   arrowRef,
-  forceMount = false,
-  trackAnchor = true,
   anchorRef,
-  inputRef,
-  hasCustomAnchor,
+  triggerRef,
+  avoidCollisions = false,
+  fitViewport = false,
+  forceMount = false,
+  hasCustomAnchor = false,
+  hideWhenDetached = false,
+  trackAnchor = true,
 }: UseComboboxPositionerParams): UseComboboxPositionerReturn {
   const direction = useDirection();
 
-  // Handle RTL and side placement
   const placement = React.useMemo((): Placement => {
     const rtlAlign =
       direction === "rtl"
@@ -114,7 +94,6 @@ export function useComboboxPositioner({
     return `${side}-${rtlAlign}` as Placement;
   }, [align, direction, side]);
 
-  // Create middleware array based on props
   const middleware = React.useMemo(() => {
     const middleware: Middleware[] = [
       offset({
@@ -141,21 +120,35 @@ export function useComboboxPositioner({
           limiter: sticky === "partial" ? limitShift() : undefined,
         }),
       );
-
-      if (fitViewport) {
-        middleware.push(
-          size({
-            padding: collisionPadding || 0,
-            apply({ availableHeight, availableWidth, elements }) {
-              Object.assign(elements.floating.style, {
-                maxHeight: `${availableHeight}px`,
-                maxWidth: `${availableWidth}px`,
-              });
-            },
-          }),
-        );
-      }
     }
+
+    middleware.push(
+      size({
+        padding: collisionPadding || 0,
+        apply({
+          elements: { floating },
+          rects: { reference },
+          availableWidth,
+          availableHeight,
+        }) {
+          for (const [key, value] of Object.entries({
+            "--dice-combobox-content-available-width": `${availableWidth}px`,
+            "--dice-combobox-content-available-height": `${availableHeight}px`,
+            "--dice-combobox-content-anchor-width": `${reference.width}px`,
+            "--dice-combobox-content-anchor-height": `${reference.height}px`,
+          })) {
+            floating.style.setProperty(key, value);
+          }
+
+          if (fitViewport) {
+            Object.assign(floating.style, {
+              maxHeight: `${availableHeight}px`,
+              maxWidth: `${availableWidth}px`,
+            });
+          }
+        },
+      }),
+    );
 
     if (hideWhenDetached) {
       middleware.push(hide());
@@ -194,7 +187,18 @@ export function useComboboxPositioner({
     [trackAnchor],
   );
 
-  const floating = useFloating({
+  const {
+    x,
+    y,
+    refs,
+    strategy: floatingStrategy,
+    context,
+    placement: floatingPlacement,
+    middlewareData,
+    isPositioned,
+    update,
+    elements,
+  } = useFloating({
     open,
     onOpenChange,
     placement,
@@ -205,29 +209,20 @@ export function useComboboxPositioner({
     strategy,
   });
 
-  const {
-    placement: placementProp,
-    middlewareData,
-    elements,
-    update,
-  } = floating;
-
-  // Handle anchor positioning
   React.useEffect(() => {
     if (!open) return;
 
     const reference =
       hasCustomAnchor && anchorRef?.current
         ? anchorRef.current
-        : inputRef?.current;
+        : triggerRef?.current;
 
     if (reference) {
-      floating.refs.setReference(reference);
+      refs.setReference(reference);
       update();
     }
-  }, [open, hasCustomAnchor, anchorRef, inputRef, floating.refs, update]);
+  }, [open, hasCustomAnchor, anchorRef, triggerRef, refs, update]);
 
-  // Handle auto-update for force mounted elements
   React.useEffect(() => {
     if (forceMount && open && elements.reference && elements.floating) {
       return autoUpdate(
@@ -240,8 +235,7 @@ export function useComboboxPositioner({
     return undefined;
   }, [forceMount, open, elements, update, autoUpdateOptions]);
 
-  // Calculate transform origin based on placement
-  const [placementSide, placementAlign] = placementProp.split("-");
+  const [placementSide, placementAlign] = floatingPlacement.split("-");
 
   const transformOrigin = React.useMemo(() => {
     const longhand = {
@@ -263,52 +257,38 @@ export function useComboboxPositioner({
   }, [placementSide, placementAlign]);
 
   const getFloatingProps = React.useCallback(
-    (userProps: React.HTMLAttributes<HTMLElement> = {}) => ({
-      ...userProps,
+    (floatingProps: React.HTMLAttributes<HTMLElement> = {}) => ({
+      ...floatingProps,
       "data-side": placementSide,
       "data-align": placementAlign,
     }),
     [placementSide, placementAlign],
   );
 
-  const getStyles = React.useCallback(() => {
-    const {
-      size: { width: anchorWidth, height: anchorHeight } = {},
-      dimensions: { width: availableWidth, height: availableHeight } = {},
-    } = middlewareData;
-
-    const styles: ReturnType<UseComboboxPositionerReturn["getStyles"]> = {
-      ...floating.floatingStyles,
-      "--dice-combobox-content-transform-origin": transformOrigin,
-    };
-
-    if (availableWidth) {
-      styles["--dice-combobox-content-available-width"] = `${availableWidth}px`;
-    }
-    if (availableHeight) {
-      styles["--dice-combobox-content-available-height"] =
-        `${availableHeight}px`;
-    }
-    if (anchorWidth) {
-      styles["--dice-combobox-content-anchor-width"] = `${anchorWidth}px`;
-    }
-    if (anchorHeight) {
-      styles["--dice-combobox-content-anchor-height"] = `${anchorHeight}px`;
-    }
-
-    return styles;
-  }, [floating.floatingStyles, transformOrigin, middlewareData]);
+  const floatingStyles = React.useMemo(
+    () =>
+      ({
+        position: floatingStrategy,
+        top: y ?? 0,
+        left: x ?? 0,
+        "--dice-combobox-content-transform-origin": transformOrigin,
+      }) as const,
+    [floatingStrategy, x, y, transformOrigin],
+  );
 
   return {
-    floating: {
-      ...floating,
-      elements,
-      update,
-      context: floating.context,
-    },
+    refs,
+    floatingStyles,
+    placement: floatingPlacement,
+    isPositioned,
+    middlewareData,
+    elements,
+    update,
+    context,
     getFloatingProps,
-    getStyles,
   };
 }
+
+export { useComboboxPositioner };
 
 export type { UseComboboxPositionerParams, UseComboboxPositionerReturn };
