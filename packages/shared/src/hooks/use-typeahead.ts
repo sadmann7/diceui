@@ -33,28 +33,47 @@ function findNextItem<T extends { textValue: string }>(
   return nextItem !== currentItem ? nextItem : undefined;
 }
 
-function useTypeahead(onSearchChange: (search: string) => void) {
+interface UseTypeaheadProps {
+  onSearchChange: (search: string) => void;
+  enabled?: boolean;
+  immediate?: boolean;
+}
+
+function useTypeahead({
+  onSearchChange,
+  enabled = true,
+  immediate = false,
+}: UseTypeaheadProps) {
   const onSearchChangeCallback = useCallbackRef(onSearchChange);
   const searchRef = React.useRef("");
   const timerRef = React.useRef(0);
 
   const onTypeaheadSearch = React.useCallback(
     (key: string) => {
+      if (!enabled) return;
+
       const search = searchRef.current + key;
-      onSearchChangeCallback(search);
+      if (immediate) {
+        onSearchChangeCallback(search);
+      }
 
       (function updateSearch(value: string) {
         searchRef.current = value;
         window.clearTimeout(timerRef.current);
         if (value !== "") {
-          timerRef.current = window.setTimeout(() => updateSearch(""), 1000);
+          timerRef.current = window.setTimeout(() => {
+            if (!immediate) {
+              onSearchChangeCallback("");
+            }
+            updateSearch("");
+          }, 1000);
         }
       })(search);
     },
-    [onSearchChangeCallback],
+    [onSearchChangeCallback, enabled, immediate],
   );
 
-  const resetTypeahead = React.useCallback(() => {
+  const onResetTypeahead = React.useCallback(() => {
     searchRef.current = "";
     window.clearTimeout(timerRef.current);
   }, []);
@@ -66,9 +85,9 @@ function useTypeahead(onSearchChange: (search: string) => void) {
   return {
     searchRef,
     onTypeaheadSearch,
-    resetTypeahead,
+    onResetTypeahead,
     getCurrentSearch: () => searchRef.current,
   } as const;
 }
 
-export { useTypeahead, findNextItem, wrapArray };
+export { findNextItem, useTypeahead, wrapArray };

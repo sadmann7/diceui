@@ -1,8 +1,4 @@
-import {
-  composeEventHandlers,
-  useComposedRefs,
-  useTypeahead,
-} from "@diceui/shared";
+import { composeEventHandlers, useComposedRefs } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { useComboboxContext } from "./combobox-root";
@@ -18,25 +14,22 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
     const context = useComboboxContext(INPUT_NAME);
     const composedRefs = useComposedRefs(forwardedRef, context.inputRef);
 
-    const { onTypeaheadSearch, resetTypeahead } = useTypeahead((search) => {
-      if (!context.open) {
-        context.onOpenChange(true);
-      }
-      context.onInputValueChange(search);
-      context.filterStore.search = search;
-      context.onFilterItems();
-    });
-
     const onChange = React.useCallback(
       (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
+
         if (!context.open) {
           context.onOpenChange(true);
+          requestAnimationFrame(() => {
+            context.onInputValueChange(value);
+            context.filterStore.search = value;
+            context.onFilterItems();
+          });
+        } else {
+          context.onInputValueChange(value);
+          context.filterStore.search = value;
+          context.onFilterItems();
         }
-
-        const value = event.target.value;
-        context.onInputValueChange(value);
-        context.filterStore.search = value;
-        context.onFilterItems();
       },
       [context],
     );
@@ -52,17 +45,6 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
           "Escape",
           ...(context.modal ? ["PageUp", "PageDown"] : []),
         ].includes(event.key);
-
-        if (
-          !isNavigationKey &&
-          event.key.length === 1 &&
-          !event.ctrlKey &&
-          !event.metaKey &&
-          !event.altKey
-        ) {
-          onTypeaheadSearch(event.key);
-          return;
-        }
 
         if (isNavigationKey) event.preventDefault();
 
@@ -114,6 +96,7 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
                     context.highlightedItem.textContent ?? "",
                   );
                   context.onHighlightedItemChange(null);
+                  context.onOpenChange(false);
                 }
                 context.onValueChange(value);
               }
@@ -125,32 +108,38 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
               context.onHighlightedItemChange(null);
             }
             break;
+          case "PageUp":
+            if (context.modal && context.open) {
+              context.onHighlightMove("prev");
+            }
+            break;
+          case "PageDown":
+            if (context.modal && context.open) {
+              context.onHighlightMove("next");
+            }
+            break;
         }
       },
-      [context, onTypeaheadSearch],
+      [context],
     );
-
-    React.useEffect(() => {
-      return () => resetTypeahead();
-    }, [resetTypeahead]);
 
     return (
       <Primitive.input
-        type="text"
         role="combobox"
-        aria-controls={context.contentId}
+        autoComplete="off"
         aria-expanded={context.open}
-        aria-activedescendant={context.highlightedItem?.id ?? context.contentId}
+        aria-controls={context.contentId}
         aria-autocomplete="list"
-        aria-labelledby={context.labelId}
+        aria-activedescendant={context.highlightedItem?.id}
+        aria-disabled={context.disabled}
+        disabled={context.disabled}
         {...inputProps}
         ref={composedRefs}
-        disabled={context.disabled}
+        value={context.inputValue}
         onChange={composeEventHandlers(inputProps.onChange, onChange)}
         onKeyDown={composeEventHandlers(inputProps.onKeyDown, onKeyDown)}
         onBlur={composeEventHandlers(inputProps.onBlur, () => {
           if (
-            !context.multiple &&
             context.resetOnBlur &&
             context.open &&
             !context.highlightedItem &&
