@@ -1,4 +1,10 @@
-import { useDirection } from "@diceui/shared";
+import {
+  VAR_ANCHOR_HEIGHT,
+  VAR_ANCHOR_WIDTH,
+  VAR_AVAILABLE_HEIGHT,
+  VAR_AVAILABLE_WIDTH,
+  useDirection,
+} from "@diceui/shared";
 import {
   type Boundary,
   type FloatingContext,
@@ -132,10 +138,10 @@ function useComboboxPositioner({
           availableHeight,
         }) {
           for (const [key, value] of Object.entries({
-            "--dice-combobox-content-available-width": `${availableWidth}px`,
-            "--dice-combobox-content-available-height": `${availableHeight}px`,
-            "--dice-combobox-content-anchor-width": `${reference.width}px`,
-            "--dice-combobox-content-anchor-height": `${reference.height}px`,
+            [VAR_AVAILABLE_WIDTH]: `${availableWidth}px`,
+            [VAR_AVAILABLE_HEIGHT]: `${availableHeight}px`,
+            [VAR_ANCHOR_WIDTH]: `${reference.width}px`,
+            [VAR_ANCHOR_HEIGHT]: `${reference.height}px`,
           })) {
             floating.style.setProperty(key, value);
           }

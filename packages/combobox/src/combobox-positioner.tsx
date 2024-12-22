@@ -8,10 +8,7 @@ import { useComboboxPositioner } from "./use-combobox-positioner";
 const POSITIONER_NAME = "ComboboxPositioner";
 
 interface ComboboxPositionerProps
-  extends Omit<
-      UseComboboxPositionerParams,
-      "open" | "onOpenChange" | "triggerRef"
-    >,
+  extends Omit<UseComboboxPositionerParams, "open" | "onOpenChange">,
     React.ComponentPropsWithoutRef<typeof Primitive.div> {
   /**
    * Whether the positioner should be force mounted.
