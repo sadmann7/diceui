@@ -7,6 +7,9 @@ export type { ComboboxAnchorProps } from "./combobox-anchor";
 export { Arrow, ComboboxArrow } from "./combobox-arrow";
 export type { ComboboxArrowProps } from "./combobox-arrow";
 
+export { ComboboxPositioner, Positioner } from "./combobox-positioner";
+export type { ComboboxPositionerProps } from "./combobox-positioner";
+
 export { ComboboxContent, Content } from "./combobox-content";
 export type { ComboboxContentProps } from "./combobox-content";
 
