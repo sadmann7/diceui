@@ -7,13 +7,13 @@ import {
   useComposedRefs,
   useControllableState,
   useDirection,
+  useDismiss,
   useFilter,
   useFormControl,
   useId,
 } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
-import { useDismiss } from "./hooks/use-dismiss";
 
 const ROOT_NAME = "ComboboxRoot";
 
