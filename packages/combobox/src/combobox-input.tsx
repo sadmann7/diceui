@@ -31,18 +31,17 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
 
     const onKeyDown = React.useCallback(
       (event: React.KeyboardEvent) => {
-        const isArrowKey = [
+        const isNavigationKey = [
           "ArrowDown",
           "ArrowUp",
           "Home",
           "End",
           "Enter",
           "Escape",
+          ...(context.modal ? ["PageUp", "PageDown"] : []),
         ].includes(event.key);
 
-        if (isArrowKey) {
-          event.preventDefault();
-        }
+        if (isNavigationKey) event.preventDefault();
 
         switch (event.key) {
           case "ArrowDown":
@@ -100,6 +99,16 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
             if (context.open) {
               context.onOpenChange(false);
               context.onHighlightedItemChange(null);
+            }
+            break;
+          case "PageUp":
+            if (context.modal && context.open) {
+              context.onMoveHighlight("prev");
+            }
+            break;
+          case "PageDown":
+            if (context.modal && context.open) {
+              context.onMoveHighlight("next");
             }
             break;
         }

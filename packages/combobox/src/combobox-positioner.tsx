@@ -3,7 +3,6 @@ import {
   type Boundary,
   type Middleware,
   type Placement,
-  type Platform,
   type VirtualElement,
   arrow,
   autoUpdate,
