@@ -1,7 +1,7 @@
 import { composeEventHandlers } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
-// combobox-trigger.tsx
 import * as React from "react";
+
 import { useComboboxContext } from "./combobox-root";
 
 const TRIGGER_NAME = "ComboboxTrigger";

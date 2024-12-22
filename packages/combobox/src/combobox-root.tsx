@@ -44,6 +44,9 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   onMoveHighlight: (
     target: "next" | "prev" | "first" | "last" | "selected",
   ) => void;
+  onCustomAnchorAdd: () => void;
+  onCustomAnchorRemove: () => void;
+  hasCustomAnchor: boolean;
   multiple: Multiple;
   disabled: boolean;
   loop: boolean;
@@ -139,6 +142,8 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     prop: inputValueProp,
     onChange: onInputValueChange,
   });
+
+  const [hasCustomAnchor, setHasCustomAnchor] = React.useState(false);
 
   const [highlightedItem, setHighlightedItem] =
     React.useState<HTMLElement | null>(null);
@@ -297,6 +302,16 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     [loop, highlightedItem, getEnabledItems, value],
   );
 
+  const onCustomAnchorAdd = React.useCallback(
+    () => setHasCustomAnchor(true),
+    [],
+  );
+
+  const onCustomAnchorRemove = React.useCallback(
+    () => setHasCustomAnchor(false),
+    [],
+  );
+
   return (
     <ComboboxProvider
       value={value}
@@ -315,6 +330,9 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       onRegisterItem={onRegisterItem}
       onFilterItems={onFilterItems}
       onMoveHighlight={onMoveHighlight}
+      onCustomAnchorAdd={onCustomAnchorAdd}
+      onCustomAnchorRemove={onCustomAnchorRemove}
+      hasCustomAnchor={hasCustomAnchor}
       multiple={multiple}
       disabled={disabled}
       loop={loop}

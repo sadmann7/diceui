@@ -34,9 +34,10 @@ import {
   ComboboxEmpty,
   ComboboxInput,
   ComboboxItem,
+  ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
 import * as ComboboxPrimitive from "@diceui/combobox";
-import { Check } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import * as React from "react";
 
 export default function PlaygroundPage() {
@@ -84,6 +85,9 @@ export default function PlaygroundPage() {
       >
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
+          <ComboboxTrigger>
+            <ChevronDown className="h-4 w-4" />
+          </ComboboxTrigger>
         </ComboboxAnchor>
         <ComboboxContent className="w-full max-w-[15rem]">
           <ComboboxEmpty>No tricks found</ComboboxEmpty>

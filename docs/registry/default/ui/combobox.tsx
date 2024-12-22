@@ -45,7 +45,7 @@ const ComboboxTrigger = React.forwardRef<
   <ComboboxPrimitive.Trigger
     ref={ref}
     className={cn(
-      "flex h-9 w-9 items-center justify-center rounded-r-md border-input border-l bg-transparent hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+      "flex h-9 w-9 items-center justify-center rounded-r-md border-input bg-transparent text-muted-foreground transition-colors hover:text-foreground/80 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
       className,
     )}
     {...props}
