@@ -68,23 +68,80 @@ interface ComboboxRootProps<Multiple extends boolean = false>
     React.ComponentPropsWithoutRef<typeof Primitive.div>,
     "value" | "defaultValue" | "onValueChange"
   > {
+  /** The current value of the combobox. */
   value?: ComboboxValue<Multiple>;
+
+  /** The default value of the combobox. */
   defaultValue?: ComboboxValue<Multiple>;
+
+  /** Event handler called when the value changes. */
   onValueChange?: (value: ComboboxValue<Multiple>) => void;
+
+  /** Whether the combobox is open. */
   open?: boolean;
+  /**
+   * Whether the combobox is open by default.
+   * @default false
+   */
   defaultOpen?: boolean;
+
+  /** Event handler called when the open state of the combobox changes. */
   onOpenChange?: (open: boolean) => void;
+
+  /** The current input value of the combobox. */
   inputValue?: string;
+
+  /** Event handler called when the input value changes. */
   onInputValueChange?: (value: string) => void;
+
+  /**
+   * Event handler called when the filter is applied.
+   * Can be used to prevent the filtering behavior.
+   */
   onFilter?: (options: string[], inputValue: string) => string[];
+
+  /** The direction of the combobox. */
   dir?: Direction;
+
+  /**
+   * Whether the combobox allows multiple values.
+   * @default false
+   */
   multiple?: Multiple;
+
+  /** Whether the combobox is disabled. */
   disabled?: boolean;
+  /**
+   * Whether the combobox loops through items.
+   * @default false
+   */
   loop?: boolean;
+
+  /**
+   * Whether the combobox resets the value on blur.
+   * @default true
+   */
   resetOnBlur?: boolean;
+
+  /**
+   * Whether the combobox uses fuzzy filtering.
+   * @default true
+   */
   fuzzy?: boolean;
+  /**
+   * Whether the combobox is modal.
+   * @default false
+   */
+
   modal?: boolean;
+
+  /**
+   * Whether the combobox is required in a form context.
+   * @default false
+   */
   required?: boolean;
+
+  /** The name of the combobox when used in a form. */
   name?: string;
 }
 
@@ -314,12 +371,6 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     () => setHasCustomAnchor(false),
     [],
   );
-
-  useDismiss({
-    open,
-    onDismiss: () => onOpenChange(false),
-    refs: [anchorRef, contentRef],
-  });
 
   return (
     <ComboboxProvider

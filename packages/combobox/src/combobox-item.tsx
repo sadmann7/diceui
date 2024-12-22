@@ -25,7 +25,10 @@ const [ComboboxItemProvider, useComboboxItemContext] =
 
 interface ComboboxItemProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
+  /** The value of the item. */
   value: string;
+
+  /** Whether the item is disabled. */
   disabled?: boolean;
 }
 

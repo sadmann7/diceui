@@ -1,3 +1,4 @@
+import { getOwnerDocument } from "@diceui/shared";
 import * as React from "react";
 
 interface FocusOutsideEvent {
@@ -28,12 +29,6 @@ interface UseDismissParameters {
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
 
   /**
-   * Event handler called when the a `pointerdown` event happens outside of the dismissable layer.
-   * Can be prevented.
-   */
-  onPointerDownOutside?: (event: PointerDownOutsideEvent) => void;
-
-  /**
    * Event handler called when the focus moves outside of the dismissable layer.
    * Can be prevented.
    */
@@ -49,6 +44,12 @@ interface UseDismissParameters {
   ) => void;
 
   /**
+   * Event handler called when the a `pointerdown` event happens outside of the dismissable layer.
+   * Can be prevented.
+   */
+  onPointerDownOutside?: (event: PointerDownOutsideEvent) => void;
+
+  /**
    * When `true`, hover/focus/click interactions will be disabled on elements outside
    * the dismissable layer. Users will need to click twice on outside elements to
    * interact with them: once to close the dismissable layer, and again to trigger the element.
@@ -62,9 +63,6 @@ interface UseDismissParameters {
   delay?: number;
 }
 
-/**
- * Hook for handling dismissal of elements (like popups, modals) when clicking outside
- */
 function useDismiss(params: UseDismissParameters) {
   const {
     open,
@@ -78,15 +76,13 @@ function useDismiss(params: UseDismissParameters) {
     delay = 0,
   } = params;
 
-  // Track whether we should trigger events
   const shouldTriggerEvents = React.useRef(true);
 
   React.useEffect(() => {
     if (!open) return undefined;
 
-    const doc = refs[0]?.current?.ownerDocument || document;
+    const doc = getOwnerDocument(refs[0]?.current) ?? document;
 
-    // Handle escape key
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         if (onEscapeKeyDown) {
@@ -97,15 +93,12 @@ function useDismiss(params: UseDismissParameters) {
       }
     }
 
-    // Handle pointer down outside
     function onPointerDown(event: PointerEvent) {
       const target = event.target as Element | null;
 
-      // Check if any ref is missing its element
       const missingElement = refs.some((ref) => !ref.current);
       if (missingElement) return;
 
-      // Check if click was inside any of the refs
       const clickedInside = refs.some((ref) => ref.current?.contains(target));
 
       if (!clickedInside && shouldTriggerEvents.current) {
@@ -126,11 +119,9 @@ function useDismiss(params: UseDismissParameters) {
       }
     }
 
-    // Handle focus outside
     function onFocusOut(event: FocusEvent) {
       const target = event.target as Element | null;
 
-      // Check if focus is still within any of our refs
       const focusedInside = refs.some((ref) => ref.current?.contains(target));
 
       if (!focusedInside && shouldTriggerEvents.current) {
@@ -150,23 +141,21 @@ function useDismiss(params: UseDismissParameters) {
       }
     }
 
-    // Handle outside pointer events
     if (disableOutsidePointerEvents) {
       const elements = refs.map((ref) => ref.current).filter(Boolean);
       for (const el of elements) {
         if (el) {
-          el.setAttribute("data-dismissable-layer", "");
+          el.setAttribute("data-dice-dismissable-layer", "");
         }
       }
 
       const style = doc.createElement("style");
-      style.setAttribute("data-dismissable-layer-style", "");
+      style.setAttribute("data-dice-dismissable-layer-style", "");
       style.textContent =
-        "[data-dismissable-layer] ~ *:not([data-dismissable-layer]) { pointer-events: none !important; }";
+        "[data-dice-dismissable-layer] ~ *:not([data-dice-dismissable-layer]) { pointer-events: none !important; }";
       doc.head.appendChild(style);
     }
 
-    // Add event listeners
     const timeoutId = window.setTimeout(() => {
       doc.addEventListener("keydown", onKeyDown);
       doc.addEventListener("pointerdown", onPointerDown);
@@ -179,14 +168,13 @@ function useDismiss(params: UseDismissParameters) {
       doc.removeEventListener("pointerdown", onPointerDown);
       doc.removeEventListener("focusout", onFocusOut);
 
-      // Clean up outside pointer events
       if (disableOutsidePointerEvents) {
         for (const ref of refs) {
           if (ref.current) {
-            ref.current.removeAttribute("data-dismissable-layer");
+            ref.current.removeAttribute("data-dice-dismissable-layer");
           }
         }
-        doc.querySelector("[data-dismissable-layer-style]")?.remove();
+        doc.querySelector("[data-dice-dismissable-layer-style]")?.remove();
       }
     };
   }, [
@@ -204,4 +192,4 @@ function useDismiss(params: UseDismissParameters) {
 
 export { useDismiss };
 
-export type { UseDismissParameters };
+export type { FocusOutsideEvent, PointerDownOutsideEvent };
