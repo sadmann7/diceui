@@ -2,6 +2,7 @@ export * from "./use-callback-ref";
 export * from "./use-collection";
 export * from "./use-controllable-state";
 export * from "./use-direction";
+export * from "./use-dismiss";
 export * from "./use-filter";
 export * from "./use-form-control";
 export * from "./use-id";

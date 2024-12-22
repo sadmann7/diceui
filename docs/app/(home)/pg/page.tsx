@@ -102,7 +102,7 @@ export default function PlaygroundPage() {
             Open
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-56">
+        <DropdownMenuContent className="w-56">
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>

@@ -2,7 +2,6 @@ import { useComposedRefs, useScrollLock } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { useComboboxContext } from "./combobox-root";
-import { useAnchorPositioning } from "./use-anchor-positioning";
 import { useComboboxPositioner } from "./use-combobox-positioner";
 import type { UseComboboxPositionerParams } from "./use-combobox-positioner";
 
@@ -40,12 +39,6 @@ const ComboboxPositioner = React.forwardRef<
   const context = useComboboxContext(POSITIONER_NAME);
   const arrowRef = React.useRef<HTMLDivElement | null>(null);
 
-  const { reference, updateReference } = useAnchorPositioning({
-    anchorRef: context.anchorRef,
-    inputRef: context.inputRef,
-    hasCustomAnchor: context.hasCustomAnchor,
-  });
-
   const { floating, getFloatingProps, getStyles } = useComboboxPositioner({
     open: context.open,
     onOpenChange: context.onOpenChange,
@@ -64,6 +57,9 @@ const ComboboxPositioner = React.forwardRef<
     arrowRef,
     forceMount,
     trackAnchor,
+    anchorRef: context.anchorRef,
+    inputRef: context.inputRef,
+    hasCustomAnchor: context.hasCustomAnchor,
   });
 
   const composedRef = useComposedRefs(
@@ -76,48 +72,6 @@ const ComboboxPositioner = React.forwardRef<
     enabled: context.open && context.modal,
     referenceElement: context.contentRef.current,
   });
-
-  // Update reference when floating UI needs to reposition
-  React.useEffect(() => {
-    const update = floating.update;
-    if (typeof update === "function") {
-      update();
-    }
-  }, [floating.update]);
-
-  // Update reference when open state changes
-  React.useEffect(() => {
-    if (context.open) {
-      updateReference();
-      const update = floating.update;
-      if (typeof update === "function") {
-        update();
-      }
-    }
-  }, [context.open, updateReference, floating.update]);
-
-  // Set reference for floating UI
-  React.useEffect(() => {
-    if (reference) {
-      floating.refs.setReference(reference);
-    }
-  }, [reference, floating.refs]);
-
-  // Handle scroll updates
-  React.useEffect(() => {
-    if (!context.open || !reference) return;
-
-    const handleScroll = () => {
-      updateReference();
-      const update = floating.update;
-      if (typeof update === "function") {
-        update();
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, true);
-    return () => window.removeEventListener("scroll", handleScroll, true);
-  }, [context.open, reference, updateReference, floating.update]);
 
   if (!forceMount && !context.open) {
     return null;

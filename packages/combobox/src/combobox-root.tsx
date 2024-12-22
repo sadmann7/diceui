@@ -13,6 +13,7 @@ import {
 } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
+import { useDismiss } from "./hooks/use-dismiss";
 
 const ROOT_NAME = "ComboboxRoot";
 
@@ -209,7 +210,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     async (open: boolean) => {
       setOpen(open);
       if (open) {
-        await new Promise((resolve) => setTimeout(resolve, 0));
+        await new Promise((resolve) => requestAnimationFrame(resolve));
         inputRef.current?.focus();
       }
     },
@@ -313,6 +314,12 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     () => setHasCustomAnchor(false),
     [],
   );
+
+  useDismiss({
+    open,
+    onDismiss: () => onOpenChange(false),
+    refs: [anchorRef, contentRef],
+  });
 
   return (
     <ComboboxProvider

@@ -66,7 +66,7 @@ interface UseComboboxPositionerReturn {
     context: FloatingContext;
   };
   getFloatingProps: (
-    userProps?: React.HTMLAttributes<HTMLElement>
+    userProps?: React.HTMLAttributes<HTMLElement>,
   ) => Record<string, unknown>;
   getStyles: () => React.CSSProperties & {
     "--dice-combobox-content-transform-origin": string;
@@ -108,8 +108,8 @@ export function useComboboxPositioner({
         ? align === "start"
           ? "end"
           : align === "end"
-          ? "start"
-          : "center"
+            ? "start"
+            : "center"
         : align;
     return `${side}-${rtlAlign}` as Placement;
   }, [align, direction, side]);
@@ -131,7 +131,7 @@ export function useComboboxPositioner({
           padding: collisionPadding || 0,
           fallbackStrategy:
             sticky === "partial" ? "bestFit" : "initialPlacement",
-        })
+        }),
       );
 
       middleware.push(
@@ -139,7 +139,7 @@ export function useComboboxPositioner({
           boundary: collisionBoundary as Boundary | undefined,
           padding: collisionPadding || 0,
           limiter: sticky === "partial" ? limitShift() : undefined,
-        })
+        }),
       );
 
       if (fitViewport) {
@@ -152,7 +152,7 @@ export function useComboboxPositioner({
                 maxWidth: `${availableWidth}px`,
               });
             },
-          })
+          }),
         );
       }
     }
@@ -166,7 +166,7 @@ export function useComboboxPositioner({
         arrow({
           element: arrowRef.current,
           padding: arrowPadding,
-        })
+        }),
       );
     }
 
@@ -191,7 +191,7 @@ export function useComboboxPositioner({
       elementResize: trackAnchor && typeof ResizeObserver !== "undefined",
       layoutShift: trackAnchor && typeof IntersectionObserver !== "undefined",
     }),
-    [trackAnchor]
+    [trackAnchor],
   );
 
   const floating = useFloating({
@@ -234,7 +234,7 @@ export function useComboboxPositioner({
         elements.reference,
         elements.floating,
         update,
-        autoUpdateOptions
+        autoUpdateOptions,
       );
     }
     return undefined;
@@ -256,8 +256,8 @@ export function useComboboxPositioner({
       placementAlign === "end"
         ? "start"
         : placementAlign === "start"
-        ? "end"
-        : "center";
+          ? "end"
+          : "center";
 
     return `${oppositeAlign} ${oppositeSide}`;
   }, [placementSide, placementAlign]);
@@ -268,7 +268,7 @@ export function useComboboxPositioner({
       "data-side": placementSide,
       "data-align": placementAlign,
     }),
-    [placementSide, placementAlign]
+    [placementSide, placementAlign],
   );
 
   const getStyles = React.useCallback(() => {
@@ -286,9 +286,8 @@ export function useComboboxPositioner({
       styles["--dice-combobox-content-available-width"] = `${availableWidth}px`;
     }
     if (availableHeight) {
-      styles[
-        "--dice-combobox-content-available-height"
-      ] = `${availableHeight}px`;
+      styles["--dice-combobox-content-available-height"] =
+        `${availableHeight}px`;
     }
     if (anchorWidth) {
       styles["--dice-combobox-content-anchor-width"] = `${anchorWidth}px`;
