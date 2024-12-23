@@ -55,52 +55,49 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
 
     const onKeyDown = React.useCallback(
       (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (context.readOnly) {
-          if (
-            event.key === "Enter" ||
-            event.key === " " ||
-            event.key === "ArrowDown" ||
-            event.key === "ArrowUp"
-          ) {
-            event.preventDefault();
-            if (!context.open) {
-              context.onOpenChange(true);
-              if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-                requestAnimationFrame(() => {
-                  if (context.value.length > 0) {
-                    context.onHighlightMove("selected");
-                  } else {
-                    context.onHighlightMove(
-                      event.key === "ArrowDown" ? "first" : "last",
-                    );
-                  }
-                });
-              }
+        function onAnimatedHighlightMove(
+          direction: Parameters<typeof context.onHighlightMove>[0],
+        ) {
+          requestAnimationFrame(() => {
+            if (direction === "selected" && context.value.length > 0) {
+              context.onHighlightMove("selected");
+            } else if (direction === "selected") {
+              context.onHighlightMove("first");
             } else {
-              if (event.key === "ArrowDown") {
-                context.onHighlightMove("next");
-              } else if (event.key === "ArrowUp") {
-                context.onHighlightMove("prev");
-              } else if (event.key === "Enter" && context.highlightedItem) {
-                const value =
-                  context.highlightedItem.getAttribute("data-value");
-                if (value) {
-                  context.onInputValueChange(
-                    context.highlightedItem.textContent ?? "",
-                  );
-                  context.onHighlightedItemChange(null);
-                  context.onOpenChange(false);
-                }
-              }
+              context.onHighlightMove(direction);
             }
-          } else if (event.key === "Escape") {
-            event.preventDefault();
-            if (context.open) {
-              context.onOpenChange(false);
-              context.onHighlightedItemChange(null);
-            }
+          });
+        }
+
+        function onMenuOpen(direction?: "first" | "last" | "selected") {
+          if (!context.open) {
+            context.onOpenChange(true);
+            if (direction) onAnimatedHighlightMove(direction);
           }
-          return;
+        }
+
+        function onMenuClose() {
+          if (context.open) {
+            context.onOpenChange(false);
+            context.onHighlightedItemChange(null);
+          }
+        }
+
+        function onSelection() {
+          if (!context.highlightedItem) return;
+
+          const value = context.highlightedItem.getAttribute("data-value");
+          if (!value) return;
+
+          if (!context.multiple) {
+            context.onInputValueChange(
+              context.highlightedItem.textContent ?? "",
+            );
+            context.onHighlightedItemChange(null);
+            context.onOpenChange(false);
+          }
+          context.onInputValueChange("");
+          context.onValueChange(value);
         }
 
         const isNavigationKey = [
@@ -110,80 +107,83 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
           "End",
           "Enter",
           "Escape",
+          "Tab",
           ...(context.modal ? ["PageUp", "PageDown"] : []),
         ].includes(event.key);
 
-        if (isNavigationKey) event.preventDefault();
+        if (context.readOnly) {
+          switch (event.key) {
+            case "Enter":
+            case " ":
+              event.preventDefault();
+              if (context.open) {
+                onSelection();
+              } else {
+                onMenuOpen();
+              }
+              break;
+            case "ArrowDown":
+              event.preventDefault();
+              if (context.open) {
+                onAnimatedHighlightMove("next");
+              } else {
+                onMenuOpen("selected");
+              }
+              break;
+            case "ArrowUp":
+              event.preventDefault();
+              if (context.open) {
+                onAnimatedHighlightMove("prev");
+              } else {
+                onMenuOpen("selected");
+              }
+              break;
+            case "Escape":
+              event.preventDefault();
+              onMenuClose();
+              break;
+            case "Tab":
+              onMenuClose();
+              break;
+          }
+          return;
+        }
+
+        if (isNavigationKey && event.key !== "Tab") event.preventDefault();
 
         switch (event.key) {
           case "ArrowDown":
             if (!context.open) {
-              context.onOpenChange(true);
-              requestAnimationFrame(() => {
-                if (context.value.length > 0) {
-                  context.onHighlightMove("selected");
-                } else {
-                  context.onHighlightMove("first");
-                }
-              });
+              onMenuOpen("selected");
             } else {
-              context.onHighlightMove("next");
+              onAnimatedHighlightMove("next");
             }
             break;
           case "ArrowUp":
             if (!context.open) {
-              context.onOpenChange(true);
-              requestAnimationFrame(() => {
-                if (context.value.length > 0) {
-                  context.onHighlightMove("selected");
-                } else {
-                  context.onHighlightMove("last");
-                }
-              });
+              onMenuOpen("selected");
             } else {
-              context.onHighlightMove("prev");
+              onAnimatedHighlightMove("prev");
             }
             break;
           case "Home":
-            if (context.open) {
-              context.onHighlightMove("first");
-            }
+            if (context.open) onAnimatedHighlightMove("first");
             break;
           case "End":
-            if (context.open) {
-              context.onHighlightMove("last");
-            }
+            if (context.open) onAnimatedHighlightMove("last");
             break;
           case "Enter":
-            if (context.open && context.highlightedItem) {
-              const value = context.highlightedItem.getAttribute("data-value");
-              if (value) {
-                if (!context.multiple) {
-                  context.onInputValueChange(
-                    context.highlightedItem.textContent ?? "",
-                  );
-                  context.onHighlightedItemChange(null);
-                  context.onOpenChange(false);
-                }
-                context.onValueChange(value);
-              }
-            }
+            if (context.open) onSelection();
             break;
           case "Escape":
-            if (context.open) {
-              context.onOpenChange(false);
-              context.onHighlightedItemChange(null);
-            }
+          case "Tab":
+            onMenuClose();
             break;
           case "PageUp":
-            if (context.modal && context.open) {
-              context.onHighlightMove("prev");
-            }
+            if (context.modal && context.open) onAnimatedHighlightMove("prev");
             break;
           case "PageDown":
-            if (context.modal && context.open) {
-              context.onHighlightMove("next");
-            }
+            if (context.modal && context.open) onAnimatedHighlightMove("next");
             break;
         }
       },

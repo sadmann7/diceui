@@ -94,6 +94,7 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
             if (context.multiple) {
               event.currentTarget.focus();
               context.inputRef.current?.focus();
+              context.onInputValueChange("");
               return;
             }
 

@@ -1,6 +1,13 @@
 "use client";
 
 import { Shell } from "@/components/shell";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Select,
   SelectContent,
@@ -28,7 +35,6 @@ export default function PlaygroundPage() {
   const [selectedTrick, setSelectedTrick] = React.useState<string | undefined>(
     undefined,
   );
-  const [selectedTricks, setSelectedTricks] = React.useState<string[]>([]);
 
   return (
     <Shell>
@@ -60,12 +66,7 @@ export default function PlaygroundPage() {
           ))}
         </ComboboxPrimitive.Content>
       </ComboboxPrimitive.Root>
-      <Combobox
-        value={selectedTricks}
-        onValueChange={setSelectedTricks}
-        multiple
-        className="w-[15rem]"
-      >
+      <Combobox className="w-[15rem]" multiple>
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
           <ComboboxTrigger>
@@ -81,6 +82,20 @@ export default function PlaygroundPage() {
           ))}
         </ComboboxContent>
       </Combobox>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" size="sm" className="w-fit">
+            Open
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start">
+          <DropdownMenuItem>Apple</DropdownMenuItem>
+          <DropdownMenuItem>Banana</DropdownMenuItem>
+          <DropdownMenuItem>Blueberry</DropdownMenuItem>
+          <DropdownMenuItem>Grapes</DropdownMenuItem>
+          <DropdownMenuItem>Pineapple</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
       <Select>
         <SelectTrigger className="w-[11.25rem]">
           <SelectValue placeholder="Select a fruit" />
