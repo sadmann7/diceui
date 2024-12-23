@@ -27,7 +27,8 @@ const ComboboxTrigger = React.forwardRef<
       tabIndex={context.disabled ? undefined : -1}
       {...triggerProps}
       ref={forwardedRef}
-      onClick={composeEventHandlers(triggerProps.onClick, async () => {
+      onClick={composeEventHandlers(triggerProps.onClick, async (event) => {
+        event.currentTarget.focus();
         const newOpenState = !context.open;
         await context.onOpenChange(newOpenState);
 

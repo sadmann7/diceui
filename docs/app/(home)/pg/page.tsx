@@ -66,7 +66,7 @@ export default function PlaygroundPage() {
           ))}
         </ComboboxPrimitive.Content>
       </ComboboxPrimitive.Root>
-      <Combobox className="w-[15rem]">
+      <Combobox className="w-[15rem]" multiple>
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
           <ComboboxTrigger>
