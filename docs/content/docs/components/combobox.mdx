@@ -1,0 +1,332 @@
+---
+title: Combobox
+description: An input with a popover that helps users filter through a list of options.
+preview: true
+---
+
+<ComponentTabs name="combobox-demo" />
+
+## Installation
+
+```package-install
+@diceui/combobox
+```
+
+## Installation with shadcn/ui
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/combobox"
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @diceui/combobox
+     ```
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource name="combobox" />
+  </Step>
+</Steps>
+
+## Anatomy
+
+Import the parts, and compose them together.
+
+```tsx
+import * as Combobox from "@diceui/combobox";
+
+<Combobox.Root>
+  <Combobox.Label />
+  <Combobox.Anchor>
+    <Combobox.Trigger>
+      <Combobox.Input />
+      <Combobox.Cancel />
+    </Combobox.Trigger>
+  </Combobox.Anchor>
+  <Combobox.Portal>
+    <Combobox.Content>
+      <Combobox.Arrow />
+      <Combobox.Empty />
+      <Combobox.Group>
+        <Combobox.GroupLabel />
+        <Combobox.Item>
+          <Combobox.ItemText />
+          <Combobox.ItemIndicator />
+        </Combobox.Item>
+      </Combobox.Group>
+      <Combobox.Separator />
+    </Combobox.Content>
+  </Combobox.Portal>
+</Combobox.Root>
+```
+
+## Examples
+
+### Basic
+
+<ComponentTabs name="combobox-basic-demo" />
+
+### With Groups
+
+<ComponentTabs name="combobox-groups-demo" />
+
+### With Search
+
+<ComponentTabs name="combobox-search-demo" />
+
+### With Multiple Selection
+
+<ComponentTabs name="combobox-multiple-demo" />
+
+## API Reference
+
+### Root
+
+Container for the combobox.
+
+<AutoTypeTable
+  path="./types/docs/combobox.ts"
+  name="RootProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-state]",
+      value: ["open", "closed"],
+    },
+    {
+      title: "[data-disabled]",
+      value: "Present when disabled",
+    },
+  ]}
+/>
+
+### Label
+
+Label element for the combobox.
+
+<AutoTypeTable
+  path="./types/docs/combobox.ts"
+  name="LabelProps"
+/>
+
+### Anchor
+
+Element that anchors the combobox popover.
+
+<AutoTypeTable
+  path="./types/docs/combobox.ts"
+  name="AnchorProps"
+/>
+
+### Trigger
+
+Button that toggles the combobox popover.
+
+<AutoTypeTable
+  path="./types/docs/combobox.ts"
+  name="TriggerProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-state]",
+      value: ["open", "closed"],
+    },
+    {
+      title: "[data-disabled]",
+      value: "Present when disabled",
+    },
+  ]}
+/>
+
+### Input
+
+Text input for filtering options.
+
+<AutoTypeTable
+  path="./types/docs/combobox.ts"
+  name="InputProps"
+/>
+
+### Cancel
+
+Button to clear the input value.
+
+<AutoTypeTable
+  path="./types/docs/combobox.ts"
+  name="CancelProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-state]",
+      value: "'visible' when input has value, 'hidden' when empty",
+    },
+  ]}
+/>
+
+### Portal
+
+Portal for the combobox popover content.
+
+<AutoTypeTable
+  path="./types/docs/combobox.ts"
+  name="PortalProps"
+/>
+
+### Content
+
+Container for the combobox options.
+
+<AutoTypeTable
+  path="./types/docs/combobox.ts"
+  name="ContentProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-state]",
+      value: ["open", "closed"],
+    },
+    {
+      title: "[data-side]",
+      value: ["top", "right", "bottom", "left"],
+    },
+    {
+      title: "[data-align]",
+      value: ["start", "center", "end"],
+    },
+  ]}
+/>
+
+### Arrow
+
+Optional arrow element for the popover.
+
+<AutoTypeTable
+  path="./types/docs/combobox.ts"
+  name="ArrowProps"
+/>
+
+### Empty
+
+Content shown when no options match the filter.
+
+<AutoTypeTable
+  path="./types/docs/combobox.ts"
+  name="EmptyProps"
+/>
+
+### Group
+
+Container for grouping related options.
+
+<AutoTypeTable
+  path="./types/docs/combobox.ts"
+  name="GroupProps"
+/>
+
+### GroupLabel
+
+Label for an option group.
+
+<AutoTypeTable
+  path="./types/docs/combobox.ts"
+  name="GroupLabelProps"
+/>
+
+### Item
+
+Individual combobox option.
+
+<AutoTypeTable
+  path="./types/docs/combobox.ts"
+  name="ItemProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-highlighted]",
+      value: "Present when the item is highlighted",
+    },
+    {
+      title: "[data-disabled]",
+      value: "Present when the item is disabled",
+    },
+    {
+      title: "[data-state]",
+      value: ["checked", "unchecked"],
+    },
+  ]}
+/>
+
+### ItemText
+
+Text content of an option.
+
+<AutoTypeTable
+  path="./types/docs/combobox.ts"
+  name="ItemTextProps"
+/>
+
+### ItemIndicator
+
+Visual indicator for selected options.
+
+<AutoTypeTable
+  path="./types/docs/combobox.ts"
+  name="ItemIndicatorProps"
+/>
+
+### Separator
+
+Visual separator between options or groups.
+
+<AutoTypeTable
+  path="./types/docs/combobox.ts"
+  name="SeparatorProps"
+/>
+
+## Accessibility
+
+### Keyboard Interactions
+
+<KeyboardShortcutsTable
+  shortcuts={[
+    {
+      keys: ["Space", "Enter"],
+      description: "When open, selects the highlighted option."
+    },
+    {
+      keys: ["↑", "↓"],
+      description: "When open, moves focus to the previous/next option."
+    },
+    {
+      keys: ["Home", "End"],
+      description: "When open, moves focus to the first/last option."
+    },
+    {
+      keys: ["Escape"],
+      description: "Closes the combobox popover."
+    },
+    {
+      keys: ["Alt + ↑", "Alt + ↓"],
+      description: "When closed, opens the combobox popover."
+    }
+  ]}
+/> 
