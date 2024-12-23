@@ -49,10 +49,12 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
     }, [context]);
 
     const onBlur = React.useCallback(() => {
-      if (
+      if (!context.multiple && context.value) {
+        context.onInputValueChange(context.selectedText);
+      } else if (
         context.open &&
         !context.highlightedItem &&
-        context.value.length === 0
+        context.inputValue
       ) {
         context.onInputValueChange("");
       }
@@ -74,17 +76,15 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
           if (context.readOnly || !context.highlightedItem) return;
 
           const value = context.highlightedItem.getAttribute(DATA_VALUE_ATTR);
+          const text = context.highlightedItem.textContent ?? "";
           if (!value) return;
 
           if (!context.multiple) {
-            context.onInputValueChange(
-              context.highlightedItem.textContent ?? "",
-            );
+            context.onInputValueChange(text);
+            context.onSelectedTextChange(text);
             context.onHighlightedItemChange(null);
             context.onOpenChange(false);
-            context.onInputValueChange("");
           }
-          context.onInputValueChange(context.highlightedItem.textContent ?? "");
           context.onValueChange(value);
         }
 

@@ -89,17 +89,19 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
           onClick={composeEventHandlers(itemProps.onClick, (event) => {
             if (isDisabled || context.readOnly) return;
 
-            context.onValueChange(value);
-
             if (context.multiple) {
               event.currentTarget.focus();
               context.inputRef.current?.focus();
               context.onInputValueChange("");
-              return;
+            } else {
+              const text = itemRef.current?.textContent ?? "";
+              context.onInputValueChange(text);
+              context.onSelectedTextChange(text);
+              context.onHighlightedItemChange(null);
+              context.onOpenChange(false);
             }
 
-            context.onHighlightedItemChange(null);
-            context.onInputValueChange(itemRef.current?.textContent ?? "");
+            context.onValueChange(value);
           })}
           onPointerDown={composeEventHandlers(
             itemProps.onPointerDown,

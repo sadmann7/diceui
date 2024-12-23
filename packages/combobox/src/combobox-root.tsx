@@ -31,6 +31,8 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   onOpenChange: (open: boolean) => Promise<void>;
   inputValue: string;
   onInputValueChange: (value: string) => void;
+  selectedText: string;
+  onSelectedTextChange: (value: string) => void;
   onFilter?: (options: string[], term: string) => string[];
   collectionRef: React.RefObject<HTMLDivElement | null>;
   listRef: React.RefObject<HTMLDivElement | null>;
@@ -225,6 +227,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     },
   });
 
+  const [selectedText, setSelectedText] = React.useState("");
   const [highlightedItem, setHighlightedItem] =
     React.useState<HTMLElement | null>(null);
 
@@ -409,6 +412,8 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       onOpenChange={onOpenChange}
       inputValue={inputValue}
       onInputValueChange={onInputValueChange}
+      selectedText={selectedText}
+      onSelectedTextChange={setSelectedText}
       onFilter={onFilter}
       collectionRef={collectionRef}
       listRef={listRef}
