@@ -101,9 +101,9 @@ const ComboboxPositioner = React.forwardRef<
     return (
       <FloatingFocusManager
         context={positionerContext.context}
-        modal={false}
-        initialFocus={context.inputRef}
         disabled={!context.open}
+        initialFocus={context.inputRef}
+        modal={false}
       >
         {content}
       </FloatingFocusManager>
