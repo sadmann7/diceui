@@ -1,4 +1,5 @@
 import { useComposedRefs, useScrollLock } from "@diceui/shared";
+import { FloatingFocusManager } from "@floating-ui/react";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { useComboboxContext } from "./combobox-root";
@@ -43,7 +44,7 @@ const ComboboxPositioner = React.forwardRef<
   const context = useComboboxContext(POSITIONER_NAME);
   const arrowRef = React.useRef<HTMLDivElement | null>(null);
 
-  const { refs, floatingStyles, getFloatingProps } = useComboboxPositioner({
+  const positionerContext = useComboboxPositioner({
     open: context.open,
     onOpenChange: context.onOpenChange,
     side,
@@ -67,16 +68,16 @@ const ComboboxPositioner = React.forwardRef<
   });
 
   const composedRef = useComposedRefs(forwardedRef, context.listRef, (node) =>
-    refs.setFloating(node),
+    positionerContext.refs.setFloating(node),
   );
 
   const composedStyle = React.useMemo<React.CSSProperties>(() => {
     return {
       ...style,
-      ...floatingStyles,
+      ...positionerContext.floatingStyles,
       ...(!context.open && forceMount ? { visibility: "hidden" } : {}),
     };
-  }, [style, floatingStyles, context.open, forceMount]);
+  }, [style, positionerContext.floatingStyles, context.open, forceMount]);
 
   useScrollLock({
     referenceElement: context.listRef.current,
@@ -87,14 +88,29 @@ const ComboboxPositioner = React.forwardRef<
     return null;
   }
 
-  return (
+  const content = (
     <Primitive.div
       data-state={context.open ? "open" : "closed"}
-      {...getFloatingProps(positionerProps)}
+      {...positionerContext.getFloatingProps(positionerProps)}
       ref={composedRef}
       style={composedStyle}
     />
   );
+
+  if (context.modal) {
+    return (
+      <FloatingFocusManager
+        context={positionerContext.context}
+        modal={false}
+        initialFocus={context.inputRef}
+        disabled={!context.open}
+      >
+        {content}
+      </FloatingFocusManager>
+    );
+  }
+
+  return content;
 });
 
 ComboboxPositioner.displayName = POSITIONER_NAME;
