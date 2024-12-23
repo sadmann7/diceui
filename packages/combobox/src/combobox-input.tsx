@@ -33,7 +33,10 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
           context.onInputValueChange(value);
           context.filterStore.search = value;
           context.onFilterItems();
-          if (value === "") context.onValueChange("");
+          if (value === "") {
+            context.onValueChange("");
+            context.onHighlightedItemChange(null);
+          }
         });
       },
       [context],
@@ -86,19 +89,19 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
         }
 
         function onMenuOpen(direction?: HighlightingDirection) {
-          if (!context.open) {
-            context.onOpenChange(true);
-            requestAnimationFrame(() => {
-              if (direction) onHighlightMove(direction);
-            });
-          }
+          if (context.open) return;
+
+          context.onOpenChange(true);
+          requestAnimationFrame(() => {
+            if (direction) onHighlightMove(direction);
+          });
         }
 
         function onMenuClose() {
-          if (context.open) {
-            context.onOpenChange(false);
-            context.onHighlightedItemChange(null);
-          }
+          if (!context.open) return;
+
+          context.onOpenChange(false);
+          context.onHighlightedItemChange(null);
         }
 
         const isNavigationKey = [
