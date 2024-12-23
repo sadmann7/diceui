@@ -12,7 +12,7 @@ interface ComboboxPositionerProps
   extends Omit<UseComboboxPositionerParams, "open" | "onOpenChange">,
     React.ComponentPropsWithoutRef<typeof Primitive.div> {
   /**
-   * Whether the positioner should be force mounted.
+   * Whether the positioner should always be mounted.
    * @default false
    */
   forceMount?: boolean;

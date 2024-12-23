@@ -106,7 +106,7 @@ Container for the combobox.
     },
     {
       title: "[data-disabled]",
-      value: "Present when disabled",
+      value: "Present when disabled.",
     },
   ]}
 />
@@ -213,6 +213,31 @@ Container for the combobox options.
   ]}
 />
 
+<CSSVariablesTable
+  variables={[
+    {
+      title: "--dice-transform-origin",
+      description: "Transform origin for anchor positioning.",
+    },
+    {
+      title: "--dice-anchor-width",
+      description: "Width of the anchor element.",
+    },
+    {
+      title: "--dice-anchor-height",
+      description: "Height of the anchor element.",
+    },
+    {
+      title: "--dice-available-width",
+      description: "Available width in the viewport for the floating element.",
+    },
+    {
+      title: "--dice-available-height",
+      description: "Available height in the viewport for the floating element.",
+    },
+  ]}
+/>
+
 ### Arrow
 
 Optional arrow element for the popover.
@@ -309,7 +334,7 @@ Visual separator between options or groups.
 <KeyboardShortcutsTable
   shortcuts={[
     {
-      keys: ["Space", "Enter"],
+      keys: ["Enter"],
       description: "When open, selects the highlighted option."
     },
     {
@@ -321,12 +346,12 @@ Visual separator between options or groups.
       description: "When open, moves focus to the first/last option."
     },
     {
+      keys: ["Page Up", "Page Down"],
+      description: "When open and modal is enabled, moves focus to the previous/next page of options."
+    },
+    {
       keys: ["Escape"],
       description: "Closes the combobox popover."
     },
-    {
-      keys: ["Alt + ↑", "Alt + ↓"],
-      description: "When closed, opens the combobox popover."
-    }
   ]}
 /> 

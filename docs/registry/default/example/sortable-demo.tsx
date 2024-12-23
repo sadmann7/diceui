@@ -18,7 +18,7 @@ export default function SortableDemo() {
       <Sortable.Content className="grid grid-cols-3 gap-2.5">
         {tricks.map((trick) => (
           <Sortable.Item key={trick.id} value={trick.id} asChild asGrip>
-            <div className="flex size-full flex-col items-center justify-center rounded-md border border-zinc-200 bg-zinc-100 p-6 text-center shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+            <div className="flex size-full flex-col items-center justify-center border border-zinc-200 bg-zinc-100 p-6 text-center shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
               <div className="font-medium text-sm leading-tight sm:text-base">
                 {trick.title}
               </div>
@@ -36,7 +36,7 @@ export default function SortableDemo() {
 
           return (
             <Sortable.Item value={trick.id} asChild>
-              <div className="flex size-full flex-col items-center justify-center rounded-md border border-zinc-200 bg-zinc-100 p-6 text-center shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+              <div className="flex size-full flex-col items-center justify-center border border-zinc-200 bg-zinc-100 p-6 text-center shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
                 <div className="font-medium text-sm leading-tight sm:text-base">
                   {trick.title}
                 </div>
