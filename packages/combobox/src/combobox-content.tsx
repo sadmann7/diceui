@@ -57,9 +57,9 @@ const ComboboxContent = React.forwardRef<HTMLDivElement, ComboboxContentProps>(
         <ComboboxPositioner
           role="listbox"
           id={context.contentId}
+          forceMount={forceMount}
           {...contentProps}
           ref={forwardedRef}
-          forceMount={forceMount}
         >
           <Primitive.div>{children}</Primitive.div>
         </ComboboxPositioner>

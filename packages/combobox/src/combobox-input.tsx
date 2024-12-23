@@ -21,33 +21,15 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
       (event: React.ChangeEvent<HTMLInputElement>) => {
         if (context.readOnly) return;
 
+        if (!context.open) context.onOpenChange(true);
+
         const value = event.target.value;
 
-        if (value === "") {
-          context.onValueChange("");
-          if (!context.open) {
-            context.onOpenChange(true);
-          }
-          requestAnimationFrame(() => {
-            context.onInputValueChange(value);
-            context.filterStore.search = value;
-            context.onFilterItems();
-          });
-          return;
-        }
-
-        if (context.open) {
-          context.onInputValueChange(value);
-          context.filterStore.search = value;
-          context.onFilterItems();
-          return;
-        }
-
-        context.onOpenChange(true);
         requestAnimationFrame(() => {
           context.onInputValueChange(value);
           context.filterStore.search = value;
           context.onFilterItems();
+          if (value === "") context.onValueChange("");
         });
       },
       [context],

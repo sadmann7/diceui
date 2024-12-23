@@ -324,9 +324,8 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       }
 
       setValue(newValue as Value<Multiple>);
-      setOpen(false);
     },
-    [multiple, setValue, setOpen, value, readOnly],
+    [multiple, setValue, value, readOnly],
   );
 
   const onRegisterItem = React.useCallback(
