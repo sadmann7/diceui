@@ -1,6 +1,5 @@
 import * as React from "react";
-
-type Direction = "ltr" | "rtl";
+import type { Direction } from "../types";
 
 const DirectionContext = React.createContext<Direction | undefined>(undefined);
 
@@ -9,4 +8,4 @@ function useDirection(dirProp?: Direction): Direction {
   return dirProp ?? contextDir ?? "ltr";
 }
 
-export { useDirection, type Direction };
+export { useDirection };

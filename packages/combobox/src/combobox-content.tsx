@@ -11,13 +11,6 @@ import type { UseComboboxPositionerParams } from "./use-combobox-positioner";
 
 const CONTENT_NAME = "ComboboxContent";
 
-interface ComboboxContentContextValue {
-  forceMount: boolean;
-}
-
-const [ComboboxContentProvider, useComboboxContentContext] =
-  createContext<ComboboxContentContextValue>(CONTENT_NAME);
-
 interface ComboboxContentProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div>,
     Omit<
@@ -58,17 +51,15 @@ const ComboboxContent = React.forwardRef<HTMLDivElement, ComboboxContentProps>(
     });
 
     return (
-      <ComboboxContentProvider forceMount={forceMount}>
-        <ComboboxPositioner
-          role="listbox"
-          id={context.contentId}
-          forceMount={forceMount}
-          {...contentProps}
-          ref={forwardedRef}
-        >
-          <Primitive.div>{children}</Primitive.div>
-        </ComboboxPositioner>
-      </ComboboxContentProvider>
+      <ComboboxPositioner
+        role="listbox"
+        id={context.contentId}
+        forceMount={forceMount}
+        {...contentProps}
+        ref={forwardedRef}
+      >
+        <Primitive.div>{children}</Primitive.div>
+      </ComboboxPositioner>
     );
   },
 );
@@ -77,6 +68,6 @@ ComboboxContent.displayName = CONTENT_NAME;
 
 const Content = ComboboxContent;
 
-export { ComboboxContent, Content, useComboboxContentContext };
+export { ComboboxContent, Content };
 
 export type { ComboboxContentProps };

@@ -1,5 +1,6 @@
 import {
   type Direction,
+  type Orientation,
   createContext,
   useComposedRefs,
   useControllableState,
@@ -19,7 +20,7 @@ interface CheckboxGroupContextValue {
   isInvalid: boolean;
   required?: boolean;
   dir: Direction;
-  orientation: "horizontal" | "vertical";
+  orientation: Orientation;
   id: string;
   labelId: string;
   descriptionId: string;

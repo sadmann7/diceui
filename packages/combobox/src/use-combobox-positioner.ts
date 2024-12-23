@@ -27,6 +27,9 @@ import {
 } from "@floating-ui/react";
 import * as React from "react";
 
+type Side = "top" | "right" | "bottom" | "left";
+type Align = "start" | "center" | "end";
+
 interface UseComboboxPositionerParams {
   /** Whether the combobox is open. */
   open: boolean;
@@ -39,7 +42,7 @@ interface UseComboboxPositionerParams {
    * If there is not enough space, it will be adjusted automatically.
    * @default "bottom"
    */
-  side?: "top" | "right" | "bottom" | "left";
+  side?: Side;
 
   /**
    * The distance between the combobox and its anchor element.
@@ -55,7 +58,7 @@ interface UseComboboxPositionerParams {
    * - 'end': Align with the end edge of the anchor
    * @default "start"
    */
-  align?: "start" | "center" | "end";
+  align?: Align;
 
   /**
    * The distance from the aligned edge when using align.
@@ -146,13 +149,6 @@ interface UseComboboxPositionerParams {
   trackAnchor?: boolean;
 
   /**
-   * Reference to the arrow element that points to the trigger.
-   * Used to position the arrow element correctly.
-   * @default undefined
-   */
-  arrowRef?: React.RefObject<HTMLDivElement | null>;
-
-  /**
    * Reference to a custom anchor element.
    * Used when hasCustomAnchor is true to position relative to a custom element.
    * @default undefined
@@ -179,6 +175,12 @@ interface UseComboboxPositionerReturn {
   getFloatingProps: (
     floatingProps?: React.HTMLAttributes<HTMLElement>,
   ) => Record<string, unknown>;
+  arrowStyles: React.CSSProperties;
+  arrowRef: React.RefObject<SVGSVGElement | null>;
+  arrowUncentered: boolean;
+  renderedSide: "top" | "right" | "bottom" | "left";
+  renderedAlign: "start" | "center" | "end";
+  anchorHidden: boolean;
 }
 
 function useComboboxPositioner({
@@ -199,11 +201,12 @@ function useComboboxPositioner({
   hasCustomAnchor = false,
   hideWhenDetached = false,
   trackAnchor = true,
-  arrowRef,
   anchorRef,
   triggerRef,
 }: UseComboboxPositionerParams): UseComboboxPositionerReturn {
   const direction = useDirection();
+
+  const arrowRef = React.useRef<SVGSVGElement | null>(null);
 
   const placement = React.useMemo((): Placement => {
     const rtlAlign =
@@ -297,7 +300,6 @@ function useComboboxPositioner({
     sticky,
     hideWhenDetached,
     fitViewport,
-    arrowRef,
   ]);
 
   const autoUpdateOptions = React.useMemo(
@@ -399,19 +401,62 @@ function useComboboxPositioner({
     [floatingStrategy, x, y, transformOrigin],
   );
 
-  return {
-    refs,
-    floatingStyles,
-    placement: floatingPlacement,
-    isPositioned,
-    middlewareData,
-    elements,
-    update,
-    context,
-    getFloatingProps,
-  };
+  const arrowStyles = React.useMemo(
+    () => ({
+      position: "absolute" as const,
+      top: middlewareData.arrow?.y,
+      left: middlewareData.arrow?.x,
+    }),
+    [middlewareData.arrow],
+  );
+
+  const arrowUncentered = middlewareData.arrow?.centerOffset !== 0;
+  const anchorHidden = Boolean(middlewareData.hide?.referenceHidden);
+
+  const returnValue = React.useMemo(
+    () => ({
+      refs,
+      floatingStyles,
+      placement: floatingPlacement,
+      isPositioned,
+      middlewareData,
+      elements,
+      update,
+      context,
+      getFloatingProps,
+      arrowStyles,
+      arrowRef: arrowRef || { current: null },
+      arrowUncentered,
+      renderedSide: placementSide as Side,
+      renderedAlign: placementAlign as Align,
+      anchorHidden,
+    }),
+    [
+      refs,
+      floatingStyles,
+      floatingPlacement,
+      isPositioned,
+      middlewareData,
+      elements,
+      update,
+      context,
+      getFloatingProps,
+      arrowStyles,
+      arrowUncentered,
+      placementSide,
+      placementAlign,
+      anchorHidden,
+    ],
+  );
+
+  return returnValue;
 }
 
 export { useComboboxPositioner };
 
-export type { UseComboboxPositionerParams, UseComboboxPositionerReturn };
+export type {
+  UseComboboxPositionerParams,
+  UseComboboxPositionerReturn,
+  Side,
+  Align,
+};

@@ -28,8 +28,8 @@ const ComboboxTrigger = React.forwardRef<
       {...triggerProps}
       ref={forwardedRef}
       onClick={composeEventHandlers(triggerProps.onClick, async (event) => {
-        event.currentTarget.focus();
         const newOpenState = !context.open;
+        if (newOpenState) event.currentTarget.focus();
         await context.onOpenChange(newOpenState);
 
         if (newOpenState) {

@@ -18,7 +18,7 @@ const ComboboxCancel = React.forwardRef<HTMLButtonElement, ComboboxCancelProps>(
         type="button"
         {...props}
         onClick={composeEventHandlers(props.onClick, () => {
-          context.onValueChange("");
+          context.onInputValueChange("");
           context.inputRef.current?.focus();
         })}
       />

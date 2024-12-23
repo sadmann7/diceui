@@ -1,12 +1,28 @@
-import { useComposedRefs, useScrollLock } from "@diceui/shared";
+import { createContext, useComposedRefs, useScrollLock } from "@diceui/shared";
 import { FloatingFocusManager } from "@floating-ui/react";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { useComboboxContext } from "./combobox-root";
-import type { UseComboboxPositionerParams } from "./use-combobox-positioner";
+import type {
+  Align,
+  Side,
+  UseComboboxPositionerParams,
+} from "./use-combobox-positioner";
 import { useComboboxPositioner } from "./use-combobox-positioner";
 
 const POSITIONER_NAME = "ComboboxPositioner";
+
+interface ComboboxPositionerContextValue {
+  arrowRef: React.RefObject<SVGSVGElement | null>;
+  side: Side;
+  align: Align;
+  arrowUncentered: boolean;
+  arrowStyles: React.CSSProperties;
+  forceMount: boolean;
+}
+
+const [ComboboxPositionerProvider, useComboboxPositionerContext] =
+  createContext<ComboboxPositionerContextValue>(POSITIONER_NAME);
 
 interface ComboboxPositionerProps
   extends Omit<UseComboboxPositionerParams, "open" | "onOpenChange">,
@@ -42,7 +58,6 @@ const ComboboxPositioner = React.forwardRef<
   } = props;
 
   const context = useComboboxContext(POSITIONER_NAME);
-  const arrowRef = React.useRef<HTMLDivElement | null>(null);
 
   const positionerContext = useComboboxPositioner({
     open: context.open,
@@ -62,7 +77,6 @@ const ComboboxPositioner = React.forwardRef<
     hideWhenDetached,
     hasCustomAnchor: context.hasCustomAnchor,
     trackAnchor,
-    arrowRef,
     anchorRef: context.anchorRef,
     triggerRef: context.inputRef,
   });
@@ -89,12 +103,21 @@ const ComboboxPositioner = React.forwardRef<
   }
 
   const content = (
-    <Primitive.div
-      data-state={context.open ? "open" : "closed"}
-      {...positionerContext.getFloatingProps(positionerProps)}
-      ref={composedRef}
-      style={composedStyle}
-    />
+    <ComboboxPositionerProvider
+      arrowRef={positionerContext.arrowRef}
+      side={side}
+      align={align}
+      arrowUncentered={positionerContext.arrowUncentered}
+      arrowStyles={positionerContext.arrowStyles}
+      forceMount={forceMount}
+    >
+      <Primitive.div
+        data-state={context.open ? "open" : "closed"}
+        {...positionerContext.getFloatingProps(positionerProps)}
+        ref={composedRef}
+        style={composedStyle}
+      />
+    </ComboboxPositionerProvider>
   );
 
   if (context.modal) {
@@ -117,6 +140,6 @@ ComboboxPositioner.displayName = POSITIONER_NAME;
 
 const Positioner = ComboboxPositioner;
 
-export { ComboboxPositioner, Positioner };
+export { ComboboxPositioner, Positioner, useComboboxPositionerContext };
 
 export type { ComboboxPositionerProps };
