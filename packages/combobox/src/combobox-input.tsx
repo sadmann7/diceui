@@ -82,6 +82,7 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
             context.onHighlightedItemChange(null);
             context.onOpenChange(false);
             context.onInputValueChange("");
+            context.filterStore.search = "";
           }
           context.onInputValueChange(context.highlightedItem.textContent ?? "");
           context.onValueChange(value);
@@ -123,7 +124,6 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
               onMenuOpen();
             }
             break;
-
           case "ArrowDown":
             if (context.open) {
               onAnimatedHighlightMove("next");
@@ -131,7 +131,6 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
               onMenuOpen("selected");
             }
             break;
-
           case "ArrowUp":
             if (context.open) {
               onAnimatedHighlightMove("prev");
@@ -139,27 +138,21 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
               onMenuOpen("selected");
             }
             break;
-
           case "Home":
             if (context.open) onAnimatedHighlightMove("first");
             break;
-
           case "End":
             if (context.open) onAnimatedHighlightMove("last");
             break;
-
           case "Escape":
             onMenuClose();
             break;
-
           case "Tab":
             onMenuClose();
             break;
-
           case "PageUp":
             if (context.modal && context.open) onAnimatedHighlightMove("prev");
             break;
-
           case "PageDown":
             if (context.modal && context.open) onAnimatedHighlightMove("next");
             break;
