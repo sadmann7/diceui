@@ -86,9 +86,18 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
           tabIndex={disabled ? undefined : -1}
           {...itemProps}
           ref={composedRefs}
-          onPointerMove={composeEventHandlers(itemProps.onPointerMove, () => {
-            if (isDisabled) return;
-            context.onHighlightedItemChange(itemRef.current);
+          onClick={composeEventHandlers(itemProps.onClick, (event) => {
+            if (isDisabled || context.readOnly) return;
+
+            context.onValueChange(value);
+
+            if (context.multiple) {
+              event.currentTarget.focus();
+              context.inputRef.current?.focus();
+            } else {
+              context.onHighlightedItemChange(null);
+              context.onInputValueChange(itemRef.current?.textContent ?? "");
+            }
           })}
           onPointerDown={composeEventHandlers(
             itemProps.onPointerDown,
@@ -102,24 +111,20 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
                 target.releasePointerCapture(event.pointerId);
               }
 
-              // prevent focus only for multiple selection mode
-              if (context.multiple) {
+              if (
+                context.multiple &&
+                event.button === 0 &&
+                event.ctrlKey === false &&
+                event.pointerType === "mouse"
+              ) {
+                // prevent item from stealing focus from the input
                 event.preventDefault();
               }
             },
           )}
-          onClick={composeEventHandlers(itemProps.onClick, (event) => {
-            if (isDisabled || context.readOnly) return;
-
-            context.onValueChange(value);
-
-            if (context.multiple) {
-              event.currentTarget.focus();
-              context.inputRef.current?.focus();
-            } else {
-              context.onHighlightedItemChange(null);
-              context.onInputValueChange(itemRef.current?.textContent ?? "");
-            }
+          onPointerMove={composeEventHandlers(itemProps.onPointerMove, () => {
+            if (isDisabled) return;
+            context.onHighlightedItemChange(itemRef.current);
           })}
         />
       </ComboboxItemProvider>

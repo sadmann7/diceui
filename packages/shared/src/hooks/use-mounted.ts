@@ -1,10 +1,10 @@
 import * as React from "react";
-import { useIsomorphicLayoutEffect } from "./use-isomorphic-layout-effect";
+import { useLayoutEffect } from "./use-layout-effect";
 
 export function useMounted() {
   const [mounted, setMounted] = React.useState(false);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     setMounted(true);
   }, []);
 
