@@ -128,7 +128,7 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
             if (context.open) {
               onHighlightMove("next");
             } else {
-              onMenuOpen("selected");
+              onMenuOpen(context.value.length > 0 ? "selected" : "first");
             }
             break;
 
@@ -136,7 +136,7 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
             if (context.open) {
               onHighlightMove("prev");
             } else {
-              onMenuOpen("last");
+              onMenuOpen(context.value.length > 0 ? "selected" : "last");
             }
             break;
 
