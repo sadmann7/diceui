@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { useLayoutEffect } from "@diceui/shared";
+import { useMounted } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as ReactDOM from "react-dom";
 
@@ -12,11 +12,7 @@ interface PortalProps
 const ComboboxPortalImpl = React.forwardRef<HTMLDivElement, PortalProps>(
   (props, forwardedRef) => {
     const { container, ...portalProps } = props;
-    const [mounted, setMounted] = React.useState(false);
-
-    useLayoutEffect(() => {
-      setMounted(true);
-    }, []);
+    const mounted = useMounted();
 
     const dynamicContainer =
       container ?? (mounted ? globalThis.document?.body : null);

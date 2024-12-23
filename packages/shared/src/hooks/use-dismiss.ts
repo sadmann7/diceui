@@ -97,7 +97,7 @@ function useDismiss(params: UseDismissParameters) {
   const shouldTriggerEvents = React.useRef(true);
 
   React.useEffect(() => {
-    if (!open) return undefined;
+    if (!open) return;
 
     const doc = getOwnerDocument(refs[0]?.current) ?? document;
 

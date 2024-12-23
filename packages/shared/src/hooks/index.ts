@@ -9,6 +9,7 @@ export * from "./use-form-control";
 export * from "./use-id";
 export * from "./use-isomorphic-layout-effect";
 export * from "./use-layout-effect";
+export * from "./use-mounted";
 export * from "./use-previous";
 export * from "./use-scroll-lock";
 export * from "./use-size";
