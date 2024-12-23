@@ -55,7 +55,6 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   multiple: Multiple;
   openOnFocus: boolean;
   readOnly: boolean;
-  resetOnBlur: boolean;
   dir: Direction;
   id: string;
   labelId: string;
@@ -148,12 +147,6 @@ interface ComboboxRootProps<Multiple extends boolean = false>
   readOnly?: boolean;
 
   /**
-   * Whether the combobox resets the value on blur.
-   * @default true
-   */
-  resetOnBlur?: boolean;
-
-  /**
    * Whether the combobox is required in a form context.
    * @default false
    */
@@ -184,7 +177,6 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     modal = false,
     openOnFocus = false,
     readOnly = false,
-    resetOnBlur = true,
     required = false,
     dir: dirProp,
     name,
@@ -409,8 +401,6 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     [loop, highlightedItem, getEnabledItems, value],
   );
 
-  console.log({ search: filterStore.search });
-
   return (
     <ComboboxProvider
       value={value}
@@ -439,7 +429,6 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       multiple={multiple}
       openOnFocus={openOnFocus}
       readOnly={readOnly}
-      resetOnBlur={resetOnBlur}
       dir={dir}
       id={id}
       labelId={labelId}

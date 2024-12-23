@@ -20,6 +20,19 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
 
         const value = event.target.value;
 
+        if (value === "") {
+          context.onValueChange("");
+          if (!context.open) {
+            context.onOpenChange(true);
+          }
+          requestAnimationFrame(() => {
+            context.onInputValueChange(value);
+            context.filterStore.search = value;
+            context.onFilterItems();
+          });
+          return;
+        }
+
         if (!context.open) {
           context.onOpenChange(true);
           requestAnimationFrame(() => {
@@ -44,7 +57,6 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
 
     const onBlur = React.useCallback(() => {
       if (
-        context.resetOnBlur &&
         context.open &&
         !context.highlightedItem &&
         context.value.length === 0
@@ -123,7 +135,6 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
               onMenuOpen();
             }
             break;
-
           case "ArrowDown":
             if (context.open) {
               onHighlightMove("next");
@@ -131,7 +142,6 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
               onMenuOpen(context.value.length > 0 ? "selected" : "first");
             }
             break;
-
           case "ArrowUp":
             if (context.open) {
               onHighlightMove("prev");
@@ -139,29 +149,23 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
               onMenuOpen(context.value.length > 0 ? "selected" : "last");
             }
             break;
-
           case "Home":
             if (context.open) onHighlightMove("first");
             break;
-
           case "End":
             if (context.open) onHighlightMove("last");
             break;
-
-          case "Escape":
-            onMenuClose();
-            break;
-
-          case "Tab":
-            onMenuClose();
-            break;
-
           case "PageUp":
             if (context.modal && context.open) onHighlightMove("prev");
             break;
-
           case "PageDown":
             if (context.modal && context.open) onHighlightMove("next");
+            break;
+          case "Escape":
+            onMenuClose();
+            break;
+          case "Tab":
+            onMenuClose();
             break;
         }
       },
