@@ -6,20 +6,31 @@ import { useComboboxContext } from "./combobox-root";
 const CANCEL_NAME = "ComboboxCancel";
 
 interface ComboboxCancelProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.button> {}
+  extends React.ComponentPropsWithoutRef<typeof Primitive.button> {
+  /**
+   * Whether the cancel button should always be mounted.
+   * @default false
+   */
+  forceMount?: boolean;
+}
 
 const ComboboxCancel = React.forwardRef<HTMLButtonElement, ComboboxCancelProps>(
   (props, forwardedRef) => {
+    const { forceMount = false, ...cancelProps } = props;
     const context = useComboboxContext(CANCEL_NAME);
+
+    if (!forceMount && !context.inputValue) return null;
 
     return (
       <Primitive.button
         ref={forwardedRef}
         type="button"
-        {...props}
-        onClick={composeEventHandlers(props.onClick, () => {
+        {...cancelProps}
+        onClick={composeEventHandlers(cancelProps.onClick, () => {
           context.onInputValueChange("");
-          context.inputRef.current?.focus();
+          requestAnimationFrame(() => {
+            context.inputRef.current?.focus();
+          });
         })}
       />
     );
@@ -30,6 +41,6 @@ ComboboxCancel.displayName = CANCEL_NAME;
 
 const Cancel = ComboboxCancel;
 
-export { ComboboxCancel, Cancel };
+export { Cancel, ComboboxCancel };
 
 export type { ComboboxCancelProps };

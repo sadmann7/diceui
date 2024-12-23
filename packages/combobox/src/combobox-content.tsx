@@ -1,5 +1,7 @@
 import {
+  type Align,
   type PointerDownOutsideEvent,
+  type Side,
   createContext,
   useDismiss,
 } from "@diceui/shared";
@@ -10,6 +12,18 @@ import { useComboboxContext } from "./combobox-root";
 import type { UseComboboxPositionerParams } from "./use-combobox-positioner";
 
 const CONTENT_NAME = "ComboboxContent";
+
+interface ComboboxContentContextValue {
+  side: Side;
+  align: Align;
+  arrowRef: React.RefObject<SVGSVGElement | null>;
+  arrowStyles: React.CSSProperties;
+  arrowUncentered: boolean;
+  forceMount: boolean;
+}
+
+const [ComboboxContentProvider, useComboboxContentContext] =
+  createContext<ComboboxContentContextValue>(CONTENT_NAME);
 
 interface ComboboxContentProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div>,
@@ -68,6 +82,11 @@ ComboboxContent.displayName = CONTENT_NAME;
 
 const Content = ComboboxContent;
 
-export { ComboboxContent, Content };
+export {
+  ComboboxContent,
+  ComboboxContentProvider,
+  Content,
+  useComboboxContentContext,
+};
 
 export type { ComboboxContentProps };

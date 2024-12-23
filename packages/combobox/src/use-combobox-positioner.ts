@@ -1,4 +1,5 @@
 import {
+  type Align,
   VAR_ANCHOR_HEIGHT,
   VAR_ANCHOR_WIDTH,
   VAR_AVAILABLE_HEIGHT,
@@ -12,6 +13,7 @@ import {
   type FloatingContext,
   type Middleware,
   type Placement,
+  type Side,
   type Strategy,
   type UseFloatingReturn,
   arrow,
@@ -26,9 +28,6 @@ import {
   useFloating,
 } from "@floating-ui/react";
 import * as React from "react";
-
-type Side = "top" | "right" | "bottom" | "left";
-type Align = "start" | "center" | "end";
 
 interface UseComboboxPositionerParams {
   /** Whether the combobox is open. */
@@ -360,7 +359,8 @@ function useComboboxPositioner({
     return undefined;
   }, [forceMount, open, elements, update, autoUpdateOptions]);
 
-  const [placementSide, placementAlign] = floatingPlacement.split("-");
+  const [placementSide = "bottom", placementAlign = "start"] =
+    floatingPlacement.split("-") as [Side?, Align?];
 
   const transformOrigin = React.useMemo(() => {
     const longhand = {
@@ -370,7 +370,7 @@ function useComboboxPositioner({
       left: "right",
     };
 
-    const oppositeSide = longhand[placementSide as keyof typeof longhand];
+    const oppositeSide = longhand[placementSide];
     const oppositeAlign =
       placementAlign === "end"
         ? "start"
@@ -427,8 +427,8 @@ function useComboboxPositioner({
       arrowStyles,
       arrowRef: arrowRef || { current: null },
       arrowUncentered,
-      renderedSide: placementSide as Side,
-      renderedAlign: placementAlign as Align,
+      renderedSide: placementSide,
+      renderedAlign: placementAlign,
       anchorHidden,
     }),
     [
@@ -454,9 +454,4 @@ function useComboboxPositioner({
 
 export { useComboboxPositioner };
 
-export type {
-  UseComboboxPositionerParams,
-  UseComboboxPositionerReturn,
-  Side,
-  Align,
-};
+export type { UseComboboxPositionerParams, UseComboboxPositionerReturn };

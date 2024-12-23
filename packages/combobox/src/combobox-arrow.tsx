@@ -3,7 +3,7 @@
 import { useComposedRefs } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
-import { useComboboxPositionerContext } from "./combobox-positioner";
+import { useComboboxContentContext } from "./combobox-content";
 import { useComboboxContext } from "./combobox-root";
 
 const ARROW_NAME = "ComboboxArrow";
@@ -27,12 +27,9 @@ const ComboboxArrow = React.forwardRef<SVGSVGElement, ComboboxArrowProps>(
     const { width = 10, height = 5, ...arrowProps } = props;
 
     const context = useComboboxContext(ARROW_NAME);
-    const positionerContext = useComboboxPositionerContext(ARROW_NAME);
+    const contentContext = useComboboxContentContext(ARROW_NAME);
 
-    const composedRef = useComposedRefs(
-      forwardedRef,
-      positionerContext.arrowRef,
-    );
+    const composedRef = useComposedRefs(forwardedRef, contentContext.arrowRef);
 
     if (!context.open) return null;
 
@@ -43,10 +40,10 @@ const ComboboxArrow = React.forwardRef<SVGSVGElement, ComboboxArrowProps>(
         height={height}
         viewBox="0 0 30 10"
         preserveAspectRatio="none"
-        style={positionerContext.arrowStyles}
-        data-side={positionerContext.side}
-        data-align={positionerContext.align}
-        data-uncentered={positionerContext.arrowUncentered || undefined}
+        style={contentContext.arrowStyles}
+        data-side={contentContext.side}
+        data-align={contentContext.align}
+        data-uncentered={contentContext.arrowUncentered || undefined}
         data-state={context.open ? "open" : "closed"}
         aria-hidden
         {...arrowProps}

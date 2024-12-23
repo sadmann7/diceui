@@ -8,8 +8,8 @@ import {
 } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
+import { useComboboxContentContext } from "./combobox-content";
 import { ComboboxGroupContext } from "./combobox-group";
-import { useComboboxPositionerContext } from "./combobox-positioner";
 import { useComboboxContext } from "./combobox-root";
 
 const ITEM_NAME = "ComboboxItem";
@@ -37,7 +37,7 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
   (props, forwardedRef) => {
     const { value, disabled, ...itemProps } = props;
     const context = useComboboxContext(ITEM_NAME);
-    const positionerContext = useComboboxPositionerContext(ITEM_NAME);
+    const contentContext = useComboboxContentContext(ITEM_NAME);
     const groupContext = React.useContext(ComboboxGroupContext);
     const itemRef = React.useRef<HTMLDivElement>(null);
     const composedRefs = useComposedRefs(forwardedRef, itemRef);
@@ -58,7 +58,7 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
     }, [id, value, context.onRegisterItem, groupContext?.id]);
 
     const shouldRender =
-      positionerContext.forceMount ||
+      contentContext.forceMount ||
       (context.filterStore.search
         ? (context.filterStore.items.get(id) ?? 0) > 0
         : true);

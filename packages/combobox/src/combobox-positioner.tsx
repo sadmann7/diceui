@@ -1,28 +1,13 @@
-import { createContext, useComposedRefs, useScrollLock } from "@diceui/shared";
+import { useComposedRefs, useScrollLock } from "@diceui/shared";
 import { FloatingFocusManager } from "@floating-ui/react";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
+import { ComboboxContentProvider } from "./combobox-content";
 import { useComboboxContext } from "./combobox-root";
-import type {
-  Align,
-  Side,
-  UseComboboxPositionerParams,
-} from "./use-combobox-positioner";
+import type { UseComboboxPositionerParams } from "./use-combobox-positioner";
 import { useComboboxPositioner } from "./use-combobox-positioner";
 
 const POSITIONER_NAME = "ComboboxPositioner";
-
-interface ComboboxPositionerContextValue {
-  arrowRef: React.RefObject<SVGSVGElement | null>;
-  side: Side;
-  align: Align;
-  arrowUncentered: boolean;
-  arrowStyles: React.CSSProperties;
-  forceMount: boolean;
-}
-
-const [ComboboxPositionerProvider, useComboboxPositionerContext] =
-  createContext<ComboboxPositionerContextValue>(POSITIONER_NAME);
 
 interface ComboboxPositionerProps
   extends Omit<UseComboboxPositionerParams, "open" | "onOpenChange">,
@@ -103,7 +88,7 @@ const ComboboxPositioner = React.forwardRef<
   }
 
   const content = (
-    <ComboboxPositionerProvider
+    <ComboboxContentProvider
       arrowRef={positionerContext.arrowRef}
       side={side}
       align={align}
@@ -117,7 +102,7 @@ const ComboboxPositioner = React.forwardRef<
         ref={composedRef}
         style={composedStyle}
       />
-    </ComboboxPositionerProvider>
+    </ComboboxContentProvider>
   );
 
   if (context.modal) {
@@ -140,6 +125,6 @@ ComboboxPositioner.displayName = POSITIONER_NAME;
 
 const Positioner = ComboboxPositioner;
 
-export { ComboboxPositioner, Positioner, useComboboxPositionerContext };
+export { ComboboxPositioner, Positioner };
 
 export type { ComboboxPositionerProps };
