@@ -1,7 +1,10 @@
 import { composeEventHandlers, useComposedRefs } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
-import { useComboboxContext } from "./combobox-root";
+import {
+  type HighlightingDirection,
+  useComboboxContext,
+} from "./combobox-root";
 
 const INPUT_NAME = "ComboboxInput";
 
@@ -67,9 +70,7 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
 
     const onKeyDown = React.useCallback(
       (event: React.KeyboardEvent<HTMLInputElement>) => {
-        function onHighlightMove(
-          direction: Parameters<typeof context.onHighlightMove>[0],
-        ) {
+        function onHighlightMove(direction: HighlightingDirection) {
           if (direction === "selected" && context.value.length > 0) {
             context.onHighlightMove("selected");
           } else if (direction === "selected") {
@@ -97,7 +98,7 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
           context.onValueChange(value);
         }
 
-        function onMenuOpen(direction?: "first" | "last" | "selected") {
+        function onMenuOpen(direction?: HighlightingDirection) {
           if (!context.open) {
             context.onOpenChange(true);
             requestAnimationFrame(() => {

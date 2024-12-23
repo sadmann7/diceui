@@ -17,13 +17,15 @@ import * as React from "react";
 
 const ROOT_NAME = "ComboboxRoot";
 
-type ComboboxValue<Multiple extends boolean = false> = Multiple extends true
+type Value<Multiple extends boolean = false> = Multiple extends true
   ? string[]
   : string;
 
+type HighlightingDirection = "next" | "prev" | "first" | "last" | "selected";
+
 interface ComboboxContextValue<Multiple extends boolean = false> {
-  value: ComboboxValue<Multiple>;
-  onValueChange: (value: ComboboxValue<Multiple>) => void;
+  value: Value<Multiple>;
+  onValueChange: (value: Value<Multiple>) => void;
   open: boolean;
   onOpenChange: (open: boolean) => Promise<void>;
   inputValue: string;
@@ -43,9 +45,7 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   onHighlightedItemChange: (item: HTMLElement | null) => void;
   onRegisterItem: (id: string, value: string, groupId?: string) => () => void;
   onFilterItems: () => void;
-  onHighlightMove: (
-    target: "next" | "prev" | "first" | "last" | "selected",
-  ) => void;
+  onHighlightMove: (target: HighlightingDirection) => void;
   onCustomAnchorAdd: () => void;
   onCustomAnchorRemove: () => void;
   disabled: boolean;
@@ -70,13 +70,13 @@ interface ComboboxRootProps<Multiple extends boolean = false>
     "value" | "defaultValue" | "onValueChange"
   > {
   /** The current value of the combobox. */
-  value?: ComboboxValue<Multiple>;
+  value?: Value<Multiple>;
 
   /** The default value of the combobox. */
-  defaultValue?: ComboboxValue<Multiple>;
+  defaultValue?: Value<Multiple>;
 
   /** Event handler called when the value changes. */
-  onValueChange?: (value: ComboboxValue<Multiple>) => void;
+  onValueChange?: (value: Value<Multiple>) => void;
 
   /** Whether the combobox is open. */
   open?: boolean;
@@ -319,11 +319,11 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
         const newValues = currentValue.includes(typedNewValue)
           ? currentValue.filter((v) => v !== newValue)
           : [...currentValue, newValue];
-        setValue(newValues as ComboboxValue<Multiple>);
+        setValue(newValues as Value<Multiple>);
         return;
       }
 
-      setValue(newValue as ComboboxValue<Multiple>);
+      setValue(newValue as Value<Multiple>);
       setOpen(false);
     },
     [multiple, setValue, setOpen, value, readOnly],
@@ -355,14 +355,14 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
   );
 
   const onHighlightMove = React.useCallback(
-    (target: Parameters<ComboboxContextValue["onHighlightMove"]>[0]) => {
+    (direction: HighlightingDirection) => {
       const items = getEnabledItems();
       if (!items.length) return;
 
       const currentIndex = items.indexOf(highlightedItem as HTMLElement);
       let nextIndex: number;
 
-      switch (target) {
+      switch (direction) {
         case "next":
           nextIndex = currentIndex + 1;
           if (nextIndex >= items.length) {
@@ -463,4 +463,4 @@ const Root = ComboboxRoot;
 
 export { ComboboxRoot, Root, useComboboxContext };
 
-export type { ComboboxRootProps };
+export type { ComboboxRootProps, HighlightingDirection };
