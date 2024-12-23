@@ -62,6 +62,7 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   id: string;
   labelId: string;
   contentId: string;
+  preserveInputOnBlur: boolean;
 }
 
 const [ComboboxProvider, useComboboxContext] =
@@ -157,6 +158,13 @@ interface ComboboxRootProps<Multiple extends boolean = false>
 
   /** The name of the combobox when used in a form. */
   name?: string;
+
+  /**
+   * Whether to preserve the input value when the input is blurred and no item is selected.
+   * Only applicable when items are not selected.
+   * @default false
+   */
+  preserveInputOnBlur?: boolean;
 }
 
 function ComboboxRootImpl<Multiple extends boolean = false>(
@@ -181,6 +189,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     openOnFocus = false,
     readOnly = false,
     required = false,
+    preserveInputOnBlur = false,
     dir: dirProp,
     name,
     children,
@@ -226,7 +235,6 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       }
     },
   });
-
   const [selectedText, setSelectedText] = React.useState("");
   const [highlightedItem, setHighlightedItem] =
     React.useState<HTMLElement | null>(null);
@@ -434,6 +442,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       multiple={multiple}
       openOnFocus={openOnFocus}
       readOnly={readOnly}
+      preserveInputOnBlur={preserveInputOnBlur}
       dir={dir}
       id={id}
       labelId={labelId}
