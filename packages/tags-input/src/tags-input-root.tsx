@@ -3,8 +3,8 @@ import * as React from "react";
 
 import {
   BubbleInput,
+  DATA_ITEM_ATTR,
   type Direction,
-  ITEM_DATA_ATTR,
   composeEventHandlers,
   createContext,
   useCollection,
@@ -472,7 +472,7 @@ const TagsInputRoot = React.forwardRef<
   const getIsClickedInEmptyRoot = React.useCallback((target: HTMLElement) => {
     return (
       collectionRef.current?.contains(target) &&
-      !target.hasAttribute(ITEM_DATA_ATTR) &&
+      !target.hasAttribute(DATA_ITEM_ATTR) &&
       target.tagName !== "INPUT"
     );
   }, []);

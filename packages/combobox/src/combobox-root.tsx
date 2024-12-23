@@ -1,5 +1,6 @@
 import {
   BubbleInput,
+  DATA_VALUE_ATTR,
   type Direction,
   createContext,
   forwardRef,
@@ -383,7 +384,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
         case "selected": {
           const selectedValue = Array.isArray(value) ? value[0] : value;
           nextIndex = items.findIndex(
-            (item) => item.getAttribute("data-value") === selectedValue,
+            (item) => item.getAttribute(DATA_VALUE_ATTR) === selectedValue,
           );
 
           if (nextIndex === -1) nextIndex = 0;

@@ -1,5 +1,5 @@
 import {
-  ITEM_DATA_ATTR,
+  DATA_ITEM_ATTR,
   composeEventHandlers,
   createContext,
   useId,
@@ -58,7 +58,7 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
         displayValue={displayValue}
       >
         <Primitive.div
-          {...{ [ITEM_DATA_ATTR]: "" }}
+          {...{ [DATA_ITEM_ATTR]: "" }}
           aria-labelledby={textId}
           aria-current={isHighlighted}
           aria-disabled={itemDisabled}
@@ -122,6 +122,6 @@ TagsInputItem.displayName = ITEM_NAME;
 
 const Item = TagsInputItem;
 
-export { TagsInputItem, Item, useTagsInputItem };
+export { Item, TagsInputItem, useTagsInputItem };
 
 export type { TagsInputItemProps };

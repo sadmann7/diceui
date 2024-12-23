@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ITEM_DATA_ATTR } from "../constants";
+import { DATA_ITEM_ATTR } from "../constants";
 
 interface UseCollectionProps {
   ref: React.RefObject<HTMLElement | null>;
@@ -9,7 +9,7 @@ interface UseCollectionProps {
 
 export function useCollection<T extends HTMLElement>({
   ref,
-  attr = ITEM_DATA_ATTR,
+  attr = DATA_ITEM_ATTR,
 }: UseCollectionProps) {
   const getItems = React.useCallback(() => {
     const collectionNode = ref.current;

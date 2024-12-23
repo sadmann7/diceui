@@ -1,5 +1,5 @@
 import {
-  ITEM_DATA_ATTR,
+  DATA_ITEM_ATTR,
   composeEventHandlers,
   createContext,
   useComposedRefs,
@@ -73,7 +73,7 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
         textId={textId}
       >
         <Primitive.div
-          {...{ [ITEM_DATA_ATTR]: "" }}
+          {...{ [DATA_ITEM_ATTR]: "" }}
           role="option"
           id={id}
           aria-selected={isSelected}

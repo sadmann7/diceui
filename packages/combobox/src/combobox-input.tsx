@@ -1,4 +1,8 @@
-import { composeEventHandlers, useComposedRefs } from "@diceui/shared";
+import {
+  DATA_VALUE_ATTR,
+  composeEventHandlers,
+  useComposedRefs,
+} from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import {
@@ -66,7 +70,7 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
         function onItemSelect() {
           if (context.readOnly || !context.highlightedItem) return;
 
-          const value = context.highlightedItem.getAttribute("data-value");
+          const value = context.highlightedItem.getAttribute(DATA_VALUE_ATTR);
           if (!value) return;
 
           if (!context.multiple) {
