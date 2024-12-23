@@ -55,18 +55,16 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
 
     const onKeyDown = React.useCallback(
       (event: React.KeyboardEvent<HTMLInputElement>) => {
-        function onAnimatedHighlightMove(
+        function onHighlightMove(
           direction: Parameters<typeof context.onHighlightMove>[0],
         ) {
-          requestAnimationFrame(() => {
-            if (direction === "selected" && context.value.length > 0) {
-              context.onHighlightMove("selected");
-            } else if (direction === "selected") {
-              context.onHighlightMove("first");
-            } else {
-              context.onHighlightMove(direction);
-            }
-          });
+          if (direction === "selected" && context.value.length > 0) {
+            context.onHighlightMove("selected");
+          } else if (direction === "selected") {
+            context.onHighlightMove("first");
+          } else {
+            context.onHighlightMove(direction);
+          }
         }
 
         function onItemSelect() {
@@ -91,7 +89,9 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
         function onMenuOpen(direction?: "first" | "last" | "selected") {
           if (!context.open) {
             context.onOpenChange(true);
-            if (direction) onAnimatedHighlightMove(direction);
+            requestAnimationFrame(() => {
+              if (direction) onHighlightMove(direction);
+            });
           }
         }
 
@@ -124,37 +124,45 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
               onMenuOpen();
             }
             break;
+
           case "ArrowDown":
             if (context.open) {
-              onAnimatedHighlightMove("next");
+              onHighlightMove("next");
             } else {
               onMenuOpen("selected");
             }
             break;
+
           case "ArrowUp":
             if (context.open) {
-              onAnimatedHighlightMove("prev");
+              onHighlightMove("prev");
             } else {
-              onMenuOpen("selected");
+              onMenuOpen("last");
             }
             break;
+
           case "Home":
-            if (context.open) onAnimatedHighlightMove("first");
+            if (context.open) onHighlightMove("first");
             break;
+
           case "End":
-            if (context.open) onAnimatedHighlightMove("last");
+            if (context.open) onHighlightMove("last");
             break;
+
           case "Escape":
             onMenuClose();
             break;
+
           case "Tab":
             onMenuClose();
             break;
+
           case "PageUp":
-            if (context.modal && context.open) onAnimatedHighlightMove("prev");
+            if (context.modal && context.open) onHighlightMove("prev");
             break;
+
           case "PageDown":
-            if (context.modal && context.open) onAnimatedHighlightMove("next");
+            if (context.modal && context.open) onHighlightMove("next");
             break;
         }
       },

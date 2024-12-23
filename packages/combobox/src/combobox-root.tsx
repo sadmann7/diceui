@@ -301,8 +301,11 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
           input.setSelectionRange(length, length);
         }
       }
+      filterStore.search = "";
+      filterStore.groups.clear();
+      filterStore.items.clear();
     },
-    [setOpen],
+    [setOpen, filterStore],
   );
 
   const onInputValueChange = React.useCallback(
@@ -405,6 +408,8 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     },
     [loop, highlightedItem, getEnabledItems, value],
   );
+
+  console.log({ search: filterStore.search });
 
   return (
     <ComboboxProvider
