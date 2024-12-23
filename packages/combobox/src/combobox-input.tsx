@@ -69,6 +69,24 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
           });
         }
 
+        function onItemSelect() {
+          if (context.readOnly || !context.highlightedItem) return;
+
+          const value = context.highlightedItem.getAttribute("data-value");
+          if (!value) return;
+
+          if (!context.multiple) {
+            context.onInputValueChange(
+              context.highlightedItem.textContent ?? "",
+            );
+            context.onHighlightedItemChange(null);
+            context.onOpenChange(false);
+            context.onInputValueChange("");
+          }
+          context.onInputValueChange(context.highlightedItem.textContent ?? "");
+          context.onValueChange(value);
+        }
+
         function onMenuOpen(direction?: "first" | "last" | "selected") {
           if (!context.open) {
             context.onOpenChange(true);
@@ -83,23 +101,6 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
           }
         }
 
-        function onSelection() {
-          if (!context.highlightedItem) return;
-
-          const value = context.highlightedItem.getAttribute("data-value");
-          if (!value) return;
-
-          if (!context.multiple) {
-            context.onInputValueChange(
-              context.highlightedItem.textContent ?? "",
-            );
-            context.onHighlightedItemChange(null);
-            context.onOpenChange(false);
-          }
-          context.onInputValueChange("");
-          context.onValueChange(value);
-        }
-
         const isNavigationKey = [
           "ArrowDown",
           "ArrowUp",
@@ -108,80 +109,57 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
           "Enter",
           "Escape",
           "Tab",
-          ...(context.modal ? ["PageUp", "PageDown"] : []),
+          "PageUp",
+          "PageDown",
         ].includes(event.key);
-
-        if (context.readOnly) {
-          switch (event.key) {
-            case "Enter":
-            case " ":
-              event.preventDefault();
-              if (context.open) {
-                onSelection();
-              } else {
-                onMenuOpen();
-              }
-              break;
-            case "ArrowDown":
-              event.preventDefault();
-              if (context.open) {
-                onAnimatedHighlightMove("next");
-              } else {
-                onMenuOpen("selected");
-              }
-              break;
-            case "ArrowUp":
-              event.preventDefault();
-              if (context.open) {
-                onAnimatedHighlightMove("prev");
-              } else {
-                onMenuOpen("selected");
-              }
-              break;
-            case "Escape":
-              event.preventDefault();
-              onMenuClose();
-              break;
-            case "Tab":
-              onMenuClose();
-              break;
-          }
-          return;
-        }
 
         if (isNavigationKey && event.key !== "Tab") event.preventDefault();
 
         switch (event.key) {
+          case "Enter":
+            if (context.open) {
+              onItemSelect();
+            } else {
+              onMenuOpen();
+            }
+            break;
+
           case "ArrowDown":
-            if (!context.open) {
-              onMenuOpen("selected");
-            } else {
+            if (context.open) {
               onAnimatedHighlightMove("next");
-            }
-            break;
-          case "ArrowUp":
-            if (!context.open) {
-              onMenuOpen("selected");
             } else {
-              onAnimatedHighlightMove("prev");
+              onMenuOpen("selected");
             }
             break;
+
+          case "ArrowUp":
+            if (context.open) {
+              onAnimatedHighlightMove("prev");
+            } else {
+              onMenuOpen("selected");
+            }
+            break;
+
           case "Home":
             if (context.open) onAnimatedHighlightMove("first");
             break;
+
           case "End":
             if (context.open) onAnimatedHighlightMove("last");
             break;
-          case "Enter":
-            if (context.open) onSelection();
-            break;
+
           case "Escape":
+            onMenuClose();
+            break;
+
           case "Tab":
             onMenuClose();
             break;
+
           case "PageUp":
             if (context.modal && context.open) onAnimatedHighlightMove("prev");
             break;
+
           case "PageDown":
             if (context.modal && context.open) onAnimatedHighlightMove("next");
             break;
@@ -193,7 +171,10 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
     return (
       <Primitive.input
         role="combobox"
+        autoCapitalize="off"
         autoComplete="off"
+        autoCorrect="off"
+        spellCheck="false"
         aria-expanded={context.open}
         aria-controls={context.contentId}
         aria-autocomplete="list"

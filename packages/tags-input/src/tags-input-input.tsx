@@ -48,6 +48,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
         autoCapitalize="off"
         autoComplete="off"
         autoCorrect="off"
+        spellCheck="false"
         autoFocus={autoFocus}
         aria-labelledby={context.labelId}
         data-invalid={context.isInvalidInput ? "" : undefined}
