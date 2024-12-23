@@ -162,6 +162,7 @@ const CheckboxGroupRoot = React.forwardRef<
         role="group"
         aria-labelledby={labelId}
         aria-describedby={`${descriptionId} ${isInvalid ? messageId : ""}`}
+        aria-readonly={readOnly}
         aria-orientation={orientation}
         data-orientation={orientation}
         data-disabled={disabled ? "" : undefined}

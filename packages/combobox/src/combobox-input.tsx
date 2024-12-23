@@ -36,18 +36,19 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
           return;
         }
 
-        if (!context.open) {
-          context.onOpenChange(true);
-          requestAnimationFrame(() => {
-            context.onInputValueChange(value);
-            context.filterStore.search = value;
-            context.onFilterItems();
-          });
-        } else {
+        if (context.open) {
           context.onInputValueChange(value);
           context.filterStore.search = value;
           context.onFilterItems();
+          return;
         }
+
+        context.onOpenChange(true);
+        requestAnimationFrame(() => {
+          context.onInputValueChange(value);
+          context.filterStore.search = value;
+          context.onFilterItems();
+        });
       },
       [context],
     );
