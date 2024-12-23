@@ -24,12 +24,17 @@ interface ComboboxContentProps
       UseComboboxPositionerParams,
       | "open"
       | "onOpenChange"
-      | "triggerRef"
       | "anchorRef"
+      | "arrowRef"
+      | "triggerRef"
       | "hasCustomAnchor"
       | "trackAnchor"
     > {
-  /** Event handler called when a `pointerdown` event happens outside of the content. */
+  /**
+   * Event handler called when a `pointerdown` event happens outside of the content.
+   *
+   * Can be used to prevent the content from closing when the pointer is outside of the content.
+   */
   onPointerDownOutside?: (event: PointerDownOutsideEvent) => void;
 }
 

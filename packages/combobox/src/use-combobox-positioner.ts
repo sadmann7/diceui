@@ -35,37 +35,45 @@ interface UseComboboxPositionerParams {
   onOpenChange: (open: boolean) => void;
 
   /**
-   * The side of the combobox.
+   * The preferred placement of the combobox relative to its anchor element.
+   * If there is not enough space, it will be adjusted automatically.
    * @default "bottom"
    */
   side?: "top" | "right" | "bottom" | "left";
 
   /**
-   * The offset of the combobox from the trigger.
+   * The distance between the combobox and its anchor element.
+   * This creates a gap between the anchor and combobox.
    * @default 4
    */
   sideOffset?: number;
 
   /**
-   * The alignment of the combobox.
+   * The alignment of the combobox relative to its anchor element.
+   * - 'start': Align with the start edge of the anchor
+   * - 'center': Center align with the anchor
+   * - 'end': Align with the end edge of the anchor
    * @default "start"
    */
   align?: "start" | "center" | "end";
 
   /**
-   * The offset of the combobox from the trigger.
+   * The distance from the aligned edge when using align.
+   * Allows the combobox to be offset from its default aligned position.
    * @default 0
    */
   alignOffset?: number;
 
   /**
-   * The boundary of the collision.
+   * The element or elements that constrain where the combobox can be positioned.
+   * By default, this is the viewport (browser window).
    * @default undefined
    */
   collisionBoundary?: Element | Element[] | null;
 
   /**
-   * The padding of the collision.
+   * The amount of padding around the boundary edges for collision detection.
+   * This prevents the combobox from touching the edges of its container.
    * @default 0
    */
   collisionPadding?:
@@ -73,73 +81,87 @@ interface UseComboboxPositionerParams {
     | Partial<Record<"top" | "right" | "bottom" | "left", number>>;
 
   /**
-   * The padding of the arrow.
+   * The padding between the arrow element and the combobox edges.
+   * Prevents the arrow from reaching the very edge of the combobox.
    * @default 0
    */
   arrowPadding?: number;
 
   /**
-   * Whether the combobox should be sticky.
+   * Controls how the combobox responds to scroll events.
+   * - 'partial': Allows partial visibility when scrolling
+   * - 'always': Maintains full visibility by shifting position
    * @default "partial"
    */
   sticky?: "partial" | "always";
 
   /**
-   * The strategy of the combobox.
+   * The positioning strategy to use.
+   * - 'absolute': Position relative to closest positioned ancestor
+   * - 'fixed': Position relative to viewport
    * @default "absolute"
    */
   strategy?: Strategy;
 
   /**
-   * Whether the combobox should avoid collisions.
+   * Whether the combobox should automatically adjust its placement to stay in view.
+   * When enabled, changes position when there's not enough space in the current placement.
    * @default true
    */
   avoidCollisions?: boolean;
 
   /**
-   * Whether the combobox should fit the viewport.
+   * Whether the combobox should be constrained to the viewport dimensions.
+   * When true, the combobox will not exceed the browser window width/height.
    * @default false
    */
   fitViewport?: boolean;
 
   /**
-   * Whether the combobox should be force mounted.
+   * Whether the combobox should be mounted in the DOM even when closed.
+   * Useful for animations or when you need to measure the combobox before displaying it.
    * @default false
    */
   forceMount?: boolean;
 
   /**
-   * Whether the combobox has a custom anchor.
+   * Whether to use a custom anchor element instead of the trigger.
+   * When true, allows positioning relative to any element using anchorRef.
    * @default false
    */
   hasCustomAnchor?: boolean;
 
   /**
-   * Whether the combobox should be hidden when detached.
+   * Whether the combobox should be hidden when it would be positioned outside its boundary.
+   * Useful for preventing partially visible comboboxes.
    * @default false
    */
   hideWhenDetached?: boolean;
 
   /**
-   * Whether the combobox should track the anchor.
+   * Whether the combobox should track the trigger element's position changes.
+   * When true, updates position on scroll and resize events.
    * @default true
    */
   trackAnchor?: boolean;
 
   /**
-   * The ref of the arrow.
+   * Reference to the arrow element that points to the trigger.
+   * Used to position the arrow element correctly.
    * @default undefined
    */
   arrowRef?: React.RefObject<HTMLDivElement | null>;
 
   /**
-   * The ref of the anchor.
+   * Reference to a custom anchor element.
+   * Used when hasCustomAnchor is true to position relative to a custom element.
    * @default undefined
    */
   anchorRef?: React.RefObject<HTMLElement | null>;
 
   /**
-   * The ref of the trigger.
+   * Reference to the trigger element that opens the combobox.
+   * Used as the default reference point for positioning.
    * @default undefined
    */
   triggerRef?: React.RefObject<HTMLElement | null>;
