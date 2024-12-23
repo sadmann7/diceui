@@ -51,11 +51,10 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
     const onBlur = React.useCallback(() => {
       if (!context.multiple && context.value) {
         context.onInputValueChange(context.selectedText);
-      } else if (
-        context.open &&
-        !context.highlightedItem &&
-        context.inputValue
-      ) {
+        return;
+      }
+
+      if (context.open && !context.highlightedItem && context.inputValue) {
         context.onInputValueChange("");
       }
     }, [context]);
