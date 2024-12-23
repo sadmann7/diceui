@@ -36,10 +36,6 @@ const ComboboxTrigger = React.forwardRef<
             context.onHighlightMove("selected");
           });
         }
-
-        if (!newOpenState) {
-          context.inputRef.current?.focus();
-        }
       })}
       onPointerDown={composeEventHandlers(
         triggerProps.onPointerDown,

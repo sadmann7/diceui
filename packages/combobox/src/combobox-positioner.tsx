@@ -79,8 +79,8 @@ const ComboboxPositioner = React.forwardRef<
   }, [style, floatingStyles, context.open, forceMount]);
 
   useScrollLock({
-    enabled: context.open && context.modal,
     referenceElement: context.listRef.current,
+    enabled: context.open && context.modal,
   });
 
   if (!forceMount && !context.open) {
@@ -90,8 +90,8 @@ const ComboboxPositioner = React.forwardRef<
   return (
     <Primitive.div
       data-state={context.open ? "open" : "closed"}
-      ref={composedRef}
       {...getFloatingProps(positionerProps)}
+      ref={composedRef}
       style={composedStyle}
     />
   );
@@ -102,4 +102,5 @@ ComboboxPositioner.displayName = POSITIONER_NAME;
 const Positioner = ComboboxPositioner;
 
 export { ComboboxPositioner, Positioner };
+
 export type { ComboboxPositionerProps };

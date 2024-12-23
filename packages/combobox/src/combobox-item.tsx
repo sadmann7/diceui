@@ -94,10 +94,11 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
             if (context.multiple) {
               event.currentTarget.focus();
               context.inputRef.current?.focus();
-            } else {
-              context.onHighlightedItemChange(null);
-              context.onInputValueChange(itemRef.current?.textContent ?? "");
+              return;
             }
+
+            context.onHighlightedItemChange(null);
+            context.onInputValueChange(itemRef.current?.textContent ?? "");
           })}
           onPointerDown={composeEventHandlers(
             itemProps.onPointerDown,

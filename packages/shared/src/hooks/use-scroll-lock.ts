@@ -2,18 +2,61 @@ import * as React from "react";
 import { isFirefox, isIOS, isSafari } from "../lib/browser";
 import { useIsomorphicLayoutEffect } from "./use-isomorphic-layout-effect";
 
+function getScrollbarWidth() {
+  return Math.max(0, window.innerWidth - document.documentElement.clientWidth);
+}
+
+function getScrollbarHeight() {
+  return Math.max(
+    0,
+    window.innerHeight - document.documentElement.clientHeight,
+  );
+}
+
+function getOriginalStyles(element: HTMLElement) {
+  const computedStyle = window.getComputedStyle(element);
+  return {
+    overflow: element.style.overflow,
+    paddingRight: element.style.paddingRight,
+    paddingBottom: element.style.paddingBottom,
+    position: element.style.position,
+    height: element.style.height,
+    width: element.style.width,
+    top: element.style.top,
+    left: element.style.left,
+    marginTop: computedStyle.marginTop,
+    marginBottom: computedStyle.marginBottom,
+  };
+}
+
+function getIsDvhSupported() {
+  return (
+    typeof CSS !== "undefined" &&
+    typeof CSS.supports === "function" &&
+    CSS.supports("height", "1dvh")
+  );
+}
+
+function hasInsetScrollbars(referenceElement: HTMLElement | null) {
+  if (typeof document === "undefined") return false;
+  const doc = referenceElement ? referenceElement.ownerDocument : document;
+  const win = doc ? doc.defaultView : window;
+  if (!win) return false;
+  return win.innerWidth - doc.documentElement.clientWidth > 0;
+}
+
 interface ScrollLockOptions {
-  enabled?: boolean;
   referenceElement?: HTMLElement | null;
+  enabled?: boolean;
   allowPinchZoom?: boolean;
 }
 
 // Track scroll lock state globally
 let preventScrollCount = 0;
 
-export function useScrollLock({
-  enabled = false,
+function useScrollLock({
   referenceElement,
+  enabled = false,
   allowPinchZoom = false,
 }: ScrollLockOptions = {}) {
   const scrollPositionRef = React.useRef(0);
@@ -133,45 +176,4 @@ export function useScrollLock({
   }, [enabled, referenceElement, allowPinchZoom]);
 }
 
-function getScrollbarWidth() {
-  return Math.max(0, window.innerWidth - document.documentElement.clientWidth);
-}
-
-function getScrollbarHeight() {
-  return Math.max(
-    0,
-    window.innerHeight - document.documentElement.clientHeight,
-  );
-}
-
-function getOriginalStyles(element: HTMLElement) {
-  const computedStyle = window.getComputedStyle(element);
-  return {
-    overflow: element.style.overflow,
-    paddingRight: element.style.paddingRight,
-    paddingBottom: element.style.paddingBottom,
-    position: element.style.position,
-    height: element.style.height,
-    width: element.style.width,
-    top: element.style.top,
-    left: element.style.left,
-    marginTop: computedStyle.marginTop,
-    marginBottom: computedStyle.marginBottom,
-  };
-}
-
-function getIsDvhSupported() {
-  return (
-    typeof CSS !== "undefined" &&
-    typeof CSS.supports === "function" &&
-    CSS.supports("height", "1dvh")
-  );
-}
-
-function hasInsetScrollbars(referenceElement: HTMLElement | null) {
-  if (typeof document === "undefined") return false;
-  const doc = referenceElement ? referenceElement.ownerDocument : document;
-  const win = doc ? doc.defaultView : window;
-  if (!win) return false;
-  return win.innerWidth - doc.documentElement.clientWidth > 0;
-}
+export { useScrollLock };

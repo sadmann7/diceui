@@ -49,8 +49,7 @@ const ComboboxContent = React.forwardRef<HTMLDivElement, ComboboxContentProps>(
       refs: [context.anchorRef, context.listRef],
       onFocusOutside: (event) => event.preventDefault(),
       onPointerDownOutside,
-      disableOutsidePointerEvents:
-        context.open && context.modal && !context.disabled,
+      disableOutsidePointerEvents: context.open && context.modal,
     });
 
     return (
