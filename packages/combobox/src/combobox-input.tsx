@@ -28,10 +28,10 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
         if (!context.open) context.onOpenChange(true);
 
         const value = event.target.value;
+        context.onInputValueChange(value);
 
         requestAnimationFrame(() => {
-          context.onInputValueChange(value);
-          context.filterStore.search = value;
+          context.filterStore.search = value.trim();
           context.onFilterItems();
           if (value === "") {
             context.onValueChange("");
@@ -123,11 +123,26 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
 
         switch (event.key) {
           case "Enter":
-            if (context.open) {
-              onItemSelect();
-            } else {
-              onMenuOpen();
+            if (!context.open) {
+              if (context.inputValue?.trim()) {
+                onMenuOpen();
+              } else if (!context.multiple && context.value) {
+                context.onInputValueChange(context.selectedText);
+              }
+              return;
             }
+
+            if (!context.highlightedItem) {
+              if (!context.multiple && context.value) {
+                context.onInputValueChange(context.selectedText);
+              } else {
+                context.onInputValueChange("");
+              }
+              context.onOpenChange(false);
+              return;
+            }
+
+            onItemSelect();
             break;
           case "ArrowDown":
             if (context.open) {
