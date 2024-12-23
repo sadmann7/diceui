@@ -90,7 +90,6 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
             if (isDisabled || context.readOnly) return;
 
             context.onValueChange(value);
-            context.filterStore.search = "";
 
             if (context.multiple) {
               event.currentTarget.focus();
