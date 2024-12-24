@@ -15,7 +15,7 @@ const ComboboxAnchor = React.forwardRef<
   <ComboboxPrimitive.Anchor
     ref={ref}
     className={cn(
-      "flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent shadow-sm",
+      "flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent shadow-sm focus:ring-1 focus:ring-ring",
       className,
     )}
     {...props}

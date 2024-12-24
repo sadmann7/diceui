@@ -64,7 +64,7 @@ function useCollectionItem<T extends HTMLElement>(
   }, [ref, label, value, disabled, context.itemMap]);
 }
 
-function getItem<T extends HTMLElement>(
+function getCollectionItem<T extends HTMLElement>(
   item: T,
   context: CollectionContextValue<T>,
 ): CollectionItem<T> | null {
@@ -74,34 +74,6 @@ function getItem<T extends HTMLElement>(
   return null;
 }
 
-function getItemLabel<T extends HTMLElement>(
-  item: T,
-  context: CollectionContextValue<T>,
-): string {
-  for (const [ref, data] of context.itemMap.entries()) {
-    if (ref.current === item) return data.label ?? "";
-  }
-  return "";
-}
-
-function getItemValue<T extends HTMLElement>(
-  item: T,
-  context: CollectionContextValue<T>,
-): string {
-  for (const [ref, data] of context.itemMap.entries()) {
-    if (ref.current === item) {
-      return data.value;
-    }
-  }
-  return "";
-}
-
-export {
-  getItem,
-  getItemLabel,
-  getItemValue,
-  useCollection,
-  useCollectionItem,
-};
+export { getCollectionItem, useCollection, useCollectionItem };
 
 export type { CollectionContextValue, CollectionItem };

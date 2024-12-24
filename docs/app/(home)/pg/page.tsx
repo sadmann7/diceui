@@ -29,7 +29,7 @@ import {
 } from "@/registry/default/ui/combobox";
 import * as ComboboxPrimitive from "@diceui/combobox";
 import { SelectArrow } from "@radix-ui/react-select";
-import { ArrowUp, Check, ChevronDown, X } from "lucide-react";
+import { ArrowUp, Check, ChevronDown } from "lucide-react";
 import * as React from "react";
 
 export default function PlaygroundPage() {
@@ -73,9 +73,6 @@ export default function PlaygroundPage() {
           <ComboboxTrigger>
             <ChevronDown className="h-4 w-4" />
           </ComboboxTrigger>
-          <ComboboxPrimitive.Cancel>
-            <X className="h-4 w-4" />
-          </ComboboxPrimitive.Cancel>
         </ComboboxAnchor>
         <ComboboxContent>
           <ComboboxPrimitive.Arrow />

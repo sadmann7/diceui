@@ -14,13 +14,7 @@ const ComboboxAnchor = React.forwardRef<HTMLDivElement, ComboboxAnchorProps>(
     const composedRefs = useComposedRefs(
       forwardedRef,
       context.anchorRef,
-      (node) => {
-        if (node) {
-          context.onCustomAnchorAdd();
-        } else {
-          context.onCustomAnchorRemove();
-        }
-      },
+      (node) => context.onHasCustomAnchorChange(!!node),
     );
 
     return (
@@ -39,6 +33,6 @@ ComboboxAnchor.displayName = ANCHOR_NAME;
 
 const Anchor = ComboboxAnchor;
 
-export { ComboboxAnchor, Anchor };
+export { Anchor, ComboboxAnchor };
 
 export type { ComboboxAnchorProps };

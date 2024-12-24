@@ -49,8 +49,7 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   onRegisterItem: (id: string, value: string, groupId?: string) => () => void;
   onFilterItems: () => void;
   onHighlightMove: (target: HighlightingDirection) => void;
-  onCustomAnchorAdd: () => void;
-  onCustomAnchorRemove: () => void;
+  onHasCustomAnchorChange: (checked: boolean) => void;
   disabled: boolean;
   hasCustomAnchor: boolean;
   loop: boolean;
@@ -232,12 +231,8 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
   const contentId = `${id}content`;
 
   const dir = useDirection(dirProp);
-  const {
-    anchorRef,
-    hasCustomAnchor,
-    onCustomAnchorAdd,
-    onCustomAnchorRemove,
-  } = useAnchor<HTMLDivElement>();
+  const { anchorRef, hasCustomAnchor, onHasCustomAnchorChange } =
+    useAnchor<HTMLDivElement>();
   const { getEnabledItems } = useCollection<HTMLElement>({
     ref: collectionRef,
   });
@@ -499,8 +494,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       onRegisterItem={onRegisterItem}
       onFilterItems={onFilterItems}
       onHighlightMove={onHighlightMove}
-      onCustomAnchorAdd={onCustomAnchorAdd}
-      onCustomAnchorRemove={onCustomAnchorRemove}
+      onHasCustomAnchorChange={onHasCustomAnchorChange}
       disabled={disabled}
       hasCustomAnchor={hasCustomAnchor}
       loop={loop}

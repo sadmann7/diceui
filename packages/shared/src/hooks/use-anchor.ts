@@ -12,10 +12,15 @@ export function useAnchor<T extends HTMLElement>() {
     setHasCustomAnchor(false);
   }, []);
 
+  const onHasCustomAnchorChange = React.useCallback((checked: boolean) => {
+    setHasCustomAnchor(checked);
+  }, []);
+
   return {
     hasCustomAnchor,
     onCustomAnchorAdd,
     onCustomAnchorRemove,
+    onHasCustomAnchorChange,
     anchorRef,
   };
 }
