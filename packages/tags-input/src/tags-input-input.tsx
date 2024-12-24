@@ -56,7 +56,20 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
         disabled={context.disabled}
         {...inputProps}
         ref={composeRefs(context.inputRef, ref)}
-        onInput={composeEventHandlers(inputProps.onInput, (event) => {
+        onBlur={composeEventHandlers(inputProps.onBlur, (event) => {
+          if (context.blurBehavior === "add") {
+            const value = event.target.value;
+            if (value) {
+              const isAdded = context.onItemAdd(value);
+              if (isAdded) event.target.value = "";
+            }
+          }
+
+          if (context.blurBehavior === "clear") {
+            event.target.value = "";
+          }
+        })}
+        onChange={composeEventHandlers(inputProps.onChange, (event) => {
           const target = event.target;
           if (!(target instanceof HTMLInputElement)) return;
 
@@ -76,19 +89,6 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
           if (event.key === "Tab") onTab(event);
           context.onInputKeydown(event);
           if (event.key.length === 1) context.setHighlightedValue(null);
-        })}
-        onBlur={composeEventHandlers(inputProps.onBlur, (event) => {
-          if (context.blurBehavior === "add") {
-            const value = event.target.value;
-            if (value) {
-              const isAdded = context.onItemAdd(value);
-              if (isAdded) event.target.value = "";
-            }
-          }
-
-          if (context.blurBehavior === "clear") {
-            event.target.value = "";
-          }
         })}
         onPaste={composeEventHandlers(inputProps.onPaste, (event) => {
           if (context.addOnPaste) {

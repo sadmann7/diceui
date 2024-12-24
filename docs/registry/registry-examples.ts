@@ -199,4 +199,16 @@ export const examples: Registry = [
       },
     ],
   },
+  {
+    name: "combobox-tags-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/combobox", "@diceui/tags-input", "lucide-react"],
+    registryDependencies: ["combobox", "tags-input"],
+    files: [
+      {
+        path: "example/combobox-tags-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
 ];

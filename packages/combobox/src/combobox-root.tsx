@@ -393,6 +393,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       if (multiple) {
         const currentValue = Array.isArray(value) ? value : [];
         const typedNewValue = typeof newValue === "string" ? newValue : "";
+        if (!typedNewValue) return;
         const newValues = currentValue.includes(typedNewValue)
           ? currentValue.filter((v) => v !== newValue)
           : [...currentValue, newValue];
