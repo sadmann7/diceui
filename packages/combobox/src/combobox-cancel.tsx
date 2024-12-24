@@ -9,6 +9,8 @@ interface ComboboxCancelProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.button> {
   /**
    * Whether the cancel button should always be mounted.
+   *
+   * By default, the cancel button is only rendered when the input has a value.
    * @default false
    */
   forceMount?: boolean;

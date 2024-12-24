@@ -90,7 +90,7 @@ import * as Combobox from "@diceui/combobox";
 
 ### Root
 
-Container for the combobox.
+The main container for the combobox. Manages state, keyboard interactions, and provides context for all other combobox components.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
@@ -112,7 +112,7 @@ Container for the combobox.
 
 ### Label
 
-Label element for the combobox.
+An accessible label that describes the combobox. Associates with the input element for screen readers.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
@@ -121,7 +121,7 @@ Label element for the combobox.
 
 ### Anchor
 
-Element that anchors the combobox popover.
+A wrapper element that positions the combobox popover relative to the input and trigger. Provides the reference point for floating positioning.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
@@ -130,7 +130,7 @@ Element that anchors the combobox popover.
 
 ### Trigger
 
-Button that toggles the combobox popover.
+A button that toggles the combobox popover. Handles focus management and keyboard interactions for opening/closing the popover. Can be styled with custom icons or indicators.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
@@ -152,7 +152,7 @@ Button that toggles the combobox popover.
 
 ### Input
 
-Text input for filtering options.
+The text input field that users can type into to filter options. Supports controlled and uncontrolled modes, with built-in filtering capabilities.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
@@ -161,25 +161,16 @@ Text input for filtering options.
 
 ### Cancel
 
-Button to clear the input value.
+A button that clears the input value and resets the filter. Automatically appears when the input has a value, unless `forceMount` is enabled. Returns focus to the input after clearing.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
   name="CancelProps"
 />
 
-<DataAttributesTable
-  attributes={[
-    {
-      title: "[data-state]",
-      value: "'visible' when input has value, 'hidden' when empty",
-    },
-  ]}
-/>
-
 ### Portal
 
-Portal for the combobox popover content.
+Creates a portal for rendering the combobox content outside of its DOM hierarchy. Ensures proper stacking context and z-index behavior.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
@@ -188,7 +179,7 @@ Portal for the combobox popover content.
 
 ### Content
 
-Container for the combobox options.
+The floating container for combobox options. Features smart positioning with collision detection, boundary constraints, and responsive sizing. Supports custom animations and transitions.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
@@ -239,7 +230,7 @@ Container for the combobox options.
 
 ### Arrow
 
-Optional arrow element to visually indicate the direction of the popover postioned against the `Anchor`. Must be used within the `Content`.
+A visual arrow element that points to the anchor. Automatically positions and rotates based on the content placement. Supports custom styling and dimensions.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
@@ -248,7 +239,7 @@ Optional arrow element to visually indicate the direction of the popover postion
 
 ### Empty
 
-Content shown when no options match the filter.
+A placeholder component displayed when no options match the current filter. Can be customized with helpful messages or suggestions.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
@@ -257,7 +248,7 @@ Content shown when no options match the filter.
 
 ### Group
 
-Container for grouping related options.
+A container for logically grouping related options. Can be used with `GroupLabel` to create accessible groupings.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
@@ -266,7 +257,7 @@ Container for grouping related options.
 
 ### GroupLabel
 
-Label for an option group.
+A label that describes a group of options. Provides context and improves accessibility for grouped options.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
@@ -275,7 +266,7 @@ Label for an option group.
 
 ### Item
 
-Individual combobox option.
+An interactive option in the combobox list. Handles selection, highlighting, and keyboard navigation.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
@@ -301,7 +292,7 @@ Individual combobox option.
 
 ### ItemText
 
-Text content of an option.
+The textual content of an item. Should only contain the text content without additional markup.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
@@ -310,7 +301,7 @@ Text content of an option.
 
 ### ItemIndicator
 
-Visual indicator for selected options.
+A visual indicator for selected options. Can be customized with icons or styles to show the selection state.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
@@ -319,7 +310,7 @@ Visual indicator for selected options.
 
 ### Separator
 
-Visual separator between options or groups.
+A visual divider for separating options or groups. Improves visual hierarchy and organization of options.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
