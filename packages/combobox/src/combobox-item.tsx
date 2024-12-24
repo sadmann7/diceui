@@ -100,7 +100,6 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
               context.onSelectedTextChange(text);
               context.onHighlightedItemChange(null);
               context.onOpenChange(false);
-              // add focus to the input
               context.inputRef.current?.focus();
             }
 
