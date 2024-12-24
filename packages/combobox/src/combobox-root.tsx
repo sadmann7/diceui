@@ -247,9 +247,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     items: new Map<string, number>(),
     groups: new Map<string, Set<string>>(),
   }).current;
-
-  const filter = useFilter({ sensitivity: "base" });
-  const currentFilter = fuzzy ? filter.fuzzy : filter.contains;
+  const normalizedCache = React.useRef(new Map<string, string>()).current;
 
   const normalizeString = React.useCallback((str: string) => {
     return str
@@ -257,6 +255,12 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       .replace(/[-_\s]+/g, " ")
       .trim();
   }, []);
+
+  const filter = useFilter({ sensitivity: "base" });
+  const currentFilter = React.useMemo(
+    () => (fuzzy ? filter.fuzzy : filter.contains),
+    [filter.fuzzy, filter.contains, fuzzy],
+  );
 
   const getItemScore = React.useCallback(
     (value: string, searchTerm: string) => {
@@ -271,8 +275,6 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     },
     [currentFilter, normalizeString, onFilter],
   );
-
-  const normalizedCache = React.useRef(new Map<string, string>()).current;
 
   const onFilterItems = React.useCallback(() => {
     filterStore.groups.clear();

@@ -43,14 +43,28 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
           context.onFilterItems();
         });
       },
-      [context],
+      [
+        context.open,
+        context.onOpenChange,
+        context.filterStore,
+        context.onFilterItems,
+        context.onInputValueChange,
+        context.onValueChange,
+        context.onHighlightedItemChange,
+        context.readOnly,
+      ],
     );
 
     const onFocus = React.useCallback(() => {
       if (context.openOnFocus && !context.open && !context.readOnly) {
         context.onOpenChange(true);
       }
-    }, [context]);
+    }, [
+      context.openOnFocus,
+      context.open,
+      context.readOnly,
+      context.onOpenChange,
+    ]);
 
     const onBlur = React.useCallback(() => {
       if (!context.multiple && context.value) {
@@ -65,7 +79,15 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
       ) {
         context.onInputValueChange("");
       }
-    }, [context]);
+    }, [
+      context.multiple,
+      context.value,
+      context.preserveInputOnBlur,
+      context.onInputValueChange,
+      context.highlightedItem,
+      context.inputValue,
+      context.selectedText,
+    ]);
 
     const onKeyDown = React.useCallback(
       (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -182,7 +204,22 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
             break;
         }
       },
-      [context],
+      [
+        context.open,
+        context.onOpenChange,
+        context.inputValue,
+        context.onInputValueChange,
+        context.onSelectedTextChange,
+        context.onHighlightedItemChange,
+        context.value,
+        context.onValueChange,
+        context.highlightedItem,
+        context.onHighlightMove,
+        context.selectedText,
+        context.readOnly,
+        context.multiple,
+        context.modal,
+      ],
     );
 
     return (
