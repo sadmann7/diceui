@@ -295,6 +295,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
 
   const onOpenChange = React.useCallback(
     async (open: boolean) => {
+      filterStore.search = "";
       setOpen(open);
       if (open) {
         await new Promise((resolve) => requestAnimationFrame(resolve));
@@ -305,9 +306,6 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
           input.setSelectionRange(length, length);
         }
       }
-      filterStore.search = "";
-      filterStore.groups.clear();
-      filterStore.items.clear();
     },
     [setOpen, filterStore],
   );

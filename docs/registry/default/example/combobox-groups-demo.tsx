@@ -4,6 +4,7 @@ import {
   Combobox,
   ComboboxAnchor,
   ComboboxContent,
+  ComboboxEmpty,
   ComboboxGroup,
   ComboboxGroupLabel,
   ComboboxInput,
@@ -45,6 +46,7 @@ export default function ComboboxGroupsDemo() {
         </ComboboxTrigger>
       </ComboboxAnchor>
       <ComboboxContent>
+        <ComboboxEmpty>No tricks found</ComboboxEmpty>
         {Object.entries(groupedTricks).map(([category, items], index) => (
           <React.Fragment key={category}>
             {index > 0 && <ComboboxSeparator />}
