@@ -135,4 +135,40 @@ export const examples: Registry = [
       },
     ],
   },
+  {
+    name: "combobox-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/combobox", "lucide-react"],
+    registryDependencies: ["combobox"],
+    files: [
+      {
+        path: "example/combobox-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "combobox-groups-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/combobox", "lucide-react"],
+    registryDependencies: ["combobox"],
+    files: [
+      {
+        path: "example/combobox-groups-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "combobox-multiple-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/combobox", "lucide-react"],
+    registryDependencies: ["combobox"],
+    files: [
+      {
+        path: "example/combobox-multiple-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
 ];

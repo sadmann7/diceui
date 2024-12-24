@@ -2,6 +2,17 @@ import type { Registry } from "@/registry/schema";
 
 export const ui: Registry = [
   {
+    name: "combobox",
+    type: "registry:ui",
+    dependencies: ["@diceui/combobox"],
+    files: [
+      {
+        path: "ui/combobox.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "tags-input",
     type: "registry:ui",
     dependencies: ["@diceui/tags-input", "@radix-ui/react-slot"],

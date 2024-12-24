@@ -1,0 +1,19 @@
+{
+  "name": "combobox-search-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@diceui/combobox",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "combobox"
+  ],
+  "files": [
+    {
+      "path": "example/combobox-search-demo.tsx",
+      "content": "\"use client\";\r\n\r\nimport * as Combobox from \"@diceui/combobox\";\r\nimport { Check, ChevronsUpDown } from \"lucide-react\";\r\nimport * as React from \"react\";\r\n\r\nconst tricks = [\r\n  { label: \"Kickflip\", value: \"kickflip\" },\r\n  { label: \"Heelflip\", value: \"heelflip\" },\r\n  { label: \"Tre Flip\", value: \"tre-flip\" },\r\n  { label: \"FS 540\", value: \"fs-540\" },\r\n  { label: \"Casper flip 360 flip\", value: \"casper-flip-360-flip\" },\r\n  { label: \"Kickflip Backflip\", value: \"kickflip-backflip\" },\r\n  { label: \"360 Varial McTwist\", value: \"360-varial-mc-twist\" },\r\n  { label: \"The 900\", value: \"the-900\" },\r\n  { label: \"Indy Backflip\", value: \"indy-backflip\" },\r\n  { label: \"Pizza Guy\", value: \"pizza-guy\" },\r\n];\r\n\r\nexport default function ComboboxSearchDemo() {\r\n  const [value, setValue] = React.useState(\"\");\r\n  const [inputValue, setInputValue] = React.useState(\"\");\r\n\r\n  return (\r\n    <Combobox.Root\r\n      value={value}\r\n      onValueChange={setValue}\r\n      inputValue={inputValue}\r\n      onInputValueChange={setInputValue}\r\n    >\r\n      <Combobox.Label>Trick</Combobox.Label>\r\n      <Combobox.Anchor className=\"flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50\">\r\n        <Combobox.Input placeholder=\"Search trick...\" />\r\n        <Combobox.Trigger>\r\n          <ChevronsUpDown className=\"h-4 w-4 opacity-50\" />\r\n        </Combobox.Trigger>\r\n      </Combobox.Anchor>\r\n      <Combobox.Portal>\r\n        <Combobox.Content className=\"relative z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2\">\r\n          <Combobox.Empty className=\"p-2 text-sm text-muted-foreground\">\r\n            No tricks found.\r\n          </Combobox.Empty>\r\n          {tricks.map((trick) => (\r\n            <Combobox.Item\r\n              key={trick.value}\r\n              value={trick.value}\r\n              className=\"relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50\"\r\n            >\r\n              <span className=\"absolute left-2 flex h-3.5 w-3.5 items-center justify-center\">\r\n                <Combobox.ItemIndicator>\r\n                  <Check className=\"h-4 w-4\" />\r\n                </Combobox.ItemIndicator>\r\n              </span>\r\n              <Combobox.ItemText>{trick.label}</Combobox.ItemText>\r\n            </Combobox.Item>\r\n          ))}\r\n        </Combobox.Content>\r\n      </Combobox.Portal>\r\n    </Combobox.Root>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

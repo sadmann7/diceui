@@ -39,7 +39,7 @@ export function ComponentTabs({ name, children }: ComponentTabsProps) {
   return (
     <Tabs items={["Preview", "Code"]} className="rounded-md">
       <Tab value="Preview">
-        <div className="flex h-[368px] w-full items-center justify-center p-10">
+        <div className="flex h-[400px] w-full items-center justify-center p-10">
           {Preview}
         </div>
       </Tab>

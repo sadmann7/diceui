@@ -55,6 +55,21 @@ const ComboboxTrigger = React.forwardRef<
 ));
 ComboboxTrigger.displayName = ComboboxPrimitive.Trigger.displayName;
 
+const ComboboxCancel = React.forwardRef<
+  React.ElementRef<typeof ComboboxPrimitive.Cancel>,
+  React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.Cancel>
+>(({ className, ...props }, ref) => (
+  <ComboboxPrimitive.Cancel
+    ref={ref}
+    className={cn(
+      "absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none",
+      className,
+    )}
+    {...props}
+  />
+));
+ComboboxCancel.displayName = ComboboxPrimitive.Cancel.displayName;
+
 const ComboboxContent = React.forwardRef<
   React.ElementRef<typeof ComboboxPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.Content>
@@ -73,17 +88,30 @@ ComboboxContent.displayName = ComboboxPrimitive.Content.displayName;
 
 const ComboboxItem = React.forwardRef<
   React.ElementRef<typeof ComboboxPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.Item>
->(({ className, children, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.Item> & {
+    /**
+     * The side of the indicator relative to the item text.
+     * @default "left"
+     */
+    indicatorSide?: "left" | "right";
+  }
+>(({ className, children, indicatorSide = "left", ...props }, ref) => (
   <ComboboxPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pr-2 pl-8 text-sm outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[disabled]:opacity-50",
+      "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5",
+      indicatorSide === "right" ? "pr-8 pl-2" : "pr-2 pl-8",
+      "text-sm outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[disabled]:opacity-50",
       className,
     )}
     {...props}
   >
-    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+    <span
+      className={cn(
+        "absolute flex h-3.5 w-3.5 items-center justify-center",
+        indicatorSide === "right" ? "right-2" : "left-2",
+      )}
+    >
       <ComboboxPrimitive.ItemIndicator>
         <Check className="h-4 w-4" />
       </ComboboxPrimitive.ItemIndicator>
@@ -105,12 +133,68 @@ const ComboboxEmpty = React.forwardRef<
 ));
 ComboboxEmpty.displayName = ComboboxPrimitive.Empty.displayName;
 
+const ComboboxSeparator = React.forwardRef<
+  React.ElementRef<typeof ComboboxPrimitive.Separator>,
+  React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.Separator>
+>(({ className, ...props }, ref) => (
+  <ComboboxPrimitive.Separator
+    ref={ref}
+    className={cn("-mx-1 my-1 h-px bg-muted", className)}
+    {...props}
+  />
+));
+ComboboxSeparator.displayName = ComboboxPrimitive.Separator.displayName;
+
+const ComboboxGroup = React.forwardRef<
+  React.ElementRef<typeof ComboboxPrimitive.Group>,
+  React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.Group>
+>(({ className, ...props }, ref) => (
+  <ComboboxPrimitive.Group
+    ref={ref}
+    className={cn("overflow-hidden", className)}
+    {...props}
+  />
+));
+ComboboxGroup.displayName = ComboboxPrimitive.Group.displayName;
+
+const ComboboxLabel = React.forwardRef<
+  React.ElementRef<typeof ComboboxPrimitive.Label>,
+  React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.Label>
+>(({ className, ...props }, ref) => (
+  <ComboboxPrimitive.Label
+    ref={ref}
+    className={cn("px-2 py-1.5 font-semibold text-sm", className)}
+    {...props}
+  />
+));
+ComboboxLabel.displayName = ComboboxPrimitive.Label.displayName;
+
+const ComboboxGroupLabel = React.forwardRef<
+  React.ElementRef<typeof ComboboxPrimitive.GroupLabel>,
+  React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.GroupLabel>
+>(({ className, ...props }, ref) => (
+  <ComboboxPrimitive.GroupLabel
+    ref={ref}
+    className={cn(
+      "px-2 py-1.5 font-semibold text-muted-foreground text-xs",
+      className,
+    )}
+    {...props}
+  />
+));
+ComboboxGroupLabel.displayName = ComboboxPrimitive.GroupLabel.displayName;
+
 export {
   Combobox,
+  ComboboxLabel,
   ComboboxAnchor,
+  ComboboxTrigger,
+  ComboboxCancel,
   ComboboxContent,
+  ComboboxSeparator,
+  ComboboxGroup,
+  ComboboxGroupLabel,
   ComboboxEmpty,
   ComboboxInput,
   ComboboxItem,
-  ComboboxTrigger,
 };

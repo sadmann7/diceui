@@ -5,6 +5,22 @@ import * as React from "react"
 
 export const Index: Record<string, any> = {
   "default": {
+    "combobox": {
+      name: "combobox",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/ui/combobox.tsx",
+        type: "registry:ui",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/combobox.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "tags-input": {
       name: "tags-input",
       description: "",
@@ -208,6 +224,54 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/example/checkbox-group-validation-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "combobox-demo": {
+      name: "combobox-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["combobox"],
+      files: [{
+        path: "registry/default/example/combobox-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/example/combobox-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "combobox-groups-demo": {
+      name: "combobox-groups-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["combobox"],
+      files: [{
+        path: "registry/default/example/combobox-groups-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/example/combobox-groups-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "combobox-multiple-demo": {
+      name: "combobox-multiple-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["combobox"],
+      files: [{
+        path: "registry/default/example/combobox-multiple-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/example/combobox-multiple-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",

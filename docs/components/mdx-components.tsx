@@ -76,14 +76,9 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       <Tabs className={cn("rounded-md", className)} {...props} />
     ),
     Tab,
-    pre: ({
-      npmCommand,
-      ...props
-    }: React.ComponentProps<typeof Pre> & {
-      npmCommand?: Required<NpmCommands>;
-    }) => (
+    pre: ({ className, ...props }: React.ComponentProps<typeof Pre>) => (
       <CodeBlock {...props}>
-        <Pre>{props.children}</Pre>
+        <Pre className={cn("max-h-[432px]", className)}>{props.children}</Pre>
       </CodeBlock>
     ),
     kbd: ({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) => (
