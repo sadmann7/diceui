@@ -13,78 +13,50 @@ import {
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { ChevronDown } from "lucide-react";
 import * as React from "react";
+import { useDeferredValue } from "react";
 
 const tricks = Array.from({ length: 10000 }, (_, i) => ({
   label: `Trick ${i + 1}`,
   value: `trick-${i + 1}`,
 }));
 
-type Trick = (typeof tricks)[number];
-
-function useVirtualCombobox(items: Trick[]) {
-  const [container, setContainer] = React.useState<HTMLDivElement | null>(null);
-
-  const virtualizer = useVirtualizer({
-    count: items.length,
-    getScrollElement: () => container,
-    estimateSize: () => 36,
-    overscan: 10,
-    scrollPaddingStart: 8,
-    scrollPaddingEnd: 8,
-    getItemKey: (index) => items[index]?.value ?? `item-${index}`,
-  });
-
-  const scrollToValue = React.useCallback(
-    (value: string) => {
-      const index = items.findIndex((item) => item.value === value);
-      if (index !== -1) {
-        virtualizer.scrollToIndex(index, { align: "center" });
-      }
-    },
-    [items, virtualizer],
-  );
-
-  const containerRef = React.useCallback((node: HTMLDivElement | null) => {
-    if (node) {
-      setContainer(node);
-    }
-  }, []);
-
-  React.useEffect(() => {
-    if (container) {
-      virtualizer.measure();
-    }
-  }, [container, virtualizer]);
-
-  return { virtualizer, scrollToValue, containerRef };
-}
-
 export default function ComboboxVirtualizedDemo() {
+  const [container, setContainer] = React.useState<HTMLDivElement | null>(null);
   const [value, setValue] = React.useState("");
   const [inputValue, setInputValue] = React.useState("");
+  const deferredInputValue = useDeferredValue(inputValue);
 
   const filteredTricks = React.useMemo(() => {
-    if (!inputValue) return tricks;
-    const normalized = inputValue.toLowerCase();
+    if (!deferredInputValue) return tricks;
+    const normalized = deferredInputValue.toLowerCase();
     return tricks.filter((trick) =>
       trick.label.toLowerCase().includes(normalized),
     );
-  }, [inputValue]);
+  }, [deferredInputValue]);
 
-  const { virtualizer, scrollToValue, containerRef } =
-    useVirtualCombobox(filteredTricks);
+  const virtualizer = useVirtualizer({
+    count: filteredTricks.length,
+    getScrollElement: () => container,
+    estimateSize: () => 36,
+    overscan: 20,
+  });
+
+  const onInputValueChange = React.useCallback(
+    (value: string) => {
+      setInputValue(value);
+      requestAnimationFrame(() => {
+        container?.scrollTo({ top: 0 });
+      });
+    },
+    [container],
+  );
 
   return (
     <Combobox
       value={value}
-      onValueChange={(value) => {
-        setValue(value);
-        requestAnimationFrame(() => {
-          scrollToValue(value);
-        });
-      }}
+      onValueChange={setValue}
       inputValue={inputValue}
-      onInputValueChange={setInputValue}
+      onInputValueChange={onInputValueChange}
       shouldFilter={false}
     >
       <ComboboxLabel>
@@ -98,7 +70,7 @@ export default function ComboboxVirtualizedDemo() {
       </ComboboxAnchor>
       <ComboboxContent>
         <div
-          ref={containerRef}
+          ref={(node) => setContainer(node)}
           className="relative max-h-[300px] overflow-y-auto overflow-x-hidden"
         >
           {filteredTricks.length > 0 ? (
@@ -113,19 +85,18 @@ export default function ComboboxVirtualizedDemo() {
                 if (!trick) return null;
 
                 return (
-                  <div
+                  <ComboboxItem
                     key={virtualItem.key}
-                    data-index={virtualItem.index}
-                    ref={virtualizer.measureElement}
+                    value={trick.value}
+                    indicatorSide="right"
                     className="absolute top-0 left-0 w-full"
                     style={{
+                      height: `${virtualItem.size}px`,
                       transform: `translateY(${virtualItem.start}px)`,
                     }}
                   >
-                    <ComboboxItem value={trick.value}>
-                      {trick.label}
-                    </ComboboxItem>
-                  </div>
+                    {trick.label}
+                  </ComboboxItem>
                 );
               })}
             </div>
