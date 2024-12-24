@@ -1,16 +1,11 @@
 import * as React from "react";
 import { DATA_ITEM_ATTR } from "../constants";
 
-interface UseCollectionProps {
-  ref: React.RefObject<HTMLElement | null>;
-  attr?: string;
-  disabledAttr?: string;
-}
-
 interface CollectionItem<T extends HTMLElement> {
   ref: T;
-  value: string;
   disabled: boolean;
+  value: string;
+  label?: string;
 }
 
 interface CollectionContextValue<T extends HTMLElement> {
@@ -18,17 +13,22 @@ interface CollectionContextValue<T extends HTMLElement> {
   itemMap: Map<React.RefObject<T>, CollectionItem<T>>;
 }
 
+interface UseCollectionParams<T extends HTMLElement> {
+  ref: React.RefObject<T | null>;
+  attr?: string;
+}
+
 function useCollection<T extends HTMLElement>({
   ref,
   attr = DATA_ITEM_ATTR,
-}: UseCollectionProps) {
+}: UseCollectionParams<T>) {
   const getItems = React.useCallback(() => {
     const collectionNode = ref.current;
     if (!collectionNode) return [];
 
     const items = Array.from(
       collectionNode.querySelectorAll(`[${attr}]`),
-    ) as T[];
+    ) satisfies T[];
 
     const orderedItems = items.sort((a, b) => {
       const aIndex = Number(a.getAttribute(attr));
@@ -51,16 +51,37 @@ function useCollection<T extends HTMLElement>({
 
 function useCollectionItem<T extends HTMLElement>(
   ref: React.RefObject<T>,
-  value: string,
-  disabled: boolean,
   context: CollectionContextValue<T>,
+  disabled: boolean,
+  value: string,
+  label?: string,
 ) {
   React.useEffect(() => {
-    context.itemMap.set(ref, { ref: ref.current, value, disabled });
+    context.itemMap.set(ref, { ref: ref.current, label, value, disabled });
     return () => {
       context.itemMap.delete(ref);
     };
-  }, [ref, value, disabled, context.itemMap]);
+  }, [ref, label, value, disabled, context.itemMap]);
+}
+
+function getItem<T extends HTMLElement>(
+  item: T,
+  context: CollectionContextValue<T>,
+): CollectionItem<T> | null {
+  for (const [ref, data] of context.itemMap.entries()) {
+    if (ref.current === item) return data;
+  }
+  return null;
+}
+
+function getItemLabel<T extends HTMLElement>(
+  item: T,
+  context: CollectionContextValue<T>,
+): string {
+  for (const [ref, data] of context.itemMap.entries()) {
+    if (ref.current === item) return data.label ?? "";
+  }
+  return "";
 }
 
 function getItemValue<T extends HTMLElement>(
@@ -75,6 +96,12 @@ function getItemValue<T extends HTMLElement>(
   return "";
 }
 
-export { useCollection, useCollectionItem, getItemValue };
+export {
+  getItem,
+  getItemLabel,
+  getItemValue,
+  useCollection,
+  useCollectionItem,
+};
 
-export type { CollectionItem };
+export type { CollectionContextValue, CollectionItem };

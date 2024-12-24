@@ -211,7 +211,9 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     onCustomAnchorAdd,
     onCustomAnchorRemove,
   } = useAnchor<HTMLDivElement>();
-  const { getEnabledItems } = useCollection({ ref: collectionRef });
+  const { getEnabledItems } = useCollection<HTMLElement>({
+    ref: collectionRef,
+  });
   const { isFormControl, onTriggerChange } = useFormControl();
   const composedRef = useComposedRefs(forwardedRef, collectionRef, (node) =>
     onTriggerChange(node),
