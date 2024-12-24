@@ -97,7 +97,6 @@ export default function ComboboxVirtualizedDemo() {
         </ComboboxTrigger>
       </ComboboxAnchor>
       <ComboboxContent>
-        <ComboboxEmpty>No items found.</ComboboxEmpty>
         <div
           ref={containerRef}
           className="relative max-h-[300px] overflow-y-auto overflow-x-hidden"
