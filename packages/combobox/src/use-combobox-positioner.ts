@@ -175,11 +175,11 @@ interface UseComboboxPositionerReturn {
     floatingProps?: React.HTMLAttributes<HTMLElement>,
   ) => Record<string, unknown>;
   arrowStyles: React.CSSProperties;
-  arrowRef: React.RefObject<HTMLElement | null>;
+  onArrowChange: (arrow: HTMLElement | null) => void;
   renderedSide: "top" | "right" | "bottom" | "left";
   renderedAlign: "start" | "center" | "end";
   arrowDisplaced: boolean;
-  anchorHidden: boolean;
+  referenceHidden: boolean;
 }
 
 function useComboboxPositioner({
@@ -204,7 +204,8 @@ function useComboboxPositioner({
   triggerRef,
 }: UseComboboxPositionerParams): UseComboboxPositionerReturn {
   const direction = useDirection();
-  const arrowRef = React.useRef<HTMLElement | null>(null);
+  const [positionerArrow, setPositionerArrow] =
+    React.useState<HTMLElement | null>(null);
 
   const placement = React.useMemo((): Placement => {
     const rtlAlign =
@@ -218,7 +219,6 @@ function useComboboxPositioner({
     return `${side}-${rtlAlign}` as Placement;
   }, [align, direction, side]);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   const middleware = React.useMemo(() => {
     const middleware: Middleware[] = [
       offset({
@@ -281,7 +281,7 @@ function useComboboxPositioner({
 
     middleware.push(
       arrow({
-        element: arrowRef.current,
+        element: positionerArrow,
         padding: arrowPadding,
       }),
     );
@@ -297,7 +297,7 @@ function useComboboxPositioner({
     sticky,
     hideWhenDetached,
     fitViewport,
-    arrowRef,
+    positionerArrow,
   ]);
 
   const autoUpdateOptions = React.useMemo(
@@ -362,7 +362,7 @@ function useComboboxPositioner({
     floatingPlacement.split("-") as [Side?, Align?];
 
   const transformOrigin = React.useMemo(() => {
-    const longhand = {
+    const longhand: Record<Side, Side> = {
       top: "bottom",
       right: "left",
       bottom: "top",
@@ -400,19 +400,26 @@ function useComboboxPositioner({
     [floatingStrategy, x, y, transformOrigin],
   );
 
-  const arrowStyles = React.useMemo(
+  const referenceHidden = !!middlewareData.hide?.referenceHidden;
+
+  const arrowDisplaced = middlewareData.arrow?.centerOffset !== 0;
+
+  const arrowStyles = React.useMemo<React.CSSProperties>(
     () => ({
       position: "absolute" as const,
       top: middlewareData.arrow?.y,
       left: middlewareData.arrow?.x,
+      [placementSide]: 0,
+      transformOrigin,
+      transform: {
+        top: "translateY(100%)",
+        right: "translateY(50%) rotate(90deg) translateX(-50%)",
+        bottom: "rotate(180deg)",
+        left: "translateY(50%) rotate(-90deg) translateX(50%)",
+      }[placementSide],
     }),
-    [middlewareData.arrow],
+    [middlewareData.arrow, placementSide, transformOrigin],
   );
-
-  console.log({ arrowMiddlewareData: middlewareData.arrow, arrowStyles });
-
-  const arrowDisplaced = middlewareData.arrow?.centerOffset !== 0;
-  const anchorHidden = !!middlewareData.hide?.referenceHidden;
 
   const positionerContext = React.useMemo(
     () => ({
@@ -426,11 +433,11 @@ function useComboboxPositioner({
       context,
       getFloatingProps,
       arrowStyles,
-      arrowRef: arrowRef ?? { current: null },
+      onArrowChange: setPositionerArrow,
       renderedSide: placementSide,
       renderedAlign: placementAlign,
       arrowDisplaced,
-      anchorHidden,
+      referenceHidden,
     }),
     [
       refs,
@@ -446,7 +453,7 @@ function useComboboxPositioner({
       placementSide,
       placementAlign,
       arrowDisplaced,
-      anchorHidden,
+      referenceHidden,
     ],
   );
 

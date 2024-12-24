@@ -29,7 +29,7 @@ import {
 } from "@/registry/default/ui/combobox";
 import * as ComboboxPrimitive from "@diceui/combobox";
 import { SelectArrow } from "@radix-ui/react-select";
-import { Check, ChevronDown, X } from "lucide-react";
+import { ArrowUp, Check, ChevronDown, X } from "lucide-react";
 import * as React from "react";
 
 export default function PlaygroundPage() {
@@ -67,7 +67,7 @@ export default function PlaygroundPage() {
           ))}
         </ComboboxPrimitive.Content>
       </ComboboxPrimitive.Root>
-      <Combobox className="w-[15rem]">
+      <Combobox className="w-[15rem]" modal>
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
           <ComboboxTrigger>
@@ -77,7 +77,7 @@ export default function PlaygroundPage() {
             <X className="h-4 w-4" />
           </ComboboxPrimitive.Cancel>
         </ComboboxAnchor>
-        <ComboboxContent arrowPadding={20}>
+        <ComboboxContent>
           <ComboboxPrimitive.Arrow />
           <ComboboxEmpty>No tricks found</ComboboxEmpty>
           {tricks.map((trick) => (
@@ -106,7 +106,9 @@ export default function PlaygroundPage() {
           <SelectValue placeholder="Select a fruit" />
         </SelectTrigger>
         <SelectContent>
-          <SelectArrow />
+          <SelectArrow asChild>
+            <ArrowUp className="size-4 text-orange-600" />
+          </SelectArrow>
           <SelectGroup>
             <SelectLabel>Fruits</SelectLabel>
             <SelectItem value="apple">Apple</SelectItem>

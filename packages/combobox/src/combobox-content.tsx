@@ -16,7 +16,7 @@ const CONTENT_NAME = "ComboboxContent";
 interface ComboboxContentContextValue {
   side: Side;
   align: Align;
-  arrowRef: React.RefObject<HTMLElement | null>;
+  onArrowChange: (arrow: HTMLElement | null) => void;
   arrowStyles: React.CSSProperties;
   arrowDisplaced: boolean;
   forceMount: boolean;
@@ -32,7 +32,6 @@ interface ComboboxContentProps
       | "open"
       | "onOpenChange"
       | "anchorRef"
-      | "arrowRef"
       | "triggerRef"
       | "hasCustomAnchor"
       | "trackAnchor"

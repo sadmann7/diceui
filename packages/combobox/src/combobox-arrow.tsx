@@ -1,5 +1,3 @@
-"use client";
-
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { useComboboxContentContext } from "./combobox-content";
@@ -10,12 +8,13 @@ const ARROW_NAME = "ComboboxArrow";
 interface ComboboxArrowProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.svg> {
   /**
-   * The width of the arrow.
+   * The width of the arrow in pixels.
    * @default 10
    */
   width?: number;
+
   /**
-   * The height of the arrow.
+   * The height of the arrow in pixels.
    * @default 5
    */
   height?: number;
@@ -24,6 +23,7 @@ interface ComboboxArrowProps
 const ComboboxArrow = React.forwardRef<SVGSVGElement, ComboboxArrowProps>(
   (props, forwardedRef) => {
     const { width = 10, height = 5, ...arrowProps } = props;
+
     const context = useComboboxContext(ARROW_NAME);
     const contentContext = useComboboxContentContext(ARROW_NAME);
 
@@ -31,10 +31,10 @@ const ComboboxArrow = React.forwardRef<SVGSVGElement, ComboboxArrowProps>(
 
     return (
       <span
-        ref={contentContext.arrowRef}
+        ref={(node) => contentContext.onArrowChange(node)}
         style={{
-          visibility: contentContext.arrowDisplaced ? "hidden" : undefined,
           ...contentContext.arrowStyles,
+          visibility: contentContext.arrowDisplaced ? "hidden" : undefined,
         }}
       >
         <Primitive.svg
@@ -51,10 +51,11 @@ const ComboboxArrow = React.forwardRef<SVGSVGElement, ComboboxArrowProps>(
           ref={forwardedRef}
           style={{
             ...arrowProps.style,
+            // ensure the svg is measured correctly
             display: "block",
           }}
         >
-          <path d="M0 10 L15 0 L30 10" fill="currentColor" />
+          {props.asChild ? props.children : <path d="M0 10 L15 0 L30 10" />}
         </Primitive.svg>
       </span>
     );
