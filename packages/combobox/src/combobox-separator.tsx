@@ -7,7 +7,7 @@ const SEPARATOR_NAME = "ComboboxSeparator";
 interface ComboboxSeparatorProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
   /**
-   * Whether to always render the separator, even if it's not between two visible groups.
+   * Whether the separator should remain visible when search filtering is active.
    * @default false
    */
   keepVisible?: boolean;
