@@ -183,4 +183,20 @@ export const examples: Registry = [
       },
     ],
   },
+  {
+    name: "combobox-virtualized-demo",
+    type: "registry:example",
+    dependencies: [
+      "@diceui/combobox",
+      "@tanstack/react-virtual",
+      "lucide-react",
+    ],
+    registryDependencies: ["combobox"],
+    files: [
+      {
+        path: "example/combobox-virtualized-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
 ];

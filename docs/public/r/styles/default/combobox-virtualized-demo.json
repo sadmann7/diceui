@@ -1,0 +1,20 @@
+{
+  "name": "combobox-virtualized-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@diceui/combobox",
+    "@tanstack/react-virtual",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "combobox"
+  ],
+  "files": [
+    {
+      "path": "example/combobox-virtualized-demo.tsx",
+      "content": "\"use client\";\r\n\r\nimport {\r\n  Combobox,\r\n  ComboboxAnchor,\r\n  ComboboxContent,\r\n  ComboboxEmpty,\r\n  ComboboxInput,\r\n  ComboboxItem,\r\n  ComboboxLabel,\r\n  ComboboxTrigger,\r\n} from \"@/registry/default/ui/combobox\";\r\nimport { useVirtualizer } from \"@tanstack/react-virtual\";\r\nimport { ChevronDown } from \"lucide-react\";\r\nimport * as React from \"react\";\r\n\r\n// Generate 10000 items for demo\r\nconst items = Array.from({ length: 10000 }, (_, i) => ({\r\n  label: `Item ${i + 1}`,\r\n  value: `item-${i + 1}`,\r\n}));\r\n\r\nexport default function ComboboxVirtualizedDemo() {\r\n  const [value, setValue] = React.useState(\"\");\r\n  const parentRef = React.useRef<HTMLDivElement>(null);\r\n\r\n  const virtualizer = useVirtualizer({\r\n    count: items.length,\r\n    getScrollElement: () => parentRef.current,\r\n    estimateSize: () => 36, // Approximate height of each item\r\n    overscan: 5,\r\n  });\r\n\r\n  return (\r\n    <Combobox value={value} onValueChange={setValue}>\r\n      <ComboboxLabel>Virtual List (10,000 items)</ComboboxLabel>\r\n      <ComboboxAnchor>\r\n        <ComboboxInput placeholder=\"Select item...\" />\r\n        <ComboboxTrigger>\r\n          <ChevronDown className=\"h-4 w-4\" />\r\n        </ComboboxTrigger>\r\n      </ComboboxAnchor>\r\n      <ComboboxContent>\r\n        <ComboboxEmpty>No items found.</ComboboxEmpty>\r\n        <div ref={parentRef} className=\"relative max-h-[300px] overflow-auto\">\r\n          <div\r\n            style={{\r\n              height: `${virtualizer.getTotalSize()}px`,\r\n              width: \"100%\",\r\n              position: \"relative\",\r\n            }}\r\n          >\r\n            {virtualizer.getVirtualItems().map((virtualItem) => {\r\n              const item = items[virtualItem.index];\r\n              if (!item) return null;\r\n\r\n              return (\r\n                <div\r\n                  key={virtualItem.key}\r\n                  style={{\r\n                    position: \"absolute\",\r\n                    top: 0,\r\n                    left: 0,\r\n                    width: \"100%\",\r\n                    height: `${virtualItem.size}px`,\r\n                    transform: `translateY(${virtualItem.start}px)`,\r\n                  }}\r\n                >\r\n                  <ComboboxItem value={item.value}>{item.label}</ComboboxItem>\r\n                </div>\r\n              );\r\n            })}\r\n          </div>\r\n        </div>\r\n      </ComboboxContent>\r\n    </Combobox>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}
