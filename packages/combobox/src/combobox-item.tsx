@@ -9,7 +9,7 @@ import {
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { useComboboxContentContext } from "./combobox-content";
-import { ComboboxGroupContext } from "./combobox-group";
+import { useComboboxGroupContext } from "./combobox-group";
 import { useComboboxContext } from "./combobox-root";
 
 const ITEM_NAME = "ComboboxItem";
@@ -38,7 +38,7 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
     const { value, disabled, ...itemProps } = props;
     const context = useComboboxContext(ITEM_NAME);
     const contentContext = useComboboxContentContext(ITEM_NAME);
-    const groupContext = React.useContext(ComboboxGroupContext);
+    const groupContext = useComboboxGroupContext(ITEM_NAME, false);
     const itemRef = React.useRef<HTMLDivElement>(null);
     const composedRefs = useComposedRefs(forwardedRef, itemRef);
     const id = useId();

@@ -1,3 +1,5 @@
+"use client";
+
 export { ComboboxRoot, Root } from "./combobox-root";
 export type { ComboboxRootProps } from "./combobox-root";
 

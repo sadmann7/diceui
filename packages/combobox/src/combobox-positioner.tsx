@@ -1,3 +1,5 @@
+"use client";
+
 import { useComposedRefs, useScrollLock } from "@diceui/shared";
 import { FloatingFocusManager } from "@floating-ui/react";
 import { Primitive } from "@radix-ui/react-primitive";

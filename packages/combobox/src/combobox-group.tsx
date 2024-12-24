@@ -1,3 +1,5 @@
+"use client";
+
 import { createContext, useId } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
@@ -10,7 +12,7 @@ interface ComboboxGroupContextValue {
   labelId: string;
 }
 
-const [ComboboxGroupProvider, useComboboxGroupContext, ComboboxGroupContext] =
+const [ComboboxGroupProvider, useComboboxGroupContext] =
   createContext<ComboboxGroupContextValue>(GROUP_NAME);
 
 interface ComboboxGroupProps
@@ -53,6 +55,6 @@ ComboboxGroup.displayName = GROUP_NAME;
 
 const Group = ComboboxGroup;
 
-export { ComboboxGroup, ComboboxGroupContext, Group, useComboboxGroupContext };
+export { ComboboxGroup, Group, useComboboxGroupContext };
 
 export type { ComboboxGroupProps };

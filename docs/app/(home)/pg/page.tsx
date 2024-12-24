@@ -1,5 +1,3 @@
-"use client";
-
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,53 +27,22 @@ import {
 } from "@/registry/default/ui/combobox";
 import * as ComboboxPrimitive from "@diceui/combobox";
 import { SelectArrow } from "@radix-ui/react-select";
-import { ArrowUp, Check, ChevronDown } from "lucide-react";
-import * as React from "react";
+import { ArrowUp, ChevronDown, ChevronUp } from "lucide-react";
 
 export default function PlaygroundPage() {
-  const [selectedTrick, setSelectedTrick] = React.useState<string | undefined>(
-    undefined,
-  );
-
   return (
     <Shell>
-      <ComboboxPrimitive.Root
-        className="max-w-[15rem]"
-        value={selectedTrick}
-        onValueChange={setSelectedTrick}
-      >
-        <ComboboxPrimitive.Anchor>
-          <ComboboxPrimitive.Input placeholder="Search tricks..." />
-        </ComboboxPrimitive.Anchor>
-        <ComboboxPrimitive.Content className="max-w-[15rem]">
-          <ComboboxPrimitive.Empty>No tricks found</ComboboxPrimitive.Empty>
-          {tricks.map((trick) => (
-            <ComboboxPrimitive.Item
-              key={trick.value}
-              value={trick.value}
-              className="flex items-center gap-2 pr-2 pl-8"
-            >
-              <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-                <ComboboxPrimitive.ItemIndicator>
-                  <Check className="h-4 w-4" />
-                </ComboboxPrimitive.ItemIndicator>
-              </span>
-              <ComboboxPrimitive.ItemText>
-                {trick.label}
-              </ComboboxPrimitive.ItemText>
-            </ComboboxPrimitive.Item>
-          ))}
-        </ComboboxPrimitive.Content>
-      </ComboboxPrimitive.Root>
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
           <ComboboxTrigger>
             <ChevronDown className="h-4 w-4" />
           </ComboboxTrigger>
+          {/* <ComboboxPrimitive.Anchor asChild>
+            <ChevronUp className="h-4 w-4" />
+          </ComboboxPrimitive.Anchor> */}
         </ComboboxAnchor>
         <ComboboxContent>
-          <ComboboxPrimitive.Arrow />
           <ComboboxEmpty>No tricks found</ComboboxEmpty>
           {tricks.map((trick) => (
             <ComboboxItem key={trick.value} value={trick.value}>

@@ -1,3 +1,5 @@
+"use client";
+
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { useComboboxContext } from "./combobox-root";

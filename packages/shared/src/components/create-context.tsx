@@ -32,18 +32,33 @@ function createContext<T extends object | null>(
 
   Provider.displayName = `${rootComponentName}Provider`;
 
-  function useContext(consumerName: string): T {
+  type ContextReturn<Required extends boolean> = Required extends true
+    ? T
+    : T | undefined;
+
+  /**
+   * @param consumerName The name of the component that is consuming the context
+   * @param required Whether the context is required
+   */
+  function useContext<Required extends boolean = true>(
+    consumerName: string,
+    required?: Required,
+  ): ContextReturn<Required> {
     const context = React.useContext(Context);
 
     if (context) return context;
     if (defaultValue !== undefined) return defaultValue;
 
-    throw new Error(
-      `\`${consumerName}\` must be used within \`${rootComponentName}\``,
-    );
+    if (required) {
+      throw new Error(
+        `\`${consumerName}\` must be used within \`${rootComponentName}\``,
+      );
+    }
+
+    return undefined as ContextReturn<Required>;
   }
 
-  return [Provider, useContext, Context] as const;
+  return [Provider, useContext] as const;
 }
 
 export { createContext };
