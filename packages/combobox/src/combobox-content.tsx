@@ -16,9 +16,9 @@ const CONTENT_NAME = "ComboboxContent";
 interface ComboboxContentContextValue {
   side: Side;
   align: Align;
-  arrowRef: React.RefObject<SVGSVGElement | null>;
+  arrowRef: React.RefObject<HTMLElement | null>;
   arrowStyles: React.CSSProperties;
-  arrowUncentered: boolean;
+  arrowDisplaced: boolean;
   forceMount: boolean;
 }
 

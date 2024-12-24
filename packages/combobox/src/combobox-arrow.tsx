@@ -1,6 +1,5 @@
 "use client";
 
-import { useComposedRefs } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { useComboboxContentContext } from "./combobox-content";
@@ -25,31 +24,39 @@ interface ComboboxArrowProps
 const ComboboxArrow = React.forwardRef<SVGSVGElement, ComboboxArrowProps>(
   (props, forwardedRef) => {
     const { width = 10, height = 5, ...arrowProps } = props;
-
     const context = useComboboxContext(ARROW_NAME);
     const contentContext = useComboboxContentContext(ARROW_NAME);
-
-    const composedRef = useComposedRefs(forwardedRef, contentContext.arrowRef);
 
     if (!context.open) return null;
 
     return (
-      <Primitive.svg
-        ref={composedRef}
-        width={width}
-        height={height}
-        viewBox="0 0 30 10"
-        preserveAspectRatio="none"
-        style={contentContext.arrowStyles}
-        data-side={contentContext.side}
-        data-align={contentContext.align}
-        data-uncentered={contentContext.arrowUncentered || undefined}
-        data-state={context.open ? "open" : "closed"}
-        aria-hidden
-        {...arrowProps}
+      <span
+        ref={contentContext.arrowRef}
+        style={{
+          visibility: contentContext.arrowDisplaced ? "hidden" : undefined,
+          ...contentContext.arrowStyles,
+        }}
       >
-        <path d="M0 10 L15 0 L30 10" fill="currentColor" />
-      </Primitive.svg>
+        <Primitive.svg
+          width={width}
+          height={height}
+          viewBox="0 0 30 10"
+          preserveAspectRatio="none"
+          aria-hidden={contentContext.arrowDisplaced}
+          data-side={contentContext.side}
+          data-align={contentContext.align}
+          data-displaced={contentContext.arrowDisplaced || undefined}
+          data-state={context.open ? "open" : "closed"}
+          {...arrowProps}
+          ref={forwardedRef}
+          style={{
+            ...arrowProps.style,
+            display: "block",
+          }}
+        >
+          <path d="M0 10 L15 0 L30 10" fill="currentColor" />
+        </Primitive.svg>
+      </span>
     );
   },
 );

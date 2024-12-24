@@ -89,10 +89,10 @@ const ComboboxPositioner = React.forwardRef<
 
   const content = (
     <ComboboxContentProvider
-      arrowRef={positionerContext.arrowRef}
       side={side}
       align={align}
-      arrowUncentered={positionerContext.arrowUncentered}
+      arrowRef={positionerContext.arrowRef}
+      arrowDisplaced={positionerContext.arrowDisplaced}
       arrowStyles={positionerContext.arrowStyles}
       forceMount={forceMount}
     >

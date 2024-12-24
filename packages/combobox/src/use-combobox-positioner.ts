@@ -175,10 +175,10 @@ interface UseComboboxPositionerReturn {
     floatingProps?: React.HTMLAttributes<HTMLElement>,
   ) => Record<string, unknown>;
   arrowStyles: React.CSSProperties;
-  arrowRef: React.RefObject<SVGSVGElement | null>;
-  arrowUncentered: boolean;
+  arrowRef: React.RefObject<HTMLElement | null>;
   renderedSide: "top" | "right" | "bottom" | "left";
   renderedAlign: "start" | "center" | "end";
+  arrowDisplaced: boolean;
   anchorHidden: boolean;
 }
 
@@ -204,8 +204,7 @@ function useComboboxPositioner({
   triggerRef,
 }: UseComboboxPositionerParams): UseComboboxPositionerReturn {
   const direction = useDirection();
-
-  const arrowRef = React.useRef<SVGSVGElement | null>(null);
+  const arrowRef = React.useRef<HTMLElement | null>(null);
 
   const placement = React.useMemo((): Placement => {
     const rtlAlign =
@@ -219,6 +218,7 @@ function useComboboxPositioner({
     return `${side}-${rtlAlign}` as Placement;
   }, [align, direction, side]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   const middleware = React.useMemo(() => {
     const middleware: Middleware[] = [
       offset({
@@ -279,14 +279,12 @@ function useComboboxPositioner({
       middleware.push(hide());
     }
 
-    if (arrowRef?.current) {
-      middleware.push(
-        arrow({
-          element: arrowRef.current,
-          padding: arrowPadding,
-        }),
-      );
-    }
+    middleware.push(
+      arrow({
+        element: arrowRef.current,
+        padding: arrowPadding,
+      }),
+    );
 
     return middleware;
   }, [
@@ -299,6 +297,7 @@ function useComboboxPositioner({
     sticky,
     hideWhenDetached,
     fitViewport,
+    arrowRef,
   ]);
 
   const autoUpdateOptions = React.useMemo(
@@ -410,10 +409,12 @@ function useComboboxPositioner({
     [middlewareData.arrow],
   );
 
-  const arrowUncentered = middlewareData.arrow?.centerOffset !== 0;
-  const anchorHidden = Boolean(middlewareData.hide?.referenceHidden);
+  console.log({ arrowMiddlewareData: middlewareData.arrow, arrowStyles });
 
-  const returnValue = React.useMemo(
+  const arrowDisplaced = middlewareData.arrow?.centerOffset !== 0;
+  const anchorHidden = !!middlewareData.hide?.referenceHidden;
+
+  const positionerContext = React.useMemo(
     () => ({
       refs,
       floatingStyles,
@@ -425,10 +426,10 @@ function useComboboxPositioner({
       context,
       getFloatingProps,
       arrowStyles,
-      arrowRef: arrowRef || { current: null },
-      arrowUncentered,
+      arrowRef: arrowRef ?? { current: null },
       renderedSide: placementSide,
       renderedAlign: placementAlign,
+      arrowDisplaced,
       anchorHidden,
     }),
     [
@@ -442,14 +443,14 @@ function useComboboxPositioner({
       context,
       getFloatingProps,
       arrowStyles,
-      arrowUncentered,
       placementSide,
       placementAlign,
+      arrowDisplaced,
       anchorHidden,
     ],
   );
 
-  return returnValue;
+  return positionerContext;
 }
 
 export { useComboboxPositioner };

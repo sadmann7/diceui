@@ -23,13 +23,13 @@ const ComboboxCancel = React.forwardRef<HTMLButtonElement, ComboboxCancelProps>(
 
     return (
       <Primitive.button
-        ref={forwardedRef}
         type="button"
         {...cancelProps}
+        ref={forwardedRef}
         onClick={composeEventHandlers(cancelProps.onClick, () => {
-          context.onInputValueChange("");
+          context.inputRef.current?.focus();
           requestAnimationFrame(() => {
-            context.inputRef.current?.focus();
+            context.onInputValueChange("");
           });
         })}
       />

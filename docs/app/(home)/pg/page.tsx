@@ -28,6 +28,7 @@ import {
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
 import * as ComboboxPrimitive from "@diceui/combobox";
+import { SelectArrow } from "@radix-ui/react-select";
 import { Check, ChevronDown, X } from "lucide-react";
 import * as React from "react";
 
@@ -76,7 +77,8 @@ export default function PlaygroundPage() {
             <X className="h-4 w-4" />
           </ComboboxPrimitive.Cancel>
         </ComboboxAnchor>
-        <ComboboxContent>
+        <ComboboxContent arrowPadding={20}>
+          <ComboboxPrimitive.Arrow />
           <ComboboxEmpty>No tricks found</ComboboxEmpty>
           {tricks.map((trick) => (
             <ComboboxItem key={trick.value} value={trick.value}>
@@ -104,6 +106,7 @@ export default function PlaygroundPage() {
           <SelectValue placeholder="Select a fruit" />
         </SelectTrigger>
         <SelectContent>
+          <SelectArrow />
           <SelectGroup>
             <SelectLabel>Fruits</SelectLabel>
             <SelectItem value="apple">Apple</SelectItem>
