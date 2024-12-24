@@ -258,40 +258,73 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       .trim();
   }, []);
 
+  const getItemScore = React.useCallback(
+    (value: string, searchTerm: string) => {
+      const normalizedValue = normalizeString(value);
+      const normalizedSearch = normalizeString(searchTerm);
+
+      if (normalizedSearch.trim() === "") return 1;
+
+      return onFilter
+        ? Number(onFilter([value], searchTerm).length > 0)
+        : Number(currentFilter(normalizedValue, normalizedSearch));
+    },
+    [currentFilter, normalizeString, onFilter],
+  );
+
+  const normalizedCache = React.useRef(new Map<string, string>()).current;
+
   const onFilterItems = React.useCallback(() => {
     filterStore.groups.clear();
     filterStore.items.clear();
 
-    function processItem(id: string, value: string) {
-      const normalizedValue = normalizeString(value);
-      const normalizedSearch = normalizeString(filterStore.search);
-
-      if (normalizedSearch.trim() === "") return 0;
-
-      const score = onFilter
-        ? Number(onFilter([value], filterStore.search).length > 0)
-        : Number(currentFilter(normalizedValue, normalizedSearch));
-      filterStore.items.set(id, score);
-      return score;
-    }
-
+    const searchTerm = filterStore.search;
     let itemCount = 0;
-    for (const [id, value] of items.entries()) {
-      itemCount += processItem(id, value);
+
+    const BATCH_SIZE = 100;
+    const itemEntries = Array.from(items.entries());
+
+    for (let i = 0; i < itemEntries.length; i += BATCH_SIZE) {
+      const batch = itemEntries.slice(i, i + BATCH_SIZE);
+
+      for (const [id, value] of batch) {
+        let normalizedValue = normalizedCache.get(value);
+        if (!normalizedValue) {
+          normalizedValue = normalizeString(value);
+          normalizedCache.set(value, normalizedValue);
+        }
+
+        const score = getItemScore(value, searchTerm);
+        if (score > 0) {
+          filterStore.items.set(id, score);
+          itemCount++;
+        }
+      }
     }
+
     filterStore.itemCount = itemCount;
 
-    if (groups.size) {
-      for (const [groupId, group] of groups.entries()) {
+    if (groups.size && itemCount > 0) {
+      const matchingItems = new Set(filterStore.items.keys());
+
+      for (const [groupId, group] of groups) {
         const hasMatchingItem = Array.from(group).some((itemId) =>
-          filterStore.items.get(itemId),
+          matchingItems.has(itemId),
         );
+
         if (hasMatchingItem) {
           filterStore.groups.set(groupId, new Set());
         }
       }
     }
-  }, [filterStore, items, groups, onFilter, currentFilter, normalizeString]);
+  }, [
+    filterStore,
+    items,
+    groups,
+    getItemScore,
+    normalizeString,
+    normalizedCache,
+  ]);
 
   const onOpenChange = React.useCallback(
     async (open: boolean) => {
