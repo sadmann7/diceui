@@ -1,3 +1,4 @@
+import type { ControlledProps } from "@/types";
 import type {
   ComboboxAnchorProps,
   ComboboxArrowProps,
@@ -20,7 +21,7 @@ import type * as React from "react";
 
 export type RootProps<Multiple extends boolean = false> = Omit<
   ComboboxRootProps<Multiple>,
-  keyof React.ComponentPropsWithoutRef<"div">
+  keyof ControlledProps<"div">
 >;
 
 export type LabelProps = Omit<

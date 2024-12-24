@@ -133,6 +133,7 @@ interface TagsInputRootProps<T = InputValue>
 
   /**
    * The content of the tags input.
+   *
    * Can be a function that receives the current value as an argument,
    * or a React node.
    * @default undefined

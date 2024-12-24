@@ -73,13 +73,28 @@ interface ComboboxRootProps<Multiple extends boolean = false>
     React.ComponentPropsWithoutRef<typeof Primitive.div>,
     "value" | "defaultValue" | "onValueChange"
   > {
-  /** The current value of the combobox. */
+  /**
+   * The current value of the combobox.
+   *
+   * - When multiple is false: `string`
+   * - When multiple is true: `string[]`
+   */
   value?: Value<Multiple>;
 
-  /** The default value of the combobox. */
+  /**
+   * The default value of the combobox.
+   *
+   * - When multiple is false: `string`
+   * - When multiple is true: `string[]`
+   */
   defaultValue?: Value<Multiple>;
 
-  /** Event handler called when the value changes. */
+  /**
+   * Event handler called when the value changes.
+   *
+   * - When multiple is false: `(value: string) => void`
+   * - When multiple is true: `(value: string[]) => void`
+   */
   onValueChange?: (value: Value<Multiple>) => void;
 
   /** Whether the combobox is open. */
@@ -116,6 +131,8 @@ interface ComboboxRootProps<Multiple extends boolean = false>
 
   /**
    * Whether the combobox uses fuzzy filtering.
+   *
+   * When false, the combobox will use exact string matching.
    * @default true
    */
   fuzzy?: boolean;

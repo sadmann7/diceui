@@ -39,12 +39,16 @@ interface UseComboboxPositionerParams {
   /**
    * The preferred placement of the combobox relative to its anchor element.
    * If there is not enough space, it will be adjusted automatically.
+   * - 'top': Position the combobox above the anchor
+   * - 'right': Position the combobox to the right of the anchor
+   * - 'bottom': Position the combobox below the anchor
+   * - 'left': Position the combobox to the left of the anchor
    * @default "bottom"
    */
   side?: Side;
 
   /**
-   * The distance between the combobox and its anchor element.
+   * The distance in pixels from the anchor element to the combobox.
    * This creates a gap between the anchor and combobox.
    * @default 4
    */
@@ -60,7 +64,7 @@ interface UseComboboxPositionerParams {
   align?: Align;
 
   /**
-   * The distance from the aligned edge when using align.
+   * The distance in pixels from the aligned edge when using align.
    * Allows the combobox to be offset from its default aligned position.
    * @default 0
    */

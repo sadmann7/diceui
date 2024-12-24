@@ -194,7 +194,9 @@ export interface OverlayProps
 
   /**
    * The children of the sortable component.
-   * @type React.ReactNode | ((params: { value: UniqueIdentifier }) => React.ReactNode)
+   *
+   * Can be a function that receives the value of the active item as an argument,
+   * or a React node.
    */
   children?:
     | ((params: { value: UniqueIdentifier }) => React.ReactNode)
