@@ -99,23 +99,20 @@ const ComboboxItem = React.forwardRef<
   <ComboboxPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5",
-      indicatorSide === "right" ? "pr-8 pl-2" : "pr-2 pl-8",
-      "text-sm outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[disabled]:opacity-50",
+      "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 text-sm outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[disabled]:opacity-50",
+      indicatorSide === "left" ? "pr-2 pl-8" : "pr-8 pl-2",
       className,
     )}
     {...props}
   >
-    <span
+    <ComboboxPrimitive.ItemIndicator
       className={cn(
         "absolute flex h-3.5 w-3.5 items-center justify-center",
-        indicatorSide === "right" ? "right-2" : "left-2",
+        indicatorSide === "left" ? "left-2" : "right-2",
       )}
     >
-      <ComboboxPrimitive.ItemIndicator>
-        <Check className="h-4 w-4" />
-      </ComboboxPrimitive.ItemIndicator>
-    </span>
+      <Check className="h-4 w-4" />
+    </ComboboxPrimitive.ItemIndicator>
     <ComboboxPrimitive.ItemText>{children}</ComboboxPrimitive.ItemText>
   </ComboboxPrimitive.Item>
 ));
@@ -186,15 +183,15 @@ ComboboxGroupLabel.displayName = ComboboxPrimitive.GroupLabel.displayName;
 
 export {
   Combobox,
-  ComboboxLabel,
   ComboboxAnchor,
-  ComboboxTrigger,
   ComboboxCancel,
   ComboboxContent,
-  ComboboxSeparator,
+  ComboboxEmpty,
   ComboboxGroup,
   ComboboxGroupLabel,
-  ComboboxEmpty,
   ComboboxInput,
   ComboboxItem,
+  ComboboxLabel,
+  ComboboxSeparator,
+  ComboboxTrigger,
 };
