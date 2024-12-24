@@ -43,7 +43,9 @@ export function ComponentTabs({ name, children }: ComponentTabsProps) {
           {Preview}
         </div>
       </Tab>
-      <Tab value="Code">{Code}</Tab>
+      <Tab value="Code" className="component-block">
+        {Code}
+      </Tab>
     </Tabs>
   );
 }

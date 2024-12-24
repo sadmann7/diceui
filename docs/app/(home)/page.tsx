@@ -8,7 +8,7 @@ export default function IndexPage() {
     <section className="container flex flex-col items-center justify-center gap-6 pt-6 pb-8 md:py-10">
       <div className="max-w-5xl space-y-8">
         <h1
-          className="animate-fade-up text-balance bg-gradient-to-br from-foreground/80 to-muted-foreground bg-clip-text text-center font-bold font-heading text-5xl/[3rem] text-transparent opacity-0 drop-shadow-sm md:text-7xl/[5rem]"
+          className="animate-fade-up text-balance bg-gradient-to-br from-foreground/80 to-muted-foreground bg-clip-text text-center font-bold text-5xl/[3rem] text-transparent opacity-0 drop-shadow-sm md:text-7xl/[5rem]"
           style={{ animationDelay: "0.20s", animationFillMode: "forwards" }}
         >
           {siteConfig.name}

@@ -66,6 +66,10 @@
 }
 
 @layer components {
+  .component-block pre {
+    @apply max-h-[431px];
+  }
+
   .mdx table {
     @apply rounded-md;
   }

@@ -1,9 +1,9 @@
-import "@/styles/globals.css";
 import { Providers } from "@/components/providers";
 import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/config/site";
-import { fontHeading, fontMono, fontSans } from "@/lib/fonts";
+import { fontMono, fontSans } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
+import "@/styles/globals.css";
 import type { Metadata, Viewport } from "next";
 import type * as React from "react";
 
@@ -56,7 +56,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body
         className={cn(
           "min-h-screen font-sans antialiased",
-          fontHeading.variable,
           fontSans.variable,
           fontMono.variable,
         )}

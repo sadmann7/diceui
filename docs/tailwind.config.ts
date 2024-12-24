@@ -15,7 +15,6 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        heading: ["var(--font-heading)", ...fontFamily.sans],
         sans: ["var(--font-geist-sans)", ...fontFamily.sans],
         mono: ["var(--font-geist-mono)", ...fontFamily.mono],
       },

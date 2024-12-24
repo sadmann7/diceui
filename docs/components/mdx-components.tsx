@@ -21,48 +21,12 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
     ...defaultComponents,
     ...components,
-    h1: (props) => (
-      <Heading
-        as="h1"
-        {...props}
-        className={cn(props.className, "font-heading")}
-      />
-    ),
-    h2: (props) => (
-      <Heading
-        as="h2"
-        {...props}
-        className={cn(props.className, "font-heading")}
-      />
-    ),
-    h3: (props) => (
-      <Heading
-        as="h3"
-        {...props}
-        className={cn(props.className, "font-heading")}
-      />
-    ),
-    h4: (props) => (
-      <Heading
-        as="h4"
-        {...props}
-        className={cn(props.className, "font-heading")}
-      />
-    ),
-    h5: (props) => (
-      <Heading
-        as="h5"
-        {...props}
-        className={cn(props.className, "font-heading")}
-      />
-    ),
-    h6: (props) => (
-      <Heading
-        as="h6"
-        {...props}
-        className={cn(props.className, "font-heading")}
-      />
-    ),
+    h1: (props) => <Heading as="h1" {...props} />,
+    h2: (props) => <Heading as="h2" {...props} />,
+    h3: (props) => <Heading as="h3" {...props} />,
+    h4: (props) => <Heading as="h4" {...props} />,
+    h5: (props) => <Heading as="h5" {...props} />,
+    h6: (props) => <Heading as="h6" {...props} />,
     table: ({
       className,
       ...props
@@ -76,13 +40,13 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       <Tabs className={cn("rounded-md", className)} {...props} />
     ),
     Tab,
-    pre: ({ className, ...props }: React.ComponentProps<typeof Pre>) => (
+    pre: ({ ...props }: React.ComponentProps<typeof Pre>) => (
       <CodeBlock {...props}>
-        <Pre className={cn("max-h-[432px]", className)}>{props.children}</Pre>
+        <Pre>{props.children}</Pre>
       </CodeBlock>
     ),
-    kbd: ({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) => (
-      <Kbd variant="outline" className={cn(className)} {...props} />
+    kbd: ({ ...props }: React.HTMLAttributes<HTMLSpanElement>) => (
+      <Kbd variant="outline" {...props} />
     ),
     ComponentTabs,
     ComponentSource,
