@@ -27,11 +27,34 @@ const ComboboxCancel = React.forwardRef<HTMLButtonElement, ComboboxCancelProps>(
         {...cancelProps}
         ref={forwardedRef}
         onClick={composeEventHandlers(cancelProps.onClick, () => {
-          context.inputRef.current?.focus();
+          context.onInputValueChange("");
+          context.filterStore.search = "";
           requestAnimationFrame(() => {
-            context.onInputValueChange("");
+            context.inputRef.current?.focus();
           });
         })}
+        onPointerDown={composeEventHandlers(
+          cancelProps.onPointerDown,
+          (event) => {
+            if (context.disabled) return;
+
+            // prevent implicit pointer capture
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+            if (target.hasPointerCapture(event.pointerId)) {
+              target.releasePointerCapture(event.pointerId);
+            }
+
+            if (
+              event.button === 0 &&
+              event.ctrlKey === false &&
+              event.pointerType === "mouse"
+            ) {
+              // prevent cancel from stealing focus from the input
+              event.preventDefault();
+            }
+          },
+        )}
       />
     );
   },
