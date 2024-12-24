@@ -49,7 +49,6 @@ export default function ComboboxGroupsDemo() {
         <ComboboxEmpty>No tricks found</ComboboxEmpty>
         {Object.entries(groupedTricks).map(([category, items], index) => (
           <React.Fragment key={category}>
-            {index > 0 && <ComboboxSeparator />}
             <ComboboxGroup>
               <ComboboxGroupLabel>{category}</ComboboxGroupLabel>
               {items.map((trick) => (
@@ -62,6 +61,9 @@ export default function ComboboxGroupsDemo() {
                 </ComboboxItem>
               ))}
             </ComboboxGroup>
+            {index < Object.entries(groupedTricks).length - 1 && (
+              <ComboboxSeparator />
+            )}
           </React.Fragment>
         ))}
       </ComboboxContent>
