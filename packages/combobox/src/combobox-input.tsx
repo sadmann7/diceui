@@ -108,14 +108,16 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
           const text = context.highlightedItem.textContent ?? "";
           if (!value) return;
 
-          if (!context.multiple) {
+          if (context.multiple) {
+            context.onInputValueChange("");
+          } else {
             context.onInputValueChange(text);
             context.onSelectedTextChange(text);
             context.onHighlightedItemChange(null);
             context.onOpenChange(false);
           }
+
           context.filterStore.search = "";
-          context.onInputValueChange("");
           context.onValueChange(value);
         }
 

@@ -91,19 +91,18 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
 
             if (context.multiple) {
               event?.currentTarget.focus();
-              context.inputRef.current?.focus();
               context.onInputValueChange("");
-              context.filterStore.search = "";
             } else {
               const text = itemRef.current?.textContent ?? "";
               context.onInputValueChange(text);
               context.onSelectedTextChange(text);
               context.onHighlightedItemChange(null);
               context.onOpenChange(false);
-              context.inputRef.current?.focus();
             }
 
+            context.filterStore.search = "";
             context.onValueChange(value);
+            context.inputRef.current?.focus();
           })}
           onPointerDown={composeEventHandlers(
             itemProps.onPointerDown,
