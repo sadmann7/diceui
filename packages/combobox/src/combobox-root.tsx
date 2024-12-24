@@ -116,7 +116,8 @@ interface ComboboxRootProps<Multiple extends boolean = false>
 
   /**
    * Event handler called when the filter is applied.
-   * Can be used to prevent the filtering behavior.
+   *
+   * Can be used to prevent the default filtering behavior.
    */
   onFilter?: (options: string[], inputValue: string) => string[];
 
@@ -130,9 +131,10 @@ interface ComboboxRootProps<Multiple extends boolean = false>
   disabled?: boolean;
 
   /**
-   * Whether the combobox uses fuzzy filtering.
+   * Whether the combobox uses fuzzy filtering. When false, the combobox will use exact string matching.
    *
-   * When false, the combobox will use exact string matching.
+   * When `onFilter` is provided, the combobox will use the provided function instead of fuzzy filtering.
+   *
    * @default true
    */
   fuzzy?: boolean;
@@ -163,6 +165,7 @@ interface ComboboxRootProps<Multiple extends boolean = false>
 
   /**
    * Whether to preserve the input value when the input is blurred and no item is selected.
+   *
    * Only applicable when items are not selected.
    * @default false
    */

@@ -171,4 +171,16 @@ export const examples: Registry = [
       },
     ],
   },
+  {
+    name: "combobox-custom-filter-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/combobox", "lucide-react"],
+    registryDependencies: ["combobox"],
+    files: [
+      {
+        path: "example/combobox-custom-filter-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
 ];

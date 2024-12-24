@@ -160,7 +160,7 @@ const ComboboxLabel = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ComboboxPrimitive.Label
     ref={ref}
-    className={cn("px-2 py-1.5 font-semibold text-sm", className)}
+    className={cn("px-0.5 py-1.5 font-semibold text-sm", className)}
     {...props}
   />
 ));

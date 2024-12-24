@@ -1,0 +1,19 @@
+{
+  "name": "combobox-custom-filter-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@diceui/combobox",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "combobox"
+  ],
+  "files": [
+    {
+      "path": "example/combobox-custom-filter-demo.tsx",
+      "content": "\"use client\";\r\n\r\nimport {\r\n  Combobox,\r\n  ComboboxAnchor,\r\n  ComboboxContent,\r\n  ComboboxEmpty,\r\n  ComboboxInput,\r\n  ComboboxItem,\r\n  ComboboxLabel,\r\n  ComboboxTrigger,\r\n} from \"@/registry/default/ui/combobox\";\r\nimport { ChevronDown } from \"lucide-react\";\r\nimport * as React from \"react\";\r\n\r\nconst frameworks = [\r\n  { label: \"Next.js\", value: \"nextjs\" },\r\n  { label: \"SvelteKit\", value: \"sveltekit\" },\r\n  { label: \"Nuxt\", value: \"nuxt\" },\r\n  { label: \"Remix\", value: \"remix\" },\r\n  { label: \"Astro\", value: \"astro\" },\r\n  { label: \"SolidStart\", value: \"solidstart\" },\r\n  { label: \"Qwik\", value: \"qwik\" },\r\n  { label: \"Gatsby\", value: \"gatsby\" },\r\n];\r\n\r\nexport default function ComboboxCustomFilterDemo() {\r\n  const [value, setValue] = React.useState(\"\");\r\n\r\n  // Custom filter that only matches from the start of the string\r\n  function onFilter(options: string[], term: string) {\r\n    return options.filter((option) =>\r\n      option.toLowerCase().startsWith(term.toLowerCase()),\r\n    );\r\n  }\r\n\r\n  return (\r\n    <Combobox value={value} onValueChange={setValue} onFilter={onFilter}>\r\n      <ComboboxLabel>Framework</ComboboxLabel>\r\n      <ComboboxAnchor>\r\n        <ComboboxInput placeholder=\"Select framework...\" />\r\n        <ComboboxTrigger>\r\n          <ChevronDown className=\"h-4 w-4\" />\r\n        </ComboboxTrigger>\r\n      </ComboboxAnchor>\r\n      <ComboboxContent>\r\n        <ComboboxEmpty>No framework found.</ComboboxEmpty>\r\n        {frameworks.map((framework) => (\r\n          <ComboboxItem key={framework.value} value={framework.value}>\r\n            {framework.label}\r\n          </ComboboxItem>\r\n        ))}\r\n      </ComboboxContent>\r\n    </Combobox>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

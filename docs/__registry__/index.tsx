@@ -277,6 +277,22 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "combobox-custom-filter-demo": {
+      name: "combobox-custom-filter-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["combobox"],
+      files: [{
+        path: "registry/default/example/combobox-custom-filter-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/example/combobox-custom-filter-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "utils": {
       name: "utils",
       description: "",
