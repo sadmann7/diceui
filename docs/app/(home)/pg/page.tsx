@@ -7,6 +7,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+} from "@/components/ui/popover";
+import {
   Select,
   SelectContent,
   SelectGroup,
@@ -25,11 +30,20 @@ import {
   ComboboxItem,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
+import { PopoverTrigger } from "@radix-ui/react-popover";
 import { ChevronDown } from "lucide-react";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
+      <Popover>
+        <PopoverAnchor>
+          <PopoverTrigger asChild>
+            <Button>Open</Button>
+          </PopoverTrigger>
+        </PopoverAnchor>
+        <PopoverContent>Test</PopoverContent>
+      </Popover>
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />

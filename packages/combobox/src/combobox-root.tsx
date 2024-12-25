@@ -15,6 +15,9 @@ import {
 } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
+import type { ComboboxAnchor } from "./combobox-anchor";
+import type { ComboboxInput } from "./combobox-input";
+import type { ComboboxPositioner } from "./combobox-positioner";
 
 const ROOT_NAME = "ComboboxRoot";
 
@@ -23,6 +26,11 @@ type Value<Multiple extends boolean = false> = Multiple extends true
   : string;
 
 type HighlightingDirection = "next" | "prev" | "first" | "last" | "selected";
+
+type CollectionElement = React.ElementRef<typeof Primitive.div>;
+type PositionerElement = React.ElementRef<typeof ComboboxPositioner>;
+type InputElement = React.ElementRef<typeof ComboboxInput>;
+type AnchorElement = React.ElementRef<typeof ComboboxAnchor>;
 
 interface ComboboxContextValue<Multiple extends boolean = false> {
   value: Value<Multiple>;
@@ -34,10 +42,10 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   selectedText: string;
   onSelectedTextChange: (value: string) => void;
   onFilter?: (options: string[], term: string) => string[];
-  collectionRef: React.RefObject<HTMLDivElement | null>;
-  listRef: React.RefObject<HTMLDivElement | null>;
-  inputRef: React.RefObject<HTMLInputElement | null>;
-  anchorRef: React.RefObject<HTMLDivElement | null>;
+  collectionRef: React.RefObject<CollectionElement | null>;
+  listRef: React.RefObject<PositionerElement | null>;
+  inputRef: React.RefObject<InputElement | null>;
+  anchorRef: React.RefObject<AnchorElement | null>;
   filterStore: {
     search: string;
     itemCount: number;
@@ -194,7 +202,7 @@ interface ComboboxRootProps<Multiple extends boolean = false>
 
 function ComboboxRootImpl<Multiple extends boolean = false>(
   props: ComboboxRootProps<Multiple>,
-  forwardedRef: React.ForwardedRef<HTMLDivElement>,
+  forwardedRef: React.ForwardedRef<CollectionElement>,
 ) {
   const {
     value: valueProp,
@@ -222,9 +230,9 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     ...rootProps
   } = props;
 
-  const collectionRef = React.useRef<HTMLDivElement | null>(null);
-  const listRef = React.useRef<HTMLDivElement | null>(null);
-  const inputRef = React.useRef<HTMLInputElement | null>(null);
+  const collectionRef = React.useRef<CollectionElement | null>(null);
+  const listRef = React.useRef<PositionerElement | null>(null);
+  const inputRef = React.useRef<InputElement | null>(null);
 
   const id = useId();
   const labelId = `${id}label`;

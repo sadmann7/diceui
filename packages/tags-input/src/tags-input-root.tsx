@@ -14,10 +14,14 @@ import {
   useFormControl,
   useId,
 } from "@diceui/shared";
+import type { TagsInputInput } from "./tags-input-input";
 
 type InputValue = string;
 
 const ROOT_NAME = "TagsInputRoot";
+
+type CollectionElement = React.ElementRef<typeof Primitive.div>;
+type InputElement = React.ElementRef<typeof TagsInputInput>;
 
 interface TagsInputContextValue<T = InputValue> {
   value: T[];
@@ -32,7 +36,7 @@ interface TagsInputContextValue<T = InputValue> {
   setEditingValue: (value: T | null) => void;
   displayValue: (value: T) => string;
   onItemLeave: () => void;
-  inputRef: React.RefObject<HTMLInputElement | null>;
+  inputRef: React.RefObject<InputElement | null>;
   addOnPaste: boolean;
   addOnTab: boolean;
   delimiter: string;
@@ -153,7 +157,7 @@ interface TagsInputRootProps<T = InputValue>
 }
 
 const TagsInputRoot = React.forwardRef<
-  HTMLDivElement,
+  CollectionElement,
   TagsInputRootProps<InputValue>
 >((props, ref) => {
   const {
@@ -190,15 +194,15 @@ const TagsInputRoot = React.forwardRef<
     null,
   );
   const [isInvalidInput, setIsInvalidInput] = React.useState(false);
-  const collectionRef = React.useRef<HTMLDivElement>(null);
-  const inputRef = React.useRef<HTMLInputElement>(null);
+  const collectionRef = React.useRef<CollectionElement>(null);
+  const inputRef = React.useRef<InputElement>(null);
 
   const id = useId();
   const inputId = `${id}input`;
   const labelId = `${id}label`;
 
   const dir = useDirection(dirProp);
-  const { getEnabledItems } = useCollection<HTMLDivElement>({
+  const { getEnabledItems } = useCollection<CollectionElement>({
     ref: collectionRef,
   });
   const { isFormControl, onTriggerChange } = useFormControl();
