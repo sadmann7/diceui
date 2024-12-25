@@ -2,6 +2,7 @@
 
 import { Index } from "@/__registry__";
 import { useConfig } from "@/hooks/use-config";
+import { cn } from "@/lib/utils";
 import { styles } from "@/registry/registry-styles";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import * as React from "react";
@@ -9,9 +10,14 @@ import * as React from "react";
 interface ComponentTabsProps {
   name: string;
   children: React.ReactNode;
+  preventPreviewFocus?: boolean;
 }
 
-export function ComponentTabs({ name, children }: ComponentTabsProps) {
+export function ComponentTabs({
+  name,
+  children,
+  preventPreviewFocus,
+}: ComponentTabsProps) {
   const [config] = useConfig();
   const index = styles.findIndex((style) => style.name === config.style);
 
@@ -38,7 +44,13 @@ export function ComponentTabs({ name, children }: ComponentTabsProps) {
 
   return (
     <Tabs items={["Preview", "Code"]} className="rounded-md">
-      <Tab value="Preview">
+      <Tab
+        value="Preview"
+        className={cn({
+          "focus-visible:outline-none focus-visible:ring-0":
+            preventPreviewFocus,
+        })}
+      >
         <div className="flex h-[400px] w-full items-center justify-center p-10">
           {Preview}
         </div>
