@@ -6,22 +6,14 @@ import { useComboboxContext } from "./combobox-root";
 const ANCHOR_NAME = "ComboboxAnchor";
 
 interface ComboboxAnchorProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
-  /**
-   * A virtual ref to be used instead of the actual anchor ref.
-   * This is useful for cases where the anchor is not a DOM element,
-   * such as when the anchor is a Popover.
-   */
-  virtualRef?: React.RefObject<HTMLDivElement | null>;
-}
+  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {}
 
 const ComboboxAnchor = React.forwardRef<HTMLDivElement, ComboboxAnchorProps>(
   (props, forwardedRef) => {
-    const { virtualRef, ...anchorProps } = props;
     const context = useComboboxContext(ANCHOR_NAME);
     const composedRef = useComposedRefs(
       forwardedRef,
-      virtualRef || context.anchorRef,
+      context.anchorRef,
       (node) => context.onHasAnchorChange(!!node),
     );
 
@@ -30,7 +22,7 @@ const ComboboxAnchor = React.forwardRef<HTMLDivElement, ComboboxAnchorProps>(
         data-state={context.open ? "open" : "closed"}
         data-disabled={context.disabled ? "" : undefined}
         data-anchor=""
-        {...anchorProps}
+        {...props}
         ref={composedRef}
       />
     );
