@@ -62,15 +62,16 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   onHasAnchorChange: (value: boolean) => void;
   disabled: boolean;
   loop: boolean;
+  manualFiltering: boolean;
   modal: boolean;
   multiple: Multiple;
   openOnFocus: boolean;
+  preserveInputOnBlur: boolean;
   readOnly: boolean;
   dir: Direction;
   id: string;
   labelId: string;
   contentId: string;
-  preserveInputOnBlur: boolean;
 }
 
 const [ComboboxProvider, useComboboxContext] =
@@ -139,12 +140,6 @@ interface ComboboxRootProps<Multiple extends boolean = false>
   disabled?: boolean;
 
   /**
-   * Whether the combobox should filter items externally.
-   * @default true
-   */
-  manualFiltering?: boolean;
-
-  /**
    * Whether the combobox uses fuzzy filtering. When false, the combobox will use exact string matching.
    *
    * When `onFilter` is provided, the combobox will use the provided function instead of fuzzy filtering.
@@ -152,6 +147,12 @@ interface ComboboxRootProps<Multiple extends boolean = false>
    * @default true
    */
   fuzzy?: boolean;
+
+  /**
+   * Whether the combobox should filter items externally.
+   * @default true
+   */
+  manualFiltering?: boolean;
 
   /**
    * Whether the combobox loops through items.
@@ -217,8 +218,8 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     onFilter,
     multiple = false,
     disabled = false,
-    manualFiltering = false,
     fuzzy = true,
+    manualFiltering = false,
     loop = false,
     modal = false,
     openOnFocus = false,
@@ -507,6 +508,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       onHasAnchorChange={onHasAnchorChange}
       disabled={disabled}
       loop={loop}
+      manualFiltering={manualFiltering}
       modal={modal}
       multiple={multiple}
       openOnFocus={openOnFocus}

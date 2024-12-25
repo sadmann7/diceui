@@ -27,6 +27,15 @@ import {
 } from "@/registry/default/ui/combobox";
 import { ChevronDown } from "lucide-react";
 
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+
 export default function PlaygroundPage() {
   return (
     <Shell>
@@ -46,6 +55,19 @@ export default function PlaygroundPage() {
           ))}
         </ComboboxContent>
       </Combobox>
+      <Command className="w-[15rem] rounded-md border">
+        <CommandInput placeholder="Search tricks..." />
+        <CommandList>
+          <CommandEmpty>No tricks found</CommandEmpty>
+          <CommandGroup>
+            {tricks.map((trick) => (
+              <CommandItem key={trick.value} value={trick.value}>
+                {trick.label}
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </CommandList>
+      </Command>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm" className="w-fit">
@@ -53,7 +75,14 @@ export default function PlaygroundPage() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
-          <DropdownMenuItem>Apple</DropdownMenuItem>
+          <DropdownMenuItem
+            onSelect={(event) => {
+              event.preventDefault();
+              console.log({ event });
+            }}
+          >
+            Apple
+          </DropdownMenuItem>
           <DropdownMenuItem>Banana</DropdownMenuItem>
           <DropdownMenuItem>Blueberry</DropdownMenuItem>
           <DropdownMenuItem>Grapes</DropdownMenuItem>
