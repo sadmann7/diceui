@@ -30,11 +30,15 @@ export default function ComboboxDebouncedDemo() {
   const [search, setSearch] = React.useState("");
   const [open, setOpen] = React.useState(false);
 
-  const filteredItems = tricks.filter((trick) =>
-    trick.label.toLowerCase().includes(search.toLowerCase()),
+  const filteredItems = React.useMemo(
+    () =>
+      tricks.filter((trick) =>
+        trick.label.toLowerCase().includes(search.toLowerCase()),
+      ),
+    [search],
   );
 
-  console.log({ filteredItems });
+  // console.log({ filteredItems });
 
   return (
     <Combobox

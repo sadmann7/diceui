@@ -5,16 +5,22 @@ import { useComboboxItemContext } from "./combobox-item";
 const ITEM_INDICATOR_NAME = "ComboboxItemIndicator";
 
 interface ComboboxItemIndicatorProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.span> {}
+  extends React.ComponentPropsWithoutRef<typeof Primitive.span> {
+  /**
+   * Whether to render the indicator even if the item is not selected.
+   * @default false
+   */
+  forceMount?: boolean;
+}
 
 const ComboboxItemIndicator = React.forwardRef<
   HTMLSpanElement,
   ComboboxItemIndicatorProps
 >((props, forwardedRef) => {
-  const { ...indicatorProps } = props;
+  const { forceMount = false, ...indicatorProps } = props;
   const itemContext = useComboboxItemContext(ITEM_INDICATOR_NAME);
 
-  if (!itemContext.isSelected) return null;
+  if (!forceMount && !itemContext.isSelected) return null;
 
   return (
     <Primitive.span aria-hidden="true" {...indicatorProps} ref={forwardedRef} />

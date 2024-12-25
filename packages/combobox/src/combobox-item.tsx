@@ -4,6 +4,7 @@ import {
   createContext,
   useComposedRefs,
   useId,
+  useIsomorphicLayoutEffect,
   useLayoutEffect,
 } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
@@ -50,7 +51,7 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
       : context.value === value;
     const isDisabled = disabled || context.disabled || false;
 
-    useLayoutEffect(() => {
+    useIsomorphicLayoutEffect(() => {
       if (value === "") {
         throw new Error(`${ITEM_NAME} value cannot be an empty string.`);
       }
@@ -60,6 +61,7 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
 
     const shouldRender =
       contentContext.forceMount ||
+      context.filterStore.itemCount === 0 ||
       (context.filterStore.search
         ? (context.filterStore.items.get(id) ?? 0) > 0
         : true);
