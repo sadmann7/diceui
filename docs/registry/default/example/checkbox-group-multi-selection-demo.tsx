@@ -23,27 +23,14 @@ export default function CheckboxGroupMultiSelectionDemo() {
   const [lastSelected, setLastSelected] = React.useState<number | null>(null);
   const isShiftPressedRef = React.useRef(false);
 
-  React.useEffect(() => {
-    function onKeyDown(event: KeyboardEvent) {
+  const onShiftKeyDown = React.useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
       if (event.key === "Shift") {
-        isShiftPressedRef.current = true;
+        isShiftPressedRef.current = event.type === "keydown";
       }
-    }
-
-    function onKeyUp(event: KeyboardEvent) {
-      if (event.key === "Shift") {
-        isShiftPressedRef.current = false;
-      }
-    }
-
-    window.addEventListener("keydown", onKeyDown);
-    window.addEventListener("keyup", onKeyUp);
-
-    return () => {
-      window.removeEventListener("keydown", onKeyDown);
-      window.removeEventListener("keyup", onKeyUp);
-    };
-  }, []);
+    },
+    [],
+  );
 
   const onValueChange = React.useCallback(
     (newValue: string[]) => {
@@ -101,7 +88,11 @@ export default function CheckboxGroupMultiSelectionDemo() {
       <CheckboxGroupDescription>
         Hold Shift and click to select multiple tricks
       </CheckboxGroupDescription>
-      <CheckboxGroupList className="mt-1">
+      <CheckboxGroupList
+        className="mt-1"
+        onKeyDown={onShiftKeyDown}
+        onKeyUp={onShiftKeyDown}
+      >
         {tricks.map((trick) => (
           <CheckboxGroupItem key={trick.value} value={trick.value}>
             {trick.label}
