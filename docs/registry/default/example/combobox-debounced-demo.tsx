@@ -89,12 +89,10 @@ export default function ComboboxDebouncedDemo() {
         </ComboboxTrigger>
       </ComboboxAnchor>
       <ComboboxContent>
-        {isLoading && (
-          <ComboboxProgress value={progress} label="Searching tricks..." />
-        )}
-        {!isLoading && filteredItems.length === 0 && (
-          <ComboboxEmpty>No trick found.</ComboboxEmpty>
-        )}
+        <ComboboxProgress value={progress} label="Searching tricks..." />
+        <ComboboxEmpty visible={!isLoading && filteredItems.length === 0}>
+          No trick found.
+        </ComboboxEmpty>
         {!isLoading &&
           filteredItems.map((trick) => (
             <ComboboxItem

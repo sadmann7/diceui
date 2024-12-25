@@ -118,36 +118,33 @@ export default function ComboboxVirtualizedDemo() {
         ref={(node) => setContent(node)}
         className="relative max-h-[300px] overflow-y-auto overflow-x-hidden"
       >
-        {filteredTricks.length > 0 ? (
-          <div
-            className="relative w-full"
-            style={{
-              height: `${virtualizer.getTotalSize()}px`,
-            }}
-          >
-            {virtualizer.getVirtualItems().map((virtualItem) => {
-              const trick = filteredTricks[virtualItem.index];
-              if (!trick) return null;
+        <ComboboxEmpty>No tricks found.</ComboboxEmpty>
+        <div
+          className="relative w-full"
+          style={{
+            height: `${virtualizer.getTotalSize()}px`,
+          }}
+        >
+          {virtualizer.getVirtualItems().map((virtualItem) => {
+            const trick = filteredTricks[virtualItem.index];
+            if (!trick) return null;
 
-              return (
-                <ComboboxItem
-                  key={virtualItem.key}
-                  value={trick.value}
-                  indicatorSide="right"
-                  className="absolute top-0 left-0 w-full"
-                  style={{
-                    height: `${virtualItem.size}px`,
-                    transform: `translateY(${virtualItem.start}px)`,
-                  }}
-                >
-                  {trick.label}
-                </ComboboxItem>
-              );
-            })}
-          </div>
-        ) : (
-          <ComboboxEmpty>No tricks found.</ComboboxEmpty>
-        )}
+            return (
+              <ComboboxItem
+                key={virtualItem.key}
+                value={trick.value}
+                indicatorSide="right"
+                className="absolute top-0 left-0 w-full"
+                style={{
+                  height: `${virtualItem.size}px`,
+                  transform: `translateY(${virtualItem.start}px)`,
+                }}
+              >
+                {trick.label}
+              </ComboboxItem>
+            );
+          })}
+        </div>
       </ComboboxContent>
     </Combobox>
   );
