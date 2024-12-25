@@ -11,6 +11,7 @@ import {
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
 import { ChevronDown } from "lucide-react";
+import { matchSorter } from "match-sorter";
 import * as React from "react";
 
 const tricks = [
@@ -28,9 +29,13 @@ export default function ComboboxCustomFilterDemo() {
   const [value, setValue] = React.useState("");
 
   function onFilter(options: string[], inputValue: string) {
-    return options.filter((option) =>
-      option.toLowerCase().startsWith(inputValue.toLowerCase()),
+    const trickOptions = tricks.filter((trick) =>
+      options.includes(trick.value),
     );
+    return matchSorter(trickOptions, inputValue, {
+      keys: ["label", "value"],
+      threshold: matchSorter.rankings.MATCHES,
+    }).map((trick) => trick.value);
   }
 
   return (
