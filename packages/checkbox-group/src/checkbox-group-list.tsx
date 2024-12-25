@@ -15,6 +15,7 @@ const CheckboxGroupList = React.forwardRef<
 
   return (
     <Primitive.div
+      role="group"
       data-orientation={context.orientation}
       data-invalid={context.isInvalid ? "" : undefined}
       {...props}

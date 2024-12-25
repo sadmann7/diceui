@@ -1,5 +1,3 @@
-"use client";
-
 import { composeEventHandlers } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
@@ -10,7 +8,7 @@ const CANCEL_NAME = "ComboboxCancel";
 interface ComboboxCancelProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.button> {
   /**
-   * Whether the cancel button should always be mounted.
+   * Whether the cancel button should always be rendered.
    *
    * By default, the cancel button is only rendered when the input has a value.
    * @default false

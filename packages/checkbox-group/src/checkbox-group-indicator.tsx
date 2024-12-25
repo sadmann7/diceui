@@ -7,7 +7,7 @@ const INDICATOR_NAME = "CheckboxGroupIndicator";
 
 interface CheckboxGroupIndicatorProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.span> {
-  /** Whether to force render the indicator */
+  /** Whether the indicator should always be rendered. */
   forceMount?: boolean;
 }
 

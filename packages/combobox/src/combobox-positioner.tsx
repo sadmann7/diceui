@@ -1,5 +1,3 @@
-"use client";
-
 import { useComposedRefs, useScrollLock } from "@diceui/shared";
 import { FloatingFocusManager } from "@floating-ui/react";
 import { Primitive } from "@radix-ui/react-primitive";
@@ -18,7 +16,7 @@ interface ComboboxPositionerProps
     >,
     React.ComponentPropsWithoutRef<typeof Primitive.div> {
   /**
-   * Whether the positioner should always be mounted.
+   * Whether the positioner should always be rendered.
    * @default false
    */
   forceMount?: boolean;

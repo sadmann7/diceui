@@ -8,7 +8,7 @@ const CLEAR_NAME = "TagsInputClear";
 interface TagsInputClearProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.button> {
   /**
-   * Whether the clear button should always be mounted.
+   * Whether the clear button should always be rendered.
    *
    * Can be used to animate the enter and exit of the clear button.
    * @default false

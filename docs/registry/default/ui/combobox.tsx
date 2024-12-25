@@ -8,6 +8,18 @@ import { cn } from "@/lib/utils";
 
 const Combobox = ComboboxPrimitive.Root;
 
+const ComboboxLabel = React.forwardRef<
+  React.ElementRef<typeof ComboboxPrimitive.Label>,
+  React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.Label>
+>(({ className, ...props }, ref) => (
+  <ComboboxPrimitive.Label
+    ref={ref}
+    className={cn("px-0.5 py-1.5 font-semibold text-sm", className)}
+    {...props}
+  />
+));
+ComboboxLabel.displayName = ComboboxPrimitive.Label.displayName;
+
 const ComboboxAnchor = React.forwardRef<
   React.ElementRef<typeof ComboboxPrimitive.Anchor>,
   React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.Anchor>
@@ -86,11 +98,50 @@ const ComboboxContent = React.forwardRef<
 ));
 ComboboxContent.displayName = ComboboxPrimitive.Content.displayName;
 
+const ComboboxEmpty = React.forwardRef<
+  React.ElementRef<typeof ComboboxPrimitive.Empty>,
+  React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.Empty>
+>(({ className, ...props }, ref) => (
+  <ComboboxPrimitive.Empty
+    ref={ref}
+    className={cn("py-6 text-center text-sm", className)}
+    {...props}
+  />
+));
+ComboboxEmpty.displayName = ComboboxPrimitive.Empty.displayName;
+
+const ComboboxGroup = React.forwardRef<
+  React.ElementRef<typeof ComboboxPrimitive.Group>,
+  React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.Group>
+>(({ className, ...props }, ref) => (
+  <ComboboxPrimitive.Group
+    ref={ref}
+    className={cn("overflow-hidden", className)}
+    {...props}
+  />
+));
+ComboboxGroup.displayName = ComboboxPrimitive.Group.displayName;
+
+const ComboboxGroupLabel = React.forwardRef<
+  React.ElementRef<typeof ComboboxPrimitive.GroupLabel>,
+  React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.GroupLabel>
+>(({ className, ...props }, ref) => (
+  <ComboboxPrimitive.GroupLabel
+    ref={ref}
+    className={cn(
+      "px-2 py-1.5 font-semibold text-muted-foreground text-xs",
+      className,
+    )}
+    {...props}
+  />
+));
+ComboboxGroupLabel.displayName = ComboboxPrimitive.GroupLabel.displayName;
+
 const ComboboxItem = React.forwardRef<
   React.ElementRef<typeof ComboboxPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.Item> & {
     /**
-     * The side of the indicator relative to the item text.
+     * The side of the item indicator relative to the item text.
      * @default "left"
      */
     indicatorSide?: "left" | "right";
@@ -118,18 +169,6 @@ const ComboboxItem = React.forwardRef<
 ));
 ComboboxItem.displayName = ComboboxPrimitive.Item.displayName;
 
-const ComboboxEmpty = React.forwardRef<
-  React.ElementRef<typeof ComboboxPrimitive.Empty>,
-  React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.Empty>
->(({ className, ...props }, ref) => (
-  <ComboboxPrimitive.Empty
-    ref={ref}
-    className={cn("py-6 text-center text-sm", className)}
-    {...props}
-  />
-));
-ComboboxEmpty.displayName = ComboboxPrimitive.Empty.displayName;
-
 const ComboboxSeparator = React.forwardRef<
   React.ElementRef<typeof ComboboxPrimitive.Separator>,
   React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.Separator>
@@ -142,56 +181,17 @@ const ComboboxSeparator = React.forwardRef<
 ));
 ComboboxSeparator.displayName = ComboboxPrimitive.Separator.displayName;
 
-const ComboboxGroup = React.forwardRef<
-  React.ElementRef<typeof ComboboxPrimitive.Group>,
-  React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.Group>
->(({ className, ...props }, ref) => (
-  <ComboboxPrimitive.Group
-    ref={ref}
-    className={cn("overflow-hidden", className)}
-    {...props}
-  />
-));
-ComboboxGroup.displayName = ComboboxPrimitive.Group.displayName;
-
-const ComboboxLabel = React.forwardRef<
-  React.ElementRef<typeof ComboboxPrimitive.Label>,
-  React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.Label>
->(({ className, ...props }, ref) => (
-  <ComboboxPrimitive.Label
-    ref={ref}
-    className={cn("px-0.5 py-1.5 font-semibold text-sm", className)}
-    {...props}
-  />
-));
-ComboboxLabel.displayName = ComboboxPrimitive.Label.displayName;
-
-const ComboboxGroupLabel = React.forwardRef<
-  React.ElementRef<typeof ComboboxPrimitive.GroupLabel>,
-  React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.GroupLabel>
->(({ className, ...props }, ref) => (
-  <ComboboxPrimitive.GroupLabel
-    ref={ref}
-    className={cn(
-      "px-2 py-1.5 font-semibold text-muted-foreground text-xs",
-      className,
-    )}
-    {...props}
-  />
-));
-ComboboxGroupLabel.displayName = ComboboxPrimitive.GroupLabel.displayName;
-
 export {
   Combobox,
+  ComboboxLabel,
   ComboboxAnchor,
+  ComboboxInput,
+  ComboboxTrigger,
   ComboboxCancel,
   ComboboxContent,
   ComboboxEmpty,
   ComboboxGroup,
   ComboboxGroupLabel,
-  ComboboxInput,
   ComboboxItem,
-  ComboboxLabel,
   ComboboxSeparator,
-  ComboboxTrigger,
 };

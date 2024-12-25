@@ -3,14 +3,14 @@
 export { ComboboxRoot, Root } from "./combobox-root";
 export type { ComboboxRootProps } from "./combobox-root";
 
+export { ComboboxLabel, Label } from "./combobox-label";
+export type { ComboboxLabelProps } from "./combobox-label";
+
 export { Anchor, ComboboxAnchor } from "./combobox-anchor";
 export type { ComboboxAnchorProps } from "./combobox-anchor";
 
 export { ComboboxTrigger, Trigger } from "./combobox-trigger";
 export type { ComboboxTriggerProps } from "./combobox-trigger";
-
-export { Arrow, ComboboxArrow } from "./combobox-arrow";
-export type { ComboboxArrowProps } from "./combobox-arrow";
 
 export { ComboboxCancel, Cancel } from "./combobox-cancel";
 export type { ComboboxCancelProps } from "./combobox-cancel";
@@ -21,8 +21,8 @@ export type { ComboboxPortalProps } from "./combobox-portal";
 export { ComboboxContent, Content } from "./combobox-content";
 export type { ComboboxContentProps } from "./combobox-content";
 
-export { ComboboxLabel, Label } from "./combobox-label";
-export type { ComboboxLabelProps } from "./combobox-label";
+export { Arrow, ComboboxArrow } from "./combobox-arrow";
+export type { ComboboxArrowProps } from "./combobox-arrow";
 
 export { ComboboxEmpty, Empty } from "./combobox-empty";
 export type { ComboboxEmptyProps } from "./combobox-empty";

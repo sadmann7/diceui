@@ -27,13 +27,13 @@ interface CheckboxGroupItemProps
     React.ComponentPropsWithoutRef<typeof Primitive.button>,
     "checked" | "defaultChecked" | "onCheckedChange"
   > {
-  /** Value of the checkbox */
+  /** Value of the checkbox. */
   value: string;
 
-  /** Whether the checkbox is disabled */
+  /** Whether the checkbox is disabled. */
   disabled?: boolean;
 
-  /** Whether the checkbox is required */
+  /** Whether the checkbox is required. */
   required?: boolean;
 }
 
@@ -50,6 +50,7 @@ const CheckboxGroupItem = React.forwardRef<
   const { isFormControl, trigger, onTriggerChange } =
     useFormControl<HTMLButtonElement>();
   const composedRefs = useComposedRefs(ref, (node) => onTriggerChange(node));
+  const lastClickTimeRef = React.useRef(0);
   const hasConsumerStoppedPropagationRef = React.useRef(false);
 
   return (
@@ -74,7 +75,15 @@ const CheckboxGroupItem = React.forwardRef<
         {...itemProps}
         ref={composedRefs}
         onClick={composeEventHandlers(props.onClick, (event) => {
-          event.preventDefault();
+          const now = Date.now();
+          // Ignore rapid subsequent clicks (debounce)
+          // This prevents event bubbling from clicking on the indicator
+          if (now - lastClickTimeRef.current < 50) {
+            event.stopPropagation();
+            return;
+          }
+          lastClickTimeRef.current = now;
+
           context.onItemCheckedChange(value, !isChecked);
 
           if (isFormControl) {
@@ -87,6 +96,7 @@ const CheckboxGroupItem = React.forwardRef<
           }
         })}
         onKeyDown={composeEventHandlers(props.onKeyDown, (event) => {
+          // Checkbox group items should not trigger on enter key press
           if (event.key === "Enter") event.preventDefault();
         })}
       />

@@ -1,5 +1,3 @@
-"use client";
-
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { useComboboxGroupContext } from "./combobox-group";
@@ -7,9 +5,7 @@ import { useComboboxGroupContext } from "./combobox-group";
 const GROUP_LABEL_NAME = "ComboboxGroupLabel";
 
 interface ComboboxGroupLabelProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
-  htmlFor?: string;
-}
+  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {}
 
 const ComboboxGroupLabel = React.forwardRef<
   HTMLDivElement,
@@ -18,12 +14,7 @@ const ComboboxGroupLabel = React.forwardRef<
   const groupContext = useComboboxGroupContext(GROUP_LABEL_NAME);
 
   return (
-    <Primitive.div
-      id={groupContext.labelId}
-      htmlFor={groupContext.id}
-      {...props}
-      ref={forwardedRef}
-    />
+    <Primitive.div id={groupContext.labelId} {...props} ref={forwardedRef} />
   );
 });
 

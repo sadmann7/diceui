@@ -87,8 +87,8 @@ const TagsInputClear = TagsInputPrimitive.Clear;
 export {
   TagsInput,
   TagsInputLabel,
-  TagsInputClear,
   TagsInputList,
   TagsInputInput,
   TagsInputItem,
+  TagsInputClear,
 };

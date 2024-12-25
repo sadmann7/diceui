@@ -1,5 +1,3 @@
-"use client";
-
 import { createContext, useId } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
@@ -18,7 +16,7 @@ const [ComboboxGroupProvider, useComboboxGroupContext] =
 interface ComboboxGroupProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
   /**
-   * Whether to force mount the group even if it's not visible during filtering.
+   * Whether to render the group even if it's not visible during filtering.
    * @default false
    */
   forceMount?: boolean;
