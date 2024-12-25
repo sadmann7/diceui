@@ -1,9 +1,8 @@
 import * as React from "react";
 
 /**
- * A hook to determine if element is inside a form element
- * @param form - The form element to check against
- * @see https://github.com/radix-ui/primitives/blob/main/packages/react/select/src/Select.tsx
+ * A hook to determine if element is inside a form element.
+ * @param form - The form element to check against.
  */
 export function useFormControl<TElement extends HTMLElement>(form?: string) {
   const [trigger, setTrigger] = React.useState<TElement | null>(null);

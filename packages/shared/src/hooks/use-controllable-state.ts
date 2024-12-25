@@ -6,11 +6,11 @@ import * as React from "react";
 
 import { useCallbackRef } from "./use-callback-ref";
 
-type UseControllableStateParams<T> = {
+interface UseControllableStateParams<T> {
   prop?: T | undefined;
   defaultProp?: T | undefined;
   onChange?: (state: T) => void;
-};
+}
 
 type SetStateFn<T> = (prevState?: T) => T;
 

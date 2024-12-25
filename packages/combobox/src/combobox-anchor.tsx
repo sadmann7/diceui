@@ -10,13 +10,13 @@ interface ComboboxAnchorProps
 
 const ComboboxAnchor = React.forwardRef<HTMLDivElement, ComboboxAnchorProps>(
   (props, forwardedRef) => {
-    const [isFocused, setIsFocused] = React.useState(false);
     const context = useComboboxContext(ANCHOR_NAME);
     const composedRef = useComposedRefs(
       forwardedRef,
       context.anchorRef,
       (node) => context.onHasAnchorChange(!!node),
     );
+    const [isFocused, setIsFocused] = React.useState(false);
 
     return (
       <Primitive.div
@@ -25,12 +25,8 @@ const ComboboxAnchor = React.forwardRef<HTMLDivElement, ComboboxAnchorProps>(
         data-disabled={context.disabled ? "" : undefined}
         data-focused={isFocused ? "" : undefined}
         {...props}
-        onFocus={composeEventHandlers(props.onFocus, () => setIsFocused(true), {
-          checkForDefaultPrevented: true,
-        })}
-        onBlur={composeEventHandlers(props.onBlur, () => setIsFocused(false), {
-          checkForDefaultPrevented: true,
-        })}
+        onFocus={composeEventHandlers(props.onFocus, () => setIsFocused(true))}
+        onBlur={composeEventHandlers(props.onBlur, () => setIsFocused(false))}
         ref={composedRef}
       />
     );
