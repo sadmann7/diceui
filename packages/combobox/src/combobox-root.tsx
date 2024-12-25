@@ -540,7 +540,8 @@ function getDataState(open: boolean) {
 
 type ComboboxRootComponent = (<Multiple extends boolean = false>(
   props: ComboboxRootProps<Multiple> & { ref?: React.Ref<HTMLDivElement> },
-) => React.ReactElement) & { displayName: string };
+) => React.ReactElement) &
+  Pick<React.FC<ComboboxRootProps<boolean>>, "displayName">;
 
 const ComboboxRoot = forwardRef(ComboboxRootImpl) as ComboboxRootComponent;
 
