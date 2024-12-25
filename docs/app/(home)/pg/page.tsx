@@ -75,14 +75,7 @@ export default function PlaygroundPage() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
-          <DropdownMenuItem
-            onSelect={(event) => {
-              event.preventDefault();
-              console.log({ event });
-            }}
-          >
-            Apple
-          </DropdownMenuItem>
+          <DropdownMenuItem>Apple</DropdownMenuItem>
           <DropdownMenuItem>Banana</DropdownMenuItem>
           <DropdownMenuItem>Blueberry</DropdownMenuItem>
           <DropdownMenuItem>Grapes</DropdownMenuItem>
