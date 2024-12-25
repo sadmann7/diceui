@@ -1,4 +1,4 @@
-import { useComposedRefs } from "@diceui/shared";
+import { composeEventHandlers, useComposedRefs } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { useComboboxContext } from "./combobox-root";
@@ -10,6 +10,7 @@ interface ComboboxAnchorProps
 
 const ComboboxAnchor = React.forwardRef<HTMLDivElement, ComboboxAnchorProps>(
   (props, forwardedRef) => {
+    const [isFocused, setIsFocused] = React.useState(false);
     const context = useComboboxContext(ANCHOR_NAME);
     const composedRef = useComposedRefs(
       forwardedRef,
@@ -20,9 +21,16 @@ const ComboboxAnchor = React.forwardRef<HTMLDivElement, ComboboxAnchorProps>(
     return (
       <Primitive.div
         data-state={context.open ? "open" : "closed"}
-        data-disabled={context.disabled ? "" : undefined}
         data-anchor=""
+        data-disabled={context.disabled ? "" : undefined}
+        data-focused={isFocused ? "" : undefined}
         {...props}
+        onFocus={composeEventHandlers(props.onFocus, () => setIsFocused(true), {
+          checkForDefaultPrevented: true,
+        })}
+        onBlur={composeEventHandlers(props.onBlur, () => setIsFocused(false), {
+          checkForDefaultPrevented: true,
+        })}
         ref={composedRef}
       />
     );
