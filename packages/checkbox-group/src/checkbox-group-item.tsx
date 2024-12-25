@@ -1,6 +1,5 @@
 import {
   BubbleInput,
-  DATA_ITEM_ATTR,
   composeEventHandlers,
   createContext,
   useComposedRefs,
@@ -60,7 +59,6 @@ const CheckboxGroupItem = React.forwardRef<
       disabled={isDisabled}
     >
       <Primitive.button
-        {...{ [DATA_ITEM_ATTR]: "" }}
         type="button"
         role="checkbox"
         aria-checked={isChecked}
