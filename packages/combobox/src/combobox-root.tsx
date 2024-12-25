@@ -17,6 +17,7 @@ import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import type { ComboboxAnchor } from "./combobox-anchor";
 import type { ComboboxInput } from "./combobox-input";
+import type { ComboboxItem } from "./combobox-item";
 import type { ComboboxPositioner } from "./combobox-positioner";
 
 const ROOT_NAME = "ComboboxRoot";
@@ -31,7 +32,7 @@ type CollectionElement = React.ElementRef<typeof Primitive.div>;
 type PositionerElement = React.ElementRef<typeof ComboboxPositioner>;
 type InputElement = React.ElementRef<typeof ComboboxInput>;
 type AnchorElement = React.ElementRef<typeof ComboboxAnchor>;
-
+type ItemElement = React.ElementRef<typeof ComboboxItem>;
 interface ComboboxContextValue<Multiple extends boolean = false> {
   value: Value<Multiple>;
   onValueChange: (value: Value<Multiple>) => void;
@@ -52,8 +53,8 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
     items: Map<string, number>;
     groups: Map<string, Set<string>>;
   };
-  highlightedItem: HTMLElement | null;
-  onHighlightedItemChange: (item: HTMLElement | null) => void;
+  highlightedItem: ItemElement | null;
+  onHighlightedItemChange: (item: ItemElement | null) => void;
   onRegisterItem: (id: string, value: string, groupId?: string) => () => void;
   onFilterItems: () => void;
   onHighlightMove: (direction: HighlightingDirection) => void;
@@ -240,8 +241,8 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
 
   const dir = useDirection(dirProp);
   const { anchorRef, hasAnchor, onHasAnchorChange } =
-    useAnchor<HTMLDivElement>();
-  const { getEnabledItems } = useCollection<HTMLElement>({
+    useAnchor<AnchorElement>();
+  const { getEnabledItems } = useCollection<CollectionElement>({
     ref: collectionRef,
   });
   const { isFormControl, onTriggerChange } = useFormControl();
@@ -269,7 +270,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
   });
   const [selectedText, setSelectedText] = React.useState("");
   const [highlightedItem, setHighlightedItem] =
-    React.useState<HTMLElement | null>(null);
+    React.useState<ItemElement | null>(null);
 
   const items = React.useRef(new Map<string, string>()).current;
   const groups = React.useRef(new Map<string, Set<string>>()).current;
@@ -439,7 +440,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       const items = getEnabledItems();
       if (!items.length) return;
 
-      const currentIndex = items.indexOf(highlightedItem as HTMLElement);
+      const currentIndex = items.indexOf(highlightedItem as ItemElement);
       let nextIndex: number;
 
       switch (direction) {

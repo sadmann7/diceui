@@ -28,9 +28,6 @@ const ComboboxAnchor = React.forwardRef<HTMLDivElement, ComboboxAnchorProps>(
     return (
       <Primitive.div
         data-state={context.open ? "open" : "closed"}
-        data-focused={
-          context.inputRef.current?.matches(":focus") ? "" : undefined
-        }
         data-disabled={context.disabled ? "" : undefined}
         data-anchor=""
         {...anchorProps}
