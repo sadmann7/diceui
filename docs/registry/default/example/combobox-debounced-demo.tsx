@@ -65,15 +65,20 @@ export default function ComboboxDebouncedDemo() {
     [],
   );
 
+  const onInputValueChange = React.useCallback(
+    (value: string) => {
+      setSearch(value);
+      debouncedSearch(value);
+    },
+    [debouncedSearch],
+  );
+
   return (
     <Combobox
       value={value}
       onValueChange={setValue}
       inputValue={search}
-      onInputValueChange={(value) => {
-        setSearch(value);
-        debouncedSearch(value);
-      }}
+      onInputValueChange={onInputValueChange}
       manualFiltering
     >
       <ComboboxLabel>Trick</ComboboxLabel>

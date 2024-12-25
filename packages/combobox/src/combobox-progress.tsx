@@ -29,7 +29,7 @@ const PROGRESS_NAME = "ComboboxProgress";
 interface ComboboxProgressProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
    * The current progress value.
-   * @default 0
+   * @default null
    */
   value?: number | null;
 
@@ -51,7 +51,12 @@ const ComboboxProgress = React.forwardRef<
 
   if (!context.open) return null;
 
-  const { value: valueProp = 0, max: maxProp, label, ...loadingProps } = props;
+  const {
+    value: valueProp = null,
+    max: maxProp,
+    label,
+    ...progressProps
+  } = props;
   const max = isValidMaxNumber(maxProp) ? maxProp : DEFAULT_MAX;
   const value = isValidValueNumber(valueProp, max) ? valueProp : null;
   const state = getProgressState(value, max);
@@ -68,7 +73,7 @@ const ComboboxProgress = React.forwardRef<
       data-state={state}
       data-value={value ?? undefined}
       data-max={max}
-      {...loadingProps}
+      {...progressProps}
       ref={forwardedRef}
     />
   );
