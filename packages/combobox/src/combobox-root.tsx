@@ -285,18 +285,38 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
 
   const normalizeString = React.useCallback(
     (str: string) => {
-      let normalized = normalizedCache.get(str);
+      if (!str) return "";
+      if (typeof str !== "string") return "";
+
+      const cacheKey = str;
+      let normalized = normalizedCache.get(cacheKey);
       if (normalized !== undefined) return normalized;
 
-      normalized = str
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/\p{Diacritic}/gu, "")
-        .replace(/[-_\s]+/g, " ")
-        .trim();
+      const SEPARATORS_PATTERN = /[-_\s./\\|:;,]+/g;
+      const UNWANTED_CHARS = /[^\p{L}\p{N}\s]/gu;
 
-      normalizedCache.set(str, normalized);
-      return normalized;
+      try {
+        normalized = str
+          .toLowerCase()
+          .replace(UNWANTED_CHARS, " ")
+          .replace(SEPARATORS_PATTERN, " ")
+          .trim();
+
+        if (normalized !== str.toLowerCase()) {
+          normalizedCache.set(cacheKey, normalized);
+        }
+
+        return normalized;
+      } catch (_err) {
+        normalized = str
+          .toLowerCase()
+          .replace(/[^a-z0-9\s]/g, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+
+        normalizedCache.set(cacheKey, normalized);
+        return normalized;
+      }
     },
     [normalizedCache],
   );

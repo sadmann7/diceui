@@ -48,7 +48,6 @@ export function useFilter(options?: Intl.CollatorOptions): Filter {
 
       const normalizedString = string.normalize("NFC");
       const normalizedSubstring = substring.normalize("NFC");
-
       return (
         collator.compare(
           normalizedString.slice(-normalizedSubstring.length),
