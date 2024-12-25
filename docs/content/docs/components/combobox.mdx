@@ -125,7 +125,7 @@ An accessible label that describes the combobox. Associates with the input eleme
 
 ### Anchor
 
-A wrapper element that positions the combobox popover relative to the input and trigger. Provides the reference point for floating positioning.
+A wrapper element that positions the combobox popover relative to the input and trigger. Provides the reference point for popover positioning.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
@@ -183,7 +183,7 @@ Creates a portal for rendering the combobox content outside of its DOM hierarchy
 
 ### Content
 
-The floating container for combobox options. Features smart positioning with collision detection, boundary constraints, and responsive sizing. Supports custom animations and transitions.
+The popover container for combobox items. Features smart positioning with collision detection, boundary constraints, and responsive sizing. Supports custom animations and transitions.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
@@ -223,11 +223,11 @@ The floating container for combobox options. Features smart positioning with col
     },
     {
       title: "--dice-available-width",
-      description: "Available width in the viewport for the floating element.",
+      description: "Available width in the viewport for the popover element.",
     },
     {
       title: "--dice-available-height",
-      description: "Available height in the viewport for the floating element.",
+      description: "Available height in the viewport for the popover element.",
     },
   ]}
 />

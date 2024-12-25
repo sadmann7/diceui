@@ -11,7 +11,6 @@ interface CSSVariablesTableProps {
   variables: {
     title: string;
     description: string;
-    defaultValue?: string;
   }[];
 }
 
@@ -22,7 +21,6 @@ export function CSSVariablesTable({ variables }: CSSVariablesTableProps) {
         <TableRow>
           <TableHead>CSS Variable</TableHead>
           <TableHead>Description</TableHead>
-          <TableHead>Default</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -32,13 +30,6 @@ export function CSSVariablesTable({ variables }: CSSVariablesTableProps) {
               <code className="text-[13px]">{variable.title}</code>
             </TableCell>
             <TableCell>{variable.description}</TableCell>
-            <TableCell>
-              {variable.defaultValue ? (
-                <code className="text-[13px]">{variable.defaultValue}</code>
-              ) : (
-                <span className="text-muted-foreground">—</span>
-              )}
-            </TableCell>
           </TableRow>
         ))}
       </TableBody>
