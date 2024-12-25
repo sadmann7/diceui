@@ -41,7 +41,7 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
     // Make the group context optional, so item can be used outside of a group
     const groupContext = useComboboxGroupContext(ITEM_NAME, false);
     const itemRef = React.useRef<HTMLDivElement>(null);
-    const composedRef = useComposedRefs(forwardedRef, itemRef);
+    const composedRefs = useComposedRefs(forwardedRef, itemRef);
     const id = useId();
     const textId = `${id}text`;
 
@@ -60,8 +60,8 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
 
     const shouldRender =
       contentContext.forceMount ||
-      (!context.filterStore.search && !context.manualFiltering) ||
-      (context.filterStore.search && !context.manualFiltering
+      context.manualFiltering ||
+      (context.filterStore.search
         ? (context.filterStore.items.get(id) ?? 0) > 0
         : true);
 
@@ -87,7 +87,7 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
           data-disabled={isDisabled ? "" : undefined}
           tabIndex={disabled ? undefined : -1}
           {...itemProps}
-          ref={composedRef}
+          ref={composedRefs}
           onClick={composeEventHandlers(itemProps.onClick, (event) => {
             if (isDisabled || context.readOnly) return;
 

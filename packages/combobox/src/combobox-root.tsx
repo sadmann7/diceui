@@ -283,12 +283,23 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
   }).current;
   const normalizedCache = React.useRef(new Map<string, string>()).current;
 
-  const normalizeString = React.useCallback((str: string) => {
-    return str
-      .toLowerCase()
-      .replace(/[-_\s]+/g, " ")
-      .trim();
-  }, []);
+  const normalizeString = React.useCallback(
+    (str: string) => {
+      let normalized = normalizedCache.get(str);
+      if (normalized !== undefined) return normalized;
+
+      normalized = str
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/\p{Diacritic}/gu, "")
+        .replace(/[-_\s]+/g, " ")
+        .trim();
+
+      normalizedCache.set(str, normalized);
+      return normalized;
+    },
+    [normalizedCache],
+  );
 
   const filter = useFilter({ sensitivity: "base" });
   const currentFilter = React.useMemo(
@@ -298,10 +309,15 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
 
   const getItemScore = React.useCallback(
     (value: string, searchTerm: string) => {
+      if (!searchTerm) return 1;
+      if (!value) return 0;
+
       const normalizedValue = normalizeString(value);
       const normalizedSearch = normalizeString(searchTerm);
 
-      if (normalizedSearch.trim() === "") return 1;
+      if (normalizedSearch === "") return 1;
+      if (normalizedValue === normalizedSearch) return 2;
+      if (normalizedValue.startsWith(normalizedSearch)) return 1.5;
 
       return onFilter
         ? Number(onFilter([value], searchTerm).length > 0)
@@ -311,37 +327,61 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
   );
 
   const onFilterItems = React.useCallback(() => {
-    if (manualFiltering) return;
+    if (!filterStore.search || manualFiltering) {
+      filterStore.itemCount = items.size;
+      return;
+    }
 
     filterStore.groups.clear();
     filterStore.items.clear();
 
     const searchTerm = filterStore.search;
     let itemCount = 0;
+    let pendingBatch: Array<[string, string]> = [];
+    const BATCH_SIZE = 250;
 
-    const BATCH_SIZE = 100;
-    const itemEntries = Array.from(items.entries());
+    function processBatch() {
+      if (!pendingBatch.length) return;
 
-    for (let i = 0; i < itemEntries.length; i += BATCH_SIZE) {
-      const batch = itemEntries.slice(i, i + BATCH_SIZE);
+      const scores = new Map<string, number>();
 
-      for (const [id, value] of batch) {
-        let normalizedValue = normalizedCache.get(value);
-        if (!normalizedValue) {
-          normalizedValue = normalizeString(value);
-          normalizedCache.set(value, normalizedValue);
-        }
-
+      for (const [id, value] of pendingBatch) {
         const score = getItemScore(value, searchTerm);
         if (score > 0) {
-          filterStore.items.set(id, score);
+          scores.set(id, score);
           itemCount++;
         }
       }
+
+      // Sort by score in descending order and add to filterStore
+      const sortedScores = Array.from(scores.entries()).sort(
+        ([, a], [, b]) => b - a,
+      );
+
+      for (const [id, score] of sortedScores) {
+        filterStore.items.set(id, score);
+      }
+
+      pendingBatch = [];
+    }
+
+    // Process items in batches
+    for (const [id, value] of items) {
+      pendingBatch.push([id, value]);
+
+      if (pendingBatch.length >= BATCH_SIZE) {
+        processBatch();
+      }
+    }
+
+    // Process remaining items
+    if (pendingBatch.length > 0) {
+      processBatch();
     }
 
     filterStore.itemCount = itemCount;
 
+    // Update groups if needed
     if (groups.size && itemCount > 0) {
       const matchingItems = new Set(filterStore.items.keys());
 
@@ -355,15 +395,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
         }
       }
     }
-  }, [
-    manualFiltering,
-    filterStore,
-    items,
-    groups,
-    getItemScore,
-    normalizeString,
-    normalizedCache,
-  ]);
+  }, [manualFiltering, filterStore, items, groups, getItemScore]);
 
   const onOpenChange = React.useCallback(
     async (open: boolean) => {
@@ -393,7 +425,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
 
   const onValueChange = React.useCallback(
     (newValue: string | string[]) => {
-      if (readOnly) return;
+      if (disabled || readOnly) return;
 
       if (multiple) {
         const currentValue = Array.isArray(value) ? value : [];
@@ -408,7 +440,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
 
       setValue(newValue as Value<Multiple>);
     },
-    [multiple, setValue, value, readOnly],
+    [multiple, setValue, value, disabled, readOnly],
   );
 
   const onRegisterItem = React.useCallback(
