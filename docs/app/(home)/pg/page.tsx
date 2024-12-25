@@ -1,3 +1,5 @@
+"use client";
+
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,11 +27,51 @@ import {
   ComboboxItem,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
+import { CommandLoading } from "cmdk";
 import { ChevronDown } from "lucide-react";
 
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
+} from "@/components/ui/command";
+import ComboboxDebouncedDemo from "@/registry/default/example/combobox-debounced-demo";
+import * as React from "react";
+
 export default function PlaygroundPage() {
+  const [search, setSearch] = React.useState("");
+
+  const filteredItems = tricks.filter((trick) =>
+    trick.label.toLowerCase().includes(search.toLowerCase()),
+  );
+
   return (
     <Shell>
+      {/* <Command
+        className="w-[15rem] rounded-lg border shadow-md"
+        shouldFilter={false}
+      >
+        <CommandInput
+          placeholder="Type a command or search..."
+          value={search}
+          onValueChange={(value) => setSearch(value)}
+        />
+        <CommandList>
+          <CommandEmpty>No tricks found.</CommandEmpty>
+          <CommandLoading>Loading...</CommandLoading>
+          {filteredItems.map((trick) => (
+            <CommandItem key={trick.value} value={trick.value}>
+              {trick.label}
+            </CommandItem>
+          ))}
+        </CommandList>
+      </Command> */}
+      <ComboboxDebouncedDemo />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />

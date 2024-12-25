@@ -65,7 +65,7 @@ export default function ComboboxVirtualizedDemo() {
       onValueChange={setValue}
       inputValue={inputValue}
       onInputValueChange={onInputValueChange}
-      shouldFilter={false}
+      manualFiltering
     >
       <ComboboxLabel>
         Trick ({filteredTricks.length.toLocaleString()})

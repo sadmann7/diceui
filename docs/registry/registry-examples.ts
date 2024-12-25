@@ -105,6 +105,18 @@ export const examples: Registry = [
     ],
   },
   {
+    name: "combobox-debounced-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/combobox", "lucide-react"],
+    registryDependencies: ["combobox"],
+    files: [
+      {
+        path: "example/combobox-debounced-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "combobox-virtualized-demo",
     type: "registry:example",
     dependencies: [

@@ -1,0 +1,19 @@
+{
+  "name": "combobox-debounced-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@diceui/combobox",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "combobox"
+  ],
+  "files": [
+    {
+      "path": "example/combobox-debounced-demo.tsx",
+      "content": "\"use client\";\r\n\r\nimport {\r\n  Combobox,\r\n  ComboboxAnchor,\r\n  ComboboxContent,\r\n  ComboboxEmpty,\r\n  ComboboxInput,\r\n  ComboboxItem,\r\n  ComboboxLabel,\r\n  ComboboxTrigger,\r\n} from \"@/registry/default/ui/combobox\";\r\nimport { ChevronDown } from \"lucide-react\";\r\nimport * as React from \"react\";\r\n\r\nconst tricks = [\r\n  { label: \"Kickflip\", value: \"kickflip\" },\r\n  { label: \"Heelflip\", value: \"heelflip\" },\r\n  { label: \"Tre Flip\", value: \"tre-flip\" },\r\n  { label: \"FS 540\", value: \"fs-540\" },\r\n  { label: \"Casper flip 360 flip\", value: \"casper-flip-360-flip\" },\r\n  { label: \"Kickflip Backflip\", value: \"kickflip-backflip\" },\r\n  { label: \"360 Varial McTwist\", value: \"360-varial-mc-twist\" },\r\n  { label: \"The 900\", value: \"the-900\" },\r\n] as const;\r\n\r\nexport default function ComboboxDebouncedDemo() {\r\n  const [value, setValue] = React.useState(\"\");\r\n  const [search, setSearch] = React.useState(\"\");\r\n  const [open, setOpen] = React.useState(false);\r\n\r\n  const debouncedSearch = React.useMemo(() => {\r\n    return debounce((value: string) => {\r\n      setSearch(value.toLowerCase());\r\n    }, 300);\r\n  }, []);\r\n\r\n  const filteredItems = React.useMemo(() => {\r\n    if (!search) return tricks;\r\n    return tricks.filter((item) => item.label.toLowerCase().includes(search));\r\n  }, [search]);\r\n\r\n  return (\r\n    <Combobox\r\n      value={value}\r\n      onValueChange={setValue}\r\n      open={open}\r\n      onOpenChange={setOpen}\r\n      manualFiltering\r\n    >\r\n      <ComboboxLabel>Trick</ComboboxLabel>\r\n      <ComboboxAnchor>\r\n        <ComboboxInput\r\n          placeholder=\"Search trick...\"\r\n          onChange={(e) => debouncedSearch(e.target.value)}\r\n        />\r\n        <ComboboxTrigger>\r\n          <ChevronDown className=\"h-4 w-4\" />\r\n        </ComboboxTrigger>\r\n      </ComboboxAnchor>\r\n      <ComboboxContent>\r\n        <ComboboxEmpty>No trick found.</ComboboxEmpty>\r\n        {filteredItems.map((trick) => (\r\n          <ComboboxItem key={trick.value} value={trick.value}>\r\n            {trick.label}\r\n          </ComboboxItem>\r\n        ))}\r\n      </ComboboxContent>\r\n    </Combobox>\r\n  );\r\n}\r\n\r\nfunction debounce<F extends (...args: Parameters<F>) => void>(\r\n  func: F,\r\n  wait: number,\r\n): F {\r\n  let timeout: NodeJS.Timeout;\r\n\r\n  return ((...args: Parameters<F>) => {\r\n    clearTimeout(timeout);\r\n    timeout = setTimeout(() => func(...args), wait);\r\n  }) as F;\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

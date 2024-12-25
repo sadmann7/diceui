@@ -24,6 +24,9 @@ export type { ComboboxContentProps } from "./combobox-content";
 export { Arrow, ComboboxArrow } from "./combobox-arrow";
 export type { ComboboxArrowProps } from "./combobox-arrow";
 
+export { ComboboxProgress, Progress } from "./combobox-progress";
+export type { ComboboxProgressProps } from "./combobox-progress";
+
 export { ComboboxEmpty, Empty } from "./combobox-empty";
 export type { ComboboxEmptyProps } from "./combobox-empty";
 

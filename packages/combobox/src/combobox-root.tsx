@@ -139,10 +139,10 @@ interface ComboboxRootProps<Multiple extends boolean = false>
   disabled?: boolean;
 
   /**
-   * Whether the combobox should filter items when the input value changes.
+   * Whether the combobox should filter items externally.
    * @default true
    */
-  shouldFilter?: boolean;
+  manualFiltering?: boolean;
 
   /**
    * Whether the combobox uses fuzzy filtering. When false, the combobox will use exact string matching.
@@ -217,7 +217,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     onFilter,
     multiple = false,
     disabled = false,
-    shouldFilter = true,
+    manualFiltering = false,
     fuzzy = true,
     loop = false,
     modal = false,
@@ -310,7 +310,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
   );
 
   const onFilterItems = React.useCallback(() => {
-    if (!shouldFilter) return;
+    if (manualFiltering) return;
 
     filterStore.groups.clear();
     filterStore.items.clear();
@@ -355,7 +355,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       }
     }
   }, [
-    shouldFilter,
+    manualFiltering,
     filterStore,
     items,
     groups,

@@ -102,6 +102,8 @@ const ComboboxContent = React.forwardRef<
 ));
 ComboboxContent.displayName = ComboboxPrimitive.Content.displayName;
 
+const ComboboxProgress = ComboboxPrimitive.Progress;
+
 const ComboboxEmpty = React.forwardRef<
   React.ElementRef<typeof ComboboxPrimitive.Empty>,
   React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.Empty>
@@ -187,15 +189,16 @@ ComboboxSeparator.displayName = ComboboxPrimitive.Separator.displayName;
 
 export {
   Combobox,
-  ComboboxLabel,
   ComboboxAnchor,
-  ComboboxInput,
-  ComboboxTrigger,
   ComboboxCancel,
   ComboboxContent,
   ComboboxEmpty,
   ComboboxGroup,
   ComboboxGroupLabel,
+  ComboboxInput,
   ComboboxItem,
+  ComboboxLabel,
+  ComboboxProgress,
   ComboboxSeparator,
+  ComboboxTrigger,
 };
