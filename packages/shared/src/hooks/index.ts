@@ -1,5 +1,3 @@
-"use client";
-
 export * from "./use-anchor";
 export * from "./use-callback-ref";
 export * from "./use-collection";
