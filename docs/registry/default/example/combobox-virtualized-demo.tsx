@@ -59,7 +59,9 @@ const generateItems = (count: number): Option[] => {
 const items = generateItems(10000);
 
 export default function ComboboxVirtualizedDemo() {
-  const [container, setContainer] = React.useState<HTMLDivElement | null>(null);
+  const [content, setContent] = React.useState<React.ComponentRef<
+    typeof ComboboxContent
+  > | null>(null);
   const [value, setValue] = React.useState("");
   const [inputValue, setInputValue] = React.useState("");
   const deferredInputValue = useDeferredValue(inputValue);
@@ -74,7 +76,7 @@ export default function ComboboxVirtualizedDemo() {
 
   const virtualizer = useVirtualizer({
     count: filteredTricks.length,
-    getScrollElement: () => container,
+    getScrollElement: () => content,
     estimateSize: () => 32,
     overscan: 20,
   });
@@ -82,20 +84,20 @@ export default function ComboboxVirtualizedDemo() {
   const onInputValueChange = React.useCallback(
     (value: string) => {
       setInputValue(value);
-      if (container) {
-        container.scrollTop = 0; // Reset scroll position
+      if (content) {
+        content.scrollTop = 0; // Reset scroll position
         virtualizer.measure();
       }
     },
-    [container, virtualizer],
+    [content, virtualizer],
   );
 
   // Re-measure virtualizer when filteredItems changes
   React.useEffect(() => {
-    if (container) {
+    if (content) {
       virtualizer.measure();
     }
-  }, [container, virtualizer]);
+  }, [content, virtualizer]);
 
   return (
     <Combobox
@@ -107,47 +109,45 @@ export default function ComboboxVirtualizedDemo() {
     >
       <ComboboxLabel>Trick</ComboboxLabel>
       <ComboboxAnchor>
-        <ComboboxInput placeholder="Search items..." />
+        <ComboboxInput placeholder="Search tricks..." />
         <ComboboxTrigger>
           <ChevronDown className="h-4 w-4" />
         </ComboboxTrigger>
       </ComboboxAnchor>
-      <ComboboxContent>
-        <div
-          ref={(node) => setContainer(node)}
-          className="relative max-h-[300px] overflow-y-auto overflow-x-hidden"
-        >
-          {filteredTricks.length > 0 ? (
-            <div
-              className="relative w-full"
-              style={{
-                height: `${virtualizer.getTotalSize()}px`,
-              }}
-            >
-              {virtualizer.getVirtualItems().map((virtualItem) => {
-                const trick = filteredTricks[virtualItem.index];
-                if (!trick) return null;
+      <ComboboxContent
+        ref={(node) => setContent(node)}
+        className="relative max-h-[300px] overflow-y-auto overflow-x-hidden"
+      >
+        {filteredTricks.length > 0 ? (
+          <div
+            className="relative w-full"
+            style={{
+              height: `${virtualizer.getTotalSize()}px`,
+            }}
+          >
+            {virtualizer.getVirtualItems().map((virtualItem) => {
+              const trick = filteredTricks[virtualItem.index];
+              if (!trick) return null;
 
-                return (
-                  <ComboboxItem
-                    key={virtualItem.key}
-                    value={trick.value}
-                    indicatorSide="right"
-                    className="absolute top-0 left-0 w-full"
-                    style={{
-                      height: `${virtualItem.size}px`,
-                      transform: `translateY(${virtualItem.start}px)`,
-                    }}
-                  >
-                    {trick.label}
-                  </ComboboxItem>
-                );
-              })}
-            </div>
-          ) : (
-            <ComboboxEmpty>No tricks found.</ComboboxEmpty>
-          )}
-        </div>
+              return (
+                <ComboboxItem
+                  key={virtualItem.key}
+                  value={trick.value}
+                  indicatorSide="right"
+                  className="absolute top-0 left-0 w-full"
+                  style={{
+                    height: `${virtualItem.size}px`,
+                    transform: `translateY(${virtualItem.start}px)`,
+                  }}
+                >
+                  {trick.label}
+                </ComboboxItem>
+              );
+            })}
+          </div>
+        ) : (
+          <ComboboxEmpty>No tricks found.</ComboboxEmpty>
+        )}
       </ComboboxContent>
     </Combobox>
   );
