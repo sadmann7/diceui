@@ -131,11 +131,11 @@ interface UseComboboxPositionerParams {
   forceMount?: boolean;
 
   /**
-   * Whether to use a custom anchor element instead of the trigger.
+   * Whether to use an anchor element instead of the trigger.
    * When true, allows positioning relative to any element using anchorRef.
    * @default false
    */
-  hasCustomAnchor?: boolean;
+  hasAnchor?: boolean;
 
   /**
    * Whether the combobox should be hidden when it would be positioned outside its boundary.
@@ -201,7 +201,7 @@ function useComboboxPositioner({
   avoidCollisions = false,
   fitViewport = false,
   forceMount = false,
-  hasCustomAnchor = false,
+  hasAnchor = false,
   hideWhenDetached = false,
   trackAnchor = true,
   anchorRef,
@@ -340,15 +340,13 @@ function useComboboxPositioner({
     if (!open) return;
 
     const reference =
-      hasCustomAnchor && anchorRef?.current
-        ? anchorRef.current
-        : triggerRef?.current;
+      hasAnchor && anchorRef?.current ? anchorRef.current : triggerRef?.current;
 
-    if (reference) {
-      refs.setReference(reference);
-      update();
-    }
-  }, [open, hasCustomAnchor, anchorRef, triggerRef, refs, update]);
+    if (!reference) return;
+
+    refs.setReference(reference);
+    update();
+  }, [open, hasAnchor, anchorRef, triggerRef, refs, update]);
 
   React.useEffect(() => {
     if (forceMount && open && elements.reference && elements.floating) {

@@ -11,10 +11,6 @@ import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { useCheckboxGroup } from "./checkbox-group-root";
 
-function getState(checked: boolean) {
-  return checked ? "checked" : "unchecked";
-}
-
 const ITEM_NAME = "CheckboxGroupItem";
 
 interface CheckboxGroupItemContext {
@@ -69,7 +65,7 @@ const CheckboxGroupItem = React.forwardRef<
         aria-checked={isChecked}
         aria-disabled={isDisabled}
         aria-invalid={context.isInvalid}
-        data-state={getState(isChecked)}
+        data-state={getDataState(isChecked)}
         data-orientation={context.orientation}
         data-disabled={isDisabled ? "" : undefined}
         data-invalid={context.isInvalid ? "" : undefined}
@@ -110,10 +106,14 @@ const CheckboxGroupItem = React.forwardRef<
   );
 });
 
+function getDataState(checked: boolean) {
+  return checked ? "checked" : "unchecked";
+}
+
 CheckboxGroupItem.displayName = ITEM_NAME;
 
 const Item = CheckboxGroupItem;
 
-export { CheckboxGroupItem, Item, getState, useCheckboxGroupItem };
+export { CheckboxGroupItem, Item, getDataState, useCheckboxGroupItem };
 
 export type { CheckboxGroupItemContext, CheckboxGroupItemProps };

@@ -48,10 +48,10 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   onHighlightedItemChange: (item: HTMLElement | null) => void;
   onRegisterItem: (id: string, value: string, groupId?: string) => () => void;
   onFilterItems: () => void;
-  onHighlightMove: (target: HighlightingDirection) => void;
-  onHasCustomAnchorChange: (checked: boolean) => void;
+  onHighlightMove: (direction: HighlightingDirection) => void;
+  hasAnchor: boolean;
+  onHasAnchorChange: (value: boolean) => void;
   disabled: boolean;
-  hasCustomAnchor: boolean;
   loop: boolean;
   modal: boolean;
   multiple: Multiple;
@@ -231,7 +231,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
   const contentId = `${id}content`;
 
   const dir = useDirection(dirProp);
-  const { anchorRef, hasCustomAnchor, onHasCustomAnchorChange } =
+  const { anchorRef, hasAnchor, onHasAnchorChange } =
     useAnchor<HTMLDivElement>();
   const { getEnabledItems } = useCollection<HTMLElement>({
     ref: collectionRef,
@@ -494,9 +494,9 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       onRegisterItem={onRegisterItem}
       onFilterItems={onFilterItems}
       onHighlightMove={onHighlightMove}
-      onHasCustomAnchorChange={onHasCustomAnchorChange}
+      hasAnchor={hasAnchor}
+      onHasAnchorChange={onHasAnchorChange}
       disabled={disabled}
-      hasCustomAnchor={hasCustomAnchor}
       loop={loop}
       modal={modal}
       multiple={multiple}
@@ -525,6 +525,10 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
   );
 }
 
+function getDataState(open: boolean) {
+  return open ? "open" : "closed";
+}
+
 type ComboboxRootComponent = (<Multiple extends boolean = false>(
   props: ComboboxRootProps<Multiple> & { ref?: React.Ref<HTMLDivElement> },
 ) => React.ReactElement) & { displayName: string };
@@ -535,6 +539,6 @@ ComboboxRoot.displayName = ROOT_NAME;
 
 const Root = ComboboxRoot;
 
-export { ComboboxRoot, Root, useComboboxContext };
+export { ComboboxRoot, Root, getDataState, useComboboxContext };
 
 export type { ComboboxRootProps, HighlightingDirection };

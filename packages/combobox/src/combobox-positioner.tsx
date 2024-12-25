@@ -5,14 +5,17 @@ import { FloatingFocusManager } from "@floating-ui/react";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { ComboboxContentProvider } from "./combobox-content";
-import { useComboboxContext } from "./combobox-root";
+import { getDataState, useComboboxContext } from "./combobox-root";
 import type { UseComboboxPositionerParams } from "./use-combobox-positioner";
 import { useComboboxPositioner } from "./use-combobox-positioner";
 
 const POSITIONER_NAME = "ComboboxPositioner";
 
 interface ComboboxPositionerProps
-  extends Omit<UseComboboxPositionerParams, "open" | "onOpenChange">,
+  extends Omit<
+      UseComboboxPositionerParams,
+      "open" | "onOpenChange" | "anchorRef" | "triggerRef" | "hasAnchor"
+    >,
     React.ComponentPropsWithoutRef<typeof Primitive.div> {
   /**
    * Whether the positioner should always be mounted.
@@ -62,7 +65,7 @@ const ComboboxPositioner = React.forwardRef<
     fitViewport,
     forceMount,
     hideWhenDetached,
-    hasCustomAnchor: context.hasCustomAnchor,
+    hasAnchor: context.hasAnchor,
     trackAnchor,
     anchorRef: context.anchorRef,
     triggerRef: context.inputRef,
@@ -99,7 +102,7 @@ const ComboboxPositioner = React.forwardRef<
       forceMount={forceMount}
     >
       <Primitive.div
-        data-state={context.open ? "open" : "closed"}
+        data-state={getDataState(context.open)}
         {...positionerContext.getFloatingProps(positionerProps)}
         ref={composedRef}
         style={composedStyle}

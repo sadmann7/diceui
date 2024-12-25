@@ -3,7 +3,7 @@
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { useComboboxContentContext } from "./combobox-content";
-import { useComboboxContext } from "./combobox-root";
+import { getDataState, useComboboxContext } from "./combobox-root";
 
 const ARROW_NAME = "ComboboxArrow";
 
@@ -47,8 +47,8 @@ const ComboboxArrow = React.forwardRef<SVGSVGElement, ComboboxArrowProps>(
           aria-hidden={contentContext.arrowDisplaced}
           data-side={contentContext.side}
           data-align={contentContext.align}
-          data-displaced={contentContext.arrowDisplaced || undefined}
-          data-state={context.open ? "open" : "closed"}
+          data-displaced={contentContext.arrowDisplaced ? "" : undefined}
+          data-state={getDataState(context.open)}
           {...arrowProps}
           ref={forwardedRef}
           style={{

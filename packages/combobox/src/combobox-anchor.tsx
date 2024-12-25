@@ -16,7 +16,7 @@ const ComboboxAnchor = React.forwardRef<HTMLDivElement, ComboboxAnchorProps>(
     const composedRefs = useComposedRefs(
       forwardedRef,
       context.anchorRef,
-      (node) => context.onHasCustomAnchorChange(!!node),
+      (node) => context.onHasAnchorChange(!!node),
     );
 
     return (

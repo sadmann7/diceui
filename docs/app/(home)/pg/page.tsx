@@ -25,9 +25,8 @@ import {
   ComboboxItem,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
-import * as ComboboxPrimitive from "@diceui/combobox";
 import { SelectArrow } from "@radix-ui/react-select";
-import { ArrowUp, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowUp, ChevronDown } from "lucide-react";
 
 export default function PlaygroundPage() {
   return (
@@ -38,9 +37,6 @@ export default function PlaygroundPage() {
           <ComboboxTrigger>
             <ChevronDown className="h-4 w-4" />
           </ComboboxTrigger>
-          {/* <ComboboxPrimitive.Anchor asChild>
-            <ChevronUp className="h-4 w-4" />
-          </ComboboxPrimitive.Anchor> */}
         </ComboboxAnchor>
         <ComboboxContent>
           <ComboboxEmpty>No tricks found</ComboboxEmpty>

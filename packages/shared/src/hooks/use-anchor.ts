@@ -2,25 +2,25 @@ import * as React from "react";
 
 export function useAnchor<T extends HTMLElement>() {
   const anchorRef = React.useRef<T | null>(null);
-  const [hasCustomAnchor, setHasCustomAnchor] = React.useState(false);
+  const [hasAnchor, setHasAnchor] = React.useState(false);
 
-  const onCustomAnchorAdd = React.useCallback(() => {
-    setHasCustomAnchor(true);
+  const onAnchorAdd = React.useCallback(() => {
+    setHasAnchor(true);
   }, []);
 
-  const onCustomAnchorRemove = React.useCallback(() => {
-    setHasCustomAnchor(false);
+  const onAnchorRemove = React.useCallback(() => {
+    setHasAnchor(false);
   }, []);
 
-  const onHasCustomAnchorChange = React.useCallback((checked: boolean) => {
-    setHasCustomAnchor(checked);
+  const onHasAnchorChange = React.useCallback((value: boolean) => {
+    setHasAnchor(value);
   }, []);
 
   return {
-    hasCustomAnchor,
-    onCustomAnchorAdd,
-    onCustomAnchorRemove,
-    onHasCustomAnchorChange,
     anchorRef,
+    hasAnchor,
+    onAnchorAdd,
+    onAnchorRemove,
+    onHasAnchorChange,
   };
 }

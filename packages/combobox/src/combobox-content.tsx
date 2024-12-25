@@ -9,9 +9,11 @@ import {
 } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
-import { ComboboxPositioner } from "./combobox-positioner";
+import {
+  ComboboxPositioner,
+  type ComboboxPositionerProps,
+} from "./combobox-positioner";
 import { useComboboxContext } from "./combobox-root";
-import type { UseComboboxPositionerParams } from "./use-combobox-positioner";
 
 const CONTENT_NAME = "ComboboxContent";
 
@@ -27,17 +29,7 @@ interface ComboboxContentContextValue {
 const [ComboboxContentProvider, useComboboxContentContext] =
   createContext<ComboboxContentContextValue>(CONTENT_NAME);
 
-interface ComboboxContentProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.div>,
-    Omit<
-      UseComboboxPositionerParams,
-      | "open"
-      | "onOpenChange"
-      | "anchorRef"
-      | "triggerRef"
-      | "hasCustomAnchor"
-      | "trackAnchor"
-    > {
+interface ComboboxContentProps extends ComboboxPositionerProps {
   /**
    * Event handler called when a `pointerdown` event happens outside of the content.
    *
@@ -70,6 +62,7 @@ const ComboboxContent = React.forwardRef<HTMLDivElement, ComboboxContentProps>(
         role="listbox"
         id={context.contentId}
         forceMount={forceMount}
+        trackAnchor={context.hasAnchor}
         {...contentProps}
         ref={forwardedRef}
       >
