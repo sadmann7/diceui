@@ -25,8 +25,7 @@ import {
   ComboboxItem,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
-import { SelectArrow } from "@radix-ui/react-select";
-import { ArrowUp, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 export default function PlaygroundPage() {
   return (
@@ -66,9 +65,6 @@ export default function PlaygroundPage() {
           <SelectValue placeholder="Select a fruit" />
         </SelectTrigger>
         <SelectContent>
-          <SelectArrow asChild>
-            <ArrowUp className="size-4 text-orange-600" />
-          </SelectArrow>
           <SelectGroup>
             <SelectLabel>Fruits</SelectLabel>
             <SelectItem value="apple">Apple</SelectItem>

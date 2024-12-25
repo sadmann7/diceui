@@ -5,7 +5,6 @@ import {
   createContext,
   useDismiss,
 } from "@diceui/shared";
-import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import {
   ComboboxPositioner,
@@ -38,12 +37,7 @@ interface ComboboxContentProps extends ComboboxPositionerProps {
 
 const ComboboxContent = React.forwardRef<HTMLDivElement, ComboboxContentProps>(
   (props, forwardedRef) => {
-    const {
-      forceMount = false,
-      onPointerDownOutside,
-      children,
-      ...contentProps
-    } = props;
+    const { forceMount = false, onPointerDownOutside, ...contentProps } = props;
     const context = useComboboxContext(CONTENT_NAME);
 
     useDismiss({
@@ -63,9 +57,7 @@ const ComboboxContent = React.forwardRef<HTMLDivElement, ComboboxContentProps>(
         trackAnchor={context.hasAnchor}
         {...contentProps}
         ref={forwardedRef}
-      >
-        <Primitive.div>{children}</Primitive.div>
-      </ComboboxPositioner>
+      />
     );
   },
 );
