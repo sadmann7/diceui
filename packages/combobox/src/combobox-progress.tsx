@@ -5,7 +5,8 @@ import { useComboboxContext } from "./combobox-root";
 
 const PROGRESS_NAME = "ComboboxProgress";
 
-interface ComboboxProgressProps extends React.HTMLAttributes<HTMLDivElement> {
+interface ComboboxProgressProps
+  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
   /**
    * The current progress value.
    * @default null

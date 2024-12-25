@@ -1,12 +1,36 @@
 import type { ProgressState } from "@diceui/shared";
 import * as React from "react";
 
+function isNumber(value: unknown): value is number {
+  return typeof value === "number";
+}
+
+function isValidMaxNumber(max: unknown): max is number {
+  return isNumber(max) && !Number.isNaN(max) && max > 0;
+}
+
+function isValidValueNumber(value: unknown, max: number): value is number {
+  return isNumber(value) && !Number.isNaN(value) && value <= max && value >= 0;
+}
+
+function getProgressState(
+  value: number | undefined | null,
+  maxValue: number,
+): ProgressState {
+  return value == null
+    ? "indeterminate"
+    : value === maxValue
+      ? "complete"
+      : "loading";
+}
+
 interface UseProgressProps {
   /**
    * The current progress value.
    * @default null
    */
   value?: number | null;
+
   /**
    * The maximum progress value.
    * @default 100
@@ -14,7 +38,7 @@ interface UseProgressProps {
   max?: number;
 }
 
-export function useProgress({
+function useProgress({
   value: valueProp = null,
   max: maxProp,
 }: UseProgressProps) {
@@ -54,25 +78,4 @@ export function useProgress({
   };
 }
 
-function isNumber(value: unknown): value is number {
-  return typeof value === "number";
-}
-
-function isValidMaxNumber(max: unknown): max is number {
-  return isNumber(max) && !Number.isNaN(max) && max > 0;
-}
-
-function isValidValueNumber(value: unknown, max: number): value is number {
-  return isNumber(value) && !Number.isNaN(value) && value <= max && value >= 0;
-}
-
-function getProgressState(
-  value: number | undefined | null,
-  maxValue: number,
-): ProgressState {
-  return value == null
-    ? "indeterminate"
-    : value === maxValue
-      ? "complete"
-      : "loading";
-}
+export { useProgress, getProgressState };
