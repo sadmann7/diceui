@@ -69,102 +69,6 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
-    "tags-input-demo": {
-      name: "tags-input-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: undefined,
-      files: [{
-        path: "registry/default/example/tags-input-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/example/tags-input-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
-    "tags-input-editable-demo": {
-      name: "tags-input-editable-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["tags-input","button"],
-      files: [{
-        path: "registry/default/example/tags-input-editable-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/example/tags-input-editable-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
-    "tags-input-sortable-demo": {
-      name: "tags-input-sortable-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["tags-input","sortable","button"],
-      files: [{
-        path: "registry/default/example/tags-input-sortable-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/example/tags-input-sortable-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
-    "tags-input-validation-demo": {
-      name: "tags-input-validation-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["tags-input","button"],
-      files: [{
-        path: "registry/default/example/tags-input-validation-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/example/tags-input-validation-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
-    "sortable-demo": {
-      name: "sortable-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["button"],
-      files: [{
-        path: "registry/default/example/sortable-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/example/sortable-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
-    "sortable-grip-demo": {
-      name: "sortable-grip-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["button","table"],
-      files: [{
-        path: "registry/default/example/sortable-grip-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/example/sortable-grip-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
     "checkbox-group-demo": {
       name: "checkbox-group-demo",
       description: "",
@@ -224,6 +128,22 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/example/checkbox-group-validation-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "checkbox-group-multi-selection-demo": {
+      name: "checkbox-group-multi-selection-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/example/checkbox-group-multi-selection-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/example/checkbox-group-multi-selection-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",
@@ -320,6 +240,102 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/example/combobox-tags-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "sortable-demo": {
+      name: "sortable-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button"],
+      files: [{
+        path: "registry/default/example/sortable-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/example/sortable-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "sortable-grip-demo": {
+      name: "sortable-grip-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","table"],
+      files: [{
+        path: "registry/default/example/sortable-grip-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/example/sortable-grip-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "tags-input-demo": {
+      name: "tags-input-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/example/tags-input-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/example/tags-input-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "tags-input-editable-demo": {
+      name: "tags-input-editable-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["tags-input","button"],
+      files: [{
+        path: "registry/default/example/tags-input-editable-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/example/tags-input-editable-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "tags-input-sortable-demo": {
+      name: "tags-input-sortable-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["tags-input","sortable","button"],
+      files: [{
+        path: "registry/default/example/tags-input-sortable-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/example/tags-input-sortable-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "tags-input-validation-demo": {
+      name: "tags-input-validation-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["tags-input","button"],
+      files: [{
+        path: "registry/default/example/tags-input-validation-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/example/tags-input-validation-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",

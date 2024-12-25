@@ -18,7 +18,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { tricks } from "@/lib/data";
-import CheckboxGroupDemo from "@/registry/default/example/checkbox-group-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -34,7 +33,6 @@ import { ArrowUp, ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <CheckboxGroupDemo />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
