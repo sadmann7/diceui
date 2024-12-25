@@ -1,28 +1,7 @@
+import { useProgress } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { useComboboxContext } from "./combobox-root";
-
-const DEFAULT_MAX = 100;
-
-function isNumber(value: unknown): value is number {
-  return typeof value === "number";
-}
-
-function isValidMaxNumber(max: unknown): max is number {
-  return isNumber(max) && !Number.isNaN(max) && max > 0;
-}
-
-function isValidValueNumber(value: unknown, max: number): value is number {
-  return isNumber(value) && !Number.isNaN(value) && value <= max && value >= 0;
-}
-
-function getProgressState(value: number | undefined | null, maxValue: number) {
-  return value == null
-    ? "indeterminate"
-    : value === maxValue
-      ? "complete"
-      : "loading";
-}
 
 const PROGRESS_NAME = "ComboboxProgress";
 
@@ -51,28 +30,15 @@ const ComboboxProgress = React.forwardRef<
 
   if (!context.open) return null;
 
-  const {
-    value: valueProp = null,
-    max: maxProp,
-    label,
-    ...progressProps
-  } = props;
-  const max = isValidMaxNumber(maxProp) ? maxProp : DEFAULT_MAX;
-  const value = isValidValueNumber(valueProp, max) ? valueProp : null;
-  const state = getProgressState(value, max);
+  const { value, max, label, ...progressProps } = props;
+  const progress = useProgress({ value, max });
 
-  if (state === "complete") return null;
+  if (progress.state === "complete") return null;
 
   return (
     <Primitive.div
-      role="progressbar"
       aria-label={label}
-      aria-valuemin={0}
-      aria-valuemax={max}
-      aria-valuenow={isNumber(value) ? value : undefined}
-      data-state={state}
-      data-value={value ?? undefined}
-      data-max={max}
+      {...progress.progressProps}
       {...progressProps}
       ref={forwardedRef}
     />

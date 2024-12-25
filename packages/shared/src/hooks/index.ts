@@ -12,6 +12,7 @@ export * from "./use-isomorphic-layout-effect";
 export * from "./use-layout-effect";
 export * from "./use-mounted";
 export * from "./use-previous";
+export * from "./use-progress";
 export * from "./use-scroll-lock";
 export * from "./use-size";
 export * from "./use-state-machine";
