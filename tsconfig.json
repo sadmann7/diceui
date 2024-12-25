@@ -8,6 +8,7 @@
     "resolveJsonModule": true,
     "moduleDetection": "force",
     "isolatedModules": true,
+    "types": ["node"],
 
     /* Strictness */
     "strict": true,

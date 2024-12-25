@@ -1,3 +1,5 @@
+"use client";
+
 import * as TagsInput from "@diceui/tags-input";
 import { RefreshCcw, X } from "lucide-react";
 

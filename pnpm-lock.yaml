@@ -11,6 +11,9 @@ importers:
       '@biomejs/biome':
         specifier: 1.9.4
         version: 1.9.4
+      '@types/node':
+        specifier: ^22.10.2
+        version: 22.10.2
       expect-type:
         specifier: ^1.1.0
         version: 1.1.0
@@ -255,7 +258,7 @@ importers:
         version: 19.0.2(@types/react@19.0.2)
       lucide-react:
         specifier: ^0.468.0
-        version: 0.469.0(react@19.0.0)
+        version: 0.468.0(react@19.0.0)
       react:
         specifier: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
         version: 19.0.0
@@ -308,7 +311,7 @@ importers:
         version: 19.0.2
       lucide-react:
         specifier: ^0.468.0
-        version: 0.469.0(react@19.0.0)
+        version: 0.468.0(react@19.0.0)
       react:
         specifier: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
         version: 19.0.0
@@ -336,7 +339,7 @@ importers:
         version: 19.0.2(@types/react@19.0.2)
       lucide-react:
         specifier: ^0.468.0
-        version: 0.469.0(react@19.0.0)
+        version: 0.468.0(react@19.0.0)
       react:
         specifier: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
         version: 19.0.0
@@ -344,6 +347,9 @@ importers:
         specifier: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
         version: 19.0.0(react@19.0.0)
     devDependencies:
+      '@types/node':
+        specifier: ^22.10.2
+        version: 22.10.2
       tsup:
         specifier: ^8.3.5
         version: 8.3.5(jiti@1.21.7)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.7.2)(yaml@2.6.1)
@@ -2284,6 +2290,11 @@ packages:
   lru-cache@11.0.2:
     resolution: {integrity: sha512-123qHRfJBmo2jXDbo/a5YOQrJoHF/GNQTLzQ5+IdK5pWpceK17yRc6ozlWd25FxvGKQbIUs91fDFkXmDHTKcyA==}
     engines: {node: 20 || >=22}
+
+  lucide-react@0.468.0:
+    resolution: {integrity: sha512-6koYRhnM2N0GGZIdXzSeiNwguv1gt/FAjZOiPl76roBi3xKEXa4WmfpxgQwTTL4KipXjefrnf3oV4IsYhi4JFA==}
+    peerDependencies:
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0-rc
 
   lucide-react@0.469.0:
     resolution: {integrity: sha512-28vvUnnKQ/dBwiCQtwJw7QauYnE7yd2Cyp4tTTJpvglX4EMpbflcdBgrgToX2j71B3YvugK/NH3BGUk+E/p/Fw==}
@@ -5103,6 +5114,10 @@ snapshots:
   lru-cache@10.4.3: {}
 
   lru-cache@11.0.2: {}
+
+  lucide-react@0.468.0(react@19.0.0):
+    dependencies:
+      react: 19.0.0
 
   lucide-react@0.469.0(react@19.0.0):
     dependencies:

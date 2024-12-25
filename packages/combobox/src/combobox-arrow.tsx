@@ -55,7 +55,11 @@ const ComboboxArrow = React.forwardRef<SVGSVGElement, ComboboxArrowProps>(
             display: "block",
           }}
         >
-          {props.asChild ? props.children : <path d="M0 10 L15 0 L30 10" />}
+          {props.asChild ? (
+            props.children
+          ) : (
+            <path d="M0 10 L15 0 L30 10" fill="currentColor" />
+          )}
         </Primitive.svg>
       </span>
     );
