@@ -9,6 +9,42 @@ import {
 } from "@/registry/default/ui/checkbox-group";
 import * as React from "react";
 
+const tricks = [
+  { label: "Kickflip", value: "kickflip" },
+  { label: "Heelflip", value: "heelflip" },
+  { label: "Tre Flip", value: "tre-flip" },
+  { label: "Pizza Guy", value: "pizza-guy" },
+  { label: "FS 540", value: "fs-540" },
+  { label: "The 900", value: "the-900" },
+];
+
+export default function CheckboxGroupMultiSelectionDemo() {
+  const { value, onValueChange, onShiftKeyDown } = useShiftMultiSelect({
+    items: tricks,
+    getItemValue: (item) => item.value,
+  });
+
+  return (
+    <CheckboxGroup value={value} onValueChange={onValueChange}>
+      <CheckboxGroupLabel>Tricks</CheckboxGroupLabel>
+      <CheckboxGroupDescription>
+        Hold Shift and click to select multiple items
+      </CheckboxGroupDescription>
+      <CheckboxGroupList
+        className="mt-1"
+        onKeyDown={onShiftKeyDown}
+        onKeyUp={onShiftKeyDown}
+      >
+        {tricks.map((trick) => (
+          <CheckboxGroupItem key={trick.value} value={trick.value}>
+            {trick.label}
+          </CheckboxGroupItem>
+        ))}
+      </CheckboxGroupList>
+    </CheckboxGroup>
+  );
+}
+
 interface UseShiftMultiSelectProps<T> {
   /** The items for selection. */
   items: T[];
@@ -95,40 +131,4 @@ function useShiftMultiSelect<T>({
     onValueChange,
     onShiftKeyDown,
   };
-}
-
-const tricks = [
-  { label: "Kickflip", value: "kickflip" },
-  { label: "Heelflip", value: "heelflip" },
-  { label: "Tre Flip", value: "tre-flip" },
-  { label: "FS 540", value: "fs-540" },
-  { label: "The 900", value: "the-900" },
-  { label: "Pizza Guy", value: "pizza-guy" },
-];
-
-export default function CheckboxGroupMultiSelectionDemo() {
-  const { value, onValueChange, onShiftKeyDown } = useShiftMultiSelect({
-    items: tricks,
-    getItemValue: (item) => item.value,
-  });
-
-  return (
-    <CheckboxGroup value={value} onValueChange={onValueChange}>
-      <CheckboxGroupLabel>Tricks</CheckboxGroupLabel>
-      <CheckboxGroupDescription>
-        Hold Shift and click to select multiple items
-      </CheckboxGroupDescription>
-      <CheckboxGroupList
-        className="mt-1"
-        onKeyDown={onShiftKeyDown}
-        onKeyUp={onShiftKeyDown}
-      >
-        {tricks.map((trick) => (
-          <CheckboxGroupItem key={trick.value} value={trick.value}>
-            {trick.label}
-          </CheckboxGroupItem>
-        ))}
-      </CheckboxGroupList>
-    </CheckboxGroup>
-  );
 }

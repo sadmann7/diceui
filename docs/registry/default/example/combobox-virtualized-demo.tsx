@@ -44,12 +44,20 @@ export default function ComboboxVirtualizedDemo() {
   const onInputValueChange = React.useCallback(
     (value: string) => {
       setInputValue(value);
-      requestAnimationFrame(() => {
-        container?.scrollTo({ top: 0 });
-      });
+      if (container) {
+        container.scrollTop = 0; // Reset scroll position
+        virtualizer.measure();
+      }
     },
-    [container],
+    [container, virtualizer],
   );
+
+  // Re-measure virtualizer when filteredTricks changes
+  React.useEffect(() => {
+    if (container) {
+      virtualizer.measure();
+    }
+  }, [container, virtualizer]);
 
   return (
     <Combobox
@@ -60,7 +68,7 @@ export default function ComboboxVirtualizedDemo() {
       shouldFilter={false}
     >
       <ComboboxLabel>
-        Virtual List ({filteredTricks.length.toLocaleString()} tricks)
+        Trick ({filteredTricks.length.toLocaleString()})
       </ComboboxLabel>
       <ComboboxAnchor>
         <ComboboxInput placeholder="Search tricks..." />
@@ -70,7 +78,7 @@ export default function ComboboxVirtualizedDemo() {
       </ComboboxAnchor>
       <ComboboxContent>
         <div
-          ref={(node) => setContainer(node)}
+          ref={setContainer}
           className="relative max-h-[300px] overflow-y-auto overflow-x-hidden"
         >
           {filteredTricks.length > 0 ? (

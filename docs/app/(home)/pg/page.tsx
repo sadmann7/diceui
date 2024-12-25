@@ -1,5 +1,3 @@
-"use client";
-
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,7 +16,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { tricks } from "@/lib/data";
-import CheckboxGroupMultiSelectionDemo from "@/registry/default/example/checkbox-group-multi-selection-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -34,7 +31,6 @@ import { ArrowUp, ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <CheckboxGroupMultiSelectionDemo />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />

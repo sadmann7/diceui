@@ -50,6 +50,7 @@ export function ComponentTabs({
           "focus-visible:outline-none focus-visible:ring-0":
             preventPreviewFocus,
         })}
+        tabIndex={preventPreviewFocus ? -1 : 0}
       >
         <div className="flex h-[400px] w-full items-center justify-center p-10">
           {Preview}
