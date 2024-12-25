@@ -399,7 +399,6 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
 
   const onOpenChange = React.useCallback(
     async (open: boolean) => {
-      filterStore.search = "";
       setOpen(open);
       if (open) {
         await new Promise((resolve) => requestAnimationFrame(resolve));
@@ -409,18 +408,21 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
           const length = input.value.length;
           input.setSelectionRange(length, length);
         }
+        return;
       }
+
+      filterStore.search = "";
     },
     [setOpen, filterStore],
   );
 
   const onInputValueChange = React.useCallback(
     (value: string) => {
-      if (!readOnly) {
-        setInputValue(value);
-      }
+      if (disabled || readOnly) return;
+
+      setInputValue(value);
     },
-    [readOnly, setInputValue],
+    [disabled, readOnly, setInputValue],
   );
 
   const onValueChange = React.useCallback(
