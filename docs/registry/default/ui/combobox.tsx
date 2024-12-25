@@ -102,7 +102,18 @@ const ComboboxContent = React.forwardRef<
 ));
 ComboboxContent.displayName = ComboboxPrimitive.Content.displayName;
 
-const ComboboxProgress = ComboboxPrimitive.Progress;
+const ComboboxProgress = React.forwardRef<
+  React.ElementRef<typeof ComboboxPrimitive.Progress>,
+  React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.Progress>
+>(({ className, ...props }, ref) => (
+  <ComboboxPrimitive.Progress
+    ref={ref}
+    className={cn("py-6 text-center text-sm", className)}
+    {...props}
+  >
+    Loading...
+  </ComboboxPrimitive.Progress>
+));
 
 const ComboboxEmpty = React.forwardRef<
   React.ElementRef<typeof ComboboxPrimitive.Empty>,

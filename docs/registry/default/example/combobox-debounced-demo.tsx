@@ -11,7 +11,7 @@ import {
   ComboboxProgress,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
-import { ChevronDown, Loader2 } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import * as React from "react";
 
 const tricks = [
@@ -28,26 +28,48 @@ const tricks = [
 export default function ComboboxDebouncedDemo() {
   const [value, setValue] = React.useState("");
   const [search, setSearch] = React.useState("");
-  const [open, setOpen] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [progress, setProgress] = React.useState(0);
+  const [filteredItems, setFilteredItems] = React.useState(tricks);
 
-  const filteredItems = React.useMemo(
-    () =>
-      tricks.filter((trick) =>
-        trick.label.toLowerCase().includes(search.toLowerCase()),
-      ),
-    [search],
+  // Debounce search with loading simulation
+  const debouncedSearch = React.useCallback(
+    // @ts-expect-error - TODO: fix this
+    debounce(async (searchTerm: string) => {
+      setIsLoading(true);
+      setProgress(0);
+
+      // Simulate progress
+      const interval = setInterval(() => {
+        setProgress((prev) => Math.min(prev + 20, 90));
+      }, 100);
+
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      const results = tricks.filter((trick) =>
+        trick.label.toLowerCase().includes(searchTerm.toLowerCase()),
+      );
+
+      setFilteredItems(results);
+      setProgress(100);
+      setIsLoading(false);
+      clearInterval(interval);
+    }, 300),
+    [],
   );
 
-  // console.log({ filteredItems });
+  function onInputValueChange(value: string) {
+    setSearch(value);
+    debouncedSearch(value);
+  }
 
   return (
     <Combobox
       value={value}
       onValueChange={setValue}
-      open={open}
-      onOpenChange={setOpen}
       inputValue={search}
-      onInputValueChange={setSearch}
+      onInputValueChange={onInputValueChange}
       manualFiltering
       className="w-[15rem]"
     >
@@ -59,19 +81,34 @@ export default function ComboboxDebouncedDemo() {
         </ComboboxTrigger>
       </ComboboxAnchor>
       <ComboboxContent>
-        {filteredItems.length === 0 && (
+        {isLoading && (
+          <ComboboxProgress value={progress} label="Searching tricks..." />
+        )}
+        {!isLoading && filteredItems.length === 0 && (
           <ComboboxEmpty>No trick found.</ComboboxEmpty>
         )}
-        {filteredItems.map((trick) => (
-          <ComboboxItem
-            key={trick.value}
-            value={trick.value}
-            indicatorSide="right"
-          >
-            {trick.label}
-          </ComboboxItem>
-        ))}
+        {!isLoading &&
+          filteredItems.map((trick) => (
+            <ComboboxItem
+              key={trick.value}
+              value={trick.value}
+              indicatorSide="right"
+            >
+              {trick.label}
+            </ComboboxItem>
+          ))}
       </ComboboxContent>
     </Combobox>
   );
+}
+
+function debounce<F extends (...args: unknown[]) => unknown>(
+  func: F,
+  wait: number,
+): (...args: Parameters<F>) => void {
+  let timeout: NodeJS.Timeout;
+  return (...args: Parameters<F>) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
 }
