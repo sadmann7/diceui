@@ -20,12 +20,12 @@ const ComboboxEmpty = React.forwardRef<HTMLDivElement, ComboboxEmptyProps>(
 
     return (
       <Primitive.div
-        {...props}
-        ref={forwardedRef}
         role="status"
         aria-live="polite"
         aria-atomic="true"
         data-state="empty"
+        {...props}
+        ref={forwardedRef}
       />
     );
   },

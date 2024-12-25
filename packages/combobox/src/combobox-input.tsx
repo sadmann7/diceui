@@ -28,18 +28,20 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
         if (!context.open) context.onOpenChange(true);
 
         const value = event.target.value;
-        context.onInputValueChange(value);
-
-        if (value.trim() === "") {
-          context.filterStore.search = "";
-          context.onValueChange("");
-          context.onHighlightedItemChange(null);
-          context.onFilterItems();
-          return;
-        }
+        const trimmedValue = value.trim();
 
         requestAnimationFrame(() => {
-          context.filterStore.search = value.trim();
+          context.onInputValueChange(value);
+
+          if (trimmedValue === "") {
+            context.filterStore.search = "";
+            context.onValueChange("");
+            context.onHighlightedItemChange(null);
+            context.onFilterItems();
+            return;
+          }
+
+          context.filterStore.search = trimmedValue;
           context.onFilterItems();
         });
       },
@@ -208,7 +210,6 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
               event.preventDefault();
               return;
             }
-
             onMenuClose();
             break;
         }

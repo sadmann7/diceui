@@ -27,7 +27,7 @@ const ComboboxAnchor = React.forwardRef<
   <ComboboxPrimitive.Anchor
     ref={ref}
     className={cn(
-      "flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent shadow-sm data-[focused]:ring-1 data-[focused]:ring-ring",
+      "relative flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent shadow-sm data-[focused]:ring-1 data-[focused]:ring-ring",
       className,
     )}
     {...props}
@@ -74,7 +74,7 @@ const ComboboxCancel = React.forwardRef<
   <ComboboxPrimitive.Cancel
     ref={ref}
     className={cn(
-      "absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none",
+      "-translate-y-1/2 absolute top-1/2 right-1 flex h-6 w-6 items-center justify-center rounded-sm bg-background opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none",
       className,
     )}
     {...props}

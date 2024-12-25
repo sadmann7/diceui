@@ -37,7 +37,7 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   value: Value<Multiple>;
   onValueChange: (value: Value<Multiple>) => void;
   open: boolean;
-  onOpenChange: (open: boolean) => Promise<void>;
+  onOpenChange: (open: boolean) => void;
   inputValue: string;
   onInputValueChange: (value: string) => void;
   selectedText: string;
@@ -355,6 +355,8 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     filterStore.groups.clear();
     filterStore.items.clear();
 
+    console.log({ filterStore });
+
     const searchTerm = filterStore.search;
     let itemCount = 0;
     let pendingBatch: Array<[string, string]> = [];
@@ -416,25 +418,6 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       }
     }
   }, [manualFiltering, filterStore, items, groups, getItemScore]);
-
-  const onOpenChange = React.useCallback(
-    async (open: boolean) => {
-      setOpen(open);
-      if (open) {
-        await new Promise((resolve) => requestAnimationFrame(resolve));
-        const input = inputRef.current;
-        if (input) {
-          input.focus();
-          const length = input.value.length;
-          input.setSelectionRange(length, length);
-        }
-        return;
-      }
-
-      filterStore.search = "";
-    },
-    [setOpen, filterStore],
-  );
 
   const onInputValueChange = React.useCallback(
     (value: string) => {
@@ -542,7 +525,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       value={value}
       onValueChange={onValueChange}
       open={open}
-      onOpenChange={onOpenChange}
+      onOpenChange={setOpen}
       inputValue={inputValue}
       onInputValueChange={onInputValueChange}
       selectedText={selectedText}

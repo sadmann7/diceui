@@ -29,14 +29,21 @@ const ComboboxTrigger = React.forwardRef<
       ref={forwardedRef}
       onClick={composeEventHandlers(triggerProps.onClick, async () => {
         const newOpenState = !context.open;
-        await context.onOpenChange(newOpenState);
+        context.onOpenChange(newOpenState);
+
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+
+        const input = context.inputRef.current;
+        if (input) {
+          input.focus();
+          const length = input.value.length;
+          input.setSelectionRange(length, length);
+        }
 
         if (newOpenState) {
-          requestAnimationFrame(() => {
-            context.onHighlightMove(
-              context.value.length > 0 ? "selected" : "first",
-            );
-          });
+          context.onHighlightMove(
+            context.value.length > 0 ? "selected" : "first",
+          );
         }
       })}
       onPointerDown={composeEventHandlers(
