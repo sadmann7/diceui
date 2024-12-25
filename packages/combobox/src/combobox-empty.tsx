@@ -12,12 +12,22 @@ const ComboboxEmpty = React.forwardRef<HTMLDivElement, ComboboxEmptyProps>(
     const context = useComboboxContext(EMPTY_NAME);
 
     const shouldRender =
+      context.open &&
       context.filterStore.itemCount === 0 &&
       context.filterStore.search.trim() !== "";
 
     if (!shouldRender) return null;
 
-    return <Primitive.div {...props} ref={forwardedRef} />;
+    return (
+      <Primitive.div
+        {...props}
+        ref={forwardedRef}
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        data-state="empty"
+      />
+    );
   },
 );
 

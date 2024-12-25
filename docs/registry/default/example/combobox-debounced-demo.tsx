@@ -34,18 +34,24 @@ export default function ComboboxDebouncedDemo() {
 
   // Debounce search with loading simulation
   const debouncedSearch = React.useCallback(
-    // @ts-expect-error - TODO: fix this
     debounce(async (searchTerm: string) => {
       setIsLoading(true);
       setProgress(0);
 
-      // Simulate progress
-      const interval = setInterval(() => {
-        setProgress((prev) => Math.min(prev + 20, 90));
-      }, 100);
+      // Simulate a more realistic progress pattern
+      const progressSteps = [15, 35, 65, 85, 95] as const;
+      let currentStepIndex = 0;
 
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      const interval = setInterval(() => {
+        if (currentStepIndex < progressSteps.length) {
+          setProgress(progressSteps[currentStepIndex] ?? 0);
+          currentStepIndex++;
+        }
+      }, 150);
+
+      // Simulate API delay with variable timing
+      const delay = Math.random() * 300 + 400; // Random delay between 400-700ms
+      await new Promise((resolve) => setTimeout(resolve, delay));
 
       const results = tricks.filter((trick) =>
         trick.label.toLowerCase().includes(searchTerm.toLowerCase()),
@@ -59,19 +65,16 @@ export default function ComboboxDebouncedDemo() {
     [],
   );
 
-  function onInputValueChange(value: string) {
-    setSearch(value);
-    debouncedSearch(value);
-  }
-
   return (
     <Combobox
       value={value}
       onValueChange={setValue}
       inputValue={search}
-      onInputValueChange={onInputValueChange}
+      onInputValueChange={(value) => {
+        setSearch(value);
+        debouncedSearch(value);
+      }}
       manualFiltering
-      className="w-[15rem]"
     >
       <ComboboxLabel>Trick</ComboboxLabel>
       <ComboboxAnchor>
@@ -102,13 +105,16 @@ export default function ComboboxDebouncedDemo() {
   );
 }
 
-function debounce<F extends (...args: unknown[]) => unknown>(
-  func: F,
+function debounce<TFunction extends (...args: never[]) => unknown>(
+  func: TFunction,
   wait: number,
-): (...args: Parameters<F>) => void {
-  let timeout: NodeJS.Timeout;
-  return (...args: Parameters<F>) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func(...args), wait);
+): (...args: Parameters<TFunction>) => void {
+  let timeoutId: ReturnType<typeof setTimeout>;
+
+  return function (this: unknown, ...args: Parameters<TFunction>): void {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      func.apply(this, args);
+    }, wait);
   };
 }

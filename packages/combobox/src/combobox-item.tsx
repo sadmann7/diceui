@@ -5,7 +5,6 @@ import {
   useComposedRefs,
   useId,
   useIsomorphicLayoutEffect,
-  useLayoutEffect,
 } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";

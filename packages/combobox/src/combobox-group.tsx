@@ -8,6 +8,7 @@ const GROUP_NAME = "ComboboxGroup";
 interface ComboboxGroupContextValue {
   id: string;
   labelId: string;
+  forceMount: boolean;
 }
 
 const [ComboboxGroupProvider, useComboboxGroupContext] =
@@ -37,7 +38,7 @@ const ComboboxGroup = React.forwardRef<HTMLDivElement, ComboboxGroupProps>(
     if (!shouldRender) return null;
 
     return (
-      <ComboboxGroupProvider id={id} labelId={labelId}>
+      <ComboboxGroupProvider id={id} labelId={labelId} forceMount={forceMount}>
         <Primitive.div
           role="group"
           aria-labelledby={labelId}
