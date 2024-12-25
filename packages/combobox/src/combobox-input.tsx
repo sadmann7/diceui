@@ -204,6 +204,11 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
             onMenuClose();
             break;
           case "Tab":
+            if (context.modal) {
+              event.preventDefault();
+              return;
+            }
+
             onMenuClose();
             break;
         }
