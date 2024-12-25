@@ -240,16 +240,16 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
   const contentId = `${id}content`;
 
   const dir = useDirection(dirProp);
-  const { anchorRef, hasAnchor, onHasAnchorChange } =
-    useAnchor<AnchorElement>();
   const { getEnabledItems } = useCollection<CollectionElement>({
     ref: collectionRef,
   });
-  const { isFormControl, onTriggerChange } = useFormControl();
+  const { anchorRef, hasAnchor, onHasAnchorChange } =
+    useAnchor<AnchorElement>();
+  const { isFormControl, onTriggerChange } =
+    useFormControl<CollectionElement>();
   const composedRef = useComposedRefs(forwardedRef, collectionRef, (node) =>
     onTriggerChange(node),
   );
-
   const [value = multiple ? [""] : "", setValue] = useControllableState({
     prop: valueProp,
     defaultProp: defaultValue,

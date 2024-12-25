@@ -205,7 +205,8 @@ const TagsInputRoot = React.forwardRef<
   const { getEnabledItems } = useCollection<CollectionElement>({
     ref: collectionRef,
   });
-  const { isFormControl, onTriggerChange } = useFormControl();
+  const { isFormControl, onTriggerChange } =
+    useFormControl<CollectionElement>();
   const composedRefs = useComposedRefs(ref, collectionRef, (node) =>
     onTriggerChange(node),
   );
@@ -534,9 +535,8 @@ const TagsInputRoot = React.forwardRef<
           if (!(target instanceof HTMLElement)) return;
 
           if (getIsClickedInEmptyRoot(target)) {
-            // prevent default for prevent collection from stealing focus from the input
+            // prevent root from stealing focus from the input
             event.preventDefault();
-            inputRef.current?.focus();
           }
         })}
         onBlur={composeEventHandlers(rootProps.onBlur, (event) => {
