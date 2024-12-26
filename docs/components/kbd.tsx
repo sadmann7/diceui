@@ -18,7 +18,7 @@ const kbdVariants = cva(
   },
 );
 
-export interface KbdProps
+interface KbdProps
   extends React.ComponentPropsWithoutRef<"kbd">,
     VariantProps<typeof kbdVariants> {
   /**
