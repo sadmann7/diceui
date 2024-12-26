@@ -3,6 +3,6 @@
   "compilerOptions": {
     "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json"
   },
-  "include": ["src", "test", "../shared/src/hooks/use-progress.ts"],
+  "include": ["src", "test"],
   "exclude": ["dist", "node_modules"]
 }
