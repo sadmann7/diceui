@@ -12,16 +12,16 @@ interface ComboboxEmptyProps
    * Can be used for `manualFiltering` comboboxes to show the empty state.
    * @default false
    */
-  visible?: boolean;
+  keepVisible?: boolean;
 }
 
 const ComboboxEmpty = React.forwardRef<HTMLDivElement, ComboboxEmptyProps>(
   (props, forwardedRef) => {
-    const { visible = false, ...emptyProps } = props;
+    const { keepVisible = false, ...emptyProps } = props;
     const context = useComboboxContext(EMPTY_NAME);
 
     const shouldRender =
-      visible ||
+      keepVisible ||
       (context.open &&
         context.filterStore.itemCount === 0 &&
         context.filterStore.search.trim() !== "");
