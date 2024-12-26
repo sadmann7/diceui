@@ -29,7 +29,7 @@ export default function ComboboxDemo() {
       <Combobox.Label className="font-medium text-sm text-zinc-950 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:text-zinc-50">
         Trick
       </Combobox.Label>
-      <Combobox.Anchor className="flex h-9 w-full items-center justify-between rounded-md border border-zinc-200 bg-white shadow-sm transition-colors dark:border-zinc-800 dark:bg-zinc-950">
+      <Combobox.Anchor className="flex h-9 w-full items-center justify-between rounded-md border border-zinc-200 bg-white shadow-sm transition-colors data-[focused]:ring-1 data-[focused]:ring-zinc-200 dark:border-zinc-800 dark:bg-zinc-950 dark:data-[focused]:ring-zinc-800">
         <Combobox.Input
           placeholder="Search trick..."
           className="flex h-9 w-full rounded-md bg-transparent px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-zinc-50 dark:placeholder:text-zinc-400"
