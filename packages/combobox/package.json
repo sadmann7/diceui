@@ -2,11 +2,7 @@
   "name": "@diceui/combobox",
   "version": "0.0.2",
   "type": "module",
-  "keywords": [
-    "combobox",
-    "ui",
-    "react"
-  ],
+  "keywords": ["combobox", "ui", "react"],
   "author": "Sadman Sakib",
   "license": "MIT",
   "repository": {
@@ -24,11 +20,7 @@
       "require": "./dist/index.cjs"
     }
   },
-  "files": [
-    "dist",
-    "package.json",
-    "README.md"
-  ],
+  "files": ["dist", "package.json", "README.md"],
   "scripts": {
     "dev": "tsup --format esm --watch --external=react",
     "build": "tsup --clean --external=react",

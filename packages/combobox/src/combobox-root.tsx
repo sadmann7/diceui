@@ -501,7 +501,6 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
           const selectedValue = Array.isArray(value)
             ? getSortedItems(items, value)[0]
             : value;
-
           nextIndex = items.findIndex(
             (item) => item.getAttribute(DATA_VALUE_ATTR) === selectedValue,
           );
