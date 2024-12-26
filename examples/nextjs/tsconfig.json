@@ -20,19 +20,24 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "jsx": "preserve",
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
+    "plugins": [{ "name": "next" }],
     "incremental": true,
 
     /* Path Aliases */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./app/*"]
+      "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "app", ".next/types/**/*.ts", "*.js"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.tsx",
+    "**/*.ts",
+    "**/*.mdx",
+    ".next/types/**/*.ts",
+    "*.js",
+    "tailwind.config.ts",
+    "next.config.mjs"
+  ],
+  "exclude": ["node_modules", "scripts/build-registry.mts", "__registry__"]
 }
