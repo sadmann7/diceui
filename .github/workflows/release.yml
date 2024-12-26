@@ -8,6 +8,10 @@ env:
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   release:
     name: Release
@@ -15,16 +19,20 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.MY_GITHUB_TOKEN }}
+          
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9.15.1
+          
       - uses: ./.github/setup
 
       - name: Build
         run: pnpm turbo build
 
-      # Using custom token `MY_GITHUB_TOKEN` with more access to avoid rate limiting
       - name: Create Release
         id: changeset
         uses: changesets/action@v1.4.1
