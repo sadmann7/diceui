@@ -2,12 +2,7 @@
   "name": "@diceui/checkbox-group",
   "version": "0.0.3",
   "type": "module",
-  "keywords": [
-    "checkbox-group",
-    "checkbox-group",
-    "ui",
-    "react"
-  ],
+  "keywords": ["checkbox-group", "checkbox-group", "ui", "react"],
   "author": "Sadman Sakib",
   "license": "MIT",
   "repository": {
@@ -25,11 +20,7 @@
       "require": "./dist/index.cjs"
     }
   },
-  "files": [
-    "dist",
-    "package.json",
-    "README.md"
-  ],
+  "files": ["dist", "package.json", "README.md"],
   "scripts": {
     "dev": "tsup --format esm --watch --external=react",
     "build": "tsup --clean --external=react",
