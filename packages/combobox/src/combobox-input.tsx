@@ -38,22 +38,11 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
             context.onValueChange("");
             context.onHighlightedItemChange(null);
             context.onFilterItems();
-            if (context.autoHighlight && !context.highlightedItem) {
-              requestAnimationFrame(() => {
-                context.onHighlightMove("first");
-              });
-            }
             return;
           }
 
           context.filterStore.search = trimmedValue;
           context.onFilterItems();
-
-          if (context.autoHighlight && !context.highlightedItem) {
-            requestAnimationFrame(() => {
-              context.onHighlightMove("first");
-            });
-          }
         });
       },
       [
@@ -63,10 +52,7 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
         context.onFilterItems,
         context.onInputValueChange,
         context.onValueChange,
-        context.highlightedItem,
         context.onHighlightedItemChange,
-        context.onHighlightMove,
-        context.autoHighlight,
         context.disabled,
         context.readOnly,
       ],

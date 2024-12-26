@@ -44,11 +44,6 @@ const ComboboxTrigger = React.forwardRef<
 
         if (context.value.length > 0) {
           context.onHighlightMove("selected");
-          return;
-        }
-
-        if (context.autoHighlight) {
-          context.onHighlightMove("first");
         }
       })}
       onPointerDown={composeEventHandlers(

@@ -60,7 +60,6 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   onHighlightMove: (direction: HighlightingDirection) => void;
   hasAnchor: boolean;
   onHasAnchorChange: (value: boolean) => void;
-  autoHighlight: boolean;
   disabled: boolean;
   loop: boolean;
   manualFiltering: boolean;
@@ -137,23 +136,19 @@ interface ComboboxRootProps<Multiple extends boolean = false>
    */
   dir?: Direction;
 
-  /**
-   * Whether to automatically highlight the first matching item when the menu opens.
-   * @default false
-   */
-  autoHighlight?: boolean;
-
   /** Whether the combobox is disabled. */
   disabled?: boolean;
 
   /**
-   * Whether the combobox uses fuzzy filtering. When false, the combobox will use exact string matching.
+   * Whether the combobox uses exact string matching. When true, the combobox will use exact string matching.
+   * When false, it will use fuzzy matching.
    *
-   * When `onFilter` is provided, the combobox will use the provided function instead of fuzzy filtering.
+   * When `manualFiltering` is true, this prop is ignored.
+   * When `onFilter` is provided, the combobox will use the provided filter function instead.
    *
-   * @default true
+   * @default false
    */
-  fuzzy?: boolean;
+  exactMatch?: boolean;
 
   /**
    * Whether the combobox should filter items externally.
@@ -223,9 +218,8 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     inputValue: inputValueProp,
     onInputValueChange,
     onFilter,
-    autoHighlight = false,
     disabled = false,
-    fuzzy = true,
+    exactMatch = false,
     manualFiltering = false,
     loop = false,
     modal = false,
@@ -381,8 +375,8 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
 
   const filter = useFilter({ sensitivity: "base" });
   const currentFilter = React.useMemo(
-    () => (fuzzy ? filter.fuzzy : filter.contains),
-    [filter.fuzzy, filter.contains, fuzzy],
+    () => (exactMatch ? filter.contains : filter.fuzzy),
+    [filter.fuzzy, filter.contains, exactMatch],
   );
 
   const getItemScore = React.useCallback(
@@ -545,7 +539,6 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       onHighlightMove={onHighlightMove}
       hasAnchor={hasAnchor}
       onHasAnchorChange={onHasAnchorChange}
-      autoHighlight={autoHighlight}
       disabled={disabled}
       loop={loop}
       manualFiltering={manualFiltering}
