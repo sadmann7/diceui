@@ -14,7 +14,6 @@
       "**/public",
       "**/.turbo",
       "**/.next",
-      "**/.changeset",
       "**/.source",
       "__registry__"
     ]
@@ -63,7 +62,6 @@
       "**/public",
       "**/.turbo",
       "**/.next",
-      "**/.changeset",
       "**/.source",
       "__registry__"
     ]
@@ -86,7 +84,6 @@
       "**/public",
       "**/.turbo",
       "**/.next",
-      "**/.changeset",
       "**/.source",
       "__registry__"
     ]

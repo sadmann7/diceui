@@ -1,6 +1,9 @@
 {
   "name": "@diceui/shared",
   "version": "0.2.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",

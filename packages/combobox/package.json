@@ -2,6 +2,9 @@
   "name": "@diceui/combobox",
   "version": "0.0.3",
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": ["combobox", "ui", "react"],
   "author": "Sadman Sakib",
   "license": "MIT",

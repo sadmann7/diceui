@@ -2,6 +2,9 @@
   "name": "@diceui/checkbox-group",
   "version": "0.0.3",
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": ["checkbox-group", "checkbox-group", "ui", "react"],
   "author": "Sadman Sakib",
   "license": "MIT",

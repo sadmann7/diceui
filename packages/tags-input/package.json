@@ -2,6 +2,9 @@
   "name": "@diceui/tags-input",
   "version": "0.0.3",
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": ["tags-input", "tag-input", "ui", "react"],
   "author": "Sadman Sakib",
   "license": "MIT",
