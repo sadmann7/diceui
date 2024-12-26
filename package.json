@@ -3,7 +3,11 @@
   "packageManager": "pnpm@9.15.1",
   "private": true,
   "type": "module",
-  "workspaces": ["docs", "examples/*", "packages/*"],
+  "workspaces": [
+    "docs",
+    "examples/*",
+    "packages/*"
+  ],
   "scripts": {
     "clean": "rimraf --glob **/node_modules **/dist **/.source **/.turbo **/.next **/pnpm-lock.yaml **/.tsbuildinfo",
     "dev": "turbo run dev",
@@ -16,6 +20,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
+    "@changesets/cli": "^2.27.11",
     "@types/node": "^22.10.2",
     "expect-type": "^1.1.0",
     "rimraf": "^6.0.1",
