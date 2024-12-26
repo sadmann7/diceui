@@ -23,7 +23,7 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
 
     const onChange = React.useCallback(
       (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (context.readOnly) return;
+        if (context.disabled || context.readOnly) return;
 
         if (!context.open) context.onOpenChange(true);
 
@@ -38,11 +38,22 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
             context.onValueChange("");
             context.onHighlightedItemChange(null);
             context.onFilterItems();
+            if (context.autoHighlight && !context.highlightedItem) {
+              requestAnimationFrame(() => {
+                context.onHighlightMove("first");
+              });
+            }
             return;
           }
 
           context.filterStore.search = trimmedValue;
           context.onFilterItems();
+
+          if (context.autoHighlight && !context.highlightedItem) {
+            requestAnimationFrame(() => {
+              context.onHighlightMove("first");
+            });
+          }
         });
       },
       [
@@ -52,7 +63,11 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
         context.onFilterItems,
         context.onInputValueChange,
         context.onValueChange,
+        context.highlightedItem,
         context.onHighlightedItemChange,
+        context.onHighlightMove,
+        context.autoHighlight,
+        context.disabled,
         context.readOnly,
       ],
     );
@@ -76,12 +91,14 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
 
       if (context.inputValue && !context.preserveInputOnBlur) {
         context.onInputValueChange("");
+        context.onHighlightedItemChange(null);
       }
     }, [
       context.multiple,
       context.value,
       context.preserveInputOnBlur,
       context.onInputValueChange,
+      context.onHighlightedItemChange,
       context.inputValue,
       context.selectedText,
     ]);

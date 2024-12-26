@@ -45,6 +45,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
     return (
       <Primitive.input
         type="text"
+        id={context.inputId}
         autoCapitalize="off"
         autoComplete="off"
         autoCorrect="off"
@@ -52,7 +53,6 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
         autoFocus={autoFocus}
         aria-labelledby={context.labelId}
         data-invalid={context.isInvalidInput ? "" : undefined}
-        id={context.inputId}
         disabled={context.disabled}
         {...inputProps}
         ref={composeRefs(context.inputRef, ref)}

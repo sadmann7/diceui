@@ -21,9 +21,10 @@ const TagsInputItemText = React.forwardRef<
     return (
       <Primitive.input
         type="text"
+        autoCapitalize="off"
         autoComplete="off"
         autoCorrect="off"
-        autoCapitalize="off"
+        spellCheck="false"
         autoFocus
         aria-describedby={itemContext.textId}
         value={editValue}
