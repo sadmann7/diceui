@@ -1,3 +1,5 @@
+"use client";
+
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,6 +25,7 @@ import {
   ComboboxEmpty,
   ComboboxInput,
   ComboboxItem,
+  ComboboxLabel,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
 import { ChevronDown } from "lucide-react";
@@ -35,19 +38,29 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import * as React from "react";
 
 export default function PlaygroundPage() {
+  const [value, setValue] = React.useState<string[]>([]);
+  console.log({ value });
+
   return (
     <Shell>
-      <Combobox className="w-[15rem]">
+      <Combobox
+        value={value}
+        onValueChange={setValue}
+        className="w-[240px]"
+        multiple
+      >
+        <ComboboxLabel>Tricks</ComboboxLabel>
         <ComboboxAnchor>
-          <ComboboxInput placeholder="Search tricks..." />
+          <ComboboxInput placeholder="Select tricks..." />
           <ComboboxTrigger>
             <ChevronDown className="h-4 w-4" />
           </ComboboxTrigger>
         </ComboboxAnchor>
         <ComboboxContent>
-          <ComboboxEmpty>No tricks found</ComboboxEmpty>
+          <ComboboxEmpty>No tricks found.</ComboboxEmpty>
           {tricks.map((trick) => (
             <ComboboxItem key={trick.value} value={trick.value}>
               {trick.label}

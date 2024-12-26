@@ -13,6 +13,7 @@ import type {
   ComboboxItemTextProps,
   ComboboxLabelProps,
   ComboboxPortalProps,
+  ComboboxProgressProps,
   ComboboxRootProps,
   ComboboxSeparatorProps,
   ComboboxTriggerProps,
@@ -62,6 +63,11 @@ export type ContentProps = Omit<
 export type ArrowProps = Omit<
   ComboboxArrowProps,
   keyof React.ComponentPropsWithoutRef<"svg">
+>;
+
+export type ProgressProps = Omit<
+  ComboboxProgressProps,
+  keyof React.ComponentPropsWithoutRef<"div">
 >;
 
 export type EmptyProps = Omit<
