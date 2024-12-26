@@ -284,7 +284,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     prop: inputValueProp,
     onChange: (value) => {
       if (disabled || readOnly) return;
-      setInputValue(value);
+      onInputValueChange?.(value);
     },
   });
   const [selectedText, setSelectedText] = React.useState("");
