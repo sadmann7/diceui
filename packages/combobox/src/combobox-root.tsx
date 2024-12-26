@@ -219,7 +219,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     onValueChange: onValueChangeProp,
     open: openProp,
     defaultOpen = false,
-    onOpenChange: onOpenChangeProp,
+    onOpenChange,
     inputValue: inputValueProp,
     onInputValueChange,
     onFilter,
@@ -269,6 +269,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
   const composedRef = useComposedRefs(forwardedRef, collectionRef, (node) =>
     onTriggerChange(node),
   );
+
   const [value = multiple ? [""] : "", setValue] = useControllableState({
     prop: valueProp,
     defaultProp: defaultValue,
@@ -281,10 +282,9 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       if (!newOpen) {
         filterStore.search = "";
       }
-      setOpen(newOpen);
+      onOpenChange?.(newOpen);
     },
   });
-
   const [inputValue = "", setInputValue] = useControllableState({
     prop: inputValueProp,
     onChange: (value) => {
@@ -295,6 +295,98 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
   const [selectedText, setSelectedText] = React.useState("");
   const [highlightedItem, setHighlightedItem] =
     React.useState<ItemElement | null>(null);
+
+  const onValueChange = React.useCallback(
+    (newValue: string | string[]) => {
+      if (disabled || readOnly) return;
+
+      if (multiple) {
+        const currentValue = Array.isArray(value) ? value : [];
+        const typedNewValue = typeof newValue === "string" ? newValue : "";
+        if (!typedNewValue) return;
+        const newValues = currentValue.includes(typedNewValue)
+          ? currentValue.filter((v) => v !== newValue)
+          : [...currentValue, newValue];
+        setValue(newValues as Value<Multiple>);
+        return;
+      }
+
+      setValue(newValue as Value<Multiple>);
+    },
+    [multiple, setValue, value, disabled, readOnly],
+  );
+
+  const onRegisterItem = React.useCallback(
+    (id: string, value: string, groupId?: string) => {
+      items.set(id, value);
+
+      if (groupId) {
+        if (!groups.has(groupId)) {
+          groups.set(groupId, new Set());
+        }
+        groups.get(groupId)?.add(id);
+      }
+
+      return () => {
+        items.delete(id);
+        if (groupId) {
+          const group = groups.get(groupId);
+          group?.delete(id);
+          if (group?.size === 0) {
+            groups.delete(groupId);
+          }
+        }
+      };
+    },
+    [items, groups],
+  );
+
+  const onHighlightMove = React.useCallback(
+    (direction: HighlightingDirection) => {
+      const items = getEnabledItems();
+      if (!items.length) return;
+
+      const currentIndex = items.indexOf(highlightedItem as ItemElement);
+      let nextIndex: number;
+
+      switch (direction) {
+        case "next":
+          nextIndex = currentIndex + 1;
+          if (nextIndex >= items.length) {
+            nextIndex = loop ? 0 : items.length - 1;
+          }
+          break;
+        case "prev":
+          nextIndex = currentIndex - 1;
+          if (nextIndex < 0) {
+            nextIndex = loop ? items.length - 1 : 0;
+          }
+          break;
+        case "first":
+          nextIndex = 0;
+          break;
+        case "last":
+          nextIndex = items.length - 1;
+          break;
+        case "selected": {
+          const selectedValue = Array.isArray(value) ? value[0] : value;
+          nextIndex = items.findIndex(
+            (item) => item.getAttribute(DATA_VALUE_ATTR) === selectedValue,
+          );
+
+          if (nextIndex === -1) nextIndex = 0;
+          break;
+        }
+      }
+
+      const nextItem = items[nextIndex];
+      if (nextItem) {
+        nextItem.scrollIntoView({ block: "nearest" });
+        setHighlightedItem(nextItem);
+      }
+    },
+    [loop, highlightedItem, getEnabledItems, value],
+  );
 
   const normalizeString = React.useCallback(
     (str: string) => {
@@ -431,98 +523,6 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       }
     }
   }, [manualFiltering, filterStore, items, groups, getItemScore]);
-
-  const onValueChange = React.useCallback(
-    (newValue: string | string[]) => {
-      if (disabled || readOnly) return;
-
-      if (multiple) {
-        const currentValue = Array.isArray(value) ? value : [];
-        const typedNewValue = typeof newValue === "string" ? newValue : "";
-        if (!typedNewValue) return;
-        const newValues = currentValue.includes(typedNewValue)
-          ? currentValue.filter((v) => v !== newValue)
-          : [...currentValue, newValue];
-        setValue(newValues as Value<Multiple>);
-        return;
-      }
-
-      setValue(newValue as Value<Multiple>);
-    },
-    [multiple, setValue, value, disabled, readOnly],
-  );
-
-  const onRegisterItem = React.useCallback(
-    (id: string, value: string, groupId?: string) => {
-      items.set(id, value);
-
-      if (groupId) {
-        if (!groups.has(groupId)) {
-          groups.set(groupId, new Set());
-        }
-        groups.get(groupId)?.add(id);
-      }
-
-      return () => {
-        items.delete(id);
-        if (groupId) {
-          const group = groups.get(groupId);
-          group?.delete(id);
-          if (group?.size === 0) {
-            groups.delete(groupId);
-          }
-        }
-      };
-    },
-    [items, groups],
-  );
-
-  const onHighlightMove = React.useCallback(
-    (direction: HighlightingDirection) => {
-      const items = getEnabledItems();
-      if (!items.length) return;
-
-      const currentIndex = items.indexOf(highlightedItem as ItemElement);
-      let nextIndex: number;
-
-      switch (direction) {
-        case "next":
-          nextIndex = currentIndex + 1;
-          if (nextIndex >= items.length) {
-            nextIndex = loop ? 0 : items.length - 1;
-          }
-          break;
-        case "prev":
-          nextIndex = currentIndex - 1;
-          if (nextIndex < 0) {
-            nextIndex = loop ? items.length - 1 : 0;
-          }
-          break;
-        case "first":
-          nextIndex = 0;
-          break;
-        case "last":
-          nextIndex = items.length - 1;
-          break;
-        case "selected": {
-          const selectedValue = Array.isArray(value) ? value[0] : value;
-          nextIndex = items.findIndex(
-            (item) => item.getAttribute(DATA_VALUE_ATTR) === selectedValue,
-          );
-
-          if (nextIndex === -1) nextIndex = 0;
-          break;
-        }
-      }
-
-      const nextItem = items[nextIndex];
-      if (nextItem) {
-        nextItem.scrollIntoView({ block: "nearest" });
-        setHighlightedItem(nextItem);
-      }
-    },
-    [loop, highlightedItem, getEnabledItems, value],
-  );
 
   return (
     <ComboboxProvider
