@@ -222,15 +222,6 @@ importers:
 
   examples/nextjs:
     dependencies:
-      '@diceui/checkbox-group':
-        specifier: workspace:*
-        version: link:../../packages/checkbox-group
-      '@diceui/combobox':
-        specifier: workspace:*
-        version: link:../../packages/combobox
-      '@diceui/tags-input':
-        specifier: workspace:*
-        version: link:../../packages/tags-input
       lucide-react:
         specifier: ^0.469.0
         version: 0.469.0(react@19.0.0)

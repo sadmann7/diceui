@@ -10,9 +10,6 @@
     "lint": "biome check ."
   },
   "dependencies": {
-    "@diceui/checkbox-group": "workspace:*",
-    "@diceui/combobox": "workspace:*",
-    "@diceui/tags-input": "workspace:*",
     "lucide-react": "^0.469.0",
     "next": "^15.1.2",
     "react": "^19.0.0",
