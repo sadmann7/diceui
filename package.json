@@ -12,7 +12,8 @@
     "lint": "biome check .",
     "lint:fix": "biome check . --write",
     "typecheck": "turbo typecheck",
-    "check": "turbo lint typecheck"
+    "check": "turbo lint typecheck",
+    "release": "changeset publish"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
