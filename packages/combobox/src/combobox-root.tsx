@@ -141,8 +141,7 @@ interface ComboboxRootProps<Multiple extends boolean = false>
   disabled?: boolean;
 
   /**
-   * Whether the combobox uses exact string matching. When true, the combobox will use exact string matching.
-   * When false, it will use fuzzy matching.
+   * Whether the combobox uses exact string matching or fuzzy matching.
    *
    * When `manualFiltering` is true, this prop is ignored.
    * When `onFilter` is provided, the combobox will use the provided filter function instead.

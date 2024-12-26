@@ -137,6 +137,27 @@ A wrapper element that positions the combobox popover relative to the input and 
   name="AnchorProps"
 />
 
+<DataAttributesTable
+  attributes={[
+    {   
+      title: "[data-state]",
+      value: ["open", "closed"],
+    },
+    {
+      title: "[data-anchor]",
+      value: "Present when the anchor is present.",
+    },
+    {
+      title: "[data-disabled]",
+      value: "Present when disabled.",
+    },
+    {
+      title: "[data-focused]",
+      value: "Present when the anchor is focused.",
+    },
+  ]}
+/>
+
 ### Trigger
 
 A button that toggles the combobox popover. Handles focus management and keyboard interactions for opening/closing the popover.
@@ -190,7 +211,7 @@ Creates a portal for rendering the combobox content outside of its DOM hierarchy
 
 ### Content
 
-The popover container for combobox items. Handles the positioning of the combobox content relative to the anchor.
+The popover container for combobox items. Positions the combobox popover relative to the anchor.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
