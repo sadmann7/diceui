@@ -36,10 +36,12 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import SortableDemo from "@/registry/default/example/sortable-demo";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
+      <SortableDemo />
       <Combobox className="w-[240px]">
         <ComboboxLabel>Tricks</ComboboxLabel>
         <ComboboxAnchor>
