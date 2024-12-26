@@ -16,8 +16,8 @@
   },
   "files": ["dist", "package.json", "README.md"],
   "scripts": {
-    "dev": "tsup --format esm --watch --external=react",
-    "build": "tsup --clean --external=react",
+    "dev": "tsup --watch",
+    "build": "tsup --clean",
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
