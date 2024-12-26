@@ -29,7 +29,7 @@ export default function TagsInputDemo() {
               className="flex-1 bg-transparent outline-none placeholder:text-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder:text-zinc-400"
             />
           </div>
-          <TagsInput.Clear className="flex h-9 items-center justify-center gap-2 rounded-sm border border-input bg-transparent text-black shadow-sm hover:bg-zinc-100 dark:text-white dark:hover:bg-zinc-800">
+          <TagsInput.Clear className="flex h-9 items-center justify-center gap-2 rounded-sm border border-input bg-transparent text-zinc-800 shadow-sm hover:bg-zinc-100/80 dark:text-zinc-300 dark:hover:bg-zinc-900/80">
             <RefreshCcw className="h-4 w-4" />
             Clear
           </TagsInput.Clear>
