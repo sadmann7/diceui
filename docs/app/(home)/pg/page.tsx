@@ -39,7 +39,7 @@ import {
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <Combobox className="w-[15rem]">
+      <Combobox className="w-[15rem]" autoHighlight>
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
           <ComboboxTrigger>

@@ -74,11 +74,7 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
         return;
       }
 
-      if (
-        !context.highlightedItem &&
-        context.inputValue &&
-        !context.preserveInputOnBlur
-      ) {
+      if (context.inputValue && !context.preserveInputOnBlur) {
         context.onInputValueChange("");
       }
     }, [
@@ -86,7 +82,6 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
       context.value,
       context.preserveInputOnBlur,
       context.onInputValueChange,
-      context.highlightedItem,
       context.inputValue,
       context.selectedText,
     ]);

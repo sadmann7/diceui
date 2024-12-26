@@ -89,7 +89,9 @@ export default function ComboboxDebouncedDemo() {
         </ComboboxTrigger>
       </ComboboxAnchor>
       <ComboboxContent>
-        <ComboboxProgress value={progress} label="Searching tricks..." />
+        {isLoading ? (
+          <ComboboxProgress value={progress} label="Searching tricks..." />
+        ) : null}
         <ComboboxEmpty visible={!isLoading && filteredItems.length === 0}>
           No trick found.
         </ComboboxEmpty>

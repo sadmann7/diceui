@@ -60,6 +60,7 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   onHighlightMove: (direction: HighlightingDirection) => void;
   hasAnchor: boolean;
   onHasAnchorChange: (value: boolean) => void;
+  autoHighlight: boolean;
   disabled: boolean;
   loop: boolean;
   manualFiltering: boolean;
@@ -135,6 +136,12 @@ interface ComboboxRootProps<Multiple extends boolean = false>
    * @default "ltr"
    */
   dir?: Direction;
+
+  /**
+   * Whether to automatically highlight the first matching item when the menu opens.
+   * @default false
+   */
+  autoHighlight?: boolean;
 
   /** Whether the combobox is disabled. */
   disabled?: boolean;
@@ -214,14 +221,15 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     defaultOpen = false,
     onOpenChange: onOpenChangeProp,
     inputValue: inputValueProp,
-    onInputValueChange: onInputValueChangeProp,
+    onInputValueChange,
     onFilter,
-    multiple = false,
+    autoHighlight = false,
     disabled = false,
     fuzzy = true,
     manualFiltering = false,
     loop = false,
     modal = false,
+    multiple = false,
     openOnFocus = false,
     preserveInputOnBlur = false,
     readOnly = false,
@@ -239,6 +247,16 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
   const id = useId();
   const labelId = `${id}label`;
   const contentId = `${id}content`;
+
+  const items = React.useRef(new Map<string, string>()).current;
+  const groups = React.useRef(new Map<string, Set<string>>()).current;
+  const filterStore = React.useRef<ComboboxContextValue["filterStore"]>({
+    search: "",
+    itemCount: 0,
+    items: new Map<string, number>(),
+    groups: new Map<string, Set<string>>(),
+  }).current;
+  const normalizedCache = React.useRef(new Map<string, string>()).current;
 
   const dir = useDirection(dirProp);
   const { getEnabledItems } = useCollection<CollectionElement>({
@@ -259,29 +277,24 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
   const [open = false, setOpen] = useControllableState({
     prop: openProp,
     defaultProp: defaultOpen,
-    onChange: onOpenChangeProp,
+    onChange: (newOpen) => {
+      if (!newOpen) {
+        filterStore.search = "";
+      }
+      setOpen(newOpen);
+    },
   });
+
   const [inputValue = "", setInputValue] = useControllableState({
     prop: inputValueProp,
     onChange: (value) => {
-      if (!readOnly) {
-        onInputValueChangeProp?.(value);
-      }
+      if (disabled || readOnly) return;
+      setInputValue(value);
     },
   });
   const [selectedText, setSelectedText] = React.useState("");
   const [highlightedItem, setHighlightedItem] =
     React.useState<ItemElement | null>(null);
-
-  const items = React.useRef(new Map<string, string>()).current;
-  const groups = React.useRef(new Map<string, Set<string>>()).current;
-  const filterStore = React.useRef<ComboboxContextValue["filterStore"]>({
-    search: "",
-    itemCount: 0,
-    items: new Map<string, number>(),
-    groups: new Map<string, Set<string>>(),
-  }).current;
-  const normalizedCache = React.useRef(new Map<string, string>()).current;
 
   const normalizeString = React.useCallback(
     (str: string) => {
@@ -419,15 +432,6 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     }
   }, [manualFiltering, filterStore, items, groups, getItemScore]);
 
-  const onInputValueChange = React.useCallback(
-    (value: string) => {
-      if (disabled || readOnly) return;
-
-      setInputValue(value);
-    },
-    [disabled, readOnly, setInputValue],
-  );
-
   const onValueChange = React.useCallback(
     (newValue: string | string[]) => {
       if (disabled || readOnly) return;
@@ -527,7 +531,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       open={open}
       onOpenChange={setOpen}
       inputValue={inputValue}
-      onInputValueChange={onInputValueChange}
+      onInputValueChange={setInputValue}
       selectedText={selectedText}
       onSelectedTextChange={setSelectedText}
       onFilter={onFilter}
@@ -543,6 +547,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       onHighlightMove={onHighlightMove}
       hasAnchor={hasAnchor}
       onHasAnchorChange={onHasAnchorChange}
+      autoHighlight={autoHighlight}
       disabled={disabled}
       loop={loop}
       manualFiltering={manualFiltering}
