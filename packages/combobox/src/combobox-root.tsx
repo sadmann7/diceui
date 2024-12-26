@@ -4,6 +4,7 @@ import {
   type Direction,
   createContext,
   forwardRef,
+  getSortedItems,
   useAnchor,
   useCollection,
   useComposedRefs,
@@ -264,11 +265,12 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     onTriggerChange(node),
   );
 
-  const [value = multiple ? [""] : "", setValue] = useControllableState({
-    prop: valueProp,
-    defaultProp: defaultValue,
-    onChange: onValueChangeProp,
-  });
+  const [value = multiple ? ([] as string[]) : "", setValue] =
+    useControllableState({
+      prop: valueProp,
+      defaultProp: defaultValue,
+      onChange: onValueChangeProp,
+    });
   const [open = false, setOpen] = useControllableState({
     prop: openProp,
     defaultProp: defaultOpen,
@@ -497,7 +499,9 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
           nextIndex = items.length - 1;
           break;
         case "selected": {
-          const selectedValue = Array.isArray(value) ? value[0] : value;
+          const selectedValue = Array.isArray(value)
+            ? getSortedItems(items, value)[0]
+            : value;
           nextIndex = items.findIndex(
             (item) => item.getAttribute(DATA_VALUE_ATTR) === selectedValue,
           );

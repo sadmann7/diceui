@@ -1,5 +1,3 @@
-"use client";
-
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,20 +36,11 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import * as React from "react";
 
 export default function PlaygroundPage() {
-  const [value, setValue] = React.useState<string[]>([]);
-  console.log({ value });
-
   return (
     <Shell>
-      <Combobox
-        value={value}
-        onValueChange={setValue}
-        className="w-[240px]"
-        multiple
-      >
+      <Combobox className="w-[240px]" multiple>
         <ComboboxLabel>Tricks</ComboboxLabel>
         <ComboboxAnchor>
           <ComboboxInput placeholder="Select tricks..." />
