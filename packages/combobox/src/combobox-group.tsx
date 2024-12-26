@@ -41,6 +41,7 @@ const ComboboxGroup = React.forwardRef<HTMLDivElement, ComboboxGroupProps>(
       <ComboboxGroupProvider id={id} labelId={labelId} forceMount={forceMount}>
         <Primitive.div
           role="group"
+          id={id}
           aria-labelledby={labelId}
           {...groupProps}
           ref={forwardedRef}

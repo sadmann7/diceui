@@ -14,7 +14,7 @@ const ComboboxLabel = React.forwardRef<HTMLLabelElement, ComboboxLabelProps>(
     return (
       <Primitive.label
         id={context.labelId}
-        htmlFor={context.id}
+        htmlFor={context.inputId}
         {...props}
         ref={forwardedRef}
       />

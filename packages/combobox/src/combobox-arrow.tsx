@@ -23,7 +23,6 @@ interface ComboboxArrowProps
 const ComboboxArrow = React.forwardRef<SVGSVGElement, ComboboxArrowProps>(
   (props, forwardedRef) => {
     const { width = 10, height = 5, ...arrowProps } = props;
-
     const context = useComboboxContext(ARROW_NAME);
     const contentContext = useComboboxContentContext(ARROW_NAME);
 

@@ -198,8 +198,8 @@ const TagsInputRoot = React.forwardRef<
   const inputRef = React.useRef<InputElement>(null);
 
   const id = useId();
-  const inputId = `${id}input`;
-  const labelId = `${id}label`;
+  const inputId = useId();
+  const labelId = useId();
 
   const dir = useDirection(dirProp);
   const { getEnabledItems } = useCollection<CollectionElement>({
@@ -207,7 +207,7 @@ const TagsInputRoot = React.forwardRef<
   });
   const { isFormControl, onTriggerChange } =
     useFormControl<CollectionElement>();
-  const composedRefs = useComposedRefs(ref, collectionRef, (node) =>
+  const composedRef = useComposedRefs(ref, collectionRef, (node) =>
     onTriggerChange(node),
   );
 
@@ -513,11 +513,12 @@ const TagsInputRoot = React.forwardRef<
       labelId={labelId}
     >
       <Primitive.div
+        id={id}
         data-invalid={isInvalidInput ? "" : undefined}
         data-disabled={disabled ? "" : undefined}
         dir={dir}
         {...rootProps}
-        ref={composedRefs}
+        ref={composedRef}
         onClick={composeEventHandlers(rootProps.onClick, (event) => {
           const target = event.target;
           if (!(target instanceof HTMLElement)) return;

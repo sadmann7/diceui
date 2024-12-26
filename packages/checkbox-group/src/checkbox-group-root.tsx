@@ -2,7 +2,6 @@ import {
   type Direction,
   type Orientation,
   createContext,
-  useComposedRefs,
   useControllableState,
   useDirection,
   useId,
@@ -121,9 +120,9 @@ const CheckboxGroupRoot = React.forwardRef<
   });
 
   const id = useId();
-  const labelId = `${id}label`;
-  const descriptionId = `${id}description`;
-  const messageId = `${id}message`;
+  const labelId = useId();
+  const descriptionId = useId();
+  const messageId = useId();
 
   const dir = useDirection(dirProp);
 

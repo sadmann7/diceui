@@ -231,12 +231,14 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
     return (
       <Primitive.input
         role="combobox"
+        id={context.inputId}
         autoCapitalize="off"
         autoComplete="off"
         autoCorrect="off"
         spellCheck="false"
         aria-expanded={context.open}
         aria-controls={context.contentId}
+        aria-labelledby={context.labelId}
         aria-autocomplete="list"
         aria-activedescendant={context.highlightedItem?.id}
         aria-disabled={context.disabled}

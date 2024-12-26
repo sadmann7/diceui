@@ -70,7 +70,7 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   preserveInputOnBlur: boolean;
   readOnly: boolean;
   dir: Direction;
-  id: string;
+  inputId: string;
   labelId: string;
   contentId: string;
 }
@@ -244,9 +244,9 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
   const listRef = React.useRef<PositionerElement | null>(null);
   const inputRef = React.useRef<InputElement | null>(null);
 
-  const id = useId();
-  const labelId = `${id}label`;
-  const contentId = `${id}content`;
+  const inputId = useId();
+  const labelId = useId();
+  const contentId = useId();
 
   const items = React.useRef(new Map<string, string>()).current;
   const groups = React.useRef(new Map<string, Set<string>>()).current;
@@ -460,11 +460,9 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     filterStore.groups.clear();
     filterStore.items.clear();
 
-    console.log({ filterStore });
-
     const searchTerm = filterStore.search;
     let itemCount = 0;
-    let pendingBatch: Array<[string, string]> = [];
+    let pendingBatch: [string, string][] = [];
     const BATCH_SIZE = 250;
 
     function processBatch() {
@@ -557,7 +555,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       preserveInputOnBlur={preserveInputOnBlur}
       readOnly={readOnly}
       dir={dir}
-      id={id}
+      inputId={inputId}
       labelId={labelId}
       contentId={contentId}
     >

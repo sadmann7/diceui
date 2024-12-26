@@ -41,7 +41,7 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
     // Make the group context optional, so item can be used outside of a group
     const groupContext = useComboboxGroupContext(ITEM_NAME, false);
     const itemRef = React.useRef<HTMLDivElement>(null);
-    const composedRefs = useComposedRefs(forwardedRef, itemRef);
+    const composedRef = useComposedRefs(forwardedRef, itemRef);
     const id = useId();
     const textId = `${id}text`;
 
@@ -87,7 +87,7 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
           data-disabled={isDisabled ? "" : undefined}
           tabIndex={disabled ? undefined : -1}
           {...itemProps}
-          ref={composedRefs}
+          ref={composedRef}
           onClick={composeEventHandlers(itemProps.onClick, (event) => {
             if (isDisabled || context.readOnly) return;
 

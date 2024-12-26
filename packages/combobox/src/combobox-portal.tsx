@@ -7,10 +7,7 @@ import { useComboboxContext } from "./combobox-root";
 
 interface PortalProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
-  /**
-   * The container to mount the portal into.
-   * @default document.body
-   */
+  /** The container to mount the portal into. */
   container?: HTMLElement | DocumentFragment | null;
 }
 

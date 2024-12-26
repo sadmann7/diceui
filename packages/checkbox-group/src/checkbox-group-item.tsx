@@ -48,7 +48,7 @@ const CheckboxGroupItem = React.forwardRef<
   const isChecked = context.value.includes(value);
   const { isFormControl, trigger, onTriggerChange } =
     useFormControl<HTMLButtonElement>();
-  const composedRefs = useComposedRefs(ref, (node) => onTriggerChange(node));
+  const composedRef = useComposedRefs(ref, (node) => onTriggerChange(node));
   const lastClickTimeRef = React.useRef(0);
   const hasConsumerStoppedPropagationRef = React.useRef(false);
 
@@ -71,7 +71,7 @@ const CheckboxGroupItem = React.forwardRef<
         disabled={isDisabled}
         id={id}
         {...itemProps}
-        ref={composedRefs}
+        ref={composedRef}
         onClick={composeEventHandlers(props.onClick, (event) => {
           const now = Date.now();
           // Ignore rapid subsequent clicks (debounce)

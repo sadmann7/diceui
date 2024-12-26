@@ -1,3 +1,4 @@
+import { useId } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { useCheckboxGroup } from "./checkbox-group-root";
@@ -12,10 +13,12 @@ const CheckboxGroupList = React.forwardRef<
   CheckboxGroupListProps
 >((props, ref) => {
   const context = useCheckboxGroup(LIST_NAME);
+  const id = useId();
 
   return (
     <Primitive.div
       role="group"
+      id={id}
       data-orientation={context.orientation}
       data-invalid={context.isInvalid ? "" : undefined}
       {...props}
