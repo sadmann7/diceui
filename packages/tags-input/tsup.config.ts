@@ -17,5 +17,9 @@ export default defineConfig({
     const filePath = join("dist", "index.js");
     const contents = await readFile(filePath, "utf-8");
     await writeFile(filePath, `'use client';\n\n${contents}`);
+
+    const filePathCjs = join("dist", "index.cjs");
+    const contentsCjs = await readFile(filePathCjs, "utf-8");
+    await writeFile(filePathCjs, `'use client';\n\n${contentsCjs}`);
   },
 });

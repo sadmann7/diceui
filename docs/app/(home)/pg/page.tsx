@@ -40,7 +40,7 @@ import {
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <Combobox className="w-[240px]" multiple>
+      <Combobox className="w-[240px]">
         <ComboboxLabel>Tricks</ComboboxLabel>
         <ComboboxAnchor>
           <ComboboxInput placeholder="Select tricks..." />

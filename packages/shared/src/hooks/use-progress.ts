@@ -1,5 +1,5 @@
-import type { ProgressState } from "@diceui/shared";
 import * as React from "react";
+import type { ProgressState } from "../types";
 
 function isNumber(value: unknown): value is number {
   return typeof value === "number";
@@ -15,13 +15,13 @@ function isValidValueNumber(value: unknown, max: number): value is number {
 
 function getProgressState(
   value: number | undefined | null,
-  maxValue: number,
+  maxValue: number
 ): ProgressState {
   return value == null
     ? "indeterminate"
     : value === maxValue
-      ? "complete"
-      : "loading";
+    ? "complete"
+    : "loading";
 }
 
 interface UseProgressProps {
@@ -44,17 +44,17 @@ function useProgress({
 }: UseProgressProps) {
   const max = React.useMemo(
     () => (isValidMaxNumber(maxProp) ? maxProp : 100),
-    [maxProp],
+    [maxProp]
   );
 
   const value = React.useMemo(
     () => (isValidValueNumber(valueProp, max) ? valueProp : null),
-    [valueProp, max],
+    [valueProp, max]
   );
 
   const state = React.useMemo<ProgressState>(
     () => getProgressState(value, max),
-    [value, max],
+    [value, max]
   );
 
   const progressProps = React.useMemo<React.HTMLAttributes<HTMLDivElement>>(
@@ -67,7 +67,7 @@ function useProgress({
       "data-value": value ?? undefined,
       "data-max": max,
     }),
-    [max, value, state],
+    [max, value, state]
   );
 
   return {

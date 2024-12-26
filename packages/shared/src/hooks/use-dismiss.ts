@@ -1,9 +1,9 @@
+import * as React from "react";
 import {
   DATA_DISMISSABLE_LAYER_ATTR,
   DATA_DISMISSABLE_LAYER_STYLE_ATTR,
-  getOwnerDocument,
-} from "@diceui/shared";
-import * as React from "react";
+} from "../constants";
+import { getOwnerDocument } from "../lib/dock";
 
 interface FocusOutsideEvent {
   currentTarget: Node;
@@ -44,7 +44,7 @@ interface UseDismissParameters {
    * Can be prevented.
    */
   onInteractOutside?: (
-    event: PointerDownOutsideEvent | FocusOutsideEvent,
+    event: PointerDownOutsideEvent | FocusOutsideEvent
   ) => void;
 
   /**
