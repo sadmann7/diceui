@@ -47,7 +47,7 @@ export default async function DocPage(props: DocPageParams) {
 
   return (
     <DocsPage toc={page.data.toc} full={page.data.full}>
-      <div className="flex flex-col gap-2 pb-8">
+      <div className="flex flex-col gap-2">
         <DocsTitle>{page.data.title}</DocsTitle>
         <DocsDescription className="mb-2.5">
           {page.data.description}
