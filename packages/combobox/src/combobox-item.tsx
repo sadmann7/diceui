@@ -8,7 +8,6 @@ import {
 } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
-import { useComboboxContentContext } from "./combobox-content";
 import { useComboboxGroupContext } from "./combobox-group";
 import { useComboboxContext } from "./combobox-root";
 
@@ -37,7 +36,6 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
   (props, forwardedRef) => {
     const { value, disabled, ...itemProps } = props;
     const context = useComboboxContext(ITEM_NAME);
-    const contentContext = useComboboxContentContext(ITEM_NAME);
     // Make the group context optional, so item can be used outside of a group
     const groupContext = useComboboxGroupContext(ITEM_NAME, false);
     const itemRef = React.useRef<HTMLDivElement>(null);
@@ -59,7 +57,6 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
     }, [id, value, context.onRegisterItem, groupContext?.id]);
 
     const shouldRender =
-      contentContext.forceMount ||
       context.manualFiltering ||
       (context.filterStore.search
         ? (context.filterStore.items.get(id) ?? 0) > 0

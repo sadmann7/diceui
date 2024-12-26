@@ -26,6 +26,7 @@ const ComboboxCancel = React.forwardRef<HTMLButtonElement, ComboboxCancelProps>(
     return (
       <Primitive.button
         type="button"
+        aria-controls={context.inputId}
         {...cancelProps}
         ref={forwardedRef}
         onClick={composeEventHandlers(cancelProps.onClick, () => {
