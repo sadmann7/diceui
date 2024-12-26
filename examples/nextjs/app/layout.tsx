@@ -1,11 +1,7 @@
-import { Geist, Geist_Mono } from "next/font/google";
-import "@/styles/globals.css";
-
 import { ThemeProvider } from "@/components/providers";
+import { fontMono, fontSans } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
-
-const fontSans = Geist({ subsets: ["latin"], variable: "--font-sans" });
-const fontMono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
+import "@/styles/globals.css";
 
 export const metadata = {
   title: "Create Next App",
@@ -21,12 +17,17 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          "flex min-h-screen flex-col bg-background font-sans antialiased",
+          "flex min-h-screen flex-col bg-zinc-50 font-sans text-zinc-950 antialiased dark:bg-zinc-950 dark:text-zinc-50",
           fontSans.variable,
           fontMono.variable,
         )}
       >
-        <ThemeProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
           <main className="flex-1">{children}</main>
         </ThemeProvider>
       </body>
