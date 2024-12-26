@@ -44,7 +44,7 @@ interface UseDismissParameters {
    * Can be prevented.
    */
   onInteractOutside?: (
-    event: PointerDownOutsideEvent | FocusOutsideEvent
+    event: PointerDownOutsideEvent | FocusOutsideEvent,
   ) => void;
 
   /**
