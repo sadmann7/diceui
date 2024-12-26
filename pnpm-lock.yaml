@@ -312,9 +312,6 @@ importers:
       '@types/react':
         specifier: '*'
         version: 19.0.2
-      lucide-react:
-        specifier: ^0.468.0
-        version: 0.468.0(react@19.0.0)
       react:
         specifier: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
         version: 19.0.0
