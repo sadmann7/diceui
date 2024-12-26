@@ -1,6 +1,6 @@
 {
   "name": "@diceui/shared",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -11,7 +11,11 @@
       "require": "./dist/index.js"
     }
   },
-  "files": ["dist", "package.json", "README.md"],
+  "files": [
+    "dist",
+    "package.json",
+    "README.md"
+  ],
   "scripts": {
     "dev": "tsup --format esm --watch --external=react",
     "build": "tsup --clean --external=react",
