@@ -30,9 +30,14 @@ export default function ComboboxMultipleDemo() {
   const [value, setValue] = React.useState<string[]>([]);
 
   return (
-    <Combobox value={value} onValueChange={setValue} multiple>
+    <Combobox
+      value={value}
+      onValueChange={setValue}
+      className="w-[400px]"
+      multiple
+    >
       <ComboboxLabel>Tricks</ComboboxLabel>
-      <ComboboxAnchor>
+      <ComboboxAnchor className="h-full min-h-10 flex-wrap p-2">
         <ComboboxBadgeList>
           {value.map((item) => (
             <ComboboxBadgeItem key={item} value={item}>
@@ -40,8 +45,11 @@ export default function ComboboxMultipleDemo() {
             </ComboboxBadgeItem>
           ))}
         </ComboboxBadgeList>
-        <ComboboxInput placeholder="Select tricks..." />
-        <ComboboxTrigger>
+        <ComboboxInput
+          placeholder="Select tricks..."
+          className="h-full min-w-20 flex-1"
+        />
+        <ComboboxTrigger className="absolute top-2 right-2">
           <ChevronDown className="h-4 w-4" />
         </ComboboxTrigger>
       </ComboboxAnchor>

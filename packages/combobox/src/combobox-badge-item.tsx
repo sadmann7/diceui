@@ -32,7 +32,8 @@ const ComboboxBadgeItem = React.forwardRef<
     <ComboboxBadgeItemProvider value={value} id={id}>
       <Primitive.div
         id={id}
-        role="listitem"
+        role="option"
+        data-value={value}
         {...badgeItemProps}
         ref={forwardedRef}
       />

@@ -6,10 +6,18 @@ import { useComboboxContext } from "./combobox-root";
 const ANCHOR_NAME = "ComboboxAnchor";
 
 interface ComboboxAnchorProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {}
+  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
+  /**
+   * Whether the combobox input should be focused when the anchor is clicked.
+   *
+   * @default false
+   */
+  preventInputFocus?: boolean;
+}
 
 const ComboboxAnchor = React.forwardRef<HTMLDivElement, ComboboxAnchorProps>(
   (props, forwardedRef) => {
+    const { preventInputFocus, ...anchorProps } = props;
     const context = useComboboxContext(ANCHOR_NAME);
     const composedRef = useComposedRefs(
       forwardedRef,
@@ -24,9 +32,40 @@ const ComboboxAnchor = React.forwardRef<HTMLDivElement, ComboboxAnchorProps>(
         data-anchor=""
         data-disabled={context.disabled ? "" : undefined}
         data-focused={isFocused ? "" : undefined}
-        {...props}
-        onFocus={composeEventHandlers(props.onFocus, () => setIsFocused(true))}
-        onBlur={composeEventHandlers(props.onBlur, () => setIsFocused(false))}
+        {...anchorProps}
+        onClick={composeEventHandlers(anchorProps.onClick, (event) => {
+          if (preventInputFocus) return;
+          event.currentTarget.focus();
+          context.inputRef.current?.focus();
+        })}
+        onPointerDown={composeEventHandlers(
+          anchorProps.onPointerDown,
+          (event) => {
+            if (context.disabled) return;
+
+            // prevent implicit pointer capture
+            const target = event.target;
+            if (!(target instanceof HTMLElement)) return;
+            if (target.hasPointerCapture(event.pointerId)) {
+              target.releasePointerCapture(event.pointerId);
+            }
+
+            if (
+              event.button === 0 &&
+              event.ctrlKey === false &&
+              event.pointerType === "mouse"
+            ) {
+              // prevent item from stealing focus from the input
+              event.preventDefault();
+            }
+          },
+        )}
+        onFocus={composeEventHandlers(anchorProps.onFocus, () =>
+          setIsFocused(true),
+        )}
+        onBlur={composeEventHandlers(anchorProps.onBlur, () =>
+          setIsFocused(false),
+        )}
         ref={composedRef}
       />
     );

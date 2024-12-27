@@ -11,20 +11,38 @@ interface ComboboxBadgeListProps
    * @default false
    */
   forceMount?: boolean;
+
+  /**
+   * The orientation of the badge list.
+   * @default "horizontal"
+   */
+  orientation?: "horizontal" | "vertical";
 }
 
 const ComboboxBadgeList = React.forwardRef<
   React.ElementRef<typeof Primitive.div>,
   ComboboxBadgeListProps
 >((props, forwardedRef) => {
-  const { forceMount = false, ...badgeListProps } = props;
+  const {
+    forceMount = false,
+    orientation = "horizontal",
+    ...badgeListProps
+  } = props;
   const context = useComboboxContext(BADGE_LIST_NAME);
 
   if (!forceMount && (!context.multiple || context.value.length === 0)) {
     return null;
   }
 
-  return <Primitive.div ref={forwardedRef} {...badgeListProps} />;
+  return (
+    <Primitive.div
+      role="listbox"
+      aria-label="Selected items"
+      data-orientation={orientation}
+      {...badgeListProps}
+      ref={forwardedRef}
+    />
+  );
 });
 
 ComboboxBadgeList.displayName = BADGE_LIST_NAME;

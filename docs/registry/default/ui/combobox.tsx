@@ -27,13 +27,45 @@ const ComboboxAnchor = React.forwardRef<
   <ComboboxPrimitive.Anchor
     ref={ref}
     className={cn(
-      "relative flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent shadow-sm data-[focused]:ring-1 data-[focused]:ring-ring",
+      "relative flex h-9 w-full items-center justify-between gap-2 rounded-md border border-input bg-transparent px-3 py-2 shadow-sm data-[focused]:ring-1 data-[focused]:ring-ring",
       className,
     )}
     {...props}
   />
 ));
 ComboboxAnchor.displayName = ComboboxPrimitive.Anchor.displayName;
+
+const ComboboxBadgeList = React.forwardRef<
+  React.ElementRef<typeof ComboboxPrimitive.BadgeList>,
+  React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.BadgeList>
+>(({ className, ...props }, ref) => (
+  <ComboboxPrimitive.BadgeList
+    ref={ref}
+    className={cn("flex flex-wrap items-center gap-1.5", className)}
+    {...props}
+  />
+));
+ComboboxBadgeList.displayName = ComboboxPrimitive.BadgeList.displayName;
+
+const ComboboxBadgeItem = React.forwardRef<
+  React.ElementRef<typeof ComboboxPrimitive.BadgeItem>,
+  React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.BadgeItem>
+>(({ className, children, ...props }, ref) => (
+  <ComboboxPrimitive.BadgeItem
+    ref={ref}
+    className={cn(
+      "inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-1 font-medium text-secondary-foreground text-sm ring-offset-background transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+      className,
+    )}
+    {...props}
+  >
+    <span className="truncate">{children}</span>
+    <ComboboxPrimitive.ComboboxBadgeItemClose className="text-muted-foreground">
+      <X className="h-3 w-3" />
+    </ComboboxPrimitive.ComboboxBadgeItemClose>
+  </ComboboxPrimitive.BadgeItem>
+));
+ComboboxBadgeItem.displayName = ComboboxPrimitive.BadgeItem.displayName;
 
 const ComboboxInput = React.forwardRef<
   React.ElementRef<typeof ComboboxPrimitive.Input>,
@@ -42,7 +74,7 @@ const ComboboxInput = React.forwardRef<
   <ComboboxPrimitive.Input
     ref={ref}
     className={cn(
-      "flex h-9 w-full rounded-md bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+      "flex h-9 w-full rounded-md bg-transparent text-sm placeholder:text-muted-foreground focus:outline-none disabled:cursor-not-allowed disabled:opacity-50",
       className,
     )}
     {...props}
@@ -57,7 +89,7 @@ const ComboboxTrigger = React.forwardRef<
   <ComboboxPrimitive.Trigger
     ref={ref}
     className={cn(
-      "flex h-9 w-9 items-center justify-center rounded-r-md border-input bg-transparent text-muted-foreground transition-colors hover:text-foreground/80 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+      "flex shrink-0 items-center justify-center rounded-r-md border-input bg-transparent text-muted-foreground transition-colors hover:text-foreground/80 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
       className,
     )}
     {...props}
@@ -198,52 +230,20 @@ const ComboboxSeparator = React.forwardRef<
 ));
 ComboboxSeparator.displayName = ComboboxPrimitive.Separator.displayName;
 
-const ComboboxBadgeList = React.forwardRef<
-  React.ElementRef<typeof ComboboxPrimitive.BadgeList>,
-  React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.BadgeList>
->(({ className, ...props }, ref) => (
-  <ComboboxPrimitive.BadgeList
-    ref={ref}
-    className={cn("flex flex-wrap items-center gap-1 px-3 py-1", className)}
-    {...props}
-  />
-));
-ComboboxBadgeList.displayName = ComboboxPrimitive.BadgeList.displayName;
-
-const ComboboxBadgeItem = React.forwardRef<
-  React.ElementRef<typeof ComboboxPrimitive.BadgeItem>,
-  React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.BadgeItem>
->(({ className, children, ...props }, ref) => (
-  <ComboboxPrimitive.BadgeItem
-    ref={ref}
-    className={cn(
-      "inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-1 font-medium text-secondary-foreground text-sm ring-offset-background transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-      className,
-    )}
-    {...props}
-  >
-    {children}
-    <ComboboxPrimitive.ComboboxBadgeItemClose className="text-muted-foreground">
-      <X className="h-3 w-3" />
-    </ComboboxPrimitive.ComboboxBadgeItemClose>
-  </ComboboxPrimitive.BadgeItem>
-));
-ComboboxBadgeItem.displayName = ComboboxPrimitive.BadgeItem.displayName;
-
 export {
   Combobox,
   ComboboxAnchor,
-  ComboboxTrigger,
+  ComboboxBadgeItem,
+  ComboboxBadgeList,
   ComboboxCancel,
   ComboboxContent,
-  ComboboxProgress,
   ComboboxEmpty,
   ComboboxGroup,
   ComboboxGroupLabel,
   ComboboxInput,
   ComboboxItem,
   ComboboxLabel,
+  ComboboxProgress,
   ComboboxSeparator,
-  ComboboxBadgeList,
-  ComboboxBadgeItem,
+  ComboboxTrigger,
 };
