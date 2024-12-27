@@ -1,5 +1,3 @@
 packages:
 - 'docs'
-- 'examples/*'
 - 'packages/*'
-

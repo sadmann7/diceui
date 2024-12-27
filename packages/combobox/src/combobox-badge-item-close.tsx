@@ -16,39 +16,19 @@ const ComboboxBadgeItemClose = React.forwardRef<
   const context = useComboboxContext(BADGE_ITEM_CLOSE_NAME);
   const badgeItemContext = useComboboxBadgeItemContext(BADGE_ITEM_CLOSE_NAME);
 
+  console.log({ value: context.value });
+
   return (
     <Primitive.button
       type="button"
       aria-controls={badgeItemContext.id}
       data-disabled={false}
       data-value={badgeItemContext.value}
+      tabIndex={context.disabled ? undefined : -1}
       {...props}
       ref={forwardedRef}
       onClick={composeEventHandlers(props.onClick, () => {
-        if (Array.isArray(context.value)) {
-          context.onValueChange(
-            context.value.filter((v) => v !== badgeItemContext.value),
-          );
-        }
-
-        context.inputRef.current?.focus();
-      })}
-      onPointerDown={composeEventHandlers(props.onPointerDown, (event) => {
-        // prevent implicit pointer capture
-        const target = event.target;
-        if (!(target instanceof HTMLElement)) return;
-        if (target.hasPointerCapture(event.pointerId)) {
-          target.releasePointerCapture(event.pointerId);
-        }
-
-        if (
-          event.button === 0 &&
-          event.ctrlKey === false &&
-          event.pointerType === "mouse"
-        ) {
-          // prevent item from stealing focus from the input
-          event.preventDefault();
-        }
+        context.onItemRemove(badgeItemContext.value);
       })}
     />
   );

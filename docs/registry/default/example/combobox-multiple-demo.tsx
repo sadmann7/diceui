@@ -3,6 +3,8 @@
 import {
   Combobox,
   ComboboxAnchor,
+  ComboboxBadgeItem,
+  ComboboxBadgeList,
   ComboboxContent,
   ComboboxEmpty,
   ComboboxInput,
@@ -10,7 +12,7 @@ import {
   ComboboxLabel,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
-import { ChevronDown, X } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import * as React from "react";
 
 const tricks = [
@@ -36,38 +38,18 @@ export default function ComboboxMultipleDemo() {
     >
       <ComboboxLabel>Tricks</ComboboxLabel>
       <ComboboxAnchor className="h-full min-h-10 flex-wrap p-2">
-        <div className="flex flex-wrap items-center gap-1.5">
+        <ComboboxBadgeList>
           {value.map((item) => {
-            const trick = tricks.find((t) => t.value === item);
-            if (!trick) return null;
+            const option = tricks.find((trick) => trick.value === item);
+            if (!option) return null;
 
             return (
-              <div
-                key={item}
-                className="inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-1 font-medium text-secondary-foreground text-sm"
-              >
-                {trick?.label}
-                <button
-                  className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring"
-                  tabIndex={-1}
-                  onClick={() => setValue(value.filter((v) => v !== item))}
-                  onMouseDown={(event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                  }}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter") {
-                      event.preventDefault();
-                      setValue(value.filter((v) => v !== item));
-                    }
-                  }}
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </div>
+              <ComboboxBadgeItem key={item} value={item}>
+                {option.label}
+              </ComboboxBadgeItem>
             );
           })}
-        </div>
+        </ComboboxBadgeList>
         <ComboboxInput
           placeholder="Select tricks..."
           className="h-full min-w-20 flex-1"

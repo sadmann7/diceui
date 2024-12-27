@@ -60,9 +60,9 @@ const ComboboxBadgeItem = React.forwardRef<
     {...props}
   >
     <span className="truncate">{children}</span>
-    <ComboboxPrimitive.BadgeItemClose className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring">
+    <ComboboxPrimitive.ComboboxBadgeItemClose className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring">
       <X className="h-3.5 w-3.5" />
-    </ComboboxPrimitive.BadgeItemClose>
+    </ComboboxPrimitive.ComboboxBadgeItemClose>
   </ComboboxPrimitive.BadgeItem>
 ));
 ComboboxBadgeItem.displayName = ComboboxPrimitive.BadgeItem.displayName;

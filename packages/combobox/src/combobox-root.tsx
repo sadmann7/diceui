@@ -44,6 +44,7 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   selectedText: string;
   onSelectedTextChange: (value: string) => void;
   onFilter?: (options: string[], term: string) => string[];
+  onItemRemove: (value: string) => void;
   collectionRef: React.RefObject<CollectionElement | null>;
   listRef: React.RefObject<PositionerElement | null>;
   inputRef: React.RefObject<InputElement | null>;
@@ -311,6 +312,16 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     [multiple, setValue, value, disabled, readOnly],
   );
 
+  const onItemRemove = React.useCallback(
+    (currentValue: string) => {
+      const newValues = Array.isArray(value)
+        ? value.filter((v) => v !== currentValue)
+        : [];
+      setValue(newValues as Value<Multiple>);
+    },
+    [setValue, value],
+  );
+
   const onRegisterItem = React.useCallback(
     (id: string, value: string, groupId?: string) => {
       items.set(id, value);
@@ -540,6 +551,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       onRegisterItem={onRegisterItem}
       onFilterItems={onFilterItems}
       onHighlightMove={onHighlightMove}
+      onItemRemove={onItemRemove}
       hasAnchor={hasAnchor}
       onHasAnchorChange={onHasAnchorChange}
       disabled={disabled}
