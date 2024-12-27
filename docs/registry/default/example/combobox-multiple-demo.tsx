@@ -3,6 +3,8 @@
 import {
   Combobox,
   ComboboxAnchor,
+  ComboboxBadgeItem,
+  ComboboxBadgeList,
   ComboboxContent,
   ComboboxEmpty,
   ComboboxInput,
@@ -31,6 +33,13 @@ export default function ComboboxMultipleDemo() {
     <Combobox value={value} onValueChange={setValue} multiple>
       <ComboboxLabel>Tricks</ComboboxLabel>
       <ComboboxAnchor>
+        <ComboboxBadgeList>
+          {value.map((item) => (
+            <ComboboxBadgeItem key={item} value={item}>
+              {item}
+            </ComboboxBadgeItem>
+          ))}
+        </ComboboxBadgeList>
         <ComboboxInput placeholder="Select tricks..." />
         <ComboboxTrigger>
           <ChevronDown className="h-4 w-4" />

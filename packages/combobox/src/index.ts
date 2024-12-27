@@ -53,3 +53,15 @@ export type { ComboboxItemTextProps } from "./combobox-item-text";
 
 export { ComboboxSeparator, Separator } from "./combobox-separator";
 export type { ComboboxSeparatorProps } from "./combobox-separator";
+
+export { ComboboxBadgeList, BadgeList } from "./combobox-badge-list";
+export type { ComboboxBadgeListProps } from "./combobox-badge-list";
+
+export { ComboboxBadgeItem, BadgeItem } from "./combobox-badge-item";
+export type { ComboboxBadgeItemProps } from "./combobox-badge-item";
+
+export {
+  ComboboxBadgeItemClose,
+  BadgeItemClose,
+} from "./combobox-badge-item-close";
+export type { ComboboxBadgeItemCloseProps } from "./combobox-badge-item-close";

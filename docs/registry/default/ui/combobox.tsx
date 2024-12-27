@@ -1,7 +1,7 @@
 "use client";
 
 import * as ComboboxPrimitive from "@diceui/combobox";
-import { Check, ChevronDown } from "lucide-react";
+import { Check, ChevronDown, X } from "lucide-react";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
@@ -198,18 +198,52 @@ const ComboboxSeparator = React.forwardRef<
 ));
 ComboboxSeparator.displayName = ComboboxPrimitive.Separator.displayName;
 
+const ComboboxBadgeList = React.forwardRef<
+  React.ElementRef<typeof ComboboxPrimitive.BadgeList>,
+  React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.BadgeList>
+>(({ className, ...props }, ref) => (
+  <ComboboxPrimitive.BadgeList
+    ref={ref}
+    className={cn("flex flex-wrap items-center gap-1 px-3 py-1", className)}
+    {...props}
+  />
+));
+ComboboxBadgeList.displayName = ComboboxPrimitive.BadgeList.displayName;
+
+const ComboboxBadgeItem = React.forwardRef<
+  React.ElementRef<typeof ComboboxPrimitive.BadgeItem>,
+  React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.BadgeItem>
+>(({ className, children, ...props }, ref) => (
+  <ComboboxPrimitive.BadgeItem
+    ref={ref}
+    className={cn(
+      "inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-1 font-medium text-secondary-foreground text-sm ring-offset-background transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+      className,
+    )}
+    {...props}
+  >
+    {children}
+    <ComboboxPrimitive.ComboboxBadgeItemClose className="text-muted-foreground">
+      <X className="h-3 w-3" />
+    </ComboboxPrimitive.ComboboxBadgeItemClose>
+  </ComboboxPrimitive.BadgeItem>
+));
+ComboboxBadgeItem.displayName = ComboboxPrimitive.BadgeItem.displayName;
+
 export {
   Combobox,
   ComboboxAnchor,
+  ComboboxTrigger,
   ComboboxCancel,
   ComboboxContent,
+  ComboboxProgress,
   ComboboxEmpty,
   ComboboxGroup,
   ComboboxGroupLabel,
   ComboboxInput,
   ComboboxItem,
   ComboboxLabel,
-  ComboboxProgress,
   ComboboxSeparator,
-  ComboboxTrigger,
+  ComboboxBadgeList,
+  ComboboxBadgeItem,
 };
