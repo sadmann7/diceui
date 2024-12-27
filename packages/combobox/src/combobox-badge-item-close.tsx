@@ -13,11 +13,7 @@ const ComboboxBadgeItemClose = React.forwardRef<
   React.ElementRef<typeof Primitive.button>,
   ComboboxBadgeItemCloseProps
 >((props, forwardedRef) => {
-  const { className, ...closeProps } = props;
   const context = useComboboxContext(BADGE_ITEM_CLOSE_NAME);
-
-  if (!context.multiple) return null;
-
   const badgeItemContext = useComboboxBadgeItemContext(BADGE_ITEM_CLOSE_NAME);
 
   return (
@@ -26,13 +22,9 @@ const ComboboxBadgeItemClose = React.forwardRef<
       aria-controls={badgeItemContext.id}
       data-disabled={false}
       data-value={badgeItemContext.value}
-      className={className}
-      {...closeProps}
+      {...props}
       ref={forwardedRef}
-      onClick={composeEventHandlers(props.onClick, (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-
+      onClick={composeEventHandlers(props.onClick, () => {
         if (Array.isArray(context.value)) {
           context.onValueChange(
             context.value.filter((v) => v !== badgeItemContext.value),

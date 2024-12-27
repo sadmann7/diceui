@@ -37,7 +37,6 @@ const ComboboxBadgeList = React.forwardRef<
   return (
     <Primitive.div
       role="listbox"
-      aria-label="Selected items"
       data-orientation={orientation}
       {...badgeListProps}
       ref={forwardedRef}

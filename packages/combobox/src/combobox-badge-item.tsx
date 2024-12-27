@@ -1,7 +1,6 @@
 import { createContext, useId } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
-import { useComboboxContext } from "./combobox-root";
 
 const BADGE_ITEM_NAME = "ComboboxBadgeItem";
 
@@ -23,10 +22,7 @@ const ComboboxBadgeItem = React.forwardRef<
   ComboboxBadgeItemProps
 >((props, forwardedRef) => {
   const { value, ...badgeItemProps } = props;
-  const context = useComboboxContext(BADGE_ITEM_NAME);
   const id = useId();
-
-  if (!context.multiple) return null;
 
   return (
     <ComboboxBadgeItemProvider value={value} id={id}>
