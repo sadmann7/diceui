@@ -55,13 +55,10 @@ const ComboboxContent = React.forwardRef<HTMLDivElement, ComboboxContentProps>(
     useDismiss({
       enabled: context.open,
       onDismiss: () => context.onOpenChange(false),
+      // the first ref is used to get the owner document
       refs: [context.listRef, context.anchorRef],
       onFocusOutside: (event) => event.preventDefault(),
-      onEscapeKeyDown: (event) => {
-        onEscapeKeyDown?.(event);
-        if (event.defaultPrevented) return;
-        context.onInputValueChange("");
-      },
+      onEscapeKeyDown,
       onPointerDownOutside,
       disableOutsidePointerEvents: context.open && context.modal,
       preventScrollDismiss: context.open && !context.modal,

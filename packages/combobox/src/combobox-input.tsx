@@ -201,6 +201,11 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
             if (context.modal && context.open) onHighlightMove("next");
             break;
           case "Escape":
+            if (context.value.length > 0 && !context.multiple) {
+              context.onInputValueChange(context.selectedText);
+            } else {
+              context.onInputValueChange("");
+            }
             onMenuClose();
             break;
           case "Tab":

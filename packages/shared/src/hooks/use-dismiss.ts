@@ -115,7 +115,7 @@ function useDismiss(params: UseDismissParameters) {
     layerStyleAttr = DATA_DISMISSABLE_LAYER_STYLE_ATTR,
   } = params;
 
-  const ownerDocument = getOwnerDocument() ?? document;
+  const ownerDocument = getOwnerDocument(refs[0]?.current) ?? document;
   const shouldTriggerEvents = React.useRef(true);
   const touchStartY = React.useRef<number | null>(null);
 
