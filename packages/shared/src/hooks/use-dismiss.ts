@@ -20,7 +20,7 @@ interface UseDismissParameters {
   /** Whether the dismissable layer is enabled. */
   enabled: boolean;
 
-  /** Callback to handle closing/dismissing the element. */
+  /** Callback to handle closing/dismissing the element, */
   onDismiss: (event?: Event) => void | Promise<void>;
 
   /** References to elements that should not trigger dismissal when clicked. */
@@ -61,19 +61,19 @@ interface UseDismissParameters {
   disableOutsidePointerEvents?: boolean;
 
   /**
-   * Delay in ms before adding the mouseup listener
+   * Delay in ms before adding the mouseup listener.
    * @default 0
    */
   delayMs?: number;
 
   /**
-   * Attribute to add to the dismissable layer
+   * Attribute to add to the dismissable layer.
    * @default DATA_DISMISSABLE_LAYER_ATTR
    */
   layerAttr?: string;
 
   /**
-   * Attribute to add to the dismissable layer style
+   * Attribute to add to the dismissable layer style.
    * @default DATA_DISMISSABLE_LAYER_STYLE_ATTR
    */
   layerStyleAttr?: string;
