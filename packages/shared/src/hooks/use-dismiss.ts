@@ -61,6 +61,12 @@ interface UseDismissParameters {
   disableOutsidePointerEvents?: boolean;
 
   /**
+   * When `true`, prevents the dismissible layer from closing when scrolling on mobile devices.
+   * @default false
+   */
+  preventScrollDismiss?: boolean;
+
+  /**
    * Delay in ms before adding the mouseup listener.
    * @default 0
    */
@@ -89,12 +95,14 @@ function useDismiss(params: UseDismissParameters) {
     onFocusOutside,
     onInteractOutside,
     disableOutsidePointerEvents = false,
+    preventScrollDismiss = false,
     delayMs = 0,
     layerAttr = DATA_DISMISSABLE_LAYER_ATTR,
     layerStyleAttr = DATA_DISMISSABLE_LAYER_STYLE_ATTR,
   } = params;
 
   const shouldTriggerEvents = React.useRef(true);
+  const touchStartY = React.useRef<number | null>(null);
 
   React.useEffect(() => {
     if (!enabled) return;
@@ -122,6 +130,18 @@ function useDismiss(params: UseDismissParameters) {
     function onPointerDown(event: PointerEvent) {
       const target = event.target as Element | null;
 
+      if (preventScrollDismiss && event.pointerType === "touch") {
+        touchStartY.current = event.clientY;
+        return;
+      }
+
+      // Handle non-touch events immediately
+      if (event.pointerType !== "touch") {
+        handleDismiss(event, target);
+      }
+    }
+
+    function handleDismiss(event: Event, target: Element | null) {
       const missingElement = refs.some((ref) => !ref.current);
       if (missingElement) return;
 
@@ -133,7 +153,7 @@ function useDismiss(params: UseDismissParameters) {
           target: target as Node,
           preventDefault: () => event.preventDefault(),
           defaultPrevented: event.defaultPrevented,
-          detail: event.detail,
+          detail: (event as PointerEvent).detail,
         };
 
         onPointerDownOutside?.(outsideEvent);
@@ -141,6 +161,25 @@ function useDismiss(params: UseDismissParameters) {
 
         if (!event.defaultPrevented && !outsideEvent.defaultPrevented) {
           onDismiss(event);
+        }
+      }
+    }
+
+    function onPointerUp(event: PointerEvent) {
+      const target = event.target as Element | null;
+
+      if (
+        preventScrollDismiss &&
+        event.pointerType === "touch" &&
+        touchStartY.current !== null
+      ) {
+        const deltaY = Math.abs(event.clientY - touchStartY.current);
+        touchStartY.current = null;
+
+        // If it was a scroll (deltaY > 5), don't dismiss
+        // If it was a tap (deltaY <= 5), handle dismiss
+        if (deltaY <= 5) {
+          handleDismiss(event, target);
         }
       }
     }
@@ -184,6 +223,7 @@ function useDismiss(params: UseDismissParameters) {
     const timeoutId = window.setTimeout(() => {
       doc.addEventListener("keydown", onKeyDown);
       doc.addEventListener("pointerdown", onPointerDown);
+      doc.addEventListener("pointerup", onPointerUp);
       doc.addEventListener("focusout", onFocusOut);
     }, delayMs);
 
@@ -191,6 +231,7 @@ function useDismiss(params: UseDismissParameters) {
       window.clearTimeout(timeoutId);
       doc.removeEventListener("keydown", onKeyDown);
       doc.removeEventListener("pointerdown", onPointerDown);
+      doc.removeEventListener("pointerup", onPointerUp);
       doc.removeEventListener("focusout", onFocusOut);
 
       if (disableOutsidePointerEvents) {
@@ -211,6 +252,7 @@ function useDismiss(params: UseDismissParameters) {
     onFocusOutside,
     onInteractOutside,
     disableOutsidePointerEvents,
+    preventScrollDismiss,
     delayMs,
     layerAttr,
     layerStyleAttr,
