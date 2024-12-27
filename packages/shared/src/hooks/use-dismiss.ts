@@ -5,6 +5,8 @@ import {
 } from "../constants";
 import { getOwnerDocument } from "../lib/dock";
 
+const SCROLL_DISTANCE_THRESHOLD = 5;
+
 interface FocusOutsideEvent {
   currentTarget: Node;
   target: Node;
@@ -20,7 +22,10 @@ interface UseDismissParameters {
   /** Whether the dismissable layer is enabled. */
   enabled: boolean;
 
-  /** Callback to handle closing/dismissing the element, */
+  /**
+   * Callback called when the dismissable layer is dismissed.
+   * @param event - The event that triggered the dismissal.
+   */
   onDismiss: (event?: Event) => void | Promise<void>;
 
   /** References to elements that should not trigger dismissal when clicked. */
@@ -29,12 +34,16 @@ interface UseDismissParameters {
   /**
    * Event handler called when the escape key is down.
    * Can be prevented.
+   *
+   * @param event - The event that triggered the escape key down.
    */
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
 
   /**
    * Event handler called when the focus moves outside of the dismissable layer.
    * Can be prevented.
+   *
+   * @param event - The event that triggered the focus move outside.
    */
   onFocusOutside?: (event: FocusOutsideEvent) => void;
 
@@ -42,6 +51,8 @@ interface UseDismissParameters {
    * Event handler called when an interaction happens outside the dismissable layer.
    * Specifically, when a `pointerdown` event happens outside or focus moves outside of it.
    * Can be prevented.
+   *
+   * @param event - The event that triggered the interaction outside.
    */
   onInteractOutside?: (
     event: PointerDownOutsideEvent | FocusOutsideEvent,
@@ -50,18 +61,20 @@ interface UseDismissParameters {
   /**
    * Event handler called when the a `pointerdown` event happens outside of the dismissable layer.
    * Can be prevented.
+   *
+   * @param event - The event that triggered the interaction outside.
    */
   onPointerDownOutside?: (event: PointerDownOutsideEvent) => void;
 
   /**
-   * When `true`, hover/focus/click interactions will be disabled on elements outside
-   * the dismissable layer. Users will need to click twice on outside elements to
-   * interact with them: once to close the dismissable layer, and again to trigger the element.
+   * Whether to disable hover/focus/click interactions on elements outside the dismissable layer.
+   * Outside elements need to be clicked twice to interact with them: once to close the
+   * dismissable layer, and again to trigger the element.
    */
   disableOutsidePointerEvents?: boolean;
 
   /**
-   * When `true`, prevents the dismissible layer from closing when scrolling on mobile devices.
+   * Whether to prevent the dismissible layer from closing when scrolling on touch devices.
    * @default false
    */
   preventScrollDismiss?: boolean;
@@ -115,12 +128,14 @@ function useDismiss(params: UseDismissParameters) {
           onEscapeKeyDown(event);
           if (event.defaultPrevented) return;
         }
+
         onInteractOutside?.({
           currentTarget: event.currentTarget as Node,
           target: event.target as Node,
           preventDefault: () => event.preventDefault(),
           defaultPrevented: event.defaultPrevented,
         });
+
         if (!event.defaultPrevented) {
           onDismiss(event);
         }
@@ -175,7 +190,7 @@ function useDismiss(params: UseDismissParameters) {
         const deltaY = Math.abs(event.clientY - touchStartY.current);
         touchStartY.current = null;
 
-        if (deltaY <= 5) {
+        if (deltaY <= SCROLL_DISTANCE_THRESHOLD) {
           onDismissWithTarget(event, target);
         }
       }

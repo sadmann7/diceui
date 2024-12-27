@@ -43,7 +43,7 @@ const ComboboxContent = React.forwardRef<HTMLDivElement, ComboboxContentProps>(
     useDismiss({
       enabled: context.open,
       onDismiss: () => context.onOpenChange(false),
-      refs: [context.anchorRef, context.listRef],
+      refs: [context.listRef, context.anchorRef],
       onFocusOutside: (event) => event.preventDefault(),
       onPointerDownOutside,
       disableOutsidePointerEvents: context.open && context.modal,
