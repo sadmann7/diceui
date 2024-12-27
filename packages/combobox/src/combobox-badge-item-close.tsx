@@ -15,20 +15,48 @@ const ComboboxBadgeItemClose = React.forwardRef<
 >((props, forwardedRef) => {
   const context = useComboboxContext(BADGE_ITEM_CLOSE_NAME);
   const badgeItemContext = useComboboxBadgeItemContext(BADGE_ITEM_CLOSE_NAME);
-
-  console.log({ value: context.value });
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
+  const composedRef = React.useCallback(
+    (node: HTMLButtonElement | null) => {
+      buttonRef.current = node;
+      if (typeof forwardedRef === "function") forwardedRef(node);
+      else if (forwardedRef) forwardedRef.current = node;
+    },
+    [forwardedRef],
+  );
 
   return (
     <Primitive.button
       type="button"
       aria-controls={badgeItemContext.id}
-      data-disabled={false}
-      data-value={badgeItemContext.value}
+      data-highlighted={badgeItemContext.isHighlighted ? "" : undefined}
       tabIndex={context.disabled ? undefined : -1}
       {...props}
-      ref={forwardedRef}
-      onClick={composeEventHandlers(props.onClick, () => {
-        context.onItemRemove(badgeItemContext.value);
+      ref={composedRef}
+      onClick={composeEventHandlers(props.onClick, (event) => {
+        event.stopPropagation();
+        if (!context.disabled) {
+          context.onItemRemove(badgeItemContext.value);
+        }
+      })}
+      onPointerDown={composeEventHandlers(props.onPointerDown, (event) => {
+        if (context.disabled) return;
+
+        // prevent implicit pointer capture
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+        if (target.hasPointerCapture(event.pointerId)) {
+          target.releasePointerCapture(event.pointerId);
+        }
+
+        if (
+          event.button === 0 &&
+          event.ctrlKey === false &&
+          event.pointerType === "mouse"
+        ) {
+          // prevent item from stealing focus from the input
+          event.preventDefault();
+        }
       })}
     />
   );

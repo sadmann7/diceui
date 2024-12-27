@@ -54,14 +54,16 @@ const ComboboxBadgeItem = React.forwardRef<
   <ComboboxPrimitive.BadgeItem
     ref={ref}
     className={cn(
-      "inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-1 font-medium text-secondary-foreground text-sm",
+      "inline-flex items-center justify-between gap-1 rounded-sm bg-secondary px-2 py-0.5",
       className,
     )}
     {...props}
   >
-    <span className="truncate">{children}</span>
-    <ComboboxPrimitive.ComboboxBadgeItemClose className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring">
-      <X className="h-3.5 w-3.5" />
+    <span className="truncate text-[13px] text-secondary-foreground">
+      {children}
+    </span>
+    <ComboboxPrimitive.ComboboxBadgeItemClose className="shrink-0 rounded p-0.5 opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring data-[highlighted]:bg-destructive">
+      <X className="h-3 w-3" />
     </ComboboxPrimitive.ComboboxBadgeItemClose>
   </ComboboxPrimitive.BadgeItem>
 ));

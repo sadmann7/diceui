@@ -7,7 +7,7 @@ const BADGE_LIST_NAME = "ComboboxBadgeList";
 interface ComboboxBadgeListProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
   /**
-   * Whether to force mount the badge list even if the combobox is not multiple or no item is selected.
+   * Whether to force mount the badge list even if there is no selected item.
    * @default false
    */
   forceMount?: boolean;

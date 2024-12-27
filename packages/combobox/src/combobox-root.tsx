@@ -57,6 +57,8 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   };
   highlightedItem: ItemElement | null;
   onHighlightedItemChange: (item: ItemElement | null) => void;
+  highlightedBadgeIndex: number;
+  onHighlightedBadgeIndexChange: (index: number) => void;
   onRegisterItem: (id: string, value: string, groupId?: string) => () => void;
   onFilterItems: () => void;
   onHighlightMove: (direction: HighlightingDirection) => void;
@@ -279,6 +281,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
         filterStore.search = "";
       }
       onOpenChange?.(newOpen);
+      if (multiple) setHighlightedBadgeIndex(-1);
     },
   });
   const [inputValue = "", setInputValue] = useControllableState({
@@ -291,6 +294,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
   const [selectedText, setSelectedText] = React.useState("");
   const [highlightedItem, setHighlightedItem] =
     React.useState<ItemElement | null>(null);
+  const [highlightedBadgeIndex, setHighlightedBadgeIndex] = React.useState(-1);
 
   const onValueChange = React.useCallback(
     (newValue: string | string[]) => {
@@ -548,6 +552,8 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       filterStore={filterStore}
       highlightedItem={highlightedItem}
       onHighlightedItemChange={setHighlightedItem}
+      highlightedBadgeIndex={highlightedBadgeIndex}
+      onHighlightedBadgeIndexChange={setHighlightedBadgeIndex}
       onRegisterItem={onRegisterItem}
       onFilterItems={onFilterItems}
       onHighlightMove={onHighlightMove}

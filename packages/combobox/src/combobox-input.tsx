@@ -79,6 +79,10 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
         context.onInputValueChange("");
         context.onHighlightedItemChange(null);
       }
+
+      if (context.multiple) {
+        context.onHighlightedBadgeIndexChange(-1);
+      }
     }, [
       context.multiple,
       context.value,
@@ -87,6 +91,7 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
       context.onHighlightedItemChange,
       context.inputValue,
       context.selectedText,
+      context.onHighlightedBadgeIndexChange,
     ]);
 
     const onKeyDown = React.useCallback(
@@ -140,6 +145,8 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
         const isNavigationKey = [
           "ArrowDown",
           "ArrowUp",
+          "ArrowLeft",
+          "ArrowRight",
           "Home",
           "End",
           "Enter",
@@ -153,8 +160,18 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
 
         switch (event.key) {
           case "Enter":
+            if (context.multiple && context.highlightedBadgeIndex > -1) {
+              const valueToRemove =
+                context.value[context.highlightedBadgeIndex];
+              if (valueToRemove) {
+                context.onItemRemove(valueToRemove);
+                context.onHighlightedBadgeIndexChange(-1);
+                return;
+              }
+            }
+
             if (!context.open) {
-              if (context.inputValue?.trim()) {
+              if (context.inputValue.trim()) {
                 onMenuOpen();
               } else if (!context.multiple && context.value) {
                 context.onInputValueChange(context.selectedText);
@@ -188,6 +205,49 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
               onMenuOpen(context.value.length > 0 ? "selected" : "last");
             }
             break;
+          case "ArrowLeft": {
+            if (!context.multiple) return;
+            const input = event.currentTarget;
+            const isAtStart =
+              input.selectionStart === 0 && input.selectionEnd === 0;
+
+            if (context.open && isAtStart) {
+              context.onHighlightedItemChange(null);
+              const values = Array.isArray(context.value) ? context.value : [];
+              if (values.length > 0) {
+                context.onOpenChange(false);
+                requestAnimationFrame(() => {
+                  context.onHighlightedBadgeIndexChange(values.length - 1);
+                });
+              }
+            } else if (!context.open && context.highlightedBadgeIndex > -1) {
+              context.onHighlightedBadgeIndexChange(
+                Math.max(0, context.highlightedBadgeIndex - 1),
+              );
+            } else if (!context.open && isAtStart) {
+              const values = Array.isArray(context.value) ? context.value : [];
+              if (values.length > 0) {
+                context.onHighlightedBadgeIndexChange(values.length - 1);
+              }
+            }
+            break;
+          }
+          case "ArrowRight": {
+            if (!context.multiple) return;
+
+            if (!context.open && context.highlightedBadgeIndex > -1) {
+              const values = Array.isArray(context.value) ? context.value : [];
+              if (context.highlightedBadgeIndex < values.length - 1) {
+                context.onHighlightedBadgeIndexChange(
+                  context.highlightedBadgeIndex + 1,
+                );
+              } else {
+                context.onHighlightedBadgeIndexChange(-1);
+                event.currentTarget.focus();
+              }
+            }
+            break;
+          }
           case "Home":
             if (context.open) onHighlightMove("first");
             break;
@@ -215,6 +275,39 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
             }
             onMenuClose();
             break;
+          case "Backspace":
+            if (
+              context.multiple &&
+              !context.inputValue &&
+              Array.isArray(context.value) &&
+              context.value.length > 0
+            ) {
+              if (context.highlightedBadgeIndex > -1) {
+                const valueToRemove =
+                  context.value[context.highlightedBadgeIndex];
+                if (valueToRemove) {
+                  context.onItemRemove(valueToRemove);
+                  context.onHighlightedBadgeIndexChange(-1);
+                }
+              } else {
+                context.onHighlightedBadgeIndexChange(context.value.length - 1);
+              }
+            }
+            break;
+          case "Delete":
+            if (
+              context.multiple &&
+              context.highlightedBadgeIndex > -1 &&
+              Array.isArray(context.value)
+            ) {
+              const valueToRemove =
+                context.value[context.highlightedBadgeIndex];
+              if (valueToRemove) {
+                context.onItemRemove(valueToRemove);
+                context.onHighlightedBadgeIndexChange(-1);
+              }
+            }
+            break;
         }
       },
       [
@@ -222,16 +315,19 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
         context.onOpenChange,
         context.inputValue,
         context.onInputValueChange,
-        context.onSelectedTextChange,
         context.onHighlightedItemChange,
         context.value,
-        context.onValueChange,
         context.highlightedItem,
         context.onHighlightMove,
         context.selectedText,
-        context.readOnly,
         context.multiple,
         context.modal,
+        context.highlightedBadgeIndex,
+        context.onHighlightedBadgeIndexChange,
+        context.onItemRemove,
+        context.readOnly,
+        context.onSelectedTextChange,
+        context.onValueChange,
         context.filterStore,
       ],
     );

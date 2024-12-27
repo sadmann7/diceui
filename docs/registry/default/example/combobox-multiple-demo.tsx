@@ -37,7 +37,7 @@ export default function ComboboxMultipleDemo() {
       multiple
     >
       <ComboboxLabel>Tricks</ComboboxLabel>
-      <ComboboxAnchor className="h-full min-h-10 flex-wrap p-2">
+      <ComboboxAnchor className="h-full min-h-10 flex-wrap px-3 py-2">
         <ComboboxBadgeList>
           {value.map((item) => {
             const option = tricks.find((trick) => trick.value === item);
@@ -52,9 +52,9 @@ export default function ComboboxMultipleDemo() {
         </ComboboxBadgeList>
         <ComboboxInput
           placeholder="Select tricks..."
-          className="h-full min-w-20 flex-1"
+          className="h-auto min-w-20 flex-1"
         />
-        <ComboboxTrigger className="absolute top-2 right-2">
+        <ComboboxTrigger className="absolute top-3 right-2">
           <ChevronDown className="h-4 w-4" />
         </ComboboxTrigger>
       </ComboboxAnchor>

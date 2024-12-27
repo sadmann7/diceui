@@ -1,12 +1,14 @@
-import { createContext, useId } from "@diceui/shared";
+import { composeEventHandlers, createContext, useId } from "@diceui/shared";
 import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
+import { useComboboxContext } from "./combobox-root";
 
 const BADGE_ITEM_NAME = "ComboboxBadgeItem";
 
 interface ComboboxBadgeItemContextValue {
   id: string;
   value: string;
+  isHighlighted: boolean;
 }
 
 const [ComboboxBadgeItemProvider, useComboboxBadgeItemContext] =
@@ -23,15 +25,34 @@ const ComboboxBadgeItem = React.forwardRef<
 >((props, forwardedRef) => {
   const { value, ...badgeItemProps } = props;
   const id = useId();
+  const context = useComboboxContext(BADGE_ITEM_NAME);
+  const index = Array.isArray(context.value)
+    ? context.value.indexOf(value)
+    : -1;
+  const isHighlighted = index === context.highlightedBadgeIndex;
 
   return (
-    <ComboboxBadgeItemProvider value={value} id={id}>
+    <ComboboxBadgeItemProvider
+      value={value}
+      id={id}
+      isHighlighted={isHighlighted}
+    >
       <Primitive.div
         id={id}
         role="option"
-        data-value={value}
+        data-highlighted={isHighlighted ? "" : undefined}
         {...badgeItemProps}
         ref={forwardedRef}
+        onFocus={composeEventHandlers(props.onFocus, () => {
+          if (!context.disabled) {
+            context.onHighlightedBadgeIndexChange(index);
+          }
+        })}
+        onBlur={composeEventHandlers(props.onBlur, () => {
+          if (context.highlightedBadgeIndex === index) {
+            context.onHighlightedBadgeIndexChange(-1);
+          }
+        })}
       />
     </ComboboxBadgeItemProvider>
   );
