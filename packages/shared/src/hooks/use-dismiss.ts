@@ -55,7 +55,7 @@ interface UseDismissParameters {
    * @param event - The event that triggered the interaction outside.
    */
   onInteractOutside?: (
-    event: PointerDownOutsideEvent | FocusOutsideEvent,
+    event: PointerDownOutsideEvent | FocusOutsideEvent
   ) => void;
 
   /**
