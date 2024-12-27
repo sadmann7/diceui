@@ -17,6 +17,20 @@ env:
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
 
 jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.1
+      - uses: ./.github/setup
+
+      - name: Check formatting
+        run: pnpm lint:fix
+
   build:
     runs-on: ubuntu-latest
     steps:

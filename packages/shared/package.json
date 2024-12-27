@@ -14,11 +14,7 @@
       "require": "./dist/index.js"
     }
   },
-  "files": [
-    "dist",
-    "package.json",
-    "README.md"
-  ],
+  "files": ["dist", "package.json", "README.md"],
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup --clean",
