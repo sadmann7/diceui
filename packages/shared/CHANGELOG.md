@@ -1,5 +1,11 @@
 # @diceui/shared
 
+## 0.3.0
+
+### Minor Changes
+
+- b19c602: Better Escape keydown for useDismiss
+
 ## 0.2.1
 
 ### Patch Changes
