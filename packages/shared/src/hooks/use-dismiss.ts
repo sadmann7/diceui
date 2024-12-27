@@ -17,13 +17,13 @@ interface PointerDownOutsideEvent extends FocusOutsideEvent {
 }
 
 interface UseDismissParameters {
-  /** Whether the element is currently open/mounted */
-  open: boolean;
+  /** Whether the dismissable layer is enabled. */
+  enabled: boolean;
 
-  /** Callback to handle closing/dismissing the element */
+  /** Callback to handle closing/dismissing the element. */
   onDismiss: (event?: Event) => void | Promise<void>;
 
-  /** References to elements that should not trigger dismissal when clicked */
+  /** References to elements that should not trigger dismissal when clicked. */
   refs: Array<React.RefObject<Element | null>>;
 
   /**
@@ -64,7 +64,7 @@ interface UseDismissParameters {
    * Delay in ms before adding the mouseup listener
    * @default 0
    */
-  delay?: number;
+  delayMs?: number;
 
   /**
    * Attribute to add to the dismissable layer
@@ -81,7 +81,7 @@ interface UseDismissParameters {
 
 function useDismiss(params: UseDismissParameters) {
   const {
-    open,
+    enabled,
     onDismiss,
     refs,
     onEscapeKeyDown,
@@ -89,7 +89,7 @@ function useDismiss(params: UseDismissParameters) {
     onFocusOutside,
     onInteractOutside,
     disableOutsidePointerEvents = false,
-    delay = 0,
+    delayMs = 0,
     layerAttr = DATA_DISMISSABLE_LAYER_ATTR,
     layerStyleAttr = DATA_DISMISSABLE_LAYER_STYLE_ATTR,
   } = params;
@@ -97,7 +97,7 @@ function useDismiss(params: UseDismissParameters) {
   const shouldTriggerEvents = React.useRef(true);
 
   React.useEffect(() => {
-    if (!open) return;
+    if (!enabled) return;
 
     const doc = getOwnerDocument(refs[0]?.current) ?? document;
 
@@ -185,7 +185,7 @@ function useDismiss(params: UseDismissParameters) {
       doc.addEventListener("keydown", onKeyDown);
       doc.addEventListener("pointerdown", onPointerDown);
       doc.addEventListener("focusout", onFocusOut);
-    }, delay);
+    }, delayMs);
 
     return () => {
       window.clearTimeout(timeoutId);
@@ -203,7 +203,7 @@ function useDismiss(params: UseDismissParameters) {
       }
     };
   }, [
-    open,
+    enabled,
     refs,
     onDismiss,
     onEscapeKeyDown,
@@ -211,7 +211,7 @@ function useDismiss(params: UseDismissParameters) {
     onFocusOutside,
     onInteractOutside,
     disableOutsidePointerEvents,
-    delay,
+    delayMs,
     layerAttr,
     layerStyleAttr,
   ]);

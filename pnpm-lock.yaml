@@ -33,14 +33,14 @@ importers:
   docs:
     dependencies:
       '@diceui/checkbox-group':
-        specifier: ^0.0.3
-        version: 0.0.3(@types/react-dom@19.0.2(@types/react@19.0.1))(@types/react@19.0.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        specifier: workspace:*
+        version: link:../packages/checkbox-group
       '@diceui/combobox':
-        specifier: ^0.0.3
-        version: 0.0.3(@types/react-dom@19.0.2(@types/react@19.0.1))(@types/react@19.0.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        specifier: workspace:*
+        version: link:../packages/combobox
       '@diceui/tags-input':
-        specifier: ^0.0.3
-        version: 0.0.3(@types/react-dom@19.0.2(@types/react@19.0.1))(@types/react@19.0.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        specifier: workspace:*
+        version: link:../packages/tags-input
       '@dnd-kit/core':
         specifier: ^6.3.1
         version: 6.3.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)

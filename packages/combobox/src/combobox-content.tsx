@@ -41,12 +41,13 @@ const ComboboxContent = React.forwardRef<HTMLDivElement, ComboboxContentProps>(
     const context = useComboboxContext(CONTENT_NAME);
 
     useDismiss({
-      open: context.open,
+      enabled: context.open,
       onDismiss: () => context.onOpenChange(false),
       refs: [context.anchorRef, context.listRef],
       onFocusOutside: (event) => event.preventDefault(),
       onPointerDownOutside,
       disableOutsidePointerEvents: context.open && context.modal,
+      preventScrollDismiss: context.open && !context.modal,
     });
 
     return (
