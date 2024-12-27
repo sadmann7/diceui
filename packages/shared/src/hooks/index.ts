@@ -4,6 +4,7 @@ export * from "./use-collection";
 export * from "./use-controllable-state";
 export * from "./use-direction";
 export * from "./use-dismiss";
+export * from "./use-escape-keydown";
 export * from "./use-event-callback";
 export * from "./use-filter";
 export * from "./use-form-control";

@@ -4,6 +4,7 @@ import {
   DATA_DISMISSABLE_LAYER_STYLE_ATTR,
 } from "../constants";
 import { getOwnerDocument } from "../lib/dock";
+import { useEscapeKeydown } from "./use-escape-keydown";
 
 const SCROLL_DISTANCE_THRESHOLD = 5;
 
@@ -114,21 +115,25 @@ function useDismiss(params: UseDismissParameters) {
     layerStyleAttr = DATA_DISMISSABLE_LAYER_STYLE_ATTR,
   } = params;
 
+  const ownerDocument = getOwnerDocument() ?? document;
   const shouldTriggerEvents = React.useRef(true);
   const touchStartY = React.useRef<number | null>(null);
+
+  useEscapeKeydown({
+    ownerDocument,
+    onEscapeKeyDown: (event) => {
+      if (onEscapeKeyDown && !event.defaultPrevented) {
+        onEscapeKeyDown(event);
+      }
+    },
+    enabled: enabled && !!onEscapeKeyDown && !!onDismiss,
+  });
 
   React.useEffect(() => {
     if (!enabled) return;
 
-    const doc = getOwnerDocument(refs[0]?.current) ?? document;
-
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        if (onEscapeKeyDown) {
-          onEscapeKeyDown(event);
-          if (event.defaultPrevented) return;
-        }
-
         onInteractOutside?.({
           currentTarget: event.currentTarget as Node,
           target: event.target as Node,
@@ -226,25 +231,25 @@ function useDismiss(params: UseDismissParameters) {
         }
       }
 
-      const style = doc.createElement("style");
+      const style = ownerDocument.createElement("style");
       style.setAttribute(layerStyleAttr, "");
       style.textContent = `[${layerAttr}] ~ *:not([${layerAttr}]) { pointer-events: none !important; }`;
-      doc.head.appendChild(style);
+      ownerDocument.head.appendChild(style);
     }
 
     const timeoutId = window.setTimeout(() => {
-      doc.addEventListener("keydown", onKeyDown);
-      doc.addEventListener("pointerdown", onPointerDown);
-      doc.addEventListener("pointerup", onPointerUp);
-      doc.addEventListener("focusout", onFocusOut);
+      ownerDocument.addEventListener("keydown", onKeyDown);
+      ownerDocument.addEventListener("pointerdown", onPointerDown);
+      ownerDocument.addEventListener("pointerup", onPointerUp);
+      ownerDocument.addEventListener("focusout", onFocusOut);
     }, delayMs);
 
     return () => {
       window.clearTimeout(timeoutId);
-      doc.removeEventListener("keydown", onKeyDown);
-      doc.removeEventListener("pointerdown", onPointerDown);
-      doc.removeEventListener("pointerup", onPointerUp);
-      doc.removeEventListener("focusout", onFocusOut);
+      ownerDocument.removeEventListener("keydown", onKeyDown);
+      ownerDocument.removeEventListener("pointerdown", onPointerDown);
+      ownerDocument.removeEventListener("pointerup", onPointerUp);
+      ownerDocument.removeEventListener("focusout", onFocusOut);
 
       if (disableOutsidePointerEvents) {
         for (const ref of refs) {
@@ -252,14 +257,13 @@ function useDismiss(params: UseDismissParameters) {
             ref.current.removeAttribute(layerAttr);
           }
         }
-        doc.querySelector(`[${layerStyleAttr}]`)?.remove();
+        ownerDocument.querySelector(`[${layerStyleAttr}]`)?.remove();
       }
     };
   }, [
     enabled,
     refs,
     onDismiss,
-    onEscapeKeyDown,
     onPointerDownOutside,
     onFocusOutside,
     onInteractOutside,
@@ -268,6 +272,7 @@ function useDismiss(params: UseDismissParameters) {
     delayMs,
     layerAttr,
     layerStyleAttr,
+    ownerDocument,
   ]);
 }
 

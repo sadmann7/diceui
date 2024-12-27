@@ -28,6 +28,13 @@ const [ComboboxContentProvider, useComboboxContentContext] =
 
 interface ComboboxContentProps extends ComboboxPositionerProps {
   /**
+   * Event handler called when the `Escape` key is pressed.
+   *
+   * Can be used to prevent input value from being reset on `Escape` key press.
+   */
+  onEscapeKeyDown?: (event: KeyboardEvent) => void;
+
+  /**
    * Event handler called when a `pointerdown` event happens outside of the content.
    *
    * Can be used to prevent the content from closing when the pointer is outside of the content.
@@ -37,7 +44,12 @@ interface ComboboxContentProps extends ComboboxPositionerProps {
 
 const ComboboxContent = React.forwardRef<HTMLDivElement, ComboboxContentProps>(
   (props, forwardedRef) => {
-    const { forceMount = false, onPointerDownOutside, ...contentProps } = props;
+    const {
+      forceMount = false,
+      onEscapeKeyDown,
+      onPointerDownOutside,
+      ...contentProps
+    } = props;
     const context = useComboboxContext(CONTENT_NAME);
 
     useDismiss({
@@ -45,6 +57,11 @@ const ComboboxContent = React.forwardRef<HTMLDivElement, ComboboxContentProps>(
       onDismiss: () => context.onOpenChange(false),
       refs: [context.listRef, context.anchorRef],
       onFocusOutside: (event) => event.preventDefault(),
+      onEscapeKeyDown: (event) => {
+        onEscapeKeyDown?.(event);
+        if (event.defaultPrevented) return;
+        context.onInputValueChange("");
+      },
       onPointerDownOutside,
       disableOutsidePointerEvents: context.open && context.modal,
       preventScrollDismiss: context.open && !context.modal,
