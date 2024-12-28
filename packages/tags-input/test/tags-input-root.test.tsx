@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import * as React from "react";
 import { describe, expect, test, vi } from "vitest";
 
-import * as TagsInput from "./index";
+import * as TagsInput from "../src/index";
 
 // Mock ResizeObserver
 class ResizeObserver {

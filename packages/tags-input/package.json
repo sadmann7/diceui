@@ -28,9 +28,7 @@
     "dev": "tsup --watch",
     "build": "tsup --clean",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test": "vitest run"
   },
   "peerDependencies": {
     "@types/react": "*",
