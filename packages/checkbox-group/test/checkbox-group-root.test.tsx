@@ -1,7 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-// biome-ignore lint/style/useImportType: <explanation>
-import * as React from "react";
 import { describe, expect, test, vi } from "vitest";
 
 import * as CheckboxGroup from "../src/index";
@@ -13,28 +11,29 @@ class ResizeObserverMock {
   disconnect() {}
 }
 
+// Add to global
 global.ResizeObserver = ResizeObserverMock;
 
 describe("CheckboxGroup", () => {
   const renderCheckboxGroup = (props = {}) => {
     return render(
       <CheckboxGroup.Root {...props}>
-        <CheckboxGroup.Label>Favorite Fruits</CheckboxGroup.Label>
+        <CheckboxGroup.Label>Favorite tricks</CheckboxGroup.Label>
         <CheckboxGroup.Description>
-          Select your favorite fruits
+          Select your favorite tricks
         </CheckboxGroup.Description>
         <CheckboxGroup.List>
-          <CheckboxGroup.Item value="apple">
+          <CheckboxGroup.Item value="kickflip">
             <CheckboxGroup.Indicator />
-            Apple
+            Kickflip
           </CheckboxGroup.Item>
-          <CheckboxGroup.Item value="banana">
+          <CheckboxGroup.Item value="heelflip">
             <CheckboxGroup.Indicator />
-            Banana
+            Heelflip
           </CheckboxGroup.Item>
-          <CheckboxGroup.Item value="orange">
+          <CheckboxGroup.Item value="fs-540">
             <CheckboxGroup.Indicator />
-            Orange
+            FS 540
           </CheckboxGroup.Item>
         </CheckboxGroup.List>
         <CheckboxGroup.Message />
@@ -44,10 +43,10 @@ describe("CheckboxGroup", () => {
 
   test("renders without crashing", () => {
     renderCheckboxGroup();
-    expect(screen.getByText("Favorite Fruits")).toBeInTheDocument();
-    expect(screen.getByText("Select your favorite fruits")).toBeInTheDocument();
+    expect(screen.getByText("Favorite tricks")).toBeInTheDocument();
+    expect(screen.getByText("Select your favorite tricks")).toBeInTheDocument();
     expect(
-      screen.getByRole("group", { name: "Favorite Fruits" }),
+      screen.getByRole("group", { name: "Favorite tricks" }),
     ).toBeInTheDocument();
   });
 
@@ -56,30 +55,30 @@ describe("CheckboxGroup", () => {
     const onValueChange = vi.fn();
 
     render(
-      <CheckboxGroup.Root value={["apple"]} onValueChange={onValueChange}>
+      <CheckboxGroup.Root value={["kickflip"]} onValueChange={onValueChange}>
         <CheckboxGroup.List>
-          <CheckboxGroup.Item value="apple">
+          <CheckboxGroup.Item value="kickflip">
             <CheckboxGroup.Indicator />
-            Apple
+            Kickflip
           </CheckboxGroup.Item>
-          <CheckboxGroup.Item value="banana">
+          <CheckboxGroup.Item value="heelflip">
             <CheckboxGroup.Indicator />
-            Banana
+            Heelflip
           </CheckboxGroup.Item>
         </CheckboxGroup.List>
       </CheckboxGroup.Root>,
     );
 
-    const appleCheckbox = screen.getByRole("checkbox", { name: "Apple" });
-    const bananaCheckbox = screen.getByRole("checkbox", { name: "Banana" });
+    const kickflipCheckbox = screen.getByRole("checkbox", { name: "Kickflip" });
+    const heelflipCheckbox = screen.getByRole("checkbox", { name: "Heelflip" });
 
-    expect(appleCheckbox).toHaveAttribute("aria-checked", "true");
-    expect(bananaCheckbox).toHaveAttribute("aria-checked", "false");
+    expect(kickflipCheckbox).toHaveAttribute("aria-checked", "true");
+    expect(heelflipCheckbox).toHaveAttribute("aria-checked", "false");
 
-    await user.click(bananaCheckbox);
-    expect(onValueChange).toHaveBeenCalledWith(["apple", "banana"]);
+    await user.click(heelflipCheckbox);
+    expect(onValueChange).toHaveBeenCalledWith(["kickflip", "heelflip"]);
 
-    await user.click(appleCheckbox);
+    await user.click(kickflipCheckbox);
     expect(onValueChange).toHaveBeenCalledWith([]);
   });
 
@@ -87,16 +86,16 @@ describe("CheckboxGroup", () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
 
-    renderCheckboxGroup({ defaultValue: ["apple"], onValueChange });
+    renderCheckboxGroup({ defaultValue: ["kickflip"], onValueChange });
 
-    const appleCheckbox = screen.getByRole("checkbox", { name: "Apple" });
-    const bananaCheckbox = screen.getByRole("checkbox", { name: "Banana" });
+    const kickflipCheckbox = screen.getByRole("checkbox", { name: "Kickflip" });
+    const heelflipCheckbox = screen.getByRole("checkbox", { name: "Heelflip" });
 
-    expect(appleCheckbox).toHaveAttribute("aria-checked", "true");
-    expect(bananaCheckbox).toHaveAttribute("aria-checked", "false");
+    expect(kickflipCheckbox).toHaveAttribute("aria-checked", "true");
+    expect(heelflipCheckbox).toHaveAttribute("aria-checked", "false");
 
-    await user.click(bananaCheckbox);
-    expect(onValueChange).toHaveBeenCalledWith(["apple", "banana"]);
+    await user.click(heelflipCheckbox);
+    expect(onValueChange).toHaveBeenCalledWith(["kickflip", "heelflip"]);
   });
 
   test("handles validation", async () => {
@@ -109,25 +108,25 @@ describe("CheckboxGroup", () => {
     render(
       <CheckboxGroup.Root onValidate={onValidate}>
         <CheckboxGroup.List>
-          <CheckboxGroup.Item value="apple">Apple</CheckboxGroup.Item>
-          <CheckboxGroup.Item value="banana">Banana</CheckboxGroup.Item>
-          <CheckboxGroup.Item value="orange">Orange</CheckboxGroup.Item>
+          <CheckboxGroup.Item value="kickflip">Kickflip</CheckboxGroup.Item>
+          <CheckboxGroup.Item value="heelflip">Heelflip</CheckboxGroup.Item>
+          <CheckboxGroup.Item value="fs-540">FS 540</CheckboxGroup.Item>
         </CheckboxGroup.List>
         <CheckboxGroup.Message />
       </CheckboxGroup.Root>,
     );
 
     // Select first two items
-    await user.click(screen.getByRole("checkbox", { name: "Apple" }));
-    await user.click(screen.getByRole("checkbox", { name: "Banana" }));
-    expect(onValidate).toHaveBeenCalledWith(["apple", "banana"]);
+    await user.click(screen.getByRole("checkbox", { name: "Kickflip" }));
+    await user.click(screen.getByRole("checkbox", { name: "Heelflip" }));
+    expect(onValidate).toHaveBeenCalledWith(["kickflip", "heelflip"]);
     expect(
       screen.queryByText("Maximum 2 items allowed"),
     ).not.toBeInTheDocument();
 
     // Try to select third item
-    await user.click(screen.getByRole("checkbox", { name: "Orange" }));
-    expect(onValidate).toHaveBeenCalledWith(["apple", "banana", "orange"]);
+    await user.click(screen.getByRole("checkbox", { name: "FS 540" }));
+    expect(onValidate).toHaveBeenCalledWith(["kickflip", "heelflip", "fs-540"]);
     expect(screen.getByText("Maximum 2 items allowed")).toBeInTheDocument();
   });
 
@@ -143,7 +142,7 @@ describe("CheckboxGroup", () => {
     expect(checkboxes[2]).toHaveAttribute("disabled");
 
     await user.click(
-      checkboxes[0] ?? screen.getByRole("checkbox", { name: "Apple" }),
+      checkboxes[0] ?? screen.getByRole("checkbox", { name: "Kickflip" }),
     );
     expect(onValueChange).not.toHaveBeenCalled();
   });
@@ -154,49 +153,45 @@ describe("CheckboxGroup", () => {
 
     renderCheckboxGroup({
       readOnly: true,
-      defaultValue: ["apple"],
+      defaultValue: ["kickflip"],
       onValueChange,
     });
 
-    const appleCheckbox = screen.getByRole("checkbox", { name: "Apple" });
-    expect(appleCheckbox).toHaveAttribute("aria-checked", "true");
+    const kickflipCheckbox = screen.getByRole("checkbox", { name: "Kickflip" });
+    expect(kickflipCheckbox).toHaveAttribute("aria-checked", "true");
 
-    await user.click(appleCheckbox);
+    await user.click(kickflipCheckbox);
     expect(onValueChange).not.toHaveBeenCalled();
   });
 
   test("handles required field validation", async () => {
     const user = userEvent.setup();
-    const handleSubmit = vi.fn((e: React.FormEvent) => {
+    const onSubmit = vi.fn((e: React.FormEvent) => {
       e.preventDefault();
     });
 
     render(
-      <form onSubmit={handleSubmit} data-testid="form">
-        <CheckboxGroup.Root name="fruits" required>
+      <form onSubmit={onSubmit} data-testid="form">
+        <CheckboxGroup.Root name="tricks" required>
           <CheckboxGroup.List>
-            <CheckboxGroup.Item value="apple">Apple</CheckboxGroup.Item>
-            <CheckboxGroup.Item value="banana">Banana</CheckboxGroup.Item>
+            <CheckboxGroup.Item value="kickflip">Kickflip</CheckboxGroup.Item>
+            <CheckboxGroup.Item value="heelflip">Heelflip</CheckboxGroup.Item>
           </CheckboxGroup.List>
         </CheckboxGroup.Root>
         <button type="submit">Submit</button>
       </form>,
     );
 
-    const form = screen.getByTestId("form");
     const submitButton = screen.getByText("Submit");
 
     // Try submitting without selection
     await user.click(submitButton);
-    expect(handleSubmit).not.toHaveBeenCalled();
+    expect(onSubmit).not.toHaveBeenCalled();
 
     // Select an item and submit
-    await user.click(screen.getByRole("checkbox", { name: "Apple" }));
+    await user.click(screen.getByRole("checkbox", { name: "Kickflip" }));
     await user.click(submitButton);
-
-    // Use fireEvent to ensure form submission
-    fireEvent.submit(form);
-    expect(handleSubmit).toHaveBeenCalledTimes(1);
+    expect(onSubmit).toHaveBeenCalledTimes(1);
   });
 
   test("handles keyboard navigation", async () => {
@@ -224,14 +219,14 @@ describe("CheckboxGroup", () => {
 
   test("supports horizontal orientation", () => {
     renderCheckboxGroup({ orientation: "horizontal" });
-    const group = screen.getByRole("group", { name: "Favorite Fruits" });
+    const group = screen.getByRole("group", { name: "Favorite tricks" });
     expect(group).toHaveAttribute("data-orientation", "horizontal");
     expect(group).toHaveAttribute("aria-orientation", "horizontal");
   });
 
   test("supports RTL direction", () => {
     renderCheckboxGroup({ dir: "rtl" });
-    const group = screen.getByRole("group", { name: "Favorite Fruits" });
+    const group = screen.getByRole("group", { name: "Favorite tricks" });
     expect(group).toHaveAttribute("dir", "rtl");
   });
 
@@ -239,23 +234,23 @@ describe("CheckboxGroup", () => {
     const { unmount } = renderCheckboxGroup();
 
     // Test group role and ARIA attributes
-    const group = screen.getByRole("group", { name: "Favorite Fruits" });
+    const group = screen.getByRole("group", { name: "Favorite tricks" });
     expect(group).toBeInTheDocument();
     expect(group).toHaveAttribute("aria-labelledby");
     expect(group).toHaveAttribute("aria-describedby");
     expect(group).toHaveAttribute("aria-orientation", "vertical");
 
     // Test label and description
-    expect(screen.getByText("Favorite Fruits")).toBeInTheDocument();
-    expect(screen.getByText("Select your favorite fruits")).toBeInTheDocument();
+    expect(screen.getByText("Favorite tricks")).toBeInTheDocument();
+    expect(screen.getByText("Select your favorite tricks")).toBeInTheDocument();
 
     // Test checkbox roles and states
-    const appleCheckbox = screen.getByRole("checkbox", { name: "Apple" });
-    const bananaCheckbox = screen.getByRole("checkbox", { name: "Banana" });
-    const orangeCheckbox = screen.getByRole("checkbox", { name: "Orange" });
+    const kickflipCheckbox = screen.getByRole("checkbox", { name: "Kickflip" });
+    const heelflipCheckbox = screen.getByRole("checkbox", { name: "Heelflip" });
+    const fs540Checkbox = screen.getByRole("checkbox", { name: "FS 540" });
 
     // Test checkbox attributes
-    const checkboxes = [appleCheckbox, bananaCheckbox, orangeCheckbox];
+    const checkboxes = [kickflipCheckbox, heelflipCheckbox, fs540Checkbox];
     for (const checkbox of checkboxes) {
       expect(checkbox).toHaveAttribute("type", "button");
       expect(checkbox).toHaveAttribute("aria-checked", "false");
@@ -267,7 +262,7 @@ describe("CheckboxGroup", () => {
 
     // Test disabled state in a new render
     renderCheckboxGroup({ disabled: true });
-    const disabledCheckbox = screen.getByRole("checkbox", { name: "Apple" });
+    const disabledCheckbox = screen.getByRole("checkbox", { name: "Kickflip" });
     expect(disabledCheckbox).toHaveAttribute("aria-disabled", "true");
   });
 });

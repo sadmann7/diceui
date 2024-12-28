@@ -10,6 +10,7 @@ Code Style and Structure
 - Use descriptive variable names with auxiliary verbs (e.g., isLoading, hasError).
 - Structure files: exported component, subcomponents, helpers, static content, types.
 - Use console.log({value}) instead of console.log(value)
+- Use onCallback instead of handleCallback
 
 Naming Conventions
 

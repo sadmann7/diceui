@@ -145,8 +145,6 @@ const CheckboxGroupRoot = React.forwardRef<
     setValidationMessage(undefined);
   }, [defaultValue, setValue]);
 
-  console.log({ value, validationMessage });
-
   return (
     <CheckboxGroupProvider
       value={value}

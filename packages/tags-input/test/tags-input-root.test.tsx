@@ -408,10 +408,10 @@ describe("TagsInput", () => {
 
   test("handles form integration correctly", async () => {
     const user = userEvent.setup();
-    const handleSubmit = vi.fn();
+    const onSubmit = vi.fn();
 
     render(
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={onSubmit}>
         <TagsInput.Root name="tags" required>
           {({ value }) => (
             <>
@@ -441,7 +441,7 @@ describe("TagsInput", () => {
 
     // Submit form after adding tag
     fireEvent.submit(form);
-    expect(handleSubmit).toHaveBeenCalled();
+    expect(onSubmit).toHaveBeenCalled();
   });
 
   test("handles blur behavior correctly", async () => {
