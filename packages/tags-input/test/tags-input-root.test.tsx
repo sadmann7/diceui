@@ -557,4 +557,257 @@ describe("TagsInput", () => {
     expect(onValidate).toHaveBeenCalledWith("short tag");
     expect(screen.getByText("short tag")).toBeInTheDocument();
   });
+
+  test("supports custom display value function", async () => {
+    const user = userEvent.setup();
+    const displayValue = vi
+      .fn()
+      .mockImplementation((value: string) => `#${value}`);
+
+    render(
+      <TagsInput.Root displayValue={displayValue} defaultValue={["tag1"]}>
+        {({ value }) => (
+          <>
+            {value.map((tag) => (
+              <TagsInput.Item key={tag} value={tag}>
+                <TagsInput.ItemText>{displayValue(tag)}</TagsInput.ItemText>
+                <TagsInput.ItemDelete aria-label="Remove tag" />
+              </TagsInput.Item>
+            ))}
+            <TagsInput.Input placeholder="Add tag..." />
+          </>
+        )}
+      </TagsInput.Root>,
+    );
+
+    expect(screen.getByText("#tag1")).toBeInTheDocument();
+
+    const input = screen.getByPlaceholderText("Add tag...");
+    await user.type(input, "newtag{Enter}");
+
+    expect(screen.getByText("#newtag")).toBeInTheDocument();
+    expect(displayValue).toHaveBeenCalledWith("newtag");
+  });
+
+  test("supports loop navigation", async () => {
+    const user = userEvent.setup();
+    renderTagsInput({
+      defaultValue: ["tag1", "tag2", "tag3"],
+      loop: true,
+    });
+
+    await user.tab(); // Focus input
+    await user.keyboard("{ArrowLeft}"); // Move to last tag
+    expect(screen.getByText("tag3").closest("div")).toHaveAttribute(
+      "data-state",
+      "active",
+    );
+
+    await user.keyboard("{ArrowLeft}"); // Move to second tag
+    expect(screen.getByText("tag2").closest("div")).toHaveAttribute(
+      "data-state",
+      "active",
+    );
+
+    await user.keyboard("{ArrowLeft}"); // Move to first tag
+    expect(screen.getByText("tag1").closest("div")).toHaveAttribute(
+      "data-state",
+      "active",
+    );
+
+    // Test loop from first to last
+    await user.keyboard("{ArrowLeft}");
+    expect(screen.getByText("tag3").closest("div")).toHaveAttribute(
+      "data-state",
+      "active",
+    );
+  });
+
+  test("handles clear button functionality", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+
+    render(
+      <TagsInput.Root
+        defaultValue={["tag1", "tag2"]}
+        onValueChange={onValueChange}
+      >
+        {({ value }) => (
+          <>
+            {value.map((tag) => (
+              <TagsInput.Item key={tag} value={tag}>
+                <TagsInput.ItemText>{tag}</TagsInput.ItemText>
+                <TagsInput.ItemDelete aria-label="Remove tag" />
+              </TagsInput.Item>
+            ))}
+            <TagsInput.Input placeholder="Add tag..." />
+            <TagsInput.Clear aria-label="Clear tags" />
+          </>
+        )}
+      </TagsInput.Root>,
+    );
+
+    const clearButton = screen.getByLabelText("Clear tags");
+    await user.click(clearButton);
+
+    expect(screen.queryByText("tag1")).not.toBeInTheDocument();
+    expect(screen.queryByText("tag2")).not.toBeInTheDocument();
+    expect(onValueChange).toHaveBeenCalledWith([]);
+  });
+
+  test("validates required field", async () => {
+    const user = userEvent.setup();
+    const mockSubmit = vi.fn();
+
+    const TestComponent = () => {
+      const [value, setValue] = React.useState<string[]>([]);
+      const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (value.length > 0) {
+          mockSubmit(e);
+        }
+      };
+
+      return (
+        <form onSubmit={handleSubmit}>
+          <TagsInput.Root
+            name="tags"
+            required
+            value={value}
+            onValueChange={setValue}
+          >
+            {({ value }) => (
+              <>
+                {value.map((tag) => (
+                  <TagsInput.Item key={tag} value={tag}>
+                    <TagsInput.ItemText>{tag}</TagsInput.ItemText>
+                  </TagsInput.Item>
+                ))}
+                <TagsInput.Input placeholder="Add tag..." />
+              </>
+            )}
+          </TagsInput.Root>
+          <button type="submit">Submit</button>
+        </form>
+      );
+    };
+
+    render(<TestComponent />);
+
+    const submitButton = screen.getByText("Submit");
+
+    // Try submitting without tags
+    await user.click(submitButton);
+    expect(mockSubmit).not.toHaveBeenCalled();
+
+    // Add a tag
+    const input = screen.getByPlaceholderText("Add tag...");
+    await user.type(input, "tag1{Enter}");
+
+    // Try submitting with a tag
+    await user.click(submitButton);
+    expect(mockSubmit).toHaveBeenCalled();
+  });
+
+  test("handles form reset", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    const defaultValue = ["initial"];
+    let currentValue = [...defaultValue];
+
+    render(
+      <form
+        onReset={(e) => {
+          currentValue = [...defaultValue];
+          onValueChange(currentValue);
+        }}
+      >
+        <TagsInput.Root
+          name="tags"
+          value={currentValue}
+          onValueChange={(newValue) => {
+            currentValue = newValue;
+            onValueChange(newValue);
+          }}
+        >
+          {({ value }) => (
+            <>
+              {value.map((tag) => (
+                <TagsInput.Item key={tag} value={tag}>
+                  <TagsInput.ItemText>{tag}</TagsInput.ItemText>
+                  <TagsInput.ItemDelete aria-label="Remove tag" />
+                </TagsInput.Item>
+              ))}
+              <TagsInput.Input placeholder="Add tag..." />
+            </>
+          )}
+        </TagsInput.Root>
+        <button type="reset">Reset</button>
+      </form>,
+    );
+
+    // Verify initial state
+    expect(screen.getByText("initial")).toBeInTheDocument();
+
+    // Add new tag
+    const input = screen.getByPlaceholderText("Add tag...");
+    await user.type(input, "new tag{Enter}");
+
+    // Reset form
+    const resetButton = screen.getByText("Reset");
+    await user.click(resetButton);
+
+    // Verify reset state
+    expect(onValueChange).toHaveBeenLastCalledWith(["initial"]);
+    expect(screen.getByText("initial")).toBeInTheDocument();
+    expect(screen.queryByText("new tag")).not.toBeInTheDocument();
+  });
+
+  test("supports accessibility features", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <TagsInput.Root defaultValue={["tag1", "tag2"]}>
+        {({ value }) => (
+          <>
+            <TagsInput.Label htmlFor="tags">Tags</TagsInput.Label>
+            {value.map((tag) => (
+              <TagsInput.Item key={tag} value={tag}>
+                <TagsInput.ItemText>{tag}</TagsInput.ItemText>
+                <TagsInput.ItemDelete aria-label={`Remove ${tag}`} />
+              </TagsInput.Item>
+            ))}
+            <TagsInput.Input
+              id="tags"
+              placeholder="Add tag..."
+              aria-describedby="tagsHint"
+            />
+            <div id="tagsHint">Press Enter to add a new tag</div>
+          </>
+        )}
+      </TagsInput.Root>,
+    );
+
+    // Test label association
+    const input = screen.getByLabelText("Tags");
+    expect(input).toHaveAttribute("aria-describedby", "tagsHint");
+
+    // Test delete button accessibility
+    const deleteButtons = screen.getAllByRole("button");
+    expect(deleteButtons[0]).toHaveAttribute("aria-label", "Remove tag1");
+    expect(deleteButtons[1]).toHaveAttribute("aria-label", "Remove tag2");
+
+    // Test keyboard navigation
+    await user.tab(); // Focus input
+    await user.keyboard("{ArrowLeft}"); // Move to last tag
+    expect(screen.getByText("tag2").closest("div")).toHaveAttribute(
+      "data-state",
+      "active",
+    );
+
+    // Test focus management after deletion
+    await user.keyboard("{Delete}");
+    expect(screen.queryByText("tag2")).not.toBeInTheDocument();
+    expect(document.activeElement).toBe(input);
+  });
 });
