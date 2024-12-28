@@ -66,6 +66,7 @@
     "autoprefixer": "^10.4.20",
     "lodash.template": "^4.5.0",
     "postcss": "^8.4.49",
+    "react-scan": "^0.0.54",
     "rehype-pretty-code": "^0.14.0",
     "rehype-slug": "^6.0.0",
     "remark-code-import": "^1.2.0",

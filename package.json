@@ -13,6 +13,7 @@
     "lint:fix": "biome check . --write",
     "typecheck": "turbo typecheck",
     "check": "turbo lint typecheck",
+    "test": "turbo run test",
     "release": "changeset publish"
   },
   "devDependencies": {

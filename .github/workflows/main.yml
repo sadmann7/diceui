@@ -68,7 +68,7 @@ jobs:
           version: 9.15.1
       - uses: ./.github/setup
 
-      - run: pnpm turbo test typecheck --filter "@acme/env*"
+      - run: pnpm turbo test
 
   typecheck:
     runs-on: ubuntu-latest

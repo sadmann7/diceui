@@ -61,7 +61,7 @@ export { ComboboxBadgeItem, BadgeItem } from "./combobox-badge-item";
 export type { ComboboxBadgeItemProps } from "./combobox-badge-item";
 
 export {
-  ComboboxBadgeItemClose,
-  BadgeItemClose,
-} from "./combobox-badge-item-close";
-export type { ComboboxBadgeItemCloseProps } from "./combobox-badge-item-close";
+  ComboboxBadgeItemDelete,
+  BadgeItemDelete,
+} from "./combobox-badge-item-delete";
+export type { ComboboxBadgeItemDeleteProps } from "./combobox-badge-item-delete";

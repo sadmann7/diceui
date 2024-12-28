@@ -35,40 +35,6 @@ const ComboboxAnchor = React.forwardRef<
 ));
 ComboboxAnchor.displayName = ComboboxPrimitive.Anchor.displayName;
 
-const ComboboxBadgeList = React.forwardRef<
-  React.ElementRef<typeof ComboboxPrimitive.BadgeList>,
-  React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.BadgeList>
->(({ className, ...props }, ref) => (
-  <ComboboxPrimitive.BadgeList
-    ref={ref}
-    className={cn("flex flex-wrap items-center gap-1.5", className)}
-    {...props}
-  />
-));
-ComboboxBadgeList.displayName = ComboboxPrimitive.BadgeList.displayName;
-
-const ComboboxBadgeItem = React.forwardRef<
-  React.ElementRef<typeof ComboboxPrimitive.BadgeItem>,
-  React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.BadgeItem>
->(({ className, children, ...props }, ref) => (
-  <ComboboxPrimitive.BadgeItem
-    ref={ref}
-    className={cn(
-      "inline-flex items-center justify-between gap-1 rounded-sm bg-secondary px-2 py-0.5",
-      className,
-    )}
-    {...props}
-  >
-    <span className="truncate text-[13px] text-secondary-foreground">
-      {children}
-    </span>
-    <ComboboxPrimitive.ComboboxBadgeItemClose className="shrink-0 rounded p-0.5 opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring data-[highlighted]:bg-destructive">
-      <X className="h-3 w-3" />
-    </ComboboxPrimitive.ComboboxBadgeItemClose>
-  </ComboboxPrimitive.BadgeItem>
-));
-ComboboxBadgeItem.displayName = ComboboxPrimitive.BadgeItem.displayName;
-
 const ComboboxInput = React.forwardRef<
   React.ElementRef<typeof ComboboxPrimitive.Input>,
   React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.Input>
@@ -231,6 +197,40 @@ const ComboboxSeparator = React.forwardRef<
   />
 ));
 ComboboxSeparator.displayName = ComboboxPrimitive.Separator.displayName;
+
+const ComboboxBadgeList = React.forwardRef<
+  React.ElementRef<typeof ComboboxPrimitive.BadgeList>,
+  React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.BadgeList>
+>(({ className, ...props }, ref) => (
+  <ComboboxPrimitive.BadgeList
+    ref={ref}
+    className={cn("flex flex-wrap items-center gap-1.5", className)}
+    {...props}
+  />
+));
+ComboboxBadgeList.displayName = ComboboxPrimitive.BadgeList.displayName;
+
+const ComboboxBadgeItem = React.forwardRef<
+  React.ElementRef<typeof ComboboxPrimitive.BadgeItem>,
+  React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.BadgeItem>
+>(({ className, children, ...props }, ref) => (
+  <ComboboxPrimitive.BadgeItem
+    ref={ref}
+    className={cn(
+      "inline-flex items-center justify-between gap-1 rounded-sm bg-secondary px-2 py-0.5",
+      className,
+    )}
+    {...props}
+  >
+    <span className="truncate text-[13px] text-secondary-foreground">
+      {children}
+    </span>
+    <ComboboxPrimitive.BadgeItemDelete className="shrink-0 rounded p-0.5 opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring data-[highlighted]:bg-destructive">
+      <X className="h-3 w-3" />
+    </ComboboxPrimitive.BadgeItemDelete>
+  </ComboboxPrimitive.BadgeItem>
+));
+ComboboxBadgeItem.displayName = ComboboxPrimitive.BadgeItem.displayName;
 
 export {
   Combobox,

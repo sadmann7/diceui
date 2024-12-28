@@ -27,7 +27,10 @@
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup --clean",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "peerDependencies": {
     "@types/react": "*",
@@ -44,9 +47,14 @@
     }
   },
   "devDependencies": {
-    "@types/node": "^22.10.2",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@vitest/coverage-v8": "^2.1.8",
+    "jsdom": "^25.0.1",
     "tsup": "^8.3.5",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vitest": "^1.1.0"
   },
   "dependencies": {
     "@diceui/shared": "workspace:*",

@@ -72,12 +72,12 @@ const TagsInputItem = React.forwardRef<
     )}
     {...props}
   >
-    <TagsInputPrimitive.Text className="truncate">
+    <TagsInputPrimitive.ItemText className="truncate">
       {children}
-    </TagsInputPrimitive.Text>
-    <TagsInputPrimitive.Delete className="h-4 w-4 shrink-0 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100">
+    </TagsInputPrimitive.ItemText>
+    <TagsInputPrimitive.ItemDelete className="h-4 w-4 shrink-0 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100">
       <X className="h-3.5 w-3.5" />
-    </TagsInputPrimitive.Delete>
+    </TagsInputPrimitive.ItemDelete>
   </TagsInputPrimitive.Item>
 ));
 TagsInputItem.displayName = TagsInputPrimitive.Item.displayName;

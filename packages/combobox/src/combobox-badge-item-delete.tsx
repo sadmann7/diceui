@@ -4,17 +4,17 @@ import * as React from "react";
 import { useComboboxBadgeItemContext } from "./combobox-badge-item";
 import { useComboboxContext } from "./combobox-root";
 
-const BADGE_ITEM_CLOSE_NAME = "ComboboxBadgeItemClose";
+const BADGE_ITEM_DELETE_NAME = "ComboboxBadgeItemDelete";
 
-interface ComboboxBadgeItemCloseProps
+interface ComboboxBadgeItemDeleteProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.button> {}
 
-const ComboboxBadgeItemClose = React.forwardRef<
+const ComboboxBadgeItemDelete = React.forwardRef<
   React.ElementRef<typeof Primitive.button>,
-  ComboboxBadgeItemCloseProps
+  ComboboxBadgeItemDeleteProps
 >((props, forwardedRef) => {
-  const context = useComboboxContext(BADGE_ITEM_CLOSE_NAME);
-  const badgeItemContext = useComboboxBadgeItemContext(BADGE_ITEM_CLOSE_NAME);
+  const context = useComboboxContext(BADGE_ITEM_DELETE_NAME);
+  const badgeItemContext = useComboboxBadgeItemContext(BADGE_ITEM_DELETE_NAME);
   const buttonRef = React.useRef<HTMLButtonElement>(null);
   const composedRef = React.useCallback(
     (node: HTMLButtonElement | null) => {
@@ -62,10 +62,10 @@ const ComboboxBadgeItemClose = React.forwardRef<
   );
 });
 
-ComboboxBadgeItemClose.displayName = BADGE_ITEM_CLOSE_NAME;
+ComboboxBadgeItemDelete.displayName = BADGE_ITEM_DELETE_NAME;
 
-const BadgeItemClose = ComboboxBadgeItemClose;
+const BadgeItemDelete = ComboboxBadgeItemDelete;
 
-export { BadgeItemClose, ComboboxBadgeItemClose };
+export { BadgeItemDelete, ComboboxBadgeItemDelete };
 
-export type { ComboboxBadgeItemCloseProps };
+export type { ComboboxBadgeItemDeleteProps };

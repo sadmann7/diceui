@@ -41,8 +41,8 @@ const TagsInputItemDelete = React.forwardRef<
 
 TagsInputItemDelete.displayName = ITEM_DELETE_NAME;
 
-const Delete = TagsInputItemDelete;
+const ItemDelete = TagsInputItemDelete;
 
-export { TagsInputItemDelete, Delete };
+export { TagsInputItemDelete, ItemDelete };
 
 export type { TagsInputItemDeleteProps };

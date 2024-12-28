@@ -28,6 +28,10 @@
       "dependsOn": ["^lint", "^typecheck"],
       "cache": false,
       "outputs": []
+    },
+    "test": {
+      "cache": false,
+      "outputs": []
     }
   }
 }
