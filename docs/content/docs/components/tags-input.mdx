@@ -39,7 +39,7 @@ npx shadcn@latest add "https://diceui.com/r/tags-input"
   </Step>
 </Steps>
 
-## Anatomy
+## Layout
 
 Import the parts, and compose them together.
 
@@ -49,8 +49,8 @@ import * as TagsInput from "@diceui/tags-input";
 <TagsInput.Root>
   <TagsInput.Label/>
   <TagsInput.Item >
-    <TagsInput.Text />
-    <TagsInput.Delete />
+    <TagsInput.ItemText />
+    <TagsInput.ItemDelete />
   </TagsInput.Item>
   <TagsInput.Input />
   <TagsInput.Clear />
@@ -174,7 +174,7 @@ Individual tag item.
 />
 
 
-### Text
+### ItemText
 
 Text content of a tag.
 
@@ -184,7 +184,7 @@ Text content of a tag.
 />
 
 
-### Delete
+### ItemDelete
 
 Button to remove a tag.
 
