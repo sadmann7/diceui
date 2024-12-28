@@ -2,7 +2,7 @@ export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
   name: "Dice UI",
-  description: "The missing dots for your design systems.",
+  description: "Unstyled ui component library.",
   url: "https://diceui.com",
   ogImage: "https://diceui.com/opengraph-image.png",
   links: {

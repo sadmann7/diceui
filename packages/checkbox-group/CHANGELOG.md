@@ -2,7 +2,7 @@
 
 ## 0.1.0
 
-### Major Changes
+### Minor Changes
 
 - 175b0d1: Better form validation for `required` prop for both `CheckboxGroup` and `CheckboxGroupItem`
 
