@@ -33,9 +33,10 @@ describe("Combobox", () => {
       <div dir={props.dir}>
         <Combobox.Root {...props}>
           <Combobox.Label>Favorite tricks</Combobox.Label>
-          <Combobox.Trigger>
+          <Combobox.Anchor>
             <Combobox.Input placeholder="Select a trick..." />
-          </Combobox.Trigger>
+            <Combobox.Trigger>&#9660;</Combobox.Trigger>
+          </Combobox.Anchor>
           <Combobox.Portal>
             <Combobox.Content role="listbox">
               <Combobox.Item value="kickflip">Kickflip</Combobox.Item>
@@ -48,136 +49,141 @@ describe("Combobox", () => {
     );
   };
 
-  //   test("renders without crashing", () => {
-  //     renderCombobox();
-  //     expect(screen.getByText("Favorite tricks")).toBeInTheDocument();
-  //     expect(
-  //       screen.getByPlaceholderText("Select a trick..."),
-  //     ).toBeInTheDocument();
-  //   });
+  test("renders without crashing", () => {
+    renderCombobox();
+    expect(screen.getByText("Favorite tricks")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Select a trick..."),
+    ).toBeInTheDocument();
+  });
 
-  //   test("handles controlled state", async () => {
-  //     const user = userEvent.setup();
-  //     const onValueChange = vi.fn();
-  //     const onOpenChange = vi.fn();
+  // test("handles controlled state", async () => {
+  //   const user = userEvent.setup();
+  //   const onValueChange = vi.fn();
+  //   const onOpenChange = vi.fn();
 
-  //     render(
-  //       <Combobox.Root
-  //         value="kickflip"
-  //         onValueChange={onValueChange}
-  //         onOpenChange={onOpenChange}
-  //       >
-  //         <Combobox.Label>Favorite tricks</Combobox.Label>
-  //         <Combobox.Trigger>
-  //           <Combobox.Input placeholder="Select a trick..." />
+  //   render(
+  //     <Combobox.Root
+  //       value="kickflip"
+  //       onValueChange={onValueChange}
+  //       onOpenChange={onOpenChange}
+  //     >
+  //       <Combobox.Label>Favorite tricks</Combobox.Label>
+  //       <Combobox.Anchor>
+  //         <Combobox.Input placeholder="Select a trick..." />
+  //         <Combobox.Trigger data-testid="controlled-trigger">
+  //           &#9660;
   //         </Combobox.Trigger>
-  //         <Combobox.Portal>
-  //           <Combobox.Content role="listbox">
-  //             <Combobox.Item value="kickflip">Kickflip</Combobox.Item>
-  //             <Combobox.Item value="heelflip">Heelflip</Combobox.Item>
-  //           </Combobox.Content>
-  //         </Combobox.Portal>
-  //       </Combobox.Root>,
-  //     );
+  //       </Combobox.Anchor>
+  //       <Combobox.Portal>
+  //         <Combobox.Content>
+  //           <Combobox.Item value="kickflip">Kickflip</Combobox.Item>
+  //           <Combobox.Item value="heelflip">Heelflip</Combobox.Item>
+  //         </Combobox.Content>
+  //       </Combobox.Portal>
+  //     </Combobox.Root>,
+  //   );
 
-  //     const trigger = screen.getByRole("button");
-  //     await user.click(trigger);
+  //   const trigger = screen.getByTestId("controlled-trigger");
+  //   await user.click(trigger);
 
-  //     await waitFor(() => {
-  //       expect(onOpenChange).toHaveBeenCalledWith(true);
-  //     });
-
-  //     const listbox = await screen.findByRole("listbox");
-  //     expect(listbox).toBeInTheDocument();
-
-  //     const heelflipOption = screen.getByText("Heelflip");
-  //     await user.click(heelflipOption);
-  //     expect(onValueChange).toHaveBeenCalledWith("heelflip");
+  //   await waitFor(() => {
+  //     expect(onOpenChange).toHaveBeenCalledWith(true);
   //   });
 
-  //   test("handles uncontrolled state", async () => {
-  //     const user = userEvent.setup();
-  //     const onValueChange = vi.fn();
+  //   const listbox = await screen.findByRole("listbox");
+  //   expect(listbox).toBeInTheDocument();
 
-  //     renderCombobox({ defaultValue: "kickflip", onValueChange });
+  //   const heelflipOption = screen.getByText("Heelflip");
+  //   await user.click(heelflipOption);
+  //   expect(onValueChange).toHaveBeenCalledWith("heelflip");
+  // });
 
-  //     const trigger = screen.getByRole("button");
-  //     await user.click(trigger);
+  // test("handles uncontrolled state", async () => {
+  //   const user = userEvent.setup();
+  //   const onValueChange = vi.fn();
 
-  //     const listbox = await screen.findByRole("listbox");
-  //     expect(listbox).toBeInTheDocument();
+  //   renderCombobox({ defaultValue: "kickflip", onValueChange });
 
-  //     const heelflipOption = screen.getByText("Heelflip");
-  //     await user.click(heelflipOption);
-  //     expect(onValueChange).toHaveBeenCalledWith("heelflip");
+  //   const trigger = screen.getByRole("button");
+  //   await user.click(trigger);
+
+  //   const listbox = await screen.findByRole("listbox");
+  //   expect(listbox).toBeInTheDocument();
+
+  //   const heelflipOption = screen.getByText("Heelflip");
+  //   await user.click(heelflipOption);
+  //   expect(onValueChange).toHaveBeenCalledWith("heelflip");
+  // });
+
+  // test("handles multiple selection", async () => {
+  //   const user = userEvent.setup();
+  //   const onValueChange = vi.fn();
+
+  //   render(
+  //     <Combobox.Root multiple onValueChange={onValueChange}>
+  //       <Combobox.Label>Favorite tricks</Combobox.Label>
+  //       <Combobox.Anchor>
+  //         <Combobox.Input placeholder="Select tricks..." />
+  //         <Combobox.Trigger>&#9660;</Combobox.Trigger>
+  //       </Combobox.Anchor>
+  //       <Combobox.Portal>
+  //         <Combobox.Content>
+  //           <Combobox.Item value="kickflip">Kickflip</Combobox.Item>
+  //           <Combobox.Item value="heelflip">Heelflip</Combobox.Item>
+  //         </Combobox.Content>
+  //       </Combobox.Portal>
+  //     </Combobox.Root>,
+  //   );
+
+  //   const trigger = screen.getByRole("button");
+  //   await user.click(trigger);
+
+  //   const listbox = await screen.findByRole("listbox");
+  //   expect(listbox).toBeInTheDocument();
+
+  //   const kickflipOption = screen.getByText("Kickflip");
+  //   await user.click(kickflipOption);
+  //   expect(onValueChange).toHaveBeenCalledWith(["kickflip"]);
+
+  //   const heelflipOption = screen.getByText("Heelflip");
+  //   await user.click(heelflipOption);
+  //   expect(onValueChange).toHaveBeenCalledWith(["kickflip", "heelflip"]);
+  // });
+
+  // test("handles filtering", async () => {
+  //   const user = userEvent.setup();
+  //   const onFilter = vi.fn((options: string[], term: string) =>
+  //     options.filter((option: string) => option.includes(term.toLowerCase())),
+  //   );
+
+  //   render(
+  //     <Combobox.Root onFilter={onFilter}>
+  //       <Combobox.Label>Favorite tricks</Combobox.Label>
+  //       <Combobox.Anchor>
+  //         <Combobox.Input placeholder="Select a trick..." />
+  //         <Combobox.Trigger>&#9660;</Combobox.Trigger>
+  //       </Combobox.Anchor>
+  //       <Combobox.Portal>
+  //         <Combobox.Content role="listbox">
+  //           <Combobox.Item value="kickflip">Kickflip</Combobox.Item>
+  //           <Combobox.Item value="heelflip">Heelflip</Combobox.Item>
+  //           <Combobox.Item value="fs-540">FS 540</Combobox.Item>
+  //         </Combobox.Content>
+  //       </Combobox.Portal>
+  //     </Combobox.Root>,
+  //   );
+
+  //   const trigger = screen.getByRole("button");
+  //   await user.click(trigger);
+
+  //   const input = screen.getByPlaceholderText("Select a trick...");
+  //   await user.type(input, "flip");
+
+  //   await waitFor(() => {
+  //     expect(onFilter).toHaveBeenCalled();
   //   });
-
-  //   test("handles multiple selection", async () => {
-  //     const user = userEvent.setup();
-  //     const onValueChange = vi.fn();
-
-  //     render(
-  //       <Combobox.Root multiple onValueChange={onValueChange}>
-  //         <Combobox.Label>Favorite tricks</Combobox.Label>
-  //         <Combobox.Trigger>
-  //           <Combobox.Input placeholder="Select tricks..." />
-  //         </Combobox.Trigger>
-  //         <Combobox.Portal>
-  //           <Combobox.Content>
-  //             <Combobox.Item value="kickflip">Kickflip</Combobox.Item>
-  //             <Combobox.Item value="heelflip">Heelflip</Combobox.Item>
-  //           </Combobox.Content>
-  //         </Combobox.Portal>
-  //       </Combobox.Root>,
-  //     );
-
-  //     const trigger = screen.getByRole("button");
-  //     await user.click(trigger);
-
-  //     const listbox = await screen.findByRole("listbox");
-  //     expect(listbox).toBeInTheDocument();
-
-  //     const kickflipOption = screen.getByText("Kickflip");
-  //     await user.click(kickflipOption);
-  //     expect(onValueChange).toHaveBeenCalledWith(["kickflip"]);
-
-  //     const heelflipOption = screen.getByText("Heelflip");
-  //     await user.click(heelflipOption);
-  //     expect(onValueChange).toHaveBeenCalledWith(["kickflip", "heelflip"]);
-  //   });
-
-  //   test("handles filtering", async () => {
-  //     const user = userEvent.setup();
-  //     const onFilter = vi.fn((options: string[], term: string) =>
-  //       options.filter((option: string) => option.includes(term.toLowerCase())),
-  //     );
-
-  //     render(
-  //       <Combobox.Root onFilter={onFilter}>
-  //         <Combobox.Label>Favorite tricks</Combobox.Label>
-  //         <Combobox.Trigger>
-  //           <Combobox.Input placeholder="Select a trick..." />
-  //         </Combobox.Trigger>
-  //         <Combobox.Portal>
-  //           <Combobox.Content role="listbox">
-  //             <Combobox.Item value="kickflip">Kickflip</Combobox.Item>
-  //             <Combobox.Item value="heelflip">Heelflip</Combobox.Item>
-  //             <Combobox.Item value="fs-540">FS 540</Combobox.Item>
-  //           </Combobox.Content>
-  //         </Combobox.Portal>
-  //       </Combobox.Root>,
-  //     );
-
-  //     const trigger = screen.getByRole("button");
-  //     await user.click(trigger);
-
-  //     const input = screen.getByPlaceholderText("Select a trick...");
-  //     await user.type(input, "flip");
-
-  //     await waitFor(() => {
-  //       expect(onFilter).toHaveBeenCalled();
-  //     });
-  //   });
+  // });
 
   test("handles disabled state", async () => {
     const user = userEvent.setup();
@@ -209,23 +215,25 @@ describe("Combobox", () => {
     expect(onValueChange).not.toHaveBeenCalled();
   });
 
-  //   test("handles keyboard navigation", async () => {
-  //     const user = userEvent.setup();
-  //     renderCombobox();
+  test("handles keyboard navigation", async () => {
+    const user = userEvent.setup();
+    renderCombobox({ defaultOpen: true });
 
-  //     const trigger = screen.getByRole("button");
-  //     await user.click(trigger);
+    // TODO: should open first time when clicking on the trigger
+    // const trigger = screen.getByRole("button");
+    // await user.click(trigger);
 
-  //     const listbox = await screen.findByRole("listbox");
-  //     expect(listbox).toBeInTheDocument();
+    const listbox = await screen.findByRole("listbox");
+    expect(listbox).toBeInTheDocument();
 
-  //     // Navigate to next item
-  //     await user.keyboard("{ArrowDown}");
-  //     await user.keyboard("{ArrowDown}");
+    // Navigate to next item
+    await user.keyboard("{ArrowDown}");
+    await user.keyboard("{ArrowDown}");
 
-  //     // Select with Enter
-  //     await user.keyboard("{Enter}");
-  //   });
+    // Select with Enter
+    await user.keyboard("{Enter}");
+    expect(screen.getByText("Heelflip")).toBeInTheDocument();
+  });
 
   test("supports RTL direction", () => {
     renderCombobox({ dir: "rtl" });
