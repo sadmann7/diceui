@@ -717,7 +717,7 @@ describe("TagsInput", () => {
 
     render(
       <form
-        onReset={(e) => {
+        onReset={() => {
           currentValue = [...defaultValue];
           onValueChange(currentValue);
         }}
