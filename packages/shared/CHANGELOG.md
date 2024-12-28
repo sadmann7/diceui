@@ -1,5 +1,11 @@
 # @diceui/shared
 
+## 0.4.0
+
+### Minor Changes
+
+- 175b0d1: Minor fixes
+
 ## 0.3.0
 
 ### Minor Changes
