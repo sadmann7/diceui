@@ -19,10 +19,15 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@changesets/cli": "^2.27.11",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.2",
     "@types/node": "^22.10.2",
     "expect-type": "^1.1.0",
     "rimraf": "^6.0.1",
     "turbo": "^2.3.3",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^1.1.0"
   }
 }

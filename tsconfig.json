@@ -8,7 +8,7 @@
     "resolveJsonModule": true,
     "moduleDetection": "force",
     "isolatedModules": true,
-    "types": ["node"],
+    "types": ["node", "@testing-library/jest-dom/vitest"],
 
     /* Strictness */
     "strict": true,
