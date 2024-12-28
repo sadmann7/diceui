@@ -30,10 +30,10 @@ interface TagsInputContextValue<T = InputValue> {
   onItemRemove: (index: number) => void;
   onItemUpdate: (index: number, newTextValue: string) => void;
   onInputKeydown: (event: React.KeyboardEvent) => void;
-  highlightedValue: T | null;
-  setHighlightedValue: (value: T | null) => void;
-  editingValue: T | null;
-  setEditingValue: (value: T | null) => void;
+  highlightedIndex: number | null;
+  setHighlightedIndex: (index: number | null) => void;
+  editingIndex: number | null;
+  setEditingIndex: (index: number | null) => void;
   displayValue: (value: T) => string;
   onItemLeave: () => void;
   inputRef: React.RefObject<InputElement | null>;
@@ -188,11 +188,10 @@ const TagsInputRoot = React.forwardRef<
     defaultProp: defaultValue,
     onChange: onValueChange,
   });
-  const [highlightedValue, setHighlightedValue] =
-    React.useState<InputValue | null>(null);
-  const [editingValue, setEditingValue] = React.useState<InputValue | null>(
+  const [highlightedIndex, setHighlightedIndex] = React.useState<number | null>(
     null,
   );
+  const [editingIndex, setEditingIndex] = React.useState<number | null>(null);
   const [isInvalidInput, setIsInvalidInput] = React.useState(false);
   const collectionRef = React.useRef<CollectionElement>(null);
   const inputRef = React.useRef<InputElement>(null);
@@ -269,8 +268,8 @@ const TagsInputRoot = React.forwardRef<
       const newValue = trimmedValue;
       const newValues = [...value, newValue];
       setValue(newValues);
-      setHighlightedValue(null);
-      setEditingValue(null);
+      setHighlightedIndex(null);
+      setEditingIndex(null);
       setIsInvalidInput(false);
       return true;
     },
@@ -305,8 +304,8 @@ const TagsInputRoot = React.forwardRef<
         newValues[index] = updatedValue;
 
         setValue(newValues);
-        setHighlightedValue(updatedValue);
-        setEditingValue(null);
+        setHighlightedIndex(index);
+        setEditingIndex(null);
         setIsInvalidInput(false);
 
         requestAnimationFrame(() => inputRef.current?.focus());
@@ -321,8 +320,8 @@ const TagsInputRoot = React.forwardRef<
         const newValues = [...value];
         newValues.splice(index, 1);
         setValue(newValues);
-        setHighlightedValue(null);
-        setEditingValue(null);
+        setHighlightedIndex(null);
+        setEditingIndex(null);
         inputRef.current?.focus();
       }
     },
@@ -330,8 +329,8 @@ const TagsInputRoot = React.forwardRef<
   );
 
   const onItemLeave = React.useCallback(() => {
-    setHighlightedValue(null);
-    setEditingValue(null);
+    setHighlightedIndex(null);
+    setEditingIndex(null);
     inputRef.current?.focus();
   }, []);
 
@@ -348,66 +347,65 @@ const TagsInputRoot = React.forwardRef<
         (event.key === "ArrowLeft" && dir === "rtl");
 
       if (target.value && target.selectionStart !== 0) {
-        setHighlightedValue(null);
-        setEditingValue(null);
+        setHighlightedIndex(null);
+        setEditingIndex(null);
         return;
       }
 
-      const findNextEnabledValue = (
-        currentValue: InputValue | null,
+      function findNextEnabledIndex(
+        currentIndex: number | null,
         direction: "next" | "prev",
-      ): InputValue | null => {
+      ): number | null {
         const collectionElement = collectionRef.current;
         if (!collectionElement) return null;
 
         const enabledItems = getEnabledItems();
-        const enabledValues = enabledItems.map((_, index) => value[index]);
+        const enabledIndices = enabledItems.map((_, index) => index);
 
-        if (enabledValues.length === 0) return null;
+        if (enabledIndices.length === 0) return null;
 
-        if (currentValue === null) {
+        if (currentIndex === null) {
           return direction === "prev"
-            ? (enabledValues[enabledValues.length - 1] ?? null)
-            : (enabledValues[0] ?? null);
+            ? (enabledIndices[enabledIndices.length - 1] ?? null)
+            : (enabledIndices[0] ?? null);
         }
 
-        const currentIndex = enabledValues.indexOf(currentValue);
+        const currentEnabledIndex = enabledIndices.indexOf(currentIndex);
         if (direction === "next") {
-          return currentIndex >= enabledValues.length - 1
+          return currentEnabledIndex >= enabledIndices.length - 1
             ? loop
-              ? (enabledValues[0] ?? null)
+              ? (enabledIndices[0] ?? null)
               : null
-            : (enabledValues[currentIndex + 1] ?? null);
+            : (enabledIndices[currentEnabledIndex + 1] ?? null);
         }
 
-        return currentIndex <= 0
+        return currentEnabledIndex <= 0
           ? loop
-            ? (enabledValues[enabledValues.length - 1] ?? null)
+            ? (enabledIndices[enabledIndices.length - 1] ?? null)
             : null
-          : (enabledValues[currentIndex - 1] ?? null);
-      };
+          : (enabledIndices[currentEnabledIndex - 1] ?? null);
+      }
 
       switch (event.key) {
         case "Delete":
         case "Backspace": {
           if (target.selectionStart !== 0 || target.selectionEnd !== 0) break;
 
-          if (highlightedValue !== null) {
-            const index = value.indexOf(highlightedValue);
-            const newValue = findNextEnabledValue(highlightedValue, "prev");
-            onItemRemove(index);
-            setHighlightedValue(newValue);
+          if (highlightedIndex !== null) {
+            const newIndex = findNextEnabledIndex(highlightedIndex, "prev");
+            onItemRemove(highlightedIndex);
+            setHighlightedIndex(newIndex);
             event.preventDefault();
           } else if (event.key === "Backspace" && value.length > 0) {
-            const lastValue = findNextEnabledValue(null, "prev");
-            setHighlightedValue(lastValue);
+            const lastIndex = findNextEnabledIndex(null, "prev");
+            setHighlightedIndex(lastIndex);
             event.preventDefault();
           }
           break;
         }
         case "Enter": {
-          if (highlightedValue !== null && editable && !disabled) {
-            setEditingValue(highlightedValue);
+          if (highlightedIndex !== null && editable && !disabled) {
+            setEditingIndex(highlightedIndex);
             event.preventDefault();
             return;
           }
@@ -418,53 +416,53 @@ const TagsInputRoot = React.forwardRef<
           if (
             target.selectionStart === 0 &&
             isArrowLeft &&
-            highlightedValue === null &&
+            highlightedIndex === null &&
             value.length > 0
           ) {
-            const lastValue = findNextEnabledValue(null, "prev");
-            setHighlightedValue(lastValue);
+            const lastIndex = findNextEnabledIndex(null, "prev");
+            setHighlightedIndex(lastIndex);
             event.preventDefault();
-          } else if (highlightedValue !== null) {
-            const nextValue = findNextEnabledValue(
-              highlightedValue,
+          } else if (highlightedIndex !== null) {
+            const nextIndex = findNextEnabledIndex(
+              highlightedIndex,
               isArrowLeft ? "prev" : "next",
             );
-            if (nextValue !== null) {
-              setHighlightedValue(nextValue);
+            if (nextIndex !== null) {
+              setHighlightedIndex(nextIndex);
               event.preventDefault();
             } else if (isArrowRight) {
-              setHighlightedValue(null);
+              setHighlightedIndex(null);
               requestAnimationFrame(() => target.setSelectionRange(0, 0));
             }
           }
           break;
         }
         case "Home": {
-          if (highlightedValue !== null) {
-            const firstValue = findNextEnabledValue(null, "next");
-            setHighlightedValue(firstValue);
+          if (highlightedIndex !== null) {
+            const firstIndex = findNextEnabledIndex(null, "next");
+            setHighlightedIndex(firstIndex);
             event.preventDefault();
           }
           break;
         }
         case "End": {
-          if (highlightedValue !== null) {
-            const lastValue = findNextEnabledValue(null, "prev");
-            setHighlightedValue(lastValue);
+          if (highlightedIndex !== null) {
+            const lastIndex = findNextEnabledIndex(null, "prev");
+            setHighlightedIndex(lastIndex);
             event.preventDefault();
           }
           break;
         }
         case "Escape": {
-          setHighlightedValue(null);
-          setEditingValue(null);
+          setHighlightedIndex(null);
+          setEditingIndex(null);
           requestAnimationFrame(() => target.setSelectionRange(0, 0));
           break;
         }
       }
     },
     [
-      highlightedValue,
+      highlightedIndex,
       value,
       onItemRemove,
       dir,
@@ -491,10 +489,10 @@ const TagsInputRoot = React.forwardRef<
       onItemRemove={onItemRemove}
       onItemUpdate={onItemUpdate}
       onInputKeydown={onInputKeydown}
-      highlightedValue={highlightedValue}
-      setHighlightedValue={setHighlightedValue}
-      editingValue={editingValue}
-      setEditingValue={setEditingValue}
+      highlightedIndex={highlightedIndex}
+      setHighlightedIndex={setHighlightedIndex}
+      editingIndex={editingIndex}
+      setEditingIndex={setEditingIndex}
       displayValue={displayValue}
       onItemLeave={onItemLeave}
       inputRef={inputRef}
@@ -545,7 +543,7 @@ const TagsInputRoot = React.forwardRef<
             event.relatedTarget !== inputRef.current &&
             !collectionRef.current?.contains(event.relatedTarget)
           ) {
-            requestAnimationFrame(() => setHighlightedValue(null));
+            requestAnimationFrame(() => setHighlightedIndex(null));
           }
         })}
       >

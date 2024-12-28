@@ -13,25 +13,31 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
     const { autoFocus, ...inputProps } = props;
     const context = useTagsInput(INPUT_NAME);
 
-    function onTab(event: React.KeyboardEvent<HTMLInputElement>) {
-      if (!context.addOnTab) return;
-      onCustomKeydown(event);
-    }
+    const onTab = React.useCallback(
+      (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (!context.addOnTab) return;
+        onCustomKeydown(event);
+      },
+      [context.addOnTab],
+    );
 
-    function onCustomKeydown(event: React.KeyboardEvent<HTMLInputElement>) {
-      if (event.defaultPrevented) return;
+    const onCustomKeydown = React.useCallback(
+      (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.defaultPrevented) return;
 
-      const value = event.currentTarget.value;
-      if (!value) return;
+        const value = event.currentTarget.value;
+        if (!value) return;
 
-      const isAdded = context.onItemAdd(value);
-      if (isAdded) {
-        event.currentTarget.value = "";
-        context.setHighlightedValue(null);
-      }
+        const isAdded = context.onItemAdd(value);
+        if (isAdded) {
+          event.currentTarget.value = "";
+          context.setHighlightedIndex(null);
+        }
 
-      event.preventDefault();
-    }
+        event.preventDefault();
+      },
+      [context.onItemAdd, context.setHighlightedIndex],
+    );
 
     React.useEffect(() => {
       if (!autoFocus) return;
@@ -80,7 +86,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
             target.value = "";
             if (value) {
               context.onItemAdd(value);
-              context.setHighlightedValue(null);
+              context.setHighlightedIndex(null);
             }
           }
         })}
@@ -88,7 +94,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
           if (event.key === "Enter") onCustomKeydown(event);
           if (event.key === "Tab") onTab(event);
           context.onInputKeydown(event);
-          if (event.key.length === 1) context.setHighlightedValue(null);
+          if (event.key.length === 1) context.setHighlightedIndex(null);
         })}
         onPaste={composeEventHandlers(inputProps.onPaste, (event) => {
           if (context.addOnPaste) {
@@ -96,7 +102,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
             const value = event.clipboardData.getData("text");
 
             context.onItemAdd(value, { viaPaste: true });
-            context.setHighlightedValue(null);
+            context.setHighlightedIndex(null);
           }
         })}
       />

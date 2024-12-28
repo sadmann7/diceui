@@ -43,7 +43,7 @@ const TagsInputItemText = React.forwardRef<
             context.onItemUpdate(index, editValue);
           } else if (event.key === "Escape") {
             setEditValue(itemContext.displayValue);
-            context.setEditingValue(null);
+            context.setEditingIndex(null);
             context.inputRef.current?.focus();
           }
           event.stopPropagation();
@@ -55,7 +55,7 @@ const TagsInputItemText = React.forwardRef<
         }}
         onBlur={() => {
           setEditValue(itemContext.displayValue);
-          context.setEditingValue(null);
+          context.setEditingIndex(null);
         }}
         style={{
           outline: "none",

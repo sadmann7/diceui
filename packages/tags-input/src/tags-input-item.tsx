@@ -13,6 +13,7 @@ const ITEM_NAME = "TagsInputItem";
 interface TagsInputItemContextValue {
   id: string;
   value: InputValue;
+  index: number;
   isHighlighted: boolean;
   isEditing: boolean;
   disabled?: boolean;
@@ -37,20 +38,22 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
     const context = useTagsInput(ITEM_NAME);
     const id = useId();
     const textId = `${id}text`;
-    const isHighlighted = value === context.highlightedValue;
-    const isEditing = value === context.editingValue;
+    const index = context.value.indexOf(value);
+    const isHighlighted = index === context.highlightedIndex;
+    const isEditing = index === context.editingIndex;
     const itemDisabled = disabled || context.disabled;
     const displayValue = context.displayValue(value);
 
-    function onSelect() {
-      context.setHighlightedValue(value);
+    const onItemSelect = React.useCallback(() => {
+      context.setHighlightedIndex(index);
       context.inputRef.current?.focus();
-    }
+    }, [context.setHighlightedIndex, context.inputRef, index]);
 
     return (
       <TagsInputItemProvider
         id={id}
         value={value}
+        index={index}
         isHighlighted={isHighlighted}
         isEditing={isEditing}
         disabled={itemDisabled}
@@ -73,18 +76,18 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
           onClick={composeEventHandlers(itemProps.onClick, (event) => {
             event.stopPropagation();
             if (!isEditing && pointerTypeRef.current !== "mouse") {
-              onSelect();
+              onItemSelect();
             }
           })}
           onDoubleClick={composeEventHandlers(itemProps.onDoubleClick, () => {
             if (context.editable && !itemDisabled) {
-              requestAnimationFrame(() => context.setEditingValue(value));
+              requestAnimationFrame(() => context.setEditingIndex(index));
             }
           })}
           onPointerUp={composeEventHandlers(itemProps.onPointerUp, () => {
             // Using a mouse you should be able to do pointer down, move through
             // the list, and release the pointer over the item to select it.
-            if (pointerTypeRef.current === "mouse") onSelect();
+            if (pointerTypeRef.current === "mouse") onItemSelect();
           })}
           onPointerDown={composeEventHandlers(
             itemProps.onPointerDown,
