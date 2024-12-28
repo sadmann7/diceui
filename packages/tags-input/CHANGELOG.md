@@ -2,9 +2,11 @@
 
 ## 0.1.0
 
-### Minor Changes
+### Major Changes
 
-- 175b0d1: Minor fixes
+- 175b0d1: Renamed TagsInput subcomponents for better clarity and consistency:
+  - Renamed `Text` component to `ItemText`
+  - Renamed `Delete` component to `ItemDelete`    
 
 ### Patch Changes
 

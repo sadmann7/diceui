@@ -2,9 +2,12 @@
 
 ## 0.1.0
 
-### Minor Changes
+### Major Changes
 
-- 175b0d1: Minor fixes
+- 175b0d1: Added `Badge` components for multiple selection
+  - Added `BadgeList` component for displaying the list of selected items
+  - Added `BadgeItem` component for displaying a selected item
+  - Added `BadgeItemDelete` component for deleting a selected item
 
 ### Patch Changes
 
