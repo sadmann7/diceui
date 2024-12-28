@@ -15,6 +15,7 @@ interface CheckboxGroupContextValue {
   value: string[];
   onValueChange: (value: string[]) => void;
   onItemCheckedChange: (value: string, checked: boolean) => void;
+  onReset: () => void;
   disabled?: boolean;
   isInvalid: boolean;
   required?: boolean;
@@ -139,11 +140,19 @@ const CheckboxGroupRoot = React.forwardRef<
     [setValue, value, readOnly],
   );
 
+  const onReset = React.useCallback(() => {
+    setValue(defaultValue ?? []);
+    setValidationMessage(undefined);
+  }, [defaultValue, setValue]);
+
+  console.log({ value, validationMessage });
+
   return (
     <CheckboxGroupProvider
       value={value}
       onValueChange={setValue}
       onItemCheckedChange={onItemCheckedChange}
+      onReset={onReset}
       disabled={disabled}
       required={required}
       dir={dir}

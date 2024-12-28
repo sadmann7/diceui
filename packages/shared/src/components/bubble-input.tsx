@@ -1,17 +1,18 @@
 import * as React from "react";
-import { usePrevious, useSize } from "../hooks";
+import { useFormReset, usePrevious, useSize } from "../hooks";
 
 type InputValue = string[] | string;
 
 interface BubbleInputProps<T = InputValue>
   extends Omit<
     React.InputHTMLAttributes<HTMLInputElement>,
-    "value" | "checked"
+    "value" | "checked" | "onReset"
   > {
   value?: T;
   checked?: boolean;
   control: HTMLElement | null;
   bubbles?: boolean;
+  onReset?: (value: T) => void;
 }
 
 export function BubbleInput<T = InputValue>(props: BubbleInputProps<T>) {
@@ -21,6 +22,7 @@ export function BubbleInput<T = InputValue>(props: BubbleInputProps<T>) {
     checked,
     bubbles = true,
     type = "hidden",
+    onReset,
     ...inputProps
   } = props;
 
@@ -52,6 +54,15 @@ export function BubbleInput<T = InputValue>(props: BubbleInputProps<T>) {
       input.dispatchEvent(event);
     }
   }, [prevValue, value, checked, bubbles, isCheckInput]);
+
+  // Trigger on onReset callback when form is reset
+  useFormReset({
+    form: ref.current?.form ?? null,
+    defaultValue: isCheckInput ? (checked as T) : value,
+    onReset: (resetValue: T) => {
+      onReset?.(resetValue);
+    },
+  });
 
   return (
     <input

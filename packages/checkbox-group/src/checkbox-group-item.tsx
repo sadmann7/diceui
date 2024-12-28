@@ -110,6 +110,7 @@ const CheckboxGroupItem = React.forwardRef<
           checked={isChecked}
           disabled={isDisabled}
           required={isRequired}
+          onReset={() => context.onReset()}
         />
       )}
     </CheckboxGroupItemProvider>
@@ -124,6 +125,6 @@ CheckboxGroupItem.displayName = ITEM_NAME;
 
 const Item = CheckboxGroupItem;
 
-export { CheckboxGroupItem, Item, getDataState, useCheckboxGroupItem };
+export { CheckboxGroupItem, getDataState, Item, useCheckboxGroupItem };
 
 export type { CheckboxGroupItemContext, CheckboxGroupItemProps };

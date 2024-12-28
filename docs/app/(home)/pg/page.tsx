@@ -50,7 +50,7 @@ export default function PlaygroundPage() {
 
   function onSubmit(event: React.FormEvent) {
     event.preventDefault();
-    console.log(tricks);
+    console.log({ tricks });
   }
 
   return (
@@ -94,10 +94,10 @@ export default function PlaygroundPage() {
             Select your favorite tricks
           </CheckboxGroupDescription>
           <CheckboxGroupList>
-            <CheckboxGroupItem value="kickflip">Kickflip</CheckboxGroupItem>
-            <CheckboxGroupItem value="heelflip" required>
-              Heelflip
+            <CheckboxGroupItem value="kickflip" required>
+              Kickflip
             </CheckboxGroupItem>
+            <CheckboxGroupItem value="heelflip">Heelflip</CheckboxGroupItem>
             <CheckboxGroupItem value="fs-540">FS 540</CheckboxGroupItem>
           </CheckboxGroupList>
         </CheckboxGroup>
