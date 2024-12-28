@@ -2,6 +2,9 @@ import type { ControlledProps } from "@/types";
 import type {
   ComboboxAnchorProps,
   ComboboxArrowProps,
+  ComboboxBadgeItemDeleteProps,
+  ComboboxBadgeItemProps,
+  ComboboxBadgeListProps,
   ComboboxCancelProps,
   ComboboxContentProps,
   ComboboxEmptyProps,
@@ -103,4 +106,19 @@ export type ItemIndicatorProps = Omit<
 export type SeparatorProps = Omit<
   ComboboxSeparatorProps,
   keyof React.ComponentPropsWithoutRef<"div">
+>;
+
+export type BadgeListProps = Omit<
+  ComboboxBadgeListProps,
+  keyof React.ComponentPropsWithoutRef<"div">
+>;
+
+export type BadgeItemProps = Omit<
+  ComboboxBadgeItemProps,
+  keyof React.ComponentPropsWithoutRef<"div">
+>;
+
+export type BadgeItemDeleteProps = Omit<
+  ComboboxBadgeItemDeleteProps,
+  keyof React.ComponentPropsWithoutRef<"button">
 >;

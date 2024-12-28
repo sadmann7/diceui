@@ -46,6 +46,11 @@ import * as Combobox from "@diceui/combobox";
 
 <Combobox.Root>
   <Combobox.Label />
+  <Combobox.BadgeList>
+    <Combobox.BadgeItem>
+      <Combobox.BadgeItemDelete />
+    </Combobox.BadgeItem>
+  </Combobox.BadgeList>
   <Combobox.Anchor>
     <Combobox.Input />
     <Combobox.Trigger />
@@ -187,6 +192,60 @@ The text input field that users can type into to filter options.
 <AutoTypeTable
   path="./types/docs/combobox.ts"
   name="InputProps"
+/>
+
+### BadgeList
+
+A container for displaying selected items as badges in a multi-select combobox.
+
+<AutoTypeTable
+  path="./types/docs/combobox.ts"
+  name="BadgeListProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-orientation]",
+      value: ["horizontal", "vertical"],
+    },
+  ]}
+/>
+
+### BadgeItem
+
+An individual badge representing a selected item in a multi-select combobox.
+
+<AutoTypeTable
+  path="./types/docs/combobox.ts"
+  name="BadgeItemProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-highlighted]",
+      value: "Present when the badge is highlighted",
+    },
+  ]}
+/>
+
+### BadgeItemDelete
+
+A button to remove a selected item from the multi-select combobox.
+
+<AutoTypeTable
+  path="./types/docs/combobox.ts"
+  name="BadgeItemDeleteProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-highlighted]",
+      value: "Present when the parent badge is highlighted",
+    },
+  ]}
 />
 
 ### Cancel

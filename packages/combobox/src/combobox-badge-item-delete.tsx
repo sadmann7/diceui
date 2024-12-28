@@ -34,10 +34,13 @@ const ComboboxBadgeItemDelete = React.forwardRef<
       {...props}
       ref={composedRef}
       onClick={composeEventHandlers(props.onClick, (event) => {
+        if (context.disabled) return;
+
         event.stopPropagation();
-        if (!context.disabled) {
-          context.onItemRemove(badgeItemContext.value);
-        }
+        context.onItemRemove(badgeItemContext.value);
+        requestAnimationFrame(() => {
+          context.inputRef.current?.focus();
+        });
       })}
       onPointerDown={composeEventHandlers(props.onPointerDown, (event) => {
         if (context.disabled) return;

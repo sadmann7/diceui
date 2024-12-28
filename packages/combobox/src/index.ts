@@ -9,8 +9,23 @@ export type { ComboboxLabelProps } from "./combobox-label";
 export { Anchor, ComboboxAnchor } from "./combobox-anchor";
 export type { ComboboxAnchorProps } from "./combobox-anchor";
 
+export { ComboboxInput, Input } from "./combobox-input";
+export type { ComboboxInputProps } from "./combobox-input";
+
 export { ComboboxTrigger, Trigger } from "./combobox-trigger";
 export type { ComboboxTriggerProps } from "./combobox-trigger";
+
+export { ComboboxBadgeList, BadgeList } from "./combobox-badge-list";
+export type { ComboboxBadgeListProps } from "./combobox-badge-list";
+
+export { ComboboxBadgeItem, BadgeItem } from "./combobox-badge-item";
+export type { ComboboxBadgeItemProps } from "./combobox-badge-item";
+
+export {
+  ComboboxBadgeItemDelete,
+  BadgeItemDelete,
+} from "./combobox-badge-item-delete";
+export type { ComboboxBadgeItemDeleteProps } from "./combobox-badge-item-delete";
 
 export { ComboboxCancel, Cancel } from "./combobox-cancel";
 export type { ComboboxCancelProps } from "./combobox-cancel";
@@ -36,9 +51,6 @@ export type { ComboboxGroupProps } from "./combobox-group";
 export { ComboboxGroupLabel, GroupLabel } from "./combobox-group-label";
 export type { ComboboxGroupLabelProps } from "./combobox-group-label";
 
-export { ComboboxInput, Input } from "./combobox-input";
-export type { ComboboxInputProps } from "./combobox-input";
-
 export { ComboboxItem, Item } from "./combobox-item";
 export type { ComboboxItemProps } from "./combobox-item";
 
@@ -53,15 +65,3 @@ export type { ComboboxItemTextProps } from "./combobox-item-text";
 
 export { ComboboxSeparator, Separator } from "./combobox-separator";
 export type { ComboboxSeparatorProps } from "./combobox-separator";
-
-export { ComboboxBadgeList, BadgeList } from "./combobox-badge-list";
-export type { ComboboxBadgeListProps } from "./combobox-badge-list";
-
-export { ComboboxBadgeItem, BadgeItem } from "./combobox-badge-item";
-export type { ComboboxBadgeItemProps } from "./combobox-badge-item";
-
-export {
-  ComboboxBadgeItemDelete,
-  BadgeItemDelete,
-} from "./combobox-badge-item-delete";
-export type { ComboboxBadgeItemDeleteProps } from "./combobox-badge-item-delete";
