@@ -1,4 +1,6 @@
 import { renderHook } from "@testing-library/react";
+import { render } from "@testing-library/react";
+import * as React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useScrollLock } from "../src/hooks/use-scroll-lock";
 import * as browser from "../src/lib/browser";
@@ -9,6 +11,31 @@ vi.mock("../src/lib/browser", () => ({
   isIOS: vi.fn(() => false),
   isSafari: vi.fn(() => false),
 }));
+
+interface ScrollLockComponentProps {
+  enabled?: boolean;
+  referenceElement?: HTMLElement;
+}
+
+function ScrollLockComponent({
+  enabled = true,
+  referenceElement,
+}: ScrollLockComponentProps) {
+  const ref = React.useRef<HTMLDivElement>(null);
+  useScrollLock({
+    enabled,
+    referenceElement: referenceElement ?? ref.current,
+  });
+
+  return (
+    <div>
+      <div ref={ref} data-testid="scroll-lock-content">
+        Scrollable Content
+      </div>
+      <div data-testid="outside-content">Outside Content</div>
+    </div>
+  );
+}
 
 describe("useScrollLock", () => {
   let originalGetComputedStyle: typeof window.getComputedStyle;
@@ -146,12 +173,12 @@ describe("useScrollLock", () => {
   });
 
   it("should not apply scroll lock when enabled is false", () => {
-    renderHook(() => useScrollLock({ enabled: false }));
+    render(<ScrollLockComponent enabled={false} />);
     expect(document.body.style.overflow).not.toBe("hidden");
   });
 
   it("should apply scroll lock to body when enabled", () => {
-    renderHook(() => useScrollLock({ enabled: true }));
+    render(<ScrollLockComponent enabled={true} />);
 
     // Force a layout calculation
     vi.runAllTimers();
@@ -175,8 +202,8 @@ describe("useScrollLock", () => {
       scrollbarGutter: "auto",
     } as unknown as CSSStyleDeclaration);
 
-    renderHook(() =>
-      useScrollLock({ enabled: true, referenceElement: customElement }),
+    render(
+      <ScrollLockComponent enabled={true} referenceElement={customElement} />,
     );
 
     // Force a layout calculation
@@ -206,7 +233,7 @@ describe("useScrollLock", () => {
       WebkitOverflowScrolling: "touch",
     } as unknown as CSSStyleDeclaration);
 
-    renderHook(() => useScrollLock({ enabled: true }));
+    render(<ScrollLockComponent enabled={true} />);
 
     // Force a layout calculation
     vi.runAllTimers();
@@ -254,7 +281,7 @@ describe("useScrollLock", () => {
       scrollbarGutter: "auto",
     } as unknown as CSSStyleDeclaration);
 
-    renderHook(() => useScrollLock({ enabled: true }));
+    render(<ScrollLockComponent enabled={true} />);
 
     // Force a layout calculation
     vi.runAllTimers();
@@ -274,14 +301,14 @@ describe("useScrollLock", () => {
       configurable: true,
     });
 
-    renderHook(() => useScrollLock({ enabled: true }));
+    render(<ScrollLockComponent enabled={true} />);
 
     // Should not apply scroll lock when zoomed
     expect(document.body.style.overflow).not.toBe("hidden");
   });
 
   it("should cleanup styles when unmounted", () => {
-    const { unmount } = renderHook(() => useScrollLock({ enabled: true }));
+    const { unmount } = render(<ScrollLockComponent enabled={true} />);
     expect(document.body.style.overflow).toBe("hidden");
 
     unmount();
@@ -313,7 +340,7 @@ describe("useScrollLock", () => {
       return originalGetComputedStyle(element);
     };
 
-    renderHook(() => useScrollLock({ enabled: true }));
+    render(<ScrollLockComponent enabled={true} />);
 
     // Force a layout calculation
     vi.runAllTimers();
@@ -349,7 +376,7 @@ describe("useScrollLock", () => {
       writable: true,
     });
 
-    renderHook(() => useScrollLock({ enabled: true }));
+    render(<ScrollLockComponent enabled={true} />);
 
     expect(document.documentElement.style.overflowY).toBe("hidden");
     expect(document.documentElement.style.paddingRight).toBe("");
@@ -365,7 +392,7 @@ describe("useScrollLock", () => {
       configurable: true,
     });
 
-    renderHook(() => useScrollLock({ enabled: true }));
+    render(<ScrollLockComponent enabled={true} />);
 
     expect(document.body.style.height).toBe("calc(100dvh - 20px)");
   });
@@ -379,7 +406,7 @@ describe("useScrollLock", () => {
       configurable: true,
     });
 
-    renderHook(() => useScrollLock({ enabled: true }));
+    render(<ScrollLockComponent enabled={true} />);
 
     expect(document.body.style.height).toBe("calc(100vh - 20px)");
   });
@@ -394,14 +421,14 @@ describe("useScrollLock", () => {
       scrollbarGutter: "auto",
     } as unknown as CSSStyleDeclaration);
 
-    renderHook(() => useScrollLock({ enabled: true }));
+    render(<ScrollLockComponent enabled={true} />);
 
     expect(document.documentElement.style.overflowY).toBe("scroll");
     expect(document.documentElement.style.overflowX).toBe("scroll");
   });
 
   it("should handle resize events", () => {
-    renderHook(() => useScrollLock({ enabled: true }));
+    render(<ScrollLockComponent enabled={true} />);
 
     // Trigger resize event
     window.dispatchEvent(new Event("resize"));
