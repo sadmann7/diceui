@@ -137,10 +137,6 @@ function useScrollLock({
         htmlStyles.scrollbarGutter?.includes("stable");
       const isScrollableY = html.scrollHeight > html.clientHeight;
       const isScrollableX = html.scrollWidth > html.clientWidth;
-      const hasConstantOverflowY =
-        htmlStyles.overflowY === "scroll" || bodyStyles.overflowY === "scroll";
-      const hasConstantOverflowX =
-        htmlStyles.overflowX === "scroll" || bodyStyles.overflowX === "scroll";
 
       // Calculate margins to prevent content shift
       const marginY =
@@ -269,13 +265,9 @@ function useScrollLock({
         // Standard scroll lock
         Object.assign(html.style, {
           overflowY:
-            !isScrollbarGutterStable && (isScrollableY || hasConstantOverflowY)
-              ? "scroll"
-              : "hidden",
+            !isScrollbarGutterStable && isScrollableY ? "scroll" : "hidden",
           overflowX:
-            !isScrollbarGutterStable && (isScrollableX || hasConstantOverflowX)
-              ? "scroll"
-              : "hidden",
+            !isScrollbarGutterStable && isScrollableX ? "scroll" : "hidden",
           paddingRight: scrollbarWidth > 0 ? `${scrollbarWidth}px` : "",
         });
 
@@ -300,6 +292,10 @@ function useScrollLock({
         if (isFirefox() && !isInsetScroll) {
           body.style.marginRight = `${scrollbarWidth}px`;
         }
+
+        // Restore scroll position
+        body.scrollTop = scrollPositionRef.current.top;
+        body.scrollLeft = scrollPositionRef.current.left;
 
         html.setAttribute("data-scroll-locked", "");
       }
@@ -341,17 +337,33 @@ function useScrollLock({
       });
     }
 
+    // Handle touch events for iOS momentum scrolling
+    function preventDefault(event: TouchEvent) {
+      if (event.touches.length > 1) return; // Allow pinch-zoom
+      event.preventDefault();
+    }
+
     onScrollLock();
     win.addEventListener("resize", onResize);
+
+    if (isIOS()) {
+      doc.addEventListener("touchmove", preventDefault, {
+        passive: false,
+      });
+    }
 
     return () => {
       preventScrollCount--;
       if (preventScrollCount !== 0) return;
 
       cancelAnimationFrame(resizeRef.current);
-      cleanupRef.current?.();
       onScrollUnlock();
       win.removeEventListener("resize", onResize);
+
+      if (isIOS()) {
+        doc.removeEventListener("touchmove", preventDefault);
+        cleanupRef.current?.();
+      }
     };
   }, [enabled, referenceElement, allowPinchZoom]);
 }
