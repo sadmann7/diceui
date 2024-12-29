@@ -1,5 +1,4 @@
 import { renderHook } from "@testing-library/react";
-import * as React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useScrollLock } from "../src/hooks/use-scroll-lock";
 import * as browser from "../src/lib/browser";
@@ -9,11 +8,6 @@ vi.mock("../src/lib/browser", () => ({
   isFirefox: vi.fn(() => false),
   isIOS: vi.fn(() => false),
   isSafari: vi.fn(() => false),
-}));
-
-// Mock useIsomorphicLayoutEffect to use useLayoutEffect
-vi.mock("../src/hooks/use-isomorphic-layout-effect", () => ({
-  useIsomorphicLayoutEffect: React.useLayoutEffect,
 }));
 
 describe("useScrollLock", () => {

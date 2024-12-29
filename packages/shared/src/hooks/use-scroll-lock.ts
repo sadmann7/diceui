@@ -36,7 +36,7 @@ function useScrollLock({
   allowPinchZoom = false,
 }: ScrollLockOptions = {}) {
   const scrollPositionRef = React.useRef(0);
-  const resizeRafRef = React.useRef(-1);
+  const resizeRef = React.useRef(-1);
 
   useIsomorphicLayoutEffect(() => {
     if (!enabled) return;
@@ -141,9 +141,9 @@ function useScrollLock({
       html.setAttribute("data-scroll-locked", "");
     }
 
-    function handleResize() {
-      cancelAnimationFrame(resizeRafRef.current);
-      resizeRafRef.current = requestAnimationFrame(() => {
+    function onResize() {
+      cancelAnimationFrame(resizeRef.current);
+      resizeRef.current = requestAnimationFrame(() => {
         // Restore and reapply to handle viewport changes
         onScrollUnlock();
         onScrollLock();
@@ -178,7 +178,7 @@ function useScrollLock({
     }
 
     onScrollLock();
-    win.addEventListener("resize", handleResize);
+    win.addEventListener("resize", onResize);
 
     if (isIOS()) {
       doc.addEventListener("touchmove", preventDefault, {
@@ -190,9 +190,9 @@ function useScrollLock({
       preventScrollCount--;
       if (preventScrollCount !== 0) return;
 
-      cancelAnimationFrame(resizeRafRef.current);
+      cancelAnimationFrame(resizeRef.current);
       onScrollUnlock();
-      win.removeEventListener("resize", handleResize);
+      win.removeEventListener("resize", onResize);
 
       if (isIOS()) {
         doc.removeEventListener("touchmove", preventDefault);
