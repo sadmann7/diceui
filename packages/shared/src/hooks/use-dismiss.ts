@@ -259,8 +259,4 @@ function useDismiss(params: UseDismissParameters) {
 
 export { useDismiss };
 
-export type {
-  FocusOutsideEvent,
-  PointerDownOutsideEvent,
-  UseDismissParameters,
-};
+export type { FocusOutsideEvent, PointerDownOutsideEvent };
