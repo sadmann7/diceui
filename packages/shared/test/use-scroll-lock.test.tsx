@@ -12,19 +12,30 @@ vi.mock("../src/lib/browser", () => ({
   isSafari: vi.fn(() => false),
 }));
 
+// Mock scrollbar width and height by setting up window and document dimensions
+const mockInnerWidth = 1024;
+const mockClientWidth = 1004;
+const scrollbarWidth = mockInnerWidth - mockClientWidth;
+const mockInnerHeight = 768;
+const mockClientHeight = 748;
+const scrollbarHeight = mockInnerHeight - mockClientHeight;
+
 interface ScrollLockComponentProps {
   enabled?: boolean;
   referenceElement?: HTMLElement;
+  allowPinchZoom?: boolean;
 }
 
 function ScrollLockComponent({
   enabled = true,
   referenceElement,
+  allowPinchZoom,
 }: ScrollLockComponentProps) {
   const ref = React.useRef<HTMLDivElement>(null);
   useScrollLock({
     enabled,
     referenceElement: referenceElement ?? ref.current,
+    allowPinchZoom,
   });
 
   return (
@@ -74,26 +85,27 @@ describe("useScrollLock", () => {
       marginRight: "10px",
       overflow: "scroll",
       scrollbarGutter: "auto",
+      overscrollBehavior: "auto",
     });
 
     // Mock window dimensions
     Object.defineProperty(window, "innerWidth", {
-      value: 1024,
+      value: mockInnerWidth,
       configurable: true,
       writable: true,
     });
     Object.defineProperty(window, "innerHeight", {
-      value: 768,
+      value: mockInnerHeight,
       configurable: true,
       writable: true,
     });
     Object.defineProperty(document.documentElement, "clientWidth", {
-      value: 1004,
+      value: mockClientWidth,
       configurable: true,
       writable: true,
     });
     Object.defineProperty(document.documentElement, "clientHeight", {
-      value: 748,
+      value: mockClientHeight,
       configurable: true,
       writable: true,
     });
@@ -113,6 +125,13 @@ describe("useScrollLock", () => {
       value: {
         supports: vi.fn((prop, value) => prop === "height" && value === "1dvh"),
       },
+      configurable: true,
+      writable: true,
+    });
+
+    // Mock visualViewport
+    Object.defineProperty(window, "visualViewport", {
+      value: { scale: 1, height: mockInnerHeight },
       configurable: true,
       writable: true,
     });
@@ -221,17 +240,16 @@ describe("useScrollLock", () => {
     const scrollY = 100;
     Object.defineProperty(window, "scrollY", { value: scrollY });
 
-    // Mock getComputedStyle to include webkit overflow scrolling
+    // Mock getComputedStyle with margins
     window.getComputedStyle = vi.fn().mockReturnValue({
-      marginRight: "0px",
-      marginTop: "0px",
-      marginBottom: "0px",
-      marginLeft: "0px",
-      overflowY: "scroll",
-      overflowX: "hidden",
+      marginRight: "10px",
+      marginTop: "10px",
+      marginBottom: "10px",
+      marginLeft: "10px",
+      overflow: "scroll",
       scrollbarGutter: "auto",
-      WebkitOverflowScrolling: "touch",
-    } as unknown as CSSStyleDeclaration);
+      overscrollBehavior: "auto",
+    });
 
     render(<ScrollLockComponent enabled={true} />);
 
@@ -239,7 +257,9 @@ describe("useScrollLock", () => {
     vi.runAllTimers();
 
     expect(document.body.style.position).toBe("fixed");
-    expect(document.body.style.width).toBe("100%");
+    expect(document.body.style.width).toBe(
+      `calc(100vw - ${scrollbarWidth + 20}px)`,
+    );
     expect(document.body.style.top).toBe(`-${scrollY}px`);
     expect(document.body.style.boxSizing).toBe("border-box");
     expect(document.body.style.overflow).toBe("hidden");
@@ -250,11 +270,6 @@ describe("useScrollLock", () => {
     (browser.isFirefox as ReturnType<typeof vi.fn>).mockReturnValue(true);
     (browser.isIOS as ReturnType<typeof vi.fn>).mockReturnValue(false);
     (browser.isSafari as ReturnType<typeof vi.fn>).mockReturnValue(false);
-
-    // Mock scrollbar width by setting up window and document dimensions
-    const mockInnerWidth = 1024;
-    const mockClientWidth = 1004;
-    const scrollbarWidth = mockInnerWidth - mockClientWidth;
 
     // Set up window dimensions to ensure scrollbarWidth > 0
     Object.defineProperty(window, "innerWidth", {
@@ -295,16 +310,18 @@ describe("useScrollLock", () => {
   it("should handle Safari with pinch zoom", () => {
     (browser.isSafari as ReturnType<typeof vi.fn>).mockReturnValue(true);
 
-    // Mock visualViewport
+    // Mock visualViewport with zoomed scale
     Object.defineProperty(window, "visualViewport", {
-      value: { scale: 2 },
+      value: { scale: 2, height: mockInnerHeight },
       configurable: true,
     });
 
-    render(<ScrollLockComponent enabled={true} />);
+    render(<ScrollLockComponent enabled={true} allowPinchZoom={false} />);
+    expect(document.body.style.overflow).toBe("");
 
-    // Should not apply scroll lock when zoomed
-    expect(document.body.style.overflow).not.toBe("hidden");
+    // Test with allowPinchZoom true
+    render(<ScrollLockComponent enabled={true} allowPinchZoom={true} />);
+    expect(document.body.style.overflow).toBe("hidden");
   });
 
   it("should cleanup styles when unmounted", () => {
@@ -380,7 +397,7 @@ describe("useScrollLock", () => {
 
     expect(document.documentElement.style.overflowY).toBe("hidden");
     expect(document.documentElement.style.paddingRight).toBe("");
-    expect(document.body.style.width).toBe("100vw"); // Should be 100vw with no margin adjustment
+    expect(document.body.style.width).toBe("100vw");
   });
 
   it("should handle dvh units when supported", () => {
@@ -436,5 +453,140 @@ describe("useScrollLock", () => {
 
     expect(document.documentElement.style.overflowY).toBe("scroll");
     expect(document.body.style.width).toBe("calc(100vw - 40px)");
+  });
+
+  it("should handle iOS specific behavior with scrollable elements", () => {
+    (browser.isIOS as ReturnType<typeof vi.fn>).mockReturnValue(true);
+    const scrollY = 100;
+    Object.defineProperty(window, "scrollY", { value: scrollY });
+
+    const scrollableElement = document.createElement("div");
+    scrollableElement.setAttribute("data-scrollable", "");
+    scrollableElement.style.overflow = "auto";
+    document.body.appendChild(scrollableElement);
+
+    render(<ScrollLockComponent enabled={true} />);
+
+    // Simulate touch events
+    const touchStartEvent = new TouchEvent("touchstart", {
+      touches: [{ clientX: 0, clientY: 0 } as Touch],
+    });
+    const touchMoveEvent = new TouchEvent("touchmove", {
+      touches: [{ clientX: 0, clientY: 10 } as Touch],
+    });
+
+    scrollableElement.dispatchEvent(touchStartEvent);
+    scrollableElement.dispatchEvent(touchMoveEvent);
+
+    expect(scrollableElement.style.overscrollBehavior).toBe("contain");
+    expect(document.body.style.position).toBe("fixed");
+    expect(document.body.style.width).toBe(
+      `calc(100vw - ${scrollbarWidth + 20}px)`,
+    );
+    expect(document.body.style.height).toBe(
+      `calc(100vh - ${scrollbarHeight + 20}px)`,
+    );
+
+    document.body.removeChild(scrollableElement);
+  });
+
+  it("should handle iOS keyboard focus behavior", () => {
+    (browser.isIOS as ReturnType<typeof vi.fn>).mockReturnValue(true);
+
+    const input = document.createElement("input");
+    input.type = "text";
+    document.body.appendChild(input);
+
+    // Mock visualViewport.addEventListener
+    const mockAddEventListener = vi.fn();
+    Object.defineProperty(window.visualViewport, "addEventListener", {
+      value: mockAddEventListener,
+      configurable: true,
+    });
+
+    render(<ScrollLockComponent enabled={true} />);
+
+    const focusEvent = new FocusEvent("focus");
+    input.dispatchEvent(focusEvent);
+
+    // Check initial transform
+    expect(input.style.transform).toBe("translateY(-2000px)");
+
+    // Run animation frame
+    vi.runAllTimers();
+
+    expect(input.style.transform).toBe("");
+
+    // Verify visualViewport event listener was called
+    expect(mockAddEventListener).toHaveBeenCalledWith(
+      "resize",
+      expect.any(Function),
+      { once: true },
+    );
+
+    document.body.removeChild(input);
+  });
+
+  it("should handle allowPinchZoom in Safari", () => {
+    (browser.isSafari as ReturnType<typeof vi.fn>).mockReturnValue(true);
+
+    // Mock visualViewport with zoomed scale
+    Object.defineProperty(window, "visualViewport", {
+      value: { scale: 2, height: mockInnerHeight },
+      configurable: true,
+    });
+
+    // Test with allowPinchZoom true
+    render(<ScrollLockComponent enabled={true} allowPinchZoom={true} />);
+    expect(document.body.style.overflow).toBe("hidden");
+
+    // Test with allowPinchZoom false
+    render(<ScrollLockComponent enabled={true} allowPinchZoom={false} />);
+    expect(document.body.style.overflow).toBe("hidden");
+  });
+
+  it("should handle scrollbar-gutter stable with no scrollbar width", () => {
+    window.getComputedStyle = vi.fn().mockReturnValue({
+      marginRight: "0px",
+      marginTop: "0px",
+      marginBottom: "0px",
+      marginLeft: "0px",
+      overflowY: "scroll",
+      overflowX: "hidden",
+      scrollbarGutter: "stable",
+    } as unknown as CSSStyleDeclaration);
+
+    // Mock dimensions to simulate no scrollbar width
+    Object.defineProperty(window, "innerWidth", {
+      value: mockClientWidth, // Same as clientWidth to simulate no scrollbar
+      configurable: true,
+    });
+
+    render(<ScrollLockComponent enabled={true} />);
+
+    expect(document.documentElement.style.overflowY).toBe("hidden");
+    expect(document.documentElement.style.paddingRight).toBe("");
+    expect(document.body.style.width).toBe("100vw");
+  });
+
+  it("should handle both vertical and horizontal scrollbars", () => {
+    window.getComputedStyle = vi.fn().mockReturnValue({
+      marginRight: "10px",
+      marginTop: "10px",
+      marginBottom: "10px",
+      marginLeft: "10px",
+      overflowY: "scroll",
+      overflowX: "scroll",
+      scrollbarGutter: "auto",
+    } as unknown as CSSStyleDeclaration);
+
+    render(<ScrollLockComponent enabled={true} />);
+
+    expect(document.documentElement.style.overflowY).toBe("scroll");
+    expect(document.documentElement.style.overflowX).toBe("scroll");
+    expect(document.body.style.width).toBe(
+      `calc(100vw - ${scrollbarWidth + 20}px)`,
+    );
+    expect(document.body.style.height).toBe("calc(100dvh - 20px)");
   });
 });

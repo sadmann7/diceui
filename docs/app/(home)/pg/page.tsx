@@ -32,7 +32,7 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <Combobox className="w-[15rem]">
+      <Combobox className="w-[15rem]" modal>
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
           <ComboboxTrigger>

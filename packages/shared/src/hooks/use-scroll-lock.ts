@@ -2,18 +2,42 @@ import * as React from "react";
 import { isFirefox, isIOS, isSafari } from "../lib/browser";
 import { useIsomorphicLayoutEffect } from "./use-isomorphic-layout-effect";
 
-let preventScrollCount = 0;
-let originalStyles: Record<string, string> = {};
+// HTML input types that do not cause the software keyboard to appear
+const nonTextInputTypes = new Set([
+  "checkbox",
+  "radio",
+  "range",
+  "color",
+  "file",
+  "image",
+  "button",
+  "submit",
+  "reset",
+]);
 
-function getScrollbarWidth() {
-  return Math.max(0, window.innerWidth - document.documentElement.clientWidth);
+function getCanOpenKeyboard(target: Element) {
+  return (
+    (target instanceof HTMLInputElement &&
+      !nonTextInputTypes.has(target.type)) ||
+    target instanceof HTMLTextAreaElement ||
+    (target instanceof HTMLElement && target.isContentEditable)
+  );
+}
+
+function getScrollbarWidth(win: Window = window, doc: Document = document) {
+  return Math.max(0, win.innerWidth - doc.documentElement.clientWidth);
+}
+
+function getScrollbarHeight(win: Window = window, doc: Document = document) {
+  return Math.max(0, win.innerHeight - doc.documentElement.clientHeight);
 }
 
 function getIsDvhSupported() {
-  if (typeof CSS === "undefined") return false;
-  if (typeof CSS.supports !== "function") return false;
-
-  return CSS.supports("height", "1dvh");
+  return (
+    typeof CSS !== "undefined" &&
+    typeof CSS.supports === "function" &&
+    CSS.supports("height", "1dvh")
+  );
 }
 
 function getIsInsetScroll(referenceElement?: Element | null) {
@@ -40,6 +64,17 @@ interface ScrollLockOptions {
   allowPinchZoom?: boolean;
 }
 
+let preventScrollCount = 0;
+let originalStyles: {
+  htmlOverflowY?: string;
+  htmlOverflowX?: string;
+  bodyOverflow?: string;
+  bodyPosition?: string;
+  bodyWidth?: string;
+  bodyHeight?: string;
+  bodyBoxSizing?: string;
+} = {};
+
 function useScrollLock({
   referenceElement,
   enabled = false,
@@ -47,6 +82,7 @@ function useScrollLock({
 }: ScrollLockOptions = {}) {
   const scrollPositionRef = React.useRef(0);
   const resizeRef = React.useRef(-1);
+  const scrollableRef = React.useRef<Element | null>(null);
 
   useIsomorphicLayoutEffect(() => {
     if (!enabled) return;
@@ -86,13 +122,14 @@ function useScrollLock({
       bodyBoxSizing: body.style.boxSizing,
     };
 
-    const scrollbarWidth = getScrollbarWidth();
+    const scrollbarWidth = getScrollbarWidth(win, doc);
+    const scrollbarHeight = getScrollbarHeight(win, doc);
     const dvhSupported = getIsDvhSupported();
     const isInsetScroll = getIsInsetScroll(referenceElement);
 
     function onScrollLock() {
       // Handle scrollbar-gutter in modern browsers
-      const hasScrollbarGutterStable =
+      const isScrollbarGutterStable =
         htmlStyles.scrollbarGutter?.includes("stable");
       const isScrollableY = html.scrollHeight > html.clientHeight;
       const isScrollableX = html.scrollWidth > html.clientWidth;
@@ -108,44 +145,149 @@ function useScrollLock({
       if (isIOS()) {
         Object.assign(body.style, {
           position: "fixed",
-          width: "100%",
-          top: `-${scrollPositionRef.current}px`,
-          left: "0",
-          height: "100%",
-          overflow: "hidden",
-          boxSizing: "border-box",
-        });
-      } else {
-        // Standard scroll lock
-        Object.assign(html.style, {
-          overflowY:
-            !hasScrollbarGutterStable && isScrollableY ? "scroll" : "hidden",
-          overflowX:
-            !hasScrollbarGutterStable && isScrollableX ? "scroll" : "hidden",
-          paddingRight: scrollbarWidth > 0 ? `${scrollbarWidth}px` : "",
-        });
-
-        Object.assign(body.style, {
-          position: "relative",
           width:
             marginX || scrollbarWidth
               ? `calc(100vw - ${marginX + scrollbarWidth}px)`
               : "100vw",
-          height: dvhSupported
-            ? marginY
-              ? `calc(100dvh - ${marginY}px)`
-              : "100dvh"
-            : marginY
-              ? `calc(100vh - ${marginY}px)`
+          height:
+            marginY || scrollbarHeight
+              ? `calc(100vh - ${marginY + scrollbarHeight}px)`
               : "100vh",
-          boxSizing: "border-box",
+          top: `-${scrollPositionRef.current}px`,
+          left: "0",
           overflow: "hidden",
+          boxSizing: "border-box",
         });
 
-        // Special handling for Firefox without inset scrollbars
-        if (isFirefox() && !isInsetScroll) {
-          body.style.marginRight = `${scrollbarWidth}px`;
+        // Enhanced iOS Safari handling
+        function onTouchStart(e: TouchEvent) {
+          const target = e.target as Element;
+          const scrollableElement: Element | null =
+            target.closest("[data-scrollable]");
+          if (scrollableElement instanceof HTMLElement) {
+            scrollableRef.current = scrollableElement;
+            const style = win.getComputedStyle(scrollableElement);
+            if (style.overscrollBehavior === "auto") {
+              scrollableElement.style.overscrollBehavior = "contain";
+            }
+          } else {
+            scrollableRef.current = null;
+          }
         }
+
+        function onTouchMove(e: TouchEvent) {
+          const scrollable = scrollableRef.current;
+          if (!scrollable || scrollable === html || scrollable === body) {
+            e.preventDefault();
+            return;
+          }
+
+          if (
+            scrollable.scrollHeight === scrollable.clientHeight &&
+            scrollable.scrollWidth === scrollable.clientWidth
+          ) {
+            e.preventDefault();
+          }
+        }
+
+        function onFocus(e: FocusEvent) {
+          const target = e.target as HTMLElement;
+          if (getCanOpenKeyboard(target)) {
+            target.style.transform = "translateY(-2000px)";
+            requestAnimationFrame(() => {
+              target.style.transform = "";
+              if (win.visualViewport) {
+                const scrollIntoView = () => {
+                  let nextTarget: Element | null = target;
+                  while (nextTarget && nextTarget !== html) {
+                    const scrollableElement: Element | null =
+                      nextTarget.closest("[data-scrollable]");
+                    if (
+                      scrollableElement instanceof HTMLElement &&
+                      scrollableElement !== html &&
+                      scrollableElement !== body
+                    ) {
+                      const scrollableTop =
+                        scrollableElement.getBoundingClientRect().top;
+                      const targetTop = nextTarget.getBoundingClientRect().top;
+                      if (
+                        targetTop >
+                        scrollableTop + scrollableElement.clientHeight
+                      ) {
+                        scrollableElement.scrollTop +=
+                          targetTop - scrollableTop;
+                      }
+                      nextTarget = scrollableElement.parentElement;
+                    } else {
+                      nextTarget = null;
+                    }
+                  }
+                };
+
+                if (win.visualViewport.height < win.innerHeight) {
+                  requestAnimationFrame(scrollIntoView);
+                } else {
+                  win.visualViewport.addEventListener(
+                    "resize",
+                    () => scrollIntoView(),
+                    { once: true }
+                  );
+                }
+              }
+            });
+          }
+        }
+
+        doc.addEventListener("touchstart", onTouchStart, {
+          passive: false,
+          capture: true,
+        });
+        doc.addEventListener("touchmove", onTouchMove, {
+          passive: false,
+          capture: true,
+        });
+        doc.addEventListener("focus", onFocus, true);
+
+        return () => {
+          doc.removeEventListener("touchstart", onTouchStart, {
+            capture: true,
+          });
+          doc.removeEventListener("touchmove", onTouchMove, {
+            capture: true,
+          });
+          doc.removeEventListener("focus", onFocus, true);
+        };
+      }
+
+      // Standard scroll lock
+      Object.assign(html.style, {
+        overflowY:
+          !isScrollbarGutterStable && isScrollableY ? "scroll" : "hidden",
+        overflowX:
+          !isScrollbarGutterStable && isScrollableX ? "scroll" : "hidden",
+        paddingRight: scrollbarWidth > 0 ? `${scrollbarWidth}px` : "",
+      });
+
+      Object.assign(body.style, {
+        position: "relative",
+        width:
+          marginX || scrollbarWidth
+            ? `calc(100vw - ${marginX + scrollbarWidth}px)`
+            : "100vw",
+        height: dvhSupported
+          ? marginY
+            ? `calc(100dvh - ${marginY}px)`
+            : "100dvh"
+          : marginY
+          ? `calc(100vh - ${marginY}px)`
+          : "100vh",
+        boxSizing: "border-box",
+        overflow: "hidden",
+      });
+
+      // Special handling for Firefox without inset scrollbars
+      if (isFirefox() && !isInsetScroll) {
+        body.style.marginRight = `${scrollbarWidth}px`;
       }
 
       html.setAttribute("data-scroll-locked", "");
@@ -168,10 +310,10 @@ function useScrollLock({
       });
 
       Object.assign(body.style, {
+        overflow: originalStyles.bodyOverflow,
         position: originalStyles.bodyPosition,
         width: originalStyles.bodyWidth,
         height: originalStyles.bodyHeight,
-        overflow: originalStyles.bodyOverflow,
         boxSizing: originalStyles.bodyBoxSizing,
         marginRight: "",
         top: "",

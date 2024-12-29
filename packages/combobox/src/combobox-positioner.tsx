@@ -82,7 +82,7 @@ const ComboboxPositioner = React.forwardRef<
   }, [style, positionerContext.floatingStyles, context.open, forceMount]);
 
   useScrollLock({
-    referenceElement: context.anchorRef.current,
+    referenceElement: context.inputRef.current,
     enabled: context.open && context.modal,
   });
 
