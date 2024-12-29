@@ -24,15 +24,26 @@ function getIsInsetScroll(referenceElement?: Element | null) {
 }
 
 interface ScrollLockOptions {
+  /** The element to lock the scroll of. */
   referenceElement?: HTMLElement | null;
+
+  /**
+   * Whether to lock the scroll.
+   * @default false
+   */
   enabled?: boolean;
+
+  /**
+   * Whether to allow pinch zoom in Safari.
+   * @default window.visualViewport?.scale !== 1
+   */
   allowPinchZoom?: boolean;
 }
 
 function useScrollLock({
   referenceElement,
   enabled = false,
-  allowPinchZoom = false,
+  allowPinchZoom = window.visualViewport?.scale !== 1,
 }: ScrollLockOptions = {}) {
   const scrollPositionRef = React.useRef(0);
   const resizeRef = React.useRef(-1);
