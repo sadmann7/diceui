@@ -49,7 +49,7 @@ export default function ComboboxTagsDemo() {
           <ComboboxInput className="h-fit flex-1 p-0" asChild>
             <TagsInputInput placeholder="Tricks..." />
           </ComboboxInput>
-          <ComboboxTrigger className="absolute top-0 right-0">
+          <ComboboxTrigger className="absolute top-2.5 right-2">
             <ChevronDown className="h-4 w-4 text-muted-foreground" />
           </ComboboxTrigger>
         </TagsInput>

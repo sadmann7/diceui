@@ -31,7 +31,7 @@ import { ChevronDown } from "lucide-react";
 
 export default function PlaygroundPage() {
   return (
-    <Shell className="overflow-hidden">
+    <Shell>
       <div className="h-screen bg-accent" />
       <Combobox className="w-[15rem]" modal>
         <ComboboxAnchor>

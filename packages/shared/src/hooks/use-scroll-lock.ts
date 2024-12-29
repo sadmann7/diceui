@@ -24,6 +24,46 @@ function getCanOpenKeyboard(target: Element) {
   );
 }
 
+function isNodeScrollable(node: Element | null): boolean {
+  if (!node) return false;
+
+  const style = window.getComputedStyle(node);
+  const hasScrollStyle = /(auto|scroll)/.test(
+    style.overflow + style.overflowX + style.overflowY
+  );
+
+  return (
+    hasScrollStyle &&
+    (node.scrollHeight !== node.clientHeight ||
+      node.scrollWidth !== node.clientWidth)
+  );
+}
+
+function scrollIntoView(target: Element) {
+  const root = document.scrollingElement || document.documentElement;
+  let currentNode: Element | null = target;
+
+  while (currentNode && currentNode !== root) {
+    // Skip non-scrollable nodes
+    while (currentNode && !isNodeScrollable(currentNode)) {
+      currentNode = currentNode.parentElement;
+    }
+
+    // No more scrollable parents found
+    if (!currentNode || currentNode === root) break;
+
+    const { top: scrollableTop } = currentNode.getBoundingClientRect();
+    const { top: targetTop } = target.getBoundingClientRect();
+
+    // Only scroll if target is below the visible area
+    if (targetTop > scrollableTop + target.clientHeight) {
+      currentNode.scrollTop += targetTop - scrollableTop;
+    }
+
+    currentNode = currentNode.parentElement;
+  }
+}
+
 function getScrollbarWidth(win: Window = window, doc: Document = document) {
   return Math.max(0, win.innerWidth - doc.documentElement.clientWidth);
 }
@@ -201,40 +241,13 @@ function useScrollLock({
             requestAnimationFrame(() => {
               target.style.transform = "";
               if (win.visualViewport) {
-                const scrollIntoView = () => {
-                  let nextTarget: Element | null = target;
-                  while (nextTarget && nextTarget !== html) {
-                    const scrollableElement: Element | null =
-                      nextTarget.closest("[data-scrollable]");
-                    if (
-                      scrollableElement instanceof HTMLElement &&
-                      scrollableElement !== html &&
-                      scrollableElement !== body
-                    ) {
-                      const scrollableTop =
-                        scrollableElement.getBoundingClientRect().top;
-                      const targetTop = nextTarget.getBoundingClientRect().top;
-                      if (
-                        targetTop >
-                        scrollableTop + scrollableElement.clientHeight
-                      ) {
-                        scrollableElement.scrollTop +=
-                          targetTop - scrollableTop;
-                      }
-                      nextTarget = scrollableElement.parentElement;
-                    } else {
-                      nextTarget = null;
-                    }
-                  }
-                };
-
                 if (win.visualViewport.height < win.innerHeight) {
-                  requestAnimationFrame(scrollIntoView);
+                  requestAnimationFrame(() => scrollIntoView(target));
                 } else {
                   win.visualViewport.addEventListener(
                     "resize",
-                    () => scrollIntoView(),
-                    { once: true },
+                    () => scrollIntoView(target),
+                    { once: true }
                   );
                 }
               }
@@ -282,8 +295,8 @@ function useScrollLock({
               ? `calc(100dvh - ${marginY}px)`
               : "100dvh"
             : marginY
-              ? `calc(100vh - ${marginY}px)`
-              : "100vh",
+            ? `calc(100vh - ${marginY}px)`
+            : "100vh",
           boxSizing: "border-box",
           overflow: "hidden",
         });
@@ -324,7 +337,7 @@ function useScrollLock({
       // Restore scroll position
       win.scrollTo(
         scrollPositionRef.current.left,
-        scrollPositionRef.current.top,
+        scrollPositionRef.current.top
       );
     }
 
