@@ -80,9 +80,10 @@ function useScrollLock({
   enabled = false,
   allowPinchZoom = window.visualViewport?.scale !== 1,
 }: ScrollLockOptions = {}) {
-  const scrollPositionRef = React.useRef(0);
+  const scrollPositionRef = React.useRef({ top: 0, left: 0 });
   const resizeRef = React.useRef(-1);
   const scrollableRef = React.useRef<Element | null>(null);
+  const cleanupRef = React.useRef<(() => void) | null>(null);
 
   useIsomorphicLayoutEffect(() => {
     if (!enabled) return;
@@ -105,7 +106,10 @@ function useScrollLock({
     if (preventScrollCount !== 1) return;
 
     // Store scroll position
-    scrollPositionRef.current = win.scrollY;
+    scrollPositionRef.current = {
+      top: win.scrollY,
+      left: win.scrollX,
+    };
 
     // Get computed styles
     const htmlStyles = win.getComputedStyle(html);
@@ -133,6 +137,10 @@ function useScrollLock({
         htmlStyles.scrollbarGutter?.includes("stable");
       const isScrollableY = html.scrollHeight > html.clientHeight;
       const isScrollableX = html.scrollWidth > html.clientWidth;
+      const hasConstantOverflowY =
+        htmlStyles.overflowY === "scroll" || bodyStyles.overflowY === "scroll";
+      const hasConstantOverflowX =
+        htmlStyles.overflowX === "scroll" || bodyStyles.overflowX === "scroll";
 
       // Calculate margins to prevent content shift
       const marginY =
@@ -153,8 +161,8 @@ function useScrollLock({
             marginY || scrollbarHeight
               ? `calc(100vh - ${marginY + scrollbarHeight}px)`
               : "100vh",
-          top: `-${scrollPositionRef.current}px`,
-          left: "0",
+          top: `-${scrollPositionRef.current.top}px`,
+          left: `-${scrollPositionRef.current.left}px`,
           overflow: "hidden",
           boxSizing: "border-box",
         });
@@ -230,7 +238,7 @@ function useScrollLock({
                   win.visualViewport.addEventListener(
                     "resize",
                     () => scrollIntoView(),
-                    { once: true }
+                    { once: true },
                   );
                 }
               }
@@ -248,7 +256,7 @@ function useScrollLock({
         });
         doc.addEventListener("focus", onFocus, true);
 
-        return () => {
+        cleanupRef.current = () => {
           doc.removeEventListener("touchstart", onTouchStart, {
             capture: true,
           });
@@ -257,49 +265,44 @@ function useScrollLock({
           });
           doc.removeEventListener("focus", onFocus, true);
         };
+      } else {
+        // Standard scroll lock
+        Object.assign(html.style, {
+          overflowY:
+            !isScrollbarGutterStable && (isScrollableY || hasConstantOverflowY)
+              ? "scroll"
+              : "hidden",
+          overflowX:
+            !isScrollbarGutterStable && (isScrollableX || hasConstantOverflowX)
+              ? "scroll"
+              : "hidden",
+          paddingRight: scrollbarWidth > 0 ? `${scrollbarWidth}px` : "",
+        });
+
+        Object.assign(body.style, {
+          position: "relative",
+          width:
+            marginX || scrollbarWidth
+              ? `calc(100vw - ${marginX + scrollbarWidth}px)`
+              : "100vw",
+          height: dvhSupported
+            ? marginY
+              ? `calc(100dvh - ${marginY}px)`
+              : "100dvh"
+            : marginY
+              ? `calc(100vh - ${marginY}px)`
+              : "100vh",
+          boxSizing: "border-box",
+          overflow: "hidden",
+        });
+
+        // Special handling for Firefox without inset scrollbars
+        if (isFirefox() && !isInsetScroll) {
+          body.style.marginRight = `${scrollbarWidth}px`;
+        }
+
+        html.setAttribute("data-scroll-locked", "");
       }
-
-      // Standard scroll lock
-      Object.assign(html.style, {
-        overflowY:
-          !isScrollbarGutterStable && isScrollableY ? "scroll" : "hidden",
-        overflowX:
-          !isScrollbarGutterStable && isScrollableX ? "scroll" : "hidden",
-        paddingRight: scrollbarWidth > 0 ? `${scrollbarWidth}px` : "",
-      });
-
-      Object.assign(body.style, {
-        position: "relative",
-        width:
-          marginX || scrollbarWidth
-            ? `calc(100vw - ${marginX + scrollbarWidth}px)`
-            : "100vw",
-        height: dvhSupported
-          ? marginY
-            ? `calc(100dvh - ${marginY}px)`
-            : "100dvh"
-          : marginY
-          ? `calc(100vh - ${marginY}px)`
-          : "100vh",
-        boxSizing: "border-box",
-        overflow: "hidden",
-      });
-
-      // Special handling for Firefox without inset scrollbars
-      if (isFirefox() && !isInsetScroll) {
-        body.style.marginRight = `${scrollbarWidth}px`;
-      }
-
-      html.setAttribute("data-scroll-locked", "");
-    }
-
-    function onResize() {
-      cancelAnimationFrame(resizeRef.current);
-      resizeRef.current = requestAnimationFrame(() => {
-        // Restore and reapply to handle viewport changes
-        onScrollUnlock();
-        onScrollLock();
-      });
     }
 
     function onScrollUnlock() {
@@ -321,35 +324,34 @@ function useScrollLock({
       });
 
       html.removeAttribute("data-scroll-locked");
+
+      // Restore scroll position
+      win.scrollTo(
+        scrollPositionRef.current.left,
+        scrollPositionRef.current.top,
+      );
     }
 
-    // Handle touch events for iOS momentum scrolling
-    function preventDefault(event: TouchEvent) {
-      if (event.touches.length > 1) return; // Allow pinch-zoom
-      event.preventDefault();
+    function onResize() {
+      cancelAnimationFrame(resizeRef.current);
+      resizeRef.current = requestAnimationFrame(() => {
+        // Restore and reapply to handle viewport changes
+        onScrollUnlock();
+        onScrollLock();
+      });
     }
 
     onScrollLock();
     win.addEventListener("resize", onResize);
-
-    if (isIOS()) {
-      doc.addEventListener("touchmove", preventDefault, {
-        passive: false,
-      });
-    }
 
     return () => {
       preventScrollCount--;
       if (preventScrollCount !== 0) return;
 
       cancelAnimationFrame(resizeRef.current);
+      cleanupRef.current?.();
       onScrollUnlock();
       win.removeEventListener("resize", onResize);
-
-      if (isIOS()) {
-        doc.removeEventListener("touchmove", preventDefault);
-        win.scrollTo(0, scrollPositionRef.current);
-      }
     };
   }, [enabled, referenceElement, allowPinchZoom]);
 }
