@@ -30,7 +30,7 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <Combobox className="w-[15rem]">
+      <Combobox className="w-[15rem]" modal>
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
           <ComboboxTrigger>
@@ -75,6 +75,11 @@ export default function PlaygroundPage() {
           </SelectGroup>
         </SelectContent>
       </Select>
+      <div className="h-[1000px] bg-red-500">
+        <div className="h-[1000px] bg-blue-500">
+          <div className="h-[1000px] bg-green-500" />
+        </div>
+      </div>
     </Shell>
   );
 }

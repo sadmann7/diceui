@@ -37,12 +37,12 @@ function getIsDvhSupported() {
   );
 }
 
-function hasInsetScrollbars(referenceElement: HTMLElement | null) {
+function getIsInsetScroll(referenceElement: HTMLElement | null) {
   if (typeof document === "undefined") return false;
   const doc = referenceElement ? referenceElement.ownerDocument : document;
   const win = doc ? doc.defaultView : window;
   if (!win) return false;
-  return win.innerWidth - doc.documentElement.clientWidth === 0;
+  return win.innerWidth - doc.documentElement.clientWidth > 0;
 }
 
 interface ScrollLockOptions {
@@ -114,7 +114,7 @@ function useScrollLock({
     } else {
       // Standard scroll lock with edge case handling
       const dvhSupported = getIsDvhSupported();
-      const hasInsetScroll = hasInsetScrollbars(targetElement);
+      const isInsetScroll = getIsInsetScroll(targetElement);
 
       Object.assign(targetElement.style, {
         overflow: "hidden",
@@ -122,7 +122,7 @@ function useScrollLock({
           paddingRight: `${scrollbarWidth}px`,
           // Prevent content shift in Firefox
           ...(firefox &&
-            !hasInsetScroll && {
+            !isInsetScroll && {
               marginRight: `${scrollbarWidth}px`,
             }),
         }),

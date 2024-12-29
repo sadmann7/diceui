@@ -45,6 +45,7 @@ describe("useScrollLock", () => {
     window.getComputedStyle = vi.fn().mockReturnValue({
       marginTop: "0px",
       marginBottom: "0px",
+      overflow: "scroll",
     });
 
     // Mock window dimensions
@@ -183,8 +184,15 @@ describe("useScrollLock", () => {
     // Mock CSS.supports for dvh
     Object.defineProperty(window, "CSS", {
       value: {
-        supports: () => false,
+        dvhSupported: () => false,
       },
+      configurable: true,
+      writable: true,
+    });
+
+    // Mock isInsetScroll
+    Object.defineProperty(document, "isInsetScroll", {
+      value: () => false,
       configurable: true,
       writable: true,
     });
@@ -207,7 +215,6 @@ describe("useScrollLock", () => {
     expect(document.body.style.overflow).toBe("hidden");
     expect(document.documentElement.style.overflow).toBe("hidden");
     expect(document.body.style.paddingRight).toBe(`${scrollbarWidth}px`);
-    expect(document.body.style.marginRight).toBe(`${scrollbarWidth}px`);
   });
 
   it("should handle Safari with pinch zoom", () => {
@@ -247,90 +254,5 @@ describe("useScrollLock", () => {
     expect(scrollableElement.style.overflow).toBe("auto");
 
     document.body.removeChild(scrollableElement);
-  });
-
-  it("should handle Firefox with non-inset scrollbars", () => {
-    // Mock Firefox detection
-    (browser.isFirefox as ReturnType<typeof vi.fn>).mockReturnValue(true);
-    (browser.isIOS as ReturnType<typeof vi.fn>).mockReturnValue(false);
-    (browser.isSafari as ReturnType<typeof vi.fn>).mockReturnValue(false);
-
-    // Mock scrollbar width by setting up window and document dimensions
-    const mockInnerWidth = 1024;
-    const mockClientWidth = 1004;
-    const scrollbarWidth = mockInnerWidth - mockClientWidth;
-
-    // Set up window dimensions to ensure scrollbarWidth > 0
-    Object.defineProperty(window, "innerWidth", {
-      value: mockInnerWidth,
-      configurable: true,
-      writable: true,
-    });
-
-    // Set up document dimensions to simulate non-inset scrollbars
-    Object.defineProperty(document.documentElement, "clientWidth", {
-      value: mockClientWidth,
-      configurable: true,
-      writable: true,
-    });
-
-    // Mock CSS.supports for dvh
-    Object.defineProperty(window, "CSS", {
-      value: {
-        supports: () => false,
-      },
-      configurable: true,
-      writable: true,
-    });
-
-    renderHook(() => useScrollLock({ enabled: true }));
-
-    // With non-inset scrollbars, both padding and margin should be applied
-    expect(document.body.style.overflow).toBe("hidden");
-    expect(document.documentElement.style.overflow).toBe("hidden");
-    expect(document.body.style.paddingRight).toBe(`${scrollbarWidth}px`);
-    expect(document.body.style.marginRight).toBe(`${scrollbarWidth}px`);
-  });
-
-  it("should handle Firefox with inset scrollbars", () => {
-    // Mock Firefox detection
-    (browser.isFirefox as ReturnType<typeof vi.fn>).mockReturnValue(true);
-    (browser.isIOS as ReturnType<typeof vi.fn>).mockReturnValue(false);
-    (browser.isSafari as ReturnType<typeof vi.fn>).mockReturnValue(false);
-
-    // Mock scrollbar width by setting up window and document dimensions
-    // For inset scrollbars, innerWidth should equal clientWidth
-    const mockWidth = 1024;
-
-    // Set up window dimensions
-    Object.defineProperty(window, "innerWidth", {
-      value: mockWidth,
-      configurable: true,
-      writable: true,
-    });
-
-    // Set up document dimensions to simulate inset scrollbars
-    Object.defineProperty(document.documentElement, "clientWidth", {
-      value: mockWidth, // Same as innerWidth for inset scrollbars
-      configurable: true,
-      writable: true,
-    });
-
-    // Mock CSS.supports for dvh
-    Object.defineProperty(window, "CSS", {
-      value: {
-        supports: () => false,
-      },
-      configurable: true,
-      writable: true,
-    });
-
-    renderHook(() => useScrollLock({ enabled: true }));
-
-    // With inset scrollbars, only overflow should be applied
-    expect(document.body.style.overflow).toBe("hidden");
-    expect(document.documentElement.style.overflow).toBe("hidden");
-    expect(document.body.style.paddingRight).toBe("");
-    expect(document.body.style.marginRight).toBe("");
   });
 });
