@@ -75,11 +75,7 @@ export default function PlaygroundPage() {
           </SelectGroup>
         </SelectContent>
       </Select>
-      <div className="h-[1000px] bg-red-500">
-        <div className="h-[1000px] bg-blue-500">
-          <div className="h-[1000px] bg-green-500" />
-        </div>
-      </div>
+      <div className="h-screen bg-accent" />
     </Shell>
   );
 }

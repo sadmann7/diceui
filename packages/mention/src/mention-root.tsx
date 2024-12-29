@@ -1,3 +1,4 @@
+import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 
 interface MentionState {
@@ -20,7 +21,7 @@ interface MentionContext {
 
 const MentionContext = React.createContext<MentionContext | null>(null);
 
-export function useMentionContext(componentName?: string) {
+function useMentionContext(componentName?: string) {
   const context = React.useContext(MentionContext);
   if (!context) {
     throw new Error(
@@ -34,7 +35,7 @@ export function getDataState(open: boolean) {
   return open ? "open" : "closed";
 }
 
-export interface MentionProps {
+interface MentionProps {
   /** The content of the mention component */
   children: React.ReactNode;
   /** Event handler called when a mention item is selected */
@@ -43,8 +44,8 @@ export interface MentionProps {
   onChange?: (value: string) => void;
 }
 
-export const MentionRoot = React.forwardRef<HTMLDivElement, MentionProps>(
-  ({ children, onSelect, onChange }, ref) => {
+const MentionRoot = React.forwardRef<HTMLDivElement, MentionProps>(
+  ({ children, onSelect, onChange }, forwardedRef) => {
     const [state, setState] = React.useState<MentionState>({
       isOpen: false,
       activeId: null,
@@ -110,10 +111,16 @@ export const MentionRoot = React.forwardRef<HTMLDivElement, MentionProps>(
 
     return (
       <MentionContext.Provider value={value}>
-        {children}
+        <Primitive.div ref={forwardedRef}>{children}</Primitive.div>
       </MentionContext.Provider>
     );
   },
 );
 
 MentionRoot.displayName = "MentionRoot";
+
+const Root = MentionRoot;
+
+export { MentionRoot, Root, useMentionContext };
+
+export type { MentionProps };
