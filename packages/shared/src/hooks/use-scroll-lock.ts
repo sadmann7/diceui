@@ -42,7 +42,7 @@ function hasInsetScrollbars(referenceElement: HTMLElement | null) {
   const doc = referenceElement ? referenceElement.ownerDocument : document;
   const win = doc ? doc.defaultView : window;
   if (!win) return false;
-  return win.innerWidth - doc.documentElement.clientWidth > 0;
+  return win.innerWidth - doc.documentElement.clientWidth === 0;
 }
 
 interface ScrollLockOptions {

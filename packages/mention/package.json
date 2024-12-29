@@ -1,17 +1,17 @@
 {
-  "name": "@diceui/combobox",
-  "version": "0.1.0",
+  "name": "@diceui/mention",
+  "version": "0.0.1",
   "type": "module",
   "publishConfig": {
     "access": "public"
   },
-  "keywords": ["combobox", "autocomplete", "ui", "react"],
+  "keywords": ["mention", "mention input", "ui", "react"],
   "author": "Sadman Sakib",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/sadmann7/diceui",
-    "directory": "packages/combobox"
+    "directory": "packages/mention"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
