@@ -1,3 +1,5 @@
+"use client";
+
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,7 +32,7 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <Combobox className="w-[15rem]" modal>
+      <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
           <ComboboxTrigger>
@@ -46,7 +48,7 @@ export default function PlaygroundPage() {
           ))}
         </ComboboxContent>
       </Combobox>
-      <DropdownMenu>
+      <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm" className="w-fit">
             Open

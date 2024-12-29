@@ -10,11 +10,10 @@ function getScrollbarWidth() {
 }
 
 function getIsDvhSupported() {
-  return (
-    typeof CSS !== "undefined" &&
-    typeof CSS.supports === "function" &&
-    CSS.supports("height", "1dvh")
-  );
+  if (typeof CSS === "undefined") return false;
+  if (typeof CSS.supports !== "function") return false;
+
+  return CSS.supports("height", "1dvh");
 }
 
 function getIsInsetScroll(referenceElement?: Element | null) {

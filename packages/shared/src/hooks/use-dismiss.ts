@@ -4,9 +4,8 @@ import {
   DATA_DISMISSABLE_LAYER_STYLE_ATTR,
 } from "../constants";
 import { getOwnerDocument } from "../lib/dock";
+import { useCallbackRef } from "./use-callback-ref";
 import { useEscapeKeydown } from "./use-escape-keydown";
-
-const SCROLL_DISTANCE_THRESHOLD = 5;
 
 interface FocusOutsideEvent {
   currentTarget: Node;
@@ -27,7 +26,9 @@ interface UseDismissParameters {
    * Callback called when the dismissable layer is dismissed.
    * @param event - The event that triggered the dismissal.
    */
-  onDismiss: (event?: Event) => void | Promise<void>;
+  onDismiss: (
+    event?: FocusOutsideEvent | KeyboardEvent,
+  ) => void | Promise<void>;
 
   /** References to elements that should not trigger dismissal when clicked. */
   refs: Array<React.RefObject<Element | null>>;
@@ -81,7 +82,7 @@ interface UseDismissParameters {
   preventScrollDismiss?: boolean;
 
   /**
-   * Delay in ms before adding the mouseup listener.
+   * Delay in ms before adding event listeners.
    * @default 0
    */
   delayMs?: number;
@@ -116,111 +117,85 @@ function useDismiss(params: UseDismissParameters) {
   } = params;
 
   const ownerDocument = getOwnerDocument(refs[0]?.current) ?? document;
-  const shouldTriggerEvents = React.useRef(true);
-  const touchStartY = React.useRef<number | null>(null);
+  const isPointerInsideReactTreeRef = React.useRef(false);
+  const handleClickRef = React.useRef(() => {});
 
   useEscapeKeydown({
     ownerDocument,
     onEscapeKeyDown: (event) => {
       if (onEscapeKeyDown && !event.defaultPrevented) {
         onEscapeKeyDown(event);
+        if (!event.defaultPrevented) {
+          onDismiss(event);
+        }
       }
     },
-    enabled: enabled && !!onEscapeKeyDown && !!onDismiss,
+    enabled: enabled && !!onDismiss && !!onEscapeKeyDown,
+  });
+
+  const onPointerDownOutsideCallback = useCallbackRef(
+    (event: PointerDownOutsideEvent) => {
+      onPointerDownOutside?.(event);
+      onInteractOutside?.(event);
+      if (!event.defaultPrevented) {
+        onDismiss(event);
+      }
+    },
+  );
+
+  const onFocusOutsideCallback = useCallbackRef((event: FocusOutsideEvent) => {
+    onFocusOutside?.(event);
+    onInteractOutside?.(event);
+    if (!event.defaultPrevented) {
+      onDismiss(event);
+    }
   });
 
   React.useEffect(() => {
     if (!enabled) return;
 
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        onInteractOutside?.({
-          currentTarget: event.currentTarget as Node,
-          target: event.target as Node,
-          preventDefault: () => event.preventDefault(),
-          defaultPrevented: event.defaultPrevented,
-        });
-
-        if (!event.defaultPrevented) {
-          onDismiss(event);
-        }
-      }
-    }
-
-    function onDismissWithTarget(event: Event, target: Element | null) {
-      const missingElement = refs.some((ref) => !ref.current);
-      if (missingElement) return;
-
-      const clickedInside = refs.some((ref) => ref.current?.contains(target));
-
-      if (!clickedInside && shouldTriggerEvents.current) {
-        const outsideEvent: PointerDownOutsideEvent = {
-          currentTarget: event.currentTarget as Node,
-          target: target as Node,
-          preventDefault: () => event.preventDefault(),
-          defaultPrevented: event.defaultPrevented,
-          detail: (event as PointerEvent).detail,
-        };
-
-        onPointerDownOutside?.(outsideEvent);
-        onInteractOutside?.(outsideEvent);
-
-        if (!event.defaultPrevented && !outsideEvent.defaultPrevented) {
-          onDismiss(event);
-        }
-      }
-    }
-
     function onPointerDown(event: PointerEvent) {
       const target = event.target as Element | null;
+      if (!target || isPointerInsideReactTreeRef.current) return;
 
-      if (preventScrollDismiss && event.pointerType === "touch") {
-        touchStartY.current = event.clientY;
-        return;
-      }
+      const isInsideRefs = refs.some((ref) => ref.current?.contains(target));
+      if (isInsideRefs) return;
 
-      if (event.pointerType !== "touch") {
-        onDismissWithTarget(event, target);
-      }
-    }
+      const outsideEvent: PointerDownOutsideEvent = {
+        currentTarget: event.currentTarget as Node,
+        target: target as Node,
+        preventDefault: () => event.preventDefault(),
+        defaultPrevented: event.defaultPrevented,
+        detail: event.detail,
+      };
 
-    function onPointerUp(event: PointerEvent) {
-      const target = event.target as Element | null;
-
-      if (
-        preventScrollDismiss &&
-        event.pointerType === "touch" &&
-        touchStartY.current !== null
-      ) {
-        const deltaY = Math.abs(event.clientY - touchStartY.current);
-        touchStartY.current = null;
-
-        if (deltaY <= SCROLL_DISTANCE_THRESHOLD) {
-          onDismissWithTarget(event, target);
-        }
+      if (event.pointerType === "touch" && preventScrollDismiss) {
+        ownerDocument.removeEventListener("click", handleClickRef.current);
+        handleClickRef.current = () =>
+          onPointerDownOutsideCallback(outsideEvent);
+        ownerDocument.addEventListener("click", handleClickRef.current, {
+          once: true,
+        });
+      } else {
+        onPointerDownOutsideCallback(outsideEvent);
       }
     }
 
-    function onFocusOut(event: FocusEvent) {
+    function onFocusIn(event: FocusEvent) {
       const target = event.target as Element | null;
+      if (!target) return;
 
-      const focusedInside = refs.some((ref) => ref.current?.contains(target));
+      const isInsideRefs = refs.some((ref) => ref.current?.contains(target));
+      if (isInsideRefs) return;
 
-      if (!focusedInside && shouldTriggerEvents.current) {
-        const outsideEvent: FocusOutsideEvent = {
-          currentTarget: event.currentTarget as Node,
-          target: target as Node,
-          preventDefault: () => event.preventDefault(),
-          defaultPrevented: event.defaultPrevented,
-        };
+      const outsideEvent: FocusOutsideEvent = {
+        currentTarget: event.currentTarget as Node,
+        target: target as Node,
+        preventDefault: () => event.preventDefault(),
+        defaultPrevented: event.defaultPrevented,
+      };
 
-        onFocusOutside?.(outsideEvent);
-        onInteractOutside?.(outsideEvent);
-
-        if (!event.defaultPrevented && !outsideEvent.defaultPrevented) {
-          onDismissWithTarget(event, target);
-        }
-      }
+      onFocusOutsideCallback(outsideEvent);
     }
 
     if (disableOutsidePointerEvents) {
@@ -238,18 +213,15 @@ function useDismiss(params: UseDismissParameters) {
     }
 
     const timeoutId = window.setTimeout(() => {
-      ownerDocument.addEventListener("keydown", onKeyDown);
       ownerDocument.addEventListener("pointerdown", onPointerDown);
-      ownerDocument.addEventListener("pointerup", onPointerUp);
-      ownerDocument.addEventListener("focusout", onFocusOut);
+      ownerDocument.addEventListener("focusin", onFocusIn);
     }, delayMs);
 
     return () => {
       window.clearTimeout(timeoutId);
-      ownerDocument.removeEventListener("keydown", onKeyDown);
       ownerDocument.removeEventListener("pointerdown", onPointerDown);
-      ownerDocument.removeEventListener("pointerup", onPointerUp);
-      ownerDocument.removeEventListener("focusout", onFocusOut);
+      ownerDocument.removeEventListener("focusin", onFocusIn);
+      ownerDocument.removeEventListener("click", handleClickRef.current);
 
       if (disableOutsidePointerEvents) {
         for (const ref of refs) {
@@ -263,10 +235,8 @@ function useDismiss(params: UseDismissParameters) {
   }, [
     enabled,
     refs,
-    onDismiss,
-    onPointerDownOutside,
-    onFocusOutside,
-    onInteractOutside,
+    onPointerDownOutsideCallback,
+    onFocusOutsideCallback,
     disableOutsidePointerEvents,
     preventScrollDismiss,
     delayMs,
@@ -274,8 +244,23 @@ function useDismiss(params: UseDismissParameters) {
     layerStyleAttr,
     ownerDocument,
   ]);
+
+  return {
+    onPointerDownCapture: () => {
+      isPointerInsideReactTreeRef.current = true;
+    },
+    onPointerUpCapture: () => {
+      window.setTimeout(() => {
+        isPointerInsideReactTreeRef.current = false;
+      }, 0);
+    },
+  };
 }
 
 export { useDismiss };
 
-export type { FocusOutsideEvent, PointerDownOutsideEvent };
+export type {
+  FocusOutsideEvent,
+  PointerDownOutsideEvent,
+  UseDismissParameters,
+};
