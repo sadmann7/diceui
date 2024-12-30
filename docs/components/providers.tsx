@@ -3,6 +3,9 @@
 import { ReactScanProvider } from "@/components/react-scan-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { RootProvider, type RootProviderProps } from "fumadocs-ui/provider";
+import { Provider as JotaiProvider, createStore } from "jotai";
+
+const store = createStore();
 
 interface ProvidersProps extends RootProviderProps {
   children: React.ReactNode;
@@ -11,9 +14,11 @@ interface ProvidersProps extends RootProviderProps {
 export function Providers({ children, ...props }: ProvidersProps) {
   return (
     <RootProvider {...props}>
-      <TooltipProvider>
-        <ReactScanProvider>{children}</ReactScanProvider>
-      </TooltipProvider>
+      <JotaiProvider store={store}>
+        <TooltipProvider>
+          <ReactScanProvider>{children}</ReactScanProvider>
+        </TooltipProvider>
+      </JotaiProvider>
     </RootProvider>
   );
 }

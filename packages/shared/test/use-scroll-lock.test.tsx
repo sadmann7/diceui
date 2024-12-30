@@ -463,7 +463,36 @@ describe("useScrollLock", () => {
     const scrollableElement = document.createElement("div");
     scrollableElement.setAttribute("data-scrollable", "");
     scrollableElement.style.overflow = "auto";
+
+    // Mock scroll dimensions to make element actually scrollable
+    Object.defineProperty(scrollableElement, "scrollHeight", { value: 200 });
+    Object.defineProperty(scrollableElement, "clientHeight", { value: 100 });
+    Object.defineProperty(scrollableElement, "scrollWidth", { value: 200 });
+    Object.defineProperty(scrollableElement, "clientWidth", { value: 100 });
+
     document.body.appendChild(scrollableElement);
+
+    // Mock getComputedStyle specifically for the scrollable element
+    const originalGetComputedStyle = window.getComputedStyle;
+    window.getComputedStyle = (element: Element) => {
+      if (element === scrollableElement) {
+        return {
+          overflow: "auto",
+          overflowY: "auto",
+          overflowX: "auto",
+          overscrollBehavior: "auto",
+        } as unknown as CSSStyleDeclaration;
+      }
+      return {
+        marginTop: "10px",
+        marginBottom: "10px",
+        marginLeft: "10px",
+        marginRight: "10px",
+        overflow: "scroll",
+        scrollbarGutter: "auto",
+        overscrollBehavior: "auto",
+      } as unknown as CSSStyleDeclaration;
+    };
 
     render(<ScrollLockComponent enabled={true} />);
 
@@ -487,6 +516,8 @@ describe("useScrollLock", () => {
       `calc(100vh - ${scrollbarHeight + 20}px)`,
     );
 
+    // Restore original getComputedStyle
+    window.getComputedStyle = originalGetComputedStyle;
     document.body.removeChild(scrollableElement);
   });
 

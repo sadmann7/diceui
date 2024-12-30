@@ -29,7 +29,7 @@ function isNodeScrollable(node: Element | null): boolean {
 
   const style = window.getComputedStyle(node);
   const hasScrollStyle = /(auto|scroll)/.test(
-    style.overflow + style.overflowX + style.overflowY
+    style.overflow + style.overflowX + style.overflowY,
   );
 
   return (
@@ -105,7 +105,7 @@ interface ScrollLockOptions {
 }
 
 let preventScrollCount = 0;
-let originalStyles: {
+let originalStyle: {
   htmlOverflowY?: string;
   htmlOverflowX?: string;
   bodyOverflow?: string;
@@ -152,11 +152,11 @@ function useScrollLock({
     };
 
     // Get computed styles
-    const htmlStyles = win.getComputedStyle(html);
-    const bodyStyles = win.getComputedStyle(body);
+    const htmlStyle = win.getComputedStyle(html);
+    const bodyStyle = win.getComputedStyle(body);
 
     // Store original styles
-    originalStyles = {
+    originalStyle = {
       htmlOverflowY: html.style.overflowY,
       htmlOverflowX: html.style.overflowX,
       bodyPosition: body.style.position,
@@ -174,17 +174,21 @@ function useScrollLock({
     function onScrollLock() {
       // Handle scrollbar-gutter in modern browsers
       const isScrollbarGutterStable =
-        htmlStyles.scrollbarGutter?.includes("stable");
+        htmlStyle.scrollbarGutter?.includes("stable");
       const isScrollableY = html.scrollHeight > html.clientHeight;
       const isScrollableX = html.scrollWidth > html.clientWidth;
+      const isOverflowYScroll =
+        htmlStyle.overflowY === "scroll" || bodyStyle.overflowY === "scroll";
+      const isOverflowXScroll =
+        htmlStyle.overflowX === "scroll" || bodyStyle.overflowX === "scroll";
 
       // Calculate margins to prevent content shift
       const marginY =
-        Number.parseFloat(bodyStyles.marginTop) +
-        Number.parseFloat(bodyStyles.marginBottom);
+        Number.parseFloat(bodyStyle.marginTop) +
+        Number.parseFloat(bodyStyle.marginBottom);
       const marginX =
-        Number.parseFloat(bodyStyles.marginLeft) +
-        Number.parseFloat(bodyStyles.marginRight);
+        Number.parseFloat(bodyStyle.marginLeft) +
+        Number.parseFloat(bodyStyle.marginRight);
 
       if (isIOS()) {
         Object.assign(body.style, {
@@ -204,25 +208,35 @@ function useScrollLock({
         });
 
         // Enhanced iOS Safari handling
-        function onTouchStart(e: TouchEvent) {
-          const target = e.target as Element;
-          const scrollableElement: Element | null =
-            target.closest("[data-scrollable]");
-          if (scrollableElement instanceof HTMLElement) {
-            scrollableRef.current = scrollableElement;
-            const style = win.getComputedStyle(scrollableElement);
-            if (style.overscrollBehavior === "auto") {
-              scrollableElement.style.overscrollBehavior = "contain";
+        function onTouchStart(event: TouchEvent) {
+          const target = event.target as Element;
+          let currentNode: Element | null = target;
+
+          // Find the first scrollable parent
+          while (currentNode && currentNode !== html) {
+            if (
+              isNodeScrollable(currentNode) &&
+              currentNode instanceof HTMLElement
+            ) {
+              scrollableRef.current = currentNode;
+              const style = win.getComputedStyle(currentNode);
+              if (style.overscrollBehavior === "auto") {
+                currentNode.style.overscrollBehavior = "contain";
+              }
+              break;
             }
-          } else {
+            currentNode = currentNode.parentElement;
+          }
+
+          if (!currentNode || currentNode === html) {
             scrollableRef.current = null;
           }
         }
 
-        function onTouchMove(e: TouchEvent) {
+        function onTouchMove(event: TouchEvent) {
           const scrollable = scrollableRef.current;
           if (!scrollable || scrollable === html || scrollable === body) {
-            e.preventDefault();
+            event.preventDefault();
             return;
           }
 
@@ -230,12 +244,12 @@ function useScrollLock({
             scrollable.scrollHeight === scrollable.clientHeight &&
             scrollable.scrollWidth === scrollable.clientWidth
           ) {
-            e.preventDefault();
+            event.preventDefault();
           }
         }
 
-        function onFocus(e: FocusEvent) {
-          const target = e.target as HTMLElement;
+        function onFocus(event: FocusEvent) {
+          const target = event.target as HTMLElement;
           if (getCanOpenKeyboard(target)) {
             target.style.transform = "translateY(-2000px)";
             requestAnimationFrame(() => {
@@ -247,7 +261,7 @@ function useScrollLock({
                   win.visualViewport.addEventListener(
                     "resize",
                     () => scrollIntoView(target),
-                    { once: true }
+                    { once: true },
                   );
                 }
               }
@@ -278,9 +292,13 @@ function useScrollLock({
         // Standard scroll lock
         Object.assign(html.style, {
           overflowY:
-            !isScrollbarGutterStable && isScrollableY ? "scroll" : "hidden",
+            !isScrollbarGutterStable && (isScrollableY || isOverflowYScroll)
+              ? "scroll"
+              : "hidden",
           overflowX:
-            !isScrollbarGutterStable && isScrollableX ? "scroll" : "hidden",
+            !isScrollbarGutterStable && (isScrollableX || isOverflowXScroll)
+              ? "scroll"
+              : "hidden",
           paddingRight: scrollbarWidth > 0 ? `${scrollbarWidth}px` : "",
         });
 
@@ -295,8 +313,8 @@ function useScrollLock({
               ? `calc(100dvh - ${marginY}px)`
               : "100dvh"
             : marginY
-            ? `calc(100vh - ${marginY}px)`
-            : "100vh",
+              ? `calc(100vh - ${marginY}px)`
+              : "100vh",
           boxSizing: "border-box",
           overflow: "hidden",
         });
@@ -316,17 +334,17 @@ function useScrollLock({
 
     function onScrollUnlock() {
       Object.assign(html.style, {
-        overflowY: originalStyles.htmlOverflowY,
-        overflowX: originalStyles.htmlOverflowX,
+        overflowY: originalStyle.htmlOverflowY,
+        overflowX: originalStyle.htmlOverflowX,
         paddingRight: "",
       });
 
       Object.assign(body.style, {
-        overflow: originalStyles.bodyOverflow,
-        position: originalStyles.bodyPosition,
-        width: originalStyles.bodyWidth,
-        height: originalStyles.bodyHeight,
-        boxSizing: originalStyles.bodyBoxSizing,
+        overflow: originalStyle.bodyOverflow,
+        position: originalStyle.bodyPosition,
+        width: originalStyle.bodyWidth,
+        height: originalStyle.bodyHeight,
+        boxSizing: originalStyle.bodyBoxSizing,
         marginRight: "",
         top: "",
         left: "",
@@ -337,7 +355,7 @@ function useScrollLock({
       // Restore scroll position
       win.scrollTo(
         scrollPositionRef.current.left,
-        scrollPositionRef.current.top
+        scrollPositionRef.current.top,
       );
     }
 

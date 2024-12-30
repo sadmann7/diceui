@@ -35,7 +35,6 @@ export default function ComboboxMultipleDemo() {
       onValueChange={setValue}
       className="w-[400px]"
       multiple
-      modal
     >
       <ComboboxLabel>Tricks</ComboboxLabel>
       <ComboboxAnchor className="h-full min-h-10 flex-wrap px-3 py-2">
