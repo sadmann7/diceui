@@ -1,12 +1,12 @@
 import {
   DATA_ITEM_ATTR,
+  Primitive,
   composeEventHandlers,
   createContext,
   useComposedRefs,
   useId,
   useIsomorphicLayoutEffect,
 } from "@diceui/shared";
-import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { useComboboxGroupContext } from "./combobox-group";
 import { useComboboxContext } from "./combobox-root";

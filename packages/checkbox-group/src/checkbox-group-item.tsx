@@ -1,12 +1,12 @@
 import {
   BubbleInput,
+  Primitive,
   composeEventHandlers,
   createContext,
   useComposedRefs,
   useFormControl,
   useId,
 } from "@diceui/shared";
-import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { useCheckboxGroup } from "./checkbox-group-root";
 

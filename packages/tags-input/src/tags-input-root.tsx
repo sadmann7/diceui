@@ -1,10 +1,10 @@
-import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 
 import {
   BubbleInput,
   DATA_ITEM_ATTR,
   type Direction,
+  Primitive,
   composeEventHandlers,
   createContext,
   useCollection,

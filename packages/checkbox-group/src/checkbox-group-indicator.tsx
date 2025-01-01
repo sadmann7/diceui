@@ -1,5 +1,4 @@
-import { Presence } from "@diceui/shared";
-import { Primitive } from "@radix-ui/react-primitive";
+import { Presence, Primitive } from "@diceui/shared";
 import * as React from "react";
 import { getDataState, useCheckboxGroupItem } from "./checkbox-group-item";
 

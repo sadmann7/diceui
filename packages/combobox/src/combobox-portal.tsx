@@ -1,7 +1,6 @@
 import * as React from "react";
 
-import { useMounted } from "@diceui/shared";
-import { Primitive } from "@radix-ui/react-primitive";
+import { Primitive, useMounted } from "@diceui/shared";
 import * as ReactDOM from "react-dom";
 import { useComboboxContext } from "./combobox-root";
 

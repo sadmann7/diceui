@@ -1,3 +1,7 @@
+/**
+ * @see https://github.com/radix-ui/primitives/blob/main/packages/react/slot/src/Slot.tsx
+ */
+
 import * as React from "react";
 import { composeRefs } from "../lib/compose-refs";
 
@@ -11,14 +15,14 @@ interface SlotCloneProps {
   children: React.ReactNode;
 }
 
-const isSlottable = React.memo(function isSlottable(
+const isSlottable = function isSlottable(
   child: React.ReactNode,
 ): child is React.ReactElement<
   { children: React.ReactNode },
   typeof Slottable
 > {
   return React.isValidElement(child) && child.type === Slottable;
-});
+};
 
 function mergeProps(
   slotProps: PrimitiveProps,
@@ -161,11 +165,11 @@ const Slot = React.forwardRef<HTMLElement, SlotProps>((props, forwardedRef) => {
 
 Slot.displayName = "Slot";
 
-const Slottable = React.memo(function Slottable({
-  children,
-}: {
+interface SlottableProps {
   children: React.ReactNode;
-}) {
+}
+
+const Slottable = React.memo(function Slottable({ children }: SlottableProps) {
   return <>{children}</>;
 });
 

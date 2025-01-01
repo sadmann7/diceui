@@ -1,4 +1,4 @@
-import { Primitive } from "@radix-ui/react-primitive";
+import { Primitive } from "@diceui/shared";
 import * as React from "react";
 import { useCheckboxGroup } from "./checkbox-group-root";
 

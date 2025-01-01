@@ -2,6 +2,7 @@ import {
   BubbleInput,
   DATA_VALUE_ATTR,
   type Direction,
+  Primitive,
   createContext,
   forwardRef,
   getSortedItems,
@@ -14,7 +15,6 @@ import {
   useFormControl,
   useId,
 } from "@diceui/shared";
-import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import type { ComboboxAnchor } from "./combobox-anchor";
 import type { ComboboxInput } from "./combobox-input";

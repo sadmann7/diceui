@@ -1,3 +1,7 @@
+/**
+ * @see https://github.com/radix-ui/primitives/blob/main/packages/react/primitive/src/Primitive.tsx
+ */
+
 import * as React from "react";
 import { Slot } from "./slot";
 
@@ -79,7 +83,6 @@ function dispatchDiscreteCustomEvent<E extends CustomEvent>(
   }
 }
 
-const Root = Primitive;
+export { dispatchDiscreteCustomEvent, Primitive };
 
-export { Primitive, Root, dispatchDiscreteCustomEvent };
 export type { PrimitivePropsWithRef };

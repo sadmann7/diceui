@@ -18,7 +18,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { tricks } from "@/lib/data";
-import TagsInputDemo from "@/registry/default/example/tags-input-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -33,7 +32,6 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <TagsInputDemo />
       <div className="h-screen bg-accent" />
       <Combobox className="w-[15rem]" modal>
         <ComboboxAnchor>

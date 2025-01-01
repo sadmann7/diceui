@@ -1,12 +1,12 @@
 import {
   type Direction,
   type Orientation,
+  Primitive,
   createContext,
   useControllableState,
   useDirection,
   useId,
 } from "@diceui/shared";
-import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 
 const ROOT_NAME = "CheckboxGroupRoot";

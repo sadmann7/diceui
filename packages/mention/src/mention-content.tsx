@@ -1,5 +1,5 @@
 import type { Align, Side } from "@diceui/shared";
-import { Primitive } from "@radix-ui/react-primitive";
+import { Primitive } from "@diceui/shared";
 import * as React from "react";
 
 interface MentionContentContext {

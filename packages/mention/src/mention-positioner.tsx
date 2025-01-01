@@ -1,6 +1,5 @@
-import { useComposedRefs, useScrollLock } from "@diceui/shared";
+import { Primitive, useComposedRefs, useScrollLock } from "@diceui/shared";
 import { FloatingFocusManager } from "@floating-ui/react";
-import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { MentionContentProvider } from "./mention-content";
 import { getDataState, useMentionContext } from "./mention-root";

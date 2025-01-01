@@ -1,9 +1,9 @@
 import {
   DATA_VALUE_ATTR,
+  Primitive,
   composeEventHandlers,
   useComposedRefs,
 } from "@diceui/shared";
-import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import {
   type HighlightingDirection,

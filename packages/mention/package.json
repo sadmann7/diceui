@@ -49,7 +49,6 @@
   },
   "dependencies": {
     "@diceui/shared": "workspace:*",
-    "@floating-ui/react": "^0.27.2",
-    "@radix-ui/react-primitive": "^2.0.1"
+    "@floating-ui/react": "^0.27.2"
   }
 }

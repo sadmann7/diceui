@@ -1,5 +1,8 @@
-import { composeEventHandlers, useComposedRefs } from "@diceui/shared";
-import { Primitive } from "@radix-ui/react-primitive";
+import {
+  Primitive,
+  composeEventHandlers,
+  useComposedRefs,
+} from "@diceui/shared";
 import * as React from "react";
 import { useComboboxContext } from "./combobox-root";
 
