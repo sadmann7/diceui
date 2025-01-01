@@ -4,6 +4,7 @@
 
 import * as React from "react";
 import { composeRefs } from "../lib/compose-refs";
+import { getElementRef } from "../lib/get-element-ref";
 
 type PrimitiveProps = Record<string, unknown>;
 
@@ -59,30 +60,6 @@ function mergeProps(
   }
 
   return { ...slotProps, ...overrideProps };
-}
-
-function getElementRef(
-  element: React.ReactElement,
-): React.Ref<unknown> | undefined {
-  if (!React.isValidElement(element)) return undefined;
-
-  const propDescriptor = Object.getOwnPropertyDescriptor(element.props, "ref");
-  const elementDescriptor = Object.getOwnPropertyDescriptor(element, "ref");
-
-  // Handle React <=18 warnings
-  if (propDescriptor?.get && "isReactWarning" in propDescriptor.get) {
-    return (element as { ref?: React.Ref<unknown> }).ref;
-  }
-
-  // Handle React 19 warnings
-  if (elementDescriptor?.get && "isReactWarning" in elementDescriptor.get) {
-    return (element.props as { ref?: React.Ref<unknown> }).ref;
-  }
-
-  return (
-    (element.props as { ref?: React.Ref<unknown> }).ref ??
-    (element as { ref?: React.Ref<unknown> }).ref
-  );
 }
 
 const SlotClone = React.forwardRef<HTMLElement, SlotCloneProps>(
