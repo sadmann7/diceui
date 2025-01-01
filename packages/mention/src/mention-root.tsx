@@ -1,12 +1,29 @@
-import { Primitive, createContext, useControllableState } from "@diceui/shared";
+import {
+  type ItemMap,
+  Primitive,
+  createCollection,
+  createContext,
+  useControllableState,
+} from "@diceui/shared";
 import * as React from "react";
+
+function getDataState(open: boolean) {
+  return open ? "open" : "closed";
+}
 
 const ROOT_NAME = "MentionRoot";
 
-interface MentionState {
-  activeId: string | null;
-  triggerPoint: { top: number; left: number } | null;
-}
+type CollectionItem = HTMLDivElement;
+
+type ItemData = {
+  label: string;
+  value: string;
+  disabled: boolean;
+};
+
+const [Collection, useCollection] = createCollection<CollectionItem, ItemData>(
+  ROOT_NAME,
+);
 
 interface MentionContextValue {
   open: boolean;
@@ -16,17 +33,16 @@ interface MentionContextValue {
   selectedValue: string | null;
   onSelectedValueChange: (value: string | null) => void;
   onItemSelect: (value: string) => void;
-  state: MentionState;
+  state: {
+    activeId: string | null;
+    triggerPoint: { top: number; left: number } | null;
+  };
   onTriggerPointChange: (point: { top: number; left: number } | null) => void;
   triggerRef: React.RefObject<HTMLInputElement | null>;
 }
 
 const [MentionProvider, useMentionContext] =
   createContext<MentionContextValue>(ROOT_NAME);
-
-function getDataState(open: boolean) {
-  return open ? "open" : "closed";
-}
 
 interface MentionProps
   extends Omit<
@@ -58,7 +74,7 @@ interface MentionProps
   onValueChange?: (value: string | null) => void;
 }
 
-const MentionRoot = React.forwardRef<HTMLDivElement, MentionProps>(
+const MentionRoot = React.forwardRef<CollectionItem, MentionProps>(
   (props, forwardedRef) => {
     const {
       children,
@@ -72,6 +88,9 @@ const MentionRoot = React.forwardRef<HTMLDivElement, MentionProps>(
       onValueChange,
       ...restProps
     } = props;
+
+    const collectionRef = React.useRef<CollectionItem | null>(null);
+    const itemMap: ItemMap<CollectionItem, ItemData> = new Map();
 
     const [open = false, setOpen] = useControllableState({
       prop: openProp,
@@ -91,7 +110,7 @@ const MentionRoot = React.forwardRef<HTMLDivElement, MentionProps>(
       onChange: onValueChange,
     });
 
-    const [state, setState] = React.useState<MentionState>({
+    const [state, setState] = React.useState<MentionContextValue["state"]>({
       activeId: null,
       triggerPoint: null,
     });
@@ -136,9 +155,11 @@ const MentionRoot = React.forwardRef<HTMLDivElement, MentionProps>(
         onTriggerPointChange={setTriggerPoint}
         triggerRef={triggerRef}
       >
-        <Primitive.div ref={forwardedRef} {...restProps}>
-          {children}
-        </Primitive.div>
+        <Collection.Provider collectionRef={collectionRef} itemMap={itemMap}>
+          <Primitive.div ref={forwardedRef} {...restProps}>
+            {children}
+          </Primitive.div>
+        </Collection.Provider>
       </MentionProvider>
     );
   },
@@ -148,6 +169,15 @@ MentionRoot.displayName = ROOT_NAME;
 
 const Root = MentionRoot;
 
-export { MentionRoot, Root, getDataState, useMentionContext };
+const CollectionItem = Collection.ItemSlot;
+
+export {
+  MentionRoot,
+  Root,
+  getDataState,
+  useMentionContext,
+  useCollection,
+  CollectionItem,
+};
 
 export type { MentionContextValue, MentionProps };

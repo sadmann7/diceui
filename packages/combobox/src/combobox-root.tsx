@@ -22,6 +22,10 @@ import type { ComboboxInput } from "./combobox-input";
 import type { ComboboxItem } from "./combobox-item";
 import type { ComboboxPositioner } from "./combobox-positioner";
 
+function getDataState(open: boolean) {
+  return open ? "open" : "closed";
+}
+
 const ROOT_NAME = "ComboboxRoot";
 
 type Value<Multiple extends boolean = false> = Multiple extends true
@@ -588,10 +592,6 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       </Primitive.div>
     </ComboboxProvider>
   );
-}
-
-function getDataState(open: boolean) {
-  return open ? "open" : "closed";
 }
 
 type ComboboxRootComponent = (<Multiple extends boolean = false>(

@@ -33,6 +33,6 @@ MentionItem.displayName = ITEM_NAME;
 
 const Item = MentionItem;
 
-export { MentionItem, Item };
+export { Item, MentionItem };
 
 export type { MentionItemProps };

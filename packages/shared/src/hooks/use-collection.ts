@@ -1,16 +1,19 @@
 import * as React from "react";
 import { DATA_ITEM_ATTR, DATA_VALUE_ATTR } from "../constants";
 
-interface CollectionItem<TElement extends HTMLElement> {
+type CollectionItem<
+  TElement extends HTMLElement,
+  TItemData extends object = {},
+> = {
   ref: TElement;
-  disabled: boolean;
-  value: string;
-  label?: string;
-}
+} & TItemData;
 
-interface CollectionContextValue<TElement extends HTMLElement> {
+interface CollectionContextValue<
+  TElement extends HTMLElement,
+  TItemData extends object = {},
+> {
   collectionRef: React.RefObject<TElement | null>;
-  itemMap: Map<React.RefObject<TElement>, CollectionItem<TElement>>;
+  itemMap: Map<React.RefObject<TElement>, CollectionItem<TElement, TItemData>>;
 }
 
 interface UseCollectionParams<TElement extends HTMLElement> {
@@ -49,25 +52,27 @@ function useCollection<TElement extends HTMLElement>({
   return { getItems, getEnabledItems };
 }
 
-function useCollectionItem<TElement extends HTMLElement>(
+function useCollectionItem<
+  TElement extends HTMLElement,
+  TItemData extends object = {},
+>(
   ref: React.RefObject<TElement>,
-  context: CollectionContextValue<TElement>,
-  disabled: boolean,
+  context: CollectionContextValue<TElement, TItemData>,
   value: string,
-  label?: string,
+  itemData: TItemData,
 ) {
   React.useEffect(() => {
-    context.itemMap.set(ref, { ref: ref.current, label, value, disabled });
+    context.itemMap.set(ref, { ref: ref.current, value, ...itemData });
     return () => {
       context.itemMap.delete(ref);
     };
-  }, [ref, label, value, disabled, context.itemMap]);
+  }, [ref, value, itemData, context.itemMap]);
 }
 
-function getItem<TElement extends HTMLElement>(
+function getItem<TElement extends HTMLElement, TItemData extends object = {}>(
   item: TElement,
-  context: CollectionContextValue<TElement>,
-): CollectionItem<TElement> | null {
+  context: CollectionContextValue<TElement, TItemData>,
+): CollectionItem<TElement, TItemData> | null {
   for (const [ref, data] of context.itemMap.entries()) {
     if (ref.current === item) return data;
   }
