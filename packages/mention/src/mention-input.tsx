@@ -15,16 +15,11 @@ interface MentionInputProps
 
 const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
   ({ triggerChar = "@", ...props }, ref) => {
-    const {
-      onInputValueChange,
-      onOpen,
-      onClose,
-      setTriggerPoint,
-      open,
-      triggerRef,
-    } = useMentionContext(INPUT_NAME);
-
-    const composedRef = useComposedRefs<HTMLInputElement>(ref, triggerRef);
+    const context = useMentionContext(INPUT_NAME);
+    const composedRef = useComposedRefs<HTMLInputElement>(
+      ref,
+      context.triggerRef,
+    );
 
     const onChange = React.useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,25 +35,30 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
           const lines = value.substr(0, selectionStart ?? 0).split("\n");
           const currentLine = lines.length;
 
-          setTriggerPoint({
+          context.onTriggerPointChange({
             top: rect.top + currentLine * lineHeight,
             left: rect.left + (selectionStart ?? 0) * 8, // Approximate char width
           });
-          onOpen();
+          context.onOpenChange(true);
         }
 
-        onInputValueChange(value);
+        context.onInputValueChange(value);
       },
-      [onInputValueChange, onOpen, setTriggerPoint, triggerChar],
+      [
+        context.onInputValueChange,
+        context.onOpenChange,
+        context.onTriggerPointChange,
+        triggerChar,
+      ],
     );
 
     const onKeyDown = React.useCallback(
       (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Escape" && open) {
-          onClose();
+        if (e.key === "Escape" && context.open) {
+          context.onOpenChange(false);
         }
       },
-      [onClose, open],
+      [context.onOpenChange, context.open],
     );
 
     return (

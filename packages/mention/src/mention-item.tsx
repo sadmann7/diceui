@@ -10,9 +10,9 @@ interface MentionItemProps
 }
 
 const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
-  ({ value, onClick, ...props }, ref) => {
-    const { onSelect, selectedValue } = useMentionContext(ITEM_NAME);
-    const isSelected = selectedValue === value;
+  ({ value, ...props }, ref) => {
+    const context = useMentionContext(ITEM_NAME);
+    const isSelected = context.selectedValue === value;
 
     return (
       <Primitive.div
@@ -20,7 +20,9 @@ const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
         role="option"
         aria-selected={isSelected}
         data-selected={isSelected ? "" : undefined}
-        onClick={composeEventHandlers(onClick, () => onSelect(value))}
+        onClick={composeEventHandlers(props.onClick, () =>
+          context.onItemSelect(value),
+        )}
         {...props}
       />
     );

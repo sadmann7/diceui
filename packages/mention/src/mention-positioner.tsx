@@ -44,8 +44,7 @@ const MentionPositioner = React.forwardRef<
     ...positionerProps
   } = props;
 
-  const { open, onOpenChange, triggerRef, state } =
-    useMentionContext(POSITIONER_NAME);
+  const context = useMentionContext(POSITIONER_NAME);
 
   const {
     refs,
@@ -61,9 +60,9 @@ const MentionPositioner = React.forwardRef<
     renderedAlign,
     arrowDisplaced,
   } = useMentionPositioner({
-    open,
-    onOpenChange,
-    triggerRef,
+    open: context.open,
+    onOpenChange: context.onOpenChange,
+    triggerRef: context.triggerRef,
     side,
     sideOffset,
     align,
@@ -83,15 +82,15 @@ const MentionPositioner = React.forwardRef<
     refs.setFloating(node),
   );
 
-  useScrollLock({ enabled: open });
+  useScrollLock({ enabled: context.open });
 
   React.useEffect(() => {
-    if (state.triggerPoint) {
+    if (context.state.triggerPoint) {
       update();
     }
-  }, [state.triggerPoint, update]);
+  }, [context.state.triggerPoint, update]);
 
-  if (!forceMount && !open) return null;
+  if (!forceMount && !context.open) return null;
 
   return (
     <FloatingFocusManager
@@ -113,15 +112,15 @@ const MentionPositioner = React.forwardRef<
           ref={composedRef}
           role="listbox"
           aria-orientation="vertical"
-          data-state={getDataState(open)}
+          data-state={getDataState(context.open)}
           data-side={renderedSide}
           data-align={renderedAlign}
           style={{
             ...style,
             ...floatingStyles,
             position: strategy,
-            top: state.triggerPoint?.top ?? 0,
-            left: state.triggerPoint?.left ?? 0,
+            top: context.state.triggerPoint?.top ?? 0,
+            left: context.state.triggerPoint?.left ?? 0,
           }}
           {...positionerProps}
         />

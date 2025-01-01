@@ -9,28 +9,22 @@ interface MentionState {
 }
 
 interface MentionContextValue {
-  // Controlled states
   open: boolean;
   onOpenChange: (open: boolean) => void;
   inputValue: string;
   onInputValueChange: (value: string) => void;
   selectedValue: string | null;
   onSelectedValueChange: (value: string | null) => void;
-
-  // Internal states
+  onItemSelect: (value: string) => void;
   state: MentionState;
-  setTriggerPoint: (point: { top: number; left: number } | null) => void;
+  onTriggerPointChange: (point: { top: number; left: number } | null) => void;
   triggerRef: React.RefObject<HTMLInputElement | null>;
-
-  // Convenience methods
-  onOpen: () => void;
-  onClose: () => void;
-  onSelect: (value: string) => void;
 }
 
-const [Provider, useContext] = createContext<MentionContextValue>(ROOT_NAME);
+const [MentionProvider, useMentionContext] =
+  createContext<MentionContextValue>(ROOT_NAME);
 
-export function getDataState(open: boolean) {
+function getDataState(open: boolean) {
   return open ? "open" : "closed";
 }
 
@@ -61,7 +55,7 @@ const MentionRoot = React.forwardRef<HTMLDivElement, MentionProps>(
       children,
       open: openProp,
       defaultOpen = false,
-      onOpenChange,
+      onOpenChange: onOpenChangeProp,
       inputValue: inputValueProp,
       onInputValueChange,
       value: valueProp,
@@ -73,7 +67,7 @@ const MentionRoot = React.forwardRef<HTMLDivElement, MentionProps>(
     const [open = false, setOpen] = useControllableState({
       prop: openProp,
       defaultProp: defaultOpen,
-      onChange: onOpenChange,
+      onChange: onOpenChangeProp,
     });
 
     const [inputValue = "", setInputValue] = useControllableState({
@@ -102,59 +96,41 @@ const MentionRoot = React.forwardRef<HTMLDivElement, MentionProps>(
       [],
     );
 
-    const onOpen = React.useCallback(() => {
-      setOpen(true);
-    }, [setOpen]);
-
-    const onClose = React.useCallback(() => {
-      setOpen(false);
-      setTriggerPoint(null);
-    }, [setOpen, setTriggerPoint]);
-
-    const onSelect = React.useCallback(
-      (value: string) => {
-        setSelectedValue(value);
-        onClose();
+    const onOpenChange = React.useCallback(
+      (open: boolean) => {
+        setOpen(open);
+        if (!open) {
+          setTriggerPoint(null);
+        }
       },
-      [setSelectedValue, onClose],
+      [setOpen, setTriggerPoint],
     );
 
-    const contextValue: MentionContextValue = React.useMemo(
-      () => ({
-        open,
-        onOpenChange: setOpen,
-        inputValue,
-        onInputValueChange: setInputValue,
-        selectedValue,
-        onSelectedValueChange: setSelectedValue,
-        state,
-        setTriggerPoint,
-        triggerRef,
-        onOpen,
-        onClose,
-        onSelect,
-      }),
-      [
-        open,
-        setOpen,
-        inputValue,
-        setInputValue,
-        selectedValue,
-        setSelectedValue,
-        state,
-        setTriggerPoint,
-        onOpen,
-        onClose,
-        onSelect,
-      ],
+    const onItemSelect = React.useCallback(
+      (value: string) => {
+        setSelectedValue(value);
+        onOpenChange(false);
+      },
+      [setSelectedValue, onOpenChange],
     );
 
     return (
-      <Provider {...contextValue}>
+      <MentionProvider
+        open={open}
+        onOpenChange={onOpenChange}
+        inputValue={inputValue}
+        onInputValueChange={setInputValue}
+        selectedValue={selectedValue}
+        onSelectedValueChange={setSelectedValue}
+        onItemSelect={onItemSelect}
+        state={state}
+        onTriggerPointChange={setTriggerPoint}
+        triggerRef={triggerRef}
+      >
         <Primitive.div ref={forwardedRef} {...restProps}>
           {children}
         </Primitive.div>
-      </Provider>
+      </MentionProvider>
     );
   },
 );
@@ -163,6 +139,6 @@ MentionRoot.displayName = ROOT_NAME;
 
 const Root = MentionRoot;
 
-export { MentionRoot, Root, useContext as useMentionContext };
+export { MentionRoot, Root, getDataState, useMentionContext };
 
-export type { MentionProps, MentionContextValue };
+export type { MentionContextValue, MentionProps };
