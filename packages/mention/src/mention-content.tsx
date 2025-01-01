@@ -3,7 +3,6 @@ import {
   type PointerDownOutsideEvent,
   type Side,
   createContext,
-  useComposedRefs,
   useDismiss,
 } from "@diceui/shared";
 import * as React from "react";
@@ -52,7 +51,6 @@ const MentionContent = React.forwardRef<HTMLDivElement, MentionContentProps>(
       ...contentProps
     } = props;
     const context = useMentionContext(CONTENT_NAME);
-    const composedRefs = useComposedRefs(forwardedRef, context.listRef);
 
     useDismiss({
       enabled: context.open,
@@ -65,25 +63,13 @@ const MentionContent = React.forwardRef<HTMLDivElement, MentionContentProps>(
       preventScrollDismiss: true,
     });
 
-    const activedescendant = React.useMemo(() => {
-      if (!context.highlightedItem) return undefined;
-      return (
-        context.highlightedItem.id ||
-        context.highlightedItem.getAttribute("id") ||
-        undefined
-      );
-    }, [context.highlightedItem]);
-
     return (
       <MentionPositioner
         role="listbox"
         forceMount={forceMount}
         {...contentProps}
-        ref={composedRefs}
-        aria-activedescendant={activedescendant}
-      >
-        <div ref={context.collectionRef}>{props.children}</div>
-      </MentionPositioner>
+        ref={forwardedRef}
+      />
     );
   },
 );
