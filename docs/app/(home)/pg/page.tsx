@@ -34,7 +34,7 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <Mention.Root>
-        <Mention.Trigger />
+        <Mention.Input />
         <Mention.Content>
           {tricks.map((trick) => (
             <Mention.Item key={trick.value} value={trick.value}>

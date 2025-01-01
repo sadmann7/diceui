@@ -118,7 +118,7 @@ function useDismiss(params: UseDismissParameters) {
 
   const ownerDocument = getOwnerDocument(refs[0]?.current);
   const isPointerInsideReactTreeRef = React.useRef(false);
-  const handleClickRef = React.useRef(() => {});
+  const onClickRef = React.useRef(() => {});
 
   useEscapeKeydown({
     ownerDocument,
@@ -171,10 +171,9 @@ function useDismiss(params: UseDismissParameters) {
 
       if (event.pointerType === "touch" && preventScrollDismiss) {
         if (!ownerDocument) return;
-        ownerDocument.removeEventListener("click", handleClickRef.current);
-        handleClickRef.current = () =>
-          onPointerDownOutsideCallback(outsideEvent);
-        ownerDocument.addEventListener("click", handleClickRef.current, {
+        ownerDocument.removeEventListener("click", onClickRef.current);
+        onClickRef.current = () => onPointerDownOutsideCallback(outsideEvent);
+        ownerDocument.addEventListener("click", onClickRef.current, {
           once: true,
         });
       } else {
@@ -222,7 +221,7 @@ function useDismiss(params: UseDismissParameters) {
       window.clearTimeout(timeoutId);
       ownerDocument.removeEventListener("pointerdown", onPointerDown);
       ownerDocument.removeEventListener("focusin", onFocusIn);
-      ownerDocument.removeEventListener("click", handleClickRef.current);
+      ownerDocument.removeEventListener("click", onClickRef.current);
 
       if (disableOutsidePointerEvents) {
         for (const ref of refs) {

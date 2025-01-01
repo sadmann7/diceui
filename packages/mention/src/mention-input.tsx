@@ -6,15 +6,15 @@ import {
 import * as React from "react";
 import { useMentionContext } from "./mention-root";
 
-const TRIGGER_NAME = "MentionTrigger";
+const INPUT_NAME = "MentionInput";
 
-interface MentionTriggerProps
+interface MentionInputProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.input> {
   triggerChar?: string;
 }
 
-const MentionTrigger = React.forwardRef<HTMLInputElement, MentionTriggerProps>(
-  ({ triggerChar = "@", onChange, onKeyDown, ...props }, ref) => {
+const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
+  ({ triggerChar = "@", ...props }, ref) => {
     const {
       onInputValueChange,
       onOpen,
@@ -22,11 +22,11 @@ const MentionTrigger = React.forwardRef<HTMLInputElement, MentionTriggerProps>(
       setTriggerPoint,
       open,
       triggerRef,
-    } = useMentionContext(TRIGGER_NAME);
+    } = useMentionContext(INPUT_NAME);
 
     const composedRef = useComposedRefs<HTMLInputElement>(ref, triggerRef);
 
-    const handleChange = React.useCallback(
+    const onChange = React.useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         const lastChar = value[value.length - 1];
@@ -52,7 +52,7 @@ const MentionTrigger = React.forwardRef<HTMLInputElement, MentionTriggerProps>(
       [onInputValueChange, onOpen, setTriggerPoint, triggerChar],
     );
 
-    const handleKeyDown = React.useCallback(
+    const onKeyDown = React.useCallback(
       (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Escape" && open) {
           onClose();
@@ -64,18 +64,18 @@ const MentionTrigger = React.forwardRef<HTMLInputElement, MentionTriggerProps>(
     return (
       <Primitive.input
         ref={composedRef}
-        onChange={composeEventHandlers(onChange, handleChange)}
-        onKeyDown={composeEventHandlers(onKeyDown, handleKeyDown)}
+        onChange={composeEventHandlers(props.onChange, onChange)}
+        onKeyDown={composeEventHandlers(props.onKeyDown, onKeyDown)}
         {...props}
       />
     );
   },
 );
 
-MentionTrigger.displayName = TRIGGER_NAME;
+MentionInput.displayName = INPUT_NAME;
 
-const Trigger = MentionTrigger;
+const Input = MentionInput;
 
-export { MentionTrigger, Trigger };
+export { MentionInput, Input };
 
-export type { MentionTriggerProps };
+export type { MentionInputProps };

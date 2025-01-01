@@ -1,8 +1,8 @@
 export { MentionRoot, Root } from "./mention-root";
 export type { MentionProps } from "./mention-root";
 
-export { MentionTrigger, Trigger } from "./mention-trigger";
-export type { MentionTriggerProps } from "./mention-trigger";
+export { MentionInput, Input } from "./mention-input";
+export type { MentionInputProps } from "./mention-input";
 
 export { MentionContent, Content } from "./mention-content";
 export type { MentionContentProps } from "./mention-content";
