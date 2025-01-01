@@ -27,11 +27,22 @@ import {
   ComboboxItem,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
+import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
+      <Mention.Root>
+        <Mention.Trigger />
+        <Mention.Content>
+          {tricks.map((trick) => (
+            <Mention.Item key={trick.value} value={trick.value}>
+              {trick.label}
+            </Mention.Item>
+          ))}
+        </Mention.Content>
+      </Mention.Root>
       <div className="h-screen bg-accent" />
       <Combobox className="w-[15rem]" modal>
         <ComboboxAnchor>

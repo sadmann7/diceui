@@ -116,7 +116,7 @@ function useDismiss(params: UseDismissParameters) {
     layerStyleAttr = DATA_DISMISSABLE_LAYER_STYLE_ATTR,
   } = params;
 
-  const ownerDocument = getOwnerDocument(refs[0]?.current) ?? document;
+  const ownerDocument = getOwnerDocument(refs[0]?.current);
   const isPointerInsideReactTreeRef = React.useRef(false);
   const handleClickRef = React.useRef(() => {});
 
@@ -170,6 +170,7 @@ function useDismiss(params: UseDismissParameters) {
       };
 
       if (event.pointerType === "touch" && preventScrollDismiss) {
+        if (!ownerDocument) return;
         ownerDocument.removeEventListener("click", handleClickRef.current);
         handleClickRef.current = () =>
           onPointerDownOutsideCallback(outsideEvent);

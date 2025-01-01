@@ -110,7 +110,7 @@ let originalStyle: {
 function useScrollLock({
   referenceElement,
   enabled = false,
-  allowPinchZoom = window.visualViewport?.scale !== 1,
+  allowPinchZoom = false,
 }: ScrollLockOptions = {}) {
   const scrollPositionRef = React.useRef({ top: 0, left: 0 });
   const resizeRef = React.useRef(-1);
@@ -120,17 +120,16 @@ function useScrollLock({
   useIsomorphicLayoutEffect(() => {
     if (!enabled) return;
 
-    const doc = referenceElement?.ownerDocument ?? document;
-    const win = doc.defaultView ?? window;
+    const doc = referenceElement?.ownerDocument ?? globalThis.document;
+    const win = doc.defaultView ?? globalThis.window;
     const html = doc.documentElement;
     const body = doc.body;
 
+    const shouldAllowPinchZoom =
+      allowPinchZoom ?? win.visualViewport?.scale !== 1;
+
     // Don't lock if pinch-zoom is active in Safari
-    if (
-      isSafari() &&
-      !allowPinchZoom &&
-      (win.visualViewport?.scale ?? 1) !== 1
-    ) {
+    if (isSafari() && !shouldAllowPinchZoom) {
       return;
     }
 

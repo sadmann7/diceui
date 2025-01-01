@@ -1,53 +1,88 @@
-import type { Align, Side } from "@diceui/shared";
-import { Primitive } from "@diceui/shared";
+import {
+  type Align,
+  type PointerDownOutsideEvent,
+  type Side,
+  createContext,
+  useDismiss,
+} from "@diceui/shared";
 import * as React from "react";
+import {
+  MentionPositioner,
+  type MentionPositionerProps,
+} from "./mention-positioner";
+import { useMentionContext } from "./mention-root";
 
-interface MentionContentContext {
+const CONTENT_NAME = "MentionContent";
+
+interface MentionContentContextValue {
   side: Side;
   align: Align;
   onArrowChange: (arrow: HTMLElement | null) => void;
-  arrowDisplaced: boolean;
   arrowStyles: React.CSSProperties;
+  arrowDisplaced: boolean;
   forceMount: boolean;
 }
 
-const MentionContentContext = React.createContext<MentionContentContext | null>(
-  null,
+const [MentionContentProvider, useMentionContentContext] =
+  createContext<MentionContentContextValue>(CONTENT_NAME);
+
+interface MentionContentProps extends MentionPositionerProps {
+  /**
+   * Event handler called when the `Escape` key is pressed.
+   *
+   * Can be used to prevent input value from being reset on `Escape` key press.
+   */
+  onEscapeKeyDown?: (event: KeyboardEvent) => void;
+
+  /**
+   * Event handler called when a `pointerdown` event happens outside of the content.
+   *
+   * Can be used to prevent the content from closing when the pointer is outside of the content.
+   */
+  onPointerDownOutside?: (event: PointerDownOutsideEvent) => void;
+}
+
+const MentionContent = React.forwardRef<HTMLDivElement, MentionContentProps>(
+  (props, forwardedRef) => {
+    const {
+      forceMount = false,
+      onEscapeKeyDown,
+      onPointerDownOutside,
+      ...contentProps
+    } = props;
+    const context = useMentionContext(CONTENT_NAME);
+
+    useDismiss({
+      enabled: context.open,
+      onDismiss: () => context.onOpenChange(false),
+      refs: [context.triggerRef],
+      onFocusOutside: (event) => event.preventDefault(),
+      onEscapeKeyDown,
+      onPointerDownOutside,
+      disableOutsidePointerEvents: false,
+      preventScrollDismiss: true,
+    });
+
+    return (
+      <MentionPositioner
+        role="listbox"
+        forceMount={forceMount}
+        {...contentProps}
+        ref={forwardedRef}
+      />
+    );
+  },
 );
 
-export function useMentionContent() {
-  const context = React.useContext(MentionContentContext);
-  if (!context) {
-    throw new Error(
-      "useMentionContent must be used within a MentionContentProvider",
-    );
-  }
-  return context;
-}
+MentionContent.displayName = CONTENT_NAME;
 
-interface MentionContentProviderProps extends MentionContentContext {
-  children: React.ReactNode;
-}
+const Content = MentionContent;
 
-export function MentionContentProvider({
-  children,
-  ...context
-}: MentionContentProviderProps) {
-  return (
-    <MentionContentContext.Provider value={context}>
-      {children}
-    </MentionContentContext.Provider>
-  );
-}
+export {
+  MentionContent,
+  MentionContentProvider,
+  Content,
+  useMentionContentContext,
+};
 
-export interface MentionContentProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {}
-
-export const MentionContent = React.forwardRef<
-  HTMLDivElement,
-  MentionContentProps
->((props, ref) => {
-  return <Primitive.div ref={ref} {...props} />;
-});
-
-MentionContent.displayName = "MentionContent";
+export type { MentionContentProps };

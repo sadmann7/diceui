@@ -5,17 +5,17 @@ import { useMentionContext } from "./mention-root";
 const ITEM_NAME = "MentionItem";
 
 interface MentionItemProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.li> {
+  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
   value: string;
 }
 
-const MentionItem = React.forwardRef<HTMLLIElement, MentionItemProps>(
+const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
   ({ value, onClick, ...props }, ref) => {
     const { onSelect, selectedValue } = useMentionContext(ITEM_NAME);
     const isSelected = selectedValue === value;
 
     return (
-      <Primitive.li
+      <Primitive.div
         ref={ref}
         role="option"
         aria-selected={isSelected}

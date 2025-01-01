@@ -91,9 +91,7 @@ const MentionPositioner = React.forwardRef<
     }
   }, [state.triggerPoint, update]);
 
-  if (!forceMount && !open) {
-    return null;
-  }
+  if (!forceMount && !open) return null;
 
   return (
     <FloatingFocusManager

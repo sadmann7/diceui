@@ -6,7 +6,7 @@ import * as React from "react";
  * @returns The ref from the element, or undefined if the element is not valid.
  */
 function getElementRef(
-  element: React.ReactElement
+  element: React.ReactElement,
 ): React.Ref<unknown> | undefined {
   if (!React.isValidElement(element)) return undefined;
 

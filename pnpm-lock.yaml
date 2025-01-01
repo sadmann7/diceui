@@ -62,6 +62,9 @@ importers:
       '@diceui/combobox':
         specifier: workspace:*
         version: link:../packages/combobox
+      '@diceui/mention':
+        specifier: workspace:*
+        version: link:../packages/mention
       '@diceui/tags-input':
         specifier: workspace:*
         version: link:../packages/tags-input
