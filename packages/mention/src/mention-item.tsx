@@ -33,7 +33,15 @@ const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
 
     const textValue = textNode?.textContent ?? "";
     const isDisabled = disabled || context.disabled;
-    const isSelected = context.selectedValue === value;
+    const isSelected = context.value.includes(value);
+
+    const isVisible =
+      !context.open ||
+      context.filteredItems.length === 0 ||
+      context.filteredItems.includes(textValue) ||
+      context.filteredItems.includes(value);
+
+    if (!isVisible) return null;
 
     return (
       <MentionItemProvider

@@ -48,9 +48,6 @@ const MentionPositioner = React.forwardRef<
 
   const {
     refs,
-    placement,
-    middlewareData,
-    elements,
     update,
     context: floatingContext,
     floatingStyles,
@@ -62,7 +59,7 @@ const MentionPositioner = React.forwardRef<
   } = useMentionPositioner({
     open: context.open,
     onOpenChange: context.onOpenChange,
-    triggerRef: context.triggerRef,
+    triggerRef: context.inputRef,
     side,
     sideOffset,
     align,
@@ -85,10 +82,10 @@ const MentionPositioner = React.forwardRef<
   useScrollLock({ enabled: context.open });
 
   React.useEffect(() => {
-    if (context.state.triggerPoint) {
+    if (context.triggerPoint) {
       update();
     }
-  }, [context.state.triggerPoint, update]);
+  }, [context.triggerPoint, update]);
 
   if (!forceMount && !context.open) return null;
 
@@ -96,7 +93,7 @@ const MentionPositioner = React.forwardRef<
     <FloatingFocusManager
       context={floatingContext}
       modal={false}
-      initialFocus={-1}
+      initialFocus={context.inputRef}
       returnFocus={false}
       visuallyHiddenDismiss
     >
@@ -119,8 +116,8 @@ const MentionPositioner = React.forwardRef<
             ...style,
             ...floatingStyles,
             position: strategy,
-            top: context.state.triggerPoint?.top ?? 0,
-            left: context.state.triggerPoint?.left ?? 0,
+            top: context.triggerPoint?.top ?? 0,
+            left: context.triggerPoint?.left ?? 0,
           }}
           {...positionerProps}
         />

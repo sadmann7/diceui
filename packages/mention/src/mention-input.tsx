@@ -9,16 +9,14 @@ import { useMentionContext } from "./mention-root";
 const INPUT_NAME = "MentionInput";
 
 interface MentionInputProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.input> {
-  triggerChar?: string;
-}
+  extends React.ComponentPropsWithoutRef<typeof Primitive.input> {}
 
 const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
-  ({ triggerChar = "@", ...props }, ref) => {
+  ({ ...props }, ref) => {
     const context = useMentionContext(INPUT_NAME);
     const composedRef = useComposedRefs<HTMLInputElement>(
       ref,
-      context.triggerRef,
+      context.inputRef,
     );
 
     const onChange = React.useCallback(
@@ -26,13 +24,13 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
         const value = e.target.value;
         const lastChar = value[value.length - 1];
 
-        if (lastChar === triggerChar) {
+        if (lastChar === context.triggerCharacter) {
           const { selectionStart } = e.target;
           const rect = e.target.getBoundingClientRect();
           const lineHeight = Number.parseInt(
             getComputedStyle(e.target).lineHeight,
           );
-          const lines = value.substr(0, selectionStart ?? 0).split("\n");
+          const lines = value.slice(0, selectionStart ?? 0).split("\n");
           const currentLine = lines.length;
 
           context.onTriggerPointChange({
@@ -43,12 +41,15 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
         }
 
         context.onInputValueChange(value);
+
+        context.onFilterItems();
       },
       [
+        context.triggerCharacter,
         context.onInputValueChange,
         context.onOpenChange,
         context.onTriggerPointChange,
-        triggerChar,
+        context.onFilterItems,
       ],
     );
 

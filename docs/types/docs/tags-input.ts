@@ -1,3 +1,4 @@
+import type { ControlledProps } from "@/types";
 import type {
   TagsInputClearProps,
   TagsInputInputProps,
@@ -8,7 +9,6 @@ import type {
   TagsInputRootProps,
 } from "@diceui/tags-input";
 import type * as React from "react";
-import type { ControlledProps } from "..";
 
 export type RootProps = Omit<TagsInputRootProps, keyof ControlledProps<"div">>;
 

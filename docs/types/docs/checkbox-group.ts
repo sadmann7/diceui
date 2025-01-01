@@ -1,4 +1,4 @@
-// docs/types/docs/checkbox-group.ts
+import type { ControlledProps } from "@/types";
 import type {
   CheckboxGroupDescriptionProps,
   CheckboxGroupIndicatorProps,
@@ -9,7 +9,6 @@ import type {
   CheckboxGroupRootProps,
 } from "@diceui/checkbox-group";
 import type * as React from "react";
-import type { ControlledProps } from "..";
 
 export type RootProps = Omit<
   CheckboxGroupRootProps,

@@ -6,8 +6,12 @@ import {
   createContext,
   useControllableState,
   useDirection,
+  useFilter,
+  useId,
 } from "@diceui/shared";
 import * as React from "react";
+import type { MentionInput } from "./mention-input";
+import type { MentionPositioner } from "./mention-positioner";
 
 function getDataState(open: boolean) {
   return open ? "open" : "closed";
@@ -16,6 +20,8 @@ function getDataState(open: boolean) {
 const ROOT_NAME = "MentionRoot";
 
 type CollectionItem = HTMLDivElement;
+type InputElement = React.ElementRef<typeof MentionInput>;
+type ListElement = React.ElementRef<typeof MentionPositioner>;
 
 interface ItemData {
   value: string;
@@ -28,21 +34,31 @@ const [Collection, useCollection] = createCollection<CollectionItem, ItemData>(
 );
 
 interface MentionContextValue {
+  value: string[];
+  onValueChange: (value: string[]) => void;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   inputValue: string;
   onInputValueChange: (value: string) => void;
-  selectedValue: string | null;
-  onSelectedValueChange: (value: string | null) => void;
   onItemSelect: (value: string) => void;
-  state: {
-    activeId: string | null;
-    triggerPoint: { top: number; left: number } | null;
-  };
+  inputRef: React.RefObject<HTMLInputElement | null>;
+  listRef: React.RefObject<ListElement | null>;
+  triggerCharacter: string;
+  onTriggerCharacterChange: (character: string) => void;
+  triggerPoint: { top: number; left: number } | null;
   onTriggerPointChange: (point: { top: number; left: number } | null) => void;
-  triggerRef: React.RefObject<HTMLInputElement | null>;
+  onFilter?: (options: string[], term: string) => string[];
+  onFilterItems: () => void;
+  filteredItems: string[];
   dir: Direction;
   disabled: boolean;
+  exactMatch: boolean;
+  loop: boolean;
+  modal: boolean;
+  readonly: boolean;
+  inputId: string;
+  labelId: string;
+  contentId: string;
 }
 
 const [MentionProvider, useMentionContext] =
@@ -53,7 +69,16 @@ interface MentionProps
     React.ComponentPropsWithoutRef<typeof Primitive.div>,
     "value" | "defaultValue"
   > {
-  /** Whether the mention popup is open. */
+  /** The currently selected value. */
+  value?: string[];
+
+  /** The default selected value. */
+  defaultValue?: string[];
+
+  /** Event handler called when a mention item is selected. */
+  onValueChange?: (value: string[]) => void;
+
+  /** Whether the mention content is open. */
   open?: boolean;
 
   /** The default open state. */
@@ -68,20 +93,45 @@ interface MentionProps
   /** Event handler called when the input value changes. */
   onInputValueChange?: (value: string) => void;
 
-  /** The currently selected value. */
-  value?: string | null;
-
-  /** The default selected value. */
-  defaultValue?: string | null;
-
-  /** Event handler called when a mention item is selected. */
-  onValueChange?: (value: string | null) => void;
+  /** The trigger character to trigger the mention content. */
+  triggerCharacter?: string;
 
   /** The direction the mention should open. */
   dir?: Direction;
 
   /** Whether the mention is disabled. */
   disabled?: boolean;
+
+  /**
+   * Event handler called when the filter is applied.
+   * Can be used to prevent the default filtering behavior.
+   */
+  onFilter?: (options: string[], term: string) => string[];
+
+  /**
+   * Whether the mention uses exact string matching or fuzzy matching.
+   * When onFilter is provided, this prop is ignored.
+   * @default false
+   */
+  exactMatch?: boolean;
+
+  /**
+   * Whether the mention loops through items.
+   * @default false
+   */
+  loop?: boolean;
+
+  /**
+   * Whether the mention is modal.
+   * @default false
+   */
+  modal?: boolean;
+
+  /**
+   * Whether the mention is read-only.
+   * @default false
+   */
+  readonly?: boolean;
 }
 
 const MentionRoot = React.forwardRef<CollectionItem, MentionProps>(
@@ -94,51 +144,53 @@ const MentionRoot = React.forwardRef<CollectionItem, MentionProps>(
       inputValue: inputValueProp,
       onInputValueChange,
       value: valueProp,
-      defaultValue = null,
+      defaultValue,
       onValueChange,
       dir: dirProp,
       disabled = false,
+      onFilter,
+      exactMatch = false,
+      loop = false,
+      modal = false,
+      readonly = false,
       ...rootProps
     } = props;
 
     const collectionRef = React.useRef<CollectionItem | null>(null);
+    const listRef = React.useRef<ListElement | null>(null);
+    const inputRef = React.useRef<InputElement | null>(null);
     const itemMapRef = React.useRef<ItemMap<CollectionItem, ItemData>>(
       new Map(),
     );
 
-    const dir = useDirection(dirProp);
+    const inputId = useId();
+    const labelId = useId();
+    const contentId = useId();
 
+    const dir = useDirection(dirProp);
+    const filter = useFilter({ sensitivity: "base" });
     const [open = false, setOpen] = useControllableState({
       prop: openProp,
       defaultProp: defaultOpen,
       onChange: onOpenChangeProp,
     });
-
     const [inputValue = "", setInputValue] = useControllableState({
       prop: inputValueProp,
       defaultProp: "",
       onChange: onInputValueChange,
     });
-
-    const [selectedValue = null, setSelectedValue] = useControllableState({
+    const [value = [], setValue] = useControllableState({
       prop: valueProp,
       defaultProp: defaultValue,
       onChange: onValueChange,
     });
-
-    const [state, setState] = React.useState<MentionContextValue["state"]>({
-      activeId: null,
-      triggerPoint: null,
-    });
-
-    const triggerRef = React.useRef<HTMLInputElement | null>(null);
-
-    const setTriggerPoint = React.useCallback(
-      (point: { top: number; left: number } | null) => {
-        setState((prev) => ({ ...prev, triggerPoint: point }));
-      },
-      [],
-    );
+    const [triggerPoint, setTriggerPoint] =
+      React.useState<MentionContextValue["triggerPoint"]>(null);
+    const [filteredItems, setFilteredItems] = React.useState<
+      MentionContextValue["filteredItems"]
+    >([]);
+    const [triggerCharacter, setTriggerCharacter] =
+      React.useState<MentionContextValue["triggerCharacter"]>("@");
 
     const onOpenChange = React.useCallback(
       (open: boolean) => {
@@ -147,16 +199,51 @@ const MentionRoot = React.forwardRef<CollectionItem, MentionProps>(
           setTriggerPoint(null);
         }
       },
-      [setOpen, setTriggerPoint],
+      [setOpen],
     );
 
     const onItemSelect = React.useCallback(
       (value: string) => {
-        setSelectedValue(value);
+        setValue([...value, value]);
         onOpenChange(false);
       },
-      [setSelectedValue, onOpenChange],
+      [setValue, onOpenChange],
     );
+
+    const onFilterItems = React.useCallback(() => {
+      const items = Array.from(itemMapRef.current.values());
+      const allValues = items.flatMap((item) => [item.value, item.textValue]);
+
+      if (!open) {
+        setFilteredItems([]);
+        return;
+      }
+
+      const lastAtIndex = inputValue.lastIndexOf(triggerCharacter);
+      if (lastAtIndex === -1) {
+        setFilteredItems([]);
+        return;
+      }
+
+      const searchTerm = inputValue.slice(lastAtIndex + 1);
+      if (searchTerm === "") {
+        setFilteredItems(allValues);
+        return;
+      }
+
+      let filteredItems: string[];
+      if (onFilter) {
+        filteredItems = onFilter(allValues, searchTerm);
+      } else {
+        filteredItems = allValues.filter((item) =>
+          exactMatch
+            ? filter.contains(item.toLowerCase(), searchTerm.toLowerCase())
+            : filter.fuzzy(item.toLowerCase(), searchTerm.toLowerCase()),
+        );
+      }
+
+      setFilteredItems(filteredItems);
+    }, [inputValue, onFilter, exactMatch, filter, open, triggerCharacter]);
 
     return (
       <MentionProvider
@@ -164,14 +251,27 @@ const MentionRoot = React.forwardRef<CollectionItem, MentionProps>(
         onOpenChange={onOpenChange}
         inputValue={inputValue}
         onInputValueChange={setInputValue}
-        selectedValue={selectedValue}
-        onSelectedValueChange={setSelectedValue}
+        value={value}
+        onValueChange={setValue}
         onItemSelect={onItemSelect}
-        state={state}
+        triggerPoint={triggerPoint}
         onTriggerPointChange={setTriggerPoint}
-        triggerRef={triggerRef}
+        onFilter={onFilter}
+        onFilterItems={onFilterItems}
+        filteredItems={filteredItems}
+        inputRef={inputRef}
+        listRef={listRef}
+        triggerCharacter={triggerCharacter}
+        onTriggerCharacterChange={setTriggerCharacter}
         dir={dir}
         disabled={disabled}
+        exactMatch={exactMatch}
+        loop={loop}
+        modal={modal}
+        readonly={readonly}
+        inputId={inputId}
+        labelId={labelId}
+        contentId={contentId}
       >
         <Collection.Provider
           collectionRef={collectionRef}

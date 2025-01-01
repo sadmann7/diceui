@@ -55,7 +55,7 @@ const MentionContent = React.forwardRef<HTMLDivElement, MentionContentProps>(
     useDismiss({
       enabled: context.open,
       onDismiss: () => context.onOpenChange(false),
-      refs: [context.triggerRef],
+      refs: [context.inputRef],
       onFocusOutside: (event) => event.preventDefault(),
       onEscapeKeyDown,
       onPointerDownOutside,
