@@ -1,9 +1,11 @@
 import {
+  type Direction,
   type ItemMap,
   Primitive,
   createCollection,
   createContext,
   useControllableState,
+  useDirection,
 } from "@diceui/shared";
 import * as React from "react";
 
@@ -15,11 +17,11 @@ const ROOT_NAME = "MentionRoot";
 
 type CollectionItem = HTMLDivElement;
 
-type ItemData = {
-  label: string;
+interface ItemData {
   value: string;
+  textValue: string;
   disabled: boolean;
-};
+}
 
 const [Collection, useCollection] = createCollection<CollectionItem, ItemData>(
   ROOT_NAME,
@@ -39,6 +41,8 @@ interface MentionContextValue {
   };
   onTriggerPointChange: (point: { top: number; left: number } | null) => void;
   triggerRef: React.RefObject<HTMLInputElement | null>;
+  dir: Direction;
+  disabled: boolean;
 }
 
 const [MentionProvider, useMentionContext] =
@@ -72,6 +76,12 @@ interface MentionProps
 
   /** Event handler called when a mention item is selected. */
   onValueChange?: (value: string | null) => void;
+
+  /** The direction the mention should open. */
+  dir?: Direction;
+
+  /** Whether the mention is disabled. */
+  disabled?: boolean;
 }
 
 const MentionRoot = React.forwardRef<CollectionItem, MentionProps>(
@@ -86,11 +96,17 @@ const MentionRoot = React.forwardRef<CollectionItem, MentionProps>(
       value: valueProp,
       defaultValue = null,
       onValueChange,
-      ...restProps
+      dir: dirProp,
+      disabled = false,
+      ...rootProps
     } = props;
 
     const collectionRef = React.useRef<CollectionItem | null>(null);
-    const itemMap: ItemMap<CollectionItem, ItemData> = new Map();
+    const itemMapRef = React.useRef<ItemMap<CollectionItem, ItemData>>(
+      new Map(),
+    );
+
+    const dir = useDirection(dirProp);
 
     const [open = false, setOpen] = useControllableState({
       prop: openProp,
@@ -154,9 +170,14 @@ const MentionRoot = React.forwardRef<CollectionItem, MentionProps>(
         state={state}
         onTriggerPointChange={setTriggerPoint}
         triggerRef={triggerRef}
+        dir={dir}
+        disabled={disabled}
       >
-        <Collection.Provider collectionRef={collectionRef} itemMap={itemMap}>
-          <Primitive.div ref={forwardedRef} {...restProps}>
+        <Collection.Provider
+          collectionRef={collectionRef}
+          itemMap={itemMapRef.current}
+        >
+          <Primitive.div ref={forwardedRef} {...rootProps}>
             {children}
           </Primitive.div>
         </Collection.Provider>
@@ -172,12 +193,12 @@ const Root = MentionRoot;
 const CollectionItem = Collection.ItemSlot;
 
 export {
+  CollectionItem,
   MentionRoot,
   Root,
   getDataState,
-  useMentionContext,
   useCollection,
-  CollectionItem,
+  useMentionContext,
 };
 
 export type { MentionContextValue, MentionProps };

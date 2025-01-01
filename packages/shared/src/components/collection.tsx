@@ -4,42 +4,39 @@ import { composeRefs } from "../lib/compose-refs";
 import { createContext } from "./create-context";
 import { Slot, type SlotProps } from "./slot";
 
-type ItemMap<ItemElement extends HTMLElement, ItemData = {}> = Map<
-  React.RefObject<ItemElement | null>,
-  { ref: ItemElement | null } & ItemData
+type ItemMap<TItemElement extends HTMLElement, TItemData = {}> = Map<
+  React.RefObject<TItemElement | null>,
+  { ref: React.RefObject<TItemElement | null> } & TItemData
 >;
 
 interface CollectionContextValue<
-  ItemElement extends HTMLElement,
-  ItemData = {},
+  TItemElement extends HTMLElement,
+  TItemData = {},
 > {
-  collectionRef: React.RefObject<HTMLElement | null>;
-  itemMap: ItemMap<ItemElement, ItemData>;
+  collectionRef: React.RefObject<TItemElement | null>;
+  itemMap: ItemMap<TItemElement, TItemData>;
 }
 
 interface CollectionProps extends SlotProps {}
 
-function createCollection<ItemElement extends HTMLElement, ItemData = {}>(
+function createCollection<TItemElement extends HTMLElement, TItemData = {}>(
   name: string,
 ) {
   const PROVIDER_NAME = `${name}CollectionProvider`;
 
   const [CollectionProvider, useCollectionContext] =
-    createContext<CollectionContextValue<ItemElement, ItemData>>(PROVIDER_NAME);
+    createContext<CollectionContextValue<TItemElement, TItemData>>(
+      PROVIDER_NAME,
+    );
 
   const COLLECTION_SLOT_NAME = `${name}CollectionSlot`;
 
   const CollectionSlot = React.forwardRef<HTMLElement, CollectionProps>(
     (props, forwardedRef) => {
-      const { children, ...slotProps } = props;
       const context = useCollectionContext(COLLECTION_SLOT_NAME);
       const composedRefs = composeRefs(forwardedRef, context.collectionRef);
 
-      return (
-        <Slot ref={composedRefs} {...slotProps}>
-          {children}
-        </Slot>
-      );
+      return <Slot ref={composedRefs} {...props} />;
     },
   );
 
@@ -47,29 +44,33 @@ function createCollection<ItemElement extends HTMLElement, ItemData = {}>(
 
   const ITEM_SLOT_NAME = `${name}CollectionItemSlot`;
 
-  type CollectionItemSlotProps = React.ComponentPropsWithoutRef<typeof Slot> &
-    ItemData & {
+  type CollectionItemSlotProps = SlotProps &
+    TItemData & {
       children: React.ReactNode;
     };
 
   const CollectionItemSlot = React.forwardRef<
-    ItemElement,
+    TItemElement,
     CollectionItemSlotProps
   >((props, forwardedRef) => {
-    const { children, ...itemData } = props;
-    const itemRef = React.useRef<ItemElement | null>(null);
-    const composedRefs = composeRefs(forwardedRef, itemRef);
+    const { children, ...itemProps } = props;
     const context = useCollectionContext(ITEM_SLOT_NAME);
+    const itemRef = React.useRef<TItemElement>(null);
+    const composedRefs = composeRefs(forwardedRef, itemRef);
 
     React.useEffect(() => {
       context.itemMap.set(itemRef, {
-        ref: itemRef.current,
-        ...(itemData as unknown as ItemData),
+        ref: itemRef,
+        ...(itemProps as unknown as TItemData),
       });
       return () => void context.itemMap.delete(itemRef);
     });
 
-    return <Slot {...{ [DATA_ITEM_ATTR]: "" }} ref={composedRefs} />;
+    return (
+      <Slot {...{ [DATA_ITEM_ATTR]: "" }} ref={composedRefs}>
+        {children}
+      </Slot>
+    );
   });
 
   CollectionItemSlot.displayName = ITEM_SLOT_NAME;
@@ -89,10 +90,10 @@ function createCollection<ItemElement extends HTMLElement, ItemData = {}>(
       return items.sort(
         (a, b) =>
           orderedNodes.indexOf(
-            a?.ref ?? globalThis.document.createElement("div"),
+            a?.ref.current ?? globalThis.document.createElement("div"),
           ) -
           orderedNodes.indexOf(
-            b?.ref ?? globalThis.document.createElement("div"),
+            b?.ref.current ?? globalThis.document.createElement("div"),
           ),
       );
     }, [context.collectionRef, context.itemMap]);

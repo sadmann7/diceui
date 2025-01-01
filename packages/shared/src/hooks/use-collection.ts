@@ -1,21 +1,6 @@
 import * as React from "react";
 import { DATA_ITEM_ATTR, DATA_VALUE_ATTR } from "../constants";
 
-type CollectionItem<
-  TElement extends HTMLElement,
-  TItemData extends object = {},
-> = {
-  ref: TElement;
-} & TItemData;
-
-interface CollectionContextValue<
-  TElement extends HTMLElement,
-  TItemData extends object = {},
-> {
-  collectionRef: React.RefObject<TElement | null>;
-  itemMap: Map<React.RefObject<TElement>, CollectionItem<TElement, TItemData>>;
-}
-
 interface UseCollectionParams<TElement extends HTMLElement> {
   ref: React.RefObject<TElement | null>;
   attr?: string;
@@ -30,7 +15,7 @@ function useCollection<TElement extends HTMLElement>({
     if (!collectionNode) return [];
 
     const items = Array.from(
-      collectionNode.querySelectorAll(`[${attr}]`),
+      collectionNode.querySelectorAll(`[${attr}]`)
     ) satisfies TElement[];
 
     const orderedItems = items.sort((a, b) => {
@@ -45,43 +30,16 @@ function useCollection<TElement extends HTMLElement>({
   const getEnabledItems = React.useCallback(() => {
     const items = getItems();
     return items.filter(
-      (item) => item.getAttribute("aria-disabled") !== "true",
+      (item) => item.getAttribute("aria-disabled") !== "true"
     );
   }, [getItems]);
 
   return { getItems, getEnabledItems };
 }
 
-function useCollectionItem<
-  TElement extends HTMLElement,
-  TItemData extends object = {},
->(
-  ref: React.RefObject<TElement>,
-  context: CollectionContextValue<TElement, TItemData>,
-  value: string,
-  itemData: TItemData,
-) {
-  React.useEffect(() => {
-    context.itemMap.set(ref, { ref: ref.current, value, ...itemData });
-    return () => {
-      context.itemMap.delete(ref);
-    };
-  }, [ref, value, itemData, context.itemMap]);
-}
-
-function getItem<TElement extends HTMLElement, TItemData extends object = {}>(
-  item: TElement,
-  context: CollectionContextValue<TElement, TItemData>,
-): CollectionItem<TElement, TItemData> | null {
-  for (const [ref, data] of context.itemMap.entries()) {
-    if (ref.current === item) return data;
-  }
-  return null;
-}
-
 function getSortedItems<TElement extends HTMLElement>(
   items: TElement[],
-  value?: string[],
+  value?: string[]
 ) {
   if (!value?.length) return items;
 
@@ -98,6 +56,4 @@ function getSortedItems<TElement extends HTMLElement>(
   });
 }
 
-export { getItem, getSortedItems, useCollection, useCollectionItem };
-
-export type { CollectionContextValue, CollectionItem };
+export { getSortedItems, useCollection };

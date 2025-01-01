@@ -79,9 +79,9 @@ MentionContent.displayName = CONTENT_NAME;
 const Content = MentionContent;
 
 export {
+  Content,
   MentionContent,
   MentionContentProvider,
-  Content,
   useMentionContentContext,
 };
 
