@@ -1,10 +1,11 @@
 import {
   DATA_ITEM_ATTR,
+  Primitive,
   composeEventHandlers,
   createContext,
   useId,
 } from "@diceui/shared";
-import { Primitive } from "@radix-ui/react-primitive";
+// import { Primitive } from "@radix-ui/react-primitive";
 import * as React from "react";
 import { type InputValue, useTagsInput } from "./tags-input-root";
 

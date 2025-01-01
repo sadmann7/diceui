@@ -339,9 +339,15 @@ importers:
       '@types/react':
         specifier: '*'
         version: 19.0.1
+      '@types/react-dom':
+        specifier: '*'
+        version: 19.0.2(@types/react@19.0.1)
       react:
         specifier: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
         version: 19.0.0
+      react-dom:
+        specifier: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+        version: 19.0.0(react@19.0.0)
     devDependencies:
       tsup:
         specifier: ^8.3.5
