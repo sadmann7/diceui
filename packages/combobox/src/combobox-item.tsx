@@ -73,8 +73,8 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
       >
         <Primitive.div
           {...{ [DATA_ITEM_ATTR]: "" }}
-          role="option"
           id={id}
+          role="option"
           aria-selected={isSelected}
           aria-disabled={isDisabled}
           aria-labelledby={textId}

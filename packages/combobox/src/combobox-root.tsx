@@ -2,6 +2,7 @@ import {
   BubbleInput,
   DATA_VALUE_ATTR,
   type Direction,
+  type HighlightingDirection,
   Primitive,
   createContext,
   forwardRef,
@@ -27,13 +28,12 @@ type Value<Multiple extends boolean = false> = Multiple extends true
   ? string[]
   : string;
 
-type HighlightingDirection = "next" | "prev" | "first" | "last" | "selected";
-
 type CollectionElement = React.ElementRef<typeof Primitive.div>;
 type PositionerElement = React.ElementRef<typeof ComboboxPositioner>;
 type InputElement = React.ElementRef<typeof ComboboxInput>;
 type AnchorElement = React.ElementRef<typeof ComboboxAnchor>;
 type ItemElement = React.ElementRef<typeof ComboboxItem>;
+
 interface ComboboxContextValue<Multiple extends boolean = false> {
   value: Value<Multiple>;
   onValueChange: (value: Value<Multiple>) => void;
