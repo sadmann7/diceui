@@ -29,7 +29,7 @@ function isNodeScrollable(node: Element | null): boolean {
 
   const style = window.getComputedStyle(node);
   const hasScrollStyle = /(auto|scroll)/.test(
-    style.overflow + style.overflowX + style.overflowY,
+    style.overflow + style.overflowX + style.overflowY
   );
 
   return (
@@ -62,14 +62,6 @@ function scrollIntoView(target: Element) {
 
     currentNode = currentNode.parentElement;
   }
-}
-
-function getScrollbarWidth(win: Window = window, doc: Document = document) {
-  return Math.max(0, win.innerWidth - doc.documentElement.clientWidth);
-}
-
-function getScrollbarHeight(win: Window = window, doc: Document = document) {
-  return Math.max(0, win.innerHeight - doc.documentElement.clientHeight);
 }
 
 function getIsDvhSupported() {
@@ -166,8 +158,14 @@ function useScrollLock({
       bodyBoxSizing: body.style.boxSizing,
     };
 
-    const scrollbarWidth = getScrollbarWidth(win, doc);
-    const scrollbarHeight = getScrollbarHeight(win, doc);
+    const scrollbarWidth = Math.max(
+      0,
+      win.innerWidth - doc.documentElement.clientWidth
+    );
+    const scrollbarHeight = Math.max(
+      0,
+      win.innerHeight - doc.documentElement.clientHeight
+    );
     const dvhSupported = getIsDvhSupported();
     const isInsetScroll = getIsInsetScroll(referenceElement);
 
@@ -251,20 +249,23 @@ function useScrollLock({
         function onFocus(event: FocusEvent) {
           const target = event.target as HTMLElement;
           if (getCanOpenKeyboard(target)) {
+            // Move the target out of the viewport for Safari
             target.style.transform = "translateY(-2000px)";
             requestAnimationFrame(() => {
               target.style.transform = "";
-              if (win.visualViewport) {
-                if (win.visualViewport.height < win.innerHeight) {
-                  requestAnimationFrame(() => scrollIntoView(target));
-                } else {
-                  win.visualViewport.addEventListener(
-                    "resize",
-                    () => scrollIntoView(target),
-                    { once: true },
-                  );
-                }
+
+              if (!win.visualViewport) return;
+
+              if (win.visualViewport.height < win.innerHeight) {
+                requestAnimationFrame(() => scrollIntoView(target));
+                return;
               }
+
+              win.visualViewport.addEventListener(
+                "resize",
+                () => scrollIntoView(target),
+                { once: true }
+              );
             });
           }
         }
@@ -313,13 +314,13 @@ function useScrollLock({
               ? `calc(100dvh - ${marginY}px)`
               : "100dvh"
             : marginY
-              ? `calc(100vh - ${marginY}px)`
-              : "100vh",
+            ? `calc(100vh - ${marginY}px)`
+            : "100vh",
           boxSizing: "border-box",
           overflow: "hidden",
         });
 
-        // Special handling for Firefox without inset scrollbars
+        // Firefox without inset scrollbars
         if (isFirefox() && !isInsetScroll) {
           body.style.marginRight = `${scrollbarWidth}px`;
         }
@@ -355,7 +356,7 @@ function useScrollLock({
       // Restore scroll position
       win.scrollTo(
         scrollPositionRef.current.left,
-        scrollPositionRef.current.top,
+        scrollPositionRef.current.top
       );
     }
 
