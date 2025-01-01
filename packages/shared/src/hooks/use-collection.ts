@@ -15,7 +15,7 @@ function useCollection<TElement extends HTMLElement>({
     if (!collectionNode) return [];
 
     const items = Array.from(
-      collectionNode.querySelectorAll(`[${attr}]`)
+      collectionNode.querySelectorAll(`[${attr}]`),
     ) satisfies TElement[];
 
     const orderedItems = items.sort((a, b) => {
@@ -30,7 +30,7 @@ function useCollection<TElement extends HTMLElement>({
   const getEnabledItems = React.useCallback(() => {
     const items = getItems();
     return items.filter(
-      (item) => item.getAttribute("aria-disabled") !== "true"
+      (item) => item.getAttribute("aria-disabled") !== "true",
     );
   }, [getItems]);
 
@@ -39,7 +39,7 @@ function useCollection<TElement extends HTMLElement>({
 
 function getSortedItems<TElement extends HTMLElement>(
   items: TElement[],
-  value?: string[]
+  value?: string[],
 ) {
   if (!value?.length) return items;
 

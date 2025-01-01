@@ -1,3 +1,7 @@
+/**
+ * @see https://github.com/radix-ui/primitives/blob/main/packages/react/collection/src/Collection.tsx
+ */
+
 import * as React from "react";
 import { DATA_ITEM_ATTR } from "../constants";
 import { composeRefs } from "../lib/compose-refs";
