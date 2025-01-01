@@ -44,86 +44,95 @@ const MentionPositioner = React.forwardRef<
     ...positionerProps
   } = props;
 
-  const context = useMentionContext(POSITIONER_NAME);
+  const { open, onOpenChange, triggerRef, state } =
+    useMentionContext(POSITIONER_NAME);
 
-  const positionerContext = useMentionPositioner({
-    open: context.state.isOpen,
-    onOpenChange: (open) => {
-      if (!open) context.onClose();
-      else context.onOpen();
-    },
+  const {
+    refs,
+    placement,
+    middlewareData,
+    elements,
+    update,
+    context: floatingContext,
+    floatingStyles,
+    arrowStyles,
+    onArrowChange,
+    renderedSide,
+    renderedAlign,
+    arrowDisplaced,
+  } = useMentionPositioner({
+    open,
+    onOpenChange,
+    triggerRef,
     side,
     sideOffset,
     align,
     alignOffset,
+    arrowPadding,
     collisionBoundary,
     collisionPadding,
-    arrowPadding,
     sticky,
     strategy,
     avoidCollisions,
     fitViewport,
-    forceMount,
     hideWhenDetached,
     trackAnchor,
-    triggerRef: context.triggerRef,
   });
 
-  const composedRef = useComposedRefs(forwardedRef, (node) =>
-    positionerContext.refs.setFloating(node),
+  const composedRef = useComposedRefs<HTMLDivElement>(forwardedRef, (node) =>
+    refs.setFloating(node),
   );
 
-  const composedStyle = React.useMemo<React.CSSProperties>(
-    () => ({
-      ...style,
-      ...positionerContext.floatingStyles,
-      ...(!context.state.isOpen && forceMount ? { visibility: "hidden" } : {}),
-    }),
-    [style, positionerContext.floatingStyles, context.state.isOpen, forceMount],
-  );
+  useScrollLock({ enabled: open });
 
-  useScrollLock({
-    referenceElement: positionerContext.refs.floating.current,
-    enabled: context.state.isOpen,
-  });
+  React.useEffect(() => {
+    if (state.triggerPoint) {
+      update();
+    }
+  }, [state.triggerPoint, update]);
 
-  if (!forceMount && !context.state.isOpen) {
+  if (!forceMount && !open) {
     return null;
   }
 
-  const content = (
-    <MentionContentProvider
-      side={side}
-      align={align}
-      onArrowChange={positionerContext.onArrowChange}
-      arrowDisplaced={positionerContext.arrowDisplaced}
-      arrowStyles={positionerContext.arrowStyles}
-      forceMount={forceMount}
-    >
-      <Primitive.div
-        data-state={getDataState(context.state.isOpen)}
-        {...positionerContext.getFloatingProps(positionerProps)}
-        ref={composedRef}
-        style={composedStyle}
-      />
-    </MentionContentProvider>
-  );
-
   return (
     <FloatingFocusManager
-      context={positionerContext.context}
-      disabled={!context.state.isOpen}
-      initialFocus={context.triggerRef}
+      context={floatingContext}
       modal={false}
+      initialFocus={-1}
+      returnFocus={false}
+      visuallyHiddenDismiss
     >
-      {content}
+      <MentionContentProvider
+        side={renderedSide}
+        align={renderedAlign}
+        arrowStyles={arrowStyles}
+        arrowDisplaced={arrowDisplaced}
+        onArrowChange={onArrowChange}
+        forceMount={forceMount}
+      >
+        <Primitive.div
+          ref={composedRef}
+          role="listbox"
+          aria-orientation="vertical"
+          data-state={getDataState(open)}
+          data-side={renderedSide}
+          data-align={renderedAlign}
+          style={{
+            ...style,
+            ...floatingStyles,
+            position: strategy,
+            top: state.triggerPoint?.top ?? 0,
+            left: state.triggerPoint?.left ?? 0,
+          }}
+          {...positionerProps}
+        />
+      </MentionContentProvider>
     </FloatingFocusManager>
   );
 });
 
 MentionPositioner.displayName = POSITIONER_NAME;
 
-const Positioner = MentionPositioner;
-
-export { MentionPositioner, Positioner };
+export { MentionPositioner };
 export type { MentionPositionerProps };

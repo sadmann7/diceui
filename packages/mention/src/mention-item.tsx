@@ -2,19 +2,23 @@ import { Primitive, composeEventHandlers } from "@diceui/shared";
 import * as React from "react";
 import { useMentionContext } from "./mention-root";
 
-export interface MentionItemProps
+const ITEM_NAME = "MentionItem";
+
+interface MentionItemProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.li> {
   value: string;
 }
 
-export const MentionItem = React.forwardRef<HTMLLIElement, MentionItemProps>(
+const MentionItem = React.forwardRef<HTMLLIElement, MentionItemProps>(
   ({ value, onClick, ...props }, ref) => {
-    const { onSelect, state } = useMentionContext("MentionItem");
-    const isSelected = state.selectedValue === value;
+    const { onSelect, selectedValue } = useMentionContext(ITEM_NAME);
+    const isSelected = selectedValue === value;
 
     return (
       <Primitive.li
         ref={ref}
+        role="option"
+        aria-selected={isSelected}
         data-selected={isSelected ? "" : undefined}
         onClick={composeEventHandlers(onClick, () => onSelect(value))}
         {...props}
@@ -23,4 +27,10 @@ export const MentionItem = React.forwardRef<HTMLLIElement, MentionItemProps>(
   },
 );
 
-MentionItem.displayName = "MentionItem";
+MentionItem.displayName = ITEM_NAME;
+
+const Item = MentionItem;
+
+export { MentionItem, Item };
+
+export type { MentionItemProps };
