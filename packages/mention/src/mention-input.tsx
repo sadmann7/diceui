@@ -12,7 +12,7 @@ interface MentionInputProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.input> {}
 
 const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
-  ({ ...props }, ref) => {
+  (props, ref) => {
     const context = useMentionContext(INPUT_NAME);
     const composedRef = useComposedRefs<HTMLInputElement>(
       ref,
@@ -64,10 +64,22 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
 
     return (
       <Primitive.input
+        role="combobox"
+        id={context.inputId}
+        autoCapitalize="off"
+        autoComplete="off"
+        autoCorrect="off"
+        spellCheck="false"
+        aria-expanded={context.open}
+        aria-controls={context.contentId}
+        aria-labelledby={context.labelId}
+        aria-autocomplete="list"
+        aria-disabled={context.disabled}
+        disabled={context.disabled}
+        {...props}
         ref={composedRef}
         onChange={composeEventHandlers(props.onChange, onChange)}
         onKeyDown={composeEventHandlers(props.onKeyDown, onKeyDown)}
-        {...props}
       />
     );
   },

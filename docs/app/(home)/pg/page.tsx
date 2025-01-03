@@ -33,7 +33,8 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <Mention.Root>
+      <Mention.Root className="flex w-[15rem] flex-col gap-2">
+        <Mention.Label>Tricks</Mention.Label>
         <Mention.Input />
         <Mention.Content>
           {tricks.map((trick) => (

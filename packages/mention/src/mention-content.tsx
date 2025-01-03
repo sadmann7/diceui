@@ -65,6 +65,7 @@ const MentionContent = React.forwardRef<HTMLDivElement, MentionContentProps>(
 
     return (
       <MentionPositioner
+        id={context.contentId}
         role="listbox"
         forceMount={forceMount}
         {...contentProps}
