@@ -1,7 +1,63 @@
 import * as React from "react";
 
-const collatorCache = new Map<string, Intl.Collator>();
-const normalizedCache = new Map<string, string>();
+class LRUCache<K, V> {
+  private cache: Map<K, V>;
+  private readonly maxSize: number;
+  private readonly keyOrder: K[];
+
+  constructor(maxSize: number) {
+    this.cache = new Map();
+    this.maxSize = maxSize;
+    this.keyOrder = [];
+  }
+
+  get(key: K): V | undefined {
+    const value = this.cache.get(key);
+    if (value !== undefined) {
+      // Move to most recently used
+      const index = this.keyOrder.indexOf(key);
+      if (index > -1) {
+        this.keyOrder.splice(index, 1);
+        this.keyOrder.push(key);
+      }
+    }
+    return value;
+  }
+
+  set(key: K, value: V): void {
+    if (this.cache.has(key)) {
+      // Update existing key
+      this.cache.set(key, value);
+      const index = this.keyOrder.indexOf(key);
+      if (index > -1) {
+        this.keyOrder.splice(index, 1);
+      }
+    } else {
+      // Add new key
+      if (this.keyOrder.length >= this.maxSize) {
+        const lruKey = this.keyOrder.shift();
+        if (lruKey !== undefined) {
+          this.cache.delete(lruKey);
+        }
+      }
+      this.cache.set(key, value);
+    }
+    this.keyOrder.push(key);
+  }
+
+  clear(): void {
+    this.cache.clear();
+    this.keyOrder.length = 0;
+  }
+
+  get size(): number {
+    return this.cache.size;
+  }
+}
+
+// Cache sizes tuned for typical usage patterns
+const collatorCache = new LRUCache<string, Intl.Collator>(10); // Few collator options typically used
+const normalizedCache = new LRUCache<string, string>(1000); // More strings to normalize
 
 interface UseFilterOptions extends Intl.CollatorOptions {
   gapMatch?: boolean;
@@ -19,16 +75,14 @@ function normalizeWithGaps(str: string) {
 
   let normalized: string;
   try {
-    // Combine operations to reduce string iterations
     normalized = str
       .toLowerCase()
       .normalize("NFC")
       .replace(UNWANTED_CHARS, " ")
       .replace(SEPARATORS_PATTERN, " ")
       .trim()
-      .replace(/\s+/g, ""); // Remove all spaces for gap matching
+      .replace(/\s+/g, "");
   } catch (_err) {
-    // Fallback for environments without Unicode property support
     normalized = str
       .toLowerCase()
       .normalize("NFC")
@@ -37,19 +91,9 @@ function normalizeWithGaps(str: string) {
       .replace(/\s+/g, "");
   }
 
-  // Only cache if the normalized string is different from lowercase input
-  if (normalized !== str.toLowerCase()) {
-    normalizedCache.set(str, normalized);
-  }
-
+  // Cache the normalized string
+  normalizedCache.set(str, normalized);
   return normalized;
-}
-
-// Limit cache size to prevent memory leaks
-function clearCacheIfNeeded() {
-  if (normalizedCache.size > 10000) {
-    normalizedCache.clear();
-  }
 }
 
 export function useFilter(options?: UseFilterOptions) {
@@ -63,7 +107,7 @@ export function useFilter(options?: UseFilterOptions) {
   if (!collator) {
     collator = new Intl.Collator("en", {
       ...options,
-      sensitivity: "base", // Make collator ignore case and diacritics by default
+      sensitivity: "base",
     });
     collatorCache.set(cacheKey, collator);
   }
@@ -75,7 +119,6 @@ export function useFilter(options?: UseFilterOptions) {
       }
 
       if (options?.gapMatch) {
-        clearCacheIfNeeded();
         const normalizedString = normalizeWithGaps(string);
         const normalizedSubstring = normalizeWithGaps(substring);
         return normalizedString.startsWith(normalizedSubstring);
@@ -100,7 +143,6 @@ export function useFilter(options?: UseFilterOptions) {
       }
 
       if (options?.gapMatch) {
-        clearCacheIfNeeded();
         const normalizedString = normalizeWithGaps(string);
         const normalizedSubstring = normalizeWithGaps(substring);
         return normalizedString.endsWith(normalizedSubstring);
@@ -125,7 +167,6 @@ export function useFilter(options?: UseFilterOptions) {
       }
 
       if (options?.gapMatch) {
-        clearCacheIfNeeded();
         const normalizedString = normalizeWithGaps(string);
         const normalizedSubstring = normalizeWithGaps(substring);
         return normalizedString.includes(normalizedSubstring);
@@ -154,7 +195,6 @@ export function useFilter(options?: UseFilterOptions) {
       if (string.length === 0) return false;
 
       if (options?.gapMatch) {
-        clearCacheIfNeeded();
         const normalizedString = normalizeWithGaps(string);
         const normalizedPattern = normalizeWithGaps(pattern);
 
@@ -200,7 +240,7 @@ export function useFilter(options?: UseFilterOptions) {
     [collator, options?.gapMatch],
   );
 
-  const memoizedFilter = React.useMemo(
+  return React.useMemo(
     () => ({
       startsWith,
       endsWith,
@@ -209,6 +249,4 @@ export function useFilter(options?: UseFilterOptions) {
     }),
     [startsWith, endsWith, contains, fuzzy],
   );
-
-  return memoizedFilter;
 }
