@@ -46,8 +46,8 @@ interface MentionContextValue {
   onInputValueChange: (value: string) => void;
   inputRef: React.RefObject<HTMLInputElement | null>;
   listRef: React.RefObject<ListElement | null>;
-  triggerCharacter: string;
-  onTriggerCharacterChange: (character: string) => void;
+  trigger: string;
+  onTriggerChange: (character: string) => void;
   triggerPoint: { top: number; left: number } | null;
   onTriggerPointChange: (point: { top: number; left: number } | null) => void;
   onFilter?: (options: string[], term: string) => string[];
@@ -90,7 +90,7 @@ interface MentionProps
   /** Event handler called when a mention item is selected. */
   onValueChange?: (value: string[]) => void;
 
-  /** Whether the mention content is open. */
+  /** Whether the mention menu is open. */
   open?: boolean;
 
   /** The default open state. */
@@ -105,8 +105,8 @@ interface MentionProps
   /** Event handler called when the input value changes. */
   onInputValueChange?: (value: string) => void;
 
-  /** The trigger character to trigger the mention content. */
-  triggerCharacter?: string;
+  /** The character that activates the mention menu when typed. */
+  trigger?: string;
 
   /** The direction the mention should open. */
   dir?: Direction;
@@ -158,6 +158,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       value: valueProp,
       defaultValue,
       onValueChange,
+      trigger: triggerProp = "@",
       dir: dirProp,
       disabled = false,
       onFilter,
@@ -223,10 +224,10 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       defaultProp: defaultValue,
       onChange: onValueChange,
     });
+    const [trigger, setTrigger] =
+      React.useState<MentionContextValue["trigger"]>(triggerProp);
     const [triggerPoint, setTriggerPoint] =
       React.useState<MentionContextValue["triggerPoint"]>(null);
-    const [triggerCharacter, setTriggerCharacter] =
-      React.useState<MentionContextValue["triggerCharacter"]>("@");
 
     const onOpenChange = React.useCallback(
       (open: boolean) => {
@@ -348,8 +349,6 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       [loop, highlightedItem, getItems, value],
     );
 
-    console.log({ value, inputValue });
-
     return (
       <MentionProvider
         open={open}
@@ -365,8 +364,8 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         filterStore={filterStore}
         inputRef={inputRef}
         listRef={listRef}
-        triggerCharacter={triggerCharacter}
-        onTriggerCharacterChange={setTriggerCharacter}
+        trigger={trigger}
+        onTriggerChange={setTrigger}
         dir={dir}
         disabled={disabled}
         exactMatch={exactMatch}

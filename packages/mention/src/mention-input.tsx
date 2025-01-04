@@ -27,7 +27,7 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
         const lastChar = value[value.length - 1];
         const { selectionStart } = event.target;
 
-        if (lastChar === context.triggerCharacter) {
+        if (lastChar === context.trigger) {
           const rect = event.target.getBoundingClientRect();
           const lineHeight = Number.parseInt(
             getComputedStyle(event.target).lineHeight,
@@ -44,8 +44,8 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
           context.onHighlightedItemChange(null);
         } else if (context.open) {
           // Check if trigger character is still present and valid
-          const lastTriggerIndex = value.lastIndexOf(context.triggerCharacter);
-          if (!value.includes(context.triggerCharacter)) {
+          const lastTriggerIndex = value.lastIndexOf(context.trigger);
+          if (!value.includes(context.trigger)) {
             context.onOpenChange(false);
             context.onHighlightedItemChange(null);
             context.filterStore.search = "";
@@ -75,7 +75,7 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
         context.onFilterItems();
       },
       [
-        context.triggerCharacter,
+        context.trigger,
         context.onInputValueChange,
         context.onOpenChange,
         context.onTriggerPointChange,
@@ -113,7 +113,7 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
         if (selectionStart === null) return;
 
         const lastTriggerIndex = value.lastIndexOf(
-          context.triggerCharacter,
+          context.trigger,
           selectionStart,
         );
 
@@ -133,7 +133,7 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
         }
       },
       [
-        context.triggerCharacter,
+        context.trigger,
         context.onOpenChange,
         context.filterStore,
         context.onFilterItems,

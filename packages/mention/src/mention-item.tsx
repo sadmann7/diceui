@@ -91,17 +91,13 @@ const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
               },
             )}
             onPointerMove={composeEventHandlers(itemProps.onPointerMove, () => {
-              if (isDisabled) return;
-              context.onHighlightedItemChange(
-                textNode
-                  ? {
-                      ref: { current: textNode },
-                      value,
-                      textValue,
-                      disabled: isDisabled,
-                    }
-                  : null,
-              );
+              if (isDisabled || !textNode) return;
+              context.onHighlightedItemChange({
+                ref: { current: textNode },
+                value,
+                textValue,
+                disabled: isDisabled,
+              });
             })}
           />
         </ItemSlot>
