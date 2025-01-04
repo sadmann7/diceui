@@ -171,7 +171,7 @@ interface UseAnchorPositionerReturn {
   update: () => void;
   context: FloatingContext;
   getFloatingProps: (
-    floatingProps?: React.HTMLAttributes<HTMLElement>
+    floatingProps?: React.HTMLAttributes<HTMLElement>,
   ) => Record<string, unknown>;
   arrowStyles: React.CSSProperties;
   onArrowChange: (arrow: HTMLElement | null) => void;
@@ -211,8 +211,8 @@ function useAnchorPositioner({
         ? align === "start"
           ? "end"
           : align === "end"
-          ? "start"
-          : "center"
+            ? "start"
+            : "center"
         : align;
     return `${side}-${rtlAlign}` as Placement;
   }, [align, direction, side]);
@@ -233,7 +233,7 @@ function useAnchorPositioner({
           padding: collisionPadding || 0,
           fallbackStrategy:
             sticky === "partial" ? "bestFit" : "initialPlacement",
-        })
+        }),
       );
 
       middleware.push(
@@ -241,7 +241,7 @@ function useAnchorPositioner({
           boundary: collisionBoundary,
           padding: collisionPadding || 0,
           limiter: sticky === "partial" ? limitShift() : undefined,
-        })
+        }),
       );
     }
 
@@ -270,7 +270,7 @@ function useAnchorPositioner({
             });
           }
         },
-      })
+      }),
     );
 
     if (hideWhenDetached) {
@@ -282,7 +282,7 @@ function useAnchorPositioner({
         arrow({
           element: positionerArrow,
           padding: arrowPadding,
-        })
+        }),
       );
     }
 
@@ -308,7 +308,7 @@ function useAnchorPositioner({
       elementResize: trackAnchor && typeof ResizeObserver !== "undefined",
       layoutShift: trackAnchor && typeof IntersectionObserver !== "undefined",
     }),
-    [trackAnchor]
+    [trackAnchor],
   );
 
   const {
@@ -353,7 +353,7 @@ function useAnchorPositioner({
         elements.reference,
         elements.floating,
         update,
-        autoUpdateOptions
+        autoUpdateOptions,
       );
     }
     return undefined;
@@ -375,8 +375,8 @@ function useAnchorPositioner({
       placementAlign === "end"
         ? "start"
         : placementAlign === "start"
-        ? "end"
-        : "center";
+          ? "end"
+          : "center";
 
     return `${oppositeAlign} ${oppositeSide}`;
   }, [placementSide, placementAlign]);
@@ -387,7 +387,7 @@ function useAnchorPositioner({
       "data-side": placementSide,
       "data-align": placementAlign,
     }),
-    [placementSide, placementAlign]
+    [placementSide, placementAlign],
   );
 
   const floatingStyles = React.useMemo(() => {
@@ -462,7 +462,7 @@ function useAnchorPositioner({
       arrowDisplaced,
       anchorHidden,
       disableArrow,
-    ]
+    ],
   );
 
   return positionerContext;
