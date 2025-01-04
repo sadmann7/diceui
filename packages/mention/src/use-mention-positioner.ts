@@ -94,7 +94,7 @@ interface UseMentionPositionerReturn {
   update: () => void;
   context: FloatingContext;
   getFloatingProps: (
-    floatingProps?: React.HTMLAttributes<HTMLElement>,
+    floatingProps?: React.HTMLAttributes<HTMLElement>
   ) => Record<string, unknown>;
   arrowStyles: React.CSSProperties;
   onArrowChange: (arrow: HTMLElement | null) => void;
@@ -133,8 +133,8 @@ function useMentionPositioner({
         ? align === "start"
           ? "end"
           : align === "end"
-            ? "start"
-            : "center"
+          ? "start"
+          : "center"
         : align;
     return `${side}-${rtlAlign}` as Placement;
   }, [align, direction, side]);
@@ -155,7 +155,7 @@ function useMentionPositioner({
           padding: collisionPadding || 0,
           fallbackStrategy:
             sticky === "partial" ? "bestFit" : "initialPlacement",
-        }),
+        })
       );
 
       middleware.push(
@@ -163,7 +163,7 @@ function useMentionPositioner({
           boundary: collisionBoundary as Boundary | undefined,
           padding: collisionPadding || 0,
           limiter: sticky === "partial" ? limitShift() : undefined,
-        }),
+        })
       );
     }
 
@@ -192,7 +192,7 @@ function useMentionPositioner({
             });
           }
         },
-      }),
+      })
     );
 
     if (hideWhenDetached) {
@@ -203,7 +203,7 @@ function useMentionPositioner({
       arrow({
         element: positionerArrow,
         padding: arrowPadding,
-      }),
+      })
     );
 
     return middleware;
@@ -227,7 +227,7 @@ function useMentionPositioner({
       elementResize: trackAnchor && typeof ResizeObserver !== "undefined",
       layoutShift: trackAnchor && typeof IntersectionObserver !== "undefined",
     }),
-    [trackAnchor],
+    [trackAnchor]
   );
 
   const {
@@ -264,7 +264,7 @@ function useMentionPositioner({
         elements.reference,
         elements.floating,
         update,
-        autoUpdateOptions,
+        autoUpdateOptions
       );
     }
     return undefined;
@@ -286,8 +286,8 @@ function useMentionPositioner({
       placementAlign === "end"
         ? "start"
         : placementAlign === "start"
-          ? "end"
-          : "center";
+        ? "end"
+        : "center";
 
     return `${oppositeAlign} ${oppositeSide}`;
   }, [placementSide, placementAlign]);
@@ -298,7 +298,7 @@ function useMentionPositioner({
       "data-side": placementSide,
       "data-align": placementAlign,
     }),
-    [placementSide, placementAlign],
+    [placementSide, placementAlign]
   );
 
   const floatingStyles = React.useMemo(
@@ -308,8 +308,8 @@ function useMentionPositioner({
         top: y ?? 0,
         left: x ?? 0,
         [VAR_TRANSFORM_ORIGIN]: transformOrigin,
-      }) as const,
-    [floatingStrategy, x, y, transformOrigin],
+      } as const),
+    [floatingStrategy, x, y, transformOrigin]
   );
 
   const referenceHidden = !!middlewareData.hide?.referenceHidden;
@@ -330,7 +330,7 @@ function useMentionPositioner({
         left: "translateY(50%) rotate(-90deg) translateX(50%)",
       }[placementSide],
     }),
-    [middlewareData.arrow, placementSide, transformOrigin],
+    [middlewareData.arrow, placementSide, transformOrigin]
   );
 
   const positionerContext = React.useMemo(
@@ -366,7 +366,7 @@ function useMentionPositioner({
       placementAlign,
       arrowDisplaced,
       referenceHidden,
-    ],
+    ]
   );
 
   return positionerContext;

@@ -34,10 +34,14 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
           );
           const lines = value.slice(0, selectionStart ?? 0).split("\n");
           const currentLine = lines.length;
+          const scrollTop =
+            window.scrollY || document.documentElement.scrollTop;
+          const scrollLeft =
+            window.scrollX || document.documentElement.scrollLeft;
 
           context.onTriggerPointChange({
-            top: rect.top + currentLine * lineHeight,
-            left: rect.left + (selectionStart ?? 0) * 8,
+            top: rect.top + currentLine * lineHeight + scrollTop,
+            left: rect.left + (selectionStart ?? 0) * 8 + scrollLeft,
           });
           context.onOpenChange(true);
           context.filterStore.search = "";
@@ -96,10 +100,13 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
         );
         const lines = element.value.slice(0, cursorPosition).split("\n");
         const currentLine = lines.length;
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const scrollLeft =
+          window.scrollX || document.documentElement.scrollLeft;
 
         context.onTriggerPointChange({
-          top: rect.top + currentLine * lineHeight,
-          left: rect.left + cursorPosition * 8,
+          top: rect.top + currentLine * lineHeight + scrollTop,
+          left: rect.left + cursorPosition * 8 + scrollLeft,
         });
       },
       [context.onTriggerPointChange],
