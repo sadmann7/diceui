@@ -29,12 +29,12 @@ const ComboboxGroup = React.forwardRef<HTMLDivElement, ComboboxGroupProps>(
     const labelId = `${id}label`;
     const context = useComboboxContext(GROUP_NAME);
 
-    const shouldRender =
+    const isVisible =
       forceMount ||
       !context.filterStore.search ||
       context.filterStore.groups.has(id);
 
-    if (!shouldRender) return null;
+    if (!isVisible) return null;
 
     return (
       <ComboboxGroupProvider id={id} labelId={labelId} forceMount={forceMount}>

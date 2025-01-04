@@ -79,7 +79,9 @@ const MentionPositioner = React.forwardRef<
     refs.setFloating(node),
   );
 
-  useScrollLock({ enabled: context.open });
+  useScrollLock({
+    enabled: context.open && context.modal,
+  });
 
   React.useEffect(() => {
     if (context.triggerPoint) {
