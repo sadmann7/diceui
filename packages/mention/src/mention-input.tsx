@@ -1,5 +1,4 @@
 import {
-  DATA_VALUE_ATTR,
   Primitive,
   composeEventHandlers,
   useComposedRefs,
@@ -106,7 +105,7 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
       [context.onTriggerPointChange],
     );
 
-    const checkAndOpenMenu = React.useCallback(
+    const onCheckAndOpenMenu = React.useCallback(
       (element: HTMLInputElement) => {
         if (context.disabled || context.readonly) return;
 
@@ -146,16 +145,16 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
 
     const onClick = React.useCallback(
       (event: React.MouseEvent<HTMLInputElement>) => {
-        checkAndOpenMenu(event.currentTarget);
+        onCheckAndOpenMenu(event.currentTarget);
       },
-      [checkAndOpenMenu],
+      [onCheckAndOpenMenu],
     );
 
     const onFocus = React.useCallback(
       (event: React.FocusEvent<HTMLInputElement>) => {
-        checkAndOpenMenu(event.currentTarget);
+        onCheckAndOpenMenu(event.currentTarget);
       },
-      [checkAndOpenMenu],
+      [onCheckAndOpenMenu],
     );
 
     const onKeyDown = React.useCallback(
@@ -234,10 +233,7 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
       <Primitive.input
         role="combobox"
         id={context.inputId}
-        autoCapitalize="off"
         autoComplete="off"
-        autoCorrect="off"
-        spellCheck="false"
         aria-expanded={context.open}
         aria-controls={context.contentId}
         aria-labelledby={context.labelId}
