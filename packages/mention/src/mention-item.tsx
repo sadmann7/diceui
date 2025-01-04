@@ -58,11 +58,20 @@ const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
             role="option"
             aria-selected={isSelected}
             data-selected={isSelected ? "" : undefined}
+            data-highlighted={
+              context.highlightedItem?.id === id ? "" : undefined
+            }
+            data-disabled={isDisabled ? "" : undefined}
             {...itemProps}
             ref={composedRef}
-            onClick={composeEventHandlers(itemProps.onClick, () =>
-              context.onItemSelect(value),
-            )}
+            onPointerMove={composeEventHandlers(itemProps.onPointerMove, () => {
+              if (isDisabled) return;
+              context.onHighlightedItemChange(textNode);
+            })}
+            onClick={composeEventHandlers(itemProps.onClick, () => {
+              if (isDisabled) return;
+              context.onItemSelect(value);
+            })}
           />
         </CollectionItem>
       </MentionItemProvider>

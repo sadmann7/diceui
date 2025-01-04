@@ -38,7 +38,11 @@ export default function PlaygroundPage() {
         <Mention.Input />
         <Mention.Content>
           {tricks.map((trick) => (
-            <Mention.Item key={trick.value} value={trick.value}>
+            <Mention.Item
+              key={trick.value}
+              value={trick.value}
+              className="data-[highlighted]:bg-primary data-[highlighted]:text-primary-foreground"
+            >
               {trick.label}
             </Mention.Item>
           ))}

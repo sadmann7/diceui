@@ -1,5 +1,6 @@
 import {
   type Direction,
+  type HighlightingDirection,
   type ItemMap,
   Primitive,
   composeRefs,
@@ -30,7 +31,9 @@ interface ItemData {
   disabled: boolean;
 }
 
-const [Collection] = createCollection<CollectionItem, ItemData>(ROOT_NAME);
+const [Collection, useCollection] = createCollection<CollectionItem, ItemData>(
+  ROOT_NAME,
+);
 
 interface MentionContextValue {
   value: string[];
@@ -53,6 +56,9 @@ interface MentionContextValue {
     itemCount: number;
     items: Map<string, number>;
   };
+  highlightedItem: CollectionItem | null;
+  onHighlightedItemChange: (item: CollectionItem | null) => void;
+  onHighlightMove: (direction: HighlightingDirection) => void;
   dir: Direction;
   disabled: boolean;
   exactMatch: boolean;
@@ -171,7 +177,7 @@ const MentionRoot = React.forwardRef<CollectionItem, MentionProps>(
       items: new Map<string, number>(),
     }).current;
 
-    // const { getItems } = useCollection({ collectionRef, itemMap });
+    const { getItems } = useCollection({ collectionRef, itemMap });
     const filter = useFilter({ sensitivity: "base", gapMatch: true });
     const currentFilter = React.useMemo(
       () => (exactMatch ? filter.contains : filter.fuzzy),
@@ -296,6 +302,53 @@ const MentionRoot = React.forwardRef<CollectionItem, MentionProps>(
       filterStore.itemCount = itemCount;
     }, [filterStore, itemMap, getItemScore]);
 
+    const [highlightedItem, setHighlightedItem] =
+      React.useState<CollectionItem | null>(null);
+
+    const onHighlightMove = React.useCallback(
+      (direction: HighlightingDirection) => {
+        const items = getItems().filter((item) => !item.disabled);
+        if (!items.length) return;
+
+        const currentIndex = items.findIndex(
+          (item) => item.ref.current === highlightedItem,
+        );
+        let nextIndex: number;
+
+        switch (direction) {
+          case "next":
+            nextIndex = currentIndex + 1;
+            if (nextIndex >= items.length) {
+              nextIndex = loop ? 0 : items.length - 1;
+            }
+            break;
+          case "prev":
+            nextIndex = currentIndex - 1;
+            if (nextIndex < 0) {
+              nextIndex = loop ? items.length - 1 : 0;
+            }
+            break;
+          case "first":
+            nextIndex = 0;
+            break;
+          case "last":
+            nextIndex = items.length - 1;
+            break;
+          case "selected":
+            nextIndex = items.findIndex((item) => value.includes(item.value));
+            if (nextIndex === -1) nextIndex = 0;
+            break;
+        }
+
+        const nextItem = items[nextIndex];
+        if (nextItem) {
+          nextItem.ref.current?.scrollIntoView({ block: "nearest" });
+          setHighlightedItem(nextItem.ref.current);
+        }
+      },
+      [loop, highlightedItem, getItems, value],
+    );
+
     return (
       <MentionProvider
         open={open}
@@ -323,6 +376,9 @@ const MentionRoot = React.forwardRef<CollectionItem, MentionProps>(
         inputId={inputId}
         labelId={labelId}
         contentId={contentId}
+        highlightedItem={highlightedItem}
+        onHighlightedItemChange={setHighlightedItem}
+        onHighlightMove={onHighlightMove}
       >
         <Collection.Provider collectionRef={collectionRef} itemMap={itemMap}>
           <Primitive.div
