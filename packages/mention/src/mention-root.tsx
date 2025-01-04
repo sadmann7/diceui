@@ -1,4 +1,5 @@
 import {
+  type CollectionItem,
   type CollectionItemMap,
   type Direction,
   type HighlightingDirection,
@@ -31,7 +32,7 @@ interface ItemData {
   disabled: boolean;
 }
 
-const [Collection, useCollection] = createCollection<
+const [{ Provider, ItemSlot }, useCollection] = createCollection<
   CollectionElement,
   ItemData
 >(ROOT_NAME);
@@ -57,9 +58,9 @@ interface MentionContextValue {
     itemCount: number;
     items: Map<string, number>;
   };
-  highlightedItem: { ref: CollectionElement; data: ItemData } | null;
+  highlightedItem: CollectionItem<CollectionElement, ItemData> | null;
   onHighlightedItemChange: (
-    item: { ref: CollectionElement; data: ItemData } | null,
+    item: CollectionItem<CollectionElement, ItemData> | null,
   ) => void;
   onHighlightMove: (direction: HighlightingDirection) => void;
   dir: Direction;
@@ -307,10 +308,10 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       filterStore.itemCount = itemCount;
     }, [filterStore, itemMap, getItemScore]);
 
-    const [highlightedItem, setHighlightedItem] = React.useState<{
-      ref: CollectionElement;
-      data: ItemData;
-    } | null>(null);
+    const [highlightedItem, setHighlightedItem] = React.useState<CollectionItem<
+      CollectionElement,
+      ItemData
+    > | null>(null);
 
     const onHighlightMove = React.useCallback(
       (direction: HighlightingDirection) => {
@@ -318,7 +319,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         if (!items.length) return;
 
         const currentIndex = items.findIndex(
-          (item) => item.ref.current === highlightedItem?.ref,
+          (item) => item.ref.current === highlightedItem?.ref.current,
         );
         let nextIndex: number;
 
@@ -350,7 +351,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         const nextItem = items[nextIndex];
         if (nextItem?.ref.current) {
           nextItem.ref.current.scrollIntoView({ block: "nearest" });
-          setHighlightedItem({ ref: nextItem.ref.current, data: nextItem });
+          setHighlightedItem(nextItem);
         }
       },
       [loop, highlightedItem, getItems, value],
@@ -387,14 +388,14 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         onHighlightedItemChange={setHighlightedItem}
         onHighlightMove={onHighlightMove}
       >
-        <Collection.Provider collectionRef={collectionRef} itemMap={itemMap}>
+        <Provider collectionRef={collectionRef} itemMap={itemMap}>
           <Primitive.div
             ref={composeRefs(forwardedRef, collectionRef)}
             {...rootProps}
           >
             {children}
           </Primitive.div>
-        </Collection.Provider>
+        </Provider>
       </MentionProvider>
     );
   },
@@ -404,8 +405,6 @@ MentionRoot.displayName = ROOT_NAME;
 
 const Root = MentionRoot;
 
-const CollectionItem = Collection.ItemSlot;
-
-export { CollectionItem, MentionRoot, Root, getDataState, useMentionContext };
+export { ItemSlot, MentionRoot, Root, getDataState, useMentionContext };
 
 export type { MentionContextValue, MentionProps };

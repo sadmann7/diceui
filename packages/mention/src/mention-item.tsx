@@ -6,7 +6,7 @@ import {
   useId,
 } from "@diceui/shared";
 import * as React from "react";
-import { CollectionItem, useMentionContext } from "./mention-root";
+import { ItemSlot, useMentionContext } from "./mention-root";
 
 const ITEM_NAME = "MentionItem";
 
@@ -48,18 +48,14 @@ const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
         value={value}
         disabled={isDisabled}
       >
-        <CollectionItem
-          textValue={textValue}
-          value={value}
-          disabled={isDisabled}
-        >
+        <ItemSlot textValue={textValue} value={value} disabled={isDisabled}>
           <Primitive.div
             id={id}
             role="option"
             aria-selected={isSelected}
             data-selected={isSelected ? "" : undefined}
             data-highlighted={
-              context.highlightedItem?.ref.id === id ? "" : undefined
+              context.highlightedItem?.ref.current?.id === id ? "" : undefined
             }
             data-disabled={isDisabled ? "" : undefined}
             {...itemProps}
@@ -69,12 +65,10 @@ const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
               context.onHighlightedItemChange(
                 textNode
                   ? {
-                      ref: textNode,
-                      data: {
-                        value,
-                        textValue,
-                        disabled: isDisabled,
-                      },
+                      ref: { current: textNode },
+                      value,
+                      textValue,
+                      disabled: isDisabled,
                     }
                   : null,
               );
@@ -84,7 +78,7 @@ const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
               context.onItemSelect(value);
             })}
           />
-        </CollectionItem>
+        </ItemSlot>
       </MentionItemProvider>
     );
   },
