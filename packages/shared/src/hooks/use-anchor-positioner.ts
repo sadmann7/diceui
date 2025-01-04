@@ -2,7 +2,6 @@ import {
   type AutoUpdateOptions,
   type Boundary,
   type FloatingContext,
-  type Middleware,
   type Placement,
   type Strategy,
   type UseFloatingReturn,
@@ -30,11 +29,31 @@ import type { Align, Side } from "../types";
 import { useDirection } from "./use-direction";
 import { useIsomorphicLayoutEffect } from "./use-isomorphic-layout-effect";
 
+const LONGHAND_SIDES: Record<Side, Side> = {
+  top: "bottom",
+  right: "left",
+  bottom: "top",
+  left: "right",
+} as const;
+
+const ARROW_TRANSFORMS: Record<Side, string> = {
+  top: "translateY(100%)",
+  right: "translateY(50%) rotate(90deg) translateX(-50%)",
+  bottom: "rotate(180deg)",
+  left: "translateY(50%) rotate(-90deg) translateX(50%)",
+} as const;
+
+function isValidNumber(value: unknown): value is number {
+  return (
+    typeof value === "number" && !Number.isNaN(value) && Number.isFinite(value)
+  );
+}
+
 interface UseAnchorPositionerProps {
-  /** Whether the combobox is open. */
+  /** Whether the popover is open. */
   open: boolean;
 
-  /** Event handler called when the combobox is opened or closed. */
+  /** Event handler called when the popover is opened or closed. */
   onOpenChange: (open: boolean) => void;
 
   /**
@@ -44,25 +63,25 @@ interface UseAnchorPositionerProps {
   anchorRef?: React.RefObject<HTMLElement | null> | VirtualElement | null;
 
   /**
-   * The preferred placement of the combobox relative to its anchor element.
+   * The preferred placement of the popover relative to its anchor element.
    * If there is not enough space, it will be adjusted automatically.
-   * - 'top': Position the combobox above the anchor
-   * - 'right': Position the combobox to the right of the anchor
-   * - 'bottom': Position the combobox below the anchor
-   * - 'left': Position the combobox to the left of the anchor
+   * - 'top': Position the popover above the anchor
+   * - 'right': Position the popover to the right of the anchor
+   * - 'bottom': Position the popover below the anchor
+   * - 'left': Position the popover to the left of the anchor
    * @default "bottom"
    */
   side?: Side;
 
   /**
-   * The distance in pixels from the anchor element to the combobox.
-   * This creates a gap between the anchor and combobox.
+   * The distance in pixels from the anchor element to the popover.
+   * This creates a gap between the anchor and popover.
    * @default 4
    */
   sideOffset?: number;
 
   /**
-   * The alignment of the combobox relative to its anchor element.
+   * The alignment of the popover relative to its anchor element.
    * - 'start': Align with the start edge of the anchor
    * - 'center': Center align with the anchor
    * - 'end': Align with the end edge of the anchor
@@ -72,33 +91,33 @@ interface UseAnchorPositionerProps {
 
   /**
    * The distance in pixels from the aligned edge when using align.
-   * Allows the combobox to be offset from its default aligned position.
+   * Allows the popover to be offset from its default aligned position.
    * @default 0
    */
   alignOffset?: number;
 
   /**
-   * The element or elements that constrain where the combobox can be positioned.
+   * The element or elements that constrain where the popover can be positioned.
    * By default, this is the viewport (browser window).
    */
   collisionBoundary?: Boundary;
 
   /**
    * The amount of padding around the boundary edges for collision detection.
-   * This prevents the combobox from touching the edges of its container.
+   * This prevents the popover from touching the edges of its container.
    * @default 0
    */
   collisionPadding?: number | Partial<Record<Side, number>>;
 
   /**
-   * The padding between the arrow element and the combobox edges.
-   * Prevents the arrow from reaching the very edge of the combobox.
+   * The padding between the arrow element and the popover edges.
+   * Prevents the arrow from reaching the very edge of the popover.
    * @default 0
    */
   arrowPadding?: number;
 
   /**
-   * Controls how the combobox responds to scroll events.
+   * Controls how the popover responds to scroll events.
    * - 'partial': Allows partial visibility when scrolling
    * - 'always': Maintains full visibility by shifting position
    * @default "partial"
@@ -114,9 +133,9 @@ interface UseAnchorPositionerProps {
   strategy?: Strategy;
 
   /**
-   * Whether the combobox should automatically adjust its placement to stay in view.
+   * Whether the popover should automatically adjust its placement to stay in view.
    * When enabled, changes position when there's not enough space in the current placement.
-   * @default false
+   * @default true
    */
   avoidCollisions?: boolean;
 
@@ -128,28 +147,28 @@ interface UseAnchorPositionerProps {
   disableArrow?: boolean;
 
   /**
-   * Whether the combobox should be constrained to the viewport dimensions.
-   * When true, the combobox will not exceed the browser window width/height.
+   * Whether the popover should be constrained to the viewport dimensions.
+   * When true, the popover will not exceed the browser window width/height.
    * @default false
    */
   fitViewport?: boolean;
 
   /**
-   * Whether the combobox should be mounted in the DOM even when closed.
-   * Useful for animations or when you need to measure the combobox before displaying it.
+   * Whether the popover should be mounted in the DOM even when closed.
+   * Useful for animations or when you need to measure the popover before displaying it.
    * @default false
    */
   forceMount?: boolean;
 
   /**
-   * Whether the combobox should be hidden when it would be positioned outside its boundary.
-   * Useful for preventing partially visible comboboxes.
+   * Whether the popover should be hidden when it would be positioned outside its boundary.
+   * Useful for preventing partially visible popovers.
    * @default false
    */
   hideWhenDetached?: boolean;
 
   /**
-   * Whether the combobox should track the trigger element's position changes.
+   * Whether the popover should track the anchor element's position changes.
    * When true, updates position on scroll and resize events.
    * @default true
    */
@@ -171,7 +190,7 @@ interface UseAnchorPositionerReturn {
   update: () => void;
   context: FloatingContext;
   getFloatingProps: (
-    floatingProps?: React.HTMLAttributes<HTMLElement>,
+    floatingProps?: React.HTMLAttributes<HTMLElement>
   ) => Record<string, unknown>;
   arrowStyles: React.CSSProperties;
   onArrowChange: (arrow: HTMLElement | null) => void;
@@ -190,11 +209,11 @@ function useAnchorPositioner({
   align = "start",
   alignOffset = 0,
   collisionBoundary,
-  collisionPadding,
+  collisionPadding = 0,
   arrowPadding = 0,
   sticky = "partial",
   strategy = "absolute",
-  avoidCollisions = false,
+  avoidCollisions = true,
   disableArrow = false,
   fitViewport = false,
   forceMount = false,
@@ -205,61 +224,65 @@ function useAnchorPositioner({
   const [positionerArrow, setPositionerArrow] =
     React.useState<HTMLElement | null>(null);
 
-  const placement = React.useMemo<Placement>(() => {
-    const rtlAlign =
-      direction === "rtl"
-        ? align === "start"
-          ? "end"
-          : align === "end"
-            ? "start"
-            : "center"
-        : align;
-    return `${side}-${rtlAlign}` as Placement;
-  }, [align, direction, side]);
+  const rtlAlign = React.useMemo(() => {
+    if (direction !== "rtl") return align;
+    return align === "start" ? "end" : align === "end" ? "start" : "center";
+  }, [align, direction]);
 
-  const middleware = React.useMemo(() => {
-    const middleware: Middleware[] = [
+  const placement = React.useMemo<Placement>(
+    () => `${side}-${rtlAlign}` as Placement,
+    [side, rtlAlign]
+  );
+
+  const baseMiddleware = React.useMemo(
+    () => [
       offset({
         mainAxis: sideOffset,
         alignmentAxis: alignOffset,
       }),
       inline(),
-    ];
+    ],
+    [sideOffset, alignOffset]
+  );
 
-    if (avoidCollisions) {
-      middleware.push(
-        flip({
-          boundary: collisionBoundary,
-          padding: collisionPadding || 0,
-          fallbackStrategy:
-            sticky === "partial" ? "bestFit" : "initialPlacement",
-        }),
-      );
+  const collisionMiddleware = React.useMemo(
+    () =>
+      avoidCollisions
+        ? [
+            flip({
+              boundary: collisionBoundary,
+              padding: collisionPadding,
+              fallbackStrategy:
+                sticky === "partial" ? "bestFit" : "initialPlacement",
+            }),
+            shift({
+              boundary: collisionBoundary,
+              padding: collisionPadding,
+              limiter: sticky === "partial" ? limitShift() : undefined,
+            }),
+          ]
+        : [],
+    [avoidCollisions, collisionBoundary, collisionPadding, sticky]
+  );
 
-      middleware.push(
-        shift({
-          boundary: collisionBoundary,
-          padding: collisionPadding || 0,
-          limiter: sticky === "partial" ? limitShift() : undefined,
-        }),
-      );
-    }
-
-    middleware.push(
+  const sizeMiddleware = React.useMemo(
+    () => [
       size({
-        padding: collisionPadding || 0,
+        padding: collisionPadding,
         apply({
           elements: { floating },
           rects: { reference },
           availableWidth,
           availableHeight,
         }) {
-          for (const [key, value] of Object.entries({
+          const styles = {
             [VAR_AVAILABLE_WIDTH]: `${availableWidth}px`,
             [VAR_AVAILABLE_HEIGHT]: `${availableHeight}px`,
             [VAR_ANCHOR_WIDTH]: `${reference.width}px`,
             [VAR_ANCHOR_HEIGHT]: `${reference.height}px`,
-          })) {
+          };
+
+          for (const [key, value] of Object.entries(styles)) {
             floating.style.setProperty(key, value);
           }
 
@@ -271,35 +294,39 @@ function useAnchorPositioner({
           }
         },
       }),
-    );
+    ],
+    [collisionPadding, fitViewport]
+  );
 
-    if (hideWhenDetached) {
-      middleware.push(hide());
-    }
+  const arrowMiddleware = React.useMemo(
+    () =>
+      !disableArrow && positionerArrow
+        ? [
+            arrow({
+              element: positionerArrow,
+              padding: arrowPadding,
+            }),
+          ]
+        : [],
+    [disableArrow, positionerArrow, arrowPadding]
+  );
 
-    if (!disableArrow) {
-      middleware.push(
-        arrow({
-          element: positionerArrow,
-          padding: arrowPadding,
-        }),
-      );
-    }
-
-    return middleware;
-  }, [
-    sideOffset,
-    alignOffset,
-    avoidCollisions,
-    collisionBoundary,
-    collisionPadding,
-    arrowPadding,
-    sticky,
-    hideWhenDetached,
-    fitViewport,
-    positionerArrow,
-    disableArrow,
-  ]);
+  const middleware = React.useMemo(
+    () => [
+      ...baseMiddleware,
+      ...collisionMiddleware,
+      ...sizeMiddleware,
+      ...(hideWhenDetached ? [hide()] : []),
+      ...arrowMiddleware,
+    ],
+    [
+      baseMiddleware,
+      collisionMiddleware,
+      sizeMiddleware,
+      hideWhenDetached,
+      arrowMiddleware,
+    ]
+  );
 
   const autoUpdateOptions = React.useMemo<AutoUpdateOptions>(
     () => ({
@@ -308,7 +335,7 @@ function useAnchorPositioner({
       elementResize: trackAnchor && typeof ResizeObserver !== "undefined",
       layoutShift: trackAnchor && typeof IntersectionObserver !== "undefined",
     }),
-    [trackAnchor],
+    [trackAnchor]
   );
 
   const {
@@ -336,14 +363,15 @@ function useAnchorPositioner({
   useIsomorphicLayoutEffect(() => {
     if (!open) return;
 
-    const reference =
-      anchorRef && "getBoundingClientRect" in anchorRef
-        ? anchorRef
-        : anchorRef?.current;
+    const isVirtualAnchor = anchorRef && "getBoundingClientRect" in anchorRef;
 
-    if (!reference) return;
+    const anchor = isVirtualAnchor ? anchorRef : anchorRef?.current;
 
-    refs.setReference(reference);
+    if (!anchor) return;
+
+    isVirtualAnchor
+      ? refs.setPositionReference(anchor)
+      : refs.setReference(anchor);
     update();
   }, [open, anchorRef, refs, update]);
 
@@ -353,7 +381,7 @@ function useAnchorPositioner({
         elements.reference,
         elements.floating,
         update,
-        autoUpdateOptions,
+        autoUpdateOptions
       );
     }
     return undefined;
@@ -363,20 +391,13 @@ function useAnchorPositioner({
     floatingPlacement.split("-") as [Side?, Align?];
 
   const transformOrigin = React.useMemo(() => {
-    const longhand: Record<Side, Side> = {
-      top: "bottom",
-      right: "left",
-      bottom: "top",
-      left: "right",
-    };
-
-    const oppositeSide = longhand[placementSide];
+    const oppositeSide = LONGHAND_SIDES[placementSide];
     const oppositeAlign =
       placementAlign === "end"
         ? "start"
         : placementAlign === "start"
-          ? "end"
-          : "center";
+        ? "end"
+        : "center";
 
     return `${oppositeAlign} ${oppositeSide}`;
   }, [placementSide, placementAlign]);
@@ -387,14 +408,12 @@ function useAnchorPositioner({
       "data-side": placementSide,
       "data-align": placementAlign,
     }),
-    [placementSide, placementAlign],
+    [placementSide, placementAlign]
   );
 
   const floatingStyles = React.useMemo(() => {
-    const validY =
-      typeof y === "number" && !Number.isNaN(y) && Number.isFinite(y) ? y : 0;
-    const validX =
-      typeof x === "number" && !Number.isNaN(x) && Number.isFinite(x) ? x : 0;
+    const validY = isValidNumber(y) ? y : 0;
+    const validX = isValidNumber(x) ? x : 0;
 
     return {
       position: floatingStrategy,
@@ -405,7 +424,6 @@ function useAnchorPositioner({
   }, [floatingStrategy, x, y, transformOrigin]);
 
   const anchorHidden = !!middlewareData.hide?.referenceHidden;
-
   const arrowDisplaced = disableArrow
     ? false
     : middlewareData.arrow?.centerOffset !== 0;
@@ -419,12 +437,7 @@ function useAnchorPositioner({
       left: middlewareData.arrow?.x,
       [placementSide]: 0,
       transformOrigin,
-      transform: {
-        top: "translateY(100%)",
-        right: "translateY(50%) rotate(90deg) translateX(-50%)",
-        bottom: "rotate(180deg)",
-        left: "translateY(50%) rotate(-90deg) translateX(50%)",
-      }[placementSide],
+      transform: ARROW_TRANSFORMS[placementSide],
     };
   }, [middlewareData.arrow, placementSide, transformOrigin, disableArrow]);
 
@@ -462,7 +475,7 @@ function useAnchorPositioner({
       arrowDisplaced,
       anchorHidden,
       disableArrow,
-    ],
+    ]
   );
 
   return positionerContext;
