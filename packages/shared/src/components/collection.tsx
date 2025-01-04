@@ -79,17 +79,18 @@ function createCollection<TItemElement extends HTMLElement, TItemData = {}>(
 
   CollectionItemSlot.displayName = ITEM_SLOT_NAME;
 
-  function useCollection(name: string) {
-    const context = useCollectionContext(name);
-
+  function useCollection<TItemElement extends HTMLElement, TItemData = {}>({
+    collectionRef,
+    itemMap,
+  }: CollectionContextValue<TItemElement, TItemData>) {
     const getItems = React.useCallback(() => {
-      const collectionNode = context.collectionRef.current;
+      const collectionNode = collectionRef.current;
       if (!collectionNode) return [];
 
       const orderedNodes = Array.from(
         collectionNode.querySelectorAll(`[${DATA_ITEM_ATTR}]`),
       );
-      const items = Array.from(context.itemMap.values());
+      const items = Array.from(itemMap.values());
 
       return items.sort(
         (a, b) =>
@@ -100,7 +101,7 @@ function createCollection<TItemElement extends HTMLElement, TItemData = {}>(
             b?.ref.current ?? globalThis.document.createElement("div"),
           ),
       );
-    }, [context.collectionRef, context.itemMap]);
+    }, [collectionRef, itemMap]);
 
     return { getItems };
   }

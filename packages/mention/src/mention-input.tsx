@@ -12,10 +12,10 @@ interface MentionInputProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.input> {}
 
 const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
-  (props, ref) => {
+  (props, forwardedRef) => {
     const context = useMentionContext(INPUT_NAME);
     const composedRef = useComposedRefs<HTMLInputElement>(
-      ref,
+      forwardedRef,
       context.inputRef,
     );
 
@@ -89,6 +89,6 @@ MentionInput.displayName = INPUT_NAME;
 
 const Input = MentionInput;
 
-export { MentionInput, Input };
+export { Input, MentionInput };
 
 export type { MentionInputProps };

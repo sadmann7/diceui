@@ -2,11 +2,11 @@ import {
   type Direction,
   type ItemMap,
   Primitive,
+  composeRefs,
   createCollection,
   createContext,
   useControllableState,
   useDirection,
-  useFilter,
   useId,
 } from "@diceui/shared";
 import * as React from "react";
@@ -49,7 +49,6 @@ interface MentionContextValue {
   onTriggerPointChange: (point: { top: number; left: number } | null) => void;
   onFilter?: (options: string[], term: string) => string[];
   onFilterItems: () => void;
-  filteredItems: string[];
   dir: Direction;
   disabled: boolean;
   exactMatch: boolean;
@@ -159,16 +158,17 @@ const MentionRoot = React.forwardRef<CollectionItem, MentionProps>(
     const collectionRef = React.useRef<CollectionItem | null>(null);
     const listRef = React.useRef<ListElement | null>(null);
     const inputRef = React.useRef<InputElement | null>(null);
-    const itemMapRef = React.useRef<ItemMap<CollectionItem, ItemData>>(
+    const itemMap = React.useRef<ItemMap<CollectionItem, ItemData>>(
       new Map(),
-    );
+    ).current;
+
+    const { getItems } = useCollection({ collectionRef, itemMap });
 
     const inputId = useId();
     const labelId = useId();
     const contentId = useId();
 
     const dir = useDirection(dirProp);
-    const filter = useFilter({ sensitivity: "base" });
     const [open = false, setOpen] = useControllableState({
       prop: openProp,
       defaultProp: defaultOpen,
@@ -186,9 +186,6 @@ const MentionRoot = React.forwardRef<CollectionItem, MentionProps>(
     });
     const [triggerPoint, setTriggerPoint] =
       React.useState<MentionContextValue["triggerPoint"]>(null);
-    const [filteredItems, setFilteredItems] = React.useState<
-      MentionContextValue["filteredItems"]
-    >([]);
     const [triggerCharacter, setTriggerCharacter] =
       React.useState<MentionContextValue["triggerCharacter"]>("@");
 
@@ -212,8 +209,6 @@ const MentionRoot = React.forwardRef<CollectionItem, MentionProps>(
 
     const onFilterItems = React.useCallback(() => {}, []);
 
-    console.log({ filteredItems });
-
     return (
       <MentionProvider
         open={open}
@@ -227,7 +222,6 @@ const MentionRoot = React.forwardRef<CollectionItem, MentionProps>(
         onTriggerPointChange={setTriggerPoint}
         onFilter={onFilter}
         onFilterItems={onFilterItems}
-        filteredItems={filteredItems}
         inputRef={inputRef}
         listRef={listRef}
         triggerCharacter={triggerCharacter}
@@ -242,11 +236,11 @@ const MentionRoot = React.forwardRef<CollectionItem, MentionProps>(
         labelId={labelId}
         contentId={contentId}
       >
-        <Collection.Provider
-          collectionRef={collectionRef}
-          itemMap={itemMapRef.current}
-        >
-          <Primitive.div ref={forwardedRef} {...rootProps}>
+        <Collection.Provider collectionRef={collectionRef} itemMap={itemMap}>
+          <Primitive.div
+            ref={composeRefs(forwardedRef, collectionRef)}
+            {...rootProps}
+          >
             {children}
           </Primitive.div>
         </Collection.Provider>
