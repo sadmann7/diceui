@@ -32,7 +32,7 @@ function TestPopover({
     anchorRef,
     side,
     align,
-    disablePointer: false,
+    disableArrow: false,
   });
 
   const arrowRef = React.useRef<HTMLDivElement>(null);
@@ -78,7 +78,7 @@ describe("useAnchorPositioner", () => {
     open: true,
     onOpenChange: vi.fn(),
     anchorRef: mockAnchorRef,
-    disablePointer: true,
+    disableArrow: true,
   };
 
   beforeEach(() => {
@@ -138,7 +138,7 @@ describe("useAnchorPositioner", () => {
         ...defaultProps,
         side: "right",
         align: "start",
-        disablePointer: false,
+        disableArrow: false,
       }),
     );
 
@@ -149,7 +149,7 @@ describe("useAnchorPositioner", () => {
     const { result } = renderHook(() =>
       useAnchorPositioner({
         ...defaultProps,
-        disablePointer: true,
+        disableArrow: true,
       }),
     );
 
@@ -216,7 +216,7 @@ describe("useAnchorPositioner", () => {
     const { result } = renderHook(() =>
       useAnchorPositioner({
         ...defaultProps,
-        disablePointer: false,
+        disableArrow: false,
       }),
     );
 

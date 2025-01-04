@@ -58,13 +58,13 @@ const MentionPositioner = React.forwardRef<
     arrowPadding,
     collisionBoundary,
     collisionPadding,
+    disableArrow: true,
     sticky,
     strategy,
     avoidCollisions,
     fitViewport,
     hideWhenDetached,
     trackAnchor,
-    disablePointer: true,
   });
 
   const composedRef = useComposedRefs<HTMLDivElement>(forwardedRef, (node) =>

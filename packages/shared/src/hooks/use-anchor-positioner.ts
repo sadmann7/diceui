@@ -40,7 +40,6 @@ interface UseAnchorPositionerProps {
   /**
    * Reference to the anchor element.
    * Can be either a VirtualElement or React ref to an HTMLElement element.
-   * @default undefined
    */
   anchorRef?: React.RefObject<HTMLElement | null> | VirtualElement | null;
 
@@ -81,9 +80,8 @@ interface UseAnchorPositionerProps {
   /**
    * The element or elements that constrain where the combobox can be positioned.
    * By default, this is the viewport (browser window).
-   * @default undefined
    */
-  collisionBoundary?: Element | Element[] | null;
+  collisionBoundary?: Boundary;
 
   /**
    * The amount of padding around the boundary edges for collision detection.
@@ -118,9 +116,16 @@ interface UseAnchorPositionerProps {
   /**
    * Whether the combobox should automatically adjust its placement to stay in view.
    * When enabled, changes position when there's not enough space in the current placement.
-   * @default true
+   * @default false
    */
   avoidCollisions?: boolean;
+
+  /**
+   * Whether to disable the floating pointer/indicator.
+   * When true, the pointer will not be rendered and pointer middleware will not be added.
+   * @default false
+   */
+  disableArrow?: boolean;
 
   /**
    * Whether the combobox should be constrained to the viewport dimensions.
@@ -149,18 +154,11 @@ interface UseAnchorPositionerProps {
    * @default true
    */
   trackAnchor?: boolean;
-
-  /**
-   * Whether to disable the floating pointer/indicator.
-   * When true, the pointer will not be rendered and pointer middleware will not be added.
-   * @default false
-   */
-  disablePointer?: boolean;
 }
 
 type AnchorPositionerProps = Omit<
   UseAnchorPositionerProps,
-  "open" | "onOpenChange" | "anchorRef" | "disablePointer"
+  "open" | "onOpenChange" | "anchorRef" | "disableArrow"
 >;
 
 interface UseAnchorPositionerReturn {
@@ -173,7 +171,7 @@ interface UseAnchorPositionerReturn {
   update: () => void;
   context: FloatingContext;
   getFloatingProps: (
-    floatingProps?: React.HTMLAttributes<HTMLElement>,
+    floatingProps?: React.HTMLAttributes<HTMLElement>
   ) => Record<string, unknown>;
   arrowStyles: React.CSSProperties;
   onArrowChange: (arrow: HTMLElement | null) => void;
@@ -197,24 +195,24 @@ function useAnchorPositioner({
   sticky = "partial",
   strategy = "absolute",
   avoidCollisions = false,
+  disableArrow = false,
   fitViewport = false,
   forceMount = false,
   hideWhenDetached = false,
   trackAnchor = true,
-  disablePointer = false,
 }: UseAnchorPositionerProps): UseAnchorPositionerReturn {
   const direction = useDirection();
   const [positionerArrow, setPositionerArrow] =
     React.useState<HTMLElement | null>(null);
 
-  const placement = React.useMemo((): Placement => {
+  const placement = React.useMemo<Placement>(() => {
     const rtlAlign =
       direction === "rtl"
         ? align === "start"
           ? "end"
           : align === "end"
-            ? "start"
-            : "center"
+          ? "start"
+          : "center"
         : align;
     return `${side}-${rtlAlign}` as Placement;
   }, [align, direction, side]);
@@ -231,19 +229,19 @@ function useAnchorPositioner({
     if (avoidCollisions) {
       middleware.push(
         flip({
-          boundary: collisionBoundary as Boundary | undefined,
+          boundary: collisionBoundary,
           padding: collisionPadding || 0,
           fallbackStrategy:
             sticky === "partial" ? "bestFit" : "initialPlacement",
-        }),
+        })
       );
 
       middleware.push(
         shift({
-          boundary: collisionBoundary as Boundary | undefined,
+          boundary: collisionBoundary,
           padding: collisionPadding || 0,
           limiter: sticky === "partial" ? limitShift() : undefined,
-        }),
+        })
       );
     }
 
@@ -272,19 +270,19 @@ function useAnchorPositioner({
             });
           }
         },
-      }),
+      })
     );
 
     if (hideWhenDetached) {
       middleware.push(hide());
     }
 
-    if (!disablePointer) {
+    if (!disableArrow) {
       middleware.push(
         arrow({
           element: positionerArrow,
           padding: arrowPadding,
-        }),
+        })
       );
     }
 
@@ -300,7 +298,7 @@ function useAnchorPositioner({
     hideWhenDetached,
     fitViewport,
     positionerArrow,
-    disablePointer,
+    disableArrow,
   ]);
 
   const autoUpdateOptions = React.useMemo<AutoUpdateOptions>(
@@ -310,7 +308,7 @@ function useAnchorPositioner({
       elementResize: trackAnchor && typeof ResizeObserver !== "undefined",
       layoutShift: trackAnchor && typeof IntersectionObserver !== "undefined",
     }),
-    [trackAnchor],
+    [trackAnchor]
   );
 
   const {
@@ -355,7 +353,7 @@ function useAnchorPositioner({
         elements.reference,
         elements.floating,
         update,
-        autoUpdateOptions,
+        autoUpdateOptions
       );
     }
     return undefined;
@@ -377,8 +375,8 @@ function useAnchorPositioner({
       placementAlign === "end"
         ? "start"
         : placementAlign === "start"
-          ? "end"
-          : "center";
+        ? "end"
+        : "center";
 
     return `${oppositeAlign} ${oppositeSide}`;
   }, [placementSide, placementAlign]);
@@ -389,7 +387,7 @@ function useAnchorPositioner({
       "data-side": placementSide,
       "data-align": placementAlign,
     }),
-    [placementSide, placementAlign],
+    [placementSide, placementAlign]
   );
 
   const floatingStyles = React.useMemo(
@@ -399,18 +397,18 @@ function useAnchorPositioner({
         top: y ?? 0,
         left: x ?? 0,
         [VAR_TRANSFORM_ORIGIN]: transformOrigin,
-      }) as const,
-    [floatingStrategy, x, y, transformOrigin],
+      } as const),
+    [floatingStrategy, x, y, transformOrigin]
   );
 
   const anchorHidden = !!middlewareData.hide?.referenceHidden;
 
-  const arrowDisplaced = disablePointer
+  const arrowDisplaced = disableArrow
     ? false
     : middlewareData.arrow?.centerOffset !== 0;
 
   const arrowStyles = React.useMemo<React.CSSProperties>(() => {
-    if (disablePointer) return {};
+    if (disableArrow) return {};
 
     return {
       position: "absolute" as const,
@@ -425,7 +423,7 @@ function useAnchorPositioner({
         left: "translateY(50%) rotate(-90deg) translateX(50%)",
       }[placementSide],
     };
-  }, [middlewareData.arrow, placementSide, transformOrigin, disablePointer]);
+  }, [middlewareData.arrow, placementSide, transformOrigin, disableArrow]);
 
   const positionerContext = React.useMemo(
     () => ({
@@ -439,7 +437,7 @@ function useAnchorPositioner({
       context,
       getFloatingProps,
       arrowStyles,
-      onArrowChange: disablePointer ? () => {} : setPositionerArrow,
+      onArrowChange: disableArrow ? () => {} : setPositionerArrow,
       side: placementSide,
       align: placementAlign,
       arrowDisplaced,
@@ -460,8 +458,8 @@ function useAnchorPositioner({
       placementAlign,
       arrowDisplaced,
       anchorHidden,
-      disablePointer,
-    ],
+      disableArrow,
+    ]
   );
 
   return positionerContext;
