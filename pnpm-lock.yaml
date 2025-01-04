@@ -330,6 +330,9 @@ importers:
 
   packages/shared:
     dependencies:
+      '@floating-ui/react':
+        specifier: ^0.27.2
+        version: 0.27.2(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@types/react':
         specifier: '*'
         version: 19.0.1

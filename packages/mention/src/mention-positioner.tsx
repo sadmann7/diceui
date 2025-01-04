@@ -1,17 +1,21 @@
-import { Primitive, useComposedRefs, useScrollLock } from "@diceui/shared";
+import {
+  Primitive,
+  type UseAnchorPositionerProps,
+  useAnchorPositioner,
+  useComposedRefs,
+  useScrollLock,
+} from "@diceui/shared";
 import { FloatingFocusManager } from "@floating-ui/react";
 import * as React from "react";
 import { MentionContentProvider } from "./mention-content";
 import { getDataState, useMentionContext } from "./mention-root";
-import type { UseMentionPositionerProps } from "./use-mention-positioner";
-import { useMentionPositioner } from "./use-mention-positioner";
 
 const POSITIONER_NAME = "MentionPositioner";
 
 interface MentionPositionerProps
   extends Omit<
-      UseMentionPositionerProps,
-      "open" | "onOpenChange" | "triggerRef" | "virtualAnchor"
+      UseAnchorPositionerProps,
+      "open" | "onOpenChange" | "triggerRef" | "anchor"
     >,
     React.ComponentPropsWithoutRef<typeof Primitive.div> {
   /**
@@ -46,11 +50,10 @@ const MentionPositioner = React.forwardRef<
 
   const context = useMentionContext(POSITIONER_NAME);
 
-  const positionerContext = useMentionPositioner({
+  const positionerContext = useAnchorPositioner({
     open: context.open,
     onOpenChange: context.onOpenChange,
-    triggerRef: context.inputRef,
-    virtualAnchor: context.virtualAnchor,
+    anchorRef: context.virtualAnchor,
     side,
     sideOffset,
     align,

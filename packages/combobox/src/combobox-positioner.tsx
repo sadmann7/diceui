@@ -1,17 +1,21 @@
-import { Primitive, useComposedRefs, useScrollLock } from "@diceui/shared";
+import {
+  Primitive,
+  type UseAnchorPositionerProps,
+  useAnchorPositioner,
+  useComposedRefs,
+  useScrollLock,
+} from "@diceui/shared";
 import { FloatingFocusManager } from "@floating-ui/react";
 import * as React from "react";
 import { ComboboxContentProvider } from "./combobox-content";
 import { getDataState, useComboboxContext } from "./combobox-root";
-import type { UseComboboxPositionerProps } from "./use-combobox-positioner";
-import { useComboboxPositioner } from "./use-combobox-positioner";
 
 const POSITIONER_NAME = "ComboboxPositioner";
 
 interface ComboboxPositionerProps
   extends Omit<
-      UseComboboxPositionerProps,
-      "open" | "onOpenChange" | "anchorRef" | "triggerRef" | "hasAnchor"
+      UseAnchorPositionerProps,
+      "open" | "onOpenChange" | "triggerRef" | "anchor"
     >,
     React.ComponentPropsWithoutRef<typeof Primitive.div> {
   /**
@@ -46,26 +50,23 @@ const ComboboxPositioner = React.forwardRef<
 
   const context = useComboboxContext(POSITIONER_NAME);
 
-  const positionerContext = useComboboxPositioner({
+  const positionerContext = useAnchorPositioner({
     open: context.open,
     onOpenChange: context.onOpenChange,
+    anchorRef: context.hasAnchor ? context.anchorRef : context.inputRef,
     side,
     sideOffset,
     align,
     alignOffset,
+    arrowPadding,
     collisionBoundary,
     collisionPadding,
-    arrowPadding,
     sticky,
     strategy,
     avoidCollisions,
     fitViewport,
-    forceMount,
     hideWhenDetached,
-    hasAnchor: context.hasAnchor,
     trackAnchor,
-    anchorRef: context.anchorRef,
-    triggerRef: context.inputRef,
   });
 
   const composedRef = useComposedRefs(forwardedRef, context.listRef, (node) =>

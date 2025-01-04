@@ -219,10 +219,6 @@ describe("Combobox", () => {
     const user = userEvent.setup();
     renderCombobox({ defaultOpen: true });
 
-    // TODO: should open first time when clicking on the trigger
-    // const trigger = screen.getByRole("button");
-    // await user.click(trigger);
-
     const listbox = await screen.findByRole("listbox");
     expect(listbox).toBeInTheDocument();
 
@@ -232,7 +228,8 @@ describe("Combobox", () => {
 
     // Select with Enter
     await user.keyboard("{Enter}");
-    expect(screen.getByText("Heelflip")).toBeInTheDocument();
+    const input = screen.getByPlaceholderText("Select a trick...");
+    expect(input).toHaveValue("Heelflip");
   });
 
   test("supports RTL direction", () => {

@@ -1,19 +1,8 @@
 import {
-  type Align,
-  VAR_ANCHOR_HEIGHT,
-  VAR_ANCHOR_WIDTH,
-  VAR_AVAILABLE_HEIGHT,
-  VAR_AVAILABLE_WIDTH,
-  VAR_TRANSFORM_ORIGIN,
-  useDirection,
-  useIsomorphicLayoutEffect,
-} from "@diceui/shared";
-import {
   type Boundary,
   type FloatingContext,
   type Middleware,
   type Placement,
-  type Side,
   type Strategy,
   type UseFloatingReturn,
   type VirtualElement,
@@ -29,13 +18,31 @@ import {
   useFloating,
 } from "@floating-ui/react";
 import * as React from "react";
+import {
+  VAR_ANCHOR_HEIGHT,
+  VAR_ANCHOR_WIDTH,
+  VAR_AVAILABLE_HEIGHT,
+  VAR_AVAILABLE_WIDTH,
+  VAR_TRANSFORM_ORIGIN,
+} from "../constants";
+import type { Align, Side } from "../types";
+import { useDirection } from "./use-direction";
+import { useIsomorphicLayoutEffect } from "./use-isomorphic-layout-effect";
 
-interface UseMentionPositionerProps {
+interface UseAnchorPositionerProps {
   /** Whether the combobox is open. */
   open: boolean;
 
   /** Event handler called when the combobox is opened or closed. */
   onOpenChange: (open: boolean) => void;
+
+  /**
+   * Reference to the anchor element or virtual element.
+   * Can be either a React ref to an HTMLElement or a VirtualElement.
+   * Used as the reference point for positioning.
+   * @default undefined
+   */
+  anchorRef?: React.RefObject<HTMLElement | null> | VirtualElement | null;
 
   /**
    * The preferred placement of the combobox relative to its anchor element.
@@ -130,13 +137,6 @@ interface UseMentionPositionerProps {
   forceMount?: boolean;
 
   /**
-   * Whether to use an anchor element instead of the trigger.
-   * When true, allows positioning relative to any element using anchorRef.
-   * @default false
-   */
-  hasAnchor?: boolean;
-
-  /**
    * Whether the combobox should be hidden when it would be positioned outside its boundary.
    * Useful for preventing partially visible comboboxes.
    * @default false
@@ -149,30 +149,9 @@ interface UseMentionPositionerProps {
    * @default true
    */
   trackAnchor?: boolean;
-
-  /**
-   * Reference to a custom anchor element.
-   * Used when hasCustomAnchor is true to position relative to a custom element.
-   * @default undefined
-   */
-  anchorRef?: React.RefObject<HTMLElement | null>;
-
-  /**
-   * Reference to the trigger element that opens the combobox.
-   * Used as the default reference point for positioning.
-   * @default undefined
-   */
-  triggerRef?: React.RefObject<HTMLElement | null>;
-
-  /**
-   * Reference to a virtual anchor element.
-   * Used to position the combobox relative to a virtual element.
-   * @default undefined
-   */
-  virtualAnchor?: VirtualElement | null;
 }
 
-interface UseMentionPositionerReturn {
+interface UseAnchorPositionerReturn {
   refs: UseFloatingReturn["refs"];
   floatingStyles: React.CSSProperties;
   placement: Placement;
@@ -192,9 +171,10 @@ interface UseMentionPositionerReturn {
   anchorHidden: boolean;
 }
 
-function useMentionPositioner({
+function useAnchorPositioner({
   open,
   onOpenChange,
+  anchorRef,
   side = "bottom",
   sideOffset = 4,
   align = "start",
@@ -204,14 +184,12 @@ function useMentionPositioner({
   arrowPadding = 0,
   sticky = "partial",
   strategy = "absolute",
-  avoidCollisions = true,
+  avoidCollisions = false,
   fitViewport = false,
   forceMount = false,
   hideWhenDetached = false,
   trackAnchor = true,
-  triggerRef,
-  virtualAnchor,
-}: UseMentionPositionerProps): UseMentionPositionerReturn {
+}: UseAnchorPositionerProps): UseAnchorPositionerReturn {
   const direction = useDirection();
   const [positionerArrow, setPositionerArrow] =
     React.useState<HTMLElement | null>(null);
@@ -315,7 +293,6 @@ function useMentionPositioner({
       ancestorResize: true,
       elementResize: trackAnchor && typeof ResizeObserver !== "undefined",
       layoutShift: trackAnchor && typeof IntersectionObserver !== "undefined",
-      animationFrame: true,
     }),
     [trackAnchor],
   );
@@ -336,32 +313,25 @@ function useMentionPositioner({
     onOpenChange,
     placement,
     middleware,
-    whileElementsMounted: (...args) => autoUpdate(...args, autoUpdateOptions),
+    whileElementsMounted: forceMount
+      ? undefined
+      : (...args) => autoUpdate(...args, autoUpdateOptions),
     strategy,
   });
 
   useIsomorphicLayoutEffect(() => {
     if (!open) return;
 
-    if (virtualAnchor) {
-      refs.setPositionReference(virtualAnchor);
-    } else if (triggerRef?.current) {
-      refs.setPositionReference(triggerRef.current);
-    }
+    const reference =
+      anchorRef && "getBoundingClientRect" in anchorRef
+        ? anchorRef
+        : anchorRef?.current;
 
-    requestAnimationFrame(update);
-  }, [open, triggerRef, virtualAnchor, refs, update]);
+    if (!reference) return;
 
-  React.useEffect(() => {
-    if (!open || !trackAnchor) return;
-
-    const handleScroll = () => {
-      requestAnimationFrame(update);
-    };
-
-    window.addEventListener("scroll", handleScroll, true);
-    return () => window.removeEventListener("scroll", handleScroll, true);
-  }, [open, update, trackAnchor]);
+    refs.setReference(reference);
+    update();
+  }, [open, anchorRef, refs, update]);
 
   React.useEffect(() => {
     if (forceMount && open && elements.reference && elements.floating) {
@@ -423,7 +393,7 @@ function useMentionPositioner({
 
   const arrowStyles = React.useMemo<React.CSSProperties>(
     () => ({
-      position: "absolute",
+      position: "absolute" as const,
       top: middlewareData.arrow?.y,
       left: middlewareData.arrow?.x,
       [placementSide]: 0,
@@ -477,6 +447,6 @@ function useMentionPositioner({
   return positionerContext;
 }
 
-export { useMentionPositioner };
+export { useAnchorPositioner };
 
-export type { UseMentionPositionerProps };
+export type { UseAnchorPositionerProps };
