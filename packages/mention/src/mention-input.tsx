@@ -38,10 +38,17 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
             left: rect.left + (selectionStart ?? 0) * 8, // Approximate char width
           });
           context.onOpenChange(true);
+          context.filterStore.search = "";
+        } else if (context.open) {
+          // Extract text after the last trigger character
+          const lastTriggerIndex = value.lastIndexOf(context.triggerCharacter);
+          if (lastTriggerIndex !== -1) {
+            const searchTerm = value.slice(lastTriggerIndex + 1);
+            context.filterStore.search = searchTerm;
+          }
         }
 
         context.onInputValueChange(value);
-
         context.onFilterItems();
       },
       [
@@ -50,6 +57,8 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
         context.onOpenChange,
         context.onTriggerPointChange,
         context.onFilterItems,
+        context.open,
+        context.filterStore,
       ],
     );
 

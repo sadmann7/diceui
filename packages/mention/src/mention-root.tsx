@@ -7,6 +7,7 @@ import {
   createContext,
   useControllableState,
   useDirection,
+  useFilter,
   useId,
 } from "@diceui/shared";
 import * as React from "react";
@@ -49,6 +50,11 @@ interface MentionContextValue {
   onTriggerPointChange: (point: { top: number; left: number } | null) => void;
   onFilter?: (options: string[], term: string) => string[];
   onFilterItems: () => void;
+  filterStore: {
+    search: string;
+    itemCount: number;
+    items: Map<string, number>;
+  };
   dir: Direction;
   disabled: boolean;
   exactMatch: boolean;
@@ -161,8 +167,34 @@ const MentionRoot = React.forwardRef<CollectionItem, MentionProps>(
     const itemMap = React.useRef<ItemMap<CollectionItem, ItemData>>(
       new Map(),
     ).current;
+    const filterStore = React.useRef<MentionContextValue["filterStore"]>({
+      search: "",
+      itemCount: 0,
+      items: new Map<string, number>(),
+    }).current;
 
-    const { getItems } = useCollection({ collectionRef, itemMap });
+    // const { getItems } = useCollection({ collectionRef, itemMap });
+    const filter = useFilter({ sensitivity: "base", gapMatch: true });
+    const currentFilter = React.useMemo(
+      () => (exactMatch ? filter.contains : filter.fuzzy),
+      [filter.fuzzy, filter.contains, exactMatch],
+    );
+
+    const getItemScore = React.useCallback(
+      (value: string, searchTerm: string) => {
+        if (!searchTerm) return 1;
+        if (!value) return 0;
+
+        if (searchTerm === "") return 1;
+        if (value === searchTerm) return 2;
+        if (value.startsWith(searchTerm)) return 1.5;
+
+        return onFilter
+          ? Number(onFilter([value], searchTerm).length > 0)
+          : Number(currentFilter(value, searchTerm));
+      },
+      [currentFilter, onFilter],
+    );
 
     const inputId = useId();
     const labelId = useId();
@@ -207,7 +239,64 @@ const MentionRoot = React.forwardRef<CollectionItem, MentionProps>(
       [setValue, onOpenChange],
     );
 
-    const onFilterItems = React.useCallback(() => {}, []);
+    const onFilterItems = React.useCallback(() => {
+      if (!filterStore.search) {
+        filterStore.itemCount = itemMap.size;
+        return;
+      }
+
+      filterStore.items.clear();
+
+      const searchTerm = filterStore.search;
+      let itemCount = 0;
+      let pendingBatch: [React.RefObject<CollectionItem | null>, ItemData][] =
+        [];
+      const BATCH_SIZE = 250;
+
+      function processBatch() {
+        if (!pendingBatch.length) return;
+
+        const scores = new Map<
+          React.RefObject<CollectionItem | null>,
+          number
+        >();
+
+        for (const [ref, data] of pendingBatch) {
+          const score = getItemScore(data.value, searchTerm);
+          if (score > 0) {
+            scores.set(ref, score);
+            itemCount++;
+          }
+        }
+
+        // Sort by score in descending order and add to filterStore
+        const sortedScores = Array.from(scores.entries()).sort(
+          ([, a], [, b]) => b - a,
+        );
+
+        for (const [ref, score] of sortedScores) {
+          filterStore.items.set(ref.current?.id ?? "", score);
+        }
+
+        pendingBatch = [];
+      }
+
+      // Process items in batches
+      for (const [ref, data] of itemMap.entries()) {
+        pendingBatch.push([ref, data]);
+
+        if (pendingBatch.length >= BATCH_SIZE) {
+          processBatch();
+        }
+      }
+
+      // Process remaining items
+      if (pendingBatch.length > 0) {
+        processBatch();
+      }
+
+      filterStore.itemCount = itemCount;
+    }, [filterStore, itemMap, getItemScore]);
 
     return (
       <MentionProvider
@@ -222,6 +311,7 @@ const MentionRoot = React.forwardRef<CollectionItem, MentionProps>(
         onTriggerPointChange={setTriggerPoint}
         onFilter={onFilter}
         onFilterItems={onFilterItems}
+        filterStore={filterStore}
         inputRef={inputRef}
         listRef={listRef}
         triggerCharacter={triggerCharacter}
@@ -255,13 +345,6 @@ const Root = MentionRoot;
 
 const CollectionItem = Collection.ItemSlot;
 
-export {
-  CollectionItem,
-  MentionRoot,
-  Root,
-  getDataState,
-  useCollection,
-  useMentionContext,
-};
+export { CollectionItem, MentionRoot, Root, getDataState, useMentionContext };
 
 export type { MentionContextValue, MentionProps };

@@ -3,6 +3,7 @@ import {
   composeEventHandlers,
   composeRefs,
   createContext,
+  useId,
 } from "@diceui/shared";
 import * as React from "react";
 import { CollectionItem, useMentionContext } from "./mention-root";
@@ -30,10 +31,16 @@ const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
     const context = useMentionContext(ITEM_NAME);
     const [textNode, setTextNode] = React.useState<HTMLDivElement | null>(null);
     const composedRef = composeRefs(forwardedRef, (node) => setTextNode(node));
+    const id = useId();
 
     const textValue = textNode?.textContent ?? "";
     const isDisabled = disabled || context.disabled;
     const isSelected = context.value.includes(value);
+
+    const isVisible =
+      !context.filterStore.search || context.filterStore.items.has(id);
+
+    if (!isVisible) return null;
 
     return (
       <MentionItemProvider
@@ -47,14 +54,15 @@ const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
           disabled={isDisabled}
         >
           <Primitive.div
+            id={id}
             role="option"
             aria-selected={isSelected}
             data-selected={isSelected ? "" : undefined}
+            {...itemProps}
+            ref={composedRef}
             onClick={composeEventHandlers(itemProps.onClick, () =>
               context.onItemSelect(value),
             )}
-            {...itemProps}
-            ref={composedRef}
           />
         </CollectionItem>
       </MentionItemProvider>

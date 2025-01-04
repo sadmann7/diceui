@@ -56,13 +56,13 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
       return context.onRegisterItem(id, value, groupContext?.id);
     }, [id, value, context.onRegisterItem, groupContext?.id]);
 
-    const shouldRender =
+    const isVisible =
       context.manualFiltering ||
       (context.filterStore.search
         ? (context.filterStore.items.get(id) ?? 0) > 0
         : true);
 
-    if (!shouldRender) return null;
+    if (!isVisible) return null;
 
     return (
       <ComboboxItemProvider
