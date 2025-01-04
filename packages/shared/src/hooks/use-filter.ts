@@ -59,10 +59,6 @@ class LRUCache<K, V> {
 const collatorCache = new LRUCache<string, Intl.Collator>(10); // Few collator options typically used
 const normalizedCache = new LRUCache<string, string>(1000); // More strings to normalize
 
-interface UseFilterOptions extends Intl.CollatorOptions {
-  gapMatch?: boolean;
-}
-
 const SEPARATORS_PATTERN = /[-_\s./\\|:;,]+/g;
 const UNWANTED_CHARS = /[^\p{L}\p{N}\s]/gu;
 
@@ -96,6 +92,20 @@ function normalizeWithGaps(str: string) {
   return normalized;
 }
 
+interface UseFilterOptions extends Intl.CollatorOptions {
+  /**
+   * Whether to match strings with gaps between words.
+   * @default false
+   */
+  gapMatch?: boolean;
+
+  /**
+   * The sensitivity of the collator.
+   * @default "base"
+   */
+  sensitivity?: Intl.CollatorOptions["sensitivity"];
+}
+
 export function useFilter(options?: UseFilterOptions) {
   const cacheKey = options
     ? Object.entries(options)
@@ -124,8 +134,8 @@ export function useFilter(options?: UseFilterOptions) {
         return normalizedString.startsWith(normalizedSubstring);
       }
 
-      const normalizedString = string.toLowerCase().normalize("NFC");
-      const normalizedSubstring = substring.toLowerCase().normalize("NFC");
+      const normalizedString = string.normalize("NFC");
+      const normalizedSubstring = substring.normalize("NFC");
       return (
         collator.compare(
           normalizedString.slice(0, normalizedSubstring.length),
@@ -148,8 +158,8 @@ export function useFilter(options?: UseFilterOptions) {
         return normalizedString.endsWith(normalizedSubstring);
       }
 
-      const normalizedString = string.toLowerCase().normalize("NFC");
-      const normalizedSubstring = substring.toLowerCase().normalize("NFC");
+      const normalizedString = string.normalize("NFC");
+      const normalizedSubstring = substring.normalize("NFC");
       return (
         collator.compare(
           normalizedString.slice(-normalizedSubstring.length),
@@ -172,8 +182,8 @@ export function useFilter(options?: UseFilterOptions) {
         return normalizedString.includes(normalizedSubstring);
       }
 
-      const normalizedString = string.toLowerCase().normalize("NFC");
-      const normalizedSubstring = substring.toLowerCase().normalize("NFC");
+      const normalizedString = string.normalize("NFC");
+      const normalizedSubstring = substring.normalize("NFC");
 
       let scan = 0;
       const sliceLen = normalizedSubstring.length;
@@ -214,8 +224,8 @@ export function useFilter(options?: UseFilterOptions) {
         return patternIdx === normalizedPattern.length;
       }
 
-      const normalizedString = string.toLowerCase().normalize("NFC");
-      const normalizedPattern = pattern.toLowerCase().normalize("NFC");
+      const normalizedString = string.normalize("NFC");
+      const normalizedPattern = pattern.normalize("NFC");
 
       let patternIdx = 0;
       let stringIdx = 0;
