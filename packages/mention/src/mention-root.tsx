@@ -30,9 +30,7 @@ interface ItemData {
   disabled: boolean;
 }
 
-const [Collection, useCollection] = createCollection<CollectionItem, ItemData>(
-  ROOT_NAME,
-);
+const [Collection] = createCollection<CollectionItem, ItemData>(ROOT_NAME);
 
 interface MentionContextValue {
   value: string[];

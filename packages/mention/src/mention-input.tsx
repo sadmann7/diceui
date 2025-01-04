@@ -20,15 +20,15 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
     );
 
     const onChange = React.useCallback(
-      (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
+      (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
         const lastChar = value[value.length - 1];
 
         if (lastChar === context.triggerCharacter) {
-          const { selectionStart } = e.target;
-          const rect = e.target.getBoundingClientRect();
+          const { selectionStart } = event.target;
+          const rect = event.target.getBoundingClientRect();
           const lineHeight = Number.parseInt(
-            getComputedStyle(e.target).lineHeight,
+            getComputedStyle(event.target).lineHeight,
           );
           const lines = value.slice(0, selectionStart ?? 0).split("\n");
           const currentLine = lines.length;
@@ -40,11 +40,19 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
           context.onOpenChange(true);
           context.filterStore.search = "";
         } else if (context.open) {
-          // Extract text after the last trigger character
-          const lastTriggerIndex = value.lastIndexOf(context.triggerCharacter);
-          if (lastTriggerIndex !== -1) {
-            const searchTerm = value.slice(lastTriggerIndex + 1);
-            context.filterStore.search = searchTerm;
+          // Check if trigger character is still present
+          if (!value.includes(context.triggerCharacter)) {
+            context.onOpenChange(false);
+            context.filterStore.search = "";
+          } else {
+            // Extract text after the last trigger character
+            const lastTriggerIndex = value.lastIndexOf(
+              context.triggerCharacter,
+            );
+            if (lastTriggerIndex !== -1) {
+              const searchTerm = value.slice(lastTriggerIndex + 1);
+              context.filterStore.search = searchTerm;
+            }
           }
         }
 
@@ -63,8 +71,8 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
     );
 
     const onKeyDown = React.useCallback(
-      (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Escape" && context.open) {
+      (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === "Escape" && context.open) {
           context.onOpenChange(false);
         }
       },
