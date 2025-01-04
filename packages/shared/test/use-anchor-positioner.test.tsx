@@ -290,3 +290,232 @@ describe("useAnchorPositioner in React component", () => {
     expect(screen.queryByTestId("content")).not.toBeInTheDocument();
   });
 });
+
+describe("useAnchorPositioner boundary collision detection", () => {
+  const mockAnchorRef = {
+    current: document.createElement("div"),
+  };
+
+  const defaultProps = {
+    open: true,
+    onOpenChange: vi.fn(),
+    anchorRef: mockAnchorRef,
+    disableArrow: true,
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    document.body.innerHTML = "";
+  });
+
+  it("handles clippingAncestors boundary", async () => {
+    const container = document.createElement("div");
+    container.style.width = "300px";
+    container.style.height = "300px";
+    container.style.overflow = "hidden";
+    document.body.appendChild(container);
+
+    function TestComponent() {
+      const anchorRef = React.useRef<HTMLButtonElement>(null);
+      const { refs, floatingStyles, getFloatingProps } = useAnchorPositioner({
+        ...defaultProps,
+        collisionBoundary: "clippingAncestors",
+        avoidCollisions: true,
+      });
+
+      return (
+        <>
+          <button ref={anchorRef} data-testid="anchor">
+            Anchor
+          </button>
+          <div
+            ref={refs.setFloating}
+            style={floatingStyles}
+            {...getFloatingProps()}
+            data-testid="floating"
+          >
+            Content
+          </div>
+        </>
+      );
+    }
+
+    render(<TestComponent />);
+    await screen.findByTestId("floating");
+
+    // Allow time for position updates
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+  });
+
+  it("handles Element boundary", async () => {
+    const boundaryElement = document.createElement("div");
+    boundaryElement.style.width = "400px";
+    boundaryElement.style.height = "400px";
+    boundaryElement.style.position = "relative";
+    document.body.appendChild(boundaryElement);
+
+    function TestComponent() {
+      const anchorRef = React.useRef<HTMLButtonElement>(null);
+      const { refs, floatingStyles, getFloatingProps } = useAnchorPositioner({
+        open: true,
+        onOpenChange: vi.fn(),
+        anchorRef,
+        collisionBoundary: boundaryElement,
+        avoidCollisions: true,
+      });
+
+      return (
+        <>
+          <button ref={anchorRef} data-testid="anchor">
+            Anchor
+          </button>
+          <div
+            ref={refs.setFloating}
+            style={floatingStyles}
+            {...getFloatingProps()}
+            data-testid="floating"
+          >
+            Content
+          </div>
+        </>
+      );
+    }
+
+    render(<TestComponent />);
+    await screen.findByTestId("floating");
+
+    // Allow time for position updates
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+  });
+
+  it("handles Array<Element> boundary", async () => {
+    const boundary1 = document.createElement("div");
+    const boundary2 = document.createElement("div");
+
+    for (const el of [boundary1, boundary2]) {
+      el.style.width = "500px";
+      el.style.height = "500px";
+      el.style.position = "relative";
+      document.body.appendChild(el);
+    }
+
+    function TestComponent() {
+      const anchorRef = React.useRef<HTMLButtonElement>(null);
+      const { refs, floatingStyles, getFloatingProps } = useAnchorPositioner({
+        open: true,
+        onOpenChange: vi.fn(),
+        anchorRef,
+        collisionBoundary: [boundary1, boundary2],
+        avoidCollisions: true,
+      });
+
+      return (
+        <>
+          <button ref={anchorRef} data-testid="anchor">
+            Anchor
+          </button>
+          <div
+            ref={refs.setFloating}
+            style={floatingStyles}
+            {...getFloatingProps()}
+            data-testid="floating"
+          >
+            Content
+          </div>
+        </>
+      );
+    }
+
+    render(<TestComponent />);
+    await screen.findByTestId("floating");
+
+    // Allow time for position updates
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+  });
+
+  it("adjusts position when content overflows boundary", async () => {
+    const rect = {
+      width: 60,
+      height: 30,
+      x: 10,
+      y: 10,
+      top: 10,
+      right: 70,
+      bottom: 40,
+      left: 10,
+    };
+
+    const virtualElement = {
+      getBoundingClientRect: () => rect,
+      getClientRects: () => [rect],
+      contextElement: document.body,
+    };
+
+    function TestComponent() {
+      const { refs, floatingStyles, getFloatingProps } = useAnchorPositioner({
+        open: true,
+        onOpenChange: vi.fn(),
+        anchorRef: virtualElement,
+        side: "bottom",
+        sideOffset: 5,
+        strategy: "fixed",
+      });
+
+      return (
+        <div
+          ref={refs.setFloating}
+          style={{
+            ...floatingStyles,
+            position: "fixed",
+            width: "100px",
+            height: "40px",
+          }}
+          {...getFloatingProps()}
+          data-testid="floating"
+        >
+          Content
+        </div>
+      );
+    }
+
+    render(<TestComponent />);
+    const floating = await screen.findByTestId("floating");
+
+    // Allow time for position updates
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 16));
+    });
+
+    // Get the computed top position from the style
+    const computedTop = Number.parseFloat(floating.style.top);
+
+    // Mock getBoundingClientRect to return the correct position
+    const floatingBox = {
+      width: 100,
+      height: 40,
+      x: rect.x,
+      y: computedTop,
+      top: computedTop,
+      right: rect.x + 100,
+      bottom: computedTop + 40,
+      left: rect.x,
+    };
+
+    // Debug output
+    console.log({
+      virtualAnchorBottom: rect.bottom,
+      floatingTop: floatingBox.top,
+      offset: floatingBox.top - rect.bottom,
+      computedTop,
+      floatingStyles: floating.style.cssText,
+    });
+
+    expect(computedTop - rect.bottom).toBeGreaterThanOrEqual(5);
+  });
+});

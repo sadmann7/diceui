@@ -390,16 +390,19 @@ function useAnchorPositioner({
     [placementSide, placementAlign]
   );
 
-  const floatingStyles = React.useMemo(
-    () =>
-      ({
-        position: floatingStrategy,
-        top: y ?? 0,
-        left: x ?? 0,
-        [VAR_TRANSFORM_ORIGIN]: transformOrigin,
-      } as const),
-    [floatingStrategy, x, y, transformOrigin]
-  );
+  const floatingStyles = React.useMemo(() => {
+    const validY =
+      typeof y === "number" && !Number.isNaN(y) && Number.isFinite(y) ? y : 0;
+    const validX =
+      typeof x === "number" && !Number.isNaN(x) && Number.isFinite(x) ? x : 0;
+
+    return {
+      position: floatingStrategy,
+      top: validY,
+      left: validX,
+      [VAR_TRANSFORM_ORIGIN]: transformOrigin,
+    } as const;
+  }, [floatingStrategy, x, y, transformOrigin]);
 
   const anchorHidden = !!middlewareData.hide?.referenceHidden;
 
