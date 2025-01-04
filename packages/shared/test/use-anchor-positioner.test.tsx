@@ -1,7 +1,73 @@
-import { act, renderHook } from "@testing-library/react";
+import { act, render, renderHook, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import * as React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { VAR_TRANSFORM_ORIGIN } from "../src/constants";
-import { useAnchorPositioner } from "../src/hooks/use-anchor-positioner";
+import {
+  type AnchorPositionerProps,
+  useAnchorPositioner,
+} from "../src/hooks/use-anchor-positioner";
+
+// Test component that uses useAnchorPositioner
+function TestPopover({
+  defaultOpen = false,
+  side = "bottom",
+  align = "start",
+}: Partial<AnchorPositionerProps> & {
+  defaultOpen?: boolean;
+}) {
+  const [open, setOpen] = React.useState(defaultOpen);
+  const anchorRef = React.useRef<HTMLButtonElement>(null);
+
+  const {
+    refs,
+    floatingStyles,
+    getFloatingProps,
+    arrowStyles,
+    onArrowChange,
+    placement,
+  } = useAnchorPositioner({
+    open,
+    onOpenChange: setOpen,
+    anchorRef,
+    side,
+    align,
+    disablePointer: false,
+  });
+
+  const arrowRef = React.useRef<HTMLDivElement>(null);
+
+  // Test arrow positioning right away without settting component for it
+  React.useEffect(() => {
+    if (arrowRef.current) {
+      onArrowChange(arrowRef.current);
+    }
+  }, [onArrowChange]);
+
+  return (
+    <>
+      <button
+        ref={anchorRef}
+        onClick={() => setOpen(!open)}
+        data-testid="anchor"
+      >
+        Toggle
+      </button>
+      {open && (
+        <div
+          ref={refs.setFloating}
+          style={floatingStyles}
+          {...getFloatingProps()}
+          data-testid="content"
+          data-placement={placement}
+        >
+          Popover Content
+          <div ref={arrowRef} style={arrowStyles} data-testid="arrow" />
+        </div>
+      )}
+    </>
+  );
+}
 
 describe("useAnchorPositioner", () => {
   const mockAnchorRef = {
@@ -183,5 +249,44 @@ describe("useAnchorPositioner", () => {
     );
 
     expect(result.current.middlewareData).toBeDefined();
+  });
+});
+
+describe("useAnchorPositioner in React component", () => {
+  it("renders and positions content relative to anchor", async () => {
+    const user = userEvent.setup();
+    render(<TestPopover />);
+
+    const anchor = screen.getByTestId("anchor");
+    expect(screen.queryByTestId("content")).not.toBeInTheDocument();
+
+    await user.click(anchor);
+
+    const content = screen.getByTestId("content");
+    const arrow = screen.getByTestId("arrow");
+
+    expect(content).toBeInTheDocument();
+    expect(content).toHaveAttribute("data-placement", "bottom-start");
+    expect(arrow).toHaveStyle({ position: "absolute" });
+  });
+
+  it("updates placement based on props", () => {
+    render(<TestPopover defaultOpen side="top" align="end" />);
+
+    const content = screen.getByTestId("content");
+    expect(content).toHaveAttribute("data-placement", "top-end");
+  });
+
+  it("toggles content visibility", async () => {
+    const user = userEvent.setup();
+    render(<TestPopover />);
+
+    const anchor = screen.getByTestId("anchor");
+
+    await user.click(anchor);
+    expect(screen.getByTestId("content")).toBeInTheDocument();
+
+    await user.click(anchor);
+    expect(screen.queryByTestId("content")).not.toBeInTheDocument();
   });
 });
