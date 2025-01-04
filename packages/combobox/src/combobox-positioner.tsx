@@ -1,6 +1,6 @@
 import {
+  type AnchorPositionerProps,
   Primitive,
-  type UseAnchorPositionerProps,
   useAnchorPositioner,
   useComposedRefs,
   useScrollLock,
@@ -13,10 +13,7 @@ import { getDataState, useComboboxContext } from "./combobox-root";
 const POSITIONER_NAME = "ComboboxPositioner";
 
 interface ComboboxPositionerProps
-  extends Omit<
-      UseAnchorPositionerProps,
-      "open" | "onOpenChange" | "triggerRef" | "anchor"
-    >,
+  extends AnchorPositionerProps,
     React.ComponentPropsWithoutRef<typeof Primitive.div> {
   /**
    * Whether the positioner should always be rendered.

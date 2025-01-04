@@ -1,6 +1,6 @@
 import {
+  type AnchorPositionerProps,
   Primitive,
-  type UseAnchorPositionerProps,
   useAnchorPositioner,
   useComposedRefs,
   useScrollLock,
@@ -13,10 +13,7 @@ import { getDataState, useMentionContext } from "./mention-root";
 const POSITIONER_NAME = "MentionPositioner";
 
 interface MentionPositionerProps
-  extends Omit<
-      UseAnchorPositionerProps,
-      "open" | "onOpenChange" | "triggerRef" | "anchor"
-    >,
+  extends AnchorPositionerProps,
     React.ComponentPropsWithoutRef<typeof Primitive.div> {
   /**
    * Whether the positioner should always be rendered.
@@ -67,6 +64,7 @@ const MentionPositioner = React.forwardRef<
     fitViewport,
     hideWhenDetached,
     trackAnchor,
+    disablePointer: true,
   });
 
   const composedRef = useComposedRefs<HTMLDivElement>(forwardedRef, (node) =>

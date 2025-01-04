@@ -1,4 +1,5 @@
 import {
+  type AutoUpdateOptions,
   type Boundary,
   type FloatingContext,
   type Middleware,
@@ -37,9 +38,8 @@ interface UseAnchorPositionerProps {
   onOpenChange: (open: boolean) => void;
 
   /**
-   * Reference to the anchor element or virtual element.
-   * Can be either a React ref to an HTMLElement or a VirtualElement.
-   * Used as the reference point for positioning.
+   * Reference to the anchor element.
+   * Can be either a VirtualElement or React ref to an HTMLElement element.
    * @default undefined
    */
   anchorRef?: React.RefObject<HTMLElement | null> | VirtualElement | null;
@@ -149,7 +149,19 @@ interface UseAnchorPositionerProps {
    * @default true
    */
   trackAnchor?: boolean;
+
+  /**
+   * Whether to disable the floating pointer/indicator.
+   * When true, the pointer will not be rendered and pointer middleware will not be added.
+   * @default false
+   */
+  disablePointer?: boolean;
 }
+
+type AnchorPositionerProps = Omit<
+  UseAnchorPositionerProps,
+  "open" | "onOpenChange" | "anchorRef" | "disablePointer"
+>;
 
 interface UseAnchorPositionerReturn {
   refs: UseFloatingReturn["refs"];
@@ -189,6 +201,7 @@ function useAnchorPositioner({
   forceMount = false,
   hideWhenDetached = false,
   trackAnchor = true,
+  disablePointer = false,
 }: UseAnchorPositionerProps): UseAnchorPositionerReturn {
   const direction = useDirection();
   const [positionerArrow, setPositionerArrow] =
@@ -266,12 +279,14 @@ function useAnchorPositioner({
       middleware.push(hide());
     }
 
-    middleware.push(
-      arrow({
-        element: positionerArrow,
-        padding: arrowPadding,
-      }),
-    );
+    if (!disablePointer) {
+      middleware.push(
+        arrow({
+          element: positionerArrow,
+          padding: arrowPadding,
+        }),
+      );
+    }
 
     return middleware;
   }, [
@@ -285,9 +300,10 @@ function useAnchorPositioner({
     hideWhenDetached,
     fitViewport,
     positionerArrow,
+    disablePointer,
   ]);
 
-  const autoUpdateOptions = React.useMemo(
+  const autoUpdateOptions = React.useMemo<AutoUpdateOptions>(
     () => ({
       ancestorScroll: trackAnchor,
       ancestorResize: true,
@@ -389,10 +405,14 @@ function useAnchorPositioner({
 
   const anchorHidden = !!middlewareData.hide?.referenceHidden;
 
-  const arrowDisplaced = middlewareData.arrow?.centerOffset !== 0;
+  const arrowDisplaced = disablePointer
+    ? false
+    : middlewareData.arrow?.centerOffset !== 0;
 
-  const arrowStyles = React.useMemo<React.CSSProperties>(
-    () => ({
+  const arrowStyles = React.useMemo<React.CSSProperties>(() => {
+    if (disablePointer) return {};
+
+    return {
       position: "absolute" as const,
       top: middlewareData.arrow?.y,
       left: middlewareData.arrow?.x,
@@ -404,9 +424,8 @@ function useAnchorPositioner({
         bottom: "rotate(180deg)",
         left: "translateY(50%) rotate(-90deg) translateX(50%)",
       }[placementSide],
-    }),
-    [middlewareData.arrow, placementSide, transformOrigin],
-  );
+    };
+  }, [middlewareData.arrow, placementSide, transformOrigin, disablePointer]);
 
   const positionerContext = React.useMemo(
     () => ({
@@ -420,7 +439,7 @@ function useAnchorPositioner({
       context,
       getFloatingProps,
       arrowStyles,
-      onArrowChange: setPositionerArrow,
+      onArrowChange: disablePointer ? () => {} : setPositionerArrow,
       side: placementSide,
       align: placementAlign,
       arrowDisplaced,
@@ -441,6 +460,7 @@ function useAnchorPositioner({
       placementAlign,
       arrowDisplaced,
       anchorHidden,
+      disablePointer,
     ],
   );
 
@@ -449,4 +469,4 @@ function useAnchorPositioner({
 
 export { useAnchorPositioner };
 
-export type { UseAnchorPositionerProps };
+export type { AnchorPositionerProps };
