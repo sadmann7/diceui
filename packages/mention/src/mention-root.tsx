@@ -1,7 +1,7 @@
 import {
+  type CollectionItemMap,
   type Direction,
   type HighlightingDirection,
-  type ItemMap,
   Primitive,
   composeRefs,
   createCollection,
@@ -21,7 +21,7 @@ function getDataState(open: boolean) {
 
 const ROOT_NAME = "MentionRoot";
 
-type CollectionItem = HTMLDivElement;
+type CollectionElement = HTMLDivElement;
 type InputElement = React.ElementRef<typeof MentionInput>;
 type ListElement = React.ElementRef<typeof MentionPositioner>;
 
@@ -31,9 +31,10 @@ interface ItemData {
   disabled: boolean;
 }
 
-const [Collection, useCollection] = createCollection<CollectionItem, ItemData>(
-  ROOT_NAME,
-);
+const [Collection, useCollection] = createCollection<
+  CollectionElement,
+  ItemData
+>(ROOT_NAME);
 
 interface MentionContextValue {
   value: string[];
@@ -56,9 +57,9 @@ interface MentionContextValue {
     itemCount: number;
     items: Map<string, number>;
   };
-  highlightedItem: { ref: CollectionItem; data: ItemData } | null;
+  highlightedItem: { ref: CollectionElement; data: ItemData } | null;
   onHighlightedItemChange: (
-    item: { ref: CollectionItem; data: ItemData } | null,
+    item: { ref: CollectionElement; data: ItemData } | null,
   ) => void;
   onHighlightMove: (direction: HighlightingDirection) => void;
   dir: Direction;
@@ -145,7 +146,7 @@ interface MentionProps
   readonly?: boolean;
 }
 
-const MentionRoot = React.forwardRef<CollectionItem, MentionProps>(
+const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
   (props, forwardedRef) => {
     const {
       children,
@@ -167,12 +168,12 @@ const MentionRoot = React.forwardRef<CollectionItem, MentionProps>(
       ...rootProps
     } = props;
 
-    const collectionRef = React.useRef<CollectionItem | null>(null);
+    const collectionRef = React.useRef<CollectionElement | null>(null);
     const listRef = React.useRef<ListElement | null>(null);
     const inputRef = React.useRef<InputElement | null>(null);
-    const itemMap = React.useRef<ItemMap<CollectionItem, ItemData>>(
-      new Map(),
-    ).current;
+    const itemMap = React.useRef<
+      CollectionItemMap<CollectionElement, ItemData>
+    >(new Map()).current;
     const filterStore = React.useRef<MentionContextValue["filterStore"]>({
       search: "",
       itemCount: 0,
@@ -255,15 +256,17 @@ const MentionRoot = React.forwardRef<CollectionItem, MentionProps>(
 
       const searchTerm = filterStore.search;
       let itemCount = 0;
-      let pendingBatch: [React.RefObject<CollectionItem | null>, ItemData][] =
-        [];
+      let pendingBatch: [
+        React.RefObject<CollectionElement | null>,
+        ItemData,
+      ][] = [];
       const BATCH_SIZE = 250;
 
       function processBatch() {
         if (!pendingBatch.length) return;
 
         const scores = new Map<
-          React.RefObject<CollectionItem | null>,
+          React.RefObject<CollectionElement | null>,
           number
         >();
 
@@ -305,7 +308,7 @@ const MentionRoot = React.forwardRef<CollectionItem, MentionProps>(
     }, [filterStore, itemMap, getItemScore]);
 
     const [highlightedItem, setHighlightedItem] = React.useState<{
-      ref: CollectionItem;
+      ref: CollectionElement;
       data: ItemData;
     } | null>(null);
 

@@ -8,7 +8,7 @@ import { composeRefs } from "../lib/compose-refs";
 import { createContext } from "./create-context";
 import { Slot, type SlotProps } from "./slot";
 
-type ItemMap<TItemElement extends HTMLElement, TItemData = {}> = Map<
+type CollectionItemMap<TItemElement extends HTMLElement, TItemData = {}> = Map<
   React.RefObject<TItemElement | null>,
   { ref: React.RefObject<TItemElement | null> } & TItemData
 >;
@@ -18,7 +18,7 @@ interface CollectionContextValue<
   TItemData = {},
 > {
   collectionRef: React.RefObject<TItemElement | null>;
-  itemMap: ItemMap<TItemElement, TItemData>;
+  itemMap: CollectionItemMap<TItemElement, TItemData>;
 }
 
 interface CollectionProps extends SlotProps {}
@@ -118,4 +118,4 @@ function createCollection<TItemElement extends HTMLElement, TItemData = {}>(
 
 export { createCollection };
 
-export type { CollectionProps, ItemMap };
+export type { CollectionProps, CollectionItemMap };
