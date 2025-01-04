@@ -31,58 +31,144 @@ import {
 import * as React from "react";
 
 interface UseMentionPositionerProps {
-  /** Whether the mention menu is open. */
+  /** Whether the combobox is open. */
   open: boolean;
 
-  /** Event handler called when the mention menu is opened or closed. */
+  /** Event handler called when the combobox is opened or closed. */
   onOpenChange: (open: boolean) => void;
 
-  /** The preferred side of the anchor to place the mention menu. */
+  /**
+   * The preferred placement of the combobox relative to its anchor element.
+   * If there is not enough space, it will be adjusted automatically.
+   * - 'top': Position the combobox above the anchor
+   * - 'right': Position the combobox to the right of the anchor
+   * - 'bottom': Position the combobox below the anchor
+   * - 'left': Position the combobox to the left of the anchor
+   * @default "bottom"
+   */
   side?: Side;
 
-  /** The distance in pixels from the anchor */
+  /**
+   * The distance in pixels from the anchor element to the combobox.
+   * This creates a gap between the anchor and combobox.
+   * @default 4
+   */
   sideOffset?: number;
 
-  /** The preferred alignment against the anchor. */
+  /**
+   * The alignment of the combobox relative to its anchor element.
+   * - 'start': Align with the start edge of the anchor
+   * - 'center': Center align with the anchor
+   * - 'end': Align with the end edge of the anchor
+   * @default "start"
+   */
   align?: Align;
 
-  /** The distance in pixels from the aligned edge. */
+  /**
+   * The distance in pixels from the aligned edge when using align.
+   * Allows the combobox to be offset from its default aligned position.
+   * @default 0
+   */
   alignOffset?: number;
 
-  /** Elements that constrain the positioning. */
+  /**
+   * The element or elements that constrain where the combobox can be positioned.
+   * By default, this is the viewport (browser window).
+   * @default undefined
+   */
   collisionBoundary?: Element | Element[] | null;
 
-  /** Padding between the mention menu and the boundary edges. */
+  /**
+   * The amount of padding around the boundary edges for collision detection.
+   * This prevents the combobox from touching the edges of its container.
+   * @default 0
+   */
   collisionPadding?: number | Partial<Record<Side, number>>;
 
-  /** Padding between the arrow and the mention menu edges. */
+  /**
+   * The padding between the arrow element and the combobox edges.
+   * Prevents the arrow from reaching the very edge of the combobox.
+   * @default 0
+   */
   arrowPadding?: number;
 
-  /** How the mention menu responds to scroll. */
+  /**
+   * Controls how the combobox responds to scroll events.
+   * - 'partial': Allows partial visibility when scrolling
+   * - 'always': Maintains full visibility by shifting position
+   * @default "partial"
+   */
   sticky?: "partial" | "always";
 
-  /** The positioning strategy to use. */
+  /**
+   * The positioning strategy to use.
+   * - 'absolute': Position relative to closest positioned ancestor
+   * - 'fixed': Position relative to viewport
+   * @default "absolute"
+   */
   strategy?: Strategy;
 
-  /** Whether to automatically adjust placement. */
+  /**
+   * Whether the combobox should automatically adjust its placement to stay in view.
+   * When enabled, changes position when there's not enough space in the current placement.
+   * @default true
+   */
   avoidCollisions?: boolean;
 
-  /** Whether to constrain the mention menu to viewport. */
+  /**
+   * Whether the combobox should be constrained to the viewport dimensions.
+   * When true, the combobox will not exceed the browser window width/height.
+   * @default false
+   */
   fitViewport?: boolean;
 
-  /** Whether to mount the mention menu even when closed. */
+  /**
+   * Whether the combobox should be mounted in the DOM even when closed.
+   * Useful for animations or when you need to measure the combobox before displaying it.
+   * @default false
+   */
   forceMount?: boolean;
 
-  /** Whether to hide when detached. */
+  /**
+   * Whether to use an anchor element instead of the trigger.
+   * When true, allows positioning relative to any element using anchorRef.
+   * @default false
+   */
+  hasAnchor?: boolean;
+
+  /**
+   * Whether the combobox should be hidden when it would be positioned outside its boundary.
+   * Useful for preventing partially visible comboboxes.
+   * @default false
+   */
   hideWhenDetached?: boolean;
 
-  /** Whether to track the anchor position. */
+  /**
+   * Whether the combobox should track the trigger element's position changes.
+   * When true, updates position on scroll and resize events.
+   * @default true
+   */
   trackAnchor?: boolean;
 
-  /** Reference to the trigger element. */
-  triggerRef?: React.RefObject<HTMLInputElement | null>;
+  /**
+   * Reference to a custom anchor element.
+   * Used when hasCustomAnchor is true to position relative to a custom element.
+   * @default undefined
+   */
+  anchorRef?: React.RefObject<HTMLElement | null>;
 
-  /** Virtual anchor for positioning. Must be used with `setPositionReference`. */
+  /**
+   * Reference to the trigger element that opens the combobox.
+   * Used as the default reference point for positioning.
+   * @default undefined
+   */
+  triggerRef?: React.RefObject<HTMLElement | null>;
+
+  /**
+   * Reference to a virtual anchor element.
+   * Used to position the combobox relative to a virtual element.
+   * @default undefined
+   */
   virtualAnchor?: VirtualElement | null;
 }
 
@@ -96,7 +182,7 @@ interface UseMentionPositionerReturn {
   update: () => void;
   context: FloatingContext;
   getFloatingProps: (
-    floatingProps?: React.HTMLAttributes<HTMLElement>
+    floatingProps?: React.HTMLAttributes<HTMLElement>,
   ) => Record<string, unknown>;
   arrowStyles: React.CSSProperties;
   onArrowChange: (arrow: HTMLElement | null) => void;
@@ -136,8 +222,8 @@ function useMentionPositioner({
         ? align === "start"
           ? "end"
           : align === "end"
-          ? "start"
-          : "center"
+            ? "start"
+            : "center"
         : align;
     return `${side}-${rtlAlign}` as Placement;
   }, [align, direction, side]);
@@ -158,7 +244,7 @@ function useMentionPositioner({
           padding: collisionPadding || 0,
           fallbackStrategy:
             sticky === "partial" ? "bestFit" : "initialPlacement",
-        })
+        }),
       );
 
       middleware.push(
@@ -166,7 +252,7 @@ function useMentionPositioner({
           boundary: collisionBoundary as Boundary | undefined,
           padding: collisionPadding || 0,
           limiter: sticky === "partial" ? limitShift() : undefined,
-        })
+        }),
       );
     }
 
@@ -195,7 +281,7 @@ function useMentionPositioner({
             });
           }
         },
-      })
+      }),
     );
 
     if (hideWhenDetached) {
@@ -206,7 +292,7 @@ function useMentionPositioner({
       arrow({
         element: positionerArrow,
         padding: arrowPadding,
-      })
+      }),
     );
 
     return middleware;
@@ -231,7 +317,7 @@ function useMentionPositioner({
       layoutShift: trackAnchor && typeof IntersectionObserver !== "undefined",
       animationFrame: true,
     }),
-    [trackAnchor]
+    [trackAnchor],
   );
 
   const {
@@ -283,7 +369,7 @@ function useMentionPositioner({
         elements.reference,
         elements.floating,
         update,
-        autoUpdateOptions
+        autoUpdateOptions,
       );
     }
     return undefined;
@@ -305,8 +391,8 @@ function useMentionPositioner({
       placementAlign === "end"
         ? "start"
         : placementAlign === "start"
-        ? "end"
-        : "center";
+          ? "end"
+          : "center";
 
     return `${oppositeAlign} ${oppositeSide}`;
   }, [placementSide, placementAlign]);
@@ -317,7 +403,7 @@ function useMentionPositioner({
       "data-side": placementSide,
       "data-align": placementAlign,
     }),
-    [placementSide, placementAlign]
+    [placementSide, placementAlign],
   );
 
   const floatingStyles = React.useMemo(
@@ -327,8 +413,8 @@ function useMentionPositioner({
         top: y ?? 0,
         left: x ?? 0,
         [VAR_TRANSFORM_ORIGIN]: transformOrigin,
-      } as const),
-    [floatingStrategy, x, y, transformOrigin]
+      }) as const,
+    [floatingStrategy, x, y, transformOrigin],
   );
 
   const anchorHidden = !!middlewareData.hide?.referenceHidden;
@@ -349,7 +435,7 @@ function useMentionPositioner({
         left: "translateY(50%) rotate(-90deg) translateX(50%)",
       }[placementSide],
     }),
-    [middlewareData.arrow, placementSide, transformOrigin]
+    [middlewareData.arrow, placementSide, transformOrigin],
   );
 
   const positionerContext = React.useMemo(
@@ -385,7 +471,7 @@ function useMentionPositioner({
       placementAlign,
       arrowDisplaced,
       anchorHidden,
-    ]
+    ],
   );
 
   return positionerContext;
