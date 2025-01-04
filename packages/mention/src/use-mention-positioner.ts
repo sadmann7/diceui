@@ -30,41 +30,57 @@ import {
 import * as React from "react";
 
 interface UseMentionPositionerParams {
-  /** Whether the mention popup is open */
+  /** Whether the mention menu is open. */
   open: boolean;
-  /** Event handler called when the mention popup is opened or closed */
+
+  /** Event handler called when the mention menu is opened or closed. */
   onOpenChange: (open: boolean) => void;
-  /** The preferred side of the anchor to place the mention popup */
+
+  /** The preferred side of the anchor to place the mention menu. */
   side?: Side;
+
   /** The distance in pixels from the anchor */
   sideOffset?: number;
-  /** The preferred alignment against the anchor */
+
+  /** The preferred alignment against the anchor. */
   align?: Align;
-  /** The distance in pixels from the aligned edge */
+
+  /** The distance in pixels from the aligned edge. */
   alignOffset?: number;
-  /** Elements that constrain the positioning */
+
+  /** Elements that constrain the positioning. */
   collisionBoundary?: Element | Element[] | null;
-  /** Padding between the mention popup and the boundary edges */
+
+  /** Padding between the mention menu and the boundary edges. */
   collisionPadding?:
     | number
     | Partial<Record<"top" | "right" | "bottom" | "left", number>>;
-  /** Padding between the arrow and the mention popup edges */
+
+  /** Padding between the arrow and the mention menu edges. */
   arrowPadding?: number;
-  /** How the mention popup responds to scroll */
+
+  /** How the mention menu responds to scroll. */
   sticky?: "partial" | "always";
-  /** The positioning strategy to use */
+
+  /** The positioning strategy to use. */
   strategy?: Strategy;
-  /** Whether to automatically adjust placement */
+
+  /** Whether to automatically adjust placement. */
   avoidCollisions?: boolean;
-  /** Whether to constrain the mention popup to viewport */
+
+  /** Whether to constrain the mention menu to viewport. */
   fitViewport?: boolean;
-  /** Whether to mount the mention popup even when closed */
+
+  /** Whether to mount the mention menu even when closed. */
   forceMount?: boolean;
-  /** Whether to hide when detached */
+
+  /** Whether to hide when detached. */
   hideWhenDetached?: boolean;
-  /** Whether to track the anchor position */
+
+  /** Whether to track the anchor position. */
   trackAnchor?: boolean;
-  /** Reference to the trigger element */
+
+  /** Reference to the trigger element. */
   triggerRef?: React.RefObject<HTMLElement | null>;
 }
 

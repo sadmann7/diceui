@@ -33,10 +33,14 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
+      <div className="h-screen bg-accent" />
       <Mention.Root className="flex w-[15rem] flex-col gap-2">
         <Mention.Label>Tricks</Mention.Label>
-        <Mention.Input />
-        <Mention.Content>
+        <Mention.Input
+          placeholder="Mention a trick with @"
+          className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm"
+        />
+        <Mention.Content className="data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 rounded-md border bg-popover p-1 text-popover-foreground shadow-md data-[state=closed]:animate-out data-[state=open]:animate-in">
           {tricks.map((trick) => (
             <Mention.Item
               key={trick.value}
@@ -48,8 +52,7 @@ export default function PlaygroundPage() {
           ))}
         </Mention.Content>
       </Mention.Root>
-      <div className="h-screen bg-accent" />
-      <Combobox className="w-[15rem]" modal>
+      <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
           <ComboboxTrigger>

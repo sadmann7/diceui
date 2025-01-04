@@ -55,12 +55,12 @@ const MentionContent = React.forwardRef<HTMLDivElement, MentionContentProps>(
     useDismiss({
       enabled: context.open,
       onDismiss: () => context.onOpenChange(false),
-      refs: [context.inputRef],
+      refs: [context.listRef, context.inputRef],
       onFocusOutside: (event) => event.preventDefault(),
       onEscapeKeyDown,
       onPointerDownOutside,
-      disableOutsidePointerEvents: false,
-      preventScrollDismiss: true,
+      disableOutsidePointerEvents: context.open && context.modal,
+      preventScrollDismiss: context.open,
     });
 
     return (

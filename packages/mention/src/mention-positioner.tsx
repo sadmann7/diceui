@@ -46,17 +46,7 @@ const MentionPositioner = React.forwardRef<
 
   const context = useMentionContext(POSITIONER_NAME);
 
-  const {
-    refs,
-    update,
-    context: floatingContext,
-    floatingStyles,
-    arrowStyles,
-    onArrowChange,
-    renderedSide,
-    renderedAlign,
-    arrowDisplaced,
-  } = useMentionPositioner({
+  const positionerContext = useMentionPositioner({
     open: context.open,
     onOpenChange: context.onOpenChange,
     triggerRef: context.inputRef,
@@ -76,35 +66,29 @@ const MentionPositioner = React.forwardRef<
   });
 
   const composedRef = useComposedRefs<HTMLDivElement>(forwardedRef, (node) =>
-    refs.setFloating(node),
+    positionerContext.refs.setFloating(node),
   );
 
   useScrollLock({
     enabled: context.open && context.modal,
   });
 
-  React.useEffect(() => {
-    if (context.triggerPoint) {
-      update();
-    }
-  }, [context.triggerPoint, update]);
-
   if (!forceMount && !context.open) return null;
 
   return (
     <FloatingFocusManager
-      context={floatingContext}
+      context={positionerContext.context}
       modal={false}
       initialFocus={context.inputRef}
       returnFocus={false}
       visuallyHiddenDismiss
     >
       <MentionContentProvider
-        side={renderedSide}
-        align={renderedAlign}
-        arrowStyles={arrowStyles}
-        arrowDisplaced={arrowDisplaced}
-        onArrowChange={onArrowChange}
+        side={positionerContext.renderedSide}
+        align={positionerContext.renderedAlign}
+        arrowStyles={positionerContext.arrowStyles}
+        arrowDisplaced={positionerContext.arrowDisplaced}
+        onArrowChange={positionerContext.onArrowChange}
         forceMount={forceMount}
       >
         <Primitive.div
@@ -112,11 +96,11 @@ const MentionPositioner = React.forwardRef<
           role="listbox"
           aria-orientation="vertical"
           data-state={getDataState(context.open)}
-          data-side={renderedSide}
-          data-align={renderedAlign}
+          data-side={positionerContext.renderedSide}
+          data-align={positionerContext.renderedAlign}
           style={{
             ...style,
-            ...floatingStyles,
+            ...positionerContext.floatingStyles,
             position: strategy,
             top: context.triggerPoint?.top ?? 0,
             left: context.triggerPoint?.left ?? 0,
