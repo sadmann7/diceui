@@ -1,15 +1,58 @@
 import * as React from "react";
 
 const collatorCache = new Map<string, Intl.Collator>();
+const normalizedCache = new Map<string, string>();
 
-export interface Filter {
-  startsWith(string: string, substring: string): boolean;
-  endsWith(string: string, substring: string): boolean;
-  contains(string: string, substring: string): boolean;
-  fuzzy(string: string, substring: string): boolean;
+interface UseFilterOptions extends Intl.CollatorOptions {
+  gapMatch?: boolean;
 }
 
-export function useFilter(options?: Intl.CollatorOptions): Filter {
+const SEPARATORS_PATTERN = /[-_\s./\\|:;,]+/g;
+const UNWANTED_CHARS = /[^\p{L}\p{N}\s]/gu;
+
+function normalizeWithGaps(str: string) {
+  if (!str) return "";
+  if (typeof str !== "string") return "";
+
+  const cached = normalizedCache.get(str);
+  if (cached !== undefined) return cached;
+
+  let normalized: string;
+  try {
+    // Combine operations to reduce string iterations
+    normalized = str
+      .toLowerCase()
+      .normalize("NFC")
+      .replace(UNWANTED_CHARS, " ")
+      .replace(SEPARATORS_PATTERN, " ")
+      .trim()
+      .replace(/\s+/g, ""); // Remove all spaces for gap matching
+  } catch (_err) {
+    // Fallback for environments without Unicode property support
+    normalized = str
+      .toLowerCase()
+      .normalize("NFC")
+      .replace(/[^a-z0-9\s]/g, " ")
+      .trim()
+      .replace(/\s+/g, "");
+  }
+
+  // Only cache if the normalized string is different from lowercase input
+  if (normalized !== str.toLowerCase()) {
+    normalizedCache.set(str, normalized);
+  }
+
+  return normalized;
+}
+
+// Limit cache size to prevent memory leaks
+function clearCacheIfNeeded() {
+  if (normalizedCache.size > 10000) {
+    normalizedCache.clear();
+  }
+}
+
+export function useFilter(options?: UseFilterOptions) {
   const cacheKey = options
     ? Object.entries(options)
         .sort((a, b) => (a[0] < b[0] ? -1 : 1))
@@ -18,7 +61,10 @@ export function useFilter(options?: Intl.CollatorOptions): Filter {
 
   let collator = collatorCache.get(cacheKey);
   if (!collator) {
-    collator = new Intl.Collator("en", options);
+    collator = new Intl.Collator("en", {
+      ...options,
+      sensitivity: "base", // Make collator ignore case and diacritics by default
+    });
     collatorCache.set(cacheKey, collator);
   }
 
@@ -28,8 +74,15 @@ export function useFilter(options?: Intl.CollatorOptions): Filter {
         return true;
       }
 
-      const normalizedString = string.normalize("NFC");
-      const normalizedSubstring = substring.normalize("NFC");
+      if (options?.gapMatch) {
+        clearCacheIfNeeded();
+        const normalizedString = normalizeWithGaps(string);
+        const normalizedSubstring = normalizeWithGaps(substring);
+        return normalizedString.startsWith(normalizedSubstring);
+      }
+
+      const normalizedString = string.toLowerCase().normalize("NFC");
+      const normalizedSubstring = substring.toLowerCase().normalize("NFC");
       return (
         collator.compare(
           normalizedString.slice(0, normalizedSubstring.length),
@@ -37,7 +90,7 @@ export function useFilter(options?: Intl.CollatorOptions): Filter {
         ) === 0
       );
     },
-    [collator],
+    [collator, options?.gapMatch],
   );
 
   const endsWith = React.useCallback(
@@ -46,8 +99,15 @@ export function useFilter(options?: Intl.CollatorOptions): Filter {
         return true;
       }
 
-      const normalizedString = string.normalize("NFC");
-      const normalizedSubstring = substring.normalize("NFC");
+      if (options?.gapMatch) {
+        clearCacheIfNeeded();
+        const normalizedString = normalizeWithGaps(string);
+        const normalizedSubstring = normalizeWithGaps(substring);
+        return normalizedString.endsWith(normalizedSubstring);
+      }
+
+      const normalizedString = string.toLowerCase().normalize("NFC");
+      const normalizedSubstring = substring.toLowerCase().normalize("NFC");
       return (
         collator.compare(
           normalizedString.slice(-normalizedSubstring.length),
@@ -55,7 +115,7 @@ export function useFilter(options?: Intl.CollatorOptions): Filter {
         ) === 0
       );
     },
-    [collator],
+    [collator, options?.gapMatch],
   );
 
   const contains = React.useCallback(
@@ -64,8 +124,15 @@ export function useFilter(options?: Intl.CollatorOptions): Filter {
         return true;
       }
 
-      const normalizedString = string.normalize("NFC");
-      const normalizedSubstring = substring.normalize("NFC");
+      if (options?.gapMatch) {
+        clearCacheIfNeeded();
+        const normalizedString = normalizeWithGaps(string);
+        const normalizedSubstring = normalizeWithGaps(substring);
+        return normalizedString.includes(normalizedSubstring);
+      }
+
+      const normalizedString = string.toLowerCase().normalize("NFC");
+      const normalizedSubstring = substring.toLowerCase().normalize("NFC");
 
       let scan = 0;
       const sliceLen = normalizedSubstring.length;
@@ -78,7 +145,7 @@ export function useFilter(options?: Intl.CollatorOptions): Filter {
 
       return false;
     },
-    [collator],
+    [collator, options?.gapMatch],
   );
 
   const fuzzy = React.useCallback(
@@ -86,8 +153,29 @@ export function useFilter(options?: Intl.CollatorOptions): Filter {
       if (pattern.length === 0) return true;
       if (string.length === 0) return false;
 
-      const normalizedString = string.normalize("NFC").toLowerCase();
-      const normalizedPattern = pattern.normalize("NFC").toLowerCase();
+      if (options?.gapMatch) {
+        clearCacheIfNeeded();
+        const normalizedString = normalizeWithGaps(string);
+        const normalizedPattern = normalizeWithGaps(pattern);
+
+        let patternIdx = 0;
+        let stringIdx = 0;
+
+        while (
+          stringIdx < normalizedString.length &&
+          patternIdx < normalizedPattern.length
+        ) {
+          if (normalizedString[stringIdx] === normalizedPattern[patternIdx]) {
+            patternIdx++;
+          }
+          stringIdx++;
+        }
+
+        return patternIdx === normalizedPattern.length;
+      }
+
+      const normalizedString = string.toLowerCase().normalize("NFC");
+      const normalizedPattern = pattern.toLowerCase().normalize("NFC");
 
       let patternIdx = 0;
       let stringIdx = 0;
@@ -109,7 +197,7 @@ export function useFilter(options?: Intl.CollatorOptions): Filter {
 
       return patternIdx === normalizedPattern.length;
     },
-    [collator],
+    [collator, options?.gapMatch],
   );
 
   const memoizedFilter = React.useMemo(

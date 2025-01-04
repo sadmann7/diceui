@@ -257,7 +257,6 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     items: new Map<string, number>(),
     groups: new Map<string, Set<string>>(),
   }).current;
-  const normalizedCache = React.useRef(new Map<string, string>()).current;
 
   const dir = useDirection(dirProp);
   const { getEnabledItems } = useCollection<CollectionElement>({
@@ -355,45 +354,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     [items, groups],
   );
 
-  const normalizeString = React.useCallback(
-    (str: string) => {
-      if (!str) return "";
-      if (typeof str !== "string") return "";
-
-      const cacheKey = str;
-      let normalized = normalizedCache.get(cacheKey);
-      if (normalized !== undefined) return normalized;
-
-      const SEPARATORS_PATTERN = /[-_\s./\\|:;,]+/g;
-      const UNWANTED_CHARS = /[^\p{L}\p{N}\s]/gu;
-
-      try {
-        normalized = str
-          .toLowerCase()
-          .replace(UNWANTED_CHARS, " ")
-          .replace(SEPARATORS_PATTERN, " ")
-          .trim();
-
-        if (normalized !== str.toLowerCase()) {
-          normalizedCache.set(cacheKey, normalized);
-        }
-
-        return normalized;
-      } catch (_err) {
-        normalized = str
-          .toLowerCase()
-          .replace(/[^a-z0-9\s]/g, " ")
-          .replace(/\s+/g, " ")
-          .trim();
-
-        normalizedCache.set(cacheKey, normalized);
-        return normalized;
-      }
-    },
-    [normalizedCache],
-  );
-
-  const filter = useFilter({ sensitivity: "base" });
+  const filter = useFilter({ sensitivity: "base", gapMatch: true });
   const currentFilter = React.useMemo(
     () => (exactMatch ? filter.contains : filter.fuzzy),
     [filter.fuzzy, filter.contains, exactMatch],
@@ -404,18 +365,15 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       if (!searchTerm) return 1;
       if (!value) return 0;
 
-      const normalizedValue = normalizeString(value);
-      const normalizedSearch = normalizeString(searchTerm);
-
-      if (normalizedSearch === "") return 1;
-      if (normalizedValue === normalizedSearch) return 2;
-      if (normalizedValue.startsWith(normalizedSearch)) return 1.5;
+      if (searchTerm === "") return 1;
+      if (value === searchTerm) return 2;
+      if (value.startsWith(searchTerm)) return 1.5;
 
       return onFilter
         ? Number(onFilter([value], searchTerm).length > 0)
-        : Number(currentFilter(normalizedValue, normalizedSearch));
+        : Number(currentFilter(value, searchTerm));
     },
-    [currentFilter, normalizeString, onFilter],
+    [currentFilter, onFilter],
   );
 
   const onFilterItems = React.useCallback(() => {

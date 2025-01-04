@@ -210,40 +210,9 @@ const MentionRoot = React.forwardRef<CollectionItem, MentionProps>(
       [setValue, onOpenChange],
     );
 
-    const onFilterItems = React.useCallback(() => {
-      const items = Array.from(itemMapRef.current.values());
-      const allValues = items.flatMap((item) => [item.value, item.textValue]);
+    const onFilterItems = React.useCallback(() => {}, []);
 
-      if (!open) {
-        setFilteredItems([]);
-        return;
-      }
-
-      const lastAtIndex = inputValue.lastIndexOf(triggerCharacter);
-      if (lastAtIndex === -1) {
-        setFilteredItems([]);
-        return;
-      }
-
-      const searchTerm = inputValue.slice(lastAtIndex + 1);
-      if (searchTerm === "") {
-        setFilteredItems(allValues);
-        return;
-      }
-
-      let filteredItems: string[];
-      if (onFilter) {
-        filteredItems = onFilter(allValues, searchTerm);
-      } else {
-        filteredItems = allValues.filter((item) =>
-          exactMatch
-            ? filter.contains(item.toLowerCase(), searchTerm.toLowerCase())
-            : filter.fuzzy(item.toLowerCase(), searchTerm.toLowerCase()),
-        );
-      }
-
-      setFilteredItems(filteredItems);
-    }, [inputValue, onFilter, exactMatch, filter, open, triggerCharacter]);
+    console.log({ filteredItems });
 
     return (
       <MentionProvider
