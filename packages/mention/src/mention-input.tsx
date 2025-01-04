@@ -72,11 +72,46 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
 
     const onKeyDown = React.useCallback(
       (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === "Escape" && context.open) {
-          context.onOpenChange(false);
+        if (!context.open) return;
+
+        const isNavigationKey = [
+          "ArrowDown",
+          "ArrowUp",
+          "Enter",
+          "Escape",
+          "Tab",
+        ].includes(event.key);
+
+        if (isNavigationKey) {
+          event.preventDefault();
+        }
+
+        switch (event.key) {
+          case "Enter":
+          case "Tab": {
+            if (context.highlightedItem) {
+              context.onItemSelect(context.highlightedItem.value);
+              context.onHighlightedItemChange(null);
+              context.onOpenChange(false);
+            }
+            break;
+          }
+          case "ArrowDown": {
+            context.onHighlightMove(context.highlightedItem ? "next" : "first");
+            break;
+          }
+          case "ArrowUp": {
+            context.onHighlightMove(context.highlightedItem ? "prev" : "last");
+            break;
+          }
+          case "Escape": {
+            context.onOpenChange(false);
+            context.onHighlightedItemChange(null);
+            break;
+          }
         }
       },
-      [context.onOpenChange, context.open],
+      [context],
     );
 
     return (
