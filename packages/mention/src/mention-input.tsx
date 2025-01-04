@@ -185,7 +185,7 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
           const value = context.highlightedItem.value;
           if (!value) return;
 
-          context.onItemSelect(value);
+          context.onValueChange([...context.value, value]);
           context.onHighlightedItemChange(null);
           context.onOpenChange(false);
           context.filterStore.search = "";

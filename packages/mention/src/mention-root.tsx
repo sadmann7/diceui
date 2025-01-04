@@ -44,7 +44,6 @@ interface MentionContextValue {
   onOpenChange: (open: boolean) => void;
   inputValue: string;
   onInputValueChange: (value: string) => void;
-  onItemSelect: (value: string) => void;
   inputRef: React.RefObject<HTMLInputElement | null>;
   listRef: React.RefObject<ListElement | null>;
   triggerCharacter: string;
@@ -239,14 +238,6 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       [setOpen],
     );
 
-    const onItemSelect = React.useCallback(
-      (value: string) => {
-        setValue([...value, value]);
-        onOpenChange(false);
-      },
-      [setValue, onOpenChange],
-    );
-
     const onFilterItems = React.useCallback(() => {
       if (!filterStore.search) {
         filterStore.itemCount = itemMap.size;
@@ -365,7 +356,6 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         onInputValueChange={setInputValue}
         value={value}
         onValueChange={setValue}
-        onItemSelect={onItemSelect}
         triggerPoint={triggerPoint}
         onTriggerPointChange={setTriggerPoint}
         onFilter={onFilter}

@@ -60,6 +60,36 @@ const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
             data-disabled={isDisabled ? "" : undefined}
             {...itemProps}
             ref={composedRef}
+            onClick={composeEventHandlers(itemProps.onClick, () => {
+              if (isDisabled) return;
+              context.onValueChange([...context.value, value]);
+              context.onOpenChange(false);
+              context.onHighlightedItemChange(null);
+              context.filterStore.search = "";
+              context.inputRef.current?.focus();
+            })}
+            onPointerDown={composeEventHandlers(
+              itemProps.onPointerDown,
+              (event) => {
+                if (isDisabled) return;
+
+                // prevent implicit pointer capture
+                const target = event.target;
+                if (!(target instanceof HTMLElement)) return;
+                if (target.hasPointerCapture(event.pointerId)) {
+                  target.releasePointerCapture(event.pointerId);
+                }
+
+                if (
+                  event.button === 0 &&
+                  event.ctrlKey === false &&
+                  event.pointerType === "mouse"
+                ) {
+                  // prevent item from stealing focus from the input
+                  event.preventDefault();
+                }
+              },
+            )}
             onPointerMove={composeEventHandlers(itemProps.onPointerMove, () => {
               if (isDisabled) return;
               context.onHighlightedItemChange(
@@ -72,10 +102,6 @@ const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
                     }
                   : null,
               );
-            })}
-            onClick={composeEventHandlers(itemProps.onClick, () => {
-              if (isDisabled) return;
-              context.onItemSelect(value);
             })}
           />
         </ItemSlot>
