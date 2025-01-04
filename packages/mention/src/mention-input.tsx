@@ -89,7 +89,7 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
       ],
     );
 
-    const handleTriggerPoint = React.useCallback(
+    const onTriggerPointChange = React.useCallback(
       (element: HTMLInputElement, cursorPosition: number) => {
         const rect = element.getBoundingClientRect();
         const lineHeight = Number.parseInt(
@@ -126,7 +126,7 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
           );
           // Only open if there are no spaces in the mention text
           if (!textAfterTrigger.includes(" ")) {
-            handleTriggerPoint(element, lastTriggerIndex);
+            onTriggerPointChange(element, lastTriggerIndex);
             context.onOpenChange(true);
             context.filterStore.search = textAfterTrigger;
             context.onFilterItems();
@@ -140,7 +140,7 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
         context.onFilterItems,
         context.disabled,
         context.readonly,
-        handleTriggerPoint,
+        onTriggerPointChange,
       ],
     );
 
