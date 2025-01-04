@@ -16,6 +16,7 @@ import {
   type Side,
   type Strategy,
   type UseFloatingReturn,
+  type VirtualElement,
   arrow,
   autoUpdate,
   flip,
@@ -29,7 +30,7 @@ import {
 } from "@floating-ui/react";
 import * as React from "react";
 
-interface UseMentionPositionerParams {
+interface UseMentionPositionerProps {
   /** Whether the mention menu is open. */
   open: boolean;
 
@@ -52,9 +53,7 @@ interface UseMentionPositionerParams {
   collisionBoundary?: Element | Element[] | null;
 
   /** Padding between the mention menu and the boundary edges. */
-  collisionPadding?:
-    | number
-    | Partial<Record<"top" | "right" | "bottom" | "left", number>>;
+  collisionPadding?: number | Partial<Record<Side, number>>;
 
   /** Padding between the arrow and the mention menu edges. */
   arrowPadding?: number;
@@ -81,7 +80,10 @@ interface UseMentionPositionerParams {
   trackAnchor?: boolean;
 
   /** Reference to the trigger element. */
-  triggerRef?: React.RefObject<HTMLElement | null>;
+  triggerRef?: React.RefObject<HTMLInputElement | null>;
+
+  /** Virtual anchor for positioning. Must be used with `setPositionReference`. */
+  virtualAnchor?: VirtualElement | null;
 }
 
 interface UseMentionPositionerReturn {
@@ -98,10 +100,10 @@ interface UseMentionPositionerReturn {
   ) => Record<string, unknown>;
   arrowStyles: React.CSSProperties;
   onArrowChange: (arrow: HTMLElement | null) => void;
-  renderedSide: Side;
-  renderedAlign: Align;
+  side: Side;
+  align: Align;
   arrowDisplaced: boolean;
-  referenceHidden: boolean;
+  anchorHidden: boolean;
 }
 
 function useMentionPositioner({
@@ -122,7 +124,8 @@ function useMentionPositioner({
   hideWhenDetached = false,
   trackAnchor = true,
   triggerRef,
-}: UseMentionPositionerParams): UseMentionPositionerReturn {
+  virtualAnchor,
+}: UseMentionPositionerProps): UseMentionPositionerReturn {
   const direction = useDirection();
   const [positionerArrow, setPositionerArrow] =
     React.useState<HTMLElement | null>(null);
@@ -226,6 +229,7 @@ function useMentionPositioner({
       ancestorResize: true,
       elementResize: trackAnchor && typeof ResizeObserver !== "undefined",
       layoutShift: trackAnchor && typeof IntersectionObserver !== "undefined",
+      animationFrame: true,
     }),
     [trackAnchor]
   );
@@ -246,17 +250,32 @@ function useMentionPositioner({
     onOpenChange,
     placement,
     middleware,
-    whileElementsMounted: forceMount
-      ? undefined
-      : (...args) => autoUpdate(...args, autoUpdateOptions),
+    whileElementsMounted: (...args) => autoUpdate(...args, autoUpdateOptions),
     strategy,
   });
 
   useIsomorphicLayoutEffect(() => {
-    if (!open || !triggerRef?.current) return;
-    refs.setReference(triggerRef.current);
-    update();
-  }, [open, triggerRef, refs, update]);
+    if (!open) return;
+
+    if (virtualAnchor) {
+      refs.setPositionReference(virtualAnchor);
+    } else if (triggerRef?.current) {
+      refs.setPositionReference(triggerRef.current);
+    }
+
+    requestAnimationFrame(update);
+  }, [open, triggerRef, virtualAnchor, refs, update]);
+
+  React.useEffect(() => {
+    if (!open || !trackAnchor) return;
+
+    const handleScroll = () => {
+      requestAnimationFrame(update);
+    };
+
+    window.addEventListener("scroll", handleScroll, true);
+    return () => window.removeEventListener("scroll", handleScroll, true);
+  }, [open, update, trackAnchor]);
 
   React.useEffect(() => {
     if (forceMount && open && elements.reference && elements.floating) {
@@ -312,7 +331,7 @@ function useMentionPositioner({
     [floatingStrategy, x, y, transformOrigin]
   );
 
-  const referenceHidden = !!middlewareData.hide?.referenceHidden;
+  const anchorHidden = !!middlewareData.hide?.referenceHidden;
 
   const arrowDisplaced = middlewareData.arrow?.centerOffset !== 0;
 
@@ -346,10 +365,10 @@ function useMentionPositioner({
       getFloatingProps,
       arrowStyles,
       onArrowChange: setPositionerArrow,
-      renderedSide: placementSide,
-      renderedAlign: placementAlign,
+      side: placementSide,
+      align: placementAlign,
       arrowDisplaced,
-      referenceHidden,
+      anchorHidden,
     }),
     [
       refs,
@@ -365,7 +384,7 @@ function useMentionPositioner({
       placementSide,
       placementAlign,
       arrowDisplaced,
-      referenceHidden,
+      anchorHidden,
     ]
   );
 
@@ -373,4 +392,5 @@ function useMentionPositioner({
 }
 
 export { useMentionPositioner };
-export type { UseMentionPositionerParams, UseMentionPositionerReturn };
+
+export type { UseMentionPositionerProps };

@@ -12,6 +12,7 @@ import {
   useFilter,
   useId,
 } from "@diceui/shared";
+import type { VirtualElement } from "@floating-ui/react";
 import * as React from "react";
 import type { MentionInput } from "./mention-input";
 import type { MentionPositioner } from "./mention-positioner";
@@ -46,10 +47,10 @@ interface MentionContextValue {
   onInputValueChange: (value: string) => void;
   inputRef: React.RefObject<HTMLInputElement | null>;
   listRef: React.RefObject<ListElement | null>;
+  virtualAnchor: VirtualElement | null;
+  onVirtualAnchorChange: (element: VirtualElement | null) => void;
   trigger: string;
   onTriggerChange: (character: string) => void;
-  triggerPoint: { top: number; left: number } | null;
-  onTriggerPointChange: (point: { top: number; left: number } | null) => void;
   onFilter?: (options: string[], term: string) => string[];
   onFilterItems: () => void;
   filterStore: {
@@ -226,14 +227,14 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
     });
     const [trigger, setTrigger] =
       React.useState<MentionContextValue["trigger"]>(triggerProp);
-    const [triggerPoint, setTriggerPoint] =
-      React.useState<MentionContextValue["triggerPoint"]>(null);
+    const [virtualAnchor, setVirtualAnchor] =
+      React.useState<VirtualElement | null>(null);
 
     const onOpenChange = React.useCallback(
       (open: boolean) => {
         setOpen(open);
         if (!open) {
-          setTriggerPoint(null);
+          setVirtualAnchor(null);
         }
       },
       [setOpen],
@@ -357,8 +358,8 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         onInputValueChange={setInputValue}
         value={value}
         onValueChange={setValue}
-        triggerPoint={triggerPoint}
-        onTriggerPointChange={setTriggerPoint}
+        virtualAnchor={virtualAnchor}
+        onVirtualAnchorChange={setVirtualAnchor}
         onFilter={onFilter}
         onFilterItems={onFilterItems}
         filterStore={filterStore}

@@ -29,7 +29,7 @@ import {
 } from "@floating-ui/react";
 import * as React from "react";
 
-interface UseComboboxPositionerParams {
+interface UseComboboxPositionerProps {
   /** Whether the combobox is open. */
   open: boolean;
 
@@ -82,9 +82,7 @@ interface UseComboboxPositionerParams {
    * This prevents the combobox from touching the edges of its container.
    * @default 0
    */
-  collisionPadding?:
-    | number
-    | Partial<Record<"top" | "right" | "bottom" | "left", number>>;
+  collisionPadding?: number | Partial<Record<Side, number>>;
 
   /**
    * The padding between the arrow element and the combobox edges.
@@ -176,14 +174,14 @@ interface UseComboboxPositionerReturn {
   update: () => void;
   context: FloatingContext;
   getFloatingProps: (
-    floatingProps?: React.HTMLAttributes<HTMLElement>,
+    floatingProps?: React.HTMLAttributes<HTMLElement>
   ) => Record<string, unknown>;
   arrowStyles: React.CSSProperties;
   onArrowChange: (arrow: HTMLElement | null) => void;
-  renderedSide: "top" | "right" | "bottom" | "left";
-  renderedAlign: "start" | "center" | "end";
+  side: Side;
+  align: Align;
   arrowDisplaced: boolean;
-  referenceHidden: boolean;
+  anchorHidden: boolean;
 }
 
 function useComboboxPositioner({
@@ -206,7 +204,7 @@ function useComboboxPositioner({
   trackAnchor = true,
   anchorRef,
   triggerRef,
-}: UseComboboxPositionerParams): UseComboboxPositionerReturn {
+}: UseComboboxPositionerProps): UseComboboxPositionerReturn {
   const direction = useDirection();
   const [positionerArrow, setPositionerArrow] =
     React.useState<HTMLElement | null>(null);
@@ -217,8 +215,8 @@ function useComboboxPositioner({
         ? align === "start"
           ? "end"
           : align === "end"
-            ? "start"
-            : "center"
+          ? "start"
+          : "center"
         : align;
     return `${side}-${rtlAlign}` as Placement;
   }, [align, direction, side]);
@@ -239,7 +237,7 @@ function useComboboxPositioner({
           padding: collisionPadding || 0,
           fallbackStrategy:
             sticky === "partial" ? "bestFit" : "initialPlacement",
-        }),
+        })
       );
 
       middleware.push(
@@ -247,7 +245,7 @@ function useComboboxPositioner({
           boundary: collisionBoundary as Boundary | undefined,
           padding: collisionPadding || 0,
           limiter: sticky === "partial" ? limitShift() : undefined,
-        }),
+        })
       );
     }
 
@@ -276,7 +274,7 @@ function useComboboxPositioner({
             });
           }
         },
-      }),
+      })
     );
 
     if (hideWhenDetached) {
@@ -287,7 +285,7 @@ function useComboboxPositioner({
       arrow({
         element: positionerArrow,
         padding: arrowPadding,
-      }),
+      })
     );
 
     return middleware;
@@ -311,7 +309,7 @@ function useComboboxPositioner({
       elementResize: trackAnchor && typeof ResizeObserver !== "undefined",
       layoutShift: trackAnchor && typeof IntersectionObserver !== "undefined",
     }),
-    [trackAnchor],
+    [trackAnchor]
   );
 
   const {
@@ -354,7 +352,7 @@ function useComboboxPositioner({
         elements.reference,
         elements.floating,
         update,
-        autoUpdateOptions,
+        autoUpdateOptions
       );
     }
     return undefined;
@@ -376,8 +374,8 @@ function useComboboxPositioner({
       placementAlign === "end"
         ? "start"
         : placementAlign === "start"
-          ? "end"
-          : "center";
+        ? "end"
+        : "center";
 
     return `${oppositeAlign} ${oppositeSide}`;
   }, [placementSide, placementAlign]);
@@ -388,7 +386,7 @@ function useComboboxPositioner({
       "data-side": placementSide,
       "data-align": placementAlign,
     }),
-    [placementSide, placementAlign],
+    [placementSide, placementAlign]
   );
 
   const floatingStyles = React.useMemo(
@@ -398,11 +396,11 @@ function useComboboxPositioner({
         top: y ?? 0,
         left: x ?? 0,
         [VAR_TRANSFORM_ORIGIN]: transformOrigin,
-      }) as const,
-    [floatingStrategy, x, y, transformOrigin],
+      } as const),
+    [floatingStrategy, x, y, transformOrigin]
   );
 
-  const referenceHidden = !!middlewareData.hide?.referenceHidden;
+  const anchorHidden = !!middlewareData.hide?.referenceHidden;
 
   const arrowDisplaced = middlewareData.arrow?.centerOffset !== 0;
 
@@ -420,7 +418,7 @@ function useComboboxPositioner({
         left: "translateY(50%) rotate(-90deg) translateX(50%)",
       }[placementSide],
     }),
-    [middlewareData.arrow, placementSide, transformOrigin],
+    [middlewareData.arrow, placementSide, transformOrigin]
   );
 
   const positionerContext = React.useMemo(
@@ -436,10 +434,10 @@ function useComboboxPositioner({
       getFloatingProps,
       arrowStyles,
       onArrowChange: setPositionerArrow,
-      renderedSide: placementSide,
-      renderedAlign: placementAlign,
+      side: placementSide,
+      align: placementAlign,
       arrowDisplaced,
-      referenceHidden,
+      anchorHidden,
     }),
     [
       refs,
@@ -455,8 +453,8 @@ function useComboboxPositioner({
       placementSide,
       placementAlign,
       arrowDisplaced,
-      referenceHidden,
-    ],
+      anchorHidden,
+    ]
   );
 
   return positionerContext;
@@ -464,4 +462,4 @@ function useComboboxPositioner({
 
 export { useComboboxPositioner };
 
-export type { UseComboboxPositionerParams, UseComboboxPositionerReturn };
+export type { UseComboboxPositionerProps };

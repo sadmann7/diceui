@@ -3,14 +3,14 @@ import { FloatingFocusManager } from "@floating-ui/react";
 import * as React from "react";
 import { ComboboxContentProvider } from "./combobox-content";
 import { getDataState, useComboboxContext } from "./combobox-root";
-import type { UseComboboxPositionerParams } from "./use-combobox-positioner";
+import type { UseComboboxPositionerProps } from "./use-combobox-positioner";
 import { useComboboxPositioner } from "./use-combobox-positioner";
 
 const POSITIONER_NAME = "ComboboxPositioner";
 
 interface ComboboxPositionerProps
   extends Omit<
-      UseComboboxPositionerParams,
+      UseComboboxPositionerProps,
       "open" | "onOpenChange" | "anchorRef" | "triggerRef" | "hasAnchor"
     >,
     React.ComponentPropsWithoutRef<typeof Primitive.div> {
@@ -89,38 +89,32 @@ const ComboboxPositioner = React.forwardRef<
     return null;
   }
 
-  const content = (
+  return (
     <ComboboxContentProvider
-      side={side}
-      align={align}
+      side={positionerContext.side}
+      align={positionerContext.align}
       onArrowChange={positionerContext.onArrowChange}
       arrowDisplaced={positionerContext.arrowDisplaced}
       arrowStyles={positionerContext.arrowStyles}
       forceMount={forceMount}
     >
-      <Primitive.div
-        data-state={getDataState(context.open)}
-        {...positionerContext.getFloatingProps(positionerProps)}
-        ref={composedRef}
-        style={composedStyle}
-      />
-    </ComboboxContentProvider>
-  );
-
-  if (context.modal) {
-    return (
       <FloatingFocusManager
         context={positionerContext.context}
-        disabled={!context.open}
-        initialFocus={context.inputRef}
         modal={false}
+        initialFocus={context.inputRef}
+        returnFocus={false}
+        disabled={!context.open}
+        visuallyHiddenDismiss
       >
-        {content}
+        <Primitive.div
+          data-state={getDataState(context.open)}
+          {...positionerContext.getFloatingProps(positionerProps)}
+          ref={composedRef}
+          style={composedStyle}
+        />
       </FloatingFocusManager>
-    );
-  }
-
-  return content;
+    </ComboboxContentProvider>
+  );
 });
 
 ComboboxPositioner.displayName = POSITIONER_NAME;
