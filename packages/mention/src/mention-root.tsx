@@ -56,8 +56,10 @@ interface MentionContextValue {
     itemCount: number;
     items: Map<string, number>;
   };
-  highlightedItem: CollectionItem | null;
-  onHighlightedItemChange: (item: CollectionItem | null) => void;
+  highlightedItem: { ref: CollectionItem; data: ItemData } | null;
+  onHighlightedItemChange: (
+    item: { ref: CollectionItem; data: ItemData } | null,
+  ) => void;
   onHighlightMove: (direction: HighlightingDirection) => void;
   dir: Direction;
   disabled: boolean;
@@ -302,8 +304,10 @@ const MentionRoot = React.forwardRef<CollectionItem, MentionProps>(
       filterStore.itemCount = itemCount;
     }, [filterStore, itemMap, getItemScore]);
 
-    const [highlightedItem, setHighlightedItem] =
-      React.useState<CollectionItem | null>(null);
+    const [highlightedItem, setHighlightedItem] = React.useState<{
+      ref: CollectionItem;
+      data: ItemData;
+    } | null>(null);
 
     const onHighlightMove = React.useCallback(
       (direction: HighlightingDirection) => {
@@ -311,7 +315,7 @@ const MentionRoot = React.forwardRef<CollectionItem, MentionProps>(
         if (!items.length) return;
 
         const currentIndex = items.findIndex(
-          (item) => item.ref.current === highlightedItem,
+          (item) => item.ref.current === highlightedItem?.ref,
         );
         let nextIndex: number;
 
@@ -341,9 +345,9 @@ const MentionRoot = React.forwardRef<CollectionItem, MentionProps>(
         }
 
         const nextItem = items[nextIndex];
-        if (nextItem) {
-          nextItem.ref.current?.scrollIntoView({ block: "nearest" });
-          setHighlightedItem(nextItem.ref.current);
+        if (nextItem?.ref.current) {
+          nextItem.ref.current.scrollIntoView({ block: "nearest" });
+          setHighlightedItem({ ref: nextItem.ref.current, data: nextItem });
         }
       },
       [loop, highlightedItem, getItems, value],
