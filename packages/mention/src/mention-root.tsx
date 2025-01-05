@@ -233,14 +233,15 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
     const onOpenChange = React.useCallback(
       (open: boolean) => {
         setOpen(open);
-        if (!open) {
-          setVirtualAnchor(null);
-          setHighlightedItem(null);
+        if (open) {
+          requestAnimationFrame(() => {
+            const items = getItems().filter((item) => !item.disabled);
+            const firstItem = items[0] ?? null;
+            setHighlightedItem(firstItem);
+          });
         } else {
-          // When opening, highlight the first non-disabled item
-          const items = getItems().filter((item) => !item.disabled);
-          const firstItem = items[0] ?? null;
-          setHighlightedItem(firstItem);
+          setHighlightedItem(null);
+          setVirtualAnchor(null);
         }
       },
       [setOpen, getItems],
@@ -314,6 +315,8 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
 
     const onHighlightMove = React.useCallback(
       (direction: HighlightingDirection) => {
+        console.log("highlight move");
+
         const items = getItems().filter((item) => !item.disabled);
         if (items.length === 0) return;
 
