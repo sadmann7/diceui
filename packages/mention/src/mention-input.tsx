@@ -8,6 +8,13 @@ import { useMentionContext } from "./mention-root";
 
 const INPUT_NAME = "MentionInput";
 
+interface Mention {
+  label: string;
+  value: string;
+  start: number;
+  end: number;
+}
+
 interface MentionInputProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.input> {}
 
@@ -17,6 +24,42 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
     const composedRef = useComposedRefs<HTMLInputElement>(
       forwardedRef,
       context.inputRef,
+    );
+
+    const [mentions, setMentions] = React.useState<Mention[]>([]);
+
+    const onMentionAdd = React.useCallback(
+      (value: string, triggerIndex: number) => {
+        const input = context.inputRef.current;
+        if (!input) return;
+
+        const mentionText = `${context.trigger}${value}`;
+        const beforeTrigger = input.value.slice(0, triggerIndex);
+        const afterSearchText = input.value.slice(
+          input.selectionStart ?? triggerIndex,
+        );
+        const newValue = `${beforeTrigger}${mentionText} ${afterSearchText}`;
+
+        const newMention: Mention = {
+          // TODO: get label from context.getItems, which is not passed in yet
+          label: value,
+          value,
+          start: triggerIndex,
+          end: triggerIndex + mentionText.length,
+        };
+
+        setMentions((prev) => [...prev, newMention]);
+
+        // Update input value directly and through context
+        input.value = newValue;
+        context.onInputValueChange?.(newValue);
+        context.onValueChange?.([...context.value, value]);
+
+        // Set cursor position after the mention and space
+        const newCursorPosition = triggerIndex + mentionText.length + 1;
+        input.setSelectionRange(newCursorPosition, newCursorPosition);
+      },
+      [context],
     );
 
     const getTextWidth = React.useCallback(
@@ -153,10 +196,28 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
           context.filterStore.search = "";
         }
 
+        // Update mentions positions if needed
+        const lengthDiff = value.length - (context.inputValue?.length || 0);
+        if (lengthDiff !== 0) {
+          setMentions((prev) =>
+            prev.map((mention) => {
+              if (mention.start >= selectionStart) {
+                return {
+                  ...mention,
+                  start: mention.start + lengthDiff,
+                  end: mention.end + lengthDiff,
+                };
+              }
+              return mention;
+            }),
+          );
+        }
+
         context.onInputValueChange?.(value);
       },
       [
         context.trigger,
+        context.inputValue,
         context.onInputValueChange,
         context.onOpenChange,
         context.onFilterItems,
@@ -264,6 +325,85 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
 
     const onKeyDown = React.useCallback(
       (event: React.KeyboardEvent<HTMLInputElement>) => {
+        const input = event.currentTarget;
+        const cursorPosition = input.selectionStart ?? 0;
+        const selectionEnd = input.selectionEnd ?? cursorPosition;
+        const hasSelection = cursorPosition !== selectionEnd;
+
+        // Handle text clearing with selection
+        if (
+          (event.key === "Backspace" || event.key === "Delete") &&
+          hasSelection
+        ) {
+          const newValue =
+            input.value.slice(0, cursorPosition) +
+            input.value.slice(selectionEnd);
+
+          // Find mentions that are fully or partially within the selection
+          const affectedMentions = mentions.filter(
+            (m) =>
+              (m.start >= cursorPosition && m.start < selectionEnd) ||
+              (m.end > cursorPosition && m.end <= selectionEnd),
+          );
+
+          if (affectedMentions.length > 0) {
+            event.preventDefault();
+
+            // Update input value directly and through context
+            input.value = newValue;
+            context.onInputValueChange?.(newValue);
+
+            // Remove affected mentions from context value and state
+            const remainingValues = context.value.filter(
+              (v) => !affectedMentions.some((m) => m.value === v),
+            );
+            context.onValueChange?.(remainingValues);
+
+            setMentions((prev) =>
+              prev.filter((m) => !affectedMentions.includes(m)),
+            );
+
+            // Update cursor position
+            input.setSelectionRange(cursorPosition, cursorPosition);
+            return;
+          }
+        }
+
+        // Handle backspace for mention deletion
+        if (event.key === "Backspace" && !context.open && !hasSelection) {
+          // Find the mention that's immediately before the cursor
+          const mention = mentions.find((m) => {
+            // Check if cursor is right after mention (accounting for space)
+            const isCursorAfterMention = cursorPosition === m.end + 1;
+            // If there's a space after mention, ensure we're not deleting the space
+            if (isCursorAfterMention) {
+              const charBeforeCursor = input.value[cursorPosition - 1];
+              return charBeforeCursor !== " ";
+            }
+            return false;
+          });
+
+          if (mention) {
+            event.preventDefault();
+            const newValue =
+              input.value.slice(0, mention.start) +
+              input.value.slice(mention.end + 1);
+
+            // Update input value directly and through context
+            input.value = newValue;
+            context.onInputValueChange?.(newValue);
+            context.onValueChange?.(
+              context.value.filter((v) => v !== mention.value),
+            );
+            setMentions((prev) => prev.filter((m) => m !== mention));
+
+            // Update cursor position
+            const newCursorPosition = mention.start;
+            input.setSelectionRange(newCursorPosition, newCursorPosition);
+            return;
+          }
+        }
+
         if (!context.open) return;
 
         const isNavigationKey = [
@@ -289,7 +429,15 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
           const value = context.highlightedItem.value;
           if (!value) return;
 
-          context.onValueChange([...context.value, value]);
+          const lastTriggerIndex = input.value.lastIndexOf(
+            context.trigger,
+            cursorPosition,
+          );
+
+          if (lastTriggerIndex !== -1) {
+            onMentionAdd(value, lastTriggerIndex);
+          }
+
           context.onHighlightedItemChange(null);
           context.onOpenChange(false);
           context.filterStore.search = "";
@@ -301,6 +449,7 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
               onMenuClose();
               return;
             }
+            event.preventDefault();
             onItemSelect();
             break;
           }
@@ -331,7 +480,7 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
           }
         }
       },
-      [context],
+      [context, mentions, onMentionAdd],
     );
 
     return (
