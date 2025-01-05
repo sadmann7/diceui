@@ -1,5 +1,11 @@
 # @diceui/shared
 
+## 0.6.0
+
+### Minor Changes
+
+- 2bbc35f: Update slot and primitive
+
 ## 0.5.0
 
 ### Minor Changes

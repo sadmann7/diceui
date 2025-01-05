@@ -1,5 +1,16 @@
 # @diceui/checkbox-group
 
+## 0.2.0
+
+### Minor Changes
+
+- 2bbc35f: Update slot and primitive
+
+### Patch Changes
+
+- Updated dependencies [2bbc35f]
+  - @diceui/shared@0.6.0
+
 ## 0.1.1
 
 ### Patch Changes
