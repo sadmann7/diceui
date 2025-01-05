@@ -1,4 +1,5 @@
 import {
+  BubbleInput,
   type CollectionItem,
   type CollectionItemMap,
   type Direction,
@@ -10,6 +11,7 @@ import {
   useControllableState,
   useDirection,
   useFilter,
+  useFormControl,
   useId,
 } from "@diceui/shared";
 import type { VirtualElement } from "@floating-ui/react";
@@ -47,11 +49,6 @@ interface MentionContextValue {
   onVirtualAnchorChange: (element: VirtualElement | null) => void;
   trigger: string;
   onTriggerChange: (character: string) => void;
-  highlightedItem: CollectionItem<CollectionElement, ItemData> | null;
-  onHighlightedItemChange: (
-    item: CollectionItem<CollectionElement, ItemData> | null,
-  ) => void;
-  onHighlightMove: (direction: HighlightingDirection) => void;
   filterStore: {
     search: string;
     itemCount: number;
@@ -59,13 +56,17 @@ interface MentionContextValue {
   };
   onFilter?: (options: string[], term: string) => string[];
   onFilterItems: () => void;
+  highlightedItem: CollectionItem<CollectionElement, ItemData> | null;
+  onHighlightedItemChange: (
+    item: CollectionItem<CollectionElement, ItemData> | null,
+  ) => void;
+  onHighlightMove: (direction: HighlightingDirection) => void;
   dir: Direction;
   disabled: boolean;
   exactMatch: boolean;
   loop: boolean;
   modal: boolean;
   readonly: boolean;
-  collectionRef: React.RefObject<CollectionElement | null>;
   inputRef: React.RefObject<HTMLInputElement | null>;
   listRef: React.RefObject<ListElement | null>;
   inputId: string;
@@ -144,6 +145,15 @@ interface MentionProps
    * @default false
    */
   readonly?: boolean;
+
+  /**
+   * Whether the mention is required in a form context.
+   * @default false
+   */
+  required?: boolean;
+
+  /** The name of the mention when used in a form. */
+  name?: string;
 }
 
 const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
@@ -166,6 +176,8 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       loop = false,
       modal = false,
       readonly = false,
+      required = false,
+      name,
       ...rootProps
     } = props;
 
@@ -181,11 +193,21 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       items: new Map<string, number>(),
     }).current;
 
+    const inputId = useId();
+    const labelId = useId();
+    const listId = useId();
+
     const { getItems } = useCollection({ collectionRef, itemMap });
     const filter = useFilter({ sensitivity: "base", gapMatch: true });
     const currentFilter = React.useMemo(
       () => (exactMatch ? filter.contains : filter.fuzzy),
       [filter.fuzzy, filter.contains, exactMatch],
+    );
+
+    const { isFormControl, onTriggerChange } =
+      useFormControl<CollectionElement>();
+    const composedRef = composeRefs(forwardedRef, collectionRef, (node) =>
+      onTriggerChange(node),
     );
 
     const getItemScore = React.useCallback(
@@ -203,10 +225,6 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       },
       [currentFilter, onFilter],
     );
-
-    const inputId = useId();
-    const labelId = useId();
-    const listId = useId();
 
     const dir = useDirection(dirProp);
     const [open = false, setOpen] = useControllableState({
@@ -379,19 +397,18 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         onVirtualAnchorChange={setVirtualAnchor}
         trigger={trigger}
         onTriggerChange={setTrigger}
-        highlightedItem={highlightedItem}
-        onHighlightedItemChange={setHighlightedItem}
-        onHighlightMove={onHighlightMove}
         filterStore={filterStore}
         onFilter={onFilter}
         onFilterItems={onFilterItems}
+        highlightedItem={highlightedItem}
+        onHighlightedItemChange={setHighlightedItem}
+        onHighlightMove={onHighlightMove}
         dir={dir}
         disabled={disabled}
         exactMatch={exactMatch}
         loop={loop}
         modal={modal}
         readonly={readonly}
-        collectionRef={collectionRef}
         inputRef={inputRef}
         listRef={listRef}
         inputId={inputId}
@@ -399,11 +416,18 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         listId={listId}
       >
         <CollectionProvider collectionRef={collectionRef} itemMap={itemMap}>
-          <Primitive.div
-            ref={composeRefs(forwardedRef, collectionRef)}
-            {...rootProps}
-          >
+          <Primitive.div ref={composedRef} {...rootProps}>
             {children}
+            {isFormControl && name && (
+              <BubbleInput
+                type="hidden"
+                control={collectionRef.current}
+                name={name}
+                value={value}
+                disabled={disabled}
+                required={required}
+              />
+            )}
           </Primitive.div>
         </CollectionProvider>
       </MentionProvider>
@@ -423,4 +447,4 @@ export {
   useMentionContext,
 };
 
-export type { MentionContextValue, MentionProps, ItemData };
+export type { ItemData, MentionContextValue, MentionProps };

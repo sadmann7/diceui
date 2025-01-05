@@ -244,11 +244,6 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
   const collectionRef = React.useRef<CollectionElement | null>(null);
   const inputRef = React.useRef<InputElement | null>(null);
   const listRef = React.useRef<ListElement | null>(null);
-
-  const inputId = useId();
-  const labelId = useId();
-  const listId = useId();
-
   const items = React.useRef(new Map<string, string>()).current;
   const groups = React.useRef(new Map<string, Set<string>>()).current;
   const filterStore = React.useRef<ComboboxContextValue["filterStore"]>({
@@ -257,6 +252,10 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     items: new Map<string, number>(),
     groups: new Map<string, Set<string>>(),
   }).current;
+
+  const inputId = useId();
+  const labelId = useId();
+  const listId = useId();
 
   const dir = useDirection(dirProp);
   const { getEnabledItems } = useCollection<CollectionElement>({
