@@ -1,5 +1,12 @@
 # @diceui/combobox
 
+## 0.1.1
+
+### Patch Changes
+
+- Updated dependencies [6074f6a]
+  - @diceui/shared@0.5.0
+
 ## 0.1.0
 
 ### Major Changes
