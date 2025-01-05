@@ -85,7 +85,9 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
           right: x,
           bottom: y + lineHeight,
           left: x,
-          toJSON: () => this,
+          toJSON() {
+            return this;
+          },
         };
 
         // Cache the position to prevent unnecessary recalculations
