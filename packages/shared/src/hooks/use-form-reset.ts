@@ -20,8 +20,9 @@ interface UseFormResetParams<T> {
 
 /**
  * A hook to handle form reset events.
+ * Can be triggered by onReset callback or by form reset event.
  */
-export function useFormReset<T>({
+function useFormReset<T>({
   form,
   defaultValue,
   onReset,
@@ -41,3 +42,5 @@ export function useFormReset<T>({
     return () => form.removeEventListener("reset", onFormReset);
   }, [form, defaultValue, onResetCallback]);
 }
+
+export { useFormReset };

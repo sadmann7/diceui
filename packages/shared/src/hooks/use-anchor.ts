@@ -1,6 +1,6 @@
 import * as React from "react";
 
-export function useAnchor<T extends HTMLElement>() {
+function useAnchor<T extends HTMLElement>() {
   const anchorRef = React.useRef<T | null>(null);
   const [hasAnchor, setHasAnchor] = React.useState(false);
 
@@ -29,3 +29,5 @@ export function useAnchor<T extends HTMLElement>() {
     onAnchorRemove,
   };
 }
+
+export { useAnchor };

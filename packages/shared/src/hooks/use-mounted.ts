@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useLayoutEffect } from "./use-layout-effect";
 
-export function useMounted() {
+function useMounted() {
   const [mounted, setMounted] = React.useState(false);
 
   useLayoutEffect(() => {
@@ -10,3 +10,5 @@ export function useMounted() {
 
   return mounted;
 }
+
+export { useMounted };

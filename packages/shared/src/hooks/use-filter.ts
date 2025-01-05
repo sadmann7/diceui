@@ -106,7 +106,7 @@ interface UseFilterOptions extends Intl.CollatorOptions {
   sensitivity?: Intl.CollatorOptions["sensitivity"];
 }
 
-export function useFilter(options?: UseFilterOptions) {
+function useFilter(options?: UseFilterOptions) {
   const cacheKey = options
     ? Object.entries(options)
         .sort((a, b) => (a[0] < b[0] ? -1 : 1))
@@ -260,3 +260,5 @@ export function useFilter(options?: UseFilterOptions) {
     [startsWith, endsWith, contains, fuzzy],
   );
 }
+
+export { useFilter };
