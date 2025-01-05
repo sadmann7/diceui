@@ -19,43 +19,55 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
       context.inputRef,
     );
 
-    const calculatePosition = React.useCallback(
-      (input: HTMLInputElement, cursorPosition: number) => {
-        // Get input's bounding rect relative to viewport
-        const rect = input.getBoundingClientRect();
+    const getTextWidth = React.useCallback(
+      (text: string, input: HTMLInputElement) => {
         const style = window.getComputedStyle(input);
-        const lineHeight =
-          Number.parseInt(style.lineHeight) || input.offsetHeight;
-        const paddingLeft = Number.parseInt(style.paddingLeft) || 0;
-        const paddingTop = Number.parseInt(style.paddingTop) || 0;
-
-        // Create a temporary span to measure text width accurately
         const measureSpan = document.createElement("span");
         measureSpan.style.cssText = `
-          position: absolute;
-          visibility: hidden;
-          white-space: pre;
-          font: ${style.font};
-          letter-spacing: ${style.letterSpacing};
-          text-transform: ${style.textTransform};
-        `;
+        position: absolute;
+        visibility: hidden;
+        white-space: pre;
+        font: ${style.font};
+        letter-spacing: ${style.letterSpacing};
+        text-transform: ${style.textTransform};
+      `;
+        measureSpan.textContent = text;
         document.body.appendChild(measureSpan);
-
-        // Measure the text width up to the cursor
-        const textUpToCursor = input.value.slice(0, cursorPosition);
-        measureSpan.textContent = textUpToCursor;
-        const textWidth = measureSpan.offsetWidth;
+        const width = measureSpan.offsetWidth;
         document.body.removeChild(measureSpan);
+        return width;
+      },
+      [],
+    );
 
-        // Calculate current line based on text content
-        const lines = textUpToCursor.split("\n");
+    const getLineHeight = React.useCallback((input: HTMLInputElement) => {
+      const style = window.getComputedStyle(input);
+      return Number.parseInt(style.lineHeight) || input.offsetHeight;
+    }, []);
+
+    const calculatePosition = React.useCallback(
+      (input: HTMLInputElement, cursorPosition: number) => {
+        const rect = input.getBoundingClientRect();
+        const text = input.value.slice(0, cursorPosition);
+        const textWidth = getTextWidth(text, input);
+        const lineHeight = getLineHeight(input);
+        const paddingLeft = Number.parseFloat(
+          getComputedStyle(input).paddingLeft,
+        );
+        const paddingTop = Number.parseFloat(
+          getComputedStyle(input).paddingTop,
+        );
+
+        // Calculate the current line number
+        const textBeforeCursor = input.value.slice(0, cursorPosition);
+        const lines = textBeforeCursor.split("\n");
         const currentLine = lines.length - 1;
 
-        // Get scroll position
+        // Get scroll positions
         const scrollTop = input.scrollTop;
         const scrollLeft = input.scrollLeft;
 
-        // Calculate coordinates relative to viewport
+        // Calculate coordinates relative to viewport, ensuring smooth transitions
         const x = Math.min(
           rect.left + paddingLeft + textWidth - scrollLeft,
           rect.right - 10,
@@ -63,7 +75,8 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
         const y =
           rect.top + paddingTop + (currentLine * lineHeight - scrollTop);
 
-        return {
+        // Create a stable position object
+        const position: DOMRect = {
           width: 0,
           height: lineHeight,
           x,
@@ -72,19 +85,19 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
           right: x,
           bottom: y + lineHeight,
           left: x,
-          toJSON() {
-            return this;
-          },
+          toJSON: () => this,
         };
+
+        // Cache the position to prevent unnecessary recalculations
+        return position;
       },
-      [],
+      [getTextWidth, getLineHeight],
     );
 
     const createVirtualElement = React.useCallback(
       (element: HTMLInputElement, cursorPosition: number) => {
         const virtualElement = {
           getBoundingClientRect() {
-            // Recalculate position on each call to ensure accuracy
             return calculatePosition(element, cursorPosition);
           },
           getClientRects() {
@@ -109,55 +122,42 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
         if (context.disabled || context.readonly) return;
 
         const value = event.target.value;
-        const lastChar = value[value.length - 1];
-        const { selectionStart } = event.target;
+        const selectionStart = event.target.selectionStart ?? 0;
+        const lastTriggerIndex = value.lastIndexOf(
+          context.trigger,
+          selectionStart,
+        );
 
-        if (lastChar === context.trigger) {
-          const input = event.target;
-          createVirtualElement(input, selectionStart ?? 0);
-          context.onOpenChange(true);
-          context.filterStore.search = "";
-          context.onHighlightedItemChange(null);
-        } else if (context.open) {
-          // Check if trigger character is still present and valid
-          const lastTriggerIndex = value.lastIndexOf(context.trigger);
-          if (!value.includes(context.trigger)) {
+        if (lastTriggerIndex !== -1) {
+          const textAfterTrigger = value.slice(
+            lastTriggerIndex + 1,
+            selectionStart,
+          );
+
+          // Only update position and keep menu open if we're still in a valid mention state
+          if (!textAfterTrigger.includes(" ")) {
+            createVirtualElement(event.target, lastTriggerIndex);
+            context.onOpenChange(true);
+            context.filterStore.search = textAfterTrigger;
+            context.onFilterItems();
+          } else {
             context.onOpenChange(false);
             context.onHighlightedItemChange(null);
             context.filterStore.search = "";
-          } else if (lastTriggerIndex !== -1) {
-            const nextChar = value[lastTriggerIndex + 1];
-            // Close if there's a space right after trigger or no character after trigger
-            if (nextChar === " " || nextChar === undefined) {
-              context.onOpenChange(false);
-              context.onHighlightedItemChange(null);
-              context.filterStore.search = "";
-            } else {
-              // Extract text after the last trigger character
-              const searchTerm = value.slice(lastTriggerIndex + 1);
-              // Close if search term contains spaces
-              if (searchTerm.includes(" ")) {
-                context.onOpenChange(false);
-                context.onHighlightedItemChange(null);
-                context.filterStore.search = "";
-              } else {
-                context.filterStore.search = searchTerm;
-                // Update position as user types
-                createVirtualElement(event.target, lastTriggerIndex);
-              }
-            }
           }
+        } else {
+          context.onOpenChange(false);
+          context.onHighlightedItemChange(null);
+          context.filterStore.search = "";
         }
 
-        context.onInputValueChange(value);
-        context.onFilterItems();
+        context.onInputValueChange?.(value);
       },
       [
         context.trigger,
         context.onInputValueChange,
         context.onOpenChange,
         context.onFilterItems,
-        context.open,
         context.filterStore,
         context.disabled,
         context.readonly,
