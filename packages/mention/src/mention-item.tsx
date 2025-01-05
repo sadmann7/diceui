@@ -58,7 +58,6 @@ const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
             ref={composedRef}
             onClick={composeEventHandlers(itemProps.onClick, () => {
               if (isDisabled) return;
-              context.onInputValueChange(`${context.inputValue}${value}`);
               context.onValueChange([...context.value, value]);
               context.onOpenChange(false);
               context.onHighlightedItemChange(null);
