@@ -178,18 +178,32 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
           selectionStart,
         );
 
-        // Check if cursor is after a trigger character
-        if (lastTriggerIndex !== -1 && selectionStart > lastTriggerIndex) {
+        // Check if cursor is immediately after a trigger character
+        if (lastTriggerIndex !== -1) {
           const textAfterTrigger = value.slice(
             lastTriggerIndex + 1,
             selectionStart,
           );
-          // Only open if there are no spaces in the mention text
-          if (!textAfterTrigger.includes(" ")) {
+          // Only open if there are no spaces in the mention text and cursor is after trigger
+          if (
+            !textAfterTrigger.includes(" ") &&
+            selectionStart > lastTriggerIndex
+          ) {
             createVirtualElement(element, lastTriggerIndex);
             context.onOpenChange(true);
             context.filterStore.search = textAfterTrigger;
             context.onFilterItems();
+          } else if (selectionStart === lastTriggerIndex + 1) {
+            // Open menu when cursor is right after trigger
+            createVirtualElement(element, lastTriggerIndex);
+            context.onOpenChange(true);
+            context.filterStore.search = "";
+            context.onFilterItems();
+          } else {
+            // Close menu when cursor moves away
+            context.onOpenChange(false);
+            context.onHighlightedItemChange(null);
+            context.filterStore.search = "";
           }
         }
       },
@@ -200,9 +214,37 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
         context.onFilterItems,
         context.disabled,
         context.readonly,
+        context.onHighlightedItemChange,
         createVirtualElement,
       ],
     );
+
+    const onSelectionChange = React.useCallback(() => {
+      if (context.disabled || context.readonly) return;
+      const input = context.inputRef.current;
+      if (!input) return;
+      onCheckAndOpenMenu(input);
+    }, [
+      context.disabled,
+      context.readonly,
+      context.inputRef,
+      onCheckAndOpenMenu,
+    ]);
+
+    React.useEffect(() => {
+      const input = context.inputRef.current;
+      if (!input) return;
+
+      const handleSelectionChange = () => {
+        if (!input) return;
+        onSelectionChange();
+      };
+
+      input.addEventListener("selectionchange", handleSelectionChange);
+      return () => {
+        input.removeEventListener("selectionchange", handleSelectionChange);
+      };
+    }, [onSelectionChange, context.inputRef]);
 
     const onClick = React.useCallback(
       (event: React.MouseEvent<HTMLInputElement>) => {
@@ -310,6 +352,7 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
         onKeyDown={composeEventHandlers(props.onKeyDown, onKeyDown)}
         onClick={composeEventHandlers(props.onClick, onClick)}
         onFocus={composeEventHandlers(props.onFocus, onFocus)}
+        onSelect={composeEventHandlers(props.onSelect, onSelectionChange)}
       />
     );
   },
