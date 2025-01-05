@@ -105,7 +105,8 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
         }
 
         function onItemSelect() {
-          if (context.readOnly || !context.highlightedItem) return;
+          if (context.disabled || context.readOnly || !context.highlightedItem)
+            return;
 
           const value = context.highlightedItem.getAttribute(DATA_VALUE_ATTR);
           const text = context.highlightedItem.textContent ?? "";
@@ -323,10 +324,11 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
         context.highlightedBadgeIndex,
         context.onHighlightedBadgeIndexChange,
         context.onItemRemove,
-        context.readOnly,
         context.onSelectedTextChange,
         context.onValueChange,
         context.filterStore,
+        context.disabled,
+        context.readOnly,
       ],
     );
 

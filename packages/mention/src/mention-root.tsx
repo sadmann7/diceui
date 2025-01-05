@@ -35,6 +35,11 @@ interface ItemData {
   disabled: boolean;
 }
 
+interface Mention extends Omit<ItemData, "disabled"> {
+  start: number;
+  end: number;
+}
+
 const [{ CollectionProvider, CollectionItemSlot }, useCollection] =
   createCollection<CollectionElement, ItemData>(ROOT_NAME);
 
@@ -61,6 +66,7 @@ interface MentionContextValue {
     item: CollectionItem<CollectionElement, ItemData> | null,
   ) => void;
   onHighlightMove: (direction: HighlightingDirection) => void;
+  mentions: Mention[];
   dir: Direction;
   disabled: boolean;
   exactMatch: boolean;
@@ -72,6 +78,7 @@ interface MentionContextValue {
   inputId: string;
   labelId: string;
   listId: string;
+  onMentionAdd: (value: string, triggerIndex: number) => void;
 }
 
 const [MentionProvider, useMentionContext] =
@@ -250,6 +257,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       CollectionElement,
       ItemData
     > | null>(null);
+    const [mentions, setMentions] = React.useState<Mention[]>([]);
 
     const onOpenChange = React.useCallback(
       (open: boolean) => {
@@ -383,6 +391,41 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       [loop, highlightedItem, getItems, value],
     );
 
+    const onMentionAdd = React.useCallback(
+      (value: string, triggerIndex: number) => {
+        const input = inputRef.current;
+        if (!input) return;
+
+        const mentionText = `${trigger}${value}`;
+        const beforeTrigger = input.value.slice(0, triggerIndex);
+        const afterSearchText = input.value.slice(
+          input.selectionStart ?? triggerIndex,
+        );
+        const newValue = `${beforeTrigger}${mentionText} ${afterSearchText}`;
+
+        const newMention: Mention = {
+          label: value,
+          value,
+          start: triggerIndex,
+          end: triggerIndex + mentionText.length,
+        };
+
+        setMentions((prev) => [...prev, newMention]);
+
+        input.value = newValue;
+        setInputValue(newValue);
+        setValue([...value, value]);
+
+        const newCursorPosition = triggerIndex + mentionText.length + 1;
+        input.setSelectionRange(newCursorPosition, newCursorPosition);
+
+        setOpen(false);
+        setHighlightedItem(null);
+        filterStore.search = "";
+      },
+      [trigger, setInputValue, setValue, setOpen, filterStore],
+    );
+
     return (
       <MentionProvider
         open={open}
@@ -401,6 +444,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         highlightedItem={highlightedItem}
         onHighlightedItemChange={setHighlightedItem}
         onHighlightMove={onHighlightMove}
+        mentions={mentions}
         dir={dir}
         disabled={disabled}
         exactMatch={exactMatch}
@@ -412,6 +456,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         inputId={inputId}
         labelId={labelId}
         listId={listId}
+        onMentionAdd={onMentionAdd}
       >
         <CollectionProvider collectionRef={collectionRef} itemMap={itemMap}>
           <Primitive.div ref={composedRef} {...rootProps}>

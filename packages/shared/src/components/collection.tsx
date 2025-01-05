@@ -4,6 +4,7 @@
 
 import * as React from "react";
 import { DATA_ITEM_ATTR } from "../constants";
+import { useIsomorphicLayoutEffect } from "../hooks";
 import { composeRefs } from "../lib/compose-refs";
 import { compareNodePosition } from "../lib/node";
 import { createContext } from "./create-context";
@@ -70,7 +71,7 @@ function createCollection<TItemElement extends HTMLElement, TItemData = {}>(
         itemPropsRef.current = itemProps;
         const composedRef = composeRefs(forwardedRef, itemRef);
 
-        React.useEffect(() => {
+        useIsomorphicLayoutEffect(() => {
           const node = itemRef.current;
           if (!node) return;
 
@@ -81,7 +82,7 @@ function createCollection<TItemElement extends HTMLElement, TItemData = {}>(
 
           context.itemMap.set(itemRef, item);
           return () => void context.itemMap.delete(itemRef);
-        }, [context.itemMap]); // itemPropsRef is used inside but doesn't need to be a dependency
+        }, [context.itemMap]);
 
         return (
           <Slot {...{ [DATA_ITEM_ATTR]: "" }} ref={composedRef}>

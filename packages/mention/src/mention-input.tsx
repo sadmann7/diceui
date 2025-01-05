@@ -8,13 +8,6 @@ import { useMentionContext } from "./mention-root";
 
 const INPUT_NAME = "MentionInput";
 
-interface Mention {
-  label: string;
-  value: string;
-  start: number;
-  end: number;
-}
-
 interface MentionInputProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.input> {}
 
@@ -24,42 +17,6 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
     const composedRef = useComposedRefs<HTMLInputElement>(
       forwardedRef,
       context.inputRef,
-    );
-
-    const [mentions, setMentions] = React.useState<Mention[]>([]);
-
-    const onMentionAdd = React.useCallback(
-      (value: string, triggerIndex: number) => {
-        const input = context.inputRef.current;
-        if (!input) return;
-
-        const mentionText = `${context.trigger}${value}`;
-        const beforeTrigger = input.value.slice(0, triggerIndex);
-        const afterSearchText = input.value.slice(
-          input.selectionStart ?? triggerIndex,
-        );
-        const newValue = `${beforeTrigger}${mentionText} ${afterSearchText}`;
-
-        const newMention: Mention = {
-          // TODO: get label from context.getItems, which is not passed in yet
-          label: value,
-          value,
-          start: triggerIndex,
-          end: triggerIndex + mentionText.length,
-        };
-
-        setMentions((prev) => [...prev, newMention]);
-
-        // Update input value directly and through context
-        input.value = newValue;
-        context.onInputValueChange?.(newValue);
-        context.onValueChange?.([...context.value, value]);
-
-        // Set cursor position after the mention and space
-        const newCursorPosition = triggerIndex + mentionText.length + 1;
-        input.setSelectionRange(newCursorPosition, newCursorPosition);
-      },
-      [context],
     );
 
     const getTextWidth = React.useCallback(
@@ -133,7 +90,6 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
           },
         };
 
-        // Cache the position to prevent unnecessary recalculations
         return position;
       },
       [getTextWidth, getLineHeight],
@@ -160,73 +116,6 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
         context.onVirtualAnchorChange(virtualElement);
       },
       [context.onVirtualAnchorChange, calculatePosition],
-    );
-
-    const onChange = React.useCallback(
-      (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (context.disabled || context.readonly) return;
-
-        const value = event.target.value;
-        const selectionStart = event.target.selectionStart ?? 0;
-        const lastTriggerIndex = value.lastIndexOf(
-          context.trigger,
-          selectionStart,
-        );
-
-        if (lastTriggerIndex !== -1) {
-          const textAfterTrigger = value.slice(
-            lastTriggerIndex + 1,
-            selectionStart,
-          );
-
-          // Only update position and keep menu open if we're still in a valid mention state
-          if (!textAfterTrigger.includes(" ")) {
-            createVirtualElement(event.target, lastTriggerIndex);
-            context.onOpenChange(true);
-            context.filterStore.search = textAfterTrigger;
-            context.onFilterItems();
-          } else {
-            context.onOpenChange(false);
-            context.onHighlightedItemChange(null);
-            context.filterStore.search = "";
-          }
-        } else {
-          context.onOpenChange(false);
-          context.onHighlightedItemChange(null);
-          context.filterStore.search = "";
-        }
-
-        // Update mentions positions if needed
-        const lengthDiff = value.length - (context.inputValue?.length || 0);
-        if (lengthDiff !== 0) {
-          setMentions((prev) =>
-            prev.map((mention) => {
-              if (mention.start >= selectionStart) {
-                return {
-                  ...mention,
-                  start: mention.start + lengthDiff,
-                  end: mention.end + lengthDiff,
-                };
-              }
-              return mention;
-            }),
-          );
-        }
-
-        context.onInputValueChange?.(value);
-      },
-      [
-        context.trigger,
-        context.inputValue,
-        context.onInputValueChange,
-        context.onOpenChange,
-        context.onFilterItems,
-        context.filterStore,
-        context.disabled,
-        context.readonly,
-        context.onHighlightedItemChange,
-        createVirtualElement,
-      ],
     );
 
     const onCheckAndOpenMenu = React.useCallback(
@@ -282,32 +171,54 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
       ],
     );
 
-    const onSelectionChange = React.useCallback(() => {
-      if (context.disabled || context.readonly) return;
-      const input = context.inputRef.current;
-      if (!input) return;
-      onCheckAndOpenMenu(input);
-    }, [
-      context.disabled,
-      context.readonly,
-      context.inputRef,
-      onCheckAndOpenMenu,
-    ]);
+    const onChange = React.useCallback(
+      (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (context.disabled || context.readonly) return;
 
-    React.useEffect(() => {
-      const input = context.inputRef.current;
-      if (!input) return;
+        const value = event.target.value;
+        const selectionStart = event.target.selectionStart ?? 0;
+        const lastTriggerIndex = value.lastIndexOf(
+          context.trigger,
+          selectionStart,
+        );
 
-      const handleSelectionChange = () => {
-        if (!input) return;
-        onSelectionChange();
-      };
+        if (lastTriggerIndex !== -1) {
+          const textAfterTrigger = value.slice(
+            lastTriggerIndex + 1,
+            selectionStart,
+          );
 
-      input.addEventListener("selectionchange", handleSelectionChange);
-      return () => {
-        input.removeEventListener("selectionchange", handleSelectionChange);
-      };
-    }, [onSelectionChange, context.inputRef]);
+          // Only update position and keep menu open if we're still in a valid mention state
+          if (!textAfterTrigger.includes(" ")) {
+            createVirtualElement(event.target, lastTriggerIndex);
+            context.onOpenChange(true);
+            context.filterStore.search = textAfterTrigger;
+            context.onFilterItems();
+          } else {
+            context.onOpenChange(false);
+            context.onHighlightedItemChange(null);
+            context.filterStore.search = "";
+          }
+        } else {
+          context.onOpenChange(false);
+          context.onHighlightedItemChange(null);
+          context.filterStore.search = "";
+        }
+
+        context.onInputValueChange?.(value);
+      },
+      [
+        context.trigger,
+        context.onOpenChange,
+        context.onFilterItems,
+        context.filterStore,
+        context.disabled,
+        context.readonly,
+        context.onHighlightedItemChange,
+        context.onInputValueChange,
+        createVirtualElement,
+      ],
+    );
 
     const onClick = React.useCallback(
       (event: React.MouseEvent<HTMLInputElement>) => {
@@ -340,7 +251,7 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
             input.value.slice(selectionEnd);
 
           // Find mentions that are fully or partially within the selection
-          const affectedMentions = mentions.filter(
+          const affectedMentions = context.mentions.filter(
             (m) =>
               (m.start >= cursorPosition && m.start < selectionEnd) ||
               (m.end > cursorPosition && m.end <= selectionEnd),
@@ -353,15 +264,11 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
             input.value = newValue;
             context.onInputValueChange?.(newValue);
 
-            // Remove affected mentions from context value and state
+            // Remove affected mentions from context value
             const remainingValues = context.value.filter(
               (v) => !affectedMentions.some((m) => m.value === v),
             );
             context.onValueChange?.(remainingValues);
-
-            setMentions((prev) =>
-              prev.filter((m) => !affectedMentions.includes(m)),
-            );
 
             // Update cursor position
             input.setSelectionRange(cursorPosition, cursorPosition);
@@ -372,7 +279,7 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
         // Handle backspace for mention deletion
         if (event.key === "Backspace" && !context.open && !hasSelection) {
           // Find the mention that's immediately before the cursor
-          const mention = mentions.find((m) => {
+          const mention = context.mentions.find((m) => {
             // Check if cursor is right after mention (accounting for space)
             const isCursorAfterMention = cursorPosition === m.end + 1;
             // If there's a space after mention, ensure we're not deleting the space
@@ -395,7 +302,6 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
             context.onValueChange?.(
               context.value.filter((v) => v !== mention.value),
             );
-            setMentions((prev) => prev.filter((m) => m !== mention));
 
             // Update cursor position
             const newCursorPosition = mention.start;
@@ -425,7 +331,8 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
         }
 
         function onItemSelect() {
-          if (context.readonly || !context.highlightedItem) return;
+          if (context.disabled || context.readonly || !context.highlightedItem)
+            return;
           const value = context.highlightedItem.value;
           if (!value) return;
 
@@ -435,12 +342,8 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
           );
 
           if (lastTriggerIndex !== -1) {
-            onMentionAdd(value, lastTriggerIndex);
+            context.onMentionAdd(value, lastTriggerIndex);
           }
-
-          context.onHighlightedItemChange(null);
-          context.onOpenChange(false);
-          context.filterStore.search = "";
         }
 
         switch (event.key) {
@@ -480,8 +383,20 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
           }
         }
       },
-      [context, mentions, onMentionAdd],
+      [context],
     );
+
+    const onSelect = React.useCallback(() => {
+      if (context.disabled || context.readonly) return;
+      const input = context.inputRef.current;
+      if (!input) return;
+      onCheckAndOpenMenu(input);
+    }, [
+      context.disabled,
+      context.readonly,
+      context.inputRef,
+      onCheckAndOpenMenu,
+    ]);
 
     return (
       <Primitive.input
@@ -500,10 +415,10 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
         {...props}
         ref={composedRef}
         onChange={composeEventHandlers(props.onChange, onChange)}
-        onKeyDown={composeEventHandlers(props.onKeyDown, onKeyDown)}
         onClick={composeEventHandlers(props.onClick, onClick)}
         onFocus={composeEventHandlers(props.onFocus, onFocus)}
-        onSelect={composeEventHandlers(props.onSelect, onSelectionChange)}
+        onKeyDown={composeEventHandlers(props.onKeyDown, onKeyDown)}
+        onSelect={composeEventHandlers(props.onSelect, onSelect)}
       />
     );
   },
@@ -513,6 +428,6 @@ MentionInput.displayName = INPUT_NAME;
 
 const Input = MentionInput;
 
-export { MentionInput, Input };
+export { Input, MentionInput };
 
 export type { MentionInputProps };

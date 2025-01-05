@@ -58,11 +58,20 @@ const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
             ref={composedRef}
             onClick={composeEventHandlers(itemProps.onClick, () => {
               if (isDisabled) return;
-              context.onValueChange([...context.value, value]);
-              context.onOpenChange(false);
-              context.onHighlightedItemChange(null);
-              context.filterStore.search = "";
-              context.inputRef.current?.focus();
+              const input = context.inputRef.current;
+              if (!input) return;
+
+              const selectionStart = input.selectionStart ?? 0;
+              const lastTriggerIndex = input.value.lastIndexOf(
+                context.trigger,
+                selectionStart,
+              );
+
+              if (lastTriggerIndex !== -1) {
+                context.onMentionAdd(value, lastTriggerIndex);
+              }
+
+              input.focus();
             })}
             onPointerDown={composeEventHandlers(
               itemProps.onPointerDown,
