@@ -54,11 +54,6 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <Script
-        defer
-        src="https://assets.onedollarstats.com/tracker.js"
-        data-site-id="diceui.com"
-      />
       <body
         className={cn(
           "isolate min-h-screen font-sans antialiased",
@@ -66,6 +61,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
           fontMono.variable,
         )}
       >
+        <Script
+          defer
+          data-site-id="diceui.com"
+          src="https://assets.onedollarstats.com/tracker.js"
+        />
         <Providers
           theme={{
             attribute: "class",
