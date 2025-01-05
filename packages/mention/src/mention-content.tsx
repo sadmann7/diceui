@@ -1,16 +1,18 @@
 import {
   type Align,
+  type AnchorPositionerProps,
   type PointerDownOutsideEvent,
+  Primitive,
   type Side,
   createContext,
+  useAnchorPositioner,
+  useComposedRefs,
   useDismiss,
+  useScrollLock,
 } from "@diceui/shared";
+import { FloatingFocusManager } from "@floating-ui/react";
 import * as React from "react";
-import {
-  MentionPositioner,
-  type MentionPositionerProps,
-} from "./mention-positioner";
-import { useMentionContext } from "./mention-root";
+import { getDataState, useMentionContext } from "./mention-root";
 
 const CONTENT_NAME = "MentionContent";
 
@@ -26,7 +28,9 @@ interface MentionContentContextValue {
 const [MentionContentProvider, useMentionContentContext] =
   createContext<MentionContentContextValue>(CONTENT_NAME);
 
-interface MentionContentProps extends MentionPositionerProps {
+interface MentionContentProps
+  extends AnchorPositionerProps,
+    React.ComponentPropsWithoutRef<typeof Primitive.div> {
   /**
    * Event handler called when the `Escape` key is pressed.
    *
@@ -46,11 +50,58 @@ const MentionContent = React.forwardRef<HTMLDivElement, MentionContentProps>(
   (props, forwardedRef) => {
     const {
       forceMount = false,
+      side = "bottom",
+      sideOffset = 4,
+      align = "start",
+      alignOffset = 0,
+      arrowPadding = 0,
+      collisionBoundary,
+      collisionPadding,
+      sticky = "partial",
+      strategy = "absolute",
+      avoidCollisions = true,
+      fitViewport = false,
+      hideWhenDetached = false,
+      trackAnchor = true,
       onEscapeKeyDown,
       onPointerDownOutside,
+      style,
       ...contentProps
     } = props;
+
     const context = useMentionContext(CONTENT_NAME);
+
+    const positionerContext = useAnchorPositioner({
+      open: context.open,
+      onOpenChange: context.onOpenChange,
+      anchorRef: context.virtualAnchor,
+      side,
+      sideOffset,
+      align,
+      alignOffset,
+      arrowPadding,
+      collisionBoundary,
+      collisionPadding,
+      disableArrow: true,
+      sticky,
+      strategy,
+      avoidCollisions,
+      fitViewport,
+      hideWhenDetached,
+      trackAnchor,
+    });
+
+    const composedRef = useComposedRefs<HTMLDivElement>(forwardedRef, (node) =>
+      positionerContext.refs.setFloating(node),
+    );
+
+    const composedStyle = React.useMemo<React.CSSProperties>(() => {
+      return {
+        ...style,
+        ...positionerContext.floatingStyles,
+        ...(!context.open && forceMount ? { visibility: "hidden" } : {}),
+      };
+    }, [style, positionerContext.floatingStyles, context.open, forceMount]);
 
     useDismiss({
       enabled: context.open,
@@ -63,14 +114,40 @@ const MentionContent = React.forwardRef<HTMLDivElement, MentionContentProps>(
       preventScrollDismiss: context.open,
     });
 
+    useScrollLock({
+      referenceElement: context.inputRef.current,
+      enabled: context.open && context.modal,
+    });
+
+    if (!forceMount && !context.open) return null;
+
     return (
-      <MentionPositioner
-        id={context.contentId}
-        role="listbox"
+      <MentionContentProvider
+        side={side}
+        align={align}
+        arrowStyles={positionerContext.arrowStyles}
+        arrowDisplaced={positionerContext.arrowDisplaced}
+        onArrowChange={positionerContext.onArrowChange}
         forceMount={forceMount}
-        {...contentProps}
-        ref={forwardedRef}
-      />
+      >
+        <FloatingFocusManager
+          context={positionerContext.context}
+          modal={false}
+          initialFocus={context.inputRef}
+          returnFocus={false}
+          disabled={!context.open}
+          visuallyHiddenDismiss
+        >
+          <Primitive.div
+            ref={composedRef}
+            role="listbox"
+            aria-orientation="vertical"
+            data-state={getDataState(context.open)}
+            {...positionerContext.getFloatingProps(contentProps)}
+            style={composedStyle}
+          />
+        </FloatingFocusManager>
+      </MentionContentProvider>
     );
   },
 );
@@ -79,11 +156,6 @@ MentionContent.displayName = CONTENT_NAME;
 
 const Content = MentionContent;
 
-export {
-  Content,
-  MentionContent,
-  MentionContentProvider,
-  useMentionContentContext,
-};
+export { Content, MentionContent, useMentionContentContext };
 
 export type { MentionContentProps };

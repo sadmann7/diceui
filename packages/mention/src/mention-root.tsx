@@ -14,8 +14,8 @@ import {
 } from "@diceui/shared";
 import type { VirtualElement } from "@floating-ui/react";
 import * as React from "react";
+import type { MentionContent } from "./mention-content";
 import type { MentionInput } from "./mention-input";
-import type { MentionPositioner } from "./mention-positioner";
 
 function getDataState(open: boolean) {
   return open ? "open" : "closed";
@@ -25,10 +25,10 @@ const ROOT_NAME = "MentionRoot";
 
 type CollectionElement = HTMLDivElement;
 type InputElement = React.ElementRef<typeof MentionInput>;
-type ListElement = React.ElementRef<typeof MentionPositioner>;
+type ListElement = React.ElementRef<typeof MentionContent>;
 
 interface ItemData {
-  text: string;
+  label: string;
   value: string;
   disabled: boolean;
 }
@@ -43,33 +43,34 @@ interface MentionContextValue {
   onOpenChange: (open: boolean) => void;
   inputValue: string;
   onInputValueChange: (value: string) => void;
-  inputRef: React.RefObject<HTMLInputElement | null>;
-  listRef: React.RefObject<ListElement | null>;
   virtualAnchor: VirtualElement | null;
   onVirtualAnchorChange: (element: VirtualElement | null) => void;
   trigger: string;
   onTriggerChange: (character: string) => void;
-  onFilter?: (options: string[], term: string) => string[];
-  onFilterItems: () => void;
-  filterStore: {
-    search: string;
-    itemCount: number;
-    items: Map<string, number>;
-  };
   highlightedItem: CollectionItem<CollectionElement, ItemData> | null;
   onHighlightedItemChange: (
     item: CollectionItem<CollectionElement, ItemData> | null,
   ) => void;
   onHighlightMove: (direction: HighlightingDirection) => void;
+  filterStore: {
+    search: string;
+    itemCount: number;
+    items: Map<string, number>;
+  };
+  onFilter?: (options: string[], term: string) => string[];
+  onFilterItems: () => void;
   dir: Direction;
   disabled: boolean;
   exactMatch: boolean;
   loop: boolean;
   modal: boolean;
   readonly: boolean;
+  collectionRef: React.RefObject<CollectionElement | null>;
+  inputRef: React.RefObject<HTMLInputElement | null>;
+  listRef: React.RefObject<ListElement | null>;
   inputId: string;
   labelId: string;
-  contentId: string;
+  listId: string;
 }
 
 const [MentionProvider, useMentionContext] =
@@ -205,7 +206,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
 
     const inputId = useId();
     const labelId = useId();
-    const contentId = useId();
+    const listId = useId();
 
     const dir = useDirection(dirProp);
     const [open = false, setOpen] = useControllableState({
@@ -227,9 +228,16 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       React.useState<MentionContextValue["trigger"]>(triggerProp);
     const [virtualAnchor, setVirtualAnchor] =
       React.useState<VirtualElement | null>(null);
+    const [highlightedItem, setHighlightedItem] = React.useState<CollectionItem<
+      CollectionElement,
+      ItemData
+    > | null>(null);
 
     const onOpenChange = React.useCallback(
       (open: boolean) => {
+        if (open && filterStore.search && filterStore.itemCount === 0) {
+          return;
+        }
         setOpen(open);
         if (open) {
           requestAnimationFrame(() => {
@@ -242,7 +250,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
           setVirtualAnchor(null);
         }
       },
-      [setOpen, getItems],
+      [setOpen, getItems, filterStore],
     );
 
     const onFilterItems = React.useCallback(() => {
@@ -304,12 +312,14 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       }
 
       filterStore.itemCount = itemCount;
-    }, [filterStore, itemMap, getItemScore]);
 
-    const [highlightedItem, setHighlightedItem] = React.useState<CollectionItem<
-      CollectionElement,
-      ItemData
-    > | null>(null);
+      // Close the menu if no items match the filter
+      if (itemCount === 0) {
+        setOpen(false);
+        setHighlightedItem(null);
+        setVirtualAnchor(null);
+      }
+    }, [filterStore, itemMap, getItemScore, setOpen]);
 
     const onHighlightMove = React.useCallback(
       (direction: HighlightingDirection) => {
@@ -367,25 +377,26 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         onValueChange={setValue}
         virtualAnchor={virtualAnchor}
         onVirtualAnchorChange={setVirtualAnchor}
-        onFilter={onFilter}
-        onFilterItems={onFilterItems}
-        filterStore={filterStore}
-        inputRef={inputRef}
-        listRef={listRef}
         trigger={trigger}
         onTriggerChange={setTrigger}
+        highlightedItem={highlightedItem}
+        onHighlightedItemChange={setHighlightedItem}
+        onHighlightMove={onHighlightMove}
+        filterStore={filterStore}
+        onFilter={onFilter}
+        onFilterItems={onFilterItems}
         dir={dir}
         disabled={disabled}
         exactMatch={exactMatch}
         loop={loop}
         modal={modal}
         readonly={readonly}
+        collectionRef={collectionRef}
+        inputRef={inputRef}
+        listRef={listRef}
         inputId={inputId}
         labelId={labelId}
-        contentId={contentId}
-        highlightedItem={highlightedItem}
-        onHighlightedItemChange={setHighlightedItem}
-        onHighlightMove={onHighlightMove}
+        listId={listId}
       >
         <CollectionProvider collectionRef={collectionRef} itemMap={itemMap}>
           <Primitive.div

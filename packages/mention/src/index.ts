@@ -7,6 +7,9 @@ export type { MentionLabelProps } from "./mention-label";
 export { MentionInput, Input } from "./mention-input";
 export type { MentionInputProps } from "./mention-input";
 
+export { MentionPortal, Portal } from "./mention-portal";
+export type { MentionPortalProps } from "./mention-portal";
+
 export { MentionContent, Content } from "./mention-content";
 export type { MentionContentProps } from "./mention-content";
 

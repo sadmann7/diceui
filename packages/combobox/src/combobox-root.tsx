@@ -18,9 +18,9 @@ import {
 } from "@diceui/shared";
 import * as React from "react";
 import type { ComboboxAnchor } from "./combobox-anchor";
+import type { ComboboxContent } from "./combobox-content";
 import type { ComboboxInput } from "./combobox-input";
 import type { ComboboxItem } from "./combobox-item";
-import type { ComboboxPositioner } from "./combobox-positioner";
 
 function getDataState(open: boolean) {
   return open ? "open" : "closed";
@@ -33,7 +33,7 @@ type Value<Multiple extends boolean = false> = Multiple extends true
   : string;
 
 type CollectionElement = React.ElementRef<typeof Primitive.div>;
-type PositionerElement = React.ElementRef<typeof ComboboxPositioner>;
+type ListElement = React.ElementRef<typeof ComboboxContent>;
 type InputElement = React.ElementRef<typeof ComboboxInput>;
 type AnchorElement = React.ElementRef<typeof ComboboxAnchor>;
 type ItemElement = React.ElementRef<typeof ComboboxItem>;
@@ -47,23 +47,19 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   onInputValueChange: (value: string) => void;
   selectedText: string;
   onSelectedTextChange: (value: string) => void;
-  onFilter?: (options: string[], term: string) => string[];
-  onItemRemove: (value: string) => void;
-  collectionRef: React.RefObject<CollectionElement | null>;
-  listRef: React.RefObject<PositionerElement | null>;
-  inputRef: React.RefObject<InputElement | null>;
-  anchorRef: React.RefObject<AnchorElement | null>;
   filterStore: {
     search: string;
     itemCount: number;
     items: Map<string, number>;
     groups: Map<string, Set<string>>;
   };
+  onFilter?: (options: string[], term: string) => string[];
+  onItemRemove: (value: string) => void;
   highlightedItem: ItemElement | null;
   onHighlightedItemChange: (item: ItemElement | null) => void;
   highlightedBadgeIndex: number;
   onHighlightedBadgeIndexChange: (index: number) => void;
-  onRegisterItem: (id: string, value: string, groupId?: string) => () => void;
+  onItemRegister: (id: string, value: string, groupId?: string) => () => void;
   onFilterItems: () => void;
   onHighlightMove: (direction: HighlightingDirection) => void;
   hasAnchor: boolean;
@@ -77,9 +73,13 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   preserveInputOnBlur: boolean;
   readOnly: boolean;
   dir: Direction;
+  collectionRef: React.RefObject<CollectionElement | null>;
+  listRef: React.RefObject<ListElement | null>;
+  inputRef: React.RefObject<InputElement | null>;
+  anchorRef: React.RefObject<AnchorElement | null>;
   inputId: string;
   labelId: string;
-  contentId: string;
+  listId: string;
 }
 
 const [ComboboxProvider, useComboboxContext] =
@@ -242,12 +242,12 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
   } = props;
 
   const collectionRef = React.useRef<CollectionElement | null>(null);
-  const listRef = React.useRef<PositionerElement | null>(null);
   const inputRef = React.useRef<InputElement | null>(null);
+  const listRef = React.useRef<ListElement | null>(null);
 
   const inputId = useId();
   const labelId = useId();
-  const contentId = useId();
+  const listId = useId();
 
   const items = React.useRef(new Map<string, string>()).current;
   const groups = React.useRef(new Map<string, Set<string>>()).current;
@@ -329,7 +329,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     [setValue, value],
   );
 
-  const onRegisterItem = React.useCallback(
+  const onItemRegister = React.useCallback(
     (id: string, value: string, groupId?: string) => {
       items.set(id, value);
 
@@ -506,18 +506,14 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       onInputValueChange={setInputValue}
       selectedText={selectedText}
       onSelectedTextChange={setSelectedText}
-      onFilter={onFilter}
-      collectionRef={collectionRef}
-      listRef={listRef}
-      inputRef={inputRef}
-      anchorRef={anchorRef}
       filterStore={filterStore}
+      onFilter={onFilter}
+      onFilterItems={onFilterItems}
       highlightedItem={highlightedItem}
       onHighlightedItemChange={setHighlightedItem}
       highlightedBadgeIndex={highlightedBadgeIndex}
       onHighlightedBadgeIndexChange={setHighlightedBadgeIndex}
-      onRegisterItem={onRegisterItem}
-      onFilterItems={onFilterItems}
+      onItemRegister={onItemRegister}
       onHighlightMove={onHighlightMove}
       onItemRemove={onItemRemove}
       hasAnchor={hasAnchor}
@@ -530,10 +526,14 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       openOnFocus={openOnFocus}
       preserveInputOnBlur={preserveInputOnBlur}
       readOnly={readOnly}
+      collectionRef={collectionRef}
+      listRef={listRef}
+      inputRef={inputRef}
+      anchorRef={anchorRef}
       dir={dir}
       inputId={inputId}
       labelId={labelId}
-      contentId={contentId}
+      listId={listId}
     >
       <Primitive.div {...rootProps} ref={composedRef}>
         {children}

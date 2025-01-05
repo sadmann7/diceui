@@ -36,7 +36,7 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
   (props, forwardedRef) => {
     const { value, disabled, ...itemProps } = props;
     const context = useComboboxContext(ITEM_NAME);
-    // Make the group context optional, so item can be used outside of a group
+    // Make the group context optional by passing false, so item can be used outside of a group
     const groupContext = useComboboxGroupContext(ITEM_NAME, false);
     const itemRef = React.useRef<HTMLDivElement>(null);
     const composedRef = useComposedRefs(forwardedRef, itemRef);
@@ -53,8 +53,8 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
         throw new Error(`${ITEM_NAME} value cannot be an empty string.`);
       }
 
-      return context.onRegisterItem(id, value, groupContext?.id);
-    }, [id, value, context.onRegisterItem, groupContext?.id]);
+      return context.onItemRegister(id, value, groupContext?.id);
+    }, [id, value, context.onItemRegister, groupContext?.id]);
 
     const isVisible =
       context.manualFiltering ||

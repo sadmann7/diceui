@@ -33,7 +33,7 @@ const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
     const composedRef = composeRefs(forwardedRef, (node) => setTextNode(node));
     const id = useId();
 
-    const text = textNode?.textContent ?? "";
+    const label = textNode?.textContent ?? "";
     const isDisabled = disabled || context.disabled;
     const isSelected = context.value.includes(value);
 
@@ -43,8 +43,8 @@ const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
     if (!isVisible) return null;
 
     return (
-      <MentionItemProvider text={text} value={value} disabled={isDisabled}>
-        <CollectionItemSlot text={text} value={value} disabled={isDisabled}>
+      <MentionItemProvider label={label} value={value} disabled={isDisabled}>
+        <CollectionItemSlot label={label} value={value} disabled={isDisabled}>
           <Primitive.div
             id={id}
             role="option"
@@ -90,7 +90,7 @@ const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
             onPointerMove={composeEventHandlers(itemProps.onPointerMove, () => {
               if (isDisabled || !textNode) return;
               context.onHighlightedItemChange({
-                text,
+                label,
                 value,
                 disabled: isDisabled,
                 ref: { current: textNode },

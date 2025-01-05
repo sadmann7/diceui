@@ -1,16 +1,18 @@
 import {
   type Align,
+  type AnchorPositionerProps,
   type PointerDownOutsideEvent,
+  Primitive,
   type Side,
   createContext,
+  useAnchorPositioner,
+  useComposedRefs,
   useDismiss,
+  useScrollLock,
 } from "@diceui/shared";
+import { FloatingFocusManager } from "@floating-ui/react";
 import * as React from "react";
-import {
-  ComboboxPositioner,
-  type ComboboxPositionerProps,
-} from "./combobox-positioner";
-import { useComboboxContext } from "./combobox-root";
+import { getDataState, useComboboxContext } from "./combobox-root";
 
 const CONTENT_NAME = "ComboboxContent";
 
@@ -26,7 +28,9 @@ interface ComboboxContentContextValue {
 const [ComboboxContentProvider, useComboboxContentContext] =
   createContext<ComboboxContentContextValue>(CONTENT_NAME);
 
-interface ComboboxContentProps extends ComboboxPositionerProps {
+interface ComboboxContentProps
+  extends AnchorPositionerProps,
+    React.ComponentPropsWithoutRef<typeof Primitive.div> {
   /**
    * Event handler called when the `Escape` key is pressed.
    *
@@ -46,11 +50,57 @@ const ComboboxContent = React.forwardRef<HTMLDivElement, ComboboxContentProps>(
   (props, forwardedRef) => {
     const {
       forceMount = false,
+      side = "bottom",
+      sideOffset = 4,
+      align = "start",
+      alignOffset = 0,
+      arrowPadding = 0,
+      collisionBoundary,
+      collisionPadding,
+      sticky = "partial",
+      strategy = "absolute",
+      avoidCollisions = true,
+      fitViewport = false,
+      hideWhenDetached = false,
+      trackAnchor = true,
       onEscapeKeyDown,
       onPointerDownOutside,
+      style,
       ...contentProps
     } = props;
+
     const context = useComboboxContext(CONTENT_NAME);
+
+    const positionerContext = useAnchorPositioner({
+      open: context.open,
+      onOpenChange: context.onOpenChange,
+      anchorRef: context.hasAnchor ? context.anchorRef : context.inputRef,
+      side,
+      sideOffset,
+      align,
+      alignOffset,
+      arrowPadding,
+      collisionBoundary,
+      collisionPadding,
+      sticky,
+      strategy,
+      avoidCollisions,
+      fitViewport,
+      hideWhenDetached,
+      trackAnchor,
+    });
+
+    const composedRef = useComposedRefs(forwardedRef, context.listRef, (node) =>
+      positionerContext.refs.setFloating(node),
+    );
+
+    const composedStyle = React.useMemo<React.CSSProperties>(() => {
+      return {
+        ...style,
+        ...positionerContext.floatingStyles,
+        ...(!context.open && forceMount ? { visibility: "hidden" } : {}),
+      };
+    }, [style, positionerContext.floatingStyles, context.open, forceMount]);
 
     useDismiss({
       enabled: context.open,
@@ -63,15 +113,38 @@ const ComboboxContent = React.forwardRef<HTMLDivElement, ComboboxContentProps>(
       preventScrollDismiss: context.open,
     });
 
+    useScrollLock({
+      referenceElement: context.inputRef.current,
+      enabled: context.open && context.modal,
+    });
+
+    if (!forceMount && !context.open) return null;
+
     return (
-      <ComboboxPositioner
-        role="listbox"
-        id={context.contentId}
+      <ComboboxContentProvider
+        side={positionerContext.side}
+        align={positionerContext.align}
+        onArrowChange={positionerContext.onArrowChange}
+        arrowDisplaced={positionerContext.arrowDisplaced}
+        arrowStyles={positionerContext.arrowStyles}
         forceMount={forceMount}
-        trackAnchor={context.hasAnchor}
-        {...contentProps}
-        ref={forwardedRef}
-      />
+      >
+        <FloatingFocusManager
+          context={positionerContext.context}
+          modal={false}
+          initialFocus={context.inputRef}
+          returnFocus={false}
+          disabled={!context.open}
+          visuallyHiddenDismiss
+        >
+          <Primitive.div
+            data-state={getDataState(context.open)}
+            {...positionerContext.getFloatingProps(contentProps)}
+            ref={composedRef}
+            style={composedStyle}
+          />
+        </FloatingFocusManager>
+      </ComboboxContentProvider>
     );
   },
 );
@@ -80,11 +153,6 @@ ComboboxContent.displayName = CONTENT_NAME;
 
 const Content = ComboboxContent;
 
-export {
-  ComboboxContent,
-  ComboboxContentProvider,
-  Content,
-  useComboboxContentContext,
-};
+export { ComboboxContent, Content, useComboboxContentContext };
 
 export type { ComboboxContentProps };
