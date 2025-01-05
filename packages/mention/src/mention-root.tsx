@@ -341,8 +341,6 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
 
     const onHighlightMove = React.useCallback(
       (direction: HighlightingDirection) => {
-        console.log("highlight move");
-
         const items = getItems().filter((item) => !item.disabled);
         if (items.length === 0) return;
 
@@ -440,11 +438,11 @@ MentionRoot.displayName = ROOT_NAME;
 const Root = MentionRoot;
 
 export {
+  CollectionItemSlot,
   MentionRoot,
   Root,
-  CollectionItemSlot,
   getDataState,
   useMentionContext,
 };
 
-export type { MentionProps, ItemData };
+export type { ItemData, MentionProps };
