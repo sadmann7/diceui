@@ -33,10 +33,8 @@ interface ItemData {
   disabled: boolean;
 }
 
-const [{ Provider, ItemSlot }, useCollection] = createCollection<
-  CollectionElement,
-  ItemData
->(ROOT_NAME);
+const [{ CollectionProvider, CollectionItemSlot }, useCollection] =
+  createCollection<CollectionElement, ItemData>(ROOT_NAME);
 
 interface MentionContextValue {
   value: string[];
@@ -389,14 +387,14 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         onHighlightedItemChange={setHighlightedItem}
         onHighlightMove={onHighlightMove}
       >
-        <Provider collectionRef={collectionRef} itemMap={itemMap}>
+        <CollectionProvider collectionRef={collectionRef} itemMap={itemMap}>
           <Primitive.div
             ref={composeRefs(forwardedRef, collectionRef)}
             {...rootProps}
           >
             {children}
           </Primitive.div>
-        </Provider>
+        </CollectionProvider>
       </MentionProvider>
     );
   },
@@ -406,6 +404,12 @@ MentionRoot.displayName = ROOT_NAME;
 
 const Root = MentionRoot;
 
-export { ItemSlot, MentionRoot, Root, getDataState, useMentionContext };
+export {
+  CollectionItemSlot,
+  MentionRoot,
+  Root,
+  getDataState,
+  useMentionContext,
+};
 
 export type { MentionContextValue, MentionProps };

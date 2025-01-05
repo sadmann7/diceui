@@ -6,7 +6,7 @@ import {
   useId,
 } from "@diceui/shared";
 import * as React from "react";
-import { ItemSlot, useMentionContext } from "./mention-root";
+import { CollectionItemSlot, useMentionContext } from "./mention-root";
 
 const ITEM_NAME = "MentionItem";
 
@@ -48,7 +48,11 @@ const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
         value={value}
         disabled={isDisabled}
       >
-        <ItemSlot textValue={textValue} value={value} disabled={isDisabled}>
+        <CollectionItemSlot
+          textValue={textValue}
+          value={value}
+          disabled={isDisabled}
+        >
           <Primitive.div
             id={id}
             role="option"
@@ -101,7 +105,7 @@ const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
               });
             })}
           />
-        </ItemSlot>
+        </CollectionItemSlot>
       </MentionItemProvider>
     );
   },

@@ -64,7 +64,7 @@ function createCollection<TItemElement extends HTMLElement, TItemData = {}>(
     const { children, ...itemProps } = props;
     const context = useCollectionContext(ITEM_SLOT_NAME);
     const itemRef = React.useRef<TItemElement>(null);
-    const composedRefs = composeRefs(forwardedRef, itemRef);
+    const composedRef = composeRefs(forwardedRef, itemRef);
 
     React.useEffect(() => {
       context.itemMap.set(itemRef, {
@@ -75,7 +75,7 @@ function createCollection<TItemElement extends HTMLElement, TItemData = {}>(
     });
 
     return (
-      <Slot {...{ [DATA_ITEM_ATTR]: "" }} ref={composedRefs}>
+      <Slot {...{ [DATA_ITEM_ATTR]: "" }} ref={composedRef}>
         {children}
       </Slot>
     );
@@ -112,9 +112,9 @@ function createCollection<TItemElement extends HTMLElement, TItemData = {}>(
 
   return [
     {
-      Provider: CollectionProvider,
-      Slot: CollectionSlot,
-      ItemSlot: CollectionItemSlot,
+      CollectionProvider,
+      CollectionSlot,
+      CollectionItemSlot,
     },
     useCollection,
   ] as const;
