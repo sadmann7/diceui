@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import type { Metadata, Viewport } from "next";
 import type * as React from "react";
 import "@/styles/globals.css";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -53,6 +54,11 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <Script
+        defer
+        src="https://assets.onedollarstats.com/tracker.js"
+        data-site-id="diceui.com"
+      />
       <body
         className={cn(
           "isolate min-h-screen font-sans antialiased",

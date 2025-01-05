@@ -54,7 +54,7 @@ export default function PlaygroundPage() {
           </Mention.Content>
         </Mention.Portal>
       </Mention.Root>
-      <Combobox className="w-[15rem]" multiple>
+      <Combobox className="w-[15rem]" modal>
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
           <ComboboxTrigger>
