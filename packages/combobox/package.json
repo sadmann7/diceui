@@ -1,11 +1,16 @@
 {
   "name": "@diceui/combobox",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "publishConfig": {
     "access": "public"
   },
-  "keywords": ["combobox", "autocomplete", "ui", "react"],
+  "keywords": [
+    "combobox",
+    "autocomplete",
+    "ui",
+    "react"
+  ],
   "author": "Sadman Sakib",
   "license": "MIT",
   "repository": {
@@ -23,7 +28,11 @@
       "require": "./dist/index.cjs"
     }
   },
-  "files": ["dist", "package.json", "README.md"],
+  "files": [
+    "dist",
+    "package.json",
+    "README.md"
+  ],
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup --clean",

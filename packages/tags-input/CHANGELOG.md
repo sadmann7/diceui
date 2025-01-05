@@ -1,12 +1,19 @@
 # @diceui/tags-input
 
+## 0.1.1
+
+### Patch Changes
+
+- Updated dependencies [6074f6a]
+  - @diceui/shared@0.5.0
+
 ## 0.1.0
 
 ### Major Changes
 
 - 175b0d1: Renamed TagsInput subcomponents for better clarity and consistency:
   - Renamed `Text` component to `ItemText`
-  - Renamed `Delete` component to `ItemDelete`    
+  - Renamed `Delete` component to `ItemDelete`
 
 ### Patch Changes
 
