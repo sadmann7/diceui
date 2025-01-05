@@ -2,6 +2,7 @@ import {
   type AutoUpdateOptions,
   type Boundary,
   type FloatingContext,
+  type Middleware,
   type Placement,
   type Strategy,
   type UseFloatingReturn,
@@ -48,7 +49,6 @@ function isValidNumber(value: unknown): value is number {
     typeof value === "number" && !Number.isNaN(value) && Number.isFinite(value)
   );
 }
-
 interface UseAnchorPositionerProps {
   /** Whether the popover is open. */
   open: boolean;
@@ -213,7 +213,7 @@ function useAnchorPositioner({
   arrowPadding = 0,
   sticky = "partial",
   strategy = "absolute",
-  avoidCollisions = true,
+  avoidCollisions = false,
   disableArrow = false,
   fitViewport = false,
   forceMount = false,
