@@ -6,15 +6,15 @@ import {
   useId,
 } from "@diceui/shared";
 import * as React from "react";
-import { CollectionItemSlot, useMentionContext } from "./mention-root";
+import {
+  CollectionItemSlot,
+  type ItemData,
+  useMentionContext,
+} from "./mention-root";
 
 const ITEM_NAME = "MentionItem";
 
-interface MentionItemContext {
-  textValue: string;
-  value: string;
-  disabled: boolean;
-}
+interface MentionItemContext extends ItemData {}
 
 const [MentionItemProvider, useMentionItemContext] =
   createContext<MentionItemContext>(ITEM_NAME);
@@ -33,7 +33,7 @@ const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
     const composedRef = composeRefs(forwardedRef, (node) => setTextNode(node));
     const id = useId();
 
-    const textValue = textNode?.textContent ?? "";
+    const text = textNode?.textContent ?? "";
     const isDisabled = disabled || context.disabled;
     const isSelected = context.value.includes(value);
 
@@ -43,16 +43,8 @@ const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
     if (!isVisible) return null;
 
     return (
-      <MentionItemProvider
-        textValue={textValue}
-        value={value}
-        disabled={isDisabled}
-      >
-        <CollectionItemSlot
-          textValue={textValue}
-          value={value}
-          disabled={isDisabled}
-        >
+      <MentionItemProvider text={text} value={value} disabled={isDisabled}>
+        <CollectionItemSlot text={text} value={value} disabled={isDisabled}>
           <Primitive.div
             id={id}
             role="option"
@@ -98,10 +90,10 @@ const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
             onPointerMove={composeEventHandlers(itemProps.onPointerMove, () => {
               if (isDisabled || !textNode) return;
               context.onHighlightedItemChange({
-                ref: { current: textNode },
+                text,
                 value,
-                textValue,
                 disabled: isDisabled,
+                ref: { current: textNode },
               });
             })}
           />

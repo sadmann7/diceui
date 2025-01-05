@@ -1,10 +1,7 @@
-/**
- * @see https://github.com/radix-ui/primitives/blob/main/packages/react/collection/src/Collection.tsx
- */
-
 import * as React from "react";
 import { DATA_ITEM_ATTR } from "../constants";
 import { composeRefs } from "../lib/compose-refs";
+import { compareNodePosition } from "../lib/node";
 import { createContext } from "./create-context";
 import { Slot, type SlotProps } from "./slot";
 
@@ -30,56 +27,66 @@ interface CollectionProps extends SlotProps {}
 function createCollection<TItemElement extends HTMLElement, TItemData = {}>(
   name: string,
 ) {
-  const PROVIDER_NAME = `${name}CollectionProvider`;
+  const PROVIDER_NAME = `${name}CollectionProvider` as const;
+  const COLLECTION_SLOT_NAME = `${name}CollectionSlot` as const;
+  const ITEM_SLOT_NAME = `${name}CollectionItemSlot` as const;
 
   const [CollectionProvider, useCollectionContext] =
     createContext<CollectionContextValue<TItemElement, TItemData>>(
       PROVIDER_NAME,
     );
 
-  const COLLECTION_SLOT_NAME = `${name}CollectionSlot`;
-
-  const CollectionSlot = React.forwardRef<HTMLElement, CollectionProps>(
-    (props, forwardedRef) => {
+  const CollectionSlot = React.memo(
+    React.forwardRef<HTMLElement, CollectionProps>((props, forwardedRef) => {
       const context = useCollectionContext(COLLECTION_SLOT_NAME);
-      const composedRefs = composeRefs(forwardedRef, context.collectionRef);
+      const composedRefs = React.useMemo(
+        () => composeRefs(forwardedRef, context.collectionRef),
+        [forwardedRef, context.collectionRef],
+      );
 
       return <Slot ref={composedRefs} {...props} />;
-    },
+    }),
   );
 
   CollectionSlot.displayName = COLLECTION_SLOT_NAME;
-
-  const ITEM_SLOT_NAME = `${name}CollectionItemSlot`;
 
   type CollectionItemSlotProps = SlotProps &
     TItemData & {
       children: React.ReactNode;
     };
 
-  const CollectionItemSlot = React.forwardRef<
-    TItemElement,
-    CollectionItemSlotProps
-  >((props, forwardedRef) => {
-    const { children, ...itemProps } = props;
-    const context = useCollectionContext(ITEM_SLOT_NAME);
-    const itemRef = React.useRef<TItemElement>(null);
-    const composedRef = composeRefs(forwardedRef, itemRef);
+  const CollectionItemSlot = React.memo(
+    React.forwardRef<TItemElement, CollectionItemSlotProps>(
+      (props, forwardedRef) => {
+        const { children, ...itemProps } = props;
+        const context = useCollectionContext(ITEM_SLOT_NAME);
+        const itemRef = React.useRef<TItemElement>(null);
+        const itemPropsRef = React.useRef(itemProps);
+        // Keep itemPropsRef up to date with latest props
+        itemPropsRef.current = itemProps;
+        const composedRef = composeRefs(forwardedRef, itemRef);
 
-    React.useEffect(() => {
-      context.itemMap.set(itemRef, {
-        ref: itemRef,
-        ...(itemProps as unknown as TItemData),
-      });
-      return () => void context.itemMap.delete(itemRef);
-    });
+        React.useEffect(() => {
+          const node = itemRef.current;
+          if (!node) return;
 
-    return (
-      <Slot {...{ [DATA_ITEM_ATTR]: "" }} ref={composedRef}>
-        {children}
-      </Slot>
-    );
-  });
+          const item: CollectionItem<TItemElement, TItemData> = {
+            ref: itemRef,
+            ...(itemPropsRef.current as unknown as TItemData),
+          };
+
+          context.itemMap.set(itemRef, item);
+          return () => void context.itemMap.delete(itemRef);
+        }, [context.itemMap]); // itemPropsRef is used inside but doesn't need to be a dependency
+
+        return (
+          <Slot {...{ [DATA_ITEM_ATTR]: "" }} ref={composedRef}>
+            {children}
+          </Slot>
+        );
+      },
+    ),
+  );
 
   CollectionItemSlot.displayName = ITEM_SLOT_NAME;
 
@@ -91,23 +98,21 @@ function createCollection<TItemElement extends HTMLElement, TItemData = {}>(
       const collectionNode = collectionRef.current;
       if (!collectionNode) return [];
 
-      const orderedNodes = Array.from(
-        collectionNode.querySelectorAll(`[${DATA_ITEM_ATTR}]`),
-      );
-      const items = Array.from(itemMap.values());
+      try {
+        const items = Array.from(itemMap.values());
+        const fallbackDiv = globalThis.document?.createElement("div");
 
-      return items.sort(
-        (a, b) =>
-          orderedNodes.indexOf(
-            a?.ref.current ?? globalThis.document.createElement("div"),
-          ) -
-          orderedNodes.indexOf(
-            b?.ref.current ?? globalThis.document.createElement("div"),
-          ),
-      );
+        return items.sort((a, b) => {
+          const aNode = a?.ref.current ?? fallbackDiv;
+          const bNode = b?.ref.current ?? fallbackDiv;
+          return compareNodePosition(aNode, bNode);
+        });
+      } catch (_err) {
+        return [];
+      }
     }, [collectionRef, itemMap]);
 
-    return { getItems };
+    return React.useMemo(() => ({ getItems }), [getItems]);
   }
 
   return [
@@ -122,4 +127,4 @@ function createCollection<TItemElement extends HTMLElement, TItemData = {}>(
 
 export { createCollection };
 
-export type { CollectionProps, CollectionItemMap, CollectionItem };
+export type { CollectionItem, CollectionItemMap, CollectionProps };

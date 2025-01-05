@@ -1,5 +1,6 @@
 import * as React from "react";
 import { DATA_ITEM_ATTR, DATA_VALUE_ATTR } from "../constants";
+import { compareNodePosition } from "../lib/node";
 
 interface UseCollectionParams<TElement extends HTMLElement> {
   ref: React.RefObject<TElement | null>;
@@ -18,13 +19,7 @@ function useCollection<TElement extends HTMLElement>({
       collectionNode.querySelectorAll(`[${attr}]`),
     ) satisfies TElement[];
 
-    const orderedItems = items.sort((a, b) => {
-      const aIndex = Number(a.getAttribute(attr));
-      const bIndex = Number(b.getAttribute(attr));
-      return aIndex - bIndex;
-    });
-
-    return orderedItems;
+    return items.sort(compareNodePosition);
   }, [ref, attr]);
 
   const getEnabledItems = React.useCallback(() => {
@@ -49,10 +44,11 @@ function getSortedItems<TElement extends HTMLElement>(
     const aIndex = value.indexOf(aValue ?? "");
     const bIndex = value.indexOf(bValue ?? "");
 
-    if (aIndex === -1 && bIndex === -1) return 0;
+    if (aIndex === -1 && bIndex === -1) return compareNodePosition(a, b);
     if (aIndex === -1) return 1;
     if (bIndex === -1) return -1;
-    return aIndex - bIndex;
+    if (aIndex !== bIndex) return aIndex - bIndex;
+    return compareNodePosition(a, b);
   });
 }
 

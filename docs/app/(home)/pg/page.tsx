@@ -52,7 +52,7 @@ export default function PlaygroundPage() {
           ))}
         </Mention.Content>
       </Mention.Root>
-      <Combobox className="w-[15rem]">
+      <Combobox className="w-[15rem]" multiple>
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
           <ComboboxTrigger>

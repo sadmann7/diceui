@@ -28,8 +28,8 @@ type InputElement = React.ElementRef<typeof MentionInput>;
 type ListElement = React.ElementRef<typeof MentionPositioner>;
 
 interface ItemData {
+  text: string;
   value: string;
-  textValue: string;
   disabled: boolean;
 }
 
@@ -412,4 +412,4 @@ export {
   useMentionContext,
 };
 
-export type { MentionContextValue, MentionProps };
+export type { MentionContextValue, MentionProps, ItemData };
