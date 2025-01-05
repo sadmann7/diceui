@@ -2,13 +2,13 @@ import * as React from "react";
 import { useCallbackRef } from "./use-callback-ref";
 
 interface UseEscapeKeydownParams {
-  ownerDocument: Document;
+  document: Document;
   onEscapeKeyDown: (event: KeyboardEvent) => void;
   enabled?: boolean;
 }
 
 function useEscapeKeydown({
-  ownerDocument,
+  document,
   onEscapeKeyDown,
   enabled,
 }: UseEscapeKeydownParams) {
@@ -22,12 +22,12 @@ function useEscapeKeydown({
         onEscapeKeyDownCallback?.(event);
       }
     }
-    ownerDocument.addEventListener("keydown", onKeyDown, { capture: true });
+    document.addEventListener("keydown", onKeyDown, { capture: true });
     return () =>
-      ownerDocument.removeEventListener("keydown", onKeyDown, {
+      document.removeEventListener("keydown", onKeyDown, {
         capture: true,
       });
-  }, [enabled, onEscapeKeyDownCallback, ownerDocument]);
+  }, [enabled, onEscapeKeyDownCallback, document]);
 }
 
 export { useEscapeKeydown };

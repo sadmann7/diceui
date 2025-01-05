@@ -41,17 +41,20 @@ function usePresence(present: boolean) {
   const prevPresentRef = React.useRef(present);
   const prevAnimationNameRef = React.useRef<string>("none");
   const initialState = present ? "mounted" : "unmounted";
-  const [state, send] = useStateMachine(initialState, {
-    mounted: {
-      UNMOUNT: "unmounted",
-      ANIMATION_OUT: "unmountSuspended",
-    },
-    unmountSuspended: {
-      MOUNT: "mounted",
-      ANIMATION_END: "unmounted",
-    },
-    unmounted: {
-      MOUNT: "mounted",
+  const [state, send] = useStateMachine({
+    initial: initialState,
+    states: {
+      mounted: {
+        UNMOUNT: "unmounted",
+        ANIMATION_OUT: "unmountSuspended",
+      },
+      unmountSuspended: {
+        MOUNT: "mounted",
+        ANIMATION_END: "unmounted",
+      },
+      unmounted: {
+        MOUNT: "mounted",
+      },
     },
   });
 

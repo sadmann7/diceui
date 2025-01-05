@@ -27,7 +27,7 @@ interface UseDismissParameters {
    * @param event - The event that triggered the dismissal.
    */
   onDismiss: (
-    event?: FocusOutsideEvent | KeyboardEvent,
+    event?: FocusOutsideEvent | KeyboardEvent
   ) => void | Promise<void>;
 
   /** References to elements that should not trigger dismissal when clicked. */
@@ -57,7 +57,7 @@ interface UseDismissParameters {
    * @param event - The event that triggered the interaction outside.
    */
   onInteractOutside?: (
-    event: PointerDownOutsideEvent | FocusOutsideEvent,
+    event: PointerDownOutsideEvent | FocusOutsideEvent
   ) => void;
 
   /**
@@ -121,7 +121,7 @@ function useDismiss(params: UseDismissParameters) {
   const onClickRef = React.useRef(() => {});
 
   useEscapeKeydown({
-    ownerDocument,
+    document: ownerDocument,
     onEscapeKeyDown: (event) => {
       if (onEscapeKeyDown && !event.defaultPrevented) {
         onEscapeKeyDown(event);
@@ -140,7 +140,7 @@ function useDismiss(params: UseDismissParameters) {
       if (!event.defaultPrevented) {
         onDismiss(event);
       }
-    },
+    }
   );
 
   const onFocusOutsideCallback = useCallbackRef((event: FocusOutsideEvent) => {
