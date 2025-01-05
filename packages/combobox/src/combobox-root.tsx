@@ -564,4 +564,4 @@ const Root = ComboboxRoot;
 
 export { ComboboxRoot, Root, getDataState, useComboboxContext };
 
-export type { ComboboxRootProps, HighlightingDirection };
+export type { ComboboxRootProps };

@@ -1,14 +1,12 @@
 import {
   DATA_VALUE_ATTR,
+  type HighlightingDirection,
   Primitive,
   composeEventHandlers,
   useComposedRefs,
 } from "@diceui/shared";
 import * as React from "react";
-import {
-  type HighlightingDirection,
-  useComboboxContext,
-} from "./combobox-root";
+import { useComboboxContext } from "./combobox-root";
 
 const INPUT_NAME = "ComboboxInput";
 

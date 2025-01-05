@@ -440,11 +440,11 @@ MentionRoot.displayName = ROOT_NAME;
 const Root = MentionRoot;
 
 export {
-  CollectionItemSlot,
   MentionRoot,
   Root,
+  CollectionItemSlot,
   getDataState,
   useMentionContext,
 };
 
-export type { ItemData, MentionContextValue, MentionProps };
+export type { MentionProps, ItemData };
