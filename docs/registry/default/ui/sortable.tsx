@@ -37,6 +37,7 @@ import * as React from "react";
 
 import { composeEventHandlers, composeRefs } from "@/lib/composition";
 import { cn } from "@/lib/utils";
+import { createPortal } from "react-dom";
 
 const orientationConfig = {
   vertical: {
@@ -283,7 +284,7 @@ function SortableOverlay(props: SortableOverlayProps) {
 
   const activeItem = context.items.find((item) => item.id === context.activeId);
 
-  return (
+  return createPortal(
     <DragOverlay
       modifiers={context.modifiers}
       dropAnimation={dropAnimationProp ?? dropAnimation}
@@ -301,7 +302,8 @@ function SortableOverlay(props: SortableOverlayProps) {
           )
         ) : null}
       </SortableOverlayContext.Provider>
-    </DragOverlay>
+    </DragOverlay>,
+    document.body,
   );
 }
 
