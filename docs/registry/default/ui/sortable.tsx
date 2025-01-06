@@ -439,7 +439,7 @@ const SortableItemGrip = React.forwardRef<
     />
   );
 });
-SortableItemGrip.displayName = "SortableItemGrip";
+SortableItemGrip.displayName = SORTABLE_ITEM_GRIP_NAME;
 
 const Root = Sortable;
 const Content = SortableContent;
