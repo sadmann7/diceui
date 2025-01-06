@@ -144,8 +144,6 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
         const isNavigationKey = [
           "ArrowDown",
           "ArrowUp",
-          "ArrowLeft",
-          "ArrowRight",
           "Home",
           "End",
           "Enter",
@@ -206,26 +204,33 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
             break;
           case "ArrowLeft": {
             if (!context.multiple) return;
+            console.log("ArrowLeft");
+
             const input = event.currentTarget;
             const isAtStart =
               input.selectionStart === 0 && input.selectionEnd === 0;
+
+            if (!isAtStart) return;
 
             if (context.open && isAtStart) {
               context.onHighlightedItemChange(null);
               const values = Array.isArray(context.value) ? context.value : [];
               if (values.length > 0) {
+                event.preventDefault();
                 context.onOpenChange(false);
                 requestAnimationFrame(() => {
                   context.onHighlightedBadgeIndexChange(values.length - 1);
                 });
               }
             } else if (!context.open && context.highlightedBadgeIndex > -1) {
+              event.preventDefault();
               context.onHighlightedBadgeIndexChange(
                 Math.max(0, context.highlightedBadgeIndex - 1),
               );
             } else if (!context.open && isAtStart) {
               const values = Array.isArray(context.value) ? context.value : [];
               if (values.length > 0) {
+                event.preventDefault();
                 context.onHighlightedBadgeIndexChange(values.length - 1);
               }
             }
@@ -233,8 +238,16 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
           }
           case "ArrowRight": {
             if (!context.multiple) return;
+            console.log("ArrowRight");
+            const input = event.currentTarget;
+            const isAtEnd =
+              input.selectionStart === input.value.length &&
+              input.selectionEnd === input.value.length;
+
+            if (!isAtEnd) return;
 
             if (!context.open && context.highlightedBadgeIndex > -1) {
+              event.preventDefault();
               const values = Array.isArray(context.value) ? context.value : [];
               if (context.highlightedBadgeIndex < values.length - 1) {
                 context.onHighlightedBadgeIndexChange(
