@@ -12,7 +12,7 @@ type CollectionItemMap<TItemElement extends HTMLElement, TItemData = {}> = Map<
 
 interface UseCollectionContextProps<
   TItemElement extends HTMLElement,
-  TItemData = {},
+  TItemData = {}
 > {
   collectionRef: React.RefObject<TItemElement | null>;
   itemMap?: CollectionItemMap<TItemElement, TItemData>;
@@ -20,7 +20,7 @@ interface UseCollectionContextProps<
 
 function useCollectionContext<
   TItemElement extends HTMLElement,
-  TItemData = {},
+  TItemData = {}
 >({
   collectionRef,
   itemMap: itemMapProp,
@@ -43,15 +43,7 @@ function useCollectionContext<
     });
   }, [collectionRef, itemMap]);
 
-  const onItemRegister = React.useCallback(
-    (item: CollectionItem<TItemElement, TItemData>) => {
-      itemMap.set(item.ref, item);
-      return () => void itemMap.delete(item.ref);
-    },
-    [itemMap],
-  );
-
-  return { getItems, itemMap, onItemRegister };
+  return { getItems, itemMap };
 }
 
 export { useCollectionContext };

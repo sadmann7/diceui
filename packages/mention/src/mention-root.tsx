@@ -208,20 +208,20 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
     const labelId = useId();
     const listId = useId();
 
-    const { getItems, itemMap, onItemRegister } = useCollectionContext<
+    const { getItems, itemMap } = useCollectionContext<
       CollectionElement,
       ItemData
     >({ collectionRef });
-    const filter = useFilter({ sensitivity: "base", gapMatch: true });
-    const currentFilter = React.useMemo(
-      () => (exactMatch ? filter.contains : filter.fuzzy),
-      [filter.fuzzy, filter.contains, exactMatch],
-    );
-
     const { isFormControl, onTriggerChange } =
       useFormControl<CollectionElement>();
     const composedRef = composeRefs(forwardedRef, collectionRef, (node) =>
       onTriggerChange(node),
+    );
+
+    const filter = useFilter({ sensitivity: "base", gapMatch: true });
+    const currentFilter = React.useMemo(
+      () => (exactMatch ? filter.contains : filter.fuzzy),
+      [filter.fuzzy, filter.contains, exactMatch],
     );
 
     const getItemScore = React.useCallback(
@@ -284,6 +284,14 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         }
       },
       [setOpen, getItems, filterStore],
+    );
+
+    const onItemRegister = React.useCallback(
+      (item: CollectionItem<CollectionElement, ItemData>) => {
+        itemMap.set(item.ref, item);
+        return () => void itemMap.delete(item.ref);
+      },
+      [itemMap],
     );
 
     const onFilterItems = React.useCallback(() => {
