@@ -361,9 +361,6 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
               event.preventDefault();
               return;
             }
-            if (context.highlightedItem) {
-              onItemSelect();
-            }
             onMenuClose();
             break;
           }
