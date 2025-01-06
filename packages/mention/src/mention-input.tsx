@@ -292,9 +292,69 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
 
           if (mention) {
             event.preventDefault();
+
+            if (context.tokenized) {
+              // In tokenized mode, delete the entire mention
+              const newValue =
+                input.value.slice(0, mention.start) +
+                input.value.slice(mention.end + 1);
+
+              // Update input value directly and through context
+              input.value = newValue;
+              context.onInputValueChange?.(newValue);
+              context.onValueChange?.(
+                context.value.filter((v) => v !== mention.value),
+              );
+
+              // Update cursor position to start of mention
+              const newCursorPosition = mention.start;
+              input.setSelectionRange(newCursorPosition, newCursorPosition);
+            } else {
+              // In text mode, delete character by character
+              const newValue =
+                input.value.slice(0, cursorPosition - 1) +
+                input.value.slice(cursorPosition);
+
+              // Only remove mention from context if we're deleting the trigger character
+              if (cursorPosition - 1 === mention.start) {
+                context.onValueChange?.(
+                  context.value.filter((v) => v !== mention.value),
+                );
+              }
+
+              // Update input value directly and through context
+              input.value = newValue;
+              context.onInputValueChange?.(newValue);
+
+              // Update cursor position
+              const newCursorPosition = cursorPosition - 1;
+              input.setSelectionRange(newCursorPosition, newCursorPosition);
+            }
+            return;
+          }
+        }
+
+        // Handle Ctrl/Cmd + Backspace for word deletion
+        if (
+          event.key === "Backspace" &&
+          (event.ctrlKey || event.metaKey) &&
+          !hasSelection &&
+          !context.tokenized // Only in text mode
+        ) {
+          const mention = context.mentions.find((m) => {
+            // Find mention that contains the cursor or is immediately after it
+            return (
+              (cursorPosition > m.start && cursorPosition <= m.end) ||
+              cursorPosition === m.end + 1
+            );
+          });
+
+          if (mention) {
+            event.preventDefault();
+            // Delete up to the trigger character
             const newValue =
               input.value.slice(0, mention.start) +
-              input.value.slice(mention.end + 1);
+              input.value.slice(cursorPosition);
 
             // Update input value directly and through context
             input.value = newValue;

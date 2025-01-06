@@ -4,7 +4,6 @@
 
 import * as React from "react";
 import { DATA_ITEM_ATTR } from "../constants";
-import { useIsomorphicLayoutEffect } from "../hooks";
 import { composeRefs } from "../lib/compose-refs";
 import { compareNodePosition } from "../lib/node";
 import { createContext } from "./create-context";
@@ -66,23 +65,15 @@ function createCollection<TItemElement extends HTMLElement, TItemData = {}>(
         const { children, ...itemProps } = props;
         const context = useCollectionContext(ITEM_SLOT_NAME);
         const itemRef = React.useRef<TItemElement>(null);
-        const itemPropsRef = React.useRef(itemProps);
-        // Keep itemPropsRef up to date with latest props
-        itemPropsRef.current = itemProps;
         const composedRef = composeRefs(forwardedRef, itemRef);
 
-        useIsomorphicLayoutEffect(() => {
-          const node = itemRef.current;
-          if (!node) return;
-
-          const item: CollectionItem<TItemElement, TItemData> = {
+        React.useEffect(() => {
+          context.itemMap.set(itemRef, {
             ref: itemRef,
-            ...(itemPropsRef.current as unknown as TItemData),
-          };
-
-          context.itemMap.set(itemRef, item);
+            ...(itemProps as unknown as TItemData),
+          });
           return () => void context.itemMap.delete(itemRef);
-        }, [context.itemMap]);
+        });
 
         return (
           <Slot {...{ [DATA_ITEM_ATTR]: "" }} ref={composedRef}>
@@ -130,6 +121,35 @@ function createCollection<TItemElement extends HTMLElement, TItemData = {}>(
   ] as const;
 }
 
-export { createCollection };
+function useCollectionContext<
+  TItemElement extends HTMLElement,
+  TItemData = {},
+>({ collectionRef }: CollectionContextValue<TItemElement, TItemData>) {
+  const itemMap = React.useRef<CollectionItemMap<TItemElement, TItemData>>(
+    new Map(),
+  ).current;
+
+  const getItems = React.useCallback(() => {
+    const collectionNode = collectionRef.current;
+    if (!collectionNode) return [];
+
+    try {
+      const items = Array.from(itemMap.values());
+      const fallbackDiv = globalThis.document?.createElement("div");
+
+      return items.sort((a, b) => {
+        const aNode = a?.ref.current ?? fallbackDiv;
+        const bNode = b?.ref.current ?? fallbackDiv;
+        return compareNodePosition(aNode, bNode);
+      });
+    } catch (_err) {
+      return [];
+    }
+  }, [collectionRef, itemMap]);
+
+  return React.useMemo(() => ({ getItems }), [getItems]);
+}
+
+export { createCollection, useCollectionContext };
 
 export type { CollectionItem, CollectionItemMap, CollectionProps };

@@ -67,18 +67,19 @@ interface MentionContextValue {
   ) => void;
   onHighlightMove: (direction: HighlightingDirection) => void;
   mentions: Mention[];
+  onMentionAdd: (value: string, triggerIndex: number) => void;
   dir: Direction;
   disabled: boolean;
   exactMatch: boolean;
   loop: boolean;
   modal: boolean;
   readonly: boolean;
+  tokenized: boolean;
   inputRef: React.RefObject<HTMLInputElement | null>;
   listRef: React.RefObject<ListElement | null>;
   inputId: string;
   labelId: string;
   listId: string;
-  onMentionAdd: (value: string, triggerIndex: number) => void;
 }
 
 const [MentionProvider, useMentionContext] =
@@ -161,6 +162,14 @@ interface MentionProps
 
   /** The name of the mention when used in a form. */
   name?: string;
+
+  /**
+   * Whether to use tokenized mode for mentions.
+   * In tokenized mode, mentions are displayed as tokens that can be deleted with a single backspace.
+   * In text mode (default), mentions are displayed as text with the trigger character.
+   * @default false
+   */
+  tokenized?: boolean;
 }
 
 const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
@@ -184,6 +193,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       modal = false,
       readonly = false,
       required = false,
+      tokenized = false,
       name,
       ...rootProps
     } = props;
@@ -391,39 +401,76 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       [loop, highlightedItem, getItems, value],
     );
 
+    // const onItemRegister = React.useCallback(
+    //   (item: CollectionItem<CollectionElement, ItemData>) => {
+    //     itemMap.set(item.ref, item);
+    //     return () => void itemMap.delete(item.ref);
+    //   },
+    //   [itemMap],
+    // );
+
     const onMentionAdd = React.useCallback(
       (value: string, triggerIndex: number) => {
         const input = inputRef.current;
         if (!input) return;
 
-        const mentionText = `${trigger}${value}`;
+        const item = getItems().find((item) => item.value === value);
+        const label = item?.label ?? value;
+
+        console.log({ item, value, label });
+
         const beforeTrigger = input.value.slice(0, triggerIndex);
         const afterSearchText = input.value.slice(
           input.selectionStart ?? triggerIndex,
         );
-        const newValue = `${beforeTrigger}${mentionText} ${afterSearchText}`;
+
+        let mentionText: string;
+        let newValue: string;
+        let end: number;
+
+        if (tokenized) {
+          // In tokenized mode, we just show the label without trigger
+          mentionText = label;
+          newValue = `${beforeTrigger}${mentionText} ${afterSearchText}`;
+          end = triggerIndex + mentionText.length;
+        } else {
+          // In text mode, we show trigger + value
+          mentionText = `${trigger}${value}`;
+          newValue = `${beforeTrigger}${mentionText} ${afterSearchText}`;
+          end = triggerIndex + mentionText.length;
+        }
 
         const newMention: Mention = {
-          label: value,
+          label,
           value,
           start: triggerIndex,
-          end: triggerIndex + mentionText.length,
+          end,
         };
 
         setMentions((prev) => [...prev, newMention]);
 
+        console.log({ newValue });
+
         input.value = newValue;
         setInputValue(newValue);
-        setValue([...value, value]);
+        setValue((prev = []) => [...prev, value]);
 
-        const newCursorPosition = triggerIndex + mentionText.length + 1;
+        const newCursorPosition = end + 1;
         input.setSelectionRange(newCursorPosition, newCursorPosition);
 
         setOpen(false);
         setHighlightedItem(null);
         filterStore.search = "";
       },
-      [trigger, setInputValue, setValue, setOpen, filterStore],
+      [
+        trigger,
+        setInputValue,
+        setValue,
+        setOpen,
+        filterStore,
+        getItems,
+        tokenized,
+      ],
     );
 
     return (
@@ -445,18 +492,19 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         onHighlightedItemChange={setHighlightedItem}
         onHighlightMove={onHighlightMove}
         mentions={mentions}
+        onMentionAdd={onMentionAdd}
         dir={dir}
         disabled={disabled}
         exactMatch={exactMatch}
         loop={loop}
         modal={modal}
         readonly={readonly}
+        tokenized={tokenized}
         inputRef={inputRef}
         listRef={listRef}
         inputId={inputId}
         labelId={labelId}
         listId={listId}
-        onMentionAdd={onMentionAdd}
       >
         <CollectionProvider collectionRef={collectionRef} itemMap={itemMap}>
           <Primitive.div ref={composedRef} {...rootProps}>

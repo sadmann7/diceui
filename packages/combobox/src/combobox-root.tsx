@@ -54,12 +54,12 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
     groups: Map<string, Set<string>>;
   };
   onFilter?: (options: string[], term: string) => string[];
-  onItemRemove: (value: string) => void;
   highlightedItem: ItemElement | null;
   onHighlightedItemChange: (item: ItemElement | null) => void;
   highlightedBadgeIndex: number;
   onHighlightedBadgeIndexChange: (index: number) => void;
   onItemRegister: (id: string, value: string, groupId?: string) => () => void;
+  onItemRemove: (value: string) => void;
   onFilterItems: () => void;
   onHighlightMove: (direction: HighlightingDirection) => void;
   hasAnchor: boolean;
@@ -318,16 +318,6 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     [multiple, setValue, value, disabled, readOnly],
   );
 
-  const onItemRemove = React.useCallback(
-    (currentValue: string) => {
-      const newValues = Array.isArray(value)
-        ? value.filter((v) => v !== currentValue)
-        : [];
-      setValue(newValues as Value<Multiple>);
-    },
-    [setValue, value],
-  );
-
   const onItemRegister = React.useCallback(
     (id: string, value: string, groupId?: string) => {
       items.set(id, value);
@@ -351,6 +341,16 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       };
     },
     [items, groups],
+  );
+
+  const onItemRemove = React.useCallback(
+    (currentValue: string) => {
+      const newValues = Array.isArray(value)
+        ? value.filter((v) => v !== currentValue)
+        : [];
+      setValue(newValues as Value<Multiple>);
+    },
+    [setValue, value],
   );
 
   const filter = useFilter({ sensitivity: "base", gapMatch: true });
@@ -513,8 +513,8 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       highlightedBadgeIndex={highlightedBadgeIndex}
       onHighlightedBadgeIndexChange={setHighlightedBadgeIndex}
       onItemRegister={onItemRegister}
-      onHighlightMove={onHighlightMove}
       onItemRemove={onItemRemove}
+      onHighlightMove={onHighlightMove}
       hasAnchor={hasAnchor}
       onHasAnchorChange={onHasAnchorChange}
       disabled={disabled}

@@ -22,18 +22,19 @@ const [MentionItemProvider, useMentionItemContext] =
 interface MentionItemProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
   value: string;
+  label?: string;
   disabled?: boolean;
 }
 
 const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
   (props, forwardedRef) => {
-    const { value, disabled = false, ...itemProps } = props;
+    const { value, label: labelProp, disabled = false, ...itemProps } = props;
     const context = useMentionContext(ITEM_NAME);
     const [textNode, setTextNode] = React.useState<HTMLDivElement | null>(null);
     const composedRef = composeRefs(forwardedRef, (node) => setTextNode(node));
     const id = useId();
 
-    const label = textNode?.textContent ?? "";
+    const label = labelProp ?? textNode?.textContent ?? "";
     const isDisabled = disabled || context.disabled;
     const isSelected = context.value.includes(value);
 
