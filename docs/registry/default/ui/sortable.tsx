@@ -119,6 +119,11 @@ function Sortable<T extends UniqueItem>(props: SortableProps<T>) {
     onMove,
     orientation = "vertical",
     flatCursor = false,
+    // dnd-kit sortable props with overrides or defaults
+    accessibility,
+    onDragStart,
+    onDragEnd,
+    onDragCancel,
     ...sortableProps
   } = props;
   const id = React.useId();
@@ -162,11 +167,11 @@ function Sortable<T extends UniqueItem>(props: SortableProps<T>) {
         modifiers={modifiers ?? config.modifiers}
         sensors={sensorsProp ?? sensors}
         onDragStart={composeEventHandlers(
-          sortableProps.onDragStart,
+          onDragStart,
           ({ active }) => setActiveId(active.id),
         )}
         onDragEnd={composeEventHandlers(
-          sortableProps.onDragEnd,
+          onDragEnd,
           ({ active, over, activatorEvent, collisions, delta }) => {
             if (over && active.id !== over?.id) {
               const activeIndex = value.findIndex(
@@ -183,11 +188,12 @@ function Sortable<T extends UniqueItem>(props: SortableProps<T>) {
             setActiveId(null);
           },
         )}
-        onDragCancel={composeEventHandlers(sortableProps.onDragCancel, () =>
+        onDragCancel={composeEventHandlers(onDragCancel, () =>
           setActiveId(null),
         )}
         collisionDetection={collisionDetection ?? config.collisionDetection}
         accessibility={{
+          ...accessibility,
           announcements: {
             onDragStart({ active }) {
               return `Picked up sortable item ${active.id}. Use arrow keys to move, space to drop.`;
@@ -213,8 +219,8 @@ function Sortable<T extends UniqueItem>(props: SortableProps<T>) {
               }
               return `Sortable item ${active.id} is no longer over a droppable area`;
             },
+            ...accessibility?.announcements,
           },
-          ...sortableProps.accessibility,
         }}
         {...sortableProps}
       />
