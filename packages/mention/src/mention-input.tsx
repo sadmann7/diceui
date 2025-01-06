@@ -361,6 +361,9 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
               event.preventDefault();
               return;
             }
+            if (context.highlightedItem) {
+              onItemSelect();
+            }
             onMenuClose();
             break;
           }
@@ -425,6 +428,6 @@ MentionInput.displayName = INPUT_NAME;
 
 const Input = MentionInput;
 
-export { Input, MentionInput };
+export { MentionInput, Input };
 
 export type { MentionInputProps };
