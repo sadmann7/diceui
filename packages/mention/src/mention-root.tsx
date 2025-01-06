@@ -414,8 +414,6 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         const item = getItems().find((item) => item.value === value);
         const label = item?.label ?? value;
 
-        console.log({ item, value, label });
-
         const beforeTrigger = input.value.slice(0, triggerIndex);
         const afterSearchText = input.value.slice(
           input.selectionStart ?? triggerIndex,
@@ -445,8 +443,6 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         };
 
         setMentions((prev) => [...prev, newMention]);
-
-        console.log({ newValue });
 
         input.value = newValue;
         setInputValue(newValue);

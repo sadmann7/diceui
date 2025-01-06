@@ -12,7 +12,7 @@ type CollectionItemMap<TItemElement extends HTMLElement, TItemData = {}> = Map<
 
 interface UseCollectionContextProps<
   TItemElement extends HTMLElement,
-  TItemData = {}
+  TItemData = {},
 > {
   collectionRef: React.RefObject<TItemElement | null>;
   itemMap?: CollectionItemMap<TItemElement, TItemData>;
@@ -20,7 +20,7 @@ interface UseCollectionContextProps<
 
 function useCollectionContext<
   TItemElement extends HTMLElement,
-  TItemData = {}
+  TItemData = {},
 >({
   collectionRef,
   itemMap: itemMapProp,
