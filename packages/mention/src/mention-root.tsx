@@ -411,59 +411,34 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         const input = inputRef.current;
         if (!input) return;
 
-        const item = getItems().find((item) => item.value === value);
-        const label = item?.label ?? value;
-
+        const mentionText = `${trigger}${value}`;
         const beforeTrigger = input.value.slice(0, triggerIndex);
         const afterSearchText = input.value.slice(
           input.selectionStart ?? triggerIndex,
         );
-
-        let mentionText: string;
-        let newValue: string;
-        let end: number;
-
-        if (tokenized) {
-          // In tokenized mode, we just show the label without trigger
-          mentionText = label;
-          newValue = `${beforeTrigger}${mentionText} ${afterSearchText}`;
-          end = triggerIndex + mentionText.length;
-        } else {
-          // In text mode, we show trigger + value
-          mentionText = `${trigger}${value}`;
-          newValue = `${beforeTrigger}${mentionText} ${afterSearchText}`;
-          end = triggerIndex + mentionText.length;
-        }
+        const newValue = `${beforeTrigger}${mentionText} ${afterSearchText}`;
 
         const newMention: Mention = {
-          label,
+          label: value,
           value,
           start: triggerIndex,
-          end,
+          end: triggerIndex + mentionText.length,
         };
 
         setMentions((prev) => [...prev, newMention]);
 
         input.value = newValue;
         setInputValue(newValue);
-        setValue((prev = []) => [...prev, value]);
+        setValue([...value, value]);
 
-        const newCursorPosition = end + 1;
+        const newCursorPosition = triggerIndex + mentionText.length + 1;
         input.setSelectionRange(newCursorPosition, newCursorPosition);
 
         setOpen(false);
         setHighlightedItem(null);
         filterStore.search = "";
       },
-      [
-        trigger,
-        setInputValue,
-        setValue,
-        setOpen,
-        filterStore,
-        getItems,
-        tokenized,
-      ],
+      [trigger, setInputValue, setValue, setOpen, filterStore],
     );
 
     return (
