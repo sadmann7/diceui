@@ -1,13 +1,12 @@
 import {
   BubbleInput,
   type CollectionItem,
-  type CollectionItemMap,
   type Direction,
   type HighlightingDirection,
   Primitive,
   composeRefs,
-  createCollection,
   createContext,
+  useCollectionContext,
   useControllableState,
   useDirection,
   useFilter,
@@ -40,9 +39,6 @@ interface Mention extends Omit<ItemData, "disabled"> {
   end: number;
 }
 
-const [{ CollectionProvider, CollectionItemSlot }, useCollection] =
-  createCollection<CollectionElement, ItemData>(ROOT_NAME);
-
 interface MentionContextValue {
   value: string[];
   onValueChange: (value: string[]) => void;
@@ -54,6 +50,7 @@ interface MentionContextValue {
   onVirtualAnchorChange: (element: VirtualElement | null) => void;
   trigger: string;
   onTriggerChange: (character: string) => void;
+  onItemRegister: (item: CollectionItem<CollectionElement, ItemData>) => void;
   filterStore: {
     search: string;
     itemCount: number;
@@ -201,9 +198,6 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
     const collectionRef = React.useRef<CollectionElement | null>(null);
     const listRef = React.useRef<ListElement | null>(null);
     const inputRef = React.useRef<InputElement | null>(null);
-    const itemMap = React.useRef<
-      CollectionItemMap<CollectionElement, ItemData>
-    >(new Map()).current;
     const filterStore = React.useRef<MentionContextValue["filterStore"]>({
       search: "",
       itemCount: 0,
@@ -214,7 +208,10 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
     const labelId = useId();
     const listId = useId();
 
-    const { getItems } = useCollection({ collectionRef, itemMap });
+    const { getItems, itemMap, onItemRegister } = useCollectionContext<
+      CollectionElement,
+      ItemData
+    >({ collectionRef });
     const filter = useFilter({ sensitivity: "base", gapMatch: true });
     const currentFilter = React.useMemo(
       () => (exactMatch ? filter.contains : filter.fuzzy),
@@ -401,14 +398,6 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       [loop, highlightedItem, getItems, value],
     );
 
-    // const onItemRegister = React.useCallback(
-    //   (item: CollectionItem<CollectionElement, ItemData>) => {
-    //     itemMap.set(item.ref, item);
-    //     return () => void itemMap.delete(item.ref);
-    //   },
-    //   [itemMap],
-    // );
-
     const onMentionAdd = React.useCallback(
       (value: string, triggerIndex: number) => {
         const input = inputRef.current;
@@ -485,6 +474,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         onVirtualAnchorChange={setVirtualAnchor}
         trigger={trigger}
         onTriggerChange={setTrigger}
+        onItemRegister={onItemRegister}
         filterStore={filterStore}
         onFilter={onFilter}
         onFilterItems={onFilterItems}
@@ -506,21 +496,19 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         labelId={labelId}
         listId={listId}
       >
-        <CollectionProvider collectionRef={collectionRef} itemMap={itemMap}>
-          <Primitive.div ref={composedRef} {...rootProps}>
-            {children}
-            {isFormControl && name && (
-              <BubbleInput
-                type="hidden"
-                control={collectionRef.current}
-                name={name}
-                value={value}
-                disabled={disabled}
-                required={required}
-              />
-            )}
-          </Primitive.div>
-        </CollectionProvider>
+        <Primitive.div ref={composedRef} {...rootProps}>
+          {children}
+          {isFormControl && name && (
+            <BubbleInput
+              type="hidden"
+              control={collectionRef.current}
+              name={name}
+              value={value}
+              disabled={disabled}
+              required={required}
+            />
+          )}
+        </Primitive.div>
       </MentionProvider>
     );
   },
@@ -530,12 +518,6 @@ MentionRoot.displayName = ROOT_NAME;
 
 const Root = MentionRoot;
 
-export {
-  CollectionItemSlot,
-  MentionRoot,
-  Root,
-  getDataState,
-  useMentionContext,
-};
+export { MentionRoot, Root, getDataState, useMentionContext };
 
 export type { ItemData, MentionProps };
