@@ -294,7 +294,6 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       [itemMap],
     );
 
-    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     const onFilterItems = React.useCallback(() => {
       if (!filterStore.search) {
         filterStore.itemCount = itemMap.size;
@@ -356,11 +355,11 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       filterStore.itemCount = itemCount;
 
       // Close the menu if no items match the filter
-      // if (itemCount === 0) {
-      //   setOpen(false);
-      //   setHighlightedItem(null);
-      //   setVirtualAnchor(null);
-      // }
+      if (itemCount === 0) {
+        setOpen(false);
+        setHighlightedItem(null);
+        setVirtualAnchor(null);
+      }
     }, [filterStore, itemMap, getItemScore, setOpen]);
 
     const onHighlightMove = React.useCallback(
@@ -412,12 +411,14 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         const input = inputRef.current;
         if (!input) return;
 
-        const mentionText = `${trigger}${value}`;
+        const mentionText = tokenized ? value : `${trigger}${value}`;
         const beforeTrigger = input.value.slice(0, triggerIndex);
         const afterSearchText = input.value.slice(
           input.selectionStart ?? triggerIndex,
         );
-        const newValue = `${beforeTrigger}${mentionText} ${afterSearchText}`;
+        const newValue = tokenized
+          ? `${beforeTrigger}${mentionText}${afterSearchText}`
+          : `${beforeTrigger}${mentionText} ${afterSearchText}`;
 
         const newMention: Mention = {
           value,
@@ -429,16 +430,17 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
 
         input.value = newValue;
         setInputValue(newValue);
-        setValue([...value, value]);
+        setValue((prev) => [...(prev ?? []), value]);
 
-        const newCursorPosition = triggerIndex + mentionText.length + 1;
+        const newCursorPosition =
+          triggerIndex + mentionText.length + (tokenized ? 0 : 1);
         input.setSelectionRange(newCursorPosition, newCursorPosition);
 
         setOpen(false);
         setHighlightedItem(null);
         filterStore.search = "";
       },
-      [trigger, setInputValue, setValue, setOpen, filterStore],
+      [trigger, setInputValue, setValue, setOpen, filterStore, tokenized],
     );
 
     return (
