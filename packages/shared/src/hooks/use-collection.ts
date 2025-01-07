@@ -16,6 +16,7 @@ function useCollection<TItemElement extends HTMLElement, TItemData = {}>() {
     new Map(),
   ).current;
 
+  /** Sort collection items by their DOM position. */
   const getItems = React.useCallback(() => {
     const collectionNode = collectionRef.current;
     if (!collectionNode) return [];
@@ -31,7 +32,16 @@ function useCollection<TItemElement extends HTMLElement, TItemData = {}>() {
     });
   }, [itemMap]);
 
-  return { collectionRef, itemMap, getItems };
+  /** Register an item in the collection. */
+  const onItemRegister = React.useCallback(
+    (item: CollectionItem<TItemElement, TItemData>) => {
+      itemMap.set(item.ref, item);
+      return () => void itemMap.delete(item.ref);
+    },
+    [itemMap],
+  );
+
+  return { collectionRef, itemMap, getItems, onItemRegister };
 }
 
 export { useCollection };

@@ -214,7 +214,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
     const labelId = useId();
     const listId = useId();
 
-    const { collectionRef, itemMap, getItems } = useCollection<
+    const { collectionRef, itemMap, getItems, onItemRegister } = useCollection<
       CollectionElement,
       ItemData
     >();
@@ -290,14 +290,6 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         }
       },
       [setOpen, getItems, filterStore],
-    );
-
-    const onItemRegister = React.useCallback(
-      (item: CollectionItem<CollectionElement, ItemData>) => {
-        itemMap.set(item.ref, item);
-        return () => void itemMap.delete(item.ref);
-      },
-      [itemMap],
     );
 
     const onFilterItems = React.useCallback(() => {
