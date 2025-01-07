@@ -42,8 +42,9 @@ interface TagsInputContextValue<T = InputValue> {
   delimiter: string;
   disabled: boolean;
   editable: boolean;
-  loop: boolean;
   isInvalidInput: boolean;
+  loop: boolean;
+  readOnly: boolean;
   blurBehavior: "add" | "clear" | undefined;
   max: number;
   dir: Direction;
@@ -184,6 +185,7 @@ const TagsInputRoot = React.forwardRef<
     blurBehavior,
     delimiter = ",",
     max = Number.POSITIVE_INFINITY,
+    readOnly = false,
     required = false,
     name,
     children,
@@ -221,6 +223,8 @@ const TagsInputRoot = React.forwardRef<
 
   const onItemAdd = React.useCallback(
     (textValue: string, options?: { viaPaste?: boolean }) => {
+      if (disabled || readOnly) return false;
+
       if (addOnPaste && options?.viaPaste) {
         const splitValues = textValue
           .split(delimiter)
@@ -282,11 +286,23 @@ const TagsInputRoot = React.forwardRef<
       setIsInvalidInput(false);
       return true;
     },
-    [value, max, addOnPaste, delimiter, setValue, onInvalid, onValidate],
+    [
+      value,
+      max,
+      addOnPaste,
+      delimiter,
+      setValue,
+      onInvalid,
+      onValidate,
+      disabled,
+      readOnly,
+    ],
   );
 
   const onItemUpdate = React.useCallback(
     (index: number, newTextValue: string) => {
+      if (disabled || readOnly) return;
+
       if (index !== -1) {
         const trimmedValue = newTextValue.trim();
 
@@ -320,11 +336,13 @@ const TagsInputRoot = React.forwardRef<
         requestAnimationFrame(() => inputRef.current?.focus());
       }
     },
-    [value, setValue, displayValue, onInvalid, onValidate],
+    [value, setValue, displayValue, onInvalid, onValidate, disabled, readOnly],
   );
 
   const onItemRemove = React.useCallback(
     (index: number) => {
+      if (disabled || readOnly) return;
+
       if (index !== -1) {
         const newValues = [...value];
         newValues.splice(index, 1);
@@ -334,7 +352,7 @@ const TagsInputRoot = React.forwardRef<
         inputRef.current?.focus();
       }
     },
-    [value, setValue],
+    [value, setValue, disabled, readOnly],
   );
 
   const onItemLeave = React.useCallback(() => {
@@ -511,6 +529,7 @@ const TagsInputRoot = React.forwardRef<
       disabled={disabled}
       editable={editable}
       loop={loop}
+      readOnly={readOnly}
       blurBehavior={blurBehavior}
       delimiter={delimiter}
       max={max}
@@ -521,8 +540,9 @@ const TagsInputRoot = React.forwardRef<
     >
       <Primitive.div
         id={id}
-        data-invalid={isInvalidInput ? "" : undefined}
         data-disabled={disabled ? "" : undefined}
+        data-invalid={isInvalidInput ? "" : undefined}
+        data-readonly={readOnly ? "" : undefined}
         dir={dir}
         {...rootProps}
         ref={composedRef}

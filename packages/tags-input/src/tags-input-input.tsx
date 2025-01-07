@@ -57,11 +57,15 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
         spellCheck="false"
         autoFocus={autoFocus}
         aria-labelledby={context.labelId}
+        aria-readonly={context.readOnly}
         data-invalid={context.isInvalidInput ? "" : undefined}
         disabled={context.disabled}
+        readOnly={context.readOnly}
         {...inputProps}
         ref={composeRefs(context.inputRef, ref)}
         onBlur={composeEventHandlers(inputProps.onBlur, (event) => {
+          if (context.readOnly) return;
+
           if (context.blurBehavior === "add") {
             const value = event.target.value;
             if (value) {
@@ -75,6 +79,8 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
           }
         })}
         onChange={composeEventHandlers(inputProps.onChange, (event) => {
+          if (context.readOnly) return;
+
           const target = event.target;
           if (!(target instanceof HTMLInputElement)) return;
 
@@ -90,12 +96,16 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
           }
         })}
         onKeyDown={composeEventHandlers(inputProps.onKeyDown, (event) => {
+          if (context.readOnly) return;
+
           if (event.key === "Enter") onCustomKeydown(event);
           if (event.key === "Tab") onTab(event);
           context.onInputKeydown(event);
           if (event.key.length === 1) context.setHighlightedIndex(null);
         })}
         onPaste={composeEventHandlers(inputProps.onPaste, (event) => {
+          if (context.readOnly) return;
+
           if (context.addOnPaste) {
             event.preventDefault();
             const value = event.clipboardData.getData("text");

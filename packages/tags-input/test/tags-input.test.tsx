@@ -810,4 +810,37 @@ describe("TagsInput", () => {
     expect(screen.queryByText("tag2")).not.toBeInTheDocument();
     expect(document.activeElement).toBe(input);
   });
+
+  test("respects readOnly state", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+
+    renderTagsInput({
+      defaultValue: ["tag1", "tag2"],
+      readOnly: true,
+      onValueChange,
+    });
+
+    // Input should be readOnly
+    const input = screen.getByPlaceholderText("Add tag...");
+    expect(input).toHaveAttribute("readOnly");
+
+    // Try to add a new tag
+    await user.type(input, "new tag{Enter}");
+    expect(screen.queryByText("new tag")).not.toBeInTheDocument();
+    expect(onValueChange).not.toHaveBeenCalled();
+
+    // Try to delete existing tag
+    const deleteButton = screen.getAllByLabelText("Remove tag")[0];
+    if (!deleteButton) {
+      throw new Error("Delete button not found");
+    }
+    await user.click(deleteButton);
+    expect(screen.getByText("tag1")).toBeInTheDocument();
+    expect(onValueChange).not.toHaveBeenCalled();
+
+    // Verify all initial tags remain
+    expect(screen.getByText("tag1")).toBeInTheDocument();
+    expect(screen.getByText("tag2")).toBeInTheDocument();
+  });
 });
