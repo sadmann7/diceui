@@ -5,22 +5,34 @@ import { useIsomorphicLayoutEffect } from "../src";
 import { useCollection } from "../src/hooks/use-collection";
 
 interface ItemData {
-  id: string;
   label: string;
   value: string;
+  disabled: boolean;
 }
 
 interface ItemProps {
+  label: string;
+  value: string;
+  disabled?: boolean;
   onRegister: (ref: React.RefObject<HTMLDivElement | null>) => void;
 }
 
-function Item({ onRegister }: ItemProps) {
+function Item({ label, value, disabled = false, onRegister }: ItemProps) {
   const itemRef = React.useRef<HTMLDivElement>(null);
   useIsomorphicLayoutEffect(() => {
     onRegister(itemRef);
   }, [onRegister]);
 
-  return <div ref={itemRef} data-testid="test-item" />;
+  return (
+    <div
+      ref={itemRef}
+      data-testid="test-item"
+      data-value={value}
+      data-disabled={disabled || undefined}
+    >
+      {label}
+    </div>
+  );
 }
 
 describe("useCollection", () => {
@@ -40,9 +52,9 @@ describe("useCollection", () => {
     const item1Ref = React.createRef<HTMLDivElement>();
     const item1Data = {
       ref: item1Ref,
-      id: "1",
       label: "Item 1",
-      value: "Value 1",
+      value: "value-1",
+      disabled: false,
     };
 
     const cleanup = result.current.onItemRegister(item1Data);
@@ -62,32 +74,39 @@ describe("useCollection", () => {
     render(
       <div ref={result.current.collectionRef}>
         <Item
+          label="Item 1"
+          value="value-1"
           onRegister={(ref) => {
             result.current.onItemRegister({
               ref,
-              id: "1",
               label: "Item 1",
-              value: "Value 1",
+              value: "value-1",
+              disabled: false,
             });
           }}
         />
         <Item
+          label="Item 2"
+          value="value-2"
           onRegister={(ref) => {
             result.current.onItemRegister({
               ref,
-              id: "2",
               label: "Item 2",
-              value: "Value 2",
+              value: "value-2",
+              disabled: false,
             });
           }}
         />
         <Item
+          label="Item 3"
+          value="value-3"
+          disabled
           onRegister={(ref) => {
             result.current.onItemRegister({
               ref,
-              id: "3",
               label: "Item 3",
-              value: "Value 3",
+              value: "value-3",
+              disabled: true,
             });
           }}
         />
@@ -96,7 +115,12 @@ describe("useCollection", () => {
 
     const items = result.current.getItems();
     expect(items).toHaveLength(3);
-    expect(items.map((item) => item.id)).toEqual(["1", "2", "3"]);
+    expect(items.map((item) => item.value)).toEqual([
+      "value-1",
+      "value-2",
+      "value-3",
+    ]);
+    expect(items.map((item) => item.disabled)).toEqual([false, false, true]);
   });
 
   it("should handle null refs gracefully", () => {
@@ -110,14 +134,15 @@ describe("useCollection", () => {
     const nullRef = { current: null };
     const itemData = {
       ref: nullRef,
-      id: "1",
       label: "Item 1",
-      value: "Value 1",
+      value: "value-1",
+      disabled: false,
     };
 
     result.current.onItemRegister(itemData);
     const items = result.current.getItems();
     expect(items).toHaveLength(1);
+    expect(items[0]).toBe(itemData);
   });
 
   it("should return empty array when collection ref is null", () => {
@@ -128,11 +153,39 @@ describe("useCollection", () => {
     const itemRef = React.createRef<HTMLDivElement>();
     result.current.onItemRegister({
       ref: itemRef,
-      id: "1",
       label: "Item 1",
-      value: "Value 1",
+      value: "value-1",
+      disabled: false,
     });
 
     expect(result.current.getItems()).toEqual([]);
+  });
+
+  it("should maintain disabled state of items", () => {
+    const { result } = renderHook(() =>
+      useCollection<HTMLDivElement, ItemData>(),
+    );
+
+    render(
+      <div ref={result.current.collectionRef}>
+        <Item
+          label="Item 1"
+          value="value-1"
+          disabled
+          onRegister={(ref) => {
+            result.current.onItemRegister({
+              ref,
+              label: "Item 1",
+              value: "value-1",
+              disabled: true,
+            });
+          }}
+        />
+      </div>,
+    );
+
+    const items = result.current.getItems();
+    expect(items).toHaveLength(1);
+    expect(items[0]?.disabled).toBe(true);
   });
 });
