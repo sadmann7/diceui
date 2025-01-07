@@ -178,6 +178,12 @@ export interface OverlayProps
     keyof React.ComponentPropsWithoutRef<"div">
   > {
   /**
+   * The container to render the overlay in.
+   * @default globalThis.document?.body
+   */
+  container?: HTMLElement | DocumentFragment | null;
+
+  /**
    * The drop animation to use for the sortable component.
    * @default
    * {

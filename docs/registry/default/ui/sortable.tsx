@@ -37,7 +37,7 @@ import * as React from "react";
 
 import { composeEventHandlers, composeRefs } from "@/lib/composition";
 import { cn } from "@/lib/utils";
-import { createPortal } from "react-dom";
+import * as ReactDOM from "react-dom";
 
 const orientationConfig = {
   vertical: {
@@ -57,18 +57,18 @@ const orientationConfig = {
   },
 };
 
-const SORTABLE_NAME = "Sortable";
-const SORTABLE_CONTENT_NAME = "SortableContent";
-const SORTABLE_ITEM_NAME = "SortableItem";
-const SORTABLE_ITEM_GRIP_NAME = "SortableItemGrip";
-const SORTABLE_OVERLAY_NAME = "SortableOverlay";
+const ROOT_NAME = "Sortable";
+const CONTENT_NAME = "SortableContent";
+const ITEM_NAME = "SortableItem";
+const ITEM_GRIP_NAME = "SortableItemGrip";
+const OVERLAY_NAME = "SortableOverlay";
 
 const SORTABLE_ERROR = {
-  root: `${SORTABLE_NAME} components must be within ${SORTABLE_NAME}`,
-  content: `${SORTABLE_CONTENT_NAME} must be within ${SORTABLE_NAME}`,
-  item: `${SORTABLE_ITEM_NAME} must be within ${SORTABLE_CONTENT_NAME}`,
-  grip: `${SORTABLE_ITEM_GRIP_NAME} must be within ${SORTABLE_ITEM_NAME}`,
-  overlay: `${SORTABLE_OVERLAY_NAME} must be within ${SORTABLE_NAME}`,
+  root: `${ROOT_NAME} components must be within ${ROOT_NAME}`,
+  content: `${CONTENT_NAME} must be within ${ROOT_NAME}`,
+  item: `${ITEM_NAME} must be within ${CONTENT_NAME}`,
+  grip: `${ITEM_GRIP_NAME} must be within ${ITEM_NAME}`,
+  overlay: `${OVERLAY_NAME} must be within ${ROOT_NAME}`,
 } as const;
 
 interface UniqueItem {
@@ -88,7 +88,7 @@ interface SortableProviderContextValue<T extends UniqueItem> {
 const SortableRoot = React.createContext<SortableProviderContextValue<{
   id: UniqueIdentifier;
 }> | null>(null);
-SortableRoot.displayName = SORTABLE_NAME;
+SortableRoot.displayName = ROOT_NAME;
 
 function useSortableRoot() {
   const context = React.useContext(SortableRoot);
@@ -119,11 +119,6 @@ function Sortable<T extends UniqueItem>(props: SortableProps<T>) {
     onMove,
     orientation = "vertical",
     flatCursor = false,
-    // dnd-kit sortable props with overrides or defaults
-    accessibility,
-    onDragStart,
-    onDragEnd,
-    onDragCancel,
     ...sortableProps
   } = props;
   const id = React.useId();
@@ -167,11 +162,11 @@ function Sortable<T extends UniqueItem>(props: SortableProps<T>) {
         modifiers={modifiers ?? config.modifiers}
         sensors={sensorsProp ?? sensors}
         onDragStart={composeEventHandlers(
-          onDragStart,
+          sortableProps.onDragStart,
           ({ active }) => setActiveId(active.id),
         )}
         onDragEnd={composeEventHandlers(
-          onDragEnd,
+          sortableProps.onDragEnd,
           ({ active, over, activatorEvent, collisions, delta }) => {
             if (over && active.id !== over?.id) {
               const activeIndex = value.findIndex(
@@ -188,38 +183,38 @@ function Sortable<T extends UniqueItem>(props: SortableProps<T>) {
             setActiveId(null);
           },
         )}
-        onDragCancel={composeEventHandlers(onDragCancel, () =>
+        onDragCancel={composeEventHandlers(sortableProps.onDragCancel, () =>
           setActiveId(null),
         )}
         collisionDetection={collisionDetection ?? config.collisionDetection}
         accessibility={{
-          ...accessibility,
+          ...props.accessibility,
           announcements: {
             onDragStart({ active }) {
               return `Picked up sortable item ${active.id}. Use arrow keys to move, space to drop.`;
             },
             onDragOver({ active, over }) {
               if (over) {
-                return `Sortable item ${active.id} was moved over position ${over.id}`;
+                return `Sortable item ${active.id} was moved over position ${over.id}.`;
               }
-              return `Sortable item ${active.id} is no longer over a droppable area`;
+              return `Sortable item ${active.id} is no longer over a droppable area.`;
             },
             onDragEnd({ active, over }) {
               if (over) {
-                return `Sortable item ${active.id} was dropped over position ${over.id}`;
+                return `Sortable item ${active.id} was dropped over position ${over.id}.`;
               }
-              return `Sortable item ${active.id} was dropped`;
+              return `Sortable item ${active.id} was dropped.`;
             },
             onDragCancel({ active }) {
               return `Sorting was cancelled. Sortable item ${active.id} was dropped.`;
             },
             onDragMove({ active, over }) {
               if (over) {
-                return `Sortable item ${active.id} was moved over position ${over.id}`;
+                return `Sortable item ${active.id} was moved over position ${over.id}.`;
               }
-              return `Sortable item ${active.id} is no longer over a droppable area`;
+              return `Sortable item ${active.id} is no longer over a droppable area.`;
             },
-            ...accessibility?.announcements,
+            ...props.accessibility?.announcements,
           },
         }}
         {...sortableProps}
@@ -229,7 +224,7 @@ function Sortable<T extends UniqueItem>(props: SortableProps<T>) {
 }
 
 const SortableContentContext = React.createContext<boolean>(false);
-SortableContentContext.displayName = SORTABLE_CONTENT_NAME;
+SortableContentContext.displayName = CONTENT_NAME;
 
 interface SortableContentProps extends SlotProps {
   strategy?: SortableContextProps["strategy"];
@@ -259,10 +254,10 @@ const SortableContent = React.forwardRef<HTMLDivElement, SortableContentProps>(
     );
   },
 );
-SortableContent.displayName = SORTABLE_CONTENT_NAME;
+SortableContent.displayName = CONTENT_NAME;
 
 const SortableOverlayContext = React.createContext(false);
-SortableOverlayContext.displayName = SORTABLE_OVERLAY_NAME;
+SortableOverlayContext.displayName = OVERLAY_NAME;
 
 const dropAnimation: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
@@ -274,23 +269,40 @@ const dropAnimation: DropAnimation = {
   }),
 };
 
+const useLayoutEffect = globalThis?.document ? React.useLayoutEffect : () => {};
+
 interface SortableOverlayProps
   extends Omit<React.ComponentPropsWithoutRef<typeof DragOverlay>, "children"> {
+  container?: HTMLElement | DocumentFragment | null;
   children?:
     | ((params: { value: UniqueIdentifier }) => React.ReactNode)
     | React.ReactNode;
 }
 
 function SortableOverlay(props: SortableOverlayProps) {
-  const { dropAnimation: dropAnimationProp, children, ...overlayProps } = props;
+  const {
+    container,
+    dropAnimation: dropAnimationProp,
+    children,
+    ...overlayProps
+  } = props;
   const context = React.useContext(SortableRoot);
   if (!context) {
     throw new Error(SORTABLE_ERROR.overlay);
   }
 
+  const [mounted, setMounted] = React.useState(false);
+
+  useLayoutEffect(() => setMounted(true), []);
+
+  const dynamicContainer =
+    container ?? (mounted ? globalThis.document?.body : null);
+
+  if (!dynamicContainer) return null;
+
   const activeItem = context.items.find((item) => item.id === context.activeId);
 
-  return createPortal(
+  return ReactDOM.createPortal(
     <DragOverlay
       modifiers={context.modifiers}
       dropAnimation={dropAnimationProp ?? dropAnimation}
@@ -309,7 +321,7 @@ function SortableOverlay(props: SortableOverlayProps) {
         ) : null}
       </SortableOverlayContext.Provider>
     </DragOverlay>,
-    document.body,
+    dynamicContainer,
   );
 }
 
@@ -326,7 +338,7 @@ const SortableItemContext = React.createContext<SortableItemContextValue>({
   listeners: undefined,
   isDragging: false,
 });
-SortableItemContext.displayName = SORTABLE_ITEM_NAME;
+SortableItemContext.displayName = ITEM_NAME;
 
 interface SortableItemProps extends SlotProps {
   value: UniqueIdentifier;
@@ -406,7 +418,7 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
     );
   },
 );
-SortableItem.displayName = SORTABLE_ITEM_NAME;
+SortableItem.displayName = ITEM_NAME;
 
 interface SortableItemGripProps
   extends React.ComponentPropsWithoutRef<"button"> {
@@ -445,7 +457,7 @@ const SortableItemGrip = React.forwardRef<
     />
   );
 });
-SortableItemGrip.displayName = SORTABLE_ITEM_GRIP_NAME;
+SortableItemGrip.displayName = ITEM_GRIP_NAME;
 
 const Root = Sortable;
 const Content = SortableContent;
@@ -454,15 +466,15 @@ const ItemGrip = SortableItemGrip;
 const Overlay = SortableOverlay;
 
 export {
+  Content,
+  Item,
+  ItemGrip,
+  Overlay,
+  //
+  Root,
   Sortable,
   SortableContent,
   SortableItem,
   SortableItemGrip,
   SortableOverlay,
-  //
-  Root,
-  Content,
-  Item,
-  ItemGrip,
-  Overlay,
 };
