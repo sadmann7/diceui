@@ -15,9 +15,8 @@ interface ComboboxInputProps
 
 const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
   (props, forwardedRef) => {
-    const { ...inputProps } = props;
     const context = useComboboxContext(INPUT_NAME);
-    const composedRefs = useComposedRefs(forwardedRef, context.inputRef);
+    const composedRef = useComposedRefs(forwardedRef, context.inputRef);
 
     const onChange = React.useCallback(
       (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -362,13 +361,13 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
         aria-readonly={context.readOnly}
         disabled={context.disabled}
         readOnly={context.readOnly}
-        {...inputProps}
-        ref={composedRefs}
+        {...props}
+        ref={composedRef}
         value={context.inputValue}
-        onChange={composeEventHandlers(inputProps.onChange, onChange)}
-        onFocus={composeEventHandlers(inputProps.onFocus, onFocus)}
-        onKeyDown={composeEventHandlers(inputProps.onKeyDown, onKeyDown)}
-        onBlur={composeEventHandlers(inputProps.onBlur, onBlur)}
+        onChange={composeEventHandlers(props.onChange, onChange)}
+        onFocus={composeEventHandlers(props.onFocus, onFocus)}
+        onKeyDown={composeEventHandlers(props.onKeyDown, onKeyDown)}
+        onBlur={composeEventHandlers(props.onBlur, onBlur)}
       />
     );
   },

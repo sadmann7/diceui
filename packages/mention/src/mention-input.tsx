@@ -14,10 +14,7 @@ interface MentionInputProps
 const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
   (props, forwardedRef) => {
     const context = useMentionContext(INPUT_NAME);
-    const composedRef = useComposedRefs<HTMLInputElement>(
-      forwardedRef,
-      context.inputRef,
-    );
+    const composedRef = useComposedRefs(forwardedRef, context.inputRef);
 
     const getTextWidth = React.useCallback(
       (text: string, input: HTMLInputElement) => {
