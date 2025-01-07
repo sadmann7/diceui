@@ -294,6 +294,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       [itemMap],
     );
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     const onFilterItems = React.useCallback(() => {
       if (!filterStore.search) {
         filterStore.itemCount = itemMap.size;
@@ -355,11 +356,11 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       filterStore.itemCount = itemCount;
 
       // Close the menu if no items match the filter
-      if (itemCount === 0) {
-        setOpen(false);
-        setHighlightedItem(null);
-        setVirtualAnchor(null);
-      }
+      // if (itemCount === 0) {
+      //   setOpen(false);
+      //   setHighlightedItem(null);
+      //   setVirtualAnchor(null);
+      // }
     }, [filterStore, itemMap, getItemScore, setOpen]);
 
     const onHighlightMove = React.useCallback(
