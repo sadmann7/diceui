@@ -543,6 +543,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
             name={name}
             value={value}
             disabled={disabled}
+            readOnly={readOnly}
             required={required}
           />
         )}

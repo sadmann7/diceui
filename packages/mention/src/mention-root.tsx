@@ -492,6 +492,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
               name={name}
               value={value}
               disabled={disabled}
+              readOnly={readonly}
               required={required}
             />
           )}

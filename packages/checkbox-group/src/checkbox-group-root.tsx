@@ -26,6 +26,7 @@ interface CheckboxGroupContextValue {
   descriptionId: string;
   messageId: string;
   validationMessage?: string | string[];
+  readOnly: boolean;
 }
 
 const [CheckboxGroupProvider, useCheckboxGroup] =
@@ -54,10 +55,16 @@ interface CheckboxGroupRootProps
   /** Whether the checkbox group is invalid. */
   invalid?: boolean;
 
-  /** Whether the checkbox group is read-only. */
+  /**
+   * Whether the checkbox group is read-only.
+   * @default false
+   */
   readOnly?: boolean;
 
-  /** Whether the checkbox group is required. */
+  /**
+   * Whether the checkbox group is required in a form context.
+   * @default false
+   */
   required?: boolean;
 
   /** Name for form submission. */
@@ -161,6 +168,7 @@ const CheckboxGroupRoot = React.forwardRef<
       descriptionId={descriptionId}
       messageId={messageId}
       validationMessage={validationMessage}
+      readOnly={readOnly}
     >
       <Primitive.div
         role="group"

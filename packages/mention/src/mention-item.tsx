@@ -43,7 +43,7 @@ const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
         disabled: isDisabled,
         ref: { current: textNode },
       });
-    }, [value, context.onItemRegister, label, isDisabled, textNode]);
+    }, [context.onItemRegister, label, value, isDisabled, textNode]);
 
     const isVisible =
       !context.filterStore.search ||

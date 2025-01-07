@@ -109,6 +109,7 @@ const CheckboxGroupItem = React.forwardRef<
           value={value}
           checked={isChecked}
           disabled={isDisabled}
+          readOnly={context.readOnly}
           required={isRequired}
           onReset={() => context.onReset()}
         />

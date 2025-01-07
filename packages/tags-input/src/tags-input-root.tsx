@@ -129,11 +129,17 @@ interface TagsInputRootProps<T = InputValue>
    */
   max?: number;
 
-  /** Whether the field is required in a form context. */
+  /**
+   * Whether the field is required in a form context.
+   * @default false
+   */
   required?: boolean;
 
-  /** Name of the form field when used in a form. */
-  name?: string;
+  /**
+   * Whether the tags input is read-only.
+   * @default false
+   */
+  readOnly?: boolean;
 
   /**
    * The content of the tags input.
@@ -151,6 +157,9 @@ interface TagsInputRootProps<T = InputValue>
    * @default "ltr"
    */
   dir?: Direction;
+
+  /** Name of the form field when used in a form. */
+  name?: string;
 
   /** Unique identifier for the tags input. */
   id?: string;
@@ -554,8 +563,8 @@ const TagsInputRoot = React.forwardRef<
             control={collectionRef.current}
             name={name}
             value={value}
-            required={required}
             disabled={disabled}
+            required={required}
           />
         )}
       </Primitive.div>
