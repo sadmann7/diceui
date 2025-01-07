@@ -34,7 +34,7 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <div className="h-screen bg-accent" />
-      <Mention.Root className="flex w-[15rem] flex-col gap-2" tokenized>
+      <Mention.Root className="flex w-[15rem] flex-col gap-2" showLabel>
         <Mention.Label>Tricks</Mention.Label>
         <Mention.Input
           placeholder="Enter @ to mention a trick"

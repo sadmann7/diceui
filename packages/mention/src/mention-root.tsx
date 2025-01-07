@@ -161,6 +161,12 @@ interface MentionProps
   name?: string;
 
   /**
+   * Whether to show the label instead of value in the input.
+   * @default false
+   */
+  showLabel?: boolean;
+
+  /**
    * Whether to use tokenized mode for mentions.
    * In tokenized mode, mentions are displayed as tokens that can be deleted with a single backspace.
    * In text mode (default), mentions are displayed as text with the trigger character.
@@ -190,6 +196,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       modal = false,
       readonly = false,
       required = false,
+      showLabel = false,
       tokenized = false,
       name,
       ...rootProps
@@ -294,6 +301,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       [itemMap],
     );
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     const onFilterItems = React.useCallback(() => {
       if (!filterStore.search) {
         filterStore.itemCount = itemMap.size;
@@ -355,11 +363,11 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       filterStore.itemCount = itemCount;
 
       // Close the menu if no items match the filter
-      if (itemCount === 0) {
-        setOpen(false);
-        setHighlightedItem(null);
-        setVirtualAnchor(null);
-      }
+      // if (itemCount === 0) {
+      //   setOpen(false);
+      //   setHighlightedItem(null);
+      //   setVirtualAnchor(null);
+      // }
     }, [filterStore, itemMap, getItemScore, setOpen]);
 
     const onHighlightMove = React.useCallback(
@@ -411,14 +419,15 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         const input = inputRef.current;
         if (!input) return;
 
-        const mentionText = tokenized ? value : `${trigger}${value}`;
+        const mentionLabel = showLabel
+          ? (getItems().find((item) => item.value === value)?.label ?? value)
+          : value;
+        const mentionText = `${trigger}${mentionLabel}`;
         const beforeTrigger = input.value.slice(0, triggerIndex);
         const afterSearchText = input.value.slice(
           input.selectionStart ?? triggerIndex,
         );
-        const newValue = tokenized
-          ? `${beforeTrigger}${mentionText}${afterSearchText}`
-          : `${beforeTrigger}${mentionText} ${afterSearchText}`;
+        const newValue = `${beforeTrigger}${mentionText} ${afterSearchText}`;
 
         const newMention: Mention = {
           value,
@@ -432,15 +441,22 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         setInputValue(newValue);
         setValue((prev) => [...(prev ?? []), value]);
 
-        const newCursorPosition =
-          triggerIndex + mentionText.length + (tokenized ? 0 : 1);
+        const newCursorPosition = triggerIndex + mentionText.length + 1;
         input.setSelectionRange(newCursorPosition, newCursorPosition);
 
         setOpen(false);
         setHighlightedItem(null);
         filterStore.search = "";
       },
-      [trigger, setInputValue, setValue, setOpen, filterStore, tokenized],
+      [
+        trigger,
+        setInputValue,
+        setValue,
+        setOpen,
+        filterStore,
+        showLabel,
+        getItems,
+      ],
     );
 
     return (

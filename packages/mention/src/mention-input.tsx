@@ -250,12 +250,9 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
         if (event.key === "Backspace" && !context.open && !hasSelection) {
           // Find the mention that's immediately before the cursor
           const mention = context.mentions.find((m) => {
-            if (context.tokenized) {
-              // In tokenized mode, delete the mention if cursor is right after it
-              return cursorPosition === m.end;
-            }
-            // In normal mode, delete the mention if cursor is right after it (accounting for space)
+            // Check if cursor is right after mention (accounting for space)
             const isCursorAfterMention = cursorPosition === m.end + 1;
+            // If there's a space after mention, ensure we're not deleting the space
             if (isCursorAfterMention) {
               const charBeforeCursor = input.value[cursorPosition - 1];
               return charBeforeCursor !== " ";
@@ -267,7 +264,7 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
             event.preventDefault();
             const newValue =
               input.value.slice(0, mention.start) +
-              (context.tokenized ? "" : input.value.slice(mention.end + 1));
+              input.value.slice(mention.end + 1);
 
             // Update input value directly and through context
             input.value = newValue;
@@ -325,6 +322,7 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
               onMenuClose();
               return;
             }
+            event.preventDefault();
             onItemSelect();
             break;
           }
