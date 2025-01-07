@@ -1,55 +1,39 @@
 import * as React from "react";
-import { DATA_ITEM_ATTR, DATA_VALUE_ATTR } from "../constants";
 import { compareNodePosition } from "../lib/node";
 
-interface UseCollectionParams<TElement extends HTMLElement> {
-  ref: React.RefObject<TElement | null>;
-  attr?: string;
-}
+type CollectionItem<TItemElement extends HTMLElement, TItemData = {}> = {
+  ref: React.RefObject<TItemElement | null>;
+} & TItemData;
 
-function useCollection<TElement extends HTMLElement>({
-  ref,
-  attr = DATA_ITEM_ATTR,
-}: UseCollectionParams<TElement>) {
+type CollectionItemMap<TItemElement extends HTMLElement, TItemData = {}> = Map<
+  React.RefObject<TItemElement | null>,
+  CollectionItem<TItemElement, TItemData>
+>;
+
+function useCollection<TItemElement extends HTMLElement, TItemData = {}>() {
+  const collectionRef = React.useRef<TItemElement | null>(null);
+  const itemMap = React.useRef<CollectionItemMap<TItemElement, TItemData>>(
+    new Map(),
+  ).current;
+
   const getItems = React.useCallback(() => {
-    const collectionNode = ref.current;
+    const collectionNode = collectionRef.current;
     if (!collectionNode) return [];
 
-    const items = Array.from(
-      collectionNode.querySelectorAll(`[${attr}]`),
-    ) satisfies TElement[];
+    const items = Array.from(itemMap.values());
 
-    return items.sort(compareNodePosition);
-  }, [ref, attr]);
+    if (items.length === 0) return [];
 
-  const getEnabledItems = React.useCallback(() => {
-    const items = getItems();
-    return items.filter(
-      (item) => item.getAttribute("aria-disabled") !== "true",
-    );
-  }, [getItems]);
+    return items.sort((a, b) => {
+      if (!a?.ref.current || !b?.ref.current) return 0;
 
-  return { getItems, getEnabledItems };
+      return compareNodePosition(a.ref.current, b.ref.current);
+    });
+  }, [itemMap]);
+
+  return { collectionRef, itemMap, getItems };
 }
 
-function getSortedItems<TElement extends HTMLElement>(
-  items: TElement[],
-  value?: string[],
-) {
-  if (!value?.length) return items;
+export { useCollection };
 
-  return items.sort((a, b) => {
-    const aValue = a.getAttribute(DATA_VALUE_ATTR);
-    const bValue = b.getAttribute(DATA_VALUE_ATTR);
-    const aIndex = value.indexOf(aValue ?? "");
-    const bIndex = value.indexOf(bValue ?? "");
-
-    if (aIndex === -1 && bIndex === -1) return compareNodePosition(a, b);
-    if (aIndex === -1) return 1;
-    if (bIndex === -1) return -1;
-    if (aIndex !== bIndex) return aIndex - bIndex;
-    return compareNodePosition(a, b);
-  });
-}
-
-export { getSortedItems, useCollection };
+export type { CollectionItem, CollectionItemMap };

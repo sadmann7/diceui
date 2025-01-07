@@ -8,13 +8,13 @@ import {
   forwardRef,
   getSortedItems,
   useAnchor,
-  useCollection,
   useComposedRefs,
   useControllableState,
   useDirection,
   useFilter,
   useFormControl,
   useId,
+  useItemCollection,
 } from "@diceui/shared";
 import * as React from "react";
 import type { ComboboxAnchor } from "./combobox-anchor";
@@ -258,7 +258,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
   const listId = useId();
 
   const dir = useDirection(dirProp);
-  const { getEnabledItems } = useCollection<CollectionElement>({
+  const { getEnabledItems } = useItemCollection<CollectionElement>({
     ref: collectionRef,
   });
   const { anchorRef, hasAnchor, onHasAnchorChange } =

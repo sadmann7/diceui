@@ -7,12 +7,12 @@ import {
   Primitive,
   composeEventHandlers,
   createContext,
-  useCollection,
   useComposedRefs,
   useControllableState,
   useDirection,
   useFormControl,
   useId,
+  useItemCollection,
 } from "@diceui/shared";
 import type { TagsInputInput } from "./tags-input-input";
 
@@ -201,7 +201,7 @@ const TagsInputRoot = React.forwardRef<
   const labelId = useId();
 
   const dir = useDirection(dirProp);
-  const { getEnabledItems } = useCollection<CollectionElement>({
+  const { getEnabledItems } = useItemCollection<CollectionElement>({
     ref: collectionRef,
   });
   const { isFormControl, onTriggerChange } =

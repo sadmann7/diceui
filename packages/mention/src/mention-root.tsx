@@ -6,7 +6,7 @@ import {
   Primitive,
   composeRefs,
   createContext,
-  useCollectionContext,
+  useCollection,
   useControllableState,
   useDirection,
   useFilter,
@@ -202,7 +202,6 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       ...rootProps
     } = props;
 
-    const collectionRef = React.useRef<CollectionElement | null>(null);
     const listRef = React.useRef<ListElement | null>(null);
     const inputRef = React.useRef<InputElement | null>(null);
     const filterStore = React.useRef<MentionContextValue["filterStore"]>({
@@ -215,10 +214,10 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
     const labelId = useId();
     const listId = useId();
 
-    const { getItems, itemMap } = useCollectionContext<
+    const { collectionRef, itemMap, getItems } = useCollection<
       CollectionElement,
       ItemData
-    >({ collectionRef });
+    >();
     const { isFormControl, onTriggerChange } =
       useFormControl<CollectionElement>();
     const composedRef = composeRefs(forwardedRef, collectionRef, (node) =>
