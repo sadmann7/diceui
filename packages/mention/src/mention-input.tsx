@@ -176,47 +176,31 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
         if (context.disabled || context.readonly) return;
 
         const value = event.target.value;
-        const selectionStart = event.target.selectionStart ?? 0;
-        const lastTriggerIndex = value.lastIndexOf(
-          context.trigger,
-          selectionStart,
-        );
 
-        if (lastTriggerIndex !== -1) {
-          const textAfterTrigger = value.slice(
-            lastTriggerIndex + 1,
+        requestAnimationFrame(() => {
+          const selectionStart = event.target.selectionStart ?? 0;
+          const lastTriggerIndex = value.lastIndexOf(
+            context.trigger,
             selectionStart,
           );
 
-          // Only update position and keep menu open if we're still in a valid mention state
-          if (!textAfterTrigger.includes(" ")) {
-            createVirtualElement(event.target, lastTriggerIndex);
-            context.onOpenChange(true);
-            context.filterStore.search = textAfterTrigger;
-            context.onFilterItems();
-          } else {
+          if (lastTriggerIndex === -1) {
             context.onOpenChange(false);
             context.onHighlightedItemChange(null);
             context.filterStore.search = "";
           }
-        } else {
-          context.onOpenChange(false);
-          context.onHighlightedItemChange(null);
-          context.filterStore.search = "";
-        }
 
-        context.onInputValueChange?.(value);
+          context.onInputValueChange?.(value);
+        });
       },
       [
         context.trigger,
         context.onOpenChange,
-        context.onFilterItems,
         context.filterStore,
         context.disabled,
         context.readonly,
         context.onHighlightedItemChange,
         context.onInputValueChange,
-        createVirtualElement,
       ],
     );
 

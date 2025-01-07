@@ -46,7 +46,8 @@ const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
     }, [value, context.onItemRegister, label, isDisabled, textNode]);
 
     const isVisible =
-      !context.filterStore.search || context.filterStore.items.has(id);
+      !context.filterStore.search ||
+      (context.filterStore.items.get(id) ?? 0) > 0;
 
     if (!isVisible) return null;
 

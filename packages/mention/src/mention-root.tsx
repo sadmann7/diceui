@@ -34,7 +34,7 @@ interface ItemData {
   disabled: boolean;
 }
 
-interface Mention extends Omit<ItemData, "disabled"> {
+interface Mention extends Omit<ItemData, "label" | "disabled"> {
   start: number;
   end: number;
 }
@@ -419,7 +419,6 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         const newValue = `${beforeTrigger}${mentionText} ${afterSearchText}`;
 
         const newMention: Mention = {
-          label: value,
           value,
           start: triggerIndex,
           end: triggerIndex + mentionText.length,
