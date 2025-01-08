@@ -8,6 +8,8 @@ import { useComboboxContext } from "./combobox-root";
 
 const ANCHOR_NAME = "ComboboxAnchor";
 
+type AnchorElement = React.ElementRef<typeof Primitive.div>;
+
 interface ComboboxAnchorProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
   /**
@@ -18,7 +20,7 @@ interface ComboboxAnchorProps
   preventInputFocus?: boolean;
 }
 
-const ComboboxAnchor = React.forwardRef<HTMLDivElement, ComboboxAnchorProps>(
+const ComboboxAnchor = React.forwardRef<AnchorElement, ComboboxAnchorProps>(
   (props, forwardedRef) => {
     const { preventInputFocus, ...anchorProps } = props;
     const context = useComboboxContext(ANCHOR_NAME);
@@ -81,4 +83,4 @@ const Anchor = ComboboxAnchor;
 
 export { Anchor, ComboboxAnchor };
 
-export type { ComboboxAnchorProps };
+export type { ComboboxAnchorProps, AnchorElement };

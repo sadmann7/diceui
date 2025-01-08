@@ -49,7 +49,7 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
     const { label, onLabelChange } = useLabel<ItemTextElement>({
       defaultValue: labelProp ?? "",
     });
-    const itemRef = React.useRef<ItemElement>(null);
+    const itemRef = React.useRef<ItemElement | null>(null);
     const composedRef = useComposedRefs(forwardedRef, itemRef);
 
     const id = useId();

@@ -16,6 +16,8 @@ import { getDataState, useComboboxContext } from "./combobox-root";
 
 const CONTENT_NAME = "ComboboxContent";
 
+type ContentElement = React.ElementRef<typeof Primitive.div>;
+
 interface ComboboxContentContextValue {
   side: Side;
   align: Align;
@@ -46,7 +48,7 @@ interface ComboboxContentProps
   onPointerDownOutside?: (event: PointerDownOutsideEvent) => void;
 }
 
-const ComboboxContent = React.forwardRef<HTMLDivElement, ComboboxContentProps>(
+const ComboboxContent = React.forwardRef<ContentElement, ComboboxContentProps>(
   (props, forwardedRef) => {
     const {
       forceMount = false,
@@ -155,4 +157,4 @@ const Content = ComboboxContent;
 
 export { ComboboxContent, Content, useComboboxContentContext };
 
-export type { ComboboxContentProps };
+export type { ComboboxContentProps, ContentElement };
