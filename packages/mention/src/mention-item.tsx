@@ -12,6 +12,8 @@ import { type ItemData, useMentionContext } from "./mention-root";
 
 const ITEM_NAME = "MentionItem";
 
+type ItemElement = React.ElementRef<typeof Primitive.div>;
+
 interface MentionItemContext extends ItemData {}
 
 const [MentionItemProvider, useMentionItemContext] =
@@ -24,15 +26,15 @@ interface MentionItemProps
   disabled?: boolean;
 }
 
-const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
+const MentionItem = React.forwardRef<ItemElement, MentionItemProps>(
   (props, forwardedRef) => {
     const { value, label: labelProp, disabled = false, ...itemProps } = props;
     const context = useMentionContext(ITEM_NAME);
-    const [textNode, setTextNode] = React.useState<HTMLDivElement | null>(null);
-    const composedRef = composeRefs(forwardedRef, (node) => setTextNode(node));
+    const [itemNode, setItemNode] = React.useState<ItemElement | null>(null);
+    const composedRef = composeRefs(forwardedRef, (node) => setItemNode(node));
     const id = useId();
 
-    const label = labelProp ?? textNode?.textContent ?? "";
+    const label = labelProp ?? itemNode?.textContent ?? "";
     const isDisabled = disabled || context.disabled;
     const isSelected = context.value.includes(value);
 
@@ -41,9 +43,9 @@ const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
         value,
         label,
         disabled: isDisabled,
-        ref: { current: textNode },
+        ref: { current: itemNode },
       });
-    }, [context.onItemRegister, label, value, isDisabled, textNode]);
+    }, [context.onItemRegister, label, value, isDisabled, itemNode]);
 
     const isVisible =
       !context.filterStore.search ||
@@ -105,12 +107,12 @@ const MentionItem = React.forwardRef<HTMLDivElement, MentionItemProps>(
             },
           )}
           onPointerMove={composeEventHandlers(itemProps.onPointerMove, () => {
-            if (isDisabled || !textNode) return;
+            if (isDisabled || !itemNode) return;
             context.onHighlightedItemChange({
               label,
               value,
               disabled: isDisabled,
-              ref: { current: textNode },
+              ref: { current: itemNode },
             });
           })}
         />
@@ -123,6 +125,6 @@ MentionItem.displayName = ITEM_NAME;
 
 const Item = MentionItem;
 
-export { Item, MentionItem, useMentionItemContext };
+export { MentionItem, Item, useMentionItemContext };
 
-export type { MentionItemProps };
+export type { MentionItemProps, ItemElement };

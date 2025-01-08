@@ -16,6 +16,8 @@ import { getDataState, useMentionContext } from "./mention-root";
 
 const CONTENT_NAME = "MentionContent";
 
+type ContentElement = React.ElementRef<typeof Primitive.div>;
+
 interface MentionContentContextValue {
   side: Side;
   align: Align;
@@ -46,7 +48,7 @@ interface MentionContentProps
   onPointerDownOutside?: (event: PointerDownOutsideEvent) => void;
 }
 
-const MentionContent = React.forwardRef<HTMLDivElement, MentionContentProps>(
+const MentionContent = React.forwardRef<ContentElement, MentionContentProps>(
   (props, forwardedRef) => {
     const {
       forceMount = false,
@@ -91,7 +93,7 @@ const MentionContent = React.forwardRef<HTMLDivElement, MentionContentProps>(
       trackAnchor,
     });
 
-    const composedRef = useComposedRefs<HTMLDivElement>(forwardedRef, (node) =>
+    const composedRef = useComposedRefs(forwardedRef, (node) =>
       positionerContext.refs.setFloating(node),
     );
 
@@ -158,4 +160,4 @@ const Content = MentionContent;
 
 export { MentionContent, Content, useMentionContentContext };
 
-export type { MentionContentProps };
+export type { MentionContentProps, ContentElement };

@@ -8,16 +8,18 @@ import { useMentionContext } from "./mention-root";
 
 const INPUT_NAME = "MentionInput";
 
+type InputElement = React.ElementRef<typeof Primitive.input>;
+
 interface MentionInputProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.input> {}
 
-const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
+const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
   (props, forwardedRef) => {
     const context = useMentionContext(INPUT_NAME);
     const composedRef = useComposedRefs(forwardedRef, context.inputRef);
 
     const getTextWidth = React.useCallback(
-      (text: string, input: HTMLInputElement) => {
+      (text: string, input: InputElement) => {
         const style = window.getComputedStyle(input);
         const measureSpan = document.createElement("span");
         measureSpan.style.cssText = `
@@ -37,13 +39,13 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
       [],
     );
 
-    const getLineHeight = React.useCallback((input: HTMLInputElement) => {
+    const getLineHeight = React.useCallback((input: InputElement) => {
       const style = window.getComputedStyle(input);
       return Number.parseInt(style.lineHeight) || input.offsetHeight;
     }, []);
 
     const calculatePosition = React.useCallback(
-      (input: HTMLInputElement, cursorPosition: number) => {
+      (input: InputElement, cursorPosition: number) => {
         const rect = input.getBoundingClientRect();
         const text = input.value.slice(0, cursorPosition);
         const textWidth = getTextWidth(text, input);
@@ -87,7 +89,7 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
     );
 
     const createVirtualElement = React.useCallback(
-      (element: HTMLInputElement, cursorPosition: number) => {
+      (element: InputElement, cursorPosition: number) => {
         const virtualElement = {
           getBoundingClientRect() {
             return calculatePosition(element, cursorPosition);
@@ -110,7 +112,7 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
     );
 
     const onMentionUpdate = React.useCallback(
-      (element: HTMLInputElement, selectionStart: number | null = null) => {
+      (element: InputElement, selectionStart: number | null = null) => {
         if (context.disabled || context.readonly) return false;
 
         const currentPosition = selectionStart ?? element.selectionStart;
@@ -174,7 +176,7 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
     );
 
     const onChange = React.useCallback(
-      (event: React.ChangeEvent<HTMLInputElement>) => {
+      (event: React.ChangeEvent<InputElement>) => {
         if (context.disabled || context.readonly) return;
         context.onInputValueChange?.(event.target.value);
         onMentionUpdate(event.target);
@@ -188,21 +190,21 @@ const MentionInput = React.forwardRef<HTMLInputElement, MentionInputProps>(
     );
 
     const onClick = React.useCallback(
-      (event: React.MouseEvent<HTMLInputElement>) => {
+      (event: React.MouseEvent<InputElement>) => {
         onMentionUpdate(event.currentTarget);
       },
       [onMentionUpdate],
     );
 
     const onFocus = React.useCallback(
-      (event: React.FocusEvent<HTMLInputElement>) => {
+      (event: React.FocusEvent<InputElement>) => {
         onMentionUpdate(event.currentTarget);
       },
       [onMentionUpdate],
     );
 
     const onKeyDown = React.useCallback(
-      (event: React.KeyboardEvent<HTMLInputElement>) => {
+      (event: React.KeyboardEvent<InputElement>) => {
         const input = event.currentTarget;
         const cursorPosition = input.selectionStart ?? 0;
         const selectionEnd = input.selectionEnd ?? cursorPosition;
@@ -392,4 +394,4 @@ const Input = MentionInput;
 
 export { MentionInput, Input };
 
-export type { MentionInputProps };
+export type { MentionInputProps, InputElement };

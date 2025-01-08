@@ -35,11 +35,7 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <div className="h-screen bg-accent" />
-      <Mention.Root
-        className="flex w-[20rem] flex-col gap-2"
-        showLabel
-        tokenized
-      >
+      <Mention.Root className="flex w-[20rem] flex-col gap-2" showLabel>
         <Mention.Label>Tricks</Mention.Label>
         <Mention.Input
           placeholder="Enter @ to mention a trick"
@@ -62,7 +58,7 @@ export default function PlaygroundPage() {
           </Mention.Content>
         </Mention.Portal>
       </Mention.Root>
-      <Combobox className="w-[15rem]" modal>
+      <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
           <ComboboxTrigger>

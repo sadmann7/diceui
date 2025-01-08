@@ -12,11 +12,13 @@ import {
   useFilter,
   useFormControl,
   useId,
+  useListHighlighting,
 } from "@diceui/shared";
 import type { VirtualElement } from "@floating-ui/react";
 import * as React from "react";
-import type { MentionContent } from "./mention-content";
-import type { MentionInput } from "./mention-input";
+import type { ContentElement, MentionContent } from "./mention-content";
+import type { InputElement, MentionInput } from "./mention-input";
+import type { ItemElement } from "./mention-item";
 
 function getDataState(open: boolean) {
   return open ? "open" : "closed";
@@ -24,9 +26,7 @@ function getDataState(open: boolean) {
 
 const ROOT_NAME = "MentionRoot";
 
-type CollectionElement = HTMLDivElement;
-type InputElement = React.ElementRef<typeof MentionInput>;
-type ListElement = React.ElementRef<typeof MentionContent>;
+type CollectionElement = React.ElementRef<typeof Primitive.div>;
 
 interface ItemData {
   label: string;
@@ -73,7 +73,7 @@ interface MentionContextValue {
   readonly: boolean;
   tokenized: boolean;
   inputRef: React.RefObject<HTMLInputElement | null>;
-  listRef: React.RefObject<ListElement | null>;
+  listRef: React.RefObject<ContentElement | null>;
   inputId: string;
   labelId: string;
   listId: string;
@@ -202,7 +202,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       ...rootProps
     } = props;
 
-    const listRef = React.useRef<ListElement | null>(null);
+    const listRef = React.useRef<ContentElement | null>(null);
     const inputRef = React.useRef<InputElement | null>(null);
     const filterStore = React.useRef<MentionContextValue["filterStore"]>({
       search: "",
@@ -215,7 +215,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
     const listId = useId();
 
     const { collectionRef, itemMap, getItems, onItemRegister } = useCollection<
-      CollectionElement,
+      ItemElement,
       ItemData
     >();
     const { isFormControl, onTriggerChange } =
@@ -360,49 +360,14 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       }
     }, [filterStore, itemMap, getItemScore, setOpen]);
 
-    const onHighlightMove = React.useCallback(
-      (direction: HighlightingDirection) => {
-        const items = getItems().filter((item) => !item.disabled);
-        if (items.length === 0) return;
-
-        const currentIndex = items.findIndex(
-          (item) => item.ref.current === highlightedItem?.ref.current,
-        );
-        let nextIndex: number;
-
-        switch (direction) {
-          case "next":
-            nextIndex = currentIndex + 1;
-            if (nextIndex >= items.length) {
-              nextIndex = loop ? 0 : items.length - 1;
-            }
-            break;
-          case "prev":
-            nextIndex = currentIndex - 1;
-            if (nextIndex < 0) {
-              nextIndex = loop ? items.length - 1 : 0;
-            }
-            break;
-          case "first":
-            nextIndex = 0;
-            break;
-          case "last":
-            nextIndex = items.length - 1;
-            break;
-          case "selected":
-            nextIndex = items.findIndex((item) => value.includes(item.value));
-            if (nextIndex === -1) nextIndex = 0;
-            break;
-        }
-
-        const nextItem = items[nextIndex];
-        if (nextItem?.ref.current) {
-          nextItem.ref.current.scrollIntoView({ block: "nearest" });
-          setHighlightedItem(nextItem);
-        }
-      },
-      [loop, highlightedItem, getItems, value],
-    );
+    const { onHighlightMove } = useListHighlighting({
+      highlightedItem,
+      onHighlightedItemChange: setHighlightedItem,
+      getItems,
+      getIsItemDisabled: (item) => !!item.disabled,
+      getIsItemSelected: (item) => value.includes(item.value),
+      loop,
+    });
 
     const onMentionAdd = React.useCallback(
       (value: string, triggerIndex: number) => {

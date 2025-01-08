@@ -1,18 +1,18 @@
 import * as React from "react";
 import { compareNodePosition } from "../lib/node";
 
-type CollectionItem<TItemElement extends HTMLElement, TItemData = {}> = {
-  ref: React.RefObject<TItemElement | null>;
-} & TItemData;
+type CollectionItem<TElement extends HTMLElement, TData = {}> = {
+  ref: React.RefObject<TElement | null>;
+} & TData;
 
-type CollectionItemMap<TItemElement extends HTMLElement, TItemData = {}> = Map<
-  React.RefObject<TItemElement | null>,
-  CollectionItem<TItemElement, TItemData>
+type CollectionItemMap<TElement extends HTMLElement, TData = {}> = Map<
+  React.RefObject<TElement | null>,
+  CollectionItem<TElement, TData>
 >;
 
-type CollectionGroupMap<TItemElement extends HTMLElement> = Map<
+type CollectionGroupMap<TElement extends HTMLElement> = Map<
   string,
-  Set<React.RefObject<TItemElement | null>>
+  Set<React.RefObject<TElement | null>>
 >;
 
 interface CollectionOptions {
@@ -23,15 +23,15 @@ interface CollectionOptions {
   grouped?: boolean;
 }
 
-function useCollection<TItemElement extends HTMLElement, TItemData = {}>({
+function useCollection<TElement extends HTMLElement, TData = {}>({
   grouped = false,
 }: CollectionOptions = {}) {
-  const collectionRef = React.useRef<TItemElement | null>(null);
-  const itemMap = React.useRef<CollectionItemMap<TItemElement, TItemData>>(
+  const collectionRef = React.useRef<TElement | null>(null);
+  const itemMap = React.useRef<CollectionItemMap<TElement, TData>>(
     new Map(),
   ).current;
   const groupMap = grouped
-    ? React.useRef<CollectionGroupMap<TItemElement>>(new Map()).current
+    ? React.useRef<CollectionGroupMap<TElement>>(new Map()).current
     : null;
 
   const getItems = React.useCallback(() => {
@@ -50,7 +50,7 @@ function useCollection<TItemElement extends HTMLElement, TItemData = {}>({
   }, [itemMap]);
 
   const onItemRegister = React.useCallback(
-    (item: CollectionItem<TItemElement, TItemData>, groupId?: string) => {
+    (item: CollectionItem<TElement, TData>, groupId?: string) => {
       itemMap.set(item.ref, item);
 
       if (grouped && groupId && groupMap) {

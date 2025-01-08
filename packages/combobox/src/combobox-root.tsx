@@ -14,11 +14,12 @@ import {
   useFilter,
   useFormControl,
   useId,
+  useListHighlighting,
 } from "@diceui/shared";
 import * as React from "react";
-import type { AnchorElement, ComboboxAnchor } from "./combobox-anchor";
-import type { ComboboxContent, ContentElement } from "./combobox-content";
-import type { ComboboxInput, InputElement } from "./combobox-input";
+import type { AnchorElement } from "./combobox-anchor";
+import type { ContentElement } from "./combobox-content";
+import type { InputElement } from "./combobox-input";
 import type { ItemElement } from "./combobox-item";
 
 function getDataState(open: boolean) {
@@ -430,52 +431,17 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     }
   }, [manualFiltering, filterStore, itemMap, groupMap, getItemScore]);
 
-  const onHighlightMove = React.useCallback(
-    (direction: HighlightingDirection) => {
-      const items = getItems().filter((item) => !item.disabled);
-      if (!items.length) return;
-
-      const currentIndex = items.findIndex(
-        (item) => item.ref.current === highlightedItem?.ref.current,
-      );
-      let nextIndex: number;
-
-      switch (direction) {
-        case "next":
-          nextIndex = currentIndex + 1;
-          if (nextIndex >= items.length) {
-            nextIndex = loop ? 0 : items.length - 1;
-          }
-          break;
-        case "prev":
-          nextIndex = currentIndex - 1;
-          if (nextIndex < 0) {
-            nextIndex = loop ? items.length - 1 : 0;
-          }
-          break;
-        case "first":
-          nextIndex = 0;
-          break;
-        case "last":
-          nextIndex = items.length - 1;
-          break;
-        case "selected": {
-          const selectedValue = Array.isArray(value) ? value[0] : value;
-          nextIndex = items.findIndex((item) => item.value === selectedValue);
-
-          if (nextIndex === -1) nextIndex = 0;
-          break;
-        }
-      }
-
-      const nextItem = items[nextIndex];
-      if (nextItem?.ref.current) {
-        nextItem.ref.current.scrollIntoView({ block: "nearest" });
-        setHighlightedItem(nextItem);
-      }
+  const { onHighlightMove } = useListHighlighting({
+    highlightedItem,
+    onHighlightedItemChange: setHighlightedItem,
+    getItems,
+    getIsItemDisabled: (item) => !!item.disabled,
+    getIsItemSelected: (item) => {
+      const selectedValue = Array.isArray(value) ? value[0] : value;
+      return item.value === selectedValue;
     },
-    [loop, highlightedItem, getItems, value],
-  );
+    loop,
+  });
 
   return (
     <ComboboxProvider

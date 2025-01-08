@@ -1,5 +1,5 @@
 import * as React from "react";
-import { DATA_ITEM_ATTR, DATA_VALUE_ATTR } from "../constants";
+import { DATA_ITEM_ATTR } from "../constants";
 import { compareNodePosition } from "../lib/node";
 
 interface UseItemCollectionProps<TElement extends HTMLElement> {
@@ -34,24 +34,4 @@ function useItemCollection<TElement extends HTMLElement>({
   return { getItems, getEnabledItems };
 }
 
-function getSortedItems<TElement extends HTMLElement>(
-  items: TElement[],
-  value?: string[],
-) {
-  if (!value?.length) return items;
-
-  return items.sort((a, b) => {
-    const aValue = a.getAttribute(DATA_VALUE_ATTR);
-    const bValue = b.getAttribute(DATA_VALUE_ATTR);
-    const aIndex = value.indexOf(aValue ?? "");
-    const bIndex = value.indexOf(bValue ?? "");
-
-    if (aIndex === -1 && bIndex === -1) return compareNodePosition(a, b);
-    if (aIndex === -1) return 1;
-    if (bIndex === -1) return -1;
-    if (aIndex !== bIndex) return aIndex - bIndex;
-    return compareNodePosition(a, b);
-  });
-}
-
-export { getSortedItems, useItemCollection };
+export { useItemCollection };
