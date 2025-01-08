@@ -107,8 +107,8 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
           if (context.disabled || context.readOnly || !context.highlightedItem)
             return;
 
-          const value = context.highlightedItem.getAttribute(DATA_VALUE_ATTR);
-          const text = context.highlightedItem.textContent ?? "";
+          const value = context.highlightedItem.value;
+          const text = context.highlightedItem.label;
           if (!value) return;
 
           if (context.multiple) {
@@ -356,7 +356,7 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
         aria-controls={context.listId}
         aria-labelledby={context.labelId}
         aria-autocomplete="list"
-        aria-activedescendant={context.highlightedItem?.id}
+        aria-activedescendant={context.highlightedItem?.ref?.current?.id}
         aria-disabled={context.disabled}
         aria-readonly={context.readOnly}
         disabled={context.disabled}

@@ -13,6 +13,7 @@ export * from "./use-form-reset";
 export * from "./use-id";
 export * from "./use-isomorphic-layout-effect";
 export * from "./use-item-collection";
+export * from "./use-label";
 export * from "./use-layout-effect";
 export * from "./use-mounted";
 export * from "./use-previous";

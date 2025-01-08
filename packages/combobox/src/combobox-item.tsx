@@ -6,9 +6,11 @@ import {
   useComposedRefs,
   useId,
   useIsomorphicLayoutEffect,
+  useLabel,
 } from "@diceui/shared";
 import * as React from "react";
 import { useComboboxGroupContext } from "./combobox-group";
+import type { ItemTextElement } from "./combobox-item-text";
 import { useComboboxContext } from "./combobox-root";
 
 const ITEM_NAME = "ComboboxItem";
@@ -18,28 +20,38 @@ interface ComboboxItemContextValue {
   isSelected: boolean;
   disabled?: boolean;
   textId: string;
+  onItemLabelChange: (node: ItemTextElement | null) => void;
 }
 
 const [ComboboxItemProvider, useComboboxItemContext] =
   createContext<ComboboxItemContextValue>(ITEM_NAME);
+
+type ItemElement = React.ElementRef<typeof Primitive.div>;
 
 interface ComboboxItemProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
   /** The value of the item. */
   value: string;
 
+  /** The label of the item. */
+  label?: string;
+
   /** Whether the item is disabled. */
   disabled?: boolean;
 }
 
-const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
+const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
   (props, forwardedRef) => {
-    const { value, disabled, ...itemProps } = props;
+    const { value, label: labelProp, disabled, ...itemProps } = props;
     const context = useComboboxContext(ITEM_NAME);
     // Make the group context optional by passing false, so item can be used outside of a group
     const groupContext = useComboboxGroupContext(ITEM_NAME, false);
-    const itemRef = React.useRef<HTMLDivElement>(null);
+    const { label, onLabelChange } = useLabel<ItemTextElement>({
+      defaultValue: labelProp ?? "",
+    });
+    const itemRef = React.useRef<ItemElement>(null);
     const composedRef = useComposedRefs(forwardedRef, itemRef);
+
     const id = useId();
     const textId = `${id}text`;
 
@@ -53,8 +65,16 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
         throw new Error(`${ITEM_NAME} value cannot be an empty string.`);
       }
 
-      return context.onItemRegister(id, value, groupContext?.id);
-    }, [id, value, context.onItemRegister, groupContext?.id]);
+      return context.onItemRegister(
+        {
+          label,
+          value,
+          disabled,
+          ref: itemRef,
+        },
+        groupContext?.id,
+      );
+    }, [context.onItemRegister, value, disabled, label, groupContext?.id]);
 
     const isVisible =
       context.manualFiltering ||
@@ -70,6 +90,7 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
         isSelected={isSelected}
         disabled={disabled}
         textId={textId}
+        onItemLabelChange={onLabelChange}
       >
         <Primitive.div
           {...{ [DATA_ITEM_ATTR]: "" }}
@@ -79,8 +100,9 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
           aria-disabled={isDisabled}
           aria-labelledby={textId}
           data-state={isSelected ? "checked" : "unchecked"}
-          data-highlighted={context.highlightedItem?.id === id ? "" : undefined}
-          data-value={value}
+          data-highlighted={
+            context.highlightedItem?.ref.current?.id === id ? "" : undefined
+          }
           data-disabled={isDisabled ? "" : undefined}
           tabIndex={disabled ? undefined : -1}
           {...itemProps}
@@ -128,7 +150,12 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
           )}
           onPointerMove={composeEventHandlers(itemProps.onPointerMove, () => {
             if (isDisabled) return;
-            context.onHighlightedItemChange(itemRef.current);
+            context.onHighlightedItemChange({
+              label,
+              value,
+              disabled: isDisabled,
+              ref: itemRef,
+            });
           })}
         />
       </ComboboxItemProvider>
@@ -142,4 +169,4 @@ const Item = ComboboxItem;
 
 export { ComboboxItem, Item, useComboboxItemContext };
 
-export type { ComboboxItemProps };
+export type { ComboboxItemProps, ItemElement };
