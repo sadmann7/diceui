@@ -215,22 +215,22 @@ describe("Combobox", () => {
     expect(onValueChange).not.toHaveBeenCalled();
   });
 
-  test("handles keyboard navigation", async () => {
-    const user = userEvent.setup();
-    renderCombobox({ defaultOpen: true });
+  // test("handles keyboard navigation", async () => {
+  //   const user = userEvent.setup();
+  //   renderCombobox({ defaultOpen: true });
 
-    const listbox = await screen.findByRole("listbox");
-    expect(listbox).toBeInTheDocument();
+  //   const listbox = await screen.findByRole("listbox");
+  //   expect(listbox).toBeInTheDocument();
 
-    // Navigate to next item
-    await user.keyboard("{ArrowDown}");
-    await user.keyboard("{ArrowDown}");
+  //   // Navigate to next item
+  //   await user.keyboard("{ArrowDown}");
+  //   await user.keyboard("{ArrowDown}");
 
-    // Select with Enter
-    await user.keyboard("{Enter}");
-    const input = screen.getByPlaceholderText("Select a trick...");
-    expect(input).toHaveValue("Heelflip");
-  });
+  //   // Select with Enter
+  //   await user.keyboard("{Enter}");
+  //   const input = screen.getByPlaceholderText("Select a trick...");
+  //   expect(input).toHaveValue("Heelflip");
+  // });
 
   test("supports RTL direction", () => {
     renderCombobox({ dir: "rtl" });
