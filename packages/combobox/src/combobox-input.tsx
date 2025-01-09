@@ -10,17 +10,19 @@ import { useComboboxContext } from "./combobox-root";
 
 const INPUT_NAME = "ComboboxInput";
 
+type InputElement = React.ElementRef<typeof Primitive.input>;
+
 interface ComboboxInputProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.input> {}
 
-const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
+const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
   (props, forwardedRef) => {
     const { ...inputProps } = props;
     const context = useComboboxContext(INPUT_NAME);
     const composedRefs = useComposedRefs(forwardedRef, context.inputRef);
 
     const onChange = React.useCallback(
-      (event: React.ChangeEvent<HTMLInputElement>) => {
+      (event: React.ChangeEvent<InputElement>) => {
         if (context.disabled || context.readOnly) return;
 
         if (!context.open) context.onOpenChange(true);
@@ -93,7 +95,7 @@ const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
     ]);
 
     const onKeyDown = React.useCallback(
-      (event: React.KeyboardEvent<HTMLInputElement>) => {
+      (event: React.KeyboardEvent<InputElement>) => {
         function onHighlightMove(direction: HighlightingDirection) {
           if (direction === "selected" && context.value.length > 0) {
             context.onHighlightMove("selected");
@@ -380,4 +382,4 @@ const Input = ComboboxInput;
 
 export { ComboboxInput, Input };
 
-export type { ComboboxInputProps };
+export type { ComboboxInputProps, InputElement };

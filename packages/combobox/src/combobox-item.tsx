@@ -26,6 +26,8 @@ interface ComboboxItemContextValue {
 const [ComboboxItemProvider, useComboboxItemContext] =
   createContext<ComboboxItemContextValue>(ITEM_NAME);
 
+type ItemElement = React.ElementRef<typeof Primitive.div>;
+
 interface ComboboxItemProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
   /** The value of the item. */
@@ -38,7 +40,7 @@ interface ComboboxItemProps
   disabled?: boolean;
 }
 
-const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
+const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
   (props, forwardedRef) => {
     const { value, label: labelProp, disabled, ...itemProps } = props;
     const context = useComboboxContext(ITEM_NAME);
@@ -47,7 +49,7 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
     const { label, onLabelChange } = useLabel<ItemTextElement>({
       defaultValue: labelProp ?? "",
     });
-    const itemRef = React.useRef<HTMLDivElement>(null);
+    const itemRef = React.useRef<ItemElement>(null);
     const composedRef = useComposedRefs(forwardedRef, itemRef);
     const id = useId();
     const textId = `${id}text`;
@@ -152,4 +154,4 @@ const Item = ComboboxItem;
 
 export { ComboboxItem, Item, useComboboxItemContext };
 
-export type { ComboboxItemProps };
+export type { ComboboxItemProps, ItemElement };

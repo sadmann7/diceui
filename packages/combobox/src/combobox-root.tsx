@@ -16,10 +16,10 @@ import {
   useItemCollection,
 } from "@diceui/shared";
 import * as React from "react";
-import type { ComboboxAnchor } from "./combobox-anchor";
-import type { ComboboxContent } from "./combobox-content";
-import type { ComboboxInput } from "./combobox-input";
-import type { ComboboxItem } from "./combobox-item";
+import type { AnchorElement, ComboboxAnchor } from "./combobox-anchor";
+import type { ComboboxContent, ContentElement } from "./combobox-content";
+import type { ComboboxInput, InputElement } from "./combobox-input";
+import type { ComboboxItem, ItemElement } from "./combobox-item";
 
 function getDataState(open: boolean) {
   return open ? "open" : "closed";
@@ -32,10 +32,12 @@ type Value<Multiple extends boolean = false> = Multiple extends true
   : string;
 
 type CollectionElement = React.ElementRef<typeof Primitive.div>;
-type ListElement = React.ElementRef<typeof ComboboxContent>;
-type InputElement = React.ElementRef<typeof ComboboxInput>;
-type AnchorElement = React.ElementRef<typeof ComboboxAnchor>;
-type ItemElement = React.ElementRef<typeof ComboboxItem>;
+
+interface ItemData {
+  label: string;
+  value: string;
+  disabled?: boolean;
+}
 
 interface ComboboxContextValue<Multiple extends boolean = false> {
   value: Value<Multiple>;
@@ -73,7 +75,7 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   readOnly: boolean;
   dir: Direction;
   collectionRef: React.RefObject<CollectionElement | null>;
-  listRef: React.RefObject<ListElement | null>;
+  listRef: React.RefObject<ContentElement | null>;
   inputRef: React.RefObject<InputElement | null>;
   anchorRef: React.RefObject<AnchorElement | null>;
   inputId: string;
@@ -242,7 +244,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
 
   const collectionRef = React.useRef<CollectionElement | null>(null);
   const inputRef = React.useRef<InputElement | null>(null);
-  const listRef = React.useRef<ListElement | null>(null);
+  const listRef = React.useRef<ContentElement | null>(null);
   const items = React.useRef(new Map<string, string>()).current;
   const groups = React.useRef(new Map<string, Set<string>>()).current;
   const filterStore = React.useRef<ComboboxContextValue["filterStore"]>({
