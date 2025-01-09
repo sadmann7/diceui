@@ -8,6 +8,7 @@ export * from "./use-dismiss";
 export * from "./use-escape-keydown";
 export * from "./use-event-callback";
 export * from "./use-filter";
+export * from "./use-filter-store";
 export * from "./use-form-control";
 export * from "./use-form-reset";
 export * from "./use-id";
