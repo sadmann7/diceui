@@ -22,7 +22,7 @@ interface UseFilterStoreOptions<TElement extends HTMLElement, TData = {}> {
 
 function useFilterStore<
   TElement extends HTMLElement,
-  TData extends { value: string },
+  TData extends { id: string; value: string },
 >({
   itemMap,
   groupMap,
@@ -38,7 +38,10 @@ function useFilterStore<
   }).current;
 
   const filter = useFilter({ sensitivity: "base", gapMatch: true });
-  const currentFilter = exactMatch ? filter.contains : filter.fuzzy;
+  const currentFilter = React.useMemo(
+    () => (exactMatch ? filter.contains : filter.fuzzy),
+    [filter.fuzzy, filter.contains, exactMatch],
+  );
 
   const getItemScore = React.useCallback(
     (value: string, searchTerm: string) => {
@@ -69,21 +72,18 @@ function useFilterStore<
 
     const searchTerm = filterStore.search;
     let itemCount = 0;
-    let pendingBatch: [
-      React.RefObject<TElement | null>,
-      CollectionItem<TElement, TData>,
-    ][] = [];
+    let pendingBatch: [React.RefObject<TElement | null>, TData][] = [];
     const BATCH_SIZE = 250;
 
     function processBatch() {
       if (!pendingBatch.length) return;
 
-      const scores = new Map<React.RefObject<TElement | null>, number>();
+      const scores = new Map<string, number>();
 
-      for (const [ref, item] of pendingBatch) {
-        const score = getItemScore(item.value, searchTerm);
+      for (const [_, itemData] of pendingBatch) {
+        const score = getItemScore(itemData.value, searchTerm);
         if (score > 0) {
-          scores.set(ref, score);
+          scores.set(itemData.id, score);
           itemCount++;
         }
       }
@@ -93,16 +93,16 @@ function useFilterStore<
         ([, a], [, b]) => b - a,
       );
 
-      for (const [ref, score] of sortedScores) {
-        filterStore.items.set(ref.current?.id ?? "", score);
+      for (const [id, score] of sortedScores) {
+        filterStore.items.set(id, score);
       }
 
       pendingBatch = [];
     }
 
     // Process items in batches
-    for (const [ref, item] of itemMap) {
-      pendingBatch.push([ref, item]);
+    for (const [id, value] of itemMap) {
+      pendingBatch.push([id, value]);
 
       if (pendingBatch.length >= BATCH_SIZE) {
         processBatch();
@@ -116,10 +116,10 @@ function useFilterStore<
 
     filterStore.itemCount = itemCount;
 
-    if (!groupMap) return;
-
     // Update groups if needed
-    if (groupMap?.size && itemCount > 0 && filterStore.groups) {
+    if (!groupMap || !filterStore.groups) return;
+
+    if (groupMap.size && itemCount > 0) {
       const matchingItems = new Set(filterStore.items.keys());
 
       for (const [groupId, group] of groupMap) {
@@ -132,7 +132,7 @@ function useFilterStore<
         }
       }
     }
-  }, [filterStore, itemMap, groupMap, getItemScore, manualFiltering]);
+  }, [manualFiltering, filterStore, itemMap, groupMap, getItemScore]);
 
   const getIsItemVisible = React.useCallback(
     (id: string) => {

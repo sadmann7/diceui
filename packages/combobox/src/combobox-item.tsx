@@ -49,8 +49,9 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
     const { label, onLabelChange } = useLabel<ItemTextElement>({
       defaultValue: labelProp ?? "",
     });
-    const itemRef = React.useRef<ItemElement>(null);
+    const itemRef = React.useRef<ItemElement | null>(null);
     const composedRef = useComposedRefs(forwardedRef, itemRef);
+
     const id = useId();
     const textId = `${id}text`;
 
@@ -74,7 +75,7 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
         },
         groupContext?.id,
       );
-    }, [id, value, context.onItemRegister, groupContext?.id]);
+    }, [context.onItemRegister, value, disabled, label, groupContext?.id]);
 
     const isVisible =
       context.manualFiltering ||
@@ -103,7 +104,6 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
           data-highlighted={
             context.highlightedItem?.ref.current?.id === id ? "" : undefined
           }
-          data-value={value}
           data-disabled={isDisabled ? "" : undefined}
           tabIndex={disabled ? undefined : -1}
           {...itemProps}
@@ -153,9 +153,9 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
             if (isDisabled) return;
             context.onHighlightedItemChange({
               id,
-              value,
               label,
-              disabled,
+              value,
+              disabled: isDisabled,
               ref: itemRef,
             });
           })}

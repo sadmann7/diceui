@@ -299,6 +299,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       onChange: onValueChangeProp,
     });
   const [inputValue = "", setInputValue] = useControllableState({
+    defaultProp: !multiple && defaultValue ? String(defaultValue) : "",
     prop: inputValueProp,
     onChange: (value) => {
       if (disabled || readOnly) return;
@@ -498,6 +499,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
             name={name}
             value={value}
             disabled={disabled}
+            readOnly={readOnly}
             required={required}
           />
         )}
