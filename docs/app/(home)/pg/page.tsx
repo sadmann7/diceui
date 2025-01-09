@@ -19,16 +19,17 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import * as ComboboxPrimitive from "@/registry/default/ui/combobox";
-import * as Mention from "@diceui/mention";
-import { ChevronDown } from "lucide-react";
-
 import {
   Combobox,
+  ComboboxAnchor,
+  ComboboxContent,
+  ComboboxEmpty,
   ComboboxInput,
-  ComboboxOption,
-  ComboboxOptions,
-} from "@headlessui/react";
+  ComboboxItem,
+  ComboboxTrigger,
+} from "@/registry/default/ui/combobox";
+import * as Mention from "@diceui/mention";
+import { ChevronDown } from "lucide-react";
 
 export default function PlaygroundPage() {
   return (
@@ -57,44 +58,22 @@ export default function PlaygroundPage() {
           </Mention.Content>
         </Mention.Portal>
       </Mention.Root>
-      <Combobox defaultValue={tricks[0]?.value}>
-        <ComboboxInput aria-label="Assignee" />
-        <ComboboxOptions anchor="bottom" className="border empty:invisible">
-          {tricks.map((trick) => (
-            <ComboboxOption
-              key={trick.value}
-              value={trick.value}
-              className="data-[focus]:bg-blue-100"
-            >
-              {trick.label}
-            </ComboboxOption>
-          ))}
-        </ComboboxOptions>
-      </Combobox>
-      <ComboboxPrimitive.Combobox
-        defaultValue={tricks[0]?.value}
-        className="w-[15rem]"
-      >
-        <ComboboxPrimitive.ComboboxAnchor>
-          <ComboboxPrimitive.ComboboxInput placeholder="Search tricks..." />
-          <ComboboxPrimitive.ComboboxTrigger>
+      <Combobox className="w-[15rem]">
+        <ComboboxAnchor>
+          <ComboboxInput placeholder="Search tricks..." />
+          <ComboboxTrigger>
             <ChevronDown className="h-4 w-4" />
-          </ComboboxPrimitive.ComboboxTrigger>
-        </ComboboxPrimitive.ComboboxAnchor>
-        <ComboboxPrimitive.ComboboxContent>
-          <ComboboxPrimitive.ComboboxEmpty>
-            No tricks found
-          </ComboboxPrimitive.ComboboxEmpty>
+          </ComboboxTrigger>
+        </ComboboxAnchor>
+        <ComboboxContent>
+          <ComboboxEmpty>No tricks found</ComboboxEmpty>
           {tricks.map((trick) => (
-            <ComboboxPrimitive.ComboboxItem
-              key={trick.value}
-              value={trick.value}
-            >
+            <ComboboxItem key={trick.value} value={trick.value}>
               {trick.label}
-            </ComboboxPrimitive.ComboboxItem>
+            </ComboboxItem>
           ))}
-        </ComboboxPrimitive.ComboboxContent>
-      </ComboboxPrimitive.Combobox>
+        </ComboboxContent>
+      </Combobox>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm" className="w-fit">

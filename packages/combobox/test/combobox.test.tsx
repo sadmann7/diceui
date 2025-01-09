@@ -89,10 +89,8 @@ describe("Combobox", () => {
     expect(screen.getByRole("listbox")).toBeInTheDocument();
 
     // Test selected item state
-    expect(screen.getByRole("option", { name: "Kickflip" })).toHaveAttribute(
-      "aria-selected",
-      "true",
-    );
+    const kickflip = screen.getByRole("option", { name: "Kickflip" });
+    expect(kickflip).toHaveAttribute("aria-selected", "true");
 
     // Test selecting a new item
     const heelflip = screen.getByRole("option", { name: "Heelflip" });
@@ -107,22 +105,23 @@ describe("Combobox", () => {
     await waitFor(() => {
       expect(onInputValueChange).toHaveBeenCalledWith("fs");
     });
-    expect(screen.getByRole("option", { name: "FS 540" })).toBeInTheDocument();
-    expect(
-      screen.queryByRole("option", { name: "Kickflip" }),
-    ).not.toBeInTheDocument();
+    const fs540 = screen.getByRole("option", { name: "FS 540" });
+    expect(fs540).toBeInTheDocument();
+    expect(kickflip).not.toBeInTheDocument();
+    expect(heelflip).not.toBeInTheDocument();
+
+    console.log({ kickflip, heelflip, fs540 });
 
     // Navigate to the filtered option
-    // fireEvent.keyDown(input, { key: "ArrowDown" });
-    // await waitFor(() => {
-    //   const option = screen.getByRole("option", { name: "FS 540" });
-    //   expect(option).toHaveAttribute("data-highlighted", "");
-    // });
+    fireEvent.keyDown(input, { key: "ArrowDown" });
+    await waitFor(() => {
+      // expect(fs540).toHaveAttribute("data-highlighted", "");
+    });
 
-    // // Select the highlighted option
-    // fireEvent.keyDown(input, { key: "Enter" });
+    // Select the highlighted option
+    fireEvent.keyDown(input, { key: "Enter" });
     // expect(onValueChange).toHaveBeenCalledWith("fs-540");
-    // expect(onOpenChange).toHaveBeenCalledWith(false);
+    expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 
   test("handles keyboard navigation", async () => {
@@ -153,6 +152,7 @@ describe("Combobox", () => {
     fireEvent.keyDown(input, { key: "ArrowDown" });
     await waitFor(() => {
       const option = screen.getByRole("option", { name: "Kickflip" });
+      console.log({ option });
       expect(option).toHaveAttribute("data-highlighted", "");
     });
 

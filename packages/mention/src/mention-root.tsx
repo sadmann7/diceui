@@ -252,15 +252,15 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       defaultProp: defaultOpen,
       onChange: onOpenChangeProp,
     });
-    const [inputValue = "", setInputValue] = useControllableState({
-      prop: inputValueProp,
-      defaultProp: "",
-      onChange: onInputValueChange,
-    });
     const [value = [], setValue] = useControllableState({
       prop: valueProp,
       defaultProp: defaultValue,
       onChange: onValueChange,
+    });
+    const [inputValue = "", setInputValue] = useControllableState({
+      prop: inputValueProp,
+      defaultProp: "",
+      onChange: onInputValueChange,
     });
     const [trigger, setTrigger] =
       React.useState<MentionContextValue["trigger"]>(triggerProp);
