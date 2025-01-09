@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, test, vi } from "vitest";
 
@@ -26,7 +26,7 @@ Element.prototype.hasPointerCapture = vi.fn();
 Element.prototype.scrollIntoView = vi.fn();
 
 describe("Combobox", () => {
-  const renderCombobox = (props: Combobox.ComboboxRootProps = {}) => {
+  function renderCombobox(props: Combobox.ComboboxRootProps = {}) {
     return render(
       <div dir={props.dir}>
         <Combobox.Root {...props}>
@@ -59,7 +59,108 @@ describe("Combobox", () => {
         </Combobox.Root>
       </div>,
     );
-  };
+  }
+
+  test("handles controlled state", async () => {
+    const onOpenChange = vi.fn();
+    const onValueChange = vi.fn();
+    const onInputValueChange = vi.fn();
+
+    renderCombobox({
+      defaultValue: "kickflip",
+      onOpenChange,
+      onValueChange,
+      onInputValueChange,
+    });
+
+    const trigger = screen.getByTestId("trigger");
+    const input = screen.getByPlaceholderText("Select a trick...");
+
+    // Test initial state
+    expect(input).toHaveValue("kickflip");
+    expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+
+    // Test open state
+    await waitFor(() => {
+      fireEvent.click(trigger);
+    });
+
+    expect(onOpenChange).toHaveBeenCalledWith(true);
+    expect(screen.getByRole("listbox")).toBeInTheDocument();
+
+    // Test selected item state
+    expect(screen.getByRole("option", { name: "Kickflip" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+
+    // Test selecting a new item
+    const heelflip = screen.getByRole("option", { name: "Heelflip" });
+    await waitFor(() => {
+      fireEvent.click(heelflip);
+    });
+    expect(onValueChange).toHaveBeenCalledWith("heelflip");
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+
+    // Test input typing
+    fireEvent.change(input, { target: { value: "fs" } });
+    await waitFor(() => {
+      expect(onInputValueChange).toHaveBeenCalledWith("fs");
+    });
+    expect(screen.getByRole("option", { name: "FS 540" })).toBeInTheDocument();
+    expect(
+      screen.queryByRole("option", { name: "Kickflip" }),
+    ).not.toBeInTheDocument();
+
+    // Navigate to the filtered option
+    // fireEvent.keyDown(input, { key: "ArrowDown" });
+    // await waitFor(() => {
+    //   const option = screen.getByRole("option", { name: "FS 540" });
+    //   expect(option).toHaveAttribute("data-highlighted", "");
+    // });
+
+    // // Select the highlighted option
+    // fireEvent.keyDown(input, { key: "Enter" });
+    // expect(onValueChange).toHaveBeenCalledWith("fs-540");
+    // expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
+
+  test("handles keyboard navigation", async () => {
+    const onOpenChange = vi.fn();
+    const onValueChange = vi.fn();
+
+    renderCombobox({
+      onOpenChange,
+      onValueChange,
+    });
+
+    const input = screen.getByPlaceholderText("Select a trick...");
+    const trigger = screen.getByTestId("trigger");
+
+    // Open the combobox
+    fireEvent.click(trigger);
+    await waitFor(() => {
+      expect(screen.getByRole("listbox")).toBeInTheDocument();
+    });
+
+    // Focus the input
+    fireEvent.focus(input);
+    await waitFor(() => {
+      expect(input).toHaveFocus();
+    });
+
+    // Test keyboard navigation
+    fireEvent.keyDown(input, { key: "ArrowDown" });
+    await waitFor(() => {
+      const option = screen.getByRole("option", { name: "Kickflip" });
+      expect(option).toHaveAttribute("data-highlighted", "");
+    });
+
+    // Test selection
+    fireEvent.keyDown(input, { key: "Enter" });
+    expect(onValueChange).toHaveBeenCalledWith("kickflip");
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
 
   test("renders without crashing", () => {
     renderCombobox();
@@ -99,7 +200,7 @@ describe("Combobox", () => {
     expect(onValueChange).not.toHaveBeenCalled();
   });
 
-  test("supports RTL direction", () => {
+  test("supports RTL direction", async () => {
     renderCombobox({ dir: "rtl" });
     const root = screen.getByRole("combobox").closest("div[dir]");
     expect(root).toHaveAttribute("dir", "rtl");

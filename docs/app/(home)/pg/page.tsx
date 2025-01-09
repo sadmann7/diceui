@@ -19,17 +19,16 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import {
-  Combobox,
-  ComboboxAnchor,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxTrigger,
-} from "@/registry/default/ui/combobox";
+import * as ComboboxPrimitive from "@/registry/default/ui/combobox";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
+
+import {
+  Combobox,
+  ComboboxInput,
+  ComboboxOption,
+  ComboboxOptions,
+} from "@headlessui/react";
 
 export default function PlaygroundPage() {
   return (
@@ -58,22 +57,44 @@ export default function PlaygroundPage() {
           </Mention.Content>
         </Mention.Portal>
       </Mention.Root>
-      <Combobox className="w-[15rem]">
-        <ComboboxAnchor>
-          <ComboboxInput placeholder="Search tricks..." />
-          <ComboboxTrigger>
-            <ChevronDown className="h-4 w-4" />
-          </ComboboxTrigger>
-        </ComboboxAnchor>
-        <ComboboxContent>
-          <ComboboxEmpty>No tricks found</ComboboxEmpty>
+      <Combobox defaultValue={tricks[0]?.value}>
+        <ComboboxInput aria-label="Assignee" />
+        <ComboboxOptions anchor="bottom" className="border empty:invisible">
           {tricks.map((trick) => (
-            <ComboboxItem key={trick.value} value={trick.value}>
+            <ComboboxOption
+              key={trick.value}
+              value={trick.value}
+              className="data-[focus]:bg-blue-100"
+            >
               {trick.label}
-            </ComboboxItem>
+            </ComboboxOption>
           ))}
-        </ComboboxContent>
+        </ComboboxOptions>
       </Combobox>
+      <ComboboxPrimitive.Combobox
+        defaultValue={tricks[0]?.value}
+        className="w-[15rem]"
+      >
+        <ComboboxPrimitive.ComboboxAnchor>
+          <ComboboxPrimitive.ComboboxInput placeholder="Search tricks..." />
+          <ComboboxPrimitive.ComboboxTrigger>
+            <ChevronDown className="h-4 w-4" />
+          </ComboboxPrimitive.ComboboxTrigger>
+        </ComboboxPrimitive.ComboboxAnchor>
+        <ComboboxPrimitive.ComboboxContent>
+          <ComboboxPrimitive.ComboboxEmpty>
+            No tricks found
+          </ComboboxPrimitive.ComboboxEmpty>
+          {tricks.map((trick) => (
+            <ComboboxPrimitive.ComboboxItem
+              key={trick.value}
+              value={trick.value}
+            >
+              {trick.label}
+            </ComboboxPrimitive.ComboboxItem>
+          ))}
+        </ComboboxPrimitive.ComboboxContent>
+      </ComboboxPrimitive.Combobox>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm" className="w-fit">

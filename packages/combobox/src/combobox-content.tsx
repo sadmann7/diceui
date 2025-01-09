@@ -141,6 +141,7 @@ const ComboboxContent = React.forwardRef<ContentElement, ComboboxContentProps>(
         >
           <Primitive.div
             data-state={getDataState(context.open)}
+            role="listbox"
             {...positionerContext.getFloatingProps(contentProps)}
             ref={composedRef}
             style={composedStyle}
