@@ -1,4 +1,5 @@
 import {
+  DATA_VALUE_ATTR,
   type HighlightingDirection,
   Primitive,
   composeEventHandlers,
@@ -9,18 +10,17 @@ import { useComboboxContext } from "./combobox-root";
 
 const INPUT_NAME = "ComboboxInput";
 
-type InputElement = React.ElementRef<typeof Primitive.input>;
-
 interface ComboboxInputProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.input> {}
 
-const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
+const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxInputProps>(
   (props, forwardedRef) => {
+    const { ...inputProps } = props;
     const context = useComboboxContext(INPUT_NAME);
-    const composedRef = useComposedRefs(forwardedRef, context.inputRef);
+    const composedRefs = useComposedRefs(forwardedRef, context.inputRef);
 
     const onChange = React.useCallback(
-      (event: React.ChangeEvent<InputElement>) => {
+      (event: React.ChangeEvent<HTMLInputElement>) => {
         if (context.disabled || context.readOnly) return;
 
         if (!context.open) context.onOpenChange(true);
@@ -32,8 +32,11 @@ const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
           context.onInputValueChange(value);
 
           if (trimmedValue === "") {
-            context.onValueChange(trimmedValue);
+            context.filterStore.search = "";
+            context.onValueChange("");
             context.onHighlightedItemChange(null);
+            context.onFilterItems();
+            return;
           }
 
           context.filterStore.search = trimmedValue;
@@ -105,8 +108,8 @@ const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
           if (context.disabled || context.readOnly || !context.highlightedItem)
             return;
 
-          const value = context.highlightedItem.value;
-          const text = context.highlightedItem.label;
+          const value = context.highlightedItem.getAttribute(DATA_VALUE_ATTR);
+          const text = context.highlightedItem.textContent ?? "";
           if (!value) return;
 
           if (context.multiple) {
@@ -354,18 +357,18 @@ const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
         aria-controls={context.listId}
         aria-labelledby={context.labelId}
         aria-autocomplete="list"
-        aria-activedescendant={context.highlightedItem?.ref?.current?.id}
+        aria-activedescendant={context.highlightedItem?.id}
         aria-disabled={context.disabled}
         aria-readonly={context.readOnly}
         disabled={context.disabled}
         readOnly={context.readOnly}
-        {...props}
-        ref={composedRef}
+        {...inputProps}
+        ref={composedRefs}
         value={context.inputValue}
-        onChange={composeEventHandlers(props.onChange, onChange)}
-        onFocus={composeEventHandlers(props.onFocus, onFocus)}
-        onKeyDown={composeEventHandlers(props.onKeyDown, onKeyDown)}
-        onBlur={composeEventHandlers(props.onBlur, onBlur)}
+        onChange={composeEventHandlers(inputProps.onChange, onChange)}
+        onFocus={composeEventHandlers(inputProps.onFocus, onFocus)}
+        onKeyDown={composeEventHandlers(inputProps.onKeyDown, onKeyDown)}
+        onBlur={composeEventHandlers(inputProps.onBlur, onBlur)}
       />
     );
   },
@@ -377,4 +380,4 @@ const Input = ComboboxInput;
 
 export { ComboboxInput, Input };
 
-export type { ComboboxInputProps, InputElement };
+export type { ComboboxInputProps };
