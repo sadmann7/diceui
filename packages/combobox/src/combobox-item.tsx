@@ -64,7 +64,16 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
         throw new Error(`${ITEM_NAME} value cannot be an empty string.`);
       }
 
-      return context.onItemRegister(id, value, groupContext?.id);
+      return context.onItemRegister(
+        {
+          id,
+          label,
+          value,
+          disabled,
+          ref: itemRef,
+        },
+        groupContext?.id,
+      );
     }, [id, value, context.onItemRegister, groupContext?.id]);
 
     const isVisible =
@@ -91,7 +100,9 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
           aria-disabled={isDisabled}
           aria-labelledby={textId}
           data-state={isSelected ? "checked" : "unchecked"}
-          data-highlighted={context.highlightedItem?.id === id ? "" : undefined}
+          data-highlighted={
+            context.highlightedItem?.ref.current?.id === id ? "" : undefined
+          }
           data-value={value}
           data-disabled={isDisabled ? "" : undefined}
           tabIndex={disabled ? undefined : -1}
@@ -140,7 +151,13 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
           )}
           onPointerMove={composeEventHandlers(itemProps.onPointerMove, () => {
             if (isDisabled) return;
-            context.onHighlightedItemChange(itemRef.current);
+            context.onHighlightedItemChange({
+              id,
+              value,
+              label,
+              disabled,
+              ref: itemRef,
+            });
           })}
         />
       </ComboboxItemProvider>

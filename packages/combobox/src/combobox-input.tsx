@@ -110,8 +110,8 @@ const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
           if (context.disabled || context.readOnly || !context.highlightedItem)
             return;
 
-          const value = context.highlightedItem.getAttribute(DATA_VALUE_ATTR);
-          const text = context.highlightedItem.textContent ?? "";
+          const value = context.highlightedItem.value;
+          const text = context.highlightedItem.label;
           if (!value) return;
 
           if (context.multiple) {
