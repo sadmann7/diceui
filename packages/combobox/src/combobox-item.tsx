@@ -6,9 +6,11 @@ import {
   useComposedRefs,
   useId,
   useIsomorphicLayoutEffect,
+  useLabel,
 } from "@diceui/shared";
 import * as React from "react";
 import { useComboboxGroupContext } from "./combobox-group";
+import type { ItemTextElement } from "./combobox-item-text";
 import { useComboboxContext } from "./combobox-root";
 
 const ITEM_NAME = "ComboboxItem";
@@ -18,6 +20,7 @@ interface ComboboxItemContextValue {
   isSelected: boolean;
   disabled?: boolean;
   textId: string;
+  onItemLabelChange: (node: ItemTextElement | null) => void;
 }
 
 const [ComboboxItemProvider, useComboboxItemContext] =
@@ -28,16 +31,22 @@ interface ComboboxItemProps
   /** The value of the item. */
   value: string;
 
+  /** The label of the item. */
+  label?: string;
+
   /** Whether the item is disabled. */
   disabled?: boolean;
 }
 
 const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
   (props, forwardedRef) => {
-    const { value, disabled, ...itemProps } = props;
+    const { value, label: labelProp, disabled, ...itemProps } = props;
     const context = useComboboxContext(ITEM_NAME);
     // Make the group context optional by passing false, so item can be used outside of a group
     const groupContext = useComboboxGroupContext(ITEM_NAME, false);
+    const { label, onLabelChange } = useLabel<ItemTextElement>({
+      defaultValue: labelProp ?? "",
+    });
     const itemRef = React.useRef<HTMLDivElement>(null);
     const composedRef = useComposedRefs(forwardedRef, itemRef);
     const id = useId();
@@ -70,6 +79,7 @@ const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxItemProps>(
         isSelected={isSelected}
         disabled={disabled}
         textId={textId}
+        onItemLabelChange={onLabelChange}
       >
         <Primitive.div
           {...{ [DATA_ITEM_ATTR]: "" }}

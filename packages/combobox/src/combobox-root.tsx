@@ -268,12 +268,6 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     onTriggerChange(node),
   );
 
-  const [value = multiple ? ([] as string[]) : "", setValue] =
-    useControllableState({
-      prop: valueProp,
-      defaultProp: defaultValue,
-      onChange: onValueChangeProp,
-    });
   const [open = false, setOpen] = useControllableState({
     prop: openProp,
     defaultProp: defaultOpen,
@@ -282,9 +276,21 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
         filterStore.search = "";
       }
       onOpenChange?.(newOpen);
-      if (multiple) setHighlightedBadgeIndex(-1);
+      if (multiple) {
+        setHighlightedBadgeIndex(-1);
+        return;
+      }
+      if (defaultValue && !Array.isArray(defaultValue) && selectedText === "") {
+        setSelectedText(defaultValue);
+      }
     },
   });
+  const [value = multiple ? ([] as string[]) : "", setValue] =
+    useControllableState({
+      prop: valueProp,
+      defaultProp: defaultValue,
+      onChange: onValueChangeProp,
+    });
   const [inputValue = "", setInputValue] = useControllableState({
     prop: inputValueProp,
     onChange: (value) => {
