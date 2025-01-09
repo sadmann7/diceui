@@ -110,11 +110,11 @@ describe("Combobox", () => {
     expect(kickflip).not.toBeInTheDocument();
     expect(heelflip).not.toBeInTheDocument();
 
-    console.log({ kickflip, heelflip, fs540 });
-
     // Navigate to the filtered option
     fireEvent.keyDown(input, { key: "ArrowDown" });
+    // hover over the option
     await waitFor(() => {
+      console.log({ fs540 });
       // expect(fs540).toHaveAttribute("data-highlighted", "");
     });
 
@@ -152,7 +152,6 @@ describe("Combobox", () => {
     fireEvent.keyDown(input, { key: "ArrowDown" });
     await waitFor(() => {
       const option = screen.getByRole("option", { name: "Kickflip" });
-      console.log({ option });
       expect(option).toHaveAttribute("data-highlighted", "");
     });
 

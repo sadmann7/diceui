@@ -32,11 +32,8 @@ const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
           context.onInputValueChange(value);
 
           if (trimmedValue === "") {
-            context.filterStore.search = "";
-            context.onValueChange("");
+            context.onValueChange(trimmedValue);
             context.onHighlightedItemChange(null);
-            context.onFilterItems();
-            return;
           }
 
           context.filterStore.search = trimmedValue;
