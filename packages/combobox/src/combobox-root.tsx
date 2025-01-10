@@ -2,6 +2,7 @@ import {
   BubbleInput,
   type CollectionItem,
   type Direction,
+  type FilterStore,
   type HighlightingDirection,
   Primitive,
   createContext,
@@ -11,7 +12,7 @@ import {
   useComposedRefs,
   useControllableState,
   useDirection,
-  useFilter,
+  useFilterStore,
   useFormControl,
   useId,
   useListHighlighting,
@@ -35,7 +36,6 @@ type Value<Multiple extends boolean = false> = Multiple extends true
 type CollectionElement = React.ElementRef<typeof Primitive.div>;
 
 interface ItemData {
-  id: string;
   label: string;
   value: string;
   disabled?: boolean;
@@ -50,13 +50,9 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   onInputValueChange: (value: string) => void;
   selectedText: string;
   onSelectedTextChange: (value: string) => void;
-  filterStore: {
-    search: string;
-    itemCount: number;
-    items: Map<string, number>;
-    groups: Map<string, Set<string>>;
-  };
+  filterStore: FilterStore;
   onFilter?: (options: string[], term: string) => string[];
+  onItemsFilter: () => void;
   highlightedItem: CollectionItem<ItemElement, ItemData> | null;
   onHighlightedItemChange: (
     item: CollectionItem<ItemElement, ItemData> | null,
@@ -68,8 +64,9 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
     groupId?: string,
   ) => () => void;
   onItemRemove: (value: string) => void;
-  onFilterItems: () => void;
   onHighlightMove: (direction: HighlightingDirection) => void;
+  getIsItemVisible: (value: string) => boolean;
+  getIsListEmpty: (manual?: boolean) => boolean;
   hasAnchor: boolean;
   onHasAnchorChange: (value: boolean) => void;
   disabled: boolean;
@@ -251,12 +248,6 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
 
   const inputRef = React.useRef<InputElement | null>(null);
   const listRef = React.useRef<ContentElement | null>(null);
-  const filterStore = React.useRef<ComboboxContextValue["filterStore"]>({
-    search: "",
-    itemCount: 0,
-    items: new Map<string, number>(),
-    groups: new Map<string, Set<string>>(),
-  }).current;
 
   const inputId = useId();
   const labelId = useId();
@@ -313,6 +304,15 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
   > | null>(null);
   const [highlightedBadgeIndex, setHighlightedBadgeIndex] = React.useState(-1);
 
+  const { filterStore, onItemsFilter, getIsItemVisible, getIsListEmpty } =
+    useFilterStore({
+      itemMap,
+      groupMap,
+      onFilter,
+      exactMatch,
+      manualFiltering,
+    });
+
   const onValueChange = React.useCallback(
     (newValue: string | string[]) => {
       if (disabled || readOnly) return;
@@ -343,102 +343,6 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     [setValue, value],
   );
 
-  const filter = useFilter({ sensitivity: "base", gapMatch: true });
-  const currentFilter = React.useMemo(
-    () => (exactMatch ? filter.contains : filter.fuzzy),
-    [filter.fuzzy, filter.contains, exactMatch],
-  );
-
-  const getItemScore = React.useCallback(
-    (value: string, searchTerm: string) => {
-      if (!searchTerm) return 1;
-      if (!value) return 0;
-
-      if (searchTerm === "") return 1;
-      if (value === searchTerm) return 2;
-      if (value.startsWith(searchTerm)) return 1.5;
-
-      return onFilter
-        ? Number(onFilter([value], searchTerm).length > 0)
-        : Number(currentFilter(value, searchTerm));
-    },
-    [currentFilter, onFilter],
-  );
-
-  const onFilterItems = React.useCallback(() => {
-    if (!filterStore.search || manualFiltering) {
-      filterStore.itemCount = itemMap.size;
-      return;
-    }
-
-    filterStore.groups.clear();
-    filterStore.items.clear();
-
-    const searchTerm = filterStore.search;
-    let itemCount = 0;
-    let pendingBatch: [React.RefObject<ItemElement | null>, ItemData][] = [];
-    const BATCH_SIZE = 250;
-
-    function processBatch() {
-      if (!pendingBatch.length) return;
-
-      const scores = new Map<string, number>();
-
-      for (const [_, itemData] of pendingBatch) {
-        const score = getItemScore(itemData.value, searchTerm);
-        if (score > 0) {
-          scores.set(itemData.id, score);
-          itemCount++;
-        }
-      }
-
-      // Sort by score in descending order and add to filterStore
-      const sortedScores = Array.from(scores.entries()).sort(
-        ([, a], [, b]) => b - a,
-      );
-
-      for (const [id, score] of sortedScores) {
-        filterStore.items.set(id, score);
-      }
-
-      pendingBatch = [];
-    }
-
-    // Process items in batches
-    for (const [id, value] of itemMap) {
-      pendingBatch.push([id, value]);
-
-      if (pendingBatch.length >= BATCH_SIZE) {
-        processBatch();
-      }
-    }
-
-    // Process remaining items
-    if (pendingBatch.length > 0) {
-      processBatch();
-    }
-
-    filterStore.itemCount = itemCount;
-
-    // Update groups if needed
-
-    if (!groupMap) return;
-
-    if (groupMap.size && itemCount > 0) {
-      const matchingItems = new Set(filterStore.items.keys());
-
-      for (const [groupId, group] of groupMap) {
-        const hasMatchingItem = Array.from(group).some((ref) =>
-          matchingItems.has(ref.current?.id ?? ""),
-        );
-
-        if (hasMatchingItem) {
-          filterStore.groups.set(groupId, new Set());
-        }
-      }
-    }
-  }, [manualFiltering, filterStore, itemMap, groupMap, getItemScore]);
-
   const { onHighlightMove } = useListHighlighting({
     highlightedItem,
     onHighlightedItemChange: setHighlightedItem,
@@ -463,7 +367,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       onSelectedTextChange={setSelectedText}
       filterStore={filterStore}
       onFilter={onFilter}
-      onFilterItems={onFilterItems}
+      onItemsFilter={onItemsFilter}
       highlightedItem={highlightedItem}
       onHighlightedItemChange={setHighlightedItem}
       highlightedBadgeIndex={highlightedBadgeIndex}
@@ -471,6 +375,8 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       onItemRegister={onItemRegister}
       onItemRemove={onItemRemove}
       onHighlightMove={onHighlightMove}
+      getIsItemVisible={getIsItemVisible}
+      getIsListEmpty={getIsListEmpty}
       hasAnchor={hasAnchor}
       onHasAnchorChange={onHasAnchorChange}
       disabled={disabled}

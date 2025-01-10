@@ -151,7 +151,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           context.filterStore.search = isImmediatelyAfterTrigger
             ? ""
             : textAfterTrigger;
-          context.onFilterItems();
+          context.onItemsFilter();
           return true;
         }
 
@@ -167,7 +167,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         context.open,
         context.onOpenChange,
         context.filterStore,
-        context.onFilterItems,
+        context.onItemsFilter,
         context.disabled,
         context.readonly,
         context.onHighlightedItemChange,

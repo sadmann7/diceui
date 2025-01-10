@@ -10,6 +10,7 @@ import {
   useControllableState,
   useDirection,
   useFilter,
+  useFilterStore,
   useFormControl,
   useId,
   useListHighlighting,
@@ -57,7 +58,7 @@ interface MentionContextValue {
     items: Map<string, number>;
   };
   onFilter?: (options: string[], term: string) => string[];
-  onFilterItems: () => void;
+  onItemsFilter: () => void;
   highlightedItem: CollectionItem<CollectionElement, ItemData> | null;
   onHighlightedItemChange: (
     item: CollectionItem<CollectionElement, ItemData> | null,
@@ -65,6 +66,7 @@ interface MentionContextValue {
   onHighlightMove: (direction: HighlightingDirection) => void;
   mentions: Mention[];
   onMentionAdd: (value: string, triggerIndex: number) => void;
+  getIsItemVisible: (value: string) => boolean;
   dir: Direction;
   disabled: boolean;
   exactMatch: boolean;
@@ -204,11 +206,6 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
 
     const listRef = React.useRef<ContentElement | null>(null);
     const inputRef = React.useRef<InputElement | null>(null);
-    const filterStore = React.useRef<MentionContextValue["filterStore"]>({
-      search: "",
-      itemCount: 0,
-      items: new Map<string, number>(),
-    }).current;
 
     const inputId = useId();
     const labelId = useId();
@@ -222,28 +219,6 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       useFormControl<CollectionElement>();
     const composedRef = composeRefs(forwardedRef, collectionRef, (node) =>
       onTriggerChange(node),
-    );
-
-    const filter = useFilter({ sensitivity: "base", gapMatch: true });
-    const currentFilter = React.useMemo(
-      () => (exactMatch ? filter.contains : filter.fuzzy),
-      [filter.fuzzy, filter.contains, exactMatch],
-    );
-
-    const getItemScore = React.useCallback(
-      (value: string, searchTerm: string) => {
-        if (!searchTerm) return 1;
-        if (!value) return 0;
-
-        if (searchTerm === "") return 1;
-        if (value === searchTerm) return 2;
-        if (value.startsWith(searchTerm)) return 1.5;
-
-        return onFilter
-          ? Number(onFilter([value], searchTerm).length > 0)
-          : Number(currentFilter(value, searchTerm));
-      },
-      [currentFilter, onFilter],
     );
 
     const dir = useDirection(dirProp);
@@ -272,6 +247,20 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
     > | null>(null);
     const [mentions, setMentions] = React.useState<Mention[]>([]);
 
+    const { filterStore, onItemsFilter, getIsItemVisible } = useFilterStore({
+      itemMap,
+      onFilter,
+      exactMatch,
+      onCallback: (itemCount) => {
+        if (itemCount === 0) {
+          // Close the menu if no items match the filter
+          setOpen(false);
+          setHighlightedItem(null);
+          setVirtualAnchor(null);
+        }
+      },
+    });
+
     const onOpenChange = React.useCallback(
       (open: boolean) => {
         if (open && filterStore.search && filterStore.itemCount === 0) {
@@ -292,73 +281,73 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       [setOpen, getItems, filterStore],
     );
 
-    const onFilterItems = React.useCallback(() => {
-      if (!filterStore.search) {
-        filterStore.itemCount = itemMap.size;
-        return;
-      }
+    // const onFilterItems = React.useCallback(() => {
+    //   if (!filterStore.search) {
+    //     filterStore.itemCount = itemMap.size;
+    //     return;
+    //   }
 
-      filterStore.items.clear();
+    //   filterStore.items.clear();
 
-      const searchTerm = filterStore.search;
-      let itemCount = 0;
-      let pendingBatch: [
-        React.RefObject<CollectionElement | null>,
-        ItemData,
-      ][] = [];
-      const BATCH_SIZE = 250;
+    //   const searchTerm = filterStore.search;
+    //   let itemCount = 0;
+    //   let pendingBatch: [
+    //     React.RefObject<CollectionElement | null>,
+    //     ItemData,
+    //   ][] = [];
+    //   const BATCH_SIZE = 250;
 
-      function processBatch() {
-        if (!pendingBatch.length) return;
+    //   function processBatch() {
+    //     if (!pendingBatch.length) return;
 
-        const scores = new Map<
-          React.RefObject<CollectionElement | null>,
-          number
-        >();
+    //     const scores = new Map<
+    //       React.RefObject<CollectionElement | null>,
+    //       number
+    //     >();
 
-        for (const [ref, data] of pendingBatch) {
-          const score = getItemScore(data.value, searchTerm);
-          if (score > 0) {
-            scores.set(ref, score);
-            itemCount++;
-          }
-        }
+    //     for (const [ref, data] of pendingBatch) {
+    //       const score = getItemScore(data.value, searchTerm);
+    //       if (score > 0) {
+    //         scores.set(ref, score);
+    //         itemCount++;
+    //       }
+    //     }
 
-        // Sort by score in descending order and add to filterStore
-        const sortedScores = Array.from(scores.entries()).sort(
-          ([, a], [, b]) => b - a,
-        );
+    //     // Sort by score in descending order and add to filterStore
+    //     const sortedScores = Array.from(scores.entries()).sort(
+    //       ([, a], [, b]) => b - a,
+    //     );
 
-        for (const [ref, score] of sortedScores) {
-          filterStore.items.set(ref.current?.id ?? "", score);
-        }
+    //     for (const [ref, score] of sortedScores) {
+    //       filterStore.items.set(ref.current?.id ?? "", score);
+    //     }
 
-        pendingBatch = [];
-      }
+    //     pendingBatch = [];
+    //   }
 
-      // Process items in batches
-      for (const [ref, data] of itemMap.entries()) {
-        pendingBatch.push([ref, data]);
+    //   // Process items in batches
+    //   for (const [ref, data] of itemMap.entries()) {
+    //     pendingBatch.push([ref, data]);
 
-        if (pendingBatch.length >= BATCH_SIZE) {
-          processBatch();
-        }
-      }
+    //     if (pendingBatch.length >= BATCH_SIZE) {
+    //       processBatch();
+    //     }
+    //   }
 
-      // Process remaining items
-      if (pendingBatch.length > 0) {
-        processBatch();
-      }
+    //   // Process remaining items
+    //   if (pendingBatch.length > 0) {
+    //     processBatch();
+    //   }
 
-      filterStore.itemCount = itemCount;
+    //   filterStore.itemCount = itemCount;
 
-      // Close the menu if no items match the filter
-      if (itemCount === 0) {
-        setOpen(false);
-        setHighlightedItem(null);
-        setVirtualAnchor(null);
-      }
-    }, [filterStore, itemMap, getItemScore, setOpen]);
+    //   // Close the menu if no items match the filter
+    //   if (itemCount === 0) {
+    //     setOpen(false);
+    //     setHighlightedItem(null);
+    //     setVirtualAnchor(null);
+    //   }
+    // }, [filterStore, itemMap, getItemScore, setOpen]);
 
     const { onHighlightMove } = useListHighlighting({
       highlightedItem,
@@ -429,7 +418,8 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         onItemRegister={onItemRegister}
         filterStore={filterStore}
         onFilter={onFilter}
-        onFilterItems={onFilterItems}
+        onItemsFilter={onItemsFilter}
+        getIsItemVisible={getIsItemVisible}
         highlightedItem={highlightedItem}
         onHighlightedItemChange={setHighlightedItem}
         onHighlightMove={onHighlightMove}

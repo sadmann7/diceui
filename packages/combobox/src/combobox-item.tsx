@@ -67,7 +67,6 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
 
       return context.onItemRegister(
         {
-          id,
           label,
           value,
           disabled,
@@ -75,13 +74,9 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
         },
         groupContext?.id,
       );
-    }, [context.onItemRegister, value, disabled, label, groupContext?.id]);
+    }, [label, value, disabled, groupContext?.id, context.onItemRegister]);
 
-    const isVisible =
-      context.manualFiltering ||
-      (context.filterStore.search
-        ? (context.filterStore.items.get(id) ?? 0) > 0
-        : true);
+    const isVisible = context.getIsItemVisible(value);
 
     if (!isVisible) return null;
 
@@ -152,7 +147,6 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
           onPointerMove={composeEventHandlers(itemProps.onPointerMove, () => {
             if (isDisabled) return;
             context.onHighlightedItemChange({
-              id,
               label,
               value,
               disabled: isDisabled,

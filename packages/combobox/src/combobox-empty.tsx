@@ -20,11 +20,7 @@ const ComboboxEmpty = React.forwardRef<HTMLDivElement, ComboboxEmptyProps>(
     const { keepVisible = false, ...emptyProps } = props;
     const context = useComboboxContext(EMPTY_NAME);
 
-    const isVisible =
-      keepVisible ||
-      (context.open &&
-        context.filterStore.itemCount === 0 &&
-        context.filterStore.search.trim() !== "");
+    const isVisible = context.open && context.getIsListEmpty(keepVisible);
 
     if (!isVisible) return null;
 

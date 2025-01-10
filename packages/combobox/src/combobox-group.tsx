@@ -32,7 +32,7 @@ const ComboboxGroup = React.forwardRef<HTMLDivElement, ComboboxGroupProps>(
     const isVisible =
       forceMount ||
       !context.filterStore.search ||
-      context.filterStore.groups.has(id);
+      context.filterStore.groups?.has(id);
 
     if (!isVisible) return null;
 

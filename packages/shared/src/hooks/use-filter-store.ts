@@ -18,17 +18,19 @@ interface UseFilterStoreOptions<TElement extends HTMLElement, TData = {}> {
   onFilter?: (options: string[], term: string) => string[];
   exactMatch?: boolean;
   manualFiltering?: boolean;
+  onCallback?: (itemCount: number) => void;
 }
 
 function useFilterStore<
   TElement extends HTMLElement,
-  TData extends { id: string; value: string },
+  TData extends { value: string },
 >({
   itemMap,
   groupMap,
   onFilter,
   exactMatch,
   manualFiltering,
+  onCallback,
 }: UseFilterStoreOptions<TElement, TData>) {
   const filterStore = React.useRef<FilterStore>({
     search: "",
@@ -83,7 +85,7 @@ function useFilterStore<
       for (const [_, itemData] of pendingBatch) {
         const score = getItemScore(itemData.value, searchTerm);
         if (score > 0) {
-          scores.set(itemData.id, score);
+          scores.set(itemData.value, score);
           itemCount++;
         }
       }
@@ -117,9 +119,7 @@ function useFilterStore<
     filterStore.itemCount = itemCount;
 
     // Update groups if needed
-    if (!groupMap || !filterStore.groups) return;
-
-    if (groupMap.size && itemCount > 0) {
+    if (groupMap && filterStore.groups && groupMap.size && itemCount > 0) {
       const matchingItems = new Set(filterStore.items.keys());
 
       for (const [groupId, group] of groupMap) {
@@ -132,21 +132,41 @@ function useFilterStore<
         }
       }
     }
-  }, [manualFiltering, filterStore, itemMap, groupMap, getItemScore]);
+
+    onCallback?.(itemCount);
+  }, [
+    manualFiltering,
+    filterStore,
+    itemMap,
+    groupMap,
+    getItemScore,
+    onCallback,
+  ]);
 
   const getIsItemVisible = React.useCallback(
-    (id: string) => {
+    (value: string) => {
       if (manualFiltering) return true;
       if (!filterStore.search) return true;
-      return (filterStore.items.get(id) ?? 0) > 0;
+      return (filterStore.items.get(value) ?? 0) > 0;
     },
     [filterStore, manualFiltering],
+  );
+
+  const getIsListEmpty = React.useCallback(
+    (manual = false) => {
+      return (
+        manual ||
+        (filterStore.itemCount === 0 && filterStore.search.trim() !== "")
+      );
+    },
+    [filterStore],
   );
 
   return {
     filterStore,
     onItemsFilter,
     getIsItemVisible,
+    getIsListEmpty,
   };
 }
 

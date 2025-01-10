@@ -16,135 +16,184 @@ describe("useFilterStore", () => {
     groupMap = new Map();
 
     // Create refs and items
-    const createRef = (id: string, value: string) => {
-      const ref = { current: { id } } as React.RefObject<HTMLElement>;
-      itemMap.set(ref, { value, ref });
+    const createRef = (_id: string, value: string) => {
+      const ref = { current: { id: value } } as React.RefObject<HTMLElement>;
+      const item = { value, ref } as CollectionItem<
+        HTMLElement,
+        { value: string }
+      >;
+      itemMap.set(ref, item);
       return ref;
     };
 
-    // Add test items
-    createRef("item1", "Apple");
-    createRef("item2", "Banana");
-    createRef("item3", "Cherry");
-    createRef("item4", "Date");
+    // Add basic tricks
+    createRef("trick1", "Kickflip");
+    createRef("trick2", "Heelflip");
+    createRef("trick3", "Tre Flip");
+    createRef("trick4", "FS 540");
 
-    // Setup groups
+    // Setup groups with special tricks
     const group1 = new Set([
-      createRef("item5", "Fruits/Orange"),
-      createRef("item6", "Fruits/Banana"),
+      createRef("special1", "The 900"),
+      createRef("special2", "Indy Backflip"),
     ]);
     const group2 = new Set([
-      createRef("item7", "Vegetables/Carrot"),
-      createRef("item8", "Vegetables/Potato"),
+      createRef("special3", "Pizza Guy"),
+      createRef("special4", "360 Varial McTwist"),
     ]);
 
-    groupMap.set("group1", group1);
-    groupMap.set("group2", group2);
+    groupMap.set("advanced", group1);
+    groupMap.set("expert", group2);
   });
 
-  // it("initializes with empty search state", () => {
-  //   const { result } = renderHook(() => useFilterStore({ itemMap }));
+  it("initializes with empty search state", () => {
+    const { result } = renderHook(() => useFilterStore({ itemMap }));
 
-  //   expect(result.current.filterStore.search).toBe("");
-  //   expect(result.current.filterStore.itemCount).toBe(0);
-  //   expect(result.current.filterStore.items.size).toBe(0);
-  // });
+    expect(result.current.filterStore.search).toBe("");
+    expect(result.current.filterStore.itemCount).toBe(0);
+    expect(result.current.filterStore.items.size).toBe(0);
+  });
 
-  // it("filters items based on exact match", () => {
-  //   const { result } = renderHook(() =>
-  //     useFilterStore({ itemMap, exactMatch: true }),
-  //   );
+  it("assigns correct scores based on match type", () => {
+    const { result } = renderHook(() => useFilterStore({ itemMap }));
 
-  //   result.current.filterStore.search = "Apple";
-  //   result.current.onItemsFilter();
+    // Test exact match (score should be 2)
+    result.current.filterStore.search = "Kickflip";
+    result.current.onItemsFilter();
+    const exactMatchScore = result.current.filterStore.items.get("Kickflip");
+    expect(exactMatchScore).toBe(2);
 
-  //   expect(result.current.filterStore.itemCount).toBe(1);
-  //   expect(result.current.filterStore.items.get("item1")).toBeDefined();
-  // });
+    // Test prefix match (score should be 1.5)
+    result.current.filterStore.search = "Kick";
+    result.current.onItemsFilter();
+    const prefixMatchScore = result.current.filterStore.items.get("Kickflip");
+    expect(prefixMatchScore).toBe(1.5);
 
-  // it("performs fuzzy matching by default", () => {
-  //   const { result } = renderHook(() => useFilterStore({ itemMap }));
+    // Test fuzzy match (score should be 1)
+    result.current.filterStore.search = "kckflp";
+    result.current.onItemsFilter();
+    const fuzzyMatchScore = result.current.filterStore.items.get("Kickflip");
+    expect(fuzzyMatchScore).toBe(1);
+  });
 
-  //   result.current.filterStore.search = "Apl";
-  //   result.current.onItemsFilter();
+  it("filters items based on exact match", () => {
+    const { result } = renderHook(() =>
+      useFilterStore({ itemMap, exactMatch: true }),
+    );
 
-  //   expect(result.current.filterStore.itemCount).toBeGreaterThan(0);
-  //   expect(result.current.filterStore.items.get("item1")).toBeDefined();
-  // });
+    result.current.filterStore.search = "Kickflip";
+    result.current.onItemsFilter();
 
-  // it("handles empty search term", () => {
-  //   const { result } = renderHook(() => useFilterStore({ itemMap }));
+    expect(result.current.filterStore.itemCount).toBe(1);
+    expect(result.current.filterStore.items.get("Kickflip")).toBeDefined();
+  });
 
-  //   result.current.filterStore.search = "";
-  //   result.current.onItemsFilter();
+  it("performs fuzzy matching by default", () => {
+    const { result } = renderHook(() => useFilterStore({ itemMap }));
 
-  //   expect(result.current.filterStore.itemCount).toBe(itemMap.size);
-  // });
+    result.current.filterStore.search = "kckflp";
+    result.current.onItemsFilter();
 
-  // it("supports custom filter function", () => {
-  //   const customFilter = (options: string[], term: string) =>
-  //     options.filter((opt) => opt.toLowerCase() === term.toLowerCase());
+    expect(result.current.filterStore.itemCount).toBeGreaterThan(0);
+    expect(result.current.filterStore.items.get("Kickflip")).toBeDefined();
+  });
 
-  //   const { result } = renderHook(() =>
-  //     useFilterStore({ itemMap, onFilter: customFilter }),
-  //   );
+  it("handles empty search term", () => {
+    const { result } = renderHook(() => useFilterStore({ itemMap }));
 
-  //   result.current.filterStore.search = "apple";
-  //   result.current.onItemsFilter();
+    result.current.filterStore.search = "";
+    result.current.onItemsFilter();
 
-  //   expect(result.current.filterStore.itemCount).toBe(1);
-  //   expect(result.current.filterStore.items.get("item1")).toBeDefined();
-  // });
+    expect(result.current.filterStore.itemCount).toBe(itemMap.size);
+  });
 
-  // it("handles group filtering", () => {
-  //   const { result } = renderHook(() => useFilterStore({ itemMap, groupMap }));
+  it("supports custom filter function", () => {
+    const customFilter = (options: string[], term: string) =>
+      options.filter((opt) => opt.toLowerCase() === term.toLowerCase());
 
-  //   result.current.filterStore.search = "Fruits";
-  //   result.current.onItemsFilter();
+    const { result } = renderHook(() =>
+      useFilterStore({ itemMap, onFilter: customFilter }),
+    );
 
-  //   expect(result.current.filterStore.itemCount).toBeGreaterThan(0);
-  //   expect(result.current.filterStore.groups?.size).toBeGreaterThan(0);
-  // });
+    result.current.filterStore.search = "kickflip";
+    result.current.onItemsFilter();
 
-  // it("respects manual filtering flag", () => {
-  //   const { result } = renderHook(() =>
-  //     useFilterStore({ itemMap, manualFiltering: true }),
-  //   );
+    expect(result.current.filterStore.itemCount).toBe(1);
+    expect(result.current.filterStore.items.get("Kickflip")).toBeDefined();
+  });
 
-  //   result.current.filterStore.search = "Apple";
-  //   result.current.onItemsFilter();
+  it("handles group filtering efficiently", () => {
+    const { result } = renderHook(() => useFilterStore({ itemMap, groupMap }));
 
-  //   // With manual filtering, it should just return all items
-  //   expect(result.current.filterStore.itemCount).toBe(itemMap.size);
-  // });
+    result.current.filterStore.search = "900";
+    result.current.onItemsFilter();
 
-  // it("prioritizes exact matches and prefix matches", () => {
-  //   const { result } = renderHook(() => useFilterStore({ itemMap }));
+    // We should have matches in the advanced group
+    expect(result.current.filterStore.itemCount).toBeGreaterThan(0);
 
-  //   result.current.filterStore.search = "Apple";
-  //   result.current.onItemsFilter();
+    // Check that the items are properly scored
+    const trickScore = result.current.filterStore.items.get("The 900");
+    expect(trickScore).toBeDefined();
 
-  //   const exactMatchScore = result.current.filterStore.items.get("item1");
-  //   const nonExactMatchScore = result.current.filterStore.items.get("item2"); // Banana
+    // Verify groups are properly filtered
+    expect(result.current.filterStore.groups?.size).toBe(1);
+    expect(result.current.filterStore.groups?.has("advanced")).toBe(true);
+    expect(result.current.filterStore.groups?.has("expert")).toBe(false);
+  });
 
-  //   expect(exactMatchScore).toBeGreaterThan(nonExactMatchScore || 0);
-  // });
+  it("respects manual filtering flag", () => {
+    const { result } = renderHook(() =>
+      useFilterStore({ itemMap, manualFiltering: true }),
+    );
 
-  // it("processes items in batches", () => {
-  //   // Create a large number of items to test batching
-  //   for (let i = 10; i < 300; i++) {
-  //     const ref = {
-  //       current: { id: `item${i}` },
-  //     } as React.RefObject<HTMLElement>;
-  //     itemMap.set(ref, { value: `Test Item ${i}`, ref });
-  //   }
+    result.current.filterStore.search = "Kickflip";
+    result.current.onItemsFilter();
 
-  //   const { result } = renderHook(() => useFilterStore({ itemMap }));
+    // With manual filtering, it should just return all items
+    expect(result.current.filterStore.itemCount).toBe(itemMap.size);
+    expect(result.current.getIsItemVisible("Kickflip")).toBe(true);
+    expect(result.current.getIsItemVisible("Heelflip")).toBe(true);
+  });
 
-  //   result.current.filterStore.search = "Test";
-  //   result.current.onItemsFilter();
+  it("processes items in batches of 250", () => {
+    // Clear existing items first
+    itemMap.clear();
 
-  //   expect(result.current.filterStore.itemCount).toBeGreaterThan(0);
-  //   expect(result.current.filterStore.items.size).toBeGreaterThan(0);
-  // });
+    // Create exactly 500 items to test batching
+    for (let i = 0; i < 500; i++) {
+      const ref = {
+        current: { id: `trick${i}` },
+      } as React.RefObject<HTMLElement>;
+      itemMap.set(ref, { value: `Trick ${i}`, ref });
+    }
+
+    const { result } = renderHook(() => useFilterStore({ itemMap }));
+
+    result.current.filterStore.search = "Trick";
+    result.current.onItemsFilter();
+
+    expect(result.current.filterStore.itemCount).toBe(500); // All items with "Trick" should match
+    expect(result.current.filterStore.items.size).toBe(500);
+
+    // Verify that items are properly scored
+    const scores = Array.from(result.current.filterStore.items.values());
+    expect(scores.every((score) => score > 0)).toBe(true);
+  });
+
+  it("correctly identifies empty lists", () => {
+    const { result } = renderHook(() => useFilterStore({ itemMap }));
+
+    // Non-empty case
+    result.current.filterStore.search = "Kickflip";
+    result.current.onItemsFilter();
+    expect(result.current.getIsListEmpty()).toBe(false);
+
+    // Empty case with search
+    result.current.filterStore.search = "NonExistentTrick";
+    result.current.onItemsFilter();
+    expect(result.current.getIsListEmpty()).toBe(true);
+
+    // Empty case with manual flag
+    expect(result.current.getIsListEmpty(true)).toBe(true);
+  });
 });
