@@ -16,6 +16,7 @@ interface MentionInputProps
 
 const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
   (props, forwardedRef) => {
+    const { style, ...inputProps } = props;
     const context = useMentionContext(INPUT_NAME);
     const composedRef = useComposedRefs(forwardedRef, context.inputRef);
 
@@ -516,8 +517,9 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           style={{
             position: "relative",
             zIndex: 1,
+            ...style,
           }}
-          {...props}
+          {...inputProps}
           onChange={composeEventHandlers(props.onChange, onChange)}
           onClick={composeEventHandlers(props.onClick, onClick)}
           onFocus={composeEventHandlers(props.onFocus, onFocus)}
