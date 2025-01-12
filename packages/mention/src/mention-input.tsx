@@ -248,33 +248,57 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         // Handle backspace for mention deletion
         if (event.key === "Backspace" && !context.open && !hasSelection) {
           // Find the mention that's immediately before the cursor
-          const mention = context.mentions.find((m) => {
+          const mentionBeforeCursor = context.mentions.find((m) => {
             // Check if cursor is right after mention (accounting for space)
-            const isCursorAfterMention = cursorPosition === m.end + 1;
-            // If there's a space after mention, ensure we're not deleting the space
-            if (isCursorAfterMention) {
-              const charBeforeCursor = input.value[cursorPosition - 1];
-              return charBeforeCursor !== " ";
-            }
-            return false;
+            const isCursorAfterMention =
+              cursorPosition === m.end || // Cursor exactly at end
+              (cursorPosition === m.end + 1 && input.value[m.end] === " "); // Or after space
+            return isCursorAfterMention;
           });
 
-          if (mention) {
+          if (mentionBeforeCursor) {
+            const hasTrailingSpace =
+              input.value[mentionBeforeCursor.end] === " ";
+            const isCtrlOrCmd = event.metaKey || event.ctrlKey;
+
+            // If there's a trailing space and not using Ctrl/Cmd, just remove the space
+            if (
+              hasTrailingSpace &&
+              cursorPosition === mentionBeforeCursor.end + 1 &&
+              !isCtrlOrCmd
+            ) {
+              event.preventDefault();
+              const newValue =
+                input.value.slice(0, mentionBeforeCursor.end) +
+                input.value.slice(mentionBeforeCursor.end + 1);
+
+              input.value = newValue;
+              context.onInputValueChange?.(newValue);
+              input.setSelectionRange(
+                mentionBeforeCursor.end,
+                mentionBeforeCursor.end,
+              );
+              return;
+            }
+
+            // Otherwise remove the entire mention
             event.preventDefault();
             const newValue =
-              input.value.slice(0, mention.start) +
-              input.value.slice(mention.end + 1);
+              input.value.slice(0, mentionBeforeCursor.start) +
+              input.value.slice(
+                mentionBeforeCursor.end + (hasTrailingSpace ? 1 : 0),
+              );
 
-            // Update input value directly and through context
             input.value = newValue;
             context.onInputValueChange?.(newValue);
-            context.onValueChange?.(
-              context.value.filter((v) => v !== mention.value),
-            );
 
-            // Update cursor position
-            const newCursorPosition = mention.start;
-            input.setSelectionRange(newCursorPosition, newCursorPosition);
+            const remainingValues = context.value.filter(
+              (v) => v !== mentionBeforeCursor.value,
+            );
+            context.onValueChange?.(remainingValues);
+
+            const newPosition = mentionBeforeCursor.start;
+            input.setSelectionRange(newPosition, newPosition);
             return;
           }
         }
