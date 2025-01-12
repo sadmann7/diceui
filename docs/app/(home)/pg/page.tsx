@@ -35,7 +35,7 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <div className="h-screen bg-accent" />
-      <Mention.Root className="flex w-[20rem] flex-col gap-2" showLabel>
+      <Mention.Root className="flex w-[20rem] flex-col gap-2">
         <Mention.Label>Tricks</Mention.Label>
         <Mention.Input
           placeholder="Enter @ to mention a trick"
@@ -49,6 +49,7 @@ export default function PlaygroundPage() {
             {tricks.map((trick) => (
               <Mention.Item
                 key={trick.value}
+                label={trick.label}
                 value={trick.value}
                 className="relative flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[disabled]:opacity-50"
               >

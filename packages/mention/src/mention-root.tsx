@@ -9,7 +9,6 @@ import {
   useCollection,
   useControllableState,
   useDirection,
-  useFilter,
   useFilterStore,
   useFormControl,
   useId,
@@ -17,8 +16,8 @@ import {
 } from "@diceui/shared";
 import type { VirtualElement } from "@floating-ui/react";
 import * as React from "react";
-import type { ContentElement, MentionContent } from "./mention-content";
-import type { InputElement, MentionInput } from "./mention-input";
+import type { ContentElement } from "./mention-content";
+import type { InputElement } from "./mention-input";
 import type { ItemElement } from "./mention-item";
 
 function getDataState(open: boolean) {
@@ -163,12 +162,6 @@ interface MentionProps
   name?: string;
 
   /**
-   * Whether to show the label instead of value in the input.
-   * @default false
-   */
-  showLabel?: boolean;
-
-  /**
    * Whether to use tokenized mode for mentions.
    * In tokenized mode, mentions are displayed as tokens that can be deleted with a single backspace.
    * In text mode (default), mentions are displayed as text with the trigger character.
@@ -198,7 +191,6 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       modal = false,
       readonly = false,
       required = false,
-      showLabel = false,
       tokenized = false,
       name,
       ...rootProps
@@ -281,74 +273,6 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       [setOpen, getItems, filterStore],
     );
 
-    // const onFilterItems = React.useCallback(() => {
-    //   if (!filterStore.search) {
-    //     filterStore.itemCount = itemMap.size;
-    //     return;
-    //   }
-
-    //   filterStore.items.clear();
-
-    //   const searchTerm = filterStore.search;
-    //   let itemCount = 0;
-    //   let pendingBatch: [
-    //     React.RefObject<CollectionElement | null>,
-    //     ItemData,
-    //   ][] = [];
-    //   const BATCH_SIZE = 250;
-
-    //   function processBatch() {
-    //     if (!pendingBatch.length) return;
-
-    //     const scores = new Map<
-    //       React.RefObject<CollectionElement | null>,
-    //       number
-    //     >();
-
-    //     for (const [ref, data] of pendingBatch) {
-    //       const score = getItemScore(data.value, searchTerm);
-    //       if (score > 0) {
-    //         scores.set(ref, score);
-    //         itemCount++;
-    //       }
-    //     }
-
-    //     // Sort by score in descending order and add to filterStore
-    //     const sortedScores = Array.from(scores.entries()).sort(
-    //       ([, a], [, b]) => b - a,
-    //     );
-
-    //     for (const [ref, score] of sortedScores) {
-    //       filterStore.items.set(ref.current?.id ?? "", score);
-    //     }
-
-    //     pendingBatch = [];
-    //   }
-
-    //   // Process items in batches
-    //   for (const [ref, data] of itemMap.entries()) {
-    //     pendingBatch.push([ref, data]);
-
-    //     if (pendingBatch.length >= BATCH_SIZE) {
-    //       processBatch();
-    //     }
-    //   }
-
-    //   // Process remaining items
-    //   if (pendingBatch.length > 0) {
-    //     processBatch();
-    //   }
-
-    //   filterStore.itemCount = itemCount;
-
-    //   // Close the menu if no items match the filter
-    //   if (itemCount === 0) {
-    //     setOpen(false);
-    //     setHighlightedItem(null);
-    //     setVirtualAnchor(null);
-    //   }
-    // }, [filterStore, itemMap, getItemScore, setOpen]);
-
     const { onHighlightMove } = useListHighlighting({
       highlightedItem,
       onHighlightedItemChange: setHighlightedItem,
@@ -363,9 +287,8 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         const input = inputRef.current;
         if (!input) return;
 
-        const mentionLabel = showLabel
-          ? (getItems().find((item) => item.value === value)?.label ?? value)
-          : value;
+        const mentionLabel =
+          getItems().find((item) => item.value === value)?.label ?? value;
         const mentionText = `${trigger}${mentionLabel}`;
         const beforeTrigger = input.value.slice(0, triggerIndex);
         const afterSearchText = input.value.slice(
@@ -392,15 +315,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         setHighlightedItem(null);
         filterStore.search = "";
       },
-      [
-        trigger,
-        setInputValue,
-        setValue,
-        setOpen,
-        filterStore,
-        showLabel,
-        getItems,
-      ],
+      [trigger, setInputValue, setValue, setOpen, filterStore, getItems],
     );
 
     return (

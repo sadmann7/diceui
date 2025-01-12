@@ -34,7 +34,7 @@ const MentionItem = React.forwardRef<ItemElement, MentionItemProps>(
     const composedRef = composeRefs(forwardedRef, (node) => setItemNode(node));
     const id = useId();
 
-    const label = labelProp ?? itemNode?.textContent ?? "";
+    const label = labelProp ?? value;
     const isDisabled = disabled || context.disabled;
     const isSelected = context.value.includes(value);
 
