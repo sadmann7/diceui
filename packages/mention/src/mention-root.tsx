@@ -83,7 +83,7 @@ interface MentionContextValue {
 const [MentionProvider, useMentionContext] =
   createContext<MentionContextValue>(ROOT_NAME);
 
-interface MentionProps
+interface MentionRootProps
   extends Omit<
     React.ComponentPropsWithoutRef<typeof Primitive.div>,
     "value" | "defaultValue"
@@ -162,7 +162,7 @@ interface MentionProps
   name?: string;
 }
 
-const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
+const MentionRoot = React.forwardRef<CollectionElement, MentionRootProps>(
   (props, forwardedRef) => {
     const {
       children,
@@ -381,4 +381,4 @@ const Root = MentionRoot;
 
 export { MentionRoot, Root, getDataState, useMentionContext };
 
-export type { ItemData, MentionProps };
+export type { MentionRootProps, ItemData, Mention };

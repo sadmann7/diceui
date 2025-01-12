@@ -1,5 +1,5 @@
 export { MentionRoot, Root } from "./mention-root";
-export type { MentionProps } from "./mention-root";
+export type { MentionRootProps } from "./mention-root";
 
 export { MentionLabel, Label } from "./mention-label";
 export type { MentionLabelProps } from "./mention-label";
