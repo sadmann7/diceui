@@ -238,6 +238,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
               (v) => !affectedMentions.some((m) => m.value === v),
             );
             context.onValueChange?.(remainingValues);
+            context.onMentionsRemove(affectedMentions);
 
             // Update cursor position
             input.setSelectionRange(cursorPosition, cursorPosition);
@@ -296,6 +297,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
               (v) => v !== mentionBeforeCursor.value,
             );
             context.onValueChange?.(remainingValues);
+            context.onMentionsRemove([mentionBeforeCursor]);
 
             const newPosition = mentionBeforeCursor.start;
             input.setSelectionRange(newPosition, newPosition);

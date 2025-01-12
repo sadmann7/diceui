@@ -65,6 +65,7 @@ interface MentionContextValue {
   onHighlightMove: (direction: HighlightingDirection) => void;
   mentions: Mention[];
   onMentionAdd: (value: string, triggerIndex: number) => void;
+  onMentionsRemove: (mentionsToRemove: Mention[]) => void;
   getIsItemVisible: (value: string) => boolean;
   dir: Direction;
   disabled: boolean;
@@ -308,6 +309,18 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       [trigger, setInputValue, setValue, setOpen, filterStore, getItems],
     );
 
+    const onMentionsRemove = React.useCallback(
+      (mentionsToRemove: Mention[]) => {
+        setMentions((prev) =>
+          prev.filter(
+            (mention) =>
+              !mentionsToRemove.some((m) => m.value === mention.value),
+          ),
+        );
+      },
+      [],
+    );
+
     console.log({ value, mentions });
 
     return (
@@ -332,6 +345,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         onHighlightMove={onHighlightMove}
         mentions={mentions}
         onMentionAdd={onMentionAdd}
+        onMentionsRemove={onMentionsRemove}
         dir={dir}
         disabled={disabled}
         exactMatch={exactMatch}
