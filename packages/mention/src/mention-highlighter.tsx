@@ -92,7 +92,7 @@ const MentionHighlighter = React.forwardRef<
   }
 
   return (
-    <div ref={forwardedRef} style={highlighterStyle} {...highlighterProps}>
+    <div {...highlighterProps} ref={forwardedRef} style={highlighterStyle}>
       {renderHighlights()}
     </div>
   );
