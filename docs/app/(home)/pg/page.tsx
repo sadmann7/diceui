@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import { cn } from "@/lib/utils";
 import {
   Combobox,
   ComboboxAnchor,
@@ -37,12 +36,7 @@ export default function PlaygroundPage() {
     <Shell>
       <div className="h-screen bg-accent" />
       <Textarea placeholder="Type here..." className="w-[20rem]" />
-      <Mention.Root
-        className={cn(
-          "flex w-[20rem] flex-col gap-2",
-          "[&_[data-mention-highlight]]:rounded [&_[data-mention-highlight]]:bg-blue-600",
-        )}
-      >
+      <Mention.Root className="flex w-[20rem] flex-col gap-2 [&_[data-mention-highlight]]:rounded [&_[data-mention-highlight]]:bg-blue-600">
         <Mention.Label>Tricks</Mention.Label>
         <Mention.Input
           placeholder="Enter @ to mention a trick..."
