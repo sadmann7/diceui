@@ -321,8 +321,6 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       [],
     );
 
-    console.log({ value, mentions });
-
     return (
       <MentionProvider
         open={open}

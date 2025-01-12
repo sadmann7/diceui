@@ -92,7 +92,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           toJSON() {
             return this;
           },
-        } as DOMRect;
+        } satisfies DOMRect;
       },
       [getTextWidth, getLineHeight],
     );
@@ -172,15 +172,15 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         return false;
       },
       [
-        context.trigger,
         context.open,
         context.onOpenChange,
+        context.trigger,
+        createVirtualElement,
         context.filterStore,
         context.onItemsFilter,
+        context.onHighlightedItemChange,
         context.disabled,
         context.readonly,
-        context.onHighlightedItemChange,
-        createVirtualElement,
       ],
     );
 
@@ -191,10 +191,10 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         onMentionUpdate(event.target);
       },
       [
-        context.disabled,
-        context.readonly,
         context.onInputValueChange,
         onMentionUpdate,
+        context.disabled,
+        context.readonly,
       ],
     );
 
@@ -387,7 +387,24 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           }
         }
       },
-      [context],
+      [
+        context.open,
+        context.onOpenChange,
+        context.value,
+        context.onValueChange,
+        context.onInputValueChange,
+        context.trigger,
+        context.highlightedItem,
+        context.onHighlightedItemChange,
+        context.onHighlightMove,
+        context.filterStore,
+        context.mentions,
+        context.onMentionAdd,
+        context.onMentionsRemove,
+        context.disabled,
+        context.readonly,
+        context.modal,
+      ],
     );
 
     const onSelect = React.useCallback(() => {
@@ -466,7 +483,16 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           }
         }
       },
-      [context],
+      [
+        context.trigger,
+        context.getIsItemVisible,
+        context.onInputValueChange,
+        context.filterStore,
+        context.onItemsFilter,
+        context.onMentionAdd,
+        context.disabled,
+        context.readonly,
+      ],
     );
 
     return (
