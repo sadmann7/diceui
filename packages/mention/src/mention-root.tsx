@@ -72,7 +72,6 @@ interface MentionContextValue {
   loop: boolean;
   modal: boolean;
   readonly: boolean;
-  tokenized: boolean;
   inputRef: React.RefObject<HTMLInputElement | null>;
   listRef: React.RefObject<ContentElement | null>;
   inputId: string;
@@ -160,14 +159,6 @@ interface MentionProps
 
   /** The name of the mention when used in a form. */
   name?: string;
-
-  /**
-   * Whether to use tokenized mode for mentions.
-   * In tokenized mode, mentions are displayed as tokens that can be deleted with a single backspace.
-   * In text mode (default), mentions are displayed as text with the trigger character.
-   * @default false
-   */
-  tokenized?: boolean;
 }
 
 const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
@@ -191,7 +182,6 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       modal = false,
       readonly = false,
       required = false,
-      tokenized = false,
       name,
       ...rootProps
     } = props;
@@ -346,7 +336,6 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
         loop={loop}
         modal={modal}
         readonly={readonly}
-        tokenized={tokenized}
         inputRef={inputRef}
         listRef={listRef}
         inputId={inputId}
