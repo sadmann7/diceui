@@ -30,6 +30,7 @@ const MentionHighlighter = React.forwardRef<
     left: 0,
     right: 0,
     bottom: 0,
+    backgroundColor: "transparent",
     color: "transparent",
     whiteSpace: "pre-wrap",
     wordWrap: "break-word",
@@ -67,10 +68,6 @@ const MentionHighlighter = React.forwardRef<
         <span
           key={`mention-${mention.start}-${mention.end}`}
           data-mention-highlight
-          style={{
-            backgroundColor: "rgba(0, 132, 255, 0.15)",
-            borderRadius: 3,
-          }}
         >
           {value.slice(mention.start, mention.end)}
         </span>,

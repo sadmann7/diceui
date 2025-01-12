@@ -37,13 +37,16 @@ export default function PlaygroundPage() {
     <Shell>
       <div className="h-screen bg-accent" />
       <Textarea placeholder="Type here..." className="w-[20rem]" />
-      <Mention.Root className="flex w-[20rem] flex-col gap-2">
+      <Mention.Root
+        className={cn(
+          "flex w-[20rem] flex-col gap-2",
+          "[&_[data-mention-highlight]]:rounded [&_[data-mention-highlight]]:bg-blue-600",
+        )}
+      >
         <Mention.Label>Tricks</Mention.Label>
         <Mention.Input
           placeholder="Enter @ to mention a trick..."
-          className={cn(
-            "flex h-9 w-full rounded-md border border-input px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm",
-          )}
+          className="flex h-9 w-full rounded-md border border-input px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm"
           asChild
         >
           <Textarea />

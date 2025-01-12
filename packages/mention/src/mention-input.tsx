@@ -513,13 +513,13 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           aria-readonly={context.readonly}
           disabled={context.disabled}
           readOnly={context.readonly}
-          ref={composedRef}
           style={{
             position: "relative",
             zIndex: 1,
             ...style,
           }}
           {...inputProps}
+          ref={composedRef}
           onChange={composeEventHandlers(props.onChange, onChange)}
           onClick={composeEventHandlers(props.onClick, onClick)}
           onFocus={composeEventHandlers(props.onFocus, onFocus)}
