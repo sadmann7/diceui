@@ -8,18 +8,17 @@ export const MentionHighlighter = React.forwardRef<
   HTMLDivElement,
   MentionHighlighterProps
 >((props, forwardedRef) => {
-  const { style } = props;
+  const { style, ...highlighterProps } = props;
   const context = useMentionContext("MentionHighlighter");
-  const { mentions, inputRef } = context;
 
   const [inputStyle, setInputStyle] = React.useState<CSSStyleDeclaration>();
 
   React.useEffect(() => {
-    if (inputRef.current) {
-      const computedStyle = window.getComputedStyle(inputRef.current);
-      setInputStyle(computedStyle);
-    }
-  }, [inputRef]);
+    if (!context.inputRef.current) return;
+
+    const computedStyle = window.getComputedStyle(context.inputRef.current);
+    setInputStyle(computedStyle);
+  }, [context.inputRef]);
 
   if (!inputStyle) return null;
 
@@ -44,14 +43,14 @@ export const MentionHighlighter = React.forwardRef<
     ...style,
   };
 
-  const renderHighlights = () => {
-    if (!inputRef.current) return null;
+  function renderHighlights() {
+    if (!context.inputRef.current) return null;
 
-    const value = inputRef.current.value;
+    const value = context.inputRef.current.value;
     const parts: React.ReactNode[] = [];
     let lastIndex = 0;
 
-    for (const mention of mentions) {
+    for (const mention of context.mentions) {
       // Add text before mention
       if (mention.start > lastIndex) {
         parts.push(
@@ -65,7 +64,7 @@ export const MentionHighlighter = React.forwardRef<
       parts.push(
         <span
           key={`mention-${mention.start}-${mention.end}`}
-          data-mention
+          data-mention-highlight
           style={{
             backgroundColor: "rgba(0, 132, 255, 0.15)",
             borderRadius: 3,
@@ -88,10 +87,10 @@ export const MentionHighlighter = React.forwardRef<
     }
 
     return parts;
-  };
+  }
 
   return (
-    <div ref={forwardedRef} style={highlighterStyle}>
+    <div ref={forwardedRef} style={highlighterStyle} {...highlighterProps}>
       {renderHighlights()}
     </div>
   );
