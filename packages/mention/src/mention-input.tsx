@@ -47,29 +47,38 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
     const calculatePosition = React.useCallback(
       (input: InputElement, cursorPosition: number) => {
         const rect = input.getBoundingClientRect();
-        const text = input.value.slice(0, cursorPosition);
-        const textWidth = getTextWidth(text, input);
-        const lineHeight = getLineHeight(input);
-        const paddingLeft = Number.parseFloat(
-          getComputedStyle(input).paddingLeft,
-        );
-        const paddingTop = Number.parseFloat(
-          getComputedStyle(input).paddingTop,
-        );
-
         const textBeforeCursor = input.value.slice(0, cursorPosition);
         const lines = textBeforeCursor.split("\n");
         const currentLine = lines.length - 1;
+        const currentLineText = lines[currentLine] ?? "";
+        const textWidth = getTextWidth(currentLineText, input);
+
+        const style = window.getComputedStyle(input);
+        const lineHeight = getLineHeight(input);
+        const paddingLeft = Number.parseFloat(
+          style.getPropertyValue("padding-left") ?? "0",
+        );
+        const paddingTop = Number.parseFloat(
+          style.getPropertyValue("padding-top") ?? "0",
+        );
+
+        // Calculate wrapped lines before cursor
+        const containerWidth = input.clientWidth - paddingLeft * 2;
+        const wrappedLines = Math.floor(textWidth / containerWidth);
+        const totalLines = currentLine + wrappedLines;
 
         const scrollTop = input.scrollTop;
         const scrollLeft = input.scrollLeft;
 
+        // Calculate x position considering text wrapping
+        const effectiveTextWidth = textWidth % containerWidth;
         const x = Math.min(
-          rect.left + paddingLeft + textWidth - scrollLeft,
+          rect.left + paddingLeft + effectiveTextWidth - scrollLeft,
           rect.right - 10,
         );
-        const y =
-          rect.top + paddingTop + (currentLine * lineHeight - scrollTop);
+
+        // Calculate y position considering wrapped lines
+        const y = rect.top + paddingTop + (totalLines * lineHeight - scrollTop);
 
         return {
           width: 0,
