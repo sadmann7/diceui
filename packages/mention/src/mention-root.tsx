@@ -308,6 +308,8 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionProps>(
       [trigger, setInputValue, setValue, setOpen, filterStore, getItems],
     );
 
+    console.log({ value, mentions });
+
     return (
       <MentionProvider
         open={open}

@@ -386,6 +386,78 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
       onMentionUpdate(input);
     }, [context.disabled, context.readonly, context.inputRef, onMentionUpdate]);
 
+    const onPaste = React.useCallback(
+      (event: React.ClipboardEvent<InputElement>) => {
+        if (context.disabled || context.readonly) return;
+
+        const input = event.currentTarget;
+        const pastedText = event.clipboardData.getData("text");
+        const cursorPosition = input.selectionStart ?? 0;
+        const selectionEnd = input.selectionEnd ?? cursorPosition;
+
+        // Check if pasted text contains trigger
+        const triggerIndex = pastedText.indexOf(context.trigger);
+        if (triggerIndex === -1) return; // No trigger found, allow default paste
+
+        event.preventDefault();
+
+        // Split text by trigger and process each mention
+        const parts = pastedText.split(context.trigger);
+        let newText = "";
+        let currentPosition = cursorPosition;
+
+        // Handle first part (before any triggers)
+        if (parts[0]) {
+          newText += parts[0];
+          currentPosition += parts[0].length;
+        }
+
+        // Process remaining parts that come after triggers
+        for (let i = 1; i < parts.length; i++) {
+          const part = parts[i];
+          if (!part) continue;
+
+          const spaceIndex = part.indexOf(" ");
+          const mentionText =
+            spaceIndex === -1 ? part : part.slice(0, spaceIndex);
+          const remainingText = spaceIndex === -1 ? "" : part.slice(spaceIndex);
+
+          // Only process if there's mention text
+          if (mentionText) {
+            // Calculate the position where this mention starts
+            const mentionStartPosition = cursorPosition + newText.length;
+
+            // Add the text to the new content
+            const textToAdd = context.trigger + mentionText + remainingText;
+            newText += textToAdd;
+            currentPosition += textToAdd.length;
+
+            // Update input value
+            const newValue =
+              input.value.slice(0, cursorPosition) +
+              newText +
+              input.value.slice(selectionEnd);
+
+            input.value = newValue;
+            context.onInputValueChange?.(newValue);
+
+            // Trigger mention update to check if it's valid
+            context.filterStore.search = mentionText;
+            context.onItemsFilter();
+
+            // Only add mention if it exists in the available items
+            const isValidMention = context.getIsItemVisible(mentionText);
+            if (isValidMention) {
+              context.onMentionAdd(mentionText, mentionStartPosition);
+            }
+
+            input.setSelectionRange(currentPosition, currentPosition);
+          }
+        }
+      },
+      [context],
+    );
+
     return (
       <Primitive.input
         role="combobox"
@@ -406,6 +478,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         onClick={composeEventHandlers(props.onClick, onClick)}
         onFocus={composeEventHandlers(props.onFocus, onFocus)}
         onKeyDown={composeEventHandlers(props.onKeyDown, onKeyDown)}
+        onPaste={composeEventHandlers(props.onPaste, onPaste)}
         onSelect={composeEventHandlers(props.onSelect, onSelect)}
       />
     );
