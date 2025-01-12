@@ -4,6 +4,7 @@ import {
   useComposedRefs,
 } from "@diceui/shared";
 import * as React from "react";
+import { MentionHighlighter } from "./mention-highlighter";
 import { useMentionContext } from "./mention-root";
 
 const INPUT_NAME = "MentionInput";
@@ -496,28 +497,35 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
     );
 
     return (
-      <Primitive.input
-        role="combobox"
-        id={context.inputId}
-        autoComplete="off"
-        aria-expanded={context.open}
-        aria-controls={context.listId}
-        aria-labelledby={context.labelId}
-        aria-autocomplete="list"
-        aria-activedescendant={context.highlightedItem?.ref.current?.id}
-        aria-disabled={context.disabled}
-        aria-readonly={context.readonly}
-        disabled={context.disabled}
-        readOnly={context.readonly}
-        {...props}
-        ref={composedRef}
-        onChange={composeEventHandlers(props.onChange, onChange)}
-        onClick={composeEventHandlers(props.onClick, onClick)}
-        onFocus={composeEventHandlers(props.onFocus, onFocus)}
-        onKeyDown={composeEventHandlers(props.onKeyDown, onKeyDown)}
-        onPaste={composeEventHandlers(props.onPaste, onPaste)}
-        onSelect={composeEventHandlers(props.onSelect, onSelect)}
-      />
+      <div style={{ position: "relative" }}>
+        <MentionHighlighter />
+        <Primitive.input
+          role="combobox"
+          id={context.inputId}
+          autoComplete="off"
+          aria-expanded={context.open}
+          aria-controls={context.listId}
+          aria-labelledby={context.labelId}
+          aria-autocomplete="list"
+          aria-activedescendant={context.highlightedItem?.ref.current?.id}
+          aria-disabled={context.disabled}
+          aria-readonly={context.readonly}
+          disabled={context.disabled}
+          readOnly={context.readonly}
+          ref={composedRef}
+          style={{
+            position: "relative",
+            zIndex: 1,
+          }}
+          {...props}
+          onChange={composeEventHandlers(props.onChange, onChange)}
+          onClick={composeEventHandlers(props.onClick, onClick)}
+          onFocus={composeEventHandlers(props.onFocus, onFocus)}
+          onKeyDown={composeEventHandlers(props.onKeyDown, onKeyDown)}
+          onPaste={composeEventHandlers(props.onPaste, onPaste)}
+          onSelect={composeEventHandlers(props.onSelect, onSelect)}
+        />
+      </div>
     );
   },
 );
