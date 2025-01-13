@@ -66,12 +66,12 @@ function useListHighlighting<TElement extends HTMLElement, TData = {}>({
       }
     },
     [
-      loop,
-      highlightedItem,
       getItems,
       getIsItemSelected,
-      onHighlightedItemChange,
       getIsItemDisabled,
+      highlightedItem,
+      onHighlightedItemChange,
+      loop,
     ],
   );
 

@@ -55,7 +55,7 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
     // Make the group context optional by passing false, so item can be used outside of a group
     const groupContext = useComboboxGroupContext(ITEM_NAME, false);
     const { label, onLabelChange } = useLabel<ItemTextElement>({
-      defaultValue: labelProp ?? "",
+      defaultValue: labelProp,
     });
     const itemRef = React.useRef<ItemElement | null>(null);
     const composedRef = useComposedRefs(forwardedRef, itemRef);
@@ -78,11 +78,11 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
           ref: itemRef,
           label,
           value,
-          disabled,
+          disabled: isDisabled,
         },
         groupContext?.id,
       );
-    }, [label, value, disabled, groupContext?.id, context.onItemRegister]);
+    }, [label, value, isDisabled, groupContext?.id, context.onItemRegister]);
 
     const isVisible = context.getIsItemVisible(value);
 
@@ -119,9 +119,9 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
             if (context.multiple) {
               context.onInputValueChange("");
             } else {
-              const text = itemRef.current?.textContent ?? "";
-              context.onInputValueChange(text);
-              context.onSelectedTextChange(text);
+              const label = context.highlightedItem?.label ?? "";
+              context.onInputValueChange(label);
+              context.onSelectedTextChange(label);
               context.onHighlightedItemChange(null);
               context.onOpenChange(false);
             }

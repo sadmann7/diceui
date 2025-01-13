@@ -14,8 +14,9 @@ const ComboboxItemText = React.forwardRef<
   ComboboxItemTextProps
 >((props, forwardedRef) => {
   const itemContext = useComboboxItemContext(ITEM_TEXT_NAME);
-  const composedRef = useComposedRefs(forwardedRef, (node) =>
-    itemContext.onItemLabelChange(node),
+  const composedRef = useComposedRefs(
+    forwardedRef,
+    itemContext.onItemLabelChange,
   );
 
   return (

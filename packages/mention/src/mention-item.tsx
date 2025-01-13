@@ -62,7 +62,7 @@ const MentionItem = React.forwardRef<ItemElement, MentionItemProps>(
         label,
         disabled: isDisabled,
       });
-    }, [context.onItemRegister, label, value, isDisabled, itemNode]);
+    }, [label, value, isDisabled, itemNode, context.onItemRegister]);
 
     const isVisible = context.getIsItemVisible(value);
 
@@ -140,6 +140,6 @@ MentionItem.displayName = ITEM_NAME;
 
 const Item = MentionItem;
 
-export { MentionItem, Item, useMentionItemContext };
+export { Item, MentionItem, useMentionItemContext };
 
-export type { MentionItemProps, ItemElement };
+export type { ItemElement, MentionItemProps };

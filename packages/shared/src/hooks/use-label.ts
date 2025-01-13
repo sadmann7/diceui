@@ -8,10 +8,10 @@ function useLabel<T extends HTMLElement>({ defaultValue }: UseLabelProps) {
   const [label, setLabel] = React.useState(defaultValue ?? "");
 
   const onLabelChange = React.useCallback((node: T | null) => {
-    setLabel(node?.textContent ?? "");
+    setLabel((node?.textContent ?? "").trim());
   }, []);
 
-  return { label, onLabelChange };
+  return { label: defaultValue ?? label, onLabelChange };
 }
 
 export { useLabel };
