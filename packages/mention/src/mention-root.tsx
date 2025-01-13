@@ -336,11 +336,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionRootProps>(
       [getItems],
     );
 
-    console.log({
-      value,
-      mentions,
-      filterStore,
-    });
+    console.log({ value, mentions });
 
     return (
       <MentionProvider

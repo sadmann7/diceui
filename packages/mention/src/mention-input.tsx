@@ -546,6 +546,12 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
               requestAnimationFrame(() => {
                 // Check if mention exists in available items
                 const isValidMention = context.filterStore.itemCount > 0;
+                const firstFilteredItem = context.filterStore.items
+                  .keys()
+                  .next().value;
+                const mentionLabel = firstFilteredItem
+                  ? context.getItemLabel(firstFilteredItem)
+                  : mentionText;
 
                 // Reset states
                 context.onOpenChange(false);
@@ -555,8 +561,8 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
                 // Calculate the position where this mention starts
                 const mentionStartPosition = cursorPosition + newText.length;
 
-                // Add the text to the new content
-                const textToAdd = `${context.trigger}${mentionText} ${remainingText}`;
+                // Add the text to the new content using the actual label
+                const textToAdd = `${context.trigger}${mentionLabel} ${remainingText}`;
                 newText += textToAdd;
                 currentPosition += textToAdd.length;
 
@@ -570,8 +576,8 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
                 context.onInputValueChange?.(newValue);
 
                 // Only add mention if it exists in the available items
-                if (isValidMention) {
-                  context.onMentionAdd(mentionText, mentionStartPosition);
+                if (isValidMention && firstFilteredItem) {
+                  context.onMentionAdd(firstFilteredItem, mentionStartPosition);
                 }
 
                 input.setSelectionRange(currentPosition, currentPosition);
@@ -590,6 +596,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         context.onMentionAdd,
         context.disabled,
         context.readonly,
+        context.getItemLabel,
       ],
     );
 

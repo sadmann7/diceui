@@ -103,6 +103,7 @@ const MentionContent = React.forwardRef<ContentElement, MentionContentProps>(
         ...style,
         ...positionerContext.floatingStyles,
         ...(!context.open && forceMount ? { visibility: "hidden" } : {}),
+        // Items are registered by opening the popover when pasting, so need to visually hide the popover
         ...(context.isPasting ? visuallyHidden : {}),
       };
     }, [
