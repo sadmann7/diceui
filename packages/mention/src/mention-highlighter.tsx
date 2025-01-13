@@ -1,19 +1,22 @@
-import { useCallbackRef } from "@diceui/shared";
+import { useCallbackRef, useComposedRefs } from "@diceui/shared";
 import * as React from "react";
 import { useMentionContext } from "./mention-root";
 
 const HIGHLIGHTER_NAME = "MentionHighlighter";
 
+type HighlighterElement = HTMLDivElement;
+
 interface MentionHighlighterProps
-  extends React.HTMLAttributes<HTMLDivElement> {}
+  extends React.HTMLAttributes<HighlighterElement> {}
 
 const MentionHighlighter = React.forwardRef<
-  HTMLDivElement,
+  HighlighterElement,
   MentionHighlighterProps
 >((props, forwardedRef) => {
   const { style, ...highlighterProps } = props;
   const context = useMentionContext(HIGHLIGHTER_NAME);
-
+  const highlighterRef = React.useRef<HighlighterElement>(null);
+  const composedRef = useComposedRefs(forwardedRef, highlighterRef);
   const [inputStyle, setInputStyle] = React.useState<CSSStyleDeclaration>();
   const onInputStyleChange = useCallbackRef(setInputStyle);
 
@@ -92,7 +95,7 @@ const MentionHighlighter = React.forwardRef<
   }
 
   return (
-    <div {...highlighterProps} ref={forwardedRef} style={highlighterStyle}>
+    <div {...highlighterProps} ref={composedRef} style={highlighterStyle}>
       {renderHighlights()}
     </div>
   );
