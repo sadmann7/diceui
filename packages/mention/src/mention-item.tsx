@@ -39,6 +39,10 @@ const MentionItem = React.forwardRef<ItemElement, MentionItemProps>(
     const isSelected = context.value.includes(value);
 
     useIsomorphicLayoutEffect(() => {
+      if (value === "") {
+        throw new Error(`${ITEM_NAME} value cannot be an empty string.`);
+      }
+
       return context.onItemRegister({
         value,
         label,

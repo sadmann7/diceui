@@ -59,6 +59,7 @@ interface MentionContextValue {
   onFilter?: (options: string[], term: string) => string[];
   onItemsFilter: () => void;
   getIsItemVisible: (value: string) => boolean;
+  getItemLabel: (value: string) => string;
   highlightedItem: CollectionItem<CollectionElement, ItemData> | null;
   onHighlightedItemChange: (
     item: CollectionItem<CollectionElement, ItemData> | null,
@@ -324,7 +325,22 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionRootProps>(
       [],
     );
 
-    console.log({ value, mentions });
+    const getItemLabel = React.useCallback(
+      (value: string) => {
+        return (
+          getItems()
+            .filter((item) => !item.disabled)
+            .find((item) => item.value === value)?.label ?? value
+        );
+      },
+      [getItems],
+    );
+
+    console.log({
+      value,
+      mentions,
+      filterStore,
+    });
 
     return (
       <MentionProvider
@@ -343,6 +359,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionRootProps>(
         onFilter={onFilter}
         onItemsFilter={onItemsFilter}
         getIsItemVisible={getIsItemVisible}
+        getItemLabel={getItemLabel}
         highlightedItem={highlightedItem}
         onHighlightedItemChange={setHighlightedItem}
         onHighlightMove={onHighlightMove}

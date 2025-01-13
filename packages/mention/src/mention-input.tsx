@@ -511,44 +511,82 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           const part = parts[i];
           if (!part) continue;
 
-          const spaceIndex = part.indexOf(" ");
-          const mentionText =
-            spaceIndex === -1 ? part : part.slice(0, spaceIndex);
-          const remainingText = spaceIndex === -1 ? "" : part.slice(spaceIndex);
+          // Try to find the next trigger to determine mention boundary
+          const nextTriggerIndex = part.indexOf(context.trigger);
+          // If no next trigger, check for newline as boundary
+          const newlineIndex = part.indexOf("\n");
+
+          let endIndex: number;
+          if (
+            nextTriggerIndex !== -1 &&
+            (newlineIndex === -1 || nextTriggerIndex < newlineIndex)
+          ) {
+            endIndex = nextTriggerIndex;
+          } else if (newlineIndex !== -1) {
+            endIndex = newlineIndex;
+          } else {
+            endIndex = part.length;
+          }
+
+          const mentionText = part.slice(0, endIndex).trim();
+          const remainingText = part.slice(endIndex);
 
           // Only process if there's mention text
           if (mentionText) {
-            // Calculate the position where this mention starts
-            const mentionStartPosition = cursorPosition + newText.length;
+            // Set isPasting to true to trigger item registration
+            context.onIsPastingChange(true);
+            // Open menu to trigger item registration
+            context.onOpenChange(true);
 
-            // Add the text to the new content
-            const textToAdd = context.trigger + mentionText + remainingText;
-            newText += textToAdd;
-            currentPosition += textToAdd.length;
+            requestAnimationFrame(() => {
+              // Update filter store search to validate mention
+              context.filterStore.search = mentionText;
+              context.onItemsFilter();
 
-            // Update input value
-            const newValue =
-              input.value.slice(0, cursorPosition) +
-              newText +
-              input.value.slice(selectionEnd);
+              requestAnimationFrame(() => {
+                // Check if mention exists in available items
+                const isValidMention = context.filterStore.itemCount > 0;
 
-            input.value = newValue;
-            context.onInputValueChange?.(newValue);
+                // Reset states
+                context.onOpenChange(false);
+                context.filterStore.search = "";
+                context.onIsPastingChange(false);
 
-            // Only add mention if it exists in the available items
-            // TODO: Check if it's valid
-            const isValidMention = true;
-            if (isValidMention) {
-              context.onMentionAdd(mentionText, mentionStartPosition);
-            }
+                // Calculate the position where this mention starts
+                const mentionStartPosition = cursorPosition + newText.length;
 
-            input.setSelectionRange(currentPosition, currentPosition);
+                // Add the text to the new content
+                const textToAdd = `${context.trigger}${mentionText} ${remainingText}`;
+                newText += textToAdd;
+                currentPosition += textToAdd.length;
+
+                // Update input value
+                const newValue =
+                  input.value.slice(0, cursorPosition) +
+                  newText +
+                  input.value.slice(selectionEnd);
+
+                input.value = newValue;
+                context.onInputValueChange?.(newValue);
+
+                // Only add mention if it exists in the available items
+                if (isValidMention) {
+                  context.onMentionAdd(mentionText, mentionStartPosition);
+                }
+
+                input.setSelectionRange(currentPosition, currentPosition);
+              });
+            });
           }
         }
       },
       [
         context.trigger,
+        context.onOpenChange,
         context.onInputValueChange,
+        context.onIsPastingChange,
+        context.filterStore,
+        context.onItemsFilter,
         context.onMentionAdd,
         context.disabled,
         context.readonly,
