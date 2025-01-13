@@ -1,4 +1,4 @@
-import { useCallbackRef, useComposedRefs } from "@diceui/shared";
+import { useCallbackRef } from "@diceui/shared";
 import * as React from "react";
 import { useMentionContext } from "./mention-root";
 
@@ -13,9 +13,6 @@ const MentionHighlighter = React.forwardRef<
 >((props, forwardedRef) => {
   const { style, ...highlighterProps } = props;
   const context = useMentionContext(HIGHLIGHTER_NAME);
-  const highlighterRef = React.useRef<HTMLDivElement>(null);
-  const composedRef = useComposedRefs(forwardedRef, highlighterRef);
-  const rafRef = React.useRef<number | null>(null);
 
   const [inputStyle, setInputStyle] = React.useState<CSSStyleDeclaration>();
   const onInputStyleChange = useCallbackRef(setInputStyle);
@@ -25,28 +22,6 @@ const MentionHighlighter = React.forwardRef<
 
     const computedStyle = window.getComputedStyle(context.inputRef.current);
     onInputStyleChange(computedStyle);
-
-    const input = context.inputRef.current;
-    function onScroll() {
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current);
-      }
-
-      rafRef.current = requestAnimationFrame(() => {
-        if (highlighterRef.current) {
-          highlighterRef.current.scrollTop = input.scrollTop;
-          highlighterRef.current.scrollLeft = input.scrollLeft;
-        }
-      });
-    }
-
-    input.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      input.removeEventListener("scroll", onScroll);
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current);
-      }
-    };
   }, [context.inputRef, onInputStyleChange]);
 
   if (!inputStyle) return null;
@@ -71,7 +46,6 @@ const MentionHighlighter = React.forwardRef<
     border: inputStyle.border,
     borderRadius: inputStyle.borderRadius,
     boxSizing: inputStyle.boxSizing as React.CSSProperties["boxSizing"],
-    overflow: "auto",
     ...style,
   };
 
@@ -118,7 +92,7 @@ const MentionHighlighter = React.forwardRef<
   }
 
   return (
-    <div {...highlighterProps} ref={composedRef} style={highlighterStyle}>
+    <div {...highlighterProps} ref={forwardedRef} style={highlighterStyle}>
       {renderHighlights()}
     </div>
   );
