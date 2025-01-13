@@ -1,25 +1,9 @@
 import { act, fireEvent, render } from "@testing-library/react";
 import * as React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  type FocusOutsideEvent,
-  type PointerDownOutsideEvent,
-  useDismiss,
-} from "../src/hooks/use-dismiss";
+import { useDismiss } from "../src/hooks/use-dismiss";
 
-interface DismissableComponentProps {
-  enabled?: boolean;
-  onDismiss?: (event?: FocusOutsideEvent | KeyboardEvent) => void;
-  onEscapeKeyDown?: (event: KeyboardEvent) => void;
-  onPointerDownOutside?: (event: PointerDownOutsideEvent) => void;
-  onFocusOutside?: (event: FocusOutsideEvent) => void;
-  onInteractOutside?: (
-    event: PointerDownOutsideEvent | FocusOutsideEvent,
-  ) => void;
-  disableOutsidePointerEvents?: boolean;
-  preventScrollDismiss?: boolean;
-  delayMs?: number;
-}
+type DismissableComponentProps = Partial<Parameters<typeof useDismiss>[0]>;
 
 function DismissableComponent({
   enabled = true,

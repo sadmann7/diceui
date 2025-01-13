@@ -18,7 +18,7 @@ interface PointerDownOutsideEvent extends FocusOutsideEvent {
   detail: number;
 }
 
-interface UseDismissParameters {
+interface UseDismissProps {
   /** Whether the dismissable layer is enabled. */
   enabled: boolean;
 
@@ -31,13 +31,13 @@ interface UseDismissParameters {
   ) => void | Promise<void>;
 
   /** References to elements that should not trigger dismissal when clicked. */
-  refs: Array<React.RefObject<Element | null>>;
+  refs: React.RefObject<Element | null>[];
 
   /**
-   * Event handler called when the escape key is down.
+   * Event handler called when the escape key is pressed.
    * Can be prevented.
    *
-   * @param event - The event that triggered the escape key down.
+   * @param event - The event that triggered the escape key press.
    */
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
 
@@ -100,7 +100,7 @@ interface UseDismissParameters {
   layerStyleAttr?: string;
 }
 
-function useDismiss(params: UseDismissParameters) {
+function useDismiss(params: UseDismissProps) {
   const {
     enabled,
     onDismiss,
