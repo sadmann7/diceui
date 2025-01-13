@@ -16,7 +16,7 @@ class ResizeObserver {
 global.ResizeObserver = ResizeObserver;
 
 describe("TagsInput", () => {
-  const renderTagsInput = (props = {}) => {
+  function renderTagsInput(props: TagsInput.TagsInputRootProps = {}) {
     return render(
       <TagsInput.Root {...props}>
         {({ value }) => (
@@ -32,7 +32,7 @@ describe("TagsInput", () => {
         )}
       </TagsInput.Root>,
     );
-  };
+  }
 
   test("renders without crashing", () => {
     renderTagsInput();

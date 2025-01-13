@@ -26,13 +26,59 @@ Element.prototype.hasPointerCapture = vi.fn();
 Element.prototype.scrollIntoView = vi.fn();
 
 describe("Combobox", () => {
-  function renderCombobox(props: Combobox.ComboboxRootProps = {}) {
+  function renderCombobox(props: Combobox.ComboboxRootProps<false> = {}) {
     return render(
       <div dir={props.dir}>
         <Combobox.Root {...props}>
           <Combobox.Label>Favorite tricks</Combobox.Label>
           <Combobox.Anchor data-testid="anchor">
             <Combobox.Input placeholder="Select a trick..." />
+            <Combobox.Trigger data-testid="trigger">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </Combobox.Trigger>
+          </Combobox.Anchor>
+          <Combobox.Portal data-testid="portal">
+            <Combobox.Content data-testid="content">
+              <Combobox.Item value="kickflip">Kickflip</Combobox.Item>
+              <Combobox.Item value="heelflip">Heelflip</Combobox.Item>
+              <Combobox.Item value="fs-540">FS 540</Combobox.Item>
+            </Combobox.Content>
+          </Combobox.Portal>
+        </Combobox.Root>
+      </div>,
+    );
+  }
+
+  function renderMultipleCombobox(
+    props: Combobox.ComboboxRootProps<true> = {},
+  ) {
+    return render(
+      <div dir={props.dir}>
+        <Combobox.Root multiple {...props}>
+          <Combobox.Label>Favorite tricks</Combobox.Label>
+          <Combobox.Anchor data-testid="anchor">
+            <Combobox.BadgeList>
+              {Array.isArray(props.value) &&
+                props.value.map((value) => (
+                  <Combobox.BadgeItem key={value} value={value}>
+                    {value}
+                    <Combobox.BadgeItemDelete />
+                  </Combobox.BadgeItem>
+                ))}
+            </Combobox.BadgeList>
+            <Combobox.Input placeholder="Select tricks..." />
             <Combobox.Trigger data-testid="trigger">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -157,6 +203,196 @@ describe("Combobox", () => {
     fireEvent.keyDown(input, { key: "Enter" });
     expect(onValueChange).toHaveBeenCalledWith("kickflip");
     expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
+
+  test("handles multiple selection", async () => {
+    const onValueChange = vi.fn();
+    const onOpenChange = vi.fn();
+
+    renderMultipleCombobox({
+      onValueChange,
+      onOpenChange,
+      value: ["kickflip"],
+    });
+
+    const input = screen.getByPlaceholderText("Select tricks...");
+    const trigger = screen.getByTestId("trigger");
+
+    // Open the combobox
+    fireEvent.click(trigger);
+    await waitFor(() => {
+      expect(screen.getByTestId("content")).toBeInTheDocument();
+    });
+
+    // Select another item
+    const heelflip = screen.getByRole("option", { name: "Heelflip" });
+    await waitFor(() => {
+      fireEvent.click(heelflip);
+    });
+
+    expect(onValueChange).toHaveBeenCalledWith(["kickflip", "heelflip"]);
+    expect(input).toHaveValue("");
+
+    // Delete a badge using keyboard navigation
+    fireEvent.keyDown(input, { key: "ArrowLeft" });
+    await waitFor(() => {
+      expect(screen.getByRole("option", { name: "kickflip" })).toHaveAttribute(
+        "data-highlighted",
+        "",
+      );
+    });
+    fireEvent.keyDown(input, { key: "Enter" });
+    await waitFor(() => {
+      expect(onValueChange).toHaveBeenLastCalledWith([]);
+    });
+  });
+
+  test("handles badge keyboard navigation", async () => {
+    const onValueChange = vi.fn();
+
+    renderMultipleCombobox({
+      value: ["kickflip", "heelflip"],
+      onValueChange,
+    });
+
+    const input = screen.getByPlaceholderText("Select tricks...");
+
+    // Focus input and navigate to badges
+    fireEvent.focus(input);
+    fireEvent.keyDown(input, { key: "ArrowLeft" });
+
+    // Check if the last badge is highlighted
+    const lastBadge = screen
+      .getByText("heelflip")
+      .closest("[data-highlighted]");
+    expect(lastBadge).toBeInTheDocument();
+
+    // Delete highlighted badge with Enter
+    fireEvent.keyDown(input, { key: "Enter" });
+    expect(onValueChange).toHaveBeenCalledWith(["kickflip"]);
+  });
+
+  test("handles custom filtering", async () => {
+    const customFilter = (options: string[], term: string) =>
+      options.filter((option) =>
+        option.toLowerCase().includes(term.toLowerCase()),
+      );
+
+    renderCombobox({
+      onFilter: customFilter,
+    });
+
+    const input = screen.getByPlaceholderText("Select a trick...");
+
+    // Type to filter
+    fireEvent.change(input, { target: { value: "FLIP" } });
+
+    // Check if case-insensitive filtering works
+    await waitFor(() => {
+      expect(screen.getByText("Kickflip")).toBeInTheDocument();
+      expect(screen.getByText("Heelflip")).toBeInTheDocument();
+      expect(screen.queryByText("FS 540")).not.toBeInTheDocument();
+    });
+  });
+
+  test("handles exact match filtering", async () => {
+    renderCombobox({
+      exactMatch: true,
+    });
+
+    const input = screen.getByPlaceholderText("Select a trick...");
+    const trigger = screen.getByTestId("trigger");
+
+    // Open the combobox
+    fireEvent.click(trigger);
+
+    // Type exact match
+    fireEvent.change(input, { target: { value: "Kickflip" } });
+    await waitFor(() => {
+      expect(screen.getByText("Kickflip")).toBeInTheDocument();
+      expect(screen.queryByText("Heelflip")).not.toBeInTheDocument();
+    });
+
+    // Type partial match
+    fireEvent.change(input, { target: { value: "kick" } });
+    await waitFor(() => {
+      expect(screen.getByText("Kickflip")).toBeInTheDocument();
+      expect(screen.queryByText("Heelflip")).not.toBeInTheDocument();
+    });
+  });
+
+  // test("handles form integration", async () => {
+  //   const onSubmit = vi.fn((e) => e.preventDefault());
+
+  //   render(
+  //     <form onSubmit={onSubmit} data-testid="form">
+  //       <Combobox.Root name="trick" required>
+  //         <Combobox.Label>Favorite tricks</Combobox.Label>
+  //         <Combobox.Anchor>
+  //           <Combobox.Input placeholder="Select a trick..." />
+  //           <Combobox.Trigger>▼</Combobox.Trigger>
+  //         </Combobox.Anchor>
+  //         <Combobox.Portal>
+  //           <Combobox.Content>
+  //             <Combobox.Item value="kickflip">Kickflip</Combobox.Item>
+  //           </Combobox.Content>
+  //         </Combobox.Portal>
+  //       </Combobox.Root>
+  //       <button type="submit">Submit</button>
+  //     </form>,
+  //   );
+
+  //   const form = screen.getByTestId("form");
+  //   const input = screen.getByPlaceholderText("Select a trick...");
+  //   const hiddenInput = screen.getByRole("textbox", { hidden: true });
+
+  //   // Try to submit without selection
+  //   fireEvent.submit(form);
+  //   expect(hiddenInput).toBeInvalid();
+  //   expect(onSubmit).not.toHaveBeenCalled();
+
+  //   // Select a value and submit
+  //   fireEvent.focus(input);
+  //   const option = screen.getByRole("option", { name: "Kickflip" });
+  //   fireEvent.click(option);
+  //   await waitFor(() => {
+  //     expect(input).toHaveValue("Kickflip");
+  //   });
+  //   fireEvent.submit(form);
+  //   expect(hiddenInput).toBeValid();
+  //   expect(onSubmit).toHaveBeenCalled();
+  // });
+
+  test("handles open on focus", async () => {
+    renderCombobox({
+      openOnFocus: true,
+    });
+
+    const input = screen.getByPlaceholderText("Select a trick...");
+
+    // Focus should open the combobox
+    fireEvent.focus(input);
+    await waitFor(() => {
+      expect(screen.getByRole("listbox")).toBeInTheDocument();
+    });
+  });
+
+  test("handles preserve input on blur", async () => {
+    renderCombobox({
+      preserveInputOnBlur: true,
+    });
+
+    const input = screen.getByPlaceholderText("Select a trick...");
+
+    // Type something and blur
+    fireEvent.change(input, { target: { value: "test" } });
+    await waitFor(() => {
+      expect(input).toHaveValue("test");
+    });
+    fireEvent.blur(input);
+    await waitFor(() => {
+      expect(input).toHaveValue("test");
+    });
   });
 
   test("renders without crashing", () => {

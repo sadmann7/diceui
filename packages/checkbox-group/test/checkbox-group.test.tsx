@@ -15,7 +15,9 @@ class ResizeObserverMock {
 global.ResizeObserver = ResizeObserverMock;
 
 describe("CheckboxGroup", () => {
-  const renderCheckboxGroup = (props = {}) => {
+  function renderCheckboxGroup(
+    props: CheckboxGroup.CheckboxGroupRootProps = {},
+  ) {
     return render(
       <CheckboxGroup.Root {...props}>
         <CheckboxGroup.Label>Favorite tricks</CheckboxGroup.Label>
@@ -39,7 +41,7 @@ describe("CheckboxGroup", () => {
         <CheckboxGroup.Message />
       </CheckboxGroup.Root>,
     );
-  };
+  }
 
   test("renders without crashing", () => {
     renderCheckboxGroup();
