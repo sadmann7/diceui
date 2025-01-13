@@ -471,10 +471,6 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
             input.value = newValue;
             context.onInputValueChange?.(newValue);
 
-            // Trigger mention update to check if it's valid
-            context.filterStore.search = mentionText;
-            context.onItemsFilter();
-
             // Only add mention if it exists in the available items
             // TODO: Check if it's valid
             const isValidMention = true;
@@ -489,8 +485,6 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
       [
         context.trigger,
         context.onInputValueChange,
-        context.filterStore,
-        context.onItemsFilter,
         context.onMentionAdd,
         context.disabled,
         context.readonly,
@@ -536,6 +530,6 @@ MentionInput.displayName = INPUT_NAME;
 
 const Input = MentionInput;
 
-export { Input, MentionInput };
+export { MentionInput, Input };
 
-export type { InputElement, MentionInputProps };
+export type { MentionInputProps, InputElement };
