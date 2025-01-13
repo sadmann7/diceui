@@ -20,12 +20,45 @@ const MentionHighlighter = React.forwardRef<
   const [inputStyle, setInputStyle] = React.useState<CSSStyleDeclaration>();
   const onInputStyleChange = useCallbackRef(setInputStyle);
 
+  // Update highlighter scroll position
+  const onResize = React.useCallback(() => {
+    const input = context.inputRef.current;
+    const highlighter = highlighterRef.current;
+    if (!input || !highlighter) return;
+
+    // Sync scroll position
+    highlighter.scrollLeft = input.scrollLeft;
+    highlighter.scrollTop = input.scrollTop;
+
+    // Sync height
+    highlighter.style.height = `${input.offsetHeight}px`;
+  }, [context.inputRef]);
+
   React.useEffect(() => {
     if (!context.inputRef.current) return;
 
     const computedStyle = window.getComputedStyle(context.inputRef.current);
     onInputStyleChange(computedStyle);
-  }, [context.inputRef, onInputStyleChange]);
+
+    // Add scroll event listener
+    const input = context.inputRef.current;
+
+    // Initial sync
+    onResize();
+
+    // Handle scroll events
+    function onScroll() {
+      window.requestAnimationFrame(onResize);
+    }
+
+    input.addEventListener("scroll", onScroll);
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      input.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+    };
+  }, [context.inputRef, onInputStyleChange, onResize]);
 
   if (!inputStyle) return null;
 
@@ -49,6 +82,8 @@ const MentionHighlighter = React.forwardRef<
     border: inputStyle.border,
     borderRadius: inputStyle.borderRadius,
     boxSizing: inputStyle.boxSizing as React.CSSProperties["boxSizing"],
+    overflow: "auto",
+    width: "100%",
     ...style,
   };
 
@@ -90,6 +125,9 @@ const MentionHighlighter = React.forwardRef<
         </span>,
       );
     }
+
+    // Add a space to ensure correct height
+    parts.push(<span key="space">&nbsp;</span>);
 
     return parts;
   }
