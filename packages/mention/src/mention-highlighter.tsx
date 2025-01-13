@@ -35,17 +35,27 @@ const MentionHighlighter = React.memo(
       const [inputStyle, setInputStyle] = React.useState<CSSStyleDeclaration>();
       const onInputStyleChange = useCallbackRef(setInputStyle);
 
+      const syncStyles = React.useCallback(() => {
+        const input = context.inputRef.current;
+        if (!input) return;
+
+        const computedStyle = window.getComputedStyle(input);
+        onInputStyleChange(computedStyle);
+      }, [context.inputRef, onInputStyleChange]);
+
       const onResize = React.useCallback(() => {
         const input = context.inputRef.current;
         const highlighter = highlighterRef.current;
         if (!input || !highlighter) return;
+
+        syncStyles();
 
         requestAnimationFrame(() => {
           highlighter.scrollLeft = input.scrollLeft;
           highlighter.scrollTop = input.scrollTop;
           highlighter.style.height = `${input.offsetHeight}px`;
         });
-      }, [context.inputRef]);
+      }, [context.inputRef, syncStyles]);
 
       const onScroll = React.useCallback(() => {
         requestAnimationFrame(onResize);
@@ -55,29 +65,52 @@ const MentionHighlighter = React.memo(
         const input = context.inputRef.current;
         if (!input) return;
 
-        const computedStyle = window.getComputedStyle(input);
-        onInputStyleChange(computedStyle);
-
-        onResize();
+        syncStyles();
 
         input.addEventListener("scroll", onScroll, { passive: true });
         window.addEventListener("resize", onResize, { passive: true });
 
+        // Create a ResizeObserver to watch for size changes including font size
+        const resizeObserver = new ResizeObserver(() => {
+          syncStyles();
+        });
+        resizeObserver.observe(input);
+
+        // Create a MutationObserver to watch for class changes
+        const mutationObserver = new MutationObserver((mutations) => {
+          for (const mutation of mutations) {
+            if (
+              mutation.type === "attributes" &&
+              mutation.attributeName === "class"
+            ) {
+              syncStyles();
+            }
+          }
+        });
+        mutationObserver.observe(input, {
+          attributes: true,
+          attributeFilter: ["class"],
+        });
+
         return () => {
           input.removeEventListener("scroll", onScroll);
           window.removeEventListener("resize", onResize);
+          resizeObserver.disconnect();
+          mutationObserver.disconnect();
         };
-      }, [context.inputRef, onInputStyleChange, onResize, onScroll]);
+      }, [context.inputRef, onResize, onScroll, syncStyles]);
 
       const highlighterStyle = React.useMemo<React.CSSProperties>(() => {
         if (!inputStyle) return defaultHighlighterStyle;
 
         return {
           ...defaultHighlighterStyle,
-          font: inputStyle.font,
           fontSize: inputStyle.fontSize,
           fontFamily: inputStyle.fontFamily,
           fontWeight: inputStyle.fontWeight,
+          fontStyle: inputStyle.fontStyle,
+          fontVariant:
+            inputStyle.fontVariant as React.CSSProperties["fontVariant"],
           lineHeight: inputStyle.lineHeight,
           letterSpacing: inputStyle.letterSpacing,
           textTransform:

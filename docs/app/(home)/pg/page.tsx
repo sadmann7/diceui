@@ -30,19 +30,23 @@ import {
 } from "@/registry/default/ui/combobox";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
+import * as React from "react";
 
 export default function PlaygroundPage() {
+  const [value, setValue] = React.useState("");
+  const [values, setValues] = React.useState<string[]>([]);
+
   return (
     <Shell>
       <div className="h-screen bg-accent" />
-      <Textarea placeholder="Type here..." className="w-[40rem]" />
-      <Mention.Root className="flex w-[40rem] flex-col gap-2 [&_[data-mention-segment]]:rounded [&_[data-mention-segment]]:bg-blue-600 [&_[data-mention-segment]]:text-white">
+      <Textarea placeholder="Type here..." className="max-w-[40rem]" />
+      <Mention.Root
+        value={values}
+        onValueChange={setValues}
+        className="flex max-w-[40rem] flex-col gap-2 [&_[data-mention-segment]]:rounded [&_[data-mention-segment]]:bg-blue-600 [&_[data-mention-segment]]:text-white"
+      >
         <Mention.Label>Tricks</Mention.Label>
-        <Mention.Input
-          placeholder="Enter @ to mention a trick..."
-          className="flex h-20 w-full rounded-md border border-input px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm"
-          asChild
-        >
+        <Mention.Input placeholder="Enter @ to mention a trick..." asChild>
           <Textarea />
         </Mention.Input>
         <Mention.Portal>
@@ -90,7 +94,7 @@ export default function PlaygroundPage() {
           <DropdownMenuItem>Pineapple</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <Select>
+      <Select value={value} onValueChange={setValue}>
         <SelectTrigger className="w-[11.25rem]">
           <SelectValue placeholder="Select a trick" />
         </SelectTrigger>
