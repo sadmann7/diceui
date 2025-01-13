@@ -2,8 +2,6 @@ import { useCallbackRef } from "@diceui/shared";
 import * as React from "react";
 import { useMentionContext } from "./mention-root";
 
-const HIGHLIGHTER_NAME = "MentionHighlighter";
-
 interface MentionHighlighterProps
   extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -12,7 +10,7 @@ const MentionHighlighter = React.forwardRef<
   MentionHighlighterProps
 >((props, forwardedRef) => {
   const { style, ...highlighterProps } = props;
-  const context = useMentionContext(HIGHLIGHTER_NAME);
+  const context = useMentionContext("MentionHighlighter");
 
   const [inputStyle, setInputStyle] = React.useState<CSSStyleDeclaration>();
   const onInputStyleChange = useCallbackRef(setInputStyle);
@@ -44,7 +42,6 @@ const MentionHighlighter = React.forwardRef<
       inputStyle.textTransform as React.CSSProperties["textTransform"],
     padding: inputStyle.padding,
     border: inputStyle.border,
-    borderRadius: inputStyle.borderRadius,
     boxSizing: inputStyle.boxSizing as React.CSSProperties["boxSizing"],
     ...style,
   };
@@ -97,7 +94,5 @@ const MentionHighlighter = React.forwardRef<
     </div>
   );
 });
-
-MentionHighlighter.displayName = HIGHLIGHTER_NAME;
 
 export { MentionHighlighter };
