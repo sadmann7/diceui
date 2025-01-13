@@ -207,6 +207,47 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
       [onMentionUpdate],
     );
 
+    const onCut = React.useCallback(
+      (event: React.ClipboardEvent<InputElement>) => {
+        if (context.disabled || context.readonly) return;
+
+        const input = event.currentTarget;
+        const cursorPosition = input.selectionStart ?? 0;
+        const selectionEnd = input.selectionEnd ?? cursorPosition;
+        const hasSelection = cursorPosition !== selectionEnd;
+
+        if (!hasSelection) return;
+
+        // Find mentions that are fully or partially within the selection
+        const affectedMentions = context.mentions.filter(
+          (m) =>
+            (m.start >= cursorPosition && m.start < selectionEnd) ||
+            (m.end > cursorPosition && m.end <= selectionEnd),
+        );
+
+        if (affectedMentions.length > 0) {
+          // Let the browser handle copying to clipboard
+          // After the cut operation, update our state
+          requestAnimationFrame(() => {
+            // Remove affected mentions from context value
+            const remainingValues = context.value.filter(
+              (v) => !affectedMentions.some((m) => m.value === v),
+            );
+            context.onValueChange?.(remainingValues);
+            context.onMentionsRemove(affectedMentions);
+          });
+        }
+      },
+      [
+        context.disabled,
+        context.readonly,
+        context.mentions,
+        context.value,
+        context.onValueChange,
+        context.onMentionsRemove,
+      ],
+    );
+
     const onFocus = React.useCallback(
       (event: React.FocusEvent<InputElement>) => {
         onMentionUpdate(event.currentTarget);
@@ -516,6 +557,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           ref={composedRef}
           onChange={composeEventHandlers(props.onChange, onChange)}
           onClick={composeEventHandlers(props.onClick, onClick)}
+          onCut={composeEventHandlers(props.onCut, onCut)}
           onFocus={composeEventHandlers(props.onFocus, onFocus)}
           onKeyDown={composeEventHandlers(props.onKeyDown, onKeyDown)}
           onPaste={composeEventHandlers(props.onPaste, onPaste)}
