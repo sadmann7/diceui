@@ -144,6 +144,29 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           return false;
         }
 
+        // Check if trigger is part of continuous text (like username@domain, passwords, etc)
+        function getIsTriggerPartOfText() {
+          // Look for characters before the trigger
+          const textBeforeTrigger = value.slice(0, lastTriggerIndex);
+          const hasTextBeforeTrigger = /\S/.test(textBeforeTrigger);
+
+          // If there's no text before trigger, it's a valid mention trigger
+          if (!hasTextBeforeTrigger) return false;
+
+          // Check if there's no space before the trigger
+          const lastCharBeforeTrigger = textBeforeTrigger.slice(-1);
+          return lastCharBeforeTrigger !== " ";
+        }
+
+        if (getIsTriggerPartOfText()) {
+          if (context.open) {
+            context.onOpenChange(false);
+            context.onHighlightedItemChange(null);
+            context.filterStore.search = "";
+          }
+          return false;
+        }
+
         const textAfterTrigger = value.slice(
           lastTriggerIndex + 1,
           currentPosition,
