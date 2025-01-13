@@ -20,6 +20,7 @@ const [ComboboxBadgeItemProvider, useComboboxBadgeItemContext] =
 
 interface ComboboxBadgeItemProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
+  /** The value of the badge item. */
   value: string;
 }
 

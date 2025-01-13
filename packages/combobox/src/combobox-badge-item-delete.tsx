@@ -1,28 +1,27 @@
-import { Primitive, composeEventHandlers } from "@diceui/shared";
+import {
+  Primitive,
+  composeEventHandlers,
+  useComposedRefs,
+} from "@diceui/shared";
 import * as React from "react";
 import { useComboboxBadgeItemContext } from "./combobox-badge-item";
 import { useComboboxContext } from "./combobox-root";
 
 const BADGE_ITEM_DELETE_NAME = "ComboboxBadgeItemDelete";
 
+type BadgeItemDeleteElement = React.ElementRef<typeof Primitive.button>;
+
 interface ComboboxBadgeItemDeleteProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.button> {}
 
 const ComboboxBadgeItemDelete = React.forwardRef<
-  React.ElementRef<typeof Primitive.button>,
+  BadgeItemDeleteElement,
   ComboboxBadgeItemDeleteProps
 >((props, forwardedRef) => {
   const context = useComboboxContext(BADGE_ITEM_DELETE_NAME);
   const badgeItemContext = useComboboxBadgeItemContext(BADGE_ITEM_DELETE_NAME);
-  const buttonRef = React.useRef<HTMLButtonElement>(null);
-  const composedRef = React.useCallback(
-    (node: HTMLButtonElement | null) => {
-      buttonRef.current = node;
-      if (typeof forwardedRef === "function") forwardedRef(node);
-      else if (forwardedRef) forwardedRef.current = node;
-    },
-    [forwardedRef],
-  );
+  const buttonRef = React.useRef<BadgeItemDeleteElement | null>(null);
+  const composedRef = useComposedRefs(forwardedRef, buttonRef);
 
   return (
     <Primitive.button

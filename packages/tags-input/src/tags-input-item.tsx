@@ -26,7 +26,10 @@ const [TagsInputItemProvider, useTagsInputItem] =
 
 interface TagsInputItemProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
+  /** The value of the item. */
   value: InputValue;
+
+  /** Whether the item is disabled. */
   disabled?: boolean;
 }
 

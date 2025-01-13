@@ -30,10 +30,18 @@ type ItemElement = React.ElementRef<typeof Primitive.div>;
 
 interface ComboboxItemProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
-  /** The value of the item. */
+  /**
+   * The value of the item.
+   *
+   * Cannot be an empty string.
+   */
   value: string;
 
-  /** The label of the item. */
+  /**
+   * The label of the item. By default, value is used as the label.
+   *
+   * Override the text value for the selected item in the input.
+   */
   label?: string;
 
   /** Whether the item is disabled. */
@@ -67,10 +75,10 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
 
       return context.onItemRegister(
         {
+          ref: itemRef,
           label,
           value,
           disabled,
-          ref: itemRef,
         },
         groupContext?.id,
       );
@@ -146,11 +154,12 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
           )}
           onPointerMove={composeEventHandlers(itemProps.onPointerMove, () => {
             if (isDisabled) return;
+
             context.onHighlightedItemChange({
+              ref: itemRef,
               label,
               value,
               disabled: isDisabled,
-              ref: itemRef,
             });
           })}
         />
