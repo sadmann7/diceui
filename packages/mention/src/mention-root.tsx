@@ -271,8 +271,11 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionRootProps>(
     const { onHighlightMove } = useListHighlighting({
       highlightedItem,
       onHighlightedItemChange: setHighlightedItem,
-      getItems,
-      getIsItemDisabled: (item) => !!item.disabled,
+      getItems: React.useCallback(() => {
+        return getItems().filter(
+          (item) => !item.disabled && getIsItemVisible(item.value),
+        );
+      }, [getItems, getIsItemVisible]),
       getIsItemSelected: (item) => value.includes(item.value),
       loop,
     });

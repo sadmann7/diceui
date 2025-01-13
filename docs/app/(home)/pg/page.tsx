@@ -72,7 +72,7 @@ export default function PlaygroundPage() {
           {tricks.map((trick) => (
             <ComboboxItem
               key={trick.value}
-              // label={trick.label}
+              label={`^${trick.label}`}
               value={trick.value}
             >
               {trick.label}

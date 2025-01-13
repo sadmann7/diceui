@@ -6,7 +6,6 @@ import { useListHighlighting } from "../src/hooks/use-list-highlighting";
 
 interface TestItemData {
   value: string;
-  disabled: boolean;
   selected?: boolean;
 }
 
@@ -14,7 +13,7 @@ describe("useListHighlighting", () => {
   // Helper to create test items
   function createTestItems(
     count: number,
-    options: { disabledIndexes?: number[]; selectedIndexes?: number[] } = {},
+    options: { selectedIndexes?: number[] } = {},
   ) {
     return Array.from({ length: count }, (_, i) => {
       const div = document.createElement("div");
@@ -22,7 +21,6 @@ describe("useListHighlighting", () => {
       return {
         ref: { current: div } as React.RefObject<HTMLDivElement>,
         value: `item-${i + 1}`,
-        disabled: options.disabledIndexes?.includes(i) ?? false,
         selected: options.selectedIndexes?.includes(i) ?? false,
       };
     });
@@ -49,7 +47,6 @@ describe("useListHighlighting", () => {
 
     const onHighlightedItemChange = vi.fn();
     const getItems = vi.fn().mockReturnValue(items);
-    const getIsItemDisabled = vi.fn((item) => item.disabled);
     const getIsItemSelected = vi.fn((item) => item.selected ?? false);
 
     const { result } = renderHook(() =>
@@ -57,7 +54,6 @@ describe("useListHighlighting", () => {
         highlightedItem,
         onHighlightedItemChange,
         getItems,
-        getIsItemDisabled,
         getIsItemSelected,
         loop: options.loop,
       }),
@@ -68,7 +64,6 @@ describe("useListHighlighting", () => {
       items,
       onHighlightedItemChange,
       getItems,
-      getIsItemDisabled,
       getIsItemSelected,
     };
   }
@@ -89,36 +84,6 @@ describe("useListHighlighting", () => {
   it("should move to previous item", () => {
     const { onHighlightedItemChange, items, result } = setupTest({
       initialHighlightedIndex: 1,
-    });
-
-    result.current.onHighlightMove("prev");
-
-    expect(onHighlightedItemChange).toHaveBeenCalledWith(items[0]);
-    expect(items[0]?.ref.current?.scrollIntoView).toHaveBeenCalledWith({
-      block: "nearest",
-    });
-  });
-
-  it("should skip disabled items when moving next", () => {
-    const items = createTestItems(5, { disabledIndexes: [1, 2] });
-    const { onHighlightedItemChange, result } = setupTest({
-      items,
-      initialHighlightedIndex: 0,
-    });
-
-    result.current.onHighlightMove("next");
-
-    expect(onHighlightedItemChange).toHaveBeenCalledWith(items[3]);
-    expect(items[3]?.ref.current?.scrollIntoView).toHaveBeenCalledWith({
-      block: "nearest",
-    });
-  });
-
-  it("should skip disabled items when moving previous", () => {
-    const items = createTestItems(5, { disabledIndexes: [1, 2] });
-    const { onHighlightedItemChange, result } = setupTest({
-      items,
-      initialHighlightedIndex: 3,
     });
 
     result.current.onHighlightMove("prev");
@@ -227,18 +192,6 @@ describe("useListHighlighting", () => {
 
   it("should handle empty items array", () => {
     const { onHighlightedItemChange, result } = setupTest({ items: [] });
-
-    result.current.onHighlightMove("next");
-
-    expect(onHighlightedItemChange).not.toHaveBeenCalled();
-  });
-
-  it("should handle all items being disabled", () => {
-    const items = createTestItems(3, { disabledIndexes: [0, 1, 2] });
-    const { onHighlightedItemChange, result } = setupTest({
-      items,
-      initialHighlightedIndex: 0,
-    });
 
     result.current.onHighlightMove("next");
 

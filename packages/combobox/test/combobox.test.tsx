@@ -112,15 +112,13 @@ describe("Combobox", () => {
 
     // Navigate to the filtered option
     fireEvent.keyDown(input, { key: "ArrowDown" });
-    // hover over the option
     await waitFor(() => {
-      console.log({ fs540 });
-      // expect(fs540).toHaveAttribute("data-highlighted", "");
+      expect(fs540).toHaveAttribute("data-highlighted", "");
     });
 
     // Select the highlighted option
     fireEvent.keyDown(input, { key: "Enter" });
-    // expect(onValueChange).toHaveBeenCalledWith("fs-540");
+    expect(onValueChange).toHaveBeenCalledWith("fs-540");
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 

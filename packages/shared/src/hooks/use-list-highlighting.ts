@@ -8,7 +8,6 @@ interface UseListHighlightingOptions<TElement extends HTMLElement, TData = {}> {
     item: CollectionItem<TElement, TData> | null,
   ) => void;
   getItems: () => CollectionItem<TElement, TData>[];
-  getIsItemDisabled: (item: CollectionItem<TElement, TData>) => boolean;
   getIsItemSelected: (item: CollectionItem<TElement, TData>) => boolean;
   loop?: boolean;
 }
@@ -17,13 +16,12 @@ function useListHighlighting<TElement extends HTMLElement, TData = {}>({
   highlightedItem,
   onHighlightedItemChange,
   getItems,
-  getIsItemDisabled,
   getIsItemSelected,
   loop = false,
 }: UseListHighlightingOptions<TElement, TData>) {
   const onHighlightMove = React.useCallback(
     (direction: HighlightingDirection) => {
-      const items = getItems().filter((item) => !getIsItemDisabled(item));
+      const items = getItems();
 
       if (items.length === 0) return;
 
@@ -68,7 +66,6 @@ function useListHighlighting<TElement extends HTMLElement, TData = {}>({
     [
       getItems,
       getIsItemSelected,
-      getIsItemDisabled,
       highlightedItem,
       onHighlightedItemChange,
       loop,

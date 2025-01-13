@@ -346,8 +346,11 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
   const { onHighlightMove } = useListHighlighting({
     highlightedItem,
     onHighlightedItemChange: setHighlightedItem,
-    getItems,
-    getIsItemDisabled: (item) => !!item.disabled,
+    getItems: React.useCallback(() => {
+      return getItems().filter(
+        (item) => !item.disabled && getIsItemVisible(item.value),
+      );
+    }, [getItems, getIsItemVisible]),
     getIsItemSelected: (item) => {
       const selectedValue = Array.isArray(value) ? value[0] : value;
       return item.value === selectedValue;
