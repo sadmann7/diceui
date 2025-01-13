@@ -149,7 +149,7 @@ describe("CheckboxGroup", () => {
     expect(onValueChange).not.toHaveBeenCalled();
   });
 
-  test("handles readOnly state", async () => {
+  test("handles read only state", async () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
 

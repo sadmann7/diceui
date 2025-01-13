@@ -70,11 +70,7 @@ export default function PlaygroundPage() {
         <ComboboxContent>
           <ComboboxEmpty>No tricks found</ComboboxEmpty>
           {tricks.map((trick) => (
-            <ComboboxItem
-              key={trick.value}
-              label={`^${trick.label}`}
-              value={trick.value}
-            >
+            <ComboboxItem key={trick.value} value={trick.value}>
               {trick.label}
             </ComboboxItem>
           ))}

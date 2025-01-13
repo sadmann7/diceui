@@ -26,59 +26,30 @@ Element.prototype.hasPointerCapture = vi.fn();
 Element.prototype.scrollIntoView = vi.fn();
 
 describe("Combobox", () => {
-  function renderCombobox(props: Combobox.ComboboxRootProps<false> = {}) {
-    return render(
-      <div dir={props.dir}>
-        <Combobox.Root {...props}>
-          <Combobox.Label>Favorite tricks</Combobox.Label>
-          <Combobox.Anchor data-testid="anchor">
-            <Combobox.Input placeholder="Select a trick..." />
-            <Combobox.Trigger data-testid="trigger">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </Combobox.Trigger>
-          </Combobox.Anchor>
-          <Combobox.Portal data-testid="portal">
-            <Combobox.Content data-testid="content">
-              <Combobox.Item value="kickflip">Kickflip</Combobox.Item>
-              <Combobox.Item value="heelflip">Heelflip</Combobox.Item>
-              <Combobox.Item value="fs-540">FS 540</Combobox.Item>
-            </Combobox.Content>
-          </Combobox.Portal>
-        </Combobox.Root>
-      </div>,
-    );
-  }
-
-  function renderMultipleCombobox(
-    props: Combobox.ComboboxRootProps<true> = {},
+  function renderCombobox<T extends boolean>(
+    props: Combobox.ComboboxRootProps<T> = {},
   ) {
+    const { value, multiple, ...comboboxProps } = props;
+
     return render(
       <div dir={props.dir}>
-        <Combobox.Root multiple {...props}>
+        <Combobox.Root value={value} multiple={multiple} {...comboboxProps}>
           <Combobox.Label>Favorite tricks</Combobox.Label>
           <Combobox.Anchor data-testid="anchor">
-            <Combobox.BadgeList>
-              {Array.isArray(props.value) &&
-                props.value.map((value) => (
-                  <Combobox.BadgeItem key={value} value={value}>
-                    {value}
-                    <Combobox.BadgeItemDelete />
-                  </Combobox.BadgeItem>
-                ))}
-            </Combobox.BadgeList>
-            <Combobox.Input placeholder="Select tricks..." />
+            {multiple ? (
+              <Combobox.BadgeList>
+                {Array.isArray(value) &&
+                  value.map((value) => (
+                    <Combobox.BadgeItem key={value} value={value}>
+                      {value}
+                      <Combobox.BadgeItemDelete />
+                    </Combobox.BadgeItem>
+                  ))}
+              </Combobox.BadgeList>
+            ) : null}
+            <Combobox.Input
+              placeholder={multiple ? "Select tricks..." : "Select a trick..."}
+            />
             <Combobox.Trigger data-testid="trigger">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -160,6 +131,7 @@ describe("Combobox", () => {
     fireEvent.keyDown(input, { key: "ArrowDown" });
     await waitFor(() => {
       expect(fs540).toHaveAttribute("data-highlighted", "");
+      expect(input).toHaveAttribute("aria-activedescendant", fs540.id);
     });
 
     // Select the highlighted option
@@ -195,8 +167,9 @@ describe("Combobox", () => {
     // Test keyboard navigation
     fireEvent.keyDown(input, { key: "ArrowDown" });
     await waitFor(() => {
-      const option = screen.getByRole("option", { name: "Kickflip" });
-      expect(option).toHaveAttribute("data-highlighted", "");
+      const kickflip = screen.getByRole("option", { name: "Kickflip" });
+      expect(kickflip).toHaveAttribute("data-highlighted", "");
+      expect(input).toHaveAttribute("aria-activedescendant", kickflip.id);
     });
 
     // Test selection
@@ -209,10 +182,11 @@ describe("Combobox", () => {
     const onValueChange = vi.fn();
     const onOpenChange = vi.fn();
 
-    renderMultipleCombobox({
+    renderCombobox({
       onValueChange,
       onOpenChange,
       value: ["kickflip"],
+      multiple: true,
     });
 
     const input = screen.getByPlaceholderText("Select tricks...");
@@ -250,9 +224,10 @@ describe("Combobox", () => {
   test("handles badge keyboard navigation", async () => {
     const onValueChange = vi.fn();
 
-    renderMultipleCombobox({
+    renderCombobox({
       value: ["kickflip", "heelflip"],
       onValueChange,
+      multiple: true,
     });
 
     const input = screen.getByPlaceholderText("Select tricks...");
@@ -270,6 +245,64 @@ describe("Combobox", () => {
     // Delete highlighted badge with Enter
     fireEvent.keyDown(input, { key: "Enter" });
     expect(onValueChange).toHaveBeenCalledWith(["kickflip"]);
+  });
+
+  test("handles default filtering", async () => {
+    renderCombobox();
+    const input = screen.getByPlaceholderText("Select a trick...");
+
+    // Type fuzzy match
+    fireEvent.change(input, { target: { value: "flp" } });
+
+    const kickflip = screen.getByRole("option", { name: "Kickflip" });
+    const heelflip = screen.getByRole("option", { name: "Heelflip" });
+    const fs540 = screen.getByRole("option", { name: "FS 540" });
+
+    await waitFor(() => {
+      expect(kickflip).toBeInTheDocument();
+      expect(heelflip).toBeInTheDocument();
+      expect(fs540).not.toBeInTheDocument();
+    });
+
+    // Type exact match
+    fireEvent.change(input, { target: { value: "Kickflip" } });
+    await waitFor(() => {
+      expect(kickflip).toBeInTheDocument();
+      expect(heelflip).not.toBeInTheDocument();
+      expect(fs540).not.toBeInTheDocument();
+    });
+  });
+
+  test("handles exact match filtering", async () => {
+    renderCombobox({
+      exactMatch: true,
+    });
+
+    const input = screen.getByPlaceholderText("Select a trick...");
+    const trigger = screen.getByTestId("trigger");
+
+    // Open the combobox
+    fireEvent.click(trigger);
+
+    const kickflip = screen.getByRole("option", { name: "Kickflip" });
+    const heelflip = screen.getByRole("option", { name: "Heelflip" });
+    const fs540 = screen.getByRole("option", { name: "FS 540" });
+
+    // Type exact match
+    fireEvent.change(input, { target: { value: "Kickflip" } });
+    await waitFor(() => {
+      expect(kickflip).toBeInTheDocument();
+      expect(heelflip).not.toBeInTheDocument();
+      expect(fs540).not.toBeInTheDocument();
+    });
+
+    // Type partial match
+    fireEvent.change(input, { target: { value: "kick" } });
+    await waitFor(() => {
+      expect(kickflip).toBeInTheDocument();
+      expect(heelflip).not.toBeInTheDocument();
+      expect(fs540).not.toBeInTheDocument();
+    });
   });
 
   test("handles custom filtering", async () => {
@@ -294,74 +327,6 @@ describe("Combobox", () => {
       expect(screen.queryByText("FS 540")).not.toBeInTheDocument();
     });
   });
-
-  test("handles exact match filtering", async () => {
-    renderCombobox({
-      exactMatch: true,
-    });
-
-    const input = screen.getByPlaceholderText("Select a trick...");
-    const trigger = screen.getByTestId("trigger");
-
-    // Open the combobox
-    fireEvent.click(trigger);
-
-    // Type exact match
-    fireEvent.change(input, { target: { value: "Kickflip" } });
-    await waitFor(() => {
-      expect(screen.getByText("Kickflip")).toBeInTheDocument();
-      expect(screen.queryByText("Heelflip")).not.toBeInTheDocument();
-    });
-
-    // Type partial match
-    fireEvent.change(input, { target: { value: "kick" } });
-    await waitFor(() => {
-      expect(screen.getByText("Kickflip")).toBeInTheDocument();
-      expect(screen.queryByText("Heelflip")).not.toBeInTheDocument();
-    });
-  });
-
-  // test("handles form integration", async () => {
-  //   const onSubmit = vi.fn((e) => e.preventDefault());
-
-  //   render(
-  //     <form onSubmit={onSubmit} data-testid="form">
-  //       <Combobox.Root name="trick" required>
-  //         <Combobox.Label>Favorite tricks</Combobox.Label>
-  //         <Combobox.Anchor>
-  //           <Combobox.Input placeholder="Select a trick..." />
-  //           <Combobox.Trigger>▼</Combobox.Trigger>
-  //         </Combobox.Anchor>
-  //         <Combobox.Portal>
-  //           <Combobox.Content>
-  //             <Combobox.Item value="kickflip">Kickflip</Combobox.Item>
-  //           </Combobox.Content>
-  //         </Combobox.Portal>
-  //       </Combobox.Root>
-  //       <button type="submit">Submit</button>
-  //     </form>,
-  //   );
-
-  //   const form = screen.getByTestId("form");
-  //   const input = screen.getByPlaceholderText("Select a trick...");
-  //   const hiddenInput = screen.getByRole("textbox", { hidden: true });
-
-  //   // Try to submit without selection
-  //   fireEvent.submit(form);
-  //   expect(hiddenInput).toBeInvalid();
-  //   expect(onSubmit).not.toHaveBeenCalled();
-
-  //   // Select a value and submit
-  //   fireEvent.focus(input);
-  //   const option = screen.getByRole("option", { name: "Kickflip" });
-  //   fireEvent.click(option);
-  //   await waitFor(() => {
-  //     expect(input).toHaveValue("Kickflip");
-  //   });
-  //   fireEvent.submit(form);
-  //   expect(hiddenInput).toBeValid();
-  //   expect(onSubmit).toHaveBeenCalled();
-  // });
 
   test("handles open on focus", async () => {
     renderCombobox({
@@ -416,7 +381,7 @@ describe("Combobox", () => {
     expect(onValueChange).not.toHaveBeenCalled();
   });
 
-  test("handles readOnly state", async () => {
+  test("handles read only state", async () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
 

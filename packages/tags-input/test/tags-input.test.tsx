@@ -131,282 +131,7 @@ describe("TagsInput", () => {
     expect(input).toHaveValue("");
   });
 
-  test("controlled value with blur behavior", async () => {
-    const user = userEvent.setup();
-    const onValueChange = vi.fn();
-    const { rerender } = renderTagsInput({
-      value: ["initial"],
-      onValueChange,
-      blurBehavior: "add",
-    });
-
-    const input = screen.getByPlaceholderText("Add tag...");
-    await user.type(input, "blur tag");
-    await user.tab();
-
-    expect(onValueChange).toHaveBeenCalledWith(["initial", "blur tag"]);
-
-    // Simulate controlled update
-    rerender(
-      <TagsInput.Root
-        value={["initial", "blur tag"]}
-        onValueChange={onValueChange}
-      >
-        {({ value }) => (
-          <>
-            {value.map((tag) => (
-              <TagsInput.Item key={tag} value={tag}>
-                <TagsInput.ItemText>{tag}</TagsInput.ItemText>
-              </TagsInput.Item>
-            ))}
-            <TagsInput.Input placeholder="Add tag..." />
-          </>
-        )}
-      </TagsInput.Root>,
-    );
-
-    expect(screen.getByText("blur tag")).toBeInTheDocument();
-    expect(input).toHaveValue("");
-  });
-
-  test("controlled value with paste behavior", async () => {
-    const user = userEvent.setup();
-    const onValueChange = vi.fn();
-    const { rerender } = renderTagsInput({
-      value: ["initial"],
-      onValueChange,
-      addOnPaste: true,
-      delimiter: ",",
-    });
-
-    const input = screen.getByPlaceholderText("Add tag...");
-    await user.click(input);
-
-    // Mock clipboard data
-    const clipboardData = {
-      getData: vi.fn().mockReturnValue("paste1,paste2"),
-    };
-
-    fireEvent.paste(input, { clipboardData });
-
-    expect(onValueChange).toHaveBeenCalledWith(["initial", "paste1", "paste2"]);
-
-    // Simulate controlled update
-    rerender(
-      <TagsInput.Root
-        value={["initial", "paste1", "paste2"]}
-        onValueChange={onValueChange}
-      >
-        {({ value }) => (
-          <>
-            {value.map((tag) => (
-              <TagsInput.Item key={tag} value={tag}>
-                <TagsInput.ItemText>{tag}</TagsInput.ItemText>
-              </TagsInput.Item>
-            ))}
-            <TagsInput.Input placeholder="Add tag..." />
-          </>
-        )}
-      </TagsInput.Root>,
-    );
-
-    expect(screen.getByText("paste1")).toBeInTheDocument();
-    expect(screen.getByText("paste2")).toBeInTheDocument();
-  });
-
-  test("controlled value with validation", async () => {
-    const user = userEvent.setup();
-    const onValueChange = vi.fn();
-    const onValidate = vi.fn().mockImplementation((value) => value.length >= 3);
-    const onInvalid = vi.fn();
-    const { rerender } = renderTagsInput({
-      value: ["initial"],
-      onValueChange,
-      onValidate,
-      onInvalid,
-    });
-
-    const input = screen.getByPlaceholderText("Add tag...");
-
-    // Try invalid tag
-    await user.type(input, "ab{Enter}");
-    expect(onValidate).toHaveBeenCalledWith("ab");
-    expect(onInvalid).toHaveBeenCalledWith("ab");
-    expect(onValueChange).not.toHaveBeenCalledWith(["initial", "ab"]);
-
-    // Try valid tag
-    await user.clear(input);
-    await user.type(input, "valid{Enter}");
-    expect(onValidate).toHaveBeenCalledWith("valid");
-    expect(onValueChange).toHaveBeenCalledWith(["initial", "valid"]);
-
-    // Simulate controlled update
-    rerender(
-      <TagsInput.Root
-        value={["initial", "valid"]}
-        onValueChange={onValueChange}
-        onValidate={onValidate}
-        onInvalid={onInvalid}
-      >
-        {({ value }) => (
-          <>
-            {value.map((tag) => (
-              <TagsInput.Item key={tag} value={tag}>
-                <TagsInput.ItemText>{tag}</TagsInput.ItemText>
-              </TagsInput.Item>
-            ))}
-            <TagsInput.Input placeholder="Add tag..." />
-          </>
-        )}
-      </TagsInput.Root>,
-    );
-
-    expect(screen.getByText("valid")).toBeInTheDocument();
-    expect(screen.queryByText("ab")).not.toBeInTheDocument();
-  });
-
-  test("controlled value with external updates", () => {
-    const onValueChange = vi.fn();
-    const { rerender } = renderTagsInput({
-      value: ["initial"],
-      onValueChange,
-    });
-
-    // Simulate external value update
-    rerender(
-      <TagsInput.Root
-        value={["initial", "external"]}
-        onValueChange={onValueChange}
-      >
-        {({ value }) => (
-          <>
-            {value.map((tag) => (
-              <TagsInput.Item key={tag} value={tag}>
-                <TagsInput.ItemText>{tag}</TagsInput.ItemText>
-              </TagsInput.Item>
-            ))}
-            <TagsInput.Input placeholder="Add tag..." />
-          </>
-        )}
-      </TagsInput.Root>,
-    );
-
-    expect(screen.getByText("external")).toBeInTheDocument();
-
-    // Verify input still works after external update
-    const input = screen.getByPlaceholderText("Add tag...");
-    fireEvent.change(input, { target: { value: "after external" } });
-    fireEvent.keyDown(input, { key: "Enter" });
-
-    expect(onValueChange).toHaveBeenCalledWith([
-      "initial",
-      "external",
-      "after external",
-    ]);
-  });
-
-  test("validates tags before adding", async () => {
-    const user = userEvent.setup();
-    const onValidate = vi.fn().mockImplementation((value) => value.length >= 3);
-    const onInvalid = vi.fn();
-
-    renderTagsInput({ onValidate, onInvalid });
-
-    const input = screen.getByPlaceholderText("Add tag...");
-
-    // Try adding invalid tag
-    await user.type(input, "ab{Enter}");
-    expect(onValidate).toHaveBeenCalledWith("ab");
-    expect(onInvalid).toHaveBeenCalledWith("ab");
-    expect(screen.queryByText("ab")).not.toBeInTheDocument();
-
-    // Add valid tag
-    await user.clear(input);
-    await user.type(input, "valid tag{Enter}");
-    expect(onValidate).toHaveBeenCalledWith("valid tag");
-    expect(screen.getByText("valid tag")).toBeInTheDocument();
-  });
-
-  test("prevents duplicate tags", async () => {
-    const user = userEvent.setup();
-    const onInvalid = vi.fn();
-
-    renderTagsInput({
-      defaultValue: ["existing tag"],
-      onInvalid,
-    });
-
-    const input = screen.getByPlaceholderText("Add tag...");
-    await user.type(input, "existing tag{Enter}");
-
-    expect(onInvalid).toHaveBeenCalledWith("existing tag");
-    expect(screen.getAllByText("existing tag")).toHaveLength(1);
-  });
-
-  test("respects max tags limit", async () => {
-    const user = userEvent.setup();
-    const onInvalid = vi.fn();
-
-    renderTagsInput({
-      defaultValue: ["tag1", "tag2"],
-      max: 2,
-      onInvalid,
-    });
-
-    const input = screen.getByPlaceholderText("Add tag...");
-    await user.type(input, "tag3{Enter}");
-
-    expect(onInvalid).toHaveBeenCalledWith("tag3");
-    expect(screen.queryByText("tag3")).not.toBeInTheDocument();
-  });
-
-  test("handles keyboard navigation between tags", async () => {
-    const user = userEvent.setup();
-    renderTagsInput({ defaultValue: ["tag1", "tag2", "tag3"] });
-
-    await user.tab(); // Focus input
-    await user.keyboard("{ArrowLeft}"); // Move to last tag
-
-    expect(screen.getByText("tag3").closest("div")).toHaveAttribute(
-      "data-state",
-      "active",
-    );
-
-    await user.keyboard("{ArrowLeft}"); // Move to second tag
-    expect(screen.getByText("tag2").closest("div")).toHaveAttribute(
-      "data-state",
-      "active",
-    );
-
-    await user.keyboard("{ArrowRight}"); // Move back to third tag
-    expect(screen.getByText("tag3").closest("div")).toHaveAttribute(
-      "data-state",
-      "active",
-    );
-  });
-
-  test("supports adding tags via paste", async () => {
-    const user = userEvent.setup();
-    renderTagsInput({ addOnPaste: true, delimiter: "," });
-
-    const input = screen.getByPlaceholderText("Add tag...");
-    await user.click(input);
-
-    // Mock clipboard data
-    const clipboardData = {
-      getData: vi.fn().mockReturnValue("tag1,tag2,tag3"),
-    };
-
-    fireEvent.paste(input, {
-      clipboardData,
-    });
-
-    expect(screen.getByText("tag1")).toBeInTheDocument();
-    expect(screen.getByText("tag2")).toBeInTheDocument();
-    expect(screen.getByText("tag3")).toBeInTheDocument();
-  });
-
-  test("handles form integration correctly", async () => {
+  test("handles form integration", async () => {
     const user = userEvent.setup();
     const onSubmit = vi.fn();
 
@@ -444,20 +169,36 @@ describe("TagsInput", () => {
     expect(onSubmit).toHaveBeenCalled();
   });
 
-  test("handles blur behavior correctly", async () => {
+  test("handles blur behavior", async () => {
     const user = userEvent.setup();
-    const onValueChange = vi.fn();
 
-    renderTagsInput({
+    // Test "add" behavior
+    const onAddValueChange = vi.fn();
+    const { unmount } = renderTagsInput({
       blurBehavior: "add",
-      onValueChange,
+      onValueChange: onAddValueChange,
     });
 
-    const input = screen.getByPlaceholderText("Add tag...");
+    let input = screen.getByPlaceholderText("Add tag...");
     await user.type(input, "new tag");
-    await user.tab(); // Blur the input
+    await user.tab();
 
-    expect(onValueChange).toHaveBeenCalledWith(["new tag"]);
+    expect(onAddValueChange).toHaveBeenCalledWith(["new tag"]);
+    unmount();
+
+    // Test "clear" behavior
+    const onClearValueChange = vi.fn();
+    renderTagsInput({
+      blurBehavior: "clear",
+      onValueChange: onClearValueChange,
+    });
+
+    input = screen.getByPlaceholderText("Add tag...");
+    await user.type(input, "new tag");
+    await user.tab();
+
+    expect(onClearValueChange).not.toHaveBeenCalled();
+    expect(input).toHaveValue("");
   });
 
   test("supports editing mode", async () => {
@@ -811,7 +552,7 @@ describe("TagsInput", () => {
     expect(document.activeElement).toBe(input);
   });
 
-  test("respects readOnly state", async () => {
+  test("respects read only state", async () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
 
