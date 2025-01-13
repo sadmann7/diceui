@@ -6,6 +6,22 @@ const HIGHLIGHTER_NAME = "MentionHighlighter";
 
 type HighlighterElement = HTMLDivElement;
 
+const defaultHighlighterStyle: React.CSSProperties = {
+  position: "absolute",
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: "transparent",
+  color: "transparent",
+  whiteSpace: "pre-wrap",
+  wordWrap: "break-word",
+  pointerEvents: "none",
+  userSelect: "none",
+  overflow: "auto",
+  width: "100%",
+};
+
 interface MentionHighlighterProps
   extends React.HTMLAttributes<HighlighterElement> {}
 
@@ -20,84 +36,68 @@ const MentionHighlighter = React.forwardRef<
   const [inputStyle, setInputStyle] = React.useState<CSSStyleDeclaration>();
   const onInputStyleChange = useCallbackRef(setInputStyle);
 
-  // Update highlighter scroll position
   const onResize = React.useCallback(() => {
     const input = context.inputRef.current;
     const highlighter = highlighterRef.current;
     if (!input || !highlighter) return;
 
-    // Sync scroll position
-    highlighter.scrollLeft = input.scrollLeft;
-    highlighter.scrollTop = input.scrollTop;
-
-    // Sync height
-    highlighter.style.height = `${input.offsetHeight}px`;
+    requestAnimationFrame(() => {
+      highlighter.scrollLeft = input.scrollLeft;
+      highlighter.scrollTop = input.scrollTop;
+      highlighter.style.height = `${input.offsetHeight}px`;
+    });
   }, [context.inputRef]);
 
-  React.useEffect(() => {
-    if (!context.inputRef.current) return;
+  const onScroll = React.useCallback(() => {
+    requestAnimationFrame(onResize);
+  }, [onResize]);
 
-    const computedStyle = window.getComputedStyle(context.inputRef.current);
+  React.useEffect(() => {
+    const input = context.inputRef.current;
+    if (!input) return;
+
+    const computedStyle = window.getComputedStyle(input);
     onInputStyleChange(computedStyle);
 
-    // Add scroll event listener
-    const input = context.inputRef.current;
-
-    // Initial sync
     onResize();
 
-    // Handle scroll events
-    function onScroll() {
-      window.requestAnimationFrame(onResize);
-    }
-
-    input.addEventListener("scroll", onScroll);
-    window.addEventListener("resize", onResize);
+    input.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize, { passive: true });
 
     return () => {
       input.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
     };
-  }, [context.inputRef, onInputStyleChange, onResize]);
+  }, [context.inputRef, onInputStyleChange, onResize, onScroll]);
 
-  if (!inputStyle) return null;
+  const highlighterStyle = React.useMemo<React.CSSProperties>(() => {
+    if (!inputStyle) return defaultHighlighterStyle;
 
-  const highlighterStyle: React.CSSProperties = {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "transparent",
-    color: "transparent",
-    whiteSpace: "pre-wrap",
-    wordWrap: "break-word",
-    pointerEvents: "none",
-    userSelect: "none",
-    font: inputStyle.font,
-    letterSpacing: inputStyle.letterSpacing,
-    textTransform:
-      inputStyle.textTransform as React.CSSProperties["textTransform"],
-    padding: inputStyle.padding,
-    border: inputStyle.border,
-    borderRadius: inputStyle.borderRadius,
-    boxSizing: inputStyle.boxSizing as React.CSSProperties["boxSizing"],
-    overflow: "auto",
-    width: "100%",
-    ...style,
-  };
+    return {
+      ...defaultHighlighterStyle,
+      font: inputStyle.font,
+      letterSpacing: inputStyle.letterSpacing,
+      textTransform:
+        inputStyle.textTransform as React.CSSProperties["textTransform"],
+      padding: inputStyle.padding,
+      border: inputStyle.border,
+      borderRadius: inputStyle.borderRadius,
+      boxSizing: inputStyle.boxSizing as React.CSSProperties["boxSizing"],
+      ...style,
+    };
+  }, [inputStyle, style]);
 
-  function renderHighlights() {
+  const onSegmentsRender = React.useCallback(() => {
     if (!context.inputRef.current) return null;
 
     const value = context.inputRef.current.value;
-    const parts: React.ReactNode[] = [];
+    const segments: React.ReactNode[] = [];
     let lastIndex = 0;
 
     for (const mention of context.mentions) {
       // Add text before mention
       if (mention.start > lastIndex) {
-        parts.push(
+        segments.push(
           <span key={`text-${mention.start}-${mention.end}`}>
             {value.slice(lastIndex, mention.start)}
           </span>,
@@ -105,7 +105,7 @@ const MentionHighlighter = React.forwardRef<
       }
 
       // Add highlighted mention
-      parts.push(
+      segments.push(
         <span
           key={`mention-${mention.start}-${mention.end}`}
           data-mention-segment
@@ -119,7 +119,7 @@ const MentionHighlighter = React.forwardRef<
 
     // Add remaining text
     if (lastIndex < value.length) {
-      parts.push(
+      segments.push(
         <span key={`text-end-${value.length}`}>
           {value.slice(lastIndex, value.length)}
         </span>,
@@ -127,14 +127,16 @@ const MentionHighlighter = React.forwardRef<
     }
 
     // Add a space to ensure correct height
-    parts.push(<span key="space">&nbsp;</span>);
+    segments.push(<span key="space">&nbsp;</span>);
 
-    return parts;
-  }
+    return segments;
+  }, [context.inputRef, context.mentions]);
+
+  if (!inputStyle) return null;
 
   return (
     <div {...highlighterProps} ref={composedRef} style={highlighterStyle}>
-      {renderHighlights()}
+      {onSegmentsRender()}
     </div>
   );
 });
