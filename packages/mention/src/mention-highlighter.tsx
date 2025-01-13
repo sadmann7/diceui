@@ -4,9 +4,6 @@ import { useMentionContext } from "./mention-root";
 
 const HIGHLIGHTER_NAME = "MentionHighlighter";
 
-interface MentionHighlighterProps
-  extends React.HTMLAttributes<HTMLDivElement> {}
-
 const baseHighlighterStyle: React.CSSProperties = {
   position: "absolute",
   top: 0,
@@ -21,6 +18,9 @@ const baseHighlighterStyle: React.CSSProperties = {
   userSelect: "none",
 };
 
+interface MentionHighlighterProps
+  extends React.HTMLAttributes<HTMLDivElement> {}
+
 const MentionHighlighter = React.memo(
   React.forwardRef<HTMLDivElement, MentionHighlighterProps>(
     (props, forwardedRef) => {
@@ -32,6 +32,7 @@ const MentionHighlighter = React.memo(
 
       React.useEffect(() => {
         if (!context.inputRef.current) return;
+
         const computedStyle = window.getComputedStyle(context.inputRef.current);
         onInputStyleChange(computedStyle);
       }, [context.inputRef, onInputStyleChange]);
@@ -56,7 +57,7 @@ const MentionHighlighter = React.memo(
         [inputStyle, style],
       );
 
-      const renderHighlights = React.useCallback(() => {
+      const onHighlightsRender = React.useCallback(() => {
         if (!context.inputRef.current) return null;
 
         const value = context.inputRef.current.value;
@@ -99,7 +100,7 @@ const MentionHighlighter = React.memo(
 
       return (
         <div {...highlighterProps} ref={forwardedRef} style={highlighterStyle}>
-          {renderHighlights()}
+          {onHighlightsRender()}
         </div>
       );
     },
