@@ -593,10 +593,10 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         context.onIsPastingChange,
         context.filterStore,
         context.onItemsFilter,
+        context.getItemLabel,
         context.onMentionAdd,
         context.disabled,
         context.readonly,
-        context.getItemLabel,
       ],
     );
 

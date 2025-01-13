@@ -21,8 +21,21 @@ const [MentionItemProvider, useMentionItemContext] =
 
 interface MentionItemProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
+  /**
+   * The value of the item.
+   *
+   * Cannot be an empty string.
+   */
   value: string;
+
+  /**
+   * The label of the item. By default value is used as label.
+   *
+   * Override the text value for mention item in the input.
+   */
   label?: string;
+
+  /** Whether the item is disabled. */
   disabled?: boolean;
 }
 
@@ -44,10 +57,10 @@ const MentionItem = React.forwardRef<ItemElement, MentionItemProps>(
       }
 
       return context.onItemRegister({
+        ref: { current: itemNode },
         value,
         label,
         disabled: isDisabled,
-        ref: { current: itemNode },
       });
     }, [context.onItemRegister, label, value, isDisabled, itemNode]);
 
@@ -111,10 +124,10 @@ const MentionItem = React.forwardRef<ItemElement, MentionItemProps>(
           onPointerMove={composeEventHandlers(itemProps.onPointerMove, () => {
             if (isDisabled || !itemNode) return;
             context.onHighlightedItemChange({
+              ref: { current: itemNode },
               label,
               value,
               disabled: isDisabled,
-              ref: { current: itemNode },
             });
           })}
         />

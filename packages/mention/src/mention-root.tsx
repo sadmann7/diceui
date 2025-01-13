@@ -277,13 +277,23 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionRootProps>(
       loop,
     });
 
+    const getItemLabel = React.useCallback(
+      (value: string) => {
+        return (
+          getItems()
+            .filter((item) => !item.disabled)
+            .find((item) => item.value === value)?.label ?? value
+        );
+      },
+      [getItems],
+    );
+
     const onMentionAdd = React.useCallback(
       (value: string, triggerIndex: number) => {
         const input = inputRef.current;
         if (!input) return;
 
-        const mentionLabel =
-          getItems().find((item) => item.value === value)?.label ?? value;
+        const mentionLabel = getItemLabel(value);
         const mentionText = `${trigger}${mentionLabel}`;
         const beforeTrigger = input.value.slice(0, triggerIndex);
         const afterSearchText = input.value.slice(
@@ -310,7 +320,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionRootProps>(
         setHighlightedItem(null);
         filterStore.search = "";
       },
-      [trigger, setInputValue, setValue, setOpen, filterStore, getItems],
+      [trigger, setInputValue, setValue, setOpen, getItemLabel, filterStore],
     );
 
     const onMentionsRemove = React.useCallback(
@@ -323,17 +333,6 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionRootProps>(
         );
       },
       [],
-    );
-
-    const getItemLabel = React.useCallback(
-      (value: string) => {
-        return (
-          getItems()
-            .filter((item) => !item.disabled)
-            .find((item) => item.value === value)?.label ?? value
-        );
-      },
-      [getItems],
     );
 
     console.log({ value, mentions });

@@ -52,7 +52,6 @@ interface MentionContentProps
 const MentionContent = React.forwardRef<ContentElement, MentionContentProps>(
   (props, forwardedRef) => {
     const {
-      forceMount = false,
       side = "bottom",
       sideOffset = 4,
       align = "start",
@@ -64,6 +63,7 @@ const MentionContent = React.forwardRef<ContentElement, MentionContentProps>(
       strategy = "absolute",
       avoidCollisions = true,
       fitViewport = false,
+      forceMount = false,
       hideWhenDetached = false,
       trackAnchor = true,
       onEscapeKeyDown,
@@ -85,10 +85,10 @@ const MentionContent = React.forwardRef<ContentElement, MentionContentProps>(
       arrowPadding,
       collisionBoundary,
       collisionPadding,
-      disableArrow: true,
       sticky,
       strategy,
       avoidCollisions,
+      disableArrow: true,
       fitViewport,
       hideWhenDetached,
       trackAnchor,
@@ -97,13 +97,12 @@ const MentionContent = React.forwardRef<ContentElement, MentionContentProps>(
     const composedRef = useComposedRefs(forwardedRef, (node) =>
       positionerContext.refs.setFloating(node),
     );
-
     const composedStyle = React.useMemo<React.CSSProperties>(() => {
       return {
         ...style,
         ...positionerContext.floatingStyles,
         ...(!context.open && forceMount ? { visibility: "hidden" } : {}),
-        // Items are registered by opening the popover when pasting, so need to visually hide the popover
+        // Hide content visually during pasting while keeping items registered
         ...(context.isPasting ? visuallyHidden : {}),
       };
     }, [
