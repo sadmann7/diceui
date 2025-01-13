@@ -75,13 +75,22 @@ const MentionHighlighter = React.memo(
         return {
           ...defaultHighlighterStyle,
           font: inputStyle.font,
+          fontSize: inputStyle.fontSize,
+          fontFamily: inputStyle.fontFamily,
+          fontWeight: inputStyle.fontWeight,
+          lineHeight: inputStyle.lineHeight,
           letterSpacing: inputStyle.letterSpacing,
           textTransform:
             inputStyle.textTransform as React.CSSProperties["textTransform"],
+          textAlign: inputStyle.textAlign as React.CSSProperties["textAlign"],
+          textIndent: inputStyle.textIndent,
           padding: inputStyle.padding,
           border: inputStyle.border,
           borderRadius: inputStyle.borderRadius,
           boxSizing: inputStyle.boxSizing as React.CSSProperties["boxSizing"],
+          wordBreak: inputStyle.wordBreak as React.CSSProperties["wordBreak"],
+          overflowWrap:
+            inputStyle.overflowWrap as React.CSSProperties["overflowWrap"],
           ...style,
         };
       }, [inputStyle, style]);
