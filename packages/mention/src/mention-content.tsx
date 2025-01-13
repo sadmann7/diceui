@@ -9,6 +9,7 @@ import {
   useComposedRefs,
   useDismiss,
   useScrollLock,
+  visuallyHidden,
 } from "@diceui/shared";
 import { FloatingFocusManager } from "@floating-ui/react";
 import * as React from "react";
@@ -102,8 +103,15 @@ const MentionContent = React.forwardRef<ContentElement, MentionContentProps>(
         ...style,
         ...positionerContext.floatingStyles,
         ...(!context.open && forceMount ? { visibility: "hidden" } : {}),
+        ...(context.isPasting ? visuallyHidden : {}),
       };
-    }, [style, positionerContext.floatingStyles, context.open, forceMount]);
+    }, [
+      style,
+      positionerContext.floatingStyles,
+      forceMount,
+      context.open,
+      context.isPasting,
+    ]);
 
     useDismiss({
       enabled: context.open,

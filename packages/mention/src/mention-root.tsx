@@ -58,6 +58,7 @@ interface MentionContextValue {
   };
   onFilter?: (options: string[], term: string) => string[];
   onItemsFilter: () => void;
+  getIsItemVisible: (value: string) => boolean;
   highlightedItem: CollectionItem<CollectionElement, ItemData> | null;
   onHighlightedItemChange: (
     item: CollectionItem<CollectionElement, ItemData> | null,
@@ -66,7 +67,8 @@ interface MentionContextValue {
   mentions: Mention[];
   onMentionAdd: (value: string, triggerIndex: number) => void;
   onMentionsRemove: (mentionsToRemove: Mention[]) => void;
-  getIsItemVisible: (value: string) => boolean;
+  isPasting: boolean;
+  onIsPastingChange: (isPasting: boolean) => void;
   dir: Direction;
   disabled: boolean;
   exactMatch: boolean;
@@ -229,6 +231,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionRootProps>(
       ItemData
     > | null>(null);
     const [mentions, setMentions] = React.useState<Mention[]>([]);
+    const [isPasting, setIsPasting] = React.useState(false);
 
     const { filterStore, onItemsFilter, getIsItemVisible } = useFilterStore({
       itemMap,
@@ -346,6 +349,8 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionRootProps>(
         mentions={mentions}
         onMentionAdd={onMentionAdd}
         onMentionsRemove={onMentionsRemove}
+        isPasting={isPasting}
+        onIsPastingChange={setIsPasting}
         dir={dir}
         disabled={disabled}
         exactMatch={exactMatch}
