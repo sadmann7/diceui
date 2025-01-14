@@ -16,6 +16,7 @@ interface MentionInputProps
 
 const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
   (props, forwardedRef) => {
+    const { style, ...inputProps } = props;
     const context = useMentionContext(INPUT_NAME);
     const composedRef = useComposedRefs(forwardedRef, context.inputRef);
 
@@ -285,6 +286,56 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         const cursorPosition = input.selectionStart ?? 0;
         const selectionEnd = input.selectionEnd ?? cursorPosition;
         const hasSelection = cursorPosition !== selectionEnd;
+
+        // Handle cursor navigation around mentions
+        if (
+          (event.key === "ArrowLeft" || event.key === "ArrowRight") &&
+          !hasSelection &&
+          !event.shiftKey // Don't override shift + arrow selection
+        ) {
+          const isCtrlOrCmd = event.metaKey || event.ctrlKey;
+          const isLeftArrow = event.key === "ArrowLeft";
+
+          // Find mention that's immediately before or after cursor
+          const adjacentMention = context.mentions.find((m) => {
+            if (isLeftArrow) {
+              // For left arrow, check if cursor is at the end of mention
+              return cursorPosition === m.end;
+            }
+            // For right arrow, check if cursor is at the start of mention
+            return cursorPosition === m.start;
+          });
+
+          if (adjacentMention) {
+            event.preventDefault();
+            const newPosition = isLeftArrow
+              ? adjacentMention.start
+              : adjacentMention.end;
+            input.setSelectionRange(newPosition, newPosition);
+            return;
+          }
+
+          // Handle Ctrl/Cmd + Arrow navigation
+          if (isCtrlOrCmd) {
+            const mentionToJump = context.mentions.find((m) => {
+              if (isLeftArrow) {
+                // Find the closest mention before cursor
+                return m.end < cursorPosition;
+              }
+              // Find the closest mention after cursor
+              return m.start > cursorPosition;
+            });
+
+            if (mentionToJump) {
+              event.preventDefault();
+              const newPosition = isLeftArrow
+                ? mentionToJump.start
+                : mentionToJump.end;
+              input.setSelectionRange(newPosition, newPosition);
+              return;
+            }
+          }
+        }
 
         // Handle text clearing with selection
         if (
@@ -596,15 +647,20 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           aria-readonly={context.readonly}
           disabled={context.disabled}
           readOnly={context.readonly}
-          {...props}
+          {...inputProps}
           ref={composedRef}
-          onChange={composeEventHandlers(props.onChange, onChange)}
-          onClick={composeEventHandlers(props.onClick, onClick)}
-          onCut={composeEventHandlers(props.onCut, onCut)}
-          onFocus={composeEventHandlers(props.onFocus, onFocus)}
-          onKeyDown={composeEventHandlers(props.onKeyDown, onKeyDown)}
-          onPaste={composeEventHandlers(props.onPaste, onPaste)}
-          onSelect={composeEventHandlers(props.onSelect, onSelect)}
+          style={{
+            position: "relative",
+            zIndex: 1,
+            ...style,
+          }}
+          onChange={composeEventHandlers(inputProps.onChange, onChange)}
+          onClick={composeEventHandlers(inputProps.onClick, onClick)}
+          onCut={composeEventHandlers(inputProps.onCut, onCut)}
+          onFocus={composeEventHandlers(inputProps.onFocus, onFocus)}
+          onKeyDown={composeEventHandlers(inputProps.onKeyDown, onKeyDown)}
+          onPaste={composeEventHandlers(inputProps.onPaste, onPaste)}
+          onSelect={composeEventHandlers(inputProps.onSelect, onSelect)}
         />
       </div>
     );
