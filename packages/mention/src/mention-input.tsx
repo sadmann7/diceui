@@ -498,6 +498,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
 
         // Split text by trigger and process each mention
         const parts = pastedText.split(context.trigger);
+
         let newText = "";
         let currentPosition = cursorPosition;
 
@@ -512,30 +513,12 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           const part = parts[i];
           if (!part) continue;
 
-          // Try to find the next trigger to determine mention boundary
-          const nextTriggerIndex = part.indexOf(context.trigger);
-          // If no next trigger, check for newline as boundary
-          const newlineIndex = part.indexOf("\n");
+          // Extract mention text up until whitespace or punctuation
+          const match = part.match(/^([^\s.,!?;]+)/);
+          if (!match?.[1]) continue;
 
-          let endIndex: number;
-          if (
-            nextTriggerIndex !== -1 &&
-            (newlineIndex === -1 || nextTriggerIndex < newlineIndex)
-          ) {
-            endIndex = nextTriggerIndex;
-          } else if (newlineIndex !== -1) {
-            endIndex = newlineIndex;
-          } else {
-            endIndex = part.length;
-          }
-
-          const mentionText = part.slice(0, endIndex).trim();
-          const remainingText = part.slice(endIndex);
-
-          console.log({
-            mentionText,
-            remainingText,
-          });
+          const mentionText = match[1].trim();
+          const remainingText = part.slice(match[0].length);
 
           // Only process if there's mention text
           if (mentionText) {
@@ -546,8 +529,12 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
 
             requestAnimationFrame(() => {
               // Check if mention exists in available items
-              // TODO: Check if mentionText exits in the context.getItems() value
-              const isValidMention = true;
+              const mentionLabel = context
+                .getItems()
+                .find(
+                  (item) =>
+                    item.value.toLowerCase() === mentionText.toLowerCase(),
+                )?.label;
 
               // Reset states
               context.onOpenChange(false);
@@ -557,7 +544,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
               const mentionStartPosition = cursorPosition + newText.length;
 
               // Add the text to the new content using the actual label
-              const textToAdd = `${context.trigger}${mentionText} ${remainingText}`;
+              const textToAdd = `${context.trigger}${mentionLabel ?? mentionText}${remainingText}`;
               newText += textToAdd;
               currentPosition += textToAdd.length;
 
@@ -571,8 +558,8 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
               context.onInputValueChange?.(newValue);
 
               // Only add mention if it exists in the available items
-              if (isValidMention) {
-                context.onMentionAdd(mentionText, mentionStartPosition);
+              if (mentionLabel) {
+                context.onMentionAdd(mentionLabel, mentionStartPosition);
               }
 
               inputElement.setSelectionRange(currentPosition, currentPosition);
@@ -584,6 +571,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         context.trigger,
         context.onOpenChange,
         context.onInputValueChange,
+        context.getItems,
         context.onIsPastingChange,
         context.onMentionAdd,
         context.disabled,
