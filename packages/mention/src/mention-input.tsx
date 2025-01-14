@@ -331,104 +331,108 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
               return;
             }
 
-            // First check for word boundaries
+            // Find all word boundaries and mention boundaries
             const text = input.value;
-            let wordBoundaryPosition = cursorPosition;
+            const boundaries: number[] = [];
 
-            if (isLeftArrow) {
-              // Skip spaces before cursor
-              while (
-                wordBoundaryPosition > 0 &&
-                text.charAt(wordBoundaryPosition - 1).match(/\s/)
-              ) {
-                wordBoundaryPosition--;
-              }
-              // If we're not at the start of text, find the start of the current/previous word
-              if (wordBoundaryPosition > 0) {
-                while (
-                  wordBoundaryPosition > 0 &&
-                  !text.charAt(wordBoundaryPosition - 1).match(/\s/)
-                ) {
-                  wordBoundaryPosition--;
-                }
-                // If there's text before cursor that's not a mention, move there
-                const isMentionBoundary = context.mentions.some(
-                  (m) =>
-                    m.start === wordBoundaryPosition ||
-                    m.end === wordBoundaryPosition,
-                );
-                if (!isMentionBoundary) {
-                  event.preventDefault();
-                  input.setSelectionRange(
-                    wordBoundaryPosition,
-                    wordBoundaryPosition,
-                  );
-                  return;
-                }
-              }
-            } else {
-              // Skip spaces after cursor
-              while (
-                wordBoundaryPosition < text.length &&
-                text.charAt(wordBoundaryPosition).match(/\s/)
-              ) {
-                wordBoundaryPosition++;
-              }
-              // If we're not at the end of text, find the end of the current/next word
-              if (wordBoundaryPosition < text.length) {
-                while (
-                  wordBoundaryPosition < text.length &&
-                  !text.charAt(wordBoundaryPosition).match(/\s/)
-                ) {
-                  wordBoundaryPosition++;
-                }
-                // If there's text after cursor that's not a mention, move there
-                const isMentionBoundary = context.mentions.some(
-                  (m) =>
-                    m.start === wordBoundaryPosition ||
-                    m.end === wordBoundaryPosition,
-                );
-                if (!isMentionBoundary) {
-                  event.preventDefault();
-                  input.setSelectionRange(
-                    wordBoundaryPosition,
-                    wordBoundaryPosition,
-                  );
-                  return;
-                }
-              }
+            // Add mention boundaries
+            for (const mention of context.mentions) {
+              boundaries.push(mention.start);
+              boundaries.push(mention.end);
             }
 
-            // If no word boundary found, look for nearest mention
-            const nearestMention = context.mentions.reduce(
-              (nearest, mention) => {
-                if (isLeftArrow) {
-                  // For left arrow, find the closest mention that ends before cursor
-                  if (mention.end <= cursorPosition) {
-                    return !nearest || mention.end > nearest.end
-                      ? mention
-                      : nearest;
-                  }
-                } else {
-                  // For right arrow, find the closest mention that starts after cursor
-                  if (mention.start >= cursorPosition) {
-                    return !nearest || mention.start < nearest.start
-                      ? mention
-                      : nearest;
-                  }
-                }
-                return nearest;
-              },
-              null as (typeof context.mentions)[0] | null,
+            // Add word boundaries
+            let pos = 0;
+            while (pos < text.length) {
+              // Skip spaces
+              while (pos < text.length && text[pos]?.match(/\s/)) pos++;
+              if (pos < text.length) boundaries.push(pos);
+              // Skip non-spaces
+              while (pos < text.length && !text[pos]?.match(/\s/)) pos++;
+              if (pos < text.length) boundaries.push(pos);
+            }
+
+            // Sort and deduplicate boundaries
+            const uniqueBoundaries = [...new Set(boundaries)].sort(
+              (a, b) => a - b,
             );
 
-            if (nearestMention) {
-              event.preventDefault();
-              const newPosition = isLeftArrow
-                ? nearestMention.start
-                : nearestMention.end;
-              input.setSelectionRange(newPosition, newPosition);
-              return;
+            // Find the next boundary position
+            if (isLeftArrow) {
+              // For left arrow, find the closest mention end or word boundary before cursor
+              const prevBoundaries = uniqueBoundaries
+                .filter((pos) => pos < cursorPosition)
+                .reverse();
+
+              // Find the closest mention end before cursor
+              const closestMentionEnd = context.mentions.find(
+                (m) =>
+                  m.end < cursorPosition &&
+                  !text.slice(m.end, cursorPosition).trim(),
+              )?.start;
+
+              // Find the closest word boundary
+              const closestWordBoundary = prevBoundaries.find(
+                (pos) =>
+                  !context.mentions.some((m) => pos > m.start && pos < m.end),
+              );
+
+              // If there's a mention end with only whitespace between it and cursor,
+              // move to the start of that mention
+              if (closestMentionEnd !== undefined) {
+                event.preventDefault();
+                input.setSelectionRange(closestMentionEnd, closestMentionEnd);
+                return;
+              }
+
+              // Otherwise move to the closest word boundary
+              if (typeof closestWordBoundary === "number") {
+                event.preventDefault();
+                input.setSelectionRange(
+                  closestWordBoundary,
+                  closestWordBoundary,
+                );
+                return;
+              }
+            } else {
+              // For right arrow, similar logic but looking forward
+              const nextBoundaries = uniqueBoundaries.filter(
+                (pos) => pos > cursorPosition,
+              );
+
+              // Find the closest mention start after cursor
+              const closestMentionStart = context.mentions.find(
+                (m) =>
+                  m.start > cursorPosition &&
+                  !text.slice(cursorPosition, m.start).trim(),
+              )?.end;
+
+              // Find the closest word boundary
+              const closestWordBoundary = nextBoundaries.find(
+                (pos) =>
+                  !context.mentions.some((m) => pos > m.start && pos < m.end),
+              );
+
+              // If there's a mention start with only whitespace between it and cursor,
+              // move to the end of that mention
+              if (closestMentionStart !== undefined) {
+                event.preventDefault();
+                input.setSelectionRange(
+                  closestMentionStart,
+                  closestMentionStart,
+                );
+                return;
+              }
+
+              // Otherwise move to the closest word boundary
+              if (typeof closestWordBoundary === "number") {
+                event.preventDefault();
+                input.setSelectionRange(
+                  closestWordBoundary,
+                  closestWordBoundary,
+                );
+                return;
+              }
             }
           }
         }
