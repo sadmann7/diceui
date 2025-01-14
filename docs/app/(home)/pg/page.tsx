@@ -1,5 +1,3 @@
-"use client";
-
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,24 +28,20 @@ import {
 } from "@/registry/default/ui/combobox";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
-import * as React from "react";
 
 export default function PlaygroundPage() {
-  const [value, setValue] = React.useState("");
-  const [values, setValues] = React.useState<string[]>([]);
-
   return (
     <Shell>
       <div className="h-screen bg-accent" />
       <Textarea placeholder="Type here..." className="max-w-[40rem]" />
-      <Mention.Root
-        value={values}
-        onValueChange={setValues}
-        className="flex max-w-[40rem] flex-col gap-2 [&_[data-mention-segment]]:rounded [&_[data-mention-segment]]:bg-blue-600 [&_[data-mention-segment]]:text-white"
-      >
+      <Mention.Root className="flex max-w-[40rem] flex-col gap-2 [&_[data-mention-segment]]:rounded [&_[data-mention-segment]]:bg-blue-600 [&_[data-mention-segment]]:text-white">
         <Mention.Label>Tricks</Mention.Label>
-        <Mention.Input placeholder="Enter @ to mention a trick..." asChild>
-          <Textarea />
+        <Mention.Input
+          placeholder="Enter @ to mention a trick..."
+          className="flex min-h-[60px] w-full rounded-md border border-zinc-200 bg-transparent px-3 py-2 text-base shadow-sm placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-600 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:border-zinc-800 focus-visible:dark:ring-zinc-300"
+          asChild
+        >
+          <textarea />
         </Mention.Input>
         <Mention.Portal>
           <Mention.Content className="data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 min-w-40 rounded-md border bg-popover p-1 text-popover-foreground shadow-md data-[state=closed]:animate-out data-[state=open]:animate-in">
@@ -94,7 +88,7 @@ export default function PlaygroundPage() {
           <DropdownMenuItem>Pineapple</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <Select value={value} onValueChange={setValue}>
+      <Select>
         <SelectTrigger className="w-[11.25rem]">
           <SelectValue placeholder="Select a trick" />
         </SelectTrigger>

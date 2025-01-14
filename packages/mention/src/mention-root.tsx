@@ -403,4 +403,4 @@ const Root = MentionRoot;
 
 export { MentionRoot, Root, getDataState, useMentionContext };
 
-export type { MentionRootProps, ItemData, Mention };
+export type { ItemData, Mention, MentionRootProps };

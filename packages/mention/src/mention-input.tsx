@@ -475,19 +475,19 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
 
     const onSelect = React.useCallback(() => {
       if (context.disabled || context.readonly) return;
-      const input = context.inputRef.current;
-      if (!input) return;
-      onMentionUpdate(input);
+      const inputElement = context.inputRef.current;
+      if (!inputElement) return;
+      onMentionUpdate(inputElement);
     }, [context.disabled, context.readonly, context.inputRef, onMentionUpdate]);
 
     const onPaste = React.useCallback(
       (event: React.ClipboardEvent<InputElement>) => {
         if (context.disabled || context.readonly) return;
 
-        const input = event.currentTarget;
+        const inputElement = event.currentTarget;
         const pastedText = event.clipboardData.getData("text");
-        const cursorPosition = input.selectionStart ?? 0;
-        const selectionEnd = input.selectionEnd ?? cursorPosition;
+        const cursorPosition = inputElement.selectionStart ?? 0;
+        const selectionEnd = inputElement.selectionEnd ?? cursorPosition;
 
         // Check if pasted text contains trigger
         const triggerIndex = pastedText.indexOf(context.trigger);
@@ -568,11 +568,11 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
 
                 // Update input value
                 const newValue =
-                  input.value.slice(0, cursorPosition) +
+                  inputElement.value.slice(0, cursorPosition) +
                   newText +
-                  input.value.slice(selectionEnd);
+                  inputElement.value.slice(selectionEnd);
 
-                input.value = newValue;
+                inputElement.value = newValue;
                 context.onInputValueChange?.(newValue);
 
                 // Only add mention if it exists in the available items
@@ -580,7 +580,10 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
                   context.onMentionAdd(firstFilteredItem, mentionStartPosition);
                 }
 
-                input.setSelectionRange(currentPosition, currentPosition);
+                inputElement.setSelectionRange(
+                  currentPosition,
+                  currentPosition,
+                );
               });
             });
           }

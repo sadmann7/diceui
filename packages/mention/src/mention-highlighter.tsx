@@ -12,7 +12,6 @@ const defaultHighlighterStyle: React.CSSProperties = {
   left: 0,
   right: 0,
   bottom: 0,
-  backgroundColor: "transparent",
   color: "transparent",
   whiteSpace: "pre-wrap",
   wordWrap: "break-word",
@@ -33,85 +32,85 @@ const MentionHighlighter = React.memo(
       const highlighterRef = React.useRef<HighlighterElement>(null);
       const composedRef = useComposedRefs(forwardedRef, highlighterRef);
       const [inputStyle, setInputStyle] = React.useState<CSSStyleDeclaration>();
-      const onInputStyleChange = useCallbackRef(setInputStyle);
+      const onInputStyleChangeCallback = useCallbackRef(setInputStyle);
 
-      const syncStyles = React.useCallback(() => {
-        const input = context.inputRef.current;
-        if (!input) return;
+      const onInputStyleChange = React.useCallback(() => {
+        const inputElement = context.inputRef.current;
+        if (!inputElement) return;
 
-        const computedStyle = window.getComputedStyle(input);
-        onInputStyleChange(computedStyle);
-      }, [context.inputRef, onInputStyleChange]);
+        const computedStyle = window.getComputedStyle(inputElement);
+        onInputStyleChangeCallback(computedStyle);
+      }, [context.inputRef, onInputStyleChangeCallback]);
 
-      const onResize = React.useCallback(() => {
-        const input = context.inputRef.current;
-        const highlighter = highlighterRef.current;
-        if (!input || !highlighter) return;
+      const onSyncScrollAndResize = React.useCallback(() => {
+        const inputElement = context.inputRef.current;
+        const highlighterElement = highlighterRef.current;
 
-        syncStyles();
+        if (!inputElement || !highlighterElement) return;
 
         requestAnimationFrame(() => {
-          highlighter.scrollLeft = input.scrollLeft;
-          highlighter.scrollTop = input.scrollTop;
-          highlighter.style.height = `${input.offsetHeight}px`;
+          highlighterElement.scrollTop = inputElement.scrollTop;
+          highlighterElement.scrollLeft = inputElement.scrollLeft;
+          highlighterElement.style.height = `${inputElement.offsetHeight}px`;
         });
-      }, [context.inputRef, syncStyles]);
-
-      const onScroll = React.useCallback(() => {
-        requestAnimationFrame(onResize);
-      }, [onResize]);
+      }, [context.inputRef]);
 
       React.useEffect(() => {
-        const input = context.inputRef.current;
-        if (!input) return;
+        const inputElement = context.inputRef.current;
+        if (!inputElement) return;
 
-        syncStyles();
+        onInputStyleChange();
 
-        input.addEventListener("scroll", onScroll, { passive: true });
-        window.addEventListener("resize", onResize, { passive: true });
+        function onResize() {
+          onInputStyleChange();
+          onSyncScrollAndResize();
+        }
 
-        // Create a ResizeObserver to watch for size changes including font size
-        const resizeObserver = new ResizeObserver(() => {
-          syncStyles();
-        });
-        resizeObserver.observe(input);
+        // Create a ResizeObserver to listen for the input's size changes
+        const resizeObserver = new ResizeObserver(onResize);
 
-        // Create a MutationObserver to watch for class changes
+        // Create a MutationObserver to listen for the input's class changes
         const mutationObserver = new MutationObserver((mutations) => {
-          for (const mutation of mutations) {
-            if (
-              mutation.type === "attributes" &&
-              mutation.attributeName === "class"
-            ) {
-              syncStyles();
-            }
+          if (
+            mutations.some(
+              (m) => m.type === "attributes" && m.attributeName === "class",
+            )
+          ) {
+            onResize();
           }
         });
-        mutationObserver.observe(input, {
+
+        inputElement.addEventListener("scroll", onSyncScrollAndResize, {
+          passive: true,
+        });
+        window.addEventListener("resize", onSyncScrollAndResize, {
+          passive: true,
+        });
+        resizeObserver.observe(inputElement);
+        mutationObserver.observe(inputElement, {
           attributes: true,
           attributeFilter: ["class"],
         });
 
         return () => {
-          input.removeEventListener("scroll", onScroll);
-          window.removeEventListener("resize", onResize);
+          inputElement.removeEventListener("scroll", onSyncScrollAndResize);
+          window.removeEventListener("resize", onSyncScrollAndResize);
           resizeObserver.disconnect();
           mutationObserver.disconnect();
         };
-      }, [context.inputRef, onResize, onScroll, syncStyles]);
+      }, [context.inputRef, onInputStyleChange, onSyncScrollAndResize]);
 
       const highlighterStyle = React.useMemo<React.CSSProperties>(() => {
         if (!inputStyle) return defaultHighlighterStyle;
 
         return {
           ...defaultHighlighterStyle,
-          fontSize: inputStyle.fontSize,
-          fontFamily: inputStyle.fontFamily,
-          fontWeight: inputStyle.fontWeight,
           fontStyle: inputStyle.fontStyle,
-          fontVariant:
-            inputStyle.fontVariant as React.CSSProperties["fontVariant"],
+          fontVariant: inputStyle.fontVariant,
+          fontWeight: inputStyle.fontWeight,
+          fontSize: inputStyle.fontSize,
           lineHeight: inputStyle.lineHeight,
+          fontFamily: inputStyle.fontFamily,
           letterSpacing: inputStyle.letterSpacing,
           textTransform:
             inputStyle.textTransform as React.CSSProperties["textTransform"],
@@ -129,45 +128,43 @@ const MentionHighlighter = React.memo(
       }, [inputStyle, style]);
 
       const onSegmentsRender = React.useCallback(() => {
-        if (!context.inputRef.current) return null;
+        const input = context.inputRef.current;
+        if (!input) return null;
 
-        const value = context.inputRef.current.value;
+        const { value } = input;
         const segments: React.ReactNode[] = [];
         let lastIndex = 0;
 
-        for (const mention of context.mentions) {
+        for (const { start, end } of context.mentions) {
           // Add text before mention
-          if (mention.start > lastIndex) {
+          if (start > lastIndex) {
             segments.push(
-              <span key={`text-${mention.start}-${mention.end}`}>
-                {value.slice(lastIndex, mention.start)}
+              <span key={`text-${lastIndex}`}>
+                {value.slice(lastIndex, start)}
               </span>,
             );
           }
 
           // Add highlighted mention
           segments.push(
-            <span
-              key={`mention-${mention.start}-${mention.end}`}
-              data-mention-segment
-            >
-              {value.slice(mention.start, mention.end)}
+            <span key={`mention-${start}`} data-mention-segment>
+              {value.slice(start, end)}
             </span>,
           );
 
-          lastIndex = mention.end;
+          lastIndex = end;
         }
 
-        // Add remaining text
+        // Add text after mention
         if (lastIndex < value.length) {
           segments.push(
             <span key={`text-end-${value.length}`}>
-              {value.slice(lastIndex, value.length)}
+              {value.slice(lastIndex)}
             </span>,
           );
         }
 
-        // Add a space to ensure correct height
+        // Add space after text
         segments.push(<span key="space">&nbsp;</span>);
 
         return segments;
@@ -182,18 +179,13 @@ const MentionHighlighter = React.memo(
       );
     },
   ),
-  (prevProps, nextProps) => {
-    // Only re-render if style or other props have changed
-    return (
-      prevProps.style === nextProps.style &&
-      Object.keys(prevProps).every(
-        (key) =>
-          key === "style" ||
-          prevProps[key as keyof typeof prevProps] ===
-            nextProps[key as keyof typeof nextProps],
-      )
-    );
-  },
+  (prevProps, nextProps) =>
+    prevProps.style === nextProps.style &&
+    Object.keys(prevProps).every(
+      (key) =>
+        prevProps[key as keyof typeof prevProps] ===
+        nextProps[key as keyof typeof nextProps],
+    ),
 );
 
 MentionHighlighter.displayName = HIGHLIGHTER_NAME;
