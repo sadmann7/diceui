@@ -315,22 +315,118 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
             return;
           }
 
-          // Handle Ctrl/Cmd + Arrow navigation
-          if (isCtrlOrCmd) {
-            const mentionToJump = context.mentions.find((m) => {
-              if (isLeftArrow) {
-                // Find the closest mention before cursor
-                return m.end < cursorPosition;
-              }
-              // Find the closest mention after cursor
-              return m.start > cursorPosition;
-            });
+          // Handle Ctrl/Cmd + Arrow navigation only when near mentions
+          if (isCtrlOrCmd && context.mentions.length > 0) {
+            // Check if cursor is inside a mention (not at boundaries)
+            const currentMention = context.mentions.find(
+              (m) => cursorPosition > m.start && cursorPosition < m.end,
+            );
 
-            if (mentionToJump) {
+            if (currentMention) {
               event.preventDefault();
               const newPosition = isLeftArrow
-                ? mentionToJump.start
-                : mentionToJump.end;
+                ? currentMention.start
+                : currentMention.end;
+              input.setSelectionRange(newPosition, newPosition);
+              return;
+            }
+
+            // First check for word boundaries
+            const text = input.value;
+            let wordBoundaryPosition = cursorPosition;
+
+            if (isLeftArrow) {
+              // Skip spaces before cursor
+              while (
+                wordBoundaryPosition > 0 &&
+                text.charAt(wordBoundaryPosition - 1).match(/\s/)
+              ) {
+                wordBoundaryPosition--;
+              }
+              // If we're not at the start of text, find the start of the current/previous word
+              if (wordBoundaryPosition > 0) {
+                while (
+                  wordBoundaryPosition > 0 &&
+                  !text.charAt(wordBoundaryPosition - 1).match(/\s/)
+                ) {
+                  wordBoundaryPosition--;
+                }
+                // If there's text before cursor that's not a mention, move there
+                const isMentionBoundary = context.mentions.some(
+                  (m) =>
+                    m.start === wordBoundaryPosition ||
+                    m.end === wordBoundaryPosition,
+                );
+                if (!isMentionBoundary) {
+                  event.preventDefault();
+                  input.setSelectionRange(
+                    wordBoundaryPosition,
+                    wordBoundaryPosition,
+                  );
+                  return;
+                }
+              }
+            } else {
+              // Skip spaces after cursor
+              while (
+                wordBoundaryPosition < text.length &&
+                text.charAt(wordBoundaryPosition).match(/\s/)
+              ) {
+                wordBoundaryPosition++;
+              }
+              // If we're not at the end of text, find the end of the current/next word
+              if (wordBoundaryPosition < text.length) {
+                while (
+                  wordBoundaryPosition < text.length &&
+                  !text.charAt(wordBoundaryPosition).match(/\s/)
+                ) {
+                  wordBoundaryPosition++;
+                }
+                // If there's text after cursor that's not a mention, move there
+                const isMentionBoundary = context.mentions.some(
+                  (m) =>
+                    m.start === wordBoundaryPosition ||
+                    m.end === wordBoundaryPosition,
+                );
+                if (!isMentionBoundary) {
+                  event.preventDefault();
+                  input.setSelectionRange(
+                    wordBoundaryPosition,
+                    wordBoundaryPosition,
+                  );
+                  return;
+                }
+              }
+            }
+
+            // If no word boundary found, look for nearest mention
+            const nearestMention = context.mentions.reduce(
+              (nearest, mention) => {
+                if (isLeftArrow) {
+                  // For left arrow, find the closest mention that ends before cursor
+                  if (mention.end <= cursorPosition) {
+                    return !nearest || mention.end > nearest.end
+                      ? mention
+                      : nearest;
+                  }
+                } else {
+                  // For right arrow, find the closest mention that starts after cursor
+                  if (mention.start >= cursorPosition) {
+                    return !nearest || mention.start < nearest.start
+                      ? mention
+                      : nearest;
+                  }
+                }
+                return nearest;
+              },
+              null as (typeof context.mentions)[0] | null,
+            );
+
+            if (nearestMention) {
+              event.preventDefault();
+              const newPosition = isLeftArrow
+                ? nearestMention.start
+                : nearestMention.end;
               input.setSelectionRange(newPosition, newPosition);
               return;
             }
@@ -481,10 +577,8 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           case "Tab": {
             if (context.modal) {
               event.preventDefault();
-              return;
-            }
-            if (context.highlightedItem) {
               onItemSelect();
+              return;
             }
             onMenuClose();
             break;
