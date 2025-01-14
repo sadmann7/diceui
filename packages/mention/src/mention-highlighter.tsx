@@ -19,6 +19,7 @@ const defaultHighlighterStyle: React.CSSProperties = {
   userSelect: "none",
   overflow: "auto",
   width: "100%",
+  transition: "border-color 0.15s ease, background-color 0.15s ease",
 };
 
 interface MentionHighlighterProps
@@ -117,7 +118,9 @@ const MentionHighlighter = React.memo(
           textAlign: inputStyle.textAlign as React.CSSProperties["textAlign"],
           textIndent: inputStyle.textIndent,
           padding: inputStyle.padding,
-          border: inputStyle.border,
+          borderWidth: inputStyle.borderWidth,
+          borderStyle: inputStyle.borderStyle,
+          borderColor: "currentColor",
           borderRadius: inputStyle.borderRadius,
           boxSizing: inputStyle.boxSizing as React.CSSProperties["boxSizing"],
           wordBreak: inputStyle.wordBreak as React.CSSProperties["wordBreak"],

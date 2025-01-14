@@ -16,7 +16,6 @@ interface MentionInputProps
 
 const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
   (props, forwardedRef) => {
-    const { style, ...inputProps } = props;
     const context = useMentionContext(INPUT_NAME);
     const composedRef = useComposedRefs(forwardedRef, context.inputRef);
 
@@ -153,9 +152,11 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           // If there's no text before trigger, it's a valid mention trigger
           if (!hasTextBeforeTrigger) return false;
 
-          // Check if there's no space before the trigger
+          // Check if there's no space or newline before the trigger
           const lastCharBeforeTrigger = textBeforeTrigger.slice(-1);
-          return lastCharBeforeTrigger !== " ";
+          return (
+            lastCharBeforeTrigger !== " " && lastCharBeforeTrigger !== "\n"
+          );
         }
 
         if (getIsTriggerPartOfText()) {
@@ -619,12 +620,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           aria-readonly={context.readonly}
           disabled={context.disabled}
           readOnly={context.readonly}
-          style={{
-            position: "relative",
-            zIndex: 1,
-            ...style,
-          }}
-          {...inputProps}
+          {...props}
           ref={composedRef}
           onChange={composeEventHandlers(props.onChange, onChange)}
           onClick={composeEventHandlers(props.onClick, onClick)}
@@ -643,6 +639,6 @@ MentionInput.displayName = INPUT_NAME;
 
 const Input = MentionInput;
 
-export { MentionInput, Input };
+export { Input, MentionInput };
 
-export type { MentionInputProps, InputElement };
+export type { InputElement, MentionInputProps };

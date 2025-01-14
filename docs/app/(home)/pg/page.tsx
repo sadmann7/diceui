@@ -33,12 +33,15 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <div className="h-screen bg-accent" />
-      <Textarea placeholder="Type here..." className="max-w-[40rem]" />
-      <Mention.Root className="flex max-w-[40rem] flex-col gap-2 [&_[data-mention-segment]]:rounded [&_[data-mention-segment]]:bg-blue-600 [&_[data-mention-segment]]:text-white">
+      <Textarea
+        placeholder="Type here..."
+        className="min-h-[80px] max-w-[40rem]"
+      />
+      <Mention.Root className="flex max-w-[40rem] flex-col gap-2 [&_[data-mention-segment]]:rounded [&_[data-mention-segment]]:bg-blue-500 [&_[data-mention-segment]]:text-white">
         <Mention.Label>Tricks</Mention.Label>
         <Mention.Input
           placeholder="Enter @ to mention a trick..."
-          className="flex min-h-[60px] w-full rounded-md border border-zinc-200 bg-transparent px-3 py-2 text-base shadow-sm placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-600 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:border-zinc-800 focus-visible:dark:ring-zinc-300"
+          className="flex min-h-[80px] w-full rounded-md border border-zinc-200 bg-transparent px-3 py-2 text-base shadow-sm placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-600 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:border-zinc-800 focus-visible:dark:ring-zinc-300"
           asChild
         >
           <textarea />
