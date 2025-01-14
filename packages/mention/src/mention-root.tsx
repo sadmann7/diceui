@@ -50,6 +50,7 @@ interface MentionContextValue {
   onVirtualAnchorChange: (element: VirtualElement | null) => void;
   trigger: string;
   onTriggerChange: (character: string) => void;
+  getItems: () => CollectionItem<CollectionElement, ItemData>[];
   onItemRegister: (item: CollectionItem<CollectionElement, ItemData>) => void;
   filterStore: {
     search: string;
@@ -281,22 +282,22 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionRootProps>(
     });
 
     const getItemLabel = React.useCallback(
-      (value: string) => {
+      (payloadValue: string) => {
         return (
           getItems()
             .filter((item) => !item.disabled)
-            .find((item) => item.value === value)?.label ?? value
+            .find((item) => item.value === payloadValue)?.label ?? payloadValue
         );
       },
       [getItems],
     );
 
     const onMentionAdd = React.useCallback(
-      (value: string, triggerIndex: number) => {
+      (payloadValue: string, triggerIndex: number) => {
         const input = inputRef.current;
         if (!input) return;
 
-        const mentionLabel = getItemLabel(value);
+        const mentionLabel = getItemLabel(payloadValue);
         const mentionText = `${trigger}${mentionLabel}`;
         const beforeTrigger = input.value.slice(0, triggerIndex);
         const afterSearchText = input.value.slice(
@@ -305,7 +306,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionRootProps>(
         const newValue = `${beforeTrigger}${mentionText} ${afterSearchText}`;
 
         const newMention: Mention = {
-          value,
+          value: payloadValue,
           start: triggerIndex,
           end: triggerIndex + mentionText.length,
         };
@@ -314,7 +315,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionRootProps>(
 
         input.value = newValue;
         setInputValue(newValue);
-        setValue((prev) => [...(prev ?? []), value]);
+        setValue((prev) => [...(prev ?? []), payloadValue]);
 
         const newCursorPosition = triggerIndex + mentionText.length + 1;
         input.setSelectionRange(newCursorPosition, newCursorPosition);
@@ -338,7 +339,10 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionRootProps>(
       [],
     );
 
-    console.log({ value, mentions });
+    console.log({
+      value,
+      mentions,
+    });
 
     return (
       <MentionProvider
@@ -352,6 +356,10 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionRootProps>(
         onVirtualAnchorChange={setVirtualAnchor}
         trigger={trigger}
         onTriggerChange={setTrigger}
+        getItems={React.useCallback(
+          () => getItems().filter((item) => !item.disabled),
+          [getItems],
+        )}
         onItemRegister={onItemRegister}
         filterStore={filterStore}
         onFilter={onFilter}
