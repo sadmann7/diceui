@@ -529,12 +529,13 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
 
             requestAnimationFrame(() => {
               // Check if mention exists in available items
-              const mentionLabel = context
+              const mentionItem = context
                 .getItems()
                 .find(
                   (item) =>
                     item.value.toLowerCase() === mentionText.toLowerCase(),
-                )?.label;
+                );
+              const mentionLabel = mentionItem?.label;
 
               // Reset states
               context.onOpenChange(false);
@@ -558,8 +559,8 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
               context.onInputValueChange?.(newValue);
 
               // Only add mention if it exists in the available items
-              if (mentionLabel) {
-                context.onMentionAdd(mentionLabel, mentionStartPosition);
+              if (mentionItem) {
+                context.onMentionAdd(mentionItem.value, mentionStartPosition);
               }
 
               inputElement.setSelectionRange(currentPosition, currentPosition);
