@@ -30,8 +30,8 @@ export default function SortableDemo() {
         ))}
       </Sortable.Content>
       <Sortable.Overlay>
-        {({ value }) => {
-          const trick = tricks.find((trick) => trick.id === value);
+        {(activeItem) => {
+          const trick = tricks.find((trick) => trick.id === activeItem.value);
           if (!trick) return null;
 
           return (

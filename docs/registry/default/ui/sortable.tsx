@@ -269,8 +269,6 @@ const dropAnimation: DropAnimation = {
   }),
 };
 
-const useLayoutEffect = globalThis?.document ? React.useLayoutEffect : () => {};
-
 interface SortableOverlayProps
   extends Omit<React.ComponentPropsWithoutRef<typeof DragOverlay>, "children"> {
   container?: HTMLElement | DocumentFragment | null;
@@ -281,7 +279,7 @@ interface SortableOverlayProps
 
 function SortableOverlay(props: SortableOverlayProps) {
   const {
-    container,
+    container: containerProp,
     dropAnimation: dropAnimationProp,
     children,
     ...overlayProps
@@ -291,18 +289,13 @@ function SortableOverlay(props: SortableOverlayProps) {
     throw new Error(SORTABLE_ERROR.overlay);
   }
 
-  const [fragment, setFragment] = React.useState<DocumentFragment>();
+  const [mounted, setMounted] = React.useState(false);
+  React.useLayoutEffect(() => setMounted(true), []);
 
-  // Set document fragment because it's not available in the server
-  useLayoutEffect(() => {
-    setFragment(new DocumentFragment());
-  }, []);
+  const container =
+    containerProp ?? (mounted ? globalThis.document?.body : null);
 
-  if (!fragment) return null;
-
-  const activeItem = React.useMemo(() => {
-    return context.items.find((item) => item.id === context.activeId);
-  }, [context.items, context.activeId]);
+  if (!container) return null;
 
   return ReactDOM.createPortal(
     <DragOverlay
@@ -312,18 +305,18 @@ function SortableOverlay(props: SortableOverlayProps) {
       {...overlayProps}
     >
       <SortableOverlayContext.Provider value={true}>
-        {activeItem ? (
+        {context.activeId ? (
           typeof children === "function" ? (
-            children({ value: activeItem.id })
+            children({ value: context.activeId })
           ) : (
-            <SortableItem value={activeItem.id} asChild>
+            <SortableItem value={context.activeId} asChild>
               {children}
             </SortableItem>
           )
         ) : null}
       </SortableOverlayContext.Provider>
     </DragOverlay>,
-    fragment,
+    container,
   );
 }
 

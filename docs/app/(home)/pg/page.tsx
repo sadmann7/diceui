@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
+import SortableDemo from "@/registry/default/example/sortable-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -33,6 +34,7 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <div className="h-screen bg-accent" />
+      <SortableDemo />
       <Textarea
         placeholder="Type here..."
         className="min-h-[80px] max-w-[40rem]"
