@@ -178,9 +178,14 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         const isImmediatelyAfterTrigger =
           currentPosition === lastTriggerIndex + 1;
 
+        // Check if we're navigating through an invalid mention
+        const hasInvalidTextAfter =
+          value.slice(lastTriggerIndex + 1).trim().length > 0;
+
         if (
           isValidMention &&
-          (isCursorAfterTrigger || isImmediatelyAfterTrigger)
+          (isCursorAfterTrigger || isImmediatelyAfterTrigger) &&
+          !hasInvalidTextAfter // Only open menu if there's no invalid text after trigger
         ) {
           createVirtualElement(element, lastTriggerIndex);
           context.onOpenChange(true);
