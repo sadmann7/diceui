@@ -291,16 +291,18 @@ function SortableOverlay(props: SortableOverlayProps) {
     throw new Error(SORTABLE_ERROR.overlay);
   }
 
-  const [mounted, setMounted] = React.useState(false);
+  const [fragment, setFragment] = React.useState<DocumentFragment>();
 
-  useLayoutEffect(() => setMounted(true), []);
+  // Set document fragment because it's not available in the server
+  useLayoutEffect(() => {
+    setFragment(new DocumentFragment());
+  }, []);
 
-  const dynamicContainer =
-    container ?? (mounted ? globalThis.document?.body : null);
+  if (!fragment) return null;
 
-  if (!dynamicContainer) return null;
-
-  const activeItem = context.items.find((item) => item.id === context.activeId);
+  const activeItem = React.useMemo(() => {
+    return context.items.find((item) => item.id === context.activeId);
+  }, [context.items, context.activeId]);
 
   return ReactDOM.createPortal(
     <DragOverlay
@@ -321,7 +323,7 @@ function SortableOverlay(props: SortableOverlayProps) {
         ) : null}
       </SortableOverlayContext.Provider>
     </DragOverlay>,
-    dynamicContainer,
+    fragment,
   );
 }
 
