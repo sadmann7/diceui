@@ -307,10 +307,11 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
               // Handle Ctrl/Cmd differently - jump to start of mention
               if (isCtrlOrCmd) {
                 return (
-                  cursorToMentionEnd > 0 && // Cursor is after mention end
-                  cursorToMentionEnd <= 20 && // Within reasonable range (20 chars)
-                  isOnlySpaces && // Only spaces between
-                  cursorPosition > m.start
+                  cursorPosition === m.end || // Exactly at mention end
+                  (cursorToMentionEnd > 0 && // Or cursor is after mention end
+                    cursorToMentionEnd <= 20 && // Within reasonable range (20 chars)
+                    isOnlySpaces && // Only spaces between
+                    cursorPosition > m.start)
                 ); // Cursor is after mention start
               }
 
