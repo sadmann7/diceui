@@ -180,6 +180,8 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
 
         // Check if we're navigating through an invalid mention
         const hasInvalidTextAfter =
+          // Only check for invalid text if we're not actively typing (cursor is not at the end)
+          currentPosition < value.length &&
           value.slice(lastTriggerIndex + 1).trim().length > 0;
 
         if (
