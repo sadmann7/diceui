@@ -296,145 +296,76 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           const isCtrlOrCmd = event.metaKey || event.ctrlKey;
           const isLeftArrow = event.key === "ArrowLeft";
 
-          // Find mention that's immediately before or after cursor
+          // Find mention that's immediately before or after cursor, considering spaces
           const adjacentMention = context.mentions.find((m) => {
             if (isLeftArrow) {
-              // For left arrow, check if cursor is at the end of mention
-              return cursorPosition === m.end;
+              // For left arrow, check if cursor is at or before the end of mention (including spaces)
+              const cursorToMentionEnd = cursorPosition - m.end;
+              const textBetween = input.value.slice(m.end, cursorPosition);
+              const isOnlySpaces = /^\s*$/.test(textBetween);
+
+              // Handle Ctrl/Cmd differently - jump to start of mention
+              if (isCtrlOrCmd) {
+                return (
+                  cursorToMentionEnd > 0 && // Cursor is after mention end
+                  cursorToMentionEnd <= 20 && // Within reasonable range (20 chars)
+                  isOnlySpaces && // Only spaces between
+                  cursorPosition > m.start
+                ); // Cursor is after mention start
+              }
+
+              // Regular arrow key - move one position at a time
+              return (
+                cursorPosition === m.end || // At mention end
+                (cursorPosition > m.end && // Or after mention with only spaces
+                  cursorPosition <= m.end + 1 &&
+                  isOnlySpaces)
+              );
             }
-            // For right arrow, check if cursor is at the start of mention
-            return cursorPosition === m.start;
+
+            // For right arrow
+            const mentionToNextChar = m.start - cursorPosition;
+            const textBetween = input.value.slice(cursorPosition, m.start);
+            const isOnlySpaces = /^\s*$/.test(textBetween);
+
+            // Handle Ctrl/Cmd differently - jump to end of mention
+            if (isCtrlOrCmd) {
+              return (
+                (cursorPosition >= m.start && cursorPosition < m.end) || // Cursor inside mention
+                (mentionToNextChar > 0 && // Or mention starts after cursor
+                  mentionToNextChar <= 20 && // Within reasonable range
+                  isOnlySpaces) // Only spaces between
+              );
+            }
+
+            // Regular arrow key - move one position at a time
+            return (
+              cursorPosition === m.start || // At mention start
+              (cursorPosition < m.start && // Or before mention with only spaces
+                cursorPosition >= m.start - 1 &&
+                isOnlySpaces)
+            );
           });
 
           if (adjacentMention) {
             event.preventDefault();
-            const newPosition = isLeftArrow
-              ? adjacentMention.start
-              : adjacentMention.end;
+            const newPosition = isCtrlOrCmd
+              ? isLeftArrow
+                ? adjacentMention.start
+                : adjacentMention.end
+              : isLeftArrow
+                ? cursorPosition > adjacentMention.end
+                  ? adjacentMention.end
+                  : adjacentMention.start
+                : cursorPosition < adjacentMention.start
+                  ? adjacentMention.start
+                  : adjacentMention.end;
             input.setSelectionRange(newPosition, newPosition);
             return;
           }
 
-          // Handle Ctrl/Cmd + Arrow navigation only when near mentions
-          if (isCtrlOrCmd && context.mentions.length > 0) {
-            // Check if cursor is inside a mention (not at boundaries)
-            const currentMention = context.mentions.find(
-              (m) => cursorPosition > m.start && cursorPosition < m.end,
-            );
-
-            if (currentMention) {
-              event.preventDefault();
-              const newPosition = isLeftArrow
-                ? currentMention.start
-                : currentMention.end;
-              input.setSelectionRange(newPosition, newPosition);
-              return;
-            }
-
-            // Find all word boundaries and mention boundaries
-            const text = input.value;
-            const boundaries: number[] = [];
-
-            // Add mention boundaries
-            for (const mention of context.mentions) {
-              boundaries.push(mention.start);
-              boundaries.push(mention.end);
-            }
-
-            // Add word boundaries
-            let pos = 0;
-            while (pos < text.length) {
-              // Skip spaces
-              while (pos < text.length && text[pos]?.match(/\s/)) pos++;
-              if (pos < text.length) boundaries.push(pos);
-              // Skip non-spaces
-              while (pos < text.length && !text[pos]?.match(/\s/)) pos++;
-              if (pos < text.length) boundaries.push(pos);
-            }
-
-            // Sort and deduplicate boundaries
-            const uniqueBoundaries = [...new Set(boundaries)].sort(
-              (a, b) => a - b,
-            );
-
-            // Find the next boundary position
-            if (isLeftArrow) {
-              // For left arrow, find the closest mention end or word boundary before cursor
-              const prevBoundaries = uniqueBoundaries
-                .filter((pos) => pos < cursorPosition)
-                .reverse();
-
-              // Find the closest mention end before cursor
-              const closestMentionEnd = context.mentions.find(
-                (m) =>
-                  m.end < cursorPosition &&
-                  !text.slice(m.end, cursorPosition).trim(),
-              )?.start;
-
-              // Find the closest word boundary
-              const closestWordBoundary = prevBoundaries.find(
-                (pos) =>
-                  !context.mentions.some((m) => pos > m.start && pos < m.end),
-              );
-
-              // If there's a mention end with only whitespace between it and cursor,
-              // move to the start of that mention
-              if (closestMentionEnd !== undefined) {
-                event.preventDefault();
-                input.setSelectionRange(closestMentionEnd, closestMentionEnd);
-                return;
-              }
-
-              // Otherwise move to the closest word boundary
-              if (typeof closestWordBoundary === "number") {
-                event.preventDefault();
-                input.setSelectionRange(
-                  closestWordBoundary,
-                  closestWordBoundary,
-                );
-                return;
-              }
-            } else {
-              // For right arrow, similar logic but looking forward
-              const nextBoundaries = uniqueBoundaries.filter(
-                (pos) => pos > cursorPosition,
-              );
-
-              // Find the closest mention start after cursor
-              const closestMentionStart = context.mentions.find(
-                (m) =>
-                  m.start > cursorPosition &&
-                  !text.slice(cursorPosition, m.start).trim(),
-              )?.end;
-
-              // Find the closest word boundary
-              const closestWordBoundary = nextBoundaries.find(
-                (pos) =>
-                  !context.mentions.some((m) => pos > m.start && pos < m.end),
-              );
-
-              // If there's a mention start with only whitespace between it and cursor,
-              // move to the end of that mention
-              if (closestMentionStart !== undefined) {
-                event.preventDefault();
-                input.setSelectionRange(
-                  closestMentionStart,
-                  closestMentionStart,
-                );
-                return;
-              }
-
-              // Otherwise move to the closest word boundary
-              if (typeof closestWordBoundary === "number") {
-                event.preventDefault();
-                input.setSelectionRange(
-                  closestWordBoundary,
-                  closestWordBoundary,
-                );
-                return;
-              }
-            }
-          }
+          // If Ctrl/Cmd is pressed but no mention found, let the browser handle word navigation
+          if (isCtrlOrCmd) return;
         }
 
         // Handle text clearing with selection

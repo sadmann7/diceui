@@ -14,7 +14,6 @@ interface ComboboxAnchorProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
   /**
    * Whether the combobox input should be focused when the anchor is clicked.
-   *
    * @default false
    */
   preventInputFocus?: boolean;
@@ -38,6 +37,7 @@ const ComboboxAnchor = React.forwardRef<AnchorElement, ComboboxAnchorProps>(
         data-disabled={context.disabled ? "" : undefined}
         data-focused={isFocused ? "" : undefined}
         {...anchorProps}
+        ref={composedRef}
         onClick={composeEventHandlers(anchorProps.onClick, (event) => {
           if (preventInputFocus) return;
           event.currentTarget.focus();
@@ -71,7 +71,6 @@ const ComboboxAnchor = React.forwardRef<AnchorElement, ComboboxAnchorProps>(
         onBlur={composeEventHandlers(anchorProps.onBlur, () =>
           setIsFocused(false),
         )}
-        ref={composedRef}
       />
     );
   },
