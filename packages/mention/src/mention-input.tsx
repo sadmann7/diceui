@@ -5,7 +5,7 @@ import {
 } from "@diceui/shared";
 import * as React from "react";
 import { MentionHighlighter } from "./mention-highlighter";
-import { useMentionContext } from "./mention-root";
+import { type Mention, useMentionContext } from "./mention-root";
 
 const INPUT_NAME = "MentionInput";
 
@@ -214,11 +214,22 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
     const onChange = React.useCallback(
       (event: React.ChangeEvent<InputElement>) => {
         if (context.disabled || context.readonly) return;
-        context.onInputValueChange?.(event.target.value);
-        onMentionUpdate(event.target);
+        const input = event.target;
+        const newValue = input.value;
+        const cursorPosition = input.selectionStart ?? 0;
+        const prevValue = context.inputValue;
+        const insertedLength = newValue.length - prevValue.length;
+
+        // Update mentions positions based on text changes
+        context.onMentionsShift(insertedLength, cursorPosition);
+
+        context.onInputValueChange?.(newValue);
+        onMentionUpdate(input);
       },
       [
         context.onInputValueChange,
+        context.inputValue,
+        context.onMentionsShift,
         onMentionUpdate,
         context.disabled,
         context.readonly,

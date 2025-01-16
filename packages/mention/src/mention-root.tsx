@@ -67,6 +67,7 @@ interface MentionContextValue {
   ) => void;
   onHighlightMove: (direction: HighlightingDirection) => void;
   mentions: Mention[];
+  onMentionsShift: (insertedLength: number, cursorPosition: number) => void;
   onMentionAdd: (value: string, triggerIndex: number) => void;
   onMentionsRemove: (mentionsToRemove: Mention[]) => void;
   isPasting: boolean;
@@ -327,6 +328,30 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionRootProps>(
       [trigger, setInputValue, setValue, setOpen, getItemLabel, filterStore],
     );
 
+    const onMentionsShift = React.useCallback(
+      (insertedLength: number, cursorPosition: number) => {
+        if (insertedLength === 0) return;
+
+        setMentions((prev) =>
+          prev.map((mention) => {
+            // Only update positions for mentions that come after the cursor
+            if (
+              mention.start >=
+              cursorPosition - (insertedLength > 0 ? insertedLength : 0)
+            ) {
+              return {
+                ...mention,
+                start: mention.start + insertedLength,
+                end: mention.end + insertedLength,
+              };
+            }
+            return mention;
+          }),
+        );
+      },
+      [],
+    );
+
     const onMentionsRemove = React.useCallback(
       (mentionsToRemove: Mention[]) => {
         setMentions((prev) =>
@@ -367,6 +392,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionRootProps>(
         onHighlightedItemChange={setHighlightedItem}
         onHighlightMove={onHighlightMove}
         mentions={mentions}
+        onMentionsShift={onMentionsShift}
         onMentionAdd={onMentionAdd}
         onMentionsRemove={onMentionsRemove}
         isPasting={isPasting}
