@@ -50,7 +50,7 @@ interface MentionContextValue {
   onVirtualAnchorChange: (element: VirtualElement | null) => void;
   trigger: string;
   onTriggerChange: (character: string) => void;
-  getItems: () => CollectionItem<CollectionElement, ItemData>[];
+  getEnabledItems: () => CollectionItem<CollectionElement, ItemData>[];
   onItemRegister: (item: CollectionItem<CollectionElement, ItemData>) => void;
   filterStore: {
     search: string;
@@ -60,7 +60,6 @@ interface MentionContextValue {
   onFilter?: (options: string[], term: string) => string[];
   onItemsFilter: () => void;
   getIsItemVisible: (value: string) => boolean;
-  getItemLabel: (value: string) => string;
   highlightedItem: CollectionItem<CollectionElement, ItemData> | null;
   onHighlightedItemChange: (
     item: CollectionItem<CollectionElement, ItemData> | null,
@@ -250,6 +249,10 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionRootProps>(
       },
     });
 
+    const getEnabledItems = React.useCallback(() => {
+      return getItems().filter((item) => !item.disabled);
+    }, [getItems]);
+
     const onOpenChange = React.useCallback(
       (open: boolean) => {
         if (open && filterStore.search && filterStore.itemCount === 0) {
@@ -258,7 +261,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionRootProps>(
         setOpen(open);
         if (open) {
           requestAnimationFrame(() => {
-            const items = getItems().filter((item) => !item.disabled);
+            const items = getEnabledItems();
             const firstItem = items[0] ?? null;
             setHighlightedItem(firstItem);
           });
@@ -267,7 +270,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionRootProps>(
           setVirtualAnchor(null);
         }
       },
-      [setOpen, getItems, filterStore],
+      [setOpen, getEnabledItems, filterStore],
     );
 
     const { onHighlightMove } = useListHighlighting({
@@ -282,23 +285,14 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionRootProps>(
       loop,
     });
 
-    const getItemLabel = React.useCallback(
-      (payloadValue: string) => {
-        return (
-          getItems()
-            .filter((item) => !item.disabled)
-            .find((item) => item.value === payloadValue)?.label ?? payloadValue
-        );
-      },
-      [getItems],
-    );
-
     const onMentionAdd = React.useCallback(
       (payloadValue: string, triggerIndex: number) => {
         const input = inputRef.current;
         if (!input) return;
 
-        const mentionLabel = getItemLabel(payloadValue);
+        const mentionLabel =
+          getEnabledItems().find((item) => item.value === payloadValue)
+            ?.label ?? payloadValue;
         const mentionText = `${trigger}${mentionLabel}`;
         const beforeTrigger = input.value.slice(0, triggerIndex);
         const afterSearchText = input.value.slice(
@@ -325,7 +319,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionRootProps>(
         setHighlightedItem(null);
         filterStore.search = "";
       },
-      [trigger, setInputValue, setValue, setOpen, getItemLabel, filterStore],
+      [trigger, setInputValue, setValue, setOpen, getEnabledItems, filterStore],
     );
 
     const onMentionsRemove = React.useCallback(
@@ -352,16 +346,12 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionRootProps>(
         onVirtualAnchorChange={setVirtualAnchor}
         trigger={trigger}
         onTriggerChange={setTrigger}
-        getItems={React.useCallback(
-          () => getItems().filter((item) => !item.disabled),
-          [getItems],
-        )}
+        getEnabledItems={getEnabledItems}
         onItemRegister={onItemRegister}
         filterStore={filterStore}
         onFilter={onFilter}
         onItemsFilter={onItemsFilter}
         getIsItemVisible={getIsItemVisible}
-        getItemLabel={getItemLabel}
         highlightedItem={highlightedItem}
         onHighlightedItemChange={setHighlightedItem}
         onHighlightMove={onHighlightMove}

@@ -10,6 +10,9 @@ import { type Mention, useMentionContext } from "./mention-root";
 
 const INPUT_NAME = "MentionInput";
 
+const SEPARATORS_PATTERN = /[-_\s./\\|:;,]+/g;
+const UNWANTED_CHARS = /[^\p{L}\p{N}\s]/gu;
+
 type InputElement = React.ElementRef<typeof Primitive.input>;
 
 interface MentionInputProps
@@ -624,9 +627,6 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           newText += parts[0];
         }
 
-        const SEPARATORS_PATTERN = /[-_\s./\\|:;,]+/g;
-        const UNWANTED_CHARS = /[^\p{L}\p{N}\s]/gu;
-
         function normalizeWithGaps(str: string) {
           if (!str) return "";
           if (typeof str !== "string") return "";
@@ -657,12 +657,16 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           context.onIsPastingChange(true);
           context.onOpenChange(true);
 
+          // Wait for the next frame to ensure the DOM is updated, otherwise the items will be empty
           await new Promise((resolve) => requestAnimationFrame(resolve));
 
           // Process remaining parts that come after triggers
-          const items = context.getItems();
+          const items = context.getEnabledItems();
           const newMentions: Mention[] = [];
           const newValues = [...context.value];
+
+          // Keep track of trailing spaces after the last part
+          const trailingSpaces = pastedText.match(/\s+$/)?.[0] ?? "";
 
           for (let i = 1; i < parts.length; i++) {
             const part = parts[i];
@@ -691,8 +695,6 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
                   normalizeWithGaps(item.value) ===
                   normalizeWithGaps(candidateText),
               );
-
-              console.log({ items, mentionItem });
 
               if (mentionItem) {
                 mentionText = candidateText;
@@ -733,7 +735,14 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
               if (mentionItem) {
                 // Add mention with its label
                 const mentionLabel = `${context.trigger}${mentionItem.label}`;
-                newText += mentionLabel + spaces + remainingText;
+                // Add trailing spaces only if this is the last part and there's no remaining text
+                const shouldAddTrailingSpaces =
+                  i === parts.length - 1 && !remainingText;
+                newText +=
+                  mentionLabel +
+                  spaces +
+                  remainingText +
+                  (shouldAddTrailingSpaces ? trailingSpaces : "");
 
                 newValues.push(mentionItem.value);
                 newMentions.push({
@@ -748,7 +757,9 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
               const spaceSegment = words[1] ?? "";
               spaces = spaceSegment?.match(/^\s+/) ? spaceSegment : "";
               remainingText = words.slice(2).join("");
-              newText += `${context.trigger}${firstWord}${spaces}${remainingText}`;
+              // Add trailing spaces only if this is the last part
+              const shouldAddTrailingSpaces = i === parts.length - 1;
+              newText += `${context.trigger}${firstWord}${spaces}${remainingText}${shouldAddTrailingSpaces ? trailingSpaces : ""}`;
             }
           }
 
@@ -770,11 +781,11 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           // Set cursor position after all mentions
           const newCursorPosition = cursorPosition + newText.length;
           inputElement.setSelectionRange(newCursorPosition, newCursorPosition);
-        });
 
-        // Unregister items
-        context.onIsPastingChange(false);
-        context.onOpenChange(false);
+          // Cleanup after all operations are complete
+          context.onIsPastingChange(false);
+          context.onOpenChange(false);
+        });
       },
       [
         context.trigger,
@@ -782,7 +793,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         context.onInputValueChange,
         context.value,
         context.onValueChange,
-        context.getItems,
+        context.getEnabledItems,
         context.onMentionsChange,
         context.onIsPastingChange,
         context.disabled,
