@@ -579,8 +579,81 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
     const onPaste = React.useCallback(
       (event: React.ClipboardEvent<InputElement>) => {
         if (context.disabled || context.readonly) return;
+
+        const pastedText = event.clipboardData.getData("text");
+        if (!pastedText) return;
+
+        const input = event.currentTarget;
+        const cursorPosition = input.selectionStart ?? 0;
+        const selectionEnd = input.selectionEnd ?? cursorPosition;
+
+        // Find all potential mentions in pasted text (e.g., @mention)
+        const mentionRegex = new RegExp(
+          `${context.trigger}\\S+(?:\\s+\\S+)*`,
+          "g",
+        );
+        const matches = [...pastedText.matchAll(mentionRegex)];
+
+        if (matches.length === 0) return;
+
+        event.preventDefault();
+
+        // Register the items
+        context.onOpenChange(true);
+        context.onIsPastingChange(true);
+
+        requestAnimationFrame(() => {
+          // Insert pasted text
+          const newValue =
+            input.value.slice(0, cursorPosition) +
+            pastedText +
+            input.value.slice(selectionEnd);
+
+          input.value = newValue;
+          context.onInputValueChange?.(newValue);
+
+          // Process each potential mention
+          for (const match of matches) {
+            if (!match.index) continue;
+
+            const absolutePosition = cursorPosition + match.index;
+            createVirtualElement(input, absolutePosition);
+
+            // Set the search term (removing the trigger)
+            const searchTerm = match[0].slice(1);
+            context.filterStore.search = searchTerm;
+            context.onItemsFilter();
+
+            // If we find a match, add it as a mention
+            const matchingItem = context
+              .getItems()
+              .find(
+                (item) => item.label.toLowerCase() === searchTerm.toLowerCase(),
+              );
+
+            if (matchingItem) {
+              context.onMentionAdd(matchingItem.value, absolutePosition);
+            }
+          }
+
+          // Update cursor position after processing
+          const newPosition = cursorPosition + pastedText.length;
+          input.setSelectionRange(newPosition, newPosition);
+        });
       },
-      [context.disabled, context.readonly],
+      [
+        context.trigger,
+        context.onInputValueChange,
+        context.filterStore,
+        context.onItemsFilter,
+        context.getItems,
+        context.onMentionAdd,
+        context.onOpenChange,
+        context.onIsPastingChange,
+        createVirtualElement,
+        context.disabled,
+        context.readonly,
+      ],
     );
 
     return (
