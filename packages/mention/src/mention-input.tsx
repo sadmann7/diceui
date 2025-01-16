@@ -4,6 +4,7 @@ import {
   useComposedRefs,
 } from "@diceui/shared";
 import * as React from "react";
+import { as } from "vitest/dist/chunks/reporters.D7Jzd9GS.js";
 import { MentionHighlighter } from "./mention-highlighter";
 import { type Mention, useMentionContext } from "./mention-root";
 
@@ -651,12 +652,14 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           return normalized;
         }
 
-        // Register items
-        context.onIsPastingChange(true);
-        context.onOpenChange(true);
+        requestAnimationFrame(async () => {
+          // Register items
+          context.onIsPastingChange(true);
+          context.onOpenChange(true);
 
-        // Process remaining parts that come after triggers
-        requestAnimationFrame(() => {
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+
+          // Process remaining parts that come after triggers
           const items = context.getItems();
           const newMentions: Mention[] = [];
           const newValues = [...context.value];
@@ -767,11 +770,11 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           // Set cursor position after all mentions
           const newCursorPosition = cursorPosition + newText.length;
           inputElement.setSelectionRange(newCursorPosition, newCursorPosition);
-
-          // Unregister items
-          context.onIsPastingChange(false);
-          context.onOpenChange(false);
         });
+
+        // Unregister items
+        context.onIsPastingChange(false);
+        context.onOpenChange(false);
       },
       [
         context.trigger,
