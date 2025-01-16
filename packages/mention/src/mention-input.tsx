@@ -230,7 +230,24 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         const insertedLength = newValue.length - prevValue.length;
 
         // Update mentions positions based on text changes
-        context.onMentionsShift(insertedLength, cursorPosition);
+        if (insertedLength !== 0) {
+          context.onMentionsChange((prev) =>
+            prev.map((mention) => {
+              // Only update positions for mentions that come after the cursor
+              if (
+                mention.start >=
+                cursorPosition - (insertedLength > 0 ? insertedLength : 0)
+              ) {
+                return {
+                  ...mention,
+                  start: mention.start + insertedLength,
+                  end: mention.end + insertedLength,
+                };
+              }
+              return mention;
+            }),
+          );
+        }
 
         context.onInputValueChange?.(newValue);
         onMentionUpdate(input);
@@ -238,7 +255,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
       [
         context.onInputValueChange,
         context.inputValue,
-        context.onMentionsShift,
+        context.onMentionsChange,
         onMentionUpdate,
         context.disabled,
         context.readonly,
@@ -600,12 +617,10 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         const parts = pastedText.split(context.trigger);
 
         let newText = "";
-        let currentPosition = cursorPosition;
 
         // Handle first part (before any triggers)
         if (parts[0]) {
           newText += parts[0];
-          currentPosition += parts[0].length;
         }
 
         const SEPARATORS_PATTERN = /[-_\s./\\|:;,]+/g;
@@ -643,25 +658,28 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         // Process remaining parts that come after triggers
         requestAnimationFrame(() => {
           const items = context.getItems();
+          const newMentions: Mention[] = [];
+          const newValues = [...context.value];
 
           for (let i = 1; i < parts.length; i++) {
             const part = parts[i];
             if (!part) continue;
 
-            // Extract mention text up until next trigger or end
-            const nextTriggerIndex = part.indexOf(context.trigger);
-            const textUntilNextTrigger =
-              nextTriggerIndex === -1 ? part : part.slice(0, nextTriggerIndex);
-
             // Try to find the longest valid mention by checking each word combination
-            const words = textUntilNextTrigger.split(/(\s+)/);
+            const words = part.split(/(\s+)/);
             let mentionText = "";
+            let spaces = "";
             let remainingText = "";
             let foundValidMention = false;
 
             // Try combinations from longest to shortest, preserving spaces
-            for (let wordCount = 1; wordCount <= words.length; wordCount++) {
-              const candidateText = words.slice(0, wordCount).join("").trim();
+            for (let wordCount = words.length; wordCount > 0; wordCount--) {
+              // Join only non-space segments for the candidate text
+              const candidateWords = words
+                .slice(0, wordCount)
+                .filter((_, index) => index % 2 === 0); // Take only non-space segments
+
+              const candidateText = candidateWords.join(" ").trim();
               if (!candidateText) continue;
 
               // Check if mention exists in available items
@@ -671,80 +689,99 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
                   normalizeWithGaps(candidateText),
               );
 
+              console.log({ items, mentionItem });
+
               if (mentionItem) {
                 mentionText = candidateText;
-                // Preserve spaces after the mention
-                const spaceAfterMention =
-                  words[wordCount]?.match(/^\s+/)?.[0] || "";
-                remainingText =
-                  spaceAfterMention +
-                  words
-                    .slice(wordCount + (spaceAfterMention ? 1 : 0))
-                    .join("") +
-                  (nextTriggerIndex !== -1 ? part.slice(nextTriggerIndex) : "");
+                // Calculate how many segments we used (including spaces)
+                const usedWordCount = candidateWords.length;
+                const usedSegments = usedWordCount * 2 - 1;
+
+                // Get spaces after the mention (if any)
+                const nextSegmentIndex = usedSegments;
+                const nextSegment = words[nextSegmentIndex];
+                const afterNextSegment = words[nextSegmentIndex + 1];
+
+                // If next segment is a space and there's text after it, keep the space
+                if (nextSegment?.match(/^\s+/) && afterNextSegment) {
+                  spaces = nextSegment;
+                  remainingText = words.slice(nextSegmentIndex + 1).join("");
+                } else {
+                  spaces = "";
+                  remainingText = words.slice(nextSegmentIndex).join("");
+                }
+
                 foundValidMention = true;
                 break;
               }
             }
 
-            // If no valid mention found, use first word as fallback
-            if (!foundValidMention) {
-              const firstWord = words[0]?.trim() ?? "";
-              const spaceAfterWord = words[1] || "";
-              mentionText = firstWord;
-              remainingText =
-                spaceAfterWord +
-                words.slice(2).join("") +
-                (nextTriggerIndex !== -1 ? part.slice(nextTriggerIndex) : "");
-            }
+            // Calculate the position where this mention starts
+            const mentionStartPosition = cursorPosition + newText.length;
 
-            // Only process if there's mention text
-            if (mentionText) {
-              // Check if mention exists in available items
+            if (foundValidMention) {
+              // Find matching item again (we know it exists)
               const mentionItem = items.find(
                 (item) =>
                   normalizeWithGaps(item.value) ===
                   normalizeWithGaps(mentionText),
               );
 
-              // Calculate the position where this mention starts
-              const mentionStartPosition = cursorPosition + newText.length;
-
-              // Add the text to the new content using the actual label
-              const textToAdd = `${context.trigger}${mentionItem?.label ?? mentionText}${remainingText}`;
-              newText += textToAdd;
-              currentPosition += textToAdd.length;
-
-              // Update input value
-              const newValue =
-                inputElement.value.slice(0, cursorPosition) +
-                newText +
-                inputElement.value.slice(selectionEnd);
-
-              inputElement.value = newValue;
-              context.onInputValueChange?.(newValue);
-
-              // Only add mention if it exists in the available items
               if (mentionItem) {
-                context.onMentionAdd(mentionItem.value, mentionStartPosition);
-              }
+                // Add mention with its label
+                const mentionLabel = `${context.trigger}${mentionItem.label}`;
+                newText += mentionLabel + spaces + remainingText;
 
-              inputElement.setSelectionRange(currentPosition, currentPosition);
+                newValues.push(mentionItem.value);
+                newMentions.push({
+                  value: mentionItem.value,
+                  start: mentionStartPosition,
+                  end: mentionStartPosition + mentionLabel.length,
+                });
+              }
+            } else {
+              // If no valid mention found, keep first word and spaces as original text
+              const firstWord = words[0] ?? "";
+              const spaceSegment = words[1] ?? "";
+              spaces = spaceSegment?.match(/^\s+/) ? spaceSegment : "";
+              remainingText = words.slice(2).join("");
+              newText += `${context.trigger}${firstWord}${spaces}${remainingText}`;
             }
           }
 
+          // Update input value
+          const finalValue =
+            inputElement.value.slice(0, cursorPosition) +
+            newText +
+            inputElement.value.slice(selectionEnd);
+
+          inputElement.value = finalValue;
+          context.onInputValueChange(finalValue);
+
+          // Update mentions and values
+          if (newMentions.length > 0) {
+            context.onValueChange(newValues);
+            context.onMentionsChange((prev) => [...prev, ...newMentions]);
+          }
+
+          // Set cursor position after all mentions
+          const newCursorPosition = cursorPosition + newText.length;
+          inputElement.setSelectionRange(newCursorPosition, newCursorPosition);
+
           // Unregister items
-          context.onOpenChange(false);
           context.onIsPastingChange(false);
+          context.onOpenChange(false);
         });
       },
       [
         context.trigger,
         context.onOpenChange,
         context.onInputValueChange,
+        context.value,
+        context.onValueChange,
         context.getItems,
+        context.onMentionsChange,
         context.onIsPastingChange,
-        context.onMentionAdd,
         context.disabled,
         context.readonly,
       ],

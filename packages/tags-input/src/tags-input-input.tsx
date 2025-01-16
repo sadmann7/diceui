@@ -59,6 +59,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
         aria-labelledby={context.labelId}
         aria-readonly={context.readOnly}
         data-invalid={context.isInvalidInput ? "" : undefined}
+        dir={context.dir}
         disabled={context.disabled}
         readOnly={context.readOnly}
         {...inputProps}
