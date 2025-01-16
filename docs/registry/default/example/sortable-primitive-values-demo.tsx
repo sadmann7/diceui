@@ -14,12 +14,7 @@ export default function SortablePrimitiveValuesDemo() {
   ]);
 
   return (
-    <Sortable.Root
-      value={tricks}
-      onValueChange={setTricks}
-      getItemValue={(item) => item}
-      orientation="mixed"
-    >
+    <Sortable.Root value={tricks} onValueChange={setTricks} orientation="mixed">
       <Sortable.Content className="grid grid-cols-3 gap-2.5">
         {tricks.map((trick) => (
           <Sortable.Item key={trick} value={trick} asChild asGrip>

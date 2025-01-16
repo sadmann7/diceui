@@ -134,18 +134,16 @@ function Sortable<T>(props: SortableProps<T>) {
     () => orientationConfig[orientation],
     [orientation],
   );
-
   const getItemValue = React.useCallback(
     (item: T): UniqueIdentifier => {
-      if (typeof item === "object") {
-        if (!getItemValueProp) {
-          throw new Error(
-            "getItemValue is required when using array of objects",
-          );
-        }
-        return getItemValueProp(item);
+      if (typeof item === "object" && !getItemValueProp) {
+        throw new Error(
+          "getItemValue is required when using array of objects.",
+        );
       }
-      return item as UniqueIdentifier;
+      return getItemValueProp
+        ? getItemValueProp(item)
+        : (item as UniqueIdentifier);
     },
     [getItemValueProp],
   );

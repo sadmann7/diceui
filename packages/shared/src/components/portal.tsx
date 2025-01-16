@@ -14,17 +14,17 @@ interface PortalProps
 
 const Portal = React.forwardRef<HTMLDivElement, PortalProps>(
   (props, forwardedRef) => {
-    const { container, ...portalProps } = props;
+    const { container: containerProp, ...portalProps } = props;
     const mounted = useMounted();
 
-    const dynamicContainer =
-      container ?? (mounted ? globalThis.document?.body : null);
+    const container =
+      containerProp ?? (mounted ? globalThis.document?.body : null);
 
-    if (!dynamicContainer) return null;
+    if (!container) return null;
 
     return ReactDOM.createPortal(
       <Primitive.div {...portalProps} ref={forwardedRef} />,
-      dynamicContainer,
+      container,
     );
   },
 );

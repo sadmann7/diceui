@@ -184,7 +184,13 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           currentPosition < value.length &&
           value.slice(lastTriggerIndex + 1).trim().length > 0;
 
+        // Check if we're inside an existing mention
+        const isInsideExistingMention = context.mentions.some(
+          (m) => currentPosition > m.start && currentPosition <= m.end,
+        );
+
         if (
+          !isInsideExistingMention &&
           isValidMention &&
           (isCursorAfterTrigger || isImmediatelyAfterTrigger) &&
           !hasInvalidTextAfter // Only open menu if there's no invalid text after trigger
@@ -215,6 +221,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         context.onHighlightedItemChange,
         context.disabled,
         context.readonly,
+        context.mentions,
       ],
     );
 
@@ -572,100 +579,8 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
     const onPaste = React.useCallback(
       (event: React.ClipboardEvent<InputElement>) => {
         if (context.disabled || context.readonly) return;
-
-        const inputElement = event.currentTarget;
-        const pastedText = event.clipboardData.getData("text");
-        const cursorPosition = inputElement.selectionStart ?? 0;
-        const selectionEnd = inputElement.selectionEnd ?? cursorPosition;
-
-        // Check if pasted text contains trigger
-        const triggerIndex = pastedText.indexOf(context.trigger);
-        if (triggerIndex === -1) return; // No trigger found, allow default paste
-
-        event.preventDefault();
-
-        // Split text by trigger and process each mention
-        const parts = pastedText.split(context.trigger);
-
-        let newText = "";
-        let currentPosition = cursorPosition;
-
-        // Handle first part (before any triggers)
-        if (parts[0]) {
-          newText += parts[0];
-          currentPosition += parts[0].length;
-        }
-
-        // Process remaining parts that come after triggers
-        for (let i = 1; i < parts.length; i++) {
-          const part = parts[i];
-          if (!part) continue;
-
-          // Extract mention text up until whitespace or punctuation
-          const match = part.match(/^([^\s.,!?;]+)/);
-          if (!match?.[1]) continue;
-
-          const mentionText = match[1].trim();
-          const remainingText = part.slice(match[0].length);
-
-          // Only process if there's mention text
-          if (mentionText) {
-            // Set isPasting to true to trigger item registration
-            context.onIsPastingChange(true);
-            // Open menu to trigger item registration
-            context.onOpenChange(true);
-
-            requestAnimationFrame(() => {
-              // Check if mention exists in available items
-              const mentionItem = context
-                .getItems()
-                .find(
-                  (item) =>
-                    item.value.toLowerCase() === mentionText.toLowerCase(),
-                );
-              const mentionLabel = mentionItem?.label;
-
-              // Reset states
-              context.onOpenChange(false);
-              context.onIsPastingChange(false);
-
-              // Calculate the position where this mention starts
-              const mentionStartPosition = cursorPosition + newText.length;
-
-              // Add the text to the new content using the actual label
-              const textToAdd = `${context.trigger}${mentionLabel ?? mentionText}${remainingText}`;
-              newText += textToAdd;
-              currentPosition += textToAdd.length;
-
-              // Update input value
-              const newValue =
-                inputElement.value.slice(0, cursorPosition) +
-                newText +
-                inputElement.value.slice(selectionEnd);
-
-              inputElement.value = newValue;
-              context.onInputValueChange?.(newValue);
-
-              // Only add mention if it exists in the available items
-              if (mentionItem) {
-                context.onMentionAdd(mentionItem.value, mentionStartPosition);
-              }
-
-              inputElement.setSelectionRange(currentPosition, currentPosition);
-            });
-          }
-        }
       },
-      [
-        context.trigger,
-        context.onOpenChange,
-        context.onInputValueChange,
-        context.getItems,
-        context.onIsPastingChange,
-        context.onMentionAdd,
-        context.disabled,
-        context.readonly,
-      ],
+      [context.disabled, context.readonly],
     );
 
     return (
