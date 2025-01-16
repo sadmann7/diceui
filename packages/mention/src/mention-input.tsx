@@ -178,22 +178,9 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         const isImmediatelyAfterTrigger =
           currentPosition === lastTriggerIndex + 1;
 
-        // Check if we're navigating through an invalid mention
-        const hasInvalidTextAfter =
-          // Only check for invalid text if we're not actively typing (cursor is not at the end)
-          currentPosition < value.length &&
-          value.slice(lastTriggerIndex + 1).trim().length > 0;
-
-        // Check if we're inside an existing mention
-        const isInsideExistingMention = context.mentions.some(
-          (m) => currentPosition > m.start && currentPosition <= m.end,
-        );
-
         if (
-          !isInsideExistingMention &&
           isValidMention &&
-          (isCursorAfterTrigger || isImmediatelyAfterTrigger) &&
-          !hasInvalidTextAfter // Only open menu if there's no invalid text after trigger
+          (isCursorAfterTrigger || isImmediatelyAfterTrigger)
         ) {
           createVirtualElement(element, lastTriggerIndex);
           context.onOpenChange(true);
@@ -221,7 +208,6 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         context.onHighlightedItemChange,
         context.disabled,
         context.readonly,
-        context.mentions,
       ],
     );
 
@@ -321,11 +307,10 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
               // Handle Ctrl/Cmd differently - jump to start of mention
               if (isCtrlOrCmd) {
                 return (
-                  cursorPosition === m.end || // Exactly at mention end
-                  (cursorToMentionEnd > 0 && // Or cursor is after mention end
-                    cursorToMentionEnd <= 20 && // Within reasonable range (20 chars)
-                    isOnlySpaces && // Only spaces between
-                    cursorPosition > m.start)
+                  cursorToMentionEnd > 0 && // Cursor is after mention end
+                  cursorToMentionEnd <= 20 && // Within reasonable range (20 chars)
+                  isOnlySpaces && // Only spaces between
+                  cursorPosition > m.start
                 ); // Cursor is after mention start
               }
 
@@ -580,77 +565,166 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
       (event: React.ClipboardEvent<InputElement>) => {
         if (context.disabled || context.readonly) return;
 
+        const inputElement = event.currentTarget;
         const pastedText = event.clipboardData.getData("text");
-        if (!pastedText) return;
+        const cursorPosition = inputElement.selectionStart ?? 0;
+        const selectionEnd = inputElement.selectionEnd ?? cursorPosition;
 
-        const input = event.currentTarget;
-        const cursorPosition = input.selectionStart ?? 0;
-        const selectionEnd = input.selectionEnd ?? cursorPosition;
-
-        // Find all potential mentions in pasted text (e.g., @mention)
-        const mentionRegex = new RegExp(
-          `${context.trigger}\\S+(?:\\s+\\S+)*`,
-          "g",
-        );
-        const matches = [...pastedText.matchAll(mentionRegex)];
-
-        if (matches.length === 0) return;
+        // Check if pasted text contains trigger
+        const triggerIndex = pastedText.indexOf(context.trigger);
+        if (triggerIndex === -1) return; // No trigger found, allow default paste
 
         event.preventDefault();
 
-        // Register the items
-        context.onOpenChange(true);
+        // Split text by trigger and process each mention
+        const parts = pastedText.split(context.trigger);
+
+        let newText = "";
+        let currentPosition = cursorPosition;
+
+        // Handle first part (before any triggers)
+        if (parts[0]) {
+          newText += parts[0];
+          currentPosition += parts[0].length;
+        }
+
+        const SEPARATORS_PATTERN = /[-_\s./\\|:;,]+/g;
+        const UNWANTED_CHARS = /[^\p{L}\p{N}\s]/gu;
+
+        function normalizeWithGaps(str: string) {
+          if (!str) return "";
+          if (typeof str !== "string") return "";
+
+          let normalized: string;
+          try {
+            normalized = str
+              .toLowerCase()
+              .normalize("NFC")
+              .replace(UNWANTED_CHARS, " ")
+              .replace(SEPARATORS_PATTERN, " ")
+              .trim()
+              .replace(/\s+/g, "");
+          } catch (_err) {
+            normalized = str
+              .toLowerCase()
+              .normalize("NFC")
+              .replace(/[^a-z0-9\s]/g, " ")
+              .trim()
+              .replace(/\s+/g, "");
+          }
+
+          return normalized;
+        }
+
+        // Register items
         context.onIsPastingChange(true);
+        context.onOpenChange(true);
 
+        // Process remaining parts that come after triggers
         requestAnimationFrame(() => {
-          // Insert pasted text
-          const newValue =
-            input.value.slice(0, cursorPosition) +
-            pastedText +
-            input.value.slice(selectionEnd);
+          const items = context.getItems();
 
-          input.value = newValue;
-          context.onInputValueChange?.(newValue);
+          for (let i = 1; i < parts.length; i++) {
+            const part = parts[i];
+            if (!part) continue;
 
-          // Process each potential mention
-          for (const match of matches) {
-            if (!match.index) continue;
+            // Extract mention text up until next trigger or end
+            const nextTriggerIndex = part.indexOf(context.trigger);
+            const textUntilNextTrigger =
+              nextTriggerIndex === -1 ? part : part.slice(0, nextTriggerIndex);
 
-            const absolutePosition = cursorPosition + match.index;
-            createVirtualElement(input, absolutePosition);
+            // Try to find the longest valid mention by checking each word combination
+            const words = textUntilNextTrigger.split(/(\s+)/);
+            let mentionText = "";
+            let remainingText = "";
+            let foundValidMention = false;
 
-            // Set the search term (removing the trigger)
-            const searchTerm = match[0].slice(1);
-            context.filterStore.search = searchTerm;
-            context.onItemsFilter();
+            // Try combinations from longest to shortest, preserving spaces
+            for (let wordCount = 1; wordCount <= words.length; wordCount++) {
+              const candidateText = words.slice(0, wordCount).join("").trim();
+              if (!candidateText) continue;
 
-            // If we find a match, add it as a mention
-            const matchingItem = context
-              .getItems()
-              .find(
-                (item) => item.label.toLowerCase() === searchTerm.toLowerCase(),
+              // Check if mention exists in available items
+              const mentionItem = items.find(
+                (item) =>
+                  normalizeWithGaps(item.value) ===
+                  normalizeWithGaps(candidateText),
               );
 
-            if (matchingItem) {
-              context.onMentionAdd(matchingItem.value, absolutePosition);
+              if (mentionItem) {
+                mentionText = candidateText;
+                // Preserve spaces after the mention
+                const spaceAfterMention =
+                  words[wordCount]?.match(/^\s+/)?.[0] || "";
+                remainingText =
+                  spaceAfterMention +
+                  words
+                    .slice(wordCount + (spaceAfterMention ? 1 : 0))
+                    .join("") +
+                  (nextTriggerIndex !== -1 ? part.slice(nextTriggerIndex) : "");
+                foundValidMention = true;
+                break;
+              }
+            }
+
+            // If no valid mention found, use first word as fallback
+            if (!foundValidMention) {
+              const firstWord = words[0]?.trim() ?? "";
+              const spaceAfterWord = words[1] || "";
+              mentionText = firstWord;
+              remainingText =
+                spaceAfterWord +
+                words.slice(2).join("") +
+                (nextTriggerIndex !== -1 ? part.slice(nextTriggerIndex) : "");
+            }
+
+            // Only process if there's mention text
+            if (mentionText) {
+              // Check if mention exists in available items
+              const mentionItem = items.find(
+                (item) =>
+                  normalizeWithGaps(item.value) ===
+                  normalizeWithGaps(mentionText),
+              );
+
+              // Calculate the position where this mention starts
+              const mentionStartPosition = cursorPosition + newText.length;
+
+              // Add the text to the new content using the actual label
+              const textToAdd = `${context.trigger}${mentionItem?.label ?? mentionText}${remainingText}`;
+              newText += textToAdd;
+              currentPosition += textToAdd.length;
+
+              // Update input value
+              const newValue =
+                inputElement.value.slice(0, cursorPosition) +
+                newText +
+                inputElement.value.slice(selectionEnd);
+
+              inputElement.value = newValue;
+              context.onInputValueChange?.(newValue);
+
+              // Only add mention if it exists in the available items
+              if (mentionItem) {
+                context.onMentionAdd(mentionItem.value, mentionStartPosition);
+              }
+
+              inputElement.setSelectionRange(currentPosition, currentPosition);
             }
           }
 
-          // Update cursor position after processing
-          const newPosition = cursorPosition + pastedText.length;
-          input.setSelectionRange(newPosition, newPosition);
+          // Unregister items
+          context.onOpenChange(false);
+          context.onIsPastingChange(false);
         });
       },
       [
         context.trigger,
-        context.onInputValueChange,
-        context.filterStore,
-        context.onItemsFilter,
-        context.getItems,
-        context.onMentionAdd,
         context.onOpenChange,
+        context.onInputValueChange,
+        context.getItems,
         context.onIsPastingChange,
-        createVirtualElement,
+        context.onMentionAdd,
         context.disabled,
         context.readonly,
       ],
