@@ -74,13 +74,18 @@ const MentionContent = React.forwardRef<ContentElement, MentionContentProps>(
 
     const context = useMentionContext(CONTENT_NAME);
 
+    const rtlAwareAlign = React.useMemo(() => {
+      if (context.dir !== "rtl") return align;
+      return align === "start" ? "end" : align === "end" ? "start" : align;
+    }, [align, context.dir]);
+
     const positionerContext = useAnchorPositioner({
       open: context.open,
       onOpenChange: context.onOpenChange,
       anchorRef: context.virtualAnchor,
       side,
       sideOffset,
-      align,
+      align: rtlAwareAlign,
       alignOffset,
       arrowPadding,
       collisionBoundary,
@@ -134,7 +139,7 @@ const MentionContent = React.forwardRef<ContentElement, MentionContentProps>(
     return (
       <MentionContentProvider
         side={side}
-        align={align}
+        align={rtlAwareAlign}
         arrowStyles={positionerContext.arrowStyles}
         arrowDisplaced={positionerContext.arrowDisplaced}
         onArrowChange={positionerContext.onArrowChange}
@@ -153,6 +158,7 @@ const MentionContent = React.forwardRef<ContentElement, MentionContentProps>(
             role="listbox"
             aria-orientation="vertical"
             data-state={getDataState(context.open)}
+            dir={context.dir}
             {...positionerContext.getFloatingProps(contentProps)}
             style={composedStyle}
           />

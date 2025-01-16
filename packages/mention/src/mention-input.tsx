@@ -60,24 +60,33 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         const paddingLeft = Number.parseFloat(
           style.getPropertyValue("padding-left") ?? "0",
         );
+        const paddingRight = Number.parseFloat(
+          style.getPropertyValue("padding-right") ?? "0",
+        );
         const paddingTop = Number.parseFloat(
           style.getPropertyValue("padding-top") ?? "0",
         );
 
         // Calculate wrapped lines before cursor
-        const containerWidth = input.clientWidth - paddingLeft * 2;
+        const containerWidth = input.clientWidth - paddingLeft - paddingRight;
         const wrappedLines = Math.floor(textWidth / containerWidth);
         const totalLines = currentLine + wrappedLines;
 
         const scrollTop = input.scrollTop;
         const scrollLeft = input.scrollLeft;
 
-        // Calculate x position considering text wrapping
+        // Calculate x position considering text wrapping and RTL
         const effectiveTextWidth = textWidth % containerWidth;
-        const x = Math.min(
-          rect.left + paddingLeft + effectiveTextWidth - scrollLeft,
-          rect.right - 10,
-        );
+        const isRTL = context.dir === "rtl";
+        const x = isRTL
+          ? Math.min(
+              rect.right - paddingRight - effectiveTextWidth + scrollLeft,
+              rect.right - 10,
+            )
+          : Math.min(
+              rect.left + paddingLeft + effectiveTextWidth - scrollLeft,
+              rect.right - 10,
+            );
 
         // Calculate y position considering wrapped lines
         const y = rect.top + paddingTop + (totalLines * lineHeight - scrollTop);
@@ -96,7 +105,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           },
         } satisfies DOMRect;
       },
-      [getTextWidth, getLineHeight],
+      [getTextWidth, getLineHeight, context.dir],
     );
 
     const createVirtualElement = React.useCallback(
@@ -757,11 +766,13 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           aria-readonly={context.readonly}
           disabled={context.disabled}
           readOnly={context.readonly}
+          dir={context.dir}
           {...inputProps}
           ref={composedRef}
           style={{
             position: "relative",
             zIndex: 1,
+            textAlign: context.dir === "rtl" ? "right" : "left",
             ...style,
           }}
           onChange={composeEventHandlers(inputProps.onChange, onChange)}

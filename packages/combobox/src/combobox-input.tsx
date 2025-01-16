@@ -357,6 +357,7 @@ const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
         aria-activedescendant={context.highlightedItem?.ref?.current?.id}
         aria-disabled={context.disabled}
         aria-readonly={context.readOnly}
+        dir={context.dir}
         disabled={context.disabled}
         readOnly={context.readOnly}
         {...props}

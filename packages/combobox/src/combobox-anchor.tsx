@@ -36,6 +36,7 @@ const ComboboxAnchor = React.forwardRef<AnchorElement, ComboboxAnchorProps>(
         data-anchor=""
         data-disabled={context.disabled ? "" : undefined}
         data-focused={isFocused ? "" : undefined}
+        dir={context.dir}
         {...anchorProps}
         ref={composedRef}
         onClick={composeEventHandlers(anchorProps.onClick, (event) => {

@@ -115,7 +115,7 @@ const MentionHighlighter = React.memo(
           letterSpacing: inputStyle.letterSpacing,
           textTransform:
             inputStyle.textTransform as React.CSSProperties["textTransform"],
-          textAlign: inputStyle.textAlign as React.CSSProperties["textAlign"],
+          textAlign: context.dir === "rtl" ? "right" : "left",
           textIndent: inputStyle.textIndent,
           padding: inputStyle.padding,
           borderWidth: inputStyle.borderWidth,
@@ -126,9 +126,10 @@ const MentionHighlighter = React.memo(
           wordBreak: inputStyle.wordBreak as React.CSSProperties["wordBreak"],
           overflowWrap:
             inputStyle.overflowWrap as React.CSSProperties["overflowWrap"],
+          direction: context.dir,
           ...style,
         };
-      }, [inputStyle, style]);
+      }, [inputStyle, style, context.dir]);
 
       const onSegmentsRender = React.useCallback(() => {
         const input = context.inputRef.current;
@@ -176,7 +177,12 @@ const MentionHighlighter = React.memo(
       if (!inputStyle) return null;
 
       return (
-        <div {...highlighterProps} ref={composedRef} style={highlighterStyle}>
+        <div
+          {...highlighterProps}
+          ref={composedRef}
+          dir={context.dir}
+          style={highlighterStyle}
+        >
           {onSegmentsRender()}
         </div>
       );

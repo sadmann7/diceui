@@ -22,6 +22,7 @@ const ComboboxTrigger = React.forwardRef<
       aria-expanded={context.open}
       aria-controls={context.listId}
       data-state={context.open ? "open" : "closed"}
+      dir={context.dir}
       disabled={context.disabled}
       tabIndex={context.disabled ? undefined : -1}
       {...triggerProps}

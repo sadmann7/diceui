@@ -34,10 +34,14 @@ export default function PlaygroundPage() {
     <Shell>
       <div className="h-screen bg-accent" />
       <Textarea
+        dir="rtl"
         placeholder="Type here..."
         className="min-h-[80px] max-w-[40rem]"
       />
-      <Mention.Root className="flex max-w-[40rem] flex-col gap-2 [&_[data-mention-segment]]:rounded [&_[data-mention-segment]]:bg-blue-500 [&_[data-mention-segment]]:text-white">
+      <Mention.Root
+        dir="rtl"
+        className="flex max-w-[40rem] flex-col gap-2 [&_[data-mention-segment]]:rounded [&_[data-mention-segment]]:bg-blue-500 [&_[data-mention-segment]]:text-white"
+      >
         <Mention.Label>Tricks</Mention.Label>
         <Mention.Input
           placeholder="Enter @ to mention a trick..."
@@ -61,7 +65,7 @@ export default function PlaygroundPage() {
           </Mention.Content>
         </Mention.Portal>
       </Mention.Root>
-      <Combobox className="w-[15rem]">
+      <Combobox dir="rtl" className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
           <ComboboxTrigger>
@@ -77,7 +81,7 @@ export default function PlaygroundPage() {
           ))}
         </ComboboxContent>
       </Combobox>
-      <DropdownMenu>
+      <DropdownMenu dir="rtl">
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm" className="w-fit">
             Open
@@ -91,7 +95,7 @@ export default function PlaygroundPage() {
           <DropdownMenuItem>Pineapple</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <Select>
+      <Select dir="rtl">
         <SelectTrigger className="w-[11.25rem]">
           <SelectValue placeholder="Select a trick" />
         </SelectTrigger>
