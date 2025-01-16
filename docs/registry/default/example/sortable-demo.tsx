@@ -14,7 +14,12 @@ export default function SortableDemo() {
   ]);
 
   return (
-    <Sortable.Root value={tricks} onValueChange={setTricks} orientation="both">
+    <Sortable.Root
+      value={tricks}
+      onValueChange={setTricks}
+      getItemValue={(item) => item.id}
+      orientation="mixed"
+    >
       <Sortable.Content className="grid grid-cols-3 gap-2.5">
         {tricks.map((trick) => (
           <Sortable.Item key={trick.id} value={trick.id} asChild asGrip>

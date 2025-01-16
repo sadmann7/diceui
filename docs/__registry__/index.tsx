@@ -277,6 +277,22 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "sortable-primitive-values-demo": {
+      name: "sortable-primitive-values-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button"],
+      files: [{
+        path: "registry/default/example/sortable-primitive-values-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/example/sortable-primitive-values-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "sortable-grip-demo": {
       name: "sortable-grip-demo",
       description: "",

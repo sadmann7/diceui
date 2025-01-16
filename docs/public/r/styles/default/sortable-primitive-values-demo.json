@@ -1,0 +1,22 @@
+{
+  "name": "sortable-primitive-values-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@dnd-kit/core",
+    "@dnd-kit/modifiers",
+    "@dnd-kit/sortable",
+    "@dnd-kit/utilities",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "button"
+  ],
+  "files": [
+    {
+      "path": "example/sortable-primitive-values-demo.tsx",
+      "content": "\"use client\";\n\nimport * as Sortable from \"@/registry/default/ui/sortable\";\nimport * as React from \"react\";\n\nexport default function SortablePrimitiveValuesDemo() {\n  const [tricks, setTricks] = React.useState([\n    \"The 900\",\n    \"Indy Backflip\",\n    \"Pizza Guy\",\n    \"Rocket Air\",\n    \"Kickflip Backflip\",\n    \"FS 540\",\n  ]);\n\n  return (\n    <Sortable.Root\n      value={tricks}\n      onValueChange={setTricks}\n      getItemValue={(item) => item}\n      orientation=\"mixed\"\n    >\n      <Sortable.Content className=\"grid grid-cols-3 gap-2.5\">\n        {tricks.map((trick) => (\n          <Sortable.Item key={trick} value={trick} asChild asGrip>\n            <div className=\"flex size-full flex-col items-center justify-center border border-zinc-200 bg-zinc-100 p-6 text-center shadow-sm dark:border-zinc-800 dark:bg-zinc-900\">\n              <div className=\"font-medium text-sm leading-tight sm:text-base\">\n                {trick}\n              </div>\n            </div>\n          </Sortable.Item>\n        ))}\n      </Sortable.Content>\n      <Sortable.Overlay>\n        {(activeItem) => (\n          <Sortable.Item value={activeItem.value} asChild>\n            <div className=\"flex size-full flex-col items-center justify-center border border-zinc-200 bg-zinc-100 p-6 text-center shadow-sm dark:border-zinc-800 dark:bg-zinc-900\">\n              <div className=\"font-medium text-sm leading-tight sm:text-base\">\n                {activeItem.value}\n              </div>\n            </div>\n          </Sortable.Item>\n        )}\n      </Sortable.Overlay>\n    </Sortable.Root>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

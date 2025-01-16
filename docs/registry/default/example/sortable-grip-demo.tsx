@@ -34,7 +34,11 @@ export default function SortableGripDemo() {
   ]);
 
   return (
-    <Sortable value={tricks} onValueChange={setTricks}>
+    <Sortable
+      value={tricks}
+      onValueChange={setTricks}
+      getItemValue={(item) => item.id}
+    >
       <Table className="rounded-none border">
         <TableHeader>
           <TableRow className="bg-accent/50">

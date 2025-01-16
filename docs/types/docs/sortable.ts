@@ -9,30 +9,38 @@ import type { SlotProps } from "@radix-ui/react-slot";
 
 import type { SortableContextProps } from "@dnd-kit/sortable";
 
-export interface RootProps<TData extends { id: UniqueIdentifier }>
-  extends DndContextProps {
+export interface RootProps<TData> extends DndContextProps {
   /**
-   * An array of data items that the sortable component will render.
+   * An array of items for sorting.
+   *
+   * Can be an array of primitives (string, number) or objects.
+   *
    * @example
-   * value={[
-   *   { id: 1, name: 'Item 1' },
-   *   { id: 2, name: 'Item 2' },
-   * ]}
+   * // Array of primitives
+   * value={["Item 1", "Item 2"]}
+   * // Array of objects
+   * value={[{ id: 1, name: 'Item 1' }, { id: 2, name: 'Item 2' }]}
    */
   value: TData[];
 
-  /**
-   * An optional callback function that is called when the order of the data items changes.
-   * It receives the new array of items as its argument.
-   * @example
-   * onValueChange={(items) => console.log(items)}
-   */
+  /** The callback function that is called when the order of the items changes. */
   onValueChange?: (items: TData[]) => void;
 
   /**
+   * A function that returns a unique identifier for each sortable item.
+   *
+   * Required when using an array of objects.
+   *
+   * @example
+   * getItemValue={(item) => item.id}
+   */
+  getItemValue?: (item: TData) => UniqueIdentifier;
+
+  /**
    * An optional callback function that is called when an item is moved.
-   * It receives the full DragEndEvent object from @dnd-kit/core.
-   * This will override the default behavior of updating the order of the data items.
+   * Receives the full DragEndEvent object from @dnd-kit/core.
+   *
+   * Overrides the default behavior of updating the order of the data items.
    */
   onMove?: (event: DragEndEvent) => void;
 
@@ -42,7 +50,7 @@ export interface RootProps<TData extends { id: UniqueIdentifier }>
    * Automatically selected based on orientation:
    * - vertical: [restrictToVerticalAxis, restrictToParentElement]
    * - horizontal: [restrictToHorizontalAxis, restrictToParentElement]
-   * - both: [restrictToParentElement]
+   * - mixed: [restrictToParentElement]
    */
   modifiers?: DndContextProps["modifiers"];
 
@@ -63,7 +71,7 @@ export interface RootProps<TData extends { id: UniqueIdentifier }>
    * Specifies the axis for the drag-and-drop operation.
    * @default "vertical"
    */
-  orientation?: "vertical" | "horizontal" | "both";
+  orientation?: "vertical" | "horizontal" | "mixed";
 
   /**
    * The id of the sortable component.
@@ -88,10 +96,11 @@ export interface RootProps<TData extends { id: UniqueIdentifier }>
 
   /**
    * Collision detection algorithm to determine drop targets during drag operations.
-   * @default Automatically selected based on orientation:
+   * @default
+   * Based on orientation:
    * - vertical: closestCenter
    * - horizontal: closestCenter
-   * - both: closestCorners
+   * - mixed: closestCorners
    */
   collisionDetection?: DndContextProps["collisionDetection"];
 
@@ -128,7 +137,7 @@ export interface ContentProps
    * Automatically selected based on orientation:
    * - vertical: verticalListSortingStrategy
    * - horizontal: horizontalListSortingStrategy
-   * - both: undefined
+   * - mixed: undefined
    */
   strategy?: SortableContextProps["strategy"];
 

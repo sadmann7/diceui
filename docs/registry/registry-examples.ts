@@ -162,6 +162,24 @@ export const examples: Registry = [
     ],
   },
   {
+    name: "sortable-primitive-values-demo",
+    type: "registry:example",
+    dependencies: [
+      "@dnd-kit/core",
+      "@dnd-kit/modifiers",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+      "lucide-react",
+    ],
+    registryDependencies: ["button"],
+    files: [
+      {
+        path: "example/sortable-primitive-values-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "sortable-grip-demo",
     type: "registry:example",
     dependencies: [

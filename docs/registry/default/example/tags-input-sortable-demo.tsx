@@ -33,9 +33,9 @@ export default function TagsInputSortableDemo() {
   return (
     <Sortable
       sensors={sensors}
-      value={tricks.map((trick) => ({ id: trick }))}
-      onValueChange={(items) => setTricks(items.map((item) => item.id))}
-      orientation="both"
+      value={tricks}
+      onValueChange={(items) => setTricks(items)}
+      orientation="mixed"
       flatCursor
     >
       <TagsInput value={tricks} onValueChange={setTricks} editable>

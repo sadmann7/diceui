@@ -64,8 +64,15 @@ import * as Sortable from "@/components/ui/sortable";
 
 ### With Grip
 
+Use `ItemGrip` as a drag handle for sorting.
+
 <ComponentTabs name="sortable-grip-demo" />
 
+### With Primitive Values
+
+Use an array of primitives (string or number) for sorting.
+
+<ComponentTabs name="sortable-primitive-value-demo" />
 
 ## API Reference
 
@@ -122,8 +129,6 @@ Individual sortable item component.
 
 A button component that acts as a drag handle for sortable items.
 
-#### Props
-
 <AutoTypeTable
   path="./types/docs/sortable.ts"
   name="ItemGripProps"
@@ -138,19 +143,13 @@ A button component that acts as a drag handle for sortable items.
   ]}
 />
 
-#### CSS
 
-The component extends the base Button component and adds the following styles:
+The component extends the base `Button` component and adds the following styles:
 
+- `select-none` for pointer events
 - `cursor-grab` when not dragging (unless `flatCursor` is true)
 - `cursor-grabbing` when dragging (unless `flatCursor` is true)
 - `cursor-default` when `flatCursor` is true
-
-#### Accessibility
-
-- Has `aria-controls` pointing to the parent sortable item's ID
-- Inherits ARIA attributes from the sortable context for drag and drop operations
-- Can be activated using keyboard navigation
 
 
 ### Overlay
