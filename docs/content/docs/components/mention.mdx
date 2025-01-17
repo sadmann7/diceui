@@ -1,0 +1,223 @@
+---
+title: Mention
+description: An input component that allows users to mention others using a trigger character.
+preview: true
+---
+
+<ComponentTabs name="mention-demo" />
+
+## Installation
+
+```package-install
+@diceui/mention
+```
+
+## Installation with shadcn/ui
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/mention"
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @diceui/mention
+     ```
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource name="mention" />
+  </Step>
+</Steps>
+
+## Layout
+
+Import the parts, and compose them together.
+
+```tsx
+import * as Mention from "@diceui/mention";
+
+<Mention.Root>
+  <Mention.Label />
+  <Mention.Input />
+  <Mention.Portal>
+    <Mention.Content>
+      <Mention.Item>
+        <Mention.ItemText />
+      </Mention.Item>
+    </Mention.Content>
+  </Mention.Portal>
+  <Mention.Highlighter />
+</Mention.Root>
+```
+
+## Examples
+
+### Basic Usage
+
+<ComponentTabs name="mention-basic-demo" />
+
+### Custom Trigger
+
+<ComponentTabs name="mention-custom-trigger-demo" />
+
+### With Custom Filter
+
+<ComponentTabs name="mention-custom-filter-demo" />
+
+### With Multiple Triggers
+
+<ComponentTabs name="mention-multiple-triggers-demo" />
+
+## API Reference
+
+### Root
+
+The main container for the mention component. Manages state, keyboard interactions, and provides context for all other mention components.
+
+<AutoTypeTable
+  path="./types/docs/mention.ts"
+  name="RootProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-state]",
+      value: ["open", "closed"],
+    },
+    {
+      title: "[data-disabled]",
+      value: "Present when disabled.",
+    },
+  ]}
+/>
+
+### Label
+
+An accessible label that describes the mention input. Associates with the input element for screen readers.
+
+<AutoTypeTable
+  path="./types/docs/mention.ts"
+  name="LabelProps"
+/>
+
+### Input
+
+The text input field that users can type into to trigger mentions.
+
+<AutoTypeTable
+  path="./types/docs/mention.ts"
+  name="InputProps"
+/>
+
+### Portal
+
+Creates a portal for rendering the mention content outside of its DOM hierarchy.
+
+<AutoTypeTable
+  path="./types/docs/mention.ts"
+  name="PortalProps"
+/>
+
+### Content
+
+The popover container for mention items. Positions the mention popover relative to the cursor position.
+
+<AutoTypeTable
+  path="./types/docs/mention.ts"
+  name="ContentProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-state]",
+      value: ["open", "closed"],
+    },
+    {
+      title: "[data-side]",
+      value: ["top", "right", "bottom", "left"],
+    },
+    {
+      title: "[data-align]",
+      value: ["start", "center", "end"],
+    },
+  ]}
+/>
+
+<CSSVariablesTable
+  variables={[
+    {
+      title: "--dice-transform-origin",
+      description: "Transform origin for cursor positioning.",
+    },
+    {
+      title: "--dice-available-width",
+      description: "Available width in the viewport for the popover element.",
+    },
+    {
+      title: "--dice-available-height",
+      description: "Available height in the viewport for the popover element.",
+    },
+  ]}
+/>
+
+### Item
+
+An interactive option in the mention list.
+
+<AutoTypeTable
+  path="./types/docs/mention.ts"
+  name="ItemProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-highlighted]",
+      value: "Present when the item is highlighted",
+    },
+    {
+      title: "[data-disabled]",
+      value: "Present when the item is disabled",
+    },
+    {
+      title: "[data-value]",
+      value: "The value of the item",
+    },
+  ]}
+/>
+
+
+## Accessibility
+
+### Keyboard Interactions
+
+<KeyboardShortcutsTable
+  shortcuts={[
+    {
+      keys: ["Enter"],
+      description: "When open, selects the highlighted mention option."
+    },
+    {
+      keys: ["↑", "↓"],
+      description: "When open, moves focus to the previous/next mention option."
+    },
+    {
+      keys: ["Home", "End"],
+      description: "When open, moves focus to the first/last mention option."
+    },
+    {
+      keys: ["Escape"],
+      description: "Closes the mention popover and returns focus to the input."
+    },
+  ]}
+/> 
