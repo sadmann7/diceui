@@ -375,11 +375,10 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
               // Handle Ctrl/Cmd differently - jump to start of mention
               if (isCtrlOrCmd) {
                 return (
+                  cursorPosition > m.start && // Cursor after mention start
                   (cursorPosition === m.end || // Cursor at mention end
                     (cursorPosition > m.end && // Or after mention end with only spaces
-                      cursorPosition <= m.end + 20 && // Within reasonable range
-                      isOnlySpaces)) && // Only spaces between
-                  cursorPosition > m.start // Cursor after mention start
+                      isOnlySpaces)) // Only spaces between
                 );
               }
 
@@ -393,7 +392,6 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
             }
 
             // For right arrow
-            const mentionToNextChar = m.start - cursorPosition;
             const textBetween = input.value.slice(cursorPosition, m.start);
             const isOnlySpaces = /^\s*$/.test(textBetween);
 
@@ -401,8 +399,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
             if (isCtrlOrCmd) {
               return (
                 (cursorPosition >= m.start && cursorPosition < m.end) || // Cursor inside mention
-                (mentionToNextChar > 0 && // Or mention starts after cursor
-                  mentionToNextChar <= 20 && // Within reasonable range
+                (cursorPosition < m.start && // Or cursor before mention start
                   isOnlySpaces) // Only spaces between
               );
             }
