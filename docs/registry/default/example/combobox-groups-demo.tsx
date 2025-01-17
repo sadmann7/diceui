@@ -52,11 +52,7 @@ export default function ComboboxGroupsDemo() {
             <ComboboxGroup>
               <ComboboxGroupLabel>{category}</ComboboxGroupLabel>
               {items.map((trick) => (
-                <ComboboxItem
-                  key={trick.value}
-                  value={trick.value}
-                  indicatorSide="right"
-                >
+                <ComboboxItem key={trick.value} value={trick.value} outset>
                   {trick.label}
                 </ComboboxItem>
               ))}

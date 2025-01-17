@@ -1,5 +1,6 @@
 "use client";
 
+import { Textarea } from "@/components/ui/textarea";
 import {
   Mention,
   MentionContent,
@@ -55,11 +56,11 @@ export default function MentionCustomFilterDemo() {
       onInputValueChange={setInputValue}
       trigger="/"
       onFilter={onFilter}
+      className="w-full max-w-[400px]"
     >
-      <MentionInput
-        placeholder="Type / to use a command..."
-        className="min-h-[100px] font-mono"
-      />
+      <MentionInput placeholder="Type / to use a command..." asChild>
+        <Textarea />
+      </MentionInput>
       <MentionContent>
         {commands.map((command) => (
           <MentionItem
@@ -67,12 +68,10 @@ export default function MentionCustomFilterDemo() {
             label={command.name}
             value={command.name}
           >
-            <div className="flex items-center gap-2">
-              <span className="font-mono text-sm">{command.name}</span>
-              <span className="text-muted-foreground text-xs">
-                {command.description}
-              </span>
-            </div>
+            <span className="font-mono text-sm">{command.name}</span>
+            <span className="text-muted-foreground text-xs">
+              {command.description}
+            </span>
           </MentionItem>
         ))}
       </MentionContent>

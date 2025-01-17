@@ -1,44 +1,56 @@
 "use client";
 
+import { Textarea } from "@/components/ui/textarea";
 import {
   Mention,
   MentionContent,
   MentionInput,
   MentionItem,
 } from "@/registry/default/ui/mention";
-import * as React from "react";
 
-const emojis = [
-  { id: "1", name: "👋 Wave", value: "👋" },
-  { id: "2", name: "😊 Smile", value: "😊" },
-  { id: "3", name: "🎉 Party", value: "🎉" },
-  { id: "4", name: "❤️ Heart", value: "❤️" },
-  { id: "5", name: "🔥 Fire", value: "🔥" },
+const users = [
+  {
+    id: "1",
+    name: "Olivia Martin",
+    email: "olivia@email.com",
+  },
+  {
+    id: "2",
+    name: "Isabella Nguyen",
+    email: "isabella@email.com",
+  },
+  {
+    id: "3",
+    name: "Emma Wilson",
+    email: "emma@email.com",
+  },
+  {
+    id: "4",
+    name: "Jackson Lee",
+    email: "jackson@email.com",
+  },
+  {
+    id: "5",
+    name: "William Kim",
+    email: "will@email.com",
+  },
 ];
 
 export default function MentionCustomTriggerDemo() {
-  const [value, setValue] = React.useState<string[]>([]);
-  const [inputValue, setInputValue] = React.useState("");
-
   return (
-    <Mention
-      value={value}
-      onValueChange={setValue}
-      inputValue={inputValue}
-      onInputValueChange={setInputValue}
-      trigger=":"
-    >
-      <MentionInput
-        placeholder="Type : to add an emoji..."
-        className="min-h-[100px]"
-      />
+    <Mention trigger="#" className="w-full max-w-[400px]">
+      <MentionInput placeholder="Type # to mention a user..." asChild>
+        <Textarea />
+      </MentionInput>
       <MentionContent>
-        {emojis.map((emoji) => (
-          <MentionItem key={emoji.id} label={emoji.name} value={emoji.value}>
-            <div className="flex items-center gap-2">
-              <span className="text-xl">{emoji.value}</span>
-              <span className="text-sm">{emoji.name}</span>
-            </div>
+        {users.map((user) => (
+          <MentionItem
+            key={user.id}
+            value={user.name}
+            className="flex-col items-start gap-0.5"
+          >
+            <span className="text-sm">{user.name}</span>
+            <span className="text-muted-foreground text-xs">{user.email}</span>
           </MentionItem>
         ))}
       </MentionContent>

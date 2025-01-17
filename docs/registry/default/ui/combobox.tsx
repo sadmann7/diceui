@@ -42,7 +42,7 @@ const ComboboxInput = React.forwardRef<
   <ComboboxPrimitive.Input
     ref={ref}
     className={cn(
-      "flex h-9 w-full rounded-md bg-transparent text-sm placeholder:text-muted-foreground focus:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+      "flex h-9 w-full rounded-md bg-transparent text-base placeholder:text-muted-foreground focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
       className,
     )}
     {...props}
@@ -191,18 +191,14 @@ ComboboxGroupLabel.displayName = ComboboxPrimitive.GroupLabel.displayName;
 const ComboboxItem = React.forwardRef<
   React.ElementRef<typeof ComboboxPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof ComboboxPrimitive.Item> & {
-    /**
-     * The side of the item indicator relative to the item text.
-     * @default "left"
-     */
-    indicatorSide?: "left" | "right";
+    outset?: boolean;
   }
->(({ className, children, indicatorSide = "left", ...props }, ref) => (
+>(({ className, children, outset, ...props }, ref) => (
   <ComboboxPrimitive.Item
     ref={ref}
     className={cn(
       "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 text-sm outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[disabled]:opacity-50",
-      indicatorSide === "left" ? "pr-2 pl-8" : "pr-8 pl-2",
+      outset ? "pr-8 pl-2" : "pr-2 pl-8",
       className,
     )}
     {...props}
@@ -210,7 +206,7 @@ const ComboboxItem = React.forwardRef<
     <ComboboxPrimitive.ItemIndicator
       className={cn(
         "absolute flex h-3.5 w-3.5 items-center justify-center",
-        indicatorSide === "left" ? "left-2" : "right-2",
+        outset ? "right-2" : "left-2",
       )}
     >
       <Check className="h-4 w-4" />

@@ -16,23 +16,15 @@ const tricks = [
 ];
 
 export default function ComboboxDemo() {
-  const [value, setValue] = React.useState("");
-  const [inputValue, setInputValue] = React.useState("");
-
   return (
-    <Combobox.Root
-      value={value}
-      onValueChange={setValue}
-      inputValue={inputValue}
-      onInputValueChange={setInputValue}
-    >
+    <Combobox.Root>
       <Combobox.Label className="font-medium text-sm text-zinc-950 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:text-zinc-50">
         Trick
       </Combobox.Label>
-      <Combobox.Anchor className="flex h-9 w-full items-center justify-between rounded-md border border-zinc-200 bg-white px-3 py-2 shadow-sm transition-colors data-[focused]:ring-1 data-[focused]:ring-zinc-200 dark:border-zinc-800 dark:bg-zinc-950 dark:data-[focused]:ring-zinc-800">
+      <Combobox.Anchor className="flex h-9 w-full items-center justify-between rounded-md border border-zinc-200 bg-white px-3 py-2 shadow-sm transition-colors data-[focused]:ring-1 data-[focused]:ring-zinc-800 dark:border-zinc-800 dark:bg-zinc-950 dark:data-[focused]:ring-zinc-300">
         <Combobox.Input
           placeholder="Search trick..."
-          className="flex h-9 w-full rounded-md bg-transparent text-sm text-zinc-900 placeholder:text-zinc-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-zinc-50 dark:placeholder:text-zinc-400"
+          className="flex h-9 w-full rounded-md bg-transparent text-base text-zinc-900 placeholder:text-zinc-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:text-zinc-50 dark:placeholder:text-zinc-400"
         />
         <Combobox.Trigger className="flex shrink-0 items-center justify-center rounded-r-md border-zinc-200 bg-transparent text-zinc-500 transition-colors hover:text-zinc-900 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-50">
           <ChevronDown className="h-4 w-4" />

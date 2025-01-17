@@ -133,12 +133,12 @@ export default function ComboboxVirtualizedDemo() {
               <ComboboxItem
                 key={virtualItem.key}
                 value={trick.value}
-                indicatorSide="right"
                 className="absolute top-0 left-0 w-full"
                 style={{
                   height: `${virtualItem.size}px`,
                   transform: `translateY(${virtualItem.start}px)`,
                 }}
+                outset
               >
                 {trick.label}
               </ComboboxItem>

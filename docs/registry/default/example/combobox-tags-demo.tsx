@@ -59,7 +59,7 @@ export default function ComboboxTagsDemo() {
         <ComboboxGroup>
           <ComboboxGroupLabel>Tricks</ComboboxGroupLabel>
           {tricks.map((trick) => (
-            <ComboboxItem key={trick} value={trick} indicatorSide="right">
+            <ComboboxItem key={trick} value={trick} outset>
               {trick}
             </ComboboxItem>
           ))}
