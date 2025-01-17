@@ -19,7 +19,6 @@ interface MentionInputProps
 
 const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
   (props, forwardedRef) => {
-    const { style, ...inputProps } = props;
     const context = useMentionContext(INPUT_NAME);
     const composedRef = useComposedRefs(forwardedRef, context.inputRef);
 
@@ -887,24 +886,19 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           disabled={context.disabled}
           readOnly={context.readonly}
           dir={context.dir}
-          {...inputProps}
+          {...props}
           ref={composedRef}
-          style={{
-            position: "relative",
-            zIndex: 1,
-            ...style,
-          }}
-          onChange={composeEventHandlers(inputProps.onChange, onChange)}
-          onClick={composeEventHandlers(inputProps.onClick, onClick)}
+          onChange={composeEventHandlers(props.onChange, onChange)}
+          onClick={composeEventHandlers(props.onClick, onClick)}
           onPointerDown={composeEventHandlers(
-            inputProps.onPointerDown,
+            props.onPointerDown,
             onPointerDown,
           )}
-          onCut={composeEventHandlers(inputProps.onCut, onCut)}
-          onFocus={composeEventHandlers(inputProps.onFocus, onFocus)}
-          onKeyDown={composeEventHandlers(inputProps.onKeyDown, onKeyDown)}
-          onPaste={composeEventHandlers(inputProps.onPaste, onPaste)}
-          onSelect={composeEventHandlers(inputProps.onSelect, onSelect)}
+          onCut={composeEventHandlers(props.onCut, onCut)}
+          onFocus={composeEventHandlers(props.onFocus, onFocus)}
+          onKeyDown={composeEventHandlers(props.onKeyDown, onKeyDown)}
+          onPaste={composeEventHandlers(props.onPaste, onPaste)}
+          onSelect={composeEventHandlers(props.onSelect, onSelect)}
         />
       </div>
     );

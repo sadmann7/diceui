@@ -19,7 +19,7 @@ const defaultHighlighterStyle: React.CSSProperties = {
   userSelect: "none",
   overflow: "auto",
   width: "100%",
-  transition: "border-color 0.15s ease, background-color 0.15s ease",
+  isolation: "isolate",
 };
 
 interface MentionHighlighterProps
@@ -132,10 +132,10 @@ const MentionHighlighter = React.memo(
       }, [inputStyle, style, context.dir]);
 
       const onSegmentsRender = React.useCallback(() => {
-        const input = context.inputRef.current;
-        if (!input) return null;
+        const inputElement = context.inputRef.current;
+        if (!inputElement) return null;
 
-        const { value } = input;
+        const { value } = inputElement;
         const segments: React.ReactNode[] = [];
         let lastIndex = 0;
 
@@ -151,7 +151,7 @@ const MentionHighlighter = React.memo(
 
           // Add highlighted mention
           segments.push(
-            <span key={`mention-${start}`} data-mention-segment>
+            <span key={`mention-${start}`} data-tag="">
               {value.slice(start, end)}
             </span>,
           );

@@ -37,7 +37,7 @@ export default function PlaygroundPage() {
         placeholder="Type here..."
         className="min-h-[80px] max-w-[40rem]"
       />
-      <Mention.Root className="flex max-w-[40rem] flex-col gap-2 [&_[data-mention-segment]]:rounded [&_[data-mention-segment]]:bg-blue-500 [&_[data-mention-segment]]:text-white">
+      <Mention.Root className="flex max-w-[40rem] flex-col gap-2 [&_[data-tag]]:rounded [&_[data-tag]]:bg-blue-500 [&_[data-tag]]:text-white">
         <Mention.Label>Tricks</Mention.Label>
         <Mention.Input
           placeholder="Enter @ to mention a trick..."
