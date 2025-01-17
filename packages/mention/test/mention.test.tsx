@@ -39,11 +39,9 @@ describe("Mention", () => {
         <Mention.Input placeholder="Type @ to mention..." />
         <Mention.Portal>
           <Mention.Content>
-            <Mention.Item value="john">John Doe</Mention.Item>
-            <Mention.Item value="jane">Jane Smith</Mention.Item>
-            <Mention.Item value="bob" disabled>
-              Bob Wilson
-            </Mention.Item>
+            <Mention.Item value="kickflip">Kickflip</Mention.Item>
+            <Mention.Item value="heelflip">Heelflip</Mention.Item>
+            <Mention.Item value="fs-540">FS 540</Mention.Item>
           </Mention.Content>
         </Mention.Portal>
       </Mention.Root>,
@@ -83,13 +81,13 @@ describe("Mention", () => {
     });
 
     // Test selecting a mention
-    const johnOption = screen.getByRole("option", { name: "John Doe" });
+    const kickflipOption = screen.getByRole("option", { name: "Kickflip" });
     await waitFor(() => {
-      fireEvent.click(johnOption);
+      fireEvent.click(kickflipOption);
     });
 
-    expect(onValueChange).toHaveBeenCalledWith(["john"]);
-    expect(onInputValueChange).toHaveBeenCalledWith("@john ");
+    expect(onValueChange).toHaveBeenCalledWith(["kickflip"]);
+    expect(onInputValueChange).toHaveBeenCalledWith("@kickflip ");
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 
@@ -117,8 +115,8 @@ describe("Mention", () => {
 
     // Select highlighted option
     fireEvent.keyDown(input, { key: "Enter" });
-    expect(onValueChange).toHaveBeenCalledWith(["jane"]);
-    expect(input).toHaveValue("@jane ");
+    expect(onValueChange).toHaveBeenCalledWith(["heelflip"]);
+    expect(input).toHaveValue("@heelflip ");
   });
 
   test("handles disabled state", async () => {
@@ -128,7 +126,7 @@ describe("Mention", () => {
     const input = screen.getByPlaceholderText("Type @ to mention...");
     expect(input).toBeDisabled();
 
-    await userEvent.type(input, "@john");
+    await userEvent.type(input, "@kickflip");
     expect(onValueChange).not.toHaveBeenCalled();
   });
 
@@ -139,7 +137,7 @@ describe("Mention", () => {
     const input = screen.getByPlaceholderText("Type @ to mention...");
     expect(input).toHaveAttribute("readonly");
 
-    await userEvent.type(input, "@john");
+    await userEvent.type(input, "@kickflip");
     expect(onValueChange).not.toHaveBeenCalled();
   });
 
@@ -154,10 +152,11 @@ describe("Mention", () => {
     });
 
     // Type to filter
-    await userEvent.type(input, "jo");
+    await userEvent.type(input, "kck");
     await waitFor(() => {
-      expect(screen.getByText("John Doe")).toBeInTheDocument();
-      expect(screen.queryByText("Jane Smith")).not.toBeInTheDocument();
+      expect(screen.getByText("Kickflip")).toBeInTheDocument();
+      expect(screen.queryByText("Heelflip")).not.toBeInTheDocument();
+      expect(screen.queryByText("FS 540")).not.toBeInTheDocument();
     });
   });
 
@@ -172,10 +171,11 @@ describe("Mention", () => {
     });
 
     // Type exact match
-    await userEvent.type(input, "John");
+    await userEvent.type(input, "kickflip");
     await waitFor(() => {
-      expect(screen.getByText("John Doe")).toBeInTheDocument();
-      expect(screen.queryByText("Jane Smith")).not.toBeInTheDocument();
+      expect(screen.getByText("Kickflip")).toBeInTheDocument();
+      expect(screen.queryByText("Heelflip")).not.toBeInTheDocument();
+      expect(screen.queryByText("FS 540")).not.toBeInTheDocument();
     });
   });
 
@@ -195,10 +195,11 @@ describe("Mention", () => {
     });
 
     // Type to filter with custom case-insensitive filter
-    await userEvent.type(input, "JOHN");
+    await userEvent.type(input, "KICKFLIP");
     await waitFor(() => {
-      expect(screen.getByText("John Doe")).toBeInTheDocument();
-      expect(screen.queryByText("Jane Smith")).not.toBeInTheDocument();
+      expect(screen.getByText("Kickflip")).toBeInTheDocument();
+      expect(screen.queryByText("Heelflip")).not.toBeInTheDocument();
+      expect(screen.queryByText("FS 540")).not.toBeInTheDocument();
     });
   });
 

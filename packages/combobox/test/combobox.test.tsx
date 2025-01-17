@@ -104,13 +104,13 @@ describe("Combobox", () => {
     expect(screen.getByRole("listbox")).toBeInTheDocument();
 
     // Test selected item state
-    const kickflip = screen.getByRole("option", { name: "Kickflip" });
-    expect(kickflip).toHaveAttribute("aria-selected", "true");
+    const kickflipOption = screen.getByRole("option", { name: "Kickflip" });
+    expect(kickflipOption).toHaveAttribute("aria-selected", "true");
 
     // Test selecting a new item
-    const heelflip = screen.getByRole("option", { name: "Heelflip" });
+    const heelflipOption = screen.getByRole("option", { name: "Heelflip" });
     await waitFor(() => {
-      fireEvent.click(heelflip);
+      fireEvent.click(heelflipOption);
     });
     expect(onValueChange).toHaveBeenCalledWith("heelflip");
     expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -120,16 +120,16 @@ describe("Combobox", () => {
     await waitFor(() => {
       expect(onInputValueChange).toHaveBeenCalledWith("fs");
     });
-    const fs540 = screen.getByRole("option", { name: "FS 540" });
-    expect(fs540).toBeInTheDocument();
-    expect(kickflip).not.toBeInTheDocument();
-    expect(heelflip).not.toBeInTheDocument();
+    const fs540Option = screen.getByRole("option", { name: "FS 540" });
+    expect(fs540Option).toBeInTheDocument();
+    expect(kickflipOption).not.toBeInTheDocument();
+    expect(heelflipOption).not.toBeInTheDocument();
 
     // Navigate to the filtered option
     fireEvent.keyDown(input, { key: "ArrowDown" });
     await waitFor(() => {
-      expect(fs540).toHaveAttribute("data-highlighted", "");
-      expect(input).toHaveAttribute("aria-activedescendant", fs540.id);
+      expect(fs540Option).toHaveAttribute("data-highlighted", "");
+      expect(input).toHaveAttribute("aria-activedescendant", fs540Option.id);
     });
 
     // Select the highlighted option
@@ -165,9 +165,9 @@ describe("Combobox", () => {
     // Test keyboard navigation
     fireEvent.keyDown(input, { key: "ArrowDown" });
     await waitFor(() => {
-      const kickflip = screen.getByRole("option", { name: "Kickflip" });
-      expect(kickflip).toHaveAttribute("data-highlighted", "");
-      expect(input).toHaveAttribute("aria-activedescendant", kickflip.id);
+      const kickflipOption = screen.getByRole("option", { name: "Kickflip" });
+      expect(kickflipOption).toHaveAttribute("data-highlighted", "");
+      expect(input).toHaveAttribute("aria-activedescendant", kickflipOption.id);
     });
 
     // Test selection
@@ -197,9 +197,9 @@ describe("Combobox", () => {
     });
 
     // Select another item
-    const heelflip = screen.getByRole("option", { name: "Heelflip" });
+    const heelflipOption = screen.getByRole("option", { name: "Heelflip" });
     await waitFor(() => {
-      fireEvent.click(heelflip);
+      fireEvent.click(heelflipOption);
     });
 
     expect(onValueChange).toHaveBeenCalledWith(["kickflip", "heelflip"]);
@@ -252,22 +252,22 @@ describe("Combobox", () => {
     // Type fuzzy match
     fireEvent.change(input, { target: { value: "flp" } });
 
-    const kickflip = screen.getByRole("option", { name: "Kickflip" });
-    const heelflip = screen.getByRole("option", { name: "Heelflip" });
-    const fs540 = screen.getByRole("option", { name: "FS 540" });
+    const kickflipOption = screen.getByRole("option", { name: "Kickflip" });
+    const heelflipOption = screen.getByRole("option", { name: "Heelflip" });
+    const fs540Option = screen.getByRole("option", { name: "FS 540" });
 
     await waitFor(() => {
-      expect(kickflip).toBeInTheDocument();
-      expect(heelflip).toBeInTheDocument();
-      expect(fs540).not.toBeInTheDocument();
+      expect(kickflipOption).toBeInTheDocument();
+      expect(heelflipOption).toBeInTheDocument();
+      expect(fs540Option).not.toBeInTheDocument();
     });
 
     // Type exact match
     fireEvent.change(input, { target: { value: "Kickflip" } });
     await waitFor(() => {
-      expect(kickflip).toBeInTheDocument();
-      expect(heelflip).not.toBeInTheDocument();
-      expect(fs540).not.toBeInTheDocument();
+      expect(kickflipOption).toBeInTheDocument();
+      expect(heelflipOption).not.toBeInTheDocument();
+      expect(fs540Option).not.toBeInTheDocument();
     });
   });
 
@@ -282,24 +282,24 @@ describe("Combobox", () => {
     // Open the combobox
     fireEvent.click(trigger);
 
-    const kickflip = screen.getByRole("option", { name: "Kickflip" });
-    const heelflip = screen.getByRole("option", { name: "Heelflip" });
-    const fs540 = screen.getByRole("option", { name: "FS 540" });
+    const kickflipOption = screen.getByRole("option", { name: "Kickflip" });
+    const heelflipOption = screen.getByRole("option", { name: "Heelflip" });
+    const fs540Option = screen.getByRole("option", { name: "FS 540" });
 
     // Type exact match
     fireEvent.change(input, { target: { value: "Kickflip" } });
     await waitFor(() => {
-      expect(kickflip).toBeInTheDocument();
-      expect(heelflip).not.toBeInTheDocument();
-      expect(fs540).not.toBeInTheDocument();
+      expect(kickflipOption).toBeInTheDocument();
+      expect(heelflipOption).not.toBeInTheDocument();
+      expect(fs540Option).not.toBeInTheDocument();
     });
 
     // Type partial match
     fireEvent.change(input, { target: { value: "kick" } });
     await waitFor(() => {
-      expect(kickflip).toBeInTheDocument();
-      expect(heelflip).not.toBeInTheDocument();
-      expect(fs540).not.toBeInTheDocument();
+      expect(kickflipOption).toBeInTheDocument();
+      expect(heelflipOption).not.toBeInTheDocument();
+      expect(fs540Option).not.toBeInTheDocument();
     });
   });
 
@@ -421,8 +421,10 @@ describe("Combobox", () => {
     renderCombobox();
 
     const input = screen.getByPlaceholderText("Select a trick...");
+    const label = screen.getByText("Favorite tricks");
     expect(input).toHaveAttribute("role", "combobox");
     expect(input).toHaveAttribute("aria-autocomplete", "list");
     expect(input).toHaveAttribute("aria-expanded", "false");
+    expect(label).toHaveAttribute("for", input.id);
   });
 });
