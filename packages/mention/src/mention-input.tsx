@@ -4,7 +4,6 @@ import {
   useComposedRefs,
 } from "@diceui/shared";
 import * as React from "react";
-import { as } from "vitest/dist/chunks/reporters.D7Jzd9GS.js";
 import { MentionHighlighter } from "./mention-highlighter";
 import { type Mention, useMentionContext } from "./mention-root";
 
@@ -476,19 +475,26 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
 
         // Handle backspace for mention deletion
         if (event.key === "Backspace" && !context.open && !hasSelection) {
+          const isCtrlOrCmd = event.metaKey || event.ctrlKey;
+
           // Find the mention that's immediately before the cursor
           const mentionBeforeCursor = context.mentions.find((m) => {
-            // Check if cursor is right after mention (accounting for space)
-            const isCursorAfterMention =
-              cursorPosition === m.end || // Cursor exactly at end
-              (cursorPosition === m.end + 1 && input.value[m.end] === " "); // Or after space
-            return isCursorAfterMention;
+            // For regular backspace, check if cursor is right after mention (accounting for space)
+            if (!isCtrlOrCmd) {
+              return (
+                cursorPosition === m.end || // Cursor exactly at end
+                (cursorPosition === m.end + 1 && input.value[m.end] === " ")
+              ); // Or after space
+            }
+
+            // For Cmd/Ctrl + Backspace, check if there's no meaningful text between cursor and mention
+            const textBetween = input.value.slice(m.end, cursorPosition);
+            return /^\s*$/.test(textBetween); // Only whitespace between mention and cursor
           });
 
           if (mentionBeforeCursor) {
             const hasTrailingSpace =
               input.value[mentionBeforeCursor.end] === " ";
-            const isCtrlOrCmd = event.metaKey || event.ctrlKey;
 
             // If there's a trailing space and not using Ctrl/Cmd, just remove the space
             if (
@@ -630,6 +636,43 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
       if (!inputElement) return;
       onMentionUpdate(inputElement);
     }, [context.disabled, context.readonly, context.inputRef, onMentionUpdate]);
+
+    const onPointerDown = React.useCallback(
+      (event: React.PointerEvent<InputElement>) => {
+        if (context.disabled || context.readonly) return;
+        const input = event.currentTarget;
+
+        // Get click position relative to input
+        const rect = input.getBoundingClientRect();
+        const style = window.getComputedStyle(input);
+        const paddingLeft = Number.parseFloat(style.paddingLeft);
+        const clickX = event.clientX - rect.left - paddingLeft;
+
+        // Calculate approximate character position
+        const textWidth = getTextWidth(
+          input.value.slice(0, input.value.length),
+          input,
+        );
+        const charWidth = textWidth / input.value.length;
+        const approximateClickPosition = Math.round(clickX / charWidth);
+
+        // Find if click is within a mention
+        const clickedMention = context.mentions.find(
+          (mention) =>
+            approximateClickPosition >= mention.start &&
+            approximateClickPosition < mention.end,
+        );
+
+        if (clickedMention) {
+          event.preventDefault();
+          // Move cursor to end of mention
+          requestAnimationFrame(() => {
+            input.setSelectionRange(clickedMention.end, clickedMention.end);
+          });
+        }
+      },
+      [context.disabled, context.readonly, context.mentions, getTextWidth],
+    );
 
     const onPaste = React.useCallback(
       (event: React.ClipboardEvent<InputElement>) => {
@@ -852,11 +895,14 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           style={{
             position: "relative",
             zIndex: 1,
-            textAlign: context.dir === "rtl" ? "right" : "left",
             ...style,
           }}
           onChange={composeEventHandlers(inputProps.onChange, onChange)}
           onClick={composeEventHandlers(inputProps.onClick, onClick)}
+          onPointerDown={composeEventHandlers(
+            inputProps.onPointerDown,
+            onPointerDown,
+          )}
           onCut={composeEventHandlers(inputProps.onCut, onCut)}
           onFocus={composeEventHandlers(inputProps.onFocus, onFocus)}
           onKeyDown={composeEventHandlers(inputProps.onKeyDown, onKeyDown)}
