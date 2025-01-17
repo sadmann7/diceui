@@ -3,7 +3,7 @@
   "type": "registry:ui",
   "dependencies": [
     "@diceui/tags-input",
-    "@radix-ui/react-slot"
+    "lucide-react"
   ],
   "files": [
     {

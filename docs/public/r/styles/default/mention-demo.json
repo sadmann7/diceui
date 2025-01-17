@@ -1,0 +1,19 @@
+{
+  "name": "mention-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@diceui/mention",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "mention"
+  ],
+  "files": [
+    {
+      "path": "example/mention-demo.tsx",
+      "content": "\"use client\";\n\nimport {\n  Mention,\n  MentionContent,\n  MentionInput,\n  MentionItem,\n} from \"@/registry/default/ui/mention\";\nimport * as React from \"react\";\n\nconst users = [\n  {\n    id: \"1\",\n    name: \"Olivia Martin\",\n    email: \"olivia@email.com\",\n  },\n  {\n    id: \"2\",\n    name: \"Isabella Nguyen\",\n    email: \"isabella@email.com\",\n  },\n  {\n    id: \"3\",\n    name: \"Emma Wilson\",\n    email: \"emma@email.com\",\n  },\n  {\n    id: \"4\",\n    name: \"Jackson Lee\",\n    email: \"jackson@email.com\",\n  },\n  {\n    id: \"5\",\n    name: \"William Kim\",\n    email: \"will@email.com\",\n  },\n];\n\nexport default function MentionDemo() {\n  const [value, setValue] = React.useState<string[]>([]);\n\n  return (\n    <Mention value={value} onValueChange={setValue}>\n      <MentionInput placeholder=\"Type @ to mention someone...\" />\n      <MentionContent>\n        {users.map((user) => (\n          <MentionItem key={user.id} value={user.name}>\n            <div className=\"flex items-center gap-2\">\n              <div className=\"flex h-6 w-6 items-center justify-center rounded-full bg-muted font-medium text-xs\">\n                {user.name\n                  .split(\" \")\n                  .map((n) => n[0])\n                  .join(\"\")}\n              </div>\n              <div className=\"flex flex-col\">\n                <span className=\"text-sm\">{user.name}</span>\n                <span className=\"text-muted-foreground text-xs\">\n                  {user.email}\n                </span>\n              </div>\n            </div>\n          </MentionItem>\n        ))}\n      </MentionContent>\n    </Mention>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

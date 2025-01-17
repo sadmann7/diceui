@@ -5,6 +5,22 @@ import * as React from "react"
 
 export const Index: Record<string, any> = {
   "default": {
+    "checkbox-group": {
+      name: "checkbox-group",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/ui/checkbox-group.tsx",
+        type: "registry:ui",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/checkbox-group.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "combobox": {
       name: "combobox",
       description: "",
@@ -21,17 +37,17 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
-    "tags-input": {
-      name: "tags-input",
+    "mention": {
+      name: "mention",
       description: "",
       type: "registry:ui",
       registryDependencies: undefined,
       files: [{
-        path: "registry/default/ui/tags-input.tsx",
+        path: "registry/default/ui/mention.tsx",
         type: "registry:ui",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/ui/tags-input.tsx")),
+      component: React.lazy(() => import("@/registry/default/ui/mention.tsx")),
       source: "",
       category: "",
       subcategory: "",
@@ -53,17 +69,17 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
-    "checkbox-group": {
-      name: "checkbox-group",
+    "tags-input": {
+      name: "tags-input",
       description: "",
       type: "registry:ui",
       registryDependencies: undefined,
       files: [{
-        path: "registry/default/ui/checkbox-group.tsx",
+        path: "registry/default/ui/tags-input.tsx",
         type: "registry:ui",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/ui/checkbox-group.tsx")),
+      component: React.lazy(() => import("@/registry/default/ui/tags-input.tsx")),
       source: "",
       category: "",
       subcategory: "",
@@ -256,6 +272,54 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/example/combobox-tags-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "mention-demo": {
+      name: "mention-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["mention"],
+      files: [{
+        path: "registry/default/example/mention-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/example/mention-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "mention-custom-filter-demo": {
+      name: "mention-custom-filter-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["mention"],
+      files: [{
+        path: "registry/default/example/mention-custom-filter-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/example/mention-custom-filter-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "mention-custom-trigger-demo": {
+      name: "mention-custom-trigger-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["mention"],
+      files: [{
+        path: "registry/default/example/mention-custom-trigger-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/example/mention-custom-trigger-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",

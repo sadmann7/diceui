@@ -236,20 +236,28 @@ Button to clear all tags.
 <KeyboardShortcutsTable
   shortcuts={[
     {
-      keys: ["Backspace", "Delete"],
-      description: "When cursor is at start, removes the highlighted tag or the last tag if no tag is highlighted."
+      keys: ["Delete"],
+      description: "When a tag is highlighted, removes it and sets focus to the next tag."
     },
     {
-      keys: ["←", "→"],
-      description: "Navigates between tags. When cursor is at start, moves focus to previous/next tag."
+      keys: ["Backspace"],
+      description: "When a tag is highlighted, removes it and sets focus to the previous tag. If there is no previous tag, focus moves to the next tag or input."
+    },
+    {
+      keys: ["ArrowLeft"],
+      description: "Highlights the previous tag. When cursor is at start of input, moves focus to the last tag."
+    },
+    {
+      keys: ["ArrowRight"],
+      description: "Highlights the next tag. When cursor is at start of input, moves focus to the first tag."
     },
     {
       keys: ["Home"],
-      description: "When a tag is highlighted, moves focus to the first tag."
+      description: "Highlights the first tag in the list."
     },
     {
       keys: ["End"], 
-      description: "When a tag is highlighted, moves focus to the last tag."
+      description: "Highlights the last tag in the list."
     },
     {
       keys: ["Enter"],
@@ -261,7 +269,7 @@ Button to clear all tags.
     },
     {
       keys: ["Tab"],
-      description: "When `addOnTab` is enabled and input has text, adds a new tag."
+      description: "When `addOnTab` is enabled and input has text, adds a new tag. Otherwise, blurs the input."
     }
   ]}
 />

@@ -2,7 +2,8 @@
   "name": "combobox",
   "type": "registry:ui",
   "dependencies": [
-    "@diceui/combobox"
+    "@diceui/combobox",
+    "lucide-react"
   ],
   "files": [
     {

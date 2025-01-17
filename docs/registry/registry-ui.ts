@@ -2,9 +2,20 @@ import type { Registry } from "@/registry/schema";
 
 export const ui: Registry = [
   {
+    name: "checkbox-group",
+    type: "registry:ui",
+    dependencies: ["@diceui/checkbox-group"],
+    files: [
+      {
+        path: "ui/checkbox-group.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "combobox",
     type: "registry:ui",
-    dependencies: ["@diceui/combobox"],
+    dependencies: ["@diceui/combobox", "lucide-react"],
     files: [
       {
         path: "ui/combobox.tsx",
@@ -13,12 +24,12 @@ export const ui: Registry = [
     ],
   },
   {
-    name: "tags-input",
+    name: "mention",
     type: "registry:ui",
-    dependencies: ["@diceui/tags-input", "@radix-ui/react-slot"],
+    dependencies: ["@diceui/mention", "lucide-react"],
     files: [
       {
-        path: "ui/tags-input.tsx",
+        path: "ui/mention.tsx",
         type: "registry:ui",
       },
     ],
@@ -41,12 +52,12 @@ export const ui: Registry = [
     ],
   },
   {
-    name: "checkbox-group",
+    name: "tags-input",
     type: "registry:ui",
-    dependencies: ["@diceui/checkbox-group"],
+    dependencies: ["@diceui/tags-input", "lucide-react"],
     files: [
       {
-        path: "ui/checkbox-group.tsx",
+        path: "ui/tags-input.tsx",
         type: "registry:ui",
       },
     ],

@@ -377,11 +377,11 @@ An interactive option in the combobox list.
   attributes={[
     {
       title: "[data-highlighted]",
-      value: "Present when the item is highlighted",
+      value: "Present when the item is highlighted.",
     },
     {
       title: "[data-disabled]",
-      value: "Present when the item is disabled",
+      value: "Present when the item is disabled.",
     },
     {
       title: "[data-state]",
@@ -389,7 +389,7 @@ An interactive option in the combobox list.
     },
     {
       title: "[data-value]",
-      value: "The value of the item",
+      value: "The value of the item.",
     },
   ]}
 />
@@ -432,16 +432,28 @@ A visual divider for separating options or groups.
       description: "When open, selects the highlighted option."
     },
     {
-      keys: ["↑", "↓"],
-      description: "When open, moves focus to the previous/next option."
+      keys: ["ArrowUp"],
+      description: "When open, highlights the previous option."
     },
     {
-      keys: ["Home", "End"],
-      description: "When open, moves focus to the first/last option."
+      keys: ["ArrowDown"],
+      description: "When open, highlights the next option."
     },
     {
-      keys: ["Page Up", "Page Down"],
-      description: "When open and modal is enabled, moves focus to the previous/next option."
+      keys: ["Home"],
+      description: "When open, highlights the first option."
+    },
+    {
+      keys: ["End"],
+      description: "When open, highlights the last option."
+    },
+    {
+      keys: ["PageUp"],
+      description: "When open and modal is enabled, highlights the previous option."
+    },
+    {
+      keys: ["PageDown"],
+      description: "When open and modal is enabled, highlights the next option."
     },
     {
       keys: ["Escape"],

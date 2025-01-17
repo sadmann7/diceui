@@ -169,19 +169,23 @@ The overlay component that appears when an item is being dragged.
   shortcuts={[
     {
       keys: ["Enter", "Space"],
-        description: "Picks up the sortable item for reordering.",
+      description: "Picks up the sortable item for reordering when released, and drops the item in its new position when pressed again.",
     },
     {
-      keys: ["↑", "↓"],
-      description: "Moves the sortable item up or down in vertical orientation.",
+      keys: ["ArrowUp"],
+      description: "Moves the sortable item up in vertical orientation.",
     },
     {
-      keys: ["←", "→"],
-      description: "Moves the sortable item left or right in horizontal orientation.",
+      keys: ["ArrowDown"],
+      description: "Moves the sortable item down in vertical orientation.",
     },
     {
-      keys: ["Enter", "Space"],
-      description: "Drops the sortable item in its new position.",
+      keys: ["ArrowLeft"],
+      description: "Moves the sortable item left in horizontal orientation.",
+    },
+    {
+      keys: ["ArrowRight"],
+      description: "Moves the sortable item right in horizontal orientation.",
     },
     {
       keys: ["Esc"],

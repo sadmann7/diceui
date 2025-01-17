@@ -145,6 +145,42 @@ export const examples: Registry = [
     ],
   },
   {
+    name: "mention-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/mention", "lucide-react"],
+    registryDependencies: ["mention"],
+    files: [
+      {
+        path: "example/mention-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "mention-custom-filter-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/mention", "lucide-react"],
+    registryDependencies: ["mention"],
+    files: [
+      {
+        path: "example/mention-custom-filter-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "mention-custom-trigger-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/mention", "lucide-react"],
+    registryDependencies: ["mention"],
+    files: [
+      {
+        path: "example/mention-custom-trigger-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "sortable-demo",
     type: "registry:example",
     dependencies: [

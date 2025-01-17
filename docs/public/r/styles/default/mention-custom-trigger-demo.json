@@ -1,0 +1,19 @@
+{
+  "name": "mention-custom-trigger-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@diceui/mention",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "mention"
+  ],
+  "files": [
+    {
+      "path": "example/mention-custom-trigger-demo.tsx",
+      "content": "\"use client\";\n\nimport {\n  Mention,\n  MentionContent,\n  MentionInput,\n  MentionItem,\n} from \"@/registry/default/ui/mention\";\nimport * as React from \"react\";\n\nconst emojis = [\n  { id: \"1\", name: \"👋 Wave\", value: \"👋\" },\n  { id: \"2\", name: \"😊 Smile\", value: \"😊\" },\n  { id: \"3\", name: \"🎉 Party\", value: \"🎉\" },\n  { id: \"4\", name: \"❤️ Heart\", value: \"❤️\" },\n  { id: \"5\", name: \"🔥 Fire\", value: \"🔥\" },\n];\n\nexport default function MentionCustomTriggerDemo() {\n  const [value, setValue] = React.useState<string[]>([]);\n  const [inputValue, setInputValue] = React.useState(\"\");\n\n  return (\n    <Mention\n      value={value}\n      onValueChange={setValue}\n      inputValue={inputValue}\n      onInputValueChange={setInputValue}\n      trigger=\":\"\n    >\n      <MentionInput\n        placeholder=\"Type : to add an emoji...\"\n        className=\"min-h-[100px]\"\n      />\n      <MentionContent>\n        {emojis.map((emoji) => (\n          <MentionItem key={emoji.id} label={emoji.name} value={emoji.value}>\n            <div className=\"flex items-center gap-2\">\n              <span className=\"text-xl\">{emoji.value}</span>\n              <span className=\"text-sm\">{emoji.name}</span>\n            </div>\n          </MentionItem>\n        ))}\n      </MentionContent>\n    </Mention>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

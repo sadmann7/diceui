@@ -886,7 +886,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
     );
 
     return (
-      <div style={{ position: "relative", isolation: "isolate" }}>
+      <div style={{ position: "relative" }}>
         <MentionHighlighter />
         <Primitive.input
           role="combobox"
