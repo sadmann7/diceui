@@ -341,18 +341,18 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           const adjacentMention = context.mentions.find((m) => {
             if (isLeftArrow) {
               // For left arrow, check if cursor is at or before the end of mention (including spaces)
-              const cursorToMentionEnd = cursorPosition - m.end;
               const textBetween = input.value.slice(m.end, cursorPosition);
               const isOnlySpaces = /^\s*$/.test(textBetween);
 
               // Handle Ctrl/Cmd differently - jump to start of mention
               if (isCtrlOrCmd) {
                 return (
-                  cursorToMentionEnd > 0 && // Cursor is after mention end
-                  cursorToMentionEnd <= 20 && // Within reasonable range (20 chars)
-                  isOnlySpaces && // Only spaces between
-                  cursorPosition > m.start
-                ); // Cursor is after mention start
+                  (cursorPosition === m.end || // Cursor at mention end
+                    (cursorPosition > m.end && // Or after mention end with only spaces
+                      cursorPosition <= m.end + 20 && // Within reasonable range
+                      isOnlySpaces)) && // Only spaces between
+                  cursorPosition > m.start // Cursor after mention start
+                );
               }
 
               // Regular arrow key - move one position at a time
