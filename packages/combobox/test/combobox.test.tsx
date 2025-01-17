@@ -32,49 +32,47 @@ describe("Combobox", () => {
     const { value, multiple, ...comboboxProps } = props;
 
     return render(
-      <div dir={props.dir}>
-        <Combobox.Root value={value} multiple={multiple} {...comboboxProps}>
-          <Combobox.Label>Favorite tricks</Combobox.Label>
-          <Combobox.Anchor data-testid="anchor">
-            {multiple ? (
-              <Combobox.BadgeList>
-                {Array.isArray(value) &&
-                  value.map((value) => (
-                    <Combobox.BadgeItem key={value} value={value}>
-                      {value}
-                      <Combobox.BadgeItemDelete />
-                    </Combobox.BadgeItem>
-                  ))}
-              </Combobox.BadgeList>
-            ) : null}
-            <Combobox.Input
-              placeholder={multiple ? "Select tricks..." : "Select a trick..."}
-            />
-            <Combobox.Trigger data-testid="trigger">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </Combobox.Trigger>
-          </Combobox.Anchor>
-          <Combobox.Portal data-testid="portal">
-            <Combobox.Content data-testid="content">
-              <Combobox.Item value="kickflip">Kickflip</Combobox.Item>
-              <Combobox.Item value="heelflip">Heelflip</Combobox.Item>
-              <Combobox.Item value="fs-540">FS 540</Combobox.Item>
-            </Combobox.Content>
-          </Combobox.Portal>
-        </Combobox.Root>
-      </div>,
+      <Combobox.Root value={value} multiple={multiple} {...comboboxProps}>
+        <Combobox.Label>Favorite tricks</Combobox.Label>
+        <Combobox.Anchor data-testid="anchor">
+          {multiple ? (
+            <Combobox.BadgeList>
+              {Array.isArray(value) &&
+                value.map((value) => (
+                  <Combobox.BadgeItem key={value} value={value}>
+                    {value}
+                    <Combobox.BadgeItemDelete />
+                  </Combobox.BadgeItem>
+                ))}
+            </Combobox.BadgeList>
+          ) : null}
+          <Combobox.Input
+            placeholder={multiple ? "Select tricks..." : "Select a trick..."}
+          />
+          <Combobox.Trigger data-testid="trigger">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </Combobox.Trigger>
+        </Combobox.Anchor>
+        <Combobox.Portal data-testid="portal">
+          <Combobox.Content data-testid="content">
+            <Combobox.Item value="kickflip">Kickflip</Combobox.Item>
+            <Combobox.Item value="heelflip">Heelflip</Combobox.Item>
+            <Combobox.Item value="fs-540">FS 540</Combobox.Item>
+          </Combobox.Content>
+        </Combobox.Portal>
+      </Combobox.Root>,
     );
   }
 
@@ -400,8 +398,23 @@ describe("Combobox", () => {
 
   test("supports RTL direction", async () => {
     renderCombobox({ dir: "rtl" });
-    const root = screen.getByRole("combobox").closest("div[dir]");
-    expect(root).toHaveAttribute("dir", "rtl");
+    const input = screen.getByPlaceholderText("Select a trick...");
+    // Input is inside an anchor
+    const anchor = input.closest("div[dir]");
+    const trigger = screen.getByTestId("trigger");
+
+    // Open the combobox
+    fireEvent.click(trigger);
+    const content = screen.getByRole("listbox");
+
+    await waitFor(() => {
+      expect(content).toBeInTheDocument();
+    });
+
+    expect(anchor).toHaveAttribute("dir", "rtl");
+    expect(input).toHaveAttribute("dir", "rtl");
+    expect(trigger).toHaveAttribute("dir", "rtl");
+    expect(content).toHaveAttribute("dir", "rtl");
   });
 
   test("supports accessibility features", () => {
