@@ -543,6 +543,8 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           "Enter",
           "Escape",
           "Tab",
+          "Home",
+          "End",
         ].includes(event.key);
 
         if (isNavigationKey && event.key !== "Tab") {
@@ -598,6 +600,20 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           case "ArrowUp": {
             if (context.readonly) return;
             context.onHighlightMove(context.highlightedItem ? "prev" : "last");
+            break;
+          }
+          case "Home": {
+            if (event.metaKey || event.ctrlKey) return; // Let default behavior happen for Ctrl/Cmd + Home
+            if (context.readonly) return;
+            event.preventDefault();
+            context.onHighlightMove("first");
+            break;
+          }
+          case "End": {
+            if (event.metaKey || event.ctrlKey) return; // Let default behavior happen for Ctrl/Cmd + End
+            if (context.readonly) return;
+            event.preventDefault();
+            context.onHighlightMove("last");
             break;
           }
           case "Escape": {

@@ -269,14 +269,6 @@ const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
           case "PageDown":
             if (context.modal && context.open) onHighlightMove("next");
             break;
-          case "Escape":
-            if (context.value.length > 0 && !context.multiple) {
-              context.onInputValueChange(context.selectedText);
-            } else {
-              context.onInputValueChange("");
-            }
-            onMenuClose();
-            break;
           case "Tab":
             if (context.open && context.modal) {
               event.preventDefault();
@@ -316,6 +308,14 @@ const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
                 context.onHighlightedBadgeIndexChange(-1);
               }
             }
+            break;
+          case "Escape":
+            if (context.value.length > 0 && !context.multiple) {
+              context.onInputValueChange(context.selectedText);
+            } else {
+              context.onInputValueChange("");
+            }
+            onMenuClose();
             break;
         }
       },
