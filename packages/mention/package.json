@@ -5,7 +5,12 @@
   "publishConfig": {
     "access": "public"
   },
-  "keywords": ["mention", "mention input", "ui", "react"],
+  "keywords": [
+    "mention",
+    "mention input",
+    "react-mention",
+    "mention-autocomplete"
+  ],
   "author": "Sadman Sakib",
   "license": "MIT",
   "repository": {

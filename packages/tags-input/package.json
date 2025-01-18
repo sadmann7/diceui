@@ -5,7 +5,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "keywords": ["tags-input", "tag-input", "ui", "react"],
+  "keywords": ["tags-input", "tag-input", "react-tags-input", "tags"],
   "author": "Sadman Sakib",
   "license": "MIT",
   "repository": {

@@ -5,7 +5,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "keywords": ["combobox", "autocomplete", "ui", "react"],
+  "keywords": ["combobox", "autocomplete", "react-combobox", "multi-select"],
   "author": "Sadman Sakib",
   "license": "MIT",
   "repository": {

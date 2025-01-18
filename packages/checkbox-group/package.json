@@ -5,7 +5,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "keywords": ["checkbox-group", "checkbox-group", "ui", "react"],
+  "keywords": ["checkbox-group", "checkbox", "react-checkbox-group"],
   "author": "Sadman Sakib",
   "license": "MIT",
   "repository": {
