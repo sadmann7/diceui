@@ -4,11 +4,7 @@
 
 ### Minor Changes
 
-- ba62131: Improvements across multiple packages:
-  - @diceui/shared: Enhanced useCollection hook functionality
-  - @diceui/combobox: Fixed event bubbling issues in Combobox.Portal
-  - @diceui/tags-input: Added readonly mode support
-  - @diceui/mention: Improved mention handling and interactions
+- ba62131: Enhanced useCollection hook functionality
 
 ## 0.6.0
 
