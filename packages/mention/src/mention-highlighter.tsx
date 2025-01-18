@@ -17,7 +17,7 @@ const defaultHighlighterStyle: React.CSSProperties = {
   wordWrap: "break-word",
   pointerEvents: "none",
   userSelect: "none",
-  overflow: "auto",
+  overflow: "hidden",
   width: "100%",
 };
 
@@ -114,7 +114,6 @@ const MentionHighlighter = React.memo(
           letterSpacing: inputStyle.letterSpacing,
           textTransform:
             inputStyle.textTransform as React.CSSProperties["textTransform"],
-          textAlign: context.dir === "rtl" ? "right" : "left",
           textIndent: inputStyle.textIndent,
           padding: inputStyle.padding,
           borderWidth: inputStyle.borderWidth,

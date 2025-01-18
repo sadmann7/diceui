@@ -31,7 +31,8 @@
         "noLabelWithoutControl": "off"
       },
       "correctness": {
-        "noUnusedVariables": "warn"
+        "noUnusedVariables": "warn",
+        "useExhaustiveDependencies": "warn"
       },
       "complexity": {
         "noBannedTypes": "off"
