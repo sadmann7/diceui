@@ -1,11 +1,16 @@
 {
   "name": "@diceui/mention",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "type": "module",
   "publishConfig": {
     "access": "public"
   },
-  "keywords": ["mention", "mention input", "ui", "react"],
+  "keywords": [
+    "mention",
+    "mention input",
+    "ui",
+    "react"
+  ],
   "author": "Sadman Sakib",
   "license": "MIT",
   "repository": {
@@ -23,7 +28,11 @@
       "require": "./dist/index.cjs"
     }
   },
-  "files": ["dist", "package.json", "README.md"],
+  "files": [
+    "dist",
+    "package.json",
+    "README.md"
+  ],
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup --clean",
