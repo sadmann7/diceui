@@ -19,7 +19,6 @@ const defaultHighlighterStyle: React.CSSProperties = {
   userSelect: "none",
   overflow: "auto",
   width: "100%",
-  isolation: "isolate",
 };
 
 interface MentionHighlighterProps
