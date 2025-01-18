@@ -51,9 +51,9 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     ComponentSource,
     Steps,
     Step,
-    AutoTypeTable: ({ path, name, type }) => (
+    AutoTypeTable: (props) => (
       <div className="auto-type-table">
-        <AutoTypeTable path={path} name={name} type={type} />
+        <AutoTypeTable {...props} />
       </div>
     ),
     CSSVariablesTable,

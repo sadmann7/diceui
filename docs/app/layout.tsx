@@ -3,10 +3,10 @@ import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/config/site";
 import { fontMono, fontSans } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
-import type { Metadata, Viewport } from "next";
-import type * as React from "react";
 import "@/styles/globals.css";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
+import type * as React from "react";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -15,7 +15,14 @@ export const metadata: Metadata = {
     template: `%s - ${siteConfig.name}`,
   },
   description: siteConfig.description,
-  keywords: ["react", "ui", "ui-library", "accessibility", "wai-aria"],
+  keywords: [
+    "react",
+    "ui",
+    "ui-library",
+    "shadcn-ui",
+    "accessibility",
+    "wai-aria",
+  ],
   authors: [
     {
       name: "sadmann7",
