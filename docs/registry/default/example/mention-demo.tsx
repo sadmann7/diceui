@@ -33,7 +33,7 @@ const users = [
 
 export default function MentionDemo() {
   return (
-    <Mention.Root className="w-full max-w-[400px] [&_[data-tag]]:rounded [&_[data-tag]]:bg-blue-500 [&_[data-tag]]:text-white">
+    <Mention.Root className="w-full max-w-[400px] [&_[data-tag]]:rounded [&_[data-tag]]:bg-blue-200 [&_[data-tag]]:text-blue-950 dark:[&_[data-tag]]:bg-blue-800 dark:[&_[data-tag]]:text-blue-50">
       <Mention.Label className="font-medium text-sm text-zinc-950 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:text-zinc-50">
         Mention users
       </Mention.Label>
