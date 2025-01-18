@@ -12,7 +12,7 @@ const Mention = React.forwardRef<
   <MentionPrimitive.Root
     ref={ref}
     className={cn(
-      "[&_[data-tag]]:rounded [&_[data-tag]]:bg-blue-200 [&_[data-tag]]:text-blue-950 dark:[&_[data-tag]]:bg-blue-800 dark:[&_[data-tag]]:text-blue-50",
+      "[&_[data-tag]]:rounded [&_[data-tag]]:bg-blue-200 [&_[data-tag]]:py-px [&_[data-tag]]:text-blue-950 dark:[&_[data-tag]]:bg-blue-800 dark:[&_[data-tag]]:text-blue-50",
       className,
     )}
     {...props}
