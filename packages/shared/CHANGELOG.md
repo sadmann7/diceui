@@ -4,7 +4,7 @@
 
 ### Minor Changes
 
-- ba62131: Enhanced useCollection hook functionality
+- ba62131: Enhanced `useCollection` hook for better items registration
 
 ## 0.6.0
 

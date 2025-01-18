@@ -10,7 +10,7 @@
 
 ### Minor Changes
 
-- ba62131: Added readonly mode support
+- ba62131: Added readOnly mode
 
 ### Patch Changes
 
