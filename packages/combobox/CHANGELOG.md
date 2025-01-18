@@ -1,5 +1,11 @@
 # @diceui/combobox
 
+## 0.4.0
+
+### Minor Changes
+
+- ca07b5d: Update keywords
+
 ## 0.3.0
 
 ### Minor Changes

@@ -1,11 +1,16 @@
 {
   "name": "@diceui/tags-input",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "type": "module",
   "publishConfig": {
     "access": "public"
   },
-  "keywords": ["tags-input", "tag-input", "react-tags-input", "tags"],
+  "keywords": [
+    "tags-input",
+    "tag-input",
+    "react-tags-input",
+    "tags"
+  ],
   "author": "Sadman Sakib",
   "license": "MIT",
   "repository": {
@@ -23,7 +28,11 @@
       "require": "./dist/index.cjs"
     }
   },
-  "files": ["dist", "package.json", "README.md"],
+  "files": [
+    "dist",
+    "package.json",
+    "README.md"
+  ],
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup --clean",

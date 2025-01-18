@@ -1,5 +1,11 @@
 # @diceui/mention
 
+## 0.2.0
+
+### Minor Changes
+
+- ca07b5d: Update keywords
+
 ## 0.1.0
 
 ### Minor Changes
