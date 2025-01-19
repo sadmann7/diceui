@@ -43,7 +43,7 @@ interface ComboboxContentProps
   /**
    * Event handler called when a `pointerdown` event happens outside of the content.
    *
-   * Can be used to prevent the content from closing when the pointer is outside of the content.
+   * Can be used to prevent the popover from closing when the pointer is outside of the content.
    */
   onPointerDownOutside?: (event: PointerDownOutsideEvent) => void;
 }

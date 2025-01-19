@@ -37,14 +37,14 @@ interface MentionContentProps
   /**
    * Event handler called when the `Escape` key is pressed.
    *
-   * Can be used to prevent input value from being reset on `Escape` key press.
+   * Can be used to prevent the popover from closing when the `Escape` key is pressed.
    */
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
 
   /**
    * Event handler called when a `pointerdown` event happens outside of the content.
    *
-   * Can be used to prevent the content from closing when the pointer is outside of the content.
+   * Can be used to prevent the popover from closing when the pointer is outside of the content.
    */
   onPointerDownOutside?: (event: PointerDownOutsideEvent) => void;
 }

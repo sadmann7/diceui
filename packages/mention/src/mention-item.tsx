@@ -84,11 +84,11 @@ const MentionItem = React.forwardRef<ItemElement, MentionItemProps>(
           ref={composedRef}
           onClick={composeEventHandlers(itemProps.onClick, () => {
             if (isDisabled) return;
-            const input = context.inputRef.current;
-            if (!input) return;
+            const inputElement = context.inputRef.current;
+            if (!inputElement) return;
 
-            const selectionStart = input.selectionStart ?? 0;
-            const lastTriggerIndex = input.value.lastIndexOf(
+            const selectionStart = inputElement.selectionStart ?? 0;
+            const lastTriggerIndex = inputElement.value.lastIndexOf(
               context.trigger,
               selectionStart,
             );
@@ -97,7 +97,7 @@ const MentionItem = React.forwardRef<ItemElement, MentionItemProps>(
               context.onMentionAdd(value, lastTriggerIndex);
             }
 
-            input.focus();
+            inputElement.focus();
           })}
           onPointerDown={composeEventHandlers(
             itemProps.onPointerDown,
@@ -111,12 +111,8 @@ const MentionItem = React.forwardRef<ItemElement, MentionItemProps>(
                 target.releasePointerCapture(event.pointerId);
               }
 
-              if (
-                event.button === 0 &&
-                event.ctrlKey === false &&
-                event.pointerType === "mouse"
-              ) {
-                // prevent item from stealing focus from the input
+              if (event.button === 0 && event.ctrlKey === false) {
+                // prevent item from stealing focus from the input for both mouse and touch
                 event.preventDefault();
               }
             },
