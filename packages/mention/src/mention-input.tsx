@@ -479,8 +479,9 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
             if (!isCtrlOrCmd) {
               return (
                 cursorPosition === m.end || // Cursor exactly at end
-                (cursorPosition === m.end + 1 && input.value[m.end] === " ")
-              ); // Or after space
+                (cursorPosition === m.end + 1 && input.value[m.end] === " ") || // Or after space
+                (cursorPosition > m.start && cursorPosition <= m.end) // Or inside mention (for mobile)
+              );
             }
 
             // For Cmd/Ctrl + Backspace, check if there's no meaningful text between cursor and mention
@@ -491,6 +492,33 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           if (mentionBeforeCursor) {
             const hasTrailingSpace =
               input.value[mentionBeforeCursor.end] === " ";
+
+            // If cursor is inside mention, always remove the entire mention
+            const isCursorInsideMention =
+              cursorPosition > mentionBeforeCursor.start &&
+              cursorPosition <= mentionBeforeCursor.end;
+
+            if (isCursorInsideMention || isCtrlOrCmd) {
+              event.preventDefault();
+              const newValue =
+                input.value.slice(0, mentionBeforeCursor.start) +
+                input.value.slice(
+                  mentionBeforeCursor.end + (hasTrailingSpace ? 1 : 0),
+                );
+
+              input.value = newValue;
+              context.onInputValueChange?.(newValue);
+
+              const remainingValues = context.value.filter(
+                (v) => v !== mentionBeforeCursor.value,
+              );
+              context.onValueChange?.(remainingValues);
+              context.onMentionsRemove([mentionBeforeCursor]);
+
+              const newPosition = mentionBeforeCursor.start;
+              input.setSelectionRange(newPosition, newPosition);
+              return;
+            }
 
             // If there's a trailing space and not using Ctrl/Cmd, just remove the space
             if (
@@ -639,6 +667,54 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         context.disabled,
         context.readonly,
         context.modal,
+      ],
+    );
+
+    // Add beforeinput event handler for better mobile support
+    const onBeforeInput = React.useCallback(
+      (event: React.FormEvent<InputElement> & { inputType?: string }) => {
+        if (context.disabled || context.readonly) return;
+        const input = event.currentTarget;
+        const cursorPosition = input.selectionStart ?? 0;
+
+        // Handle deleteContentBackward on mobile
+        if (event.inputType === "deleteContentBackward") {
+          const mentionAtCursor = context.mentions.find(
+            (m) => cursorPosition > m.start && cursorPosition <= m.end,
+          );
+
+          if (mentionAtCursor) {
+            event.preventDefault();
+            const hasTrailingSpace = input.value[mentionAtCursor.end] === " ";
+
+            const newValue =
+              input.value.slice(0, mentionAtCursor.start) +
+              input.value.slice(
+                mentionAtCursor.end + (hasTrailingSpace ? 1 : 0),
+              );
+
+            input.value = newValue;
+            context.onInputValueChange?.(newValue);
+
+            const remainingValues = context.value.filter(
+              (v) => v !== mentionAtCursor.value,
+            );
+            context.onValueChange?.(remainingValues);
+            context.onMentionsRemove([mentionAtCursor]);
+
+            const newPosition = mentionAtCursor.start;
+            input.setSelectionRange(newPosition, newPosition);
+          }
+        }
+      },
+      [
+        context.disabled,
+        context.readonly,
+        context.mentions,
+        context.value,
+        context.onValueChange,
+        context.onInputValueChange,
+        context.onMentionsRemove,
       ],
     );
 
@@ -909,6 +985,10 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           onPointerDown={composeEventHandlers(
             props.onPointerDown,
             onPointerDown,
+          )}
+          onBeforeInput={composeEventHandlers(
+            props.onBeforeInput,
+            onBeforeInput,
           )}
           onCut={composeEventHandlers(props.onCut, onCut)}
           onFocus={composeEventHandlers(props.onFocus, onFocus)}
