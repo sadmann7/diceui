@@ -677,10 +677,46 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         const input = event.currentTarget;
         const cursorPosition = input.selectionStart ?? 0;
 
-        // Handle deleteContentBackward on mobile
-        if (event.inputType === "deleteContentBackward") {
+        // Handle all deletion events on mobile
+        if (
+          event.inputType === "deleteContentBackward" ||
+          event.inputType === "deleteContentForward" ||
+          event.inputType === "deleteByCut" ||
+          event.inputType === "deleteByDrag" ||
+          event.inputType === "deleteContent"
+        ) {
+          // First check if we're at the end of a mention
+          const mentionBeforeCursor = context.mentions.find(
+            (m) => cursorPosition === m.end || cursorPosition === m.end + 1
+          );
+
+          if (mentionBeforeCursor) {
+            event.preventDefault();
+            const hasTrailingSpace = input.value[mentionBeforeCursor.end] === " ";
+
+            const newValue =
+              input.value.slice(0, mentionBeforeCursor.start) +
+              input.value.slice(
+                mentionBeforeCursor.end + (hasTrailingSpace ? 1 : 0)
+              );
+
+            input.value = newValue;
+            context.onInputValueChange?.(newValue);
+
+            const remainingValues = context.value.filter(
+              (v) => v !== mentionBeforeCursor.value
+            );
+            context.onValueChange?.(remainingValues);
+            context.onMentionsRemove([mentionBeforeCursor]);
+
+            const newPosition = mentionBeforeCursor.start;
+            input.setSelectionRange(newPosition, newPosition);
+            return;
+          }
+
+          // Then check if we're inside a mention
           const mentionAtCursor = context.mentions.find(
-            (m) => cursorPosition > m.start && cursorPosition <= m.end,
+            (m) => cursorPosition > m.start && cursorPosition <= m.end
           );
 
           if (mentionAtCursor) {
@@ -690,14 +726,14 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
             const newValue =
               input.value.slice(0, mentionAtCursor.start) +
               input.value.slice(
-                mentionAtCursor.end + (hasTrailingSpace ? 1 : 0),
+                mentionAtCursor.end + (hasTrailingSpace ? 1 : 0)
               );
 
             input.value = newValue;
             context.onInputValueChange?.(newValue);
 
             const remainingValues = context.value.filter(
-              (v) => v !== mentionAtCursor.value,
+              (v) => v !== mentionAtCursor.value
             );
             context.onValueChange?.(remainingValues);
             context.onMentionsRemove([mentionAtCursor]);
@@ -715,7 +751,54 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         context.onValueChange,
         context.onInputValueChange,
         context.onMentionsRemove,
-      ],
+      ]
+    );
+
+    // Add input event handler for additional mobile support
+    const onInput = React.useCallback(
+      (event: React.FormEvent<InputElement>) => {
+        if (context.disabled || context.readonly) return;
+        const input = event.currentTarget;
+        const cursorPosition = input.selectionStart ?? 0;
+
+        // Check for any mention that might be partially deleted
+        const partiallyDeletedMention = context.mentions.find(
+          (m) =>
+            (cursorPosition >= m.start && cursorPosition < m.end) || // Cursor inside mention
+            cursorPosition === m.end // Cursor at end of mention
+        );
+
+        if (partiallyDeletedMention) {
+          const hasTrailingSpace = input.value[partiallyDeletedMention.end] === " ";
+
+          const newValue =
+            input.value.slice(0, partiallyDeletedMention.start) +
+            input.value.slice(
+              partiallyDeletedMention.end + (hasTrailingSpace ? 1 : 0)
+            );
+
+          input.value = newValue;
+          context.onInputValueChange?.(newValue);
+
+          const remainingValues = context.value.filter(
+            (v) => v !== partiallyDeletedMention.value
+          );
+          context.onValueChange?.(remainingValues);
+          context.onMentionsRemove([partiallyDeletedMention]);
+
+          const newPosition = partiallyDeletedMention.start;
+          input.setSelectionRange(newPosition, newPosition);
+        }
+      },
+      [
+        context.disabled,
+        context.readonly,
+        context.mentions,
+        context.value,
+        context.onValueChange,
+        context.onInputValueChange,
+        context.onMentionsRemove,
+      ]
     );
 
     const onSelect = React.useCallback(() => {
@@ -986,10 +1069,8 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
             props.onPointerDown,
             onPointerDown,
           )}
-          onBeforeInput={composeEventHandlers(
-            props.onBeforeInput,
-            onBeforeInput,
-          )}
+          onBeforeInput={composeEventHandlers(props.onBeforeInput, onBeforeInput)}
+          onInput={composeEventHandlers(props.onInput, onInput)}
           onCut={composeEventHandlers(props.onCut, onCut)}
           onFocus={composeEventHandlers(props.onFocus, onFocus)}
           onKeyDown={composeEventHandlers(props.onKeyDown, onKeyDown)}
