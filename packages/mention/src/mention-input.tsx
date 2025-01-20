@@ -45,7 +45,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
 
     const getLineHeight = React.useCallback((input: InputElement) => {
       const style = window.getComputedStyle(input);
-      return Number.parseInt(style.lineHeight) || input.offsetHeight;
+      return Number.parseInt(style.lineHeight) ?? input.offsetHeight;
     }, []);
 
     const calculatePosition = React.useCallback(
@@ -984,20 +984,20 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           dir={context.dir}
           {...props}
           ref={composedRef}
-          onChange={composeEventHandlers(props.onChange, onChange)}
-          onClick={composeEventHandlers(props.onClick, onClick)}
-          onPointerDown={composeEventHandlers(
-            props.onPointerDown,
-            onPointerDown,
-          )}
           onBeforeInput={composeEventHandlers(
             props.onBeforeInput,
             onBeforeInput,
           )}
+          onChange={composeEventHandlers(props.onChange, onChange)}
+          onClick={composeEventHandlers(props.onClick, onClick)}
           onCut={composeEventHandlers(props.onCut, onCut)}
           onFocus={composeEventHandlers(props.onFocus, onFocus)}
           onKeyDown={composeEventHandlers(props.onKeyDown, onKeyDown)}
           onPaste={composeEventHandlers(props.onPaste, onPaste)}
+          onPointerDown={composeEventHandlers(
+            props.onPointerDown,
+            onPointerDown,
+          )}
           onSelect={composeEventHandlers(props.onSelect, onSelect)}
         />
       </div>

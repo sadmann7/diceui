@@ -383,7 +383,7 @@ describe("TagsInput", () => {
                 <TagsInput.ItemDelete aria-label="Remove tag" />
               </TagsInput.Item>
             ))}
-            <TagsInput.Input placeholder="Add tag..." />
+            <TagsInput.Input placeholder={placeholder} />
             <TagsInput.Clear aria-label="Clear tags" />
           </>
         )}
@@ -426,7 +426,7 @@ describe("TagsInput", () => {
                     <TagsInput.ItemText>{tag}</TagsInput.ItemText>
                   </TagsInput.Item>
                 ))}
-                <TagsInput.Input placeholder="Add tag..." />
+                <TagsInput.Input placeholder={placeholder} />
               </>
             )}
           </TagsInput.Root>
@@ -481,7 +481,7 @@ describe("TagsInput", () => {
                   <TagsInput.ItemDelete aria-label="Remove tag" />
                 </TagsInput.Item>
               ))}
-              <TagsInput.Input placeholder="Add tag..." />
+              <TagsInput.Input placeholder={placeholder} />
             </>
           )}
         </TagsInput.Root>
@@ -504,54 +504,6 @@ describe("TagsInput", () => {
     expect(onValueChange).toHaveBeenLastCalledWith(["initial"]);
     expect(screen.getByText("initial")).toBeInTheDocument();
     expect(screen.queryByText("new tag")).not.toBeInTheDocument();
-  });
-
-  test("supports accessibility features", async () => {
-    const user = userEvent.setup();
-
-    render(
-      <TagsInput.Root defaultValue={["tag1", "tag2"]}>
-        {({ value }) => (
-          <>
-            <TagsInput.Label htmlFor="tags">Tags</TagsInput.Label>
-            {value.map((tag) => (
-              <TagsInput.Item key={tag} value={tag}>
-                <TagsInput.ItemText>{tag}</TagsInput.ItemText>
-                <TagsInput.ItemDelete aria-label={`Remove ${tag}`} />
-              </TagsInput.Item>
-            ))}
-            <TagsInput.Input
-              id="tags"
-              placeholder="Add tag..."
-              aria-describedby="tagsHint"
-            />
-            <div id="tagsHint">Press Enter to add a new tag</div>
-          </>
-        )}
-      </TagsInput.Root>,
-    );
-
-    // Test label association
-    const input = screen.getByLabelText("Tags");
-    expect(input).toHaveAttribute("aria-describedby", "tagsHint");
-
-    // Test delete button accessibility
-    const deleteButtons = screen.getAllByRole("button");
-    expect(deleteButtons[0]).toHaveAttribute("aria-label", "Remove tag1");
-    expect(deleteButtons[1]).toHaveAttribute("aria-label", "Remove tag2");
-
-    // Test keyboard navigation
-    await user.tab(); // Focus input
-    await user.keyboard("{ArrowLeft}"); // Move to last tag
-    expect(screen.getByText("tag2").closest("div")).toHaveAttribute(
-      "data-state",
-      "active",
-    );
-
-    // Test focus management after deletion
-    await user.keyboard("{Delete}");
-    expect(screen.queryByText("tag2")).not.toBeInTheDocument();
-    expect(document.activeElement).toBe(input);
   });
 
   test("respects read only state", async () => {
@@ -585,5 +537,53 @@ describe("TagsInput", () => {
     // Verify all initial tags remain
     expect(screen.getByText("tag1")).toBeInTheDocument();
     expect(screen.getByText("tag2")).toBeInTheDocument();
+  });
+
+  test("supports accessibility features", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <TagsInput.Root defaultValue={["tag1", "tag2"]}>
+        {({ value }) => (
+          <>
+            <TagsInput.Label htmlFor="tags">Tags</TagsInput.Label>
+            {value.map((tag) => (
+              <TagsInput.Item key={tag} value={tag}>
+                <TagsInput.ItemText>{tag}</TagsInput.ItemText>
+                <TagsInput.ItemDelete aria-label={`Remove ${tag}`} />
+              </TagsInput.Item>
+            ))}
+            <TagsInput.Input
+              id="tags"
+              placeholder={placeholder}
+              aria-describedby="tagsHint"
+            />
+            <div id="tagsHint">Press Enter to add a new tag</div>
+          </>
+        )}
+      </TagsInput.Root>,
+    );
+
+    // Test label association
+    const input = screen.getByLabelText("Tags");
+    expect(input).toHaveAttribute("aria-describedby", "tagsHint");
+
+    // Test delete button accessibility
+    const deleteButtons = screen.getAllByRole("button");
+    expect(deleteButtons[0]).toHaveAttribute("aria-label", "Remove tag1");
+    expect(deleteButtons[1]).toHaveAttribute("aria-label", "Remove tag2");
+
+    // Test keyboard navigation
+    await user.tab(); // Focus input
+    await user.keyboard("{ArrowLeft}"); // Move to last tag
+    expect(screen.getByText("tag2").closest("div")).toHaveAttribute(
+      "data-state",
+      "active",
+    );
+
+    // Test focus management after deletion
+    await user.keyboard("{Delete}");
+    expect(screen.queryByText("tag2")).not.toBeInTheDocument();
+    expect(document.activeElement).toBe(input);
   });
 });
