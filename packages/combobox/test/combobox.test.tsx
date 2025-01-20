@@ -25,6 +25,10 @@ Element.prototype.hasPointerCapture = vi.fn();
 // Mock scrollIntoView
 Element.prototype.scrollIntoView = vi.fn();
 
+function getInputPlaceholder(multiple?: boolean) {
+  return multiple ? "Select tricks..." : "Select a trick...";
+}
+
 describe("Combobox", () => {
   function renderCombobox<T extends boolean>(
     props: Combobox.ComboboxRootProps<T> = {},
@@ -46,9 +50,7 @@ describe("Combobox", () => {
                 ))}
             </Combobox.BadgeList>
           ) : null}
-          <Combobox.Input
-            placeholder={multiple ? "Select tricks..." : "Select a trick..."}
-          />
+          <Combobox.Input placeholder={getInputPlaceholder(multiple)} />
           <Combobox.Trigger data-testid="trigger">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -89,7 +91,7 @@ describe("Combobox", () => {
     });
 
     const trigger = screen.getByTestId("trigger");
-    const input = screen.getByPlaceholderText("Select a trick...");
+    const input = screen.getByPlaceholderText(getInputPlaceholder());
 
     // Test initial state
     expect(input).toHaveValue("kickflip");
@@ -147,7 +149,7 @@ describe("Combobox", () => {
       onValueChange,
     });
 
-    const input = screen.getByPlaceholderText("Select a trick...");
+    const input = screen.getByPlaceholderText(getInputPlaceholder());
     const trigger = screen.getByTestId("trigger");
 
     // Open the combobox
@@ -187,7 +189,7 @@ describe("Combobox", () => {
       multiple: true,
     });
 
-    const input = screen.getByPlaceholderText("Select tricks...");
+    const input = screen.getByPlaceholderText(getInputPlaceholder(true));
     const trigger = screen.getByTestId("trigger");
 
     // Open the combobox
@@ -228,7 +230,7 @@ describe("Combobox", () => {
       multiple: true,
     });
 
-    const input = screen.getByPlaceholderText("Select tricks...");
+    const input = screen.getByPlaceholderText(getInputPlaceholder(true));
 
     // Focus input and navigate to badges
     fireEvent.focus(input);
@@ -247,7 +249,7 @@ describe("Combobox", () => {
 
   test("handles default filtering", async () => {
     renderCombobox();
-    const input = screen.getByPlaceholderText("Select a trick...");
+    const input = screen.getByPlaceholderText(getInputPlaceholder());
 
     // Type fuzzy match
     fireEvent.change(input, { target: { value: "flp" } });
@@ -276,7 +278,7 @@ describe("Combobox", () => {
       exactMatch: true,
     });
 
-    const input = screen.getByPlaceholderText("Select a trick...");
+    const input = screen.getByPlaceholderText(getInputPlaceholder());
     const trigger = screen.getByTestId("trigger");
 
     // Open the combobox
@@ -313,7 +315,7 @@ describe("Combobox", () => {
       onFilter: customFilter,
     });
 
-    const input = screen.getByPlaceholderText("Select a trick...");
+    const input = screen.getByPlaceholderText(getInputPlaceholder());
 
     // Type to filter
     fireEvent.change(input, { target: { value: "FLIP" } });
@@ -331,7 +333,7 @@ describe("Combobox", () => {
       openOnFocus: true,
     });
 
-    const input = screen.getByPlaceholderText("Select a trick...");
+    const input = screen.getByPlaceholderText(getInputPlaceholder());
 
     // Focus should open the combobox
     fireEvent.focus(input);
@@ -345,7 +347,7 @@ describe("Combobox", () => {
       preserveInputOnBlur: true,
     });
 
-    const input = screen.getByPlaceholderText("Select a trick...");
+    const input = screen.getByPlaceholderText(getInputPlaceholder());
 
     // Type something and blur
     fireEvent.change(input, { target: { value: "test" } });
@@ -362,7 +364,7 @@ describe("Combobox", () => {
     renderCombobox();
     expect(screen.getByText("Favorite tricks")).toBeInTheDocument();
     expect(
-      screen.getByPlaceholderText("Select a trick..."),
+      screen.getByPlaceholderText(getInputPlaceholder()),
     ).toBeInTheDocument();
   });
 
@@ -372,7 +374,7 @@ describe("Combobox", () => {
 
     renderCombobox({ disabled: true, onValueChange });
 
-    const input = screen.getByPlaceholderText("Select a trick...");
+    const input = screen.getByPlaceholderText(getInputPlaceholder());
     expect(input).toBeDisabled();
 
     await user.click(input);
@@ -389,7 +391,7 @@ describe("Combobox", () => {
       onValueChange,
     });
 
-    const input = screen.getByPlaceholderText("Select a trick...");
+    const input = screen.getByPlaceholderText(getInputPlaceholder());
     expect(input).toHaveAttribute("readonly");
 
     await user.type(input, "new value");
@@ -398,7 +400,7 @@ describe("Combobox", () => {
 
   test("supports RTL direction", async () => {
     renderCombobox({ dir: "rtl" });
-    const input = screen.getByPlaceholderText("Select a trick...");
+    const input = screen.getByPlaceholderText(getInputPlaceholder());
     // Input is inside an anchor
     const anchor = input.closest("div[dir]");
     const trigger = screen.getByTestId("trigger");
@@ -420,7 +422,7 @@ describe("Combobox", () => {
   test("supports accessibility features", () => {
     renderCombobox();
 
-    const input = screen.getByPlaceholderText("Select a trick...");
+    const input = screen.getByPlaceholderText(getInputPlaceholder());
     const label = screen.getByText("Favorite tricks");
     expect(input).toHaveAttribute("role", "combobox");
     expect(input).toHaveAttribute("aria-autocomplete", "list");

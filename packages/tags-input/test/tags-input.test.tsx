@@ -15,6 +15,8 @@ class ResizeObserver {
 // Add to global
 global.ResizeObserver = ResizeObserver;
 
+const placeholder = "Add tag...";
+
 describe("TagsInput", () => {
   function renderTagsInput(props: TagsInput.TagsInputRootProps = {}) {
     return render(
@@ -27,7 +29,7 @@ describe("TagsInput", () => {
                 <TagsInput.ItemDelete aria-label="Remove tag" />
               </TagsInput.Item>
             ))}
-            <TagsInput.Input placeholder="Add tag..." />
+            <TagsInput.Input placeholder={placeholder} />
           </>
         )}
       </TagsInput.Root>,
@@ -36,14 +38,14 @@ describe("TagsInput", () => {
 
   test("renders without crashing", () => {
     renderTagsInput();
-    expect(screen.getByPlaceholderText("Add tag...")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(placeholder)).toBeInTheDocument();
   });
 
   test("adds a new tag when Enter is pressed", async () => {
     const user = userEvent.setup();
     renderTagsInput();
 
-    const input = screen.getByPlaceholderText("Add tag...");
+    const input = screen.getByPlaceholderText(placeholder);
     await user.type(input, "test tag{Enter}");
 
     expect(screen.getByText("test tag")).toBeInTheDocument();
@@ -70,7 +72,7 @@ describe("TagsInput", () => {
       onValueChange,
     });
 
-    const input = screen.getByPlaceholderText("Add tag...");
+    const input = screen.getByPlaceholderText(placeholder);
     fireEvent.change(input, { target: { value: "new tag" } });
     fireEvent.keyDown(input, { key: "Enter" });
 
@@ -89,7 +91,7 @@ describe("TagsInput", () => {
                 <TagsInput.ItemText>{tag}</TagsInput.ItemText>
               </TagsInput.Item>
             ))}
-            <TagsInput.Input placeholder="Add tag..." />
+            <TagsInput.Input placeholder={placeholder} />
           </>
         )}
       </TagsInput.Root>,
@@ -107,7 +109,7 @@ describe("TagsInput", () => {
       delimiter: ",",
     });
 
-    const input = screen.getByPlaceholderText("Add tag...");
+    const input = screen.getByPlaceholderText(placeholder);
     await user.type(input, "tag1,");
     expect(onValueChange).toHaveBeenCalledWith(["initial", "tag1"]);
 
@@ -121,7 +123,7 @@ describe("TagsInput", () => {
                 <TagsInput.ItemText>{tag}</TagsInput.ItemText>
               </TagsInput.Item>
             ))}
-            <TagsInput.Input placeholder="Add tag..." />
+            <TagsInput.Input placeholder={placeholder} />
           </>
         )}
       </TagsInput.Root>,
@@ -147,14 +149,14 @@ describe("TagsInput", () => {
                   <TagsInput.ItemDelete aria-label="Remove tag" />
                 </TagsInput.Item>
               ))}
-              <TagsInput.Input id="tags" placeholder="Add tag..." />
+              <TagsInput.Input id="tags" placeholder={placeholder} />
             </>
           )}
         </TagsInput.Root>
       </form>,
     );
 
-    const input = screen.getByPlaceholderText("Add tag...");
+    const input = screen.getByPlaceholderText(placeholder);
     const form = input.closest("form");
 
     if (!form) {
@@ -179,7 +181,7 @@ describe("TagsInput", () => {
       onValueChange: onAddValueChange,
     });
 
-    let input = screen.getByPlaceholderText("Add tag...");
+    let input = screen.getByPlaceholderText(placeholder);
     await user.type(input, "new tag");
     await user.tab();
 
@@ -193,7 +195,7 @@ describe("TagsInput", () => {
       onValueChange: onClearValueChange,
     });
 
-    input = screen.getByPlaceholderText("Add tag...");
+    input = screen.getByPlaceholderText(placeholder);
     await user.type(input, "new tag");
     await user.tab();
 
@@ -253,7 +255,7 @@ describe("TagsInput", () => {
       disabled: true,
     });
 
-    const input = screen.getByPlaceholderText("Add tag...");
+    const input = screen.getByPlaceholderText(placeholder);
     expect(input).toBeDisabled();
 
     // Try to delete tag
@@ -266,7 +268,7 @@ describe("TagsInput", () => {
     const user = userEvent.setup();
     renderTagsInput({ addOnTab: true });
 
-    const input = screen.getByPlaceholderText("Add tag...");
+    const input = screen.getByPlaceholderText(placeholder);
     await user.type(input, "new tag");
     await user.tab();
 
@@ -282,7 +284,7 @@ describe("TagsInput", () => {
 
     renderTagsInput({ onValidate, onInvalid });
 
-    const input = screen.getByPlaceholderText("Add tag...");
+    const input = screen.getByPlaceholderText(placeholder);
 
     // Try adding tag that's too long
     await user.type(input, "this is a very long tag{Enter}");
@@ -315,7 +317,7 @@ describe("TagsInput", () => {
                 <TagsInput.ItemDelete aria-label="Remove tag" />
               </TagsInput.Item>
             ))}
-            <TagsInput.Input placeholder="Add tag..." />
+            <TagsInput.Input placeholder={placeholder} />
           </>
         )}
       </TagsInput.Root>,
@@ -323,7 +325,7 @@ describe("TagsInput", () => {
 
     expect(screen.getByText("#tag1")).toBeInTheDocument();
 
-    const input = screen.getByPlaceholderText("Add tag...");
+    const input = screen.getByPlaceholderText(placeholder);
     await user.type(input, "newtag{Enter}");
 
     expect(screen.getByText("#newtag")).toBeInTheDocument();
@@ -442,7 +444,7 @@ describe("TagsInput", () => {
     expect(mockSubmit).not.toHaveBeenCalled();
 
     // Add a tag
-    const input = screen.getByPlaceholderText("Add tag...");
+    const input = screen.getByPlaceholderText(placeholder);
     await user.type(input, "tag1{Enter}");
 
     // Try submitting with a tag
@@ -491,7 +493,7 @@ describe("TagsInput", () => {
     expect(screen.getByText("initial")).toBeInTheDocument();
 
     // Add new tag
-    const input = screen.getByPlaceholderText("Add tag...");
+    const input = screen.getByPlaceholderText(placeholder);
     await user.type(input, "new tag{Enter}");
 
     // Reset form
@@ -563,7 +565,7 @@ describe("TagsInput", () => {
     });
 
     // Input should be readOnly
-    const input = screen.getByPlaceholderText("Add tag...");
+    const input = screen.getByPlaceholderText(placeholder);
     expect(input).toHaveAttribute("readOnly");
 
     // Try to add a new tag

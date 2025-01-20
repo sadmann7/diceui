@@ -31,12 +31,14 @@ global.getComputedStyle = vi.fn().mockReturnValue({
   lineHeight: "24px",
 });
 
+const placeholder = "Type @ to mention...";
+
 describe("Mention", () => {
   function renderMention(props: Mention.MentionRootProps = {}) {
     return render(
       <Mention.Root {...props}>
         <Mention.Label>Mention users</Mention.Label>
-        <Mention.Input placeholder="Type @ to mention..." />
+        <Mention.Input placeholder={placeholder} />
         <Mention.Portal>
           <Mention.Content>
             <Mention.Item value="kickflip">Kickflip</Mention.Item>
@@ -51,9 +53,7 @@ describe("Mention", () => {
   test("renders without crashing", () => {
     renderMention();
     expect(screen.getByText("Mention users")).toBeInTheDocument();
-    expect(
-      screen.getByPlaceholderText("Type @ to mention..."),
-    ).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(placeholder)).toBeInTheDocument();
   });
 
   test("handles controlled state", async () => {
@@ -67,7 +67,7 @@ describe("Mention", () => {
       onInputValueChange,
     });
 
-    const input = screen.getByPlaceholderText("Type @ to mention...");
+    const input = screen.getByPlaceholderText(placeholder);
 
     // Test initial state
     expect(input).toHaveValue("");
@@ -95,7 +95,7 @@ describe("Mention", () => {
     const onValueChange = vi.fn();
     renderMention({ onValueChange });
 
-    const input = screen.getByPlaceholderText("Type @ to mention...");
+    const input = screen.getByPlaceholderText(placeholder);
 
     // Open mention list
     await userEvent.type(input, "@");
@@ -123,7 +123,7 @@ describe("Mention", () => {
     const onValueChange = vi.fn();
     renderMention({ disabled: true, onValueChange });
 
-    const input = screen.getByPlaceholderText("Type @ to mention...");
+    const input = screen.getByPlaceholderText(placeholder);
     expect(input).toBeDisabled();
 
     await userEvent.type(input, "@kickflip");
@@ -134,7 +134,7 @@ describe("Mention", () => {
     const onValueChange = vi.fn();
     renderMention({ readonly: true, onValueChange });
 
-    const input = screen.getByPlaceholderText("Type @ to mention...");
+    const input = screen.getByPlaceholderText(placeholder);
     expect(input).toHaveAttribute("readonly");
 
     await userEvent.type(input, "@kickflip");
@@ -143,7 +143,7 @@ describe("Mention", () => {
 
   test("handles default filtering", async () => {
     renderMention();
-    const input = screen.getByPlaceholderText("Type @ to mention...");
+    const input = screen.getByPlaceholderText(placeholder);
 
     // Open mention list
     await userEvent.type(input, "@");
@@ -162,7 +162,7 @@ describe("Mention", () => {
 
   test("handles exact match filtering", async () => {
     renderMention({ exactMatch: true });
-    const input = screen.getByPlaceholderText("Type @ to mention...");
+    const input = screen.getByPlaceholderText(placeholder);
 
     // Open mention list
     await userEvent.type(input, "@");
@@ -186,7 +186,7 @@ describe("Mention", () => {
       );
 
     renderMention({ onFilter: customFilter });
-    const input = screen.getByPlaceholderText("Type @ to mention...");
+    const input = screen.getByPlaceholderText(placeholder);
 
     // Open mention list
     await userEvent.type(input, "@");
@@ -207,7 +207,7 @@ describe("Mention", () => {
     const onOpenChange = vi.fn();
     renderMention({ trigger: "#", onOpenChange });
 
-    const input = screen.getByPlaceholderText("Type @ to mention...");
+    const input = screen.getByPlaceholderText(placeholder);
 
     // Test that @ doesn't trigger the mention list
     await userEvent.type(input, "@");
@@ -227,7 +227,7 @@ describe("Mention", () => {
 
   test("supports RTL direction", async () => {
     renderMention({ dir: "rtl" });
-    const input = screen.getByPlaceholderText("Type @ to mention...");
+    const input = screen.getByPlaceholderText(placeholder);
 
     await userEvent.type(input, "@");
 
@@ -246,7 +246,7 @@ describe("Mention", () => {
     const onInputValueChange = vi.fn();
     renderMention({ onValueChange, onInputValueChange });
 
-    const input = screen.getByPlaceholderText("Type @ to mention...");
+    const input = screen.getByPlaceholderText(placeholder);
 
     if (!(input instanceof HTMLInputElement)) {
       throw new Error("Input element not found");
@@ -288,7 +288,7 @@ describe("Mention", () => {
     const onInputValueChange = vi.fn();
     renderMention({ onValueChange, onInputValueChange });
 
-    const input = screen.getByPlaceholderText("Type @ to mention...");
+    const input = screen.getByPlaceholderText(placeholder);
 
     if (!(input instanceof HTMLInputElement)) {
       throw new Error("Input element not found");
@@ -330,7 +330,7 @@ describe("Mention", () => {
 
   test("supports accessibility features", () => {
     renderMention();
-    const input = screen.getByPlaceholderText("Type @ to mention...");
+    const input = screen.getByPlaceholderText(placeholder);
     const label = screen.getByText("Mention users");
 
     expect(input).toHaveAttribute("role", "combobox");
