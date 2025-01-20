@@ -7,7 +7,7 @@ interface PortalProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
   /**
    * The container to mount the portal into.
-   * @default globalThis.document?.body
+   * @default document.body
    */
   container?: HTMLElement | DocumentFragment | null;
 }

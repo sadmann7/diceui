@@ -2,8 +2,6 @@ import * as React from "react";
 
 /**
  * Get the ref from a React element without throwing warnings.
- * @param element - The React element to get the ref from.
- * @returns The ref from the element, or undefined if the element is not valid.
  */
 function getElementRef(
   element: React.ReactElement,

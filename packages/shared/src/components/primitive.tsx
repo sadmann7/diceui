@@ -3,6 +3,7 @@
  */
 
 import * as React from "react";
+import * as ReactDOM from "react-dom";
 import { Slot } from "./slot";
 
 type IntrinsicElementsKeys = keyof React.JSX.IntrinsicElements;
@@ -11,6 +12,7 @@ type PrimitivePropsWithRef<E extends IntrinsicElementsKeys> = Omit<
   React.JSX.IntrinsicElements[E],
   "ref"
 > & {
+  /** Whether to render the wrapped component and merge their props. */
   asChild?: boolean;
   ref?: React.Ref<React.ElementRef<E>>;
 };
@@ -68,19 +70,15 @@ const Primitive = new Proxy(
 
 /**
  * Flush custom event dispatch for React 18 batching
+ * @see https://github.com/facebook/react/blob/a8a4742f1c54493df00da648a3f9d26e3db9c8b5/packages/react-dom/src/events/ReactDOMEventListener.js#L294-L350
  */
 function dispatchDiscreteCustomEvent<E extends CustomEvent>(
   target: E["target"],
   event: E,
 ) {
-  if (target) {
-    const evt = new CustomEvent(event.type, {
-      bubbles: true,
-      cancelable: true,
-      detail: event.detail,
-    });
-    target.dispatchEvent(evt);
-  }
+  if (!target) return;
+
+  ReactDOM.flushSync(() => target.dispatchEvent(event));
 }
 
 export { dispatchDiscreteCustomEvent, Primitive };
