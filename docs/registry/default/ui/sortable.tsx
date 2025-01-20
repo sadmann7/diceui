@@ -251,7 +251,7 @@ interface SortableContentProps extends SlotProps {
 }
 
 const SortableContent = React.forwardRef<HTMLDivElement, SortableContentProps>(
-  (props, ref) => {
+  (props, forwardedRef) => {
     const { strategy: strategyProp, asChild, ...contentProps } = props;
     const context = useSortableRoot();
     if (!context) {
@@ -268,7 +268,7 @@ const SortableContent = React.forwardRef<HTMLDivElement, SortableContentProps>(
           }))}
           strategy={strategyProp ?? context.strategy}
         >
-          <ContentSlot {...contentProps} ref={ref} />
+          <ContentSlot {...contentProps} ref={forwardedRef} />
         </SortableContext>
       </SortableContentContext.Provider>
     );
@@ -362,7 +362,7 @@ interface SortableItemProps extends SlotProps {
 }
 
 const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
-  (props, ref) => {
+  (props, forwardedRef) => {
     const inSortableContent = React.useContext(SortableContentContext);
     const inSortableOverlay = React.useContext(SortableOverlayContext);
 
@@ -373,34 +373,37 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
     const { value, style, asGrip, asChild, className, ...itemProps } = props;
     const context = useSortableRoot();
     const id = React.useId();
-    const {
-      attributes,
-      listeners,
-      setNodeRef,
-      transform,
-      transition,
-      isDragging,
-    } = useSortable({ id: value });
+    const sortableContext = useSortable({ id: value });
 
     const composedStyle = React.useMemo<React.CSSProperties>(() => {
       return {
-        opacity: isDragging ? 0.5 : 1,
-        transform: CSS.Translate.toString(transform),
-        transition,
+        opacity: sortableContext.isDragging ? 0.5 : 1,
+        transform: CSS.Translate.toString(sortableContext.transform),
+        transition: sortableContext.transition,
         ...style,
       };
-    }, [isDragging, transform, transition, style]);
+    }, [
+      sortableContext.isDragging,
+      sortableContext.transform,
+      sortableContext.transition,
+      style,
+    ]);
 
     const ItemSlot = asChild ? Slot : "div";
 
     const itemContext = React.useMemo<SortableItemContextValue>(
       () => ({
         id,
-        attributes,
-        listeners,
-        isDragging,
+        attributes: sortableContext.attributes,
+        listeners: sortableContext.listeners,
+        isDragging: sortableContext.isDragging,
       }),
-      [id, attributes, listeners, isDragging],
+      [
+        id,
+        sortableContext.attributes,
+        sortableContext.listeners,
+        sortableContext.isDragging,
+      ],
     );
 
     if (value === "") {
@@ -411,21 +414,25 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
       <SortableItemContext.Provider value={itemContext}>
         <ItemSlot
           id={id}
-          data-dragging={isDragging ? "" : undefined}
+          data-dragging={sortableContext.isDragging ? "" : undefined}
           {...itemProps}
-          ref={composeRefs(ref, (node) => setNodeRef(node))}
+          ref={composeRefs(forwardedRef, (node) =>
+            sortableContext.setNodeRef(node),
+          )}
           style={composedStyle}
           className={cn(
+            "data-[dragging]:focus-visible:outline-none data-[dragging]:focus-visible:ring-1 data-[dragging]:focus-visible:ring-ring data-[dragging]:focus-visible:ring-offset-1",
             {
               "touch-none select-none": asGrip,
               "cursor-default": context.flatCursor,
               "data-[dragging]:cursor-grabbing": !context.flatCursor,
-              "cursor-grab": !isDragging && asGrip && !context.flatCursor,
+              "cursor-grab":
+                !sortableContext.isDragging && asGrip && !context.flatCursor,
             },
             className,
           )}
-          {...(asGrip ? attributes : {})}
-          {...(asGrip ? listeners : {})}
+          {...(asGrip ? sortableContext.attributes : {})}
+          {...(asGrip ? sortableContext.listeners : {})}
         />
       </SortableItemContext.Provider>
     );
@@ -441,7 +448,7 @@ interface SortableItemGripProps
 const SortableItemGrip = React.forwardRef<
   HTMLButtonElement,
   SortableItemGripProps
->((props, ref) => {
+>((props, forwardedRef) => {
   const itemContext = React.useContext(SortableItemContext);
   if (!itemContext) {
     throw new Error(SORTABLE_ERROR.grip);
@@ -465,7 +472,7 @@ const SortableItemGrip = React.forwardRef<
       )}
       {...itemContext.attributes}
       {...itemContext.listeners}
-      ref={ref}
+      ref={forwardedRef}
       {...dragHandleProps}
     />
   );

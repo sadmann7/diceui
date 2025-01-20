@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import * as Kanban from "@/registry/default/ui/kanban";
 import * as React from "react";
 
@@ -45,7 +46,7 @@ export default function KanbanDemo() {
           <Kanban.Column
             key={column.id}
             value={column.id}
-            className="flex flex-col gap-4"
+            className="flex max-h-[400px] flex-col gap-4 overflow-y-auto"
           >
             <div className="font-medium">{column.title}</div>
             {columns[column.id]?.map((task) => (
@@ -54,13 +55,14 @@ export default function KanbanDemo() {
                   <div className="flex items-center justify-between">
                     <div className="font-medium">{task.title}</div>
                     <div
-                      className={`text-xs ${
+                      className={cn(
+                        "text-xs",
                         task.priority === "high"
                           ? "text-red-500"
                           : task.priority === "medium"
                             ? "text-yellow-500"
-                            : "text-green-500"
-                      }`}
+                            : "text-green-500",
+                      )}
                     >
                       {task.priority}
                     </div>
@@ -80,22 +82,25 @@ export default function KanbanDemo() {
           if (!task) return null;
 
           return (
-            <div className="rounded-md border bg-card p-4 shadow-sm">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">{task.title}</div>
-                <div
-                  className={`text-xs ${
-                    task.priority === "high"
-                      ? "text-red-500"
-                      : task.priority === "medium"
-                        ? "text-yellow-500"
-                        : "text-green-500"
-                  }`}
-                >
-                  {task.priority}
+            <Kanban.Item value={task.id} asChild>
+              <div className="rounded-md border bg-card p-4 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <div className="font-medium">{task.title}</div>
+                  <div
+                    className={cn(
+                      "text-xs",
+                      task.priority === "high"
+                        ? "text-red-500"
+                        : task.priority === "medium"
+                          ? "text-yellow-500"
+                          : "text-green-500",
+                    )}
+                  >
+                    {task.priority}
+                  </div>
                 </div>
               </div>
-            </div>
+            </Kanban.Item>
           );
         }}
       </Kanban.Overlay>

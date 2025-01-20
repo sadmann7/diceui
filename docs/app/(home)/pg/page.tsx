@@ -18,6 +18,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import KanbanDemo from "@/registry/default/example/kanban-demo";
+import SortableDemo from "@/registry/default/example/sortable-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -33,7 +34,7 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <div className="h-screen bg-accent" />
+      <SortableDemo />
       <KanbanDemo />
       <Textarea
         placeholder="Type here..."
@@ -108,7 +109,6 @@ export default function PlaygroundPage() {
           </SelectGroup>
         </SelectContent>
       </Select>
-      <div className="h-screen bg-accent" />
     </Shell>
   );
 }

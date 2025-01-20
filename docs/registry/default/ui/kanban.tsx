@@ -55,6 +55,7 @@ interface KanbanProviderContextValue<T, C> {
   setActiveId: (id: UniqueIdentifier | null) => void;
   getColumnValue: (column: C) => UniqueIdentifier;
   getItemValue: (item: T) => UniqueIdentifier;
+  flatCursor: boolean;
 }
 
 const KanbanRoot = React.createContext<KanbanProviderContextValue<
@@ -77,6 +78,7 @@ type KanbanProps<T, C> = DndContextProps & {
   columnData: C[];
   onMove?: (event: DragEndEvent) => void;
   sensors?: DndContextProps["sensors"];
+  flatCursor?: boolean;
 } & (T extends object
     ? { getItemValue: (item: T) => UniqueIdentifier }
     : { getItemValue?: (item: T) => UniqueIdentifier }) &
@@ -93,6 +95,7 @@ function Kanban<T, C>(props: KanbanProps<T, C>) {
     onMove,
     getItemValue: getItemValueProp,
     getColumnValue: getColumnValueProp,
+    flatCursor = false,
     ...kanbanProps
   } = props;
   const id = React.useId();
@@ -142,8 +145,17 @@ function Kanban<T, C>(props: KanbanProps<T, C>) {
       setActiveId,
       getItemValue,
       getColumnValue,
+      flatCursor,
     }),
-    [id, columns, columnData, activeId, getItemValue, getColumnValue],
+    [
+      id,
+      columns,
+      columnData,
+      activeId,
+      getItemValue,
+      getColumnValue,
+      flatCursor,
+    ],
   );
 
   const getContainer = React.useCallback(
@@ -278,7 +290,7 @@ interface KanbanBoardProps extends SlotProps {
 }
 
 const KanbanBoard = React.forwardRef<HTMLDivElement, KanbanBoardProps>(
-  (props, ref) => {
+  (props, forwardedRef) => {
     const { asChild, ...boardProps } = props;
     const context = useKanbanRoot();
     if (!context) {
@@ -291,7 +303,7 @@ const KanbanBoard = React.forwardRef<HTMLDivElement, KanbanBoardProps>(
       <KanbanBoardContext.Provider value={true}>
         <BoardSlot
           {...boardProps}
-          ref={ref}
+          ref={forwardedRef}
           className={cn(
             "flex h-full w-full gap-4 overflow-x-auto p-4",
             props.className,
@@ -310,7 +322,7 @@ interface KanbanColumnProps extends SlotProps {
 }
 
 const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
-  (props, ref) => {
+  (props, forwardedRef) => {
     const { value, asChild, ...columnProps } = props;
     const context = useKanbanRoot();
     const inBoard = React.useContext(KanbanBoardContext);
@@ -329,7 +341,7 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
       >
         <ColumnSlot
           {...columnProps}
-          ref={ref}
+          ref={forwardedRef}
           className={cn(
             "flex h-full min-h-[200px] w-[300px] flex-none flex-col gap-2 rounded-lg bg-muted/50 p-4",
             props.className,
@@ -363,9 +375,10 @@ interface KanbanItemProps extends SlotProps {
 }
 
 const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
-  (props, ref) => {
+  (props, forwardedRef) => {
     const { value, style, asGrip, asChild, className, ...itemProps } = props;
     const id = React.useId();
+    const context = useKanbanRoot();
     const {
       attributes,
       listeners,
@@ -406,13 +419,14 @@ const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
           id={id}
           data-dragging={isDragging ? "" : undefined}
           {...itemProps}
-          ref={composeRefs(ref, (node) => setNodeRef(node))}
+          ref={composeRefs(forwardedRef, (node) => setNodeRef(node))}
           style={composedStyle}
           className={cn(
             {
               "touch-none select-none": asGrip,
-              "cursor-grab": !isDragging && asGrip,
-              "data-[dragging]:cursor-grabbing": true,
+              "cursor-default": context.flatCursor,
+              "data-[dragging]:cursor-grabbing": !context.flatCursor,
+              "cursor-grab": !isDragging && asGrip && !context.flatCursor,
             },
             className,
           )}
@@ -430,8 +444,9 @@ interface KanbanItemGripProps extends React.ComponentPropsWithoutRef<"button"> {
 }
 
 const KanbanItemGrip = React.forwardRef<HTMLButtonElement, KanbanItemGripProps>(
-  (props, ref) => {
+  (props, forwardedRef) => {
     const itemContext = React.useContext(KanbanItemContext);
+    const context = useKanbanRoot();
     if (!itemContext) {
       throw new Error(KANBAN_ERROR.grip);
     }
@@ -444,12 +459,15 @@ const KanbanItemGrip = React.forwardRef<HTMLButtonElement, KanbanItemGripProps>(
         aria-controls={itemContext.id}
         data-dragging={itemContext.isDragging ? "" : undefined}
         className={cn(
-          "cursor-grab select-none data-[dragging]:cursor-grabbing",
+          "select-none",
+          context.flatCursor
+            ? "cursor-default"
+            : "cursor-grab data-[dragging]:cursor-grabbing",
           className,
         )}
         {...itemContext.attributes}
         {...itemContext.listeners}
-        ref={ref}
+        ref={forwardedRef}
         {...dragHandleProps}
       />
     );
@@ -498,7 +516,7 @@ function KanbanOverlay(props: KanbanOverlayProps) {
   return ReactDOM.createPortal(
     <DragOverlay
       dropAnimation={dropAnimationProp ?? dropAnimation}
-      className="cursor-grabbing"
+      className={cn(!context.flatCursor && "cursor-grabbing")}
       {...overlayProps}
     >
       {context.activeId ? (
