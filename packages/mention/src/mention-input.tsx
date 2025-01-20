@@ -485,8 +485,12 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
             }
 
             // For Cmd/Ctrl + Backspace, check if there's no meaningful text between cursor and mention
+            // AND ensure the mention is before the cursor
             const textBetween = input.value.slice(m.end, cursorPosition);
-            return /^\s*$/.test(textBetween); // Only whitespace between mention and cursor
+            return (
+              m.end <= cursorPosition && // Mention must end before or at cursor
+              /^\s*$/.test(textBetween) // Only whitespace between mention and cursor
+            );
           });
 
           if (mentionBeforeCursor) {
