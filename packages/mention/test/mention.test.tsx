@@ -241,6 +241,93 @@ describe("Mention", () => {
     expect(content).toHaveAttribute("dir", "rtl");
   });
 
+  test("handles backspace deletion of mentions", async () => {
+    const onValueChange = vi.fn();
+    const onInputValueChange = vi.fn();
+    renderMention({ onValueChange, onInputValueChange });
+
+    const input = screen.getByPlaceholderText("Type @ to mention...");
+
+    if (!(input instanceof HTMLInputElement)) {
+      throw new Error("Input element not found");
+    }
+
+    // Add a mention
+    await userEvent.type(input, "@kickflip");
+    const kickflipOption = screen.getByRole("option", { name: "Kickflip" });
+    await waitFor(() => {
+      fireEvent.click(kickflipOption);
+    });
+
+    // Test regular backspace at end of mention
+    input.setSelectionRange(9, 9); // Position cursor at end of mention
+    fireEvent.keyDown(input, { key: "Backspace" });
+    expect(onValueChange).toHaveBeenLastCalledWith([]);
+    expect(onInputValueChange).toHaveBeenLastCalledWith("");
+
+    // Reset input for next test
+    fireEvent.change(input, { target: { value: "" } });
+    onValueChange.mockClear();
+    onInputValueChange.mockClear();
+
+    // Add mention with trailing space
+    await userEvent.type(input, "@kickflip");
+    await waitFor(() => {
+      fireEvent.click(kickflipOption);
+    });
+
+    // Move cursor after space and backspace
+    input.setSelectionRange(10, 10); // After space
+    fireEvent.keyDown(input, { key: "Backspace" });
+    expect(onValueChange).not.toHaveBeenCalled(); // Should only remove space
+    expect(onInputValueChange).toHaveBeenCalledWith("@kickflip");
+  });
+
+  test("handles Cmd/Ctrl backspace deletion of mentions", async () => {
+    const onValueChange = vi.fn();
+    const onInputValueChange = vi.fn();
+    renderMention({ onValueChange, onInputValueChange });
+
+    const input = screen.getByPlaceholderText("Type @ to mention...");
+
+    if (!(input instanceof HTMLInputElement)) {
+      throw new Error("Input element not found");
+    }
+
+    // Add first mention
+    await userEvent.type(input, "@kickflip");
+    const kickflipOption = screen.getByRole("option", { name: "Kickflip" });
+    await waitFor(() => {
+      fireEvent.click(kickflipOption);
+    });
+
+    // Add second mention
+    await userEvent.type(input, "some text @heelflip");
+    const heelflipOption = screen.getByRole("option", { name: "Heelflip" });
+    await waitFor(() => {
+      fireEvent.click(heelflipOption);
+    });
+
+    // Test Cmd/Ctrl backspace from end of input
+    input.setSelectionRange(29, 29); // End of input after "@heelflip "
+    fireEvent.keyDown(input, { key: "Backspace", metaKey: true });
+    expect(onValueChange).toHaveBeenLastCalledWith(["kickflip"]);
+    expect(onInputValueChange).toHaveBeenLastCalledWith("@kickflip some text ");
+
+    // Update input value to match the state after first deletion
+    fireEvent.change(input, { target: { value: "@kickflip some text " } });
+
+    // Clear mocks for next test
+    onValueChange.mockClear();
+    onInputValueChange.mockClear();
+
+    // Test Cmd/Ctrl backspace with cursor after first mention
+    input.setSelectionRange(9, 9); // After "@kickflip"
+    fireEvent.keyDown(input, { key: "Backspace", metaKey: true });
+    expect(onValueChange).toHaveBeenLastCalledWith([]);
+    expect(onInputValueChange).toHaveBeenLastCalledWith("some text ");
+  });
+
   test("supports accessibility features", () => {
     renderMention();
     const input = screen.getByPlaceholderText("Type @ to mention...");
