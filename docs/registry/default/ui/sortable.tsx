@@ -479,12 +479,12 @@ const ItemGrip = SortableItemGrip;
 const Overlay = SortableOverlay;
 
 export {
+  Root,
   Content,
   Item,
   ItemGrip,
   Overlay,
   //
-  Root,
   Sortable,
   SortableContent,
   SortableItem,
