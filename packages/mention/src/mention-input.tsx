@@ -864,9 +864,19 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
 
         if (clickedMention) {
           event.preventDefault();
-          // Move cursor to end of mention
+          // Calculate relative click position within the mention
+          const mentionWidth = clickedMention.end - clickedMention.start;
+          const clickOffsetInMention =
+            approximateClickPosition - clickedMention.start;
+
+          // If click is in the first third of the mention, place cursor at start
+          const isNearStart = clickOffsetInMention <= mentionWidth / 3;
+
           requestAnimationFrame(() => {
-            input.setSelectionRange(clickedMention.end, clickedMention.end);
+            const newPosition = isNearStart
+              ? clickedMention.start
+              : clickedMention.end;
+            input.setSelectionRange(newPosition, newPosition);
           });
         }
       },
@@ -1086,9 +1096,9 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           aria-activedescendant={context.highlightedItem?.ref.current?.id}
           aria-disabled={context.disabled}
           aria-readonly={context.readonly}
+          dir={context.dir}
           disabled={context.disabled}
           readOnly={context.readonly}
-          dir={context.dir}
           {...props}
           ref={composedRef}
           onChange={composeEventHandlers(props.onChange, onChange)}
