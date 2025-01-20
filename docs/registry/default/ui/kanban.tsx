@@ -53,13 +53,14 @@ interface KanbanProviderContextValue<T, C> {
   columnData: C[];
   activeId: UniqueIdentifier | null;
   setActiveId: (id: UniqueIdentifier | null) => void;
-  getItemValue: (item: T) => UniqueIdentifier;
   getColumnValue: (column: C) => UniqueIdentifier;
+  getItemValue: (item: T) => UniqueIdentifier;
 }
 
-type KanbanRootContextValue = KanbanProviderContextValue<unknown, unknown>;
-
-const KanbanRoot = React.createContext<KanbanRootContextValue | null>(null);
+const KanbanRoot = React.createContext<KanbanProviderContextValue<
+  unknown,
+  unknown
+> | null>(null);
 KanbanRoot.displayName = ROOT_NAME;
 
 function useKanbanRoot() {
@@ -72,8 +73,8 @@ function useKanbanRoot() {
 
 type KanbanProps<T, C> = DndContextProps & {
   columns: Record<UniqueIdentifier, T[]>;
+  onColumnsChange?: (columns: Record<UniqueIdentifier, T[]>) => void;
   columnData: C[];
-  onValueChange?: (columns: Record<UniqueIdentifier, T[]>) => void;
   onMove?: (event: DragEndEvent) => void;
   sensors?: DndContextProps["sensors"];
 } & (T extends object
@@ -87,7 +88,7 @@ function Kanban<T, C>(props: KanbanProps<T, C>) {
   const {
     columns,
     columnData,
-    onValueChange,
+    onColumnsChange,
     sensors: sensorsProp,
     onMove,
     getItemValue: getItemValueProp,
@@ -132,7 +133,7 @@ function Kanban<T, C>(props: KanbanProps<T, C>) {
     [getColumnValueProp],
   );
 
-  const contextValue = React.useMemo(
+  const contextValue = React.useMemo<KanbanProviderContextValue<T, C>>(
     () => ({
       id,
       columns,
@@ -145,20 +146,25 @@ function Kanban<T, C>(props: KanbanProps<T, C>) {
     [id, columns, columnData, activeId, getItemValue, getColumnValue],
   );
 
-  const findContainer = (id: UniqueIdentifier) => {
-    if (id in columns) return id;
+  const getContainer = React.useCallback(
+    (id: UniqueIdentifier) => {
+      if (id in columns) return id;
 
-    for (const [columnId, items] of Object.entries(columns)) {
-      if (items.some((item) => getItemValue(item) === id)) {
-        return columnId;
+      for (const [columnId, items] of Object.entries(columns)) {
+        if (items.some((item) => getItemValue(item) === id)) {
+          return columnId;
+        }
       }
-    }
 
-    return null;
-  };
+      return null;
+    },
+    [columns, getItemValue],
+  );
 
   return (
-    <KanbanRoot.Provider value={contextValue as KanbanRootContextValue}>
+    <KanbanRoot.Provider
+      value={contextValue as KanbanProviderContextValue<unknown, unknown>}
+    >
       <DndContext
         id={id}
         sensors={sensorsProp ?? sensors}
@@ -174,8 +180,8 @@ function Kanban<T, C>(props: KanbanProps<T, C>) {
             return;
           }
 
-          const activeContainer = findContainer(active.id);
-          const overContainer = findContainer(over.id);
+          const activeContainer = getContainer(active.id);
+          const overContainer = getContainer(over.id);
 
           if (!activeContainer || !overContainer) {
             setActiveId(null);
@@ -217,7 +223,7 @@ function Kanban<T, C>(props: KanbanProps<T, C>) {
               }
 
               overColumn.splice(overIndex, 0, movedItem);
-              onValueChange?.(newColumns);
+              onColumnsChange?.(newColumns);
             }
           } else {
             const items = columns[activeContainer];
@@ -248,7 +254,7 @@ function Kanban<T, C>(props: KanbanProps<T, C>) {
                   activeIndex,
                   overIndex,
                 );
-                onValueChange?.(newColumns);
+                onColumnsChange?.(newColumns);
               }
             }
           }

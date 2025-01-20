@@ -1,6 +1,6 @@
 # `Dice UI`
 
-Dice UI is a primitive ui component library for your design systems.
+Unstyled ui component library.
 
 ## Documentation
 
