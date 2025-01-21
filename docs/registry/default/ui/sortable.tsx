@@ -71,26 +71,25 @@ const SORTABLE_ERROR = {
   overlay: `${OVERLAY_NAME} must be within ${ROOT_NAME}`,
 } as const;
 
-interface SortableProviderContextValue<T> {
+interface SortableRootContextValue<T> {
   id: string;
   items: T[];
   modifiers: DndContextProps["modifiers"];
   strategy: SortableContextProps["strategy"];
   activeId: UniqueIdentifier | null;
   setActiveId: (id: UniqueIdentifier | null) => void;
-  flatCursor: boolean;
   getItemValue: (item: T) => UniqueIdentifier;
+  flatCursor: boolean;
 }
 
-type SortableRootContextValue = SortableProviderContextValue<unknown>;
+const SortableRootContext =
+  React.createContext<SortableRootContextValue<unknown> | null>(null);
+SortableRootContext.displayName = ROOT_NAME;
 
-const SortableRoot = React.createContext<SortableRootContextValue | null>(null);
-SortableRoot.displayName = ROOT_NAME;
-
-function useSortableRoot() {
-  const context = React.useContext(SortableRoot);
+function useSortableContext(name: keyof typeof SORTABLE_ERROR) {
+  const context = React.useContext(SortableRootContext);
   if (!context) {
-    throw new Error(SORTABLE_ERROR.root);
+    throw new Error(SORTABLE_ERROR[name]);
   }
   return context;
 }
@@ -156,8 +155,8 @@ function Sortable<T>(props: SortableProps<T>) {
       strategy: config.strategy,
       activeId,
       setActiveId,
-      flatCursor,
       getItemValue,
+      flatCursor,
     }),
     [
       id,
@@ -166,13 +165,15 @@ function Sortable<T>(props: SortableProps<T>) {
       config.modifiers,
       config.strategy,
       activeId,
-      flatCursor,
       getItemValue,
+      flatCursor,
     ],
   );
 
   return (
-    <SortableRoot.Provider value={contextValue as SortableRootContextValue}>
+    <SortableRootContext.Provider
+      value={contextValue as SortableRootContextValue<unknown>}
+    >
       <DndContext
         id={id}
         modifiers={modifiers ?? config.modifiers}
@@ -237,7 +238,7 @@ function Sortable<T>(props: SortableProps<T>) {
         }}
         {...sortableProps}
       />
-    </SortableRoot.Provider>
+    </SortableRootContext.Provider>
   );
 }
 
@@ -253,10 +254,7 @@ interface SortableContentProps extends SlotProps {
 const SortableContent = React.forwardRef<HTMLDivElement, SortableContentProps>(
   (props, forwardedRef) => {
     const { strategy: strategyProp, asChild, ...contentProps } = props;
-    const context = useSortableRoot();
-    if (!context) {
-      throw new Error(SORTABLE_ERROR.content);
-    }
+    const context = useSortableContext("content");
 
     const ContentSlot = asChild ? Slot : "div";
 
@@ -304,10 +302,8 @@ function SortableOverlay(props: SortableOverlayProps) {
     children,
     ...overlayProps
   } = props;
-  const context = React.useContext(SortableRoot);
-  if (!context) {
-    throw new Error(SORTABLE_ERROR.overlay);
-  }
+
+  const context = useSortableContext("overlay");
 
   const [mounted, setMounted] = React.useState(false);
   React.useLayoutEffect(() => setMounted(true), []);
@@ -371,7 +367,7 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
     }
 
     const { value, style, asGrip, asChild, className, ...itemProps } = props;
-    const context = useSortableRoot();
+    const context = useSortableContext("item");
     const id = React.useId();
     const sortableContext = useSortable({ id: value });
 
@@ -455,7 +451,7 @@ const SortableItemGrip = React.forwardRef<
   }
 
   const { asChild, className, ...dragHandleProps } = props;
-  const context = useSortableRoot();
+  const context = useSortableContext("grip");
 
   const GripSlot = asChild ? Slot : "button";
 

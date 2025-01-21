@@ -47,54 +47,45 @@ const KANBAN_ERROR = {
   overlay: `${OVERLAY_NAME} must be within ${ROOT_NAME}`,
 } as const;
 
-interface KanbanProviderContextValue<T, C> {
+interface KanbanContextValue<T> {
   id: string;
   columns: Record<UniqueIdentifier, T[]>;
-  columnData: C[];
   activeId: UniqueIdentifier | null;
   setActiveId: (id: UniqueIdentifier | null) => void;
-  getColumnValue: (column: C) => UniqueIdentifier;
   getItemValue: (item: T) => UniqueIdentifier;
   flatCursor: boolean;
 }
 
-const KanbanRoot = React.createContext<KanbanProviderContextValue<
-  unknown,
-  unknown
-> | null>(null);
-KanbanRoot.displayName = ROOT_NAME;
+const KanbanContext = React.createContext<KanbanContextValue<unknown> | null>(
+  null,
+);
+KanbanContext.displayName = ROOT_NAME;
 
-function useKanbanRoot() {
-  const context = React.useContext(KanbanRoot);
+function useKanbanContext(name: keyof typeof KANBAN_ERROR) {
+  const context = React.useContext(KanbanContext);
   if (!context) {
-    throw new Error(KANBAN_ERROR.root);
+    throw new Error(KANBAN_ERROR[name]);
   }
   return context;
 }
 
-type KanbanProps<T, C> = DndContextProps & {
+type KanbanProps<T> = DndContextProps & {
   columns: Record<UniqueIdentifier, T[]>;
   onColumnsChange?: (columns: Record<UniqueIdentifier, T[]>) => void;
-  columnData: C[];
   onMove?: (event: DragEndEvent) => void;
   sensors?: DndContextProps["sensors"];
   flatCursor?: boolean;
 } & (T extends object
     ? { getItemValue: (item: T) => UniqueIdentifier }
-    : { getItemValue?: (item: T) => UniqueIdentifier }) &
-  (C extends object
-    ? { getColumnValue: (column: C) => UniqueIdentifier }
-    : { getColumnValue?: (column: C) => UniqueIdentifier });
+    : { getItemValue?: (item: T) => UniqueIdentifier });
 
-function Kanban<T, C>(props: KanbanProps<T, C>) {
+function Kanban<T>(props: KanbanProps<T>) {
   const {
     columns,
-    columnData,
     onColumnsChange,
     sensors: sensorsProp,
     onMove,
     getItemValue: getItemValueProp,
-    getColumnValue: getColumnValueProp,
     flatCursor = false,
     ...kanbanProps
   } = props;
@@ -122,40 +113,16 @@ function Kanban<T, C>(props: KanbanProps<T, C>) {
     [getItemValueProp],
   );
 
-  const getColumnValue = React.useCallback(
-    (column: C): UniqueIdentifier => {
-      if (typeof column === "object" && !getColumnValueProp) {
-        throw new Error(
-          "getColumnValue is required when using array of objects.",
-        );
-      }
-      return getColumnValueProp
-        ? getColumnValueProp(column)
-        : (column as UniqueIdentifier);
-    },
-    [getColumnValueProp],
-  );
-
-  const contextValue = React.useMemo<KanbanProviderContextValue<T, C>>(
+  const contextValue = React.useMemo<KanbanContextValue<T>>(
     () => ({
       id,
       columns,
-      columnData,
       activeId,
       setActiveId,
       getItemValue,
-      getColumnValue,
       flatCursor,
     }),
-    [
-      id,
-      columns,
-      columnData,
-      activeId,
-      getItemValue,
-      getColumnValue,
-      flatCursor,
-    ],
+    [id, columns, activeId, getItemValue, flatCursor],
   );
 
   const getContainer = React.useCallback(
@@ -174,9 +141,7 @@ function Kanban<T, C>(props: KanbanProps<T, C>) {
   );
 
   return (
-    <KanbanRoot.Provider
-      value={contextValue as KanbanProviderContextValue<unknown, unknown>}
-    >
+    <KanbanContext.Provider value={contextValue as KanbanContextValue<unknown>}>
       <DndContext
         id={id}
         sensors={sensorsProp ?? sensors}
@@ -277,7 +242,7 @@ function Kanban<T, C>(props: KanbanProps<T, C>) {
         )}
         {...kanbanProps}
       />
-    </KanbanRoot.Provider>
+    </KanbanContext.Provider>
   );
 }
 
@@ -292,10 +257,7 @@ interface KanbanBoardProps extends SlotProps {
 const KanbanBoard = React.forwardRef<HTMLDivElement, KanbanBoardProps>(
   (props, forwardedRef) => {
     const { asChild, ...boardProps } = props;
-    const context = useKanbanRoot();
-    if (!context) {
-      throw new Error(KANBAN_ERROR.board);
-    }
+    useKanbanContext("board");
 
     const BoardSlot = asChild ? Slot : "div";
 
@@ -324,7 +286,7 @@ interface KanbanColumnProps extends SlotProps {
 const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
   (props, forwardedRef) => {
     const { value, asChild, ...columnProps } = props;
-    const context = useKanbanRoot();
+    const context = useKanbanContext("board");
     const inBoard = React.useContext(KanbanBoardContext);
 
     if (!inBoard) {
@@ -378,7 +340,7 @@ const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
   (props, forwardedRef) => {
     const { value, style, asGrip, asChild, className, ...itemProps } = props;
     const id = React.useId();
-    const context = useKanbanRoot();
+    const context = useKanbanContext("item");
     const {
       attributes,
       listeners,
@@ -446,10 +408,7 @@ interface KanbanItemGripProps extends React.ComponentPropsWithoutRef<"button"> {
 const KanbanItemGrip = React.forwardRef<HTMLButtonElement, KanbanItemGripProps>(
   (props, forwardedRef) => {
     const itemContext = React.useContext(KanbanItemContext);
-    const context = useKanbanRoot();
-    if (!itemContext) {
-      throw new Error(KANBAN_ERROR.grip);
-    }
+    const context = useKanbanContext("item");
 
     const { asChild, className, ...dragHandleProps } = props;
     const GripSlot = asChild ? Slot : "button";
@@ -500,10 +459,7 @@ function KanbanOverlay(props: KanbanOverlayProps) {
     children,
     ...overlayProps
   } = props;
-  const context = React.useContext(KanbanRoot);
-  if (!context) {
-    throw new Error(KANBAN_ERROR.overlay);
-  }
+  const context = useKanbanContext("overlay");
 
   const [mounted, setMounted] = React.useState(false);
   React.useLayoutEffect(() => setMounted(true), []);
@@ -541,12 +497,10 @@ const ItemGrip = KanbanItemGrip;
 const Overlay = KanbanOverlay;
 
 export {
-  Root,
   Board,
   Column,
   Item,
   ItemGrip,
-  Overlay,
   //
   Kanban,
   KanbanBoard,
@@ -554,4 +508,6 @@ export {
   KanbanItem,
   KanbanItemGrip,
   KanbanOverlay,
+  Overlay,
+  Root,
 };

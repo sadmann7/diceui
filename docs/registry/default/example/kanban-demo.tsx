@@ -37,8 +37,6 @@ export default function KanbanDemo() {
     <Kanban.Root
       columns={columns}
       onColumnsChange={setColumns}
-      columnData={columnData}
-      getColumnValue={(column) => column.id}
       getItemValue={(item) => item.id}
     >
       <Kanban.Board>
