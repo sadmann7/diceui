@@ -7,19 +7,22 @@ import {
   DragOverlay,
   type DraggableSyntheticListeners,
   type DropAnimation,
+  type DroppableContainer,
+  KeyboardCode,
+  type KeyboardCoordinateGetter,
   KeyboardSensor,
   MouseSensor,
   TouchSensor,
   type UniqueIdentifier,
   closestCorners,
   defaultDropAnimationSideEffects,
+  getFirstCollision,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
 import {
   SortableContext,
   arrayMove,
-  sortableKeyboardCoordinates,
   useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
@@ -30,6 +33,113 @@ import * as ReactDOM from "react-dom";
 
 import { composeEventHandlers, composeRefs } from "@/lib/composition";
 import { cn } from "@/lib/utils";
+
+const directions: string[] = [
+  KeyboardCode.Down,
+  KeyboardCode.Right,
+  KeyboardCode.Up,
+  KeyboardCode.Left,
+];
+
+const coordinateGetter: KeyboardCoordinateGetter = (
+  event,
+  { context: { active, droppableRects, droppableContainers, collisionRect } },
+) => {
+  if (directions.includes(event.code)) {
+    event.preventDefault();
+
+    if (!active || !collisionRect) {
+      return;
+    }
+
+    const filteredContainers: DroppableContainer[] = [];
+
+    for (const entry of droppableContainers.getEnabled()) {
+      if (!entry || entry?.disabled) {
+        return;
+      }
+
+      const rect = droppableRects.get(entry.id);
+
+      if (!rect) {
+        return;
+      }
+
+      const data = entry.data.current;
+
+      if (data) {
+        const { type, children } = data;
+
+        if (type === "container" && children?.length > 0) {
+          if (active.data.current?.type !== "container") {
+            return;
+          }
+        }
+      }
+
+      switch (event.code) {
+        case KeyboardCode.Down:
+          if (collisionRect.top < rect.top) {
+            filteredContainers.push(entry);
+          }
+          break;
+        case KeyboardCode.Up:
+          if (collisionRect.top > rect.top) {
+            filteredContainers.push(entry);
+          }
+          break;
+        case KeyboardCode.Left:
+          if (collisionRect.left >= rect.left + rect.width) {
+            filteredContainers.push(entry);
+          }
+          break;
+        case KeyboardCode.Right:
+          if (collisionRect.left + collisionRect.width <= rect.left) {
+            filteredContainers.push(entry);
+          }
+          break;
+      }
+    }
+
+    const collisions = closestCorners({
+      active,
+      collisionRect: collisionRect,
+      droppableRects,
+      droppableContainers: filteredContainers,
+      pointerCoordinates: null,
+    });
+    const closestId = getFirstCollision(collisions, "id");
+
+    if (closestId != null) {
+      const newDroppable = droppableContainers.get(closestId);
+      const newNode = newDroppable?.node.current;
+      const newRect = newDroppable?.rect.current;
+
+      if (newNode && newRect) {
+        if (newDroppable.id === "placeholder") {
+          return {
+            x: newRect.left + (newRect.width - collisionRect.width) / 2,
+            y: newRect.top + (newRect.height - collisionRect.height) / 2,
+          };
+        }
+
+        if (newDroppable.data.current?.type === "container") {
+          return {
+            x: newRect.left + 20,
+            y: newRect.top + 74,
+          };
+        }
+
+        return {
+          x: newRect.left,
+          y: newRect.top,
+        };
+      }
+    }
+  }
+
+  return undefined;
+};
 
 const ROOT_NAME = "Kanban";
 const BOARD_NAME = "KanbanBoard";
@@ -95,7 +205,7 @@ function Kanban<T>(props: KanbanProps<T>) {
     useSensor(MouseSensor),
     useSensor(TouchSensor),
     useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
+      coordinateGetter: coordinateGetter,
     }),
   );
 
@@ -127,14 +237,10 @@ function Kanban<T>(props: KanbanProps<T>) {
 
   const getContainer = React.useCallback(
     (id: UniqueIdentifier) => {
-      if (id in columns) return id;
-
+      // Then check if the id belongs to an item in any column
       for (const [columnId, items] of Object.entries(columns)) {
-        if (items.some((item) => getItemValue(item) === id)) {
-          return columnId;
-        }
+        if (items.some((item) => getItemValue(item) === id)) return columnId;
       }
-
       return null;
     },
     [columns, getItemValue],
@@ -159,6 +265,13 @@ function Kanban<T>(props: KanbanProps<T>) {
 
           const activeContainer = getContainer(active.id);
           const overContainer = getContainer(over.id);
+
+          console.log({
+            activeId: active.id,
+            overId: over.id,
+            activeContainer,
+            overContainer,
+          });
 
           if (!activeContainer || !overContainer) {
             setActiveId(null);
