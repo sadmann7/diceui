@@ -203,13 +203,6 @@ function Kanban<T>(props: KanbanProps<T>) {
     [activeId, value, getItemValue],
   );
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  React.useEffect(() => {
-    requestAnimationFrame(() => {
-      recentlyMovedToNewContainer.current = false;
-    });
-  }, [value]);
-
   return (
     <KanbanContext.Provider value={contextValue as KanbanContextValue<unknown>}>
       <DndContext
@@ -221,80 +214,86 @@ function Kanban<T>(props: KanbanProps<T>) {
             strategy: MeasuringStrategy.Always,
           },
         }}
-        onDragStart={composeEventHandlers(kanbanProps.onDragStart, (event) => {
-          setActiveId(event.active.id);
-          setClonedItems(value);
-        })}
-        onDragOver={composeEventHandlers(kanbanProps.onDragOver, (event) => {
-          const { active, over } = event;
-          const overId = over?.id;
+        onDragStart={composeEventHandlers(
+          kanbanProps.onDragStart,
+          ({ active }) => {
+            setActiveId(active.id);
+            setClonedItems(value);
+          },
+        )}
+        onDragOver={composeEventHandlers(
+          kanbanProps.onDragOver,
+          ({ active, over }) => {
+            const overId = over?.id;
 
-          if (!overId || active.id in value) return;
+            if (!overId || active.id in value) return;
 
-          const overContainer = getContainer(overId);
-          const activeContainer = getContainer(active.id);
+            const overContainer = getContainer(overId);
+            const activeContainer = getContainer(active.id);
 
-          if (!overContainer || !activeContainer) return;
+            if (!overContainer || !activeContainer) return;
 
-          if (activeContainer !== overContainer) {
-            const activeItems = value[activeContainer];
-            const overItems = value[overContainer];
+            if (activeContainer !== overContainer) {
+              const activeItems = value[activeContainer];
+              const overItems = value[overContainer];
 
-            if (!activeItems || !overItems) return;
+              if (!activeItems || !overItems) return;
 
-            const overIndex = overItems.findIndex(
-              (item) => getItemValue(item) === overId,
-            );
-            const activeIndex = activeItems.findIndex(
-              (item) => getItemValue(item) === active.id,
-            );
+              const overIndex = overItems.findIndex(
+                (item) => getItemValue(item) === overId,
+              );
+              const activeIndex = activeItems.findIndex(
+                (item) => getItemValue(item) === active.id,
+              );
 
-            if (activeIndex === -1) return;
+              if (activeIndex === -1) return;
 
-            const activeItem = activeItems[activeIndex];
-            if (!activeItem) return;
+              const activeItem = activeItems[activeIndex];
+              if (!activeItem) return;
 
-            let newIndex: number;
+              let newIndex: number;
 
-            if (overId in value) {
-              newIndex = overItems.length;
-            } else {
-              const isBelowOverItem =
-                over &&
-                active.rect.current.translated &&
-                active.rect.current.translated.top >
-                  over.rect.top + over.rect.height;
+              if (overId in value) {
+                newIndex = overItems.length;
+              } else {
+                const isBelowOverItem =
+                  over &&
+                  active.rect.current.translated &&
+                  active.rect.current.translated.top >
+                    over.rect.top + over.rect.height;
 
-              const modifier = isBelowOverItem ? 1 : 0;
-              newIndex =
-                overIndex >= 0 ? overIndex + modifier : overItems.length;
+                const modifier = isBelowOverItem ? 1 : 0;
+                newIndex =
+                  overIndex >= 0 ? overIndex + modifier : overItems.length;
+              }
+
+              recentlyMovedToNewContainer.current = true;
+
+              const newOverItems = [
+                ...overItems.slice(0, newIndex),
+                activeItem,
+                ...overItems.slice(newIndex),
+              ];
+
+              const updatedColumns: Record<UniqueIdentifier, T[]> = {
+                ...value,
+                [activeContainer]: activeItems.filter(
+                  (item) => getItemValue(item) !== active.id,
+                ),
+                [overContainer]: newOverItems,
+              };
+
+              onValueChange?.(updatedColumns);
             }
-
-            recentlyMovedToNewContainer.current = true;
-
-            const newOverItems = [
-              ...overItems.slice(0, newIndex),
-              activeItem,
-              ...overItems.slice(newIndex),
-            ];
-
-            const updatedColumns: Record<UniqueIdentifier, T[]> = {
-              ...value,
-              [activeContainer]: activeItems.filter(
-                (item) => getItemValue(item) !== active.id,
-              ),
-              [overContainer]: newOverItems,
-            };
-
-            onValueChange?.(updatedColumns);
-          }
-        })}
+          },
+        )}
         onDragEnd={composeEventHandlers(kanbanProps.onDragEnd, (event) => {
           const { active, over } = event;
 
           if (!over) {
             setActiveId(null);
             setClonedItems(null);
+            recentlyMovedToNewContainer.current = false;
             return;
           }
 
@@ -304,6 +303,7 @@ function Kanban<T>(props: KanbanProps<T>) {
           if (!activeContainer || !overContainer) {
             setActiveId(null);
             setClonedItems(null);
+            recentlyMovedToNewContainer.current = false;
             return;
           }
 
@@ -313,6 +313,7 @@ function Kanban<T>(props: KanbanProps<T>) {
           if (!activeItems || !overItems) {
             setActiveId(null);
             setClonedItems(null);
+            recentlyMovedToNewContainer.current = false;
             return;
           }
 
@@ -334,6 +335,7 @@ function Kanban<T>(props: KanbanProps<T>) {
               if (!activeColumn || !overColumn) {
                 setActiveId(null);
                 setClonedItems(null);
+                recentlyMovedToNewContainer.current = false;
                 return;
               }
 
@@ -341,6 +343,7 @@ function Kanban<T>(props: KanbanProps<T>) {
               if (!movedItem) {
                 setActiveId(null);
                 setClonedItems(null);
+                recentlyMovedToNewContainer.current = false;
                 return;
               }
 
@@ -352,6 +355,7 @@ function Kanban<T>(props: KanbanProps<T>) {
             if (!items) {
               setActiveId(null);
               setClonedItems(null);
+              recentlyMovedToNewContainer.current = false;
               return;
             }
 
@@ -371,6 +375,7 @@ function Kanban<T>(props: KanbanProps<T>) {
                 if (!columnItems) {
                   setActiveId(null);
                   setClonedItems(null);
+                  recentlyMovedToNewContainer.current = false;
                   return;
                 }
                 newColumns[activeContainer] = arrayMove(
@@ -384,6 +389,7 @@ function Kanban<T>(props: KanbanProps<T>) {
           }
           setActiveId(null);
           setClonedItems(null);
+          recentlyMovedToNewContainer.current = false;
         })}
         onDragCancel={composeEventHandlers(kanbanProps.onDragCancel, () => {
           if (clonedItems) {
@@ -391,6 +397,7 @@ function Kanban<T>(props: KanbanProps<T>) {
           }
           setActiveId(null);
           setClonedItems(null);
+          recentlyMovedToNewContainer.current = false;
         })}
         {...kanbanProps}
       />
