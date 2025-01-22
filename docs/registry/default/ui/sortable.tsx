@@ -171,7 +171,7 @@ function Sortable<T>(props: SortableProps<T>) {
       }
       setActiveId(null);
     },
-    [value, getItemValue, onMove, onValueChange],
+    [value, onValueChange, onMove, getItemValue],
   );
 
   const contextValue = React.useMemo(

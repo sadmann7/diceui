@@ -78,6 +78,8 @@ function useKanbanContext(name: keyof typeof KANBAN_ERROR) {
   return context;
 }
 
+const UPDATE_THROTTLE_MS = 50;
+
 interface GetItemValue<T> {
   /**
    * Callback that returns a unique identifier for each kanban item. Required for array of objects.
@@ -115,6 +117,7 @@ function Kanban<T>(props: KanbanProps<T>) {
     UniqueIdentifier,
     T[]
   > | null>(null);
+  const [lastUpdateTime, setLastUpdateTime] = React.useState(0);
 
   const sensors = useSensors(
     useSensor(MouseSensor),
@@ -208,8 +211,11 @@ function Kanban<T>(props: KanbanProps<T>) {
     (event: DragOverEvent) => {
       const { active, over } = event;
       const overId = over?.id;
+      const now = Date.now();
 
       if (!overId || active.id in value) return;
+      // Throttle updates to prevent excessive re-renders
+      if (now - lastUpdateTime < UPDATE_THROTTLE_MS) return;
 
       const overContainer = getContainer(overId);
       const activeContainer = getContainer(active.id);
@@ -265,10 +271,11 @@ function Kanban<T>(props: KanbanProps<T>) {
           [overContainer]: newOverItems,
         };
 
+        setLastUpdateTime(now);
         onValueChange?.(updatedColumns);
       }
     },
-    [value, getContainer, getItemValue, onValueChange],
+    [value, getContainer, getItemValue, onValueChange, lastUpdateTime],
   );
 
   const onDragEnd = React.useCallback(
