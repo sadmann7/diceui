@@ -123,7 +123,7 @@ export default function KanbanDemo() {
             </div>
             <div className="flex max-h-[600px] flex-col gap-2 overflow-y-auto p-0.5">
               {tasks?.map((task) => (
-                <KanbanItemCard key={task.id} task={task} asHandle />
+                <TaskCard key={task.id} task={task} asHandle />
               ))}
             </div>
           </Kanban.Column>
@@ -137,19 +137,19 @@ export default function KanbanDemo() {
 
           if (!task) return null;
 
-          return <KanbanItemCard key={task.id} task={task} />;
+          return <TaskCard key={task.id} task={task} />;
         }}
       </Kanban.Overlay>
     </Kanban.Root>
   );
 }
 
-interface KanbanItemCardProps
+interface TaskCardProps
   extends Omit<React.ComponentProps<typeof Kanban.Item>, "value"> {
   task: Task;
 }
 
-function KanbanItemCard({ task, ...props }: KanbanItemCardProps) {
+function TaskCard({ task, ...props }: TaskCardProps) {
   return (
     <Kanban.Item value={task.id} asChild {...props}>
       <div className="rounded-md border bg-card p-4 shadow-sm transition-shadow hover:shadow-md">
