@@ -77,13 +77,11 @@ function useKanbanContext(name: keyof typeof KANBAN_ERROR) {
   return context;
 }
 
-type KanbanProps<T> = DndContextProps & {
+type KanbanProps<T> = Omit<DndContextProps, "collisionDetection"> & {
   value: Record<UniqueIdentifier, T[]>;
   onValueChange?: (columns: Record<UniqueIdentifier, T[]>) => void;
   onMove?: (event: DragEndEvent) => void;
-  modifiers?: DndContextProps["modifiers"];
   strategy?: SortableContextProps["strategy"];
-  sensors?: DndContextProps["sensors"];
   flatCursor?: boolean;
 } & (T extends object
     ? { getItemValue: (item: T) => UniqueIdentifier }

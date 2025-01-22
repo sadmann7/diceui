@@ -98,10 +98,7 @@ type SortableProps<T> = DndContextProps & {
   value: T[];
   onValueChange?: (items: T[]) => void;
   onMove?: (event: DragEndEvent) => void;
-  collisionDetection?: DndContextProps["collisionDetection"];
-  modifiers?: DndContextProps["modifiers"];
   strategy?: SortableContextProps["strategy"];
-  sensors?: DndContextProps["sensors"];
   orientation?: "vertical" | "horizontal" | "mixed";
   flatCursor?: boolean;
 } & (T extends object
@@ -479,11 +476,11 @@ const ItemGrip = SortableItemGrip;
 const Overlay = SortableOverlay;
 
 export {
-  Root,
   Content,
   Item,
   ItemGrip,
   Overlay,
+  Root,
   //
   Sortable,
   SortableContent,
