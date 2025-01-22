@@ -206,6 +206,7 @@ function Sortable<T>(props: SortableProps<T>) {
         id={id}
         modifiers={modifiers ?? config.modifiers}
         sensors={sensorsProp ?? sensors}
+        collisionDetection={collisionDetection ?? config.collisionDetection}
         onDragStart={composeEventHandlers(
           sortableProps.onDragStart,
           ({ active }) => setActiveId(active.id),
@@ -214,7 +215,6 @@ function Sortable<T>(props: SortableProps<T>) {
         onDragCancel={composeEventHandlers(sortableProps.onDragCancel, () =>
           setActiveId(null),
         )}
-        collisionDetection={collisionDetection ?? config.collisionDetection}
         accessibility={{
           ...props.accessibility,
           announcements: {

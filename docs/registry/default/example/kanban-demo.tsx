@@ -35,15 +35,13 @@ export default function KanbanDemo() {
     >
       <Kanban.Board>
         {Object.keys(columns).map((column) => (
-          <Kanban.Column
-            key={column}
-            value={column}
-            className="flex max-h-[400px] flex-col gap-2 overflow-y-auto"
-          >
+          <Kanban.Column key={column} value={column}>
             <div className="font-medium">{column}</div>
-            {columns[column]?.map((task) => (
-              <KanbanItemCard key={task.id} task={task} asHandle />
-            ))}
+            <div className="flex max-h-[400px] flex-col gap-2">
+              {columns[column]?.map((task) => (
+                <KanbanItemCard key={task.id} task={task} asHandle />
+              ))}
+            </div>
           </Kanban.Column>
         ))}
       </Kanban.Board>
