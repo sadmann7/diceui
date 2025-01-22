@@ -102,45 +102,45 @@ export default function KanbanDemo() {
     React.useState<Record<string, Task[]>>(INITIAL_TASKS);
 
   return (
-    <div className="rounded-lg border bg-background p-4">
-      <Kanban.Root
-        value={columns}
-        onValueChange={setColumns}
-        getItemValue={(item) => item.id}
-      >
-        <Kanban.Board>
-          {Object.entries(columns).map(([columnId, tasks]) => (
-            <Kanban.Column key={columnId} value={columnId}>
-              <div className="mb-4 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <h3 className="font-semibold">{COLUMN_TITLES[columnId]}</h3>
-                  <Badge variant="secondary">{tasks?.length ?? 0}</Badge>
-                </div>
-                <Button variant="ghost" size="icon">
-                  <GripVertical className="h-4 w-4" />
-                </Button>
+    <Kanban.Root
+      value={columns}
+      onValueChange={setColumns}
+      getItemValue={(item) => item.id}
+    >
+      <Kanban.Board>
+        {Object.entries(columns).map(([columnId, tasks]) => (
+          <Kanban.Column key={columnId} value={columnId}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold">{COLUMN_TITLES[columnId]}</h3>
+                <Badge variant="secondary" className="rounded-sm">
+                  {tasks?.length ?? 0}
+                </Badge>
               </div>
-              <div className="flex max-h-[600px] flex-col gap-2 overflow-y-auto p-0.5">
-                {tasks?.map((task) => (
-                  <KanbanItemCard key={task.id} task={task} asHandle />
-                ))}
-              </div>
-            </Kanban.Column>
-          ))}
-        </Kanban.Board>
-        <Kanban.Overlay>
-          {(activeItem) => {
-            const task = Object.values(columns)
-              .flat()
-              .find((task) => task.id === activeItem.value);
+              <Button variant="ghost" size="icon">
+                <GripVertical className="h-4 w-4" />
+              </Button>
+            </div>
+            <div className="flex max-h-[600px] flex-col gap-2 overflow-y-auto p-0.5">
+              {tasks?.map((task) => (
+                <KanbanItemCard key={task.id} task={task} asHandle />
+              ))}
+            </div>
+          </Kanban.Column>
+        ))}
+      </Kanban.Board>
+      <Kanban.Overlay>
+        {(activeItem) => {
+          const task = Object.values(columns)
+            .flat()
+            .find((task) => task.id === activeItem.value);
 
-            if (!task) return null;
+          if (!task) return null;
 
-            return <KanbanItemCard key={task.id} task={task} />;
-          }}
-        </Kanban.Overlay>
-      </Kanban.Root>
-    </div>
+          return <KanbanItemCard key={task.id} task={task} />;
+        }}
+      </Kanban.Overlay>
+    </Kanban.Root>
   );
 }
 
@@ -164,7 +164,7 @@ function KanbanItemCard({ task, ...props }: KanbanItemCardProps) {
                     ? "default"
                     : "secondary"
               }
-              className="capitalize"
+              className="rounded-sm capitalize"
             >
               {task.priority}
             </Badge>
