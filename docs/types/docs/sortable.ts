@@ -55,6 +55,16 @@ export interface RootProps<TData> extends DndContextProps {
   modifiers?: DndContextProps["modifiers"];
 
   /**
+   * The strategy to use for sorting the items.
+   * @default
+   * Automatically selected based on orientation:
+   * - vertical: verticalListSortingStrategy
+   * - horizontal: horizontalListSortingStrategy
+   * - mixed: undefined
+   */
+  strategy?: SortableContextProps["strategy"];
+
+  /**
    * An array of sensors that will be used to detect the position of the sortable items.\n
    * @default
    * [

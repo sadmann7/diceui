@@ -23,6 +23,7 @@ import {
 } from "@dnd-kit/core";
 import {
   SortableContext,
+  type SortableContextProps,
   arrayMove,
   sortableKeyboardCoordinates,
   useSortable,
@@ -55,6 +56,8 @@ const KANBAN_ERROR = {
 interface KanbanContextValue<T> {
   id: string;
   items: Record<UniqueIdentifier, T[]>;
+  modifiers: DndContextProps["modifiers"];
+  strategy: SortableContextProps["strategy"];
   activeId: UniqueIdentifier | null;
   setActiveId: (id: UniqueIdentifier | null) => void;
   getItemValue: (item: T) => UniqueIdentifier;
@@ -78,7 +81,9 @@ type KanbanProps<T> = DndContextProps & {
   value: Record<UniqueIdentifier, T[]>;
   onValueChange?: (columns: Record<UniqueIdentifier, T[]>) => void;
   onMove?: (event: DragEndEvent) => void;
+  modifiers?: DndContextProps["modifiers"];
   sensors?: DndContextProps["sensors"];
+  strategy?: SortableContextProps["strategy"];
   flatCursor?: boolean;
 } & (T extends object
     ? { getItemValue: (item: T) => UniqueIdentifier }
@@ -89,7 +94,9 @@ function Kanban<T>(props: KanbanProps<T>) {
     id = React.useId(),
     value,
     onValueChange,
+    modifiers,
     sensors: sensorsProp,
+    strategy = verticalListSortingStrategy,
     onMove,
     getItemValue: getItemValueProp,
     flatCursor = false,
@@ -123,18 +130,6 @@ function Kanban<T>(props: KanbanProps<T>) {
         : (item as UniqueIdentifier);
     },
     [getItemValueProp],
-  );
-
-  const contextValue = React.useMemo<KanbanContextValue<T>>(
-    () => ({
-      id,
-      items: value,
-      activeId,
-      setActiveId,
-      getItemValue,
-      flatCursor,
-    }),
-    [id, value, activeId, getItemValue, flatCursor],
   );
 
   const getContainer = React.useCallback(
@@ -203,10 +198,25 @@ function Kanban<T>(props: KanbanProps<T>) {
     [activeId, value, getItemValue],
   );
 
+  const contextValue = React.useMemo<KanbanContextValue<T>>(
+    () => ({
+      id,
+      items: value,
+      modifiers,
+      strategy,
+      activeId,
+      setActiveId,
+      getItemValue,
+      flatCursor,
+    }),
+    [id, value, activeId, modifiers, strategy, getItemValue, flatCursor],
+  );
+
   return (
     <KanbanContext.Provider value={contextValue as KanbanContextValue<unknown>}>
       <DndContext
         id={id}
+        modifiers={modifiers}
         sensors={sensorsProp ?? sensors}
         collisionDetection={collisionDetection}
         measuring={{
@@ -444,7 +454,7 @@ interface KanbanColumnProps extends SlotProps {
 
 const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
   (props, forwardedRef) => {
-    const { value, asChild, ...columnProps } = props;
+    const { value, asChild, className, ...columnProps } = props;
     const context = useKanbanContext("board");
     const inBoard = React.useContext(KanbanBoardContext);
 
@@ -453,19 +463,20 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
     }
 
     const ColumnSlot = asChild ? Slot : "div";
-    const items = context.items[value] ?? [];
+
+    const items = React.useMemo(() => {
+      const items = context.items[value] ?? [];
+      return items.map((item) => context.getItemValue(item));
+    }, [context.items, value, context.getItemValue]);
 
     return (
-      <SortableContext
-        items={items.map((item) => context.getItemValue(item))}
-        strategy={verticalListSortingStrategy}
-      >
+      <SortableContext strategy={context.strategy} items={items}>
         <ColumnSlot
           {...columnProps}
           ref={forwardedRef}
           className={cn(
-            "flex h-full min-h-[200px] w-[300px] flex-none flex-col gap-2 rounded-lg bg-muted/50 p-4",
-            props.className,
+            "flex size-full flex-col gap-2 rounded-lg border bg-card p-4 text-card-foreground",
+            className,
           )}
         />
       </SortableContext>
@@ -543,6 +554,7 @@ const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
           ref={composeRefs(forwardedRef, (node) => setNodeRef(node))}
           style={composedStyle}
           className={cn(
+            "data-[dragging]:focus-visible:outline-none data-[dragging]:focus-visible:ring-1 data-[dragging]:focus-visible:ring-ring data-[dragging]:focus-visible:ring-offset-1",
             {
               "touch-none select-none": asGrip,
               "cursor-default": context.flatCursor,
@@ -656,12 +668,10 @@ const ItemGrip = KanbanItemGrip;
 const Overlay = KanbanOverlay;
 
 export {
-  Root,
   Board,
   Column,
   Item,
   ItemGrip,
-  Overlay,
   //
   Kanban,
   KanbanBoard,
@@ -669,4 +679,6 @@ export {
   KanbanItem,
   KanbanItemGrip,
   KanbanOverlay,
+  Overlay,
+  Root,
 };

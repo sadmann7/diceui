@@ -101,6 +101,7 @@ type SortableProps<T> = DndContextProps & {
   collisionDetection?: DndContextProps["collisionDetection"];
   modifiers?: DndContextProps["modifiers"];
   sensors?: DndContextProps["sensors"];
+  strategy?: SortableContextProps["strategy"];
   orientation?: "vertical" | "horizontal" | "mixed";
   flatCursor?: boolean;
 } & (T extends object
@@ -115,6 +116,7 @@ function Sortable<T>(props: SortableProps<T>) {
     collisionDetection,
     modifiers,
     sensors: sensorsProp,
+    strategy,
     onMove,
     orientation = "vertical",
     flatCursor = false,
@@ -152,7 +154,7 @@ function Sortable<T>(props: SortableProps<T>) {
       id,
       items: value,
       modifiers: modifiers ?? config.modifiers,
-      strategy: config.strategy,
+      strategy: strategy ?? config.strategy,
       activeId,
       setActiveId,
       getItemValue,
@@ -162,6 +164,7 @@ function Sortable<T>(props: SortableProps<T>) {
       id,
       value,
       modifiers,
+      strategy,
       config.modifiers,
       config.strategy,
       activeId,
@@ -256,12 +259,14 @@ const SortableContent = React.forwardRef<HTMLDivElement, SortableContentProps>(
 
     const ContentSlot = asChild ? Slot : "div";
 
+    const items = React.useMemo(() => {
+      return context.items.map((item) => context.getItemValue(item));
+    }, [context.items, context.getItemValue]);
+
     return (
       <SortableContentContext.Provider value={true}>
         <SortableContext
-          items={context.items.map((item) => ({
-            id: context.getItemValue(item),
-          }))}
+          items={items}
           strategy={strategyProp ?? context.strategy}
         >
           <ContentSlot {...contentProps} ref={forwardedRef} />
@@ -367,37 +372,34 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
     const { value, style, asGrip, asChild, className, ...itemProps } = props;
     const context = useSortableContext("item");
     const id = React.useId();
-    const sortableContext = useSortable({ id: value });
+    const {
+      attributes,
+      listeners,
+      setNodeRef,
+      transform,
+      transition,
+      isDragging,
+    } = useSortable({ id: value });
 
     const composedStyle = React.useMemo<React.CSSProperties>(() => {
       return {
-        opacity: sortableContext.isDragging ? 0.5 : 1,
-        transform: CSS.Translate.toString(sortableContext.transform),
-        transition: sortableContext.transition,
+        opacity: isDragging ? 0.5 : 1,
+        transform: CSS.Translate.toString(transform),
+        transition,
         ...style,
       };
-    }, [
-      sortableContext.isDragging,
-      sortableContext.transform,
-      sortableContext.transition,
-      style,
-    ]);
+    }, [isDragging, transform, transition, style]);
 
     const ItemSlot = asChild ? Slot : "div";
 
     const itemContext = React.useMemo<SortableItemContextValue>(
       () => ({
         id,
-        attributes: sortableContext.attributes,
-        listeners: sortableContext.listeners,
-        isDragging: sortableContext.isDragging,
+        attributes,
+        listeners,
+        isDragging,
       }),
-      [
-        id,
-        sortableContext.attributes,
-        sortableContext.listeners,
-        sortableContext.isDragging,
-      ],
+      [id, attributes, listeners, isDragging],
     );
 
     if (value === "") {
@@ -408,11 +410,9 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
       <SortableItemContext.Provider value={itemContext}>
         <ItemSlot
           id={id}
-          data-dragging={sortableContext.isDragging ? "" : undefined}
+          data-dragging={isDragging ? "" : undefined}
           {...itemProps}
-          ref={composeRefs(forwardedRef, (node) =>
-            sortableContext.setNodeRef(node),
-          )}
+          ref={composeRefs(forwardedRef, (node) => setNodeRef(node))}
           style={composedStyle}
           className={cn(
             "data-[dragging]:focus-visible:outline-none data-[dragging]:focus-visible:ring-1 data-[dragging]:focus-visible:ring-ring data-[dragging]:focus-visible:ring-offset-1",
@@ -420,13 +420,12 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
               "touch-none select-none": asGrip,
               "cursor-default": context.flatCursor,
               "data-[dragging]:cursor-grabbing": !context.flatCursor,
-              "cursor-grab":
-                !sortableContext.isDragging && asGrip && !context.flatCursor,
+              "cursor-grab": !isDragging && asGrip && !context.flatCursor,
             },
             className,
           )}
-          {...(asGrip ? sortableContext.attributes : {})}
-          {...(asGrip ? sortableContext.listeners : {})}
+          {...(asGrip ? attributes : {})}
+          {...(asGrip ? listeners : {})}
         />
       </SortableItemContext.Provider>
     );
