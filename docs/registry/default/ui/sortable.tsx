@@ -410,12 +410,11 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
 
     const composedStyle = React.useMemo<React.CSSProperties>(() => {
       return {
-        opacity: isDragging || disabled ? 0.5 : 1,
         transform: CSS.Translate.toString(transform),
         transition,
         ...style,
       };
-    }, [transform, transition, style, isDragging, disabled]);
+    }, [transform, transition, style]);
 
     const ItemSlot = asChild ? Slot : "div";
 
@@ -446,13 +445,14 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
           ref={composedRef}
           style={composedStyle}
           className={cn(
-            "data-[dragging]:focus-visible:outline-none data-[dragging]:focus-visible:ring-1 data-[dragging]:focus-visible:ring-ring data-[dragging]:focus-visible:ring-offset-1",
+            "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1",
             {
               "touch-none select-none": asHandle,
               "cursor-default": context.flatCursor,
               "data-[dragging]:cursor-grabbing": !context.flatCursor,
               "cursor-grab": !isDragging && asHandle && !context.flatCursor,
-              "pointer-events-none": disabled,
+              "opacity-50": isDragging,
+              "pointer-events-none opacity-50": disabled,
             },
             className,
           )}
@@ -516,11 +516,11 @@ const ItemHandle = SortableItemHandle;
 const Overlay = SortableOverlay;
 
 export {
+  Root,
   Content,
   Item,
   ItemHandle,
   Overlay,
-  Root,
   //
   Sortable,
   SortableContent,

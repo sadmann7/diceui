@@ -594,6 +594,10 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
       throw new Error(KANBAN_ERROR.column);
     }
 
+    if (value === "") {
+      throw new Error(`${ITEM_NAME} value cannot be an empty string.`);
+    }
+
     const ColumnSlot = asChild ? Slot : "div";
 
     const items = React.useMemo(() => {
@@ -675,12 +679,11 @@ const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
 
     const composedStyle = React.useMemo<React.CSSProperties>(() => {
       return {
-        opacity: isDragging || disabled ? 0.5 : 1,
         transform: CSS.Translate.toString(transform),
         transition,
         ...style,
       };
-    }, [transform, transition, style, isDragging, disabled]);
+    }, [transform, transition, style]);
 
     const ItemSlot = asChild ? Slot : "div";
 
@@ -711,13 +714,14 @@ const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
           ref={composedRef}
           style={composedStyle}
           className={cn(
-            "data-[dragging]:focus-visible:outline-none data-[dragging]:focus-visible:ring-1 data-[dragging]:focus-visible:ring-ring data-[dragging]:focus-visible:ring-offset-1",
+            "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1",
             {
               "touch-none select-none": asHandle,
               "cursor-default": context.flatCursor,
               "data-[dragging]:cursor-grabbing": !context.flatCursor,
               "cursor-grab": !isDragging && asHandle && !context.flatCursor,
-              "pointer-events-none": disabled,
+              "opacity-50": isDragging,
+              "pointer-events-none opacity-50": disabled,
             },
             className,
           )}
@@ -839,10 +843,12 @@ const ItemHandle = KanbanItemHandle;
 const Overlay = KanbanOverlay;
 
 export {
+  Root,
   Board,
   Column,
   Item,
   ItemHandle,
+  Overlay,
   //
   Kanban,
   KanbanBoard,
@@ -850,6 +856,4 @@ export {
   KanbanItem,
   KanbanItemHandle,
   KanbanOverlay,
-  Overlay,
-  Root,
 };

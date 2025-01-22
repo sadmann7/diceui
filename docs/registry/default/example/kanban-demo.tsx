@@ -42,7 +42,7 @@ export default function KanbanDemo() {
           >
             <div className="font-medium">{column}</div>
             {columns[column]?.map((task) => (
-              <KanbanItemCard key={task.id} task={task} />
+              <KanbanItemCard key={task.id} task={task} asHandle />
             ))}
           </Kanban.Column>
         ))}
@@ -67,9 +67,9 @@ interface KanbanItemCardProps
   task: Task;
 }
 
-function KanbanItemCard({ task }: KanbanItemCardProps) {
+function KanbanItemCard({ task, ...props }: KanbanItemCardProps) {
   return (
-    <Kanban.Item key={task.id} value={task.id} asChild asHandle>
+    <Kanban.Item key={task.id} value={task.id} asChild {...props}>
       <div className="rounded-md border bg-card p-4 shadow-sm">
         <div className="flex items-center justify-between">
           <div className="font-medium">{task.title}</div>
