@@ -28,9 +28,11 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import {
+  type AnimateLayoutChanges,
   SortableContext,
   type SortableContextProps,
   arrayMove,
+  defaultAnimateLayoutChanges,
   useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
@@ -175,6 +177,8 @@ interface KanbanContextValue<T> {
   setActiveId: (id: UniqueIdentifier | null) => void;
   getItemValue: (item: T) => UniqueIdentifier;
   flatCursor: boolean;
+  clonedItems: Record<UniqueIdentifier, T[]> | null;
+  setClonedItems: (items: Record<UniqueIdentifier, T[]> | null) => void;
 }
 
 const KanbanContext = React.createContext<KanbanContextValue<unknown> | null>(
@@ -224,11 +228,25 @@ function Kanban<T>(props: KanbanProps<T>) {
   } = props;
 
   const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null);
+  const [clonedItems, setClonedItems] = React.useState<Record<
+    UniqueIdentifier,
+    T[]
+  > | null>(null);
   const lastOverIdRef = React.useRef<UniqueIdentifier | null>(null);
-  const isShiftingRef = React.useRef(false);
+  const isMovedToNewContainerRef = React.useRef(false);
+
   const sensors = useSensors(
-    useSensor(MouseSensor),
-    useSensor(TouchSensor),
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 100,
+        tolerance: 8,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: coordinateGetter,
     }),
@@ -263,7 +281,7 @@ function Kanban<T>(props: KanbanProps<T>) {
     [value, getItemValue],
   );
 
-  const collisionDetection: CollisionDetection = React.useCallback(
+  const collisionDetectionStrategy: CollisionDetection = React.useCallback(
     (args) => {
       if (activeId && activeId in value) {
         return closestCenter({
@@ -282,7 +300,7 @@ function Kanban<T>(props: KanbanProps<T>) {
       let overId = getFirstCollision(intersections, "id");
 
       if (!overId) {
-        if (isShiftingRef.current) {
+        if (isMovedToNewContainerRef.current) {
           lastOverIdRef.current = activeId;
         }
         return lastOverIdRef.current ? [{ id: lastOverIdRef.current }] : [];
@@ -314,6 +332,24 @@ function Kanban<T>(props: KanbanProps<T>) {
     [activeId, value, getItemValue],
   );
 
+  const onDragStart = React.useCallback(
+    ({ active }: { active: { id: UniqueIdentifier } }) => {
+      setActiveId(active.id);
+      setClonedItems(value);
+      isMovedToNewContainerRef.current = false;
+    },
+    [value],
+  );
+
+  const onDragCancel = React.useCallback(() => {
+    if (clonedItems) {
+      onValueChange?.(clonedItems);
+    }
+    setActiveId(null);
+    setClonedItems(null);
+    isMovedToNewContainerRef.current = false;
+  }, [clonedItems, onValueChange]);
+
   const onDragOver = React.useCallback(
     (event: DragOverEvent) => {
       const { active, over } = event;
@@ -343,6 +379,8 @@ function Kanban<T>(props: KanbanProps<T>) {
       const activeItem = activeItems[activeIndex];
       if (!activeItem) return;
 
+      isMovedToNewContainerRef.current = true;
+
       const updatedItems = {
         ...value,
         [activeContainer]: activeItems.filter(
@@ -362,6 +400,7 @@ function Kanban<T>(props: KanbanProps<T>) {
 
       if (!over) {
         setActiveId(null);
+        isMovedToNewContainerRef.current = false;
         return;
       }
 
@@ -370,6 +409,7 @@ function Kanban<T>(props: KanbanProps<T>) {
 
       if (!activeContainer || !overContainer) {
         setActiveId(null);
+        isMovedToNewContainerRef.current = false;
         return;
       }
 
@@ -377,6 +417,7 @@ function Kanban<T>(props: KanbanProps<T>) {
         const items = value[activeContainer];
         if (!items) {
           setActiveId(null);
+          isMovedToNewContainerRef.current = false;
           return;
         }
 
@@ -399,6 +440,7 @@ function Kanban<T>(props: KanbanProps<T>) {
       }
 
       setActiveId(null);
+      isMovedToNewContainerRef.current = false;
       onMove?.(event);
     },
     [value, getContainer, getItemValue, onValueChange, onMove],
@@ -415,6 +457,8 @@ function Kanban<T>(props: KanbanProps<T>) {
       setActiveId,
       getItemValue,
       flatCursor,
+      clonedItems,
+      setClonedItems,
     }),
     [
       id,
@@ -425,6 +469,7 @@ function Kanban<T>(props: KanbanProps<T>) {
       orientation,
       getItemValue,
       flatCursor,
+      clonedItems,
     ],
   );
 
@@ -434,23 +479,19 @@ function Kanban<T>(props: KanbanProps<T>) {
         id={id}
         modifiers={modifiers}
         sensors={sensorsProp ?? sensors}
-        collisionDetection={collisionDetection}
+        collisionDetection={collisionDetectionStrategy}
         measuring={{
           droppable: {
             strategy: MeasuringStrategy.Always,
           },
         }}
-        onDragStart={composeEventHandlers(
-          kanbanProps.onDragStart,
-          ({ active }) => {
-            setActiveId(active.id);
-          },
-        )}
+        onDragStart={composeEventHandlers(kanbanProps.onDragStart, onDragStart)}
         onDragOver={composeEventHandlers(kanbanProps.onDragOver, onDragOver)}
         onDragEnd={composeEventHandlers(kanbanProps.onDragEnd, onDragEnd)}
-        onDragCancel={composeEventHandlers(kanbanProps.onDragCancel, () => {
-          setActiveId(null);
-        })}
+        onDragCancel={composeEventHandlers(
+          kanbanProps.onDragCancel,
+          onDragCancel,
+        )}
         {...kanbanProps}
       />
     </KanbanContext.Provider>

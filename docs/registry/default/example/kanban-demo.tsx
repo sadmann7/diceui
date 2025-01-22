@@ -1,62 +1,146 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import * as Kanban from "@/registry/default/ui/kanban";
+import { GripVertical } from "lucide-react";
 import * as React from "react";
 
 interface Task {
   id: string;
   title: string;
   priority: "low" | "medium" | "high";
+  description?: string;
+  assignee?: string;
+  dueDate?: string;
 }
 
+const INITIAL_TASKS: Record<string, Task[]> = {
+  backlog: [
+    {
+      id: "1",
+      title: "Add authentication",
+      priority: "high",
+      description: "Implement user authentication using NextAuth.js",
+      assignee: "John Doe",
+      dueDate: "2024-04-01",
+    },
+    {
+      id: "2",
+      title: "Create API endpoints",
+      priority: "medium",
+      description: "Design and implement RESTful API endpoints",
+      assignee: "Jane Smith",
+      dueDate: "2024-04-05",
+    },
+    {
+      id: "3",
+      title: "Write documentation",
+      priority: "low",
+      description: "Document API endpoints and component usage",
+      assignee: "Bob Johnson",
+      dueDate: "2024-04-10",
+    },
+  ],
+  inProgress: [
+    {
+      id: "4",
+      title: "Design system updates",
+      priority: "high",
+      description: "Update design tokens and component styles",
+      assignee: "Alice Brown",
+      dueDate: "2024-03-28",
+    },
+    {
+      id: "5",
+      title: "Implement dark mode",
+      priority: "medium",
+      description: "Add dark mode support using Tailwind",
+      assignee: "Charlie Wilson",
+      dueDate: "2024-04-02",
+    },
+  ],
+  review: [
+    {
+      id: "6",
+      title: "Code review",
+      priority: "high",
+      description: "Review pull requests and provide feedback",
+      assignee: "David Miller",
+      dueDate: "2024-03-27",
+    },
+  ],
+  done: [
+    {
+      id: "7",
+      title: "Setup project",
+      priority: "high",
+      description: "Initialize Next.js project with TypeScript",
+      assignee: "Eve Davis",
+      dueDate: "2024-03-25",
+    },
+    {
+      id: "8",
+      title: "Initial commit",
+      priority: "low",
+      description: "Create repository and add initial files",
+      assignee: "Frank White",
+      dueDate: "2024-03-24",
+    },
+  ],
+};
+
+const COLUMN_TITLES: Record<string, string> = {
+  backlog: "Backlog",
+  inProgress: "In Progress",
+  review: "Review",
+  done: "Done",
+};
+
 export default function KanbanDemo() {
-  const [columns, setColumns] = React.useState<Record<string, Task[]>>({
-    todo: [
-      { id: "1", title: "Add authentication", priority: "high" },
-      { id: "2", title: "Create API endpoints", priority: "medium" },
-      { id: "3", title: "Write documentation", priority: "low" },
-    ],
-    inProgress: [
-      { id: "4", title: "Design system updates", priority: "high" },
-      { id: "5", title: "Implement dark mode", priority: "medium" },
-    ],
-    done: [
-      { id: "6", title: "Setup project", priority: "high" },
-      { id: "7", title: "Initial commit", priority: "low" },
-    ],
-  });
+  const [columns, setColumns] =
+    React.useState<Record<string, Task[]>>(INITIAL_TASKS);
 
   return (
-    <Kanban.Root
-      value={columns}
-      onValueChange={setColumns}
-      getItemValue={(item) => item.id}
-    >
-      <Kanban.Board>
-        {Object.keys(columns).map((column) => (
-          <Kanban.Column key={column} value={column}>
-            <div className="font-medium">{column}</div>
-            <div className="flex max-h-[400px] flex-col gap-2">
-              {columns[column]?.map((task) => (
-                <KanbanItemCard key={task.id} task={task} asHandle />
-              ))}
-            </div>
-          </Kanban.Column>
-        ))}
-      </Kanban.Board>
-      <Kanban.Overlay>
-        {(activeItem) => {
-          const task = Object.values(columns)
-            .flat()
-            .find((task) => task.id === activeItem.value);
+    <div className="rounded-lg border bg-background p-4">
+      <Kanban.Root
+        value={columns}
+        onValueChange={setColumns}
+        getItemValue={(item) => item.id}
+      >
+        <Kanban.Board>
+          {Object.entries(columns).map(([columnId, tasks]) => (
+            <Kanban.Column key={columnId} value={columnId}>
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <h3 className="font-semibold">{COLUMN_TITLES[columnId]}</h3>
+                  <Badge variant="secondary">{tasks?.length ?? 0}</Badge>
+                </div>
+                <Button variant="ghost" size="icon">
+                  <GripVertical className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="flex max-h-[600px] flex-col gap-2 overflow-y-auto p-0.5">
+                {tasks?.map((task) => (
+                  <KanbanItemCard key={task.id} task={task} asHandle />
+                ))}
+              </div>
+            </Kanban.Column>
+          ))}
+        </Kanban.Board>
+        <Kanban.Overlay>
+          {(activeItem) => {
+            const task = Object.values(columns)
+              .flat()
+              .find((task) => task.id === activeItem.value);
 
-          if (!task) return null;
+            if (!task) return null;
 
-          return <KanbanItemCard key={task.id} task={task} />;
-        }}
-      </Kanban.Overlay>
-    </Kanban.Root>
+            return <KanbanItemCard key={task.id} task={task} />;
+          }}
+        </Kanban.Overlay>
+      </Kanban.Root>
+    </div>
   );
 }
 
@@ -67,21 +151,30 @@ interface KanbanItemCardProps
 
 function KanbanItemCard({ task, ...props }: KanbanItemCardProps) {
   return (
-    <Kanban.Item key={task.id} value={task.id} asChild {...props}>
-      <div className="rounded-md border bg-card p-4 shadow-sm">
-        <div className="flex items-center justify-between">
-          <div className="font-medium">{task.title}</div>
-          <div
-            className={cn(
-              "text-xs",
-              task.priority === "high"
-                ? "text-red-500"
-                : task.priority === "medium"
-                  ? "text-yellow-500"
-                  : "text-green-500",
-            )}
-          >
-            {task.priority}
+    <Kanban.Item value={task.id} asChild {...props}>
+      <div className="rounded-md border bg-card p-4 shadow-sm transition-shadow hover:shadow-md">
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <h4 className="font-medium">{task.title}</h4>
+            <Badge
+              variant={
+                task.priority === "high"
+                  ? "destructive"
+                  : task.priority === "medium"
+                    ? "default"
+                    : "secondary"
+              }
+              className="capitalize"
+            >
+              {task.priority}
+            </Badge>
+          </div>
+          {task.description && (
+            <p className="text-muted-foreground text-sm">{task.description}</p>
+          )}
+          <div className="flex items-center justify-between text-muted-foreground text-xs">
+            {task.assignee && <div>Assigned to: {task.assignee}</div>}
+            {task.dueDate && <div>Due: {task.dueDate}</div>}
           </div>
         </div>
       </div>
