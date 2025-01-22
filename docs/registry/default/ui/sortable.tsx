@@ -442,7 +442,7 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
           {...itemProps}
           {...(asHandle ? attributes : {})}
           {...(asHandle ? listeners : {})}
-          tabIndex={disabled ? undefined : -1}
+          tabIndex={disabled ? undefined : 0}
           ref={composedRef}
           style={composedStyle}
           className={cn(

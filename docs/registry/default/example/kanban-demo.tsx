@@ -137,7 +137,13 @@ export default function KanbanDemo() {
 
           if (!task) return null;
 
-          return <KanbanItemCard key={task.id} task={task} />;
+          return (
+            <KanbanItemCard
+              key={task.id}
+              task={task}
+              className="ring-1 ring-ring ring-offset-1"
+            />
+          );
         }}
       </Kanban.Overlay>
     </Kanban.Root>
@@ -173,8 +179,8 @@ function KanbanItemCard({ task, ...props }: KanbanItemCardProps) {
             <p className="text-muted-foreground text-sm">{task.description}</p>
           )}
           <div className="flex items-center justify-between text-muted-foreground text-xs">
-            {task.assignee && <div>Assigned to: {task.assignee}</div>}
-            {task.dueDate && <div>Due: {task.dueDate}</div>}
+            {task.assignee && <span>{task.assignee}</span>}
+            {task.dueDate && <span>{task.dueDate}</span>}
           </div>
         </div>
       </div>
