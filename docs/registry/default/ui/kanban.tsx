@@ -5,6 +5,7 @@ import {
   DndContext,
   type DndContextProps,
   type DragEndEvent,
+  type DragOverEvent,
   DragOverlay,
   type DraggableSyntheticListeners,
   type DropAnimation,
@@ -109,7 +110,7 @@ function Kanban<T>(props: KanbanProps<T>) {
   } = props;
   const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null);
   const lastOverIdRef = React.useRef<UniqueIdentifier | null>(null);
-  const recentlyMovedToNewContainerRef = React.useRef(false);
+  const isDraggingRef = React.useRef(false);
   const [clonedItems, setClonedItems] = React.useState<Record<
     UniqueIdentifier,
     T[]
@@ -171,7 +172,7 @@ function Kanban<T>(props: KanbanProps<T>) {
       let overId = getFirstCollision(intersections, "id");
 
       if (!overId) {
-        if (recentlyMovedToNewContainerRef.current) {
+        if (isDraggingRef.current) {
           lastOverIdRef.current = activeId;
         }
         return lastOverIdRef.current ? [{ id: lastOverIdRef.current }] : [];
@@ -203,6 +204,181 @@ function Kanban<T>(props: KanbanProps<T>) {
     [activeId, value, getItemValue],
   );
 
+  const onDragOver = React.useCallback(
+    (event: DragOverEvent) => {
+      const { active, over } = event;
+      const overId = over?.id;
+
+      if (!overId || active.id in value) return;
+
+      const overContainer = getContainer(overId);
+      const activeContainer = getContainer(active.id);
+
+      if (!overContainer || !activeContainer) return;
+
+      if (activeContainer !== overContainer) {
+        const activeItems = value[activeContainer];
+        const overItems = value[overContainer];
+
+        if (!activeItems || !overItems) return;
+
+        const overIndex = overItems.findIndex(
+          (item) => getItemValue(item) === overId,
+        );
+        const activeIndex = activeItems.findIndex(
+          (item) => getItemValue(item) === active.id,
+        );
+
+        if (activeIndex === -1) return;
+
+        const activeItem = activeItems[activeIndex];
+        if (!activeItem) return;
+
+        let newIndex: number;
+
+        if (overId in value) {
+          newIndex = overItems.length;
+        } else {
+          const isBelowOverItem =
+            over &&
+            active.rect.current.translated &&
+            active.rect.current.translated.top >
+              over.rect.top + over.rect.height;
+
+          const modifier = isBelowOverItem ? 1 : 0;
+          newIndex = overIndex >= 0 ? overIndex + modifier : overItems.length;
+        }
+
+        isDraggingRef.current = true;
+
+        const newOverItems = [
+          ...overItems.slice(0, newIndex),
+          activeItem,
+          ...overItems.slice(newIndex),
+        ];
+
+        const updatedColumns: Record<UniqueIdentifier, T[]> = {
+          ...value,
+          [activeContainer]: activeItems.filter(
+            (item) => getItemValue(item) !== active.id,
+          ),
+          [overContainer]: newOverItems,
+        };
+
+        onValueChange?.(updatedColumns);
+      }
+    },
+    [value, getContainer, getItemValue, onValueChange],
+  );
+
+  const onDragEnd = React.useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+
+      if (!over) {
+        setActiveId(null);
+        setClonedItems(null);
+        isDraggingRef.current = false;
+        return;
+      }
+
+      const activeContainer = getContainer(active.id);
+      const overContainer = getContainer(over.id);
+
+      if (!activeContainer || !overContainer) {
+        setActiveId(null);
+        setClonedItems(null);
+        isDraggingRef.current = false;
+        return;
+      }
+
+      const activeItems = value[activeContainer];
+      const overItems = value[overContainer];
+
+      if (!activeItems || !overItems) {
+        setActiveId(null);
+        setClonedItems(null);
+        isDraggingRef.current = false;
+        return;
+      }
+
+      if (activeContainer !== overContainer) {
+        const activeIndex = activeItems.findIndex(
+          (item) => getItemValue(item) === active.id,
+        );
+        const overIndex = overItems.findIndex(
+          (item) => getItemValue(item) === over.id,
+        );
+
+        if (onMove) {
+          onMove(event);
+        } else {
+          const newColumns = { ...value };
+          const activeColumn = newColumns[activeContainer];
+          const overColumn = newColumns[overContainer];
+
+          if (!activeColumn || !overColumn) {
+            setActiveId(null);
+            setClonedItems(null);
+            isDraggingRef.current = false;
+            return;
+          }
+
+          const [movedItem] = activeColumn.splice(activeIndex, 1);
+          if (!movedItem) {
+            setActiveId(null);
+            setClonedItems(null);
+            isDraggingRef.current = false;
+            return;
+          }
+
+          overColumn.splice(overIndex, 0, movedItem);
+          onValueChange?.(newColumns);
+        }
+      } else {
+        const items = value[activeContainer];
+        if (!items) {
+          setActiveId(null);
+          setClonedItems(null);
+          isDraggingRef.current = false;
+          return;
+        }
+
+        const activeIndex = items.findIndex(
+          (item) => getItemValue(item) === active.id,
+        );
+        const overIndex = items.findIndex(
+          (item) => getItemValue(item) === over.id,
+        );
+
+        if (activeIndex !== overIndex) {
+          if (onMove) {
+            onMove(event);
+          } else {
+            const newColumns = { ...value };
+            const columnItems = newColumns[activeContainer];
+            if (!columnItems) {
+              setActiveId(null);
+              setClonedItems(null);
+              isDraggingRef.current = false;
+              return;
+            }
+            newColumns[activeContainer] = arrayMove(
+              columnItems,
+              activeIndex,
+              overIndex,
+            );
+            onValueChange?.(newColumns);
+          }
+        }
+      }
+      setActiveId(null);
+      setClonedItems(null);
+      isDraggingRef.current = false;
+    },
+    [value, getItemValue, onMove, onValueChange, getContainer],
+  );
+
   const contextValue = React.useMemo<KanbanContextValue<T>>(
     () => ({
       id,
@@ -224,11 +400,7 @@ function Kanban<T>(props: KanbanProps<T>) {
         modifiers={modifiers}
         sensors={sensorsProp ?? sensors}
         collisionDetection={collisionDetection}
-        measuring={{
-          droppable: {
-            strategy: MeasuringStrategy.Always,
-          },
-        }}
+        measuring={{ droppable: { strategy: MeasuringStrategy.Always } }}
         onDragStart={composeEventHandlers(
           kanbanProps.onDragStart,
           ({ active }) => {
@@ -236,183 +408,15 @@ function Kanban<T>(props: KanbanProps<T>) {
             setClonedItems(value);
           },
         )}
-        onDragOver={composeEventHandlers(
-          kanbanProps.onDragOver,
-          ({ active, over }) => {
-            const overId = over?.id;
-
-            if (!overId || active.id in value) return;
-
-            const overContainer = getContainer(overId);
-            const activeContainer = getContainer(active.id);
-
-            if (!overContainer || !activeContainer) return;
-
-            if (activeContainer !== overContainer) {
-              const activeItems = value[activeContainer];
-              const overItems = value[overContainer];
-
-              if (!activeItems || !overItems) return;
-
-              const overIndex = overItems.findIndex(
-                (item) => getItemValue(item) === overId,
-              );
-              const activeIndex = activeItems.findIndex(
-                (item) => getItemValue(item) === active.id,
-              );
-
-              if (activeIndex === -1) return;
-
-              const activeItem = activeItems[activeIndex];
-              if (!activeItem) return;
-
-              let newIndex: number;
-
-              if (overId in value) {
-                newIndex = overItems.length;
-              } else {
-                const isBelowOverItem =
-                  over &&
-                  active.rect.current.translated &&
-                  active.rect.current.translated.top >
-                    over.rect.top + over.rect.height;
-
-                const modifier = isBelowOverItem ? 1 : 0;
-                newIndex =
-                  overIndex >= 0 ? overIndex + modifier : overItems.length;
-              }
-
-              recentlyMovedToNewContainerRef.current = true;
-
-              const newOverItems = [
-                ...overItems.slice(0, newIndex),
-                activeItem,
-                ...overItems.slice(newIndex),
-              ];
-
-              const updatedColumns: Record<UniqueIdentifier, T[]> = {
-                ...value,
-                [activeContainer]: activeItems.filter(
-                  (item) => getItemValue(item) !== active.id,
-                ),
-                [overContainer]: newOverItems,
-              };
-
-              onValueChange?.(updatedColumns);
-            }
-          },
-        )}
-        onDragEnd={composeEventHandlers(kanbanProps.onDragEnd, (event) => {
-          const { active, over } = event;
-
-          if (!over) {
-            setActiveId(null);
-            setClonedItems(null);
-            recentlyMovedToNewContainerRef.current = false;
-            return;
-          }
-
-          const activeContainer = getContainer(active.id);
-          const overContainer = getContainer(over.id);
-
-          if (!activeContainer || !overContainer) {
-            setActiveId(null);
-            setClonedItems(null);
-            recentlyMovedToNewContainerRef.current = false;
-            return;
-          }
-
-          const activeItems = value[activeContainer];
-          const overItems = value[overContainer];
-
-          if (!activeItems || !overItems) {
-            setActiveId(null);
-            setClonedItems(null);
-            recentlyMovedToNewContainerRef.current = false;
-            return;
-          }
-
-          if (activeContainer !== overContainer) {
-            const activeIndex = activeItems.findIndex(
-              (item) => getItemValue(item) === active.id,
-            );
-            const overIndex = overItems.findIndex(
-              (item) => getItemValue(item) === over.id,
-            );
-
-            if (onMove) {
-              onMove(event);
-            } else {
-              const newColumns = { ...value };
-              const activeColumn = newColumns[activeContainer];
-              const overColumn = newColumns[overContainer];
-
-              if (!activeColumn || !overColumn) {
-                setActiveId(null);
-                setClonedItems(null);
-                recentlyMovedToNewContainerRef.current = false;
-                return;
-              }
-
-              const [movedItem] = activeColumn.splice(activeIndex, 1);
-              if (!movedItem) {
-                setActiveId(null);
-                setClonedItems(null);
-                recentlyMovedToNewContainerRef.current = false;
-                return;
-              }
-
-              overColumn.splice(overIndex, 0, movedItem);
-              onValueChange?.(newColumns);
-            }
-          } else {
-            const items = value[activeContainer];
-            if (!items) {
-              setActiveId(null);
-              setClonedItems(null);
-              recentlyMovedToNewContainerRef.current = false;
-              return;
-            }
-
-            const activeIndex = items.findIndex(
-              (item) => getItemValue(item) === active.id,
-            );
-            const overIndex = items.findIndex(
-              (item) => getItemValue(item) === over.id,
-            );
-
-            if (activeIndex !== overIndex) {
-              if (onMove) {
-                onMove(event);
-              } else {
-                const newColumns = { ...value };
-                const columnItems = newColumns[activeContainer];
-                if (!columnItems) {
-                  setActiveId(null);
-                  setClonedItems(null);
-                  recentlyMovedToNewContainerRef.current = false;
-                  return;
-                }
-                newColumns[activeContainer] = arrayMove(
-                  columnItems,
-                  activeIndex,
-                  overIndex,
-                );
-                onValueChange?.(newColumns);
-              }
-            }
-          }
-          setActiveId(null);
-          setClonedItems(null);
-          recentlyMovedToNewContainerRef.current = false;
-        })}
+        onDragOver={composeEventHandlers(kanbanProps.onDragOver, onDragOver)}
+        onDragEnd={composeEventHandlers(kanbanProps.onDragEnd, onDragEnd)}
         onDragCancel={composeEventHandlers(kanbanProps.onDragCancel, () => {
           if (clonedItems) {
             onValueChange?.(clonedItems);
           }
           setActiveId(null);
           setClonedItems(null);
-          recentlyMovedToNewContainerRef.current = false;
+          isDraggingRef.current = false;
         })}
         {...kanbanProps}
       />
@@ -647,6 +651,7 @@ function KanbanOverlay(props: KanbanOverlayProps) {
 
   return ReactDOM.createPortal(
     <DragOverlay
+      modifiers={context.modifiers}
       dropAnimation={dropAnimationProp ?? dropAnimation}
       className={cn(!context.flatCursor && "cursor-grabbing")}
       {...overlayProps}

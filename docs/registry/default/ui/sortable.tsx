@@ -152,6 +152,28 @@ function Sortable<T>(props: SortableProps<T>) {
     [getItemValueProp],
   );
 
+  const onDragEnd = React.useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+      if (over && active.id !== over?.id) {
+        const activeIndex = value.findIndex(
+          (item) => getItemValue(item) === active.id,
+        );
+        const overIndex = value.findIndex(
+          (item) => getItemValue(item) === over.id,
+        );
+
+        if (onMove) {
+          onMove(event);
+        } else {
+          onValueChange?.(arrayMove(value, activeIndex, overIndex));
+        }
+      }
+      setActiveId(null);
+    },
+    [value, getItemValue, onMove, onValueChange],
+  );
+
   const contextValue = React.useMemo(
     () => ({
       id,
@@ -188,24 +210,7 @@ function Sortable<T>(props: SortableProps<T>) {
           sortableProps.onDragStart,
           ({ active }) => setActiveId(active.id),
         )}
-        onDragEnd={composeEventHandlers(sortableProps.onDragEnd, (event) => {
-          const { active, over } = event;
-          if (over && active.id !== over?.id) {
-            const activeIndex = value.findIndex(
-              (item) => getItemValue(item) === active.id,
-            );
-            const overIndex = value.findIndex(
-              (item) => getItemValue(item) === over.id,
-            );
-
-            if (onMove) {
-              onMove(event);
-            } else {
-              onValueChange?.(arrayMove(value, activeIndex, overIndex));
-            }
-          }
-          setActiveId(null);
-        })}
+        onDragEnd={composeEventHandlers(sortableProps.onDragEnd, onDragEnd)}
         onDragCancel={composeEventHandlers(sortableProps.onDragCancel, () =>
           setActiveId(null),
         )}
