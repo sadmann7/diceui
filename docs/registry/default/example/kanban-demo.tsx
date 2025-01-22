@@ -38,7 +38,7 @@ export default function KanbanDemo() {
           <Kanban.Column
             key={column}
             value={column}
-            className="flex max-h-[200px] flex-col gap-2 overflow-y-auto"
+            className="flex max-h-[400px] flex-col gap-2 overflow-y-auto"
           >
             <div className="font-medium">{column}</div>
             {columns[column]?.map((task) => (

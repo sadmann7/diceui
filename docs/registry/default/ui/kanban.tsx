@@ -13,6 +13,7 @@ import {
   type UniqueIdentifier,
   closestCorners,
   defaultDropAnimationSideEffects,
+  useDroppable,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -156,7 +157,10 @@ function Kanban<T>(props: KanbanProps<T>) {
           }
 
           const activeContainer = getContainer(event.active.id);
-          const overContainer = getContainer(event.over.id);
+          const overContainer =
+            event.over.data?.current?.type === "column"
+              ? event.over.id
+              : getContainer(event.over.id);
 
           if (!activeContainer || !overContainer) {
             setActiveId(null);
@@ -175,9 +179,12 @@ function Kanban<T>(props: KanbanProps<T>) {
             const activeIndex = activeItems.findIndex(
               (item) => getItemValue(item) === event.active.id,
             );
-            const overIndex = overItems.findIndex(
-              (item) => getItemValue(item) === event.over?.id,
-            );
+            const overIndex =
+              event.over.data?.current?.type === "column"
+                ? overItems.length
+                : overItems.findIndex(
+                    (item) => getItemValue(item) === event.over?.id,
+                  );
 
             if (onMove) {
               onMove(event);
@@ -286,6 +293,13 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
     const { value, asChild, ...columnProps } = props;
     const context = useKanbanContext("board");
     const inBoard = React.useContext(KanbanBoardContext);
+    const { setNodeRef, isOver } = useDroppable({
+      id: value,
+      data: {
+        type: "column",
+        value,
+      },
+    });
 
     if (!inBoard) {
       throw new Error(KANBAN_ERROR.column);
@@ -301,9 +315,15 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
       >
         <ColumnSlot
           {...columnProps}
-          ref={forwardedRef}
+          ref={composeRefs(forwardedRef, (node) =>
+            setNodeRef(node as HTMLElement),
+          )}
+          data-droppable=""
+          data-column-id={value}
+          data-over={isOver ? "" : undefined}
           className={cn(
             "flex h-full min-h-[200px] w-[300px] flex-none flex-col gap-2 rounded-lg bg-muted/50 p-4",
+            isOver && "ring-2 ring-primary ring-offset-2",
             props.className,
           )}
         />
