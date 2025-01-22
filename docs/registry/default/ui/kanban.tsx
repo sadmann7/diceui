@@ -54,7 +54,7 @@ const KANBAN_ERROR = {
 
 interface KanbanContextValue<T> {
   id: string;
-  value: Record<UniqueIdentifier, T[]>;
+  items: Record<UniqueIdentifier, T[]>;
   activeId: UniqueIdentifier | null;
   setActiveId: (id: UniqueIdentifier | null) => void;
   getItemValue: (item: T) => UniqueIdentifier;
@@ -98,7 +98,7 @@ function Kanban<T>(props: KanbanProps<T>) {
   const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null);
   const lastOverId = React.useRef<UniqueIdentifier | null>(null);
   const recentlyMovedToNewContainer = React.useRef(false);
-  const [clonedColumns, setClonedColumns] = React.useState<Record<
+  const [clonedItems, setClonedItems] = React.useState<Record<
     UniqueIdentifier,
     T[]
   > | null>(null);
@@ -128,7 +128,7 @@ function Kanban<T>(props: KanbanProps<T>) {
   const contextValue = React.useMemo<KanbanContextValue<T>>(
     () => ({
       id,
-      value,
+      items: value,
       activeId,
       setActiveId,
       getItemValue,
@@ -223,7 +223,7 @@ function Kanban<T>(props: KanbanProps<T>) {
         }}
         onDragStart={composeEventHandlers(kanbanProps.onDragStart, (event) => {
           setActiveId(event.active.id);
-          setClonedColumns(value);
+          setClonedItems(value);
         })}
         onDragOver={composeEventHandlers(kanbanProps.onDragOver, (event) => {
           const { active, over } = event;
@@ -294,7 +294,7 @@ function Kanban<T>(props: KanbanProps<T>) {
 
           if (!over) {
             setActiveId(null);
-            setClonedColumns(null);
+            setClonedItems(null);
             return;
           }
 
@@ -303,7 +303,7 @@ function Kanban<T>(props: KanbanProps<T>) {
 
           if (!activeContainer || !overContainer) {
             setActiveId(null);
-            setClonedColumns(null);
+            setClonedItems(null);
             return;
           }
 
@@ -312,7 +312,7 @@ function Kanban<T>(props: KanbanProps<T>) {
 
           if (!activeItems || !overItems) {
             setActiveId(null);
-            setClonedColumns(null);
+            setClonedItems(null);
             return;
           }
 
@@ -333,14 +333,14 @@ function Kanban<T>(props: KanbanProps<T>) {
 
               if (!activeColumn || !overColumn) {
                 setActiveId(null);
-                setClonedColumns(null);
+                setClonedItems(null);
                 return;
               }
 
               const [movedItem] = activeColumn.splice(activeIndex, 1);
               if (!movedItem) {
                 setActiveId(null);
-                setClonedColumns(null);
+                setClonedItems(null);
                 return;
               }
 
@@ -351,7 +351,7 @@ function Kanban<T>(props: KanbanProps<T>) {
             const items = value[activeContainer];
             if (!items) {
               setActiveId(null);
-              setClonedColumns(null);
+              setClonedItems(null);
               return;
             }
 
@@ -370,7 +370,7 @@ function Kanban<T>(props: KanbanProps<T>) {
                 const columnItems = newColumns[activeContainer];
                 if (!columnItems) {
                   setActiveId(null);
-                  setClonedColumns(null);
+                  setClonedItems(null);
                   return;
                 }
                 newColumns[activeContainer] = arrayMove(
@@ -383,14 +383,14 @@ function Kanban<T>(props: KanbanProps<T>) {
             }
           }
           setActiveId(null);
-          setClonedColumns(null);
+          setClonedItems(null);
         })}
         onDragCancel={composeEventHandlers(kanbanProps.onDragCancel, () => {
-          if (clonedColumns) {
-            onValueChange?.(clonedColumns);
+          if (clonedItems) {
+            onValueChange?.(clonedItems);
           }
           setActiveId(null);
-          setClonedColumns(null);
+          setClonedItems(null);
         })}
         {...kanbanProps}
       />
@@ -446,7 +446,7 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
     }
 
     const ColumnSlot = asChild ? Slot : "div";
-    const items = context.value[value] ?? [];
+    const items = context.items[value] ?? [];
 
     return (
       <SortableContext
@@ -649,10 +649,12 @@ const ItemGrip = KanbanItemGrip;
 const Overlay = KanbanOverlay;
 
 export {
+  Root,
   Board,
   Column,
   Item,
   ItemGrip,
+  Overlay,
   //
   Kanban,
   KanbanBoard,
@@ -660,6 +662,4 @@ export {
   KanbanItem,
   KanbanItemGrip,
   KanbanOverlay,
-  Overlay,
-  Root,
 };

@@ -178,16 +178,18 @@ function Sortable<T>(props: SortableProps<T>) {
         id={id}
         modifiers={modifiers ?? config.modifiers}
         sensors={sensorsProp ?? sensors}
-        onDragStart={composeEventHandlers(sortableProps.onDragStart, (event) =>
-          setActiveId(event.active.id),
+        onDragStart={composeEventHandlers(
+          sortableProps.onDragStart,
+          ({ active }) => setActiveId(active.id),
         )}
         onDragEnd={composeEventHandlers(sortableProps.onDragEnd, (event) => {
-          if (event.over && event.active.id !== event.over?.id) {
+          const { active, over } = event;
+          if (over && active.id !== over?.id) {
             const activeIndex = value.findIndex(
-              (item) => getItemValue(item) === event.active.id,
+              (item) => getItemValue(item) === active.id,
             );
             const overIndex = value.findIndex(
-              (item) => getItemValue(item) === event.active.id,
+              (item) => getItemValue(item) === over.id,
             );
 
             if (onMove) {
