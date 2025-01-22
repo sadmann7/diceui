@@ -22,10 +22,16 @@ export default function KanbanDemo() {
       { id: "5", title: "Implement dark mode", priority: "medium" },
     ],
     done: [
-      // { id: "6", title: "Setup project", priority: "high" },
-      // { id: "7", title: "Initial commit", priority: "low" },
+      { id: "6", title: "Setup project", priority: "high" },
+      { id: "7", title: "Initial commit", priority: "low" },
     ],
   });
+
+  const columnData = [
+    { id: "todo", title: "Todo" },
+    { id: "inProgress", title: "In Progress" },
+    { id: "done", title: "Done" },
+  ];
 
   return (
     <Kanban.Root
@@ -34,14 +40,14 @@ export default function KanbanDemo() {
       getItemValue={(item) => item.id}
     >
       <Kanban.Board>
-        {Object.keys(columns).map((column) => (
+        {columnData.map((column) => (
           <Kanban.Column
-            key={column}
-            value={column}
+            key={column.id}
+            value={column.id}
             className="flex max-h-[400px] flex-col gap-4 overflow-y-auto"
           >
-            <div className="font-medium">{column}</div>
-            {columns[column]?.map((task) => (
+            <div className="font-medium">{column.title}</div>
+            {columns[column.id]?.map((task) => (
               <Kanban.Item key={task.id} value={task.id} asChild asGrip>
                 <div className="rounded-md border bg-card p-4 shadow-sm">
                   <div className="flex items-center justify-between">
@@ -65,6 +71,37 @@ export default function KanbanDemo() {
           </Kanban.Column>
         ))}
       </Kanban.Board>
+      <Kanban.Overlay>
+        {({ value }) => {
+          const task = Object.values(columns)
+            .flat()
+            .find((task) => task.id === value);
+
+          if (!task) return null;
+
+          return (
+            <Kanban.Item value={task.id} asChild>
+              <div className="rounded-md border bg-card p-4 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <div className="font-medium">{task.title}</div>
+                  <div
+                    className={cn(
+                      "text-xs",
+                      task.priority === "high"
+                        ? "text-red-500"
+                        : task.priority === "medium"
+                          ? "text-yellow-500"
+                          : "text-green-500",
+                    )}
+                  >
+                    {task.priority}
+                  </div>
+                </div>
+              </div>
+            </Kanban.Item>
+          );
+        }}
+      </Kanban.Overlay>
     </Kanban.Root>
   );
 }
