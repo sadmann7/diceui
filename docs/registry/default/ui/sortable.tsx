@@ -100,8 +100,8 @@ type SortableProps<T> = DndContextProps & {
   onMove?: (event: DragEndEvent) => void;
   collisionDetection?: DndContextProps["collisionDetection"];
   modifiers?: DndContextProps["modifiers"];
-  sensors?: DndContextProps["sensors"];
   strategy?: SortableContextProps["strategy"];
+  sensors?: DndContextProps["sensors"];
   orientation?: "vertical" | "horizontal" | "mixed";
   flatCursor?: boolean;
 } & (T extends object
@@ -115,8 +115,8 @@ function Sortable<T>(props: SortableProps<T>) {
     onValueChange,
     collisionDetection,
     modifiers,
-    sensors: sensorsProp,
     strategy,
+    sensors: sensorsProp,
     onMove,
     orientation = "vertical",
     flatCursor = false,

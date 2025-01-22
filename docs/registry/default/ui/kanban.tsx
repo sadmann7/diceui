@@ -82,8 +82,8 @@ type KanbanProps<T> = DndContextProps & {
   onValueChange?: (columns: Record<UniqueIdentifier, T[]>) => void;
   onMove?: (event: DragEndEvent) => void;
   modifiers?: DndContextProps["modifiers"];
-  sensors?: DndContextProps["sensors"];
   strategy?: SortableContextProps["strategy"];
+  sensors?: DndContextProps["sensors"];
   flatCursor?: boolean;
 } & (T extends object
     ? { getItemValue: (item: T) => UniqueIdentifier }
@@ -95,16 +95,16 @@ function Kanban<T>(props: KanbanProps<T>) {
     value,
     onValueChange,
     modifiers,
-    sensors: sensorsProp,
     strategy = verticalListSortingStrategy,
+    sensors: sensorsProp,
     onMove,
     getItemValue: getItemValueProp,
     flatCursor = false,
     ...kanbanProps
   } = props;
   const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null);
-  const lastOverId = React.useRef<UniqueIdentifier | null>(null);
-  const recentlyMovedToNewContainer = React.useRef(false);
+  const lastOverIdRef = React.useRef<UniqueIdentifier | null>(null);
+  const recentlyMovedToNewContainerRef = React.useRef(false);
   const [clonedItems, setClonedItems] = React.useState<Record<
     UniqueIdentifier,
     T[]
@@ -166,10 +166,10 @@ function Kanban<T>(props: KanbanProps<T>) {
       let overId = getFirstCollision(intersections, "id");
 
       if (!overId) {
-        if (recentlyMovedToNewContainer.current) {
-          lastOverId.current = activeId;
+        if (recentlyMovedToNewContainerRef.current) {
+          lastOverIdRef.current = activeId;
         }
-        return lastOverId.current ? [{ id: lastOverId.current }] : [];
+        return lastOverIdRef.current ? [{ id: lastOverIdRef.current }] : [];
       }
 
       if (overId in value) {
@@ -192,7 +192,7 @@ function Kanban<T>(props: KanbanProps<T>) {
         }
       }
 
-      lastOverId.current = overId;
+      lastOverIdRef.current = overId;
       return [{ id: overId }];
     },
     [activeId, value, getItemValue],
@@ -277,7 +277,7 @@ function Kanban<T>(props: KanbanProps<T>) {
                   overIndex >= 0 ? overIndex + modifier : overItems.length;
               }
 
-              recentlyMovedToNewContainer.current = true;
+              recentlyMovedToNewContainerRef.current = true;
 
               const newOverItems = [
                 ...overItems.slice(0, newIndex),
@@ -303,7 +303,7 @@ function Kanban<T>(props: KanbanProps<T>) {
           if (!over) {
             setActiveId(null);
             setClonedItems(null);
-            recentlyMovedToNewContainer.current = false;
+            recentlyMovedToNewContainerRef.current = false;
             return;
           }
 
@@ -313,7 +313,7 @@ function Kanban<T>(props: KanbanProps<T>) {
           if (!activeContainer || !overContainer) {
             setActiveId(null);
             setClonedItems(null);
-            recentlyMovedToNewContainer.current = false;
+            recentlyMovedToNewContainerRef.current = false;
             return;
           }
 
@@ -323,7 +323,7 @@ function Kanban<T>(props: KanbanProps<T>) {
           if (!activeItems || !overItems) {
             setActiveId(null);
             setClonedItems(null);
-            recentlyMovedToNewContainer.current = false;
+            recentlyMovedToNewContainerRef.current = false;
             return;
           }
 
@@ -345,7 +345,7 @@ function Kanban<T>(props: KanbanProps<T>) {
               if (!activeColumn || !overColumn) {
                 setActiveId(null);
                 setClonedItems(null);
-                recentlyMovedToNewContainer.current = false;
+                recentlyMovedToNewContainerRef.current = false;
                 return;
               }
 
@@ -353,7 +353,7 @@ function Kanban<T>(props: KanbanProps<T>) {
               if (!movedItem) {
                 setActiveId(null);
                 setClonedItems(null);
-                recentlyMovedToNewContainer.current = false;
+                recentlyMovedToNewContainerRef.current = false;
                 return;
               }
 
@@ -365,7 +365,7 @@ function Kanban<T>(props: KanbanProps<T>) {
             if (!items) {
               setActiveId(null);
               setClonedItems(null);
-              recentlyMovedToNewContainer.current = false;
+              recentlyMovedToNewContainerRef.current = false;
               return;
             }
 
@@ -385,7 +385,7 @@ function Kanban<T>(props: KanbanProps<T>) {
                 if (!columnItems) {
                   setActiveId(null);
                   setClonedItems(null);
-                  recentlyMovedToNewContainer.current = false;
+                  recentlyMovedToNewContainerRef.current = false;
                   return;
                 }
                 newColumns[activeContainer] = arrayMove(
@@ -399,7 +399,7 @@ function Kanban<T>(props: KanbanProps<T>) {
           }
           setActiveId(null);
           setClonedItems(null);
-          recentlyMovedToNewContainer.current = false;
+          recentlyMovedToNewContainerRef.current = false;
         })}
         onDragCancel={composeEventHandlers(kanbanProps.onDragCancel, () => {
           if (clonedItems) {
@@ -407,7 +407,7 @@ function Kanban<T>(props: KanbanProps<T>) {
           }
           setActiveId(null);
           setClonedItems(null);
-          recentlyMovedToNewContainer.current = false;
+          recentlyMovedToNewContainerRef.current = false;
         })}
         {...kanbanProps}
       />
@@ -475,7 +475,7 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
           {...columnProps}
           ref={forwardedRef}
           className={cn(
-            "flex size-full flex-col gap-2 rounded-lg border bg-card p-4 text-card-foreground",
+            "flex size-full flex-col gap-2 rounded-lg border bg-zinc-100 p-4 dark:bg-zinc-900",
             className,
           )}
         />
