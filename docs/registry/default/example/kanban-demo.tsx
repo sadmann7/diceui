@@ -137,13 +137,7 @@ export default function KanbanDemo() {
 
           if (!task) return null;
 
-          return (
-            <KanbanItemCard
-              key={task.id}
-              task={task}
-              className="ring-1 ring-ring ring-offset-1"
-            />
-          );
+          return <KanbanItemCard key={task.id} task={task} />;
         }}
       </Kanban.Overlay>
     </Kanban.Root>

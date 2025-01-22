@@ -79,6 +79,7 @@ interface SortableRootContextValue<T> {
   activeId: UniqueIdentifier | null;
   setActiveId: (id: UniqueIdentifier | null) => void;
   getItemValue: (item: T) => UniqueIdentifier;
+  renderItem?: (item: T) => React.ReactNode;
   flatCursor: boolean;
 }
 
@@ -109,6 +110,7 @@ type SortableProps<T> = DndContextProps & {
   strategy?: SortableContextProps["strategy"];
   orientation?: "vertical" | "horizontal" | "mixed";
   flatCursor?: boolean;
+  renderItem?: (item: T) => React.ReactNode;
 } & (T extends object ? GetItemValue<T> : Partial<GetItemValue<T>>);
 
 function Sortable<T>(props: SortableProps<T>) {
@@ -124,6 +126,7 @@ function Sortable<T>(props: SortableProps<T>) {
     orientation = "vertical",
     flatCursor = false,
     getItemValue: getItemValueProp,
+    renderItem,
     ...sortableProps
   } = props;
   const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null);
@@ -183,6 +186,7 @@ function Sortable<T>(props: SortableProps<T>) {
       activeId,
       setActiveId,
       getItemValue,
+      renderItem,
       flatCursor,
     }),
     [
@@ -194,6 +198,7 @@ function Sortable<T>(props: SortableProps<T>) {
       config.strategy,
       activeId,
       getItemValue,
+      renderItem,
       flatCursor,
     ],
   );
@@ -334,6 +339,13 @@ function SortableOverlay(props: SortableOverlayProps) {
         {context.activeId ? (
           typeof children === "function" ? (
             children({ value: context.activeId })
+          ) : context.renderItem ? (
+            (() => {
+              const activeItem = context.items.find(
+                (item) => context.getItemValue(item) === context.activeId,
+              );
+              return activeItem ? context.renderItem(activeItem) : null;
+            })()
           ) : (
             <SortableItem value={context.activeId} asChild>
               {children}

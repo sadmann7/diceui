@@ -37,6 +37,15 @@ export interface RootProps<TData> extends DndContextProps {
   getItemValue?: (item: TData) => UniqueIdentifier;
 
   /**
+   * Callback to render each item in the list.
+   * This will be used for both the list items and the drag overlay.
+   *
+   * @example
+   * renderItem={(item) => <div>{item.name}</div>}
+   */
+  renderItem?: (item: TData) => React.ReactNode;
+
+  /**
    * An optional callback function that is called when an item is moved.
    * Receives the full DragEndEvent object from @dnd-kit/core.
    *

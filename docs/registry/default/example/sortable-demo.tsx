@@ -13,46 +13,37 @@ export default function SortableDemo() {
     { id: "6", title: "FS 540", points: 4500 },
   ]);
 
+  // Memoize the item renderer to avoid recreating it on each render
+  const renderItem = React.useCallback(
+    (trick: (typeof tricks)[number]) => (
+      <div className="flex size-full flex-col items-center justify-center rounded-md border bg-zinc-100 p-6 text-center text-foreground shadow dark:bg-zinc-900">
+        <div className="font-medium text-sm leading-tight sm:text-base">
+          {trick.title}
+        </div>
+        <div className="hidden text-muted-foreground text-sm sm:block">
+          {trick.points} points
+        </div>
+      </div>
+    ),
+    [],
+  );
+
   return (
     <Sortable.Root
       value={tricks}
       onValueChange={setTricks}
       getItemValue={(item) => item.id}
       orientation="mixed"
+      renderItem={renderItem}
     >
       <Sortable.Content className="grid grid-cols-3 gap-2.5">
         {tricks.map((trick) => (
           <Sortable.Item key={trick.id} value={trick.id} asChild asHandle>
-            <div className="flex size-full flex-col items-center justify-center rounded-md border bg-zinc-100 p-6 text-center text-foreground shadow dark:bg-zinc-900">
-              <div className="font-medium text-sm leading-tight sm:text-base">
-                {trick.title}
-              </div>
-              <div className="hidden text-muted-foreground text-sm sm:block">
-                {trick.points} points
-              </div>
-            </div>
+            {renderItem(trick)}
           </Sortable.Item>
         ))}
       </Sortable.Content>
-      <Sortable.Overlay>
-        {(activeItem) => {
-          const trick = tricks.find((trick) => trick.id === activeItem.value);
-          if (!trick) return null;
-
-          return (
-            <Sortable.Item key={trick.id} value={trick.id} asChild>
-              <div className="flex size-full flex-col items-center justify-center rounded-md border bg-zinc-100 p-6 text-center text-foreground shadow dark:bg-zinc-900">
-                <div className="font-medium text-sm leading-tight sm:text-base">
-                  {trick.title}
-                </div>
-                <div className="hidden text-muted-foreground text-sm sm:block">
-                  {trick.points} points
-                </div>
-              </div>
-            </Sortable.Item>
-          );
-        }}
-      </Sortable.Overlay>
+      <Sortable.Overlay />
     </Sortable.Root>
   );
 }
