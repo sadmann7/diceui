@@ -216,7 +216,7 @@ export const examples: Registry = [
     ],
   },
   {
-    name: "sortable-grip-demo",
+    name: "sortable-handle-demo",
     type: "registry:example",
     dependencies: [
       "@dnd-kit/core",
@@ -228,7 +228,7 @@ export const examples: Registry = [
     registryDependencies: ["button", "table"],
     files: [
       {
-        path: "example/sortable-grip-demo.tsx",
+        path: "example/sortable-handle-demo.tsx",
         type: "registry:example",
       },
     ],

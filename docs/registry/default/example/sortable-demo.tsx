@@ -22,7 +22,7 @@ export default function SortableDemo() {
     >
       <Sortable.Content className="grid grid-cols-3 gap-2.5">
         {tricks.map((trick) => (
-          <Sortable.Item key={trick.id} value={trick.id} asChild asGrip>
+          <Sortable.Item key={trick.id} value={trick.id} asChild asHandle>
             <div className="flex size-full flex-col items-center justify-center rounded-md border bg-zinc-100 p-6 text-center text-foreground shadow dark:bg-zinc-900">
               <div className="font-medium text-sm leading-tight sm:text-base">
                 {trick.title}

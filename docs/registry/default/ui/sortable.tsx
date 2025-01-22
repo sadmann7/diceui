@@ -35,7 +35,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { Slot, type SlotProps } from "@radix-ui/react-slot";
 import * as React from "react";
 
-import { composeEventHandlers, composeRefs } from "@/lib/composition";
+import { composeEventHandlers, useComposedRefs } from "@/lib/composition";
 import { cn } from "@/lib/utils";
 import * as ReactDOM from "react-dom";
 
@@ -60,14 +60,14 @@ const orientationConfig = {
 const ROOT_NAME = "Sortable";
 const CONTENT_NAME = "SortableContent";
 const ITEM_NAME = "SortableItem";
-const ITEM_GRIP_NAME = "SortableItemGrip";
+const ITEM_HANDLE_NAME = "SortableItemHandle";
 const OVERLAY_NAME = "SortableOverlay";
 
 const SORTABLE_ERROR = {
   root: `${ROOT_NAME} components must be within ${ROOT_NAME}`,
   content: `${CONTENT_NAME} must be within ${ROOT_NAME}`,
   item: `${ITEM_NAME} must be within ${CONTENT_NAME}`,
-  grip: `${ITEM_GRIP_NAME} must be within ${ITEM_NAME}`,
+  itemHandle: `${ITEM_HANDLE_NAME} must be within ${ITEM_NAME}`,
   overlay: `${OVERLAY_NAME} must be within ${ROOT_NAME}`,
 } as const;
 
@@ -313,7 +313,6 @@ function SortableOverlay(props: SortableOverlayProps) {
     children,
     ...overlayProps
   } = props;
-
   const context = useSortableContext("overlay");
 
   const [mounted, setMounted] = React.useState(false);
@@ -351,25 +350,39 @@ interface SortableItemContextValue {
   id: string;
   attributes: React.HTMLAttributes<HTMLElement>;
   listeners: DraggableSyntheticListeners | undefined;
+  setActivatorNodeRef: (node: HTMLElement | null) => void;
   isDragging?: boolean;
+  disabled?: boolean;
 }
 
 const SortableItemContext = React.createContext<SortableItemContextValue>({
   id: "",
   attributes: {},
   listeners: undefined,
+  setActivatorNodeRef: () => {},
   isDragging: false,
 });
 SortableItemContext.displayName = ITEM_NAME;
 
 interface SortableItemProps extends SlotProps {
   value: UniqueIdentifier;
-  asGrip?: boolean;
+  asHandle?: boolean;
   asChild?: boolean;
+  disabled?: boolean;
 }
 
 const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
   (props, forwardedRef) => {
+    const {
+      value,
+      style,
+      asHandle,
+      asChild,
+      disabled,
+      className,
+      ...itemProps
+    } = props;
+
     const inSortableContent = React.useContext(SortableContentContext);
     const inSortableOverlay = React.useContext(SortableOverlayContext);
 
@@ -377,26 +390,32 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
       throw new Error(SORTABLE_ERROR.item);
     }
 
-    const { value, style, asGrip, asChild, className, ...itemProps } = props;
     const context = useSortableContext("item");
     const id = React.useId();
     const {
       attributes,
       listeners,
       setNodeRef,
+      setActivatorNodeRef,
       transform,
       transition,
       isDragging,
-    } = useSortable({ id: value });
+    } = useSortable({ id: value, disabled });
+
+    const composedRef = useComposedRefs(forwardedRef, (node) => {
+      if (disabled) return;
+      setNodeRef(node);
+      if (asHandle) setActivatorNodeRef(node);
+    });
 
     const composedStyle = React.useMemo<React.CSSProperties>(() => {
       return {
-        opacity: isDragging ? 0.5 : 1,
+        opacity: isDragging || disabled ? 0.5 : 1,
         transform: CSS.Translate.toString(transform),
         transition,
         ...style,
       };
-    }, [isDragging, transform, transition, style]);
+    }, [transform, transition, style, isDragging, disabled]);
 
     const ItemSlot = asChild ? Slot : "div";
 
@@ -405,9 +424,11 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
         id,
         attributes,
         listeners,
+        setActivatorNodeRef,
         isDragging,
+        disabled,
       }),
-      [id, attributes, listeners, isDragging],
+      [id, attributes, listeners, setActivatorNodeRef, isDragging, disabled],
     );
 
     if (value === "") {
@@ -420,20 +441,21 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
           id={id}
           data-dragging={isDragging ? "" : undefined}
           {...itemProps}
-          ref={composeRefs(forwardedRef, (node) => setNodeRef(node))}
+          {...(asHandle ? attributes : {})}
+          {...(asHandle ? listeners : {})}
+          ref={composedRef}
           style={composedStyle}
           className={cn(
             "data-[dragging]:focus-visible:outline-none data-[dragging]:focus-visible:ring-1 data-[dragging]:focus-visible:ring-ring data-[dragging]:focus-visible:ring-offset-1",
             {
-              "touch-none select-none": asGrip,
+              "touch-none select-none": asHandle,
               "cursor-default": context.flatCursor,
               "data-[dragging]:cursor-grabbing": !context.flatCursor,
-              "cursor-grab": !isDragging && asGrip && !context.flatCursor,
+              "cursor-grab": !isDragging && asHandle && !context.flatCursor,
+              "pointer-events-none": disabled,
             },
             className,
           )}
-          {...(asGrip ? attributes : {})}
-          {...(asGrip ? listeners : {})}
         />
       </SortableItemContext.Provider>
     );
@@ -441,61 +463,68 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
 );
 SortableItem.displayName = ITEM_NAME;
 
-interface SortableItemGripProps
+interface SortableItemHandleProps
   extends React.ComponentPropsWithoutRef<"button"> {
   asChild?: boolean;
 }
 
-const SortableItemGrip = React.forwardRef<
+const SortableItemHandle = React.forwardRef<
   HTMLButtonElement,
-  SortableItemGripProps
+  SortableItemHandleProps
 >((props, forwardedRef) => {
+  const { asChild, disabled, className, ...dragHandleProps } = props;
   const itemContext = React.useContext(SortableItemContext);
   if (!itemContext) {
-    throw new Error(SORTABLE_ERROR.grip);
+    throw new Error(SORTABLE_ERROR.itemHandle);
   }
+  const context = useSortableContext("itemHandle");
 
-  const { asChild, className, ...dragHandleProps } = props;
-  const context = useSortableContext("grip");
+  const isDisabled = disabled ?? itemContext.disabled;
 
-  const GripSlot = asChild ? Slot : "button";
+  const composedRef = useComposedRefs(forwardedRef, (node) => {
+    if (!isDisabled) return;
+    itemContext.setActivatorNodeRef(node);
+  });
+
+  const HandleSlot = asChild ? Slot : "button";
 
   return (
-    <GripSlot
+    <HandleSlot
       aria-controls={itemContext.id}
       data-dragging={itemContext.isDragging ? "" : undefined}
+      {...dragHandleProps}
+      {...itemContext.attributes}
+      {...itemContext.listeners}
+      ref={composedRef}
       className={cn(
-        "select-none",
+        "select-none disabled:pointer-events-none disabled:opacity-50",
         context.flatCursor
           ? "cursor-default"
           : "cursor-grab data-[dragging]:cursor-grabbing",
         className,
       )}
-      {...itemContext.attributes}
-      {...itemContext.listeners}
-      ref={forwardedRef}
-      {...dragHandleProps}
+      disabled={isDisabled}
     />
   );
 });
-SortableItemGrip.displayName = ITEM_GRIP_NAME;
+SortableItemHandle.displayName = ITEM_HANDLE_NAME;
 
 const Root = Sortable;
 const Content = SortableContent;
 const Item = SortableItem;
-const ItemGrip = SortableItemGrip;
+const ItemHandle = SortableItemHandle;
 const Overlay = SortableOverlay;
 
 export {
   Content,
   Item,
-  ItemGrip,
+  ItemHandle,
   Overlay,
   Root,
   //
   Sortable,
   SortableContent,
   SortableItem,
-  SortableItemGrip,
+  SortableItemHandle,
   SortableOverlay,
 };

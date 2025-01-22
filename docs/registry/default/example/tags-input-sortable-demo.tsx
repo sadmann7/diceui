@@ -49,7 +49,7 @@ export default function TagsInputSortableDemo() {
                 // to prevent tag item from being tabbable
                 tabIndex={-1}
                 asChild
-                asGrip
+                asHandle
               >
                 <TagsInputItem value={trick}>{trick}</TagsInputItem>
               </SortableItem>

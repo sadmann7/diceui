@@ -357,17 +357,17 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
-    "sortable-grip-demo": {
-      name: "sortable-grip-demo",
+    "sortable-handle-demo": {
+      name: "sortable-handle-demo",
       description: "",
       type: "registry:example",
       registryDependencies: ["button","table"],
       files: [{
-        path: "registry/default/example/sortable-grip-demo.tsx",
+        path: "registry/default/example/sortable-handle-demo.tsx",
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/sortable-grip-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/example/sortable-handle-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",

@@ -14,13 +14,13 @@ import {
   Sortable,
   SortableContent,
   SortableItem,
-  SortableItemGrip,
+  SortableItemHandle,
   SortableOverlay,
 } from "@/registry/default/ui/sortable";
 import { GripVertical } from "lucide-react";
 import * as React from "react";
 
-export default function SortableGripDemo() {
+export default function SortableHandleDemo() {
   const [tricks, setTricks] = React.useState([
     { id: "1", title: "The 900", difficulty: "Expert", points: 9000 },
     { id: "2", title: "Indy Backflip", difficulty: "Advanced", points: 4000 },
@@ -51,14 +51,14 @@ export default function SortableGripDemo() {
         <SortableContent asChild>
           <TableBody>
             {tricks.map((trick) => (
-              <SortableItem key={trick.id} value={trick.id} asChild>
+              <SortableItem key={trick.id} value={trick.id} asChild asHandle>
                 <TableRow>
                   <TableCell className="w-[50px]">
-                    <SortableItemGrip asChild>
+                    <SortableItemHandle asChild>
                       <Button variant="ghost" size="icon" className="size-8">
                         <GripVertical className="h-4 w-4" />
                       </Button>
-                    </SortableItemGrip>
+                    </SortableItemHandle>
                   </TableCell>
                   <TableCell className="font-medium">{trick.title}</TableCell>
                   <TableCell className="text-muted-foreground">

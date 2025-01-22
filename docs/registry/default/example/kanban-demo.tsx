@@ -69,7 +69,7 @@ interface KanbanItemCardProps
 
 function KanbanItemCard({ task }: KanbanItemCardProps) {
   return (
-    <Kanban.Item key={task.id} value={task.id} asChild asGrip>
+    <Kanban.Item key={task.id} value={task.id} asChild asHandle>
       <div className="rounded-md border bg-card p-4 shadow-sm">
         <div className="flex items-center justify-between">
           <div className="font-medium">{task.title}</div>

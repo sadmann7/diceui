@@ -9,12 +9,16 @@ import {
   DragOverlay,
   type DraggableSyntheticListeners,
   type DropAnimation,
+  type DroppableContainer,
+  KeyboardCode,
+  type KeyboardCoordinateGetter,
   KeyboardSensor,
   MeasuringStrategy,
   MouseSensor,
   TouchSensor,
   type UniqueIdentifier,
   closestCenter,
+  closestCorners,
   defaultDropAnimationSideEffects,
   getFirstCollision,
   pointerWithin,
@@ -26,7 +30,6 @@ import {
   SortableContext,
   type SortableContextProps,
   arrayMove,
-  sortableKeyboardCoordinates,
   useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
@@ -35,14 +38,121 @@ import { Slot, type SlotProps } from "@radix-ui/react-slot";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { composeEventHandlers, composeRefs } from "@/lib/composition";
+import { composeEventHandlers, useComposedRefs } from "@/lib/composition";
 import { cn } from "@/lib/utils";
+
+const directions: string[] = [
+  KeyboardCode.Down,
+  KeyboardCode.Right,
+  KeyboardCode.Up,
+  KeyboardCode.Left,
+];
+
+const coordinateGetter: KeyboardCoordinateGetter = (
+  event,
+  { context: { active, droppableRects, droppableContainers, collisionRect } },
+) => {
+  if (directions.includes(event.code)) {
+    event.preventDefault();
+
+    if (!active || !collisionRect) {
+      return;
+    }
+
+    const filteredContainers: DroppableContainer[] = [];
+
+    for (const entry of droppableContainers.getEnabled()) {
+      if (!entry || entry?.disabled) {
+        return;
+      }
+
+      const rect = droppableRects.get(entry.id);
+
+      if (!rect) {
+        return;
+      }
+
+      const data = entry.data.current;
+
+      if (data) {
+        const { type, children } = data;
+
+        if (type === "container" && children?.length > 0) {
+          if (active.data.current?.type !== "container") {
+            return;
+          }
+        }
+      }
+
+      switch (event.code) {
+        case KeyboardCode.Down:
+          if (collisionRect.top < rect.top) {
+            filteredContainers.push(entry);
+          }
+          break;
+        case KeyboardCode.Up:
+          if (collisionRect.top > rect.top) {
+            filteredContainers.push(entry);
+          }
+          break;
+        case KeyboardCode.Left:
+          if (collisionRect.left >= rect.left + rect.width) {
+            filteredContainers.push(entry);
+          }
+          break;
+        case KeyboardCode.Right:
+          if (collisionRect.left + collisionRect.width <= rect.left) {
+            filteredContainers.push(entry);
+          }
+          break;
+      }
+    }
+
+    const collisions = closestCorners({
+      active,
+      collisionRect: collisionRect,
+      droppableRects,
+      droppableContainers: filteredContainers,
+      pointerCoordinates: null,
+    });
+    const closestId = getFirstCollision(collisions, "id");
+
+    if (closestId != null) {
+      const newDroppable = droppableContainers.get(closestId);
+      const newNode = newDroppable?.node.current;
+      const newRect = newDroppable?.rect.current;
+
+      if (newNode && newRect) {
+        if (newDroppable.id === "placeholder") {
+          return {
+            x: newRect.left + (newRect.width - collisionRect.width) / 2,
+            y: newRect.top + (newRect.height - collisionRect.height) / 2,
+          };
+        }
+
+        if (newDroppable.data.current?.type === "container") {
+          return {
+            x: newRect.left + 20,
+            y: newRect.top + 74,
+          };
+        }
+
+        return {
+          x: newRect.left,
+          y: newRect.top,
+        };
+      }
+    }
+  }
+
+  return undefined;
+};
 
 const ROOT_NAME = "Kanban";
 const BOARD_NAME = "KanbanBoard";
 const COLUMN_NAME = "KanbanColumn";
 const ITEM_NAME = "KanbanItem";
-const ITEM_GRIP_NAME = "KanbanItemGrip";
+const ITEM_HANDLE_NAME = "KanbanItemHandle";
 const OVERLAY_NAME = "KanbanOverlay";
 
 const KANBAN_ERROR = {
@@ -50,7 +160,7 @@ const KANBAN_ERROR = {
   board: `${BOARD_NAME} must be within ${ROOT_NAME}`,
   column: `${COLUMN_NAME} must be within ${BOARD_NAME}`,
   item: `${ITEM_NAME} must be within ${COLUMN_NAME}`,
-  grip: `${ITEM_GRIP_NAME} must be within ${ITEM_NAME}`,
+  itemHandle: `${ITEM_HANDLE_NAME} must be within ${ITEM_NAME}`,
   overlay: `${OVERLAY_NAME} must be within ${ROOT_NAME}`,
 } as const;
 
@@ -112,7 +222,7 @@ function Kanban<T>(props: KanbanProps<T>) {
   } = props;
   const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null);
   const lastOverIdRef = React.useRef<UniqueIdentifier | null>(null);
-  const isDraggingRef = React.useRef(false);
+  const isShiftingRef = React.useRef(false);
   const [clonedItems, setClonedItems] = React.useState<Record<
     UniqueIdentifier,
     T[]
@@ -123,7 +233,7 @@ function Kanban<T>(props: KanbanProps<T>) {
     useSensor(MouseSensor),
     useSensor(TouchSensor),
     useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
+      coordinateGetter: coordinateGetter,
     }),
   );
 
@@ -175,7 +285,7 @@ function Kanban<T>(props: KanbanProps<T>) {
       let overId = getFirstCollision(intersections, "id");
 
       if (!overId) {
-        if (isDraggingRef.current) {
+        if (isShiftingRef.current) {
           lastOverIdRef.current = activeId;
         }
         return lastOverIdRef.current ? [{ id: lastOverIdRef.current }] : [];
@@ -255,7 +365,7 @@ function Kanban<T>(props: KanbanProps<T>) {
           newIndex = overIndex >= 0 ? overIndex + modifier : overItems.length;
         }
 
-        isDraggingRef.current = true;
+        isShiftingRef.current = true;
 
         const newOverItems = [
           ...overItems.slice(0, newIndex),
@@ -263,7 +373,7 @@ function Kanban<T>(props: KanbanProps<T>) {
           ...overItems.slice(newIndex),
         ];
 
-        const updatedColumns: Record<UniqueIdentifier, T[]> = {
+        const updatedItems: Record<UniqueIdentifier, T[]> = {
           ...value,
           [activeContainer]: activeItems.filter(
             (item) => getItemValue(item) !== active.id,
@@ -272,7 +382,7 @@ function Kanban<T>(props: KanbanProps<T>) {
         };
 
         setLastUpdateTime(now);
-        onValueChange?.(updatedColumns);
+        onValueChange?.(updatedItems);
       }
     },
     [value, getContainer, getItemValue, onValueChange, lastUpdateTime],
@@ -285,17 +395,19 @@ function Kanban<T>(props: KanbanProps<T>) {
       if (!over) {
         setActiveId(null);
         setClonedItems(null);
-        isDraggingRef.current = false;
+        isShiftingRef.current = false;
         return;
       }
 
       const activeContainer = getContainer(active.id);
       const overContainer = getContainer(over.id);
 
+      console.log({ activeId: active.id, overId: over.id });
+
       if (!activeContainer || !overContainer) {
         setActiveId(null);
         setClonedItems(null);
-        isDraggingRef.current = false;
+        isShiftingRef.current = false;
         return;
       }
 
@@ -305,7 +417,7 @@ function Kanban<T>(props: KanbanProps<T>) {
       if (!activeItems || !overItems) {
         setActiveId(null);
         setClonedItems(null);
-        isDraggingRef.current = false;
+        isShiftingRef.current = false;
         return;
       }
 
@@ -327,7 +439,7 @@ function Kanban<T>(props: KanbanProps<T>) {
           if (!activeColumn || !overColumn) {
             setActiveId(null);
             setClonedItems(null);
-            isDraggingRef.current = false;
+            isShiftingRef.current = false;
             return;
           }
 
@@ -335,7 +447,7 @@ function Kanban<T>(props: KanbanProps<T>) {
           if (!movedItem) {
             setActiveId(null);
             setClonedItems(null);
-            isDraggingRef.current = false;
+            isShiftingRef.current = false;
             return;
           }
 
@@ -347,7 +459,7 @@ function Kanban<T>(props: KanbanProps<T>) {
         if (!items) {
           setActiveId(null);
           setClonedItems(null);
-          isDraggingRef.current = false;
+          isShiftingRef.current = false;
           return;
         }
 
@@ -367,7 +479,7 @@ function Kanban<T>(props: KanbanProps<T>) {
             if (!columnItems) {
               setActiveId(null);
               setClonedItems(null);
-              isDraggingRef.current = false;
+              isShiftingRef.current = false;
               return;
             }
             newColumns[activeContainer] = arrayMove(
@@ -381,7 +493,7 @@ function Kanban<T>(props: KanbanProps<T>) {
       }
       setActiveId(null);
       setClonedItems(null);
-      isDraggingRef.current = false;
+      isShiftingRef.current = false;
     },
     [value, getItemValue, onMove, onValueChange, getContainer],
   );
@@ -407,7 +519,11 @@ function Kanban<T>(props: KanbanProps<T>) {
         modifiers={modifiers}
         sensors={sensorsProp ?? sensors}
         collisionDetection={collisionDetection}
-        measuring={{ droppable: { strategy: MeasuringStrategy.Always } }}
+        measuring={{
+          droppable: {
+            strategy: MeasuringStrategy.Always,
+          },
+        }}
         onDragStart={composeEventHandlers(
           kanbanProps.onDragStart,
           ({ active }) => {
@@ -423,7 +539,7 @@ function Kanban<T>(props: KanbanProps<T>) {
           }
           setActiveId(null);
           setClonedItems(null);
-          isDraggingRef.current = false;
+          isShiftingRef.current = false;
         })}
         {...kanbanProps}
       />
@@ -471,9 +587,9 @@ interface KanbanColumnProps extends SlotProps {
 const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
   (props, forwardedRef) => {
     const { value, asChild, className, ...columnProps } = props;
+
     const context = useKanbanContext("board");
     const inBoard = React.useContext(KanbanBoardContext);
-
     if (!inBoard) {
       throw new Error(KANBAN_ERROR.column);
     }
@@ -505,45 +621,66 @@ interface KanbanItemContextValue {
   id: string;
   attributes: React.HTMLAttributes<HTMLElement>;
   listeners: DraggableSyntheticListeners | undefined;
+  setActivatorNodeRef: (node: HTMLElement | null) => void;
   isDragging?: boolean;
+  disabled?: boolean;
 }
 
 const KanbanItemContext = React.createContext<KanbanItemContextValue>({
   id: "",
   attributes: {},
   listeners: undefined,
+  setActivatorNodeRef: () => {},
   isDragging: false,
+  disabled: false,
 });
 KanbanItemContext.displayName = ITEM_NAME;
 
 interface KanbanItemProps extends SlotProps {
   value: UniqueIdentifier;
-  asGrip?: boolean;
+  asHandle?: boolean;
   asChild?: boolean;
+  disabled?: boolean;
 }
 
 const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
   (props, forwardedRef) => {
-    const { value, style, asGrip, asChild, className, ...itemProps } = props;
+    const {
+      value,
+      style,
+      asHandle,
+      asChild,
+      disabled,
+      className,
+      ...itemProps
+    } = props;
+
     const id = React.useId();
     const context = useKanbanContext("item");
     const {
       attributes,
       listeners,
       setNodeRef,
+      setActivatorNodeRef,
       transform,
       transition,
       isDragging,
-    } = useSortable({ id: value });
+    } = useSortable({ id: value, disabled });
+
+    const composedRef = useComposedRefs(forwardedRef, (node) => {
+      if (disabled) return;
+      setNodeRef(node);
+      if (asHandle) setActivatorNodeRef(node);
+    });
 
     const composedStyle = React.useMemo<React.CSSProperties>(() => {
       return {
-        opacity: isDragging ? 0.5 : 1,
+        opacity: isDragging || disabled ? 0.5 : 1,
         transform: CSS.Translate.toString(transform),
         transition,
         ...style,
       };
-    }, [isDragging, transform, transition, style]);
+    }, [transform, transition, style, isDragging, disabled]);
 
     const ItemSlot = asChild ? Slot : "div";
 
@@ -552,9 +689,11 @@ const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
         id,
         attributes,
         listeners,
+        setActivatorNodeRef,
         isDragging,
+        disabled,
       }),
-      [id, attributes, listeners, isDragging],
+      [id, attributes, listeners, setActivatorNodeRef, isDragging, disabled],
     );
 
     if (value === "") {
@@ -567,20 +706,21 @@ const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
           id={id}
           data-dragging={isDragging ? "" : undefined}
           {...itemProps}
-          ref={composeRefs(forwardedRef, (node) => setNodeRef(node))}
+          {...(asHandle ? attributes : {})}
+          {...(asHandle ? listeners : {})}
+          ref={composedRef}
           style={composedStyle}
           className={cn(
             "data-[dragging]:focus-visible:outline-none data-[dragging]:focus-visible:ring-1 data-[dragging]:focus-visible:ring-ring data-[dragging]:focus-visible:ring-offset-1",
             {
-              "touch-none select-none": asGrip,
+              "touch-none select-none": asHandle,
               "cursor-default": context.flatCursor,
               "data-[dragging]:cursor-grabbing": !context.flatCursor,
-              "cursor-grab": !isDragging && asGrip && !context.flatCursor,
+              "cursor-grab": !isDragging && asHandle && !context.flatCursor,
+              "pointer-events-none": disabled,
             },
             className,
           )}
-          {...(asGrip ? attributes : {})}
-          {...(asGrip ? listeners : {})}
         />
       </KanbanItemContext.Provider>
     );
@@ -588,38 +728,52 @@ const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
 );
 KanbanItem.displayName = ITEM_NAME;
 
-interface KanbanItemGripProps extends React.ComponentPropsWithoutRef<"button"> {
+interface KanbanItemHandleProps
+  extends React.ComponentPropsWithoutRef<"button"> {
   asChild?: boolean;
 }
 
-const KanbanItemGrip = React.forwardRef<HTMLButtonElement, KanbanItemGripProps>(
-  (props, forwardedRef) => {
-    const itemContext = React.useContext(KanbanItemContext);
-    const context = useKanbanContext("item");
+const KanbanItemHandle = React.forwardRef<
+  HTMLButtonElement,
+  KanbanItemHandleProps
+>((props, forwardedRef) => {
+  const { asChild, disabled, className, ...dragHandleProps } = props;
 
-    const { asChild, className, ...dragHandleProps } = props;
-    const GripSlot = asChild ? Slot : "button";
+  const itemContext = React.useContext(KanbanItemContext);
+  if (!itemContext) {
+    throw new Error(KANBAN_ERROR.itemHandle);
+  }
+  const context = useKanbanContext("itemHandle");
 
-    return (
-      <GripSlot
-        aria-controls={itemContext.id}
-        data-dragging={itemContext.isDragging ? "" : undefined}
-        className={cn(
-          "select-none",
-          context.flatCursor
-            ? "cursor-default"
-            : "cursor-grab data-[dragging]:cursor-grabbing",
-          className,
-        )}
-        {...itemContext.attributes}
-        {...itemContext.listeners}
-        ref={forwardedRef}
-        {...dragHandleProps}
-      />
-    );
-  },
-);
-KanbanItemGrip.displayName = ITEM_GRIP_NAME;
+  const isDisabled = disabled ?? itemContext.disabled;
+
+  const composedRef = useComposedRefs(forwardedRef, (node) => {
+    if (isDisabled) return;
+    itemContext.setActivatorNodeRef(node);
+  });
+
+  const HandleSlot = asChild ? Slot : "button";
+
+  return (
+    <HandleSlot
+      aria-controls={itemContext.id}
+      data-dragging={itemContext.isDragging ? "" : undefined}
+      ref={composedRef}
+      {...dragHandleProps}
+      {...itemContext.attributes}
+      {...itemContext.listeners}
+      className={cn(
+        "select-none disabled:pointer-events-none disabled:opacity-50",
+        context.flatCursor
+          ? "cursor-default"
+          : "cursor-grab data-[dragging]:cursor-grabbing",
+        className,
+      )}
+      disabled={isDisabled}
+    />
+  );
+});
+KanbanItemHandle.displayName = ITEM_HANDLE_NAME;
 
 const dropAnimation: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
@@ -681,20 +835,20 @@ const Root = Kanban;
 const Board = KanbanBoard;
 const Column = KanbanColumn;
 const Item = KanbanItem;
-const ItemGrip = KanbanItemGrip;
+const ItemHandle = KanbanItemHandle;
 const Overlay = KanbanOverlay;
 
 export {
   Board,
   Column,
   Item,
-  ItemGrip,
+  ItemHandle,
   //
   Kanban,
   KanbanBoard,
   KanbanColumn,
   KanbanItem,
-  KanbanItemGrip,
+  KanbanItemHandle,
   KanbanOverlay,
   Overlay,
   Root,

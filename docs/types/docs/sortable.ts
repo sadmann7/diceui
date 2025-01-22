@@ -170,19 +170,25 @@ export interface ItemProps
   value: UniqueIdentifier;
 
   /**
-   * Specifies whether the item should act as a grip for dragging.
+   * Whether the item should act as a handle for dragging.
    * @default false
    */
-  asGrip?: boolean;
+  asHandle?: boolean;
 
   /**
    * Merges the item's props into its immediate child.
    * @default false
    */
   asChild?: boolean;
+
+  /**
+   * Whether the item is disabled.
+   * @default false
+   */
+  disabled?: boolean;
 }
 
-export interface ItemGripProps
+export interface ItemHandleProps
   extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"button">> {
   /**
    * Merges the item's props into its immediate child.
