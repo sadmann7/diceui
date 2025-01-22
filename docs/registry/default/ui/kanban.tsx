@@ -495,11 +495,12 @@ interface KanbanColumnProps extends SlotProps {
   value: UniqueIdentifier;
   children: React.ReactNode;
   asChild?: boolean;
+  disabled?: boolean;
 }
 
 const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
   (props, forwardedRef) => {
-    const { value, asChild, className, ...columnProps } = props;
+    const { value, asChild, disabled, className, ...columnProps } = props;
 
     const context = useKanbanContext("column");
     const inBoard = React.useContext(KanbanBoardContext);
@@ -513,6 +514,7 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
 
     const { setNodeRef } = useDroppable({
       id: value,
+      disabled,
     });
 
     const ColumnSlot = asChild ? Slot : "div";
@@ -522,20 +524,19 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
       return items.map((item) => context.getItemValue(item));
     }, [context.items, value, context.getItemValue]);
 
-    const composedRef = useComposedRefs(
-      forwardedRef,
-      (node: HTMLDivElement | null) => {
-        if (node) setNodeRef(node);
-      },
-    );
+    const composedRef = useComposedRefs(forwardedRef, (node) => {
+      if (disabled) return;
+      setNodeRef(node);
+    });
 
     return (
       <SortableContext strategy={context.strategy} items={items}>
         <ColumnSlot
+          aria-disabled={disabled}
           {...columnProps}
           ref={composedRef}
           className={cn(
-            "flex size-full flex-col gap-2 rounded-lg border bg-zinc-100 p-4 dark:bg-zinc-900",
+            "flex size-full flex-col gap-2 rounded-lg border bg-zinc-100 p-4 aria-disabled:pointer-events-none aria-disabled:opacity-50 dark:bg-zinc-900",
             className,
           )}
         />

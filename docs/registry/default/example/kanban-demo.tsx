@@ -22,8 +22,8 @@ export default function KanbanDemo() {
       { id: "5", title: "Implement dark mode", priority: "medium" },
     ],
     done: [
-      // { id: "6", title: "Setup project", priority: "high" },
-      // { id: "7", title: "Initial commit", priority: "low" },
+      { id: "6", title: "Setup project", priority: "high" },
+      { id: "7", title: "Initial commit", priority: "low" },
     ],
   });
 
