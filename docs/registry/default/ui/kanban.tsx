@@ -516,18 +516,17 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
       id: value,
       disabled,
     });
-
-    const ColumnSlot = asChild ? Slot : "div";
+    const composedRef = useComposedRefs(forwardedRef, (node) => {
+      if (disabled) return;
+      setNodeRef(node);
+    });
 
     const items = React.useMemo(() => {
       const items = context.items[value] ?? [];
       return items.map((item) => context.getItemValue(item));
     }, [context.items, value, context.getItemValue]);
 
-    const composedRef = useComposedRefs(forwardedRef, (node) => {
-      if (disabled) return;
-      setNodeRef(node);
-    });
+    const ColumnSlot = asChild ? Slot : "div";
 
     return (
       <SortableContext strategy={context.strategy} items={items}>
@@ -583,16 +582,21 @@ const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
       className,
       ...itemProps
     } = props;
-
     const context = useKanbanContext("item");
+    const id = React.useId();
     const {
       attributes,
       listeners,
       setNodeRef,
+      setActivatorNodeRef,
       transform,
       transition,
       isDragging,
     } = useSortable({ id: value, disabled });
+
+    if (value === "") {
+      throw new Error(`${ITEM_NAME} value cannot be an empty string.`);
+    }
 
     const composedRef = useComposedRefs(forwardedRef, (node) => {
       if (disabled) return;
@@ -609,27 +613,42 @@ const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
 
     const ItemSlot = asChild ? Slot : "div";
 
+    const itemContext = React.useMemo<KanbanItemContextValue>(
+      () => ({
+        id,
+        attributes,
+        listeners,
+        setActivatorNodeRef,
+        isDragging,
+        disabled,
+      }),
+      [id, attributes, listeners, setActivatorNodeRef, isDragging, disabled],
+    );
+
     return (
-      <ItemSlot
-        {...itemProps}
-        {...(asHandle ? attributes : {})}
-        {...(asHandle ? listeners : {})}
-        ref={composedRef}
-        style={composedStyle}
-        data-dragging={isDragging ? "" : undefined}
-        className={cn(
-          "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1",
-          {
-            "touch-none select-none": asHandle,
-            "cursor-default": context.flatCursor,
-            "data-[dragging]:cursor-grabbing": !context.flatCursor,
-            "cursor-grab": !isDragging && asHandle && !context.flatCursor,
-            "opacity-50": isDragging,
-            "pointer-events-none opacity-50": disabled,
-          },
-          className,
-        )}
-      />
+      <KanbanItemContext.Provider value={itemContext}>
+        <ItemSlot
+          data-dragging={isDragging ? "" : undefined}
+          {...itemProps}
+          {...(asHandle ? attributes : {})}
+          {...(asHandle ? listeners : {})}
+          tabIndex={disabled ? undefined : -1}
+          ref={composedRef}
+          style={composedStyle}
+          className={cn(
+            "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1",
+            {
+              "touch-none select-none": asHandle,
+              "cursor-default": context.flatCursor,
+              "data-[dragging]:cursor-grabbing": !context.flatCursor,
+              "cursor-grab": !isDragging && asHandle && !context.flatCursor,
+              "opacity-50": isDragging,
+              "pointer-events-none opacity-50": disabled,
+            },
+            className,
+          )}
+        />
+      </KanbanItemContext.Provider>
     );
   },
 );
@@ -645,7 +664,6 @@ const KanbanItemHandle = React.forwardRef<
   KanbanItemHandleProps
 >((props, forwardedRef) => {
   const { asChild, disabled, className, ...dragHandleProps } = props;
-
   const itemContext = React.useContext(KanbanItemContext);
   if (!itemContext) {
     throw new Error(KANBAN_ERROR.itemHandle);
@@ -665,10 +683,10 @@ const KanbanItemHandle = React.forwardRef<
     <HandleSlot
       aria-controls={itemContext.id}
       data-dragging={itemContext.isDragging ? "" : undefined}
-      ref={composedRef}
       {...dragHandleProps}
       {...itemContext.attributes}
       {...itemContext.listeners}
+      ref={composedRef}
       className={cn(
         "select-none disabled:pointer-events-none disabled:opacity-50",
         context.flatCursor

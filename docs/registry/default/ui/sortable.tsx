@@ -265,11 +265,11 @@ const SortableContent = React.forwardRef<HTMLDivElement, SortableContentProps>(
     const { strategy: strategyProp, asChild, ...contentProps } = props;
     const context = useSortableContext("content");
 
-    const ContentSlot = asChild ? Slot : "div";
-
     const items = React.useMemo(() => {
       return context.items.map((item) => context.getItemValue(item));
     }, [context.items, context.getItemValue]);
+
+    const ContentSlot = asChild ? Slot : "div";
 
     return (
       <SortableContentContext.Provider value={true}>
@@ -390,6 +390,10 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
       throw new Error(SORTABLE_ERROR.item);
     }
 
+    if (value === "") {
+      throw new Error(`${ITEM_NAME} value cannot be an empty string.`);
+    }
+
     const context = useSortableContext("item");
     const id = React.useId();
     const {
@@ -416,8 +420,6 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
       };
     }, [transform, transition, style]);
 
-    const ItemSlot = asChild ? Slot : "div";
-
     const itemContext = React.useMemo<SortableItemContextValue>(
       () => ({
         id,
@@ -430,9 +432,7 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
       [id, attributes, listeners, setActivatorNodeRef, isDragging, disabled],
     );
 
-    if (value === "") {
-      throw new Error(`${ITEM_NAME} value cannot be an empty string.`);
-    }
+    const ItemSlot = asChild ? Slot : "div";
 
     return (
       <SortableItemContext.Provider value={itemContext}>
@@ -442,6 +442,7 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
           {...itemProps}
           {...(asHandle ? attributes : {})}
           {...(asHandle ? listeners : {})}
+          tabIndex={disabled ? undefined : -1}
           ref={composedRef}
           style={composedStyle}
           className={cn(
