@@ -146,99 +146,95 @@ function Kanban<T>(props: KanbanProps<T>) {
         id={id}
         sensors={sensorsProp ?? sensors}
         collisionDetection={closestCorners}
-        onDragStart={composeEventHandlers(
-          kanbanProps.onDragStart,
-          ({ active }) => setActiveId(active.id),
+        onDragStart={composeEventHandlers(kanbanProps.onDragStart, (event) =>
+          setActiveId(event.active.id),
         )}
-        onDragEnd={composeEventHandlers(
-          kanbanProps.onDragEnd,
-          ({ active, over, activatorEvent, collisions, delta }) => {
-            if (!over) {
-              setActiveId(null);
-              return;
-            }
+        onDragEnd={composeEventHandlers(kanbanProps.onDragEnd, (event) => {
+          if (!event.over) {
+            setActiveId(null);
+            return;
+          }
 
-            const activeContainer = getContainer(active.id);
-            const overContainer = getContainer(over.id);
+          const activeContainer = getContainer(event.active.id);
+          const overContainer = getContainer(event.over.id);
 
-            if (!activeContainer || !overContainer) {
-              setActiveId(null);
-              return;
-            }
+          if (!activeContainer || !overContainer) {
+            setActiveId(null);
+            return;
+          }
 
-            const activeItems = columns[activeContainer];
-            const overItems = columns[overContainer];
+          const activeItems = columns[activeContainer];
+          const overItems = columns[overContainer];
 
-            if (!activeItems || !overItems) {
-              setActiveId(null);
-              return;
-            }
+          if (!activeItems || !overItems) {
+            setActiveId(null);
+            return;
+          }
 
-            if (activeContainer !== overContainer) {
-              const activeIndex = activeItems.findIndex(
-                (item) => getItemValue(item) === active.id,
-              );
-              const overIndex = overItems.findIndex(
-                (item) => getItemValue(item) === over.id,
-              );
+          if (activeContainer !== overContainer) {
+            const activeIndex = activeItems.findIndex(
+              (item) => getItemValue(item) === event.active.id,
+            );
+            const overIndex = overItems.findIndex(
+              (item) => getItemValue(item) === event.over?.id,
+            );
 
-              if (onMove) {
-                onMove({ active, over, activatorEvent, collisions, delta });
-              } else {
-                const newColumns = { ...columns };
-                const activeColumn = newColumns[activeContainer];
-                const overColumn = newColumns[overContainer];
-
-                if (!activeColumn || !overColumn) {
-                  setActiveId(null);
-                  return;
-                }
-
-                const [movedItem] = activeColumn.splice(activeIndex, 1);
-                if (!movedItem) {
-                  setActiveId(null);
-                  return;
-                }
-
-                overColumn.splice(overIndex, 0, movedItem);
-                onColumnsChange?.(newColumns);
-              }
+            if (onMove) {
+              onMove(event);
             } else {
-              const items = columns[activeContainer];
-              if (!items) {
+              const newColumns = { ...columns };
+              const activeColumn = newColumns[activeContainer];
+              const overColumn = newColumns[overContainer];
+
+              if (!activeColumn || !overColumn) {
                 setActiveId(null);
                 return;
               }
 
-              const activeIndex = items.findIndex(
-                (item) => getItemValue(item) === active.id,
-              );
-              const overIndex = items.findIndex(
-                (item) => getItemValue(item) === over.id,
-              );
+              const [movedItem] = activeColumn.splice(activeIndex, 1);
+              if (!movedItem) {
+                setActiveId(null);
+                return;
+              }
 
-              if (activeIndex !== overIndex) {
-                if (onMove) {
-                  onMove({ active, over, activatorEvent, collisions, delta });
-                } else {
-                  const newColumns = { ...columns };
-                  const columnItems = newColumns[activeContainer];
-                  if (!columnItems) {
-                    setActiveId(null);
-                    return;
-                  }
-                  newColumns[activeContainer] = arrayMove(
-                    columnItems,
-                    activeIndex,
-                    overIndex,
-                  );
-                  onColumnsChange?.(newColumns);
+              overColumn.splice(overIndex, 0, movedItem);
+              onColumnsChange?.(newColumns);
+            }
+          } else {
+            const items = columns[activeContainer];
+            if (!items) {
+              setActiveId(null);
+              return;
+            }
+
+            const activeIndex = items.findIndex(
+              (item) => getItemValue(item) === event.active.id,
+            );
+            const overIndex = items.findIndex(
+              (item) => getItemValue(item) === event.over?.id,
+            );
+
+            if (activeIndex !== overIndex) {
+              if (onMove) {
+                onMove(event);
+              } else {
+                const newColumns = { ...columns };
+                const columnItems = newColumns[activeContainer];
+                if (!columnItems) {
+                  setActiveId(null);
+                  return;
                 }
+                newColumns[activeContainer] = arrayMove(
+                  columnItems,
+                  activeIndex,
+                  overIndex,
+                );
+                onColumnsChange?.(newColumns);
               }
             }
-            setActiveId(null);
-          },
-        )}
+          }
+          setActiveId(null);
+        })}
         onDragCancel={composeEventHandlers(kanbanProps.onDragCancel, () =>
           setActiveId(null),
         )}

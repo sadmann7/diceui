@@ -178,30 +178,26 @@ function Sortable<T>(props: SortableProps<T>) {
         id={id}
         modifiers={modifiers ?? config.modifiers}
         sensors={sensorsProp ?? sensors}
-        onDragStart={composeEventHandlers(
-          sortableProps.onDragStart,
-          ({ active }) => setActiveId(active.id),
+        onDragStart={composeEventHandlers(sortableProps.onDragStart, (event) =>
+          setActiveId(event.active.id),
         )}
-        onDragEnd={composeEventHandlers(
-          sortableProps.onDragEnd,
-          ({ active, over, activatorEvent, collisions, delta }) => {
-            if (over && active.id !== over?.id) {
-              const activeIndex = value.findIndex(
-                (item) => getItemValue(item) === active.id,
-              );
-              const overIndex = value.findIndex(
-                (item) => getItemValue(item) === over.id,
-              );
+        onDragEnd={composeEventHandlers(sortableProps.onDragEnd, (event) => {
+          if (event.over && event.active.id !== event.over?.id) {
+            const activeIndex = value.findIndex(
+              (item) => getItemValue(item) === event.active.id,
+            );
+            const overIndex = value.findIndex(
+              (item) => getItemValue(item) === event.active.id,
+            );
 
-              if (onMove) {
-                onMove({ active, over, activatorEvent, collisions, delta });
-              } else {
-                onValueChange?.(arrayMove(value, activeIndex, overIndex));
-              }
+            if (onMove) {
+              onMove(event);
+            } else {
+              onValueChange?.(arrayMove(value, activeIndex, overIndex));
             }
-            setActiveId(null);
-          },
-        )}
+          }
+          setActiveId(null);
+        })}
         onDragCancel={composeEventHandlers(sortableProps.onDragCancel, () =>
           setActiveId(null),
         )}
