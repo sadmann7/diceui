@@ -27,7 +27,7 @@ export interface RootProps<TData> extends DndContextProps {
   onValueChange?: (items: TData[]) => void;
 
   /**
-   * A function that returns a unique identifier for each sortable item.
+   * Callback that returns a unique identifier for each sortable item.
    *
    * Required when using an array of objects.
    *

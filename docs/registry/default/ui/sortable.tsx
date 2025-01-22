@@ -94,6 +94,14 @@ function useSortableContext(name: keyof typeof SORTABLE_ERROR) {
   return context;
 }
 
+interface GetItemValue<T> {
+  /**
+   * Callback that returns a unique identifier for each sortable item. Required for array of objects.
+   * @example getItemValue={(item) => item.id}
+   */
+  getItemValue: (item: T) => UniqueIdentifier;
+}
+
 type SortableProps<T> = DndContextProps & {
   value: T[];
   onValueChange?: (items: T[]) => void;
@@ -101,9 +109,7 @@ type SortableProps<T> = DndContextProps & {
   strategy?: SortableContextProps["strategy"];
   orientation?: "vertical" | "horizontal" | "mixed";
   flatCursor?: boolean;
-} & (T extends object
-    ? { getItemValue: (item: T) => UniqueIdentifier }
-    : { getItemValue?: (item: T) => UniqueIdentifier });
+} & (T extends object ? GetItemValue<T> : Partial<GetItemValue<T>>);
 
 function Sortable<T>(props: SortableProps<T>) {
   const {

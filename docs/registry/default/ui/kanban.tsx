@@ -77,15 +77,22 @@ function useKanbanContext(name: keyof typeof KANBAN_ERROR) {
   return context;
 }
 
-type KanbanProps<T> = Omit<DndContextProps, "collisionDetection"> & {
-  value: Record<UniqueIdentifier, T[]>;
-  onValueChange?: (columns: Record<UniqueIdentifier, T[]>) => void;
-  onMove?: (event: DragEndEvent) => void;
-  strategy?: SortableContextProps["strategy"];
-  flatCursor?: boolean;
-} & (T extends object
-    ? { getItemValue: (item: T) => UniqueIdentifier }
-    : { getItemValue?: (item: T) => UniqueIdentifier });
+interface GetItemValue<T> {
+  /**
+   * Callback that returns a unique identifier for each kanban item. Required for array of objects.
+   * @example getItemValue={(item) => item.id}
+   */
+  getItemValue: (item: T) => UniqueIdentifier;
+}
+
+type KanbanProps<T> = Omit<DndContextProps, "collisionDetection"> &
+  GetItemValue<T> & {
+    value: Record<UniqueIdentifier, T[]>;
+    onValueChange?: (columns: Record<UniqueIdentifier, T[]>) => void;
+    onMove?: (event: DragEndEvent) => void;
+    strategy?: SortableContextProps["strategy"];
+    flatCursor?: boolean;
+  } & (T extends object ? GetItemValue<T> : Partial<GetItemValue<T>>);
 
 function Kanban<T>(props: KanbanProps<T>) {
   const {
