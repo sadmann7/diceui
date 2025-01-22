@@ -29,8 +29,8 @@ export default function KanbanDemo() {
 
   return (
     <Kanban.Root
-      columns={columns}
-      onColumnsChange={setColumns}
+      value={columns}
+      onValueChange={setColumns}
       getItemValue={(item) => item.id}
     >
       <Kanban.Board>
@@ -42,60 +42,51 @@ export default function KanbanDemo() {
           >
             <div className="font-medium">{column}</div>
             {columns[column]?.map((task) => (
-              <Kanban.Item key={task.id} value={task.id} asChild asGrip>
-                <div className="rounded-md border bg-card p-4 shadow-sm">
-                  <div className="flex items-center justify-between">
-                    <div className="font-medium">{task.title}</div>
-                    <div
-                      className={cn(
-                        "text-xs",
-                        task.priority === "high"
-                          ? "text-red-500"
-                          : task.priority === "medium"
-                            ? "text-yellow-500"
-                            : "text-green-500",
-                      )}
-                    >
-                      {task.priority}
-                    </div>
-                  </div>
-                </div>
-              </Kanban.Item>
+              <KanbanItemCard key={task.id} task={task} />
             ))}
           </Kanban.Column>
         ))}
       </Kanban.Board>
       <Kanban.Overlay>
-        {({ value }) => {
+        {(activeItem) => {
           const task = Object.values(columns)
             .flat()
-            .find((task) => task.id === value);
+            .find((task) => task.id === activeItem.value);
 
           if (!task) return null;
 
-          return (
-            <Kanban.Item value={task.id} asChild>
-              <div className="rounded-md border bg-card p-4 shadow-sm">
-                <div className="flex items-center justify-between">
-                  <div className="font-medium">{task.title}</div>
-                  <div
-                    className={cn(
-                      "text-xs",
-                      task.priority === "high"
-                        ? "text-red-500"
-                        : task.priority === "medium"
-                          ? "text-yellow-500"
-                          : "text-green-500",
-                    )}
-                  >
-                    {task.priority}
-                  </div>
-                </div>
-              </div>
-            </Kanban.Item>
-          );
+          return <KanbanItemCard key={task.id} task={task} />;
         }}
       </Kanban.Overlay>
     </Kanban.Root>
+  );
+}
+
+interface KanbanItemCardProps
+  extends Omit<React.ComponentProps<typeof Kanban.Item>, "value"> {
+  task: Task;
+}
+
+function KanbanItemCard({ task }: KanbanItemCardProps) {
+  return (
+    <Kanban.Item key={task.id} value={task.id} asChild asGrip>
+      <div className="rounded-md border bg-card p-4 shadow-sm">
+        <div className="flex items-center justify-between">
+          <div className="font-medium">{task.title}</div>
+          <div
+            className={cn(
+              "text-xs",
+              task.priority === "high"
+                ? "text-red-500"
+                : task.priority === "medium"
+                  ? "text-yellow-500"
+                  : "text-green-500",
+            )}
+          >
+            {task.priority}
+          </div>
+        </div>
+      </div>
+    </Kanban.Item>
   );
 }

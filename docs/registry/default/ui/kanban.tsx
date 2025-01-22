@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  type CollisionDetection,
   DndContext,
   type DndContextProps,
   type DragEndEvent,
@@ -8,12 +9,15 @@ import {
   type DraggableSyntheticListeners,
   type DropAnimation,
   KeyboardSensor,
+  MeasuringStrategy,
   MouseSensor,
   TouchSensor,
   type UniqueIdentifier,
-  closestCorners,
+  closestCenter,
   defaultDropAnimationSideEffects,
-  useDroppable,
+  getFirstCollision,
+  pointerWithin,
+  rectIntersection,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -50,7 +54,7 @@ const KANBAN_ERROR = {
 
 interface KanbanContextValue<T> {
   id: string;
-  columns: Record<UniqueIdentifier, T[]>;
+  value: Record<UniqueIdentifier, T[]>;
   activeId: UniqueIdentifier | null;
   setActiveId: (id: UniqueIdentifier | null) => void;
   getItemValue: (item: T) => UniqueIdentifier;
@@ -71,8 +75,8 @@ function useKanbanContext(name: keyof typeof KANBAN_ERROR) {
 }
 
 type KanbanProps<T> = DndContextProps & {
-  columns: Record<UniqueIdentifier, T[]>;
-  onColumnsChange?: (columns: Record<UniqueIdentifier, T[]>) => void;
+  value: Record<UniqueIdentifier, T[]>;
+  onValueChange?: (columns: Record<UniqueIdentifier, T[]>) => void;
   onMove?: (event: DragEndEvent) => void;
   sensors?: DndContextProps["sensors"];
   flatCursor?: boolean;
@@ -82,16 +86,23 @@ type KanbanProps<T> = DndContextProps & {
 
 function Kanban<T>(props: KanbanProps<T>) {
   const {
-    columns,
-    onColumnsChange,
+    id = React.useId(),
+    value,
+    onValueChange,
     sensors: sensorsProp,
     onMove,
     getItemValue: getItemValueProp,
     flatCursor = false,
     ...kanbanProps
   } = props;
-  const id = React.useId();
   const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null);
+  const lastOverId = React.useRef<UniqueIdentifier | null>(null);
+  const recentlyMovedToNewContainer = React.useRef(false);
+  const [clonedColumns, setClonedColumns] = React.useState<Record<
+    UniqueIdentifier,
+    T[]
+  > | null>(null);
+
   const sensors = useSensors(
     useSensor(MouseSensor),
     useSensor(TouchSensor),
@@ -117,20 +128,20 @@ function Kanban<T>(props: KanbanProps<T>) {
   const contextValue = React.useMemo<KanbanContextValue<T>>(
     () => ({
       id,
-      columns,
+      value,
       activeId,
       setActiveId,
       getItemValue,
       flatCursor,
     }),
-    [id, columns, activeId, getItemValue, flatCursor],
+    [id, value, activeId, getItemValue, flatCursor],
   );
 
   const getContainer = React.useCallback(
     (id: UniqueIdentifier) => {
-      if (id in columns) return id;
+      if (id in value) return id;
 
-      for (const [columnId, items] of Object.entries(columns)) {
+      for (const [columnId, items] of Object.entries(value)) {
         if (items.some((item) => getItemValue(item) === id)) {
           return columnId;
         }
@@ -138,97 +149,228 @@ function Kanban<T>(props: KanbanProps<T>) {
 
       return null;
     },
-    [columns, getItemValue],
+    [value, getItemValue],
   );
+
+  const collisionDetection: CollisionDetection = React.useCallback(
+    (args) => {
+      if (activeId && activeId in value) {
+        return closestCenter({
+          ...args,
+          droppableContainers: args.droppableContainers.filter(
+            (container) => container.id in value,
+          ),
+        });
+      }
+
+      const pointerIntersections = pointerWithin(args);
+      const intersections =
+        pointerIntersections.length > 0
+          ? pointerIntersections
+          : rectIntersection(args);
+      let overId = getFirstCollision(intersections, "id");
+
+      if (!overId) {
+        if (recentlyMovedToNewContainer.current) {
+          lastOverId.current = activeId;
+        }
+        return lastOverId.current ? [{ id: lastOverId.current }] : [];
+      }
+
+      if (overId in value) {
+        const containerItems = value[overId];
+        if (containerItems && containerItems.length > 0) {
+          const closestItem = closestCenter({
+            ...args,
+            droppableContainers: args.droppableContainers.filter(
+              (container) =>
+                container.id !== overId &&
+                containerItems.some(
+                  (item) => getItemValue(item) === container.id,
+                ),
+            ),
+          });
+
+          if (closestItem.length > 0) {
+            overId = closestItem[0]?.id ?? overId;
+          }
+        }
+      }
+
+      lastOverId.current = overId;
+      return [{ id: overId }];
+    },
+    [activeId, value, getItemValue],
+  );
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  React.useEffect(() => {
+    requestAnimationFrame(() => {
+      recentlyMovedToNewContainer.current = false;
+    });
+  }, [value]);
 
   return (
     <KanbanContext.Provider value={contextValue as KanbanContextValue<unknown>}>
       <DndContext
         id={id}
         sensors={sensorsProp ?? sensors}
-        collisionDetection={closestCorners}
-        onDragStart={composeEventHandlers(kanbanProps.onDragStart, (event) =>
-          setActiveId(event.active.id),
-        )}
+        collisionDetection={collisionDetection}
+        measuring={{
+          droppable: {
+            strategy: MeasuringStrategy.Always,
+          },
+        }}
+        onDragStart={composeEventHandlers(kanbanProps.onDragStart, (event) => {
+          setActiveId(event.active.id);
+          setClonedColumns(value);
+        })}
+        onDragOver={composeEventHandlers(kanbanProps.onDragOver, (event) => {
+          const { active, over } = event;
+          const overId = over?.id;
+
+          if (!overId || active.id in value) return;
+
+          const overContainer = getContainer(overId);
+          const activeContainer = getContainer(active.id);
+
+          if (!overContainer || !activeContainer) return;
+
+          if (activeContainer !== overContainer) {
+            const activeItems = value[activeContainer];
+            const overItems = value[overContainer];
+
+            if (!activeItems || !overItems) return;
+
+            const overIndex = overItems.findIndex(
+              (item) => getItemValue(item) === overId,
+            );
+            const activeIndex = activeItems.findIndex(
+              (item) => getItemValue(item) === active.id,
+            );
+
+            if (activeIndex === -1) return;
+
+            const activeItem = activeItems[activeIndex];
+            if (!activeItem) return;
+
+            let newIndex: number;
+
+            if (overId in value) {
+              newIndex = overItems.length;
+            } else {
+              const isBelowOverItem =
+                over &&
+                active.rect.current.translated &&
+                active.rect.current.translated.top >
+                  over.rect.top + over.rect.height;
+
+              const modifier = isBelowOverItem ? 1 : 0;
+              newIndex =
+                overIndex >= 0 ? overIndex + modifier : overItems.length;
+            }
+
+            recentlyMovedToNewContainer.current = true;
+
+            const newOverItems = [
+              ...overItems.slice(0, newIndex),
+              activeItem,
+              ...overItems.slice(newIndex),
+            ];
+
+            const updatedColumns: Record<UniqueIdentifier, T[]> = {
+              ...value,
+              [activeContainer]: activeItems.filter(
+                (item) => getItemValue(item) !== active.id,
+              ),
+              [overContainer]: newOverItems,
+            };
+
+            onValueChange?.(updatedColumns);
+          }
+        })}
         onDragEnd={composeEventHandlers(kanbanProps.onDragEnd, (event) => {
-          if (!event.over) {
+          const { active, over } = event;
+
+          if (!over) {
             setActiveId(null);
+            setClonedColumns(null);
             return;
           }
 
-          const activeContainer = getContainer(event.active.id);
-          const overContainer =
-            event.over.data?.current?.type === "column"
-              ? event.over.id
-              : getContainer(event.over.id);
+          const activeContainer = getContainer(active.id);
+          const overContainer = getContainer(over.id);
 
           if (!activeContainer || !overContainer) {
             setActiveId(null);
+            setClonedColumns(null);
             return;
           }
 
-          const activeItems = columns[activeContainer];
-          const overItems = columns[overContainer];
+          const activeItems = value[activeContainer];
+          const overItems = value[overContainer];
 
           if (!activeItems || !overItems) {
             setActiveId(null);
+            setClonedColumns(null);
             return;
           }
 
           if (activeContainer !== overContainer) {
             const activeIndex = activeItems.findIndex(
-              (item) => getItemValue(item) === event.active.id,
+              (item) => getItemValue(item) === active.id,
             );
-            const overIndex =
-              event.over.data?.current?.type === "column"
-                ? overItems.length
-                : overItems.findIndex(
-                    (item) => getItemValue(item) === event.over?.id,
-                  );
+            const overIndex = overItems.findIndex(
+              (item) => getItemValue(item) === over.id,
+            );
 
             if (onMove) {
               onMove(event);
             } else {
-              const newColumns = { ...columns };
+              const newColumns = { ...value };
               const activeColumn = newColumns[activeContainer];
               const overColumn = newColumns[overContainer];
 
               if (!activeColumn || !overColumn) {
                 setActiveId(null);
+                setClonedColumns(null);
                 return;
               }
 
               const [movedItem] = activeColumn.splice(activeIndex, 1);
               if (!movedItem) {
                 setActiveId(null);
+                setClonedColumns(null);
                 return;
               }
 
               overColumn.splice(overIndex, 0, movedItem);
-              onColumnsChange?.(newColumns);
+              onValueChange?.(newColumns);
             }
           } else {
-            const items = columns[activeContainer];
+            const items = value[activeContainer];
             if (!items) {
               setActiveId(null);
+              setClonedColumns(null);
               return;
             }
 
             const activeIndex = items.findIndex(
-              (item) => getItemValue(item) === event.active.id,
+              (item) => getItemValue(item) === active.id,
             );
             const overIndex = items.findIndex(
-              (item) => getItemValue(item) === event.over?.id,
+              (item) => getItemValue(item) === over.id,
             );
 
             if (activeIndex !== overIndex) {
               if (onMove) {
                 onMove(event);
               } else {
-                const newColumns = { ...columns };
+                const newColumns = { ...value };
                 const columnItems = newColumns[activeContainer];
                 if (!columnItems) {
                   setActiveId(null);
+                  setClonedColumns(null);
                   return;
                 }
                 newColumns[activeContainer] = arrayMove(
@@ -236,15 +378,20 @@ function Kanban<T>(props: KanbanProps<T>) {
                   activeIndex,
                   overIndex,
                 );
-                onColumnsChange?.(newColumns);
+                onValueChange?.(newColumns);
               }
             }
           }
           setActiveId(null);
+          setClonedColumns(null);
         })}
-        onDragCancel={composeEventHandlers(kanbanProps.onDragCancel, () =>
-          setActiveId(null),
-        )}
+        onDragCancel={composeEventHandlers(kanbanProps.onDragCancel, () => {
+          if (clonedColumns) {
+            onValueChange?.(clonedColumns);
+          }
+          setActiveId(null);
+          setClonedColumns(null);
+        })}
         {...kanbanProps}
       />
     </KanbanContext.Provider>
@@ -293,20 +440,13 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
     const { value, asChild, ...columnProps } = props;
     const context = useKanbanContext("board");
     const inBoard = React.useContext(KanbanBoardContext);
-    const { setNodeRef, isOver } = useDroppable({
-      id: value,
-      data: {
-        type: "column",
-        value,
-      },
-    });
 
     if (!inBoard) {
       throw new Error(KANBAN_ERROR.column);
     }
 
     const ColumnSlot = asChild ? Slot : "div";
-    const items = context.columns[value] ?? [];
+    const items = context.value[value] ?? [];
 
     return (
       <SortableContext
@@ -315,15 +455,9 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
       >
         <ColumnSlot
           {...columnProps}
-          ref={composeRefs(forwardedRef, (node) =>
-            setNodeRef(node as HTMLElement),
-          )}
-          data-droppable=""
-          data-column-id={value}
-          data-over={isOver ? "" : undefined}
+          ref={forwardedRef}
           className={cn(
             "flex h-full min-h-[200px] w-[300px] flex-none flex-col gap-2 rounded-lg bg-muted/50 p-4",
-            isOver && "ring-2 ring-primary ring-offset-2",
             props.className,
           )}
         />
@@ -515,12 +649,10 @@ const ItemGrip = KanbanItemGrip;
 const Overlay = KanbanOverlay;
 
 export {
-  Root,
   Board,
   Column,
   Item,
   ItemGrip,
-  Overlay,
   //
   Kanban,
   KanbanBoard,
@@ -528,4 +660,6 @@ export {
   KanbanItem,
   KanbanItemGrip,
   KanbanOverlay,
+  Overlay,
+  Root,
 };
