@@ -22,16 +22,10 @@ export default function KanbanDemo() {
       { id: "5", title: "Implement dark mode", priority: "medium" },
     ],
     done: [
-      { id: "6", title: "Setup project", priority: "high" },
-      { id: "7", title: "Initial commit", priority: "low" },
+      // { id: "6", title: "Setup project", priority: "high" },
+      // { id: "7", title: "Initial commit", priority: "low" },
     ],
   });
-
-  const columnData = [
-    { id: "todo", title: "Todo" },
-    { id: "inProgress", title: "In Progress" },
-    { id: "done", title: "Done" },
-  ];
 
   return (
     <Kanban.Root
@@ -40,14 +34,14 @@ export default function KanbanDemo() {
       getItemValue={(item) => item.id}
     >
       <Kanban.Board>
-        {columnData.map((column) => (
+        {Object.keys(columns).map((column) => (
           <Kanban.Column
-            key={column.id}
-            value={column.id}
-            className="flex max-h-[400px] flex-col gap-4 overflow-y-auto"
+            key={column}
+            value={column}
+            className="flex max-h-[200px] flex-col gap-2 overflow-y-auto"
           >
-            <div className="font-medium">{column.title}</div>
-            {columns[column.id]?.map((task) => (
+            <div className="font-medium">{column}</div>
+            {columns[column]?.map((task) => (
               <Kanban.Item key={task.id} value={task.id} asChild asGrip>
                 <div className="rounded-md border bg-card p-4 shadow-sm">
                   <div className="flex items-center justify-between">
