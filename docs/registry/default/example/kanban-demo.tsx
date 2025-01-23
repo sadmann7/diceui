@@ -3,6 +3,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import * as Kanban from "@/registry/default/ui/kanban";
+import {
+  SortableContext,
+  horizontalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { GripVertical } from "lucide-react";
 import * as React from "react";
 
@@ -120,9 +124,11 @@ export default function KanbanDemo() {
                   {tasks?.length ?? 0}
                 </Badge>
               </div>
-              <Button variant="ghost" size="icon">
-                <GripVertical className="h-4 w-4" />
-              </Button>
+              <Kanban.ColumnHandle asChild>
+                <Button variant="ghost" size="icon">
+                  <GripVertical className="h-4 w-4" />
+                </Button>
+              </Kanban.ColumnHandle>
             </div>
             <div className="flex flex-col gap-2 p-0.5">
               {tasks?.map((task) => (
