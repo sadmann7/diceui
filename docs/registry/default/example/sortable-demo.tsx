@@ -34,6 +34,7 @@ export default function SortableDemo() {
       <Sortable.Overlay>
         {(activeItem) => {
           const trick = tricks.find((trick) => trick.id === activeItem.value);
+
           if (!trick) return null;
 
           return <TrickCard trick={trick} />;

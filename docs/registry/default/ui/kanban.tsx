@@ -23,7 +23,6 @@ import {
   getFirstCollision,
   pointerWithin,
   rectIntersection,
-  useDroppable,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -158,12 +157,12 @@ const ITEM_HANDLE_NAME = "KanbanItemHandle";
 const OVERLAY_NAME = "KanbanOverlay";
 
 const KANBAN_ERROR = {
-  root: `${ROOT_NAME} components must be within ${ROOT_NAME}`,
-  board: `${BOARD_NAME} must be within ${ROOT_NAME}`,
-  column: `${COLUMN_NAME} must be within ${BOARD_NAME}`,
-  item: `${ITEM_NAME} must be within ${COLUMN_NAME}`,
-  itemHandle: `${ITEM_HANDLE_NAME} must be within ${ITEM_NAME}`,
-  overlay: `${OVERLAY_NAME} must be within ${ROOT_NAME}`,
+  [ROOT_NAME]: `${ROOT_NAME} components must be within ${ROOT_NAME}`,
+  [BOARD_NAME]: `${BOARD_NAME} must be within ${ROOT_NAME}`,
+  [COLUMN_NAME]: `${COLUMN_NAME} must be within ${BOARD_NAME}`,
+  [ITEM_NAME]: `${ITEM_NAME} must be within ${COLUMN_NAME}`,
+  [ITEM_HANDLE_NAME]: `${ITEM_HANDLE_NAME} must be within ${ITEM_NAME}`,
+  [OVERLAY_NAME]: `${OVERLAY_NAME} must be within ${ROOT_NAME}`,
 } as const;
 
 interface KanbanContextValue<T> {
@@ -528,7 +527,7 @@ interface KanbanBoardProps extends SlotProps {
 const KanbanBoard = React.forwardRef<HTMLDivElement, KanbanBoardProps>(
   (props, forwardedRef) => {
     const { asChild, className, ...boardProps } = props;
-    const context = useKanbanContext("board");
+    const context = useKanbanContext(BOARD_NAME);
 
     const BoardSlot = asChild ? Slot : "div";
 
@@ -571,13 +570,13 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
       ...columnProps
     } = props;
 
-    const context = useKanbanContext("column");
+    const context = useKanbanContext(COLUMN_NAME);
     const inBoard = React.useContext(KanbanBoardContext);
     const inOverlay = React.useContext(KanbanOverlayContext);
     const id = React.useId();
 
     if (!inBoard && !inOverlay) {
-      throw new Error(KANBAN_ERROR.column);
+      throw new Error(KANBAN_ERROR[COLUMN_NAME]);
     }
 
     if (value === "") {
@@ -680,7 +679,7 @@ const KanbanColumnHandle = React.forwardRef<
   if (!columnContext) {
     throw new Error("KanbanColumnHandle must be used within a KanbanColumn");
   }
-  const context = useKanbanContext("column");
+  const context = useKanbanContext(COLUMN_NAME);
 
   const isDisabled = disabled ?? columnContext.disabled;
 
@@ -749,12 +748,12 @@ const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
       className,
       ...itemProps
     } = props;
-    const context = useKanbanContext("item");
+    const context = useKanbanContext(ITEM_NAME);
     const inBoard = React.useContext(KanbanBoardContext);
     const inOverlay = React.useContext(KanbanOverlayContext);
 
     if (!inBoard && !inOverlay) {
-      throw new Error(KANBAN_ERROR.item);
+      throw new Error(KANBAN_ERROR[ITEM_NAME]);
     }
 
     const id = React.useId();
@@ -840,9 +839,9 @@ const KanbanItemHandle = React.forwardRef<
   const { asChild, disabled, className, ...dragHandleProps } = props;
   const itemContext = React.useContext(KanbanItemContext);
   if (!itemContext) {
-    throw new Error(KANBAN_ERROR.itemHandle);
+    throw new Error(KANBAN_ERROR[ITEM_HANDLE_NAME]);
   }
-  const context = useKanbanContext("itemHandle");
+  const context = useKanbanContext(ITEM_HANDLE_NAME);
 
   const isDisabled = disabled ?? itemContext.disabled;
 
@@ -875,6 +874,8 @@ const KanbanItemHandle = React.forwardRef<
 KanbanItemHandle.displayName = ITEM_HANDLE_NAME;
 
 const KanbanOverlayContext = React.createContext(false);
+KanbanOverlayContext.displayName = OVERLAY_NAME;
+
 const dropAnimation: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
     styles: {
@@ -891,19 +892,14 @@ interface KanbanOverlayProps
   children?:
     | ((params: {
         value: UniqueIdentifier;
-        type: "column" | "item";
+        variant: "column" | "item";
       }) => React.ReactNode)
     | React.ReactNode;
 }
 
 function KanbanOverlay(props: KanbanOverlayProps) {
-  const {
-    container: containerProp,
-    dropAnimation: dropAnimationProp,
-    children,
-    ...overlayProps
-  } = props;
-  const context = useKanbanContext("overlay");
+  const { container: containerProp, children, ...overlayProps } = props;
+  const context = useKanbanContext(OVERLAY_NAME);
 
   const [mounted, setMounted] = React.useState(false);
   React.useLayoutEffect(() => setMounted(true), []);
@@ -913,22 +909,33 @@ function KanbanOverlay(props: KanbanOverlayProps) {
 
   if (!container) return null;
 
+  const variant =
+    context.activeId && context.activeId in context.items ? "column" : "item";
+
   return ReactDOM.createPortal(
     <DragOverlay
       modifiers={context.modifiers}
-      dropAnimation={dropAnimationProp ?? dropAnimation}
+      dropAnimation={dropAnimation}
       className={cn(!context.flatCursor && "cursor-grabbing")}
       {...overlayProps}
     >
       <KanbanOverlayContext.Provider value={true}>
-        {context.activeId && children
-          ? typeof children === "function"
-            ? children({
-                value: context.activeId,
-                type: context.activeId in context.items ? "column" : "item",
-              })
-            : children
-          : null}
+        {context.activeId && children ? (
+          typeof children === "function" ? (
+            children({
+              value: context.activeId,
+              variant,
+            })
+          ) : variant === "column" ? (
+            <KanbanColumn value={context.activeId} asChild>
+              {children}
+            </KanbanColumn>
+          ) : (
+            <KanbanItem value={context.activeId} asChild>
+              {children}
+            </KanbanItem>
+          )
+        ) : null}
       </KanbanOverlayContext.Provider>
     </DragOverlay>,
     container,
@@ -944,13 +951,11 @@ const ItemHandle = KanbanItemHandle;
 const Overlay = KanbanOverlay;
 
 export {
-  Root,
   Board,
   Column,
   ColumnHandle,
   Item,
   ItemHandle,
-  Overlay,
   //
   Kanban,
   KanbanBoard,
@@ -959,4 +964,6 @@ export {
   KanbanItem,
   KanbanItemHandle,
   KanbanOverlay,
+  Overlay,
+  Root,
 };

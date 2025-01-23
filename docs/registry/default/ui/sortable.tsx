@@ -64,12 +64,14 @@ const ITEM_HANDLE_NAME = "SortableItemHandle";
 const OVERLAY_NAME = "SortableOverlay";
 
 const SORTABLE_ERROR = {
-  root: `${ROOT_NAME} components must be within ${ROOT_NAME}`,
-  content: `${CONTENT_NAME} must be within ${ROOT_NAME}`,
-  item: `${ITEM_NAME} must be within ${CONTENT_NAME}`,
-  itemHandle: `${ITEM_HANDLE_NAME} must be within ${ITEM_NAME}`,
-  overlay: `${OVERLAY_NAME} must be within ${ROOT_NAME}`,
+  [ROOT_NAME]: `${ROOT_NAME} components must be within ${ROOT_NAME}`,
+  [CONTENT_NAME]: `${CONTENT_NAME} must be within ${ROOT_NAME}`,
+  [ITEM_NAME]: `${ITEM_NAME} must be within ${CONTENT_NAME}`,
+  [ITEM_HANDLE_NAME]: `${ITEM_HANDLE_NAME} must be within ${ITEM_NAME}`,
+  [OVERLAY_NAME]: `${OVERLAY_NAME} must be within ${ROOT_NAME}`,
 } as const;
+
+type SortableNames = keyof typeof SORTABLE_ERROR;
 
 interface SortableRootContextValue<T> {
   id: string;
@@ -86,7 +88,7 @@ const SortableRootContext =
   React.createContext<SortableRootContextValue<unknown> | null>(null);
 SortableRootContext.displayName = ROOT_NAME;
 
-function useSortableContext(name: keyof typeof SORTABLE_ERROR) {
+function useSortableContext(name: SortableNames) {
   const context = React.useContext(SortableRootContext);
   if (!context) {
     throw new Error(SORTABLE_ERROR[name]);
@@ -263,7 +265,7 @@ interface SortableContentProps extends SlotProps {
 const SortableContent = React.forwardRef<HTMLDivElement, SortableContentProps>(
   (props, forwardedRef) => {
     const { strategy: strategyProp, asChild, ...contentProps } = props;
-    const context = useSortableContext("content");
+    const context = useSortableContext(CONTENT_NAME);
 
     const items = React.useMemo(() => {
       return context.items.map((item) => context.getItemValue(item));
@@ -284,67 +286,6 @@ const SortableContent = React.forwardRef<HTMLDivElement, SortableContentProps>(
   },
 );
 SortableContent.displayName = CONTENT_NAME;
-
-const SortableOverlayContext = React.createContext(false);
-SortableOverlayContext.displayName = OVERLAY_NAME;
-
-const dropAnimation: DropAnimation = {
-  sideEffects: defaultDropAnimationSideEffects({
-    styles: {
-      active: {
-        opacity: "0.4",
-      },
-    },
-  }),
-};
-
-interface SortableOverlayProps
-  extends Omit<React.ComponentPropsWithoutRef<typeof DragOverlay>, "children"> {
-  container?: HTMLElement | DocumentFragment | null;
-  children?:
-    | ((params: { value: UniqueIdentifier }) => React.ReactNode)
-    | React.ReactNode;
-}
-
-function SortableOverlay(props: SortableOverlayProps) {
-  const {
-    container: containerProp,
-    dropAnimation: dropAnimationProp,
-    children,
-    ...overlayProps
-  } = props;
-  const context = useSortableContext("overlay");
-
-  const [mounted, setMounted] = React.useState(false);
-  React.useLayoutEffect(() => setMounted(true), []);
-
-  const container =
-    containerProp ?? (mounted ? globalThis.document?.body : null);
-
-  if (!container) return null;
-
-  return ReactDOM.createPortal(
-    <DragOverlay
-      modifiers={context.modifiers}
-      dropAnimation={dropAnimationProp ?? dropAnimation}
-      className={cn(!context.flatCursor && "cursor-grabbing")}
-      {...overlayProps}
-    >
-      <SortableOverlayContext.Provider value={true}>
-        {context.activeId ? (
-          typeof children === "function" ? (
-            children({ value: context.activeId })
-          ) : (
-            <SortableItem value={context.activeId} asChild>
-              {children}
-            </SortableItem>
-          )
-        ) : null}
-      </SortableOverlayContext.Provider>
-    </DragOverlay>,
-    container,
-  );
-}
 
 interface SortableItemContextValue {
   id: string;
@@ -386,14 +327,14 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
     const inSortableOverlay = React.useContext(SortableOverlayContext);
 
     if (!inSortableContent && !inSortableOverlay) {
-      throw new Error(SORTABLE_ERROR.item);
+      throw new Error(SORTABLE_ERROR[ITEM_NAME]);
     }
 
     if (value === "") {
       throw new Error(`${ITEM_NAME} value cannot be an empty string.`);
     }
 
-    const context = useSortableContext("item");
+    const context = useSortableContext(ITEM_NAME);
     const id = React.useId();
     const {
       attributes,
@@ -475,9 +416,9 @@ const SortableItemHandle = React.forwardRef<
   const { asChild, disabled, className, ...dragHandleProps } = props;
   const itemContext = React.useContext(SortableItemContext);
   if (!itemContext) {
-    throw new Error(SORTABLE_ERROR.itemHandle);
+    throw new Error(SORTABLE_ERROR[ITEM_HANDLE_NAME]);
   }
-  const context = useSortableContext("itemHandle");
+  const context = useSortableContext(ITEM_HANDLE_NAME);
 
   const isDisabled = disabled ?? itemContext.disabled;
 
@@ -508,6 +449,62 @@ const SortableItemHandle = React.forwardRef<
   );
 });
 SortableItemHandle.displayName = ITEM_HANDLE_NAME;
+
+const SortableOverlayContext = React.createContext(false);
+SortableOverlayContext.displayName = OVERLAY_NAME;
+
+const dropAnimation: DropAnimation = {
+  sideEffects: defaultDropAnimationSideEffects({
+    styles: {
+      active: {
+        opacity: "0.4",
+      },
+    },
+  }),
+};
+
+interface SortableOverlayProps
+  extends Omit<React.ComponentPropsWithoutRef<typeof DragOverlay>, "children"> {
+  container?: HTMLElement | DocumentFragment | null;
+  children?:
+    | ((params: { value: UniqueIdentifier }) => React.ReactNode)
+    | React.ReactNode;
+}
+
+function SortableOverlay(props: SortableOverlayProps) {
+  const { container: containerProp, children, ...overlayProps } = props;
+  const context = useSortableContext(OVERLAY_NAME);
+
+  const [mounted, setMounted] = React.useState(false);
+  React.useLayoutEffect(() => setMounted(true), []);
+
+  const container =
+    containerProp ?? (mounted ? globalThis.document?.body : null);
+
+  if (!container) return null;
+
+  return ReactDOM.createPortal(
+    <DragOverlay
+      modifiers={context.modifiers}
+      dropAnimation={dropAnimation}
+      className={cn(!context.flatCursor && "cursor-grabbing")}
+      {...overlayProps}
+    >
+      <SortableOverlayContext.Provider value={true}>
+        {context.activeId ? (
+          typeof children === "function" ? (
+            children({ value: context.activeId })
+          ) : (
+            <SortableItem value={context.activeId} asChild>
+              {children}
+            </SortableItem>
+          )
+        ) : null}
+      </SortableOverlayContext.Provider>
+    </DragOverlay>,
+    container,
+  );
+}
 
 const Root = Sortable;
 const Content = SortableContent;

@@ -113,15 +113,20 @@ export default function KanbanDemo() {
         ))}
       </Kanban.Board>
       <Kanban.Overlay>
-        {({ value, type }) => {
-          if (type === "column") {
+        {({ value, variant }) => {
+          if (variant === "column") {
             const [columnId, tasks] =
               Object.entries(columns).find(([id]) => id === value) ?? [];
 
             if (!columnId || !tasks) return null;
 
             return (
-              <TaskColumn key={columnId} columnId={columnId} tasks={tasks} />
+              <TaskColumn
+                key={columnId}
+                columnId={columnId}
+                tasks={tasks}
+                asHandle
+              />
             );
           }
 
