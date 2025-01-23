@@ -121,7 +121,7 @@ export default function KanbanDemo() {
                 <GripVertical className="h-4 w-4" />
               </Button>
             </div>
-            <div className="flex max-h-[600px] flex-col gap-2 overflow-y-auto p-0.5">
+            <div className="flex flex-col gap-2 p-0.5">
               {tasks?.map((task) => (
                 <TaskCard key={task.id} task={task} asHandle />
               ))}

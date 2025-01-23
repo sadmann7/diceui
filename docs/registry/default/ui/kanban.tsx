@@ -611,8 +611,6 @@ const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
       };
     }, [transform, transition, style]);
 
-    const ItemSlot = asChild ? Slot : "div";
-
     const itemContext = React.useMemo<KanbanItemContextValue>(
       () => ({
         id,
@@ -625,10 +623,13 @@ const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
       [id, attributes, listeners, setActivatorNodeRef, isDragging, disabled],
     );
 
+    const ItemSlot = asChild ? Slot : "div";
+
     return (
       <KanbanItemContext.Provider value={itemContext}>
         <ItemSlot
           data-dragging={isDragging ? "" : undefined}
+          data-kanban-item=""
           {...itemProps}
           {...(asHandle ? attributes : {})}
           {...(asHandle ? listeners : {})}
@@ -739,7 +740,10 @@ function KanbanOverlay(props: KanbanOverlayProps) {
     <DragOverlay
       modifiers={context.modifiers}
       dropAnimation={dropAnimationProp ?? dropAnimation}
-      className={cn(!context.flatCursor && "cursor-grabbing")}
+      className={cn(
+        "[&_[data-kanban-item]]:opacity-50 [&_[data-kanban-item]]:outline-none [&_[data-kanban-item]]:ring-1 [&_[data-kanban-item]]:ring-ring [&_[data-kanban-item]]:ring-offset-1",
+        !context.flatCursor && "cursor-grabbing",
+      )}
       {...overlayProps}
     >
       {context.activeId && children

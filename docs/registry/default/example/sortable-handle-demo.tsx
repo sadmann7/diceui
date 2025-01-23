@@ -51,7 +51,7 @@ export default function SortableHandleDemo() {
         <SortableContent asChild>
           <TableBody>
             {tricks.map((trick) => (
-              <SortableItem key={trick.id} value={trick.id} asChild asHandle>
+              <SortableItem key={trick.id} value={trick.id} asChild>
                 <TableRow>
                   <TableCell className="w-[50px]">
                     <SortableItemHandle asChild>
