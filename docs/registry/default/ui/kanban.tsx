@@ -219,6 +219,7 @@ function Kanban<T>(props: KanbanProps<T>) {
     orientation = "horizontal",
     onMove,
     getItemValue: getItemValueProp,
+    accessibility,
     flatCursor = false,
     ...kanbanProps
   } = props;
@@ -443,6 +444,17 @@ function Kanban<T>(props: KanbanProps<T>) {
     [value, getContainer, getItemValue, onValueChange, onMove],
   );
 
+  const screenReaderInstructions = React.useMemo(
+    () => ({
+      draggable: `
+        To pick up a kanban item or column, press space or enter.
+        While dragging, use the arrow keys to move the item.
+        Press space or enter again to drop the item in its new position, or press escape to cancel.
+      `,
+    }),
+    [],
+  );
+
   const contextValue = React.useMemo<KanbanContextValue<T>>(
     () => ({
       id,
@@ -491,6 +503,110 @@ function Kanban<T>(props: KanbanProps<T>) {
           setActiveId(null);
           recentlyMovedToNewContainerRef.current = false;
         })}
+        accessibility={{
+          announcements: {
+            onDragStart({ active }) {
+              const isColumn = active.id in value;
+              const activeValue = active.id.toString();
+              if (isColumn) {
+                const columnIndex = Object.keys(value).indexOf(activeValue);
+                return `Grabbed kanban column "${activeValue}". Current position is ${columnIndex + 1} of ${Object.keys(value).length}. Use arrow keys to move, space to drop.`;
+              }
+
+              const container = getContainer(active.id);
+              if (!container) return;
+              const containerItems = value[container];
+              if (!containerItems?.length) return;
+              const itemIndex = containerItems.findIndex(
+                (item) => getItemValue(item) === active.id,
+              );
+              return `Grabbed kanban item "${activeValue}". Current position is ${itemIndex + 1} of ${containerItems.length} in column "${container}". Use arrow keys to move, space to drop.`;
+            },
+            onDragOver({ active, over }) {
+              if (!over) {
+                return "Item is no longer over a droppable area. Press escape to cancel.";
+              }
+
+              const isColumn = active.id in value;
+              const activeValue = active.id.toString();
+              const overValue = over.id.toString();
+
+              if (isColumn) {
+                const activeIndex = Object.keys(value).indexOf(activeValue);
+                const overIndex = Object.keys(value).indexOf(overValue);
+                const moveDirection =
+                  overIndex > activeIndex ? "right" : "left";
+                return `Column "${activeValue}" moved ${moveDirection} to position ${overIndex + 1} of ${Object.keys(value).length}.`;
+              }
+
+              const activeContainer = getContainer(active.id);
+              const overContainer = getContainer(over.id);
+
+              if (!activeContainer || !overContainer) return;
+
+              if (activeContainer === overContainer) {
+                const items = value[activeContainer];
+                if (!items?.length) return;
+                const activeIndex = items.findIndex(
+                  (item) => getItemValue(item) === active.id,
+                );
+                const overIndex = items.findIndex(
+                  (item) => getItemValue(item) === over.id,
+                );
+                const moveDirection = overIndex > activeIndex ? "down" : "up";
+                return `Item "${activeValue}" moved ${moveDirection} to position ${overIndex + 1} of ${items.length} in column "${activeContainer}".`;
+              }
+
+              return `Item "${activeValue}" moved to column "${overContainer}".`;
+            },
+            onDragEnd({ active, over }) {
+              if (!over) {
+                return `Dropped kanban item "${active.id}". No changes were made.`;
+              }
+
+              const isColumn = active.id in value;
+              const activeValue = active.id.toString();
+              const overValue = over.id.toString();
+
+              if (isColumn) {
+                const overIndex = Object.keys(value).indexOf(overValue);
+                return `Column "${activeValue}" dropped at position ${overIndex + 1} of ${Object.keys(value).length}.`;
+              }
+
+              const overContainer = getContainer(over.id);
+              if (!overContainer) return;
+
+              const items = value[overContainer];
+              if (!items?.length) return;
+              const overIndex = items.findIndex(
+                (item) => getItemValue(item) === over.id,
+              );
+              return `Item "${activeValue}" dropped at position ${overIndex + 1} of ${items.length} in column "${overContainer}".`;
+            },
+            onDragCancel({ active }) {
+              const isColumn = active.id in value;
+              const activeValue = active.id.toString();
+
+              if (isColumn) {
+                const columnIndex = Object.keys(value).indexOf(activeValue);
+                return `Sorting cancelled. Column "${activeValue}" returned to position ${columnIndex + 1} of ${Object.keys(value).length}.`;
+              }
+
+              const container = getContainer(active.id);
+              if (!container) return;
+
+              const items = value[container];
+              if (!items?.length) return;
+              const itemIndex = items.findIndex(
+                (item) => getItemValue(item) === active.id,
+              );
+              return `Sorting cancelled. Item "${activeValue}" returned to position ${itemIndex + 1} of ${items.length} in column "${container}".`;
+            },
+            ...accessibility?.announcements,
+          },
+          screenReaderInstructions,
+          ...accessibility,
+        }}
         {...kanbanProps}
       />
     </KanbanContext.Provider>
@@ -951,11 +1067,13 @@ const ItemHandle = KanbanItemHandle;
 const Overlay = KanbanOverlay;
 
 export {
+  Root,
   Board,
   Column,
   ColumnHandle,
   Item,
   ItemHandle,
+  Overlay,
   //
   Kanban,
   KanbanBoard,
@@ -964,6 +1082,4 @@ export {
   KanbanItem,
   KanbanItemHandle,
   KanbanOverlay,
-  Overlay,
-  Root,
 };
