@@ -8,9 +8,6 @@
     "@dnd-kit/utilities",
     "lucide-react"
   ],
-  "registryDependencies": [
-    "button"
-  ],
   "files": [
     {
       "path": "example/sortable-primitive-values-demo.tsx",

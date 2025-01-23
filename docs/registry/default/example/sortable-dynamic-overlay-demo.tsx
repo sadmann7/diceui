@@ -1,11 +1,16 @@
 "use client";
 
-import { Skeleton } from "@/components/ui/skeleton";
 import * as Sortable from "@/registry/default/ui/sortable";
 import * as React from "react";
 
-export default function SortableDemo() {
-  const [tricks, setTricks] = React.useState([
+interface Trick {
+  id: string;
+  title: string;
+  description: string;
+}
+
+export default function SortableDynamicOverlayDemo() {
+  const [tricks, setTricks] = React.useState<Trick[]>([
     {
       id: "1",
       title: "The 900",
@@ -49,21 +54,38 @@ export default function SortableDemo() {
     >
       <Sortable.Content className="grid auto-rows-fr grid-cols-3 gap-2.5">
         {tricks.map((trick) => (
-          <Sortable.Item key={trick.id} value={trick.id} asChild asHandle>
-            <div className="flex flex-col gap-1 rounded-md border bg-zinc-100 p-4 text-foreground shadow dark:bg-zinc-900">
-              <div className="font-medium text-sm leading-tight sm:text-base">
-                {trick.title}
-              </div>
-              <span className="line-clamp-2 hidden text-muted-foreground text-sm sm:inline-block">
-                {trick.description}
-              </span>
-            </div>
-          </Sortable.Item>
+          <TrickCard key={trick.id} trick={trick} asHandle />
         ))}
       </Sortable.Content>
       <Sortable.Overlay>
-        <Skeleton className="size-full" />
+        {(activeItem) => {
+          const trick = tricks.find((trick) => trick.id === activeItem.value);
+
+          if (!trick) return null;
+
+          return <TrickCard trick={trick} />;
+        }}
       </Sortable.Overlay>
     </Sortable.Root>
+  );
+}
+
+interface TrickCardProps
+  extends Omit<React.ComponentPropsWithoutRef<typeof Sortable.Item>, "value"> {
+  trick: Trick;
+}
+
+function TrickCard({ trick, ...props }: TrickCardProps) {
+  return (
+    <Sortable.Item key={trick.id} value={trick.id} asChild {...props}>
+      <div className="flex flex-col gap-1 rounded-md border bg-zinc-100 p-4 text-foreground shadow dark:bg-zinc-900">
+        <div className="font-medium text-sm leading-tight sm:text-base">
+          {trick.title}
+        </div>
+        <span className="line-clamp-2 hidden text-muted-foreground text-sm sm:inline-block">
+          {trick.description}
+        </span>
+      </div>
+    </Sortable.Item>
   );
 }

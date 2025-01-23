@@ -329,7 +329,7 @@ export const Index: Record<string, any> = {
       name: "sortable-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["button"],
+      registryDependencies: ["skeleton"],
       files: [{
         path: "registry/default/example/sortable-demo.tsx",
         type: "registry:example",
@@ -341,11 +341,27 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "sortable-dynamic-overlay-demo": {
+      name: "sortable-dynamic-overlay-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/example/sortable-dynamic-overlay-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/example/sortable-dynamic-overlay-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "sortable-primitive-values-demo": {
       name: "sortable-primitive-values-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["button"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/example/sortable-primitive-values-demo.tsx",
         type: "registry:example",
@@ -361,7 +377,7 @@ export const Index: Record<string, any> = {
       name: "sortable-handle-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["button","table"],
+      registryDependencies: ["button","skeleton","table"],
       files: [{
         path: "registry/default/example/sortable-handle-demo.tsx",
         type: "registry:example",

@@ -10,6 +10,7 @@
   ],
   "registryDependencies": [
     "button",
+    "skeleton",
     "table"
   ],
   "files": [

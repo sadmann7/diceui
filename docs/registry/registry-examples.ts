@@ -189,10 +189,27 @@ export const examples: Registry = [
       "@dnd-kit/sortable",
       "@dnd-kit/utilities",
     ],
-    registryDependencies: ["button"],
+    registryDependencies: ["skeleton"],
     files: [
       {
         path: "example/sortable-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "sortable-dynamic-overlay-demo",
+    type: "registry:example",
+    dependencies: [
+      "@dnd-kit/core",
+      "@dnd-kit/modifiers",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+      "lucide-react",
+    ],
+    files: [
+      {
+        path: "example/sortable-dynamic-overlay-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -207,7 +224,6 @@ export const examples: Registry = [
       "@dnd-kit/utilities",
       "lucide-react",
     ],
-    registryDependencies: ["button"],
     files: [
       {
         path: "example/sortable-primitive-values-demo.tsx",
@@ -225,7 +241,7 @@ export const examples: Registry = [
       "@dnd-kit/utilities",
       "lucide-react",
     ],
-    registryDependencies: ["button", "table"],
+    registryDependencies: ["button", "skeleton", "table"],
     files: [
       {
         path: "example/sortable-handle-demo.tsx",
