@@ -49,10 +49,10 @@ const directions: string[] = [
   KeyboardCode.Left,
 ];
 
-const coordinateGetter: KeyboardCoordinateGetter = (
-  event,
-  { context: { active, droppableRects, droppableContainers, collisionRect } },
-) => {
+const coordinateGetter: KeyboardCoordinateGetter = (event, { context }) => {
+  const { active, droppableRects, droppableContainers, collisionRect } =
+    context;
+
   if (directions.includes(event.code)) {
     event.preventDefault();
 
@@ -395,6 +395,16 @@ function Kanban<T>(props: KanbanProps<T>) {
             overIndex,
           );
           onValueChange?.(newColumns);
+
+          // Focus management - focus the moved item in its new position
+          requestAnimationFrame(() => {
+            const movedItem = document.querySelector(
+              `[data-value="${active.id}"]`,
+            );
+            if (movedItem instanceof HTMLElement) {
+              movedItem.focus();
+            }
+          });
         }
       }
 
@@ -475,10 +485,10 @@ const KanbanBoard = React.forwardRef<HTMLDivElement, KanbanBoardProps>(
     return (
       <KanbanBoardContext.Provider value={true}>
         <BoardSlot
-          {...boardProps}
-          ref={forwardedRef}
           aria-orientation={context.orientation}
           data-orientation={context.orientation}
+          {...boardProps}
+          ref={forwardedRef}
           className={cn(
             "flex size-full gap-4",
             context.orientation === "horizontal" ? "flex-row" : "flex-col",
@@ -629,7 +639,6 @@ const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
       <KanbanItemContext.Provider value={itemContext}>
         <ItemSlot
           data-dragging={isDragging ? "" : undefined}
-          data-kanban-item=""
           {...itemProps}
           {...(asHandle ? attributes : {})}
           {...(asHandle ? listeners : {})}
@@ -740,10 +749,7 @@ function KanbanOverlay(props: KanbanOverlayProps) {
     <DragOverlay
       modifiers={context.modifiers}
       dropAnimation={dropAnimationProp ?? dropAnimation}
-      className={cn(
-        "[&_[data-kanban-item]]:opacity-50 [&_[data-kanban-item]]:outline-none [&_[data-kanban-item]]:ring-1 [&_[data-kanban-item]]:ring-ring [&_[data-kanban-item]]:ring-offset-1",
-        !context.flatCursor && "cursor-grabbing",
-      )}
+      className={cn(!context.flatCursor && "cursor-grabbing")}
       {...overlayProps}
     >
       {context.activeId && children

@@ -113,7 +113,10 @@ export default function KanbanDemo() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <h3 className="font-semibold">{COLUMN_TITLES[columnId]}</h3>
-                <Badge variant="secondary" className="rounded-sm">
+                <Badge
+                  variant="secondary"
+                  className="pointer-events-none rounded-sm"
+                >
                   {tasks?.length ?? 0}
                 </Badge>
               </div>
@@ -164,7 +167,7 @@ function TaskCard({ task, ...props }: TaskCardProps) {
                     ? "default"
                     : "secondary"
               }
-              className="rounded-sm capitalize"
+              className="pointer-events-none rounded-sm capitalize"
             >
               {task.priority}
             </Badge>

@@ -327,10 +327,7 @@ function SortableOverlay(props: SortableOverlayProps) {
     <DragOverlay
       modifiers={context.modifiers}
       dropAnimation={dropAnimationProp ?? dropAnimation}
-      className={cn(
-        "[&_[data-sortable-item]]:opacity-50 [&_[data-sortable-item]]:outline-none [&_[data-sortable-item]]:ring-1 [&_[data-sortable-item]]:ring-ring [&_[data-sortable-item]]:ring-offset-1",
-        !context.flatCursor && "cursor-grabbing",
-      )}
+      className={cn(!context.flatCursor && "cursor-grabbing")}
       {...overlayProps}
     >
       <SortableOverlayContext.Provider value={true}>
@@ -442,7 +439,6 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
         <ItemSlot
           id={id}
           data-dragging={isDragging ? "" : undefined}
-          data-sortable-item=""
           {...itemProps}
           {...(asHandle ? attributes : {})}
           {...(asHandle ? listeners : {})}
