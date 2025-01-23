@@ -15,81 +15,6 @@ interface Task {
   dueDate?: string;
 }
 
-const INITIAL_TASKS: Record<string, Task[]> = {
-  backlog: [
-    {
-      id: "1",
-      title: "Add authentication",
-      priority: "high",
-      description: "Implement user authentication using NextAuth.js",
-      assignee: "John Doe",
-      dueDate: "2024-04-01",
-    },
-    {
-      id: "2",
-      title: "Create API endpoints",
-      priority: "medium",
-      description: "Design and implement RESTful API endpoints",
-      assignee: "Jane Smith",
-      dueDate: "2024-04-05",
-    },
-    {
-      id: "3",
-      title: "Write documentation",
-      priority: "low",
-      description: "Document API endpoints and component usage",
-      assignee: "Bob Johnson",
-      dueDate: "2024-04-10",
-    },
-  ],
-  inProgress: [
-    {
-      id: "4",
-      title: "Design system updates",
-      priority: "high",
-      description: "Update design tokens and component styles",
-      assignee: "Alice Brown",
-      dueDate: "2024-03-28",
-    },
-    {
-      id: "5",
-      title: "Implement dark mode",
-      priority: "medium",
-      description: "Add dark mode support using Tailwind",
-      assignee: "Charlie Wilson",
-      dueDate: "2024-04-02",
-    },
-  ],
-  review: [
-    {
-      id: "6",
-      title: "Code review",
-      priority: "high",
-      description: "Review pull requests and provide feedback",
-      assignee: "David Miller",
-      dueDate: "2024-03-27",
-    },
-  ],
-  done: [
-    {
-      id: "7",
-      title: "Setup project",
-      priority: "high",
-      description: "Initialize Next.js project with TypeScript",
-      assignee: "Eve Davis",
-      dueDate: "2024-03-25",
-    },
-    {
-      id: "8",
-      title: "Initial commit",
-      priority: "low",
-      description: "Create repository and add initial files",
-      assignee: "Frank White",
-      dueDate: "2024-03-24",
-    },
-  ],
-};
-
 const COLUMN_TITLES: Record<string, string> = {
   backlog: "Backlog",
   inProgress: "In Progress",
@@ -98,8 +23,80 @@ const COLUMN_TITLES: Record<string, string> = {
 };
 
 export default function KanbanDemo() {
-  const [columns, setColumns] =
-    React.useState<Record<string, Task[]>>(INITIAL_TASKS);
+  const [columns, setColumns] = React.useState<Record<string, Task[]>>({
+    backlog: [
+      {
+        id: "1",
+        title: "Add authentication",
+        priority: "high",
+        description: "Implement user authentication using NextAuth.js",
+        assignee: "John Doe",
+        dueDate: "2024-04-01",
+      },
+      {
+        id: "2",
+        title: "Create API endpoints",
+        priority: "medium",
+        description: "Design and implement RESTful API endpoints",
+        assignee: "Jane Smith",
+        dueDate: "2024-04-05",
+      },
+      {
+        id: "3",
+        title: "Write documentation",
+        priority: "low",
+        description: "Document API endpoints and component usage",
+        assignee: "Bob Johnson",
+        dueDate: "2024-04-10",
+      },
+    ],
+    inProgress: [
+      {
+        id: "4",
+        title: "Design system updates",
+        priority: "high",
+        description: "Update design tokens and component styles",
+        assignee: "Alice Brown",
+        dueDate: "2024-03-28",
+      },
+      {
+        id: "5",
+        title: "Implement dark mode",
+        priority: "medium",
+        description: "Add dark mode support using Tailwind",
+        assignee: "Charlie Wilson",
+        dueDate: "2024-04-02",
+      },
+    ],
+    review: [
+      {
+        id: "6",
+        title: "Code review",
+        priority: "high",
+        description: "Review pull requests and provide feedback",
+        assignee: "David Miller",
+        dueDate: "2024-03-27",
+      },
+    ],
+    done: [
+      {
+        id: "7",
+        title: "Setup project",
+        priority: "high",
+        description: "Initialize Next.js project with TypeScript",
+        assignee: "Eve Davis",
+        dueDate: "2024-03-25",
+      },
+      {
+        id: "8",
+        title: "Initial commit",
+        priority: "low",
+        description: "Create repository and add initial files",
+        assignee: "Frank White",
+        dueDate: "2024-03-24",
+      },
+    ],
+  });
 
   return (
     <Kanban.Root
