@@ -382,7 +382,6 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
       className,
       ...itemProps
     } = props;
-
     const inSortableContent = React.useContext(SortableContentContext);
     const inSortableOverlay = React.useContext(SortableOverlayContext);
 

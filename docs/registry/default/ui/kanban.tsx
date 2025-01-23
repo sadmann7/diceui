@@ -573,9 +573,10 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
 
     const context = useKanbanContext("column");
     const inBoard = React.useContext(KanbanBoardContext);
+    const inOverlay = React.useContext(KanbanOverlayContext);
     const id = React.useId();
 
-    if (!inBoard) {
+    if (!inBoard && !inOverlay) {
       throw new Error(KANBAN_ERROR.column);
     }
 
@@ -665,7 +666,6 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
   },
 );
 KanbanColumn.displayName = COLUMN_NAME;
-
 interface KanbanColumnHandleProps
   extends React.ComponentPropsWithoutRef<"button"> {
   asChild?: boolean;
@@ -750,6 +750,13 @@ const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
       ...itemProps
     } = props;
     const context = useKanbanContext("item");
+    const inBoard = React.useContext(KanbanBoardContext);
+    const inOverlay = React.useContext(KanbanOverlayContext);
+
+    if (!inBoard && !inOverlay) {
+      throw new Error(KANBAN_ERROR.item);
+    }
+
     const id = React.useId();
     const {
       attributes,
@@ -867,6 +874,7 @@ const KanbanItemHandle = React.forwardRef<
 });
 KanbanItemHandle.displayName = ITEM_HANDLE_NAME;
 
+const KanbanOverlayContext = React.createContext(false);
 const dropAnimation: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
     styles: {
@@ -881,7 +889,10 @@ interface KanbanOverlayProps
   extends Omit<React.ComponentPropsWithoutRef<typeof DragOverlay>, "children"> {
   container?: HTMLElement | DocumentFragment | null;
   children?:
-    | ((params: { value: UniqueIdentifier }) => React.ReactNode)
+    | ((params: {
+        value: UniqueIdentifier;
+        type: "column" | "item";
+      }) => React.ReactNode)
     | React.ReactNode;
 }
 
@@ -909,11 +920,16 @@ function KanbanOverlay(props: KanbanOverlayProps) {
       className={cn(!context.flatCursor && "cursor-grabbing")}
       {...overlayProps}
     >
-      {context.activeId && children
-        ? typeof children === "function"
-          ? children({ value: context.activeId })
-          : children
-        : null}
+      <KanbanOverlayContext.Provider value={true}>
+        {context.activeId && children
+          ? typeof children === "function"
+            ? children({
+                value: context.activeId,
+                type: context.activeId in context.items ? "column" : "item",
+              })
+            : children
+          : null}
+      </KanbanOverlayContext.Provider>
     </DragOverlay>,
     container,
   );

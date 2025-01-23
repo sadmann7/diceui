@@ -3,10 +3,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import * as Kanban from "@/registry/default/ui/kanban";
-import {
-  SortableContext,
-  horizontalListSortingStrategy,
-} from "@dnd-kit/sortable";
 import { GripVertical } from "lucide-react";
 import * as React from "react";
 
@@ -113,36 +109,25 @@ export default function KanbanDemo() {
     >
       <Kanban.Board>
         {Object.entries(columns).map(([columnId, tasks]) => (
-          <Kanban.Column key={columnId} value={columnId}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <h3 className="font-semibold">{COLUMN_TITLES[columnId]}</h3>
-                <Badge
-                  variant="secondary"
-                  className="pointer-events-none rounded-sm"
-                >
-                  {tasks?.length ?? 0}
-                </Badge>
-              </div>
-              <Kanban.ColumnHandle asChild>
-                <Button variant="ghost" size="icon">
-                  <GripVertical className="h-4 w-4" />
-                </Button>
-              </Kanban.ColumnHandle>
-            </div>
-            <div className="flex flex-col gap-2 p-0.5">
-              {tasks?.map((task) => (
-                <TaskCard key={task.id} task={task} asHandle />
-              ))}
-            </div>
-          </Kanban.Column>
+          <TaskColumn key={columnId} columnId={columnId} tasks={tasks} />
         ))}
       </Kanban.Board>
       <Kanban.Overlay>
-        {(activeItem) => {
+        {({ value, type }) => {
+          if (type === "column") {
+            const [columnId, tasks] =
+              Object.entries(columns).find(([id]) => id === value) ?? [];
+
+            if (!columnId || !tasks) return null;
+
+            return (
+              <TaskColumn key={columnId} columnId={columnId} tasks={tasks} />
+            );
+          }
+
           const task = Object.values(columns)
             .flat()
-            .find((task) => task.id === activeItem.value);
+            .find((task) => task.id === value);
 
           if (!task) return null;
 
@@ -188,5 +173,39 @@ function TaskCard({ task, ...props }: TaskCardProps) {
         </div>
       </div>
     </Kanban.Item>
+  );
+}
+
+interface TaskColumnProps
+  extends Omit<
+    React.ComponentProps<typeof Kanban.Column>,
+    "value" | "children"
+  > {
+  columnId: string;
+  tasks: Task[];
+}
+
+function TaskColumn({ columnId, tasks, ...props }: TaskColumnProps) {
+  return (
+    <Kanban.Column key={columnId} value={columnId} {...props}>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <h3 className="font-semibold">{COLUMN_TITLES[columnId]}</h3>
+          <Badge variant="secondary" className="pointer-events-none rounded-sm">
+            {tasks?.length ?? 0}
+          </Badge>
+        </div>
+        <Kanban.ColumnHandle asChild>
+          <Button variant="ghost" size="icon">
+            <GripVertical className="h-4 w-4" />
+          </Button>
+        </Kanban.ColumnHandle>
+      </div>
+      <div className="flex flex-col gap-2 p-0.5">
+        {tasks?.map((task) => (
+          <TaskCard key={task.id} task={task} asHandle />
+        ))}
+      </div>
+    </Kanban.Column>
   );
 }
