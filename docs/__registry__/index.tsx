@@ -329,7 +329,7 @@ export const Index: Record<string, any> = {
       name: "sortable-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["skeleton"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/example/sortable-demo.tsx",
         type: "registry:example",
@@ -377,7 +377,7 @@ export const Index: Record<string, any> = {
       name: "sortable-handle-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["button","skeleton","table"],
+      registryDependencies: ["button","table"],
       files: [{
         path: "registry/default/example/sortable-handle-demo.tsx",
         type: "registry:example",

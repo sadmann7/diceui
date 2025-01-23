@@ -62,7 +62,7 @@ export default function SortableDemo() {
         ))}
       </Sortable.Content>
       <Sortable.Overlay>
-        <Skeleton className="size-full" />
+        <div className="size-full rounded-md bg-primary/10" />
       </Sortable.Overlay>
     </Sortable.Root>
   );

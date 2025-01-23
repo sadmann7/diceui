@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -74,7 +73,7 @@ export default function SortableHandleDemo() {
         </SortableContent>
       </Table>
       <SortableOverlay>
-        <Skeleton className="size-full rounded-none" />
+        <div className="size-full rounded-none bg-primary/10" />
       </SortableOverlay>
     </Sortable>
   );

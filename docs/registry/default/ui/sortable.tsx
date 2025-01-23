@@ -518,15 +518,11 @@ function SortableOverlay(props: SortableOverlayProps) {
       {...overlayProps}
     >
       <SortableOverlayContext.Provider value={true}>
-        {context.activeId ? (
-          typeof children === "function" ? (
-            children({ value: context.activeId })
-          ) : (
-            <SortableItem value={context.activeId} asChild>
-              {children}
-            </SortableItem>
-          )
-        ) : null}
+        {context.activeId
+          ? typeof children === "function"
+            ? children({ value: context.activeId })
+            : children
+          : null}
       </SortableOverlayContext.Provider>
     </DragOverlay>,
     container,

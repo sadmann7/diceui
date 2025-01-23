@@ -685,7 +685,6 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
       style,
       ...columnProps
     } = props;
-
     const context = useKanbanContext(COLUMN_NAME);
     const inBoard = React.useContext(KanbanBoardContext);
     const inOverlay = React.useContext(KanbanOverlayContext);
