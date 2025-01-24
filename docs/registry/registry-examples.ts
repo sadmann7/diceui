@@ -152,6 +152,7 @@ export const examples: Registry = [
       "@dnd-kit/modifiers",
       "@dnd-kit/sortable",
       "@dnd-kit/utilities",
+      "lucide-react",
     ],
     registryDependencies: ["badge", "button"],
     files: [

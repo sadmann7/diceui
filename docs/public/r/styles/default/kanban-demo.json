@@ -5,7 +5,8 @@
     "@dnd-kit/core",
     "@dnd-kit/modifiers",
     "@dnd-kit/sortable",
-    "@dnd-kit/utilities"
+    "@dnd-kit/utilities",
+    "lucide-react"
   ],
   "registryDependencies": [
     "badge",

@@ -16,7 +16,6 @@ import {
   KeyboardSensor,
   MeasuringStrategy,
   MouseSensor,
-  type ScreenReaderInstructions,
   TouchSensor,
   type UniqueIdentifier,
   closestCenter,
@@ -60,22 +59,16 @@ const coordinateGetter: KeyboardCoordinateGetter = (event, { context }) => {
   if (directions.includes(event.code)) {
     event.preventDefault();
 
-    if (!active || !collisionRect) {
-      return;
-    }
+    if (!active || !collisionRect) return;
 
     const filteredContainers: DroppableContainer[] = [];
 
     for (const entry of droppableContainers.getEnabled()) {
-      if (!entry || entry?.disabled) {
-        return;
-      }
+      if (!entry || entry?.disabled) return;
 
       const rect = droppableRects.get(entry.id);
 
-      if (!rect) {
-        return;
-      }
+      if (!rect) return;
 
       const data = entry.data.current;
 
@@ -235,7 +228,7 @@ function Kanban<T>(props: KanbanProps<T>) {
     useSensor(MouseSensor),
     useSensor(TouchSensor),
     useSensor(KeyboardSensor, {
-      coordinateGetter: coordinateGetter,
+      coordinateGetter,
     }),
   );
 
@@ -622,25 +615,6 @@ function Kanban<T>(props: KanbanProps<T>) {
 const KanbanBoardContext = React.createContext<boolean>(false);
 KanbanBoardContext.displayName = BOARD_NAME;
 
-interface KanbanColumnContextValue {
-  id: string;
-  attributes: React.HTMLAttributes<HTMLElement>;
-  listeners: DraggableSyntheticListeners | undefined;
-  setActivatorNodeRef: (node: HTMLElement | null) => void;
-  isDragging?: boolean;
-  disabled?: boolean;
-}
-
-const KanbanColumnContext = React.createContext<KanbanColumnContextValue>({
-  id: "",
-  attributes: {},
-  listeners: undefined,
-  setActivatorNodeRef: () => {},
-  isDragging: false,
-  disabled: false,
-});
-KanbanColumnContext.displayName = COLUMN_NAME;
-
 interface KanbanBoardProps extends SlotProps {
   children: React.ReactNode;
   asChild?: boolean;
@@ -684,6 +658,25 @@ const KanbanBoard = React.forwardRef<HTMLDivElement, KanbanBoardProps>(
   },
 );
 KanbanBoard.displayName = BOARD_NAME;
+
+interface KanbanColumnContextValue {
+  id: string;
+  attributes: React.HTMLAttributes<HTMLElement>;
+  listeners: DraggableSyntheticListeners | undefined;
+  setActivatorNodeRef: (node: HTMLElement | null) => void;
+  isDragging?: boolean;
+  disabled?: boolean;
+}
+
+const KanbanColumnContext = React.createContext<KanbanColumnContextValue>({
+  id: "",
+  attributes: {},
+  listeners: undefined,
+  setActivatorNodeRef: () => {},
+  isDragging: false,
+  disabled: false,
+});
+KanbanColumnContext.displayName = COLUMN_NAME;
 
 const animateLayoutChanges: AnimateLayoutChanges = (args) =>
   defaultAnimateLayoutChanges({ ...args, wasDragging: true });
@@ -1081,12 +1074,6 @@ const ItemHandle = KanbanItemHandle;
 const Overlay = KanbanOverlay;
 
 export {
-  Board,
-  Column,
-  ColumnHandle,
-  Item,
-  ItemHandle,
-  //
   Kanban,
   KanbanBoard,
   KanbanColumn,
@@ -1094,6 +1081,12 @@ export {
   KanbanItem,
   KanbanItemHandle,
   KanbanOverlay,
-  Overlay,
+  //
   Root,
+  Board,
+  Column,
+  ColumnHandle,
+  Item,
+  ItemHandle,
+  Overlay,
 };

@@ -73,8 +73,6 @@ const SORTABLE_ERROR = {
   [OVERLAY_NAME]: `${OVERLAY_NAME} must be within ${ROOT_NAME}`,
 } as const;
 
-type SortableNames = keyof typeof SORTABLE_ERROR;
-
 interface SortableRootContextValue<T> {
   id: string;
   items: T[];
@@ -90,7 +88,7 @@ const SortableRootContext =
   React.createContext<SortableRootContextValue<unknown> | null>(null);
 SortableRootContext.displayName = ROOT_NAME;
 
-function useSortableContext(name: SortableNames) {
+function useSortableContext(name: keyof typeof SORTABLE_ERROR) {
   const context = React.useContext(SortableRootContext);
   if (!context) {
     throw new Error(SORTABLE_ERROR[name]);
@@ -539,15 +537,15 @@ const ItemHandle = SortableItemHandle;
 const Overlay = SortableOverlay;
 
 export {
-  Root,
-  Content,
-  Item,
-  ItemHandle,
-  Overlay,
-  //
   Sortable,
   SortableContent,
   SortableItem,
   SortableItemHandle,
   SortableOverlay,
+  //
+  Root,
+  Content,
+  Item,
+  ItemHandle,
+  Overlay,
 };

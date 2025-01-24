@@ -1,12 +1,10 @@
 import * as React from "react";
 
 /**
+ * Composes two event handlers into a single handler by calling both in order.
+ * The custom handler runs if `checkForDefaultPrevented` is false or if the original handler doesn't call `event.preventDefault()`.
+ *
  * @see https://github.com/radix-ui/primitives/blob/main/packages/core/primitive/src/primitive.tsx
- */
-
-/**
- * A utility to compose multiple event handlers into a single event handler.
- * Executes originalEventHandler first, then ourEventHandler unless prevented.
  */
 function composeEventHandlers<E>(
   originalEventHandler?: (event: E) => void,
