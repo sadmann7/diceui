@@ -554,17 +554,6 @@ function Kanban<T>(props: KanbanProps<T>) {
     [value, getContainer, getItemValue],
   );
 
-  const screenReaderInstructions: ScreenReaderInstructions = React.useMemo(
-    () => ({
-      draggable: `
-        To pick up a kanban item or column, press space or enter.
-        While dragging, use the arrow keys to move the item.
-        Press space or enter again to drop the item in its new position, or press escape to cancel.
-      `,
-    }),
-    [],
-  );
-
   const contextValue = React.useMemo<KanbanContextValue<T>>(
     () => ({
       id,
@@ -615,7 +604,13 @@ function Kanban<T>(props: KanbanProps<T>) {
         })}
         accessibility={{
           announcements,
-          screenReaderInstructions,
+          screenReaderInstructions: {
+            draggable: `
+            To pick up a kanban item or column, press space or enter.
+            While dragging, use the arrow keys to move the item.
+            Press space or enter again to drop the item in its new position, or press escape to cancel.
+          `,
+          },
           ...accessibility,
         }}
         {...kanbanProps}
