@@ -105,26 +105,16 @@ export default function KanbanDemo() {
       getItemValue={(item) => item.id}
     >
       <Kanban.Board>
-        {Object.entries(columns).map(([columnId, tasks]) => (
-          <TaskColumn key={columnId} columnId={columnId} tasks={tasks} />
+        {Object.entries(columns).map(([columnValue, tasks]) => (
+          <TaskColumn key={columnValue} value={columnValue} tasks={tasks} />
         ))}
       </Kanban.Board>
       <Kanban.Overlay>
         {({ value, variant }) => {
           if (variant === "column") {
-            const [columnId, tasks] =
-              Object.entries(columns).find(([id]) => id === value) ?? [];
+            const tasks = columns[value] ?? [];
 
-            if (!columnId || !tasks) return null;
-
-            return (
-              <TaskColumn
-                key={columnId}
-                columnId={columnId}
-                tasks={tasks}
-                asHandle
-              />
-            );
+            return <TaskColumn value={value} tasks={tasks} />;
           }
 
           const task = Object.values(columns)
@@ -133,7 +123,7 @@ export default function KanbanDemo() {
 
           if (!task) return null;
 
-          return <TaskCard key={task.id} task={task} />;
+          return <TaskCard task={task} />;
         }}
       </Kanban.Overlay>
     </Kanban.Root>
@@ -179,20 +169,16 @@ function TaskCard({ task, ...props }: TaskCardProps) {
 }
 
 interface TaskColumnProps
-  extends Omit<
-    React.ComponentProps<typeof Kanban.Column>,
-    "value" | "children"
-  > {
-  columnId: string;
+  extends Omit<React.ComponentProps<typeof Kanban.Column>, "children"> {
   tasks: Task[];
 }
 
-function TaskColumn({ columnId, tasks, ...props }: TaskColumnProps) {
+function TaskColumn({ value, tasks, ...props }: TaskColumnProps) {
   return (
-    <Kanban.Column key={columnId} value={columnId} {...props}>
+    <Kanban.Column value={value} {...props}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <h3 className="font-semibold">{COLUMN_TITLES[columnId]}</h3>
+          <h3 className="font-semibold">{COLUMN_TITLES[value]}</h3>
           <Badge variant="secondary" className="pointer-events-none rounded-sm">
             {tasks?.length ?? 0}
           </Badge>

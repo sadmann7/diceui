@@ -27,9 +27,11 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import {
+  type AnimateLayoutChanges,
   SortableContext,
   type SortableContextProps,
   arrayMove,
+  defaultAnimateLayoutChanges,
   horizontalListSortingStrategy,
   useSortable,
   verticalListSortingStrategy,
@@ -545,26 +547,42 @@ const KanbanBoard = React.forwardRef<HTMLDivElement, KanbanBoardProps>(
     const { asChild, className, ...boardProps } = props;
     const context = useKanbanContext(BOARD_NAME);
 
+    const columns = React.useMemo(() => {
+      return Object.keys(context.items);
+    }, [context.items]);
+
     const BoardSlot = asChild ? Slot : "div";
 
     return (
       <KanbanBoardContext.Provider value={true}>
-        <BoardSlot
-          aria-orientation={context.orientation}
-          data-orientation={context.orientation}
-          {...boardProps}
-          ref={forwardedRef}
-          className={cn(
-            "flex size-full gap-4",
-            context.orientation === "horizontal" ? "flex-row" : "flex-col",
-            className,
-          )}
-        />
+        <SortableContext
+          items={columns}
+          strategy={
+            context.orientation === "horizontal"
+              ? horizontalListSortingStrategy
+              : verticalListSortingStrategy
+          }
+        >
+          <BoardSlot
+            aria-orientation={context.orientation}
+            data-orientation={context.orientation}
+            {...boardProps}
+            ref={forwardedRef}
+            className={cn(
+              "flex size-full gap-4",
+              context.orientation === "horizontal" ? "flex-row" : "flex-col",
+              className,
+            )}
+          />
+        </SortableContext>
       </KanbanBoardContext.Provider>
     );
   },
 );
 KanbanBoard.displayName = BOARD_NAME;
+
+const animateLayoutChanges: AnimateLayoutChanges = (args) =>
+  defaultAnimateLayoutChanges({ ...args, wasDragging: true });
 
 interface KanbanColumnProps extends SlotProps {
   value: UniqueIdentifier;
@@ -609,6 +627,7 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
     } = useSortable({
       id: value,
       disabled,
+      animateLayoutChanges,
     });
 
     const composedRef = useComposedRefs(forwardedRef, (node) => {
@@ -646,12 +665,12 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
     return (
       <KanbanColumnContext.Provider value={columnContext}>
         <SortableContext
+          items={items}
           strategy={
             context.orientation === "horizontal"
               ? horizontalListSortingStrategy
               : verticalListSortingStrategy
           }
-          items={items}
         >
           <ColumnSlot
             data-dragging={isDragging ? "" : undefined}
