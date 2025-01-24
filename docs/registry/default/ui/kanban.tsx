@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  type Announcements,
   type CollisionDetection,
   DndContext,
   type DndContextProps,
@@ -15,6 +16,7 @@ import {
   KeyboardSensor,
   MeasuringStrategy,
   MouseSensor,
+  type ScreenReaderInstructions,
   TouchSensor,
   type UniqueIdentifier,
   closestCenter,
@@ -446,7 +448,113 @@ function Kanban<T>(props: KanbanProps<T>) {
     [value, getContainer, getItemValue, onValueChange, onMove],
   );
 
-  const screenReaderInstructions = React.useMemo(
+  const announcements: Announcements = React.useMemo(
+    () => ({
+      onDragStart({ active }) {
+        const isColumn = active.id in value;
+        const itemType = isColumn ? "column" : "item";
+        const position = isColumn
+          ? Object.keys(value).indexOf(active.id as string) + 1
+          : (() => {
+              const container = getContainer(active.id);
+              if (!container || !value[container]) return 1;
+              return (
+                value[container].findIndex(
+                  (item) => getItemValue(item) === active.id,
+                ) + 1
+              );
+            })();
+        const total = isColumn
+          ? Object.keys(value).length
+          : (() => {
+              const container = getContainer(active.id);
+              return container ? (value[container]?.length ?? 0) : 0;
+            })();
+
+        return `Picked up ${itemType} at position ${position} of ${total}`;
+      },
+      onDragOver({ active, over }) {
+        if (!over) return;
+
+        const isColumn = active.id in value;
+        const itemType = isColumn ? "column" : "item";
+        const position = isColumn
+          ? Object.keys(value).indexOf(over.id as string) + 1
+          : (() => {
+              const container = getContainer(over.id);
+              if (!container || !value[container]) return 1;
+              return (
+                value[container].findIndex(
+                  (item) => getItemValue(item) === over.id,
+                ) + 1
+              );
+            })();
+        const total = isColumn
+          ? Object.keys(value).length
+          : (() => {
+              const container = getContainer(over.id);
+              return container ? (value[container]?.length ?? 0) : 0;
+            })();
+
+        const overContainer = getContainer(over.id);
+        const activeContainer = getContainer(active.id);
+
+        if (isColumn) {
+          return `${itemType} is now at position ${position} of ${total}`;
+        }
+
+        if (activeContainer !== overContainer) {
+          return `${itemType} is now at position ${position} of ${total} in ${overContainer}`;
+        }
+
+        return `${itemType} is now at position ${position} of ${total}`;
+      },
+      onDragEnd({ active, over }) {
+        if (!over) return;
+
+        const isColumn = active.id in value;
+        const itemType = isColumn ? "column" : "item";
+        const position = isColumn
+          ? Object.keys(value).indexOf(over.id as string) + 1
+          : (() => {
+              const container = getContainer(over.id);
+              if (!container || !value[container]) return 1;
+              return (
+                value[container].findIndex(
+                  (item) => getItemValue(item) === over.id,
+                ) + 1
+              );
+            })();
+        const total = isColumn
+          ? Object.keys(value).length
+          : (() => {
+              const container = getContainer(over.id);
+              return container ? (value[container]?.length ?? 0) : 0;
+            })();
+
+        const overContainer = getContainer(over.id);
+        const activeContainer = getContainer(active.id);
+
+        if (isColumn) {
+          return `${itemType} was dropped at position ${position} of ${total}`;
+        }
+
+        if (activeContainer !== overContainer) {
+          return `${itemType} was dropped at position ${position} of ${total} in ${overContainer}`;
+        }
+
+        return `${itemType} was dropped at position ${position} of ${total}`;
+      },
+      onDragCancel({ active }) {
+        const isColumn = active.id in value;
+        const itemType = isColumn ? "column" : "item";
+        return `Dragging was cancelled. ${itemType} was dropped.`;
+      },
+    }),
+    [value, getContainer, getItemValue],
+  );
+
+  const screenReaderInstructions: ScreenReaderInstructions = React.useMemo(
     () => ({
       draggable: `
         To pick up a kanban item or column, press space or enter.
@@ -506,6 +614,7 @@ function Kanban<T>(props: KanbanProps<T>) {
           recentlyMovedToNewContainerRef.current = false;
         })}
         accessibility={{
+          announcements,
           screenReaderInstructions,
           ...accessibility,
         }}

@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  type Announcements,
   DndContext,
   type DndContextProps,
   type DragEndEvent,
@@ -9,6 +10,7 @@ import {
   type DropAnimation,
   KeyboardSensor,
   MouseSensor,
+  type ScreenReaderInstructions,
   TouchSensor,
   type UniqueIdentifier,
   closestCenter,
@@ -177,7 +179,47 @@ function Sortable<T>(props: SortableProps<T>) {
     [value, onValueChange, onMove, getItemValue],
   );
 
-  const screenReaderInstructions = React.useMemo(
+  const announcements: Announcements = {
+    onDragStart({ active }) {
+      const activeValue = active.id.toString();
+      return `Grabbed sortable item "${activeValue}". Current position is ${active.data.current?.sortable.index + 1} of ${value.length}. Use arrow keys to move, space to drop.`;
+    },
+    onDragOver({ active, over }) {
+      if (over) {
+        const overIndex = over.data.current?.sortable.index ?? 0;
+        const activeIndex = active.data.current?.sortable.index ?? 0;
+        const moveDirection = overIndex > activeIndex ? "down" : "up";
+        const activeValue = active.id.toString();
+        return `Sortable item "${activeValue}" moved ${moveDirection} to position ${overIndex + 1} of ${value.length}.`;
+      }
+      return "Sortable item is no longer over a droppable area. Press escape to cancel.";
+    },
+    onDragEnd({ active, over }) {
+      const activeValue = active.id.toString();
+      if (over) {
+        const overIndex = over.data.current?.sortable.index ?? 0;
+        return `Sortable item "${activeValue}" dropped at position ${overIndex + 1} of ${value.length}.`;
+      }
+      return `Sortable item "${activeValue}" dropped. No changes were made.`;
+    },
+    onDragCancel({ active }) {
+      const activeIndex = active.data.current?.sortable.index ?? 0;
+      const activeValue = active.id.toString();
+      return `Sorting cancelled. Sortable item "${activeValue}" returned to position ${activeIndex + 1} of ${value.length}.`;
+    },
+    onDragMove({ active, over }) {
+      if (over) {
+        const overIndex = over.data.current?.sortable.index ?? 0;
+        const activeIndex = active.data.current?.sortable.index ?? 0;
+        const moveDirection = overIndex > activeIndex ? "down" : "up";
+        const activeValue = active.id.toString();
+        return `Sortable item "${activeValue}" is moving ${moveDirection} to position ${overIndex + 1} of ${value.length}.`;
+      }
+      return "Sortable item is no longer over a droppable area. Press escape to cancel.";
+    },
+  };
+
+  const screenReaderInstructions: ScreenReaderInstructions = React.useMemo(
     () => ({
       draggable: `
         To pick up a sortable item, press space or enter.
@@ -230,46 +272,7 @@ function Sortable<T>(props: SortableProps<T>) {
           setActiveId(null),
         )}
         accessibility={{
-          announcements: {
-            onDragStart({ active }) {
-              const activeValue = active.id.toString();
-              return `Grabbed sortable item "${activeValue}". Current position is ${active.data.current?.sortable.index + 1} of ${value.length}. Use arrow keys to move, space to drop.`;
-            },
-            onDragOver({ active, over }) {
-              if (over) {
-                const overIndex = over.data.current?.sortable.index ?? 0;
-                const activeIndex = active.data.current?.sortable.index ?? 0;
-                const moveDirection = overIndex > activeIndex ? "down" : "up";
-                const activeValue = active.id.toString();
-                return `Sortable item "${activeValue}" moved ${moveDirection} to position ${overIndex + 1} of ${value.length}.`;
-              }
-              return "Sortable item is no longer over a droppable area. Press escape to cancel.";
-            },
-            onDragEnd({ active, over }) {
-              const activeValue = active.id.toString();
-              if (over) {
-                const overIndex = over.data.current?.sortable.index ?? 0;
-                return `Sortable item "${activeValue}" dropped at position ${overIndex + 1} of ${value.length}.`;
-              }
-              return `Sortable item "${activeValue}" dropped. No changes were made.`;
-            },
-            onDragCancel({ active }) {
-              const activeIndex = active.data.current?.sortable.index ?? 0;
-              const activeValue = active.id.toString();
-              return `Sorting cancelled. Sortable item "${activeValue}" returned to position ${activeIndex + 1} of ${value.length}.`;
-            },
-            onDragMove({ active, over }) {
-              if (over) {
-                const overIndex = over.data.current?.sortable.index ?? 0;
-                const activeIndex = active.data.current?.sortable.index ?? 0;
-                const moveDirection = overIndex > activeIndex ? "down" : "up";
-                const activeValue = active.id.toString();
-                return `Sortable item "${activeValue}" is moving ${moveDirection} to position ${overIndex + 1} of ${value.length}.`;
-              }
-              return "Sortable item is no longer over a droppable area. Press escape to cancel.";
-            },
-            ...accessibility?.announcements,
-          },
+          announcements,
           screenReaderInstructions,
           ...accessibility,
         }}
