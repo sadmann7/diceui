@@ -16,13 +16,37 @@
     "name": "combobox",
     "type": "registry:ui",
     "dependencies": [
-      "@diceui/combobox",
-      "lucide-react"
+      "@dnd-kit/core",
+      "@dnd-kit/modifiers",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+      "@radix-ui/react-slot"
     ],
     "files": [
       {
         "path": "ui/combobox.tsx",
         "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "kanban",
+    "type": "registry:ui",
+    "dependencies": [
+      "@dnd-kit/core",
+      "@dnd-kit/modifiers",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+      "@radix-ui/react-slot"
+    ],
+    "files": [
+      {
+        "path": "ui/kanban.tsx",
+        "type": "registry:ui"
+      },
+      {
+        "path": "lib/composition.ts",
+        "type": "registry:lib"
       }
     ]
   },
@@ -54,6 +78,10 @@
       {
         "path": "ui/sortable.tsx",
         "type": "registry:ui"
+      },
+      {
+        "path": "lib/composition.ts",
+        "type": "registry:lib"
       }
     ]
   },

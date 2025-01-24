@@ -439,7 +439,7 @@ const SortableItemHandle = React.forwardRef<
   HTMLButtonElement,
   SortableItemHandleProps
 >((props, forwardedRef) => {
-  const { asChild, disabled, className, ...dragHandleProps } = props;
+  const { asChild, disabled, className, ...itemHandleProps } = props;
   const itemContext = React.useContext(SortableItemContext);
   if (!itemContext) {
     throw new Error(SORTABLE_ERROR[ITEM_HANDLE_NAME]);
@@ -460,7 +460,7 @@ const SortableItemHandle = React.forwardRef<
       aria-controls={itemContext.id}
       aria-roledescription="sortable item handle"
       data-dragging={itemContext.isDragging ? "" : undefined}
-      {...dragHandleProps}
+      {...itemHandleProps}
       {...itemContext.attributes}
       {...itemContext.listeners}
       ref={composedRef}

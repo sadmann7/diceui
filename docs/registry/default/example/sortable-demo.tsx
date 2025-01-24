@@ -1,6 +1,5 @@
 "use client";
 
-import { Skeleton } from "@/components/ui/skeleton";
 import * as Sortable from "@/registry/default/ui/sortable";
 import * as React from "react";
 

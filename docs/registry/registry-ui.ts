@@ -15,11 +15,38 @@ export const ui: Registry = [
   {
     name: "combobox",
     type: "registry:ui",
-    dependencies: ["@diceui/combobox", "lucide-react"],
+    dependencies: [
+      "@dnd-kit/core",
+      "@dnd-kit/modifiers",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+      "@radix-ui/react-slot",
+    ],
     files: [
       {
         path: "ui/combobox.tsx",
         type: "registry:ui",
+      },
+    ],
+  },
+  {
+    name: "kanban",
+    type: "registry:ui",
+    dependencies: [
+      "@dnd-kit/core",
+      "@dnd-kit/modifiers",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+      "@radix-ui/react-slot",
+    ],
+    files: [
+      {
+        path: "ui/kanban.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "lib/composition.ts",
+        type: "registry:lib",
       },
     ],
   },
@@ -48,6 +75,10 @@ export const ui: Registry = [
       {
         path: "ui/sortable.tsx",
         type: "registry:ui",
+      },
+      {
+        path: "lib/composition.ts",
+        type: "registry:lib",
       },
     ],
   },

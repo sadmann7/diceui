@@ -2,8 +2,11 @@
   "name": "combobox",
   "type": "registry:ui",
   "dependencies": [
-    "@diceui/combobox",
-    "lucide-react"
+    "@dnd-kit/core",
+    "@dnd-kit/modifiers",
+    "@dnd-kit/sortable",
+    "@dnd-kit/utilities",
+    "@radix-ui/react-slot"
   ],
   "files": [
     {

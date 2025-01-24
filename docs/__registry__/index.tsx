@@ -37,6 +37,26 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "kanban": {
+      name: "kanban",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/ui/kanban.tsx",
+        type: "registry:ui",
+        target: ""
+      },{
+        path: "registry/default/lib/composition.ts",
+        type: "registry:lib",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/kanban.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "mention": {
       name: "mention",
       description: "",
@@ -61,6 +81,10 @@ export const Index: Record<string, any> = {
       files: [{
         path: "registry/default/ui/sortable.tsx",
         type: "registry:ui",
+        target: ""
+      },{
+        path: "registry/default/lib/composition.ts",
+        type: "registry:lib",
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/ui/sortable.tsx")),
@@ -272,6 +296,38 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/example/combobox-tags-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "kanban-demo": {
+      name: "kanban-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["badge","button"],
+      files: [{
+        path: "registry/default/example/kanban-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/example/kanban-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "kanban-dynamic-overlay-demo": {
+      name: "kanban-dynamic-overlay-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["badge","button"],
+      files: [{
+        path: "registry/default/example/kanban-dynamic-overlay-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/example/kanban-dynamic-overlay-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",

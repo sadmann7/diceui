@@ -145,6 +145,41 @@ export const examples: Registry = [
     ],
   },
   {
+    name: "kanban-demo",
+    type: "registry:example",
+    dependencies: [
+      "@dnd-kit/core",
+      "@dnd-kit/modifiers",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+    ],
+    registryDependencies: ["badge", "button"],
+    files: [
+      {
+        path: "example/kanban-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "kanban-dynamic-overlay-demo",
+    type: "registry:example",
+    dependencies: [
+      "@dnd-kit/core",
+      "@dnd-kit/modifiers",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+      "lucide-react",
+    ],
+    registryDependencies: ["badge", "button"],
+    files: [
+      {
+        path: "example/kanban-dynamic-overlay-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "mention-demo",
     type: "registry:example",
     dependencies: ["@diceui/mention", "lucide-react"],

@@ -681,7 +681,7 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
             ref={composedRef}
             style={composedStyle}
             className={cn(
-              "flex size-full flex-col gap-2 rounded-lg border bg-zinc-100 p-4 aria-disabled:pointer-events-none aria-disabled:opacity-50 dark:bg-zinc-900",
+              "flex size-full flex-col gap-2 rounded-lg border bg-zinc-100 p-2.5 aria-disabled:pointer-events-none aria-disabled:opacity-50 dark:bg-zinc-900",
               {
                 "touch-none select-none": asHandle,
                 "cursor-default": context.flatCursor,
@@ -708,7 +708,7 @@ const KanbanColumnHandle = React.forwardRef<
   HTMLButtonElement,
   KanbanColumnHandleProps
 >((props, forwardedRef) => {
-  const { asChild, disabled, className, ...handleProps } = props;
+  const { asChild, disabled, className, ...columnHandleProps } = props;
   const columnContext = React.useContext(KanbanColumnContext);
   if (!columnContext) {
     throw new Error("KanbanColumnHandle must be used within a KanbanColumn");
@@ -728,7 +728,7 @@ const KanbanColumnHandle = React.forwardRef<
     <HandleSlot
       aria-controls={columnContext.id}
       data-dragging={columnContext.isDragging ? "" : undefined}
-      {...handleProps}
+      {...columnHandleProps}
       {...columnContext.attributes}
       {...columnContext.listeners}
       ref={composedRef}
@@ -870,7 +870,7 @@ const KanbanItemHandle = React.forwardRef<
   HTMLButtonElement,
   KanbanItemHandleProps
 >((props, forwardedRef) => {
-  const { asChild, disabled, className, ...dragHandleProps } = props;
+  const { asChild, disabled, className, ...itemHandleProps } = props;
   const itemContext = React.useContext(KanbanItemContext);
   if (!itemContext) {
     throw new Error(KANBAN_ERROR[ITEM_HANDLE_NAME]);
@@ -890,7 +890,7 @@ const KanbanItemHandle = React.forwardRef<
     <HandleSlot
       aria-controls={itemContext.id}
       data-dragging={itemContext.isDragging ? "" : undefined}
-      {...dragHandleProps}
+      {...itemHandleProps}
       {...itemContext.attributes}
       {...itemContext.listeners}
       ref={composedRef}

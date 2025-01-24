@@ -1,0 +1,202 @@
+---
+title: Kanban
+description: A drag and drop kanban board component for organizing items into columns.
+preview: true
+links:
+  doc: https://docs.dndkit.com/introduction/getting-started
+---
+
+<ComponentTabs name="kanban-demo" fullPreview />
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/kanban"
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @dnd-kit/core @dnd-kit/modifiers @dnd-kit/sortable @dnd-kit/utilities @radix-ui/react-slot
+     ```
+  </Step>
+  <Step>
+  Copy the composition utilities into your `lib/composition.ts` file.
+
+  <ComponentSource src="./lib/composition.ts" />
+
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource name="kanban" />
+  </Step>
+</Steps>
+
+## Anatomy
+
+Import the parts, and compose them together.
+
+```tsx
+import * as Kanban from "@/components/ui/kanban";
+
+<Kanban.Root>
+  <Kanban.Board>
+    <Kanban.Column>
+      <Kanban.ColumnHandle />
+      <Kanban.Item>
+        <Kanban.ItemHandle />
+      </Kanban.Item>
+    </Kanban.Column>
+  </Kanban.Board>
+  <Kanban.Overlay />
+</Kanban.Root>
+```
+
+## Examples
+
+### With Dynamic Overlay
+
+Display a dynamic overlay when an item or column is being dragged.
+
+<ComponentTabs name="kanban-dynamic-overlay-demo" fullPreview />
+
+## API Reference
+
+### Root
+
+The main container component for kanban board functionality.
+
+<AutoTypeTable
+  path="./types/docs/kanban.ts"
+  name="RootProps"
+/>
+
+### Board
+
+Container for kanban columns.
+
+<AutoTypeTable
+  path="./types/docs/kanban.ts"
+  name="BoardProps"
+/>
+
+### Column
+
+Individual kanban column component.
+
+<AutoTypeTable
+  path="./types/docs/kanban.ts"
+  name="ColumnProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-dragging]",
+      value: "Present when the column is being dragged.",
+    },
+  ]}
+/>
+
+### ColumnHandle
+
+A button component that acts as a drag handle for kanban columns.
+
+<AutoTypeTable
+  path="./types/docs/kanban.ts"
+  name="ColumnHandleProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-dragging]",
+      value: "Present when the parent column is being dragged.",
+    }
+  ]}
+/>
+
+### Item
+
+Individual kanban item component.
+
+<AutoTypeTable
+  path="./types/docs/kanban.ts"
+  name="ItemProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-dragging]",
+      value: "Present when the item is being dragged.",
+    },
+  ]}
+/>
+
+### ItemHandle
+
+A button component that acts as a drag handle for kanban items.
+
+<AutoTypeTable
+  path="./types/docs/kanban.ts"
+  name="ItemHandleProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-dragging]",
+      value: "Present when the parent item is being dragged.",
+    }
+  ]}
+/>
+
+### Overlay
+
+The overlay component that appears when an item or column is being dragged.
+
+<AutoTypeTable
+  path="./types/docs/kanban.ts"
+  name="OverlayProps"
+/>
+
+## Accessibility
+
+### Keyboard Interactions
+
+<KeyboardShortcutsTable
+  shortcuts={[
+    {
+      keys: ["Enter", "Space"],
+      description: "Picks up the kanban item or column for reordering when released, and drops it in its new position when pressed again.",
+    },
+    {
+      keys: ["ArrowUp"],
+      description: "Moves the kanban item up in vertical orientation.",
+    },
+    {
+      keys: ["ArrowDown"],
+      description: "Moves the kanban item down in vertical orientation.",
+    },
+    {
+      keys: ["ArrowLeft"],
+      description: "Moves the kanban item left in horizontal orientation.",
+    },
+    {
+      keys: ["ArrowRight"],
+      description: "Moves the kanban item right in horizontal orientation.",
+    },
+    {
+      keys: ["Esc"],
+      description: "Cancels the drag operation and returns the item or column to its original position.",
+    },
+  ]}
+/> 

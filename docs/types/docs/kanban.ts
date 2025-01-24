@@ -5,116 +5,111 @@ import type {
   DropAnimation,
   UniqueIdentifier,
 } from "@dnd-kit/core";
+import type { SortableContextProps } from "@dnd-kit/sortable";
 import type { SlotProps } from "@radix-ui/react-slot";
 
-import type { SortableContextProps } from "@dnd-kit/sortable";
-
-export interface RootProps<TData> extends DndContextProps {
+export interface RootProps<T> extends DndContextProps {
   /**
-   * An array of items for sorting.
-   *
+   * A record of column IDs to arrays of items for the kanban board.
    * Can be an array of primitives (string, number) or objects.
    *
    * @example
-   * // Array of primitives
-   * value={["Item 1", "Item 2"]}
-   * // Array of objects
-   * value={[{ id: 1, name: 'Item 1' }, { id: 2, name: 'Item 2' }]}
+   * // Record of arrays of primitives
+   * value={{
+   *   "todo": ["Task 1", "Task 2"],
+   *   "done": ["Task 3"]
+   * }}
+   * // Record of arrays of objects
+   * value={{
+   *   "todo": [{ id: 1, title: "Task 1" }, { id: 2, title: "Task 2" }],
+   *   "done": [{ id: 3, title: "Task 3" }]
+   * }}
    */
-  value: TData[];
+  value: Record<UniqueIdentifier, T[]>;
 
-  /** The callback function that is called when the order of the items changes. */
-  onValueChange?: (items: TData[]) => void;
+  /** The callback function that is called when items are moved between columns or reordered. */
+  onValueChange?: (columns: Record<UniqueIdentifier, T[]>) => void;
 
   /**
-   * Callback that returns a unique identifier for each sortable item.
-   *
+   * Callback that returns a unique identifier for each kanban item.
    * Required when using an array of objects.
    *
    * @example
    * getItemValue={(item) => item.id}
    */
-  getItemValue?: (item: TData) => UniqueIdentifier;
+  getItemValue?: (item: T) => UniqueIdentifier;
 
   /**
    * An optional callback function that is called when an item is moved.
    * Receives the full DragEndEvent object from @dnd-kit/core.
-   *
-   * Overrides the default behavior of updating the order of the data items.
    */
   onMove?: (event: DragEndEvent) => void;
 
   /**
-   * The array of modifiers that will be used to modify the behavior of the sortable component.
-   * @default
-   * Automatically selected based on orientation:
-   * - vertical: [restrictToVerticalAxis, restrictToParentElement]
-   * - horizontal: [restrictToHorizontalAxis, restrictToParentElement]
-   * - mixed: [restrictToParentElement]
+   * The array of modifiers that will be used to modify the behavior of the kanban component.
+   * @default undefined
    */
   modifiers?: DndContextProps["modifiers"];
 
   /**
-   * The strategy to use for sorting the items.
+   * The strategy to use for the columns and items.
    * @default
-   * Automatically selected based on orientation:
+   *
+   * For `Root`, the strategy is verticalListSortingStrategy.
+   *
+   * For `Board`, the strategy is automatically selected based on orientation:
    * - vertical: verticalListSortingStrategy
    * - horizontal: horizontalListSortingStrategy
-   * - mixed: undefined
    */
   strategy?: SortableContextProps["strategy"];
 
   /**
-   * An array of sensors that will be used to detect the position of the sortable items.\n
+   * An array of sensors that will be used to detect drag and drop interactions.
    * @default
    * [
    *   useSensor(MouseSensor),
    *   useSensor(TouchSensor),
    *   useSensor(KeyboardSensor, {
-   *     coordinateGetter: sortableKeyboardCoordinates,
+   *     coordinateGetter,
    *   }),
    * ]
    */
   sensors?: DndContextProps["sensors"];
 
   /**
-   * Specifies the axis for the drag-and-drop operation.
-   * @default "vertical"
+   * Specifies the orientation of the kanban board.
+   * @default "horizontal"
    */
-  orientation?: "vertical" | "horizontal" | "mixed";
+  orientation?: "horizontal" | "vertical";
 
   /**
-   * The id of the sortable component.
+   * The id of the kanban component.
    * @default React.useId()
    */
   id?: string;
 
-  /** Accessibility options for the sortable component. */
+  /** Accessibility options for the kanban component. */
   accessibility?: DndContextProps["accessibility"];
 
   /**
-   * Specifies whether the sortable component should automatically scroll to the active item.
+   * Specifies whether the kanban component should automatically scroll during drag.
    * @default false
    */
   autoScroll?: DndContextProps["autoScroll"];
 
-  /** Specifies whether the sortable component should cancel the drop event. */
+  /** Specifies whether the kanban component should cancel the drop event. */
   cancelDrop?: DndContextProps["cancelDrop"];
 
-  /** The children of the sortable component. */
+  /** The children of the kanban component. */
   children?: DndContextProps["children"];
 
   /**
    * Collision detection algorithm to determine drop targets during drag operations.
-   * @default
-   * Based on orientation:
-   * - vertical: closestCenter
-   * - horizontal: closestCenter
-   * - mixed: closestCorners
+   * @default closestCorners with custom handling for containers
    */
   collisionDetection?: DndContextProps["collisionDetection"];
 
-  /** Specifies the measuring configuration for the sortable component. */
+  /** Specifies the measuring configuration for the kanban component. */
   measuring?: DndContextProps["measuring"];
 
   /** Event handler for the drag start event. */
@@ -139,23 +134,52 @@ export interface RootProps<TData> extends DndContextProps {
   flatCursor?: boolean;
 }
 
-export interface ContentProps
+export interface BoardProps
   extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"div">> {
-  /**
-   * The strategy to use for sorting the items.
-   * @default
-   * Automatically selected based on orientation:
-   * - vertical: verticalListSortingStrategy
-   * - horizontal: horizontalListSortingStrategy
-   * - mixed: undefined
-   */
-  strategy?: SortableContextProps["strategy"];
-
-  /** The children of the sortable component. */
+  /** The children of the kanban board. */
   children: React.ReactNode;
 
   /**
-   * Merges the content's props into its immediate child.
+   * Merges the board's props into its immediate child.
+   * @default false
+   */
+  asChild?: boolean;
+}
+
+export interface ColumnProps
+  extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"div">> {
+  /**
+   * The unique identifier of the column.
+   * @example "todo"
+   */
+  value: UniqueIdentifier;
+
+  /** The children of the kanban column. */
+  children: React.ReactNode;
+
+  /**
+   * Whether the column should act as a handle for dragging.
+   * @default false
+   */
+  asHandle?: boolean;
+
+  /**
+   * Merges the column's props into its immediate child.
+   * @default false
+   */
+  asChild?: boolean;
+
+  /**
+   * Whether the column is disabled.
+   * @default false
+   */
+  disabled?: boolean;
+}
+
+export interface ColumnHandleProps
+  extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"button">> {
+  /**
+   * Merges the handle's props into its immediate child.
    * @default false
    */
   asChild?: boolean;
@@ -165,7 +189,7 @@ export interface ItemProps
   extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"div">> {
   /**
    * The unique identifier of the item.
-   * @example "item-1"
+   * @example "task-1"
    */
   value: UniqueIdentifier;
 
@@ -191,7 +215,7 @@ export interface ItemProps
 export interface ItemHandleProps
   extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"button">> {
   /**
-   * Merges the item's props into its immediate child.
+   * Merges the handle's props into its immediate child.
    * @default false
    */
   asChild?: boolean;
@@ -209,7 +233,7 @@ export interface OverlayProps
   container?: HTMLElement | DocumentFragment | null;
 
   /**
-   * The drop animation to use for the sortable component.
+   * The drop animation to use for the kanban component.
    * @default
    * {
    *   sideEffects: defaultDropAnimationSideEffects({
@@ -224,12 +248,15 @@ export interface OverlayProps
   dropAnimation?: DropAnimation;
 
   /**
-   * The children of the sortable component.
+   * The children of the overlay component.
    *
-   * Can be a function that receives the value of the active item as an argument,
+   * Can be a function that receives the value and variant of the active item,
    * or a React node.
    */
   children?:
-    | ((params: { value: UniqueIdentifier }) => React.ReactNode)
+    | ((params: {
+        value: UniqueIdentifier;
+        variant: "column" | "item";
+      }) => React.ReactNode)
     | React.ReactNode;
 }

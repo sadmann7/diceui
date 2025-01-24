@@ -12,6 +12,7 @@ interface ComponentTabsProps {
   children: React.ReactNode;
   preventPreviewFocus?: boolean;
   scalePreview?: boolean;
+  fullPreview?: boolean;
 }
 
 export function ComponentTabs({
@@ -19,6 +20,7 @@ export function ComponentTabs({
   children,
   preventPreviewFocus,
   scalePreview,
+  fullPreview,
 }: ComponentTabsProps) {
   const [config] = useConfig();
   const index = styles.findIndex((style) => style.name === config.style);
@@ -57,7 +59,7 @@ export function ComponentTabs({
         <div
           className={cn(
             "flex h-[400px] w-full items-center justify-center",
-            scalePreview ? "sm:p-10" : "p-10",
+            fullPreview ? "h-full p-0" : scalePreview ? "sm:p-10" : "p-10",
           )}
         >
           {Preview}

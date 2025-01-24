@@ -10,7 +10,6 @@ interface Task {
   id: string;
   title: string;
   priority: "low" | "medium" | "high";
-  description?: string;
   assignee?: string;
   dueDate?: string;
 }
@@ -18,7 +17,6 @@ interface Task {
 const COLUMN_TITLES: Record<string, string> = {
   backlog: "Backlog",
   inProgress: "In Progress",
-  review: "Review",
   done: "Done",
 };
 
@@ -29,7 +27,6 @@ export default function KanbanDemo() {
         id: "1",
         title: "Add authentication",
         priority: "high",
-        description: "Implement user authentication using NextAuth.js",
         assignee: "John Doe",
         dueDate: "2024-04-01",
       },
@@ -37,7 +34,6 @@ export default function KanbanDemo() {
         id: "2",
         title: "Create API endpoints",
         priority: "medium",
-        description: "Design and implement RESTful API endpoints",
         assignee: "Jane Smith",
         dueDate: "2024-04-05",
       },
@@ -45,7 +41,6 @@ export default function KanbanDemo() {
         id: "3",
         title: "Write documentation",
         priority: "low",
-        description: "Document API endpoints and component usage",
         assignee: "Bob Johnson",
         dueDate: "2024-04-10",
       },
@@ -55,7 +50,6 @@ export default function KanbanDemo() {
         id: "4",
         title: "Design system updates",
         priority: "high",
-        description: "Update design tokens and component styles",
         assignee: "Alice Brown",
         dueDate: "2024-03-28",
       },
@@ -63,19 +57,8 @@ export default function KanbanDemo() {
         id: "5",
         title: "Implement dark mode",
         priority: "medium",
-        description: "Add dark mode support using Tailwind",
         assignee: "Charlie Wilson",
         dueDate: "2024-04-02",
-      },
-    ],
-    review: [
-      {
-        id: "6",
-        title: "Code review",
-        priority: "high",
-        description: "Review pull requests and provide feedback",
-        assignee: "David Miller",
-        dueDate: "2024-03-27",
       },
     ],
     done: [
@@ -83,7 +66,6 @@ export default function KanbanDemo() {
         id: "7",
         title: "Setup project",
         priority: "high",
-        description: "Initialize Next.js project with TypeScript",
         assignee: "Eve Davis",
         dueDate: "2024-03-25",
       },
@@ -91,7 +73,6 @@ export default function KanbanDemo() {
         id: "8",
         title: "Initial commit",
         priority: "low",
-        description: "Create repository and add initial files",
         assignee: "Frank White",
         dueDate: "2024-03-24",
       },
@@ -104,96 +85,75 @@ export default function KanbanDemo() {
       onValueChange={setColumns}
       getItemValue={(item) => item.id}
     >
-      <Kanban.Board>
+      <Kanban.Board className="grid auto-rows-fr grid-cols-3">
         {Object.entries(columns).map(([columnValue, tasks]) => (
-          <TaskColumn key={columnValue} value={columnValue} tasks={tasks} />
+          <Kanban.Column key={columnValue} value={columnValue}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-sm">
+                  {COLUMN_TITLES[columnValue]}
+                </span>
+                <Badge
+                  variant="secondary"
+                  className="pointer-events-none rounded-sm"
+                >
+                  {tasks.length}
+                </Badge>
+              </div>
+              <Kanban.ColumnHandle asChild>
+                <Button variant="ghost" size="icon">
+                  <GripVertical className="h-4 w-4" />
+                </Button>
+              </Kanban.ColumnHandle>
+            </div>
+            <div className="flex flex-col gap-2 p-0.5">
+              {tasks.map((task) => (
+                <Kanban.Item key={task.id} value={task.id} asHandle asChild>
+                  <div className="rounded-md border bg-card p-3 shadow-sm">
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="line-clamp-1 font-medium text-sm">
+                          {task.title}
+                        </span>
+                        <Badge
+                          variant={
+                            task.priority === "high"
+                              ? "destructive"
+                              : task.priority === "medium"
+                                ? "default"
+                                : "secondary"
+                          }
+                          className="pointer-events-none h-5 rounded-sm px-1.5 text-[11px] capitalize"
+                        >
+                          {task.priority}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center justify-between text-muted-foreground text-xs">
+                        {task.assignee && (
+                          <div className="flex items-center gap-1">
+                            <div className="size-2 rounded-full bg-primary/20" />
+                            <span className="line-clamp-1">
+                              {task.assignee}
+                            </span>
+                          </div>
+                        )}
+                        {task.dueDate && (
+                          <time className="text-[10px] tabular-nums">
+                            {task.dueDate}
+                          </time>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </Kanban.Item>
+              ))}
+            </div>
+          </Kanban.Column>
         ))}
       </Kanban.Board>
       <Kanban.Overlay>
-        {({ value, variant }) => {
-          if (variant === "column") {
-            const tasks = columns[value] ?? [];
-
-            return <TaskColumn value={value} tasks={tasks} />;
-          }
-
-          const task = Object.values(columns)
-            .flat()
-            .find((task) => task.id === value);
-
-          if (!task) return null;
-
-          return <TaskCard task={task} />;
-        }}
+        <div className="size-full rounded-md bg-primary/10" />
       </Kanban.Overlay>
     </Kanban.Root>
-  );
-}
-
-interface TaskCardProps
-  extends Omit<React.ComponentProps<typeof Kanban.Item>, "value"> {
-  task: Task;
-}
-
-function TaskCard({ task, ...props }: TaskCardProps) {
-  return (
-    <Kanban.Item value={task.id} asChild {...props}>
-      <div className="rounded-md border bg-card p-4 shadow-sm transition-shadow hover:shadow-md">
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <h4 className="font-medium">{task.title}</h4>
-            <Badge
-              variant={
-                task.priority === "high"
-                  ? "destructive"
-                  : task.priority === "medium"
-                    ? "default"
-                    : "secondary"
-              }
-              className="pointer-events-none rounded-sm capitalize"
-            >
-              {task.priority}
-            </Badge>
-          </div>
-          {task.description && (
-            <p className="text-muted-foreground text-sm">{task.description}</p>
-          )}
-          <div className="flex items-center justify-between text-muted-foreground text-xs">
-            {task.assignee && <span>{task.assignee}</span>}
-            {task.dueDate && <span>{task.dueDate}</span>}
-          </div>
-        </div>
-      </div>
-    </Kanban.Item>
-  );
-}
-
-interface TaskColumnProps
-  extends Omit<React.ComponentProps<typeof Kanban.Column>, "children"> {
-  tasks: Task[];
-}
-
-function TaskColumn({ value, tasks, ...props }: TaskColumnProps) {
-  return (
-    <Kanban.Column value={value} {...props}>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <h3 className="font-semibold">{COLUMN_TITLES[value]}</h3>
-          <Badge variant="secondary" className="pointer-events-none rounded-sm">
-            {tasks?.length ?? 0}
-          </Badge>
-        </div>
-        <Kanban.ColumnHandle asChild>
-          <Button variant="ghost" size="icon">
-            <GripVertical className="h-4 w-4" />
-          </Button>
-        </Kanban.ColumnHandle>
-      </div>
-      <div className="flex flex-col gap-2 p-0.5">
-        {tasks?.map((task) => (
-          <TaskCard key={task.id} task={task} asHandle />
-        ))}
-      </div>
-    </Kanban.Column>
   );
 }
