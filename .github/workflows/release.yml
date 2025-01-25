@@ -26,17 +26,14 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9.15.4 
+          version: 9.15.1
           
       - uses: ./.github/setup
-
-      - name: Fix lint issues
-        run: pnpm lint:fix
 
       - name: Build
         run: pnpm turbo build
 
-      - name: Create release
+      - name: Create Release
         id: changesets
         uses: changesets/action@v1.4.1
         with:

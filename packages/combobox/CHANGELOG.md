@@ -1,11 +1,5 @@
 # @diceui/combobox
 
-## 0.5.0
-
-### Minor Changes
-
-- 7ab8505: Fixed text selection for `Combobox.Input` with pointer
-
 ## 0.4.0
 
 ### Minor Changes
