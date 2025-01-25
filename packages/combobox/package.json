@@ -1,6 +1,6 @@
 {
   "name": "@diceui/combobox",
-  "version": "0.5.0",
+  "version": "0.4.0",
   "type": "module",
   "publishConfig": {
     "access": "public"
