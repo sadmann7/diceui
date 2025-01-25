@@ -2,7 +2,6 @@ import { promises as fs, existsSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { cwd } from "node:process";
-import template from "lodash.template";
 import { rimraf } from "rimraf";
 import { Project, ScriptKind, SyntaxKind } from "ts-morph";
 import type { z } from "zod";
@@ -38,6 +37,24 @@ const project = new Project({
 async function createTempSourceFile(filename: string) {
   const dir = await fs.mkdtemp(path.join(tmpdir(), "shadcn-"));
   return path.join(dir, filename);
+}
+
+/**
+ * A simple template function that replaces <%- variable %> with values from the data object
+ * @param template The template string containing <%- variable %> placeholders
+ * @returns A function that takes a data object and returns the interpolated string
+ */
+function createTemplate(template: string) {
+  return (data: Record<string, unknown>) => {
+    return template.replace(/<%-(.*?)%>/g, (_match: string, key: string) => {
+      const props = key.trim().split(".");
+      let value: unknown = data;
+      for (const prop of props) {
+        value = (value as Record<string, unknown>)?.[prop];
+      }
+      return String(value ?? "");
+    });
+  };
 }
 
 // ----------------------------------------------------------------------------
@@ -682,8 +699,8 @@ async function buildThemes() {
     }
 
     // Build css vars.
-    base.inlineColorsTemplate = template(BASE_STYLES)({});
-    base.cssVarsTemplate = template(BASE_STYLES_WITH_VARIABLES)({
+    base.inlineColorsTemplate = createTemplate(BASE_STYLES)({});
+    base.cssVarsTemplate = createTemplate(BASE_STYLES_WITH_VARIABLES)({
       colors: base.cssVars,
     });
 
@@ -765,7 +782,7 @@ async function buildThemes() {
     for (const theme of baseColors) {
       themeCSS.push(
         // @ts-ignore
-        template(THEME_STYLES_WITH_VARIABLES)({
+        createTemplate(THEME_STYLES_WITH_VARIABLES)({
           colors: theme.cssVars,
           theme: theme.name,
         }),

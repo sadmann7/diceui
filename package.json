@@ -18,18 +18,18 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "@changesets/cli": "^2.27.11",
+    "@changesets/cli": "^2.27.12",
     "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.1.0",
-    "@testing-library/user-event": "^14.5.2",
-    "@types/node": "^22.10.5",
+    "@testing-library/react": "^16.2.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^22.10.10",
     "@vitejs/plugin-react": "^4.3.4",
     "expect-type": "^1.1.0",
-    "jsdom": "^25.0.1",
+    "jsdom": "^26.0.0",
     "rimraf": "^6.0.1",
-    "turbo": "^2.3.3",
-    "typescript": "^5.7.2",
+    "turbo": "^2.3.4",
+    "typescript": "^5.7.3",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^2.1.8"
+    "vitest": "^3.0.4"
   }
 }
