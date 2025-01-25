@@ -118,10 +118,8 @@ function Sortable<T>(props: SortableProps<T>) {
     id = React.useId(),
     value,
     onValueChange,
-    collisionDetection,
     modifiers,
     strategy,
-    sensors: sensorsProp,
     onMove,
     orientation = "vertical",
     flatCursor = false,
@@ -259,8 +257,8 @@ function Sortable<T>(props: SortableProps<T>) {
       <DndContext
         id={id}
         modifiers={modifiers ?? config.modifiers}
-        sensors={sensorsProp ?? sensors}
-        collisionDetection={collisionDetection ?? config.collisionDetection}
+        sensors={sensors}
+        collisionDetection={config.collisionDetection}
         onDragStart={composeEventHandlers(
           sortableProps.onDragStart,
           ({ active }) => setActiveId(active.id),

@@ -58,12 +58,14 @@ const ComboboxTrigger = React.forwardRef<
             target.releasePointerCapture(event.pointerId);
           }
 
+          // Only prevent default if we're not clicking on the input
+          // This allows text selection in the input while still preventing focus stealing elsewhere
           if (
             event.button === 0 &&
             event.ctrlKey === false &&
-            event.pointerType === "mouse"
+            event.pointerType === "mouse" &&
+            !(event.target instanceof HTMLInputElement)
           ) {
-            // prevent trigger from stealing focus from the input
             event.preventDefault();
           }
         },

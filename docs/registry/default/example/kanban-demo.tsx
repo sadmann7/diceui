@@ -85,7 +85,7 @@ export default function KanbanDemo() {
       onValueChange={setColumns}
       getItemValue={(item) => item.id}
     >
-      <Kanban.Board className="grid auto-rows-fr grid-cols-3">
+      <Kanban.Board className="grid auto-rows-fr sm:grid-cols-3">
         {Object.entries(columns).map(([columnValue, tasks]) => (
           <Kanban.Column key={columnValue} value={columnValue}>
             <div className="flex items-center justify-between">

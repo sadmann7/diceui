@@ -39,11 +39,17 @@ const ComboboxAnchor = React.forwardRef<AnchorElement, ComboboxAnchorProps>(
         dir={context.dir}
         {...anchorProps}
         ref={composedRef}
+        onBlur={composeEventHandlers(anchorProps.onBlur, () =>
+          setIsFocused(false),
+        )}
         onClick={composeEventHandlers(anchorProps.onClick, (event) => {
           if (preventInputFocus) return;
           event.currentTarget.focus();
           context.inputRef.current?.focus();
         })}
+        onFocus={composeEventHandlers(anchorProps.onFocus, () =>
+          setIsFocused(true),
+        )}
         onPointerDown={composeEventHandlers(
           anchorProps.onPointerDown,
           (event) => {
@@ -56,21 +62,17 @@ const ComboboxAnchor = React.forwardRef<AnchorElement, ComboboxAnchorProps>(
               target.releasePointerCapture(event.pointerId);
             }
 
+            // Only prevent default if we're not clicking on the input
+            // This allows text selection in the input while still preventing focus stealing elsewhere
             if (
               event.button === 0 &&
               event.ctrlKey === false &&
-              event.pointerType === "mouse"
+              event.pointerType === "mouse" &&
+              !(event.target instanceof HTMLInputElement)
             ) {
-              // prevent item from stealing focus from the input
               event.preventDefault();
             }
           },
-        )}
-        onFocus={composeEventHandlers(anchorProps.onFocus, () =>
-          setIsFocused(true),
-        )}
-        onBlur={composeEventHandlers(anchorProps.onBlur, () =>
-          setIsFocused(false),
         )}
       />
     );
