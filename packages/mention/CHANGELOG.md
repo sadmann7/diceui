@@ -1,5 +1,11 @@
 # @diceui/mention
 
+## 0.3.0
+
+### Minor Changes
+
+- 7ab8505: Fixed `Mention.Item` selection on touch devices
+
 ## 0.2.0
 
 ### Minor Changes
