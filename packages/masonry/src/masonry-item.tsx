@@ -62,6 +62,8 @@ const MasonryItem = React.forwardRef<ItemElement, MasonryItemProps>(
 
 MasonryItem.displayName = ITEM_NAME;
 
-export { MasonryItem };
+const Item = MasonryItem;
+
+export { MasonryItem, Item };
 
 export type { MasonryItemProps, ItemElement };

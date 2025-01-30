@@ -102,7 +102,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
     const totalHeight = React.useMemo(() => {
       const columnHeights = new Array(columnCount).fill(0);
       for (let i = 0; i < itemHeights.length; i++) {
-        const height = itemHeights[i];
+        const height = itemHeights[i] ?? 0;
         const shortestColumn = columnHeights.indexOf(
           Math.min(...columnHeights),
         );
@@ -142,6 +142,8 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
 
 MasonryRoot.displayName = ROOT_NAME;
 
-export { MasonryRoot, useMasonryContext };
+const Root = MasonryRoot;
+
+export { MasonryRoot, Root, useMasonryContext };
 
 export type { MasonryItem, MasonryRootProps };
