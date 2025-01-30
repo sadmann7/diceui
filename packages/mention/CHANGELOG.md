@@ -1,5 +1,16 @@
 # @diceui/mention
 
+## 0.4.0
+
+### Minor Changes
+
+- 732b7ce: Bump slot
+
+### Patch Changes
+
+- Updated dependencies [732b7ce]
+  - @diceui/shared@0.8.0
+
 ## 0.3.0
 
 ### Minor Changes

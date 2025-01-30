@@ -1,5 +1,11 @@
 # @diceui/shared
 
+## 0.8.0
+
+### Minor Changes
+
+- 732b7ce: Bump slot
+
 ## 0.7.0
 
 ### Minor Changes
