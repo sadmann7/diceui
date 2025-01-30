@@ -16,6 +16,7 @@ export const ui: Registry = [
     name: "combobox",
     type: "registry:ui",
     dependencies: [
+      "@diceui/combobox",
       "@dnd-kit/core",
       "@dnd-kit/modifiers",
       "@dnd-kit/sortable",

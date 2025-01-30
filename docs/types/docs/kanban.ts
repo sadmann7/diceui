@@ -14,6 +14,7 @@ export interface RootProps<T> extends DndContextProps {
    * Can be an array of primitives (string, number) or objects.
    *
    * @example
+   * ```ts
    * // Record of arrays of primitives
    * value={{
    *   "todo": ["Task 1", "Task 2"],
@@ -24,6 +25,7 @@ export interface RootProps<T> extends DndContextProps {
    *   "todo": [{ id: 1, title: "Task 1" }, { id: 2, title: "Task 2" }],
    *   "done": [{ id: 3, title: "Task 3" }]
    * }}
+   * ```
    */
   value: Record<UniqueIdentifier, T[]>;
 
@@ -32,6 +34,7 @@ export interface RootProps<T> extends DndContextProps {
 
   /**
    * Callback that returns a unique identifier for each kanban item.
+   *
    * Required when using an array of objects.
    *
    * @example
@@ -40,10 +43,13 @@ export interface RootProps<T> extends DndContextProps {
   getItemValue?: (item: T) => UniqueIdentifier;
 
   /**
-   * An optional callback function that is called when an item is moved.
-   * Receives the full DragEndEvent object from @dnd-kit/core.
+   * Callback called when an item is moved. Receives the DragEndEvent with active and over indexes.
+   *
+   * Overrides default reordering behavior.
    */
-  onMove?: (event: DragEndEvent) => void;
+  onMove?: (
+    event: DragEndEvent & { activeIndex: number; overIndex: number },
+  ) => void;
 
   /**
    * The array of modifiers that will be used to modify the behavior of the kanban component.

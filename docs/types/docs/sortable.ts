@@ -16,10 +16,12 @@ export interface RootProps<TData> extends DndContextProps {
    * Can be an array of primitives (string, number) or objects.
    *
    * @example
+   * ```ts
    * // Array of primitives
    * value={["Item 1", "Item 2"]}
    * // Array of objects
    * value={[{ id: 1, name: 'Item 1' }, { id: 2, name: 'Item 2' }]}
+   * ```
    */
   value: TData[];
 
@@ -37,12 +39,13 @@ export interface RootProps<TData> extends DndContextProps {
   getItemValue?: (item: TData) => UniqueIdentifier;
 
   /**
-   * An optional callback function that is called when an item is moved.
-   * Receives the full DragEndEvent object from @dnd-kit/core.
+   * Callback called when an item is moved. Receives the DragEndEvent with active and over indexes.
    *
-   * Overrides the default behavior of updating the order of the data items.
+   * Overrides default reordering behavior.
    */
-  onMove?: (event: DragEndEvent) => void;
+  onMove?: (
+    event: DragEndEvent & { activeIndex: number; overIndex: number },
+  ) => void;
 
   /**
    * The array of modifiers that will be used to modify the behavior of the sortable component.

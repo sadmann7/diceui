@@ -107,7 +107,9 @@ interface GetItemValue<T> {
 type SortableProps<T> = DndContextProps & {
   value: T[];
   onValueChange?: (items: T[]) => void;
-  onMove?: (event: DragEndEvent) => void;
+  onMove?: (
+    event: DragEndEvent & { activeIndex: number; overIndex: number },
+  ) => void;
   strategy?: SortableContextProps["strategy"];
   orientation?: "vertical" | "horizontal" | "mixed";
   flatCursor?: boolean;
@@ -165,7 +167,7 @@ function Sortable<T>(props: SortableProps<T>) {
         );
 
         if (onMove) {
-          onMove(event);
+          onMove({ ...event, activeIndex, overIndex });
         } else {
           onValueChange?.(arrayMove(value, activeIndex, overIndex));
         }

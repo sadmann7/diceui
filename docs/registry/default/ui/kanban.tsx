@@ -199,7 +199,9 @@ type KanbanProps<T> = Omit<DndContextProps, "collisionDetection"> &
   GetItemValue<T> & {
     value: Record<UniqueIdentifier, T[]>;
     onValueChange?: (columns: Record<UniqueIdentifier, T[]>) => void;
-    onMove?: (event: DragEndEvent) => void;
+    onMove?: (
+      event: DragEndEvent & { activeIndex: number; overIndex: number },
+    ) => void;
     strategy?: SortableContextProps["strategy"];
     orientation?: "horizontal" | "vertical";
     flatCursor?: boolean;
@@ -391,7 +393,15 @@ function Kanban<T>(props: KanbanProps<T>) {
             }
           }
 
-          onValueChange?.(newColumns);
+          if (onMove) {
+            onMove({
+              ...event,
+              activeIndex,
+              overIndex,
+            });
+          } else {
+            onValueChange?.(newColumns);
+          }
         }
       } else {
         const activeColumn = getColumn(active.id);
@@ -419,14 +429,21 @@ function Kanban<T>(props: KanbanProps<T>) {
           if (activeIndex !== overIndex) {
             const newColumns = { ...value };
             newColumns[activeColumn] = arrayMove(items, activeIndex, overIndex);
-            onValueChange?.(newColumns);
+            if (onMove) {
+              onMove({
+                ...event,
+                activeIndex,
+                overIndex,
+              });
+            } else {
+              onValueChange?.(newColumns);
+            }
           }
         }
       }
 
       setActiveId(null);
       hasMovedRef.current = false;
-      onMove?.(event);
     },
     [value, getColumn, getItemValue, onValueChange, onMove],
   );
