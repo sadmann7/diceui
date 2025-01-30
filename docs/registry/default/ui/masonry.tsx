@@ -9,8 +9,8 @@ interface MasonryContextValue {
   columnCount: number;
   columnWidth: number;
   gap: number;
-  items: Map<number, { height: number; element: HTMLElement }>;
-  onItemRegister: (index: number, element: HTMLElement) => void;
+  itemMap: Map<number, { height: number; element: ItemElement }>;
+  onItemRegister: (index: number, element: ItemElement) => void;
   onItemUnregister: (index: number) => void;
 }
 
@@ -37,9 +37,35 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryProps>(
     const collectionRef = React.useRef<HTMLDivElement>(null);
     const composedRefs = useComposedRefs(forwardedRef, collectionRef);
     const [containerWidth, setContainerWidth] = React.useState(0);
-    const [items] = React.useState(
-      () => new Map<number, { height: number; element: HTMLElement }>(),
-    );
+
+    const itemMap = React.useRef(
+      new Map<number, { height: number; element: ItemElement }>(),
+    ).current;
+
+    const getItems = React.useCallback(() => {
+      const collectionNode = collectionRef.current;
+      if (!collectionNode) return [];
+
+      const allItems = Array.from(itemMap.values());
+
+      return allItems.sort((a, b) => {
+        const position = a.element.compareDocumentPosition(b.element);
+        if (
+          position & Node.DOCUMENT_POSITION_FOLLOWING ||
+          position & Node.DOCUMENT_POSITION_CONTAINED_BY
+        ) {
+          return -1;
+        }
+        if (
+          position & Node.DOCUMENT_POSITION_PRECEDING ||
+          position & Node.DOCUMENT_POSITION_CONTAINS
+        ) {
+          return 1;
+        }
+        return 0;
+      });
+    }, [itemMap]);
+
     const [positions, setPositions] = React.useState<
       Map<number, { top: number; left: number }>
     >(new Map());
@@ -71,32 +97,31 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryProps>(
 
     // Register/unregister items and recalculate layout
     const onItemRegister = React.useCallback(
-      (index: number, element: HTMLElement) => {
-        items.set(index, { height: element.offsetHeight, element });
+      (index: number, element: ItemElement) => {
+        itemMap.set(index, { height: element.offsetHeight, element });
         recalculateLayout();
       },
-      [items],
+      [itemMap],
     );
 
     const onItemUnregister = React.useCallback(
       (index: number) => {
-        items.delete(index);
+        itemMap.delete(index);
         recalculateLayout();
       },
-      [items],
+      [itemMap],
     );
 
-    // Calculate item positions
+    // Calculate item positions using pre-sorted items
     const recalculateLayout = React.useCallback(() => {
-      if (!collectionRef.current || !items.size) return;
+      if (!collectionRef.current || !itemMap.size) return;
 
       const columnHeights = new Array(columnCount).fill(0);
       const newPositions = new Map<number, { top: number; left: number }>();
 
-      // Sort items by index to maintain order
-      const sortedItems = Array.from(items.entries()).sort(([a], [b]) => a - b);
+      const sortedItems = getItems();
 
-      for (const [index, item] of sortedItems) {
+      for (const [index, item] of sortedItems.entries()) {
         // Find shortest column
         const minHeight = Math.min(...columnHeights);
         const columnIndex = columnHeights.indexOf(minHeight);
@@ -110,14 +135,14 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryProps>(
       }
 
       setPositions(newPositions);
-    }, [columnCount, actualColumnWidth, gap, items]);
+    }, [columnCount, actualColumnWidth, gap, getItems, itemMap]);
 
     const contextValue = React.useMemo<MasonryContextValue>(
       () => ({
         columnCount,
         columnWidth: actualColumnWidth,
         gap,
-        items,
+        itemMap,
         onItemRegister,
         onItemUnregister,
       }),
@@ -125,7 +150,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryProps>(
         columnCount,
         actualColumnWidth,
         gap,
-        items,
+        itemMap,
         onItemRegister,
         onItemUnregister,
       ],
@@ -167,15 +192,20 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryProps>(
 );
 MasonryRoot.displayName = "MasonryRoot";
 
-interface MasonryItemProps extends React.HTMLAttributes<HTMLDivElement> {
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
+
+type ItemElement = React.ComponentRef<"div">;
+
+interface MasonryItemProps extends React.HTMLAttributes<ItemElement> {
   index: number;
   asChild?: boolean;
 }
 
-const MasonryItem = React.forwardRef<HTMLDivElement, MasonryItemProps>(
+const MasonryItem = React.forwardRef<ItemElement, MasonryItemProps>(
   (props, forwardedRef) => {
     const { index, className, children, asChild, ...itemProps } = props;
-    const itemRef = React.useRef<HTMLDivElement>(null);
+    const itemRef = React.useRef<ItemElement>(null);
     const composedRefs = useComposedRefs(forwardedRef, itemRef);
     const context = React.useContext(MasonryContext);
 
@@ -183,7 +213,7 @@ const MasonryItem = React.forwardRef<HTMLDivElement, MasonryItemProps>(
       throw new Error("MasonryItem must be used within MasonryRoot");
     }
 
-    React.useEffect(() => {
+    useIsomorphicLayoutEffect(() => {
       const element = itemRef.current;
       if (!element) return;
 
@@ -213,4 +243,4 @@ const MasonryItem = React.forwardRef<HTMLDivElement, MasonryItemProps>(
 );
 MasonryItem.displayName = "MasonryItem";
 
-export { MasonryRoot, MasonryItem };
+export { MasonryItem, MasonryRoot };
