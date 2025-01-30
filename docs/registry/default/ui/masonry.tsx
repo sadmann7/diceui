@@ -243,4 +243,13 @@ const MasonryItem = React.forwardRef<ItemElement, MasonryItemProps>(
 );
 MasonryItem.displayName = "MasonryItem";
 
-export { MasonryItem, MasonryRoot };
+const Root = MasonryRoot;
+const Item = MasonryItem;
+
+export {
+  MasonryRoot,
+  MasonryItem,
+  //
+  Root,
+  Item,
+};
