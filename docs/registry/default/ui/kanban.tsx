@@ -154,12 +154,12 @@ const ITEM_HANDLE_NAME = "KanbanItemHandle";
 const OVERLAY_NAME = "KanbanOverlay";
 
 const KANBAN_ERROR = {
-  [ROOT_NAME]: `${ROOT_NAME} components must be within ${ROOT_NAME}`,
-  [BOARD_NAME]: `${BOARD_NAME} must be within ${ROOT_NAME}`,
-  [COLUMN_NAME]: `${COLUMN_NAME} must be within ${BOARD_NAME}`,
-  [ITEM_NAME]: `${ITEM_NAME} must be within ${COLUMN_NAME}`,
-  [ITEM_HANDLE_NAME]: `${ITEM_HANDLE_NAME} must be within ${ITEM_NAME}`,
-  [OVERLAY_NAME]: `${OVERLAY_NAME} must be within ${ROOT_NAME}`,
+  [ROOT_NAME]: `\`${ROOT_NAME}\` components must be within \`${ROOT_NAME}\``,
+  [BOARD_NAME]: `\`${BOARD_NAME}\` must be within \`${ROOT_NAME}\``,
+  [COLUMN_NAME]: `\`${COLUMN_NAME}\` must be within \`${BOARD_NAME}\``,
+  [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${COLUMN_NAME}\``,
+  [ITEM_HANDLE_NAME]: `\`${ITEM_HANDLE_NAME}\` must be within \`${ITEM_NAME}\``,
+  [OVERLAY_NAME]: `\`${OVERLAY_NAME}\` must be within \`${ROOT_NAME}\``,
 } as const;
 
 interface KanbanContextValue<T> {

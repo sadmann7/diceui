@@ -52,8 +52,8 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
   (props, forwardedRef) => {
     const { value, label: labelProp, disabled, ...itemProps } = props;
     const context = useComboboxContext(ITEM_NAME);
-    // Make the group context optional by passing false, so item can be used outside of a group
-    const groupContext = useComboboxGroupContext(ITEM_NAME, false);
+    // Make the group context optional by passing true, so item can be used outside of a group
+    const groupContext = useComboboxGroupContext(ITEM_NAME, true);
     const { label, onLabelChange } = useLabel<ItemTextElement>({
       defaultValue: labelProp,
     });

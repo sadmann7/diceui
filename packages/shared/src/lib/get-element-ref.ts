@@ -1,29 +1,34 @@
+/**
+ * @see https://github.com/radix-ui/primitives/blob/main/packages/react/slot/src/Slot.tsx
+ */
+
 import * as React from "react";
 
 /**
  * Get the ref from a React element without throwing warnings.
  */
-function getElementRef(
-  element: React.ReactElement,
-): React.Ref<unknown> | undefined {
+function getElementRef(element: React.ReactElement) {
   if (!React.isValidElement(element)) return undefined;
 
-  const propDescriptor = Object.getOwnPropertyDescriptor(element.props, "ref");
-  const elementDescriptor = Object.getOwnPropertyDescriptor(element, "ref");
-
-  // Handle React <=18 warnings
-  if (propDescriptor?.get && "isReactWarning" in propDescriptor.get) {
-    return (element as { ref?: React.Ref<unknown> }).ref;
+  // React <=18 in DEV
+  let getter = Object.getOwnPropertyDescriptor(element.props, "ref")?.get;
+  let mayWarn = getter && "isReactWarning" in getter && getter.isReactWarning;
+  if (mayWarn) {
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    return (element as any).ref;
   }
 
-  // Handle React 19 warnings
-  if (elementDescriptor?.get && "isReactWarning" in elementDescriptor.get) {
+  // React 19 in DEV
+  getter = Object.getOwnPropertyDescriptor(element, "ref")?.get;
+  mayWarn = getter && "isReactWarning" in getter && getter.isReactWarning;
+  if (mayWarn) {
     return (element.props as { ref?: React.Ref<unknown> }).ref;
   }
 
+  // Not DEV
   return (
-    (element.props as { ref?: React.Ref<unknown> }).ref ??
-    (element as { ref?: React.Ref<unknown> }).ref
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    (element.props as { ref?: React.Ref<unknown> }).ref || (element as any).ref
   );
 }
 

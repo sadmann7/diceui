@@ -15,7 +15,6 @@
   "dependencies": {
     "@diceui/checkbox-group": "workspace:*",
     "@diceui/combobox": "workspace:*",
-    "@diceui/masonry": "workspace:*",
     "@diceui/mention": "workspace:*",
     "@diceui/tags-input": "workspace:*",
     "@dnd-kit/core": "^6.3.1",
