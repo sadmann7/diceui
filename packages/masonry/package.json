@@ -27,8 +27,7 @@
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup --clean",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
     "@types/react": "*",
