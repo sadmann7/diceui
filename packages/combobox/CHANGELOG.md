@@ -1,5 +1,16 @@
 # @diceui/combobox
 
+## 0.6.0
+
+### Minor Changes
+
+- 732b7ce: Bump slot
+
+### Patch Changes
+
+- Updated dependencies [732b7ce]
+  - @diceui/shared@0.8.0
+
 ## 0.5.0
 
 ### Minor Changes
