@@ -1,8 +1,10 @@
-import { Primitive } from "@diceui/shared";
+import { Primitive, useComposedRefs } from "@diceui/shared";
 import * as React from "react";
 import { useMasonryContext } from "./masonry-root";
 
 const ITEM_NAME = "MasonryItem";
+
+type ItemElement = React.ElementRef<typeof Primitive.div>;
 
 interface MasonryItemProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
@@ -10,10 +12,11 @@ interface MasonryItemProps
   index: number;
 }
 
-const MasonryItem = React.forwardRef<HTMLDivElement, MasonryItemProps>(
+const MasonryItem = React.forwardRef<ItemElement, MasonryItemProps>(
   (props, forwardedRef) => {
     const { index, children, style, ...itemProps } = props;
-    const itemRef = React.useRef<HTMLDivElement>(null);
+    const itemRef = React.useRef<ItemElement>(null);
+    const composedRef = useComposedRefs(itemRef, forwardedRef);
     const { columnCount, columnWidth, columnGutter, rowGutter, onItemResize } =
       useMasonryContext(ITEM_NAME);
 
@@ -41,7 +44,7 @@ const MasonryItem = React.forwardRef<HTMLDivElement, MasonryItemProps>(
 
     return (
       <Primitive.div
-        ref={itemRef}
+        ref={composedRef}
         style={{
           position: "absolute",
           top: 0,
@@ -60,4 +63,5 @@ const MasonryItem = React.forwardRef<HTMLDivElement, MasonryItemProps>(
 MasonryItem.displayName = ITEM_NAME;
 
 export { MasonryItem };
-export type { MasonryItemProps };
+
+export type { MasonryItemProps, ItemElement };

@@ -1,4 +1,4 @@
-import { Primitive, composeRefs, createContext } from "@diceui/shared";
+import { Primitive, createContext, useComposedRefs } from "@diceui/shared";
 import * as React from "react";
 
 const ROOT_NAME = "MasonryRoot";
@@ -51,20 +51,22 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
       items = [],
       width: widthProp,
       height: heightProp,
+      style,
       children,
       ...rootProps
     } = props;
 
-    const containerRef = React.useRef<HTMLDivElement>(null);
+    const collectionRef = React.useRef<HTMLDivElement>(null);
     const [containerWidth, setContainerWidth] = React.useState(0);
     const [containerHeight, setContainerHeight] = React.useState(0);
     const [itemHeights, setItemHeights] = React.useState<number[]>([]);
+    const composedRef = useComposedRefs(collectionRef, forwardedRef);
 
     // Update container dimensions on mount and window resize
     React.useLayoutEffect(() => {
       const updateDimensions = () => {
-        if (containerRef.current) {
-          const rect = containerRef.current.getBoundingClientRect();
+        if (collectionRef.current) {
+          const rect = collectionRef.current.getBoundingClientRect();
           setContainerWidth(rect.width);
           setContainerHeight(rect.height);
         }
@@ -121,14 +123,15 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
         onItemResize={onItemResize}
       >
         <Primitive.div
-          ref={composeRefs(containerRef, forwardedRef)}
+          {...rootProps}
+          ref={composedRef}
           style={{
             position: "relative",
             width: "100%",
-            height: totalHeight || "auto",
+            height: totalHeight ?? "auto",
             minHeight: heightProp,
+            ...style,
           }}
-          {...rootProps}
         >
           {children}
         </Primitive.div>
@@ -140,4 +143,5 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
 MasonryRoot.displayName = ROOT_NAME;
 
 export { MasonryRoot, useMasonryContext };
+
 export type { MasonryItem, MasonryRootProps };
