@@ -99,41 +99,27 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
     // Calculate total height
     const totalHeight = React.useMemo(() => {
       const columnHeights = new Array(columnCount).fill(0);
-      itemHeights.forEach((height, i) => {
+      for (let i = 0; i < itemHeights.length; i++) {
+        const height = itemHeights[i];
         const shortestColumn = columnHeights.indexOf(
           Math.min(...columnHeights),
         );
         columnHeights[shortestColumn] += height + rowGutter;
-      });
+      }
       return Math.max(...columnHeights) - rowGutter;
     }, [columnCount, itemHeights, rowGutter]);
 
-    const contextValue = React.useMemo(
-      () => ({
-        columnCount,
-        columnWidth,
-        columnGutter,
-        rowGutter,
-        items,
-        containerWidth: width,
-        containerHeight: heightProp || containerHeight,
-        onItemResize,
-      }),
-      [
-        columnCount,
-        columnWidth,
-        columnGutter,
-        rowGutter,
-        items,
-        width,
-        heightProp,
-        containerHeight,
-        onItemResize,
-      ],
-    );
-
     return (
-      <MasonryProvider {...contextValue}>
+      <MasonryProvider
+        columnCount={columnCount}
+        columnWidth={columnWidth}
+        columnGutter={columnGutter}
+        rowGutter={rowGutter}
+        items={items}
+        containerWidth={width}
+        containerHeight={heightProp || containerHeight}
+        onItemResize={onItemResize}
+      >
         <Primitive.div
           ref={composeRefs(containerRef, forwardedRef)}
           style={{
@@ -154,4 +140,4 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
 MasonryRoot.displayName = ROOT_NAME;
 
 export { MasonryRoot, useMasonryContext };
-export type { MasonryRootProps, MasonryItem };
+export type { MasonryItem, MasonryRootProps };

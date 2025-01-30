@@ -33,13 +33,13 @@ type Value<Multiple extends boolean = false> = Multiple extends true
   ? string[]
   : string;
 
-type CollectionElement = React.ElementRef<typeof Primitive.div>;
-
 interface ItemData {
   label: string;
   value: string;
   disabled?: boolean;
 }
+
+type RootElement = React.ElementRef<typeof Primitive.div>;
 
 interface ComboboxContextValue<Multiple extends boolean = false> {
   value: Value<Multiple>;
@@ -78,7 +78,7 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   preserveInputOnBlur: boolean;
   readOnly: boolean;
   dir: Direction;
-  collectionRef: React.RefObject<CollectionElement | null>;
+  collectionRef: React.RefObject<ItemElement | null>;
   listRef: React.RefObject<ContentElement | null>;
   inputRef: React.RefObject<InputElement | null>;
   anchorRef: React.RefObject<AnchorElement | null>;
@@ -218,7 +218,7 @@ interface ComboboxRootProps<Multiple extends boolean = false>
 
 function ComboboxRootImpl<Multiple extends boolean = false>(
   props: ComboboxRootProps<Multiple>,
-  forwardedRef: React.ForwardedRef<CollectionElement>,
+  forwardedRef: React.ForwardedRef<RootElement>,
 ) {
   const {
     value: valueProp,
@@ -255,13 +255,12 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
 
   const dir = useDirection(dirProp);
   const { collectionRef, getItems, itemMap, groupMap, onItemRegister } =
-    useCollection<CollectionElement, ItemData>({
+    useCollection<ItemElement, ItemData>({
       grouped: true,
     });
   const { anchorRef, hasAnchor, onHasAnchorChange } =
     useAnchor<AnchorElement>();
-  const { isFormControl, onTriggerChange } =
-    useFormControl<CollectionElement>();
+  const { isFormControl, onTriggerChange } = useFormControl<RootElement>();
   const composedRef = useComposedRefs(forwardedRef, collectionRef, (node) =>
     onTriggerChange(node),
   );

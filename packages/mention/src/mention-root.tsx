@@ -26,7 +26,7 @@ function getDataState(open: boolean) {
 
 const ROOT_NAME = "MentionRoot";
 
-type CollectionElement = React.ElementRef<typeof Primitive.div>;
+type RootElement = React.ElementRef<typeof Primitive.div>;
 
 interface ItemData {
   label: string;
@@ -50,8 +50,8 @@ interface MentionContextValue {
   onVirtualAnchorChange: (element: VirtualElement | null) => void;
   trigger: string;
   onTriggerChange: (character: string) => void;
-  getEnabledItems: () => CollectionItem<CollectionElement, ItemData>[];
-  onItemRegister: (item: CollectionItem<CollectionElement, ItemData>) => void;
+  getEnabledItems: () => CollectionItem<ItemElement, ItemData>[];
+  onItemRegister: (item: CollectionItem<ItemElement, ItemData>) => void;
   filterStore: {
     search: string;
     itemCount: number;
@@ -60,9 +60,9 @@ interface MentionContextValue {
   onFilter?: (options: string[], term: string) => string[];
   onItemsFilter: () => void;
   getIsItemVisible: (value: string) => boolean;
-  highlightedItem: CollectionItem<CollectionElement, ItemData> | null;
+  highlightedItem: CollectionItem<ItemElement, ItemData> | null;
   onHighlightedItemChange: (
-    item: CollectionItem<CollectionElement, ItemData> | null,
+    item: CollectionItem<ItemElement, ItemData> | null,
   ) => void;
   onHighlightMove: (direction: HighlightingDirection) => void;
   mentions: Mention[];
@@ -166,7 +166,7 @@ interface MentionRootProps
   name?: string;
 }
 
-const MentionRoot = React.forwardRef<CollectionElement, MentionRootProps>(
+const MentionRoot = React.forwardRef<RootElement, MentionRootProps>(
   (props, forwardedRef) => {
     const {
       children,
@@ -202,8 +202,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionRootProps>(
       ItemElement,
       ItemData
     >();
-    const { isFormControl, onTriggerChange } =
-      useFormControl<CollectionElement>();
+    const { isFormControl, onTriggerChange } = useFormControl<RootElement>();
     const composedRef = composeRefs(forwardedRef, collectionRef, (node) =>
       onTriggerChange(node),
     );
@@ -229,7 +228,7 @@ const MentionRoot = React.forwardRef<CollectionElement, MentionRootProps>(
     const [virtualAnchor, setVirtualAnchor] =
       React.useState<VirtualElement | null>(null);
     const [highlightedItem, setHighlightedItem] = React.useState<CollectionItem<
-      CollectionElement,
+      ItemElement,
       ItemData
     > | null>(null);
     const [mentions, setMentions] = React.useState<Mention[]>([]);
