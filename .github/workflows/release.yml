@@ -35,6 +35,7 @@ jobs:
           # Create or update .npmrc
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
           echo "@diceui:registry=https://registry.npmjs.org/" >> ~/.npmrc
+          npm config set access public
           
           # Debug info (without exposing token)
           echo "--- NPM Config ---"
@@ -50,7 +51,10 @@ jobs:
         run: pnpm lint:fix
 
       - name: Build
-        run: pnpm turbo build
+        run: pnpm turbo build --no-cache --force
+        env:
+          TURBO_TOKEN: ""
+          TURBO_TEAM: ""
 
       - name: Create Release
         id: changesets
