@@ -9,6 +9,7 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "build:registry": "pnpm --filter=docs build:registry --loglevel silent",
+    "build:packages": "pnpm --filter \"@diceui/*\" build",
     "lint": "biome check .",
     "lint:fix": "biome check . --write",
     "typecheck": "turbo typecheck",

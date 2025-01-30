@@ -36,13 +36,13 @@ jobs:
       - name: Build
         run: pnpm turbo build
 
-      # - name: Create Release
-      #   id: changesets
-      #   uses: changesets/action@v1.4.1
-      #   with:
-      #     commit: "chore(release): version packages"
-      #     title: "chore(release): version packages"
-      #     publish: pnpm changeset publish
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-      #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Create Release
+        id: changesets
+        uses: changesets/action@v1.4.1
+        with:
+          commit: "chore(release): version packages"
+          title: "chore(release): version packages"
+          publish: pnpm changeset publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}         

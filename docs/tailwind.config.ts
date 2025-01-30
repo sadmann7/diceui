@@ -1,5 +1,5 @@
-import { createPreset } from "fumadocs-ui/tailwind-plugin";
 import type { Config } from "tailwindcss";
+import { createPreset } from "fumadocs-ui/tailwind-plugin";
 import { fontFamily } from "tailwindcss/defaultTheme";
 
 export default {
