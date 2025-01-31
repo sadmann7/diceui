@@ -50,7 +50,7 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <HydrationBoundary fallback={<Skeleton className="h-svh w-full" />}>
-        <Masonry>
+        <Masonry columnCount={{ sm: 2, md: 3 }} gap={16}>
           {items.map((item) => (
             <div
               key={item.id}

@@ -31,7 +31,7 @@ function parseBreakpoint(breakpoint: BreakpointValue): number {
 function getInitialValue(value: ResponsiveValue, defaultValue: number): number {
   if (typeof value === "number") return value;
 
-  // For SSR, use the smallest breakpoint value or default to 1
+  // For SSR and screens smaller than smallest breakpoint, use 1 column
   const breakpoints = Object.entries(value)
     .map(([key, val]) => ({
       breakpoint: parseBreakpoint(key as BreakpointValue),
@@ -39,7 +39,13 @@ function getInitialValue(value: ResponsiveValue, defaultValue: number): number {
     }))
     .sort((a, b) => a.breakpoint - b.breakpoint);
 
-  return breakpoints[0]?.value ?? defaultValue;
+  // If we're dealing with responsive columns and there are breakpoints defined,
+  // default to 1 for smallest screens instead of using the first breakpoint value
+  if (breakpoints.length > 0) {
+    return 1;
+  }
+
+  return defaultValue;
 }
 
 function useResponsiveValue({
@@ -76,7 +82,8 @@ function useResponsiveValue({
         }))
         .sort((a, b) => a.breakpoint - b.breakpoint);
 
-      let newValue = breakpoints[0]?.value ?? defaultValue;
+      // Default to 1 column for screens smaller than the smallest breakpoint
+      let newValue = 1;
 
       for (const { breakpoint, value } of breakpoints) {
         if (width >= breakpoint) {
@@ -92,7 +99,7 @@ function useResponsiveValue({
     updateValue();
     window.addEventListener("resize", updateValue);
     return () => window.removeEventListener("resize", updateValue);
-  }, [value, mounted, defaultValue]);
+  }, [value, mounted]);
 
   return currentValue;
 }
