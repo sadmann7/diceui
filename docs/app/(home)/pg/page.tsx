@@ -67,7 +67,7 @@ export default function PlaygroundPage() {
             </div>
           )}
         />
-        <Masonry.Root>
+        <Masonry.Root columnCount={{ sm: 2, md: 3, lg: 4 }}>
           {items.map((item) => (
             <div
               key={item.id}
