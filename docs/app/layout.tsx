@@ -1,4 +1,5 @@
 import { Providers } from "@/components/providers";
+import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/config/site";
 import { fontMono, fontSans } from "@/lib/fonts";
@@ -73,6 +74,8 @@ export default function RootLayout({ children }: RootLayoutProps) {
           data-site-id="diceui.com"
           src="https://assets.onedollarstats.com/tracker.js"
         />
+        <TailwindIndicator />
+        <Toaster />
         <Providers
           theme={{
             attribute: "class",
@@ -83,7 +86,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
         >
           {children}
         </Providers>
-        <Toaster />
       </body>
     </html>
   );

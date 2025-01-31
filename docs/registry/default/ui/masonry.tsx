@@ -28,13 +28,40 @@ function parseBreakpoint(breakpoint: BreakpointValue): number {
   return TAILWIND_BREAKPOINTS[breakpoint];
 }
 
-function useResponsiveValue(
-  value: ResponsiveValue,
-  defaultValue: number,
-): number {
-  const [currentValue, setCurrentValue] = React.useState(defaultValue);
+function getInitialValue(value: ResponsiveValue, defaultValue: number): number {
+  if (typeof value === "number") return value;
+
+  // For SSR, use the smallest breakpoint value or default to 1
+  const breakpoints = Object.entries(value)
+    .map(([key, val]) => ({
+      breakpoint: parseBreakpoint(key as BreakpointValue),
+      value: val,
+    }))
+    .sort((a, b) => a.breakpoint - b.breakpoint);
+
+  return breakpoints[0]?.value ?? defaultValue;
+}
+
+function useResponsiveValue({
+  value,
+  defaultValue,
+  mounted,
+}: {
+  value: ResponsiveValue;
+  defaultValue: number;
+  mounted: boolean;
+}): number {
+  // Get initial SSR-compatible value
+  const initialValue = React.useMemo(
+    () => getInitialValue(value, defaultValue),
+    [value, defaultValue],
+  );
+
+  const [currentValue, setCurrentValue] = React.useState(initialValue);
 
   React.useEffect(() => {
+    if (!mounted) return;
+
     if (typeof value === "number") {
       setCurrentValue(value);
       return;
@@ -49,8 +76,7 @@ function useResponsiveValue(
         }))
         .sort((a, b) => a.breakpoint - b.breakpoint);
 
-      // Default to 1 column for smallest screens
-      let newValue = 1;
+      let newValue = breakpoints[0]?.value ?? defaultValue;
 
       for (const { breakpoint, value } of breakpoints) {
         if (width >= breakpoint) {
@@ -66,18 +92,9 @@ function useResponsiveValue(
     updateValue();
     window.addEventListener("resize", updateValue);
     return () => window.removeEventListener("resize", updateValue);
-  }, [value]);
+  }, [value, mounted, defaultValue]);
 
   return currentValue;
-}
-
-function parseAsNumber(
-  value: ResponsiveValue | undefined,
-  defaultValue: number,
-): number {
-  if (typeof value === "number") return value;
-  if (typeof value === "undefined") return defaultValue;
-  return defaultValue;
 }
 
 interface MasonryProps extends React.ComponentPropsWithoutRef<"div"> {
@@ -100,8 +117,19 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       ...rootProps
     } = props;
 
-    const currentColumnCount = useResponsiveValue(columnCount, 4);
-    const currentGap = useResponsiveValue(gap, 16);
+    const [mounted, setMounted] = React.useState(false);
+    React.useLayoutEffect(() => setMounted(true), []);
+
+    const currentColumnCount = useResponsiveValue({
+      value: columnCount,
+      defaultValue: 4,
+      mounted,
+    });
+    const currentGap = useResponsiveValue({
+      value: gap,
+      defaultValue: 16,
+      mounted,
+    });
 
     const collectionRef = React.useRef<HTMLDivElement | null>(null);
     const composedRef = useComposedRefs(forwardedRef, collectionRef);
@@ -109,12 +137,11 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       number | undefined
     >(undefined);
 
-    const [mounted, setMounted] = React.useState(false);
-    React.useLayoutEffect(() => {
-      setMounted(true);
-    }, []);
-
-    const [lineBreakCount, setLineBreakCount] = React.useState(0);
+    const [lineBreakCount, setLineBreakCount] = React.useState(
+      getInitialValue(columnCount, 4) > 0
+        ? getInitialValue(columnCount, 4) - 1
+        : 0,
+    );
 
     const onResize = React.useCallback(() => {
       if (!collectionRef.current) return;
@@ -228,22 +255,35 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
     }, [onResize]);
 
     // Add line breaks to prevent columns from merging
-    const lineBreaks = React.useMemo(
+    const lineBreaks = React.useMemo(() => {
+      if (!mounted) return null;
+
+      return Array.from({ length: lineBreakCount }, (_, i) => (
+        <span
+          key={`masonry-break-${currentColumnCount}-${i.toString()}`}
+          data-class="line-break"
+          style={{
+            flexBasis: "100%",
+            width: 0,
+            margin: 0,
+            padding: 0,
+            order: i + 1,
+          }}
+        />
+      ));
+    }, [lineBreakCount, currentColumnCount, mounted]);
+
+    // Apply initial grid layout for SSR
+    const initialGridStyle = React.useMemo(
       () =>
-        Array.from({ length: lineBreakCount }, (_, i) => (
-          <span
-            key={`masonry-break-${currentColumnCount}-${i.toString()}`}
-            data-class="line-break"
-            style={{
-              flexBasis: "100%",
-              width: 0,
-              margin: 0,
-              padding: 0,
-              order: i + 1,
-            }}
-          />
-        )),
-      [lineBreakCount, currentColumnCount],
+        !mounted
+          ? {
+              display: "grid",
+              gridTemplateColumns: `repeat(${getInitialValue(columnCount, 4)}, 1fr)`,
+              gap: `${getInitialValue(gap, 16)}px`,
+            }
+          : undefined,
+      [columnCount, gap, mounted],
     );
 
     const RootSlot = asChild ? Slot : "div";
@@ -255,7 +295,9 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
         className={cn("relative w-full", className)}
         style={{
           ...style,
-          height: maxColumnHeight ? `${maxColumnHeight}px` : undefined,
+          ...initialGridStyle,
+          height:
+            maxColumnHeight && mounted ? `${maxColumnHeight}px` : undefined,
           minHeight: "0px",
         }}
       >
