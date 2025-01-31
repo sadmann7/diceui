@@ -301,12 +301,15 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       <RootSlot
         {...rootProps}
         ref={composedRef}
-        className={cn("relative w-full", className)}
+        className={cn("relative mx-auto w-full", className)}
         style={{
           ...style,
           ...initialGridStyle,
           height: mounted && maxColumnHeight ? `${maxColumnHeight}px` : "auto",
           minHeight: "0px",
+          width: mounted ? `calc(100% - ${currentGap}px)` : "100%",
+          marginLeft: mounted ? `${currentGap / 2}px` : undefined,
+          marginRight: mounted ? `${currentGap / 2}px` : undefined,
         }}
       >
         {children}
