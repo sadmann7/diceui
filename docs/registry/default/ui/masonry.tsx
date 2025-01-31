@@ -7,7 +7,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 const TAILWIND_BREAKPOINTS = {
-  default: 0,
+  initial: 0,
   sm: 640,
   md: 768,
   lg: 1024,
@@ -26,15 +26,17 @@ type ResponsiveValue = number | ResponsiveObject;
 
 function parseBreakpoint(breakpoint: BreakpointValue): number {
   if (typeof breakpoint === "number") return breakpoint;
-  return TAILWIND_BREAKPOINTS[breakpoint];
+  if (typeof breakpoint === "string" && breakpoint in TAILWIND_BREAKPOINTS)
+    return TAILWIND_BREAKPOINTS[breakpoint];
+  return Number(breakpoint);
 }
 
 function getInitialValue(value: ResponsiveValue, defaultValue: number): number {
   if (typeof value === "number") return value;
 
   // Check for default breakpoint first
-  if ("default" in value) {
-    return value.default ?? defaultValue;
+  if ("initial" in value) {
+    return value.initial ?? defaultValue;
   }
 
   const breakpoints = Object.entries(value)
@@ -77,18 +79,17 @@ function useResponsiveValue({
       const width = window.innerWidth;
       const breakpoints = Object.entries(value)
         .map(([key, val]) => ({
-          breakpoint: parseBreakpoint(key as BreakpointValue),
-          value: val,
+          breakpoint:
+            key === "initial" ? 0 : parseBreakpoint(key as BreakpointValue),
+          value: val ?? defaultValue,
         }))
-        .sort((a, b) => a.breakpoint - b.breakpoint);
+        .sort((a, b) => b.breakpoint - a.breakpoint);
 
-      // Default to 1 column for screens smaller than the smallest breakpoint
-      let newValue = 1;
+      let newValue = defaultValue;
 
       for (const { breakpoint, value } of breakpoints) {
         if (width >= breakpoint) {
-          newValue = value;
-        } else {
+          newValue = value ?? defaultValue;
           break;
         }
       }
@@ -99,7 +100,7 @@ function useResponsiveValue({
     updateValue();
     window.addEventListener("resize", updateValue);
     return () => window.removeEventListener("resize", updateValue);
-  }, [value, mounted]);
+  }, [value, defaultValue, mounted]);
 
   return currentValue;
 }
