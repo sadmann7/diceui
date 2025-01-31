@@ -68,19 +68,17 @@ export default function PlaygroundPage() {
           )}
         />
         <Masonry.Root>
-          <Masonry.Content>
-            {items.map((item) => (
-              <Masonry.Item
-                key={item.id}
-                className="rounded-lg border bg-card p-4 text-card-foreground shadow"
-                style={{
-                  height: item.height,
-                }}
-              >
-                {item.content}
-              </Masonry.Item>
-            ))}
-          </Masonry.Content>
+          {items.map((item) => (
+            <Masonry.Item
+              key={item.id}
+              className="rounded-lg border bg-card p-4 text-card-foreground shadow"
+              style={{
+                height: item.height,
+              }}
+            >
+              {item.content}
+            </Masonry.Item>
+          ))}
         </Masonry.Root>
         <Textarea
           placeholder="Type here..."

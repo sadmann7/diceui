@@ -6,13 +6,11 @@ import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 
 const ROOT_NAME = "Masonry";
-const CONTENT_NAME = "MasonryContent";
 const ITEM_NAME = "MasonryItem";
 
 const MASONRY_ERROR = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` components must be within \`${ROOT_NAME}\``,
-  [CONTENT_NAME]: `\`${CONTENT_NAME}\` must be within \`${ROOT_NAME}\``,
-  [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${CONTENT_NAME}\``,
+  [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${ROOT_NAME}\``,
 } as const;
 
 interface MasonryRootContextValue {
@@ -36,6 +34,8 @@ function useMasonryContext(name: keyof typeof MASONRY_ERROR) {
   return context;
 }
 
+type ItemElement = React.ComponentRef<typeof MasonryItem>;
+
 interface MasonryProps extends React.ComponentPropsWithoutRef<"div"> {
   columnCount?: number;
   gap?: number;
@@ -55,7 +55,11 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       ...rootProps
     } = props;
 
-    const [maxColumnHeight, setMaxColumnHeight] = React.useState<number>();
+    const collectionRef = React.useRef<ItemElement | null>(null);
+    const composedRef = useComposedRefs(forwardedRef, collectionRef);
+    const [maxColumnHeight, setMaxColumnHeight] = React.useState<
+      number | undefined
+    >();
 
     const contextValue = React.useMemo(
       () => ({
@@ -68,78 +72,47 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       [columnCount, gap, sequential, maxColumnHeight],
     );
 
-    const RootSlot = asChild ? Slot : "div";
-
-    return (
-      <MasonryRootContext.Provider value={contextValue}>
-        <RootSlot
-          {...rootProps}
-          ref={forwardedRef}
-          className={cn("relative w-full", className)}
-        >
-          {children}
-        </RootSlot>
-      </MasonryRootContext.Provider>
-    );
-  },
-);
-Masonry.displayName = ROOT_NAME;
-
-const MasonryContentContext = React.createContext<boolean>(false);
-MasonryContentContext.displayName = CONTENT_NAME;
-
-interface MasonryContentProps extends React.ComponentPropsWithoutRef<"div"> {
-  asChild?: boolean;
-}
-
-const MasonryContent = React.forwardRef<HTMLDivElement, MasonryContentProps>(
-  (props, forwardedRef) => {
-    const { asChild, className, ...contentProps } = props;
-    const context = useMasonryContext(CONTENT_NAME);
-    const collectionRef = React.useRef<HTMLDivElement>(null);
-    const composedRef = useComposedRefs(forwardedRef, collectionRef);
-
     const onResize = React.useCallback(() => {
       if (!collectionRef.current) return;
 
-      const items = Array.from(collectionRef.current.children) as HTMLElement[];
-      const columnHeights = new Array(context.columnCount).fill(0);
+      const items = Array.from(collectionRef.current.children) as ItemElement[];
+      const columnHeights = new Array(columnCount).fill(0);
 
       // Reset all items
       for (const item of items) {
         item.style.removeProperty("position");
         item.style.removeProperty("top");
         item.style.removeProperty("left");
-        item.style.width = `calc(${100 / context.columnCount}% - ${(context.gap * (context.columnCount - 1)) / context.columnCount}px)`;
+        item.style.width = `calc(${100 / columnCount}% - ${(gap * (columnCount - 1)) / columnCount}px)`;
       }
 
       // Position items
       for (const item of items) {
-        if (context.sequential) {
+        if (sequential) {
           const columnIndex = columnHeights.indexOf(Math.min(...columnHeights));
-          const xPos = columnIndex * (item.offsetWidth + context.gap);
+          const xPos = columnIndex * (item.offsetWidth + gap);
           const yPos = columnHeights[columnIndex];
 
           item.style.position = "absolute";
           item.style.top = `${yPos}px`;
           item.style.left = `${xPos}px`;
 
-          columnHeights[columnIndex] += item.offsetHeight + context.gap;
+          columnHeights[columnIndex] += item.offsetHeight + gap;
         } else {
           const columnIndex = columnHeights.indexOf(Math.min(...columnHeights));
-          const xPos = columnIndex * (item.offsetWidth + context.gap);
+          const xPos = columnIndex * (item.offsetWidth + gap);
           const yPos = columnHeights[columnIndex];
 
           item.style.position = "absolute";
           item.style.top = `${yPos}px`;
           item.style.left = `${xPos}px`;
 
-          columnHeights[columnIndex] += item.offsetHeight + context.gap;
+          columnHeights[columnIndex] += item.offsetHeight + gap;
         }
       }
 
-      context.setMaxColumnHeight(Math.max(...columnHeights));
-    }, [context]);
+      setMaxColumnHeight(Math.max(...columnHeights));
+    }, [columnCount, gap, sequential]);
 
     React.useEffect(() => {
       if (typeof ResizeObserver === "undefined") return;
@@ -161,28 +134,28 @@ const MasonryContent = React.forwardRef<HTMLDivElement, MasonryContentProps>(
       };
     }, [onResize]);
 
-    const ContentSlot = asChild ? Slot : "div";
+    const RootSlot = asChild ? Slot : "div";
 
     return (
-      <MasonryContentContext.Provider value={true}>
-        <ContentSlot
-          {...contentProps}
+      <MasonryRootContext.Provider value={contextValue}>
+        <RootSlot
+          {...rootProps}
           ref={composedRef}
           className={cn(
             "relative w-full",
-            context.maxColumnHeight && {
-              height: context.maxColumnHeight,
+            maxColumnHeight && {
+              height: maxColumnHeight,
             },
             className,
           )}
         >
-          {props.children}
-        </ContentSlot>
-      </MasonryContentContext.Provider>
+          {children}
+        </RootSlot>
+      </MasonryRootContext.Provider>
     );
   },
 );
-MasonryContent.displayName = CONTENT_NAME;
+Masonry.displayName = ROOT_NAME;
 
 interface MasonryItemProps extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
@@ -191,11 +164,7 @@ interface MasonryItemProps extends React.ComponentPropsWithoutRef<"div"> {
 const MasonryItem = React.forwardRef<HTMLDivElement, MasonryItemProps>(
   (props, forwardedRef) => {
     const { asChild, className, ...itemProps } = props;
-    const inMasonryContent = React.useContext(MasonryContentContext);
-
-    if (!inMasonryContent) {
-      throw new Error(MASONRY_ERROR[ITEM_NAME]);
-    }
+    useMasonryContext(ITEM_NAME);
 
     const ItemSlot = asChild ? Slot : "div";
 
@@ -211,15 +180,12 @@ const MasonryItem = React.forwardRef<HTMLDivElement, MasonryItemProps>(
 MasonryItem.displayName = ITEM_NAME;
 
 const Root = Masonry;
-const Content = MasonryContent;
 const Item = MasonryItem;
 
 export {
   Masonry,
-  MasonryContent,
   MasonryItem,
   //
   Root,
-  Content,
   Item,
 };
