@@ -16,9 +16,8 @@ const MASONRY_ERROR = {
 } as const;
 
 interface MasonryRootContextValue {
-  id: string;
-  columns: number;
-  spacing: number;
+  columnCount: number;
+  gap: number;
   sequential: boolean;
   maxColumnHeight: number | undefined;
   setMaxColumnHeight: (height: number | undefined) => void;
@@ -38,8 +37,8 @@ function useMasonryContext(name: keyof typeof MASONRY_ERROR) {
 }
 
 interface MasonryProps extends React.ComponentPropsWithoutRef<"div"> {
-  columns?: number;
-  spacing?: number;
+  columnCount?: number;
+  gap?: number;
   sequential?: boolean;
   asChild?: boolean;
 }
@@ -48,27 +47,25 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
   (props, forwardedRef) => {
     const {
       children,
-      columns = 4,
-      spacing = 16,
+      columnCount = 4,
+      gap = 16,
       sequential = false,
       asChild,
       className,
       ...rootProps
     } = props;
 
-    const id = React.useId();
     const [maxColumnHeight, setMaxColumnHeight] = React.useState<number>();
 
     const contextValue = React.useMemo(
       () => ({
-        id,
-        columns,
-        spacing,
+        columnCount,
+        gap,
         sequential,
         maxColumnHeight,
         setMaxColumnHeight,
       }),
-      [id, columns, spacing, sequential, maxColumnHeight],
+      [columnCount, gap, sequential, maxColumnHeight],
     );
 
     const RootSlot = asChild ? Slot : "div";
@@ -99,47 +96,45 @@ const MasonryContent = React.forwardRef<HTMLDivElement, MasonryContentProps>(
   (props, forwardedRef) => {
     const { asChild, className, ...contentProps } = props;
     const context = useMasonryContext(CONTENT_NAME);
-    const contentRef = React.useRef<HTMLDivElement>(null);
+    const collectionRef = React.useRef<HTMLDivElement>(null);
+    const composedRef = useComposedRefs(forwardedRef, collectionRef);
 
-    const handleResize = React.useCallback(() => {
-      if (!contentRef.current) return;
+    const onResize = React.useCallback(() => {
+      if (!collectionRef.current) return;
 
-      const content = contentRef.current;
-      const items = Array.from(content.children) as HTMLElement[];
-      const columnCount = context.columns;
-      const columnHeights = new Array(columnCount).fill(0);
-      const columnGap = context.spacing;
+      const items = Array.from(collectionRef.current.children) as HTMLElement[];
+      const columnHeights = new Array(context.columnCount).fill(0);
 
       // Reset all items
       for (const item of items) {
         item.style.removeProperty("position");
         item.style.removeProperty("top");
         item.style.removeProperty("left");
-        item.style.width = `calc(${100 / columnCount}% - ${(columnGap * (columnCount - 1)) / columnCount}px)`;
+        item.style.width = `calc(${100 / context.columnCount}% - ${(context.gap * (context.columnCount - 1)) / context.columnCount}px)`;
       }
 
       // Position items
       for (const item of items) {
         if (context.sequential) {
           const columnIndex = columnHeights.indexOf(Math.min(...columnHeights));
-          const xPos = columnIndex * (item.offsetWidth + columnGap);
+          const xPos = columnIndex * (item.offsetWidth + context.gap);
           const yPos = columnHeights[columnIndex];
 
           item.style.position = "absolute";
           item.style.top = `${yPos}px`;
           item.style.left = `${xPos}px`;
 
-          columnHeights[columnIndex] += item.offsetHeight + columnGap;
+          columnHeights[columnIndex] += item.offsetHeight + context.gap;
         } else {
           const columnIndex = columnHeights.indexOf(Math.min(...columnHeights));
-          const xPos = columnIndex * (item.offsetWidth + columnGap);
+          const xPos = columnIndex * (item.offsetWidth + context.gap);
           const yPos = columnHeights[columnIndex];
 
           item.style.position = "absolute";
           item.style.top = `${yPos}px`;
           item.style.left = `${xPos}px`;
 
-          columnHeights[columnIndex] += item.offsetHeight + columnGap;
+          columnHeights[columnIndex] += item.offsetHeight + context.gap;
         }
       }
 
@@ -150,11 +145,11 @@ const MasonryContent = React.forwardRef<HTMLDivElement, MasonryContentProps>(
       if (typeof ResizeObserver === "undefined") return;
 
       const resizeObserver = new ResizeObserver(() => {
-        requestAnimationFrame(handleResize);
+        requestAnimationFrame(onResize);
       });
 
-      if (contentRef.current) {
-        const content = contentRef.current;
+      if (collectionRef.current) {
+        const content = collectionRef.current;
         resizeObserver.observe(content);
         for (const child of Array.from(content.children)) {
           resizeObserver.observe(child);
@@ -164,9 +159,8 @@ const MasonryContent = React.forwardRef<HTMLDivElement, MasonryContentProps>(
       return () => {
         resizeObserver.disconnect();
       };
-    }, [handleResize]);
+    }, [onResize]);
 
-    const composedRef = useComposedRefs(forwardedRef, contentRef);
     const ContentSlot = asChild ? Slot : "div";
 
     return (
