@@ -82,11 +82,8 @@ function parseAsNumber(
 
 interface MasonryProps extends React.ComponentPropsWithoutRef<"div"> {
   columnCount?: ResponsiveValue;
-  spacing?: ResponsiveValue;
-  sequential?: boolean;
-  initialHeight?: number;
-  initialColumnCount?: number;
-  initialSpacing?: number;
+  gap?: ResponsiveValue;
+  linear?: boolean;
   asChild?: boolean;
 }
 
@@ -95,42 +92,29 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
     const {
       children,
       columnCount = 4,
-      spacing = 16,
-      sequential = false,
+      gap = 16,
+      linear = false,
       asChild,
-      initialHeight,
-      initialColumnCount = parseAsNumber(columnCount, 4),
-      initialSpacing = parseAsNumber(spacing, 16),
       className,
       style,
       ...rootProps
     } = props;
 
-    const currentColumnCount = useResponsiveValue(
-      columnCount,
-      initialColumnCount,
-    );
-    const currentSpacing = useResponsiveValue(spacing, initialSpacing);
+    const currentColumnCount = useResponsiveValue(columnCount, 4);
+    const currentGap = useResponsiveValue(gap, 16);
 
     const collectionRef = React.useRef<HTMLDivElement | null>(null);
     const composedRef = useComposedRefs(forwardedRef, collectionRef);
     const [maxColumnHeight, setMaxColumnHeight] = React.useState<
       number | undefined
-    >(initialHeight);
+    >(undefined);
 
     const [mounted, setMounted] = React.useState(false);
     React.useLayoutEffect(() => {
       setMounted(true);
     }, []);
 
-    const isSSR =
-      !mounted &&
-      initialHeight !== undefined &&
-      initialColumnCount !== undefined;
-
-    const [lineBreakCount, setLineBreakCount] = React.useState(
-      isSSR ? initialColumnCount - 1 : 0,
-    );
+    const [lineBreakCount, setLineBreakCount] = React.useState(0);
 
     const onResize = React.useCallback(() => {
       if (!collectionRef.current) return;
@@ -147,8 +131,8 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
         item.style.removeProperty("position");
         item.style.removeProperty("top");
         item.style.removeProperty("left");
-        item.style.width = `calc(${100 / currentColumnCount}% - ${(currentSpacing * (currentColumnCount - 1)) / currentColumnCount}px)`;
-        item.style.margin = `${currentSpacing / 2}px`;
+        item.style.width = `calc(${100 / currentColumnCount}% - ${(currentGap * (currentColumnCount - 1)) / currentColumnCount}px)`;
+        item.style.margin = `${currentGap / 2}px`;
       }
 
       // Position items
@@ -156,7 +140,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
         if (item.dataset.class === "line-break" || skip) continue;
 
         const itemStyle = window.getComputedStyle(item);
-        const spacingValue = Number(currentSpacing);
+        const spacingValue = Number(currentGap);
         const marginTop = itemStyle?.marginTop
           ? Number.parseFloat(itemStyle.marginTop)
           : spacingValue / 2;
@@ -180,7 +164,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
         }
 
         if (!skip) {
-          if (sequential) {
+          if (linear) {
             const yPos = columnHeights[nextOrder - 1];
             item.style.position = "absolute";
             item.style.top = `${yPos}px`;
@@ -217,7 +201,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
           );
         });
       }
-    }, [currentColumnCount, currentSpacing, sequential]);
+    }, [currentColumnCount, currentGap, linear]);
 
     React.useEffect(() => {
       if (typeof ResizeObserver === "undefined") return;
