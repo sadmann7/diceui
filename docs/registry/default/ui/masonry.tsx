@@ -7,6 +7,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 const TAILWIND_BREAKPOINTS = {
+  default: 0,
   sm: 640,
   md: 768,
   lg: 1024,
@@ -31,21 +32,20 @@ function parseBreakpoint(breakpoint: BreakpointValue): number {
 function getInitialValue(value: ResponsiveValue, defaultValue: number): number {
   if (typeof value === "number") return value;
 
-  // For SSR and screens smaller than smallest breakpoint, use 1 column
+  // Check for default breakpoint first
+  if ("default" in value) {
+    return value.default ?? defaultValue;
+  }
+
   const breakpoints = Object.entries(value)
     .map(([key, val]) => ({
       breakpoint: parseBreakpoint(key as BreakpointValue),
-      value: val,
+      value: val ?? defaultValue,
     }))
     .sort((a, b) => a.breakpoint - b.breakpoint);
 
-  // If we're dealing with responsive columns and there are breakpoints defined,
-  // default to 1 for smallest screens instead of using the first breakpoint value
-  if (breakpoints.length > 0) {
-    return 1;
-  }
-
-  return defaultValue;
+  // If we have breakpoints, use the value from smallest breakpoint instead of defaulting
+  return breakpoints[0]?.value ?? defaultValue;
 }
 
 function useResponsiveValue({
