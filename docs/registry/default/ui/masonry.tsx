@@ -127,6 +127,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       !mounted &&
       initialHeight !== undefined &&
       initialColumnCount !== undefined;
+
     const [lineBreakCount, setLineBreakCount] = React.useState(
       isSSR ? initialColumnCount - 1 : 0,
     );
@@ -280,12 +281,6 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
     );
   },
 );
-Masonry.displayName = "MasonryRoot";
+Masonry.displayName = "Masonry";
 
-const Root = Masonry;
-
-export {
-  Masonry,
-  //
-  Root,
-};
+export { Masonry };

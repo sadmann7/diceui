@@ -30,7 +30,7 @@ import {
   ComboboxItem,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
-import * as Masonry from "@/registry/default/ui/masonry";
+import { Masonry } from "@/registry/default/ui/masonry";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
 import { Masonry as MasonryAlt } from "masonic";
@@ -49,6 +49,19 @@ export default function PlaygroundPage() {
 
   return (
     <Shell>
+      <Masonry>
+        {items.map((item) => (
+          <div
+            key={item.id}
+            className="rounded-lg border bg-card p-4 text-card-foreground shadow"
+            style={{
+              height: item.height,
+            }}
+          >
+            {item.content}
+          </div>
+        ))}
+      </Masonry>
       <HydrationBoundary fallback={<Skeleton className="h-svh w-full" />}>
         <MasonryAlt
           items={items}
@@ -67,19 +80,6 @@ export default function PlaygroundPage() {
             </div>
           )}
         />
-        <Masonry.Root>
-          {items.map((item) => (
-            <div
-              key={item.id}
-              className="rounded-lg border bg-card p-4 text-card-foreground shadow"
-              style={{
-                height: item.height,
-              }}
-            >
-              {item.content}
-            </div>
-          ))}
-        </Masonry.Root>
         <Textarea
           placeholder="Type here..."
           className="min-h-[80px] max-w-[40rem]"
