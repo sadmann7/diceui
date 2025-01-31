@@ -102,6 +102,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       initialColumnCount = parseAsNumber(columnCount, 4),
       initialSpacing = parseAsNumber(spacing, 16),
       className,
+      style,
       ...rootProps
     } = props;
 
@@ -208,7 +209,8 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       if (!skip) {
         // Use flushSync to prevent layout thrashing
         ReactDOM.flushSync(() => {
-          setMaxColumnHeight(Math.max(...columnHeights));
+          const maxHeight = Math.max(...columnHeights);
+          setMaxColumnHeight(maxHeight > 0 ? maxHeight : undefined);
           setLineBreakCount(
             currentColumnCount > 0 ? currentColumnCount - 1 : 0,
           );
@@ -265,13 +267,12 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       <RootSlot
         {...rootProps}
         ref={composedRef}
-        className={cn(
-          "relative w-full",
-          maxColumnHeight && {
-            height: maxColumnHeight,
-          },
-          className,
-        )}
+        className={cn("relative w-full", className)}
+        style={{
+          ...style,
+          height: maxColumnHeight ? `${maxColumnHeight}px` : undefined,
+          minHeight: "0px",
+        }}
       >
         {children}
         {lineBreaks}
