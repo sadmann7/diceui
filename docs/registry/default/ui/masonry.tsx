@@ -144,7 +144,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
     );
 
     const onResize = React.useCallback(() => {
-      if (!collectionRef.current) return;
+      if (!collectionRef.current || !mounted) return;
 
       const items = Array.from(collectionRef.current.children) as HTMLElement[];
       const columnHeights = new Array(currentColumnCount).fill(0);
@@ -219,7 +219,10 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       }
 
       if (!skip) {
-        // Use flushSync to prevent layout thrashing
+        /**
+         * Use flushSync to prevent layout thrashing during React 18 batching
+         * @see https://github.com/facebook/react/blob/a8a4742f1c54493df00da648a3f9d26e3db9c8b5/packages/react-dom/src/events/ReactDOMEventListener.js#L294-L350
+         */
         ReactDOM.flushSync(() => {
           const maxHeight = Math.max(...columnHeights);
           setMaxColumnHeight(maxHeight > 0 ? maxHeight : undefined);
@@ -228,10 +231,10 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
           );
         });
       }
-    }, [currentColumnCount, currentGap, linear]);
+    }, [currentColumnCount, currentGap, linear, mounted]);
 
     React.useEffect(() => {
-      if (typeof ResizeObserver === "undefined") return;
+      if (!mounted || typeof ResizeObserver === "undefined") return;
 
       let animationFrame: number;
       const resizeObserver = new ResizeObserver(() => {
@@ -252,7 +255,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
         }
         resizeObserver.disconnect();
       };
-    }, [onResize]);
+    }, [onResize, mounted]);
 
     // Add line breaks to prevent columns from merging
     const lineBreaks = React.useMemo(() => {
@@ -273,16 +276,15 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       ));
     }, [lineBreakCount, currentColumnCount, mounted]);
 
-    // Apply initial grid layout for SSR
+    // Initial grid layout for SSR
     const initialGridStyle = React.useMemo(
-      () =>
-        !mounted
-          ? {
-              display: "grid",
-              gridTemplateColumns: `repeat(${getInitialValue(columnCount, 4)}, 1fr)`,
-              gap: `${getInitialValue(gap, 16)}px`,
-            }
+      () => ({
+        display: mounted ? "block" : "grid",
+        gridTemplateColumns: !mounted
+          ? `repeat(${getInitialValue(columnCount, 4)}, 1fr)`
           : undefined,
+        gap: !mounted ? `${getInitialValue(gap, 16)}px` : undefined,
+      }),
       [columnCount, gap, mounted],
     );
 
@@ -296,8 +298,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
         style={{
           ...style,
           ...initialGridStyle,
-          height:
-            maxColumnHeight && mounted ? `${maxColumnHeight}px` : undefined,
+          height: mounted && maxColumnHeight ? `${maxColumnHeight}px` : "auto",
           minHeight: "0px",
         }}
       >
