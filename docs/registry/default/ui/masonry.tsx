@@ -17,27 +17,19 @@ const TAILWIND_BREAKPOINTS = {
 
 type TailwindBreakpoint = keyof typeof TAILWIND_BREAKPOINTS;
 type BreakpointValue = TailwindBreakpoint | number;
-
-type ResponsiveObject = {
-  [K in BreakpointValue]?: number;
-};
-
+type ResponsiveObject = Partial<Record<BreakpointValue, number>>;
 type ResponsiveValue = number | ResponsiveObject;
 
 function parseBreakpoint(breakpoint: BreakpointValue): number {
   if (typeof breakpoint === "number") return breakpoint;
-  if (typeof breakpoint === "string" && breakpoint in TAILWIND_BREAKPOINTS)
-    return TAILWIND_BREAKPOINTS[breakpoint];
-  return Number(breakpoint);
+  return breakpoint in TAILWIND_BREAKPOINTS
+    ? TAILWIND_BREAKPOINTS[breakpoint]
+    : Number(breakpoint);
 }
 
 function getInitialValue(value: ResponsiveValue, defaultValue: number): number {
   if (typeof value === "number") return value;
-
-  // Check for default breakpoint first
-  if ("initial" in value) {
-    return value.initial ?? defaultValue;
-  }
+  if ("initial" in value) return value.initial ?? defaultValue;
 
   const breakpoints = Object.entries(value)
     .map(([key, val]) => ({
@@ -46,7 +38,6 @@ function getInitialValue(value: ResponsiveValue, defaultValue: number): number {
     }))
     .sort((a, b) => a.breakpoint - b.breakpoint);
 
-  // If we have breakpoints, use the value from smallest breakpoint instead of defaulting
   return breakpoints[0]?.value ?? defaultValue;
 }
 
@@ -59,51 +50,47 @@ function useResponsiveValue({
   defaultValue: number;
   mounted: boolean;
 }): number {
-  // Get initial SSR-compatible value
   const initialValue = React.useMemo(
     () => getInitialValue(value, defaultValue),
     [value, defaultValue],
   );
-
   const [currentValue, setCurrentValue] = React.useState(initialValue);
 
-  React.useEffect(() => {
+  const updateValue = React.useCallback(() => {
     if (!mounted) return;
-
     if (typeof value === "number") {
       setCurrentValue(value);
       return;
     }
 
-    function updateValue() {
-      const width = window.innerWidth;
-      const breakpoints = Object.entries(value)
-        .map(([key, val]) => ({
-          breakpoint:
-            key === "initial" ? 0 : parseBreakpoint(key as BreakpointValue),
-          value: val ?? defaultValue,
-        }))
-        .sort((a, b) => b.breakpoint - a.breakpoint);
+    const width = window.innerWidth;
+    const breakpoints = Object.entries(value)
+      .map(([key, val]) => ({
+        breakpoint:
+          key === "initial" ? 0 : parseBreakpoint(key as BreakpointValue),
+        value: val ?? defaultValue,
+      }))
+      .sort((a, b) => b.breakpoint - a.breakpoint);
 
-      let newValue = defaultValue;
+    const newValue =
+      breakpoints.find(({ breakpoint }) => width >= breakpoint)?.value ??
+      defaultValue;
+    setCurrentValue(newValue);
+  }, [value, defaultValue, mounted]);
 
-      for (const { breakpoint, value } of breakpoints) {
-        if (width >= breakpoint) {
-          newValue = value ?? defaultValue;
-          break;
-        }
-      }
-
-      setCurrentValue(newValue);
-    }
+  React.useEffect(() => {
+    if (!mounted) return;
 
     updateValue();
     window.addEventListener("resize", updateValue);
     return () => window.removeEventListener("resize", updateValue);
-  }, [value, defaultValue, mounted]);
+  }, [updateValue, mounted]);
 
   return currentValue;
 }
+
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
 interface MasonryProps extends React.ComponentPropsWithoutRef<"div"> {
   columnCount?: ResponsiveValue;
@@ -112,8 +99,8 @@ interface MasonryProps extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
 }
 
-const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
-  (props, forwardedRef) => {
+export const Masonry = React.memo(
+  React.forwardRef<HTMLDivElement, MasonryProps>((props, forwardedRef) => {
     const {
       children,
       columnCount = 4,
@@ -125,8 +112,14 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       ...rootProps
     } = props;
 
+    const [maxColumnHeight, setMaxColumnHeight] = React.useState<number>();
+    const collectionRef = React.useRef<HTMLDivElement>(null);
+    const composedRef = useComposedRefs(forwardedRef, collectionRef);
+
     const [mounted, setMounted] = React.useState(false);
-    React.useLayoutEffect(() => setMounted(true), []);
+    React.useLayoutEffect(() => {
+      setMounted(true);
+    }, []);
 
     const currentColumnCount = useResponsiveValue({
       value: columnCount,
@@ -138,20 +131,9 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       defaultValue: 16,
       mounted,
     });
+    const lineBreakCount = currentColumnCount > 0 ? currentColumnCount - 1 : 0;
 
-    const collectionRef = React.useRef<HTMLDivElement | null>(null);
-    const composedRef = useComposedRefs(forwardedRef, collectionRef);
-    const [maxColumnHeight, setMaxColumnHeight] = React.useState<
-      number | undefined
-    >(undefined);
-
-    const [lineBreakCount, setLineBreakCount] = React.useState(
-      getInitialValue(columnCount, 4) > 0
-        ? getInitialValue(columnCount, 4) - 1
-        : 0,
-    );
-
-    const onResize = React.useCallback(() => {
+    const calculateLayout = React.useCallback(() => {
       if (!collectionRef.current || !mounted) return;
 
       const items = Array.from(collectionRef.current.children) as HTMLElement[];
@@ -159,70 +141,64 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       let skip = false;
       let nextOrder = 1;
 
-      // Reset all items
+      // Reset styles
       for (const item of items) {
-        if (item.dataset.class === "line-break") continue;
-
-        item.style.removeProperty("position");
-        item.style.removeProperty("top");
-        item.style.removeProperty("left");
-        item.style.width = `calc(${100 / currentColumnCount}% - ${(currentGap * (currentColumnCount - 1)) / currentColumnCount}px)`;
-        item.style.margin = `${currentGap / 2}px`;
+        if (item.dataset.break === "line-break") continue;
+        const styles: Partial<CSSStyleDeclaration> = {
+          position: "",
+          top: "",
+          left: "",
+          width: `calc(${100 / currentColumnCount}% - ${(currentGap * (currentColumnCount - 1)) / currentColumnCount}px)`,
+          margin: `${currentGap / 2}px`,
+        };
+        Object.assign(item.style, styles);
       }
 
       // Position items
       for (const item of items) {
-        if (item.dataset.class === "line-break" || skip) continue;
+        if (item.dataset.break === "line-break" || skip) continue;
 
         const itemStyle = window.getComputedStyle(item);
-        const spacingValue = Number(currentGap);
-        const marginTop = itemStyle?.marginTop
-          ? Number.parseFloat(itemStyle.marginTop)
-          : spacingValue / 2;
-        const marginBottom = itemStyle?.marginBottom
-          ? Number.parseFloat(itemStyle.marginBottom)
-          : spacingValue / 2;
+        const marginTop =
+          Number.parseFloat(itemStyle.marginTop) || currentGap / 2;
+        const marginBottom =
+          Number.parseFloat(itemStyle.marginBottom) || currentGap / 2;
         const itemHeight = item.offsetHeight + marginTop + marginBottom;
 
-        if (itemHeight === 0) {
+        if (
+          itemHeight === 0 ||
+          Array.from(item.getElementsByTagName("img")).some(
+            (img) => img.clientHeight === 0,
+          )
+        ) {
           skip = true;
           continue;
         }
 
-        // Check for unloaded images
-        const images = item.getElementsByTagName("img");
-        for (let i = 0; i < images.length; i++) {
-          if (images[i]?.clientHeight === 0) {
-            skip = true;
-            break;
-          }
-        }
+        if (linear) {
+          const yPos = columnHeights[nextOrder - 1];
+          Object.assign(item.style, {
+            position: "absolute",
+            top: `${yPos}px`,
+            left: `${(nextOrder - 1) * (item.offsetWidth + currentGap)}px`,
+          });
 
-        if (!skip) {
-          if (linear) {
-            const yPos = columnHeights[nextOrder - 1];
-            item.style.position = "absolute";
-            item.style.top = `${yPos}px`;
-            item.style.left = `${(nextOrder - 1) * (item.offsetWidth + spacingValue)}px`;
+          columnHeights[nextOrder - 1] = yPos + itemHeight;
+          nextOrder = (nextOrder % currentColumnCount) + 1;
+        } else {
+          const minColumnIndex = columnHeights.indexOf(
+            Math.min(...columnHeights),
+          );
+          const xPos = minColumnIndex * (item.offsetWidth + currentGap);
+          const yPos = columnHeights[minColumnIndex];
 
-            columnHeights[nextOrder - 1] = yPos + itemHeight;
-            nextOrder += 1;
-            if (nextOrder > currentColumnCount) {
-              nextOrder = 1;
-            }
-          } else {
-            const minColumnIndex = columnHeights.indexOf(
-              Math.min(...columnHeights),
-            );
-            const xPos = minColumnIndex * (item.offsetWidth + spacingValue);
-            const yPos = columnHeights[minColumnIndex];
+          Object.assign(item.style, {
+            position: "absolute",
+            top: `${yPos}px`,
+            left: `${xPos}px`,
+          });
 
-            item.style.position = "absolute";
-            item.style.top = `${yPos}px`;
-            item.style.left = `${xPos}px`;
-
-            columnHeights[minColumnIndex] = yPos + itemHeight;
-          }
+          columnHeights[minColumnIndex] = yPos + itemHeight;
         }
       }
 
@@ -234,23 +210,20 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
         ReactDOM.flushSync(() => {
           const maxHeight = Math.max(...columnHeights);
           setMaxColumnHeight(maxHeight > 0 ? maxHeight : undefined);
-          setLineBreakCount(
-            currentColumnCount > 0 ? currentColumnCount - 1 : 0,
-          );
         });
       }
     }, [currentColumnCount, currentGap, linear, mounted]);
 
-    React.useEffect(() => {
-      if (!mounted || typeof ResizeObserver === "undefined") return;
+    useIsomorphicLayoutEffect(() => {
+      if (typeof ResizeObserver === "undefined") return;
 
-      let animationFrame: number;
+      let rafId: number;
       const resizeObserver = new ResizeObserver(() => {
-        animationFrame = requestAnimationFrame(onResize);
+        rafId = requestAnimationFrame(calculateLayout);
       });
 
-      if (collectionRef.current) {
-        const content = collectionRef.current;
+      const content = collectionRef.current;
+      if (content) {
         resizeObserver.observe(content);
         for (const child of Array.from(content.children)) {
           resizeObserver.observe(child);
@@ -258,33 +231,33 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       }
 
       return () => {
-        if (animationFrame) {
-          cancelAnimationFrame(animationFrame);
-        }
+        cancelAnimationFrame(rafId);
         resizeObserver.disconnect();
       };
-    }, [onResize, mounted]);
+    }, [calculateLayout]);
 
-    // Add line breaks to prevent columns from merging
     const lineBreaks = React.useMemo(() => {
       if (!mounted) return null;
 
-      return Array.from({ length: lineBreakCount }, (_, i) => (
-        <span
-          key={`masonry-break-${currentColumnCount}-${i.toString()}`}
-          data-class="line-break"
-          style={{
-            flexBasis: "100%",
-            width: 0,
-            margin: 0,
-            padding: 0,
-            order: i + 1,
-          }}
-        />
-      ));
-    }, [lineBreakCount, currentColumnCount, mounted]);
+      return Array.from({ length: lineBreakCount }, (_, i) => {
+        const key = `mb-${currentColumnCount}-${i}`;
 
-    // Initial grid layout for SSR
+        return (
+          <span
+            key={key}
+            data-break="line-break"
+            style={{
+              flexBasis: "100%",
+              width: 0,
+              margin: 0,
+              padding: 0,
+              order: i + 1,
+            }}
+          />
+        );
+      });
+    }, [lineBreakCount, mounted, currentColumnCount]);
+
     const initialGridStyle = React.useMemo(
       () => ({
         display: mounted ? "block" : "grid",
@@ -317,8 +290,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
         {lineBreaks}
       </RootSlot>
     );
-  },
+  }),
 );
-Masonry.displayName = "Masonry";
 
-export { Masonry };
+Masonry.displayName = "Masonry";
