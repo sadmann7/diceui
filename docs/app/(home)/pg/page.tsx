@@ -49,6 +49,19 @@ export default function PlaygroundPage() {
 
   return (
     <Shell>
+      <Masonry.Root>
+        {items.map((item) => (
+          <div
+            key={item.id}
+            className="rounded-lg border bg-card p-4 text-card-foreground shadow"
+            style={{
+              height: item.height,
+            }}
+          >
+            {item.content}
+          </div>
+        ))}
+      </Masonry.Root>
       <HydrationBoundary fallback={<Skeleton className="h-svh w-full" />}>
         <MasonryAlt
           items={items}
@@ -67,19 +80,6 @@ export default function PlaygroundPage() {
             </div>
           )}
         />
-        <Masonry.Root columnCount={{ sm: 2, md: 3, lg: 4 }}>
-          {items.map((item) => (
-            <div
-              key={item.id}
-              className="rounded-lg border bg-card p-4 text-card-foreground shadow"
-              style={{
-                height: item.height,
-              }}
-            >
-              {item.content}
-            </div>
-          ))}
-        </Masonry.Root>
         <Textarea
           placeholder="Type here..."
           className="min-h-[80px] max-w-[40rem]"

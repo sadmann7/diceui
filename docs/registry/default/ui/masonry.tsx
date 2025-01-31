@@ -1,14 +1,78 @@
 "use client";
 
-import { useMounted } from "@/hooks/use-mounted";
 import { useComposedRefs } from "@/lib/composition";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
+const TAILWIND_BREAKPOINTS = {
+  sm: 640,
+  md: 768,
+  lg: 1024,
+  xl: 1280,
+  "2xl": 1536,
+} as const;
+
+type TailwindBreakpoint = keyof typeof TAILWIND_BREAKPOINTS;
+type BreakpointValue = TailwindBreakpoint | number;
+
+type ResponsiveObject = {
+  [K in BreakpointValue]?: number;
+};
+
+type ResponsiveValue = number | ResponsiveObject;
+
+function parseBreakpoint(breakpoint: BreakpointValue): number {
+  if (typeof breakpoint === "number") return breakpoint;
+  return TAILWIND_BREAKPOINTS[breakpoint];
+}
+
+function useResponsiveValue(
+  value: ResponsiveValue,
+  defaultValue: number,
+): number {
+  const [currentValue, setCurrentValue] = React.useState(defaultValue);
+
+  React.useEffect(() => {
+    if (typeof value === "number") {
+      setCurrentValue(value);
+      return;
+    }
+
+    function updateValue() {
+      const width = window.innerWidth;
+      const breakpoints = Object.entries(value)
+        .map(([key, val]) => ({
+          breakpoint: parseBreakpoint(key as BreakpointValue),
+          value: val,
+        }))
+        .sort((a, b) => a.breakpoint - b.breakpoint);
+
+      // Default to 1 column for smallest screens
+      let newValue = 1;
+
+      for (const { breakpoint, value } of breakpoints) {
+        if (width >= breakpoint) {
+          newValue = value;
+        } else {
+          break;
+        }
+      }
+
+      setCurrentValue(newValue);
+    }
+
+    updateValue();
+    window.addEventListener("resize", updateValue);
+    return () => window.removeEventListener("resize", updateValue);
+  }, [value]);
+
+  return currentValue;
+}
+
 function parseAsNumber(
-  value: number | { [key: string]: number } | undefined,
+  value: ResponsiveValue | undefined,
   defaultValue: number,
 ): number {
   if (typeof value === "number") return value;
@@ -17,8 +81,8 @@ function parseAsNumber(
 }
 
 interface MasonryProps extends React.ComponentPropsWithoutRef<"div"> {
-  columnCount?: number | { [key: string]: number };
-  spacing?: number | { [key: string]: number };
+  columnCount?: ResponsiveValue;
+  spacing?: ResponsiveValue;
   sequential?: boolean;
   initialHeight?: number;
   initialColumnCount?: number;
@@ -40,6 +104,12 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       className,
       ...rootProps
     } = props;
+
+    const currentColumnCount = useResponsiveValue(
+      columnCount,
+      initialColumnCount,
+    );
+    const currentSpacing = useResponsiveValue(spacing, initialSpacing);
 
     const collectionRef = React.useRef<HTMLDivElement | null>(null);
     const composedRef = useComposedRefs(forwardedRef, collectionRef);
@@ -64,8 +134,6 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       if (!collectionRef.current) return;
 
       const items = Array.from(collectionRef.current.children) as HTMLElement[];
-      const currentColumnCount = parseAsNumber(columnCount, 4);
-      const currentSpacing = parseAsNumber(spacing, 16);
       const columnHeights = new Array(currentColumnCount).fill(0);
       let skip = false;
       let nextOrder = 1;
@@ -146,7 +214,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
           );
         });
       }
-    }, [columnCount, spacing, sequential]);
+    }, [currentColumnCount, currentSpacing, sequential]);
 
     React.useEffect(() => {
       if (typeof ResizeObserver === "undefined") return;
@@ -173,21 +241,23 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
     }, [onResize]);
 
     // Add line breaks to prevent columns from merging
-    const currentColumnCount =
-      typeof columnCount === "number" ? columnCount : 4;
-    const lineBreaks = Array.from({ length: lineBreakCount }, (_, i) => (
-      <span
-        key={`masonry-break-${currentColumnCount}-${i.toString()}`}
-        data-class="line-break"
-        style={{
-          flexBasis: "100%",
-          width: 0,
-          margin: 0,
-          padding: 0,
-          order: i + 1,
-        }}
-      />
-    ));
+    const lineBreaks = React.useMemo(
+      () =>
+        Array.from({ length: lineBreakCount }, (_, i) => (
+          <span
+            key={`masonry-break-${currentColumnCount}-${i.toString()}`}
+            data-class="line-break"
+            style={{
+              flexBasis: "100%",
+              width: 0,
+              margin: 0,
+              padding: 0,
+              order: i + 1,
+            }}
+          />
+        )),
+      [lineBreakCount, currentColumnCount],
+    );
 
     const RootSlot = asChild ? Slot : "div";
 
