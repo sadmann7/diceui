@@ -49,20 +49,20 @@ export default function PlaygroundPage() {
 
   return (
     <Shell>
+      <Masonry>
+        {items.map((item) => (
+          <div
+            key={item.id}
+            className="rounded-lg border bg-card p-4 text-card-foreground shadow"
+            style={{
+              height: item.height,
+            }}
+          >
+            {item.content}
+          </div>
+        ))}
+      </Masonry>
       <HydrationBoundary fallback={<Skeleton className="h-svh w-full" />}>
-        <Masonry>
-          {items.map((item) => (
-            <div
-              key={item.id}
-              className="rounded-lg border bg-card p-4 text-card-foreground shadow"
-              style={{
-                height: item.height,
-              }}
-            >
-              {item.content}
-            </div>
-          ))}
-        </Masonry>
         <MasonryAlt
           items={items}
           columnWidth={300}

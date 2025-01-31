@@ -99,7 +99,7 @@ interface MasonryProps extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
 }
 
-export const Masonry = React.memo(
+const Masonry = React.memo(
   React.forwardRef<HTMLDivElement, MasonryProps>((props, forwardedRef) => {
     const {
       children,
@@ -294,3 +294,5 @@ export const Masonry = React.memo(
 );
 
 Masonry.displayName = "Masonry";
+
+export { Masonry };
