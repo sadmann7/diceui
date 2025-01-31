@@ -69,7 +69,7 @@ export default function PlaygroundPage() {
         />
         <Masonry.Root>
           {items.map((item) => (
-            <Masonry.Item
+            <div
               key={item.id}
               className="rounded-lg border bg-card p-4 text-card-foreground shadow"
               style={{
@@ -77,7 +77,7 @@ export default function PlaygroundPage() {
               }}
             >
               {item.content}
-            </Masonry.Item>
+            </div>
           ))}
         </Masonry.Root>
         <Textarea

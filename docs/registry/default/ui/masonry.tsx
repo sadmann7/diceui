@@ -5,37 +5,6 @@ import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 
-const ROOT_NAME = "Masonry";
-const ITEM_NAME = "MasonryItem";
-
-const MASONRY_ERROR = {
-  [ROOT_NAME]: `\`${ROOT_NAME}\` components must be within \`${ROOT_NAME}\``,
-  [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${ROOT_NAME}\``,
-} as const;
-
-interface MasonryRootContextValue {
-  columnCount: number;
-  gap: number;
-  sequential: boolean;
-  maxColumnHeight: number | undefined;
-  setMaxColumnHeight: (height: number | undefined) => void;
-}
-
-const MasonryRootContext = React.createContext<MasonryRootContextValue | null>(
-  null,
-);
-MasonryRootContext.displayName = ROOT_NAME;
-
-function useMasonryContext(name: keyof typeof MASONRY_ERROR) {
-  const context = React.useContext(MasonryRootContext);
-  if (!context) {
-    throw new Error(MASONRY_ERROR[name]);
-  }
-  return context;
-}
-
-type ItemElement = React.ComponentRef<typeof MasonryItem>;
-
 interface MasonryProps extends React.ComponentPropsWithoutRef<"div"> {
   columnCount?: number;
   gap?: number;
@@ -55,27 +24,16 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       ...rootProps
     } = props;
 
-    const collectionRef = React.useRef<ItemElement | null>(null);
+    const collectionRef = React.useRef<HTMLDivElement | null>(null);
     const composedRef = useComposedRefs(forwardedRef, collectionRef);
     const [maxColumnHeight, setMaxColumnHeight] = React.useState<
       number | undefined
     >();
 
-    const contextValue = React.useMemo(
-      () => ({
-        columnCount,
-        gap,
-        sequential,
-        maxColumnHeight,
-        setMaxColumnHeight,
-      }),
-      [columnCount, gap, sequential, maxColumnHeight],
-    );
-
     const onResize = React.useCallback(() => {
       if (!collectionRef.current) return;
 
-      const items = Array.from(collectionRef.current.children) as ItemElement[];
+      const items = Array.from(collectionRef.current.children) as HTMLElement[];
       const columnHeights = new Array(columnCount).fill(0);
 
       // Reset all items
@@ -137,55 +95,28 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
     const RootSlot = asChild ? Slot : "div";
 
     return (
-      <MasonryRootContext.Provider value={contextValue}>
-        <RootSlot
-          {...rootProps}
-          ref={composedRef}
-          className={cn(
-            "relative w-full",
-            maxColumnHeight && {
-              height: maxColumnHeight,
-            },
-            className,
-          )}
-        >
-          {children}
-        </RootSlot>
-      </MasonryRootContext.Provider>
+      <RootSlot
+        {...rootProps}
+        ref={composedRef}
+        className={cn(
+          "relative w-full",
+          maxColumnHeight && {
+            height: maxColumnHeight,
+          },
+          className,
+        )}
+      >
+        {children}
+      </RootSlot>
     );
   },
 );
-Masonry.displayName = ROOT_NAME;
-
-interface MasonryItemProps extends React.ComponentPropsWithoutRef<"div"> {
-  asChild?: boolean;
-}
-
-const MasonryItem = React.forwardRef<HTMLDivElement, MasonryItemProps>(
-  (props, forwardedRef) => {
-    const { asChild, className, ...itemProps } = props;
-    useMasonryContext(ITEM_NAME);
-
-    const ItemSlot = asChild ? Slot : "div";
-
-    return (
-      <ItemSlot
-        {...itemProps}
-        ref={forwardedRef}
-        className={cn("break-inside-avoid", className)}
-      />
-    );
-  },
-);
-MasonryItem.displayName = ITEM_NAME;
+Masonry.displayName = "MasonryRoot";
 
 const Root = Masonry;
-const Item = MasonryItem;
 
 export {
   Masonry,
-  MasonryItem,
   //
   Root,
-  Item,
 };
