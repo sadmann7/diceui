@@ -20,6 +20,21 @@ const MASONRY_ERROR = {
   [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${ROOT_NAME}\``,
 } as const;
 
+interface MasonryContextValue {
+  mounted: boolean;
+}
+
+const MasonryContext = React.createContext<MasonryContextValue | null>(null);
+MasonryContext.displayName = ROOT_NAME;
+
+function useMasonryContext(name: keyof typeof MASONRY_ERROR) {
+  const context = React.useContext(MasonryContext);
+  if (!context) {
+    throw new Error(MASONRY_ERROR[name]);
+  }
+  return context;
+}
+
 const TAILWIND_BREAKPOINTS = {
   initial: 0,
   sm: 640,
@@ -106,21 +121,6 @@ function useResponsiveValue({
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
-interface MasonryContextValue {
-  mounted: boolean;
-}
-
-const MasonryContext = React.createContext<MasonryContextValue | null>(null);
-MasonryContext.displayName = ROOT_NAME;
-
-function useMasonryContext(name: keyof typeof MASONRY_ERROR) {
-  const context = React.useContext(MasonryContext);
-  if (!context) {
-    throw new Error(MASONRY_ERROR[name]);
-  }
-  return context;
-}
-
 interface MasonryProps extends React.ComponentPropsWithoutRef<"div"> {
   columnCount?: ResponsiveValue;
   defaultColumnCount?: number;
@@ -129,12 +129,6 @@ interface MasonryProps extends React.ComponentPropsWithoutRef<"div"> {
   linear?: boolean;
   asChild?: boolean;
 }
-
-// Cache for layout calculations
-const layoutCache = new Map<
-  string,
-  { heights: number[]; positions: { top: number; left: number }[] }
->();
 
 const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
   (props, forwardedRef) => {
@@ -154,8 +148,6 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
     const [maxColumnHeight, setMaxColumnHeight] = React.useState<number>();
     const collectionRef = React.useRef<HTMLDivElement>(null);
     const composedRef = useComposedRefs(forwardedRef, collectionRef);
-    const prevLayoutKey = React.useRef("");
-    const resizeTimeoutRef = React.useRef<number | null>(null);
 
     const [mounted, setMounted] = React.useState(false);
     React.useLayoutEffect(() => {
@@ -174,45 +166,16 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
     });
     const lineBreakCount = currentColumnCount > 0 ? currentColumnCount - 1 : 0;
 
-    // Memoize items array creation
-    const getItems = React.useCallback(() => {
-      if (!collectionRef.current) return [];
-      return Array.from(collectionRef.current.children).filter(
+    const calculateLayout = React.useCallback(() => {
+      if (!collectionRef.current || !mounted) return;
+
+      const items = Array.from(collectionRef.current.children).filter(
         (child): child is HTMLElement =>
           child instanceof HTMLElement &&
           child.dataset[DATA_LINE_BREAK_ATTR] !== "",
       );
-    }, []);
-
-    const calculateLayout = React.useCallback(() => {
-      if (!collectionRef.current || !mounted) return;
-
-      const items = getItems();
-      const layoutKey = `${items.length}-${currentColumnCount}-${currentGap}-${linear}`;
-
-      // Check if we can use cached layout
-      if (layoutKey === prevLayoutKey.current && layoutCache.has(layoutKey)) {
-        const cachedLayout = layoutCache.get(layoutKey);
-        if (cachedLayout) {
-          for (const [index, item] of items.entries()) {
-            const position = cachedLayout.positions[index];
-            if (position) {
-              Object.assign(item.style, {
-                position: "absolute",
-                top: `${position.top}px`,
-                left: `${position.left}px`,
-                width: `calc(${100 / currentColumnCount}% - ${(currentGap * (currentColumnCount - 1)) / currentColumnCount}px)`,
-                margin: `${currentGap / 2}px`,
-              });
-            }
-          }
-          setMaxColumnHeight(Math.max(...cachedLayout.heights));
-          return;
-        }
-      }
 
       const columnHeights = new Array(currentColumnCount).fill(0);
-      const positions: { top: number; left: number }[] = [];
       let skip = false;
       let nextOrder = 1;
 
@@ -229,108 +192,87 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
         Object.assign(item.style, styles);
       }
 
-      // Position items with batched updates
-      ReactDOM.flushSync(() => {
-        for (const item of items) {
-          if (item.dataset.lineBreak === DATA_LINE_BREAK_ATTR || skip) {
-            positions.push({ top: 0, left: 0 });
-            continue;
-          }
+      // Position items
+      for (const item of items) {
+        if (item.dataset.lineBreak === DATA_LINE_BREAK_ATTR || skip) continue;
 
-          const itemStyle = window.getComputedStyle(item);
-          const marginTop =
-            Number.parseFloat(itemStyle.marginTop) || currentGap / 2;
-          const marginBottom =
-            Number.parseFloat(itemStyle.marginBottom) || currentGap / 2;
-          const itemHeight = item.offsetHeight + marginTop + marginBottom;
+        const itemStyle = window.getComputedStyle(item);
+        const marginTop =
+          Number.parseFloat(itemStyle.marginTop) || currentGap / 2;
+        const marginBottom =
+          Number.parseFloat(itemStyle.marginBottom) || currentGap / 2;
+        const itemHeight = item.offsetHeight + marginTop + marginBottom;
 
-          if (
-            itemHeight === 0 ||
-            Array.from(item.getElementsByTagName("img")).some(
-              (img) => img.clientHeight === 0,
-            )
-          ) {
-            skip = true;
-            positions.push({ top: 0, left: 0 });
-            continue;
-          }
+        if (
+          itemHeight === 0 ||
+          Array.from(item.getElementsByTagName("img")).some(
+            (img) => img.clientHeight === 0,
+          )
+        ) {
+          skip = true;
+          continue;
+        }
 
-          let position: { top: number; left: number };
-
-          if (linear) {
-            const yPos = columnHeights[nextOrder - 1];
-            position = {
-              top: yPos,
-              left: (nextOrder - 1) * (item.offsetWidth + currentGap),
-            };
-            columnHeights[nextOrder - 1] = yPos + itemHeight;
-            nextOrder = (nextOrder % currentColumnCount) + 1;
-          } else {
-            const minColumnIndex = columnHeights.indexOf(
-              Math.min(...columnHeights),
-            );
-            const xPos = minColumnIndex * (item.offsetWidth + currentGap);
-            const yPos = columnHeights[minColumnIndex];
-            position = { top: yPos, left: xPos };
-            columnHeights[minColumnIndex] = yPos + itemHeight;
-          }
-
-          positions.push(position);
+        if (linear) {
+          const yPos = columnHeights[nextOrder - 1];
           Object.assign(item.style, {
             position: "absolute",
-            top: `${position.top}px`,
-            left: `${position.left}px`,
+            top: `${yPos}px`,
+            left: `${(nextOrder - 1) * (item.offsetWidth + currentGap)}px`,
           });
-        }
 
-        if (!skip) {
+          columnHeights[nextOrder - 1] = yPos + itemHeight;
+          nextOrder = (nextOrder % currentColumnCount) + 1;
+        } else {
+          const minColumnIndex = columnHeights.indexOf(
+            Math.min(...columnHeights),
+          );
+          const xPos = minColumnIndex * (item.offsetWidth + currentGap);
+          const yPos = columnHeights[minColumnIndex];
+
+          Object.assign(item.style, {
+            position: "absolute",
+            top: `${yPos}px`,
+            left: `${xPos}px`,
+          });
+
+          columnHeights[minColumnIndex] = yPos + itemHeight;
+        }
+      }
+
+      if (!skip) {
+        /**
+         * Use flushSync to prevent layout thrashing during React 18 batching
+         * @see https://github.com/facebook/react/blob/a8a4742f1c54493df00da648a3f9d26e3db9c8b5/packages/react-dom/src/events/ReactDOMEventListener.js#L294-L350
+         */
+        ReactDOM.flushSync(() => {
           const maxHeight = Math.max(...columnHeights);
           setMaxColumnHeight(maxHeight > 0 ? maxHeight : undefined);
-
-          // Cache the layout
-          layoutCache.set(layoutKey, {
-            heights: columnHeights,
-            positions,
-          });
-          prevLayoutKey.current = layoutKey;
-        }
-      });
-    }, [currentColumnCount, currentGap, linear, mounted, getItems]);
-
-    // Custom debounced resize handler
-    const handleResize = React.useCallback(() => {
-      if (resizeTimeoutRef.current) {
-        window.clearTimeout(resizeTimeoutRef.current);
+        });
       }
-      resizeTimeoutRef.current = window.setTimeout(calculateLayout, 150);
-    }, [calculateLayout]);
+    }, [currentColumnCount, currentGap, linear, mounted]);
 
     useIsomorphicLayoutEffect(() => {
       if (typeof ResizeObserver === "undefined") return;
 
-      const resizeObserver = new ResizeObserver(handleResize);
-      const content = collectionRef.current;
+      let rafId: number;
+      const resizeObserver = new ResizeObserver(() => {
+        rafId = requestAnimationFrame(calculateLayout);
+      });
 
+      const content = collectionRef.current;
       if (content) {
         resizeObserver.observe(content);
-        const children = Array.from(content.children);
-
-        for (const child of children) {
+        for (const child of Array.from(content.children)) {
           resizeObserver.observe(child);
         }
-
-        return () => {
-          for (const child of children) {
-            resizeObserver.unobserve(child);
-          }
-          resizeObserver.unobserve(content);
-          resizeObserver.disconnect();
-          if (resizeTimeoutRef.current) {
-            window.clearTimeout(resizeTimeoutRef.current);
-          }
-        };
       }
-    }, [handleResize]);
+
+      return () => {
+        cancelAnimationFrame(rafId);
+        resizeObserver.disconnect();
+      };
+    }, [calculateLayout]);
 
     const lineBreaks = React.useMemo(() => {
       if (!mounted) return null;
@@ -432,9 +374,9 @@ const Root = Masonry;
 const Item = MasonryItem;
 
 export {
-  Item,
   Masonry,
   MasonryItem,
   //
   Root,
+  Item,
 };
