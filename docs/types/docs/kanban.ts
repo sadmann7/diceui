@@ -11,9 +11,9 @@ import type { SlotProps } from "@radix-ui/react-slot";
 export interface RootProps<T> extends DndContextProps {
   /**
    * A record of column IDs to arrays of items for the kanban board.
+   *
    * Can be an array of primitives (string, number) or objects.
    *
-   * @example
    * ```ts
    * // Record of arrays of primitives
    * value={{
@@ -37,8 +37,9 @@ export interface RootProps<T> extends DndContextProps {
    *
    * Required when using an array of objects.
    *
-   * @example
+   * ```ts
    * getItemValue={(item) => item.id}
+   * ```
    */
   getItemValue?: (item: T) => UniqueIdentifier;
 
@@ -59,6 +60,7 @@ export interface RootProps<T> extends DndContextProps {
 
   /**
    * The strategy to use for the columns and items.
+   *
    * @default
    *
    * For `Root`, the strategy is verticalListSortingStrategy.
@@ -71,6 +73,7 @@ export interface RootProps<T> extends DndContextProps {
 
   /**
    * An array of sensors that will be used to detect drag and drop interactions.
+   *
    * @default
    * [
    *   useSensor(MouseSensor),
@@ -84,12 +87,14 @@ export interface RootProps<T> extends DndContextProps {
 
   /**
    * Specifies the orientation of the kanban board.
+   *
    * @default "horizontal"
    */
   orientation?: "horizontal" | "vertical";
 
   /**
    * The id of the kanban component.
+   *
    * @default React.useId()
    */
   id?: string;
@@ -99,6 +104,7 @@ export interface RootProps<T> extends DndContextProps {
 
   /**
    * Specifies whether the kanban component should automatically scroll during drag.
+   *
    * @default false
    */
   autoScroll?: DndContextProps["autoScroll"];
@@ -111,6 +117,7 @@ export interface RootProps<T> extends DndContextProps {
 
   /**
    * Collision detection algorithm to determine drop targets during drag operations.
+   *
    * @default closestCorners with custom handling for containers
    */
   collisionDetection?: DndContextProps["collisionDetection"];
@@ -135,6 +142,7 @@ export interface RootProps<T> extends DndContextProps {
 
   /**
    * Specifies whether to use a flat cursor style instead of grab/grabbing.
+   *
    * @default false
    */
   flatCursor?: boolean;
@@ -147,6 +155,7 @@ export interface BoardProps
 
   /**
    * Merges the board's props into its immediate child.
+   *
    * @default false
    */
   asChild?: boolean;
@@ -156,7 +165,8 @@ export interface ColumnProps
   extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"div">> {
   /**
    * The unique identifier of the column.
-   * @example "todo"
+   *
+   * Cannot be an empty string.
    */
   value: UniqueIdentifier;
 
@@ -165,18 +175,21 @@ export interface ColumnProps
 
   /**
    * Whether the column should act as a handle for dragging.
+   *
    * @default false
    */
   asHandle?: boolean;
 
   /**
    * Merges the column's props into its immediate child.
+   *
    * @default false
    */
   asChild?: boolean;
 
   /**
    * Whether the column is disabled.
+   *
    * @default false
    */
   disabled?: boolean;
@@ -195,24 +208,28 @@ export interface ItemProps
   extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"div">> {
   /**
    * The unique identifier of the item.
-   * @example "task-1"
+   *
+   * Cannot be an empty string.
    */
   value: UniqueIdentifier;
 
   /**
    * Whether the item should act as a handle for dragging.
+   *
    * @default false
    */
   asHandle?: boolean;
 
   /**
    * Merges the item's props into its immediate child.
+   *
    * @default false
    */
   asChild?: boolean;
 
   /**
    * Whether the item is disabled.
+   *
    * @default false
    */
   disabled?: boolean;
@@ -222,6 +239,7 @@ export interface ItemHandleProps
   extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"button">> {
   /**
    * Merges the handle's props into its immediate child.
+   *
    * @default false
    */
   asChild?: boolean;
@@ -234,22 +252,16 @@ export interface OverlayProps
   > {
   /**
    * The container to render the overlay in.
-   * @default globalThis.document?.body
+   *
+   * @default document.body
    */
   container?: HTMLElement | DocumentFragment | null;
 
   /**
    * The drop animation to use for the kanban component.
+   *
    * @default
-   * {
-   *   sideEffects: defaultDropAnimationSideEffects({
-   *     styles: {
-   *       active: {
-   *         opacity: "0.4",
-   *       },
-   *     },
-   *   }),
-   * }
+   * { sideEffects: defaultDropAnimationSideEffects({ styles: { active: { opacity: "0.4" } } }), }
    */
   dropAnimation?: DropAnimation;
 
@@ -258,6 +270,10 @@ export interface OverlayProps
    *
    * Can be a function that receives the value and variant of the active item,
    * or a React node.
+   *
+   * ```ts
+   * children={(params) => <div>{params.value}</div>}
+   * ```
    */
   children?:
     | ((params: {

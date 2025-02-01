@@ -15,7 +15,6 @@ export interface RootProps<TData> extends DndContextProps {
    *
    * Can be an array of primitives (string, number) or objects.
    *
-   * @example
    * ```ts
    * // Array of primitives
    * value={["Item 1", "Item 2"]}
@@ -33,8 +32,9 @@ export interface RootProps<TData> extends DndContextProps {
    *
    * Required when using an array of objects.
    *
-   * @example
+   * ```ts
    * getItemValue={(item) => item.id}
+   * ```
    */
   getItemValue?: (item: TData) => UniqueIdentifier;
 
@@ -42,6 +42,10 @@ export interface RootProps<TData> extends DndContextProps {
    * Callback called when an item is moved. Receives the DragEndEvent with active and over indexes.
    *
    * Overrides default reordering behavior.
+   *
+   * ```ts
+   * onMove={(event) => onCustomMove({activeIndex: event.activeIndex, overIndex: event.overIndex})}
+   * ```
    */
   onMove?: (
     event: DragEndEvent & { activeIndex: number; overIndex: number },
@@ -49,6 +53,7 @@ export interface RootProps<TData> extends DndContextProps {
 
   /**
    * The array of modifiers that will be used to modify the behavior of the sortable component.
+   *
    * @default
    * Automatically selected based on orientation:
    * - vertical: [restrictToVerticalAxis, restrictToParentElement]
@@ -59,6 +64,7 @@ export interface RootProps<TData> extends DndContextProps {
 
   /**
    * The strategy to use for sorting the items.
+   *
    * @default
    * Automatically selected based on orientation:
    * - vertical: verticalListSortingStrategy
@@ -68,7 +74,8 @@ export interface RootProps<TData> extends DndContextProps {
   strategy?: SortableContextProps["strategy"];
 
   /**
-   * An array of sensors that will be used to detect the position of the sortable items.\n
+   * An array of sensors that will be used to detect the position of the sortable items.
+   *
    * @default
    * [
    *   useSensor(MouseSensor),
@@ -88,6 +95,7 @@ export interface RootProps<TData> extends DndContextProps {
 
   /**
    * The id of the sortable component.
+   *
    * @default React.useId()
    */
   id?: string;
@@ -97,6 +105,7 @@ export interface RootProps<TData> extends DndContextProps {
 
   /**
    * Specifies whether the sortable component should automatically scroll to the active item.
+   *
    * @default false
    */
   autoScroll?: DndContextProps["autoScroll"];
@@ -109,6 +118,7 @@ export interface RootProps<TData> extends DndContextProps {
 
   /**
    * Collision detection algorithm to determine drop targets during drag operations.
+   *
    * @default
    * Based on orientation:
    * - vertical: closestCenter
@@ -146,6 +156,7 @@ export interface ContentProps
   extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"div">> {
   /**
    * The strategy to use for sorting the items.
+   *
    * @default
    * Automatically selected based on orientation:
    * - vertical: verticalListSortingStrategy
@@ -159,6 +170,7 @@ export interface ContentProps
 
   /**
    * Merges the content's props into its immediate child.
+   *
    * @default false
    */
   asChild?: boolean;
@@ -168,24 +180,28 @@ export interface ItemProps
   extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"div">> {
   /**
    * The unique identifier of the item.
-   * @example "item-1"
+   *
+   * Cannot be an empty string.
    */
   value: UniqueIdentifier;
 
   /**
    * Whether the item should act as a handle for dragging.
+   *
    * @default false
    */
   asHandle?: boolean;
 
   /**
    * Merges the item's props into its immediate child.
+   *
    * @default false
    */
   asChild?: boolean;
 
   /**
    * Whether the item is disabled.
+   *
    * @default false
    */
   disabled?: boolean;
@@ -195,6 +211,7 @@ export interface ItemHandleProps
   extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"button">> {
   /**
    * Merges the item's props into its immediate child.
+   *
    * @default false
    */
   asChild?: boolean;
@@ -207,22 +224,16 @@ export interface OverlayProps
   > {
   /**
    * The container to render the overlay in.
-   * @default globalThis.document?.body
+   *
+   * @default document.body
    */
   container?: HTMLElement | DocumentFragment | null;
 
   /**
    * The drop animation to use for the sortable component.
+   *
    * @default
-   * {
-   *   sideEffects: defaultDropAnimationSideEffects({
-   *     styles: {
-   *       active: {
-   *         opacity: "0.4",
-   *       },
-   *     },
-   *   }),
-   * }
+   * { sideEffects: defaultDropAnimationSideEffects({ styles: { active: { opacity: "0.4" } } }), }
    */
   dropAnimation?: DropAnimation;
 
@@ -231,6 +242,10 @@ export interface OverlayProps
    *
    * Can be a function that receives the value of the active item as an argument,
    * or a React node.
+   *
+   * ```ts
+   * children={(params) => <div>{params.value}</div>}
+   * ```
    */
   children?:
     | ((params: { value: UniqueIdentifier }) => React.ReactNode)
