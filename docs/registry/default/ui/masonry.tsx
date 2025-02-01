@@ -169,11 +169,9 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
     const calculateLayout = React.useCallback(() => {
       if (!collectionRef.current || !mounted) return;
 
-      const items = Array.from(collectionRef.current.children).filter(
-        (child): child is HTMLElement =>
-          child instanceof HTMLElement &&
-          child.dataset[DATA_LINE_BREAK_ATTR] !== "",
-      );
+      const items = Array.from(
+        collectionRef.current.querySelectorAll(`[${DATA_ITEM_ATTR}]`),
+      ).filter((child): child is HTMLElement => child instanceof HTMLElement);
 
       const columnHeights = new Array(currentColumnCount).fill(0);
       let skip = false;
