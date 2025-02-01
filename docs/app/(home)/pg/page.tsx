@@ -19,7 +19,6 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import MasonryDemo from "@/registry/default/example/masonry-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -47,12 +46,11 @@ export default function PlaygroundPage() {
 
   return (
     <Shell>
-      <MasonryDemo />
-      <Masonry.Root columnCount={{ initial: 2, sm: 2, md: 3, lg: 4 }} gap={16}>
+      <Masonry.Root columnCount={3} gap={16}>
         {items.map((item) => (
           <Masonry.Item
             key={item.id}
-            fallback={<Skeleton className="w-full" style={{ height: 160 }} />}
+            // fallback={<Skeleton className="w-full" style={{ height: 160 }} />}
             className="rounded-lg border bg-card p-4 text-card-foreground shadow"
             style={{
               height: item.height,
