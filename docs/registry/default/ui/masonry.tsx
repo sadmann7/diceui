@@ -14,6 +14,7 @@ const DATA_ITEM_ATTR = "data-masonry-item";
 
 const COLUMN_COUNT = 4;
 const GAP = 16;
+const CACHE_MAX_AGE = 5000;
 
 const MASONRY_ERROR = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` components must be within \`${ROOT_NAME}\``,
@@ -133,6 +134,7 @@ interface ItemMeasurement {
 interface ItemCache {
   measurements: Map<ItemElement, ItemMeasurement>;
   lastUpdate: number;
+  timestamps: Map<ItemElement, number>;
 }
 
 interface MasonryProps extends React.ComponentPropsWithoutRef<"div"> {
@@ -166,6 +168,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
     const itemCacheRef = React.useRef<ItemCache>({
       measurements: new Map(),
       lastUpdate: 0,
+      timestamps: new Map(),
     });
     const collectionRef = React.useRef<HTMLDivElement>(null);
     const composedRef = useComposedRefs(forwardedRef, collectionRef);
@@ -190,7 +193,12 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
     const getMeasurements = React.useCallback(
       (item: ItemElement): ItemMeasurement | null => {
         const cached = itemCacheRef.current.measurements.get(item);
-        if (cached) return cached;
+        const timestamp = itemCacheRef.current.timestamps.get(item);
+        const now = Date.now();
+
+        if (cached && timestamp && now - timestamp < CACHE_MAX_AGE) {
+          return cached;
+        }
 
         const itemStyle = window.getComputedStyle(item);
         const marginTop =
@@ -211,7 +219,8 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
 
         const measurements = { height, width, marginTop, marginBottom };
         itemCacheRef.current.measurements.set(item, measurements);
-        itemCacheRef.current.lastUpdate = Date.now();
+        itemCacheRef.current.timestamps.set(item, now);
+        itemCacheRef.current.lastUpdate = now;
 
         return measurements;
       },
@@ -220,6 +229,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
 
     const invalidateCache = React.useCallback(() => {
       itemCacheRef.current.measurements.clear();
+      itemCacheRef.current.timestamps.clear();
       itemCacheRef.current.lastUpdate = Date.now();
     }, []);
 
