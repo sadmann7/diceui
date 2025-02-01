@@ -6,11 +6,14 @@ import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
+const ROOT_NAME = "MasonryRoot";
+const ITEM_NAME = "MasonryItem";
+
 const DATA_LINE_BREAK_ATTR = "data-masonry-line-break";
 const DATA_ITEM_ATTR = "data-masonry-item";
 
-const ROOT_NAME = "MasonryRoot";
-const ITEM_NAME = "MasonryItem";
+const COLUMN_COUNT = 4;
+const GAP = 16;
 
 const MASONRY_ERROR = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` components must be within \`${ROOT_NAME}\``,
@@ -125,12 +128,12 @@ interface MasonryProps extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
 }
 
-const Masonry = React.memo(
-  React.forwardRef<HTMLDivElement, MasonryProps>((props, forwardedRef) => {
+const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
+  (props, forwardedRef) => {
     const {
       children,
-      columnCount = 4,
-      gap = 16,
+      columnCount = COLUMN_COUNT,
+      gap = GAP,
       linear = false,
       asChild,
       className,
@@ -149,12 +152,12 @@ const Masonry = React.memo(
 
     const currentColumnCount = useResponsiveValue({
       value: columnCount,
-      defaultValue: 4,
+      defaultValue: COLUMN_COUNT,
       mounted,
     });
     const currentGap = useResponsiveValue({
       value: gap,
-      defaultValue: 16,
+      defaultValue: GAP,
       mounted,
     });
     const lineBreakCount = currentColumnCount > 0 ? currentColumnCount - 1 : 0;
@@ -329,7 +332,7 @@ const Masonry = React.memo(
         </RootSlot>
       </MasonryContext.Provider>
     );
-  }),
+  },
 );
 
 Masonry.displayName = ROOT_NAME;
@@ -367,9 +370,9 @@ const Root = Masonry;
 const Item = MasonryItem;
 
 export {
+  Item,
   Masonry,
   MasonryItem,
   //
   Root,
-  Item,
 };

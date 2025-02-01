@@ -46,11 +46,11 @@ export default function PlaygroundPage() {
 
   return (
     <Shell>
-      <Masonry.Root columnCount={3} gap={16}>
+      <Masonry.Root columnCount={{ initial: 1, md: 2, lg: 4 }} gap={16}>
         {items.map((item) => (
           <Masonry.Item
             key={item.id}
-            // fallback={<Skeleton className="w-full" style={{ height: 160 }} />}
+            fallback={<Skeleton className="w-full" style={{ height: 160 }} />}
             className="rounded-lg border bg-card p-4 text-card-foreground shadow"
             style={{
               height: item.height,

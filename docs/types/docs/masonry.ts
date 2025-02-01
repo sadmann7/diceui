@@ -33,6 +33,18 @@ export interface RootProps
   columnCount?: number | ResponsiveObject;
 
   /**
+   * The default number of columns to display during SSR and before hydration.
+   * This should match the `initial` value in your responsive `columnCount` object
+   * for a smooth transition during hydration.
+   *
+   * ```ts
+   * defaultColumnCount={2} // matches columnCount={{ initial: 2, sm: 3, md: 4 }}
+   * ```
+   * @default 4
+   */
+  defaultColumnCount?: number;
+
+  /**
    * The gap between items.
    * Can be a fixed number or a responsive object.
    *
@@ -45,6 +57,18 @@ export interface RootProps
    * @default 16
    */
   gap?: number | ResponsiveObject;
+
+  /**
+   * The default gap between items during SSR and before hydration.
+   * This should match the `initial` value in your responsive `gap` object
+   * for a smooth transition during hydration.
+   *
+   * ```ts
+   * defaultGap={16} // matches gap={{ initial: 16, sm: 20, md: 24 }}
+   * ```
+   * @default 16
+   */
+  defaultGap?: number;
 
   /**
    * Whether to use linear layout instead of optimal layout.
