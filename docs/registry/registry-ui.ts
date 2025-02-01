@@ -60,6 +60,10 @@ export const ui: Registry = [
         path: "ui/masonry.tsx",
         type: "registry:ui",
       },
+      {
+        path: "lib/composition.ts",
+        type: "registry:lib",
+      },
     ],
   },
   {
