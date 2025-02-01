@@ -1,5 +1,6 @@
 "use client";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import { useComposedRefs } from "@/lib/composition";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
@@ -8,6 +9,29 @@ import * as ReactDOM from "react-dom";
 
 const DATA_LINE_BREAK_ATTR = "data-masonry-line-break";
 const DATA_ITEM_ATTR = "data-masonry-item";
+
+const ROOT_NAME = "MasonryRoot";
+const ITEM_NAME = "MasonryItem";
+
+const MASONRY_ERROR = {
+  [ROOT_NAME]: `\`${ROOT_NAME}\` components must be within \`${ROOT_NAME}\``,
+  [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${ROOT_NAME}\``,
+} as const;
+
+interface MasonryContextValue {
+  mounted: boolean;
+}
+
+const MasonryContext = React.createContext<MasonryContextValue | null>(null);
+MasonryContext.displayName = ROOT_NAME;
+
+function useMasonryContext(name: keyof typeof MASONRY_ERROR) {
+  const context = React.useContext(MasonryContext);
+  if (!context) {
+    throw new Error(MASONRY_ERROR[name]);
+  }
+  return context;
+}
 
 const TAILWIND_BREAKPOINTS = {
   initial: 0,
@@ -311,37 +335,54 @@ const Masonry = React.memo(
 
     const RootSlot = asChild ? Slot : "div";
 
+    const contextValue = React.useMemo(
+      () => ({
+        mounted,
+      }),
+      [mounted],
+    );
+
     return (
-      <RootSlot
-        {...rootProps}
-        ref={composedRef}
-        className={cn("relative mx-auto w-full", className)}
-        style={{
-          ...style,
-          ...initialGridStyle,
-          height: mounted && maxColumnHeight ? `${maxColumnHeight}px` : "auto",
-          minHeight: "0px",
-          width: mounted ? `calc(100% - ${currentGap}px)` : "100%",
-          marginLeft: mounted ? `${currentGap / 2}px` : undefined,
-          marginRight: mounted ? `${currentGap / 2}px` : undefined,
-        }}
-      >
-        {children}
-        {lineBreaks}
-      </RootSlot>
+      <MasonryContext.Provider value={contextValue}>
+        <RootSlot
+          {...rootProps}
+          ref={composedRef}
+          className={cn("relative mx-auto w-full", className)}
+          style={{
+            ...style,
+            ...initialGridStyle,
+            height:
+              mounted && maxColumnHeight ? `${maxColumnHeight}px` : "auto",
+            minHeight: "0px",
+            width: mounted ? `calc(100% - ${currentGap}px)` : "100%",
+            marginLeft: mounted ? `${currentGap / 2}px` : undefined,
+            marginRight: mounted ? `${currentGap / 2}px` : undefined,
+          }}
+        >
+          {children}
+          {lineBreaks}
+        </RootSlot>
+      </MasonryContext.Provider>
     );
   }),
 );
 
-Masonry.displayName = "MasonryRoot";
+Masonry.displayName = ROOT_NAME;
 
 interface MasonryItemProps extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
+  fallback?: React.ReactNode;
 }
 
 const MasonryItem = React.forwardRef<HTMLDivElement, MasonryItemProps>(
   (props, forwardedRef) => {
-    const { asChild, ...itemProps } = props;
+    const { asChild, fallback, ...itemProps } = props;
+
+    const context = useMasonryContext(ITEM_NAME);
+
+    if (!context.mounted && fallback) {
+      return fallback;
+    }
 
     const ItemSlot = asChild ? Slot : "div";
 
@@ -355,7 +396,7 @@ const MasonryItem = React.forwardRef<HTMLDivElement, MasonryItemProps>(
   },
 );
 
-MasonryItem.displayName = "MasonryItem";
+MasonryItem.displayName = ITEM_NAME;
 
 const Root = Masonry;
 const Item = MasonryItem;
