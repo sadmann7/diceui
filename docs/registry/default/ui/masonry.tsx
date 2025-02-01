@@ -6,6 +6,8 @@ import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
+const DATA_LINE_BREAK_ATTR = "data-masonry-line-break";
+
 const TAILWIND_BREAKPOINTS = {
   initial: 0,
   sm: 640,
@@ -56,7 +58,7 @@ function useResponsiveValue({
   );
   const [currentValue, setCurrentValue] = React.useState(initialValue);
 
-  const updateValue = React.useCallback(() => {
+  const onResize = React.useCallback(() => {
     if (!mounted) return;
     if (typeof value === "number") {
       setCurrentValue(value);
@@ -81,10 +83,10 @@ function useResponsiveValue({
   React.useEffect(() => {
     if (!mounted) return;
 
-    updateValue();
-    window.addEventListener("resize", updateValue);
-    return () => window.removeEventListener("resize", updateValue);
-  }, [updateValue, mounted]);
+    onResize();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [onResize, mounted]);
 
   return currentValue;
 }
@@ -136,14 +138,19 @@ const Masonry = React.memo(
     const calculateLayout = React.useCallback(() => {
       if (!collectionRef.current || !mounted) return;
 
-      const items = Array.from(collectionRef.current.children) as HTMLElement[];
+      const items = Array.from(collectionRef.current.children).filter(
+        (child): child is HTMLElement =>
+          child instanceof HTMLElement &&
+          child.dataset[DATA_LINE_BREAK_ATTR] !== "",
+      );
+
       const columnHeights = new Array(currentColumnCount).fill(0);
       let skip = false;
       let nextOrder = 1;
 
       // Reset styles
       for (const item of items) {
-        if (item.dataset.break === "line-break") continue;
+        if (item.dataset[DATA_LINE_BREAK_ATTR] === "") continue;
         const styles: Partial<CSSStyleDeclaration> = {
           position: "",
           top: "",
@@ -156,7 +163,7 @@ const Masonry = React.memo(
 
       // Position items
       for (const item of items) {
-        if (item.dataset.break === "line-break" || skip) continue;
+        if (item.dataset.lineBreak === DATA_LINE_BREAK_ATTR || skip) continue;
 
         const itemStyle = window.getComputedStyle(item);
         const marginTop =
@@ -240,12 +247,12 @@ const Masonry = React.memo(
       if (!mounted) return null;
 
       return Array.from({ length: lineBreakCount }, (_, i) => {
-        const key = `mb-${currentColumnCount}-${i}`;
+        const key = `line-break-${currentColumnCount}-${i}`;
 
         return (
           <span
             key={key}
-            data-break="line-break"
+            {...{ [DATA_LINE_BREAK_ATTR]: "" }}
             style={{
               flexBasis: "100%",
               width: 0,

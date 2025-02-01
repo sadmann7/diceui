@@ -33,7 +33,6 @@ import {
 import { Masonry } from "@/registry/default/ui/masonry";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
-import { Masonry as MasonryAlt } from "masonic";
 import * as React from "react";
 
 export default function PlaygroundPage() {
@@ -49,37 +48,20 @@ export default function PlaygroundPage() {
 
   return (
     <Shell>
-      <Masonry>
-        {items.map((item) => (
-          <div
-            key={item.id}
-            className="rounded-lg border bg-card p-4 text-card-foreground shadow"
-            style={{
-              height: item.height,
-            }}
-          >
-            {item.content}
-          </div>
-        ))}
-      </Masonry>
       <HydrationBoundary fallback={<Skeleton className="h-svh w-full" />}>
-        <MasonryAlt
-          items={items}
-          columnWidth={300}
-          columnGutter={16}
-          columnCount={3}
-          render={({ data }) => (
+        <Masonry>
+          {items.map((item) => (
             <div
-              key={data.id}
+              key={item.id}
               className="rounded-lg border bg-card p-4 text-card-foreground shadow"
               style={{
-                height: data.height,
+                height: item.height,
               }}
             >
-              {data.content}
+              {item.content}
             </div>
-          )}
-        />
+          ))}
+        </Masonry>
         <Textarea
           placeholder="Type here..."
           className="min-h-[80px] max-w-[40rem]"
