@@ -28,42 +28,12 @@ import {
   ComboboxItem,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
-import * as Masonry from "@/registry/default/ui/masonry";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
-import * as React from "react";
 
 export default function PlaygroundPage() {
-  const items = React.useMemo(
-    () =>
-      Array.from({ length: 10 }, (_, i) => ({
-        id: i.toString(),
-        content: `Item ${i + 1}`,
-        height: Math.floor(Math.random() * 100) + 100,
-      })),
-    [],
-  );
-
   return (
     <Shell>
-      <Masonry.Root
-        columnCount={{ initial: 1, md: 2, lg: 4 }}
-        defaultColumnCount={4}
-        gap={16}
-      >
-        {items.map((item) => (
-          <Masonry.Item
-            key={item.id}
-            fallback={<Skeleton className="w-full" style={{ height: 160 }} />}
-            className="rounded-lg border bg-card p-4 text-card-foreground shadow"
-            style={{
-              height: item.height,
-            }}
-          >
-            {item.content}
-          </Masonry.Item>
-        ))}
-      </Masonry.Root>
       <HydrationBoundary fallback={<Skeleton className="h-svh w-full" />}>
         <Textarea
           placeholder="Type here..."
