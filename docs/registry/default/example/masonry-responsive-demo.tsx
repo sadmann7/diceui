@@ -1,5 +1,5 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import * as Masonry from "@/registry/default/ui/masonry";
-import * as React from "react";
 
 const items = [
   {
@@ -11,19 +11,19 @@ const items = [
     id: "2",
     title: "Indy Backflip",
     description:
-      "The Indy Backflip is a trick where you backflip in the air while grabbing the board with your back hand.",
+      "The Indy Backflip is a trick where you perform a backflip while doing an Indy.",
   },
   {
     id: "3",
     title: "Pizza Guy",
     description:
-      "The Pizza Guy is a trick where you flip the board like a pizza.",
+      "The Pizza Guy is a trick where you perform a backflip while doing a pizza.",
   },
   {
     id: "4",
     title: "Rocket Air",
     description:
-      "The Rocket Air is a trick where you grab the nose of your board and point it straight up to the sky.",
+      "The Rocket Air is a trick where you perform a backflip while doing a rocket.",
   },
   {
     id: "5",
@@ -39,11 +39,23 @@ const items = [
   },
 ];
 
-export default function MasonryDemo() {
+export default function MasonryResponsiveDemo() {
   return (
-    <Masonry.Root columnCount={3} gap={12}>
+    <Masonry.Root
+      columnCount={{ initial: 1, sm: 2, md: 3 }}
+      defaultColumnCount={3}
+      gap={{ initial: 4, sm: 8, md: 12 }}
+      defaultGap={12}
+      className="w-full"
+    >
       {items.map((item) => (
-        <Masonry.Item key={item.id} asChild>
+        <Masonry.Item
+          key={item.id}
+          fallback={
+            <Skeleton className="aspect-video size-full max-h-28 rounded-sm" />
+          }
+          className="relative touch-none select-none overflow-hidden rounded-sm transition-transform duration-300 hover:scale-[1.02]"
+        >
           <div className="flex flex-col gap-1 rounded-md border bg-card p-4 text-card-foreground shadow-sm">
             <div className="font-medium text-sm leading-tight sm:text-base">
               {item.title}

@@ -39,75 +39,27 @@ Import the parts, and compose them together.
 import * as Masonry from "@/components/ui/masonry";
 
 <Masonry.Root>
-  <Masonry.Item>Item 1</Masonry.Item>
-  <Masonry.Item>Item 2</Masonry.Item>
-  <Masonry.Item>Item 3</Masonry.Item>
+  <Masonry.Item />
 </Masonry.Root>
 ```
 
 ## Examples
 
-### Basic Usage
+### Responsive Layout
 
-A basic masonry layout with default settings.
-
-<ComponentTabs name="masonry-basic-demo" />
-
-### Responsive Columns
-
-Adjust the number of columns based on screen size.
-
-```tsx
-<Masonry.Root
-  columnCount={{
-    initial: 2,
-    sm: 3,
-    md: 4,
-    lg: 5,
-  }}
->
-  {/* Items */}
-</Masonry.Root>
-```
-
-### Custom Gap
-
-Customize the gap between items.
-
-```tsx
-<Masonry.Root
-  gap={{
-    initial: 16,
-    sm: 20,
-    md: 24,
-    lg: 32,
-  }}
->
-  {/* Items */}
-</Masonry.Root>
-```
+<ComponentTabs name="masonry-responsive-demo" scalePreview />
 
 ### Linear Layout
 
-Use linear layout to maintain item order from left to right.
+Set `linear` to `true` to maintain item order from left to right.
 
-```tsx
-<Masonry.Root linear>
-  {/* Items */}
-</Masonry.Root>
-```
+<ComponentTabs name="masonry-linear-demo" scalePreview />
 
-### With Fallback
+### Server Side Rendering
 
-Show fallback content while the masonry layout is initializing.
+Use `defaultColumnCount` and `defaultGap`, and item `fallback` to render items on the server. This is useful for preventing layout shift and hydration errors.
 
-```tsx
-<Masonry.Root>
-  <Masonry.Item fallback={<Skeleton className="h-[200px]" />}>
-    {/* Item content */}
-  </Masonry.Item>
-</Masonry.Root>
-```
+<ComponentTabs name="masonry-ssr-demo" scalePreview />
 
 ## API Reference
 
@@ -137,66 +89,3 @@ Individual item component within the masonry layout.
     },
   ]}
 />
-
-## Examples
-
-### Image Gallery
-
-Create a responsive image gallery with masonry layout.
-
-```tsx
-<Masonry.Root
-  columnCount={{
-    initial: 2,
-    sm: 3,
-    md: 4,
-  }}
-  gap={16}
-  className="max-w-7xl mx-auto px-4"
->
-  {images.map((image) => (
-    <Masonry.Item key={image.id} fallback={<Skeleton className="h-[200px]" />}>
-      <Image
-        src={image.src}
-        alt={image.alt}
-        width={image.width}
-        height={image.height}
-        className="w-full h-auto rounded-lg"
-      />
-    </Masonry.Item>
-  ))}
-</Masonry.Root>
-```
-
-### Card Grid
-
-Create a grid of cards with varying heights.
-
-```tsx
-<Masonry.Root
-  columnCount={3}
-  gap={24}
-  className="max-w-7xl mx-auto px-4"
->
-  {cards.map((card) => (
-    <Masonry.Item key={card.id}>
-      <Card>
-        <CardHeader>
-          <CardTitle>{card.title}</CardTitle>
-        </CardHeader>
-        <CardContent>{card.content}</CardContent>
-      </Card>
-    </Masonry.Item>
-  ))}
-</Masonry.Root>
-```
-
-## Accessibility
-
-The masonry layout is built with accessibility in mind:
-
-- Items are arranged in a logical reading order.
-- Content maintains its semantic structure.
-- Layout adjusts responsively for different screen sizes.
-- Fallback content is provided during initialization.
-- Focus management is preserved.

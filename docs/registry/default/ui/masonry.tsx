@@ -13,7 +13,7 @@ const DATA_LINE_BREAK_ATTR = "data-masonry-line-break";
 const DATA_ITEM_ATTR = "data-masonry-item";
 
 const COLUMN_COUNT = 4;
-const GAP = 16;
+const GAP = 12;
 const CACHE_MAX_AGE = 5000;
 
 const MASONRY_ERROR = {
