@@ -30,7 +30,7 @@ import {
   ComboboxItem,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
-import { Masonry } from "@/registry/default/ui/masonry";
+import * as Masonry from "@/registry/default/ui/masonry";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
 import * as React from "react";
@@ -49,9 +49,9 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <HydrationBoundary fallback={<Skeleton className="h-svh w-full" />}>
-        <Masonry>
+        <Masonry.Root>
           {items.map((item) => (
-            <div
+            <Masonry.Item
               key={item.id}
               className="rounded-lg border bg-card p-4 text-card-foreground shadow"
               style={{
@@ -59,9 +59,9 @@ export default function PlaygroundPage() {
               }}
             >
               {item.content}
-            </div>
+            </Masonry.Item>
           ))}
-        </Masonry>
+        </Masonry.Root>
         <Textarea
           placeholder="Type here..."
           className="min-h-[80px] max-w-[40rem]"
