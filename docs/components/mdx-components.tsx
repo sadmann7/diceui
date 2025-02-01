@@ -1,5 +1,6 @@
 import { ComponentSource } from "@/components/component-source";
 import { ComponentTabs } from "@/components/component-tabs";
+import { CSSVariablesTable } from "@/components/css-variables-table";
 import { DataAttributesTable } from "@/components/data-attributes-table";
 import { Kbd } from "@/components/kbd";
 import { KeyboardShortcutsTable } from "@/components/keyboard-shortcuts-table";
@@ -12,7 +13,6 @@ import { Step, Steps } from "fumadocs-ui/components/steps";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import defaultComponents from "fumadocs-ui/mdx";
 import type { MDXComponents } from "mdx/types";
-import { CSSVariablesTable } from "./css-variables-table";
 
 const { AutoTypeTable } = createTypeTable();
 

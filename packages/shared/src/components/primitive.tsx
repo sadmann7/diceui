@@ -81,6 +81,6 @@ function dispatchDiscreteCustomEvent<E extends CustomEvent>(
   ReactDOM.flushSync(() => target.dispatchEvent(event));
 }
 
-export { dispatchDiscreteCustomEvent, Primitive };
+export { Primitive, dispatchDiscreteCustomEvent };
 
 export type { PrimitivePropsWithRef };

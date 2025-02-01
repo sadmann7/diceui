@@ -152,6 +152,7 @@ export const examples: Registry = [
       "@dnd-kit/modifiers",
       "@dnd-kit/sortable",
       "@dnd-kit/utilities",
+      "@radix-ui/react-slot",
       "lucide-react",
     ],
     registryDependencies: ["badge", "button"],
@@ -170,12 +171,60 @@ export const examples: Registry = [
       "@dnd-kit/modifiers",
       "@dnd-kit/sortable",
       "@dnd-kit/utilities",
+      "@radix-ui/react-slot",
       "lucide-react",
     ],
     registryDependencies: ["badge", "button"],
     files: [
       {
         path: "example/kanban-dynamic-overlay-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "masonry-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot"],
+    files: [
+      {
+        path: "example/masonry-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "masonry-responsive-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot"],
+    registryDependencies: ["skeleton"],
+    files: [
+      {
+        path: "example/masonry-responsive-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "masonry-linear-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot"],
+    registryDependencies: ["skeleton"],
+    files: [
+      {
+        path: "example/masonry-linear-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "masonry-ssr-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot"],
+    registryDependencies: ["skeleton"],
+    files: [
+      {
+        path: "example/masonry-ssr-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -224,6 +273,8 @@ export const examples: Registry = [
       "@dnd-kit/modifiers",
       "@dnd-kit/sortable",
       "@dnd-kit/utilities",
+      "@radix-ui/react-slot",
+      "lucide-react",
     ],
     files: [
       {
@@ -240,6 +291,7 @@ export const examples: Registry = [
       "@dnd-kit/modifiers",
       "@dnd-kit/sortable",
       "@dnd-kit/utilities",
+      "@radix-ui/react-slot",
       "lucide-react",
     ],
     files: [
@@ -257,6 +309,7 @@ export const examples: Registry = [
       "@dnd-kit/modifiers",
       "@dnd-kit/sortable",
       "@dnd-kit/utilities",
+      "@radix-ui/react-slot",
       "lucide-react",
     ],
     files: [
@@ -274,6 +327,7 @@ export const examples: Registry = [
       "@dnd-kit/modifiers",
       "@dnd-kit/sortable",
       "@dnd-kit/utilities",
+      "@radix-ui/react-slot",
       "lucide-react",
     ],
     registryDependencies: ["button", "table"],

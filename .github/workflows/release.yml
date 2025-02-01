@@ -19,42 +19,10 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.MY_GITHUB_TOKEN }}
-          
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9.15.4
-          
       - uses: ./.github/setup
 
-      - name: Setup npm
-        run: |
-          # Create or update .npmrc
-          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-          echo "@diceui:registry=https://registry.npmjs.org/" >> ~/.npmrc
-          npm config set access public
-          
-          # Debug info (without exposing token)
-          echo "--- NPM Config ---"
-          npm config list
-          echo "--- NPM User ---"
-          npm whoami || echo "Not authenticated"
-          echo "--- Registry ---"
-          npm config get registry
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Format and lint
-        run: pnpm lint:fix
-
       - name: Build
-        run: pnpm turbo build --no-cache --force
-        env:
-          TURBO_TOKEN: ""
-          TURBO_TEAM: ""
+        run: pnpm build
 
       - name: Create Release
         id: changesets
@@ -65,4 +33,5 @@ jobs:
           publish: pnpm changeset publish
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}         
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+         

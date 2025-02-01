@@ -4,250 +4,451 @@ import { useComposedRefs } from "@/lib/composition";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
+import * as ReactDOM from "react-dom";
 
-interface MasonryContextValue {
-  columnCount: number;
-  columnWidth: number;
-  gap: number;
-  itemMap: Map<number, { height: number; element: ItemElement }>;
-  onItemRegister: (index: number, element: ItemElement) => void;
-  onItemUnregister: (index: number) => void;
+const ROOT_NAME = "MasonryRoot";
+const ITEM_NAME = "MasonryItem";
+
+const DATA_LINE_BREAK_ATTR = "data-masonry-line-break";
+const DATA_ITEM_ATTR = "data-masonry-item";
+
+const COLUMN_COUNT = 4;
+const GAP = 12;
+const CACHE_MAX_AGE = 5000;
+
+const MASONRY_ERROR = {
+  [ROOT_NAME]: `\`${ROOT_NAME}\` components must be within \`${ROOT_NAME}\``,
+  [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${ROOT_NAME}\``,
+} as const;
+
+const TAILWIND_BREAKPOINTS = {
+  initial: 0,
+  sm: 640,
+  md: 768,
+  lg: 1024,
+  xl: 1280,
+  "2xl": 1536,
+} as const;
+
+type TailwindBreakpoint = keyof typeof TAILWIND_BREAKPOINTS;
+type BreakpointValue = TailwindBreakpoint | number;
+type ResponsiveObject = Partial<Record<BreakpointValue, number>>;
+type ResponsiveValue = number | ResponsiveObject;
+
+function parseBreakpoint(breakpoint: BreakpointValue): number {
+  if (typeof breakpoint === "number") return breakpoint;
+  return breakpoint in TAILWIND_BREAKPOINTS
+    ? TAILWIND_BREAKPOINTS[breakpoint]
+    : Number(breakpoint);
 }
 
-const MasonryContext = React.createContext<MasonryContextValue | undefined>(
-  undefined,
-);
+function getInitialValue(value: ResponsiveValue, defaultValue: number): number {
+  if (typeof value === "number") return value;
+  if ("initial" in value) return value.initial ?? defaultValue;
 
-interface MasonryProps extends React.HTMLAttributes<HTMLDivElement> {
-  columnWidth?: number;
-  gap?: number;
-  asChild?: boolean;
+  const breakpoints = Object.entries(value)
+    .map(([key, val]) => ({
+      breakpoint: parseBreakpoint(key as BreakpointValue),
+      value: val ?? defaultValue,
+    }))
+    .sort((a, b) => a.breakpoint - b.breakpoint);
+
+  return breakpoints[0]?.value ?? defaultValue;
 }
 
-const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryProps>(
-  (props, forwardedRef) => {
-    const {
-      columnWidth = 300,
-      gap = 16,
-      className,
-      children,
-      asChild,
-      ...rootProps
-    } = props;
-    const collectionRef = React.useRef<HTMLDivElement>(null);
-    const composedRefs = useComposedRefs(forwardedRef, collectionRef);
-    const [containerWidth, setContainerWidth] = React.useState(0);
+function useResponsiveValue({
+  value,
+  defaultValue,
+  mounted,
+}: {
+  value: ResponsiveValue;
+  defaultValue: number;
+  mounted: boolean;
+}): number {
+  const initialValue = React.useMemo(
+    () => getInitialValue(value, defaultValue),
+    [value, defaultValue],
+  );
+  const [currentValue, setCurrentValue] = React.useState(initialValue);
 
-    const itemMap = React.useRef(
-      new Map<number, { height: number; element: ItemElement }>(),
-    ).current;
+  const onResize = React.useCallback(() => {
+    if (!mounted) return;
+    if (typeof value === "number") {
+      setCurrentValue(value);
+      return;
+    }
 
-    const getItems = React.useCallback(() => {
-      const collectionNode = collectionRef.current;
-      if (!collectionNode) return [];
+    const width = window.innerWidth;
+    const breakpoints = Object.entries(value)
+      .map(([key, val]) => ({
+        breakpoint:
+          key === "initial" ? 0 : parseBreakpoint(key as BreakpointValue),
+        value: val ?? defaultValue,
+      }))
+      .sort((a, b) => b.breakpoint - a.breakpoint);
 
-      const allItems = Array.from(itemMap.values());
+    const newValue =
+      breakpoints.find(({ breakpoint }) => width >= breakpoint)?.value ??
+      defaultValue;
+    setCurrentValue(newValue);
+  }, [value, defaultValue, mounted]);
 
-      return allItems.sort((a, b) => {
-        const position = a.element.compareDocumentPosition(b.element);
-        if (
-          position & Node.DOCUMENT_POSITION_FOLLOWING ||
-          position & Node.DOCUMENT_POSITION_CONTAINED_BY
-        ) {
-          return -1;
-        }
-        if (
-          position & Node.DOCUMENT_POSITION_PRECEDING ||
-          position & Node.DOCUMENT_POSITION_CONTAINS
-        ) {
-          return 1;
-        }
-        return 0;
-      });
-    }, [itemMap]);
+  React.useEffect(() => {
+    if (!mounted) return;
 
-    const [positions, setPositions] = React.useState<
-      Map<number, { top: number; left: number }>
-    >(new Map());
+    onResize();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [onResize, mounted]);
 
-    // Calculate number of columns based on container width
-    const columnCount = Math.max(
-      1,
-      Math.floor((containerWidth + gap) / (columnWidth + gap)),
-    );
-    const actualColumnWidth =
-      (containerWidth - (columnCount - 1) * gap) / columnCount;
-
-    // Track container width changes
-    React.useEffect(() => {
-      if (!collectionRef.current) return;
-
-      const observer = new ResizeObserver((entries) => {
-        const entry = entries[0];
-        if (entry) {
-          setContainerWidth(entry.contentRect.width);
-        }
-      });
-
-      observer.observe(collectionRef.current);
-      setContainerWidth(collectionRef.current.offsetWidth);
-
-      return () => observer.disconnect();
-    }, []);
-
-    // Register/unregister items and recalculate layout
-    const onItemRegister = React.useCallback(
-      (index: number, element: ItemElement) => {
-        itemMap.set(index, { height: element.offsetHeight, element });
-        recalculateLayout();
-      },
-      [itemMap],
-    );
-
-    const onItemUnregister = React.useCallback(
-      (index: number) => {
-        itemMap.delete(index);
-        recalculateLayout();
-      },
-      [itemMap],
-    );
-
-    // Calculate item positions using pre-sorted items
-    const recalculateLayout = React.useCallback(() => {
-      if (!collectionRef.current || !itemMap.size) return;
-
-      const columnHeights = new Array(columnCount).fill(0);
-      const newPositions = new Map<number, { top: number; left: number }>();
-
-      const sortedItems = getItems();
-
-      for (const [index, item] of sortedItems.entries()) {
-        // Find shortest column
-        const minHeight = Math.min(...columnHeights);
-        const columnIndex = columnHeights.indexOf(minHeight);
-
-        // Calculate position
-        const left = columnIndex * (actualColumnWidth + gap);
-        const top = columnHeights[columnIndex];
-
-        newPositions.set(index, { top, left });
-        columnHeights[columnIndex] += item.height + gap;
-      }
-
-      setPositions(newPositions);
-    }, [columnCount, actualColumnWidth, gap, getItems, itemMap]);
-
-    const contextValue = React.useMemo<MasonryContextValue>(
-      () => ({
-        columnCount,
-        columnWidth: actualColumnWidth,
-        gap,
-        itemMap,
-        onItemRegister,
-        onItemUnregister,
-      }),
-      [
-        columnCount,
-        actualColumnWidth,
-        gap,
-        itemMap,
-        onItemRegister,
-        onItemUnregister,
-      ],
-    );
-
-    const Comp = asChild ? Slot : "div";
-
-    return (
-      <MasonryContext.Provider value={contextValue}>
-        <Comp
-          ref={composedRefs}
-          className={cn("relative w-full", className)}
-          {...rootProps}
-        >
-          {React.Children.map(children, (child, index) => {
-            if (!React.isValidElement(child)) return null;
-
-            const position = positions.get(index);
-            return position ? (
-              <div
-                style={{
-                  position: "absolute",
-                  top: position.top,
-                  left: position.left,
-                  width: actualColumnWidth,
-                  transform: "translate3d(0, 0, 0)",
-                }}
-              >
-                {child}
-              </div>
-            ) : (
-              <div style={{ opacity: 0, pointerEvents: "none" }}>{child}</div>
-            );
-          })}
-        </Comp>
-      </MasonryContext.Provider>
-    );
-  },
-);
-MasonryRoot.displayName = "MasonryRoot";
+  return currentValue;
+}
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
-type ItemElement = React.ComponentRef<"div">;
+interface MasonryContextValue {
+  mounted: boolean;
+}
 
-interface MasonryItemProps extends React.HTMLAttributes<ItemElement> {
-  index: number;
+const MasonryContext = React.createContext<MasonryContextValue | null>(null);
+MasonryContext.displayName = ROOT_NAME;
+
+function useMasonryContext(name: keyof typeof MASONRY_ERROR) {
+  const context = React.useContext(MasonryContext);
+  if (!context) {
+    throw new Error(MASONRY_ERROR[name]);
+  }
+  return context;
+}
+
+type ItemElement = React.ComponentRef<typeof MasonryItem>;
+
+interface ItemMeasurement {
+  height: number;
+  width: number;
+  marginTop: number;
+  marginBottom: number;
+}
+
+interface ItemCache {
+  measurements: Map<ItemElement, ItemMeasurement>;
+  lastUpdate: number;
+  timestamps: Map<ItemElement, number>;
+}
+
+interface MasonryProps extends React.ComponentPropsWithoutRef<"div"> {
+  columnCount?: ResponsiveValue;
+  defaultColumnCount?: number;
+  gap?: ResponsiveValue;
+  defaultGap?: number;
+  linear?: boolean;
   asChild?: boolean;
 }
 
-const MasonryItem = React.forwardRef<ItemElement, MasonryItemProps>(
+const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
   (props, forwardedRef) => {
-    const { index, className, children, asChild, ...itemProps } = props;
-    const itemRef = React.useRef<ItemElement>(null);
-    const composedRefs = useComposedRefs(forwardedRef, itemRef);
-    const context = React.useContext(MasonryContext);
+    const {
+      children,
+      columnCount = COLUMN_COUNT,
+      defaultColumnCount = columnCount,
+      gap = GAP,
+      defaultGap = gap,
+      linear = false,
+      asChild,
+      className,
+      style,
+      ...rootProps
+    } = props;
+    const [maxColumnHeight, setMaxColumnHeight] = React.useState<number | null>(
+      null,
+    );
+    const resizeObserverRef = React.useRef<ResizeObserver | null>(null);
+    const rafIdRef = React.useRef<number | null>(null);
+    const itemCacheRef = React.useRef<ItemCache>({
+      measurements: new Map(),
+      lastUpdate: 0,
+      timestamps: new Map(),
+    });
+    const collectionRef = React.useRef<HTMLDivElement>(null);
+    const composedRef = useComposedRefs(forwardedRef, collectionRef);
 
-    if (!context) {
-      throw new Error("MasonryItem must be used within MasonryRoot");
-    }
+    const [mounted, setMounted] = React.useState(false);
+    React.useLayoutEffect(() => {
+      setMounted(true);
+    }, []);
+
+    const currentColumnCount = useResponsiveValue({
+      value: columnCount,
+      defaultValue: COLUMN_COUNT,
+      mounted,
+    });
+    const currentGap = useResponsiveValue({
+      value: gap,
+      defaultValue: GAP,
+      mounted,
+    });
+    const lineBreakCount = currentColumnCount > 0 ? currentColumnCount - 1 : 0;
+
+    const getMeasurements = React.useCallback(
+      (item: ItemElement): ItemMeasurement | null => {
+        const cached = itemCacheRef.current.measurements.get(item);
+        const timestamp = itemCacheRef.current.timestamps.get(item);
+        const now = Date.now();
+
+        if (cached && timestamp && now - timestamp < CACHE_MAX_AGE) {
+          return cached;
+        }
+
+        const itemStyle = window.getComputedStyle(item);
+        const marginTop =
+          Number.parseFloat(itemStyle.marginTop) || currentGap / 2;
+        const marginBottom =
+          Number.parseFloat(itemStyle.marginBottom) || currentGap / 2;
+        const height = item.offsetHeight + marginTop + marginBottom;
+        const width = item.offsetWidth;
+
+        if (
+          height === 0 ||
+          Array.from(item.getElementsByTagName("img")).some(
+            (img) => img.clientHeight === 0,
+          )
+        ) {
+          return null;
+        }
+
+        const measurements = { height, width, marginTop, marginBottom };
+        itemCacheRef.current.measurements.set(item, measurements);
+        itemCacheRef.current.timestamps.set(item, now);
+        itemCacheRef.current.lastUpdate = now;
+
+        return measurements;
+      },
+      [currentGap],
+    );
+
+    const invalidateCache = React.useCallback(() => {
+      itemCacheRef.current.measurements.clear();
+      itemCacheRef.current.timestamps.clear();
+      itemCacheRef.current.lastUpdate = Date.now();
+    }, []);
+
+    const calculateLayout = React.useCallback(() => {
+      if (!collectionRef.current || !mounted) return;
+
+      const items = Array.from(
+        collectionRef.current.querySelectorAll<ItemElement>(
+          `[${DATA_ITEM_ATTR}]`,
+        ),
+      );
+
+      const columnHeights = new Array(currentColumnCount).fill(0);
+      let skip = false;
+      let nextOrder = 1;
+
+      for (const item of items) {
+        if (item.dataset[DATA_LINE_BREAK_ATTR] === "") continue;
+        const styles: Partial<CSSStyleDeclaration> = {
+          position: "",
+          top: "",
+          left: "",
+          width: `calc(${100 / currentColumnCount}% - ${(currentGap * (currentColumnCount - 1)) / currentColumnCount}px)`,
+          margin: `${currentGap / 2}px`,
+        };
+        Object.assign(item.style, styles);
+      }
+
+      for (const item of items) {
+        if (item.dataset[DATA_LINE_BREAK_ATTR] === "" || skip) continue;
+
+        const itemMeasurement = getMeasurements(item);
+        if (!itemMeasurement) {
+          skip = true;
+          continue;
+        }
+
+        if (linear) {
+          const yPos = columnHeights[nextOrder - 1];
+          Object.assign(item.style, {
+            position: "absolute",
+            top: `${yPos}px`,
+            left: `${(nextOrder - 1) * (itemMeasurement.width + currentGap)}px`,
+          });
+
+          columnHeights[nextOrder - 1] = yPos + itemMeasurement.height;
+          nextOrder = (nextOrder % currentColumnCount) + 1;
+        } else {
+          const minColumnIndex = columnHeights.indexOf(
+            Math.min(...columnHeights),
+          );
+          const xPos = minColumnIndex * (itemMeasurement.width + currentGap);
+          const yPos = columnHeights[minColumnIndex];
+
+          Object.assign(item.style, {
+            position: "absolute",
+            top: `${yPos}px`,
+            left: `${xPos}px`,
+          });
+
+          columnHeights[minColumnIndex] = yPos + itemMeasurement.height;
+        }
+      }
+
+      if (!skip) {
+        /**
+         * Use flushSync to prevent layout thrashing during React 18 batching
+         * @see https://github.com/facebook/react/blob/a8a4742f1c54493df00da648a3f9d26e3db9c8b5/packages/react-dom/src/events/ReactDOMEventListener.js#L294-L350
+         */
+        ReactDOM.flushSync(() => {
+          const maxHeight = Math.max(...columnHeights);
+          setMaxColumnHeight(maxHeight > 0 ? maxHeight : null);
+        });
+      }
+    }, [currentColumnCount, currentGap, linear, mounted, getMeasurements]);
 
     useIsomorphicLayoutEffect(() => {
-      const element = itemRef.current;
-      if (!element) return;
+      if (typeof ResizeObserver === "undefined") return;
 
-      const observer = new ResizeObserver(() => {
-        if (element) {
-          context.onItemRegister(index, element);
+      const cleanupResizeObserver = () => {
+        if (rafIdRef.current) {
+          cancelAnimationFrame(rafIdRef.current);
         }
+        if (resizeObserverRef.current) {
+          resizeObserverRef.current.disconnect();
+        }
+      };
+
+      resizeObserverRef.current = new ResizeObserver(() => {
+        invalidateCache();
+        rafIdRef.current = requestAnimationFrame(calculateLayout);
       });
 
-      observer.observe(element);
-      context.onItemRegister(index, element);
+      const content = collectionRef.current;
+      if (content) {
+        resizeObserverRef.current.observe(content);
+        for (const child of Array.from(content.children)) {
+          resizeObserverRef.current.observe(child);
+        }
+      }
 
-      return () => {
-        observer.disconnect();
-        context.onItemUnregister(index);
-      };
-    }, [context, index]);
+      return cleanupResizeObserver;
+    }, [calculateLayout, invalidateCache]);
 
-    const Comp = asChild ? Slot : "div";
+    const initialGridStyle = React.useMemo(
+      () => ({
+        display: mounted ? "block" : "grid",
+        gridTemplateColumns: !mounted
+          ? `repeat(${getInitialValue(defaultColumnCount, 4)}, 1fr)`
+          : undefined,
+        gap: !mounted ? `${getInitialValue(defaultGap, 16)}px` : undefined,
+      }),
+      [mounted, defaultColumnCount, defaultGap],
+    );
+
+    const containerStyle = React.useMemo(
+      () => ({
+        ...style,
+        ...initialGridStyle,
+        height: mounted && maxColumnHeight ? `${maxColumnHeight}px` : "auto",
+        minHeight: "0px",
+        width: mounted ? `calc(100% - ${currentGap}px)` : "100%",
+        marginLeft: mounted ? `${currentGap / 2}px` : undefined,
+        marginRight: mounted ? `${currentGap / 2}px` : undefined,
+      }),
+      [style, initialGridStyle, mounted, maxColumnHeight, currentGap],
+    );
+
+    const contextValue = React.useMemo(() => ({ mounted }), [mounted]);
+
+    const RootSlot = asChild ? Slot : "div";
 
     return (
-      <Comp ref={composedRefs} className={cn(className)} {...itemProps}>
-        {children}
-      </Comp>
+      <MasonryContext.Provider value={contextValue}>
+        <RootSlot
+          {...rootProps}
+          ref={composedRef}
+          className={cn("relative mx-auto w-full", className)}
+          style={containerStyle}
+        >
+          {children}
+          <LineBreaks
+            lineBreakCount={lineBreakCount}
+            currentColumnCount={currentColumnCount}
+          />
+        </RootSlot>
+      </MasonryContext.Provider>
     );
   },
 );
-MasonryItem.displayName = "MasonryItem";
 
-const Root = MasonryRoot;
+Masonry.displayName = ROOT_NAME;
+
+interface LineBreaksProps {
+  lineBreakCount: number;
+  currentColumnCount: number;
+}
+
+const LineBreaks = React.memo(
+  function LineBreaks({ lineBreakCount, currentColumnCount }: LineBreaksProps) {
+    return (
+      <>
+        {Array.from({ length: lineBreakCount }, (_, i) => {
+          const key = `line-break-${currentColumnCount}-${i}`;
+          return (
+            <span
+              key={key}
+              {...{ [DATA_LINE_BREAK_ATTR]: "" }}
+              style={{
+                flexBasis: "100%",
+                width: 0,
+                margin: 0,
+                padding: 0,
+                order: i + 1,
+              }}
+            />
+          );
+        })}
+      </>
+    );
+  },
+  (prevProps, nextProps) => {
+    return prevProps.lineBreakCount === nextProps.lineBreakCount;
+  },
+);
+
+interface MasonryItemProps extends React.ComponentPropsWithoutRef<"div"> {
+  asChild?: boolean;
+  fallback?: React.ReactNode;
+}
+
+const MasonryItem = React.forwardRef<HTMLDivElement, MasonryItemProps>(
+  (props, forwardedRef) => {
+    const { asChild, fallback, ...itemProps } = props;
+    const context = useMasonryContext(ITEM_NAME);
+
+    if (!context.mounted && fallback) {
+      return fallback;
+    }
+
+    const ItemSlot = asChild ? Slot : "div";
+
+    return (
+      <ItemSlot
+        {...{ [DATA_ITEM_ATTR]: "" }}
+        {...itemProps}
+        ref={forwardedRef}
+      />
+    );
+  },
+);
+
+MasonryItem.displayName = ITEM_NAME;
+
+const Root = Masonry;
 const Item = MasonryItem;
 
 export {
-  MasonryRoot,
+  Masonry,
   MasonryItem,
   //
   Root,
