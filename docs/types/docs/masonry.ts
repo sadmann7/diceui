@@ -1,17 +1,17 @@
 import type { SlotProps } from "@radix-ui/react-slot";
 
 interface ResponsiveObject {
-  /** Value for initial breakpoint (0px) */
+  /** Value for initial breakpoint (0px). */
   initial?: number;
-  /** Value for sm breakpoint (640px) */
+  /** Value for sm breakpoint (640px). */
   sm?: number;
-  /** Value for md breakpoint (768px) */
+  /** Value for md breakpoint (768px). */
   md?: number;
-  /** Value for lg breakpoint (1024px) */
+  /** Value for lg breakpoint (1024px). */
   lg?: number;
-  /** Value for xl breakpoint (1280px) */
+  /** Value for xl breakpoint (1280px). */
   xl?: number;
-  /** Value for 2xl breakpoint (1536px) */
+  /** Value for 2xl breakpoint (1536px). */
   "2xl"?: number;
 }
 
@@ -34,8 +34,8 @@ export interface RootProps
 
   /**
    * The default number of columns to display during SSR and before hydration.
-   * This should match the `initial` value in your responsive `columnCount` object
-   * for a smooth transition during hydration.
+   *
+   * This value will be used before the component is mounted.
    *
    * ```ts
    * defaultColumnCount={2} // matches columnCount={{ initial: 2, sm: 3, md: 4 }}
@@ -60,8 +60,8 @@ export interface RootProps
 
   /**
    * The default gap between items during SSR and before hydration.
-   * This should match the `initial` value in your responsive `gap` object
-   * for a smooth transition during hydration.
+   *
+   * This value will be used before the component is mounted.
    *
    * ```ts
    * defaultGap={16} // matches gap={{ initial: 16, sm: 20, md: 24 }}

@@ -46,7 +46,7 @@ export default function PlaygroundPage() {
 
   return (
     <Shell>
-      <Masonry.Root columnCount={{ initial: 1, md: 2, lg: 4 }} gap={16}>
+      <Masonry.Root defaultColumnCount={2} gap={16}>
         {items.map((item) => (
           <Masonry.Item
             key={item.id}

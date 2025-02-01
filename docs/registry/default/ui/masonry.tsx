@@ -123,7 +123,9 @@ const useIsomorphicLayoutEffect =
 
 interface MasonryProps extends React.ComponentPropsWithoutRef<"div"> {
   columnCount?: ResponsiveValue;
+  defaultColumnCount?: number;
   gap?: ResponsiveValue;
+  defaultGap?: number;
   linear?: boolean;
   asChild?: boolean;
 }
@@ -133,7 +135,9 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
     const {
       children,
       columnCount = COLUMN_COUNT,
+      defaultColumnCount = columnCount,
       gap = GAP,
+      defaultGap = gap,
       linear = false,
       asChild,
       className,
@@ -296,11 +300,11 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       () => ({
         display: mounted ? "block" : "grid",
         gridTemplateColumns: !mounted
-          ? `repeat(${getInitialValue(columnCount, 4)}, 1fr)`
+          ? `repeat(${getInitialValue(defaultColumnCount, 4)}, 1fr)`
           : undefined,
-        gap: !mounted ? `${getInitialValue(gap, 16)}px` : undefined,
+        gap: !mounted ? `${getInitialValue(defaultGap, 16)}px` : undefined,
       }),
-      [columnCount, gap, mounted],
+      [mounted, defaultColumnCount, defaultGap],
     );
 
     const contextValue: MasonryContextValue = React.useMemo(
@@ -370,9 +374,9 @@ const Root = Masonry;
 const Item = MasonryItem;
 
 export {
-  Item,
   Masonry,
   MasonryItem,
   //
   Root,
+  Item,
 };
