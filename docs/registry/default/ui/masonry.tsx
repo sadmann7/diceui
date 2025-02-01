@@ -20,21 +20,6 @@ const MASONRY_ERROR = {
   [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${ROOT_NAME}\``,
 } as const;
 
-interface MasonryContextValue {
-  mounted: boolean;
-}
-
-const MasonryContext = React.createContext<MasonryContextValue | null>(null);
-MasonryContext.displayName = ROOT_NAME;
-
-function useMasonryContext(name: keyof typeof MASONRY_ERROR) {
-  const context = React.useContext(MasonryContext);
-  if (!context) {
-    throw new Error(MASONRY_ERROR[name]);
-  }
-  return context;
-}
-
 const TAILWIND_BREAKPOINTS = {
   initial: 0,
   sm: 640,
@@ -120,6 +105,21 @@ function useResponsiveValue({
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
+
+interface MasonryContextValue {
+  mounted: boolean;
+}
+
+const MasonryContext = React.createContext<MasonryContextValue | null>(null);
+MasonryContext.displayName = ROOT_NAME;
+
+function useMasonryContext(name: keyof typeof MASONRY_ERROR) {
+  const context = React.useContext(MasonryContext);
+  if (!context) {
+    throw new Error(MASONRY_ERROR[name]);
+  }
+  return context;
+}
 
 interface MasonryProps extends React.ComponentPropsWithoutRef<"div"> {
   columnCount?: ResponsiveValue;
