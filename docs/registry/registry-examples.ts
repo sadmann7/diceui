@@ -339,4 +339,36 @@ export const examples: Registry = [
       },
     ],
   },
+  {
+    name: "masonry-demo",
+    type: "registry:example",
+    files: [
+      {
+        path: "example/masonry-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "masonry-loading-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/skeleton"],
+    files: [
+      {
+        path: "example/masonry-loading-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "masonry-images-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/skeleton"],
+    files: [
+      {
+        path: "example/masonry-images-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
 ];

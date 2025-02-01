@@ -1,0 +1,12 @@
+{
+  "name": "masonry-demo",
+  "type": "registry:example",
+  "files": [
+    {
+      "path": "example/masonry-demo.tsx",
+      "content": "\"use client\";\n\nimport * as Masonry from \"@/registry/default/ui/masonry\";\nimport * as React from \"react\";\n\nexport default function MasonryDemo() {\n  const items = [\n    {\n      id: \"1\",\n      title: \"The 900\",\n      description: \"The 900 is a trick where you spin 900 degrees in the air.\",\n    },\n    {\n      id: \"2\",\n      title: \"Indy Backflip\",\n      description:\n        \"The Indy Backflip is a trick where you backflip in the air while grabbing the board with your back hand.\",\n    },\n    {\n      id: \"3\",\n      title: \"Pizza Guy\",\n      description:\n        \"The Pizza Guy is a trick where you flip the board like a pizza.\",\n    },\n    {\n      id: \"4\",\n      title: \"Rocket Air\",\n      description:\n        \"The Rocket Air is a trick where you grab the nose of your board and point it straight up to the sky.\",\n    },\n    {\n      id: \"5\",\n      title: \"Kickflip Backflip\",\n      description:\n        \"The Kickflip Backflip is a trick where you perform a kickflip while doing a backflip simultaneously.\",\n    },\n    {\n      id: \"6\",\n      title: \"FS 540\",\n      description:\n        \"The FS 540 is a trick where you spin frontside 540 degrees in the air.\",\n    },\n  ];\n\n  return (\n    <Masonry.Root columnCount={{ initial: 2, sm: 2, md: 3, lg: 4 }} gap={16}>\n      {items.map((item) => (\n        <Masonry.Item key={item.id}>\n          <div className=\"flex flex-col gap-1 rounded-md border bg-card p-4 text-card-foreground shadow-sm\">\n            <div className=\"font-medium text-sm leading-tight sm:text-base\">\n              {item.title}\n            </div>\n            <span className=\"text-muted-foreground text-sm\">\n              {item.description}\n            </span>\n          </div>\n        </Masonry.Item>\n      ))}\n    </Masonry.Root>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

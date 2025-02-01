@@ -1,6 +1,5 @@
 "use client";
 
-import { Skeleton } from "@/components/ui/skeleton";
 import { useComposedRefs } from "@/lib/composition";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
@@ -56,6 +55,13 @@ interface ItemMeasurements {
 
 const itemCache = new WeakMap<HTMLElement, ItemMeasurements>();
 
+// Add a function to clear items from cache for specific elements
+function clearItemCacheFor(items: HTMLElement[]) {
+  for (const item of items) {
+    itemCache.delete(item);
+  }
+}
+
 function parseBreakpoint(breakpoint: BreakpointValue): number {
   if (typeof breakpoint === "number") return breakpoint;
   return breakpoint in TAILWIND_BREAKPOINTS
@@ -81,10 +87,12 @@ function useResponsiveValue({
   value,
   defaultValue,
   mounted,
+  collectionRef,
 }: {
   value: ResponsiveValue;
   defaultValue: number;
   mounted: boolean;
+  collectionRef: React.RefObject<HTMLDivElement | null>;
 }): number {
   const initialValue = React.useMemo(
     () => getInitialValue(value, defaultValue),
@@ -94,6 +102,15 @@ function useResponsiveValue({
 
   const onResize = React.useCallback(() => {
     if (!mounted) return;
+
+    // Clear cache for all masonry items on resize
+    if (collectionRef?.current) {
+      const items = Array.from(
+        collectionRef.current.querySelectorAll(`[${DATA_ITEM_ATTR}]`),
+      ).filter((child): child is HTMLElement => child instanceof HTMLElement);
+      clearItemCacheFor(items);
+    }
+
     if (typeof value === "number") {
       setCurrentValue(value);
       return;
@@ -111,24 +128,26 @@ function useResponsiveValue({
     const newValue =
       breakpoints.find(({ breakpoint }) => width >= breakpoint)?.value ??
       defaultValue;
-    setCurrentValue(newValue);
-  }, [value, defaultValue, mounted]);
+
+    if (newValue !== currentValue) {
+      setCurrentValue(newValue);
+    }
+  }, [value, defaultValue, mounted, currentValue, collectionRef]);
 
   React.useEffect(() => {
     if (!mounted) return;
 
-    function debounce<T extends (...args: unknown[]) => unknown>(
-      fn: T,
-      delay: number,
-    ): (...args: Parameters<T>) => void {
-      let timeoutId: ReturnType<typeof setTimeout>;
-      return (...args: Parameters<T>) => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => fn(...args), delay);
-      };
-    }
+    // Initial calculation
+    onResize();
 
-    const debouncedResize = debounce(onResize, 100);
+    const debouncedResize = (() => {
+      let timeoutId: ReturnType<typeof setTimeout>;
+      return () => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(onResize, 100);
+      };
+    })();
+
     window.addEventListener("resize", debouncedResize);
     return () => window.removeEventListener("resize", debouncedResize);
   }, [onResize, mounted]);
@@ -165,8 +184,8 @@ interface MasonryProps extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
 }
 
-const Masonry = React.memo(
-  React.forwardRef<HTMLDivElement, MasonryProps>((props, forwardedRef) => {
+const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
+  (props, forwardedRef) => {
     const {
       children,
       columnCount = 4,
@@ -192,11 +211,13 @@ const Masonry = React.memo(
       value: columnCount,
       defaultValue: 4,
       mounted,
+      collectionRef,
     });
     const currentGap = useResponsiveValue({
       value: gap,
       defaultValue: 16,
       mounted,
+      collectionRef,
     });
     const lineBreakCount = currentColumnCount > 0 ? currentColumnCount - 1 : 0;
 
@@ -210,9 +231,11 @@ const Masonry = React.memo(
       const columnHeights = new Array(currentColumnCount).fill(0);
       let skip = false;
 
-      // Reset styles and cache
+      // Clear cache for all items when layout recalculates
+      clearItemCacheFor(items);
+
+      // Reset styles
       for (const item of items) {
-        itemCache.delete(item);
         Object.assign(item.style, {
           position: "absolute",
           width: `calc(${100 / currentColumnCount}% - ${
@@ -364,7 +387,7 @@ const Masonry = React.memo(
         </RootSlot>
       </MasonryContext.Provider>
     );
-  }),
+  },
 );
 
 Masonry.displayName = ROOT_NAME;
@@ -402,9 +425,9 @@ const Root = Masonry;
 const Item = MasonryItem;
 
 export {
+  Item,
   Masonry,
   MasonryItem,
   //
   Root,
-  Item,
 };

@@ -52,6 +52,17 @@ export const ui: Registry = [
     ],
   },
   {
+    name: "masonry",
+    type: "registry:ui",
+    dependencies: ["@diceui/masonry", "@radix-ui/react-slot"],
+    files: [
+      {
+        path: "ui/masonry.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "mention",
     type: "registry:ui",
     dependencies: ["@diceui/mention", "lucide-react"],

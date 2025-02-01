@@ -1,5 +1,3 @@
-"use client";
-
 import { HydrationBoundary } from "@/components/hydration-boundary";
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
@@ -21,6 +19,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
+import MasonryDemo from "@/registry/default/example/masonry-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -48,7 +47,8 @@ export default function PlaygroundPage() {
 
   return (
     <Shell>
-      <Masonry.Root>
+      <MasonryDemo />
+      <Masonry.Root columnCount={{ initial: 2, sm: 2, md: 3, lg: 4 }} gap={16}>
         {items.map((item) => (
           <Masonry.Item
             key={item.id}
