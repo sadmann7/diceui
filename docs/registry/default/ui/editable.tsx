@@ -97,40 +97,55 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
     const inputId = React.useId();
     const labelId = React.useId();
 
-    const [internalValue, setInternalValue] = React.useState(defaultValue);
-    const [isEditing, setIsEditing] = React.useState(false);
-    const [previousValue, setPreviousValue] = React.useState(defaultValue);
-
     const isControlled = valueProp !== undefined;
-    const value = isControlled ? valueProp : internalValue;
+    const [uncontrolledValue, setUncontrolledValue] =
+      React.useState(defaultValue);
+    const value = isControlled ? valueProp : uncontrolledValue;
+    const previousValueRef = React.useRef(value);
+    const onValueChangeRef = React.useRef(onValueChangeProp);
+    const [isEditing, setIsEditing] = React.useState(false);
+
+    React.useEffect(() => {
+      onValueChangeRef.current = onValueChangeProp;
+    });
 
     const onValueChange = React.useCallback(
-      (newValue: string) => {
+      (nextValue: string) => {
         if (!isControlled) {
-          setInternalValue(newValue);
+          setUncontrolledValue(nextValue);
         }
-        onValueChangeProp?.(newValue);
+        onValueChangeRef.current?.(nextValue);
       },
-      [isControlled, onValueChangeProp],
+      [isControlled],
     );
 
-    const onCancel = React.useCallback(() => {
-      if (!isControlled) {
-        setInternalValue(previousValue);
+    React.useEffect(() => {
+      if (isControlled && valueProp !== previousValueRef.current) {
+        previousValueRef.current = valueProp;
       }
-      onValueChange(previousValue);
+    }, [isControlled, valueProp]);
+
+    const onCancel = React.useCallback(() => {
+      const prevValue = previousValueRef.current;
+      onValueChange(prevValue);
       setIsEditing(false);
-    }, [previousValue, isControlled, onValueChange]);
+      onCancelProp?.();
+    }, [onValueChange, onCancelProp]);
 
     const onEdit = React.useCallback(() => {
-      setPreviousValue(value);
+      previousValueRef.current = value;
       setIsEditing(true);
-    }, [value]);
+      onEditProp?.();
+    }, [value, onEditProp]);
 
-    const onSubmit = React.useCallback((newValue: string) => {
-      setInternalValue(newValue);
-      setIsEditing(false);
-    }, []);
+    const onSubmit = React.useCallback(
+      (newValue: string) => {
+        onValueChange(newValue);
+        setIsEditing(false);
+        onSubmitProp?.(newValue);
+      },
+      [onValueChange, onSubmitProp],
+    );
 
     const contextValue = React.useMemo<EditableContextValue>(
       () => ({
