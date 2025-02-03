@@ -1,3 +1,4 @@
+import type { EmptyProps } from "@/types";
 import type {
   DndContextProps,
   DragEndEvent,
@@ -148,8 +149,7 @@ export interface RootProps<T> extends DndContextProps {
   flatCursor?: boolean;
 }
 
-export interface BoardProps
-  extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"div">> {
+export interface BoardProps extends EmptyProps<"div"> {
   /** The children of the kanban board. */
   children: React.ReactNode;
 
@@ -195,8 +195,7 @@ export interface ColumnProps
   disabled?: boolean;
 }
 
-export interface ColumnHandleProps
-  extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"button">> {
+export interface ColumnHandleProps extends EmptyProps<"button"> {
   /**
    * Merges the handle's props into its immediate child.
    * @default false
@@ -204,8 +203,7 @@ export interface ColumnHandleProps
   asChild?: boolean;
 }
 
-export interface ItemProps
-  extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"div">> {
+export interface ItemProps extends EmptyProps<"div"> {
   /**
    * The unique identifier of the item.
    *
@@ -235,8 +233,7 @@ export interface ItemProps
   disabled?: boolean;
 }
 
-export interface ItemHandleProps
-  extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"button">> {
+export interface ItemHandleProps extends EmptyProps<"button"> {
   /**
    * Merges the handle's props into its immediate child.
    *

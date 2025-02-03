@@ -16,15 +16,11 @@ function useSize(element: HTMLElement | null) {
       setSize({ width: element.offsetWidth, height: element.offsetHeight });
 
       const resizeObserver = new ResizeObserver((entries) => {
-        if (!Array.isArray(entries)) {
-          return;
-        }
+        if (!Array.isArray(entries)) return;
 
         // Since we only observe the one element, we don't need to loop over the
         // array
-        if (!entries.length) {
-          return;
-        }
+        if (!entries.length) return;
 
         const entry = entries[0];
         let width: number;

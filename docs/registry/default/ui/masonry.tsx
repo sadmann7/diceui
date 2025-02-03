@@ -345,7 +345,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       [mounted, defaultColumnCount, defaultGap],
     );
 
-    const containerStyle = React.useMemo(
+    const rootStyle = React.useMemo(
       () => ({
         ...style,
         ...initialGridStyle,
@@ -366,9 +366,10 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       <MasonryContext.Provider value={contextValue}>
         <RootSlot
           {...rootProps}
+          role="grid"
           ref={composedRef}
           className={cn("relative mx-auto w-full", className)}
-          style={containerStyle}
+          style={rootStyle}
         >
           {children}
           <LineBreaks
@@ -436,6 +437,7 @@ const MasonryItem = React.forwardRef<HTMLDivElement, MasonryItemProps>(
       <ItemSlot
         {...{ [DATA_ITEM_ATTR]: "" }}
         {...itemProps}
+        role="gridcell"
         ref={forwardedRef}
       />
     );

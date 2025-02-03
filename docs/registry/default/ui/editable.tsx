@@ -58,6 +58,8 @@ function useEditableContext(name: keyof typeof EDITABLE_ERROR) {
   return context;
 }
 
+type RootElement = React.ComponentRef<typeof EditableRoot>;
+
 interface EditableRootProps
   extends Omit<React.ComponentPropsWithoutRef<"div">, "onSubmit"> {
   id?: string;
@@ -67,6 +69,7 @@ interface EditableRootProps
   onCancel?: () => void;
   onEdit?: () => void;
   onSubmit?: (value: string) => void;
+  name?: string;
   placeholder?: string;
   triggerMode?: EditableContextValue["triggerMode"];
   asChild?: boolean;
@@ -87,6 +90,7 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
       onCancel: onCancelProp,
       onEdit: onEditProp,
       onSubmit: onSubmitProp,
+      name,
       placeholder,
       triggerMode = "click",
       asChild,
@@ -129,6 +133,12 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
         previousValueRef.current = valueProp;
       }
     }, [isControlled, valueProp]);
+
+    const [trigger, setTrigger] = React.useState<RootElement | null>(null);
+    const composedRef = useComposedRefs(forwardedRef, (node) =>
+      setTrigger(node),
+    );
+    const isFormControl = trigger ? !!trigger.closest("form") : true;
 
     const onCancel = React.useCallback(() => {
       const prevValue = previousValueRef.current;
@@ -199,9 +209,20 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
       <EditableContext.Provider value={contextValue}>
         <RootSlot
           {...rootProps}
-          ref={forwardedRef}
+          ref={composedRef}
           className={cn("flex flex-col gap-2", className)}
         />
+        {name && isFormControl && (
+          <VisuallyHiddenInput
+            control={trigger}
+            type="hidden"
+            name={name}
+            value={value}
+            disabled={disabled}
+            readOnly={readOnly}
+            required={required}
+          />
+        )}
       </EditableContext.Provider>
     );
   },
@@ -510,6 +531,81 @@ const EditableSubmit = React.forwardRef<HTMLButtonElement, EditableSubmitProps>(
   },
 );
 EditableSubmit.displayName = SUBMIT_NAME;
+
+/**
+ * @see https://github.com/radix-ui/primitives/blob/main/packages/react/checkbox/src/Checkbox.tsx#L165-L212
+ */
+
+interface VisuallyHiddenInputProps<T extends HTMLElement>
+  extends React.ComponentPropsWithoutRef<"input"> {
+  control: T | null;
+  bubbles?: boolean;
+}
+
+function VisuallyHiddenInput<T extends HTMLElement>(
+  props: VisuallyHiddenInputProps<T>,
+) {
+  const {
+    control,
+    value,
+    bubbles = true,
+    type = "hidden",
+    ...inputProps
+  } = props;
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  const previousRef = React.useRef({ value, previous: value });
+  const previousValue = React.useMemo(() => {
+    if (inputRef.current?.value !== value) {
+      previousRef.current.previous = previousRef.current.value;
+      previousRef.current.value = value;
+    }
+    return previousRef.current.previous;
+  }, [value]);
+
+  React.useEffect(() => {
+    const input = inputRef.current;
+    if (!input) return;
+    const inputProto = window.HTMLInputElement.prototype;
+
+    const propertyKey = "value";
+    const eventType = "input";
+    const currentValue = JSON.stringify(value);
+
+    const descriptor = Object.getOwnPropertyDescriptor(
+      inputProto,
+      propertyKey,
+    ) as PropertyDescriptor;
+    const setter = descriptor.set;
+
+    if (previousValue !== currentValue && setter) {
+      const event = new Event(eventType, { bubbles });
+      setter.call(input, currentValue);
+      input.dispatchEvent(event);
+    }
+  }, [previousValue, value, bubbles]);
+
+  return (
+    <input
+      type={type}
+      {...inputProps}
+      ref={inputRef}
+      style={{
+        ...props.style,
+        border: 0,
+        clip: "rect(0 0 0 0)",
+        clipPath: "inset(50%)",
+        height: "1px",
+        margin: "-1px",
+        overflow: "hidden",
+        padding: 0,
+        position: "absolute",
+        whiteSpace: "nowrap",
+        width: "1px",
+      }}
+    />
+  );
+}
 
 const Root = EditableRoot;
 const Label = EditableLabel;

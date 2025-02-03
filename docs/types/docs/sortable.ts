@@ -5,8 +5,8 @@ import type {
   DropAnimation,
   UniqueIdentifier,
 } from "@dnd-kit/core";
-import type { SlotProps } from "@radix-ui/react-slot";
 
+import type { EmptyProps } from "@/types";
 import type { SortableContextProps } from "@dnd-kit/sortable";
 
 export interface RootProps<TData> extends DndContextProps {
@@ -152,8 +152,7 @@ export interface RootProps<TData> extends DndContextProps {
   flatCursor?: boolean;
 }
 
-export interface ContentProps
-  extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"div">> {
+export interface ContentProps extends EmptyProps<"div"> {
   /**
    * The strategy to use for sorting the items.
    *
@@ -176,8 +175,7 @@ export interface ContentProps
   asChild?: boolean;
 }
 
-export interface ItemProps
-  extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"div">> {
+export interface ItemProps extends EmptyProps<"div"> {
   /**
    * The unique identifier of the item.
    *
@@ -207,8 +205,7 @@ export interface ItemProps
   disabled?: boolean;
 }
 
-export interface ItemHandleProps
-  extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"button">> {
+export interface ItemHandleProps extends EmptyProps<"button"> {
   /**
    * Merges the item's props into its immediate child.
    *

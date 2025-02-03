@@ -162,7 +162,7 @@ interface MentionRootProps
    */
   required?: boolean;
 
-  /** The name of the mention when used in a form. */
+  /** The name of the mention for form submission. */
   name?: string;
 }
 

@@ -212,7 +212,7 @@ interface ComboboxRootProps<Multiple extends boolean = false>
    */
   required?: boolean;
 
-  /** The name of the combobox when used in a form. */
+  /** The name of the combobox for form submission. */
   name?: string;
 }
 

@@ -67,7 +67,7 @@ interface CheckboxGroupRootProps
    */
   required?: boolean;
 
-  /** Name for form submission. */
+  /** The name of the checkbox group for form submission. */
   name?: string;
 
   /**

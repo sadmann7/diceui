@@ -38,7 +38,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Slot, type SlotProps } from "@radix-ui/react-slot";
+import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
@@ -149,6 +149,7 @@ const coordinateGetter: KeyboardCoordinateGetter = (event, { context }) => {
 const ROOT_NAME = "Kanban";
 const BOARD_NAME = "KanbanBoard";
 const COLUMN_NAME = "KanbanColumn";
+const COLUMN_HANDLE_NAME = "KanbanColumnHandle";
 const ITEM_NAME = "KanbanItem";
 const ITEM_HANDLE_NAME = "KanbanItemHandle";
 const OVERLAY_NAME = "KanbanOverlay";
@@ -157,6 +158,7 @@ const KANBAN_ERROR = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` components must be within \`${ROOT_NAME}\``,
   [BOARD_NAME]: `\`${BOARD_NAME}\` must be within \`${ROOT_NAME}\``,
   [COLUMN_NAME]: `\`${COLUMN_NAME}\` must be within \`${BOARD_NAME}\``,
+  [COLUMN_HANDLE_NAME]: `\`${COLUMN_HANDLE_NAME}\` must be within \`${COLUMN_NAME}\``,
   [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${COLUMN_NAME}\``,
   [ITEM_HANDLE_NAME]: `\`${ITEM_HANDLE_NAME}\` must be within \`${ITEM_NAME}\``,
   [OVERLAY_NAME]: `\`${OVERLAY_NAME}\` must be within \`${ROOT_NAME}\``,
@@ -622,7 +624,7 @@ function Kanban<T>(props: KanbanProps<T>) {
 const KanbanBoardContext = React.createContext<boolean>(false);
 KanbanBoardContext.displayName = BOARD_NAME;
 
-interface KanbanBoardProps extends SlotProps {
+interface KanbanBoardProps extends React.ComponentPropsWithoutRef<"div"> {
   children: React.ReactNode;
   asChild?: boolean;
 }
@@ -688,7 +690,7 @@ KanbanColumnContext.displayName = COLUMN_NAME;
 const animateLayoutChanges: AnimateLayoutChanges = (args) =>
   defaultAnimateLayoutChanges({ ...args, wasDragging: true });
 
-interface KanbanColumnProps extends SlotProps {
+interface KanbanColumnProps extends React.ComponentPropsWithoutRef<"div"> {
   value: UniqueIdentifier;
   children: React.ReactNode;
   asChild?: boolean;
@@ -699,6 +701,7 @@ interface KanbanColumnProps extends SlotProps {
 const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
   (props, forwardedRef) => {
     const {
+      id = React.useId(),
       value,
       asChild,
       asHandle,
@@ -710,7 +713,6 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
     const context = useKanbanContext(COLUMN_NAME);
     const inBoard = React.useContext(KanbanBoardContext);
     const inOverlay = React.useContext(KanbanOverlayContext);
-    const id = React.useId();
 
     if (!inBoard && !inOverlay) {
       throw new Error(KANBAN_ERROR[COLUMN_NAME]);
@@ -777,6 +779,7 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
           }
         >
           <ColumnSlot
+            id={id}
             data-dragging={isDragging ? "" : undefined}
             {...columnProps}
             {...(asHandle ? attributes : {})}
@@ -813,11 +816,11 @@ const KanbanColumnHandle = React.forwardRef<
   KanbanColumnHandleProps
 >((props, forwardedRef) => {
   const { asChild, disabled, className, ...columnHandleProps } = props;
+  const context = useKanbanContext(COLUMN_NAME);
   const columnContext = React.useContext(KanbanColumnContext);
   if (!columnContext) {
-    throw new Error("KanbanColumnHandle must be used within a KanbanColumn");
+    throw new Error(KANBAN_ERROR[COLUMN_HANDLE_NAME]);
   }
-  const context = useKanbanContext(COLUMN_NAME);
 
   const isDisabled = disabled ?? columnContext.disabled;
 
@@ -848,7 +851,7 @@ const KanbanColumnHandle = React.forwardRef<
     />
   );
 });
-KanbanColumnHandle.displayName = "KanbanColumnHandle";
+KanbanColumnHandle.displayName = COLUMN_HANDLE_NAME;
 
 interface KanbanItemContextValue {
   id: string;
@@ -869,7 +872,7 @@ const KanbanItemContext = React.createContext<KanbanItemContextValue>({
 });
 KanbanItemContext.displayName = ITEM_NAME;
 
-interface KanbanItemProps extends SlotProps {
+interface KanbanItemProps extends React.ComponentPropsWithoutRef<"div"> {
   value: UniqueIdentifier;
   asHandle?: boolean;
   asChild?: boolean;
@@ -879,6 +882,7 @@ interface KanbanItemProps extends SlotProps {
 const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
   (props, forwardedRef) => {
     const {
+      id = React.useId(),
       value,
       style,
       asHandle,
@@ -895,7 +899,6 @@ const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
       throw new Error(KANBAN_ERROR[ITEM_NAME]);
     }
 
-    const id = React.useId();
     const {
       attributes,
       listeners,
@@ -940,6 +943,7 @@ const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
     return (
       <KanbanItemContext.Provider value={itemContext}>
         <ItemSlot
+          id={id}
           data-dragging={isDragging ? "" : undefined}
           {...itemProps}
           {...(asHandle ? attributes : {})}

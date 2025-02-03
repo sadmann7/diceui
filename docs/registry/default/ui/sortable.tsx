@@ -34,7 +34,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Slot, type SlotProps } from "@radix-ui/react-slot";
+import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 
 import { composeEventHandlers, useComposedRefs } from "@/lib/composition";
@@ -283,7 +283,7 @@ function Sortable<T>(props: SortableProps<T>) {
 const SortableContentContext = React.createContext<boolean>(false);
 SortableContentContext.displayName = CONTENT_NAME;
 
-interface SortableContentProps extends SlotProps {
+interface SortableContentProps extends React.ComponentPropsWithoutRef<"div"> {
   strategy?: SortableContextProps["strategy"];
   children: React.ReactNode;
   asChild?: boolean;
@@ -332,7 +332,7 @@ const SortableItemContext = React.createContext<SortableItemContextValue>({
 });
 SortableItemContext.displayName = ITEM_NAME;
 
-interface SortableItemProps extends SlotProps {
+interface SortableItemProps extends React.ComponentPropsWithoutRef<"div"> {
   value: UniqueIdentifier;
   asHandle?: boolean;
   asChild?: boolean;
@@ -460,7 +460,6 @@ const SortableItemHandle = React.forwardRef<
     <HandleSlot
       type="button"
       aria-controls={itemContext.id}
-      aria-roledescription="sortable item handle"
       data-dragging={itemContext.isDragging ? "" : undefined}
       {...itemHandleProps}
       {...itemContext.attributes}
@@ -538,15 +537,15 @@ const ItemHandle = SortableItemHandle;
 const Overlay = SortableOverlay;
 
 export {
+  Content,
+  Item,
+  ItemHandle,
+  Overlay,
+  //
+  Root,
   Sortable,
   SortableContent,
   SortableItem,
   SortableItemHandle,
   SortableOverlay,
-  //
-  Root,
-  Content,
-  Item,
-  ItemHandle,
-  Overlay,
 };

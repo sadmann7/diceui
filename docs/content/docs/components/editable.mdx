@@ -1,0 +1,225 @@
+---
+title: Editable
+description: An accessible inline editable component for editing text content in place.
+preview: true
+---
+
+<ComponentTabs name="editable-demo" scalePreview />
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/editable"
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @radix-ui/react-slot
+     ```
+  </Step>
+  <Step>
+    Copy the composition utilities into your `lib/composition.ts` file.
+
+    <ComponentSource src="./lib/composition.ts" />
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource name="editable" />
+  </Step>
+</Steps>
+
+## Layout
+
+Import the parts, and compose them together.
+
+```tsx
+import * as Editable from "@/components/ui/editable";
+
+<Editable.Root defaultValue="Click to edit">
+  <Editable.Label>Label</Editable.Label>
+  <Editable.Area>
+    <Editable.Preview />
+    <Editable.Input />
+  </Editable.Area>
+  <Editable.Toolbar>
+    <Editable.Submit />
+    <Editable.Cancel />
+  </Editable.Toolbar>
+</Editable.Root>
+```
+
+## Examples
+
+### Basic Usage
+
+A basic editable text field with submit and cancel buttons.
+
+<ComponentTabs name="editable-basic-demo" />
+
+### With Double Click
+
+Trigger edit mode with double click instead of single click.
+
+<ComponentTabs name="editable-double-click-demo" />
+
+### With Autosize
+
+Input that automatically resizes based on content.
+
+<ComponentTabs name="editable-autosize-demo" />
+
+### Read Only
+
+Display editable content in read-only mode.
+
+<ComponentTabs name="editable-readonly-demo" />
+
+## API Reference
+
+### Root
+
+The main container component for editable functionality.
+
+<AutoTypeTable
+  path="./types/docs/editable.ts"
+  name="RootProps"
+/>
+
+### Label
+
+The label component for the editable field.
+
+<AutoTypeTable
+  path="./types/docs/editable.ts"
+  name="LabelProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the editable field is disabled",
+    },
+    {
+      title: "[data-invalid]",
+      value: "Present when the editable field is invalid",
+    },
+    {
+      title: "[data-required]",
+      value: "Present when the editable field is required",
+    },
+  ]}
+/>
+
+### Area
+
+Container for the preview and input components.
+
+<AutoTypeTable
+  path="./types/docs/editable.ts"
+  name="AreaProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the editable field is disabled",
+    },
+    {
+      title: "[data-editing]",
+      value: "Present when the field is in edit mode",
+    },
+  ]}
+/>
+
+### Preview
+
+The preview component that displays the current value.
+
+<AutoTypeTable
+  path="./types/docs/editable.ts"
+  name="PreviewProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-empty]",
+      value: "Present when the field has no value",
+    },
+    {
+      title: "[data-disabled]",
+      value: "Present when the editable field is disabled",
+    },
+    {
+      title: "[data-readonly]",
+      value: "Present when the field is read-only",
+    },
+  ]}
+/>
+
+### Input
+
+The input component for editing the value.
+
+<AutoTypeTable
+  path="./types/docs/editable.ts"
+  name="InputProps"
+/>
+
+### Toolbar
+
+Container for action buttons.
+
+<AutoTypeTable
+  path="./types/docs/editable.ts"
+  name="ToolbarProps"
+/>
+
+### Submit
+
+Button to submit changes.
+
+<AutoTypeTable
+  path="./types/docs/editable.ts"
+  name="SubmitProps"
+/>
+
+### Cancel
+
+Button to cancel changes.
+
+<AutoTypeTable
+  path="./types/docs/editable.ts"
+  name="CancelProps"
+/>
+
+## Accessibility
+
+### Keyboard Interactions
+
+<KeyboardShortcutsTable
+  shortcuts={[
+    {
+      keys: ["Enter"],
+      description: "Submits the current value when in edit mode.",
+    },
+    {
+      keys: ["Escape"],
+      description: "Cancels editing and reverts to the previous value.",
+    },
+    {
+      keys: ["Tab"],
+      description: "Moves focus to the next focusable element.",
+    },
+  ]}
+/>
