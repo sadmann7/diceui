@@ -39,6 +39,7 @@ interface EditableContextValue {
   onEdit: () => void;
   onSubmit: (value: string) => void;
   placeholder?: string;
+  triggerMode: "click" | "dblclick";
   autosize: boolean;
   disabled?: boolean;
   readOnly?: boolean;
@@ -67,6 +68,7 @@ interface EditableRootProps
   onEdit?: () => void;
   onSubmit?: (value: string) => void;
   placeholder?: string;
+  triggerMode?: EditableContextValue["triggerMode"];
   asChild?: boolean;
   autosize?: boolean;
   disabled?: boolean;
@@ -86,6 +88,7 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
       onEdit: onEditProp,
       onSubmit: onSubmitProp,
       placeholder,
+      triggerMode = "click",
       asChild,
       autosize = false,
       disabled,
@@ -167,6 +170,7 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
         readOnly,
         required,
         invalid,
+        triggerMode,
       }),
       [
         id,
@@ -185,6 +189,7 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
         required,
         readOnly,
         invalid,
+        triggerMode,
       ],
     );
 
@@ -254,7 +259,7 @@ const EditableArea = React.forwardRef<HTMLDivElement, EditableAreaProps>(
         {...areaProps}
         ref={forwardedRef}
         className={cn(
-          "relative inline-block min-w-[200px] data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
+          "relative inline-block data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
           className,
         )}
       />
@@ -276,6 +281,11 @@ const EditablePreview = React.forwardRef<HTMLDivElement, EditablePreviewProps>(
 
     if (context.isEditing || context.readOnly) return null;
 
+    const onTrigger = React.useCallback(() => {
+      if (context.disabled || context.readOnly) return;
+      context.onEdit();
+    }, [context.disabled, context.readOnly, context.onEdit]);
+
     return (
       <PreviewSlot
         role="button"
@@ -286,11 +296,10 @@ const EditablePreview = React.forwardRef<HTMLDivElement, EditablePreviewProps>(
         tabIndex={context.disabled || context.readOnly ? undefined : 0}
         {...previewProps}
         ref={forwardedRef}
-        onClick={() => {
-          if (context.disabled || context.readOnly) return;
-
-          context.onEdit();
-        }}
+        onClick={context.triggerMode === "click" ? onTrigger : undefined}
+        onDoubleClick={
+          context.triggerMode === "dblclick" ? onTrigger : undefined
+        }
         className={cn(
           "cursor-text rounded-md px-3 py-2 text-base hover:bg-accent/50 data-[disabled]:cursor-not-allowed data-[readonly]:cursor-default data-[empty]:text-muted-foreground data-[disabled]:opacity-50 md:text-sm",
           className,

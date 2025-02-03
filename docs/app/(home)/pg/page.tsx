@@ -1,5 +1,3 @@
-"use client";
-
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,12 +33,7 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <Editable.Root
-        className="w-fit"
-        defaultValue="Click to edit"
-        placeholder="Enter text..."
-        onSubmit={(value) => console.log(value)}
-      >
+      <Editable.Root className="w-fit" placeholder="Enter text..." autosize>
         <Editable.Label>Label</Editable.Label>
         <Editable.Area>
           <Editable.Preview />
