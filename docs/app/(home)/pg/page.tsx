@@ -46,8 +46,14 @@ export default function PlaygroundPage() {
           <Editable.Input />
         </Editable.Area>
         <Editable.Toolbar>
-          <Editable.Cancel />
-          <Editable.Submit />
+          <Editable.Cancel asChild>
+            <Button variant="outline" size="sm">
+              Cancel
+            </Button>
+          </Editable.Cancel>
+          <Editable.Submit asChild>
+            <Button size="sm">Submit</Button>
+          </Editable.Submit>
         </Editable.Toolbar>
       </Editable.Root>
       <Textarea

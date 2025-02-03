@@ -458,6 +458,7 @@ const SortableItemHandle = React.forwardRef<
 
   return (
     <HandleSlot
+      type="button"
       aria-controls={itemContext.id}
       aria-roledescription="sortable item handle"
       data-dragging={itemContext.isDragging ? "" : undefined}

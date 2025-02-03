@@ -830,6 +830,7 @@ const KanbanColumnHandle = React.forwardRef<
 
   return (
     <HandleSlot
+      type="button"
       aria-controls={columnContext.id}
       data-dragging={columnContext.isDragging ? "" : undefined}
       {...columnHandleProps}
@@ -992,6 +993,7 @@ const KanbanItemHandle = React.forwardRef<
 
   return (
     <HandleSlot
+      type="button"
       aria-controls={itemContext.id}
       data-dragging={itemContext.isDragging ? "" : undefined}
       {...itemHandleProps}

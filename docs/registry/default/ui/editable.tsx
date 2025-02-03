@@ -1,6 +1,7 @@
 "use client";
 
 import { useComposedRefs } from "@/lib/composition";
+import { composeEventHandlers } from "@/lib/composition";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
@@ -27,10 +28,11 @@ const EDITABLE_ERROR = {
 
 interface EditableContextValue {
   id: string;
+  inputId: string;
+  labelId: string;
   value: string;
   defaultValue: string;
   isEditing: boolean;
-  isDisabled?: boolean;
   placeholder?: string;
   onValueChange?: (value: string) => void;
   onSubmit?: (value: string) => void;
@@ -38,6 +40,10 @@ interface EditableContextValue {
   onEdit?: () => void;
   setIsEditing: (isEditing: boolean) => void;
   setValue: (value: string) => void;
+  disabled?: boolean;
+  readOnly?: boolean;
+  required?: boolean;
+  invalid?: boolean;
 }
 
 const EditableContext = React.createContext<EditableContextValue | null>(null);
@@ -62,6 +68,9 @@ interface EditableRootProps
   onCancel?: () => void;
   onEdit?: () => void;
   disabled?: boolean;
+  readOnly?: boolean;
+  required?: boolean;
+  invalid?: boolean;
   asChild?: boolean;
 }
 
@@ -77,6 +86,8 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
       onCancel,
       onEdit,
       disabled,
+      required,
+      readOnly,
       asChild,
       className,
       ...rootProps
@@ -84,6 +95,8 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
 
     const [isEditing, setIsEditing] = React.useState(false);
     const [internalValue, setInternalValue] = React.useState(defaultValue);
+    const inputId = React.useId();
+    const labelId = React.useId();
 
     const isControlled = valueProp !== undefined;
     const value = isControlled ? valueProp : internalValue;
@@ -101,10 +114,14 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
     const contextValue = React.useMemo(
       () => ({
         id,
+        inputId,
+        labelId,
         value,
         defaultValue,
         isEditing,
-        disabled,
+        isDisabled: disabled,
+        isRequired: required,
+        isReadOnly: readOnly,
         placeholder,
         onValueChange,
         onSubmit,
@@ -115,10 +132,14 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
       }),
       [
         id,
+        inputId,
+        labelId,
         value,
         defaultValue,
         isEditing,
         disabled,
+        required,
+        readOnly,
         placeholder,
         onValueChange,
         onSubmit,
@@ -149,22 +170,27 @@ interface EditableLabelProps extends React.HTMLAttributes<HTMLLabelElement> {
 
 const EditableLabel = React.forwardRef<HTMLLabelElement, EditableLabelProps>(
   (props, forwardedRef) => {
-    const { asChild, className, ...labelProps } = props;
+    const { asChild, className, children, ...labelProps } = props;
     const context = useEditableContext(LABEL_NAME);
 
     const LabelSlot = asChild ? Slot : "label";
 
     return (
       <LabelSlot
+        data-disabled={context.disabled ? "" : undefined}
+        data-invalid={context.invalid ? "" : undefined}
+        data-required={context.required ? "" : undefined}
         {...labelProps}
         ref={forwardedRef}
-        data-disabled={context.isDisabled ? "" : undefined}
-        data-invalid={context.isDisabled ? "" : undefined}
+        id={context.labelId}
+        htmlFor={context.inputId}
         className={cn(
-          "font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+          "font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 data-[required]:after:ml-0.5 data-[required]:after:text-destructive data-[required]:after:content-['*']",
           className,
         )}
-      />
+      >
+        {children}
+      </LabelSlot>
     );
   },
 );
@@ -183,10 +209,11 @@ const EditableArea = React.forwardRef<HTMLDivElement, EditableAreaProps>(
 
     return (
       <AreaSlot
+        role="group"
+        data-disabled={context.disabled ? "" : undefined}
+        data-editing={context.isEditing ? "" : undefined}
         {...areaProps}
         ref={forwardedRef}
-        data-disabled={context.isDisabled ? "" : undefined}
-        data-editing={context.isEditing ? "" : undefined}
         className={cn(
           "relative inline-block min-w-[200px] data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
           className,
@@ -214,18 +241,22 @@ const EditablePreview = React.forwardRef<HTMLDivElement, EditablePreviewProps>(
 
     return (
       <PreviewSlot
+        role="button"
+        aria-disabled={context.disabled || context.readOnly}
+        data-placeholder-shown={!context.value ? "" : undefined}
+        data-disabled={context.disabled ? "" : undefined}
+        data-readonly={context.readOnly ? "" : undefined}
+        tabIndex={context.disabled || context.readOnly ? undefined : 0}
         {...previewProps}
         ref={forwardedRef}
         onClick={() => {
-          if (!context.isDisabled) {
-            context.onEdit?.();
-            context.setIsEditing(true);
-          }
+          if (context.disabled || context.readOnly) return;
+
+          context.onEdit?.();
+          context.setIsEditing(true);
         }}
-        data-placeholder-shown={!context.value ? "" : undefined}
-        data-disabled={context.isDisabled ? "" : undefined}
         className={cn(
-          "cursor-text rounded-md px-3 py-2 text-sm hover:bg-accent/50 data-[disabled]:cursor-not-allowed data-[placeholder-shown]:text-muted-foreground data-[disabled]:opacity-50",
+          "cursor-text rounded-md px-3 py-2 text-sm hover:bg-accent/50 data-[disabled]:cursor-not-allowed data-[readonly]:cursor-default data-[placeholder-shown]:text-muted-foreground data-[disabled]:opacity-50",
           className,
         )}
       >
@@ -243,20 +274,24 @@ interface EditableInputProps
 
 const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
   (props, forwardedRef) => {
-    const { asChild, className, ...inputProps } = props;
+    const { asChild, className, disabled, readOnly, required, ...inputProps } =
+      props;
     const context = useEditableContext(INPUT_NAME);
     const inputRef = React.useRef<HTMLInputElement>(null);
     const composedRef = useComposedRefs(forwardedRef, inputRef);
 
+    const isDisabled = disabled || context.disabled;
+    const isReadOnly = readOnly || context.readOnly;
+    const isRequired = required || context.required;
+
     React.useEffect(() => {
-      if (context.isEditing) {
-        // Focus and select all text when entering edit mode
+      if (context.isEditing && !isReadOnly) {
         requestAnimationFrame(() => {
           inputRef.current?.focus();
           inputRef.current?.select();
         });
       }
-    }, [context.isEditing]);
+    }, [context.isEditing, isReadOnly]);
 
     React.useEffect(() => {
       function onClickOutside(e: MouseEvent) {
@@ -276,32 +311,37 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
 
     const InputSlot = asChild ? Slot : "input";
 
-    if (!context.isEditing) {
-      return null;
-    }
+    if (!context.isEditing && !isReadOnly) return null;
 
     return (
       <InputSlot
+        aria-required={isRequired}
+        aria-invalid={context.invalid}
+        aria-labelledby={context.labelId}
+        disabled={isDisabled}
+        readOnly={isReadOnly}
+        required={isRequired}
         {...inputProps}
         ref={composedRef}
-        value={context.value}
+        id={context.inputId}
         placeholder={context.placeholder}
-        onChange={(e) => {
-          inputProps.onChange?.(e);
-          context.setValue(e.target.value);
-        }}
-        onKeyDown={(e) => {
-          inputProps.onKeyDown?.(e);
-          if (e.key === "Escape") {
+        value={context.value}
+        onChange={composeEventHandlers(inputProps.onChange, (event) => {
+          if (isReadOnly) return;
+          context.setValue(event.target.value);
+        })}
+        onKeyDown={composeEventHandlers(inputProps.onKeyDown, (event) => {
+          if (isReadOnly) return;
+          if (event.key === "Escape") {
             context.onCancel?.();
             context.setIsEditing(false);
-          } else if (e.key === "Enter") {
+          } else if (event.key === "Enter") {
             context.onSubmit?.(context.value);
             context.setIsEditing(false);
           }
-        }}
+        })}
         className={cn(
-          "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+          "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground read-only:cursor-default read-only:opacity-50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
           className,
         )}
       />
@@ -313,18 +353,32 @@ EditableInput.displayName = INPUT_NAME;
 
 interface EditableToolbarProps extends React.HTMLAttributes<HTMLDivElement> {
   asChild?: boolean;
+  orientation?: "horizontal" | "vertical";
 }
 
 const EditableToolbar = React.forwardRef<HTMLDivElement, EditableToolbarProps>(
   (props, forwardedRef) => {
-    const { asChild, className, ...toolbarProps } = props;
+    const {
+      asChild,
+      className,
+      orientation = "horizontal",
+      ...toolbarProps
+    } = props;
+    const context = useEditableContext(TOOLBAR_NAME);
     const ToolbarSlot = asChild ? Slot : "div";
 
     return (
       <ToolbarSlot
+        role="toolbar"
+        aria-controls={context.id}
+        aria-orientation={orientation}
         {...toolbarProps}
         ref={forwardedRef}
-        className={cn("mt-2 flex items-center gap-2", className)}
+        className={cn(
+          "mt-2 flex items-center gap-2",
+          orientation === "vertical" && "flex-col",
+          className,
+        )}
       />
     );
   },
@@ -343,28 +397,20 @@ const EditableCancel = React.forwardRef<HTMLButtonElement, EditableCancelProps>(
 
     const CancelSlot = asChild ? Slot : "button";
 
-    if (!context.isEditing) {
-      return null;
-    }
+    if (!context.isEditing && !context.readOnly) return null;
 
     return (
       <CancelSlot
         type="button"
-        aria-label="Cancel editing"
+        aria-controls={context.id}
         {...cancelProps}
-        onClick={() => {
+        onClick={composeEventHandlers(cancelProps.onClick, () => {
           context.onCancel?.();
           context.setIsEditing(false);
           context.setValue(context.defaultValue);
-        }}
+        })}
         ref={forwardedRef}
-        className={cn(
-          "inline-flex h-8 items-center justify-center rounded-md border bg-transparent px-3 font-medium text-sm shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
-          cancelProps.className,
-        )}
-      >
-        {cancelProps.children ?? "Cancel"}
-      </CancelSlot>
+      />
     );
   },
 );
@@ -382,27 +428,19 @@ const EditableSubmit = React.forwardRef<HTMLButtonElement, EditableSubmitProps>(
 
     const SubmitSlot = asChild ? Slot : "button";
 
-    if (!context.isEditing) {
-      return null;
-    }
+    if (!context.isEditing && !context.readOnly) return null;
 
     return (
       <SubmitSlot
         type="button"
-        aria-label="Submit changes"
+        aria-controls={context.id}
         {...submitProps}
-        onClick={() => {
+        ref={forwardedRef}
+        onClick={composeEventHandlers(submitProps.onClick, () => {
           context.onSubmit?.(context.value);
           context.setIsEditing(false);
-        }}
-        ref={forwardedRef}
-        className={cn(
-          "inline-flex h-8 items-center justify-center rounded-md border bg-primary px-3 font-medium text-primary-foreground text-sm shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
-          submitProps.className,
-        )}
-      >
-        {submitProps.children ?? "Save"}
-      </SubmitSlot>
+        })}
+      />
     );
   },
 );
