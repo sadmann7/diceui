@@ -34,12 +34,12 @@ interface EditableContextValue {
   defaultValue: string;
   value: string;
   onValueChange: (value: string) => void;
-  placeholder?: string;
   isEditing: boolean;
-  setIsEditing: (isEditing: boolean) => void;
   onCancel: () => void;
   onEdit: () => void;
   onSubmit: (value: string) => void;
+  placeholder?: string;
+  autosize: boolean;
   disabled?: boolean;
   readOnly?: boolean;
   required?: boolean;
@@ -63,11 +63,12 @@ interface EditableRootProps
   defaultValue?: string;
   value?: string;
   onValueChange?: (value: string) => void;
-  placeholder?: string;
   onCancel?: () => void;
   onEdit?: () => void;
   onSubmit?: (value: string) => void;
+  placeholder?: string;
   asChild?: boolean;
+  autosize?: boolean;
   disabled?: boolean;
   readOnly?: boolean;
   required?: boolean;
@@ -81,11 +82,12 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
       defaultValue = "",
       value: valueProp,
       onValueChange: onValueChangeProp,
-      placeholder,
       onCancel: onCancelProp,
       onEdit: onEditProp,
       onSubmit: onSubmitProp,
+      placeholder,
       asChild,
+      autosize = false,
       disabled,
       required,
       readOnly,
@@ -156,15 +158,15 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
         value,
         onValueChange,
         isEditing,
-        setIsEditing,
+        onSubmit,
+        onEdit,
+        onCancel,
+        placeholder,
+        autosize,
         disabled,
         readOnly,
         required,
         invalid,
-        placeholder,
-        onSubmit,
-        onEdit,
-        onCancel,
       }),
       [
         id,
@@ -174,10 +176,11 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
         value,
         onValueChange,
         isEditing,
-        placeholder,
         onSubmit,
         onCancel,
         onEdit,
+        placeholder,
+        autosize,
         disabled,
         required,
         readOnly,
@@ -363,12 +366,12 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
       <InputSlot
         aria-required={isRequired}
         aria-invalid={context.invalid}
-        aria-labelledby={context.labelId}
         disabled={isDisabled}
         readOnly={isReadOnly}
         required={isRequired}
         autoFocus={context.isEditing && !isReadOnly}
         {...inputProps}
+        aria-labelledby={context.labelId}
         ref={composedRef}
         id={context.inputId}
         placeholder={context.placeholder}
