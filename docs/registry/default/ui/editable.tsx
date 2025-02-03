@@ -1,7 +1,6 @@
 "use client";
 
-import { useComposedRefs } from "@/lib/composition";
-import { composeEventHandlers } from "@/lib/composition";
+import { composeEventHandlers, useComposedRefs } from "@/lib/composition";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
@@ -36,9 +35,9 @@ interface EditableContextValue {
   placeholder?: string;
   isEditing: boolean;
   setIsEditing: (isEditing: boolean) => void;
-  onCancel?: () => void;
-  onEdit?: () => void;
-  onSubmit?: (value: string) => void;
+  onCancel: () => void;
+  onEdit: () => void;
+  onSubmit: (value: string) => void;
   disabled?: boolean;
   readOnly?: boolean;
   required?: boolean;
@@ -81,9 +80,9 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
       value: valueProp,
       onValueChange: onValueChangeProp,
       placeholder,
-      onCancel,
-      onEdit,
-      onSubmit,
+      onCancel: onCancelProp,
+      onEdit: onEditProp,
+      onSubmit: onSubmitProp,
       asChild,
       disabled,
       required,
@@ -93,10 +92,12 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
       ...rootProps
     } = props;
 
-    const [isEditing, setIsEditing] = React.useState(false);
-    const [internalValue, setInternalValue] = React.useState(defaultValue);
     const inputId = React.useId();
     const labelId = React.useId();
+
+    const [internalValue, setInternalValue] = React.useState(defaultValue);
+    const [isEditing, setIsEditing] = React.useState(false);
+    const [previousValue, setPreviousValue] = React.useState(defaultValue);
 
     const isControlled = valueProp !== undefined;
     const value = isControlled ? valueProp : internalValue;
@@ -110,6 +111,24 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
       },
       [isControlled, onValueChangeProp],
     );
+
+    const onCancel = React.useCallback(() => {
+      if (!isControlled) {
+        setInternalValue(previousValue);
+      }
+      onValueChange(previousValue);
+      setIsEditing(false);
+    }, [previousValue, isControlled, onValueChange]);
+
+    const onEdit = React.useCallback(() => {
+      setPreviousValue(value);
+      setIsEditing(true);
+    }, [value]);
+
+    const onSubmit = React.useCallback((newValue: string) => {
+      setInternalValue(newValue);
+      setIsEditing(false);
+    }, []);
 
     const contextValue = React.useMemo<EditableContextValue>(
       () => ({
@@ -252,11 +271,10 @@ const EditablePreview = React.forwardRef<HTMLDivElement, EditablePreviewProps>(
         onClick={() => {
           if (context.disabled || context.readOnly) return;
 
-          context.onEdit?.();
-          context.setIsEditing(true);
+          context.onEdit();
         }}
         className={cn(
-          "cursor-text rounded-md px-3 py-2 text-sm hover:bg-accent/50 data-[disabled]:cursor-not-allowed data-[readonly]:cursor-default data-[empty]:text-muted-foreground data-[disabled]:opacity-50",
+          "cursor-text rounded-md px-3 py-2 text-base hover:bg-accent/50 data-[disabled]:cursor-not-allowed data-[readonly]:cursor-default data-[empty]:text-muted-foreground data-[disabled]:opacity-50 md:text-sm",
           className,
         )}
       >
@@ -293,22 +311,6 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
       }
     }, [context.isEditing, isReadOnly]);
 
-    React.useEffect(() => {
-      function onClickOutside(e: MouseEvent) {
-        if (
-          inputRef.current &&
-          !inputRef.current.contains(e.target as Node) &&
-          context.isEditing
-        ) {
-          context.onSubmit?.(context.value);
-          context.setIsEditing(false);
-        }
-      }
-
-      document.addEventListener("mousedown", onClickOutside);
-      return () => document.removeEventListener("mousedown", onClickOutside);
-    }, [context]);
-
     const InputSlot = asChild ? Slot : "input";
 
     if (!context.isEditing && !isReadOnly) return null;
@@ -326,6 +328,18 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
         id={context.inputId}
         placeholder={context.placeholder}
         value={context.value}
+        onBlur={composeEventHandlers(inputProps.onBlur, (event) => {
+          if (isReadOnly) return;
+          const relatedTarget = event.relatedTarget;
+
+          const isAction =
+            relatedTarget instanceof HTMLElement &&
+            relatedTarget.closest(`[data-action=""]`);
+
+          if (!isAction) {
+            context.onSubmit(context.value);
+          }
+        })}
         onChange={composeEventHandlers(inputProps.onChange, (event) => {
           if (isReadOnly) return;
           context.onValueChange(event.target.value);
@@ -333,11 +347,9 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
         onKeyDown={composeEventHandlers(inputProps.onKeyDown, (event) => {
           if (isReadOnly) return;
           if (event.key === "Escape") {
-            context.onCancel?.();
-            context.setIsEditing(false);
+            context.onCancel();
           } else if (event.key === "Enter") {
-            context.onSubmit?.(context.value);
-            context.setIsEditing(false);
+            context.onSubmit(context.value);
           }
         })}
         className={cn(
@@ -348,7 +360,6 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
     );
   },
 );
-
 EditableInput.displayName = INPUT_NAME;
 
 interface EditableToolbarProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -365,6 +376,7 @@ const EditableToolbar = React.forwardRef<HTMLDivElement, EditableToolbarProps>(
       ...toolbarProps
     } = props;
     const context = useEditableContext(TOOLBAR_NAME);
+
     const ToolbarSlot = asChild ? Slot : "div";
 
     return (
@@ -403,11 +415,10 @@ const EditableCancel = React.forwardRef<HTMLButtonElement, EditableCancelProps>(
       <CancelSlot
         type="button"
         aria-controls={context.id}
+        data-action=""
         {...cancelProps}
         onClick={composeEventHandlers(cancelProps.onClick, () => {
-          context.onCancel?.();
-          context.setIsEditing(false);
-          context.onValueChange(context.defaultValue);
+          context.onCancel();
         })}
         ref={forwardedRef}
       />
@@ -434,11 +445,11 @@ const EditableSubmit = React.forwardRef<HTMLButtonElement, EditableSubmitProps>(
       <SubmitSlot
         type="button"
         aria-controls={context.id}
+        data-action=""
         {...submitProps}
         ref={forwardedRef}
         onClick={composeEventHandlers(submitProps.onClick, () => {
-          context.onSubmit?.(context.value);
-          context.setIsEditing(false);
+          context.onSubmit(context.value);
         })}
       />
     );
