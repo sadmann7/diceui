@@ -301,7 +301,7 @@ const EditablePreview = React.forwardRef<HTMLDivElement, EditablePreviewProps>(
           context.triggerMode === "dblclick" ? onTrigger : undefined
         }
         className={cn(
-          "cursor-text rounded-md px-3 py-2 text-base hover:bg-accent/50 data-[disabled]:cursor-not-allowed data-[readonly]:cursor-default data-[empty]:text-muted-foreground data-[disabled]:opacity-50 md:text-sm",
+          "cursor-text rounded-md border border-transparent px-3 py-1.5 text-base hover:bg-accent/50 data-[disabled]:cursor-not-allowed data-[readonly]:cursor-default data-[empty]:text-muted-foreground data-[disabled]:opacity-50 md:text-sm",
           className,
         )}
       >
@@ -346,6 +346,19 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
       [context.value, context.onSubmit, isReadOnly],
     );
 
+    const onChange = React.useCallback(
+      (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (isReadOnly) return;
+        context.onValueChange(event.target.value);
+
+        if (!context.autosize) return;
+        const target = event.target;
+        target.style.width = "0";
+        target.style.width = `${target.scrollWidth + 4}px`;
+      },
+      [context.onValueChange, context.autosize, isReadOnly],
+    );
+
     const onKeyDown = React.useCallback(
       (event: React.KeyboardEvent<InputElement>) => {
         if (isReadOnly) return;
@@ -362,9 +375,14 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
       (event: React.FocusEvent<InputElement>) => {
         if (context.isEditing && !isReadOnly) {
           event.target.select();
+
+          if (!context.autosize) return;
+          const target = event.target;
+          target.style.width = "0";
+          target.style.width = `${target.scrollWidth + 4}px`;
         }
       },
-      [context.isEditing, isReadOnly],
+      [context.isEditing, isReadOnly, context.autosize],
     );
 
     const InputSlot = asChild ? Slot : "input";
@@ -387,13 +405,11 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
         value={context.value}
         onFocus={composeEventHandlers(inputProps.onFocus, onFocus)}
         onBlur={composeEventHandlers(inputProps.onBlur, onBlur)}
-        onChange={composeEventHandlers(inputProps.onChange, (event) => {
-          if (isReadOnly) return;
-          context.onValueChange(event.target.value);
-        })}
+        onChange={composeEventHandlers(inputProps.onChange, onChange)}
         onKeyDown={composeEventHandlers(inputProps.onKeyDown, onKeyDown)}
         className={cn(
-          "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+          "flex rounded-md border border-input bg-transparent px-3 py-1.5 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+          context.autosize ? "w-auto" : "w-full",
           className,
         )}
       />
