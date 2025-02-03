@@ -30,16 +30,15 @@ interface EditableContextValue {
   id: string;
   inputId: string;
   labelId: string;
-  value: string;
   defaultValue: string;
-  isEditing: boolean;
+  value: string;
+  onValueChange: (value: string) => void;
   placeholder?: string;
-  onValueChange?: (value: string) => void;
-  onSubmit?: (value: string) => void;
+  isEditing: boolean;
+  setIsEditing: (isEditing: boolean) => void;
   onCancel?: () => void;
   onEdit?: () => void;
-  setIsEditing: (isEditing: boolean) => void;
-  setValue: (value: string) => void;
+  onSubmit?: (value: string) => void;
   disabled?: boolean;
   readOnly?: boolean;
   required?: boolean;
@@ -60,35 +59,36 @@ function useEditableContext(name: keyof typeof EDITABLE_ERROR) {
 interface EditableRootProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, "onSubmit"> {
   id?: string;
-  value?: string;
   defaultValue?: string;
-  placeholder?: string;
+  value?: string;
   onValueChange?: (value: string) => void;
-  onSubmit?: (value: string) => void;
+  placeholder?: string;
   onCancel?: () => void;
   onEdit?: () => void;
+  onSubmit?: (value: string) => void;
+  asChild?: boolean;
   disabled?: boolean;
   readOnly?: boolean;
   required?: boolean;
   invalid?: boolean;
-  asChild?: boolean;
 }
 
 const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
   (props, forwardedRef) => {
     const {
       id = React.useId(),
-      value: valueProp,
       defaultValue = "",
+      value: valueProp,
+      onValueChange: onValueChangeProp,
       placeholder,
-      onValueChange,
-      onSubmit,
       onCancel,
       onEdit,
+      onSubmit,
+      asChild,
       disabled,
       required,
       readOnly,
-      asChild,
+      invalid,
       className,
       ...rootProps
     } = props;
@@ -101,51 +101,51 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
     const isControlled = valueProp !== undefined;
     const value = isControlled ? valueProp : internalValue;
 
-    const setValue = React.useCallback(
+    const onValueChange = React.useCallback(
       (newValue: string) => {
         if (!isControlled) {
           setInternalValue(newValue);
         }
-        onValueChange?.(newValue);
+        onValueChangeProp?.(newValue);
       },
-      [isControlled, onValueChange],
+      [isControlled, onValueChangeProp],
     );
 
-    const contextValue = React.useMemo(
+    const contextValue = React.useMemo<EditableContextValue>(
       () => ({
         id,
         inputId,
         labelId,
-        value,
         defaultValue,
-        isEditing,
-        isDisabled: disabled,
-        isRequired: required,
-        isReadOnly: readOnly,
-        placeholder,
+        value,
         onValueChange,
-        onSubmit,
-        onCancel,
-        onEdit,
+        isEditing,
         setIsEditing,
-        setValue,
+        disabled,
+        readOnly,
+        required,
+        invalid,
+        placeholder,
+        onSubmit,
+        onEdit,
+        onCancel,
       }),
       [
         id,
         inputId,
         labelId,
-        value,
         defaultValue,
-        isEditing,
-        disabled,
-        required,
-        readOnly,
-        placeholder,
+        value,
         onValueChange,
+        isEditing,
+        placeholder,
         onSubmit,
         onCancel,
         onEdit,
-        setValue,
+        disabled,
+        required,
+        readOnly,
+        invalid,
       ],
     );
 
@@ -243,7 +243,7 @@ const EditablePreview = React.forwardRef<HTMLDivElement, EditablePreviewProps>(
       <PreviewSlot
         role="button"
         aria-disabled={context.disabled || context.readOnly}
-        data-placeholder-shown={!context.value ? "" : undefined}
+        data-empty={!context.value ? "" : undefined}
         data-disabled={context.disabled ? "" : undefined}
         data-readonly={context.readOnly ? "" : undefined}
         tabIndex={context.disabled || context.readOnly ? undefined : 0}
@@ -256,7 +256,7 @@ const EditablePreview = React.forwardRef<HTMLDivElement, EditablePreviewProps>(
           context.setIsEditing(true);
         }}
         className={cn(
-          "cursor-text rounded-md px-3 py-2 text-sm hover:bg-accent/50 data-[disabled]:cursor-not-allowed data-[readonly]:cursor-default data-[placeholder-shown]:text-muted-foreground data-[disabled]:opacity-50",
+          "cursor-text rounded-md px-3 py-2 text-sm hover:bg-accent/50 data-[disabled]:cursor-not-allowed data-[readonly]:cursor-default data-[empty]:text-muted-foreground data-[disabled]:opacity-50",
           className,
         )}
       >
@@ -328,7 +328,7 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
         value={context.value}
         onChange={composeEventHandlers(inputProps.onChange, (event) => {
           if (isReadOnly) return;
-          context.setValue(event.target.value);
+          context.onValueChange(event.target.value);
         })}
         onKeyDown={composeEventHandlers(inputProps.onKeyDown, (event) => {
           if (isReadOnly) return;
@@ -341,7 +341,7 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
           }
         })}
         className={cn(
-          "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground read-only:cursor-default read-only:opacity-50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+          "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
           className,
         )}
       />
@@ -407,7 +407,7 @@ const EditableCancel = React.forwardRef<HTMLButtonElement, EditableCancelProps>(
         onClick={composeEventHandlers(cancelProps.onClick, () => {
           context.onCancel?.();
           context.setIsEditing(false);
-          context.setValue(context.defaultValue);
+          context.onValueChange(context.defaultValue);
         })}
         ref={forwardedRef}
       />

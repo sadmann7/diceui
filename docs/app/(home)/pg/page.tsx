@@ -36,6 +36,7 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <Editable.Root
+        className="w-fit"
         defaultValue="Click to edit"
         placeholder="Enter text..."
         onSubmit={(value) => console.log(value)}
