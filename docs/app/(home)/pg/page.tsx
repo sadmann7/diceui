@@ -1,4 +1,5 @@
-import { HydrationBoundary } from "@/components/hydration-boundary";
+"use client";
+
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,10 +17,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import MasonryDemo from "@/registry/default/example/masonry-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -29,13 +28,28 @@ import {
   ComboboxItem,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
+import * as Editable from "@/registry/default/ui/editable";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <MasonryDemo />
+      <Editable.Root
+        defaultValue="Click to edit"
+        placeholder="Enter text..."
+        onSubmit={(value) => console.log(value)}
+      >
+        <Editable.Label>Label</Editable.Label>
+        <Editable.Area>
+          <Editable.Preview />
+          <Editable.Input />
+        </Editable.Area>
+        <Editable.Toolbar>
+          <Editable.Cancel />
+          <Editable.Submit />
+        </Editable.Toolbar>
+      </Editable.Root>
       <Textarea
         placeholder="Type here..."
         className="min-h-[80px] max-w-[40rem]"
