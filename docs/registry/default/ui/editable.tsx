@@ -82,7 +82,7 @@ interface EditableRootProps
   name?: string;
   maxLength?: number;
   placeholder?: string;
-  triggerMode?: "click" | "dblclick" | "focus";
+  triggerMode?: EditableContextValue["triggerMode"];
   asChild?: boolean;
   autosize?: boolean;
   disabled?: boolean;

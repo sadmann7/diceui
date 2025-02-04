@@ -51,19 +51,24 @@ export function ComponentTabs({
     <Tabs items={["Preview", "Code"]} className="rounded-md">
       <Tab
         value="Preview"
-        className={cn(
-          "flex h-[400px] w-full items-center justify-center p-10",
-          {
-            "focus-visible:outline-none focus-visible:ring-0":
-              preventPreviewFocus,
-            "h-full p-0": fullPreview,
-            "sm:p-10": scalePreview,
-          },
-          className,
-        )}
+        className={cn({
+          "focus-visible:outline-none focus-visible:ring-0":
+            preventPreviewFocus,
+        })}
         tabIndex={preventPreviewFocus ? -1 : 0}
       >
-        {Preview}
+        <div
+          className={cn(
+            "flex h-[400px] w-full items-center justify-center p-10",
+            {
+              "h-full p-0": fullPreview,
+              "sm:p-10": scalePreview,
+            },
+            className,
+          )}
+        >
+          {Preview}
+        </div>
       </Tab>
       <Tab value="Code" className="component-block">
         {Code}
