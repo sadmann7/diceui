@@ -40,7 +40,9 @@ interface EditableContextValue {
   onCancel: () => void;
   onEdit: () => void;
   onSubmit: (value: string) => void;
+  onEscapeKeyDown?: (event: KeyboardEvent) => void;
   dir?: "ltr" | "rtl";
+  maxLength?: number;
   placeholder?: string;
   triggerMode: "click" | "dblclick" | "focus";
   autosize: boolean;
@@ -75,8 +77,10 @@ interface EditableRootProps
   onCancel?: () => void;
   onEdit?: () => void;
   onSubmit?: (value: string) => void;
+  onEscapeKeyDown?: (event: KeyboardEvent) => void;
   dir?: "ltr" | "rtl";
   name?: string;
+  maxLength?: number;
   placeholder?: string;
   triggerMode?: "click" | "dblclick" | "focus";
   asChild?: boolean;
@@ -100,8 +104,10 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
       onCancel: onCancelProp,
       onEdit: onEditProp,
       onSubmit: onSubmitProp,
+      onEscapeKeyDown,
       dir = "ltr",
       name,
+      maxLength,
       placeholder,
       triggerMode = "click",
       asChild,
@@ -204,13 +210,15 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
         onSubmit,
         onEdit,
         onCancel,
+        onEscapeKeyDown,
+        maxLength,
         placeholder,
+        triggerMode,
         autosize,
         disabled,
         readOnly,
         required,
         invalid,
-        triggerMode,
       }),
       [
         id,
@@ -223,13 +231,15 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
         onSubmit,
         onCancel,
         onEdit,
+        onEscapeKeyDown,
+        maxLength,
         placeholder,
+        triggerMode,
         autosize,
         disabled,
         required,
         readOnly,
         invalid,
-        triggerMode,
       ],
     );
 
@@ -376,12 +386,20 @@ type InputElement = React.ComponentRef<typeof EditableInput>;
 
 interface EditableInputProps extends React.ComponentPropsWithoutRef<"input"> {
   asChild?: boolean;
+  maxLength?: number;
 }
 
 const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
   (props, forwardedRef) => {
-    const { asChild, className, disabled, readOnly, required, ...inputProps } =
-      props;
+    const {
+      asChild,
+      className,
+      disabled,
+      readOnly,
+      required,
+      maxLength,
+      ...inputProps
+    } = props;
     const context = useEditableContext(INPUT_NAME);
     const inputRef = React.useRef<InputElement>(null);
     const composedRef = useComposedRefs(forwardedRef, inputRef);
@@ -394,6 +412,7 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
       (event: React.FocusEvent<InputElement>) => {
         if (isReadOnly) return;
         const relatedTarget = event.relatedTarget;
+        console.log("blur", relatedTarget);
 
         const isAction =
           relatedTarget instanceof HTMLElement &&
@@ -428,12 +447,23 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
       (event: React.KeyboardEvent<InputElement>) => {
         if (isReadOnly) return;
         if (event.key === "Escape") {
+          const nativeEvent = event.nativeEvent;
+          if (context.onEscapeKeyDown) {
+            context.onEscapeKeyDown(nativeEvent);
+            if (nativeEvent.defaultPrevented) return;
+          }
           context.onCancel();
         } else if (event.key === "Enter") {
           context.onSubmit(context.value);
         }
       },
-      [context.value, context.onSubmit, context.onCancel, isReadOnly],
+      [
+        context.value,
+        context.onSubmit,
+        context.onCancel,
+        context.onEscapeKeyDown,
+        isReadOnly,
+      ],
     );
 
     const onFocus = React.useCallback(
@@ -468,9 +498,10 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
         required={isRequired}
         autoFocus={context.editing && !isReadOnly}
         {...inputProps}
+        id={context.inputId}
         aria-labelledby={context.labelId}
         ref={composedRef}
-        id={context.inputId}
+        maxLength={maxLength}
         placeholder={context.placeholder}
         value={context.value}
         onFocus={composeEventHandlers(inputProps.onFocus, onFocus)}

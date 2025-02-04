@@ -36,9 +36,11 @@ export interface RootProps extends EmptyProps<"div"> {
   editing?: boolean;
 
   /**
-   * Callback fired when the editing state changes.
+   * Event handler called when the `Escape` key is pressed.
+   *
+   * Can be used to prevent input value from being reset on `Escape` key press.
    */
-  onEditingChange?: (editing: boolean) => void;
+  onEscapeKeyDown?: (event: KeyboardEvent) => void;
 
   /**
    * Callback fired when editing is cancelled.
