@@ -148,6 +148,7 @@ export const examples: Registry = [
     name: "editable-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot"],
+    registryDependencies: ["button"],
     files: [
       {
         path: "example/editable-demo.tsx",
@@ -159,6 +160,7 @@ export const examples: Registry = [
     name: "editable-double-click-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot"],
+    registryDependencies: ["button"],
     files: [
       {
         path: "example/editable-double-click-demo.tsx",
@@ -170,6 +172,7 @@ export const examples: Registry = [
     name: "editable-autosize-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot"],
+    registryDependencies: ["button", "textarea"],
     files: [
       {
         path: "example/editable-autosize-demo.tsx",

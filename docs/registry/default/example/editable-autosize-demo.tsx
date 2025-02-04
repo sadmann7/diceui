@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import * as Editable from "@/registry/default/ui/editable";
@@ -15,7 +13,7 @@ export default function EditableAutosizeDemo() {
       <Editable.Area>
         <Editable.Preview className="whitespace-pre-wrap" />
         <Editable.Input asChild>
-          <Textarea className="max-h-[200px] min-h-[60px] w-full min-w-[240px]" />
+          <Textarea className="max-h-[120px] min-h-[60px] w-full min-w-[240px]" />
         </Editable.Input>
       </Editable.Area>
       <Editable.Toolbar>

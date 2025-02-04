@@ -15,12 +15,12 @@ export default function EditableDemo() {
         <Editable.Preview />
         <Editable.Input />
       </Editable.Area>
-      <Editable.Trigger className="mt-2" asChild>
+      <Editable.Trigger asChild>
         <Button size="sm" className="w-fit">
           Edit
         </Button>
       </Editable.Trigger>
-      <Editable.Toolbar className="mt-2">
+      <Editable.Toolbar>
         <Editable.Submit asChild>
           <Button size="sm">Save</Button>
         </Editable.Submit>
