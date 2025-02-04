@@ -1,0 +1,15 @@
+{
+  "name": "editable-autosize-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@radix-ui/react-slot"
+  ],
+  "files": [
+    {
+      "path": "example/editable-autosize-demo.tsx",
+      "content": "\"use client\";\r\n\r\nimport * as Editable from \"@/registry/default/ui/editable\";\r\nimport * as React from \"react\";\r\n\r\nexport default function EditableAutosizeDemo() {\r\n  return (\r\n    <div className=\"flex flex-col gap-4\">\r\n      <Editable.Root\r\n        defaultValue=\"This input will automatically resize based on content length. Try typing a longer text to see it in action!\"\r\n        autosize\r\n      >\r\n        <Editable.Label>Autosize Editable</Editable.Label>\r\n        <Editable.Area>\r\n          <Editable.Preview className=\"whitespace-pre-wrap\" />\r\n          <Editable.Input className=\"w-full resize-none bg-transparent outline-none\" />\r\n        </Editable.Area>\r\n        <Editable.Toolbar>\r\n          <Editable.Submit>Save</Editable.Submit>\r\n          <Editable.Cancel>Cancel</Editable.Cancel>\r\n        </Editable.Toolbar>\r\n      </Editable.Root>\r\n    </div>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

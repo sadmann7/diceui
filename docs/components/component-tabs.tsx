@@ -7,7 +7,7 @@ import { styles } from "@/registry/registry-styles";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import * as React from "react";
 
-interface ComponentTabsProps {
+interface ComponentTabsProps extends React.ComponentPropsWithoutRef<"div"> {
   name: string;
   children: React.ReactNode;
   preventPreviewFocus?: boolean;
@@ -21,6 +21,7 @@ export function ComponentTabs({
   preventPreviewFocus,
   scalePreview,
   fullPreview,
+  className,
 }: ComponentTabsProps) {
   const [config] = useConfig();
   const index = styles.findIndex((style) => style.name === config.style);
@@ -58,8 +59,12 @@ export function ComponentTabs({
       >
         <div
           className={cn(
-            "flex h-[400px] w-full items-center justify-center",
-            fullPreview ? "h-full p-0" : scalePreview ? "sm:p-10" : "p-10",
+            "flex h-[400px] w-full items-center justify-center p-10",
+            {
+              "h-full p-0": fullPreview,
+              "sm:p-10": scalePreview,
+            },
+            className,
           )}
         >
           {Preview}

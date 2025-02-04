@@ -145,6 +145,39 @@ export const examples: Registry = [
     ],
   },
   {
+    name: "editable-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot"],
+    files: [
+      {
+        path: "example/editable-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "editable-double-click-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot"],
+    files: [
+      {
+        path: "example/editable-double-click-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "editable-autosize-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot"],
+    files: [
+      {
+        path: "example/editable-autosize-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "kanban-demo",
     type: "registry:example",
     dependencies: [

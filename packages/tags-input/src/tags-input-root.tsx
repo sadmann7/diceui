@@ -1,10 +1,10 @@
 import * as React from "react";
 
 import {
-  BubbleInput,
   DATA_ITEM_ATTR,
   type Direction,
   Primitive,
+  VisuallyHiddenInput,
   composeEventHandlers,
   createContext,
   useComposedRefs,
@@ -578,7 +578,7 @@ const TagsInputRoot = React.forwardRef<
       >
         {typeof children === "function" ? <>{children({ value })}</> : children}
         {isFormControl && name && (
-          <BubbleInput
+          <VisuallyHiddenInput
             type="hidden"
             control={collectionRef.current}
             name={name}

@@ -31,6 +31,21 @@ export const ui: Registry = [
     ],
   },
   {
+    name: "editable",
+    type: "registry:ui",
+    dependencies: ["@radix-ui/react-slot"],
+    files: [
+      {
+        path: "ui/editable.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "lib/composition.ts",
+        type: "registry:lib",
+      },
+    ],
+  },
+  {
     name: "kanban",
     type: "registry:ui",
     dependencies: [

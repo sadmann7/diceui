@@ -1,0 +1,15 @@
+{
+  "name": "editable-readonly-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@radix-ui/react-slot"
+  ],
+  "files": [
+    {
+      "path": "example/editable-readonly-demo.tsx",
+      "content": "\"use client\";\r\n\r\nimport * as Editable from \"@/registry/default/ui/editable\";\r\nimport * as React from \"react\";\r\n\r\nexport default function EditableReadonlyDemo() {\r\n  return (\r\n    <Editable.Root defaultValue=\"This content is read-only\" readOnly>\r\n      <Editable.Label>Read Only Editable</Editable.Label>\r\n      <Editable.Area>\r\n        <Editable.Preview />\r\n        <Editable.Input />\r\n      </Editable.Area>\r\n      <Editable.Toolbar>\r\n        <Editable.Submit>Save</Editable.Submit>\r\n        <Editable.Cancel>Cancel</Editable.Cancel>\r\n      </Editable.Toolbar>\r\n    </Editable.Root>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

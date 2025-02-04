@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import TagsInputDemo from "@/registry/default/example/tags-input-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -34,8 +33,7 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <TagsInputDemo />
-      <Editable.Root className="w-fit" placeholder="Enter text...">
+      <Editable.Root className="w-full" placeholder="Enter text...">
         <Editable.Label>Label</Editable.Label>
         <Editable.Area>
           <Editable.Preview />

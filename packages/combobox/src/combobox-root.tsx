@@ -1,10 +1,10 @@
 import {
-  BubbleInput,
   type CollectionItem,
   type Direction,
   type FilterStore,
   type HighlightingDirection,
   Primitive,
+  VisuallyHiddenInput,
   createContext,
   forwardRef,
   useAnchor,
@@ -401,7 +401,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       <Primitive.div {...rootProps} ref={composedRef}>
         {children}
         {isFormControl && name && (
-          <BubbleInput
+          <VisuallyHiddenInput
             type="hidden"
             control={collectionRef.current}
             name={name}

@@ -1,4 +1,4 @@
-export * from "./bubble-input";
+export * from "./visually-hidden-input";
 export * from "./create-context";
 export * from "./portal";
 export * from "./presence";

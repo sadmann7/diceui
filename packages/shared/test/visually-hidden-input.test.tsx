@@ -1,8 +1,8 @@
-import { fireEvent, render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import * as React from "react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import type * as React from "react";
 import { describe, expect, it, vi } from "vitest";
-import { BubbleInput } from "../src/components/bubble-input";
+import { VisuallyHiddenInput } from "../src/components/visually-hidden-input";
+import { visuallyHidden } from "../src/lib";
 
 // Mock ResizeObserver
 class ResizeObserver {
@@ -14,13 +14,25 @@ class ResizeObserver {
 // Add to global
 global.ResizeObserver = ResizeObserver;
 
-describe("BubbleInput", () => {
+describe("VisuallyHiddenInput", () => {
   const mockControl = document.createElement("div");
+
+  function renderVisuallyHiddenInput(
+    props: Partial<React.ComponentProps<typeof VisuallyHiddenInput>> = {},
+  ) {
+    return render(
+      <VisuallyHiddenInput
+        data-testid="input"
+        control={mockControl}
+        {...props}
+      />,
+    );
+  }
 
   describe("hidden input", () => {
     it("should render with default props", () => {
-      render(<BubbleInput control={mockControl} data-testid="bubble-input" />);
-      const input = screen.getByTestId("bubble-input");
+      renderVisuallyHiddenInput();
+      const input = screen.getByTestId("input");
       expect(input).toHaveAttribute("type", "hidden");
     });
 
@@ -28,15 +40,8 @@ describe("BubbleInput", () => {
       const value = "test";
       const onChange = vi.fn();
 
-      render(
-        <BubbleInput
-          control={mockControl}
-          value={value}
-          onChange={onChange}
-          data-testid="bubble-input"
-        />,
-      );
-      const input = screen.getByTestId("bubble-input");
+      renderVisuallyHiddenInput({ value, onChange });
+      const input = screen.getByTestId("input");
 
       expect(input).toHaveValue(JSON.stringify(value));
     });
@@ -45,15 +50,8 @@ describe("BubbleInput", () => {
       const value = ["item1", "item2"];
       const onChange = vi.fn();
 
-      render(
-        <BubbleInput
-          control={mockControl}
-          value={value}
-          onChange={onChange}
-          data-testid="bubble-input"
-        />,
-      );
-      const input = screen.getByTestId("bubble-input");
+      renderVisuallyHiddenInput({ value, onChange });
+      const input = screen.getByTestId("input");
 
       expect(input).toHaveValue(JSON.stringify(value));
     });
@@ -62,55 +60,36 @@ describe("BubbleInput", () => {
       const value = "test";
       const onChange = vi.fn();
 
-      render(
-        <BubbleInput
-          control={mockControl}
-          value={value}
-          onChange={onChange}
-          bubbles={false}
-          data-testid="bubble-input"
-        />,
-      );
-
-      const input = screen.getByTestId("bubble-input");
+      renderVisuallyHiddenInput({ value, onChange, bubbles: false });
+      const input = screen.getByTestId("input");
       expect(input).toHaveValue(JSON.stringify(value));
     });
   });
 
   describe("checkbox input", () => {
     it("should render checkbox type", () => {
-      render(
-        <BubbleInput
-          control={mockControl}
-          type="checkbox"
-          data-testid="bubble-input"
-        />,
-      );
-      const input = screen.getByTestId("bubble-input");
+      renderVisuallyHiddenInput({ type: "checkbox" });
+      const input = screen.getByTestId("input");
       expect(input).toHaveAttribute("type", "checkbox");
       expect(input).toHaveAttribute("aria-hidden", "true");
       expect(input).toHaveAttribute("tabindex", "-1");
     });
 
     it("should handle checked state", () => {
-      const { rerender } = render(
-        <BubbleInput
-          control={mockControl}
-          type="checkbox"
-          checked={true}
-          data-testid="bubble-input"
-        />,
-      );
+      const { rerender } = renderVisuallyHiddenInput({
+        type: "checkbox",
+        checked: true,
+      });
 
-      const input = screen.getByTestId("bubble-input");
+      const input = screen.getByTestId("input");
       expect(input).toBeChecked();
 
       rerender(
-        <BubbleInput
+        <VisuallyHiddenInput
           control={mockControl}
           type="checkbox"
           checked={false}
-          data-testid="bubble-input"
+          data-testid="input"
         />,
       );
       expect(input).not.toBeChecked();
@@ -118,24 +97,26 @@ describe("BubbleInput", () => {
   });
 
   describe("form reset", () => {
-    it("should call onReset with default value when form is reset", () => {
+    it("should call onReset with default value when form is reset", async () => {
       const onReset = vi.fn();
       const defaultValue = "default";
 
       const { container } = render(
         <form>
-          <BubbleInput
+          <VisuallyHiddenInput
             control={mockControl}
             value={defaultValue}
             onReset={onReset}
-            data-testid="bubble-input"
+            data-testid="input"
           />
         </form>,
       );
 
-      const form = container.querySelector("form");
-      if (!form) throw new Error("Form not found");
-      fireEvent.reset(form);
+      await waitFor(() => {
+        const form = container.querySelector("form");
+        if (!form) throw new Error("Form not found");
+        fireEvent.reset(form);
+      });
 
       expect(onReset).toHaveBeenCalledWith(defaultValue);
     });
@@ -146,16 +127,13 @@ describe("BubbleInput", () => {
       Object.defineProperty(mockControl, "offsetWidth", { value: 100 });
       Object.defineProperty(mockControl, "offsetHeight", { value: 50 });
 
-      render(<BubbleInput control={mockControl} data-testid="bubble-input" />);
-      const input = screen.getByTestId("bubble-input");
+      renderVisuallyHiddenInput();
+      const input = screen.getByTestId("input");
 
       expect(input).toHaveStyle({
         width: "100px",
         height: "50px",
-        position: "absolute",
-        pointerEvents: "none",
-        opacity: "0",
-        margin: "0",
+        ...visuallyHidden,
       });
     });
   });

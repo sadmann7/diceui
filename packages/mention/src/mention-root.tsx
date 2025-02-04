@@ -1,9 +1,9 @@
 import {
-  BubbleInput,
   type CollectionItem,
   type Direction,
   type HighlightingDirection,
   Primitive,
+  VisuallyHiddenInput,
   composeRefs,
   createContext,
   useCollection,
@@ -375,7 +375,7 @@ const MentionRoot = React.forwardRef<RootElement, MentionRootProps>(
         <Primitive.div ref={composedRef} {...rootProps}>
           {children}
           {isFormControl && name && (
-            <BubbleInput
+            <VisuallyHiddenInput
               type="hidden"
               control={collectionRef.current}
               name={name}

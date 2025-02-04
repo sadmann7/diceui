@@ -1,0 +1,15 @@
+{
+  "name": "editable-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@radix-ui/react-slot"
+  ],
+  "files": [
+    {
+      "path": "example/editable-demo.tsx",
+      "content": "\"use client\";\r\n\r\nimport { Button } from \"@/components/ui/button\";\r\nimport * as Editable from \"@/registry/default/ui/editable\";\r\nimport * as React from \"react\";\r\n\r\nexport default function EditableDemo() {\r\n  return (\r\n    <Editable.Root placeholder=\"Click to edit\">\r\n      <Editable.Label>Basic Editable</Editable.Label>\r\n      <Editable.Area>\r\n        <Editable.Preview />\r\n        <Editable.Input />\r\n      </Editable.Area>\r\n      <Editable.Trigger className=\"mt-2\" asChild>\r\n        <Button size=\"sm\" className=\"w-fit\">\r\n          Edit\r\n        </Button>\r\n      </Editable.Trigger>\r\n      <Editable.Toolbar className=\"mt-2\">\r\n        <Editable.Submit asChild>\r\n          <Button size=\"sm\">Save</Button>\r\n        </Editable.Submit>\r\n        <Editable.Cancel asChild>\r\n          <Button variant=\"outline\" size=\"sm\">\r\n            Cancel\r\n          </Button>\r\n        </Editable.Cancel>\r\n      </Editable.Toolbar>\r\n    </Editable.Root>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

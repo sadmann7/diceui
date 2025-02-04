@@ -1,11 +1,12 @@
 import * as React from "react";
 import { useFormReset, usePrevious, useSize } from "../hooks";
+import { visuallyHidden } from "../lib";
 
 type InputValue = string[] | string;
 
-interface BubbleInputProps<T = InputValue>
+interface VisuallyHiddenInputProps<T = InputValue>
   extends Omit<
-    React.ComponentPropsWithoutRef<"input">,
+    React.InputHTMLAttributes<HTMLInputElement>,
     "value" | "checked" | "onReset"
   > {
   value?: T;
@@ -15,7 +16,9 @@ interface BubbleInputProps<T = InputValue>
   onReset?: (value: T) => void;
 }
 
-export function BubbleInput<T = InputValue>(props: BubbleInputProps<T>) {
+export function VisuallyHiddenInput<T = InputValue>(
+  props: VisuallyHiddenInputProps<T>,
+) {
   const {
     control,
     value,
@@ -30,8 +33,8 @@ export function BubbleInput<T = InputValue>(props: BubbleInputProps<T>) {
   const isCheckInput =
     type === "checkbox" || type === "radio" || type === "switch";
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const previousValue = usePrevious(type === "hidden" ? value : checked);
-  const controlSize = isCheckInput ? useSize(control) : undefined;
+  const prevValue = usePrevious(type === "hidden" ? value : checked);
+  const controlSize = useSize(control);
 
   // Bubble value/checked change to parents
   React.useEffect(() => {
@@ -49,12 +52,12 @@ export function BubbleInput<T = InputValue>(props: BubbleInputProps<T>) {
     ) as PropertyDescriptor;
     const setter = descriptor.set;
 
-    if (previousValue !== currentValue && setter) {
+    if (prevValue !== currentValue && setter) {
       const event = new Event(eventType, { bubbles });
       setter.call(input, currentValue);
       input.dispatchEvent(event);
     }
-  }, [previousValue, value, checked, bubbles, isCheckInput]);
+  }, [prevValue, value, checked, bubbles, isCheckInput]);
 
   // Trigger on onReset callback when form is reset
   useFormReset({
@@ -71,21 +74,12 @@ export function BubbleInput<T = InputValue>(props: BubbleInputProps<T>) {
       {...inputProps}
       ref={inputRef}
       aria-hidden={isCheckInput}
-      tabIndex={isCheckInput ? -1 : undefined}
+      tabIndex={-1}
       defaultChecked={isCheckInput ? checked : undefined}
       style={{
-        ...style,
+        ...props.style,
         ...controlSize,
-        border: 0,
-        clip: "rect(0 0 0 0)",
-        clipPath: "inset(50%)",
-        height: "1px",
-        margin: "-1px",
-        overflow: "hidden",
-        padding: 0,
-        position: "absolute",
-        whiteSpace: "nowrap",
-        width: "1px",
+        ...visuallyHidden,
       }}
     />
   );

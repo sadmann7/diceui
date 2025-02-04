@@ -42,5 +42,4 @@ function useFormReset<T>({
     return () => form.removeEventListener("reset", onFormReset);
   }, [form, defaultValue, onResetCallback]);
 }
-
 export { useFormReset };

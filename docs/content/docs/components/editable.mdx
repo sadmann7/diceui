@@ -4,13 +4,16 @@ description: An accessible inline editable component for editing text content in
 preview: true
 ---
 
-<ComponentTabs name="editable-demo" scalePreview />
+<ComponentTabs name="editable-demo" className="[&>div]:h-full justify-start" />
 
 ## Installation
 
 ### CLI
 
 ```package-install
+
+
+
 npx shadcn@latest add "https://diceui.com/r/editable"
 ```
 
@@ -43,8 +46,8 @@ Import the parts, and compose them together.
 ```tsx
 import * as Editable from "@/components/ui/editable";
 
-<Editable.Root defaultValue="Click to edit">
-  <Editable.Label>Label</Editable.Label>
+<Editable.Root>
+  <Editable.Label />
   <Editable.Area>
     <Editable.Preview />
     <Editable.Input />
@@ -58,29 +61,17 @@ import * as Editable from "@/components/ui/editable";
 
 ## Examples
 
-### Basic Usage
-
-A basic editable text field with submit and cancel buttons.
-
-<ComponentTabs name="editable-basic-demo" />
-
 ### With Double Click
 
 Trigger edit mode with double click instead of single click.
 
-<ComponentTabs name="editable-double-click-demo" />
+<ComponentTabs name="editable-double-click-demo" className="[&>div]:h-full justify-start" />
 
 ### With Autosize
 
 Input that automatically resizes based on content.
 
-<ComponentTabs name="editable-autosize-demo" />
-
-### Read Only
-
-Display editable content in read-only mode.
-
-<ComponentTabs name="editable-readonly-demo" />
+<ComponentTabs name="editable-autosize-demo" className="[&>div]:h-full justify-start" />
 
 ## API Reference
 

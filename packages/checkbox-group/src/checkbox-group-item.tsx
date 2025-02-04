@@ -1,6 +1,6 @@
 import {
-  BubbleInput,
   Primitive,
+  VisuallyHiddenInput,
   composeEventHandlers,
   createContext,
   useComposedRefs,
@@ -101,7 +101,7 @@ const CheckboxGroupItem = React.forwardRef<
         })}
       />
       {isFormControl && (
-        <BubbleInput
+        <VisuallyHiddenInput
           type="checkbox"
           control={trigger}
           bubbles={!hasConsumerStoppedPropagationRef.current}
@@ -126,6 +126,6 @@ CheckboxGroupItem.displayName = ITEM_NAME;
 
 const Item = CheckboxGroupItem;
 
-export { CheckboxGroupItem, getDataState, Item, useCheckboxGroupItem };
+export { CheckboxGroupItem, Item, getDataState, useCheckboxGroupItem };
 
 export type { CheckboxGroupItemContext, CheckboxGroupItemProps };
