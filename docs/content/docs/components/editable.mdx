@@ -51,6 +51,7 @@ import * as Editable from "@/components/ui/editable";
   <Editable.Area>
     <Editable.Preview />
     <Editable.Input />
+    <Editable.Trigger />
   </Editable.Area>
   <Editable.Toolbar>
     <Editable.Submit />
@@ -165,6 +166,28 @@ The input component for editing the value.
 <AutoTypeTable
   path="./types/docs/editable.ts"
   name="InputProps"
+/>
+
+### Trigger
+
+Button to trigger edit mode.
+
+<AutoTypeTable
+  path="./types/docs/editable.ts"
+  name="TriggerProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the editable field is disabled",
+    },
+    {
+      title: "[data-readonly]",
+      value: "Present when the field is read-only",
+    },
+  ]}
 />
 
 ### Toolbar

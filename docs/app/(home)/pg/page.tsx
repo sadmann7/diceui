@@ -33,7 +33,11 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <Editable.Root className="w-full" placeholder="Enter text...">
+      <Editable.Root
+        className="w-full"
+        placeholder="Enter text..."
+        triggerMode="focus"
+      >
         <Editable.Label>Label</Editable.Label>
         <Editable.Area>
           <Editable.Preview />

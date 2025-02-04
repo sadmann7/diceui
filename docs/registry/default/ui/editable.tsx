@@ -36,13 +36,13 @@ interface EditableContextValue {
   defaultValue: string;
   value: string;
   onValueChange: (value: string) => void;
-  isEditing: boolean;
+  editing: boolean;
   onCancel: () => void;
   onEdit: () => void;
   onSubmit: (value: string) => void;
   dir?: "ltr" | "rtl";
   placeholder?: string;
-  triggerMode: "click" | "dblclick";
+  triggerMode: "click" | "dblclick" | "focus";
   autosize: boolean;
   disabled?: boolean;
   readOnly?: boolean;
@@ -69,13 +69,16 @@ interface EditableRootProps
   defaultValue?: string;
   value?: string;
   onValueChange?: (value: string) => void;
+  defaultEditing?: boolean;
+  editing?: boolean;
+  onEditingChange?: (editing: boolean) => void;
   onCancel?: () => void;
   onEdit?: () => void;
   onSubmit?: (value: string) => void;
   dir?: "ltr" | "rtl";
   name?: string;
   placeholder?: string;
-  triggerMode?: EditableContextValue["triggerMode"];
+  triggerMode?: "click" | "dblclick" | "focus";
   asChild?: boolean;
   autosize?: boolean;
   disabled?: boolean;
@@ -91,6 +94,9 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
       defaultValue = "",
       value: valueProp,
       onValueChange: onValueChangeProp,
+      defaultEditing = false,
+      editing: editingProp,
+      onEditingChange: onEditingChangeProp,
       onCancel: onCancelProp,
       onEdit: onEditProp,
       onSubmit: onSubmitProp,
@@ -117,10 +123,16 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
     const value = isControlled ? valueProp : uncontrolledValue;
     const previousValueRef = React.useRef(value);
     const onValueChangeRef = React.useRef(onValueChangeProp);
-    const [isEditing, setIsEditing] = React.useState(false);
+
+    const isEditingControlled = editingProp !== undefined;
+    const [uncontrolledEditing, setUncontrolledEditing] =
+      React.useState(defaultEditing);
+    const editing = isEditingControlled ? editingProp : uncontrolledEditing;
+    const onEditingChangeRef = React.useRef(onEditingChangeProp);
 
     React.useEffect(() => {
       onValueChangeRef.current = onValueChangeProp;
+      onEditingChangeRef.current = onEditingChangeProp;
     });
 
     const onValueChange = React.useCallback(
@@ -131,6 +143,16 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
         onValueChangeRef.current?.(nextValue);
       },
       [isControlled],
+    );
+
+    const onEditingChange = React.useCallback(
+      (nextEditing: boolean) => {
+        if (!isEditingControlled) {
+          setUncontrolledEditing(nextEditing);
+        }
+        onEditingChangeRef.current?.(nextEditing);
+      },
+      [isEditingControlled],
     );
 
     React.useEffect(() => {
@@ -150,23 +172,24 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
     const onCancel = React.useCallback(() => {
       const prevValue = previousValueRef.current;
       onValueChange(prevValue);
-      setIsEditing(false);
+      onEditingChange(false);
       onCancelProp?.();
-    }, [onValueChange, onCancelProp]);
+    }, [onValueChange, onCancelProp, onEditingChange]);
 
     const onEdit = React.useCallback(() => {
       previousValueRef.current = value;
-      setIsEditing(true);
+      onEditingChange(true);
       onEditProp?.();
-    }, [value, onEditProp]);
+    }, [value, onEditProp, onEditingChange]);
 
     const onSubmit = React.useCallback(
       (newValue: string) => {
         onValueChange(newValue);
-        setIsEditing(false);
+        onEditingChange(false);
         onSubmitProp?.(newValue);
       },
-      [onValueChange, onSubmitProp],
+
+      [onValueChange, onSubmitProp, onEditingChange],
     );
 
     const contextValue = React.useMemo<EditableContextValue>(
@@ -177,7 +200,7 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
         defaultValue,
         value,
         onValueChange,
-        isEditing,
+        editing,
         onSubmit,
         onEdit,
         onCancel,
@@ -196,7 +219,7 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
         defaultValue,
         value,
         onValueChange,
-        isEditing,
+        editing,
         onSubmit,
         onCancel,
         onEdit,
@@ -284,7 +307,7 @@ const EditableArea = React.forwardRef<HTMLDivElement, EditableAreaProps>(
       <AreaSlot
         role="group"
         data-disabled={context.disabled ? "" : undefined}
-        data-editing={context.isEditing ? "" : undefined}
+        data-editing={context.editing ? "" : undefined}
         {...areaProps}
         ref={forwardedRef}
         className={cn(
@@ -313,7 +336,7 @@ const EditablePreview = React.forwardRef<HTMLDivElement, EditablePreviewProps>(
 
     const PreviewSlot = asChild ? Slot : "div";
 
-    if (context.isEditing || context.readOnly) return null;
+    if (context.editing || context.readOnly) return null;
 
     return (
       <PreviewSlot
@@ -325,12 +348,20 @@ const EditablePreview = React.forwardRef<HTMLDivElement, EditablePreviewProps>(
         tabIndex={context.disabled || context.readOnly ? undefined : 0}
         {...previewProps}
         ref={forwardedRef}
-        onClick={context.triggerMode === "click" ? onTrigger : undefined}
-        onDoubleClick={
-          context.triggerMode === "dblclick" ? onTrigger : undefined
-        }
+        onClick={composeEventHandlers(
+          previewProps.onClick,
+          context.triggerMode === "click" ? onTrigger : undefined,
+        )}
+        onDoubleClick={composeEventHandlers(
+          previewProps.onDoubleClick,
+          context.triggerMode === "dblclick" ? onTrigger : undefined,
+        )}
+        onFocus={composeEventHandlers(
+          previewProps.onFocus,
+          context.triggerMode === "focus" ? onTrigger : undefined,
+        )}
         className={cn(
-          "cursor-text truncate rounded-md border border-transparent py-1 text-base data-[disabled]:cursor-not-allowed data-[readonly]:cursor-default data-[empty]:text-muted-foreground data-[disabled]:opacity-50 md:text-sm",
+          "cursor-text truncate rounded-sm border border-transparent py-1 text-base focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring data-[disabled]:cursor-not-allowed data-[readonly]:cursor-default data-[empty]:text-muted-foreground data-[disabled]:opacity-50 md:text-sm",
           className,
         )}
       >
@@ -407,7 +438,7 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
 
     const onFocus = React.useCallback(
       (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        if (context.isEditing && !isReadOnly) {
+        if (context.editing && !isReadOnly) {
           event.target.select();
 
           if (!context.autosize) return;
@@ -421,12 +452,12 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
           }
         }
       },
-      [context.isEditing, isReadOnly, context.autosize],
+      [context.editing, isReadOnly, context.autosize],
     );
 
     const InputSlot = asChild ? Slot : "input";
 
-    if (!context.isEditing && !isReadOnly) return null;
+    if (!context.editing && !isReadOnly) return null;
 
     return (
       <InputSlot
@@ -435,7 +466,7 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
         disabled={isDisabled}
         readOnly={isReadOnly}
         required={isRequired}
-        autoFocus={context.isEditing && !isReadOnly}
+        autoFocus={context.editing && !isReadOnly}
         {...inputProps}
         aria-labelledby={context.labelId}
         ref={composedRef}
@@ -472,7 +503,7 @@ const EditableTrigger = React.forwardRef<
 
   const TriggerSlot = asChild ? Slot : "button";
 
-  if (!forceMount && (context.isEditing || context.readOnly)) return null;
+  if (!forceMount && (context.editing || context.readOnly)) return null;
 
   const onTrigger = React.useCallback(() => {
     if (context.disabled || context.readOnly) return;
@@ -541,7 +572,7 @@ const EditableCancel = React.forwardRef<HTMLButtonElement, EditableCancelProps>(
 
     const CancelSlot = asChild ? Slot : "button";
 
-    if (!context.isEditing && !context.readOnly) return null;
+    if (!context.editing && !context.readOnly) return null;
 
     return (
       <CancelSlot
@@ -570,7 +601,7 @@ const EditableSubmit = React.forwardRef<HTMLButtonElement, EditableSubmitProps>(
 
     const SubmitSlot = asChild ? Slot : "button";
 
-    if (!context.isEditing && !context.readOnly) return null;
+    if (!context.editing && !context.readOnly) return null;
 
     return (
       <SubmitSlot

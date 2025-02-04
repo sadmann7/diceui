@@ -25,6 +25,22 @@ export interface RootProps extends EmptyProps<"div"> {
   onValueChange?: (value: string) => void;
 
   /**
+   * The default editing state.
+   * @default false
+   */
+  defaultEditing?: boolean;
+
+  /**
+   * The controlled editing state.
+   */
+  editing?: boolean;
+
+  /**
+   * Callback fired when the editing state changes.
+   */
+  onEditingChange?: (editing: boolean) => void;
+
+  /**
    * Callback fired when editing is cancelled.
    */
   onCancel?: () => void;
@@ -51,9 +67,14 @@ export interface RootProps extends EmptyProps<"div"> {
 
   /**
    * The trigger mode for entering edit mode.
+   *
+   * - `click`: Clicking the editable component will enter edit mode.
+   * - `dblclick`: Double-clicking the editable component will enter edit mode.
+   * - `focus`: Focusing the editable component will enter edit mode.
+   *
    * @default "click"
    */
-  triggerMode?: "click" | "dblclick";
+  triggerMode?: "click" | "dblclick" | "focus";
 
   /**
    * Whether to merge props with child component.
@@ -122,6 +143,20 @@ export interface InputProps extends EmptyProps<"input"> {
    * @default false
    */
   asChild?: boolean;
+}
+
+export interface TriggerProps extends EmptyProps<"button"> {
+  /**
+   * Whether to merge props with child component.
+   * @default false
+   */
+  asChild?: boolean;
+
+  /**
+   * Whether to force mount the trigger.
+   * @default false
+   */
+  forceMount?: boolean;
 }
 
 export interface ToolbarProps extends EmptyProps<"div"> {
