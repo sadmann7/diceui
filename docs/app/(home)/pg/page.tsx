@@ -1,5 +1,3 @@
-"use client";
-
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,12 +27,17 @@ import {
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
 import * as Editable from "@/registry/default/ui/editable";
+import * as Kbd from "@/registry/default/ui/kbd";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
+      <Kbd.Root variant="outline" size="sm">
+        <Kbd.Key>Ctrl</Kbd.Key>
+        <Kbd.Key>K</Kbd.Key>
+      </Kbd.Root>
       <Editable.Root className="w-full" placeholder="Enter text...">
         <Editable.Label>Label</Editable.Label>
         <Editable.Area>
@@ -87,12 +90,7 @@ export default function PlaygroundPage() {
             <ChevronDown className="h-4 w-4" />
           </ComboboxTrigger>
         </ComboboxAnchor>
-        <ComboboxContent
-          onPointerDownOutside={(event) => {
-            console.log("pointer down outside", event);
-            event.preventDefault();
-          }}
-        >
+        <ComboboxContent>
           <ComboboxEmpty>No tricks found</ComboboxEmpty>
           {tricks.map((trick) => (
             <ComboboxItem key={trick.value} value={trick.value}>

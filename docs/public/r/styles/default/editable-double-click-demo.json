@@ -4,10 +4,13 @@
   "dependencies": [
     "@radix-ui/react-slot"
   ],
+  "registryDependencies": [
+    "button"
+  ],
   "files": [
     {
       "path": "example/editable-double-click-demo.tsx",
-      "content": "\"use client\";\r\n\r\nimport * as Editable from \"@/registry/default/ui/editable\";\r\nimport * as React from \"react\";\r\n\r\nexport default function EditableDoubleClickDemo() {\r\n  return (\r\n    <div className=\"flex flex-col gap-4\">\r\n      <Editable.Root defaultValue=\"Double click to edit\" triggerMode=\"dblclick\">\r\n        <Editable.Label>Double Click Editable</Editable.Label>\r\n        <Editable.Area>\r\n          <Editable.Preview />\r\n          <Editable.Input />\r\n        </Editable.Area>\r\n        <Editable.Toolbar>\r\n          <Editable.Submit>Save</Editable.Submit>\r\n          <Editable.Cancel>Cancel</Editable.Cancel>\r\n        </Editable.Toolbar>\r\n      </Editable.Root>\r\n    </div>\r\n  );\r\n}\r\n",
+      "content": "import { Button } from \"@/components/ui/button\";\nimport * as Editable from \"@/registry/default/ui/editable\";\nimport * as React from \"react\";\n\nexport default function EditableDoubleClickDemo() {\n  return (\n    <div className=\"flex flex-col gap-4\">\n      <Editable.Root\n        defaultValue=\"Double click to edit\"\n        placeholder=\"Enter your text here\"\n        triggerMode=\"dblclick\"\n      >\n        <Editable.Label>Fruit</Editable.Label>\n        <Editable.Area>\n          <Editable.Preview />\n          <Editable.Input />\n        </Editable.Area>\n        <Editable.Toolbar>\n          <Editable.Submit asChild>\n            <Button size=\"sm\">Save</Button>\n          </Editable.Submit>\n          <Editable.Cancel asChild>\n            <Button variant=\"outline\" size=\"sm\">\n              Cancel\n            </Button>\n          </Editable.Cancel>\n        </Editable.Toolbar>\n      </Editable.Root>\n    </div>\n  );\n}\n",
       "type": "registry:example",
       "target": ""
     }

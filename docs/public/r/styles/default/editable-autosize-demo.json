@@ -4,10 +4,13 @@
   "dependencies": [
     "@radix-ui/react-slot"
   ],
+  "registryDependencies": [
+    "button"
+  ],
   "files": [
     {
       "path": "example/editable-autosize-demo.tsx",
-      "content": "\"use client\";\r\n\r\nimport * as Editable from \"@/registry/default/ui/editable\";\r\nimport * as React from \"react\";\r\n\r\nexport default function EditableAutosizeDemo() {\r\n  return (\r\n    <div className=\"flex flex-col gap-4\">\r\n      <Editable.Root\r\n        defaultValue=\"This input will automatically resize based on content length. Try typing a longer text to see it in action!\"\r\n        autosize\r\n      >\r\n        <Editable.Label>Autosize Editable</Editable.Label>\r\n        <Editable.Area>\r\n          <Editable.Preview className=\"whitespace-pre-wrap\" />\r\n          <Editable.Input className=\"w-full resize-none bg-transparent outline-none\" />\r\n        </Editable.Area>\r\n        <Editable.Toolbar>\r\n          <Editable.Submit>Save</Editable.Submit>\r\n          <Editable.Cancel>Cancel</Editable.Cancel>\r\n        </Editable.Toolbar>\r\n      </Editable.Root>\r\n    </div>\r\n  );\r\n}\r\n",
+      "content": "import { Button } from \"@/components/ui/button\";\nimport * as Editable from \"@/registry/default/ui/editable\";\n\nexport default function EditableAutosizeDemo() {\n  return (\n    <Editable.Root\n      defaultValue=\"Adjust the size of the input with the text inside.\"\n      autosize\n    >\n      <Editable.Label>Autosize editable</Editable.Label>\n      <Editable.Area>\n        <Editable.Preview className=\"whitespace-pre-wrap\" />\n        <Editable.Input />\n      </Editable.Area>\n      <Editable.Toolbar>\n        <Editable.Submit asChild>\n          <Button size=\"sm\">Save</Button>\n        </Editable.Submit>\n        <Editable.Cancel asChild>\n          <Button variant=\"outline\" size=\"sm\">\n            Cancel\n          </Button>\n        </Editable.Cancel>\n      </Editable.Toolbar>\n    </Editable.Root>\n  );\n}\n",
       "type": "registry:example",
       "target": ""
     }

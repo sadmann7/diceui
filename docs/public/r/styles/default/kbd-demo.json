@@ -1,0 +1,12 @@
+{
+  "name": "kbd-demo",
+  "type": "registry:example",
+  "files": [
+    {
+      "path": "example/kbd-demo.tsx",
+      "content": "import * as Kbd from \"@/registry/default/ui/kbd\";\r\n\r\nexport default function KbdDemo() {\r\n  return (\r\n    <div className=\"flex flex-col gap-8\">\r\n      <div className=\"flex flex-col gap-2\">\r\n        <p className=\"text-muted-foreground text-sm\">Basic shortcut</p>\r\n        <Kbd.Root>\r\n          <Kbd.Key>⌘</Kbd.Key>\r\n          <Kbd.Separator />\r\n          <Kbd.Key description=\"Search\">K</Kbd.Key>\r\n        </Kbd.Root>\r\n      </div>\r\n      <div className=\"flex flex-col gap-2\">\r\n        <p className=\"text-muted-foreground text-sm\">Multiple keys</p>\r\n        <Kbd.Root>\r\n          <Kbd.Key>⌘</Kbd.Key>\r\n\r\n          <Kbd.Separator />\r\n          <Kbd.Key>⇧</Kbd.Key>\r\n          <Kbd.Separator />\r\n          <Kbd.Key description=\"Save\">S</Kbd.Key>\r\n        </Kbd.Root>\r\n      </div>\r\n      <div className=\"flex flex-col gap-2\">\r\n        <p className=\"text-muted-foreground text-sm\">With descriptions</p>\r\n        <div className=\"flex flex-col gap-2\">\r\n          <Kbd.Root>\r\n            <Kbd.Key description=\"Windows key\">⊞</Kbd.Key>\r\n            <Kbd.Separator />\r\n            <Kbd.Key description=\"Lock screen\">L</Kbd.Key>\r\n          </Kbd.Root>\r\n          <Kbd.Root>\r\n            <Kbd.Key description=\"Option\">⌥</Kbd.Key>\r\n            <Kbd.Separator />\r\n            <Kbd.Key description=\"Delete word\">⌫</Kbd.Key>\r\n          </Kbd.Root>\r\n        </div>\r\n      </div>\r\n      <div className=\"flex flex-col gap-2\">\r\n        <p className=\"text-muted-foreground text-sm\">Different sizes</p>\r\n        <div className=\"flex items-end gap-4\">\r\n          <Kbd.Root size=\"sm\">\r\n            <Kbd.Key>⌘</Kbd.Key>\r\n            <Kbd.Separator />\r\n            <Kbd.Key>P</Kbd.Key>\r\n          </Kbd.Root>\r\n          <Kbd.Root>\r\n            <Kbd.Key>⌘</Kbd.Key>\r\n            <Kbd.Separator />\r\n            <Kbd.Key>P</Kbd.Key>\r\n          </Kbd.Root>\r\n          <Kbd.Root size=\"lg\">\r\n            <Kbd.Key>⌘</Kbd.Key>\r\n            <Kbd.Separator />\r\n            <Kbd.Key>P</Kbd.Key>\r\n          </Kbd.Root>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

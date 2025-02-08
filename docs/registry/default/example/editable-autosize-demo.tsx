@@ -1,20 +1,16 @@
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import * as Editable from "@/registry/default/ui/editable";
-import * as React from "react";
 
 export default function EditableAutosizeDemo() {
   return (
     <Editable.Root
-      defaultValue="Adjust the size of the textarea with the text inside."
+      defaultValue="Adjust the size of the input with the text inside."
       autosize
     >
-      <Editable.Label>Autosize Editable</Editable.Label>
+      <Editable.Label>Autosize editable</Editable.Label>
       <Editable.Area>
         <Editable.Preview className="whitespace-pre-wrap" />
-        <Editable.Input asChild>
-          <Textarea className="max-h-[120px] min-h-[60px] w-full min-w-[240px]" />
-        </Editable.Input>
+        <Editable.Input />
       </Editable.Area>
       <Editable.Toolbar>
         <Editable.Submit asChild>

@@ -345,7 +345,7 @@ export const Index: Record<string, any> = {
       name: "editable-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: undefined,
+      registryDependencies: ["button"],
       files: [{
         path: "registry/default/example/editable-demo.tsx",
         type: "registry:example",
@@ -361,7 +361,7 @@ export const Index: Record<string, any> = {
       name: "editable-double-click-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: undefined,
+      registryDependencies: ["button"],
       files: [{
         path: "registry/default/example/editable-double-click-demo.tsx",
         type: "registry:example",
@@ -377,7 +377,7 @@ export const Index: Record<string, any> = {
       name: "editable-autosize-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: undefined,
+      registryDependencies: ["button"],
       files: [{
         path: "registry/default/example/editable-autosize-demo.tsx",
         type: "registry:example",
@@ -528,6 +528,54 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/example/mention-custom-trigger-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "kbd-demo": {
+      name: "kbd-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/example/kbd-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/example/kbd-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "kbd-variants-demo": {
+      name: "kbd-variants-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/example/kbd-variants-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/example/kbd-variants-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "kbd-multiple-demo": {
+      name: "kbd-multiple-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/example/kbd-multiple-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/example/kbd-multiple-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",
