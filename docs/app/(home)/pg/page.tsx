@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
+import ComboboxMultipleDemo from "@/registry/default/example/combobox-multiple-demo";
+import TagsInputDemo from "@/registry/default/example/tags-input-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -33,6 +35,8 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
+      <TagsInputDemo />
+      <ComboboxMultipleDemo />
       <Kbd.Root variant="outline">
         <Kbd.Key>Ctrl</Kbd.Key>
         <Kbd.Key>K</Kbd.Key>

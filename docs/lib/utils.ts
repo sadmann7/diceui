@@ -5,6 +5,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function getIsExternalLink(link: string) {
-  return link.startsWith("http") || link.startsWith("https");
+export function getIsExternalLink(href: string) {
+  return href.startsWith("http") || href.startsWith("https");
 }

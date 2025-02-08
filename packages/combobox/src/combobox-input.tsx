@@ -277,6 +277,7 @@ const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
             onMenuClose();
             break;
           case "Backspace":
+          case "Delete":
             if (
               context.multiple &&
               !context.inputValue &&
@@ -288,24 +289,19 @@ const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
                   context.value[context.highlightedBadgeIndex];
                 if (valueToRemove) {
                   context.onItemRemove(valueToRemove);
-                  context.onHighlightedBadgeIndexChange(-1);
+                  const newIndex = Math.max(
+                    0,
+                    context.highlightedBadgeIndex - 1,
+                  );
+                  context.onHighlightedBadgeIndexChange(
+                    context.value.length > 1 ? newIndex : -1,
+                  );
                 }
               } else {
-                context.onHighlightedBadgeIndexChange(context.value.length - 1);
-              }
-            }
-            break;
-          case "Delete":
-            if (
-              context.multiple &&
-              context.highlightedBadgeIndex > -1 &&
-              Array.isArray(context.value)
-            ) {
-              const valueToRemove =
-                context.value[context.highlightedBadgeIndex];
-              if (valueToRemove) {
-                context.onItemRemove(valueToRemove);
-                context.onHighlightedBadgeIndexChange(-1);
+                const lastValue = context.value[context.value.length - 1];
+                if (lastValue) {
+                  context.onItemRemove(lastValue);
+                }
               }
             }
             break;
