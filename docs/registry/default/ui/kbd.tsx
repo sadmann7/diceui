@@ -15,8 +15,8 @@ const KBD_ERROR = {
 } as const;
 
 interface KbdContextValue {
-  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost";
   size?: "default" | "sm" | "lg";
+  variant?: "default" | "outline" | "ghost";
 }
 
 const KbdContext = React.createContext<KbdContextValue | null>(null);
@@ -40,8 +40,8 @@ interface KbdRootProps extends React.ComponentPropsWithoutRef<"kbd"> {
 const KbdRoot = React.forwardRef<HTMLElement, KbdRootProps>(
   (props, forwardedRef) => {
     const {
-      variant = "default",
       size = "default",
+      variant = "default",
       asChild,
       className,
       ...rootProps
@@ -64,14 +64,13 @@ const KbdRoot = React.forwardRef<HTMLElement, KbdRootProps>(
           {...rootProps}
           ref={forwardedRef}
           className={cn(
-            "inline-flex w-fit items-center gap-1 font-medium font-mono text-[10px] text-muted-foreground opacity-100 sm:text-[11px]",
-            variant === "default" && "bg-accent",
-            variant === "outline" && "bg-background",
-            variant === "secondary" && "bg-secondary",
-            variant === "ghost" && "bg-transparent shadow-none",
+            "inline-flex w-fit items-center gap-1 font-medium font-mono text-[10px] text-foreground/70 sm:text-[11px]",
             size === "default" && "h-6 rounded px-1.5",
             size === "sm" && "h-5 rounded-sm px-1",
             size === "lg" && "h-7 rounded-md px-2 ",
+            variant === "default" && "bg-accent",
+            variant === "outline" && "bg-background px-0",
+            variant === "ghost" && "bg-transparent shadow-none",
             className,
           )}
         />
@@ -86,6 +85,7 @@ const KEY_DESCRIPTIONS: Record<string, string> = {
   "⇧": "Shift",
   "⌥": "Option",
   "⌃": "Control",
+  Ctrl: "Control",
   "⌫": "Backspace",
   "⎋": "Escape",
   "↩": "Return",
@@ -126,7 +126,7 @@ const KbdKey = React.forwardRef<HTMLSpanElement, KbdKeyProps>(
         className={cn(
           "inline-flex items-center justify-center rounded",
           context.variant === "outline" &&
-            "border border-border bg-muted/30 px-1 shadow-sm",
+            "min-w-[20px] border border-border bg-muted/30 px-1.5 shadow-sm",
           className,
         )}
       >
@@ -179,7 +179,7 @@ const KbdSeparator = React.forwardRef<HTMLSpanElement, KbdSeparatorProps>(
         aria-hidden="true"
         {...separatorProps}
         ref={forwardedRef}
-        className={cn("text-muted-foreground", className)}
+        className={cn("text-foreground/70", className)}
       >
         {children}
       </SeparatorSlot>

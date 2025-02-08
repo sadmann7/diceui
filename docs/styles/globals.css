@@ -90,6 +90,10 @@
     @apply max-h-[431px];
   }
 
+  .preview-block kbd {
+    @apply !shadow-none !border-none;
+  }
+
   .mdx table {
     @apply rounded-md;
   }

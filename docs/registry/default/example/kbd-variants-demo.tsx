@@ -2,9 +2,9 @@ import * as Kbd from "@/registry/default/ui/kbd";
 
 export default function KbdVariantsDemo() {
   return (
-    <div className="flex flex-col gap-8">
+    <div className="grid gap-6 sm:grid-cols-2">
       <div className="flex flex-col gap-2">
-        <p className="text-muted-foreground text-sm">Default</p>
+        <span className="text-muted-foreground text-sm">Default</span>
         <Kbd.Root>
           <Kbd.Key>⌘</Kbd.Key>
           <Kbd.Separator />
@@ -12,7 +12,7 @@ export default function KbdVariantsDemo() {
         </Kbd.Root>
       </div>
       <div className="flex flex-col gap-2">
-        <p className="text-muted-foreground text-sm">Outline</p>
+        <span className="text-muted-foreground text-sm">Outline</span>
         <Kbd.Root variant="outline">
           <Kbd.Key>⎋</Kbd.Key>
           <Kbd.Separator />
@@ -20,7 +20,7 @@ export default function KbdVariantsDemo() {
         </Kbd.Root>
       </div>
       <div className="flex flex-col gap-2">
-        <p className="text-muted-foreground text-sm">Ghost</p>
+        <span className="text-muted-foreground text-sm">Ghost</span>
         <Kbd.Root variant="ghost">
           <Kbd.Key>⌤</Kbd.Key>
           <Kbd.Separator />
@@ -28,8 +28,8 @@ export default function KbdVariantsDemo() {
         </Kbd.Root>
       </div>
       <div className="flex flex-col gap-2">
-        <p className="text-muted-foreground text-sm">Function keys</p>
-        <div className="flex gap-2">
+        <span className="text-muted-foreground text-sm">Function keys</span>
+        <div className="flex items-center gap-1">
           <Kbd.Root variant="outline">
             <Kbd.Key description="Function key 1">F1</Kbd.Key>
           </Kbd.Root>
@@ -42,8 +42,8 @@ export default function KbdVariantsDemo() {
         </div>
       </div>
       <div className="flex flex-col gap-2">
-        <p className="text-muted-foreground text-sm">Mixed variants</p>
-        <div className="flex gap-2">
+        <span className="text-muted-foreground text-sm">Mixed variants</span>
+        <div className="flex items-center gap-2">
           <Kbd.Root>
             <Kbd.Key>⌘</Kbd.Key>
             <Kbd.Separator />

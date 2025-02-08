@@ -51,7 +51,7 @@ export function ComponentTabs({
     <Tabs items={["Preview", "Code"]} className="rounded-md">
       <Tab
         value="Preview"
-        className={cn({
+        className={cn("preview-block", {
           "focus-visible:outline-none focus-visible:ring-0":
             preventPreviewFocus,
         })}

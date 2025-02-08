@@ -1,14 +1,10 @@
-"use client";
-
 import * as Kbd from "@/registry/default/ui/kbd";
-import * as React from "react";
 
 export default function KbdMultipleDemo() {
   return (
-    <div className="flex flex-col gap-8">
-      {/* Common IDE Shortcuts */}
-      <div className="space-y-2">
-        <p className="text-sm text-muted-foreground">Common IDE shortcuts</p>
+    <div className="grid gap-6 sm:grid-cols-2">
+      <div className="flex flex-col gap-2">
+        <span className="text-muted-foreground text-sm">IDE shortcuts</span>
         <div className="flex flex-col gap-2">
           <Kbd.Root>
             <Kbd.Key>⌘</Kbd.Key>
@@ -26,10 +22,8 @@ export default function KbdMultipleDemo() {
           </Kbd.Root>
         </div>
       </div>
-
-      {/* System Shortcuts */}
-      <div className="space-y-2">
-        <p className="text-sm text-muted-foreground">System shortcuts</p>
+      <div className="flex flex-col gap-2">
+        <span className="text-muted-foreground text-sm">System shortcuts</span>
         <div className="flex flex-col gap-2">
           <Kbd.Root>
             <Kbd.Key>⌘</Kbd.Key>
@@ -50,9 +44,8 @@ export default function KbdMultipleDemo() {
         </div>
       </div>
 
-      {/* Browser Shortcuts */}
-      <div className="space-y-2">
-        <p className="text-sm text-muted-foreground">Browser shortcuts</p>
+      <div className="flex flex-col gap-2">
+        <span className="text-muted-foreground text-sm">Browser shortcuts</span>
         <div className="flex flex-col gap-2">
           <Kbd.Root>
             <Kbd.Key>⌘</Kbd.Key>
@@ -70,10 +63,8 @@ export default function KbdMultipleDemo() {
           </Kbd.Root>
         </div>
       </div>
-
-      {/* With Descriptions */}
-      <div className="space-y-2">
-        <p className="text-sm text-muted-foreground">With descriptions</p>
+      <div className="flex flex-col gap-2">
+        <span className="text-muted-foreground text-sm">With descriptions</span>
         <div className="flex flex-col gap-2">
           <Kbd.Root>
             <Kbd.Key description="Control">⌃</Kbd.Key>

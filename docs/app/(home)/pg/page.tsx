@@ -26,7 +26,6 @@ import {
   ComboboxItem,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
-import * as Editable from "@/registry/default/ui/editable";
 import * as Kbd from "@/registry/default/ui/kbd";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
@@ -34,27 +33,10 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <Kbd.Root variant="outline" size="sm">
+      <Kbd.Root variant="outline">
         <Kbd.Key>Ctrl</Kbd.Key>
         <Kbd.Key>K</Kbd.Key>
       </Kbd.Root>
-      <Editable.Root className="w-full" placeholder="Enter text...">
-        <Editable.Label>Label</Editable.Label>
-        <Editable.Area>
-          <Editable.Preview />
-          <Editable.Input />
-        </Editable.Area>
-        <Editable.Toolbar>
-          <Editable.Cancel asChild>
-            <Button variant="outline" size="sm">
-              Cancel
-            </Button>
-          </Editable.Cancel>
-          <Editable.Submit asChild>
-            <Button size="sm">Submit</Button>
-          </Editable.Submit>
-        </Editable.Toolbar>
-      </Editable.Root>
       <Textarea
         placeholder="Type here..."
         className="min-h-[80px] max-w-[40rem]"
