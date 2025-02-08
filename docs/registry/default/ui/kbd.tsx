@@ -61,6 +61,7 @@ const KbdRoot = React.forwardRef<HTMLElement, KbdRootProps>(
       <KbdContext.Provider value={contextValue}>
         <RootSlot
           role="group"
+          data-slot="kbd"
           {...rootProps}
           ref={forwardedRef}
           className={cn(
@@ -139,6 +140,7 @@ const KbdKey = React.forwardRef<HTMLSpanElement, KbdKeyProps>(
         <KeySlot
           role="presentation"
           aria-label={keyDescription}
+          data-slot="kbd-key"
           {...keyProps}
           ref={forwardedRef}
         >
@@ -177,6 +179,7 @@ const KbdSeparator = React.forwardRef<HTMLSpanElement, KbdSeparatorProps>(
         role="separator"
         aria-orientation="horizontal"
         aria-hidden="true"
+        data-slot="kbd-separator"
         {...separatorProps}
         ref={forwardedRef}
         className={cn("text-foreground/70", className)}
