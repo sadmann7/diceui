@@ -149,6 +149,12 @@ interface ComboboxRootProps<Multiple extends boolean = false>
    */
   dir?: Direction;
 
+  /**
+   * Whether to automatically highlight the first visible item when filtering.
+   * @default false
+   */
+  autoHighlight?: boolean;
+
   /** Whether the combobox is disabled. */
   disabled?: boolean;
 
@@ -230,6 +236,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     inputValue: inputValueProp,
     onInputValueChange,
     onFilter,
+    autoHighlight = false,
     disabled = false,
     exactMatch = false,
     manualFiltering = false,
@@ -294,6 +301,13 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     onChange: (value) => {
       if (disabled || readOnly) return;
       onInputValueChange?.(value);
+      if (autoHighlight && open) {
+        const visibleItems = getItems().filter(
+          (item) => !item.disabled && getIsItemVisible(item.value),
+        );
+        const firstVisibleItem = visibleItems[0] ?? null;
+        setHighlightedItem(firstVisibleItem);
+      }
     },
   });
   const [selectedText, setSelectedText] = React.useState("");
