@@ -27,14 +27,14 @@ const ComboboxBadgeItemDelete = React.forwardRef<
     <Primitive.button
       type="button"
       aria-controls={badgeItemContext.id}
-      aria-disabled={context.disabled}
+      aria-disabled={badgeItemContext.disabled}
+      data-disabled={badgeItemContext.disabled ? "" : undefined}
       data-highlighted={badgeItemContext.isHighlighted ? "" : undefined}
-      data-disabled={context.disabled ? "" : undefined}
-      tabIndex={context.disabled ? undefined : -1}
+      tabIndex={badgeItemContext.disabled ? undefined : -1}
       {...props}
       ref={composedRef}
       onClick={composeEventHandlers(props.onClick, (event) => {
-        if (context.disabled) return;
+        if (badgeItemContext.disabled) return;
 
         event.stopPropagation();
         context.onItemRemove(badgeItemContext.value);
@@ -43,7 +43,7 @@ const ComboboxBadgeItemDelete = React.forwardRef<
         });
       })}
       onPointerDown={composeEventHandlers(props.onPointerDown, (event) => {
-        if (context.disabled) return;
+        if (badgeItemContext.disabled) return;
 
         // prevent implicit pointer capture
         const target = event.target;

@@ -226,8 +226,16 @@ An individual badge representing a selected item in a multi-select combobox.
 <DataAttributesTable
   attributes={[
     {
+      title: "[data-disabled]",
+      value: "Present when the badge is disabled.",
+    },
+    {
       title: "[data-highlighted]",
       value: "Present when the badge is highlighted.",
+    },
+    {
+      title: "[data-orientation]",
+      value: ["horizontal", "vertical"],
     },
   ]}
 />
@@ -244,11 +252,16 @@ A button to remove a selected item from the multi-select combobox.
 <DataAttributesTable
   attributes={[
     {
+      title: "[data-disabled]",
+      value: "Present when the parent badge is disabled.",
+    },
+    {
       title: "[data-highlighted]",
       value: "Present when the parent badge is highlighted.",
     },
   ]}
 />
+
 
 ### Cancel
 
@@ -431,7 +444,7 @@ A visual divider for separating options or groups.
   shortcuts={[
     {
       keys: ["Enter"],
-      description: "When open, selects the highlighted option."
+      description: "When open, selects the highlighted option. When a badge is highlighted in multiple mode, removes the badge."
     },
     {
       keys: ["ArrowUp"],
@@ -440,6 +453,18 @@ A visual divider for separating options or groups.
     {
       keys: ["ArrowDown"],
       description: "When open, highlights the next option."
+    },
+    {
+      keys: ["ArrowLeft"],
+      description: "In multiple mode: When cursor is at start of input, closes the menu and highlights the last badge. When a badge is highlighted, moves highlight to previous badge."
+    },
+    {
+      keys: ["ArrowRight"],
+      description: "In multiple mode: When a badge is highlighted, moves highlight to next badge. If on last badge, removes highlight and focuses input."
+    },
+    {
+      keys: ["Backspace", "Delete"],
+      description: "In multiple mode: When input is empty, removes the last badge. When a badge is highlighted, removes the highlighted badge."
     },
     {
       keys: ["Home"],

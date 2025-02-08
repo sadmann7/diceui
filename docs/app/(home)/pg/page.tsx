@@ -1,3 +1,4 @@
+import { CommandBox } from "@/components/command-box";
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,35 +19,13 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import ComboboxMultipleDemo from "@/registry/default/example/combobox-multiple-demo";
-import * as Kbd from "@/registry/default/ui/kbd";
 import * as Mention from "@diceui/mention";
-
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-  CommandShortcut,
-} from "@/components/ui/command";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
       <ComboboxMultipleDemo />
-      <Command>
-        <CommandInput placeholder="Search tricks..." />
-        <CommandEmpty>No tricks found.</CommandEmpty>
-        <CommandGroup heading="Tricks">
-          {tricks.map((trick) => (
-            <CommandItem key={trick.value} value={trick.value}>
-              {trick.label}
-            </CommandItem>
-          ))}
-        </CommandGroup>
-      </Command>
+      <CommandBox />
       <Textarea
         placeholder="Type here..."
         className="min-h-[80px] max-w-[40rem]"

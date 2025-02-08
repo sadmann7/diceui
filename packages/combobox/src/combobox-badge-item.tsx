@@ -15,6 +15,7 @@ interface ComboboxBadgeItemContextValue {
   value: string;
   isHighlighted: boolean;
   position: number;
+  disabled: boolean;
 }
 
 const [ComboboxBadgeItemProvider, useComboboxBadgeItemContext] =
@@ -24,13 +25,19 @@ interface ComboboxBadgeItemProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
   /** The value of the badge item. */
   value: string;
+
+  /**
+   * Whether the badge item is disabled.
+   * @default false
+   */
+  disabled?: boolean;
 }
 
 const ComboboxBadgeItem = React.forwardRef<
   React.ElementRef<typeof Primitive.div>,
   ComboboxBadgeItemProps
 >((props, forwardedRef) => {
-  const { value, ...badgeItemProps } = props;
+  const { value, disabled, ...badgeItemProps } = props;
   const id = useId();
   const context = useComboboxContext(BADGE_ITEM_NAME);
   const badgeListContext = useComboboxBadgeListContext(BADGE_ITEM_NAME);
@@ -41,28 +48,31 @@ const ComboboxBadgeItem = React.forwardRef<
   const isHighlighted = index === context.highlightedBadgeIndex;
   const position = index + 1;
 
+  const isDisabled = disabled || context.disabled;
+
   return (
     <ComboboxBadgeItemProvider
       value={value}
       id={id}
       isHighlighted={isHighlighted}
       position={position}
+      disabled={isDisabled}
     >
       <Primitive.div
         role="option"
         id={id}
         aria-selected={isHighlighted}
-        aria-disabled={context.disabled}
+        aria-disabled={isDisabled}
         aria-orientation={badgeListContext.orientation}
         aria-posinset={position}
         aria-setsize={badgeListContext.badgeCount}
+        data-disabled={isDisabled ? "" : undefined}
         data-highlighted={isHighlighted ? "" : undefined}
-        data-disabled={context.disabled ? "" : undefined}
         data-orientation={badgeListContext.orientation}
         {...badgeItemProps}
         ref={forwardedRef}
         onFocus={composeEventHandlers(props.onFocus, () => {
-          if (!context.disabled) {
+          if (!isDisabled) {
             context.onHighlightedBadgeIndexChange(index);
           }
         })}
