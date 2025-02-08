@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, test, vi } from "vitest";
 
@@ -31,16 +37,24 @@ function getInputPlaceholder(multiple?: boolean) {
 
 describe("Combobox", () => {
   function renderCombobox<T extends boolean>(
-    props: Combobox.ComboboxRootProps<T> = {},
+    props: Combobox.ComboboxRootProps<T> & {
+      badgeListOrientation?: "horizontal" | "vertical";
+    } = {},
   ) {
-    const { value, multiple, ...comboboxProps } = props;
+    const {
+      value,
+      multiple,
+      children,
+      badgeListOrientation = "horizontal",
+      ...comboboxProps
+    } = props;
 
     return render(
       <Combobox.Root value={value} multiple={multiple} {...comboboxProps}>
         <Combobox.Label>Favorite tricks</Combobox.Label>
         <Combobox.Anchor data-testid="anchor">
           {multiple ? (
-            <Combobox.BadgeList>
+            <Combobox.BadgeList orientation={badgeListOrientation}>
               {Array.isArray(value) &&
                 value.map((value) => (
                   <Combobox.BadgeItem key={value} value={value}>
@@ -443,6 +457,115 @@ describe("Combobox", () => {
     });
   });
 
+  test("handles badge list orientation", async () => {
+    // Test default horizontal orientation
+    renderCombobox({
+      value: ["kickflip", "heelflip"],
+      multiple: true,
+    });
+
+    const horizontalBadgeList = screen.getByRole("listbox");
+    expect(horizontalBadgeList).toHaveAttribute(
+      "data-orientation",
+      "horizontal",
+    );
+    expect(horizontalBadgeList).toHaveAttribute(
+      "aria-orientation",
+      "horizontal",
+    );
+
+    // Cleanup and test vertical orientation
+    cleanup();
+    renderCombobox({
+      value: ["kickflip", "heelflip"],
+      multiple: true,
+      badgeListOrientation: "vertical",
+    });
+
+    const verticalBadgeList = screen.getByRole("listbox");
+    expect(verticalBadgeList).toHaveAttribute("data-orientation", "vertical");
+    expect(verticalBadgeList).toHaveAttribute("aria-orientation", "vertical");
+  });
+
+  test("handles badge item highlighting", async () => {
+    renderCombobox({
+      value: ["kickflip", "heelflip"],
+      multiple: true,
+    });
+
+    const badges = screen.getAllByRole("option");
+
+    // Focus first badge
+    const firstBadge = badges[0];
+    if (firstBadge) {
+      fireEvent.focus(firstBadge);
+      await waitFor(() => {
+        expect(firstBadge).toHaveAttribute("data-highlighted", "");
+        expect(firstBadge).toHaveAttribute("aria-selected", "true");
+      });
+    }
+
+    // Focus second badge
+    const secondBadge = badges[1];
+    if (secondBadge) {
+      fireEvent.focus(secondBadge);
+      await waitFor(() => {
+        expect(secondBadge).toHaveAttribute("data-highlighted", "");
+        expect(secondBadge).toHaveAttribute("aria-selected", "true");
+        expect(firstBadge).not.toHaveAttribute("data-highlighted");
+        expect(firstBadge).not.toHaveAttribute("aria-selected", "true");
+      });
+
+      // Blur should remove highlight
+      fireEvent.blur(secondBadge);
+      await waitFor(() => {
+        expect(secondBadge).not.toHaveAttribute("data-highlighted");
+        expect(secondBadge).not.toHaveAttribute("aria-selected", "true");
+      });
+    }
+  });
+
+  test("handles badge list keyboard navigation", async () => {
+    const onValueChange = vi.fn();
+
+    renderCombobox({
+      value: ["kickflip", "heelflip"],
+      onValueChange,
+      multiple: true,
+    });
+
+    const input = screen.getByPlaceholderText(getInputPlaceholder(true));
+    const badges = screen.getAllByRole("option");
+
+    // Focus input and navigate to badges
+    fireEvent.focus(input);
+    fireEvent.keyDown(input, { key: "ArrowLeft" });
+
+    // Check if the last badge is highlighted
+    await waitFor(() => {
+      expect(badges[1]).toHaveAttribute("data-highlighted", "");
+      expect(badges[1]).toHaveAttribute("aria-selected", "true");
+    });
+
+    // Navigate to previous badge
+    fireEvent.keyDown(input, { key: "ArrowLeft" });
+    await waitFor(() => {
+      expect(badges[0]).toHaveAttribute("data-highlighted", "");
+      expect(badges[0]).toHaveAttribute("aria-selected", "true");
+    });
+
+    // Delete highlighted badge with Enter
+    fireEvent.keyDown(input, { key: "Enter" });
+    expect(onValueChange).toHaveBeenCalledWith(["heelflip"]);
+
+    // Navigate back to input
+    fireEvent.keyDown(input, { key: "ArrowRight" });
+    await waitFor(() => {
+      expect(badges[0]).not.toHaveAttribute("data-highlighted");
+      expect(badges[0]).not.toHaveAttribute("aria-selected", "true");
+    });
+  });
+
   test("supports accessibility features", () => {
     renderCombobox();
 
@@ -452,5 +575,25 @@ describe("Combobox", () => {
     expect(input).toHaveAttribute("aria-autocomplete", "list");
     expect(input).toHaveAttribute("aria-expanded", "false");
     expect(label).toHaveAttribute("for", input.id);
+  });
+
+  test("handles badge item accessibility attributes", async () => {
+    renderCombobox({
+      value: ["kickflip", "heelflip"],
+      multiple: true,
+    });
+
+    const badges = screen.getAllByRole("option");
+    expect(badges).toHaveLength(2);
+
+    // First badge
+    expect(badges[0]).toHaveAttribute("aria-posinset", "1");
+    expect(badges[0]).toHaveAttribute("aria-setsize", "2");
+    expect(badges[0]).toHaveAttribute("aria-orientation", "horizontal");
+    expect(badges[0]).toHaveAttribute("data-orientation", "horizontal");
+
+    // Second badge
+    expect(badges[1]).toHaveAttribute("aria-posinset", "2");
+    expect(badges[1]).toHaveAttribute("aria-setsize", "2");
   });
 });
