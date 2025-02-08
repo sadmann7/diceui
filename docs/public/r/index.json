@@ -69,6 +69,16 @@
     ]
   },
   {
+    "name": "kbd",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/kbd.tsx",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
     "name": "masonry",
     "type": "registry:ui",
     "dependencies": [

@@ -6,6 +6,7 @@ import { Kbd } from "@/components/kbd";
 import { KeyboardShortcutsTable } from "@/components/keyboard-shortcuts-table";
 import { Table, TableCell, TableHead, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+import type { Page } from "fumadocs-core/source";
 import { createTypeTable } from "fumadocs-typescript/ui";
 import { CodeBlock, Pre } from "fumadocs-ui/components/codeblock";
 import { Heading } from "fumadocs-ui/components/heading";
@@ -16,37 +17,41 @@ import type { MDXComponents } from "mdx/types";
 
 const { AutoTypeTable } = createTypeTable();
 
-export function useMDXComponents(components: MDXComponents): MDXComponents {
+export function useMdxComponents(
+  components: Partial<MDXComponents>,
+): MDXComponents {
+  const headings = Object.fromEntries(
+    ["h1", "h2", "h3", "h4", "h5", "h6"].map((level) => [
+      level,
+      (props: React.ComponentProps<typeof Heading>) => (
+        <Heading
+          as={level as React.ComponentProps<typeof Heading>["as"]}
+          {...props}
+        />
+      ),
+    ]),
+  );
+
   return {
     ...defaultComponents,
     ...components,
-    h1: (props) => <Heading as="h1" {...props} />,
-    h2: (props) => <Heading as="h2" {...props} />,
-    h3: (props) => <Heading as="h3" {...props} />,
-    h4: (props) => <Heading as="h4" {...props} />,
-    h5: (props) => <Heading as="h5" {...props} />,
-    h6: (props) => <Heading as="h6" {...props} />,
-    table: ({
-      className,
-      ...props
-    }: React.HTMLAttributes<HTMLTableElement>) => (
+    ...headings,
+    table: ({ className, ...props }) => (
       <Table className={cn(className)} mdx {...props} />
     ),
     tr: TableRow,
     th: TableHead,
     td: TableCell,
-    Tabs: ({ className, ...props }: React.ComponentProps<typeof Tabs>) => (
+    Tabs: ({ className, ...props }) => (
       <Tabs className={cn("rounded-md", className)} {...props} />
     ),
     Tab,
-    pre: ({ ...props }: React.ComponentProps<typeof Pre>) => (
+    pre: (props) => (
       <CodeBlock {...props}>
         <Pre>{props.children}</Pre>
       </CodeBlock>
     ),
-    kbd: ({ ...props }: React.HTMLAttributes<HTMLSpanElement>) => (
-      <Kbd variant="outline" {...props} />
-    ),
+    kbd: (props) => <Kbd variant="outline" {...props} />,
     ComponentTabs,
     ComponentSource,
     Steps,
@@ -60,4 +65,18 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     DataAttributesTable,
     KeyboardShortcutsTable,
   };
+}
+
+interface MdxProps {
+  page: Page & {
+    data: { body: React.ComponentType<{ components: MDXComponents }> };
+  };
+  components?: Partial<MDXComponents>;
+}
+
+export function Mdx({ page, components = {} }: MdxProps) {
+  const Comp = page.data.body;
+  const mdxComponents = useMdxComponents(components);
+
+  return <Comp components={mdxComponents} />;
 }

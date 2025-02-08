@@ -219,6 +219,36 @@ export const examples: Registry = [
     ],
   },
   {
+    name: "kbd-demo",
+    type: "registry:example",
+    files: [
+      {
+        path: "example/kbd-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "kbd-variants-demo",
+    type: "registry:example",
+    files: [
+      {
+        path: "example/kbd-variants-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "kbd-multiple-demo",
+    type: "registry:example",
+    files: [
+      {
+        path: "example/kbd-multiple-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "masonry-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot"],
@@ -297,36 +327,6 @@ export const examples: Registry = [
     files: [
       {
         path: "example/mention-custom-trigger-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "kbd-demo",
-    type: "registry:example",
-    files: [
-      {
-        path: "example/kbd-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "kbd-variants-demo",
-    type: "registry:example",
-    files: [
-      {
-        path: "example/kbd-variants-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "kbd-multiple-demo",
-    type: "registry:example",
-    files: [
-      {
-        path: "example/kbd-multiple-demo.tsx",
         type: "registry:example",
       },
     ],

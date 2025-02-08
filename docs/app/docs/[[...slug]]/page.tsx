@@ -1,16 +1,13 @@
-import { useMDXComponents } from "@/components/mdx-components";
-import { buttonVariants } from "@/components/ui/button";
+import { DynamicLink } from "@/components/dynamic-link";
+import { Mdx } from "@/components/mdx-components";
 import { source } from "@/lib/source";
-import { cn } from "@/lib/utils";
 import {
   DocsBody,
   DocsDescription,
   DocsPage,
   DocsTitle,
 } from "fumadocs-ui/page";
-import { ExternalLink } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 interface DocPageParams {
@@ -43,8 +40,6 @@ export default async function DocPage(props: DocPageParams) {
 
   if (!page) notFound();
 
-  const MDX = page.data.body;
-
   return (
     <DocsPage toc={page.data.toc} full={page.data.full}>
       <div className="flex flex-col gap-2">
@@ -54,41 +49,15 @@ export default async function DocPage(props: DocPageParams) {
         </DocsDescription>
         <div className="flex items-center gap-2">
           {page.data.links?.doc ? (
-            <Link
-              href={page.data.links.doc}
-              target="_blank"
-              className={cn(
-                buttonVariants({
-                  variant: "outline",
-                  size: "sm",
-                  className: "h-6 rounded-sm px-2 py-0.5 [&_svg]:size-3.5",
-                }),
-              )}
-            >
-              Docs
-              <ExternalLink aria-hidden="true" />
-            </Link>
+            <DynamicLink href={page.data.links.doc}>Docs</DynamicLink>
           ) : null}
           {page.data.links?.api ? (
-            <Link
-              href={page.data.links.api}
-              target="_blank"
-              className={cn(
-                buttonVariants({
-                  variant: "outline",
-                  size: "sm",
-                  className: "h-6 rounded-sm px-2 py-0.5 [&_svg]:size-3.5",
-                }),
-              )}
-            >
-              API
-              <ExternalLink aria-hidden="true" />
-            </Link>
+            <DynamicLink href={page.data.links.api}>API</DynamicLink>
           ) : null}
         </div>
       </div>
       <DocsBody>
-        <MDX components={useMDXComponents({})} />
+        <Mdx page={page} />
       </DocsBody>
     </DocsPage>
   );
