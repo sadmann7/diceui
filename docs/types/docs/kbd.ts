@@ -3,15 +3,15 @@ import type { EmptyProps } from "@/types";
 export interface RootProps extends EmptyProps<"kbd"> {
   /**
    * The size of the keyboard key.
-   * @default "md"
+   * @default "default"
    */
-  size?: "sm" | "md" | "lg";
+  size?: "default" | "sm" | "lg";
 
   /**
    * The visual style of the keyboard key.
-   * @default "outline"
+   * @default "default"
    */
-  variant?: "outline" | "ghost";
+  variant?: "default" | "outline" | "ghost";
 
   /**
    * Whether to merge props with child component.
