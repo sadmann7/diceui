@@ -566,6 +566,105 @@ describe("Combobox", () => {
     });
   });
 
+  test("handles backspace and delete with empty input to remove last badge", async () => {
+    const onValueChange = vi.fn();
+    renderCombobox({
+      value: ["kickflip", "heelflip"],
+      multiple: true,
+      onValueChange,
+    });
+
+    const input = screen.getByPlaceholderText(getInputPlaceholder(true));
+
+    // Press backspace with empty input
+    fireEvent.keyDown(input, { key: "Backspace" });
+    expect(onValueChange).toHaveBeenCalledWith(["kickflip"]);
+
+    // Reset mock and test delete key
+    onValueChange.mockReset();
+    fireEvent.keyDown(input, { key: "Delete" });
+    expect(onValueChange).toHaveBeenCalledWith(["kickflip"]);
+  });
+
+  test("handles backspace and delete with highlighted badge", async () => {
+    const onValueChange = vi.fn();
+    renderCombobox({
+      value: ["kickflip", "heelflip", "fs-540"],
+      multiple: true,
+      onValueChange,
+    });
+
+    const input = screen.getByPlaceholderText(getInputPlaceholder(true));
+    const badges = screen.getAllByRole("option");
+
+    // Navigate to highlight second badge
+    fireEvent.focus(input);
+    fireEvent.keyDown(input, { key: "ArrowLeft" });
+    fireEvent.keyDown(input, { key: "ArrowLeft" });
+
+    await waitFor(() => {
+      expect(badges[1]).toHaveAttribute("data-highlighted", "");
+    });
+
+    // Delete highlighted badge with backspace
+    fireEvent.keyDown(input, { key: "Backspace" });
+    expect(onValueChange).toHaveBeenCalledWith(["kickflip", "fs-540"]);
+
+    // Verify highlighted index updates
+    const updatedBadges = screen.getAllByRole("option");
+    await waitFor(() => {
+      expect(updatedBadges[0]).toHaveAttribute("data-highlighted", "");
+    });
+
+    // Delete highlighted badge with delete key
+    onValueChange.mockReset();
+    fireEvent.keyDown(input, { key: "Delete" });
+    expect(onValueChange).toHaveBeenCalledWith(["heelflip", "fs-540"]);
+
+    // Return focus to input to clear highlight
+    fireEvent.keyDown(input, { key: "ArrowRight" });
+    fireEvent.keyDown(input, { key: "ArrowRight" });
+    fireEvent.focus(input);
+
+    // Verify highlight is removed
+    const finalBadges = screen.getAllByRole("option");
+    await waitFor(() => {
+      expect(finalBadges[0]).not.toHaveAttribute("data-highlighted");
+    });
+  });
+
+  test("handles backspace and delete with non-empty input", async () => {
+    const onValueChange = vi.fn();
+    const onInputValueChange = vi.fn();
+
+    renderCombobox({
+      value: ["kickflip", "heelflip"],
+      multiple: true,
+      onValueChange,
+      onInputValueChange,
+    });
+
+    const input = screen.getByPlaceholderText(getInputPlaceholder(true));
+
+    // Type something in input and ensure the value is set
+    fireEvent.focus(input);
+    fireEvent.change(input, { target: { value: "test" } });
+
+    await waitFor(() => {
+      expect(onInputValueChange).toHaveBeenCalledWith("test");
+    });
+
+    onValueChange.mockReset();
+
+    // Press backspace with non-empty input - should not remove badge
+    fireEvent.keyDown(input, { key: "Backspace" });
+    expect(onValueChange).not.toHaveBeenCalled();
+
+    // Press delete with non-empty input - should not remove badge
+    fireEvent.keyDown(input, { key: "Delete" });
+    expect(onValueChange).not.toHaveBeenCalled();
+  });
+
   test("supports accessibility features", () => {
     renderCombobox();
 
