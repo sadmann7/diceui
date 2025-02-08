@@ -419,6 +419,30 @@ describe("Combobox", () => {
     expect(content).toHaveAttribute("dir", "rtl");
   });
 
+  test("handles autoHighlight", async () => {
+    renderCombobox({ autoHighlight: true });
+    const input = screen.getByPlaceholderText(getInputPlaceholder());
+    const trigger = screen.getByTestId("trigger");
+
+    // Open the combobox
+    fireEvent.click(trigger);
+
+    // First option should be automatically highlighted
+    await waitFor(() => {
+      const kickflipOption = screen.getByRole("option", { name: "Kickflip" });
+      expect(kickflipOption).toHaveAttribute("data-highlighted", "");
+      expect(input).toHaveAttribute("aria-activedescendant", kickflipOption.id);
+    });
+
+    // Type to filter and check if highlight updates
+    fireEvent.change(input, { target: { value: "heel" } });
+    await waitFor(() => {
+      const heelflipOption = screen.getByRole("option", { name: "Heelflip" });
+      expect(heelflipOption).toHaveAttribute("data-highlighted", "");
+      expect(input).toHaveAttribute("aria-activedescendant", heelflipOption.id);
+    });
+  });
+
   test("supports accessibility features", () => {
     renderCombobox();
 

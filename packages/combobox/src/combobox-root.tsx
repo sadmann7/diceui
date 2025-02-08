@@ -69,6 +69,7 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   getIsListEmpty: (manual?: boolean) => boolean;
   hasAnchor: boolean;
   onHasAnchorChange: (value: boolean) => void;
+  autoHighlight: boolean;
   disabled: boolean;
   loop: boolean;
   manualFiltering: boolean;
@@ -302,14 +303,11 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       if (disabled || readOnly) return;
       onInputValueChange?.(value);
       if (autoHighlight && open) {
-        const visibleItems = getItems().filter(
-          (item) => !item.disabled && getIsItemVisible(item.value),
-        );
-        const firstVisibleItem = visibleItems[0] ?? null;
-        setHighlightedItem(firstVisibleItem);
+        onHighlightMove("first");
       }
     },
   });
+
   const [selectedText, setSelectedText] = React.useState("");
   const [highlightedItem, setHighlightedItem] = React.useState<CollectionItem<
     ItemElement,
@@ -395,6 +393,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       getIsListEmpty={getIsListEmpty}
       hasAnchor={hasAnchor}
       onHasAnchorChange={onHasAnchorChange}
+      autoHighlight={autoHighlight}
       disabled={disabled}
       loop={loop}
       manualFiltering={manualFiltering}
