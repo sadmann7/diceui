@@ -69,6 +69,8 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
   getIsListEmpty: (manual?: boolean) => boolean;
   hasAnchor: boolean;
   onHasAnchorChange: (value: boolean) => void;
+  hasBadgeList: boolean;
+  onHasBadgeListChange: (value: boolean) => void;
   autoHighlight: boolean;
   disabled: boolean;
   loop: boolean;
@@ -273,6 +275,14 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     onTriggerChange(node),
   );
 
+  const [selectedText, setSelectedText] = React.useState("");
+  const [highlightedItem, setHighlightedItem] = React.useState<CollectionItem<
+    ItemElement,
+    ItemData
+  > | null>(null);
+  const [highlightedBadgeIndex, setHighlightedBadgeIndex] = React.useState(-1);
+  const [hasBadgeList, setHasBadgeList] = React.useState(false);
+
   const [open = false, setOpen] = useControllableState({
     prop: openProp,
     defaultProp: defaultOpen,
@@ -307,13 +317,6 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       }
     },
   });
-
-  const [selectedText, setSelectedText] = React.useState("");
-  const [highlightedItem, setHighlightedItem] = React.useState<CollectionItem<
-    ItemElement,
-    ItemData
-  > | null>(null);
-  const [highlightedBadgeIndex, setHighlightedBadgeIndex] = React.useState(-1);
 
   const { filterStore, onItemsFilter, getIsItemVisible, getIsListEmpty } =
     useFilterStore({
@@ -393,6 +396,8 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
       getIsListEmpty={getIsListEmpty}
       hasAnchor={hasAnchor}
       onHasAnchorChange={onHasAnchorChange}
+      hasBadgeList={hasBadgeList}
+      onHasBadgeListChange={setHasBadgeList}
       autoHighlight={autoHighlight}
       disabled={disabled}
       loop={loop}

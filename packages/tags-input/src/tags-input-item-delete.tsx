@@ -21,7 +21,7 @@ const TagsInputItemDelete = React.forwardRef<
   return (
     <Primitive.button
       type="button"
-      tabIndex={-1}
+      tabIndex={disabled ? undefined : -1}
       aria-labelledby={itemContext.textId}
       aria-controls={itemContext.id}
       aria-current={itemContext.isHighlighted}

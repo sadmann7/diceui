@@ -97,12 +97,12 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
         onItemLabelChange={onLabelChange}
       >
         <Primitive.div
-          {...{ [DATA_ITEM_ATTR]: "" }}
-          id={id}
           role="option"
+          id={id}
           aria-selected={isSelected}
           aria-disabled={isDisabled}
           aria-labelledby={textId}
+          {...{ [DATA_ITEM_ATTR]: "" }}
           data-state={isSelected ? "checked" : "unchecked"}
           data-highlighted={
             context.highlightedItem?.ref.current?.id === id ? "" : undefined

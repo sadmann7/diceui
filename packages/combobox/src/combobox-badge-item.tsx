@@ -5,6 +5,7 @@ import {
   useId,
 } from "@diceui/shared";
 import * as React from "react";
+import { useComboboxBadgeListContext } from "./combobox-badge-list";
 import { useComboboxContext } from "./combobox-root";
 
 const BADGE_ITEM_NAME = "ComboboxBadgeItem";
@@ -13,6 +14,7 @@ interface ComboboxBadgeItemContextValue {
   id: string;
   value: string;
   isHighlighted: boolean;
+  position: number;
 }
 
 const [ComboboxBadgeItemProvider, useComboboxBadgeItemContext] =
@@ -31,21 +33,32 @@ const ComboboxBadgeItem = React.forwardRef<
   const { value, ...badgeItemProps } = props;
   const id = useId();
   const context = useComboboxContext(BADGE_ITEM_NAME);
+  const badgeListContext = useComboboxBadgeListContext(BADGE_ITEM_NAME);
+
   const index = Array.isArray(context.value)
     ? context.value.indexOf(value)
     : -1;
   const isHighlighted = index === context.highlightedBadgeIndex;
+  const position = index + 1;
 
   return (
     <ComboboxBadgeItemProvider
       value={value}
       id={id}
       isHighlighted={isHighlighted}
+      position={position}
     >
       <Primitive.div
-        id={id}
         role="option"
+        id={id}
+        aria-selected={isHighlighted}
+        aria-disabled={context.disabled}
+        aria-orientation={badgeListContext.orientation}
+        aria-posinset={position}
+        aria-setsize={badgeListContext.badgeCount}
         data-highlighted={isHighlighted ? "" : undefined}
+        data-disabled={context.disabled ? "" : undefined}
+        data-orientation={badgeListContext.orientation}
         {...badgeItemProps}
         ref={forwardedRef}
         onFocus={composeEventHandlers(props.onFocus, () => {
@@ -69,4 +82,4 @@ const BadgeItem = ComboboxBadgeItem;
 
 export { BadgeItem, ComboboxBadgeItem, useComboboxBadgeItemContext };
 
-export type { ComboboxBadgeItemProps };
+export type { ComboboxBadgeItemProps, ComboboxBadgeItemContextValue };

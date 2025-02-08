@@ -64,16 +64,16 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
         displayValue={displayValue}
       >
         <Primitive.div
-          {...{ [DATA_ITEM_ATTR]: "" }}
+          id={id}
           aria-labelledby={textId}
           aria-current={isHighlighted}
           aria-disabled={itemDisabled}
+          {...{ [DATA_ITEM_ATTR]: "" }}
           data-state={isHighlighted ? "active" : "inactive"}
           data-highlighted={isHighlighted ? "" : undefined}
           data-editing={isEditing ? "" : undefined}
           data-editable={context.editable ? "" : undefined}
           data-disabled={itemDisabled ? "" : undefined}
-          id={id}
           {...itemProps}
           ref={ref}
           onClick={composeEventHandlers(itemProps.onClick, (event) => {

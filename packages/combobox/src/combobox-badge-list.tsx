@@ -1,8 +1,18 @@
-import { Primitive } from "@diceui/shared";
+import { Primitive, createContext, useComposedRefs } from "@diceui/shared";
 import * as React from "react";
 import { useComboboxContext } from "./combobox-root";
 
 const BADGE_LIST_NAME = "ComboboxBadgeList";
+
+interface ComboboxBadgeListContextValue {
+  orientation: "horizontal" | "vertical";
+  badgeCount: number;
+}
+
+const [ComboboxBadgeListProvider, useComboboxBadgeListContext] =
+  createContext<ComboboxBadgeListContextValue>(BADGE_LIST_NAME);
+
+type BadgeListElement = React.ElementRef<typeof Primitive.div>;
 
 interface ComboboxBadgeListProps
   extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
@@ -20,7 +30,7 @@ interface ComboboxBadgeListProps
 }
 
 const ComboboxBadgeList = React.forwardRef<
-  React.ElementRef<typeof Primitive.div>,
+  BadgeListElement,
   ComboboxBadgeListProps
 >((props, forwardedRef) => {
   const {
@@ -29,18 +39,30 @@ const ComboboxBadgeList = React.forwardRef<
     ...badgeListProps
   } = props;
   const context = useComboboxContext(BADGE_LIST_NAME);
+  const values = Array.isArray(context.value) ? context.value : [];
+  const composedRef = useComposedRefs(forwardedRef, (node) => {
+    // If the list is not rendered, don't need to consider badge list keyboard navigation
+    context.onHasBadgeListChange(!!node);
+  });
 
-  if (!forceMount && (!context.multiple || context.value.length === 0)) {
+  if (!forceMount && (!context.multiple || values.length === 0)) {
     return null;
   }
 
   return (
-    <Primitive.div
-      role="listbox"
-      data-orientation={orientation}
-      {...badgeListProps}
-      ref={forwardedRef}
-    />
+    <ComboboxBadgeListProvider
+      orientation={orientation}
+      badgeCount={values.length}
+    >
+      <Primitive.div
+        role="listbox"
+        aria-multiselectable={context.multiple}
+        aria-orientation={orientation}
+        data-orientation={orientation}
+        {...badgeListProps}
+        ref={composedRef}
+      />
+    </ComboboxBadgeListProvider>
   );
 });
 
@@ -48,6 +70,6 @@ ComboboxBadgeList.displayName = BADGE_LIST_NAME;
 
 const BadgeList = ComboboxBadgeList;
 
-export { BadgeList, ComboboxBadgeList };
+export { BadgeList, ComboboxBadgeList, useComboboxBadgeListContext };
 
-export type { ComboboxBadgeListProps };
+export type { ComboboxBadgeListProps, ComboboxBadgeListContextValue };

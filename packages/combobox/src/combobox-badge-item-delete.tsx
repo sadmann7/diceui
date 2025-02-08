@@ -27,7 +27,9 @@ const ComboboxBadgeItemDelete = React.forwardRef<
     <Primitive.button
       type="button"
       aria-controls={badgeItemContext.id}
+      aria-disabled={context.disabled}
       data-highlighted={badgeItemContext.isHighlighted ? "" : undefined}
+      data-disabled={context.disabled ? "" : undefined}
       tabIndex={context.disabled ? undefined : -1}
       {...props}
       ref={composedRef}

@@ -71,10 +71,10 @@ const MentionItem = React.forwardRef<ItemElement, MentionItemProps>(
     return (
       <MentionItemProvider label={label} value={value} disabled={isDisabled}>
         <Primitive.div
-          {...{ [DATA_ITEM_ATTR]: "" }}
-          id={id}
           role="option"
+          id={id}
           aria-selected={isSelected}
+          {...{ [DATA_ITEM_ATTR]: "" }}
           data-selected={isSelected ? "" : undefined}
           data-highlighted={
             context.highlightedItem?.ref.current?.id === id ? "" : undefined

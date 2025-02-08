@@ -154,7 +154,11 @@ const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
 
         switch (event.key) {
           case "Enter":
-            if (context.multiple && context.highlightedBadgeIndex > -1) {
+            if (
+              context.multiple &&
+              context.hasBadgeList &&
+              context.highlightedBadgeIndex > -1
+            ) {
               const valueToRemove =
                 context.value[context.highlightedBadgeIndex];
               if (valueToRemove) {
@@ -200,8 +204,7 @@ const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
             }
             break;
           case "ArrowLeft": {
-            if (!context.multiple) return;
-            console.log("ArrowLeft");
+            if (!context.multiple || !context.hasBadgeList) return;
 
             const input = event.currentTarget;
             const isAtStart =
@@ -234,8 +237,8 @@ const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
             break;
           }
           case "ArrowRight": {
-            if (!context.multiple) return;
-            console.log("ArrowRight");
+            if (!context.multiple || !context.hasBadgeList) return;
+
             const input = event.currentTarget;
             const isAtEnd =
               input.selectionStart === input.value.length &&
@@ -280,6 +283,7 @@ const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
           case "Delete":
             if (
               context.multiple &&
+              context.hasBadgeList &&
               !context.inputValue &&
               Array.isArray(context.value) &&
               context.value.length > 0
@@ -325,8 +329,6 @@ const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
         context.highlightedItem,
         context.onHighlightMove,
         context.selectedText,
-        context.multiple,
-        context.modal,
         context.highlightedBadgeIndex,
         context.onHighlightedBadgeIndexChange,
         context.onItemRemove,
@@ -334,6 +336,9 @@ const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
         context.onValueChange,
         context.filterStore,
         context.disabled,
+        context.hasBadgeList,
+        context.modal,
+        context.multiple,
         context.readOnly,
       ],
     );
