@@ -1,6 +1,15 @@
-import { CommandBox } from "@/components/command-box";
+"use client";
+
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,13 +28,63 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import ComboboxMultipleDemo from "@/registry/default/example/combobox-multiple-demo";
+import {
+  Combobox,
+  ComboboxAnchor,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxTrigger,
+} from "@/registry/default/ui/combobox";
 import * as Mention from "@diceui/mention";
+import { ChevronDown } from "lucide-react";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
       <ComboboxMultipleDemo />
-      <CommandBox />
+      <Combobox className="w-[15rem]" autoHighlight>
+        <ComboboxAnchor>
+          <ComboboxInput placeholder="Search tricks..." />
+          <ComboboxTrigger>
+            <ChevronDown className="h-4 w-4" />
+          </ComboboxTrigger>
+        </ComboboxAnchor>
+        <ComboboxContent>
+          <ComboboxEmpty>No tricks found</ComboboxEmpty>
+          {tricks.map((trick) => (
+            <ComboboxItem
+              key={trick.value}
+              value={trick.value}
+              onSelect={(value) => {
+                console.log(value);
+              }}
+            >
+              {trick.label}
+            </ComboboxItem>
+          ))}
+        </ComboboxContent>
+      </Combobox>
+      <Command className="max-w-[15rem] border">
+        <CommandInput placeholder="Search tricks..." />
+        <CommandEmpty>No tricks found.</CommandEmpty>
+        <CommandList>
+          <CommandGroup heading="Tricks">
+            {tricks.map((trick) => (
+              <CommandItem
+                key={trick.value}
+                value={trick.value}
+                onSelect={(value) => {
+                  console.log(value);
+                }}
+              >
+                {trick.label}
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </CommandList>
+      </Command>
       <Textarea
         placeholder="Type here..."
         className="min-h-[80px] max-w-[40rem]"
@@ -61,7 +120,9 @@ export default function PlaygroundPage() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
-          <DropdownMenuItem>Apple</DropdownMenuItem>
+          <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
+            Apple
+          </DropdownMenuItem>
           <DropdownMenuItem>Banana</DropdownMenuItem>
           <DropdownMenuItem>Blueberry</DropdownMenuItem>
           <DropdownMenuItem>Grapes</DropdownMenuItem>
@@ -76,7 +137,14 @@ export default function PlaygroundPage() {
           <SelectGroup>
             <SelectLabel>Tricks</SelectLabel>
             {tricks.map((trick) => (
-              <SelectItem key={trick.value} value={trick.value}>
+              <SelectItem
+                key={trick.value}
+                value={trick.value}
+                onSelect={(event) => {
+                  event.preventDefault();
+                  console.log(event);
+                }}
+              >
                 {trick.label}
               </SelectItem>
             ))}

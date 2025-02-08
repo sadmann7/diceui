@@ -2,10 +2,6 @@
 
 ## 0.5.0
 
-### Minor Changes
-
-- 91c8b92: Better `Combobox.BadgeList` navigation and action
-
 ### Patch Changes
 
 - Updated dependencies [91c8b92]

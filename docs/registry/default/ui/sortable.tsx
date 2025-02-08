@@ -358,7 +358,7 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
     }
 
     if (value === "") {
-      throw new Error(`${ITEM_NAME} value cannot be an empty string.`);
+      throw new Error(`\`${ITEM_NAME}\` value cannot be an empty string`);
     }
 
     const context = useSortableContext(ITEM_NAME);

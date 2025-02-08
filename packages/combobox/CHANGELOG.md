@@ -4,7 +4,8 @@
 
 ### Minor Changes
 
-- 91c8b92: Better `Combobox.BadgeList` navigation and action
+- 91c8b92: Better `Combobox.Item` highlighting management, and deletion with `Backspace` and `Delete` keys.
+- 91c8b92: Add `autoHighlight` prop to `Combobox.Root` to auto highlight the matching item when the `Combobox.Content` is open.
 
 ### Patch Changes
 

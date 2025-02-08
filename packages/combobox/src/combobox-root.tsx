@@ -309,9 +309,9 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
   const [inputValue = "", setInputValue] = useControllableState({
     defaultProp: !multiple && defaultValue ? String(defaultValue) : "",
     prop: inputValueProp,
-    onChange: (value) => {
+    onChange: (payload) => {
       if (disabled || readOnly) return;
-      onInputValueChange?.(value);
+      onInputValueChange?.(payload);
       if (autoHighlight && open) {
         onHighlightMove("first");
       }

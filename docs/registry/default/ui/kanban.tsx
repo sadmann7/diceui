@@ -719,7 +719,7 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
     }
 
     if (value === "") {
-      throw new Error(`${ITEM_NAME} value cannot be an empty string.`);
+      throw new Error(`\`${COLUMN_NAME}\` value cannot be an empty string`);
     }
 
     const {
@@ -910,7 +910,7 @@ const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
     } = useSortable({ id: value, disabled });
 
     if (value === "") {
-      throw new Error(`${ITEM_NAME} value cannot be an empty string.`);
+      throw new Error(`\`${ITEM_NAME}\` value cannot be an empty string`);
     }
 
     const composedRef = useComposedRefs(forwardedRef, (node) => {

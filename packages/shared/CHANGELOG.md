@@ -4,13 +4,14 @@
 
 ### Minor Changes
 
-- 91c8b92: Better `Combobox.BadgeList` navigation and action
+- 91c8b92: Bump version
 
 ## 0.8.0
 
 ### Minor Changes
 
 - 732b7ce: Bump slot
+
 
 ## 0.7.0
 
