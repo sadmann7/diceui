@@ -1,5 +1,3 @@
-"use client";
-
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
@@ -54,13 +52,7 @@ export default function PlaygroundPage() {
         <ComboboxContent>
           <ComboboxEmpty>No tricks found</ComboboxEmpty>
           {tricks.map((trick) => (
-            <ComboboxItem
-              key={trick.value}
-              value={trick.value}
-              onSelect={(value) => {
-                console.log(value);
-              }}
-            >
+            <ComboboxItem key={trick.value} value={trick.value}>
               {trick.label}
             </ComboboxItem>
           ))}
@@ -72,13 +64,7 @@ export default function PlaygroundPage() {
         <CommandList>
           <CommandGroup heading="Tricks">
             {tricks.map((trick) => (
-              <CommandItem
-                key={trick.value}
-                value={trick.value}
-                onSelect={(value) => {
-                  console.log(value);
-                }}
-              >
+              <CommandItem key={trick.value} value={trick.value}>
                 {trick.label}
               </CommandItem>
             ))}
@@ -120,9 +106,7 @@ export default function PlaygroundPage() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
-          <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
-            Apple
-          </DropdownMenuItem>
+          <DropdownMenuItem>Apple</DropdownMenuItem>
           <DropdownMenuItem>Banana</DropdownMenuItem>
           <DropdownMenuItem>Blueberry</DropdownMenuItem>
           <DropdownMenuItem>Grapes</DropdownMenuItem>
@@ -137,14 +121,7 @@ export default function PlaygroundPage() {
           <SelectGroup>
             <SelectLabel>Tricks</SelectLabel>
             {tricks.map((trick) => (
-              <SelectItem
-                key={trick.value}
-                value={trick.value}
-                onSelect={(event) => {
-                  event.preventDefault();
-                  console.log(event);
-                }}
-              >
+              <SelectItem key={trick.value} value={trick.value}>
                 {trick.label}
               </SelectItem>
             ))}

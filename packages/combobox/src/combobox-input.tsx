@@ -2,9 +2,11 @@ import {
   type HighlightingDirection,
   Primitive,
   composeEventHandlers,
+  dispatchDiscreteCustomEvent,
   useComposedRefs,
 } from "@diceui/shared";
 import * as React from "react";
+import { ITEM_SELECT_EVENT } from "./combobox-item";
 import { useComboboxContext } from "./combobox-root";
 
 const INPUT_NAME = "ComboboxInput";
@@ -105,9 +107,27 @@ const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
           if (context.disabled || context.readOnly || !context.highlightedItem)
             return;
 
-          const value = context.highlightedItem.value;
-          const label = context.highlightedItem.label;
+          const { value, label, onSelect } = context.highlightedItem;
+
           if (!value) return;
+
+          const itemElement = context.highlightedItem.ref.current;
+
+          if (itemElement && onSelect) {
+            const selectEvent = new CustomEvent(ITEM_SELECT_EVENT, {
+              bubbles: true,
+            });
+
+            itemElement.addEventListener(
+              ITEM_SELECT_EVENT,
+              () => onSelect(value),
+              {
+                once: true,
+              },
+            );
+
+            dispatchDiscreteCustomEvent(itemElement, selectEvent);
+          }
 
           if (context.multiple) {
             context.onInputValueChange("");

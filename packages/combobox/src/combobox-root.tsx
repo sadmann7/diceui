@@ -37,6 +37,7 @@ interface ItemData {
   label: string;
   value: string;
   disabled?: boolean;
+  onSelect?: (value: string) => void;
 }
 
 type RootElement = React.ElementRef<typeof Primitive.div>;

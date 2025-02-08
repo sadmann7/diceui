@@ -3,6 +3,7 @@ import {
   Primitive,
   composeEventHandlers,
   createContext,
+  dispatchDiscreteCustomEvent,
   useComposedRefs,
   useId,
   useIsomorphicLayoutEffect,
@@ -14,6 +15,7 @@ import type { ItemTextElement } from "./combobox-item-text";
 import { useComboboxContext } from "./combobox-root";
 
 const ITEM_NAME = "ComboboxItem";
+const ITEM_SELECT_EVENT = `${ITEM_NAME}.Select.Event`;
 
 interface ComboboxItemContextValue {
   value: string;
@@ -29,7 +31,10 @@ const [ComboboxItemProvider, useComboboxItemContext] =
 type ItemElement = React.ElementRef<typeof Primitive.div>;
 
 interface ComboboxItemProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
+  extends Omit<
+    React.ComponentPropsWithoutRef<typeof Primitive.div>,
+    "onSelect"
+  > {
   /**
    * The value of the item.
    *
@@ -46,19 +51,22 @@ interface ComboboxItemProps
 
   /** Whether the item is disabled. */
   disabled?: boolean;
+
+  /** Callback called when the item is selected. */
+  onSelect?: (value: string) => void;
 }
 
 const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
   (props, forwardedRef) => {
-    const { value, label: labelProp, disabled, ...itemProps } = props;
+    const { value, label: labelProp, disabled, onSelect, ...itemProps } = props;
     const context = useComboboxContext(ITEM_NAME);
-    // Make the group context optional by passing true, so item can be used outside of a group
     const groupContext = useComboboxGroupContext(ITEM_NAME, true);
     const { label, onLabelChange } = useLabel<ItemTextElement>({
       defaultValue: labelProp,
     });
     const itemRef = React.useRef<ItemElement | null>(null);
     const composedRef = useComposedRefs(forwardedRef, itemRef);
+    const isPointerDownRef = React.useRef(false);
 
     const id = useId();
     const textId = `${id}text`;
@@ -67,6 +75,52 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
       ? context.value.includes(value)
       : context.value === value;
     const isDisabled = disabled || context.disabled || false;
+
+    const onItemSelect = React.useCallback(() => {
+      const itemElement = itemRef.current;
+      if (!itemElement) return;
+
+      if (onSelect) {
+        const selectEvent = new CustomEvent(ITEM_SELECT_EVENT, {
+          bubbles: true,
+        });
+
+        itemElement.addEventListener(
+          ITEM_SELECT_EVENT,
+          () => onSelect?.(value),
+          {
+            once: true,
+          },
+        );
+        dispatchDiscreteCustomEvent(itemElement, selectEvent);
+      }
+
+      if (context.multiple) {
+        context.onInputValueChange("");
+      } else {
+        const selectedLabel = label ?? itemElement.textContent ?? "";
+        context.onInputValueChange(selectedLabel);
+        context.onSelectedTextChange(selectedLabel);
+        context.onHighlightedItemChange(null);
+        context.onOpenChange(false);
+      }
+
+      context.filterStore.search = "";
+      context.onValueChange(value);
+      context.inputRef.current?.focus();
+    }, [
+      label,
+      value,
+      onSelect,
+      context.multiple,
+      context.onInputValueChange,
+      context.onHighlightedItemChange,
+      context.onOpenChange,
+      context.onSelectedTextChange,
+      context.onValueChange,
+      context.inputRef,
+      context.filterStore,
+    ]);
 
     useIsomorphicLayoutEffect(() => {
       if (value === "") {
@@ -79,10 +133,18 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
           label,
           value,
           disabled: isDisabled,
+          onSelect,
         },
         groupContext?.id,
       );
-    }, [label, value, isDisabled, groupContext?.id, context.onItemRegister]);
+    }, [
+      label,
+      value,
+      isDisabled,
+      groupContext?.id,
+      context.onItemRegister,
+      onSelect,
+    ]);
 
     const isVisible = context.getIsItemVisible(value);
 
@@ -113,32 +175,15 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
           ref={composedRef}
           onClick={composeEventHandlers(itemProps.onClick, (event) => {
             if (isDisabled || context.readOnly) return;
-
             event?.currentTarget.focus();
-
-            if (context.multiple) {
-              context.onInputValueChange("");
-            } else {
-              const label =
-                context.highlightedItem?.label ??
-                itemRef.current?.textContent ??
-                "";
-              context.onInputValueChange(label);
-              context.onSelectedTextChange(label);
-              context.onHighlightedItemChange(null);
-              context.onOpenChange(false);
-            }
-
-            context.filterStore.search = "";
-            context.onValueChange(value);
-            context.inputRef.current?.focus();
+            onItemSelect();
           })}
           onPointerDown={composeEventHandlers(
             itemProps.onPointerDown,
             (event) => {
               if (isDisabled) return;
+              isPointerDownRef.current = true;
 
-              // prevent implicit pointer capture
               const target = event.target;
               if (!(target instanceof HTMLElement)) return;
               if (target.hasPointerCapture(event.pointerId)) {
@@ -150,11 +195,14 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
                 event.ctrlKey === false &&
                 event.pointerType === "mouse"
               ) {
-                // prevent item from stealing focus from the input
                 event.preventDefault();
               }
             },
           )}
+          onPointerUp={composeEventHandlers(itemProps.onPointerUp, (event) => {
+            if (!isPointerDownRef.current) event.currentTarget?.click();
+            isPointerDownRef.current = false;
+          })}
           onPointerMove={composeEventHandlers(itemProps.onPointerMove, () => {
             if (isDisabled) return;
 
@@ -175,6 +223,6 @@ ComboboxItem.displayName = ITEM_NAME;
 
 const Item = ComboboxItem;
 
-export { ComboboxItem, Item, useComboboxItemContext };
+export { ComboboxItem, Item, useComboboxItemContext, ITEM_SELECT_EVENT };
 
 export type { ComboboxItemProps, ItemElement };
