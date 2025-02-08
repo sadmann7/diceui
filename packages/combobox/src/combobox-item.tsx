@@ -225,4 +225,4 @@ const Item = ComboboxItem;
 
 export { ComboboxItem, Item, useComboboxItemContext, ITEM_SELECT_EVENT };
 
-export type { ComboboxItemProps, ItemElement };
+export type { ItemElement, ComboboxItemProps };

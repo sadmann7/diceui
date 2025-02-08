@@ -90,7 +90,7 @@ export type GroupLabelProps = Omit<
 
 export type ItemProps = Omit<
   ComboboxItemProps,
-  keyof React.ComponentPropsWithoutRef<"div">
+  keyof Omit<React.ComponentPropsWithoutRef<"div">, "onSelect">
 >;
 
 export type ItemTextProps = Omit<

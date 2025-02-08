@@ -37,7 +37,10 @@ export type ListProps = Omit<
 
 export type ItemProps = Omit<
   CheckboxGroupItemProps,
-  keyof React.ComponentPropsWithoutRef<"div">
+  keyof Omit<
+    React.ComponentPropsWithoutRef<"button">,
+    "checked" | "defaultChecked" | "onCheckedChange"
+  >
 >;
 
 export type IndicatorProps = Omit<
