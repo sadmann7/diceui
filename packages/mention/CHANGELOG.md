@@ -1,5 +1,16 @@
 # @diceui/mention
 
+## 0.5.0
+
+### Minor Changes
+
+- 91c8b92: Better `Combobox.BadgeList` navigation and action
+
+### Patch Changes
+
+- Updated dependencies [91c8b92]
+  - @diceui/shared@0.9.0
+
 ## 0.4.0
 
 ### Minor Changes
