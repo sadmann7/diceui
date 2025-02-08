@@ -1,5 +1,11 @@
 # @diceui/shared
 
+## 0.9.0
+
+### Minor Changes
+
+- 91c8b92: Better `Combobox.BadgeList` navigation and action
+
 ## 0.8.0
 
 ### Minor Changes
