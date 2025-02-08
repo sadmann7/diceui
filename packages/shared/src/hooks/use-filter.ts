@@ -87,6 +87,12 @@ function normalizeWithGaps(str: string) {
       .replace(/\s+/g, "");
   }
 
+  // If the string only contained special characters, it will be empty after normalization
+  // Return a special value that won't match anything
+  if (normalized === "" && str.length > 0) {
+    normalized = "\u0000"; // Using null character as a special non-matching value
+  }
+
   // Cache the normalized string
   normalizedCache.set(str, normalized);
   return normalized;

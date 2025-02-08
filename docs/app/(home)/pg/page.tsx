@@ -18,29 +18,35 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import ComboboxMultipleDemo from "@/registry/default/example/combobox-multiple-demo";
-import TagsInputDemo from "@/registry/default/example/tags-input-demo";
-import {
-  Combobox,
-  ComboboxAnchor,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxTrigger,
-} from "@/registry/default/ui/combobox";
 import * as Kbd from "@/registry/default/ui/kbd";
 import * as Mention from "@diceui/mention";
-import { ChevronDown } from "lucide-react";
+
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
+} from "@/components/ui/command";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <TagsInputDemo />
       <ComboboxMultipleDemo />
-      <Kbd.Root variant="outline">
-        <Kbd.Key>Ctrl</Kbd.Key>
-        <Kbd.Key>K</Kbd.Key>
-      </Kbd.Root>
+      <Command>
+        <CommandInput placeholder="Search tricks..." />
+        <CommandEmpty>No tricks found.</CommandEmpty>
+        <CommandGroup heading="Tricks">
+          {tricks.map((trick) => (
+            <CommandItem key={trick.value} value={trick.value}>
+              {trick.label}
+            </CommandItem>
+          ))}
+        </CommandGroup>
+      </Command>
       <Textarea
         placeholder="Type here..."
         className="min-h-[80px] max-w-[40rem]"
@@ -69,22 +75,6 @@ export default function PlaygroundPage() {
           </Mention.Content>
         </Mention.Portal>
       </Mention.Root>
-      <Combobox className="w-[15rem]">
-        <ComboboxAnchor>
-          <ComboboxInput placeholder="Search tricks..." />
-          <ComboboxTrigger>
-            <ChevronDown className="h-4 w-4" />
-          </ComboboxTrigger>
-        </ComboboxAnchor>
-        <ComboboxContent>
-          <ComboboxEmpty>No tricks found</ComboboxEmpty>
-          {tricks.map((trick) => (
-            <ComboboxItem key={trick.value} value={trick.value}>
-              {trick.label}
-            </ComboboxItem>
-          ))}
-        </ComboboxContent>
-      </Combobox>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm" className="w-fit">
