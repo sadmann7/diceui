@@ -9,7 +9,7 @@
   ],
   "files": [
     {
-      "path": "example/editable-double-click-demo.tsx",
+      "path": "examples/editable-double-click-demo.tsx",
       "content": "import { Button } from \"@/components/ui/button\";\nimport * as Editable from \"@/registry/default/ui/editable\";\nimport * as React from \"react\";\n\nexport default function EditableDoubleClickDemo() {\n  return (\n    <div className=\"flex flex-col gap-4\">\n      <Editable.Root\n        defaultValue=\"Double click to edit\"\n        placeholder=\"Enter your text here\"\n        triggerMode=\"dblclick\"\n      >\n        <Editable.Label>Fruit</Editable.Label>\n        <Editable.Area>\n          <Editable.Preview />\n          <Editable.Input />\n        </Editable.Area>\n        <Editable.Toolbar>\n          <Editable.Submit asChild>\n            <Button size=\"sm\">Save</Button>\n          </Editable.Submit>\n          <Editable.Cancel asChild>\n            <Button variant=\"outline\" size=\"sm\">\n              Cancel\n            </Button>\n          </Editable.Cancel>\n        </Editable.Toolbar>\n      </Editable.Root>\n    </div>\n  );\n}\n",
       "type": "registry:example",
       "target": ""

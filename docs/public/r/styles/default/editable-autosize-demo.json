@@ -9,7 +9,7 @@
   ],
   "files": [
     {
-      "path": "example/editable-autosize-demo.tsx",
+      "path": "examples/editable-autosize-demo.tsx",
       "content": "import { Button } from \"@/components/ui/button\";\nimport * as Editable from \"@/registry/default/ui/editable\";\n\nexport default function EditableAutosizeDemo() {\n  return (\n    <Editable.Root\n      defaultValue=\"Adjust the size of the input with the text inside.\"\n      autosize\n    >\n      <Editable.Label>Autosize editable</Editable.Label>\n      <Editable.Area>\n        <Editable.Preview className=\"whitespace-pre-wrap\" />\n        <Editable.Input />\n      </Editable.Area>\n      <Editable.Toolbar>\n        <Editable.Submit asChild>\n          <Button size=\"sm\">Save</Button>\n        </Editable.Submit>\n        <Editable.Cancel asChild>\n          <Button variant=\"outline\" size=\"sm\">\n            Cancel\n          </Button>\n        </Editable.Cancel>\n      </Editable.Toolbar>\n    </Editable.Root>\n  );\n}\n",
       "type": "registry:example",
       "target": ""
