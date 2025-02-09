@@ -45,11 +45,11 @@
     }
   },
   "devDependencies": {
-    "tsup": "^8.3.5",
+    "tsup": "^8.3.6",
     "typescript": "^5.7.3"
   },
   "dependencies": {
     "@diceui/shared": "workspace:*",
-    "@floating-ui/react": "^0.27.2"
+    "@floating-ui/react": "^0.27.4"
   }
 }

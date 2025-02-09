@@ -22,11 +22,11 @@
     "test": "vitest run"
   },
   "peerDependencies": {
+    "@floating-ui/react": "^0.27.4",
     "@types/react": "*",
     "@types/react-dom": "*",
     "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
-    "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
-    "@floating-ui/react": "^0.27.2"
+    "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
   },
   "peerDependenciesMeta": {
     "@types/react": {
@@ -37,7 +37,7 @@
     }
   },
   "devDependencies": {
-    "tsup": "^8.3.5",
-    "typescript": "^5.7.2"
+    "tsup": "^8.3.6",
+    "typescript": "^5.7.3"
   }
 }
