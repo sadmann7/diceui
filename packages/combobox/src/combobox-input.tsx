@@ -114,7 +114,7 @@ const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
           const itemElement = context.highlightedItem.ref.current;
 
           if (itemElement && onSelect) {
-            const selectEvent = new CustomEvent(ITEM_SELECT_EVENT, {
+            const itemSelectEvent = new CustomEvent(ITEM_SELECT_EVENT, {
               bubbles: true,
             });
 
@@ -126,7 +126,7 @@ const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
               },
             );
 
-            dispatchDiscreteCustomEvent(itemElement, selectEvent);
+            dispatchDiscreteCustomEvent(itemElement, itemSelectEvent);
           }
 
           if (context.multiple) {

@@ -81,7 +81,7 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
       if (!itemElement) return;
 
       if (onSelect) {
-        const selectEvent = new CustomEvent(ITEM_SELECT_EVENT, {
+        const itemSelectEvent = new CustomEvent(ITEM_SELECT_EVENT, {
           bubbles: true,
         });
 
@@ -92,7 +92,7 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
             once: true,
           },
         );
-        dispatchDiscreteCustomEvent(itemElement, selectEvent);
+        dispatchDiscreteCustomEvent(itemElement, itemSelectEvent);
       }
 
       if (context.multiple) {
@@ -141,9 +141,9 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
       label,
       value,
       isDisabled,
+      onSelect,
       groupContext?.id,
       context.onItemRegister,
-      onSelect,
     ]);
 
     const isVisible = context.getIsItemVisible(value);
