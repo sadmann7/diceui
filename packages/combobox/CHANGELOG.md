@@ -4,7 +4,7 @@
 
 ### Minor Changes
 
-- 90d0462: Bump `@floating-ui/react`
+- 90d0462: Bump `@floating-ui/react` and add `onSelect` custom event to `Combobox.Item`
 
 ### Patch Changes
 

@@ -4,7 +4,7 @@
 
 ### Minor Changes
 
-- 90d0462: Bump `@floating-ui/react`
+- 90d0462: Better `useFilter` gap matching for special characters
 
 ## 0.9.0
 
