@@ -1,0 +1,65 @@
+---
+title: Visually Hidden
+description: A utility component for hiding content visually while keeping it accessible to screen readers.
+links:
+  doc: /docs/utilities/visually-hidden
+---
+
+# Visually Hidden
+
+The Visually Hidden component allows you to hide content visually while keeping it accessible to screen readers, improving the accessibility of your application.
+
+## Features
+
+- Hides content visually while maintaining screen reader accessibility
+- Zero impact on layout
+- Follows WCAG guidelines
+- Zero dependencies
+
+## Installation
+
+```bash
+npm install @diceui/visually-hidden
+```
+
+## Usage
+
+```tsx
+import { VisuallyHidden } from "@diceui/visually-hidden"
+
+export default function IconButton() {
+  return (
+    <button>
+      <Icon />
+      <VisuallyHidden>Close menu</VisuallyHidden>
+    </button>
+  )
+}
+```
+
+## API Reference
+
+### VisuallyHidden
+
+The main component that visually hides content while keeping it accessible.
+
+#### Props
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `as` | `ElementType` | `"span"` | The element to render as |
+| `children` | `ReactNode` | - | The content to hide visually |
+
+### useVisuallyHidden
+
+A hook that returns the CSS properties used for visual hiding.
+
+```tsx
+import { useVisuallyHidden } from "@diceui/visually-hidden"
+
+function Component() {
+  const hiddenStyles = useVisuallyHidden()
+  
+  return <div style={hiddenStyles}>Hidden but accessible</div>
+}
+``` 

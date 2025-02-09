@@ -1,0 +1,68 @@
+---
+title: Direction Provider
+description: A provider component for managing RTL/LTR text direction in your application.
+links:
+  doc: /docs/utilities/direction-provider
+---
+
+# Direction Provider
+
+The Direction Provider component allows you to manage and control text direction (RTL/LTR) throughout your application.
+
+## Features
+
+- Provides RTL/LTR context to child components
+- Automatically handles direction changes
+- Supports SSR and hydration
+- Zero dependencies
+
+## Installation
+
+```bash
+npm install @diceui/direction-provider
+```
+
+## Usage
+
+```tsx
+import { DirectionProvider } from "@diceui/direction-provider"
+
+export default function App() {
+  return (
+    <DirectionProvider defaultDirection="ltr">
+      <YourApp />
+    </DirectionProvider>
+  )
+}
+```
+
+## API Reference
+
+### DirectionProvider
+
+The main provider component that manages direction context.
+
+#### Props
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `defaultDirection` | `"ltr" \| "rtl"` | `"ltr"` | The default text direction |
+| `children` | `ReactNode` | - | The child components |
+
+### useDirection
+
+A hook to access and update the current direction.
+
+```tsx
+import { useDirection } from "@diceui/direction-provider"
+
+function Component() {
+  const { direction, setDirection } = useDirection()
+  
+  return (
+    <button onClick={() => setDirection(direction === "ltr" ? "rtl" : "ltr")}>
+      Toggle Direction
+    </button>
+  )
+}
+``` 
