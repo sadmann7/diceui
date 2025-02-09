@@ -1,10 +1,10 @@
 import { docsOptions } from "@/config/layout";
-import { DocsLayout as DocsLayoutComp } from "fumadocs-ui/layouts/docs";
+import { DocsLayout as DocsLayoutImpl } from "fumadocs-ui/layouts/docs";
 
 interface DocsLayoutProps {
   children: React.ReactNode;
 }
 
 export default function DocsLayout({ children }: DocsLayoutProps) {
-  return <DocsLayoutComp {...docsOptions}>{children}</DocsLayoutComp>;
+  return <DocsLayoutImpl {...docsOptions}>{children}</DocsLayoutImpl>;
 }

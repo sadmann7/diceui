@@ -2,6 +2,7 @@ import {
   type Align,
   type AnchorPositionerProps,
   type PointerDownOutsideEvent,
+  Presence,
   Primitive,
   type Side,
   createContext,
@@ -134,8 +135,6 @@ const MentionContent = React.forwardRef<ContentElement, MentionContentProps>(
       enabled: context.open && context.modal,
     });
 
-    if (!forceMount && !context.open) return null;
-
     return (
       <MentionContentProvider
         side={side}
@@ -153,15 +152,17 @@ const MentionContent = React.forwardRef<ContentElement, MentionContentProps>(
           disabled={!context.open}
           visuallyHiddenDismiss
         >
-          <Primitive.div
-            ref={composedRef}
-            role="listbox"
-            aria-orientation="vertical"
-            data-state={getDataState(context.open)}
-            dir={context.dir}
-            {...positionerContext.getFloatingProps(contentProps)}
-            style={composedStyle}
-          />
+          <Presence present={forceMount || context.open}>
+            <Primitive.div
+              ref={composedRef}
+              role="listbox"
+              aria-orientation="vertical"
+              data-state={getDataState(context.open)}
+              dir={context.dir}
+              {...positionerContext.getFloatingProps(contentProps)}
+              style={composedStyle}
+            />
+          </Presence>
         </FloatingFocusManager>
       </MentionContentProvider>
     );
