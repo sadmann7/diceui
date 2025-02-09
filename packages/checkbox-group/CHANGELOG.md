@@ -1,5 +1,12 @@
 # @diceui/checkbox-group
 
+## 0.7.1
+
+### Patch Changes
+
+- Updated dependencies [d38e0e1]
+  - @diceui/shared@0.11.0
+
 ## 0.7.0
 
 ### Minor Changes
