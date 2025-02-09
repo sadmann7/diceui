@@ -175,7 +175,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/checkbox-group-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/checkbox-group-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -191,7 +191,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/checkbox-group-animated-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/checkbox-group-animated-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -207,7 +207,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/checkbox-group-horizontal-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/checkbox-group-horizontal-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -223,7 +223,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/checkbox-group-validation-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/checkbox-group-validation-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -239,7 +239,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/checkbox-group-multi-selection-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/checkbox-group-multi-selection-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -255,7 +255,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/combobox-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/combobox-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -271,7 +271,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/combobox-groups-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/combobox-groups-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -287,7 +287,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/combobox-multiple-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/combobox-multiple-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -303,7 +303,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/combobox-custom-filter-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/combobox-custom-filter-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -319,7 +319,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/combobox-debounced-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/combobox-debounced-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -335,7 +335,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/combobox-virtualized-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/combobox-virtualized-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -351,7 +351,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/combobox-tags-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/combobox-tags-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -367,7 +367,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/editable-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/editable-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -383,7 +383,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/editable-double-click-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/editable-double-click-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -399,7 +399,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/editable-autosize-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/editable-autosize-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -415,7 +415,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/kanban-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/kanban-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -431,7 +431,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/kanban-dynamic-overlay-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/kanban-dynamic-overlay-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -447,7 +447,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/kbd-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/kbd-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -463,7 +463,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/kbd-variants-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/kbd-variants-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -479,7 +479,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/kbd-multiple-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/kbd-multiple-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -495,7 +495,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/masonry-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/masonry-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -511,7 +511,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/masonry-responsive-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/masonry-responsive-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -527,7 +527,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/masonry-linear-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/masonry-linear-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -543,7 +543,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/masonry-ssr-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/masonry-ssr-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -559,7 +559,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/mention-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/mention-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -575,7 +575,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/mention-custom-filter-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/mention-custom-filter-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -591,7 +591,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/mention-custom-trigger-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/mention-custom-trigger-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -607,7 +607,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/sortable-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/sortable-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -623,7 +623,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/sortable-dynamic-overlay-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/sortable-dynamic-overlay-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -639,7 +639,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/sortable-primitive-values-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/sortable-primitive-values-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -655,7 +655,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/sortable-handle-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/sortable-handle-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -671,7 +671,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/tags-input-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/tags-input-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -687,7 +687,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/tags-input-editable-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/tags-input-editable-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -703,7 +703,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/tags-input-sortable-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/tags-input-sortable-demo")),
       source: "",
       category: "",
       subcategory: "",
@@ -719,7 +719,7 @@ export const Index: Record<string, any> = {
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/example/tags-input-validation-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/tags-input-validation-demo")),
       source: "",
       category: "",
       subcategory: "",

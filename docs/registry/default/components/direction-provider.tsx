@@ -27,4 +27,4 @@ function DirectionProvider({ children, dir }: DirectionProviderProps) {
   );
 }
 
-export { useDirection, DirectionProvider };
+export { DirectionProvider, useDirection };

@@ -17,19 +17,16 @@ interface UtilityPageParams {
 }
 
 export async function generateStaticParams() {
-  return source
-    .getPages()
-    .filter((page) => page.slugs[0] === "utilities")
-    .map((page) => ({
-      slug: page.slugs.slice(1),
-    }));
+  return source.getPages().map((page) => ({
+    slug: page.slugs,
+  }));
 }
 
 export async function generateMetadata(
   props: UtilityPageParams,
 ): Promise<Metadata> {
   const params = await props.params;
-  const page = source.getPage(["utilities", ...(params.slug ?? [])]);
+  const page = source.getPage(params.slug);
 
   if (!page) return {};
 
@@ -41,7 +38,7 @@ export async function generateMetadata(
 
 export default async function UtilityPage(props: UtilityPageParams) {
   const params = await props.params;
-  const page = source.getPage(["utilities", ...(params.slug ?? [])]);
+  const page = source.getPage(params.slug);
 
   if (!page) notFound();
 

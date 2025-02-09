@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import ComboboxMultipleDemo from "@/registry/default/example/combobox-multiple-demo";
+import ComboboxMultipleDemo from "@/registry/default/examples/combobox-multiple-demo";
 import {
   Combobox,
   ComboboxAnchor,

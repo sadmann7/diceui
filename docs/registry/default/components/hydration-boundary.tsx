@@ -2,13 +2,13 @@
 
 import * as React from "react";
 
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
+
 interface HydrationBoundaryProps {
   children: React.ReactNode;
   fallback?: React.ReactNode;
 }
-
-const useIsomorphicLayoutEffect =
-  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
 function HydrationBoundary({
   children,

@@ -7,7 +7,7 @@ export const examples: Registry = [
     dependencies: ["@diceui/checkbox-group", "lucide-react"],
     files: [
       {
-        path: "example/checkbox-group-demo.tsx",
+        path: "examples/checkbox-group-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -18,7 +18,7 @@ export const examples: Registry = [
     dependencies: ["@diceui/checkbox-group", "lucide-react"],
     files: [
       {
-        path: "example/checkbox-group-animated-demo.tsx",
+        path: "examples/checkbox-group-animated-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -29,7 +29,7 @@ export const examples: Registry = [
     dependencies: ["@diceui/checkbox-group", "lucide-react"],
     files: [
       {
-        path: "example/checkbox-group-horizontal-demo.tsx",
+        path: "examples/checkbox-group-horizontal-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -40,7 +40,7 @@ export const examples: Registry = [
     dependencies: ["@diceui/checkbox-group", "lucide-react"],
     files: [
       {
-        path: "example/checkbox-group-validation-demo.tsx",
+        path: "examples/checkbox-group-validation-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -51,7 +51,7 @@ export const examples: Registry = [
     dependencies: ["@diceui/checkbox-group", "lucide-react"],
     files: [
       {
-        path: "example/checkbox-group-multi-selection-demo.tsx",
+        path: "examples/checkbox-group-multi-selection-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -63,7 +63,7 @@ export const examples: Registry = [
     registryDependencies: ["combobox"],
     files: [
       {
-        path: "example/combobox-demo.tsx",
+        path: "examples/combobox-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -75,7 +75,7 @@ export const examples: Registry = [
     registryDependencies: ["combobox"],
     files: [
       {
-        path: "example/combobox-groups-demo.tsx",
+        path: "examples/combobox-groups-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -87,7 +87,7 @@ export const examples: Registry = [
     registryDependencies: ["combobox"],
     files: [
       {
-        path: "example/combobox-multiple-demo.tsx",
+        path: "examples/combobox-multiple-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -99,7 +99,7 @@ export const examples: Registry = [
     registryDependencies: ["combobox"],
     files: [
       {
-        path: "example/combobox-custom-filter-demo.tsx",
+        path: "examples/combobox-custom-filter-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -111,7 +111,7 @@ export const examples: Registry = [
     registryDependencies: ["combobox"],
     files: [
       {
-        path: "example/combobox-debounced-demo.tsx",
+        path: "examples/combobox-debounced-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -127,7 +127,7 @@ export const examples: Registry = [
     registryDependencies: ["combobox"],
     files: [
       {
-        path: "example/combobox-virtualized-demo.tsx",
+        path: "examples/combobox-virtualized-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -139,7 +139,7 @@ export const examples: Registry = [
     registryDependencies: ["combobox", "tags-input"],
     files: [
       {
-        path: "example/combobox-tags-demo.tsx",
+        path: "examples/combobox-tags-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -151,7 +151,7 @@ export const examples: Registry = [
     registryDependencies: ["button"],
     files: [
       {
-        path: "example/editable-demo.tsx",
+        path: "examples/editable-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -163,7 +163,7 @@ export const examples: Registry = [
     registryDependencies: ["button"],
     files: [
       {
-        path: "example/editable-double-click-demo.tsx",
+        path: "examples/editable-double-click-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -175,7 +175,7 @@ export const examples: Registry = [
     registryDependencies: ["button"],
     files: [
       {
-        path: "example/editable-autosize-demo.tsx",
+        path: "examples/editable-autosize-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -194,7 +194,7 @@ export const examples: Registry = [
     registryDependencies: ["badge", "button"],
     files: [
       {
-        path: "example/kanban-demo.tsx",
+        path: "examples/kanban-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -213,7 +213,7 @@ export const examples: Registry = [
     registryDependencies: ["badge", "button"],
     files: [
       {
-        path: "example/kanban-dynamic-overlay-demo.tsx",
+        path: "examples/kanban-dynamic-overlay-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -223,7 +223,7 @@ export const examples: Registry = [
     type: "registry:example",
     files: [
       {
-        path: "example/kbd-demo.tsx",
+        path: "examples/kbd-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -233,7 +233,7 @@ export const examples: Registry = [
     type: "registry:example",
     files: [
       {
-        path: "example/kbd-variants-demo.tsx",
+        path: "examples/kbd-variants-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -243,7 +243,7 @@ export const examples: Registry = [
     type: "registry:example",
     files: [
       {
-        path: "example/kbd-multiple-demo.tsx",
+        path: "examples/kbd-multiple-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -254,7 +254,7 @@ export const examples: Registry = [
     dependencies: ["@radix-ui/react-slot"],
     files: [
       {
-        path: "example/masonry-demo.tsx",
+        path: "examples/masonry-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -266,7 +266,7 @@ export const examples: Registry = [
     registryDependencies: ["skeleton"],
     files: [
       {
-        path: "example/masonry-responsive-demo.tsx",
+        path: "examples/masonry-responsive-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -278,7 +278,7 @@ export const examples: Registry = [
     registryDependencies: ["skeleton"],
     files: [
       {
-        path: "example/masonry-linear-demo.tsx",
+        path: "examples/masonry-linear-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -290,7 +290,7 @@ export const examples: Registry = [
     registryDependencies: ["skeleton"],
     files: [
       {
-        path: "example/masonry-ssr-demo.tsx",
+        path: "examples/masonry-ssr-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -302,7 +302,7 @@ export const examples: Registry = [
     registryDependencies: ["mention"],
     files: [
       {
-        path: "example/mention-demo.tsx",
+        path: "examples/mention-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -314,7 +314,7 @@ export const examples: Registry = [
     registryDependencies: ["mention"],
     files: [
       {
-        path: "example/mention-custom-filter-demo.tsx",
+        path: "examples/mention-custom-filter-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -326,7 +326,7 @@ export const examples: Registry = [
     registryDependencies: ["mention"],
     files: [
       {
-        path: "example/mention-custom-trigger-demo.tsx",
+        path: "examples/mention-custom-trigger-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -344,7 +344,7 @@ export const examples: Registry = [
     ],
     files: [
       {
-        path: "example/sortable-demo.tsx",
+        path: "examples/sortable-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -362,7 +362,7 @@ export const examples: Registry = [
     ],
     files: [
       {
-        path: "example/sortable-dynamic-overlay-demo.tsx",
+        path: "examples/sortable-dynamic-overlay-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -380,7 +380,7 @@ export const examples: Registry = [
     ],
     files: [
       {
-        path: "example/sortable-primitive-values-demo.tsx",
+        path: "examples/sortable-primitive-values-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -399,7 +399,7 @@ export const examples: Registry = [
     registryDependencies: ["button", "table"],
     files: [
       {
-        path: "example/sortable-handle-demo.tsx",
+        path: "examples/sortable-handle-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -410,7 +410,7 @@ export const examples: Registry = [
     dependencies: ["@diceui/tags-input", "lucide-react"],
     files: [
       {
-        path: "example/tags-input-demo.tsx",
+        path: "examples/tags-input-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -422,7 +422,7 @@ export const examples: Registry = [
     registryDependencies: ["tags-input", "button"],
     files: [
       {
-        path: "example/tags-input-editable-demo.tsx",
+        path: "examples/tags-input-editable-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -442,7 +442,7 @@ export const examples: Registry = [
     registryDependencies: ["tags-input", "sortable", "button"],
     files: [
       {
-        path: "example/tags-input-sortable-demo.tsx",
+        path: "examples/tags-input-sortable-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -454,7 +454,7 @@ export const examples: Registry = [
     registryDependencies: ["tags-input", "button"],
     files: [
       {
-        path: "example/tags-input-validation-demo.tsx",
+        path: "examples/tags-input-validation-demo.tsx",
         type: "registry:example",
       },
     ],
