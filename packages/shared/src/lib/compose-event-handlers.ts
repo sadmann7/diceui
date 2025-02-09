@@ -4,7 +4,7 @@
 
 /**
  * A utility to compose multiple event handlers into a single event handler.
- * Executes originalEventHandler first, then ourEventHandler unless prevented.
+ * Call originalEventHandler first, then ourEventHandler unless prevented.
  */
 function composeEventHandlers<E>(
   originalEventHandler?: (event: E) => void,
