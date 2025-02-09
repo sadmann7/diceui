@@ -1,5 +1,11 @@
 # @diceui/shared
 
+## 0.10.0
+
+### Minor Changes
+
+- 90d0462: Bump `@floating-ui/react`
+
 ## 0.9.0
 
 ### Minor Changes
@@ -11,7 +17,6 @@
 ### Minor Changes
 
 - 732b7ce: Bump slot
-
 
 ## 0.7.0
 

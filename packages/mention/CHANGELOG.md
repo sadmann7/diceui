@@ -1,5 +1,16 @@
 # @diceui/mention
 
+## 0.6.0
+
+### Minor Changes
+
+- 90d0462: Bump `@floating-ui/react`
+
+### Patch Changes
+
+- Updated dependencies [90d0462]
+  - @diceui/shared@0.10.0
+
 ## 0.5.0
 
 ### Patch Changes
