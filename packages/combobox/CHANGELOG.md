@@ -4,11 +4,7 @@
 
 ### Minor Changes
 
-- d38e0e1: Improve React 19 compatibility for `composeRefs` utility with better ref handling.
-
-  Add exit animation support for `Combobox.Content` when it unmounts from the DOM.
-
-  Add exit animation support for `Mention.Content` when it unmounts from the DOM.
+- d38e0e1: Add exit animation support for `Combobox.Content` when it unmounts from the DOM
 
 ### Patch Changes
 
