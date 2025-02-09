@@ -58,40 +58,30 @@ function Input({ forwardedRef, ...props }) {
 
 A utility function that composes two event handlers into a single handler.
 
-```tsx
-function composeEventHandlers<E>(
-  originalEventHandler?: (event: E) => void,
-  ourEventHandler?: (event: E) => void,
-  options?: { checkForDefaultPrevented?: boolean }
-): (event: E) => void
-```
-
-#### Parameters
-
-- `originalEventHandler`: The original event handler to be called first
-- `ourEventHandler`: Our custom event handler to be called second
-- `options.checkForDefaultPrevented`: Whether to check if event.preventDefault() was called (default: true)
+<AutoTypeTable
+  path="./types/docs/utilities.ts"
+  name="ComposeEventHandlersProps"
+/>
 
 ### composeRefs
 
 A utility function that composes multiple refs together.
 
-```tsx
-function composeRefs<T>(...refs: React.Ref<T>[]): (node: T) => void
-```
-
-#### Parameters
-
-- `refs`: Multiple refs to compose together (can be callback refs or RefObjects)
+<AutoTypeTable
+  path="./types/docs/utilities.ts"
+  name="ComposeRefsProps"
+/>
 
 ### useComposedRefs
 
 A React hook that composes multiple refs together.
 
-```tsx
-function useComposedRefs<T>(...refs: React.Ref<T>[]): (node: T) => void
-```
+<AutoTypeTable
+  path="./types/docs/utilities.ts"
+  name="UseComposedRefsProps"
+/>
 
-#### Parameters
+## Credits
 
-- `refs`: Multiple refs to compose together (can be callback refs or RefObjects) 
+- [composeEventHandlers](https://github.com/radix-ui/primitives/blob/main/packages/core/primitive/src/primitive.tsx)
+- [composeRefs and useComposedRefs](https://github.com/radix-ui/primitives/blob/main/packages/react/compose-refs/src/compose-refs.tsx)

@@ -24,7 +24,7 @@ function composeEventHandlers<E>(
 }
 
 /**
- * @see https://github.com/radix-ui/primitives/blob/main/packages/react/compose-refs/src/composeRefs.tsx
+ * @see https://github.com/radix-ui/primitives/blob/main/packages/react/compose-refs/src/compose-refs.tsx
  */
 
 type PossibleRef<T> = React.Ref<T> | undefined;
@@ -37,7 +37,7 @@ function setRef<T>(ref: PossibleRef<T>, value: T) {
   if (typeof ref === "function") {
     ref(value);
   } else if (ref !== null && ref !== undefined) {
-    (ref as React.MutableRefObject<T>).current = value;
+    (ref as React.RefObject<T>).current = value;
   }
 }
 

@@ -2,6 +2,7 @@ import {
   type Align,
   type AnchorPositionerProps,
   type PointerDownOutsideEvent,
+  Presence,
   Primitive,
   type Side,
   createContext,
@@ -120,8 +121,6 @@ const ComboboxContent = React.forwardRef<ContentElement, ComboboxContentProps>(
       enabled: context.open && context.modal,
     });
 
-    if (!forceMount && !context.open) return null;
-
     return (
       <ComboboxContentProvider
         side={positionerContext.side}
@@ -139,14 +138,16 @@ const ComboboxContent = React.forwardRef<ContentElement, ComboboxContentProps>(
           disabled={!context.open}
           visuallyHiddenDismiss
         >
-          <Primitive.div
-            data-state={getDataState(context.open)}
-            role="listbox"
-            dir={context.dir}
-            {...positionerContext.getFloatingProps(contentProps)}
-            ref={composedRef}
-            style={composedStyle}
-          />
+          <Presence present={forceMount || context.open}>
+            <Primitive.div
+              data-state={getDataState(context.open)}
+              role="listbox"
+              dir={context.dir}
+              {...positionerContext.getFloatingProps(contentProps)}
+              ref={composedRef}
+              style={composedStyle}
+            />
+          </Presence>
         </FloatingFocusManager>
       </ComboboxContentProvider>
     );
