@@ -2,7 +2,7 @@
 title: Direction Provider
 description: A provider component for managing RTL/LTR text direction in your application.
 links:
-  doc: /docs/utilities/direction-provider
+  api: /docs/utilities/direction-provider#api-reference
 ---
 
 ## Installation
@@ -27,11 +27,9 @@ npx shadcn@latest add "https://diceui.com/r/direction-provider"
   <Step>
     Copy and paste the following code into your project.
 
-    <ComponentSource name="direction-provider" />
+    <ComponentSource src="./registry/default/components/direction-provider.tsx" />
   </Step>
 </Steps>
-
-
 
 ## Usage
 
@@ -40,7 +38,7 @@ import { DirectionProvider } from "@diceui/direction-provider"
 
 export default function App() {
   return (
-    <DirectionProvider defaultDirection="ltr">
+    <DirectionProvider dir="ltr">
       <YourApp />
     </DirectionProvider>
   )
@@ -51,14 +49,12 @@ export default function App() {
 
 ### DirectionProvider
 
-The main provider component that manages direction context.
+Manages direction context for the `useDirection` hook.
 
-#### Props
-
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `defaultDirection` | `"ltr" \| "rtl"` | `"ltr"` | The default text direction |
-| `children` | `ReactNode` | - | The child components |
+<AutoTypeTable
+  path="./types/docs/utilities.ts"
+  name="DirectionProviderProps"
+/>
 
 ### useDirection
 
@@ -69,12 +65,12 @@ import { useDirection } from "@diceui/direction-provider"
 
 
 function Component() {
-  const { direction} = useDirection()
+  const dir = useDirection()
   
   return (
-    <button dir={direction}>
-      Text direction
+    <button dir={dir}>
+      Do a kickflip
     </button>
   )
 }
-``` 
+```

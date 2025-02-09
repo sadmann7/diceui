@@ -2,21 +2,21 @@ import type { Registry } from "@/registry/schema";
 
 export const components: Registry = [
   {
-    name: "direction-provider",
+    name: "client-only",
     type: "registry:component",
     files: [
       {
-        path: "components/direction-provider.tsx",
+        path: "components/client-only.tsx",
         type: "registry:component",
       },
     ],
   },
   {
-    name: "hydration-boundary",
+    name: "direction-provider",
     type: "registry:component",
     files: [
       {
-        path: "components/hydration-boundary.tsx",
+        path: "components/direction-provider.tsx",
         type: "registry:component",
       },
     ],

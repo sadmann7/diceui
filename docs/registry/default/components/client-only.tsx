@@ -5,15 +5,12 @@ import * as React from "react";
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
-interface HydrationBoundaryProps {
+interface ClientOnlyProps {
   children: React.ReactNode;
   fallback?: React.ReactNode;
 }
 
-function HydrationBoundary({
-  children,
-  fallback = null,
-}: HydrationBoundaryProps) {
+function ClientOnly({ children, fallback = null }: ClientOnlyProps) {
   const [mounted, setMounted] = React.useState(false);
 
   useIsomorphicLayoutEffect(() => {
@@ -25,4 +22,4 @@ function HydrationBoundary({
   return children;
 }
 
-export { HydrationBoundary };
+export { ClientOnly };

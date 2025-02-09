@@ -1,0 +1,57 @@
+---
+title: Client Only
+description: A utility component for managing client-only components in React Server Components.
+links:
+  api: /docs/utilities/client-only#api-reference
+---
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/client-only"
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @diceui/hydration-boundary
+     ```
+  </Step>
+
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource src="./registry/default/components/client-only.tsx" />
+  </Step>
+</Steps>
+
+## Usage
+
+```tsx
+import { ClientOnly } from "@diceui/client-only"
+
+export default function App() {
+  return (
+    <ClientOnly fallback={<LoadingSpinner />}>
+      <ClientComponent />
+    </ClientOnly>
+  )
+}
+```
+
+## API Reference
+
+### ClientOnly
+
+A component that only renders its children on the client side.
+
+<AutoTypeTable
+  path="./types/docs/utilities.ts"
+  name="ClientOnlyProps"
+/>

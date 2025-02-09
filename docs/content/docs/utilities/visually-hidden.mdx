@@ -2,25 +2,34 @@
 title: Visually Hidden
 description: A utility component for hiding content visually while keeping it accessible to screen readers.
 links:
-  doc: /docs/utilities/visually-hidden
+  api: /docs/utilities/visually-hidden#api-reference
 ---
-
-# Visually Hidden
-
-The Visually Hidden component allows you to hide content visually while keeping it accessible to screen readers, improving the accessibility of your application.
-
-## Features
-
-- Hides content visually while maintaining screen reader accessibility
-- Zero impact on layout
-- Follows WCAG guidelines
-- Zero dependencies
 
 ## Installation
 
-```bash
-npm install @diceui/visually-hidden
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/visually-hidden"
 ```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @diceui/visually-hidden
+     ```
+  </Step>
+
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource src="./registry/default/components/visually-hidden.tsx" />
+  </Step>
+</Steps>
 
 ## Usage
 
@@ -41,25 +50,9 @@ export default function IconButton() {
 
 ### VisuallyHidden
 
-The main component that visually hides content while keeping it accessible.
+Visually hides content while keeping it accessible.
 
-#### Props
-
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `as` | `ElementType` | `"span"` | The element to render as |
-| `children` | `ReactNode` | - | The content to hide visually |
-
-### useVisuallyHidden
-
-A hook that returns the CSS properties used for visual hiding.
-
-```tsx
-import { useVisuallyHidden } from "@diceui/visually-hidden"
-
-function Component() {
-  const hiddenStyles = useVisuallyHidden()
-  
-  return <div style={hiddenStyles}>Hidden but accessible</div>
-}
-``` 
+<AutoTypeTable
+  path="./types/docs/utilities.ts"
+  name="VisuallyHiddenProps"
+/>
