@@ -1,5 +1,16 @@
 # @diceui/combobox
 
+## 0.8.0
+
+### Minor Changes
+
+- 90d0462: Bump `@floating-ui/react`
+
+### Patch Changes
+
+- Updated dependencies [90d0462]
+  - @diceui/shared@0.10.0
+
 ## 0.7.0
 
 ### Minor Changes
