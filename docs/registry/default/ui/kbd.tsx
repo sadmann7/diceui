@@ -30,10 +30,9 @@ function useKbdContext(name: keyof typeof KBD_ERROR) {
   return context;
 }
 
-interface KbdRootProps extends React.ComponentPropsWithoutRef<"kbd"> {
-  id?: string;
-  size?: KbdContextValue["size"];
-  variant?: KbdContextValue["variant"];
+interface KbdRootProps
+  extends KbdContextValue,
+    React.ComponentPropsWithoutRef<"kbd"> {
   asChild?: boolean;
 }
 
