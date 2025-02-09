@@ -1,0 +1,97 @@
+---
+title: Composition
+description: A collection of utility functions for composing event handlers and refs in React components.
+links:
+  api: /docs/utilities/composition#api-reference
+---
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/composition"
+```
+
+### Manual
+
+<Steps>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource src="./lib/composition.ts" />
+  </Step>
+</Steps>
+
+## Usage
+
+### Composing Event Handlers
+
+```tsx
+import { composeEventHandlers } from "@/lib/composition"
+
+function Button({ onClick, ...props }) {
+  const handleClick = composeEventHandlers(onClick, (event) => {
+    console.log("Button clicked")
+  })
+
+  return <button onClick={handleClick} {...props} />
+}
+```
+
+### Composing Refs
+
+```tsx
+import { useComposedRefs } from "@/lib/composition"
+
+function Input({ forwardedRef, ...props }) {
+  const localRef = React.useRef(null)
+  const composedRefs = useComposedRefs(forwardedRef, localRef)
+
+  return <input ref={composedRefs} {...props} />
+}
+```
+
+## API Reference
+
+### composeEventHandlers
+
+A utility function that composes two event handlers into a single handler.
+
+```tsx
+function composeEventHandlers<E>(
+  originalEventHandler?: (event: E) => void,
+  ourEventHandler?: (event: E) => void,
+  options?: { checkForDefaultPrevented?: boolean }
+): (event: E) => void
+```
+
+#### Parameters
+
+- `originalEventHandler`: The original event handler to be called first
+- `ourEventHandler`: Our custom event handler to be called second
+- `options.checkForDefaultPrevented`: Whether to check if event.preventDefault() was called (default: true)
+
+### composeRefs
+
+A utility function that composes multiple refs together.
+
+```tsx
+function composeRefs<T>(...refs: React.Ref<T>[]): (node: T) => void
+```
+
+#### Parameters
+
+- `refs`: Multiple refs to compose together (can be callback refs or RefObjects)
+
+### useComposedRefs
+
+A React hook that composes multiple refs together.
+
+```tsx
+function useComposedRefs<T>(...refs: React.Ref<T>[]): (node: T) => void
+```
+
+#### Parameters
+
+- `refs`: Multiple refs to compose together (can be callback refs or RefObjects) 

@@ -24,6 +24,7 @@ export const components: Registry = [
   {
     name: "visually-hidden",
     type: "registry:component",
+    dependencies: ["@radix-ui/react-slot"],
     files: [
       {
         path: "components/visually-hidden.tsx",
