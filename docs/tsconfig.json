@@ -35,9 +35,7 @@
     "**/*.ts",
     "**/*.mdx",
     ".next/types/**/*.ts",
-    "*.js",
-    "tailwind.config.ts",
-    "next.config.mjs"
+    "*.js"
   ],
   "exclude": ["node_modules", "scripts/build-registry.mts", "__registry__"]
 }

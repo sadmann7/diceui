@@ -70,7 +70,7 @@ export function ComponentTabs({
           {Preview}
         </div>
       </Tab>
-      <Tab value="Code" className="component-block">
+      <Tab value="Code" className="component-block py-0">
         {Code}
       </Tab>
     </Tabs>
