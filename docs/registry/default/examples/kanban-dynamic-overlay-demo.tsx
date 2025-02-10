@@ -121,7 +121,7 @@ interface TaskCardProps
 function TaskCard({ task, ...props }: TaskCardProps) {
   return (
     <Kanban.Item key={task.id} value={task.id} asChild {...props}>
-      <div className="rounded-md border bg-card p-3 shadow-sm">
+      <div className="rounded-md border bg-card p-3 shadow-xs">
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between gap-2">
             <span className="line-clamp-1 font-medium text-sm">

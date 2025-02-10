@@ -49,11 +49,11 @@ const CheckboxGroupItem = React.forwardRef<
   React.ElementRef<typeof CheckboxGroupPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof CheckboxGroupPrimitive.Item>
 >(({ className, children, ...props }, ref) => (
-  <label className="flex w-fit select-none items-center gap-2 text-sm leading-none has-[[data-disabled]]:cursor-not-allowed has-[[data-invalid]]:text-destructive has-[[data-disabled]]:opacity-50">
+  <label className="flex w-fit select-none items-center gap-2 text-sm leading-none has-data-disabled:cursor-not-allowed has-data-invalid:text-destructive has-data-disabled:opacity-50">
     <CheckboxGroupPrimitive.Item
       ref={ref}
       className={cn(
-        "h-4 w-4 shrink-0 rounded-sm border border-primary shadow focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring data-[invalid]:border-destructive [&[data-state=checked]:not([data-invalid])]:bg-primary [&[data-state=checked]:not([data-invalid])]:text-primary-foreground [&[data-state=checked][data-invalid]]:bg-destructive [&[data-state=checked][data-invalid]]:text-primary-foreground [&[data-state=unchecked][data-invalid]]:bg-transparent",
+        "h-4 w-4 shrink-0 rounded-sm border border-primary shadow-sm focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring data-invalid:border-destructive [&[data-state=checked]:not([data-invalid])]:bg-primary [&[data-state=checked]:not([data-invalid])]:text-primary-foreground [&[data-state=checked][data-invalid]]:bg-destructive [&[data-state=checked][data-invalid]]:text-primary-foreground [&[data-state=unchecked][data-invalid]]:bg-transparent",
         className,
       )}
       {...props}
@@ -77,7 +77,7 @@ const CheckboxGroupDescription = React.forwardRef<
   <CheckboxGroupPrimitive.Description
     ref={ref}
     className={cn(
-      "text-[0.8rem] text-muted-foreground leading-none data-[invalid]:text-destructive",
+      "text-[0.8rem] text-muted-foreground leading-none data-invalid:text-destructive",
       className,
     )}
     {...props}
@@ -93,7 +93,7 @@ const CheckboxGroupMessage = React.forwardRef<
   <CheckboxGroupPrimitive.Message
     ref={ref}
     className={cn(
-      "text-[0.8rem] text-muted-foreground leading-none data-[invalid]:text-destructive",
+      "text-[0.8rem] text-muted-foreground leading-none data-invalid:text-destructive",
       className,
     )}
     {...props}

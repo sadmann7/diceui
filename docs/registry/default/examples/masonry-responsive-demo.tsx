@@ -56,7 +56,7 @@ export default function MasonryResponsiveDemo() {
           }
           className="relative touch-none select-none overflow-hidden rounded-sm transition-transform duration-300 hover:scale-[1.02]"
         >
-          <div className="flex flex-col gap-1 rounded-md border bg-card p-4 text-card-foreground shadow-sm">
+          <div className="flex flex-col gap-1 rounded-md border bg-card p-4 text-card-foreground shadow-xs">
             <div className="font-medium text-sm leading-tight sm:text-base">
               {item.title}
             </div>

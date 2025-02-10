@@ -50,7 +50,7 @@ function getTricks(): SkateboardTrick[] {
 
 function TrickCard({ trick }: { trick: SkateboardTrick }) {
   return (
-    <div className="flex flex-col gap-2 rounded-md border bg-card p-4 text-card-foreground shadow-sm">
+    <div className="flex flex-col gap-2 rounded-md border bg-card p-4 text-card-foreground shadow-xs">
       <div className="font-medium text-sm leading-tight sm:text-base">
         {trick.title}
       </div>

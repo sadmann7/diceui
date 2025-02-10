@@ -44,7 +44,7 @@ export default function MasonryDemo() {
     <Masonry.Root columnCount={3} gap={12}>
       {items.map((item) => (
         <Masonry.Item key={item.id} asChild>
-          <div className="flex flex-col gap-1 rounded-md border bg-card p-4 text-card-foreground shadow-sm">
+          <div className="flex flex-col gap-1 rounded-md border bg-card p-4 text-card-foreground shadow-xs">
             <div className="font-medium text-sm leading-tight sm:text-base">
               {item.title}
             </div>

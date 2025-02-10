@@ -46,7 +46,7 @@ export default function MasonryLinearDemo() {
       {items.map((item) => (
         <Masonry.Item
           key={item.id}
-          className="flex items-center justify-center rounded-lg border bg-card text-card-foreground shadow-sm"
+          className="flex items-center justify-center rounded-lg border bg-card text-card-foreground shadow-xs"
           style={{ aspectRatio: item.aspectRatio }}
           fallback={<Skeleton className="aspect-square size-full" />}
         >

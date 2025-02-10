@@ -291,7 +291,7 @@ const EditableLabel = React.forwardRef<HTMLLabelElement, EditableLabelProps>(
         id={context.labelId}
         htmlFor={context.inputId}
         className={cn(
-          "font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 data-[required]:after:ml-0.5 data-[required]:after:text-destructive data-[required]:after:content-['*']",
+          "font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 data-required:after:ml-0.5 data-required:after:text-destructive data-required:after:content-['*']",
           className,
         )}
       >
@@ -321,7 +321,7 @@ const EditableArea = React.forwardRef<HTMLDivElement, EditableAreaProps>(
         {...areaProps}
         ref={forwardedRef}
         className={cn(
-          "relative inline-block data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
+          "relative inline-block data-disabled:cursor-not-allowed data-disabled:opacity-50",
           className,
         )}
       />
@@ -371,7 +371,7 @@ const EditablePreview = React.forwardRef<HTMLDivElement, EditablePreviewProps>(
           context.triggerMode === "focus" ? onTrigger : undefined,
         )}
         className={cn(
-          "cursor-text truncate rounded-sm border border-transparent py-1 text-base focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring data-[disabled]:cursor-not-allowed data-[readonly]:cursor-default data-[empty]:text-muted-foreground data-[disabled]:opacity-50 md:text-sm",
+          "cursor-text truncate rounded-sm border border-transparent py-1 text-base focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring data-disabled:cursor-not-allowed data-readonly:cursor-default data-empty:text-muted-foreground data-disabled:opacity-50 md:text-sm",
           className,
         )}
       >
@@ -412,7 +412,7 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
       (event: React.FocusEvent<InputElement>) => {
         if (isReadOnly) return;
         const relatedTarget = event.relatedTarget;
-        console.log("blur", relatedTarget);
+        console.log("blur-sm", relatedTarget);
 
         const isAction =
           relatedTarget instanceof HTMLElement &&
@@ -509,7 +509,7 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
         onChange={composeEventHandlers(inputProps.onChange, onChange)}
         onKeyDown={composeEventHandlers(inputProps.onKeyDown, onKeyDown)}
         className={cn(
-          "flex rounded-sm border border-input bg-transparent py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+          "flex rounded-sm border border-input bg-transparent py-1 text-base shadow-xs transition-colors file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
           context.autosize ? "w-auto" : "w-full",
           className,
         )}

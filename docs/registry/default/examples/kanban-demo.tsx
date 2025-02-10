@@ -109,7 +109,7 @@ export default function KanbanDemo() {
             <div className="flex flex-col gap-2 p-0.5">
               {tasks.map((task) => (
                 <Kanban.Item key={task.id} value={task.id} asHandle asChild>
-                  <div className="rounded-md border bg-card p-3 shadow-sm">
+                  <div className="rounded-md border bg-card p-3 shadow-xs">
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center justify-between gap-2">
                         <span className="line-clamp-1 font-medium text-sm">

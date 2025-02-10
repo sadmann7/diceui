@@ -6,7 +6,7 @@ interface StateMachineConfig<TState extends string, TEvent extends string> {
 }
 
 function useStateMachine<TState extends string, TEvent extends string>(
-  config: StateMachineConfig<TState, TEvent>
+  config: StateMachineConfig<TState, TEvent>,
 ) {
   const [state, setState] = React.useState<TState>(config.initial);
 
@@ -17,7 +17,7 @@ function useStateMachine<TState extends string, TEvent extends string>(
         return transition ?? currentState;
       });
     },
-    [config.states]
+    [config.states],
   );
 
   return [state, send] as const;

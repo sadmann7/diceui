@@ -126,7 +126,7 @@ const KbdKey = React.forwardRef<HTMLSpanElement, KbdKeyProps>(
         className={cn(
           "inline-flex items-center justify-center rounded",
           context.variant === "outline" &&
-            "min-w-[20px] border border-border bg-muted/30 px-1.5 shadow-sm",
+            "min-w-[20px] border border-border bg-muted/30 px-1.5 shadow-xs",
           className,
         )}
       >
