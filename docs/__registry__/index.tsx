@@ -165,6 +165,26 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "utils": {
+      name: "utils",
+      description: "",
+      type: "registry:lib",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/lib/utils.ts",
+        type: "registry:lib",
+        target: ""
+      },{
+        path: "registry/default/lib/composition.ts",
+        type: "registry:lib",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/lib/utils.ts")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "checkbox-group-demo": {
       name: "checkbox-group-demo",
       description: "",
@@ -725,21 +745,49 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
-    "utils": {
-      name: "utils",
+    "client-only": {
+      name: "client-only",
       description: "",
-      type: "registry:lib",
+      type: "registry:component",
       registryDependencies: undefined,
       files: [{
-        path: "registry/default/lib/utils.ts",
-        type: "registry:lib",
-        target: ""
-      },{
-        path: "registry/default/lib/composition.ts",
-        type: "registry:lib",
+        path: "registry/default/components/client-only.tsx",
+        type: "registry:component",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/lib/utils.ts")),
+      component: React.lazy(() => import("@/registry/default/components/client-only.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "direction-provider": {
+      name: "direction-provider",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/components/direction-provider.tsx",
+        type: "registry:component",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/components/direction-provider.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "visually-hidden": {
+      name: "visually-hidden",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/components/visually-hidden.tsx",
+        type: "registry:component",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/components/visually-hidden.tsx")),
       source: "",
       category: "",
       subcategory: "",

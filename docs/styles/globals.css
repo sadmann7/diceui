@@ -205,6 +205,10 @@
   & pre {
     @apply max-h-[432.4px];
   }
+
+  [data-rehype-pretty-code-figure] figure {
+    @apply rounded-none! my-4!;
+  }
 }
 
 @utility preview-block {
@@ -251,7 +255,7 @@
 
 @layer components {
   [data-rehype-pretty-code-figure] figure {
-    @apply border-none bg-secondary/50! rounded-none! my-4!;
+    @apply border-none bg-secondary/50!;
   }
 
   [data-line] span {

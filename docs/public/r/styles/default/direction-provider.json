@@ -1,0 +1,12 @@
+{
+  "name": "direction-provider",
+  "type": "registry:component",
+  "files": [
+    {
+      "path": "components/direction-provider.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\ntype Direction = \"ltr\" | \"rtl\";\n\nconst DirectionContext = React.createContext<Direction | undefined>(undefined);\n\nfunction useDirection(dirProp?: Direction): Direction {\n  const contextDir = React.useContext(DirectionContext);\n  if (!contextDir) {\n    throw new Error(\"useDirection must be used within a DirectionProvider\");\n  }\n  return dirProp ?? contextDir ?? \"ltr\";\n}\n\ninterface DirectionProviderProps {\n  children: React.ReactNode;\n  dir: Direction;\n}\n\nfunction DirectionProvider({ children, dir }: DirectionProviderProps) {\n  return (\n    <DirectionContext.Provider value={dir}>\n      {children}\n    </DirectionContext.Provider>\n  );\n}\n\nexport { DirectionProvider, useDirection };\n",
+      "type": "registry:component",
+      "target": ""
+    }
+  ]
+}

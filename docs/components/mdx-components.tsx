@@ -46,9 +46,9 @@ export function useMdxComponents(
       <Tabs className={cn("rounded-md", className)} {...props} />
     ),
     Tab,
-    pre: (props) => (
+    pre: ({ children, ...props }) => (
       <CodeBlock {...props}>
-        <Pre>{props.children}</Pre>
+        <Pre>{children}</Pre>
       </CodeBlock>
     ),
     kbd: (props) => <Kbd variant="outline" {...props} />,
