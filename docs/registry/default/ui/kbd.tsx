@@ -30,10 +30,9 @@ function useKbdContext(name: keyof typeof KBD_ERROR) {
   return context;
 }
 
-interface KbdRootProps extends React.ComponentPropsWithoutRef<"kbd"> {
-  id?: string;
-  size?: KbdContextValue["size"];
-  variant?: KbdContextValue["variant"];
+interface KbdRootProps
+  extends KbdContextValue,
+    React.ComponentPropsWithoutRef<"kbd"> {
   asChild?: boolean;
 }
 
@@ -127,7 +126,7 @@ const KbdKey = React.forwardRef<HTMLSpanElement, KbdKeyProps>(
         className={cn(
           "inline-flex items-center justify-center rounded",
           context.variant === "outline" &&
-            "min-w-[20px] border border-border bg-muted/30 px-1.5 shadow-sm",
+            "min-w-[20px] border border-border bg-muted/30 px-1.5 shadow-xs",
           className,
         )}
       >

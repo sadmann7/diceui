@@ -21,24 +21,29 @@ Dice UI is organized into multiple packages and documentation:
 
 ## Development Setup
 
-1. Clone the repository:
+1. Fork the repository
+
+2. Clone the repository:
 
    ```bash
    git clone https://github.com/sadmann7/diceui.git
+   ```
+
+3. Navigate to the project directory:
+
+   ```bash
    cd diceui
    ```
 
-2. Install dependencies:
+4. Install dependencies:
 
    ```bash
    pnpm install
-
    ```
 
-3. Start the development server:
+5. Start the development server:
 
    ```bash
-   cd docs
    turbo dev
    ```
 
@@ -81,6 +86,16 @@ packages/your-component/
 | `your-component.test.ts` | Test file for the component |
 | `tsconfig.json` | TypeScript configuration |
 | `tsup.config.ts` | Tsup configuration |
+
+### Write Documentation
+
+- Navigate to the `/docs` directory
+- Add the package name into `package.json`, and run `pnpm install`
+- Create a new file in the `/types/` directory, and import the types from the component package
+- Place new documentation in the appropriate directory under `/content/docs/`
+- Use MDX format for documentation files
+- Include proper frontmatter with title, description, and other metadata
+- Follow the existing documentation style and structure
 
 ### Component Guidelines
 

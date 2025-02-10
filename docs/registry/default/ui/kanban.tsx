@@ -792,7 +792,7 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
               {
                 "touch-none select-none": asHandle,
                 "cursor-default": context.flatCursor,
-                "data-[dragging]:cursor-grabbing": !context.flatCursor,
+                "data-dragging:cursor-grabbing": !context.flatCursor,
                 "cursor-grab": !isDragging && asHandle && !context.flatCursor,
                 "opacity-50": isDragging,
                 "pointer-events-none opacity-50": disabled,
@@ -844,7 +844,7 @@ const KanbanColumnHandle = React.forwardRef<
         "select-none disabled:pointer-events-none disabled:opacity-50",
         context.flatCursor
           ? "cursor-default"
-          : "cursor-grab data-[dragging]:cursor-grabbing",
+          : "cursor-grab data-dragging:cursor-grabbing",
         className,
       )}
       disabled={isDisabled}
@@ -952,11 +952,11 @@ const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
           ref={composedRef}
           style={composedStyle}
           className={cn(
-            "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1",
+            "focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1",
             {
               "touch-none select-none": asHandle,
               "cursor-default": context.flatCursor,
-              "data-[dragging]:cursor-grabbing": !context.flatCursor,
+              "data-dragging:cursor-grabbing": !context.flatCursor,
               "cursor-grab": !isDragging && asHandle && !context.flatCursor,
               "opacity-50": isDragging,
               "pointer-events-none opacity-50": disabled,
@@ -1008,7 +1008,7 @@ const KanbanItemHandle = React.forwardRef<
         "select-none disabled:pointer-events-none disabled:opacity-50",
         context.flatCursor
           ? "cursor-default"
-          : "cursor-grab data-[dragging]:cursor-grabbing",
+          : "cursor-grab data-dragging:cursor-grabbing",
         className,
       )}
       disabled={isDisabled}

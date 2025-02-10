@@ -78,7 +78,7 @@ interface TrickCardProps
 function TrickCard({ trick, ...props }: TrickCardProps) {
   return (
     <Sortable.Item value={trick.id} asChild {...props}>
-      <div className="flex size-full flex-col gap-1 rounded-md border bg-zinc-100 p-4 text-foreground shadow dark:bg-zinc-900">
+      <div className="flex size-full flex-col gap-1 rounded-md border bg-zinc-100 p-4 text-foreground shadow-sm dark:bg-zinc-900">
         <div className="font-medium text-sm leading-tight sm:text-base">
           {trick.title}
         </div>

@@ -52,7 +52,7 @@ export function ComponentTabs({
       <Tab
         value="Preview"
         className={cn("preview-block", {
-          "focus-visible:outline-none focus-visible:ring-0":
+          "focus-visible:outline-hidden focus-visible:ring-0":
             preventPreviewFocus,
         })}
         tabIndex={preventPreviewFocus ? -1 : 0}
@@ -70,7 +70,7 @@ export function ComponentTabs({
           {Preview}
         </div>
       </Tab>
-      <Tab value="Code" className="component-block">
+      <Tab value="Code" className="component-block py-0">
         {Code}
       </Tab>
     </Tabs>

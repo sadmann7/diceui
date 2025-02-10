@@ -27,7 +27,7 @@ const ComboboxAnchor = React.forwardRef<
   <ComboboxPrimitive.Anchor
     ref={ref}
     className={cn(
-      "relative flex h-9 w-full items-center justify-between gap-2 rounded-md border border-input bg-transparent px-3 py-2 shadow-sm data-[focused]:ring-1 data-[focused]:ring-ring",
+      "relative flex h-9 w-full items-center justify-between gap-2 rounded-md border border-input bg-transparent px-3 py-2 shadow-xs data-focused:ring-1 data-focused:ring-ring",
       className,
     )}
     {...props}
@@ -42,7 +42,7 @@ const ComboboxInput = React.forwardRef<
   <ComboboxPrimitive.Input
     ref={ref}
     className={cn(
-      "flex h-9 w-full rounded-md bg-transparent text-base placeholder:text-muted-foreground focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+      "flex h-9 w-full rounded-md bg-transparent text-base placeholder:text-muted-foreground focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
       className,
     )}
     {...props}
@@ -57,7 +57,7 @@ const ComboboxTrigger = React.forwardRef<
   <ComboboxPrimitive.Trigger
     ref={ref}
     className={cn(
-      "flex shrink-0 items-center justify-center rounded-r-md border-input bg-transparent text-muted-foreground transition-colors hover:text-foreground/80 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+      "flex shrink-0 items-center justify-center rounded-r-md border-input bg-transparent text-muted-foreground transition-colors hover:text-foreground/80 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
       className,
     )}
     {...props}
@@ -74,7 +74,7 @@ const ComboboxCancel = React.forwardRef<
   <ComboboxPrimitive.Cancel
     ref={ref}
     className={cn(
-      "-translate-y-1/2 absolute top-1/2 right-1 flex h-6 w-6 items-center justify-center rounded-sm bg-background opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none",
+      "-translate-y-1/2 absolute top-1/2 right-1 flex h-6 w-6 items-center justify-center rounded-sm bg-background opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none",
       className,
     )}
     {...props}
@@ -109,7 +109,7 @@ const ComboboxBadgeItem = React.forwardRef<
     <span className="truncate text-[13px] text-secondary-foreground">
       {children}
     </span>
-    <ComboboxPrimitive.BadgeItemDelete className="shrink-0 rounded p-0.5 opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring data-[highlighted]:bg-destructive">
+    <ComboboxPrimitive.BadgeItemDelete className="shrink-0 rounded p-0.5 opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring data-highlighted:bg-destructive">
       <X className="h-3 w-3" />
     </ComboboxPrimitive.BadgeItemDelete>
   </ComboboxPrimitive.BadgeItem>
@@ -197,7 +197,7 @@ const ComboboxItem = React.forwardRef<
   <ComboboxPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 text-sm outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[disabled]:opacity-50",
+      "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 text-sm outline-hidden data-disabled:pointer-events-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:opacity-50",
       outset ? "pr-8 pl-2" : "pr-2 pl-8",
       className,
     )}
