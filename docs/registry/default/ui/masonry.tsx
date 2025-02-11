@@ -1,7 +1,6 @@
 "use client";
 
 import { useComposedRefs } from "@/lib/composition";
-import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 
@@ -212,9 +211,9 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       const containerRect = containerRef.current.getBoundingClientRect();
       const viewportTop = window.scrollY - containerRect.top;
       const viewportBottom = viewportTop + window.innerHeight;
-      const overscanAmount = overscanBy * window.innerHeight;
+      const overscanAmount = Math.max(overscanBy * window.innerHeight, 1000); // Increased minimum buffer
 
-      // Update visible range for virtualization
+      // Add extra buffer at the bottom to prevent flickering
       const start = Math.max(
         0,
         Math.floor((viewportTop - overscanAmount) / itemHeight) *
@@ -222,13 +221,20 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       );
       const end = Math.min(
         React.Children.count(children),
-        Math.ceil((viewportBottom + overscanAmount) / itemHeight) *
-          currentColumnCount,
+        Math.ceil((viewportBottom + overscanAmount * 2) / itemHeight) *
+          currentColumnCount, // Double buffer at bottom
       );
 
       React.Children.forEach(children, (child, index) => {
         if (!React.isValidElement<MasonryItemProps>(child)) return;
-        if (index < start || index > end) return;
+
+        // Always render items that were previously measured to maintain layout stability
+        const element = itemRefs.current.get(index);
+        const isInViewport = index >= start && index <= end;
+        const hasCachedMeasurements =
+          element && cacheRef.current.measurements.has(element);
+
+        if (!isInViewport && !hasCachedMeasurements) return;
 
         const shortestColumnIndex = columnHeights.indexOf(
           Math.min(...columnHeights),
@@ -239,7 +245,6 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
         const top = columnHeights[shortestColumnIndex];
 
         let height = itemHeight;
-        const element = itemRefs.current.get(index);
 
         if (element) {
           const cached = cacheRef.current.measurements.get(element);
@@ -277,8 +282,11 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
             left,
             width: columnWidth,
             transform: "translateZ(0)",
-            willChange: isScrolling.current ? "transform" : undefined,
-            visibility: height === 0 ? "hidden" : undefined,
+            transition: isScrolling.current
+              ? "none"
+              : "opacity 0.2s ease-in-out",
+            opacity: isInViewport ? 1 : 0,
+            pointerEvents: isInViewport ? "auto" : "none",
             ...child.props.style,
           },
         };
@@ -298,22 +306,46 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       getColumnWidth,
     ]);
 
-    // Handle scroll events for virtualization
+    // Update scroll handler for smoother performance
     React.useEffect(() => {
+      let rafId: number;
+      let lastScrollY = window.scrollY;
+
       const onScroll = () => {
-        isScrolling.current = true;
-        if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+        if (rafId) {
+          cancelAnimationFrame(rafId);
+        }
 
-        scrollTimeout.current = setTimeout(() => {
-          isScrolling.current = false;
-          calculateLayout();
-        }, scrollingDelay);
+        const currentScrollY = window.scrollY;
+        const scrollDelta = Math.abs(currentScrollY - lastScrollY);
 
-        calculateLayout();
+        // Only update if we've scrolled significantly
+        if (scrollDelta > 50) {
+          isScrolling.current = true;
+          lastScrollY = currentScrollY;
+
+          if (scrollTimeout.current) {
+            clearTimeout(scrollTimeout.current);
+          }
+
+          rafId = requestAnimationFrame(() => {
+            calculateLayout();
+
+            scrollTimeout.current = setTimeout(() => {
+              isScrolling.current = false;
+              calculateLayout();
+            }, scrollingDelay);
+          });
+        }
       };
 
       window.addEventListener("scroll", onScroll, { passive: true });
-      return () => window.removeEventListener("scroll", onScroll);
+      return () => {
+        window.removeEventListener("scroll", onScroll);
+        if (rafId) {
+          cancelAnimationFrame(rafId);
+        }
+      };
     }, [calculateLayout, scrollingDelay]);
 
     // Handle resize events with debouncing
