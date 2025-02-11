@@ -71,7 +71,7 @@ NULL_NODE.L = NULL_NODE;
 NULL_NODE.R = NULL_NODE;
 
 // RAF scheduler implementation
-function rafSchd<T extends unknown[]>(fn: (...args: T) => void) {
+function onScheduleRaf<T extends unknown[]>(fn: (...args: T) => void) {
   let lastArgs: T = Array(0) as unknown as T;
   let frameId: number | null = null;
 
@@ -142,17 +142,17 @@ function useOptimizedScroll(callback: () => void, delay = 16) {
   callbackRef.current = callback;
 
   React.useEffect(() => {
-    const handler = () => {
+    function onScroll() {
       if (timeoutRef.current) return;
       timeoutRef.current = window.setTimeout(() => {
         timeoutRef.current = null;
         callbackRef.current();
       }, delay);
-    };
+    }
 
-    window.addEventListener("scroll", handler, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
-      window.removeEventListener("scroll", handler);
+      window.removeEventListener("scroll", onScroll);
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
@@ -167,17 +167,17 @@ function useOptimizedResize(callback: () => void, delay = 16) {
   callbackRef.current = callback;
 
   React.useEffect(() => {
-    const handler = () => {
+    function onResize() {
       if (timeoutRef.current) return;
       timeoutRef.current = window.setTimeout(() => {
         timeoutRef.current = null;
         callbackRef.current();
       }, delay);
-    };
+    }
 
-    window.addEventListener("resize", handler, { passive: true });
+    window.addEventListener("resize", onResize, { passive: true });
     return () => {
-      window.removeEventListener("resize", handler);
+      window.removeEventListener("resize", onResize);
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
@@ -367,11 +367,52 @@ function replaceNode(tree: { root: TreeNode }, x: TreeNode, y: TreeNode) {
   y.P = x.P;
 }
 
+function addInterval(treeNode: TreeNode, high: number, index: number): boolean {
+  let node: ListNode | null = treeNode.list;
+  let prevNode: ListNode | undefined;
+
+  while (node) {
+    if (node.index === index) return false;
+    if (high > node.high) break;
+    prevNode = node;
+    node = node.next;
+  }
+
+  if (!prevNode) {
+    treeNode.list = { index, high, next: node };
+  } else {
+    prevNode.next = { index, high, next: prevNode.next };
+  }
+
+  return true;
+}
+
+function removeInterval(treeNode: TreeNode, index: number) {
+  const node = treeNode.list;
+  if (node.index === index) {
+    if (node.next === null) return DELETE;
+    treeNode.list = node.next;
+    return KEEP;
+  }
+
+  let prevNode: ListNode = node;
+  let currNode = node.next;
+
+  while (currNode !== null) {
+    if (currNode.index === index) {
+      prevNode.next = currNode.next;
+      return KEEP;
+    }
+    prevNode = currNode;
+    currNode = currNode.next;
+  }
+}
+
 // Optimize interval tree implementation
-const createIntervalTree = () => {
+function createIntervalTree() {
   const tree = { root: NULL_NODE, size: 0 };
   const indexMap: Record<number, TreeNode> = {};
-  const debouncedUpdate = rafSchd(() => {
+  const debouncedUpdate = onScheduleRaf(() => {
     // Batch updates
     if (pendingUpdates.length > 0) {
       const updates = [...pendingUpdates];
@@ -513,7 +554,7 @@ const createIntervalTree = () => {
 
     size: () => tree.size,
   };
-};
+}
 
 function parseBreakpoint(breakpoint: BreakpointValue): number {
   if (typeof breakpoint === "number") return breakpoint;
@@ -640,8 +681,8 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
     } = props;
 
     const [mounted, setMounted] = React.useState(false);
-    const containerRef = React.useRef<HTMLDivElement>(null);
-    const composedRef = useComposedRefs(forwardedRef, containerRef);
+    const collectionRef = React.useRef<HTMLDivElement>(null);
+    const composedRef = useComposedRefs(forwardedRef, collectionRef);
     const [items, setItems] = React.useState<VisibleItem[]>([]);
     const [maxHeight, setMaxHeight] = React.useState(0);
     const itemRefs = React.useRef<Map<number, HTMLElement>>(new Map());
@@ -680,8 +721,8 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
 
     // Enhanced column width calculation
     const getColumnWidth = React.useCallback(() => {
-      if (!containerRef.current) return 0;
-      const containerWidth = containerRef.current.offsetWidth;
+      if (!collectionRef.current) return 0;
+      const containerWidth = collectionRef.current.offsetWidth;
       if (containerWidth === 0) return 0;
       const totalGap = currentGap * (currentColumnCount - 1);
       return Math.floor((containerWidth - totalGap) / currentColumnCount);
@@ -725,7 +766,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
 
     // Enhanced layout calculation
     const calculateLayout = React.useCallback(() => {
-      if (!mounted || !containerRef.current) return;
+      if (!mounted || !collectionRef.current) return;
 
       const columnWidth = getColumnWidth();
       if (columnWidth === 0) return;
@@ -735,7 +776,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
 
       const columnHeights = new Array(currentColumnCount).fill(0);
       const newItems: VisibleItem[] = [];
-      const containerRect = containerRef.current.getBoundingClientRect();
+      const containerRect = collectionRef.current.getBoundingClientRect();
       const viewportTop = window.scrollY - containerRect.top;
       const viewportBottom = viewportTop + window.innerHeight;
       const overscanAmount = Math.max(overscanBy * window.innerHeight, 1000);
@@ -885,7 +926,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       if (resizeTimeout.current) clearTimeout(resizeTimeout.current);
 
       // Get container width safely
-      const container = containerRef.current;
+      const container = collectionRef.current;
       if (!container) return;
 
       // Immediately update column width and ensure it's a number
@@ -921,24 +962,24 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       let retryCount = 0;
       const maxRetries = 5;
 
-      const tryLayout = () => {
-        if (containerRef.current?.offsetWidth) {
+      function tryLayout() {
+        if (collectionRef.current?.offsetWidth) {
           calculateLayout();
         } else if (retryCount < maxRetries) {
           retryCount++;
           setTimeout(tryLayout, 100);
         }
-      };
+      }
 
       tryLayout();
 
       // Ensure all items are eventually measured
-      const measureAll = () => {
+      function measureAll() {
         if (measurementQueue.current.size > 0) {
           calculateLayout();
           setTimeout(measureAll, 100);
         }
-      };
+      }
 
       setTimeout(measureAll, 100);
     }, [mounted, calculateLayout]);
@@ -999,47 +1040,6 @@ MasonryItem.displayName = ITEM_NAME;
 
 const Root = Masonry;
 const Item = MasonryItem;
-
-function addInterval(treeNode: TreeNode, high: number, index: number): boolean {
-  let node: ListNode | null = treeNode.list;
-  let prevNode: ListNode | undefined;
-
-  while (node) {
-    if (node.index === index) return false;
-    if (high > node.high) break;
-    prevNode = node;
-    node = node.next;
-  }
-
-  if (!prevNode) {
-    treeNode.list = { index, high, next: node };
-  } else {
-    prevNode.next = { index, high, next: prevNode.next };
-  }
-
-  return true;
-}
-
-function removeInterval(treeNode: TreeNode, index: number) {
-  const node = treeNode.list;
-  if (node.index === index) {
-    if (node.next === null) return DELETE;
-    treeNode.list = node.next;
-    return KEEP;
-  }
-
-  let prevNode: ListNode = node;
-  let currNode = node.next;
-
-  while (currNode !== null) {
-    if (currNode.index === index) {
-      prevNode.next = currNode.next;
-      return KEEP;
-    }
-    prevNode = currNode;
-    currNode = currNode.next;
-  }
-}
 
 export {
   Masonry,
