@@ -155,7 +155,6 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       defaultGap = typeof gap === "number" ? gap : GAP,
       linear = false,
       asChild,
-      className,
       style,
       overscanBy = 2,
       scrollingDelay = 150,
@@ -166,19 +165,13 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
     const [mounted, setMounted] = React.useState(false);
     const containerRef = React.useRef<HTMLDivElement>(null);
     const composedRef = useComposedRefs(forwardedRef, containerRef);
-    const resizeObserver = React.useRef<ResizeObserver | null>(null);
     const [items, setItems] = React.useState<VisibleItem[]>([]);
     const [maxHeight, setMaxHeight] = React.useState(0);
     const itemRefs = React.useRef<Map<number, HTMLElement>>(new Map());
     const cacheRef = React.useRef(createCache());
     const isScrolling = React.useRef(false);
     const scrollTimeout = React.useRef<NodeJS.Timeout | null>(null);
-
-    // Track visible range for virtualization
-    const [visibleRange, setVisibleRange] = React.useState({
-      start: 0,
-      end: 0,
-    });
+    const resizeTimeout = React.useRef<NodeJS.Timeout | null>(null);
 
     React.useLayoutEffect(() => {
       setMounted(true);
@@ -222,8 +215,6 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       const overscanAmount = overscanBy * window.innerHeight;
 
       // Update visible range for virtualization
-      const estimatedItemsInView =
-        Math.ceil(window.innerHeight / itemHeight) * currentColumnCount;
       const start = Math.max(
         0,
         Math.floor((viewportTop - overscanAmount) / itemHeight) *
@@ -234,8 +225,6 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
         Math.ceil((viewportBottom + overscanAmount) / itemHeight) *
           currentColumnCount,
       );
-
-      setVisibleRange({ start, end });
 
       React.Children.forEach(children, (child, index) => {
         if (!React.isValidElement<MasonryItemProps>(child)) return;
@@ -306,6 +295,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       mounted,
       itemHeight,
       overscanBy,
+      getColumnWidth,
     ]);
 
     // Handle scroll events for virtualization
@@ -326,19 +316,40 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       return () => window.removeEventListener("scroll", onScroll);
     }, [calculateLayout, scrollingDelay]);
 
-    // Handle resize events
+    // Handle resize events with debouncing
     React.useEffect(() => {
       if (!mounted) return;
 
-      const resizeObserver = new ResizeObserver((entries) => {
-        calculateLayout();
+      const handleResize = () => {
+        // Clear measurements cache on resize
+        cacheRef.current = createCache();
+
+        if (resizeTimeout.current) {
+          clearTimeout(resizeTimeout.current);
+        }
+
+        resizeTimeout.current = setTimeout(() => {
+          calculateLayout();
+        }, 100); // Debounce resize events
+      };
+
+      const resizeObserver = new ResizeObserver(() => {
+        handleResize();
       });
 
       if (containerRef.current) {
         resizeObserver.observe(containerRef.current);
       }
 
-      return () => resizeObserver.disconnect();
+      window.addEventListener("resize", handleResize);
+
+      return () => {
+        if (resizeTimeout.current) {
+          clearTimeout(resizeTimeout.current);
+        }
+        resizeObserver.disconnect();
+        window.removeEventListener("resize", handleResize);
+      };
     }, [mounted, calculateLayout]);
 
     // Initial layout calculation
@@ -359,7 +370,6 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
         <RootSlot
           {...rootProps}
           ref={composedRef}
-          className={cn("relative mx-auto w-full", className)}
           style={{
             ...style,
             height: maxHeight,
