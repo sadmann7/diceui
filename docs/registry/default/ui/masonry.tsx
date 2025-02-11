@@ -8,7 +8,7 @@ const ROOT_NAME = "MasonryRoot";
 const ITEM_NAME = "MasonryItem";
 
 const COLUMN_COUNT = 4;
-const GAP = 12;
+const GAP = 0;
 
 const MASONRY_ERROR = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` components must be within \`${ROOT_NAME}\``,
@@ -71,27 +71,27 @@ NULL_NODE.L = NULL_NODE;
 NULL_NODE.R = NULL_NODE;
 
 // RAF scheduler implementation
-function onScheduleRaf<T extends unknown[]>(fn: (...args: T) => void) {
+function onScheduleRaf<T extends unknown[]>(callback: (...args: T) => void) {
   let lastArgs: T = Array(0) as unknown as T;
   let frameId: number | null = null;
 
-  const wrapperFn = (...args: T) => {
+  function onCallback(...args: T) {
     lastArgs = args;
     if (frameId) return;
 
     frameId = requestAnimationFrame(() => {
       frameId = null;
-      fn(...lastArgs);
+      callback(...lastArgs);
     });
-  };
+  }
 
-  wrapperFn.cancel = () => {
+  onCallback.cancel = () => {
     if (!frameId) return;
     cancelAnimationFrame(frameId);
     frameId = null;
   };
 
-  return wrapperFn;
+  return onCallback;
 }
 
 // Optimized cache implementation
@@ -774,7 +774,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       // Process any pending measurements first
       const hasNewMeasurements = processMeasurements();
 
-      const columnHeights = new Array(currentColumnCount).fill(0);
+      const columnHeights = new Array<number>(currentColumnCount).fill(0);
       const newItems: VisibleItem[] = [];
       const containerRect = collectionRef.current.getBoundingClientRect();
       const viewportTop = window.scrollY - containerRect.top;
@@ -821,7 +821,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
           Math.min(...columnHeights),
         );
         const left = columnGaps[shortestColumnIndex] ?? 0;
-        const top = columnHeights[shortestColumnIndex];
+        const top = columnHeights[shortestColumnIndex] ?? 0;
 
         let height = itemHeight;
 
@@ -842,7 +842,8 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
           }
         }
 
-        columnHeights[shortestColumnIndex] += height + currentGap;
+        columnHeights[shortestColumnIndex] =
+          (columnHeights[shortestColumnIndex] ?? 0) + height + currentGap;
 
         const itemProps: MasonryItemProps = {
           ref: (el: HTMLElement | null) => {
