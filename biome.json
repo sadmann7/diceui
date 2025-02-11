@@ -38,13 +38,15 @@
         "noBannedTypes": "off"
       },
       "style": {
-        "useImportType": "warn"
+        "useImportType": "warn",
+        "useSelfClosingElements": "off"
       },
       "security": {
         "noDangerouslySetInnerHtml": "off"
       },
       "suspicious": {
-        "noAssignInExpressions": "off"
+        "noAssignInExpressions": "off",
+        "noArrayIndexKey": "off"
       },
       "nursery": {
         "useSortedClasses": {

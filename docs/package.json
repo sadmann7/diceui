@@ -46,6 +46,7 @@
     "fumadocs-ui": "^15.0.5",
     "jotai": "^2.11.3",
     "lucide-react": "^0.475.0",
+    "masonic": "^4.0.1",
     "match-sorter": "^8.0.0",
     "motion": "^12.4.1",
     "next": "^15.1.6",

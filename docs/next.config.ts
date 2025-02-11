@@ -5,6 +5,13 @@ const withMDX = createMDX();
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  images: {
+    remotePatterns: [
+      {
+        hostname: "picsum.photos",
+      },
+    ],
+  },
   async redirects() {
     return [
       {
