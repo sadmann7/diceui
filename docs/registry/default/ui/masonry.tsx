@@ -35,6 +35,12 @@ const RED = 0;
 const BLACK = 1;
 const NIL = 2;
 
+interface ListNode {
+  index: number;
+  high: number;
+  next: ListNode | null;
+}
+
 interface TreeNode {
   max: number;
   low: number;
@@ -43,15 +49,18 @@ interface TreeNode {
   P: TreeNode;
   R: TreeNode;
   L: TreeNode;
-  index: number;
+  list: ListNode;
 }
+
+const DELETE = 0;
+const KEEP = 1;
 
 const NULL_NODE: TreeNode = {
   low: 0,
   max: 0,
   high: 0,
   C: NIL,
-  index: -1,
+  list: { index: -1, high: 0, next: null },
   P: undefined as unknown as TreeNode,
   R: undefined as unknown as TreeNode,
   L: undefined as unknown as TreeNode,
@@ -61,23 +70,120 @@ NULL_NODE.P = NULL_NODE;
 NULL_NODE.L = NULL_NODE;
 NULL_NODE.R = NULL_NODE;
 
-// Cache Implementation with proper clear methods
-class SafeWeakMap<K extends object, V> extends WeakMap<K, V> {
+// RAF scheduler implementation
+function rafSchd<T extends unknown[]>(fn: (...args: T) => void) {
+  let lastArgs: T = Array(0) as unknown as T;
+  let frameId: number | null = null;
+
+  const wrapperFn = (...args: T) => {
+    lastArgs = args;
+    if (frameId) return;
+
+    frameId = requestAnimationFrame(() => {
+      frameId = null;
+      fn(...lastArgs);
+    });
+  };
+
+  wrapperFn.cancel = () => {
+    if (!frameId) return;
+    cancelAnimationFrame(frameId);
+    frameId = null;
+  };
+
+  return wrapperFn;
+}
+
+// Optimized cache implementation
+class OptimizedCache<K extends object, V> extends WeakMap<K, V> {
+  private pendingUpdates = new Set<K>();
+  private frameId: number | null = null;
+
+  set(key: K, value: V): this {
+    super.set(key, value);
+    this.pendingUpdates.add(key);
+    this.scheduleUpdate();
+    return this;
+  }
+
+  private scheduleUpdate = () => {
+    if (this.frameId) return;
+    this.frameId = requestAnimationFrame(() => {
+      this.frameId = null;
+      this.pendingUpdates.clear();
+    });
+  };
+
   clear(): void {
-    // Create a new WeakMap to effectively clear the old one
+    if (this.frameId) {
+      cancelAnimationFrame(this.frameId);
+      this.frameId = null;
+    }
+    this.pendingUpdates.clear();
     Object.assign(this, new WeakMap<K, V>());
   }
 }
 
-const elementsCache = new SafeWeakMap<HTMLElement, number>();
-const measurementCache = new SafeWeakMap<
+// Replace existing caches with optimized versions
+const elementsCache = new OptimizedCache<HTMLElement, number>();
+const measurementCache = new OptimizedCache<
   HTMLElement,
   { width: number; height: number }
 >();
-const positionCache = new SafeWeakMap<
+const positionCache = new OptimizedCache<
   HTMLElement,
   { top: number; left: number }
 >();
+
+// Optimized scroll handling
+function useOptimizedScroll(callback: () => void, delay = 16) {
+  const timeoutRef = React.useRef<number | null>(null);
+  const callbackRef = React.useRef(callback);
+  callbackRef.current = callback;
+
+  React.useEffect(() => {
+    const handler = () => {
+      if (timeoutRef.current) return;
+      timeoutRef.current = window.setTimeout(() => {
+        timeoutRef.current = null;
+        callbackRef.current();
+      }, delay);
+    };
+
+    window.addEventListener("scroll", handler, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handler);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [delay]);
+}
+
+// Optimized resize handling
+function useOptimizedResize(callback: () => void, delay = 16) {
+  const timeoutRef = React.useRef<number | null>(null);
+  const callbackRef = React.useRef(callback);
+  callbackRef.current = callback;
+
+  React.useEffect(() => {
+    const handler = () => {
+      if (timeoutRef.current) return;
+      timeoutRef.current = window.setTimeout(() => {
+        timeoutRef.current = null;
+        callbackRef.current();
+      }, delay);
+    };
+
+    window.addEventListener("resize", handler, { passive: true });
+    return () => {
+      window.removeEventListener("resize", handler);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [delay]);
+}
 
 // Utilities
 function updateMax(node: TreeNode) {
@@ -261,132 +367,153 @@ function replaceNode(tree: { root: TreeNode }, x: TreeNode, y: TreeNode) {
   y.P = x.P;
 }
 
-// Enhance interval tree with remove operation
-function createIntervalTree() {
-  const tree = { root: NULL_NODE };
+// Optimize interval tree implementation
+const createIntervalTree = () => {
+  const tree = { root: NULL_NODE, size: 0 };
   const indexMap: Record<number, TreeNode> = {};
-  let size = 0;
-
-  function findInsertPosition(low: number) {
-    let current = tree.root;
-    let parent = NULL_NODE;
-
-    while (current !== NULL_NODE) {
-      parent = current;
-      if (low === parent.low) break;
-      current = low < current.low ? current.L : current.R;
-    }
-
-    return { parent, found: low === parent.low && parent !== NULL_NODE };
-  }
-
-  function insertNode(low: number, high: number, index: number) {
-    const { parent, found } = findInsertPosition(low);
-
-    if (found) {
-      parent.high = Math.max(parent.high, high);
-      updateMax(parent);
-      updateMaxUp(parent);
-      indexMap[index] = parent;
-      return;
-    }
-
-    const newNode: TreeNode = {
-      low,
-      high,
-      max: high,
-      C: RED,
-      P: parent,
-      L: NULL_NODE,
-      R: NULL_NODE,
-      index,
-    };
-
-    if (parent === NULL_NODE) {
-      tree.root = newNode;
-    } else {
-      if (newNode.low < parent.low) {
-        parent.L = newNode;
-      } else {
-        parent.R = newNode;
+  const debouncedUpdate = rafSchd(() => {
+    // Batch updates
+    if (pendingUpdates.length > 0) {
+      const updates = [...pendingUpdates];
+      pendingUpdates.length = 0;
+      for (const [index, height] of updates) {
+        const node = indexMap[index];
+        if (node) {
+          node.high = height;
+          updateMax(node);
+          updateMaxUp(node);
+        }
       }
-      updateMaxUp(newNode);
     }
+  });
 
-    fixInsert(tree, newNode);
-    indexMap[index] = newNode;
-    size++;
-  }
+  const pendingUpdates: [number, number][] = [];
 
   return {
-    insert: insertNode,
+    insert(low: number, high: number, index: number) {
+      let x = tree.root;
+      let y = NULL_NODE;
+
+      while (x !== NULL_NODE) {
+        y = x;
+        if (low === y.low) break;
+        x = low < x.low ? x.L : x.R;
+      }
+
+      if (y !== NULL_NODE && low === y.low) {
+        if (!addInterval(y, high, index)) return;
+        pendingUpdates.push([index, high]);
+        debouncedUpdate();
+        indexMap[index] = y;
+        tree.size++;
+        return;
+      }
+
+      const z: TreeNode = {
+        low,
+        high,
+        max: high,
+        C: RED,
+        P: y,
+        L: NULL_NODE,
+        R: NULL_NODE,
+        list: { index, high, next: null },
+      };
+
+      if (y === NULL_NODE) tree.root = z;
+      else {
+        if (z.low < y.low) y.L = z;
+        else y.R = z;
+        updateMaxUp(z);
+      }
+
+      fixInsert(tree, z);
+      indexMap[index] = z;
+      tree.size++;
+    },
+
     remove(index: number) {
-      const nodeToRemove = indexMap[index];
-      if (!nodeToRemove) return;
+      const z = indexMap[index];
+      if (!z) return;
       delete indexMap[index];
 
-      const originalColor = nodeToRemove.C;
-      let childNode: TreeNode;
+      const result = removeInterval(z, index);
+      if (result === undefined) return;
+      if (result === KEEP) {
+        pendingUpdates.push([index, z.list.high]);
+        debouncedUpdate();
+        tree.size--;
+        return;
+      }
 
-      if (nodeToRemove.L === NULL_NODE) {
-        childNode = nodeToRemove.R;
-        replaceNode(tree, nodeToRemove, nodeToRemove.R);
-      } else if (nodeToRemove.R === NULL_NODE) {
-        childNode = nodeToRemove.L;
-        replaceNode(tree, nodeToRemove, nodeToRemove.L);
+      let y = z;
+      let originalColor = y.C;
+      let x: TreeNode;
+
+      if (z.L === NULL_NODE) {
+        x = z.R;
+        replaceNode(tree, z, z.R);
+      } else if (z.R === NULL_NODE) {
+        x = z.L;
+        replaceNode(tree, z, z.L);
       } else {
-        const successor = minimumTree(nodeToRemove.R);
-        const successorColor = successor.C;
-        childNode = successor.R;
+        y = minimumTree(z.R);
+        originalColor = y.C;
+        x = y.R;
 
-        const isDirectChild = successor.P === nodeToRemove;
-        if (isDirectChild) {
-          childNode.P = successor;
-        } else {
-          replaceNode(tree, successor, successor.R);
-          successor.R = nodeToRemove.R;
-          successor.R.P = successor;
+        if (y.P === z) x.P = y;
+        else {
+          replaceNode(tree, y, y.R);
+          y.R = z.R;
+          y.R.P = y;
         }
 
-        replaceNode(tree, nodeToRemove, successor);
-        successor.L = nodeToRemove.L;
-        successor.L.P = successor;
-        successor.C = nodeToRemove.C;
-
-        if (successorColor === BLACK) {
-          fixRemove(tree, childNode);
-        }
+        replaceNode(tree, z, y);
+        y.L = z.L;
+        y.L.P = y;
+        y.C = z.C;
       }
 
-      updateMax(childNode);
-      updateMaxUp(childNode);
+      updateMax(x);
+      updateMaxUp(x);
 
-      if (originalColor === BLACK) {
-        fixRemove(tree, childNode);
-      }
-      size--;
+      if (originalColor === BLACK) fixRemove(tree, x);
+      tree.size--;
     },
 
     search(
       low: number,
       high: number,
-      callback: (index: number, top: number) => void,
+      callback: (index: number, low: number) => void,
     ) {
       const stack = [tree.root];
-      while (stack.length !== 0) {
-        const node = stack.pop();
+      while (stack.length > 0) {
+        const node = stack[stack.length - 1];
+        stack.pop();
+
+        // Skip if node is null or out of range
         if (!node || node === NULL_NODE || low > node.max) continue;
+
+        // Add children to stack
         if (node.L !== NULL_NODE) stack.push(node.L);
         if (node.R !== NULL_NODE) stack.push(node.R);
-        if (node.low <= high && node.high >= low) {
-          callback(node.index, node.low);
+
+        // Process current node
+        if (node.low <= high && node.high >= low && node.list) {
+          let curr: ListNode | null = node.list;
+          while (curr !== null) {
+            if (curr.high >= low) {
+              callback(curr.index, node.low);
+            }
+            curr = curr.next;
+          }
         }
       }
     },
 
-    size: () => size,
+    size: () => tree.size,
   };
-}
+};
 
 function parseBreakpoint(breakpoint: BreakpointValue): number {
   if (typeof breakpoint === "number") return breakpoint;
@@ -522,13 +649,21 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
     const isScrolling = React.useRef(false);
     const scrollTimeout = React.useRef<NodeJS.Timeout | null>(null);
     const resizeTimeout = React.useRef<NodeJS.Timeout | null>(null);
+    const measurementQueue = React.useRef<Set<number>>(new Set());
+    const pendingLayout = React.useRef<NodeJS.Timeout | null>(null);
+    const initialMeasurementComplete = React.useRef(false);
+
+    // Clear all timeouts on unmount
+    React.useEffect(() => {
+      return () => {
+        if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+        if (resizeTimeout.current) clearTimeout(resizeTimeout.current);
+        if (pendingLayout.current) clearTimeout(pendingLayout.current);
+      };
+    }, []);
 
     React.useLayoutEffect(() => {
       setMounted(true);
-      return () => {
-        itemRefs.current = new Map();
-        if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-      };
     }, []);
 
     const currentColumnCount = useResponsiveValue({
@@ -543,19 +678,61 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       mounted,
     });
 
-    // Column width calculation
+    // Enhanced column width calculation
     const getColumnWidth = React.useCallback(() => {
       if (!containerRef.current) return 0;
       const containerWidth = containerRef.current.offsetWidth;
+      if (containerWidth === 0) return 0;
       const totalGap = currentGap * (currentColumnCount - 1);
       return Math.floor((containerWidth - totalGap) / currentColumnCount);
     }, [currentColumnCount, currentGap]);
 
-    // Layout calculation with virtualization
+    // Measure a single item
+    const measureItem = React.useCallback(
+      (index: number) => {
+        const element = itemRefs.current.get(index);
+        if (!element) return null;
+
+        const height = element.offsetHeight;
+        if (height > 0) {
+          const columnWidth = getColumnWidth();
+          measurementCache.set(element, {
+            width: columnWidth,
+            height,
+          });
+          return height;
+        }
+        return null;
+      },
+      [getColumnWidth],
+    );
+
+    // Process measurement queue
+    const processMeasurements = React.useCallback(() => {
+      if (measurementQueue.current.size === 0) return false;
+
+      let hasNewMeasurements = false;
+      for (const index of measurementQueue.current) {
+        const height = measureItem(index);
+        if (height !== null) {
+          hasNewMeasurements = true;
+          measurementQueue.current.delete(index);
+        }
+      }
+
+      return hasNewMeasurements;
+    }, [measureItem]);
+
+    // Enhanced layout calculation
     const calculateLayout = React.useCallback(() => {
       if (!mounted || !containerRef.current) return;
 
       const columnWidth = getColumnWidth();
+      if (columnWidth === 0) return;
+
+      // Process any pending measurements first
+      const hasNewMeasurements = processMeasurements();
+
       const columnHeights = new Array(currentColumnCount).fill(0);
       const newItems: VisibleItem[] = [];
       const containerRect = containerRef.current.getBoundingClientRect();
@@ -568,10 +745,13 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
         end: viewportBottom + overscanAmount * 2,
       };
 
-      // Clear existing interval tree
-      React.Children.forEach(children, (_, index) => {
-        intervalTree.current.remove(index);
-      });
+      // Clear and rebuild interval tree
+      intervalTree.current = createIntervalTree();
+
+      // Pre-calculate column gaps
+      const columnGaps = new Array(currentColumnCount)
+        .fill(0)
+        .map((_, i) => Math.round(i * (columnWidth + currentGap)));
 
       React.Children.forEach(children, (child, index) => {
         if (!React.isValidElement<MasonryItemProps>(child)) return;
@@ -582,30 +762,42 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
             Math.floor(visibleRange.start / itemHeight) * currentColumnCount &&
           index <=
             Math.ceil(visibleRange.end / itemHeight) * currentColumnCount;
-        const hasCachedMeasurements = element && measurementCache.has(element);
 
-        if (!isInViewport && !hasCachedMeasurements) return;
+        // Queue measurement if needed
+        if (element && !measurementCache.has(element)) {
+          measurementQueue.current.add(index);
+        }
+
+        const hasCachedMeasurements = element && measurementCache.has(element);
+        const shouldRender =
+          isInViewport ||
+          hasCachedMeasurements ||
+          initialMeasurementComplete.current;
+
+        if (!shouldRender) return;
 
         const shortestColumnIndex = columnHeights.indexOf(
           Math.min(...columnHeights),
         );
-        const left = Math.round(
-          shortestColumnIndex * (columnWidth + currentGap),
-        );
+        const left = columnGaps[shortestColumnIndex] ?? 0;
         const top = columnHeights[shortestColumnIndex];
 
         let height = itemHeight;
 
         if (element) {
           const cached = measurementCache.get(element);
-          if (cached && cached.width === columnWidth) {
+          if (cached) {
+            // Use cached height even if width changed to prevent jumps
             height = cached.height;
+            if (cached.width !== columnWidth) {
+              // Queue for remeasurement if width changed
+              measurementQueue.current.add(index);
+            }
           } else {
-            height = element.offsetHeight;
-            measurementCache.set(element, {
-              width: columnWidth,
-              height,
-            });
+            const measuredHeight = measureItem(index);
+            if (measuredHeight !== null) {
+              height = measuredHeight;
+            }
           }
         }
 
@@ -616,6 +808,9 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
             if (el) {
               itemRefs.current.set(index, el);
               elementsCache.set(el, index);
+              if (!measurementCache.has(el)) {
+                measurementQueue.current.add(index);
+              }
               if (child.props.ref) {
                 if (typeof child.props.ref === "function") {
                   child.props.ref(el);
@@ -633,6 +828,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
             left,
             width: columnWidth,
             transform: "translateZ(0)",
+            willChange: "transform", // Optimize for animations
             transition: isScrolling.current
               ? "none"
               : "opacity 0.2s ease-in-out",
@@ -642,7 +838,6 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
           },
         };
 
-        // Insert into interval tree with actual position
         intervalTree.current.insert(top, top + height, index);
         if (element) {
           positionCache.set(element, { top, left });
@@ -653,6 +848,16 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
 
       setItems(newItems);
       setMaxHeight(Math.max(...columnHeights));
+
+      // Schedule next measurement/layout if needed
+      if (measurementQueue.current.size > 0 || hasNewMeasurements) {
+        if (pendingLayout.current) clearTimeout(pendingLayout.current);
+        pendingLayout.current = setTimeout(() => {
+          calculateLayout();
+        }, 50);
+      } else {
+        initialMeasurementComplete.current = true;
+      }
     }, [
       children,
       currentColumnCount,
@@ -661,89 +866,82 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       itemHeight,
       overscanBy,
       getColumnWidth,
+      measureItem,
+      processMeasurements,
     ]);
 
-    // Scroll handler
-    React.useEffect(() => {
-      let rafId: number;
-      let lastScrollY = window.scrollY;
+    // Optimized scroll handling
+    useOptimizedScroll(() => {
+      if (intervalTree.current.size() < items.length) {
+        if (pendingLayout.current) clearTimeout(pendingLayout.current);
+        pendingLayout.current = setTimeout(() => {
+          calculateLayout();
+        }, 50);
+      }
+    });
 
-      const onScroll = () => {
-        if (rafId) {
-          cancelAnimationFrame(rafId);
-        }
+    // Enhanced resize handling
+    useOptimizedResize(() => {
+      if (resizeTimeout.current) clearTimeout(resizeTimeout.current);
 
-        const currentScrollY = window.scrollY;
-        const scrollDelta = Math.abs(currentScrollY - lastScrollY);
+      // Get container width safely
+      const container = containerRef.current;
+      if (!container) return;
 
-        if (scrollDelta > 50) {
-          isScrolling.current = true;
-          lastScrollY = currentScrollY;
+      // Immediately update column width and ensure it's a number
+      const newColumnWidth = getColumnWidth();
+      const containerWidth: number = container.offsetWidth || 0;
 
-          if (scrollTimeout.current) {
-            clearTimeout(scrollTimeout.current);
-          }
+      // Only trigger full recalculation if width actually changed and is valid
+      if (containerWidth > 0 && newColumnWidth > 0) {
+        // Temporarily disable transitions during resize
+        container.style.setProperty("transition", "none");
 
-          rafId = requestAnimationFrame(() => {
-            calculateLayout();
+        // Clear only position cache, keep measurements if possible
+        positionCache.clear();
 
-            scrollTimeout.current = setTimeout(() => {
-              isScrolling.current = false;
-              calculateLayout();
-            }, scrollingDelay);
-          });
-        }
-      };
+        // Immediate layout update with current measurements
+        calculateLayout();
 
-      window.addEventListener("scroll", onScroll, { passive: true });
-      return () => {
-        window.removeEventListener("scroll", onScroll);
-        if (rafId) {
-          cancelAnimationFrame(rafId);
-        }
-      };
-    }, [calculateLayout, scrollingDelay]);
+        // Schedule a full measurement update
+        resizeTimeout.current = setTimeout(() => {
+          container.style.removeProperty("transition");
+          measurementCache.clear();
+          measurementQueue.current.clear();
+          initialMeasurementComplete.current = false;
+          calculateLayout();
+        }, 50);
+      }
+    }, 16);
 
-    // Resize handler
+    // Initial layout with measurement handling
     React.useEffect(() => {
       if (!mounted) return;
 
-      const handleResize = () => {
-        measurementCache.clear();
-        positionCache.clear();
+      let retryCount = 0;
+      const maxRetries = 5;
 
-        if (resizeTimeout.current) {
-          clearTimeout(resizeTimeout.current);
-        }
-
-        resizeTimeout.current = setTimeout(() => {
+      const tryLayout = () => {
+        if (containerRef.current?.offsetWidth) {
           calculateLayout();
-        }, 100);
-      };
-
-      const resizeObserver = new ResizeObserver(() => {
-        handleResize();
-      });
-
-      if (containerRef.current) {
-        resizeObserver.observe(containerRef.current);
-      }
-
-      window.addEventListener("resize", handleResize);
-
-      return () => {
-        if (resizeTimeout.current) {
-          clearTimeout(resizeTimeout.current);
+        } else if (retryCount < maxRetries) {
+          retryCount++;
+          setTimeout(tryLayout, 100);
         }
-        resizeObserver.disconnect();
-        window.removeEventListener("resize", handleResize);
       };
-    }, [mounted, calculateLayout]);
 
-    // Initial layout
-    React.useEffect(() => {
-      calculateLayout();
-    }, [calculateLayout]);
+      tryLayout();
+
+      // Ensure all items are eventually measured
+      const measureAll = () => {
+        if (measurementQueue.current.size > 0) {
+          calculateLayout();
+          setTimeout(measureAll, 100);
+        }
+      };
+
+      setTimeout(measureAll, 100);
+    }, [mounted, calculateLayout]);
 
     const RootSlot = asChild ? Slot : "div";
 
@@ -762,6 +960,10 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
             ...style,
             height: maxHeight,
             position: "relative",
+            minHeight: itemHeight,
+            visibility: initialMeasurementComplete.current
+              ? "visible"
+              : "hidden",
           }}
         >
           {items}
@@ -797,6 +999,47 @@ MasonryItem.displayName = ITEM_NAME;
 
 const Root = Masonry;
 const Item = MasonryItem;
+
+function addInterval(treeNode: TreeNode, high: number, index: number): boolean {
+  let node: ListNode | null = treeNode.list;
+  let prevNode: ListNode | undefined;
+
+  while (node) {
+    if (node.index === index) return false;
+    if (high > node.high) break;
+    prevNode = node;
+    node = node.next;
+  }
+
+  if (!prevNode) {
+    treeNode.list = { index, high, next: node };
+  } else {
+    prevNode.next = { index, high, next: prevNode.next };
+  }
+
+  return true;
+}
+
+function removeInterval(treeNode: TreeNode, index: number) {
+  const node = treeNode.list;
+  if (node.index === index) {
+    if (node.next === null) return DELETE;
+    treeNode.list = node.next;
+    return KEEP;
+  }
+
+  let prevNode: ListNode = node;
+  let currNode = node.next;
+
+  while (currNode !== null) {
+    if (currNode.index === index) {
+      prevNode.next = currNode.next;
+      return KEEP;
+    }
+    prevNode = currNode;
+    currNode = currNode.next;
+  }
+}
 
 export {
   Masonry,

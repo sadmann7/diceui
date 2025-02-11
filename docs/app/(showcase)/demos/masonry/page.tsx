@@ -2,9 +2,7 @@
 
 import { Shell } from "@/components/shell";
 import { ClientOnly } from "@/registry/default/components/client-only";
-import MasonryDemo from "@/registry/default/examples/masonry-demo";
 import * as Masonry from "@/registry/default/ui/masonry";
-import { Masonry as MasonryAlt } from "masonic";
 import Image from "next/image";
 import * as React from "react";
 import { z } from "zod";
