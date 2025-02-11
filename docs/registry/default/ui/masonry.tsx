@@ -14,6 +14,7 @@ const DATA_ITEM_ATTR = "data-masonry-item";
 
 const COLUMN_COUNT = 4;
 const GAP = 12;
+const CACHE_MAX_AGE = 5000;
 
 const MASONRY_ERROR = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` components must be within \`${ROOT_NAME}\``,
@@ -128,9 +129,16 @@ interface ItemMeasurement {
   width: number;
   marginTop: number;
   marginBottom: number;
+  virtualTop?: number;
+  virtualLeft?: number;
 }
 
-const measurementCache = new WeakMap<ItemElement, ItemMeasurement>();
+interface ItemCache {
+  measurements: Map<ItemElement, ItemMeasurement>;
+  lastUpdate: number;
+  timestamps: Map<ItemElement, number>;
+  virtualPositions: Map<number, { top: number; left: number }>;
+}
 
 interface MasonryProps extends React.ComponentPropsWithoutRef<"div"> {
   columnCount?: ResponsiveValue;
@@ -160,6 +168,12 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
     );
     const resizeObserverRef = React.useRef<ResizeObserver | null>(null);
     const rafIdRef = React.useRef<number | null>(null);
+    const itemCacheRef = React.useRef<ItemCache>({
+      measurements: new Map(),
+      lastUpdate: 0,
+      timestamps: new Map(),
+      virtualPositions: new Map(),
+    });
     const collectionRef = React.useRef<HTMLDivElement>(null);
     const composedRef = useComposedRefs(forwardedRef, collectionRef);
 
@@ -182,8 +196,13 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
 
     const getMeasurements = React.useCallback(
       (item: ItemElement): ItemMeasurement | null => {
-        const cached = measurementCache.get(item);
-        if (cached) return cached;
+        const cached = itemCacheRef.current.measurements.get(item);
+        const timestamp = itemCacheRef.current.timestamps.get(item);
+        const now = Date.now();
+
+        if (cached && timestamp && now - timestamp < CACHE_MAX_AGE) {
+          return cached;
+        }
 
         const itemStyle = window.getComputedStyle(item);
         const marginTop =
@@ -203,11 +222,20 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
         }
 
         const measurements = { height, width, marginTop, marginBottom };
-        measurementCache.set(item, measurements);
+        itemCacheRef.current.measurements.set(item, measurements);
+        itemCacheRef.current.timestamps.set(item, now);
+        itemCacheRef.current.lastUpdate = now;
+
         return measurements;
       },
       [currentGap],
     );
+
+    const invalidateCache = React.useCallback(() => {
+      itemCacheRef.current.measurements.clear();
+      itemCacheRef.current.timestamps.clear();
+      itemCacheRef.current.lastUpdate = Date.now();
+    }, []);
 
     const calculateLayout = React.useCallback(() => {
       if (!collectionRef.current || !mounted) return;
@@ -222,14 +250,22 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       let skip = false;
       let nextOrder = 1;
 
+      // Pre-calculate column widths
+      const columnWidth = `calc(${100 / currentColumnCount}% - ${(currentGap * (currentColumnCount - 1)) / currentColumnCount}px)`;
+
+      // Clear virtual positions
+      itemCacheRef.current.virtualPositions.clear();
+
       for (const item of items) {
         if (item.dataset[DATA_LINE_BREAK_ATTR] === "") continue;
+
+        // Apply base styles once
         const styles: Partial<CSSStyleDeclaration> = {
-          position: "",
-          top: "",
-          left: "",
-          width: `calc(${100 / currentColumnCount}% - ${(currentGap * (currentColumnCount - 1)) / currentColumnCount}px)`,
+          position: "absolute",
+          width: columnWidth,
           margin: `${currentGap / 2}px`,
+          willChange: "transform",
+          transform: "translate3d(0, 0, 0)",
         };
         Object.assign(item.style, styles);
       }
@@ -243,38 +279,40 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
           continue;
         }
 
-        if (linear) {
-          const yPos = columnHeights[nextOrder - 1];
-          Object.assign(item.style, {
-            position: "absolute",
-            top: `${yPos}px`,
-            left: `${(nextOrder - 1) * (itemMeasurement.width + currentGap)}px`,
-          });
+        let xPos = 0;
+        let yPos = 0;
 
+        if (linear) {
+          yPos = columnHeights[nextOrder - 1];
+          xPos = (nextOrder - 1) * (itemMeasurement.width + currentGap);
           columnHeights[nextOrder - 1] = yPos + itemMeasurement.height;
           nextOrder = (nextOrder % currentColumnCount) + 1;
         } else {
           const minColumnIndex = columnHeights.indexOf(
             Math.min(...columnHeights),
           );
-          const xPos = minColumnIndex * (itemMeasurement.width + currentGap);
-          const yPos = columnHeights[minColumnIndex];
-
-          Object.assign(item.style, {
-            position: "absolute",
-            top: `${yPos}px`,
-            left: `${xPos}px`,
-          });
-
+          xPos = minColumnIndex * (itemMeasurement.width + currentGap);
+          yPos = columnHeights[minColumnIndex];
           columnHeights[minColumnIndex] = yPos + itemMeasurement.height;
         }
+
+        // Store virtual position
+        const index = Number.parseInt(
+          item.getAttribute("data-index") || "0",
+          10,
+        );
+        itemCacheRef.current.virtualPositions.set(index, {
+          top: yPos,
+          left: xPos,
+        });
+
+        // Apply transform instead of top/left
+        Object.assign(item.style, {
+          transform: `translate3d(${xPos}px, ${yPos}px, 0)`,
+        });
       }
 
       if (!skip) {
-        /**
-         * Use flushSync to prevent layout thrashing during React 18 batching
-         * @see https://github.com/facebook/react/blob/a8a4742f1c54493df00da648a3f9d26e3db9c8b5/packages/react-dom/src/events/ReactDOMEventListener.js#L294-L350
-         */
         ReactDOM.flushSync(() => {
           const maxHeight = Math.max(...columnHeights);
           setMaxColumnHeight(maxHeight > 0 ? maxHeight : null);
@@ -295,6 +333,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       };
 
       resizeObserverRef.current = new ResizeObserver(() => {
+        invalidateCache();
         rafIdRef.current = requestAnimationFrame(calculateLayout);
       });
 
@@ -307,7 +346,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       }
 
       return cleanupResizeObserver;
-    }, [calculateLayout]);
+    }, [calculateLayout, invalidateCache]);
 
     const initialGridStyle = React.useMemo(
       () => ({
@@ -395,12 +434,41 @@ const LineBreaks = React.memo(
 interface MasonryItemProps extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
   fallback?: React.ReactNode;
+  index?: number;
+  isVisible?: boolean;
 }
 
 const MasonryItem = React.forwardRef<HTMLDivElement, MasonryItemProps>(
   (props, forwardedRef) => {
-    const { asChild, fallback, ...itemProps } = props;
+    const { asChild, fallback, index, isVisible = true, ...itemProps } = props;
     const context = useMasonryContext(ITEM_NAME);
+    const itemRef = React.useRef<ItemElement>(null);
+    const composedRef = useComposedRefs(forwardedRef, itemRef);
+
+    React.useEffect(() => {
+      if (!context.mounted || !itemRef.current) return;
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            const target = entry.target as HTMLElement;
+            if (target === itemRef.current) {
+              target.style.visibility = entry.isIntersecting
+                ? "visible"
+                : "hidden";
+            }
+          }
+        },
+        {
+          root: null,
+          rootMargin: "50px",
+          threshold: 0,
+        },
+      );
+
+      observer.observe(itemRef.current);
+      return () => observer.disconnect();
+    }, [context.mounted]);
 
     if (!context.mounted && fallback) {
       return fallback;
@@ -411,9 +479,14 @@ const MasonryItem = React.forwardRef<HTMLDivElement, MasonryItemProps>(
     return (
       <ItemSlot
         {...{ [DATA_ITEM_ATTR]: "" }}
+        {...(typeof index === "number" ? { "data-index": index } : {})}
         {...itemProps}
         role="gridcell"
-        ref={forwardedRef}
+        ref={composedRef}
+        style={{
+          ...itemProps.style,
+          visibility: isVisible ? "visible" : "hidden",
+        }}
       />
     );
   },

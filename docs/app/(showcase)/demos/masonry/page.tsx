@@ -3,6 +3,7 @@
 import { Shell } from "@/components/shell";
 import { ClientOnly } from "@/registry/default/components/client-only";
 import * as Masonry from "@/registry/default/ui/masonry";
+import { Masonry as MasonryAlt } from "masonic";
 import Image from "next/image";
 import * as React from "react";
 import { z } from "zod";
@@ -27,7 +28,7 @@ export default function MasonryPage() {
     async function fetchImages() {
       try {
         const response = await fetch(
-          "https://picsum.photos/v2/list?page=1&limit=20",
+          "https://picsum.photos/v2/list?page=1&limit=100",
         );
         const data: unknown = await response.json();
 
@@ -57,6 +58,28 @@ export default function MasonryPage() {
   return (
     <Shell>
       <ClientOnly fallback={<div>Loading...</div>}>
+        {/* <MasonryAlt
+          items={images}
+          columnGutter={12}
+          overscanBy={10}
+          render={({ data }) => (
+            <div
+              className="relative overflow-hidden rounded-lg"
+              style={{ aspectRatio: data.aspectRatio }}
+            >
+              <Image
+                src={data.download_url}
+                alt={data.author}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                quality={85}
+                className="object-cover transition-all duration-300 hover:scale-105"
+                placeholder="blur"
+                blurDataURL={`https://picsum.photos/id/${data.id}/100/100`}
+              />
+            </div>
+          )}
+        /> */}
         <Masonry.Root>
           {images.map((image) => (
             <Masonry.Item key={image.id}>
