@@ -857,9 +857,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
                 if (typeof child.props.ref === "function") {
                   child.props.ref(el);
                 } else if (child.props.ref) {
-                  (
-                    child.props.ref as React.MutableRefObject<HTMLElement>
-                  ).current = el;
+                  child.props.ref.current = el;
                 }
               }
             }

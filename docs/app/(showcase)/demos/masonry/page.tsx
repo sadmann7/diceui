@@ -7,6 +7,8 @@ import Image from "next/image";
 import * as React from "react";
 import { z } from "zod";
 
+import { Masonry as MasonryAlt } from "masonic";
+
 const imageSchema = z.object({
   id: z.string(),
   author: z.string(),
@@ -60,7 +62,7 @@ export default function MasonryPage() {
         {/* <MasonryAlt
           items={images}
           columnGutter={12}
-          overscanBy={10}
+          overscanBy={6}
           render={({ data }) => (
             <div
               className="relative overflow-hidden rounded-lg"
@@ -81,8 +83,8 @@ export default function MasonryPage() {
         /> */}
         <Masonry.Root
           columnCount={{ initial: 1, sm: 2, md: 3, lg: 4 }}
-          gap={16}
-          overscanBy={10}
+          gap={12}
+          overscanBy={6}
           itemHeight={300}
         >
           {images.map((image) => (
