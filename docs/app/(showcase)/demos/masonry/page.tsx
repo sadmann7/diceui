@@ -80,7 +80,11 @@ export default function MasonryPage() {
             </div>
           )}
         /> */}
-        <Masonry.Root>
+        <Masonry.Root
+          columnCount={{ initial: 1, sm: 2, md: 3, lg: 4 }}
+          gap={16}
+          overscanBy={10}
+        >
           {images.map((image) => (
             <Masonry.Item key={image.id}>
               <div
