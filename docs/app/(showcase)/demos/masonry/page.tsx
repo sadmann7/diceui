@@ -1,8 +1,10 @@
 "use client";
 
+import { ReactScanProvider } from "@/components/react-scan-provider";
 import { Shell } from "@/components/shell";
 import { ClientOnly } from "@/registry/default/components/client-only";
 import * as Masonry from "@/registry/default/ui/masonry";
+import { Masonry as MasonryAlt } from "masonic";
 import * as React from "react";
 import { z } from "zod";
 
@@ -63,16 +65,6 @@ export default function MasonryPage() {
   return (
     <Shell>
       <ClientOnly fallback={<div>Loading...</div>}>
-        {/* <MasonryAlt
-          items={items}
-          columnGutter={12}
-          overscanBy={6}
-          render={({ data }) => (
-            <div className="bg-accent" style={{ height: data.height }}>
-              {data.id}
-            </div>
-          )}
-        /> */}
         {/* <Masonry.Root
           columnCount={{ initial: 1, sm: 2, md: 3, lg: 4 }}
           gap={12}
@@ -99,6 +91,16 @@ export default function MasonryPage() {
             </Masonry.Item>
           ))}
         </Masonry.Root> */}
+        {/* <MasonryAlt
+          items={items}
+          columnGutter={12}
+          overscanBy={6}
+          render={({ data }) => (
+            <div className="bg-accent" style={{ height: data.height }}>
+              {data.id}
+            </div>
+          )}
+        /> */}
         <Masonry.Root
           columnCount={{ initial: 1, sm: 2, md: 3, lg: 4 }}
           gap={10}

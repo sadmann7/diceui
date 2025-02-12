@@ -70,50 +70,59 @@ NULL_NODE.P = NULL_NODE;
 NULL_NODE.L = NULL_NODE;
 NULL_NODE.R = NULL_NODE;
 
-// Optimized cache implementation with WeakRef for better memory management
-class LRUCache<K extends object, V extends object> {
-  private cache = new WeakMap<K, WeakRef<V>>();
-  private registry = new FinalizationRegistry<K>((key) => {
-    this.cache.delete(key);
-  });
+// Optimized memoization implementation
+function memoOne<Args extends unknown[], Result>(
+  fn: (...args: Args) => Result,
+  areEqual?: (currentArgs: Args, prevArgs: Args) => boolean,
+): (...args: Args) => Result {
+  const equal = areEqual || defaultAreEqual;
+  let prevArgs: Args | undefined;
+  let prevResult: Result | undefined;
 
-  set(key: K, value: V): void {
-    const ref = new WeakRef(value);
-    this.cache.set(key, ref);
-    this.registry.register(ref, key);
+  return (...args: Args): Result => {
+    if (prevArgs && equal(args, prevArgs)) {
+      return prevResult as Result;
+    }
+    prevArgs = args;
+    prevResult = fn(...args);
+    return prevResult;
+  };
+}
+
+const defaultAreEqual = <T extends unknown[]>(current: T, prev: T): boolean =>
+  current[0] === prev[0] &&
+  current[1] === prev[1] &&
+  current[2] === prev[2] &&
+  current[3] === prev[3];
+
+class OneKeyMap<K, V> {
+  private key: K | undefined;
+  private val: V | undefined;
+
+  constructor() {
+    this.key = undefined;
+    this.val = undefined;
   }
 
-  get(key: K): V | undefined {
-    const ref = this.cache.get(key);
-    return ref?.deref();
+  get(k: K): V | undefined {
+    return k === this.key ? this.val : undefined;
   }
 
-  has(key: K): boolean {
-    const ref = this.cache.get(key);
-    return ref?.deref() !== undefined;
-  }
-
-  delete(key: K): void {
-    this.cache.delete(key);
-  }
-
-  clear(): void {
-    this.cache = new WeakMap();
+  set(k: K, v: V): void {
+    this.key = k;
+    this.val = v;
   }
 }
 
-// Replace existing caches with optimized versions
-const itemsCache = new LRUCache<HTMLElement, { index: number }>();
-const measurementsCache = new LRUCache<
+// Optimized cache implementation with Map
+const itemsCache = new Map<HTMLElement, { index: number }>();
+const measurementsCache = new Map<
   HTMLElement,
   { width: number; height: number }
 >();
-const positionsCache = new LRUCache<
-  HTMLElement,
-  { top: number; left: number }
->();
+const positionsCache = new Map<HTMLElement, { top: number; left: number }>();
 
-// Optimized RAF scheduler with cancellation and debouncing
+// Optimized RAF scheduler with proper types
 function createRafScheduler<T extends unknown[]>(
   callback: (...args: T) => void,
   debounceMs = 0,
@@ -656,6 +665,7 @@ function useResponsiveValue({
   return currentValue;
 }
 
+// Add stable context
 interface MasonryContextValue {
   mounted: boolean;
   columnCount: number;
@@ -690,8 +700,118 @@ interface MasonryProps extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
 }
 
-const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
-  (props, forwardedRef) => {
+// Memoized item component
+const MasonryItem = React.memo(
+  React.forwardRef<HTMLDivElement, MasonryItemProps>((props, forwardedRef) => {
+    const { asChild, fallback, style, ...itemProps } = props;
+    const context = useMasonryContext(ITEM_NAME);
+
+    if (!context.mounted && fallback) {
+      return fallback;
+    }
+
+    const ItemSlot = asChild ? Slot : "div";
+
+    return (
+      <ItemSlot
+        role="gridcell"
+        {...itemProps}
+        style={style}
+        ref={forwardedRef}
+      />
+    );
+  }),
+);
+
+MasonryItem.displayName = ITEM_NAME;
+
+// Memoized style getters with proper types
+const getContainerStyle = memoOne(
+  (
+    isScrolling: boolean | undefined,
+    estimateHeight: number,
+  ): React.CSSProperties => ({
+    position: "relative",
+    width: "100%",
+    maxWidth: "100%",
+    height: Math.ceil(estimateHeight),
+    maxHeight: Math.ceil(estimateHeight),
+    willChange: isScrolling ? "contents" : undefined,
+    pointerEvents: isScrolling ? "none" : undefined,
+  }),
+);
+
+const getItemStyle = memoOne(
+  (
+    top: number,
+    left: number,
+    width: number,
+    isVisible: boolean,
+    itemStyle?: React.CSSProperties,
+  ): React.CSSProperties => ({
+    position: "absolute",
+    top,
+    left,
+    width,
+    transform: "translateZ(0)",
+    willChange: "transform",
+    transition: "opacity 0.2s ease-in-out",
+    opacity: isVisible ? 1 : 0,
+    pointerEvents: isVisible ? "auto" : "none",
+    ...itemStyle,
+  }),
+);
+
+// Memoized callbacks with proper types
+const useItemRefCallback = (
+  index: number,
+  positioner: Positioner,
+  resizeObserver?: ResizeObserver,
+) =>
+  React.useCallback(
+    (element: HTMLElement | null) => {
+      if (!element) return;
+
+      if (resizeObserver) {
+        resizeObserver.observe(element);
+        itemsCache.set(element, { index });
+      }
+
+      if (positioner.get(index) === undefined) {
+        positioner.set(index, element.offsetHeight);
+      }
+    },
+    [index, positioner, resizeObserver],
+  );
+
+// Add Positioner type definition
+interface PositionerItem {
+  top: number;
+  left: number;
+  height: number;
+  column: number;
+}
+
+interface Positioner {
+  columnCount: number;
+  columnWidth: number;
+  set: (index: number, height: number) => void;
+  get: (index: number) => PositionerItem | undefined;
+  update: (updates: number[]) => void;
+  range: (
+    lo: number,
+    hi: number,
+    renderCallback: (index: number, left: number, top: number) => void,
+  ) => void;
+  size: () => number;
+  estimateHeight: (itemCount: number, defaultItemHeight: number) => number;
+  shortestColumn: () => number;
+  all: () => PositionerItem[];
+}
+
+// Optimized Masonry component
+const Masonry = React.memo(
+  React.forwardRef<HTMLDivElement, MasonryProps>((props, forwardedRef) => {
     const {
       columnCount = COLUMN_COUNT,
       defaultColumnCount = typeof columnCount === "number"
@@ -717,13 +837,15 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
     const intervalTree = React.useRef(createIntervalTree());
     const measurementQueue = React.useRef(new PriorityQueue<number>());
     const initialMeasurementComplete = React.useRef(false);
+    const isScrolling = React.useRef(false);
+    const rafId = React.useRef<number | null>(null);
 
     // Mount effect
     React.useLayoutEffect(() => {
       setMounted(true);
     }, []);
 
-    // Memoized values and callbacks
+    // Memoized values
     const currentColumnCount = useResponsiveValue({
       value: columnCount,
       defaultValue: defaultColumnCount,
@@ -744,7 +866,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       return Math.floor((containerWidth - totalGap) / currentColumnCount);
     }, [currentColumnCount, currentGap]);
 
-    // Measure item callback
+    // Memoized measure callback
     const measureItem = React.useCallback(
       (index: number) => {
         const element = itemRefs.current.get(index);
@@ -764,7 +886,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       [getColumnWidth],
     );
 
-    // Layout calculation function
+    // Optimized layout calculation
     const calculateLayout = React.useCallback(() => {
       if (!mounted || !collectionRef.current) return;
 
@@ -864,48 +986,53 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
           columnHeights[shortestColumnIndex] = top + height + currentGap;
         }
 
-        const itemProps: ItemPropsWithRef = {
-          ref: (element: HTMLElement | null) => {
-            if (element) {
-              itemRefs.current.set(index, element);
-              itemsCache.set(element, { index });
-              if (child.props.ref) {
-                if (typeof child.props.ref === "function") {
-                  child.props.ref(element);
-                } else if (child.props.ref) {
-                  child.props.ref.current = element;
-                }
+        const itemStyle = getItemStyle(
+          top,
+          left,
+          columnWidth,
+          isInViewport,
+          child.props.style,
+        );
+
+        const itemRef = (element: HTMLElement | null) => {
+          if (element) {
+            itemRefs.current.set(index, element);
+            itemsCache.set(element, { index });
+            if (child.props.ref) {
+              if (typeof child.props.ref === "function") {
+                child.props.ref(element);
+              } else if (child.props.ref) {
+                child.props.ref.current = element;
               }
             }
-          },
-          style: {
-            position: "absolute",
-            top,
-            left,
-            width: columnWidth,
-            transform: "translateZ(0)",
-            willChange: "transform",
-            transition: "opacity 0.2s ease-in-out",
-            opacity: isInViewport ? 1 : 0,
-            pointerEvents: isInViewport ? "auto" : "none",
-            ...child.props.style,
-          },
+          }
         };
+
+        newItems.push(
+          React.cloneElement(child, {
+            ref: itemRef,
+            style: itemStyle,
+          }),
+        );
 
         intervalTree.current.insert(top, top + height, index);
         if (element) {
           positionsCache.set(element, { top, left });
         }
-
-        newItems.push(React.cloneElement(child, itemProps));
       });
 
-      setItems(newItems);
-      setMaxHeight(Math.max(...columnHeights));
-
-      if (!hasNewMeasurements && measurementQueue.current.isEmpty()) {
-        initialMeasurementComplete.current = true;
+      if (rafId.current) {
+        cancelAnimationFrame(rafId.current);
       }
+
+      rafId.current = requestAnimationFrame(() => {
+        setItems(newItems);
+        setMaxHeight(Math.max(...columnHeights));
+
+        if (!hasNewMeasurements && measurementQueue.current.isEmpty()) {
+          initialMeasurementComplete.current = true;
+        }
+      });
     }, [
       mounted,
       getColumnWidth,
@@ -918,16 +1045,24 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       overscan,
     ]);
 
-    // Layout scheduler
-    const layoutScheduler = React.useMemo(
-      () => createRafScheduler(calculateLayout, 16),
+    // Optimized scroll handler
+    const onScroll = React.useCallback(
+      (event?: Event) => {
+        if (!isScrolling.current) {
+          isScrolling.current = true;
+          calculateLayout();
+          setTimeout(() => {
+            isScrolling.current = false;
+          }, 150);
+        }
+      },
       [calculateLayout],
     );
 
     // Visibility observer
     useIntersectionObserver(collectionRef, (entries) => {
       if (entries[0]?.isIntersecting) {
-        layoutScheduler.schedule();
+        onScroll();
       }
     });
 
@@ -935,21 +1070,32 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
     React.useEffect(() => {
       if (!mounted || !collectionRef.current) return;
 
-      const resizeObserver = new ResizeObserver(() => {
-        layoutScheduler.schedule();
+      const resizeObserver = new ResizeObserver((entries) => {
+        if (entries[0]?.target === collectionRef.current) {
+          onScroll();
+        }
       });
-
       resizeObserver.observe(collectionRef.current);
-      return () => resizeObserver.disconnect();
-    }, [mounted, layoutScheduler]);
+
+      window.addEventListener("scroll", onScroll, { passive: true });
+
+      return () => {
+        resizeObserver.disconnect();
+        window.removeEventListener("scroll", onScroll);
+        if (rafId.current) {
+          cancelAnimationFrame(rafId.current);
+        }
+      };
+    }, [mounted, onScroll]);
 
     // Initial layout
     React.useEffect(() => {
       if (!mounted) return;
-      layoutScheduler.schedule();
-    }, [mounted, layoutScheduler]);
+      calculateLayout();
+    }, [mounted, calculateLayout]);
 
     const Component = asChild ? Slot : "div";
+    const containerStyle = getContainerStyle(mounted, maxHeight);
 
     return (
       <MasonryContext.Provider
@@ -964,22 +1110,18 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
           {...rootProps}
           ref={composedRef}
           style={{
+            ...containerStyle,
             ...style,
-            height: maxHeight,
-            position: "relative",
-            minHeight: itemHeight,
             visibility: initialMeasurementComplete.current
               ? "visible"
               : "hidden",
-            contain: "content",
-            willChange: "contents",
           }}
         >
           {items}
         </Component>
       </MasonryContext.Provider>
     );
-  },
+  }),
 );
 
 Masonry.displayName = ROOT_NAME;
@@ -988,23 +1130,6 @@ interface MasonryItemProps extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
   fallback?: React.ReactNode;
 }
-
-const MasonryItem = React.forwardRef<HTMLDivElement, MasonryItemProps>(
-  (props, forwardedRef) => {
-    const { asChild, fallback, ...itemProps } = props;
-    const context = useMasonryContext(ITEM_NAME);
-
-    if (!context.mounted && fallback) {
-      return fallback;
-    }
-
-    const ItemSlot = asChild ? Slot : "div";
-
-    return <ItemSlot role="gridcell" {...itemProps} ref={forwardedRef} />;
-  },
-);
-
-MasonryItem.displayName = ITEM_NAME;
 
 const Root = Masonry;
 const Item = MasonryItem;
