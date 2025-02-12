@@ -3,11 +3,8 @@
 import { Shell } from "@/components/shell";
 import { ClientOnly } from "@/registry/default/components/client-only";
 import * as Masonry from "@/registry/default/ui/masonry";
-import Image from "next/image";
 import * as React from "react";
 import { z } from "zod";
-
-import { Masonry as MasonryAlt } from "masonic";
 
 const imageSchema = z.object({
   id: z.string(),
@@ -23,38 +20,38 @@ type PicsumImage = z.infer<typeof imageSchema> & {
 };
 
 export default function MasonryPage() {
-  const [images, setImages] = React.useState<PicsumImage[]>([]);
+  // const [images, setImages] = React.useState<PicsumImage[]>([]);
 
-  React.useEffect(() => {
-    async function fetchImages() {
-      try {
-        const response = await fetch(
-          "https://picsum.photos/v2/list?page=1&limit=100",
-        );
-        const data: unknown = await response.json();
+  // React.useEffect(() => {
+  //   async function fetchImages() {
+  //     try {
+  //       const response = await fetch(
+  //         "https://picsum.photos/v2/list?page=1&limit=100",
+  //       );
+  //       const data: unknown = await response.json();
 
-        const parsedData = imageSchema.array().safeParse(data);
+  //       const parsedData = imageSchema.array().safeParse(data);
 
-        if (!parsedData.success) {
-          throw new Error("Invalid data");
-        }
+  //       if (!parsedData.success) {
+  //         throw new Error("Invalid data");
+  //       }
 
-        const images = parsedData.data.map((image) => ({
-          ...image,
-          aspectRatio:
-            ["1/1", "4/3", "16/9", "1/2", "2/1"][
-              Math.floor(Math.random() * 5)
-            ] ?? "1/1",
-        }));
+  //       const images = parsedData.data.map((image) => ({
+  //         ...image,
+  //         aspectRatio:
+  //           ["1/1", "4/3", "16/9", "1/2", "2/1"][
+  //             Math.floor(Math.random() * 5)
+  //           ] ?? "1/1",
+  //       }));
 
-        setImages(images);
-      } catch (error) {
-        console.error({ error });
-      }
-    }
+  //       setImages(images);
+  //     } catch (error) {
+  //       console.error({ error });
+  //     }
+  //   }
 
-    fetchImages();
-  }, []);
+  //   fetchImages();
+  // }, []);
 
   const items = React.useMemo(() => {
     return Array.from({ length: 1000 }, (_, index) => ({

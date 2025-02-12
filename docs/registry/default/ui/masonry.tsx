@@ -658,29 +658,29 @@ interface MasonryProps extends React.ComponentPropsWithoutRef<"div"> {
   defaultColumnCount?: number;
   gap?: number | ResponsiveObject;
   defaultGap?: number;
-  linear?: boolean;
-  asChild?: boolean;
   overscan?: number;
   scrollingDelay?: number;
   itemHeight?: number;
+  linear?: boolean;
+  asChild?: boolean;
 }
 
 const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
   (props, forwardedRef) => {
     const {
-      children,
       columnCount = COLUMN_COUNT,
       defaultColumnCount = typeof columnCount === "number"
         ? columnCount
         : COLUMN_COUNT,
       gap = GAP,
       defaultGap = typeof gap === "number" ? gap : GAP,
-      linear = false,
-      asChild,
-      style,
       overscan = 2,
       scrollingDelay = 150,
       itemHeight = 300,
+      linear = false,
+      asChild,
+      children,
+      style,
       ...rootProps
     } = props;
 
@@ -798,6 +798,8 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
         .fill(0)
         .map((_, i) => Math.round(i * (columnWidth + currentGap)));
 
+      let currentColumn = 0;
+
       React.Children.forEach(children, (child, index) => {
         if (!React.isValidElement<MasonryItemProps>(child)) return;
 
@@ -821,14 +823,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
 
         if (!shouldRender) return;
 
-        const shortestColumnIndex = columnHeights.indexOf(
-          Math.min(...columnHeights),
-        );
-        const left = columnGaps[shortestColumnIndex] ?? 0;
-        const top = columnHeights[shortestColumnIndex] ?? 0;
-
         let height = itemHeight;
-
         if (element) {
           const cached = measurementCache.get(element);
           if (cached) {
@@ -844,8 +839,29 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
           }
         }
 
-        columnHeights[shortestColumnIndex] =
-          (columnHeights[shortestColumnIndex] ?? 0) + height + currentGap;
+        let top: number;
+        let left: number;
+
+        if (linear) {
+          // Linear mode: left to right, top to bottom
+          left = columnGaps[currentColumn] ?? 0;
+          const columnHeight = columnHeights[currentColumn] ?? 0;
+          top = columnHeight;
+
+          // Update the column height with this item's height
+          columnHeights[currentColumn] = columnHeight + height + currentGap;
+
+          // Move to next column, wrap around if needed
+          currentColumn = (currentColumn + 1) % currentColumnCount;
+        } else {
+          // Original masonry mode: shortest column first
+          const shortestColumnIndex = columnHeights.indexOf(
+            Math.min(...columnHeights),
+          );
+          left = columnGaps[shortestColumnIndex] ?? 0;
+          top = columnHeights[shortestColumnIndex] ?? 0;
+          columnHeights[shortestColumnIndex] = top + height + currentGap;
+        }
 
         const itemProps: MasonryItemProps = {
           ref: (el: HTMLElement | null) => {
