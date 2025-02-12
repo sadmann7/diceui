@@ -644,11 +644,8 @@ function useResponsiveValue({
   return currentValue;
 }
 
-// Add stable context
 interface MasonryContextValue {
   mounted: boolean;
-  columnCount: number;
-  gap: number;
 }
 
 const MasonryContext = React.createContext<MasonryContextValue | null>(null);
@@ -1002,8 +999,6 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       <MasonryContext.Provider
         value={{
           mounted,
-          columnCount: currentColumnCount,
-          gap: currentGap,
         }}
       >
         <Component
