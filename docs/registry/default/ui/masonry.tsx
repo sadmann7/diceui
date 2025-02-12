@@ -71,7 +71,7 @@ NULL_NODE.L = NULL_NODE;
 NULL_NODE.R = NULL_NODE;
 
 // Optimized memoization implementation
-function memoOne<Args extends unknown[], Result>(
+function memoize<Args extends unknown[], Result>(
   fn: (...args: Args) => Result,
   areEqual?: (currentArgs: Args, prevArgs: Args) => boolean,
 ): (...args: Args) => Result {
@@ -94,25 +94,6 @@ const defaultAreEqual = <T extends unknown[]>(current: T, prev: T): boolean =>
   current[1] === prev[1] &&
   current[2] === prev[2] &&
   current[3] === prev[3];
-
-class OneKeyMap<K, V> {
-  private key: K | undefined;
-  private val: V | undefined;
-
-  constructor() {
-    this.key = undefined;
-    this.val = undefined;
-  }
-
-  get(k: K): V | undefined {
-    return k === this.key ? this.val : undefined;
-  }
-
-  set(k: K, v: V): void {
-    this.key = k;
-    this.val = v;
-  }
-}
 
 // Optimized cache implementation with Map
 const itemsCache = new Map<HTMLElement, { index: number }>();
@@ -700,33 +681,8 @@ interface MasonryProps extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
 }
 
-// Memoized item component
-const MasonryItem = React.memo(
-  React.forwardRef<HTMLDivElement, MasonryItemProps>((props, forwardedRef) => {
-    const { asChild, fallback, style, ...itemProps } = props;
-    const context = useMasonryContext(ITEM_NAME);
-
-    if (!context.mounted && fallback) {
-      return fallback;
-    }
-
-    const ItemSlot = asChild ? Slot : "div";
-
-    return (
-      <ItemSlot
-        role="gridcell"
-        {...itemProps}
-        style={style}
-        ref={forwardedRef}
-      />
-    );
-  }),
-);
-
-MasonryItem.displayName = ITEM_NAME;
-
 // Memoized style getters with proper types
-const getContainerStyle = memoOne(
+const getContainerStyle = memoize(
   (
     isScrolling: boolean | undefined,
     estimateHeight: number,
@@ -741,7 +697,7 @@ const getContainerStyle = memoOne(
   }),
 );
 
-const getItemStyle = memoOne(
+const getItemStyle = memoize(
   (
     top: number,
     left: number,
@@ -762,54 +718,6 @@ const getItemStyle = memoOne(
   }),
 );
 
-// Memoized callbacks with proper types
-const useItemRefCallback = (
-  index: number,
-  positioner: Positioner,
-  resizeObserver?: ResizeObserver,
-) =>
-  React.useCallback(
-    (element: HTMLElement | null) => {
-      if (!element) return;
-
-      if (resizeObserver) {
-        resizeObserver.observe(element);
-        itemsCache.set(element, { index });
-      }
-
-      if (positioner.get(index) === undefined) {
-        positioner.set(index, element.offsetHeight);
-      }
-    },
-    [index, positioner, resizeObserver],
-  );
-
-// Add Positioner type definition
-interface PositionerItem {
-  top: number;
-  left: number;
-  height: number;
-  column: number;
-}
-
-interface Positioner {
-  columnCount: number;
-  columnWidth: number;
-  set: (index: number, height: number) => void;
-  get: (index: number) => PositionerItem | undefined;
-  update: (updates: number[]) => void;
-  range: (
-    lo: number,
-    hi: number,
-    renderCallback: (index: number, left: number, top: number) => void,
-  ) => void;
-  size: () => number;
-  estimateHeight: (itemCount: number, defaultItemHeight: number) => number;
-  shortestColumn: () => number;
-  all: () => PositionerItem[];
-}
-
-// Optimized Masonry component
 const Masonry = React.memo(
   React.forwardRef<HTMLDivElement, MasonryProps>((props, forwardedRef) => {
     const {
@@ -973,7 +881,6 @@ const Masonry = React.memo(
 
           // Update the column height with this item's height
           columnHeights[currentColumn] = columnHeight + height + currentGap;
-
           // Move to next column, wrap around if needed
           currentColumn = (currentColumn + 1) % currentColumnCount;
         } else {
@@ -1045,19 +952,15 @@ const Masonry = React.memo(
       overscan,
     ]);
 
-    // Optimized scroll handler
-    const onScroll = React.useCallback(
-      (event?: Event) => {
-        if (!isScrolling.current) {
-          isScrolling.current = true;
-          calculateLayout();
-          setTimeout(() => {
-            isScrolling.current = false;
-          }, 150);
-        }
-      },
-      [calculateLayout],
-    );
+    const onScroll = React.useCallback(() => {
+      if (!isScrolling.current) {
+        isScrolling.current = true;
+        calculateLayout();
+        setTimeout(() => {
+          isScrolling.current = false;
+        }, 150);
+      }
+    }, [calculateLayout]);
 
     // Visibility observer
     useIntersectionObserver(collectionRef, (entries) => {
@@ -1106,7 +1009,6 @@ const Masonry = React.memo(
         }}
       >
         <Component
-          role="grid"
           {...rootProps}
           ref={composedRef}
           style={{
@@ -1130,6 +1032,23 @@ interface MasonryItemProps extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
   fallback?: React.ReactNode;
 }
+
+const MasonryItem = React.memo(
+  React.forwardRef<HTMLDivElement, MasonryItemProps>((props, forwardedRef) => {
+    const { asChild, fallback, style, ...itemProps } = props;
+    const context = useMasonryContext(ITEM_NAME);
+
+    if (!context.mounted && fallback) {
+      return fallback;
+    }
+
+    const ItemSlot = asChild ? Slot : "div";
+
+    return <ItemSlot {...itemProps} style={style} ref={forwardedRef} />;
+  }),
+);
+
+MasonryItem.displayName = ITEM_NAME;
 
 const Root = Masonry;
 const Item = MasonryItem;
