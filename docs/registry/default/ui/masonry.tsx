@@ -656,7 +656,7 @@ interface MasonryProps extends React.ComponentPropsWithoutRef<"div"> {
   defaultGap?: number;
   linear?: boolean;
   asChild?: boolean;
-  overscanBy?: number;
+  overscan?: number;
   scrollingDelay?: number;
   itemHeight?: number;
 }
@@ -674,7 +674,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       linear = false,
       asChild,
       style,
-      overscanBy = 2,
+      overscan = 2,
       scrollingDelay = 150,
       itemHeight = 300,
       ...rootProps
@@ -779,7 +779,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       const containerRect = collectionRef.current.getBoundingClientRect();
       const viewportTop = window.scrollY - containerRect.top;
       const viewportBottom = viewportTop + window.innerHeight;
-      const overscanAmount = Math.max(overscanBy * window.innerHeight, 1000);
+      const overscanAmount = Math.max(overscan * window.innerHeight, 1000);
 
       const visibleRange = {
         start: Math.max(0, viewportTop - overscanAmount),
@@ -904,7 +904,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       currentGap,
       mounted,
       itemHeight,
-      overscanBy,
+      overscan,
       getColumnWidth,
       measureItem,
       processMeasurements,

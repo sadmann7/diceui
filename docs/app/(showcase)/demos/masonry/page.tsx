@@ -56,35 +56,30 @@ export default function MasonryPage() {
     fetchImages();
   }, []);
 
+  const items = React.useMemo(() => {
+    return Array.from({ length: 1000 }, (_, index) => ({
+      id: index,
+      height: Math.random() * 100 + 100,
+    }));
+  }, []);
+
   return (
     <Shell>
       <ClientOnly fallback={<div>Loading...</div>}>
         {/* <MasonryAlt
-          items={images}
+          items={items}
           columnGutter={12}
           overscanBy={6}
           render={({ data }) => (
-            <div
-              className="relative overflow-hidden rounded-lg"
-              style={{ aspectRatio: data.aspectRatio }}
-            >
-              <Image
-                src={data.download_url}
-                alt={data.author}
-                fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                quality={85}
-                className="object-cover transition-all duration-300 hover:scale-105"
-                placeholder="blur"
-                blurDataURL={`https://picsum.photos/id/${data.id}/100/100`}
-              />
+            <div className="bg-accent" style={{ height: data.height }}>
+              {data.id}
             </div>
           )}
         /> */}
-        <Masonry.Root
+        {/* <Masonry.Root
           columnCount={{ initial: 1, sm: 2, md: 3, lg: 4 }}
           gap={12}
-          overscanBy={6}
+          overscan={6}
           itemHeight={300}
         >
           {images.map((image) => (
@@ -103,6 +98,19 @@ export default function MasonryPage() {
                   placeholder="blur"
                   blurDataURL={`https://picsum.photos/id/${image.id}/100/100`}
                 />
+              </div>
+            </Masonry.Item>
+          ))}
+        </Masonry.Root> */}
+        <Masonry.Root
+          columnCount={{ initial: 1, sm: 2, md: 3, lg: 4 }}
+          gap={10}
+          overscan={6}
+        >
+          {items.map((item) => (
+            <Masonry.Item key={item.id} asChild>
+              <div className="bg-accent" style={{ height: item.height }}>
+                {item.id}
               </div>
             </Masonry.Item>
           ))}
