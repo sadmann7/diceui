@@ -117,15 +117,12 @@ const positionsCache = new LRUCache<
 function createRafScheduler<T extends unknown[]>(
   callback: (...args: T) => void,
   debounceMs = 0,
-): {
-  schedule: (...args: T) => void;
-  cancel: () => void;
-} {
+) {
   let rafId: number | null = null;
   let timeoutId: number | null = null;
   let lastArgs: T | null = null;
 
-  const cancel = () => {
+  function cancel() {
     if (rafId !== null) {
       cancelAnimationFrame(rafId);
       rafId = null;
@@ -134,9 +131,9 @@ function createRafScheduler<T extends unknown[]>(
       clearTimeout(timeoutId);
       timeoutId = null;
     }
-  };
+  }
 
-  const schedule = (...args: T) => {
+  function schedule(...args: T) {
     lastArgs = args;
     cancel();
 
@@ -154,7 +151,7 @@ function createRafScheduler<T extends unknown[]>(
         if (lastArgs) callback(...lastArgs);
       });
     }
-  };
+  }
 
   return { schedule, cancel };
 }
@@ -676,11 +673,11 @@ function useMasonryContext(name: keyof typeof MASONRY_ERROR) {
   return context;
 }
 
-interface MasonryItemProps extends React.ComponentPropsWithoutRef<"div"> {
+interface ItemPropsWithRef extends MasonryItemProps {
   ref?: React.Ref<HTMLElement>;
 }
 
-type VisibleItem = React.ReactElement<MasonryItemProps>;
+type VisibleItem = React.ReactElement<ItemPropsWithRef>;
 
 interface MasonryProps extends React.ComponentPropsWithoutRef<"div"> {
   columnCount?: number | ResponsiveObject;
@@ -716,7 +713,6 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
     const [mounted, setMounted] = React.useState(false);
     const [items, setItems] = React.useState<VisibleItem[]>([]);
     const [maxHeight, setMaxHeight] = React.useState(0);
-
     const itemRefs = React.useRef<Map<number, HTMLElement>>(new Map());
     const intervalTree = React.useRef(createIntervalTree());
     const measurementQueue = React.useRef(new PriorityQueue<number>());
@@ -811,7 +807,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       let currentColumn = 0;
 
       React.Children.forEach(children, (child, index) => {
-        if (!React.isValidElement<MasonryItemProps>(child)) return;
+        if (!React.isValidElement<ItemPropsWithRef>(child)) return;
 
         const element = itemRefs.current.get(index);
         const isInViewport =
@@ -868,16 +864,16 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
           columnHeights[shortestColumnIndex] = top + height + currentGap;
         }
 
-        const itemProps: MasonryItemProps = {
-          ref: (el: HTMLElement | null) => {
-            if (el) {
-              itemRefs.current.set(index, el);
-              itemsCache.set(el, { index });
+        const itemProps: ItemPropsWithRef = {
+          ref: (element: HTMLElement | null) => {
+            if (element) {
+              itemRefs.current.set(index, element);
+              itemsCache.set(element, { index });
               if (child.props.ref) {
                 if (typeof child.props.ref === "function") {
-                  child.props.ref(el);
+                  child.props.ref(element);
                 } else if (child.props.ref) {
-                  child.props.ref.current = el;
+                  child.props.ref.current = element;
                 }
               }
             }
