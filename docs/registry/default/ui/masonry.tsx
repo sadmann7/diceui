@@ -71,11 +71,18 @@ NULL_NODE.L = NULL_NODE;
 NULL_NODE.R = NULL_NODE;
 
 // RAF scheduler implementation
-function rafSchedule<T extends unknown[]>(callback: (...args: T) => void) {
+interface RafCallback<T extends unknown[]> {
+  (...args: T): void;
+  cancel: () => void;
+}
+
+function onRafSchedule<T extends unknown[]>(
+  callback: (...args: T) => void,
+): RafCallback<T> {
   let lastArgs: T = Array(0) as unknown as T;
   let frameId: number | null = null;
 
-  function onCallback(...args: T) {
+  const onCallback: RafCallback<T> = (...args: T) => {
     lastArgs = args;
     if (frameId) return;
 
@@ -83,7 +90,7 @@ function rafSchedule<T extends unknown[]>(callback: (...args: T) => void) {
       frameId = null;
       callback(...lastArgs);
     });
-  }
+  };
 
   onCallback.cancel = () => {
     if (!frameId) return;
@@ -409,7 +416,7 @@ function removeInterval(treeNode: TreeNode, index: number) {
 function createIntervalTree() {
   const tree = { root: NULL_NODE, size: 0 };
   const indexMap: Record<number, TreeNode> = {};
-  const debouncedUpdate = rafSchedule(() => {
+  const debouncedUpdate = onRafSchedule(() => {
     // Batch updates
     if (pendingUpdates.length > 0) {
       const updates = [...pendingUpdates];
@@ -677,9 +684,9 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       ...rootProps
     } = props;
 
-    const [mounted, setMounted] = React.useState(false);
     const collectionRef = React.useRef<HTMLDivElement>(null);
     const composedRef = useComposedRefs(forwardedRef, collectionRef);
+    const [mounted, setMounted] = React.useState(false);
     const [items, setItems] = React.useState<VisibleItem[]>([]);
     const [maxHeight, setMaxHeight] = React.useState(0);
     const itemRefs = React.useRef<Map<number, HTMLElement>>(new Map());
@@ -762,7 +769,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
     }, [measureItem]);
 
     // Enhanced layout calculation with RAF scheduling
-    const calculateLayout = rafSchedule(() => {
+    const calculateLayout = onRafSchedule(() => {
       if (!mounted || !collectionRef.current) return;
 
       const columnWidth = getColumnWidth();
