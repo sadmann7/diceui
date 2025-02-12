@@ -70,123 +70,153 @@ NULL_NODE.P = NULL_NODE;
 NULL_NODE.L = NULL_NODE;
 NULL_NODE.R = NULL_NODE;
 
-// RAF scheduler implementation
-interface RafCallback<T extends unknown[]> {
-  (...args: T): void;
-  cancel: () => void;
-}
+// Optimized cache implementation with WeakRef for better memory management
+class LRUCache<K extends object, V extends object> {
+  private cache = new WeakMap<K, WeakRef<V>>();
+  private registry = new FinalizationRegistry<K>((key) => {
+    this.cache.delete(key);
+  });
 
-function onRafSchedule<T extends unknown[]>(
-  callback: (...args: T) => void,
-): RafCallback<T> {
-  let lastArgs: T = Array(0) as unknown as T;
-  let frameId: number | null = null;
-
-  const onCallback: RafCallback<T> = (...args: T) => {
-    lastArgs = args;
-    if (frameId) return;
-
-    frameId = requestAnimationFrame(() => {
-      frameId = null;
-      callback(...lastArgs);
-    });
-  };
-
-  onCallback.cancel = () => {
-    if (!frameId) return;
-    cancelAnimationFrame(frameId);
-    frameId = null;
-  };
-
-  return onCallback;
-}
-
-// Optimized cache implementation
-class Cache<K extends object, V> extends WeakMap<K, V> {
-  private pendingUpdates = new Set<K>();
-  private frameId: number | null = null;
-
-  set(key: K, value: V): this {
-    super.set(key, value);
-    this.pendingUpdates.add(key);
-    this.scheduleUpdate();
-    return this;
+  set(key: K, value: V): void {
+    const ref = new WeakRef(value);
+    this.cache.set(key, ref);
+    this.registry.register(ref, key);
   }
 
-  private scheduleUpdate = () => {
-    if (this.frameId) return;
-    this.frameId = requestAnimationFrame(() => {
-      this.frameId = null;
-      this.pendingUpdates.clear();
-    });
-  };
+  get(key: K): V | undefined {
+    const ref = this.cache.get(key);
+    return ref?.deref();
+  }
+
+  has(key: K): boolean {
+    const ref = this.cache.get(key);
+    return ref?.deref() !== undefined;
+  }
+
+  delete(key: K): void {
+    this.cache.delete(key);
+  }
 
   clear(): void {
-    if (this.frameId) {
-      cancelAnimationFrame(this.frameId);
-      this.frameId = null;
-    }
-    this.pendingUpdates.clear();
-    Object.assign(this, new WeakMap<K, V>());
+    this.cache = new WeakMap();
   }
 }
 
 // Replace existing caches with optimized versions
-const elementsCache = new Cache<HTMLElement, number>();
-const measurementCache = new Cache<
+const itemsCache = new LRUCache<HTMLElement, { index: number }>();
+const measurementsCache = new LRUCache<
   HTMLElement,
   { width: number; height: number }
 >();
-const positionCache = new Cache<HTMLElement, { top: number; left: number }>();
+const positionsCache = new LRUCache<
+  HTMLElement,
+  { top: number; left: number }
+>();
 
-// Optimized scroll handling
-function useOptimizedScroll(callback: () => void, delay = 16) {
-  const timeoutRef = React.useRef<number | null>(null);
-  const callbackRef = React.useRef(callback);
-  callbackRef.current = callback;
+// Optimized RAF scheduler with cancellation and debouncing
+function createRafScheduler<T extends unknown[]>(
+  callback: (...args: T) => void,
+  debounceMs = 0,
+): {
+  schedule: (...args: T) => void;
+  cancel: () => void;
+} {
+  let rafId: number | null = null;
+  let timeoutId: number | null = null;
+  let lastArgs: T | null = null;
 
-  React.useEffect(() => {
-    function onScroll() {
-      if (timeoutRef.current) return;
-      timeoutRef.current = window.setTimeout(() => {
-        timeoutRef.current = null;
-        callbackRef.current();
-      }, delay);
+  const cancel = () => {
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
     }
+    if (timeoutId !== null) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    }
+  };
 
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, [delay]);
+  const schedule = (...args: T) => {
+    lastArgs = args;
+    cancel();
+
+    if (debounceMs > 0) {
+      timeoutId = window.setTimeout(() => {
+        timeoutId = null;
+        rafId = requestAnimationFrame(() => {
+          rafId = null;
+          if (lastArgs) callback(...lastArgs);
+        });
+      }, debounceMs);
+    } else {
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        if (lastArgs) callback(...lastArgs);
+      });
+    }
+  };
+
+  return { schedule, cancel };
 }
 
-// Optimized resize handling
-function useOptimizedResize(callback: () => void, delay = 16) {
-  const timeoutRef = React.useRef<number | null>(null);
-  const callbackRef = React.useRef(callback);
-  callbackRef.current = callback;
+// Optimized measurement queue with priority
+class PriorityQueue<T> {
+  private items: T[] = [];
+  private priorities = new Map<T, number>();
 
-  React.useEffect(() => {
-    function onResize() {
-      if (timeoutRef.current) return;
-      timeoutRef.current = window.setTimeout(() => {
-        timeoutRef.current = null;
-        callbackRef.current();
-      }, delay);
+  get size(): number {
+    return this.items.length;
+  }
+
+  add(item: T, priority: number): void {
+    this.items.push(item);
+    this.priorities.set(item, priority);
+    this.items.sort(
+      (a, b) => (this.priorities.get(b) ?? 0) - (this.priorities.get(a) ?? 0),
+    );
+  }
+
+  remove(item: T): void {
+    const index = this.items.indexOf(item);
+    if (index !== -1) {
+      this.items.splice(index, 1);
+      this.priorities.delete(item);
     }
+  }
 
-    window.addEventListener("resize", onResize, { passive: true });
-    return () => {
-      window.removeEventListener("resize", onResize);
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, [delay]);
+  peek(): T | undefined {
+    return this.items[0];
+  }
+
+  isEmpty(): boolean {
+    return this.items.length === 0;
+  }
+
+  clear(): void {
+    this.items = [];
+    this.priorities.clear();
+  }
+}
+
+// Optimized intersection observer hook
+function useIntersectionObserver<T extends Element | null>(
+  ref: React.RefObject<T>,
+  callback: (entries: IntersectionObserverEntry[]) => void,
+  options: IntersectionObserverInit = {},
+) {
+  React.useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(callback, {
+      rootMargin: "200% 0px",
+      threshold: 0,
+      ...options,
+    });
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref, callback, options]);
 }
 
 // Utilities
@@ -416,7 +446,7 @@ function removeInterval(treeNode: TreeNode, index: number) {
 function createIntervalTree() {
   const tree = { root: NULL_NODE, size: 0 };
   const indexMap: Record<number, TreeNode> = {};
-  const debouncedUpdate = onRafSchedule(() => {
+  const debouncedUpdate = createRafScheduler(() => {
     // Batch updates
     if (pendingUpdates.length > 0) {
       const updates = [...pendingUpdates];
@@ -430,7 +460,7 @@ function createIntervalTree() {
         }
       }
     }
-  });
+  }).schedule;
 
   const pendingUpdates: [number, number][] = [];
 
@@ -647,7 +677,6 @@ function useMasonryContext(name: keyof typeof MASONRY_ERROR) {
 }
 
 interface MasonryItemProps extends React.ComponentPropsWithoutRef<"div"> {
-  style?: React.CSSProperties;
   ref?: React.Ref<HTMLElement>;
 }
 
@@ -659,7 +688,6 @@ interface MasonryProps extends React.ComponentPropsWithoutRef<"div"> {
   gap?: number | ResponsiveObject;
   defaultGap?: number;
   overscan?: number;
-  scrollingDelay?: number;
   itemHeight?: number;
   linear?: boolean;
   asChild?: boolean;
@@ -675,7 +703,6 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       gap = GAP,
       defaultGap = typeof gap === "number" ? gap : GAP,
       overscan = 2,
-      scrollingDelay = 150,
       itemHeight = 300,
       linear = false,
       asChild,
@@ -689,28 +716,18 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
     const [mounted, setMounted] = React.useState(false);
     const [items, setItems] = React.useState<VisibleItem[]>([]);
     const [maxHeight, setMaxHeight] = React.useState(0);
+
     const itemRefs = React.useRef<Map<number, HTMLElement>>(new Map());
     const intervalTree = React.useRef(createIntervalTree());
-    const isScrolling = React.useRef(false);
-    const scrollTimeout = React.useRef<NodeJS.Timeout | null>(null);
-    const resizeTimeout = React.useRef<NodeJS.Timeout | null>(null);
-    const measurementQueue = React.useRef<Set<number>>(new Set());
-    const pendingLayout = React.useRef<NodeJS.Timeout | null>(null);
+    const measurementQueue = React.useRef(new PriorityQueue<number>());
     const initialMeasurementComplete = React.useRef(false);
 
-    // Clear all timeouts on unmount
-    React.useEffect(() => {
-      return () => {
-        if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-        if (resizeTimeout.current) clearTimeout(resizeTimeout.current);
-        if (pendingLayout.current) clearTimeout(pendingLayout.current);
-      };
-    }, []);
-
+    // Mount effect
     React.useLayoutEffect(() => {
       setMounted(true);
     }, []);
 
+    // Memoized values and callbacks
     const currentColumnCount = useResponsiveValue({
       value: columnCount,
       defaultValue: defaultColumnCount,
@@ -723,7 +740,6 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       mounted,
     });
 
-    // Enhanced column width calculation
     const getColumnWidth = React.useCallback(() => {
       if (!collectionRef.current) return 0;
       const containerWidth = collectionRef.current.offsetWidth;
@@ -732,7 +748,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       return Math.floor((containerWidth - totalGap) / currentColumnCount);
     }, [currentColumnCount, currentGap]);
 
-    // Measure a single item
+    // Measure item callback
     const measureItem = React.useCallback(
       (index: number) => {
         const element = itemRefs.current.get(index);
@@ -741,7 +757,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
         const height = element.offsetHeight;
         if (height > 0) {
           const columnWidth = getColumnWidth();
-          measurementCache.set(element, {
+          measurementsCache.set(element, {
             width: columnWidth,
             height,
           });
@@ -752,31 +768,25 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       [getColumnWidth],
     );
 
-    // Process measurement queue with RAF scheduling
-    const processMeasurements = React.useCallback(() => {
-      if (measurementQueue.current.size === 0) return false;
-
-      let hasNewMeasurements = false;
-      for (const index of measurementQueue.current) {
-        const height = measureItem(index);
-        if (height !== null) {
-          hasNewMeasurements = true;
-          measurementQueue.current.delete(index);
-        }
-      }
-
-      return hasNewMeasurements;
-    }, [measureItem]);
-
-    // Enhanced layout calculation with RAF scheduling
-    const calculateLayout = onRafSchedule(() => {
+    // Layout calculation function
+    const calculateLayout = React.useCallback(() => {
       if (!mounted || !collectionRef.current) return;
 
       const columnWidth = getColumnWidth();
       if (columnWidth === 0) return;
 
-      // Process any pending measurements first
-      const hasNewMeasurements = processMeasurements();
+      // Process measurements
+      let hasNewMeasurements = false;
+      while (!measurementQueue.current.isEmpty()) {
+        const index = measurementQueue.current.peek();
+        if (index !== undefined) {
+          const height = measureItem(index);
+          if (height !== null) {
+            hasNewMeasurements = true;
+            measurementQueue.current.remove(index);
+          }
+        }
+      }
 
       const columnHeights = new Array<number>(currentColumnCount).fill(0);
       const newItems: VisibleItem[] = [];
@@ -810,12 +820,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
           index <=
             Math.ceil(visibleRange.end / itemHeight) * currentColumnCount;
 
-        // Queue measurement if needed
-        if (element && !measurementCache.has(element)) {
-          measurementQueue.current.add(index);
-        }
-
-        const hasCachedMeasurements = element && measurementCache.has(element);
+        const hasCachedMeasurements = element && measurementsCache.has(element);
         const shouldRender =
           isInViewport ||
           hasCachedMeasurements ||
@@ -825,11 +830,11 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
 
         let height = itemHeight;
         if (element) {
-          const cached = measurementCache.get(element);
+          const cached = measurementsCache.get(element);
           if (cached) {
             height = cached.height;
             if (cached.width !== columnWidth) {
-              measurementQueue.current.add(index);
+              measurementQueue.current.add(index, 0);
             }
           } else {
             const measuredHeight = measureItem(index);
@@ -867,10 +872,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
           ref: (el: HTMLElement | null) => {
             if (el) {
               itemRefs.current.set(index, el);
-              elementsCache.set(el, index);
-              if (!measurementCache.has(el)) {
-                measurementQueue.current.add(index);
-              }
+              itemsCache.set(el, { index });
               if (child.props.ref) {
                 if (typeof child.props.ref === "function") {
                   child.props.ref(el);
@@ -887,9 +889,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
             width: columnWidth,
             transform: "translateZ(0)",
             willChange: "transform",
-            transition: isScrolling.current
-              ? "none"
-              : "opacity 0.2s ease-in-out",
+            transition: "opacity 0.2s ease-in-out",
             opacity: isInViewport ? 1 : 0,
             pointerEvents: isInViewport ? "auto" : "none",
             ...child.props.style,
@@ -898,7 +898,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
 
         intervalTree.current.insert(top, top + height, index);
         if (element) {
-          positionCache.set(element, { top, left });
+          positionsCache.set(element, { top, left });
         }
 
         newItems.push(React.cloneElement(child, itemProps));
@@ -907,91 +907,53 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       setItems(newItems);
       setMaxHeight(Math.max(...columnHeights));
 
-      // Schedule next measurement/layout if needed
-      if (measurementQueue.current.size > 0 || hasNewMeasurements) {
-        if (pendingLayout.current) clearTimeout(pendingLayout.current);
-        pendingLayout.current = setTimeout(() => {
-          calculateLayout();
-        }, 50);
-      } else {
+      if (!hasNewMeasurements && measurementQueue.current.isEmpty()) {
         initialMeasurementComplete.current = true;
       }
-    });
+    }, [
+      mounted,
+      getColumnWidth,
+      measureItem,
+      currentColumnCount,
+      currentGap,
+      children,
+      itemHeight,
+      linear,
+      overscan,
+    ]);
 
-    // Optimized scroll handling
-    useOptimizedScroll(() => {
-      if (intervalTree.current.size() < items.length) {
-        if (pendingLayout.current) clearTimeout(pendingLayout.current);
-        pendingLayout.current = setTimeout(() => {
-          calculateLayout();
-        }, 50);
+    // Layout scheduler
+    const layoutScheduler = React.useMemo(
+      () => createRafScheduler(calculateLayout, 16),
+      [calculateLayout],
+    );
+
+    // Visibility observer
+    useIntersectionObserver(collectionRef, (entries) => {
+      if (entries[0]?.isIntersecting) {
+        layoutScheduler.schedule();
       }
     });
 
-    // Enhanced resize handling
-    useOptimizedResize(() => {
-      if (resizeTimeout.current) clearTimeout(resizeTimeout.current);
+    // Resize observer
+    React.useEffect(() => {
+      if (!mounted || !collectionRef.current) return;
 
-      // Get container width safely
-      const container = collectionRef.current;
-      if (!container) return;
+      const resizeObserver = new ResizeObserver(() => {
+        layoutScheduler.schedule();
+      });
 
-      // Immediately update column width and ensure it's a number
-      const newColumnWidth = getColumnWidth();
-      const containerWidth: number = container.offsetWidth || 0;
+      resizeObserver.observe(collectionRef.current);
+      return () => resizeObserver.disconnect();
+    }, [mounted, layoutScheduler]);
 
-      // Only trigger full recalculation if width actually changed and is valid
-      if (containerWidth > 0 && newColumnWidth > 0) {
-        // Temporarily disable transitions during resize
-        container.style.setProperty("transition", "none");
-
-        // Clear only position cache, keep measurements if possible
-        positionCache.clear();
-
-        // Immediate layout update with current measurements
-        calculateLayout();
-
-        // Schedule a full measurement update
-        resizeTimeout.current = setTimeout(() => {
-          container.style.removeProperty("transition");
-          measurementCache.clear();
-          measurementQueue.current.clear();
-          initialMeasurementComplete.current = false;
-          calculateLayout();
-        }, 50);
-      }
-    }, 16);
-
-    // Initial layout with measurement handling
+    // Initial layout
     React.useEffect(() => {
       if (!mounted) return;
+      layoutScheduler.schedule();
+    }, [mounted, layoutScheduler]);
 
-      let retryCount = 0;
-      const maxRetries = 5;
-
-      function tryLayout() {
-        if (collectionRef.current?.offsetWidth) {
-          calculateLayout();
-        } else if (retryCount < maxRetries) {
-          retryCount++;
-          setTimeout(tryLayout, 100);
-        }
-      }
-
-      tryLayout();
-
-      // Ensure all items are eventually measured
-      function measureAll() {
-        if (measurementQueue.current.size > 0) {
-          calculateLayout();
-          setTimeout(measureAll, 100);
-        }
-      }
-
-      setTimeout(measureAll, 100);
-    }, [mounted, calculateLayout]);
-
-    const RootSlot = asChild ? Slot : "div";
+    const Component = asChild ? Slot : "div";
 
     return (
       <MasonryContext.Provider
@@ -1001,7 +963,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
           gap: currentGap,
         }}
       >
-        <RootSlot
+        <Component
           role="grid"
           {...rootProps}
           ref={composedRef}
@@ -1013,10 +975,12 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
             visibility: initialMeasurementComplete.current
               ? "visible"
               : "hidden",
+            contain: "content",
+            willChange: "contents",
           }}
         >
           {items}
-        </RootSlot>
+        </Component>
       </MasonryContext.Provider>
     );
   },
