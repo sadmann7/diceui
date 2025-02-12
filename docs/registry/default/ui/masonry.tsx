@@ -71,7 +71,7 @@ NULL_NODE.L = NULL_NODE;
 NULL_NODE.R = NULL_NODE;
 
 // RAF scheduler implementation
-function onScheduleRaf<T extends unknown[]>(callback: (...args: T) => void) {
+function rafSchedule<T extends unknown[]>(callback: (...args: T) => void) {
   let lastArgs: T = Array(0) as unknown as T;
   let frameId: number | null = null;
 
@@ -95,7 +95,7 @@ function onScheduleRaf<T extends unknown[]>(callback: (...args: T) => void) {
 }
 
 // Optimized cache implementation
-class OptimizedCache<K extends object, V> extends WeakMap<K, V> {
+class Cache<K extends object, V> extends WeakMap<K, V> {
   private pendingUpdates = new Set<K>();
   private frameId: number | null = null;
 
@@ -125,15 +125,12 @@ class OptimizedCache<K extends object, V> extends WeakMap<K, V> {
 }
 
 // Replace existing caches with optimized versions
-const elementsCache = new OptimizedCache<HTMLElement, number>();
-const measurementCache = new OptimizedCache<
+const elementsCache = new Cache<HTMLElement, number>();
+const measurementCache = new Cache<
   HTMLElement,
   { width: number; height: number }
 >();
-const positionCache = new OptimizedCache<
-  HTMLElement,
-  { top: number; left: number }
->();
+const positionCache = new Cache<HTMLElement, { top: number; left: number }>();
 
 // Optimized scroll handling
 function useOptimizedScroll(callback: () => void, delay = 16) {
@@ -412,7 +409,7 @@ function removeInterval(treeNode: TreeNode, index: number) {
 function createIntervalTree() {
   const tree = { root: NULL_NODE, size: 0 };
   const indexMap: Record<number, TreeNode> = {};
-  const debouncedUpdate = onScheduleRaf(() => {
+  const debouncedUpdate = rafSchedule(() => {
     // Batch updates
     if (pendingUpdates.length > 0) {
       const updates = [...pendingUpdates];
@@ -748,7 +745,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       [getColumnWidth],
     );
 
-    // Process measurement queue
+    // Process measurement queue with RAF scheduling
     const processMeasurements = React.useCallback(() => {
       if (measurementQueue.current.size === 0) return false;
 
@@ -764,8 +761,8 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       return hasNewMeasurements;
     }, [measureItem]);
 
-    // Enhanced layout calculation
-    const calculateLayout = React.useCallback(() => {
+    // Enhanced layout calculation with RAF scheduling
+    const calculateLayout = rafSchedule(() => {
       if (!mounted || !collectionRef.current) return;
 
       const columnWidth = getColumnWidth();
@@ -828,10 +825,8 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
         if (element) {
           const cached = measurementCache.get(element);
           if (cached) {
-            // Use cached height even if width changed to prevent jumps
             height = cached.height;
             if (cached.width !== columnWidth) {
-              // Queue for remeasurement if width changed
               measurementQueue.current.add(index);
             }
           } else {
@@ -868,7 +863,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
             left,
             width: columnWidth,
             transform: "translateZ(0)",
-            willChange: "transform", // Optimize for animations
+            willChange: "transform",
             transition: isScrolling.current
               ? "none"
               : "opacity 0.2s ease-in-out",
@@ -898,17 +893,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       } else {
         initialMeasurementComplete.current = true;
       }
-    }, [
-      children,
-      currentColumnCount,
-      currentGap,
-      mounted,
-      itemHeight,
-      overscan,
-      getColumnWidth,
-      measureItem,
-      processMeasurements,
-    ]);
+    });
 
     // Optimized scroll handling
     useOptimizedScroll(() => {
@@ -994,6 +979,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
         }}
       >
         <RootSlot
+          role="grid"
           {...rootProps}
           ref={composedRef}
           style={{
@@ -1031,7 +1017,7 @@ const MasonryItem = React.forwardRef<HTMLDivElement, MasonryItemProps>(
 
     const ItemSlot = asChild ? Slot : "div";
 
-    return <ItemSlot {...itemProps} ref={forwardedRef} />;
+    return <ItemSlot role="gridcell" {...itemProps} ref={forwardedRef} />;
   },
 );
 

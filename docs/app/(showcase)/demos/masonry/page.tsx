@@ -66,7 +66,7 @@ export default function MasonryPage() {
   return (
     <Shell>
       <ClientOnly fallback={<div>Loading...</div>}>
-        {/* <MasonryAlt
+        <MasonryAlt
           items={items}
           columnGutter={12}
           overscanBy={6}
@@ -75,7 +75,7 @@ export default function MasonryPage() {
               {data.id}
             </div>
           )}
-        /> */}
+        />
         {/* <Masonry.Root
           columnCount={{ initial: 1, sm: 2, md: 3, lg: 4 }}
           gap={12}
