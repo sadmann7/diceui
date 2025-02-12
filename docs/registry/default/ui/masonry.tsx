@@ -94,12 +94,212 @@ function memoize<TArgs extends unknown[], TResult>(
   };
 }
 
-const itemsCache = new Map<HTMLElement, { index: number }>();
-const measurementsCache = new Map<
+// Add type for LRU node
+interface LRUNode<K, V> {
+  key: K;
+  value: V;
+  prev: LRUNode<K, V> | null;
+  next: LRUNode<K, V> | null;
+}
+
+// Optimized LRU Cache with doubly-linked list for O(1) operations
+class LRUCache<K, V> {
+  private cache: Map<K, LRUNode<K, V>>;
+  private maxSize: number;
+  private head: LRUNode<K, V> | null;
+  private tail: LRUNode<K, V> | null;
+  private size: number;
+
+  constructor(maxSize = 1000) {
+    this.cache = new Map();
+    this.maxSize = maxSize;
+    this.head = null;
+    this.tail = null;
+    this.size = 0;
+  }
+
+  private createNode(key: K, value: V): LRUNode<K, V> {
+    return { key, value, prev: null, next: null };
+  }
+
+  private moveToFront(node: LRUNode<K, V>): void {
+    if (node === this.head) return;
+
+    // Remove from current position
+    if (node.prev) node.prev.next = node.next;
+    if (node.next) node.next.prev = node.prev;
+    if (node === this.tail) this.tail = node.prev;
+
+    // Move to front
+    node.next = this.head;
+    node.prev = null;
+    if (this.head) this.head.prev = node;
+    this.head = node;
+    if (!this.tail) this.tail = node;
+  }
+
+  private addToFront(node: LRUNode<K, V>): void {
+    if (!this.head) {
+      this.head = node;
+      this.tail = node;
+    } else {
+      node.next = this.head;
+      this.head.prev = node;
+      this.head = node;
+    }
+  }
+
+  private removeLRU(): void {
+    if (!this.tail) return;
+
+    const key = this.tail.key;
+    if (this.tail.prev) {
+      this.tail.prev.next = null;
+      this.tail = this.tail.prev;
+    } else {
+      this.head = null;
+      this.tail = null;
+    }
+    this.cache.delete(key);
+    this.size--;
+  }
+
+  get(key: K): V | undefined {
+    const node = this.cache.get(key);
+    if (node) {
+      this.moveToFront(node);
+      return node.value;
+    }
+    return undefined;
+  }
+
+  set(key: K, value: V): void {
+    const existingNode = this.cache.get(key);
+    if (existingNode) {
+      existingNode.value = value;
+      this.moveToFront(existingNode);
+    } else {
+      if (this.size >= this.maxSize) {
+        this.removeLRU();
+      }
+      const newNode = this.createNode(key, value);
+      this.cache.set(key, newNode);
+      this.addToFront(newNode);
+      this.size++;
+    }
+  }
+
+  delete(key: K): void {
+    const node = this.cache.get(key);
+    if (!node) return;
+
+    if (node.prev) node.prev.next = node.next;
+    if (node.next) node.next.prev = node.prev;
+    if (node === this.head) this.head = node.next;
+    if (node === this.tail) this.tail = node.prev;
+
+    this.cache.delete(key);
+    this.size--;
+  }
+
+  clear(): void {
+    this.cache.clear();
+    this.head = null;
+    this.tail = null;
+    this.size = 0;
+  }
+
+  has(key: K): boolean {
+    return this.cache.has(key);
+  }
+}
+
+// Optimized object pool with pre-allocation
+class ObjectPool<T> {
+  private pool: T[];
+  private createFn: () => T;
+  private resetFn: (obj: T) => void;
+  private size: number;
+  private capacity: number;
+
+  constructor(
+    createFn: () => T,
+    resetFn: (obj: T) => void,
+    initialCapacity = 1000,
+  ) {
+    this.createFn = createFn;
+    this.resetFn = resetFn;
+    this.capacity = initialCapacity;
+    this.size = 0;
+    this.pool = new Array(initialCapacity);
+    // Pre-allocate objects
+    for (let i = 0; i < initialCapacity; i++) {
+      this.pool[i] = this.createFn();
+    }
+  }
+
+  acquire(): T {
+    if (this.size > 0) {
+      const obj = this.pool[--this.size];
+      // Since we pre-allocate, obj should never be undefined
+      // but we add this check for type safety
+      return obj ?? this.createFn();
+    }
+    return this.createFn();
+  }
+
+  release(obj: T): void {
+    if (this.size < this.capacity) {
+      this.resetFn(obj);
+      this.pool[this.size++] = obj;
+    }
+  }
+}
+
+// Pre-allocated ListNode pool
+const listNodePool = new ObjectPool<ListNode>(
+  () => ({ index: -1, high: 0, next: null }),
+  (node) => {
+    node.index = -1;
+    node.high = 0;
+    node.next = null;
+  },
+);
+
+// Pre-allocated TreeNode pool
+const treeNodePool = new ObjectPool<TreeNode>(
+  () => ({
+    max: 0,
+    low: 0,
+    high: 0,
+    C: NIL,
+    list: { index: -1, high: 0, next: null },
+    P: NULL_NODE,
+    R: NULL_NODE,
+    L: NULL_NODE,
+  }),
+  (node) => {
+    node.max = 0;
+    node.low = 0;
+    node.high = 0;
+    node.C = NIL;
+    node.list = listNodePool.acquire();
+    node.P = NULL_NODE;
+    node.R = NULL_NODE;
+    node.L = NULL_NODE;
+  },
+);
+
+// Replace existing caches with optimized LRU implementation
+const itemsCache = new LRUCache<HTMLElement, { index: number }>();
+const measurementsCache = new LRUCache<
   HTMLElement,
   { width: number; height: number }
 >();
-const positionsCache = new Map<HTMLElement, { top: number; left: number }>();
+const positionsCache = new LRUCache<
+  HTMLElement,
+  { top: number; left: number }
+>();
 
 // Optimized RAF scheduler with proper types
 function createRafScheduler<T extends unknown[]>(
@@ -427,17 +627,16 @@ function removeInterval(treeNode: TreeNode, index: number) {
   }
 }
 
-// Optimize interval tree implementation
+// Update interval tree to use optimized pools
 function createIntervalTree() {
   const tree = { root: NULL_NODE, size: 0 };
-  const indexMap: Record<number, TreeNode> = {};
+  const indexMap = new LRUCache<number, TreeNode>(1000);
+  const pendingUpdates: [number, number][] = [];
   const debouncedUpdate = createRafScheduler(() => {
-    // Batch updates
     if (pendingUpdates.length > 0) {
-      const updates = [...pendingUpdates];
-      pendingUpdates.length = 0;
+      const updates = pendingUpdates.splice(0); // More efficient than spread
       for (const [index, height] of updates) {
-        const node = indexMap[index];
+        const node = indexMap.get(index);
         if (node) {
           node.high = height;
           updateMax(node);
@@ -445,9 +644,7 @@ function createIntervalTree() {
         }
       }
     }
-  }).schedule;
-
-  const pendingUpdates: [number, number][] = [];
+  }, 16).schedule; // Align with frame rate
 
   return {
     insert(low: number, high: number, index: number) {
@@ -464,21 +661,23 @@ function createIntervalTree() {
         if (!addInterval(y, high, index)) return;
         pendingUpdates.push([index, high]);
         debouncedUpdate();
-        indexMap[index] = y;
+        indexMap.set(index, y);
         tree.size++;
         return;
       }
 
-      const z: TreeNode = {
-        low,
-        high,
-        max: high,
-        C: RED,
-        P: y,
-        L: NULL_NODE,
-        R: NULL_NODE,
-        list: { index, high, next: null },
-      };
+      const z = treeNodePool.acquire();
+      z.low = low;
+      z.high = high;
+      z.max = high;
+      z.C = RED;
+      z.P = y;
+      z.L = NULL_NODE;
+      z.R = NULL_NODE;
+      z.list = listNodePool.acquire();
+      z.list.index = index;
+      z.list.high = high;
+      z.list.next = null;
 
       if (y === NULL_NODE) tree.root = z;
       else {
@@ -488,14 +687,14 @@ function createIntervalTree() {
       }
 
       fixInsert(tree, z);
-      indexMap[index] = z;
+      indexMap.set(index, z);
       tree.size++;
     },
 
     remove(index: number) {
-      const z = indexMap[index];
+      const z = indexMap.get(index);
       if (!z) return;
-      delete indexMap[index];
+      indexMap.delete(index);
 
       const result = removeInterval(z, index);
       if (result === undefined) return;
@@ -538,6 +737,10 @@ function createIntervalTree() {
       updateMaxUp(x);
 
       if (originalColor === BLACK) fixRemove(tree, x);
+
+      // Return nodes to pools
+      listNodePool.release(z.list);
+      treeNodePool.release(z);
       tree.size--;
     },
 
@@ -548,17 +751,12 @@ function createIntervalTree() {
     ) {
       const stack = [tree.root];
       while (stack.length > 0) {
-        const node = stack[stack.length - 1];
-        stack.pop();
-
-        // Skip if node is null or out of range
+        const node = stack.pop();
         if (!node || node === NULL_NODE || low > node.max) continue;
 
-        // Add children to stack
         if (node.L !== NULL_NODE) stack.push(node.L);
         if (node.R !== NULL_NODE) stack.push(node.R);
 
-        // Process current node
         if (node.low <= high && node.high >= low && node.list) {
           let curr: ListNode | null = node.list;
           while (curr !== null) {
