@@ -70,32 +70,30 @@ NULL_NODE.P = NULL_NODE;
 NULL_NODE.L = NULL_NODE;
 NULL_NODE.R = NULL_NODE;
 
-// Optimized memoization implementation
-function memoize<Args extends unknown[], Result>(
-  fn: (...args: Args) => Result,
-  areEqual?: (currentArgs: Args, prevArgs: Args) => boolean,
-): (...args: Args) => Result {
-  const equal = areEqual || defaultAreEqual;
-  let prevArgs: Args | undefined;
-  let prevResult: Result | undefined;
-
-  return (...args: Args): Result => {
-    if (prevArgs && equal(args, prevArgs)) {
-      return prevResult as Result;
-    }
-    prevArgs = args;
-    prevResult = fn(...args);
-    return prevResult;
-  };
-}
-
 const defaultAreEqual = <T extends unknown[]>(current: T, prev: T): boolean =>
   current[0] === prev[0] &&
   current[1] === prev[1] &&
   current[2] === prev[2] &&
   current[3] === prev[3];
 
-// Optimized cache implementation with Map
+function memoize<TArgs extends unknown[], TResult>(
+  callback: (...args: TArgs) => TResult,
+  areEqual?: (currentArgs: TArgs, prevArgs: TArgs) => boolean,
+): (...args: TArgs) => TResult {
+  const equal = areEqual || defaultAreEqual;
+  let prevArgs: TArgs | undefined;
+  let prevResult: TResult | undefined;
+
+  return (...args: TArgs): TResult => {
+    if (prevArgs && equal(args, prevArgs)) {
+      return prevResult as TResult;
+    }
+    prevArgs = args;
+    prevResult = callback(...args);
+    return prevResult;
+  };
+}
+
 const itemsCache = new Map<HTMLElement, { index: number }>();
 const measurementsCache = new Map<
   HTMLElement,
@@ -718,8 +716,8 @@ const getItemStyle = memoize(
   }),
 );
 
-const Masonry = React.memo(
-  React.forwardRef<HTMLDivElement, MasonryProps>((props, forwardedRef) => {
+const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
+  (props, forwardedRef) => {
     const {
       columnCount = COLUMN_COUNT,
       defaultColumnCount = typeof columnCount === "number"
@@ -1023,7 +1021,7 @@ const Masonry = React.memo(
         </Component>
       </MasonryContext.Provider>
     );
-  }),
+  },
 );
 
 Masonry.displayName = ROOT_NAME;
@@ -1046,6 +1044,13 @@ const MasonryItem = React.memo(
 
     return <ItemSlot {...itemProps} style={style} ref={forwardedRef} />;
   }),
+  (prev, next) => {
+    return (
+      prev.asChild === next.asChild &&
+      prev.fallback === next.fallback &&
+      prev.style === next.style
+    );
+  },
 );
 
 MasonryItem.displayName = ITEM_NAME;
