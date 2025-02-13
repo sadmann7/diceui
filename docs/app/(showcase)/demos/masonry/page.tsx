@@ -55,7 +55,7 @@ export default function MasonryPage() {
           loadMore();
         }
       },
-      { root: null, rootMargin: "0px", threshold: 0.1 },
+      { root: null, rootMargin: "200px", threshold: 0.1 },
     );
 
     const currentLoader = loaderRef.current;
@@ -70,42 +70,38 @@ export default function MasonryPage() {
     };
   }, [loadMore]);
 
-  console.log({ isLoading, hasMore, items });
-
   return (
-    <Shell className="relative min-h-screen">
-      <ClientOnly fallback={<Skeleton className="size-full" />}>
-        <div className="flex flex-col gap-8">
-          <Masonry.Root
-            columnCount={{ initial: 1, sm: 2, md: 3, lg: 4 }}
-            gap={10}
-            overscan={6}
+    <Shell>
+      <div className="flex flex-col gap-8">
+        <Masonry.Root
+          columnCount={{ initial: 1, sm: 2, md: 3, lg: 4 }}
+          gap={10}
+          overscan={6}
+        >
+          {items.map((item) => (
+            <Masonry.Item key={item.id} asChild>
+              <div
+                className="rounded-md bg-accent p-4"
+                style={{ height: item.height }}
+              >
+                {item.id + 1}
+              </div>
+            </Masonry.Item>
+          ))}
+        </Masonry.Root>
+        {hasMore && (
+          <div
+            ref={loaderRef}
+            className="flex w-full items-center justify-center py-8"
           >
-            {items.map((item) => (
-              <Masonry.Item key={item.id} asChild>
-                <div
-                  className="rounded-md bg-accent p-4"
-                  style={{ height: item.height }}
-                >
-                  {item.id + 1}
-                </div>
-              </Masonry.Item>
-            ))}
-          </Masonry.Root>
-          {hasMore && (
-            <div
-              ref={loaderRef}
-              className="flex w-full items-center justify-center py-8"
-            >
-              {isLoading ? (
-                <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-              ) : (
-                <div className="h-6 w-6" />
-              )}
-            </div>
-          )}
-        </div>
-      </ClientOnly>
+            {isLoading ? (
+              <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+            ) : (
+              <div className="h-6 w-6" />
+            )}
+          </div>
+        )}
+      </div>
     </Shell>
   );
 }
