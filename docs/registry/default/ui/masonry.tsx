@@ -4,17 +4,6 @@ import { useComposedRefs } from "@/lib/composition";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 
-const ROOT_NAME = "MasonryRoot";
-const ITEM_NAME = "MasonryItem";
-
-const COLUMN_COUNT = 4;
-const GAP = 0;
-
-const MASONRY_ERROR = {
-  [ROOT_NAME]: `\`${ROOT_NAME}\` components must be within \`${ROOT_NAME}\``,
-  [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${ROOT_NAME}\``,
-} as const;
-
 const TREE_COLOR = {
   RED: 0,
   BLACK: 1,
@@ -676,6 +665,17 @@ function useResponsiveValue({
   return currentValue;
 }
 
+const ROOT_NAME = "MasonryRoot";
+const ITEM_NAME = "MasonryItem";
+
+const COLUMN_COUNT = 4;
+const GAP = 0;
+
+const MASONRY_ERROR = {
+  [ROOT_NAME]: `\`${ROOT_NAME}\` components must be within \`${ROOT_NAME}\``,
+  [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${ROOT_NAME}\``,
+} as const;
+
 interface MasonryContextValue {
   mounted: boolean;
 }
@@ -691,7 +691,7 @@ function useMasonryContext(name: keyof typeof MASONRY_ERROR) {
   return context;
 }
 
-const getContainerStyle = memoize(
+const getRootStyle = memoize(
   (
     isScrolling: boolean | undefined,
     estimateHeight: number,
@@ -1016,7 +1016,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       calculateLayout();
     }, [mounted, calculateLayout]);
 
-    const containerStyle = getContainerStyle(isScrolling.current, maxHeight);
+    const rootStyle = getRootStyle(isScrolling.current, maxHeight);
 
     const Comp = asChild ? Slot : "div";
 
@@ -1030,7 +1030,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
           {...rootProps}
           ref={composedRef}
           style={{
-            ...containerStyle,
+            ...rootStyle,
             ...style,
             visibility: initialMeasurementComplete.current
               ? "visible"
