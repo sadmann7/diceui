@@ -26,6 +26,46 @@ const TREE_ACTION = {
   KEEP: 1,
 } as const;
 
+function memoize<TArgs extends unknown[], TReturn>(
+  resultFn: (...args: TArgs) => TReturn,
+): ((...args: TArgs) => TReturn) & { clear: () => void } {
+  let cache: {
+    lastArgs: TArgs;
+    lastResult: TReturn;
+  } | null = null;
+
+  function memoized(this: unknown, ...newArgs: TArgs): TReturn {
+    if (cache) {
+      const lastArgs = cache.lastArgs;
+      if (
+        newArgs.length === lastArgs.length &&
+        newArgs.every((arg, i) => {
+          const lastArg = lastArgs[i];
+          return (
+            arg === lastArg || (Number.isNaN(arg) && Number.isNaN(lastArg))
+          );
+        })
+      ) {
+        return cache.lastResult;
+      }
+    }
+
+    const lastResult = resultFn.apply(this, newArgs);
+    cache = {
+      lastResult,
+      lastArgs: newArgs,
+    };
+
+    return lastResult;
+  }
+
+  memoized.clear = function clear() {
+    cache = null;
+  };
+
+  return memoized;
+}
+
 type TreeColor = (typeof TREE_COLOR)[keyof typeof TREE_COLOR];
 type TreeAction = (typeof TREE_ACTION)[keyof typeof TREE_ACTION];
 
@@ -60,30 +100,6 @@ const NULL_NODE: TreeNode = {
 NULL_NODE.parent = NULL_NODE;
 NULL_NODE.left = NULL_NODE;
 NULL_NODE.right = NULL_NODE;
-
-const defaultAreEqual = <T extends unknown[]>(current: T, prev: T): boolean =>
-  current[0] === prev[0] &&
-  current[1] === prev[1] &&
-  current[2] === prev[2] &&
-  current[3] === prev[3];
-
-function memoize<TArgs extends unknown[], TResult>(
-  callback: (...args: TArgs) => TResult,
-  areEqual?: (currentArgs: TArgs, prevArgs: TArgs) => boolean,
-): (...args: TArgs) => TResult {
-  const equal = areEqual || defaultAreEqual;
-  let prevArgs: TArgs | undefined;
-  let prevResult: TResult | undefined;
-
-  return (...args: TArgs): TResult => {
-    if (prevArgs && equal(args, prevArgs)) {
-      return prevResult as TResult;
-    }
-    prevArgs = args;
-    prevResult = callback(...args);
-    return prevResult;
-  };
-}
 
 const itemsCache = new Map<HTMLElement, { index: number }>();
 const measurementsCache = new Map<
@@ -673,23 +689,6 @@ function useMasonryContext(name: keyof typeof MASONRY_ERROR) {
   return context;
 }
 
-interface ItemPropsWithRef extends MasonryItemProps {
-  ref?: React.Ref<HTMLElement>;
-}
-
-type VisibleItem = React.ReactElement<ItemPropsWithRef>;
-
-interface MasonryProps extends React.ComponentPropsWithoutRef<"div"> {
-  columnCount?: number | ResponsiveObject;
-  defaultColumnCount?: number;
-  gap?: number | ResponsiveObject;
-  defaultGap?: number;
-  overscan?: number;
-  itemHeight?: number;
-  linear?: boolean;
-  asChild?: boolean;
-}
-
 const getContainerStyle = memoize(
   (
     isScrolling: boolean | undefined,
@@ -726,6 +725,23 @@ const getItemStyle = memoize(
   }),
 );
 
+interface ItemPropsWithRef extends MasonryItemProps {
+  ref?: React.Ref<HTMLElement>;
+}
+
+type VisibleItem = React.ReactElement<ItemPropsWithRef>;
+
+interface MasonryProps extends React.ComponentPropsWithoutRef<"div"> {
+  columnCount?: number | ResponsiveObject;
+  defaultColumnCount?: number;
+  gap?: number | ResponsiveObject;
+  defaultGap?: number;
+  overscan?: number;
+  itemHeight?: number;
+  linear?: boolean;
+  asChild?: boolean;
+}
+
 const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
   (props, forwardedRef) => {
     const {
@@ -756,12 +772,10 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
     const isScrolling = React.useRef(false);
     const rafId = React.useRef<number | null>(null);
 
-    // Mount effect
     React.useLayoutEffect(() => {
       setMounted(true);
     }, []);
 
-    // Memoized values
     const currentColumnCount = useResponsiveValue({
       value: columnCount,
       defaultValue: defaultColumnCount,
@@ -782,7 +796,6 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       return Math.floor((containerWidth - totalGap) / currentColumnCount);
     }, [currentColumnCount, currentGap]);
 
-    // Memoized measure callback
     const measureItem = React.useCallback(
       (index: number) => {
         const element = itemRefs.current.get(index);
@@ -802,7 +815,6 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       [getColumnWidth],
     );
 
-    // Optimized layout calculation
     const calculateLayout = React.useCallback(() => {
       if (!mounted || !collectionRef.current) return;
 
@@ -970,14 +982,12 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       }
     }, [calculateLayout]);
 
-    // Visibility observer
     useIntersectionObserver(collectionRef, (entries) => {
       if (entries[0]?.isIntersecting) {
         onScroll();
       }
     });
 
-    // Resize observer
     React.useEffect(() => {
       if (!mounted || !collectionRef.current) return;
 
@@ -999,14 +1009,14 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       };
     }, [mounted, onScroll]);
 
-    // Initial layout
     React.useEffect(() => {
       if (!mounted) return;
       calculateLayout();
     }, [mounted, calculateLayout]);
 
-    const Component = asChild ? Slot : "div";
-    const containerStyle = getContainerStyle(mounted, maxHeight);
+    const containerStyle = getContainerStyle(isScrolling.current, maxHeight);
+
+    const Comp = asChild ? Slot : "div";
 
     return (
       <MasonryContext.Provider
@@ -1014,7 +1024,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
           mounted,
         }}
       >
-        <Component
+        <Comp
           {...rootProps}
           ref={composedRef}
           style={{
@@ -1026,7 +1036,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
           }}
         >
           {items}
-        </Component>
+        </Comp>
       </MasonryContext.Provider>
     );
   },
