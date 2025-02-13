@@ -26,46 +26,6 @@ const TREE_ACTION = {
   KEEP: 1,
 } as const;
 
-function memoize<TArgs extends unknown[], TReturn>(
-  resultFn: (...args: TArgs) => TReturn,
-): ((...args: TArgs) => TReturn) & { clear: () => void } {
-  let cache: {
-    lastArgs: TArgs;
-    lastResult: TReturn;
-  } | null = null;
-
-  function memoized(this: unknown, ...newArgs: TArgs): TReturn {
-    if (cache) {
-      const lastArgs = cache.lastArgs;
-      if (
-        newArgs.length === lastArgs.length &&
-        newArgs.every((arg, i) => {
-          const lastArg = lastArgs[i];
-          return (
-            arg === lastArg || (Number.isNaN(arg) && Number.isNaN(lastArg))
-          );
-        })
-      ) {
-        return cache.lastResult;
-      }
-    }
-
-    const lastResult = resultFn.apply(this, newArgs);
-    cache = {
-      lastResult,
-      lastArgs: newArgs,
-    };
-
-    return lastResult;
-  }
-
-  memoized.clear = function clear() {
-    cache = null;
-  };
-
-  return memoized;
-}
-
 type TreeColor = (typeof TREE_COLOR)[keyof typeof TREE_COLOR];
 type TreeAction = (typeof TREE_ACTION)[keyof typeof TREE_ACTION];
 
@@ -101,12 +61,14 @@ NULL_NODE.parent = NULL_NODE;
 NULL_NODE.left = NULL_NODE;
 NULL_NODE.right = NULL_NODE;
 
-const itemsCache = new Map<HTMLElement, { index: number }>();
+type ItemElement = React.ComponentRef<typeof MasonryItem>;
+
+const itemsCache = new Map<ItemElement, { index: number }>();
 const measurementsCache = new Map<
-  HTMLElement,
+  ItemElement,
   { width: number; height: number }
 >();
-const positionsCache = new Map<HTMLElement, { top: number; left: number }>();
+const positionsCache = new Map<ItemElement, { top: number; left: number }>();
 
 function createRafScheduler<T extends unknown[]>(
   callback: (...args: T) => void,
@@ -591,6 +553,46 @@ function createIntervalTree() {
   };
 }
 
+function memoize<TArgs extends unknown[], TReturn>(
+  resultFn: (...args: TArgs) => TReturn,
+): ((...args: TArgs) => TReturn) & { clear: () => void } {
+  let cache: {
+    lastArgs: TArgs;
+    lastResult: TReturn;
+  } | null = null;
+
+  function memoized(this: unknown, ...newArgs: TArgs): TReturn {
+    if (cache) {
+      const lastArgs = cache.lastArgs;
+      if (
+        newArgs.length === lastArgs.length &&
+        newArgs.every((arg, i) => {
+          const lastArg = lastArgs[i];
+          return (
+            arg === lastArg || (Number.isNaN(arg) && Number.isNaN(lastArg))
+          );
+        })
+      ) {
+        return cache.lastResult;
+      }
+    }
+
+    const lastResult = resultFn.apply(this, newArgs);
+    cache = {
+      lastResult,
+      lastArgs: newArgs,
+    };
+
+    return lastResult;
+  }
+
+  memoized.clear = function clear() {
+    cache = null;
+  };
+
+  return memoized;
+}
+
 const TAILWIND_BREAKPOINTS = {
   initial: 0,
   sm: 640,
@@ -726,7 +728,7 @@ const getItemStyle = memoize(
 );
 
 interface ItemPropsWithRef extends MasonryItemProps {
-  ref?: React.Ref<HTMLElement>;
+  ref?: React.Ref<ItemElement>;
 }
 
 type VisibleItem = React.ReactElement<ItemPropsWithRef>;
@@ -765,7 +767,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
     const [mounted, setMounted] = React.useState(false);
     const [items, setItems] = React.useState<VisibleItem[]>([]);
     const [maxHeight, setMaxHeight] = React.useState(0);
-    const itemRefs = React.useRef<Map<number, HTMLElement>>(new Map());
+    const itemRefs = React.useRef<Map<number, ItemElement>>(new Map());
     const intervalTree = React.useRef(createIntervalTree());
     const measurementQueue = React.useRef(new PriorityQueue<number>());
     const initialMeasurementComplete = React.useRef(false);
@@ -921,7 +923,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
           child.props.style,
         );
 
-        const itemRef = (element: HTMLElement | null) => {
+        const itemRef = (element: ItemElement | null) => {
           if (element) {
             itemRefs.current.set(index, element);
             itemsCache.set(element, { index });
