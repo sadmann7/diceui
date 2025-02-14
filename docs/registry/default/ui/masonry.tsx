@@ -59,6 +59,10 @@ const measurementsCache = new Map<
 >();
 const positionsCache = new Map<ItemElement, { top: number; left: number }>();
 
+// Add new caches for better item tracking
+const itemRefs = new Map<number, ItemElement>();
+const visibleItems = new Set<number>();
+
 function createRafScheduler<T extends unknown[]>(
   callback: (...args: T) => void,
   debounceMs = 0,
@@ -767,12 +771,11 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
     const [mounted, setMounted] = React.useState(false);
     const [items, setItems] = React.useState<VisibleItem[]>([]);
     const [maxHeight, setMaxHeight] = React.useState(0);
-    const itemRefs = React.useRef<Map<number, ItemElement>>(new Map());
-    const intervalTree = React.useRef(createIntervalTree());
     const measurementQueue = React.useRef(new PriorityQueue<number>());
     const initialMeasurementComplete = React.useRef(false);
     const isScrolling = React.useRef(false);
     const rafId = React.useRef<number | null>(null);
+    const intervalTree = React.useRef(createIntervalTree());
 
     React.useLayoutEffect(() => {
       setMounted(true);
@@ -800,7 +803,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
 
     const measureItem = React.useCallback(
       (index: number) => {
-        const element = itemRefs.current.get(index);
+        const element = itemRefs.get(index);
         if (!element) return null;
 
         const height = element.offsetHeight;
@@ -843,11 +846,14 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       const viewportBottom = viewportTop + window.innerHeight;
       const overscanAmount = Math.max(overscan * window.innerHeight, 1000);
 
-      // Expand the visible range to include overscan
+      // Expand the visible range to ensure items don't disappear
       const visibleRange = {
-        start: Math.max(0, viewportTop - overscanAmount * 2), // Double the overscan above
-        end: viewportBottom + overscanAmount * 2, // Double the overscan below
+        start: Math.max(0, viewportTop - overscanAmount * 2),
+        end: viewportBottom + overscanAmount * 2,
       };
+
+      // Clear and rebuild interval tree
+      intervalTree.current = createIntervalTree();
 
       // Pre-calculate column gaps
       const columnGaps = new Array(currentColumnCount)
@@ -855,22 +861,14 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
         .map((_, i) => Math.round(i * (columnWidth + currentGap)));
 
       let currentColumn = 0;
-      const processedIndexes = new Set<number>();
 
-      // First pass: Process items that are already in the interval tree
-      intervalTree.current.search(
-        visibleRange.start,
-        visibleRange.end,
-        (index) => {
-          processedIndexes.add(index);
-        },
-      );
+      // Track visible items
+      const newVisibleItems = new Set<number>();
 
-      // Second pass: Process all items
       React.Children.forEach(children, (child, index) => {
         if (!React.isValidElement<ItemPropsWithRef>(child)) return;
 
-        const element = itemRefs.current.get(index);
+        const element = itemRefs.get(index);
         const isInViewport =
           index >=
             Math.floor(visibleRange.start / itemHeight) * currentColumnCount &&
@@ -882,7 +880,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
           isInViewport ||
           hasCachedMeasurements ||
           initialMeasurementComplete.current ||
-          processedIndexes.has(index);
+          visibleItems.has(index);
 
         if (!shouldRender) return;
 
@@ -906,17 +904,12 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
         let left: number;
 
         if (linear) {
-          // Linear mode: left to right, top to bottom
           left = columnGaps[currentColumn] ?? 0;
           const columnHeight = columnHeights[currentColumn] ?? 0;
           top = columnHeight;
-
-          // Update the column height with this item's height
           columnHeights[currentColumn] = columnHeight + height + currentGap;
-          // Move to next column, wrap around if needed
           currentColumn = (currentColumn + 1) % currentColumnCount;
         } else {
-          // Original masonry mode: shortest column first
           const shortestColumnIndex = columnHeights.indexOf(
             Math.min(...columnHeights),
           );
@@ -929,13 +922,13 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
           top,
           left,
           columnWidth,
-          true, // Always keep items visible once rendered
+          isInViewport,
           child.props.style,
         );
 
         const itemRef = (element: ItemElement | null) => {
           if (element) {
-            itemRefs.current.set(index, element);
+            itemRefs.set(index, element);
             itemsCache.set(element, { index });
             if (child.props.ref) {
               if (typeof child.props.ref === "function") {
@@ -954,11 +947,14 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
           }),
         );
 
-        // Update interval tree
-        intervalTree.current.remove(index);
         intervalTree.current.insert(top, top + height, index);
         if (element) {
           positionsCache.set(element, { top, left });
+        }
+
+        // Track visible items
+        if (isInViewport) {
+          newVisibleItems.add(index);
         }
       });
 
@@ -969,6 +965,10 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       rafId.current = requestAnimationFrame(() => {
         setItems(newItems);
         setMaxHeight(Math.max(...columnHeights));
+        visibleItems.clear();
+        for (const index of newVisibleItems) {
+          visibleItems.add(index);
+        }
 
         if (!hasNewMeasurements && measurementQueue.current.isEmpty()) {
           initialMeasurementComplete.current = true;
