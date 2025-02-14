@@ -50,16 +50,60 @@ NULL_NODE.parent = NULL_NODE;
 NULL_NODE.left = NULL_NODE;
 NULL_NODE.right = NULL_NODE;
 
+class LRUCache<K, V> {
+  private cache = new Map<K, V>();
+  private readonly maxSize: number;
+
+  constructor(maxSize: number) {
+    this.maxSize = maxSize;
+  }
+
+  get(key: K): V | undefined {
+    const value = this.cache.get(key);
+    if (value !== undefined) {
+      this.cache.delete(key);
+      this.cache.set(key, value);
+    }
+    return value;
+  }
+
+  set(key: K, value: V): void {
+    if (this.cache.has(key)) {
+      this.cache.delete(key);
+    } else if (this.cache.size >= this.maxSize) {
+      const firstKey = this.cache.keys().next().value;
+      if (firstKey !== undefined) {
+        this.cache.delete(firstKey);
+      }
+    }
+    this.cache.set(key, value);
+  }
+
+  has(key: K): boolean {
+    return this.cache.has(key);
+  }
+
+  delete(key: K): void {
+    this.cache.delete(key);
+  }
+
+  clear(): void {
+    this.cache.clear();
+  }
+}
+
 type ItemElement = React.ComponentRef<typeof MasonryItem>;
 
-const itemsCache = new Map<ItemElement, { index: number }>();
-const measurementsCache = new Map<
+const itemsCache = new WeakMap<ItemElement, { index: number }>();
+const positionsCache = new WeakMap<
+  ItemElement,
+  { top: number; left: number }
+>();
+const measurementsCache = new LRUCache<
   ItemElement,
   { width: number; height: number }
->();
-const positionsCache = new Map<ItemElement, { top: number; left: number }>();
+>(1000);
 
-// Add new caches for better item tracking
 const itemRefs = new Map<number, ItemElement>();
 const visibleItems = new Set<number>();
 
@@ -398,27 +442,45 @@ function removeInterval(
   }
 }
 
-// Optimize interval tree implementation
+// Optimize interval tree by adding bulk operations
 function createIntervalTree() {
   const tree = { root: NULL_NODE, size: 0 };
   const indexMap: Record<number, TreeNode> = {};
+  const pendingUpdates = new Map<number, number>();
+
   const debouncedUpdate = createRafScheduler(() => {
-    // Batch updates
-    if (pendingUpdates.length > 0) {
-      const updates = [...pendingUpdates];
-      pendingUpdates.length = 0;
-      for (const [index, height] of updates) {
+    if (pendingUpdates.size > 0) {
+      for (const [index, height] of pendingUpdates) {
         const node = indexMap[index];
         if (node) {
           node.high = height;
           updateMax(node);
-          updateMaxUp(node);
         }
       }
-    }
-  }).schedule;
+      // Batch update maxUp operations
+      const nodes = Array.from(pendingUpdates.keys())
+        .map((index) => indexMap[index])
+        .filter((node): node is TreeNode => node !== undefined);
 
-  const pendingUpdates: [number, number][] = [];
+      if (nodes.length > 0) {
+        const roots = new Set(
+          nodes.map((node) => {
+            let current: TreeNode = node;
+            while (current && current.parent !== NULL_NODE) {
+              current = current.parent;
+            }
+            return current;
+          }),
+        );
+
+        for (const root of roots) {
+          updateMaxUp(root);
+        }
+      }
+
+      pendingUpdates.clear();
+    }
+  }, 16).schedule;
 
   return {
     insert(low: number, high: number, index: number) {
@@ -433,7 +495,7 @@ function createIntervalTree() {
 
       if (y !== NULL_NODE && low === y.low) {
         if (!addInterval(y, high, index)) return;
-        pendingUpdates.push([index, high]);
+        pendingUpdates.set(index, high);
         debouncedUpdate();
         indexMap[index] = y;
         tree.size++;
@@ -471,7 +533,7 @@ function createIntervalTree() {
       const result = removeInterval(z, index);
       if (result === undefined) return;
       if (result === TREE_ACTION.KEEP) {
-        pendingUpdates.push([index, z.list.high]);
+        pendingUpdates.set(index, z.list.high);
         debouncedUpdate();
         tree.size--;
         return;
