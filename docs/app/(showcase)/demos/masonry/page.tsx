@@ -4,6 +4,7 @@ import { Shell } from "@/components/shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ClientOnly } from "@/registry/default/components/client-only";
 import * as Masonry from "@/registry/default/ui/masonry";
+import { Loader } from "lucide-react";
 import * as React from "react";
 
 const ITEMS_PER_PAGE = 50;
@@ -55,7 +56,7 @@ export default function MasonryPage() {
           loadMore();
         }
       },
-      { root: null, rootMargin: "200px", threshold: 0.1 },
+      { root: null, rootMargin: "60px", threshold: 0.1 },
     );
 
     const currentLoader = loaderRef.current;
@@ -95,7 +96,7 @@ export default function MasonryPage() {
             className="flex w-full items-center justify-center py-8"
           >
             {isLoading ? (
-              <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+              <Loader className="h-6 w-6 animate-spin text-muted-foreground" />
             ) : (
               <div className="h-6 w-6" />
             )}

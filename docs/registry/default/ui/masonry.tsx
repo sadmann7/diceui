@@ -843,13 +843,11 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       const viewportBottom = viewportTop + window.innerHeight;
       const overscanAmount = Math.max(overscan * window.innerHeight, 1000);
 
+      // Expand the visible range to include overscan
       const visibleRange = {
-        start: Math.max(0, viewportTop - overscanAmount),
-        end: viewportBottom + overscanAmount * 2,
+        start: Math.max(0, viewportTop - overscanAmount * 2), // Double the overscan above
+        end: viewportBottom + overscanAmount * 2, // Double the overscan below
       };
-
-      // Clear and rebuild interval tree
-      intervalTree.current = createIntervalTree();
 
       // Pre-calculate column gaps
       const columnGaps = new Array(currentColumnCount)
@@ -857,7 +855,18 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
         .map((_, i) => Math.round(i * (columnWidth + currentGap)));
 
       let currentColumn = 0;
+      const processedIndexes = new Set<number>();
 
+      // First pass: Process items that are already in the interval tree
+      intervalTree.current.search(
+        visibleRange.start,
+        visibleRange.end,
+        (index) => {
+          processedIndexes.add(index);
+        },
+      );
+
+      // Second pass: Process all items
       React.Children.forEach(children, (child, index) => {
         if (!React.isValidElement<ItemPropsWithRef>(child)) return;
 
@@ -872,7 +881,8 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
         const shouldRender =
           isInViewport ||
           hasCachedMeasurements ||
-          initialMeasurementComplete.current;
+          initialMeasurementComplete.current ||
+          processedIndexes.has(index);
 
         if (!shouldRender) return;
 
@@ -919,7 +929,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
           top,
           left,
           columnWidth,
-          isInViewport,
+          true, // Always keep items visible once rendered
           child.props.style,
         );
 
@@ -944,6 +954,8 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
           }),
         );
 
+        // Update interval tree
+        intervalTree.current.remove(index);
         intervalTree.current.insert(top, top + height, index);
         if (element) {
           positionsCache.set(element, { top, left });
