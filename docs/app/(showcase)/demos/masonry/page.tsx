@@ -1,13 +1,12 @@
 "use client";
 
 import { Shell } from "@/components/shell";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ClientOnly } from "@/registry/default/components/client-only";
 import * as Masonry from "@/registry/default/ui/masonry";
 import { Loader } from "lucide-react";
+import { Masonry as MasonryAlt } from "masonic";
 import * as React from "react";
 
-const ITEMS_PER_PAGE = 50;
+const ITEMS_PER_PAGE = 2000;
 const MAX_ITEMS = 2000;
 
 export default function MasonryPage() {
@@ -74,6 +73,19 @@ export default function MasonryPage() {
   return (
     <Shell>
       <div className="flex flex-col gap-8">
+        {/* <MasonryAlt
+          items={items}
+          overscanBy={6}
+          columnGutter={10}
+          render={({ data }) => (
+            <div
+              className="rounded-md bg-accent p-4"
+              style={{ height: data.height }}
+            >
+              {data.id + 1}
+            </div>
+          )}
+        /> */}
         <Masonry.Root
           columnCount={{ initial: 1, sm: 2, md: 3, lg: 4 }}
           gap={10}
