@@ -35,20 +35,24 @@ interface TreeNode {
   list: ListNode;
 }
 
-const NULL_NODE: TreeNode = {
-  low: 0,
-  max: 0,
-  high: 0,
-  color: TREE_COLOR.NULL,
-  list: { index: -1, high: 0, next: null },
-  parent: undefined as unknown as TreeNode,
-  right: undefined as unknown as TreeNode,
-  left: undefined as unknown as TreeNode,
-};
+function createNullNode(): TreeNode {
+  const nullNode: TreeNode = {
+    low: 0,
+    max: 0,
+    high: 0,
+    color: TREE_COLOR.NULL,
+    list: { index: -1, high: 0, next: null },
+    parent: undefined as unknown as TreeNode,
+    right: undefined as unknown as TreeNode,
+    left: undefined as unknown as TreeNode,
+  };
 
-NULL_NODE.parent = NULL_NODE;
-NULL_NODE.left = NULL_NODE;
-NULL_NODE.right = NULL_NODE;
+  nullNode.parent = nullNode;
+  nullNode.left = nullNode;
+  nullNode.right = nullNode;
+
+  return nullNode;
+}
 
 class LRUCache<K, V> {
   private cache = new Map<K, V>();
@@ -207,64 +211,76 @@ function useIntersectionObserver<T extends Element | null>(
   }, [ref, callback, options]);
 }
 
-function updateMax(node: TreeNode) {
+function updateMax(node: TreeNode, nullNode: TreeNode) {
   const max = node.high;
-  if (node.left === NULL_NODE && node.right === NULL_NODE) {
+  if (node.left === nullNode && node.right === nullNode) {
     node.max = max;
-  } else if (node.left === NULL_NODE) {
+  } else if (node.left === nullNode) {
     node.max = Math.max(node.right.max, max);
-  } else if (node.right === NULL_NODE) {
+  } else if (node.right === nullNode) {
     node.max = Math.max(node.left.max, max);
   } else {
     node.max = Math.max(Math.max(node.left.max, node.right.max), max);
   }
 }
 
-function updateMaxUp(node: TreeNode) {
+function updateMaxUp(node: TreeNode, nullNode: TreeNode) {
   let current = node;
-  while (current.parent !== NULL_NODE) {
-    updateMax(current.parent);
+  while (current.parent !== nullNode) {
+    updateMax(current.parent, nullNode);
     current = current.parent;
   }
 }
 
-function rotateLeft(tree: { root: TreeNode }, node: TreeNode) {
-  if (node.right === NULL_NODE) return;
+function rotateLeft(
+  tree: { root: TreeNode },
+  node: TreeNode,
+  nullNode: TreeNode,
+) {
+  if (node.right === nullNode) return;
   const rightChild = node.right;
   node.right = rightChild.left;
-  if (rightChild.left !== NULL_NODE) rightChild.left.parent = node;
+  if (rightChild.left !== nullNode) rightChild.left.parent = node;
   rightChild.parent = node.parent;
 
-  if (node.parent === NULL_NODE) tree.root = rightChild;
+  if (node.parent === nullNode) tree.root = rightChild;
   else if (node === node.parent.left) node.parent.left = rightChild;
   else node.parent.right = rightChild;
 
   rightChild.left = node;
   node.parent = rightChild;
 
-  updateMax(node);
-  updateMax(rightChild);
+  updateMax(node, nullNode);
+  updateMax(rightChild, nullNode);
 }
 
-function rotateRight(tree: { root: TreeNode }, node: TreeNode) {
-  if (node.left === NULL_NODE) return;
+function rotateRight(
+  tree: { root: TreeNode },
+  node: TreeNode,
+  nullNode: TreeNode,
+) {
+  if (node.left === nullNode) return;
   const leftChild = node.left;
   node.left = leftChild.right;
-  if (leftChild.right !== NULL_NODE) leftChild.right.parent = node;
+  if (leftChild.right !== nullNode) leftChild.right.parent = node;
   leftChild.parent = node.parent;
 
-  if (node.parent === NULL_NODE) tree.root = leftChild;
+  if (node.parent === nullNode) tree.root = leftChild;
   else if (node === node.parent.right) node.parent.right = leftChild;
   else node.parent.left = leftChild;
 
   leftChild.right = node;
   node.parent = leftChild;
 
-  updateMax(node);
-  updateMax(leftChild);
+  updateMax(node, nullNode);
+  updateMax(leftChild, nullNode);
 }
 
-function fixInsert(tree: { root: TreeNode }, node: TreeNode) {
+function fixInsert(
+  tree: { root: TreeNode },
+  node: TreeNode,
+  nullNode: TreeNode,
+) {
   let current = node;
   let uncle: TreeNode;
 
@@ -280,12 +296,12 @@ function fixInsert(tree: { root: TreeNode }, node: TreeNode) {
       } else {
         if (current === current.parent.right) {
           current = current.parent;
-          rotateLeft(tree, current);
+          rotateLeft(tree, current, nullNode);
         }
 
         current.parent.color = TREE_COLOR.BLACK;
         current.parent.parent.color = TREE_COLOR.RED;
-        rotateRight(tree, current.parent.parent);
+        rotateRight(tree, current.parent.parent, nullNode);
       }
     } else {
       uncle = current.parent.parent.left;
@@ -298,36 +314,40 @@ function fixInsert(tree: { root: TreeNode }, node: TreeNode) {
       } else {
         if (current === current.parent.left) {
           current = current.parent;
-          rotateRight(tree, current);
+          rotateRight(tree, current, nullNode);
         }
 
         current.parent.color = TREE_COLOR.BLACK;
         current.parent.parent.color = TREE_COLOR.RED;
-        rotateLeft(tree, current.parent.parent);
+        rotateLeft(tree, current.parent.parent, nullNode);
       }
     }
   }
   tree.root.color = TREE_COLOR.BLACK;
 }
 
-function minimumTree(node: TreeNode): TreeNode {
+function minimumTree(node: TreeNode, nullNode: TreeNode): TreeNode {
   let currentNode = node;
-  while (currentNode.left !== NULL_NODE) currentNode = currentNode.left;
+  while (currentNode.left !== nullNode) currentNode = currentNode.left;
   return currentNode;
 }
 
-function fixRemove(tree: { root: TreeNode }, node: TreeNode) {
+function fixRemove(
+  tree: { root: TreeNode },
+  node: TreeNode,
+  nullNode: TreeNode,
+) {
   let current = node;
   let sibling: TreeNode;
 
-  while (current !== NULL_NODE && current.color === TREE_COLOR.BLACK) {
+  while (current !== nullNode && current.color === TREE_COLOR.BLACK) {
     if (current === current.parent.left) {
       sibling = current.parent.right;
 
       if (sibling.color === TREE_COLOR.RED) {
         sibling.color = TREE_COLOR.BLACK;
         current.parent.color = TREE_COLOR.RED;
-        rotateLeft(tree, current.parent);
+        rotateLeft(tree, current.parent, nullNode);
         sibling = current.parent.right;
       }
 
@@ -341,14 +361,14 @@ function fixRemove(tree: { root: TreeNode }, node: TreeNode) {
         if (sibling.right.color === TREE_COLOR.BLACK) {
           sibling.left.color = TREE_COLOR.BLACK;
           sibling.color = TREE_COLOR.RED;
-          rotateRight(tree, sibling);
+          rotateRight(tree, sibling, nullNode);
           sibling = current.parent.right;
         }
 
         sibling.color = current.parent.color;
         current.parent.color = TREE_COLOR.BLACK;
         sibling.right.color = TREE_COLOR.BLACK;
-        rotateLeft(tree, current.parent);
+        rotateLeft(tree, current.parent, nullNode);
         current = tree.root;
       }
     } else {
@@ -357,7 +377,7 @@ function fixRemove(tree: { root: TreeNode }, node: TreeNode) {
       if (sibling.color === TREE_COLOR.RED) {
         sibling.color = TREE_COLOR.BLACK;
         current.parent.color = TREE_COLOR.RED;
-        rotateRight(tree, current.parent);
+        rotateRight(tree, current.parent, nullNode);
         sibling = current.parent.left;
       }
 
@@ -371,14 +391,14 @@ function fixRemove(tree: { root: TreeNode }, node: TreeNode) {
         if (sibling.left.color === TREE_COLOR.BLACK) {
           sibling.right.color = TREE_COLOR.BLACK;
           sibling.color = TREE_COLOR.RED;
-          rotateLeft(tree, sibling);
+          rotateLeft(tree, sibling, nullNode);
           sibling = current.parent.left;
         }
 
         sibling.color = current.parent.color;
         current.parent.color = TREE_COLOR.BLACK;
         sibling.left.color = TREE_COLOR.BLACK;
-        rotateRight(tree, current.parent);
+        rotateRight(tree, current.parent, nullNode);
         current = tree.root;
       }
     }
@@ -391,8 +411,9 @@ function replaceNode(
   tree: { root: TreeNode },
   oldNode: TreeNode,
   newNode: TreeNode,
+  nullNode: TreeNode,
 ) {
-  if (oldNode.parent === NULL_NODE) tree.root = newNode;
+  if (oldNode.parent === nullNode) tree.root = newNode;
   else if (oldNode === oldNode.parent.left) oldNode.parent.left = newNode;
   else oldNode.parent.right = newNode;
   newNode.parent = oldNode.parent;
@@ -423,6 +444,8 @@ function removeInterval(
   index: number,
 ): TreeAction | undefined {
   const node = treeNode.list;
+  if (!node) return undefined;
+
   if (node.index === index) {
     if (node.next === null) return TREE_ACTION.DELETE;
     treeNode.list = node.next;
@@ -440,64 +463,70 @@ function removeInterval(
     prevNode = currNode;
     currNode = currNode.next;
   }
+
+  return undefined;
 }
 
 // Optimize interval tree by adding bulk operations
 function createIntervalTree() {
-  const tree = { root: NULL_NODE, size: 0 };
-  const indexMap: Record<number, TreeNode> = {};
+  const nullNode = createNullNode();
+  const tree = { root: nullNode, size: 0 };
+  const indexMap = new Map<number, TreeNode>();
   const pendingUpdates = new Map<number, number>();
+  let isDestroyed = false;
 
   const debouncedUpdate = createRafScheduler(() => {
-    if (pendingUpdates.size > 0) {
-      for (const [index, height] of pendingUpdates) {
-        const node = indexMap[index];
-        if (node) {
-          node.high = height;
-          updateMax(node);
-        }
+    if (isDestroyed || pendingUpdates.size === 0) return;
+
+    const updates = Array.from(pendingUpdates.entries());
+    pendingUpdates.clear();
+
+    // Batch process all updates
+    const affectedNodes = new Set<TreeNode>();
+
+    for (const [index, height] of updates) {
+      const node = indexMap.get(index);
+      if (node) {
+        node.high = height;
+        updateMax(node, nullNode);
+        affectedNodes.add(node);
       }
-      // Batch update maxUp operations
-      const nodes = Array.from(pendingUpdates.keys())
-        .map((index) => indexMap[index])
-        .filter((node): node is TreeNode => node !== undefined);
+    }
 
-      if (nodes.length > 0) {
-        const roots = new Set(
-          nodes.map((node) => {
-            let current: TreeNode = node;
-            while (current && current.parent !== NULL_NODE) {
-              current = current.parent;
-            }
-            return current;
-          }),
-        );
-
-        for (const root of roots) {
-          updateMaxUp(root);
-        }
+    // Find unique roots for affected nodes
+    const roots = new Set<TreeNode>();
+    for (const node of affectedNodes) {
+      let current: TreeNode = node;
+      while (current && current.parent !== nullNode) {
+        current = current.parent;
       }
+      roots.add(current);
+    }
 
-      pendingUpdates.clear();
+    // Update max values from roots
+    for (const root of roots) {
+      updateMaxUp(root, nullNode);
     }
   }, 16).schedule;
 
   return {
     insert(low: number, high: number, index: number) {
-      let x = tree.root;
-      let y = NULL_NODE;
+      if (isDestroyed) return;
 
-      while (x !== NULL_NODE) {
+      let x = tree.root;
+      let y = nullNode;
+
+      while (x !== nullNode) {
         y = x;
         if (low === y.low) break;
         x = low < x.low ? x.left : x.right;
       }
 
-      if (y !== NULL_NODE && low === y.low) {
+      if (y !== nullNode && low === y.low) {
         if (!addInterval(y, high, index)) return;
         pendingUpdates.set(index, high);
         debouncedUpdate();
-        indexMap[index] = y;
+        indexMap.set(index, y);
         tree.size++;
         return;
       }
@@ -508,27 +537,29 @@ function createIntervalTree() {
         max: high,
         color: TREE_COLOR.RED,
         parent: y,
-        left: NULL_NODE,
-        right: NULL_NODE,
+        left: nullNode,
+        right: nullNode,
         list: { index, high, next: null },
       };
 
-      if (y === NULL_NODE) tree.root = z;
+      if (y === nullNode) tree.root = z;
       else {
         if (z.low < y.low) y.left = z;
         else y.right = z;
-        updateMaxUp(z);
+        updateMaxUp(z, nullNode);
       }
 
-      fixInsert(tree, z);
-      indexMap[index] = z;
+      fixInsert(tree, z, nullNode);
+      indexMap.set(index, z);
       tree.size++;
     },
 
     remove(index: number) {
-      const z = indexMap[index];
+      if (isDestroyed) return;
+
+      const z = indexMap.get(index);
       if (!z) return;
-      delete indexMap[index];
+      indexMap.delete(index);
 
       const result = removeInterval(z, index);
       if (result === undefined) return;
@@ -543,34 +574,34 @@ function createIntervalTree() {
       let originalColor = y.color;
       let x: TreeNode;
 
-      if (z.left === NULL_NODE) {
+      if (z.left === nullNode) {
         x = z.right;
-        replaceNode(tree, z, z.right);
-      } else if (z.right === NULL_NODE) {
+        replaceNode(tree, z, z.right, nullNode);
+      } else if (z.right === nullNode) {
         x = z.left;
-        replaceNode(tree, z, z.left);
+        replaceNode(tree, z, z.left, nullNode);
       } else {
-        y = minimumTree(z.right);
+        y = minimumTree(z.right, nullNode);
         originalColor = y.color;
         x = y.right;
 
         if (y.parent === z) x.parent = y;
         else {
-          replaceNode(tree, y, y.right);
+          replaceNode(tree, y, y.right, nullNode);
           y.right = z.right;
           y.right.parent = y;
         }
 
-        replaceNode(tree, z, y);
+        replaceNode(tree, z, y, nullNode);
         y.left = z.left;
         y.left.parent = y;
         y.color = z.color;
       }
 
-      updateMax(x);
-      updateMaxUp(x);
+      updateMax(x, nullNode);
+      updateMaxUp(x, nullNode);
 
-      if (originalColor === TREE_COLOR.BLACK) fixRemove(tree, x);
+      if (originalColor === TREE_COLOR.BLACK) fixRemove(tree, x, nullNode);
       tree.size--;
     },
 
@@ -579,19 +610,18 @@ function createIntervalTree() {
       high: number,
       callback: (index: number, low: number) => void,
     ) {
+      if (isDestroyed) return;
+
       const stack = [tree.root];
       while (stack.length > 0) {
         const node = stack[stack.length - 1];
         stack.pop();
 
-        // Skip if node is null or out of range
-        if (!node || node === NULL_NODE || low > node.max) continue;
+        if (!node || node === nullNode || low > node.max) continue;
 
-        // Add children to stack
-        if (node.left !== NULL_NODE) stack.push(node.left);
-        if (node.right !== NULL_NODE) stack.push(node.right);
+        if (node.left !== nullNode) stack.push(node.left);
+        if (node.right !== nullNode) stack.push(node.right);
 
-        // Process current node
         if (node.low <= high && node.high >= low && node.list) {
           let curr: ListNode | null = node.list;
           while (curr !== null) {
@@ -602,6 +632,12 @@ function createIntervalTree() {
           }
         }
       }
+    },
+
+    destroy() {
+      isDestroyed = true;
+      indexMap.clear();
+      pendingUpdates.clear();
     },
 
     size: () => tree.size,
@@ -837,7 +873,9 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
     const initialMeasurementComplete = React.useRef(false);
     const isScrolling = React.useRef(false);
     const rafId = React.useRef<number | null>(null);
-    const intervalTree = React.useRef(createIntervalTree());
+    const intervalTreeRef = React.useRef<ReturnType<
+      typeof createIntervalTree
+    > | null>(null);
 
     React.useLayoutEffect(() => {
       setMounted(true);
@@ -883,7 +921,8 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
     );
 
     const calculateLayout = React.useCallback(() => {
-      if (!mounted || !collectionRef.current) return;
+      if (!mounted || !collectionRef.current || !intervalTreeRef.current)
+        return;
 
       const columnWidth = getColumnWidth();
       if (columnWidth === 0) return;
@@ -908,14 +947,15 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       const viewportBottom = viewportTop + window.innerHeight;
       const overscanAmount = Math.max(overscan * window.innerHeight, 1000);
 
-      // Expand the visible range to ensure items don't disappear
       const visibleRange = {
         start: Math.max(0, viewportTop - overscanAmount * 2),
         end: viewportBottom + overscanAmount * 2,
       };
 
-      // Clear and rebuild interval tree
-      intervalTree.current = createIntervalTree();
+      // Create a new interval tree for this layout pass
+      const tree = createIntervalTree();
+      intervalTreeRef.current.destroy();
+      intervalTreeRef.current = tree;
 
       // Pre-calculate column gaps
       const columnGaps = new Array(currentColumnCount)
@@ -923,8 +963,6 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
         .map((_, i) => Math.round(i * (columnWidth + currentGap)));
 
       let currentColumn = 0;
-
-      // Track visible items
       const newVisibleItems = new Set<number>();
 
       React.Children.forEach(children, (child, index) => {
@@ -1009,7 +1047,7 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
           }),
         );
 
-        intervalTree.current.insert(top, top + height, index);
+        tree.insert(top, top + height, index);
         if (element) {
           positionsCache.set(element, { top, left });
         }
@@ -1058,11 +1096,15 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       }
     }, [calculateLayout]);
 
-    useIntersectionObserver(collectionRef, (entries) => {
-      if (entries[0]?.isIntersecting) {
-        onScroll();
-      }
-    });
+    useIntersectionObserver(
+      collectionRef,
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          onScroll();
+        }
+      },
+      {},
+    );
 
     React.useEffect(() => {
       if (!mounted || !collectionRef.current) return;
@@ -1089,6 +1131,12 @@ const Masonry = React.forwardRef<HTMLDivElement, MasonryProps>(
       if (!mounted) return;
       calculateLayout();
     }, [mounted, calculateLayout]);
+
+    React.useLayoutEffect(() => {
+      const tree = createIntervalTree();
+      intervalTreeRef.current = tree;
+      return () => tree.destroy();
+    }, []);
 
     const rootStyle = getRootStyle(isScrolling.current, maxHeight);
 
