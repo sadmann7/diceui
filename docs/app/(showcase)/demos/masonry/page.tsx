@@ -2,8 +2,10 @@
 
 import { Shell } from "@/components/shell";
 import * as Masonry from "@/registry/default/ui/masonry";
+import { Masonry as MasonryThree } from "@/registry/default/ui/masonry/masonry";
+import * as MasonryFour from "@/registry/default/ui/masonry/masonry-combined";
 import { Loader } from "lucide-react";
-import { Masonry as MasonryAlt } from "masonic";
+import { Masonry as MasonryTwo } from "masonic";
 import * as React from "react";
 
 const ITEMS_PER_PAGE = 2000;
@@ -73,7 +75,19 @@ export default function MasonryPage() {
   return (
     <Shell>
       <div className="flex flex-col gap-8">
-        {/* <MasonryAlt
+        {/* <Masonry.Root columnCount={4} gap={10} overscan={6}>
+          {items.map((item) => (
+            <Masonry.Item key={item.id} asChild>
+              <div
+                className="rounded-md bg-accent p-4"
+                style={{ height: item.height }}
+              >
+                {item.id + 1}
+              </div>
+            </Masonry.Item>
+          ))}
+        </Masonry.Root> */}
+        {/* <MasonryTwo
           items={items}
           overscanBy={6}
           columnGutter={10}
@@ -86,22 +100,48 @@ export default function MasonryPage() {
             </div>
           )}
         /> */}
-        <Masonry.Root
-          columnCount={{ initial: 1, sm: 2, md: 3, lg: 4 }}
-          gap={10}
-          overscan={6}
-        >
-          {items.map((item) => (
-            <Masonry.Item key={item.id} asChild>
-              <div
-                className="rounded-md bg-accent p-4"
-                style={{ height: item.height }}
-              >
-                {item.id + 1}
-              </div>
-            </Masonry.Item>
-          ))}
-        </Masonry.Root>
+        {/* <MasonryThree
+          items={items}
+          columnWidth={200}
+          columnGutter={10}
+          overscanBy={6}
+          render={({ data }) => (
+            <div
+              className="rounded-md bg-accent p-4"
+              style={{ height: data.height }}
+            >
+              {data.id + 1}
+            </div>
+          )}
+        /> */}
+        {/* <MasonryFour.Masonry
+          items={items}
+          columnWidth={200}
+          columnGutter={10}
+          overscanBy={6}
+          render={({ data }) => (
+            <div
+              className="rounded-md bg-accent p-4"
+              style={{ height: data.height }}
+            >
+              {data.id + 1}
+            </div>
+          )}
+        /> */}
+        <MasonryFour.Root columnGutter={10} overscanBy={6}>
+          <MasonryFour.Viewport>
+            {items.map((item, index) => (
+              <MasonryFour.Item key={item.id} index={index}>
+                <div
+                  className="rounded-md bg-accent p-4"
+                  style={{ height: item.height }}
+                >
+                  {item.id + 1}
+                </div>
+              </MasonryFour.Item>
+            ))}
+          </MasonryFour.Viewport>
+        </MasonryFour.Root>
         {hasMore && (
           <div
             ref={loaderRef}
