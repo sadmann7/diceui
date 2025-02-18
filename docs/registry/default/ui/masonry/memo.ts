@@ -10,7 +10,7 @@ const defaultAreEqual = <T extends unknown[]>(current: T, prev: T): boolean =>
 
 const memoizeOne = <Args extends unknown[], T>(
   fn: (...args: Args) => T,
-  areEqual?: AreEqual<Args>
+  areEqual?: AreEqual<Args>,
 ): OutputFunction<Args, T> => {
   const equal = areEqual || defaultAreEqual;
   let lastArgs: Args | undefined;
@@ -94,7 +94,7 @@ const memo = (constructors: CacheConstructor[]): MemoResult => {
       if (!base) {
         if (!constructors[1]) {
           throw new Error(
-            "Second constructor is required for non-single depth cache"
+            "Second constructor is required for non-single depth cache",
           );
         }
         map = createCache(constructors[1]);
@@ -142,7 +142,7 @@ const memo = (constructors: CacheConstructor[]): MemoResult => {
 
 const trieMemoize = <T extends unknown[], U>(
   mapConstructors: CacheConstructor[],
-  fn: (...args: T) => U
+  fn: (...args: T) => U,
 ): ((...args: T) => U) => {
   const { g, s } = memo(mapConstructors);
 

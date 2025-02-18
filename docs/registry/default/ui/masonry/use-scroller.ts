@@ -33,7 +33,7 @@ const clearRequestTimeout = (handle: { id: number }) => {
  */
 export function useScroller(
   offset = 0,
-  fps = 12
+  fps = 12,
 ): { scrollTop: number; isScrolling: boolean } {
   const scrollTop = useWindowScroll(fps);
   const [isScrolling, setIsScrolling] = React.useState(false);
@@ -49,7 +49,7 @@ export function useScroller(
         // unsets. Without it there will always bee a lot of unnecessary DOM writes to style.
         setIsScrolling(false);
       },
-      40 + 1000 / fps
+      40 + 1000 / fps,
     );
     didMount.current = 1;
     return () => {
@@ -69,7 +69,7 @@ export function useEvent<K extends EventType>(
   target: EventTarget | { current: EventTarget },
   type: K,
   listener: (ev: EventMap[K]) => void,
-  cleanup?: () => void
+  cleanup?: () => void,
 ): void {
   const storedListener = React.useRef(listener);
   const storedCleanup = React.useRef(cleanup);
@@ -111,7 +111,7 @@ export const useWindowScroll = (fps = 30): number => {
   const state = useThrottle(
     typeof window === "undefined" ? 0 : getScrollY,
     fps,
-    true
+    true,
   );
   useEvent(win, "scroll", (): void => state[1](getScrollY()));
   return state[0];

@@ -48,7 +48,7 @@ export type UseScrollToIndexOptions = {
  */
 export function useScrollToIndex(
   positioner: Positioner,
-  options: UseScrollToIndexOptions
+  options: UseScrollToIndexOptions,
 ) {
   const {
     align = "top",
@@ -80,7 +80,7 @@ export function useScrollToIndex(
         | { type: "scrollToIndex"; value: number | undefined }
         | { type: "setPosition"; value: PositionerItem | undefined }
         | { type: "setPrevTop"; value: number | undefined }
-        | { type: "reset" }
+        | { type: "reset" },
     ) => {
       const nextState = {
         position: state.position,
@@ -108,7 +108,7 @@ export function useScrollToIndex(
 
       return nextState;
     },
-    defaultState
+    defaultState,
   );
   const throttledDispatch = useThrottleCallback(dispatch, 15);
 
@@ -151,7 +151,7 @@ export function useScrollToIndex(
       let didUnsubscribe = false;
       const timeout = setTimeout(
         () => !didUnsubscribe && dispatch({ type: "reset" }),
-        400
+        400,
       );
       return () => {
         didUnsubscribe = true;

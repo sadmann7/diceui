@@ -124,5 +124,5 @@ export const createResizeObserver = trieMemoize(
     };
 
     return ro;
-  }
+  },
 );

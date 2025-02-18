@@ -274,7 +274,7 @@ export interface IIntervalTree {
   search(
     low: number,
     high: number,
-    callback: (index: number, low: number) => void
+    callback: (index: number, low: number) => void,
   ): void;
   size: number;
 }

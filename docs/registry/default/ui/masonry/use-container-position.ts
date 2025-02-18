@@ -30,7 +30,7 @@ export interface ContainerPosition {
  */
 export function useContainerPosition(
   elementRef: React.MutableRefObject<HTMLElement | null>,
-  deps: React.DependencyList = emptyArr
+  deps: React.DependencyList = emptyArr,
 ): ContainerPosition {
   const [containerPosition, setContainerPosition] =
     React.useState<ContainerPosition>({ offset: 0, width: 0 });

@@ -7,7 +7,7 @@ interface DebounceOptions {
 
 export function useDebounceState<T>(
   initialState: T | (() => T),
-  options: DebounceOptions = {}
+  options: DebounceOptions = {},
 ): [T, React.Dispatch<React.SetStateAction<T>>] {
   const { wait = 100, leading = false } = options;
   const [state, setState] = React.useState<T>(initialState);
@@ -34,7 +34,7 @@ export function useDebounceState<T>(
         setState(value);
       }, wait);
     },
-    [wait, leading]
+    [wait, leading],
   );
 
   React.useEffect(() => {

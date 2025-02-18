@@ -21,12 +21,12 @@ const getSize = () =>
   ] as const;
 
 export const useWindowSize = (
-  options: DebouncedWindowSizeOptions = emptyObj
+  options: DebouncedWindowSizeOptions = emptyObj,
 ): readonly [number, number] => {
   const { wait, leading, initialWidth = 0, initialHeight = 0 } = options;
   const [size, setDebouncedSize] = useDebounceState<readonly [number, number]>(
     typeof document === "undefined" ? [initialWidth, initialHeight] : getSize(),
-    { wait, leading }
+    { wait, leading },
   );
 
   React.useEffect(() => {
@@ -47,9 +47,9 @@ export const useWindowSize = (
 };
 
 export const useWindowHeight = (
-  options?: Omit<DebouncedWindowSizeOptions, "initialWidth">
+  options?: Omit<DebouncedWindowSizeOptions, "initialWidth">,
 ): number => useWindowSize(options)[1];
 
 export const useWindowWidth = (
-  options?: Omit<DebouncedWindowSizeOptions, "initialHeight">
+  options?: Omit<DebouncedWindowSizeOptions, "initialHeight">,
 ): number => useWindowSize(options)[0];

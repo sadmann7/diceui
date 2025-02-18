@@ -7,13 +7,13 @@ const now = () => perf.now();
 export function useThrottleCallback<CallbackArguments extends unknown[]>(
   callback: (...args: CallbackArguments) => void,
   fps = 30,
-  leading = false
+  leading = false,
 ): (...args: CallbackArguments) => void {
   const storedCallback = useLatest(callback);
   const ms = 1000 / fps;
   const prev = React.useRef(0);
   const trailingTimeout = React.useRef<ReturnType<typeof setTimeout> | null>(
-    null
+    null,
   );
   const clearTrailing = () =>
     trailingTimeout.current && clearTimeout(trailingTimeout.current);
@@ -25,7 +25,7 @@ export function useThrottleCallback<CallbackArguments extends unknown[]>(
       prev.current = 0;
       clearTrailing();
     },
-    deps
+    deps,
   );
 
   return React.useCallback((...args: CallbackArguments) => {
@@ -56,7 +56,7 @@ export function useThrottleCallback<CallbackArguments extends unknown[]>(
 export function useThrottle<State>(
   initialState: State | (() => State),
   fps?: number,
-  leading?: boolean
+  leading?: boolean,
 ): [State, React.Dispatch<React.SetStateAction<State>>] {
   const state = React.useState<State>(initialState);
   return [state[0], useThrottleCallback(state[1], fps, leading)];

@@ -3,7 +3,7 @@ import { useLatest } from "./use-latest";
 
 export function useInfiniteLoader<Item, T extends LoadMoreItemsCallback<Item>>(
   loadMoreItems: T,
-  options: UseInfiniteLoaderOptions<Item> = emptyObj
+  options: UseInfiniteLoaderOptions<Item> = emptyObj,
 ): LoadMoreItemsCallback<Item> {
   const {
     isItemLoaded,
@@ -22,7 +22,7 @@ export function useInfiniteLoader<Item, T extends LoadMoreItemsCallback<Item>>(
         Math.min(totalItems - 1, (stopIndex || 0) + threshold),
         storedIsItemLoaded.current,
         minimumBatchSize,
-        totalItems
+        totalItems,
       );
       // The user is responsible for memoizing their loadMoreItems() function
       // because we don't want to make assumptions about how they want to deal
@@ -31,7 +31,7 @@ export function useInfiniteLoader<Item, T extends LoadMoreItemsCallback<Item>>(
         storedLoadMoreItems.current(
           unloadedRanges[i] ?? 0,
           unloadedRanges[++i] ?? 0,
-          items
+          items,
         );
     },
     [
@@ -40,7 +40,7 @@ export function useInfiniteLoader<Item, T extends LoadMoreItemsCallback<Item>>(
       threshold,
       storedLoadMoreItems,
       storedIsItemLoaded,
-    ]
+    ],
   );
 }
 
@@ -50,7 +50,7 @@ function scanForUnloadedRanges<Item>(
   stopIndex: number,
   isItemLoaded: UseInfiniteLoaderOptions<Item>["isItemLoaded"] = defaultIsItemLoaded,
   minimumBatchSize: UseInfiniteLoaderOptions<Item>["minimumBatchSize"] = 16,
-  totalItems: UseInfiniteLoaderOptions<Item>["totalItems"] = 9e9
+  totalItems: UseInfiniteLoaderOptions<Item>["totalItems"] = 9e9,
 ): number[] {
   const unloadedRanges: number[] = [];
   let rangeStartIndex: number | undefined;
@@ -73,7 +73,7 @@ function scanForUnloadedRanges<Item>(
   if (rangeStartIndex !== void 0 && rangeStopIndex !== void 0) {
     const potentialStopIndex = Math.min(
       Math.max(rangeStopIndex, rangeStartIndex + minimumBatchSize - 1),
-      totalItems - 1
+      totalItems - 1,
     );
 
     /* istanbul ignore next */
@@ -133,7 +133,7 @@ export interface UseInfiniteLoaderOptions<Item> {
 export type LoadMoreItemsCallback<Item> = (
   startIndex: number,
   stopIndex: number,
-  items: Item[]
+  items: Item[],
 ) => Promise<void> | void;
 
 const emptyObj = {} as const;

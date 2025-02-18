@@ -49,7 +49,7 @@ export function usePositioner(
     columnCount,
     maxColumnCount,
   }: UsePositionerOptions,
-  deps: React.DependencyList = emptyArr
+  deps: React.DependencyList = emptyArr,
 ): Positioner {
   const initPositioner = (): Positioner => {
     const [computedColumnWidth, computedColumnCount] = getColumns(
@@ -57,13 +57,13 @@ export function usePositioner(
       columnWidth,
       columnGutter,
       columnCount,
-      maxColumnCount
+      maxColumnCount,
     );
     return createPositioner(
       computedColumnCount,
       computedColumnWidth,
       columnGutter,
-      rowGutter ?? columnGutter
+      rowGutter ?? columnGutter,
     );
   };
   const positionerRef = React.useRef<Positioner | null>(null);
@@ -84,7 +84,7 @@ export function usePositioner(
   if (typeof process !== "undefined" && process.env.NODE_ENV !== "production") {
     if (deps.length !== prevDeps.current.length) {
       throw new Error(
-        "usePositioner(): The length of your dependencies array changed."
+        "usePositioner(): The length of your dependencies array changed.",
       );
     }
   }
@@ -126,7 +126,7 @@ export const createPositioner = (
   columnCount: number,
   columnWidth: number,
   columnGutter = 0,
-  rowGutter = columnGutter
+  rowGutter = columnGutter,
 ): Positioner => {
   // O(log(n)) lookup of cells to render for a given viewport size
   // Store tops and bottoms of each cell for fast intersection lookup.
@@ -253,7 +253,7 @@ export const createPositioner = (
     range: (
       lo: number,
       hi: number,
-      renderCallback: (index: number, left: number, top: number) => void
+      renderCallback: (index: number, left: number, top: number) => void,
     ) =>
       intervalTree.search(lo, hi, (index: number, top: number) => {
         const item = items[index];
@@ -312,7 +312,7 @@ export interface Positioner {
   range: (
     lo: number,
     hi: number,
-    renderCallback: (index: number, left: number, top: number) => void
+    renderCallback: (index: number, left: number, top: number) => void,
   ) => void;
   /**
    * Returns the number of grid cells in the cache
@@ -377,17 +377,17 @@ const getColumns = (
   minimumWidth = 0,
   gutter = 8,
   initialColumnCount?: number,
-  maxColumnCount?: number
+  maxColumnCount?: number,
 ): [number, number] => {
   const computedColumnCount =
     initialColumnCount ||
     Math.min(
       Math.floor((width + gutter) / (minimumWidth + gutter)),
-      maxColumnCount || Number.POSITIVE_INFINITY
+      maxColumnCount || Number.POSITIVE_INFINITY,
     ) ||
     1;
   const columnWidth = Math.floor(
-    (width - gutter * (computedColumnCount - 1)) / computedColumnCount
+    (width - gutter * (computedColumnCount - 1)) / computedColumnCount,
   );
   return [columnWidth, computedColumnCount];
 };
