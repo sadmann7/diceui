@@ -1091,15 +1091,14 @@ const ITEM_NAME = "MasonryItem";
 const MASONRY_ERROR = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` components must be within \`${ROOT_NAME}\``,
   [VIEWPORT_NAME]: `\`${VIEWPORT_NAME}\` components must be within \`${ROOT_NAME}\``,
-  [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${ROOT_NAME}\``,
+  [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${VIEWPORT_NAME}\``,
 } as const;
 
 interface MasonryContextValue {
   positioner: Positioner;
   resizeObserver?: ResizeObserver;
   columnWidth: number;
-  itemMap: Map<number, HTMLElement>;
-  onItemRegister: (index: number, element: HTMLElement | null) => void;
+  onItemRegister: (index: number, element: ItemElement | null) => void;
   scrollTop: number;
   windowHeight: number;
   itemHeight: number;
@@ -1173,7 +1172,9 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
 
       do {
         offset += container.offsetTop ?? 0;
-        container = container.offsetParent as HTMLDivElement;
+        container = container.offsetParent as React.ComponentRef<
+          typeof MasonryRoot
+        >;
       } while (container);
 
       if (
@@ -1201,10 +1202,10 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
       fps: scrollFps,
     });
 
-    const itemMap = React.useRef(new Map<number, HTMLElement>()).current;
+    const itemMap = React.useRef(new Map<number, ItemElement>()).current;
 
     const onItemRegister = React.useCallback(
-      (index: number, element: HTMLElement | null) => {
+      (index: number, element: ItemElement | null) => {
         if (element) {
           itemMap.set(index, element);
           if (resizeObserver) {
@@ -1229,7 +1230,6 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
         positioner,
         resizeObserver,
         columnWidth: positioner.columnWidth,
-        itemMap,
         onItemRegister,
         scrollTop,
         windowHeight: windowSize.height,
@@ -1240,7 +1240,6 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
       [
         positioner,
         resizeObserver,
-        itemMap,
         onItemRegister,
         scrollTop,
         windowSize.height,
@@ -1387,6 +1386,8 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, MasonryViewportProps>(
 );
 
 MasonryViewport.displayName = VIEWPORT_NAME;
+
+type ItemElement = React.ComponentRef<typeof MasonryItem>;
 
 interface MasonryItemProps extends DivProps {
   index: number;
