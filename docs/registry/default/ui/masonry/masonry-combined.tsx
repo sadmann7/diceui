@@ -269,25 +269,23 @@ function fixInsert(tree: Tree, node: TreeNode) {
   tree.root.color = BLACK;
 }
 
-interface IIntervalTree {
+interface IntervalTree {
   insert(low: number, high: number, index: number): void;
   remove(index: number): void;
   search(
     low: number,
     high: number,
-    callback: (index: number, low: number) => void,
+    onCallback: (index: number, low: number) => void,
   ): void;
   size: number;
 }
 
-function createIntervalTree(): IIntervalTree {
-  const tree = {
+function createIntervalTree(): IntervalTree {
+  const tree: Tree = {
     root: SENTINEL_NODE,
     size: 0,
   };
-  // we know these indexes are a consistent, safe way to make look ups
-  // for our case so it's a solid O(1) alternative to
-  // the O(log n) searchNode() in typical interval trees
+
   const indexMap: Record<number, TreeNode> = {};
 
   return {
@@ -387,7 +385,7 @@ function createIntervalTree(): IIntervalTree {
       tree.size--;
     },
 
-    search(low, high, callback) {
+    search(low, high, onCallback) {
       const stack = [tree.root];
       while (stack.length !== 0) {
         const node = stack.pop() as TreeNode;
@@ -397,7 +395,7 @@ function createIntervalTree(): IIntervalTree {
         if (node.low <= high && node.high >= low) {
           let curr: ListNode | null = node.list;
           while (curr !== null) {
-            if (curr.high >= low) callback(curr.index, node.low);
+            if (curr.high >= low) onCallback(curr.index, node.low);
             curr = curr.next;
           }
         }
@@ -547,42 +545,12 @@ interface PositionerItem {
   columnIndex: number;
 }
 
-export interface UsePositionerOptions {
-  /**
-   * The width of the container you're rendering the grid within, i.e. the container
-   * element's `element.offsetWidth`
-   */
+interface UsePositionerOptions {
   width: number;
-  /**
-   * The minimum column width. The `usePositioner()` hook will automatically size the
-   * columns to fill their container based upon the `columnWidth` and `columnGutter` values.
-   * It will never render anything smaller than this width unless its container itself is
-   * smaller than its value. This property is optional if you're using a static `columnCount`.
-   *
-   * @default 200
-   */
   columnWidth?: number;
-  /**
-   * This sets the horizontal space between grid columns in pixels. If `rowGutter` is not set, this
-   * also sets the vertical space between cells within a column in pixels.
-   *
-   * @default 0
-   */
   columnGutter?: number;
-  /**
-   * This sets the vertical space between cells within a column in pixels. If not set, the value of
-   * `columnGutter` is used instead.
-   */
   rowGutter?: number;
-  /**
-   * By default, `usePositioner()` derives the column count from the `columnWidth`, `columnGutter`,
-   * and `width` props. However, in some situations it is nice to be able to override that behavior
-   * (e.g. creating a `List` component).
-   */
   columnCount?: number;
-  /**
-   * The upper bound of column count. This property won't work if `columnCount` is set.
-   */
   maxColumnCount?: number;
 }
 
@@ -1074,7 +1042,6 @@ function useThrottle<State>(
     }
   }, []);
 
-  // Reset throttling whenever fps or leading options change.
   React.useEffect(() => {
     return () => {
       prev.current = 0;
@@ -1189,6 +1156,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
       scrollFps = 12,
       ssrWidth,
       ssrHeight,
+      style,
       asChild,
       ...rootProps
     } = props;
@@ -1309,7 +1277,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
             position: "relative",
             width: "100%",
             height: "100%",
-            ...rootProps.style,
+            ...style,
           }}
         >
           <MasonryViewport>{children}</MasonryViewport>
