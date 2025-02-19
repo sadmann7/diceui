@@ -2137,6 +2137,7 @@ interface MasonryContextValue {
   scrollTop: number;
   isScrolling?: boolean;
   height: number;
+  overscanBy: number;
 }
 
 const MasonryContext = React.createContext<MasonryContextValue | null>(null);
@@ -2190,10 +2191,15 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
     );
 
     const itemsMapRef = React.useRef(new Map<number, HTMLElement>());
+    const registeredItemsRef = React.useRef(new Set<number>());
 
     const registerItem = React.useCallback(
       (index: number, element: HTMLElement) => {
+        if (registeredItemsRef.current.has(index)) return;
+
         itemsMapRef.current.set(index, element);
+        registeredItemsRef.current.add(index);
+
         if (resizeObserver) {
           resizeObserver.observe(element);
         }
@@ -2206,11 +2212,14 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
 
     const unregisterItem = React.useCallback(
       (index: number) => {
+        if (!registeredItemsRef.current.has(index)) return;
+
         const element = itemsMapRef.current.get(index);
         if (element && resizeObserver) {
           resizeObserver.unobserve(element);
         }
         itemsMapRef.current.delete(index);
+        registeredItemsRef.current.delete(index);
       },
       [resizeObserver],
     );
@@ -2225,6 +2234,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
         scrollTop,
         isScrolling,
         height: windowSize[1],
+        overscanBy,
       }),
       [
         positioner,
@@ -2234,6 +2244,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
         scrollTop,
         isScrolling,
         windowSize,
+        overscanBy,
       ],
     );
 
@@ -2264,10 +2275,27 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, MasonryViewportProps>(
     { children, asChild = false, style, ...props },
     ref,
   ) {
-    const { positioner, isScrolling } = useMasonryContext();
+    const {
+      positioner,
+      isScrolling,
+      scrollTop,
+      height,
+      overscanBy,
+      columnWidth,
+    } = useMasonryContext();
+
+    // Track total items for height calculation
+    const totalItems = React.useMemo(() => {
+      return React.Children.toArray(children).filter(
+        (child) =>
+          React.isValidElement(child) &&
+          (child.type === MasonryItem || child.type === Item),
+      ).length;
+    }, [children]);
+
     const estimatedHeight = React.useMemo(
-      () => positioner.estimateHeight(positioner.size(), 300),
-      [positioner],
+      () => positioner.estimateHeight(totalItems, 300),
+      [positioner, totalItems],
     );
 
     const containerStyle = React.useMemo(
@@ -2284,10 +2312,63 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, MasonryViewportProps>(
       [estimatedHeight, isScrolling, style],
     );
 
+    // Calculate visible range with overscan
+    const [startIndex, stopIndex] = React.useMemo(() => {
+      const rangeStart = Math.max(0, scrollTop - overscanBy);
+      const rangeEnd = scrollTop + height + overscanBy;
+
+      const visibleItems: number[] = [];
+      positioner.range(rangeStart, rangeEnd, (index) => {
+        visibleItems.push(index);
+      });
+
+      if (!visibleItems.length) {
+        // If no items are positioned yet, show first batch
+        return [0, Math.min(50, totalItems - 1)];
+      }
+      return [
+        Math.max(0, Math.min(...visibleItems) - 5),
+        Math.min(totalItems - 1, Math.max(...visibleItems) + 5),
+      ];
+    }, [scrollTop, height, overscanBy, positioner, totalItems]);
+
+    // Filter and clone children to apply positioning
+    const positionedChildren = React.useMemo(() => {
+      const validChildren = React.Children.toArray(children).filter(
+        (child): child is React.ReactElement<MasonryItemProps> =>
+          React.isValidElement(child) &&
+          (child.type === MasonryItem || child.type === Item),
+      );
+
+      return validChildren
+        .map((child, i) => {
+          const index = child.props.index ?? i;
+          const position = positioner.get(index);
+
+          // Always render items initially to get their heights
+          const isInView = index >= startIndex && index <= stopIndex;
+          if (!isInView && position) return null;
+
+          return React.cloneElement(child, {
+            key: child.key ?? index,
+            index, // Ensure index is passed
+            style: {
+              position: "absolute",
+              top: position?.top ?? 0,
+              left: position?.left ?? 0,
+              width: columnWidth,
+              visibility: position ? "visible" : "hidden",
+              ...child.props.style,
+            },
+          });
+        })
+        .filter(Boolean);
+    }, [children, startIndex, stopIndex, positioner, columnWidth]);
+
     const Comp = asChild ? Slot : "div";
     return (
       <Comp ref={ref} style={containerStyle} {...props}>
-        {children}
+        {positionedChildren}
       </Comp>
     );
   },
@@ -2300,37 +2381,27 @@ const MasonryItem = React.forwardRef<HTMLDivElement, MasonryItemProps>(
     { children, index, asChild = false, style, ...props },
     ref,
   ) {
-    const { columnWidth, registerItem, unregisterItem, positioner } =
-      useMasonryContext();
+    const { registerItem, unregisterItem } = useMasonryContext();
     const itemRef = React.useRef<HTMLDivElement>(null);
     const combinedRef = useComposedRefs(ref, itemRef);
+    const registeredRef = React.useRef(false);
 
     React.useEffect(() => {
       const element = itemRef.current;
-      if (element) {
-        registerItem(index, element);
-        return () => unregisterItem(index);
-      }
-    }, [index, registerItem, unregisterItem]);
+      if (!element || registeredRef.current) return;
 
-    const position = positioner.get(index);
-    const itemStyle = React.useMemo(
-      () => ({
-        position: "absolute" as const,
-        top: position?.top ?? 0,
-        left: position?.left ?? 0,
-        width: columnWidth,
-        transform: position
-          ? "translate3d(0, 0, 0)"
-          : "translate3d(-9999px, -9999px, 0)",
-        ...style,
-      }),
-      [position, columnWidth, style],
-    );
+      registeredRef.current = true;
+      registerItem(index, element);
+
+      return () => {
+        registeredRef.current = false;
+        unregisterItem(index);
+      };
+    }, [index, registerItem, unregisterItem]);
 
     const Comp = asChild ? Slot : "div";
     return (
-      <Comp ref={combinedRef} style={itemStyle} {...props}>
+      <Comp ref={combinedRef} style={style} {...props}>
         {children}
       </Comp>
     );
