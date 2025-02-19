@@ -269,7 +269,7 @@ function fixInsert(tree: Tree, node: TreeNode) {
   tree.root.color = BLACK;
 }
 
-export interface IIntervalTree {
+interface IIntervalTree {
   insert(low: number, high: number, index: number): void;
   remove(index: number): void;
   search(
@@ -280,7 +280,7 @@ export interface IIntervalTree {
   size: number;
 }
 
-export function createIntervalTree(): IIntervalTree {
+function createIntervalTree(): IIntervalTree {
   const tree = {
     root: SENTINEL_NODE,
     size: 0,
@@ -410,30 +410,34 @@ export function createIntervalTree(): IIntervalTree {
   };
 }
 
-export interface MapLike {
-  new (...args: unknown[]): unknown;
-}
-
-export type CacheConstructor =
-  | MapConstructor
-  | WeakMapConstructor
-  | MapLike
-  | Record<string | number | symbol, unknown>;
+type CacheKey = string | number | symbol;
+type CacheConstructor = (new () => Cache) | Record<CacheKey, unknown>;
 
 interface Cache<K = CacheKey, V = unknown> {
   set: (k: K, v: V) => V;
   get: (k: K) => V | undefined;
 }
 
-type CacheKey = string | number | symbol;
+function hierarchicalMemo<T extends unknown[], U>(
+  mapConstructors: CacheConstructor[],
+  fn: (...args: T) => U,
+): (...args: T) => U {
+  if (!mapConstructors.length || !mapConstructors[0]) {
+    throw new Error("At least one constructor is required");
+  }
 
-const createCache = (obj: CacheConstructor): Cache => {
-  try {
-    // @ts-expect-error - This is a valid way to create a cache
-    return new obj();
-  } catch (_err) {
-    const cache = new Map<CacheKey, unknown>();
-
+  // Inline createCache function.
+  function createCache(obj: CacheConstructor): Cache {
+    let cache: Cache;
+    if (typeof obj === "function") {
+      try {
+        cache = new (obj as new () => Cache)();
+      } catch (_err) {
+        cache = new Map<CacheKey, unknown>();
+      }
+    } else {
+      cache = obj as unknown as Cache;
+    }
     return {
       set(k: CacheKey, v: unknown): unknown {
         cache.set(k, v);
@@ -444,54 +448,24 @@ const createCache = (obj: CacheConstructor): Cache => {
       },
     };
   }
-};
 
-interface MemoResult {
-  s: (args: unknown[], value: unknown) => unknown;
-  g: (args: unknown[]) => unknown;
-}
+  const depth = mapConstructors.length;
+  const baseCache = createCache(mapConstructors[0]);
 
-const memo = (constructors: CacheConstructor[]): MemoResult => {
-  if (!constructors.length || !constructors[0]) {
-    throw new Error("At least one constructor is required");
-  }
-
-  const depth = constructors.length;
-  const baseCache = createCache(constructors[0]);
   let base: Cache | undefined;
   let map: Cache | undefined;
+  let node: Cache;
   let i: number;
-  let node: Cache = baseCache;
   const one = depth === 1;
 
-  const g1 = (args: unknown[]): unknown => {
-    const key = args[0] as CacheKey;
-    base = baseCache.get(key) as Cache | undefined;
-    return one ? base : base?.get(args[1] as CacheKey);
-  };
-
-  const s1 = (args: unknown[], value: unknown): unknown => {
-    if (one) {
-      baseCache.set(args[0] as CacheKey, value);
-    } else {
-      base = baseCache.get(args[0] as CacheKey) as Cache | undefined;
-      if (!base) {
-        if (!constructors[1]) {
-          throw new Error(
-            "Second constructor is required for non-single depth cache",
-          );
-        }
-        map = createCache(constructors[1]);
-        map.set(args[1] as CacheKey, value);
-        baseCache.set(args[0] as CacheKey, map);
-      } else {
-        base.set(args[1] as CacheKey, value);
-      }
+  // A combined getter function (from memo's g1/g2)
+  const get = (args: unknown[]): unknown => {
+    if (depth < 3) {
+      const key = args[0] as CacheKey;
+      base = baseCache.get(key) as Cache | undefined;
+      return one ? base : base?.get(args[1] as CacheKey);
     }
-    return value;
-  };
 
-  const g2 = (args: unknown[]): unknown => {
     node = baseCache;
     for (i = 0; i < depth; i++) {
       const next = node.get(args[i] as CacheKey);
@@ -501,12 +475,34 @@ const memo = (constructors: CacheConstructor[]): MemoResult => {
     return node;
   };
 
-  const s2 = (args: unknown[], value: unknown): unknown => {
+  // A combined setter function (from memo's s1/s2)
+  const set = (args: unknown[], value: unknown): unknown => {
+    if (depth < 3) {
+      if (one) {
+        baseCache.set(args[0] as CacheKey, value);
+      } else {
+        base = baseCache.get(args[0] as CacheKey) as Cache | undefined;
+        if (!base) {
+          if (!mapConstructors[1]) {
+            throw new Error(
+              "Second constructor is required for non-single depth cache",
+            );
+          }
+          map = createCache(mapConstructors[1]);
+          map.set(args[1] as CacheKey, value);
+          baseCache.set(args[0] as CacheKey, map);
+        } else {
+          base.set(args[1] as CacheKey, value);
+        }
+      }
+      return value;
+    }
+
     node = baseCache;
     for (i = 0; i < depth - 1; i++) {
       map = node.get(args[i] as CacheKey) as Cache | undefined;
       if (!map) {
-        const nextConstructor = constructors[i + 1];
+        const nextConstructor = mapConstructors[i + 1];
         if (!nextConstructor) {
           throw new Error(`Constructor at index ${i + 1} is required`);
         }
@@ -521,23 +517,15 @@ const memo = (constructors: CacheConstructor[]): MemoResult => {
     return value;
   };
 
-  return depth < 3 ? { g: g1, s: s1 } : { g: g2, s: s2 };
-};
-
-const trieMemoize = <T extends unknown[], U>(
-  mapConstructors: CacheConstructor[],
-  fn: (...args: T) => U,
-): ((...args: T) => U) => {
-  const { g, s } = memo(mapConstructors);
-
+  // Return a memoized function: check cache first, otherwise compute and cache.
   return (...args: T): U => {
-    const result = g(args);
-    if (result === undefined) {
-      return s(args, fn(...args)) as U;
+    const cached = get(args);
+    if (cached === undefined) {
+      return set(args, fn(...args)) as U;
     }
-    return result as U;
+    return cached as U;
   };
-};
+}
 
 export interface UsePositionerOptions {
   /**
@@ -1158,7 +1146,7 @@ export function useResizeObserver(positioner: Positioner) {
  * @param positioner - A cell positioner created by the `usePositioner()` hook or the `createPositioner()` utility
  * @param updater - A callback that fires whenever one or many cell heights change.
  */
-export const createResizeObserver = trieMemoize(
+export const createResizeObserver = hierarchicalMemo(
   [WeakMap],
   // TODO: figure out a way to test this
   /* istanbul ignore next */
@@ -1754,7 +1742,7 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, MasonryViewportProps>(
     // Track total items for height calculation
     const totalItems = React.useMemo(() => {
       return React.Children.toArray(children).filter(
-        (child) =>
+        (child): child is React.ReactElement<MasonryItemProps> =>
           React.isValidElement(child) &&
           (child.type === MasonryItem || child.type === Item),
       ).length;
