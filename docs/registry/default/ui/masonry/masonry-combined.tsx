@@ -1445,8 +1445,10 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, MasonryViewportProps>(
 
     // Calculate visible range with overscan
     const [startIndex, stopIndex] = React.useMemo(() => {
-      const rangeStart = Math.max(0, context.scrollTop - context.overscanBy);
-      const rangeEnd = context.scrollTop + context.height + context.overscanBy;
+      // Increase overscan to reduce gaps during scrolling
+      const overscanPixels = context.height * context.overscanBy;
+      const rangeStart = Math.max(0, context.scrollTop - overscanPixels);
+      const rangeEnd = context.scrollTop + context.height + overscanPixels;
 
       const visibleItems: number[] = [];
       context.positioner.range(rangeStart, rangeEnd, (index) => {
@@ -1454,12 +1456,18 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, MasonryViewportProps>(
       });
 
       if (!visibleItems.length) {
-        // If no items are positioned yet, show first batch
-        return [0, Math.min(50, totalItems - 1)];
+        // If no items are positioned yet, show first batch with larger initial render
+        return [0, Math.min(100, totalItems - 1)];
       }
+
+      // Increase the overscan range for smoother scrolling
+      const minVisible = Math.min(...visibleItems);
+      const maxVisible = Math.max(...visibleItems);
+      const overscanCount = Math.ceil(context.overscanBy * 2); // Double the overscan items
+
       return [
-        Math.max(0, Math.min(...visibleItems) - 5),
-        Math.min(totalItems - 1, Math.max(...visibleItems) + 5),
+        Math.max(0, minVisible - overscanCount),
+        Math.min(totalItems - 1, maxVisible + overscanCount),
       ];
     }, [
       context.scrollTop,
@@ -1483,8 +1491,10 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, MasonryViewportProps>(
           const position = context.positioner.get(index);
 
           // Always render items initially to get their heights
+          // Expand the render range during scrolling to reduce gaps
           const isInView = index >= startIndex && index <= stopIndex;
-          if (!isInView && position) return null;
+          const shouldRender = isInView || !position || context.isScrolling;
+          if (!shouldRender) return null;
 
           return React.cloneElement(child, {
             key: child.key ?? index,
@@ -1495,6 +1505,7 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, MasonryViewportProps>(
               left: position?.left ?? 0,
               width: context.columnWidth,
               visibility: position ? "visible" : "hidden",
+              transform: context.isScrolling ? "translateZ(0)" : undefined,
               ...child.props.style,
             },
           });
@@ -1506,6 +1517,7 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, MasonryViewportProps>(
       stopIndex,
       context.columnWidth,
       context.positioner,
+      context.isScrolling,
     ]);
 
     return (
