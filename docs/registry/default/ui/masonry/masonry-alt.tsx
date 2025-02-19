@@ -1,7 +1,5 @@
 "use client";
 
-import { useComposedRefs } from "@/lib/composition";
-import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 
 type Color = 0 | 1 | 2;
@@ -12,11 +10,11 @@ const NIL = 2;
 const DELETE = 0;
 const KEEP = 1;
 
-interface ListNode {
+type ListNode = {
   index: number;
   high: number;
   next: ListNode | null;
-}
+};
 
 interface TreeNode {
   max: number;
@@ -415,6 +413,33 @@ export function createIntervalTree(): IIntervalTree {
   };
 }
 
+const defaultAreEqual = <T extends unknown[]>(current: T, prev: T): boolean =>
+  current[0] === prev[0] &&
+  current[1] === prev[1] &&
+  current[2] === prev[2] &&
+  current[3] === prev[3];
+
+type AreEqual<Args> = (currentArgs: Args, prevArgs: Args) => boolean;
+type OutputFunction<Args extends unknown[], T> = (...args: Args) => T;
+
+const memoizeOne = <Args extends unknown[], T>(
+  fn: (...args: Args) => T,
+  areEqual?: AreEqual<Args>,
+): OutputFunction<Args, T> => {
+  const equal = areEqual || defaultAreEqual;
+  let lastArgs: Args | undefined;
+  let value: T;
+
+  return (...currentArgs: Args): T => {
+    if (lastArgs && equal(currentArgs, lastArgs)) {
+      return value;
+    }
+    lastArgs = currentArgs;
+    value = fn(...currentArgs);
+    return value;
+  };
+};
+
 export interface MapLike {
   new (...args: unknown[]): unknown;
 }
@@ -543,6 +568,156 @@ const trieMemoize = <T extends unknown[], U>(
     return result as U;
   };
 };
+
+class OneKeyMap<K = unknown, V = unknown> {
+  set: (k: K, v: V) => void;
+  get: (k: K) => V | undefined;
+
+  constructor() {
+    let key: K | undefined;
+    let val: V | undefined;
+    this.get = (k: K): V | undefined => (k === key ? val : void 0);
+    this.set = (k: K, v: V): void => {
+      key = k;
+      val = v;
+    };
+  }
+}
+
+export interface MasonryProps<Item>
+  extends Omit<
+      MasonryScrollerProps<Item>,
+      "offset" | "width" | "height" | "containerRef" | "positioner"
+    >,
+    Pick<
+      UsePositionerOptions,
+      | "columnWidth"
+      | "columnGutter"
+      | "rowGutter"
+      | "columnCount"
+      | "maxColumnCount"
+    > {
+  /**
+   * Scrolls to a given index within the grid. The grid will re-scroll
+   * any time the index changes.
+   */
+  scrollToIndex?:
+    | number
+    | {
+        index: number;
+        align: UseScrollToIndexOptions["align"];
+      };
+  /**
+   * This is the width that will be used for the browser `window` when rendering this component in SSR.
+   * This prop isn't relevant for client-side only apps.
+   */
+  ssrWidth?: number;
+  /**
+   * This is the height that will be used for the browser `window` when rendering this component in SSR.
+   * This prop isn't relevant for client-side only apps.
+   */
+  ssrHeight?: number;
+  /**
+   * This determines how often (in frames per second) to update the scroll position of the
+   * browser `window` in state, and as a result the rate the masonry grid recalculates its visible cells.
+   * The default value of `12` has been very reasonable in my own testing, but if you have particularly
+   * heavy `render` components it may be prudent to reduce this number.
+   *
+   * @default 12
+   */
+  scrollFps?: number;
+}
+
+export function Masonry<Item>(props: MasonryProps<Item>) {
+  const containerRef = React.useRef<null | HTMLElement>(null);
+  const windowSize = useWindowSize({
+    initialWidth: props.ssrWidth,
+    initialHeight: props.ssrHeight,
+  });
+  const containerPos = useContainerPosition(containerRef, windowSize);
+  const nextProps = Object.assign(
+    {
+      offset: containerPos.offset,
+      width: containerPos.width || windowSize[0],
+      height: windowSize[1],
+      containerRef,
+    },
+    props,
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  ) as any;
+  nextProps.positioner = usePositioner(nextProps);
+  nextProps.resizeObserver = useResizeObserver(nextProps.positioner);
+  const scrollToIndex = useScrollToIndex(nextProps.positioner, {
+    height: nextProps.height,
+    offset: containerPos.offset,
+    align:
+      typeof props.scrollToIndex === "object"
+        ? props.scrollToIndex.align
+        : void 0,
+  });
+  const index =
+    props.scrollToIndex &&
+    (typeof props.scrollToIndex === "number"
+      ? props.scrollToIndex
+      : props.scrollToIndex.index);
+
+  React.useEffect(() => {
+    if (index !== void 0) scrollToIndex(index);
+  }, [index, scrollToIndex]);
+
+  return React.createElement(MasonryScroller, nextProps);
+}
+
+Masonry.displayName = "Masonry";
+
+export interface MasonryScrollerProps<Item>
+  extends Omit<UseMasonryOptions<Item>, "scrollTop" | "isScrolling"> {
+  /**
+   * This determines how often (in frames per second) to update the scroll position of the
+   * browser `window` in state, and as a result the rate the masonry grid recalculates its visible cells.
+   * The default value of `12` has been very reasonable in my own testing, but if you have particularly
+   * heavy `render` components it may be prudent to reduce this number.
+   *
+   * @default 12
+   */
+  scrollFps?: number;
+  /**
+   * The vertical space in pixels between the top of the grid container and the top
+   * of the browser `document.documentElement`.
+   *
+   * @default 0
+   */
+  offset?: number;
+}
+
+export function MasonryScroller<Item>(props: MasonryScrollerProps<Item>) {
+  const { scrollTop, isScrolling } = useScroller(props.offset, props.scrollFps);
+
+  return useMasonry<Item>({
+    scrollTop,
+    isScrolling,
+    positioner: props.positioner,
+    resizeObserver: props.resizeObserver,
+    items: props.items,
+    onRender: props.onRender,
+    as: props.as,
+    id: props.id,
+    className: props.className,
+    style: props.style,
+    role: props.role,
+    tabIndex: props.tabIndex,
+    containerRef: props.containerRef,
+    itemAs: props.itemAs,
+    itemStyle: props.itemStyle,
+    itemHeightEstimate: props.itemHeightEstimate,
+    itemKey: props.itemKey,
+    overscanBy: props.overscanBy,
+    height: props.height,
+    render: props.render,
+  });
+}
+
+MasonryScroller.displayName = "MasonryScroller";
 
 export interface UsePositionerOptions {
   /**
@@ -934,6 +1109,352 @@ const getColumns = (
   );
   return [columnWidth, computedColumnCount];
 };
+
+// This is for triggering a remount after SSR has loaded in the client w/ hydrate()
+let didEverMount = "0";
+
+type ElementType = React.ElementType<React.HTMLAttributes<HTMLElement>>;
+
+interface BaseItemProps extends React.HTMLAttributes<HTMLElement> {
+  key?: string | number;
+  ref?: (el: HTMLElement | null) => void;
+  role?: string;
+  style?: React.CSSProperties;
+  children?: React.ReactNode;
+}
+
+export interface UseMasonryOptions<Item> {
+  items: Item[];
+  positioner: Positioner;
+  resizeObserver?: {
+    observe: ResizeObserver["observe"];
+    disconnect: ResizeObserver["observe"];
+    unobserve: ResizeObserver["unobserve"];
+  };
+  as?: ElementType;
+  id?: string;
+  className?: string;
+  style?: React.CSSProperties;
+  role?: "grid" | "list";
+  tabIndex?: number;
+  containerRef?:
+    | ((element: HTMLElement) => void)
+    | React.MutableRefObject<HTMLElement | null>;
+  itemAs?: ElementType;
+  itemStyle?: React.CSSProperties;
+  itemHeightEstimate?: number;
+  itemKey?: (data: Item, index: number) => string | number;
+  overscanBy?: number;
+  height: number;
+  scrollTop: number;
+  isScrolling?: boolean;
+  render: React.ComponentType<RenderComponentProps<Item>>;
+  onRender?: (startIndex: number, stopIndex: number, items: Item[]) => void;
+}
+
+/** Renders phases of the masonry layout and returns the grid as a React element. */
+function useMasonry<Item>({
+  // Measurement and layout
+  positioner,
+  resizeObserver,
+  // Grid items
+  items,
+  // Container props
+  as: ContainerComponent = "div",
+  id,
+  className,
+  style,
+  role = "grid",
+  tabIndex = 0,
+  containerRef,
+  // Item props
+  itemAs: ItemComponent = "div",
+  itemStyle,
+  itemHeightEstimate = 300,
+  itemKey = defaultGetItemKey,
+  // Rendering props
+  overscanBy = 2,
+  scrollTop,
+  isScrolling,
+  height,
+  render: RenderComponent,
+  onRender,
+}: UseMasonryOptions<Item>) {
+  let startIndex = 0;
+  let stopIndex: number | undefined;
+  const forceUpdate = useForceUpdate();
+  const setItemRef = getRefSetter(positioner, resizeObserver);
+  const itemCount = items.length;
+  const {
+    columnWidth,
+    columnCount,
+    range,
+    estimateHeight,
+    size,
+    shortestColumn,
+  } = positioner;
+  const measuredCount = size();
+  const shortestColumnSize = shortestColumn();
+  const children: React.ReactElement[] = [];
+  const itemRole =
+    role === "list" ? "listitem" : role === "grid" ? "gridcell" : undefined;
+  const storedOnRender = useLatest(onRender);
+
+  overscanBy = height * overscanBy;
+  const rangeEnd = scrollTop + overscanBy;
+  const needsFreshBatch =
+    shortestColumnSize < rangeEnd && measuredCount < itemCount;
+
+  range(
+    // We overscan in both directions because users scroll both ways,
+    // though one must admit scrolling down is more common and thus
+    // we only overscan by half the downward overscan amount
+    Math.max(0, scrollTop - overscanBy / 2),
+    rangeEnd,
+    (index, left, top) => {
+      const data = items[index];
+      if (!data) return;
+      const key = itemKey(data, index);
+      const phaseTwoStyle: React.CSSProperties = {
+        top,
+        left,
+        width: columnWidth,
+        writingMode: "horizontal-tb",
+        position: "absolute",
+      };
+
+      if (
+        typeof process !== "undefined" &&
+        process.env.NODE_ENV !== "production"
+      ) {
+        throwWithoutData(data, index);
+      }
+
+      children.push(
+        React.createElement(
+          ItemComponent,
+          {
+            key,
+            ref: setItemRef(index),
+            role: itemRole,
+            style:
+              typeof itemStyle === "object" && itemStyle !== null
+                ? Object.assign({}, phaseTwoStyle, itemStyle)
+                : phaseTwoStyle,
+          } as BaseItemProps,
+          createRenderElement(RenderComponent, index, data, columnWidth),
+        ),
+      );
+
+      if (stopIndex === void 0) {
+        startIndex = index;
+        stopIndex = index;
+      } else {
+        startIndex = Math.min(startIndex, index);
+        stopIndex = Math.max(stopIndex, index);
+      }
+    },
+  );
+
+  if (needsFreshBatch) {
+    const batchSize = Math.min(
+      itemCount - measuredCount,
+      Math.ceil(
+        ((scrollTop + overscanBy - shortestColumnSize) / itemHeightEstimate) *
+          columnCount,
+      ),
+    );
+
+    let index = measuredCount;
+    const phaseOneStyle = getCachedSize(columnWidth);
+
+    for (; index < measuredCount + batchSize; index++) {
+      const data = items[index];
+      if (!data) continue;
+      const key = itemKey(data, index);
+
+      if (
+        typeof process !== "undefined" &&
+        process.env.NODE_ENV !== "production"
+      ) {
+        throwWithoutData(data, index);
+      }
+
+      children.push(
+        React.createElement(
+          ItemComponent,
+          {
+            key,
+            ref: setItemRef(index),
+            role: itemRole,
+            style:
+              typeof itemStyle === "object"
+                ? Object.assign({}, phaseOneStyle, itemStyle)
+                : phaseOneStyle,
+          } as BaseItemProps,
+          createRenderElement(RenderComponent, index, data, columnWidth),
+        ),
+      );
+    }
+  }
+
+  // Calls the onRender callback if the rendered indices changed
+  React.useEffect(() => {
+    if (typeof storedOnRender.current === "function" && stopIndex !== void 0)
+      storedOnRender.current(startIndex, stopIndex, items);
+
+    didEverMount = "1";
+  }, [startIndex, stopIndex, items, storedOnRender]);
+  // If we needed a fresh batch we should reload our components with the measured
+  // sizes
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  React.useEffect(() => {
+    if (needsFreshBatch) forceUpdate();
+  }, [needsFreshBatch, positioner]);
+
+  // gets the container style object based upon the estimated height and whether or not
+  // the page is being scrolled
+  const containerStyle = getContainerStyle(
+    isScrolling,
+    estimateHeight(itemCount, itemHeightEstimate),
+  );
+
+  const containerProps = {
+    ref: containerRef,
+    key: didEverMount,
+    id,
+    role,
+    className,
+    tabIndex,
+    style:
+      typeof style === "object" && style !== null
+        ? assignUserStyle(containerStyle, style as React.CSSProperties)
+        : containerStyle,
+  } as const;
+
+  return React.createElement(ContainerComponent, containerProps, children);
+}
+
+function throwWithoutData(data: unknown, index: number) {
+  if (!data) {
+    throw new Error(
+      [
+        `No data was found at index: ${index}`,
+        "",
+        'This usually happens when you\'ve mutated or changed the "items" array in a',
+        'way that makes it shorter than the previous "items" array. Masonic knows nothing',
+        "about your underlying data and when it caches cell positions, it assumes you aren't",
+        'mutating the underlying "items".',
+        "",
+        "See https://codesandbox.io/s/masonic-w-react-router-example-2b5f9?file=/src/index.js for",
+        "an example that gets around this limitations. For advanced implementations, see",
+        "https://codesandbox.io/s/masonic-w-react-router-and-advanced-config-example-8em42?file=/src/index.js",
+        "",
+        'If this was the result of your removing an item from your "items", see this issue:',
+        "https://github.com/jaredLunde/masonic/issues/12",
+      ].join("\n"),
+    );
+  }
+}
+
+export interface RenderComponentProps<Item> {
+  /**
+   * The index of the cell in the `items` prop array.
+   */
+  index: number;
+  /**
+   * The rendered width of the cell's column.
+   */
+  width: number;
+  /**
+   * The data at `items[index]` of your `items` prop array.
+   */
+  data: Item;
+}
+
+//
+// Render-phase utilities
+
+// ~5.5x faster than createElement without the memo
+const createRenderElement = trieMemoize(
+  [OneKeyMap, {}, WeakMap, OneKeyMap],
+  <Item,>(
+    RenderComponent: React.ComponentType<RenderComponentProps<Item>>,
+    index: number,
+    data: Item,
+    columnWidth: number,
+  ) =>
+    React.createElement(RenderComponent, {
+      index,
+      data,
+      width: columnWidth,
+    }),
+);
+
+const getContainerStyle = memoizeOne(
+  (
+    isScrolling: boolean | undefined,
+    estimateHeight: number,
+  ): React.CSSProperties => ({
+    position: "relative",
+    width: "100%",
+    maxWidth: "100%",
+    height: Math.ceil(estimateHeight),
+    maxHeight: Math.ceil(estimateHeight),
+    willChange: isScrolling ? "contents" : undefined,
+    pointerEvents: isScrolling ? "none" : undefined,
+  }),
+);
+
+const cmp2 = (args: IArguments, pargs: IArguments | unknown[]): boolean =>
+  args[0] === pargs[0] && args[1] === pargs[1];
+
+const assignUserStyle = memoizeOne(
+  (
+    containerStyle: React.CSSProperties,
+    userStyle: React.CSSProperties,
+  ): React.CSSProperties => Object.assign({}, containerStyle, userStyle),
+  // @ts-expect-error
+  cmp2,
+);
+
+function defaultGetItemKey<Item>(_: Item, i: number) {
+  return i;
+}
+
+// the below memoizations for for ensuring shallow equal is reliable for pure
+// component children
+const getCachedSize = memoizeOne(
+  (width: number): React.CSSProperties => ({
+    width,
+    zIndex: -1000,
+    visibility: "hidden",
+    position: "absolute",
+    writingMode: "horizontal-tb",
+  }),
+  (args, pargs) => args[0] === pargs[0],
+);
+
+const getRefSetter = memoizeOne(
+  (
+    positioner: Positioner,
+    resizeObserver?: UseMasonryOptions<unknown>["resizeObserver"],
+  ) =>
+    (index: number) =>
+    (el: HTMLElement | null): void => {
+      const elementsCache: WeakMap<Element, number> = new WeakMap();
+
+      if (el === null) return;
+      if (resizeObserver) {
+        resizeObserver.observe(el);
+        elementsCache.set(el, index);
+      }
+      if (positioner.get(index) === void 0)
+        positioner.set(index, el.offsetHeight);
+    },
+  // @ts-expect-error - This is a memoization function that compares two arguments
+  cmp2,
+);
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
@@ -1573,321 +2094,3 @@ export function useThrottle<State>(
   const state = React.useState<State>(initialState);
   return [state[0], useThrottleCallback(state[1], fps, leading)];
 }
-
-const ROOT_NAME = "MasonryRoot";
-const VIEWPORT_NAME = "MasonryViewport";
-const ITEM_NAME = "MasonryItem";
-
-interface MasonryRootProps extends React.HTMLAttributes<HTMLDivElement> {
-  children?: React.ReactNode;
-  columnWidth?: number;
-  columnGutter?: number;
-  rowGutter?: number;
-  columnCount?: number;
-  maxColumnCount?: number;
-  itemHeightEstimate?: number;
-  overscanBy?: number;
-  scrollFps?: number;
-  ssrWidth?: number;
-  ssrHeight?: number;
-  asChild?: boolean;
-}
-
-interface MasonryViewportProps extends React.HTMLAttributes<HTMLDivElement> {
-  children?: React.ReactNode;
-  asChild?: boolean;
-}
-
-interface MasonryItemProps extends React.HTMLAttributes<HTMLDivElement> {
-  children?: React.ReactNode;
-  index: number;
-  asChild?: boolean;
-}
-
-interface MasonryContextValue {
-  positioner: Positioner;
-  resizeObserver?: ResizeObserver;
-  columnWidth: number;
-  registerItem: (index: number, element: HTMLElement) => void;
-  unregisterItem: (index: number) => void;
-  scrollTop: number;
-  isScrolling?: boolean;
-  height: number;
-  overscanBy: number;
-}
-
-const MasonryContext = React.createContext<MasonryContextValue | null>(null);
-
-function useMasonryContext() {
-  const context = React.useContext(MasonryContext);
-  if (!context) {
-    throw new Error("MasonryContext Provider is missing");
-  }
-  return context;
-}
-
-const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
-  function MasonryRoot(
-    {
-      children,
-      columnWidth = 200,
-      columnGutter = 0,
-      rowGutter,
-      columnCount,
-      maxColumnCount,
-      itemHeightEstimate = 300,
-      overscanBy = 2,
-      scrollFps = 12,
-      ssrWidth,
-      ssrHeight,
-      asChild = false,
-      ...props
-    },
-    ref,
-  ) {
-    const containerRef = React.useRef<HTMLDivElement | null>(null);
-    const combinedRef = useComposedRefs(ref, containerRef);
-    const windowSize = useWindowSize({
-      initialWidth: ssrWidth,
-      initialHeight: ssrHeight,
-    });
-    const containerPos = useContainerPosition(containerRef, windowSize);
-    const positioner = usePositioner({
-      width: containerPos.width || windowSize[0],
-      columnWidth,
-      columnGutter,
-      rowGutter,
-      columnCount,
-      maxColumnCount,
-    });
-    const resizeObserver = useResizeObserver(positioner);
-    const { scrollTop, isScrolling } = useScroller(
-      containerPos.offset,
-      scrollFps,
-    );
-
-    const itemsMapRef = React.useRef(new Map<number, HTMLElement>());
-    const registeredItemsRef = React.useRef(new Set<number>());
-
-    const registerItem = React.useCallback(
-      (index: number, element: HTMLElement) => {
-        if (registeredItemsRef.current.has(index)) return;
-
-        itemsMapRef.current.set(index, element);
-        registeredItemsRef.current.add(index);
-
-        if (resizeObserver) {
-          resizeObserver.observe(element);
-        }
-        if (positioner.get(index) === void 0) {
-          positioner.set(index, element.offsetHeight);
-        }
-      },
-      [positioner, resizeObserver],
-    );
-
-    const unregisterItem = React.useCallback(
-      (index: number) => {
-        if (!registeredItemsRef.current.has(index)) return;
-
-        const element = itemsMapRef.current.get(index);
-        if (element && resizeObserver) {
-          resizeObserver.unobserve(element);
-        }
-        itemsMapRef.current.delete(index);
-        registeredItemsRef.current.delete(index);
-      },
-      [resizeObserver],
-    );
-
-    const contextValue = React.useMemo(
-      () => ({
-        positioner,
-        resizeObserver,
-        columnWidth: positioner.columnWidth,
-        registerItem,
-        unregisterItem,
-        scrollTop,
-        isScrolling,
-        height: windowSize[1],
-        overscanBy,
-      }),
-      [
-        positioner,
-        resizeObserver,
-        registerItem,
-        unregisterItem,
-        scrollTop,
-        isScrolling,
-        windowSize,
-        overscanBy,
-      ],
-    );
-
-    const Comp = asChild ? Slot : "div";
-    return (
-      <MasonryContext.Provider value={contextValue}>
-        <Comp
-          ref={combinedRef}
-          {...props}
-          style={{
-            position: "relative",
-            width: "100%",
-            height: "100%",
-            ...props.style,
-          }}
-        >
-          {children}
-        </Comp>
-      </MasonryContext.Provider>
-    );
-  },
-);
-
-MasonryRoot.displayName = ROOT_NAME;
-
-const MasonryViewport = React.forwardRef<HTMLDivElement, MasonryViewportProps>(
-  function MasonryViewport(
-    { children, asChild = false, style, ...props },
-    ref,
-  ) {
-    const {
-      positioner,
-      isScrolling,
-      scrollTop,
-      height,
-      overscanBy,
-      columnWidth,
-    } = useMasonryContext();
-
-    // Track total items for height calculation
-    const totalItems = React.useMemo(() => {
-      return React.Children.toArray(children).filter(
-        (child) =>
-          React.isValidElement(child) &&
-          (child.type === MasonryItem || child.type === Item),
-      ).length;
-    }, [children]);
-
-    const estimatedHeight = React.useMemo(
-      () => positioner.estimateHeight(totalItems, 300),
-      [positioner, totalItems],
-    );
-
-    const containerStyle = React.useMemo(
-      () => ({
-        position: "relative" as const,
-        width: "100%",
-        maxWidth: "100%",
-        height: Math.ceil(estimatedHeight),
-        maxHeight: Math.ceil(estimatedHeight),
-        willChange: isScrolling ? "contents" : undefined,
-        pointerEvents: isScrolling ? ("none" as const) : undefined,
-        ...style,
-      }),
-      [estimatedHeight, isScrolling, style],
-    );
-
-    // Calculate visible range with overscan
-    const [startIndex, stopIndex] = React.useMemo(() => {
-      const rangeStart = Math.max(0, scrollTop - overscanBy);
-      const rangeEnd = scrollTop + height + overscanBy;
-
-      const visibleItems: number[] = [];
-      positioner.range(rangeStart, rangeEnd, (index) => {
-        visibleItems.push(index);
-      });
-
-      if (!visibleItems.length) {
-        // If no items are positioned yet, show first batch
-        return [0, Math.min(50, totalItems - 1)];
-      }
-      return [
-        Math.max(0, Math.min(...visibleItems) - 5),
-        Math.min(totalItems - 1, Math.max(...visibleItems) + 5),
-      ];
-    }, [scrollTop, height, overscanBy, positioner, totalItems]);
-
-    // Filter and clone children to apply positioning
-    const positionedChildren = React.useMemo(() => {
-      const validChildren = React.Children.toArray(children).filter(
-        (child): child is React.ReactElement<MasonryItemProps> =>
-          React.isValidElement(child) &&
-          (child.type === MasonryItem || child.type === Item),
-      );
-
-      return validChildren
-        .map((child, i) => {
-          const index = child.props.index ?? i;
-          const position = positioner.get(index);
-
-          // Always render items initially to get their heights
-          const isInView = index >= startIndex && index <= stopIndex;
-          if (!isInView && position) return null;
-
-          return React.cloneElement(child, {
-            key: child.key ?? index,
-            index, // Ensure index is passed
-            style: {
-              position: "absolute",
-              top: position?.top ?? 0,
-              left: position?.left ?? 0,
-              width: columnWidth,
-              visibility: position ? "visible" : "hidden",
-              ...child.props.style,
-            },
-          });
-        })
-        .filter(Boolean);
-    }, [children, startIndex, stopIndex, positioner, columnWidth]);
-
-    const Comp = asChild ? Slot : "div";
-    return (
-      <Comp ref={ref} style={containerStyle} {...props}>
-        {positionedChildren}
-      </Comp>
-    );
-  },
-);
-
-MasonryViewport.displayName = VIEWPORT_NAME;
-
-const MasonryItem = React.forwardRef<HTMLDivElement, MasonryItemProps>(
-  function MasonryItem(
-    { children, index, asChild = false, style, ...props },
-    ref,
-  ) {
-    const { registerItem, unregisterItem } = useMasonryContext();
-    const itemRef = React.useRef<HTMLDivElement>(null);
-    const combinedRef = useComposedRefs(ref, itemRef);
-    const registeredRef = React.useRef(false);
-
-    React.useEffect(() => {
-      const element = itemRef.current;
-      if (!element || registeredRef.current) return;
-
-      registeredRef.current = true;
-      registerItem(index, element);
-
-      return () => {
-        registeredRef.current = false;
-        unregisterItem(index);
-      };
-    }, [index, registerItem, unregisterItem]);
-
-    const Comp = asChild ? Slot : "div";
-    return (
-      <Comp ref={combinedRef} style={style} {...props}>
-        {children}
-      </Comp>
-    );
-  },
-);
-
-MasonryItem.displayName = ITEM_NAME;
-
-const Root = MasonryRoot;
-const Viewport = MasonryViewport;
-const Item = MasonryItem;
-
-export { Item, Root, Viewport };

@@ -1,11 +1,10 @@
 "use client";
 
 import { Shell } from "@/components/shell";
-import * as Masonry from "@/registry/default/ui/masonry";
-import { Masonry as MasonryThree } from "@/registry/default/ui/masonry/masonry";
-import * as MasonryFour from "@/registry/default/ui/masonry/masonry-combined";
+import * as MasonryTwo from "@/registry/default/ui/masonry/masonry-alt";
+import * as MasonryThree from "@/registry/default/ui/masonry/masonry-combined";
 import { Loader } from "lucide-react";
-import { Masonry as MasonryTwo } from "masonic";
+import { Masonry as MasonryOne } from "masonic";
 import * as React from "react";
 
 const ITEMS_PER_PAGE = 2000;
@@ -75,18 +74,6 @@ export default function MasonryPage() {
   return (
     <Shell>
       <div className="flex flex-col gap-8">
-        {/* <Masonry.Root columnCount={4} gap={10} overscan={6}>
-          {items.map((item) => (
-            <Masonry.Item key={item.id} asChild>
-              <div
-                className="rounded-md bg-accent p-4"
-                style={{ height: item.height }}
-              >
-                {item.id + 1}
-              </div>
-            </Masonry.Item>
-          ))}
-        </Masonry.Root> */}
         {/* <MasonryTwo
           items={items}
           overscanBy={6}
@@ -114,7 +101,7 @@ export default function MasonryPage() {
             </div>
           )}
         /> */}
-        {/* <MasonryFour.Masonry
+        {/* <MasonryTwo.Masonry
           items={items}
           columnWidth={200}
           columnGutter={10}
@@ -128,20 +115,20 @@ export default function MasonryPage() {
             </div>
           )}
         /> */}
-        <MasonryFour.Root columnGutter={10} overscanBy={6}>
-          <MasonryFour.Viewport>
+        <MasonryThree.Root columnGutter={10} overscanBy={6}>
+          <MasonryThree.Viewport>
             {items.map((item, index) => (
-              <MasonryFour.Item key={item.id} index={index}>
+              <MasonryThree.Item key={item.id} index={index}>
                 <div
                   className="rounded-md bg-accent p-4"
                   style={{ height: item.height }}
                 >
                   {item.id + 1}
                 </div>
-              </MasonryFour.Item>
+              </MasonryThree.Item>
             ))}
-          </MasonryFour.Viewport>
-        </MasonryFour.Root>
+          </MasonryThree.Viewport>
+        </MasonryThree.Root>
         {hasMore && (
           <div
             ref={loaderRef}
