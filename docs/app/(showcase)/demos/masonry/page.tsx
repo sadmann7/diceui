@@ -116,18 +116,16 @@ export default function MasonryPage() {
           )}
         /> */}
         <MasonryThree.Root columnGutter={10} overscanBy={6}>
-          <MasonryThree.Viewport>
-            {items.map((item, index) => (
-              <MasonryThree.Item key={item.id} index={index}>
-                <div
-                  className="rounded-md bg-accent p-4"
-                  style={{ height: item.height }}
-                >
-                  {item.id + 1}
-                </div>
-              </MasonryThree.Item>
-            ))}
-          </MasonryThree.Viewport>
+          {items.map((item, index) => (
+            <MasonryThree.Item key={item.id} index={index}>
+              <div
+                className="rounded-md bg-accent p-4"
+                style={{ height: item.height }}
+              >
+                {item.id + 1}
+              </div>
+            </MasonryThree.Item>
+          ))}
         </MasonryThree.Root>
         {hasMore && (
           <div

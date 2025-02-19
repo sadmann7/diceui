@@ -7,7 +7,7 @@ import * as React from "react";
 type Color = 0 | 1 | 2;
 const RED = 0;
 const BLACK = 1;
-const NIL = 2;
+const SENTINEL = 2;
 
 const DELETE = 0;
 const KEEP = 1;
@@ -22,14 +22,10 @@ interface TreeNode {
   max: number;
   low: number;
   high: number;
-  // color
-  C: Color;
-  // P
-  P: TreeNode;
-  // right
-  R: TreeNode;
-  // left
-  L: TreeNode;
+  color: Color;
+  parent: TreeNode;
+  right: TreeNode;
+  left: TreeNode;
   list: ListNode;
 }
 
@@ -76,150 +72,153 @@ function removeInterval(treeNode: TreeNode, index: number) {
   }
 }
 
-const NULL_NODE: TreeNode = {
+const SENTINEL_NODE: TreeNode = {
   low: 0,
   max: 0,
   high: 0,
-  C: NIL,
-  P: undefined as unknown as TreeNode,
-  R: undefined as unknown as TreeNode,
-  L: undefined as unknown as TreeNode,
+  color: SENTINEL,
+  parent: undefined as unknown as TreeNode,
+  right: undefined as unknown as TreeNode,
+  left: undefined as unknown as TreeNode,
   list: undefined as unknown as ListNode,
 };
 
-NULL_NODE.P = NULL_NODE;
-NULL_NODE.L = NULL_NODE;
-NULL_NODE.R = NULL_NODE;
+SENTINEL_NODE.parent = SENTINEL_NODE;
+SENTINEL_NODE.left = SENTINEL_NODE;
+SENTINEL_NODE.right = SENTINEL_NODE;
 
 function updateMax(node: TreeNode) {
   const max = node.high;
-  if (node.L === NULL_NODE && node.R === NULL_NODE) node.max = max;
-  else if (node.L === NULL_NODE) node.max = Math.max(node.R.max, max);
-  else if (node.R === NULL_NODE) node.max = Math.max(node.L.max, max);
-  else node.max = Math.max(Math.max(node.L.max, node.R.max), max);
+  if (node.left === SENTINEL_NODE && node.right === SENTINEL_NODE)
+    node.max = max;
+  else if (node.left === SENTINEL_NODE)
+    node.max = Math.max(node.right.max, max);
+  else if (node.right === SENTINEL_NODE)
+    node.max = Math.max(node.left.max, max);
+  else node.max = Math.max(Math.max(node.left.max, node.right.max), max);
 }
 
 function updateMaxUp(node: TreeNode) {
   let x = node;
 
-  while (x.P !== NULL_NODE) {
-    updateMax(x.P);
-    x = x.P;
+  while (x.parent !== SENTINEL_NODE) {
+    updateMax(x.parent);
+    x = x.parent;
   }
 }
 
 function rotateLeft(tree: Tree, x: TreeNode) {
-  if (x.R === NULL_NODE) return;
-  const y = x.R;
-  x.R = y.L;
-  if (y.L !== NULL_NODE) y.L.P = x;
-  y.P = x.P;
+  if (x.right === SENTINEL_NODE) return;
+  const y = x.right;
+  x.right = y.left;
+  if (y.left !== SENTINEL_NODE) y.left.parent = x;
+  y.parent = x.parent;
 
-  if (x.P === NULL_NODE) tree.root = y;
-  else if (x === x.P.L) x.P.L = y;
-  else x.P.R = y;
+  if (x.parent === SENTINEL_NODE) tree.root = y;
+  else if (x === x.parent.left) x.parent.left = y;
+  else x.parent.right = y;
 
-  y.L = x;
-  x.P = y;
+  y.left = x;
+  x.parent = y;
 
   updateMax(x);
   updateMax(y);
 }
 
 function rotateRight(tree: Tree, x: TreeNode) {
-  if (x.L === NULL_NODE) return;
-  const y = x.L;
-  x.L = y.R;
-  if (y.R !== NULL_NODE) y.R.P = x;
-  y.P = x.P;
+  if (x.left === SENTINEL_NODE) return;
+  const y = x.left;
+  x.left = y.right;
+  if (y.right !== SENTINEL_NODE) y.right.parent = x;
+  y.parent = x.parent;
 
-  if (x.P === NULL_NODE) tree.root = y;
-  else if (x === x.P.R) x.P.R = y;
-  else x.P.L = y;
+  if (x.parent === SENTINEL_NODE) tree.root = y;
+  else if (x === x.parent.right) x.parent.right = y;
+  else x.parent.left = y;
 
-  y.R = x;
-  x.P = y;
+  y.right = x;
+  x.parent = y;
 
   updateMax(x);
   updateMax(y);
 }
 
 function replaceNode(tree: Tree, x: TreeNode, y: TreeNode) {
-  if (x.P === NULL_NODE) tree.root = y;
-  else if (x === x.P.L) x.P.L = y;
-  else x.P.R = y;
-  y.P = x.P;
+  if (x.parent === SENTINEL_NODE) tree.root = y;
+  else if (x === x.parent.left) x.parent.left = y;
+  else x.parent.right = y;
+  y.parent = x.parent;
 }
 
 function fixRemove(tree: Tree, node: TreeNode) {
   let x = node;
   let w: TreeNode;
 
-  while (x !== NULL_NODE && x.C === BLACK) {
-    if (x === x.P.L) {
-      w = x.P.R;
+  while (x !== SENTINEL_NODE && x.color === BLACK) {
+    if (x === x.parent.left) {
+      w = x.parent.right;
 
-      if (w.C === RED) {
-        w.C = BLACK;
-        x.P.C = RED;
-        rotateLeft(tree, x.P);
-        w = x.P.R;
+      if (w.color === RED) {
+        w.color = BLACK;
+        x.parent.color = RED;
+        rotateLeft(tree, x.parent);
+        w = x.parent.right;
       }
 
-      if (w.L.C === BLACK && w.R.C === BLACK) {
-        w.C = RED;
-        x = x.P;
+      if (w.left.color === BLACK && w.right.color === BLACK) {
+        w.color = RED;
+        x = x.parent;
       } else {
-        if (w.R.C === BLACK) {
-          w.L.C = BLACK;
-          w.C = RED;
+        if (w.right.color === BLACK) {
+          w.left.color = BLACK;
+          w.color = RED;
           rotateRight(tree, w);
-          w = x.P.R;
+          w = x.parent.right;
         }
 
-        w.C = x.P.C;
-        x.P.C = BLACK;
-        w.R.C = BLACK;
-        rotateLeft(tree, x.P);
+        w.color = x.parent.color;
+        x.parent.color = BLACK;
+        w.right.color = BLACK;
+        rotateLeft(tree, x.parent);
         x = tree.root;
       }
     } else {
-      w = x.P.L;
+      w = x.parent.left;
 
-      if (w.C === RED) {
-        w.C = BLACK;
-        x.P.C = RED;
-        rotateRight(tree, x.P);
-        w = x.P.L;
+      if (w.color === RED) {
+        w.color = BLACK;
+        x.parent.color = RED;
+        rotateRight(tree, x.parent);
+        w = x.parent.left;
       }
 
-      if (w.R.C === BLACK && w.L.C === BLACK) {
-        w.C = RED;
-        x = x.P;
+      if (w.right.color === BLACK && w.left.color === BLACK) {
+        w.color = RED;
+        x = x.parent;
       } else {
-        if (w.L.C === BLACK) {
-          w.R.C = BLACK;
-          w.C = RED;
+        if (w.left.color === BLACK) {
+          w.right.color = BLACK;
+          w.color = RED;
           rotateLeft(tree, w);
-          w = x.P.L;
+          w = x.parent.left;
         }
 
-        w.C = x.P.C;
-        x.P.C = BLACK;
-        w.L.C = BLACK;
-        rotateRight(tree, x.P);
+        w.color = x.parent.color;
+        x.parent.color = BLACK;
+        w.left.color = BLACK;
+        rotateRight(tree, x.parent);
         x = tree.root;
       }
     }
   }
 
-  x.C = BLACK;
+  x.color = BLACK;
 }
 
 function minimumTree(node: TreeNode) {
   let current = node;
-  while (current.L !== NULL_NODE) {
-    current = current.L;
+  while (current.left !== SENTINEL_NODE) {
+    current = current.left;
   }
   return current;
 }
@@ -228,46 +227,46 @@ function fixInsert(tree: Tree, node: TreeNode) {
   let current = node;
   let y: TreeNode;
 
-  while (current.P.C === RED) {
-    if (current.P === current.P.P.L) {
-      y = current.P.P.R;
+  while (current.parent.color === RED) {
+    if (current.parent === current.parent.parent.left) {
+      y = current.parent.parent.right;
 
-      if (y.C === RED) {
-        current.P.C = BLACK;
-        y.C = BLACK;
-        current.P.P.C = RED;
-        current = current.P.P;
+      if (y.color === RED) {
+        current.parent.color = BLACK;
+        y.color = BLACK;
+        current.parent.parent.color = RED;
+        current = current.parent.parent;
       } else {
-        if (current === current.P.R) {
-          current = current.P;
+        if (current === current.parent.right) {
+          current = current.parent;
           rotateLeft(tree, current);
         }
 
-        current.P.C = BLACK;
-        current.P.P.C = RED;
-        rotateRight(tree, current.P.P);
+        current.parent.color = BLACK;
+        current.parent.parent.color = RED;
+        rotateRight(tree, current.parent.parent);
       }
     } else {
-      y = current.P.P.L;
+      y = current.parent.parent.left;
 
-      if (y.C === RED) {
-        current.P.C = BLACK;
-        y.C = BLACK;
-        current.P.P.C = RED;
-        current = current.P.P;
+      if (y.color === RED) {
+        current.parent.color = BLACK;
+        y.color = BLACK;
+        current.parent.parent.color = RED;
+        current = current.parent.parent;
       } else {
-        if (current === current.P.L) {
-          current = current.P;
+        if (current === current.parent.left) {
+          current = current.parent;
           rotateRight(tree, current);
         }
 
-        current.P.C = BLACK;
-        current.P.P.C = RED;
-        rotateLeft(tree, current.P.P);
+        current.parent.color = BLACK;
+        current.parent.parent.color = RED;
+        rotateLeft(tree, current.parent.parent);
       }
     }
   }
-  tree.root.C = BLACK;
+  tree.root.color = BLACK;
 }
 
 export interface IIntervalTree {
@@ -283,7 +282,7 @@ export interface IIntervalTree {
 
 export function createIntervalTree(): IIntervalTree {
   const tree = {
-    root: NULL_NODE,
+    root: SENTINEL_NODE,
     size: 0,
   };
   // we know these indexes are a consistent, safe way to make look ups
@@ -294,16 +293,16 @@ export function createIntervalTree(): IIntervalTree {
   return {
     insert(low, high, index) {
       let x: TreeNode = tree.root;
-      let y: TreeNode = NULL_NODE;
+      let y: TreeNode = SENTINEL_NODE;
 
-      while (x !== NULL_NODE) {
+      while (x !== SENTINEL_NODE) {
         y = x;
         if (low === y.low) break;
-        if (low < x.low) x = x.L;
-        else x = x.R;
+        if (low < x.low) x = x.left;
+        else x = x.right;
       }
 
-      if (low === y.low && y !== NULL_NODE) {
+      if (low === y.low && y !== SENTINEL_NODE) {
         if (!addInterval(y, high, index)) return;
         y.high = Math.max(y.high, high);
         updateMax(y);
@@ -317,18 +316,18 @@ export function createIntervalTree(): IIntervalTree {
         low,
         high,
         max: high,
-        C: RED,
-        P: y,
-        L: NULL_NODE,
-        R: NULL_NODE,
+        color: RED,
+        parent: y,
+        left: SENTINEL_NODE,
+        right: SENTINEL_NODE,
         list: { index, high, next: null },
       };
 
-      if (y === NULL_NODE) {
+      if (y === SENTINEL_NODE) {
         tree.root = z;
       } else {
-        if (z.low < y.low) y.L = z;
-        else y.R = z;
+        if (z.low < y.low) y.left = z;
+        else y.right = z;
         updateMaxUp(z);
       }
 
@@ -353,32 +352,32 @@ export function createIntervalTree(): IIntervalTree {
       }
 
       let y = z;
-      let originalYColor = y.C;
+      let originalYColor = y.color;
       let x: TreeNode;
 
-      if (z.L === NULL_NODE) {
-        x = z.R;
-        replaceNode(tree, z, z.R);
-      } else if (z.R === NULL_NODE) {
-        x = z.L;
-        replaceNode(tree, z, z.L);
+      if (z.left === SENTINEL_NODE) {
+        x = z.right;
+        replaceNode(tree, z, z.right);
+      } else if (z.right === SENTINEL_NODE) {
+        x = z.left;
+        replaceNode(tree, z, z.left);
       } else {
-        y = minimumTree(z.R);
-        originalYColor = y.C;
-        x = y.R;
+        y = minimumTree(z.right);
+        originalYColor = y.color;
+        x = y.right;
 
-        if (y.P === z) {
-          x.P = y;
+        if (y.parent === z) {
+          x.parent = y;
         } else {
-          replaceNode(tree, y, y.R);
-          y.R = z.R;
-          y.R.P = y;
+          replaceNode(tree, y, y.right);
+          y.right = z.right;
+          y.right.parent = y;
         }
 
         replaceNode(tree, z, y);
-        y.L = z.L;
-        y.L.P = y;
-        y.C = z.C;
+        y.left = z.left;
+        y.left.parent = y;
+        y.color = z.color;
       }
 
       updateMax(x);
@@ -392,9 +391,9 @@ export function createIntervalTree(): IIntervalTree {
       const stack = [tree.root];
       while (stack.length !== 0) {
         const node = stack.pop() as TreeNode;
-        if (node === NULL_NODE || low > node.max) continue;
-        if (node.L !== NULL_NODE) stack.push(node.L);
-        if (node.R !== NULL_NODE) stack.push(node.R);
+        if (node === SENTINEL_NODE || low > node.max) continue;
+        if (node.left !== SENTINEL_NODE) stack.push(node.left);
+        if (node.right !== SENTINEL_NODE) stack.push(node.right);
         if (node.low <= high && node.high >= low) {
           let curr: ListNode | null = node.list;
           while (curr !== null) {
@@ -1631,6 +1630,7 @@ function useMasonryContext(name: keyof typeof MASONRY_ERROR) {
 const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
   (props, forwardedRef) => {
     const {
+      children,
       columnWidth = 200,
       columnGutter = 0,
       rowGutter,
@@ -1736,7 +1736,9 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
             height: "100%",
             ...rootProps.style,
           }}
-        />
+        >
+          <MasonryViewport>{children}</MasonryViewport>
+        </RootSlot>
       </MasonryContext.Provider>
     );
   },
@@ -1746,7 +1748,7 @@ MasonryRoot.displayName = ROOT_NAME;
 
 const MasonryViewport = React.forwardRef<HTMLDivElement, MasonryViewportProps>(
   (props, forwardedRef) => {
-    const { asChild, children, style, ...viewportProps } = props;
+    const { children, style, ...viewportProps } = props;
     const context = useMasonryContext(VIEWPORT_NAME);
 
     // Track total items for height calculation
@@ -1842,12 +1844,10 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, MasonryViewportProps>(
       context.positioner,
     ]);
 
-    const ViewportSlot = asChild ? Slot : "div";
-
     return (
-      <ViewportSlot {...viewportProps} ref={forwardedRef} style={composedStyle}>
+      <div {...viewportProps} ref={forwardedRef} style={composedStyle}>
         {positionedChildren}
-      </ViewportSlot>
+      </div>
     );
   },
 );
@@ -1879,11 +1879,11 @@ const Viewport = MasonryViewport;
 const Item = MasonryItem;
 
 export {
+  Item,
+  MasonryItem,
   MasonryRoot,
   MasonryViewport,
-  MasonryItem,
   //
   Root,
   Viewport,
-  Item,
 };
