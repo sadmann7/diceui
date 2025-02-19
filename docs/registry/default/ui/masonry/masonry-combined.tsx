@@ -896,93 +896,74 @@ function getColumns(
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
-interface DebounceOptions {
-  wait?: number;
+interface DebouncedWindowSizeOptions {
+  defaultWidth?: number;
+  defaultHeight?: number;
+  delayMs?: number;
   leading?: boolean;
 }
 
-function useDebounceState<T>(
-  initialState: T | (() => T),
-  options: DebounceOptions = {},
-): [T, React.Dispatch<React.SetStateAction<T>>] {
-  const { wait = 100, leading = false } = options;
-  const [state, setState] = React.useState<T>(initialState);
+function useDebouncedWindowSize(
+  options: DebouncedWindowSizeOptions = {},
+): readonly [number, number] {
+  const {
+    defaultWidth = 0,
+    defaultHeight = 0,
+    delayMs = 100,
+    leading = false,
+  } = options;
+
+  const [size, setSize] = React.useState<[number, number]>(
+    typeof document === "undefined"
+      ? [defaultWidth, defaultHeight]
+      : [
+          document.documentElement.clientWidth,
+          document.documentElement.clientHeight,
+        ],
+  );
+
   const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
   const leadingRef = React.useRef(true);
 
-  const debouncedSetState = React.useCallback(
-    (value: T | ((prevState: T) => T)) => {
+  const setDebouncedSize = React.useCallback(
+    (value: [number, number]) => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
 
       if (leading && leadingRef.current) {
         leadingRef.current = false;
-        setState(value);
+        setSize(value);
         timeoutRef.current = setTimeout(() => {
           leadingRef.current = true;
-        }, wait);
+        }, delayMs);
         return;
       }
 
       timeoutRef.current = setTimeout(() => {
         leadingRef.current = true;
-        setState(value);
-      }, wait);
+        setSize(value);
+      }, delayMs);
     },
-    [wait, leading],
+    [delayMs, leading],
   );
 
   React.useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
+    const handleResize = () =>
+      setDebouncedSize([
+        document.documentElement.clientWidth,
+        document.documentElement.clientHeight,
+      ]);
 
-  return [state, debouncedSetState];
-}
-
-interface DebouncedWindowSizeOptions {
-  initialWidth?: number;
-  initialHeight?: number;
-  wait?: number;
-  leading?: boolean;
-}
-
-const getSize = () =>
-  [
-    document.documentElement.clientWidth,
-    document.documentElement.clientHeight,
-  ] as const;
-
-function useWindowSize(
-  options: DebouncedWindowSizeOptions = {},
-): readonly [number, number] {
-  const { wait, leading, initialWidth = 0, initialHeight = 0 } = options;
-  const [size, setDebouncedSize] = useDebounceState<readonly [number, number]>(
-    typeof document === "undefined" ? [initialWidth, initialHeight] : getSize(),
-    { wait, leading },
-  );
-
-  const win = typeof window === "undefined" ? null : window;
-  const wv =
-    win && typeof win.visualViewport !== "undefined"
-      ? win.visualViewport
-      : null;
-
-  React.useEffect(() => {
-    const setSize = () => setDebouncedSize(getSize());
-
-    win?.addEventListener("resize", setSize);
-    wv?.addEventListener("resize", setSize);
-    win?.addEventListener("orientationchange", setSize);
+    window?.addEventListener("resize", handleResize);
+    window?.addEventListener("orientationchange", handleResize);
+    window.visualViewport?.addEventListener("resize", handleResize);
 
     return () => {
-      win?.removeEventListener("resize", setSize);
-      wv?.removeEventListener("resize", setSize);
-      win?.removeEventListener("orientationchange", setSize);
+      window?.removeEventListener("resize", handleResize);
+      window?.removeEventListener("orientationchange", handleResize);
+      window.visualViewport?.removeEventListener("resize", handleResize);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, [setDebouncedSize]);
 
@@ -1087,15 +1068,18 @@ function useResizeObserver(positioner: Positioner) {
   return resizeObserver;
 }
 
-function useScroller(
+function useScroller({
   offset = 0,
   fps = 12,
-): { scrollTop: number; isScrolling: boolean } {
+}: {
+  offset?: number;
+  fps?: number;
+} = {}): { scrollTop: number; isScrolling: boolean } {
   const [scrollY, setScrollY] = useThrottle(
     typeof globalThis.window === "undefined"
       ? 0
       : (globalThis.window.scrollY ?? document.documentElement.scrollTop ?? 0),
-    { delayMs: 1000 / fps, leading: true },
+    { fps, leading: true },
   );
 
   const onScroll = React.useCallback(() => {
@@ -1151,78 +1135,75 @@ function useScroller(
   return { scrollTop: Math.max(0, scrollY - offset), isScrolling };
 }
 
-type AnyFunction = (...args: unknown[]) => unknown;
-type ThrottleReturnType<T> = T extends AnyFunction
-  ? T
-  : [T, React.Dispatch<React.SetStateAction<T>>];
+const perf = typeof performance !== "undefined" ? performance : Date;
+const now = () => perf.now();
 
-export function useThrottle<T>(
-  value: T,
-  options: { delayMs?: number; leading?: boolean } = {},
-): ThrottleReturnType<T> {
-  const { delayMs = 1000, leading = false } = options;
+function useThrottle<State>(
+  initialState: State | (() => State),
+  options: {
+    fps?: number;
+    leading?: boolean;
+  } = {},
+): [State, React.Dispatch<React.SetStateAction<State>>] {
+  const { fps = 30, leading = false } = options;
+  const [state, setState] = React.useState(initialState);
+  const latestSetState = React.useRef(setState);
+  latestSetState.current = setState;
 
-  const isFunction = typeof value === "function";
-  const valueRef = React.useRef(value);
-  const frameRef = React.useRef<number | null>(null);
-  const lastRunRef = React.useRef<number>(0);
-  const [state, setState] = React.useState<T>(value);
-
-  React.useEffect(() => {
-    valueRef.current = value;
-  }, [value]);
-
-  const throttledFn = React.useCallback(
-    (...args: unknown[]) => {
-      const now = performance.now();
-      const cancel = () => {
-        if (frameRef.current) {
-          cancelAnimationFrame(frameRef.current);
-          frameRef.current = null;
-        }
-      };
-
-      function run() {
-        lastRunRef.current = now;
-        cancel();
-        if (isFunction) {
-          (valueRef.current as AnyFunction)(...args);
-        } else {
-          setState(valueRef.current);
-        }
-      }
-
-      if (leading && lastRunRef.current === 0) {
-        run();
-        return;
-      }
-
-      if (now - lastRunRef.current >= delayMs) {
-        run();
-        return;
-      }
-
-      cancel();
-      frameRef.current = requestAnimationFrame(() => {
-        if (now - lastRunRef.current >= delayMs) {
-          run();
-        }
-      });
-    },
-    [delayMs, leading, isFunction],
+  const ms = 1000 / fps;
+  const prev = React.useRef(0);
+  const trailingTimeout = React.useRef<ReturnType<typeof setTimeout> | null>(
+    null,
   );
 
-  React.useEffect(() => {
-    return () => {
-      if (frameRef.current) {
-        cancelAnimationFrame(frameRef.current);
-      }
-    };
+  const clearTrailing = React.useCallback(() => {
+    if (trailingTimeout.current) {
+      clearTimeout(trailingTimeout.current);
+    }
   }, []);
 
-  return (
-    isFunction ? throttledFn : [state, throttledFn]
-  ) as ThrottleReturnType<T>;
+  // Reset throttling whenever fps or leading options change.
+  React.useEffect(() => {
+    return () => {
+      prev.current = 0;
+      clearTrailing();
+    };
+  }, [clearTrailing]);
+
+  const throttledSetState = React.useCallback(
+    (action: React.SetStateAction<State>) => {
+      const rightNow = now();
+      const call = () => {
+        prev.current = rightNow;
+        clearTrailing();
+        latestSetState.current(action);
+      };
+      const current = prev.current;
+
+      // If "leading" is true and this is the first call, execute immediately.
+      if (leading && current === 0) {
+        return call();
+      }
+
+      // If enough time has passed since the last call, call immediately.
+      if (rightNow - current > ms) {
+        if (current > 0) {
+          return call();
+        }
+        prev.current = rightNow;
+      }
+
+      // Otherwise, schedule a trailing call.
+      clearTrailing();
+      trailingTimeout.current = setTimeout(() => {
+        call();
+        prev.current = 0;
+      }, ms);
+    },
+    [leading, ms, clearTrailing],
+  );
+
+  return [state, throttledSetState];
 }
 
 const ROOT_NAME = "MasonryRoot";
@@ -1302,9 +1283,9 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
     } = props;
     const containerRef = React.useRef<HTMLDivElement | null>(null);
     const composedRef = useComposedRefs(forwardedRef, containerRef);
-    const windowSize = useWindowSize({
-      initialWidth: ssrWidth,
-      initialHeight: ssrHeight,
+    const windowSize = useDebouncedWindowSize({
+      defaultWidth: ssrWidth,
+      defaultHeight: ssrHeight,
     });
 
     const [containerPosition, setContainerPosition] = React.useState<{
@@ -1343,10 +1324,10 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
       maxColumnCount,
     });
     const resizeObserver = useResizeObserver(positioner);
-    const { scrollTop, isScrolling } = useScroller(
-      containerPosition.offset,
-      scrollFps,
-    );
+    const { scrollTop, isScrolling } = useScroller({
+      offset: containerPosition.offset,
+      fps: scrollFps,
+    });
 
     const itemsMapRef = React.useRef(new Map<number, HTMLElement>());
     const registeredItemsRef = React.useRef(new Set<number>());
