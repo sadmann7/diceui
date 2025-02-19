@@ -893,7 +893,7 @@ function useResizeObserver(positioner: Positioner) {
     [WeakMap],
     (positioner: Positioner, updater: (updates: number[]) => void) => {
       const updates: number[] = [];
-      const itemsCache = new WeakMap<Element, number>();
+      const itemMap = new WeakMap<Element, number>();
 
       const update = onRafSchedule(() => {
         if (updates.length > 0) {
@@ -906,7 +906,7 @@ function useResizeObserver(positioner: Positioner) {
       function commonHandler(target: HTMLElement) {
         const height = target.offsetHeight;
         if (height > 0) {
-          const index = itemsCache.get(target);
+          const index = itemMap.get(target);
           if (index !== void 0) {
             const position = positioner.get(index);
             if (position !== void 0 && height !== position.height) {
@@ -921,7 +921,7 @@ function useResizeObserver(positioner: Positioner) {
       const handleEntries: ResizeObserverCallback = (entries) => {
         for (const entry of entries) {
           if (!entry) continue;
-          const index = itemsCache.get(entry.target);
+          const index = itemMap.get(entry.target);
 
           if (index === void 0) continue;
           let handler = handlers.get(index);
@@ -1401,15 +1401,15 @@ MasonryViewport.displayName = VIEWPORT_NAME;
 
 const MasonryItem = React.forwardRef<HTMLDivElement, MasonryItemProps>(
   (props, forwardedRef) => {
-    const { index, asChild, style, ...itemProps } = props;
+    const { index, asChild, ...itemProps } = props;
     const context = useMasonryContext(ITEM_NAME);
-    const combinedRef = useComposedRefs(forwardedRef, (node) => {
+    const composedRef = useComposedRefs(forwardedRef, (node) => {
       context.onItemRegister(index, node);
     });
 
     const ItemSlot = asChild ? Slot : "div";
 
-    return <ItemSlot {...itemProps} ref={combinedRef} style={style} />;
+    return <ItemSlot {...itemProps} ref={composedRef} />;
   },
 );
 
