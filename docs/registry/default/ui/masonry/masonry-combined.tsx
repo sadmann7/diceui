@@ -1124,8 +1124,8 @@ interface MasonryContextValue {
   positioner: Positioner;
   resizeObserver?: ResizeObserver;
   columnWidth: number;
-  onItemRegister: (index: number, element: HTMLElement) => void;
-  onItemUnregister: (index: number) => void;
+  itemMap: Map<number, HTMLElement>;
+  onItemRegister: (index: number, element: HTMLElement | null) => void;
   scrollTop: number;
   isScrolling?: boolean;
   height: number;
@@ -1160,6 +1160,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
       asChild,
       ...rootProps
     } = props;
+
     const containerRef = React.useRef<HTMLDivElement | null>(null);
     const composedRef = useComposedRefs(forwardedRef, containerRef);
     const windowSize = useDebouncedWindowSize({
@@ -1208,38 +1209,27 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
       fps: scrollFps,
     });
 
-    const itemsMapRef = React.useRef(new Map<number, HTMLElement>());
-    const registeredItemsRef = React.useRef(new Set<number>());
+    const itemMap = React.useRef(new Map<number, HTMLElement>()).current;
 
     const onItemRegister = React.useCallback(
-      (index: number, element: HTMLElement) => {
-        if (registeredItemsRef.current.has(index)) return;
-
-        itemsMapRef.current.set(index, element);
-        registeredItemsRef.current.add(index);
-
-        if (resizeObserver) {
-          resizeObserver.observe(element);
-        }
-        if (positioner.get(index) === void 0) {
-          positioner.set(index, element.offsetHeight);
+      (index: number, element: HTMLElement | null) => {
+        if (element) {
+          itemMap.set(index, element);
+          if (resizeObserver) {
+            resizeObserver.observe(element);
+          }
+          if (positioner.get(index) === void 0) {
+            positioner.set(index, element.offsetHeight);
+          }
+        } else {
+          const existingElement = itemMap.get(index);
+          if (existingElement && resizeObserver) {
+            resizeObserver.unobserve(existingElement);
+          }
+          itemMap.delete(index);
         }
       },
-      [positioner, resizeObserver],
-    );
-
-    const onItemUnregister = React.useCallback(
-      (index: number) => {
-        if (!registeredItemsRef.current.has(index)) return;
-
-        const element = itemsMapRef.current.get(index);
-        if (element && resizeObserver) {
-          resizeObserver.unobserve(element);
-        }
-        itemsMapRef.current.delete(index);
-        registeredItemsRef.current.delete(index);
-      },
-      [resizeObserver],
+      [itemMap, positioner, resizeObserver],
     );
 
     const contextValue = React.useMemo(
@@ -1247,8 +1237,8 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
         positioner,
         resizeObserver,
         columnWidth: positioner.columnWidth,
+        itemMap,
         onItemRegister,
-        onItemUnregister,
         scrollTop,
         isScrolling,
         height: windowSize.height,
@@ -1257,11 +1247,11 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
       [
         positioner,
         resizeObserver,
+        itemMap,
         onItemRegister,
-        onItemUnregister,
         scrollTop,
         isScrolling,
-        windowSize,
+        windowSize.height,
         overscanBy,
       ],
     );
@@ -1414,11 +1404,7 @@ const MasonryItem = React.forwardRef<HTMLDivElement, MasonryItemProps>(
     const { index, asChild, style, ...itemProps } = props;
     const context = useMasonryContext(ITEM_NAME);
     const combinedRef = useComposedRefs(forwardedRef, (node) => {
-      if (node) {
-        context.onItemRegister(index, node);
-      } else {
-        context.onItemUnregister(index);
-      }
+      context.onItemRegister(index, node);
     });
 
     const ItemSlot = asChild ? Slot : "div";
