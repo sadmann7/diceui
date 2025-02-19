@@ -901,7 +901,7 @@ interface DebounceOptions {
   leading?: boolean;
 }
 
-export function useDebounceState<T>(
+function useDebounceState<T>(
   initialState: T | (() => T),
   options: DebounceOptions = {},
 ): [T, React.Dispatch<React.SetStateAction<T>>] {
@@ -944,14 +944,6 @@ export function useDebounceState<T>(
   return [state, debouncedSetState];
 }
 
-const emptyObj = {};
-
-function useLatest<Value>(value: Value): React.RefObject<Value> {
-  const ref = React.useRef<Value>(value);
-  ref.current = value;
-  return ref;
-}
-
 interface DebouncedWindowSizeOptions {
   initialWidth?: number;
   initialHeight?: number;
@@ -966,7 +958,7 @@ const getSize = () =>
   ] as const;
 
 function useWindowSize(
-  options: DebouncedWindowSizeOptions = emptyObj,
+  options: DebouncedWindowSizeOptions = {},
 ): readonly [number, number] {
   const { wait, leading, initialWidth = 0, initialHeight = 0 } = options;
   const [size, setDebouncedSize] = useDebounceState<readonly [number, number]>(
@@ -1003,42 +995,32 @@ type OnRafScheduleReturn<T extends unknown[]> = {
 };
 
 function onRafSchedule<T extends unknown[]>(
-  fn: (...args: T) => void,
+  callback: (...args: T) => void,
 ): OnRafScheduleReturn<T> {
   let lastArgs: T = [] as unknown as T;
   let frameId: number | null = null;
 
-  const wrapperFn = (...args: T): void => {
-    // Always capture the latest value
+  function onCallback(...args: T) {
     lastArgs = args;
 
-    // There is already a frame queued
-    if (frameId) {
-      return;
-    }
+    if (frameId)
+      frameId = requestAnimationFrame(() => {
+        frameId = null;
+        callback(...lastArgs);
+      });
+  }
 
-    // Schedule a new frame
-    frameId = requestAnimationFrame(() => {
-      frameId = null;
-      fn(...lastArgs);
-    });
-  };
-
-  // Adding cancel property to result function
-  wrapperFn.cancel = () => {
-    if (!frameId) {
-      return;
-    }
-
+  onCallback.cancel = () => {
+    if (!frameId) return;
     cancelAnimationFrame(frameId);
     frameId = null;
   };
 
-  return wrapperFn;
+  return onCallback;
 }
 
 function useResizeObserver(positioner: Positioner) {
-  const [, setForceUpdate] = React.useState(emptyObj);
+  const [, setForceUpdate] = React.useState({});
   const forceUpdate = React.useCallback(() => setForceUpdate({}), []);
 
   const createResizeObserver = onDeepMemo(
@@ -1105,217 +1087,52 @@ function useResizeObserver(positioner: Positioner) {
   return resizeObserver;
 }
 
-const defaultState = {
-  index: void 0,
-  position: void 0,
-  prevTop: void 0,
-} as const;
-
-export type UseScrollToIndexOptions = {
-  /**
-   * The window element or a React ref for the window element. That is,
-   * this is the grid container.
-   *
-   * @default window
-   */
-  element?: Window | HTMLElement | React.RefObject<HTMLElement> | null;
-  /**
-   * Sets the vertical alignment of the cell within the grid container.
-   *
-   * @default "top"
-   */
-  align?: "center" | "top" | "bottom";
-  /**
-   * The height of the grid.
-   *
-   * @default window.innerHeight
-   */
-  height?: number;
-  /**
-   * The vertical space in pixels between the top of the grid container and the top
-   * of the window.
-   *
-   * @default 0
-   */
-  offset?: number;
-};
-
-/**
- * A hook that creates a callback for scrolling to a specific index in
- * the "items" array.
- *
- * @param positioner - A positioner created by the `usePositioner()` hook
- * @param options - Configuration options
- */
-export function useScrollToIndex(
-  positioner: Positioner,
-  options: UseScrollToIndexOptions,
-) {
-  const {
-    align = "top",
-    element = typeof window !== "undefined" && window,
-    offset = 0,
-    height = typeof window !== "undefined" ? window.innerHeight : 0,
-  } = options;
-  const latestOptions = useLatest({
-    positioner,
-    element,
-    align,
-    offset,
-    height,
-  } as const);
-  const getTarget = React.useRef(() => {
-    const latestElement = latestOptions.current.element;
-    return latestElement && "current" in latestElement
-      ? latestElement.current
-      : latestElement;
-  }).current;
-  const [state, dispatch] = React.useReducer(
-    (
-      state: {
-        position: PositionerItem | undefined;
-        index: number | undefined;
-        prevTop: number | undefined;
-      },
-      action:
-        | { type: "scrollToIndex"; value: number | undefined }
-        | { type: "setPosition"; value: PositionerItem | undefined }
-        | { type: "setPrevTop"; value: number | undefined }
-        | { type: "reset" },
-    ) => {
-      const nextState = {
-        position: state.position,
-        index: state.index,
-        prevTop: state.prevTop,
-      };
-
-      if (action.type === "scrollToIndex") {
-        return {
-          position: latestOptions.current.positioner.get(action.value ?? -1),
-          index: action.value,
-          prevTop: void 0,
-        };
-      }
-      if (action.type === "setPosition") {
-        nextState.position = action.value;
-      }
-      if (action.type === "setPrevTop") {
-        nextState.prevTop = action.value;
-      }
-      if (action.type === "reset") {
-        return defaultState;
-      }
-
-      return nextState;
-    },
-    defaultState,
-  );
-  const throttledDispatch = useThrottleCallback(dispatch, 15);
-
-  // If we find the position along the way we can immediately take off
-  // to the correct spot.
-  useEvent(getTarget() as Window, "scroll", () => {
-    if (!state.position && state.index) {
-      const position = latestOptions.current.positioner.get(state.index);
-
-      if (position) {
-        dispatch({ type: "setPosition", value: position });
-      }
-    }
-  });
-
-  // If the top changes out from under us in the case of dynamic cells, we
-  // want to keep following it.
-  const currentTop =
-    state.index !== void 0 &&
-    latestOptions.current.positioner.get(state.index)?.top;
-
-  React.useEffect(() => {
-    const target = getTarget();
-    if (!target) return;
-    const { height, align, offset, positioner } = latestOptions.current;
-
-    if (state.position) {
-      let scrollTop = state.position.top;
-
-      if (align === "bottom") {
-        scrollTop = scrollTop - height + state.position.height;
-      } else if (align === "center") {
-        scrollTop -= (height - state.position.height) / 2;
-      }
-
-      target.scrollTo(0, Math.max(0, (scrollTop += offset)));
-      // Resets state after 400ms, an arbitrary time I determined to be
-      // still visually pleasing if there is a slow network reply in dynamic
-      // cells
-      let didUnsubscribe = false;
-      const timeout = setTimeout(
-        () => !didUnsubscribe && dispatch({ type: "reset" }),
-        400,
-      );
-      return () => {
-        didUnsubscribe = true;
-        clearTimeout(timeout);
-      };
-    }
-    if (state.index !== void 0) {
-      // Estimates the top based upon the average height of current cells
-      let estimatedTop =
-        (positioner.shortestColumn() / positioner.size()) * state.index;
-      if (state.prevTop)
-        estimatedTop = Math.max(estimatedTop, state.prevTop + height);
-      target.scrollTo(0, estimatedTop);
-      throttledDispatch({ type: "setPrevTop", value: estimatedTop });
-    }
-  }, [currentTop, state, latestOptions, getTarget, throttledDispatch]);
-
-  return React.useRef((index: number) => {
-    dispatch({ type: "scrollToIndex", value: index });
-  }).current;
-}
-
-const requestTimeout = (fn: () => void, delay: number) => {
-  const start = performance.now();
-  const handle = {
-    id: requestAnimationFrame(function tick(timestamp) {
-      if (timestamp - start >= delay) {
-        fn();
-      } else {
-        handle.id = requestAnimationFrame(tick);
-      }
-    }),
-  };
-  return handle;
-};
-
-const clearRequestTimeout = (handle: { id: number }) => {
-  cancelAnimationFrame(handle.id);
-};
-
-/**
- * A hook for tracking whether the `window` is currently being scrolled and it's scroll position on
- * the y-axis. These values are used for determining which grid cells to render and when
- * to add styles to the masonry container that maximize scroll performance.
- *
- * @param offset - The vertical space in pixels between the top of the grid container and the top
- *  of the browser `document.documentElement`.
- * @param fps - This determines how often (in frames per second) to update the scroll position of the
- *  browser `window` in state, and as a result the rate the masonry grid recalculates its visible cells.
- *  The default value of `12` has been very reasonable in my own testing, but if you have particularly
- *  heavy `render` components it may be prudent to reduce this number.
- */
-export function useScroller(
+function useScroller(
   offset = 0,
   fps = 12,
 ): { scrollTop: number; isScrolling: boolean } {
-  const scrollTop = useWindowScroll(fps);
-  const [isScrolling, setIsScrolling] = React.useState(false);
-  const didMount = React.useRef(0);
+  const [scrollY, setScrollY] = useThrottle(
+    typeof globalThis.window === "undefined"
+      ? 0
+      : (globalThis.window.scrollY ?? document.documentElement.scrollTop ?? 0),
+    { delayMs: 1000 / fps, leading: true },
+  );
+
+  const onScroll = React.useCallback(() => {
+    setScrollY(
+      globalThis.window.scrollY ?? document.documentElement.scrollTop ?? 0,
+    );
+  }, [setScrollY]);
 
   React.useEffect(() => {
-    if (didMount.current === 1) setIsScrolling(true);
+    if (typeof globalThis.window === "undefined") return;
+    globalThis.window.addEventListener("scroll", onScroll, { passive: true });
+
+    return () => globalThis.window.removeEventListener("scroll", onScroll);
+  }, [onScroll]);
+
+  const [isScrolling, setIsScrolling] = React.useState(false);
+  const hasMountedRef = React.useRef(0);
+
+  React.useEffect(() => {
+    if (hasMountedRef.current === 1) setIsScrolling(true);
     let didUnsubscribe = false;
-    const to = requestTimeout(
+
+    function requestTimeout(fn: () => void, delay: number) {
+      const start = performance.now();
+      const handle = {
+        id: requestAnimationFrame(function tick(timestamp) {
+          if (timestamp - start >= delay) {
+            fn();
+          } else {
+            handle.id = requestAnimationFrame(tick);
+          }
+        }),
+      };
+      return handle;
+    }
+
+    const timeout = requestTimeout(
       () => {
         if (didUnsubscribe) return;
         // This is here to prevent premature bail outs while maintaining high resolution
@@ -1324,131 +1141,88 @@ export function useScroller(
       },
       40 + 1000 / fps,
     );
-    didMount.current = 1;
+    hasMountedRef.current = 1;
     return () => {
       didUnsubscribe = true;
-      clearRequestTimeout(to);
+      cancelAnimationFrame(timeout.id);
     };
-  }, [fps, scrollTop]);
+  }, [fps]);
 
-  return { scrollTop: Math.max(0, scrollTop - offset), isScrolling };
+  return { scrollTop: Math.max(0, scrollY - offset), isScrolling };
 }
 
-type EventMap = WindowEventMap & DocumentEventMap & HTMLElementEventMap;
-type EventTarget = HTMLElement | Document | Window | null;
-type EventType = keyof EventMap;
+type AnyFunction = (...args: unknown[]) => unknown;
+type ThrottleReturnType<T> = T extends AnyFunction
+  ? T
+  : [T, React.Dispatch<React.SetStateAction<T>>];
 
-export function useEvent<K extends EventType>(
-  target: EventTarget | { current: EventTarget },
-  type: K,
-  listener: (ev: EventMap[K]) => void,
-  cleanup?: () => void,
-): void {
-  const storedListener = React.useRef(listener);
-  const storedCleanup = React.useRef(cleanup);
+export function useThrottle<T>(
+  value: T,
+  options: { delayMs?: number; leading?: boolean } = {},
+): ThrottleReturnType<T> {
+  const { delayMs = 1000, leading = false } = options;
+
+  const isFunction = typeof value === "function";
+  const valueRef = React.useRef(value);
+  const frameRef = React.useRef<number | null>(null);
+  const lastRunRef = React.useRef<number>(0);
+  const [state, setState] = React.useState<T>(value);
 
   React.useEffect(() => {
-    storedListener.current = listener;
-    storedCleanup.current = cleanup;
-  });
+    valueRef.current = value;
+  }, [value]);
 
-  React.useEffect(() => {
-    const targetEl = target && "current" in target ? target.current : target;
-    if (!targetEl) return;
+  const throttledFn = React.useCallback(
+    (...args: unknown[]) => {
+      const now = performance.now();
+      const cancel = () => {
+        if (frameRef.current) {
+          cancelAnimationFrame(frameRef.current);
+          frameRef.current = null;
+        }
+      };
 
-    let didUnsubscribe = 0;
-    const eventHandler = ((ev: Event) => {
-      if (didUnsubscribe) return;
-      storedListener.current(ev as EventMap[K]);
-    }) as EventListener;
+      function run() {
+        lastRunRef.current = now;
+        cancel();
+        if (isFunction) {
+          (valueRef.current as AnyFunction)(...args);
+        } else {
+          setState(valueRef.current);
+        }
+      }
 
-    targetEl.addEventListener(type, eventHandler);
+      if (leading && lastRunRef.current === 0) {
+        run();
+        return;
+      }
 
-    return () => {
-      didUnsubscribe = 1;
-      targetEl.removeEventListener(type, eventHandler);
-      storedCleanup.current?.();
-    };
-  }, [target, type]);
-}
+      if (now - lastRunRef.current >= delayMs) {
+        run();
+        return;
+      }
 
-const win = typeof window === "undefined" ? null : window;
-const getScrollY = (): number =>
-  (win as Window).scrollY !== void 0
-    ? (win as Window).scrollY
-    : (win as Window).pageYOffset === void 0
-      ? 0
-      : (win as Window).pageYOffset;
-
-export const useWindowScroll = (fps = 30): number => {
-  const state = useThrottle(
-    typeof window === "undefined" ? 0 : getScrollY,
-    fps,
-    true,
-  );
-  useEvent(win, "scroll", (): void => state[1](getScrollY()));
-  return state[0];
-};
-
-const perf = typeof performance !== "undefined" ? performance : Date;
-const now = () => perf.now();
-
-export function useThrottleCallback<CallbackArguments extends unknown[]>(
-  callback: (...args: CallbackArguments) => void,
-  fps = 30,
-  leading = false,
-): (...args: CallbackArguments) => void {
-  const storedCallback = useLatest(callback);
-  const ms = 1000 / fps;
-  const prev = React.useRef(0);
-  const trailingTimeout = React.useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
-  const clearTrailing = () =>
-    trailingTimeout.current && clearTimeout(trailingTimeout.current);
-  const deps = [fps, leading, storedCallback];
-
-  // Reset any time the deps change
-  React.useEffect(
-    () => () => {
-      prev.current = 0;
-      clearTrailing();
+      cancel();
+      frameRef.current = requestAnimationFrame(() => {
+        if (now - lastRunRef.current >= delayMs) {
+          run();
+        }
+      });
     },
-    deps,
+    [delayMs, leading, isFunction],
   );
 
-  return React.useCallback((...args: CallbackArguments) => {
-    const rightNow = now();
-    const call = () => {
-      prev.current = rightNow;
-      clearTrailing();
-      storedCallback.current.apply(null, args);
+  React.useEffect(() => {
+    return () => {
+      if (frameRef.current) {
+        cancelAnimationFrame(frameRef.current);
+      }
     };
-    const current = prev.current;
-    // leading
-    if (leading && current === 0) return call();
-    // body
-    if (rightNow - current > ms) {
-      if (current > 0) return call();
-      prev.current = rightNow;
-    }
-    // trailing
-    clearTrailing();
+  }, []);
 
-    trailingTimeout.current = setTimeout(() => {
-      call();
-      prev.current = 0;
-    }, ms);
-  }, deps);
-}
-
-export function useThrottle<State>(
-  initialState: State | (() => State),
-  fps?: number,
-  leading?: boolean,
-): [State, React.Dispatch<React.SetStateAction<State>>] {
-  const state = React.useState<State>(initialState);
-  return [state[0], useThrottleCallback(state[1], fps, leading)];
+  return (
+    isFunction ? throttledFn : [state, throttledFn]
+  ) as ThrottleReturnType<T>;
 }
 
 const ROOT_NAME = "MasonryRoot";
