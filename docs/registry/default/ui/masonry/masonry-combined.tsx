@@ -418,7 +418,7 @@ interface Cache<K = CacheKey, V = unknown> {
   get: (k: K) => V | undefined;
 }
 
-function hierarchicalMemo<T extends unknown[], U>(
+function onDeepMemo<T extends unknown[], U>(
   mapConstructors: CacheConstructor[],
   fn: (...args: T) => U,
 ): (...args: T) => U {
@@ -426,7 +426,6 @@ function hierarchicalMemo<T extends unknown[], U>(
     throw new Error("At least one constructor is required");
   }
 
-  // Inline createCache function.
   function createCache(obj: CacheConstructor): Cache {
     let cache: Cache;
     if (typeof obj === "function") {
@@ -458,8 +457,7 @@ function hierarchicalMemo<T extends unknown[], U>(
   let i: number;
   const one = depth === 1;
 
-  // A combined getter function (from memo's g1/g2)
-  const get = (args: unknown[]): unknown => {
+  function get(args: unknown[]): unknown {
     if (depth < 3) {
       const key = args[0] as CacheKey;
       base = baseCache.get(key) as Cache | undefined;
@@ -473,10 +471,9 @@ function hierarchicalMemo<T extends unknown[], U>(
       node = next as Cache;
     }
     return node;
-  };
+  }
 
-  // A combined setter function (from memo's s1/s2)
-  const set = (args: unknown[], value: unknown): unknown => {
+  function set(args: unknown[], value: unknown): unknown {
     if (depth < 3) {
       if (one) {
         baseCache.set(args[0] as CacheKey, value);
@@ -515,9 +512,8 @@ function hierarchicalMemo<T extends unknown[], U>(
     }
     node.set(args[depth - 1] as CacheKey, value);
     return value;
-  };
+  }
 
-  // Return a memoized function: check cache first, otherwise compute and cache.
   return (...args: T): U => {
     const cached = get(args);
     if (cached === undefined) {
@@ -525,6 +521,80 @@ function hierarchicalMemo<T extends unknown[], U>(
     }
     return cached as U;
   };
+}
+
+export interface Positioner {
+  /**
+   * The number of columns in the grid
+   */
+  columnCount: number;
+  /**
+   * The width of each column in the grid
+   */
+  columnWidth: number;
+  /**
+   * Sets the position for the cell at `index` based upon the cell's height
+   */
+  set: (index: number, height: number) => void;
+  /**
+   * Gets the `PositionerItem` for the cell at `index`
+   */
+  get: (index: number) => PositionerItem | undefined;
+  /**
+   * Updates cells based on their indexes and heights
+   * positioner.update([index, height, index, height, index, height...])
+   */
+  update: (updates: number[]) => void;
+  /**
+   * Searches the interval tree for grid cells with a `top` value in
+   * betwen `lo` and `hi` and invokes the callback for each item that
+   * is discovered
+   */
+  range: (
+    lo: number,
+    hi: number,
+    renderCallback: (index: number, left: number, top: number) => void,
+  ) => void;
+  /**
+   * Returns the number of grid cells in the cache
+   */
+
+  size: () => number;
+  /**
+   * Estimates the total height of the grid
+   */
+
+  estimateHeight: (itemCount: number, defaultItemHeight: number) => number;
+  /**
+   * Returns the height of the shortest column in the grid
+   */
+
+  shortestColumn: () => number;
+  /**
+   * Returns all `PositionerItem` items
+   */
+  all: () => PositionerItem[];
+}
+
+export interface PositionerItem {
+  /**
+   * This is how far from the top edge of the grid container in pixels the
+   * item is placed
+   */
+  top: number;
+  /**
+   * This is how far from the left edge of the grid container in pixels the
+   * item is placed
+   */
+  left: number;
+  /**
+   * This is the height of the grid cell
+   */
+  height: number;
+  /**
+   * This is the column number containing the grid cell
+   */
+  column: number;
 }
 
 export interface UsePositionerOptions {
@@ -808,81 +878,6 @@ export const createPositioner = (
   };
 };
 
-export interface Positioner {
-  /**
-   * The number of columns in the grid
-   */
-  columnCount: number;
-  /**
-   * The width of each column in the grid
-   */
-  columnWidth: number;
-  /**
-   * Sets the position for the cell at `index` based upon the cell's height
-   */
-  set: (index: number, height: number) => void;
-  /**
-   * Gets the `PositionerItem` for the cell at `index`
-   */
-  get: (index: number) => PositionerItem | undefined;
-  /**
-   * Updates cells based on their indexes and heights
-   * positioner.update([index, height, index, height, index, height...])
-   */
-  update: (updates: number[]) => void;
-  /**
-   * Searches the interval tree for grid cells with a `top` value in
-   * betwen `lo` and `hi` and invokes the callback for each item that
-   * is discovered
-   */
-  range: (
-    lo: number,
-    hi: number,
-    renderCallback: (index: number, left: number, top: number) => void,
-  ) => void;
-  /**
-   * Returns the number of grid cells in the cache
-   */
-
-  size: () => number;
-  /**
-   * Estimates the total height of the grid
-   */
-
-  estimateHeight: (itemCount: number, defaultItemHeight: number) => number;
-  /**
-   * Returns the height of the shortest column in the grid
-   */
-
-  shortestColumn: () => number;
-  /**
-   * Returns all `PositionerItem` items
-   */
-  all: () => PositionerItem[];
-}
-
-export interface PositionerItem {
-  /**
-   * This is how far from the top edge of the grid container in pixels the
-   * item is placed
-   */
-  top: number;
-  /**
-   * This is how far from the left edge of the grid container in pixels the
-   * item is placed
-   */
-  left: number;
-  /**
-   * This is the height of the grid cell
-   */
-  height: number;
-  /**
-   * This is the column number containing the grid cell
-   */
-  column: number;
-}
-
-/* istanbul ignore next */
 const binarySearch = (a: number[], y: number): number => {
   let l = 0;
   let h = a.length - 1;
@@ -1146,10 +1141,8 @@ export function useResizeObserver(positioner: Positioner) {
  * @param positioner - A cell positioner created by the `usePositioner()` hook or the `createPositioner()` utility
  * @param updater - A callback that fires whenever one or many cell heights change.
  */
-export const createResizeObserver = hierarchicalMemo(
+export const createResizeObserver = onDeepMemo(
   [WeakMap],
-  // TODO: figure out a way to test this
-  /* istanbul ignore next */
   (positioner: Positioner, updater: (updates: number[]) => void) => {
     const updates: number[] = [];
     const elementsCache = new WeakMap<Element, number>();
@@ -1294,7 +1287,6 @@ export function useScrollToIndex(
         prevTop: state.prevTop,
       };
 
-      /* istanbul ignore next */
       if (action.type === "scrollToIndex") {
         return {
           position: latestOptions.current.positioner.get(action.value ?? -1),
