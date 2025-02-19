@@ -523,78 +523,28 @@ function onDeepMemo<T extends unknown[], U>(
   };
 }
 
-export interface Positioner {
-  /**
-   * The number of columns in the grid
-   */
+interface Positioner {
   columnCount: number;
-  /**
-   * The width of each column in the grid
-   */
   columnWidth: number;
-  /**
-   * Sets the position for the cell at `index` based upon the cell's height
-   */
   set: (index: number, height: number) => void;
-  /**
-   * Gets the `PositionerItem` for the cell at `index`
-   */
   get: (index: number) => PositionerItem | undefined;
-  /**
-   * Updates cells based on their indexes and heights
-   * positioner.update([index, height, index, height, index, height...])
-   */
   update: (updates: number[]) => void;
-  /**
-   * Searches the interval tree for grid cells with a `top` value in
-   * betwen `lo` and `hi` and invokes the callback for each item that
-   * is discovered
-   */
   range: (
-    lo: number,
-    hi: number,
-    renderCallback: (index: number, left: number, top: number) => void,
+    low: number,
+    high: number,
+    onItemRender: (index: number, left: number, top: number) => void,
   ) => void;
-  /**
-   * Returns the number of grid cells in the cache
-   */
-
   size: () => number;
-  /**
-   * Estimates the total height of the grid
-   */
-
   estimateHeight: (itemCount: number, defaultItemHeight: number) => number;
-  /**
-   * Returns the height of the shortest column in the grid
-   */
-
   shortestColumn: () => number;
-  /**
-   * Returns all `PositionerItem` items
-   */
   all: () => PositionerItem[];
 }
 
-export interface PositionerItem {
-  /**
-   * This is how far from the top edge of the grid container in pixels the
-   * item is placed
-   */
+interface PositionerItem {
   top: number;
-  /**
-   * This is how far from the left edge of the grid container in pixels the
-   * item is placed
-   */
   left: number;
-  /**
-   * This is the height of the grid cell
-   */
   height: number;
-  /**
-   * This is the column number containing the grid cell
-   */
-  column: number;
+  columnIndex: number;
 }
 
 export interface UsePositionerOptions {
@@ -648,23 +598,35 @@ function usePositioner(
   deps: React.DependencyList = [],
 ): Positioner {
   const initPositioner = React.useCallback((): Positioner => {
-    const [computedColumnWidth, computedColumnCount] = getColumns(
-      width,
-      columnWidth,
-      columnGutter,
-      columnCount,
-      maxColumnCount,
+    function binarySearch(a: number[], y: number): number {
+      let l = 0;
+      let h = a.length - 1;
+
+      while (l <= h) {
+        const m = (l + h) >>> 1;
+        const x = a[m];
+        if (x === y) return m;
+        if (x === undefined || x <= y) l = m + 1;
+        else h = m - 1;
+      }
+
+      return -1;
+    }
+
+    const computedColumnCount =
+      columnCount ||
+      Math.min(
+        Math.floor((width + 8) / (columnWidth + 8)),
+        maxColumnCount || Number.POSITIVE_INFINITY,
+      ) ||
+      1;
+    const computedColumnWidth = Math.floor(
+      (width - columnGutter * (computedColumnCount - 1)) / computedColumnCount,
     );
 
-    // O(log(n)) lookup of cells to render for a given viewport size
-    // Store tops and bottoms of each cell for fast intersection lookup.
     const intervalTree = createIntervalTree();
-    // Track the height of each column.
-    // Layout algorithm below always inserts into the shortest column.
     const columnHeights: number[] = new Array(computedColumnCount).fill(0);
-    // Used for O(1) item access
     const items: (PositionerItem | undefined)[] = [];
-    // Tracks the item indexes within an individual column
     const columnItems: number[][] = new Array(computedColumnCount)
       .fill(0)
       .map(() => []);
@@ -678,36 +640,35 @@ function usePositioner(
       columnCount: computedColumnCount,
       columnWidth: computedColumnWidth,
       set: (index: number, height = 0) => {
-        let column = 0;
+        let columnIndex = 0;
 
-        // finds the shortest column and uses it
         for (let i = 1; i < columnHeights.length; i++) {
           const currentHeight = columnHeights[i];
-          const shortestHeight = columnHeights[column];
+          const shortestHeight = columnHeights[columnIndex];
           if (
             currentHeight !== undefined &&
             shortestHeight !== undefined &&
             currentHeight < shortestHeight
           ) {
-            column = i;
+            columnIndex = i;
           }
         }
 
-        const columnHeight = columnHeights[column];
+        const columnHeight = columnHeights[columnIndex];
         if (columnHeight === undefined) return;
 
         const top = columnHeight;
-        columnHeights[column] = top + height + (rowGutter ?? columnGutter);
+        columnHeights[columnIndex] = top + height + (rowGutter ?? columnGutter);
 
-        const columnItemsList = columnItems[column];
+        const columnItemsList = columnItems[columnIndex];
         if (!columnItemsList) return;
         columnItemsList.push(index);
 
         items[index] = {
-          left: column * (computedColumnWidth + columnGutter),
+          left: columnIndex * (computedColumnWidth + columnGutter),
           top,
           height,
-          column,
+          columnIndex,
         };
         intervalTree.insert(top, top + height, index);
       },
@@ -717,9 +678,6 @@ function usePositioner(
         let i = 0;
         let j = 0;
 
-        // determines which columns have items that changed, as well as the minimum index
-        // changed in that column, as all items after that index will have their positions
-        // affected by the change
         for (; i < updates.length - 1; i++) {
           const currentIndex = updates[i];
           if (typeof currentIndex !== "number") continue;
@@ -733,22 +691,22 @@ function usePositioner(
           item.height = nextHeight;
           intervalTree.remove(currentIndex);
           intervalTree.insert(item.top, item.top + item.height, currentIndex);
-          columns[item.column] =
-            columns[item.column] === void 0
+          columns[item.columnIndex] =
+            columns[item.columnIndex] === void 0
               ? currentIndex
-              : Math.min(currentIndex, columns[item.column] ?? currentIndex);
+              : Math.min(
+                  currentIndex,
+                  columns[item.columnIndex] ?? currentIndex,
+                );
         }
 
         for (i = 0; i < columns.length; i++) {
-          // bails out if the column didn't change
           const currentColumn = columns[i];
           if (currentColumn === void 0) continue;
 
           const itemsInColumn = columnItems[i];
           if (!itemsInColumn) continue;
 
-          // the index order is sorted with certainty so binary search is a great solution
-          // here as opposed to Array.indexOf()
           const startIndex = binarySearch(itemsInColumn, currentColumn);
           if (startIndex === -1) continue;
 
@@ -782,15 +740,11 @@ function usePositioner(
           }
         }
       },
-      range: (
-        lo: number,
-        hi: number,
-        renderCallback: (index: number, left: number, top: number) => void,
-      ) =>
-        intervalTree.search(lo, hi, (index: number, top: number) => {
+      range: (low, high, onItemRender) =>
+        intervalTree.search(low, high, (index: number, top: number) => {
           const item = items[index];
           if (!item) return;
-          renderCallback(index, item.left, top);
+          onItemRender(index, item.left, top);
         }),
       estimateHeight: (itemCount, defaultItemHeight): number => {
         const tallestColumn = Math.max(0, Math.max.apply(null, columnHeights));
@@ -804,7 +758,7 @@ function usePositioner(
       shortestColumn: () => {
         if (columnHeights.length > 1)
           return Math.min.apply(null, columnHeights);
-        return columnHeights[0] || 0;
+        return columnHeights[0] ?? 0;
       },
       size(): number {
         return intervalTree.size;
@@ -837,7 +791,6 @@ function usePositioner(
   const prevOpts = React.useRef(opts);
   const optsChanged = !opts.every((item, i) => prevOpts.current[i] === item);
 
-  // Create a new positioner when the dependencies or sizes change
   if (optsChanged || !deps.every((item, i) => prevDeps.current[i] === item)) {
     const prevPositioner = positionerRef.current;
     const positioner = initPositioner();
@@ -858,41 +811,6 @@ function usePositioner(
   return positionerRef.current;
 }
 
-function binarySearch(a: number[], y: number): number {
-  let l = 0;
-  let h = a.length - 1;
-
-  while (l <= h) {
-    const m = (l + h) >>> 1;
-    const x = a[m];
-    if (x === y) return m;
-    if (x === undefined || x <= y) l = m + 1;
-    else h = m - 1;
-  }
-
-  return -1;
-}
-
-function getColumns(
-  width = 0,
-  minimumWidth = 0,
-  gutter = 8,
-  initialColumnCount?: number,
-  maxColumnCount?: number,
-): [number, number] {
-  const computedColumnCount =
-    initialColumnCount ||
-    Math.min(
-      Math.floor((width + gutter) / (minimumWidth + gutter)),
-      maxColumnCount || Number.POSITIVE_INFINITY,
-    ) ||
-    1;
-  const columnWidth = Math.floor(
-    (width - gutter * (computedColumnCount - 1)) / computedColumnCount,
-  );
-  return [columnWidth, computedColumnCount];
-}
-
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
@@ -903,9 +821,7 @@ interface DebouncedWindowSizeOptions {
   leading?: boolean;
 }
 
-function useDebouncedWindowSize(
-  options: DebouncedWindowSizeOptions = {},
-): readonly [number, number] {
+function useDebouncedWindowSize(options: DebouncedWindowSizeOptions = {}) {
   const {
     defaultWidth = 0,
     defaultHeight = 0,
@@ -913,20 +829,20 @@ function useDebouncedWindowSize(
     leading = false,
   } = options;
 
-  const [size, setSize] = React.useState<[number, number]>(
+  const [size, setSize] = React.useState<{ width: number; height: number }>(
     typeof document === "undefined"
-      ? [defaultWidth, defaultHeight]
-      : [
-          document.documentElement.clientWidth,
-          document.documentElement.clientHeight,
-        ],
+      ? { width: defaultWidth, height: defaultHeight }
+      : {
+          width: document.documentElement.clientWidth,
+          height: document.documentElement.clientHeight,
+        },
   );
 
   const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
   const leadingRef = React.useRef(true);
 
   const setDebouncedSize = React.useCallback(
-    (value: [number, number]) => {
+    (value: { width: number; height: number }) => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
@@ -949,20 +865,21 @@ function useDebouncedWindowSize(
   );
 
   React.useEffect(() => {
-    const handleResize = () =>
-      setDebouncedSize([
-        document.documentElement.clientWidth,
-        document.documentElement.clientHeight,
-      ]);
+    function onResize() {
+      setDebouncedSize({
+        width: document.documentElement.clientWidth,
+        height: document.documentElement.clientHeight,
+      });
+    }
 
-    window?.addEventListener("resize", handleResize);
-    window?.addEventListener("orientationchange", handleResize);
-    window.visualViewport?.addEventListener("resize", handleResize);
+    window?.addEventListener("resize", onResize);
+    window?.addEventListener("orientationchange", onResize);
+    window.visualViewport?.addEventListener("resize", onResize);
 
     return () => {
-      window?.removeEventListener("resize", handleResize);
-      window?.removeEventListener("orientationchange", handleResize);
-      window.visualViewport?.removeEventListener("resize", handleResize);
+      window?.removeEventListener("resize", onResize);
+      window?.removeEventListener("orientationchange", onResize);
+      window.visualViewport?.removeEventListener("resize", onResize);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, [setDebouncedSize]);
@@ -1119,8 +1036,6 @@ function useScroller({
     const timeout = requestTimeout(
       () => {
         if (didUnsubscribe) return;
-        // This is here to prevent premature bail outs while maintaining high resolution
-        // unsets. Without it there will always bee a lot of unnecessary DOM writes to style.
         setIsScrolling(false);
       },
       40 + 1000 / fps,
@@ -1134,9 +1049,6 @@ function useScroller({
 
   return { scrollTop: Math.max(0, scrollY - offset), isScrolling };
 }
-
-const perf = typeof performance !== "undefined" ? performance : Date;
-const now = () => perf.now();
 
 function useThrottle<State>(
   initialState: State | (() => State),
@@ -1172,6 +1084,8 @@ function useThrottle<State>(
 
   const throttledSetState = React.useCallback(
     (action: React.SetStateAction<State>) => {
+      const perf = typeof performance !== "undefined" ? performance : Date;
+      const now = () => perf.now();
       const rightNow = now();
       const call = () => {
         prev.current = rightNow;
@@ -1180,12 +1094,10 @@ function useThrottle<State>(
       };
       const current = prev.current;
 
-      // If "leading" is true and this is the first call, execute immediately.
       if (leading && current === 0) {
         return call();
       }
 
-      // If enough time has passed since the last call, call immediately.
       if (rightNow - current > ms) {
         if (current > 0) {
           return call();
@@ -1193,7 +1105,6 @@ function useThrottle<State>(
         prev.current = rightNow;
       }
 
-      // Otherwise, schedule a trailing call.
       clearTrailing();
       trailingTimeout.current = setTimeout(() => {
         call();
@@ -1316,7 +1227,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
     }, []);
 
     const positioner = usePositioner({
-      width: containerPosition.width ?? windowSize[0],
+      width: containerPosition.width ?? windowSize.width,
       columnWidth,
       columnGutter,
       rowGutter,
@@ -1372,7 +1283,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
         onItemUnregister,
         scrollTop,
         isScrolling,
-        height: windowSize[1],
+        height: windowSize.height,
         overscanBy,
       }),
       [
