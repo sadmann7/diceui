@@ -1094,6 +1094,11 @@ const MASONRY_ERROR = {
   [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${VIEWPORT_NAME}\``,
 } as const;
 
+interface DivProps extends React.ComponentPropsWithoutRef<"div"> {}
+
+type RootElement = React.ComponentRef<typeof MasonryRoot>;
+type ItemElement = React.ComponentRef<typeof MasonryItem>;
+
 interface MasonryContextValue {
   positioner: Positioner;
   resizeObserver?: ResizeObserver;
@@ -1115,8 +1120,6 @@ function useMasonryContext(name: keyof typeof MASONRY_ERROR) {
   }
   return context;
 }
-
-interface DivProps extends React.ComponentPropsWithoutRef<"div"> {}
 
 interface MasonryRootProps extends DivProps {
   children?: React.ReactNode;
@@ -1152,7 +1155,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
       ...rootProps
     } = props;
 
-    const containerRef = React.useRef<HTMLDivElement | null>(null);
+    const containerRef = React.useRef<RootElement | null>(null);
     const composedRef = useComposedRefs(forwardedRef, containerRef);
     const windowSize = useDebouncedWindowSize({
       defaultWidth,
@@ -1172,9 +1175,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
 
       do {
         offset += container.offsetTop ?? 0;
-        container = container.offsetParent as React.ComponentRef<
-          typeof MasonryRoot
-        >;
+        container = container.offsetParent as RootElement;
       } while (container);
 
       if (
@@ -1386,8 +1387,6 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, MasonryViewportProps>(
 );
 
 MasonryViewport.displayName = VIEWPORT_NAME;
-
-type ItemElement = React.ComponentRef<typeof MasonryItem>;
 
 interface MasonryItemProps extends DivProps {
   index: number;
