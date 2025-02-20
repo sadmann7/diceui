@@ -1330,93 +1330,124 @@ interface MasonryItemPropsWithRef extends MasonryItemProps {
   ref: React.Ref<ItemElement | null>;
 }
 
+function useForceUpdate() {
+  const [, setState] = React.useState({});
+  return React.useCallback(() => setState({}), []);
+}
+
 const MasonryViewport = React.forwardRef<HTMLDivElement, DivProps>(
   (props, forwardedRef) => {
     const { children, style, ...viewportProps } = props;
     const context = useMasonryContext(VIEWPORT_NAME);
 
-    const itemCount = React.useMemo(() => {
-      return React.Children.toArray(children).filter(
-        (child): child is React.ReactElement<MasonryItemPropsWithRef> =>
-          React.isValidElement(child) &&
-          (child.type === MasonryItem || child.type === Item),
-      ).length;
-    }, [children]);
+    let startIndex = 0;
+    let stopIndex: number | undefined;
+    const forceUpdate = useForceUpdate();
 
-    const estimatedHeight = React.useMemo(
-      () => context.positioner.estimateHeight(itemCount, context.itemHeight),
-      [context.positioner, itemCount, context.itemHeight],
+    const validChildren = React.Children.toArray(children).filter(
+      (child): child is React.ReactElement<MasonryItemPropsWithRef> =>
+        React.isValidElement(child) &&
+        (child.type === MasonryItem || child.type === Item),
     );
+    const itemCount = validChildren.length;
 
-    const [startIndex, stopIndex] = React.useMemo(() => {
-      const overscanPixels = context.windowHeight * context.overscan;
-      const rangeStart = Math.max(0, context.scrollTop - overscanPixels);
-      const rangeEnd =
-        context.scrollTop + context.windowHeight + overscanPixels;
+    const shortestColumnSize = context.positioner.shortestColumn();
+    const measuredCount = context.positioner.size();
+    const overscanPixels = context.windowHeight * context.overscan;
+    const rangeEnd = context.scrollTop + overscanPixels;
+    const needsFreshBatch =
+      shortestColumnSize < rangeEnd && measuredCount < itemCount;
 
-      const visibleItems: number[] = [];
-      context.positioner.range(rangeStart, rangeEnd, (index) => {
-        visibleItems.push(index);
-      });
+    const positionedChildren: React.ReactElement[] = [];
 
-      if (!visibleItems.length) {
-        return [0, Math.min(100, itemCount - 1)];
-      }
+    // Phase 1: Position visible items
+    context.positioner.range(
+      Math.max(0, context.scrollTop - overscanPixels / 2),
+      rangeEnd,
+      (index, left, top) => {
+        const child = validChildren[index];
+        if (!child) return;
 
-      const minVisible = Math.min(...visibleItems);
-      const maxVisible = Math.max(...visibleItems);
-      const overscanCount = Math.ceil(context.overscan * 2);
+        const phaseTwoStyle: React.CSSProperties = {
+          position: "absolute",
+          top,
+          left,
+          width: context.columnWidth,
+          writingMode: "horizontal-tb",
+          visibility: "visible",
+          transform: context.isScrolling ? "translateZ(0)" : undefined,
+        };
 
-      return [
-        Math.max(0, minVisible - overscanCount),
-        Math.min(itemCount - 1, maxVisible + overscanCount),
-      ];
-    }, [
-      context.scrollTop,
-      context.windowHeight,
-      context.overscan,
-      context.positioner,
-      itemCount,
-    ]);
-
-    const positionedChildren = React.useMemo(() => {
-      const validChildren = React.Children.toArray(children).filter(
-        (child): child is React.ReactElement<MasonryItemPropsWithRef> =>
-          React.isValidElement(child) &&
-          (child.type === MasonryItem || child.type === Item),
-      );
-
-      return validChildren
-        .map((child, index) => {
-          const position = context.positioner.get(index);
-          const isInView = index >= startIndex && index <= stopIndex;
-          const shouldRender = isInView || !position || context.isScrolling;
-          if (!shouldRender) return null;
-
-          return React.cloneElement(child, {
+        positionedChildren.push(
+          React.cloneElement(child, {
             key: child.key ?? index,
             ref: context.onItemRegister(index),
             style: {
-              position: "absolute",
-              top: position?.top ?? 0,
-              left: position?.left ?? 0,
-              width: context.columnWidth,
-              visibility: position ? "visible" : "hidden",
-              transform: context.isScrolling ? "translateZ(0)" : undefined,
+              ...phaseTwoStyle,
               ...child.props.style,
             },
-          });
-        })
-        .filter(Boolean);
-    }, [
-      children,
-      startIndex,
-      stopIndex,
-      context.columnWidth,
-      context.positioner,
-      context.isScrolling,
-      context.onItemRegister,
-    ]);
+          }),
+        );
+
+        if (stopIndex === undefined) {
+          startIndex = index;
+          stopIndex = index;
+        } else {
+          startIndex = Math.min(startIndex, index);
+          stopIndex = Math.max(stopIndex, index);
+        }
+      },
+    );
+
+    // Phase 2: Add fresh batch if needed
+    if (needsFreshBatch) {
+      const batchSize = Math.min(
+        itemCount - measuredCount,
+        Math.ceil(
+          ((context.scrollTop + overscanPixels - shortestColumnSize) /
+            context.itemHeight) *
+            context.positioner.columnCount,
+        ),
+      );
+
+      const phaseOneStyle: React.CSSProperties = {
+        position: "absolute",
+        width: context.columnWidth,
+        zIndex: -1000,
+        visibility: "hidden",
+        writingMode: "horizontal-tb",
+      };
+
+      for (
+        let index = measuredCount;
+        index < measuredCount + batchSize;
+        index++
+      ) {
+        const child = validChildren[index];
+        if (!child) continue;
+
+        positionedChildren.push(
+          React.cloneElement(child, {
+            key: child.key ?? index,
+            ref: context.onItemRegister(index),
+            style: {
+              ...phaseOneStyle,
+              ...child.props.style,
+            },
+          }),
+        );
+      }
+    }
+
+    // Force update when batch is needed
+    React.useEffect(() => {
+      if (needsFreshBatch) forceUpdate();
+    }, [needsFreshBatch, forceUpdate]);
+
+    const estimatedHeight = context.positioner.estimateHeight(
+      itemCount,
+      context.itemHeight,
+    );
 
     const composedStyle = React.useMemo(
       () => ({
