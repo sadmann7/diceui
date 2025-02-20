@@ -935,19 +935,18 @@ function onRafSchedule<T extends unknown[]>(
 }
 
 function useResizeObserver(positioner: Positioner) {
-  const [, setForceUpdate] = React.useState({});
-  const forceUpdate = React.useCallback(() => setForceUpdate({}), []);
+  const [, setLayoutVersion] = React.useState(0);
 
   const createResizeObserver = onDeepMemo(
     [WeakMap],
-    (positioner: Positioner, updater: (updates: number[]) => void) => {
+    (positioner: Positioner, onUpdate: () => void) => {
       const updates: number[] = [];
       const itemMap = new WeakMap<Element, number>();
 
       const update = onRafSchedule(() => {
         if (updates.length > 0) {
           positioner.update(updates);
-          updater(updates);
+          onUpdate();
         }
         updates.length = 0;
       });
@@ -995,7 +994,9 @@ function useResizeObserver(positioner: Positioner) {
     },
   );
 
-  const resizeObserver = createResizeObserver(positioner, forceUpdate);
+  const resizeObserver = createResizeObserver(positioner, () =>
+    setLayoutVersion((prev) => prev + 1),
+  );
 
   React.useEffect(() => () => resizeObserver.disconnect(), [resizeObserver]);
 
@@ -1330,19 +1331,14 @@ interface MasonryItemPropsWithRef extends MasonryItemProps {
   ref: React.Ref<ItemElement | null>;
 }
 
-function useForceUpdate() {
-  const [, setState] = React.useState({});
-  return React.useCallback(() => setState({}), []);
-}
-
 const MasonryViewport = React.forwardRef<HTMLDivElement, DivProps>(
   (props, forwardedRef) => {
     const { children, style, ...viewportProps } = props;
     const context = useMasonryContext(VIEWPORT_NAME);
+    const [, setLayoutVersion] = React.useState(0);
 
     let startIndex = 0;
     let stopIndex: number | undefined;
-    const forceUpdate = useForceUpdate();
 
     const validChildren = React.Children.toArray(children).filter(
       (child): child is React.ReactElement<MasonryItemPropsWithRef> =>
@@ -1355,12 +1351,11 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, DivProps>(
     const measuredCount = context.positioner.size();
     const overscanPixels = context.windowHeight * context.overscan;
     const rangeEnd = context.scrollTop + overscanPixels;
-    const needsFreshBatch =
+    const layoutOutdated =
       shortestColumnSize < rangeEnd && measuredCount < itemCount;
 
     const positionedChildren: React.ReactElement[] = [];
 
-    // Phase 1: Position visible items
     context.positioner.range(
       Math.max(0, context.scrollTop - overscanPixels / 2),
       rangeEnd,
@@ -1368,7 +1363,7 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, DivProps>(
         const child = validChildren[index];
         if (!child) return;
 
-        const phaseTwoStyle: React.CSSProperties = {
+        const visibleItemStyle: React.CSSProperties = {
           position: "absolute",
           top,
           left,
@@ -1383,7 +1378,7 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, DivProps>(
             key: child.key ?? index,
             ref: context.onItemRegister(index),
             style: {
-              ...phaseTwoStyle,
+              ...visibleItemStyle,
               ...child.props.style,
             },
           }),
@@ -1399,8 +1394,7 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, DivProps>(
       },
     );
 
-    // Phase 2: Add fresh batch if needed
-    if (needsFreshBatch) {
+    if (layoutOutdated) {
       const batchSize = Math.min(
         itemCount - measuredCount,
         Math.ceil(
@@ -1410,7 +1404,7 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, DivProps>(
         ),
       );
 
-      const phaseOneStyle: React.CSSProperties = {
+      const hiddenItemStyle: React.CSSProperties = {
         position: "absolute",
         width: context.columnWidth,
         zIndex: -1000,
@@ -1431,7 +1425,7 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, DivProps>(
             key: child.key ?? index,
             ref: context.onItemRegister(index),
             style: {
-              ...phaseOneStyle,
+              ...hiddenItemStyle,
               ...child.props.style,
             },
           }),
@@ -1439,10 +1433,9 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, DivProps>(
       }
     }
 
-    // Force update when batch is needed
     React.useEffect(() => {
-      if (needsFreshBatch) forceUpdate();
-    }, [needsFreshBatch, forceUpdate]);
+      if (layoutOutdated) setLayoutVersion((prev) => prev + 1);
+    }, [layoutOutdated]);
 
     const estimatedHeight = context.positioner.estimateHeight(
       itemCount,
