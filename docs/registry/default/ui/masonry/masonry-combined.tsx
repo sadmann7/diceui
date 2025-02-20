@@ -575,6 +575,7 @@ interface UsePositionerOptions {
   rowGap?: number;
   columnCount?: number;
   maxColumnCount?: number;
+  sequential?: boolean;
 }
 
 function usePositioner(
@@ -585,6 +586,7 @@ function usePositioner(
     rowGap,
     columnCount,
     maxColumnCount,
+    sequential = false,
   }: UsePositionerOptions,
   deps: React.DependencyList = [],
 ): Positioner {
@@ -607,7 +609,7 @@ function usePositioner(
     const computedColumnCount =
       columnCount ||
       Math.min(
-        Math.floor((width + 8) / (columnWidth + 8)),
+        Math.floor((width + columnGap) / (columnWidth + columnGap)),
         maxColumnCount || Number.POSITIVE_INFINITY,
       ) ||
       1;
@@ -633,15 +635,43 @@ function usePositioner(
       set: (index: number, height = 0) => {
         let columnIndex = 0;
 
-        for (let i = 1; i < columnHeights.length; i++) {
-          const currentHeight = columnHeights[i];
-          const shortestHeight = columnHeights[columnIndex];
-          if (
-            currentHeight !== undefined &&
-            shortestHeight !== undefined &&
-            currentHeight < shortestHeight
-          ) {
-            columnIndex = i;
+        if (sequential) {
+          const preferredColumn = index % computedColumnCount;
+
+          let shortestHeight = columnHeights[0] ?? 0;
+          let tallestHeight = shortestHeight;
+          let shortestIndex = 0;
+
+          for (let i = 0; i < columnHeights.length; i++) {
+            const currentHeight = columnHeights[i] ?? 0;
+            if (currentHeight < shortestHeight) {
+              shortestHeight = currentHeight;
+              shortestIndex = i;
+            }
+            if (currentHeight > tallestHeight) {
+              tallestHeight = currentHeight;
+            }
+          }
+
+          const preferredHeight =
+            (columnHeights[preferredColumn] ?? 0) + height;
+
+          const maxAllowedHeight = shortestHeight + height * 2.5;
+          columnIndex =
+            preferredHeight <= maxAllowedHeight
+              ? preferredColumn
+              : shortestIndex;
+        } else {
+          for (let i = 1; i < columnHeights.length; i++) {
+            const currentHeight = columnHeights[i];
+            const shortestHeight = columnHeights[columnIndex];
+            if (
+              currentHeight !== undefined &&
+              shortestHeight !== undefined &&
+              currentHeight < shortestHeight
+            ) {
+              columnIndex = i;
+            }
           }
         }
 
@@ -757,7 +787,15 @@ function usePositioner(
         return items.filter(Boolean) as PositionerItem[];
       },
     };
-  }, [width, columnWidth, columnGap, rowGap, columnCount, maxColumnCount]);
+  }, [
+    width,
+    columnWidth,
+    columnGap,
+    rowGap,
+    columnCount,
+    maxColumnCount,
+    sequential,
+  ]);
 
   const positionerRef = React.useRef<Positioner | null>(null);
   if (positionerRef.current === null) positionerRef.current = initPositioner();
@@ -770,6 +808,7 @@ function usePositioner(
     rowGap,
     columnCount,
     maxColumnCount,
+    sequential,
   ];
   const prevOptsRef = React.useRef(opts);
   const optsChanged = !opts.every((item, i) => prevOptsRef.current[i] === item);
@@ -862,7 +901,7 @@ function useDebouncedWindowSize(options: DebouncedWindowSizeOptions) {
     };
   }, [setDebouncedSize, containerRef, getDocumentSize]);
 
-  return { size, containerRef };
+  return size;
 }
 
 type OnRafScheduleReturn<T extends unknown[]> = {
@@ -1144,6 +1183,7 @@ interface MasonryRootProps extends DivProps {
   defaultHeight?: number;
   overscan?: number;
   scrollFps?: number;
+  sequential?: boolean;
   asChild?: boolean;
 }
 
@@ -1159,6 +1199,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
       defaultHeight,
       overscan = OVERSCAN,
       scrollFps = SCROLL_FPS,
+      sequential = false,
       asChild,
       children,
       style,
@@ -1171,13 +1212,13 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
 
     const containerRef = React.useRef<RootElement | null>(null);
     const composedRef = useComposedRefs(forwardedRef, containerRef);
-    const { size, containerRef: windowSizeContainerRef } =
-      useDebouncedWindowSize({
-        containerRef,
-        defaultWidth,
-        defaultHeight,
-        delayMs: DEBOUNCE_DELAY,
-      });
+
+    const size = useDebouncedWindowSize({
+      containerRef,
+      defaultWidth,
+      defaultHeight,
+      delayMs: DEBOUNCE_DELAY,
+    });
 
     const [containerPosition, setContainerPosition] = React.useState<{
       offset: number;
@@ -1189,7 +1230,6 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
 
       let offset = 0;
       let container = containerRef.current;
-      windowSizeContainerRef.current = container;
 
       do {
         offset += container.offsetTop ?? 0;
@@ -1205,7 +1245,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
           width: containerRef.current.offsetWidth,
         });
       }
-    }, [containerPosition, size]);
+    }, [containerPosition]);
 
     const positioner = usePositioner({
       width: containerPosition.width ?? size.width,
@@ -1214,6 +1254,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
       rowGap,
       columnCount,
       maxColumnCount,
+      sequential,
     });
     const resizeObserver = useResizeObserver(positioner);
     const { scrollTop, isScrolling } = useScroller({
@@ -1286,7 +1327,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
 MasonryRoot.displayName = ROOT_NAME;
 
 interface MasonryItemPropsWithRef extends MasonryItemProps {
-  ref: React.Ref<ItemElement>;
+  ref: React.Ref<ItemElement | null>;
 }
 
 const MasonryViewport = React.forwardRef<HTMLDivElement, DivProps>(
