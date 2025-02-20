@@ -1,6 +1,7 @@
 "use client";
 
 import { Shell } from "@/components/shell";
+import { Skeleton } from "@/components/ui/skeleton";
 import * as MasonryTwo from "@/registry/default/ui/masonry/masonry-alt";
 import * as MasonryThree from "@/registry/default/ui/masonry/masonry-combined";
 import { Loader } from "lucide-react";
@@ -73,8 +74,11 @@ export default function MasonryPage() {
 
   return (
     <Shell>
-      <div className="flex flex-col gap-8">
-        {/* <MasonryTwo
+      {isLoading ? (
+        <Skeleton className="h-dvh w-full" />
+      ) : (
+        <div className="flex flex-col gap-8">
+          {/* <MasonryTwo
           items={items}
           overscanBy={6}
           columnGutter={10}
@@ -87,21 +91,7 @@ export default function MasonryPage() {
             </div>
           )}
         /> */}
-        {/* <MasonryThree
-          items={items}
-          columnWidth={200}
-          columnGutter={10}
-          overscanBy={6}
-          render={({ data }) => (
-            <div
-              className="rounded-md bg-accent p-4"
-              style={{ height: data.height }}
-            >
-              {data.id + 1}
-            </div>
-          )}
-        /> */}
-        {/* <MasonryTwo.Masonry
+          {/* <MasonryThree
           items={items}
           columnWidth={200}
           columnGutter={10}
@@ -115,31 +105,46 @@ export default function MasonryPage() {
             </div>
           )}
         /> */}
-        <MasonryThree.Root gap={10} overscan={6}>
-          {items.map((item) => (
-            <MasonryThree.Item key={item.id}>
+          {/* <MasonryTwo.Masonry
+            items={items}
+            columnWidth={200}
+            columnGutter={10}
+            overscanBy={6}
+            render={({ data }) => (
               <div
                 className="rounded-md bg-accent p-4"
-                style={{ height: item.height }}
+                style={{ height: data.height }}
               >
-                {item.id + 1}
+                {data.id + 1}
               </div>
-            </MasonryThree.Item>
-          ))}
-        </MasonryThree.Root>
-        {hasMore && (
-          <div
-            ref={loaderRef}
-            className="flex w-full items-center justify-center py-8"
-          >
-            {isLoading ? (
-              <Loader className="h-6 w-6 animate-spin text-muted-foreground" />
-            ) : (
-              <div className="h-6 w-6" />
             )}
-          </div>
-        )}
-      </div>
+          /> */}
+          <MasonryThree.Root gap={10} overscan={6}>
+            {items.map((item) => (
+              <MasonryThree.Item key={item.id}>
+                <div
+                  className="rounded-md bg-accent p-4"
+                  style={{ height: item.height }}
+                >
+                  {item.id + 1}
+                </div>
+              </MasonryThree.Item>
+            ))}
+          </MasonryThree.Root>
+          {hasMore && (
+            <div
+              ref={loaderRef}
+              className="flex w-full items-center justify-center py-8"
+            >
+              {isLoading ? (
+                <Loader className="h-6 w-6 animate-spin text-muted-foreground" />
+              ) : (
+                <div className="h-6 w-6" />
+              )}
+            </div>
+          )}
+        </div>
+      )}
     </Shell>
   );
 }

@@ -771,35 +771,33 @@ function usePositioner(
   return positionerRef.current;
 }
 
-const useIsomorphicLayoutEffect =
-  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
-
 interface DebouncedWindowSizeOptions {
+  containerRef: React.RefObject<RootElement | null>;
   defaultWidth?: number;
   defaultHeight?: number;
   delayMs?: number;
-  leading?: boolean;
 }
 
-function useDebouncedWindowSize(options: DebouncedWindowSizeOptions = {}) {
+function useDebouncedWindowSize(options: DebouncedWindowSizeOptions) {
   const {
+    containerRef,
     defaultWidth = 0,
     defaultHeight = 0,
     delayMs = 100,
-    leading = false,
   } = options;
 
-  const [size, setSize] = React.useState<{ width: number; height: number }>(
-    typeof document === "undefined"
-      ? { width: defaultWidth, height: defaultHeight }
-      : {
-          width: document.documentElement.clientWidth,
-          height: document.documentElement.clientHeight,
-        },
-  );
+  const getDocumentSize = React.useCallback(() => {
+    if (typeof document === "undefined") {
+      return { width: defaultWidth, height: defaultHeight };
+    }
+    return {
+      width: document.documentElement.clientWidth,
+      height: document.documentElement.clientHeight,
+    };
+  }, [defaultWidth, defaultHeight]);
 
+  const [size, setSize] = React.useState(getDocumentSize());
   const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
-  const leadingRef = React.useRef(true);
 
   const setDebouncedSize = React.useCallback(
     (value: { width: number; height: number }) => {
@@ -807,32 +805,26 @@ function useDebouncedWindowSize(options: DebouncedWindowSizeOptions = {}) {
         clearTimeout(timeoutRef.current);
       }
 
-      if (leading && leadingRef.current) {
-        leadingRef.current = false;
-        setSize(value);
-        timeoutRef.current = setTimeout(() => {
-          leadingRef.current = true;
-        }, delayMs);
-        return;
-      }
-
       timeoutRef.current = setTimeout(() => {
-        leadingRef.current = true;
         setSize(value);
       }, delayMs);
     },
-    [delayMs, leading],
+    [delayMs],
   );
 
   React.useEffect(() => {
     function onResize() {
-      setDebouncedSize({
-        width: document.documentElement.clientWidth,
-        height: document.documentElement.clientHeight,
-      });
+      if (containerRef.current) {
+        setDebouncedSize({
+          width: containerRef.current.offsetWidth,
+          height: document.documentElement.clientHeight,
+        });
+      } else {
+        setDebouncedSize(getDocumentSize());
+      }
     }
 
-    window?.addEventListener("resize", onResize);
+    window?.addEventListener("resize", onResize, { passive: true });
     window?.addEventListener("orientationchange", onResize);
     window.visualViewport?.addEventListener("resize", onResize);
 
@@ -842,9 +834,9 @@ function useDebouncedWindowSize(options: DebouncedWindowSizeOptions = {}) {
       window.visualViewport?.removeEventListener("resize", onResize);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, [setDebouncedSize]);
+  }, [setDebouncedSize, containerRef, getDocumentSize]);
 
-  return size;
+  return { size, containerRef };
 }
 
 type OnRafScheduleReturn<T extends unknown[]> = {
@@ -1113,6 +1105,9 @@ function useMasonryContext(name: keyof typeof MASONRY_ERROR) {
   return context;
 }
 
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
+
 interface MasonryRootProps extends DivProps {
   columnWidth?: number;
   columnCount?: number;
@@ -1150,10 +1145,13 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
 
     const containerRef = React.useRef<RootElement | null>(null);
     const composedRef = useComposedRefs(forwardedRef, containerRef);
-    const windowSize = useDebouncedWindowSize({
-      defaultWidth,
-      defaultHeight,
-    });
+    const { size, containerRef: windowSizeContainerRef } =
+      useDebouncedWindowSize({
+        containerRef,
+        defaultWidth,
+        defaultHeight,
+        delayMs: 300,
+      });
 
     const [containerPosition, setContainerPosition] = React.useState<{
       offset: number;
@@ -1165,6 +1163,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
 
       let offset = 0;
       let container = containerRef.current;
+      windowSizeContainerRef.current = container;
 
       do {
         offset += container.offsetTop ?? 0;
@@ -1180,10 +1179,10 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
           width: containerRef.current.offsetWidth,
         });
       }
-    }, [containerPosition]);
+    }, [containerPosition, size]);
 
     const positioner = usePositioner({
-      width: containerPosition.width ?? windowSize.width,
+      width: containerPosition.width ?? size.width,
       columnWidth,
       columnGap,
       rowGap,
@@ -1220,7 +1219,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
         columnWidth: positioner.columnWidth,
         onItemRegister,
         scrollTop,
-        windowHeight: windowSize.height,
+        windowHeight: size.height,
         itemHeight,
         overscan,
         isScrolling,
@@ -1230,7 +1229,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
         resizeObserver,
         onItemRegister,
         scrollTop,
-        windowSize.height,
+        size.height,
         itemHeight,
         overscan,
         isScrolling,
