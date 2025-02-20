@@ -1,19 +1,34 @@
 "use client";
 
 import { Shell } from "@/components/shell";
-import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import * as MasonryTwo from "@/registry/default/ui/masonry/masonry-alt";
 import * as MasonryThree from "@/registry/default/ui/masonry/masonry-combined";
 import { Loader } from "lucide-react";
 import { Masonry as MasonryOne } from "masonic";
 import * as React from "react";
 
-const ITEMS_PER_PAGE = 2000;
-const MAX_ITEMS = 2000;
+const DEFAULT_ITEMS_PER_PAGE = 100;
+const DEFAULT_MAX_ITEM_COUNT = 5000;
+
+const ITEMS_PER_PAGE_OPTIONS = [50, 100, 500, 1000];
+const MAX_ITEMS_OPTIONS = [1000, 5000, 10000, 20000];
 
 export default function MasonryPage() {
+  const [itemsPerPage, setItemsPerPage] = React.useState(
+    DEFAULT_ITEMS_PER_PAGE,
+  );
+  const [maxItemCount, setMaxItemCount] = React.useState(
+    DEFAULT_MAX_ITEM_COUNT,
+  );
   const [items, setItems] = React.useState(() =>
-    Array.from({ length: ITEMS_PER_PAGE }, (_, index) => ({
+    Array.from({ length: itemsPerPage }, (_, index) => ({
       id: index,
       height: Math.random() * 100 + 100,
     })),
@@ -27,11 +42,10 @@ export default function MasonryPage() {
     console.log("Loading more items...");
 
     setIsLoading(true);
-    // Simulate loading delay
     setTimeout(() => {
       setItems((currentItems) => {
         console.log("Current items length:", currentItems.length);
-        const newItems = Array.from({ length: ITEMS_PER_PAGE }, (_, index) => ({
+        const newItems = Array.from({ length: itemsPerPage }, (_, index) => ({
           id: currentItems.length + index,
           height: Math.random() * 100 + 100,
         }));
@@ -39,15 +53,15 @@ export default function MasonryPage() {
         const updatedItems = [...currentItems, ...newItems];
         console.log("Updated items length:", updatedItems.length);
 
-        if (updatedItems.length >= MAX_ITEMS) {
+        if (updatedItems.length >= maxItemCount) {
           setHasMore(false);
         }
 
-        return updatedItems.slice(0, MAX_ITEMS);
+        return updatedItems.slice(0, maxItemCount);
       });
       setIsLoading(false);
     }, 500);
-  }, [isLoading, hasMore]);
+  }, [isLoading, hasMore, itemsPerPage, maxItemCount]);
 
   React.useEffect(() => {
     const observer = new IntersectionObserver(
@@ -75,6 +89,44 @@ export default function MasonryPage() {
   return (
     <Shell>
       <div className="flex flex-col gap-8">
+        <div className="flex items-center gap-2 self-end">
+          <Select
+            value={itemsPerPage.toString()}
+            onValueChange={(value) => {
+              const numValue = Number.parseInt(value);
+              setItemsPerPage(numValue);
+            }}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select items per page" />
+            </SelectTrigger>
+            <SelectContent>
+              {ITEMS_PER_PAGE_OPTIONS.map((option) => (
+                <SelectItem key={option} value={option.toString()}>
+                  {option} items/page
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
+            value={maxItemCount.toString()}
+            onValueChange={(value) => {
+              const numValue = Number.parseInt(value);
+              setMaxItemCount(numValue);
+            }}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select max items" />
+            </SelectTrigger>
+            <SelectContent>
+              {MAX_ITEMS_OPTIONS.map((option) => (
+                <SelectItem key={option} value={option.toString()}>
+                  {option} items
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         {/* <MasonryTwo
           items={items}
           overscanBy={6}
@@ -118,7 +170,7 @@ export default function MasonryPage() {
           /> */}
         <MasonryThree.Root gap={10} overscan={6}>
           {items.map((item) => (
-            <MasonryThree.Item key={item.id}>
+            <MasonryThree.Item key={item.id} asChild>
               <div
                 className="rounded-md bg-accent p-4"
                 style={{ height: item.height }}
