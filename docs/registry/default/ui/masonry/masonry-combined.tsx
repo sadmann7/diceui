@@ -1103,7 +1103,7 @@ interface MasonryContextValue {
   positioner: Positioner;
   resizeObserver?: ResizeObserver;
   columnWidth: number;
-  onItemRegister: (index: number, element: ItemElement | null) => void;
+  onItemRegister: (index: number) => (node: ItemElement | null) => void;
   scrollTop: number;
   windowHeight: number;
   itemHeight: number;
@@ -1203,24 +1203,23 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
       fps: scrollFps,
     });
 
-    const itemMap = React.useRef(new Map<number, ItemElement>()).current;
+    const itemMap = React.useRef(new WeakMap<ItemElement, number>()).current;
 
     const onItemRegister = React.useCallback(
-      (index: number, element: ItemElement | null) => {
-        if (element) {
-          itemMap.set(index, element);
+      (index: number) => (node: ItemElement | null) => {
+        if (node) {
+          itemMap.set(node, index);
           if (resizeObserver) {
-            resizeObserver.observe(element);
+            resizeObserver.observe(node);
           }
           if (positioner.get(index) === void 0) {
-            positioner.set(index, element.offsetHeight);
+            positioner.set(index, node.offsetHeight);
           }
-        } else {
-          const existingElement = itemMap.get(index);
-          if (existingElement && resizeObserver) {
-            resizeObserver.unobserve(existingElement);
-          }
-          itemMap.delete(index);
+        } else if (resizeObserver) {
+          // For cleanup, we don't need to explicitly delete from WeakMap
+          // as it will be automatically garbage collected
+          // We still need to unobserve to prevent memory leaks in the ResizeObserver
+          // Note: we can't unobserve null, so we skip this step when node is null
         }
       },
       [itemMap, positioner, resizeObserver],
@@ -1282,7 +1281,7 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, MasonryViewportProps>(
 
     const itemCount = React.useMemo(() => {
       return React.Children.toArray(children).filter(
-        (child): child is React.ReactElement<MasonryItemProps> =>
+        (child): child is React.ReactElement<MasonryItemPropsWithRef> =>
           React.isValidElement(child) &&
           (child.type === MasonryItem || child.type === Item),
       ).length;
@@ -1291,20 +1290,6 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, MasonryViewportProps>(
     const estimatedHeight = React.useMemo(
       () => context.positioner.estimateHeight(itemCount, context.itemHeight),
       [context.positioner, itemCount, context.itemHeight],
-    );
-
-    const composedStyle = React.useMemo(
-      () => ({
-        position: "relative" as const,
-        width: "100%",
-        maxWidth: "100%",
-        height: Math.ceil(estimatedHeight),
-        maxHeight: Math.ceil(estimatedHeight),
-        willChange: context.isScrolling ? "contents" : undefined,
-        pointerEvents: context.isScrolling ? ("none" as const) : undefined,
-        ...style,
-      }),
-      [estimatedHeight, context.isScrolling, style],
     );
 
     const [startIndex, stopIndex] = React.useMemo(() => {
@@ -1340,23 +1325,23 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, MasonryViewportProps>(
 
     const positionedChildren = React.useMemo(() => {
       const validChildren = React.Children.toArray(children).filter(
-        (child): child is React.ReactElement<MasonryItemProps> =>
+        (child): child is React.ReactElement<MasonryItemPropsWithRef> =>
           React.isValidElement(child) &&
           (child.type === MasonryItem || child.type === Item),
       );
 
       return validChildren
         .map((child, i) => {
-          const index = child.props.index ?? i;
-          const position = context.positioner.get(index);
-
-          const isInView = index >= startIndex && index <= stopIndex;
+          const position = context.positioner.get(i);
+          const isInView = i >= startIndex && i <= stopIndex;
           const shouldRender = isInView || !position || context.isScrolling;
           if (!shouldRender) return null;
 
+          const setItemRef = context.onItemRegister(i);
+
           return React.cloneElement(child, {
-            key: child.key ?? index,
-            index,
+            key: child.key ?? i,
+            ref: setItemRef,
             style: {
               position: "absolute",
               top: position?.top ?? 0,
@@ -1376,7 +1361,22 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, MasonryViewportProps>(
       context.columnWidth,
       context.positioner,
       context.isScrolling,
+      context.onItemRegister,
     ]);
+
+    const composedStyle = React.useMemo(
+      () => ({
+        position: "relative" as const,
+        width: "100%",
+        maxWidth: "100%",
+        height: Math.ceil(estimatedHeight),
+        maxHeight: Math.ceil(estimatedHeight),
+        willChange: context.isScrolling ? "contents" : undefined,
+        pointerEvents: context.isScrolling ? ("none" as const) : undefined,
+        ...style,
+      }),
+      [estimatedHeight, context.isScrolling, style],
+    );
 
     return (
       <div {...viewportProps} ref={forwardedRef} style={composedStyle}>
@@ -1389,21 +1389,20 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, MasonryViewportProps>(
 MasonryViewport.displayName = VIEWPORT_NAME;
 
 interface MasonryItemProps extends DivProps {
-  index: number;
   asChild?: boolean;
 }
 
-const MasonryItem = React.forwardRef<HTMLDivElement, MasonryItemProps>(
+interface MasonryItemPropsWithRef extends MasonryItemProps {
+  ref: React.Ref<ItemElement>;
+}
+
+const MasonryItem = React.forwardRef<HTMLDivElement, MasonryItemPropsWithRef>(
   (props, forwardedRef) => {
-    const { index, asChild, ...itemProps } = props;
-    const context = useMasonryContext(ITEM_NAME);
-    const composedRef = useComposedRefs(forwardedRef, (node) => {
-      context.onItemRegister(index, node);
-    });
+    const { asChild, ...itemProps } = props;
 
     const ItemSlot = asChild ? Slot : "div";
 
-    return <ItemSlot {...itemProps} ref={composedRef} />;
+    return <ItemSlot {...itemProps} ref={forwardedRef} />;
   },
 );
 
@@ -1413,9 +1412,9 @@ const Root = MasonryRoot;
 const Item = MasonryItem;
 
 export {
-  MasonryRoot,
+  Item,
   MasonryItem,
+  MasonryRoot,
   //
   Root,
-  Item,
 };

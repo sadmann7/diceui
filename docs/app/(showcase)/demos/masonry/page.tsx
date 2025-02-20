@@ -116,8 +116,8 @@ export default function MasonryPage() {
           )}
         /> */}
         <MasonryThree.Root columnGutter={10} overscanBy={6}>
-          {items.map((item, index) => (
-            <MasonryThree.Item key={item.id} index={index}>
+          {items.map((item) => (
+            <MasonryThree.Item key={item.id}>
               <div
                 className="rounded-md bg-accent p-4"
                 style={{ height: item.height }}
