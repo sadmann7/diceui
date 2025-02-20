@@ -537,6 +537,13 @@ function onDeepMemo<T extends unknown[], U>(
   };
 }
 
+const COLUMN_WIDTH = 200;
+const GAP = 0;
+const ITEM_HEIGHT = 300;
+const OVERSCAN = 2;
+const SCROLL_FPS = 12;
+const DEBOUNCE_DELAY = 300;
+
 interface Positioner {
   columnCount: number;
   columnWidth: number;
@@ -573,8 +580,8 @@ interface UsePositionerOptions {
 function usePositioner(
   {
     width,
-    columnWidth = 200,
-    columnGap = 0,
+    columnWidth = COLUMN_WIDTH,
+    columnGap = GAP,
     rowGap,
     columnCount,
     maxColumnCount,
@@ -802,7 +809,7 @@ function useDebouncedWindowSize(options: DebouncedWindowSizeOptions) {
     containerRef,
     defaultWidth = 0,
     defaultHeight = 0,
-    delayMs = 100,
+    delayMs = DEBOUNCE_DELAY,
   } = options;
 
   const getDocumentSize = React.useCallback(() => {
@@ -958,7 +965,7 @@ function useResizeObserver(positioner: Positioner) {
 
 function useScroller({
   offset = 0,
-  fps = 12,
+  fps = SCROLL_FPS,
 }: {
   offset?: number;
   fps?: number;
@@ -1034,7 +1041,7 @@ function useThrottle<State>(
   latestSetState.current = setState;
 
   const ms = 1000 / fps;
-  const prev = React.useRef(0);
+  const prevCountRef = React.useRef(0);
   const trailingTimeout = React.useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
@@ -1047,7 +1054,7 @@ function useThrottle<State>(
 
   React.useEffect(() => {
     return () => {
-      prev.current = 0;
+      prevCountRef.current = 0;
       clearTrailing();
     };
   }, [clearTrailing]);
@@ -1058,11 +1065,11 @@ function useThrottle<State>(
       const now = () => perf.now();
       const rightNow = now();
       const call = () => {
-        prev.current = rightNow;
+        prevCountRef.current = rightNow;
         clearTrailing();
         latestSetState.current(action);
       };
-      const current = prev.current;
+      const current = prevCountRef.current;
 
       if (leading && current === 0) {
         return call();
@@ -1072,13 +1079,13 @@ function useThrottle<State>(
         if (current > 0) {
           return call();
         }
-        prev.current = rightNow;
+        prevCountRef.current = rightNow;
       }
 
       clearTrailing();
       trailingTimeout.current = setTimeout(() => {
         call();
-        prev.current = 0;
+        prevCountRef.current = 0;
       }, ms);
     },
     [leading, ms, clearTrailing],
@@ -1143,15 +1150,15 @@ interface MasonryRootProps extends DivProps {
 const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
   (props, forwardedRef) => {
     const {
-      columnWidth = 200,
+      columnWidth = COLUMN_WIDTH,
       columnCount,
       maxColumnCount,
-      gap = 0,
-      itemHeight = 300,
+      gap = GAP,
+      itemHeight = ITEM_HEIGHT,
       defaultWidth,
       defaultHeight,
-      overscan = 2,
-      scrollFps = 12,
+      overscan = OVERSCAN,
+      scrollFps = SCROLL_FPS,
       asChild,
       children,
       style,
@@ -1169,7 +1176,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
         containerRef,
         defaultWidth,
         defaultHeight,
-        delayMs: 300,
+        delayMs: DEBOUNCE_DELAY,
       });
 
     const [containerPosition, setContainerPosition] = React.useState<{
