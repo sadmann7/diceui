@@ -548,8 +548,8 @@ interface PositionerItem {
 interface UsePositionerOptions {
   width: number;
   columnWidth?: number;
-  columnGutter?: number;
-  rowGutter?: number;
+  columnGap?: number;
+  rowGap?: number;
   columnCount?: number;
   maxColumnCount?: number;
 }
@@ -558,8 +558,8 @@ function usePositioner(
   {
     width,
     columnWidth = 200,
-    columnGutter = 0,
-    rowGutter,
+    columnGap = 0,
+    rowGap,
     columnCount,
     maxColumnCount,
   }: UsePositionerOptions,
@@ -589,7 +589,7 @@ function usePositioner(
       ) ||
       1;
     const computedColumnWidth = Math.floor(
-      (width - columnGutter * (computedColumnCount - 1)) / computedColumnCount,
+      (width - columnGap * (computedColumnCount - 1)) / computedColumnCount,
     );
 
     const intervalTree = createIntervalTree();
@@ -626,14 +626,14 @@ function usePositioner(
         if (columnHeight === undefined) return;
 
         const top = columnHeight;
-        columnHeights[columnIndex] = top + height + (rowGutter ?? columnGutter);
+        columnHeights[columnIndex] = top + height + (rowGap ?? columnGap);
 
         const columnItemsList = columnItems[columnIndex];
         if (!columnItemsList) return;
         columnItemsList.push(index);
 
         items[index] = {
-          left: columnIndex * (computedColumnWidth + columnGutter),
+          left: columnIndex * (computedColumnWidth + columnGap),
           top,
           height,
           columnIndex,
@@ -688,7 +688,7 @@ function usePositioner(
           if (typeof currentHeight !== "number") continue;
 
           columnHeights[i] =
-            startItem.top + startItem.height + (rowGutter ?? columnGutter);
+            startItem.top + startItem.height + (rowGap ?? columnGap);
 
           for (j = startIndex + 1; j < itemsInColumn.length; j++) {
             const currentIndex = itemsInColumn[j];
@@ -701,8 +701,7 @@ function usePositioner(
             if (typeof columnHeight !== "number") continue;
 
             item.top = columnHeight;
-            columnHeights[i] =
-              item.top + item.height + (rowGutter ?? columnGutter);
+            columnHeights[i] = item.top + item.height + (rowGap ?? columnGap);
             intervalTree.remove(currentIndex);
             intervalTree.insert(item.top, item.top + item.height, currentIndex);
           }
@@ -735,14 +734,7 @@ function usePositioner(
         return items.filter(Boolean) as PositionerItem[];
       },
     };
-  }, [
-    width,
-    columnWidth,
-    columnGutter,
-    rowGutter,
-    columnCount,
-    maxColumnCount,
-  ]);
+  }, [width, columnWidth, columnGap, rowGap, columnCount, maxColumnCount]);
 
   const positionerRef = React.useRef<Positioner | null>(null);
   if (positionerRef.current === null) positionerRef.current = initPositioner();
@@ -751,8 +743,8 @@ function usePositioner(
   const opts = [
     width,
     columnWidth,
-    columnGutter,
-    rowGutter,
+    columnGap,
+    rowGap,
     columnCount,
     maxColumnCount,
   ];
@@ -1124,8 +1116,7 @@ function useMasonryContext(name: keyof typeof MASONRY_ERROR) {
 interface MasonryRootProps extends DivProps {
   children?: React.ReactNode;
   columnWidth?: number;
-  columnGutter?: number;
-  rowGutter?: number;
+  gap?: number | { column: number; row: number };
   columnCount?: number;
   maxColumnCount?: number;
   itemHeight?: number;
@@ -1141,8 +1132,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
     const {
       children,
       columnWidth = 200,
-      columnGutter = 0,
-      rowGutter,
+      gap = 0,
       columnCount,
       maxColumnCount,
       itemHeight = 300,
@@ -1154,6 +1144,10 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
       asChild,
       ...rootProps
     } = props;
+
+    const gapValue = typeof gap === "object" ? gap : { column: gap, row: gap };
+    const columnGap = gapValue.column;
+    const rowGap = gapValue.row;
 
     const containerRef = React.useRef<RootElement | null>(null);
     const composedRef = useComposedRefs(forwardedRef, containerRef);
@@ -1187,13 +1181,13 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
           width: containerRef.current.offsetWidth,
         });
       }
-    }, []);
+    }, [containerPosition]);
 
     const positioner = usePositioner({
       width: containerPosition.width ?? windowSize.width,
       columnWidth,
-      columnGutter,
-      rowGutter,
+      columnGap,
+      rowGap,
       columnCount,
       maxColumnCount,
     });
@@ -1207,19 +1201,14 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
 
     const onItemRegister = React.useCallback(
       (index: number) => (node: ItemElement | null) => {
-        if (node) {
-          itemMap.set(node, index);
-          if (resizeObserver) {
-            resizeObserver.observe(node);
-          }
-          if (positioner.get(index) === void 0) {
-            positioner.set(index, node.offsetHeight);
-          }
-        } else if (resizeObserver) {
-          // For cleanup, we don't need to explicitly delete from WeakMap
-          // as it will be automatically garbage collected
-          // We still need to unobserve to prevent memory leaks in the ResizeObserver
-          // Note: we can't unobserve null, so we skip this step when node is null
+        if (!node) return;
+
+        itemMap.set(node, index);
+        if (resizeObserver) {
+          resizeObserver.observe(node);
+        }
+        if (positioner.get(index) === void 0) {
+          positioner.set(index, node.offsetHeight);
         }
       },
       [itemMap, positioner, resizeObserver],
@@ -1273,6 +1262,10 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
 MasonryRoot.displayName = ROOT_NAME;
 
 interface MasonryViewportProps extends DivProps {}
+
+interface MasonryItemPropsWithRef extends MasonryItemProps {
+  ref: React.Ref<ItemElement>;
+}
 
 const MasonryViewport = React.forwardRef<HTMLDivElement, MasonryViewportProps>(
   (props, forwardedRef) => {
@@ -1331,17 +1324,15 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, MasonryViewportProps>(
       );
 
       return validChildren
-        .map((child, i) => {
-          const position = context.positioner.get(i);
-          const isInView = i >= startIndex && i <= stopIndex;
+        .map((child, index) => {
+          const position = context.positioner.get(index);
+          const isInView = index >= startIndex && index <= stopIndex;
           const shouldRender = isInView || !position || context.isScrolling;
           if (!shouldRender) return null;
 
-          const setItemRef = context.onItemRegister(i);
-
           return React.cloneElement(child, {
-            key: child.key ?? i,
-            ref: setItemRef,
+            key: child.key ?? index,
+            ref: context.onItemRegister(index),
             style: {
               position: "absolute",
               top: position?.top ?? 0,
@@ -1392,11 +1383,7 @@ interface MasonryItemProps extends DivProps {
   asChild?: boolean;
 }
 
-interface MasonryItemPropsWithRef extends MasonryItemProps {
-  ref: React.Ref<ItemElement>;
-}
-
-const MasonryItem = React.forwardRef<HTMLDivElement, MasonryItemPropsWithRef>(
+const MasonryItem = React.forwardRef<HTMLDivElement, MasonryItemProps>(
   (props, forwardedRef) => {
     const { asChild, ...itemProps } = props;
 
@@ -1412,9 +1399,9 @@ const Root = MasonryRoot;
 const Item = MasonryItem;
 
 export {
-  Item,
-  MasonryItem,
   MasonryRoot,
+  MasonryItem,
   //
   Root,
+  Item,
 };
