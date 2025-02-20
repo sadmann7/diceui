@@ -4,13 +4,19 @@ import { useComposedRefs } from "@/lib/composition";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 
-type Color = 0 | 1 | 2;
-const RED = 0;
-const BLACK = 1;
-const SENTINEL = 2;
+const NODE_COLOR = {
+  RED: 0,
+  BLACK: 1,
+  SENTINEL: 2,
+} as const;
 
-const DELETE = 0;
-const KEEP = 1;
+const NODE_OPERATION = {
+  REMOVE: 0,
+  PRESERVE: 1,
+} as const;
+
+type NodeColor = (typeof NODE_COLOR)[keyof typeof NODE_COLOR];
+type NodeOperation = (typeof NODE_OPERATION)[keyof typeof NODE_OPERATION];
 
 interface ListNode {
   index: number;
@@ -22,7 +28,7 @@ interface TreeNode {
   max: number;
   low: number;
   high: number;
-  color: Color;
+  color: NodeColor;
   parent: TreeNode;
   right: TreeNode;
   left: TreeNode;
@@ -51,12 +57,15 @@ function addInterval(treeNode: TreeNode, high: number, index: number): boolean {
   return true;
 }
 
-function removeInterval(treeNode: TreeNode, index: number) {
+function removeInterval(
+  treeNode: TreeNode,
+  index: number,
+): NodeOperation | undefined {
   let node: ListNode | null = treeNode.list;
   if (node.index === index) {
-    if (node.next === null) return DELETE;
+    if (node.next === null) return NODE_OPERATION.REMOVE;
     treeNode.list = node.next;
-    return KEEP;
+    return NODE_OPERATION.PRESERVE;
   }
 
   let prevNode: ListNode | undefined = node;
@@ -65,7 +74,7 @@ function removeInterval(treeNode: TreeNode, index: number) {
   while (node !== null) {
     if (node.index === index) {
       prevNode.next = node.next;
-      return KEEP;
+      return NODE_OPERATION.PRESERVE;
     }
     prevNode = node;
     node = node.next;
@@ -76,7 +85,7 @@ const SENTINEL_NODE: TreeNode = {
   low: 0,
   max: 0,
   high: 0,
-  color: SENTINEL,
+  color: NODE_COLOR.SENTINEL,
   parent: undefined as unknown as TreeNode,
   right: undefined as unknown as TreeNode,
   left: undefined as unknown as TreeNode,
@@ -154,65 +163,71 @@ function fixRemove(tree: Tree, node: TreeNode) {
   let x = node;
   let w: TreeNode;
 
-  while (x !== SENTINEL_NODE && x.color === BLACK) {
+  while (x !== SENTINEL_NODE && x.color === NODE_COLOR.BLACK) {
     if (x === x.parent.left) {
       w = x.parent.right;
 
-      if (w.color === RED) {
-        w.color = BLACK;
-        x.parent.color = RED;
+      if (w.color === NODE_COLOR.RED) {
+        w.color = NODE_COLOR.BLACK;
+        x.parent.color = NODE_COLOR.RED;
         rotateLeft(tree, x.parent);
         w = x.parent.right;
       }
 
-      if (w.left.color === BLACK && w.right.color === BLACK) {
-        w.color = RED;
+      if (
+        w.left.color === NODE_COLOR.BLACK &&
+        w.right.color === NODE_COLOR.BLACK
+      ) {
+        w.color = NODE_COLOR.RED;
         x = x.parent;
       } else {
-        if (w.right.color === BLACK) {
-          w.left.color = BLACK;
-          w.color = RED;
+        if (w.right.color === NODE_COLOR.BLACK) {
+          w.left.color = NODE_COLOR.BLACK;
+          w.color = NODE_COLOR.RED;
           rotateRight(tree, w);
           w = x.parent.right;
         }
 
         w.color = x.parent.color;
-        x.parent.color = BLACK;
-        w.right.color = BLACK;
+        x.parent.color = NODE_COLOR.BLACK;
+        w.right.color = NODE_COLOR.BLACK;
         rotateLeft(tree, x.parent);
         x = tree.root;
       }
     } else {
       w = x.parent.left;
 
-      if (w.color === RED) {
-        w.color = BLACK;
-        x.parent.color = RED;
+      if (w.color === NODE_COLOR.RED) {
+        w.color = NODE_COLOR.BLACK;
+        x.parent.color = NODE_COLOR.RED;
         rotateRight(tree, x.parent);
         w = x.parent.left;
       }
 
-      if (w.right.color === BLACK && w.left.color === BLACK) {
-        w.color = RED;
+      if (
+        w.right.color === NODE_COLOR.BLACK &&
+        w.left.color === NODE_COLOR.BLACK
+      ) {
+        w.color = NODE_COLOR.RED;
         x = x.parent;
       } else {
-        if (w.left.color === BLACK) {
-          w.right.color = BLACK;
-          w.color = RED;
+        if (w.left.color === NODE_COLOR.BLACK) {
+          w.right.color = NODE_COLOR.BLACK;
+          w.color = NODE_COLOR.RED;
           rotateLeft(tree, w);
           w = x.parent.left;
         }
 
         w.color = x.parent.color;
-        x.parent.color = BLACK;
-        w.left.color = BLACK;
+        x.parent.color = NODE_COLOR.BLACK;
+        w.left.color = NODE_COLOR.BLACK;
         rotateRight(tree, x.parent);
         x = tree.root;
       }
     }
   }
 
-  x.color = BLACK;
+  x.color = NODE_COLOR.BLACK;
 }
 
 function minimumTree(node: TreeNode) {
@@ -227,14 +242,14 @@ function fixInsert(tree: Tree, node: TreeNode) {
   let current = node;
   let y: TreeNode;
 
-  while (current.parent.color === RED) {
+  while (current.parent.color === NODE_COLOR.RED) {
     if (current.parent === current.parent.parent.left) {
       y = current.parent.parent.right;
 
-      if (y.color === RED) {
-        current.parent.color = BLACK;
-        y.color = BLACK;
-        current.parent.parent.color = RED;
+      if (y.color === NODE_COLOR.RED) {
+        current.parent.color = NODE_COLOR.BLACK;
+        y.color = NODE_COLOR.BLACK;
+        current.parent.parent.color = NODE_COLOR.RED;
         current = current.parent.parent;
       } else {
         if (current === current.parent.right) {
@@ -242,17 +257,17 @@ function fixInsert(tree: Tree, node: TreeNode) {
           rotateLeft(tree, current);
         }
 
-        current.parent.color = BLACK;
-        current.parent.parent.color = RED;
+        current.parent.color = NODE_COLOR.BLACK;
+        current.parent.parent.color = NODE_COLOR.RED;
         rotateRight(tree, current.parent.parent);
       }
     } else {
       y = current.parent.parent.left;
 
-      if (y.color === RED) {
-        current.parent.color = BLACK;
-        y.color = BLACK;
-        current.parent.parent.color = RED;
+      if (y.color === NODE_COLOR.RED) {
+        current.parent.color = NODE_COLOR.BLACK;
+        y.color = NODE_COLOR.BLACK;
+        current.parent.parent.color = NODE_COLOR.RED;
         current = current.parent.parent;
       } else {
         if (current === current.parent.left) {
@@ -260,13 +275,13 @@ function fixInsert(tree: Tree, node: TreeNode) {
           rotateRight(tree, current);
         }
 
-        current.parent.color = BLACK;
-        current.parent.parent.color = RED;
+        current.parent.color = NODE_COLOR.BLACK;
+        current.parent.parent.color = NODE_COLOR.RED;
         rotateLeft(tree, current.parent.parent);
       }
     }
   }
-  tree.root.color = BLACK;
+  tree.root.color = NODE_COLOR.BLACK;
 }
 
 interface IntervalTree {
@@ -314,7 +329,7 @@ function createIntervalTree(): IntervalTree {
         low,
         high,
         max: high,
-        color: RED,
+        color: NODE_COLOR.RED,
         parent: y,
         left: SENTINEL_NODE,
         right: SENTINEL_NODE,
@@ -341,7 +356,7 @@ function createIntervalTree(): IntervalTree {
 
       const intervalResult = removeInterval(z, index);
       if (intervalResult === void 0) return;
-      if (intervalResult === KEEP) {
+      if (intervalResult === NODE_OPERATION.PRESERVE) {
         z.high = z.list.high;
         updateMax(z);
         updateMaxUp(z);
@@ -381,14 +396,15 @@ function createIntervalTree(): IntervalTree {
       updateMax(x);
       updateMaxUp(x);
 
-      if (originalYColor === BLACK) fixRemove(tree, x);
+      if (originalYColor === NODE_COLOR.BLACK) fixRemove(tree, x);
       tree.size--;
     },
 
     search(low, high, onCallback) {
       const stack = [tree.root];
       while (stack.length !== 0) {
-        const node = stack.pop() as TreeNode;
+        const node = stack.pop();
+        if (!node) continue;
         if (node === SENTINEL_NODE || low > node.max) continue;
         if (node.left !== SENTINEL_NODE) stack.push(node.left);
         if (node.right !== SENTINEL_NODE) stack.push(node.right);
@@ -739,7 +755,7 @@ function usePositioner(
   const positionerRef = React.useRef<Positioner | null>(null);
   if (positionerRef.current === null) positionerRef.current = initPositioner();
 
-  const prevDeps = React.useRef(deps);
+  const prevDepsRef = React.useRef(deps);
   const opts = [
     width,
     columnWidth,
@@ -748,14 +764,17 @@ function usePositioner(
     columnCount,
     maxColumnCount,
   ];
-  const prevOpts = React.useRef(opts);
-  const optsChanged = !opts.every((item, i) => prevOpts.current[i] === item);
+  const prevOptsRef = React.useRef(opts);
+  const optsChanged = !opts.every((item, i) => prevOptsRef.current[i] === item);
 
-  if (optsChanged || !deps.every((item, i) => prevDeps.current[i] === item)) {
+  if (
+    optsChanged ||
+    !deps.every((item, i) => prevDepsRef.current[i] === item)
+  ) {
     const prevPositioner = positionerRef.current;
     const positioner = initPositioner();
-    prevDeps.current = deps;
-    prevOpts.current = opts;
+    prevDepsRef.current = deps;
+    prevOptsRef.current = opts;
 
     if (optsChanged) {
       const cacheSize = prevPositioner.size();
