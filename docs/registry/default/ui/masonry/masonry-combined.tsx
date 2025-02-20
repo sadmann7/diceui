@@ -1099,7 +1099,7 @@ interface MasonryContextValue {
   scrollTop: number;
   windowHeight: number;
   itemHeight: number;
-  overscanBy: number;
+  overscan: number;
   isScrolling?: boolean;
 }
 
@@ -1114,34 +1114,33 @@ function useMasonryContext(name: keyof typeof MASONRY_ERROR) {
 }
 
 interface MasonryRootProps extends DivProps {
-  children?: React.ReactNode;
   columnWidth?: number;
-  gap?: number | { column: number; row: number };
   columnCount?: number;
   maxColumnCount?: number;
+  gap?: number | { column: number; row: number };
   itemHeight?: number;
-  overscanBy?: number;
-  scrollFps?: number;
   defaultWidth?: number;
   defaultHeight?: number;
+  overscan?: number;
+  scrollFps?: number;
   asChild?: boolean;
 }
 
 const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
   (props, forwardedRef) => {
     const {
-      children,
       columnWidth = 200,
-      gap = 0,
       columnCount,
       maxColumnCount,
+      gap = 0,
       itemHeight = 300,
-      overscanBy = 2,
-      scrollFps = 12,
       defaultWidth,
       defaultHeight,
-      style,
+      overscan = 2,
+      scrollFps = 12,
       asChild,
+      children,
+      style,
       ...rootProps
     } = props;
 
@@ -1223,7 +1222,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
         scrollTop,
         windowHeight: windowSize.height,
         itemHeight,
-        overscanBy,
+        overscan,
         isScrolling,
       }),
       [
@@ -1233,7 +1232,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
         scrollTop,
         windowSize.height,
         itemHeight,
-        overscanBy,
+        overscan,
         isScrolling,
       ],
     );
@@ -1261,13 +1260,11 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
 
 MasonryRoot.displayName = ROOT_NAME;
 
-interface MasonryViewportProps extends DivProps {}
-
 interface MasonryItemPropsWithRef extends MasonryItemProps {
   ref: React.Ref<ItemElement>;
 }
 
-const MasonryViewport = React.forwardRef<HTMLDivElement, MasonryViewportProps>(
+const MasonryViewport = React.forwardRef<HTMLDivElement, DivProps>(
   (props, forwardedRef) => {
     const { children, style, ...viewportProps } = props;
     const context = useMasonryContext(VIEWPORT_NAME);
@@ -1286,7 +1283,7 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, MasonryViewportProps>(
     );
 
     const [startIndex, stopIndex] = React.useMemo(() => {
-      const overscanPixels = context.windowHeight * context.overscanBy;
+      const overscanPixels = context.windowHeight * context.overscan;
       const rangeStart = Math.max(0, context.scrollTop - overscanPixels);
       const rangeEnd =
         context.scrollTop + context.windowHeight + overscanPixels;
@@ -1302,7 +1299,7 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, MasonryViewportProps>(
 
       const minVisible = Math.min(...visibleItems);
       const maxVisible = Math.max(...visibleItems);
-      const overscanCount = Math.ceil(context.overscanBy * 2);
+      const overscanCount = Math.ceil(context.overscan * 2);
 
       return [
         Math.max(0, minVisible - overscanCount),
@@ -1311,7 +1308,7 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, MasonryViewportProps>(
     }, [
       context.scrollTop,
       context.windowHeight,
-      context.overscanBy,
+      context.overscan,
       context.positioner,
       itemCount,
     ]);

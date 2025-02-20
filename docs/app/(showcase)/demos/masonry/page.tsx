@@ -115,7 +115,7 @@ export default function MasonryPage() {
             </div>
           )}
         /> */}
-        <MasonryThree.Root gap={10} overscanBy={6}>
+        <MasonryThree.Root gap={10} overscan={6}>
           {items.map((item) => (
             <MasonryThree.Item key={item.id}>
               <div
