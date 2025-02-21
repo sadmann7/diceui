@@ -1,29 +1,30 @@
 "use client";
 
-import { Shell } from "@/components/shell";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import * as MasonryTwo from "@/registry/default/ui/masonry/masonry-alt";
-import * as MasonryThree from "@/registry/default/ui/masonry/masonry-combined";
-import { Loader } from "lucide-react";
-import { Masonry as MasonryOne } from "masonic";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import * as Masonry from "@/registry/default/ui/masonry";
+import { Check, ChevronDown, Loader } from "lucide-react";
 import * as React from "react";
 
-const DEFAULT_ITEMS_PER_PAGE = 1000;
+const DEFAULT_ITEMS_PER_PAGE = 100;
 const DEFAULT_MAX_ITEM_COUNT = 5000;
 
 const ITEMS_PER_PAGE_OPTIONS = [50, 100, 500, 1000];
 const MAX_ITEMS_OPTIONS = [1000, 5000, 10000, 20000];
 
 export default function MasonryPage() {
-  const [sequential, setSequential] = React.useState(false);
+  const [linear, setLinear] = React.useState(false);
   const [itemsPerPage, setItemsPerPage] = React.useState(
     DEFAULT_ITEMS_PER_PAGE,
   );
@@ -90,94 +91,72 @@ export default function MasonryPage() {
   }, [loadMore]);
 
   return (
-    <Shell>
+    <div className="container grid items-center gap-4 pt-6 pb-8 md:py-8">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="outline"
+            size="sm"
+            className="sticky top-8 z-10 ml-auto w-fit"
+          >
+            Layout
+            <ChevronDown />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-40">
+          <DropdownMenuLabel>Layout</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => setLinear(!linear)}>
+            <span>Linear mode</span>
+            {linear && <Check className="ml-auto" />}
+          </DropdownMenuItem>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>Items per page</DropdownMenuSubTrigger>
+            <DropdownMenuPortal>
+              <DropdownMenuSubContent>
+                {ITEMS_PER_PAGE_OPTIONS.map((option) => (
+                  <DropdownMenuItem
+                    key={option}
+                    onClick={() => setItemsPerPage(option)}
+                  >
+                    <span>{option} items</span>
+                    {itemsPerPage === option && <Check className="ml-auto" />}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuSubContent>
+            </DropdownMenuPortal>
+          </DropdownMenuSub>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>Max items</DropdownMenuSubTrigger>
+            <DropdownMenuPortal>
+              <DropdownMenuSubContent>
+                {MAX_ITEMS_OPTIONS.map((option) => (
+                  <DropdownMenuItem
+                    key={option}
+                    onClick={() => setMaxItemCount(option)}
+                  >
+                    <span>{option} items</span>
+                    {maxItemCount === option && <Check className="ml-auto" />}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuSubContent>
+            </DropdownMenuPortal>
+          </DropdownMenuSub>
+        </DropdownMenuContent>
+      </DropdownMenu>
       <div className="flex flex-col gap-8">
-        <div className="flex items-center gap-2 self-end">
-          <div className="flex items-center gap-2">
-            <Switch
-              id="sequential-toggle"
-              checked={sequential}
-              onCheckedChange={setSequential}
-            />
-            <Label htmlFor="sequential-toggle">Sequential</Label>
-          </div>
-          <Select
-            value={itemsPerPage.toString()}
-            onValueChange={(value) => {
-              const numValue = Number.parseInt(value);
-              setItemsPerPage(numValue);
-            }}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select items per page" />
-            </SelectTrigger>
-            <SelectContent>
-              {ITEMS_PER_PAGE_OPTIONS.map((option) => (
-                <SelectItem key={option} value={option.toString()}>
-                  {option} items/page
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select
-            value={maxItemCount.toString()}
-            onValueChange={(value) => {
-              const numValue = Number.parseInt(value);
-              setMaxItemCount(numValue);
-            }}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select max items" />
-            </SelectTrigger>
-            <SelectContent>
-              {MAX_ITEMS_OPTIONS.map((option) => (
-                <SelectItem key={option} value={option.toString()}>
-                  {option} items
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        {/* <MasonryOne
-          items={items}
-          columnWidth={200}
-          columnGutter={10}
-          overscanBy={6}
-          render={({ data }) => (
-            <div
-              className="rounded-md bg-accent p-4"
-              style={{ height: data.height }}
-            >
-              {data.id + 1}
-            </div>
-          )}
-        /> */}
-        {/* <MasonryTwo.Masonry
-          items={items}
-          columnWidth={200}
-          columnGutter={10}
-          overscanBy={6}
-          render={({ data }) => (
-            <div
-              className="rounded-md bg-accent p-4"
-              style={{ height: data.height }}
-            >
-              {data.id + 1}
-            </div>
-          )}
-        /> */}
-        <MasonryThree.Root gap={10} overscan={6} sequential={sequential}>
+        <Masonry.Root gap={10} overscan={6} linear={linear}>
           {items.map((item) => (
-            <MasonryThree.Item key={item.id} asChild>
+            <Masonry.Item key={item.id} asChild>
               <div
-                className="rounded-md bg-accent p-4"
+                className="flex items-center justify-center rounded-md bg-accent p-4"
                 style={{ height: item.height }}
               >
                 {item.id + 1}
               </div>
-            </MasonryThree.Item>
+            </Masonry.Item>
           ))}
-        </MasonryThree.Root>
+        </Masonry.Root>
         {hasMore && (
           <div
             ref={loaderRef}
@@ -191,6 +170,6 @@ export default function MasonryPage() {
           </div>
         )}
       </div>
-    </Shell>
+    </div>
   );
 }

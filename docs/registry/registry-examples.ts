@@ -260,18 +260,6 @@ export const examples: Registry = [
     ],
   },
   {
-    name: "masonry-responsive-demo",
-    type: "registry:example",
-    dependencies: ["@radix-ui/react-slot"],
-    registryDependencies: ["skeleton"],
-    files: [
-      {
-        path: "examples/masonry-responsive-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
     name: "masonry-linear-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot"],
@@ -279,18 +267,6 @@ export const examples: Registry = [
     files: [
       {
         path: "examples/masonry-linear-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "masonry-ssr-demo",
-    type: "registry:example",
-    dependencies: ["@radix-ui/react-slot"],
-    registryDependencies: ["skeleton"],
-    files: [
-      {
-        path: "examples/masonry-ssr-demo.tsx",
         type: "registry:example",
       },
     ],
