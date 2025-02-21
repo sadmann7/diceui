@@ -937,6 +937,13 @@ function onRafSchedule<T extends unknown[]>(
 function useResizeObserver(positioner: Positioner) {
   const [, setLayoutVersion] = React.useState(0);
 
+  if (typeof window === "undefined")
+    return {
+      disconnect: () => {},
+      observe: () => {},
+      unobserve: () => {},
+    };
+
   const createResizeObserver = onDeepMemo(
     [WeakMap],
     (positioner: Positioner, onUpdate: () => void) => {
@@ -951,7 +958,7 @@ function useResizeObserver(positioner: Positioner) {
         updates.length = 0;
       });
 
-      function commonHandler(target: HTMLElement) {
+      function onItemResize(target: ItemElement) {
         const height = target.offsetHeight;
         if (height > 0) {
           const index = itemMap.get(target);
@@ -965,28 +972,31 @@ function useResizeObserver(positioner: Positioner) {
         update();
       }
 
-      const handlers = new Map<number, OnRafScheduleReturn<[HTMLElement]>>();
-      const handleEntries: ResizeObserverCallback = (entries) => {
+      const scheduledItemMap = new Map<
+        number,
+        OnRafScheduleReturn<[ItemElement]>
+      >();
+      function onResizeObserver(entries: ResizeObserverEntry[]) {
         for (const entry of entries) {
           if (!entry) continue;
           const index = itemMap.get(entry.target);
 
           if (index === void 0) continue;
-          let handler = handlers.get(index);
+          let handler = scheduledItemMap.get(index);
           if (!handler) {
-            handler = onRafSchedule(commonHandler);
-            handlers.set(index, handler);
+            handler = onRafSchedule(onItemResize);
+            scheduledItemMap.set(index, handler);
           }
-          handler(entry.target as HTMLElement);
+          handler(entry.target as ItemElement);
         }
-      };
+      }
 
-      const observer = new ResizeObserver(handleEntries);
+      const observer = new ResizeObserver(onResizeObserver);
       const disconnect = observer.disconnect.bind(observer);
       observer.disconnect = () => {
         disconnect();
-        for (const [, handler] of handlers) {
-          handler.cancel();
+        for (const [, scheduleItem] of scheduledItemMap) {
+          scheduleItem.cancel();
         }
       };
 
