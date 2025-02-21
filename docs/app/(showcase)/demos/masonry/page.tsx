@@ -14,7 +14,7 @@ import { Loader } from "lucide-react";
 import { Masonry as MasonryOne } from "masonic";
 import * as React from "react";
 
-const DEFAULT_ITEMS_PER_PAGE = 100;
+const DEFAULT_ITEMS_PER_PAGE = 1000;
 const DEFAULT_MAX_ITEM_COUNT = 5000;
 
 const ITEMS_PER_PAGE_OPTIONS = [50, 100, 500, 1000];
