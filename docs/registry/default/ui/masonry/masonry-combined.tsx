@@ -1134,13 +1134,6 @@ function useThrottle<State>(
   return [state, throttledSetState];
 }
 
-const emptyObj = {};
-
-function useForceUpdate() {
-  const setState = React.useState(emptyObj)[1];
-  return React.useRef(() => setState({})).current;
-}
-
 const ROOT_NAME = "MasonryRoot";
 const VIEWPORT_NAME = "MasonryViewport";
 const ITEM_NAME = "MasonryItem";
@@ -1253,7 +1246,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
           width: containerRef.current.offsetWidth,
         });
       }
-    }, [containerPosition]);
+    }, [containerPosition, size]);
 
     const positioner = usePositioner({
       width: containerPosition.width ?? size.width,

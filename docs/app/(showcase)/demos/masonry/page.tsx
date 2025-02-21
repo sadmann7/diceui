@@ -1,6 +1,7 @@
 "use client";
 
 import { Shell } from "@/components/shell";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -8,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import * as MasonryTwo from "@/registry/default/ui/masonry/masonry-alt";
 import * as MasonryThree from "@/registry/default/ui/masonry/masonry-combined";
 import { Loader } from "lucide-react";
@@ -21,6 +23,7 @@ const ITEMS_PER_PAGE_OPTIONS = [50, 100, 500, 1000];
 const MAX_ITEMS_OPTIONS = [1000, 5000, 10000, 20000];
 
 export default function MasonryPage() {
+  const [sequential, setSequential] = React.useState(false);
   const [itemsPerPage, setItemsPerPage] = React.useState(
     DEFAULT_ITEMS_PER_PAGE,
   );
@@ -90,6 +93,14 @@ export default function MasonryPage() {
     <Shell>
       <div className="flex flex-col gap-8">
         <div className="flex items-center gap-2 self-end">
+          <div className="flex items-center gap-2">
+            <Switch
+              id="sequential-toggle"
+              checked={sequential}
+              onCheckedChange={setSequential}
+            />
+            <Label htmlFor="sequential-toggle">Sequential</Label>
+          </div>
           <Select
             value={itemsPerPage.toString()}
             onValueChange={(value) => {
@@ -127,20 +138,7 @@ export default function MasonryPage() {
             </SelectContent>
           </Select>
         </div>
-        {/* <MasonryTwo
-          items={items}
-          overscanBy={6}
-          columnGutter={10}
-          render={({ data }) => (
-            <div
-              className="rounded-md bg-accent p-4"
-              style={{ height: data.height }}
-            >
-              {data.id + 1}
-            </div>
-          )}
-        /> */}
-        {/* <MasonryThree
+        {/* <MasonryOne
           items={items}
           columnWidth={200}
           columnGutter={10}
@@ -155,20 +153,20 @@ export default function MasonryPage() {
           )}
         /> */}
         {/* <MasonryTwo.Masonry
-            items={items}
-            columnWidth={200}
-            columnGutter={10}
-            overscanBy={6}
-            render={({ data }) => (
-              <div
-                className="rounded-md bg-accent p-4"
-                style={{ height: data.height }}
-              >
-                {data.id + 1}
-              </div>
-            )}
-          /> */}
-        <MasonryThree.Root gap={10} overscan={6}>
+          items={items}
+          columnWidth={200}
+          columnGutter={10}
+          overscanBy={6}
+          render={({ data }) => (
+            <div
+              className="rounded-md bg-accent p-4"
+              style={{ height: data.height }}
+            >
+              {data.id + 1}
+            </div>
+          )}
+        /> */}
+        <MasonryThree.Root gap={10} overscan={6} sequential={sequential}>
           {items.map((item) => (
             <MasonryThree.Item key={item.id} asChild>
               <div
