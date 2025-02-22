@@ -147,20 +147,23 @@ export default function MasonryPage() {
         </DropdownMenuContent>
       </DropdownMenu>
       <div className="flex flex-col gap-8">
-        <ClientOnly fallback={<Skeleton className="h-dvh w-full" />}>
-          <Masonry.Root gap={10} overscan={6} linear={linear}>
-            {items.map((item) => (
-              <Masonry.Item key={item.id} asChild>
-                <div
-                  className="flex items-center justify-center rounded-md bg-accent p-4"
-                  style={{ height: item.height }}
-                >
-                  {item.id + 1}
-                </div>
-              </Masonry.Item>
-            ))}
-          </Masonry.Root>
-        </ClientOnly>
+        <Masonry.Root
+          gap={10}
+          overscan={6}
+          linear={linear}
+          fallback={<Skeleton className="h-dvh w-full" />}
+        >
+          {items.map((item) => (
+            <Masonry.Item key={item.id} asChild>
+              <div
+                className="flex items-center justify-center rounded-md bg-accent p-4"
+                style={{ height: item.height }}
+              >
+                {item.id + 1}
+              </div>
+            </Masonry.Item>
+          ))}
+        </Masonry.Root>
         {hasMore && (
           <div
             ref={loaderRef}
