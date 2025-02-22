@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import * as Editable from "@/registry/default/ui/editable";
-import { Edit, Pencil, Trash2 } from "lucide-react";
+import { Edit, Trash2 } from "lucide-react";
 import * as React from "react";
 
 interface Todo {
@@ -15,10 +15,10 @@ interface Todo {
 
 export default function EditableTodoListDemo() {
   const [todos, setTodos] = React.useState<Todo[]>([
-    { id: "1", text: "Do a ollie", completed: false },
-    { id: "2", text: "Do a kickflip", completed: false },
-    { id: "3", text: "Do a 360 flip", completed: false },
-    { id: "4", text: "Do a 540 flip", completed: false },
+    { id: "1", text: "Ollie", completed: false },
+    { id: "2", text: "Kickflip", completed: false },
+    { id: "3", text: "360 flip", completed: false },
+    { id: "4", text: "540 flip", completed: false },
   ]);
 
   function onDeleteTodo(id: string) {
@@ -41,7 +41,7 @@ export default function EditableTodoListDemo() {
 
   return (
     <div className="flex w-full min-w-0 flex-col gap-2">
-      <span className="font-semibold text-lg">Todo list</span>
+      <span className="font-semibold text-lg">Tricks to learn</span>
       {todos.map((todo) => (
         <div
           key={todo.id}
