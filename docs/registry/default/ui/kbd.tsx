@@ -67,7 +67,7 @@ const KbdRoot = React.forwardRef<HTMLElement, KbdRootProps>(
             "inline-flex w-fit items-center gap-1 font-medium font-mono text-[10px] text-foreground/70 sm:text-[11px]",
             size === "default" && "h-6 rounded px-1.5",
             size === "sm" && "h-5 rounded-sm px-1",
-            size === "lg" && "h-7 rounded-md px-2 ",
+            size === "lg" && "h-7 rounded-md px-2",
             variant === "default" && "bg-accent",
             variant === "outline" && "bg-background px-0",
             variant === "ghost" && "bg-transparent shadow-none",
@@ -190,12 +190,13 @@ const KbdSeparator = React.forwardRef<HTMLSpanElement, KbdSeparatorProps>(
 );
 KbdSeparator.displayName = SEPARATOR_NAME;
 
+const Kbd = KbdRoot;
 const Root = KbdRoot;
 const Key = KbdKey;
 const Separator = KbdSeparator;
 
 export {
-  KbdRoot,
+  Kbd,
   KbdKey,
   KbdSeparator,
   //

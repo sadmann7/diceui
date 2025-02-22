@@ -1,0 +1,19 @@
+{
+  "name": "editable-todo-list-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@radix-ui/react-slot"
+  ],
+  "registryDependencies": [
+    "checkbox",
+    "button"
+  ],
+  "files": [
+    {
+      "path": "examples/editable-todo-list-demo.tsx",
+      "content": "\"use client\";\n\nimport { Button } from \"@/components/ui/button\";\nimport { Checkbox } from \"@/components/ui/checkbox\";\nimport { cn } from \"@/lib/utils\";\nimport * as Editable from \"@/registry/default/ui/editable\";\nimport { Edit, Pencil, Trash2 } from \"lucide-react\";\nimport * as React from \"react\";\n\ninterface Todo {\n  id: string;\n  text: string;\n  completed: boolean;\n}\n\nexport default function EditableTodoListDemo() {\n  const [todos, setTodos] = React.useState<Todo[]>([\n    { id: \"1\", text: \"Do a ollie\", completed: false },\n    { id: \"2\", text: \"Do a kickflip\", completed: false },\n    { id: \"3\", text: \"Do a 360 flip\", completed: false },\n    { id: \"4\", text: \"Do a 540 flip\", completed: false },\n  ]);\n\n  function onDeleteTodo(id: string) {\n    setTodos((prev) => prev.filter((todo) => todo.id !== id));\n  }\n\n  function onToggleTodo(id: string) {\n    setTodos((prev) =>\n      prev.map((todo) =>\n        todo.id === id ? { ...todo, completed: !todo.completed } : todo,\n      ),\n    );\n  }\n\n  function onUpdateTodo(id: string, newText: string) {\n    setTodos((prev) =>\n      prev.map((todo) => (todo.id === id ? { ...todo, text: newText } : todo)),\n    );\n  }\n\n  return (\n    <div className=\"flex w-full min-w-0 flex-col gap-2\">\n      <span className=\"font-semibold text-lg\">Todo list</span>\n      {todos.map((todo) => (\n        <div\n          key={todo.id}\n          className=\"flex items-center gap-2 rounded-lg border bg-card px-4 py-2\"\n        >\n          <Checkbox\n            checked={todo.completed}\n            onCheckedChange={() => onToggleTodo(todo.id)}\n          />\n          <Editable.Root\n            key={todo.id}\n            defaultValue={todo.text}\n            onSubmit={(value) => onUpdateTodo(todo.id, value)}\n            className=\"flex flex-1 flex-row items-center gap-1.5\"\n          >\n            <Editable.Area className=\"flex-1\">\n              <Editable.Preview\n                className={cn(\"w-full rounded-md px-1.5 py-1\", {\n                  \"text-muted-foreground line-through\": todo.completed,\n                })}\n              />\n              <Editable.Input className=\"px-1.5 py-1\" />\n            </Editable.Area>\n            <Editable.Trigger asChild>\n              <Button variant=\"ghost\" size=\"icon\" className=\"size-7\">\n                <Edit />\n              </Button>\n            </Editable.Trigger>\n          </Editable.Root>\n          <Button\n            variant=\"ghost\"\n            size=\"icon\"\n            className=\"size-7 text-destructive\"\n            onClick={() => onDeleteTodo(todo.id)}\n          >\n            <Trash2 />\n          </Button>\n        </div>\n      ))}\n    </div>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

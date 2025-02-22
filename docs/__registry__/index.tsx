@@ -425,6 +425,22 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "editable-todo-list-demo": {
+      name: "editable-todo-list-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["checkbox","button"],
+      files: [{
+        path: "registry/default/examples/editable-todo-list-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/editable-todo-list-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "editable-form-demo": {
       name: "editable-form-demo",
       description: "",
