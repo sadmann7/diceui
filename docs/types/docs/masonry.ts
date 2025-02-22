@@ -1,7 +1,9 @@
+import type { CompositionProps } from "@/types";
 import type { SlotProps } from "@radix-ui/react-slot";
 
 export interface RootProps
-  extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"div">> {
+  extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"div">>,
+    CompositionProps {
   /**
    * The width of each column in pixels.
    * @default 200
@@ -95,19 +97,8 @@ export interface RootProps
    * @default false
    */
   linear?: boolean;
-
-  /**
-   * Whether to merge the root element's props with its child element.
-   * @default false
-   */
-  asChild?: boolean;
 }
 
 export interface ItemProps
-  extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"div">> {
-  /**
-   * Whether to merge the item element's props with its child element.
-   * @default false
-   */
-  asChild?: boolean;
-}
+  extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"div">>,
+    CompositionProps {}

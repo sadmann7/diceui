@@ -1,0 +1,12 @@
+{
+  "name": "portal",
+  "type": "registry:component",
+  "files": [
+    {
+      "path": "components/portal.tsx",
+      "content": "\"use client\";\r\n\r\nimport { Slot, type SlotProps } from \"@radix-ui/react-slot\";\r\nimport * as React from \"react\";\r\nimport * as ReactDOM from \"react-dom\";\r\n\r\ninterface PortalProps extends SlotProps {\r\n  container?: Element | DocumentFragment | null;\r\n}\r\n\r\nconst Portal = React.forwardRef<HTMLDivElement, PortalProps>(\r\n  (props, forwardedRef) => {\r\n    const { container: containerProp, ...portalProps } = props;\r\n\r\n    const [mounted, setMounted] = React.useState(false);\r\n\r\n    React.useLayoutEffect(() => {\r\n      setMounted(true);\r\n    }, []);\r\n\r\n    const container =\r\n      containerProp ?? (mounted ? globalThis.document?.body : null);\r\n\r\n    if (!container) return null;\r\n\r\n    return ReactDOM.createPortal(\r\n      <Slot {...portalProps} ref={forwardedRef} />,\r\n      container,\r\n    );\r\n  },\r\n);\r\n\r\nPortal.displayName = \"Portal\";\r\n\r\nexport { Portal };\r\n\r\nexport type { PortalProps };\r\n",
+      "type": "registry:component",
+      "target": ""
+    }
+  ]
+}
