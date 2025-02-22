@@ -446,7 +446,6 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
       (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         if (isReadOnly) return;
         context.onValueChange(event.target.value);
-
         onAutosize(event.target);
       },
       [context.onValueChange, isReadOnly, onAutosize],
@@ -475,28 +474,11 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
       ],
     );
 
-    const onFocus = React.useCallback(
-      (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        if (context.editing && !isReadOnly) {
-          event.target.select();
-
-          onAutosize(event.target);
-        }
-      },
-      [context.editing, isReadOnly, onAutosize],
-    );
-
-    /**
-     * Focus input on mount for `ssr`
-     */
     const useIsomorphicLayoutEffect =
       typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
-    const [mounted, setMounted] = React.useState(false);
-
     useIsomorphicLayoutEffect(() => {
-      if (mounted || !context.editing || isReadOnly || !inputRef.current)
-        return;
+      if (!context.editing || isReadOnly || !inputRef.current) return;
 
       const frameId = window.requestAnimationFrame(() => {
         if (!inputRef.current) return;
@@ -504,13 +486,12 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
         inputRef.current.focus();
         inputRef.current.select();
         onAutosize(inputRef.current);
-        setMounted(true);
       });
 
       return () => {
         window.cancelAnimationFrame(frameId);
       };
-    }, [mounted, context.editing, isReadOnly, onAutosize]);
+    }, [context.editing, isReadOnly, onAutosize]);
 
     const InputSlot = asChild ? Slot : "input";
 
@@ -524,7 +505,6 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
         disabled={isDisabled}
         readOnly={isReadOnly}
         required={isRequired}
-        autoFocus={context.editing && !isReadOnly}
         {...inputProps}
         id={context.inputId}
         aria-labelledby={context.labelId}
@@ -532,7 +512,6 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
         maxLength={maxLength}
         placeholder={context.placeholder}
         value={context.value}
-        onFocus={composeEventHandlers(inputProps.onFocus, onFocus)}
         onBlur={composeEventHandlers(inputProps.onBlur, onBlur)}
         onChange={composeEventHandlers(inputProps.onChange, onChange)}
         onKeyDown={composeEventHandlers(inputProps.onKeyDown, onKeyDown)}
