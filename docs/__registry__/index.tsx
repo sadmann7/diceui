@@ -425,6 +425,22 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "editable-form-demo": {
+      name: "editable-form-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","form"],
+      files: [{
+        path: "registry/default/examples/editable-form-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/editable-form-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "kanban-demo": {
       name: "kanban-demo",
       description: "",

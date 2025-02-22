@@ -181,6 +181,18 @@ export const examples: Registry = [
     ],
   },
   {
+    name: "editable-form-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "@diceui/form"],
+    registryDependencies: ["button", "form"],
+    files: [
+      {
+        path: "examples/editable-form-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "kanban-demo",
     type: "registry:example",
     dependencies: [

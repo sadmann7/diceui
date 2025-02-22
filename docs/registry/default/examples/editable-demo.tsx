@@ -7,6 +7,7 @@ export default function EditableDemo() {
     <Editable.Root
       defaultValue="Click to edit"
       placeholder="Enter your text here"
+      defaultEditing
     >
       <Editable.Label>Fruit</Editable.Label>
       <Editable.Area>
