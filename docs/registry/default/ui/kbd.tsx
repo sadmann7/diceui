@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
+import { type VariantProps, cva } from "class-variance-authority";
 import * as React from "react";
 
 const ROOT_NAME = "Kbd";
@@ -14,12 +15,34 @@ const KBD_ERROR = {
   [KEY_NAME]: `\`${KEY_NAME}\` must be within \`${ROOT_NAME}\``,
 } as const;
 
-interface KbdContextValue {
-  size?: "default" | "sm" | "lg";
-  variant?: "default" | "outline" | "ghost";
-}
+const kbdVariants = cva(
+  "inline-flex w-fit items-center gap-1 font-medium font-mono text-[10px] text-foreground/70 sm:text-[11px]",
+  {
+    variants: {
+      variant: {
+        default: "bg-accent",
+        outline: "bg-background px-0",
+        ghost: "bg-transparent shadow-none",
+      },
+      size: {
+        default: "h-6 rounded px-1.5",
+        sm: "h-5 rounded-sm px-1",
+        lg: "h-7 rounded-md px-2",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  },
+);
 
-const KbdContext = React.createContext<KbdContextValue | null>(null);
+interface KbdContextValue extends VariantProps<typeof kbdVariants> {}
+
+const KbdContext = React.createContext<KbdContextValue>({
+  size: "default",
+  variant: "default",
+});
 KbdContext.displayName = ROOT_NAME;
 
 function useKbdContext(name: keyof typeof KBD_ERROR) {
@@ -31,8 +54,8 @@ function useKbdContext(name: keyof typeof KBD_ERROR) {
 }
 
 interface KbdRootProps
-  extends KbdContextValue,
-    React.ComponentPropsWithoutRef<"kbd"> {
+  extends React.ComponentPropsWithoutRef<"kbd">,
+    VariantProps<typeof kbdVariants> {
   asChild?: boolean;
 }
 
@@ -63,16 +86,7 @@ const KbdRoot = React.forwardRef<HTMLElement, KbdRootProps>(
           data-slot="kbd"
           {...rootProps}
           ref={forwardedRef}
-          className={cn(
-            "inline-flex w-fit items-center gap-1 font-medium font-mono text-[10px] text-foreground/70 sm:text-[11px]",
-            size === "default" && "h-6 rounded px-1.5",
-            size === "sm" && "h-5 rounded-sm px-1",
-            size === "lg" && "h-7 rounded-md px-2",
-            variant === "default" && "bg-accent",
-            variant === "outline" && "bg-background px-0",
-            variant === "ghost" && "bg-transparent shadow-none",
-            className,
-          )}
+          className={cn(kbdVariants({ variant, size, className }))}
         />
       </KbdContext.Provider>
     );
