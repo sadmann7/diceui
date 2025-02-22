@@ -1,4 +1,4 @@
-import type { EmptyProps } from "@/types";
+import type { CompositionProps, EmptyProps } from "@/types";
 import type {
   DndContextProps,
   DragEndEvent,
@@ -149,20 +149,14 @@ export interface RootProps<T> extends DndContextProps {
   flatCursor?: boolean;
 }
 
-export interface BoardProps extends EmptyProps<"div"> {
+export interface BoardProps extends EmptyProps<"div">, CompositionProps {
   /** The children of the kanban board. */
   children: React.ReactNode;
-
-  /**
-   * Merges the board's props into its immediate child.
-   *
-   * @default false
-   */
-  asChild?: boolean;
 }
 
 export interface ColumnProps
-  extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"div">> {
+  extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"div">>,
+    CompositionProps {
   /**
    * The unique identifier of the column.
    *
@@ -174,36 +168,25 @@ export interface ColumnProps
   children: React.ReactNode;
 
   /**
-   * Whether the column should act as a handle for dragging.
-   *
-   * @default false
-   */
-  asHandle?: boolean;
-
-  /**
-   * Merges the column's props into its immediate child.
-   *
-   * @default false
-   */
-  asChild?: boolean;
-
-  /**
    * Whether the column is disabled.
    *
    * @default false
    */
   disabled?: boolean;
-}
 
-export interface ColumnHandleProps extends EmptyProps<"button"> {
   /**
-   * Merges the handle's props into its immediate child.
+   * Whether the column should act as a handle for dragging.
+   *
    * @default false
    */
-  asChild?: boolean;
+  asHandle?: boolean;
 }
 
-export interface ItemProps extends EmptyProps<"div"> {
+export interface ColumnHandleProps
+  extends EmptyProps<"button">,
+    CompositionProps {}
+
+export interface ItemProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The unique identifier of the item.
    *
@@ -212,35 +195,23 @@ export interface ItemProps extends EmptyProps<"div"> {
   value: UniqueIdentifier;
 
   /**
-   * Whether the item should act as a handle for dragging.
-   *
-   * @default false
-   */
-  asHandle?: boolean;
-
-  /**
-   * Merges the item's props into its immediate child.
-   *
-   * @default false
-   */
-  asChild?: boolean;
-
-  /**
    * Whether the item is disabled.
    *
    * @default false
    */
   disabled?: boolean;
-}
 
-export interface ItemHandleProps extends EmptyProps<"button"> {
   /**
-   * Merges the handle's props into its immediate child.
+   * Whether the item should act as a handle for dragging.
    *
    * @default false
    */
-  asChild?: boolean;
+  asHandle?: boolean;
 }
+
+export interface ItemHandleProps
+  extends EmptyProps<"button">,
+    CompositionProps {}
 
 export interface OverlayProps
   extends Omit<
@@ -252,7 +223,7 @@ export interface OverlayProps
    *
    * @default document.body
    */
-  container?: HTMLElement | DocumentFragment | null;
+  container?: Element | DocumentFragment | null;
 
   /**
    * The drop animation to use for the kanban component.

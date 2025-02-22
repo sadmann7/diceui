@@ -1,0 +1,79 @@
+---
+title: Portal
+description: Renders React elements into a different part of the DOM tree.
+links:
+  api: /docs/utilities/portal#api-reference
+---
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/portal"
+```
+
+### Manual
+
+<Steps>
+  <Step>
+    Install the following dependencies:
+
+    ```package-install
+    @radix-ui/react-slot
+    ```
+  </Step>
+
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource src="./registry/default/components/portal.tsx" />
+  </Step>
+</Steps>
+
+## Usage
+
+```tsx
+import { Portal } from "@/components/portal"
+
+export default function App() {
+  return (
+    <Portal>
+      {/* Content to be rendered in a different part of the DOM */}
+      <div>This will be rendered in the document body by default</div>
+    </Portal>
+  )
+}
+```
+
+You can also specify a custom container:
+
+```tsx
+import { Portal } from "@/components/portal"
+
+export default function App() {
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  return (
+    <>
+      <div ref={containerRef} />
+      <Portal container={containerRef.current}>
+        <div>This will be rendered in the custom container</div>
+      </Portal>
+    </>
+  )
+}
+```
+
+## API Reference
+
+### Portal
+
+A component that renders its children into a different part of the DOM tree using React's `createPortal`.
+
+#### Props
+
+<AutoTypeTable
+  path="./types/docs/utilities.ts"
+  name="PortalProps"
+/>

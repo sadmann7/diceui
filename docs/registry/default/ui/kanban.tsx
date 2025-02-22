@@ -677,14 +677,8 @@ interface KanbanColumnContextValue {
   disabled?: boolean;
 }
 
-const KanbanColumnContext = React.createContext<KanbanColumnContextValue>({
-  id: "",
-  attributes: {},
-  listeners: undefined,
-  setActivatorNodeRef: () => {},
-  isDragging: false,
-  disabled: false,
-});
+const KanbanColumnContext =
+  React.createContext<KanbanColumnContextValue | null>(null);
 KanbanColumnContext.displayName = COLUMN_NAME;
 
 const animateLayoutChanges: AnimateLayoutChanges = (args) =>
@@ -806,6 +800,7 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
   },
 );
 KanbanColumn.displayName = COLUMN_NAME;
+
 interface KanbanColumnHandleProps
   extends React.ComponentPropsWithoutRef<"button"> {
   asChild?: boolean;
@@ -862,14 +857,9 @@ interface KanbanItemContextValue {
   disabled?: boolean;
 }
 
-const KanbanItemContext = React.createContext<KanbanItemContextValue>({
-  id: "",
-  attributes: {},
-  listeners: undefined,
-  setActivatorNodeRef: () => {},
-  isDragging: false,
-  disabled: false,
-});
+const KanbanItemContext = React.createContext<KanbanItemContextValue | null>(
+  null,
+);
 KanbanItemContext.displayName = ITEM_NAME;
 
 interface KanbanItemProps extends React.ComponentPropsWithoutRef<"div"> {
@@ -1032,7 +1022,7 @@ const dropAnimation: DropAnimation = {
 
 interface KanbanOverlayProps
   extends Omit<React.ComponentPropsWithoutRef<typeof DragOverlay>, "children"> {
-  container?: HTMLElement | DocumentFragment | null;
+  container?: Element | DocumentFragment | null;
   children?:
     | ((params: {
         value: UniqueIdentifier;

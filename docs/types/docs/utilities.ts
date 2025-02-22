@@ -1,3 +1,5 @@
+import type { CompositionProps } from "@/types";
+
 export interface ClientOnlyProps {
   /**
    * Component to show before client-side hydration.
@@ -20,13 +22,15 @@ export interface DirectionProviderProps {
   dir: "ltr" | "rtl";
 }
 
-export interface VisuallyHiddenProps {
+export interface PortalProps extends CompositionProps {
   /**
-   * Whether to merge props with child component.
-   * @default false
+   * The container to mount the portal into.
+   * @default document.body
    */
-  asChild?: boolean;
+  container?: Element | DocumentFragment | null;
 }
+
+export interface VisuallyHiddenProps extends CompositionProps {}
 
 export interface ComposeEventHandlersProps<E> {
   /** The original event handler that will be called first. */

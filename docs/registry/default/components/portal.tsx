@@ -1,21 +1,22 @@
+"use client";
+
+import { Slot, type SlotProps } from "@radix-ui/react-slot";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { useMounted } from "../hooks/use-mounted";
-import { Primitive } from "./primitive";
 
-interface PortalProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
-  /**
-   * The container to mount the portal into.
-   * @default document.body
-   */
+interface PortalProps extends SlotProps {
   container?: Element | DocumentFragment | null;
 }
 
 const Portal = React.forwardRef<HTMLDivElement, PortalProps>(
   (props, forwardedRef) => {
     const { container: containerProp, ...portalProps } = props;
-    const mounted = useMounted();
+
+    const [mounted, setMounted] = React.useState(false);
+
+    React.useLayoutEffect(() => {
+      setMounted(true);
+    }, []);
 
     const container =
       containerProp ?? (mounted ? globalThis.document?.body : null);
@@ -23,7 +24,7 @@ const Portal = React.forwardRef<HTMLDivElement, PortalProps>(
     if (!container) return null;
 
     return ReactDOM.createPortal(
-      <Primitive.div {...portalProps} ref={forwardedRef} />,
+      <Slot {...portalProps} ref={forwardedRef} />,
       container,
     );
   },

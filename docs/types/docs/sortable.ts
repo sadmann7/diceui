@@ -6,7 +6,7 @@ import type {
   UniqueIdentifier,
 } from "@dnd-kit/core";
 
-import type { EmptyProps } from "@/types";
+import type { CompositionProps, EmptyProps } from "@/types";
 import type { SortableContextProps } from "@dnd-kit/sortable";
 
 export interface RootProps<TData> extends DndContextProps {
@@ -152,7 +152,7 @@ export interface RootProps<TData> extends DndContextProps {
   flatCursor?: boolean;
 }
 
-export interface ContentProps extends EmptyProps<"div"> {
+export interface ContentProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The strategy to use for sorting the items.
    *
@@ -168,14 +168,16 @@ export interface ContentProps extends EmptyProps<"div"> {
   children: React.ReactNode;
 
   /**
-   * Merges the content's props into its immediate child.
+   * Whether to render the children without a slot.
+   *
+   * When `true`, the `asChild` prop will be ignored.
    *
    * @default false
    */
-  asChild?: boolean;
+  withoutSlot?: boolean;
 }
 
-export interface ItemProps extends EmptyProps<"div"> {
+export interface ItemProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The unique identifier of the item.
    *
@@ -184,35 +186,23 @@ export interface ItemProps extends EmptyProps<"div"> {
   value: UniqueIdentifier;
 
   /**
-   * Whether the item should act as a handle for dragging.
-   *
-   * @default false
-   */
-  asHandle?: boolean;
-
-  /**
-   * Merges the item's props into its immediate child.
-   *
-   * @default false
-   */
-  asChild?: boolean;
-
-  /**
    * Whether the item is disabled.
    *
    * @default false
    */
   disabled?: boolean;
-}
 
-export interface ItemHandleProps extends EmptyProps<"button"> {
   /**
-   * Merges the item's props into its immediate child.
+   * Whether the item should act as a handle for dragging.
    *
    * @default false
    */
-  asChild?: boolean;
+  asHandle?: boolean;
 }
+
+export interface ItemHandleProps
+  extends EmptyProps<"button">,
+    CompositionProps {}
 
 export interface OverlayProps
   extends Omit<
@@ -224,7 +214,7 @@ export interface OverlayProps
    *
    * @default document.body
    */
-  container?: HTMLElement | DocumentFragment | null;
+  container?: Element | DocumentFragment | null;
 
   /**
    * The drop animation to use for the sortable component.

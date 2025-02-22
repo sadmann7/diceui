@@ -22,6 +22,16 @@ export const components: Registry = [
     ],
   },
   {
+    name: "portal",
+    type: "registry:component",
+    files: [
+      {
+        path: "components/portal.tsx",
+        type: "registry:component",
+      },
+    ],
+  },
+  {
     name: "visually-hidden",
     type: "registry:component",
     dependencies: ["@radix-ui/react-slot"],

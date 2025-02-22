@@ -2,9 +2,6 @@
 
 import * as React from "react";
 
-const useIsomorphicLayoutEffect =
-  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
-
 interface ClientOnlyProps {
   children: React.ReactNode;
   fallback?: React.ReactNode;
@@ -13,7 +10,7 @@ interface ClientOnlyProps {
 function ClientOnly({ children, fallback = null }: ClientOnlyProps) {
   const [mounted, setMounted] = React.useState(false);
 
-  useIsomorphicLayoutEffect(() => {
+  React.useLayoutEffect(() => {
     setMounted(true);
   }, []);
 

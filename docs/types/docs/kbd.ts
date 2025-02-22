@@ -1,6 +1,6 @@
-import type { EmptyProps } from "@/types";
+import type { CompositionProps, EmptyProps } from "@/types";
 
-export interface RootProps extends EmptyProps<"kbd"> {
+export interface RootProps extends EmptyProps<"kbd">, CompositionProps {
   /**
    * The size of the keyboard key.
    * @default "default"
@@ -12,15 +12,9 @@ export interface RootProps extends EmptyProps<"kbd"> {
    * @default "default"
    */
   variant?: "default" | "outline" | "ghost";
-
-  /**
-   * Whether to merge props with child component.
-   * @default false
-   */
-  asChild?: boolean;
 }
 
-export interface KeyProps extends EmptyProps<"span"> {
+export interface KeyProps extends EmptyProps<"span">, CompositionProps {
   /**
    * Description for the key. If not provided, will try to use the predefined description from KEY_DESCRIPTIONS.
    * @example
@@ -28,18 +22,6 @@ export interface KeyProps extends EmptyProps<"span"> {
    * <KbdKey>⌘</KbdKey> // Uses built-in description
    */
   description?: string;
-
-  /**
-   * Whether to merge props with child component.
-   * @default false
-   */
-  asChild?: boolean;
 }
 
-export interface SeparatorProps extends EmptyProps<"span"> {
-  /**
-   * Whether to merge props with child component.
-   * @default false
-   */
-  asChild?: boolean;
-}
+export interface SeparatorProps extends EmptyProps<"span">, CompositionProps {}

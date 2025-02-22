@@ -761,6 +761,22 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "portal": {
+      name: "portal",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/components/portal.tsx",
+        type: "registry:component",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/components/portal.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "visually-hidden": {
       name: "visually-hidden",
       description: "",

@@ -4,7 +4,7 @@
   "files": [
     {
       "path": "components/client-only.tsx",
-      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nconst useIsomorphicLayoutEffect =\n  typeof window !== \"undefined\" ? React.useLayoutEffect : React.useEffect;\n\ninterface ClientOnlyProps {\n  children: React.ReactNode;\n  fallback?: React.ReactNode;\n}\n\nfunction ClientOnly({ children, fallback = null }: ClientOnlyProps) {\n  const [mounted, setMounted] = React.useState(false);\n\n  useIsomorphicLayoutEffect(() => {\n    setMounted(true);\n  }, []);\n\n  if (!mounted) return fallback;\n\n  return children;\n}\n\nexport { ClientOnly };\n",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\ninterface ClientOnlyProps {\n  children: React.ReactNode;\n  fallback?: React.ReactNode;\n}\n\nfunction ClientOnly({ children, fallback = null }: ClientOnlyProps) {\n  const [mounted, setMounted] = React.useState(false);\n\n  React.useLayoutEffect(() => {\n    setMounted(true);\n  }, []);\n\n  if (!mounted) return fallback;\n\n  return children;\n}\n\nexport { ClientOnly };\n",
       "type": "registry:component",
       "target": ""
     }
