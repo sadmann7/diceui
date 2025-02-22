@@ -166,6 +166,15 @@ export interface ContentProps extends EmptyProps<"div">, CompositionProps {
 
   /** The children of the sortable component. */
   children: React.ReactNode;
+
+  /**
+   * Whether to render the children without a slot.
+   *
+   * When `true`, the `asChild` prop will be ignored.
+   *
+   * @default false
+   */
+  withoutSlot?: boolean;
 }
 
 export interface ItemProps extends EmptyProps<"div">, CompositionProps {

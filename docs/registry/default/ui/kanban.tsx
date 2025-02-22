@@ -189,8 +189,6 @@ function useKanbanContext(name: keyof typeof KANBAN_ERROR) {
   return context;
 }
 
-interface DivProps extends React.ComponentPropsWithoutRef<"div"> {}
-
 interface GetItemValue<T> {
   /**
    * Callback that returns a unique identifier for each kanban item. Required for array of objects.
@@ -626,7 +624,7 @@ function Kanban<T>(props: KanbanProps<T>) {
 const KanbanBoardContext = React.createContext<boolean>(false);
 KanbanBoardContext.displayName = BOARD_NAME;
 
-interface KanbanBoardProps extends DivProps {
+interface KanbanBoardProps extends React.ComponentPropsWithoutRef<"div"> {
   children: React.ReactNode;
   asChild?: boolean;
 }
@@ -686,7 +684,7 @@ KanbanColumnContext.displayName = COLUMN_NAME;
 const animateLayoutChanges: AnimateLayoutChanges = (args) =>
   defaultAnimateLayoutChanges({ ...args, wasDragging: true });
 
-interface KanbanColumnProps extends DivProps {
+interface KanbanColumnProps extends React.ComponentPropsWithoutRef<"div"> {
   value: UniqueIdentifier;
   children: React.ReactNode;
   asChild?: boolean;
@@ -864,7 +862,7 @@ const KanbanItemContext = React.createContext<KanbanItemContextValue | null>(
 );
 KanbanItemContext.displayName = ITEM_NAME;
 
-interface KanbanItemProps extends DivProps {
+interface KanbanItemProps extends React.ComponentPropsWithoutRef<"div"> {
   value: UniqueIdentifier;
   asHandle?: boolean;
   asChild?: boolean;
@@ -1024,7 +1022,7 @@ const dropAnimation: DropAnimation = {
 
 interface KanbanOverlayProps
   extends Omit<React.ComponentPropsWithoutRef<typeof DragOverlay>, "children"> {
-  container?: HTMLElement | DocumentFragment | null;
+  container?: Element | DocumentFragment | null;
   children?:
     | ((params: {
         value: UniqueIdentifier;

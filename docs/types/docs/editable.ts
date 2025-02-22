@@ -1,6 +1,6 @@
-import type { EmptyProps } from "@/types";
+import type { CompositionProps, EmptyProps } from "@/types";
 
-export interface RootProps extends EmptyProps<"div"> {
+export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The unique identifier for the editable component.
    * @default React.useId()
@@ -79,12 +79,6 @@ export interface RootProps extends EmptyProps<"div"> {
   triggerMode?: "click" | "dblclick" | "focus";
 
   /**
-   * Whether to merge props with child component.
-   * @default false
-   */
-  asChild?: boolean;
-
-  /**
    * Whether the input should automatically resize based on content.
    * @default false
    */
@@ -115,45 +109,15 @@ export interface RootProps extends EmptyProps<"div"> {
   invalid?: boolean;
 }
 
-export interface LabelProps extends EmptyProps<"label"> {
-  /**
-   * Whether to merge props with child component.
-   * @default false
-   */
-  asChild?: boolean;
-}
+export interface LabelProps extends EmptyProps<"label">, CompositionProps {}
 
-export interface AreaProps extends EmptyProps<"div"> {
-  /**
-   * Whether to merge props with child component.
-   * @default false
-   */
-  asChild?: boolean;
-}
+export interface AreaProps extends EmptyProps<"div">, CompositionProps {}
 
-export interface PreviewProps extends EmptyProps<"div"> {
-  /**
-   * Whether to merge props with child component.
-   * @default false
-   */
-  asChild?: boolean;
-}
+export interface PreviewProps extends EmptyProps<"div">, CompositionProps {}
 
-export interface InputProps extends EmptyProps<"input"> {
-  /**
-   * Whether to merge props with child component.
-   * @default false
-   */
-  asChild?: boolean;
-}
+export interface InputProps extends EmptyProps<"input">, CompositionProps {}
 
-export interface TriggerProps extends EmptyProps<"button"> {
-  /**
-   * Whether to merge props with child component.
-   * @default false
-   */
-  asChild?: boolean;
-
+export interface TriggerProps extends EmptyProps<"button">, CompositionProps {
   /**
    * Whether to force mount the trigger.
    * @default false
@@ -161,13 +125,7 @@ export interface TriggerProps extends EmptyProps<"button"> {
   forceMount?: boolean;
 }
 
-export interface ToolbarProps extends EmptyProps<"div"> {
-  /**
-   * Whether to merge props with child component.
-   * @default false
-   */
-  asChild?: boolean;
-
+export interface ToolbarProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The orientation of the toolbar.
    * @default "horizontal"
@@ -175,18 +133,6 @@ export interface ToolbarProps extends EmptyProps<"div"> {
   orientation?: "horizontal" | "vertical";
 }
 
-export interface SubmitProps extends EmptyProps<"button"> {
-  /**
-   * Whether to merge props with child component.
-   * @default false
-   */
-  asChild?: boolean;
-}
+export interface SubmitProps extends EmptyProps<"button">, CompositionProps {}
 
-export interface CancelProps extends EmptyProps<"button"> {
-  /**
-   * Whether to merge props with child component.
-   * @default false
-   */
-  asChild?: boolean;
-}
+export interface CancelProps extends EmptyProps<"button">, CompositionProps {}

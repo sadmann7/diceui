@@ -96,8 +96,6 @@ function useSortableContext(name: keyof typeof SORTABLE_ERROR) {
   return context;
 }
 
-interface DivProps extends React.ComponentPropsWithoutRef<"div"> {}
-
 interface GetItemValue<T> {
   /**
    * Callback that returns a unique identifier for each sortable item. Required for array of objects.
@@ -145,10 +143,6 @@ function Sortable<T>(props: SortableProps<T>) {
     [orientation],
   );
 
-  const items = React.useMemo(() => {
-    return value.map((item) => getItemValue(item));
-  }, [value]);
-
   const getItemValue = React.useCallback(
     (item: T): UniqueIdentifier => {
       if (typeof item === "object" && !getItemValueProp) {
@@ -162,6 +156,10 @@ function Sortable<T>(props: SortableProps<T>) {
     },
     [getItemValueProp],
   );
+
+  const items = React.useMemo(() => {
+    return value.map((item) => getItemValue(item));
+  }, [value, getItemValue]);
 
   const onDragEnd = React.useCallback(
     (event: DragEndEvent) => {
@@ -291,7 +289,7 @@ function Sortable<T>(props: SortableProps<T>) {
 const SortableContentContext = React.createContext<boolean>(false);
 SortableContentContext.displayName = CONTENT_NAME;
 
-interface SortableContentProps extends DivProps {
+interface SortableContentProps extends React.ComponentPropsWithoutRef<"div"> {
   strategy?: SortableContextProps["strategy"];
   children: React.ReactNode;
   asChild?: boolean;
@@ -344,7 +342,7 @@ const SortableItemContext =
   React.createContext<SortableItemContextValue | null>(null);
 SortableItemContext.displayName = ITEM_NAME;
 
-interface SortableItemProps extends DivProps {
+interface SortableItemProps extends React.ComponentPropsWithoutRef<"div"> {
   value: UniqueIdentifier;
   asHandle?: boolean;
   asChild?: boolean;

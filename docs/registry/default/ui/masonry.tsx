@@ -433,10 +433,10 @@ interface Cache<K = CacheKey, V = unknown> {
 }
 
 function onDeepMemo<T extends unknown[], U>(
-  mapConstructors: CacheConstructor[],
+  constructors: CacheConstructor[],
   fn: (...args: T) => U,
 ): (...args: T) => U {
-  if (!mapConstructors.length || !mapConstructors[0]) {
+  if (!constructors.length || !constructors[0]) {
     throw new Error("At least one constructor is required");
   }
 
@@ -462,8 +462,8 @@ function onDeepMemo<T extends unknown[], U>(
     };
   }
 
-  const depth = mapConstructors.length;
-  const baseCache = createCache(mapConstructors[0]);
+  const depth = constructors.length;
+  const baseCache = createCache(constructors[0]);
 
   let base: Cache | undefined;
   let map: Cache | undefined;
@@ -494,12 +494,12 @@ function onDeepMemo<T extends unknown[], U>(
       } else {
         base = baseCache.get(args[0] as CacheKey) as Cache | undefined;
         if (!base) {
-          if (!mapConstructors[1]) {
+          if (!constructors[1]) {
             throw new Error(
               "Second constructor is required for non-single depth cache",
             );
           }
-          map = createCache(mapConstructors[1]);
+          map = createCache(constructors[1]);
           map.set(args[1] as CacheKey, value);
           baseCache.set(args[0] as CacheKey, map);
         } else {
@@ -513,7 +513,7 @@ function onDeepMemo<T extends unknown[], U>(
     for (i = 0; i < depth - 1; i++) {
       map = node.get(args[i] as CacheKey) as Cache | undefined;
       if (!map) {
-        const nextConstructor = mapConstructors[i + 1];
+        const nextConstructor = constructors[i + 1];
         if (!nextConstructor) {
           throw new Error(`Constructor at index ${i + 1} is required`);
         }
