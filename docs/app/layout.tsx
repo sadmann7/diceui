@@ -46,6 +46,9 @@ export const metadata: Metadata = {
     images: [`${siteConfig.url}/og.jpg`],
     creator: "@sadmann17",
   },
+  icons: {
+    icon: "/icon.png",
+  },
 };
 
 export const viewport: Viewport = {

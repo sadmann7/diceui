@@ -5,8 +5,8 @@
   "scripts": {
     "build": "next build",
     "build:registry": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/build-registry.mts",
-    "dev": "next dev",
     "postinstall": "pnpm --filter \"@diceui/*\" build && fumadocs-mdx",
+    "dev": "next dev",
     "start": "next start",
     "lint": "biome check .",
     "lint:fix": "biome check . --write",
@@ -32,6 +32,7 @@
     "@radix-ui/react-scroll-area": "^1.2.3",
     "@radix-ui/react-select": "^2.1.6",
     "@radix-ui/react-slot": "^1.1.2",
+    "@radix-ui/react-switch": "^1.1.3",
     "@radix-ui/react-tabs": "^1.1.3",
     "@radix-ui/react-tooltip": "^1.1.8",
     "@tailwindcss/upgrade": "^4.0.5",

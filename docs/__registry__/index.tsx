@@ -521,22 +521,6 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
-    "masonry-responsive-demo": {
-      name: "masonry-responsive-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["skeleton"],
-      files: [{
-        path: "registry/default/examples/masonry-responsive-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/masonry-responsive-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
     "masonry-linear-demo": {
       name: "masonry-linear-demo",
       description: "",

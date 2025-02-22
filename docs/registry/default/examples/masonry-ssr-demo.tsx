@@ -1,6 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import * as Masonry from "@/registry/default/ui/masonry";
-import { Suspense } from "react";
 
 interface SkateboardTrick {
   id: string;
@@ -69,55 +68,34 @@ function SkeletonCard() {
   );
 }
 
-function TricksGrid() {
-  const tricks = getTricks();
-
-  return (
-    <Masonry.Root
-      columnCount={{ initial: 1, sm: 2, md: 3 }}
-      defaultColumnCount={3}
-      gap={{ initial: 4, sm: 8, md: 12 }}
-      defaultGap={12}
-      className="w-full"
-    >
-      {tricks.map((trick) => (
-        <Masonry.Item
-          key={trick.id}
-          fallback={<SkeletonCard />}
-          className="relative overflow-hidden transition-all duration-300 hover:scale-[1.02]"
-        >
-          <TrickCard trick={trick} />
-        </Masonry.Item>
-      ))}
-    </Masonry.Root>
-  );
-}
-
 export default function MasonrySSRDemo() {
+  const tricks = getTricks();
   const skeletonIds = Array.from(
     { length: 6 },
     () => `skeleton-${Math.random().toString(36).substring(2, 9)}`,
   );
 
   return (
-    <Suspense
+    <Masonry.Root
+      columnCount={3}
+      gap={{ column: 8, row: 8 }}
+      className="w-full"
       fallback={
-        <Masonry.Root
-          columnCount={{ initial: 1, sm: 2, md: 3 }}
-          defaultColumnCount={3}
-          gap={{ initial: 4, sm: 8, md: 12 }}
-          defaultGap={12}
-          className="w-full"
-        >
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
           {skeletonIds.map((id) => (
-            <Masonry.Item key={id} fallback={<SkeletonCard />}>
-              <SkeletonCard />
-            </Masonry.Item>
+            <SkeletonCard key={id} />
           ))}
-        </Masonry.Root>
+        </div>
       }
     >
-      <TricksGrid />
-    </Suspense>
+      {tricks.map((trick) => (
+        <Masonry.Item
+          key={trick.id}
+          className="relative overflow-hidden transition-all duration-300 hover:scale-[1.02]"
+        >
+          <TrickCard trick={trick} />
+        </Masonry.Item>
+      ))}
+    </Masonry.Root>
   );
 }

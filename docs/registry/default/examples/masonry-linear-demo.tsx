@@ -38,17 +38,16 @@ const items = [
 export default function MasonryLinearDemo() {
   return (
     <Masonry.Root
-      columnCount={{ initial: 1, md: 2, lg: 4 }}
-      defaultColumnCount={4}
-      gap={12}
+      gap={10}
+      columnWidth={140}
       linear
+      fallback={<Skeleton className="h-72 w-full" />}
     >
       {items.map((item) => (
         <Masonry.Item
           key={item.id}
           className="flex items-center justify-center rounded-lg border bg-card text-card-foreground shadow-xs"
           style={{ aspectRatio: item.aspectRatio }}
-          fallback={<Skeleton className="aspect-square size-full" />}
         >
           <span className="font-medium text-2xl">{item.number}</span>
         </Masonry.Item>

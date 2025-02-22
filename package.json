@@ -6,11 +6,11 @@
   "workspaces": ["docs", "packages/*"],
   "scripts": {
     "clean": "rimraf --glob **/node_modules **/dist **/.source **/.turbo **/.next **/pnpm-lock.yaml **/.tsbuildinfo",
-    "dev": "turbo run dev",
     "build": "turbo run build",
     "build:registry": "pnpm --filter=docs build:registry --loglevel silent",
     "build:packages": "pnpm --filter \"@diceui/*\" build",
-    "content:generate": "pnpm --filter=docs content:generate",
+    "dev": "turbo run dev",
+    "docs:dev": "pnpm --filter=docs dev",
     "lint": "biome check .",
     "lint:fix": "biome check . --write",
     "typecheck": "turbo typecheck",
