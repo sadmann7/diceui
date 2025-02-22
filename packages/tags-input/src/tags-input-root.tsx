@@ -481,22 +481,23 @@ const TagsInputRoot = React.forwardRef<
           break;
         }
         case "Escape": {
-          setHighlightedIndex(null);
-          setEditingIndex(null);
+          if (highlightedIndex !== null) setHighlightedIndex(null);
+          if (editingIndex !== null) setEditingIndex(null);
           requestAnimationFrame(() => target.setSelectionRange(0, 0));
           break;
         }
       }
     },
     [
+      dir,
+      editingIndex,
       highlightedIndex,
       value,
       onItemRemove,
-      dir,
+      getEnabledItems,
       editable,
       disabled,
       loop,
-      getEnabledItems,
     ],
   );
 

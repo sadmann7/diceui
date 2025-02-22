@@ -66,6 +66,7 @@ function TagsInputEditableItemText() {
       } else if (event.key === "Escape") {
         setEditValue(itemContext.displayValue);
         context.setEditingIndex(null);
+        context.setHighlightedIndex(itemContext.index);
         context.inputRef.current?.focus();
       }
       event.stopPropagation();
@@ -78,6 +79,8 @@ function TagsInputEditableItemText() {
       context.inputRef.current?.focus,
       editValue,
       itemContext.value,
+      context.setHighlightedIndex,
+      itemContext.index,
     ],
   );
 
