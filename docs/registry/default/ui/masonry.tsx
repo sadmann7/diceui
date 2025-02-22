@@ -1169,6 +1169,7 @@ interface MasonryContextValue {
   itemHeight: number;
   overscan: number;
   isScrolling?: boolean;
+  fallback?: React.ReactNode;
 }
 
 const MasonryContext = React.createContext<MasonryContextValue | null>(null);
@@ -1194,6 +1195,7 @@ interface MasonryRootProps extends DivProps {
   defaultHeight?: number;
   overscan?: number;
   scrollFps?: number;
+  fallback?: React.ReactNode;
   linear?: boolean;
   asChild?: boolean;
 }
@@ -1210,6 +1212,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
       defaultHeight,
       overscan = OVERSCAN,
       scrollFps = SCROLL_FPS,
+      fallback,
       linear = false,
       asChild,
       children,
@@ -1300,6 +1303,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
         windowHeight: size.height,
         itemHeight,
         overscan,
+        fallback,
         isScrolling,
       }),
       [
@@ -1310,6 +1314,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
         size.height,
         itemHeight,
         overscan,
+        fallback,
         isScrolling,
       ],
     );
@@ -1347,6 +1352,11 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, DivProps>(
     const context = useMasonryContext(VIEWPORT_NAME);
     const [layoutVersion, setLayoutVersion] = React.useState(0);
     const rafId = React.useRef<number | null>(null);
+    const [mounted, setMounted] = React.useState(false);
+
+    useIsomorphicLayoutEffect(() => {
+      setMounted(true);
+    }, []);
 
     let startIndex = 0;
     let stopIndex: number | undefined;
@@ -1419,7 +1429,7 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, DivProps>(
       }
     });
 
-    if (layoutOutdated) {
+    if (layoutOutdated && mounted) {
       const batchSize = Math.min(
         itemCount - measuredCount,
         Math.ceil(
@@ -1453,7 +1463,7 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, DivProps>(
     }
 
     React.useEffect(() => {
-      if (layoutOutdated) {
+      if (layoutOutdated && mounted) {
         if (rafId.current) {
           cancelAnimationFrame(rafId.current);
         }
@@ -1466,7 +1476,7 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, DivProps>(
           cancelAnimationFrame(rafId.current);
         }
       };
-    }, [layoutOutdated]);
+    }, [layoutOutdated, mounted]);
 
     const estimatedHeight = React.useMemo(() => {
       const measuredHeight = context.positioner.estimateHeight(
@@ -1497,12 +1507,16 @@ const MasonryViewport = React.forwardRef<HTMLDivElement, DivProps>(
       [context.isScrolling, estimatedHeight, style],
     );
 
+    if (!mounted && context.fallback) {
+      return context.fallback;
+    }
+
     return (
       <div
         {...viewportProps}
         ref={forwardedRef}
         style={containerStyle}
-        data-layout-version={layoutVersion}
+        data-version={mounted ? layoutVersion : undefined}
       >
         {positionedChildren}
       </div>

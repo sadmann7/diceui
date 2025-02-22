@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import * as Masonry from "@/registry/default/ui/masonry";
 import * as React from "react";
 
@@ -41,7 +42,11 @@ const items = [
 
 export default function MasonryDemo() {
   return (
-    <Masonry.Root columnCount={3} gap={12}>
+    <Masonry.Root
+      columnCount={3}
+      gap={12}
+      fallback={<Skeleton className="h-72 w-full" />}
+    >
       {items.map((item) => (
         <Masonry.Item key={item.id} asChild>
           <div className="flex flex-col gap-1 rounded-md border bg-card p-4 text-card-foreground shadow-xs">

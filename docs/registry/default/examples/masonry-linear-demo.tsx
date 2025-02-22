@@ -37,7 +37,7 @@ const items = [
 
 export default function MasonryLinearDemo() {
   return (
-    <Masonry.Root gap={12} linear>
+    <Masonry.Root gap={10} columnWidth={140} linear>
       {items.map((item) => (
         <Masonry.Item
           key={item.id}
