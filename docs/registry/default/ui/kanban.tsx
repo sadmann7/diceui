@@ -189,6 +189,8 @@ function useKanbanContext(name: keyof typeof KANBAN_ERROR) {
   return context;
 }
 
+interface DivProps extends React.ComponentPropsWithoutRef<"div"> {}
+
 interface GetItemValue<T> {
   /**
    * Callback that returns a unique identifier for each kanban item. Required for array of objects.
@@ -624,7 +626,7 @@ function Kanban<T>(props: KanbanProps<T>) {
 const KanbanBoardContext = React.createContext<boolean>(false);
 KanbanBoardContext.displayName = BOARD_NAME;
 
-interface KanbanBoardProps extends React.ComponentPropsWithoutRef<"div"> {
+interface KanbanBoardProps extends DivProps {
   children: React.ReactNode;
   asChild?: boolean;
 }
@@ -677,20 +679,14 @@ interface KanbanColumnContextValue {
   disabled?: boolean;
 }
 
-const KanbanColumnContext = React.createContext<KanbanColumnContextValue>({
-  id: "",
-  attributes: {},
-  listeners: undefined,
-  setActivatorNodeRef: () => {},
-  isDragging: false,
-  disabled: false,
-});
+const KanbanColumnContext =
+  React.createContext<KanbanColumnContextValue | null>(null);
 KanbanColumnContext.displayName = COLUMN_NAME;
 
 const animateLayoutChanges: AnimateLayoutChanges = (args) =>
   defaultAnimateLayoutChanges({ ...args, wasDragging: true });
 
-interface KanbanColumnProps extends React.ComponentPropsWithoutRef<"div"> {
+interface KanbanColumnProps extends DivProps {
   value: UniqueIdentifier;
   children: React.ReactNode;
   asChild?: boolean;
@@ -806,6 +802,7 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
   },
 );
 KanbanColumn.displayName = COLUMN_NAME;
+
 interface KanbanColumnHandleProps
   extends React.ComponentPropsWithoutRef<"button"> {
   asChild?: boolean;
@@ -862,17 +859,12 @@ interface KanbanItemContextValue {
   disabled?: boolean;
 }
 
-const KanbanItemContext = React.createContext<KanbanItemContextValue>({
-  id: "",
-  attributes: {},
-  listeners: undefined,
-  setActivatorNodeRef: () => {},
-  isDragging: false,
-  disabled: false,
-});
+const KanbanItemContext = React.createContext<KanbanItemContextValue | null>(
+  null,
+);
 KanbanItemContext.displayName = ITEM_NAME;
 
-interface KanbanItemProps extends React.ComponentPropsWithoutRef<"div"> {
+interface KanbanItemProps extends DivProps {
   value: UniqueIdentifier;
   asHandle?: boolean;
   asChild?: boolean;

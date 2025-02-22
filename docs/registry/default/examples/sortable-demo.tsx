@@ -46,7 +46,10 @@ export default function SortableDemo() {
       getItemValue={(item) => item.id}
       orientation="mixed"
     >
-      <Sortable.Content className="grid auto-rows-fr grid-cols-3 gap-2.5">
+      <Sortable.Content
+        className="grid auto-rows-fr grid-cols-3 gap-2.5"
+        withoutSlot
+      >
         {tricks.map((trick) => (
           <Sortable.Item key={trick.id} value={trick.id} asChild asHandle>
             <div className="flex size-full flex-col gap-1 rounded-md border bg-zinc-100 p-4 text-foreground shadow-sm dark:bg-zinc-900">
