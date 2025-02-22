@@ -65,7 +65,7 @@ function useEditableContext(name: keyof typeof EDITABLE_ERROR) {
 
 type RootElement = React.ComponentRef<typeof Editable>;
 
-interface EditableProps
+interface EditableRootProps
   extends Omit<React.ComponentPropsWithoutRef<"div">, "onSubmit"> {
   id?: string;
   defaultValue?: string;
@@ -79,8 +79,8 @@ interface EditableProps
   onSubmit?: (value: string) => void;
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
   dir?: "ltr" | "rtl";
-  name?: string;
   maxLength?: number;
+  name?: string;
   placeholder?: string;
   triggerMode?: EditableContextValue["triggerMode"];
   asChild?: boolean;
@@ -91,7 +91,7 @@ interface EditableProps
   invalid?: boolean;
 }
 
-const Editable = React.forwardRef<HTMLDivElement, EditableProps>(
+const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
   (props, forwardedRef) => {
     const {
       id = React.useId(),
@@ -106,8 +106,8 @@ const Editable = React.forwardRef<HTMLDivElement, EditableProps>(
       onSubmit: onSubmitProp,
       onEscapeKeyDown,
       dir = "ltr",
-      name,
       maxLength,
+      name,
       placeholder,
       triggerMode = "click",
       asChild,
@@ -269,7 +269,7 @@ const Editable = React.forwardRef<HTMLDivElement, EditableProps>(
     );
   },
 );
-Editable.displayName = ROOT_NAME;
+EditableRoot.displayName = ROOT_NAME;
 
 interface EditableLabelProps extends React.ComponentPropsWithoutRef<"label"> {
   asChild?: boolean;
@@ -324,7 +324,7 @@ const EditableArea = React.forwardRef<HTMLDivElement, EditableAreaProps>(
         {...areaProps}
         ref={forwardedRef}
         className={cn(
-          "relative inline-block data-disabled:cursor-not-allowed data-disabled:opacity-50",
+          "relative inline-block min-w-0 data-disabled:cursor-not-allowed data-disabled:opacity-50",
           className,
         )}
       />
@@ -736,7 +736,8 @@ function VisuallyHiddenInput<T extends HTMLElement>(
   );
 }
 
-const Root = Editable;
+const Editable = EditableRoot;
+const Root = EditableRoot;
 const Label = EditableLabel;
 const Area = EditableArea;
 const Preview = EditablePreview;
