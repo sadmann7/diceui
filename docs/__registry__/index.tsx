@@ -537,6 +537,22 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "masonry-ssr-demo": {
+      name: "masonry-ssr-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["skeleton"],
+      files: [{
+        path: "registry/default/examples/masonry-ssr-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/masonry-ssr-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "mention-demo": {
       name: "mention-demo",
       description: "",

@@ -272,6 +272,18 @@ export const examples: Registry = [
     ],
   },
   {
+    name: "masonry-ssr-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot"],
+    registryDependencies: ["skeleton"],
+    files: [
+      {
+        path: "examples/masonry-ssr-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "mention-demo",
     type: "registry:example",
     dependencies: ["@diceui/mention", "lucide-react"],
