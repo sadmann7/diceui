@@ -1,5 +1,8 @@
 import type { CompositionProps, EmptyProps } from "@/types";
-import type { HoverCardContentProps } from "@radix-ui/react-hover-card";
+import type {
+  HoverCardContentProps,
+  HoverCardProps,
+} from "@radix-ui/react-hover-card";
 
 export interface RelativeTimeCardProps
   extends EmptyProps<"button">,
@@ -29,7 +32,7 @@ export interface RelativeTimeCardProps
    * Interval in milliseconds to update the relative time display.
    * @default 1000
    */
-  updateIntervalMs?: number;
+  updateInterval?: number;
 
   /**
    * The visual style of the trigger element.
@@ -38,11 +41,33 @@ export interface RelativeTimeCardProps
   variant?: "default" | "subtle" | "ghost";
 
   /**
-   * The preferred alignment against the trigger. May change when collisions occur.
-   *
-   * @default "center"
+   * Whether the hover card is open.
+   * @default false
    */
-  align?: HoverCardContentProps["align"];
+  open?: HoverCardProps["open"];
+
+  /**
+   * Whether the hover card is open by default.
+   * @default false
+   */
+  defaultOpen?: HoverCardProps["defaultOpen"];
+
+  /**
+   * The callback function that is called when the open state of the hover card changes.
+   */
+  onOpenChange?: HoverCardProps["onOpenChange"];
+
+  /**
+   * The delay in milliseconds before the hover card opens.
+   * @default 500
+   */
+  openDelay?: HoverCardProps["openDelay"];
+
+  /**
+   * The delay in milliseconds before the hover card closes.
+   * @default 300
+   */
+  closeDelay?: HoverCardProps["closeDelay"];
 
   /**
    * The preferred side of the trigger to render against when open.
@@ -54,16 +79,30 @@ export interface RelativeTimeCardProps
   side?: HoverCardContentProps["side"];
 
   /**
+   * The distance in pixels from the trigger.
+   * @default 0
+   */
+  sideOffset?: HoverCardContentProps["sideOffset"];
+
+  /**
+  /**
+   * The preferred alignment against the trigger. May change when collisions occur.
+   *
+   * @default "center"
+   */
+  align?: HoverCardContentProps["align"];
+
+  /**
    * An offset in pixels from the "start" or "end" alignment options.
    * @default 0
    */
   alignOffset?: HoverCardContentProps["alignOffset"];
 
   /**
-   * The distance in pixels from the trigger.
-   * @default 0
+   * Whether to avoid collisions with boundary edges.
+   * @default true
    */
-  sideOffset?: HoverCardContentProps["sideOffset"];
+  avoidCollisions?: HoverCardContentProps["avoidCollisions"];
 
   /**
    * The element used as the collision boundary. By default this is the viewport,

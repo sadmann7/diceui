@@ -6,7 +6,10 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { cn } from "@/lib/utils";
-import type { HoverCardContentProps } from "@radix-ui/react-hover-card";
+import type {
+  HoverCardContentProps,
+  HoverCardProps,
+} from "@radix-ui/react-hover-card";
 import { Slot } from "@radix-ui/react-slot";
 import { type VariantProps, cva } from "class-variance-authority";
 import * as React from "react";
@@ -19,6 +22,7 @@ function formatRelativeTime(date: Date): string {
   const hours = Math.floor(minutes / 60);
   const days = Math.floor(hours / 24);
 
+  if (seconds < 5) return "just now";
   if (seconds < 60) return `${seconds} seconds ago`;
   if (minutes < 60) return `${minutes} minutes ${seconds % 60} seconds ago`;
   if (hours < 24) return `${hours} hours ago`;
@@ -45,12 +49,14 @@ const triggerVariants = cva(
 
 interface RelativeTimeCardProps
   extends React.ComponentPropsWithoutRef<"button">,
+    HoverCardProps,
     Pick<
       HoverCardContentProps,
       | "align"
       | "side"
       | "alignOffset"
       | "sideOffset"
+      | "avoidCollisions"
       | "collisionBoundary"
       | "collisionPadding"
       | "asChild"
@@ -58,7 +64,7 @@ interface RelativeTimeCardProps
     VariantProps<typeof triggerVariants> {
   date: Date | string | number;
   timezones?: string[];
-  updateIntervalMs?: number;
+  updateInterval?: number;
 }
 
 const RelativeTimeCard = React.forwardRef<
@@ -68,17 +74,23 @@ const RelativeTimeCard = React.forwardRef<
   const {
     date: dateProp,
     variant,
-    asChild,
+    timezones = ["UTC"],
+    open,
+    defaultOpen,
+    onOpenChange,
+    openDelay = 500,
+    closeDelay = 300,
     align,
     side,
     alignOffset,
     sideOffset,
+    avoidCollisions,
     collisionBoundary,
     collisionPadding,
+    updateInterval = 1000,
+    asChild,
     children,
     className,
-    timezones = ["UTC"],
-    updateIntervalMs = 1000,
     ...triggerProps
   } = props;
 
@@ -95,15 +107,21 @@ const RelativeTimeCard = React.forwardRef<
     setFormattedTime(formatRelativeTime(date));
     const timer = setInterval(() => {
       setFormattedTime(formatRelativeTime(date));
-    }, updateIntervalMs);
+    }, updateInterval);
 
     return () => clearInterval(timer);
-  }, [date, updateIntervalMs]);
+  }, [date, updateInterval]);
 
   const TriggerSlot = asChild ? Slot : "button";
 
   return (
-    <HoverCard>
+    <HoverCard
+      open={open}
+      defaultOpen={defaultOpen}
+      onOpenChange={onOpenChange}
+      openDelay={openDelay}
+      closeDelay={closeDelay}
+    >
       <HoverCardTrigger asChild>
         <TriggerSlot
           {...triggerProps}
@@ -128,6 +146,7 @@ const RelativeTimeCard = React.forwardRef<
         align={align}
         sideOffset={sideOffset}
         alignOffset={alignOffset}
+        avoidCollisions={avoidCollisions}
         collisionBoundary={collisionBoundary}
         collisionPadding={collisionPadding}
         className="flex w-full max-w-[420px] flex-col gap-2 p-3"
@@ -162,7 +181,7 @@ interface TimezoneCardProps extends React.ComponentPropsWithoutRef<"div"> {
 
 const TimezoneCard = React.forwardRef<HTMLDivElement, TimezoneCardProps>(
   (props, forwardedRef) => {
-    const { date, timezone, ...divProps } = props;
+    const { date, timezone, ...cardProps } = props;
 
     const timezoneName = React.useMemo(
       () =>
@@ -194,10 +213,10 @@ const TimezoneCard = React.forwardRef<HTMLDivElement, TimezoneCardProps>(
 
     return (
       <div
-        {...divProps}
+        aria-label={`Time in ${timezoneName}: ${formattedDate} ${formattedTime}`}
+        {...cardProps}
         ref={forwardedRef}
         className="grid grid-cols-[auto_1fr_auto] items-center gap-2 text-muted-foreground text-sm"
-        aria-label={`Time in ${timezoneName}: ${formattedDate} ${formattedTime}`}
       >
         <span className="w-fit rounded bg-accent px-1 font-medium text-xs">
           {timezoneName}
