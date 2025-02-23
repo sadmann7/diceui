@@ -10,6 +10,7 @@ import {
   ChevronRight,
   ChevronUp,
 } from "lucide-react";
+import { withCoalescedInvoke } from "next/dist/lib/coalesced-function";
 import * as React from "react";
 
 const DATA_TOP_SCROLL = "data-top-scroll";
@@ -53,9 +54,9 @@ interface ScrollerProps
     React.ComponentPropsWithoutRef<"div"> {
   size?: number;
   offset?: number;
+  scrollStep?: number;
   asChild?: boolean;
   withNavigation?: boolean;
-  scrollStep?: number;
 }
 
 const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
@@ -66,10 +67,10 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
       className,
       size = 40,
       offset = 0,
+      scrollStep = 40,
       style,
       asChild,
       withNavigation = false,
-      scrollStep = 40,
       ...scrollerProps
     } = props;
 
@@ -181,8 +182,39 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
     const Comp = asChild ? Slot : "div";
 
     return (
-      <div className="flex flex-col p-4">
-        <ScrollButton direction="up" onClick={() => onScroll("up")} />
+      <div className="relative w-fit">
+        {withNavigation ? (
+          <>
+            {canScrollUp && (
+              <ScrollButton
+                direction="up"
+                onClick={() => onScroll("up")}
+                className="-translate-x-1/2 absolute top-0 left-1/2 z-10"
+              />
+            )}
+            {canScrollDown && (
+              <ScrollButton
+                direction="down"
+                onClick={() => onScroll("down")}
+                className="-translate-x-1/2 absolute bottom-0 left-1/2 z-10"
+              />
+            )}
+            {canScrollLeft && (
+              <ScrollButton
+                direction="left"
+                onClick={() => onScroll("left")}
+                className="-translate-y-1/2 absolute top-1/2 left-0 z-10"
+              />
+            )}
+            {canScrollRight && (
+              <ScrollButton
+                direction="right"
+                onClick={() => onScroll("right")}
+                className="-translate-y-1/2 absolute top-1/2 right-0 z-10"
+              />
+            )}
+          </>
+        ) : null}
         <Comp
           {...scrollerProps}
           ref={composedRef}
@@ -193,7 +225,6 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
             className,
           )}
         />
-        <ScrollButton direction="down" onClick={() => onScroll("down")} />
       </div>
     );
   },
@@ -238,7 +269,10 @@ const ScrollButton = React.forwardRef<HTMLButtonElement, ScrollButtonProps>(
         onPointerUp={stopAutoScroll}
         onPointerLeave={stopAutoScroll}
         onClick={onClick}
-        className={cn("[&>svg]:size-4", className)}
+        className={cn(
+          "transition-opacity [&>svg]:size-4 [&>svg]:opacity-80 hover:[&>svg]:opacity-100",
+          className,
+        )}
       >
         {direction === "up" ? (
           <ChevronUp />
