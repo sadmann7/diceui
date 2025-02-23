@@ -117,7 +117,7 @@ export default function PlaygroundPage() {
         <SelectTrigger className="w-[11.25rem]">
           <SelectValue placeholder="Select a trick" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="max-h-20">
           <SelectGroup>
             <SelectLabel>Tricks</SelectLabel>
             {tricks.map((trick) => (
