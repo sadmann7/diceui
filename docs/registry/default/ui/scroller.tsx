@@ -6,6 +6,13 @@ import { Slot } from "@radix-ui/react-slot";
 import { type VariantProps, cva } from "class-variance-authority";
 import * as React from "react";
 
+const DATA_TOP_SCROLL = "data-top-scroll";
+const DATA_BOTTOM_SCROLL = "data-bottom-scroll";
+const DATA_LEFT_SCROLL = "data-left-scroll";
+const DATA_RIGHT_SCROLL = "data-right-scroll";
+const DATA_TOP_BOTTOM_SCROLL = "data-top-bottom-scroll";
+const DATA_LEFT_RIGHT_SCROLL = "data-left-right-scroll";
+
 const scrollerVariants = cva("", {
   variants: {
     orientation: {
@@ -20,13 +27,6 @@ const scrollerVariants = cva("", {
         "data-[left-scroll=true]:[mask-image:linear-gradient(270deg,#000_calc(100%_-_var(--scroll-shadow-size)),transparent)]",
         "data-[right-scroll=true]:[mask-image:linear-gradient(90deg,#000_calc(100%_-_var(--scroll-shadow-size)),transparent)]",
         "data-[left-right-scroll=true]:[mask-image:linear-gradient(to_right,#000,#000,transparent_0,#000_var(--scroll-shadow-size),#000_calc(100%_-_var(--scroll-shadow-size)),transparent)]",
-      ],
-      mixed: [
-        "overflow-auto",
-        "data-[right-scroll=true]:[mask-image:linear-gradient(90deg,#000_calc(100%_-_var(--scroll-shadow-size)),transparent)]",
-        "data-[bottom-scroll=true]:[mask-image:linear-gradient(180deg,#000_calc(100%_-_var(--scroll-shadow-size)),transparent)]",
-        "data-[right-bottom-scroll=true]:[mask-image:linear-gradient(90deg,#000_calc(100%_-_var(--scroll-shadow-size)),transparent),linear-gradient(180deg,#000_calc(100%_-_var(--scroll-shadow-size)),transparent)]",
-        "data-[right-bottom-scroll=true]:[mask-composite:intersect]",
       ],
     },
     hideScrollbar: {
@@ -73,10 +73,9 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
 
         const isVertical = orientation === "vertical";
         const isHorizontal = orientation === "horizontal";
-        const isMixed = orientation === "mixed";
 
         // Vertical scroll state
-        if (isVertical || isMixed) {
+        if (isVertical) {
           const scrollTop = element.scrollTop;
           const clientHeight = element.clientHeight;
           const scrollHeight = element.scrollHeight;
@@ -86,28 +85,22 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
             scrollTop + clientHeight + offset < scrollHeight;
           const isVerticallyScrollable = scrollHeight > clientHeight;
 
-          if (!isMixed) {
-            if (hasTopScroll && hasBottomScroll && isVerticallyScrollable) {
-              element.dataset.topBottomScroll = "true";
-              element.removeAttribute("data-top-scroll");
-              element.removeAttribute("data-bottom-scroll");
-            } else {
-              element.removeAttribute("data-top-bottom-scroll");
-              if (hasTopScroll) element.dataset.topScroll = "true";
-              else element.removeAttribute("data-top-scroll");
-              if (hasBottomScroll && isVerticallyScrollable)
-                element.dataset.bottomScroll = "true";
-              else element.removeAttribute("data-bottom-scroll");
-            }
-          } else if (hasBottomScroll && isVerticallyScrollable) {
-            element.dataset.bottomScroll = "true";
+          if (hasTopScroll && hasBottomScroll && isVerticallyScrollable) {
+            element.setAttribute(DATA_TOP_BOTTOM_SCROLL, "true");
+            element.removeAttribute(DATA_TOP_SCROLL);
+            element.removeAttribute(DATA_BOTTOM_SCROLL);
           } else {
-            element.removeAttribute("data-bottom-scroll");
+            element.removeAttribute(DATA_TOP_BOTTOM_SCROLL);
+            if (hasTopScroll) element.setAttribute(DATA_TOP_SCROLL, "true");
+            else element.removeAttribute(DATA_TOP_SCROLL);
+            if (hasBottomScroll && isVerticallyScrollable)
+              element.setAttribute(DATA_BOTTOM_SCROLL, "true");
+            else element.removeAttribute(DATA_BOTTOM_SCROLL);
           }
         }
 
         // Horizontal scroll state
-        if (isHorizontal || isMixed) {
+        if (isHorizontal) {
           const scrollLeft = element.scrollLeft;
           const clientWidth = element.clientWidth;
           const scrollWidth = element.scrollWidth;
@@ -117,37 +110,17 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
             scrollLeft + clientWidth + offset < scrollWidth;
           const isHorizontallyScrollable = scrollWidth > clientWidth;
 
-          if (!isMixed) {
-            if (hasLeftScroll && hasRightScroll && isHorizontallyScrollable) {
-              element.dataset.leftRightScroll = "true";
-              element.removeAttribute("data-left-scroll");
-              element.removeAttribute("data-right-scroll");
-            } else {
-              element.removeAttribute("data-left-right-scroll");
-              if (hasLeftScroll) element.dataset.leftScroll = "true";
-              else element.removeAttribute("data-left-scroll");
-              if (hasRightScroll && isHorizontallyScrollable)
-                element.dataset.rightScroll = "true";
-              else element.removeAttribute("data-right-scroll");
-            }
-          } else if (hasRightScroll && isHorizontallyScrollable) {
-            element.dataset.rightScroll = "true";
+          if (hasLeftScroll && hasRightScroll && isHorizontallyScrollable) {
+            element.setAttribute(DATA_LEFT_RIGHT_SCROLL, "true");
+            element.removeAttribute(DATA_LEFT_SCROLL);
+            element.removeAttribute(DATA_RIGHT_SCROLL);
           } else {
-            element.removeAttribute("data-right-scroll");
-          }
-        }
-
-        // Mixed scroll state
-        if (isMixed) {
-          const hasRightScroll = element.hasAttribute("data-right-scroll");
-          const hasBottomScroll = element.hasAttribute("data-bottom-scroll");
-
-          if (hasRightScroll && hasBottomScroll) {
-            element.dataset.rightBottomScroll = "true";
-            element.removeAttribute("data-right-scroll");
-            element.removeAttribute("data-bottom-scroll");
-          } else {
-            element.removeAttribute("data-right-bottom-scroll");
+            element.removeAttribute(DATA_LEFT_RIGHT_SCROLL);
+            if (hasLeftScroll) element.setAttribute(DATA_LEFT_SCROLL, "true");
+            else element.removeAttribute(DATA_LEFT_SCROLL);
+            if (hasRightScroll && isHorizontallyScrollable)
+              element.setAttribute(DATA_RIGHT_SCROLL, "true");
+            else element.removeAttribute(DATA_RIGHT_SCROLL);
           }
         }
       }
