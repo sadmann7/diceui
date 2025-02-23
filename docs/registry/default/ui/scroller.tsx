@@ -60,6 +60,7 @@ interface ScrollerProps
   scrollStep?: number;
   asChild?: boolean;
   withNavigation?: boolean;
+  scrollTriggerMode?: "press" | "hover" | "click";
 }
 
 const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
@@ -74,6 +75,7 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
       style,
       asChild,
       withNavigation = false,
+      scrollTriggerMode = "press",
       ...scrollerProps
     } = props;
 
@@ -114,17 +116,22 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
         const isVertical = orientation === "vertical";
 
         if (isVertical) {
-          const { scrollTop, clientHeight, scrollHeight } = container;
+          const scrollTop = container.scrollTop;
+          const clientHeight = container.clientHeight;
+          const scrollHeight = container.scrollHeight;
+
+          if (withNavigation) {
+            setScrollVisibility((prev) => ({
+              ...prev,
+              up: scrollTop > offset,
+              down: scrollTop + clientHeight < scrollHeight,
+            }));
+          }
+
           const hasTopScroll = scrollTop > offset;
           const hasBottomScroll =
             scrollTop + clientHeight + offset < scrollHeight;
           const isVerticallyScrollable = scrollHeight > clientHeight;
-
-          setScrollVisibility((prev) => ({
-            ...prev,
-            up: scrollTop > offset,
-            down: scrollTop + clientHeight < scrollHeight,
-          }));
 
           if (hasTopScroll && hasBottomScroll && isVerticallyScrollable) {
             container.setAttribute(DATA_TOP_BOTTOM_SCROLL, "true");
@@ -132,24 +139,29 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
             container.removeAttribute(DATA_BOTTOM_SCROLL);
           } else {
             container.removeAttribute(DATA_TOP_BOTTOM_SCROLL);
-            container.toggleAttribute(DATA_TOP_SCROLL, hasTopScroll);
-            container.toggleAttribute(
-              DATA_BOTTOM_SCROLL,
-              hasBottomScroll && isVerticallyScrollable,
-            );
+            if (hasTopScroll) container.setAttribute(DATA_TOP_SCROLL, "true");
+            else container.removeAttribute(DATA_TOP_SCROLL);
+            if (hasBottomScroll && isVerticallyScrollable)
+              container.setAttribute(DATA_BOTTOM_SCROLL, "true");
+            else container.removeAttribute(DATA_BOTTOM_SCROLL);
           }
         }
 
-        const { scrollLeft, clientWidth, scrollWidth } = container;
+        const scrollLeft = container.scrollLeft;
+        const clientWidth = container.clientWidth;
+        const scrollWidth = container.scrollWidth;
+
+        if (withNavigation) {
+          setScrollVisibility((prev) => ({
+            ...prev,
+            left: scrollLeft > offset,
+            right: scrollLeft + clientWidth < scrollWidth,
+          }));
+        }
+
         const hasLeftScroll = scrollLeft > offset;
         const hasRightScroll = scrollLeft + clientWidth + offset < scrollWidth;
         const isHorizontallyScrollable = scrollWidth > clientWidth;
-
-        setScrollVisibility((prev) => ({
-          ...prev,
-          left: scrollLeft > offset,
-          right: scrollLeft + clientWidth < scrollWidth,
-        }));
 
         if (hasLeftScroll && hasRightScroll && isHorizontallyScrollable) {
           container.setAttribute(DATA_LEFT_RIGHT_SCROLL, "true");
@@ -157,11 +169,11 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
           container.removeAttribute(DATA_RIGHT_SCROLL);
         } else {
           container.removeAttribute(DATA_LEFT_RIGHT_SCROLL);
-          container.toggleAttribute(DATA_LEFT_SCROLL, hasLeftScroll);
-          container.toggleAttribute(
-            DATA_RIGHT_SCROLL,
-            hasRightScroll && isHorizontallyScrollable,
-          );
+          if (hasLeftScroll) container.setAttribute(DATA_LEFT_SCROLL, "true");
+          else container.removeAttribute(DATA_LEFT_SCROLL);
+          if (hasRightScroll && isHorizontallyScrollable)
+            container.setAttribute(DATA_RIGHT_SCROLL, "true");
+          else container.removeAttribute(DATA_RIGHT_SCROLL);
         }
       }
 
@@ -173,7 +185,7 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
         container.removeEventListener("scroll", onScroll);
         window.removeEventListener("resize", onScroll);
       };
-    }, [orientation, offset]);
+    }, [orientation, offset, withNavigation]);
 
     const composedStyle = React.useMemo<React.CSSProperties>(
       () => ({
@@ -200,6 +212,7 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
                   key={direction}
                   direction={direction}
                   onClick={() => onScrollBy(direction)}
+                  triggerMode={scrollTriggerMode}
                 />
               ),
           )}
@@ -243,44 +256,83 @@ const directionToIcon: Record<ScrollDirection, React.ElementType> = {
 
 interface ScrollButtonProps extends React.ComponentPropsWithoutRef<"button"> {
   direction: ScrollDirection;
+  triggerMode?: "press" | "hover" | "click";
 }
 
 const ScrollButton = React.forwardRef<HTMLButtonElement, ScrollButtonProps>(
   (props, forwardedRef) => {
-    const { onClick, direction, className, ...buttonProps } = props;
+    const {
+      onClick,
+      direction,
+      className,
+      triggerMode = "press",
+      ...buttonProps
+    } = props;
+
+    const Icon = directionToIcon[direction];
+
     const [autoScrollTimer, setAutoScrollTimer] = React.useState<number | null>(
       null,
     );
 
-    const startAutoScroll = React.useCallback(() => {
-      if (autoScrollTimer === null) {
-        const timer = window.setInterval(onClick ?? (() => {}), 50);
-        setAutoScrollTimer(timer);
-      }
-    }, [autoScrollTimer, onClick]);
+    const onAutoScrollStart = React.useCallback(
+      (event?: React.MouseEvent<HTMLButtonElement>) => {
+        if (autoScrollTimer === null) {
+          if (triggerMode === "press") {
+            const timer = window.setInterval(onClick ?? (() => {}), 50);
+            setAutoScrollTimer(timer);
+          } else if (triggerMode === "hover") {
+            const timer = window.setInterval(() => {
+              if (event) onClick?.(event);
+            }, 50);
+            setAutoScrollTimer(timer);
+          }
+        }
+      },
+      [autoScrollTimer, onClick, triggerMode],
+    );
 
-    const stopAutoScroll = React.useCallback(() => {
+    const onAutoScrollStop = React.useCallback(() => {
       if (autoScrollTimer !== null) {
         window.clearInterval(autoScrollTimer);
         setAutoScrollTimer(null);
       }
     }, [autoScrollTimer]);
 
-    React.useEffect(() => {
-      return () => stopAutoScroll();
-    }, [stopAutoScroll]);
+    const eventHandlers = React.useMemo(() => {
+      const triggerModeHandlers: Record<
+        NonNullable<ScrollerProps["scrollTriggerMode"]>,
+        React.HTMLAttributes<HTMLButtonElement>
+      > = {
+        press: {
+          onPointerDown: onAutoScrollStart,
+          onPointerUp: onAutoScrollStop,
+          onPointerLeave: onAutoScrollStop,
+          onClick: () => {},
+        },
+        hover: {
+          onPointerEnter: onAutoScrollStart,
+          onPointerLeave: onAutoScrollStop,
+          onClick: () => {},
+        },
+        click: {
+          onClick,
+        },
+      } as const;
 
-    const Icon = directionToIcon[direction];
+      return triggerModeHandlers[triggerMode] ?? {};
+    }, [triggerMode, onAutoScrollStart, onAutoScrollStop, onClick]);
+
+    React.useEffect(() => {
+      return () => onAutoScrollStop();
+    }, [onAutoScrollStop]);
 
     return (
       <button
         type="button"
         {...buttonProps}
+        {...eventHandlers}
         ref={forwardedRef}
-        onPointerDown={startAutoScroll}
-        onPointerUp={stopAutoScroll}
-        onPointerLeave={stopAutoScroll}
-        onClick={onClick}
         className={scrollButtonVariants({ direction, className })}
       >
         <Icon />
