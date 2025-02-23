@@ -1,5 +1,3 @@
-"use client";
-
 import * as ComboboxPrimitive from "@diceui/combobox";
 import { Check, ChevronDown, X } from "lucide-react";
 import * as React from "react";

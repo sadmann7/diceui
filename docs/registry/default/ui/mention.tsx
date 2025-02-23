@@ -1,5 +1,3 @@
-"use client";
-
 import * as MentionPrimitive from "@diceui/mention";
 import * as React from "react";
 

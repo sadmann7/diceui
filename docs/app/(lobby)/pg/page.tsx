@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
+import ScrollerDemo from "@/registry/default/examples/scroller-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -40,6 +41,7 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
+      <ScrollerDemo />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
@@ -115,7 +117,7 @@ export default function PlaygroundPage() {
         <SelectTrigger className="w-[11.25rem]">
           <SelectValue placeholder="Select a trick" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="max-h-20">
           <SelectGroup>
             <SelectLabel>Tricks</SelectLabel>
             {tricks.map((trick) => (

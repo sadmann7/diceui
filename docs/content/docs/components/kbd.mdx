@@ -47,9 +47,9 @@ import * as Kbd from "@/components/ui/kbd";
 </Kbd.Root>
 ```
 
-### Built-in Key Descriptions
+### Built-in Key Titles
 
-The component includes built-in descriptions for common keyboard symbols:
+The component includes built-in titles for common keyboard symbols:
 
 ```tsx
 <Kbd.Root>
@@ -59,15 +59,15 @@ The component includes built-in descriptions for common keyboard symbols:
 </Kbd.Root>
 ```
 
-### Custom Key Descriptions
+### Custom Key Titles
 
-You can provide custom descriptions for any key:
+You can provide custom titles for any key:
 
 ```tsx
 <Kbd.Root>
-  <Kbd.Key description="Windows key">⊞</Kbd.Key>
+  <Kbd.Key title="Windows key">⊞</Kbd.Key>
   <Kbd.Separator />
-  <Kbd.Key description="Lock screen">L</Kbd.Key>
+  <Kbd.Key title="Lock screen">L</Kbd.Key>
 </Kbd.Root>
 ```
 
@@ -92,6 +92,15 @@ The main container component for keyboard shortcuts.
   name="RootProps"
 />
 
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-slot]",
+      value: ["kbd"],
+    },
+  ]}
+/>
+
 ### Key
 
 The component that represents a single keyboard key.
@@ -101,6 +110,15 @@ The component that represents a single keyboard key.
   name="KeyProps"
 />
 
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-slot]",
+      value: ["kbd-key"],
+    },
+  ]}
+/>
+
 ### Separator
 
 The component that represents the separator between keyboard keys.
@@ -108,4 +126,13 @@ The component that represents the separator between keyboard keys.
 <AutoTypeTable
   path="./types/docs/kbd.ts"
   name="SeparatorProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-slot]",
+      value: ["kbd-separator"],
+    },
+  ]}
 />

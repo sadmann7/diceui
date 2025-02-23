@@ -8,7 +8,7 @@ export default function KbdDemo() {
         <Kbd.Root>
           <Kbd.Key>⌘</Kbd.Key>
           <Kbd.Separator />
-          <Kbd.Key description="Search">K</Kbd.Key>
+          <Kbd.Key title="Search">K</Kbd.Key>
         </Kbd.Root>
       </div>
       <div className="flex flex-col gap-2">
@@ -18,21 +18,21 @@ export default function KbdDemo() {
           <Kbd.Separator />
           <Kbd.Key>⇧</Kbd.Key>
           <Kbd.Separator />
-          <Kbd.Key description="Save">S</Kbd.Key>
+          <Kbd.Key title="Save">S</Kbd.Key>
         </Kbd.Root>
       </div>
       <div className="flex flex-col gap-2">
         <span className="text-muted-foreground text-sm">With descriptions</span>
         <div className="flex items-center gap-4">
           <Kbd.Root>
-            <Kbd.Key description="Windows key">⊞</Kbd.Key>
+            <Kbd.Key title="Windows key">⊞</Kbd.Key>
             <Kbd.Separator />
-            <Kbd.Key description="Lock screen">L</Kbd.Key>
+            <Kbd.Key title="Lock screen">L</Kbd.Key>
           </Kbd.Root>
           <Kbd.Root>
-            <Kbd.Key description="Option">⌥</Kbd.Key>
+            <Kbd.Key title="Option">⌥</Kbd.Key>
             <Kbd.Separator />
-            <Kbd.Key description="Delete word">⌫</Kbd.Key>
+            <Kbd.Key title="Delete word">⌫</Kbd.Key>
           </Kbd.Root>
         </div>
       </div>

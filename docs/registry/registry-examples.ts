@@ -362,6 +362,50 @@ export const examples: Registry = [
     ],
   },
   {
+    name: "scroller-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot"],
+    files: [
+      {
+        path: "examples/scroller-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "scroller-horizontal-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot"],
+    files: [
+      {
+        path: "examples/scroller-horizontal-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "scroller-hidden-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot"],
+    files: [
+      {
+        path: "examples/scroller-hidden-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "scroller-navigation-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot"],
+    files: [
+      {
+        path: "examples/scroller-navigation-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "sortable-dynamic-overlay-demo",
     type: "registry:example",
     dependencies: [

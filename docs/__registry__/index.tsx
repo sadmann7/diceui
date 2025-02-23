@@ -129,6 +129,26 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "scroller": {
+      name: "scroller",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/ui/scroller.tsx",
+        type: "registry:ui",
+        target: ""
+      },{
+        path: "registry/default/lib/composition.ts",
+        type: "registry:lib",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/scroller.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "sortable": {
       name: "sortable",
       description: "",
@@ -644,6 +664,70 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/sortable-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "scroller-demo": {
+      name: "scroller-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/examples/scroller-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/scroller-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "scroller-horizontal-demo": {
+      name: "scroller-horizontal-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/examples/scroller-horizontal-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/scroller-horizontal-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "scroller-hidden-demo": {
+      name: "scroller-hidden-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/examples/scroller-hidden-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/scroller-hidden-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "scroller-navigation-demo": {
+      name: "scroller-navigation-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/examples/scroller-navigation-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/scroller-navigation-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",

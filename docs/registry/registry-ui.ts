@@ -103,6 +103,21 @@ export const ui: Registry = [
     ],
   },
   {
+    name: "scroller",
+    type: "registry:ui",
+    dependencies: ["@radix-ui/react-slot"],
+    files: [
+      {
+        path: "ui/scroller.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "lib/composition.ts",
+        type: "registry:lib",
+      },
+    ],
+  },
+  {
     name: "sortable",
     type: "registry:ui",
     dependencies: [
