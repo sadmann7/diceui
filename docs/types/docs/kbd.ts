@@ -16,12 +16,12 @@ export interface RootProps extends EmptyProps<"kbd">, CompositionProps {
 
 export interface KeyProps extends EmptyProps<"span">, CompositionProps {
   /**
-   * Description for the key. If not provided, will try to use the predefined description from KEY_DESCRIPTIONS.
+   * Title for the key. If not provided, will try to use the predefined title.
    * @example
-   * <KbdKey description="Command">⌘</KbdKey>
-   * <KbdKey>⌘</KbdKey> // Uses built-in description
+   * <KbdKey title="Command">⌘</KbdKey>
+   * <KbdKey>⌘</KbdKey> // Uses built-in title
    */
-  description?: string;
+  title?: string;
 }
 
 export interface SeparatorProps extends EmptyProps<"span">, CompositionProps {}

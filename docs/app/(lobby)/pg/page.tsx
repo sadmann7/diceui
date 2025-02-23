@@ -25,6 +25,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
+import KbdMultipleDemo from "@/registry/default/examples/kbd-multiple-demo";
+import KbdVariantsDemo from "@/registry/default/examples/kbd-variants-demo";
 import { ScrollerDemo } from "@/registry/default/examples/scroller-demo";
 import {
   Combobox,
@@ -41,6 +43,7 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
+      <KbdVariantsDemo />
       <ScrollerDemo />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>

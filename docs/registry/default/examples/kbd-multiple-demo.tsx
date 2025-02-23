@@ -11,14 +11,14 @@ export default function KbdMultipleDemo() {
             <Kbd.Separator />
             <Kbd.Key>⇧</Kbd.Key>
             <Kbd.Separator />
-            <Kbd.Key description="Find in files">F</Kbd.Key>
+            <Kbd.Key title="Find in files">F</Kbd.Key>
           </Kbd.Root>
           <Kbd.Root>
             <Kbd.Key>⌘</Kbd.Key>
             <Kbd.Separator />
             <Kbd.Key>⌥</Kbd.Key>
             <Kbd.Separator />
-            <Kbd.Key description="Multi-cursor">↓</Kbd.Key>
+            <Kbd.Key title="Multi-cursor">↓</Kbd.Key>
           </Kbd.Root>
         </div>
       </div>
@@ -30,7 +30,7 @@ export default function KbdMultipleDemo() {
             <Kbd.Separator />
             <Kbd.Key>⌥</Kbd.Key>
             <Kbd.Separator />
-            <Kbd.Key description="Force quit">⎋</Kbd.Key>
+            <Kbd.Key title="Force quit">⎋</Kbd.Key>
           </Kbd.Root>
           <Kbd.Root>
             <Kbd.Key>⌘</Kbd.Key>
@@ -39,11 +39,10 @@ export default function KbdMultipleDemo() {
             <Kbd.Separator />
             <Kbd.Key>⌥</Kbd.Key>
             <Kbd.Separator />
-            <Kbd.Key description="System preferences">P</Kbd.Key>
+            <Kbd.Key title="System preferences">P</Kbd.Key>
           </Kbd.Root>
         </div>
       </div>
-
       <div className="flex flex-col gap-2">
         <span className="text-muted-foreground text-sm">Browser shortcuts</span>
         <div className="flex flex-col gap-2">
@@ -52,14 +51,14 @@ export default function KbdMultipleDemo() {
             <Kbd.Separator />
             <Kbd.Key>⇧</Kbd.Key>
             <Kbd.Separator />
-            <Kbd.Key description="New incognito window">N</Kbd.Key>
+            <Kbd.Key title="New incognito window">N</Kbd.Key>
           </Kbd.Root>
           <Kbd.Root>
             <Kbd.Key>⌘</Kbd.Key>
             <Kbd.Separator />
             <Kbd.Key>⌥</Kbd.Key>
             <Kbd.Separator />
-            <Kbd.Key description="Developer tools">I</Kbd.Key>
+            <Kbd.Key title="Developer tools">I</Kbd.Key>
           </Kbd.Root>
         </div>
       </div>
@@ -67,18 +66,18 @@ export default function KbdMultipleDemo() {
         <span className="text-muted-foreground text-sm">With descriptions</span>
         <div className="flex flex-col gap-2">
           <Kbd.Root>
-            <Kbd.Key description="Control">⌃</Kbd.Key>
+            <Kbd.Key title="Control">⌃</Kbd.Key>
             <Kbd.Separator />
-            <Kbd.Key description="Option">⌥</Kbd.Key>
+            <Kbd.Key title="Option">⌥</Kbd.Key>
             <Kbd.Separator />
-            <Kbd.Key description="Delete">⌫</Kbd.Key>
+            <Kbd.Key title="Delete">⌫</Kbd.Key>
           </Kbd.Root>
           <Kbd.Root>
-            <Kbd.Key description="Command">⌘</Kbd.Key>
+            <Kbd.Key title="Command">⌘</Kbd.Key>
             <Kbd.Separator />
-            <Kbd.Key description="Shift">⇧</Kbd.Key>
+            <Kbd.Key title="Shift">⇧</Kbd.Key>
             <Kbd.Separator />
-            <Kbd.Key description="Question mark">?</Kbd.Key>
+            <Kbd.Key title="Question mark">?</Kbd.Key>
           </Kbd.Root>
         </div>
       </div>

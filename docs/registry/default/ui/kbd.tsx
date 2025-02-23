@@ -1,57 +1,30 @@
-"use client";
-
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import { type VariantProps, cva } from "class-variance-authority";
 import * as React from "react";
 
-const ROOT_NAME = "Kbd";
-const SEPARATOR_NAME = "KbdSeparator";
-const KEY_NAME = "KbdKey";
-
-const KBD_ERROR = {
-  [ROOT_NAME]: `\`${ROOT_NAME}\` components must be within \`${ROOT_NAME}\``,
-  [SEPARATOR_NAME]: `\`${SEPARATOR_NAME}\` must be within \`${ROOT_NAME}\``,
-  [KEY_NAME]: `\`${KEY_NAME}\` must be within \`${ROOT_NAME}\``,
-} as const;
-
 const kbdVariants = cva(
   "inline-flex w-fit items-center gap-1 font-medium font-mono text-[10px] text-foreground/70 sm:text-[11px]",
   {
     variants: {
-      variant: {
-        default: "bg-accent",
-        outline: "bg-background px-0",
-        ghost: "bg-transparent shadow-none",
-      },
       size: {
         default: "h-6 rounded px-1.5",
         sm: "h-5 rounded-sm px-1",
         lg: "h-7 rounded-md px-2",
       },
+      variant: {
+        default: "bg-accent",
+        outline:
+          "bg-background px-0 [&_[data-slot='kbd-key']]:min-w-[20px] [&_[data-slot='kbd-key']]:border [&_[data-slot='kbd-key']]:border-border [&_[data-slot='kbd-key']]:bg-muted/30 [&_[data-slot='kbd-key']]:px-1.5 [&_[data-slot='kbd-key']]:shadow-xs",
+        ghost: "bg-transparent shadow-none",
+      },
     },
     defaultVariants: {
-      variant: "default",
       size: "default",
+      variant: "default",
     },
   },
 );
-
-interface KbdContextValue extends VariantProps<typeof kbdVariants> {}
-
-const KbdContext = React.createContext<KbdContextValue>({
-  size: "default",
-  variant: "default",
-});
-KbdContext.displayName = ROOT_NAME;
-
-function useKbdContext(name: keyof typeof KBD_ERROR) {
-  const context = React.useContext(KbdContext);
-  if (!context) {
-    throw new Error(KBD_ERROR[name]);
-  }
-  return context;
-}
 
 interface KbdRootProps
   extends React.ComponentPropsWithoutRef<"kbd">,
@@ -62,37 +35,29 @@ interface KbdRootProps
 const KbdRoot = React.forwardRef<HTMLElement, KbdRootProps>(
   (props, forwardedRef) => {
     const {
-      size = "default",
       variant = "default",
+      size = "default",
       asChild,
       className,
       ...rootProps
     } = props;
 
-    const contextValue = React.useMemo<KbdContextValue>(
-      () => ({
-        size,
-        variant,
-      }),
-      [size, variant],
-    );
-
     const RootSlot = asChild ? Slot : "kbd";
 
     return (
-      <KbdContext.Provider value={contextValue}>
-        <RootSlot
-          role="group"
-          data-slot="kbd"
-          {...rootProps}
-          ref={forwardedRef}
-          className={cn(kbdVariants({ variant, size, className }))}
-        />
-      </KbdContext.Provider>
+      <RootSlot
+        role="group"
+        data-slot="kbd"
+        data-variant={variant}
+        data-size={size}
+        {...rootProps}
+        ref={forwardedRef}
+        className={cn(kbdVariants({ size, variant, className }))}
+      />
     );
   },
 );
-KbdRoot.displayName = ROOT_NAME;
+KbdRoot.displayName = "KbdRoot";
 
 const KEY_DESCRIPTIONS: Record<string, string> = {
   "⌘": "Command",
@@ -122,59 +87,41 @@ const KEY_DESCRIPTIONS: Record<string, string> = {
 
 interface KbdKeyProps extends React.ComponentPropsWithoutRef<"span"> {
   asChild?: boolean;
-  description?: string;
 }
 
 const KbdKey = React.forwardRef<HTMLSpanElement, KbdKeyProps>(
   (props, forwardedRef) => {
-    const { asChild, className, children, description, ...keyProps } = props;
-    const context = useKbdContext(KEY_NAME);
+    const {
+      asChild,
+      className,
+      children,
+      title: titleProp,
+      ...keyProps
+    } = props;
 
     const KeySlot = asChild ? Slot : "span";
 
     const keyText = children?.toString() ?? "";
-    const keyDescription = description ?? KEY_DESCRIPTIONS[keyText] ?? keyText;
+    const title = titleProp ?? KEY_DESCRIPTIONS[keyText] ?? keyText;
 
-    const Inner = (
-      <span
-        className={cn(
-          "inline-flex items-center justify-center rounded",
-          context.variant === "outline" &&
-            "min-w-[20px] border border-border bg-muted/30 px-1.5 shadow-xs",
-          className,
-        )}
-      >
-        {children}
-      </span>
-    );
-
-    if (asChild) {
-      return (
+    return (
+      <abbr title={title} className="no-underline">
         <KeySlot
-          role="presentation"
-          aria-label={keyDescription}
           data-slot="kbd-key"
           {...keyProps}
           ref={forwardedRef}
+          className={cn(
+            "inline-flex items-center justify-center rounded",
+            className,
+          )}
         >
-          {Inner}
+          {children}
         </KeySlot>
-      );
-    }
-
-    return (
-      <abbr
-        title={keyDescription}
-        {...keyProps}
-        ref={forwardedRef}
-        className="no-underline"
-      >
-        {Inner}
       </abbr>
     );
   },
 );
-KbdKey.displayName = KEY_NAME;
+KbdKey.displayName = "KbdKey";
 
 interface KbdSeparatorProps extends React.ComponentPropsWithoutRef<"span"> {
   asChild?: boolean;
@@ -183,7 +130,6 @@ interface KbdSeparatorProps extends React.ComponentPropsWithoutRef<"span"> {
 const KbdSeparator = React.forwardRef<HTMLSpanElement, KbdSeparatorProps>(
   (props, forwardedRef) => {
     const { asChild, children = "+", className, ...separatorProps } = props;
-    useKbdContext(SEPARATOR_NAME);
 
     const SeparatorSlot = asChild ? Slot : "span";
 
@@ -202,7 +148,7 @@ const KbdSeparator = React.forwardRef<HTMLSpanElement, KbdSeparatorProps>(
     );
   },
 );
-KbdSeparator.displayName = SEPARATOR_NAME;
+KbdSeparator.displayName = "KbdSeparator";
 
 const Kbd = KbdRoot;
 const Root = KbdRoot;
@@ -213,8 +159,8 @@ export {
   Kbd,
   KbdKey,
   KbdSeparator,
+  Key,
   //
   Root,
-  Key,
   Separator,
 };

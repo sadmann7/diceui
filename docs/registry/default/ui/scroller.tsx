@@ -144,8 +144,7 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
         ref={composedRef}
         style={composedStyle}
         className={cn(
-          scrollerVariants({ orientation, hideScrollbar }),
-          className,
+          scrollerVariants({ orientation, hideScrollbar, className }),
         )}
       />
     );
