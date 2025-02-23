@@ -48,8 +48,6 @@ const KbdRoot = React.forwardRef<HTMLElement, KbdRootProps>(
       <RootSlot
         role="group"
         data-slot="kbd"
-        data-variant={variant}
-        data-size={size}
         {...rootProps}
         ref={forwardedRef}
         className={cn(kbdVariants({ size, variant, className }))}
