@@ -10,7 +10,6 @@ import {
   ChevronRight,
   ChevronUp,
 } from "lucide-react";
-import { withCoalescedInvoke } from "next/dist/lib/coalesced-function";
 import * as React from "react";
 
 const DATA_TOP_SCROLL = "data-top-scroll";
@@ -19,6 +18,12 @@ const DATA_LEFT_SCROLL = "data-left-scroll";
 const DATA_RIGHT_SCROLL = "data-right-scroll";
 const DATA_TOP_BOTTOM_SCROLL = "data-top-bottom-scroll";
 const DATA_LEFT_RIGHT_SCROLL = "data-left-right-scroll";
+
+type ScrollDirection = "up" | "down" | "left" | "right";
+
+type ScrollVisibility = {
+  [key in ScrollDirection]: boolean;
+};
 
 const scrollerVariants = cva("", {
   variants: {
@@ -47,8 +52,6 @@ const scrollerVariants = cva("", {
   },
 });
 
-type ScrollDirection = "up" | "down" | "left" | "right";
-
 interface ScrollerProps
   extends VariantProps<typeof scrollerVariants>,
     React.ComponentPropsWithoutRef<"div"> {
@@ -76,20 +79,27 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
 
     const containerRef = React.useRef<HTMLDivElement | null>(null);
     const composedRef = useComposedRefs(forwardedRef, containerRef);
-    const [canScrollUp, setCanScrollUp] = React.useState(false);
-    const [canScrollDown, setCanScrollDown] = React.useState(false);
-    const [canScrollLeft, setCanScrollLeft] = React.useState(false);
-    const [canScrollRight, setCanScrollRight] = React.useState(false);
+    const [scrollVisibility, setScrollVisibility] =
+      React.useState<ScrollVisibility>({
+        up: false,
+        down: false,
+        left: false,
+        right: false,
+      });
 
-    const onScroll = React.useCallback(
+    const onScrollBy = React.useCallback(
       (direction: ScrollDirection) => {
         const container = containerRef.current;
         if (!container) return;
 
-        if (direction === "up") container.scrollTop -= scrollStep;
-        else if (direction === "down") container.scrollTop += scrollStep;
-        else if (direction === "left") container.scrollLeft -= scrollStep;
-        else if (direction === "right") container.scrollLeft += scrollStep;
+        const scrollMap: Record<ScrollDirection, () => void> = {
+          up: () => (container.scrollTop -= scrollStep),
+          down: () => (container.scrollTop += scrollStep),
+          left: () => (container.scrollLeft -= scrollStep),
+          right: () => (container.scrollLeft += scrollStep),
+        };
+
+        scrollMap[direction]();
       },
       [scrollStep],
     );
@@ -102,21 +112,19 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
         if (!container) return;
 
         const isVertical = orientation === "vertical";
-        const isHorizontal = orientation === "horizontal";
 
-        // Vertical scroll state
         if (isVertical) {
-          const scrollTop = container.scrollTop;
-          const clientHeight = container.clientHeight;
-          const scrollHeight = container.scrollHeight;
-
-          setCanScrollUp(scrollTop > offset);
-          setCanScrollDown(scrollTop + clientHeight < scrollHeight);
-
+          const { scrollTop, clientHeight, scrollHeight } = container;
           const hasTopScroll = scrollTop > offset;
           const hasBottomScroll =
             scrollTop + clientHeight + offset < scrollHeight;
           const isVerticallyScrollable = scrollHeight > clientHeight;
+
+          setScrollVisibility((prev) => ({
+            ...prev,
+            up: scrollTop > offset,
+            down: scrollTop + clientHeight < scrollHeight,
+          }));
 
           if (hasTopScroll && hasBottomScroll && isVerticallyScrollable) {
             container.setAttribute(DATA_TOP_BOTTOM_SCROLL, "true");
@@ -124,40 +132,36 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
             container.removeAttribute(DATA_BOTTOM_SCROLL);
           } else {
             container.removeAttribute(DATA_TOP_BOTTOM_SCROLL);
-            if (hasTopScroll) container.setAttribute(DATA_TOP_SCROLL, "true");
-            else container.removeAttribute(DATA_TOP_SCROLL);
-            if (hasBottomScroll && isVerticallyScrollable)
-              container.setAttribute(DATA_BOTTOM_SCROLL, "true");
-            else container.removeAttribute(DATA_BOTTOM_SCROLL);
+            container.toggleAttribute(DATA_TOP_SCROLL, hasTopScroll);
+            container.toggleAttribute(
+              DATA_BOTTOM_SCROLL,
+              hasBottomScroll && isVerticallyScrollable,
+            );
           }
         }
 
-        // Horizontal scroll state
-        if (isHorizontal) {
-          const scrollLeft = container.scrollLeft;
-          const clientWidth = container.clientWidth;
-          const scrollWidth = container.scrollWidth;
+        const { scrollLeft, clientWidth, scrollWidth } = container;
+        const hasLeftScroll = scrollLeft > offset;
+        const hasRightScroll = scrollLeft + clientWidth + offset < scrollWidth;
+        const isHorizontallyScrollable = scrollWidth > clientWidth;
 
-          setCanScrollLeft(scrollLeft > offset);
-          setCanScrollRight(scrollLeft + clientWidth < scrollWidth);
+        setScrollVisibility((prev) => ({
+          ...prev,
+          left: scrollLeft > offset,
+          right: scrollLeft + clientWidth < scrollWidth,
+        }));
 
-          const hasLeftScroll = scrollLeft > offset;
-          const hasRightScroll =
-            scrollLeft + clientWidth + offset < scrollWidth;
-          const isHorizontallyScrollable = scrollWidth > clientWidth;
-
-          if (hasLeftScroll && hasRightScroll && isHorizontallyScrollable) {
-            container.setAttribute(DATA_LEFT_RIGHT_SCROLL, "true");
-            container.removeAttribute(DATA_LEFT_SCROLL);
-            container.removeAttribute(DATA_RIGHT_SCROLL);
-          } else {
-            container.removeAttribute(DATA_LEFT_RIGHT_SCROLL);
-            if (hasLeftScroll) container.setAttribute(DATA_LEFT_SCROLL, "true");
-            else container.removeAttribute(DATA_LEFT_SCROLL);
-            if (hasRightScroll && isHorizontallyScrollable)
-              container.setAttribute(DATA_RIGHT_SCROLL, "true");
-            else container.removeAttribute(DATA_RIGHT_SCROLL);
-          }
+        if (hasLeftScroll && hasRightScroll && isHorizontallyScrollable) {
+          container.setAttribute(DATA_LEFT_RIGHT_SCROLL, "true");
+          container.removeAttribute(DATA_LEFT_SCROLL);
+          container.removeAttribute(DATA_RIGHT_SCROLL);
+        } else {
+          container.removeAttribute(DATA_LEFT_RIGHT_SCROLL);
+          container.toggleAttribute(DATA_LEFT_SCROLL, hasLeftScroll);
+          container.toggleAttribute(
+            DATA_RIGHT_SCROLL,
+            hasRightScroll && isHorizontallyScrollable,
+          );
         }
       }
 
@@ -181,48 +185,30 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
 
     const Comp = asChild ? Slot : "div";
 
+    const activeDirections = React.useMemo<ScrollDirection[]>(
+      () => (orientation === "vertical" ? ["up", "down"] : ["left", "right"]),
+      [orientation],
+    );
+
     return (
       <div className="relative w-fit">
-        {withNavigation ? (
-          <>
-            {canScrollUp && (
-              <ScrollButton
-                direction="up"
-                onClick={() => onScroll("up")}
-                className="-translate-x-1/2 absolute top-0 left-1/2 z-10"
-              />
-            )}
-            {canScrollDown && (
-              <ScrollButton
-                direction="down"
-                onClick={() => onScroll("down")}
-                className="-translate-x-1/2 absolute bottom-0 left-1/2 z-10"
-              />
-            )}
-            {canScrollLeft && (
-              <ScrollButton
-                direction="left"
-                onClick={() => onScroll("left")}
-                className="-translate-y-1/2 absolute top-1/2 left-0 z-10"
-              />
-            )}
-            {canScrollRight && (
-              <ScrollButton
-                direction="right"
-                onClick={() => onScroll("right")}
-                className="-translate-y-1/2 absolute top-1/2 right-0 z-10"
-              />
-            )}
-          </>
-        ) : null}
+        {withNavigation &&
+          activeDirections.map(
+            (direction) =>
+              scrollVisibility[direction] && (
+                <ScrollButton
+                  key={direction}
+                  direction={direction}
+                  onClick={() => onScrollBy(direction)}
+                />
+              ),
+          )}
         <Comp
           {...scrollerProps}
           ref={composedRef}
           style={composedStyle}
           className={cn(
-            scrollerVariants({ orientation, hideScrollbar }),
-            withNavigation && orientation === "horizontal" && "px-8",
-            className,
+            scrollerVariants({ orientation, hideScrollbar, className }),
           )}
         />
       </div>
@@ -230,6 +216,30 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
   },
 );
 Scroller.displayName = "Scroller";
+
+const scrollButtonVariants = cva(
+  "absolute z-10 transition-opacity [&>svg]:size-4 [&>svg]:opacity-80 hover:[&>svg]:opacity-100",
+  {
+    variants: {
+      direction: {
+        up: "-translate-x-1/2 top-0 left-1/2",
+        down: "-translate-x-1/2 bottom-0 left-1/2",
+        left: "-translate-y-1/2 top-1/2 left-0",
+        right: "-translate-y-1/2 top-1/2 right-0",
+      },
+    },
+    defaultVariants: {
+      direction: "up",
+    },
+  },
+);
+
+const directionToIcon: Record<ScrollDirection, React.ElementType> = {
+  up: ChevronUp,
+  down: ChevronDown,
+  left: ChevronLeft,
+  right: ChevronRight,
+} as const;
 
 interface ScrollButtonProps extends React.ComponentPropsWithoutRef<"button"> {
   direction: ScrollDirection;
@@ -260,6 +270,8 @@ const ScrollButton = React.forwardRef<HTMLButtonElement, ScrollButtonProps>(
       return () => stopAutoScroll();
     }, [stopAutoScroll]);
 
+    const Icon = directionToIcon[direction];
+
     return (
       <button
         type="button"
@@ -269,20 +281,9 @@ const ScrollButton = React.forwardRef<HTMLButtonElement, ScrollButtonProps>(
         onPointerUp={stopAutoScroll}
         onPointerLeave={stopAutoScroll}
         onClick={onClick}
-        className={cn(
-          "transition-opacity [&>svg]:size-4 [&>svg]:opacity-80 hover:[&>svg]:opacity-100",
-          className,
-        )}
+        className={scrollButtonVariants({ direction, className })}
       >
-        {direction === "up" ? (
-          <ChevronUp />
-        ) : direction === "down" ? (
-          <ChevronDown />
-        ) : direction === "left" ? (
-          <ChevronLeft />
-        ) : (
-          <ChevronRight />
-        )}
+        <Icon />
       </button>
     );
   },
