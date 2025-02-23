@@ -1,0 +1,15 @@
+{
+  "name": "scroller-hidden-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@radix-ui/react-slot"
+  ],
+  "files": [
+    {
+      "path": "examples/scroller-hidden-demo.tsx",
+      "content": "import { Scroller } from \"@/registry/default/ui/scroller\";\r\n\r\nexport default function ScrollerHiddenDemo() {\r\n  return (\r\n    <Scroller className=\"flex h-80 w-full flex-col gap-4 p-4\" hideScrollbar>\r\n      {Array.from({ length: 20 }).map((_, index) => (\r\n        <div\r\n          key={index}\r\n          className=\"flex h-40 flex-col rounded-md bg-accent p-4\"\r\n        >\r\n          <div className=\"font-medium text-lg\">Card {index + 1}</div>\r\n          <span className=\"text-muted-foreground text-sm\">\r\n            Scroll smoothly without visible scrollbars\r\n          </span>\r\n        </div>\r\n      ))}\r\n    </Scroller>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}
