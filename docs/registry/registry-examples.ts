@@ -344,19 +344,35 @@ export const examples: Registry = [
     ],
   },
   {
-    name: "sortable-demo",
+    name: "relative-time-card-demo",
     type: "registry:example",
-    dependencies: [
-      "@dnd-kit/core",
-      "@dnd-kit/modifiers",
-      "@dnd-kit/sortable",
-      "@dnd-kit/utilities",
-      "@radix-ui/react-slot",
-      "lucide-react",
-    ],
+    registryDependencies: ["button", "hover-card"],
     files: [
       {
-        path: "examples/sortable-demo.tsx",
+        path: "examples/relative-time-card-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "relative-time-card-variants-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "hover-card"],
+    files: [
+      {
+        path: "examples/relative-time-card-variants-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "relative-time-card-timezones-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot"],
+    registryDependencies: ["hover-card"],
+    files: [
+      {
+        path: "examples/relative-time-card-timezones-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -401,6 +417,24 @@ export const examples: Registry = [
     files: [
       {
         path: "examples/scroller-navigation-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "sortable-demo",
+    type: "registry:example",
+    dependencies: [
+      "@dnd-kit/core",
+      "@dnd-kit/modifiers",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+      "@radix-ui/react-slot",
+      "lucide-react",
+    ],
+    files: [
+      {
+        path: "examples/sortable-demo.tsx",
         type: "registry:example",
       },
     ],

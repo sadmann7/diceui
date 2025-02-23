@@ -35,12 +35,14 @@ import {
   ComboboxItem,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
+import { RelativeTimeCard } from "@/registry/default/ui/relative-time-card";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
+      <RelativeTimeCard date={new Date()}>Relative time</RelativeTimeCard>
       <ScrollerDemo />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>

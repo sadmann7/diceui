@@ -129,6 +129,22 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "relative-time-card": {
+      name: "relative-time-card",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["hover-card"],
+      files: [{
+        path: "registry/default/ui/relative-time-card.tsx",
+        type: "registry:ui",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/relative-time-card.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "scroller": {
       name: "scroller",
       description: "",
@@ -653,17 +669,49 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
-    "sortable-demo": {
-      name: "sortable-demo",
+    "relative-time-card-demo": {
+      name: "relative-time-card-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: undefined,
+      registryDependencies: ["button","hover-card"],
       files: [{
-        path: "registry/default/examples/sortable-demo.tsx",
+        path: "registry/default/examples/relative-time-card-demo.tsx",
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/examples/sortable-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/relative-time-card-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "relative-time-card-variants-demo": {
+      name: "relative-time-card-variants-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","hover-card"],
+      files: [{
+        path: "registry/default/examples/relative-time-card-variants-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/relative-time-card-variants-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "relative-time-card-timezones-demo": {
+      name: "relative-time-card-timezones-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["hover-card"],
+      files: [{
+        path: "registry/default/examples/relative-time-card-timezones-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/relative-time-card-timezones-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",
@@ -728,6 +776,22 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/scroller-navigation-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "sortable-demo": {
+      name: "sortable-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/examples/sortable-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/sortable-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",

@@ -103,6 +103,18 @@ export const ui: Registry = [
     ],
   },
   {
+    name: "relative-time-card",
+    type: "registry:ui",
+    dependencies: ["@radix-ui/react-slot"],
+    registryDependencies: ["hover-card"],
+    files: [
+      {
+        path: "ui/relative-time-card.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "scroller",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot"],

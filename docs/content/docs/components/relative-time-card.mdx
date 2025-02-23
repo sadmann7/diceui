@@ -1,0 +1,94 @@
+---
+title: Relative Time Card
+description: A hover card that displays relative time relative to local time with timezone information.
+preview: true
+links:
+  api: /docs/components/relative-time-card#api-reference
+---
+
+<ComponentTabs name="relative-time-card-demo" />
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/relative-time-card"
+```
+
+### Manual
+
+<Steps>
+  <Step>
+    Install the following dependencies:
+
+    ```package-install
+    @radix-ui/react-hover-card
+    @radix-ui/react-slot
+    ```
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource name="relative-time-card" />
+  </Step>
+</Steps>
+
+
+## Examples
+
+### With Multiple Timezones
+
+<ComponentTabs name="relative-time-card-timezones-demo" />
+
+### With Variants
+
+<ComponentTabs name="relative-time-card-variants-demo" />
+
+## API Reference
+
+### RelativeTimeCard
+
+The main component that displays relative time with hover functionality.
+
+<AutoTypeTable
+  path="./types/docs/relative-time-card.ts"
+  name="RelativeTimeCardProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-state]",
+      description: "The state of the hover card",
+      value: ["open", "closed"],
+    },
+    {
+      title: "[data-side]",
+      description: "The side the hover card appears on",
+      value: ["top", "right", "bottom", "left"],
+    },
+    {
+      title: "[data-align]",
+      description: "The alignment of the hover card",
+      value: ["start", "center", "end"],
+    },
+  ]}
+/>
+
+## Accessibility
+
+### Keyboard Interactions
+
+<KeyboardShortcutsTable
+  shortcuts={[
+    {
+      keys: ["Tab"],
+      description: "Opens/closes the relative time card.",
+    },
+    {
+      keys: ["Enter"],
+      description: "Opens the relative time card if closed.",
+    },
+  ]}
+/>
