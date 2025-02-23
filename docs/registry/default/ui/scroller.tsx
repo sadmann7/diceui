@@ -21,14 +21,6 @@ const scrollerVariants = cva("", {
         "data-[right-scroll=true]:[mask-image:linear-gradient(90deg,#000_calc(100%_-_var(--scroll-shadow-size)),transparent)]",
         "data-[left-right-scroll=true]:[mask-image:linear-gradient(to_right,#000,#000,transparent_0,#000_var(--scroll-shadow-size),#000_calc(100%_-_var(--scroll-shadow-size)),transparent)]",
       ],
-      mixed: [
-        "overflow-auto",
-        "data-[top-scroll=true]:[mask-image:linear-gradient(0deg,#000_calc(100%_-_var(--scroll-shadow-size)),transparent)]",
-        "data-[bottom-scroll=true]:[mask-image:linear-gradient(180deg,#000_calc(100%_-_var(--scroll-shadow-size)),transparent)]",
-        "data-[left-scroll=true]:[mask-image:linear-gradient(270deg,#000_calc(100%_-_var(--scroll-shadow-size)),transparent)]",
-        "data-[right-scroll=true]:[mask-image:linear-gradient(90deg,#000_calc(100%_-_var(--scroll-shadow-size)),transparent)]",
-        "data-[mixed-scroll=true]:[mask-image:linear-gradient(#000,#000,transparent_0,#000_var(--scroll-shadow-size),#000_calc(100%_-_var(--scroll-shadow-size)),transparent)]",
-      ],
     },
     hideScrollbar: {
       true: "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
@@ -72,9 +64,8 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
       function onScroll() {
         if (!element) return;
 
-        const isMixed = orientation === "mixed";
-        const isVertical = orientation === "vertical" || isMixed;
-        const isHorizontal = orientation === "horizontal" || isMixed;
+        const isVertical = orientation === "vertical";
+        const isHorizontal = orientation === "horizontal";
 
         // Vertical scroll state
         if (isVertical) {
@@ -85,11 +76,20 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
           const hasTopScroll = scrollTop > offset;
           const hasBottomScroll =
             scrollTop + clientHeight + offset < scrollHeight;
+          const isVerticallyScrollable = scrollHeight > clientHeight;
 
-          if (hasTopScroll) element.dataset.topScroll = "true";
-          else element.removeAttribute("data-top-scroll");
-          if (hasBottomScroll) element.dataset.bottomScroll = "true";
-          else element.removeAttribute("data-bottom-scroll");
+          if (hasTopScroll && hasBottomScroll && isVerticallyScrollable) {
+            element.dataset.topBottomScroll = "true";
+            element.removeAttribute("data-top-scroll");
+            element.removeAttribute("data-bottom-scroll");
+          } else {
+            element.removeAttribute("data-top-bottom-scroll");
+            if (hasTopScroll) element.dataset.topScroll = "true";
+            else element.removeAttribute("data-top-scroll");
+            if (hasBottomScroll && isVerticallyScrollable)
+              element.dataset.bottomScroll = "true";
+            else element.removeAttribute("data-bottom-scroll");
+          }
         }
 
         // Horizontal scroll state
@@ -101,18 +101,20 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
           const hasLeftScroll = scrollLeft > offset;
           const hasRightScroll =
             scrollLeft + clientWidth + offset < scrollWidth;
+          const isHorizontallyScrollable = scrollWidth > clientWidth;
 
-          if (hasLeftScroll) element.dataset.leftScroll = "true";
-          else element.removeAttribute("data-left-scroll");
-          if (hasRightScroll) element.dataset.rightScroll = "true";
-          else element.removeAttribute("data-right-scroll");
-        }
-
-        // Mixed scroll state
-        if (isMixed) {
-          element.dataset.mixedScroll = "true";
-        } else {
-          element.removeAttribute("data-mixed-scroll");
+          if (hasLeftScroll && hasRightScroll && isHorizontallyScrollable) {
+            element.dataset.leftRightScroll = "true";
+            element.removeAttribute("data-left-scroll");
+            element.removeAttribute("data-right-scroll");
+          } else {
+            element.removeAttribute("data-left-right-scroll");
+            if (hasLeftScroll) element.dataset.leftScroll = "true";
+            else element.removeAttribute("data-left-scroll");
+            if (hasRightScroll && isHorizontallyScrollable)
+              element.dataset.rightScroll = "true";
+            else element.removeAttribute("data-right-scroll");
+          }
         }
       }
 
