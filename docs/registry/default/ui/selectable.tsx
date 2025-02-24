@@ -14,14 +14,14 @@ const SELECTABLE_ERROR = {
 } as const;
 
 interface SelectableContextValue {
-  id: string;
-  selectedIndex: number;
-  onSelect: (index: number) => void;
-  orientation?: "horizontal" | "vertical" | "both";
+  selectedIndices: number[];
+  onSelect: (indices: number[]) => void;
+  orientation?: "horizontal" | "vertical" | "mixed";
   loop?: boolean;
   dir?: "ltr" | "rtl";
   disabled?: boolean;
   virtual?: boolean;
+  multiple?: boolean;
 }
 
 const SelectableContext = React.createContext<SelectableContextValue | null>(
@@ -38,63 +38,72 @@ function useSelectableContext(name: keyof typeof SELECTABLE_ERROR) {
 }
 
 interface SelectableRootProps extends React.ComponentPropsWithoutRef<"div"> {
-  id?: string;
-  defaultSelectedIndex?: number;
-  selectedIndex?: number;
-  onSelectedIndexChange?: (index: number) => void;
-  orientation?: "horizontal" | "vertical" | "both";
+  defaultSelectedIndices?: number[];
+  selectedIndices?: number[];
+  onSelectedIndicesChange?: (indices: number[]) => void;
+  orientation?: "horizontal" | "vertical" | "mixed";
   loop?: boolean;
   dir?: "ltr" | "rtl";
   disabled?: boolean;
   virtual?: boolean;
+  multiple?: boolean;
   asChild?: boolean;
 }
 
 const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
   (props, forwardedRef) => {
     const {
-      id = React.useId(),
-      defaultSelectedIndex = -1,
-      selectedIndex: selectedIndexProp,
-      onSelectedIndexChange,
+      defaultSelectedIndices = [],
+      selectedIndices: selectedIndicesProp,
+      onSelectedIndicesChange,
       orientation = "vertical",
       loop = false,
       dir = "ltr",
       disabled = false,
       virtual = false,
+      multiple = false,
       asChild,
       className,
       ...listProps
     } = props;
 
-    const [uncontrolledSelectedIndex, setUncontrolledSelectedIndex] =
-      React.useState(defaultSelectedIndex);
+    const [uncontrolledSelectedIndices, setUncontrolledSelectedIndices] =
+      React.useState(defaultSelectedIndices);
 
-    const selectedIndex = selectedIndexProp ?? uncontrolledSelectedIndex;
-    const isControlled = selectedIndexProp !== undefined;
+    const selectedIndices = selectedIndicesProp ?? uncontrolledSelectedIndices;
+    const isControlled = selectedIndicesProp !== undefined;
 
     const onSelect = React.useCallback(
-      (index: number) => {
+      (indices: number[]) => {
         if (!isControlled) {
-          setUncontrolledSelectedIndex(index);
+          setUncontrolledSelectedIndices(indices);
         }
-        onSelectedIndexChange?.(index);
+        onSelectedIndicesChange?.(indices);
       },
-      [isControlled, onSelectedIndexChange],
+      [isControlled, onSelectedIndicesChange],
     );
 
     const contextValue = React.useMemo<SelectableContextValue>(
       () => ({
-        id,
-        selectedIndex,
+        selectedIndices,
         onSelect,
         orientation,
         loop,
         dir,
         disabled,
         virtual,
+        multiple,
       }),
-      [id, selectedIndex, onSelect, orientation, loop, dir, disabled, virtual],
+      [
+        selectedIndices,
+        onSelect,
+        orientation,
+        loop,
+        dir,
+        disabled,
+        virtual,
+        multiple,
+      ],
     );
 
     const ListSlot = asChild ? Slot : "div";
@@ -113,7 +122,7 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
 
     const getNextIndex = React.useCallback(
       (currentIndex: number, key: string): number => {
-        if (orientation === "both") {
+        if (orientation === "mixed") {
           const currentRow = Math.floor(currentIndex / columnCount);
 
           switch (key) {
@@ -147,6 +156,8 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
                 ? currentIndex
                 : nextIndex;
             }
+            default:
+              return currentIndex;
           }
         }
 
@@ -159,41 +170,45 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
       (event: React.KeyboardEvent) => {
         if (disabled) return;
 
-        const isVertical = orientation === "vertical" || orientation === "both";
+        const isVertical =
+          orientation === "vertical" || orientation === "mixed";
         const isHorizontal =
-          orientation === "horizontal" || orientation === "both";
+          orientation === "horizontal" || orientation === "mixed";
         const isRtl = dir === "rtl";
 
-        let nextIndex = selectedIndex;
+        // Get the last selected index or -1 if none selected
+        const lastSelectedIndex: number = selectedIndices.at(-1) ?? -1;
+
+        let nextIndex: number = lastSelectedIndex;
 
         if (event.key === "Tab") {
-          if (selectedIndex === -1) {
+          if (lastSelectedIndex === -1) {
             event.preventDefault();
             nextIndex = 0;
           } else {
             nextIndex = -1;
           }
-        } else if (orientation === "both") {
-          nextIndex = getNextIndex(selectedIndex, event.key);
+        } else if (orientation === "mixed" && lastSelectedIndex !== -1) {
+          nextIndex = getNextIndex(lastSelectedIndex, event.key);
         } else {
           if (isVertical && event.key === "ArrowDown") {
             event.preventDefault();
-            nextIndex = selectedIndex + 1;
+            nextIndex = Math.max(-1, lastSelectedIndex) + 1;
           } else if (isVertical && event.key === "ArrowUp") {
             event.preventDefault();
-            nextIndex = selectedIndex - 1;
+            nextIndex = Math.max(-1, lastSelectedIndex) - 1;
           } else if (
             isHorizontal &&
             event.key === (isRtl ? "ArrowLeft" : "ArrowRight")
           ) {
             event.preventDefault();
-            nextIndex = selectedIndex + 1;
+            nextIndex = Math.max(-1, lastSelectedIndex) + 1;
           } else if (
             isHorizontal &&
             event.key === (isRtl ? "ArrowRight" : "ArrowLeft")
           ) {
             event.preventDefault();
-            nextIndex = selectedIndex - 1;
+            nextIndex = Math.max(-1, lastSelectedIndex) - 1;
           } else if (event.key === "Home") {
             event.preventDefault();
             nextIndex = 0;
@@ -209,19 +224,32 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
           }
         }
 
-        if (nextIndex !== selectedIndex) {
-          onSelect(nextIndex);
+        if (nextIndex !== lastSelectedIndex) {
+          if (multiple && event.shiftKey) {
+            // Add to selection if multiple and shift is pressed
+            onSelect([...selectedIndices, nextIndex]);
+          } else if (multiple && (event.ctrlKey || event.metaKey)) {
+            // Toggle selection if multiple and ctrl/cmd is pressed
+            const newIndices = selectedIndices.includes(nextIndex)
+              ? selectedIndices.filter((i) => i !== nextIndex)
+              : [...selectedIndices, nextIndex];
+            onSelect(newIndices);
+          } else {
+            // Single selection
+            onSelect([nextIndex]);
+          }
         }
       },
       [
         disabled,
         orientation,
         dir,
-        selectedIndex,
+        selectedIndices,
         loop,
         itemCount,
         onSelect,
         getNextIndex,
+        multiple,
       ],
     );
 
@@ -237,15 +265,15 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
           ref={forwardedRef}
           onKeyDown={composeEventHandlers(listProps.onKeyDown, onKeyDown)}
           onFocus={composeEventHandlers(listProps.onFocus, () => {
-            if (selectedIndex === -1 && !disabled) {
-              onSelect(0);
+            if (selectedIndices.length === 0 && !disabled) {
+              onSelect([0]);
             }
           })}
           className={cn(
             "focus-visible:outline-none",
             orientation === "horizontal" && "flex items-center gap-2",
             orientation === "vertical" && "flex flex-col gap-2",
-            orientation === "both" && `grid gap-2 grid-cols-${columnCount}`,
+            orientation === "mixed" && `grid gap-2 grid-cols-${columnCount}`,
             className,
           )}
         />
@@ -258,6 +286,7 @@ SelectableRoot.displayName = SELECTABLE_NAME;
 interface SelectableItemProps extends React.ComponentPropsWithoutRef<"div"> {
   index: number;
   asChild?: boolean;
+  disabled?: boolean;
 }
 
 const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
@@ -266,7 +295,36 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
     const context = useSelectableContext(SELECTABLE_ITEM_NAME);
     const ItemSlot = asChild ? Slot : "div";
 
-    const isSelected = context.selectedIndex === index;
+    const isSelected = context.selectedIndices.includes(index);
+
+    const isDisabled = context.disabled || itemProps.disabled;
+
+    const onItemSelect = React.useCallback(
+      (event: React.MouseEvent) => {
+        if (!isDisabled) {
+          if (context.multiple && (event.ctrlKey || event.metaKey)) {
+            // Toggle selection if multiple and ctrl/cmd is pressed
+            const newIndices = context.selectedIndices.includes(index)
+              ? context.selectedIndices.filter((i) => i !== index)
+              : [...context.selectedIndices, index];
+            context.onSelect(newIndices);
+          } else if (context.multiple && event.shiftKey) {
+            // Add to selection if multiple and shift is pressed
+            context.onSelect([...context.selectedIndices, index]);
+          } else {
+            // Single selection
+            context.onSelect([index]);
+          }
+        }
+      },
+      [
+        context.onSelect,
+        context.selectedIndices,
+        index,
+        context.multiple,
+        isDisabled,
+      ],
+    );
 
     return (
       <ItemSlot
@@ -274,14 +332,10 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
         aria-selected={isSelected}
         data-slot="selectable-item"
         data-selected={isSelected ? "" : undefined}
-        data-disabled={context.disabled ? "" : undefined}
+        data-disabled={isDisabled ? "" : undefined}
         {...itemProps}
         ref={forwardedRef}
-        onClick={composeEventHandlers(itemProps.onClick, () => {
-          if (!context.disabled) {
-            context.onSelect(index);
-          }
-        })}
+        onClick={composeEventHandlers(itemProps.onClick, onItemSelect)}
         className={cn(
           "cursor-default select-none ring-1 ring-transparent focus-visible:outline-none",
           "data-disabled:pointer-events-none data-disabled:opacity-50 data-selected:ring-ring",
