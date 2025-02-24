@@ -35,13 +35,37 @@ import {
   ComboboxItem,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
+import * as Grid from "@/registry/default/ui/grid";
 import { RelativeTimeCard } from "@/registry/default/ui/relative-time-card";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
 
-export default function PlaygroundPage() {
+export default async function PlaygroundPage() {
+  const awaitedTricks = await new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(tricks);
+    }, 1000);
+  });
+
+  console.log({ awaitedTricks });
+
   return (
     <Shell>
+      <Grid.Root
+        variant="bento"
+        columnCount={{ sm: 1, md: 2, lg: 3, xl: 4 }}
+        gap={4}
+      >
+        {Array.from({ length: 12 }).map((_, index) => (
+          <Grid.Item
+            key={index}
+            className="rounded-md bg-accent p-4"
+            colSpan={index % 2 === 0 ? 1 : 2}
+          >
+            {index}
+          </Grid.Item>
+        ))}
+      </Grid.Root>
       <RelativeTimeCard date={new Date()}>Relative time</RelativeTimeCard>
       <ScrollerDemo />
       <Combobox className="w-[15rem]">
