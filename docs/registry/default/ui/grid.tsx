@@ -6,7 +6,7 @@ type Breakpoint = "sm" | "md" | "lg" | "xl" | "2xl";
 type BreakpointValue<T> = T | Partial<Record<Breakpoint, T>>;
 
 function getResponsiveClasses(
-  value: BreakpointValue<number | string>,
+  value: BreakpointValue<number | string | undefined>,
   prefix: string,
 ): string {
   if (typeof value === "object") {
@@ -24,32 +24,12 @@ function getResponsiveClasses(
 
 interface GridRootProps extends React.ComponentPropsWithoutRef<"div"> {
   variant?: "default" | "bento";
-  columnCount?: BreakpointValue<number | "auto" | "autoFit" | "autoFill">;
   asChild?: boolean;
 }
 
 const GridRoot = React.forwardRef<HTMLDivElement, GridRootProps>(
   (props, forwardedRef) => {
-    const {
-      columnCount = { sm: 1, md: 2, lg: 3, xl: 4 },
-      variant = "default",
-      asChild,
-      className,
-      ...rootProps
-    } = props;
-
-    const rootClasses = React.useMemo(
-      () =>
-        cn(
-          "grid",
-          typeof columnCount === "number" || typeof columnCount === "string"
-            ? `grid-cols-${columnCount}`
-            : getResponsiveClasses(columnCount, "grid-cols"),
-          variant === "bento" && "grid-flow-dense",
-          className,
-        ),
-      [columnCount, variant, className],
-    );
+    const { variant = "default", asChild, className, ...rootProps } = props;
 
     const RootSlot = asChild ? Slot : "div";
 
@@ -58,7 +38,11 @@ const GridRoot = React.forwardRef<HTMLDivElement, GridRootProps>(
         data-slot="grid"
         {...rootProps}
         ref={forwardedRef}
-        className={rootClasses}
+        className={cn(
+          "grid gap-4",
+          variant === "bento" && "grid-flow-dense",
+          className,
+        )}
       />
     );
   },
@@ -71,8 +55,8 @@ interface GridItemProps extends React.ComponentPropsWithoutRef<"div"> {
   rowSpan?: BreakpointValue<number>;
 }
 
-const GridItem = React.memo(
-  React.forwardRef<HTMLDivElement, GridItemProps>((props, forwardedRef) => {
+const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>(
+  (props, forwardedRef) => {
     const { asChild, className, colSpan, rowSpan, ...itemProps } = props;
 
     const ItemSlot = asChild ? Slot : "div";
@@ -95,7 +79,7 @@ const GridItem = React.memo(
         className={itemClasses}
       />
     );
-  }),
+  },
 );
 GridItem.displayName = "GridItem";
 

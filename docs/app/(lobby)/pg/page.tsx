@@ -25,7 +25,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import ScrollerDemo from "@/registry/default/examples/scroller-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -35,31 +34,25 @@ import {
   ComboboxItem,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
-import * as Grid from "@/registry/default/ui/grid";
-import { RelativeTimeCard } from "@/registry/default/ui/relative-time-card";
+import * as Navigable from "@/registry/default/ui/navigable";
 import * as Mention from "@diceui/mention";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, UserIcon } from "lucide-react";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <Grid.Root
-        variant="bento"
-        columnCount={{ sm: 1, md: 2, lg: 3, xl: 4 }}
-        className="gap-2 sm:gap-4"
-      >
-        {Array.from({ length: 12 }).map((_, index) => (
-          <Grid.Item
+      <Navigable.Root className="grid grid-cols-3 gap-2">
+        {Array.from({ length: 10 }).map((_, index) => (
+          <Navigable.Item
             key={index}
-            className="rounded-md bg-accent p-4"
-            colSpan={index % 2 === 0 ? 1 : 2}
+            index={index}
+            className="rounded-sm bg-muted/40 p-4"
           >
-            {index}
-          </Grid.Item>
+            {index + 1}
+          </Navigable.Item>
         ))}
-      </Grid.Root>
-      <RelativeTimeCard date={new Date()}>Relative time</RelativeTimeCard>
-      <ScrollerDemo />
+      </Navigable.Root>
+
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
