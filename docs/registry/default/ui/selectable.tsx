@@ -5,15 +5,15 @@ import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 
-const LIST_NAME = "NavigableList";
-const ITEM_NAME = "NavigableItem";
+const SELECTABLE_NAME = "Selectable";
+const SELECTABLE_ITEM_NAME = "SelectableItem";
 
-const NAVIGABLE_ERROR = {
-  [LIST_NAME]: `\`${LIST_NAME}\` must be used as root component`,
-  [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${LIST_NAME}\``,
+const SELECTABLE_ERROR = {
+  [SELECTABLE_NAME]: `\`${SELECTABLE_NAME}\` must be used as root component`,
+  [SELECTABLE_ITEM_NAME]: `\`${SELECTABLE_ITEM_NAME}\` must be within \`${SELECTABLE_NAME}\``,
 } as const;
 
-interface NavigableContextValue {
+interface SelectableContextValue {
   id: string;
   selectedIndex: number;
   onSelect: (index: number) => void;
@@ -24,20 +24,20 @@ interface NavigableContextValue {
   virtual?: boolean;
 }
 
-const NavigableContext = React.createContext<NavigableContextValue | null>(
+const SelectableContext = React.createContext<SelectableContextValue | null>(
   null,
 );
-NavigableContext.displayName = LIST_NAME;
+SelectableContext.displayName = SELECTABLE_NAME;
 
-function useNavigableContext(name: keyof typeof NAVIGABLE_ERROR) {
-  const context = React.useContext(NavigableContext);
+function useSelectableContext(name: keyof typeof SELECTABLE_ERROR) {
+  const context = React.useContext(SelectableContext);
   if (!context) {
-    throw new Error(NAVIGABLE_ERROR[name]);
+    throw new Error(SELECTABLE_ERROR[name]);
   }
   return context;
 }
 
-interface NavigableListProps extends React.ComponentPropsWithoutRef<"div"> {
+interface SelectableRootProps extends React.ComponentPropsWithoutRef<"div"> {
   id?: string;
   defaultSelectedIndex?: number;
   selectedIndex?: number;
@@ -50,7 +50,7 @@ interface NavigableListProps extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
 }
 
-const NavigableList = React.forwardRef<HTMLDivElement, NavigableListProps>(
+const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
   (props, forwardedRef) => {
     const {
       id = React.useId(),
@@ -83,7 +83,7 @@ const NavigableList = React.forwardRef<HTMLDivElement, NavigableListProps>(
       [isControlled, onSelectedIndexChange],
     );
 
-    const contextValue = React.useMemo<NavigableContextValue>(
+    const contextValue = React.useMemo<SelectableContextValue>(
       () => ({
         id,
         selectedIndex,
@@ -226,14 +226,14 @@ const NavigableList = React.forwardRef<HTMLDivElement, NavigableListProps>(
     );
 
     return (
-      <NavigableContext.Provider value={contextValue}>
+      <SelectableContext.Provider value={contextValue}>
         <ListSlot
           role="listbox"
-          data-slot="navigable-list"
+          data-slot="selectable-list"
           data-orientation={orientation}
           data-disabled={disabled ? "" : undefined}
+          tabIndex={disabled ? undefined : 0}
           {...listProps}
-          tabIndex={disabled ? undefined : -1}
           ref={forwardedRef}
           onKeyDown={composeEventHandlers(listProps.onKeyDown, onKeyDown)}
           onFocus={composeEventHandlers(listProps.onFocus, () => {
@@ -249,21 +249,21 @@ const NavigableList = React.forwardRef<HTMLDivElement, NavigableListProps>(
             className,
           )}
         />
-      </NavigableContext.Provider>
+      </SelectableContext.Provider>
     );
   },
 );
-NavigableList.displayName = LIST_NAME;
+SelectableRoot.displayName = SELECTABLE_NAME;
 
-interface NavigableItemProps extends React.ComponentPropsWithoutRef<"div"> {
+interface SelectableItemProps extends React.ComponentPropsWithoutRef<"div"> {
   index: number;
   asChild?: boolean;
 }
 
-const NavigableItem = React.forwardRef<HTMLDivElement, NavigableItemProps>(
+const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
   (props, forwardedRef) => {
     const { asChild, className, index, ...itemProps } = props;
-    const context = useNavigableContext(ITEM_NAME);
+    const context = useSelectableContext(SELECTABLE_ITEM_NAME);
     const ItemSlot = asChild ? Slot : "div";
 
     const isSelected = context.selectedIndex === index;
@@ -272,7 +272,7 @@ const NavigableItem = React.forwardRef<HTMLDivElement, NavigableItemProps>(
       <ItemSlot
         role="option"
         aria-selected={isSelected}
-        data-slot="navigable-item"
+        data-slot="selectable-item"
         data-selected={isSelected ? "" : undefined}
         data-disabled={context.disabled ? "" : undefined}
         {...itemProps}
@@ -291,15 +291,16 @@ const NavigableItem = React.forwardRef<HTMLDivElement, NavigableItemProps>(
     );
   },
 );
-NavigableItem.displayName = ITEM_NAME;
+SelectableItem.displayName = SELECTABLE_ITEM_NAME;
 
-const List = NavigableList;
-const Item = NavigableItem;
+const Selectable = SelectableRoot;
+const Root = SelectableRoot;
+const Item = SelectableItem;
 
 export {
-  NavigableList,
-  NavigableItem,
+  Selectable,
+  SelectableItem,
   //
-  List,
+  Root,
   Item,
 };

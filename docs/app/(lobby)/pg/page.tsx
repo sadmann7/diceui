@@ -34,24 +34,24 @@ import {
   ComboboxItem,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
-import * as Navigable from "@/registry/default/ui/navigable";
+import * as Selectable from "@/registry/default/ui/selectable";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <Navigable.List orientation="both">
+      <Selectable.Root orientation="both">
         {Array.from({ length: 10 }).map((_, index) => (
-          <Navigable.Item
+          <Selectable.Item
             key={index}
             index={index}
             className="rounded-sm bg-muted/40 p-4"
           >
             {index + 1}
-          </Navigable.Item>
+          </Selectable.Item>
         ))}
-      </Navigable.List>
+      </Selectable.Root>
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
