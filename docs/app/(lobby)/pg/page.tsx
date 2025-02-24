@@ -40,21 +40,13 @@ import { RelativeTimeCard } from "@/registry/default/ui/relative-time-card";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
 
-export default async function PlaygroundPage() {
-  const awaitedTricks = await new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(tricks);
-    }, 1000);
-  });
-
-  console.log({ awaitedTricks });
-
+export default function PlaygroundPage() {
   return (
     <Shell>
       <Grid.Root
         variant="bento"
         columnCount={{ sm: 1, md: 2, lg: 3, xl: 4 }}
-        gap={4}
+        className="gap-2 sm:gap-4"
       >
         {Array.from({ length: 12 }).map((_, index) => (
           <Grid.Item
