@@ -1,20 +1,16 @@
 "use client";
 
-import { composeEventHandlers, useComposedRefs } from "@/lib/composition";
+import { composeEventHandlers } from "@/lib/composition";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 
-const ROOT_NAME = "Navigable";
 const LIST_NAME = "NavigableList";
 const ITEM_NAME = "NavigableItem";
-const TRIGGER_NAME = "NavigableTrigger";
 
 const NAVIGABLE_ERROR = {
-  [ROOT_NAME]: `\`${ROOT_NAME}\` components must be within \`${ROOT_NAME}\``,
-  [LIST_NAME]: `\`${LIST_NAME}\` must be within \`${ROOT_NAME}\``,
+  [LIST_NAME]: `\`${LIST_NAME}\` must be used as root component`,
   [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${LIST_NAME}\``,
-  [TRIGGER_NAME]: `\`${TRIGGER_NAME}\` must be within \`${ROOT_NAME}\``,
 } as const;
 
 interface NavigableContextValue {
@@ -31,7 +27,7 @@ interface NavigableContextValue {
 const NavigableContext = React.createContext<NavigableContextValue | null>(
   null,
 );
-NavigableContext.displayName = ROOT_NAME;
+NavigableContext.displayName = LIST_NAME;
 
 function useNavigableContext(name: keyof typeof NAVIGABLE_ERROR) {
   const context = React.useContext(NavigableContext);
@@ -41,7 +37,7 @@ function useNavigableContext(name: keyof typeof NAVIGABLE_ERROR) {
   return context;
 }
 
-interface NavigableRootProps extends React.ComponentPropsWithoutRef<"div"> {
+interface NavigableListProps extends React.ComponentPropsWithoutRef<"div"> {
   id?: string;
   defaultSelectedIndex?: number;
   selectedIndex?: number;
@@ -54,7 +50,7 @@ interface NavigableRootProps extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
 }
 
-const NavigableRoot = React.forwardRef<HTMLDivElement, NavigableRootProps>(
+const NavigableList = React.forwardRef<HTMLDivElement, NavigableListProps>(
   (props, forwardedRef) => {
     const {
       id = React.useId(),
@@ -68,7 +64,7 @@ const NavigableRoot = React.forwardRef<HTMLDivElement, NavigableRootProps>(
       virtual = false,
       asChild,
       className,
-      ...rootProps
+      ...listProps
     } = props;
 
     const [uncontrolledSelectedIndex, setUncontrolledSelectedIndex] =
@@ -101,107 +97,159 @@ const NavigableRoot = React.forwardRef<HTMLDivElement, NavigableRootProps>(
       [id, selectedIndex, onSelect, orientation, loop, dir, disabled, virtual],
     );
 
-    const RootSlot = asChild ? Slot : "div";
-
-    console.log({ selectedIndex });
-
-    return (
-      <NavigableContext.Provider value={contextValue}>
-        <RootSlot
-          data-slot="navigable"
-          data-orientation={orientation}
-          data-disabled={disabled ? "" : undefined}
-          {...rootProps}
-          ref={forwardedRef}
-          className={cn("relative", className)}
-        />
-      </NavigableContext.Provider>
-    );
-  },
-);
-NavigableRoot.displayName = ROOT_NAME;
-
-interface NavigableListProps extends React.ComponentPropsWithoutRef<"div"> {
-  asChild?: boolean;
-}
-
-const NavigableList = React.forwardRef<HTMLDivElement, NavigableListProps>(
-  (props, forwardedRef) => {
-    const { asChild, className, ...listProps } = props;
-    const context = useNavigableContext(LIST_NAME);
     const ListSlot = asChild ? Slot : "div";
+
+    const itemCount = React.useMemo(
+      () => React.Children.count(props.children),
+      [props.children],
+    );
+    const columnCount = React.useMemo(
+      () =>
+        orientation === "horizontal"
+          ? itemCount
+          : Math.ceil(Math.sqrt(itemCount)),
+      [orientation, itemCount],
+    );
+
+    const getNextIndex = React.useCallback(
+      (currentIndex: number, key: string): number => {
+        if (orientation === "both") {
+          const currentRow = Math.floor(currentIndex / columnCount);
+
+          switch (key) {
+            case "ArrowDown": {
+              const nextIndex = currentIndex + columnCount;
+              return loop
+                ? ((nextIndex % itemCount) + itemCount) % itemCount
+                : nextIndex >= itemCount
+                  ? currentIndex
+                  : nextIndex;
+            }
+            case "ArrowUp": {
+              const nextIndex = currentIndex - columnCount;
+              return loop
+                ? ((nextIndex % itemCount) + itemCount) % itemCount
+                : nextIndex < 0
+                  ? currentIndex
+                  : nextIndex;
+            }
+            case "ArrowRight": {
+              const nextIndex = currentIndex + 1;
+              const nextRow = Math.floor(nextIndex / columnCount);
+              return nextRow !== currentRow || nextIndex >= itemCount
+                ? currentIndex
+                : nextIndex;
+            }
+            case "ArrowLeft": {
+              const nextIndex = currentIndex - 1;
+              const nextRow = Math.floor(nextIndex / columnCount);
+              return nextRow !== currentRow || nextIndex < 0
+                ? currentIndex
+                : nextIndex;
+            }
+          }
+        }
+
+        return currentIndex;
+      },
+      [orientation, columnCount, itemCount, loop],
+    );
 
     const onKeyDown = React.useCallback(
       (event: React.KeyboardEvent) => {
-        if (context.disabled) return;
+        if (disabled) return;
 
-        const isVertical =
-          context.orientation === "vertical" || context.orientation === "both";
+        const isVertical = orientation === "vertical" || orientation === "both";
         const isHorizontal =
-          context.orientation === "horizontal" ||
-          context.orientation === "both";
-        const isRtl = context.dir === "rtl";
+          orientation === "horizontal" || orientation === "both";
+        const isRtl = dir === "rtl";
 
-        let nextIndex = context.selectedIndex;
+        let nextIndex = selectedIndex;
 
-        if (isVertical && event.key === "ArrowDown") {
-          event.preventDefault();
-          nextIndex = context.selectedIndex + 1;
-        } else if (isVertical && event.key === "ArrowUp") {
-          event.preventDefault();
-          nextIndex = context.selectedIndex - 1;
-        } else if (
-          isHorizontal &&
-          event.key === (isRtl ? "ArrowLeft" : "ArrowRight")
-        ) {
-          event.preventDefault();
-          nextIndex = context.selectedIndex + 1;
-        } else if (
-          isHorizontal &&
-          event.key === (isRtl ? "ArrowRight" : "ArrowLeft")
-        ) {
-          event.preventDefault();
-          nextIndex = context.selectedIndex - 1;
-        } else if (event.key === "Home") {
-          event.preventDefault();
-          nextIndex = 0;
-        } else if (event.key === "End") {
-          event.preventDefault();
-          nextIndex = React.Children.count(props.children) - 1;
-        }
-
-        if (context.loop) {
-          const count = React.Children.count(props.children);
-          nextIndex = ((nextIndex % count) + count) % count;
+        if (event.key === "Tab") {
+          if (selectedIndex === -1) {
+            event.preventDefault();
+            nextIndex = 0;
+          } else {
+            nextIndex = -1;
+          }
+        } else if (orientation === "both") {
+          nextIndex = getNextIndex(selectedIndex, event.key);
         } else {
-          nextIndex = Math.max(
-            0,
-            Math.min(nextIndex, React.Children.count(props.children) - 1),
-          );
+          if (isVertical && event.key === "ArrowDown") {
+            event.preventDefault();
+            nextIndex = selectedIndex + 1;
+          } else if (isVertical && event.key === "ArrowUp") {
+            event.preventDefault();
+            nextIndex = selectedIndex - 1;
+          } else if (
+            isHorizontal &&
+            event.key === (isRtl ? "ArrowLeft" : "ArrowRight")
+          ) {
+            event.preventDefault();
+            nextIndex = selectedIndex + 1;
+          } else if (
+            isHorizontal &&
+            event.key === (isRtl ? "ArrowRight" : "ArrowLeft")
+          ) {
+            event.preventDefault();
+            nextIndex = selectedIndex - 1;
+          } else if (event.key === "Home") {
+            event.preventDefault();
+            nextIndex = 0;
+          } else if (event.key === "End") {
+            event.preventDefault();
+            nextIndex = itemCount - 1;
+          }
+
+          if (loop) {
+            nextIndex = ((nextIndex % itemCount) + itemCount) % itemCount;
+          } else {
+            nextIndex = Math.max(0, Math.min(nextIndex, itemCount - 1));
+          }
         }
 
-        if (nextIndex !== context.selectedIndex) {
-          context.onSelect(nextIndex);
+        if (nextIndex !== selectedIndex) {
+          onSelect(nextIndex);
         }
       },
-      [context, props.children],
+      [
+        disabled,
+        orientation,
+        dir,
+        selectedIndex,
+        loop,
+        itemCount,
+        onSelect,
+        getNextIndex,
+      ],
     );
 
     return (
-      <ListSlot
-        role="listbox"
-        data-slot="navigable-list"
-        data-orientation={context.orientation}
-        {...listProps}
-        ref={forwardedRef}
-        onKeyDown={composeEventHandlers(listProps.onKeyDown, onKeyDown)}
-        className={cn(
-          "outline-none",
-          context.orientation === "horizontal" && "flex",
-          className,
-        )}
-        tabIndex={context.disabled ? undefined : 0}
-      />
+      <NavigableContext.Provider value={contextValue}>
+        <ListSlot
+          role="listbox"
+          data-slot="navigable-list"
+          data-orientation={orientation}
+          data-disabled={disabled ? "" : undefined}
+          {...listProps}
+          tabIndex={disabled ? undefined : -1}
+          ref={forwardedRef}
+          onKeyDown={composeEventHandlers(listProps.onKeyDown, onKeyDown)}
+          onFocus={composeEventHandlers(listProps.onFocus, () => {
+            if (selectedIndex === -1 && !disabled) {
+              onSelect(0);
+            }
+          })}
+          className={cn(
+            "focus-visible:outline-none",
+            orientation === "horizontal" && "flex items-center gap-2",
+            orientation === "vertical" && "flex flex-col gap-2",
+            orientation === "both" && `grid gap-2 grid-cols-${columnCount}`,
+            className,
+          )}
+        />
+      </NavigableContext.Provider>
     );
   },
 );
@@ -235,7 +283,7 @@ const NavigableItem = React.forwardRef<HTMLDivElement, NavigableItemProps>(
           }
         })}
         className={cn(
-          "relative cursor-default select-none ring-1 ring-transparent focus-visible:outline-none",
+          "cursor-default select-none ring-1 ring-transparent focus-visible:outline-none",
           "data-disabled:pointer-events-none data-disabled:opacity-50 data-selected:ring-ring",
           className,
         )}
@@ -245,18 +293,13 @@ const NavigableItem = React.forwardRef<HTMLDivElement, NavigableItemProps>(
 );
 NavigableItem.displayName = ITEM_NAME;
 
-const Navigable = NavigableRoot;
-const Root = NavigableRoot;
 const List = NavigableList;
 const Item = NavigableItem;
 
 export {
-  Navigable,
-  NavigableRoot,
   NavigableList,
   NavigableItem,
   //
-  Root,
   List,
   Item,
 };

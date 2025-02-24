@@ -36,12 +36,12 @@ import {
 } from "@/registry/default/ui/combobox";
 import * as Navigable from "@/registry/default/ui/navigable";
 import * as Mention from "@diceui/mention";
-import { ChevronDown, UserIcon } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <Navigable.Root className="grid grid-cols-3 gap-2">
+      <Navigable.List orientation="both">
         {Array.from({ length: 10 }).map((_, index) => (
           <Navigable.Item
             key={index}
@@ -51,8 +51,7 @@ export default function PlaygroundPage() {
             {index + 1}
           </Navigable.Item>
         ))}
-      </Navigable.Root>
-
+      </Navigable.List>
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
