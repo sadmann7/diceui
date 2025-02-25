@@ -13,6 +13,7 @@ const HOME = "Home";
 const END = "End";
 const ENTER = "Enter";
 const SPACE = " ";
+const TAB = "Tab";
 
 const SELECTABLE_NAME = "Selectable";
 const SELECTABLE_ITEM_NAME = "SelectableItem";
@@ -25,6 +26,8 @@ const SELECTABLE_ERROR = {
 interface SelectableContextValue {
   id: string;
   selectedIndex: number;
+  highlightedIndex: number;
+  setHighlightedIndex: (index: number) => void;
   onSelect: (index: number) => void;
   orientation?: "horizontal" | "vertical" | "mixed";
   loop?: boolean;
@@ -32,6 +35,7 @@ interface SelectableContextValue {
   disabled?: boolean;
   virtual?: boolean;
   collectionRef: React.RefObject<Array<HTMLElement | null>>;
+  rootRef: React.RefObject<HTMLElement | null>;
 }
 
 const SelectableContext = React.createContext<SelectableContextValue | null>(
@@ -155,11 +159,14 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
 
     const [uncontrolledSelectedIndex, setUncontrolledSelectedIndex] =
       React.useState(defaultSelectedIndex);
+    const [highlightedIndex, setHighlightedIndex] = React.useState(-1);
 
     const selectedIndex = selectedIndexProp ?? uncontrolledSelectedIndex;
     const isControlled = selectedIndexProp !== undefined;
 
     const collectionRef = React.useRef<ItemElement[]>([]);
+    const rootRef = React.useRef<HTMLElement>(null);
+    const composedRootRef = useComposedRefs(rootRef, forwardedRef);
 
     const onSelect = React.useCallback(
       (index: number) => {
@@ -175,6 +182,8 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
       () => ({
         id,
         selectedIndex,
+        highlightedIndex,
+        setHighlightedIndex,
         onSelect,
         orientation,
         loop,
@@ -182,8 +191,19 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
         disabled,
         virtual,
         collectionRef,
+        rootRef,
       }),
-      [id, selectedIndex, onSelect, orientation, loop, dir, disabled, virtual],
+      [
+        id,
+        selectedIndex,
+        highlightedIndex,
+        onSelect,
+        orientation,
+        loop,
+        dir,
+        disabled,
+        virtual,
+      ],
     );
 
     const RootSlot = asChild ? Slot : "div";
@@ -204,8 +224,14 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
         if (itemCount === 0) return;
 
         // Get the current index, defaulting to first item if none selected
-        const currentIndex = selectedIndex >= 0 ? selectedIndex : 0;
+        const currentIndex = highlightedIndex >= 0 ? highlightedIndex : 0;
         let nextIndex = currentIndex;
+
+        // Handle Tab key to move focus outside the component
+        if (event.key === TAB) {
+          // Let the default tab behavior happen
+          return;
+        }
 
         switch (event.key) {
           case HOME:
@@ -298,9 +324,9 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
 
           case ENTER:
           case SPACE:
-            if (selectedIndex >= 0 && items[selectedIndex]) {
-              // Simulate a click on the selected item
-              items[selectedIndex]?.click();
+            if (highlightedIndex >= 0 && items[highlightedIndex]) {
+              // Simulate a click on the highlighted item
+              items[highlightedIndex]?.click();
               event.preventDefault();
             }
             break;
@@ -310,7 +336,7 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
         }
 
         if (nextIndex !== currentIndex) {
-          onSelect(nextIndex);
+          setHighlightedIndex(nextIndex);
 
           // If virtual focus management is not being used, focus the item
           if (!virtual && items[nextIndex]) {
@@ -318,8 +344,23 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
           }
         }
       },
-      [selectedIndex, onSelect, orientation, loop, dir, disabled, virtual],
+      [highlightedIndex, orientation, loop, dir, disabled, virtual],
     );
+
+    // Handle focus on the root element
+    const onFocus = React.useCallback((event: React.FocusEvent) => {
+      // Only handle focus if it's directly on the root element (not bubbling from children)
+      if (event.target === rootRef.current) {
+        const firstEnabledIndex = getMinIndex(collectionRef);
+        if (
+          firstEnabledIndex >= 0 &&
+          collectionRef.current[firstEnabledIndex]
+        ) {
+          setHighlightedIndex(firstEnabledIndex);
+          collectionRef.current[firstEnabledIndex]?.focus();
+        }
+      }
+    }, []);
 
     return (
       <SelectableContext.Provider value={contextValue}>
@@ -328,9 +369,11 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
           data-slot="selectable-list"
           data-orientation={orientation}
           data-disabled={disabled ? "" : undefined}
+          tabIndex={highlightedIndex === -1 ? 0 : -1}
           {...rootProps}
-          ref={forwardedRef}
+          ref={composedRootRef}
           onKeyDown={composeEventHandlers(rootProps.onKeyDown, onKeyDown)}
+          onFocus={composeEventHandlers(rootProps.onFocus, onFocus)}
           className={cn(
             "focus-visible:outline-none",
             orientation === "horizontal" && "flex items-center gap-2",
@@ -360,6 +403,7 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
     const composedRef = useComposedRefs(itemRef, forwardedRef);
 
     const isSelected = context.selectedIndex === index;
+    const isHighlighted = context.highlightedIndex === index;
 
     React.useEffect(() => {
       if (itemRef.current) {
@@ -371,16 +415,35 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
       }
     }, [context.collectionRef, index]);
 
+    // Handle focus on the item
+    const onFocus = React.useCallback(() => {
+      context.setHighlightedIndex(index);
+    }, [context.setHighlightedIndex, index]);
+
+    // Handle blur on the item
+    const onBlur = React.useCallback(
+      (event: React.FocusEvent) => {
+        // Only clear highlighted index if focus is moving outside the selectable component
+        if (!context.rootRef.current?.contains(event.relatedTarget as Node)) {
+          context.setHighlightedIndex(-1);
+        }
+      },
+      [context.setHighlightedIndex, context.rootRef],
+    );
+
     return (
       <ItemSlot
         role="option"
         aria-selected={isSelected}
         data-slot="selectable-item"
         data-selected={isSelected ? "" : undefined}
+        data-highlighted={isHighlighted ? "" : undefined}
         data-disabled={context.disabled ? "" : undefined}
-        tabIndex={isSelected && !context.disabled ? 0 : -1}
+        tabIndex={isHighlighted && !context.disabled ? 0 : -1}
         {...itemProps}
         ref={composedRef}
+        onFocus={composeEventHandlers(itemProps.onFocus, onFocus)}
+        onBlur={composeEventHandlers(itemProps.onBlur, onBlur)}
         onClick={composeEventHandlers(itemProps.onClick, () => {
           if (!context.disabled) {
             context.onSelect(index);
@@ -388,7 +451,9 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
         })}
         className={cn(
           "cursor-default select-none ring-1 ring-transparent focus-visible:outline-none",
-          "data-disabled:pointer-events-none data-disabled:opacity-50 data-selected:ring-ring",
+          "data-disabled:pointer-events-none data-disabled:opacity-50",
+          "data-selected:ring-ring",
+          "data-highlighted:ring-ring",
           className,
         )}
       />
