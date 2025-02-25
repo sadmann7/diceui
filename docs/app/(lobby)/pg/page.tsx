@@ -41,7 +41,7 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <Selectable.Root multiple orientation="mixed">
+      <Selectable.Root>
         {Array.from({ length: 10 }).map((_, index) => (
           <Selectable.Item
             key={index}

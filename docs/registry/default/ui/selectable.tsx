@@ -1,9 +1,18 @@
 "use client";
 
-import { composeEventHandlers } from "@/lib/composition";
+import { composeEventHandlers, useComposedRefs } from "@/lib/composition";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
+
+const ARROW_UP = "ArrowUp";
+const ARROW_DOWN = "ArrowDown";
+const ARROW_LEFT = "ArrowLeft";
+const ARROW_RIGHT = "ArrowRight";
+const HOME = "Home";
+const END = "End";
+const ENTER = "Enter";
+const SPACE = " ";
 
 const SELECTABLE_NAME = "Selectable";
 const SELECTABLE_ITEM_NAME = "SelectableItem";
@@ -14,14 +23,15 @@ const SELECTABLE_ERROR = {
 } as const;
 
 interface SelectableContextValue {
-  selectedIndices: number[];
-  onSelect: (indices: number[]) => void;
+  id: string;
+  selectedIndex: number;
+  onSelect: (index: number) => void;
   orientation?: "horizontal" | "vertical" | "mixed";
   loop?: boolean;
   dir?: "ltr" | "rtl";
   disabled?: boolean;
   virtual?: boolean;
-  multiple?: boolean;
+  collectionRef: React.RefObject<Array<HTMLElement | null>>;
 }
 
 const SelectableContext = React.createContext<SelectableContextValue | null>(
@@ -38,242 +48,282 @@ function useSelectableContext(name: keyof typeof SELECTABLE_ERROR) {
 }
 
 interface SelectableRootProps extends React.ComponentPropsWithoutRef<"div"> {
-  defaultSelectedIndices?: number[];
-  selectedIndices?: number[];
-  onSelectedIndicesChange?: (indices: number[]) => void;
+  id?: string;
+  defaultSelectedIndex?: number;
+  selectedIndex?: number;
+  onSelectedIndexChange?: (index: number) => void;
   orientation?: "horizontal" | "vertical" | "mixed";
   loop?: boolean;
   dir?: "ltr" | "rtl";
   disabled?: boolean;
   virtual?: boolean;
-  multiple?: boolean;
   asChild?: boolean;
+}
+
+function findNonDisabledIndex(
+  collectionRef: React.RefObject<Array<ItemElement | null>>,
+  {
+    startingIndex,
+    disabledIndices,
+    decrement = false,
+  }: {
+    startingIndex: number;
+    disabledIndices?: number[];
+    decrement?: boolean;
+  },
+): number {
+  const len = collectionRef.current.length;
+  let index = startingIndex;
+
+  do {
+    index = decrement ? index - 1 : index + 1;
+
+    // Handle loop around
+    if (index < 0) {
+      index = len - 1;
+    } else if (index >= len) {
+      index = 0;
+    }
+
+    // Check if the index is disabled
+    const isIndexDisabled = disabledIndices?.includes(index) || false;
+
+    if (!isIndexDisabled) {
+      return index;
+    }
+  } while (index !== startingIndex);
+
+  // If all indices are disabled, return the starting index
+  return startingIndex;
+}
+
+function getMinIndex(
+  collectionRef: React.RefObject<Array<ItemElement | null>>,
+  disabledIndices?: number[],
+): number {
+  const len = collectionRef.current.length;
+
+  for (let i = 0; i < len; i++) {
+    if (!disabledIndices?.includes(i)) {
+      return i;
+    }
+  }
+
+  return 0;
+}
+
+function getMaxIndex(
+  collectionRef: React.RefObject<Array<ItemElement | null>>,
+  disabledIndices?: number[],
+): number {
+  const len = collectionRef.current.length;
+
+  for (let i = len - 1; i >= 0; i--) {
+    if (!disabledIndices?.includes(i)) {
+      return i;
+    }
+  }
+
+  return len - 1;
 }
 
 const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
   (props, forwardedRef) => {
     const {
-      defaultSelectedIndices = [],
-      selectedIndices: selectedIndicesProp,
-      onSelectedIndicesChange,
+      id = React.useId(),
+      defaultSelectedIndex = -1,
+      selectedIndex: selectedIndexProp,
+      onSelectedIndexChange,
       orientation = "vertical",
       loop = false,
       dir = "ltr",
       disabled = false,
       virtual = false,
-      multiple = false,
       asChild,
       className,
-      ...listProps
+      ...rootProps
     } = props;
 
-    const [uncontrolledSelectedIndices, setUncontrolledSelectedIndices] =
-      React.useState(defaultSelectedIndices);
+    const [uncontrolledSelectedIndex, setUncontrolledSelectedIndex] =
+      React.useState(defaultSelectedIndex);
 
-    const selectedIndices = selectedIndicesProp ?? uncontrolledSelectedIndices;
-    const isControlled = selectedIndicesProp !== undefined;
+    const selectedIndex = selectedIndexProp ?? uncontrolledSelectedIndex;
+    const isControlled = selectedIndexProp !== undefined;
+
+    const collectionRef = React.useRef<ItemElement[]>([]);
 
     const onSelect = React.useCallback(
-      (indices: number[]) => {
+      (index: number) => {
         if (!isControlled) {
-          setUncontrolledSelectedIndices(indices);
+          setUncontrolledSelectedIndex(index);
         }
-        onSelectedIndicesChange?.(indices);
+        onSelectedIndexChange?.(index);
       },
-      [isControlled, onSelectedIndicesChange],
+      [isControlled, onSelectedIndexChange],
     );
 
     const contextValue = React.useMemo<SelectableContextValue>(
       () => ({
-        selectedIndices,
+        id,
+        selectedIndex,
         onSelect,
         orientation,
         loop,
         dir,
         disabled,
         virtual,
-        multiple,
+        collectionRef,
       }),
-      [
-        selectedIndices,
-        onSelect,
-        orientation,
-        loop,
-        dir,
-        disabled,
-        virtual,
-        multiple,
-      ],
+      [id, selectedIndex, onSelect, orientation, loop, dir, disabled, virtual],
     );
 
-    const ListSlot = asChild ? Slot : "div";
-
-    const itemCount = React.useMemo(
-      () => React.Children.count(props.children),
-      [props.children],
-    );
-    const columnCount = React.useMemo(
-      () =>
-        orientation === "horizontal"
-          ? itemCount
-          : Math.ceil(Math.sqrt(itemCount)),
-      [orientation, itemCount],
-    );
-
-    const getNextIndex = React.useCallback(
-      (currentIndex: number, key: string): number => {
-        if (orientation === "mixed") {
-          const currentRow = Math.floor(currentIndex / columnCount);
-
-          switch (key) {
-            case "ArrowDown": {
-              const nextIndex = currentIndex + columnCount;
-              return loop
-                ? ((nextIndex % itemCount) + itemCount) % itemCount
-                : nextIndex >= itemCount
-                  ? currentIndex
-                  : nextIndex;
-            }
-            case "ArrowUp": {
-              const nextIndex = currentIndex - columnCount;
-              return loop
-                ? ((nextIndex % itemCount) + itemCount) % itemCount
-                : nextIndex < 0
-                  ? currentIndex
-                  : nextIndex;
-            }
-            case "ArrowRight": {
-              const nextIndex = currentIndex + 1;
-              const nextRow = Math.floor(nextIndex / columnCount);
-              return nextRow !== currentRow || nextIndex >= itemCount
-                ? currentIndex
-                : nextIndex;
-            }
-            case "ArrowLeft": {
-              const nextIndex = currentIndex - 1;
-              const nextRow = Math.floor(nextIndex / columnCount);
-              return nextRow !== currentRow || nextIndex < 0
-                ? currentIndex
-                : nextIndex;
-            }
-            default:
-              return currentIndex;
-          }
-        }
-
-        return currentIndex;
-      },
-      [orientation, columnCount, itemCount, loop],
-    );
+    const RootSlot = asChild ? Slot : "div";
 
     const onKeyDown = React.useCallback(
       (event: React.KeyboardEvent) => {
         if (disabled) return;
 
+        const isRtl = dir === "rtl";
         const isVertical =
           orientation === "vertical" || orientation === "mixed";
         const isHorizontal =
           orientation === "horizontal" || orientation === "mixed";
-        const isRtl = dir === "rtl";
 
-        // Get the last selected index or -1 if none selected
-        const lastSelectedIndex: number = selectedIndices.at(-1) ?? -1;
+        const items = collectionRef.current;
+        const itemCount = items.length;
 
-        let nextIndex: number = lastSelectedIndex;
+        if (itemCount === 0) return;
 
-        if (event.key === "Tab") {
-          if (lastSelectedIndex === -1) {
-            event.preventDefault();
-            nextIndex = 0;
-          } else {
-            nextIndex = -1;
-          }
-        } else if (orientation === "mixed" && lastSelectedIndex !== -1) {
-          nextIndex = getNextIndex(lastSelectedIndex, event.key);
-        } else {
-          if (isVertical && event.key === "ArrowDown") {
-            event.preventDefault();
-            nextIndex = Math.max(-1, lastSelectedIndex) + 1;
-          } else if (isVertical && event.key === "ArrowUp") {
-            event.preventDefault();
-            nextIndex = Math.max(-1, lastSelectedIndex) - 1;
-          } else if (
-            isHorizontal &&
-            event.key === (isRtl ? "ArrowLeft" : "ArrowRight")
-          ) {
-            event.preventDefault();
-            nextIndex = Math.max(-1, lastSelectedIndex) + 1;
-          } else if (
-            isHorizontal &&
-            event.key === (isRtl ? "ArrowRight" : "ArrowLeft")
-          ) {
-            event.preventDefault();
-            nextIndex = Math.max(-1, lastSelectedIndex) - 1;
-          } else if (event.key === "Home") {
-            event.preventDefault();
-            nextIndex = 0;
-          } else if (event.key === "End") {
-            event.preventDefault();
-            nextIndex = itemCount - 1;
-          }
+        // Get the current index, defaulting to first item if none selected
+        const currentIndex = selectedIndex >= 0 ? selectedIndex : 0;
+        let nextIndex = currentIndex;
 
-          if (loop) {
-            nextIndex = ((nextIndex % itemCount) + itemCount) % itemCount;
-          } else {
-            nextIndex = Math.max(0, Math.min(nextIndex, itemCount - 1));
-          }
+        switch (event.key) {
+          case HOME:
+            nextIndex = getMinIndex(collectionRef);
+            event.preventDefault();
+            break;
+
+          case END:
+            nextIndex = getMaxIndex(collectionRef);
+            event.preventDefault();
+            break;
+
+          case ARROW_UP:
+            if (isVertical) {
+              nextIndex = loop
+                ? findNonDisabledIndex(collectionRef, {
+                    startingIndex: currentIndex,
+                    decrement: true,
+                  })
+                : Math.max(
+                    0,
+                    findNonDisabledIndex(collectionRef, {
+                      startingIndex: currentIndex,
+                      decrement: true,
+                    }),
+                  );
+              event.preventDefault();
+            }
+            break;
+
+          case ARROW_DOWN:
+            if (isVertical) {
+              nextIndex = loop
+                ? findNonDisabledIndex(collectionRef, {
+                    startingIndex: currentIndex,
+                  })
+                : Math.min(
+                    itemCount - 1,
+                    findNonDisabledIndex(collectionRef, {
+                      startingIndex: currentIndex,
+                    }),
+                  );
+              event.preventDefault();
+            }
+            break;
+
+          case ARROW_LEFT:
+            if (isHorizontal) {
+              nextIndex = loop
+                ? findNonDisabledIndex(collectionRef, {
+                    startingIndex: currentIndex,
+                    decrement: !isRtl,
+                  })
+                : Math.max(
+                    0,
+                    findNonDisabledIndex(collectionRef, {
+                      startingIndex: currentIndex,
+                      decrement: !isRtl,
+                    }),
+                  );
+              event.preventDefault();
+            }
+            break;
+
+          case ARROW_RIGHT:
+            if (isHorizontal) {
+              nextIndex = loop
+                ? findNonDisabledIndex(collectionRef, {
+                    startingIndex: currentIndex,
+                    decrement: isRtl,
+                  })
+                : Math.min(
+                    itemCount - 1,
+                    findNonDisabledIndex(collectionRef, {
+                      startingIndex: currentIndex,
+                      decrement: isRtl,
+                    }),
+                  );
+              event.preventDefault();
+            }
+            break;
+
+          case ENTER:
+          case SPACE:
+            if (selectedIndex >= 0 && items[selectedIndex]) {
+              // Simulate a click on the selected item
+              items[selectedIndex]?.click();
+              event.preventDefault();
+            }
+            break;
+
+          default:
+            return;
         }
 
-        if (nextIndex !== lastSelectedIndex) {
-          if (multiple && event.shiftKey) {
-            // Add to selection if multiple and shift is pressed
-            onSelect([...selectedIndices, nextIndex]);
-          } else if (multiple && (event.ctrlKey || event.metaKey)) {
-            // Toggle selection if multiple and ctrl/cmd is pressed
-            const newIndices = selectedIndices.includes(nextIndex)
-              ? selectedIndices.filter((i) => i !== nextIndex)
-              : [...selectedIndices, nextIndex];
-            onSelect(newIndices);
-          } else {
-            // Single selection
-            onSelect([nextIndex]);
+        if (nextIndex !== currentIndex) {
+          onSelect(nextIndex);
+
+          // If virtual focus management is not being used, focus the item
+          if (!virtual && items[nextIndex]) {
+            items[nextIndex]?.focus();
           }
         }
       },
-      [
-        disabled,
-        orientation,
-        dir,
-        selectedIndices,
-        loop,
-        itemCount,
-        onSelect,
-        getNextIndex,
-        multiple,
-      ],
+      [selectedIndex, onSelect, orientation, loop, dir, disabled, virtual],
     );
 
     return (
       <SelectableContext.Provider value={contextValue}>
-        <ListSlot
+        <RootSlot
           role="listbox"
           data-slot="selectable-list"
           data-orientation={orientation}
           data-disabled={disabled ? "" : undefined}
           tabIndex={disabled ? undefined : 0}
-          {...listProps}
+          {...rootProps}
           ref={forwardedRef}
-          onKeyDown={composeEventHandlers(listProps.onKeyDown, onKeyDown)}
-          onFocus={composeEventHandlers(listProps.onFocus, () => {
-            if (selectedIndices.length === 0 && !disabled) {
-              onSelect([0]);
+          onKeyDown={composeEventHandlers(rootProps.onKeyDown, onKeyDown)}
+          onFocus={composeEventHandlers(rootProps.onFocus, () => {
+            if (selectedIndex === -1 && !disabled) {
+              onSelect(0);
             }
           })}
           className={cn(
             "focus-visible:outline-none",
             orientation === "horizontal" && "flex items-center gap-2",
             orientation === "vertical" && "flex flex-col gap-2",
-            orientation === "mixed" && `grid gap-2 grid-cols-${columnCount}`,
             className,
           )}
         />
@@ -283,10 +333,11 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
 );
 SelectableRoot.displayName = SELECTABLE_NAME;
 
+type ItemElement = React.ComponentRef<typeof SelectableItem>;
+
 interface SelectableItemProps extends React.ComponentPropsWithoutRef<"div"> {
   index: number;
   asChild?: boolean;
-  disabled?: boolean;
 }
 
 const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
@@ -294,37 +345,20 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
     const { asChild, className, index, ...itemProps } = props;
     const context = useSelectableContext(SELECTABLE_ITEM_NAME);
     const ItemSlot = asChild ? Slot : "div";
+    const itemRef = React.useRef<ItemElement>(null);
+    const composedRef = useComposedRefs(itemRef, forwardedRef);
 
-    const isSelected = context.selectedIndices.includes(index);
+    const isSelected = context.selectedIndex === index;
 
-    const isDisabled = context.disabled || itemProps.disabled;
+    React.useEffect(() => {
+      if (itemRef.current) {
+        context.collectionRef.current[index] = itemRef.current;
 
-    const onItemSelect = React.useCallback(
-      (event: React.MouseEvent) => {
-        if (!isDisabled) {
-          if (context.multiple && (event.ctrlKey || event.metaKey)) {
-            // Toggle selection if multiple and ctrl/cmd is pressed
-            const newIndices = context.selectedIndices.includes(index)
-              ? context.selectedIndices.filter((i) => i !== index)
-              : [...context.selectedIndices, index];
-            context.onSelect(newIndices);
-          } else if (context.multiple && event.shiftKey) {
-            // Add to selection if multiple and shift is pressed
-            context.onSelect([...context.selectedIndices, index]);
-          } else {
-            // Single selection
-            context.onSelect([index]);
-          }
-        }
-      },
-      [
-        context.onSelect,
-        context.selectedIndices,
-        index,
-        context.multiple,
-        isDisabled,
-      ],
-    );
+        return () => {
+          context.collectionRef.current[index] = null;
+        };
+      }
+    }, [context.collectionRef, index]);
 
     return (
       <ItemSlot
@@ -332,10 +366,15 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
         aria-selected={isSelected}
         data-slot="selectable-item"
         data-selected={isSelected ? "" : undefined}
-        data-disabled={isDisabled ? "" : undefined}
+        data-disabled={context.disabled ? "" : undefined}
+        tabIndex={isSelected && !context.disabled ? 0 : -1}
         {...itemProps}
-        ref={forwardedRef}
-        onClick={composeEventHandlers(itemProps.onClick, onItemSelect)}
+        ref={composedRef}
+        onClick={composeEventHandlers(itemProps.onClick, () => {
+          if (!context.disabled) {
+            context.onSelect(index);
+          }
+        })}
         className={cn(
           "cursor-default select-none ring-1 ring-transparent focus-visible:outline-none",
           "data-disabled:pointer-events-none data-disabled:opacity-50 data-selected:ring-ring",
