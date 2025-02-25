@@ -60,16 +60,18 @@ interface SelectableRootProps extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
 }
 
-function findNonDisabledIndex(
+function findEnabledIndex(
   collectionRef: React.RefObject<Array<ItemElement | null>>,
   {
     startingIndex,
     disabledIndices,
     decrement = false,
+    loop = false,
   }: {
     startingIndex: number;
     disabledIndices?: number[];
     decrement?: boolean;
+    loop?: boolean;
   },
 ): number {
   const len = collectionRef.current.length;
@@ -78,11 +80,18 @@ function findNonDisabledIndex(
   do {
     index = decrement ? index - 1 : index + 1;
 
-    // Handle loop around
-    if (index < 0) {
-      index = len - 1;
-    } else if (index >= len) {
-      index = 0;
+    // Handle loop around only if loop is true
+    if (loop) {
+      if (index < 0) {
+        index = len - 1;
+      } else if (index >= len) {
+        index = 0;
+      }
+    } else {
+      // If loop is false, stop at boundaries
+      if (index < 0 || index >= len) {
+        return decrement ? 0 : len - 1;
+      }
     }
 
     // Check if the index is disabled
@@ -212,15 +221,17 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
           case ARROW_UP:
             if (isVertical) {
               nextIndex = loop
-                ? findNonDisabledIndex(collectionRef, {
+                ? findEnabledIndex(collectionRef, {
                     startingIndex: currentIndex,
                     decrement: true,
+                    loop,
                   })
                 : Math.max(
                     0,
-                    findNonDisabledIndex(collectionRef, {
+                    findEnabledIndex(collectionRef, {
                       startingIndex: currentIndex,
                       decrement: true,
+                      loop,
                     }),
                   );
               event.preventDefault();
@@ -230,13 +241,15 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
           case ARROW_DOWN:
             if (isVertical) {
               nextIndex = loop
-                ? findNonDisabledIndex(collectionRef, {
+                ? findEnabledIndex(collectionRef, {
                     startingIndex: currentIndex,
+                    loop,
                   })
                 : Math.min(
                     itemCount - 1,
-                    findNonDisabledIndex(collectionRef, {
+                    findEnabledIndex(collectionRef, {
                       startingIndex: currentIndex,
+                      loop,
                     }),
                   );
               event.preventDefault();
@@ -246,15 +259,17 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
           case ARROW_LEFT:
             if (isHorizontal) {
               nextIndex = loop
-                ? findNonDisabledIndex(collectionRef, {
+                ? findEnabledIndex(collectionRef, {
                     startingIndex: currentIndex,
                     decrement: !isRtl,
+                    loop,
                   })
                 : Math.max(
                     0,
-                    findNonDisabledIndex(collectionRef, {
+                    findEnabledIndex(collectionRef, {
                       startingIndex: currentIndex,
                       decrement: !isRtl,
+                      loop,
                     }),
                   );
               event.preventDefault();
@@ -264,15 +279,17 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
           case ARROW_RIGHT:
             if (isHorizontal) {
               nextIndex = loop
-                ? findNonDisabledIndex(collectionRef, {
+                ? findEnabledIndex(collectionRef, {
                     startingIndex: currentIndex,
                     decrement: isRtl,
+                    loop,
                   })
                 : Math.min(
                     itemCount - 1,
-                    findNonDisabledIndex(collectionRef, {
+                    findEnabledIndex(collectionRef, {
                       startingIndex: currentIndex,
                       decrement: isRtl,
+                      loop,
                     }),
                   );
               event.preventDefault();
@@ -311,15 +328,9 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
           data-slot="selectable-list"
           data-orientation={orientation}
           data-disabled={disabled ? "" : undefined}
-          tabIndex={disabled ? undefined : 0}
           {...rootProps}
           ref={forwardedRef}
           onKeyDown={composeEventHandlers(rootProps.onKeyDown, onKeyDown)}
-          onFocus={composeEventHandlers(rootProps.onFocus, () => {
-            if (selectedIndex === -1 && !disabled) {
-              onSelect(0);
-            }
-          })}
           className={cn(
             "focus-visible:outline-none",
             orientation === "horizontal" && "flex items-center gap-2",
