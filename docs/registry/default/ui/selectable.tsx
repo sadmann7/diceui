@@ -82,10 +82,9 @@ function useSelectableState<T>(
 }
 
 interface SelectableContextValue {
-  id: string;
   store: SelectableStore;
   onItemRegister: (id: string, element: ItemElement | null) => () => void;
-  onValueSelect: (value: string) => void;
+  onItemSelect: (value: string) => void;
   orientation?: "horizontal" | "vertical" | "mixed";
   loop?: boolean;
   dir?: "ltr" | "rtl";
@@ -109,7 +108,6 @@ function useSelectableContext(name: keyof typeof SELECTABLE_ERROR) {
 }
 
 interface SelectableRootProps extends React.ComponentPropsWithoutRef<"div"> {
-  id?: string;
   defaultSelectedValue?: string;
   selectedValue?: string;
   onSelectedValueChange?: (value: string) => void;
@@ -198,7 +196,6 @@ function getMaxItemValue(
 const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
   (props, forwardedRef) => {
     const {
-      id = React.useId(),
       defaultSelectedValue = null,
       selectedValue: selectedValueProp,
       onSelectedValueChange,
@@ -235,7 +232,7 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
 
     const itemsRef = React.useRef<string[]>([]);
 
-    const onValueSelect = React.useCallback(
+    const onItemSelect = React.useCallback(
       (value: string) => {
         if (!isControlled) {
           store.setState(value);
@@ -263,10 +260,9 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
 
     const contextValue = React.useMemo<SelectableContextValue>(
       () => ({
-        id,
         store,
         onItemRegister,
-        onValueSelect,
+        onItemSelect,
         orientation,
         loop,
         dir,
@@ -276,10 +272,9 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
         itemsRef,
       }),
       [
-        id,
         store,
         onItemRegister,
-        onValueSelect,
+        onItemSelect,
         orientation,
         loop,
         dir,
@@ -377,7 +372,7 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
         }
 
         if (nextItemValue && nextItemValue !== selectedValue) {
-          onValueSelect(nextItemValue);
+          onItemSelect(nextItemValue);
 
           if (!virtual) {
             const element = collectionRef.current.get(nextItemValue);
@@ -385,7 +380,7 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
           }
         }
       },
-      [onValueSelect, orientation, loop, dir, disabled, virtual, store],
+      [onItemSelect, orientation, loop, dir, disabled, virtual, store],
     );
 
     return (
@@ -458,7 +453,7 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
         ref={composedRef}
         onClick={composeEventHandlers(itemProps.onClick, () => {
           if (!isDisabled) {
-            context.onValueSelect(itemValue);
+            context.onItemSelect(itemValue);
           }
         })}
         className={cn(
