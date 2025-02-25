@@ -25,6 +25,7 @@ const SELECTABLE_ERROR = {
 
 interface SelectableState {
   selectedValue: string | null;
+  focusedValue: string | null;
 }
 
 interface SelectableStore {
@@ -32,6 +33,7 @@ interface SelectableStore {
   listeners: Set<() => void>;
   subscribe: (callback: () => void) => () => void;
   setState: (value: string | null) => void;
+  setFocusedState: (value: string | null) => void;
   getState: () => SelectableState;
 }
 
@@ -41,6 +43,7 @@ function createSelectableStore(
   return {
     state: {
       selectedValue: initialValue,
+      focusedValue: null,
     },
     listeners: new Set<() => void>(),
     subscribe(callback: () => void) {
@@ -52,6 +55,14 @@ function createSelectableStore(
     setState(value: string | null) {
       if (this.state.selectedValue !== value) {
         this.state.selectedValue = value;
+        for (const listener of this.listeners) {
+          listener();
+        }
+      }
+    },
+    setFocusedState(value: string | null) {
+      if (this.state.focusedValue !== value) {
+        this.state.focusedValue = value;
         for (const listener of this.listeners) {
           listener();
         }
@@ -138,10 +149,18 @@ function useCollection() {
   };
 }
 
+const itemSelectedSelector = (itemValue: string) => (state: SelectableState) =>
+  state.selectedValue === itemValue;
+
+const itemFocusedSelector = (itemValue: string) => (state: SelectableState) =>
+  state.focusedValue === itemValue;
+
 interface SelectableContextValue {
   store: SelectableStore;
   onItemRegister: (item: CollectionItem) => () => void;
   onItemSelect: (value: string) => void;
+  onItemFocus: (value: string) => void;
+  onItemBlur: () => void;
   orientation?: "horizontal" | "vertical" | "mixed";
   loop?: boolean;
   dir?: "ltr" | "rtl";
@@ -282,6 +301,41 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
       [isControlled, onSelectedValueChange, store],
     );
 
+    const onItemFocus = React.useCallback(
+      (value: string) => {
+        store.setFocusedState(value);
+      },
+      [store],
+    );
+
+    const onItemBlur = React.useCallback(() => {
+      store.setFocusedState(null);
+    }, [store]);
+
+    const focusFirstItem = React.useCallback(() => {
+      const items = getItems().filter((item) => !item.disabled);
+      if (items.length === 0) return;
+
+      const firstItem = items[0];
+      if (firstItem?.ref.current && !virtual) {
+        firstItem.ref.current?.focus();
+        store.setFocusedState(firstItem.value);
+        store.setState(firstItem.value);
+      }
+    }, [getItems, store, virtual]);
+
+    const focusItemByValue = React.useCallback(
+      (value: string) => {
+        const items = getItems();
+        const item = items.find((item) => item.value === value);
+        if (item?.ref.current && !virtual && !item.disabled) {
+          item.ref.current?.focus();
+          store.setFocusedState(value);
+        }
+      },
+      [getItems, store, virtual],
+    );
+
     const onKeyDown = React.useCallback(
       (event: React.KeyboardEvent) => {
         if (disabled) return;
@@ -339,6 +393,13 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
           }
         }
 
+        if (event.key === "Tab") {
+          if (selectedValue) {
+            onItemSelect("");
+          }
+          return;
+        }
+
         switch (event.key) {
           case HOME: {
             const minValue = getMinItemValue(items);
@@ -347,7 +408,8 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
               const minItem =
                 items.find((item) => item.value === minValue) ?? null;
               if (minItem?.ref.current && !virtual) {
-                minItem.ref.current.focus();
+                minItem.ref.current?.focus();
+                store.setFocusedState(minValue);
               }
             }
             event.preventDefault();
@@ -361,7 +423,8 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
               const maxItem =
                 items.find((item) => item.value === maxValue) ?? null;
               if (maxItem?.ref.current && !virtual) {
-                maxItem.ref.current.focus();
+                maxItem.ref.current?.focus();
+                store.setFocusedState(maxValue);
               }
             }
             event.preventDefault();
@@ -472,7 +535,8 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
           onItemSelect(nextItem.value);
 
           if (!virtual && nextItem.ref.current) {
-            nextItem.ref.current.focus();
+            nextItem.ref.current?.focus();
+            store.setFocusedState(nextItem.value);
           }
         }
       },
@@ -488,6 +552,20 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
       ],
     );
 
+    const onFocus = React.useCallback(
+      (event: React.FocusEvent) => {
+        if (event.target === event.currentTarget) {
+          const focusedValue = store.getState().focusedValue;
+          if (focusedValue) {
+            focusItemByValue(focusedValue);
+          } else {
+            focusFirstItem();
+          }
+        }
+      },
+      [focusFirstItem, focusItemByValue, store],
+    );
+
     const contextValue = React.useMemo<SelectableContextValue>(
       () => ({
         dir,
@@ -495,6 +573,8 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
         store,
         onItemRegister,
         onItemSelect,
+        onItemFocus,
+        onItemBlur,
         getItems,
         disabled,
         loop,
@@ -506,6 +586,8 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
         store,
         onItemRegister,
         onItemSelect,
+        onItemFocus,
+        onItemBlur,
         getItems,
         disabled,
         loop,
@@ -521,10 +603,11 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
           role="listbox"
           data-orientation={orientation}
           data-slot="selectable"
+          tabIndex={0}
           {...rootProps}
-          dir={dir}
           ref={composedRef}
           onKeyDown={composeEventHandlers(rootProps.onKeyDown, onKeyDown)}
+          onFocus={composeEventHandlers(rootProps.onFocus, onFocus)}
           className={cn(
             "focus-visible:outline-none",
             orientation === "horizontal" && "flex items-center gap-2",
@@ -540,9 +623,6 @@ SelectableRoot.displayName = SELECTABLE_NAME;
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
-
-const itemSelectedSelector = (itemValue: string) => (state: SelectableState) =>
-  state.selectedValue === itemValue;
 
 interface SelectableItemProps extends React.ComponentPropsWithoutRef<"div"> {
   value?: string;
@@ -564,7 +644,13 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
       context.store,
       React.useCallback(itemSelectedSelector(itemValue), []),
     );
-    const isDisabled = context.disabled || disabled;
+
+    const isFocused = useSelectableState(
+      context.store,
+      React.useCallback(itemFocusedSelector(itemValue), []),
+    );
+
+    const isDisabled = disabled || context.disabled;
 
     useIsomorphicLayoutEffect(() => {
       return context.onItemRegister({
@@ -574,6 +660,16 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
       });
     }, [context.onItemRegister, itemValue, isDisabled]);
 
+    const onFocus = React.useCallback(() => {
+      if (!isDisabled) {
+        context.onItemFocus(itemValue);
+      }
+    }, [context, isDisabled, itemValue]);
+
+    const onBlur = React.useCallback(() => {
+      context.onItemBlur();
+    }, [context]);
+
     const ItemSlot = asChild ? Slot : "div";
 
     return (
@@ -582,8 +678,9 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
         aria-selected={isSelected}
         data-slot="selectable-item"
         data-selected={isSelected ? "" : undefined}
+        data-highlighted={isFocused ? "" : undefined}
         data-disabled={isDisabled ? "" : undefined}
-        tabIndex={isDisabled ? undefined : -1}
+        tabIndex={isDisabled ? undefined : isFocused ? 0 : -1}
         {...itemProps}
         ref={composedRef}
         onClick={composeEventHandlers(itemProps.onClick, () => {
@@ -591,9 +688,10 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
             context.onItemSelect(itemValue);
           }
         })}
+        onFocus={composeEventHandlers(itemProps.onFocus, onFocus)}
+        onBlur={composeEventHandlers(itemProps.onBlur, onBlur)}
         className={cn(
-          "cursor-default select-none ring-1 ring-transparent focus-visible:outline-none",
-          "data-disabled:pointer-events-none data-disabled:opacity-50 data-selected:ring-ring",
+          "cursor-default select-none ring-1 ring-transparent focus-visible:outline-none focus-visible:ring-ring data-disabled:pointer-events-none data-disabled:opacity-50 data-selected:ring-ring",
           className,
         )}
       />
