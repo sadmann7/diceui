@@ -307,11 +307,10 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
         let columnCount = 1;
         let rowCount = itemCount;
 
-        const containerElement = event.currentTarget as HTMLElement;
-        if (orientation === "mixed" && containerElement) {
+        if (orientation === "mixed" && event.currentTarget) {
           const itemElements = items
             .map((item) => item.ref.current)
-            .filter(Boolean) as HTMLElement[];
+            .filter(Boolean) as ItemElement[];
 
           if (itemElements.length > 1) {
             const rect1 = itemElements[0]?.getBoundingClientRect();
@@ -324,8 +323,8 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
                 const firstRowY = rect1.top;
                 let colCount = 0;
 
-                for (const element of itemElements) {
-                  const rect = element.getBoundingClientRect();
+                for (const itemElement of itemElements) {
+                  const rect = itemElement.getBoundingClientRect();
                   if (Math.abs(rect.top - firstRowY) < 10) {
                     colCount++;
                   } else {
@@ -346,7 +345,7 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
             if (minValue) {
               onItemSelect(minValue);
               const minItem =
-                items.find((item) => item.value === minValue) || null;
+                items.find((item) => item.value === minValue) ?? null;
               if (minItem?.ref.current && !virtual) {
                 minItem.ref.current.focus();
               }
@@ -360,7 +359,7 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
             if (maxValue) {
               onItemSelect(maxValue);
               const maxItem =
-                items.find((item) => item.value === maxValue) || null;
+                items.find((item) => item.value === maxValue) ?? null;
               if (maxItem?.ref.current && !virtual) {
                 maxItem.ref.current.focus();
               }
@@ -380,12 +379,12 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
                 const targetIndex = currentIndex - columnCount;
 
                 if (targetIndex >= 0) {
-                  nextItem = items[targetIndex] || null;
+                  nextItem = items[targetIndex] ?? null;
                 } else if (loop) {
                   const lastRowItemIndex =
                     currentCol + (rowCount - 1) * columnCount;
                   const targetIndex = Math.min(lastRowItemIndex, itemCount - 1);
-                  nextItem = items[targetIndex] || null;
+                  nextItem = items[targetIndex] ?? null;
                 }
               } else if (currentIndex >= 0) {
                 nextItem = findEnabledItem(items, {
@@ -411,9 +410,9 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
                 const targetIndex = currentIndex + columnCount;
 
                 if (targetIndex < itemCount) {
-                  nextItem = items[targetIndex] || null;
+                  nextItem = items[targetIndex] ?? null;
                 } else if (loop) {
-                  nextItem = items[currentCol] || null;
+                  nextItem = items[currentCol] ?? null;
                 }
               } else if (currentIndex >= 0) {
                 nextItem = findEnabledItem(items, {
@@ -421,7 +420,7 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
                   loop,
                 });
               } else if (items.length > 0) {
-                nextItem = items[0] || null;
+                nextItem = items[0] ?? null;
               }
               event.preventDefault();
             }
@@ -436,7 +435,7 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
               });
               event.preventDefault();
             } else if (isHorizontal && items.length > 0) {
-              nextItem = items[0] || null;
+              nextItem = items[0] ?? null;
               event.preventDefault();
             }
             break;
@@ -450,7 +449,7 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
               });
               event.preventDefault();
             } else if (isHorizontal && items.length > 0) {
-              nextItem = items[0] || null;
+              nextItem = items[0] ?? null;
               event.preventDefault();
             }
             break;
@@ -459,7 +458,7 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
           case SPACE:
             if (selectedValue) {
               const selectedItem =
-                items.find((item) => item.value === selectedValue) || null;
+                items.find((item) => item.value === selectedValue) ?? null;
               selectedItem?.ref.current?.click();
               event.preventDefault();
             }
@@ -478,39 +477,39 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
         }
       },
       [
-        onItemSelect,
-        orientation,
-        loop,
         dir,
-        disabled,
-        virtual,
+        orientation,
         store,
+        onItemSelect,
         getItems,
+        disabled,
+        loop,
+        virtual,
       ],
     );
 
     const contextValue = React.useMemo<SelectableContextValue>(
       () => ({
+        dir,
+        orientation,
         store,
         onItemRegister,
         onItemSelect,
-        orientation,
-        loop,
-        dir,
-        disabled,
-        virtual,
         getItems,
+        disabled,
+        loop,
+        virtual,
       }),
       [
+        dir,
+        orientation,
         store,
         onItemRegister,
         onItemSelect,
-        orientation,
-        loop,
-        dir,
-        disabled,
-        virtual,
         getItems,
+        disabled,
+        loop,
+        virtual,
       ],
     );
 
@@ -520,10 +519,10 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
       <SelectableContext.Provider value={contextValue}>
         <RootSlot
           role="listbox"
-          data-slot="selectable-list"
           data-orientation={orientation}
-          data-disabled={disabled ? "" : undefined}
+          data-slot="selectable"
           {...rootProps}
+          dir={dir}
           ref={composedRef}
           onKeyDown={composeEventHandlers(rootProps.onKeyDown, onKeyDown)}
           className={cn(
@@ -557,7 +556,6 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
     const context = useSelectableContext(SELECTABLE_ITEM_NAME);
     const itemRef = React.useRef<ItemElement>(null);
     const composedRef = useComposedRefs(itemRef, forwardedRef);
-    const ItemSlot = asChild ? Slot : "div";
 
     const id = React.useId();
     const itemValue = value ?? id;
@@ -575,6 +573,8 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
         disabled: isDisabled,
       });
     }, [context.onItemRegister, itemValue, isDisabled]);
+
+    const ItemSlot = asChild ? Slot : "div";
 
     return (
       <ItemSlot
