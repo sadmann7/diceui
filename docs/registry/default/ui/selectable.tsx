@@ -24,7 +24,7 @@ const SELECTABLE_ERROR = {
 } as const;
 
 interface SelectableState {
-  selectedValue: string | null;
+  selectedValues: Set<string>;
   focusedValue: string | null;
 }
 
@@ -32,9 +32,11 @@ interface SelectableStore {
   state: SelectableState;
   listeners: Set<() => void>;
   subscribe: (callback: () => void) => () => void;
-  setState: (value: string | null) => void;
+  setSelectedState: (value: string, multiple?: boolean) => void;
+  clearSelection: () => void;
   setFocusedState: (value: string | null) => void;
   getState: () => SelectableState;
+  isSelected: (value: string) => boolean;
 }
 
 function createSelectableStore(
@@ -42,7 +44,7 @@ function createSelectableStore(
 ): SelectableStore {
   return {
     state: {
-      selectedValue: initialValue,
+      selectedValues: initialValue ? new Set([initialValue]) : new Set(),
       focusedValue: null,
     },
     listeners: new Set<() => void>(),
@@ -52,9 +54,43 @@ function createSelectableStore(
         this.listeners.delete(callback);
       };
     },
-    setState(value: string | null) {
-      if (this.state.selectedValue !== value) {
-        this.state.selectedValue = value;
+    setSelectedState(value: string, multiple = false) {
+      const newSelectedValues = new Set(this.state.selectedValues);
+
+      if (multiple) {
+        // Toggle selection in multiple mode
+        if (newSelectedValues.has(value)) {
+          newSelectedValues.delete(value);
+        } else {
+          newSelectedValues.add(value);
+        }
+      } else {
+        // Single selection mode
+        if (newSelectedValues.size === 1 && newSelectedValues.has(value)) {
+          // Deselect if already selected
+          newSelectedValues.clear();
+        } else {
+          // Select only this item
+          newSelectedValues.clear();
+          newSelectedValues.add(value);
+        }
+      }
+
+      // Check if the selection has actually changed
+      const hasChanged =
+        this.state.selectedValues.size !== newSelectedValues.size ||
+        ![...newSelectedValues].every((v) => this.state.selectedValues.has(v));
+
+      if (hasChanged) {
+        this.state.selectedValues = newSelectedValues;
+        for (const listener of this.listeners) {
+          listener();
+        }
+      }
+    },
+    clearSelection() {
+      if (this.state.selectedValues.size > 0) {
+        this.state.selectedValues.clear();
         for (const listener of this.listeners) {
           listener();
         }
@@ -70,6 +106,9 @@ function createSelectableStore(
     },
     getState() {
       return this.state;
+    },
+    isSelected(value: string) {
+      return this.state.selectedValues.has(value);
     },
   };
 }
@@ -150,7 +189,7 @@ function useCollection() {
 }
 
 const itemSelectedSelector = (itemValue: string) => (state: SelectableState) =>
-  state.selectedValue === itemValue;
+  state.selectedValues.has(itemValue);
 
 const itemFocusedSelector = (itemValue: string) => (state: SelectableState) =>
   state.focusedValue === itemValue;
@@ -158,7 +197,7 @@ const itemFocusedSelector = (itemValue: string) => (state: SelectableState) =>
 interface SelectableContextValue {
   store: SelectableStore;
   onItemRegister: (item: CollectionItem) => () => void;
-  onItemSelect: (value: string) => void;
+  onItemSelect: (value: string, isMultipleEvent?: boolean) => void;
   onItemFocus: (value: string) => void;
   onItemBlur: () => void;
   orientation?: "horizontal" | "vertical" | "mixed";
@@ -166,6 +205,7 @@ interface SelectableContextValue {
   dir?: "ltr" | "rtl";
   disabled?: boolean;
   virtual?: boolean;
+  multiple?: boolean;
   getItems: () => CollectionItem[];
 }
 
@@ -184,8 +224,12 @@ function useSelectableContext(name: keyof typeof SELECTABLE_ERROR) {
 
 interface SelectableRootProps extends React.ComponentPropsWithoutRef<"div"> {
   defaultSelectedValue?: string;
+  defaultSelectedValues?: string[];
   selectedValue?: string;
+  selectedValues?: string[];
   onSelectedValueChange?: (value: string) => void;
+  onSelectedValuesChange?: (values: string[]) => void;
+  multiple?: boolean;
   orientation?: "horizontal" | "vertical" | "mixed";
   loop?: boolean;
   dir?: "ltr" | "rtl";
@@ -259,8 +303,12 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
   (props, forwardedRef) => {
     const {
       defaultSelectedValue = null,
+      defaultSelectedValues,
       selectedValue: selectedValueProp,
+      selectedValues: selectedValuesProp,
       onSelectedValueChange,
+      onSelectedValuesChange,
+      multiple = false,
       orientation = "vertical",
       loop = false,
       dir = "ltr",
@@ -274,36 +322,75 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
     const storeRef = React.useRef<SelectableStore | null>(null);
     if (storeRef.current === null) {
       storeRef.current = createSelectableStore(defaultSelectedValue);
+
+      // Initialize with defaultSelectedValues if provided and multiple is true
+      if (multiple && defaultSelectedValues?.length) {
+        const store = storeRef.current;
+        for (const value of defaultSelectedValues) {
+          store.setSelectedState(value, true);
+        }
+      }
     }
     const store = storeRef.current;
 
-    const isControlled = selectedValueProp !== undefined;
+    const isControlled =
+      selectedValueProp !== undefined || selectedValuesProp !== undefined;
 
     const lastFocusedValueRef = React.useRef<string | null>(null);
 
     React.useEffect(() => {
-      if (
-        isControlled &&
-        selectedValueProp !== store.getState().selectedValue
-      ) {
-        store.setState(selectedValueProp);
-        if (selectedValueProp === null || selectedValueProp === "") {
-          lastFocusedValueRef.current = null;
+      if (isControlled) {
+        if (multiple && selectedValuesProp) {
+          // Clear current selection
+          store.clearSelection();
+
+          // Add each value from the array
+          for (const value of selectedValuesProp) {
+            if (value) store.setSelectedState(value, true);
+          }
+        } else if (
+          selectedValueProp !== undefined &&
+          selectedValueProp !==
+            store.getState().selectedValues.values().next().value
+        ) {
+          store.clearSelection();
+          if (selectedValueProp) {
+            store.setSelectedState(selectedValueProp);
+          }
+
+          if (selectedValueProp === null || selectedValueProp === "") {
+            lastFocusedValueRef.current = null;
+          }
         }
       }
-    }, [isControlled, selectedValueProp, store]);
+    }, [isControlled, selectedValueProp, selectedValuesProp, store, multiple]);
 
     const { collectionRef, getItems, onItemRegister } = useCollection();
     const composedRef = useComposedRefs(collectionRef, forwardedRef);
 
     const onItemSelect = React.useCallback(
-      (value: string) => {
+      (value: string, isMultipleEvent = false) => {
         if (!isControlled) {
-          store.setState(value);
+          store.setSelectedState(value, multiple && isMultipleEvent);
         }
-        onSelectedValueChange?.(value);
+
+        if (multiple) {
+          // Ensure we get the latest state after the update
+          setTimeout(() => {
+            const newValues = [...store.getState().selectedValues];
+            onSelectedValuesChange?.(newValues);
+          }, 0);
+        } else {
+          onSelectedValueChange?.(value);
+        }
       },
-      [isControlled, onSelectedValueChange, store],
+      [
+        isControlled,
+        onSelectedValueChange,
+        onSelectedValuesChange,
+        store,
+        multiple,
+      ],
     );
 
     const onItemFocus = React.useCallback(
@@ -317,18 +404,6 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
     const onItemBlur = React.useCallback(() => {
       store.setFocusedState(null);
     }, [store]);
-
-    const focusFirstItem = React.useCallback(() => {
-      const items = getItems().filter((item) => !item.disabled);
-      if (items.length === 0) return;
-
-      const firstItem = items[0];
-      if (firstItem?.ref.current && !virtual) {
-        firstItem.ref.current?.focus();
-        store.setFocusedState(firstItem.value);
-        store.setState(firstItem.value);
-      }
-    }, [getItems, store, virtual]);
 
     const focusItemByValue = React.useCallback(
       (value: string) => {
@@ -357,9 +432,10 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
 
         if (itemCount === 0) return;
 
-        const selectedValue = store.getState().selectedValue;
-        const currentIndex = selectedValue
-          ? items.findIndex((item) => item.value === selectedValue)
+        // Use focusedValue for navigation instead of selectedValue
+        const focusedValue = store.getState().focusedValue;
+        const currentIndex = focusedValue
+          ? items.findIndex((item) => item.value === focusedValue)
           : -1;
 
         let nextItem: CollectionItem | null = null;
@@ -400,11 +476,6 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
         }
 
         if (event.key === "Tab") {
-          if (selectedValue) {
-            if (!event.shiftKey) {
-              onItemSelect("");
-            }
-          }
           return;
         }
 
@@ -412,7 +483,6 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
           case HOME: {
             const minValue = getMinItemValue(items);
             if (minValue) {
-              onItemSelect(minValue);
               const minItem =
                 items.find((item) => item.value === minValue) ?? null;
               if (minItem?.ref.current && !virtual) {
@@ -427,7 +497,6 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
           case END: {
             const maxValue = getMaxItemValue(items);
             if (maxValue) {
-              onItemSelect(maxValue);
               const maxItem =
                 items.find((item) => item.value === maxValue) ?? null;
               if (maxItem?.ref.current && !virtual) {
@@ -527,10 +596,14 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
 
           case ENTER:
           case SPACE:
-            if (selectedValue) {
-              const selectedItem =
-                items.find((item) => item.value === selectedValue) ?? null;
-              selectedItem?.ref.current?.click();
+            if (focusedValue) {
+              // Toggle selection of the focused item
+              // Use the same multiple selection logic as in onClick
+              const isMultipleSelectionKey =
+                multiple &&
+                (multiple === true || event.ctrlKey || event.metaKey);
+
+              onItemSelect(focusedValue, isMultipleSelectionKey);
               event.preventDefault();
             }
             break;
@@ -539,12 +612,13 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
             return;
         }
 
-        if (nextItem && nextItem.value !== selectedValue) {
-          onItemSelect(nextItem.value);
-
+        if (nextItem) {
+          // Only update focus, not selection
           if (!virtual && nextItem.ref.current) {
             nextItem.ref.current?.focus();
             store.setFocusedState(nextItem.value);
+            // Don't select on arrow navigation
+            // onItemSelect(nextItem.value);
           }
         }
       },
@@ -557,6 +631,7 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
         disabled,
         loop,
         virtual,
+        multiple,
       ],
     );
 
@@ -573,10 +648,16 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
 
             if (itemExists) {
               focusItemByValue(lastFocusedValueRef.current);
-              onItemSelect(lastFocusedValueRef.current);
+              // Remove selection on tab focus
+              // onItemSelect(lastFocusedValueRef.current);
             } else {
               lastFocusedValueRef.current = null;
-              focusFirstItem();
+              // Only focus the first item, don't select it
+              const firstItem = items[0];
+              if (firstItem?.ref.current && !virtual) {
+                firstItem.ref.current?.focus();
+                store.setFocusedState(firstItem.value);
+              }
             }
           } else if (focusedValue) {
             const itemExists = items.some(
@@ -586,14 +667,24 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
             if (itemExists) {
               focusItemByValue(focusedValue);
             } else {
-              focusFirstItem();
+              // Only focus the first item, don't select it
+              const firstItem = items[0];
+              if (firstItem?.ref.current && !virtual) {
+                firstItem.ref.current?.focus();
+                store.setFocusedState(firstItem.value);
+              }
             }
           } else {
-            focusFirstItem();
+            // Only focus the first item, don't select it
+            const firstItem = items[0];
+            if (firstItem?.ref.current && !virtual) {
+              firstItem.ref.current?.focus();
+              store.setFocusedState(firstItem.value);
+            }
           }
         }
       },
-      [focusFirstItem, focusItemByValue, store, onItemSelect, getItems],
+      [focusItemByValue, store, getItems, virtual],
     );
 
     const contextValue = React.useMemo<SelectableContextValue>(
@@ -609,6 +700,7 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
         disabled,
         loop,
         virtual,
+        multiple,
       }),
       [
         dir,
@@ -622,6 +714,7 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
         disabled,
         loop,
         virtual,
+        multiple,
       ],
     );
 
@@ -631,6 +724,7 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
       <SelectableContext.Provider value={contextValue}>
         <RootSlot
           role="listbox"
+          aria-multiselectable={multiple ? "true" : undefined}
           data-orientation={orientation}
           data-slot="selectable"
           tabIndex={0}
@@ -674,12 +768,10 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
       context.store,
       React.useCallback(itemSelectedSelector(itemValue), []),
     );
-
     const isFocused = useSelectableState(
       context.store,
       React.useCallback(itemFocusedSelector(itemValue), []),
     );
-
     const isDisabled = disabled || context.disabled;
 
     useIsomorphicLayoutEffect(() => {
@@ -700,6 +792,19 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
       context.onItemBlur();
     }, [context]);
 
+    const onClick = React.useCallback(
+      (event: React.MouseEvent) => {
+        if (!isDisabled) {
+          const isMultipleSelectionKey =
+            context.multiple &&
+            (context.multiple === true || event.ctrlKey || event.metaKey);
+
+          context.onItemSelect(itemValue, isMultipleSelectionKey);
+        }
+      },
+      [context, isDisabled, itemValue],
+    );
+
     const ItemSlot = asChild ? Slot : "div";
 
     return (
@@ -713,11 +818,7 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
         tabIndex={isDisabled ? undefined : isFocused ? 0 : -1}
         {...itemProps}
         ref={composedRef}
-        onClick={composeEventHandlers(itemProps.onClick, () => {
-          if (!isDisabled) {
-            context.onItemSelect(itemValue);
-          }
-        })}
+        onClick={composeEventHandlers(itemProps.onClick, onClick)}
         onFocus={composeEventHandlers(itemProps.onFocus, onFocus)}
         onBlur={composeEventHandlers(itemProps.onBlur, onBlur)}
         className={cn(
