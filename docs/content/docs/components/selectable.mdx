@@ -1,0 +1,130 @@
+---
+title: Selectable
+description: A component for creating keyboard-navigable selection lists and grids.
+preview: true
+links:
+  api: /docs/components/selectable#api-reference
+---
+
+<ComponentTabs name="selectable-demo" />
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/selectable"
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @radix-ui/react-slot
+     ```
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource name="selectable" />
+  </Step>
+</Steps>
+
+## Layout
+
+Import the parts, and compose them together.
+
+```tsx
+import { Selectable, SelectableItem } from "@/components/ui/selectable"
+
+<Selectable>
+  <SelectableItem value="option-1">Option 1</SelectableItem>
+  <SelectableItem value="option-2">Option 2</SelectableItem>
+  <SelectableItem value="option-3">Option 3</SelectableItem>
+</Selectable>
+```
+
+## Examples
+
+### Basic Usage
+
+The selectable component can be used to create a keyboard-navigable list of items.
+
+<ComponentTabs name="selectable-demo" />
+
+### Horizontal Orientation
+
+Set `orientation="horizontal"` to create a horizontally navigable list.
+
+<ComponentTabs name="selectable-horizontal-demo" />
+
+### Grid Layout
+
+For grid layouts, use `orientation="mixed"` to enable navigation in both directions. 
+Use CSS Grid to arrange the items in a grid structure. In grid layouts, 
+arrow keys will navigate accordingly:
+
+- Up/Down: Navigates within a column
+- Left/Right: Navigates within a row
+
+<ComponentTabs name="selectable-grid-demo" />
+
+## API Reference
+
+### Selectable
+
+The root component for creating selectable lists and grids.
+
+<AutoTypeTable
+  path="./types/docs/selectable.ts"
+  name="SelectableProps"
+/>
+
+### SelectableItem
+
+An item inside the selectable list.
+
+<AutoTypeTable
+  path="./types/docs/selectable.ts"
+  name="SelectableItemProps"
+/>
+
+## Accessibility
+
+### Keyboard Interactions
+
+<KeyboardShortcutsTable
+  shortcuts={[
+    {
+      keys: ["ArrowUp"],
+      description: "In vertical or mixed orientation, moves selection to the previous item.",
+    },
+    {
+      keys: ["ArrowDown"],
+      description: "In vertical or mixed orientation, moves selection to the next item.",
+    },
+    {
+      keys: ["ArrowLeft"],
+      description: "In horizontal or mixed orientation, moves selection to the previous item.",
+    },
+    {
+      keys: ["ArrowRight"],
+      description: "In horizontal or mixed orientation, moves selection to the next item.",
+    },
+    {
+      keys: ["Home"],
+      description: "Moves selection to the first item.",
+    },
+    {
+      keys: ["End"],
+      description: "Moves selection to the last item.",
+    },
+    {
+      keys: ["Enter", "Space"],
+      description: "Activates the selected item.",
+    },
+  ]}
+/> 

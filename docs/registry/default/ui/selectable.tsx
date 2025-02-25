@@ -304,6 +304,42 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
         const currentIndex = selectedValue ? items.indexOf(selectedValue) : 0;
         let nextItemValue: string | null = null;
 
+        let columnCount = 1;
+        let rowCount = itemCount;
+
+        const containerElement = event.currentTarget as HTMLElement;
+        if (orientation === "mixed" && containerElement) {
+          const itemElements = Array.from(
+            collectionRef.current.values(),
+          ).filter(Boolean) as HTMLElement[];
+
+          if (itemElements.length > 1) {
+            const rect1 = itemElements[0]?.getBoundingClientRect();
+            const rect2 = itemElements[1]?.getBoundingClientRect();
+
+            if (rect1 && rect2) {
+              const sameRow = Math.abs(rect1.top - rect2.top) < 10;
+
+              if (sameRow) {
+                const firstRowY = rect1.top;
+                let colCount = 0;
+
+                for (const element of itemElements) {
+                  const rect = element.getBoundingClientRect();
+                  if (Math.abs(rect.top - firstRowY) < 10) {
+                    colCount++;
+                  } else {
+                    break;
+                  }
+                }
+
+                columnCount = Math.max(1, colCount);
+                rowCount = Math.ceil(itemCount / columnCount);
+              }
+            }
+          }
+        }
+
         switch (event.key) {
           case HOME:
             nextItemValue = getMinItemValue(itemsRef);
@@ -317,21 +353,58 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
 
           case ARROW_UP:
             if (isVertical) {
-              nextItemValue = findEnabledItem(itemsRef, {
-                startingIndex: currentIndex,
-                decrement: true,
-                loop,
-              });
+              if (orientation === "mixed" && columnCount > 1) {
+                const currentCol = currentIndex % columnCount;
+                const targetIndex = currentIndex - columnCount;
+
+                if (targetIndex >= 0) {
+                  const targetItem = items[targetIndex];
+                  if (targetItem !== undefined) {
+                    nextItemValue = targetItem;
+                  }
+                } else if (loop) {
+                  const lastRowItemIndex =
+                    currentCol + (rowCount - 1) * columnCount;
+                  const targetIndex = Math.min(lastRowItemIndex, itemCount - 1);
+                  const targetItem = items[targetIndex];
+                  if (targetItem !== undefined) {
+                    nextItemValue = targetItem;
+                  }
+                }
+              } else {
+                nextItemValue = findEnabledItem(itemsRef, {
+                  startingIndex: currentIndex,
+                  decrement: true,
+                  loop,
+                });
+              }
               event.preventDefault();
             }
             break;
 
           case ARROW_DOWN:
             if (isVertical) {
-              nextItemValue = findEnabledItem(itemsRef, {
-                startingIndex: currentIndex,
-                loop,
-              });
+              if (orientation === "mixed" && columnCount > 1) {
+                const currentCol = currentIndex % columnCount;
+                const targetIndex = currentIndex + columnCount;
+
+                if (targetIndex < itemCount) {
+                  const targetItem = items[targetIndex];
+                  if (targetItem !== undefined) {
+                    nextItemValue = targetItem;
+                  }
+                } else if (loop) {
+                  const targetItem = items[currentCol];
+                  if (targetItem !== undefined) {
+                    nextItemValue = targetItem;
+                  }
+                }
+              } else {
+                nextItemValue = findEnabledItem(itemsRef, {
+                  startingIndex: currentIndex,
+                  loop,
+                });
+              }
               event.preventDefault();
             }
             break;
