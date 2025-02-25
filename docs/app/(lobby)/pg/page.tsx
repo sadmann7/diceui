@@ -43,11 +43,7 @@ export default function PlaygroundPage() {
     <Shell>
       <Selectable.Root>
         {Array.from({ length: 10 }).map((_, index) => (
-          <Selectable.Item
-            key={index}
-            index={index}
-            className="rounded-sm bg-muted/40 p-4"
-          >
+          <Selectable.Item key={index} className="rounded-sm bg-muted/40 p-4">
             {index + 1}
           </Selectable.Item>
         ))}

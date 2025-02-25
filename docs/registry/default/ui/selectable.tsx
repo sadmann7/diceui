@@ -13,7 +13,6 @@ const HOME = "Home";
 const END = "End";
 const ENTER = "Enter";
 const SPACE = " ";
-const TAB = "Tab";
 
 const SELECTABLE_NAME = "Selectable";
 const SELECTABLE_ITEM_NAME = "SelectableItem";
@@ -25,17 +24,16 @@ const SELECTABLE_ERROR = {
 
 interface SelectableContextValue {
   id: string;
-  selectedIndex: number;
-  highlightedIndex: number;
-  setHighlightedIndex: (index: number) => void;
-  onSelect: (index: number) => void;
+  selectedValue: string | null;
+  registerItem: (id: string, element: ItemElement | null) => () => void;
+  onValueSelect: (value: string) => void;
   orientation?: "horizontal" | "vertical" | "mixed";
   loop?: boolean;
   dir?: "ltr" | "rtl";
   disabled?: boolean;
   virtual?: boolean;
-  collectionRef: React.RefObject<Array<HTMLElement | null>>;
-  rootRef: React.RefObject<HTMLElement | null>;
+  collectionRef: React.RefObject<Map<string, ItemElement | null>>;
+  itemsRef: React.RefObject<string[]>;
 }
 
 const SelectableContext = React.createContext<SelectableContextValue | null>(
@@ -53,9 +51,9 @@ function useSelectableContext(name: keyof typeof SELECTABLE_ERROR) {
 
 interface SelectableRootProps extends React.ComponentPropsWithoutRef<"div"> {
   id?: string;
-  defaultSelectedIndex?: number;
-  selectedIndex?: number;
-  onSelectedIndexChange?: (index: number) => void;
+  defaultSelectedValue?: string;
+  selectedValue?: string;
+  onSelectedValueChange?: (value: string) => void;
   orientation?: "horizontal" | "vertical" | "mixed";
   loop?: boolean;
   dir?: "ltr" | "rtl";
@@ -64,27 +62,27 @@ interface SelectableRootProps extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
 }
 
-function findEnabledIndex(
-  collectionRef: React.RefObject<Array<ItemElement | null>>,
+function findEnabledItem(
+  itemsRef: React.RefObject<string[]>,
   {
     startingIndex,
-    disabledIndices,
+    disabledIds = new Set<string>(),
     decrement = false,
     loop = false,
   }: {
     startingIndex: number;
-    disabledIndices?: number[];
+    disabledIds?: Set<string>;
     decrement?: boolean;
     loop?: boolean;
   },
-): number {
-  const len = collectionRef.current.length;
+): string | null {
+  const items = itemsRef.current || [];
+  const len = items.length;
   let index = startingIndex;
 
   do {
     index = decrement ? index - 1 : index + 1;
 
-    // Handle loop around only if loop is true
     if (loop) {
       if (index < 0) {
         index = len - 1;
@@ -92,61 +90,59 @@ function findEnabledIndex(
         index = 0;
       }
     } else {
-      // If loop is false, stop at boundaries
       if (index < 0 || index >= len) {
-        return decrement ? 0 : len - 1;
+        return items[decrement ? 0 : len - 1] ?? null;
       }
     }
 
-    // Check if the index is disabled
-    const isIndexDisabled = disabledIndices?.includes(index) || false;
+    const itemId = items[index];
 
-    if (!isIndexDisabled) {
-      return index;
+    if (itemId && !disabledIds.has(itemId)) {
+      return itemId;
     }
   } while (index !== startingIndex);
 
-  // If all indices are disabled, return the starting index
-  return startingIndex;
+  return items[startingIndex] ?? null;
 }
 
-function getMinIndex(
-  collectionRef: React.RefObject<Array<ItemElement | null>>,
-  disabledIndices?: number[],
-): number {
-  const len = collectionRef.current.length;
+function getMinItemValue(
+  itemsRef: React.RefObject<string[]>,
+  disabledIds?: Set<string>,
+): string | null {
+  const items = itemsRef.current ?? [];
 
-  for (let i = 0; i < len; i++) {
-    if (!disabledIndices?.includes(i)) {
-      return i;
+  for (const itemId of items) {
+    if (!disabledIds?.has(itemId)) {
+      return itemId;
     }
   }
 
-  return 0;
+  return items[0] ?? null;
 }
 
-function getMaxIndex(
-  collectionRef: React.RefObject<Array<ItemElement | null>>,
-  disabledIndices?: number[],
-): number {
-  const len = collectionRef.current.length;
+function getMaxItemValue(
+  itemsRef: React.RefObject<string[]>,
+  disabledIds?: Set<string>,
+): string | null {
+  const items = itemsRef.current ?? [];
 
-  for (let i = len - 1; i >= 0; i--) {
-    if (!disabledIndices?.includes(i)) {
-      return i;
+  for (let i = items.length - 1; i >= 0; i--) {
+    const itemId = items[i];
+    if (itemId && !disabledIds?.has(itemId)) {
+      return itemId;
     }
   }
 
-  return len - 1;
+  return items[items.length - 1] || null;
 }
 
 const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
   (props, forwardedRef) => {
     const {
       id = React.useId(),
-      defaultSelectedIndex = -1,
-      selectedIndex: selectedIndexProp,
-      onSelectedIndexChange,
+      defaultSelectedValue = null,
+      selectedValue: selectedValueProp,
+      onSelectedValueChange,
       orientation = "vertical",
       loop = false,
       dir = "ltr",
@@ -157,47 +153,66 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
       ...rootProps
     } = props;
 
-    const [uncontrolledSelectedIndex, setUncontrolledSelectedIndex] =
-      React.useState(defaultSelectedIndex);
-    const [highlightedIndex, setHighlightedIndex] = React.useState(-1);
+    const [uncontrolledSelectedValue, setUncontrolledSelectedValue] =
+      React.useState<string | null>(defaultSelectedValue);
 
-    const selectedIndex = selectedIndexProp ?? uncontrolledSelectedIndex;
-    const isControlled = selectedIndexProp !== undefined;
+    const selectedValue =
+      selectedValueProp !== undefined
+        ? selectedValueProp
+        : uncontrolledSelectedValue;
+    const isControlled = selectedValueProp !== undefined;
 
-    const collectionRef = React.useRef<ItemElement[]>([]);
-    const rootRef = React.useRef<HTMLElement>(null);
-    const composedRootRef = useComposedRefs(rootRef, forwardedRef);
+    const collectionRef = React.useRef<Map<string, ItemElement | null>>(
+      new Map(),
+    );
 
-    const onSelect = React.useCallback(
-      (index: number) => {
+    const itemsRef = React.useRef<string[]>([]);
+
+    const onValueSelect = React.useCallback(
+      (value: string) => {
         if (!isControlled) {
-          setUncontrolledSelectedIndex(index);
+          setUncontrolledSelectedValue(value);
         }
-        onSelectedIndexChange?.(index);
+        onSelectedValueChange?.(value);
       },
-      [isControlled, onSelectedIndexChange],
+      [isControlled, onSelectedValueChange],
+    );
+
+    const registerItem = React.useCallback(
+      (id: string, element: ItemElement | null) => {
+        collectionRef.current.set(id, element);
+
+        if (!itemsRef.current.includes(id)) {
+          itemsRef.current.push(id);
+        }
+
+        return () => {
+          collectionRef.current.delete(id);
+          itemsRef.current = itemsRef.current.filter((itemId) => itemId !== id);
+        };
+      },
+      [],
     );
 
     const contextValue = React.useMemo<SelectableContextValue>(
       () => ({
         id,
-        selectedIndex,
-        highlightedIndex,
-        setHighlightedIndex,
-        onSelect,
+        selectedValue,
+        registerItem,
+        onValueSelect,
         orientation,
         loop,
         dir,
         disabled,
         virtual,
         collectionRef,
-        rootRef,
+        itemsRef,
       }),
       [
         id,
-        selectedIndex,
-        highlightedIndex,
-        onSelect,
+        selectedValue,
+        registerItem,
+        onValueSelect,
         orientation,
         loop,
         dir,
@@ -218,115 +233,74 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
         const isHorizontal =
           orientation === "horizontal" || orientation === "mixed";
 
-        const items = collectionRef.current;
+        const items = itemsRef.current;
         const itemCount = items.length;
 
         if (itemCount === 0) return;
 
-        // Get the current index, defaulting to first item if none selected
-        const currentIndex = highlightedIndex >= 0 ? highlightedIndex : 0;
-        let nextIndex = currentIndex;
-
-        // Handle Tab key to move focus outside the component
-        if (event.key === TAB) {
-          // Let the default tab behavior happen
-          return;
-        }
+        const currentIndex = selectedValue ? items.indexOf(selectedValue) : 0;
+        let nextItemValue: string | null = null;
 
         switch (event.key) {
           case HOME:
-            nextIndex = getMinIndex(collectionRef);
+            nextItemValue = getMinItemValue(itemsRef);
             event.preventDefault();
             break;
 
           case END:
-            nextIndex = getMaxIndex(collectionRef);
+            nextItemValue = getMaxItemValue(itemsRef);
             event.preventDefault();
             break;
 
           case ARROW_UP:
             if (isVertical) {
-              nextIndex = loop
-                ? findEnabledIndex(collectionRef, {
-                    startingIndex: currentIndex,
-                    decrement: true,
-                    loop,
-                  })
-                : Math.max(
-                    0,
-                    findEnabledIndex(collectionRef, {
-                      startingIndex: currentIndex,
-                      decrement: true,
-                      loop,
-                    }),
-                  );
+              nextItemValue = findEnabledItem(itemsRef, {
+                startingIndex: currentIndex,
+                decrement: true,
+                loop,
+              });
               event.preventDefault();
             }
             break;
 
           case ARROW_DOWN:
             if (isVertical) {
-              nextIndex = loop
-                ? findEnabledIndex(collectionRef, {
-                    startingIndex: currentIndex,
-                    loop,
-                  })
-                : Math.min(
-                    itemCount - 1,
-                    findEnabledIndex(collectionRef, {
-                      startingIndex: currentIndex,
-                      loop,
-                    }),
-                  );
+              nextItemValue = findEnabledItem(itemsRef, {
+                startingIndex: currentIndex,
+                loop,
+              });
               event.preventDefault();
             }
             break;
 
           case ARROW_LEFT:
             if (isHorizontal) {
-              nextIndex = loop
-                ? findEnabledIndex(collectionRef, {
-                    startingIndex: currentIndex,
-                    decrement: !isRtl,
-                    loop,
-                  })
-                : Math.max(
-                    0,
-                    findEnabledIndex(collectionRef, {
-                      startingIndex: currentIndex,
-                      decrement: !isRtl,
-                      loop,
-                    }),
-                  );
+              nextItemValue = findEnabledItem(itemsRef, {
+                startingIndex: currentIndex,
+                decrement: !isRtl,
+                loop,
+              });
               event.preventDefault();
             }
             break;
 
           case ARROW_RIGHT:
             if (isHorizontal) {
-              nextIndex = loop
-                ? findEnabledIndex(collectionRef, {
-                    startingIndex: currentIndex,
-                    decrement: isRtl,
-                    loop,
-                  })
-                : Math.min(
-                    itemCount - 1,
-                    findEnabledIndex(collectionRef, {
-                      startingIndex: currentIndex,
-                      decrement: isRtl,
-                      loop,
-                    }),
-                  );
+              nextItemValue = findEnabledItem(itemsRef, {
+                startingIndex: currentIndex,
+                decrement: isRtl,
+                loop,
+              });
               event.preventDefault();
             }
             break;
 
           case ENTER:
           case SPACE:
-            if (highlightedIndex >= 0 && items[highlightedIndex]) {
-              // Simulate a click on the highlighted item
-              items[highlightedIndex]?.click();
+            if (selectedValue) {
+              // Simulate a click on the selected item
+              const element = collectionRef.current.get(selectedValue);
+              element?.click();
               event.preventDefault();
             }
             break;
@@ -335,32 +309,18 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
             return;
         }
 
-        if (nextIndex !== currentIndex) {
-          setHighlightedIndex(nextIndex);
+        if (nextItemValue && nextItemValue !== selectedValue) {
+          onValueSelect(nextItemValue);
 
           // If virtual focus management is not being used, focus the item
-          if (!virtual && items[nextIndex]) {
-            items[nextIndex]?.focus();
+          if (!virtual) {
+            const element = collectionRef.current.get(nextItemValue);
+            element?.focus();
           }
         }
       },
-      [highlightedIndex, orientation, loop, dir, disabled, virtual],
+      [selectedValue, onValueSelect, orientation, loop, dir, disabled, virtual],
     );
-
-    // Handle focus on the root element
-    const onFocus = React.useCallback((event: React.FocusEvent) => {
-      // Only handle focus if it's directly on the root element (not bubbling from children)
-      if (event.target === rootRef.current) {
-        const firstEnabledIndex = getMinIndex(collectionRef);
-        if (
-          firstEnabledIndex >= 0 &&
-          collectionRef.current[firstEnabledIndex]
-        ) {
-          setHighlightedIndex(firstEnabledIndex);
-          collectionRef.current[firstEnabledIndex]?.focus();
-        }
-      }
-    }, []);
 
     return (
       <SelectableContext.Provider value={contextValue}>
@@ -369,11 +329,9 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
           data-slot="selectable-list"
           data-orientation={orientation}
           data-disabled={disabled ? "" : undefined}
-          tabIndex={highlightedIndex === -1 ? 0 : -1}
           {...rootProps}
-          ref={composedRootRef}
+          ref={forwardedRef}
           onKeyDown={composeEventHandlers(rootProps.onKeyDown, onKeyDown)}
-          onFocus={composeEventHandlers(rootProps.onFocus, onFocus)}
           className={cn(
             "focus-visible:outline-none",
             orientation === "horizontal" && "flex items-center gap-2",
@@ -387,49 +345,34 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
 );
 SelectableRoot.displayName = SELECTABLE_NAME;
 
-type ItemElement = React.ComponentRef<typeof SelectableItem>;
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
+
+type ItemElement = HTMLDivElement;
 
 interface SelectableItemProps extends React.ComponentPropsWithoutRef<"div"> {
-  index: number;
+  value?: string;
+  disabled?: boolean;
   asChild?: boolean;
 }
 
 const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
   (props, forwardedRef) => {
-    const { asChild, className, index, ...itemProps } = props;
+    const { asChild, className, value, disabled = false, ...itemProps } = props;
     const context = useSelectableContext(SELECTABLE_ITEM_NAME);
-    const ItemSlot = asChild ? Slot : "div";
     const itemRef = React.useRef<ItemElement>(null);
     const composedRef = useComposedRefs(itemRef, forwardedRef);
+    const ItemSlot = asChild ? Slot : "div";
 
-    const isSelected = context.selectedIndex === index;
-    const isHighlighted = context.highlightedIndex === index;
+    const id = React.useId();
+    const itemValue = value ?? id;
 
-    React.useEffect(() => {
-      if (itemRef.current) {
-        context.collectionRef.current[index] = itemRef.current;
+    const isSelected = context.selectedValue === itemValue;
+    const isDisabled = context.disabled || disabled;
 
-        return () => {
-          context.collectionRef.current[index] = null;
-        };
-      }
-    }, [context.collectionRef, index]);
-
-    // Handle focus on the item
-    const onFocus = React.useCallback(() => {
-      context.setHighlightedIndex(index);
-    }, [context.setHighlightedIndex, index]);
-
-    // Handle blur on the item
-    const onBlur = React.useCallback(
-      (event: React.FocusEvent) => {
-        // Only clear highlighted index if focus is moving outside the selectable component
-        if (!context.rootRef.current?.contains(event.relatedTarget as Node)) {
-          context.setHighlightedIndex(-1);
-        }
-      },
-      [context.setHighlightedIndex, context.rootRef],
-    );
+    useIsomorphicLayoutEffect(() => {
+      return context.registerItem(itemValue, itemRef.current);
+    }, [context.registerItem, itemValue]);
 
     return (
       <ItemSlot
@@ -437,23 +380,18 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
         aria-selected={isSelected}
         data-slot="selectable-item"
         data-selected={isSelected ? "" : undefined}
-        data-highlighted={isHighlighted ? "" : undefined}
-        data-disabled={context.disabled ? "" : undefined}
-        tabIndex={isHighlighted && !context.disabled ? 0 : -1}
+        data-disabled={isDisabled ? "" : undefined}
+        tabIndex={isDisabled ? undefined : -1}
         {...itemProps}
         ref={composedRef}
-        onFocus={composeEventHandlers(itemProps.onFocus, onFocus)}
-        onBlur={composeEventHandlers(itemProps.onBlur, onBlur)}
         onClick={composeEventHandlers(itemProps.onClick, () => {
-          if (!context.disabled) {
-            context.onSelect(index);
+          if (!isDisabled) {
+            context.onValueSelect(itemValue);
           }
         })}
         className={cn(
           "cursor-default select-none ring-1 ring-transparent focus-visible:outline-none",
-          "data-disabled:pointer-events-none data-disabled:opacity-50",
-          "data-selected:ring-ring",
-          "data-highlighted:ring-ring",
+          "data-disabled:pointer-events-none data-disabled:opacity-50 data-selected:ring-ring",
           className,
         )}
       />
