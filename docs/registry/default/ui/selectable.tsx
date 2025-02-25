@@ -279,12 +279,17 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
 
     const isControlled = selectedValueProp !== undefined;
 
+    const lastFocusedValueRef = React.useRef<string | null>(null);
+
     React.useEffect(() => {
       if (
         isControlled &&
         selectedValueProp !== store.getState().selectedValue
       ) {
         store.setState(selectedValueProp);
+        if (selectedValueProp === null || selectedValueProp === "") {
+          lastFocusedValueRef.current = null;
+        }
       }
     }, [isControlled, selectedValueProp, store]);
 
@@ -304,6 +309,7 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
     const onItemFocus = React.useCallback(
       (value: string) => {
         store.setFocusedState(value);
+        lastFocusedValueRef.current = value;
       },
       [store],
     );
@@ -395,7 +401,9 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
 
         if (event.key === "Tab") {
           if (selectedValue) {
-            onItemSelect("");
+            if (!event.shiftKey) {
+              onItemSelect("");
+            }
           }
           return;
         }
@@ -556,14 +564,36 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
       (event: React.FocusEvent) => {
         if (event.target === event.currentTarget) {
           const focusedValue = store.getState().focusedValue;
-          if (focusedValue) {
-            focusItemByValue(focusedValue);
+          const items = getItems().filter((item) => !item.disabled);
+
+          if (lastFocusedValueRef.current) {
+            const itemExists = items.some(
+              (item) => item.value === lastFocusedValueRef.current,
+            );
+
+            if (itemExists) {
+              focusItemByValue(lastFocusedValueRef.current);
+              onItemSelect(lastFocusedValueRef.current);
+            } else {
+              lastFocusedValueRef.current = null;
+              focusFirstItem();
+            }
+          } else if (focusedValue) {
+            const itemExists = items.some(
+              (item) => item.value === focusedValue,
+            );
+
+            if (itemExists) {
+              focusItemByValue(focusedValue);
+            } else {
+              focusFirstItem();
+            }
           } else {
             focusFirstItem();
           }
         }
       },
-      [focusFirstItem, focusItemByValue, store],
+      [focusFirstItem, focusItemByValue, store, onItemSelect, getItems],
     );
 
     const contextValue = React.useMemo<SelectableContextValue>(
