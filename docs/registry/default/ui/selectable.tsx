@@ -22,9 +22,68 @@ const SELECTABLE_ERROR = {
   [SELECTABLE_ITEM_NAME]: `\`${SELECTABLE_ITEM_NAME}\` must be within \`${SELECTABLE_NAME}\``,
 } as const;
 
+interface SelectableState {
+  selectedValue: string | null;
+}
+
+interface SelectableStore {
+  state: SelectableState;
+  listeners: Set<() => void>;
+  subscribe: (callback: () => void) => () => void;
+  setState: (value: string | null) => void;
+  getState: () => SelectableState;
+}
+
+function createSelectableStore(
+  initialValue: string | null = null,
+): SelectableStore {
+  return {
+    state: {
+      selectedValue: initialValue,
+    },
+    listeners: new Set<() => void>(),
+    subscribe(callback: () => void) {
+      this.listeners.add(callback);
+      return () => {
+        this.listeners.delete(callback);
+      };
+    },
+    setState(value: string | null) {
+      if (this.state.selectedValue !== value) {
+        this.state.selectedValue = value;
+        for (const listener of this.listeners) {
+          listener();
+        }
+      }
+    },
+    getState() {
+      return this.state;
+    },
+  };
+}
+
+function useSelectableState<T>(
+  store: SelectableStore,
+  selector: (state: SelectableState) => T,
+): T {
+  const [state, setState] = React.useState(() => selector(store.getState()));
+
+  React.useEffect(() => {
+    function callback() {
+      const nextState = selector(store.getState());
+      setState(nextState);
+    }
+
+    const unsubscribe = store.subscribe(callback);
+    return unsubscribe;
+  }, [store, selector]);
+
+  return state;
+}
+
 interface SelectableContextValue {
   id: string;
-  selectedValue: string | null;
+  store: SelectableStore;
   registerItem: (id: string, element: ItemElement | null) => () => void;
   onValueSelect: (value: string) => void;
   orientation?: "horizontal" | "vertical" | "mixed";
@@ -76,7 +135,7 @@ function findEnabledItem(
     loop?: boolean;
   },
 ): string | null {
-  const items = itemsRef.current || [];
+  const items = itemsRef.current ?? [];
   const len = items.length;
   let index = startingIndex;
 
@@ -133,7 +192,7 @@ function getMaxItemValue(
     }
   }
 
-  return items[items.length - 1] || null;
+  return items[items.length - 1] ?? null;
 }
 
 const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
@@ -153,14 +212,22 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
       ...rootProps
     } = props;
 
-    const [uncontrolledSelectedValue, setUncontrolledSelectedValue] =
-      React.useState<string | null>(defaultSelectedValue);
+    const storeRef = React.useRef<SelectableStore | null>(null);
+    if (storeRef.current === null) {
+      storeRef.current = createSelectableStore(defaultSelectedValue);
+    }
+    const store = storeRef.current;
 
-    const selectedValue =
-      selectedValueProp !== undefined
-        ? selectedValueProp
-        : uncontrolledSelectedValue;
     const isControlled = selectedValueProp !== undefined;
+
+    React.useEffect(() => {
+      if (
+        isControlled &&
+        selectedValueProp !== store.getState().selectedValue
+      ) {
+        store.setState(selectedValueProp);
+      }
+    }, [isControlled, selectedValueProp, store]);
 
     const collectionRef = React.useRef<Map<string, ItemElement | null>>(
       new Map(),
@@ -171,11 +238,11 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
     const onValueSelect = React.useCallback(
       (value: string) => {
         if (!isControlled) {
-          setUncontrolledSelectedValue(value);
+          store.setState(value);
         }
         onSelectedValueChange?.(value);
       },
-      [isControlled, onSelectedValueChange],
+      [isControlled, onSelectedValueChange, store],
     );
 
     const registerItem = React.useCallback(
@@ -197,7 +264,7 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
     const contextValue = React.useMemo<SelectableContextValue>(
       () => ({
         id,
-        selectedValue,
+        store,
         registerItem,
         onValueSelect,
         orientation,
@@ -210,7 +277,7 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
       }),
       [
         id,
-        selectedValue,
+        store,
         registerItem,
         onValueSelect,
         orientation,
@@ -238,6 +305,7 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
 
         if (itemCount === 0) return;
 
+        const selectedValue = store.getState().selectedValue;
         const currentIndex = selectedValue ? items.indexOf(selectedValue) : 0;
         let nextItemValue: string | null = null;
 
@@ -312,14 +380,13 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
         if (nextItemValue && nextItemValue !== selectedValue) {
           onValueSelect(nextItemValue);
 
-          // If virtual focus management is not being used, focus the item
           if (!virtual) {
             const element = collectionRef.current.get(nextItemValue);
             element?.focus();
           }
         }
       },
-      [selectedValue, onValueSelect, orientation, loop, dir, disabled, virtual],
+      [onValueSelect, orientation, loop, dir, disabled, virtual, store],
     );
 
     return (
@@ -356,6 +423,9 @@ interface SelectableItemProps extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
 }
 
+const itemSelectedSelector = (itemValue: string) => (state: SelectableState) =>
+  state.selectedValue === itemValue;
+
 const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
   (props, forwardedRef) => {
     const { asChild, className, value, disabled = false, ...itemProps } = props;
@@ -367,7 +437,11 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
     const id = React.useId();
     const itemValue = value ?? id;
 
-    const isSelected = context.selectedValue === itemValue;
+    const isSelected = useSelectableState(
+      context.store,
+      React.useCallback(itemSelectedSelector(itemValue), []),
+    );
+
     const isDisabled = context.disabled || disabled;
 
     useIsomorphicLayoutEffect(() => {
