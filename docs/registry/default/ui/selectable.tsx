@@ -84,7 +84,7 @@ function useSelectableState<T>(
 interface SelectableContextValue {
   id: string;
   store: SelectableStore;
-  registerItem: (id: string, element: ItemElement | null) => () => void;
+  onItemRegister: (id: string, element: ItemElement | null) => () => void;
   onValueSelect: (value: string) => void;
   orientation?: "horizontal" | "vertical" | "mixed";
   loop?: boolean;
@@ -245,7 +245,7 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
       [isControlled, onSelectedValueChange, store],
     );
 
-    const registerItem = React.useCallback(
+    const onItemRegister = React.useCallback(
       (id: string, element: ItemElement | null) => {
         collectionRef.current.set(id, element);
 
@@ -265,7 +265,7 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
       () => ({
         id,
         store,
-        registerItem,
+        onItemRegister,
         onValueSelect,
         orientation,
         loop,
@@ -278,7 +278,7 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
       [
         id,
         store,
-        registerItem,
+        onItemRegister,
         onValueSelect,
         orientation,
         loop,
@@ -366,9 +366,8 @@ const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
           case ENTER:
           case SPACE:
             if (selectedValue) {
-              // Simulate a click on the selected item
-              const element = collectionRef.current.get(selectedValue);
-              element?.click();
+              const itemElement = collectionRef.current.get(selectedValue);
+              itemElement?.click();
               event.preventDefault();
             }
             break;
@@ -441,12 +440,11 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
       context.store,
       React.useCallback(itemSelectedSelector(itemValue), []),
     );
-
     const isDisabled = context.disabled || disabled;
 
     useIsomorphicLayoutEffect(() => {
-      return context.registerItem(itemValue, itemRef.current);
-    }, [context.registerItem, itemValue]);
+      return context.onItemRegister(itemValue, itemRef.current);
+    }, [context.onItemRegister, itemValue]);
 
     return (
       <ItemSlot
