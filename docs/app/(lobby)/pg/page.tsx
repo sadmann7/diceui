@@ -1,3 +1,5 @@
+"use client";
+
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,13 +39,18 @@ import {
 import * as Selectable from "@/registry/default/ui/selectable";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
+import * as React from "react";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
       <Selectable.Root orientation="mixed" className="grid grid-cols-4 gap-2">
         {Array.from({ length: 10 }).map((_, index) => (
-          <Selectable.Item key={index} className="rounded-sm bg-muted/40 p-4">
+          <Selectable.Item
+            key={index}
+            value={index.toString()}
+            className="rounded-sm bg-muted/40 p-4"
+          >
             {index + 1}
           </Selectable.Item>
         ))}

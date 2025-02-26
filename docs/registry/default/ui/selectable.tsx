@@ -23,6 +23,36 @@ const SELECTABLE_ERROR = {
   [SELECTABLE_ITEM_NAME]: `\`${SELECTABLE_ITEM_NAME}\` must be within \`${SELECTABLE_NAME}\``,
 } as const;
 
+type Value<Multiple extends boolean = false> = Multiple extends true
+  ? string[]
+  : string;
+
+function useControllableState<T>({
+  prop,
+  defaultProp,
+  onChange,
+}: {
+  prop?: T;
+  defaultProp?: T;
+  onChange?: (state: T) => void;
+}) {
+  const [uncontrolledState, setUncontrolledState] = React.useState(defaultProp);
+  const isControlled = prop !== undefined;
+  const state = isControlled ? prop : uncontrolledState;
+
+  const handleChange = React.useCallback(
+    (nextState: T) => {
+      if (!isControlled) {
+        setUncontrolledState(nextState);
+      }
+      onChange?.(nextState);
+    },
+    [isControlled, onChange],
+  );
+
+  return [state, handleChange] as const;
+}
+
 interface SelectableState {
   selectedValues: Set<string>;
   focusedValue: string | null;
@@ -58,25 +88,20 @@ function createSelectableStore(
       const newSelectedValues = new Set(this.state.selectedValues);
 
       if (multiple) {
-        // Toggle selection in multiple mode
         if (newSelectedValues.has(value)) {
           newSelectedValues.delete(value);
         } else {
           newSelectedValues.add(value);
         }
       } else {
-        // Single selection mode
         if (newSelectedValues.size === 1 && newSelectedValues.has(value)) {
-          // Deselect if already selected
           newSelectedValues.clear();
         } else {
-          // Select only this item
           newSelectedValues.clear();
           newSelectedValues.add(value);
         }
       }
 
-      // Check if the selection has actually changed
       const hasChanged =
         this.state.selectedValues.size !== newSelectedValues.size ||
         ![...newSelectedValues].every((v) => this.state.selectedValues.has(v));
@@ -222,19 +247,72 @@ function useSelectableContext(name: keyof typeof SELECTABLE_ERROR) {
   return context;
 }
 
-interface SelectableRootProps extends React.ComponentPropsWithoutRef<"div"> {
-  defaultSelectedValue?: string;
-  defaultSelectedValues?: string[];
-  selectedValue?: string;
-  selectedValues?: string[];
-  onSelectedValueChange?: (value: string) => void;
-  onSelectedValuesChange?: (values: string[]) => void;
-  multiple?: boolean;
+interface SelectableRootProps<Multiple extends boolean = false>
+  extends React.ComponentPropsWithoutRef<"div"> {
+  /**
+   * The default value of the selectable.
+   *
+   * - When multiple is false: `string`
+   * - When multiple is true: `string[]`
+   */
+  defaultValue?: Value<Multiple>;
+
+  /**
+   * The current value of the selectable.
+   *
+   * - When multiple is false: `string`
+   * - When multiple is true: `string[]`
+   */
+  value?: Value<Multiple>;
+
+  /**
+   * Event handler called when the value changes.
+   *
+   * - When multiple is false: `(value: string) => void`
+   * - When multiple is true: `(value: string[]) => void`
+   */
+  onValueChange?: (value: Value<Multiple>) => void;
+
+  /**
+   * Whether the selectable allows multiple values.
+   * @default false
+   */
+  multiple?: Multiple;
+
+  /**
+   * The orientation of the selectable.
+   * @default "vertical"
+   */
   orientation?: "horizontal" | "vertical" | "mixed";
+
+  /**
+   * Whether the selectable loops through items.
+   * @default false
+   */
   loop?: boolean;
+
+  /**
+   * The reading direction of the selectable.
+   * @default "ltr"
+   */
   dir?: "ltr" | "rtl";
+
+  /**
+   * Whether the selectable is disabled.
+   * @default false
+   */
   disabled?: boolean;
+
+  /**
+   * Whether the selectable is virtual.
+   * @default false
+   */
   virtual?: boolean;
+
+  /**
+   * Whether to render the selectable as a child of another element.
+   * @default false
+   */
   asChild?: boolean;
 }
 
@@ -299,450 +377,445 @@ function getMaxItemValue(items: CollectionItem[]): string | null {
   return items[items.length - 1]?.value ?? null;
 }
 
-const SelectableRoot = React.forwardRef<HTMLDivElement, SelectableRootProps>(
-  (props, forwardedRef) => {
-    const {
-      defaultSelectedValue = null,
-      defaultSelectedValues,
-      selectedValue: selectedValueProp,
-      selectedValues: selectedValuesProp,
-      onSelectedValueChange,
-      onSelectedValuesChange,
-      multiple = false,
-      orientation = "vertical",
-      loop = false,
-      dir = "ltr",
-      disabled = false,
-      virtual = false,
-      asChild,
-      className,
-      ...rootProps
-    } = props;
+function SelectableRootImpl<Multiple extends boolean = false>(
+  props: SelectableRootProps<Multiple>,
+  forwardedRef: React.ForwardedRef<HTMLDivElement>,
+) {
+  const {
+    defaultValue,
+    value: valueProp,
+    onValueChange,
+    multiple = false as Multiple,
+    orientation = "vertical",
+    loop = false,
+    dir = "ltr",
+    disabled = false,
+    virtual = false,
+    asChild,
+    className,
+    ...rootProps
+  } = props;
 
-    const storeRef = React.useRef<SelectableStore | null>(null);
-    if (storeRef.current === null) {
-      storeRef.current = createSelectableStore(defaultSelectedValue);
+  const [value, setValue] = useControllableState<Value<typeof multiple>>({
+    prop: valueProp,
+    defaultProp: defaultValue,
+    onChange: onValueChange,
+  });
 
-      // Initialize with defaultSelectedValues if provided and multiple is true
-      if (multiple && defaultSelectedValues?.length) {
-        const store = storeRef.current;
-        for (const value of defaultSelectedValues) {
-          store.setSelectedState(value, true);
+  const storeRef = React.useRef<SelectableStore | null>(null);
+  if (storeRef.current === null) {
+    storeRef.current = createSelectableStore(
+      typeof defaultValue === "string" ? defaultValue : null,
+    );
+
+    if (multiple && Array.isArray(defaultValue) && defaultValue.length) {
+      const store = storeRef.current;
+      for (const val of defaultValue) {
+        if (val) store.setSelectedState(val, true);
+      }
+    }
+  }
+  const store = storeRef.current;
+
+  const isControlled = valueProp !== undefined;
+  const lastFocusedValueRef = React.useRef<string | null>(null);
+
+  React.useEffect(() => {
+    if (isControlled && value !== undefined) {
+      if (multiple && Array.isArray(value)) {
+        store.clearSelection();
+
+        for (const val of value) {
+          if (val) store.setSelectedState(val, true);
+        }
+      } else if (
+        typeof value === "string" &&
+        value !== store.getState().selectedValues.values().next().value
+      ) {
+        store.clearSelection();
+        if (value) {
+          store.setSelectedState(value);
+        }
+
+        if (value === null || value === "") {
+          lastFocusedValueRef.current = null;
         }
       }
     }
-    const store = storeRef.current;
+  }, [isControlled, value, store, multiple]);
 
-    const isControlled =
-      selectedValueProp !== undefined || selectedValuesProp !== undefined;
+  const { collectionRef, getItems, onItemRegister } = useCollection();
+  const composedRef = useComposedRefs(collectionRef, forwardedRef);
 
-    const lastFocusedValueRef = React.useRef<string | null>(null);
+  const onItemSelect = React.useCallback(
+    (itemValue: string, isMultipleEvent = false) => {
+      if (!isControlled) {
+        store.setSelectedState(itemValue, multiple && isMultipleEvent);
+      }
 
-    React.useEffect(() => {
-      if (isControlled) {
-        if (multiple && selectedValuesProp) {
-          // Clear current selection
-          store.clearSelection();
+      if (multiple) {
+        const currentValues = [...store.getState().selectedValues];
 
-          // Add each value from the array
-          for (const value of selectedValuesProp) {
-            if (value) store.setSelectedState(value, true);
-          }
-        } else if (
-          selectedValueProp !== undefined &&
-          selectedValueProp !==
-            store.getState().selectedValues.values().next().value
-        ) {
-          store.clearSelection();
-          if (selectedValueProp) {
-            store.setSelectedState(selectedValueProp);
-          }
+        if (currentValues.includes(itemValue)) {
+          setValue(
+            currentValues.filter((v) => v !== itemValue) as Value<
+              typeof multiple
+            >,
+          );
+        } else {
+          setValue([...currentValues, itemValue] as Value<typeof multiple>);
+        }
+      } else {
+        setValue(itemValue as Value<typeof multiple>);
+      }
+    },
+    [isControlled, setValue, store, multiple],
+  );
 
-          if (selectedValueProp === null || selectedValueProp === "") {
-            lastFocusedValueRef.current = null;
+  const onItemFocus = React.useCallback(
+    (value: string) => {
+      store.setFocusedState(value);
+      lastFocusedValueRef.current = value;
+    },
+    [store],
+  );
+
+  const onItemBlur = React.useCallback(() => {
+    store.setFocusedState(null);
+  }, [store]);
+
+  const focusItemByValue = React.useCallback(
+    (value: string) => {
+      const items = getItems();
+      const item = items.find((item) => item.value === value);
+      if (item?.ref.current && !virtual && !item.disabled) {
+        item.ref.current?.focus();
+        store.setFocusedState(value);
+      }
+    },
+    [getItems, store, virtual],
+  );
+
+  const onKeyDown = React.useCallback(
+    (event: React.KeyboardEvent) => {
+      if (disabled) return;
+
+      const isRtl = dir === "rtl";
+      const isVertical = orientation === "vertical" || orientation === "mixed";
+      const isHorizontal =
+        orientation === "horizontal" || orientation === "mixed";
+
+      const items = getItems().filter((item) => !item.disabled);
+      const itemCount = items.length;
+
+      if (itemCount === 0) return;
+
+      const focusedValue = store.getState().focusedValue;
+      const currentIndex = focusedValue
+        ? items.findIndex((item) => item.value === focusedValue)
+        : -1;
+
+      let nextItem: CollectionItem | null = null;
+
+      let columnCount = 1;
+      let rowCount = itemCount;
+
+      if (orientation === "mixed" && event.currentTarget) {
+        const itemElements = items
+          .map((item) => item.ref.current)
+          .filter(Boolean) as ItemElement[];
+
+        if (itemElements.length > 1) {
+          const rect1 = itemElements[0]?.getBoundingClientRect();
+          const rect2 = itemElements[1]?.getBoundingClientRect();
+
+          if (rect1 && rect2) {
+            const sameRow = Math.abs(rect1.top - rect2.top) < 10;
+
+            if (sameRow) {
+              const firstRowY = rect1.top;
+              let colCount = 0;
+
+              for (const itemElement of itemElements) {
+                const rect = itemElement.getBoundingClientRect();
+                if (Math.abs(rect.top - firstRowY) < 10) {
+                  colCount++;
+                } else {
+                  break;
+                }
+              }
+
+              columnCount = Math.max(1, colCount);
+              rowCount = Math.ceil(itemCount / columnCount);
+            }
           }
         }
       }
-    }, [isControlled, selectedValueProp, selectedValuesProp, store, multiple]);
 
-    const { collectionRef, getItems, onItemRegister } = useCollection();
-    const composedRef = useComposedRefs(collectionRef, forwardedRef);
+      if (event.key === "Tab") {
+        return;
+      }
 
-    const onItemSelect = React.useCallback(
-      (value: string, isMultipleEvent = false) => {
-        if (!isControlled) {
-          store.setSelectedState(value, multiple && isMultipleEvent);
-        }
-
-        if (multiple) {
-          // Ensure we get the latest state after the update
-          setTimeout(() => {
-            const newValues = [...store.getState().selectedValues];
-            onSelectedValuesChange?.(newValues);
-          }, 0);
-        } else {
-          onSelectedValueChange?.(value);
-        }
-      },
-      [
-        isControlled,
-        onSelectedValueChange,
-        onSelectedValuesChange,
-        store,
-        multiple,
-      ],
-    );
-
-    const onItemFocus = React.useCallback(
-      (value: string) => {
-        store.setFocusedState(value);
-        lastFocusedValueRef.current = value;
-      },
-      [store],
-    );
-
-    const onItemBlur = React.useCallback(() => {
-      store.setFocusedState(null);
-    }, [store]);
-
-    const focusItemByValue = React.useCallback(
-      (value: string) => {
-        const items = getItems();
-        const item = items.find((item) => item.value === value);
-        if (item?.ref.current && !virtual && !item.disabled) {
-          item.ref.current?.focus();
-          store.setFocusedState(value);
-        }
-      },
-      [getItems, store, virtual],
-    );
-
-    const onKeyDown = React.useCallback(
-      (event: React.KeyboardEvent) => {
-        if (disabled) return;
-
-        const isRtl = dir === "rtl";
-        const isVertical =
-          orientation === "vertical" || orientation === "mixed";
-        const isHorizontal =
-          orientation === "horizontal" || orientation === "mixed";
-
-        const items = getItems().filter((item) => !item.disabled);
-        const itemCount = items.length;
-
-        if (itemCount === 0) return;
-
-        // Use focusedValue for navigation instead of selectedValue
-        const focusedValue = store.getState().focusedValue;
-        const currentIndex = focusedValue
-          ? items.findIndex((item) => item.value === focusedValue)
-          : -1;
-
-        let nextItem: CollectionItem | null = null;
-
-        let columnCount = 1;
-        let rowCount = itemCount;
-
-        if (orientation === "mixed" && event.currentTarget) {
-          const itemElements = items
-            .map((item) => item.ref.current)
-            .filter(Boolean) as ItemElement[];
-
-          if (itemElements.length > 1) {
-            const rect1 = itemElements[0]?.getBoundingClientRect();
-            const rect2 = itemElements[1]?.getBoundingClientRect();
-
-            if (rect1 && rect2) {
-              const sameRow = Math.abs(rect1.top - rect2.top) < 10;
-
-              if (sameRow) {
-                const firstRowY = rect1.top;
-                let colCount = 0;
-
-                for (const itemElement of itemElements) {
-                  const rect = itemElement.getBoundingClientRect();
-                  if (Math.abs(rect.top - firstRowY) < 10) {
-                    colCount++;
-                  } else {
-                    break;
-                  }
-                }
-
-                columnCount = Math.max(1, colCount);
-                rowCount = Math.ceil(itemCount / columnCount);
-              }
+      switch (event.key) {
+        case HOME: {
+          const minValue = getMinItemValue(items);
+          if (minValue) {
+            const minItem =
+              items.find((item) => item.value === minValue) ?? null;
+            if (minItem?.ref.current && !virtual) {
+              minItem.ref.current?.focus();
+              store.setFocusedState(minValue);
             }
           }
+          event.preventDefault();
+          break;
         }
 
-        if (event.key === "Tab") {
+        case END: {
+          const maxValue = getMaxItemValue(items);
+          if (maxValue) {
+            const maxItem =
+              items.find((item) => item.value === maxValue) ?? null;
+            if (maxItem?.ref.current && !virtual) {
+              maxItem.ref.current?.focus();
+              store.setFocusedState(maxValue);
+            }
+          }
+          event.preventDefault();
+          break;
+        }
+
+        case ARROW_UP:
+          if (isVertical) {
+            if (
+              orientation === "mixed" &&
+              columnCount > 1 &&
+              currentIndex >= 0
+            ) {
+              const currentCol = currentIndex % columnCount;
+              const targetIndex = currentIndex - columnCount;
+
+              if (targetIndex >= 0) {
+                nextItem = items[targetIndex] ?? null;
+              } else if (loop) {
+                const lastRowItemIndex =
+                  currentCol + (rowCount - 1) * columnCount;
+                const targetIndex = Math.min(lastRowItemIndex, itemCount - 1);
+                nextItem = items[targetIndex] ?? null;
+              }
+            } else if (currentIndex >= 0) {
+              nextItem = findEnabledItem(items, {
+                startingIndex: currentIndex,
+                decrement: true,
+                loop,
+              });
+            } else if (items.length > 0) {
+              nextItem = items[0] || null;
+            }
+            event.preventDefault();
+          }
+          break;
+
+        case ARROW_DOWN:
+          if (isVertical) {
+            if (
+              orientation === "mixed" &&
+              columnCount > 1 &&
+              currentIndex >= 0
+            ) {
+              const currentCol = currentIndex % columnCount;
+              const targetIndex = currentIndex + columnCount;
+
+              if (targetIndex < itemCount) {
+                nextItem = items[targetIndex] ?? null;
+              } else if (loop) {
+                nextItem = items[currentCol] ?? null;
+              }
+            } else if (currentIndex >= 0) {
+              nextItem = findEnabledItem(items, {
+                startingIndex: currentIndex,
+                loop,
+              });
+            } else if (items.length > 0) {
+              nextItem = items[0] ?? null;
+            }
+            event.preventDefault();
+          }
+          break;
+
+        case ARROW_LEFT:
+          if (isHorizontal && currentIndex >= 0) {
+            nextItem = findEnabledItem(items, {
+              startingIndex: currentIndex,
+              decrement: !isRtl,
+              loop,
+            });
+            event.preventDefault();
+          } else if (isHorizontal && items.length > 0) {
+            nextItem = items[0] ?? null;
+            event.preventDefault();
+          }
+          break;
+
+        case ARROW_RIGHT:
+          if (isHorizontal && currentIndex >= 0) {
+            nextItem = findEnabledItem(items, {
+              startingIndex: currentIndex,
+              decrement: isRtl,
+              loop,
+            });
+            event.preventDefault();
+          } else if (isHorizontal && items.length > 0) {
+            nextItem = items[0] ?? null;
+            event.preventDefault();
+          }
+          break;
+
+        case ENTER:
+        case SPACE:
+          if (focusedValue) {
+            const isMultipleSelectionKey =
+              multiple && (multiple === true || event.ctrlKey || event.metaKey);
+
+            onItemSelect(focusedValue, isMultipleSelectionKey);
+            event.preventDefault();
+          }
+          break;
+
+        default:
           return;
+      }
+
+      if (nextItem) {
+        if (!virtual && nextItem.ref.current) {
+          nextItem.ref.current?.focus();
+          store.setFocusedState(nextItem.value);
         }
+      }
+    },
+    [
+      dir,
+      orientation,
+      store,
+      onItemSelect,
+      getItems,
+      disabled,
+      loop,
+      virtual,
+      multiple,
+    ],
+  );
 
-        switch (event.key) {
-          case HOME: {
-            const minValue = getMinItemValue(items);
-            if (minValue) {
-              const minItem =
-                items.find((item) => item.value === minValue) ?? null;
-              if (minItem?.ref.current && !virtual) {
-                minItem.ref.current?.focus();
-                store.setFocusedState(minValue);
-              }
-            }
-            event.preventDefault();
-            break;
-          }
+  const onFocus = React.useCallback(
+    (event: React.FocusEvent) => {
+      if (event.target === event.currentTarget) {
+        const focusedValue = store.getState().focusedValue;
+        const items = getItems().filter((item) => !item.disabled);
 
-          case END: {
-            const maxValue = getMaxItemValue(items);
-            if (maxValue) {
-              const maxItem =
-                items.find((item) => item.value === maxValue) ?? null;
-              if (maxItem?.ref.current && !virtual) {
-                maxItem.ref.current?.focus();
-                store.setFocusedState(maxValue);
-              }
-            }
-            event.preventDefault();
-            break;
-          }
+        if (lastFocusedValueRef.current) {
+          const itemExists = items.some(
+            (item) => item.value === lastFocusedValueRef.current,
+          );
 
-          case ARROW_UP:
-            if (isVertical) {
-              if (
-                orientation === "mixed" &&
-                columnCount > 1 &&
-                currentIndex >= 0
-              ) {
-                const currentCol = currentIndex % columnCount;
-                const targetIndex = currentIndex - columnCount;
-
-                if (targetIndex >= 0) {
-                  nextItem = items[targetIndex] ?? null;
-                } else if (loop) {
-                  const lastRowItemIndex =
-                    currentCol + (rowCount - 1) * columnCount;
-                  const targetIndex = Math.min(lastRowItemIndex, itemCount - 1);
-                  nextItem = items[targetIndex] ?? null;
-                }
-              } else if (currentIndex >= 0) {
-                nextItem = findEnabledItem(items, {
-                  startingIndex: currentIndex,
-                  decrement: true,
-                  loop,
-                });
-              } else if (items.length > 0) {
-                nextItem = items[0] || null;
-              }
-              event.preventDefault();
-            }
-            break;
-
-          case ARROW_DOWN:
-            if (isVertical) {
-              if (
-                orientation === "mixed" &&
-                columnCount > 1 &&
-                currentIndex >= 0
-              ) {
-                const currentCol = currentIndex % columnCount;
-                const targetIndex = currentIndex + columnCount;
-
-                if (targetIndex < itemCount) {
-                  nextItem = items[targetIndex] ?? null;
-                } else if (loop) {
-                  nextItem = items[currentCol] ?? null;
-                }
-              } else if (currentIndex >= 0) {
-                nextItem = findEnabledItem(items, {
-                  startingIndex: currentIndex,
-                  loop,
-                });
-              } else if (items.length > 0) {
-                nextItem = items[0] ?? null;
-              }
-              event.preventDefault();
-            }
-            break;
-
-          case ARROW_LEFT:
-            if (isHorizontal && currentIndex >= 0) {
-              nextItem = findEnabledItem(items, {
-                startingIndex: currentIndex,
-                decrement: !isRtl,
-                loop,
-              });
-              event.preventDefault();
-            } else if (isHorizontal && items.length > 0) {
-              nextItem = items[0] ?? null;
-              event.preventDefault();
-            }
-            break;
-
-          case ARROW_RIGHT:
-            if (isHorizontal && currentIndex >= 0) {
-              nextItem = findEnabledItem(items, {
-                startingIndex: currentIndex,
-                decrement: isRtl,
-                loop,
-              });
-              event.preventDefault();
-            } else if (isHorizontal && items.length > 0) {
-              nextItem = items[0] ?? null;
-              event.preventDefault();
-            }
-            break;
-
-          case ENTER:
-          case SPACE:
-            if (focusedValue) {
-              // Toggle selection of the focused item
-              // Use the same multiple selection logic as in onClick
-              const isMultipleSelectionKey =
-                multiple &&
-                (multiple === true || event.ctrlKey || event.metaKey);
-
-              onItemSelect(focusedValue, isMultipleSelectionKey);
-              event.preventDefault();
-            }
-            break;
-
-          default:
-            return;
-        }
-
-        if (nextItem) {
-          // Only update focus, not selection
-          if (!virtual && nextItem.ref.current) {
-            nextItem.ref.current?.focus();
-            store.setFocusedState(nextItem.value);
-            // Don't select on arrow navigation
-            // onItemSelect(nextItem.value);
-          }
-        }
-      },
-      [
-        dir,
-        orientation,
-        store,
-        onItemSelect,
-        getItems,
-        disabled,
-        loop,
-        virtual,
-        multiple,
-      ],
-    );
-
-    const onFocus = React.useCallback(
-      (event: React.FocusEvent) => {
-        if (event.target === event.currentTarget) {
-          const focusedValue = store.getState().focusedValue;
-          const items = getItems().filter((item) => !item.disabled);
-
-          if (lastFocusedValueRef.current) {
-            const itemExists = items.some(
-              (item) => item.value === lastFocusedValueRef.current,
-            );
-
-            if (itemExists) {
-              focusItemByValue(lastFocusedValueRef.current);
-              // Remove selection on tab focus
-              // onItemSelect(lastFocusedValueRef.current);
-            } else {
-              lastFocusedValueRef.current = null;
-              // Only focus the first item, don't select it
-              const firstItem = items[0];
-              if (firstItem?.ref.current && !virtual) {
-                firstItem.ref.current?.focus();
-                store.setFocusedState(firstItem.value);
-              }
-            }
-          } else if (focusedValue) {
-            const itemExists = items.some(
-              (item) => item.value === focusedValue,
-            );
-
-            if (itemExists) {
-              focusItemByValue(focusedValue);
-            } else {
-              // Only focus the first item, don't select it
-              const firstItem = items[0];
-              if (firstItem?.ref.current && !virtual) {
-                firstItem.ref.current?.focus();
-                store.setFocusedState(firstItem.value);
-              }
-            }
+          if (itemExists) {
+            focusItemByValue(lastFocusedValueRef.current);
           } else {
-            // Only focus the first item, don't select it
+            lastFocusedValueRef.current = null;
             const firstItem = items[0];
             if (firstItem?.ref.current && !virtual) {
               firstItem.ref.current?.focus();
               store.setFocusedState(firstItem.value);
             }
           }
+        } else if (focusedValue) {
+          const itemExists = items.some((item) => item.value === focusedValue);
+
+          if (itemExists) {
+            focusItemByValue(focusedValue);
+          } else {
+            const firstItem = items[0];
+            if (firstItem?.ref.current && !virtual) {
+              firstItem.ref.current?.focus();
+              store.setFocusedState(firstItem.value);
+            }
+          }
+        } else {
+          const firstItem = items[0];
+          if (firstItem?.ref.current && !virtual) {
+            firstItem.ref.current?.focus();
+            store.setFocusedState(firstItem.value);
+          }
         }
-      },
-      [focusItemByValue, store, getItems, virtual],
-    );
+      }
+    },
+    [focusItemByValue, store, getItems, virtual],
+  );
 
-    const contextValue = React.useMemo<SelectableContextValue>(
-      () => ({
-        dir,
-        orientation,
-        store,
-        onItemRegister,
-        onItemSelect,
-        onItemFocus,
-        onItemBlur,
-        getItems,
-        disabled,
-        loop,
-        virtual,
-        multiple,
-      }),
-      [
-        dir,
-        orientation,
-        store,
-        onItemRegister,
-        onItemSelect,
-        onItemFocus,
-        onItemBlur,
-        getItems,
-        disabled,
-        loop,
-        virtual,
-        multiple,
-      ],
-    );
+  const contextValue = React.useMemo<SelectableContextValue>(
+    () => ({
+      dir,
+      orientation,
+      store,
+      onItemRegister,
+      onItemSelect,
+      onItemFocus,
+      onItemBlur,
+      getItems,
+      disabled,
+      loop,
+      virtual,
+      multiple,
+    }),
+    [
+      dir,
+      orientation,
+      store,
+      onItemRegister,
+      onItemSelect,
+      onItemFocus,
+      onItemBlur,
+      getItems,
+      disabled,
+      loop,
+      virtual,
+      multiple,
+    ],
+  );
 
-    const RootSlot = asChild ? Slot : "div";
+  const RootSlot = asChild ? Slot : "div";
 
-    return (
-      <SelectableContext.Provider value={contextValue}>
-        <RootSlot
-          role="listbox"
-          aria-multiselectable={multiple ? "true" : undefined}
-          data-orientation={orientation}
-          data-slot="selectable"
-          tabIndex={0}
-          {...rootProps}
-          ref={composedRef}
-          onKeyDown={composeEventHandlers(rootProps.onKeyDown, onKeyDown)}
-          onFocus={composeEventHandlers(rootProps.onFocus, onFocus)}
-          className={cn(
-            "focus-visible:outline-none",
-            orientation === "horizontal" && "flex items-center gap-2",
-            orientation === "vertical" && "flex flex-col gap-2",
-            className,
-          )}
-        />
-      </SelectableContext.Provider>
-    );
-  },
-);
+  return (
+    <SelectableContext.Provider value={contextValue}>
+      <RootSlot
+        role="listbox"
+        aria-multiselectable={multiple ? "true" : undefined}
+        data-orientation={orientation}
+        data-slot="selectable"
+        dir={dir}
+        tabIndex={0}
+        {...rootProps}
+        ref={composedRef}
+        onKeyDown={composeEventHandlers(rootProps.onKeyDown, onKeyDown)}
+        onFocus={composeEventHandlers(rootProps.onFocus, onFocus)}
+        className={cn(
+          "focus-visible:outline-none",
+          orientation === "horizontal" && "flex items-center gap-2",
+          orientation === "vertical" && "flex flex-col gap-2",
+          className,
+        )}
+      />
+    </SelectableContext.Provider>
+  );
+}
+
+type SelectableRootComponent = (<Multiple extends boolean = false>(
+  props: SelectableRootProps<Multiple> & { ref?: React.Ref<HTMLDivElement> },
+) => React.ReactElement) &
+  Pick<React.FC<SelectableRootProps<boolean>>, "displayName">;
+
+const SelectableRoot = React.forwardRef(
+  SelectableRootImpl,
+) as SelectableRootComponent;
 SelectableRoot.displayName = SELECTABLE_NAME;
 
 const useIsomorphicLayoutEffect =
@@ -822,7 +895,7 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
         onFocus={composeEventHandlers(itemProps.onFocus, onFocus)}
         onBlur={composeEventHandlers(itemProps.onBlur, onBlur)}
         className={cn(
-          "cursor-default select-none ring-1 ring-transparent focus-visible:outline-none focus-visible:ring-ring data-disabled:pointer-events-none data-disabled:opacity-50 data-selected:ring-ring",
+          "cursor-default select-none ring-1 ring-transparent focus-visible:outline-none focus-visible:ring-ring data-disabled:pointer-events-none data-selected:bg-accent data-selected:text-accent-foreground data-disabled:opacity-50",
           className,
         )}
       />
@@ -842,3 +915,5 @@ export {
   Root,
   Item,
 };
+
+export type { SelectableRootProps };

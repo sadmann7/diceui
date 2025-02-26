@@ -2,54 +2,70 @@ import type { CompositionProps, EmptyProps } from "@/types";
 
 export interface SelectableProps extends EmptyProps<"div">, CompositionProps {
   /**
-   * The default selected value when component is uncontrolled.
+   * The default value of the selectable.
+   *
+   * - When multiple is false: `string`
+   * - When multiple is true: `string[]`
    */
-  defaultSelectedValue?: string;
+  defaultValue?: string | string[];
 
   /**
-   * The controlled selected value. Use with `onSelectedValueChange`.
+   * The current value of the selectable.
+   *
+   * - When multiple is false: `string`
+   * - When multiple is true: `string[]`
    */
-  selectedValue?: string;
+  value?: string | string[];
 
   /**
-   * Callback fired when the selected value changes.
-   * @param value The new selected value
+   * Event handler called when the value changes.
+   *
+   * - When multiple is false: `(value: string) => void`
+   * - When multiple is true: `(value: string[]) => void`
    */
-  onSelectedValueChange?: (value: string) => void;
+  onValueChange?: (value: string | string[]) => void;
 
   /**
-   * The orientation of the selection navigation.
-   * - `horizontal`: Left/right arrow keys navigate
-   * - `vertical`: Up/down arrow keys navigate
-   * - `mixed`: Both directional navigation, optimal for grid layouts
+   * Whether the selectable allows multiple values.
+   * @default false
+   */
+  multiple?: boolean;
+
+  /**
+   * The orientation of the selectable.
    * @default "vertical"
    */
   orientation?: "horizontal" | "vertical" | "mixed";
 
   /**
-   * Whether keyboard navigation should loop around when reaching the end.
+   * Whether the selectable loops through items.
    * @default false
    */
   loop?: boolean;
 
   /**
-   * Text direction for navigation.
+   * The reading direction of the selectable.
    * @default "ltr"
    */
   dir?: "ltr" | "rtl";
 
   /**
-   * Whether the selectable component is disabled.
+   * Whether the selectable is disabled.
    * @default false
    */
   disabled?: boolean;
 
   /**
-   * Whether to use virtual focus management.
-   * In virtual mode, items don't receive focus directly.
+   * Whether the selectable is virtual.
    * @default false
    */
   virtual?: boolean;
+
+  /**
+   * Whether to render the selectable as a child of another element.
+   * @default false
+   */
+  asChild?: boolean;
 }
 
 export interface SelectableItemProps
