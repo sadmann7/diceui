@@ -973,5 +973,21 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "visually-hidden-input": {
+      name: "visually-hidden-input",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/components/visually-hidden-input.tsx",
+        type: "registry:component",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/components/visually-hidden-input.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
   },
 }

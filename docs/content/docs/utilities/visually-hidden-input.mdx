@@ -1,0 +1,76 @@
+---
+title: Visually Hidden Input
+description: A hidden input that remains accessible to assistive technology and maintains form functionality.
+links:
+  api: /docs/utilities/visually-hidden-input#api-reference
+---
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/visually-hidden-input"
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @diceui/visually-hidden-input
+     ```
+  </Step>
+
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource src="./registry/default/components/visually-hidden-input.tsx" />
+  </Step>
+</Steps>
+
+## Usage
+
+```tsx
+import { VisuallyHiddenInput } from "@diceui/visually-hidden-input"
+
+export function CustomForm() {
+  const [checked, setChecked] = React.useState(false)
+  const controlRef = React.useRef(null)
+  
+  return (
+    <form>
+      <button 
+        ref={controlRef}
+        onClick={() => setChecked(!checked)}
+        aria-checked={checked}
+        role="checkbox"
+      >
+        {checked ? "✓" : ""}
+      </button>
+      <VisuallyHiddenInput
+        type="checkbox"
+        checked={checked}
+        control={controlRef.current}
+      />
+    </form>
+  )
+}
+```
+
+## API Reference
+
+### VisuallyHiddenInput
+
+A hidden input that maintains form functionality while being visually hidden.
+
+<AutoTypeTable
+  path="./types/docs/utilities.ts"
+  name="VisuallyHiddenInputProps"
+/>
+
+# Credits
+
+- [Radix UI](https://github.com/radix-ui/primitives/blob/main/packages/react/checkbox/src/checkbox.tsx#L165-L212) - Checkbox bubble input

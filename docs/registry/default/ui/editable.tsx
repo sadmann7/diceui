@@ -268,8 +268,8 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
         />
         {isFormControl && (
           <VisuallyHiddenInput
-            control={formTrigger}
             type="hidden"
+            control={formTrigger}
             name={name}
             value={value}
             disabled={disabled}
@@ -677,7 +677,7 @@ const EditableSubmit = React.forwardRef<HTMLButtonElement, EditableSubmitProps>(
 EditableSubmit.displayName = SUBMIT_NAME;
 
 /**
- * @see https://github.com/radix-ui/primitives/blob/main/packages/react/checkbox/src/Checkbox.tsx#L165-L212
+ * @see https://github.com/radix-ui/primitives/blob/main/packages/react/checkbox/src/checkbox.tsx#L165-L212
  */
 
 interface VisuallyHiddenInputProps<T extends HTMLElement>
