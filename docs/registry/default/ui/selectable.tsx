@@ -1,5 +1,6 @@
 "use client";
 
+import { useControllableState } from "@/hooks/use-controllable-state";
 import { composeEventHandlers, useComposedRefs } from "@/lib/composition";
 import { cn } from "@/lib/utils";
 import type { SelectItem } from "@radix-ui/react-select";
@@ -389,44 +390,46 @@ function SelectableRootImpl<Multiple extends boolean = false>(
   }
   const store = storeRef.current;
 
-  const isControlledRef = React.useRef(valueProp !== undefined);
-  const valueRef = React.useRef(valueProp);
-  valueRef.current = valueProp;
-
   const lastFocusedValueRef = React.useRef<string | null>(null);
 
+  const [value, setValue] = useControllableState<Value<Multiple>>({
+    prop: valueProp,
+    defaultProp: defaultValue,
+    onChange: onValueChange,
+  });
+
   React.useEffect(() => {
-    if (isControlledRef.current && valueProp !== undefined) {
-      if (multiple && Array.isArray(valueProp)) {
+    if (value !== undefined) {
+      if (multiple && Array.isArray(value)) {
         const currentSelectedValues = store.getState().selectedValues;
         const currentSelectedArray = [...currentSelectedValues];
 
         const needsUpdate =
-          valueProp.length !== currentSelectedArray.length ||
-          !valueProp.every((val) => currentSelectedValues.has(val)) ||
-          !currentSelectedArray.every((val) => valueProp.includes(val));
+          value.length !== currentSelectedArray.length ||
+          !value.every((val) => currentSelectedValues.has(val)) ||
+          !currentSelectedArray.every((val) => value.includes(val));
 
         if (needsUpdate) {
           store.clearSelection();
-          for (const val of valueProp) {
+          for (const val of value) {
             if (val) store.setSelectedState(val, true);
           }
         }
       } else if (
-        typeof valueProp === "string" &&
-        valueProp !== store.getState().selectedValues.values().next().value
+        typeof value === "string" &&
+        value !== store.getState().selectedValues.values().next().value
       ) {
         store.clearSelection();
-        if (valueProp) {
-          store.setSelectedState(valueProp);
+        if (value) {
+          store.setSelectedState(value);
         }
 
-        if (valueProp === null || valueProp === "") {
+        if (value === null || value === "") {
           lastFocusedValueRef.current = null;
         }
       }
     }
-  }, [valueProp, store, multiple]);
+  }, [value, store, multiple]);
 
   const { collectionRef, getItems, onItemRegister } = useCollection();
 
@@ -435,54 +438,33 @@ function SelectableRootImpl<Multiple extends boolean = false>(
 
   const onItemSelect = React.useCallback(
     (itemValue: string, isMultipleEvent = false) => {
-      if (!isControlledRef.current) {
-        store.setSelectedState(itemValue, multiple && isMultipleEvent);
-      } else if (multiple) {
-        const isSelected = store.isSelected(itemValue);
-        const newSelectedValues = new Set(store.getState().selectedValues);
-
+      if (multiple) {
         if (isMultipleEvent) {
-          if (isSelected) {
-            newSelectedValues.delete(itemValue);
+          const currentValues = new Set(
+            Array.isArray(value) ? value : value ? [value] : [],
+          );
+
+          if (currentValues.has(itemValue)) {
+            currentValues.delete(itemValue);
           } else {
-            newSelectedValues.add(itemValue);
+            currentValues.add(itemValue);
           }
+
+          setValue([...currentValues] as Value<Multiple>);
         } else {
-          newSelectedValues.clear();
-          newSelectedValues.add(itemValue);
+          setValue([itemValue] as Value<Multiple>);
+        }
+      } else {
+        if (value === itemValue) {
+          setValue("" as Value<Multiple>);
+        } else {
+          setValue(itemValue as Value<Multiple>);
         }
       }
 
-      if (onValueChange) {
-        if (multiple) {
-          if (!isControlledRef.current) {
-            store.setSelectedState(itemValue, isMultipleEvent);
-          }
-
-          const currentValues = [...store.getState().selectedValues];
-
-          if (isControlledRef.current) {
-            const simulatedValues = new Set(currentValues);
-            if (isMultipleEvent) {
-              if (simulatedValues.has(itemValue)) {
-                simulatedValues.delete(itemValue);
-              } else {
-                simulatedValues.add(itemValue);
-              }
-            } else {
-              simulatedValues.clear();
-              simulatedValues.add(itemValue);
-            }
-            onValueChange([...simulatedValues] as Value<typeof multiple>);
-          } else {
-            onValueChange(currentValues as Value<typeof multiple>);
-          }
-        } else {
-          onValueChange(itemValue as Value<typeof multiple>);
-        }
-      }
+      store.setSelectedState(itemValue, multiple && isMultipleEvent);
     },
-    [onValueChange, store, multiple],
+    [value, setValue, store, multiple],
   );
 
   const onItemFocus = React.useCallback(
@@ -519,7 +501,8 @@ function SelectableRootImpl<Multiple extends boolean = false>(
         if (event.target !== event.currentTarget) {
           store.setFocusedState(null);
 
-          (event.currentTarget as HTMLElement).focus();
+          if (!(event.currentTarget instanceof HTMLElement)) return;
+          event.currentTarget.focus();
         }
 
         setTimeout(() => {
@@ -706,9 +689,22 @@ function SelectableRootImpl<Multiple extends boolean = false>(
 
       if (event.target === event.currentTarget) {
         const focusedValue = store.getState().focusedValue;
+        const hasSelection = store.getState().selectedValues.size > 0;
         const items = getItems().filter((item) => !item.disabled);
 
         if (items.length === 0) return;
+
+        if (hasSelection) {
+          const firstSelectedValue = [...store.getState().selectedValues].find(
+            (value) =>
+              items.some((item) => item.value === value && !item.disabled),
+          );
+
+          if (firstSelectedValue) {
+            focusItemByValue(firstSelectedValue);
+            return;
+          }
+        }
 
         if (lastFocusedValueRef.current) {
           const itemExists = items.some(
@@ -746,9 +742,11 @@ function SelectableRootImpl<Multiple extends boolean = false>(
     (event: React.FocusEvent<RootElement>) => {
       if (
         collectionRef.current &&
-        !collectionRef.current.contains(event.relatedTarget as Node)
+        !collectionRef.current.contains(event.relatedTarget)
       ) {
-        store.setFocusedState(null);
+        if (store.getState().selectedValues.size === 0) {
+          store.setFocusedState(null);
+        }
       }
     },
     [store, collectionRef],
@@ -795,7 +793,12 @@ function SelectableRootImpl<Multiple extends boolean = false>(
         data-orientation={orientation}
         data-slot="selectable"
         dir={dir}
-        tabIndex={store.getState().focusedValue ? -1 : 0}
+        tabIndex={
+          store.getState().selectedValues.size > 0 ||
+          store.getState().focusedValue
+            ? -1
+            : 0
+        }
         {...rootProps}
         ref={composedRef}
         onKeyDown={composeEventHandlers(rootProps.onKeyDown, onKeyDown)}
@@ -841,7 +844,6 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
     const id = React.useId();
     const itemValue = value ?? id;
 
-    // Create selectors only once per item instance
     const selectedSelector = React.useMemo(
       () => itemSelectedSelector(itemValue),
       [itemValue],
@@ -855,7 +857,6 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
     const isFocused = useSelectableState(context.store, focusedSelector);
     const isDisabled = disabled || context.disabled;
 
-    // Memoize the item data to prevent unnecessary re-registrations
     const itemData = React.useMemo(
       () => ({
         ref: itemRef,
@@ -892,19 +893,12 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
       [context, isDisabled, itemValue],
     );
 
-    // Add key handler for Tab navigation at the item level
     const onKeyDown = React.useCallback(
       (event: React.KeyboardEvent) => {
-        // For Tab navigation
         if (event.key === "Tab") {
-          // If shift+tab is pressed, let the parent component handle it
-          if (event.shiftKey) {
-            // We don't call preventDefault here to allow the event to bubble up
-            return;
+          if (!event.shiftKey) {
+            context.onItemBlur();
           }
-
-          // For regular tab, clear focus state to allow moving to next element
-          context.onItemBlur();
           return;
         }
       },
@@ -921,7 +915,7 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
         data-selected={isSelected ? "" : undefined}
         data-highlighted={isFocused ? "" : undefined}
         data-disabled={isDisabled ? "" : undefined}
-        tabIndex={isDisabled ? undefined : isFocused ? 0 : -1}
+        tabIndex={isDisabled ? undefined : isFocused || isSelected ? 0 : -1}
         {...itemProps}
         ref={composedRef}
         onClick={composeEventHandlers(itemProps.onClick, onClick)}
