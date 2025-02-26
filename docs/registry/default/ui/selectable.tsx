@@ -403,9 +403,55 @@ function SelectableRootImpl<Multiple extends boolean = false>(
     [getItems, store, virtual],
   );
 
+  // Track tab direction
+  const isShiftTabRef = React.useRef(false);
+  const lastActiveElementRef = React.useRef<Element | null>(null);
+
+  // Update the last active element on blur
+  React.useEffect(() => {
+    const handleFocusIn = () => {
+      lastActiveElementRef.current = document.activeElement;
+    };
+
+    document.addEventListener("focusin", handleFocusIn);
+    return () => {
+      document.removeEventListener("focusin", handleFocusIn);
+    };
+  }, []);
+
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent) => {
       if (disabled) return;
+
+      // Handle Shift+Tab to properly move focus to previous element
+      if (event.key === "Tab" && event.shiftKey) {
+        isShiftTabRef.current = true;
+
+        // Important: when a Selectable item has focus, we need to:
+        // 1. Move focus to the root element first
+        // 2. Let the browser's default tab behavior move to the previous focusable element
+        if (event.target !== event.currentTarget) {
+          // If a child item has focus, explicitly clear the focus state
+          store.setFocusedState(null);
+
+          // Focus the container element first, then let browser handle the tab traversal
+          // Ensure we properly type the element for the focus method
+          (event.currentTarget as HTMLElement).focus();
+
+          // Don't prevent default - let browser handle the tab navigation
+        }
+
+        // Reset the flag after the event cycle
+        setTimeout(() => {
+          isShiftTabRef.current = false;
+        }, 0);
+
+        return;
+      }
+
+      if (event.key === "Tab") {
+        return;
+      }
 
       const isRtl = dir === "rtl";
       const isVertical = orientation === "vertical" || orientation === "mixed";
@@ -457,10 +503,6 @@ function SelectableRootImpl<Multiple extends boolean = false>(
             }
           }
         }
-      }
-
-      if (event.key === "Tab") {
-        return;
       }
 
       switch (event.key) {
@@ -615,10 +657,20 @@ function SelectableRootImpl<Multiple extends boolean = false>(
 
   const onFocus = React.useCallback(
     (event: React.FocusEvent) => {
+      // If Shift+Tab was pressed, allow focus to exit the component without redirecting
+      if (isShiftTabRef.current) {
+        return;
+      }
+
+      // Only handle focus events directly on the container element
       if (event.target === event.currentTarget) {
         const focusedValue = store.getState().focusedValue;
         const items = getItems().filter((item) => !item.disabled);
 
+        // No items to focus
+        if (items.length === 0) return;
+
+        // If we have a previously focused item, try to focus it again
         if (lastFocusedValueRef.current) {
           const itemExists = items.some(
             (item) => item.value === lastFocusedValueRef.current,
@@ -626,32 +678,28 @@ function SelectableRootImpl<Multiple extends boolean = false>(
 
           if (itemExists) {
             focusItemByValue(lastFocusedValueRef.current);
-          } else {
-            lastFocusedValueRef.current = null;
-            const firstItem = items[0];
-            if (firstItem?.ref.current && !virtual) {
-              firstItem.ref.current?.focus();
-              store.setFocusedState(firstItem.value);
-            }
+            return;
           }
-        } else if (focusedValue) {
+
+          // Reset if the item no longer exists
+          lastFocusedValueRef.current = null;
+        }
+
+        // If there's a currently focused item in state, try to focus it
+        if (focusedValue) {
           const itemExists = items.some((item) => item.value === focusedValue);
 
           if (itemExists) {
             focusItemByValue(focusedValue);
-          } else {
-            const firstItem = items[0];
-            if (firstItem?.ref.current && !virtual) {
-              firstItem.ref.current?.focus();
-              store.setFocusedState(firstItem.value);
-            }
+            return;
           }
-        } else {
-          const firstItem = items[0];
-          if (firstItem?.ref.current && !virtual) {
-            firstItem.ref.current?.focus();
-            store.setFocusedState(firstItem.value);
-          }
+        }
+
+        // Default to focusing the first enabled item
+        const firstItem = items[0];
+        if (firstItem?.ref.current && !virtual) {
+          firstItem.ref.current?.focus();
+          store.setFocusedState(firstItem.value);
         }
       }
     },
@@ -699,7 +747,7 @@ function SelectableRootImpl<Multiple extends boolean = false>(
         data-orientation={orientation}
         data-slot="selectable"
         dir={dir}
-        tabIndex={0}
+        tabIndex={store.getState().focusedValue ? -1 : 0}
         {...rootProps}
         ref={composedRef}
         onKeyDown={composeEventHandlers(rootProps.onKeyDown, onKeyDown)}
@@ -785,6 +833,25 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
       [context, isDisabled, itemValue],
     );
 
+    // Add key handler for Tab navigation at the item level
+    const onKeyDown = React.useCallback(
+      (event: React.KeyboardEvent) => {
+        // For Tab navigation
+        if (event.key === "Tab") {
+          // If shift+tab is pressed, let the parent component handle it
+          if (event.shiftKey) {
+            // We don't call preventDefault here to allow the event to bubble up
+            return;
+          }
+
+          // For regular tab, clear focus state to allow moving to next element
+          context.onItemBlur();
+          return;
+        }
+      },
+      [context],
+    );
+
     const ItemSlot = asChild ? Slot : "div";
 
     return (
@@ -801,6 +868,7 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
         onClick={composeEventHandlers(itemProps.onClick, onClick)}
         onFocus={composeEventHandlers(itemProps.onFocus, onFocus)}
         onBlur={composeEventHandlers(itemProps.onBlur, onBlur)}
+        onKeyDown={composeEventHandlers(itemProps.onKeyDown, onKeyDown)}
         className={cn(
           "cursor-default select-none ring-1 ring-transparent hover:bg-accent focus-visible:outline-none focus-visible:ring-ring data-disabled:pointer-events-none data-selected:bg-accent data-selected:text-accent-foreground data-disabled:opacity-50",
           className,
