@@ -1,3 +1,5 @@
+"use client";
+
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
@@ -40,9 +42,19 @@ import { ChevronDown } from "lucide-react";
 import * as React from "react";
 
 export default function PlaygroundPage() {
+  const [value, setValue] = React.useState("");
+  const [values, setValues] = React.useState<string[]>([]);
+  console.log({ value, values });
+
   return (
     <Shell>
-      <Selectable.Root orientation="mixed" className="grid grid-cols-4 gap-2">
+      <Selectable.Root
+        orientation="mixed"
+        className="grid grid-cols-4 gap-2"
+        multiple
+        value={values}
+        onValueChange={setValues}
+      >
         {Array.from({ length: 10 }).map((_, index) => (
           <Selectable.Item
             key={index}
@@ -69,7 +81,11 @@ export default function PlaygroundPage() {
           ))}
         </ComboboxContent>
       </Combobox>
-      <Command className="max-w-[15rem] border">
+      <Command
+        className="max-w-[15rem] border"
+        value={value}
+        onValueChange={setValue}
+      >
         <CommandInput placeholder="Search tricks..." />
         <CommandEmpty>No tricks found.</CommandEmpty>
         <CommandList>
@@ -128,7 +144,7 @@ export default function PlaygroundPage() {
         <SelectTrigger className="w-[11.25rem]">
           <SelectValue placeholder="Select a trick" />
         </SelectTrigger>
-        <SelectContent className="max-h-20">
+        <SelectContent>
           <SelectGroup>
             <SelectLabel>Tricks</SelectLabel>
             {tricks.map((trick) => (

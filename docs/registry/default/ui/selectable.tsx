@@ -35,11 +35,13 @@ interface SelectableStore {
 }
 
 function createSelectableStore(
-  initialValue: string | null = null,
+  defaultValue: string | null = null,
 ): SelectableStore {
-  return {
+  const store: SelectableStore = {
     state: {
-      selectedValues: initialValue ? new Set([initialValue]) : new Set(),
+      selectedValues: defaultValue
+        ? new Set<string>([defaultValue])
+        : new Set<string>(),
       focusedValue: null,
     },
     listeners: new Set<() => void>(),
@@ -101,25 +103,26 @@ function createSelectableStore(
       return this.state.selectedValues.has(value);
     },
   };
+
+  return store;
 }
 
 function useSelectableState<T>(
   store: SelectableStore,
   selector: (state: SelectableState) => T,
 ): T {
-  const [state, setState] = React.useState(() => selector(store.getState()));
+  const subscribe = React.useCallback(
+    (callback: () => void) => {
+      return store.subscribe.call(store, callback);
+    },
+    [store],
+  );
 
-  React.useEffect(() => {
-    function callback() {
-      const nextState = selector(store.getState());
-      setState(nextState);
-    }
-
-    const unsubscribe = store.subscribe(callback);
-    return unsubscribe;
-  }, [store, selector]);
-
-  return state;
+  return React.useSyncExternalStore(
+    subscribe,
+    () => selector(store.getState()),
+    () => selector(store.getState()),
+  );
 }
 
 type ItemElement = React.ComponentRef<typeof SelectItem>;
@@ -799,7 +802,7 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
         onFocus={composeEventHandlers(itemProps.onFocus, onFocus)}
         onBlur={composeEventHandlers(itemProps.onBlur, onBlur)}
         className={cn(
-          "cursor-default select-none ring-1 ring-transparent focus-visible:outline-none focus-visible:ring-ring data-disabled:pointer-events-none data-selected:bg-accent data-selected:text-accent-foreground data-disabled:opacity-50",
+          "cursor-default select-none ring-1 ring-transparent hover:bg-accent focus-visible:outline-none focus-visible:ring-ring data-disabled:pointer-events-none data-selected:bg-accent data-selected:text-accent-foreground data-disabled:opacity-50",
           className,
         )}
       />
@@ -819,5 +822,3 @@ export {
   Root,
   Item,
 };
-
-export type { SelectableRootProps };
