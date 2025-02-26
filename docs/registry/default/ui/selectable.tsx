@@ -6,15 +6,6 @@ import type { SelectItem } from "@radix-ui/react-select";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 
-const ARROW_UP = "ArrowUp";
-const ARROW_DOWN = "ArrowDown";
-const ARROW_LEFT = "ArrowLeft";
-const ARROW_RIGHT = "ArrowRight";
-const HOME = "Home";
-const END = "End";
-const ENTER = "Enter";
-const SPACE = " ";
-
 const SELECTABLE_NAME = "Selectable";
 const SELECTABLE_ITEM_NAME = "SelectableItem";
 
@@ -26,32 +17,6 @@ const SELECTABLE_ERROR = {
 type Value<Multiple extends boolean = false> = Multiple extends true
   ? string[]
   : string;
-
-function useControllableState<T>({
-  prop,
-  defaultProp,
-  onChange,
-}: {
-  prop?: T;
-  defaultProp?: T;
-  onChange?: (state: T) => void;
-}) {
-  const [uncontrolledState, setUncontrolledState] = React.useState(defaultProp);
-  const isControlled = prop !== undefined;
-  const state = isControlled ? prop : uncontrolledState;
-
-  const handleChange = React.useCallback(
-    (nextState: T) => {
-      if (!isControlled) {
-        setUncontrolledState(nextState);
-      }
-      onChange?.(nextState);
-    },
-    [isControlled, onChange],
-  );
-
-  return [state, handleChange] as const;
-}
 
 interface SelectableState {
   selectedValues: Set<string>;
@@ -247,75 +212,6 @@ function useSelectableContext(name: keyof typeof SELECTABLE_ERROR) {
   return context;
 }
 
-interface SelectableRootProps<Multiple extends boolean = false>
-  extends React.ComponentPropsWithoutRef<"div"> {
-  /**
-   * The default value of the selectable.
-   *
-   * - When multiple is false: `string`
-   * - When multiple is true: `string[]`
-   */
-  defaultValue?: Value<Multiple>;
-
-  /**
-   * The current value of the selectable.
-   *
-   * - When multiple is false: `string`
-   * - When multiple is true: `string[]`
-   */
-  value?: Value<Multiple>;
-
-  /**
-   * Event handler called when the value changes.
-   *
-   * - When multiple is false: `(value: string) => void`
-   * - When multiple is true: `(value: string[]) => void`
-   */
-  onValueChange?: (value: Value<Multiple>) => void;
-
-  /**
-   * Whether the selectable allows multiple values.
-   * @default false
-   */
-  multiple?: Multiple;
-
-  /**
-   * The orientation of the selectable.
-   * @default "vertical"
-   */
-  orientation?: "horizontal" | "vertical" | "mixed";
-
-  /**
-   * Whether the selectable loops through items.
-   * @default false
-   */
-  loop?: boolean;
-
-  /**
-   * The reading direction of the selectable.
-   * @default "ltr"
-   */
-  dir?: "ltr" | "rtl";
-
-  /**
-   * Whether the selectable is disabled.
-   * @default false
-   */
-  disabled?: boolean;
-
-  /**
-   * Whether the selectable is virtual.
-   * @default false
-   */
-  virtual?: boolean;
-
-  /**
-   * Whether to render the selectable as a child of another element.
-   * @default false
-   */
-  asChild?: boolean;
-}
-
 function findEnabledItem(
   items: CollectionItem[],
   {
@@ -377,6 +273,20 @@ function getMaxItemValue(items: CollectionItem[]): string | null {
   return items[items.length - 1]?.value ?? null;
 }
 
+interface SelectableRootProps<Multiple extends boolean = false>
+  extends React.ComponentPropsWithoutRef<"div"> {
+  defaultValue?: Value<Multiple>;
+  value?: Value<Multiple>;
+  onValueChange?: (value: Value<Multiple>) => void;
+  dir?: "ltr" | "rtl";
+  disabled?: boolean;
+  loop?: boolean;
+  multiple?: Multiple;
+  orientation?: "horizontal" | "vertical" | "mixed";
+  virtual?: boolean;
+  asChild?: boolean;
+}
+
 function SelectableRootImpl<Multiple extends boolean = false>(
   props: SelectableRootProps<Multiple>,
   forwardedRef: React.ForwardedRef<HTMLDivElement>,
@@ -385,22 +295,16 @@ function SelectableRootImpl<Multiple extends boolean = false>(
     defaultValue,
     value: valueProp,
     onValueChange,
-    multiple = false as Multiple,
-    orientation = "vertical",
-    loop = false,
     dir = "ltr",
     disabled = false,
+    loop = false,
+    multiple = false as Multiple,
+    orientation = "vertical",
     virtual = false,
     asChild,
     className,
     ...rootProps
   } = props;
-
-  const [value, setValue] = useControllableState<Value<typeof multiple>>({
-    prop: valueProp,
-    defaultProp: defaultValue,
-    onChange: onValueChange,
-  });
 
   const storeRef = React.useRef<SelectableStore | null>(null);
   if (storeRef.current === null) {
@@ -417,59 +321,59 @@ function SelectableRootImpl<Multiple extends boolean = false>(
   }
   const store = storeRef.current;
 
-  const isControlled = valueProp !== undefined;
+  const isControlledRef = React.useRef(valueProp !== undefined);
+  const valueRef = React.useRef(valueProp);
+  valueRef.current = valueProp;
+
   const lastFocusedValueRef = React.useRef<string | null>(null);
 
   React.useEffect(() => {
-    if (isControlled && value !== undefined) {
-      if (multiple && Array.isArray(value)) {
+    if (isControlledRef.current && valueProp !== undefined) {
+      if (multiple && Array.isArray(valueProp)) {
         store.clearSelection();
 
-        for (const val of value) {
+        for (const val of valueProp) {
           if (val) store.setSelectedState(val, true);
         }
       } else if (
-        typeof value === "string" &&
-        value !== store.getState().selectedValues.values().next().value
+        typeof valueProp === "string" &&
+        valueProp !== store.getState().selectedValues.values().next().value
       ) {
         store.clearSelection();
-        if (value) {
-          store.setSelectedState(value);
+        if (valueProp) {
+          store.setSelectedState(valueProp);
         }
 
-        if (value === null || value === "") {
+        if (valueProp === null || valueProp === "") {
           lastFocusedValueRef.current = null;
         }
       }
     }
-  }, [isControlled, value, store, multiple]);
+  }, [valueProp, store, multiple]);
 
   const { collectionRef, getItems, onItemRegister } = useCollection();
   const composedRef = useComposedRefs(collectionRef, forwardedRef);
 
   const onItemSelect = React.useCallback(
     (itemValue: string, isMultipleEvent = false) => {
-      if (!isControlled) {
+      if (!isControlledRef.current) {
         store.setSelectedState(itemValue, multiple && isMultipleEvent);
       }
 
-      if (multiple) {
-        const currentValues = [...store.getState().selectedValues];
+      if (onValueChange) {
+        if (multiple) {
+          if (!isControlledRef.current) {
+            store.setSelectedState(itemValue, isMultipleEvent);
+          }
 
-        if (currentValues.includes(itemValue)) {
-          setValue(
-            currentValues.filter((v) => v !== itemValue) as Value<
-              typeof multiple
-            >,
-          );
+          const currentValues = [...store.getState().selectedValues];
+          onValueChange(currentValues as Value<typeof multiple>);
         } else {
-          setValue([...currentValues, itemValue] as Value<typeof multiple>);
+          onValueChange(itemValue as Value<typeof multiple>);
         }
-      } else {
-        setValue(itemValue as Value<typeof multiple>);
       }
     },
-    [isControlled, setValue, store, multiple],
+    [onValueChange, store, multiple],
   );
 
   const onItemFocus = React.useCallback(
@@ -557,7 +461,7 @@ function SelectableRootImpl<Multiple extends boolean = false>(
       }
 
       switch (event.key) {
-        case HOME: {
+        case "Home": {
           const minValue = getMinItemValue(items);
           if (minValue) {
             const minItem =
@@ -571,7 +475,7 @@ function SelectableRootImpl<Multiple extends boolean = false>(
           break;
         }
 
-        case END: {
+        case "End": {
           const maxValue = getMaxItemValue(items);
           if (maxValue) {
             const maxItem =
@@ -585,7 +489,7 @@ function SelectableRootImpl<Multiple extends boolean = false>(
           break;
         }
 
-        case ARROW_UP:
+        case "ArrowUp":
           if (isVertical) {
             if (
               orientation === "mixed" &&
@@ -616,7 +520,7 @@ function SelectableRootImpl<Multiple extends boolean = false>(
           }
           break;
 
-        case ARROW_DOWN:
+        case "ArrowDown":
           if (isVertical) {
             if (
               orientation === "mixed" &&
@@ -643,7 +547,7 @@ function SelectableRootImpl<Multiple extends boolean = false>(
           }
           break;
 
-        case ARROW_LEFT:
+        case "ArrowLeft":
           if (isHorizontal && currentIndex >= 0) {
             nextItem = findEnabledItem(items, {
               startingIndex: currentIndex,
@@ -657,7 +561,7 @@ function SelectableRootImpl<Multiple extends boolean = false>(
           }
           break;
 
-        case ARROW_RIGHT:
+        case "ArrowRight":
           if (isHorizontal && currentIndex >= 0) {
             nextItem = findEnabledItem(items, {
               startingIndex: currentIndex,
@@ -671,8 +575,8 @@ function SelectableRootImpl<Multiple extends boolean = false>(
           }
           break;
 
-        case ENTER:
-        case SPACE:
+        case "Enter":
+        case " ":
           if (focusedValue) {
             const isMultipleSelectionKey =
               multiple && (multiple === true || event.ctrlKey || event.metaKey);
@@ -753,32 +657,32 @@ function SelectableRootImpl<Multiple extends boolean = false>(
 
   const contextValue = React.useMemo<SelectableContextValue>(
     () => ({
-      dir,
-      orientation,
       store,
       onItemRegister,
       onItemSelect,
       onItemFocus,
       onItemBlur,
       getItems,
+      dir,
       disabled,
       loop,
-      virtual,
       multiple,
+      orientation,
+      virtual,
     }),
     [
-      dir,
-      orientation,
       store,
       onItemRegister,
       onItemSelect,
       onItemFocus,
       onItemBlur,
       getItems,
+      dir,
       disabled,
       loop,
-      virtual,
       multiple,
+      orientation,
+      virtual,
     ],
   );
 
