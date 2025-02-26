@@ -29,6 +29,15 @@ const EDITABLE_ERROR = {
   [SUBMIT_NAME]: `\`${SUBMIT_NAME}\` must be within \`${ROOT_NAME}\``,
 } as const;
 
+type Direction = "ltr" | "rtl";
+
+const DirectionContext = React.createContext<Direction | undefined>(undefined);
+
+function useDirection(dirProp?: Direction): Direction {
+  const contextDir = React.useContext(DirectionContext);
+  return dirProp ?? contextDir ?? "ltr";
+}
+
 interface EditableContextValue {
   id: string;
   inputId: string;
@@ -41,7 +50,7 @@ interface EditableContextValue {
   onEdit: () => void;
   onSubmit: (value: string) => void;
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
-  dir?: "ltr" | "rtl";
+  dir?: Direction;
   maxLength?: number;
   placeholder?: string;
   triggerMode: "click" | "dblclick" | "focus";
@@ -78,7 +87,7 @@ interface EditableRootProps
   onEdit?: () => void;
   onSubmit?: (value: string) => void;
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
-  dir?: "ltr" | "rtl";
+  dir?: Direction;
   maxLength?: number;
   name?: string;
   placeholder?: string;
@@ -105,7 +114,7 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
       onEdit: onEditProp,
       onSubmit: onSubmitProp,
       onEscapeKeyDown,
-      dir = "ltr",
+      dir: dirProp,
       maxLength,
       name,
       placeholder,
@@ -122,6 +131,8 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
 
     const inputId = React.useId();
     const labelId = React.useId();
+
+    const dir = useDirection(dirProp);
 
     const isControlled = valueProp !== undefined;
     const [uncontrolledValue, setUncontrolledValue] =
@@ -211,6 +222,7 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
         onEdit,
         onCancel,
         onEscapeKeyDown,
+        dir,
         maxLength,
         placeholder,
         triggerMode,
@@ -232,6 +244,7 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
         onCancel,
         onEdit,
         onEscapeKeyDown,
+        dir,
         maxLength,
         placeholder,
         triggerMode,
@@ -249,7 +262,6 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
       <EditableContext.Provider value={contextValue}>
         <RootSlot
           data-slot="editable"
-          dir={dir}
           {...rootProps}
           ref={composedRef}
           className={cn("flex min-w-0 flex-col gap-2", className)}
@@ -321,6 +333,7 @@ const EditableArea = React.forwardRef<HTMLDivElement, EditableAreaProps>(
         data-disabled={context.disabled ? "" : undefined}
         data-editing={context.editing ? "" : undefined}
         data-slot="editable-area"
+        dir={context.dir}
         {...areaProps}
         ref={forwardedRef}
         className={cn(
@@ -502,6 +515,7 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
         aria-required={isRequired}
         aria-invalid={context.invalid}
         data-slot="editable-input"
+        dir={context.dir}
         disabled={isDisabled}
         readOnly={isReadOnly}
         required={isRequired}
@@ -588,6 +602,7 @@ const EditableToolbar = React.forwardRef<HTMLDivElement, EditableToolbarProps>(
         aria-controls={context.id}
         aria-orientation={orientation}
         data-slot="editable-toolbar"
+        dir={context.dir}
         {...toolbarProps}
         ref={forwardedRef}
         className={cn(
