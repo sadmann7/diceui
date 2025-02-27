@@ -43,17 +43,17 @@ import * as React from "react";
 
 export default function PlaygroundPage() {
   const [value, setValue] = React.useState("");
-  // const [values, setValues] = React.useState<string[]>([]);
-  console.log({ value });
+  const [values, setValues] = React.useState<string[]>([]);
+  console.log({ value, values });
 
   return (
     <Shell>
       <Selectable.Root
         orientation="mixed"
         className="grid grid-cols-4 gap-2"
-        // multiple
-        value={value}
-        onValueChange={setValue}
+        multiple
+        value={values}
+        onValueChange={setValues}
       >
         {Array.from({ length: 10 }).map((_, index) => {
           return (

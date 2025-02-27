@@ -793,12 +793,7 @@ function SelectableRootImpl<Multiple extends boolean = false>(
         data-orientation={orientation}
         data-slot="selectable"
         dir={dir}
-        tabIndex={
-          store.getState().selectedValues.size > 0 ||
-          store.getState().focusedValue
-            ? -1
-            : 0
-        }
+        tabIndex={disabled ? undefined : 0}
         {...rootProps}
         ref={composedRef}
         onKeyDown={composeEventHandlers(rootProps.onKeyDown, onKeyDown)}
