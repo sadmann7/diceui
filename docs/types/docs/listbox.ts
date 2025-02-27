@@ -1,6 +1,6 @@
 import type { CompositionProps, EmptyProps } from "@/types";
 
-export interface SelectableProps extends EmptyProps<"div">, CompositionProps {
+export interface ListboxProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The default value of the selectable.
    *
@@ -68,18 +68,14 @@ export interface SelectableProps extends EmptyProps<"div">, CompositionProps {
   asChild?: boolean;
 }
 
-export interface SelectableItemProps
-  extends EmptyProps<"div">,
-    CompositionProps {
+export interface ListboxItemProps extends EmptyProps<"div">, CompositionProps {
   /**
-   * The value associated with this item.
-   * Must be unique among siblings.
+   * The value of the item.
+   *
+   * Cannot be an empty string.
    */
-  value?: string;
+  value: string;
 
-  /**
-   * Whether the item is disabled from selection.
-   * @default false
-   */
+  /** Whether the item is disabled. */
   disabled?: boolean;
 }

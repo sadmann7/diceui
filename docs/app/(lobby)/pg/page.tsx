@@ -36,7 +36,7 @@ import {
   ComboboxItem,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
-import * as Selectable from "@/registry/default/ui/selectable";
+import * as Listbox from "@/registry/default/ui/listbox";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
 import * as React from "react";
@@ -44,19 +44,19 @@ import * as React from "react";
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <Selectable.Root orientation="mixed" className="grid grid-cols-4 gap-2">
+      <Listbox.Root orientation="mixed" className="grid grid-cols-4 gap-2">
         {tricks.map((trick) => {
           return (
-            <Selectable.Item
+            <Listbox.Item
               key={trick.value}
               value={trick.value}
               className="rounded-sm bg-muted/40 p-4"
             >
               {trick.label}
-            </Selectable.Item>
+            </Listbox.Item>
           );
         })}
-      </Selectable.Root>
+      </Listbox.Root>
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />

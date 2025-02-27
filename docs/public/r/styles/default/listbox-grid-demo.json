@@ -1,0 +1,15 @@
+{
+  "name": "listbox-grid-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "files": [
+    {
+      "path": "examples/listbox-grid-demo.tsx",
+      "content": "import { Listbox, ListboxItem } from \"@/registry/default/ui/listbox\";\n\nexport default function SelectableGridDemo() {\n  return (\n    <Listbox orientation=\"mixed\" className=\"grid w-full grid-cols-3 gap-4\">\n      {Array.from({ length: 9 }).map((_, index) => (\n        <ListboxItem\n          key={index}\n          value={`item-${index + 1}`}\n          className=\"flex h-24 w-full items-center justify-center rounded-md border-2 border-border bg-card p-4 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2\"\n        >\n          <div className=\"text-center\">\n            <div className=\"font-medium\">Item {index + 1}</div>\n            <div className=\"text-muted-foreground text-sm\">\n              Cell {Math.floor(index / 3) + 1}-{(index % 3) + 1}\n            </div>\n          </div>\n        </ListboxItem>\n      ))}\n    </Listbox>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

@@ -7,11 +7,11 @@ import type { SelectItem } from "@radix-ui/react-select";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 
-const ROOT_NAME = "Selectable";
-const ITEM_NAME = "SelectableItem";
-const ITEM_INDICATOR_NAME = "SelectableItemIndicator";
+const ROOT_NAME = "Listbox";
+const ITEM_NAME = "ListboxItem";
+const ITEM_INDICATOR_NAME = "ListboxItemIndicator";
 
-const SELECTABLE_ERROR = {
+const ERRORS = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` must be used as root component`,
   [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${ROOT_NAME}\``,
   [ITEM_INDICATOR_NAME]: `\`${ITEM_INDICATOR_NAME}\` must be within \`${ITEM_NAME}\``,
@@ -21,20 +21,20 @@ type Value<Multiple extends boolean = false> = Multiple extends true
   ? string[]
   : string;
 
-interface SelectableState {
+interface ListboxState {
   selectedValues: Set<string>;
   focusedValue: string | null;
 }
 
 type StoreListener = () => void;
-type StoreStateSelector<T> = (state: SelectableState) => T;
+type StoreStateSelector<T> = (state: ListboxState) => T;
 
-interface SelectableStore {
+interface ListboxStore {
   onSubscribe: (callback: StoreListener) => () => void;
-  getSnapshot: () => SelectableState;
-  onStateChange: <K extends keyof SelectableState>(
+  getSnapshot: () => ListboxState;
+  onStateChange: <K extends keyof ListboxState>(
     key: K,
-    value: SelectableState[K],
+    value: ListboxState[K],
     silent?: boolean,
   ) => void;
   onEmit: () => void;
@@ -44,8 +44,8 @@ interface SelectableStore {
 
 function createSelectableStore(
   defaultValue: string | null = null,
-): SelectableStore {
-  const state: SelectableState = {
+): ListboxStore {
+  const state: ListboxState = {
     selectedValues: defaultValue
       ? new Set<string>([defaultValue])
       : new Set<string>(),
@@ -54,7 +54,7 @@ function createSelectableStore(
 
   const listeners = new Set<StoreListener>();
 
-  const store: SelectableStore = {
+  const store: ListboxStore = {
     onSubscribe(callback: StoreListener) {
       listeners.add(callback);
       return () => {
@@ -66,9 +66,9 @@ function createSelectableStore(
       return state;
     },
 
-    onStateChange<K extends keyof SelectableState>(
+    onStateChange<K extends keyof ListboxState>(
       key: K,
-      value: SelectableState[K],
+      value: ListboxState[K],
       silent = false,
     ) {
       if (Object.is(state[key], value)) return;
@@ -123,8 +123,8 @@ function createSelectableStore(
   return store;
 }
 
-function useSelectableState<T>(selector: StoreStateSelector<T>): T {
-  const store = useSelectableContext(ROOT_NAME).store;
+function useListboxState<T>(selector: StoreStateSelector<T>): T {
+  const store = useListboxContext(ROOT_NAME).store;
 
   const subscribe = React.useCallback(
     (callback: StoreListener) => {
@@ -140,8 +140,8 @@ function useSelectableState<T>(selector: StoreStateSelector<T>): T {
   return React.useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 }
 
-type RootElement = React.ComponentRef<typeof SelectableRoot>;
-type ItemElement = React.ComponentRef<typeof SelectItem>;
+type RootElement = React.ComponentRef<typeof ListboxRoot>;
+type ItemElement = React.ComponentRef<typeof ListboxItem>;
 
 interface ItemData {
   value: string;
@@ -195,8 +195,8 @@ function useCollection() {
   };
 }
 
-interface SelectableContextValue {
-  store: SelectableStore;
+interface ListboxContextValue {
+  store: ListboxStore;
   onItemRegister: (item: CollectionItem) => () => void;
   onItemSelect: (value: string, isMultipleEvent?: boolean) => void;
   onItemFocus: (value: string) => void;
@@ -206,28 +206,13 @@ interface SelectableContextValue {
   multiple?: boolean;
 }
 
-const SelectableContext = React.createContext<SelectableContextValue | null>(
-  null,
-);
-SelectableContext.displayName = ROOT_NAME;
+const ListboxContext = React.createContext<ListboxContextValue | null>(null);
+ListboxContext.displayName = ROOT_NAME;
 
-function useSelectableContext(name: keyof typeof SELECTABLE_ERROR) {
-  const context = React.useContext(SelectableContext);
+function useListboxContext(name: keyof typeof ERRORS) {
+  const context = React.useContext(ListboxContext);
   if (!context) {
-    throw new Error(SELECTABLE_ERROR[name]);
-  }
-  return context;
-}
-
-const SelectableItemContext = React.createContext<{
-  isSelected: boolean;
-} | null>(null);
-SelectableItemContext.displayName = ITEM_NAME;
-
-function useSelectableItemContext(name: keyof typeof SELECTABLE_ERROR) {
-  const context = React.useContext(SelectableItemContext);
-  if (!context) {
-    throw new Error(SELECTABLE_ERROR[name]);
+    throw new Error(ERRORS[name]);
   }
   return context;
 }
@@ -339,7 +324,7 @@ function calculateGridLayout(
   return { columnCount, rowCount };
 }
 
-interface SelectableRootProps<Multiple extends boolean = false>
+interface ListboxRootProps<Multiple extends boolean = false>
   extends React.ComponentPropsWithoutRef<"div"> {
   defaultValue?: Value<Multiple>;
   value?: Value<Multiple>;
@@ -353,8 +338,8 @@ interface SelectableRootProps<Multiple extends boolean = false>
   asChild?: boolean;
 }
 
-function SelectableRootImpl<Multiple extends boolean = false>(
-  props: SelectableRootProps<Multiple>,
+function ListboxRootImpl<Multiple extends boolean = false>(
+  props: ListboxRootProps<Multiple>,
   forwardedRef: React.ForwardedRef<HTMLDivElement>,
 ) {
   const {
@@ -372,7 +357,7 @@ function SelectableRootImpl<Multiple extends boolean = false>(
     ...rootProps
   } = props;
 
-  const storeRef = React.useRef<SelectableStore | null>(null);
+  const storeRef = React.useRef<ListboxStore | null>(null);
 
   if (storeRef.current === null) {
     const store = createSelectableStore(
@@ -734,7 +719,7 @@ function SelectableRootImpl<Multiple extends boolean = false>(
     [store, collectionRef],
   );
 
-  const contextValue = React.useMemo<SelectableContextValue>(
+  const contextValue = React.useMemo<ListboxContextValue>(
     () => ({
       store,
       onItemRegister,
@@ -760,12 +745,12 @@ function SelectableRootImpl<Multiple extends boolean = false>(
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
-    <SelectableContext.Provider value={contextValue}>
+    <ListboxContext.Provider value={contextValue}>
       <RootPrimitive
         role="listbox"
         aria-multiselectable={multiple ? "true" : undefined}
         data-orientation={orientation}
-        data-slot="selectable"
+        data-slot="listbox"
         dir={dir}
         tabIndex={disabled ? undefined : 0}
         {...rootProps}
@@ -780,42 +765,51 @@ function SelectableRootImpl<Multiple extends boolean = false>(
           className,
         )}
       />
-    </SelectableContext.Provider>
+    </ListboxContext.Provider>
   );
 }
 
-type SelectableRootComponent = (<Multiple extends boolean = false>(
-  props: SelectableRootProps<Multiple> & { ref?: React.Ref<HTMLDivElement> },
+type ListboxRootComponent = (<Multiple extends boolean = false>(
+  props: ListboxRootProps<Multiple> & { ref?: React.Ref<HTMLDivElement> },
 ) => React.ReactElement) &
-  Pick<React.FC<SelectableRootProps<boolean>>, "displayName">;
+  Pick<React.FC<ListboxRootProps<boolean>>, "displayName">;
 
-const SelectableRoot = React.forwardRef(
-  SelectableRootImpl,
-) as SelectableRootComponent;
-SelectableRoot.displayName = ROOT_NAME;
+const ListboxRoot = React.forwardRef(ListboxRootImpl) as ListboxRootComponent;
+ListboxRoot.displayName = ROOT_NAME;
+
+const ListboxItemContext = React.createContext<{
+  isSelected: boolean;
+} | null>(null);
+ListboxItemContext.displayName = ITEM_NAME;
+
+function useListboxItemContext(name: keyof typeof ERRORS) {
+  const context = React.useContext(ListboxItemContext);
+  if (!context) {
+    throw new Error(ERRORS[name]);
+  }
+  return context;
+}
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
-interface SelectableItemProps extends React.ComponentPropsWithoutRef<"div"> {
+interface ListboxItemProps extends React.ComponentPropsWithoutRef<"div"> {
   value: string;
   disabled?: boolean;
   asChild?: boolean;
 }
 
-const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
+const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
   (props, forwardedRef) => {
     const { asChild, className, value, disabled = false, ...itemProps } = props;
-    const context = useSelectableContext(ITEM_NAME);
+    const context = useListboxContext(ITEM_NAME);
     const itemRef = React.useRef<ItemElement>(null);
     const composedRef = useComposedRefs(itemRef, forwardedRef);
 
-    const isSelected = useSelectableState((state) =>
+    const isSelected = useListboxState((state) =>
       state.selectedValues.has(value),
     );
-    const isFocused = useSelectableState(
-      (state) => state.focusedValue === value,
-    );
+    const isFocused = useListboxState((state) => state.focusedValue === value);
     const isDisabled = disabled || context.disabled;
 
     useIsomorphicLayoutEffect(() => {
@@ -873,7 +867,7 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
     );
 
     return (
-      <SelectableItemContext.Provider value={itemContextValue}>
+      <ListboxItemContext.Provider value={itemContextValue}>
         <ItemPrimitive
           role="option"
           aria-selected={isSelected}
@@ -893,24 +887,24 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
             className,
           )}
         />
-      </SelectableItemContext.Provider>
+      </ListboxItemContext.Provider>
     );
   },
 );
-SelectableItem.displayName = ITEM_NAME;
+ListboxItem.displayName = ITEM_NAME;
 
-interface SelectableItemIndicatorProps
+interface ListboxItemIndicatorProps
   extends React.ComponentPropsWithoutRef<"span"> {
   forceMount?: boolean;
   asChild?: boolean;
 }
 
-const SelectableItemIndicator = React.forwardRef<
+const ListboxItemIndicator = React.forwardRef<
   HTMLSpanElement,
-  SelectableItemIndicatorProps
+  ListboxItemIndicatorProps
 >((props, forwardedRef) => {
   const { forceMount = false, asChild, ...indicatorProps } = props;
-  const itemContext = useSelectableItemContext(ITEM_INDICATOR_NAME);
+  const itemContext = useListboxItemContext(ITEM_INDICATOR_NAME);
 
   if (!forceMount && !itemContext.isSelected) return null;
 
@@ -925,18 +919,17 @@ const SelectableItemIndicator = React.forwardRef<
     />
   );
 });
+ListboxItemIndicator.displayName = ITEM_INDICATOR_NAME;
 
-SelectableItemIndicator.displayName = ITEM_INDICATOR_NAME;
-
-const Selectable = SelectableRoot;
-const Root = SelectableRoot;
-const Item = SelectableItem;
-const ItemIndicator = SelectableItemIndicator;
+const Listbox = ListboxRoot;
+const Root = ListboxRoot;
+const Item = ListboxItem;
+const ItemIndicator = ListboxItemIndicator;
 
 export {
-  Selectable,
-  SelectableItem,
-  SelectableItemIndicator,
+  Listbox,
+  ListboxItem,
+  ListboxItemIndicator,
   //
   Root,
   Item,

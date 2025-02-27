@@ -273,6 +273,39 @@ export const examples: Registry = [
     ],
   },
   {
+    name: "listbox-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    files: [
+      {
+        path: "examples/listbox-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "listbox-horizontal-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    files: [
+      {
+        path: "examples/listbox-horizontal-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "listbox-grid-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    files: [
+      {
+        path: "examples/listbox-grid-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "masonry-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot"],
