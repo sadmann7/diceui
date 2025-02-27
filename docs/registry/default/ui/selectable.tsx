@@ -390,7 +390,20 @@ function SelectableRootImpl<Multiple extends boolean = false>(
   }
   const store = storeRef.current;
 
+  // Initialize this as null - it will only be set when an item is actually focused
   const lastFocusedValueRef = React.useRef<string | null>(null);
+
+  // Store the last focused value in state as well to ensure it persists
+  const [lastFocusedValue, setLastFocusedValue] = React.useState<string | null>(
+    null,
+  );
+
+  // Create a safe setter for lastFocusedValueRef that also updates the state
+  const setLastFocused = React.useCallback((value: string | null) => {
+    console.log("Setting last focused to:", value);
+    lastFocusedValueRef.current = value;
+    setLastFocusedValue(value);
+  }, []);
 
   const [value, setValue] = useControllableState<Value<Multiple>>({
     prop: valueProp,
@@ -423,10 +436,6 @@ function SelectableRootImpl<Multiple extends boolean = false>(
         if (value) {
           store.setSelectedState(value);
         }
-
-        if (value === null || value === "") {
-          lastFocusedValueRef.current = null;
-        }
       }
     }
   }, [value, store, multiple]);
@@ -448,34 +457,39 @@ function SelectableRootImpl<Multiple extends boolean = false>(
             currentValues.delete(itemValue);
           } else {
             currentValues.add(itemValue);
+            setLastFocused(itemValue);
           }
 
           setValue([...currentValues] as Value<Multiple>);
         } else {
           setValue([itemValue] as Value<Multiple>);
+          setLastFocused(itemValue);
         }
       } else {
         if (value === itemValue) {
           setValue("" as Value<Multiple>);
         } else {
           setValue(itemValue as Value<Multiple>);
+          setLastFocused(itemValue);
         }
       }
 
       store.setSelectedState(itemValue, multiple && isMultipleEvent);
     },
-    [value, setValue, store, multiple],
+    [value, setValue, store, multiple, setLastFocused],
   );
 
   const onItemFocus = React.useCallback(
     (value: string) => {
       store.setFocusedState(value);
-      lastFocusedValueRef.current = value;
+      setLastFocused(value);
     },
-    [store],
+    [store, setLastFocused],
   );
 
   const onItemBlur = React.useCallback(() => {
+    // Only update the focused state in the store, not the lastFocusedValueRef
+    // This ensures we remember the last focused item when tabbing back in
     store.setFocusedState(null);
   }, [store]);
 
@@ -486,9 +500,10 @@ function SelectableRootImpl<Multiple extends boolean = false>(
       if (item?.ref.current && !virtual && !item.disabled) {
         item.ref.current?.focus();
         store.setFocusedState(value);
+        setLastFocused(value);
       }
     },
-    [getItems, store, virtual],
+    [getItems, store, virtual, setLastFocused],
   );
 
   const onKeyDown = React.useCallback(
@@ -499,6 +514,8 @@ function SelectableRootImpl<Multiple extends boolean = false>(
         isShiftTabRef.current = true;
 
         if (event.target !== event.currentTarget) {
+          // Only update the focused state in the store, not the lastFocusedValue
+          // This ensures we remember the last focused item when tabbing back in
           store.setFocusedState(null);
 
           if (!(event.currentTarget instanceof HTMLElement)) return;
@@ -512,7 +529,15 @@ function SelectableRootImpl<Multiple extends boolean = false>(
         return;
       }
 
-      if (event.key === "Tab") return;
+      if (event.key === "Tab") {
+        // When tabbing forward, ensure we only update the store state and not the lastFocusedValue
+        // so we can remember what item was last focused when tabbing back in
+        console.log(
+          "Tab key pressed, preserving lastFocusedValue:",
+          lastFocusedValueRef.current,
+        );
+        return;
+      }
 
       const isRtl = dir === "rtl";
       const isVertical = orientation === "vertical" || orientation === "mixed";
@@ -542,6 +567,8 @@ function SelectableRootImpl<Multiple extends boolean = false>(
             if (minItem?.ref.current && !virtual) {
               minItem.ref.current?.focus();
               store.setFocusedState(minValue);
+              // Update lastFocusedValueRef for consistent focus behavior
+              setLastFocused(minValue);
             }
           }
           event.preventDefault();
@@ -556,6 +583,8 @@ function SelectableRootImpl<Multiple extends boolean = false>(
             if (maxItem?.ref.current && !virtual) {
               maxItem.ref.current?.focus();
               store.setFocusedState(maxValue);
+              // Update lastFocusedValueRef for consistent focus behavior
+              setLastFocused(maxValue);
             }
           }
           event.preventDefault();
@@ -655,6 +684,10 @@ function SelectableRootImpl<Multiple extends boolean = false>(
               multiple && (multiple === true || event.ctrlKey || event.metaKey);
 
             onItemSelect(focusedValue, isMultipleSelectionKey);
+
+            // Always update lastFocusedValueRef when selecting via keyboard
+            setLastFocused(focusedValue);
+
             event.preventDefault();
           }
           break;
@@ -667,6 +700,8 @@ function SelectableRootImpl<Multiple extends boolean = false>(
         if (!virtual && nextItem.ref.current) {
           nextItem.ref.current?.focus();
           store.setFocusedState(nextItem.value);
+          // Always update lastFocusedValueRef when navigating via keyboard
+          setLastFocused(nextItem.value);
         }
       }
     },
@@ -680,62 +715,58 @@ function SelectableRootImpl<Multiple extends boolean = false>(
       loop,
       virtual,
       multiple,
+      setLastFocused,
     ],
   );
 
   const onFocus = React.useCallback(
     (event: React.FocusEvent<RootElement>) => {
+      console.log(
+        "onFocus called, isShiftTab:",
+        isShiftTabRef.current,
+        "lastFocusedValue:",
+        lastFocusedValue,
+      );
+
+      // Make sure we're not handling shift+tab (which is handled differently)
       if (isShiftTabRef.current) return;
 
+      // Only handle focus when it's directly on the root element
+      // (not when a child element gets focus)
       if (event.target === event.currentTarget) {
-        const focusedValue = store.getState().focusedValue;
-        const hasSelection = store.getState().selectedValues.size > 0;
         const items = getItems().filter((item) => !item.disabled);
 
         if (items.length === 0) return;
 
-        if (hasSelection) {
-          const firstSelectedValue = [...store.getState().selectedValues].find(
-            (value) =>
-              items.some((item) => item.value === value && !item.disabled),
+        // First priority: focus the last focused item
+        if (lastFocusedValue) {
+          const lastFocusedItem = items.find(
+            (item) => item.value === lastFocusedValue && !item.disabled,
           );
 
-          if (firstSelectedValue) {
-            focusItemByValue(firstSelectedValue);
+          if (lastFocusedItem) {
+            focusItemByValue(lastFocusedValue);
             return;
           }
         }
 
-        if (lastFocusedValueRef.current) {
-          const itemExists = items.some(
-            (item) => item.value === lastFocusedValueRef.current,
-          );
-
-          if (itemExists) {
-            focusItemByValue(lastFocusedValueRef.current);
-            return;
-          }
-
-          lastFocusedValueRef.current = null;
-        }
-
-        if (focusedValue) {
-          const itemExists = items.some((item) => item.value === focusedValue);
-
-          if (itemExists) {
-            focusItemByValue(focusedValue);
-            return;
-          }
-        }
-
+        // Fallback: focus the first item if there's no last focused item or it can't be found
         const firstItem = items[0];
         if (firstItem?.ref.current && !virtual) {
           firstItem.ref.current?.focus();
           store.setFocusedState(firstItem.value);
+          setLastFocused(firstItem.value);
         }
       }
     },
-    [focusItemByValue, store, getItems, virtual],
+    [
+      focusItemByValue,
+      getItems,
+      virtual,
+      store,
+      setLastFocused,
+      lastFocusedValue,
+    ],
   );
 
   const onBlur = React.useCallback(
@@ -744,9 +775,9 @@ function SelectableRootImpl<Multiple extends boolean = false>(
         collectionRef.current &&
         !collectionRef.current.contains(event.relatedTarget)
       ) {
-        if (store.getState().selectedValues.size === 0) {
-          store.setFocusedState(null);
-        }
+        // Only update the focused state in the store, not the lastFocusedValue
+        // This ensures we remember the last focused item when tabbing back in
+        store.setFocusedState(null);
       }
     },
     [store, collectionRef],
@@ -869,11 +900,11 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
       if (!isDisabled) {
         context.onItemFocus(itemValue);
       }
-    }, [context, isDisabled, itemValue]);
+    }, [context.onItemFocus, isDisabled, itemValue]);
 
     const onBlur = React.useCallback(() => {
       context.onItemBlur();
-    }, [context]);
+    }, [context.onItemBlur]);
 
     const onClick = React.useCallback(
       (event: React.MouseEvent) => {
@@ -885,19 +916,21 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
           context.onItemSelect(itemValue, isMultipleSelectionKey);
         }
       },
-      [context, isDisabled, itemValue],
+      [context.onItemSelect, itemValue, isDisabled, context.multiple],
     );
 
     const onKeyDown = React.useCallback(
       (event: React.KeyboardEvent) => {
         if (event.key === "Tab") {
           if (!event.shiftKey) {
+            // When tabbing forward, we only want to update the focused state in the store
+            // but keep track of this item as the last focused one
             context.onItemBlur();
           }
           return;
         }
       },
-      [context],
+      [context.onItemBlur],
     );
 
     const ItemSlot = asChild ? Slot : "div";
@@ -910,7 +943,7 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
         data-selected={isSelected ? "" : undefined}
         data-highlighted={isFocused ? "" : undefined}
         data-disabled={isDisabled ? "" : undefined}
-        tabIndex={isDisabled ? undefined : isFocused || isSelected ? 0 : -1}
+        tabIndex={isDisabled ? undefined : isFocused ? 0 : -1}
         {...itemProps}
         ref={composedRef}
         onClick={composeEventHandlers(itemProps.onClick, onClick)}
