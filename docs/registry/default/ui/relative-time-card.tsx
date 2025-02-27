@@ -112,7 +112,7 @@ const RelativeTimeCard = React.forwardRef<
     return () => clearInterval(timer);
   }, [date, updateInterval]);
 
-  const TriggerSlot = asChild ? Slot : "button";
+  const TriggerPrimitive = asChild ? Slot : "button";
 
   return (
     <HoverCard
@@ -123,7 +123,7 @@ const RelativeTimeCard = React.forwardRef<
       closeDelay={closeDelay}
     >
       <HoverCardTrigger asChild>
-        <TriggerSlot
+        <TriggerPrimitive
           {...triggerProps}
           ref={forwardedRef}
           className={cn(triggerVariants({ variant, className }))}
@@ -139,7 +139,7 @@ const RelativeTimeCard = React.forwardRef<
               }).format(date)}
             </time>
           )}
-        </TriggerSlot>
+        </TriggerPrimitive>
       </HoverCardTrigger>
       <HoverCardContent
         side={side}

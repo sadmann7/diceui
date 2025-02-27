@@ -1319,11 +1319,11 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
       ],
     );
 
-    const RootSlot = asChild ? Slot : "div";
+    const RootPrimitive = asChild ? Slot : "div";
 
     return (
       <MasonryContext.Provider value={contextValue}>
-        <RootSlot
+        <RootPrimitive
           {...rootProps}
           ref={composedRef}
           style={{
@@ -1334,7 +1334,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
           }}
         >
           <MasonryViewport>{children}</MasonryViewport>
-        </RootSlot>
+        </RootPrimitive>
       </MasonryContext.Provider>
     );
   },
@@ -1534,9 +1534,9 @@ const MasonryItem = React.forwardRef<HTMLDivElement, MasonryItemProps>(
   (props, forwardedRef) => {
     const { asChild, ...itemProps } = props;
 
-    const ItemSlot = asChild ? Slot : "div";
+    const ItemPrimitive = asChild ? Slot : "div";
 
-    return <ItemSlot {...itemProps} ref={forwardedRef} />;
+    return <ItemPrimitive {...itemProps} ref={forwardedRef} />;
   },
 );
 

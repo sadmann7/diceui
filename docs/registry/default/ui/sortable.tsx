@@ -307,7 +307,7 @@ const SortableContent = React.forwardRef<HTMLDivElement, SortableContentProps>(
     } = props;
     const context = useSortableContext(CONTENT_NAME);
 
-    const ContentSlot = asChild ? Slot : "div";
+    const ContentPrimitive = asChild ? Slot : "div";
 
     return (
       <SortableContentContext.Provider value={true}>
@@ -318,9 +318,9 @@ const SortableContent = React.forwardRef<HTMLDivElement, SortableContentProps>(
           {withoutSlot ? (
             children
           ) : (
-            <ContentSlot {...contentProps} ref={forwardedRef}>
+            <ContentPrimitive {...contentProps} ref={forwardedRef}>
               {children}
-            </ContentSlot>
+            </ContentPrimitive>
           )}
         </SortableContext>
       </SortableContentContext.Provider>
@@ -409,11 +409,11 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
       [id, attributes, listeners, setActivatorNodeRef, isDragging, disabled],
     );
 
-    const ItemSlot = asChild ? Slot : "div";
+    const ItemPrimitive = asChild ? Slot : "div";
 
     return (
       <SortableItemContext.Provider value={itemContext}>
-        <ItemSlot
+        <ItemPrimitive
           id={id}
           data-dragging={isDragging ? "" : undefined}
           {...itemProps}
@@ -464,10 +464,10 @@ const SortableItemHandle = React.forwardRef<
     itemContext.setActivatorNodeRef(node);
   });
 
-  const HandleSlot = asChild ? Slot : "button";
+  const HandlePrimitive = asChild ? Slot : "button";
 
   return (
-    <HandleSlot
+    <HandlePrimitive
       type="button"
       aria-controls={itemContext.id}
       data-dragging={itemContext.isDragging ? "" : undefined}

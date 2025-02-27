@@ -129,16 +129,16 @@ function createSelectableStore(
 function useSelectableState<T>(selector: (state: SelectableState) => T): T {
   const store = useSelectableContext(SELECTABLE_NAME).store;
 
-  const getSnapshot = React.useCallback(() => {
-    return selector(store.getState());
-  }, [store, selector]);
-
   const subscribe = React.useCallback(
     (callback: () => void) => {
       return store.subscribe(callback);
     },
     [store],
   );
+
+  const getSnapshot = React.useCallback(() => {
+    return selector(store.getState());
+  }, [store, selector]);
 
   return React.useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 }
@@ -204,13 +204,9 @@ interface SelectableContextValue {
   onItemSelect: (value: string, isMultipleEvent?: boolean) => void;
   onItemFocus: (value: string) => void;
   onItemBlur: () => void;
-  orientation?: "horizontal" | "vertical" | "mixed";
-  loop?: boolean;
   dir?: "ltr" | "rtl";
   disabled?: boolean;
-  virtual?: boolean;
   multiple?: boolean;
-  getItems: () => CollectionItem[];
 }
 
 const SelectableContext = React.createContext<SelectableContextValue | null>(
@@ -732,13 +728,9 @@ function SelectableRootImpl<Multiple extends boolean = false>(
       onItemSelect,
       onItemFocus,
       onItemBlur,
-      getItems,
       dir,
       disabled,
-      loop,
       multiple,
-      orientation,
-      virtual,
     }),
     [
       store,
@@ -746,21 +738,17 @@ function SelectableRootImpl<Multiple extends boolean = false>(
       onItemSelect,
       onItemFocus,
       onItemBlur,
-      getItems,
       dir,
       disabled,
-      loop,
       multiple,
-      orientation,
-      virtual,
     ],
   );
 
-  const RootSlot = asChild ? Slot : "div";
+  const RootPrimitive = asChild ? Slot : "div";
 
   return (
     <SelectableContext.Provider value={contextValue}>
-      <RootSlot
+      <RootPrimitive
         role="listbox"
         aria-multiselectable={multiple ? "true" : undefined}
         data-orientation={orientation}
@@ -863,10 +851,10 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
       [context.onItemBlur],
     );
 
-    const ItemSlot = asChild ? Slot : "div";
+    const ItemPrimitive = asChild ? Slot : "div";
 
     return (
-      <ItemSlot
+      <ItemPrimitive
         role="option"
         aria-selected={isSelected}
         data-slot="selectable-item"

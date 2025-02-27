@@ -638,7 +638,7 @@ const KanbanBoard = React.forwardRef<HTMLDivElement, KanbanBoardProps>(
       return Object.keys(context.items);
     }, [context.items]);
 
-    const BoardSlot = asChild ? Slot : "div";
+    const BoardPrimitive = asChild ? Slot : "div";
 
     return (
       <KanbanBoardContext.Provider value={true}>
@@ -650,7 +650,7 @@ const KanbanBoard = React.forwardRef<HTMLDivElement, KanbanBoardProps>(
               : verticalListSortingStrategy
           }
         >
-          <BoardSlot
+          <BoardPrimitive
             aria-orientation={context.orientation}
             data-orientation={context.orientation}
             {...boardProps}
@@ -760,7 +760,7 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
       [id, attributes, listeners, setActivatorNodeRef, isDragging, disabled],
     );
 
-    const ColumnSlot = asChild ? Slot : "div";
+    const ColumnPrimitive = asChild ? Slot : "div";
 
     return (
       <KanbanColumnContext.Provider value={columnContext}>
@@ -772,7 +772,7 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
               : verticalListSortingStrategy
           }
         >
-          <ColumnSlot
+          <ColumnPrimitive
             id={id}
             data-dragging={isDragging ? "" : undefined}
             {...columnProps}
@@ -824,10 +824,10 @@ const KanbanColumnHandle = React.forwardRef<
     columnContext.setActivatorNodeRef(node);
   });
 
-  const HandleSlot = asChild ? Slot : "button";
+  const HandlePrimitive = asChild ? Slot : "button";
 
   return (
-    <HandleSlot
+    <HandlePrimitive
       type="button"
       aria-controls={columnContext.id}
       data-dragging={columnContext.isDragging ? "" : undefined}
@@ -928,11 +928,11 @@ const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
       [id, attributes, listeners, setActivatorNodeRef, isDragging, disabled],
     );
 
-    const ItemSlot = asChild ? Slot : "div";
+    const ItemPrimitive = asChild ? Slot : "div";
 
     return (
       <KanbanItemContext.Provider value={itemContext}>
-        <ItemSlot
+        <ItemPrimitive
           id={id}
           data-dragging={isDragging ? "" : undefined}
           {...itemProps}
@@ -983,10 +983,10 @@ const KanbanItemHandle = React.forwardRef<
     itemContext.setActivatorNodeRef(node);
   });
 
-  const HandleSlot = asChild ? Slot : "button";
+  const HandlePrimitive = asChild ? Slot : "button";
 
   return (
-    <HandleSlot
+    <HandlePrimitive
       type="button"
       aria-controls={itemContext.id}
       data-dragging={itemContext.isDragging ? "" : undefined}

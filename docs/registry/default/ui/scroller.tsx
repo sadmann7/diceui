@@ -226,10 +226,10 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
       return orientation === "vertical" ? ["up", "down"] : ["left", "right"];
     }, [orientation, withNavigation]);
 
-    const Comp = asChild ? Slot : "div";
+    const ScrollerPrimitive = asChild ? Slot : "div";
 
     const ScrollerImpl = (
-      <Comp
+      <ScrollerPrimitive
         {...scrollerProps}
         ref={composedRef}
         style={composedStyle}

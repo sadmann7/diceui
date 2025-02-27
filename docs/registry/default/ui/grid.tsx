@@ -31,10 +31,10 @@ const GridRoot = React.forwardRef<HTMLDivElement, GridRootProps>(
   (props, forwardedRef) => {
     const { variant = "default", asChild, className, ...rootProps } = props;
 
-    const RootSlot = asChild ? Slot : "div";
+    const RootPrimitive = asChild ? Slot : "div";
 
     return (
-      <RootSlot
+      <RootPrimitive
         data-slot="grid"
         {...rootProps}
         ref={forwardedRef}
@@ -59,7 +59,7 @@ const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>(
   (props, forwardedRef) => {
     const { asChild, className, colSpan, rowSpan, ...itemProps } = props;
 
-    const ItemSlot = asChild ? Slot : "div";
+    const ItemPrimitive = asChild ? Slot : "div";
 
     const itemClasses = React.useMemo(
       () =>
@@ -72,7 +72,7 @@ const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>(
     );
 
     return (
-      <ItemSlot
+      <ItemPrimitive
         data-slot="grid-item"
         {...itemProps}
         ref={forwardedRef}

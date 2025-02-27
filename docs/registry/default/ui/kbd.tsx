@@ -42,10 +42,10 @@ const KbdRoot = React.forwardRef<HTMLElement, KbdRootProps>(
       ...rootProps
     } = props;
 
-    const RootSlot = asChild ? Slot : "kbd";
+    const RootPrimitive = asChild ? Slot : "kbd";
 
     return (
-      <RootSlot
+      <RootPrimitive
         role="group"
         data-slot="kbd"
         {...rootProps}
@@ -97,14 +97,14 @@ const KbdKey = React.forwardRef<HTMLSpanElement, KbdKeyProps>(
       ...keyProps
     } = props;
 
-    const KeySlot = asChild ? Slot : "span";
-
     const keyText = children?.toString() ?? "";
     const title = titleProp ?? KEY_DESCRIPTIONS[keyText] ?? keyText;
 
+    const KeyPrimitive = asChild ? Slot : "span";
+
     return (
       <abbr title={title} className="no-underline">
-        <KeySlot
+        <KeyPrimitive
           data-slot="kbd-key"
           {...keyProps}
           ref={forwardedRef}
@@ -114,7 +114,7 @@ const KbdKey = React.forwardRef<HTMLSpanElement, KbdKeyProps>(
           )}
         >
           {children}
-        </KeySlot>
+        </KeyPrimitive>
       </abbr>
     );
   },
@@ -129,10 +129,10 @@ const KbdSeparator = React.forwardRef<HTMLSpanElement, KbdSeparatorProps>(
   (props, forwardedRef) => {
     const { asChild, children = "+", className, ...separatorProps } = props;
 
-    const SeparatorSlot = asChild ? Slot : "span";
+    const SeparatorPrimitive = asChild ? Slot : "span";
 
     return (
-      <SeparatorSlot
+      <SeparatorPrimitive
         role="separator"
         aria-orientation="horizontal"
         aria-hidden="true"
@@ -142,7 +142,7 @@ const KbdSeparator = React.forwardRef<HTMLSpanElement, KbdSeparatorProps>(
         className={cn("text-foreground/70", className)}
       >
         {children}
-      </SeparatorSlot>
+      </SeparatorPrimitive>
     );
   },
 );
