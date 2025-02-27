@@ -4,6 +4,7 @@ import { useControllableState } from "@/hooks/use-controllable-state";
 import { composeEventHandlers, useComposedRefs } from "@/lib/composition";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
+import { Check } from "lucide-react";
 import * as React from "react";
 
 const ROOT_NAME = "Listbox";
@@ -11,6 +12,7 @@ const ITEM_NAME = "ListboxItem";
 const ITEM_INDICATOR_NAME = "ListboxItemIndicator";
 const GROUP_NAME = "ListboxGroup";
 const GROUP_LABEL_NAME = "ListboxGroupLabel";
+const INPUT_NAME = "ListboxInput";
 
 const ERRORS = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` must be used as root component`,
@@ -18,6 +20,7 @@ const ERRORS = {
   [ITEM_INDICATOR_NAME]: `\`${ITEM_INDICATOR_NAME}\` must be within \`${ITEM_NAME}\``,
   [GROUP_NAME]: `\`${GROUP_NAME}\` must be within \`${ROOT_NAME}\``,
   [GROUP_LABEL_NAME]: `\`${GROUP_LABEL_NAME}\` must be within \`${GROUP_NAME}\``,
+  [INPUT_NAME]: `\`${INPUT_NAME}\` must be within \`${ROOT_NAME}\``,
 } as const;
 
 type Value<Multiple extends boolean = false> = Multiple extends true
@@ -27,6 +30,7 @@ type Value<Multiple extends boolean = false> = Multiple extends true
 interface ListboxState {
   selectedValues: Set<string>;
   focusedValue: string | null;
+  filterValue: string;
 }
 
 type StoreListener = () => void;
@@ -43,6 +47,7 @@ interface ListboxStore {
   onEmit: () => void;
   onSelectedStateChange: (value: string, multiple?: boolean) => void;
   onClearSelection: () => void;
+  onFilterChange: (value: string) => void;
 }
 
 function createSelectableStore(
@@ -53,6 +58,7 @@ function createSelectableStore(
       ? new Set<string>([defaultValue])
       : new Set<string>(),
     focusedValue: null,
+    filterValue: "",
   };
 
   const listeners = new Set<StoreListener>();
@@ -120,6 +126,10 @@ function createSelectableStore(
       if (state.selectedValues.size > 0) {
         store.onStateChange("selectedValues", new Set<string>());
       }
+    },
+
+    onFilterChange(value: string) {
+      store.onStateChange("filterValue", value);
     },
   };
 
@@ -331,9 +341,11 @@ interface ListboxContextValue {
   onItemSelect: (value: string, isMultipleEvent?: boolean) => void;
   onItemFocus: (value: string) => void;
   onItemBlur: () => void;
+  onFilterChange: (value: string) => void;
   dir?: "ltr" | "rtl";
   disabled?: boolean;
   multiple?: boolean;
+  filterValue: string;
 }
 
 const ListboxContext = React.createContext<ListboxContextValue | null>(null);
@@ -491,8 +503,18 @@ function ListboxRootImpl<Multiple extends boolean = false>(
 
   const focusItemByValue = React.useCallback(
     (value: string) => {
-      const items = getItems();
-      const item = items.find((item) => item.value === value);
+      const allItems = getItems();
+      const filterValue = store.getSnapshot().filterValue;
+
+      // First check if the item is visible with the current filter
+      if (
+        filterValue &&
+        !value.toLowerCase().includes(filterValue.toLowerCase())
+      ) {
+        return; // The item doesn't match the filter, so we can't focus it
+      }
+
+      const item = allItems.find((item) => item.value === value);
       if (item?.ref.current && !virtual && !item.disabled) {
         item.ref.current?.focus();
         store.onStateChange("focusedValue", value);
@@ -530,7 +552,17 @@ function ListboxRootImpl<Multiple extends boolean = false>(
       const isHorizontal =
         orientation === "horizontal" || orientation === "mixed";
 
-      const items = getItems().filter((item) => !item.disabled);
+      // Get all items and filter them by visibility (both not disabled and matching current filter)
+      const allItems = getItems();
+      const filterValue = store.getSnapshot().filterValue;
+      const items = allItems.filter((item) => {
+        if (item.disabled) return false;
+        // If there's a filter value, only include items that match the filter
+        if (filterValue) {
+          return item.value.toLowerCase().includes(filterValue.toLowerCase());
+        }
+        return true;
+      });
       const itemCount = items.length;
 
       if (itemCount === 0) return;
@@ -600,7 +632,7 @@ function ListboxRootImpl<Multiple extends boolean = false>(
                 loop,
               });
             } else if (items.length > 0) {
-              nextItem = items[0] || null;
+              nextItem = items[0] ?? null;
             }
             event.preventDefault();
           }
@@ -703,14 +735,21 @@ function ListboxRootImpl<Multiple extends boolean = false>(
       if (isShiftTabRef.current) return;
 
       if (event.target === event.currentTarget) {
-        const items = getItems().filter((item) => !item.disabled);
+        const allItems = getItems();
+        const filterValue = store.getSnapshot().filterValue;
+        const items = allItems.filter((item) => {
+          if (item.disabled) return false;
+          if (filterValue) {
+            return item.value.toLowerCase().includes(filterValue.toLowerCase());
+          }
+          return true;
+        });
 
         if (items.length === 0) return;
 
         if (lastFocusedValueRef.current) {
           const lastFocusedItem = items.find(
-            (item) =>
-              item.value === lastFocusedValueRef.current && !item.disabled,
+            (item) => item.value === lastFocusedValueRef.current,
           );
 
           if (lastFocusedItem) {
@@ -742,6 +781,35 @@ function ListboxRootImpl<Multiple extends boolean = false>(
     [store, collectionRef],
   );
 
+  const onFilterChange = React.useCallback(
+    (value: string) => {
+      store.onFilterChange(value);
+
+      // Reset the focused value when the filter changes
+      store.onStateChange("focusedValue", null);
+
+      // If we have items that match the filter, focus the first one
+      if (value) {
+        const allItems = getItems();
+        const filteredItems = allItems.filter(
+          (item) =>
+            !item.disabled &&
+            item.value.toLowerCase().includes(value.toLowerCase()),
+        );
+
+        if (
+          filteredItems.length > 0 &&
+          filteredItems[0]?.ref.current &&
+          !virtual
+        ) {
+          store.onStateChange("focusedValue", filteredItems[0].value);
+          onFocusedValueChange(filteredItems[0].value);
+        }
+      }
+    },
+    [store, getItems, virtual, onFocusedValueChange],
+  );
+
   const contextValue = React.useMemo<ListboxContextValue>(
     () => ({
       store,
@@ -749,9 +817,11 @@ function ListboxRootImpl<Multiple extends boolean = false>(
       onItemSelect,
       onItemFocus,
       onItemBlur,
+      onFilterChange,
       dir,
       disabled,
       multiple,
+      filterValue: store.getSnapshot().filterValue,
     }),
     [
       store,
@@ -759,6 +829,7 @@ function ListboxRootImpl<Multiple extends boolean = false>(
       onItemSelect,
       onItemFocus,
       onItemBlur,
+      onFilterChange,
       dir,
       disabled,
       multiple,
@@ -901,10 +972,17 @@ interface ListboxItemProps extends React.ComponentPropsWithoutRef<"div"> {
 
 const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
   (props, forwardedRef) => {
-    const { asChild, className, value, disabled = false, ...itemProps } = props;
+    const {
+      asChild,
+      value,
+      disabled = false,
+      children,
+      className,
+      ...itemProps
+    } = props;
     const context = useListboxContext(ITEM_NAME);
     const groupContext = React.useContext(ListboxGroupContext);
-    const itemRef = React.useRef<ItemElement>(null);
+    const itemRef = React.useRef<HTMLDivElement>(null);
     const composedRef = useComposedRefs(itemRef, forwardedRef);
 
     const isSelected = useListboxState((state) =>
@@ -912,6 +990,12 @@ const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
     );
     const isFocused = useListboxState((state) => state.focusedValue === value);
     const isDisabled = disabled || context.disabled;
+
+    const filterValue = useListboxState((state) => state.filterValue);
+    const isVisible = React.useMemo(() => {
+      if (!filterValue) return true;
+      return value.toLowerCase().includes(filterValue.toLowerCase());
+    }, [value, filterValue]);
 
     useIsomorphicLayoutEffect(() => {
       if (value === "") {
@@ -970,6 +1054,8 @@ const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
       [isSelected],
     );
 
+    if (!isVisible) return null;
+
     return (
       <ListboxItemContext.Provider value={itemContextValue}>
         <ItemPrimitive
@@ -979,18 +1065,24 @@ const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
           data-selected={isSelected ? "" : undefined}
           data-highlighted={isFocused ? "" : undefined}
           data-disabled={isDisabled ? "" : undefined}
-          tabIndex={isDisabled ? undefined : isFocused ? 0 : -1}
+          tabIndex={isDisabled ? undefined : -1}
           {...itemProps}
           ref={composedRef}
           onClick={composeEventHandlers(itemProps.onClick, onClick)}
           onFocus={composeEventHandlers(itemProps.onFocus, onFocus)}
           onBlur={composeEventHandlers(itemProps.onBlur, onBlur)}
           onKeyDown={composeEventHandlers(itemProps.onKeyDown, onKeyDown)}
+          onPointerMove={composeEventHandlers(itemProps.onPointerMove, onFocus)}
           className={cn(
-            "cursor-default select-none ring-1 ring-transparent hover:bg-accent focus-visible:outline-none focus-visible:ring-ring data-disabled:pointer-events-none data-selected:bg-accent data-selected:text-accent-foreground data-disabled:opacity-50",
+            "flex cursor-default select-none items-center gap-2 rounded-md border p-4 outline-hidden data-disabled:pointer-events-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:opacity-50",
             className,
           )}
-        />
+        >
+          {children}
+          <ListboxItemIndicator className="ml-auto">
+            <Check className="h-4 w-4" />
+          </ListboxItemIndicator>
+        </ItemPrimitive>
       </ListboxItemContext.Provider>
     );
   },
@@ -1025,12 +1117,66 @@ const ListboxItemIndicator = React.forwardRef<
 });
 ListboxItemIndicator.displayName = ITEM_INDICATOR_NAME;
 
+interface ListboxInputProps extends React.ComponentPropsWithoutRef<"input"> {
+  asChild?: boolean;
+}
+
+const ListboxInput = React.forwardRef<HTMLInputElement, ListboxInputProps>(
+  (props, forwardedRef) => {
+    const {
+      asChild,
+      className,
+      placeholder,
+      onChange: onChangeProp,
+      ...inputProps
+    } = props;
+
+    const context = useListboxContext(INPUT_NAME);
+    const filterValue = useListboxState((state) => state.filterValue);
+
+    const onChange = React.useCallback(
+      (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = event.target.value;
+
+        onChangeProp?.(event);
+        context.onFilterChange(newValue);
+      },
+      [onChangeProp, context.onFilterChange],
+    );
+
+    const InputPrimitive = asChild ? Slot : "input";
+
+    return (
+      <InputPrimitive
+        role="searchbox"
+        aria-autocomplete="list"
+        autoCapitalize="off"
+        autoComplete="off"
+        autoCorrect="off"
+        spellCheck="false"
+        data-slot="listbox-input"
+        placeholder={placeholder}
+        value={filterValue}
+        {...inputProps}
+        ref={forwardedRef}
+        onChange={composeEventHandlers(onChangeProp, onChange)}
+        className={cn(
+          "w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          className,
+        )}
+      />
+    );
+  },
+);
+ListboxInput.displayName = INPUT_NAME;
+
 const Listbox = ListboxRoot;
 const Root = ListboxRoot;
 const Item = ListboxItem;
 const ItemIndicator = ListboxItemIndicator;
 const Group = ListboxGroup;
 const GroupLabel = ListboxGroupLabel;
+const Input = ListboxInput;
 
 export {
   Listbox,
@@ -1038,10 +1184,12 @@ export {
   ListboxGroupLabel,
   ListboxItem,
   ListboxItemIndicator,
+  ListboxInput,
   //
   Root,
   Group,
   GroupLabel,
   Item,
   ItemIndicator,
+  Input,
 };

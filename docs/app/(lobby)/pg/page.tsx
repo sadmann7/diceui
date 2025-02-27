@@ -43,18 +43,17 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <Listbox.Root orientation="mixed" className="grid grid-cols-4 gap-2">
-        {tricks.map((trick) => {
-          return (
-            <Listbox.Item
-              key={trick.value}
-              value={trick.value}
-              className="rounded-sm bg-muted/40 p-4"
-            >
-              {trick.label}
-            </Listbox.Item>
-          );
-        })}
+      <Listbox.Root orientation="mixed" className="flex flex-col gap-2.5">
+        <Listbox.Input placeholder="Search tricks..." />
+        <div className="grid grid-cols-4 gap-2">
+          {tricks.map((trick) => {
+            return (
+              <Listbox.Item key={trick.value} value={trick.value}>
+                {trick.label}
+              </Listbox.Item>
+            );
+          })}
+        </div>
       </Listbox.Root>
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
