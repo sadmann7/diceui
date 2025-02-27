@@ -42,27 +42,15 @@ import { ChevronDown } from "lucide-react";
 import * as React from "react";
 
 export default function PlaygroundPage() {
-  const [value, setValue] = React.useState("");
-  const [values, setValues] = React.useState<string[]>([]);
-
   return (
     <Shell>
-      <Selectable.Root
-        orientation="mixed"
-        className="grid grid-cols-4 gap-2"
-        multiple
-        value={values}
-        onValueChange={setValues}
-      >
+      <Selectable.Root orientation="mixed" className="grid grid-cols-4 gap-2">
         {tricks.map((trick) => {
           return (
             <Selectable.Item
               key={trick.value}
               value={trick.value}
               className="rounded-sm bg-muted/40 p-4"
-              onSelect={(value) => {
-                console.log({ value });
-              }}
             >
               {trick.label}
             </Selectable.Item>

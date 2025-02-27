@@ -10,9 +10,8 @@ import * as React from "react";
 const ROOT_NAME = "Selectable";
 const ITEM_NAME = "SelectableItem";
 const ITEM_INDICATOR_NAME = "SelectableItemIndicator";
-const ITEM_SELECT_EVENT = `${ITEM_NAME}.Select.Event`;
 
-const ERRORS = {
+const SELECTABLE_ERROR = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` must be used as root component`,
   [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${ROOT_NAME}\``,
   [ITEM_INDICATOR_NAME]: `\`${ITEM_INDICATOR_NAME}\` must be within \`${ITEM_NAME}\``,
@@ -147,7 +146,6 @@ type ItemElement = React.ComponentRef<typeof SelectItem>;
 interface ItemData {
   value: string;
   disabled?: boolean;
-  onSelect?: (value: string) => void;
 }
 
 interface CollectionItem extends ItemData {
@@ -213,10 +211,23 @@ const SelectableContext = React.createContext<SelectableContextValue | null>(
 );
 SelectableContext.displayName = ROOT_NAME;
 
-function useSelectableContext(name: keyof typeof ERRORS) {
+function useSelectableContext(name: keyof typeof SELECTABLE_ERROR) {
   const context = React.useContext(SelectableContext);
   if (!context) {
-    throw new Error(ERRORS[name]);
+    throw new Error(SELECTABLE_ERROR[name]);
+  }
+  return context;
+}
+
+const SelectableItemContext = React.createContext<{
+  isSelected: boolean;
+} | null>(null);
+SelectableItemContext.displayName = ITEM_NAME;
+
+function useSelectableItemContext(name: keyof typeof SELECTABLE_ERROR) {
+  const context = React.useContext(SelectableItemContext);
+  if (!context) {
+    throw new Error(SELECTABLE_ERROR[name]);
   }
   return context;
 }
@@ -647,30 +658,6 @@ function SelectableRootImpl<Multiple extends boolean = false>(
           if (focusedValue) {
             const isMultipleSelectionKey =
               multiple && (multiple === true || event.ctrlKey || event.metaKey);
-
-            const focusedItem = items.find(
-              (item) => item.value === focusedValue,
-            );
-
-            if (focusedItem?.onSelect) {
-              const itemElement = focusedItem.ref.current;
-              if (itemElement) {
-                const itemSelectEvent = new CustomEvent(ITEM_SELECT_EVENT, {
-                  bubbles: true,
-                });
-
-                itemElement.addEventListener(
-                  ITEM_SELECT_EVENT,
-                  () => focusedItem.onSelect?.(focusedValue),
-                  { once: true },
-                );
-
-                itemElement.dispatchEvent(itemSelectEvent);
-              } else {
-                focusedItem.onSelect(focusedValue);
-              }
-            }
-
             onItemSelect(focusedValue, isMultipleSelectionKey);
             onFocusedValueChange(focusedValue);
             event.preventDefault();
@@ -810,37 +797,15 @@ SelectableRoot.displayName = ROOT_NAME;
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
-const SelectableItemContext = React.createContext<{
-  isSelected: boolean;
-} | null>(null);
-SelectableItemContext.displayName = ITEM_NAME;
-
-function useSelectableItemContext(name: keyof typeof ERRORS) {
-  const context = React.useContext(SelectableItemContext);
-  if (!context) {
-    throw new Error(ERRORS[name]);
-  }
-  return context;
-}
-
-interface SelectableItemProps
-  extends Omit<React.ComponentPropsWithoutRef<"div">, "onSelect"> {
+interface SelectableItemProps extends React.ComponentPropsWithoutRef<"div"> {
   value: string;
-  onSelect?: (value: string) => void;
   disabled?: boolean;
   asChild?: boolean;
 }
 
 const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
   (props, forwardedRef) => {
-    const {
-      asChild,
-      className,
-      value,
-      disabled = false,
-      onSelect,
-      ...itemProps
-    } = props;
+    const { asChild, className, value, disabled = false, ...itemProps } = props;
     const context = useSelectableContext(ITEM_NAME);
     const itemRef = React.useRef<ItemElement>(null);
     const composedRef = useComposedRefs(itemRef, forwardedRef);
@@ -862,9 +827,8 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
         ref: itemRef,
         value,
         disabled: isDisabled,
-        onSelect,
       });
-    }, [value, isDisabled, context.onItemRegister, onSelect]);
+    }, [value, isDisabled, context.onItemRegister]);
 
     const onFocus = React.useCallback(() => {
       if (!isDisabled) {
@@ -883,29 +847,10 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
             context.multiple &&
             (context.multiple === true || event.ctrlKey || event.metaKey);
 
-          if (onSelect) {
-            const itemElement = itemRef.current;
-            if (itemElement) {
-              const itemSelectEvent = new CustomEvent(ITEM_SELECT_EVENT, {
-                bubbles: true,
-              });
-
-              itemElement.addEventListener(
-                ITEM_SELECT_EVENT,
-                () => onSelect?.(value),
-                { once: true },
-              );
-
-              itemElement.dispatchEvent(itemSelectEvent);
-            } else {
-              onSelect(value);
-            }
-          }
-
           context.onItemSelect(value, isMultipleSelectionKey);
         }
       },
-      [context.onItemSelect, value, isDisabled, context.multiple, onSelect],
+      [context.onItemSelect, value, isDisabled, context.multiple],
     );
 
     const onKeyDown = React.useCallback(
@@ -996,5 +941,4 @@ export {
   Root,
   Item,
   ItemIndicator,
-  ITEM_SELECT_EVENT,
 };
