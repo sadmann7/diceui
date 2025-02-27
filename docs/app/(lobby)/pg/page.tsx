@@ -44,7 +44,7 @@ import * as React from "react";
 export default function PlaygroundPage() {
   const [value, setValue] = React.useState("");
   const [values, setValues] = React.useState<string[]>([]);
-  // console.log({ value, values });
+  console.log({ value, values });
 
   return (
     <Shell>

@@ -24,36 +24,68 @@ interface SelectableState {
   focusedValue: string | null;
 }
 
+type StoreListener = () => void;
+type StoreStateSelector<T> = (state: SelectableState) => T;
+
 interface SelectableStore {
-  state: SelectableState;
-  listeners: Set<() => void>;
-  subscribe: (callback: () => void) => () => void;
-  setSelectedState: (value: string, multiple?: boolean) => void;
-  clearSelection: () => void;
-  setFocusedState: (value: string | null) => void;
-  getState: () => SelectableState;
-  isSelected: (value: string) => boolean;
+  onSubscribe: (callback: StoreListener) => () => void;
+  getSnapshot: () => SelectableState;
+  onStateChange: <K extends keyof SelectableState>(
+    key: K,
+    value: SelectableState[K],
+    silent?: boolean,
+  ) => void;
+  onEmit: () => void;
+  onSelectedStateChange: (value: string, multiple?: boolean) => void;
+  onClearSelection: () => void;
 }
 
 function createSelectableStore(
   defaultValue: string | null = null,
 ): SelectableStore {
+  const state: SelectableState = {
+    selectedValues: defaultValue
+      ? new Set<string>([defaultValue])
+      : new Set<string>(),
+    focusedValue: null,
+  };
+
+  const listeners = new Set<StoreListener>();
+
   const store: SelectableStore = {
-    state: {
-      selectedValues: defaultValue
-        ? new Set<string>([defaultValue])
-        : new Set<string>(),
-      focusedValue: null,
-    },
-    listeners: new Set<() => void>(),
-    subscribe(callback: () => void) {
-      this.listeners.add(callback);
+    onSubscribe(callback: StoreListener) {
+      listeners.add(callback);
       return () => {
-        this.listeners.delete(callback);
+        listeners.delete(callback);
       };
     },
-    setSelectedState(value: string, multiple = false) {
-      const newSelectedValues = new Set(this.state.selectedValues);
+
+    getSnapshot() {
+      return state;
+    },
+
+    onStateChange<K extends keyof SelectableState>(
+      key: K,
+      value: SelectableState[K],
+      silent = false,
+    ) {
+      if (Object.is(state[key], value)) return;
+
+      state[key] = value;
+
+      if (!silent) {
+        queueMicrotask(() => store.onEmit());
+      }
+    },
+
+    onEmit() {
+      for (const listener of listeners) {
+        listener();
+      }
+    },
+
+    onSelectedStateChange(value: string, multiple = false) {
+      const newSelectedValues = new Set(state.selectedValues);
 
       if (multiple) {
         if (newSelectedValues.has(value)) {
@@ -71,76 +103,49 @@ function createSelectableStore(
       }
 
       const hasChanged =
-        this.state.selectedValues.size !== newSelectedValues.size ||
-        ![...newSelectedValues].every((v) => this.state.selectedValues.has(v));
+        state.selectedValues.size !== newSelectedValues.size ||
+        ![...newSelectedValues].every((v) => state.selectedValues.has(v));
 
       if (hasChanged) {
-        this.state = {
-          ...this.state,
-          selectedValues: newSelectedValues,
-        };
-
-        queueMicrotask(() => {
-          for (const listener of this.listeners) {
-            listener();
-          }
-        });
+        store.onStateChange("selectedValues", newSelectedValues);
       }
     },
-    clearSelection() {
-      if (this.state.selectedValues.size > 0) {
-        this.state = {
-          ...this.state,
-          selectedValues: new Set<string>(),
-        };
 
-        queueMicrotask(() => {
-          for (const listener of this.listeners) {
-            listener();
-          }
-        });
+    onClearSelection() {
+      if (state.selectedValues.size > 0) {
+        store.onStateChange("selectedValues", new Set<string>());
       }
-    },
-    setFocusedState(value: string | null) {
-      if (this.state.focusedValue !== value) {
-        this.state = {
-          ...this.state,
-          focusedValue: value,
-        };
-
-        queueMicrotask(() => {
-          for (const listener of this.listeners) {
-            listener();
-          }
-        });
-      }
-    },
-    getState() {
-      return this.state;
-    },
-    isSelected(value: string) {
-      return this.state.selectedValues.has(value);
     },
   };
 
   return store;
 }
 
-function useSelectableState<T>(selector: (state: SelectableState) => T): T {
+function useSelectableState<T>(selector: StoreStateSelector<T>): T {
   const store = useSelectableContext(SELECTABLE_NAME).store;
 
   const subscribe = React.useCallback(
-    (callback: () => void) => {
-      return store.subscribe(callback);
+    (callback: StoreListener) => {
+      return store.onSubscribe(callback);
     },
     [store],
   );
 
   const getSnapshot = React.useCallback(() => {
-    return selector(store.getState());
+    return selector(store.getSnapshot());
   }, [store, selector]);
 
   return React.useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+}
+
+function useLazyRef<T>(factory: () => T): React.RefObject<T> {
+  const ref = React.useRef<T | null>(null);
+
+  if (ref.current === null) {
+    ref.current = factory();
+  }
+
+  return ref as React.RefObject<T>;
 }
 
 type RootElement = React.ComponentRef<typeof SelectableRoot>;
@@ -362,20 +367,19 @@ function SelectableRootImpl<Multiple extends boolean = false>(
     ...rootProps
   } = props;
 
-  const storeRef = React.useRef<SelectableStore | null>(null);
-  if (storeRef.current === null) {
-    storeRef.current = createSelectableStore(
+  const store = useLazyRef(() => {
+    const store = createSelectableStore(
       typeof defaultValue === "string" ? defaultValue : null,
     );
 
     if (multiple && Array.isArray(defaultValue) && defaultValue.length) {
-      const store = storeRef.current;
       for (const val of defaultValue) {
-        if (val) store.setSelectedState(val, true);
+        if (val) store.onSelectedStateChange(val, true);
       }
     }
-  }
-  const store = storeRef.current;
+
+    return store;
+  }).current;
 
   const lastFocusedValueRef = React.useRef<string | null>(null);
 
@@ -392,7 +396,7 @@ function SelectableRootImpl<Multiple extends boolean = false>(
   React.useEffect(() => {
     if (value !== undefined) {
       if (multiple && Array.isArray(value)) {
-        const currentSelectedValues = store.getState().selectedValues;
+        const currentSelectedValues = store.getSnapshot().selectedValues;
         const currentSelectedArray = [...currentSelectedValues];
 
         const needsUpdate =
@@ -401,17 +405,17 @@ function SelectableRootImpl<Multiple extends boolean = false>(
           !currentSelectedArray.every((val) => value.includes(val));
 
         if (needsUpdate) {
-          store.clearSelection();
+          store.onClearSelection();
           for (const val of value) {
-            if (val) store.setSelectedState(val, true);
+            if (val) store.onSelectedStateChange(val, true);
           }
         }
       } else if (
         typeof value === "string" &&
-        value !== store.getState().selectedValues.values().next().value
+        value !== store.getSnapshot().selectedValues.values().next().value
       ) {
         if (value) {
-          store.setSelectedState(value);
+          store.onSelectedStateChange(value);
         }
       }
     }
@@ -451,21 +455,21 @@ function SelectableRootImpl<Multiple extends boolean = false>(
         }
       }
 
-      store.setSelectedState(itemValue, multiple && isMultipleEvent);
+      store.onSelectedStateChange(itemValue, multiple && isMultipleEvent);
     },
     [value, setValue, store, multiple, onFocusedValueChange],
   );
 
   const onItemFocus = React.useCallback(
     (value: string) => {
-      store.setFocusedState(value);
+      store.onStateChange("focusedValue", value);
       onFocusedValueChange(value);
     },
     [store, onFocusedValueChange],
   );
 
   const onItemBlur = React.useCallback(() => {
-    store.setFocusedState(null);
+    store.onStateChange("focusedValue", null);
   }, [store]);
 
   const focusItemByValue = React.useCallback(
@@ -474,7 +478,7 @@ function SelectableRootImpl<Multiple extends boolean = false>(
       const item = items.find((item) => item.value === value);
       if (item?.ref.current && !virtual && !item.disabled) {
         item.ref.current?.focus();
-        store.setFocusedState(value);
+        store.onStateChange("focusedValue", value);
         onFocusedValueChange(value);
       }
     },
@@ -489,7 +493,7 @@ function SelectableRootImpl<Multiple extends boolean = false>(
         isShiftTabRef.current = true;
 
         if (event.target !== event.currentTarget) {
-          store.setFocusedState(null);
+          store.onStateChange("focusedValue", null);
 
           if (!(event.currentTarget instanceof HTMLElement)) return;
           event.currentTarget.focus();
@@ -514,7 +518,7 @@ function SelectableRootImpl<Multiple extends boolean = false>(
 
       if (itemCount === 0) return;
 
-      const focusedValue = store.getState().focusedValue;
+      const focusedValue = store.getSnapshot().focusedValue;
       const currentIndex = focusedValue
         ? items.findIndex((item) => item.value === focusedValue)
         : -1;
@@ -531,7 +535,7 @@ function SelectableRootImpl<Multiple extends boolean = false>(
               items.find((item) => item.value === minValue) ?? null;
             if (minItem?.ref.current && !virtual) {
               minItem.ref.current?.focus();
-              store.setFocusedState(minValue);
+              store.onStateChange("focusedValue", minValue);
               onFocusedValueChange(minValue);
             }
           }
@@ -546,7 +550,7 @@ function SelectableRootImpl<Multiple extends boolean = false>(
               items.find((item) => item.value === maxValue) ?? null;
             if (maxItem?.ref.current && !virtual) {
               maxItem.ref.current?.focus();
-              store.setFocusedState(maxValue);
+              store.onStateChange("focusedValue", maxValue);
               onFocusedValueChange(maxValue);
             }
           }
@@ -658,7 +662,7 @@ function SelectableRootImpl<Multiple extends boolean = false>(
       if (nextItem) {
         if (!virtual && nextItem.ref.current) {
           nextItem.ref.current?.focus();
-          store.setFocusedState(nextItem.value);
+          store.onStateChange("focusedValue", nextItem.value);
           onFocusedValueChange(nextItem.value);
         }
       }
@@ -701,7 +705,7 @@ function SelectableRootImpl<Multiple extends boolean = false>(
         const firstItem = items[0];
         if (firstItem?.ref.current && !virtual) {
           firstItem.ref.current?.focus();
-          store.setFocusedState(firstItem.value);
+          store.onStateChange("focusedValue", firstItem.value);
           onFocusedValueChange(firstItem.value);
         }
       }
@@ -715,7 +719,7 @@ function SelectableRootImpl<Multiple extends boolean = false>(
         collectionRef.current &&
         !collectionRef.current.contains(event.relatedTarget)
       ) {
-        store.setFocusedState(null);
+        store.onStateChange("focusedValue", null);
       }
     },
     [store, collectionRef],
