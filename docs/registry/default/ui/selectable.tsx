@@ -126,10 +126,9 @@ function createSelectableStore(
   return store;
 }
 
-function useSelectableState<T>(
-  store: SelectableStore,
-  selector: (state: SelectableState) => T,
-): T {
+function useSelectableState<T>(selector: (state: SelectableState) => T): T {
+  const store = useSelectableContext(SELECTABLE_NAME).store;
+
   const getSnapshot = React.useCallback(() => {
     return selector(store.getState());
   }, [store, selector]);
@@ -186,9 +185,7 @@ function useCollection() {
     (item: CollectionItem) => {
       itemMap.set(item.ref, item);
 
-      return () => {
-        itemMap.delete(item.ref);
-      };
+      return () => itemMap.delete(item.ref);
     },
     [itemMap],
   );
@@ -200,12 +197,6 @@ function useCollection() {
     onItemRegister,
   };
 }
-
-const itemSelectedSelector = (itemValue: string) => (state: SelectableState) =>
-  state.selectedValues.has(itemValue);
-
-const itemFocusedSelector = (itemValue: string) => (state: SelectableState) =>
-  state.focusedValue === itemValue;
 
 interface SelectableContextValue {
   store: SelectableStore;
@@ -423,7 +414,6 @@ function SelectableRootImpl<Multiple extends boolean = false>(
         typeof value === "string" &&
         value !== store.getState().selectedValues.values().next().value
       ) {
-        console.log("Updating selection state for single value");
         if (value) {
           store.setSelectedState(value);
         }
@@ -822,31 +812,21 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
     const id = React.useId();
     const itemValue = value ?? id;
 
-    const selectedSelector = React.useMemo(
-      () => itemSelectedSelector(itemValue),
-      [itemValue],
+    const isSelected = useSelectableState((state) =>
+      state.selectedValues.has(itemValue),
     );
-    const focusedSelector = React.useMemo(
-      () => itemFocusedSelector(itemValue),
-      [itemValue],
+    const isFocused = useSelectableState(
+      (state) => state.focusedValue === itemValue,
     );
-
-    const isSelected = useSelectableState(context.store, selectedSelector);
-    const isFocused = useSelectableState(context.store, focusedSelector);
     const isDisabled = disabled || context.disabled;
 
-    const itemData = React.useMemo(
-      () => ({
+    useIsomorphicLayoutEffect(() => {
+      return context.onItemRegister({
         ref: itemRef,
         value: itemValue,
         disabled: isDisabled,
-      }),
-      [itemValue, isDisabled],
-    );
-
-    useIsomorphicLayoutEffect(() => {
-      return context.onItemRegister(itemData);
-    }, [context.onItemRegister, itemData]);
+      });
+    }, [itemValue, isDisabled, context.onItemRegister]);
 
     const onFocus = React.useCallback(() => {
       if (!isDisabled) {
@@ -875,8 +855,6 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
       (event: React.KeyboardEvent) => {
         if (event.key === "Tab") {
           if (!event.shiftKey) {
-            // When tabbing forward, we only want to update the focused state in the store
-            // but keep track of this item as the last focused one
             context.onItemBlur();
           }
           return;

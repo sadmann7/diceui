@@ -51,9 +51,9 @@ export default function PlaygroundPage() {
       <Selectable.Root
         orientation="mixed"
         className="grid grid-cols-4 gap-2"
-        multiple
-        value={values}
-        onValueChange={setValues}
+        // multiple
+        // value={values}
+        // onValueChange={setValues}
       >
         {Array.from({ length: 10 }).map((_, index) => {
           return (
