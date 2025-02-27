@@ -124,7 +124,7 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
 
     useIsomorphicLayoutEffect(() => {
       if (value === "") {
-        throw new Error(`${ITEM_NAME} value cannot be an empty string.`);
+        throw new Error(`${ITEM_NAME} value cannot be an empty string`);
       }
 
       return context.onItemRegister(

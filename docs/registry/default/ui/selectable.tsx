@@ -7,12 +7,15 @@ import type { SelectItem } from "@radix-ui/react-select";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 
-const SELECTABLE_NAME = "Selectable";
-const SELECTABLE_ITEM_NAME = "SelectableItem";
+const ROOT_NAME = "Selectable";
+const ITEM_NAME = "SelectableItem";
+const ITEM_INDICATOR_NAME = "SelectableItemIndicator";
+const ITEM_SELECT_EVENT = `${ITEM_NAME}.Select.Event`;
 
-const SELECTABLE_ERROR = {
-  [SELECTABLE_NAME]: `\`${SELECTABLE_NAME}\` must be used as root component`,
-  [SELECTABLE_ITEM_NAME]: `\`${SELECTABLE_ITEM_NAME}\` must be within \`${SELECTABLE_NAME}\``,
+const ERRORS = {
+  [ROOT_NAME]: `\`${ROOT_NAME}\` must be used as root component`,
+  [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${ROOT_NAME}\``,
+  [ITEM_INDICATOR_NAME]: `\`${ITEM_INDICATOR_NAME}\` must be within \`${ITEM_NAME}\``,
 } as const;
 
 type Value<Multiple extends boolean = false> = Multiple extends true
@@ -122,7 +125,7 @@ function createSelectableStore(
 }
 
 function useSelectableState<T>(selector: StoreStateSelector<T>): T {
-  const store = useSelectableContext(SELECTABLE_NAME).store;
+  const store = useSelectableContext(ROOT_NAME).store;
 
   const subscribe = React.useCallback(
     (callback: StoreListener) => {
@@ -138,22 +141,13 @@ function useSelectableState<T>(selector: StoreStateSelector<T>): T {
   return React.useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 }
 
-function useLazyRef<T>(factory: () => T): React.RefObject<T> {
-  const ref = React.useRef<T | null>(null);
-
-  if (ref.current === null) {
-    ref.current = factory();
-  }
-
-  return ref as React.RefObject<T>;
-}
-
 type RootElement = React.ComponentRef<typeof SelectableRoot>;
 type ItemElement = React.ComponentRef<typeof SelectItem>;
 
 interface ItemData {
   value: string;
   disabled?: boolean;
+  onSelect?: (value: string) => void;
 }
 
 interface CollectionItem extends ItemData {
@@ -217,12 +211,12 @@ interface SelectableContextValue {
 const SelectableContext = React.createContext<SelectableContextValue | null>(
   null,
 );
-SelectableContext.displayName = SELECTABLE_NAME;
+SelectableContext.displayName = ROOT_NAME;
 
-function useSelectableContext(name: keyof typeof SELECTABLE_ERROR) {
+function useSelectableContext(name: keyof typeof ERRORS) {
   const context = React.useContext(SelectableContext);
   if (!context) {
-    throw new Error(SELECTABLE_ERROR[name]);
+    throw new Error(ERRORS[name]);
   }
   return context;
 }
@@ -367,7 +361,9 @@ function SelectableRootImpl<Multiple extends boolean = false>(
     ...rootProps
   } = props;
 
-  const store = useLazyRef(() => {
+  const storeRef = React.useRef<SelectableStore | null>(null);
+
+  if (storeRef.current === null) {
     const store = createSelectableStore(
       typeof defaultValue === "string" ? defaultValue : null,
     );
@@ -378,8 +374,10 @@ function SelectableRootImpl<Multiple extends boolean = false>(
       }
     }
 
-    return store;
-  }).current;
+    storeRef.current = store;
+  }
+
+  const store = storeRef.current;
 
   const lastFocusedValueRef = React.useRef<string | null>(null);
 
@@ -649,6 +647,30 @@ function SelectableRootImpl<Multiple extends boolean = false>(
           if (focusedValue) {
             const isMultipleSelectionKey =
               multiple && (multiple === true || event.ctrlKey || event.metaKey);
+
+            const focusedItem = items.find(
+              (item) => item.value === focusedValue,
+            );
+
+            if (focusedItem?.onSelect) {
+              const itemElement = focusedItem.ref.current;
+              if (itemElement) {
+                const itemSelectEvent = new CustomEvent(ITEM_SELECT_EVENT, {
+                  bubbles: true,
+                });
+
+                itemElement.addEventListener(
+                  ITEM_SELECT_EVENT,
+                  () => focusedItem.onSelect?.(focusedValue),
+                  { once: true },
+                );
+
+                itemElement.dispatchEvent(itemSelectEvent);
+              } else {
+                focusedItem.onSelect(focusedValue);
+              }
+            }
+
             onItemSelect(focusedValue, isMultipleSelectionKey);
             onFocusedValueChange(focusedValue);
             event.preventDefault();
@@ -783,48 +805,72 @@ type SelectableRootComponent = (<Multiple extends boolean = false>(
 const SelectableRoot = React.forwardRef(
   SelectableRootImpl,
 ) as SelectableRootComponent;
-SelectableRoot.displayName = SELECTABLE_NAME;
+SelectableRoot.displayName = ROOT_NAME;
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
-interface SelectableItemProps extends React.ComponentPropsWithoutRef<"div"> {
-  value?: string;
+const SelectableItemContext = React.createContext<{
+  isSelected: boolean;
+} | null>(null);
+SelectableItemContext.displayName = ITEM_NAME;
+
+function useSelectableItemContext(name: keyof typeof ERRORS) {
+  const context = React.useContext(SelectableItemContext);
+  if (!context) {
+    throw new Error(ERRORS[name]);
+  }
+  return context;
+}
+
+interface SelectableItemProps
+  extends Omit<React.ComponentPropsWithoutRef<"div">, "onSelect"> {
+  value: string;
+  onSelect?: (value: string) => void;
   disabled?: boolean;
   asChild?: boolean;
 }
 
 const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
   (props, forwardedRef) => {
-    const { asChild, className, value, disabled = false, ...itemProps } = props;
-    const context = useSelectableContext(SELECTABLE_ITEM_NAME);
+    const {
+      asChild,
+      className,
+      value,
+      disabled = false,
+      onSelect,
+      ...itemProps
+    } = props;
+    const context = useSelectableContext(ITEM_NAME);
     const itemRef = React.useRef<ItemElement>(null);
     const composedRef = useComposedRefs(itemRef, forwardedRef);
 
-    const id = React.useId();
-    const itemValue = value ?? id;
-
     const isSelected = useSelectableState((state) =>
-      state.selectedValues.has(itemValue),
+      state.selectedValues.has(value),
     );
     const isFocused = useSelectableState(
-      (state) => state.focusedValue === itemValue,
+      (state) => state.focusedValue === value,
     );
     const isDisabled = disabled || context.disabled;
 
     useIsomorphicLayoutEffect(() => {
+      if (value === "") {
+        throw new Error(`${ITEM_NAME} value cannot be an empty string`);
+      }
+
       return context.onItemRegister({
         ref: itemRef,
-        value: itemValue,
+        value,
         disabled: isDisabled,
+        onSelect,
       });
-    }, [itemValue, isDisabled, context.onItemRegister]);
+    }, [value, isDisabled, context.onItemRegister, onSelect]);
 
     const onFocus = React.useCallback(() => {
       if (!isDisabled) {
-        context.onItemFocus(itemValue);
+        context.onItemFocus(value);
       }
-    }, [context.onItemFocus, isDisabled, itemValue]);
+    }, [context.onItemFocus, isDisabled, value]);
 
     const onBlur = React.useCallback(() => {
       context.onItemBlur();
@@ -837,10 +883,29 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
             context.multiple &&
             (context.multiple === true || event.ctrlKey || event.metaKey);
 
-          context.onItemSelect(itemValue, isMultipleSelectionKey);
+          if (onSelect) {
+            const itemElement = itemRef.current;
+            if (itemElement) {
+              const itemSelectEvent = new CustomEvent(ITEM_SELECT_EVENT, {
+                bubbles: true,
+              });
+
+              itemElement.addEventListener(
+                ITEM_SELECT_EVENT,
+                () => onSelect?.(value),
+                { once: true },
+              );
+
+              itemElement.dispatchEvent(itemSelectEvent);
+            } else {
+              onSelect(value);
+            }
+          }
+
+          context.onItemSelect(value, isMultipleSelectionKey);
         }
       },
-      [context.onItemSelect, itemValue, isDisabled, context.multiple],
+      [context.onItemSelect, value, isDisabled, context.multiple, onSelect],
     );
 
     const onKeyDown = React.useCallback(
@@ -857,39 +922,79 @@ const SelectableItem = React.forwardRef<HTMLDivElement, SelectableItemProps>(
 
     const ItemPrimitive = asChild ? Slot : "div";
 
+    const itemContextValue = React.useMemo(
+      () => ({ isSelected }),
+      [isSelected],
+    );
+
     return (
-      <ItemPrimitive
-        role="option"
-        aria-selected={isSelected}
-        data-slot="selectable-item"
-        data-selected={isSelected ? "" : undefined}
-        data-highlighted={isFocused ? "" : undefined}
-        data-disabled={isDisabled ? "" : undefined}
-        tabIndex={isDisabled ? undefined : isFocused ? 0 : -1}
-        {...itemProps}
-        ref={composedRef}
-        onClick={composeEventHandlers(itemProps.onClick, onClick)}
-        onFocus={composeEventHandlers(itemProps.onFocus, onFocus)}
-        onBlur={composeEventHandlers(itemProps.onBlur, onBlur)}
-        onKeyDown={composeEventHandlers(itemProps.onKeyDown, onKeyDown)}
-        className={cn(
-          "cursor-default select-none ring-1 ring-transparent hover:bg-accent focus-visible:outline-none focus-visible:ring-ring data-disabled:pointer-events-none data-selected:bg-accent data-selected:text-accent-foreground data-disabled:opacity-50",
-          className,
-        )}
-      />
+      <SelectableItemContext.Provider value={itemContextValue}>
+        <ItemPrimitive
+          role="option"
+          aria-selected={isSelected}
+          data-slot="selectable-item"
+          data-selected={isSelected ? "" : undefined}
+          data-highlighted={isFocused ? "" : undefined}
+          data-disabled={isDisabled ? "" : undefined}
+          tabIndex={isDisabled ? undefined : isFocused ? 0 : -1}
+          {...itemProps}
+          ref={composedRef}
+          onClick={composeEventHandlers(itemProps.onClick, onClick)}
+          onFocus={composeEventHandlers(itemProps.onFocus, onFocus)}
+          onBlur={composeEventHandlers(itemProps.onBlur, onBlur)}
+          onKeyDown={composeEventHandlers(itemProps.onKeyDown, onKeyDown)}
+          className={cn(
+            "cursor-default select-none ring-1 ring-transparent hover:bg-accent focus-visible:outline-none focus-visible:ring-ring data-disabled:pointer-events-none data-selected:bg-accent data-selected:text-accent-foreground data-disabled:opacity-50",
+            className,
+          )}
+        />
+      </SelectableItemContext.Provider>
     );
   },
 );
-SelectableItem.displayName = SELECTABLE_ITEM_NAME;
+SelectableItem.displayName = ITEM_NAME;
+
+interface SelectableItemIndicatorProps
+  extends React.ComponentPropsWithoutRef<"span"> {
+  forceMount?: boolean;
+  asChild?: boolean;
+}
+
+const SelectableItemIndicator = React.forwardRef<
+  HTMLSpanElement,
+  SelectableItemIndicatorProps
+>((props, forwardedRef) => {
+  const { forceMount = false, asChild, ...indicatorProps } = props;
+  const itemContext = useSelectableItemContext(ITEM_INDICATOR_NAME);
+
+  if (!forceMount && !itemContext.isSelected) return null;
+
+  const IndicatorPrimitive = asChild ? Slot : "span";
+
+  return (
+    <IndicatorPrimitive
+      aria-hidden="true"
+      data-slot="selectable-item-indicator"
+      {...indicatorProps}
+      ref={forwardedRef}
+    />
+  );
+});
+
+SelectableItemIndicator.displayName = ITEM_INDICATOR_NAME;
 
 const Selectable = SelectableRoot;
 const Root = SelectableRoot;
 const Item = SelectableItem;
+const ItemIndicator = SelectableItemIndicator;
 
 export {
   Selectable,
   SelectableItem,
+  SelectableItemIndicator,
   //
   Root,
   Item,
+  ItemIndicator,
+  ITEM_SELECT_EVENT,
 };

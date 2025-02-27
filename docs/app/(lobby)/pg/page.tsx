@@ -44,7 +44,6 @@ import * as React from "react";
 export default function PlaygroundPage() {
   const [value, setValue] = React.useState("");
   const [values, setValues] = React.useState<string[]>([]);
-  console.log({ value, values });
 
   return (
     <Shell>
@@ -55,14 +54,17 @@ export default function PlaygroundPage() {
         value={values}
         onValueChange={setValues}
       >
-        {Array.from({ length: 10 }).map((_, index) => {
+        {tricks.map((trick) => {
           return (
             <Selectable.Item
-              key={index}
-              // value={index.toString()}
+              key={trick.value}
+              value={trick.value}
               className="rounded-sm bg-muted/40 p-4"
+              onSelect={(value) => {
+                console.log({ value });
+              }}
             >
-              Item {index + 1}
+              {trick.label}
             </Selectable.Item>
           );
         })}
