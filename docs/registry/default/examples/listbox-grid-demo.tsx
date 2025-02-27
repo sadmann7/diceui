@@ -1,6 +1,6 @@
 import { Listbox, ListboxItem } from "@/registry/default/ui/listbox";
 
-export default function SelectableGridDemo() {
+export default function ListboxGridDemo() {
   return (
     <Listbox orientation="mixed" className="grid w-full grid-cols-3 gap-4">
       {Array.from({ length: 9 }).map((_, index) => (

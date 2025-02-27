@@ -39,7 +39,6 @@ import {
 import * as Listbox from "@/registry/default/ui/listbox";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
-import * as React from "react";
 
 export default function PlaygroundPage() {
   return (

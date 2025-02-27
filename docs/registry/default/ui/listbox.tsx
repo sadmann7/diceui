@@ -3,18 +3,21 @@
 import { useControllableState } from "@/hooks/use-controllable-state";
 import { composeEventHandlers, useComposedRefs } from "@/lib/composition";
 import { cn } from "@/lib/utils";
-import type { SelectItem } from "@radix-ui/react-select";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 
 const ROOT_NAME = "Listbox";
 const ITEM_NAME = "ListboxItem";
 const ITEM_INDICATOR_NAME = "ListboxItemIndicator";
+const GROUP_NAME = "ListboxGroup";
+const GROUP_LABEL_NAME = "ListboxGroupLabel";
 
 const ERRORS = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` must be used as root component`,
   [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${ROOT_NAME}\``,
   [ITEM_INDICATOR_NAME]: `\`${ITEM_INDICATOR_NAME}\` must be within \`${ITEM_NAME}\``,
+  [GROUP_NAME]: `\`${GROUP_NAME}\` must be within \`${ROOT_NAME}\``,
+  [GROUP_LABEL_NAME]: `\`${GROUP_LABEL_NAME}\` must be within \`${GROUP_NAME}\``,
 } as const;
 
 type Value<Multiple extends boolean = false> = Multiple extends true
@@ -157,9 +160,12 @@ type CollectionItemMap = Map<
   CollectionItem
 >;
 
+type CollectionGroupMap = Map<string, Set<React.RefObject<ItemElement | null>>>;
+
 function useCollection() {
   const collectionRef = React.useRef<RootElement | null>(null);
   const itemMap = React.useRef<CollectionItemMap>(new Map()).current;
+  const groupMap = React.useRef<CollectionGroupMap>(new Map()).current;
 
   const getItems = React.useCallback(() => {
     const collectionNode = collectionRef.current;
@@ -179,42 +185,37 @@ function useCollection() {
   }, [itemMap]);
 
   const onItemRegister = React.useCallback(
-    (item: CollectionItem) => {
+    (item: CollectionItem, groupId?: string) => {
       itemMap.set(item.ref, item);
 
-      return () => itemMap.delete(item.ref);
+      if (groupId) {
+        if (!groupMap.has(groupId)) {
+          groupMap.set(groupId, new Set());
+        }
+        groupMap.get(groupId)?.add(item.ref);
+      }
+
+      return () => {
+        itemMap.delete(item.ref);
+        if (groupId) {
+          const group = groupMap.get(groupId);
+          group?.delete(item.ref);
+          if (group?.size === 0) {
+            groupMap.delete(groupId);
+          }
+        }
+      };
     },
-    [itemMap],
+    [itemMap, groupMap],
   );
 
   return {
     collectionRef,
     itemMap,
+    groupMap,
     getItems,
     onItemRegister,
   };
-}
-
-interface ListboxContextValue {
-  store: ListboxStore;
-  onItemRegister: (item: CollectionItem) => () => void;
-  onItemSelect: (value: string, isMultipleEvent?: boolean) => void;
-  onItemFocus: (value: string) => void;
-  onItemBlur: () => void;
-  dir?: "ltr" | "rtl";
-  disabled?: boolean;
-  multiple?: boolean;
-}
-
-const ListboxContext = React.createContext<ListboxContextValue | null>(null);
-ListboxContext.displayName = ROOT_NAME;
-
-function useListboxContext(name: keyof typeof ERRORS) {
-  const context = React.useContext(ListboxContext);
-  if (!context) {
-    throw new Error(ERRORS[name]);
-  }
-  return context;
 }
 
 function findEnabledItem(
@@ -322,6 +323,28 @@ function calculateGridLayout(
   const rowCount = Math.ceil(items.length / columnCount);
 
   return { columnCount, rowCount };
+}
+
+interface ListboxContextValue {
+  store: ListboxStore;
+  onItemRegister: (item: CollectionItem, groupId?: string) => () => void;
+  onItemSelect: (value: string, isMultipleEvent?: boolean) => void;
+  onItemFocus: (value: string) => void;
+  onItemBlur: () => void;
+  dir?: "ltr" | "rtl";
+  disabled?: boolean;
+  multiple?: boolean;
+}
+
+const ListboxContext = React.createContext<ListboxContextValue | null>(null);
+ListboxContext.displayName = ROOT_NAME;
+
+function useListboxContext(name: keyof typeof ERRORS) {
+  const context = React.useContext(ListboxContext);
+  if (!context) {
+    throw new Error(ERRORS[name]);
+  }
+  return context;
 }
 
 interface ListboxRootProps<Multiple extends boolean = false>
@@ -777,6 +800,83 @@ type ListboxRootComponent = (<Multiple extends boolean = false>(
 const ListboxRoot = React.forwardRef(ListboxRootImpl) as ListboxRootComponent;
 ListboxRoot.displayName = ROOT_NAME;
 
+interface ListboxGroupContextValue {
+  id: string;
+  labelId: string;
+}
+
+const ListboxGroupContext =
+  React.createContext<ListboxGroupContextValue | null>(null);
+ListboxGroupContext.displayName = GROUP_NAME;
+
+function useListboxGroupContext(name: keyof typeof ERRORS) {
+  const context = React.useContext(ListboxGroupContext);
+  if (!context) {
+    throw new Error(ERRORS[name]);
+  }
+  return context;
+}
+interface ListboxGroupProps extends React.ComponentPropsWithoutRef<"div"> {
+  asChild?: boolean;
+}
+
+const ListboxGroup = React.forwardRef<HTMLDivElement, ListboxGroupProps>(
+  (props, forwardedRef) => {
+    const { asChild, ...groupProps } = props;
+    const id = React.useId();
+    const labelId = React.useId();
+
+    const groupContextValue = React.useMemo(
+      () => ({ id, labelId }),
+      [id, labelId],
+    );
+
+    const GroupPrimitive = asChild ? Slot : "div";
+
+    return (
+      <ListboxGroupContext.Provider value={groupContextValue}>
+        <GroupPrimitive
+          role="group"
+          id={id}
+          aria-labelledby={labelId}
+          data-slot="listbox-group"
+          {...groupProps}
+          ref={forwardedRef}
+        />
+      </ListboxGroupContext.Provider>
+    );
+  },
+);
+ListboxGroup.displayName = GROUP_NAME;
+
+interface ListboxGroupLabelProps extends React.ComponentPropsWithoutRef<"div"> {
+  asChild?: boolean;
+}
+
+const ListboxGroupLabel = React.forwardRef<
+  HTMLDivElement,
+  ListboxGroupLabelProps
+>((props, forwardedRef) => {
+  const { asChild, className, ...labelProps } = props;
+  const groupContext = useListboxGroupContext(GROUP_LABEL_NAME);
+
+  const LabelPrimitive = asChild ? Slot : "div";
+
+  return (
+    <LabelPrimitive
+      id={groupContext.labelId}
+      data-slot="listbox-group-label"
+      {...labelProps}
+      ref={forwardedRef}
+      className={cn(
+        "px-2 py-1.5 font-medium text-muted-foreground text-sm",
+        className,
+      )}
+    />
+  );
+});
+ListboxGroupLabel.displayName = GROUP_LABEL_NAME;
+
 const ListboxItemContext = React.createContext<{
   isSelected: boolean;
 } | null>(null);
@@ -803,6 +903,7 @@ const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
   (props, forwardedRef) => {
     const { asChild, className, value, disabled = false, ...itemProps } = props;
     const context = useListboxContext(ITEM_NAME);
+    const groupContext = React.useContext(ListboxGroupContext);
     const itemRef = React.useRef<ItemElement>(null);
     const composedRef = useComposedRefs(itemRef, forwardedRef);
 
@@ -817,12 +918,15 @@ const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
         throw new Error(`${ITEM_NAME} value cannot be an empty string`);
       }
 
-      return context.onItemRegister({
-        ref: itemRef,
-        value,
-        disabled: isDisabled,
-      });
-    }, [value, isDisabled, context.onItemRegister]);
+      return context.onItemRegister(
+        {
+          ref: itemRef,
+          value,
+          disabled: isDisabled,
+        },
+        groupContext?.id,
+      );
+    }, [value, isDisabled, context.onItemRegister, groupContext?.id]);
 
     const onFocus = React.useCallback(() => {
       if (!isDisabled) {
@@ -871,7 +975,7 @@ const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
         <ItemPrimitive
           role="option"
           aria-selected={isSelected}
-          data-slot="selectable-item"
+          data-slot="listbox-item"
           data-selected={isSelected ? "" : undefined}
           data-highlighted={isFocused ? "" : undefined}
           data-disabled={isDisabled ? "" : undefined}
@@ -913,7 +1017,7 @@ const ListboxItemIndicator = React.forwardRef<
   return (
     <IndicatorPrimitive
       aria-hidden="true"
-      data-slot="selectable-item-indicator"
+      data-slot="listbox-item-indicator"
       {...indicatorProps}
       ref={forwardedRef}
     />
@@ -925,13 +1029,19 @@ const Listbox = ListboxRoot;
 const Root = ListboxRoot;
 const Item = ListboxItem;
 const ItemIndicator = ListboxItemIndicator;
+const Group = ListboxGroup;
+const GroupLabel = ListboxGroupLabel;
 
 export {
   Listbox,
+  ListboxGroup,
+  ListboxGroupLabel,
   ListboxItem,
   ListboxItemIndicator,
   //
   Root,
+  Group,
+  GroupLabel,
   Item,
   ItemIndicator,
 };

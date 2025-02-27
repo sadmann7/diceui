@@ -1,6 +1,6 @@
 import { Listbox, ListboxItem } from "@/registry/default/ui/listbox";
 
-export default function SelectableHorizontalDemo() {
+export default function ListboxHorizontalDemo() {
   return (
     <Listbox orientation="horizontal" className="flex w-full flex-row gap-4">
       {Array.from({ length: 5 }).map((_, index) => (
