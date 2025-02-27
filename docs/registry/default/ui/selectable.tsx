@@ -390,19 +390,10 @@ function SelectableRootImpl<Multiple extends boolean = false>(
   }
   const store = storeRef.current;
 
-  // Initialize this as null - it will only be set when an item is actually focused
   const lastFocusedValueRef = React.useRef<string | null>(null);
 
-  // Store the last focused value in state as well to ensure it persists
-  const [lastFocusedValue, setLastFocusedValue] = React.useState<string | null>(
-    null,
-  );
-
-  // Create a safe setter for lastFocusedValueRef that also updates the state
-  const setLastFocused = React.useCallback((value: string | null) => {
-    console.log("Setting last focused to:", value);
+  const onFocusedValueChange = React.useCallback((value: string | null) => {
     lastFocusedValueRef.current = value;
-    setLastFocusedValue(value);
   }, []);
 
   const [value, setValue] = useControllableState<Value<Multiple>>({
@@ -432,7 +423,7 @@ function SelectableRootImpl<Multiple extends boolean = false>(
         typeof value === "string" &&
         value !== store.getState().selectedValues.values().next().value
       ) {
-        store.clearSelection();
+        console.log("Updating selection state for single value");
         if (value) {
           store.setSelectedState(value);
         }
@@ -457,39 +448,37 @@ function SelectableRootImpl<Multiple extends boolean = false>(
             currentValues.delete(itemValue);
           } else {
             currentValues.add(itemValue);
-            setLastFocused(itemValue);
+            onFocusedValueChange(itemValue);
           }
 
           setValue([...currentValues] as Value<Multiple>);
         } else {
           setValue([itemValue] as Value<Multiple>);
-          setLastFocused(itemValue);
+          onFocusedValueChange(itemValue);
         }
       } else {
         if (value === itemValue) {
           setValue("" as Value<Multiple>);
         } else {
           setValue(itemValue as Value<Multiple>);
-          setLastFocused(itemValue);
+          onFocusedValueChange(itemValue);
         }
       }
 
       store.setSelectedState(itemValue, multiple && isMultipleEvent);
     },
-    [value, setValue, store, multiple, setLastFocused],
+    [value, setValue, store, multiple, onFocusedValueChange],
   );
 
   const onItemFocus = React.useCallback(
     (value: string) => {
       store.setFocusedState(value);
-      setLastFocused(value);
+      onFocusedValueChange(value);
     },
-    [store, setLastFocused],
+    [store, onFocusedValueChange],
   );
 
   const onItemBlur = React.useCallback(() => {
-    // Only update the focused state in the store, not the lastFocusedValueRef
-    // This ensures we remember the last focused item when tabbing back in
     store.setFocusedState(null);
   }, [store]);
 
@@ -500,10 +489,10 @@ function SelectableRootImpl<Multiple extends boolean = false>(
       if (item?.ref.current && !virtual && !item.disabled) {
         item.ref.current?.focus();
         store.setFocusedState(value);
-        setLastFocused(value);
+        onFocusedValueChange(value);
       }
     },
-    [getItems, store, virtual, setLastFocused],
+    [getItems, store, virtual, onFocusedValueChange],
   );
 
   const onKeyDown = React.useCallback(
@@ -514,8 +503,6 @@ function SelectableRootImpl<Multiple extends boolean = false>(
         isShiftTabRef.current = true;
 
         if (event.target !== event.currentTarget) {
-          // Only update the focused state in the store, not the lastFocusedValue
-          // This ensures we remember the last focused item when tabbing back in
           store.setFocusedState(null);
 
           if (!(event.currentTarget instanceof HTMLElement)) return;
@@ -529,15 +516,7 @@ function SelectableRootImpl<Multiple extends boolean = false>(
         return;
       }
 
-      if (event.key === "Tab") {
-        // When tabbing forward, ensure we only update the store state and not the lastFocusedValue
-        // so we can remember what item was last focused when tabbing back in
-        console.log(
-          "Tab key pressed, preserving lastFocusedValue:",
-          lastFocusedValueRef.current,
-        );
-        return;
-      }
+      if (event.key === "Tab") return;
 
       const isRtl = dir === "rtl";
       const isVertical = orientation === "vertical" || orientation === "mixed";
@@ -567,8 +546,7 @@ function SelectableRootImpl<Multiple extends boolean = false>(
             if (minItem?.ref.current && !virtual) {
               minItem.ref.current?.focus();
               store.setFocusedState(minValue);
-              // Update lastFocusedValueRef for consistent focus behavior
-              setLastFocused(minValue);
+              onFocusedValueChange(minValue);
             }
           }
           event.preventDefault();
@@ -583,8 +561,7 @@ function SelectableRootImpl<Multiple extends boolean = false>(
             if (maxItem?.ref.current && !virtual) {
               maxItem.ref.current?.focus();
               store.setFocusedState(maxValue);
-              // Update lastFocusedValueRef for consistent focus behavior
-              setLastFocused(maxValue);
+              onFocusedValueChange(maxValue);
             }
           }
           event.preventDefault();
@@ -682,12 +659,8 @@ function SelectableRootImpl<Multiple extends boolean = false>(
           if (focusedValue) {
             const isMultipleSelectionKey =
               multiple && (multiple === true || event.ctrlKey || event.metaKey);
-
             onItemSelect(focusedValue, isMultipleSelectionKey);
-
-            // Always update lastFocusedValueRef when selecting via keyboard
-            setLastFocused(focusedValue);
-
+            onFocusedValueChange(focusedValue);
             event.preventDefault();
           }
           break;
@@ -700,8 +673,7 @@ function SelectableRootImpl<Multiple extends boolean = false>(
         if (!virtual && nextItem.ref.current) {
           nextItem.ref.current?.focus();
           store.setFocusedState(nextItem.value);
-          // Always update lastFocusedValueRef when navigating via keyboard
-          setLastFocused(nextItem.value);
+          onFocusedValueChange(nextItem.value);
         }
       }
     },
@@ -715,58 +687,40 @@ function SelectableRootImpl<Multiple extends boolean = false>(
       loop,
       virtual,
       multiple,
-      setLastFocused,
+      onFocusedValueChange,
     ],
   );
 
   const onFocus = React.useCallback(
     (event: React.FocusEvent<RootElement>) => {
-      console.log(
-        "onFocus called, isShiftTab:",
-        isShiftTabRef.current,
-        "lastFocusedValue:",
-        lastFocusedValue,
-      );
-
-      // Make sure we're not handling shift+tab (which is handled differently)
       if (isShiftTabRef.current) return;
 
-      // Only handle focus when it's directly on the root element
-      // (not when a child element gets focus)
       if (event.target === event.currentTarget) {
         const items = getItems().filter((item) => !item.disabled);
 
         if (items.length === 0) return;
 
-        // First priority: focus the last focused item
-        if (lastFocusedValue) {
+        if (lastFocusedValueRef.current) {
           const lastFocusedItem = items.find(
-            (item) => item.value === lastFocusedValue && !item.disabled,
+            (item) =>
+              item.value === lastFocusedValueRef.current && !item.disabled,
           );
 
           if (lastFocusedItem) {
-            focusItemByValue(lastFocusedValue);
+            focusItemByValue(lastFocusedValueRef.current);
             return;
           }
         }
 
-        // Fallback: focus the first item if there's no last focused item or it can't be found
         const firstItem = items[0];
         if (firstItem?.ref.current && !virtual) {
           firstItem.ref.current?.focus();
           store.setFocusedState(firstItem.value);
-          setLastFocused(firstItem.value);
+          onFocusedValueChange(firstItem.value);
         }
       }
     },
-    [
-      focusItemByValue,
-      getItems,
-      virtual,
-      store,
-      setLastFocused,
-      lastFocusedValue,
-    ],
+    [focusItemByValue, getItems, virtual, store, onFocusedValueChange],
   );
 
   const onBlur = React.useCallback(
@@ -775,8 +729,6 @@ function SelectableRootImpl<Multiple extends boolean = false>(
         collectionRef.current &&
         !collectionRef.current.contains(event.relatedTarget)
       ) {
-        // Only update the focused state in the store, not the lastFocusedValue
-        // This ensures we remember the last focused item when tabbing back in
         store.setFocusedState(null);
       }
     },
