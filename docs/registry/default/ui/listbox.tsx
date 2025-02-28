@@ -13,6 +13,7 @@ const ITEM_INDICATOR_NAME = "ListboxItemIndicator";
 const GROUP_NAME = "ListboxGroup";
 const GROUP_LABEL_NAME = "ListboxGroupLabel";
 const INPUT_NAME = "ListboxInput";
+const ITEM_SELECT_EVENT = `${ITEM_NAME}.Select.Event`;
 
 const ERRORS = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` must be used as root component`,
@@ -30,6 +31,7 @@ type Value<Multiple extends boolean = false> = Multiple extends true
 interface ListboxState {
   selectedValues: Set<string>;
   focusedValue: string | null;
+  highlightedValue: string | null;
   filterValue: string;
 }
 
@@ -48,6 +50,7 @@ interface ListboxStore {
   onSelectedStateChange: (value: string, multiple?: boolean) => void;
   onClearSelection: () => void;
   onFilterChange: (value: string) => void;
+  onHighlightedValueChange: (value: string | null) => void;
 }
 
 function createSelectableStore(
@@ -58,6 +61,7 @@ function createSelectableStore(
       ? new Set<string>([defaultValue])
       : new Set<string>(),
     focusedValue: null,
+    highlightedValue: null,
     filterValue: "",
   };
 
@@ -131,6 +135,10 @@ function createSelectableStore(
     onFilterChange(value: string) {
       store.onStateChange("filterValue", value);
     },
+
+    onHighlightedValueChange(value: string | null) {
+      store.onStateChange("highlightedValue", value);
+    },
   };
 
   return store;
@@ -159,6 +167,7 @@ type ItemElement = React.ComponentRef<typeof ListboxItem>;
 interface ItemData {
   value: string;
   disabled?: boolean;
+  onSelect?: (value: string) => void;
 }
 
 interface CollectionItem extends ItemData {
@@ -335,12 +344,22 @@ function calculateGridLayout(
   return { columnCount, rowCount };
 }
 
+function dispatchDiscreteCustomEvent<E extends CustomEvent>(
+  target: EventTarget,
+  event: E,
+) {
+  if (target && "dispatchEvent" in target && target.dispatchEvent) {
+    target.dispatchEvent(event);
+  }
+}
+
 interface ListboxContextValue {
   store: ListboxStore;
   onItemRegister: (item: CollectionItem, groupId?: string) => () => void;
   onItemSelect: (value: string, isMultipleEvent?: boolean) => void;
   onItemFocus: (value: string) => void;
   onItemBlur: () => void;
+  onItemHighlight: (value: string | null) => void;
   onFilterChange: (value: string) => void;
   dir?: "ltr" | "rtl";
   disabled?: boolean;
@@ -410,11 +429,7 @@ function ListboxRootImpl<Multiple extends boolean = false>(
 
   const store = storeRef.current;
 
-  const lastFocusedValueRef = React.useRef<string | null>(null);
-
-  const onFocusedValueChange = React.useCallback((value: string | null) => {
-    lastFocusedValueRef.current = value;
-  }, []);
+  const [focusedValue, setFocusedValue] = React.useState<string | null>(null);
 
   const [value, setValue] = useControllableState<Value<Multiple>>({
     prop: valueProp,
@@ -457,6 +472,27 @@ function ListboxRootImpl<Multiple extends boolean = false>(
 
   const onItemSelect = React.useCallback(
     (itemValue: string, isMultipleEvent = false) => {
+      const allItems = getItems();
+      const item = allItems.find((item) => item.value === itemValue);
+
+      if (item?.ref.current && item.onSelect) {
+        const itemSelectEvent = new CustomEvent(ITEM_SELECT_EVENT, {
+          bubbles: true,
+        });
+
+        item.ref.current.addEventListener(
+          ITEM_SELECT_EVENT,
+          () => item.onSelect?.(itemValue),
+          {
+            once: true,
+          },
+        );
+
+        if (item.ref.current instanceof HTMLElement) {
+          dispatchDiscreteCustomEvent(item.ref.current, itemSelectEvent);
+        }
+      }
+
       if (multiple) {
         if (isMultipleEvent) {
           const currentValues = new Set(
@@ -467,61 +503,68 @@ function ListboxRootImpl<Multiple extends boolean = false>(
             currentValues.delete(itemValue);
           } else {
             currentValues.add(itemValue);
-            onFocusedValueChange(itemValue);
+            setFocusedValue(itemValue);
           }
 
           setValue([...currentValues] as Value<Multiple>);
         } else {
           setValue([itemValue] as Value<Multiple>);
-          onFocusedValueChange(itemValue);
+          setFocusedValue(itemValue);
         }
       } else {
         if (value === itemValue) {
           setValue("" as Value<Multiple>);
         } else {
           setValue(itemValue as Value<Multiple>);
-          onFocusedValueChange(itemValue);
+          setFocusedValue(itemValue);
         }
       }
 
       store.onSelectedStateChange(itemValue, multiple && isMultipleEvent);
     },
-    [value, setValue, store, multiple, onFocusedValueChange],
+    [value, setValue, store, multiple, getItems],
   );
 
   const onItemFocus = React.useCallback(
     (value: string) => {
       store.onStateChange("focusedValue", value);
-      onFocusedValueChange(value);
+      setFocusedValue(value);
     },
-    [store, onFocusedValueChange],
+    [store],
   );
 
   const onItemBlur = React.useCallback(() => {
     store.onStateChange("focusedValue", null);
   }, [store]);
 
+  const onItemHighlight = React.useCallback(
+    (value: string | null) => {
+      store.onHighlightedValueChange(value);
+    },
+    [store],
+  );
+
   const focusItemByValue = React.useCallback(
     (value: string) => {
       const allItems = getItems();
       const filterValue = store.getSnapshot().filterValue;
 
-      // First check if the item is visible with the current filter
       if (
         filterValue &&
         !value.toLowerCase().includes(filterValue.toLowerCase())
       ) {
-        return; // The item doesn't match the filter, so we can't focus it
+        return;
       }
 
       const item = allItems.find((item) => item.value === value);
       if (item?.ref.current && !virtual && !item.disabled) {
         item.ref.current?.focus();
         store.onStateChange("focusedValue", value);
-        onFocusedValueChange(value);
+        setFocusedValue(value);
+        store.onHighlightedValueChange(value);
       }
     },
-    [getItems, store, virtual, onFocusedValueChange],
+    [getItems, store, virtual],
   );
 
   const onKeyDown = React.useCallback(
@@ -552,12 +595,10 @@ function ListboxRootImpl<Multiple extends boolean = false>(
       const isHorizontal =
         orientation === "horizontal" || orientation === "mixed";
 
-      // Get all items and filter them by visibility (both not disabled and matching current filter)
       const allItems = getItems();
       const filterValue = store.getSnapshot().filterValue;
       const items = allItems.filter((item) => {
         if (item.disabled) return false;
-        // If there's a filter value, only include items that match the filter
         if (filterValue) {
           return item.value.toLowerCase().includes(filterValue.toLowerCase());
         }
@@ -585,7 +626,8 @@ function ListboxRootImpl<Multiple extends boolean = false>(
             if (minItem?.ref.current && !virtual) {
               minItem.ref.current?.focus();
               store.onStateChange("focusedValue", minValue);
-              onFocusedValueChange(minValue);
+              setFocusedValue(minValue);
+              store.onHighlightedValueChange(minValue);
             }
           }
           event.preventDefault();
@@ -600,7 +642,8 @@ function ListboxRootImpl<Multiple extends boolean = false>(
             if (maxItem?.ref.current && !virtual) {
               maxItem.ref.current?.focus();
               store.onStateChange("focusedValue", maxValue);
-              onFocusedValueChange(maxValue);
+              setFocusedValue(maxValue);
+              store.onHighlightedValueChange(maxValue);
             }
           }
           event.preventDefault();
@@ -699,9 +742,26 @@ function ListboxRootImpl<Multiple extends boolean = false>(
             const isMultipleSelectionKey =
               multiple && (multiple === true || event.ctrlKey || event.metaKey);
             onItemSelect(focusedValue, isMultipleSelectionKey);
-            onFocusedValueChange(focusedValue);
+            setFocusedValue(focusedValue);
+
+            const focusedItem = items.find(
+              (item) => item.value === focusedValue,
+            );
+            if (focusedItem?.ref.current instanceof HTMLElement) {
+              focusedItem.ref.current.scrollIntoView({
+                block: "nearest",
+                inline: "nearest",
+              });
+            }
+
             event.preventDefault();
           }
+          break;
+
+        case "Escape":
+          store.onStateChange("focusedValue", null);
+          store.onHighlightedValueChange(null);
+          event.preventDefault();
           break;
 
         default:
@@ -712,7 +772,8 @@ function ListboxRootImpl<Multiple extends boolean = false>(
         if (!virtual && nextItem.ref.current) {
           nextItem.ref.current?.focus();
           store.onStateChange("focusedValue", nextItem.value);
-          onFocusedValueChange(nextItem.value);
+          setFocusedValue(nextItem.value);
+          store.onHighlightedValueChange(nextItem.value);
         }
       }
     },
@@ -726,7 +787,6 @@ function ListboxRootImpl<Multiple extends boolean = false>(
       loop,
       virtual,
       multiple,
-      onFocusedValueChange,
     ],
   );
 
@@ -747,13 +807,13 @@ function ListboxRootImpl<Multiple extends boolean = false>(
 
         if (items.length === 0) return;
 
-        if (lastFocusedValueRef.current) {
+        if (focusedValue) {
           const lastFocusedItem = items.find(
-            (item) => item.value === lastFocusedValueRef.current,
+            (item) => item.value === focusedValue,
           );
 
           if (lastFocusedItem) {
-            focusItemByValue(lastFocusedValueRef.current);
+            focusItemByValue(focusedValue);
             return;
           }
         }
@@ -762,11 +822,11 @@ function ListboxRootImpl<Multiple extends boolean = false>(
         if (firstItem?.ref.current && !virtual) {
           firstItem.ref.current?.focus();
           store.onStateChange("focusedValue", firstItem.value);
-          onFocusedValueChange(firstItem.value);
+          setFocusedValue(firstItem.value);
         }
       }
     },
-    [focusItemByValue, getItems, virtual, store, onFocusedValueChange],
+    [focusItemByValue, getItems, virtual, store, focusedValue],
   );
 
   const onBlur = React.useCallback(
@@ -785,10 +845,8 @@ function ListboxRootImpl<Multiple extends boolean = false>(
     (value: string) => {
       store.onFilterChange(value);
 
-      // Reset the focused value when the filter changes
       store.onStateChange("focusedValue", null);
 
-      // If we have items that match the filter, focus the first one
       if (value) {
         const allItems = getItems();
         const filteredItems = allItems.filter(
@@ -803,11 +861,11 @@ function ListboxRootImpl<Multiple extends boolean = false>(
           !virtual
         ) {
           store.onStateChange("focusedValue", filteredItems[0].value);
-          onFocusedValueChange(filteredItems[0].value);
+          setFocusedValue(filteredItems[0].value);
         }
       }
     },
-    [store, getItems, virtual, onFocusedValueChange],
+    [store, getItems, virtual],
   );
 
   const contextValue = React.useMemo<ListboxContextValue>(
@@ -817,6 +875,7 @@ function ListboxRootImpl<Multiple extends boolean = false>(
       onItemSelect,
       onItemFocus,
       onItemBlur,
+      onItemHighlight,
       onFilterChange,
       dir,
       disabled,
@@ -829,6 +888,7 @@ function ListboxRootImpl<Multiple extends boolean = false>(
       onItemSelect,
       onItemFocus,
       onItemBlur,
+      onItemHighlight,
       onFilterChange,
       dir,
       disabled,
@@ -964,10 +1024,12 @@ function useListboxItemContext(name: keyof typeof ERRORS) {
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
-interface ListboxItemProps extends React.ComponentPropsWithoutRef<"div"> {
+interface ListboxItemProps
+  extends Omit<React.ComponentPropsWithoutRef<"div">, "onSelect"> {
   value: string;
   disabled?: boolean;
   asChild?: boolean;
+  onSelect?: (value: string) => void;
 }
 
 const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
@@ -978,6 +1040,7 @@ const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
       disabled = false,
       children,
       className,
+      onSelect,
       ...itemProps
     } = props;
     const context = useListboxContext(ITEM_NAME);
@@ -988,7 +1051,9 @@ const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
     const isSelected = useListboxState((state) =>
       state.selectedValues.has(value),
     );
-    const isFocused = useListboxState((state) => state.focusedValue === value);
+    const isHighlighted = useListboxState(
+      (state) => state.highlightedValue === value,
+    );
     const isDisabled = disabled || context.disabled;
 
     const filterValue = useListboxState((state) => state.filterValue);
@@ -1007,16 +1072,11 @@ const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
           ref: itemRef,
           value,
           disabled: isDisabled,
+          onSelect,
         },
         groupContext?.id,
       );
-    }, [value, isDisabled, context.onItemRegister, groupContext?.id]);
-
-    const onFocus = React.useCallback(() => {
-      if (!isDisabled) {
-        context.onItemFocus(value);
-      }
-    }, [context.onItemFocus, isDisabled, value]);
+    }, [value, isDisabled, context.onItemRegister, groupContext?.id, onSelect]);
 
     const onBlur = React.useCallback(() => {
       context.onItemBlur();
@@ -1035,6 +1095,13 @@ const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
       [context.onItemSelect, value, isDisabled, context.multiple],
     );
 
+    const onFocus = React.useCallback(() => {
+      if (!isDisabled) {
+        context.onItemFocus(value);
+        context.onItemHighlight(value);
+      }
+    }, [context.onItemFocus, context.onItemHighlight, isDisabled, value]);
+
     const onKeyDown = React.useCallback(
       (event: React.KeyboardEvent) => {
         if (event.key === "Tab") {
@@ -1046,6 +1113,16 @@ const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
       },
       [context.onItemBlur],
     );
+
+    const onPointerLeave = React.useCallback(() => {
+      context.onItemHighlight(null);
+    }, [context.onItemHighlight]);
+
+    const onPointerMove = React.useCallback(() => {
+      if (!isDisabled) {
+        context.onItemHighlight(value);
+      }
+    }, [context.onItemHighlight, isDisabled, value]);
 
     const ItemPrimitive = asChild ? Slot : "div";
 
@@ -1063,7 +1140,7 @@ const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
           aria-selected={isSelected}
           data-slot="listbox-item"
           data-selected={isSelected ? "" : undefined}
-          data-highlighted={isFocused ? "" : undefined}
+          data-highlighted={isHighlighted ? "" : undefined}
           data-disabled={isDisabled ? "" : undefined}
           tabIndex={isDisabled ? undefined : -1}
           {...itemProps}
@@ -1072,9 +1149,16 @@ const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
           onFocus={composeEventHandlers(itemProps.onFocus, onFocus)}
           onBlur={composeEventHandlers(itemProps.onBlur, onBlur)}
           onKeyDown={composeEventHandlers(itemProps.onKeyDown, onKeyDown)}
-          onPointerMove={composeEventHandlers(itemProps.onPointerMove, onFocus)}
+          onPointerLeave={composeEventHandlers(
+            itemProps.onPointerLeave,
+            onPointerLeave,
+          )}
+          onPointerMove={composeEventHandlers(
+            itemProps.onPointerMove,
+            onPointerMove,
+          )}
           className={cn(
-            "flex cursor-default select-none items-center gap-2 rounded-md border p-4 outline-hidden data-disabled:pointer-events-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:opacity-50",
+            "flex cursor-default select-none items-center gap-2 rounded-md p-4 outline-hidden ring-1 ring-border focus-visible:ring-primary data-disabled:pointer-events-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:opacity-50",
             className,
           )}
         >
@@ -1161,7 +1245,7 @@ const ListboxInput = React.forwardRef<HTMLInputElement, ListboxInputProps>(
         ref={forwardedRef}
         onChange={composeEventHandlers(onChangeProp, onChange)}
         className={cn(
-          "w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          "w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
           className,
         )}
       />
@@ -1192,4 +1276,5 @@ export {
   Item,
   ItemIndicator,
   Input,
+  ITEM_SELECT_EVENT,
 };

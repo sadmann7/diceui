@@ -44,11 +44,15 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <Listbox.Root orientation="mixed" className="flex flex-col gap-2.5">
-        <Listbox.Input placeholder="Search tricks..." />
-        <div className="grid grid-cols-4 gap-2">
+        {/* <Listbox.Input placeholder="Search tricks..." /> */}
+        <div className="grid grid-cols-3 gap-2">
           {tricks.map((trick) => {
             return (
-              <Listbox.Item key={trick.value} value={trick.value}>
+              <Listbox.Item
+                key={trick.value}
+                value={trick.value}
+                onSelect={(value) => console.log("select", value)}
+              >
                 {trick.label}
               </Listbox.Item>
             );
