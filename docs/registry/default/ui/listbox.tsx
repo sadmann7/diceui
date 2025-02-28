@@ -429,7 +429,11 @@ function ListboxRootImpl<Multiple extends boolean = false>(
 
   const store = storeRef.current;
 
-  const [focusedValue, setFocusedValue] = React.useState<string | null>(null);
+  const focusedValueRef = React.useRef<string | null>(null);
+
+  const onFocusedValueChange = React.useCallback((value: string | null) => {
+    focusedValueRef.current = value;
+  }, []);
 
   const [value, setValue] = useControllableState<Value<Multiple>>({
     prop: valueProp,
@@ -503,45 +507,47 @@ function ListboxRootImpl<Multiple extends boolean = false>(
             currentValues.delete(itemValue);
           } else {
             currentValues.add(itemValue);
-            setFocusedValue(itemValue);
+            onFocusedValueChange(itemValue);
           }
 
           setValue([...currentValues] as Value<Multiple>);
         } else {
           setValue([itemValue] as Value<Multiple>);
-          setFocusedValue(itemValue);
+          onFocusedValueChange(itemValue);
         }
       } else {
         if (value === itemValue) {
           setValue("" as Value<Multiple>);
         } else {
           setValue(itemValue as Value<Multiple>);
-          setFocusedValue(itemValue);
+          onFocusedValueChange(itemValue);
         }
       }
 
       store.onSelectedStateChange(itemValue, multiple && isMultipleEvent);
     },
-    [value, setValue, store, multiple, getItems],
+    [value, setValue, store, multiple, getItems, onFocusedValueChange],
   );
 
   const onItemFocus = React.useCallback(
     (value: string) => {
       store.onStateChange("focusedValue", value);
-      setFocusedValue(value);
+      onFocusedValueChange(value);
     },
-    [store],
+    [store, onFocusedValueChange],
   );
 
   const onItemBlur = React.useCallback(() => {
     store.onStateChange("focusedValue", null);
-  }, [store]);
+    onFocusedValueChange(null);
+  }, [store, onFocusedValueChange]);
 
   const onItemHighlight = React.useCallback(
     (value: string | null) => {
       store.onHighlightedValueChange(value);
+      onFocusedValueChange(value);
     },
-    [store],
+    [store, onFocusedValueChange],
   );
 
   const focusItemByValue = React.useCallback(
@@ -560,11 +566,11 @@ function ListboxRootImpl<Multiple extends boolean = false>(
       if (item?.ref.current && !virtual && !item.disabled) {
         item.ref.current?.focus();
         store.onStateChange("focusedValue", value);
-        setFocusedValue(value);
+        onFocusedValueChange(value);
         store.onHighlightedValueChange(value);
       }
     },
-    [getItems, store, virtual],
+    [getItems, store, virtual, onFocusedValueChange],
   );
 
   const onKeyDown = React.useCallback(
@@ -626,7 +632,7 @@ function ListboxRootImpl<Multiple extends boolean = false>(
             if (minItem?.ref.current && !virtual) {
               minItem.ref.current?.focus();
               store.onStateChange("focusedValue", minValue);
-              setFocusedValue(minValue);
+              onFocusedValueChange(minValue);
               store.onHighlightedValueChange(minValue);
             }
           }
@@ -642,7 +648,7 @@ function ListboxRootImpl<Multiple extends boolean = false>(
             if (maxItem?.ref.current && !virtual) {
               maxItem.ref.current?.focus();
               store.onStateChange("focusedValue", maxValue);
-              setFocusedValue(maxValue);
+              onFocusedValueChange(maxValue);
               store.onHighlightedValueChange(maxValue);
             }
           }
@@ -742,7 +748,7 @@ function ListboxRootImpl<Multiple extends boolean = false>(
             const isMultipleSelectionKey =
               multiple && (multiple === true || event.ctrlKey || event.metaKey);
             onItemSelect(focusedValue, isMultipleSelectionKey);
-            setFocusedValue(focusedValue);
+            onFocusedValueChange(focusedValue);
 
             const focusedItem = items.find(
               (item) => item.value === focusedValue,
@@ -772,7 +778,7 @@ function ListboxRootImpl<Multiple extends boolean = false>(
         if (!virtual && nextItem.ref.current) {
           nextItem.ref.current?.focus();
           store.onStateChange("focusedValue", nextItem.value);
-          setFocusedValue(nextItem.value);
+          onFocusedValueChange(nextItem.value);
           store.onHighlightedValueChange(nextItem.value);
         }
       }
@@ -787,6 +793,7 @@ function ListboxRootImpl<Multiple extends boolean = false>(
       loop,
       virtual,
       multiple,
+      onFocusedValueChange,
     ],
   );
 
@@ -807,13 +814,13 @@ function ListboxRootImpl<Multiple extends boolean = false>(
 
         if (items.length === 0) return;
 
-        if (focusedValue) {
+        if (focusedValueRef.current) {
           const lastFocusedItem = items.find(
-            (item) => item.value === focusedValue,
+            (item) => item.value === focusedValueRef.current,
           );
 
           if (lastFocusedItem) {
-            focusItemByValue(focusedValue);
+            focusItemByValue(focusedValueRef.current);
             return;
           }
         }
@@ -822,11 +829,11 @@ function ListboxRootImpl<Multiple extends boolean = false>(
         if (firstItem?.ref.current && !virtual) {
           firstItem.ref.current?.focus();
           store.onStateChange("focusedValue", firstItem.value);
-          setFocusedValue(firstItem.value);
+          onFocusedValueChange(firstItem.value);
         }
       }
     },
-    [focusItemByValue, getItems, virtual, store, focusedValue],
+    [focusItemByValue, getItems, virtual, store, onFocusedValueChange],
   );
 
   const onBlur = React.useCallback(
@@ -861,11 +868,11 @@ function ListboxRootImpl<Multiple extends boolean = false>(
           !virtual
         ) {
           store.onStateChange("focusedValue", filteredItems[0].value);
-          setFocusedValue(filteredItems[0].value);
+          onFocusedValueChange(filteredItems[0].value);
         }
       }
     },
-    [store, getItems, virtual],
+    [store, getItems, virtual, onFocusedValueChange],
   );
 
   const contextValue = React.useMemo<ListboxContextValue>(

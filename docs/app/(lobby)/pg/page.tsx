@@ -48,11 +48,7 @@ export default function PlaygroundPage() {
         <div className="grid grid-cols-3 gap-2">
           {tricks.map((trick) => {
             return (
-              <Listbox.Item
-                key={trick.value}
-                value={trick.value}
-                onSelect={(value) => console.log("select", value)}
-              >
+              <Listbox.Item key={trick.value} value={trick.value}>
                 {trick.label}
               </Listbox.Item>
             );
