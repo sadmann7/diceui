@@ -38,12 +38,23 @@ export const metadata: Metadata = {
     title: siteConfig.name,
     description: siteConfig.description,
     siteName: siteConfig.name,
+    images: [
+      {
+        url: "/opengraph-image.png",
+        alt: siteConfig.name,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: siteConfig.name,
     description: siteConfig.description,
-    images: [`${siteConfig.url}/og.jpg`],
+    images: [
+      {
+        url: "/opengraph-image.png",
+        alt: siteConfig.name,
+      },
+    ],
     creator: "@sadmann17",
   },
   icons: {
