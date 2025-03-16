@@ -902,7 +902,6 @@ function ListboxRootImpl<Multiple extends boolean = false>(
         role="listbox"
         aria-multiselectable={multiple ? "true" : undefined}
         data-orientation={orientation}
-        data-slot="listbox"
         dir={dir}
         tabIndex={disabled ? undefined : 0}
         {...rootProps}
@@ -911,9 +910,9 @@ function ListboxRootImpl<Multiple extends boolean = false>(
         onFocus={composeEventHandlers(rootProps.onFocus, onFocus)}
         onBlur={composeEventHandlers(rootProps.onBlur, onBlur)}
         className={cn(
-          "focus-visible:outline-none",
-          orientation === "horizontal" && "flex items-center gap-2",
-          orientation === "vertical" && "flex flex-col gap-2",
+          "flex gap-2 focus-visible:outline-none",
+          orientation === "horizontal" && "items-center",
+          orientation === "vertical" && "flex-col",
           className,
         )}
       />
@@ -968,7 +967,6 @@ const ListboxGroup = React.forwardRef<HTMLDivElement, ListboxGroupProps>(
           role="group"
           id={id}
           aria-labelledby={labelId}
-          data-slot="listbox-group"
           {...groupProps}
           ref={forwardedRef}
         />
@@ -994,7 +992,6 @@ const ListboxGroupLabel = React.forwardRef<
   return (
     <LabelPrimitive
       id={groupContext.labelId}
-      data-slot="listbox-group-label"
       {...labelProps}
       ref={forwardedRef}
       className={cn(
@@ -1136,7 +1133,6 @@ const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
         <ItemPrimitive
           role="option"
           aria-selected={isSelected}
-          data-slot="listbox-item"
           data-selected={isSelected ? "" : undefined}
           data-highlighted={isHighlighted ? "" : undefined}
           data-disabled={isDisabled ? "" : undefined}
@@ -1156,13 +1152,13 @@ const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
             onPointerMove,
           )}
           className={cn(
-            "flex cursor-default select-none items-center gap-2 rounded-md p-4 outline-hidden ring-1 ring-border focus-visible:ring-primary data-disabled:pointer-events-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:opacity-50",
+            "flex cursor-default select-none items-center gap-2 rounded-md p-4 outline-hidden ring-1 ring-border focus-visible:ring-ring data-disabled:pointer-events-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:opacity-50",
             className,
           )}
         >
           {children}
           <ListboxItemIndicator className="ml-auto">
-            <Check className="h-4 w-4" />
+            <Check className="size-4" />
           </ListboxItemIndicator>
         </ItemPrimitive>
       </ListboxItemContext.Provider>
@@ -1191,7 +1187,6 @@ const ListboxItemIndicator = React.forwardRef<
   return (
     <IndicatorPrimitive
       aria-hidden="true"
-      data-slot="listbox-item-indicator"
       {...indicatorProps}
       ref={forwardedRef}
     />
