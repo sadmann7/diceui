@@ -396,7 +396,7 @@ function ListboxRootImpl<Multiple extends boolean = false>(
 ) {
   const {
     defaultValue,
-    value: valueProp,
+    value,
     onValueChange,
     dir = "ltr",
     disabled = false,
@@ -428,40 +428,6 @@ function ListboxRootImpl<Multiple extends boolean = false>(
   const store = storeRef.current;
 
   const [focusedValue, setFocusedValue] = React.useState<string | null>(null);
-
-  const [value, setValue] = useControllableState<Value<Multiple>>({
-    prop: valueProp,
-    defaultProp: defaultValue,
-    onChange: onValueChange,
-  });
-
-  React.useEffect(() => {
-    if (value !== undefined) {
-      if (multiple && Array.isArray(value)) {
-        const currentSelectedValues = store.getSnapshot().selectedValues;
-        const currentSelectedArray = [...currentSelectedValues];
-
-        const needsUpdate =
-          value.length !== currentSelectedArray.length ||
-          !value.every((val) => currentSelectedValues.has(val)) ||
-          !currentSelectedArray.every((val) => value.includes(val));
-
-        if (needsUpdate) {
-          store.onClearSelection();
-          for (const val of value) {
-            if (val) store.onSelectedStateChange(val, true);
-          }
-        }
-      } else if (
-        typeof value === "string" &&
-        value !== store.getSnapshot().selectedValues.values().next().value
-      ) {
-        if (value) {
-          store.onSelectedStateChange(value);
-        }
-      }
-    }
-  }, [value, store, multiple]);
 
   const { collectionRef, getItems, onItemRegister } = useCollection();
 
@@ -504,23 +470,23 @@ function ListboxRootImpl<Multiple extends boolean = false>(
             setFocusedValue(itemValue);
           }
 
-          setValue([...currentValues] as Value<Multiple>);
+          onValueChange?.([...currentValues] as Value<Multiple>);
         } else {
-          setValue([itemValue] as Value<Multiple>);
+          onValueChange?.([itemValue] as Value<Multiple>);
           setFocusedValue(itemValue);
         }
       } else {
         if (value === itemValue) {
-          setValue("" as Value<Multiple>);
+          onValueChange?.("" as Value<Multiple>);
         } else {
-          setValue(itemValue as Value<Multiple>);
+          onValueChange?.(itemValue as Value<Multiple>);
           setFocusedValue(itemValue);
         }
       }
 
       store.onSelectedStateChange(itemValue, multiple && isMultipleEvent);
     },
-    [value, setValue, store, multiple, getItems],
+    [value, onValueChange, store, multiple, getItems],
   );
 
   const onItemFocus = React.useCallback(
