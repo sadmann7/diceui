@@ -30,7 +30,7 @@ npx shadcn@latest add "https://diceui.com/r/composition"
 ```tsx
 import { composeEventHandlers } from "@/lib/composition"
 
-function Button({ onClick, ...props }) {
+export function Button({ onClick, ...props }) {
   const handleClick = composeEventHandlers(onClick, (event) => {
     console.log("Button clicked")
   })
@@ -44,7 +44,7 @@ function Button({ onClick, ...props }) {
 ```tsx
 import { useComposedRefs } from "@/lib/composition"
 
-function Input({ forwardedRef, ...props }) {
+export function Input({ forwardedRef, ...props }) {
   const localRef = React.useRef(null)
   const composedRefs = useComposedRefs(forwardedRef, localRef)
 

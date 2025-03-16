@@ -2,6 +2,7 @@
 
 import { composeEventHandlers, useComposedRefs } from "@/lib/composition";
 import { cn } from "@/lib/utils";
+import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidden-input";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 
@@ -17,7 +18,7 @@ const TOOLBAR_NAME = "EditableToolbar";
 const CANCEL_NAME = "EditableCancel";
 const SUBMIT_NAME = "EditableSubmit";
 
-const EDITABLE_ERROR = {
+const EDITABLE_ERRORS = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` components must be within \`${ROOT_NAME}\``,
   [AREA_NAME]: `\`${AREA_NAME}\` must be within \`${ROOT_NAME}\``,
   [PREVIEW_NAME]: `\`${PREVIEW_NAME}\` must be within \`${ROOT_NAME}\``,
@@ -28,6 +29,15 @@ const EDITABLE_ERROR = {
   [CANCEL_NAME]: `\`${CANCEL_NAME}\` must be within \`${ROOT_NAME}\``,
   [SUBMIT_NAME]: `\`${SUBMIT_NAME}\` must be within \`${ROOT_NAME}\``,
 } as const;
+
+type Direction = "ltr" | "rtl";
+
+const DirectionContext = React.createContext<Direction | undefined>(undefined);
+
+function useDirection(dirProp?: Direction): Direction {
+  const contextDir = React.useContext(DirectionContext);
+  return dirProp ?? contextDir ?? "ltr";
+}
 
 interface EditableContextValue {
   id: string;
@@ -41,7 +51,7 @@ interface EditableContextValue {
   onEdit: () => void;
   onSubmit: (value: string) => void;
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
-  dir?: "ltr" | "rtl";
+  dir?: Direction;
   maxLength?: number;
   placeholder?: string;
   triggerMode: "click" | "dblclick" | "focus";
@@ -55,10 +65,10 @@ interface EditableContextValue {
 const EditableContext = React.createContext<EditableContextValue | null>(null);
 EditableContext.displayName = ROOT_NAME;
 
-function useEditableContext(name: keyof typeof EDITABLE_ERROR) {
+function useEditableContext(name: keyof typeof EDITABLE_ERRORS) {
   const context = React.useContext(EditableContext);
   if (!context) {
-    throw new Error(EDITABLE_ERROR[name]);
+    throw new Error(EDITABLE_ERRORS[name]);
   }
   return context;
 }
@@ -78,7 +88,7 @@ interface EditableRootProps
   onEdit?: () => void;
   onSubmit?: (value: string) => void;
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
-  dir?: "ltr" | "rtl";
+  dir?: Direction;
   maxLength?: number;
   name?: string;
   placeholder?: string;
@@ -105,7 +115,7 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
       onEdit: onEditProp,
       onSubmit: onSubmitProp,
       onEscapeKeyDown,
-      dir = "ltr",
+      dir: dirProp,
       maxLength,
       name,
       placeholder,
@@ -122,6 +132,8 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
 
     const inputId = React.useId();
     const labelId = React.useId();
+
+    const dir = useDirection(dirProp);
 
     const isControlled = valueProp !== undefined;
     const [uncontrolledValue, setUncontrolledValue] =
@@ -211,6 +223,7 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
         onEdit,
         onCancel,
         onEscapeKeyDown,
+        dir,
         maxLength,
         placeholder,
         triggerMode,
@@ -232,6 +245,7 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
         onCancel,
         onEdit,
         onEscapeKeyDown,
+        dir,
         maxLength,
         placeholder,
         triggerMode,
@@ -243,21 +257,20 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
       ],
     );
 
-    const RootSlot = asChild ? Slot : "div";
+    const RootPrimitive = asChild ? Slot : "div";
 
     return (
       <EditableContext.Provider value={contextValue}>
-        <RootSlot
+        <RootPrimitive
           data-slot="editable"
-          dir={dir}
           {...rootProps}
           ref={composedRef}
           className={cn("flex min-w-0 flex-col gap-2", className)}
         />
         {isFormControl && (
           <VisuallyHiddenInput
-            control={formTrigger}
             type="hidden"
+            control={formTrigger}
             name={name}
             value={value}
             disabled={disabled}
@@ -280,10 +293,10 @@ const EditableLabel = React.forwardRef<HTMLLabelElement, EditableLabelProps>(
     const { asChild, className, children, ...labelProps } = props;
     const context = useEditableContext(LABEL_NAME);
 
-    const LabelSlot = asChild ? Slot : "label";
+    const LabelPrimitive = asChild ? Slot : "label";
 
     return (
-      <LabelSlot
+      <LabelPrimitive
         data-disabled={context.disabled ? "" : undefined}
         data-invalid={context.invalid ? "" : undefined}
         data-required={context.required ? "" : undefined}
@@ -298,7 +311,7 @@ const EditableLabel = React.forwardRef<HTMLLabelElement, EditableLabelProps>(
         )}
       >
         {children}
-      </LabelSlot>
+      </LabelPrimitive>
     );
   },
 );
@@ -313,14 +326,15 @@ const EditableArea = React.forwardRef<HTMLDivElement, EditableAreaProps>(
     const { asChild, className, ...areaProps } = props;
     const context = useEditableContext(AREA_NAME);
 
-    const AreaSlot = asChild ? Slot : "div";
+    const AreaPrimitive = asChild ? Slot : "div";
 
     return (
-      <AreaSlot
+      <AreaPrimitive
         role="group"
         data-disabled={context.disabled ? "" : undefined}
         data-editing={context.editing ? "" : undefined}
         data-slot="editable-area"
+        dir={context.dir}
         {...areaProps}
         ref={forwardedRef}
         className={cn(
@@ -347,12 +361,12 @@ const EditablePreview = React.forwardRef<HTMLDivElement, EditablePreviewProps>(
       context.onEdit();
     }, [context.disabled, context.readOnly, context.onEdit]);
 
-    const PreviewSlot = asChild ? Slot : "div";
+    const PreviewPrimitive = asChild ? Slot : "div";
 
     if (context.editing || context.readOnly) return null;
 
     return (
-      <PreviewSlot
+      <PreviewPrimitive
         role="button"
         aria-disabled={context.disabled || context.readOnly}
         data-empty={!context.value ? "" : undefined}
@@ -380,11 +394,14 @@ const EditablePreview = React.forwardRef<HTMLDivElement, EditablePreviewProps>(
         )}
       >
         {context.value || context.placeholder}
-      </PreviewSlot>
+      </PreviewPrimitive>
     );
   },
 );
 EditablePreview.displayName = PREVIEW_NAME;
+
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
 type InputElement = React.ComponentRef<typeof EditableInput>;
 
@@ -474,9 +491,6 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
       ],
     );
 
-    const useIsomorphicLayoutEffect =
-      typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
-
     useIsomorphicLayoutEffect(() => {
       if (!context.editing || isReadOnly || !inputRef.current) return;
 
@@ -493,15 +507,16 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
       };
     }, [context.editing, isReadOnly, onAutosize]);
 
-    const InputSlot = asChild ? Slot : "input";
+    const InputPrimitive = asChild ? Slot : "input";
 
     if (!context.editing && !isReadOnly) return null;
 
     return (
-      <InputSlot
+      <InputPrimitive
         aria-required={isRequired}
         aria-invalid={context.invalid}
         data-slot="editable-input"
+        dir={context.dir}
         disabled={isDisabled}
         readOnly={isReadOnly}
         required={isRequired}
@@ -544,12 +559,12 @@ const EditableTrigger = React.forwardRef<
     context.onEdit();
   }, [context.disabled, context.readOnly, context.onEdit]);
 
-  const TriggerSlot = asChild ? Slot : "button";
+  const TriggerPrimitive = asChild ? Slot : "button";
 
   if (!forceMount && (context.editing || context.readOnly)) return null;
 
   return (
-    <TriggerSlot
+    <TriggerPrimitive
       type="button"
       aria-controls={context.id}
       aria-disabled={context.disabled || context.readOnly}
@@ -580,14 +595,15 @@ const EditableToolbar = React.forwardRef<HTMLDivElement, EditableToolbarProps>(
     } = props;
     const context = useEditableContext(TOOLBAR_NAME);
 
-    const ToolbarSlot = asChild ? Slot : "div";
+    const ToolbarPrimitive = asChild ? Slot : "div";
 
     return (
-      <ToolbarSlot
+      <ToolbarPrimitive
         role="toolbar"
         aria-controls={context.id}
         aria-orientation={orientation}
         data-slot="editable-toolbar"
+        dir={context.dir}
         {...toolbarProps}
         ref={forwardedRef}
         className={cn(
@@ -610,12 +626,12 @@ const EditableCancel = React.forwardRef<HTMLButtonElement, EditableCancelProps>(
     const { asChild, ...cancelProps } = props;
     const context = useEditableContext(CANCEL_NAME);
 
-    const CancelSlot = asChild ? Slot : "button";
+    const CancelPrimitive = asChild ? Slot : "button";
 
     if (!context.editing && !context.readOnly) return null;
 
     return (
-      <CancelSlot
+      <CancelPrimitive
         type="button"
         aria-controls={context.id}
         data-slot="editable-cancel"
@@ -640,12 +656,12 @@ const EditableSubmit = React.forwardRef<HTMLButtonElement, EditableSubmitProps>(
     const { asChild, ...submitProps } = props;
     const context = useEditableContext(SUBMIT_NAME);
 
-    const SubmitSlot = asChild ? Slot : "button";
+    const SubmitPrimitive = asChild ? Slot : "button";
 
     if (!context.editing && !context.readOnly) return null;
 
     return (
-      <SubmitSlot
+      <SubmitPrimitive
         type="button"
         aria-controls={context.id}
         data-slot="editable-submit"
@@ -660,81 +676,6 @@ const EditableSubmit = React.forwardRef<HTMLButtonElement, EditableSubmitProps>(
   },
 );
 EditableSubmit.displayName = SUBMIT_NAME;
-
-/**
- * @see https://github.com/radix-ui/primitives/blob/main/packages/react/checkbox/src/Checkbox.tsx#L165-L212
- */
-
-interface VisuallyHiddenInputProps<T extends HTMLElement>
-  extends React.ComponentPropsWithoutRef<"input"> {
-  control: T | null;
-  bubbles?: boolean;
-}
-
-function VisuallyHiddenInput<T extends HTMLElement>(
-  props: VisuallyHiddenInputProps<T>,
-) {
-  const {
-    control,
-    value,
-    bubbles = true,
-    type = "hidden",
-    ...inputProps
-  } = props;
-  const inputRef = React.useRef<HTMLInputElement>(null);
-
-  const previousRef = React.useRef({ value, previous: value });
-  const previousValue = React.useMemo(() => {
-    if (inputRef.current?.value !== value) {
-      previousRef.current.previous = previousRef.current.value;
-      previousRef.current.value = value;
-    }
-    return previousRef.current.previous;
-  }, [value]);
-
-  React.useEffect(() => {
-    const input = inputRef.current;
-    if (!input) return;
-    const inputProto = window.HTMLInputElement.prototype;
-
-    const propertyKey = "value";
-    const eventType = "input";
-    const currentValue = JSON.stringify(value);
-
-    const descriptor = Object.getOwnPropertyDescriptor(
-      inputProto,
-      propertyKey,
-    ) as PropertyDescriptor;
-    const setter = descriptor.set;
-
-    if (previousValue !== currentValue && setter) {
-      const event = new Event(eventType, { bubbles });
-      setter.call(input, currentValue);
-      input.dispatchEvent(event);
-    }
-  }, [previousValue, value, bubbles]);
-
-  return (
-    <input
-      type={type}
-      {...inputProps}
-      ref={inputRef}
-      style={{
-        ...props.style,
-        border: 0,
-        clip: "rect(0 0 0 0)",
-        clipPath: "inset(50%)",
-        height: "1px",
-        margin: "-1px",
-        overflow: "hidden",
-        padding: 0,
-        position: "absolute",
-        whiteSpace: "nowrap",
-        width: "1px",
-      }}
-    />
-  );
-}
 
 const Editable = EditableRoot;
 const Root = EditableRoot;

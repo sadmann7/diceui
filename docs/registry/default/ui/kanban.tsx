@@ -154,7 +154,7 @@ const ITEM_NAME = "KanbanItem";
 const ITEM_HANDLE_NAME = "KanbanItemHandle";
 const OVERLAY_NAME = "KanbanOverlay";
 
-const KANBAN_ERROR = {
+const KANBAN_ERRORS = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` components must be within \`${ROOT_NAME}\``,
   [BOARD_NAME]: `\`${BOARD_NAME}\` must be within \`${ROOT_NAME}\``,
   [COLUMN_NAME]: `\`${COLUMN_NAME}\` must be within \`${BOARD_NAME}\``,
@@ -181,10 +181,10 @@ const KanbanContext = React.createContext<KanbanContextValue<unknown> | null>(
 );
 KanbanContext.displayName = ROOT_NAME;
 
-function useKanbanContext(name: keyof typeof KANBAN_ERROR) {
+function useKanbanContext(name: keyof typeof KANBAN_ERRORS) {
   const context = React.useContext(KanbanContext);
   if (!context) {
-    throw new Error(KANBAN_ERROR[name]);
+    throw new Error(KANBAN_ERRORS[name]);
   }
   return context;
 }
@@ -638,7 +638,7 @@ const KanbanBoard = React.forwardRef<HTMLDivElement, KanbanBoardProps>(
       return Object.keys(context.items);
     }, [context.items]);
 
-    const BoardSlot = asChild ? Slot : "div";
+    const BoardPrimitive = asChild ? Slot : "div";
 
     return (
       <KanbanBoardContext.Provider value={true}>
@@ -650,7 +650,7 @@ const KanbanBoard = React.forwardRef<HTMLDivElement, KanbanBoardProps>(
               : verticalListSortingStrategy
           }
         >
-          <BoardSlot
+          <BoardPrimitive
             aria-orientation={context.orientation}
             data-orientation={context.orientation}
             {...boardProps}
@@ -709,7 +709,7 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
     const inOverlay = React.useContext(KanbanOverlayContext);
 
     if (!inBoard && !inOverlay) {
-      throw new Error(KANBAN_ERROR[COLUMN_NAME]);
+      throw new Error(KANBAN_ERRORS[COLUMN_NAME]);
     }
 
     if (value === "") {
@@ -760,7 +760,7 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
       [id, attributes, listeners, setActivatorNodeRef, isDragging, disabled],
     );
 
-    const ColumnSlot = asChild ? Slot : "div";
+    const ColumnPrimitive = asChild ? Slot : "div";
 
     return (
       <KanbanColumnContext.Provider value={columnContext}>
@@ -772,7 +772,7 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
               : verticalListSortingStrategy
           }
         >
-          <ColumnSlot
+          <ColumnPrimitive
             id={id}
             data-dragging={isDragging ? "" : undefined}
             {...columnProps}
@@ -814,7 +814,7 @@ const KanbanColumnHandle = React.forwardRef<
   const context = useKanbanContext(COLUMN_NAME);
   const columnContext = React.useContext(KanbanColumnContext);
   if (!columnContext) {
-    throw new Error(KANBAN_ERROR[COLUMN_HANDLE_NAME]);
+    throw new Error(KANBAN_ERRORS[COLUMN_HANDLE_NAME]);
   }
 
   const isDisabled = disabled ?? columnContext.disabled;
@@ -824,10 +824,10 @@ const KanbanColumnHandle = React.forwardRef<
     columnContext.setActivatorNodeRef(node);
   });
 
-  const HandleSlot = asChild ? Slot : "button";
+  const HandlePrimitive = asChild ? Slot : "button";
 
   return (
-    <HandleSlot
+    <HandlePrimitive
       type="button"
       aria-controls={columnContext.id}
       data-dragging={columnContext.isDragging ? "" : undefined}
@@ -886,7 +886,7 @@ const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
     const inOverlay = React.useContext(KanbanOverlayContext);
 
     if (!inBoard && !inOverlay) {
-      throw new Error(KANBAN_ERROR[ITEM_NAME]);
+      throw new Error(KANBAN_ERRORS[ITEM_NAME]);
     }
 
     const {
@@ -928,11 +928,11 @@ const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
       [id, attributes, listeners, setActivatorNodeRef, isDragging, disabled],
     );
 
-    const ItemSlot = asChild ? Slot : "div";
+    const ItemPrimitive = asChild ? Slot : "div";
 
     return (
       <KanbanItemContext.Provider value={itemContext}>
-        <ItemSlot
+        <ItemPrimitive
           id={id}
           data-dragging={isDragging ? "" : undefined}
           {...itemProps}
@@ -972,7 +972,7 @@ const KanbanItemHandle = React.forwardRef<
   const { asChild, disabled, className, ...itemHandleProps } = props;
   const itemContext = React.useContext(KanbanItemContext);
   if (!itemContext) {
-    throw new Error(KANBAN_ERROR[ITEM_HANDLE_NAME]);
+    throw new Error(KANBAN_ERRORS[ITEM_HANDLE_NAME]);
   }
   const context = useKanbanContext(ITEM_HANDLE_NAME);
 
@@ -983,10 +983,10 @@ const KanbanItemHandle = React.forwardRef<
     itemContext.setActivatorNodeRef(node);
   });
 
-  const HandleSlot = asChild ? Slot : "button";
+  const HandlePrimitive = asChild ? Slot : "button";
 
   return (
-    <HandleSlot
+    <HandlePrimitive
       type="button"
       aria-controls={itemContext.id}
       data-dragging={itemContext.isDragging ? "" : undefined}

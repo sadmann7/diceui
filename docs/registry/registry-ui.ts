@@ -40,6 +40,10 @@ export const ui: Registry = [
         type: "registry:ui",
       },
       {
+        path: "components/visually-hidden-input.tsx",
+        type: "registry:component",
+      },
+      {
         path: "lib/composition.ts",
         type: "registry:lib",
       },

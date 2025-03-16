@@ -42,4 +42,14 @@ export const components: Registry = [
       },
     ],
   },
+  {
+    name: "visually-hidden-input",
+    type: "registry:component",
+    files: [
+      {
+        path: "components/visually-hidden-input.tsx",
+        type: "registry:component",
+      },
+    ],
+  },
 ];

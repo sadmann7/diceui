@@ -1,3 +1,5 @@
+"use client";
+
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,7 +27,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import ScrollerDemo from "@/registry/default/examples/scroller-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -35,15 +36,12 @@ import {
   ComboboxItem,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
-import { RelativeTimeCard } from "@/registry/default/ui/relative-time-card";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <RelativeTimeCard date={new Date()}>Relative time</RelativeTimeCard>
-      <ScrollerDemo />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
@@ -119,7 +117,7 @@ export default function PlaygroundPage() {
         <SelectTrigger className="w-[11.25rem]">
           <SelectValue placeholder="Select a trick" />
         </SelectTrigger>
-        <SelectContent className="max-h-20">
+        <SelectContent>
           <SelectGroup>
             <SelectLabel>Tricks</SelectLabel>
             {tricks.map((trick) => (

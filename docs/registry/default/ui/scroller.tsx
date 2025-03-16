@@ -106,6 +106,16 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
       [scrollStep],
     );
 
+    const scrollHandlers = React.useMemo(
+      () => ({
+        up: () => onScrollBy("up"),
+        down: () => onScrollBy("down"),
+        left: () => onScrollBy("left"),
+        right: () => onScrollBy("right"),
+      }),
+      [onScrollBy],
+    );
+
     React.useLayoutEffect(() => {
       const container = containerRef.current;
       if (!container) return;
@@ -121,11 +131,19 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
           const scrollHeight = container.scrollHeight;
 
           if (withNavigation) {
-            setScrollVisibility((prev) => ({
-              ...prev,
-              up: scrollTop > offset,
-              down: scrollTop + clientHeight < scrollHeight,
-            }));
+            setScrollVisibility((prev) => {
+              const newUp = scrollTop > offset;
+              const newDown = scrollTop + clientHeight < scrollHeight;
+
+              if (prev.up !== newUp || prev.down !== newDown) {
+                return {
+                  ...prev,
+                  up: newUp,
+                  down: newDown,
+                };
+              }
+              return prev;
+            });
           }
 
           const hasTopScroll = scrollTop > offset;
@@ -152,11 +170,19 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
         const scrollWidth = container.scrollWidth;
 
         if (withNavigation) {
-          setScrollVisibility((prev) => ({
-            ...prev,
-            left: scrollLeft > offset,
-            right: scrollLeft + clientWidth < scrollWidth,
-          }));
+          setScrollVisibility((prev) => {
+            const newLeft = scrollLeft > offset;
+            const newRight = scrollLeft + clientWidth < scrollWidth;
+
+            if (prev.left !== newLeft || prev.right !== newRight) {
+              return {
+                ...prev,
+                left: newLeft,
+                right: newRight,
+              };
+            }
+            return prev;
+          });
         }
 
         const hasLeftScroll = scrollLeft > offset;
@@ -195,18 +221,15 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
       [size, style],
     );
 
-    const activeDirections = withNavigation
-      ? React.useMemo<ScrollDirection[]>(
-          () =>
-            orientation === "vertical" ? ["up", "down"] : ["left", "right"],
-          [orientation],
-        )
-      : [];
+    const activeDirections = React.useMemo<ScrollDirection[]>(() => {
+      if (!withNavigation) return [];
+      return orientation === "vertical" ? ["up", "down"] : ["left", "right"];
+    }, [orientation, withNavigation]);
 
-    const Comp = asChild ? Slot : "div";
+    const ScrollerPrimitive = asChild ? Slot : "div";
 
     const ScrollerImpl = (
-      <Comp
+      <ScrollerPrimitive
         {...scrollerProps}
         ref={composedRef}
         style={composedStyle}
@@ -216,20 +239,31 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
       />
     );
 
+    const navigationButtons = React.useMemo(() => {
+      if (!withNavigation) return null;
+
+      return activeDirections
+        .filter((direction) => scrollVisibility[direction])
+        .map((direction) => (
+          <ScrollButton
+            key={direction}
+            direction={direction}
+            onClick={scrollHandlers[direction]}
+            triggerMode={scrollTriggerMode}
+          />
+        ));
+    }, [
+      activeDirections,
+      scrollVisibility,
+      scrollHandlers,
+      scrollTriggerMode,
+      withNavigation,
+    ]);
+
     if (withNavigation) {
       return (
         <div className="relative w-full">
-          {activeDirections.map(
-            (direction) =>
-              scrollVisibility[direction] && (
-                <ScrollButton
-                  key={direction}
-                  direction={direction}
-                  onClick={() => onScrollBy(direction)}
-                  triggerMode={scrollTriggerMode}
-                />
-              ),
-          )}
+          {navigationButtons}
           {ScrollerImpl}
         </div>
       );

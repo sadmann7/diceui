@@ -65,7 +65,7 @@ const ITEM_NAME = "SortableItem";
 const ITEM_HANDLE_NAME = "SortableItemHandle";
 const OVERLAY_NAME = "SortableOverlay";
 
-const SORTABLE_ERROR = {
+const SORTABLE_ERRORS = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` components must be within \`${ROOT_NAME}\``,
   [CONTENT_NAME]: `\`${CONTENT_NAME}\` must be within \`${ROOT_NAME}\``,
   [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${CONTENT_NAME}\``,
@@ -88,10 +88,10 @@ const SortableRootContext =
   React.createContext<SortableRootContextValue<unknown> | null>(null);
 SortableRootContext.displayName = ROOT_NAME;
 
-function useSortableContext(name: keyof typeof SORTABLE_ERROR) {
+function useSortableContext(name: keyof typeof SORTABLE_ERRORS) {
   const context = React.useContext(SortableRootContext);
   if (!context) {
-    throw new Error(SORTABLE_ERROR[name]);
+    throw new Error(SORTABLE_ERRORS[name]);
   }
   return context;
 }
@@ -307,7 +307,7 @@ const SortableContent = React.forwardRef<HTMLDivElement, SortableContentProps>(
     } = props;
     const context = useSortableContext(CONTENT_NAME);
 
-    const ContentSlot = asChild ? Slot : "div";
+    const ContentPrimitive = asChild ? Slot : "div";
 
     return (
       <SortableContentContext.Provider value={true}>
@@ -318,9 +318,9 @@ const SortableContent = React.forwardRef<HTMLDivElement, SortableContentProps>(
           {withoutSlot ? (
             children
           ) : (
-            <ContentSlot {...contentProps} ref={forwardedRef}>
+            <ContentPrimitive {...contentProps} ref={forwardedRef}>
               {children}
-            </ContentSlot>
+            </ContentPrimitive>
           )}
         </SortableContext>
       </SortableContentContext.Provider>
@@ -364,7 +364,7 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
     const inSortableOverlay = React.useContext(SortableOverlayContext);
 
     if (!inSortableContent && !inSortableOverlay) {
-      throw new Error(SORTABLE_ERROR[ITEM_NAME]);
+      throw new Error(SORTABLE_ERRORS[ITEM_NAME]);
     }
 
     if (value === "") {
@@ -409,11 +409,11 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
       [id, attributes, listeners, setActivatorNodeRef, isDragging, disabled],
     );
 
-    const ItemSlot = asChild ? Slot : "div";
+    const ItemPrimitive = asChild ? Slot : "div";
 
     return (
       <SortableItemContext.Provider value={itemContext}>
-        <ItemSlot
+        <ItemPrimitive
           id={id}
           data-dragging={isDragging ? "" : undefined}
           {...itemProps}
@@ -453,7 +453,7 @@ const SortableItemHandle = React.forwardRef<
   const { asChild, disabled, className, ...itemHandleProps } = props;
   const itemContext = React.useContext(SortableItemContext);
   if (!itemContext) {
-    throw new Error(SORTABLE_ERROR[ITEM_HANDLE_NAME]);
+    throw new Error(SORTABLE_ERRORS[ITEM_HANDLE_NAME]);
   }
   const context = useSortableContext(ITEM_HANDLE_NAME);
 
@@ -464,10 +464,10 @@ const SortableItemHandle = React.forwardRef<
     itemContext.setActivatorNodeRef(node);
   });
 
-  const HandleSlot = asChild ? Slot : "button";
+  const HandlePrimitive = asChild ? Slot : "button";
 
   return (
-    <HandleSlot
+    <HandlePrimitive
       type="button"
       aria-controls={itemContext.id}
       data-dragging={itemContext.isDragging ? "" : undefined}
