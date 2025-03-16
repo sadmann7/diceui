@@ -36,35 +36,12 @@ import {
   ComboboxItem,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
-import * as Listbox from "@/registry/default/ui/listbox";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
-import * as React from "react";
 
 export default function PlaygroundPage() {
-  const [value, setValue] = React.useState("");
-  const [values, setValues] = React.useState<string[]>([]);
-
   return (
     <Shell>
-      <Listbox.Root
-        // value={values}
-        // onValueChange={setValues}
-        multiple
-        orientation="mixed"
-        className="flex flex-col gap-2.5"
-      >
-        {/* <Listbox.Input placeholder="Search tricks..." /> */}
-        <div className="grid grid-cols-3 gap-2">
-          {tricks.map((trick) => {
-            return (
-              <Listbox.Item key={trick.value} value={trick.value}>
-                {trick.label}
-              </Listbox.Item>
-            );
-          })}
-        </div>
-      </Listbox.Root>
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
@@ -81,11 +58,7 @@ export default function PlaygroundPage() {
           ))}
         </ComboboxContent>
       </Combobox>
-      <Command
-        value={value}
-        onValueChange={setValue}
-        className="max-w-[15rem] border"
-      >
+      <Command className="max-w-[15rem] border">
         <CommandInput placeholder="Search tricks..." />
         <CommandEmpty>No tricks found.</CommandEmpty>
         <CommandList>

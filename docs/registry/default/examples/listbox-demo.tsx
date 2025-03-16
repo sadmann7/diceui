@@ -1,8 +1,8 @@
-import { Listbox, ListboxItem } from "@/registry/default/ui/listbox";
+import { ListboxItem, ListboxRoot } from "@/registry/default/ui/listbox";
 
 export default function ListboxDemo() {
   return (
-    <Listbox className="w-full max-w-md">
+    <ListboxRoot className="w-full max-w-md">
       {Array.from({ length: 5 }).map((_, index) => (
         <ListboxItem
           key={index}
@@ -17,6 +17,6 @@ export default function ListboxDemo() {
           </div>
         </ListboxItem>
       ))}
-    </Listbox>
+    </ListboxRoot>
   );
 }

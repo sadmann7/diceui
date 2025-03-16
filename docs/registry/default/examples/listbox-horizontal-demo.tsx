@@ -1,8 +1,11 @@
-import { Listbox, ListboxItem } from "@/registry/default/ui/listbox";
+import { ListboxItem, ListboxRoot } from "@/registry/default/ui/listbox";
 
 export default function ListboxHorizontalDemo() {
   return (
-    <Listbox orientation="horizontal" className="flex w-full flex-row gap-4">
+    <ListboxRoot
+      orientation="horizontal"
+      className="flex w-full flex-row gap-4"
+    >
       {Array.from({ length: 5 }).map((_, index) => (
         <ListboxItem
           key={index}
@@ -13,6 +16,6 @@ export default function ListboxHorizontalDemo() {
           <div className="text-muted-foreground text-sm">Horizontal Item</div>
         </ListboxItem>
       ))}
-    </Listbox>
+    </ListboxRoot>
   );
 }

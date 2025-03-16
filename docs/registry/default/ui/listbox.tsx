@@ -2,6 +2,7 @@
 
 import { composeEventHandlers, useComposedRefs } from "@/lib/composition";
 import { cn } from "@/lib/utils";
+import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidden-input";
 import { Slot } from "@radix-ui/react-slot";
 import { Check } from "lucide-react";
 import * as React from "react";
@@ -389,6 +390,7 @@ interface ListboxRootProps<Multiple extends boolean = false>
   loop?: boolean;
   multiple?: Multiple;
   orientation?: "horizontal" | "vertical" | "mixed";
+  name?: string;
   virtual?: boolean;
   asChild?: boolean;
 }
@@ -402,10 +404,11 @@ function ListboxRootImpl<Multiple extends boolean = false>(
     value,
     onValueChange,
     dir = "ltr",
-    disabled = false,
+    disabled,
     loop = false,
     multiple = false as Multiple,
     orientation = "vertical",
+    name,
     virtual = false,
     asChild,
     className,
@@ -434,6 +437,10 @@ function ListboxRootImpl<Multiple extends boolean = false>(
 
   const isShiftTabRef = useLazyRef(() => false);
   const composedRef = useComposedRefs(collectionRef, forwardedRef);
+
+  const isFormControl = collectionRef.current
+    ? !!collectionRef.current.closest("form")
+    : true;
 
   const onItemSelect = React.useCallback(
     (itemValue: string, isMultipleEvent = false) => {
@@ -830,6 +837,15 @@ function ListboxRootImpl<Multiple extends boolean = false>(
           className,
         )}
       />
+      {isFormControl && (
+        <VisuallyHiddenInput
+          type="hidden"
+          control={collectionRef.current}
+          name={name}
+          value={value}
+          disabled={disabled}
+        />
+      )}
     </ListboxContext.Provider>
   );
 }
@@ -1097,7 +1113,6 @@ const ListboxItemIndicator = React.forwardRef<
 });
 ListboxItemIndicator.displayName = ITEM_INDICATOR_NAME;
 
-const Listbox = ListboxRoot;
 const Root = ListboxRoot;
 const Item = ListboxItem;
 const ItemIndicator = ListboxItemIndicator;
@@ -1108,13 +1123,12 @@ export {
   Group,
   GroupLabel,
   Item,
-  ITEM_SELECT_EVENT,
   ItemIndicator,
-  Listbox,
   ListboxGroup,
   ListboxGroupLabel,
   ListboxItem,
   ListboxItemIndicator,
+  ListboxRoot,
   //
   Root,
 };

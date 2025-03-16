@@ -1,8 +1,8 @@
-import { Listbox, ListboxItem } from "@/registry/default/ui/listbox";
+import { ListboxItem, ListboxRoot } from "@/registry/default/ui/listbox";
 
 export default function ListboxGridDemo() {
   return (
-    <Listbox orientation="mixed" className="grid w-full grid-cols-3 gap-4">
+    <ListboxRoot orientation="mixed" className="grid w-full grid-cols-3 gap-4">
       {Array.from({ length: 9 }).map((_, index) => (
         <ListboxItem
           key={index}
@@ -17,6 +17,6 @@ export default function ListboxGridDemo() {
           </div>
         </ListboxItem>
       ))}
-    </Listbox>
+    </ListboxRoot>
   );
 }
