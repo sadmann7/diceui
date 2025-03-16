@@ -12,7 +12,6 @@ const ITEM_NAME = "ListboxItem";
 const ITEM_INDICATOR_NAME = "ListboxItemIndicator";
 const GROUP_NAME = "ListboxGroup";
 const GROUP_LABEL_NAME = "ListboxGroupLabel";
-const INPUT_NAME = "ListboxInput";
 const ITEM_SELECT_EVENT = `${ITEM_NAME}.Select.Event`;
 
 const ERRORS = {
@@ -21,7 +20,6 @@ const ERRORS = {
   [ITEM_INDICATOR_NAME]: `\`${ITEM_INDICATOR_NAME}\` must be within \`${ITEM_NAME}\``,
   [GROUP_NAME]: `\`${GROUP_NAME}\` must be within \`${ROOT_NAME}\``,
   [GROUP_LABEL_NAME]: `\`${GROUP_LABEL_NAME}\` must be within \`${GROUP_NAME}\``,
-  [INPUT_NAME]: `\`${INPUT_NAME}\` must be within \`${ROOT_NAME}\``,
 } as const;
 
 type Value<Multiple extends boolean = false> = Multiple extends true
@@ -911,7 +909,6 @@ function ListboxRootImpl<Multiple extends boolean = false>(
         role="listbox"
         aria-multiselectable={multiple ? "true" : undefined}
         data-orientation={orientation}
-        data-slot="listbox"
         dir={dir}
         tabIndex={disabled ? undefined : 0}
         {...rootProps}
@@ -977,7 +974,6 @@ const ListboxGroup = React.forwardRef<HTMLDivElement, ListboxGroupProps>(
           role="group"
           id={id}
           aria-labelledby={labelId}
-          data-slot="listbox-group"
           {...groupProps}
           ref={forwardedRef}
         />
@@ -1003,7 +999,6 @@ const ListboxGroupLabel = React.forwardRef<
   return (
     <LabelPrimitive
       id={groupContext.labelId}
-      data-slot="listbox-group-label"
       {...labelProps}
       ref={forwardedRef}
       className={cn(
@@ -1044,7 +1039,7 @@ const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
     const {
       asChild,
       value,
-      disabled = false,
+      disabled,
       children,
       className,
       onSelect,
@@ -1145,7 +1140,6 @@ const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
         <ItemPrimitive
           role="option"
           aria-selected={isSelected}
-          data-slot="listbox-item"
           data-selected={isSelected ? "" : undefined}
           data-highlighted={isHighlighted ? "" : undefined}
           data-disabled={isDisabled ? "" : undefined}
@@ -1200,7 +1194,6 @@ const ListboxItemIndicator = React.forwardRef<
   return (
     <IndicatorPrimitive
       aria-hidden="true"
-      data-slot="listbox-item-indicator"
       {...indicatorProps}
       ref={forwardedRef}
     />
@@ -1208,66 +1201,12 @@ const ListboxItemIndicator = React.forwardRef<
 });
 ListboxItemIndicator.displayName = ITEM_INDICATOR_NAME;
 
-interface ListboxInputProps extends React.ComponentPropsWithoutRef<"input"> {
-  asChild?: boolean;
-}
-
-const ListboxInput = React.forwardRef<HTMLInputElement, ListboxInputProps>(
-  (props, forwardedRef) => {
-    const {
-      asChild,
-      className,
-      placeholder,
-      onChange: onChangeProp,
-      ...inputProps
-    } = props;
-
-    const context = useListboxContext(INPUT_NAME);
-    const filterValue = useListboxState((state) => state.filterValue);
-
-    const onChange = React.useCallback(
-      (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = event.target.value;
-
-        onChangeProp?.(event);
-        context.onFilterChange(newValue);
-      },
-      [onChangeProp, context.onFilterChange],
-    );
-
-    const InputPrimitive = asChild ? Slot : "input";
-
-    return (
-      <InputPrimitive
-        role="searchbox"
-        aria-autocomplete="list"
-        autoCapitalize="off"
-        autoComplete="off"
-        autoCorrect="off"
-        spellCheck="false"
-        data-slot="listbox-input"
-        placeholder={placeholder}
-        value={filterValue}
-        {...inputProps}
-        ref={forwardedRef}
-        onChange={composeEventHandlers(onChangeProp, onChange)}
-        className={cn(
-          "w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
-          className,
-        )}
-      />
-    );
-  },
-);
-ListboxInput.displayName = INPUT_NAME;
-
 const Listbox = ListboxRoot;
 const Root = ListboxRoot;
 const Item = ListboxItem;
 const ItemIndicator = ListboxItemIndicator;
 const Group = ListboxGroup;
 const GroupLabel = ListboxGroupLabel;
-const Input = ListboxInput;
 
 export {
   Listbox,
@@ -1275,13 +1214,11 @@ export {
   ListboxGroupLabel,
   ListboxItem,
   ListboxItemIndicator,
-  ListboxInput,
   //
   Root,
   Group,
   GroupLabel,
   Item,
   ItemIndicator,
-  Input,
   ITEM_SELECT_EVENT,
 };
