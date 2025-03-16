@@ -27,6 +27,9 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
+import ListboxDemo from "@/registry/default/examples/listbox-demo";
+import ListboxGridDemo from "@/registry/default/examples/listbox-grid-demo";
+import ListboxHorizontalDemo from "@/registry/default/examples/listbox-horizontal-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -42,6 +45,9 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
+      <ListboxDemo />
+      <ListboxHorizontalDemo />
+      <ListboxGridDemo />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />

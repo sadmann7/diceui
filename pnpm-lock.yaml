@@ -59,6 +59,9 @@ importers:
       '@diceui/combobox':
         specifier: workspace:*
         version: link:../packages/combobox
+      '@diceui/listbox':
+        specifier: workspace:*
+        version: link:../packages/listbox
       '@diceui/mention':
         specifier: workspace:*
         version: link:../packages/mention
