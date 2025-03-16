@@ -1,6 +1,5 @@
 "use client";
 
-import { useControllableState } from "@/hooks/use-controllable-state";
 import { composeEventHandlers, useComposedRefs } from "@/lib/composition";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
@@ -174,8 +173,8 @@ type CollectionGroupMap = Map<string, Set<React.RefObject<ItemElement | null>>>;
 
 function useCollection() {
   const collectionRef = React.useRef<RootElement | null>(null);
-  const itemMap = React.useRef<CollectionItemMap>(new Map()).current;
-  const groupMap = React.useRef<CollectionGroupMap>(new Map()).current;
+  const itemMap = useLazyRef<CollectionItemMap>(() => new Map()).current;
+  const groupMap = useLazyRef<CollectionGroupMap>(() => new Map()).current;
 
   const getItems = React.useCallback(() => {
     const collectionNode = collectionRef.current;
@@ -344,6 +343,19 @@ function dispatchDiscreteCustomEvent<E extends CustomEvent>(
   }
 }
 
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
+
+function useLazyRef<T>(init: () => T): React.RefObject<T> {
+  const ref = React.useRef<T | null>(null);
+
+  if (ref.current === null) {
+    ref.current = init();
+  }
+
+  return ref as React.RefObject<T>;
+}
+
 interface ListboxContextValue {
   store: ListboxStore;
   onItemRegister: (item: CollectionItem, groupId?: string) => () => void;
@@ -400,9 +412,7 @@ function ListboxRootImpl<Multiple extends boolean = false>(
     ...rootProps
   } = props;
 
-  const storeRef = React.useRef<ListboxStore | null>(null);
-
-  if (storeRef.current === null) {
+  const storeRef = useLazyRef<ListboxStore>(() => {
     const store = createSelectableStore(
       typeof defaultValue === "string" ? defaultValue : null,
     );
@@ -413,8 +423,8 @@ function ListboxRootImpl<Multiple extends boolean = false>(
       }
     }
 
-    storeRef.current = store;
-  }
+    return store;
+  });
 
   const store = storeRef.current;
 
@@ -422,7 +432,7 @@ function ListboxRootImpl<Multiple extends boolean = false>(
 
   const { collectionRef, getItems, onItemRegister } = useCollection();
 
-  const isShiftTabRef = React.useRef(false);
+  const isShiftTabRef = useLazyRef(() => false);
   const composedRef = useComposedRefs(collectionRef, forwardedRef);
 
   const onItemSelect = React.useCallback(
@@ -722,6 +732,7 @@ function ListboxRootImpl<Multiple extends boolean = false>(
       store,
       onItemSelect,
       getItems,
+      isShiftTabRef,
       disabled,
       loop,
       virtual,
@@ -757,7 +768,7 @@ function ListboxRootImpl<Multiple extends boolean = false>(
         }
       }
     },
-    [focusItemByValue, getItems, virtual, store, focusedValue],
+    [focusItemByValue, getItems, virtual, store, focusedValue, isShiftTabRef],
   );
 
   const onBlur = React.useCallback(
@@ -918,9 +929,6 @@ function useListboxItemContext(name: keyof typeof ERRORS) {
   }
   return context;
 }
-
-const useIsomorphicLayoutEffect =
-  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
 interface ListboxItemProps
   extends Omit<React.ComponentPropsWithoutRef<"div">, "onSelect"> {
@@ -1097,6 +1105,11 @@ const Group = ListboxGroup;
 const GroupLabel = ListboxGroupLabel;
 
 export {
+  Group,
+  GroupLabel,
+  Item,
+  ITEM_SELECT_EVENT,
+  ItemIndicator,
   Listbox,
   ListboxGroup,
   ListboxGroupLabel,
@@ -1104,9 +1117,4 @@ export {
   ListboxItemIndicator,
   //
   Root,
-  Group,
-  GroupLabel,
-  Item,
-  ItemIndicator,
-  ITEM_SELECT_EVENT,
 };
