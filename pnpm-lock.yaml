@@ -303,6 +303,28 @@ importers:
         specifier: ^5.7.3
         version: 5.8.2
 
+  packages/listbox:
+    dependencies:
+      '@types/react':
+        specifier: '*'
+        version: 19.0.10
+      '@types/react-dom':
+        specifier: '*'
+        version: 19.0.4(@types/react@19.0.10)
+      react:
+        specifier: ^18.0 || ^19.0 || ^19.0.0-rc
+        version: 19.0.0
+      react-dom:
+        specifier: ^18.0 || ^19.0 || ^19.0.0-rc
+        version: 19.0.0(react@19.0.0)
+    devDependencies:
+      tsup:
+        specifier: ^8.3.6
+        version: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)
+      typescript:
+        specifier: ^5.7.3
+        version: 5.8.2
+
   packages/mention:
     dependencies:
       '@diceui/shared':
