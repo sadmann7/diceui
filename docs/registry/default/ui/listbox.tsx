@@ -14,7 +14,7 @@ const GROUP_NAME = "ListboxGroup";
 const GROUP_LABEL_NAME = "ListboxGroupLabel";
 const ITEM_SELECT_EVENT = `${ITEM_NAME}.Select.Event`;
 
-const ERRORS = {
+const LISTBOX_ERRORS = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` must be used as root component`,
   [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${ROOT_NAME}\``,
   [ITEM_INDICATOR_NAME]: `\`${ITEM_INDICATOR_NAME}\` must be within \`${ITEM_NAME}\``,
@@ -372,10 +372,10 @@ interface ListboxContextValue {
 const ListboxContext = React.createContext<ListboxContextValue | null>(null);
 ListboxContext.displayName = ROOT_NAME;
 
-function useListboxContext(name: keyof typeof ERRORS) {
+function useListboxContext(name: keyof typeof LISTBOX_ERRORS) {
   const context = React.useContext(ListboxContext);
   if (!context) {
-    throw new Error(ERRORS[name]);
+    throw new Error(LISTBOX_ERRORS[name]);
   }
   return context;
 }
@@ -867,10 +867,10 @@ const ListboxGroupContext =
   React.createContext<ListboxGroupContextValue | null>(null);
 ListboxGroupContext.displayName = GROUP_NAME;
 
-function useListboxGroupContext(name: keyof typeof ERRORS) {
+function useListboxGroupContext(name: keyof typeof LISTBOX_ERRORS) {
   const context = React.useContext(ListboxGroupContext);
   if (!context) {
-    throw new Error(ERRORS[name]);
+    throw new Error(LISTBOX_ERRORS[name]);
   }
   return context;
 }
@@ -938,10 +938,10 @@ const ListboxItemContext = React.createContext<{
 } | null>(null);
 ListboxItemContext.displayName = ITEM_NAME;
 
-function useListboxItemContext(name: keyof typeof ERRORS) {
+function useListboxItemContext(name: keyof typeof LISTBOX_ERRORS) {
   const context = React.useContext(ListboxItemContext);
   if (!context) {
-    throw new Error(ERRORS[name]);
+    throw new Error(LISTBOX_ERRORS[name]);
   }
   return context;
 }
@@ -1120,15 +1120,15 @@ const Group = ListboxGroup;
 const GroupLabel = ListboxGroupLabel;
 
 export {
-  Group,
-  GroupLabel,
-  Item,
-  ItemIndicator,
+  ListboxRoot,
   ListboxGroup,
   ListboxGroupLabel,
   ListboxItem,
   ListboxItemIndicator,
-  ListboxRoot,
   //
   Root,
+  Group,
+  GroupLabel,
+  Item,
+  ItemIndicator,
 };

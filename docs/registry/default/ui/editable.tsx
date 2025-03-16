@@ -18,7 +18,7 @@ const TOOLBAR_NAME = "EditableToolbar";
 const CANCEL_NAME = "EditableCancel";
 const SUBMIT_NAME = "EditableSubmit";
 
-const EDITABLE_ERROR = {
+const EDITABLE_ERRORS = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` components must be within \`${ROOT_NAME}\``,
   [AREA_NAME]: `\`${AREA_NAME}\` must be within \`${ROOT_NAME}\``,
   [PREVIEW_NAME]: `\`${PREVIEW_NAME}\` must be within \`${ROOT_NAME}\``,
@@ -65,10 +65,10 @@ interface EditableContextValue {
 const EditableContext = React.createContext<EditableContextValue | null>(null);
 EditableContext.displayName = ROOT_NAME;
 
-function useEditableContext(name: keyof typeof EDITABLE_ERROR) {
+function useEditableContext(name: keyof typeof EDITABLE_ERRORS) {
   const context = React.useContext(EditableContext);
   if (!context) {
-    throw new Error(EDITABLE_ERROR[name]);
+    throw new Error(EDITABLE_ERRORS[name]);
   }
   return context;
 }
