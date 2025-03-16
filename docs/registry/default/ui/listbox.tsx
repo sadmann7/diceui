@@ -12,7 +12,6 @@ const ITEM_NAME = "ListboxItem";
 const ITEM_INDICATOR_NAME = "ListboxItemIndicator";
 const GROUP_NAME = "ListboxGroup";
 const GROUP_LABEL_NAME = "ListboxGroupLabel";
-const INPUT_NAME = "ListboxInput";
 const ITEM_SELECT_EVENT = `${ITEM_NAME}.Select.Event`;
 
 const ERRORS = {
@@ -21,7 +20,6 @@ const ERRORS = {
   [ITEM_INDICATOR_NAME]: `\`${ITEM_INDICATOR_NAME}\` must be within \`${ITEM_NAME}\``,
   [GROUP_NAME]: `\`${GROUP_NAME}\` must be within \`${ROOT_NAME}\``,
   [GROUP_LABEL_NAME]: `\`${GROUP_LABEL_NAME}\` must be within \`${GROUP_NAME}\``,
-  [INPUT_NAME]: `\`${INPUT_NAME}\` must be within \`${ROOT_NAME}\``,
 } as const;
 
 type Value<Multiple extends boolean = false> = Multiple extends true
@@ -429,11 +427,7 @@ function ListboxRootImpl<Multiple extends boolean = false>(
 
   const store = storeRef.current;
 
-  const focusedValueRef = React.useRef<string | null>(null);
-
-  const onFocusedValueChange = React.useCallback((value: string | null) => {
-    focusedValueRef.current = value;
-  }, []);
+  const [focusedValue, setFocusedValue] = React.useState<string | null>(null);
 
   const [value, setValue] = useControllableState<Value<Multiple>>({
     prop: valueProp,
@@ -507,47 +501,45 @@ function ListboxRootImpl<Multiple extends boolean = false>(
             currentValues.delete(itemValue);
           } else {
             currentValues.add(itemValue);
-            onFocusedValueChange(itemValue);
+            setFocusedValue(itemValue);
           }
 
           setValue([...currentValues] as Value<Multiple>);
         } else {
           setValue([itemValue] as Value<Multiple>);
-          onFocusedValueChange(itemValue);
+          setFocusedValue(itemValue);
         }
       } else {
         if (value === itemValue) {
           setValue("" as Value<Multiple>);
         } else {
           setValue(itemValue as Value<Multiple>);
-          onFocusedValueChange(itemValue);
+          setFocusedValue(itemValue);
         }
       }
 
       store.onSelectedStateChange(itemValue, multiple && isMultipleEvent);
     },
-    [value, setValue, store, multiple, getItems, onFocusedValueChange],
+    [value, setValue, store, multiple, getItems],
   );
 
   const onItemFocus = React.useCallback(
     (value: string) => {
       store.onStateChange("focusedValue", value);
-      onFocusedValueChange(value);
+      setFocusedValue(value);
     },
-    [store, onFocusedValueChange],
+    [store],
   );
 
   const onItemBlur = React.useCallback(() => {
     store.onStateChange("focusedValue", null);
-    onFocusedValueChange(null);
-  }, [store, onFocusedValueChange]);
+  }, [store]);
 
   const onItemHighlight = React.useCallback(
     (value: string | null) => {
       store.onHighlightedValueChange(value);
-      onFocusedValueChange(value);
     },
-    [store, onFocusedValueChange],
+    [store],
   );
 
   const focusItemByValue = React.useCallback(
@@ -566,11 +558,11 @@ function ListboxRootImpl<Multiple extends boolean = false>(
       if (item?.ref.current && !virtual && !item.disabled) {
         item.ref.current?.focus();
         store.onStateChange("focusedValue", value);
-        onFocusedValueChange(value);
+        setFocusedValue(value);
         store.onHighlightedValueChange(value);
       }
     },
-    [getItems, store, virtual, onFocusedValueChange],
+    [getItems, store, virtual],
   );
 
   const onKeyDown = React.useCallback(
@@ -632,7 +624,7 @@ function ListboxRootImpl<Multiple extends boolean = false>(
             if (minItem?.ref.current && !virtual) {
               minItem.ref.current?.focus();
               store.onStateChange("focusedValue", minValue);
-              onFocusedValueChange(minValue);
+              setFocusedValue(minValue);
               store.onHighlightedValueChange(minValue);
             }
           }
@@ -648,7 +640,7 @@ function ListboxRootImpl<Multiple extends boolean = false>(
             if (maxItem?.ref.current && !virtual) {
               maxItem.ref.current?.focus();
               store.onStateChange("focusedValue", maxValue);
-              onFocusedValueChange(maxValue);
+              setFocusedValue(maxValue);
               store.onHighlightedValueChange(maxValue);
             }
           }
@@ -748,7 +740,7 @@ function ListboxRootImpl<Multiple extends boolean = false>(
             const isMultipleSelectionKey =
               multiple && (multiple === true || event.ctrlKey || event.metaKey);
             onItemSelect(focusedValue, isMultipleSelectionKey);
-            onFocusedValueChange(focusedValue);
+            setFocusedValue(focusedValue);
 
             const focusedItem = items.find(
               (item) => item.value === focusedValue,
@@ -778,7 +770,7 @@ function ListboxRootImpl<Multiple extends boolean = false>(
         if (!virtual && nextItem.ref.current) {
           nextItem.ref.current?.focus();
           store.onStateChange("focusedValue", nextItem.value);
-          onFocusedValueChange(nextItem.value);
+          setFocusedValue(nextItem.value);
           store.onHighlightedValueChange(nextItem.value);
         }
       }
@@ -793,7 +785,6 @@ function ListboxRootImpl<Multiple extends boolean = false>(
       loop,
       virtual,
       multiple,
-      onFocusedValueChange,
     ],
   );
 
@@ -814,13 +805,13 @@ function ListboxRootImpl<Multiple extends boolean = false>(
 
         if (items.length === 0) return;
 
-        if (focusedValueRef.current) {
+        if (focusedValue) {
           const lastFocusedItem = items.find(
-            (item) => item.value === focusedValueRef.current,
+            (item) => item.value === focusedValue,
           );
 
           if (lastFocusedItem) {
-            focusItemByValue(focusedValueRef.current);
+            focusItemByValue(focusedValue);
             return;
           }
         }
@@ -829,11 +820,11 @@ function ListboxRootImpl<Multiple extends boolean = false>(
         if (firstItem?.ref.current && !virtual) {
           firstItem.ref.current?.focus();
           store.onStateChange("focusedValue", firstItem.value);
-          onFocusedValueChange(firstItem.value);
+          setFocusedValue(firstItem.value);
         }
       }
     },
-    [focusItemByValue, getItems, virtual, store, onFocusedValueChange],
+    [focusItemByValue, getItems, virtual, store, focusedValue],
   );
 
   const onBlur = React.useCallback(
@@ -868,11 +859,11 @@ function ListboxRootImpl<Multiple extends boolean = false>(
           !virtual
         ) {
           store.onStateChange("focusedValue", filteredItems[0].value);
-          onFocusedValueChange(filteredItems[0].value);
+          setFocusedValue(filteredItems[0].value);
         }
       }
     },
-    [store, getItems, virtual, onFocusedValueChange],
+    [store, getItems, virtual],
   );
 
   const contextValue = React.useMemo<ListboxContextValue>(
@@ -1208,66 +1199,12 @@ const ListboxItemIndicator = React.forwardRef<
 });
 ListboxItemIndicator.displayName = ITEM_INDICATOR_NAME;
 
-interface ListboxInputProps extends React.ComponentPropsWithoutRef<"input"> {
-  asChild?: boolean;
-}
-
-const ListboxInput = React.forwardRef<HTMLInputElement, ListboxInputProps>(
-  (props, forwardedRef) => {
-    const {
-      asChild,
-      className,
-      placeholder,
-      onChange: onChangeProp,
-      ...inputProps
-    } = props;
-
-    const context = useListboxContext(INPUT_NAME);
-    const filterValue = useListboxState((state) => state.filterValue);
-
-    const onChange = React.useCallback(
-      (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = event.target.value;
-
-        onChangeProp?.(event);
-        context.onFilterChange(newValue);
-      },
-      [onChangeProp, context.onFilterChange],
-    );
-
-    const InputPrimitive = asChild ? Slot : "input";
-
-    return (
-      <InputPrimitive
-        role="searchbox"
-        aria-autocomplete="list"
-        autoCapitalize="off"
-        autoComplete="off"
-        autoCorrect="off"
-        spellCheck="false"
-        data-slot="listbox-input"
-        placeholder={placeholder}
-        value={filterValue}
-        {...inputProps}
-        ref={forwardedRef}
-        onChange={composeEventHandlers(onChangeProp, onChange)}
-        className={cn(
-          "w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
-          className,
-        )}
-      />
-    );
-  },
-);
-ListboxInput.displayName = INPUT_NAME;
-
 const Listbox = ListboxRoot;
 const Root = ListboxRoot;
 const Item = ListboxItem;
 const ItemIndicator = ListboxItemIndicator;
 const Group = ListboxGroup;
 const GroupLabel = ListboxGroupLabel;
-const Input = ListboxInput;
 
 export {
   Listbox,
@@ -1275,13 +1212,11 @@ export {
   ListboxGroupLabel,
   ListboxItem,
   ListboxItemIndicator,
-  ListboxInput,
   //
   Root,
   Group,
   GroupLabel,
   Item,
   ItemIndicator,
-  Input,
   ITEM_SELECT_EVENT,
 };
