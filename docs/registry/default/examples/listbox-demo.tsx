@@ -3,7 +3,6 @@ import {
   ListboxItem,
   ListboxItemIndicator,
 } from "@/registry/default/ui/listbox";
-import { Check } from "lucide-react";
 
 const tricks = [
   { label: "Kickflip", description: "Flip the board 360° along its long axis" },

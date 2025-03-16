@@ -12,6 +12,15 @@ const tricks = [
       "Flip the board 360° along its long axis in the opposite direction of a kickflip",
   },
   {
+    label: "Tre Flip",
+    description:
+      "Flip the board 360° along its long axis in the opposite direction of a kickflip",
+  },
+  {
+    label: "FS 540",
+    description: "Flip the board 540° along its long axis",
+  },
+  {
     label: "360 Varial McTwist",
     description: "A 540° inverted aerial with a 360° board rotation",
   },
@@ -30,9 +39,9 @@ export default function ListboxGridDemo() {
           value={trick.label}
           className="items-start"
         >
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-px">
             <div className="font-medium">{trick.label}</div>
-            <div className="text-muted-foreground text-sm">
+            <div className="line-clamp-2 text-muted-foreground text-sm">
               {trick.description}
             </div>
           </div>

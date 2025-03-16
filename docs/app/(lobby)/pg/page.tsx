@@ -28,8 +28,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import ListboxDemo from "@/registry/default/examples/listbox-demo";
-import ListboxGridDemo from "@/registry/default/examples/listbox-grid-demo";
-import ListboxHorizontalDemo from "@/registry/default/examples/listbox-horizontal-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -39,15 +37,27 @@ import {
   ComboboxItem,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
+import * as Listbox from "@diceui/listbox";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
+import * as React from "react";
 
 export default function PlaygroundPage() {
+  const [value, setValue] = React.useState("");
+
   return (
     <Shell>
-      <ListboxDemo />
-      <ListboxHorizontalDemo />
-      <ListboxGridDemo />
+      <Listbox.Root
+        value={value}
+        onValueChange={setValue}
+        className="w-full max-w-md"
+      >
+        {tricks.map((trick) => (
+          <Listbox.Item key={trick.value} value={trick.value}>
+            {trick.label}
+          </Listbox.Item>
+        ))}
+      </Listbox.Root>
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />

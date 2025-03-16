@@ -4,7 +4,7 @@ import { defineConfig } from "tsup";
 
 export default defineConfig({
   entry: {
-    index: "src/listbox.tsx",
+    index: "src/index.ts",
   },
   format: ["esm", "cjs"],
   dts: true,

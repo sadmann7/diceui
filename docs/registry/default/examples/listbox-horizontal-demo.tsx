@@ -12,10 +12,6 @@ const tricks = [
       "Flip the board 360° along its long axis in the opposite direction of a kickflip",
   },
   {
-    label: "360 Varial McTwist",
-    description: "A 540° inverted aerial with a 360° board rotation",
-  },
-  {
     label: "The 900",
     description: "Legendary 900° aerial rotation pioneered by Tony Hawk",
   },
@@ -31,7 +27,7 @@ export default function ListboxHorizontalDemo() {
               <div className="font-medium">{trick.label}</div>
               <ListboxItemIndicator />
             </div>
-            <div className="text-muted-foreground text-sm">
+            <div className="line-clamp-2 text-muted-foreground text-sm">
               {trick.description}
             </div>
           </div>

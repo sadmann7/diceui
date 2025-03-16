@@ -1,48 +1,36 @@
 import { cn } from "@/lib/utils";
-import {
-  Group,
-  GroupLabel,
-  Item,
-  ItemIndicator,
-  type ListboxGroupLabelProps,
-  type ListboxGroupProps,
-  type ListboxItemIndicatorProps,
-  type ListboxItemProps,
-  type ListboxRootProps,
-  Root,
-} from "@diceui/listbox";
-import { Check } from "lucide-react";
+import * as ListboxPrimitive from "@diceui/listbox";
+import { Check, Group } from "lucide-react";
 import * as React from "react";
 
 const Listbox = React.forwardRef<
-  React.ComponentRef<typeof Root>,
-  React.ComponentPropsWithoutRef<typeof Root>
+  React.ComponentRef<typeof ListboxPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof ListboxPrimitive.Root>
 >(({ className, orientation = "vertical", ...props }, ref) => (
-  <Root
+  <ListboxPrimitive.Root
     ref={ref}
     orientation={orientation}
     className={cn(
       "flex gap-2 focus-visible:outline-none",
-      orientation === "horizontal" && "items-center",
       orientation === "vertical" && "flex-col",
       className,
     )}
     {...props}
   />
 ));
-Listbox.displayName = Root.displayName;
+Listbox.displayName = ListboxPrimitive.Root.displayName;
 
 const ListboxGroup = React.forwardRef<
-  React.ComponentRef<typeof Group>,
-  React.ComponentPropsWithoutRef<typeof Group>
->(({ ...props }, ref) => <Group ref={ref} {...props} />);
-ListboxGroup.displayName = Group.displayName;
+  React.ComponentRef<typeof ListboxPrimitive.Group>,
+  React.ComponentPropsWithoutRef<typeof ListboxPrimitive.Group>
+>(({ ...props }, ref) => <ListboxPrimitive.Group ref={ref} {...props} />);
+ListboxGroup.displayName = ListboxPrimitive.Group.displayName;
 
 const ListboxGroupLabel = React.forwardRef<
-  React.ElementRef<typeof GroupLabel>,
-  React.ComponentPropsWithoutRef<typeof GroupLabel>
+  React.ElementRef<typeof ListboxPrimitive.GroupLabel>,
+  React.ComponentPropsWithoutRef<typeof ListboxPrimitive.GroupLabel>
 >(({ className, ...props }, ref) => (
-  <GroupLabel
+  <ListboxPrimitive.GroupLabel
     ref={ref}
     className={cn(
       "px-2 py-1.5 font-medium text-muted-foreground text-sm",
@@ -51,32 +39,32 @@ const ListboxGroupLabel = React.forwardRef<
     {...props}
   />
 ));
-ListboxGroupLabel.displayName = GroupLabel.displayName;
+ListboxGroupLabel.displayName = ListboxPrimitive.GroupLabel.displayName;
 
 const ListboxItem = React.forwardRef<
-  React.ComponentRef<typeof Item>,
-  React.ComponentPropsWithoutRef<typeof Item>
+  React.ComponentRef<typeof ListboxPrimitive.Item>,
+  React.ComponentPropsWithoutRef<typeof ListboxPrimitive.Item>
 >(({ className, ...props }, ref) => (
-  <Item
+  <ListboxPrimitive.Item
     ref={ref}
     className={cn(
-      "flex cursor-default select-none items-center justify-between gap-2 rounded-md p-4 outline-hidden ring-1 ring-border focus-visible:ring-ring data-disabled:pointer-events-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:opacity-50",
+      "flex w-full cursor-default select-none items-center justify-between gap-2 rounded-md p-4 outline-hidden ring-1 ring-border focus-visible:ring-ring data-disabled:pointer-events-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:opacity-50",
       className,
     )}
     {...props}
   />
 ));
-ListboxItem.displayName = Item.displayName;
+ListboxItem.displayName = ListboxPrimitive.Item.displayName;
 
 const ListboxItemIndicator = React.forwardRef<
-  React.ComponentRef<typeof ItemIndicator>,
-  React.ComponentPropsWithoutRef<typeof ItemIndicator>
+  React.ComponentRef<typeof ListboxPrimitive.ItemIndicator>,
+  React.ComponentPropsWithoutRef<typeof ListboxPrimitive.ItemIndicator>
 >(({ ...props }, ref) => (
-  <ItemIndicator ref={ref} {...props}>
+  <ListboxPrimitive.ItemIndicator ref={ref} {...props}>
     <Check className="size-4" />
-  </ItemIndicator>
+  </ListboxPrimitive.ItemIndicator>
 ));
-ListboxItemIndicator.displayName = ItemIndicator.displayName;
+ListboxItemIndicator.displayName = ListboxPrimitive.ItemIndicator.displayName;
 
 export {
   Listbox,
@@ -84,12 +72,4 @@ export {
   ListboxGroupLabel,
   ListboxItem,
   ListboxItemIndicator,
-};
-
-export type {
-  ListboxRootProps,
-  ListboxGroupProps,
-  ListboxGroupLabelProps,
-  ListboxItemProps,
-  ListboxItemIndicatorProps,
 };
