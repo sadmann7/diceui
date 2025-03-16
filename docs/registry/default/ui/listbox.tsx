@@ -30,7 +30,6 @@ interface ListboxState {
   selectedValues: Set<string>;
   focusedValue: string | null;
   highlightedValue: string | null;
-  filterValue: string;
 }
 
 type StoreListener = () => void;
@@ -47,7 +46,6 @@ interface ListboxStore {
   onEmit: () => void;
   onSelectedStateChange: (value: string, multiple?: boolean) => void;
   onClearSelection: () => void;
-  onFilterChange: (value: string) => void;
   onHighlightedValueChange: (value: string | null) => void;
 }
 
@@ -60,7 +58,6 @@ function createSelectableStore(
       : new Set<string>(),
     focusedValue: null,
     highlightedValue: null,
-    filterValue: "",
   };
 
   const listeners = new Set<StoreListener>();
@@ -128,10 +125,6 @@ function createSelectableStore(
       if (state.selectedValues.size > 0) {
         store.onStateChange("selectedValues", new Set<string>());
       }
-    },
-
-    onFilterChange(value: string) {
-      store.onStateChange("filterValue", value);
     },
 
     onHighlightedValueChange(value: string | null) {
@@ -358,11 +351,9 @@ interface ListboxContextValue {
   onItemFocus: (value: string) => void;
   onItemBlur: () => void;
   onItemHighlight: (value: string | null) => void;
-  onFilterChange: (value: string) => void;
   dir?: "ltr" | "rtl";
   disabled?: boolean;
   multiple?: boolean;
-  filterValue: string;
 }
 
 const ListboxContext = React.createContext<ListboxContextValue | null>(null);
@@ -511,14 +502,6 @@ function ListboxRootImpl<Multiple extends boolean = false>(
   const focusItemByValue = React.useCallback(
     (value: string) => {
       const allItems = getItems();
-      const filterValue = store.getSnapshot().filterValue;
-
-      if (
-        filterValue &&
-        !value.toLowerCase().includes(filterValue.toLowerCase())
-      ) {
-        return;
-      }
 
       const item = allItems.find((item) => item.value === value);
       if (item?.ref.current && !virtual && !item.disabled) {
@@ -559,15 +542,7 @@ function ListboxRootImpl<Multiple extends boolean = false>(
       const isHorizontal =
         orientation === "horizontal" || orientation === "mixed";
 
-      const allItems = getItems();
-      const filterValue = store.getSnapshot().filterValue;
-      const items = allItems.filter((item) => {
-        if (item.disabled) return false;
-        if (filterValue) {
-          return item.value.toLowerCase().includes(filterValue.toLowerCase());
-        }
-        return true;
-      });
+      const items = getItems().filter((item) => !item.disabled);
       const itemCount = items.length;
 
       if (itemCount === 0) return;
@@ -759,15 +734,7 @@ function ListboxRootImpl<Multiple extends boolean = false>(
       if (isShiftTabRef.current) return;
 
       if (event.target === event.currentTarget) {
-        const allItems = getItems();
-        const filterValue = store.getSnapshot().filterValue;
-        const items = allItems.filter((item) => {
-          if (item.disabled) return false;
-          if (filterValue) {
-            return item.value.toLowerCase().includes(filterValue.toLowerCase());
-          }
-          return true;
-        });
+        const items = getItems().filter((item) => !item.disabled);
 
         if (items.length === 0) return;
 
@@ -805,33 +772,6 @@ function ListboxRootImpl<Multiple extends boolean = false>(
     [store, collectionRef],
   );
 
-  const onFilterChange = React.useCallback(
-    (value: string) => {
-      store.onFilterChange(value);
-
-      store.onStateChange("focusedValue", null);
-
-      if (value) {
-        const allItems = getItems();
-        const filteredItems = allItems.filter(
-          (item) =>
-            !item.disabled &&
-            item.value.toLowerCase().includes(value.toLowerCase()),
-        );
-
-        if (
-          filteredItems.length > 0 &&
-          filteredItems[0]?.ref.current &&
-          !virtual
-        ) {
-          store.onStateChange("focusedValue", filteredItems[0].value);
-          setFocusedValue(filteredItems[0].value);
-        }
-      }
-    },
-    [store, getItems, virtual],
-  );
-
   const contextValue = React.useMemo<ListboxContextValue>(
     () => ({
       store,
@@ -840,11 +780,9 @@ function ListboxRootImpl<Multiple extends boolean = false>(
       onItemFocus,
       onItemBlur,
       onItemHighlight,
-      onFilterChange,
       dir,
       disabled,
       multiple,
-      filterValue: store.getSnapshot().filterValue,
     }),
     [
       store,
@@ -853,7 +791,6 @@ function ListboxRootImpl<Multiple extends boolean = false>(
       onItemFocus,
       onItemBlur,
       onItemHighlight,
-      onFilterChange,
       dir,
       disabled,
       multiple,
@@ -1017,12 +954,6 @@ const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
     );
     const isDisabled = disabled || context.disabled;
 
-    const filterValue = useListboxState((state) => state.filterValue);
-    const isVisible = React.useMemo(() => {
-      if (!filterValue) return true;
-      return value.toLowerCase().includes(filterValue.toLowerCase());
-    }, [value, filterValue]);
-
     useIsomorphicLayoutEffect(() => {
       if (value === "") {
         throw new Error(`${ITEM_NAME} value cannot be an empty string`);
@@ -1091,8 +1022,6 @@ const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
       () => ({ isSelected }),
       [isSelected],
     );
-
-    if (!isVisible) return null;
 
     return (
       <ListboxItemContext.Provider value={itemContextValue}>
