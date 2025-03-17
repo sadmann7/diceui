@@ -27,7 +27,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import ListboxGroupDemo from "@/registry/default/examples/listbox-group-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -37,22 +36,12 @@ import {
   ComboboxItem,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
-import * as Listbox from "@diceui/listbox";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <ListboxGroupDemo />
-      <Listbox.Root className="w-full max-w-md">
-        {tricks.map((trick) => (
-          <Listbox.Item key={trick.value} value={trick.value}>
-            {trick.label}
-            <Listbox.ItemIndicator>✓</Listbox.ItemIndicator>
-          </Listbox.Item>
-        ))}
-      </Listbox.Root>
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
