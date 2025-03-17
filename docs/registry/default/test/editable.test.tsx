@@ -8,7 +8,7 @@ import {
 } from "@testing-library/react";
 import { describe, expect, test, vi } from "vitest";
 
-import * as Editable from "../ui/editable";
+import * as Editable from "@/registry/default/ui/editable";
 
 // Mock ResizeObserver
 class ResizeObserver {
@@ -306,7 +306,7 @@ describe("Editable", () => {
     const onEdit = vi.fn();
 
     // Create a wrapper component that provides the Editable context
-    const { container } = render(
+    render(
       <Editable.Root onEdit={onEdit}>
         <Editable.Label>Title</Editable.Label>
         <Editable.Area>
