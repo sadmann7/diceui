@@ -1,5 +1,16 @@
 # @diceui/combobox
 
+## 0.10.0
+
+### Minor Changes
+
+- a13ae2e: Add better forwardRef
+
+### Patch Changes
+
+- Updated dependencies [a13ae2e]
+  - @diceui/shared@0.12.0
+
 ## 0.9.0
 
 ### Minor Changes

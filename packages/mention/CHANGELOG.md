@@ -1,5 +1,12 @@
 # @diceui/mention
 
+## 0.7.1
+
+### Patch Changes
+
+- Updated dependencies [a13ae2e]
+  - @diceui/shared@0.12.0
+
 ## 0.7.0
 
 ### Minor Changes

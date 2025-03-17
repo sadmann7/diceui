@@ -1,5 +1,11 @@
 # @diceui/shared
 
+## 0.12.0
+
+### Minor Changes
+
+- a13ae2e: Add better forwardRef
+
 ## 0.11.0
 
 ### Minor Changes
