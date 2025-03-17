@@ -3,6 +3,11 @@
 import * as React from "react";
 import { composeEventHandlers } from "./compose-event-handlers";
 import { useComposedRefs } from "./compose-refs";
+import {
+  type WithDisplayName,
+  type WithForwardedRef,
+  forwardRef,
+} from "./forward-ref";
 import { Slot } from "./slot";
 import { VisuallyHiddenInput } from "./visually-hidden-input";
 
@@ -151,7 +156,7 @@ function useListboxState<T>(selector: StoreStateSelector<T>): T {
   return React.useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 }
 
-type RootElement = React.ComponentRef<typeof ListboxRoot>;
+type RootElement = HTMLDivElement;
 type ItemElement = React.ComponentRef<typeof ListboxItem>;
 
 interface ItemData {
@@ -844,13 +849,14 @@ function ListboxRootImpl<Multiple extends boolean = false>(
   );
 }
 
-const ListboxRoot = React.forwardRef(ListboxRootImpl) as (<
-  Multiple extends boolean = false,
->(
-  props: ListboxRootProps<Multiple> & {
-    ref?: React.ForwardedRef<HTMLDivElement>;
-  },
-) => React.ReactElement) & { displayName?: string };
+interface ListboxRootComponentProps extends WithDisplayName {
+  <Multiple extends boolean = false>(
+    props: ListboxRootProps<Multiple> &
+      WithForwardedRef<typeof ListboxRootImpl>,
+  ): React.JSX.Element;
+}
+
+const ListboxRoot = forwardRef(ListboxRootImpl) as ListboxRootComponentProps;
 ListboxRoot.displayName = ROOT_NAME;
 
 interface ListboxGroupContextValue {
@@ -1109,6 +1115,7 @@ export {
 
 export type {
   ListboxRootProps,
+  ListboxRootComponentProps,
   ListboxGroupProps,
   ListboxGroupLabelProps,
   ListboxItemProps,

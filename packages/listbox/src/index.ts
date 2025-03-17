@@ -16,6 +16,7 @@ export {
 
 export type {
   ListboxRootProps,
+  ListboxRootComponentProps,
   ListboxGroupProps,
   ListboxGroupLabelProps,
   ListboxItemProps,

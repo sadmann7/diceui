@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import * as ListboxPrimitive from "@diceui/listbox";
-import { Check, Group } from "lucide-react";
+import { Check } from "lucide-react";
 import * as React from "react";
 
 const Listbox = React.forwardRef<
@@ -17,7 +17,7 @@ const Listbox = React.forwardRef<
     )}
     {...props}
   />
-));
+)) as ListboxPrimitive.ListboxRootComponentProps;
 Listbox.displayName = ListboxPrimitive.Root.displayName;
 
 const ListboxGroup = React.forwardRef<

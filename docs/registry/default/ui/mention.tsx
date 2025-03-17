@@ -4,7 +4,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const Mention = React.forwardRef<
-  React.ElementRef<typeof MentionPrimitive.Root>,
+  React.ComponentRef<typeof MentionPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof MentionPrimitive.Root>
 >(({ className, ...props }, ref) => (
   <MentionPrimitive.Root
@@ -19,7 +19,7 @@ const Mention = React.forwardRef<
 Mention.displayName = MentionPrimitive.Root.displayName;
 
 const MentionLabel = React.forwardRef<
-  React.ElementRef<typeof MentionPrimitive.Label>,
+  React.ComponentRef<typeof MentionPrimitive.Label>,
   React.ComponentPropsWithoutRef<typeof MentionPrimitive.Label>
 >(({ className, ...props }, ref) => (
   <MentionPrimitive.Label
@@ -31,7 +31,7 @@ const MentionLabel = React.forwardRef<
 MentionLabel.displayName = MentionPrimitive.Label.displayName;
 
 const MentionInput = React.forwardRef<
-  React.ElementRef<typeof MentionPrimitive.Input>,
+  React.ComponentRef<typeof MentionPrimitive.Input>,
   React.ComponentPropsWithoutRef<typeof MentionPrimitive.Input>
 >(({ className, ...props }, ref) => (
   <MentionPrimitive.Input
@@ -46,7 +46,7 @@ const MentionInput = React.forwardRef<
 MentionInput.displayName = MentionPrimitive.Input.displayName;
 
 const MentionContent = React.forwardRef<
-  React.ElementRef<typeof MentionPrimitive.Content>,
+  React.ComponentRef<typeof MentionPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof MentionPrimitive.Content>
 >(({ className, children, ...props }, ref) => (
   <MentionPrimitive.Portal>
@@ -65,7 +65,7 @@ const MentionContent = React.forwardRef<
 MentionContent.displayName = MentionPrimitive.Content.displayName;
 
 const MentionItem = React.forwardRef<
-  React.ElementRef<typeof MentionPrimitive.Item>,
+  React.ComponentRef<typeof MentionPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof MentionPrimitive.Item>
 >(({ className, children, ...props }, ref) => (
   <MentionPrimitive.Item
