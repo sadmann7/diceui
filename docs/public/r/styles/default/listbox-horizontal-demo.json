@@ -1,9 +1,6 @@
 {
   "name": "listbox-horizontal-demo",
   "type": "registry:example",
-  "dependencies": [
-    "lucide-react"
-  ],
   "files": [
     {
       "path": "examples/listbox-horizontal-demo.tsx",

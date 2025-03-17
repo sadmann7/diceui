@@ -8,7 +8,14 @@ links:
 
 <ComponentTabs name="listbox-demo" />
 
+
 ## Installation
+
+```package-install
+@diceui/listbox
+```
+
+## Installation with shadcn/ui
 
 ### CLI
 
@@ -23,13 +30,8 @@ npx shadcn@latest add "https://diceui.com/r/listbox"
      Install the following dependencies:
 
      ```package-install
-     @radix-ui/react-slot
+     @diceui/listbox
      ```
-  </Step>
-   <Step>
-    Copy the composition utilities into your `lib/composition.ts` file.
-
-    <ComponentSource src="./lib/composition.ts" />
   </Step>
   <Step>
     Copy and paste the following code into your project.
@@ -43,14 +45,16 @@ npx shadcn@latest add "https://diceui.com/r/listbox"
 Import the parts, and compose them together.
 
 ```tsx
-import { Listbox, ListboxItem } from "@/components/ui/listbox"
+import * as Listbox from "@diceui/listbox"
 
-<Listbox>
-  <ListboxGroup>
-    <ListboxGroupLabel/>
-    <ListboxItem />
-  </ListboxGroup>
-</Listbox>
+<Listbox.Root>
+  <Listbox.Group>
+    <Listbox.GroupLabel/>
+    <Listbox.Item >
+      <Listbox.ItemIndicator />
+    </Listbox.Item>
+  </Listbox.Group>
+</Listbox.Root>
 ```
 
 ## Examples
@@ -72,24 +76,57 @@ arrow keys will navigate accordingly:
 
 <ComponentTabs name="listbox-grid-demo" />
 
+### Grouped Items
+
+Group items together to create a list of related options.
+
+<ComponentTabs name="listbox-group-demo" />
+
 ## API Reference
 
-### Listbox
+### Root
 
 The root component for creating listboxes.
 
 <AutoTypeTable
   path="./types/docs/listbox.ts"
-  name="ListboxProps"
+  name="RootProps"
 />
 
-### SelectableItem
+### Group
+
+A group of items inside the selectable list.
+
+<AutoTypeTable
+  path="./types/docs/listbox.ts"
+  name="GroupProps"
+/>
+
+### GroupLabel
+
+A label for the group of items.
+
+<AutoTypeTable
+  path="./types/docs/listbox.ts"
+  name="GroupLabelProps"
+/>
+
+### Item
 
 An item inside the selectable list.
 
 <AutoTypeTable
   path="./types/docs/listbox.ts"
-  name="ListboxItemProps"
+  name="ItemProps"
+/>
+
+### ItemIndicator
+
+A visual indicator that shows when the item is selected.
+
+<AutoTypeTable
+  path="./types/docs/listbox.ts"
+  name="ItemIndicatorProps"
 />
 
 ## Accessibility
@@ -99,32 +136,28 @@ An item inside the selectable list.
 <KeyboardShortcutsTable
   shortcuts={[
     {
+      keys: ["Tab"],
+      description: "Focuses the last active item in the list.",
+    },
+    {
+      keys: ["Shift+Tab"],
+      description: "Moves focus to previous focusable item in the list.",
+    },
+    {
       keys: ["ArrowUp"],
-      description: "In vertical or mixed orientation, moves selection to the previous item.",
+      description: "Moves highlighting to previous item in vertical lists.",
     },
     {
       keys: ["ArrowDown"],
-      description: "In vertical or mixed orientation, moves selection to the next item.",
+      description: "Moves highlighting to next item in vertical lists.",
     },
     {
       keys: ["ArrowLeft"],
-      description: "In horizontal or mixed orientation, moves selection to the previous item.",
+      description: "Moves highlighting to previous item in horizontal lists.",
     },
     {
       keys: ["ArrowRight"],
-      description: "In horizontal or mixed orientation, moves selection to the next item.",
-    },
-    {
-      keys: ["Home"],
-      description: "Moves selection to the first item.",
-    },
-    {
-      keys: ["End"],
-      description: "Moves selection to the last item.",
-    },
-    {
-      keys: ["Enter", "Space"],
-      description: "Activates the selected item.",
+      description: "Moves highlighting to next item in horizontal lists.",
     },
   ]}
 />

@@ -1,9 +1,6 @@
 {
   "name": "listbox-grid-demo",
   "type": "registry:example",
-  "dependencies": [
-    "lucide-react"
-  ],
   "files": [
     {
       "path": "examples/listbox-grid-demo.tsx",

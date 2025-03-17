@@ -81,6 +81,17 @@ export const ui: Registry = [
     ],
   },
   {
+    name: "listbox",
+    type: "registry:ui",
+    dependencies: ["@diceui/listbox", "lucide-react"],
+    files: [
+      {
+        path: "ui/listbox.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "masonry",
     type: "registry:ui",
     dependencies: ["@diceui/masonry", "@radix-ui/react-slot"],

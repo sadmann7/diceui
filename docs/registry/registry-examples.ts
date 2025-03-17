@@ -275,7 +275,6 @@ export const examples: Registry = [
   {
     name: "listbox-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
     files: [
       {
         path: "examples/listbox-demo.tsx",
@@ -286,7 +285,6 @@ export const examples: Registry = [
   {
     name: "listbox-horizontal-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
     files: [
       {
         path: "examples/listbox-horizontal-demo.tsx",
@@ -297,10 +295,19 @@ export const examples: Registry = [
   {
     name: "listbox-grid-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
     files: [
       {
         path: "examples/listbox-grid-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "listbox-group-demo",
+    type: "registry:example",
+    files: [
+      {
+        path: "examples/listbox-group-demo.tsx",
         type: "registry:example",
       },
     ],

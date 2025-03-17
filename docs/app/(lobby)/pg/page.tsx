@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
+import ListboxGroupDemo from "@/registry/default/examples/listbox-group-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -43,6 +44,7 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
+      <ListboxGroupDemo />
       <Listbox.Root className="w-full max-w-md">
         {tricks.map((trick) => (
           <Listbox.Item key={trick.value} value={trick.value}>
