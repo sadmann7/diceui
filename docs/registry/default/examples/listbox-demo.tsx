@@ -23,7 +23,7 @@ const tricks = [
 
 export default function ListboxDemo() {
   return (
-    <Listbox className="w-full max-w-md">
+    <Listbox>
       {tricks.map((trick) => (
         <ListboxItem key={trick.label} value={trick.label}>
           <div className="flex flex-col">

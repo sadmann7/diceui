@@ -32,7 +32,7 @@ const tricks = [
 
 export default function ListboxGridDemo() {
   return (
-    <Listbox orientation="mixed" className="grid w-full grid-cols-3 gap-4">
+    <Listbox orientation="mixed" className="grid w-full gap-2 sm:grid-cols-3">
       {tricks.map((trick) => (
         <ListboxItem
           key={trick.label}
