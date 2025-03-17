@@ -10,7 +10,8 @@
     "start": "next start",
     "lint": "biome check .",
     "lint:fix": "biome check . --write",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "@diceui/checkbox-group": "workspace:*",
