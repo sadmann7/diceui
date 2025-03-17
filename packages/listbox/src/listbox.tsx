@@ -356,19 +356,21 @@ function useLazyRef<T>(init: () => T): React.RefObject<T> {
   return ref as React.RefObject<T>;
 }
 
-interface ListboxContextValue {
+interface ListboxContextValue<Multiple extends boolean = false> {
   store: ListboxStore;
   onItemRegister: (item: CollectionItem, groupId?: string) => () => void;
   onItemSelect: (value: string, isMultipleEvent?: boolean) => void;
   onItemFocus: (value: string) => void;
   onItemBlur: () => void;
   onItemHighlight: (value: string | null) => void;
-  dir?: "ltr" | "rtl";
-  disabled?: boolean;
-  multiple?: boolean;
+  dir: "ltr" | "rtl";
+  disabled: boolean;
+  multiple: Multiple;
 }
 
-const ListboxContext = React.createContext<ListboxContextValue | null>(null);
+const ListboxContext = React.createContext<ListboxContextValue<boolean> | null>(
+  null,
+);
 ListboxContext.displayName = ROOT_NAME;
 
 function useListboxContext(name: keyof typeof LISTBOX_ERRORS) {
@@ -385,13 +387,13 @@ interface ListboxRootProps<Multiple extends boolean = false>
   value?: Value<Multiple>;
   onValueChange?: (value: Value<Multiple>) => void;
   dir?: "ltr" | "rtl";
+  asChild?: boolean;
   disabled?: boolean;
   loop?: boolean;
   multiple?: Multiple;
+  virtual?: boolean;
   orientation?: "horizontal" | "vertical" | "mixed";
   name?: string;
-  virtual?: boolean;
-  asChild?: boolean;
 }
 
 function ListboxRootImpl<Multiple extends boolean = false>(
@@ -403,9 +405,9 @@ function ListboxRootImpl<Multiple extends boolean = false>(
     value,
     onValueChange,
     dir = "ltr",
-    disabled,
+    disabled = false,
     loop = false,
-    multiple = false as Multiple,
+    multiple = false,
     orientation = "vertical",
     name,
     virtual = false,
@@ -788,7 +790,7 @@ function ListboxRootImpl<Multiple extends boolean = false>(
     [store, collectionRef],
   );
 
-  const contextValue = React.useMemo<ListboxContextValue>(
+  const contextValue = React.useMemo<ListboxContextValue<typeof multiple>>(
     () => ({
       store,
       onItemRegister,
@@ -842,12 +844,13 @@ function ListboxRootImpl<Multiple extends boolean = false>(
   );
 }
 
-type ListboxRootComponent = (<Multiple extends boolean = false>(
-  props: ListboxRootProps<Multiple> & { ref?: React.Ref<HTMLDivElement> },
-) => React.ReactElement) &
-  Pick<React.FC<ListboxRootProps<boolean>>, "displayName">;
-
-const ListboxRoot = React.forwardRef(ListboxRootImpl) as ListboxRootComponent;
+const ListboxRoot = React.forwardRef(ListboxRootImpl) as (<
+  Multiple extends boolean = false,
+>(
+  props: ListboxRootProps<Multiple> & {
+    ref?: React.ForwardedRef<HTMLDivElement>;
+  },
+) => React.ReactElement) & { displayName?: string };
 ListboxRoot.displayName = ROOT_NAME;
 
 interface ListboxGroupContextValue {
