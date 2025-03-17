@@ -8,7 +8,7 @@ import {
 } from "@testing-library/react";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-import * as Listbox from "../src/index";
+import * as Listbox from "../src/listbox";
 
 // Mock ResizeObserver
 class ResizeObserver {
