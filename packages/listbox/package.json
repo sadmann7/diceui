@@ -25,7 +25,6 @@
   },
   "files": ["dist", "package.json", "README.md"],
   "scripts": {
-    "clean": "rimraf --glob **/node_modules **/dist **/.source **/.turbo **/.next **/pnpm-lock.yaml **/.tsbuildinfo",
     "dev": "tsup --watch",
     "build": "tsup --clean",
     "typecheck": "tsc --noEmit",

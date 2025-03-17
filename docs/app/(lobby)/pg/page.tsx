@@ -27,7 +27,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import ListboxDemo from "@/registry/default/examples/listbox-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -40,21 +39,15 @@ import {
 import * as Listbox from "@diceui/listbox";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
-import * as React from "react";
 
 export default function PlaygroundPage() {
-  const [value, setValue] = React.useState("");
-
   return (
     <Shell>
-      <Listbox.Root
-        value={value}
-        onValueChange={setValue}
-        className="w-full max-w-md"
-      >
+      <Listbox.Root className="w-full max-w-md">
         {tricks.map((trick) => (
           <Listbox.Item key={trick.value} value={trick.value}>
             {trick.label}
+            <Listbox.ItemIndicator>✓</Listbox.ItemIndicator>
           </Listbox.Item>
         ))}
       </Listbox.Root>
@@ -74,7 +67,7 @@ export default function PlaygroundPage() {
           ))}
         </ComboboxContent>
       </Combobox>
-      <Command className="max-w-[15rem] border">
+      <Command value="heelflip" className="max-w-[15rem] border">
         <CommandInput placeholder="Search tricks..." />
         <CommandEmpty>No tricks found.</CommandEmpty>
         <CommandList>
@@ -129,7 +122,7 @@ export default function PlaygroundPage() {
           <DropdownMenuItem>Pineapple</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <Select>
+      <Select value="heelflip">
         <SelectTrigger className="w-[11.25rem]">
           <SelectValue placeholder="Select a trick" />
         </SelectTrigger>

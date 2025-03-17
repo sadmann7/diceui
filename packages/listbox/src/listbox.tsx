@@ -436,6 +436,20 @@ function ListboxRootImpl<Multiple extends boolean = false>(
 
   const store = storeRef.current;
 
+  useIsomorphicLayoutEffect(() => {
+    if (value !== undefined) {
+      store.onClearSelection();
+
+      if (multiple && Array.isArray(value)) {
+        for (const val of value) {
+          if (val) store.onSelectedStateChange(val, true);
+        }
+      } else if (typeof value === "string" && value) {
+        store.onSelectedStateChange(value, false);
+      }
+    }
+  }, [value, multiple, store]);
+
   const [focusedValue, setFocusedValue] = React.useState<string | null>(null);
 
   const { collectionRef, getItems, onItemRegister } = useCollection();
