@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import { composeEventHandlers } from "./compose-event-handlers";
 import { useComposedRefs } from "./compose-refs";
