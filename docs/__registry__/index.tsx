@@ -97,6 +97,22 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "listbox": {
+      name: "listbox",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/ui/listbox.tsx",
+        type: "registry:ui",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/listbox.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "masonry": {
       name: "masonry",
       description: "",
@@ -620,6 +636,22 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/listbox-grid-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "listbox-group-demo": {
+      name: "listbox-group-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/examples/listbox-group-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/listbox-group-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",

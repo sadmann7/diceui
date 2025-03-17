@@ -1,21 +1,38 @@
-import { ListboxItem, ListboxRoot } from "@/registry/default/ui/listbox";
+import {
+  Listbox,
+  ListboxItem,
+  ListboxItemIndicator,
+} from "@/registry/default/ui/listbox";
+
+const tricks = [
+  { label: "Kickflip", description: "Flip the board 360° along its long axis" },
+  {
+    label: "Heelflip",
+    description:
+      "Flip the board 360° along its long axis in the opposite direction of a kickflip",
+  },
+  {
+    label: "The 900",
+    description: "Legendary 900° aerial rotation pioneered by Tony Hawk",
+  },
+];
 
 export default function ListboxHorizontalDemo() {
   return (
-    <ListboxRoot
-      orientation="horizontal"
-      className="flex w-full flex-row gap-4"
-    >
-      {Array.from({ length: 5 }).map((_, index) => (
-        <ListboxItem
-          key={index}
-          value={`option-${index + 1}`}
-          className="flex h-32 flex-1 flex-col items-center justify-center rounded-md border-2 border-border bg-card p-4 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-        >
-          <div className="font-medium">Option {index + 1}</div>
-          <div className="text-muted-foreground text-sm">Horizontal Item</div>
+    <Listbox orientation="horizontal" className="flex w-full flex-row gap-4">
+      {tricks.map((trick) => (
+        <ListboxItem key={trick.label} value={trick.label}>
+          <div className="flex flex-col">
+            <div className="flex items-center justify-between">
+              <div className="font-medium">{trick.label}</div>
+              <ListboxItemIndicator />
+            </div>
+            <div className="line-clamp-2 text-muted-foreground text-sm">
+              {trick.description}
+            </div>
+          </div>
         </ListboxItem>
       ))}
-    </ListboxRoot>
+    </Listbox>
   );
 }

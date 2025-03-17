@@ -5,6 +5,8 @@ import {
   type HighlightingDirection,
   Primitive,
   VisuallyHiddenInput,
+  type WithDisplayName,
+  type WithForwardedRef,
   createContext,
   forwardRef,
   useAnchor,
@@ -435,12 +437,14 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
   );
 }
 
-type ComboboxRootComponent = (<Multiple extends boolean = false>(
-  props: ComboboxRootProps<Multiple> & { ref?: React.Ref<HTMLDivElement> },
-) => React.ReactElement) &
-  Pick<React.FC<ComboboxRootProps<boolean>>, "displayName">;
+interface ComboboxRootComponentProps extends WithDisplayName {
+  <Multiple extends boolean = false>(
+    props: ComboboxRootProps<Multiple> &
+      WithForwardedRef<typeof ComboboxRootImpl>,
+  ): React.JSX.Element;
+}
 
-const ComboboxRoot = forwardRef(ComboboxRootImpl) as ComboboxRootComponent;
+const ComboboxRoot = forwardRef(ComboboxRootImpl) as ComboboxRootComponentProps;
 
 ComboboxRoot.displayName = ROOT_NAME;
 
@@ -448,4 +452,4 @@ const Root = ComboboxRoot;
 
 export { ComboboxRoot, Root, getDataState, useComboboxContext };
 
-export type { ComboboxRootProps };
+export type { ComboboxRootProps, ComboboxRootComponentProps };

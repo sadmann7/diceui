@@ -1,13 +1,10 @@
 {
   "name": "listbox-grid-demo",
   "type": "registry:example",
-  "dependencies": [
-    "lucide-react"
-  ],
   "files": [
     {
       "path": "examples/listbox-grid-demo.tsx",
-      "content": "import { ListboxItem, ListboxRoot } from \"@/registry/default/ui/listbox\";\n\nexport default function ListboxGridDemo() {\n  return (\n    <ListboxRoot orientation=\"mixed\" className=\"grid w-full grid-cols-3 gap-4\">\n      {Array.from({ length: 9 }).map((_, index) => (\n        <ListboxItem\n          key={index}\n          value={`item-${index + 1}`}\n          className=\"flex h-24 w-full items-center justify-center rounded-md border-2 border-border bg-card p-4 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2\"\n        >\n          <div className=\"text-center\">\n            <div className=\"font-medium\">Item {index + 1}</div>\n            <div className=\"text-muted-foreground text-sm\">\n              Cell {Math.floor(index / 3) + 1}-{(index % 3) + 1}\n            </div>\n          </div>\n        </ListboxItem>\n      ))}\n    </ListboxRoot>\n  );\n}\n",
+      "content": "import {\n  Listbox,\n  ListboxItem,\n  ListboxItemIndicator,\n} from \"@/registry/default/ui/listbox\";\n\nconst tricks = [\n  { label: \"Kickflip\", description: \"Flip the board 360° along its long axis\" },\n  {\n    label: \"Heelflip\",\n    description:\n      \"Flip the board 360° along its long axis in the opposite direction of a kickflip\",\n  },\n  {\n    label: \"Tre Flip\",\n    description:\n      \"Flip the board 360° along its long axis in the opposite direction of a kickflip\",\n  },\n  {\n    label: \"FS 540\",\n    description: \"Flip the board 540° along its long axis\",\n  },\n  {\n    label: \"360 Varial McTwist\",\n    description: \"A 540° inverted aerial with a 360° board rotation\",\n  },\n  {\n    label: \"The 900\",\n    description: \"Legendary 900° aerial rotation pioneered by Tony Hawk\",\n  },\n];\n\nexport default function ListboxGridDemo() {\n  return (\n    <Listbox orientation=\"mixed\" className=\"grid w-full grid-cols-3 gap-4\">\n      {tricks.map((trick) => (\n        <ListboxItem\n          key={trick.label}\n          value={trick.label}\n          className=\"items-start\"\n        >\n          <div className=\"flex flex-col gap-px\">\n            <div className=\"font-medium\">{trick.label}</div>\n            <div className=\"line-clamp-2 text-muted-foreground text-sm\">\n              {trick.description}\n            </div>\n          </div>\n          <ListboxItemIndicator />\n        </ListboxItem>\n      ))}\n    </Listbox>\n  );\n}\n",
       "type": "registry:example",
       "target": ""
     }

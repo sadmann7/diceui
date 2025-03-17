@@ -1,22 +1,40 @@
-import { ListboxItem, ListboxRoot } from "@/registry/default/ui/listbox";
+import {
+  Listbox,
+  ListboxItem,
+  ListboxItemIndicator,
+} from "@/registry/default/ui/listbox";
+
+const tricks = [
+  { label: "Kickflip", description: "Flip the board 360° along its long axis" },
+  {
+    label: "Heelflip",
+    description:
+      "Flip the board 360° along its long axis in the opposite direction of a kickflip",
+  },
+  {
+    label: "360 Varial McTwist",
+    description: "A 540° inverted aerial with a 360° board rotation",
+  },
+  {
+    label: "The 900",
+    description: "Legendary 900° aerial rotation pioneered by Tony Hawk",
+  },
+];
 
 export default function ListboxDemo() {
   return (
-    <ListboxRoot className="w-full max-w-md">
-      {Array.from({ length: 5 }).map((_, index) => (
-        <ListboxItem
-          key={index}
-          value={`option-${index + 1}`}
-          className="flex items-center rounded-md p-4 transition-colors hover:bg-accent focus:bg-accent focus:outline-none"
-        >
+    <Listbox className="w-full max-w-md">
+      {tricks.map((trick) => (
+        <ListboxItem key={trick.label} value={trick.label}>
           <div className="flex flex-col">
-            <div className="font-medium">Option {index + 1}</div>
+            <div className="font-medium">{trick.label}</div>
             <div className="text-muted-foreground text-sm">
-              Description for option {index + 1}
+              {trick.description}
             </div>
           </div>
+          <ListboxItemIndicator />
         </ListboxItem>
       ))}
-    </ListboxRoot>
+    </Listbox>
   );
 }
