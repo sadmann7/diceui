@@ -27,9 +27,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import ListboxDemo from "@/registry/default/examples/listbox-demo";
-import ListboxGridDemo from "@/registry/default/examples/listbox-grid-demo";
-import ListboxGroupDemo from "@/registry/default/examples/listbox-group-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -45,19 +42,7 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <div className="flex max-w-md flex-col gap-4">
-        <h1 className="font-bold text-2xl">Listbox</h1>
-        <ListboxDemo />
-      </div>
-      <div className="flex flex-col gap-4">
-        <h1 className="font-bold text-2xl">Listbox grid</h1>
-        <ListboxGridDemo />
-      </div>
-      <div className="flex max-w-md flex-col gap-4">
-        <h1 className="font-bold text-2xl">Listbox group</h1>
-        <ListboxGroupDemo />
-      </div>
-      {/* <Combobox className="w-[15rem]">
+      <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
           <ComboboxTrigger>
@@ -142,7 +127,7 @@ export default function PlaygroundPage() {
             ))}
           </SelectGroup>
         </SelectContent>
-      </Select> */}
+      </Select>
     </Shell>
   );
 }
