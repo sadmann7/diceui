@@ -230,12 +230,24 @@ export const Index: Record<string, any> = {
         path: "registry/default/lib/utils.ts",
         type: "registry:lib",
         target: ""
-      },{
+      }],
+      component: React.lazy(() => import("@/registry/default/lib/utils.ts")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "composition": {
+      name: "composition",
+      description: "",
+      type: "registry:lib",
+      registryDependencies: undefined,
+      files: [{
         path: "registry/default/lib/composition.ts",
         type: "registry:lib",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/lib/utils.ts")),
+      component: React.lazy(() => import("@/registry/default/lib/composition.ts")),
       source: "",
       category: "",
       subcategory: "",
