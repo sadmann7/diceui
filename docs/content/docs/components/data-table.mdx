@@ -16,28 +16,6 @@ links:
 npx shadcn@latest add "https://diceui.com/r/data-table"
 ```
 
-### Manual
-
-<Steps>
-  <Step>
-     Install the following dependencies:
-
-     ```package-install
-     @tanstack/react-table nuqs react-day-picker date-fns motion
-     ```
-  </Step>
-  <Step>
-    Copy and paste the following code into your project.
-
-    <ComponentSource name="data-table" />
-  </Step>
-  <Step>
-    Create necessary utilities for composition.
-
-    <ComponentSource src="./lib/composition.ts" />
-  </Step>
-</Steps>
-
 ## Layout
 
 Import the components and compose them together:
@@ -68,122 +46,117 @@ import { DataTable } from "@/components/ui/data-table";
 </DataTable>
 ```
 
-## Setup
+## Walkthrough
 
-**Set up your columns with appropriate metadata**:
+<Steps>
+  <Step>
+    Define columns with appropriate metadata:
 
-```tsx
-const columns = [
-  // Selectable column
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  // Text column with filtering
-  {
-    id: "title",
-    accessorKey: "title",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Title" />
-    ),
-    cell: ({ row }) => <div>{row.getValue("title")}</div>,
-    meta: {
-      label: "Title",
-      placeholder: "Search titles...",
-      variant: "text",
-      icon: Text,
+    ```tsx showLineNumbers 
+    const columns = React.useMemo(() => [
+      // Selectable column for row selection
+      {
+        id: "select",
+        header: ({ table }) => (
+          <Checkbox
+            checked={table.getIsAllPageRowsSelected()}
+            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+            aria-label="Select all"
+          />
+        ),
+        cell: ({ row }) => (
+          <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            aria-label="Select row"
+          />
+        ),
+        enableSorting: false,
+        enableHiding: false,
+      },
+      // Text column with filtering
+      {
+        id: "title",
+        accessorKey: "title",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Title" />
+        ),
+        cell: ({ row }) => <div>{row.getValue("title")}</div>,
+        meta: {
+          label: "Title",
+          placeholder: "Search titles...",
+          variant: "text",
+          icon: Text,
+        },
+        enableColumnFilter: true,
+      },
+      // Multi-select column
+      {
+        id: "status",
+        accessorKey: "status",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Status" />
+        ),
+        cell: ({ cell }) => {
+          const status = cell.getValue();
+          return (
+            <Badge variant="outline">
+              <span className="capitalize">{status}</span>
+            </Badge>
+          );
+        },
+        meta: {
+          label: "Status",
+          variant: "multi-select",
+          options: [
+            { label: "Active", value: "active", count: 10 },
+            { label: "Inactive", value: "inactive", count: 5 },
+          ],
+        },
+        enableColumnFilter: true,
+      },
+      // Date range column
+      {
+        id: "createdAt",
+        accessorKey: "createdAt",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Created At" />
+        ),
+        cell: ({ cell }) => formatDate(cell.getValue()),
+        meta: {
+          label: "Created At",
+          variant: "date-range",
+          icon: CalendarIcon,
+        },
+        enableColumnFilter: true,
+      },
+    ], []);
+    ```
+  </Step>
+  <Step>
+    Use the provided hook to initialize your table:
+
+    
+  ```tsx
+  import { useDataTable } from "@/hooks/use-data-table";
+
+  const { table } = useDataTable({
+    data,
+    columns,
+    pageCount,
+    initialState: {
+      sorting: [{ id: "createdAt", desc: true }],
+      columnPinning: { right: ["actions"] },
     },
-    enableColumnFilter: true,
-  },
-  // Multi-select column
-  {
-    id: "status",
-    accessorKey: "status",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Status" />
-    ),
-    cell: ({ cell }) => {
-      const status = cell.getValue();
-      return (
-        <Badge variant="outline">
-          <span className="capitalize">{status}</span>
-        </Badge>
-      );
-    },
-    meta: {
-      label: "Status",
-      variant: "multi-select",
-      options: [
-        { label: "Active", value: "active", count: 10 },
-        { label: "Inactive", value: "inactive", count: 5 },
-      ],
-    },
-    enableColumnFilter: true,
-  },
-  // Date range column
-  {
-    id: "createdAt",
-    accessorKey: "createdAt",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Created At" />
-    ),
-    cell: ({ cell }) => formatDate(cell.getValue()),
-    meta: {
-      label: "Created At",
-      variant: "date-range",
-      icon: CalendarIcon,
-    },
-    enableColumnFilter: true,
-  },
-];
-```
+    getRowId: (row) => row.id,
+  });
+  ```
+  </Step>
+</Steps>
 
-**Use the provided hook to initialize your table**:
 
-```tsx
-import { useDataTable } from "@/components/ui/data-table/hooks/use-data-table";
 
-// In your component
-const { table } = useDataTable({
-  data,
-  columns,
-  pageCount,
-  initialState: {
-    sorting: [{ id: "createdAt", desc: true }],
-    columnPinning: { right: ["actions"] },
-  },
-  enableAdvancedFilter: true,
-});
-```
 
-## Examples
-
-### Basic Data Table
-
-<ComponentTabs name="data-table-basic-demo" />
-
-### With Advanced Filtering
-
-<ComponentTabs name="data-table-filter-demo" />
-
-### With Action Bar
-
-<ComponentTabs name="data-table-action-bar-demo" />
 
 ## API Reference
 
