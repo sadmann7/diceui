@@ -1,382 +1,266 @@
-import type { Cell, Row, Table } from "@tanstack/react-table";
+import type { DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+
+import type { filterSchema } from "@/lib/parsers";
+import type { EmptyProps } from "@/types";
+
+import type { Column, Table, TableOptions } from "@tanstack/react-table";
+import type { motion } from "motion/react";
 import type * as React from "react";
+import type { z } from "zod";
 
-/**
- * Props for the main DataTable component.
- */
-export interface DataTableProps<TData> {
-  /**
-   * The initialized table instance.
-   */
-  table: Table<TData>;
-
-  /**
-   * Optional action bar component to be displayed below the table.
-   */
-  actionBar?: React.ReactNode;
-
-  /**
-   * Optional children to render inside the data table, typically toolbar components.
-   */
-  children?: React.ReactNode;
-
-  /**
-   * Optional CSS class to apply to the DataTable container.
-   */
-  className?: string;
+interface Option {
+  label: string;
+  value: string;
+  count?: number;
+  icon?: React.ComponentType<{ className?: string }>;
 }
 
-/**
- * Props for the DataTableToolbar component.
- */
-export interface DataTableToolbarProps<TData> {
-  /**
-   * The initialized table instance.
-   */
-  table: Table<TData>;
-
-  /**
-   * Optional children to render inside the toolbar.
-   */
-  children?: React.ReactNode;
-
-  /**
-   * Optional CSS class to apply to the toolbar.
-   */
-  className?: string;
+interface ExtendedColumnFilter<TData> extends z.infer<typeof filterSchema> {
+  id: Extract<keyof TData, string>;
 }
 
-/**
- * Props for the DataTableAdvancedToolbar component.
- */
-export interface DataTableAdvancedToolbarProps<TData> {
+export interface UseDataTableProps<TData>
+  extends Required<Pick<TableOptions<TData>, "pageCount">>,
+    Pick<
+      TableOptions<TData>,
+      "data" | "columns" | "getRowId" | "defaultColumn" | "initialState"
+    > {
   /**
-   * The initialized table instance.
-   */
-  table: Table<TData>;
-
-  /**
-   * Optional children to render inside the advanced toolbar.
-   */
-  children?: React.ReactNode;
-
-  /**
-   * Optional CSS class to apply to the advanced toolbar.
-   */
-  className?: string;
-}
-
-/**
- * Props for the DataTableColumnHeader component.
- */
-export interface DataTableColumnHeaderProps<TData, TValue> {
-  /**
-   * The column to render the header for.
-   */
-  column: Column<TData, TValue>;
-
-  /**
-   * The title to display in the header.
-   */
-  title: string;
-
-  /**
-   * Optional CSS class to apply to the column header.
-   */
-  className?: string;
-}
-
-/**
- * Props for the DataTableFilterList component.
- */
-export interface DataTableFilterListProps<TData> {
-  /**
-   * The initialized table instance.
-   */
-  table: Table<TData>;
-
-  /**
-   * Debounce time in milliseconds for filter input changes.
-   * @default 300
-   */
-  debounceMs?: number;
-
-  /**
-   * Throttle time in milliseconds for filter input changes.
-   * @default 50
-   */
-  throttleMs?: number;
-
-  /**
-   * Whether to use shallow routing.
-   * @default true
-   */
-  shallow?: boolean;
-
-  /**
-   * Alignment for the filter popover.
-   * @default "center"
-   */
-  align?: "start" | "center" | "end";
-
-  /**
-   * Side for the filter popover.
-   * @default "bottom"
-   */
-  side?: "top" | "right" | "bottom" | "left";
-
-  /**
-   * Alignment offset for the filter popover.
-   * @default 0
-   */
-  alignOffset?: number;
-
-  /**
-   * Side offset for the filter popover.
-   * @default 4
-   */
-  sideOffset?: number;
-
-  /**
-   * Collision padding for the filter popover.
-   * @default 16
-   */
-  collisionPadding?: number;
-}
-
-/**
- * Props for the DataTableSortList component.
- */
-export interface DataTableSortListProps<TData> {
-  /**
-   * The initialized table instance.
-   */
-  table: Table<TData>;
-
-  /**
-   * Alignment for the sort popover.
-   * @default "center"
-   */
-  align?: "start" | "center" | "end";
-
-  /**
-   * Side for the sort popover.
-   * @default "bottom"
-   */
-  side?: "top" | "right" | "bottom" | "left";
-
-  /**
-   * Alignment offset for the sort popover.
-   * @default 0
-   */
-  alignOffset?: number;
-
-  /**
-   * Side offset for the sort popover.
-   * @default 4
-   */
-  sideOffset?: number;
-
-  /**
-   * Collision padding for the sort popover.
-   * @default 16
-   */
-  collisionPadding?: number;
-}
-
-/**
- * Props for the DataTablePagination component.
- */
-export interface DataTablePaginationProps<TData> {
-  /**
-   * The initialized table instance.
-   */
-  table: Table<TData>;
-
-  /**
-   * Available page size options.
-   * @default [10, 20, 30, 40, 50]
-   */
-  pageSizeOptions?: number[];
-}
-
-/**
- * Props for the useDataTable hook.
- */
-export interface UseDataTableProps<TData> {
-  /**
-   * The data to display in the table.
-   */
-  data: TData[];
-
-  /**
-   * The columns configuration for the table.
-   */
-  columns: Column<TData>[];
-
-  /**
-   * The total number of pages available.
-   */
-  pageCount: number;
-
-  /**
-   * Optional initial state for the table.
-   */
-  initialState?: {
-    sorting?: { id: keyof TData & string; desc: boolean }[];
-    pagination?: { pageIndex: number; pageSize: number };
-    columnVisibility?: Record<string, boolean>;
-    columnPinning?: { left?: string[]; right?: string[] };
-    rowSelection?: Record<string, boolean>;
-  };
-
-  /**
-   * History mode for URL state.
+   * Determines how query updates affect history.
+   * `push` creates a new history entry; `replace` (default) updates the current entry.
    * @default "replace"
    */
   history?: "push" | "replace";
 
   /**
-   * Throttle time in milliseconds.
-   * @default 50
-   */
-  throttleMs?: number;
-
-  /**
-   * Debounce time in milliseconds.
+   * Debounce time (ms) for filter updates to enhance performance during rapid input.
    * @default 300
    */
   debounceMs?: number;
 
   /**
-   * Whether to scroll on URL changes.
-   * @default false
+   * Maximum time (ms) to wait between URL query string updates.
+   * Helps with browser rate-limiting. Minimum effective value is 50ms.
+   * @default 50
    */
-  scroll?: boolean;
+  throttleMs?: number;
 
   /**
-   * Whether to use shallow routing.
-   * @default true
-   */
-  shallow?: boolean;
-
-  /**
-   * Whether to clear params when they match the default values.
+   * Clear URL query key-value pair when state is set to default.
+   * Keep URL meaning consistent when defaults change.
    * @default false
    */
   clearOnDefault?: boolean;
 
   /**
-   * Whether to enable advanced filtering features.
+   * Enable notion like column filters.
+   * Advanced filters and column filters cannot be used at the same time.
    * @default false
+   * @type boolean
    */
   enableAdvancedFilter?: boolean;
 
   /**
-   * Optional function to start a React transition.
+   * Whether the page should scroll to the top when the URL changes.
+   * @default false
+   */
+  scroll?: boolean;
+
+  /**
+   * Whether to keep query states client-side, avoiding server calls.
+   * Setting to `false` triggers a network request with the updated querystring.
+   * @default true
+   */
+  shallow?: boolean;
+
+  /**
+   * Observe Server Component loading states for non-shallow updates.
+   * Pass `startTransition` from `React.useTransition()`.
+   * Sets `shallow` to `false` automatically.
+   * So shallow: true` and `startTransition` cannot be used at the same time.
+   * @see https://react.dev/reference/react/useTransition
    */
   startTransition?: React.TransitionStartFunction;
 }
 
-/**
- * Type for a column in the data table.
- */
-export interface Column<TData, TValue = unknown> {
-  /**
-   * The column ID.
-   */
-  id: string;
+export interface DataTableProps<TData> extends EmptyProps<"div"> {
+  /** The table instance. */
+  table: Table<TData>;
+
+  /** The action bar to display above the table. */
+  actionBar?: React.ReactNode;
+}
+
+export interface DataTableToolbarProps<TData> extends EmptyProps<"div"> {
+  /** The table instance. */
+  table: Table<TData>;
+}
+
+export interface DataTableAdvancedToolbarProps<TData>
+  extends EmptyProps<"div"> {
+  /** The table instance. */
+  table: Table<TData>;
+}
+
+export interface DataTableActionBarProps<TData>
+  extends EmptyProps<typeof motion.div> {
+  /** The table instance. */
+  table: Table<TData>;
+
+  /** Whether the action bar is visible. */
+  visible?: boolean;
 
   /**
-   * The accessor key for the column data.
+   * The container to mount the portal into.
+   * @default document.body
    */
-  accessorKey?: string;
+  container?: Element | DocumentFragment | null;
+}
+
+export interface DataTableColumnHeaderProps<TData, TValue>
+  extends EmptyProps<typeof DropdownMenuTrigger> {
+  /** The column instance. */
+  column: Column<TData, TValue>;
+
+  /** The column title. */
+  title: string;
+}
+
+export interface DataTableDateFilterProps<TData> {
+  /** The column instance. */
+  column: Column<TData, unknown>;
+
+  /** The title of the date picker. */
+  title?: string;
+
+  /** Whether to enable range selection. */
+  multiple?: boolean;
+}
+
+export interface DataTableFacetedFilterProps<TData, TValue> {
+  /** The column instance. */
+  column?: Column<TData, TValue>;
+
+  /** The title of the filter. */
+  title?: string;
+
+  /** The options of the filter. */
+  options: Option[];
+
+  /** Whether to enable multiple selection. */
+  multiple?: boolean;
+}
+
+export interface DataTableSliderFilterProps<TData> {
+  /** The column instance. */
+  column: Column<TData, unknown>;
+
+  /** The title of the slider filter. */
+  title?: string;
+}
+
+export interface DataTableRangeFilterProps<TData> extends EmptyProps<"div"> {
+  /** The extended column filter. */
+  filter: ExtendedColumnFilter<TData>;
+
+  /** The column instance. */
+  column: Column<TData>;
+
+  /** The input id for screen readers. */
+  inputId: string;
+
+  /** The function to update the filter. */
+  onFilterUpdate: (
+    filterId: string,
+    updates: Partial<Omit<ExtendedColumnFilter<TData>, "filterId">>,
+  ) => void;
+}
+
+export interface DataTableFilterListProps<TData> {
+  /** The table instance. */
+  table: Table<TData>;
 
   /**
-   * The header component or render function.
+   * Debounce time (ms) for filter updates to enhance performance during rapid input.
+   * @default 300
    */
-  header?:
-    | React.ReactNode
-    | ((props: { column: Column<TData, TValue> }) => React.ReactNode);
+  debounceMs?: number;
 
   /**
-   * The cell component or render function.
+   * Maximum time (ms) to wait between URL query string updates.
+   * Helps with browser rate-limiting. Minimum effective value is 50ms.
+   * @default 50
    */
-  cell?:
-    | React.ReactNode
-    | ((props: {
-        row: Row<TData>;
-        cell: Cell<TData, TValue>;
-      }) => React.ReactNode);
+  throttleMs?: number;
 
   /**
-   * Whether the column can be sorted.
-   * @default false
-   */
-  enableSorting?: boolean;
-
-  /**
-   * Whether the column can be filtered.
-   * @default false
-   */
-  enableColumnFilter?: boolean;
-
-  /**
-   * Whether the column can be hidden.
+   * Whether to keep query states client-side, avoiding server calls.
+   * Setting to `false` triggers a network request with the updated querystring.
    * @default true
    */
-  enableHiding?: boolean;
+  shallow?: boolean;
+}
+
+export interface DataTableFilterMenuProps<TData>
+  extends DataTableFilterListProps<TData> {}
+
+export interface DataTableSortListProps<TData>
+  extends DataTableFilterListProps<TData> {}
+
+export interface DataTablePaginationProps<TData> extends EmptyProps<"div"> {
+  /** The table instance. */
+  table: Table<TData>;
 
   /**
-   * Meta information for the column.
+   * The options of the pagination.
+   * @default [10, 20, 30, 40, 50]
    */
-  meta?: {
-    /**
-     * The label for the column.
-     */
-    label?: string;
+  pageSizeOptions?: number[];
+}
 
-    /**
-     * Placeholder text for filters.
-     */
-    placeholder?: string;
+export interface DataTableViewOptionsProps<TData> {
+  /** The table instance. */
+  table: Table<TData>;
+}
 
-    /**
-     * The filter variant for the column.
-     */
-    variant?:
-      | "text"
-      | "number"
-      | "range"
-      | "date"
-      | "date-range"
-      | "boolean"
-      | "select"
-      | "multi-select";
+export interface DataTableSkeletonProps extends EmptyProps<"div"> {
+  /** The number of columns in the table. */
+  columnCount: number;
 
-    /**
-     * Options for select/multi-select filters.
-     */
-    options?: Array<{
-      label: string;
-      value: string;
-      count?: number;
-      icon?: React.ComponentType<{ className?: string }>;
-    }>;
+  /**
+   * The number of rows in the table.
+   * @default 10
+   */
+  rowCount?: number;
 
-    /**
-     * Range values for range filters.
-     */
-    range?: [number, number];
+  /**
+   * The number of filters in the table.
+   * @default 0
+   */
+  filterCount?: number;
 
-    /**
-     * Unit for numeric filters.
-     */
-    unit?: string;
+  /**
+   * Array of CSS width values for each table column.
+   * The maximum length of the array must match columnCount, extra values will be ignored.
+   * @default ["auto"]
+   */
+  cellWidths?: string[];
 
-    /**
-     * Icon for the column.
-     */
-    icon?: React.ComponentType<{ className?: string }>;
-  };
+  /**
+   * Whether to show the view options.
+   * @default true
+   */
+  withViewOptions?: boolean;
+
+  /**
+   * Whether to show the pagination bar.
+   * @default true
+   */
+  withPagination?: boolean;
+
+  /**
+   * Whether to prevent the table cells from shrinking.
+   * @default false
+   */
+  shrinkZero?: boolean;
 }
