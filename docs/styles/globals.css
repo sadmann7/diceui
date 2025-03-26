@@ -272,4 +272,8 @@
   [data-line] span {
     @apply text-[var(--shiki-light)] dark:text-[var(--shiki-dark)];
   }
+
+  [data-line-number] {
+    @apply text-muted-foreground;
+  }
 }

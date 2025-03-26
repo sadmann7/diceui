@@ -4,6 +4,7 @@ import { CSSVariablesTable } from "@/components/css-variables-table";
 import { DataAttributesTable } from "@/components/data-attributes-table";
 import { Kbd } from "@/components/kbd";
 import { KeyboardShortcutsTable } from "@/components/keyboard-shortcuts-table";
+import { PropsTable } from "@/components/props-table";
 import { Table, TableCell, TableHead, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import type { Page } from "fumadocs-core/source";
@@ -63,6 +64,7 @@ export function useMdxComponents(
     ),
     CSSVariablesTable,
     DataAttributesTable,
+    PropsTable,
     KeyboardShortcutsTable,
   };
 }

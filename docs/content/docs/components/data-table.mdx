@@ -52,45 +52,27 @@ import { DataTable } from "@/components/ui/data-table";
   <Step>
     Define columns with appropriate metadata:
 
-    ```tsx showLineNumbers 
+    ```tsx
     const columns = React.useMemo(() => [
-      // Selectable column for row selection
       {
-        id: "select",
-        header: ({ table }) => (
-          <Checkbox
-            checked={table.getIsAllPageRowsSelected()}
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-            aria-label="Select all"
-          />
-        ),
-        cell: ({ row }) => (
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Select row"
-          />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-      },
-      // Text column with filtering
-      {
-        id: "title",
+        // Provide an unique id for the column.
+        // This id will be used as query key for the column filter.
+        id: "title", // [!code highlight]
         accessorKey: "title",
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Title" />
         ),
         cell: ({ row }) => <div>{row.getValue("title")}</div>,
-        meta: {
-          label: "Title",
-          placeholder: "Search titles...",
-          variant: "text",
-          icon: Text,
-        },
-        enableColumnFilter: true,
+        // Define the column meta options for the filter.
+        meta: { // [!code highlight]
+          label: "Title", // [!code highlight]
+          placeholder: "Search titles...", // [!code highlight]
+          variant: "text", // [!code highlight]
+          icon: Text, // [!code highlight]
+        }, // [!code highlight] 
+        // Enable filtering for the column by setting the enableColumnFilter to true.
+        enableColumnFilter: true, // [!code highlight]
       },
-      // Multi-select column
       {
         id: "status",
         accessorKey: "status",
@@ -105,13 +87,14 @@ import { DataTable } from "@/components/ui/data-table";
             </Badge>
           );
         },
-        meta: {
-          label: "Status",
-          variant: "multi-select",
-          options: [
-            { label: "Active", value: "active", count: 10 },
-            { label: "Inactive", value: "inactive", count: 5 },
-          ],
+        // Use variant `select` or `multi-select` with `options` for faceted filtering
+        meta: { // [!code highlight]
+          label: "Status", // [!code highlight]
+          variant: "multi-select", // [!code highlight]
+          options: [ // [!code highlight]
+            { label: "Active", value: "active", count: 10 }, // [!code highlight]
+            { label: "Inactive", value: "inactive", count: 5 }, // [!code highlight]
+          ], // [!code highlight]
         },
         enableColumnFilter: true,
       },
@@ -123,11 +106,12 @@ import { DataTable } from "@/components/ui/data-table";
           <DataTableColumnHeader column={column} title="Created At" />
         ),
         cell: ({ cell }) => formatDate(cell.getValue()),
-        meta: {
-          label: "Created At",
-          variant: "date-range",
-          icon: CalendarIcon,
-        },
+        // Use variant `date-range` for date range filtering
+        meta: { // [!code highlight]
+          label: "Created At", // [!code highlight]
+          variant: "date-range", // [!code highlight]
+          icon: CalendarIcon, // [!code highlight]
+        }, // [!code highlight]
         enableColumnFilter: true,
       },
     ], []);
@@ -143,19 +127,18 @@ import { DataTable } from "@/components/ui/data-table";
   const { table } = useDataTable({
     data,
     columns,
-    pageCount,
+    // Set the total number of pages for the table.
+    pageCount, // [!code highlight]
     initialState: {
       sorting: [{ id: "createdAt", desc: true }],
       columnPinning: { right: ["actions"] },
     },
-    getRowId: (row) => row.id,
+    // Set the row id for the table for unique row selection.
+    getRowId: (row) => row.id, // [!code highlight]
   });
   ```
   </Step>
 </Steps>
-
-
-
 
 
 ## API Reference
@@ -236,28 +219,77 @@ Hook for initializing the data table with state management.
 
 ### Column Meta Options
 
-The `meta` property on columns can include:
-
-- `label`: The display name for the column
-- `placeholder`: The placeholder text for filter inputs
-- `variant`: The type of filter to use (`text`, `number`, `range`, `date`, `date-range`, `boolean`, `select`, `multi-select`)
-- `options`: For select/multi-select filters, an array of options with `label`, `value`, and optional `count` and `icon`
-- `range`: For range filters, a tuple of `[min, max]` values
-- `unit`: For numeric filters, the unit to display (e.g., "hr", "$")
-- `icon`: A React component to use as an icon
+<PropsTable
+  props={[
+    {
+      title: "label",
+      description: "The display name for the column",
+    },
+    {
+      title: "placeholder",
+      description: "The placeholder text for filter inputs",
+    },
+    {
+      title: "variant",
+      description: "The type of filter to use (`text`, `number`, `range`, `date`, `date-range`, `boolean`, `select`, `multi-select`)",
+    },
+    {
+      title: "options",
+      description: "For select/multi-select filters, an array of options with `label`, `value`, and optional `count` and `icon`",
+    },
+    {
+      title: "range",
+      description: "For range filters, a tuple of `[min, max]` values",
+    },
+    {
+      title: "unit",
+      description: "For numeric filters, the unit to display (e.g., 'hr', '$')",
+    },
+    {
+      title: "icon",
+      description: "A React component to use as an icon",
+    },
+  ]}
+/>
 
 ### Filter Variants
 
-The component supports multiple filter types:
-
-- `text`: Text search with contains, equals, etc.
-- `number`: Numeric filters with equals, greater than, less than, etc.
-- `range`: Range filters with minimum and maximum values
-- `date`: Date filters with equals, before, after, etc.
-- `date-range`: Date range filters with start and end dates
-- `boolean`: Boolean filters with true/false values
-- `select`: Single-select filters with predefined options
-- `multi-select`: Multi-select filters with predefined options
+<PropsTable
+  props={[
+    {
+      title: "text",
+      description: "Text search with contains, equals, etc.",
+    },
+    {
+      title: "number",
+      description: "Numeric filters with equals, greater than, less than, etc.",
+    },
+    {
+      title: "range",
+      description: "Range filters with minimum and maximum values",
+    },
+    {
+      title: "date",
+      description: "Date filters with equals, before, after, etc.",
+    },
+    {
+      title: "date-range",
+      description: "Date range filters with start and end dates",
+    },
+    {
+      title: "boolean",
+      description: "Boolean filters with true/false values",
+    },
+    {
+      title: "select",
+      description: "Single-select filters with predefined options",
+    },
+    {
+      title: "multi-select",
+      description: "Multi-select filters with predefined options",
+    },
+  ]}
+/>
 
 ## Accessibility
 
