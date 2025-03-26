@@ -104,7 +104,6 @@ interface EditableRootProps
 const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
   (props, forwardedRef) => {
     const {
-      id = React.useId(),
       defaultValue = "",
       value: valueProp,
       onValueChange: onValueChangeProp,
@@ -130,6 +129,7 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
       ...rootProps
     } = props;
 
+    const id = React.useId();
     const inputId = React.useId();
     const labelId = React.useId();
 
@@ -264,6 +264,7 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
         <RootPrimitive
           data-slot="editable"
           {...rootProps}
+          id={id}
           ref={composedRef}
           className={cn("flex min-w-0 flex-col gap-2", className)}
         />

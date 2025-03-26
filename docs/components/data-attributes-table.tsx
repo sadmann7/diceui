@@ -32,9 +32,9 @@ export function DataAttributesTable({ attributes }: DataAttributesTableProps) {
             <TableCell>
               {Array.isArray(attribute.value) ? (
                 <code className="font-mono text-foreground/80">
-                  {attribute.value.map((item, idx) => (
+                  {attribute.value.map((item, index) => (
                     <span key={item}>
-                      {idx + 1 !== attribute.value.length
+                      {index + 1 !== attribute.value.length
                         ? `"${item}" | `
                         : `"${item}"`}
                     </span>

@@ -8,36 +8,43 @@ import {
 } from "@/components/ui/table";
 
 interface PropsTableProps {
-  props: {
+  variant: "default" | "title" | "css-variable";
+  data: {
     title: string;
     description: string;
     defaultValue?: string;
   }[];
 }
 
-export function PropsTable({ props }: PropsTableProps) {
-  const hasDefaultValues = props.some((prop) => prop.defaultValue);
+export function PropsTable({ variant = "default", data }: PropsTableProps) {
+  const hasDefaultValues = data.some((item) => item.defaultValue);
+  const firstColumn =
+    variant === "default"
+      ? "Prop"
+      : variant === "title"
+        ? "Title"
+        : "CSS Variable";
 
   return (
     <Table mdx>
       <TableHeader>
         <TableRow>
-          <TableHead>Prop</TableHead>
+          <TableHead>{firstColumn}</TableHead>
           <TableHead>Description</TableHead>
           {hasDefaultValues && <TableHead>Default</TableHead>}
         </TableRow>
       </TableHeader>
       <TableBody>
-        {props.map((prop) => (
-          <TableRow key={prop.title}>
+        {data.map((item) => (
+          <TableRow key={item.title}>
             <TableCell>
-              <code className="text-[13px]">{prop.title}</code>
+              <code className="text-[13px]">{item.title}</code>
             </TableCell>
-            <TableCell>{prop.description}</TableCell>
+            <TableCell>{item.description}</TableCell>
             {hasDefaultValues && (
               <TableCell>
-                {prop.defaultValue ? (
-                  <code className="text-[13px]">{prop.defaultValue}</code>
+                {item.defaultValue ? (
+                  <code className="text-[13px]">{item.defaultValue}</code>
                 ) : (
                   <span className="text-muted-foreground">—</span>
                 )}

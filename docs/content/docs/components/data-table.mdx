@@ -90,7 +90,7 @@ import { DataTable } from "@/components/ui/data-table";
         // Use variant `select` or `multi-select` with `options` for faceted filtering
         meta: { // [!code highlight]
           label: "Status", // [!code highlight]
-          variant: "multi-select", // [!code highlight]
+          variant: "multiSelect", // [!code highlight]
           options: [ // [!code highlight]
             { label: "Active", value: "active", count: 10 }, // [!code highlight]
             { label: "Inactive", value: "inactive", count: 5 }, // [!code highlight]
@@ -109,7 +109,7 @@ import { DataTable } from "@/components/ui/data-table";
         // Use variant `date-range` for date range filtering
         meta: { // [!code highlight]
           label: "Created At", // [!code highlight]
-          variant: "date-range", // [!code highlight]
+          variant: "dateRange", // [!code highlight]
           icon: CalendarIcon, // [!code highlight]
         }, // [!code highlight]
         enableColumnFilter: true,
@@ -139,6 +139,31 @@ import { DataTable } from "@/components/ui/data-table";
   ```
   </Step>
 </Steps>
+
+
+## Multi Sorting
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/data-table-sort-list"
+```
+
+The multi-sorting feature allows you to sort data by multiple columns simultaneously. Each sort can be configured with its own direction (ascending/descending) and can be reordered using drag and drop.
+
+## Advanced Filtering
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/data-table-filter-list"
+```
+
+The advanced filtering system provides a comprehensive way to filter data with multiple conditions. It supports various filter types and operators, with the ability to combine filters using AND/OR logic.
+
+## Filter Menu
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/data-table-filter-menu"
+```
+
+The filter menu provides a command palette-style interface for quickly adding and managing filters. It supports keyboard shortcuts and offers a streamlined way to filter data.
 
 
 ## API Reference
@@ -220,7 +245,7 @@ Hook for initializing the data table with state management.
 ### Column Meta Options
 
 <PropsTable
-  props={[
+  data={[
     {
       title: "label",
       description: "The display name for the column",
@@ -255,7 +280,8 @@ Hook for initializing the data table with state management.
 ### Filter Variants
 
 <PropsTable
-  props={[
+  variant="title"
+  data={[
     {
       title: "text",
       description: "Text search with contains, equals, etc.",
@@ -273,7 +299,7 @@ Hook for initializing the data table with state management.
       description: "Date filters with equals, before, after, etc.",
     },
     {
-      title: "date-range",
+      title: "dateRange",
       description: "Date range filters with start and end dates",
     },
     {
@@ -285,7 +311,7 @@ Hook for initializing the data table with state management.
       description: "Single-select filters with predefined options",
     },
     {
-      title: "multi-select",
+      title: "multiSelect",
       description: "Multi-select filters with predefined options",
     },
   ]}
@@ -298,24 +324,13 @@ Hook for initializing the data table with state management.
 <KeyboardShortcutsTable
   shortcuts={[
     {
-      keys: ["Tab"],
-      description: "Navigates through interactive elements in the data table.",
-    },
-    {
-      keys: ["Enter", "Space"],
-      description: "Activates the currently focused interactive element.",
-    },
-    {
-      keys: ["Esc"],
-      description: "Clears selected rows when using the action bar.",
-    },
-    {
       keys: ["F"],
-      description: "Opens the filter menu (when keyboard shortcuts are enabled).",
+      description: "Opens the filter menu.",
     },
     {
-      keys: ["Shift+F"],
-      description: "Removes the last applied filter (when keyboard shortcuts are enabled).",
+      keys: ["Shift", "F"],
+      description: "Removes the last applied filter.",
+      combined: true,
     },
   ]}
 /> 
