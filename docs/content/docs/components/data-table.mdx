@@ -447,8 +447,6 @@ Hook for initializing the data table with state management.
 
 ### Keyboard Interactions
 
-#### DataTableFilterMenu
-
 <KeyboardShortcutsTable
   shortcuts={[
     {
@@ -459,6 +457,23 @@ Hook for initializing the data table with state management.
       keys: ["Shift", "F"],
       description: "Removes the last applied filter.",
       combined: true,
+    },
+    {
+      keys: ["S"],
+      description: "Opens the sort menu.",
+    },
+    {
+      keys: ["Shift", "S"],
+      description: "Removes the last applied sort.",
+      combined: true,
+    },
+    {
+      keys: ["Backspace"],
+      description: "Removes the focused filter/sort item. Removes the last applied filter/sort when menu trigger is focused.",
+    },
+    {
+      keys: ["Delete"],
+      description: "Removes the focused filter/sort item. Removes the last applied filter/sort when menu trigger is focused.",
     },
   ]}
 />
