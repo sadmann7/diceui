@@ -141,6 +141,87 @@ import { DataTable } from "@/components/ui/data-table";
 </Steps>
 
 
+## Column Configuration
+
+### Column Meta Options
+
+The column meta options to be used for column configuration.
+
+<PropsTable
+  data={[
+    {
+      title: "label",
+      description: "The display name for the column",
+    },
+    {
+      title: "placeholder",
+      description: "The placeholder text for filter inputs",
+    },
+    {
+      title: "variant",
+      description: "The type of filter to use (`text`, `number`, `range`, `date`, `date-range`, `boolean`, `select`, `multi-select`)",
+    },
+    {
+      title: "options",
+      description: "For select/multi-select filters, an array of options with `label`, `value`, and optional `count` and `icon`",
+    },
+    {
+      title: "range",
+      description: "For range filters, a tuple of `[min, max]` values",
+    },
+    {
+      title: "unit",
+      description: "For numeric filters, the unit to display (e.g., 'hr', '$')",
+    },
+    {
+      title: "icon",
+      description: "A React component to use as an icon",
+    },
+  ]}
+/>
+
+### Filter Variants
+
+The filter variants to be used for column meta options.
+
+<PropsTable
+  variant="title"
+  data={[
+    {
+      title: "text",
+      description: "Text search with contains, equals, etc.",
+    },
+    {
+      title: "number",
+      description: "Numeric filters with equals, greater than, less than, etc.",
+    },
+    {
+      title: "range",
+      description: "Range filters with minimum and maximum values",
+    },
+    {
+      title: "date",
+      description: "Date filters with equals, before, after, etc.",
+    },
+    {
+      title: "dateRange",
+      description: "Date range filters with start and end dates",
+    },
+    {
+      title: "boolean",
+      description: "Boolean filters with true/false values",
+    },
+    {
+      title: "select",
+      description: "Single-select filters with predefined options",
+    },
+    {
+      title: "multiSelect",
+      description: "Multi-select filters with predefined options",
+    },
+  ]}
+/>
+
 ## Multi Sorting
 
 ```package-install
@@ -204,6 +285,15 @@ Custom header component for columns with sorting.
   name="DataTableColumnHeaderProps"
 />
 
+### DataTableSortList
+
+List of applied sorting with ability to add, remove, and modify sorting.
+
+<AutoTypeTable
+  path="./types/docs/data-table.ts"
+  name="DataTableSortListProps"
+/>
+
 ### DataTableFilterList
 
 List of applied filters with ability to add, remove, and modify filters.
@@ -213,13 +303,13 @@ List of applied filters with ability to add, remove, and modify filters.
   name="DataTableFilterListProps"
 />
 
-### DataTableSortList
+### DataTableFilterMenu
 
-List of applied sorting with ability to add, remove, and modify sorting.
+Filter menu with ability to add, remove, and modify filters.
 
 <AutoTypeTable
   path="./types/docs/data-table.ts"
-  name="DataTableSortListProps"
+  name="DataTableFilterMenuProps"
 />
 
 ### DataTablePagination
@@ -240,86 +330,11 @@ Hook for initializing the data table with state management.
   name="UseDataTableProps"
 />
 
-## Column Configuration
-
-### Column Meta Options
-
-<PropsTable
-  data={[
-    {
-      title: "label",
-      description: "The display name for the column",
-    },
-    {
-      title: "placeholder",
-      description: "The placeholder text for filter inputs",
-    },
-    {
-      title: "variant",
-      description: "The type of filter to use (`text`, `number`, `range`, `date`, `date-range`, `boolean`, `select`, `multi-select`)",
-    },
-    {
-      title: "options",
-      description: "For select/multi-select filters, an array of options with `label`, `value`, and optional `count` and `icon`",
-    },
-    {
-      title: "range",
-      description: "For range filters, a tuple of `[min, max]` values",
-    },
-    {
-      title: "unit",
-      description: "For numeric filters, the unit to display (e.g., 'hr', '$')",
-    },
-    {
-      title: "icon",
-      description: "A React component to use as an icon",
-    },
-  ]}
-/>
-
-### Filter Variants
-
-<PropsTable
-  variant="title"
-  data={[
-    {
-      title: "text",
-      description: "Text search with contains, equals, etc.",
-    },
-    {
-      title: "number",
-      description: "Numeric filters with equals, greater than, less than, etc.",
-    },
-    {
-      title: "range",
-      description: "Range filters with minimum and maximum values",
-    },
-    {
-      title: "date",
-      description: "Date filters with equals, before, after, etc.",
-    },
-    {
-      title: "dateRange",
-      description: "Date range filters with start and end dates",
-    },
-    {
-      title: "boolean",
-      description: "Boolean filters with true/false values",
-    },
-    {
-      title: "select",
-      description: "Single-select filters with predefined options",
-    },
-    {
-      title: "multiSelect",
-      description: "Multi-select filters with predefined options",
-    },
-  ]}
-/>
-
 ## Accessibility
 
 ### Keyboard Interactions
+
+#### DataTableFilterMenu
 
 <KeyboardShortcutsTable
   shortcuts={[
@@ -333,4 +348,4 @@ Hook for initializing the data table with state management.
       combined: true,
     },
   ]}
-/> 
+/>
