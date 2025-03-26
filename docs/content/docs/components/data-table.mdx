@@ -21,7 +21,18 @@ npx shadcn@latest add "https://diceui.com/r/data-table"
 Import the components and compose them together:
 
 ```tsx
-import { DataTable } from "@/components/ui/data-table";
+import { DataTable } from "@/components/data-table/data-table";
+import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
+import { DataTableAdvancedToolbar } from "@/components/data-table/data-table-advanced-toolbar";
+import { DataTableFilterList } from "@/components/data-table/data-table-filter-list";
+import { DataTableSortList } from "@/components/data-table/data-table-sort-list";
+import { useDataTable } from "@/hooks/use-data-table";
+
+const { table } = useDataTable({
+  data,
+  columns,
+  pageCount,
+});
 
 // Basic usage
 <DataTable
@@ -45,6 +56,174 @@ import { DataTable } from "@/components/ui/data-table";
   </DataTableToolbar>
 </DataTable>
 ```
+
+## Column Definitions
+
+```tsx
+const columns = React.useMemo(() => [
+  {
+    // Required: Unique identifier for the column
+    id: "title", // [!code highlight]
+    // Required: Key to access the data, `accessorFn` can also be used
+    accessorKey: "title", // [!code highlight]
+    // Optional: Custom header component
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Title" />
+    ),
+    // Optional: Custom cell component
+    cell: ({ row }) => <div>{row.getValue("title")}</div>,
+    // Optional: Meta options for filtering, sorting, and view options
+    meta: {
+      label: "Title",
+      placeholder: "Search titles...",
+      variant: "text",
+      icon: Text,
+    },
+    // Enable features for this column
+    enableColumnFilter: true, // [!code highlight]
+    enableSorting: true,
+    enableHiding: true,
+  },
+  {
+    id: "price",
+    // Access nested data using `accessorFn`
+    accessorFn: (row) => row.line.price, // [!code highlight]
+    header: "Price",
+    meta: {
+      label: "Price",
+      variant: "number",
+      icon: DollarSign,
+      unit: "$",
+    },
+    enableColumnFilter: true,
+  },
+], []);
+```
+
+### Column Definition Properties
+
+<PropsTable
+  data={[
+    {
+      title: "id",
+      description: "Required: Unique identifier for the column",
+    },
+    {
+      title: "accessorKey",
+      description: "Required: Key to access the data from the row",
+    },
+    {
+      title: "accessorFn",
+      description: "Optional: Custom accessor function to access data",
+    },
+    {
+      title: "header",
+      description: "Optional: Custom header component with column props",
+    },
+    {
+      title: "cell",
+      description: "Optional: Custom cell component with row props",
+    },
+    {
+      title: "meta",
+      description: "Optional: Meta options for filtering, sorting, and viewing",
+    },
+    {
+      title: "enableColumnFilter",
+      description: "By default, the column will not be filtered. Set to `true` to enable filtering.",
+    },
+    {
+      title: "enableSorting",
+      description: "Enable sorting for this column",
+    },
+    {
+      title: "enableHiding",
+      description: "Enable column visibility toggle",
+    },
+  ]}
+/>
+
+
+### Column Meta
+
+The column meta options to be used for column definition.
+
+<PropsTable
+  data={[
+    {
+      title: "label",
+      description: "The display name for the column",
+    },
+    {
+      title: "placeholder",
+      description: "The placeholder text for filter inputs",
+    },
+    {
+      title: "variant",
+      description: "The type of filter to use (`text`, `number`, `range`, `date`, `date-range`, `boolean`, `select`, `multi-select`)",
+    },
+    {
+      title: "options",
+      description: "For select/multi-select filters, an array of options with `label`, `value`, and optional `count` and `icon`",
+    },
+    {
+      title: "range",
+      description: "For range filters, a tuple of `[min, max]` values",
+    },
+    {
+      title: "unit",
+      description: "For numeric filters, the unit to display (e.g., 'hr', '$')",
+    },
+    {
+      title: "icon",
+      description: "The react component to use as an icon for the column",
+    },
+  ]}
+/>
+
+### Filter Variants
+
+The filter variants to be used for [column meta](#column-meta).
+
+<PropsTable
+  variant="title"
+  data={[
+    {
+      title: "text",
+      description: "Text search with contains, equals, etc.",
+    },
+    {
+      title: "number",
+      description: "Numeric filters with equals, greater than, less than, etc.",
+    },
+    {
+      title: "range",
+      description: "Range filters with minimum and maximum values",
+    },
+    {
+      title: "date",
+      description: "Date filters with equals, before, after, etc.",
+    },
+    {
+      title: "dateRange",
+      description: "Date range filters with start and end dates",
+    },
+    {
+      title: "boolean",
+      description: "Boolean filters with true/false values",
+    },
+    {
+      title: "select",
+      description: "Single-select filters with predefined options",
+    },
+    {
+      title: "multiSelect",
+      description: "Multi-select filters with predefined options",
+    },
+  ]}
+/>
+
+Reference the [TanStack Table Column Definitions Guide](https://tanstack.com/table/latest/docs/guide/column-defs#column-definitions-guide) for detailed column definition guide.
 
 ## Walkthrough
 
@@ -141,111 +320,45 @@ import { DataTable } from "@/components/ui/data-table";
 </Steps>
 
 
-## Column Configuration
+## Sort List
 
-### Column Meta Options
+The [`DataTableSortList`](#datatablesortlist) allows you to sort data by multiple columns simultaneously. Each sort can be configured with its own direction (asc/desc) and can be reordered using drag and drop.
 
-The column meta options to be used for column configuration.
-
-<PropsTable
-  data={[
-    {
-      title: "label",
-      description: "The display name for the column",
-    },
-    {
-      title: "placeholder",
-      description: "The placeholder text for filter inputs",
-    },
-    {
-      title: "variant",
-      description: "The type of filter to use (`text`, `number`, `range`, `date`, `date-range`, `boolean`, `select`, `multi-select`)",
-    },
-    {
-      title: "options",
-      description: "For select/multi-select filters, an array of options with `label`, `value`, and optional `count` and `icon`",
-    },
-    {
-      title: "range",
-      description: "For range filters, a tuple of `[min, max]` values",
-    },
-    {
-      title: "unit",
-      description: "For numeric filters, the unit to display (e.g., 'hr', '$')",
-    },
-    {
-      title: "icon",
-      description: "A React component to use as an icon",
-    },
-  ]}
-/>
-
-### Filter Variants
-
-The filter variants to be used for column meta options.
-
-<PropsTable
-  variant="title"
-  data={[
-    {
-      title: "text",
-      description: "Text search with contains, equals, etc.",
-    },
-    {
-      title: "number",
-      description: "Numeric filters with equals, greater than, less than, etc.",
-    },
-    {
-      title: "range",
-      description: "Range filters with minimum and maximum values",
-    },
-    {
-      title: "date",
-      description: "Date filters with equals, before, after, etc.",
-    },
-    {
-      title: "dateRange",
-      description: "Date range filters with start and end dates",
-    },
-    {
-      title: "boolean",
-      description: "Boolean filters with true/false values",
-    },
-    {
-      title: "select",
-      description: "Single-select filters with predefined options",
-    },
-    {
-      title: "multiSelect",
-      description: "Multi-select filters with predefined options",
-    },
-  ]}
-/>
-
-## Multi Sorting
+### Installation
 
 ```package-install
 npx shadcn@latest add "https://diceui.com/r/data-table-sort-list"
 ```
 
-The multi-sorting feature allows you to sort data by multiple columns simultaneously. Each sort can be configured with its own direction (ascending/descending) and can be reordered using drag and drop.
+## Filter List
 
-## Advanced Filtering
+The [`DataTableFilterList`](#datatablefilterlist) provides a comprehensive way to filter data with multiple conditions. It supports various filter types and operators, with the ability to combine filters using AND/OR logic.
+
+### Installation
 
 ```package-install
 npx shadcn@latest add "https://diceui.com/r/data-table-filter-list"
 ```
 
-The advanced filtering system provides a comprehensive way to filter data with multiple conditions. It supports various filter types and operators, with the ability to combine filters using AND/OR logic.
-
 ## Filter Menu
+
+The [`DataTableFilterMenu`](#datatablefiltermenu) provides a command palette-style interface for quickly adding and managing filters. It supports keyboard shortcuts and offers a streamlined way to filter data.
+
+### Installation
 
 ```package-install
 npx shadcn@latest add "https://diceui.com/r/data-table-filter-menu"
 ```
 
-The filter menu provides a command palette-style interface for quickly adding and managing filters. It supports keyboard shortcuts and offers a streamlined way to filter data.
+## Action Bar
 
+The [`DataTableActionBar`](#datatableactionbar) provides a toolbar for the data table when rows are selected.
+
+### Installation
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/data-table-action-bar"
+```
 
 ## API Reference
 

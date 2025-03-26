@@ -182,6 +182,10 @@
     @apply bg-background text-foreground;
   }
 
+  a:has(code) {
+    @apply !no-underline;
+  }
+
   /**
    * @see https://github.com/shadcn-ui/ui/blob/main/apps/www/styles/globals.css#L98
    */
