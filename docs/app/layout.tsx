@@ -1,4 +1,5 @@
 import { Providers } from "@/components/providers";
+import { ReactScan } from "@/components/react-scan";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/config/site";
@@ -90,6 +91,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         />
         <TailwindIndicator />
         <Toaster />
+        <ReactScan enabled={false} />
         <Providers
           theme={{
             attribute: "class",
