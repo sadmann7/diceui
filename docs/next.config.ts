@@ -19,6 +19,11 @@ const nextConfig: NextConfig = {
         destination: "/docs/introduction",
         permanent: false,
       },
+      {
+        source: "/r/:path*",
+        destination: "https://table.sadmn.com/r/:path*",
+        permanent: true,
+      },
       /**
        * @see https://github.com/magicuidesign/magicui/blob/main/next.config.mjs
        */
