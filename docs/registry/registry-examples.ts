@@ -145,6 +145,18 @@ export const examples: Registry = [
     ],
   },
   {
+    name: "data-table-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/data-table", "lucide-react"],
+    registryDependencies: ["data-table"],
+    files: [
+      {
+        path: "examples/data-table-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "editable-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot"],

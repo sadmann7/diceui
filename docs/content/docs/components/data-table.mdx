@@ -10,11 +10,27 @@ links:
 
 ## Installation
 
-### CLI
+<Steps>
+  <Step>
+    Install the components and dependencies:
 
-```package-install
-npx shadcn@latest add "https://diceui.com/r/data-table"
-```
+    ```package-install
+    npx shadcn@latest add "https://diceui.com/r/data-table"
+    ```
+  </Step>
+  <Step>
+    Wrap your application with the [`NuqsAdapter`](https://nuqs.47ng.com/docs/adapters) for query state management:
+
+    ```tsx
+    import { NuqsAdapter } from "nuqs/adapters/next/app";
+
+    <NuqsAdapter>
+      <App />
+    </NuqsAdapter>
+    ```
+  </Step>
+  
+</Steps>
 
 ## Layout
 

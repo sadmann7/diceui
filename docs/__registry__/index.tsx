@@ -445,6 +445,22 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "data-table-demo": {
+      name: "data-table-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["data-table"],
+      files: [{
+        path: "registry/default/examples/data-table-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/data-table-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "editable-demo": {
       name: "editable-demo",
       description: "",

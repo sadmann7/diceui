@@ -276,4 +276,13 @@
   [data-line] span {
     @apply text-[var(--shiki-light)] dark:text-[var(--shiki-dark)];
   }
+
+  [data-table] table {
+    @apply !border-none !rounded-none !my-0;
+  }
+
+  [data-table] table td,
+  [data-table] table th {
+    @apply !w-auto !border-t-0 !border-x-0;
+  }
 }
