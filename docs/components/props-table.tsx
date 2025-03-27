@@ -26,7 +26,7 @@ export function PropsTable({ variant = "default", data }: PropsTableProps) {
         : "CSS Variable";
 
   return (
-    <Table mdx>
+    <Table className="mdx">
       <TableHeader>
         <TableRow>
           <TableHead>{firstColumn}</TableHead>

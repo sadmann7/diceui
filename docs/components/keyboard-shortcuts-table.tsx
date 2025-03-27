@@ -20,7 +20,7 @@ export function KeyboardShortcutsTable({
   shortcuts,
 }: KeyboardShortcutsTableProps) {
   return (
-    <Table mdx>
+    <Table className="mdx">
       <TableHeader>
         <TableRow>
           <TableHead>Key</TableHead>

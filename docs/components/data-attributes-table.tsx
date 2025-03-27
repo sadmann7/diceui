@@ -16,7 +16,7 @@ interface DataAttributesTableProps {
 
 export function DataAttributesTable({ attributes }: DataAttributesTableProps) {
   return (
-    <Table mdx>
+    <Table className="mdx">
       <TableHeader>
         <TableRow>
           <TableHead>Data Attribute</TableHead>
