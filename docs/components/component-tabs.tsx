@@ -10,6 +10,7 @@ import * as React from "react";
 interface ComponentTabsProps extends React.ComponentPropsWithoutRef<"div"> {
   name: string;
   children: React.ReactNode;
+  align?: "start" | "center" | "end";
   preventPreviewFocus?: boolean;
   scalePreview?: boolean;
   fullPreview?: boolean;
@@ -18,6 +19,7 @@ interface ComponentTabsProps extends React.ComponentPropsWithoutRef<"div"> {
 export function ComponentTabs({
   name,
   children,
+  align = "center",
   preventPreviewFocus,
   scalePreview,
   fullPreview,
@@ -59,8 +61,11 @@ export function ComponentTabs({
       >
         <div
           className={cn(
-            "flex h-[400px] w-full items-center justify-center p-10",
+            "flex h-[400px] w-full justify-center p-10",
             {
+              "items-start": align === "start",
+              "items-center": align === "center",
+              "items-end": align === "end",
               "h-full p-0": fullPreview,
               "sm:p-10": scalePreview,
             },

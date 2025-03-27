@@ -16,7 +16,17 @@ import {
 import { useDataTable } from "@/hooks/use-data-table";
 
 import type { Column, ColumnDef } from "@tanstack/react-table";
-import { DollarSign, MoreHorizontal, Text } from "lucide-react";
+import {
+  CheckCircle,
+  CheckCircle2,
+  DollarSign,
+  MoreHorizontal,
+  Text,
+  XCircle,
+} from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { parseAsArrayOf, parseAsString } from "nuqs";
+import { type SearchParams, createSearchParamsCache } from "nuqs/server";
 import * as React from "react";
 
 interface Project {
@@ -53,7 +63,34 @@ const data: Project[] = [
   },
 ];
 
+export const searchParamsCache = createSearchParamsCache({
+  title: parseAsString.withDefault(""),
+  status: parseAsArrayOf(parseAsString).withDefault([]),
+});
+
 export default function DataTableDemo() {
+  const searchParams = useSearchParams();
+
+  const parsedSearchParams = searchParamsCache.parse(
+    searchParams as unknown as SearchParams,
+  );
+
+  // Ideally we would filter the data server-side, but for the sake of this example, we'll filter the data client-side
+  const filteredData = React.useMemo(() => {
+    return data.filter((project) => {
+      const matchesTitle =
+        parsedSearchParams.title === "" ||
+        project.title
+          .toLowerCase()
+          .includes(parsedSearchParams.title.toLowerCase());
+      const matchesStatus =
+        parsedSearchParams.status.length === 0 ||
+        parsedSearchParams.status.includes(project.status);
+
+      return matchesTitle && matchesStatus;
+    });
+  }, [parsedSearchParams]);
+
   const columns = React.useMemo<ColumnDef<Project>[]>(
     () => [
       {
@@ -104,15 +141,21 @@ export default function DataTableDemo() {
         ),
         cell: ({ cell }) => {
           const status = cell.getValue<Project["status"]>();
+          const Icon = status === "active" ? CheckCircle2 : XCircle;
 
-          return <Badge variant="outline">{status}</Badge>;
+          return (
+            <Badge variant="outline" className="capitalize">
+              <Icon />
+              {status}
+            </Badge>
+          );
         },
         meta: {
           label: "Status",
           variant: "multiSelect",
           options: [
-            { label: "Active", value: "active" },
-            { label: "Inactive", value: "inactive" },
+            { label: "Active", value: "active", icon: CheckCircle },
+            { label: "Inactive", value: "inactive", icon: XCircle },
           ],
         },
         enableColumnFilter: true,
@@ -160,7 +203,7 @@ export default function DataTableDemo() {
   );
 
   const { table } = useDataTable({
-    data,
+    data: filteredData,
     columns,
     pageCount: 1,
     initialState: {
