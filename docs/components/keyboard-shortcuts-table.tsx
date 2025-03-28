@@ -12,7 +12,6 @@ interface KeyboardShortcutsTableProps {
   shortcuts: {
     keys: string[];
     description: string;
-    combined?: boolean;
   }[];
 }
 
@@ -31,16 +30,12 @@ export function KeyboardShortcutsTable({
         <TableBody>
           {shortcuts.map((shortcut, index) => (
             <TableRow key={`${shortcut.keys.join(" + ")}-${index}`}>
-              <TableCell>
-                {shortcut.combined ? (
-                  <Kbd variant="outline">{shortcut.keys.join(" + ")}</Kbd>
-                ) : (
-                  shortcut.keys.map((key) => (
-                    <Kbd key={key} variant="outline" className="mr-2">
-                      {key}
-                    </Kbd>
-                  ))
-                )}
+              <TableCell className="flex items-center gap-2">
+                {shortcut.keys.map((key) => (
+                  <Kbd key={key} variant="outline">
+                    {key}
+                  </Kbd>
+                ))}
               </TableCell>
               <TableCell>
                 <span>{shortcut.description}</span>

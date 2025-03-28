@@ -8,13 +8,22 @@ import {
 } from "@/components/ui/table";
 
 interface DataAttributesTableProps {
-  attributes: {
+  attributes?: {
     title: string;
     value: string | string[];
   }[];
+  slot?: string;
 }
 
-export function DataAttributesTable({ attributes }: DataAttributesTableProps) {
+export function DataAttributesTable({
+  attributes,
+  slot,
+}: DataAttributesTableProps) {
+  const allAttributes = [
+    ...(attributes ?? []),
+    ...(slot ? [{ title: "[data-slot]", value: `"${slot}"` }] : []),
+  ];
+
   return (
     <div className="mdx">
       <Table>
@@ -25,7 +34,7 @@ export function DataAttributesTable({ attributes }: DataAttributesTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {attributes.map((attribute, index) => (
+          {allAttributes.map((attribute, index) => (
             <TableRow key={`${attribute.title}-${index}`}>
               <TableCell>
                 <code className="text-[13px]">{attribute.title}</code>

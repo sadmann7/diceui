@@ -340,8 +340,6 @@ Reference the [TanStack Table Column Definitions Guide](https://tanstack.com/tab
 
 The [`DataTableSortList`](#datatablesortlist) allows you to sort data by multiple columns simultaneously. Each sort can be configured with its own direction (asc/desc) and can be reordered using drag and drop.
 
-### Installation
-
 ```package-install
 npx shadcn@latest add "https://diceui.com/r/data-table-sort-list"
 ```
@@ -349,8 +347,6 @@ npx shadcn@latest add "https://diceui.com/r/data-table-sort-list"
 ## Filter List
 
 The [`DataTableFilterList`](#datatablefilterlist) provides a comprehensive way to filter data with multiple conditions. It supports various filter types and operators, with the ability to combine filters using AND/OR logic.
-
-### Installation
 
 ```package-install
 npx shadcn@latest add "https://diceui.com/r/data-table-filter-list"
@@ -360,8 +356,6 @@ npx shadcn@latest add "https://diceui.com/r/data-table-filter-list"
 
 The [`DataTableFilterMenu`](#datatablefiltermenu) provides a command palette-style interface for quickly adding and managing filters. It supports keyboard shortcuts and offers a streamlined way to filter data.
 
-### Installation
-
 ```package-install
 npx shadcn@latest add "https://diceui.com/r/data-table-filter-menu"
 ```
@@ -369,8 +363,6 @@ npx shadcn@latest add "https://diceui.com/r/data-table-filter-menu"
 ## Action Bar
 
 The [`DataTableActionBar`](#datatableactionbar) provides a toolbar for the data table when rows are selected.
-
-### Installation
 
 ```package-install
 npx shadcn@latest add "https://diceui.com/r/data-table-action-bar"
@@ -470,25 +462,19 @@ Hook for initializing the data table with state management.
       description: "Opens the filter menu.",
     },
     {
-      keys: ["Shift", "F"],
+      keys: ["Shift + F"],
       description: "Removes the last applied filter.",
-      combined: true,
     },
     {
       keys: ["S"],
       description: "Opens the sort menu.",
     },
     {
-      keys: ["Shift", "S"],
+      keys: ["Shift + S"],
       description: "Removes the last applied sort.",
-      combined: true,
     },
     {
-      keys: ["Backspace"],
-      description: "Removes the focused filter/sort item. Removes the last applied filter/sort when menu trigger is focused.",
-    },
-    {
-      keys: ["Delete"],
+      keys: ["Backspace", "Delete"],
       description: "Removes the focused filter/sort item. Removes the last applied filter/sort when menu trigger is focused.",
     },
   ]}

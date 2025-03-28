@@ -8,7 +8,7 @@ import {
   ComboboxInput,
   ComboboxItem,
   ComboboxLabel,
-  ComboboxProgress,
+  ComboboxLoading,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
 import { ChevronDown } from "lucide-react";
@@ -90,7 +90,7 @@ export default function ComboboxDebouncedDemo() {
       </ComboboxAnchor>
       <ComboboxContent>
         {isLoading ? (
-          <ComboboxProgress value={progress} label="Searching tricks..." />
+          <ComboboxLoading value={progress} label="Searching tricks..." />
         ) : null}
         <ComboboxEmpty keepVisible={!isLoading && filteredItems.length === 0}>
           No trick found.

@@ -1325,6 +1325,7 @@ const MasonryRoot = React.forwardRef<HTMLDivElement, MasonryRootProps>(
       <MasonryContext.Provider value={contextValue}>
         <RootPrimitive
           {...rootProps}
+          data-slot="masonry"
           ref={composedRef}
           style={{
             position: "relative",
@@ -1536,7 +1537,13 @@ const MasonryItem = React.forwardRef<HTMLDivElement, MasonryItemProps>(
 
     const ItemPrimitive = asChild ? Slot : "div";
 
-    return <ItemPrimitive {...itemProps} ref={forwardedRef} />;
+    return (
+      <ItemPrimitive
+        data-slot="masonry-item"
+        {...itemProps}
+        ref={forwardedRef}
+      />
+    );
   },
 );
 

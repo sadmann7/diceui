@@ -1,7 +1,10 @@
 "use client";
 
 export { ComboboxRoot, Root } from "./combobox-root";
-export type { ComboboxRootProps } from "./combobox-root";
+export type {
+  ComboboxRootProps,
+  ComboboxRootComponentProps,
+} from "./combobox-root";
 
 export { ComboboxLabel, Label } from "./combobox-label";
 export type { ComboboxLabelProps } from "./combobox-label";
@@ -39,8 +42,8 @@ export type { ComboboxContentProps } from "./combobox-content";
 export { Arrow, ComboboxArrow } from "./combobox-arrow";
 export type { ComboboxArrowProps } from "./combobox-arrow";
 
-export { ComboboxProgress, Progress } from "./combobox-progress";
-export type { ComboboxProgressProps } from "./combobox-progress";
+export { ComboboxLoading, Loading } from "./combobox-loading";
+export type { ComboboxLoadingProps } from "./combobox-loading";
 
 export { ComboboxEmpty, Empty } from "./combobox-empty";
 export type { ComboboxEmptyProps } from "./combobox-empty";
