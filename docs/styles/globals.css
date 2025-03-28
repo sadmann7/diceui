@@ -223,7 +223,7 @@
 
 @utility mdx {
   & table {
-    @apply rounded-md my-3;
+    @apply rounded-md my-2.5;
   }
 
   & table tr {
@@ -268,6 +268,17 @@
   }
 }
 
+@utility data-table-container {
+  & table {
+    @apply border-none rounded-none my-0;
+  }
+
+  & table td,
+  & table th {
+    @apply w-auto border-t-0 border-x-0;
+  }
+}
+
 @layer components {
   [data-rehype-pretty-code-figure] figure {
     @apply border-none bg-secondary/50!;
@@ -275,14 +286,5 @@
 
   [data-line] span {
     @apply text-[var(--shiki-light)] dark:text-[var(--shiki-dark)];
-  }
-
-  [data-table] table {
-    @apply !border-none !rounded-none !my-0;
-  }
-
-  [data-table] table td,
-  [data-table] table th {
-    @apply !w-auto !border-t-0 !border-x-0;
   }
 }

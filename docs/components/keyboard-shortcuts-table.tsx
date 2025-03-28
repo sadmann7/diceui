@@ -20,33 +20,35 @@ export function KeyboardShortcutsTable({
   shortcuts,
 }: KeyboardShortcutsTableProps) {
   return (
-    <Table className="mdx">
-      <TableHeader>
-        <TableRow>
-          <TableHead>Key</TableHead>
-          <TableHead>Description</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {shortcuts.map((shortcut, index) => (
-          <TableRow key={`${shortcut.keys.join(" + ")}-${index}`}>
-            <TableCell>
-              {shortcut.combined ? (
-                <Kbd variant="outline">{shortcut.keys.join(" + ")}</Kbd>
-              ) : (
-                shortcut.keys.map((key) => (
-                  <Kbd key={key} variant="outline" className="mr-2">
-                    {key}
-                  </Kbd>
-                ))
-              )}
-            </TableCell>
-            <TableCell>
-              <span>{shortcut.description}</span>
-            </TableCell>
+    <div className="mdx">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Key</TableHead>
+            <TableHead>Description</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {shortcuts.map((shortcut, index) => (
+            <TableRow key={`${shortcut.keys.join(" + ")}-${index}`}>
+              <TableCell>
+                {shortcut.combined ? (
+                  <Kbd variant="outline">{shortcut.keys.join(" + ")}</Kbd>
+                ) : (
+                  shortcut.keys.map((key) => (
+                    <Kbd key={key} variant="outline" className="mr-2">
+                      {key}
+                    </Kbd>
+                  ))
+                )}
+              </TableCell>
+              <TableCell>
+                <span>{shortcut.description}</span>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 }

@@ -204,7 +204,7 @@ export default function DataTableDemo() {
   });
 
   return (
-    <div data-table>
+    <div className="data-table-container">
       <DataTable table={table}>
         <DataTableToolbar table={table} />
       </DataTable>
