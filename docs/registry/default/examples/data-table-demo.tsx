@@ -187,6 +187,7 @@ export default function DataTableDemo() {
             </DropdownMenu>
           );
         },
+        size: 32,
       },
     ],
     [],
