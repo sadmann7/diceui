@@ -24,9 +24,7 @@ import {
   Text,
   XCircle,
 } from "lucide-react";
-import { useSearchParams } from "next/navigation";
-import { parseAsArrayOf, parseAsString } from "nuqs";
-import { type SearchParams, createSearchParamsCache } from "nuqs/server";
+import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
 import * as React from "react";
 
 interface Project {
@@ -63,33 +61,25 @@ const data: Project[] = [
   },
 ];
 
-export const searchParamsCache = createSearchParamsCache({
-  title: parseAsString.withDefault(""),
-  status: parseAsArrayOf(parseAsString).withDefault([]),
-});
-
 export default function DataTableDemo() {
-  const searchParams = useSearchParams();
-
-  const parsedSearchParams = searchParamsCache.parse(
-    searchParams as unknown as SearchParams,
+  const [title] = useQueryState("title", parseAsString.withDefault(""));
+  const [status] = useQueryState(
+    "status",
+    parseAsArrayOf(parseAsString).withDefault([]),
   );
 
   // Ideally we would filter the data server-side, but for the sake of this example, we'll filter the data client-side
   const filteredData = React.useMemo(() => {
     return data.filter((project) => {
       const matchesTitle =
-        parsedSearchParams.title === "" ||
-        project.title
-          .toLowerCase()
-          .includes(parsedSearchParams.title.toLowerCase());
+        title === "" ||
+        project.title.toLowerCase().includes(title.toLowerCase());
       const matchesStatus =
-        parsedSearchParams.status.length === 0 ||
-        parsedSearchParams.status.includes(project.status);
+        status.length === 0 || status.includes(project.status);
 
       return matchesTitle && matchesStatus;
     });
-  }, [parsedSearchParams]);
+  }, [title, status]);
 
   const columns = React.useMemo<ColumnDef<Project>[]>(
     () => [
