@@ -13,7 +13,24 @@ import {
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
-import { PlusCircle, Settings2, XCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { PlusCircle, XCircle } from "lucide-react";
+
+interface Range {
+  min: number;
+  max: number;
+}
+
+type RangeValue = [number, number];
+
+function getIsValidRange(value: unknown): value is RangeValue {
+  return (
+    Array.isArray(value) &&
+    value.length === 2 &&
+    typeof value[0] === "number" &&
+    typeof value[1] === "number"
+  );
+}
 
 interface DataTableSliderFilterProps<TData> {
   column: Column<TData, unknown>;
@@ -25,48 +42,91 @@ export function DataTableSliderFilter<TData>({
   title,
 }: DataTableSliderFilterProps<TData>) {
   const id = React.useId();
-  const columnFilterValue = column.getFilterValue() as
-    | [number, number]
-    | undefined;
 
+  const columnFilterValue = getIsValidRange(column.getFilterValue())
+    ? (column.getFilterValue() as RangeValue)
+    : undefined;
+
+  const defaultRange = column.columnDef.meta?.range;
   const unit = column.columnDef.meta?.unit;
 
-  const [min, max] = React.useMemo(() => {
-    const range = column.columnDef.meta?.range;
-    if (range) return range;
+  const { min, max, step } = React.useMemo<Range & { step: number }>(() => {
+    let minValue = 0;
+    let maxValue = 100;
 
-    const values = column.getFacetedMinMaxValues();
-    if (!values) return [0, 100];
+    if (defaultRange && getIsValidRange(defaultRange)) {
+      [minValue, maxValue] = defaultRange;
+    } else {
+      const values = column.getFacetedMinMaxValues();
+      if (values && Array.isArray(values) && values.length === 2) {
+        const [facetMinValue, facetMaxValue] = values;
+        if (
+          typeof facetMinValue === "number" &&
+          typeof facetMaxValue === "number"
+        ) {
+          minValue = facetMinValue;
+          maxValue = facetMaxValue;
+        }
+      }
+    }
 
-    return [values[0], values[1]];
-  }, [column]);
+    const rangeSize = maxValue - minValue;
+    const step =
+      rangeSize <= 20
+        ? 1
+        : rangeSize <= 100
+          ? Math.ceil(rangeSize / 20)
+          : Math.ceil(rangeSize / 50);
 
-  const [range, setRange] = React.useState<[number, number]>(
-    columnFilterValue ?? [min, max],
+    return { min: minValue, max: maxValue, step };
+  }, [column, defaultRange]);
+
+  const range = React.useMemo((): RangeValue => {
+    return columnFilterValue ?? [min, max];
+  }, [columnFilterValue, min, max]);
+
+  const formatValue = React.useCallback((value: number) => {
+    return value.toLocaleString(undefined, { maximumFractionDigits: 0 });
+  }, []);
+
+  const onFromInputChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const numValue = Number(event.target.value);
+      if (!Number.isNaN(numValue) && numValue >= min && numValue <= range[1]) {
+        column.setFilterValue([numValue, range[1]]);
+      }
+    },
+    [column, min, range],
   );
 
-  const onRangeChange = React.useCallback(
-    (values: [number, number]) => {
-      setRange(values);
-      column.setFilterValue(values);
+  const onToInputChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const numValue = Number(event.target.value);
+      if (!Number.isNaN(numValue) && numValue <= max && numValue >= range[0]) {
+        column.setFilterValue([range[0], numValue]);
+      }
+    },
+    [column, max, range],
+  );
+
+  const onSliderValueChange = React.useCallback(
+    (value: RangeValue) => {
+      if (Array.isArray(value) && value.length === 2) {
+        column.setFilterValue(value);
+      }
     },
     [column],
   );
 
   const onReset = React.useCallback(
-    (event?: React.MouseEvent) => {
-      event?.stopPropagation();
-      setRange([min, max]);
+    (event: React.MouseEvent) => {
+      if (event.target instanceof HTMLDivElement) {
+        event.stopPropagation();
+      }
       column.setFilterValue(undefined);
     },
-    [column, min, max],
+    [column],
   );
-
-  const formatValue = React.useCallback((value: number) => {
-    return value.toLocaleString(undefined, {
-      maximumFractionDigits: 0,
-    });
-  }, []);
 
   return (
     <Popover>
@@ -77,8 +137,8 @@ export function DataTableSliderFilter<TData>({
               role="button"
               aria-label={`Clear ${title} filter`}
               tabIndex={0}
-              onClick={onReset}
               className="rounded-sm opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              onClick={onReset}
             >
               <XCircle />
             </div>
@@ -111,7 +171,7 @@ export function DataTableSliderFilter<TData>({
             <div className="relative">
               <Input
                 id={`${id}-from`}
-                type="text"
+                type="number"
                 aria-valuemin={min}
                 aria-valuemax={max}
                 inputMode="numeric"
@@ -119,18 +179,9 @@ export function DataTableSliderFilter<TData>({
                 placeholder={min.toString()}
                 min={min}
                 max={max}
-                value={range[0].toString()}
-                onChange={(event) => {
-                  const numValue = Number(event.target.value);
-                  if (
-                    !Number.isNaN(numValue) &&
-                    numValue >= min &&
-                    numValue <= range[1]
-                  ) {
-                    onRangeChange([numValue, range[1]]);
-                  }
-                }}
-                className="h-8 w-24 pr-8"
+                value={range[0]?.toString()}
+                onChange={onFromInputChange}
+                className={cn("h-8 w-24", unit && "pr-8")}
               />
               {unit && (
                 <span className="absolute top-0 right-0 bottom-0 flex items-center rounded-r-md bg-accent px-2 text-muted-foreground text-sm">
@@ -144,7 +195,7 @@ export function DataTableSliderFilter<TData>({
             <div className="relative">
               <Input
                 id={`${id}-to`}
-                type="text"
+                type="number"
                 aria-valuemin={min}
                 aria-valuemax={max}
                 inputMode="numeric"
@@ -152,18 +203,9 @@ export function DataTableSliderFilter<TData>({
                 placeholder={max.toString()}
                 min={min}
                 max={max}
-                value={range[1].toString()}
-                onChange={(event) => {
-                  const numValue = Number(event.target.value);
-                  if (
-                    !Number.isNaN(numValue) &&
-                    numValue <= max &&
-                    numValue >= range[0]
-                  ) {
-                    onRangeChange([range[0], numValue]);
-                  }
-                }}
-                className="h-8 w-24 pr-8"
+                value={range[1]?.toString()}
+                onChange={onToInputChange}
+                className={cn("h-8 w-24", unit && "pr-8")}
               />
               {unit && (
                 <span className="absolute top-0 right-0 bottom-0 flex items-center rounded-r-md bg-accent px-2 text-muted-foreground text-sm">
@@ -172,24 +214,25 @@ export function DataTableSliderFilter<TData>({
               )}
             </div>
           </div>
+          <Label htmlFor={`${id}-slider`} className="sr-only">
+            {title} slider
+          </Label>
           <Slider
-            aria-label="Select range"
+            id={`${id}-slider`}
             min={min}
             max={max}
+            step={step}
             value={range}
-            onValueChange={(value) => setRange(value as [number, number])}
-            onValueCommit={(value) => onRangeChange(value as [number, number])}
-            className="[&_[role=slider]]:h-4 [&_[role=slider]]:w-4"
+            onValueChange={onSliderValueChange}
           />
         </div>
         <Button
-          aria-label="Reset range filter"
+          aria-label={`Clear ${title} filter`}
           variant="outline"
           size="sm"
           onClick={onReset}
-          className="px-3 text-xs"
         >
-          Reset
+          Clear
         </Button>
       </PopoverContent>
     </Popover>
