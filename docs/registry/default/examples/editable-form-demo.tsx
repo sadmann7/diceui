@@ -147,16 +147,16 @@ export default function EditableFormDemo() {
           )}
         />
         <div className="flex w-fit gap-2 self-end">
-          <Button type="submit" className="w-full">
-            Update
-          </Button>
           <Button
             type="button"
             variant="outline"
-            className="w-full"
+            className="w-fit"
             onClick={() => form.reset()}
           >
-            Cancel
+            Reset
+          </Button>
+          <Button type="submit" className="w-fit">
+            Update
           </Button>
         </div>
       </form>

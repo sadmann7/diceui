@@ -2,9 +2,9 @@
 @import "fumadocs-ui/css/black.css";
 @import "fumadocs-ui/css/preset.css";
 
-@plugin "tailwindcss-animate";
+@import "tw-animate-css";
 
-@source '../node_modules/fumadocs-ui/dist/**/*.js';
+@source "../node_modules/fumadocs-ui/dist/**/*.js";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -182,6 +182,10 @@
     @apply bg-background text-foreground;
   }
 
+  a:has(code) {
+    @apply !no-underline;
+  }
+
   /**
    * @see https://github.com/shadcn-ui/ui/blob/main/apps/www/styles/globals.css#L98
    */
@@ -219,7 +223,7 @@
 
 @utility mdx {
   & table {
-    @apply rounded-md;
+    @apply rounded-md my-2.5;
   }
 
   & table tr {
@@ -233,7 +237,7 @@
 
 @utility auto-type-table {
   & table {
-    @apply rounded-md;
+    @apply rounded-md w-full;
   }
 
   & table tr {
@@ -248,8 +252,30 @@
     @apply align-top whitespace-pre-wrap;
   }
 
-  & table td:nth-child(2) {
-    @apply w-full;
+  & table td:nth-child(1),
+  & table th:nth-child(1) {
+    @apply w-[20%];
+  }
+
+  & table td:nth-child(2),
+  & table th:nth-child(2) {
+    @apply w-[40%];
+  }
+
+  & table td:nth-child(3),
+  & table th:nth-child(3) {
+    @apply w-[20%];
+  }
+}
+
+@utility data-table-container {
+  & table {
+    @apply border-none rounded-none my-0;
+  }
+
+  & table td,
+  & table th {
+    @apply w-auto border-t-0 border-x-0;
   }
 }
 

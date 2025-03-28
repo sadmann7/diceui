@@ -1,5 +1,3 @@
-"use client";
-
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
@@ -46,7 +44,7 @@ export default function PlaygroundPage() {
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
           <ComboboxTrigger>
-            <ChevronDown className="h-4 w-4" />
+            <ChevronDown className="size-4" />
           </ComboboxTrigger>
         </ComboboxAnchor>
         <ComboboxContent>

@@ -230,6 +230,7 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
 
     const ScrollerImpl = (
       <ScrollerPrimitive
+        data-slot="scroller"
         {...scrollerProps}
         ref={composedRef}
         style={composedStyle}
@@ -247,6 +248,7 @@ const Scroller = React.forwardRef<HTMLDivElement, ScrollerProps>(
         .map((direction) => (
           <ScrollButton
             key={direction}
+            data-slot="scroll-button"
             direction={direction}
             onClick={scrollHandlers[direction]}
             triggerMode={scrollTriggerMode}

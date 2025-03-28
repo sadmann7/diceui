@@ -211,7 +211,6 @@ type KanbanProps<T> = Omit<DndContextProps, "collisionDetection"> &
 
 function Kanban<T>(props: KanbanProps<T>) {
   const {
-    id = React.useId(),
     value,
     onValueChange,
     modifiers,
@@ -223,6 +222,7 @@ function Kanban<T>(props: KanbanProps<T>) {
     flatCursor = false,
     ...kanbanProps
   } = props;
+  const id = React.useId();
   const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null);
   const lastOverIdRef = React.useRef<UniqueIdentifier | null>(null);
   const hasMovedRef = React.useRef(false);
@@ -583,10 +583,11 @@ function Kanban<T>(props: KanbanProps<T>) {
   return (
     <KanbanContext.Provider value={contextValue as KanbanContextValue<unknown>}>
       <DndContext
-        id={id}
+        collisionDetection={collisionDetection}
         modifiers={modifiers}
         sensors={sensors}
-        collisionDetection={collisionDetection}
+        {...kanbanProps}
+        id={id}
         measuring={{
           droppable: {
             strategy: MeasuringStrategy.Always,
@@ -615,7 +616,6 @@ function Kanban<T>(props: KanbanProps<T>) {
           },
           ...accessibility,
         }}
-        {...kanbanProps}
       />
     </KanbanContext.Provider>
   );
@@ -1048,8 +1048,8 @@ function KanbanOverlay(props: KanbanOverlayProps) {
 
   return ReactDOM.createPortal(
     <DragOverlay
-      modifiers={context.modifiers}
       dropAnimation={dropAnimation}
+      modifiers={context.modifiers}
       className={cn(!context.flatCursor && "cursor-grabbing")}
       {...overlayProps}
     >

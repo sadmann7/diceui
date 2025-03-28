@@ -10,6 +10,12 @@ export const lib: Registry = [
         path: "lib/utils.ts",
         type: "registry:lib",
       },
+    ],
+  },
+  {
+    name: "composition",
+    type: "registry:lib",
+    files: [
       {
         path: "lib/composition.ts",
         type: "registry:lib",

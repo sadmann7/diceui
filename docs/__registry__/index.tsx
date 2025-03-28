@@ -230,12 +230,24 @@ export const Index: Record<string, any> = {
         path: "registry/default/lib/utils.ts",
         type: "registry:lib",
         target: ""
-      },{
+      }],
+      component: React.lazy(() => import("@/registry/default/lib/utils.ts")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "composition": {
+      name: "composition",
+      description: "",
+      type: "registry:lib",
+      registryDependencies: undefined,
+      files: [{
         path: "registry/default/lib/composition.ts",
         type: "registry:lib",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/lib/utils.ts")),
+      component: React.lazy(() => import("@/registry/default/lib/composition.ts")),
       source: "",
       category: "",
       subcategory: "",
@@ -428,6 +440,22 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/combobox-tags-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "data-table-demo": {
+      name: "data-table-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["data-table"],
+      files: [{
+        path: "registry/default/examples/data-table-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/data-table-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",
