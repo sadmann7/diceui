@@ -176,7 +176,7 @@ interface ComboboxRootProps<Multiple extends boolean = false>
 
   /**
    * Whether the combobox should filter items externally.
-   * @default true
+   * @default false
    */
   manualFiltering?: boolean;
 
