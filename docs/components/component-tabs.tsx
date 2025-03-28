@@ -1,6 +1,7 @@
 "use client";
 
 import { Index } from "@/__registry__";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useConfig } from "@/hooks/use-config";
 import { cn } from "@/lib/utils";
 import { styles } from "@/registry/registry-styles";
@@ -72,7 +73,9 @@ export function ComponentTabs({
             className,
           )}
         >
-          {Preview}
+          <React.Suspense fallback={<Skeleton className="size-full" />}>
+            {Preview}
+          </React.Suspense>
         </div>
       </Tab>
       <Tab value="Code" className="component-block py-0">
