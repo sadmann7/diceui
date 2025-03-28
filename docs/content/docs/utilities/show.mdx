@@ -1,0 +1,108 @@
+---
+title: Show
+description: Renders React elements based in a condition, in a more elegant and nestable way than JSX ternaries.
+links:
+  api: /docs/utilities/show#api-reference
+---
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/show"
+```
+
+### Manual
+
+<Steps>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource src="./registry/default/components/show.tsx" />
+  </Step>
+</Steps>
+
+## Usage
+
+```tsx
+import { Show } from "@diceui/show"
+
+export default function App() {
+  const isAuthenticated = false
+
+  return (
+    <Show when={isAuthenticated} fallback={<button>Sign In</button>}>
+      {() => (
+        <button>Hello, User!</button>
+      )}
+    </Show>
+  )
+}
+```
+
+When the parameter inserted into "when" prop. will be used inside the children function, in order to have type-safety, pass it on the render function, such as:
+
+```tsx
+import { Show } from "@diceui/show"
+
+type User = {
+  name: string
+} | null
+
+export default function App() {
+  const [user, setUser] = useState<User>(null)
+
+  return (
+    <Show when={user} fallback={<div>No user to show</div>}>
+      {(user) => (
+        <span>User Name: {user.name}</span>
+      )}
+    </Show>
+  )
+}
+```
+
+It is also possible to nest Show components:
+
+```tsx
+import { Show } from "@diceui/show"
+
+type User = {
+  name: string
+} | null
+
+export default function App() {
+  const [user] = useState<User>(null)
+  const [isVIP] = useState(false)
+
+  return (
+    <Show when={user} fallback={<div>No user to show</div>}>
+      {(user) => (
+        <div>
+          <span>User name: {user.name}</span>
+          <span>
+            Member Category:
+            <Show when={isVIP} fallback={<>Member</>}>
+              {() => <>VIP</>}
+            </Show>
+          </span>
+        </div>
+      )}
+  </Show>
+  )
+}
+```
+
+## API Reference
+
+### Show
+
+A component that renders React elements based in a condition, in a more elegant and nestable way than JSX ternaries. Inspired by [SolidJS Show function](https://docs.solidjs.com/reference/components/show) and adapted to React.
+
+#### Props
+
+<AutoTypeTable
+  path="./types/docs/utilities.ts"
+  name="ShowProps"
+/>
