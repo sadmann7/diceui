@@ -20,8 +20,8 @@ const nextConfig: NextConfig = {
         permanent: false,
       },
       {
-        source: "/r/:path*",
-        destination: "https://table.sadmn.com/r/:path*",
+        source: "/r/:component(data-table.*)",
+        destination: "https://table.sadmn.com/r/:component.json",
         permanent: true,
       },
       /**

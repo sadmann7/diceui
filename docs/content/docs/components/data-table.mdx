@@ -116,6 +116,13 @@ npx shadcn@latest add "https://diceui.com/r/data-table-filter-menu"
 
 The [`DataTableActionBar`](#datatableactionbar) provides a toolbar for the data table when rows are selected.
 
+### Features
+- Floating action bar
+- Customizable actions
+- Row selection tracking
+
+### Installation
+
 ```package-install
 npx shadcn@latest add "https://diceui.com/r/data-table-action-bar"
 ```
@@ -280,7 +287,7 @@ npx shadcn@latest add "https://diceui.com/r/data-table-action-bar"
 The column definitions are used to define the columns of the data table.
 
 ```tsx
-const columns = React.useMemo(() => [
+const columns = React.useMemo<ColumnDef<Project>[]>(() => [
   {
     // Required: Unique identifier for the column
     id: "title", // [!code highlight]
@@ -303,15 +310,17 @@ const columns = React.useMemo(() => [
     enableColumnFilter: true, // [!code highlight]
   },
   {
-    id: "price",
+    id: "status",
     // Access nested data using `accessorFn`
-    accessorFn: (row) => row.line.price, // [!code highlight]
-    header: "Price",
+    accessorFn: (row) => row.lineItem.status,
+    header: "Status",
     meta: {
-      label: "Price",
-      variant: "number",
-      icon: DollarSign,
-      unit: "$",
+      label: "Status",
+      variant: "select",
+      options: [
+        { label: "Active", value: "active" },
+        { label: "Inactive", value: "inactive" },
+      ],
     },
     enableColumnFilter: true,
   },
@@ -320,7 +329,7 @@ const columns = React.useMemo(() => [
 
 #### Properties
 
-The properties to be used for column definition.
+Core configuration options for defining columns.
 
 <PropsTable
   data={[
@@ -365,7 +374,7 @@ The properties to be used for column definition.
 
 #### Column Meta
 
-The column meta options to be used for column definition.
+Column meta options for filtering, sorting, and view options.
 
 <PropsTable
   data={[
@@ -379,7 +388,7 @@ The column meta options to be used for column definition.
     },
     {
       title: "variant",
-      description: "The type of filter to use (`text`, `number`, `range`, `date`, `date-range`, `boolean`, `select`, `multi-select`)",
+      description: "The type of filter to use (`text`, `number`, `select`, etc.)",
     },
     {
       title: "options",
@@ -402,7 +411,7 @@ The column meta options to be used for column definition.
 
 #### Filter Variants
 
-The filter variants to be used for [column meta](#column-meta).
+Available filter variants for [column meta](#column-meta).
 
 <PropsTable
   variant="title"
@@ -444,6 +453,15 @@ The filter variants to be used for [column meta](#column-meta).
 
 Reference the [TanStack Table Column Definitions Guide](https://tanstack.com/table/latest/docs/guide/column-defs#column-definitions-guide) for detailed column definition guide.
 
+### useDataTable
+
+A hook for initializing the data table with state management.
+
+<AutoTypeTable
+  path="./types/docs/data-table.ts"
+  name="UseDataTableProps"
+/>
+
 ### DataTable
 
 The main data table component.
@@ -482,7 +500,7 @@ Advanced toolbar with more comprehensive filtering capabilities.
 
 ### DataTableViewOptions
 
-A compoennt to toggle column visibility.
+Controls column visibility and display preferences in the data table.
 
 <AutoTypeTable
   path="./types/docs/data-table.ts"
@@ -516,6 +534,15 @@ Filter menu with ability to add, remove, and modify filters.
   name="DataTableFilterMenuProps"
 />
 
+### DataTableActionBar
+
+Floating action bar component for actions for selected rows.
+
+<AutoTypeTable
+  path="./types/docs/data-table.ts"
+  name="DataTableActionBarProps"
+/>
+
 ### DataTablePagination
 
 Pagination controls for the data table.
@@ -523,15 +550,6 @@ Pagination controls for the data table.
 <AutoTypeTable
   path="./types/docs/data-table.ts"
   name="DataTablePaginationProps"
-/>
-
-### useDataTable Hook
-
-Hook for initializing the data table with state management.
-
-<AutoTypeTable
-  path="./types/docs/data-table.ts"
-  name="UseDataTableProps"
 />
 
 ## Accessibility
