@@ -52,4 +52,14 @@ export const components: Registry = [
       },
     ],
   },
+  {
+    name: "show",
+    type: "registry:component",
+    files: [
+      {
+        path: "components/show.tsx",
+        type: "registry:component",
+      },
+    ],
+  },
 ];
