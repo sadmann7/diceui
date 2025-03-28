@@ -70,11 +70,11 @@ import { Show } from "@diceui/show"
 
 type User = {
   name: string
+  isVIP: boolean
 } | null
 
 export default function App() {
   const [user] = useState<User>(null)
-  const [isVIP] = useState(false)
 
   return (
     <Show when={user} fallback={<div>No user to show</div>}>
@@ -83,13 +83,13 @@ export default function App() {
           <span>User name: {user.name}</span>
           <span>
             Member Category:
-            <Show when={isVIP} fallback={<>Member</>}>
+            <Show when={user.isVIP} fallback={<>Member</>}>
               {() => <>VIP</>}
             </Show>
           </span>
         </div>
       )}
-  </Show>
+    </Show>
   )
 }
 ```
