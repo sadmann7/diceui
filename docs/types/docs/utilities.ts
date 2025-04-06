@@ -109,3 +109,24 @@ export interface VisuallyHiddenInputProps {
    */
   bubbles?: boolean;
 }
+
+export interface ShowProps<T> {
+  /** Condition to be met to render children. */
+  when: T
+  /** Component to show instead of children, if condition is not met. */
+  fallback?: React.ReactNode
+   /**
+   *  Component to show instead of fallback, if condition is met.
+   *
+   *  The children shall be passed inside a function, because if not, even if the condition isn't met, the children will still be calculated.
+   *
+   * ```ts
+   * <Show when={...} fallback={...}>
+   *   {() => <MyComponent />}
+   * </Show>
+   * ```
+   *
+   * @default true
+   */
+  children: (item: NonNullable<T>) => React.ReactNode
+}
