@@ -123,7 +123,11 @@ export interface PresenceProps {
 
   /**
    * Whether to force mount the children regardless of the present state.
+   * Useful for controlling the presence of a component that is animating in or out.
    * @default false
    */
   forceMount?: boolean;
+
+  /** Callback when all exit animations have completed. */
+  onExitComplete?: () => void;
 }

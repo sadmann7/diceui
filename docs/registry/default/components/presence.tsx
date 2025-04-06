@@ -37,9 +37,15 @@ interface PresenceProps {
         ref?: React.Ref<HTMLElement>;
       }>);
   forceMount?: boolean;
+  onExitComplete?: () => void;
 }
 
-function Presence({ present, children, forceMount = false }: PresenceProps) {
+function Presence({
+  present,
+  children,
+  forceMount = false,
+  onExitComplete,
+}: PresenceProps) {
   const [node, setNode] = React.useState<HTMLElement | null>(null);
   const stylesRef = React.useRef<CSSStyleDeclaration>(
     {} as CSSStyleDeclaration,
@@ -65,7 +71,6 @@ function Presence({ present, children, forceMount = false }: PresenceProps) {
     },
   });
 
-  // Track animation name changes
   React.useEffect(() => {
     const currentAnimationName = getAnimationName(stylesRef.current);
     prevAnimationNameRef.current =
@@ -163,6 +168,12 @@ function Presence({ present, children, forceMount = false }: PresenceProps) {
       node.removeEventListener("transitioncancel", onTransitionEnd);
     };
   }, [node, send]);
+
+  React.useEffect(() => {
+    if (state === "unmounted" && !present && onExitComplete) {
+      onExitComplete();
+    }
+  }, [state, present, onExitComplete]);
 
   const isPresent = ["mounted", "unmountSuspended"].includes(state);
 
