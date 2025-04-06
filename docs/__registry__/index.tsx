@@ -1069,6 +1069,22 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "presence": {
+      name: "presence",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/components/presence.tsx",
+        type: "registry:component",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/components/presence.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "visually-hidden": {
       name: "visually-hidden",
       description: "",
@@ -1096,22 +1112,6 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/components/visually-hidden-input.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
-    "show": {
-      name: "show",
-      description: "",
-      type: "registry:component",
-      registryDependencies: undefined,
-      files: [{
-        path: "registry/default/components/show.tsx",
-        type: "registry:component",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/components/presence")),
       source: "",
       category: "",
       subcategory: "",

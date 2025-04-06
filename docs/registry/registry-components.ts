@@ -32,6 +32,16 @@ export const components: Registry = [
     ],
   },
   {
+    name: "presence",
+    type: "registry:component",
+    files: [
+      {
+        path: "components/presence.tsx",
+        type: "registry:component",
+      },
+    ],
+  },
+  {
     name: "visually-hidden",
     type: "registry:component",
     dependencies: ["@radix-ui/react-slot"],
@@ -48,16 +58,6 @@ export const components: Registry = [
     files: [
       {
         path: "components/visually-hidden-input.tsx",
-        type: "registry:component",
-      },
-    ],
-  },
-  {
-    name: "show",
-    type: "registry:component",
-    files: [
-      {
-        path: "components/show.tsx",
         type: "registry:component",
       },
     ],

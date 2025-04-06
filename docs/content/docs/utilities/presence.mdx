@@ -1,6 +1,6 @@
 ---
 title: Presence
-description: A utility component for managing the presence state of elements with animations.
+description: Manages element mounting and unmounting with animation support.
 links:
   api: /docs/utilities/presence#api-reference
 ---
@@ -29,11 +29,14 @@ npx shadcn@latest add "https://diceui.com/r/presence"
 import { Presence } from "@/components/presence"
 
 export default function App() {
-  const [isOpen, setIsOpen] = React.useState(false)
+  const [open, setOpen] = React.useState(false)
 
   return (
-    <Presence present={isOpen}>
-      <div className="animate-in fade-in">
+    <Presence present={open}>
+      <div
+        data-state={open ? "open" : "closed"}
+        className="data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=open]:animate-in"
+      >
         This content will animate in and out
       </div>
     </Presence>
@@ -41,7 +44,9 @@ export default function App() {
 }
 ```
 
-You can also use it with a function as children to access the present state:
+### Render Function Pattern
+
+Access presence state through a render function:
 
 ```tsx
 import { Presence } from "@/components/presence"
@@ -52,10 +57,35 @@ export default function App() {
   return (
     <Presence present={isOpen}>
       {({ present }) => (
-        <div className={present ? "animate-in fade-in" : "animate-out fade-out"}>
+        <div className={present ? "animate-in fade-in-0" : "animate-out fade-out-0"}>
           This content will animate based on presence state
         </div>
       )}
+    </Presence>
+  )
+}
+```
+
+### Force Mounting
+
+Use `forceMount` to keep elements mounted regardless of presence state. Useful for accessibility requirements and focus management:
+
+```tsx
+import { Presence } from "@/components/presence"
+
+export default function App() {
+  const [isOpen, setIsOpen] = React.useState(false)
+
+  return (
+    <Presence present={isOpen} forceMount>
+      <div 
+        className={cn(
+          "transition-opacity duration-200",
+          isOpen ? "opacity-100" : "opacity-0"
+        )}
+      >
+        This content will always be mounted but will fade in/out
+      </div>
     </Presence>
   )
 }
@@ -67,28 +97,12 @@ export default function App() {
 
 A component that manages the presence state of elements with support for animations. It handles mounting, unmounting, and animation states automatically.
 
-#### Props
-
 <AutoTypeTable
   path="./types/docs/utilities.ts"
   name="PresenceProps"
 />
 
-The component supports the following props:
-
-- `present` - Boolean indicating whether the element should be present in the DOM
-- `children` - React element or render function that receives the present state
-- `forceMount` - Optional boolean to force mounting regardless of present state
-
-#### Features
-
-- Manages element presence with animation support
-- Handles animation and transition events automatically
-- Supports both CSS animations and transitions
-- Maintains animation states correctly during unmounting
-- Provides present state to child components through render props
-
 ## Credits
 
-- [Radix UI's Presence](https://github.com/radix-ui/primitives/blob/main/packages/react/presence/src/presence.tsx) - For the core presence management and animation state handling
+- [Radix's Presence](https://github.com/radix-ui/primitives/blob/main/packages/react/presence/src/presence.tsx) - For the core presence management and animation state handling
 - [Motion's AnimatePresence](https://motion.dev/docs/react-animate-presence) - For the animation presence patterns handling
