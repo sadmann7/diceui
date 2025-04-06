@@ -1,3 +1,5 @@
+"use client";
+
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,6 +27,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
+import { Presence } from "@/registry/default/components/presence";
 import {
   Combobox,
   ComboboxAnchor,
@@ -36,8 +39,11 @@ import {
 } from "@/registry/default/ui/combobox";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
+import * as React from "react";
 
 export default function PlaygroundPage() {
+  const [present, setPresent] = React.useState(false);
+
   return (
     <Shell>
       <Combobox className="w-[15rem]">

@@ -1,0 +1,100 @@
+---
+title: Presence
+description: Renders React elements based in a condition, in a more elegant and nestable way than JSX ternaries.
+links:
+  api: /docs/utilities/presence#api-reference
+---
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/presence"
+```
+
+### Manual
+
+<Steps>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource src="./registry/default/components/presence.tsx" />
+  </Step>
+</Steps>
+
+## Usage
+
+```tsx
+import { Presence } from "@/components/presence"
+
+export default function App() {
+  const isAuthenticated = false
+
+  return (
+    <Presence present={isAuthenticated}>
+      <button>Hello, User!</button>
+    </Presence>
+  )
+}
+```
+
+When the parameter inserted into "when" prop. will be used inside the children function, in order to have type-safety, pass it on the render function, such as:
+
+```tsx
+import { Presence } from "@/components/presence"
+
+type User = {
+  name: string
+} | null
+
+export default function App() {
+  const [user, setUser] = React.useState<User>(null)
+
+  return (
+    <Presence present={user}>
+      <span>User Name: {user.name}</span>
+    </Presence>
+  )
+}
+```
+
+It is also possible to nest Show components:
+
+```tsx
+import { Presence } from "@/components/presence"
+
+type User = {
+  name: string
+  isVIP: boolean
+} | null
+
+export default function App() {
+  const [user] = useState<User>(null)
+
+  return (
+    <Presence present={user}>
+      <span>User name: {user.name}</span>
+        <span>
+          Member Category:
+          <Show when={user.isVIP} fallback={<>Member</>}>
+            {() => <>VIP</>}
+        </Show>
+      </span>
+    </Presence>
+  )
+}
+```
+
+## API Reference
+
+### Presence
+
+A component that renders React elements based in a condition, in a more elegant and nestable way than JSX ternaries.
+
+#### Props
+
+<AutoTypeTable
+  path="./types/docs/utilities.ts"
+  name="PresenceProps"
+/>

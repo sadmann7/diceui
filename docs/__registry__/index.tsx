@@ -1111,7 +1111,7 @@ export const Index: Record<string, any> = {
         type: "registry:component",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/components/show.tsx")),
+      component: React.lazy(() => import("@/registry/default/components/presence")),
       source: "",
       category: "",
       subcategory: "",

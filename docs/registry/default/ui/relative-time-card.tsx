@@ -21,13 +21,15 @@ function formatRelativeTime(date: Date): string {
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
   const days = Math.floor(hours / 24);
-  const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
+  const plural = (n: number, word: string) =>
+    `${n} ${word}${n === 1 ? "" : "s"}`;
 
   if (seconds < 5) return "just now";
-  if (seconds < 60) return `${plural(seconds, 'second')} ago`;
-  if (minutes < 60) return `${plural(minutes, 'minute')} ${plural(seconds % 60, 'second')} ago`;
-  if (hours < 24) return `${plural(hours, 'hour')} ago`;
-  if (days < 7) return `${plural(days, 'day')} ago`;
+  if (seconds < 60) return `${plural(seconds, "second")} ago`;
+  if (minutes < 60)
+    return `${plural(minutes, "minute")} ${plural(seconds % 60, "second")} ago`;
+  if (hours < 24) return `${plural(hours, "hour")} ago`;
+  if (days < 7) return `${plural(days, "day")} ago`;
   return date.toLocaleDateString();
 }
 
