@@ -175,7 +175,7 @@ function usePresence(present: boolean) {
 }
 
 function getAnimationName(styles?: CSSStyleDeclaration) {
-  return styles?.animationName || "none";
+  return styles?.animationName ?? "none";
 }
 
 export { Presence };
