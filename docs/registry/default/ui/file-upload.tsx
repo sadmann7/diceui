@@ -1,6 +1,6 @@
 "use client";
 
-import { composeEventHandlers, useComposedRefs } from "@/lib/composition";
+import { composeEventHandlers } from "@/lib/composition";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
@@ -37,7 +37,6 @@ interface StoreState {
   files: Map<string, FileState>;
   dragOver: boolean;
   inputRef: React.RefObject<HTMLInputElement | null>;
-  fileItemsRefs: Map<string, React.RefObject<HTMLDivElement>>;
 }
 
 type StoreAction =
@@ -47,12 +46,6 @@ type StoreAction =
   | { type: "SET_ERROR"; id: string; error: string }
   | { type: "REMOVE_FILE"; id: string }
   | { type: "SET_DRAG_OVER"; dragOver: boolean }
-  | {
-      type: "REGISTER_FILE_ITEM";
-      id: string;
-      ref: React.RefObject<HTMLDivElement | null>;
-    }
-  | { type: "UNREGISTER_FILE_ITEM"; id: string }
   | { type: "CLEAR" };
 
 function createStore() {
@@ -60,7 +53,6 @@ function createStore() {
     files: new Map(),
     dragOver: false,
     inputRef: React.createRef(),
-    fileItemsRefs: new Map(),
   };
 
   let state = initialState;
@@ -125,22 +117,6 @@ function createStore() {
       case "SET_DRAG_OVER": {
         return { ...state, dragOver: action.dragOver };
       }
-      case "REGISTER_FILE_ITEM": {
-        const newFileItemsRefs = new Map(state.fileItemsRefs);
-        if (action.ref) {
-          newFileItemsRefs.set(
-            action.id,
-            action.ref as React.RefObject<HTMLDivElement>,
-          );
-        }
-
-        return { ...state, fileItemsRefs: newFileItemsRefs };
-      }
-      case "UNREGISTER_FILE_ITEM": {
-        const newFileItemsRefs = new Map(state.fileItemsRefs);
-        newFileItemsRefs.delete(action.id);
-        return { ...state, fileItemsRefs: newFileItemsRefs };
-      }
       case "CLEAR": {
         return { ...state, files: new Map() };
       }
@@ -171,9 +147,6 @@ const StoreContext = React.createContext<ReturnType<typeof createStore> | null>(
 );
 StoreContext.displayName = ROOT_NAME;
 
-const FileItemContext = React.createContext<string | null>(null);
-FileItemContext.displayName = ITEM_NAME;
-
 function useStoreContext(name: keyof typeof FILE_UPLOAD_ERRORS) {
   const context = React.useContext(StoreContext);
   if (!context) {
@@ -182,7 +155,10 @@ function useStoreContext(name: keyof typeof FILE_UPLOAD_ERRORS) {
   return context;
 }
 
-function useStore<T>(selector: (state: StoreState) => T): T {
+function useStore<T>(
+  selector: (state: StoreState) => T,
+  _equalityFn?: (a: T, b: T) => boolean,
+): T {
   const store = useStoreContext(ROOT_NAME);
   return React.useSyncExternalStore(
     store.subscribe,
@@ -517,73 +493,35 @@ const FileUploadList = React.forwardRef<HTMLDivElement, FileUploadListProps>(
 FileUploadList.displayName = LIST_NAME;
 
 interface FileUploadItemProps extends React.ComponentPropsWithoutRef<"div"> {
+  id: string;
   asChild?: boolean;
-  value?: string; // Optional, will use auto-generated ID if not provided
 }
+
+const FileUploadItemContext = React.createContext<string | null>(null);
 
 const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
   (props, forwardedRef) => {
-    const { asChild, className, value, ...itemProps } = props;
-    const store = useStoreContext(ITEM_NAME);
-    const itemRef = React.useRef<HTMLDivElement>(null);
-    const composedRef = useComposedRefs(itemRef, forwardedRef);
+    const { id, asChild, className, ...itemProps } = props;
+    useStoreContext(ITEM_NAME);
 
-    // Get all files and find one that matches our position in the list
-    const allFiles = useStore((state) => state.files);
-    const [fileId, fileState] = React.useMemo(() => {
-      if (value) {
-        // If value is provided, find the file that matches that ID
-        const entries = Array.from(allFiles.entries());
-        const entry = entries.find(([id]) => id === value);
-        return entry ?? [null, null];
-      }
-
-      // Otherwise, use the generated ID to select a file based on position
-      const entries = Array.from(allFiles.entries());
-      const refs = store.getState().fileItemsRefs;
-
-      // If this is a new item being rendered, it won't be in the refs map yet
-      // Find the first file that doesn't have a component reference
-      for (const [id, file] of entries) {
-        if (!refs.has(id)) {
-          return [id, file];
-        }
-      }
-
-      return [null, null];
-    }, [value, allFiles, store]);
-
-    React.useEffect(() => {
-      if (fileId) {
-        store.dispatch({
-          type: "REGISTER_FILE_ITEM",
-          id: fileId,
-          ref: itemRef,
-        });
-
-        return () => {
-          store.dispatch({
-            type: "UNREGISTER_FILE_ITEM",
-            id: fileId,
-          });
-        };
-      }
-    }, [fileId, store]);
+    const fileState = useStore(
+      (state) => state.files.get(id),
+      (a, b) => a === b,
+    );
 
     if (!fileState) return null;
 
     const ItemPrimitive = asChild ? Slot : "div";
 
     return (
-      <FileItemContext.Provider value={fileId}>
+      <FileUploadItemContext.Provider value={id}>
         <ItemPrimitive
-          id={fileId}
+          id={id}
           role="listitem"
           data-slot="file-upload-item"
           data-status={fileState.status}
-          data-file-id={fileId}
           {...itemProps}
-          ref={composedRef}
+          ref={forwardedRef}
           className={cn(
             "flex items-center justify-between rounded-md border p-3",
             {
@@ -597,14 +535,14 @@ const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
             className,
           )}
         />
-      </FileItemContext.Provider>
+      </FileUploadItemContext.Provider>
     );
   },
 );
 FileUploadItem.displayName = ITEM_NAME;
 
-function useFileItemContext(name: keyof typeof FILE_UPLOAD_ERRORS) {
-  const context = React.useContext(FileItemContext);
+function useFileUploadItemContext(name: keyof typeof FILE_UPLOAD_ERRORS) {
+  const context = React.useContext(FileUploadItemContext);
   if (!context) {
     throw new Error(FILE_UPLOAD_ERRORS[name]);
   }
@@ -622,19 +560,19 @@ const FileUploadItemDelete = React.forwardRef<
 >((props, forwardedRef) => {
   const { asChild, ...deleteProps } = props;
   const store = useStoreContext(ITEM_DELETE_NAME);
-  const fileId = useFileItemContext(ITEM_DELETE_NAME);
+  const id = useFileUploadItemContext(ITEM_DELETE_NAME);
 
   const ItemDeletePrimitive = asChild ? Slot : "button";
 
   return (
     <ItemDeletePrimitive
       type="button"
-      aria-controls={fileId}
+      aria-controls={id}
       data-slot="file-upload-item-delete"
       {...deleteProps}
       ref={forwardedRef}
       onClick={composeEventHandlers(deleteProps.onClick, () => {
-        store.dispatch({ type: "REMOVE_FILE", id: fileId });
+        store.dispatch({ type: "REMOVE_FILE", id });
       })}
     />
   );
@@ -652,9 +590,12 @@ const FileUploadItemProgress = React.forwardRef<
 >((props, forwardedRef) => {
   const { asChild, className, ...progressProps } = props;
   useStoreContext(ITEM_PROGRESS_NAME);
-  const fileId = useFileItemContext(ITEM_PROGRESS_NAME);
+  const id = useFileUploadItemContext(ITEM_PROGRESS_NAME);
 
-  const fileState = useStore((state) => state.files.get(fileId));
+  const fileState = useStore(
+    (state) => state.files.get(id),
+    (a, b) => a?.progress === b?.progress,
+  );
 
   if (!fileState) return null;
 
@@ -701,9 +642,12 @@ const FileUploadItemPreview = React.forwardRef<
 >((props, forwardedRef) => {
   const { asChild, render, className, ...previewProps } = props;
   useStoreContext(ITEM_PREVIEW_NAME);
-  const fileId = useFileItemContext(ITEM_PREVIEW_NAME);
+  const id = useFileUploadItemContext(ITEM_PREVIEW_NAME);
 
-  const fileState = useStore((state) => state.files.get(fileId));
+  const fileState = useStore(
+    (state) => state.files.get(id),
+    (a, b) => a?.file === b?.file,
+  );
 
   if (!fileState) return null;
 
