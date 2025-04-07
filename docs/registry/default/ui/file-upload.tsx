@@ -155,10 +155,7 @@ function useStoreContext(name: keyof typeof FILE_UPLOAD_ERRORS) {
   return context;
 }
 
-function useStore<T>(
-  selector: (state: StoreState) => T,
-  _equalityFn?: (a: T, b: T) => boolean,
-): T {
+function useStore<T>(selector: (state: StoreState) => T): T {
   const store = useStoreContext(ROOT_NAME);
   return React.useSyncExternalStore(
     store.subscribe,
@@ -504,10 +501,7 @@ const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
     const { id, asChild, className, ...itemProps } = props;
     useStoreContext(ITEM_NAME);
 
-    const fileState = useStore(
-      (state) => state.files.get(id),
-      (a, b) => a === b,
-    );
+    const fileState = useStore((state) => state.files.get(id));
 
     if (!fileState) return null;
 
@@ -592,10 +586,7 @@ const FileUploadItemProgress = React.forwardRef<
   useStoreContext(ITEM_PROGRESS_NAME);
   const id = useFileUploadItemContext(ITEM_PROGRESS_NAME);
 
-  const fileState = useStore(
-    (state) => state.files.get(id),
-    (a, b) => a?.progress === b?.progress,
-  );
+  const fileState = useStore((state) => state.files.get(id));
 
   if (!fileState) return null;
 
@@ -644,10 +635,7 @@ const FileUploadItemPreview = React.forwardRef<
   useStoreContext(ITEM_PREVIEW_NAME);
   const id = useFileUploadItemContext(ITEM_PREVIEW_NAME);
 
-  const fileState = useStore(
-    (state) => state.files.get(id),
-    (a, b) => a?.file === b?.file,
-  );
+  const fileState = useStore((state) => state.files.get(id));
 
   if (!fileState) return null;
 
