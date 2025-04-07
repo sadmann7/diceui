@@ -729,21 +729,21 @@ const ItemProgress = FileUploadItemProgress;
 const ItemPreview = FileUploadItemPreview;
 
 export {
-  Dropzone,
   FileUpload,
   FileUploadDropzone,
+  FileUploadTrigger,
+  FileUploadList,
   FileUploadItem,
   FileUploadItemDelete,
   FileUploadItemPreview,
   FileUploadItemProgress,
-  FileUploadList,
-  FileUploadTrigger,
+  //
+  Root,
+  Dropzone,
+  Trigger,
+  List,
   Item,
   ItemDelete,
   ItemPreview,
   ItemProgress,
-  List,
-  //
-  Root,
-  Trigger,
 };
