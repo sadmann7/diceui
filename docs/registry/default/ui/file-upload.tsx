@@ -40,13 +40,13 @@ interface StoreState {
 }
 
 type StoreAction =
-  | { type: "ADD_FILES"; files: File[] }
-  | { type: "SET_PROGRESS"; id: string; progress: number }
-  | { type: "SET_SUCCESS"; id: string }
-  | { type: "SET_ERROR"; id: string; error: string }
-  | { type: "REMOVE_FILE"; id: string }
-  | { type: "SET_DRAG_OVER"; dragOver: boolean }
-  | { type: "CLEAR" };
+  | { variant: "ADD_FILES"; files: File[] }
+  | { variant: "SET_PROGRESS"; id: string; progress: number }
+  | { variant: "SET_SUCCESS"; id: string }
+  | { variant: "SET_ERROR"; id: string; error: string }
+  | { variant: "REMOVE_FILE"; id: string }
+  | { variant: "SET_DRAG_OVER"; dragOver: boolean }
+  | { variant: "CLEAR" };
 
 function createStore() {
   const initialState: StoreState = {
@@ -59,7 +59,7 @@ function createStore() {
   const listeners = new Set<() => void>();
 
   function reducer(state: StoreState, action: StoreAction): StoreState {
-    switch (action.type) {
+    switch (action.variant) {
       case "ADD_FILES": {
         const newFiles = new Map(state.files);
         for (const file of action.files) {
@@ -247,7 +247,7 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
         }
 
         if (acceptedFiles.length > 0) {
-          store.dispatch({ type: "ADD_FILES", files: acceptedFiles });
+          store.dispatch({ variant: "ADD_FILES", files: acceptedFiles });
           onFilesAccepted?.(acceptedFiles);
 
           if (onUpload) {
@@ -278,13 +278,13 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
     const onUploadFile = React.useCallback(
       async (file: File, id: string) => {
         try {
-          store.dispatch({ type: "SET_PROGRESS", id, progress: 0 });
+          store.dispatch({ variant: "SET_PROGRESS", id, progress: 0 });
 
           const progressInterval = setInterval(() => {
             const fileState = store.getState().files.get(id);
             if (fileState && fileState.progress < 95) {
               store.dispatch({
-                type: "SET_PROGRESS",
+                variant: "SET_PROGRESS",
                 id,
                 progress: fileState.progress + 5,
               });
@@ -298,10 +298,10 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
           }
 
           clearInterval(progressInterval);
-          store.dispatch({ type: "SET_SUCCESS", id });
+          store.dispatch({ variant: "SET_SUCCESS", id });
         } catch (error) {
           store.dispatch({
-            type: "SET_ERROR",
+            variant: "SET_ERROR",
             id,
             error: error instanceof Error ? error.message : "Upload failed",
           });
@@ -404,44 +404,64 @@ const FileUploadDropzone = React.forwardRef<
 
   const DropzonePrimitive = asChild ? Slot : "div";
 
+  const onDragOver = React.useCallback(
+    (event: React.DragEvent<HTMLDivElement>) => {
+      event.preventDefault();
+      store.dispatch({ variant: "SET_DRAG_OVER", dragOver: true });
+    },
+    [store],
+  );
+
+  const onDragEnter = React.useCallback(
+    (event: React.DragEvent<HTMLDivElement>) => {
+      event.preventDefault();
+      store.dispatch({ variant: "SET_DRAG_OVER", dragOver: true });
+    },
+    [store],
+  );
+
+  const onDragLeave = React.useCallback(
+    (event: React.DragEvent<HTMLDivElement>) => {
+      event.preventDefault();
+      store.dispatch({ variant: "SET_DRAG_OVER", dragOver: false });
+    },
+    [store],
+  );
+
+  const onDrop = React.useCallback(
+    (event: React.DragEvent<HTMLDivElement>) => {
+      event.preventDefault();
+      store.dispatch({ variant: "SET_DRAG_OVER", dragOver: false });
+
+      const files = Array.from(event.dataTransfer.files);
+      const inputElement = store.getState().inputRef.current;
+      if (!inputElement) return;
+
+      const dataTransfer = new DataTransfer();
+      for (const file of files) {
+        dataTransfer.items.add(file);
+      }
+
+      inputElement.files = dataTransfer.files;
+      inputElement.dispatchEvent(new Event("change", { bubbles: true }));
+    },
+    [store],
+  );
+
   return (
     <DropzonePrimitive
-      data-drag-active={dragOver ? "" : undefined}
+      data-dragging={dragOver ? "" : undefined}
       data-slot="file-upload-dropzone"
       {...dropzoneProps}
       ref={forwardedRef}
       className={cn(
-        "relative rounded-lg border-2 border-dashed p-6 transition-colors hover:bg-muted/50 data-drag-active:border-primary data-drag-active:bg-muted/50",
+        "relative rounded-lg border-2 border-dashed p-6 transition-colors hover:bg-muted/50 data-[dragging]:border-primary data-[dragging]:bg-muted/50",
         className,
       )}
-      onDragOver={(event) => {
-        event.preventDefault();
-        store.dispatch({ type: "SET_DRAG_OVER", dragOver: true });
-      }}
-      onDragEnter={(event) => {
-        event.preventDefault();
-        store.dispatch({ type: "SET_DRAG_OVER", dragOver: true });
-      }}
-      onDragLeave={(event) => {
-        event.preventDefault();
-        store.dispatch({ type: "SET_DRAG_OVER", dragOver: false });
-      }}
-      onDrop={(event) => {
-        event.preventDefault();
-        store.dispatch({ type: "SET_DRAG_OVER", dragOver: false });
-
-        const files = Array.from(event.dataTransfer.files);
-        const inputElement = store.getState().inputRef.current;
-        if (!inputElement) return;
-
-        const dataTransfer = new DataTransfer();
-        for (const file of files) {
-          dataTransfer.items.add(file);
-        }
-
-        inputElement.files = dataTransfer.files;
-        inputElement.dispatchEvent(new Event("change", { bubbles: true }));
-      }}
+      onDragOver={onDragOver}
+      onDragEnter={onDragEnter}
+      onDragLeave={onDragLeave}
+      onDrop={onDrop}
     />
   );
 });
@@ -570,7 +590,7 @@ const FileUploadItemDelete = React.forwardRef<
       {...deleteProps}
       ref={forwardedRef}
       onClick={composeEventHandlers(deleteProps.onClick, () => {
-        store.dispatch({ type: "REMOVE_FILE", id });
+        store.dispatch({ variant: "REMOVE_FILE", id });
       })}
     />
   );
