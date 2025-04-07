@@ -62,10 +62,11 @@ export default function PlaygroundPage() {
           accept="image/*,application/pdf"
           maxSize={5 * 1024 * 1024}
           maxFiles={5}
+          className="max-w-md"
           onFilesAccepted={(files) => setFiles(files)}
           onFileRejected={(file, reason) => console.log({ file, reason })}
         >
-          <FileUploadDropzone className="max-w-md">
+          <FileUploadDropzone>
             <div className="flex flex-col items-center justify-center gap-2 p-4">
               <Upload className="size-10 text-muted-foreground" />
               <p className="font-medium text-sm">Drag & drop files here</p>
@@ -79,9 +80,9 @@ export default function PlaygroundPage() {
               </FileUploadTrigger>
             </div>
           </FileUploadDropzone>
-          <FileUploadList className="max-w-md">
+          <FileUploadList>
             {files.map((file) => (
-              <FileUploadItem asChild key={file.name}>
+              <FileUploadItem key={file.name} asChild>
                 <li className="flex flex-col gap-2">
                   <div className="flex items-center justify-between">
                     <FileUploadItemPreview />
