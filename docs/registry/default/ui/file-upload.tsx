@@ -11,8 +11,8 @@ const DROPZONE_NAME = "FileUploadDropzone";
 const LIST_NAME = "FileUploadList";
 const ITEM_NAME = "FileUploadItem";
 const ITEM_DELETE_NAME = "FileUploadItemDelete";
-const PROGRESS_NAME = "FileUploadProgress";
-const PREVIEW_NAME = "FileUploadPreview";
+const ITEM_PROGRESS_NAME = "FileUploadItemProgress";
+const ITEM_PREVIEW_NAME = "FileUploadItemPreview";
 
 const FILE_UPLOAD_ERRORS = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` is the root component`,
@@ -21,8 +21,8 @@ const FILE_UPLOAD_ERRORS = {
   [LIST_NAME]: `\`${LIST_NAME}\` must be within \`${ROOT_NAME}\``,
   [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${LIST_NAME}\``,
   [ITEM_DELETE_NAME]: `\`${ITEM_DELETE_NAME}\` must be within \`${ITEM_NAME}\``,
-  [PROGRESS_NAME]: `\`${PROGRESS_NAME}\` must be within \`${ITEM_NAME}\``,
-  [PREVIEW_NAME]: `\`${PREVIEW_NAME}\` must be within \`${ITEM_NAME}\``,
+  [ITEM_PROGRESS_NAME]: `\`${ITEM_PROGRESS_NAME}\` must be within \`${ITEM_NAME}\``,
+  [ITEM_PREVIEW_NAME]: `\`${ITEM_PREVIEW_NAME}\` must be within \`${ITEM_NAME}\``,
 } as const;
 
 interface FileState {
@@ -145,13 +145,13 @@ const StoreContext = React.createContext<ReturnType<typeof createStore> | null>(
 );
 StoreContext.displayName = ROOT_NAME;
 
-const useStoreContext = (name: keyof typeof FILE_UPLOAD_ERRORS) => {
+function useStoreContext(name: keyof typeof FILE_UPLOAD_ERRORS) {
   const context = React.useContext(StoreContext);
   if (!context) {
     throw new Error(FILE_UPLOAD_ERRORS[name]);
   }
   return context;
-};
+}
 
 function useStore<T>(
   selector: (state: StoreState) => T,
@@ -366,11 +366,18 @@ const FileUploadTrigger = React.forwardRef<
       data-slot="file-upload-trigger"
       {...triggerProps}
       ref={forwardedRef}
-      onClick={composeEventHandlers(triggerProps.onClick, () => {
-        const inputElement = document.querySelector(
-          `#${triggerProps.form} input[type="file"]`,
-        ) as HTMLInputElement;
-        if (inputElement) inputElement.click();
+      onClick={composeEventHandlers(triggerProps.onClick, (event) => {
+        const fileUploadElement = (event.currentTarget as HTMLElement).closest(
+          '[data-slot="file-upload"]',
+        );
+        if (fileUploadElement) {
+          const inputElement = fileUploadElement.querySelector(
+            'input[type="file"]',
+          ) as HTMLInputElement;
+          if (inputElement) {
+            inputElement.click();
+          }
+        }
       })}
     />
   );
@@ -474,14 +481,14 @@ const FileUploadList = React.forwardRef<HTMLDivElement, FileUploadListProps>(
 );
 FileUploadList.displayName = LIST_NAME;
 
-interface FileUploadItemProps extends React.ComponentPropsWithoutRef<"li"> {
+interface FileUploadItemProps extends React.ComponentPropsWithoutRef<"div"> {
   id: string;
   asChild?: boolean;
 }
 
 const FileUploadItemContext = React.createContext<string | null>(null);
 
-const FileUploadItem = React.forwardRef<HTMLLIElement, FileUploadItemProps>(
+const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
   (props, forwardedRef) => {
     const { id, asChild, className, ...itemProps } = props;
     useStoreContext(ITEM_NAME);
@@ -491,13 +498,15 @@ const FileUploadItem = React.forwardRef<HTMLLIElement, FileUploadItemProps>(
       (a, b) => a === b,
     );
 
-    const ItemPrimitive = asChild ? Slot : "li";
-
     if (!fileState) return null;
+
+    const ItemPrimitive = asChild ? Slot : "div";
 
     return (
       <FileUploadItemContext.Provider value={id}>
         <ItemPrimitive
+          id={id}
+          role="listitem"
           data-slot="file-upload-item"
           data-status={fileState.status}
           {...itemProps}
@@ -521,12 +530,10 @@ const FileUploadItem = React.forwardRef<HTMLLIElement, FileUploadItemProps>(
 );
 FileUploadItem.displayName = ITEM_NAME;
 
-function useFileUploadItemContext() {
+function useFileUploadItemContext(name: keyof typeof FILE_UPLOAD_ERRORS) {
   const context = React.useContext(FileUploadItemContext);
   if (!context) {
-    throw new Error(
-      `\`${ITEM_DELETE_NAME}\` or \`${PROGRESS_NAME}\` or \`${PREVIEW_NAME}\` must be within \`${ITEM_NAME}\``,
-    );
+    throw new Error(FILE_UPLOAD_ERRORS[name]);
   }
   return context;
 }
@@ -542,13 +549,14 @@ const FileUploadItemDelete = React.forwardRef<
 >((props, forwardedRef) => {
   const { asChild, ...deleteProps } = props;
   const store = useStoreContext(ITEM_DELETE_NAME);
-  const id = useFileUploadItemContext();
+  const id = useFileUploadItemContext(ITEM_DELETE_NAME);
 
   const DeletePrimitive = asChild ? Slot : "button";
 
   return (
     <DeletePrimitive
       type="button"
+      aria-controls={id}
       data-slot="file-upload-item-delete"
       {...deleteProps}
       ref={forwardedRef}
@@ -560,27 +568,27 @@ const FileUploadItemDelete = React.forwardRef<
 });
 FileUploadItemDelete.displayName = ITEM_DELETE_NAME;
 
-interface FileUploadProgressProps
+interface FileUploadItemProgressProps
   extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
 }
 
-const FileUploadProgress = React.forwardRef<
+const FileUploadItemProgress = React.forwardRef<
   HTMLDivElement,
-  FileUploadProgressProps
+  FileUploadItemProgressProps
 >((props, forwardedRef) => {
   const { asChild, className, ...progressProps } = props;
-  useStoreContext(PROGRESS_NAME);
-  const id = useFileUploadItemContext();
+  useStoreContext(ITEM_PROGRESS_NAME);
+  const id = useFileUploadItemContext(ITEM_PROGRESS_NAME);
 
   const fileState = useStore(
     (state) => state.files.get(id),
     (a, b) => a?.progress === b?.progress,
   );
 
-  const ProgressPrimitive = asChild ? Slot : "div";
-
   if (!fileState) return null;
+
+  const ProgressPrimitive = asChild ? Slot : "div";
 
   return (
     <ProgressPrimitive
@@ -609,29 +617,30 @@ const FileUploadProgress = React.forwardRef<
     </ProgressPrimitive>
   );
 });
-FileUploadProgress.displayName = PROGRESS_NAME;
+FileUploadItemProgress.displayName = ITEM_PROGRESS_NAME;
 
-interface FileUploadPreviewProps extends React.ComponentPropsWithoutRef<"div"> {
+interface FileUploadItemPreviewProps
+  extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
   render?: (file: File) => React.ReactNode;
 }
 
-const FileUploadPreview = React.forwardRef<
+const FileUploadItemPreview = React.forwardRef<
   HTMLDivElement,
-  FileUploadPreviewProps
+  FileUploadItemPreviewProps
 >((props, forwardedRef) => {
   const { asChild, render, className, ...previewProps } = props;
-  useStoreContext(PREVIEW_NAME);
-  const id = useFileUploadItemContext();
+  useStoreContext(ITEM_PREVIEW_NAME);
+  const id = useFileUploadItemContext(ITEM_PREVIEW_NAME);
 
   const fileState = useStore(
     (state) => state.files.get(id),
     (a, b) => a?.file === b?.file,
   );
 
-  const PreviewPrimitive = asChild ? Slot : "div";
-
   if (!fileState) return null;
+
+  const PreviewPrimitive = asChild ? Slot : "div";
 
   return (
     <PreviewPrimitive
@@ -662,7 +671,7 @@ const FileUploadPreview = React.forwardRef<
     </PreviewPrimitive>
   );
 });
-FileUploadPreview.displayName = PREVIEW_NAME;
+FileUploadItemPreview.displayName = ITEM_PREVIEW_NAME;
 
 const FileUpload = FileUploadRoot;
 const Root = FileUploadRoot;
@@ -671,8 +680,8 @@ const Dropzone = FileUploadDropzone;
 const List = FileUploadList;
 const Item = FileUploadItem;
 const ItemDelete = FileUploadItemDelete;
-const Progress = FileUploadProgress;
-const Preview = FileUploadPreview;
+const ItemProgress = FileUploadItemProgress;
+const ItemPreview = FileUploadItemPreview;
 
 export {
   FileUpload,
@@ -682,8 +691,8 @@ export {
   FileUploadList,
   FileUploadItem,
   FileUploadItemDelete,
-  FileUploadProgress,
-  FileUploadPreview,
+  FileUploadItemProgress,
+  FileUploadItemPreview,
   //
   Root,
   Trigger,
@@ -691,6 +700,6 @@ export {
   List,
   Item,
   ItemDelete,
-  Progress,
-  Preview,
+  ItemProgress,
+  ItemPreview,
 };

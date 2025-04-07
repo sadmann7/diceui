@@ -41,9 +41,9 @@ import {
   FileUploadDropzone,
   FileUploadItem,
   FileUploadItemDelete,
+  FileUploadItemPreview,
+  FileUploadItemProgress,
   FileUploadList,
-  FileUploadPreview,
-  FileUploadProgress,
   FileUploadTrigger,
 } from "@/registry/default/ui/file-upload";
 import * as Mention from "@diceui/mention";
@@ -83,7 +83,7 @@ export default function PlaygroundPage() {
                 <FileUploadItem key={id} id={id} asChild>
                   <li className="flex flex-col gap-2">
                     <div className="flex items-center justify-between">
-                      <FileUploadPreview />
+                      <FileUploadItemPreview />
                       <FileUploadItemDelete asChild>
                         <Button variant="ghost" size="icon" className="size-8">
                           <X className="size-4" />
@@ -91,7 +91,7 @@ export default function PlaygroundPage() {
                         </Button>
                       </FileUploadItemDelete>
                     </div>
-                    <FileUploadProgress />
+                    <FileUploadItemProgress />
                   </li>
                 </FileUploadItem>
               );
