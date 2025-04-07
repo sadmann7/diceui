@@ -53,6 +53,8 @@ import * as React from "react";
 export default function PlaygroundPage() {
   const [files, setFiles] = React.useState<File[]>([]);
 
+  console.log({ files });
+
   return (
     <Shell>
       <div className="grid gap-8">
@@ -79,26 +81,20 @@ export default function PlaygroundPage() {
             </div>
           </FileUploadDropzone>
           <FileUploadList className="max-w-md">
-            {files.map((file, i) => {
-              const id = `${file.name}-${i}`;
-
-              return (
-                <FileUploadItem key={id} id={id} asChild>
-                  <li className="flex flex-col gap-2">
-                    <div className="flex items-center justify-between">
-                      <FileUploadItemPreview />
-                      <FileUploadItemDelete asChild>
-                        <Button variant="ghost" size="icon" className="size-8">
-                          <X className="size-4" />
-                          <span className="sr-only">Remove file</span>
-                        </Button>
-                      </FileUploadItemDelete>
-                    </div>
-                    <FileUploadItemProgress />
-                  </li>
-                </FileUploadItem>
-              );
-            })}
+            {files.map((file, i) => (
+              <FileUploadItem key={`${file.name}-${i}`}>
+                <div className="flex items-center justify-between">
+                  <FileUploadItemPreview />
+                  <FileUploadItemDelete asChild>
+                    <Button variant="ghost" size="icon" className="size-8">
+                      <X className="size-4" />
+                      <span className="sr-only">Remove file</span>
+                    </Button>
+                  </FileUploadItemDelete>
+                </div>
+                <FileUploadItemProgress />
+              </FileUploadItem>
+            ))}
           </FileUploadList>
         </FileUpload>
         <Combobox className="w-[15rem]">
