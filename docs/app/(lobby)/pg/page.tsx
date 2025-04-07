@@ -48,8 +48,11 @@ import {
 } from "@/registry/default/ui/file-upload";
 import * as Mention from "@diceui/mention";
 import { ChevronDown, Upload, X } from "lucide-react";
+import * as React from "react";
 
 export default function PlaygroundPage() {
+  const [files, setFiles] = React.useState<File[]>([]);
+
   return (
     <Shell>
       <div className="grid gap-8">
@@ -58,7 +61,7 @@ export default function PlaygroundPage() {
           accept="image/*,application/pdf"
           maxSize={5 * 1024 * 1024}
           maxFiles={5}
-          onFilesAccepted={(files) => console.log({ files })}
+          onFilesAccepted={(files) => setFiles(files)}
           onFileRejected={(file, reason) => console.log({ file, reason })}
         >
           <FileUploadDropzone className="max-w-md">
@@ -76,8 +79,8 @@ export default function PlaygroundPage() {
             </div>
           </FileUploadDropzone>
           <FileUploadList className="max-w-md">
-            {Array.from({ length: 10 }).map((_, i) => {
-              const id = `file-${i}`;
+            {files.map((file, i) => {
+              const id = `${file.name}-${i}`;
 
               return (
                 <FileUploadItem key={id} id={id} asChild>
