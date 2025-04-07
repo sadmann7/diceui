@@ -1,7 +1,6 @@
 "use client";
 
 import { composeEventHandlers } from "@/lib/composition";
-import { useComposedRefs } from "@/lib/composition";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
@@ -26,15 +25,15 @@ const FILE_UPLOAD_ERRORS = {
   [ITEM_PREVIEW_NAME]: `\`${ITEM_PREVIEW_NAME}\` must be within \`${ITEM_NAME}\``,
 } as const;
 
-interface FileState {
+interface ItemData {
+  file: File;
   progress: number;
   error?: string;
   status: "idle" | "uploading" | "error" | "success";
 }
 
-interface CollectionItem extends FileState {
+interface CollectionItem extends ItemData {
   ref: React.RefObject<HTMLDivElement | null>;
-  file: File;
 }
 
 type CollectionItemMap = Map<
@@ -80,9 +79,10 @@ function createStore() {
       case "ADD_FILES": {
         const newItemMap = new Map(state.itemMap);
         for (const file of action.files) {
-          const ref = React.createRef<HTMLDivElement | null>();
-          newItemMap.set(ref, {
-            ref,
+          const itemRef = React.createRef<HTMLDivElement | null>();
+
+          newItemMap.set(itemRef, {
+            ref: itemRef,
             file,
             progress: 0,
             status: "idle",
@@ -365,23 +365,21 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
           {children}
           <input
             type="file"
-            aria-hidden="true"
             accept={accept}
             disabled={disabled}
             multiple={multiple}
             tabIndex={-1}
             ref={inputRef}
             style={{
-              border: 0,
-              clip: "rect(0 0 0 0)",
-              clipPath: "inset(50%)",
+              position: "absolute",
+              width: "1px",
               height: "1px",
+              padding: 0,
               margin: "-1px",
               overflow: "hidden",
-              padding: 0,
-              position: "absolute",
+              clip: "rect(0 0 0 0)",
               whiteSpace: "nowrap",
-              width: "1px",
+              borderWidth: 0,
             }}
             onChange={onInputChange}
           />
@@ -551,41 +549,37 @@ const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
   (props, forwardedRef) => {
     const { asChild, className, ...itemProps } = props;
     useStoreContext(ITEM_NAME);
-    const itemRef = React.useRef<HTMLDivElement>(null);
-    const composedRef = useComposedRefs(itemRef, forwardedRef);
 
     const items = useStore((state) => Array.from(state.itemMap.entries()));
 
-    if (items.length === 0) return null;
+    const [itemRef, itemState] = items[0] ?? [null, null];
+
+    if (!itemRef) return null;
 
     const ItemPrimitive = asChild ? Slot : "div";
 
     return (
-      <>
-        {items.map(([ref, item]) => (
-          <FileUploadItemContext.Provider key={item.file.name} value={ref}>
-            <ItemPrimitive
-              role="listitem"
-              data-slot="file-upload-item"
-              data-status={item.status}
-              {...itemProps}
-              ref={composedRef}
-              className={cn(
-                "flex items-center justify-between rounded-md border p-3",
-                {
-                  "border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-950/50":
-                    item.status === "uploading",
-                  "border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950/50":
-                    item.status === "success",
-                  "border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/50":
-                    item.status === "error",
-                },
-                className,
-              )}
-            />
-          </FileUploadItemContext.Provider>
-        ))}
-      </>
+      <FileUploadItemContext.Provider value={itemRef}>
+        <ItemPrimitive
+          role="listitem"
+          data-slot="file-upload-item"
+          data-status={itemState?.status}
+          {...itemProps}
+          ref={forwardedRef}
+          className={cn(
+            "flex items-center justify-between rounded-md border p-3",
+            {
+              "border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-950/50":
+                itemState?.status === "uploading",
+              "border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950/50":
+                itemState?.status === "success",
+              "border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/50":
+                itemState?.status === "error",
+            },
+            className,
+          )}
+        />
+      </FileUploadItemContext.Provider>
     );
   },
 );
@@ -735,21 +729,21 @@ const ItemProgress = FileUploadItemProgress;
 const ItemPreview = FileUploadItemPreview;
 
 export {
+  Dropzone,
   FileUpload,
-  FileUploadTrigger,
   FileUploadDropzone,
-  FileUploadList,
   FileUploadItem,
   FileUploadItemDelete,
-  FileUploadItemProgress,
   FileUploadItemPreview,
+  FileUploadItemProgress,
+  FileUploadList,
+  FileUploadTrigger,
+  Item,
+  ItemDelete,
+  ItemPreview,
+  ItemProgress,
+  List,
   //
   Root,
   Trigger,
-  Dropzone,
-  List,
-  Item,
-  ItemDelete,
-  ItemProgress,
-  ItemPreview,
 };
