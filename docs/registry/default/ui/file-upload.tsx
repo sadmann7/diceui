@@ -490,7 +490,6 @@ const FileUploadList = React.forwardRef<HTMLDivElement, FileUploadListProps>(
 FileUploadList.displayName = LIST_NAME;
 
 interface FileUploadItemProps extends React.ComponentPropsWithoutRef<"div"> {
-  id: string;
   asChild?: boolean;
 }
 
@@ -498,38 +497,43 @@ const FileUploadItemContext = React.createContext<string | null>(null);
 
 const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
   (props, forwardedRef) => {
-    const { id, asChild, className, ...itemProps } = props;
+    const { asChild, className, ...itemProps } = props;
     useStoreContext(ITEM_NAME);
 
-    const fileState = useStore((state) => state.files.get(id));
+    const files = useStore((state) => state.files);
+    const fileEntries = Array.from(files.entries());
 
-    if (!fileState) return null;
+    if (fileEntries.length === 0) return null;
 
     const ItemPrimitive = asChild ? Slot : "div";
 
     return (
-      <FileUploadItemContext.Provider value={id}>
-        <ItemPrimitive
-          id={id}
-          role="listitem"
-          data-slot="file-upload-item"
-          data-status={fileState.status}
-          {...itemProps}
-          ref={forwardedRef}
-          className={cn(
-            "flex items-center justify-between rounded-md border p-3",
-            {
-              "border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-950/50":
-                fileState.status === "uploading",
-              "border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950/50":
-                fileState.status === "success",
-              "border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/50":
-                fileState.status === "error",
-            },
-            className,
-          )}
-        />
-      </FileUploadItemContext.Provider>
+      <>
+        {fileEntries.map(([id, fileState]) => (
+          <FileUploadItemContext.Provider key={id} value={id}>
+            <ItemPrimitive
+              id={id}
+              role="listitem"
+              data-slot="file-upload-item"
+              data-status={fileState.status}
+              {...itemProps}
+              ref={forwardedRef}
+              className={cn(
+                "flex items-center justify-between rounded-md border p-3",
+                {
+                  "border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-950/50":
+                    fileState.status === "uploading",
+                  "border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950/50":
+                    fileState.status === "success",
+                  "border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/50":
+                    fileState.status === "error",
+                },
+                className,
+              )}
+            />
+          </FileUploadItemContext.Provider>
+        ))}
+      </>
     );
   },
 );
