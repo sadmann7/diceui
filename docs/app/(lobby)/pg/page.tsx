@@ -66,35 +66,28 @@ export default function PlaygroundPage() {
           value={files}
           onValueChange={setFiles}
         >
-          <FileUploadDropzone>
+          <FileUploadDropzone asTrigger>
             <div className="flex flex-col items-center justify-center gap-2 p-4">
               <Upload className="size-10 text-muted-foreground" />
               <p className="font-medium text-sm">Drag & drop files here</p>
               <p className="text-muted-foreground text-xs">
                 Or click to browse (max 5 files, 5MB each)
               </p>
-              <FileUploadTrigger asChild>
-                <Button variant="secondary" size="sm" className="mt-2">
-                  Browse files
-                </Button>
-              </FileUploadTrigger>
             </div>
           </FileUploadDropzone>
           <FileUploadList>
             {files.map((file, index) => (
-              <FileUploadItem key={index} value={file.name} asChild>
-                <li className="flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
-                    <FileUploadItemPreview />
-                    <FileUploadItemDelete asChild>
-                      <Button variant="ghost" size="icon" className="size-8">
-                        <X className="size-4" />
-                        <span className="sr-only">Remove file</span>
-                      </Button>
-                    </FileUploadItemDelete>
-                  </div>
-                  <FileUploadItemProgress />
-                </li>
+              <FileUploadItem key={index} value={file.name}>
+                <div className="flex items-center justify-between">
+                  <FileUploadItemPreview />
+                  <FileUploadItemDelete asChild>
+                    <Button variant="ghost" size="icon" className="size-8">
+                      <X className="size-4" />
+                      <span className="sr-only">Remove file</span>
+                    </Button>
+                  </FileUploadItemDelete>
+                </div>
+                <FileUploadItemProgress />
               </FileUploadItem>
             ))}
           </FileUploadList>

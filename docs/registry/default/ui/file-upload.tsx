@@ -411,7 +411,6 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
           {children}
           <input
             type="file"
-            aria-hidden="true"
             accept={accept}
             disabled={disabled}
             multiple={multiple}
@@ -452,15 +451,20 @@ const FileUploadTrigger = React.forwardRef<
 
   const TriggerPrimitive = asChild ? Slot : "button";
 
+  const onTriggerClick = React.useCallback(
+    composeEventHandlers(triggerProps.onClick, () => {
+      inputRef.current?.click();
+    }),
+    [],
+  );
+
   return (
     <TriggerPrimitive
       type="button"
       data-slot="file-upload-trigger"
       {...triggerProps}
       ref={forwardedRef}
-      onClick={composeEventHandlers(triggerProps.onClick, () => {
-        inputRef.current?.click();
-      })}
+      onClick={onTriggerClick}
     />
   );
 });
@@ -468,6 +472,7 @@ FileUploadTrigger.displayName = TRIGGER_NAME;
 
 interface FileUploadDropzoneProps
   extends React.ComponentPropsWithoutRef<"div"> {
+  asTrigger?: boolean;
   asChild?: boolean;
 }
 
@@ -475,9 +480,11 @@ const FileUploadDropzone = React.forwardRef<
   HTMLDivElement,
   FileUploadDropzoneProps
 >((props, forwardedRef) => {
-  const { asChild, className, ...dropzoneProps } = props;
+  const { asTrigger, asChild, className, ...dropzoneProps } = props;
   const store = useStoreContext(DROPZONE_NAME);
   const dragOver = useStore((state) => state.dragOver);
+
+  const DropzonePrimitive = asChild ? Slot : "div";
 
   const onDragOver = React.useCallback(
     (event: React.DragEvent<HTMLDivElement>) => {
@@ -523,21 +530,28 @@ const FileUploadDropzone = React.forwardRef<
     [store],
   );
 
-  const DropzonePrimitive = asChild ? Slot : "div";
+  const onClick = React.useCallback(() => {
+    if (!asTrigger) return;
+    const inputRef = store.getState().inputRef;
+    if (inputRef.current) {
+      inputRef.current.click();
+    }
+  }, [asTrigger, store]);
 
   return (
     <DropzonePrimitive
-      data-drag-active={dragOver ? "" : undefined}
+      data-dragging={dragOver ? "" : undefined}
       data-slot="file-upload-dropzone"
       {...dropzoneProps}
       ref={forwardedRef}
       className={cn(
-        "relative rounded-lg border-2 border-dashed p-6 transition-colors hover:bg-muted/50 data-drag-active:border-primary data-drag-active:bg-muted/50",
+        "relative rounded-lg border-2 border-dashed not-has-[>[data-slot=file-upload-trigger]]:p-6 transition-colors hover:bg-muted/50 data-[dragging]:border-primary data-[dragging]:bg-muted/50",
         className,
       )}
-      onDragOver={onDragOver}
+      onClick={onClick}
       onDragEnter={onDragEnter}
       onDragLeave={onDragLeave}
+      onDragOver={onDragOver}
       onDrop={onDrop}
     />
   );
