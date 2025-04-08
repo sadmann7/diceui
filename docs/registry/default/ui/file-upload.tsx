@@ -541,16 +541,20 @@ const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
   (props, forwardedRef) => {
     const { value, asChild, className, ...itemProps } = props;
 
-    const fileState = useStore((state) => state.files.get(value));
+    const fileState = useStore((state) => {
+      const entries = Array.from(state.files.entries());
+      const entry = entries.find(([_, f]) => f.file.name === value);
+      return entry ? entry[1] : null;
+    });
 
     if (!fileState) return null;
 
     const ItemPrimitive = asChild ? Slot : "div";
 
     return (
-      <FileUploadItemContext.Provider value={value}>
+      <FileUploadItemContext.Provider value={fileState.id}>
         <ItemPrimitive
-          id={value}
+          id={fileState.id}
           role="listitem"
           data-slot="file-upload-item"
           data-status={fileState.status}
