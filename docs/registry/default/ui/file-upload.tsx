@@ -41,6 +41,7 @@ interface StoreState {
 
 type StoreAction =
   | { variant: "ADD_FILES"; files: File[] }
+  | { variant: "SET_FILES"; files: File[] }
   | { variant: "SET_PROGRESS"; id: string; progress: number }
   | { variant: "SET_SUCCESS"; id: string }
   | { variant: "SET_ERROR"; id: string; error: string }
@@ -48,7 +49,7 @@ type StoreAction =
   | { variant: "SET_DRAG_OVER"; dragOver: boolean }
   | { variant: "CLEAR" };
 
-function createStore() {
+function createStore(onFilesChange?: (files: File[]) => void) {
   const initialState: StoreState = {
     files: new Map(),
     dragOver: false,
@@ -70,6 +71,38 @@ function createStore() {
             progress: 0,
             status: "idle",
           });
+        }
+        if (onFilesChange) {
+          const fileList = Array.from(newFiles.values()).map(
+            (fileState) => fileState.file,
+          );
+          onFilesChange(fileList);
+        }
+        return { ...state, files: newFiles };
+      }
+      case "SET_FILES": {
+        const newFiles = new Map();
+        for (const file of action.files) {
+          const existingEntry = Array.from(state.files.entries()).find(
+            ([_, fileState]) =>
+              fileState.file.name === file.name &&
+              fileState.file.size === file.size &&
+              fileState.file.type === file.type,
+          );
+
+          if (existingEntry) {
+            // Preserve existing file state (progress, status, etc.)
+            newFiles.set(existingEntry[0], existingEntry[1]);
+          } else {
+            // Add new file
+            const id = crypto.randomUUID();
+            newFiles.set(id, {
+              id,
+              file,
+              progress: 0,
+              status: "idle",
+            });
+          }
         }
         return { ...state, files: newFiles };
       }
@@ -112,12 +145,21 @@ function createStore() {
       case "REMOVE_FILE": {
         const newFiles = new Map(state.files);
         newFiles.delete(action.id);
+        if (onFilesChange) {
+          const fileList = Array.from(newFiles.values()).map(
+            (fileState) => fileState.file,
+          );
+          onFilesChange(fileList);
+        }
         return { ...state, files: newFiles };
       }
       case "SET_DRAG_OVER": {
         return { ...state, dragOver: action.dragOver };
       }
       case "CLEAR": {
+        if (onFilesChange) {
+          onFilesChange([]);
+        }
         return { ...state, files: new Map() };
       }
       default:
@@ -184,6 +226,8 @@ interface FileUploadRootProps extends React.ComponentPropsWithoutRef<"div"> {
   maxSize?: number;
   maxFiles?: number;
   disabled?: boolean;
+  value?: File[];
+  onValueChange?: (files: File[]) => void;
   onFilesAccepted?: (files: File[]) => void;
   onFileRejected?: (file: File, reason: string) => void;
   onUpload?: (file: File) => Promise<void>;
@@ -198,6 +242,8 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
       maxSize,
       maxFiles,
       disabled,
+      value,
+      onValueChange,
       onFilesAccepted,
       onFileRejected,
       onUpload,
@@ -207,10 +253,20 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
       ...rootProps
     } = props;
 
-    const store = React.useMemo(() => createStore(), []);
+    const store = React.useMemo(
+      () => createStore(onValueChange),
+      [onValueChange],
+    );
     const inputRef = React.useRef<HTMLInputElement>(null);
     store.getState().inputRef = inputRef;
     const id = React.useId();
+
+    // Handle controlled mode with value prop
+    React.useEffect(() => {
+      if (value !== undefined) {
+        store.dispatch({ variant: "SET_FILES", files: value });
+      }
+    }, [value, store]);
 
     const onFilesChange = React.useCallback(
       (originalFiles: File[]) => {
@@ -261,7 +317,17 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
         }
 
         if (acceptedFiles.length > 0) {
-          store.dispatch({ variant: "ADD_FILES", files: acceptedFiles });
+          // In controlled mode, we don't update the store directly
+          if (value === undefined) {
+            store.dispatch({ variant: "ADD_FILES", files: acceptedFiles });
+          } else if (onValueChange) {
+            // If controlled, call onValueChange with new files
+            const currentFiles = Array.from(
+              store.getState().files.values(),
+            ).map((f) => f.file);
+            onValueChange([...currentFiles, ...acceptedFiles]);
+          }
+
           onFilesAccepted?.(acceptedFiles);
 
           if (onUpload) {
@@ -286,6 +352,8 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
         onFileRejected,
         onUpload,
         store,
+        value,
+        onValueChange,
       ],
     );
 
@@ -592,6 +660,19 @@ const FileUploadItemDelete = React.forwardRef<
   const store = useStoreContext(ITEM_DELETE_NAME);
   const id = useFileUploadItemContext(ITEM_DELETE_NAME);
 
+  const fileState = useStore((state) => state.files.get(id));
+
+  const onClick = React.useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      deleteProps.onClick?.(e);
+
+      if (fileState) {
+        store.dispatch({ variant: "REMOVE_FILE", id });
+      }
+    },
+    [id, store, fileState, deleteProps.onClick],
+  );
+
   const ItemDeletePrimitive = asChild ? Slot : "button";
 
   return (
@@ -601,9 +682,7 @@ const FileUploadItemDelete = React.forwardRef<
       data-slot="file-upload-item-delete"
       {...deleteProps}
       ref={forwardedRef}
-      onClick={composeEventHandlers(deleteProps.onClick, () => {
-        store.dispatch({ variant: "REMOVE_FILE", id });
-      })}
+      onClick={onClick}
     />
   );
 });

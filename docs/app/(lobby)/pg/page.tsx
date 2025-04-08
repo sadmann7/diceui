@@ -63,8 +63,8 @@ export default function PlaygroundPage() {
           maxSize={5 * 1024 * 1024}
           maxFiles={5}
           className="max-w-md"
-          onFilesAccepted={(files) => setFiles(files)}
-          onFileRejected={(file, reason) => console.log({ file, reason })}
+          value={files}
+          onValueChange={setFiles}
         >
           <FileUploadDropzone>
             <div className="flex flex-col items-center justify-center gap-2 p-4">
@@ -81,8 +81,8 @@ export default function PlaygroundPage() {
             </div>
           </FileUploadDropzone>
           <FileUploadList>
-            {files.map((file) => (
-              <FileUploadItem key={file.name} value={file.name} asChild>
+            {files.map((file, index) => (
+              <FileUploadItem key={index} value={file.name} asChild>
                 <li className="flex flex-col gap-2">
                   <div className="flex items-center justify-between">
                     <FileUploadItemPreview />
