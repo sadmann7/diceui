@@ -91,10 +91,8 @@ function createStore(onFilesChange?: (files: File[]) => void) {
           );
 
           if (existingEntry) {
-            // Preserve existing file state (progress, status, etc.)
             newFiles.set(existingEntry[0], existingEntry[1]);
           } else {
-            // Add new file
             const id = crypto.randomUUID();
             newFiles.set(id, {
               id,
@@ -261,7 +259,6 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
     store.getState().inputRef = inputRef;
     const id = React.useId();
 
-    // Handle controlled mode with value prop
     React.useEffect(() => {
       if (value !== undefined) {
         store.dispatch({ variant: "SET_FILES", files: value });
@@ -317,11 +314,9 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
         }
 
         if (acceptedFiles.length > 0) {
-          // In controlled mode, we don't update the store directly
           if (value === undefined) {
             store.dispatch({ variant: "ADD_FILES", files: acceptedFiles });
           } else if (onValueChange) {
-            // If controlled, call onValueChange with new files
             const currentFiles = Array.from(
               store.getState().files.values(),
             ).map((f) => f.file);
