@@ -484,7 +484,6 @@ FileUploadTrigger.displayName = TRIGGER_NAME;
 
 interface FileUploadDropzoneProps
   extends React.ComponentPropsWithoutRef<"div"> {
-  asTrigger?: boolean;
   asChild?: boolean;
 }
 
@@ -492,7 +491,7 @@ const FileUploadDropzone = React.forwardRef<
   HTMLDivElement,
   FileUploadDropzoneProps
 >((props, forwardedRef) => {
-  const { asTrigger, asChild, className, ...dropzoneProps } = props;
+  const { asChild, className, ...dropzoneProps } = props;
   const store = useStoreContext(DROPZONE_NAME);
   const dragOver = useStore((state) => state.dragOver);
 
@@ -556,20 +555,6 @@ const FileUploadDropzone = React.forwardRef<
     [store, dropzoneProps.onDrop],
   );
 
-  const onClick = React.useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
-      dropzoneProps.onClick?.(event);
-
-      if (!event.defaultPrevented && asTrigger) {
-        const inputRef = store.getState().inputRef;
-        if (inputRef.current) {
-          inputRef.current.click();
-        }
-      }
-    },
-    [store, dropzoneProps.onClick, asTrigger],
-  );
-
   const DropzonePrimitive = asChild ? Slot : "div";
 
   return (
@@ -579,11 +564,9 @@ const FileUploadDropzone = React.forwardRef<
       {...dropzoneProps}
       ref={forwardedRef}
       className={cn(
-        "relative rounded-lg border-2 border-dashed not-has-[>[data-slot=file-upload-trigger]]:p-6 transition-colors hover:bg-muted/50 data-[dragging]:border-primary data-[dragging]:bg-muted/50",
-        asTrigger && "select-none",
+        "relative select-none rounded-lg border-2 border-dashed not-has-[>[data-slot=file-upload-trigger]]:p-6 transition-colors hover:bg-muted/50 data-[dragging]:border-primary data-[dragging]:bg-muted/50",
         className,
       )}
-      onClick={onClick}
       onDragEnter={onDragEnter}
       onDragLeave={onDragLeave}
       onDragOver={onDragOver}

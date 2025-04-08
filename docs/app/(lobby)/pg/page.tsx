@@ -66,15 +66,17 @@ export default function PlaygroundPage() {
           value={files}
           onValueChange={setFiles}
         >
-          <FileUploadDropzone asTrigger>
-            <div className="flex flex-col items-center justify-center gap-2 p-4">
-              <Upload className="size-10 text-muted-foreground" />
-              <p className="font-medium text-sm">Drag & drop files here</p>
-              <p className="text-muted-foreground text-xs">
-                Or click to browse (max 5 files, 5MB each)
-              </p>
-            </div>
-          </FileUploadDropzone>
+          <FileUploadTrigger asChild>
+            <FileUploadDropzone>
+              <div className="flex flex-col items-center justify-center gap-2 p-4">
+                <Upload className="size-10 text-muted-foreground" />
+                <p className="font-medium text-sm">Drag & drop files here</p>
+                <p className="text-muted-foreground text-xs">
+                  Or click to browse (max 5 files, 5MB each)
+                </p>
+              </div>
+            </FileUploadDropzone>
+          </FileUploadTrigger>
           <FileUploadList>
             {files.map((file, index) => (
               <FileUploadItem key={index} value={file.name}>
