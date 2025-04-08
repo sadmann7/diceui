@@ -78,16 +78,13 @@ export default function PlaygroundPage() {
           <FileUploadList>
             {files.map((file, index) => (
               <FileUploadItem key={index} value={file.name}>
-                <div className="flex items-center justify-between">
-                  <FileUploadItemPreview />
-                  <FileUploadItemDelete asChild>
-                    <Button variant="ghost" size="icon" className="size-8">
-                      <X className="size-4" />
-                      <span className="sr-only">Remove file</span>
-                    </Button>
-                  </FileUploadItemDelete>
-                </div>
-                <FileUploadItemProgress />
+                <FileUploadItemPreview />
+                <FileUploadItemDelete asChild>
+                  <Button variant="ghost" size="icon" className="size-7">
+                    <X className="size-4" />
+                    <span className="sr-only">Remove file</span>
+                  </Button>
+                </FileUploadItemDelete>
               </FileUploadItem>
             ))}
           </FileUploadList>

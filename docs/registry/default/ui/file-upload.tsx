@@ -3,6 +3,15 @@
 import { composeEventHandlers } from "@/lib/composition";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
+import {
+  FileArchiveIcon,
+  FileAudioIcon,
+  FileCodeIcon,
+  FileCogIcon,
+  FileIcon,
+  FileTextIcon,
+  FileVideoIcon,
+} from "lucide-react";
 import * as React from "react";
 
 const ROOT_NAME = "FileUpload";
@@ -765,6 +774,87 @@ const FileUploadItemPreview = React.forwardRef<
 
   const ItemPreviewPrimitive = asChild ? Slot : "div";
 
+  const getFileIcon = React.useCallback((file: File) => {
+    const type = file.type;
+    const extension = file.name.split(".").pop()?.toLowerCase() || "";
+
+    if (type.startsWith("video/")) {
+      return <FileVideoIcon />;
+    }
+
+    if (type.startsWith("audio/")) {
+      return <FileAudioIcon />;
+    }
+
+    if (
+      type.startsWith("text/") ||
+      ["txt", "md", "rtf", "pdf"].includes(extension)
+    ) {
+      return <FileTextIcon />;
+    }
+
+    if (
+      [
+        "html",
+        "css",
+        "js",
+        "jsx",
+        "ts",
+        "tsx",
+        "json",
+        "xml",
+        "php",
+        "py",
+        "rb",
+        "java",
+        "c",
+        "cpp",
+        "cs",
+      ].includes(extension)
+    ) {
+      return <FileCodeIcon />;
+    }
+
+    if (["zip", "rar", "7z", "tar", "gz", "bz2"].includes(extension)) {
+      return <FileArchiveIcon />;
+    }
+
+    if (
+      ["exe", "msi", "app", "apk", "deb", "rpm"].includes(extension) ||
+      type.startsWith("application/")
+    ) {
+      return <FileCogIcon />;
+    }
+
+    return <FileIcon />;
+  }, []);
+
+  const onPreviewRender = React.useCallback(
+    (file: File) => {
+      if (file.type.startsWith("image/")) {
+        return (
+          <div className="relative flex size-10 shrink-0 items-center justify-center">
+            <img
+              src={URL.createObjectURL(file)}
+              alt={file.name}
+              className="rounded object-cover"
+              onLoad={(event) => {
+                URL.revokeObjectURL((event.target as HTMLImageElement).src);
+              }}
+            />
+          </div>
+        );
+      }
+
+      return (
+        <div className="relative flex size-9 shrink-0 items-center justify-center rounded-md bg-accent [&>svg]:size-8">
+          {getFileIcon(file)}
+        </div>
+      );
+    },
+    [getFileIcon],
+  );
+
   return (
     <ItemPreviewPrimitive
       data-slot="file-upload-preview"
@@ -776,6 +866,7 @@ const FileUploadItemPreview = React.forwardRef<
         render(fileState.file)
       ) : (
         <>
+          {onPreviewRender(fileState.file)}
           <div className="flex min-w-0 flex-col">
             <span className="truncate font-medium text-sm">
               {fileState.file.name}
@@ -807,21 +898,21 @@ const ItemProgress = FileUploadItemProgress;
 const ItemPreview = FileUploadItemPreview;
 
 export {
+  Dropzone,
   FileUpload,
   FileUploadDropzone,
-  FileUploadTrigger,
-  FileUploadList,
   FileUploadItem,
   FileUploadItemDelete,
   FileUploadItemPreview,
   FileUploadItemProgress,
-  //
-  Root,
-  Dropzone,
-  Trigger,
-  List,
+  FileUploadList,
+  FileUploadTrigger,
   Item,
   ItemDelete,
   ItemPreview,
   ItemProgress,
+  List,
+  //
+  Root,
+  Trigger,
 };
