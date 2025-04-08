@@ -25,48 +25,32 @@ const FILE_UPLOAD_ERRORS = {
   [ITEM_PREVIEW_NAME]: `\`${ITEM_PREVIEW_NAME}\` must be within \`${ITEM_NAME}\``,
 } as const;
 
-interface ItemData {
+interface FileState {
+  id: string;
   file: File;
   progress: number;
   error?: string;
   status: "idle" | "uploading" | "error" | "success";
 }
 
-interface CollectionItem extends ItemData {
-  ref: React.RefObject<HTMLDivElement | null>;
-}
-
-type CollectionItemMap = Map<
-  React.RefObject<HTMLDivElement | null>,
-  CollectionItem
->;
-
 interface StoreState {
-  itemMap: CollectionItemMap;
+  files: Map<string, FileState>;
   dragOver: boolean;
   inputRef: React.RefObject<HTMLInputElement | null>;
 }
 
 type StoreAction =
   | { variant: "ADD_FILES"; files: File[] }
-  | {
-      variant: "SET_PROGRESS";
-      ref: React.RefObject<HTMLDivElement | null>;
-      progress: number;
-    }
-  | { variant: "SET_SUCCESS"; ref: React.RefObject<HTMLDivElement | null> }
-  | {
-      variant: "SET_ERROR";
-      ref: React.RefObject<HTMLDivElement | null>;
-      error: string;
-    }
-  | { variant: "REMOVE_FILE"; ref: React.RefObject<HTMLDivElement | null> }
+  | { variant: "SET_PROGRESS"; id: string; progress: number }
+  | { variant: "SET_SUCCESS"; id: string }
+  | { variant: "SET_ERROR"; id: string; error: string }
+  | { variant: "REMOVE_FILE"; id: string }
   | { variant: "SET_DRAG_OVER"; dragOver: boolean }
   | { variant: "CLEAR" };
 
 function createStore() {
   const initialState: StoreState = {
-    itemMap: new Map(),
+    files: new Map(),
     dragOver: false,
     inputRef: React.createRef(),
   };
@@ -77,65 +61,64 @@ function createStore() {
   function reducer(state: StoreState, action: StoreAction): StoreState {
     switch (action.variant) {
       case "ADD_FILES": {
-        const newItemMap = new Map(state.itemMap);
+        const newFiles = new Map(state.files);
         for (const file of action.files) {
-          const itemRef = React.createRef<HTMLDivElement | null>();
-
-          newItemMap.set(itemRef, {
-            ref: itemRef,
+          const id = crypto.randomUUID();
+          newFiles.set(id, {
+            id,
             file,
             progress: 0,
             status: "idle",
           });
         }
-        return { ...state, itemMap: newItemMap };
+        return { ...state, files: newFiles };
       }
       case "SET_PROGRESS": {
-        const newItemMap = new Map(state.itemMap);
-        const item = newItemMap.get(action.ref);
-        if (item) {
-          newItemMap.set(action.ref, {
-            ...item,
+        const newFiles = new Map(state.files);
+        const file = newFiles.get(action.id);
+        if (file) {
+          newFiles.set(action.id, {
+            ...file,
             progress: action.progress,
             status: "uploading",
           });
         }
-        return { ...state, itemMap: newItemMap };
+        return { ...state, files: newFiles };
       }
       case "SET_SUCCESS": {
-        const newItemMap = new Map(state.itemMap);
-        const item = newItemMap.get(action.ref);
-        if (item) {
-          newItemMap.set(action.ref, {
-            ...item,
+        const newFiles = new Map(state.files);
+        const file = newFiles.get(action.id);
+        if (file) {
+          newFiles.set(action.id, {
+            ...file,
             progress: 100,
             status: "success",
           });
         }
-        return { ...state, itemMap: newItemMap };
+        return { ...state, files: newFiles };
       }
       case "SET_ERROR": {
-        const newItemMap = new Map(state.itemMap);
-        const item = newItemMap.get(action.ref);
-        if (item) {
-          newItemMap.set(action.ref, {
-            ...item,
+        const newFiles = new Map(state.files);
+        const file = newFiles.get(action.id);
+        if (file) {
+          newFiles.set(action.id, {
+            ...file,
             error: action.error,
             status: "error",
           });
         }
-        return { ...state, itemMap: newItemMap };
+        return { ...state, files: newFiles };
       }
       case "REMOVE_FILE": {
-        const newItemMap = new Map(state.itemMap);
-        newItemMap.delete(action.ref);
-        return { ...state, itemMap: newItemMap };
+        const newFiles = new Map(state.files);
+        newFiles.delete(action.id);
+        return { ...state, files: newFiles };
       }
       case "SET_DRAG_OVER": {
         return { ...state, dragOver: action.dragOver };
       }
       case "CLEAR": {
-        return { ...state, itemMap: new Map() };
+        return { ...state, files: new Map() };
       }
       default:
         return state;
@@ -236,7 +219,7 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
         let filesToProcess = [...originalFiles];
 
         if (maxFiles) {
-          const currentFiles = store.getState().itemMap.size;
+          const currentFiles = store.getState().files.size;
           if (currentFiles + filesToProcess.length > maxFiles) {
             const allowed = Math.max(0, maxFiles - currentFiles);
             filesToProcess = filesToProcess.slice(0, allowed);
@@ -283,12 +266,12 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
 
           if (onUpload) {
             for (const file of acceptedFiles) {
-              const ref = Array.from(store.getState().itemMap.entries()).find(
+              const id = Array.from(store.getState().files.entries()).find(
                 ([_, f]) => f.file === file,
               )?.[0];
 
-              if (ref) {
-                onUploadFile(file, ref);
+              if (id) {
+                onUploadFile(file, id);
               }
             }
           }
@@ -307,17 +290,17 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
     );
 
     const onUploadFile = React.useCallback(
-      async (file: File, ref: React.RefObject<HTMLDivElement | null>) => {
+      async (file: File, id: string) => {
         try {
-          store.dispatch({ variant: "SET_PROGRESS", ref, progress: 0 });
+          store.dispatch({ variant: "SET_PROGRESS", id, progress: 0 });
 
           const progressInterval = setInterval(() => {
-            const item = store.getState().itemMap.get(ref);
-            if (item && item.progress < 95) {
+            const fileState = store.getState().files.get(id);
+            if (fileState && fileState.progress < 95) {
               store.dispatch({
                 variant: "SET_PROGRESS",
-                ref,
-                progress: item.progress + 5,
+                id,
+                progress: fileState.progress + 5,
               });
             } else {
               clearInterval(progressInterval);
@@ -329,11 +312,11 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
           }
 
           clearInterval(progressInterval);
-          store.dispatch({ variant: "SET_SUCCESS", ref });
+          store.dispatch({ variant: "SET_SUCCESS", id });
         } catch (error) {
           store.dispatch({
             variant: "SET_ERROR",
-            ref,
+            id,
             error: error instanceof Error ? error.message : "Upload failed",
           });
         }
@@ -365,21 +348,23 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
           {children}
           <input
             type="file"
+            aria-hidden="true"
             accept={accept}
             disabled={disabled}
             multiple={multiple}
             tabIndex={-1}
             ref={inputRef}
             style={{
-              position: "absolute",
-              width: "1px",
+              border: 0,
+              clip: "rect(0 0 0 0)",
+              clipPath: "inset(50%)",
               height: "1px",
-              padding: 0,
               margin: "-1px",
               overflow: "hidden",
-              clip: "rect(0 0 0 0)",
+              padding: 0,
+              position: "absolute",
               whiteSpace: "nowrap",
-              borderWidth: 0,
+              width: "1px",
             }}
             onChange={onInputChange}
           />
@@ -431,8 +416,6 @@ const FileUploadDropzone = React.forwardRef<
   const store = useStoreContext(DROPZONE_NAME);
   const dragOver = useStore((state) => state.dragOver);
 
-  const DropzonePrimitive = asChild ? Slot : "div";
-
   const onDragOver = React.useCallback(
     (event: React.DragEvent<HTMLDivElement>) => {
       event.preventDefault();
@@ -477,14 +460,16 @@ const FileUploadDropzone = React.forwardRef<
     [store],
   );
 
+  const DropzonePrimitive = asChild ? Slot : "div";
+
   return (
     <DropzonePrimitive
-      data-dragging={dragOver ? "" : undefined}
+      data-drag-active={dragOver ? "" : undefined}
       data-slot="file-upload-dropzone"
       {...dropzoneProps}
       ref={forwardedRef}
       className={cn(
-        "relative rounded-lg border-2 border-dashed p-6 transition-colors hover:bg-muted/50 data-[dragging]:border-primary data-[dragging]:bg-muted/50",
+        "relative rounded-lg border-2 border-dashed p-6 transition-colors hover:bg-muted/50 data-drag-active:border-primary data-drag-active:bg-muted/50",
         className,
       )}
       onDragOver={onDragOver}
@@ -511,10 +496,9 @@ const FileUploadList = React.forwardRef<HTMLDivElement, FileUploadListProps>(
       forceMount,
       ...listProps
     } = props;
-    useStoreContext(LIST_NAME);
 
     const shouldRender =
-      forceMount || useStore((state) => state.itemMap.size > 0);
+      forceMount || useStore((state) => state.files.size > 0);
 
     if (!shouldRender) return null;
 
@@ -538,43 +522,49 @@ const FileUploadList = React.forwardRef<HTMLDivElement, FileUploadListProps>(
 );
 FileUploadList.displayName = LIST_NAME;
 
+const FileUploadItemContext = React.createContext<string | null>(null);
+
+function useFileUploadItemContext(name: keyof typeof FILE_UPLOAD_ERRORS) {
+  const context = React.useContext(FileUploadItemContext);
+  if (!context) {
+    throw new Error(FILE_UPLOAD_ERRORS[name]);
+  }
+  return context;
+}
+
 interface FileUploadItemProps extends React.ComponentPropsWithoutRef<"div"> {
+  value: string;
   asChild?: boolean;
 }
 
-const FileUploadItemContext =
-  React.createContext<React.RefObject<HTMLDivElement | null> | null>(null);
-
 const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
   (props, forwardedRef) => {
-    const { asChild, className, ...itemProps } = props;
-    useStoreContext(ITEM_NAME);
+    const { value, asChild, className, ...itemProps } = props;
 
-    const items = useStore((state) => Array.from(state.itemMap.entries()));
+    const fileState = useStore((state) => state.files.get(value));
 
-    const [itemRef, itemState] = items[0] ?? [null, null];
-
-    if (!itemRef) return null;
+    if (!fileState) return null;
 
     const ItemPrimitive = asChild ? Slot : "div";
 
     return (
-      <FileUploadItemContext.Provider value={itemRef}>
+      <FileUploadItemContext.Provider value={value}>
         <ItemPrimitive
+          id={value}
           role="listitem"
           data-slot="file-upload-item"
-          data-status={itemState?.status}
+          data-status={fileState.status}
           {...itemProps}
           ref={forwardedRef}
           className={cn(
             "flex items-center justify-between rounded-md border p-3",
             {
               "border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-950/50":
-                itemState?.status === "uploading",
+                fileState.status === "uploading",
               "border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950/50":
-                itemState?.status === "success",
+                fileState.status === "success",
               "border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/50":
-                itemState?.status === "error",
+                fileState.status === "error",
             },
             className,
           )}
@@ -584,14 +574,6 @@ const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
   },
 );
 FileUploadItem.displayName = ITEM_NAME;
-
-function useFileUploadItemContext(name: keyof typeof FILE_UPLOAD_ERRORS) {
-  const context = React.useContext(FileUploadItemContext);
-  if (!context) {
-    throw new Error(FILE_UPLOAD_ERRORS[name]);
-  }
-  return context;
-}
 
 interface FileUploadItemDeleteProps
   extends React.ComponentPropsWithoutRef<"button"> {
@@ -604,18 +586,19 @@ const FileUploadItemDelete = React.forwardRef<
 >((props, forwardedRef) => {
   const { asChild, ...deleteProps } = props;
   const store = useStoreContext(ITEM_DELETE_NAME);
-  const ref = useFileUploadItemContext(ITEM_DELETE_NAME);
+  const id = useFileUploadItemContext(ITEM_DELETE_NAME);
 
   const ItemDeletePrimitive = asChild ? Slot : "button";
 
   return (
     <ItemDeletePrimitive
       type="button"
+      aria-controls={id}
       data-slot="file-upload-item-delete"
       {...deleteProps}
       ref={forwardedRef}
       onClick={composeEventHandlers(deleteProps.onClick, () => {
-        store.dispatch({ variant: "REMOVE_FILE", ref });
+        store.dispatch({ variant: "REMOVE_FILE", id });
       })}
     />
   );
@@ -633,18 +616,18 @@ const FileUploadItemProgress = React.forwardRef<
 >((props, forwardedRef) => {
   const { asChild, className, ...progressProps } = props;
   useStoreContext(ITEM_PROGRESS_NAME);
-  const ref = useFileUploadItemContext(ITEM_PROGRESS_NAME);
+  const id = useFileUploadItemContext(ITEM_PROGRESS_NAME);
 
-  const item = useStore((state) => state.itemMap.get(ref));
+  const fileState = useStore((state) => state.files.get(id));
 
-  if (!item) return null;
+  if (!fileState) return null;
 
   const ItemProgressPrimitive = asChild ? Slot : "div";
 
   return (
     <ItemProgressPrimitive
       data-slot="file-upload-progress"
-      data-value={item.progress}
+      data-value={fileState.progress}
       data-max="100"
       {...progressProps}
       ref={forwardedRef}
@@ -657,12 +640,13 @@ const FileUploadItemProgress = React.forwardRef<
         className={cn(
           "absolute inset-y-0 left-0 flex w-full max-w-full items-center justify-center transition-all",
           {
-            "bg-orange-500 dark:bg-orange-600": item.status === "uploading",
-            "bg-green-500 dark:bg-green-600": item.status === "success",
-            "bg-red-500 dark:bg-red-600": item.status === "error",
+            "bg-orange-500 dark:bg-orange-600":
+              fileState.status === "uploading",
+            "bg-green-500 dark:bg-green-600": fileState.status === "success",
+            "bg-red-500 dark:bg-red-600": fileState.status === "error",
           },
         )}
-        style={{ width: `${item.progress}%` }}
+        style={{ width: `${fileState.progress}%` }}
       />
     </ItemProgressPrimitive>
   );
@@ -681,11 +665,11 @@ const FileUploadItemPreview = React.forwardRef<
 >((props, forwardedRef) => {
   const { asChild, render, className, ...previewProps } = props;
   useStoreContext(ITEM_PREVIEW_NAME);
-  const ref = useFileUploadItemContext(ITEM_PREVIEW_NAME);
+  const id = useFileUploadItemContext(ITEM_PREVIEW_NAME);
 
-  const item = useStore((state) => state.itemMap.get(ref));
+  const fileState = useStore((state) => state.files.get(id));
 
-  if (!item) return null;
+  if (!fileState) return null;
 
   const ItemPreviewPrimitive = asChild ? Slot : "div";
 
@@ -697,18 +681,20 @@ const FileUploadItemPreview = React.forwardRef<
       className={cn("flex items-center gap-2", className)}
     >
       {render ? (
-        render(item.file)
+        render(fileState.file)
       ) : (
         <>
           <div className="flex min-w-0 flex-col">
             <span className="truncate font-medium text-sm">
-              {item.file.name}
+              {fileState.file.name}
             </span>
             <span className="text-muted-foreground text-xs">
-              {(item.file.size / 1024).toFixed(1)} KB
+              {(fileState.file.size / 1024).toFixed(1)} KB
             </span>
-            {item.error && (
-              <span className="text-destructive text-xs">{item.error}</span>
+            {fileState.error && (
+              <span className="text-destructive text-xs">
+                {fileState.error}
+              </span>
             )}
           </div>
         </>

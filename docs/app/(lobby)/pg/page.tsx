@@ -82,7 +82,7 @@ export default function PlaygroundPage() {
           </FileUploadDropzone>
           <FileUploadList>
             {files.map((file) => (
-              <FileUploadItem key={file.name} asChild>
+              <FileUploadItem key={file.name} value={file.name} asChild>
                 <li className="flex flex-col gap-2">
                   <div className="flex items-center justify-between">
                     <FileUploadItemPreview />
