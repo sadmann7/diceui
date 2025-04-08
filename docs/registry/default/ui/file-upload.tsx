@@ -754,17 +754,78 @@ const FileUploadItemProgress = React.forwardRef<
 });
 FileUploadItemProgress.displayName = ITEM_PROGRESS_NAME;
 
+function formatBytes(bytes: number) {
+  if (bytes === 0) return "0 B";
+  const sizes = ["B", "KB", "MB", "GB", "TB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  return `${(bytes / 1024 ** i).toFixed(i ? 1 : 0)} ${sizes[i]}`;
+}
+
+function getFileIcon(file: File) {
+  const type = file.type;
+  const extension = file.name.split(".").pop()?.toLowerCase() || "";
+
+  if (type.startsWith("video/")) {
+    return <FileVideoIcon />;
+  }
+
+  if (type.startsWith("audio/")) {
+    return <FileAudioIcon />;
+  }
+
+  if (
+    type.startsWith("text/") ||
+    ["txt", "md", "rtf", "pdf"].includes(extension)
+  ) {
+    return <FileTextIcon />;
+  }
+
+  if (
+    [
+      "html",
+      "css",
+      "js",
+      "jsx",
+      "ts",
+      "tsx",
+      "json",
+      "xml",
+      "php",
+      "py",
+      "rb",
+      "java",
+      "c",
+      "cpp",
+      "cs",
+    ].includes(extension)
+  ) {
+    return <FileCodeIcon />;
+  }
+
+  if (["zip", "rar", "7z", "tar", "gz", "bz2"].includes(extension)) {
+    return <FileArchiveIcon />;
+  }
+
+  if (
+    ["exe", "msi", "app", "apk", "deb", "rpm"].includes(extension) ||
+    type.startsWith("application/")
+  ) {
+    return <FileCogIcon />;
+  }
+
+  return <FileIcon />;
+}
+
 interface FileUploadItemPreviewProps
   extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
-  render?: (file: File) => React.ReactNode;
 }
 
 const FileUploadItemPreview = React.forwardRef<
   HTMLDivElement,
   FileUploadItemPreviewProps
 >((props, forwardedRef) => {
-  const { asChild, render, className, ...previewProps } = props;
+  const { asChild, children, className, ...previewProps } = props;
   useStoreContext(ITEM_PREVIEW_NAME);
   const id = useFileUploadItemContext(ITEM_PREVIEW_NAME);
 
@@ -774,86 +835,29 @@ const FileUploadItemPreview = React.forwardRef<
 
   const ItemPreviewPrimitive = asChild ? Slot : "div";
 
-  const getFileIcon = React.useCallback((file: File) => {
-    const type = file.type;
-    const extension = file.name.split(".").pop()?.toLowerCase() || "";
-
-    if (type.startsWith("video/")) {
-      return <FileVideoIcon />;
-    }
-
-    if (type.startsWith("audio/")) {
-      return <FileAudioIcon />;
-    }
-
-    if (
-      type.startsWith("text/") ||
-      ["txt", "md", "rtf", "pdf"].includes(extension)
-    ) {
-      return <FileTextIcon />;
-    }
-
-    if (
-      [
-        "html",
-        "css",
-        "js",
-        "jsx",
-        "ts",
-        "tsx",
-        "json",
-        "xml",
-        "php",
-        "py",
-        "rb",
-        "java",
-        "c",
-        "cpp",
-        "cs",
-      ].includes(extension)
-    ) {
-      return <FileCodeIcon />;
-    }
-
-    if (["zip", "rar", "7z", "tar", "gz", "bz2"].includes(extension)) {
-      return <FileArchiveIcon />;
-    }
-
-    if (
-      ["exe", "msi", "app", "apk", "deb", "rpm"].includes(extension) ||
-      type.startsWith("application/")
-    ) {
-      return <FileCogIcon />;
-    }
-
-    return <FileIcon />;
-  }, []);
-
-  const onPreviewRender = React.useCallback(
-    (file: File) => {
-      if (file.type.startsWith("image/")) {
-        return (
-          <div className="relative flex size-10 shrink-0 items-center justify-center">
-            <img
-              src={URL.createObjectURL(file)}
-              alt={file.name}
-              className="rounded object-cover"
-              onLoad={(event) => {
-                URL.revokeObjectURL((event.target as HTMLImageElement).src);
-              }}
-            />
-          </div>
-        );
-      }
-
+  const onPreviewRender = React.useCallback((file: File) => {
+    if (file.type.startsWith("image/")) {
       return (
-        <div className="relative flex size-9 shrink-0 items-center justify-center rounded-md bg-accent [&>svg]:size-8">
-          {getFileIcon(file)}
+        <div className="relative flex size-10 shrink-0 items-center justify-center">
+          <img
+            src={URL.createObjectURL(file)}
+            alt={file.name}
+            className="rounded object-cover"
+            onLoad={(event) => {
+              if (!(event.target instanceof HTMLImageElement)) return;
+              URL.revokeObjectURL(event.target.src);
+            }}
+          />
         </div>
       );
-    },
-    [getFileIcon],
-  );
+    }
+
+    return (
+      <div className="relative flex size-9 shrink-0 items-center justify-center rounded-md bg-accent [&>svg]:size-8">
+        {getFileIcon(file)}
+      </div>
+    );
+  }, []);
 
   return (
     <ItemPreviewPrimitive
@@ -862,9 +866,7 @@ const FileUploadItemPreview = React.forwardRef<
       ref={forwardedRef}
       className={cn("flex items-center gap-2", className)}
     >
-      {render ? (
-        render(fileState.file)
-      ) : (
+      {children ?? (
         <>
           {onPreviewRender(fileState.file)}
           <div className="flex min-w-0 flex-col">
@@ -872,7 +874,7 @@ const FileUploadItemPreview = React.forwardRef<
               {fileState.file.name}
             </span>
             <span className="text-muted-foreground text-xs">
-              {(fileState.file.size / 1024).toFixed(1)} KB
+              {formatBytes(fileState.file.size)}
             </span>
             {fileState.error && (
               <span className="text-destructive text-xs">
