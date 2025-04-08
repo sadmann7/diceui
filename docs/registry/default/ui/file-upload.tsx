@@ -1,6 +1,5 @@
 "use client";
 
-import { composeEventHandlers } from "@/lib/composition";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import {
@@ -460,11 +459,15 @@ const FileUploadTrigger = React.forwardRef<
 
   const TriggerPrimitive = asChild ? Slot : "button";
 
-  const onTriggerClick = React.useCallback(
-    composeEventHandlers(triggerProps.onClick, () => {
-      inputRef.current?.click();
-    }),
-    [],
+  const onClick = React.useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      triggerProps.onClick?.(event);
+
+      if (!event.defaultPrevented) {
+        inputRef.current?.click();
+      }
+    },
+    [triggerProps.onClick, inputRef],
   );
 
   return (
@@ -473,7 +476,7 @@ const FileUploadTrigger = React.forwardRef<
       data-slot="file-upload-trigger"
       {...triggerProps}
       ref={forwardedRef}
-      onClick={onTriggerClick}
+      onClick={onClick}
     />
   );
 });
@@ -493,59 +496,81 @@ const FileUploadDropzone = React.forwardRef<
   const store = useStoreContext(DROPZONE_NAME);
   const dragOver = useStore((state) => state.dragOver);
 
-  const DropzonePrimitive = asChild ? Slot : "div";
-
   const onDragOver = React.useCallback(
     (event: React.DragEvent<HTMLDivElement>) => {
-      event.preventDefault();
-      store.dispatch({ variant: "SET_DRAG_OVER", dragOver: true });
+      dropzoneProps.onDragOver?.(event);
+
+      if (!event.defaultPrevented) {
+        event.preventDefault();
+        store.dispatch({ variant: "SET_DRAG_OVER", dragOver: true });
+      }
     },
-    [store],
+    [store, dropzoneProps.onDragOver],
   );
 
   const onDragEnter = React.useCallback(
     (event: React.DragEvent<HTMLDivElement>) => {
-      event.preventDefault();
-      store.dispatch({ variant: "SET_DRAG_OVER", dragOver: true });
+      dropzoneProps.onDragEnter?.(event);
+
+      if (!event.defaultPrevented) {
+        event.preventDefault();
+        store.dispatch({ variant: "SET_DRAG_OVER", dragOver: true });
+      }
     },
-    [store],
+    [store, dropzoneProps.onDragEnter],
   );
 
   const onDragLeave = React.useCallback(
     (event: React.DragEvent<HTMLDivElement>) => {
-      event.preventDefault();
-      store.dispatch({ variant: "SET_DRAG_OVER", dragOver: false });
+      dropzoneProps.onDragLeave?.(event);
+
+      if (!event.defaultPrevented) {
+        event.preventDefault();
+        store.dispatch({ variant: "SET_DRAG_OVER", dragOver: false });
+      }
     },
-    [store],
+    [store, dropzoneProps.onDragLeave],
   );
 
   const onDrop = React.useCallback(
     (event: React.DragEvent<HTMLDivElement>) => {
-      event.preventDefault();
-      store.dispatch({ variant: "SET_DRAG_OVER", dragOver: false });
+      dropzoneProps.onDrop?.(event);
 
-      const files = Array.from(event.dataTransfer.files);
-      const inputElement = store.getState().inputRef.current;
-      if (!inputElement) return;
+      if (!event.defaultPrevented) {
+        event.preventDefault();
+        store.dispatch({ variant: "SET_DRAG_OVER", dragOver: false });
 
-      const dataTransfer = new DataTransfer();
-      for (const file of files) {
-        dataTransfer.items.add(file);
+        const files = Array.from(event.dataTransfer.files);
+        const inputElement = store.getState().inputRef.current;
+        if (!inputElement) return;
+
+        const dataTransfer = new DataTransfer();
+        for (const file of files) {
+          dataTransfer.items.add(file);
+        }
+
+        inputElement.files = dataTransfer.files;
+        inputElement.dispatchEvent(new Event("change", { bubbles: true }));
       }
-
-      inputElement.files = dataTransfer.files;
-      inputElement.dispatchEvent(new Event("change", { bubbles: true }));
     },
-    [store],
+    [store, dropzoneProps.onDrop],
   );
 
-  const onClick = React.useCallback(() => {
-    if (!asTrigger) return;
-    const inputRef = store.getState().inputRef;
-    if (inputRef.current) {
-      inputRef.current.click();
-    }
-  }, [asTrigger, store]);
+  const onClick = React.useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      dropzoneProps.onClick?.(event);
+
+      if (!event.defaultPrevented && asTrigger) {
+        const inputRef = store.getState().inputRef;
+        if (inputRef.current) {
+          inputRef.current.click();
+        }
+      }
+    },
+    [store, dropzoneProps.onClick, asTrigger],
+  );
+
+  const DropzonePrimitive = asChild ? Slot : "div";
 
   return (
     <DropzonePrimitive
@@ -555,6 +580,7 @@ const FileUploadDropzone = React.forwardRef<
       ref={forwardedRef}
       className={cn(
         "relative rounded-lg border-2 border-dashed not-has-[>[data-slot=file-upload-trigger]]:p-6 transition-colors hover:bg-muted/50 data-[dragging]:border-primary data-[dragging]:bg-muted/50",
+        asTrigger && "select-none",
         className,
       )}
       onClick={onClick}
@@ -680,17 +706,18 @@ const FileUploadItemDelete = React.forwardRef<
 
   const fileState = useStore((state) => state.files.get(id));
 
-  const onClick = React.useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>) => {
-      deleteProps.onClick?.(e);
+  if (!fileState) return null;
 
-      if (fileState) {
+  const onClick = React.useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      deleteProps.onClick?.(event);
+
+      if (!event.defaultPrevented) {
         store.dispatch({ variant: "REMOVE_FILE", id });
       }
     },
-    [id, store, fileState, deleteProps.onClick],
+    [store, deleteProps.onClick, id],
   );
-
   const ItemDeletePrimitive = asChild ? Slot : "button";
 
   return (
@@ -900,21 +927,21 @@ const ItemProgress = FileUploadItemProgress;
 const ItemPreview = FileUploadItemPreview;
 
 export {
-  Dropzone,
   FileUpload,
   FileUploadDropzone,
+  FileUploadTrigger,
+  FileUploadList,
   FileUploadItem,
   FileUploadItemDelete,
   FileUploadItemPreview,
   FileUploadItemProgress,
-  FileUploadList,
-  FileUploadTrigger,
+  //
+  Root,
+  Dropzone,
+  Trigger,
+  List,
   Item,
   ItemDelete,
   ItemPreview,
   ItemProgress,
-  List,
-  //
-  Root,
-  Trigger,
 };
