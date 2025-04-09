@@ -642,7 +642,7 @@ const FileUploadList = React.forwardRef<HTMLDivElement, FileUploadListProps>(
 );
 FileUploadList.displayName = LIST_NAME;
 
-const FileUploadItemContext = React.createContext<File | null>(null);
+const FileUploadItemContext = React.createContext<FileState | null>(null);
 
 function useFileUploadItemContext(name: keyof typeof FILE_UPLOAD_ERRORS) {
   const context = React.useContext(FileUploadItemContext);
@@ -669,7 +669,7 @@ const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
     const ItemPrimitive = asChild ? Slot : "div";
 
     return (
-      <FileUploadItemContext.Provider value={value}>
+      <FileUploadItemContext.Provider value={fileState}>
         <ItemPrimitive
           role="listitem"
           data-slot="file-upload-item"
@@ -776,11 +776,7 @@ const FileUploadItemPreview = React.forwardRef<
 >((props, forwardedRef) => {
   const { asChild, children, className, ...previewProps } = props;
   useStoreContext(ITEM_PREVIEW_NAME);
-  const file = useFileUploadItemContext(ITEM_PREVIEW_NAME);
-
-  const fileState = useStore((state) => state.files.get(file));
-
-  if (!fileState) return null;
+  const fileState = useFileUploadItemContext(ITEM_PREVIEW_NAME);
 
   const ItemPreviewPrimitive = asChild ? Slot : "div";
 
@@ -849,12 +845,8 @@ const FileUploadItemProgress = React.forwardRef<
 >((props, forwardedRef) => {
   const { asChild, className, ...progressProps } = props;
   useStoreContext(ITEM_PROGRESS_NAME);
-  const file = useFileUploadItemContext(ITEM_PROGRESS_NAME);
-
-  const fileState = useStore((state) => state.files.get(file));
+  const fileState = useFileUploadItemContext(ITEM_PROGRESS_NAME);
   const vibrant = useStore((state) => state.vibrant);
-
-  if (!fileState) return null;
 
   const ItemProgressPrimitive = asChild ? Slot : "div";
 
@@ -916,29 +908,26 @@ const FileUploadItemDelete = React.forwardRef<
 >((props, forwardedRef) => {
   const { asChild, ...deleteProps } = props;
   const store = useStoreContext(ITEM_DELETE_NAME);
-  const file = useFileUploadItemContext(ITEM_DELETE_NAME);
+  const fileState = useFileUploadItemContext(ITEM_DELETE_NAME);
   const propsRef = useAsRef(deleteProps);
-
-  const fileState = useStore((state) => state.files.get(file));
-
-  if (!fileState) return null;
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       propsRef.current?.onClick?.(event);
 
       if (!event.defaultPrevented) {
-        store.dispatch({ variant: "REMOVE_FILE", file });
+        store.dispatch({ variant: "REMOVE_FILE", file: fileState.file });
       }
     },
-    [store, file, propsRef.current.onClick],
+    [store, fileState.file, propsRef.current.onClick],
   );
+
   const ItemDeletePrimitive = asChild ? Slot : "button";
 
   return (
     <ItemDeletePrimitive
       type="button"
-      aria-controls={file.name}
+      aria-controls={fileState.file.name}
       data-slot="file-upload-item-delete"
       {...deleteProps}
       ref={forwardedRef}
