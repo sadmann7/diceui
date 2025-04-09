@@ -97,6 +97,7 @@ function createStore(
             status: "idle",
           });
         }
+
         if (onFilesChange) {
           const fileList = Array.from(newFiles.values()).map(
             (fileState) => fileState.file,
@@ -108,11 +109,16 @@ function createStore(
       case "SET_FILES": {
         const newFiles = new Map(state.files);
         for (const file of action.files) {
-          newFiles.set(file, {
-            file,
-            progress: 0,
-            status: "idle",
-          });
+          const existingState = state.files.get(file);
+          if (existingState) {
+            newFiles.set(file, existingState);
+          } else {
+            newFiles.set(file, {
+              file,
+              progress: 0,
+              status: "idle",
+            });
+          }
         }
         return { ...state, files: newFiles };
       }
@@ -155,6 +161,7 @@ function createStore(
       case "REMOVE_FILE": {
         const newFiles = new Map(state.files);
         newFiles.delete(action.file);
+
         if (onFilesChange) {
           const fileList = Array.from(newFiles.values()).map(
             (fileState) => fileState.file,
