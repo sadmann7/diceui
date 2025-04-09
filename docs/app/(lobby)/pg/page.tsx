@@ -120,11 +120,8 @@ export default function PlaygroundPage() {
             </FileUploadDropzone>
           </FileUploadTrigger>
           <FileUploadList>
-            {files.map((file) => (
-              <FileUploadItem
-                key={`${file.name}-${file.size}`}
-                value={`${file.name}-${file.size}`}
-              >
+            {files.map((file, index) => (
+              <FileUploadItem key={index} value={file}>
                 <div className="flex w-full items-center gap-2">
                   <FileUploadItemPreview />
                   <FileUploadItemDelete asChild>
