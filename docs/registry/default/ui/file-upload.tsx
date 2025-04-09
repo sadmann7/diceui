@@ -18,9 +18,9 @@ const TRIGGER_NAME = "FileUploadTrigger";
 const DROPZONE_NAME = "FileUploadDropzone";
 const LIST_NAME = "FileUploadList";
 const ITEM_NAME = "FileUploadItem";
-const ITEM_DELETE_NAME = "FileUploadItemDelete";
-const ITEM_PROGRESS_NAME = "FileUploadItemProgress";
 const ITEM_PREVIEW_NAME = "FileUploadItemPreview";
+const ITEM_PROGRESS_NAME = "FileUploadItemProgress";
+const ITEM_DELETE_NAME = "FileUploadItemDelete";
 
 const FILE_UPLOAD_ERRORS = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` is the root component`,
@@ -28,9 +28,9 @@ const FILE_UPLOAD_ERRORS = {
   [DROPZONE_NAME]: `\`${DROPZONE_NAME}\` must be within \`${ROOT_NAME}\``,
   [LIST_NAME]: `\`${LIST_NAME}\` must be within \`${ROOT_NAME}\``,
   [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${ROOT_NAME}\``,
-  [ITEM_DELETE_NAME]: `\`${ITEM_DELETE_NAME}\` must be within \`${ITEM_NAME}\``,
-  [ITEM_PROGRESS_NAME]: `\`${ITEM_PROGRESS_NAME}\` must be within \`${ITEM_NAME}\``,
   [ITEM_PREVIEW_NAME]: `\`${ITEM_PREVIEW_NAME}\` must be within \`${ITEM_NAME}\``,
+  [ITEM_PROGRESS_NAME]: `\`${ITEM_PROGRESS_NAME}\` must be within \`${ITEM_NAME}\``,
+  [ITEM_DELETE_NAME]: `\`${ITEM_DELETE_NAME}\` must be within \`${ITEM_NAME}\``,
 } as const;
 
 function useLazyRef<T>(fn: () => T) {
@@ -74,8 +74,8 @@ type StoreAction =
 
 function createStore(
   listeners: Set<() => void>,
-  inputRef: React.RefObject<HTMLInputElement | null>,
   files: Map<File, FileState>,
+  inputRef: React.RefObject<HTMLInputElement | null>,
   onFilesChange?: (files: File[]) => void,
   vibrant = false,
 ) {
@@ -281,11 +281,11 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
     } = props;
 
     const listeners = useLazyRef(() => new Set<() => void>()).current;
+    const files = useLazyRef<Map<File, FileState>>(() => new Map()).current;
     const inputRef = React.useRef<HTMLInputElement>(null);
 
-    const files = useLazyRef<Map<File, FileState>>(() => new Map()).current;
     const store = React.useMemo(
-      () => createStore(listeners, inputRef, files, onValueChange, vibrant),
+      () => createStore(listeners, files, inputRef, onValueChange, vibrant),
       [listeners, files, vibrant, onValueChange],
     );
     const id = React.useId();
