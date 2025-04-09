@@ -241,7 +241,7 @@ interface FileUploadRootProps
   defaultValue?: File[];
   onValueChange?: (files: File[]) => void;
   onFileAccept?: (file: File) => void;
-  onFileReject?: (file: File, reason: string) => void;
+  onFileReject?: (file: File, message: string) => void;
   onUpload?: (
     file: File,
     options: {
@@ -311,16 +311,22 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
         let filesToProcess = [...originalFiles];
 
         if (propsRef.current.maxFiles) {
-          const currentFiles = store.getState().files.size;
-          if (
-            currentFiles + filesToProcess.length >
-            propsRef.current.maxFiles
-          ) {
-            const allowed = Math.max(
-              0,
-              propsRef.current.maxFiles - currentFiles,
-            );
-            filesToProcess = filesToProcess.slice(0, allowed);
+          const currentCount = store.getState().files.size;
+          const remainingSlotCount = Math.max(
+            0,
+            propsRef.current.maxFiles - currentCount,
+          );
+
+          if (remainingSlotCount < filesToProcess.length) {
+            const rejectedFiles = filesToProcess.slice(remainingSlotCount);
+            filesToProcess = filesToProcess.slice(0, remainingSlotCount);
+
+            for (const file of rejectedFiles) {
+              propsRef.current.onFileReject?.(
+                file,
+                `Only ${propsRef.current.maxFiles} files allowed`,
+              );
+            }
           }
         }
 

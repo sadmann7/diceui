@@ -49,10 +49,11 @@ import {
 import * as Mention from "@diceui/mention";
 import { ChevronDown, Upload, X } from "lucide-react";
 import * as React from "react";
+import { toast } from "sonner";
 
 export default function PlaygroundPage() {
   const [files, setFiles] = React.useState<File[]>([]);
-  console.log({ files });
+  // console.log({ files });
 
   const onUpload = React.useCallback(
     async (
@@ -101,12 +102,20 @@ export default function PlaygroundPage() {
         <FileUpload
           multiple
           accept="image/*,application/pdf"
-          maxSize={5 * 1024 * 1024}
+          maxSize={2 * 1024 * 1024}
           maxFiles={5}
           className="max-w-md"
           value={files}
           onValueChange={setFiles}
           onUpload={onUpload}
+          onFileReject={(file, description) => {
+            toast(
+              `"${file.name.length > 20 ? `${file.name.slice(0, 20)}...` : file.name}" was rejected`,
+              {
+                description,
+              },
+            );
+          }}
         >
           <FileUploadTrigger asChild>
             <FileUploadDropzone>
