@@ -27,7 +27,7 @@ const FILE_UPLOAD_ERRORS = {
   [TRIGGER_NAME]: `\`${TRIGGER_NAME}\` must be within \`${ROOT_NAME}\``,
   [DROPZONE_NAME]: `\`${DROPZONE_NAME}\` must be within \`${ROOT_NAME}\``,
   [LIST_NAME]: `\`${LIST_NAME}\` must be within \`${ROOT_NAME}\``,
-  [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${LIST_NAME}\``,
+  [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${ROOT_NAME}\``,
   [ITEM_DELETE_NAME]: `\`${ITEM_DELETE_NAME}\` must be within \`${ITEM_NAME}\``,
   [ITEM_PROGRESS_NAME]: `\`${ITEM_PROGRESS_NAME}\` must be within \`${ITEM_NAME}\``,
   [ITEM_PREVIEW_NAME]: `\`${ITEM_PREVIEW_NAME}\` must be within \`${ITEM_NAME}\``,
@@ -298,7 +298,6 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
       [listeners, onValueChange],
     );
     const id = React.useId();
-    const inputId = React.useId();
     const propsRef = useAsRef(props);
     const isControlled = value !== undefined;
 
@@ -463,7 +462,6 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
         >
           {children}
           <input
-            id={inputId}
             type="file"
             ref={inputRef}
             accept={accept}
@@ -509,7 +507,6 @@ const FileUploadTrigger = React.forwardRef<
   return (
     <TriggerPrimitive
       type="button"
-      aria-controls={inputRef.current?.id}
       data-slot="file-upload-trigger"
       {...triggerProps}
       ref={forwardedRef}
@@ -961,21 +958,21 @@ const ItemProgress = FileUploadItemProgress;
 const ItemDelete = FileUploadItemDelete;
 
 export {
-  Dropzone,
   FileUpload,
   FileUploadDropzone,
+  FileUploadTrigger,
+  FileUploadList,
   FileUploadItem,
   FileUploadItemDelete,
   FileUploadItemPreview,
   FileUploadItemProgress,
-  FileUploadList,
-  FileUploadTrigger,
+  //
+  Root,
+  Dropzone,
+  Trigger,
+  List,
   Item,
   ItemDelete,
   ItemPreview,
   ItemProgress,
-  List,
-  //
-  Root,
-  Trigger,
 };
