@@ -227,11 +227,6 @@ function useStore<T>(selector: (state: StoreState) => T): T {
 }
 
 interface FileUploadRootProps extends React.ComponentPropsWithoutRef<"div"> {
-  multiple?: boolean;
-  accept?: string;
-  maxSize?: number;
-  maxFiles?: number;
-  disabled?: boolean;
   value?: File[];
   onValueChange?: (files: File[]) => void;
   onFilesAccepted?: (files: File[]) => void;
@@ -244,23 +239,28 @@ interface FileUploadRootProps extends React.ComponentPropsWithoutRef<"div"> {
       onError: (error: Error) => void;
     },
   ) => Promise<void> | void;
+  accept?: string;
+  maxFiles?: number;
+  maxSize?: number;
   asChild?: boolean;
+  disabled?: boolean;
+  multiple?: boolean;
 }
 
 const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
   (props, forwardedRef) => {
     const {
-      multiple = false,
-      accept,
-      maxSize,
-      maxFiles,
-      disabled,
       value,
       onValueChange,
       onFilesAccepted,
       onFileRejected,
       onUpload,
+      accept,
+      maxFiles,
+      maxSize,
       asChild,
+      disabled,
+      multiple = false,
       className,
       children,
       ...rootProps
@@ -341,7 +341,7 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
           onFilesAccepted?.(acceptedFiles);
 
           if (onUpload) {
-            setTimeout(() => {
+            requestAnimationFrame(() => {
               for (const file of acceptedFiles) {
                 const id = `${file.name}-${file.size}`;
 
@@ -349,21 +349,21 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
                   onUploadFile(file, id);
                 }
               }
-            }, 0);
+            });
           }
         }
       },
       [
-        disabled,
-        maxFiles,
-        accept,
-        maxSize,
+        value,
+        onValueChange,
         onFilesAccepted,
         onFileRejected,
         onUpload,
+        accept,
+        maxFiles,
+        maxSize,
+        disabled,
         store,
-        value,
-        onValueChange,
       ],
     );
 
@@ -430,23 +430,11 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
           {children}
           <input
             type="file"
+            ref={inputRef}
             accept={accept}
             disabled={disabled}
             multiple={multiple}
-            tabIndex={-1}
-            ref={inputRef}
-            style={{
-              border: 0,
-              clip: "rect(0 0 0 0)",
-              clipPath: "inset(50%)",
-              height: "1px",
-              margin: "-1px",
-              overflow: "hidden",
-              padding: 0,
-              position: "absolute",
-              whiteSpace: "nowrap",
-              width: "1px",
-            }}
+            className="sr-only"
             onChange={onInputChange}
           />
         </RootPrimitive>
@@ -864,7 +852,7 @@ const FileUploadItemProgress = React.forwardRef<
         data-value={fileState.progress}
         data-max="100"
         className={cn(
-          "absolute inset-y-0 left-0 flex w-full max-w-full items-center justify-center transition-all",
+          "absolute inset-y-0 left-0 flex w-full items-center justify-center transition-transform duration-200",
           {
             "bg-orange-500 dark:bg-orange-600":
               fileState.status === "uploading",
@@ -872,7 +860,7 @@ const FileUploadItemProgress = React.forwardRef<
             "bg-red-500 dark:bg-red-600": fileState.status === "error",
           },
         )}
-        style={{ width: `${fileState.progress}%` }}
+        style={{ transform: `translateX(-${100 - fileState.progress}%)` }}
       />
     </ItemProgressPrimitive>
   );
