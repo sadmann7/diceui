@@ -1,6 +1,5 @@
 "use client";
 
-import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import {
