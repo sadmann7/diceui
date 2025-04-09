@@ -75,11 +75,12 @@ type StoreAction =
 function createStore(
   listeners: Set<() => void>,
   inputRef: React.RefObject<HTMLInputElement | null>,
+  files: Map<File, FileState>,
   onFilesChange?: (files: File[]) => void,
   vibrant = false,
 ) {
   const initialState: StoreState = {
-    files: new Map(),
+    files,
     dragOver: false,
     vibrant,
   };
@@ -89,9 +90,8 @@ function createStore(
   function reducer(state: StoreState, action: StoreAction): StoreState {
     switch (action.variant) {
       case "ADD_FILES": {
-        const newFiles = new Map(state.files);
         for (const file of action.files) {
-          newFiles.set(file, {
+          files.set(file, {
             file,
             progress: 0,
             status: "idle",
@@ -99,85 +99,79 @@ function createStore(
         }
 
         if (onFilesChange) {
-          const fileList = Array.from(newFiles.values()).map(
+          const fileList = Array.from(files.values()).map(
             (fileState) => fileState.file,
           );
           onFilesChange(fileList);
         }
-        return { ...state, files: newFiles };
+        return { ...state, files };
       }
       case "SET_FILES": {
-        const newFiles = new Map(state.files);
         for (const file of action.files) {
-          const existingState = state.files.get(file);
-          if (existingState) {
-            newFiles.set(file, existingState);
-          } else {
-            newFiles.set(file, {
+          const existingState = files.get(file);
+          if (!existingState) {
+            files.set(file, {
               file,
               progress: 0,
               status: "idle",
             });
           }
         }
-        return { ...state, files: newFiles };
+        return { ...state, files };
       }
       case "SET_PROGRESS": {
-        const newFiles = new Map(state.files);
-        const fileState = newFiles.get(action.file);
+        const fileState = files.get(action.file);
         if (fileState) {
-          newFiles.set(action.file, {
+          files.set(action.file, {
             ...fileState,
             progress: action.progress,
             status: "uploading",
           });
         }
-        return { ...state, files: newFiles };
+        return { ...state, files };
       }
       case "SET_SUCCESS": {
-        const newFiles = new Map(state.files);
-        const fileState = newFiles.get(action.file);
+        const fileState = files.get(action.file);
         if (fileState) {
-          newFiles.set(action.file, {
+          files.set(action.file, {
             ...fileState,
             progress: 100,
             status: "success",
           });
         }
-        return { ...state, files: newFiles };
+        return { ...state, files };
       }
       case "SET_ERROR": {
-        const newFiles = new Map(state.files);
-        const fileState = newFiles.get(action.file);
+        const fileState = files.get(action.file);
         if (fileState) {
-          newFiles.set(action.file, {
+          files.set(action.file, {
             ...fileState,
             error: action.error,
             status: "error",
           });
         }
-        return { ...state, files: newFiles };
+        return { ...state, files };
       }
       case "REMOVE_FILE": {
-        const newFiles = new Map(state.files);
-        newFiles.delete(action.file);
+        files.delete(action.file);
 
         if (onFilesChange) {
-          const fileList = Array.from(newFiles.values()).map(
+          const fileList = Array.from(files.values()).map(
             (fileState) => fileState.file,
           );
           onFilesChange(fileList);
         }
-        return { ...state, files: newFiles };
+        return { ...state, files };
       }
       case "SET_DRAG_OVER": {
         return { ...state, dragOver: action.dragOver };
       }
       case "CLEAR": {
+        files.clear();
         if (onFilesChange) {
           onFilesChange([]);
         }
-        return { ...state, files: new Map() };
+        return { ...state, files };
       }
       default:
         return state;
@@ -289,9 +283,10 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
     const listeners = useLazyRef(() => new Set<() => void>()).current;
     const inputRef = React.useRef<HTMLInputElement>(null);
 
+    const files = useLazyRef<Map<File, FileState>>(() => new Map()).current;
     const store = React.useMemo(
-      () => createStore(listeners, inputRef, onValueChange, vibrant),
-      [listeners, onValueChange, vibrant],
+      () => createStore(listeners, inputRef, files, onValueChange, vibrant),
+      [listeners, files, vibrant, onValueChange],
     );
     const id = React.useId();
     const propsRef = useAsRef(props);
