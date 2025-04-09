@@ -54,6 +54,47 @@ export default function PlaygroundPage() {
   const [files, setFiles] = React.useState<File[]>([]);
   console.log({ files });
 
+  const onUpload = React.useCallback(
+    async (
+      _file: File,
+      {
+        onProgress,
+        onSuccess,
+        onError,
+      }: {
+        onProgress: (progress: number) => void;
+        onSuccess: () => void;
+        onError: (error: Error) => void;
+      },
+    ) => {
+      try {
+        // Simulate file upload with progress
+        const totalChunks = 10;
+        let uploadedChunks = 0;
+
+        // Simulate chunk upload with delays
+        for (let i = 0; i < totalChunks; i++) {
+          // Simulate network delay (100-300ms per chunk)
+          await new Promise((resolve) =>
+            setTimeout(resolve, Math.random() * 200 + 100),
+          );
+
+          // Update progress
+          uploadedChunks++;
+          const progress = (uploadedChunks / totalChunks) * 100;
+          onProgress(progress);
+        }
+
+        // Simulate server processing delay
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        onSuccess();
+      } catch (error) {
+        onError(error instanceof Error ? error : new Error("Upload failed"));
+      }
+    },
+    [],
+  );
+
   return (
     <Shell>
       <div className="grid gap-8">
@@ -65,6 +106,7 @@ export default function PlaygroundPage() {
           className="max-w-md"
           value={files}
           onValueChange={setFiles}
+          onUpload={onUpload}
         >
           <FileUploadTrigger asChild>
             <FileUploadDropzone>
@@ -78,15 +120,21 @@ export default function PlaygroundPage() {
             </FileUploadDropzone>
           </FileUploadTrigger>
           <FileUploadList>
-            {files.map((file, index) => (
-              <FileUploadItem key={index} value={file.name}>
-                <FileUploadItemPreview />
-                <FileUploadItemDelete asChild>
-                  <Button variant="ghost" size="icon" className="size-7">
-                    <X className="size-4" />
-                    <span className="sr-only">Remove file</span>
-                  </Button>
-                </FileUploadItemDelete>
+            {files.map((file) => (
+              <FileUploadItem
+                key={`${file.name}-${file.size}`}
+                value={`${file.name}-${file.size}`}
+              >
+                <div className="flex w-full items-center gap-2">
+                  <FileUploadItemPreview />
+                  <FileUploadItemDelete asChild>
+                    <Button variant="ghost" size="icon" className="size-7">
+                      <X className="size-4" />
+                      <span className="sr-only">Remove file</span>
+                    </Button>
+                  </FileUploadItemDelete>
+                </div>
+                <FileUploadItemProgress />
               </FileUploadItem>
             ))}
           </FileUploadList>

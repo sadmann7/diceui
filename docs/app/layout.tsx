@@ -91,7 +91,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         />
         <TailwindIndicator />
         <Toaster />
-        <ReactScan />
+        <ReactScan enabled={false} />
         <Providers
           theme={{
             attribute: "class",
