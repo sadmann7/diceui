@@ -1,5 +1,6 @@
 "use client";
 
+import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import {
@@ -60,6 +61,7 @@ interface FileState {
 interface StoreState {
   files: Map<string, FileState>;
   dragOver: boolean;
+  vibrant: boolean;
 }
 
 type StoreAction =
@@ -76,10 +78,12 @@ function createStore(
   listeners: Set<() => void>,
   inputRef: React.RefObject<HTMLInputElement | null>,
   onFilesChange?: (files: File[]) => void,
+  vibrant = false,
 ) {
   const initialState: StoreState = {
     files: new Map(),
     dragOver: false,
+    vibrant,
   };
 
   let state = initialState;
@@ -268,6 +272,7 @@ interface FileUploadRootProps
   asChild?: boolean;
   disabled?: boolean;
   multiple?: boolean;
+  vibrant?: boolean;
 }
 
 const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
@@ -285,6 +290,7 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
       asChild,
       disabled,
       multiple = false,
+      vibrant = false,
       className,
       children,
       ...rootProps
@@ -294,8 +300,8 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
     const inputRef = React.useRef<HTMLInputElement>(null);
 
     const store = React.useMemo(
-      () => createStore(listeners, inputRef, onValueChange),
-      [listeners, onValueChange],
+      () => createStore(listeners, inputRef, onValueChange, vibrant),
+      [listeners, onValueChange, vibrant],
     );
     const id = React.useId();
     const propsRef = useAsRef(props);
@@ -680,6 +686,8 @@ const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
       return entry ? entry[1] : null;
     });
 
+    const vibrant = useStore((state) => state.vibrant);
+
     if (!fileState) return null;
 
     const ItemPrimitive = asChild ? Slot : "div";
@@ -695,14 +703,22 @@ const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
           ref={forwardedRef}
           className={cn(
             "flex items-center gap-2 rounded-md border p-3 has-[_[data-slot=file-upload-preview]]:flex-col has-[_[data-slot=file-upload-progress]]:items-start",
-            {
-              "border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-950/50":
-                fileState.status === "uploading",
-              "border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950/50":
-                fileState.status === "success",
-              "border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/50":
-                fileState.status === "error",
-            },
+            vibrant
+              ? {
+                  "border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-950/50":
+                    fileState.status === "uploading",
+                  "border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950/50":
+                    fileState.status === "success",
+                  "border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/50":
+                    fileState.status === "error",
+                  "border-orange-500 bg-orange-100 dark:border-orange-500 dark:bg-orange-950/50":
+                    fileState.status === "uploading",
+                  "border-green-500 bg-green-100 dark:border-green-500 dark:bg-green-950/50":
+                    fileState.status === "success",
+                  "border-red-500 bg-red-100 dark:border-red-500 dark:bg-red-950/50":
+                    fileState.status === "error",
+                }
+              : "",
             className,
           )}
         />
@@ -861,6 +877,7 @@ const FileUploadItemProgress = React.forwardRef<
   const id = useFileUploadItemContext(ITEM_PROGRESS_NAME);
 
   const fileState = useStore((state) => state.files.get(id));
+  const vibrant = useStore((state) => state.vibrant);
 
   if (!fileState) return null;
 
@@ -880,7 +897,7 @@ const FileUploadItemProgress = React.forwardRef<
       {...progressProps}
       ref={forwardedRef}
       className={cn(
-        "relative h-2 w-full overflow-hidden rounded-full bg-secondary",
+        "relative h-1.5 w-full overflow-hidden rounded-full bg-primary/20",
         className,
       )}
     >
@@ -889,13 +906,22 @@ const FileUploadItemProgress = React.forwardRef<
         data-value={fileState.progress}
         data-max="100"
         className={cn(
-          "absolute inset-y-0 left-0 flex w-full items-center justify-center transition-transform duration-200",
-          {
-            "bg-orange-500 dark:bg-orange-600":
-              fileState.status === "uploading",
-            "bg-green-500 dark:bg-green-600": fileState.status === "success",
-            "bg-red-500 dark:bg-red-600": fileState.status === "error",
-          },
+          "h-full w-full flex-1 bg-primary transition-all",
+          vibrant
+            ? {
+                "bg-orange-500/50 dark:bg-orange-600/50":
+                  fileState.status === "uploading",
+                "bg-green-500/50 dark:bg-green-600/50":
+                  fileState.status === "success",
+                "bg-red-500/50 dark:bg-red-600/50":
+                  fileState.status === "error",
+                "bg-orange-500 dark:bg-orange-600":
+                  fileState.status === "uploading",
+                "bg-green-500 dark:bg-green-600":
+                  fileState.status === "success",
+                "bg-red-500 dark:bg-red-600": fileState.status === "error",
+              }
+            : "bg-primary",
         )}
         style={{ transform: `translateX(-${100 - fileState.progress}%)` }}
       />
