@@ -44,6 +44,7 @@ import {
   FileUploadItemPreview,
   FileUploadItemProgress,
   FileUploadList,
+  FileUploadTrigger,
 } from "@/registry/default/ui/file-upload";
 import * as Mention from "@diceui/mention";
 import { ChevronDown, Upload, X } from "lucide-react";
@@ -117,13 +118,18 @@ export default function PlaygroundPage() {
           }}
         >
           <FileUploadDropzone>
-            <div className="flex flex-col items-center justify-center gap-2 p-4">
-              <Upload className="size-10 text-muted-foreground" />
+            <Upload className="size-8 text-muted-foreground" />
+            <div className="flex flex-col items-center gap-1">
               <p className="font-medium text-sm">Drag & drop files here</p>
               <p className="text-muted-foreground text-xs">
                 Or click to browse (max 5 files, 5MB each)
               </p>
             </div>
+            <FileUploadTrigger asChild>
+              <Button variant="outline" size="sm" className="w-fit">
+                Open
+              </Button>
+            </FileUploadTrigger>
           </FileUploadDropzone>
           <FileUploadList>
             {files.map((file, index) => (
