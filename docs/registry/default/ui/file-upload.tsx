@@ -35,20 +35,23 @@ const FILE_UPLOAD_ERRORS = {
   [ITEM_DELETE_NAME]: `\`${ITEM_DELETE_NAME}\` must be within \`${ITEM_NAME}\``,
 } as const;
 
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
+
+function useAsRef<T>(data: T) {
+  const ref = React.useRef<T>(data);
+  useIsomorphicLayoutEffect(() => {
+    ref.current = data;
+  });
+  return ref;
+}
+
 function useLazyRef<T>(fn: () => T) {
   const ref = React.useRef<T | null>(null);
   if (ref.current === null) {
     ref.current = fn();
   }
   return ref as React.RefObject<T>;
-}
-
-function useAsRef<T>(data: T) {
-  const ref = React.useRef<T>(data);
-  React.useLayoutEffect(() => {
-    ref.current = data;
-  });
-  return ref;
 }
 
 type Direction = "ltr" | "rtl";
