@@ -102,7 +102,7 @@ export default function PlaygroundPage() {
         <FileUpload
           multiple
           accept="image/*,application/pdf"
-          maxSize={2 * 1024 * 1024}
+          maxSize={4 * 1024 * 1024}
           maxFiles={5}
           className="max-w-md"
           value={files}
@@ -119,12 +119,12 @@ export default function PlaygroundPage() {
             <div className="flex flex-col items-center gap-1">
               <p className="font-medium text-sm">Drag & drop files here</p>
               <p className="text-muted-foreground text-xs">
-                Or click to browse (max 5 files, 5MB each)
+                Or click to browse (max 5 files, 4MB each)
               </p>
             </div>
             <FileUploadTrigger asChild>
               <Button variant="outline" size="sm" className="mt-2 w-fit">
-                Open
+                Browse files
               </Button>
             </FileUploadTrigger>
           </FileUploadDropzone>

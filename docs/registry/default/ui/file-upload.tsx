@@ -277,6 +277,7 @@ interface FileUploadRootProps
   onAccept?: (files: File[]) => void;
   onFileAccept?: (file: File) => void;
   onFileReject?: (file: File, message: string) => void;
+  onFileValidate?: (file: File) => string | undefined;
   onUpload?: (
     file: File,
     options: {
@@ -306,6 +307,7 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
       onAccept,
       onFileAccept,
       onFileReject,
+      onFileValidate,
       onUpload,
       accept,
       maxFiles,
@@ -360,7 +362,7 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
         if (propsRef.current.disabled) return;
 
         let filesToProcess = [...originalFiles];
-        let hasRejectedFiles = false;
+        let invalid = false;
 
         if (propsRef.current.maxFiles) {
           const currentCount = store.getState().files.size;
@@ -371,7 +373,7 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
 
           if (remainingSlotCount < filesToProcess.length) {
             const rejectedFiles = filesToProcess.slice(remainingSlotCount);
-            hasRejectedFiles = true;
+            invalid = true;
 
             filesToProcess = filesToProcess.slice(0, remainingSlotCount);
 
@@ -385,11 +387,22 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
         }
 
         const acceptedFiles: File[] = [];
-        const rejectedFiles: { file: File; reason: string }[] = [];
+        const rejectedFiles: { file: File; message: string }[] = [];
 
         for (const file of filesToProcess) {
           let rejected = false;
-          let rejectReason = "";
+          let rejectionMessage = "";
+
+          if (propsRef.current.onFileValidate) {
+            const validationMessage = propsRef.current.onFileValidate(file);
+            if (validationMessage) {
+              rejectionMessage = validationMessage;
+              propsRef.current.onFileReject?.(file, rejectionMessage);
+              rejected = true;
+              invalid = true;
+              continue;
+            }
+          }
 
           if (propsRef.current.accept) {
             const acceptTypes = propsRef.current.accept
@@ -407,10 +420,10 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
                     fileType.startsWith(type.replace("/*", "/"))),
               )
             ) {
-              rejectReason = "File type not accepted";
-              propsRef.current.onFileReject?.(file, rejectReason);
+              rejectionMessage = "File type not accepted";
+              propsRef.current.onFileReject?.(file, rejectionMessage);
               rejected = true;
-              hasRejectedFiles = true;
+              invalid = true;
             }
           }
 
@@ -418,21 +431,21 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
             propsRef.current.maxSize &&
             file.size > propsRef.current.maxSize
           ) {
-            rejectReason = "File too large";
-            propsRef.current.onFileReject?.(file, rejectReason);
+            rejectionMessage = "File too large";
+            propsRef.current.onFileReject?.(file, rejectionMessage);
             rejected = true;
-            hasRejectedFiles = true;
+            invalid = true;
           }
 
           if (!rejected) {
             acceptedFiles.push(file);
           } else {
-            rejectedFiles.push({ file, reason: rejectReason });
+            rejectedFiles.push({ file, message: rejectionMessage });
           }
         }
 
-        if (hasRejectedFiles) {
-          store.dispatch({ variant: "SET_INVALID", invalid: true });
+        if (invalid) {
+          store.dispatch({ variant: "SET_INVALID", invalid });
           setTimeout(() => {
             store.dispatch({ variant: "SET_INVALID", invalid: false });
           }, 2000);
