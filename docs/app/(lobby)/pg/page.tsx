@@ -41,6 +41,7 @@ import {
   FileUploadDropzone,
   FileUploadItem,
   FileUploadItemDelete,
+  FileUploadItemMetadata,
   FileUploadItemPreview,
   FileUploadItemProgress,
   FileUploadList,
@@ -135,10 +136,10 @@ export default function PlaygroundPage() {
               <FileUploadItem key={index} value={file}>
                 <div className="flex w-full items-center gap-2">
                   <FileUploadItemPreview />
+                  <FileUploadItemMetadata />
                   <FileUploadItemDelete asChild>
                     <Button variant="ghost" size="icon" className="size-7">
                       <X className="size-4" />
-                      <span className="sr-only">Remove file</span>
                     </Button>
                   </FileUploadItemDelete>
                 </div>

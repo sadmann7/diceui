@@ -19,6 +19,7 @@ const TRIGGER_NAME = "FileUploadTrigger";
 const LIST_NAME = "FileUploadList";
 const ITEM_NAME = "FileUploadItem";
 const ITEM_PREVIEW_NAME = "FileUploadItemPreview";
+const ITEM_METADATA_NAME = "FileUploadItemMetadata";
 const ITEM_PROGRESS_NAME = "FileUploadItemProgress";
 const ITEM_DELETE_NAME = "FileUploadItemDelete";
 
@@ -29,6 +30,7 @@ const FILE_UPLOAD_ERRORS = {
   [LIST_NAME]: `\`${LIST_NAME}\` must be within \`${ROOT_NAME}\``,
   [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${ROOT_NAME}\``,
   [ITEM_PREVIEW_NAME]: `\`${ITEM_PREVIEW_NAME}\` must be within \`${ITEM_NAME}\``,
+  [ITEM_METADATA_NAME]: `\`${ITEM_METADATA_NAME}\` must be within \`${ITEM_NAME}\``,
   [ITEM_PROGRESS_NAME]: `\`${ITEM_PROGRESS_NAME}\` must be within \`${ITEM_NAME}\``,
   [ITEM_DELETE_NAME]: `\`${ITEM_DELETE_NAME}\` must be within \`${ITEM_NAME}\``,
 } as const;
@@ -814,7 +816,7 @@ const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
     const { value, asChild, className, ...itemProps } = props;
 
     const id = React.useId();
-    const statusId = React.useId();
+    const statusId = `${id}-status`;
 
     const fileState = useStore((state) => state.files.get(value));
     const fileCount = useStore((state) => state.files.size);
@@ -943,31 +945,25 @@ const FileUploadItemPreview = React.forwardRef<
   FileUploadItemPreviewProps
 >((props, forwardedRef) => {
   const { asChild, children, className, ...previewProps } = props;
-  useStoreContext(ITEM_PREVIEW_NAME);
+
   const itemContext = useFileUploadItemContext(ITEM_PREVIEW_NAME);
 
   const onPreviewRender = React.useCallback((file: File) => {
     if (file.type.startsWith("image/")) {
       return (
-        <div className="relative flex size-10 shrink-0 items-center justify-center">
-          <img
-            src={URL.createObjectURL(file)}
-            alt={file.name}
-            className="size-full rounded object-cover"
-            onLoad={(event) => {
-              if (!(event.target instanceof HTMLImageElement)) return;
-              URL.revokeObjectURL(event.target.src);
-            }}
-          />
-        </div>
+        <img
+          src={URL.createObjectURL(file)}
+          alt={file.name}
+          className="size-full rounded object-cover"
+          onLoad={(event) => {
+            if (!(event.target instanceof HTMLImageElement)) return;
+            URL.revokeObjectURL(event.target.src);
+          }}
+        />
       );
     }
 
-    return (
-      <div className="relative flex size-9 shrink-0 items-center justify-center rounded-md bg-accent [&>svg]:size-8">
-        {getFileIcon(file)}
-      </div>
-    );
+    return getFileIcon(file);
   }, []);
 
   if (!itemContext.fileState) return null;
@@ -979,30 +975,60 @@ const FileUploadItemPreview = React.forwardRef<
       data-slot="file-upload-preview"
       {...previewProps}
       ref={forwardedRef}
-      className={cn("flex min-w-0 flex-1 items-center gap-2", className)}
-    >
-      {children ?? (
-        <>
-          {onPreviewRender(itemContext.fileState.file)}
-          <div className="flex min-w-0 flex-col">
-            <span className="truncate font-medium text-sm">
-              {itemContext.fileState.file.name}
-            </span>
-            <span className="text-muted-foreground text-xs">
-              {formatBytes(itemContext.fileState.file.size)}
-            </span>
-            {itemContext.fileState.error && (
-              <span className="text-destructive text-xs">
-                {itemContext.fileState.error}
-              </span>
-            )}
-          </div>
-        </>
+      className={cn(
+        "relative flex size-10 shrink-0 items-center justify-center rounded-md bg-accent object-cover [&>svg]:size-8",
+        className,
       )}
+    >
+      {children ?? onPreviewRender(itemContext.fileState.file)}
     </ItemPreviewPrimitive>
   );
 });
 FileUploadItemPreview.displayName = ITEM_PREVIEW_NAME;
+
+interface FileUploadItemMetadataProps
+  extends React.ComponentPropsWithoutRef<"div"> {
+  asChild?: boolean;
+}
+
+const FileUploadItemMetadata = React.forwardRef<
+  HTMLDivElement,
+  FileUploadItemMetadataProps
+>((props, forwardedRef) => {
+  const { asChild, children, className, ...metadataProps } = props;
+
+  const itemContext = useFileUploadItemContext(ITEM_METADATA_NAME);
+
+  if (!itemContext.fileState) return null;
+
+  const ItemMetadataPrimitive = asChild ? Slot : "div";
+
+  return (
+    <ItemMetadataPrimitive
+      data-slot="file-upload-metadata"
+      {...metadataProps}
+      ref={forwardedRef}
+      className={cn("flex min-w-0 flex-1 flex-col", className)}
+    >
+      {children ?? (
+        <>
+          <span className="truncate font-medium text-sm">
+            {itemContext.fileState.file.name}
+          </span>
+          <span className="text-muted-foreground text-xs">
+            {formatBytes(itemContext.fileState.file.size)}
+          </span>
+          {itemContext.fileState.error && (
+            <span className="text-destructive text-xs">
+              {itemContext.fileState.error}
+            </span>
+          )}
+        </>
+      )}
+    </ItemMetadataPrimitive>
+  );
+});
+FileUploadItemMetadata.displayName = ITEM_METADATA_NAME;
 
 interface FileUploadItemProgressProps
   extends React.ComponentPropsWithoutRef<"div"> {
@@ -1103,6 +1129,7 @@ const Dropzone = FileUploadDropzone;
 const List = FileUploadList;
 const Item = FileUploadItem;
 const ItemPreview = FileUploadItemPreview;
+const ItemMetadata = FileUploadItemMetadata;
 const ItemProgress = FileUploadItemProgress;
 const ItemDelete = FileUploadItemDelete;
 
@@ -1112,16 +1139,18 @@ export {
   FileUploadTrigger,
   FileUploadList,
   FileUploadItem,
-  FileUploadItemDelete,
   FileUploadItemPreview,
+  FileUploadItemMetadata,
   FileUploadItemProgress,
+  FileUploadItemDelete,
   //
   Root,
   Dropzone,
   Trigger,
   List,
   Item,
-  ItemDelete,
   ItemPreview,
+  ItemMetadata,
   ItemProgress,
+  ItemDelete,
 };
