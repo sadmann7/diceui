@@ -537,7 +537,16 @@ const FileUploadDropzone = React.forwardRef<
       propsRef.current?.onClick?.(event);
 
       if (!event.defaultPrevented) {
-        inputRef.current?.click();
+        const target = event.target as HTMLElement;
+        if (!(target instanceof HTMLElement)) return;
+
+        const isFromTrigger = target.closest(
+          '[data-slot="file-upload-trigger"]',
+        );
+
+        if (!isFromTrigger) {
+          inputRef.current?.click();
+        }
       }
     },
     [inputRef, propsRef],
@@ -658,8 +667,6 @@ const FileUploadTrigger = React.forwardRef<
   const inputRef = store.getInputRef();
   const propsRef = useAsRef(triggerProps);
 
-  const TriggerPrimitive = asChild ? Slot : "button";
-
   const onClick = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       propsRef.current?.onClick?.(event);
@@ -670,6 +677,8 @@ const FileUploadTrigger = React.forwardRef<
     },
     [inputRef, propsRef.current],
   );
+
+  const TriggerPrimitive = asChild ? Slot : "button";
 
   return (
     <TriggerPrimitive
@@ -881,8 +890,6 @@ const FileUploadItemPreview = React.forwardRef<
   useStoreContext(ITEM_PREVIEW_NAME);
   const itemContext = useFileUploadItemContext(ITEM_PREVIEW_NAME);
 
-  const ItemPreviewPrimitive = asChild ? Slot : "div";
-
   const onPreviewRender = React.useCallback((file: File) => {
     if (file.type.startsWith("image/")) {
       return (
@@ -906,6 +913,8 @@ const FileUploadItemPreview = React.forwardRef<
       </div>
     );
   }, []);
+
+  const ItemPreviewPrimitive = asChild ? Slot : "div";
 
   return (
     <ItemPreviewPrimitive
