@@ -305,12 +305,12 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
     const inputId = React.useId();
     const dropzoneId = React.useId();
     const listId = React.useId();
-    const propsRef = useAsRef(props);
-    const isControlled = value !== undefined;
 
+    const propsRef = useAsRef(props);
     const listeners = useLazyRef(() => new Set<() => void>()).current;
     const files = useLazyRef<Map<File, FileState>>(() => new Map()).current;
     const inputRef = React.useRef<HTMLInputElement>(null);
+    const isControlled = value !== undefined;
 
     const store = React.useMemo(
       () => createStore(listeners, files, inputRef, onValueChange),
@@ -366,9 +366,11 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
         }
 
         const acceptedFiles: File[] = [];
+        const rejectedFiles: { file: File; reason: string }[] = [];
 
         for (const file of filesToProcess) {
           let rejected = false;
+          let rejectReason = "";
 
           if (propsRef.current.accept) {
             const acceptTypes = propsRef.current.accept
@@ -386,7 +388,8 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
                     fileType.startsWith(type.replace("/*", "/"))),
               )
             ) {
-              propsRef.current.onFileReject?.(file, "File type not accepted");
+              rejectReason = "File type not accepted";
+              propsRef.current.onFileReject?.(file, rejectReason);
               rejected = true;
             }
           }
@@ -395,12 +398,15 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
             propsRef.current.maxSize &&
             file.size > propsRef.current.maxSize
           ) {
-            propsRef.current.onFileReject?.(file, "File too large");
+            rejectReason = "File too large";
+            propsRef.current.onFileReject?.(file, rejectReason);
             rejected = true;
           }
 
           if (!rejected) {
             acceptedFiles.push(file);
+          } else {
+            rejectedFiles.push({ file, reason: rejectReason });
           }
         }
 
@@ -632,6 +638,7 @@ const FileUploadDropzone = React.forwardRef<
       id={context.dropzoneId}
       aria-controls={context.inputId}
       aria-disabled={context.disabled}
+      aria-owns={context.listId}
       data-dragging={dragOver ? "" : undefined}
       data-slot="file-upload-dropzone"
       {...dropzoneProps}
@@ -722,6 +729,7 @@ const FileUploadList = React.forwardRef<HTMLDivElement, FileUploadListProps>(
       <ListPrimitive
         role="list"
         id={context.listId}
+        aria-labelledby={context.dropzoneId}
         aria-orientation={orientation}
         data-orientation={orientation}
         data-slot="file-upload-list"
@@ -740,7 +748,7 @@ FileUploadList.displayName = LIST_NAME;
 
 interface FileUploadItemContextValue {
   id: string;
-  fileState: FileState;
+  fileState: FileState | undefined;
 }
 
 const FileUploadItemContext =
@@ -763,11 +771,16 @@ const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
   (props, forwardedRef) => {
     const { value, asChild, className, ...itemProps } = props;
 
-    const context = useFileUploadContext(ITEM_NAME);
     const id = React.useId();
-    const fileState = useStore((state) => state.files.get(value));
+    const statusId = React.useId();
 
-    if (!fileState) return null;
+    const context = useFileUploadContext(ITEM_NAME);
+    const fileState = useStore((state) => state.files.get(value));
+    const fileCount = useStore((state) => state.files.size);
+    const fileIndex = useStore((state) => {
+      const files = Array.from(state.files.keys());
+      return files.indexOf(value) + 1;
+    });
 
     const contextValue = React.useMemo(
       () => ({
@@ -777,6 +790,16 @@ const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
       [id, fileState],
     );
 
+    if (!fileState) return null;
+
+    const statusText = fileState.error
+      ? `Error: ${fileState.error}`
+      : fileState.status === "uploading"
+        ? `Uploading: ${fileState.progress}% complete`
+        : fileState.status === "success"
+          ? "Upload complete"
+          : "Ready to upload";
+
     const ItemPrimitive = asChild ? Slot : "div";
 
     return (
@@ -784,6 +807,9 @@ const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
         <ItemPrimitive
           id={id}
           role="listitem"
+          aria-setsize={fileCount}
+          aria-posinset={fileIndex}
+          aria-describedby={statusId}
           data-slot="file-upload-item"
           data-status={fileState.status}
           {...itemProps}
@@ -808,7 +834,12 @@ const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
               : "",
             className,
           )}
-        />
+        >
+          <span id={statusId} className="sr-only">
+            {statusText}
+          </span>
+          {props.children}
+        </ItemPrimitive>
       </FileUploadItemContext.Provider>
     );
   },
@@ -914,6 +945,8 @@ const FileUploadItemPreview = React.forwardRef<
     );
   }, []);
 
+  if (!itemContext.fileState) return null;
+
   const ItemPreviewPrimitive = asChild ? Slot : "div";
 
   return (
@@ -959,6 +992,8 @@ const FileUploadItemProgress = React.forwardRef<
 
   const context = useFileUploadContext(ITEM_PROGRESS_NAME);
   const itemContext = useFileUploadItemContext(ITEM_PROGRESS_NAME);
+
+  if (!itemContext.fileState) return null;
 
   const ItemProgressPrimitive = asChild ? Slot : "div";
 
@@ -1025,6 +1060,8 @@ const FileUploadItemDelete = React.forwardRef<
     (event: React.MouseEvent<HTMLButtonElement>) => {
       propsRef.current?.onClick?.(event);
 
+      if (!itemContext.fileState) return;
+
       if (!event.defaultPrevented) {
         store.dispatch({
           variant: "REMOVE_FILE",
@@ -1032,8 +1069,10 @@ const FileUploadItemDelete = React.forwardRef<
         });
       }
     },
-    [store, itemContext.fileState.file, propsRef.current.onClick],
+    [store, itemContext.fileState, propsRef.current?.onClick],
   );
+
+  if (!itemContext.fileState) return null;
 
   const ItemDeletePrimitive = asChild ? Slot : "button";
 
@@ -1044,6 +1083,7 @@ const FileUploadItemDelete = React.forwardRef<
       data-slot="file-upload-item-delete"
       {...deleteProps}
       ref={forwardedRef}
+      disabled={itemContext.fileState.status === "uploading"}
       onClick={onClick}
     />
   );
