@@ -14,8 +14,8 @@ import {
 import * as React from "react";
 
 const ROOT_NAME = "FileUpload";
-const TRIGGER_NAME = "FileUploadTrigger";
 const DROPZONE_NAME = "FileUploadDropzone";
+const TRIGGER_NAME = "FileUploadTrigger";
 const LIST_NAME = "FileUploadList";
 const ITEM_NAME = "FileUploadItem";
 const ITEM_PREVIEW_NAME = "FileUploadItemPreview";
@@ -23,9 +23,9 @@ const ITEM_PROGRESS_NAME = "FileUploadItemProgress";
 const ITEM_DELETE_NAME = "FileUploadItemDelete";
 
 const FILE_UPLOAD_ERRORS = {
-  [ROOT_NAME]: `\`${ROOT_NAME}\` is the root component`,
-  [TRIGGER_NAME]: `\`${TRIGGER_NAME}\` must be within \`${ROOT_NAME}\``,
+  [ROOT_NAME]: `\`${ROOT_NAME}\` must be used as root component`,
   [DROPZONE_NAME]: `\`${DROPZONE_NAME}\` must be within \`${ROOT_NAME}\``,
+  [TRIGGER_NAME]: `\`${TRIGGER_NAME}\` must be within \`${ROOT_NAME}\``,
   [LIST_NAME]: `\`${LIST_NAME}\` must be within \`${ROOT_NAME}\``,
   [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${ROOT_NAME}\``,
   [ITEM_PREVIEW_NAME]: `\`${ITEM_PREVIEW_NAME}\` must be within \`${ITEM_NAME}\``,
@@ -59,7 +59,6 @@ interface FileState {
 interface StoreState {
   files: Map<File, FileState>;
   dragOver: boolean;
-  vibrant: boolean;
 }
 
 type StoreAction =
@@ -77,12 +76,10 @@ function createStore(
   files: Map<File, FileState>,
   inputRef: React.RefObject<HTMLInputElement | null>,
   onFilesChange?: (files: File[]) => void,
-  vibrant = false,
 ) {
   const initialState: StoreState = {
     files,
     dragOver: false,
-    vibrant,
   };
 
   let state = initialState;
@@ -232,6 +229,26 @@ function useStore<T>(selector: (state: StoreState) => T): T {
   return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
 
+interface FileUploadContextValue {
+  vibrant: boolean;
+  inputId: string;
+  labelId: string;
+  dropzoneId: string;
+  listId: string;
+}
+
+const FileUploadContext = React.createContext<FileUploadContextValue | null>(
+  null,
+);
+
+function useFileUploadContext(name: keyof typeof FILE_UPLOAD_ERRORS) {
+  const context = React.useContext(FileUploadContext);
+  if (!context) {
+    throw new Error(FILE_UPLOAD_ERRORS[name]);
+  }
+  return context;
+}
+
 interface FileUploadRootProps
   extends Omit<
     React.ComponentPropsWithoutRef<"div">,
@@ -284,17 +301,27 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
       ...rootProps
     } = props;
 
+    const id = React.useId();
+    const inputId = React.useId();
+    const labelId = React.useId();
+    const dropzoneId = React.useId();
+    const listId = React.useId();
+    const propsRef = useAsRef(props);
+    const isControlled = value !== undefined;
+
     const listeners = useLazyRef(() => new Set<() => void>()).current;
     const files = useLazyRef<Map<File, FileState>>(() => new Map()).current;
     const inputRef = React.useRef<HTMLInputElement>(null);
 
     const store = React.useMemo(
-      () => createStore(listeners, files, inputRef, onValueChange, vibrant),
-      [listeners, files, vibrant, onValueChange],
+      () => createStore(listeners, files, inputRef, onValueChange),
+      [listeners, files, onValueChange],
     );
-    const id = React.useId();
-    const propsRef = useAsRef(props);
-    const isControlled = value !== undefined;
+
+    const contextValue = React.useMemo<FileUploadContextValue>(
+      () => ({ vibrant, inputId, labelId, dropzoneId, listId }),
+      [vibrant, inputId, labelId, dropzoneId, listId],
+    );
 
     React.useEffect(() => {
       if (isControlled) {
@@ -460,26 +487,30 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
 
     return (
       <StoreContext.Provider value={store}>
-        <RootPrimitive
-          data-disabled={disabled ? "" : undefined}
-          data-slot="file-upload"
-          {...rootProps}
-          id={id}
-          ref={forwardedRef}
-          className={cn("relative flex flex-col gap-2", className)}
-        >
-          {children}
-          <input
-            type="file"
-            ref={inputRef}
-            tabIndex={-1}
-            accept={accept}
-            disabled={disabled}
-            multiple={multiple}
-            className="sr-only"
-            onChange={onInputChange}
-          />
-        </RootPrimitive>
+        <FileUploadContext.Provider value={contextValue}>
+          <RootPrimitive
+            data-disabled={disabled ? "" : undefined}
+            data-slot="file-upload"
+            {...rootProps}
+            id={id}
+            ref={forwardedRef}
+            className={cn("relative flex flex-col gap-2", className)}
+          >
+            {children}
+            <input
+              type="file"
+              id={inputId}
+              aria-labelledby={labelId}
+              ref={inputRef}
+              tabIndex={-1}
+              accept={accept}
+              disabled={disabled}
+              multiple={multiple}
+              className="sr-only"
+              onChange={onInputChange}
+            />
+          </RootPrimitive>
+        </FileUploadContext.Provider>
       </StoreContext.Provider>
     );
   },
@@ -496,6 +527,8 @@ const FileUploadDropzone = React.forwardRef<
   FileUploadDropzoneProps
 >((props, forwardedRef) => {
   const { asChild, className, ...dropzoneProps } = props;
+
+  const context = useFileUploadContext(DROPZONE_NAME);
   const store = useStoreContext(DROPZONE_NAME);
   const dragOver = useStore((state) => state.dragOver);
   const inputRef = store.getInputRef();
@@ -576,6 +609,7 @@ const FileUploadDropzone = React.forwardRef<
 
   return (
     <DropzonePrimitive
+      id={context.dropzoneId}
       data-dragging={dragOver ? "" : undefined}
       data-slot="file-upload-dropzone"
       {...dropzoneProps}
@@ -604,6 +638,7 @@ const FileUploadTrigger = React.forwardRef<
   FileUploadTriggerProps
 >((props, forwardedRef) => {
   const { asChild, ...triggerProps } = props;
+  const context = useFileUploadContext(TRIGGER_NAME);
   const store = useStoreContext(TRIGGER_NAME);
   const inputRef = store.getInputRef();
   const propsRef = useAsRef(triggerProps);
@@ -624,6 +659,7 @@ const FileUploadTrigger = React.forwardRef<
   return (
     <TriggerPrimitive
       type="button"
+      aria-controls={context.dropzoneId}
       data-slot="file-upload-trigger"
       {...triggerProps}
       ref={forwardedRef}
@@ -699,9 +735,9 @@ const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
   (props, forwardedRef) => {
     const { value, asChild, className, ...itemProps } = props;
 
+    const context = useFileUploadContext(ITEM_NAME);
     const id = React.useId();
     const fileState = useStore((state) => state.files.get(value));
-    const vibrant = useStore((state) => state.vibrant);
 
     if (!fileState) return null;
 
@@ -726,7 +762,7 @@ const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
           ref={forwardedRef}
           className={cn(
             "flex items-center gap-2 rounded-md border p-3 has-[_[data-slot=file-upload-preview]]:flex-col has-[_[data-slot=file-upload-progress]]:items-start",
-            vibrant
+            context.vibrant
               ? {
                   "border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-950/50":
                     fileState.status === "uploading",
@@ -892,9 +928,9 @@ const FileUploadItemProgress = React.forwardRef<
   FileUploadItemProgressProps
 >((props, forwardedRef) => {
   const { asChild, className, ...progressProps } = props;
-  useStoreContext(ITEM_PROGRESS_NAME);
+
+  const context = useFileUploadContext(ITEM_PROGRESS_NAME);
   const itemContext = useFileUploadItemContext(ITEM_PROGRESS_NAME);
-  const vibrant = useStore((state) => state.vibrant);
 
   const ItemProgressPrimitive = asChild ? Slot : "div";
 
@@ -922,7 +958,7 @@ const FileUploadItemProgress = React.forwardRef<
         data-max="100"
         className={cn(
           "h-full w-full flex-1 bg-primary transition-all",
-          vibrant
+          context.vibrant
             ? {
                 "bg-orange-500/50 dark:bg-orange-600/50":
                   itemContext.fileState.status === "uploading",
@@ -1002,21 +1038,21 @@ const ItemProgress = FileUploadItemProgress;
 const ItemDelete = FileUploadItemDelete;
 
 export {
+  Dropzone,
   FileUpload,
   FileUploadDropzone,
-  FileUploadTrigger,
-  FileUploadList,
   FileUploadItem,
   FileUploadItemDelete,
   FileUploadItemPreview,
   FileUploadItemProgress,
-  //
-  Root,
-  Dropzone,
-  Trigger,
-  List,
+  FileUploadList,
+  FileUploadTrigger,
   Item,
   ItemDelete,
   ItemPreview,
   ItemProgress,
+  List,
+  //
+  Root,
+  Trigger,
 };
