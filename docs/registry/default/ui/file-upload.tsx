@@ -240,6 +240,8 @@ interface FileUploadRootProps
   value?: File[];
   defaultValue?: File[];
   onValueChange?: (files: File[]) => void;
+  onAccept?: (files: File[]) => void;
+  onReject?: (files: File[]) => void;
   onFileAccept?: (file: File) => void;
   onFileReject?: (file: File, message: string) => void;
   onUpload?: (
@@ -265,6 +267,8 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
       value,
       defaultValue,
       onValueChange,
+      onAccept,
+      onReject,
       onFileAccept,
       onFileReject,
       onUpload,
@@ -319,6 +323,11 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
 
           if (remainingSlotCount < filesToProcess.length) {
             const rejectedFiles = filesToProcess.slice(remainingSlotCount);
+
+            if (propsRef.current.onReject) {
+              propsRef.current.onReject(rejectedFiles);
+            }
+
             filesToProcess = filesToProcess.slice(0, remainingSlotCount);
 
             for (const file of rejectedFiles) {
@@ -377,6 +386,10 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
               store.getState().files.values(),
             ).map((f) => f.file);
             propsRef.current.onValueChange([...currentFiles]);
+          }
+
+          if (propsRef.current.onAccept) {
+            propsRef.current.onAccept(acceptedFiles);
           }
 
           for (const file of acceptedFiles) {
@@ -793,7 +806,7 @@ const FileUploadItemPreview = React.forwardRef<
           <img
             src={URL.createObjectURL(file)}
             alt={file.name}
-            className="rounded object-cover"
+            className="size-full rounded object-cover"
             onLoad={(event) => {
               if (!(event.target instanceof HTMLImageElement)) return;
               URL.revokeObjectURL(event.target.src);
@@ -815,7 +828,7 @@ const FileUploadItemPreview = React.forwardRef<
       data-slot="file-upload-preview"
       {...previewProps}
       ref={forwardedRef}
-      className={cn("flex flex-1 items-center gap-2", className)}
+      className={cn("flex min-w-0 flex-1 items-center gap-2", className)}
     >
       {children ?? (
         <>
