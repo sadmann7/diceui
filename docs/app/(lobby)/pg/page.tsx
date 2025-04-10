@@ -116,6 +116,7 @@ export default function PlaygroundPage() {
               },
             );
           }}
+          vibrant
         >
           <FileUploadDropzone>
             <Upload className="size-8 text-muted-foreground" />

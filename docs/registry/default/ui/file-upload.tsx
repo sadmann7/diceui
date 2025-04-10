@@ -74,7 +74,6 @@ type StoreAction =
 function createStore(
   listeners: Set<() => void>,
   files: Map<File, FileState>,
-  inputRef: React.RefObject<HTMLInputElement | null>,
   onFilesChange?: (files: File[]) => void,
 ) {
   const initialState: StoreState = {
@@ -103,6 +102,7 @@ function createStore(
         }
         return { ...state, files };
       }
+
       case "SET_FILES": {
         for (const file of action.files) {
           const existingState = files.get(file);
@@ -116,6 +116,7 @@ function createStore(
         }
         return { ...state, files };
       }
+
       case "SET_PROGRESS": {
         const fileState = files.get(action.file);
         if (fileState) {
@@ -127,6 +128,7 @@ function createStore(
         }
         return { ...state, files };
       }
+
       case "SET_SUCCESS": {
         const fileState = files.get(action.file);
         if (fileState) {
@@ -138,6 +140,7 @@ function createStore(
         }
         return { ...state, files };
       }
+
       case "SET_ERROR": {
         const fileState = files.get(action.file);
         if (fileState) {
@@ -149,6 +152,7 @@ function createStore(
         }
         return { ...state, files };
       }
+
       case "REMOVE_FILE": {
         files.delete(action.file);
 
@@ -160,9 +164,11 @@ function createStore(
         }
         return { ...state, files };
       }
+
       case "SET_DRAG_OVER": {
         return { ...state, dragOver: action.dragOver };
       }
+
       case "CLEAR": {
         files.clear();
         if (onFilesChange) {
@@ -170,27 +176,29 @@ function createStore(
         }
         return { ...state, files };
       }
+
       default:
         return state;
     }
   }
 
-  const getState = () => state;
-  const getInputRef = () => inputRef;
+  function getState() {
+    return state;
+  }
 
-  const dispatch = (action: StoreAction) => {
+  function dispatch(action: StoreAction) {
     state = reducer(state, action);
     for (const listener of listeners) {
       listener();
     }
-  };
+  }
 
-  const subscribe = (listener: () => void) => {
+  function subscribe(listener: () => void) {
     listeners.add(listener);
     return () => listeners.delete(listener);
-  };
+  }
 
-  return { getState, getInputRef, dispatch, subscribe };
+  return { getState, dispatch, subscribe };
 }
 
 const StoreContext = React.createContext<ReturnType<typeof createStore> | null>(
@@ -235,6 +243,7 @@ interface FileUploadContextValue {
   dropzoneId: string;
   listId: string;
   disabled: boolean;
+  inputRef: React.RefObject<HTMLInputElement | null>;
 }
 
 const FileUploadContext = React.createContext<FileUploadContextValue | null>(
@@ -313,12 +322,12 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
     const isControlled = value !== undefined;
 
     const store = React.useMemo(
-      () => createStore(listeners, files, inputRef, onValueChange),
+      () => createStore(listeners, files, onValueChange),
       [listeners, files, onValueChange],
     );
 
     const contextValue = React.useMemo<FileUploadContextValue>(
-      () => ({ vibrant, inputId, dropzoneId, listId, disabled }),
+      () => ({ vibrant, inputId, dropzoneId, listId, disabled, inputRef }),
       [vibrant, inputId, dropzoneId, listId, disabled],
     );
 
@@ -535,7 +544,6 @@ const FileUploadDropzone = React.forwardRef<
   const context = useFileUploadContext(DROPZONE_NAME);
   const store = useStoreContext(DROPZONE_NAME);
   const dragOver = useStore((state) => state.dragOver);
-  const inputRef = store.getInputRef();
   const propsRef = useAsRef(dropzoneProps);
 
   const onClick = React.useCallback(
@@ -551,11 +559,11 @@ const FileUploadDropzone = React.forwardRef<
         );
 
         if (!isFromTrigger) {
-          inputRef.current?.click();
+          context.inputRef.current?.click();
         }
       }
     },
-    [inputRef, propsRef],
+    [context.inputRef, propsRef],
   );
 
   const onDragOver = React.useCallback(
@@ -603,7 +611,7 @@ const FileUploadDropzone = React.forwardRef<
         store.dispatch({ variant: "SET_DRAG_OVER", dragOver: false });
 
         const files = Array.from(event.dataTransfer.files);
-        const inputElement = inputRef.current;
+        const inputElement = context.inputRef.current;
         if (!inputElement) return;
 
         const dataTransfer = new DataTransfer();
@@ -615,7 +623,7 @@ const FileUploadDropzone = React.forwardRef<
         inputElement.dispatchEvent(new Event("change", { bubbles: true }));
       }
     },
-    [store, inputRef, propsRef.current.onDrop],
+    [store, context.inputRef, propsRef.current.onDrop],
   );
 
   const onKeyDown = React.useCallback(
@@ -624,10 +632,10 @@ const FileUploadDropzone = React.forwardRef<
 
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
-        inputRef.current?.click();
+        context.inputRef.current?.click();
       }
     },
-    [inputRef, propsRef.current.onKeyDown],
+    [context.inputRef, propsRef.current.onKeyDown],
   );
 
   const DropzonePrimitive = asChild ? Slot : "div";
@@ -670,8 +678,6 @@ const FileUploadTrigger = React.forwardRef<
 >((props, forwardedRef) => {
   const { asChild, ...triggerProps } = props;
   const context = useFileUploadContext(TRIGGER_NAME);
-  const store = useStoreContext(TRIGGER_NAME);
-  const inputRef = store.getInputRef();
   const propsRef = useAsRef(triggerProps);
 
   const onClick = React.useCallback(
@@ -679,10 +685,10 @@ const FileUploadTrigger = React.forwardRef<
       propsRef.current?.onClick?.(event);
 
       if (!event.defaultPrevented) {
-        inputRef.current?.click();
+        context.inputRef.current?.click();
       }
     },
-    [inputRef, propsRef.current],
+    [context.inputRef, propsRef.current],
   );
 
   const TriggerPrimitive = asChild ? Slot : "button";
@@ -1101,21 +1107,21 @@ const ItemProgress = FileUploadItemProgress;
 const ItemDelete = FileUploadItemDelete;
 
 export {
+  Dropzone,
   FileUpload,
   FileUploadDropzone,
-  FileUploadTrigger,
-  FileUploadList,
   FileUploadItem,
   FileUploadItemDelete,
   FileUploadItemPreview,
   FileUploadItemProgress,
-  //
-  Root,
-  Dropzone,
-  Trigger,
-  List,
+  FileUploadList,
+  FileUploadTrigger,
   Item,
   ItemDelete,
   ItemPreview,
   ItemProgress,
+  List,
+  //
+  Root,
+  Trigger,
 };
