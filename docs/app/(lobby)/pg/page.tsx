@@ -116,7 +116,6 @@ export default function PlaygroundPage() {
               },
             );
           }}
-          vibrant
         >
           <FileUploadDropzone>
             <Upload className="size-8 text-muted-foreground" />
@@ -127,7 +126,7 @@ export default function PlaygroundPage() {
               </p>
             </div>
             <FileUploadTrigger asChild>
-              <Button variant="outline" size="sm" className="w-fit">
+              <Button variant="outline" size="sm" className="mt-2 w-fit">
                 Open
               </Button>
             </FileUploadTrigger>

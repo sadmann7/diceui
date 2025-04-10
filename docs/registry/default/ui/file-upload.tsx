@@ -59,6 +59,7 @@ interface FileState {
 interface StoreState {
   files: Map<File, FileState>;
   dragOver: boolean;
+  invalid: boolean;
 }
 
 type StoreAction =
@@ -69,16 +70,19 @@ type StoreAction =
   | { variant: "SET_ERROR"; file: File; error: string }
   | { variant: "REMOVE_FILE"; file: File }
   | { variant: "SET_DRAG_OVER"; dragOver: boolean }
+  | { variant: "SET_INVALID"; invalid: boolean }
   | { variant: "CLEAR" };
 
 function createStore(
   listeners: Set<() => void>,
   files: Map<File, FileState>,
   onFilesChange?: (files: File[]) => void,
+  invalid?: boolean,
 ) {
   const initialState: StoreState = {
     files,
     dragOver: false,
+    invalid: invalid ?? false,
   };
 
   let state = initialState;
@@ -169,12 +173,16 @@ function createStore(
         return { ...state, dragOver: action.dragOver };
       }
 
+      case "SET_INVALID": {
+        return { ...state, invalid: action.invalid };
+      }
+
       case "CLEAR": {
         files.clear();
         if (onFilesChange) {
           onFilesChange([]);
         }
-        return { ...state, files };
+        return { ...state, files, invalid: false };
       }
 
       default:
@@ -283,6 +291,7 @@ interface FileUploadRootProps
   maxSize?: number;
   asChild?: boolean;
   disabled?: boolean;
+  invalid?: boolean;
   multiple?: boolean;
   vibrant?: boolean;
 }
@@ -303,6 +312,7 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
       maxSize,
       asChild,
       disabled = false,
+      invalid = false,
       multiple = false,
       vibrant = false,
       className,
@@ -322,8 +332,8 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
     const isControlled = value !== undefined;
 
     const store = React.useMemo(
-      () => createStore(listeners, files, onValueChange),
-      [listeners, files, onValueChange],
+      () => createStore(listeners, files, onValueChange, invalid),
+      [listeners, files, onValueChange, invalid],
     );
 
     const contextValue = React.useMemo<FileUploadContextValue>(
@@ -348,6 +358,7 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
         if (propsRef.current.disabled) return;
 
         let filesToProcess = [...originalFiles];
+        let hasRejectedFiles = false;
 
         if (propsRef.current.maxFiles) {
           const currentCount = store.getState().files.size;
@@ -358,6 +369,7 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
 
           if (remainingSlotCount < filesToProcess.length) {
             const rejectedFiles = filesToProcess.slice(remainingSlotCount);
+            hasRejectedFiles = true;
 
             if (propsRef.current.onReject) {
               propsRef.current.onReject(rejectedFiles);
@@ -400,6 +412,7 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
               rejectReason = "File type not accepted";
               propsRef.current.onFileReject?.(file, rejectReason);
               rejected = true;
+              hasRejectedFiles = true;
             }
           }
 
@@ -410,6 +423,7 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
             rejectReason = "File too large";
             propsRef.current.onFileReject?.(file, rejectReason);
             rejected = true;
+            hasRejectedFiles = true;
           }
 
           if (!rejected) {
@@ -417,6 +431,13 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
           } else {
             rejectedFiles.push({ file, reason: rejectReason });
           }
+        }
+
+        if (hasRejectedFiles) {
+          store.dispatch({ variant: "SET_INVALID", invalid: true });
+          setTimeout(() => {
+            store.dispatch({ variant: "SET_INVALID", invalid: false });
+          }, 2000);
         }
 
         if (acceptedFiles.length > 0) {
@@ -544,6 +565,7 @@ const FileUploadDropzone = React.forwardRef<
   const context = useFileUploadContext(DROPZONE_NAME);
   const store = useStoreContext(DROPZONE_NAME);
   const dragOver = useStore((state) => state.dragOver);
+  const invalid = useStore((state) => state.invalid);
   const propsRef = useAsRef(dropzoneProps);
 
   const onClick = React.useCallback(
@@ -646,14 +668,17 @@ const FileUploadDropzone = React.forwardRef<
       id={context.dropzoneId}
       aria-controls={context.inputId}
       aria-disabled={context.disabled}
+      aria-invalid={invalid}
       aria-owns={context.listId}
+      data-disabled={context.disabled ? "" : undefined}
       data-dragging={dragOver ? "" : undefined}
+      data-invalid={invalid ? "" : undefined}
       data-slot="file-upload-dropzone"
       {...dropzoneProps}
       ref={forwardedRef}
-      tabIndex={0}
+      tabIndex={context.disabled ? undefined : 0}
       className={cn(
-        "relative flex cursor-pointer select-none flex-col items-center gap-2 rounded-lg border-2 border-dashed p-6 transition-colors hover:bg-muted/50 data-[dragging]:border-primary data-[dragging]:bg-muted/50",
+        "relative flex select-none flex-col items-center gap-2 rounded-lg border-2 border-dashed p-6 outline-none transition-all transition-all transition-colors hover:bg-muted/50 focus-visible:border-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 data-[disabled]:pointer-events-none data-[dragging]:border-primary data-[invalid]:border-destructive data-[invalid]:border-destructive data-[dragging]:bg-muted/50 data-[invalid]:bg-destructive/5 data-[disabled]:opacity-50",
         className,
       )}
       onClick={onClick}
@@ -697,9 +722,11 @@ const FileUploadTrigger = React.forwardRef<
     <TriggerPrimitive
       type="button"
       aria-controls={context.inputId}
+      data-disabled={context.disabled ? "" : undefined}
       data-slot="file-upload-trigger"
       {...triggerProps}
       ref={forwardedRef}
+      disabled={context.disabled}
       onClick={onClick}
     />
   );
@@ -1107,21 +1134,21 @@ const ItemProgress = FileUploadItemProgress;
 const ItemDelete = FileUploadItemDelete;
 
 export {
-  Dropzone,
   FileUpload,
   FileUploadDropzone,
+  FileUploadTrigger,
+  FileUploadList,
   FileUploadItem,
   FileUploadItemDelete,
   FileUploadItemPreview,
   FileUploadItemProgress,
-  FileUploadList,
-  FileUploadTrigger,
+  //
+  Root,
+  Dropzone,
+  Trigger,
+  List,
   Item,
   ItemDelete,
   ItemPreview,
   ItemProgress,
-  List,
-  //
-  Root,
-  Trigger,
 };
