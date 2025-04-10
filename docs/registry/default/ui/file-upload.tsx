@@ -289,11 +289,13 @@ interface FileUploadRootProps
   accept?: string;
   maxFiles?: number;
   maxSize?: number;
+  name?: string;
   asChild?: boolean;
   disabled?: boolean;
   invalid?: boolean;
   multiple?: boolean;
   vibrant?: boolean;
+  required?: boolean;
 }
 
 const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
@@ -310,13 +312,15 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
       accept,
       maxFiles,
       maxSize,
+      name,
       asChild,
       disabled = false,
       invalid = false,
       multiple = false,
       vibrant = false,
-      className,
+      required = false,
       children,
+      className,
       ...rootProps
     } = props;
 
@@ -540,6 +544,8 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
               accept={accept}
               disabled={disabled}
               multiple={multiple}
+              name={name}
+              required={required}
               className="sr-only"
               onChange={onInputChange}
             />
@@ -573,7 +579,7 @@ const FileUploadDropzone = React.forwardRef<
       propsRef.current?.onClick?.(event);
 
       if (!event.defaultPrevented) {
-        const target = event.target as HTMLElement;
+        const target = event.target;
         if (!(target instanceof HTMLElement)) return;
 
         const isFromTrigger = target.closest(

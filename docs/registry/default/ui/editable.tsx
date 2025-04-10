@@ -6,8 +6,6 @@ import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidd
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 
-const DATA_ACTION_ATTR = "data-action";
-
 const ROOT_NAME = "Editable";
 const AREA_NAME = "EditableArea";
 const PREVIEW_NAME = "EditablePreview";
@@ -72,8 +70,6 @@ function useEditableContext(name: keyof typeof EDITABLE_ERRORS) {
   }
   return context;
 }
-
-type RootElement = React.ComponentRef<typeof Editable>;
 
 interface EditableRootProps
   extends Omit<React.ComponentPropsWithoutRef<"div">, "onSubmit"> {
@@ -179,7 +175,7 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
       }
     }, [isControlled, valueProp]);
 
-    const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
+    const [formTrigger, setFormTrigger] = React.useState<HTMLDivElement | null>(
       null,
     );
     const composedRef = useComposedRefs(forwardedRef, (node) =>
@@ -404,8 +400,6 @@ EditablePreview.displayName = PREVIEW_NAME;
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
-type InputElement = React.ComponentRef<typeof EditableInput>;
-
 interface EditableInputProps extends React.ComponentPropsWithoutRef<"input"> {
   asChild?: boolean;
   maxLength?: number;
@@ -422,8 +416,9 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
       maxLength,
       ...inputProps
     } = props;
+
     const context = useEditableContext(INPUT_NAME);
-    const inputRef = React.useRef<InputElement>(null);
+    const inputRef = React.useRef<HTMLInputElement>(null);
     const composedRef = useComposedRefs(forwardedRef, inputRef);
 
     const isDisabled = disabled || context.disabled;
@@ -444,14 +439,16 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
       },
       [context.autosize],
     );
+
     const onBlur = React.useCallback(
-      (event: React.FocusEvent<InputElement>) => {
+      (event: React.FocusEvent<HTMLInputElement>) => {
         if (isReadOnly) return;
         const relatedTarget = event.relatedTarget;
+        if (!(relatedTarget instanceof HTMLElement)) return;
 
         const isAction =
-          relatedTarget instanceof HTMLElement &&
-          relatedTarget.closest(`[${DATA_ACTION_ATTR}=""]`);
+          relatedTarget.closest(`[data-slot="editable-trigger"]`) ||
+          relatedTarget.closest(`[data-slot="editable-cancel"]`);
 
         if (!isAction) {
           context.onSubmit(context.value);
@@ -470,7 +467,7 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
     );
 
     const onKeyDown = React.useCallback(
-      (event: React.KeyboardEvent<InputElement>) => {
+      (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (isReadOnly) return;
         if (event.key === "Escape") {
           const nativeEvent = event.nativeEvent;
@@ -495,7 +492,7 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
     useIsomorphicLayoutEffect(() => {
       if (!context.editing || isReadOnly || !inputRef.current) return;
 
-      const frameId = window.requestAnimationFrame(() => {
+      const frameId = requestAnimationFrame(() => {
         if (!inputRef.current) return;
 
         inputRef.current.focus();
@@ -504,7 +501,7 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
       });
 
       return () => {
-        window.cancelAnimationFrame(frameId);
+        cancelAnimationFrame(frameId);
       };
     }, [context.editing, isReadOnly, onAutosize]);
 
@@ -636,7 +633,6 @@ const EditableCancel = React.forwardRef<HTMLButtonElement, EditableCancelProps>(
         type="button"
         aria-controls={context.id}
         data-slot="editable-cancel"
-        {...{ [DATA_ACTION_ATTR]: "" }}
         {...cancelProps}
         onClick={composeEventHandlers(cancelProps.onClick, () => {
           context.onCancel();
@@ -666,7 +662,6 @@ const EditableSubmit = React.forwardRef<HTMLButtonElement, EditableSubmitProps>(
         type="button"
         aria-controls={context.id}
         data-slot="editable-submit"
-        {...{ [DATA_ACTION_ATTR]: "" }}
         {...submitProps}
         ref={forwardedRef}
         onClick={composeEventHandlers(submitProps.onClick, () => {
