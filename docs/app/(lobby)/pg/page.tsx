@@ -115,8 +115,10 @@ export default function PlaygroundPage() {
           }}
         >
           <FileUploadDropzone>
-            <Upload className="size-8 text-muted-foreground" />
             <div className="flex flex-col items-center gap-1">
+              <div className="flex items-center justify-center rounded-full border p-2.5">
+                <Upload className="size-6 text-muted-foreground" />
+              </div>
               <p className="font-medium text-sm">Drag & drop files here</p>
               <p className="text-muted-foreground text-xs">
                 Or click to browse (max 5 files, 4MB each)

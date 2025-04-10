@@ -246,7 +246,6 @@ function useStore<T>(selector: (state: StoreState) => T): T {
 }
 
 interface FileUploadContextValue {
-  vibrant: boolean;
   inputId: string;
   dropzoneId: string;
   listId: string;
@@ -294,7 +293,6 @@ interface FileUploadRootProps
   disabled?: boolean;
   invalid?: boolean;
   multiple?: boolean;
-  vibrant?: boolean;
   required?: boolean;
 }
 
@@ -317,7 +315,6 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
       disabled = false,
       invalid = false,
       multiple = false,
-      vibrant = false,
       required = false,
       children,
       className,
@@ -341,8 +338,8 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
     );
 
     const contextValue = React.useMemo<FileUploadContextValue>(
-      () => ({ vibrant, inputId, dropzoneId, listId, disabled, inputRef }),
-      [vibrant, inputId, dropzoneId, listId, disabled],
+      () => ({ inputId, dropzoneId, listId, disabled, inputRef }),
+      [inputId, dropzoneId, listId, disabled],
     );
 
     React.useEffect(() => {
@@ -549,9 +546,9 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
               ref={inputRef}
               tabIndex={-1}
               accept={accept}
+              name={name}
               disabled={disabled}
               multiple={multiple}
-              name={name}
               required={required}
               className="sr-only"
               onChange={onInputChange}
@@ -775,7 +772,6 @@ const FileUploadList = React.forwardRef<HTMLDivElement, FileUploadListProps>(
       <ListPrimitive
         role="list"
         id={context.listId}
-        aria-labelledby={context.dropzoneId}
         aria-orientation={orientation}
         data-orientation={orientation}
         data-slot="file-upload-list"
@@ -820,7 +816,6 @@ const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
     const id = React.useId();
     const statusId = React.useId();
 
-    const context = useFileUploadContext(ITEM_NAME);
     const fileState = useStore((state) => state.files.get(value));
     const fileCount = useStore((state) => state.files.size);
     const fileIndex = useStore((state) => {
@@ -862,22 +857,6 @@ const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
           ref={forwardedRef}
           className={cn(
             "flex items-center gap-2 rounded-md border p-3 has-[_[data-slot=file-upload-preview]]:flex-col has-[_[data-slot=file-upload-progress]]:items-start",
-            context.vibrant
-              ? {
-                  "border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-950/50":
-                    fileState.status === "uploading",
-                  "border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950/50":
-                    fileState.status === "success",
-                  "border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/50":
-                    fileState.status === "error",
-                  "border-orange-500 bg-orange-100 dark:border-orange-500 dark:bg-orange-950/50":
-                    fileState.status === "uploading",
-                  "border-green-500 bg-green-100 dark:border-green-500 dark:bg-green-950/50":
-                    fileState.status === "success",
-                  "border-red-500 bg-red-100 dark:border-red-500 dark:bg-red-950/50":
-                    fileState.status === "error",
-                }
-              : "",
             className,
           )}
         >
@@ -1036,7 +1015,6 @@ const FileUploadItemProgress = React.forwardRef<
 >((props, forwardedRef) => {
   const { asChild, className, ...progressProps } = props;
 
-  const context = useFileUploadContext(ITEM_PROGRESS_NAME);
   const itemContext = useFileUploadItemContext(ITEM_PROGRESS_NAME);
 
   if (!itemContext.fileState) return null;
@@ -1059,25 +1037,7 @@ const FileUploadItemProgress = React.forwardRef<
       )}
     >
       <div
-        className={cn(
-          "h-full w-full flex-1 bg-primary transition-all",
-          context.vibrant
-            ? {
-                "bg-orange-500/50 dark:bg-orange-600/50":
-                  itemContext.fileState.status === "uploading",
-                "bg-green-500/50 dark:bg-green-600/50":
-                  itemContext.fileState.status === "success",
-                "bg-red-500/50 dark:bg-red-600/50":
-                  itemContext.fileState.status === "error",
-                "bg-orange-500 dark:bg-orange-600":
-                  itemContext.fileState.status === "uploading",
-                "bg-green-500 dark:bg-green-600":
-                  itemContext.fileState.status === "success",
-                "bg-red-500 dark:bg-red-600":
-                  itemContext.fileState.status === "error",
-              }
-            : "bg-primary",
-        )}
+        className="h-full w-full flex-1 bg-primary transition-all"
         style={{
           transform: `translateX(-${100 - itemContext.fileState.progress}%)`,
         }}
