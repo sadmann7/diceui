@@ -793,6 +793,10 @@ FileUploadList.displayName = LIST_NAME;
 interface FileUploadItemContextValue {
   id: string;
   fileState: FileState | undefined;
+  nameId: string;
+  sizeId: string;
+  statusId: string;
+  messageId: string;
 }
 
 const FileUploadItemContext =
@@ -817,6 +821,9 @@ const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
 
     const id = React.useId();
     const statusId = `${id}-status`;
+    const nameId = `${id}-name`;
+    const sizeId = `${id}-size`;
+    const messageId = `${id}-message`;
 
     const fileState = useStore((state) => state.files.get(value));
     const fileCount = useStore((state) => state.files.size);
@@ -829,8 +836,12 @@ const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
       () => ({
         id,
         fileState,
+        nameId,
+        sizeId,
+        statusId,
+        messageId,
       }),
-      [id, fileState],
+      [id, fileState, statusId, nameId, sizeId, messageId],
     );
 
     if (!fileState) return null;
@@ -852,7 +863,10 @@ const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
           role="listitem"
           aria-setsize={fileCount}
           aria-posinset={fileIndex}
-          aria-describedby={statusId}
+          aria-describedby={`${nameId} ${sizeId} ${statusId} ${
+            fileState.error ? messageId : ""
+          }`}
+          aria-labelledby={nameId}
           data-slot="file-upload-item"
           data-status={fileState.status}
           {...itemProps}
@@ -972,6 +986,7 @@ const FileUploadItemPreview = React.forwardRef<
 
   return (
     <ItemPreviewPrimitive
+      aria-labelledby={itemContext.nameId}
       data-slot="file-upload-preview"
       {...previewProps}
       ref={forwardedRef}
@@ -1012,14 +1027,23 @@ const FileUploadItemMetadata = React.forwardRef<
     >
       {children ?? (
         <>
-          <span className="truncate font-medium text-sm">
+          <span
+            id={itemContext.nameId}
+            className="truncate font-medium text-sm"
+          >
             {itemContext.fileState.file.name}
           </span>
-          <span className="text-muted-foreground text-xs">
+          <span
+            id={itemContext.sizeId}
+            className="text-muted-foreground text-xs"
+          >
             {formatBytes(itemContext.fileState.file.size)}
           </span>
           {itemContext.fileState.error && (
-            <span className="text-destructive text-xs">
+            <span
+              id={itemContext.messageId}
+              className="text-destructive text-xs"
+            >
               {itemContext.fileState.error}
             </span>
           )}
@@ -1054,6 +1078,7 @@ const FileUploadItemProgress = React.forwardRef<
       aria-valuemax={100}
       aria-valuenow={itemContext.fileState.progress}
       aria-valuetext={`${itemContext.fileState.progress}%`}
+      aria-labelledby={itemContext.nameId}
       data-slot="file-upload-progress"
       {...progressProps}
       ref={forwardedRef}
@@ -1112,6 +1137,7 @@ const FileUploadItemDelete = React.forwardRef<
     <ItemDeletePrimitive
       type="button"
       aria-controls={itemContext.id}
+      aria-describedby={itemContext.nameId}
       data-slot="file-upload-item-delete"
       {...deleteProps}
       ref={forwardedRef}
