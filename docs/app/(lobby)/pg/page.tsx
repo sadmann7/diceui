@@ -108,13 +108,10 @@ export default function PlaygroundPage() {
           value={files}
           onValueChange={setFiles}
           onUpload={onUpload}
-          onFileReject={(file, description) => {
-            toast(
-              `"${file.name.length > 20 ? `${file.name.slice(0, 20)}...` : file.name}" was rejected`,
-              {
-                description,
-              },
-            );
+          onFileReject={(file, message) => {
+            toast(message, {
+              description: `"${file.name.length > 20 ? `${file.name.slice(0, 20)}...` : file.name}" has been rejected`,
+            });
           }}
         >
           <FileUploadDropzone>

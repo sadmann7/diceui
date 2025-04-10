@@ -275,7 +275,6 @@ interface FileUploadRootProps
   defaultValue?: File[];
   onValueChange?: (files: File[]) => void;
   onAccept?: (files: File[]) => void;
-  onReject?: (files: File[]) => void;
   onFileAccept?: (file: File) => void;
   onFileReject?: (file: File, message: string) => void;
   onUpload?: (
@@ -305,7 +304,6 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
       defaultValue,
       onValueChange,
       onAccept,
-      onReject,
       onFileAccept,
       onFileReject,
       onUpload,
@@ -375,16 +373,12 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
             const rejectedFiles = filesToProcess.slice(remainingSlotCount);
             hasRejectedFiles = true;
 
-            if (propsRef.current.onReject) {
-              propsRef.current.onReject(rejectedFiles);
-            }
-
             filesToProcess = filesToProcess.slice(0, remainingSlotCount);
 
             for (const file of rejectedFiles) {
               propsRef.current.onFileReject?.(
                 file,
-                `Only ${propsRef.current.maxFiles} files allowed`,
+                `Maximum ${propsRef.current.maxFiles} files allowed`,
               );
             }
           }
