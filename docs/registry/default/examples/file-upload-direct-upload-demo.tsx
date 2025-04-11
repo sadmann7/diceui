@@ -15,7 +15,7 @@ import {
 import { Upload, X } from "lucide-react";
 import * as React from "react";
 
-export default function FileUploadAutoUploadDemo() {
+export default function FileUploadDirectUploadDemo() {
   const [files, setFiles] = React.useState<File[]>([]);
 
   const onUpload = React.useCallback(

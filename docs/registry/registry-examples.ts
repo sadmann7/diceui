@@ -241,13 +241,13 @@ export const examples: Registry = [
     ],
   },
   {
-    name: "file-upload-auto-upload-demo",
+    name: "file-upload-direct-upload-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot", "lucide-react"],
     registryDependencies: ["button"],
     files: [
       {
-        path: "examples/file-upload-auto-upload-demo.tsx",
+        path: "examples/file-upload-direct-upload-demo.tsx",
         type: "registry:example",
       },
     ],

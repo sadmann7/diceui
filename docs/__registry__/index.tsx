@@ -589,17 +589,17 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
-    "file-upload-auto-upload-demo": {
-      name: "file-upload-auto-upload-demo",
+    "file-upload-direct-upload-demo": {
+      name: "file-upload-direct-upload-demo",
       description: "",
       type: "registry:example",
       registryDependencies: ["button"],
       files: [{
-        path: "registry/default/examples/file-upload-auto-upload-demo.tsx",
+        path: "registry/default/examples/file-upload-direct-upload-demo.tsx",
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/examples/file-upload-auto-upload-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/file-upload-direct-upload-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",
