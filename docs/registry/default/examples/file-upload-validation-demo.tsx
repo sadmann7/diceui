@@ -48,47 +48,45 @@ export default function FileUploadValidationDemo() {
   }, []);
 
   return (
-    <div className="w-full max-w-md">
-      <FileUpload
-        value={files}
-        onValueChange={setFiles}
-        onFileValidate={onFileValidate}
-        onFileReject={onFileReject}
-        accept="image/*"
-        maxFiles={2}
-        className="w-full"
-        multiple
-      >
-        <FileUploadDropzone>
-          <div className="flex flex-col items-center gap-1">
-            <div className="flex items-center justify-center rounded-full border p-2.5">
-              <Upload className="size-6 text-muted-foreground" />
-            </div>
-            <p className="font-medium text-sm">Drag & drop files here</p>
-            <p className="text-muted-foreground text-xs">
-              Or click to browse (max 2 files)
-            </p>
+    <FileUpload
+      value={files}
+      onValueChange={setFiles}
+      onFileValidate={onFileValidate}
+      onFileReject={onFileReject}
+      accept="image/*"
+      maxFiles={2}
+      className="w-full max-w-md"
+      multiple
+    >
+      <FileUploadDropzone>
+        <div className="flex flex-col items-center gap-1">
+          <div className="flex items-center justify-center rounded-full border p-2.5">
+            <Upload className="size-6 text-muted-foreground" />
           </div>
-          <FileUploadTrigger asChild>
-            <Button variant="outline" size="sm" className="mt-2 w-fit">
-              Browse files
-            </Button>
-          </FileUploadTrigger>
-        </FileUploadDropzone>
-        <FileUploadList>
-          {files.map((file) => (
-            <FileUploadItem key={file.name} value={file}>
-              <FileUploadItemPreview />
-              <FileUploadItemMetadata />
-              <FileUploadItemDelete asChild>
-                <Button variant="ghost" size="icon" className="size-7">
-                  <X />
-                </Button>
-              </FileUploadItemDelete>
-            </FileUploadItem>
-          ))}
-        </FileUploadList>
-      </FileUpload>
-    </div>
+          <p className="font-medium text-sm">Drag & drop files here</p>
+          <p className="text-muted-foreground text-xs">
+            Or click to browse (max 2 files)
+          </p>
+        </div>
+        <FileUploadTrigger asChild>
+          <Button variant="outline" size="sm" className="mt-2 w-fit">
+            Browse files
+          </Button>
+        </FileUploadTrigger>
+      </FileUploadDropzone>
+      <FileUploadList>
+        {files.map((file) => (
+          <FileUploadItem key={file.name} value={file}>
+            <FileUploadItemPreview />
+            <FileUploadItemMetadata />
+            <FileUploadItemDelete asChild>
+              <Button variant="ghost" size="icon" className="size-7">
+                <X />
+              </Button>
+            </FileUploadItemDelete>
+          </FileUploadItem>
+        ))}
+      </FileUploadList>
+    </FileUpload>
   );
 }

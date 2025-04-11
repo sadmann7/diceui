@@ -605,6 +605,22 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "file-upload-uploadthing-demo": {
+      name: "file-upload-uploadthing-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button"],
+      files: [{
+        path: "registry/default/examples/file-upload-uploadthing-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/file-upload-uploadthing-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "file-upload-circular-progress-demo": {
       name: "file-upload-circular-progress-demo",
       description: "",
@@ -632,22 +648,6 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/file-upload-form-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
-    "file-upload-uploadthing-demo": {
-      name: "file-upload-uploadthing-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["button"],
-      files: [{
-        path: "registry/default/examples/file-upload-uploadthing-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/file-upload-uploadthing-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",
