@@ -1269,6 +1269,7 @@ const ItemPreview = FileUploadItemPreview;
 const ItemMetadata = FileUploadItemMetadata;
 const ItemProgress = FileUploadItemProgress;
 const ItemDelete = FileUploadItemDelete;
+
 export {
   FileUpload,
   FileUploadDropzone,

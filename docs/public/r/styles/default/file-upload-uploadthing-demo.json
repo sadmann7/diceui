@@ -4,10 +4,13 @@
   "dependencies": [
     "@radix-ui/react-slot",
     "lucide-react",
+    "uploadthing",
     "@uploadthing/react"
   ],
   "registryDependencies": [
-    "button"
+    "button",
+    "lucide-react",
+    "sonner"
   ],
   "files": [
     {

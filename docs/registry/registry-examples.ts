@@ -219,7 +219,7 @@ export const examples: Registry = [
   {
     name: "file-upload-demo",
     type: "registry:example",
-    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    dependencies: ["@radix-ui/react-slot", "lucide-react", "sonner"],
     registryDependencies: ["button"],
     files: [
       {
@@ -231,7 +231,7 @@ export const examples: Registry = [
   {
     name: "file-upload-validation-demo",
     type: "registry:example",
-    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    dependencies: ["@radix-ui/react-slot", "lucide-react", "sonner"],
     registryDependencies: ["button"],
     files: [
       {
@@ -243,7 +243,7 @@ export const examples: Registry = [
   {
     name: "file-upload-direct-upload-demo",
     type: "registry:example",
-    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    dependencies: ["@radix-ui/react-slot", "lucide-react", "sonner"],
     registryDependencies: ["button"],
     files: [
       {
@@ -258,9 +258,10 @@ export const examples: Registry = [
     dependencies: [
       "@radix-ui/react-slot",
       "lucide-react",
+      "uploadthing",
       "@uploadthing/react",
     ],
-    registryDependencies: ["button"],
+    registryDependencies: ["button", "lucide-react", "sonner"],
     files: [
       {
         path: "examples/file-upload-uploadthing-demo.tsx",
@@ -272,7 +273,7 @@ export const examples: Registry = [
     name: "file-upload-circular-progress-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot", "lucide-react"],
-    registryDependencies: ["button"],
+    registryDependencies: ["button", "lucide-react", "sonner"],
     files: [
       {
         path: "examples/file-upload-circular-progress-demo.tsx",
@@ -289,7 +290,7 @@ export const examples: Registry = [
       "@hookform/resolvers/zod",
       "zod",
     ],
-    registryDependencies: ["button", "form"],
+    registryDependencies: ["button", "form", "lucide-react", "sonner"],
     files: [
       {
         path: "examples/file-upload-form-demo.tsx",

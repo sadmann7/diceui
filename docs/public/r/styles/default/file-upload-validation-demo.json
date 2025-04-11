@@ -3,7 +3,8 @@
   "type": "registry:example",
   "dependencies": [
     "@radix-ui/react-slot",
-    "lucide-react"
+    "lucide-react",
+    "sonner"
   ],
   "registryDependencies": [
     "button"
