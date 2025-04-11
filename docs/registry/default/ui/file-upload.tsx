@@ -990,6 +990,7 @@ function getFileIcon(file: File) {
 
 interface FileUploadItemPreviewProps
   extends React.ComponentPropsWithoutRef<"div"> {
+  render?: (file: File) => React.ReactNode;
   asChild?: boolean;
 }
 
@@ -997,7 +998,7 @@ const FileUploadItemPreview = React.forwardRef<
   HTMLDivElement,
   FileUploadItemPreviewProps
 >((props, forwardedRef) => {
-  const { asChild, children, className, ...previewProps } = props;
+  const { asChild, children, className, render, ...previewProps } = props;
 
   const itemContext = useFileUploadItemContext(ITEM_PREVIEW_NAME);
 
@@ -1005,7 +1006,7 @@ const FileUploadItemPreview = React.forwardRef<
 
   const onPreviewRender = React.useCallback(
     (file: File) => {
-      if (children) return children;
+      if (render) return render(file);
 
       if (isImage) {
         return (
@@ -1023,7 +1024,7 @@ const FileUploadItemPreview = React.forwardRef<
 
       return getFileIcon(file);
     },
-    [isImage, children],
+    [isImage, render],
   );
 
   if (!itemContext.fileState) return null;
@@ -1043,6 +1044,7 @@ const FileUploadItemPreview = React.forwardRef<
       )}
     >
       {onPreviewRender(itemContext.fileState.file)}
+      {children}
     </ItemPreviewPrimitive>
   );
 });
@@ -1140,7 +1142,10 @@ const FileUploadItemProgress = React.forwardRef<
         data-slot="file-upload-progress"
         {...progressProps}
         ref={forwardedRef}
-        className={cn("absolute top-3 left-3", className)}
+        className={cn(
+          "-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2",
+          className,
+        )}
       >
         <svg
           className="rotate-[-90deg] transform"
@@ -1242,7 +1247,6 @@ const FileUploadItemDelete = React.forwardRef<
       data-slot="file-upload-item-delete"
       {...deleteProps}
       ref={forwardedRef}
-      disabled={itemContext.fileState.status === "uploading"}
       onClick={onClick}
     />
   );

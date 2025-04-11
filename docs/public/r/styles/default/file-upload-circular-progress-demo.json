@@ -1,0 +1,20 @@
+{
+  "name": "file-upload-circular-progress-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@radix-ui/react-slot",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "file-upload",
+    "button"
+  ],
+  "files": [
+    {
+      "path": "examples/file-upload-circular-progress-demo.tsx",
+      "content": "\"use client\";\r\n\r\nimport { Button } from \"@/components/ui/button\";\r\nimport {\r\n  FileUpload,\r\n  FileUploadDropzone,\r\n  FileUploadItem,\r\n  FileUploadItemDelete,\r\n  FileUploadItemMetadata,\r\n  FileUploadItemPreview,\r\n  FileUploadItemProgress,\r\n  FileUploadList,\r\n  FileUploadTrigger,\r\n} from \"@/registry/default/ui/file-upload\";\r\nimport { Upload, X } from \"lucide-react\";\r\nimport * as React from \"react\";\r\nimport { toast } from \"sonner\";\r\n\r\nexport default function FileUploadCircularProgressDemo() {\r\n  const [files, setFiles] = React.useState<File[]>([]);\r\n\r\n  const onFileReject = React.useCallback((file: File, message: string) => {\r\n    toast(message, {\r\n      description: `\"${file.name.length > 20 ? `${file.name.slice(0, 20)}...` : file.name}\" has been rejected`,\r\n    });\r\n  }, []);\r\n\r\n  const onUpload = React.useCallback(\r\n    async (\r\n      _file: File,\r\n      options: {\r\n        onProgress: (progress: number) => void;\r\n        onSuccess: () => void;\r\n        onError: (error: Error) => void;\r\n      },\r\n    ) => {\r\n      try {\r\n        // Simulate file upload with progress\r\n        const totalSteps = 100;\r\n        for (let i = 0; i <= totalSteps; i++) {\r\n          await new Promise((resolve) => setTimeout(resolve, 50));\r\n          options.onProgress((i / totalSteps) * 100);\r\n        }\r\n        options.onSuccess();\r\n      } catch (error) {\r\n        options.onError(\r\n          error instanceof Error ? error : new Error(\"Upload failed\"),\r\n        );\r\n      }\r\n    },\r\n    [],\r\n  );\r\n\r\n  return (\r\n    <FileUpload\r\n      value={files}\r\n      onValueChange={setFiles}\r\n      className=\"w-full max-w-md\"\r\n      maxFiles={2}\r\n      maxSize={5 * 1024 * 1024}\r\n      onFileReject={onFileReject}\r\n      onUpload={onUpload}\r\n      multiple\r\n    >\r\n      <FileUploadDropzone>\r\n        <div className=\"flex flex-col items-center gap-1\">\r\n          <div className=\"flex items-center justify-center rounded-full border p-2.5\">\r\n            <Upload className=\"size-6 text-muted-foreground\" />\r\n          </div>\r\n          <p className=\"font-medium text-sm\">Drag & drop files here</p>\r\n          <p className=\"text-muted-foreground text-xs\">\r\n            Or click to browse (max 2 files, up to 5MB each)\r\n          </p>\r\n        </div>\r\n        <FileUploadTrigger asChild>\r\n          <Button variant=\"outline\" size=\"sm\" className=\"mt-2 w-fit\">\r\n            Browse files\r\n          </Button>\r\n        </FileUploadTrigger>\r\n      </FileUploadDropzone>\r\n      <FileUploadList orientation=\"horizontal\">\r\n        {files.map((file, index) => (\r\n          <FileUploadItem key={index} value={file} className=\"min-w-[200px]\">\r\n            <FileUploadItemPreview />\r\n            <FileUploadItemMetadata />\r\n            <FileUploadItemProgress circular size={40} />\r\n            <FileUploadItemDelete asChild>\r\n              <Button variant=\"ghost\" size=\"icon\" className=\"size-7\">\r\n                <X />\r\n              </Button>\r\n            </FileUploadItemDelete>\r\n          </FileUploadItem>\r\n        ))}\r\n      </FileUploadList>\r\n    </FileUpload>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

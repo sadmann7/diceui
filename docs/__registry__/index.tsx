@@ -605,6 +605,22 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "file-upload-circular-progress-demo": {
+      name: "file-upload-circular-progress-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["file-upload","button"],
+      files: [{
+        path: "registry/default/examples/file-upload-circular-progress-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/file-upload-circular-progress-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "kanban-demo": {
       name: "kanban-demo",
       description: "",

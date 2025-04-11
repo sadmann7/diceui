@@ -229,6 +229,18 @@ export const examples: Registry = [
     ],
   },
   {
+    name: "file-upload-validation-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    registryDependencies: ["file-upload", "button"],
+    files: [
+      {
+        path: "examples/file-upload-validation-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "file-upload-auto-upload-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot", "lucide-react"],
@@ -241,13 +253,13 @@ export const examples: Registry = [
     ],
   },
   {
-    name: "file-upload-validation-demo",
+    name: "file-upload-circular-progress-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot", "lucide-react"],
     registryDependencies: ["file-upload", "button"],
     files: [
       {
-        path: "examples/file-upload-validation-demo.tsx",
+        path: "examples/file-upload-circular-progress-demo.tsx",
         type: "registry:example",
       },
     ],

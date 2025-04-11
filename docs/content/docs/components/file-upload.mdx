@@ -56,17 +56,23 @@ import * as FileUpload from "@/components/ui/file-upload";
 
 ## Examples
 
+### With Validation
+
+Validate files with the `onFileValidate` prop on the `Root` component based on type, size, and custom rules. This will override the default file rejection message.
+
 ### With Auto Upload
 
-Automatically start uploading files when they are added.
+Automatically start uploading files when they are added with the `onUpload` prop on the `Root` component.
 
 <ComponentTabs name="file-upload-auto-upload-demo" align="start" className="p-4" />
 
-### With Validation
-
-Validate files based on type, size, and custom rules. This will override the default file rejection message.
-
 <ComponentTabs name="file-upload-validation-demo" align="start" className="p-4" />
+
+### Circular Progress
+
+Render a circular progress indicator instead of a linear one by enabling the `circular` prop on the `ItemProgress` component.
+
+<ComponentTabs name="file-upload-circular-progress-demo" align="start" className="p-4" />
 
 ## API Reference
 
