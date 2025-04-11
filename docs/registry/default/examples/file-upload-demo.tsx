@@ -8,58 +8,56 @@ import {
   FileUploadItemDelete,
   FileUploadItemMetadata,
   FileUploadItemPreview,
-  FileUploadItemProgress,
   FileUploadList,
   FileUploadTrigger,
 } from "@/registry/default/ui/file-upload";
-import { CloudUploadIcon, FileIcon, TrashIcon, UploadIcon } from "lucide-react";
+import { Upload, X } from "lucide-react";
 import * as React from "react";
+import { toast } from "sonner";
 
 export default function FileUploadDemo() {
   const [files, setFiles] = React.useState<File[]>([]);
+
+  const onFileReject = React.useCallback((file: File, message: string) => {
+    toast(message, {
+      description: `"${file.name.length > 20 ? `${file.name.slice(0, 20)}...` : file.name}" has been rejected`,
+    });
+  }, []);
 
   return (
     <FileUpload
       value={files}
       onValueChange={setFiles}
-      className="w-full max-w-xl"
+      className="w-full max-w-md"
+      maxFiles={2}
+      maxSize={5 * 1024 * 1024}
+      onFileReject={onFileReject}
       multiple
     >
-      <FileUploadDropzone className="flex flex-col items-center justify-center gap-4 rounded-lg border border-border border-dashed p-10">
-        <div className="flex flex-col items-center justify-center gap-2 text-center">
-          <CloudUploadIcon className="h-10 w-10 text-muted-foreground" />
-          <div className="flex flex-col space-y-1">
-            <p className="font-medium text-sm">Drag and drop files here</p>
-            <p className="text-muted-foreground text-xs">
-              or click to select files
-            </p>
+      <FileUploadDropzone>
+        <div className="flex flex-col items-center gap-1">
+          <div className="flex items-center justify-center rounded-full border p-2.5">
+            <Upload className="size-6 text-muted-foreground" />
           </div>
+          <p className="font-medium text-sm">Drag & drop files here</p>
+          <p className="text-muted-foreground text-xs">
+            Or click to browse (max 2 files, up to 5MB each)
+          </p>
         </div>
         <FileUploadTrigger asChild>
-          <Button variant="ghost" size="icon" className="size-7">
-            <UploadIcon />
-            Select files
+          <Button variant="outline" size="sm" className="mt-2 w-fit">
+            Browse files
           </Button>
         </FileUploadTrigger>
       </FileUploadDropzone>
       <FileUploadList>
-        {files.map((file) => (
-          <FileUploadItem
-            key={file.name}
-            value={file}
-            className="flex items-center rounded-lg border p-2"
-          >
-            <FileUploadItemPreview className="size-10 rounded bg-muted p-2" />
-            <FileUploadItemMetadata className="flex-1 px-4" />
-            <FileUploadItemProgress className="w-[100px]" />
+        {files.map((file, index) => (
+          <FileUploadItem key={index} value={file}>
+            <FileUploadItemPreview />
+            <FileUploadItemMetadata />
             <FileUploadItemDelete asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="ml-2 text-destructive"
-              >
-                <TrashIcon className="h-4 w-4" />
-                <span className="sr-only">Delete</span>
+              <Button variant="ghost" size="icon" className="size-7">
+                <X />
               </Button>
             </FileUploadItemDelete>
           </FileUploadItem>

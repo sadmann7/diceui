@@ -12,7 +12,7 @@ import {
   FileUploadList,
   FileUploadTrigger,
 } from "@/registry/default/ui/file-upload";
-import { CloudUploadIcon, UploadIcon, X } from "lucide-react";
+import { Upload, X } from "lucide-react";
 import * as React from "react";
 
 export default function FileUploadAutoUploadDemo() {
@@ -32,12 +32,25 @@ export default function FileUploadAutoUploadDemo() {
       },
     ) => {
       try {
-        // Simulate the upload process
-        const totalSteps = 10;
-        for (let step = 1; step <= totalSteps; step++) {
-          await new Promise((resolve) => setTimeout(resolve, 500));
-          onProgress((step / totalSteps) * 100);
+        // Simulate file upload with progress
+        const totalChunks = 10;
+        let uploadedChunks = 0;
+
+        // Simulate chunk upload with delays
+        for (let i = 0; i < totalChunks; i++) {
+          // Simulate network delay (100-300ms per chunk)
+          await new Promise((resolve) =>
+            setTimeout(resolve, Math.random() * 200 + 100),
+          );
+
+          // Update progress
+          uploadedChunks++;
+          const progress = (uploadedChunks / totalChunks) * 100;
+          onProgress(progress);
         }
+
+        // Simulate server processing delay
+        await new Promise((resolve) => setTimeout(resolve, 500));
         onSuccess();
       } catch (error) {
         onError(error instanceof Error ? error : new Error("Upload failed"));
@@ -51,41 +64,39 @@ export default function FileUploadAutoUploadDemo() {
       value={files}
       onValueChange={setFiles}
       onUpload={onUpload}
-      className="w-full max-w-xl"
+      maxFiles={2}
+      className="w-full max-w-md"
       multiple
     >
-      <FileUploadDropzone className="flex flex-col items-center justify-center gap-4 rounded-lg border border-border border-dashed p-10">
-        <div className="flex flex-col items-center justify-center gap-2 text-center">
-          <CloudUploadIcon className="h-10 w-10 text-muted-foreground" />
-          <div className="flex flex-col space-y-1">
-            <p className="font-medium text-sm">Drag and drop files here</p>
-            <p className="text-muted-foreground text-xs">
-              Files will be uploaded automatically
-            </p>
+      <FileUploadDropzone>
+        <div className="flex flex-col items-center gap-1">
+          <div className="flex items-center justify-center rounded-full border p-2.5">
+            <Upload className="size-6 text-muted-foreground" />
           </div>
+          <p className="font-medium text-sm">Drag & drop files here</p>
+          <p className="text-muted-foreground text-xs">
+            Or click to browse (max 2 files)
+          </p>
         </div>
         <FileUploadTrigger asChild>
-          <Button variant="ghost" size="icon" className="size-7">
-            <UploadIcon />
-            Select files
+          <Button variant="outline" size="sm" className="mt-2 w-fit">
+            Browse files
           </Button>
         </FileUploadTrigger>
       </FileUploadDropzone>
       <FileUploadList>
-        {files.map((file) => (
-          <FileUploadItem
-            key={file.name}
-            value={file}
-            className="flex items-center rounded-lg border p-2"
-          >
-            <FileUploadItemPreview className="size-10 rounded bg-muted p-2" />
-            <FileUploadItemMetadata className="flex-1 px-4" />
-            <FileUploadItemProgress className="w-[100px]" />
-            <FileUploadItemDelete asChild>
-              <Button variant="ghost" size="icon" className="size-7">
-                <X />
-              </Button>
-            </FileUploadItemDelete>
+        {files.map((file, index) => (
+          <FileUploadItem key={index} value={file}>
+            <div className="flex w-full items-center gap-2">
+              <FileUploadItemPreview />
+              <FileUploadItemMetadata />
+              <FileUploadItemDelete asChild>
+                <Button variant="ghost" size="icon" className="size-7">
+                  <X />
+                </Button>
+              </FileUploadItemDelete>
+            </div>
+            <FileUploadItemProgress />
           </FileUploadItem>
         ))}
       </FileUploadList>

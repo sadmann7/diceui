@@ -253,18 +253,6 @@ export const examples: Registry = [
     ],
   },
   {
-    name: "file-upload-multiple-demo",
-    type: "registry:example",
-    dependencies: ["@radix-ui/react-slot", "lucide-react"],
-    registryDependencies: ["file-upload", "button", "badge"],
-    files: [
-      {
-        path: "examples/file-upload-multiple-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
     name: "kanban-demo",
     type: "registry:example",
     dependencies: [

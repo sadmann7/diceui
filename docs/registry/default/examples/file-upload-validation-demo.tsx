@@ -8,31 +8,38 @@ import {
   FileUploadItemDelete,
   FileUploadItemMetadata,
   FileUploadItemPreview,
-  FileUploadItemProgress,
   FileUploadList,
   FileUploadTrigger,
 } from "@/registry/default/ui/file-upload";
-import { CloudUploadIcon, TrashIcon, UploadIcon, X } from "lucide-react";
+import { Upload, X } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
 
 export default function FileUploadValidationDemo() {
   const [files, setFiles] = React.useState<File[]>([]);
 
-  const onFileValidate = React.useCallback((file: File): string | undefined => {
-    // Validate file type (only images)
-    if (!file.type.startsWith("image/")) {
-      return "Only image files are allowed";
-    }
+  const onFileValidate = React.useCallback(
+    (file: File): string | undefined => {
+      // Validate max files
+      if (files.length >= 2) {
+        return "You can only upload up to 2 files";
+      }
 
-    // Validate file size (max 2MB)
-    const MAX_SIZE = 2 * 1024 * 1024; // 2MB
-    if (file.size > MAX_SIZE) {
-      return `File size must be less than ${MAX_SIZE / (1024 * 1024)}MB`;
-    }
+      // Validate file type (only images)
+      if (!file.type.startsWith("image/")) {
+        return "Only image files are allowed";
+      }
 
-    return undefined;
-  }, []);
+      // Validate file size (max 2MB)
+      const MAX_SIZE = 2 * 1024 * 1024; // 2MB
+      if (file.size > MAX_SIZE) {
+        return `File size must be less than ${MAX_SIZE / (1024 * 1024)}MB`;
+      }
+
+      return undefined;
+    },
+    [files],
+  );
 
   const onFileReject = React.useCallback((file: File, message: string) => {
     toast(message, {
@@ -41,42 +48,36 @@ export default function FileUploadValidationDemo() {
   }, []);
 
   return (
-    <div className="w-full max-w-xl">
+    <div className="w-full max-w-md">
       <FileUpload
         value={files}
         onValueChange={setFiles}
         onFileValidate={onFileValidate}
         onFileReject={onFileReject}
         accept="image/*"
-        maxSize={2 * 1024 * 1024} // 2MB
-        maxFiles={5}
+        maxFiles={2}
         className="w-full"
         multiple
       >
-        <FileUploadDropzone className="flex flex-col items-center justify-center gap-4 rounded-lg border border-border border-dashed p-10">
-          <div className="flex flex-col items-center justify-center gap-2 text-center">
-            <CloudUploadIcon className="h-10 w-10 text-muted-foreground" />
-            <div className="flex flex-col space-y-1">
-              <p className="font-medium text-sm">Drop images here</p>
-              <p className="text-muted-foreground text-xs">
-                Only images less than 2MB (max 5 files)
-              </p>
+        <FileUploadDropzone>
+          <div className="flex flex-col items-center gap-1">
+            <div className="flex items-center justify-center rounded-full border p-2.5">
+              <Upload className="size-6 text-muted-foreground" />
             </div>
+            <p className="font-medium text-sm">Drag & drop files here</p>
+            <p className="text-muted-foreground text-xs">
+              Or click to browse (max 2 files)
+            </p>
           </div>
           <FileUploadTrigger asChild>
-            <Button variant="ghost" size="icon" className="size-7">
-              <UploadIcon />
-              Select images
+            <Button variant="outline" size="sm" className="mt-2 w-fit">
+              Browse files
             </Button>
           </FileUploadTrigger>
         </FileUploadDropzone>
-        <FileUploadList className="mt-4 space-y-2">
+        <FileUploadList>
           {files.map((file) => (
-            <FileUploadItem
-              key={file.name}
-              value={file}
-              className="flex items-center rounded-lg border p-2"
-            >
+            <FileUploadItem key={file.name} value={file}>
               <FileUploadItemPreview />
               <FileUploadItemMetadata />
               <FileUploadItemDelete asChild>

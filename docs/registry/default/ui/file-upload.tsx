@@ -400,10 +400,16 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
             filesToProcess = filesToProcess.slice(0, remainingSlotCount);
 
             for (const file of rejectedFiles) {
-              propsRef.current.onFileReject?.(
-                file,
-                `Maximum ${propsRef.current.maxFiles} files allowed`,
-              );
+              let rejectionMessage = `Maximum ${propsRef.current.maxFiles} files allowed`;
+
+              if (propsRef.current.onFileValidate) {
+                const validationMessage = propsRef.current.onFileValidate(file);
+                if (validationMessage) {
+                  rejectionMessage = validationMessage;
+                }
+              }
+
+              propsRef.current.onFileReject?.(file, rejectionMessage);
             }
           }
         }
@@ -431,13 +437,13 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
               .split(",")
               .map((t) => t.trim());
             const fileType = file.type;
-            const fileExt = `.${file.name.split(".").pop()}`;
+            const fileExtension = `.${file.name.split(".").pop()}`;
 
             if (
               !acceptTypes.some(
                 (type) =>
                   type === fileType ||
-                  type === fileExt ||
+                  type === fileExtension ||
                   (type.includes("/*") &&
                     fileType.startsWith(type.replace("/*", "/"))),
               )
@@ -905,7 +911,7 @@ const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
           {...itemProps}
           ref={forwardedRef}
           className={cn(
-            "flex items-center gap-2.5 rounded-md border p-3 has-[_[data-slot=file-upload-preview]]:flex-col has-[_[data-slot=file-upload-progress]]:items-start",
+            "flex items-center gap-2.5 rounded-md border p-3 has-[_[data-slot=file-upload-progress]]:flex-col has-[_[data-slot=file-upload-progress]]:items-start",
             className,
           )}
         >
@@ -1058,11 +1064,7 @@ const FileUploadItemMetadata = React.forwardRef<
       dir={context.dir}
       {...metadataProps}
       ref={forwardedRef}
-      className={cn(
-        "flex min-w-0 flex-1 flex-col",
-        context.dir === "rtl" && "items-end space-x-reverse",
-        className,
-      )}
+      className={cn("flex min-w-0 flex-1 flex-col", className)}
     >
       {children ?? (
         <>
@@ -1218,4 +1220,5 @@ export {
   ItemMetadata,
   ItemProgress,
   ItemDelete,
+  useStore as useFileUpload,
 };

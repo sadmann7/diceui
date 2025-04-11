@@ -605,22 +605,6 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
-    "file-upload-multiple-demo": {
-      name: "file-upload-multiple-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["file-upload","button","badge"],
-      files: [{
-        path: "registry/default/examples/file-upload-multiple-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/file-upload-multiple-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
     "kanban-demo": {
       name: "kanban-demo",
       description: "",

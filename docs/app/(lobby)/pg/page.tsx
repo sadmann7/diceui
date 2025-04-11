@@ -27,6 +27,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
+import FileUploadAutoUploadDemo from "@/registry/default/examples/file-upload-auto-upload-demo";
+import FileUploadDemo from "@/registry/default/examples/file-upload-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -106,6 +108,8 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <div className="grid gap-8">
+        <FileUploadDemo />
+        <FileUploadAutoUploadDemo />
         <FileUpload
           multiple
           accept="image/*,application/pdf"
@@ -124,7 +128,7 @@ export default function PlaygroundPage() {
               </div>
               <p className="font-medium text-sm">Drag & drop files here</p>
               <p className="text-muted-foreground text-xs">
-                Or click to browse (max 5 files, 4MB each)
+                Or click to browse (max 5 files, up to 4MB each)
               </p>
             </div>
             <FileUploadTrigger asChild>
