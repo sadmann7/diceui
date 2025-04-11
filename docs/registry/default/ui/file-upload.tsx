@@ -911,7 +911,7 @@ const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
           {...itemProps}
           ref={forwardedRef}
           className={cn(
-            "flex items-center gap-2.5 rounded-md border p-3 has-[_[data-slot=file-upload-progress]]:flex-col has-[_[data-slot=file-upload-progress]]:items-start",
+            "relative flex items-center gap-2.5 rounded-md border p-3 has-[_[data-slot=file-upload-progress]]:flex-col has-[_[data-slot=file-upload-progress]]:items-start",
             className,
           )}
         >
@@ -1001,23 +1001,30 @@ const FileUploadItemPreview = React.forwardRef<
 
   const itemContext = useFileUploadItemContext(ITEM_PREVIEW_NAME);
 
-  const onPreviewRender = React.useCallback((file: File) => {
-    if (file.type.startsWith("image/")) {
-      return (
-        <img
-          src={URL.createObjectURL(file)}
-          alt={file.name}
-          className="size-full rounded object-cover"
-          onLoad={(event) => {
-            if (!(event.target instanceof HTMLImageElement)) return;
-            URL.revokeObjectURL(event.target.src);
-          }}
-        />
-      );
-    }
+  const isImage = itemContext.fileState?.file.type.startsWith("image/");
 
-    return getFileIcon(file);
-  }, []);
+  const onPreviewRender = React.useCallback(
+    (file: File) => {
+      if (children) return children;
+
+      if (isImage) {
+        return (
+          <img
+            src={URL.createObjectURL(file)}
+            alt={file.name}
+            className="size-full rounded object-cover"
+            onLoad={(event) => {
+              if (!(event.target instanceof HTMLImageElement)) return;
+              URL.revokeObjectURL(event.target.src);
+            }}
+          />
+        );
+      }
+
+      return getFileIcon(file);
+    },
+    [isImage, children],
+  );
 
   if (!itemContext.fileState) return null;
 
@@ -1030,11 +1037,12 @@ const FileUploadItemPreview = React.forwardRef<
       {...previewProps}
       ref={forwardedRef}
       className={cn(
-        "relative flex size-10 shrink-0 items-center justify-center rounded-md bg-accent object-cover [&>svg]:size-8",
+        "relative flex size-10 shrink-0 items-center justify-center rounded-md",
+        isImage ? "object-cover" : "bg-accent [&>svg]:size-8",
         className,
       )}
     >
-      {children ?? onPreviewRender(itemContext.fileState.file)}
+      {onPreviewRender(itemContext.fileState.file)}
     </ItemPreviewPrimitive>
   );
 });
@@ -1098,19 +1106,71 @@ FileUploadItemMetadata.displayName = ITEM_METADATA_NAME;
 interface FileUploadItemProgressProps
   extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
+  circular?: boolean;
+  size?: number;
 }
 
 const FileUploadItemProgress = React.forwardRef<
   HTMLDivElement,
   FileUploadItemProgressProps
 >((props, forwardedRef) => {
-  const { asChild, className, ...progressProps } = props;
+  const { circular, size = 40, asChild, className, ...progressProps } = props;
 
   const itemContext = useFileUploadItemContext(ITEM_PROGRESS_NAME);
 
   if (!itemContext.fileState) return null;
 
   const ItemProgressPrimitive = asChild ? Slot : "div";
+
+  if (circular) {
+    if (itemContext.fileState.status === "success") return null;
+
+    const circumference = 2 * Math.PI * ((size - 4) / 2);
+    const strokeDashoffset =
+      circumference - (itemContext.fileState.progress / 100) * circumference;
+
+    return (
+      <ItemProgressPrimitive
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={itemContext.fileState.progress}
+        aria-valuetext={`${itemContext.fileState.progress}%`}
+        aria-labelledby={itemContext.nameId}
+        data-slot="file-upload-progress"
+        {...progressProps}
+        ref={forwardedRef}
+        className={cn("absolute top-3 left-3", className)}
+      >
+        <svg
+          className="rotate-[-90deg] transform"
+          width={size}
+          height={size}
+          viewBox={`0 0 ${size} ${size}`}
+          fill="none"
+          stroke="currentColor"
+        >
+          <circle
+            className="text-primary/20"
+            strokeWidth="2"
+            cx={size / 2}
+            cy={size / 2}
+            r={(size - 4) / 2}
+          />
+          <circle
+            className="text-primary transition-all"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            strokeDashoffset={strokeDashoffset}
+            cx={size / 2}
+            cy={size / 2}
+            r={(size - 4) / 2}
+          />
+        </svg>
+      </ItemProgressPrimitive>
+    );
+  }
 
   return (
     <ItemProgressPrimitive
