@@ -6,7 +6,6 @@
     "lucide-react"
   ],
   "registryDependencies": [
-    "file-upload",
     "button"
   ],
   "files": [
