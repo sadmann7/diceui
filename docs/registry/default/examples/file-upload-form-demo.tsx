@@ -50,10 +50,16 @@ export default function FileUploadFormDemo() {
   });
 
   const onSubmit = React.useCallback((data: FormValues) => {
-    toast("Files uploaded successfully", {
+    toast("Submitted values:", {
       description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        <pre className="mt-2 w-80 rounded-md bg-accent/30 p-4 text-accent-foreground">
+          <code>
+            {JSON.stringify(
+              data.files.map((file) => file.name),
+              null,
+              2,
+            )}
+          </code>
         </pre>
       ),
     });
@@ -75,6 +81,11 @@ export default function FileUploadFormDemo() {
                   accept="image/*"
                   maxFiles={2}
                   maxSize={5 * 1024 * 1024}
+                  onFileReject={(_, message) => {
+                    form.setError("files", {
+                      message,
+                    });
+                  }}
                   multiple
                 >
                   <FileUploadDropzone className="flex-row border-dotted">

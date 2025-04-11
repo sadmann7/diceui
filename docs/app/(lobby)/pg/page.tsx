@@ -27,7 +27,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import FileUploadCircularProgressDemo from "@/registry/default/examples/file-upload-circular-progress-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -107,7 +106,6 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <div className="grid gap-8">
-        <FileUploadCircularProgressDemo />
         <FileUpload
           multiple
           accept="image/*,application/pdf"
