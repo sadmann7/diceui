@@ -6,7 +6,7 @@ import type { AnyFileRoute, UploadFilesOptions } from "uploadthing/types";
 import type { OurFileRouter } from "@/app/api/uploadthing/core";
 import { uploadFiles } from "@/lib/uploadthing";
 
-interface UseFileUploadOptions<TFileRoute extends AnyFileRoute>
+interface UseUploadThingOptions<TFileRoute extends AnyFileRoute>
   extends Pick<
     UploadFilesOptions<TFileRoute>,
     "headers" | "onUploadBegin" | "onUploadProgress" | "skipPolling"
@@ -14,12 +14,12 @@ interface UseFileUploadOptions<TFileRoute extends AnyFileRoute>
   defaultFiles?: UploadedFile[];
 }
 
-export function useFileUpload(
+export function useUploadThing(
   endpoint: keyof OurFileRouter,
   {
     defaultFiles = [],
     ...props
-  }: UseFileUploadOptions<OurFileRouter[keyof OurFileRouter]> = {},
+  }: UseUploadThingOptions<OurFileRouter[keyof OurFileRouter]> = {},
 ) {
   const [uploadedFiles, setUploadedFiles] =
     React.useState<UploadedFile[]>(defaultFiles);

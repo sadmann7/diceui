@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useFileUpload } from "@/hooks/use-file-upload";
 import { uploadFiles } from "@/lib/uploadthing";
 import {
   FileUpload,
@@ -14,24 +13,65 @@ import {
   FileUploadList,
   FileUploadTrigger,
 } from "@/registry/default/ui/file-upload";
+import type { UploadedFile } from "@/types";
 import { Upload, X } from "lucide-react";
 import * as React from "react";
+import { toast } from "sonner";
 
 export default function FileUploadUploadThingDemo() {
-  const { onUpload, progresses, uploadedFiles } = useFileUpload(
-    "imageUploader",
-    {
-      defaultFiles: [],
+  const [uploadedFiles, setUploadedFiles] = React.useState<UploadedFile[]>([]);
+
+  const onUpload = React.useCallback(
+    async (
+      files: File[],
+      {
+        onProgress,
+      }: {
+        onProgress: (file: File, progress: number) => void;
+      },
+    ) => {
+      try {
+        const res = await uploadFiles("imageUploader", {
+          files,
+          onUploadProgress: ({ file, progress }) => {
+            onProgress(file, progress);
+          },
+        });
+
+        setUploadedFiles((prev) => (prev ? [...prev, ...res] : res));
+      } catch (error) {
+        toast.error(
+          error instanceof Error ? error.message : "An unknown error occurred",
+        );
+      }
     },
+    [],
   );
+
+  const convertedFiles = React.useMemo(() => {
+    return uploadedFiles.map((file) => {
+      return {
+        name: file.name,
+        size: file.size,
+        type: file.type ?? "application/octet-stream",
+        lastModified: file.lastModified ?? Date.now(),
+        webkitRelativePath: "",
+        arrayBuffer: () => Promise.resolve(new ArrayBuffer(0)),
+        bytes: () => Promise.resolve(new Uint8Array()),
+        slice: () => new Blob(),
+        stream: () => new ReadableStream(),
+        text: () => Promise.resolve(""),
+      } satisfies File;
+    });
+  }, [uploadedFiles]);
 
   return (
     <FileUpload
-      // onUpload={onUpload}
       className="w-full max-w-md"
+      accept="image/*"
       maxFiles={2}
       maxSize={4 * 1024 * 1024}
-      accept="image/*"
+      onUpload={onUpload}
       multiple
     >
       <FileUploadDropzone>
@@ -50,24 +90,22 @@ export default function FileUploadUploadThingDemo() {
           </Button>
         </FileUploadTrigger>
       </FileUploadDropzone>
-      {/* <FileUploadList>
-        {uploadedFiles.map((file, index) => (
+      <FileUploadList>
+        {convertedFiles.map((file, index) => (
           <FileUploadItem key={index} value={file}>
-            <FileUploadItemPreview />
-            <FileUploadItemMetadata />
-            <div className="flex items-center gap-2">
-              {progresses[file.name] !== undefined && (
-                <FileUploadItemProgress circular />
-              )}
+            <div className="flex w-full items-center gap-2">
+              <FileUploadItemPreview />
+              <FileUploadItemMetadata />
               <FileUploadItemDelete asChild>
                 <Button variant="ghost" size="icon" className="size-7">
-                  <X className="size-4" />
+                  <X />
                 </Button>
               </FileUploadItemDelete>
             </div>
+            <FileUploadItemProgress />
           </FileUploadItem>
         ))}
-      </FileUploadList> */}
+      </FileUploadList>
     </FileUpload>
   );
 }

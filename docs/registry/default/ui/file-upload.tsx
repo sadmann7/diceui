@@ -530,7 +530,7 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
                 store.dispatch({
                   variant: "SET_ERROR",
                   file,
-                  error: error.message || "Upload failed",
+                  error: error.message ?? "Upload failed",
                 });
               },
             });
@@ -1269,7 +1269,6 @@ const ItemPreview = FileUploadItemPreview;
 const ItemMetadata = FileUploadItemMetadata;
 const ItemProgress = FileUploadItemProgress;
 const ItemDelete = FileUploadItemDelete;
-
 export {
   FileUpload,
   FileUploadDropzone,
