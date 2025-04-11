@@ -1,0 +1,20 @@
+{
+  "name": "file-upload-auto-upload-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@radix-ui/react-slot",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "file-upload",
+    "button"
+  ],
+  "files": [
+    {
+      "path": "examples/file-upload-auto-upload-demo.tsx",
+      "content": "\"use client\";\n\nimport { Button } from \"@/components/ui/button\";\nimport {\n  FileUpload,\n  FileUploadDropzone,\n  FileUploadItem,\n  FileUploadItemDelete,\n  FileUploadItemMetadata,\n  FileUploadItemPreview,\n  FileUploadItemProgress,\n  FileUploadList,\n  FileUploadTrigger,\n} from \"@/registry/default/ui/file-upload\";\nimport { CloudUploadIcon, UploadIcon, X } from \"lucide-react\";\nimport * as React from \"react\";\n\nexport default function FileUploadAutoUploadDemo() {\n  const [files, setFiles] = React.useState<File[]>([]);\n\n  const onUpload = React.useCallback(\n    async (\n      _file: File,\n      {\n        onProgress,\n        onSuccess,\n        onError,\n      }: {\n        onProgress: (progress: number) => void;\n        onSuccess: () => void;\n        onError: (error: Error) => void;\n      },\n    ) => {\n      try {\n        // Simulate the upload process\n        const totalSteps = 10;\n        for (let step = 1; step <= totalSteps; step++) {\n          await new Promise((resolve) => setTimeout(resolve, 500));\n          onProgress((step / totalSteps) * 100);\n        }\n        onSuccess();\n      } catch (error) {\n        onError(error instanceof Error ? error : new Error(\"Upload failed\"));\n      }\n    },\n    [],\n  );\n\n  return (\n    <FileUpload\n      value={files}\n      onValueChange={setFiles}\n      onUpload={onUpload}\n      className=\"w-full max-w-xl\"\n      multiple\n    >\n      <FileUploadDropzone className=\"flex flex-col items-center justify-center gap-4 rounded-lg border border-border border-dashed p-10\">\n        <div className=\"flex flex-col items-center justify-center gap-2 text-center\">\n          <CloudUploadIcon className=\"h-10 w-10 text-muted-foreground\" />\n          <div className=\"flex flex-col space-y-1\">\n            <p className=\"font-medium text-sm\">Drag and drop files here</p>\n            <p className=\"text-muted-foreground text-xs\">\n              Files will be uploaded automatically\n            </p>\n          </div>\n        </div>\n        <FileUploadTrigger asChild>\n          <Button variant=\"ghost\" size=\"icon\" className=\"size-7\">\n            <UploadIcon />\n            Select files\n          </Button>\n        </FileUploadTrigger>\n      </FileUploadDropzone>\n      <FileUploadList>\n        {files.map((file) => (\n          <FileUploadItem\n            key={file.name}\n            value={file}\n            className=\"flex items-center rounded-lg border p-2\"\n          >\n            <FileUploadItemPreview className=\"size-10 rounded bg-muted p-2\" />\n            <FileUploadItemMetadata className=\"flex-1 px-4\" />\n            <FileUploadItemProgress className=\"w-[100px]\" />\n            <FileUploadItemDelete asChild>\n              <Button variant=\"ghost\" size=\"icon\" className=\"size-7\">\n                <X />\n              </Button>\n            </FileUploadItemDelete>\n          </FileUploadItem>\n        ))}\n      </FileUploadList>\n    </FileUpload>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

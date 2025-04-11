@@ -265,7 +265,7 @@ interface FileUploadContextValue {
   listId: string;
   disabled: boolean;
   inputRef: React.RefObject<HTMLInputElement | null>;
-  dir?: Direction;
+  dir: Direction;
 }
 
 const FileUploadContext = React.createContext<FileUploadContextValue | null>(
@@ -301,6 +301,7 @@ interface FileUploadRootProps
     },
   ) => Promise<void> | void;
   accept?: string;
+  dir?: Direction;
   maxFiles?: number;
   maxSize?: number;
   name?: string;
@@ -309,7 +310,6 @@ interface FileUploadRootProps
   invalid?: boolean;
   multiple?: boolean;
   required?: boolean;
-  dir?: Direction;
 }
 
 const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
@@ -324,6 +324,7 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
       onFileValidate,
       onUpload,
       accept,
+      dir: dirProp,
       maxFiles,
       maxSize,
       name,
@@ -332,7 +333,6 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
       invalid = false,
       multiple = false,
       required = false,
-      dir: dirProp,
       children,
       className,
       ...rootProps
@@ -356,8 +356,15 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
     );
 
     const contextValue = React.useMemo<FileUploadContextValue>(
-      () => ({ inputId, dropzoneId, listId, disabled, inputRef, dir }),
-      [inputId, dropzoneId, listId, disabled, dir],
+      () => ({
+        dropzoneId,
+        inputId,
+        listId,
+        dir,
+        disabled,
+        inputRef,
+      }),
+      [dropzoneId, inputId, listId, dir, disabled],
     );
 
     React.useEffect(() => {
@@ -898,8 +905,7 @@ const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
           {...itemProps}
           ref={forwardedRef}
           className={cn(
-            "flex items-center gap-2",
-            context.dir === "rtl" && "space-x-reverse",
+            "flex items-center gap-2.5 rounded-md border p-3 has-[_[data-slot=file-upload-preview]]:flex-col has-[_[data-slot=file-upload-progress]]:items-start",
             className,
           )}
         >

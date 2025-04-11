@@ -97,6 +97,12 @@ export default function PlaygroundPage() {
     [],
   );
 
+  const onFileReject = React.useCallback((file: File, message: string) => {
+    toast(message, {
+      description: `"${file.name.length > 20 ? `${file.name.slice(0, 20)}...` : file.name}" has been rejected`,
+    });
+  }, []);
+
   return (
     <Shell>
       <div className="grid gap-8">
@@ -109,11 +115,7 @@ export default function PlaygroundPage() {
           value={files}
           onValueChange={setFiles}
           onUpload={onUpload}
-          onFileReject={(file, message) => {
-            toast(message, {
-              description: `"${file.name.length > 20 ? `${file.name.slice(0, 20)}...` : file.name}" has been rejected`,
-            });
-          }}
+          onFileReject={onFileReject}
         >
           <FileUploadDropzone>
             <div className="flex flex-col items-center gap-1">
@@ -139,7 +141,7 @@ export default function PlaygroundPage() {
                   <FileUploadItemMetadata />
                   <FileUploadItemDelete asChild>
                     <Button variant="ghost" size="icon" className="size-7">
-                      <X className="size-4" />
+                      <X />
                     </Button>
                   </FileUploadItemDelete>
                 </div>

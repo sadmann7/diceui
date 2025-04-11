@@ -217,6 +217,54 @@ export const examples: Registry = [
     ],
   },
   {
+    name: "file-upload-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    registryDependencies: ["file-upload", "button"],
+    files: [
+      {
+        path: "examples/file-upload-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "file-upload-auto-upload-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    registryDependencies: ["file-upload", "button"],
+    files: [
+      {
+        path: "examples/file-upload-auto-upload-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "file-upload-validation-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    registryDependencies: ["file-upload", "button"],
+    files: [
+      {
+        path: "examples/file-upload-validation-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "file-upload-multiple-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    registryDependencies: ["file-upload", "button", "badge"],
+    files: [
+      {
+        path: "examples/file-upload-multiple-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "kanban-demo",
     type: "registry:example",
     dependencies: [
