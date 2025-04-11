@@ -19,16 +19,14 @@ import { toast } from "sonner";
 export default function FileUploadCircularProgressDemo() {
   const [files, setFiles] = React.useState<File[]>([]);
 
-  const onFileReject = React.useCallback((file: File, message: string) => {
-    toast(message, {
-      description: `"${file.name.length > 20 ? `${file.name.slice(0, 20)}...` : file.name}" has been rejected`,
-    });
-  }, []);
-
   const onUpload = React.useCallback(
     async (
       _file: File,
-      options: {
+      {
+        onProgress,
+        onSuccess,
+        onError,
+      }: {
         onProgress: (progress: number) => void;
         onSuccess: () => void;
         onError: (error: Error) => void;
@@ -36,30 +34,47 @@ export default function FileUploadCircularProgressDemo() {
     ) => {
       try {
         // Simulate file upload with progress
-        const totalSteps = 100;
-        for (let i = 0; i <= totalSteps; i++) {
-          await new Promise((resolve) => setTimeout(resolve, 50));
-          options.onProgress((i / totalSteps) * 100);
+        const totalChunks = 10;
+        let uploadedChunks = 0;
+
+        // Simulate chunk upload with delays
+        for (let i = 0; i < totalChunks; i++) {
+          // Simulate network delay (100-300ms per chunk)
+          await new Promise((resolve) =>
+            setTimeout(resolve, Math.random() * 200 + 100),
+          );
+
+          // Update progress
+          uploadedChunks++;
+          const progress = (uploadedChunks / totalChunks) * 100;
+          onProgress(progress);
         }
-        options.onSuccess();
+
+        // Simulate server processing delay
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        onSuccess();
       } catch (error) {
-        options.onError(
-          error instanceof Error ? error : new Error("Upload failed"),
-        );
+        onError(error instanceof Error ? error : new Error("Upload failed"));
       }
     },
     [],
   );
+
+  const onFileReject = React.useCallback((file: File, message: string) => {
+    toast(message, {
+      description: `"${file.name.length > 20 ? `${file.name.slice(0, 20)}...` : file.name}" has been rejected`,
+    });
+  }, []);
 
   return (
     <FileUpload
       value={files}
       onValueChange={setFiles}
       className="w-full max-w-md"
-      maxFiles={2}
+      maxFiles={10}
       maxSize={5 * 1024 * 1024}
-      onFileReject={onFileReject}
       onUpload={onUpload}
+      onFileReject={onFileReject}
       multiple
     >
       <FileUploadDropzone>
@@ -69,7 +84,7 @@ export default function FileUploadCircularProgressDemo() {
           </div>
           <p className="font-medium text-sm">Drag & drop files here</p>
           <p className="text-muted-foreground text-xs">
-            Or click to browse (max 2 files, up to 5MB each)
+            Or click to browse (max 10 files, up to 5MB each)
           </p>
         </div>
         <FileUploadTrigger asChild>
@@ -81,7 +96,7 @@ export default function FileUploadCircularProgressDemo() {
       <FileUploadList orientation="horizontal">
         {files.map((file, index) => (
           <FileUploadItem key={index} value={file} className="p-0">
-            <FileUploadItemPreview className="size-20">
+            <FileUploadItemPreview className="size-20 [&>svg]:size-12">
               <FileUploadItemProgress circular size={40} />
             </FileUploadItemPreview>
             <FileUploadItemMetadata className="sr-only" />

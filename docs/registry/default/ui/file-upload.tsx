@@ -301,9 +301,9 @@ interface FileUploadRootProps
     },
   ) => Promise<void> | void;
   accept?: string;
-  dir?: Direction;
   maxFiles?: number;
   maxSize?: number;
+  dir?: Direction;
   name?: string;
   asChild?: boolean;
   disabled?: boolean;
@@ -324,9 +324,9 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
       onFileValidate,
       onUpload,
       accept,
-      dir: dirProp,
       maxFiles,
       maxSize,
+      dir: dirProp,
       name,
       asChild,
       disabled = false,
@@ -813,13 +813,13 @@ const FileUploadList = React.forwardRef<HTMLDivElement, FileUploadListProps>(
         aria-orientation={orientation}
         data-orientation={orientation}
         data-slot="file-upload-list"
+        data-state={shouldRender ? "active" : "inactive"}
         dir={context.dir}
         {...listProps}
         ref={forwardedRef}
         className={cn(
-          "flex flex-col gap-2",
-          orientation === "horizontal" && "flex-row",
-          context.dir === "rtl" && "space-x-reverse",
+          "data-[state=inactive]:fade-out-0 data-[state=active]:fade-in-0 data-[state=inactive]:slide-out-to-top-2 data-[state=active]:slide-in-from-top-2 flex flex-col gap-2 data-[state=active]:animate-in data-[state=inactive]:animate-out",
+          orientation === "horizontal" && "flex-row overflow-x-auto p-1.5",
           className,
         )}
       />
@@ -998,7 +998,7 @@ const FileUploadItemPreview = React.forwardRef<
   HTMLDivElement,
   FileUploadItemPreviewProps
 >((props, forwardedRef) => {
-  const { asChild, children, className, render, ...previewProps } = props;
+  const { render, asChild, children, className, ...previewProps } = props;
 
   const itemContext = useFileUploadItemContext(ITEM_PREVIEW_NAME);
 
@@ -1039,7 +1039,7 @@ const FileUploadItemPreview = React.forwardRef<
       ref={forwardedRef}
       className={cn(
         "relative flex size-10 shrink-0 items-center justify-center rounded-md",
-        isImage ? "object-cover" : "bg-accent [&>svg]:size-8",
+        isImage ? "object-cover" : "bg-accent/50 [&>svg]:size-7",
         className,
       )}
     >

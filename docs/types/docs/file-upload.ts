@@ -69,6 +69,11 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   maxSize?: number;
 
   /**
+   * The text direction of the component.
+   */
+  dir?: "ltr" | "rtl";
+
+  /**
    * The name attribute for the file input element.
    */
   name?: string;
@@ -101,11 +106,6 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * @default false
    */
   required?: boolean;
-
-  /**
-   * The text direction of the component.
-   */
-  dir?: "ltr" | "rtl";
 }
 
 export interface DropzoneProps extends EmptyProps<"div">, CompositionProps {}
@@ -133,15 +133,31 @@ export interface ItemProps extends EmptyProps<"div">, CompositionProps {
   value: File;
 }
 
-export interface ItemPreviewProps extends EmptyProps<"div">, CompositionProps {}
+export interface ItemPreviewProps extends EmptyProps<"div">, CompositionProps {
+  /**
+   * The render function for the preview.
+   * This can be used to override the default preview.
+   */
+  render: (file: File) => React.ReactNode;
+}
 
 export interface ItemMetadataProps
   extends EmptyProps<"div">,
     CompositionProps {}
 
-export interface ItemProgressProps
-  extends EmptyProps<"div">,
-    CompositionProps {}
+export interface ItemProgressProps extends EmptyProps<"div">, CompositionProps {
+  /**
+   * Whether to display the progress in a circular format.
+   * @default false
+   */
+  circular?: boolean;
+
+  /**
+   * The size of the circular progress indicator.
+   * @default 40
+   */
+  size?: number;
+}
 
 export interface ItemDeleteProps
   extends EmptyProps<"button">,
