@@ -17,8 +17,10 @@ import type { UploadedFile } from "@/types";
 import { Upload, X } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
+import { UploadThingError } from "uploadthing/server";
 
 export default function FileUploadUploadThingDemo() {
+  const [isUploading, setIsUploading] = React.useState(false);
   const [uploadedFiles, setUploadedFiles] = React.useState<UploadedFile[]>([]);
 
   const onUpload = React.useCallback(
@@ -31,6 +33,7 @@ export default function FileUploadUploadThingDemo() {
       },
     ) => {
       try {
+        setIsUploading(true);
         const res = await uploadFiles("imageUploader", {
           files,
           onUploadProgress: ({ file, progress }) => {
@@ -40,9 +43,22 @@ export default function FileUploadUploadThingDemo() {
 
         setUploadedFiles((prev) => (prev ? [...prev, ...res] : res));
       } catch (error) {
-        toast.error(
-          error instanceof Error ? error.message : "An unknown error occurred",
-        );
+        setIsUploading(false);
+        if (error instanceof UploadThingError) {
+          const errorMessage =
+            error.data && "error" in error.data
+              ? error.data.error
+              : "Upload failed";
+          toast.error(errorMessage);
+        } else {
+          toast.error(
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+          );
+        }
+      } finally {
+        setIsUploading(false);
       }
     },
     [],
@@ -73,6 +89,7 @@ export default function FileUploadUploadThingDemo() {
       maxSize={4 * 1024 * 1024}
       onUpload={onUpload}
       multiple
+      disabled={isUploading}
     >
       <FileUploadDropzone>
         <div className="flex flex-col items-center gap-1">
