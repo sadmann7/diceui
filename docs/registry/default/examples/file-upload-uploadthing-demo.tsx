@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { uploadFiles } from "@/lib/uploadthing";
 import {
   FileUpload,
   FileUploadDropzone,
@@ -15,8 +16,10 @@ import {
 import { Upload, X } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
+import { UploadThingError } from "uploadthing/server";
 
-export default function FileUploadDirectUploadDemo() {
+export default function FileUploadUploadThingDemo() {
+  const [isUploading, setIsUploading] = React.useState(false);
   const [files, setFiles] = React.useState<File[]>([]);
 
   const onUpload = React.useCallback(
@@ -24,51 +27,49 @@ export default function FileUploadDirectUploadDemo() {
       files: File[],
       {
         onProgress,
-        onSuccess,
-        onError,
       }: {
         onProgress: (file: File, progress: number) => void;
-        onSuccess: (file: File) => void;
-        onError: (file: File, error: Error) => void;
       },
     ) => {
       try {
-        // Process each file individually
-        const uploadPromises = files.map(async (file) => {
-          try {
-            // Simulate file upload with progress
-            const totalChunks = 10;
-            let uploadedChunks = 0;
-
-            // Simulate chunk upload with delays
-            for (let i = 0; i < totalChunks; i++) {
-              // Simulate network delay (100-300ms per chunk)
-              await new Promise((resolve) =>
-                setTimeout(resolve, Math.random() * 200 + 100),
-              );
-
-              // Update progress for this specific file
-              uploadedChunks++;
-              const progress = (uploadedChunks / totalChunks) * 100;
-              onProgress(file, progress);
-            }
-
-            // Simulate server processing delay
-            await new Promise((resolve) => setTimeout(resolve, 500));
-            onSuccess(file);
-          } catch (error) {
-            onError(
-              file,
-              error instanceof Error ? error : new Error("Upload failed"),
-            );
-          }
+        setIsUploading(true);
+        const res = await uploadFiles("imageUploader", {
+          files,
+          onUploadProgress: ({ file, progress }) => {
+            onProgress(file, progress);
+          },
         });
 
-        // Wait for all uploads to complete
-        await Promise.all(uploadPromises);
+        toast.success("Uploaded files:", {
+          description: (
+            <pre className="mt-2 w-80 rounded-md bg-accent/30 p-4 text-accent-foreground">
+              <code>
+                {JSON.stringify(
+                  res.map((file) => file.name),
+                  null,
+                  2,
+                )}
+              </code>
+            </pre>
+          ),
+        });
       } catch (error) {
-        // This handles any error that might occur outside the individual upload processes
-        console.error("Unexpected error during upload:", error);
+        setIsUploading(false);
+
+        if (error instanceof UploadThingError) {
+          const errorMessage =
+            error.data && "error" in error.data
+              ? error.data.error
+              : "Upload failed";
+          toast.error(errorMessage);
+          return;
+        }
+
+        toast.error(
+          error instanceof Error ? error.message : "An unknown error occurred",
+        );
+      } finally {
+        setIsUploading(false);
       }
     },
     [],
@@ -82,22 +83,24 @@ export default function FileUploadDirectUploadDemo() {
 
   return (
     <FileUpload
-      value={files}
-      onValueChange={setFiles}
+      className="w-full max-w-md"
+      accept="image/*"
+      maxFiles={2}
+      maxSize={4 * 1024 * 1024}
+      onAccept={(files) => setFiles(files)}
       onUpload={onUpload}
       onFileReject={onFileReject}
-      maxFiles={2}
-      className="w-full max-w-md"
       multiple
+      disabled={isUploading}
     >
       <FileUploadDropzone>
         <div className="flex flex-col items-center gap-1">
           <div className="flex items-center justify-center rounded-full border p-2.5">
             <Upload className="size-6 text-muted-foreground" />
           </div>
-          <p className="font-medium text-sm">Drag & drop files here</p>
+          <p className="font-medium text-sm">Drag & drop images here</p>
           <p className="text-muted-foreground text-xs">
-            Or click to browse (max 2 files)
+            Or click to browse (max 2 files, up to 4MB each)
           </p>
         </div>
         <FileUploadTrigger asChild>

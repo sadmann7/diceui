@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
       {
         hostname: "picsum.photos",
       },
+      {
+        hostname: "9jxzamsunn.ufs.sh",
+      },
     ],
   },
   async redirects() {

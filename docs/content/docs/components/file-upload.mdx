@@ -6,7 +6,7 @@ links:
   api: /docs/components/file-upload#api-reference
 ---
 
-<ComponentTabs name="file-upload-demo" align="start" />
+<ComponentTabs name="file-upload-demo" align="start" className="p-8" />
 
 ## Installation
 
@@ -60,13 +60,13 @@ import * as FileUpload from "@/components/ui/file-upload";
 
 Validate files with the `onFileValidate` prop on the `Root` component based on type, size, and custom rules. This will override the default file rejection message.
 
-<ComponentTabs name="file-upload-validation-demo" align="start" />
+<ComponentTabs name="file-upload-validation-demo" align="start" className="p-8" />
 
 ### Direct Upload
 
 Upload files directly with the `onUpload` prop on the `Root` component.
 
-<ComponentTabs name="file-upload-direct-upload-demo" align="start" />
+<ComponentTabs name="file-upload-direct-upload-demo" align="start" className="p-8" />
 
 ### Circular Progress
 
@@ -74,11 +74,17 @@ Render a circular progress indicator instead of a linear one by enabling the `ci
 
 <ComponentTabs name="file-upload-circular-progress-demo" align="start" />
 
+### With uploadthing
+
+Integrate with [uploadthing](https://uploadthing.com) for secure, type-safe file uploads with real-time progress tracking.
+
+<ComponentTabs name="file-upload-uploadthing-demo" align="start" className="p-8" />
+
 ### With Form
 
 Use the `value` and `onValueChange` props to handle file uploads with validation and submission.
 
-<ComponentTabs name="file-upload-form-demo" align="start" />
+<ComponentTabs name="file-upload-form-demo" align="start" className="p-8" />
 
 ## API Reference
 
