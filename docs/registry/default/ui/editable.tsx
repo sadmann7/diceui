@@ -71,6 +71,8 @@ function useEditableContext(name: keyof typeof EDITABLE_ERRORS) {
   return context;
 }
 
+type RootElement = React.ComponentRef<typeof Editable>;
+
 interface EditableRootProps
   extends Omit<React.ComponentPropsWithoutRef<"div">, "onSubmit"> {
   id?: string;
@@ -175,7 +177,7 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
       }
     }, [isControlled, valueProp]);
 
-    const [formTrigger, setFormTrigger] = React.useState<HTMLDivElement | null>(
+    const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
       null,
     );
     const composedRef = useComposedRefs(forwardedRef, (node) =>
@@ -400,6 +402,8 @@ EditablePreview.displayName = PREVIEW_NAME;
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
+type InputElement = React.ComponentRef<typeof EditableInput>;
+
 interface EditableInputProps extends React.ComponentPropsWithoutRef<"input"> {
   asChild?: boolean;
   maxLength?: number;
@@ -416,9 +420,8 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
       maxLength,
       ...inputProps
     } = props;
-
     const context = useEditableContext(INPUT_NAME);
-    const inputRef = React.useRef<HTMLInputElement>(null);
+    const inputRef = React.useRef<InputElement>(null);
     const composedRef = useComposedRefs(forwardedRef, inputRef);
 
     const isDisabled = disabled || context.disabled;
@@ -439,16 +442,15 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
       },
       [context.autosize],
     );
-
     const onBlur = React.useCallback(
-      (event: React.FocusEvent<HTMLInputElement>) => {
+      (event: React.FocusEvent<InputElement>) => {
         if (isReadOnly) return;
         const relatedTarget = event.relatedTarget;
-        if (!(relatedTarget instanceof HTMLElement)) return;
 
         const isAction =
-          relatedTarget.closest(`[data-slot="editable-trigger"]`) ||
-          relatedTarget.closest(`[data-slot="editable-cancel"]`);
+          relatedTarget instanceof HTMLElement &&
+          (relatedTarget.closest(`[data-slot="editable-trigger"]`) ||
+            relatedTarget.closest(`[data-slot="editable-cancel"]`));
 
         if (!isAction) {
           context.onSubmit(context.value);
@@ -467,7 +469,7 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
     );
 
     const onKeyDown = React.useCallback(
-      (event: React.KeyboardEvent<HTMLInputElement>) => {
+      (event: React.KeyboardEvent<InputElement>) => {
         if (isReadOnly) return;
         if (event.key === "Escape") {
           const nativeEvent = event.nativeEvent;
@@ -492,7 +494,7 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
     useIsomorphicLayoutEffect(() => {
       if (!context.editing || isReadOnly || !inputRef.current) return;
 
-      const frameId = requestAnimationFrame(() => {
+      const frameId = window.requestAnimationFrame(() => {
         if (!inputRef.current) return;
 
         inputRef.current.focus();
@@ -501,7 +503,7 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
       });
 
       return () => {
-        cancelAnimationFrame(frameId);
+        window.cancelAnimationFrame(frameId);
       };
     }, [context.editing, isReadOnly, onAutosize]);
 

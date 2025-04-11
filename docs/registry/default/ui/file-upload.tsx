@@ -619,11 +619,10 @@ const FileUploadDropzone = React.forwardRef<
 
       if (!event.defaultPrevented) {
         const target = event.target;
-        if (!(target instanceof HTMLElement)) return;
 
-        const isFromTrigger = target.closest(
-          '[data-slot="file-upload-trigger"]',
-        );
+        const isFromTrigger =
+          target instanceof HTMLElement &&
+          target.closest('[data-slot="file-upload-trigger"]');
 
         if (!isFromTrigger) {
           context.inputRef.current?.click();
