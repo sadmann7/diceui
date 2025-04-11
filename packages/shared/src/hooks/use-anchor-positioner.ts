@@ -49,6 +49,7 @@ function isValidNumber(value: unknown): value is number {
     typeof value === "number" && !Number.isNaN(value) && Number.isFinite(value)
   );
 }
+
 interface UseAnchorPositionerProps {
   /** Whether the popover is open. */
   open: boolean;
