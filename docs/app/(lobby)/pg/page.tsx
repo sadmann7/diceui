@@ -27,8 +27,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import FileUploadAutoUploadDemo from "@/registry/default/examples/file-upload-auto-upload-demo";
-import FileUploadDemo from "@/registry/default/examples/file-upload-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -108,8 +106,6 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <div className="grid gap-8">
-        <FileUploadDemo />
-        <FileUploadAutoUploadDemo />
         <FileUpload
           multiple
           accept="image/*,application/pdf"
