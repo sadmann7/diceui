@@ -217,6 +217,71 @@ export const examples: Registry = [
     ],
   },
   {
+    name: "file-upload-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    registryDependencies: ["button"],
+    files: [
+      {
+        path: "examples/file-upload-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "file-upload-validation-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    registryDependencies: ["button"],
+    files: [
+      {
+        path: "examples/file-upload-validation-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "file-upload-direct-upload-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    registryDependencies: ["button"],
+    files: [
+      {
+        path: "examples/file-upload-direct-upload-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "file-upload-circular-progress-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    registryDependencies: ["button"],
+    files: [
+      {
+        path: "examples/file-upload-circular-progress-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "file-upload-form-demo",
+    type: "registry:example",
+    dependencies: [
+      "@radix-ui/react-slot",
+      "lucide-react",
+      "@hookform/resolvers/zod",
+      "zod",
+    ],
+    registryDependencies: ["button", "form"],
+    files: [
+      {
+        path: "examples/file-upload-form-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "kanban-demo",
     type: "registry:example",
     dependencies: [

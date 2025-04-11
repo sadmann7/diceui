@@ -50,6 +50,17 @@ export const ui: Registry = [
     ],
   },
   {
+    name: "file-upload",
+    type: "registry:ui",
+    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    files: [
+      {
+        path: "ui/file-upload.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "kanban",
     type: "registry:ui",
     dependencies: [

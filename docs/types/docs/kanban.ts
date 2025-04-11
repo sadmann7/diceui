@@ -7,7 +7,6 @@ import type {
   UniqueIdentifier,
 } from "@dnd-kit/core";
 import type { SortableContextProps } from "@dnd-kit/sortable";
-import type { SlotProps } from "@radix-ui/react-slot";
 
 export interface RootProps<T> extends DndContextProps {
   /**
@@ -154,9 +153,7 @@ export interface BoardProps extends EmptyProps<"div">, CompositionProps {
   children: React.ReactNode;
 }
 
-export interface ColumnProps
-  extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"div">>,
-    CompositionProps {
+export interface ColumnProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The unique identifier of the column.
    *

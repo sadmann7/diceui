@@ -215,12 +215,6 @@
   }
 }
 
-@utility preview-block {
-  & kbd {
-    @apply shadow-none! border-none!;
-  }
-}
-
 @utility mdx {
   & table {
     @apply rounded-md my-2.5;

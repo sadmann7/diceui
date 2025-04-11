@@ -1,0 +1,19 @@
+{
+  "name": "file-upload-auto-upload-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@radix-ui/react-slot",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "button"
+  ],
+  "files": [
+    {
+      "path": "examples/file-upload-auto-upload-demo.tsx",
+      "content": "\"use client\";\n\nimport { Button } from \"@/components/ui/button\";\nimport {\n  FileUpload,\n  FileUploadDropzone,\n  FileUploadItem,\n  FileUploadItemDelete,\n  FileUploadItemMetadata,\n  FileUploadItemPreview,\n  FileUploadItemProgress,\n  FileUploadList,\n  FileUploadTrigger,\n} from \"@/registry/default/ui/file-upload\";\nimport { Upload, X } from \"lucide-react\";\nimport * as React from \"react\";\n\nexport default function FileUploadAutoUploadDemo() {\n  const [files, setFiles] = React.useState<File[]>([]);\n\n  const onUpload = React.useCallback(\n    async (\n      _file: File,\n      {\n        onProgress,\n        onSuccess,\n        onError,\n      }: {\n        onProgress: (progress: number) => void;\n        onSuccess: () => void;\n        onError: (error: Error) => void;\n      },\n    ) => {\n      try {\n        // Simulate file upload with progress\n        const totalChunks = 10;\n        let uploadedChunks = 0;\n\n        // Simulate chunk upload with delays\n        for (let i = 0; i < totalChunks; i++) {\n          // Simulate network delay (100-300ms per chunk)\n          await new Promise((resolve) =>\n            setTimeout(resolve, Math.random() * 200 + 100),\n          );\n\n          // Update progress\n          uploadedChunks++;\n          const progress = (uploadedChunks / totalChunks) * 100;\n          onProgress(progress);\n        }\n\n        // Simulate server processing delay\n        await new Promise((resolve) => setTimeout(resolve, 500));\n        onSuccess();\n      } catch (error) {\n        onError(error instanceof Error ? error : new Error(\"Upload failed\"));\n      }\n    },\n    [],\n  );\n\n  return (\n    <FileUpload\n      value={files}\n      onValueChange={setFiles}\n      onUpload={onUpload}\n      maxFiles={2}\n      className=\"w-full max-w-md\"\n      multiple\n    >\n      <FileUploadDropzone>\n        <div className=\"flex flex-col items-center gap-1\">\n          <div className=\"flex items-center justify-center rounded-full border p-2.5\">\n            <Upload className=\"size-6 text-muted-foreground\" />\n          </div>\n          <p className=\"font-medium text-sm\">Drag & drop files here</p>\n          <p className=\"text-muted-foreground text-xs\">\n            Or click to browse (max 2 files)\n          </p>\n        </div>\n        <FileUploadTrigger asChild>\n          <Button variant=\"outline\" size=\"sm\" className=\"mt-2 w-fit\">\n            Browse files\n          </Button>\n        </FileUploadTrigger>\n      </FileUploadDropzone>\n      <FileUploadList>\n        {files.map((file, index) => (\n          <FileUploadItem key={index} value={file}>\n            <div className=\"flex w-full items-center gap-2\">\n              <FileUploadItemPreview />\n              <FileUploadItemMetadata />\n              <FileUploadItemDelete asChild>\n                <Button variant=\"ghost\" size=\"icon\" className=\"size-7\">\n                  <X />\n                </Button>\n              </FileUploadItemDelete>\n            </div>\n            <FileUploadItemProgress />\n          </FileUploadItem>\n        ))}\n      </FileUploadList>\n    </FileUpload>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

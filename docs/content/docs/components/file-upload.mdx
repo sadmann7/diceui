@@ -1,0 +1,224 @@
+---
+title: File Upload
+description: A file upload component with drag and drop, previewing, and progress tracking.
+preview: true
+links:
+  api: /docs/components/file-upload#api-reference
+---
+
+<ComponentTabs name="file-upload-demo" align="start" />
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/file-upload"
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @radix-ui/react-slot
+     ```
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource name="file-upload" />
+  </Step>
+</Steps>
+
+## Layout
+
+Import the parts, and compose them together.
+
+```tsx
+import * as FileUpload from "@/components/ui/file-upload";
+
+<FileUpload.Root>
+  <FileUpload.Dropzone />
+  <FileUpload.Trigger />
+  <FileUpload.List>
+    <FileUpload.Item>
+      <FileUpload.ItemPreview />
+      <FileUpload.ItemMetadata />
+      <FileUpload.ItemProgress />
+      <FileUpload.ItemDelete />
+    </FileUpload.Item>
+  </FileUpload.List>
+</FileUpload.Root>
+```
+
+## Examples
+
+### With Validation
+
+Validate files with the `onFileValidate` prop on the `Root` component based on type, size, and custom rules. This will override the default file rejection message.
+
+<ComponentTabs name="file-upload-validation-demo" align="start" />
+
+### Direct Upload
+
+Upload files directly with the `onUpload` prop on the `Root` component.
+
+<ComponentTabs name="file-upload-direct-upload-demo" align="start" />
+
+### Circular Progress
+
+Render a circular progress indicator instead of a linear one by enabling the `circular` prop on the `ItemProgress` component.
+
+<ComponentTabs name="file-upload-circular-progress-demo" align="start" />
+
+### With Form
+
+Use the `value` and `onValueChange` props to handle file uploads with validation and submission.
+
+<ComponentTabs name="file-upload-form-demo" align="start" />
+
+## API Reference
+
+### Root
+
+The main container component for the file upload functionality.
+
+<AutoTypeTable
+  path="./types/docs/file-upload.ts"
+  name="RootProps"
+/>
+
+### Dropzone
+
+A container for drag and drop functionality.
+
+<AutoTypeTable
+  path="./types/docs/file-upload.ts"
+  name="DropzoneProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the dropzone is disabled.",
+    },
+    {
+      title: "[data-dragging]",
+      value: "Present when files are being dragged over the dropzone.",
+    },
+    {
+      title: "[data-invalid]",
+      value: "Present when there was an error with the files being uploaded.",
+    },
+  ]}
+/>
+
+### Trigger
+
+A button that opens the file selection dialog.
+
+<AutoTypeTable
+  path="./types/docs/file-upload.ts"
+  name="TriggerProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the trigger is disabled.",
+    }
+  ]}
+/>
+
+### List
+
+A container for displaying uploaded files.
+
+<AutoTypeTable
+  path="./types/docs/file-upload.ts"
+  name="ListProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-orientation]",
+      value: ["horizontal", "vertical"],
+    },
+    {
+      title: "[data-state]",
+      value: ["active", "inactive"],
+    },
+  ]}
+/>
+
+### Item
+
+Individual file item component.
+
+<AutoTypeTable
+  path="./types/docs/file-upload.ts"
+  name="ItemProps"
+/>
+
+### ItemPreview
+
+Displays a preview of the file, showing an image for image files or an appropriate icon for other file types.
+
+<AutoTypeTable
+  path="./types/docs/file-upload.ts"
+  name="ItemPreviewProps"
+/>
+
+### ItemMetadata
+
+Displays file information such as name, size, and error messages.
+
+<AutoTypeTable
+  path="./types/docs/file-upload.ts"
+  name="ItemMetadataProps"
+/>
+
+### ItemProgress
+
+Shows the upload progress for a file.
+
+<AutoTypeTable
+  path="./types/docs/file-upload.ts"
+  name="ItemProgressProps"
+/>
+
+### ItemDelete
+
+A button to remove a file from the upload list.
+
+<AutoTypeTable
+  path="./types/docs/file-upload.ts"
+  name="ItemDeleteProps"
+/>
+
+## Accessibility
+
+### Keyboard Interactions
+
+<KeyboardShortcutsTable
+  shortcuts={[
+    {
+      keys: ["Enter", "Space"],
+      description: "When focus is on the dropzone or trigger, opens the file selection dialog.",
+    },
+    {
+      keys: ["Tab"],
+      description: "Moves focus between the dropzone, trigger, and file delete buttons.",
+    },
+    {
+      keys: ["Shift + Tab"],
+      description: "When the dropzone is focused, moves focus away from the dropzone.",
+    },
+  ]}
+/>

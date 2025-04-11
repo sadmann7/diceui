@@ -6,8 +6,6 @@ import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidd
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 
-const DATA_ACTION_ATTR = "data-action";
-
 const ROOT_NAME = "Editable";
 const AREA_NAME = "EditableArea";
 const PREVIEW_NAME = "EditablePreview";
@@ -451,7 +449,8 @@ const EditableInput = React.forwardRef<HTMLInputElement, EditableInputProps>(
 
         const isAction =
           relatedTarget instanceof HTMLElement &&
-          relatedTarget.closest(`[${DATA_ACTION_ATTR}=""]`);
+          (relatedTarget.closest(`[data-slot="editable-trigger"]`) ||
+            relatedTarget.closest(`[data-slot="editable-cancel"]`));
 
         if (!isAction) {
           context.onSubmit(context.value);
@@ -636,7 +635,6 @@ const EditableCancel = React.forwardRef<HTMLButtonElement, EditableCancelProps>(
         type="button"
         aria-controls={context.id}
         data-slot="editable-cancel"
-        {...{ [DATA_ACTION_ATTR]: "" }}
         {...cancelProps}
         onClick={composeEventHandlers(cancelProps.onClick, () => {
           context.onCancel();
@@ -666,7 +664,6 @@ const EditableSubmit = React.forwardRef<HTMLButtonElement, EditableSubmitProps>(
         type="button"
         aria-controls={context.id}
         data-slot="editable-submit"
-        {...{ [DATA_ACTION_ATTR]: "" }}
         {...submitProps}
         ref={forwardedRef}
         onClick={composeEventHandlers(submitProps.onClick, () => {
