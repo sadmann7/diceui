@@ -44,19 +44,19 @@ export default function FileUploadUploadThingDemo() {
         setUploadedFiles((prev) => (prev ? [...prev, ...res] : res));
       } catch (error) {
         setIsUploading(false);
+
         if (error instanceof UploadThingError) {
           const errorMessage =
             error.data && "error" in error.data
               ? error.data.error
               : "Upload failed";
           toast.error(errorMessage);
-        } else {
-          toast.error(
-            error instanceof Error
-              ? error.message
-              : "An unknown error occurred",
-          );
+          return;
         }
+
+        toast.error(
+          error instanceof Error ? error.message : "An unknown error occurred",
+        );
       } finally {
         setIsUploading(false);
       }
