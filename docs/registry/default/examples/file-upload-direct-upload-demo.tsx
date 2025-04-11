@@ -14,56 +14,78 @@ import {
 } from "@/registry/default/ui/file-upload";
 import { Upload, X } from "lucide-react";
 import * as React from "react";
+import { toast } from "sonner";
 
 export default function FileUploadDirectUploadDemo() {
   const [files, setFiles] = React.useState<File[]>([]);
 
   const onUpload = React.useCallback(
     async (
-      _file: File,
+      files: File[],
       {
         onProgress,
         onSuccess,
         onError,
       }: {
-        onProgress: (progress: number) => void;
-        onSuccess: () => void;
-        onError: (error: Error) => void;
+        onProgress: (file: File, progress: number) => void;
+        onSuccess: (file: File) => void;
+        onError: (file: File, error: Error) => void;
       },
     ) => {
       try {
-        // Simulate file upload with progress
-        const totalChunks = 10;
-        let uploadedChunks = 0;
+        // Process each file individually
+        const uploadPromises = files.map(async (file) => {
+          try {
+            // Simulate file upload with progress
+            const totalChunks = 10;
+            let uploadedChunks = 0;
 
-        // Simulate chunk upload with delays
-        for (let i = 0; i < totalChunks; i++) {
-          // Simulate network delay (100-300ms per chunk)
-          await new Promise((resolve) =>
-            setTimeout(resolve, Math.random() * 200 + 100),
-          );
+            // Simulate chunk upload with delays
+            for (let i = 0; i < totalChunks; i++) {
+              // Simulate network delay (100-300ms per chunk)
+              await new Promise((resolve) =>
+                setTimeout(resolve, Math.random() * 200 + 100),
+              );
 
-          // Update progress
-          uploadedChunks++;
-          const progress = (uploadedChunks / totalChunks) * 100;
-          onProgress(progress);
-        }
+              // Update progress for this specific file
+              uploadedChunks++;
+              const progress = (uploadedChunks / totalChunks) * 100;
+              onProgress(file, progress);
+            }
 
-        // Simulate server processing delay
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        onSuccess();
+            // Simulate server processing delay
+            await new Promise((resolve) => setTimeout(resolve, 500));
+            onSuccess(file);
+          } catch (error) {
+            onError(
+              file,
+              error instanceof Error ? error : new Error("Upload failed"),
+            );
+          }
+        });
+
+        // Wait for all uploads to complete
+        await Promise.all(uploadPromises);
       } catch (error) {
-        onError(error instanceof Error ? error : new Error("Upload failed"));
+        // This handles any error that might occur outside the individual upload processes
+        console.error("Unexpected error during upload:", error);
       }
     },
     [],
   );
+
+  const onFileReject = React.useCallback((file: File, message: string) => {
+    toast(message, {
+      description: `"${file.name.length > 20 ? `${file.name.slice(0, 20)}...` : file.name}" has been rejected`,
+    });
+  }, []);
 
   return (
     <FileUpload
       value={files}
       onValueChange={setFiles}
       onUpload={onUpload}
+      onFileReject={onFileReject}
       maxFiles={2}
       className="w-full max-w-md"
       multiple

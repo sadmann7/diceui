@@ -15,3 +15,7 @@ export interface CompositionProps {
    */
   asChild?: boolean;
 }
+
+import type { ClientUploadedFileData } from "uploadthing/types";
+
+export interface UploadedFile<T = unknown> extends ClientUploadedFileData<T> {}

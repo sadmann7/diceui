@@ -291,13 +291,13 @@ interface FileUploadRootProps
   onAccept?: (files: File[]) => void;
   onFileAccept?: (file: File) => void;
   onFileReject?: (file: File, message: string) => void;
-  onFileValidate?: (file: File) => string | undefined;
+  onFileValidate?: (file: File) => string | null | undefined;
   onUpload?: (
-    file: File,
+    files: File[],
     options: {
-      onProgress: (progress: number) => void;
-      onSuccess: () => void;
-      onError: (error: Error) => void;
+      onProgress: (file: File, progress: number) => void;
+      onSuccess: (file: File) => void;
+      onError: (file: File, error: Error) => void;
     },
   ) => Promise<void> | void;
   accept?: string;
@@ -499,9 +499,7 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
 
           if (propsRef.current.onUpload) {
             requestAnimationFrame(() => {
-              for (const file of acceptedFiles) {
-                onUploadFile(file);
-              }
+              onFilesUpload(acceptedFiles);
             });
           }
         }
@@ -509,24 +507,26 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
       [store, isControlled, propsRef],
     );
 
-    const onUploadFile = React.useCallback(
-      async (file: File) => {
+    const onFilesUpload = React.useCallback(
+      async (files: File[]) => {
         try {
-          store.dispatch({ variant: "SET_PROGRESS", file, progress: 0 });
+          for (const file of files) {
+            store.dispatch({ variant: "SET_PROGRESS", file, progress: 0 });
+          }
 
           if (propsRef.current.onUpload) {
-            await propsRef.current.onUpload(file, {
-              onProgress: (progress) => {
+            await propsRef.current.onUpload(files, {
+              onProgress: (file, progress) => {
                 store.dispatch({
                   variant: "SET_PROGRESS",
                   file,
                   progress: Math.min(Math.max(0, progress), 100),
                 });
               },
-              onSuccess: () => {
+              onSuccess: (file) => {
                 store.dispatch({ variant: "SET_SUCCESS", file });
               },
-              onError: (error) => {
+              onError: (file, error) => {
                 store.dispatch({
                   variant: "SET_ERROR",
                   file,
@@ -535,14 +535,20 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
               },
             });
           } else {
-            store.dispatch({ variant: "SET_SUCCESS", file });
+            for (const file of files) {
+              store.dispatch({ variant: "SET_SUCCESS", file });
+            }
           }
         } catch (error) {
-          store.dispatch({
-            variant: "SET_ERROR",
-            file,
-            error: error instanceof Error ? error.message : "Upload failed",
-          });
+          const errorMessage =
+            error instanceof Error ? error.message : "Upload failed";
+          for (const file of files) {
+            store.dispatch({
+              variant: "SET_ERROR",
+              file,
+              error: errorMessage,
+            });
+          }
         }
       },
       [store, propsRef.current.onUpload],

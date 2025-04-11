@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
+import FileUploadDirectUploadDemo from "@/registry/default/examples/file-upload-direct-upload-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -42,6 +43,7 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
+      <FileUploadDirectUploadDemo />
       <div className="grid gap-8">
         <Combobox className="w-[15rem]">
           <ComboboxAnchor>

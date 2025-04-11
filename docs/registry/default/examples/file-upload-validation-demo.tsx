@@ -19,7 +19,7 @@ export default function FileUploadValidationDemo() {
   const [files, setFiles] = React.useState<File[]>([]);
 
   const onFileValidate = React.useCallback(
-    (file: File): string | undefined => {
+    (file: File): string | null => {
       // Validate max files
       if (files.length >= 2) {
         return "You can only upload up to 2 files";
@@ -36,7 +36,7 @@ export default function FileUploadValidationDemo() {
         return `File size must be less than ${MAX_SIZE / (1024 * 1024)}MB`;
       }
 
-      return undefined;
+      return null;
     },
     [files],
   );
