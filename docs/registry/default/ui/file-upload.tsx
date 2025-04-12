@@ -353,19 +353,14 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
     const dir = useDirection(dirProp);
     const propsRef = useAsRef(props);
     const listeners = useLazyRef(() => new Set<() => void>()).current;
-    const state = useLazyRef(() => ({
-      files: new Map<File, FileState>(),
-      value: value ?? defaultValue ?? [],
-    })).current;
-
-    console.log({ files: Array.from(state.files.values()) });
+    const files = useLazyRef(() => new Map<File, FileState>()).current;
 
     const inputRef = React.useRef<HTMLInputElement>(null);
     const isControlled = value !== undefined;
 
     const store = React.useMemo(
-      () => createStore(listeners, state.files, onValueChange, invalid),
-      [listeners, state.files, onValueChange, invalid],
+      () => createStore(listeners, files, onValueChange, invalid),
+      [listeners, files, onValueChange, invalid],
     );
 
     const contextValue = React.useMemo<FileUploadContextValue>(
