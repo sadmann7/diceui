@@ -59,7 +59,7 @@ export default function PlaygroundPage() {
             ))}
           </ComboboxContent>
         </Combobox>
-        <Command value="heelflip" className="max-w-[15rem] border">
+        <Command defaultValue="heelflip" className="max-w-[15rem] border">
           <CommandInput placeholder="Search tricks..." />
           <CommandEmpty>No tricks found.</CommandEmpty>
           <CommandList>
