@@ -1,18 +1,23 @@
 "use client";
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import {
   FullscreenIcon,
+  GaugeIcon,
   MinimizeIcon,
   PauseIcon,
   PictureInPicture2Icon,
   PictureInPictureIcon,
   PlayIcon,
-  RepeatIcon,
-  ShuffleIcon,
-  SkipBackIcon,
-  SkipForwardIcon,
+  SubtitlesIcon,
   Volume2Icon,
   VolumeIcon,
   VolumeXIcon,
@@ -29,6 +34,8 @@ const FULLSCREEN_NAME = "MediaPlayerFullscreen";
 const VIDEO_NAME = "MediaPlayerVideo";
 const AUDIO_NAME = "MediaPlayerAudio";
 const PIP_NAME = "MediaPlayerPiP";
+const PLAYBACK_SPEED_NAME = "MediaPlayerPlaybackSpeed";
+const CAPTIONS_NAME = "MediaPlayerCaptions";
 
 const MEDIA_PLAYER_ERRORS = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` must be used as root component`,
@@ -41,6 +48,8 @@ const MEDIA_PLAYER_ERRORS = {
   [VIDEO_NAME]: `\`${VIDEO_NAME}\` must be within \`${ROOT_NAME}\``,
   [AUDIO_NAME]: `\`${AUDIO_NAME}\` must be within \`${ROOT_NAME}\``,
   [PIP_NAME]: `\`${PIP_NAME}\` must be within \`${ROOT_NAME}\``,
+  [PLAYBACK_SPEED_NAME]: `\`${PLAYBACK_SPEED_NAME}\` must be within \`${ROOT_NAME}\``,
+  [CAPTIONS_NAME]: `\`${CAPTIONS_NAME}\` must be within \`${ROOT_NAME}\``,
 } as const;
 
 const useIsomorphicLayoutEffect =
@@ -82,6 +91,7 @@ interface MediaState {
   isLooping: boolean;
   playbackRate: number;
   isPictureInPicture: boolean;
+  captionsEnabled: boolean;
 }
 
 interface StoreState {
@@ -98,7 +108,8 @@ type StoreAction =
   | { variant: "SET_FULLSCREEN"; isFullscreen: boolean }
   | { variant: "SET_LOOP"; isLooping: boolean }
   | { variant: "SET_PLAYBACK_RATE"; playbackRate: number }
-  | { variant: "SET_PICTURE_IN_PICTURE"; isPictureInPicture: boolean };
+  | { variant: "SET_PICTURE_IN_PICTURE"; isPictureInPicture: boolean }
+  | { variant: "SET_CAPTIONS_ENABLED"; captionsEnabled: boolean };
 
 function createStore(listeners: Set<() => void>, initialState: MediaState) {
   let state: StoreState = {
@@ -172,6 +183,12 @@ function createStore(listeners: Set<() => void>, initialState: MediaState) {
             ...state.media,
             isPictureInPicture: action.isPictureInPicture,
           },
+        };
+        break;
+      case "SET_CAPTIONS_ENABLED":
+        state = {
+          ...state,
+          media: { ...state.media, captionsEnabled: action.captionsEnabled },
         };
         break;
     }
@@ -304,6 +321,7 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
         isLooping: defaultLoop,
         playbackRate: 1,
         isPictureInPicture: false,
+        captionsEnabled: false,
       }),
       [defaultPlaying, defaultMuted, defaultVolume, defaultLoop],
     );
@@ -392,6 +410,13 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
         });
       };
 
+      const onRateChange = () => {
+        store.dispatch({
+          variant: "SET_PLAYBACK_RATE",
+          playbackRate: media.playbackRate,
+        });
+      };
+
       media.addEventListener("timeupdate", onTimeUpdate);
       media.addEventListener("durationchange", onDurationChange);
       media.addEventListener("progress", onProgress);
@@ -399,6 +424,7 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
       media.addEventListener("pause", onPause);
       media.addEventListener("ended", onEnded);
       media.addEventListener("volumechange", onVolumeChange);
+      media.addEventListener("ratechange", onRateChange);
       document.addEventListener("fullscreenchange", onFullscreenChange);
 
       // Add PiP event listeners if the media is a video element
@@ -415,9 +441,9 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
         media.removeEventListener("pause", onPause);
         media.removeEventListener("ended", onEnded);
         media.removeEventListener("volumechange", onVolumeChange);
+        media.removeEventListener("ratechange", onRateChange);
         document.removeEventListener("fullscreenchange", onFullscreenChange);
 
-        // Remove PiP event listeners if the media is a video element
         if (media instanceof HTMLVideoElement) {
           media.removeEventListener("enterpictureinpicture", onEnteredPiP);
           media.removeEventListener("leavepictureinpicture", onExitedPiP);
@@ -872,6 +898,132 @@ const MediaPlayerAudio = React.forwardRef<
 });
 MediaPlayerAudio.displayName = AUDIO_NAME;
 
+// Add PlaybackSpeed component
+interface MediaPlayerPlaybackSpeedProps
+  extends React.ComponentPropsWithoutRef<"div"> {
+  asChild?: boolean;
+  speeds?: number[];
+}
+
+const MediaPlayerPlaybackSpeed = React.forwardRef<
+  HTMLDivElement,
+  MediaPlayerPlaybackSpeedProps
+>((props, forwardedRef) => {
+  const {
+    asChild,
+    speeds = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2],
+    className,
+    ...playbackSpeedProps
+  } = props;
+  const context = useMediaPlayerContext(PLAYBACK_SPEED_NAME);
+  const store = useStoreContext(PLAYBACK_SPEED_NAME);
+  const playbackRate = useStore((state) => state.media.playbackRate);
+
+  const onPlaybackRateChange = React.useCallback(
+    (value: string) => {
+      const media = context.mediaRef.current;
+      if (!media) return;
+
+      const rate = Number.parseFloat(value);
+      media.playbackRate = rate;
+      store.dispatch({ variant: "SET_PLAYBACK_RATE", playbackRate: rate });
+    },
+    [context.mediaRef, store],
+  );
+
+  const PlaybackSpeedPrimitive = asChild ? Slot : "div";
+
+  return (
+    <PlaybackSpeedPrimitive
+      data-slot="media-player-playback-speed"
+      dir={context.dir}
+      {...playbackSpeedProps}
+      ref={forwardedRef}
+      className={cn("flex items-center gap-1.5", className)}
+    >
+      <GaugeIcon className="h-4 w-4" />
+      <Select
+        value={playbackRate.toString()}
+        onValueChange={onPlaybackRateChange}
+      >
+        <SelectTrigger className="h-7 w-[70px] border-none bg-transparent px-2 py-1 text-xs shadow-none hover:bg-accent hover:text-accent-foreground focus:ring-0">
+          <SelectValue>{playbackRate}x</SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          {speeds.map((speed) => (
+            <SelectItem key={speed} value={speed.toString()}>
+              {speed}x
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </PlaybackSpeedPrimitive>
+  );
+});
+MediaPlayerPlaybackSpeed.displayName = PLAYBACK_SPEED_NAME;
+
+// Add Captions component
+interface MediaPlayerCaptionsProps
+  extends React.ComponentPropsWithoutRef<"button"> {
+  asChild?: boolean;
+}
+
+const MediaPlayerCaptions = React.forwardRef<
+  HTMLButtonElement,
+  MediaPlayerCaptionsProps
+>((props, forwardedRef) => {
+  const { asChild, ...captionsProps } = props;
+  const context = useMediaPlayerContext(CAPTIONS_NAME);
+  const store = useStoreContext(CAPTIONS_NAME);
+  const captionsEnabled = useStore((state) => state.media.captionsEnabled);
+
+  const onToggleCaptions = React.useCallback(() => {
+    const media = context.mediaRef.current;
+    if (!media) return;
+
+    // Toggle captions - this assumes you're using the tracks API
+    if (media instanceof HTMLVideoElement && media.textTracks.length > 0) {
+      for (let i = 0; i < media.textTracks.length; i++) {
+        const track = media.textTracks[i];
+        // Only toggle if it's a caption or subtitle track
+        if (
+          track &&
+          (track.kind === "captions" || track.kind === "subtitles")
+        ) {
+          track.mode = captionsEnabled ? "hidden" : "showing";
+        }
+      }
+    }
+
+    store.dispatch({
+      variant: "SET_CAPTIONS_ENABLED",
+      captionsEnabled: !captionsEnabled,
+    });
+  }, [context.mediaRef, store, captionsEnabled]);
+
+  const CaptionsButtonPrimitive = asChild ? Slot : "button";
+
+  return (
+    <CaptionsButtonPrimitive
+      type="button"
+      aria-label={captionsEnabled ? "Disable captions" : "Enable captions"}
+      data-state={captionsEnabled ? "enabled" : "disabled"}
+      data-slot="media-player-captions"
+      {...captionsProps}
+      ref={forwardedRef}
+      onClick={onToggleCaptions}
+    >
+      <SubtitlesIcon
+        className={cn(
+          "h-4 w-4",
+          captionsEnabled ? "text-primary" : "text-muted-foreground",
+        )}
+      />
+    </CaptionsButtonPrimitive>
+  );
+});
+MediaPlayerCaptions.displayName = CAPTIONS_NAME;
+
 const MediaPlayer = MediaPlayerRoot;
 const Root = MediaPlayerRoot;
 const Controls = MediaPlayerControls;
@@ -883,6 +1035,8 @@ const Fullscreen = MediaPlayerFullscreen;
 const PiP = MediaPlayerPiP;
 const Video = MediaPlayerVideo;
 const Audio = MediaPlayerAudio;
+const PlaybackSpeed = MediaPlayerPlaybackSpeed;
+const Captions = MediaPlayerCaptions;
 
 export {
   MediaPlayer,
@@ -895,6 +1049,8 @@ export {
   MediaPlayerPiP,
   MediaPlayerVideo,
   MediaPlayerAudio,
+  MediaPlayerPlaybackSpeed,
+  MediaPlayerCaptions,
   //
   Root,
   Controls,
@@ -906,6 +1062,8 @@ export {
   PiP,
   Video,
   Audio,
+  PlaybackSpeed,
+  Captions,
   //
   useStore as useMediaPlayer,
 };
