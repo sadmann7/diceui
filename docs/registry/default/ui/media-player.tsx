@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import {
   CaptionsOffIcon,
+  DownloadIcon,
   Maximize2Icon,
   Minimize2Icon,
   PauseIcon,
@@ -28,7 +29,7 @@ import * as React from "react";
 
 const ROOT_NAME = "MediaPlayer";
 const CONTROLS_NAME = "MediaPlayerControls";
-const PLAY_BUTTON_NAME = "MediaPlayerPlayButton";
+const PLAY_NAME = "MediaPlayerPlay";
 const SEEK_NAME = "MediaPlayerSeek";
 const VOLUME_NAME = "MediaPlayerVolume";
 const TIME_NAME = "MediaPlayerTime";
@@ -38,11 +39,12 @@ const AUDIO_NAME = "MediaPlayerAudio";
 const PIP_NAME = "MediaPlayerPiP";
 const PLAYBACK_SPEED_NAME = "MediaPlayerPlaybackSpeed";
 const CAPTIONS_NAME = "MediaPlayerCaptions";
+const DOWNLOAD_NAME = "MediaPlayerDownload";
 
 const MEDIA_PLAYER_ERRORS = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` must be used as root component`,
   [CONTROLS_NAME]: `\`${CONTROLS_NAME}\` must be within \`${ROOT_NAME}\``,
-  [PLAY_BUTTON_NAME]: `\`${PLAY_BUTTON_NAME}\` must be within \`${ROOT_NAME}\``,
+  [PLAY_NAME]: `\`${PLAY_NAME}\` must be within \`${ROOT_NAME}\``,
   [SEEK_NAME]: `\`${SEEK_NAME}\` must be within \`${ROOT_NAME}\``,
   [VOLUME_NAME]: `\`${VOLUME_NAME}\` must be within \`${ROOT_NAME}\``,
   [TIME_NAME]: `\`${TIME_NAME}\` must be within \`${ROOT_NAME}\``,
@@ -52,6 +54,7 @@ const MEDIA_PLAYER_ERRORS = {
   [PIP_NAME]: `\`${PIP_NAME}\` must be within \`${ROOT_NAME}\``,
   [PLAYBACK_SPEED_NAME]: `\`${PLAYBACK_SPEED_NAME}\` must be within \`${ROOT_NAME}\``,
   [CAPTIONS_NAME]: `\`${CAPTIONS_NAME}\` must be within \`${ROOT_NAME}\``,
+  [DOWNLOAD_NAME]: `\`${DOWNLOAD_NAME}\` must be within \`${ROOT_NAME}\``,
 } as const;
 
 const useIsomorphicLayoutEffect =
@@ -530,16 +533,16 @@ const MediaPlayerControls = React.forwardRef<
 });
 MediaPlayerControls.displayName = CONTROLS_NAME;
 
-interface MediaPlayerPlayButtonProps
+interface MediaPlayerPlayProps
   extends React.ComponentPropsWithoutRef<typeof Button> {}
 
-const MediaPlayerPlayButton = React.forwardRef<
+const MediaPlayerPlay = React.forwardRef<
   HTMLButtonElement,
-  MediaPlayerPlayButtonProps
+  MediaPlayerPlayProps
 >((props, forwardedRef) => {
   const { asChild, children, className, ...playButtonProps } = props;
 
-  const context = useMediaPlayerContext(PLAY_BUTTON_NAME);
+  const context = useMediaPlayerContext(PLAY_NAME);
   const isPlaying = useStore((state) => state.media.isPlaying);
 
   const onPlay = React.useCallback(
@@ -592,7 +595,7 @@ const MediaPlayerPlayButton = React.forwardRef<
     </Button>
   );
 });
-MediaPlayerPlayButton.displayName = PLAY_BUTTON_NAME;
+MediaPlayerPlay.displayName = PLAY_NAME;
 
 interface MediaPlayerSeekProps extends React.ComponentPropsWithoutRef<"input"> {
   asChild?: boolean;
@@ -1108,10 +1111,59 @@ const MediaPlayerCaptions = React.forwardRef<
 });
 MediaPlayerCaptions.displayName = CAPTIONS_NAME;
 
+interface MediaPlayerDownloadProps
+  extends React.ComponentPropsWithoutRef<typeof Button> {}
+
+const MediaPlayerDownload = React.forwardRef<
+  HTMLButtonElement,
+  MediaPlayerDownloadProps
+>((props, forwardedRef) => {
+  const { asChild, children, className, ...downloadProps } = props;
+
+  const context = useMediaPlayerContext(DOWNLOAD_NAME);
+  const mediaUrl = context.mediaRef.current?.currentSrc;
+
+  const onDownload = React.useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      props.onClick?.(event);
+
+      if (event.defaultPrevented) return;
+
+      const media = context.mediaRef.current;
+      if (!media || !mediaUrl) return;
+
+      const link = document.createElement("a");
+      link.href = mediaUrl;
+      link.download = "";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    },
+    [context.mediaRef, mediaUrl, props.onClick],
+  );
+
+  return (
+    <Button
+      type="button"
+      aria-label="Download"
+      data-slot="media-player-download"
+      {...downloadProps}
+      ref={forwardedRef}
+      variant="ghost"
+      size="icon"
+      className={cn("size-8", className)}
+      onClick={onDownload}
+    >
+      {children ?? <DownloadIcon />}
+    </Button>
+  );
+});
+MediaPlayerDownload.displayName = DOWNLOAD_NAME;
+
 const MediaPlayer = MediaPlayerRoot;
 const Root = MediaPlayerRoot;
 const Controls = MediaPlayerControls;
-const PlayButton = MediaPlayerPlayButton;
+const Play = MediaPlayerPlay;
 const Seek = MediaPlayerSeek;
 const Volume = MediaPlayerVolume;
 const Time = MediaPlayerTime;
@@ -1121,11 +1173,12 @@ const Video = MediaPlayerVideo;
 const Audio = MediaPlayerAudio;
 const PlaybackSpeed = MediaPlayerPlaybackSpeed;
 const Captions = MediaPlayerCaptions;
+const Download = MediaPlayerDownload;
 
 export {
   MediaPlayer,
   MediaPlayerControls,
-  MediaPlayerPlayButton,
+  MediaPlayerPlay,
   MediaPlayerSeek,
   MediaPlayerVolume,
   MediaPlayerTime,
@@ -1135,10 +1188,11 @@ export {
   MediaPlayerAudio,
   MediaPlayerPlaybackSpeed,
   MediaPlayerCaptions,
+  MediaPlayerDownload,
   //
   Root,
   Controls,
-  PlayButton,
+  Play,
   Seek,
   Volume,
   Time,
@@ -1148,6 +1202,7 @@ export {
   Audio,
   PlaybackSpeed,
   Captions,
+  Download,
   //
   useStore as useMediaPlayer,
 };

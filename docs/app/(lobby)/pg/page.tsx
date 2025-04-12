@@ -54,8 +54,8 @@ export default function PlaygroundPage() {
             <track kind="captions" />
           </MediaPlayer.Video>
           <MediaPlayer.Controls>
-            <MediaPlayer.PlayButton />
-            <MediaPlayer.Seek withTime />
+            <MediaPlayer.Play />
+            <MediaPlayer.Seek />
             <MediaPlayer.Time />
             <MediaPlayer.PlaybackSpeed />
             <MediaPlayer.Captions />
