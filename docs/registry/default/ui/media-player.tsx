@@ -355,6 +355,13 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
         propsRef.current.onMuted?.(media.muted);
       };
 
+      const onFullscreenChange = () => {
+        store.dispatch({
+          variant: "SET_FULLSCREEN",
+          isFullscreen: !!document.fullscreenElement,
+        });
+      };
+
       media.addEventListener("timeupdate", onTimeUpdate);
       media.addEventListener("durationchange", onDurationChange);
       media.addEventListener("progress", onProgress);
@@ -362,6 +369,7 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
       media.addEventListener("pause", onPause);
       media.addEventListener("ended", onEnded);
       media.addEventListener("volumechange", onVolumeChange);
+      document.addEventListener("fullscreenchange", onFullscreenChange);
 
       return () => {
         media.removeEventListener("timeupdate", onTimeUpdate);
@@ -371,6 +379,7 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
         media.removeEventListener("pause", onPause);
         media.removeEventListener("ended", onEnded);
         media.removeEventListener("volumechange", onVolumeChange);
+        document.removeEventListener("fullscreenchange", onFullscreenChange);
       };
     }, [store, propsRef]);
 
@@ -387,6 +396,7 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
             ref={forwardedRef}
             className={cn(
               "relative flex flex-col overflow-hidden rounded-lg bg-background",
+              "[:fullscreen_&]:flex [:fullscreen_&]:h-full [:fullscreen_&]:max-h-screen [:fullscreen_&]:flex-col [:fullscreen_&]:justify-between",
               className,
             )}
           >
@@ -410,6 +420,7 @@ const MediaPlayerControls = React.forwardRef<
 >((props, forwardedRef) => {
   const { asChild, className, ...controlsProps } = props;
   const context = useMediaPlayerContext(CONTROLS_NAME);
+  const isFullscreen = useStore((state) => state.media.isFullscreen);
 
   const ControlsPrimitive = asChild ? Slot : "div";
 
@@ -421,6 +432,9 @@ const MediaPlayerControls = React.forwardRef<
       ref={forwardedRef}
       className={cn(
         "relative flex items-center gap-2 bg-gradient-to-t from-background/80 to-transparent p-2",
+        "[:fullscreen_&]:z-50 [:fullscreen_&]:bg-gradient-to-t [:fullscreen_&]:from-black/80 [:fullscreen_&]:to-transparent [:fullscreen_&]:p-4",
+        isFullscreen &&
+          "z-50 bg-gradient-to-t from-black/80 to-transparent p-4",
         className,
       )}
     />
@@ -664,7 +678,12 @@ const MediaPlayerFullscreen = React.forwardRef<
     if (!media) return;
 
     if (!document.fullscreenElement) {
-      media.requestFullscreen();
+      const container = media.closest('[data-slot="media-player"]');
+      if (container) {
+        container.requestFullscreen();
+      } else {
+        media.requestFullscreen();
+      }
       store.dispatch({ variant: "SET_FULLSCREEN", isFullscreen: true });
     } else {
       document.exitFullscreen();
@@ -693,13 +712,14 @@ MediaPlayerFullscreen.displayName = FULLSCREEN_NAME;
 interface MediaPlayerVideoProps
   extends React.ComponentPropsWithoutRef<"video"> {
   asChild?: boolean;
+  controls?: boolean;
 }
 
 const MediaPlayerVideo = React.forwardRef<
   HTMLVideoElement,
   MediaPlayerVideoProps
 >((props, forwardedRef) => {
-  const { asChild, className, ...videoProps } = props;
+  const { asChild, className, controls = false, ...videoProps } = props;
   const context = useMediaPlayerContext(VIDEO_NAME);
   const isLooping = useStore((state) => state.media.isLooping);
 
@@ -718,6 +738,9 @@ const MediaPlayerVideo = React.forwardRef<
       playsInline
       preload="metadata"
       data-slot="media-player-video"
+      disablePictureInPicture
+      controlsList="nodownload noremoteplayback"
+      controls={controls}
       {...videoProps}
       className={cn("h-full w-full", className)}
     />
@@ -790,5 +813,6 @@ export {
   Fullscreen,
   Video,
   Audio,
+  //
   useStore as useMediaPlayer,
 };
