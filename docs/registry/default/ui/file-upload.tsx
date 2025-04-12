@@ -90,7 +90,7 @@ type StoreAction =
 function createStore(
   listeners: Set<() => void>,
   files: Map<File, FileState>,
-  onFilesChange?: (files: File[]) => void,
+  onValueChange?: (files: File[]) => void,
   invalid?: boolean,
 ) {
   const initialState: StoreState = {
@@ -112,16 +112,23 @@ function createStore(
           });
         }
 
-        if (onFilesChange) {
+        if (onValueChange) {
           const fileList = Array.from(files.values()).map(
             (fileState) => fileState.file,
           );
-          onFilesChange(fileList);
+          onValueChange(fileList);
         }
         return { ...state, files };
       }
 
       case "SET_FILES": {
+        const newFileSet = new Set(action.files);
+        for (const existingFile of files.keys()) {
+          if (!newFileSet.has(existingFile)) {
+            files.delete(existingFile);
+          }
+        }
+
         for (const file of action.files) {
           const existingState = files.get(file);
           if (!existingState) {
@@ -174,11 +181,11 @@ function createStore(
       case "REMOVE_FILE": {
         files.delete(action.file);
 
-        if (onFilesChange) {
+        if (onValueChange) {
           const fileList = Array.from(files.values()).map(
             (fileState) => fileState.file,
           );
-          onFilesChange(fileList);
+          onValueChange(fileList);
         }
         return { ...state, files };
       }
@@ -193,8 +200,8 @@ function createStore(
 
       case "CLEAR": {
         files.clear();
-        if (onFilesChange) {
-          onFilesChange([]);
+        if (onValueChange) {
+          onValueChange([]);
         }
         return { ...state, files, invalid: false };
       }
@@ -351,6 +358,8 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
       value: value ?? defaultValue ?? [],
     })).current;
 
+    console.log({ files: Array.from(state.files.values()) });
+
     const inputRef = React.useRef<HTMLInputElement>(null);
     const isControlled = value !== undefined;
 
@@ -371,7 +380,7 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
       [dropzoneId, inputId, listId, dir, disabled],
     );
 
-    React.useEffect(() => {
+    useIsomorphicLayoutEffect(() => {
       if (isControlled) {
         store.dispatch({ variant: "SET_FILES", files: value });
       } else if (

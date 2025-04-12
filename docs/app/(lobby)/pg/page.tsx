@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
+import FileUploadDirectUploadDemo from "@/registry/default/examples/file-upload-direct-upload-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -63,6 +64,7 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <div className="grid gap-8">
+        <FileUploadDirectUploadDemo />
         <FileUpload
           value={files}
           onValueChange={setFiles}
@@ -126,7 +128,7 @@ export default function PlaygroundPage() {
             ))}
           </ComboboxContent>
         </Combobox>
-        <Command value="heelflip" className="max-w-[15rem] border">
+        <Command defaultValue="heelflip" className="max-w-[15rem] border">
           <CommandInput placeholder="Search tricks..." />
           <CommandEmpty>No tricks found.</CommandEmpty>
           <CommandList>
