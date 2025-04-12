@@ -201,11 +201,29 @@ Shows the upload progress for a file.
 
 ### ItemDelete
 
-A button to remove a file from the upload list.
+A button to remove a file from the list.
 
 <AutoTypeTable
   path="./types/docs/file-upload.ts"
   name="ItemDeleteProps"
+/>
+
+### Clear
+
+A button to clear all files from the list.
+
+<AutoTypeTable
+  path="./types/docs/file-upload.ts"
+  name="ClearProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the clear button is disabled.",
+    },
+  ]}
 />
 
 ## Accessibility
