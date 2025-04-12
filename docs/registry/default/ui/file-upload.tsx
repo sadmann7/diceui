@@ -92,7 +92,7 @@ type StoreAction =
 function createStore(
   listeners: Set<() => void>,
   files: Map<File, FileState>,
-  onFilesChange?: (files: File[]) => void,
+  onValueChange?: (files: File[]) => void,
   invalid?: boolean,
 ) {
   const initialState: StoreState = {
@@ -114,11 +114,11 @@ function createStore(
           });
         }
 
-        if (onFilesChange) {
+        if (onValueChange) {
           const fileList = Array.from(files.values()).map(
             (fileState) => fileState.file,
           );
-          onFilesChange(fileList);
+          onValueChange(fileList);
         }
         return { ...state, files };
       }
@@ -183,11 +183,11 @@ function createStore(
       case "REMOVE_FILE": {
         files.delete(action.file);
 
-        if (onFilesChange) {
+        if (onValueChange) {
           const fileList = Array.from(files.values()).map(
             (fileState) => fileState.file,
           );
-          onFilesChange(fileList);
+          onValueChange(fileList);
         }
         return { ...state, files };
       }
@@ -202,8 +202,8 @@ function createStore(
 
       case "CLEAR": {
         files.clear();
-        if (onFilesChange) {
-          onFilesChange([]);
+        if (onValueChange) {
+          onValueChange([]);
         }
         return { ...state, files, invalid: false };
       }
