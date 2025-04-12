@@ -130,54 +130,63 @@ function createStore(listeners: Set<() => void>, initialState: MediaState) {
           media: { ...state.media, isPlaying: action.isPlaying },
         };
         break;
+
       case "SET_MUTED":
         state = {
           ...state,
           media: { ...state.media, isMuted: action.isMuted },
         };
         break;
+
       case "SET_VOLUME":
         state = {
           ...state,
           media: { ...state.media, volume: action.volume },
         };
         break;
+
       case "SET_CURRENT_TIME":
         state = {
           ...state,
           media: { ...state.media, currentTime: action.currentTime },
         };
         break;
+
       case "SET_DURATION":
         state = {
           ...state,
           media: { ...state.media, duration: action.duration },
         };
         break;
+
       case "SET_BUFFERED":
         state = {
           ...state,
           media: { ...state.media, buffered: action.buffered },
         };
         break;
+
       case "SET_FULLSCREEN":
         state = {
           ...state,
           media: { ...state.media, isFullscreen: action.isFullscreen },
         };
         break;
+
       case "SET_LOOP":
         state = {
           ...state,
           media: { ...state.media, isLooping: action.isLooping },
         };
         break;
+
       case "SET_PLAYBACK_RATE":
         state = {
           ...state,
           media: { ...state.media, playbackRate: action.playbackRate },
         };
         break;
+
       case "SET_PICTURE_IN_PICTURE":
         state = {
           ...state,
@@ -187,6 +196,7 @@ function createStore(listeners: Set<() => void>, initialState: MediaState) {
           },
         };
         break;
+
       case "SET_CAPTIONS_ENABLED":
         state = {
           ...state,
@@ -450,7 +460,15 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
           media.removeEventListener("leavepictureinpicture", onExitedPiP);
         }
       };
-    }, [store, propsRef]);
+    }, [
+      store,
+      propsRef.current.onTimeUpdate,
+      propsRef.current.onVolumeChange,
+      propsRef.current.onMuted,
+      propsRef.current.onPlay,
+      propsRef.current.onPause,
+      propsRef.current.onEnded,
+    ]);
 
     const RootPrimitive = asChild ? Slot : "div";
 
@@ -488,6 +506,7 @@ const MediaPlayerControls = React.forwardRef<
   MediaPlayerControlsProps
 >((props, forwardedRef) => {
   const { asChild, className, ...controlsProps } = props;
+
   const context = useMediaPlayerContext(CONTROLS_NAME);
   const isFullscreen = useStore((state) => state.media.isFullscreen);
 
@@ -496,14 +515,14 @@ const MediaPlayerControls = React.forwardRef<
   return (
     <ControlsPrimitive
       data-slot="media-player-controls"
+      data-state={isFullscreen ? "fullscreen" : "windowed"}
       dir={context.dir}
       {...controlsProps}
       ref={forwardedRef}
       className={cn(
-        "relative flex items-center gap-2 bg-gradient-to-t from-background/80 to-transparent p-2",
-        "[:fullscreen_&]:z-50 [:fullscreen_&]:bg-gradient-to-t [:fullscreen_&]:from-black/80 [:fullscreen_&]:to-transparent [:fullscreen_&]:p-4",
-        isFullscreen &&
-          "z-50 bg-gradient-to-t from-black/80 to-transparent p-4",
+        "absolute right-0 bottom-0 left-0 flex items-center gap-2 bg-gradient-to-t from-background/80 to-transparent p-2",
+        "[:fullscreen_&]:absolute [:fullscreen_&]:right-0 [:fullscreen_&]:bottom-0 [:fullscreen_&]:left-0 [:fullscreen_&]:z-50 [:fullscreen_&]:bg-gradient-to-t [:fullscreen_&]:from-black/80 [:fullscreen_&]:to-transparent [:fullscreen_&]:p-4",
+        "data-[state=fullscreen]:absolute data-[state=fullscreen]:right-0 data-[state=fullscreen]:bottom-0 data-[state=fullscreen]:left-0 data-[state=fullscreen]:z-50 data-[state=fullscreen]:bg-gradient-to-t data-[state=fullscreen]:from-black/80 data-[state=fullscreen]:to-transparent data-[state=fullscreen]:p-4",
         className,
       )}
     />
@@ -519,6 +538,7 @@ const MediaPlayerPlayButton = React.forwardRef<
   MediaPlayerPlayButtonProps
 >((props, forwardedRef) => {
   const { asChild, children, className, ...playButtonProps } = props;
+
   const context = useMediaPlayerContext(PLAY_BUTTON_NAME);
   const isPlaying = useStore((state) => state.media.isPlaying);
 
@@ -583,6 +603,7 @@ const MediaPlayerSeek = React.forwardRef<
   MediaPlayerSeekProps
 >((props, forwardedRef) => {
   const { asChild, className, ...seekProps } = props;
+
   const context = useMediaPlayerContext(SEEK_NAME);
   const store = useStoreContext(SEEK_NAME);
   const currentTime = useStore((state) => state.media.currentTime);
@@ -637,6 +658,7 @@ const MediaPlayerVolume = React.forwardRef<
   MediaPlayerVolumeProps
 >((props, forwardedRef) => {
   const { asChild, className, ...volumeProps } = props;
+
   const context = useMediaPlayerContext(VOLUME_NAME);
   const store = useStoreContext(VOLUME_NAME);
   const volume = useStore((state) => state.media.volume);
@@ -737,6 +759,7 @@ interface MediaPlayerTimeProps extends React.ComponentPropsWithoutRef<"div"> {
 const MediaPlayerTime = React.forwardRef<HTMLDivElement, MediaPlayerTimeProps>(
   (props, forwardedRef) => {
     const { asChild, className, ...timeProps } = props;
+
     const context = useMediaPlayerContext(TIME_NAME);
     const currentTime = useStore((state) => state.media.currentTime);
     const duration = useStore((state) => state.media.duration);
@@ -768,6 +791,7 @@ const MediaPlayerFullscreen = React.forwardRef<
   MediaPlayerFullscreenProps
 >((props, forwardedRef) => {
   const { asChild, children, className, ...fullscreenProps } = props;
+
   const context = useMediaPlayerContext(FULLSCREEN_NAME);
   const store = useStoreContext(FULLSCREEN_NAME);
   const isFullscreen = useStore((state) => state.media.isFullscreen);
@@ -783,6 +807,7 @@ const MediaPlayerFullscreen = React.forwardRef<
 
       if (!document.fullscreenElement) {
         const container = media.closest('[data-slot="media-player"]');
+        console.log({ container });
         if (container) {
           container.requestFullscreen();
         } else {
@@ -822,6 +847,7 @@ interface MediaPlayerPiPProps
 const MediaPlayerPiP = React.forwardRef<HTMLButtonElement, MediaPlayerPiPProps>(
   (props, forwardedRef) => {
     const { asChild, children, className, ...pipButtonProps } = props;
+
     const context = useMediaPlayerContext(PIP_NAME);
     const isPictureInPicture = useStore(
       (state) => state.media.isPictureInPicture,
@@ -876,6 +902,7 @@ const MediaPlayerVideo = React.forwardRef<
   MediaPlayerVideoProps
 >((props, forwardedRef) => {
   const { asChild, className, controls = false, ...videoProps } = props;
+
   const context = useMediaPlayerContext(VIDEO_NAME);
   const isLooping = useStore((state) => state.media.isLooping);
   const composedRef = useComposedRefs(forwardedRef, context.mediaRef);
@@ -908,6 +935,7 @@ const MediaPlayerAudio = React.forwardRef<
   MediaPlayerAudioProps
 >((props, forwardedRef) => {
   const { asChild, className, ...audioProps } = props;
+
   const context = useMediaPlayerContext(AUDIO_NAME);
   const isLooping = useStore((state) => state.media.isLooping);
   const composedRef = useComposedRefs(forwardedRef, context.mediaRef);
@@ -943,6 +971,7 @@ const MediaPlayerPlaybackSpeed = React.forwardRef<
     className,
     ...playbackSpeedProps
   } = props;
+
   const context = useMediaPlayerContext(PLAYBACK_SPEED_NAME);
   const store = useStoreContext(PLAYBACK_SPEED_NAME);
   const playbackRate = useStore((state) => state.media.playbackRate);
@@ -997,33 +1026,40 @@ const MediaPlayerCaptions = React.forwardRef<
   MediaPlayerCaptionsProps
 >((props, forwardedRef) => {
   const { asChild, children, className, ...captionsProps } = props;
+
   const context = useMediaPlayerContext(CAPTIONS_NAME);
   const store = useStoreContext(CAPTIONS_NAME);
   const captionsEnabled = useStore((state) => state.media.captionsEnabled);
 
-  const onToggleCaptions = React.useCallback(() => {
-    const media = context.mediaRef.current;
-    if (!media) return;
+  const onToggleCaptions = React.useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      props.onClick?.(event);
 
-    // Toggle captions - this assumes you're using the tracks API
-    if (media instanceof HTMLVideoElement && media.textTracks.length > 0) {
-      for (let i = 0; i < media.textTracks.length; i++) {
-        const track = media.textTracks[i];
-        // Only toggle if it's a caption or subtitle track
-        if (
-          track &&
-          (track.kind === "captions" || track.kind === "subtitles")
-        ) {
-          track.mode = captionsEnabled ? "hidden" : "showing";
+      if (event.defaultPrevented) return;
+      const media = context.mediaRef.current;
+      if (!media) return;
+
+      // Toggle captions - this assumes you're using the tracks API
+      if (media instanceof HTMLVideoElement && media.textTracks.length > 0) {
+        for (let i = 0; i < media.textTracks.length; i++) {
+          const track = media.textTracks[i];
+          // Only toggle if it's a caption or subtitle track
+          if (
+            track &&
+            (track.kind === "captions" || track.kind === "subtitles")
+          ) {
+            track.mode = captionsEnabled ? "hidden" : "showing";
+          }
         }
       }
-    }
 
-    store.dispatch({
-      variant: "SET_CAPTIONS_ENABLED",
-      captionsEnabled: !captionsEnabled,
-    });
-  }, [context.mediaRef, store, captionsEnabled]);
+      store.dispatch({
+        variant: "SET_CAPTIONS_ENABLED",
+        captionsEnabled: !captionsEnabled,
+      });
+    },
+    [context.mediaRef, props.onClick, store, captionsEnabled],
+  );
 
   return (
     <Button
