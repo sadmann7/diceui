@@ -374,13 +374,24 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
     const dir = useDirection(dirProp);
     const propsRef = useAsRef(props);
     const listeners = useLazyRef(() => new Set<() => void>()).current;
-    const files = useLazyRef<Map<File, FileState>>(() => new Map()).current;
+    const state = useLazyRef(() => ({
+      files: new Map<File, FileState>(),
+      value: value ?? defaultValue ?? [],
+    })).current;
+
     const inputRef = React.useRef<HTMLInputElement>(null);
     const isControlled = value !== undefined;
 
     const store = React.useMemo(
-      () => createStore(listeners, files, onValueChange, invalid, isControlled),
-      [listeners, files, onValueChange, invalid, isControlled],
+      () =>
+        createStore(
+          listeners,
+          state.files,
+          onValueChange,
+          invalid,
+          isControlled,
+        ),
+      [listeners, state.files, onValueChange, invalid, isControlled],
     );
 
     const contextValue = React.useMemo<FileUploadContextValue>(
@@ -395,14 +406,16 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
       [dropzoneId, inputId, listId, dir, disabled],
     );
 
-    React.useEffect(() => {
+    useIsomorphicLayoutEffect(() => {
       if (isControlled) {
+        state.value = value;
         store.dispatch({ variant: "SET_FILES", files: value });
       } else if (
         defaultValue &&
         defaultValue.length > 0 &&
         !store.getState().files.size
       ) {
+        state.value = defaultValue;
         store.dispatch({ variant: "SET_FILES", files: defaultValue });
       }
     }, [value, defaultValue, isControlled, store]);
