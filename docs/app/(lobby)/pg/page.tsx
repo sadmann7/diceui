@@ -47,9 +47,9 @@ export default function PlaygroundPage() {
     <Shell>
       <ClientOnly fallback={<Skeleton className="h-[500px] w-full" />}>
         <MediaPlayer.Root>
-          <video src="/videos/data-table.mp4">
+          <MediaPlayer.Video src="/videos/data-table.mp4">
             <track kind="captions" />
-          </video>
+          </MediaPlayer.Video>
           <MediaPlayer.Controls>
             <MediaPlayer.PlayButton />
             <MediaPlayer.Seek />

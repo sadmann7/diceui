@@ -24,6 +24,8 @@ const SEEK_NAME = "MediaPlayerSeek";
 const VOLUME_NAME = "MediaPlayerVolume";
 const TIME_NAME = "MediaPlayerTime";
 const FULLSCREEN_NAME = "MediaPlayerFullscreen";
+const VIDEO_NAME = "MediaPlayerVideo";
+const AUDIO_NAME = "MediaPlayerAudio";
 
 const MEDIA_PLAYER_ERRORS = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` must be used as root component`,
@@ -33,6 +35,8 @@ const MEDIA_PLAYER_ERRORS = {
   [VOLUME_NAME]: `\`${VOLUME_NAME}\` must be within \`${ROOT_NAME}\``,
   [TIME_NAME]: `\`${TIME_NAME}\` must be within \`${ROOT_NAME}\``,
   [FULLSCREEN_NAME]: `\`${FULLSCREEN_NAME}\` must be within \`${ROOT_NAME}\``,
+  [VIDEO_NAME]: `\`${VIDEO_NAME}\` must be within \`${ROOT_NAME}\``,
+  [AUDIO_NAME]: `\`${AUDIO_NAME}\` must be within \`${ROOT_NAME}\``,
 } as const;
 
 const useIsomorphicLayoutEffect =
@@ -686,6 +690,75 @@ const MediaPlayerFullscreen = React.forwardRef<
 });
 MediaPlayerFullscreen.displayName = FULLSCREEN_NAME;
 
+interface MediaPlayerVideoProps
+  extends React.ComponentPropsWithoutRef<"video"> {
+  asChild?: boolean;
+}
+
+const MediaPlayerVideo = React.forwardRef<
+  HTMLVideoElement,
+  MediaPlayerVideoProps
+>((props, forwardedRef) => {
+  const { asChild, className, ...videoProps } = props;
+  const context = useMediaPlayerContext(VIDEO_NAME);
+  const isLooping = useStore((state) => state.media.isLooping);
+
+  const VideoPrimitive = asChild ? Slot : "video";
+
+  return (
+    <VideoPrimitive
+      ref={(node) => {
+        if (typeof forwardedRef === "function") forwardedRef(node);
+        else if (forwardedRef) forwardedRef.current = node;
+        if (context.mediaRef && node)
+          (context.mediaRef as React.RefObject<HTMLVideoElement>).current =
+            node;
+      }}
+      loop={isLooping}
+      playsInline
+      preload="metadata"
+      data-slot="media-player-video"
+      {...videoProps}
+      className={cn("h-full w-full", className)}
+    />
+  );
+});
+MediaPlayerVideo.displayName = VIDEO_NAME;
+
+interface MediaPlayerAudioProps
+  extends React.ComponentPropsWithoutRef<"audio"> {
+  asChild?: boolean;
+}
+
+const MediaPlayerAudio = React.forwardRef<
+  HTMLAudioElement,
+  MediaPlayerAudioProps
+>((props, forwardedRef) => {
+  const { asChild, className, ...audioProps } = props;
+  const context = useMediaPlayerContext(AUDIO_NAME);
+  const isLooping = useStore((state) => state.media.isLooping);
+
+  const AudioPrimitive = asChild ? Slot : "audio";
+
+  return (
+    <AudioPrimitive
+      ref={(node) => {
+        if (typeof forwardedRef === "function") forwardedRef(node);
+        else if (forwardedRef) forwardedRef.current = node;
+        if (context.mediaRef && node)
+          (context.mediaRef as React.RefObject<HTMLAudioElement>).current =
+            node;
+      }}
+      loop={isLooping}
+      preload="metadata"
+      data-slot="media-player-audio"
+      {...audioProps}
+      className={cn("w-full", className)}
+    />
+  );
+});
+MediaPlayerAudio.displayName = AUDIO_NAME;
+
 const MediaPlayer = MediaPlayerRoot;
 const Root = MediaPlayerRoot;
 const Controls = MediaPlayerControls;
@@ -694,6 +767,8 @@ const Seek = MediaPlayerSeek;
 const Volume = MediaPlayerVolume;
 const Time = MediaPlayerTime;
 const Fullscreen = MediaPlayerFullscreen;
+const Video = MediaPlayerVideo;
+const Audio = MediaPlayerAudio;
 
 export {
   MediaPlayer,
@@ -703,6 +778,8 @@ export {
   MediaPlayerVolume,
   MediaPlayerTime,
   MediaPlayerFullscreen,
+  MediaPlayerVideo,
+  MediaPlayerAudio,
   //
   Root,
   Controls,
@@ -711,5 +788,7 @@ export {
   Volume,
   Time,
   Fullscreen,
+  Video,
+  Audio,
   useStore as useMediaPlayer,
 };
