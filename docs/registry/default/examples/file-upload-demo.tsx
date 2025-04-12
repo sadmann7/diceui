@@ -26,11 +26,11 @@ export default function FileUploadDemo() {
 
   return (
     <FileUpload
-      value={files}
-      onValueChange={setFiles}
-      className="w-full max-w-md"
       maxFiles={2}
       maxSize={5 * 1024 * 1024}
+      className="w-full max-w-md"
+      value={files}
+      onValueChange={setFiles}
       onFileReject={onFileReject}
       multiple
     >
