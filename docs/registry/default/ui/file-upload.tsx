@@ -92,7 +92,7 @@ type StoreAction =
 function createStore(
   listeners: Set<() => void>,
   files: Map<File, FileState>,
-  onValueChange?: (files: File[]) => void,
+  onFilesChange?: (files: File[]) => void,
   invalid?: boolean,
 ) {
   const initialState: StoreState = {
@@ -114,11 +114,11 @@ function createStore(
           });
         }
 
-        if (onValueChange) {
+        if (onFilesChange) {
           const fileList = Array.from(files.values()).map(
             (fileState) => fileState.file,
           );
-          onValueChange(fileList);
+          onFilesChange(fileList);
         }
         return { ...state, files };
       }
@@ -183,11 +183,11 @@ function createStore(
       case "REMOVE_FILE": {
         files.delete(action.file);
 
-        if (onValueChange) {
+        if (onFilesChange) {
           const fileList = Array.from(files.values()).map(
             (fileState) => fileState.file,
           );
-          onValueChange(fileList);
+          onFilesChange(fileList);
         }
         return { ...state, files };
       }
@@ -202,8 +202,8 @@ function createStore(
 
       case "CLEAR": {
         files.clear();
-        if (onValueChange) {
-          onValueChange([]);
+        if (onFilesChange) {
+          onFilesChange([]);
         }
         return { ...state, files, invalid: false };
       }
@@ -355,8 +355,7 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
     const dir = useDirection(dirProp);
     const propsRef = useAsRef(props);
     const listeners = useLazyRef(() => new Set<() => void>()).current;
-    const files = useLazyRef(() => new Map<File, FileState>()).current;
-
+    const files = useLazyRef<Map<File, FileState>>(() => new Map()).current;
     const inputRef = React.useRef<HTMLInputElement>(null);
     const isControlled = value !== undefined;
 
@@ -377,7 +376,7 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
       [dropzoneId, inputId, listId, dir, disabled],
     );
 
-    useIsomorphicLayoutEffect(() => {
+    React.useEffect(() => {
       if (isControlled) {
         store.dispatch({ variant: "SET_FILES", files: value });
       } else if (
@@ -592,7 +591,7 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
               <input
                 type="file"
                 id={inputId}
-                aria-controls={dropzoneId}
+                aria-labelledby={dropzoneId}
                 ref={inputRef}
                 tabIndex={-1}
                 accept={accept}
@@ -729,10 +728,9 @@ const FileUploadDropzone = React.forwardRef<
     <DropzonePrimitive
       role="region"
       id={context.dropzoneId}
-      aria-controls={context.inputId}
+      aria-controls={`${context.inputId} ${context.listId}`}
       aria-disabled={context.disabled}
       aria-invalid={invalid}
-      aria-owns={context.listId}
       data-disabled={context.disabled ? "" : undefined}
       data-dragging={dragOver ? "" : undefined}
       data-invalid={invalid ? "" : undefined}
@@ -1351,5 +1349,6 @@ export {
   ItemProgress,
   ItemDelete,
   Clear,
+  //
   useStore as useFileUpload,
 };
