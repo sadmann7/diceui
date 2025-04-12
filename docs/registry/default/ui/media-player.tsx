@@ -596,13 +596,14 @@ MediaPlayerPlayButton.displayName = PLAY_BUTTON_NAME;
 
 interface MediaPlayerSeekProps extends React.ComponentPropsWithoutRef<"input"> {
   asChild?: boolean;
+  withTime?: boolean;
 }
 
 const MediaPlayerSeek = React.forwardRef<
   HTMLInputElement,
   MediaPlayerSeekProps
 >((props, forwardedRef) => {
-  const { asChild, className, ...seekProps } = props;
+  const { asChild, className, withTime = false, ...seekProps } = props;
 
   const context = useMediaPlayerContext(SEEK_NAME);
   const store = useStoreContext(SEEK_NAME);
@@ -626,6 +627,33 @@ const MediaPlayerSeek = React.forwardRef<
   );
 
   const SeekPrimitive = asChild ? Slot : "input";
+
+  if (withTime) {
+    return (
+      <div className="flex w-full items-center gap-2">
+        <span className="text-sm">{formatTime(currentTime)}</span>
+        <SeekPrimitive
+          type="range"
+          min={0}
+          max={duration ?? 100}
+          step="any"
+          value={currentTime}
+          aria-label="Seek"
+          data-slot="media-player-seek"
+          {...seekProps}
+          ref={forwardedRef}
+          className={cn(
+            "h-1 w-full cursor-pointer appearance-none rounded-full bg-primary/20 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary",
+            className,
+          )}
+          onChange={onSeek}
+        />
+        <span className="text-sm">
+          {formatTime((duration ?? 0) - currentTime)}
+        </span>
+      </div>
+    );
+  }
 
   return (
     <SeekPrimitive

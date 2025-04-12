@@ -55,7 +55,7 @@ export default function PlaygroundPage() {
           </MediaPlayer.Video>
           <MediaPlayer.Controls>
             <MediaPlayer.PlayButton />
-            <MediaPlayer.Seek />
+            <MediaPlayer.Seek withTime />
             <MediaPlayer.Time />
             <MediaPlayer.PlaybackSpeed />
             <MediaPlayer.Captions />
