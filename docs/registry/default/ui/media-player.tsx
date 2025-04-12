@@ -683,6 +683,7 @@ const MediaPlayerVolume = React.forwardRef<
         data-slot="media-player-mute"
         variant="ghost"
         size="icon"
+        className="size-8"
         onClick={onMute}
       >
         {isMuted ? (
@@ -963,10 +964,7 @@ const MediaPlayerPlaybackSpeed = React.forwardRef<
         value={playbackRate.toString()}
         onValueChange={onPlaybackRateChange}
       >
-        <SelectTrigger
-          size="sm"
-          className="w-16 justify-center border-none dark:bg-transparent [&_svg]:hidden"
-        >
+        <SelectTrigger className="h-8 w-16 justify-center border-none data-[state=open]:bg-accent data-[state=closed]:hover:bg-accent data-[state=closed]:dark:bg-transparent data-[state=closed]:dark:hover:bg-accent/50 [&[data-size]]:h-8 [&_svg]:hidden">
           <SelectValue>{playbackRate}x</SelectValue>
         </SelectTrigger>
         <SelectContent className="min-w-[var(--radix-select-trigger-width)]">
