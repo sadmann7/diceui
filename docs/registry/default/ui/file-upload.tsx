@@ -949,7 +949,7 @@ function formatBytes(bytes: number) {
 
 function getFileIcon(file: File) {
   const type = file.type;
-  const extension = file.name.split(".").pop()?.toLowerCase() || "";
+  const extension = file.name.split(".").pop()?.toLowerCase() ?? "";
 
   if (type.startsWith("video/")) {
     return <FileVideoIcon />;

@@ -13,17 +13,15 @@ import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import {
   CaptionsOffIcon,
-  FullscreenIcon,
   Maximize2Icon,
   Minimize2Icon,
-  MinimizeIcon,
   PauseIcon,
   PictureInPicture2Icon,
   PictureInPictureIcon,
   PlayIcon,
   SubtitlesIcon,
+  Volume1Icon,
   Volume2Icon,
-  VolumeIcon,
   VolumeXIcon,
 } from "lucide-react";
 import * as React from "react";
@@ -74,8 +72,6 @@ function useLazyRef<T>(fn: () => T) {
   }
   return ref as React.RefObject<T>;
 }
-
-// useComposedRefs
 
 type Direction = "ltr" | "rtl";
 
@@ -645,6 +641,7 @@ const MediaPlayerVolume = React.forwardRef<
   const store = useStoreContext(VOLUME_NAME);
   const volume = useStore((state) => state.media.volume);
   const isMuted = useStore((state) => state.media.isMuted);
+  const previousVolumeRef = React.useRef(volume);
 
   const onVolumeChange = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -658,6 +655,7 @@ const MediaPlayerVolume = React.forwardRef<
       const volume = Number.parseFloat(event.target.value);
       media.volume = volume;
       media.muted = volume === 0;
+      previousVolumeRef.current = volume;
       store.dispatch({ variant: "SET_VOLUME", volume });
       store.dispatch({ variant: "SET_MUTED", isMuted: volume === 0 });
     },
@@ -668,9 +666,20 @@ const MediaPlayerVolume = React.forwardRef<
     const media = context.mediaRef.current;
     if (!media) return;
 
-    media.muted = !media.muted;
-    store.dispatch({ variant: "SET_MUTED", isMuted: media.muted });
-  }, [context.mediaRef, store]);
+    if (!isMuted) {
+      previousVolumeRef.current = volume ?? previousVolumeRef.current;
+      media.volume = 0;
+      media.muted = true;
+      store.dispatch({ variant: "SET_VOLUME", volume: 0 });
+      store.dispatch({ variant: "SET_MUTED", isMuted: true });
+    } else {
+      const restoreVolume = previousVolumeRef.current ?? 1;
+      media.volume = restoreVolume;
+      media.muted = false;
+      store.dispatch({ variant: "SET_VOLUME", volume: restoreVolume });
+      store.dispatch({ variant: "SET_MUTED", isMuted: false });
+    }
+  }, [context.mediaRef, store, volume, isMuted]);
 
   const VolumePrimitive = asChild ? Slot : "input";
 
@@ -691,7 +700,7 @@ const MediaPlayerVolume = React.forwardRef<
         ) : volume > 0.5 ? (
           <Volume2Icon />
         ) : (
-          <VolumeIcon />
+          <Volume1Icon />
         )}
       </Button>
       <VolumePrimitive
