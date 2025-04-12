@@ -27,7 +27,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import FileUploadDirectUploadDemo from "@/registry/default/examples/file-upload-direct-upload-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -64,7 +63,6 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <div className="grid gap-8">
-        <FileUploadDirectUploadDemo />
         <FileUpload
           value={files}
           onValueChange={setFiles}

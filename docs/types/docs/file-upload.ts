@@ -364,3 +364,17 @@ export interface ItemProgressProps extends EmptyProps<"div">, CompositionProps {
 export interface ItemDeleteProps
   extends EmptyProps<"button">,
     CompositionProps {}
+
+export interface ClearProps extends EmptyProps<"button">, CompositionProps {
+  /**
+   * Whether to force mount the clear button even if there are no files.
+   * Useful for animating the clear button with animation libraries.
+   *
+   * ```tsx
+   * <Clear forceMount />
+   * ```
+   *
+   * @default false
+   */
+  forceMount?: boolean;
+}

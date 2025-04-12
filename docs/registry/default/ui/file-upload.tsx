@@ -22,6 +22,7 @@ const ITEM_PREVIEW_NAME = "FileUploadItemPreview";
 const ITEM_METADATA_NAME = "FileUploadItemMetadata";
 const ITEM_PROGRESS_NAME = "FileUploadItemProgress";
 const ITEM_DELETE_NAME = "FileUploadItemDelete";
+const CLEAR_NAME = "FileUploadClear";
 
 const FILE_UPLOAD_ERRORS = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` must be used as root component`,
@@ -33,6 +34,7 @@ const FILE_UPLOAD_ERRORS = {
   [ITEM_METADATA_NAME]: `\`${ITEM_METADATA_NAME}\` must be within \`${ITEM_NAME}\``,
   [ITEM_PROGRESS_NAME]: `\`${ITEM_PROGRESS_NAME}\` must be within \`${ITEM_NAME}\``,
   [ITEM_DELETE_NAME]: `\`${ITEM_DELETE_NAME}\` must be within \`${ITEM_NAME}\``,
+  [CLEAR_NAME]: `\`${CLEAR_NAME}\` must be within \`${ROOT_NAME}\``,
 } as const;
 
 const useIsomorphicLayoutEffect =
@@ -1267,6 +1269,54 @@ const FileUploadItemDelete = React.forwardRef<
 });
 FileUploadItemDelete.displayName = ITEM_DELETE_NAME;
 
+interface FileUploadClearProps
+  extends React.ComponentPropsWithoutRef<"button"> {
+  forceMount?: boolean;
+  asChild?: boolean;
+}
+
+const FileUploadClear = React.forwardRef<
+  HTMLButtonElement,
+  FileUploadClearProps
+>((props, forwardedRef) => {
+  const { asChild, forceMount, ...clearProps } = props;
+
+  const context = useFileUploadContext(CLEAR_NAME);
+  const store = useStoreContext(CLEAR_NAME);
+  const propsRef = useAsRef(clearProps);
+
+  const onClick = React.useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      propsRef.current?.onClick?.(event);
+
+      if (!event.defaultPrevented) {
+        store.dispatch({ variant: "CLEAR" });
+      }
+    },
+    [store, propsRef],
+  );
+
+  const shouldRender = forceMount || useStore((state) => state.files.size > 0);
+
+  if (!shouldRender) return null;
+
+  const ClearPrimitive = asChild ? Slot : "button";
+
+  return (
+    <ClearPrimitive
+      type="button"
+      aria-controls={context.listId}
+      data-slot="file-upload-clear"
+      data-disabled={context.disabled ? "" : undefined}
+      {...clearProps}
+      ref={forwardedRef}
+      disabled={context.disabled}
+      onClick={onClick}
+    />
+  );
+});
+FileUploadClear.displayName = CLEAR_NAME;
+
 const FileUpload = FileUploadRoot;
 const Root = FileUploadRoot;
 const Trigger = FileUploadTrigger;
@@ -1277,6 +1327,7 @@ const ItemPreview = FileUploadItemPreview;
 const ItemMetadata = FileUploadItemMetadata;
 const ItemProgress = FileUploadItemProgress;
 const ItemDelete = FileUploadItemDelete;
+const Clear = FileUploadClear;
 
 export {
   FileUpload,
@@ -1288,6 +1339,7 @@ export {
   FileUploadItemMetadata,
   FileUploadItemProgress,
   FileUploadItemDelete,
+  FileUploadClear,
   //
   Root,
   Dropzone,
@@ -1298,5 +1350,6 @@ export {
   ItemMetadata,
   ItemProgress,
   ItemDelete,
+  Clear,
   useStore as useFileUpload,
 };
