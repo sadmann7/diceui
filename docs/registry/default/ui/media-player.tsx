@@ -6,6 +6,8 @@ import {
   FullscreenIcon,
   MinimizeIcon,
   PauseIcon,
+  PictureInPicture2Icon,
+  PictureInPictureIcon,
   PlayIcon,
   RepeatIcon,
   ShuffleIcon,
@@ -26,6 +28,7 @@ const TIME_NAME = "MediaPlayerTime";
 const FULLSCREEN_NAME = "MediaPlayerFullscreen";
 const VIDEO_NAME = "MediaPlayerVideo";
 const AUDIO_NAME = "MediaPlayerAudio";
+const PIP_NAME = "MediaPlayerPiP";
 
 const MEDIA_PLAYER_ERRORS = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` must be used as root component`,
@@ -37,6 +40,7 @@ const MEDIA_PLAYER_ERRORS = {
   [FULLSCREEN_NAME]: `\`${FULLSCREEN_NAME}\` must be within \`${ROOT_NAME}\``,
   [VIDEO_NAME]: `\`${VIDEO_NAME}\` must be within \`${ROOT_NAME}\``,
   [AUDIO_NAME]: `\`${AUDIO_NAME}\` must be within \`${ROOT_NAME}\``,
+  [PIP_NAME]: `\`${PIP_NAME}\` must be within \`${ROOT_NAME}\``,
 } as const;
 
 const useIsomorphicLayoutEffect =
@@ -77,6 +81,7 @@ interface MediaState {
   isFullscreen: boolean;
   isLooping: boolean;
   playbackRate: number;
+  isPictureInPicture: boolean;
 }
 
 interface StoreState {
@@ -92,7 +97,8 @@ type StoreAction =
   | { variant: "SET_BUFFERED"; buffered: TimeRanges }
   | { variant: "SET_FULLSCREEN"; isFullscreen: boolean }
   | { variant: "SET_LOOP"; isLooping: boolean }
-  | { variant: "SET_PLAYBACK_RATE"; playbackRate: number };
+  | { variant: "SET_PLAYBACK_RATE"; playbackRate: number }
+  | { variant: "SET_PICTURE_IN_PICTURE"; isPictureInPicture: boolean };
 
 function createStore(listeners: Set<() => void>, initialState: MediaState) {
   let state: StoreState = {
@@ -157,6 +163,15 @@ function createStore(listeners: Set<() => void>, initialState: MediaState) {
         state = {
           ...state,
           media: { ...state.media, playbackRate: action.playbackRate },
+        };
+        break;
+      case "SET_PICTURE_IN_PICTURE":
+        state = {
+          ...state,
+          media: {
+            ...state.media,
+            isPictureInPicture: action.isPictureInPicture,
+          },
         };
         break;
     }
@@ -288,6 +303,7 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
         isFullscreen: false,
         isLooping: defaultLoop,
         playbackRate: 1,
+        isPictureInPicture: false,
       }),
       [defaultPlaying, defaultMuted, defaultVolume, defaultLoop],
     );
@@ -362,6 +378,20 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
         });
       };
 
+      const onEnteredPiP = () => {
+        store.dispatch({
+          variant: "SET_PICTURE_IN_PICTURE",
+          isPictureInPicture: true,
+        });
+      };
+
+      const onExitedPiP = () => {
+        store.dispatch({
+          variant: "SET_PICTURE_IN_PICTURE",
+          isPictureInPicture: false,
+        });
+      };
+
       media.addEventListener("timeupdate", onTimeUpdate);
       media.addEventListener("durationchange", onDurationChange);
       media.addEventListener("progress", onProgress);
@@ -370,6 +400,12 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
       media.addEventListener("ended", onEnded);
       media.addEventListener("volumechange", onVolumeChange);
       document.addEventListener("fullscreenchange", onFullscreenChange);
+
+      // Add PiP event listeners if the media is a video element
+      if (media instanceof HTMLVideoElement) {
+        media.addEventListener("enterpictureinpicture", onEnteredPiP);
+        media.addEventListener("leavepictureinpicture", onExitedPiP);
+      }
 
       return () => {
         media.removeEventListener("timeupdate", onTimeUpdate);
@@ -380,6 +416,12 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
         media.removeEventListener("ended", onEnded);
         media.removeEventListener("volumechange", onVolumeChange);
         document.removeEventListener("fullscreenchange", onFullscreenChange);
+
+        // Remove PiP event listeners if the media is a video element
+        if (media instanceof HTMLVideoElement) {
+          media.removeEventListener("enterpictureinpicture", onEnteredPiP);
+          media.removeEventListener("leavepictureinpicture", onExitedPiP);
+        }
       };
     }, [store, propsRef]);
 
@@ -709,10 +751,59 @@ const MediaPlayerFullscreen = React.forwardRef<
 });
 MediaPlayerFullscreen.displayName = FULLSCREEN_NAME;
 
+interface MediaPlayerPiPProps extends React.ComponentPropsWithoutRef<"button"> {
+  asChild?: boolean;
+}
+
+const MediaPlayerPiP = React.forwardRef<HTMLButtonElement, MediaPlayerPiPProps>(
+  (props, forwardedRef) => {
+    const { asChild, ...pipButtonProps } = props;
+    const context = useMediaPlayerContext(PIP_NAME);
+    const isPictureInPicture = useStore(
+      (state) => state.media.isPictureInPicture,
+    );
+
+    const onPictureInPicture = React.useCallback(() => {
+      const media = context.mediaRef.current;
+      if (!media || !(media instanceof HTMLVideoElement)) return;
+
+      if (document.pictureInPictureElement === media) {
+        document.exitPictureInPicture().catch((error) => {
+          console.error("Failed to exit Picture-in-Picture mode:", error);
+        });
+      } else {
+        media.requestPictureInPicture().catch((error) => {
+          console.error("Failed to enter Picture-in-Picture mode:", error);
+        });
+      }
+    }, [context.mediaRef]);
+
+    const PiPButtonPrimitive = asChild ? Slot : "button";
+
+    return (
+      <PiPButtonPrimitive
+        type="button"
+        aria-label={isPictureInPicture ? "Exit pip" : "Enter pip"}
+        data-state={isPictureInPicture ? "pip" : "inline"}
+        data-slot="media-player-pip"
+        {...pipButtonProps}
+        ref={forwardedRef}
+        onClick={onPictureInPicture}
+      >
+        {isPictureInPicture ? (
+          <PictureInPicture2Icon />
+        ) : (
+          <PictureInPictureIcon />
+        )}
+      </PiPButtonPrimitive>
+    );
+  },
+);
+MediaPlayerPiP.displayName = PIP_NAME;
+
 interface MediaPlayerVideoProps
   extends React.ComponentPropsWithoutRef<"video"> {
   asChild?: boolean;
-  controls?: boolean;
 }
 
 const MediaPlayerVideo = React.forwardRef<
@@ -738,7 +829,6 @@ const MediaPlayerVideo = React.forwardRef<
       playsInline
       preload="metadata"
       data-slot="media-player-video"
-      disablePictureInPicture
       controlsList="nodownload noremoteplayback"
       controls={controls}
       {...videoProps}
@@ -790,6 +880,7 @@ const Seek = MediaPlayerSeek;
 const Volume = MediaPlayerVolume;
 const Time = MediaPlayerTime;
 const Fullscreen = MediaPlayerFullscreen;
+const PiP = MediaPlayerPiP;
 const Video = MediaPlayerVideo;
 const Audio = MediaPlayerAudio;
 
@@ -801,6 +892,7 @@ export {
   MediaPlayerVolume,
   MediaPlayerTime,
   MediaPlayerFullscreen,
+  MediaPlayerPiP,
   MediaPlayerVideo,
   MediaPlayerAudio,
   //
@@ -811,6 +903,7 @@ export {
   Volume,
   Time,
   Fullscreen,
+  PiP,
   Video,
   Audio,
   //

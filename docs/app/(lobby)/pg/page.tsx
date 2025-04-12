@@ -55,6 +55,7 @@ export default function PlaygroundPage() {
             <MediaPlayer.Seek />
             <MediaPlayer.Time />
             <MediaPlayer.Volume />
+            <MediaPlayer.PiP />
             <MediaPlayer.Fullscreen />
           </MediaPlayer.Controls>
         </MediaPlayer.Root>
