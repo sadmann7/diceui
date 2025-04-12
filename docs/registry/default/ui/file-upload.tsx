@@ -92,7 +92,6 @@ function createStore(
   files: Map<File, FileState>,
   onFilesChange?: (files: File[]) => void,
   invalid?: boolean,
-  isControlled?: boolean,
 ) {
   const initialState: StoreState = {
     files,
@@ -105,17 +104,6 @@ function createStore(
   function reducer(state: StoreState, action: StoreAction): StoreState {
     switch (action.variant) {
       case "ADD_FILES": {
-        if (isControlled) {
-          if (onFilesChange) {
-            const currentFiles = Array.from(state.files.values()).map(
-              (fileState) => fileState.file,
-            );
-            const newFiles = [...currentFiles, ...action.files];
-            onFilesChange(newFiles);
-          }
-          return state;
-        }
-
         for (const file of action.files) {
           files.set(file, {
             file,
@@ -134,14 +122,15 @@ function createStore(
       }
 
       case "SET_FILES": {
-        files.clear();
-
         for (const file of action.files) {
-          files.set(file, {
-            file,
-            progress: 0,
-            status: "idle",
-          });
+          const existingState = files.get(file);
+          if (!existingState) {
+            files.set(file, {
+              file,
+              progress: 0,
+              status: "idle",
+            });
+          }
         }
         return { ...state, files };
       }
@@ -183,16 +172,6 @@ function createStore(
       }
 
       case "REMOVE_FILE": {
-        if (isControlled) {
-          if (onFilesChange) {
-            const currentFiles = Array.from(state.files.values())
-              .map((fileState) => fileState.file)
-              .filter((file) => file !== action.file);
-            onFilesChange(currentFiles);
-          }
-          return state;
-        }
-
         files.delete(action.file);
 
         if (onFilesChange) {
@@ -213,13 +192,6 @@ function createStore(
       }
 
       case "CLEAR": {
-        if (isControlled) {
-          if (onFilesChange) {
-            onFilesChange([]);
-          }
-          return { ...state, invalid: false };
-        }
-
         files.clear();
         if (onFilesChange) {
           onFilesChange([]);
@@ -383,15 +355,8 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
     const isControlled = value !== undefined;
 
     const store = React.useMemo(
-      () =>
-        createStore(
-          listeners,
-          state.files,
-          onValueChange,
-          invalid,
-          isControlled,
-        ),
-      [listeners, state.files, onValueChange, invalid, isControlled],
+      () => createStore(listeners, state.files, onValueChange, invalid),
+      [listeners, state.files, onValueChange, invalid],
     );
 
     const contextValue = React.useMemo<FileUploadContextValue>(
@@ -406,16 +371,14 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
       [dropzoneId, inputId, listId, dir, disabled],
     );
 
-    useIsomorphicLayoutEffect(() => {
+    React.useEffect(() => {
       if (isControlled) {
-        state.value = value;
         store.dispatch({ variant: "SET_FILES", files: value });
       } else if (
         defaultValue &&
         defaultValue.length > 0 &&
         !store.getState().files.size
       ) {
-        state.value = defaultValue;
         store.dispatch({ variant: "SET_FILES", files: defaultValue });
       }
     }, [value, defaultValue, isControlled, store]);
@@ -523,6 +486,13 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
         if (acceptedFiles.length > 0) {
           store.dispatch({ variant: "ADD_FILES", files: acceptedFiles });
 
+          if (isControlled && propsRef.current.onValueChange) {
+            const currentFiles = Array.from(
+              store.getState().files.values(),
+            ).map((f) => f.file);
+            propsRef.current.onValueChange([...currentFiles]);
+          }
+
           if (propsRef.current.onAccept) {
             propsRef.current.onAccept(acceptedFiles);
           }
@@ -538,18 +508,7 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
           }
         }
       },
-      [
-        store,
-        propsRef.current.accept,
-        propsRef.current.maxFiles,
-        propsRef.current.maxSize,
-        propsRef.current.onAccept,
-        propsRef.current.onFileAccept,
-        propsRef.current.onFileReject,
-        propsRef.current.onFileValidate,
-        propsRef.current.onUpload,
-        propsRef.current.disabled,
-      ],
+      [store, isControlled, propsRef],
     );
 
     const onFilesUpload = React.useCallback(
