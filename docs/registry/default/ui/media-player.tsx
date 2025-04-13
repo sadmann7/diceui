@@ -8,6 +8,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useComposedRefs } from "@/lib/composition";
 import { cn } from "@/lib/utils";
 import * as SliderPrimitive from "@radix-ui/react-slider";
@@ -631,6 +636,57 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
     const duration = useStore((state) => state.media.duration);
     const buffered = useStore((state) => state.media.buffered);
 
+    const seekRef = React.useRef<HTMLDivElement>(null);
+    const tooltipRef = React.useRef<HTMLDivElement>(null);
+    const composedRef = useComposedRefs(forwardedRef, seekRef);
+
+    const formattedCurrentTime = formatTime(currentTime);
+    const formattedDuration = formatTime(duration);
+
+    const [tooltipPositionX, setTooltipPositionX] = React.useState(0);
+    const [isHoveringSeek, setIsHoveringSeek] = React.useState(false);
+    const [hoverTime, setHoverTime] = React.useState(0);
+
+    const onPointerLeave = React.useCallback(() => {
+      setIsHoveringSeek(false);
+    }, []);
+
+    const onPointerMove = React.useCallback(
+      (event: React.PointerEvent<HTMLDivElement>) => {
+        if (!seekRef.current || duration <= 0) {
+          setIsHoveringSeek(false);
+          return;
+        }
+
+        const rect = seekRef.current.getBoundingClientRect();
+        const offsetX = event.clientX - rect.left;
+        const clampedOffsetX = Math.max(0, Math.min(offsetX, rect.width));
+        const relativeX = clampedOffsetX / rect.width;
+        const calculatedHoverTime = relativeX * duration;
+
+        const tooltipWidth =
+          tooltipRef.current?.getBoundingClientRect().width ?? 0;
+        const centeredPosition = clampedOffsetX - tooltipWidth / 2;
+
+        setTooltipPositionX(centeredPosition);
+        setHoverTime(calculatedHoverTime);
+        setIsHoveringSeek(true);
+      },
+      [duration],
+    );
+
+    const onSeek = React.useCallback(
+      (value: number[]) => {
+        const media = context.mediaRef.current;
+        if (!media) return;
+
+        const time = value[0] ?? 0;
+        media.currentTime = time;
+        store.dispatch({ variant: "SET_CURRENT_TIME", currentTime: time });
+      },
+      [context.mediaRef, store],
+    );
+
     const bufferedRanges = React.useMemo(() => {
       if (!buffered || duration <= 0) return null;
 
@@ -653,51 +709,58 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
       });
     }, [buffered, duration]);
 
-    const onSeek = React.useCallback(
-      (value: number[]) => {
-        const media = context.mediaRef.current;
-        if (!media) return;
-
-        const time = value[0] ?? 0;
-        media.currentTime = time;
-        store.dispatch({ variant: "SET_CURRENT_TIME", currentTime: time });
-      },
-      [context.mediaRef, store],
-    );
-
     const SeekSlider = (
-      <SliderPrimitive.Root
-        aria-label="Seek"
-        data-slider=""
-        data-slot="media-player-seek"
-        min={0}
-        max={duration ?? 100}
-        step={0.1}
-        value={[currentTime ?? 0]}
-        onValueChange={onSeek}
-        {...seekProps}
-        ref={forwardedRef}
-        className={cn(
-          "relative flex w-full touch-none select-none items-center",
-          className,
+      <Tooltip open={isHoveringSeek} delayDuration={0}>
+        <TooltipTrigger asChild>
+          <SliderPrimitive.Root
+            aria-label="Seek"
+            data-slider=""
+            data-slot="media-player-seek"
+            {...seekProps}
+            min={0}
+            max={duration}
+            step={0.1}
+            value={[currentTime]}
+            onValueChange={onSeek}
+            onPointerLeave={onPointerLeave}
+            onPointerMove={onPointerMove}
+            ref={composedRef}
+            className={cn(
+              "relative flex w-full touch-none select-none items-center",
+              className,
+            )}
+          >
+            <SliderPrimitive.Track className="relative h-1 w-full grow overflow-hidden rounded-full bg-secondary">
+              {bufferedRanges}
+              <SliderPrimitive.Range className="absolute h-full bg-primary" />
+            </SliderPrimitive.Track>
+            <SliderPrimitive.Thumb
+              aria-valuetext={`${formattedCurrentTime} of ${formattedDuration}`}
+              className="relative z-10 block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:outline-hidden focus-visible:ring-4 disabled:pointer-events-none disabled:opacity-50"
+            />
+          </SliderPrimitive.Root>
+        </TooltipTrigger>
+        {duration > 0 && (
+          <TooltipContent
+            ref={tooltipRef}
+            side="top"
+            align="start"
+            alignOffset={tooltipPositionX}
+            sideOffset={10}
+            className="bg-accent text-accent-foreground [&>span]:hidden"
+          >
+            {formatTime(hoverTime)} / {formattedDuration}
+          </TooltipContent>
         )}
-      >
-        <SliderPrimitive.Track className="relative h-1 w-full grow overflow-hidden rounded-full bg-secondary">
-          {bufferedRanges}
-          <SliderPrimitive.Range className="absolute h-full bg-primary" />
-        </SliderPrimitive.Track>
-        <SliderPrimitive.Thumb className="relative z-10 block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:outline-hidden focus-visible:ring-4 disabled:pointer-events-none disabled:opacity-50" />
-      </SliderPrimitive.Root>
+      </Tooltip>
     );
 
     if (withTime) {
       return (
         <div className="flex w-full items-center gap-2">
-          <span className="text-sm">{formatTime(currentTime ?? 0)}</span>
-          {SeekSlider}
-          <span className="text-sm">
-            {formatTime((duration ?? 0) - (currentTime ?? 0))}
-          </span>
+          <span className="text-sm">{formattedCurrentTime}</span>
+          <div className={cn("w-full", className)}>{SeekSlider}</div>
+          <span className="text-sm">{formatTime(duration - currentTime)}</span>
         </div>
       );
     }
@@ -785,13 +848,13 @@ const MediaPlayerVolume = React.forwardRef<
         aria-label="Volume"
         data-slider=""
         data-slot="media-player-volume"
+        {...volumeProps}
+        ref={forwardedRef}
         min={0}
         max={1}
         step={0.1}
         value={[volume ?? 0]}
         onValueChange={onVolumeChange}
-        {...volumeProps}
-        ref={forwardedRef}
         className={cn(
           "relative flex w-16 touch-none select-none items-center",
           className,
@@ -800,7 +863,10 @@ const MediaPlayerVolume = React.forwardRef<
         <SliderPrimitive.Track className="relative h-1 w-full grow overflow-hidden rounded-full bg-secondary">
           <SliderPrimitive.Range className="absolute h-full bg-primary" />
         </SliderPrimitive.Track>
-        <SliderPrimitive.Thumb className="block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:outline-hidden focus-visible:ring-4 disabled:pointer-events-none disabled:opacity-50" />
+        <SliderPrimitive.Thumb
+          aria-valuetext={`${volume * 100}% volume`}
+          className="block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:outline-hidden focus-visible:ring-4 disabled:pointer-events-none disabled:opacity-50"
+        />
       </SliderPrimitive.Root>
     </div>
   );
