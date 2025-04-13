@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
 import { useComposedRefs } from "@/lib/composition";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
@@ -487,6 +488,7 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
             className={cn(
               "relative flex flex-col overflow-hidden rounded-lg bg-background",
               "[:fullscreen_&]:flex [:fullscreen_&]:h-full [:fullscreen_&]:max-h-screen [:fullscreen_&]:flex-col [:fullscreen_&]:justify-between",
+              "[&_[data-slider]::before]:-top-6 [&_[data-slider]::before]:-bottom-2 [&_[data-slider]::before]:absolute [&_[data-slider]::before]:inset-x-0 [&_[data-slider]::before]:z-10 [&_[data-slider]::before]:h-12 [&_[data-slider]::before]:cursor-pointer [&_[data-slider]::before]:content-[''] [&_[data-slider]]:relative",
               className,
             )}
           >
@@ -597,87 +599,79 @@ const MediaPlayerPlay = React.forwardRef<
 });
 MediaPlayerPlay.displayName = PLAY_NAME;
 
-interface MediaPlayerSeekProps extends React.ComponentPropsWithoutRef<"input"> {
+interface MediaPlayerSeekProps
+  extends Omit<
+    React.ComponentPropsWithoutRef<typeof Slider>,
+    "value" | "defaultValue" | "min" | "max" | "step" | "onValueChange"
+  > {
   asChild?: boolean;
   withTime?: boolean;
 }
 
-const MediaPlayerSeek = React.forwardRef<
-  HTMLInputElement,
-  MediaPlayerSeekProps
->((props, forwardedRef) => {
-  const { asChild, className, withTime = false, ...seekProps } = props;
+const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
+  (props, forwardedRef) => {
+    const { asChild, className, withTime = false, ...seekProps } = props;
 
-  const context = useMediaPlayerContext(SEEK_NAME);
-  const store = useStoreContext(SEEK_NAME);
-  const currentTime = useStore((state) => state.media.currentTime);
-  const duration = useStore((state) => state.media.duration);
+    const context = useMediaPlayerContext(SEEK_NAME);
+    const store = useStoreContext(SEEK_NAME);
+    const currentTime = useStore((state) => state.media.currentTime);
+    const duration = useStore((state) => state.media.duration);
 
-  const onSeek = React.useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      props.onChange?.(event);
-
-      if (!event.defaultPrevented) {
+    const onSeek = React.useCallback(
+      (value: number[]) => {
         const media = context.mediaRef.current;
         if (!media) return;
 
-        const time = Number.parseFloat(event.target.value);
+        const time = value[0] ?? 0;
         media.currentTime = time;
         store.dispatch({ variant: "SET_CURRENT_TIME", currentTime: time });
-      }
-    },
-    [context.mediaRef, props.onChange, store],
-  );
-
-  const SeekPrimitive = asChild ? Slot : "input";
-
-  const SeekSlider = (
-    <SeekPrimitive
-      type="range"
-      aria-label="Seek"
-      aria-valuemin={0}
-      aria-valuenow={currentTime}
-      aria-valuemax={duration ?? 100}
-      data-slot="media-player-seek"
-      min={0}
-      max={duration ?? 100}
-      step="any"
-      value={currentTime}
-      {...seekProps}
-      ref={forwardedRef}
-      className={cn(
-        "relative h-8 w-full cursor-pointer appearance-none bg-transparent",
-        "before:absolute before:inset-y-[calc(50%-1.5px)] before:right-0 before:left-0 before:h-[3px] before:bg-primary/20 before:content-['']",
-        "[&::-webkit-slider-thumb]:relative [&::-webkit-slider-thumb]:size-3 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary",
-        className,
-      )}
-      onChange={onSeek}
-    />
-  );
-
-  if (withTime) {
-    return (
-      <div className="flex w-full items-center gap-2">
-        <span className="text-sm">{formatTime(currentTime)}</span>
-        {SeekSlider}
-        <span className="text-sm">
-          {formatTime((duration ?? 0) - currentTime)}
-        </span>
-      </div>
+      },
+      [context.mediaRef, store],
     );
-  }
 
-  return SeekSlider;
-});
+    const SeekSlider = (
+      <Slider
+        aria-label="Seek"
+        data-slider=""
+        data-slot="media-player-seek"
+        min={0}
+        max={duration ?? 100}
+        step={0.1}
+        value={[currentTime ?? 0]}
+        onValueChange={onSeek}
+        {...seekProps}
+        ref={forwardedRef}
+        className={cn("relative w-full", className)}
+      />
+    );
+
+    if (withTime) {
+      return (
+        <div className="flex w-full items-center gap-2">
+          <span className="text-sm">{formatTime(currentTime ?? 0)}</span>
+          {SeekSlider}
+          <span className="text-sm">
+            {formatTime((duration ?? 0) - (currentTime ?? 0))}
+          </span>
+        </div>
+      );
+    }
+
+    return SeekSlider;
+  },
+);
 MediaPlayerSeek.displayName = SEEK_NAME;
 
 interface MediaPlayerVolumeProps
-  extends React.ComponentPropsWithoutRef<"input"> {
+  extends Omit<
+    React.ComponentPropsWithoutRef<typeof Slider>,
+    "value" | "defaultValue" | "min" | "max" | "step" | "onValueChange"
+  > {
   asChild?: boolean;
 }
 
 const MediaPlayerVolume = React.forwardRef<
-  HTMLInputElement,
+  HTMLDivElement,
   MediaPlayerVolumeProps
 >((props, forwardedRef) => {
   const { asChild, className, ...volumeProps } = props;
@@ -686,25 +680,21 @@ const MediaPlayerVolume = React.forwardRef<
   const store = useStoreContext(VOLUME_NAME);
   const volume = useStore((state) => state.media.volume);
   const isMuted = useStore((state) => state.media.isMuted);
-  const previousVolumeRef = React.useRef(volume);
+  const previousVolumeRef = React.useRef(volume ?? 1);
 
   const onVolumeChange = React.useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      props.onChange?.(event);
-
-      if (event.defaultPrevented) return;
-
+    (value: number[]) => {
       const media = context.mediaRef.current;
       if (!media) return;
 
-      const volume = Number.parseFloat(event.target.value);
+      const volume = value[0] ?? 0;
       media.volume = volume;
       media.muted = volume === 0;
       previousVolumeRef.current = volume;
       store.dispatch({ variant: "SET_VOLUME", volume });
       store.dispatch({ variant: "SET_MUTED", isMuted: volume === 0 });
     },
-    [context.mediaRef, props.onChange, store],
+    [context.mediaRef, store],
   );
 
   const onMute = React.useCallback(() => {
@@ -718,15 +708,13 @@ const MediaPlayerVolume = React.forwardRef<
       store.dispatch({ variant: "SET_VOLUME", volume: 0 });
       store.dispatch({ variant: "SET_MUTED", isMuted: true });
     } else {
-      const restoreVolume = previousVolumeRef.current ?? 1;
+      const restoreVolume = previousVolumeRef.current;
       media.volume = restoreVolume;
       media.muted = false;
       store.dispatch({ variant: "SET_VOLUME", volume: restoreVolume });
       store.dispatch({ variant: "SET_MUTED", isMuted: false });
     }
   }, [context.mediaRef, store, volume, isMuted]);
-
-  const VolumePrimitive = asChild ? Slot : "input";
 
   return (
     <div className="flex items-center gap-2">
@@ -742,27 +730,24 @@ const MediaPlayerVolume = React.forwardRef<
       >
         {isMuted ? (
           <VolumeXIcon />
-        ) : volume > 0.5 ? (
+        ) : (volume ?? 0) > 0.5 ? (
           <Volume2Icon />
         ) : (
           <Volume1Icon />
         )}
       </Button>
-      <VolumePrimitive
-        type="range"
+      <Slider
+        aria-label="Volume"
+        data-slider=""
+        data-slot="media-player-volume"
         min={0}
         max={1}
-        step="any"
-        value={volume}
-        aria-label="Volume"
-        data-slot="media-player-volume"
+        step={0.01}
+        value={[volume ?? 0]}
+        onValueChange={onVolumeChange}
         {...volumeProps}
         ref={forwardedRef}
-        className={cn(
-          "h-1 w-20 cursor-pointer appearance-none rounded-full bg-primary/20 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary",
-          className,
-        )}
-        onChange={onVolumeChange}
+        className={cn("w-20", className)}
       />
     </div>
   );
