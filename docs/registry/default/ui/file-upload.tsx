@@ -272,9 +272,10 @@ interface FileUploadContextValue {
   inputId: string;
   dropzoneId: string;
   listId: string;
+  labelId: string;
   disabled: boolean;
-  inputRef: React.RefObject<HTMLInputElement | null>;
   dir: Direction;
+  inputRef: React.RefObject<HTMLInputElement | null>;
 }
 
 const FileUploadContext = React.createContext<FileUploadContextValue | null>(
@@ -313,6 +314,7 @@ interface FileUploadRootProps
   maxFiles?: number;
   maxSize?: number;
   dir?: Direction;
+  label?: string;
   name?: string;
   asChild?: boolean;
   disabled?: boolean;
@@ -336,6 +338,7 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
       maxFiles,
       maxSize,
       dir: dirProp,
+      label,
       name,
       asChild,
       disabled = false,
@@ -347,10 +350,10 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
       ...rootProps
     } = props;
 
-    const id = React.useId();
     const inputId = React.useId();
     const dropzoneId = React.useId();
     const listId = React.useId();
+    const labelId = React.useId();
 
     const dir = useDirection(dirProp);
     const propsRef = useAsRef(props);
@@ -369,11 +372,12 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
         dropzoneId,
         inputId,
         listId,
+        labelId,
         dir,
         disabled,
         inputRef,
       }),
-      [dropzoneId, inputId, listId, dir, disabled],
+      [dropzoneId, inputId, listId, labelId, dir, disabled],
     );
 
     React.useEffect(() => {
@@ -583,7 +587,6 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
               data-slot="file-upload"
               dir={dir}
               {...rootProps}
-              id={id}
               ref={forwardedRef}
               className={cn("relative flex flex-col gap-2", className)}
             >
@@ -591,7 +594,8 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
               <input
                 type="file"
                 id={inputId}
-                aria-labelledby={dropzoneId}
+                aria-labelledby={labelId}
+                aria-describedby={dropzoneId}
                 ref={inputRef}
                 tabIndex={-1}
                 accept={accept}
@@ -602,6 +606,9 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
                 className="sr-only"
                 onChange={onInputChange}
               />
+              <span id={labelId} className="sr-only">
+                {label ?? "File upload"}
+              </span>
             </RootPrimitive>
           </FileUploadContext.Provider>
         </StoreContext.Provider>
@@ -632,16 +639,16 @@ const FileUploadDropzone = React.forwardRef<
     (event: React.MouseEvent<HTMLDivElement>) => {
       propsRef.current?.onClick?.(event);
 
-      if (!event.defaultPrevented) {
-        const target = event.target;
+      if (event.defaultPrevented) return;
 
-        const isFromTrigger =
-          target instanceof HTMLElement &&
-          target.closest('[data-slot="file-upload-trigger"]');
+      const target = event.target;
 
-        if (!isFromTrigger) {
-          context.inputRef.current?.click();
-        }
+      const isFromTrigger =
+        target instanceof HTMLElement &&
+        target.closest('[data-slot="file-upload-trigger"]');
+
+      if (!isFromTrigger) {
+        context.inputRef.current?.click();
       }
     },
     [context.inputRef, propsRef],
@@ -651,10 +658,10 @@ const FileUploadDropzone = React.forwardRef<
     (event: React.DragEvent<HTMLDivElement>) => {
       propsRef.current?.onDragOver?.(event);
 
-      if (!event.defaultPrevented) {
-        event.preventDefault();
-        store.dispatch({ variant: "SET_DRAG_OVER", dragOver: true });
-      }
+      if (event.defaultPrevented) return;
+
+      event.preventDefault();
+      store.dispatch({ variant: "SET_DRAG_OVER", dragOver: true });
     },
     [store, propsRef.current.onDragOver],
   );
@@ -663,10 +670,10 @@ const FileUploadDropzone = React.forwardRef<
     (event: React.DragEvent<HTMLDivElement>) => {
       propsRef.current?.onDragEnter?.(event);
 
-      if (!event.defaultPrevented) {
-        event.preventDefault();
-        store.dispatch({ variant: "SET_DRAG_OVER", dragOver: true });
-      }
+      if (event.defaultPrevented) return;
+
+      event.preventDefault();
+      store.dispatch({ variant: "SET_DRAG_OVER", dragOver: true });
     },
     [store, propsRef.current.onDragEnter],
   );
@@ -675,10 +682,10 @@ const FileUploadDropzone = React.forwardRef<
     (event: React.DragEvent<HTMLDivElement>) => {
       propsRef.current?.onDragLeave?.(event);
 
-      if (!event.defaultPrevented) {
-        event.preventDefault();
-        store.dispatch({ variant: "SET_DRAG_OVER", dragOver: false });
-      }
+      if (event.defaultPrevented) return;
+
+      event.preventDefault();
+      store.dispatch({ variant: "SET_DRAG_OVER", dragOver: false });
     },
     [store, propsRef.current.onDragLeave],
   );
@@ -687,22 +694,22 @@ const FileUploadDropzone = React.forwardRef<
     (event: React.DragEvent<HTMLDivElement>) => {
       propsRef.current?.onDrop?.(event);
 
-      if (!event.defaultPrevented) {
-        event.preventDefault();
-        store.dispatch({ variant: "SET_DRAG_OVER", dragOver: false });
+      if (event.defaultPrevented) return;
 
-        const files = Array.from(event.dataTransfer.files);
-        const inputElement = context.inputRef.current;
-        if (!inputElement) return;
+      event.preventDefault();
+      store.dispatch({ variant: "SET_DRAG_OVER", dragOver: false });
 
-        const dataTransfer = new DataTransfer();
-        for (const file of files) {
-          dataTransfer.items.add(file);
-        }
+      const files = Array.from(event.dataTransfer.files);
+      const inputElement = context.inputRef.current;
+      if (!inputElement) return;
 
-        inputElement.files = dataTransfer.files;
-        inputElement.dispatchEvent(new Event("change", { bubbles: true }));
+      const dataTransfer = new DataTransfer();
+      for (const file of files) {
+        dataTransfer.items.add(file);
       }
+
+      inputElement.files = dataTransfer.files;
+      inputElement.dispatchEvent(new Event("change", { bubbles: true }));
     },
     [store, context.inputRef, propsRef.current.onDrop],
   );
@@ -771,9 +778,9 @@ const FileUploadTrigger = React.forwardRef<
     (event: React.MouseEvent<HTMLButtonElement>) => {
       propsRef.current?.onClick?.(event);
 
-      if (!event.defaultPrevented) {
-        context.inputRef.current?.click();
-      }
+      if (event.defaultPrevented) return;
+
+      context.inputRef.current?.click();
     },
     [context.inputRef, propsRef.current],
   );
@@ -1237,14 +1244,12 @@ const FileUploadItemDelete = React.forwardRef<
     (event: React.MouseEvent<HTMLButtonElement>) => {
       propsRef.current?.onClick?.(event);
 
-      if (!itemContext.fileState) return;
+      if (!itemContext.fileState || event.defaultPrevented) return;
 
-      if (!event.defaultPrevented) {
-        store.dispatch({
-          variant: "REMOVE_FILE",
-          file: itemContext.fileState.file,
-        });
-      }
+      store.dispatch({
+        variant: "REMOVE_FILE",
+        file: itemContext.fileState.file,
+      });
     },
     [store, itemContext.fileState, propsRef.current?.onClick],
   );
@@ -1277,19 +1282,21 @@ const FileUploadClear = React.forwardRef<
   HTMLButtonElement,
   FileUploadClearProps
 >((props, forwardedRef) => {
-  const { asChild, forceMount, ...clearProps } = props;
+  const { asChild, forceMount, disabled, ...clearProps } = props;
 
   const context = useFileUploadContext(CLEAR_NAME);
   const store = useStoreContext(CLEAR_NAME);
   const propsRef = useAsRef(clearProps);
 
+  const isDisabled = disabled || context.disabled;
+
   const onClick = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       propsRef.current?.onClick?.(event);
 
-      if (!event.defaultPrevented) {
-        store.dispatch({ variant: "CLEAR" });
-      }
+      if (event.defaultPrevented) return;
+
+      store.dispatch({ variant: "CLEAR" });
     },
     [store, propsRef],
   );
@@ -1305,10 +1312,10 @@ const FileUploadClear = React.forwardRef<
       type="button"
       aria-controls={context.listId}
       data-slot="file-upload-clear"
-      data-disabled={context.disabled ? "" : undefined}
+      data-disabled={isDisabled ? "" : undefined}
       {...clearProps}
       ref={forwardedRef}
-      disabled={context.disabled}
+      disabled={isDisabled}
       onClick={onClick}
     />
   );

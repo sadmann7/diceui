@@ -267,10 +267,13 @@ function useStore<T>(selector: (state: StoreState) => T): T {
 }
 
 interface MediaPlayerContextValue {
-  id: string;
-  mediaRef: React.RefObject<HTMLVideoElement | HTMLAudioElement | null>;
+  mediaId: string;
+  controlsId: string;
+  labelId: string;
+  descriptionId: string;
   dir: Direction;
   disabled: boolean;
+  mediaRef: React.RefObject<HTMLVideoElement | HTMLAudioElement | null>;
 }
 
 const MediaPlayerContext = React.createContext<MediaPlayerContextValue | null>(
@@ -290,9 +293,6 @@ interface MediaPlayerRootProps
     React.ComponentPropsWithoutRef<"div">,
     "onTimeUpdate" | "onVolumeChange"
   > {
-  asChild?: boolean;
-  disabled?: boolean;
-  dir?: Direction;
   defaultVolume?: number;
   defaultMuted?: boolean;
   defaultPlaying?: boolean;
@@ -303,14 +303,15 @@ interface MediaPlayerRootProps
   onTimeUpdate?: (time: number) => void;
   onVolumeChange?: (volume: number) => void;
   onMuted?: (muted: boolean) => void;
+  dir?: Direction;
+  label?: string;
+  asChild?: boolean;
+  disabled?: boolean;
 }
 
 const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
   (props, forwardedRef) => {
     const {
-      asChild,
-      disabled = false,
-      dir: dirProp,
       defaultVolume = 1,
       defaultMuted = false,
       defaultPlaying = false,
@@ -321,12 +322,19 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
       onTimeUpdate,
       onVolumeChange,
       onMuted,
+      asChild,
+      disabled = false,
+      dir: dirProp,
+      label,
       children,
       className,
       ...rootProps
     } = props;
 
-    const id = React.useId();
+    const mediaId = React.useId();
+    const controlsId = React.useId();
+    const labelId = React.useId();
+    const descriptionId = React.useId();
 
     const dir = useDirection(dirProp);
     const propsRef = useAsRef(props);
@@ -358,12 +366,15 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
 
     const contextValue = React.useMemo<MediaPlayerContextValue>(
       () => ({
-        id,
+        mediaId,
+        controlsId,
+        labelId,
+        descriptionId,
         mediaRef,
         dir,
         disabled,
       }),
-      [id, dir, disabled],
+      [mediaId, controlsId, labelId, descriptionId, dir, disabled],
     );
 
     const onKeyDown = React.useCallback(
@@ -634,6 +645,9 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
       <StoreContext.Provider value={store}>
         <MediaPlayerContext.Provider value={contextValue}>
           <RootPrimitive
+            role="region"
+            aria-labelledby={labelId}
+            aria-describedby={descriptionId}
             data-disabled={disabled ? "" : undefined}
             data-slot="media-player"
             dir={dir}
@@ -648,6 +662,9 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
               className,
             )}
           >
+            <span id={labelId} className="sr-only">
+              {label ?? "Media player"}
+            </span>
             {children}
           </RootPrimitive>
         </MediaPlayerContext.Provider>
@@ -675,6 +692,9 @@ const MediaPlayerControls = React.forwardRef<
 
   return (
     <ControlsPrimitive
+      role="group"
+      id={context.controlsId}
+      aria-label="Media controls"
       data-slot="media-player-controls"
       data-state={isFullscreen ? "fullscreen" : "windowed"}
       dir={context.dir}
@@ -736,6 +756,8 @@ const MediaPlayerPlay = React.forwardRef<
       <Button
         type="button"
         aria-label={isPlaying ? "Pause" : "Play"}
+        aria-pressed={isPlaying}
+        aria-controls={context.mediaId}
         data-state={isPlaying ? "playing" : "paused"}
         data-slot="media-player-play-button"
         {...playButtonProps}
@@ -783,7 +805,6 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
     const pointerMoveThrottleTimeoutRef = React.useRef<NodeJS.Timeout | null>(
       null,
     );
-
     const seekThrottleTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
     const latestSeekValueRef = React.useRef<number | null>(null);
 
@@ -899,10 +920,12 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
     }, [buffered, duration]);
 
     const SeekSlider = (
-      <Tooltip delayDuration={150} open={isHoveringSeek}>
+      <Tooltip delayDuration={240} open={isHoveringSeek}>
         <TooltipTrigger asChild>
           <SliderPrimitive.Root
-            aria-label="Seek"
+            aria-label="Seek time"
+            aria-valuetext={`${formatTime(currentTime)} of ${formatTime(duration)}`}
+            aria-controls={context.mediaId}
             data-slider=""
             data-slot="media-player-seek"
             {...seekProps}
@@ -919,12 +942,19 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
               className,
             )}
           >
-            <SliderPrimitive.Track className="relative h-1 w-full grow overflow-hidden rounded-full bg-secondary">
+            <SliderPrimitive.Track
+              className="relative h-1 w-full grow overflow-hidden rounded-full bg-secondary"
+              aria-label="Video progress"
+            >
               {bufferedRanges}
-              <SliderPrimitive.Range className="absolute h-full bg-primary" />
+              <SliderPrimitive.Range
+                className="absolute h-full bg-primary"
+                aria-label="Current progress"
+              />
             </SliderPrimitive.Track>
             <SliderPrimitive.Thumb
-              aria-valuetext={`${currentTime} of ${duration}`}
+              aria-label="Seek thumb"
+              aria-valuetext={`${formatTime(currentTime)} of ${formatTime(duration)}`}
               className="relative z-10 block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:outline-hidden focus-visible:ring-4 disabled:pointer-events-none disabled:opacity-50"
             />
           </SliderPrimitive.Root>
@@ -936,7 +966,8 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
             align="start"
             alignOffset={tooltipPositionX}
             sideOffset={10}
-            className="pointer-events-none bg-accent text-accent-foreground [&>span]:hidden"
+            className="pointer-events-none border bg-accent text-accent-foreground dark:bg-zinc-900 [&>span]:hidden"
+            role="tooltip"
           >
             {formatTime(hoverTime)} / {formatTime(duration)}
           </TooltipContent>
@@ -946,6 +977,7 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
 
     const SeekWrapper = (
       <div
+        role="presentation"
         data-slot="media-player-seek-wrapper"
         className="relative w-full"
         onPointerEnter={onPointerEnter}
@@ -957,10 +989,18 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
 
     if (withTime) {
       return (
-        <div className="flex w-full items-center gap-2">
-          <span className="text-sm">{formatTime(currentTime)}</span>
+        <div
+          role="group"
+          aria-label="Video progress"
+          className="flex w-full items-center gap-2"
+        >
+          <span className="text-sm" aria-label="Current time">
+            {formatTime(currentTime)}
+          </span>
           <div className={cn("w-full", className)}>{SeekWrapper}</div>
-          <span className="text-sm">{formatTime(duration - currentTime)}</span>
+          <span className="text-sm" aria-label="Time remaining">
+            {formatTime(duration - currentTime)}
+          </span>
         </div>
       );
     }
@@ -1022,11 +1062,17 @@ const MediaPlayerVolume = React.forwardRef<
   }, [context.mediaRef, store, volume, isMuted]);
 
   return (
-    <div className="flex items-center gap-2">
+    <div
+      className="flex items-center gap-2"
+      role="group"
+      aria-label="Volume controls"
+    >
       <MediaPlayerTooltip tooltip="Volume" shortcut="M">
         <Button
           type="button"
           aria-label={isMuted ? "Unmute" : "Mute"}
+          aria-pressed={isMuted}
+          aria-controls={context.mediaId}
           data-state={isMuted ? "muted" : "unmuted"}
           data-slot="media-player-mute"
           variant="ghost"
@@ -1035,16 +1081,18 @@ const MediaPlayerVolume = React.forwardRef<
           onClick={onMute}
         >
           {isMuted ? (
-            <VolumeXIcon />
+            <VolumeXIcon aria-hidden="true" />
           ) : (volume ?? 0) > 0.5 ? (
-            <Volume2Icon />
+            <Volume2Icon aria-hidden="true" />
           ) : (
-            <Volume1Icon />
+            <Volume1Icon aria-hidden="true" />
           )}
         </Button>
       </MediaPlayerTooltip>
       <SliderPrimitive.Root
         aria-label="Volume"
+        aria-valuetext={`Volume ${Math.round((volume ?? 0) * 100)}%`}
+        aria-controls={context.mediaId}
         data-slider=""
         data-slot="media-player-volume"
         {...volumeProps}
@@ -1059,11 +1107,18 @@ const MediaPlayerVolume = React.forwardRef<
           className,
         )}
       >
-        <SliderPrimitive.Track className="relative h-1 w-full grow overflow-hidden rounded-full bg-secondary">
-          <SliderPrimitive.Range className="absolute h-full bg-primary" />
+        <SliderPrimitive.Track
+          className="relative h-1 w-full grow overflow-hidden rounded-full bg-secondary"
+          aria-label="Volume track"
+        >
+          <SliderPrimitive.Range
+            className="absolute h-full bg-primary"
+            aria-label="Current volume"
+          />
         </SliderPrimitive.Track>
         <SliderPrimitive.Thumb
-          aria-valuetext={`${volume * 100}% volume`}
+          aria-label="Volume thumb"
+          aria-valuetext={`${Math.round((volume ?? 0) * 100)}% volume`}
           className="block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:outline-hidden focus-visible:ring-4 disabled:pointer-events-none disabled:opacity-50"
         />
       </SliderPrimitive.Root>
@@ -1231,7 +1286,13 @@ const MediaPlayerVideo = React.forwardRef<
   HTMLVideoElement,
   MediaPlayerVideoProps
 >((props, forwardedRef) => {
-  const { asChild, className, controls = false, ...videoProps } = props;
+  const {
+    asChild,
+    children,
+    className,
+    controls = false,
+    ...videoProps
+  } = props;
 
   const context = useMediaPlayerContext(VIDEO_NAME);
   const isLooping = useStore((state) => state.media.isLooping);
@@ -1241,16 +1302,25 @@ const MediaPlayerVideo = React.forwardRef<
 
   return (
     <VideoPrimitive
+      aria-labelledby={context.labelId}
+      aria-describedby={context.descriptionId}
+      data-slot="media-player-video"
+      controlsList="nodownload noremoteplayback"
+      {...videoProps}
       ref={composedRef}
+      id={context.mediaId}
       loop={isLooping}
       playsInline
       preload="metadata"
-      data-slot="media-player-video"
-      controlsList="nodownload noremoteplayback"
       controls={controls}
-      {...videoProps}
       className={cn("h-full w-full", className)}
-    />
+    >
+      {children}
+      <span id={context.descriptionId} className="sr-only">
+        Video player with custom controls for playback, volume, seeking, and
+        more. Use space bar to play/pause, arrow keys to seek and adjust volume.
+      </span>
+    </VideoPrimitive>
   );
 });
 MediaPlayerVideo.displayName = VIDEO_NAME;
@@ -1264,7 +1334,7 @@ const MediaPlayerAudio = React.forwardRef<
   HTMLAudioElement,
   MediaPlayerAudioProps
 >((props, forwardedRef) => {
-  const { asChild, className, ...audioProps } = props;
+  const { asChild, children, className, ...audioProps } = props;
 
   const context = useMediaPlayerContext(AUDIO_NAME);
   const isLooping = useStore((state) => state.media.isLooping);
@@ -1274,13 +1344,22 @@ const MediaPlayerAudio = React.forwardRef<
 
   return (
     <AudioPrimitive
-      ref={composedRef}
-      loop={isLooping}
-      preload="metadata"
+      aria-labelledby={context.labelId}
+      aria-describedby={context.descriptionId}
       data-slot="media-player-audio"
       {...audioProps}
+      ref={composedRef}
+      id={context.mediaId}
+      loop={isLooping}
+      preload="metadata"
       className={cn("w-full", className)}
-    />
+    >
+      {children}
+      <span id={context.descriptionId} className="sr-only">
+        Audio player with custom controls for playback, volume, seeking, and
+        more. Use space bar to play/pause, arrow keys to seek and adjust volume.
+      </span>
+    </AudioPrimitive>
   );
 });
 MediaPlayerAudio.displayName = AUDIO_NAME;
@@ -1333,7 +1412,10 @@ const MediaPlayerPlaybackSpeed = React.forwardRef<
         onValueChange={onPlaybackRateChange}
       >
         <MediaPlayerTooltip tooltip="Playback speed" shortcut={["<", ">"]}>
-          <SelectTrigger className="h-8 w-16 justify-center border-none data-[state=open]:bg-accent data-[state=closed]:hover:bg-accent data-[state=closed]:dark:bg-transparent data-[state=closed]:dark:hover:bg-accent/50 [&[data-size]]:h-8 [&_svg]:hidden">
+          <SelectTrigger
+            aria-controls={context.mediaId}
+            className="h-8 w-16 justify-center border-none data-[state=open]:bg-accent data-[state=closed]:hover:bg-accent data-[state=closed]:dark:bg-transparent data-[state=closed]:dark:hover:bg-accent/50 [&[data-size]]:h-8 [&_svg]:hidden"
+          >
             <SelectValue>{playbackRate}x</SelectValue>
           </SelectTrigger>
         </MediaPlayerTooltip>
@@ -1401,6 +1483,8 @@ const MediaPlayerCaptions = React.forwardRef<
       <Button
         type="button"
         aria-label={captionsEnabled ? "Disable captions" : "Enable captions"}
+        aria-controls={context.mediaId}
+        aria-pressed={captionsEnabled}
         data-state={captionsEnabled ? "active" : "inactive"}
         data-slot="media-player-captions"
         {...captionsProps}
@@ -1454,6 +1538,7 @@ const MediaPlayerDownload = React.forwardRef<
       <Button
         type="button"
         aria-label="Download"
+        aria-controls={context.mediaId}
         data-slot="media-player-download"
         {...downloadProps}
         ref={forwardedRef}
@@ -1488,7 +1573,7 @@ function MediaPlayerTooltip({
       <TooltipTrigger asChild>{children}</TooltipTrigger>
       <TooltipContent
         sideOffset={10}
-        className="flex items-center gap-2 border bg-accent px-2 py-1 font-semibold text-foreground dark:bg-zinc-900 [&>span]:hidden"
+        className="flex items-center gap-2 border bg-accent px-2 py-1 font-medium text-foreground dark:bg-zinc-900 [&>span]:hidden"
       >
         <p>{tooltip}</p>
         {Array.isArray(shortcut) ? (
@@ -1496,7 +1581,7 @@ function MediaPlayerTooltip({
             {shortcut.map((shortcutKey) => (
               <kbd
                 key={shortcutKey}
-                className="select-none rounded border bg-secondary px-1.5 py-px font-medium font-medium font-mono text-[0.7rem] text-foreground shadow-xs"
+                className="select-none rounded border bg-secondary px-1.5 py-0.5 font-mono text-[0.7rem] text-foreground shadow-xs"
               >
                 <abbr title={shortcutKey} className="no-underline">
                   {shortcutKey}
@@ -1507,7 +1592,7 @@ function MediaPlayerTooltip({
         ) : (
           <kbd
             key={shortcut}
-            className="select-none rounded border bg-secondary px-1.5 py-px font-medium font-mono font-normal text-[0.7rem] text-foreground shadow-xs"
+            className="select-none rounded border bg-secondary px-1.5 py-px font-mono text-[0.7rem] text-foreground shadow-xs"
           >
             <abbr title={shortcut} className="no-underline">
               {shortcut}
@@ -1519,8 +1604,23 @@ function MediaPlayerTooltip({
   );
 }
 
+const MediaPlayer = MediaPlayerRoot;
+const Root = MediaPlayerRoot;
+const Controls = MediaPlayerControls;
+const Play = MediaPlayerPlay;
+const Seek = MediaPlayerSeek;
+const Volume = MediaPlayerVolume;
+const Time = MediaPlayerTime;
+const Fullscreen = MediaPlayerFullscreen;
+const PiP = MediaPlayerPiP;
+const Video = MediaPlayerVideo;
+const Audio = MediaPlayerAudio;
+const PlaybackSpeed = MediaPlayerPlaybackSpeed;
+const Captions = MediaPlayerCaptions;
+const Download = MediaPlayerDownload;
+
 export {
-  MediaPlayerRoot as MediaPlayer,
+  MediaPlayer,
   MediaPlayerControls,
   MediaPlayerPlay,
   MediaPlayerSeek,
@@ -1534,19 +1634,19 @@ export {
   MediaPlayerCaptions,
   MediaPlayerDownload,
   //
-  MediaPlayerRoot as Root,
-  MediaPlayerControls as Controls,
-  MediaPlayerPlay as Play,
-  MediaPlayerSeek as Seek,
-  MediaPlayerVolume as Volume,
-  MediaPlayerTime as Time,
-  MediaPlayerFullscreen as Fullscreen,
-  MediaPlayerPiP as PiP,
-  MediaPlayerVideo as Video,
-  MediaPlayerAudio as Audio,
-  MediaPlayerPlaybackSpeed as PlaybackSpeed,
-  MediaPlayerCaptions as Captions,
-  MediaPlayerDownload as Download,
+  Root,
+  Controls,
+  Play,
+  Seek,
+  Volume,
+  Time,
+  Fullscreen,
+  PiP,
+  Video,
+  Audio,
+  PlaybackSpeed,
+  Captions,
+  Download,
   //
   useStore as useMediaPlayer,
 };

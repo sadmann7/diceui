@@ -16,7 +16,7 @@ export function Providers({ children, ...props }: ProvidersProps) {
     <RootProvider {...props}>
       <NuqsAdapter>
         <JotaiProvider store={store}>
-          <TooltipProvider>{children}</TooltipProvider>
+          <TooltipProvider delayDuration={240}>{children}</TooltipProvider>
         </JotaiProvider>
       </NuqsAdapter>
     </RootProvider>

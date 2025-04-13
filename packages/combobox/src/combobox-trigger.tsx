@@ -12,8 +12,11 @@ const ComboboxTrigger = React.forwardRef<
   HTMLButtonElement,
   ComboboxTriggerProps
 >((props, forwardedRef) => {
-  const { ...triggerProps } = props;
+  const { disabled, ...triggerProps } = props;
+
   const context = useComboboxContext(TRIGGER_NAME);
+
+  const isDisabled = disabled || context.disabled;
 
   return (
     <Primitive.button
@@ -22,9 +25,10 @@ const ComboboxTrigger = React.forwardRef<
       aria-expanded={context.open}
       aria-controls={context.listId}
       data-state={context.open ? "open" : "closed"}
+      data-disabled={isDisabled ? "" : undefined}
       dir={context.dir}
-      disabled={context.disabled}
-      tabIndex={context.disabled ? undefined : -1}
+      disabled={isDisabled}
+      tabIndex={isDisabled ? undefined : -1}
       {...triggerProps}
       ref={forwardedRef}
       onClick={composeEventHandlers(triggerProps.onClick, async () => {
