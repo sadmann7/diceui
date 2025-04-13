@@ -8,9 +8,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
 import { useComposedRefs } from "@/lib/composition";
 import { cn } from "@/lib/utils";
+import * as SliderPrimitive from "@radix-ui/react-slider";
 import { Slot } from "@radix-ui/react-slot";
 import {
   CaptionsOffIcon,
@@ -601,7 +601,7 @@ MediaPlayerPlay.displayName = PLAY_NAME;
 
 interface MediaPlayerSeekProps
   extends Omit<
-    React.ComponentPropsWithoutRef<typeof Slider>,
+    React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root>,
     "value" | "defaultValue" | "min" | "max" | "step" | "onValueChange"
   > {
   asChild?: boolean;
@@ -630,7 +630,7 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
     );
 
     const SeekSlider = (
-      <Slider
+      <SliderPrimitive.Root
         aria-label="Seek"
         data-slider=""
         data-slot="media-player-seek"
@@ -641,8 +641,16 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
         onValueChange={onSeek}
         {...seekProps}
         ref={forwardedRef}
-        className={cn("relative w-full", className)}
-      />
+        className={cn(
+          "relative flex w-full touch-none select-none items-center",
+          className,
+        )}
+      >
+        <SliderPrimitive.Track className="relative h-1 w-full grow overflow-hidden rounded-full bg-secondary">
+          <SliderPrimitive.Range className="absolute h-full bg-primary" />
+        </SliderPrimitive.Track>
+        <SliderPrimitive.Thumb className="block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:outline-hidden focus-visible:ring-4 disabled:pointer-events-none disabled:opacity-50" />
+      </SliderPrimitive.Root>
     );
 
     if (withTime) {
@@ -664,7 +672,7 @@ MediaPlayerSeek.displayName = SEEK_NAME;
 
 interface MediaPlayerVolumeProps
   extends Omit<
-    React.ComponentPropsWithoutRef<typeof Slider>,
+    React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root>,
     "value" | "defaultValue" | "min" | "max" | "step" | "onValueChange"
   > {
   asChild?: boolean;
@@ -736,19 +744,27 @@ const MediaPlayerVolume = React.forwardRef<
           <Volume1Icon />
         )}
       </Button>
-      <Slider
+      <SliderPrimitive.Root
         aria-label="Volume"
         data-slider=""
         data-slot="media-player-volume"
         min={0}
         max={1}
-        step={0.01}
+        step={0.1}
         value={[volume ?? 0]}
         onValueChange={onVolumeChange}
         {...volumeProps}
         ref={forwardedRef}
-        className={cn("w-20", className)}
-      />
+        className={cn(
+          "relative flex w-16 touch-none select-none items-center",
+          className,
+        )}
+      >
+        <SliderPrimitive.Track className="relative h-1 w-full grow overflow-hidden rounded-full bg-secondary">
+          <SliderPrimitive.Range className="absolute h-full bg-primary" />
+        </SliderPrimitive.Track>
+        <SliderPrimitive.Thumb className="block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:outline-hidden focus-visible:ring-4 disabled:pointer-events-none disabled:opacity-50" />
+      </SliderPrimitive.Root>
     </div>
   );
 });
