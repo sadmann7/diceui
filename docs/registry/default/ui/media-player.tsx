@@ -1192,7 +1192,10 @@ const MediaPlayerPlaybackSpeed = React.forwardRef<
         <SelectTrigger className="h-8 w-16 justify-center border-none data-[state=open]:bg-accent data-[state=closed]:hover:bg-accent data-[state=closed]:dark:bg-transparent data-[state=closed]:dark:hover:bg-accent/50 [&[data-size]]:h-8 [&_svg]:hidden">
           <SelectValue>{playbackRate}x</SelectValue>
         </SelectTrigger>
-        <SelectContent className="min-w-[var(--radix-select-trigger-width)]">
+        <SelectContent
+          align="center"
+          className="min-w-[var(--radix-select-trigger-width)]"
+        >
           {speeds.map((speed) => (
             <SelectItem key={speed} value={speed.toString()}>
               {speed}x
