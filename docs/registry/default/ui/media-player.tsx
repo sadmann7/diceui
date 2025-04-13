@@ -268,7 +268,6 @@ function useStore<T>(selector: (state: StoreState) => T): T {
 
 interface MediaPlayerContextValue {
   mediaId: string;
-  controlsId: string;
   labelId: string;
   descriptionId: string;
   dir: Direction;
@@ -332,7 +331,6 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
     } = props;
 
     const mediaId = React.useId();
-    const controlsId = React.useId();
     const labelId = React.useId();
     const descriptionId = React.useId();
 
@@ -367,14 +365,13 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
     const contextValue = React.useMemo<MediaPlayerContextValue>(
       () => ({
         mediaId,
-        controlsId,
         labelId,
         descriptionId,
         mediaRef,
         dir,
         disabled,
       }),
-      [mediaId, controlsId, labelId, descriptionId, dir, disabled],
+      [mediaId, labelId, descriptionId, dir, disabled],
     );
 
     const onKeyDown = React.useCallback(
@@ -645,7 +642,6 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
       <StoreContext.Provider value={store}>
         <MediaPlayerContext.Provider value={contextValue}>
           <RootPrimitive
-            role="region"
             aria-labelledby={labelId}
             aria-describedby={descriptionId}
             data-disabled={disabled ? "" : undefined}
@@ -693,7 +689,6 @@ const MediaPlayerControls = React.forwardRef<
   return (
     <ControlsPrimitive
       role="group"
-      id={context.controlsId}
       aria-label="Media controls"
       data-slot="media-player-controls"
       data-state={isFullscreen ? "fullscreen" : "windowed"}
@@ -909,6 +904,7 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
         return (
           <div
             key={i}
+            data-slot="media-player-seek-buffered"
             className="absolute h-full bg-secondary-foreground/50"
             style={{
               left: `${startPercent}%`,
