@@ -374,6 +374,10 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
           variant: "SET_DURATION",
           duration: media.duration,
         });
+        store.dispatch({
+          variant: "SET_BUFFERED",
+          buffered: media.buffered,
+        });
       };
 
       const onProgress = () => {
@@ -616,6 +620,29 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
     const store = useStoreContext(SEEK_NAME);
     const currentTime = useStore((state) => state.media.currentTime);
     const duration = useStore((state) => state.media.duration);
+    const buffered = useStore((state) => state.media.buffered);
+
+    const bufferedRanges = React.useMemo(() => {
+      if (!buffered || duration <= 0) return null;
+
+      return Array.from({ length: buffered.length }).map((_, i) => {
+        const start = buffered.start(i);
+        const end = buffered.end(i);
+        const startPercent = (start / duration) * 100;
+        const widthPercent = ((end - start) / duration) * 100;
+
+        return (
+          <div
+            key={i}
+            className="absolute h-full bg-secondary-foreground/50"
+            style={{
+              left: `${startPercent}%`,
+              width: `${widthPercent}%`,
+            }}
+          />
+        );
+      });
+    }, [buffered, duration]);
 
     const onSeek = React.useCallback(
       (value: number[]) => {
@@ -647,9 +674,10 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
         )}
       >
         <SliderPrimitive.Track className="relative h-1 w-full grow overflow-hidden rounded-full bg-secondary">
+          {bufferedRanges}
           <SliderPrimitive.Range className="absolute h-full bg-primary" />
         </SliderPrimitive.Track>
-        <SliderPrimitive.Thumb className="block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:outline-hidden focus-visible:ring-4 disabled:pointer-events-none disabled:opacity-50" />
+        <SliderPrimitive.Thumb className="relative z-10 block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:outline-hidden focus-visible:ring-4 disabled:pointer-events-none disabled:opacity-50" />
       </SliderPrimitive.Root>
     );
 
