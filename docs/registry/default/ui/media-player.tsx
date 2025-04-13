@@ -33,6 +33,9 @@ import {
 } from "lucide-react";
 import * as React from "react";
 
+const SEEK_THROTTLE_MS = 100;
+const POINTER_MOVE_THROTTLE_MS = 16;
+
 const ROOT_NAME = "MediaPlayer";
 const CONTROLS_NAME = "MediaPlayerControls";
 const PLAY_NAME = "MediaPlayerPlay";
@@ -640,21 +643,32 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
     const tooltipRef = React.useRef<HTMLDivElement>(null);
     const composedRef = useComposedRefs(forwardedRef, seekRef);
 
-    const formattedCurrentTime = formatTime(currentTime);
-    const formattedDuration = formatTime(duration);
-
     const [tooltipPositionX, setTooltipPositionX] = React.useState(0);
     const [isHoveringSeek, setIsHoveringSeek] = React.useState(false);
     const [hoverTime, setHoverTime] = React.useState(0);
 
+    const pointerMoveThrottleTimeoutRef = React.useRef<NodeJS.Timeout | null>(
+      null,
+    );
+
+    const seekThrottleTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+    const latestSeekValueRef = React.useRef<number | null>(null);
+
     const onPointerLeave = React.useCallback(() => {
+      if (pointerMoveThrottleTimeoutRef.current) {
+        clearTimeout(pointerMoveThrottleTimeoutRef.current);
+        pointerMoveThrottleTimeoutRef.current = null;
+      }
       setIsHoveringSeek(false);
     }, []);
 
     const onPointerMove = React.useCallback(
       (event: React.PointerEvent<HTMLDivElement>) => {
-        if (!seekRef.current || duration <= 0) {
-          setIsHoveringSeek(false);
+        if (
+          !seekRef.current ||
+          duration <= 0 ||
+          pointerMoveThrottleTimeoutRef.current
+        ) {
           return;
         }
 
@@ -671,6 +685,10 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
         setTooltipPositionX(centeredPosition);
         setHoverTime(calculatedHoverTime);
         setIsHoveringSeek(true);
+
+        pointerMoveThrottleTimeoutRef.current = setTimeout(() => {
+          pointerMoveThrottleTimeoutRef.current = null;
+        }, POINTER_MOVE_THROTTLE_MS);
       },
       [duration],
     );
@@ -682,7 +700,40 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
 
         const time = value[0] ?? 0;
         media.currentTime = time;
+        latestSeekValueRef.current = time;
+
+        if (!seekThrottleTimeoutRef.current) {
+          store.dispatch({ variant: "SET_CURRENT_TIME", currentTime: time });
+
+          seekThrottleTimeoutRef.current = setTimeout(() => {
+            seekThrottleTimeoutRef.current = null;
+            if (
+              latestSeekValueRef.current !== null &&
+              latestSeekValueRef.current !== time
+            ) {
+              store.dispatch({
+                variant: "SET_CURRENT_TIME",
+                currentTime: latestSeekValueRef.current,
+              });
+            }
+          }, SEEK_THROTTLE_MS);
+        }
+      },
+      [context.mediaRef, store],
+    );
+
+    const onSeekCommit = React.useCallback(
+      (value: number[]) => {
+        const media = context.mediaRef.current;
+        if (!media) return;
+
+        const time = value[0] ?? 0;
+        if (seekThrottleTimeoutRef.current) {
+          clearTimeout(seekThrottleTimeoutRef.current);
+          seekThrottleTimeoutRef.current = null;
+        }
         store.dispatch({ variant: "SET_CURRENT_TIME", currentTime: time });
+        latestSeekValueRef.current = null;
       },
       [context.mediaRef, store],
     );
@@ -710,21 +761,22 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
     }, [buffered, duration]);
 
     const SeekSlider = (
-      <Tooltip open={isHoveringSeek} delayDuration={0}>
+      <Tooltip delayDuration={150} open={isHoveringSeek}>
         <TooltipTrigger asChild>
           <SliderPrimitive.Root
             aria-label="Seek"
             data-slider=""
             data-slot="media-player-seek"
             {...seekProps}
+            ref={composedRef}
             min={0}
             max={duration}
             step={0.1}
             value={[currentTime]}
             onValueChange={onSeek}
+            onValueCommit={onSeekCommit}
             onPointerLeave={onPointerLeave}
             onPointerMove={onPointerMove}
-            ref={composedRef}
             className={cn(
               "relative flex w-full touch-none select-none items-center",
               className,
@@ -735,7 +787,7 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
               <SliderPrimitive.Range className="absolute h-full bg-primary" />
             </SliderPrimitive.Track>
             <SliderPrimitive.Thumb
-              aria-valuetext={`${formattedCurrentTime} of ${formattedDuration}`}
+              aria-valuetext={`${currentTime} of ${duration}`}
               className="relative z-10 block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:outline-hidden focus-visible:ring-4 disabled:pointer-events-none disabled:opacity-50"
             />
           </SliderPrimitive.Root>
@@ -749,7 +801,7 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
             sideOffset={10}
             className="bg-accent text-accent-foreground [&>span]:hidden"
           >
-            {formatTime(hoverTime)} / {formattedDuration}
+            {formatTime(hoverTime)} / {formatTime(duration)}
           </TooltipContent>
         )}
       </Tooltip>
@@ -758,7 +810,7 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
     if (withTime) {
       return (
         <div className="flex w-full items-center gap-2">
-          <span className="text-sm">{formattedCurrentTime}</span>
+          <span className="text-sm">{formatTime(currentTime)}</span>
           <div className={cn("w-full", className)}>{SeekSlider}</div>
           <span className="text-sm">{formatTime(duration - currentTime)}</span>
         </div>
