@@ -375,8 +375,13 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
     );
 
     const onKeyDown = React.useCallback(
-      (event: React.KeyboardEvent) => {
+      (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (disabled) return;
+
+        propsRef.current.onKeyDown?.(event);
+
+        if (event.defaultPrevented) return;
+
         const media = mediaRef.current;
         if (!media) return;
 
@@ -503,7 +508,7 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
           }
         }
       },
-      [disabled, store],
+      [store, propsRef.current.onKeyDown, disabled],
     );
 
     React.useEffect(() => {
@@ -690,6 +695,7 @@ const MediaPlayerControls = React.forwardRef<
     <ControlsPrimitive
       role="group"
       aria-label="Media controls"
+      data-disabled={context.disabled ? "" : undefined}
       data-slot="media-player-controls"
       data-state={isFullscreen ? "fullscreen" : "windowed"}
       dir={context.dir}
@@ -713,10 +719,12 @@ const MediaPlayerPlay = React.forwardRef<
   HTMLButtonElement,
   MediaPlayerPlayProps
 >((props, forwardedRef) => {
-  const { asChild, children, className, ...playButtonProps } = props;
+  const { asChild, children, className, disabled, ...playButtonProps } = props;
 
   const context = useMediaPlayerContext(PLAY_NAME);
   const isPlaying = useStore((state) => state.media.isPlaying);
+
+  const isDisabled = disabled || context.disabled;
 
   const onPlay = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -753,8 +761,10 @@ const MediaPlayerPlay = React.forwardRef<
         aria-label={isPlaying ? "Pause" : "Play"}
         aria-pressed={isPlaying}
         aria-controls={context.mediaId}
+        data-disabled={isDisabled ? "" : undefined}
         data-state={isPlaying ? "playing" : "paused"}
         data-slot="media-player-play-button"
+        disabled={isDisabled}
         {...playButtonProps}
         ref={forwardedRef}
         variant="ghost"
@@ -781,7 +791,13 @@ interface MediaPlayerSeekProps
 
 const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
   (props, forwardedRef) => {
-    const { asChild, className, withTime = false, ...seekProps } = props;
+    const {
+      asChild,
+      className,
+      withTime = false,
+      disabled,
+      ...seekProps
+    } = props;
 
     const context = useMediaPlayerContext(SEEK_NAME);
     const store = useStoreContext(SEEK_NAME);
@@ -796,6 +812,8 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
     const [tooltipPositionX, setTooltipPositionX] = React.useState(0);
     const [isHoveringSeek, setIsHoveringSeek] = React.useState(false);
     const [hoverTime, setHoverTime] = React.useState(0);
+
+    const isDisabled = disabled || context.disabled;
 
     const pointerMoveThrottleTimeoutRef = React.useRef<NodeJS.Timeout | null>(
       null,
@@ -924,19 +942,20 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
             aria-controls={context.mediaId}
             data-slider=""
             data-slot="media-player-seek"
+            disabled={isDisabled}
             {...seekProps}
             ref={composedRef}
             min={0}
             max={duration}
             step={0.1}
+            className={cn(
+              "relative flex w-full touch-none select-none items-center data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+              className,
+            )}
             value={[currentTime]}
             onValueChange={onSeek}
             onValueCommit={onSeekCommit}
             onPointerMove={onPointerMove}
-            className={cn(
-              "relative flex w-full touch-none select-none items-center",
-              className,
-            )}
           >
             <SliderPrimitive.Track
               className="relative h-1 w-full grow overflow-hidden rounded-full bg-secondary"
@@ -1015,13 +1034,18 @@ const MediaPlayerVolume = React.forwardRef<
   HTMLDivElement,
   MediaPlayerVolumeProps
 >((props, forwardedRef) => {
-  const { asChild, className, ...volumeProps } = props;
+  const { asChild, className, disabled, ...volumeProps } = props;
 
   const context = useMediaPlayerContext(VOLUME_NAME);
   const store = useStoreContext(VOLUME_NAME);
   const volume = useStore((state) => state.media.volume);
   const isMuted = useStore((state) => state.media.isMuted);
-  const previousVolumeRef = React.useRef(volume ?? 1);
+
+  const volumeTriggerId = React.useId();
+  const sliderId = React.useId();
+  const previousVolumeRef = React.useRef(volume);
+
+  const isDisabled = disabled || context.disabled;
 
   const onVolumeChange = React.useCallback(
     (value: number[]) => {
@@ -1049,36 +1073,39 @@ const MediaPlayerVolume = React.forwardRef<
       store.dispatch({ variant: "SET_VOLUME", volume: 0 });
       store.dispatch({ variant: "SET_MUTED", isMuted: true });
     } else {
-      const restoreVolume = previousVolumeRef.current;
-      media.volume = restoreVolume;
+      const restoredVolume = previousVolumeRef.current;
+      media.volume = restoredVolume;
       media.muted = false;
-      store.dispatch({ variant: "SET_VOLUME", volume: restoreVolume });
+      store.dispatch({ variant: "SET_VOLUME", volume: restoredVolume });
       store.dispatch({ variant: "SET_MUTED", isMuted: false });
     }
   }, [context.mediaRef, store, volume, isMuted]);
 
   return (
     <div
-      className="flex items-center gap-2"
       role="group"
       aria-label="Volume controls"
+      data-disabled={isDisabled ? "" : undefined}
+      className="flex items-center gap-2"
     >
       <MediaPlayerTooltip tooltip="Volume" shortcut="M">
         <Button
+          id={volumeTriggerId}
           type="button"
           aria-label={isMuted ? "Unmute" : "Mute"}
           aria-pressed={isMuted}
-          aria-controls={context.mediaId}
+          aria-controls={`${context.mediaId} ${sliderId}`}
           data-state={isMuted ? "muted" : "unmuted"}
           data-slot="media-player-mute"
           variant="ghost"
           size="icon"
           className="size-8"
+          disabled={isDisabled}
           onClick={onMute}
         >
           {isMuted ? (
             <VolumeXIcon aria-hidden="true" />
-          ) : (volume ?? 0) > 0.5 ? (
+          ) : volume > 0.5 ? (
             <Volume2Icon aria-hidden="true" />
           ) : (
             <Volume1Icon aria-hidden="true" />
@@ -1086,8 +1113,8 @@ const MediaPlayerVolume = React.forwardRef<
         </Button>
       </MediaPlayerTooltip>
       <SliderPrimitive.Root
+        id={sliderId}
         aria-label="Volume"
-        aria-valuetext={`Volume ${Math.round((volume ?? 0) * 100)}%`}
         aria-controls={context.mediaId}
         data-slider=""
         data-slot="media-player-volume"
@@ -1096,12 +1123,13 @@ const MediaPlayerVolume = React.forwardRef<
         min={0}
         max={1}
         step={0.1}
-        value={[volume ?? 0]}
-        onValueChange={onVolumeChange}
         className={cn(
           "relative flex w-16 touch-none select-none items-center",
           className,
         )}
+        disabled={isDisabled}
+        value={[volume]}
+        onValueChange={onVolumeChange}
       >
         <SliderPrimitive.Track
           className="relative h-1 w-full grow overflow-hidden rounded-full bg-secondary"
@@ -1114,7 +1142,7 @@ const MediaPlayerVolume = React.forwardRef<
         </SliderPrimitive.Track>
         <SliderPrimitive.Thumb
           aria-label="Volume thumb"
-          aria-valuetext={`${Math.round((volume ?? 0) * 100)}% volume`}
+          aria-valuetext={`${Math.round(volume * 100)}% volume`}
           className="block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:outline-hidden focus-visible:ring-4 disabled:pointer-events-none disabled:opacity-50"
         />
       </SliderPrimitive.Root>
@@ -1145,6 +1173,7 @@ const MediaPlayerTime = React.forwardRef<HTMLDivElement, MediaPlayerTimeProps>(
 
     return (
       <TimePrimitive
+        aria-valuetext={`${formatTime(currentTime)} of ${formatTime(duration)}`}
         data-slot="media-player-time"
         dir={context.dir}
         {...timeProps}
@@ -1153,7 +1182,7 @@ const MediaPlayerTime = React.forwardRef<HTMLDivElement, MediaPlayerTimeProps>(
       >
         <span>{formatTime(currentTime)}</span>
         <span className="mx-1">/</span>
-        <span>{formatTime(duration ?? 0)}</span>
+        <span>{formatTime(duration)}</span>
       </TimePrimitive>
     );
   },
@@ -1184,7 +1213,6 @@ const MediaPlayerFullscreen = React.forwardRef<
 
       if (!document.fullscreenElement) {
         const container = media.closest('[data-slot="media-player"]');
-        console.log({ container });
         if (container) {
           container.requestFullscreen();
         } else {
@@ -1232,20 +1260,27 @@ const MediaPlayerPiP = React.forwardRef<HTMLButtonElement, MediaPlayerPiPProps>(
       (state) => state.media.isPictureInPicture,
     );
 
-    const onPictureInPicture = React.useCallback(() => {
-      const media = context.mediaRef.current;
-      if (!media || !(media instanceof HTMLVideoElement)) return;
+    const onPictureInPicture = React.useCallback(
+      (event: React.MouseEvent<HTMLButtonElement>) => {
+        props.onClick?.(event);
 
-      if (document.pictureInPictureElement === media) {
-        document.exitPictureInPicture().catch((error) => {
-          console.error("Failed to exit Picture-in-Picture mode:", error);
-        });
-      } else {
-        media.requestPictureInPicture().catch((error) => {
-          console.error("Failed to enter Picture-in-Picture mode:", error);
-        });
-      }
-    }, [context.mediaRef]);
+        if (event.defaultPrevented) return;
+
+        const media = context.mediaRef.current;
+        if (!media || !(media instanceof HTMLVideoElement)) return;
+
+        if (document.pictureInPictureElement === media) {
+          document.exitPictureInPicture().catch((error) => {
+            console.error("Failed to exit Picture-in-Picture mode:", error);
+          });
+        } else {
+          media.requestPictureInPicture().catch((error) => {
+            console.error("Failed to enter Picture-in-Picture mode:", error);
+          });
+        }
+      },
+      [context.mediaRef, props.onClick],
+    );
 
     return (
       <MediaPlayerTooltip tooltip="Picture in picture" shortcut="P">
