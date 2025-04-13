@@ -329,9 +329,10 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
     const id = React.useId();
 
     const dir = useDirection(dirProp);
-    const mediaRef = React.useRef<HTMLVideoElement | HTMLAudioElement>(null);
     const propsRef = useAsRef(props);
     const listeners = useLazyRef(() => new Set<() => void>()).current;
+
+    const mediaRef = React.useRef<HTMLVideoElement | HTMLAudioElement>(null);
 
     const initialState = React.useMemo<MediaState>(
       () => ({
@@ -365,14 +366,12 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
       [id, dir, disabled],
     );
 
-    // Handle keyboard shortcuts
     const onKeyDown = React.useCallback(
       (event: React.KeyboardEvent) => {
         if (disabled) return;
         const media = mediaRef.current;
         if (!media) return;
 
-        // Check if focus is within the player or on the media element
         const isMediaFocused = document.activeElement === media;
         const isPlayerFocused =
           document.activeElement?.closest('[data-slot="media-player"]') !==
@@ -403,10 +402,26 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
               document.exitFullscreen();
             }
             break;
-          case "m":
+          case "m": {
             event.preventDefault();
-            media.muted = !media.muted;
+            const currentVolume = store.getState().media.volume;
+            const currentMuted = store.getState().media.isMuted;
+            if (!currentMuted) {
+              store.dispatch({ variant: "SET_VOLUME", volume: 0 });
+              store.dispatch({ variant: "SET_MUTED", isMuted: true });
+              media.volume = 0;
+              media.muted = true;
+            } else {
+              store.dispatch({
+                variant: "SET_VOLUME",
+                volume: currentVolume || 1,
+              });
+              store.dispatch({ variant: "SET_MUTED", isMuted: false });
+              media.volume = currentVolume || 1;
+              media.muted = false;
+            }
             break;
+          }
           case "arrowright":
             event.preventDefault();
             media.currentTime = Math.min(media.duration, media.currentTime + 5);
@@ -445,6 +460,39 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
               });
             }
             break;
+          case "d": {
+            event.preventDefault();
+            if (media.currentSrc) {
+              const link = document.createElement("a");
+              link.href = media.currentSrc;
+              link.download = "";
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+            }
+            break;
+          }
+          case "p": {
+            event.preventDefault();
+            if (media instanceof HTMLVideoElement) {
+              if (document.pictureInPictureElement === media) {
+                document.exitPictureInPicture().catch((error) => {
+                  console.error(
+                    "Failed to exit Picture-in-Picture mode:",
+                    error,
+                  );
+                });
+              } else {
+                media.requestPictureInPicture().catch((error) => {
+                  console.error(
+                    "Failed to enter Picture-in-Picture mode:",
+                    error,
+                  );
+                });
+              }
+            }
+            break;
+          }
         }
       },
       [disabled, store],
@@ -1149,7 +1197,7 @@ const MediaPlayerPiP = React.forwardRef<HTMLButtonElement, MediaPlayerPiPProps>(
     }, [context.mediaRef]);
 
     return (
-      <MediaPlayerTooltip tooltip="Picture-in-Picture" shortcut="P">
+      <MediaPlayerTooltip tooltip="Picture in picture" shortcut="P">
         <Button
           type="button"
           aria-label={isPictureInPicture ? "Exit pip" : "Enter pip"}
@@ -1284,9 +1332,11 @@ const MediaPlayerPlaybackSpeed = React.forwardRef<
         value={playbackRate.toString()}
         onValueChange={onPlaybackRateChange}
       >
-        <SelectTrigger className="h-8 w-16 justify-center border-none data-[state=open]:bg-accent data-[state=closed]:hover:bg-accent data-[state=closed]:dark:bg-transparent data-[state=closed]:dark:hover:bg-accent/50 [&[data-size]]:h-8 [&_svg]:hidden">
-          <SelectValue>{playbackRate}x</SelectValue>
-        </SelectTrigger>
+        <MediaPlayerTooltip tooltip="Playback speed" shortcut={["<", ">"]}>
+          <SelectTrigger className="h-8 w-16 justify-center border-none data-[state=open]:bg-accent data-[state=closed]:hover:bg-accent data-[state=closed]:dark:bg-transparent data-[state=closed]:dark:hover:bg-accent/50 [&[data-size]]:h-8 [&_svg]:hidden">
+            <SelectValue>{playbackRate}x</SelectValue>
+          </SelectTrigger>
+        </MediaPlayerTooltip>
         <SelectContent
           align="center"
           className="min-w-[var(--radix-select-trigger-width)]"
@@ -1422,7 +1472,7 @@ MediaPlayerDownload.displayName = DOWNLOAD_NAME;
 interface MediaPlayerTooltipProps
   extends React.ComponentPropsWithoutRef<typeof Tooltip> {
   tooltip?: string;
-  shortcut?: string;
+  shortcut?: string | string[];
 }
 
 function MediaPlayerTooltip({
@@ -1440,14 +1490,30 @@ function MediaPlayerTooltip({
         sideOffset={10}
         className="flex items-center gap-2 border bg-accent px-2 py-1 font-semibold text-foreground dark:bg-zinc-900 [&>span]:hidden"
       >
-        {tooltip}
-        {shortcut ? (
-          <kbd className="select-none rounded border bg-secondary px-1.5 py-px font-mono font-normal text-[0.7rem] text-foreground shadow-xs">
+        <p>{tooltip}</p>
+        {Array.isArray(shortcut) ? (
+          <div className="flex items-center gap-1">
+            {shortcut.map((shortcutKey) => (
+              <kbd
+                key={shortcutKey}
+                className="select-none rounded border bg-secondary px-1.5 py-px font-medium font-medium font-mono text-[0.7rem] text-foreground shadow-xs"
+              >
+                <abbr title={shortcutKey} className="no-underline">
+                  {shortcutKey}
+                </abbr>
+              </kbd>
+            ))}
+          </div>
+        ) : (
+          <kbd
+            key={shortcut}
+            className="select-none rounded border bg-secondary px-1.5 py-px font-medium font-mono font-normal text-[0.7rem] text-foreground shadow-xs"
+          >
             <abbr title={shortcut} className="no-underline">
               {shortcut}
             </abbr>
           </kbd>
-        ) : null}
+        )}
       </TooltipContent>
     </Tooltip>
   );
@@ -1483,5 +1549,4 @@ export {
   MediaPlayerDownload as Download,
   //
   useStore as useMediaPlayer,
-  //
 };
