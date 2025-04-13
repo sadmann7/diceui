@@ -84,9 +84,9 @@ export default function FileUploadCircularProgressDemo() {
     <FileUpload
       value={files}
       onValueChange={setFiles}
-      className="w-full max-w-md"
       maxFiles={10}
       maxSize={5 * 1024 * 1024}
+      className="w-full max-w-md"
       onUpload={onUpload}
       onFileReject={onFileReject}
       multiple

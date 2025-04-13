@@ -55,7 +55,11 @@ export default function FileUploadFormDemo() {
         <pre className="mt-2 w-80 rounded-md bg-accent/30 p-4 text-accent-foreground">
           <code>
             {JSON.stringify(
-              data.files.map((file) => file.name),
+              data.files.map((file) =>
+                file.name.length > 25
+                  ? `${file.name.slice(0, 25)}...`
+                  : file.name,
+              ),
               null,
               2,
             )}

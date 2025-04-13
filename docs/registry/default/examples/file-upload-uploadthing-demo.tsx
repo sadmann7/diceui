@@ -45,7 +45,11 @@ export default function FileUploadUploadThingDemo() {
             <pre className="mt-2 w-80 rounded-md bg-accent/30 p-4 text-accent-foreground">
               <code>
                 {JSON.stringify(
-                  res.map((file) => file.name),
+                  res.map((file) =>
+                    file.name.length > 25
+                      ? `${file.name.slice(0, 25)}...`
+                      : file.name,
+                  ),
                   null,
                   2,
                 )}
@@ -83,10 +87,10 @@ export default function FileUploadUploadThingDemo() {
 
   return (
     <FileUpload
-      className="w-full max-w-md"
       accept="image/*"
       maxFiles={2}
       maxSize={4 * 1024 * 1024}
+      className="w-full max-w-md"
       onAccept={(files) => setFiles(files)}
       onUpload={onUpload}
       onFileReject={onFileReject}
