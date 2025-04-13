@@ -609,7 +609,7 @@ export const Index: Record<string, any> = {
       name: "file-upload-uploadthing-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["button"],
+      registryDependencies: ["button","lucide-react","sonner"],
       files: [{
         path: "registry/default/examples/file-upload-uploadthing-demo.tsx",
         type: "registry:example",
@@ -625,7 +625,7 @@ export const Index: Record<string, any> = {
       name: "file-upload-circular-progress-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["button"],
+      registryDependencies: ["button","lucide-react","sonner"],
       files: [{
         path: "registry/default/examples/file-upload-circular-progress-demo.tsx",
         type: "registry:example",
@@ -641,7 +641,7 @@ export const Index: Record<string, any> = {
       name: "file-upload-form-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["button","form"],
+      registryDependencies: ["button","form","lucide-react","sonner"],
       files: [{
         path: "registry/default/examples/file-upload-form-demo.tsx",
         type: "registry:example",

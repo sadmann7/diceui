@@ -182,6 +182,18 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   dir?: "ltr" | "rtl";
 
   /**
+   * The label for the file upload component.
+   * Useful for labelling the hidden file input.
+   *
+   * ```ts
+   * <FileUpload label="Upload files" />
+   * ```
+   *
+   * @default "File upload"
+   */
+  label?: string;
+
+  /**
    * The name attribute for the file input element.
    * Useful when using the component in a form.
    *

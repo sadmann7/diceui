@@ -9,7 +9,9 @@
   ],
   "registryDependencies": [
     "button",
-    "form"
+    "form",
+    "lucide-react",
+    "sonner"
   ],
   "files": [
     {

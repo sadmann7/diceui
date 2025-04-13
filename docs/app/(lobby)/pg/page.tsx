@@ -25,8 +25,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
+import { ClientOnly } from "@/registry/default/components/client-only";
 import {
   Combobox,
   ComboboxAnchor,
@@ -36,12 +38,36 @@ import {
   ComboboxItem,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
+import * as MediaPlayer from "@/registry/default/ui/media-player";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
+      <ClientOnly fallback={<Skeleton className="h-[500px] w-full" />}>
+        <video tabIndex={-1} src="/assets/data-table.mp4" controls>
+          <track kind="captions" />
+        </video>
+        <MediaPlayer.Root>
+          <MediaPlayer.Video src="/assets/data-table.mp4">
+            <track kind="captions" />
+          </MediaPlayer.Video>
+          <MediaPlayer.Controls>
+            <MediaPlayer.Play />
+            <MediaPlayer.Seek />
+            <MediaPlayer.Time />
+            <MediaPlayer.PlaybackSpeed />
+            <MediaPlayer.Captions />
+            <MediaPlayer.Volume />
+            <MediaPlayer.Download />
+            <MediaPlayer.PiP />
+            <MediaPlayer.Fullscreen />
+            <MediaPlayer.SeekBackward />
+            <MediaPlayer.SeekForward />
+          </MediaPlayer.Controls>
+        </MediaPlayer.Root>
+      </ClientOnly>
       <div className="grid gap-8">
         <Combobox className="w-[15rem]">
           <ComboboxAnchor>

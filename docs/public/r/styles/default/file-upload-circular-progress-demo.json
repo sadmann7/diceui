@@ -6,7 +6,9 @@
     "lucide-react"
   ],
   "registryDependencies": [
-    "button"
+    "button",
+    "lucide-react",
+    "sonner"
   ],
   "files": [
     {

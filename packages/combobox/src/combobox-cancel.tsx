@@ -17,8 +17,11 @@ interface ComboboxCancelProps
 
 const ComboboxCancel = React.forwardRef<HTMLButtonElement, ComboboxCancelProps>(
   (props, forwardedRef) => {
-    const { forceMount = false, ...cancelProps } = props;
+    const { forceMount = false, disabled, ...cancelProps } = props;
+
     const context = useComboboxContext(CANCEL_NAME);
+
+    const isDisabled = disabled || context.disabled;
 
     if (!forceMount && !context.inputValue) return null;
 
@@ -26,6 +29,8 @@ const ComboboxCancel = React.forwardRef<HTMLButtonElement, ComboboxCancelProps>(
       <Primitive.button
         type="button"
         aria-controls={context.inputId}
+        data-disabled={isDisabled ? "" : undefined}
+        disabled={isDisabled}
         {...cancelProps}
         ref={forwardedRef}
         onClick={composeEventHandlers(cancelProps.onClick, () => {
@@ -38,7 +43,7 @@ const ComboboxCancel = React.forwardRef<HTMLButtonElement, ComboboxCancelProps>(
         onPointerDown={composeEventHandlers(
           cancelProps.onPointerDown,
           (event) => {
-            if (context.disabled) return;
+            if (isDisabled) return;
 
             // prevent implicit pointer capture
             const target = event.target;
