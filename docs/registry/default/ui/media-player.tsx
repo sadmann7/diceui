@@ -690,6 +690,7 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
           <RootPrimitive
             aria-labelledby={labelId}
             aria-describedby={descriptionId}
+            aria-disabled={disabled}
             data-disabled={disabled ? "" : undefined}
             data-slot="media-player"
             dir={dir}
