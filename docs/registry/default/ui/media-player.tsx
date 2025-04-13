@@ -387,6 +387,13 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
         });
       };
 
+      const onSeeked = () => {
+        store.dispatch({
+          variant: "SET_BUFFERED",
+          buffered: media.buffered,
+        });
+      };
+
       const onPlay = () => {
         store.dispatch({ variant: "SET_PLAYING", isPlaying: true });
         propsRef.current.onPlay?.();
@@ -445,6 +452,7 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
       media.addEventListener("ended", onEnded);
       media.addEventListener("volumechange", onVolumeChange);
       media.addEventListener("ratechange", onRateChange);
+      media.addEventListener("seeked", onSeeked);
       document.addEventListener("fullscreenchange", onFullscreenChange);
 
       if (media instanceof HTMLVideoElement) {
@@ -461,6 +469,7 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
         media.removeEventListener("ended", onEnded);
         media.removeEventListener("volumechange", onVolumeChange);
         media.removeEventListener("ratechange", onRateChange);
+        media.removeEventListener("seeked", onSeeked);
         document.removeEventListener("fullscreenchange", onFullscreenChange);
 
         if (media instanceof HTMLVideoElement) {
