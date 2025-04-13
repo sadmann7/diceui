@@ -634,16 +634,21 @@ const MediaPlayerSeek = React.forwardRef<
   const SeekSlider = (
     <SeekPrimitive
       type="range"
+      aria-label="Seek"
+      aria-valuemin={0}
+      aria-valuenow={currentTime}
+      aria-valuemax={duration ?? 100}
+      data-slot="media-player-seek"
       min={0}
       max={duration ?? 100}
       step="any"
       value={currentTime}
-      aria-label="Seek"
-      data-slot="media-player-seek"
       {...seekProps}
       ref={forwardedRef}
       className={cn(
-        "h-1 w-full cursor-pointer appearance-none rounded-full bg-primary/20 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary",
+        "relative h-8 w-full cursor-pointer appearance-none bg-transparent",
+        "before:absolute before:inset-y-[calc(50%-1.5px)] before:right-0 before:left-0 before:h-[3px] before:bg-primary/20 before:content-['']",
+        "[&::-webkit-slider-thumb]:relative [&::-webkit-slider-thumb]:size-3 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary",
         className,
       )}
       onChange={onSeek}
