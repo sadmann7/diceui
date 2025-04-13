@@ -621,11 +621,7 @@ const MediaPlayerPlay = React.forwardRef<
 MediaPlayerPlay.displayName = PLAY_NAME;
 
 interface MediaPlayerSeekProps
-  extends Omit<
-    React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root>,
-    "value" | "defaultValue" | "min" | "max" | "step" | "onValueChange"
-  > {
-  asChild?: boolean;
+  extends React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root> {
   withTime?: boolean;
 }
 
@@ -653,6 +649,12 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
 
     const seekThrottleTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
     const latestSeekValueRef = React.useRef<number | null>(null);
+
+    const onPointerEnter = React.useCallback(() => {
+      if (duration > 0) {
+        setIsHoveringSeek(true);
+      }
+    }, [duration]);
 
     const onPointerLeave = React.useCallback(() => {
       if (pointerMoveThrottleTimeoutRef.current) {
@@ -684,7 +686,6 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
 
         setTooltipPositionX(centeredPosition);
         setHoverTime(calculatedHoverTime);
-        setIsHoveringSeek(true);
 
         pointerMoveThrottleTimeoutRef.current = setTimeout(() => {
           pointerMoveThrottleTimeoutRef.current = null;
@@ -775,7 +776,6 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
             value={[currentTime]}
             onValueChange={onSeek}
             onValueCommit={onSeekCommit}
-            onPointerLeave={onPointerLeave}
             onPointerMove={onPointerMove}
             className={cn(
               "relative flex w-full touch-none select-none items-center",
@@ -799,7 +799,7 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
             align="start"
             alignOffset={tooltipPositionX}
             sideOffset={10}
-            className="bg-accent text-accent-foreground [&>span]:hidden"
+            className="pointer-events-none bg-accent text-accent-foreground [&>span]:hidden"
           >
             {formatTime(hoverTime)} / {formatTime(duration)}
           </TooltipContent>
@@ -807,26 +807,34 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
       </Tooltip>
     );
 
+    const SeekWrapper = (
+      <div
+        data-slot="media-player-seek-wrapper"
+        className="relative w-full"
+        onPointerEnter={onPointerEnter}
+        onPointerLeave={onPointerLeave}
+      >
+        {SeekSlider}
+      </div>
+    );
+
     if (withTime) {
       return (
         <div className="flex w-full items-center gap-2">
           <span className="text-sm">{formatTime(currentTime)}</span>
-          <div className={cn("w-full", className)}>{SeekSlider}</div>
+          <div className={cn("w-full", className)}>{SeekWrapper}</div>
           <span className="text-sm">{formatTime(duration - currentTime)}</span>
         </div>
       );
     }
 
-    return SeekSlider;
+    return SeekWrapper;
   },
 );
 MediaPlayerSeek.displayName = SEEK_NAME;
 
 interface MediaPlayerVolumeProps
-  extends Omit<
-    React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root>,
-    "value" | "defaultValue" | "min" | "max" | "step" | "onValueChange"
-  > {
+  extends React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root> {
   asChild?: boolean;
 }
 
