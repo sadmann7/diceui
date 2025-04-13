@@ -46,6 +46,9 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <ClientOnly fallback={<Skeleton className="h-[500px] w-full" />}>
+        <video src="/assets/data-table.mp4" controls>
+          <track kind="captions" />
+        </video>
         <MediaPlayer.Root>
           <MediaPlayer.Video src="/assets/data-table.mp4">
             <track kind="captions" />
@@ -61,9 +64,6 @@ export default function PlaygroundPage() {
             <MediaPlayer.Fullscreen />
           </MediaPlayer.Controls>
         </MediaPlayer.Root>
-        <video src="/assets/data-table.mp4" controls>
-          <track kind="captions" />
-        </video>
       </ClientOnly>
       <div className="grid gap-8">
         <Combobox className="w-[15rem]">

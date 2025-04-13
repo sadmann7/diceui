@@ -8,7 +8,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
 import { useComposedRefs } from "@/lib/composition";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
@@ -598,87 +597,82 @@ const MediaPlayerPlay = React.forwardRef<
 });
 MediaPlayerPlay.displayName = PLAY_NAME;
 
-interface MediaPlayerSeekProps
-  extends Omit<
-    React.ComponentPropsWithoutRef<typeof Slider>,
-    "value" | "defaultValue" | "min" | "max" | "step" | "onValueChange"
-  > {
+interface MediaPlayerSeekProps extends React.ComponentPropsWithoutRef<"input"> {
   asChild?: boolean;
   withTime?: boolean;
 }
 
-const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
-  (props, forwardedRef) => {
-    const { asChild, className, withTime = false, ...seekProps } = props;
+const MediaPlayerSeek = React.forwardRef<
+  HTMLInputElement,
+  MediaPlayerSeekProps
+>((props, forwardedRef) => {
+  const { asChild, className, withTime = false, ...seekProps } = props;
 
-    const context = useMediaPlayerContext(SEEK_NAME);
-    const store = useStoreContext(SEEK_NAME);
-    const currentTime = useStore((state) => state.media.currentTime);
-    const duration = useStore((state) => state.media.duration);
+  const context = useMediaPlayerContext(SEEK_NAME);
+  const store = useStoreContext(SEEK_NAME);
+  const currentTime = useStore((state) => state.media.currentTime);
+  const duration = useStore((state) => state.media.duration);
 
-    const onSeek = React.useCallback(
-      (value: number[]) => {
+  const onSeek = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      props.onChange?.(event);
+
+      if (!event.defaultPrevented) {
         const media = context.mediaRef.current;
         if (!media) return;
 
-        const time = value[0] ?? 0;
+        const time = Number.parseFloat(event.target.value);
         media.currentTime = time;
         store.dispatch({ variant: "SET_CURRENT_TIME", currentTime: time });
-      },
-      [context.mediaRef, store],
-    );
+      }
+    },
+    [context.mediaRef, props.onChange, store],
+  );
 
-    if (withTime) {
-      return (
-        <div className="flex w-full items-center gap-2">
-          <span className="text-sm">{formatTime(currentTime)}</span>
-          <Slider
-            value={[currentTime ?? 0]}
-            min={0}
-            max={duration ?? 100}
-            step={0.1}
-            onValueChange={onSeek}
-            aria-label="Seek"
-            data-slot="media-player-seek"
-            {...seekProps}
-            ref={forwardedRef}
-            className={cn("w-full", className)}
-          />
-          <span className="text-sm">
-            {formatTime((duration ?? 0) - (currentTime ?? 0))}
-          </span>
-        </div>
-      );
-    }
+  const SeekPrimitive = asChild ? Slot : "input";
 
+  const SeekSlider = (
+    <SeekPrimitive
+      type="range"
+      min={0}
+      max={duration ?? 100}
+      step="any"
+      value={currentTime}
+      aria-label="Seek"
+      data-slot="media-player-seek"
+      {...seekProps}
+      ref={forwardedRef}
+      className={cn(
+        "h-1 w-full cursor-pointer appearance-none rounded-full bg-primary/20 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary",
+        className,
+      )}
+      onChange={onSeek}
+    />
+  );
+
+  if (withTime) {
     return (
-      <Slider
-        value={[currentTime ?? 0]}
-        min={0}
-        max={duration ?? 100}
-        step={0.1}
-        onValueChange={onSeek}
-        aria-label="Seek"
-        data-slot="media-player-seek"
-        {...seekProps}
-        ref={forwardedRef}
-        className={cn("w-full", className)}
-      />
+      <div className="flex w-full items-center gap-2">
+        <span className="text-sm">{formatTime(currentTime)}</span>
+        {SeekSlider}
+        <span className="text-sm">
+          {formatTime((duration ?? 0) - currentTime)}
+        </span>
+      </div>
     );
-  },
-);
+  }
+
+  return SeekSlider;
+});
 MediaPlayerSeek.displayName = SEEK_NAME;
 
 interface MediaPlayerVolumeProps
-  extends Omit<
-    React.ComponentPropsWithoutRef<typeof Slider>,
-    "value" | "defaultValue" | "min" | "max" | "step" | "onValueChange"
-  > {
+  extends React.ComponentPropsWithoutRef<"input"> {
   asChild?: boolean;
 }
 
 const MediaPlayerVolume = React.forwardRef<
-  HTMLDivElement,
+  HTMLInputElement,
   MediaPlayerVolumeProps
 >((props, forwardedRef) => {
   const { asChild, className, ...volumeProps } = props;
@@ -687,21 +681,25 @@ const MediaPlayerVolume = React.forwardRef<
   const store = useStoreContext(VOLUME_NAME);
   const volume = useStore((state) => state.media.volume);
   const isMuted = useStore((state) => state.media.isMuted);
-  const previousVolumeRef = React.useRef(volume ?? 1);
+  const previousVolumeRef = React.useRef(volume);
 
   const onVolumeChange = React.useCallback(
-    (value: number[]) => {
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      props.onChange?.(event);
+
+      if (event.defaultPrevented) return;
+
       const media = context.mediaRef.current;
       if (!media) return;
 
-      const volume = value[0] ?? 0;
+      const volume = Number.parseFloat(event.target.value);
       media.volume = volume;
       media.muted = volume === 0;
       previousVolumeRef.current = volume;
       store.dispatch({ variant: "SET_VOLUME", volume });
       store.dispatch({ variant: "SET_MUTED", isMuted: volume === 0 });
     },
-    [context.mediaRef, store],
+    [context.mediaRef, props.onChange, store],
   );
 
   const onMute = React.useCallback(() => {
@@ -715,13 +713,15 @@ const MediaPlayerVolume = React.forwardRef<
       store.dispatch({ variant: "SET_VOLUME", volume: 0 });
       store.dispatch({ variant: "SET_MUTED", isMuted: true });
     } else {
-      const restoreVolume = previousVolumeRef.current;
+      const restoreVolume = previousVolumeRef.current ?? 1;
       media.volume = restoreVolume;
       media.muted = false;
       store.dispatch({ variant: "SET_VOLUME", volume: restoreVolume });
       store.dispatch({ variant: "SET_MUTED", isMuted: false });
     }
   }, [context.mediaRef, store, volume, isMuted]);
+
+  const VolumePrimitive = asChild ? Slot : "input";
 
   return (
     <div className="flex items-center gap-2">
@@ -737,23 +737,27 @@ const MediaPlayerVolume = React.forwardRef<
       >
         {isMuted ? (
           <VolumeXIcon />
-        ) : (volume ?? 0) > 0.5 ? (
+        ) : volume > 0.5 ? (
           <Volume2Icon />
         ) : (
           <Volume1Icon />
         )}
       </Button>
-      <Slider
-        value={[volume ?? 0]}
+      <VolumePrimitive
+        type="range"
         min={0}
         max={1}
-        step={0.01}
-        onValueChange={onVolumeChange}
+        step="any"
+        value={volume}
         aria-label="Volume"
         data-slot="media-player-volume"
         {...volumeProps}
         ref={forwardedRef}
-        className={cn("w-20", className)}
+        className={cn(
+          "h-1 w-20 cursor-pointer appearance-none rounded-full bg-primary/20 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary",
+          className,
+        )}
+        onChange={onVolumeChange}
       />
     </div>
   );
