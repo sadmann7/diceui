@@ -46,7 +46,7 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <ClientOnly fallback={<Skeleton className="h-[500px] w-full" />}>
-        <video src="/assets/data-table.mp4" controls>
+        <video tabIndex={-1} src="/assets/data-table.mp4" controls>
           <track kind="captions" />
         </video>
         <MediaPlayer.Root>
@@ -60,6 +60,7 @@ export default function PlaygroundPage() {
             <MediaPlayer.PlaybackSpeed />
             <MediaPlayer.Captions />
             <MediaPlayer.Volume />
+            <MediaPlayer.Download />
             <MediaPlayer.PiP />
             <MediaPlayer.Fullscreen />
           </MediaPlayer.Controls>

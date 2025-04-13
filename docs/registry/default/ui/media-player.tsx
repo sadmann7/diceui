@@ -365,6 +365,91 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
       [id, dir, disabled],
     );
 
+    // Handle keyboard shortcuts
+    const onKeyDown = React.useCallback(
+      (event: React.KeyboardEvent) => {
+        if (disabled) return;
+        const media = mediaRef.current;
+        if (!media) return;
+
+        // Check if focus is within the player or on the media element
+        const isMediaFocused = document.activeElement === media;
+        const isPlayerFocused =
+          document.activeElement?.closest('[data-slot="media-player"]') !==
+          null;
+
+        if (!isMediaFocused && !isPlayerFocused) return;
+
+        switch (event.key.toLowerCase()) {
+          case " ":
+          case "k":
+            event.preventDefault();
+            if (media.paused) {
+              media.play();
+            } else {
+              media.pause();
+            }
+            break;
+          case "f":
+            event.preventDefault();
+            if (!document.fullscreenElement) {
+              const container = media.closest('[data-slot="media-player"]');
+              if (container) {
+                container.requestFullscreen();
+              } else {
+                media.requestFullscreen();
+              }
+            } else {
+              document.exitFullscreen();
+            }
+            break;
+          case "m":
+            event.preventDefault();
+            media.muted = !media.muted;
+            break;
+          case "arrowright":
+            event.preventDefault();
+            media.currentTime = Math.min(media.duration, media.currentTime + 5);
+            break;
+          case "arrowleft":
+            event.preventDefault();
+            media.currentTime = Math.max(0, media.currentTime - 5);
+            break;
+          case "arrowup":
+            event.preventDefault();
+            media.volume = Math.min(1, media.volume + 0.1);
+            break;
+          case "arrowdown":
+            event.preventDefault();
+            media.volume = Math.max(0, media.volume - 0.1);
+            break;
+          case "c":
+            event.preventDefault();
+            if (
+              media instanceof HTMLVideoElement &&
+              media.textTracks.length > 0
+            ) {
+              const captionsEnabled = store.getState().media.captionsEnabled;
+              for (let i = 0; i < media.textTracks.length; i++) {
+                const track = media.textTracks[i];
+                if (
+                  track &&
+                  (track.kind === "captions" || track.kind === "subtitles")
+                ) {
+                  track.mode = captionsEnabled ? "hidden" : "showing";
+                }
+              }
+              store.dispatch({
+                variant: "SET_CAPTIONS_ENABLED",
+                captionsEnabled: !captionsEnabled,
+              });
+            }
+            break;
+        }
+      },
+      [disabled, store],
+    );
+
     React.useEffect(() => {
       const media = mediaRef.current;
       if (!media) return;
@@ -504,6 +589,8 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
             data-disabled={disabled ? "" : undefined}
             data-slot="media-player"
             dir={dir}
+            tabIndex={0}
+            onKeyDown={onKeyDown}
             {...rootProps}
             ref={forwardedRef}
             className={cn(
@@ -597,25 +684,27 @@ const MediaPlayerPlay = React.forwardRef<
   );
 
   return (
-    <Button
-      type="button"
-      aria-label={isPlaying ? "Pause" : "Play"}
-      data-state={isPlaying ? "playing" : "paused"}
-      data-slot="media-player-play-button"
-      {...playButtonProps}
-      ref={forwardedRef}
-      variant="ghost"
-      size="icon"
-      className={cn("size-8", className)}
-      onClick={isPlaying ? onPause : onPlay}
-    >
-      {children ??
-        (isPlaying ? (
-          <PauseIcon className="fill-current" />
-        ) : (
-          <PlayIcon className="fill-current" />
-        ))}
-    </Button>
+    <MediaPlayerTooltip tooltip={isPlaying ? "Pause" : "Play"} shortcut="Space">
+      <Button
+        type="button"
+        aria-label={isPlaying ? "Pause" : "Play"}
+        data-state={isPlaying ? "playing" : "paused"}
+        data-slot="media-player-play-button"
+        {...playButtonProps}
+        ref={forwardedRef}
+        variant="ghost"
+        size="icon"
+        className={cn("size-8", className)}
+        onClick={isPlaying ? onPause : onPlay}
+      >
+        {children ??
+          (isPlaying ? (
+            <PauseIcon className="fill-current" />
+          ) : (
+            <PlayIcon className="fill-current" />
+          ))}
+      </Button>
+    </MediaPlayerTooltip>
   );
 });
 MediaPlayerPlay.displayName = PLAY_NAME;
@@ -886,24 +975,26 @@ const MediaPlayerVolume = React.forwardRef<
 
   return (
     <div className="flex items-center gap-2">
-      <Button
-        type="button"
-        aria-label={isMuted ? "Unmute" : "Mute"}
-        data-state={isMuted ? "muted" : "unmuted"}
-        data-slot="media-player-mute"
-        variant="ghost"
-        size="icon"
-        className="size-8"
-        onClick={onMute}
-      >
-        {isMuted ? (
-          <VolumeXIcon />
-        ) : (volume ?? 0) > 0.5 ? (
-          <Volume2Icon />
-        ) : (
-          <Volume1Icon />
-        )}
-      </Button>
+      <MediaPlayerTooltip tooltip="Volume" shortcut="M">
+        <Button
+          type="button"
+          aria-label={isMuted ? "Unmute" : "Mute"}
+          data-state={isMuted ? "muted" : "unmuted"}
+          data-slot="media-player-mute"
+          variant="ghost"
+          size="icon"
+          className="size-8"
+          onClick={onMute}
+        >
+          {isMuted ? (
+            <VolumeXIcon />
+          ) : (volume ?? 0) > 0.5 ? (
+            <Volume2Icon />
+          ) : (
+            <Volume1Icon />
+          )}
+        </Button>
+      </MediaPlayerTooltip>
       <SliderPrimitive.Root
         aria-label="Volume"
         data-slider=""
@@ -1010,20 +1101,22 @@ const MediaPlayerFullscreen = React.forwardRef<
   );
 
   return (
-    <Button
-      type="button"
-      aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
-      data-state={isFullscreen ? "fullscreen" : "windowed"}
-      data-slot="media-player-fullscreen"
-      {...fullscreenProps}
-      ref={forwardedRef}
-      variant="ghost"
-      size="icon"
-      className={cn("size-8", className)}
-      onClick={onFullscreen}
-    >
-      {children ?? (isFullscreen ? <Minimize2Icon /> : <Maximize2Icon />)}
-    </Button>
+    <MediaPlayerTooltip tooltip="Fullscreen" shortcut="F">
+      <Button
+        type="button"
+        aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+        data-state={isFullscreen ? "fullscreen" : "windowed"}
+        data-slot="media-player-fullscreen"
+        {...fullscreenProps}
+        ref={forwardedRef}
+        variant="ghost"
+        size="icon"
+        className={cn("size-8", className)}
+        onClick={onFullscreen}
+      >
+        {children ?? (isFullscreen ? <Minimize2Icon /> : <Maximize2Icon />)}
+      </Button>
+    </MediaPlayerTooltip>
   );
 });
 MediaPlayerFullscreen.displayName = FULLSCREEN_NAME;
@@ -1056,24 +1149,26 @@ const MediaPlayerPiP = React.forwardRef<HTMLButtonElement, MediaPlayerPiPProps>(
     }, [context.mediaRef]);
 
     return (
-      <Button
-        type="button"
-        aria-label={isPictureInPicture ? "Exit pip" : "Enter pip"}
-        data-state={isPictureInPicture ? "pip" : "inline"}
-        data-slot="media-player-pip"
-        {...pipButtonProps}
-        ref={forwardedRef}
-        variant="ghost"
-        size="icon"
-        className={cn("size-8", className)}
-        onClick={onPictureInPicture}
-      >
-        {isPictureInPicture ? (
-          <PictureInPicture2Icon />
-        ) : (
-          <PictureInPictureIcon />
-        )}
-      </Button>
+      <MediaPlayerTooltip tooltip="Picture-in-Picture" shortcut="P">
+        <Button
+          type="button"
+          aria-label={isPictureInPicture ? "Exit pip" : "Enter pip"}
+          data-state={isPictureInPicture ? "pip" : "inline"}
+          data-slot="media-player-pip"
+          {...pipButtonProps}
+          ref={forwardedRef}
+          variant="ghost"
+          size="icon"
+          className={cn("size-8", className)}
+          onClick={onPictureInPicture}
+        >
+          {isPictureInPicture ? (
+            <PictureInPicture2Icon />
+          ) : (
+            <PictureInPictureIcon />
+          )}
+        </Button>
+      </MediaPlayerTooltip>
     );
   },
 );
@@ -1252,20 +1347,23 @@ const MediaPlayerCaptions = React.forwardRef<
   );
 
   return (
-    <Button
-      type="button"
-      aria-label={captionsEnabled ? "Disable captions" : "Enable captions"}
-      data-state={captionsEnabled ? "active" : "inactive"}
-      data-slot="media-player-captions"
-      {...captionsProps}
-      ref={forwardedRef}
-      variant="ghost"
-      size="icon"
-      className={cn("size-8", className)}
-      onClick={onToggleCaptions}
-    >
-      {children ?? (captionsEnabled ? <SubtitlesIcon /> : <CaptionsOffIcon />)}
-    </Button>
+    <MediaPlayerTooltip tooltip="Captions" shortcut="C">
+      <Button
+        type="button"
+        aria-label={captionsEnabled ? "Disable captions" : "Enable captions"}
+        data-state={captionsEnabled ? "active" : "inactive"}
+        data-slot="media-player-captions"
+        {...captionsProps}
+        ref={forwardedRef}
+        variant="ghost"
+        size="icon"
+        className={cn("size-8", className)}
+        onClick={onToggleCaptions}
+      >
+        {children ??
+          (captionsEnabled ? <SubtitlesIcon /> : <CaptionsOffIcon />)}
+      </Button>
+    </MediaPlayerTooltip>
   );
 });
 MediaPlayerCaptions.displayName = CAPTIONS_NAME;
@@ -1302,40 +1400,61 @@ const MediaPlayerDownload = React.forwardRef<
   );
 
   return (
-    <Button
-      type="button"
-      aria-label="Download"
-      data-slot="media-player-download"
-      {...downloadProps}
-      ref={forwardedRef}
-      variant="ghost"
-      size="icon"
-      className={cn("size-8", className)}
-      onClick={onDownload}
-    >
-      {children ?? <DownloadIcon />}
-    </Button>
+    <MediaPlayerTooltip tooltip="Download" shortcut="D">
+      <Button
+        type="button"
+        aria-label="Download"
+        data-slot="media-player-download"
+        {...downloadProps}
+        ref={forwardedRef}
+        variant="ghost"
+        size="icon"
+        className={cn("size-8", className)}
+        onClick={onDownload}
+      >
+        {children ?? <DownloadIcon />}
+      </Button>
+    </MediaPlayerTooltip>
   );
 });
 MediaPlayerDownload.displayName = DOWNLOAD_NAME;
 
-const MediaPlayer = MediaPlayerRoot;
-const Root = MediaPlayerRoot;
-const Controls = MediaPlayerControls;
-const Play = MediaPlayerPlay;
-const Seek = MediaPlayerSeek;
-const Volume = MediaPlayerVolume;
-const Time = MediaPlayerTime;
-const Fullscreen = MediaPlayerFullscreen;
-const PiP = MediaPlayerPiP;
-const Video = MediaPlayerVideo;
-const Audio = MediaPlayerAudio;
-const PlaybackSpeed = MediaPlayerPlaybackSpeed;
-const Captions = MediaPlayerCaptions;
-const Download = MediaPlayerDownload;
+interface MediaPlayerTooltipProps
+  extends React.ComponentPropsWithoutRef<typeof Tooltip> {
+  tooltip?: string;
+  shortcut?: string;
+}
+
+function MediaPlayerTooltip({
+  tooltip,
+  shortcut,
+  children,
+  ...props
+}: MediaPlayerTooltipProps) {
+  if (!tooltip && !shortcut) return <>{children}</>;
+
+  return (
+    <Tooltip {...props}>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipContent
+        sideOffset={10}
+        className="flex items-center gap-2 border bg-accent px-2 py-1 font-semibold text-foreground dark:bg-zinc-900 [&>span]:hidden"
+      >
+        {tooltip}
+        {shortcut ? (
+          <kbd className="select-none rounded border bg-secondary px-1.5 py-px font-mono font-normal text-[0.7rem] text-foreground shadow-xs">
+            <abbr title={shortcut} className="no-underline">
+              {shortcut}
+            </abbr>
+          </kbd>
+        ) : null}
+      </TooltipContent>
+    </Tooltip>
+  );
+}
 
 export {
-  MediaPlayer,
+  MediaPlayerRoot as MediaPlayer,
   MediaPlayerControls,
   MediaPlayerPlay,
   MediaPlayerSeek,
@@ -1349,19 +1468,20 @@ export {
   MediaPlayerCaptions,
   MediaPlayerDownload,
   //
-  Root,
-  Controls,
-  Play,
-  Seek,
-  Volume,
-  Time,
-  Fullscreen,
-  PiP,
-  Video,
-  Audio,
-  PlaybackSpeed,
-  Captions,
-  Download,
+  MediaPlayerRoot as Root,
+  MediaPlayerControls as Controls,
+  MediaPlayerPlay as Play,
+  MediaPlayerSeek as Seek,
+  MediaPlayerVolume as Volume,
+  MediaPlayerTime as Time,
+  MediaPlayerFullscreen as Fullscreen,
+  MediaPlayerPiP as PiP,
+  MediaPlayerVideo as Video,
+  MediaPlayerAudio as Audio,
+  MediaPlayerPlaybackSpeed as PlaybackSpeed,
+  MediaPlayerCaptions as Captions,
+  MediaPlayerDownload as Download,
   //
   useStore as useMediaPlayer,
+  //
 };
