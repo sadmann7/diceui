@@ -20,12 +20,16 @@ import { Slot } from "@radix-ui/react-slot";
 import {
   CaptionsOffIcon,
   DownloadIcon,
+  FastForwardIcon,
   Maximize2Icon,
   Minimize2Icon,
   PauseIcon,
   PictureInPicture2Icon,
   PictureInPictureIcon,
   PlayIcon,
+  RewindIcon,
+  SkipBackIcon,
+  SkipForwardIcon,
   SubtitlesIcon,
   Volume1Icon,
   Volume2Icon,
@@ -35,6 +39,8 @@ import * as React from "react";
 
 const SEEK_THROTTLE_MS = 100;
 const POINTER_MOVE_THROTTLE_MS = 16;
+
+const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
 const ROOT_NAME = "MediaPlayer";
 const CONTROLS_NAME = "MediaPlayerControls";
@@ -49,6 +55,8 @@ const PIP_NAME = "MediaPlayerPiP";
 const PLAYBACK_SPEED_NAME = "MediaPlayerPlaybackSpeed";
 const CAPTIONS_NAME = "MediaPlayerCaptions";
 const DOWNLOAD_NAME = "MediaPlayerDownload";
+const SEEK_FORWARD_NAME = "MediaPlayerSeekForward";
+const SEEK_BACKWARD_NAME = "MediaPlayerSeekBackward";
 
 const MEDIA_PLAYER_ERRORS = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` must be used as root component`,
@@ -64,6 +72,8 @@ const MEDIA_PLAYER_ERRORS = {
   [PLAYBACK_SPEED_NAME]: `\`${PLAYBACK_SPEED_NAME}\` must be within \`${ROOT_NAME}\``,
   [CAPTIONS_NAME]: `\`${CAPTIONS_NAME}\` must be within \`${ROOT_NAME}\``,
   [DOWNLOAD_NAME]: `\`${DOWNLOAD_NAME}\` must be within \`${ROOT_NAME}\``,
+  [SEEK_FORWARD_NAME]: `\`${SEEK_FORWARD_NAME}\` must be within \`${ROOT_NAME}\``,
+  [SEEK_BACKWARD_NAME]: `\`${SEEK_BACKWARD_NAME}\` must be within \`${ROOT_NAME}\``,
 } as const;
 
 const useIsomorphicLayoutEffect =
@@ -451,6 +461,37 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
             event.preventDefault();
             media.volume = Math.max(0, media.volume - 0.1);
             break;
+          case "<": {
+            event.preventDefault();
+            const decreaseRate = store.getState().media.playbackRate;
+            const decreaseIndex = SPEEDS.indexOf(decreaseRate);
+            const newDecreaseIndex = Math.max(0, decreaseIndex - 1);
+            const newDecreaseRate = SPEEDS[newDecreaseIndex] ?? 1;
+
+            media.playbackRate = newDecreaseRate;
+            store.dispatch({
+              variant: "SET_PLAYBACK_RATE",
+              playbackRate: newDecreaseRate,
+            });
+            break;
+          }
+          case ">": {
+            event.preventDefault();
+            const increaseRate = store.getState().media.playbackRate;
+            const increaseIndex = SPEEDS.indexOf(increaseRate);
+            const newIncreaseIndex = Math.min(
+              SPEEDS.length - 1,
+              increaseIndex + 1,
+            );
+            const newIncreaseRate = SPEEDS[newIncreaseIndex] ?? 1;
+
+            media.playbackRate = newIncreaseRate;
+            store.dispatch({
+              variant: "SET_PLAYBACK_RATE",
+              playbackRate: newIncreaseRate,
+            });
+            break;
+          }
           case "c":
             event.preventDefault();
             if (
@@ -652,12 +693,12 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
             data-disabled={disabled ? "" : undefined}
             data-slot="media-player"
             dir={dir}
-            tabIndex={0}
+            tabIndex={disabled ? undefined : 0}
             onKeyDown={onKeyDown}
             {...rootProps}
             ref={forwardedRef}
             className={cn(
-              "relative flex flex-col overflow-hidden rounded-lg bg-background",
+              "relative flex flex-col overflow-hidden rounded-lg bg-background outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
               "[:fullscreen_&]:flex [:fullscreen_&]:h-full [:fullscreen_&]:max-h-screen [:fullscreen_&]:flex-col [:fullscreen_&]:justify-between",
               "[&_[data-slider]::before]:-top-6 [&_[data-slider]::before]:-bottom-2 [&_[data-slider]::before]:absolute [&_[data-slider]::before]:inset-x-0 [&_[data-slider]::before]:z-10 [&_[data-slider]::before]:h-12 [&_[data-slider]::before]:cursor-pointer [&_[data-slider]::before]:content-[''] [&_[data-slider]]:relative",
               className,
@@ -1405,12 +1446,7 @@ const MediaPlayerPlaybackSpeed = React.forwardRef<
   HTMLDivElement,
   MediaPlayerPlaybackSpeedProps
 >((props, forwardedRef) => {
-  const {
-    asChild,
-    speeds = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2],
-    className,
-    ...playbackSpeedProps
-  } = props;
+  const { asChild, speeds = SPEEDS, className, ...playbackSpeedProps } = props;
 
   const context = useMediaPlayerContext(PLAYBACK_SPEED_NAME);
   const store = useStoreContext(PLAYBACK_SPEED_NAME);
@@ -1635,6 +1671,125 @@ function MediaPlayerTooltip({
   );
 }
 
+interface MediaPlayerSeekForwardProps
+  extends React.ComponentPropsWithoutRef<typeof Button> {
+  seconds?: number;
+}
+
+const MediaPlayerSeekForward = React.forwardRef<
+  HTMLButtonElement,
+  MediaPlayerSeekForwardProps
+>((props, forwardedRef) => {
+  const {
+    asChild,
+    children,
+    className,
+    seconds = 10,
+    ...seekForwardProps
+  } = props;
+
+  const context = useMediaPlayerContext(SEEK_FORWARD_NAME);
+  const isDisabled = props.disabled || context.disabled;
+  const seekAmount = seconds ?? 10;
+
+  const onSeekForward = React.useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      props.onClick?.(event);
+
+      if (event.defaultPrevented) return;
+
+      const media = context.mediaRef.current;
+      if (!media) return;
+
+      media.currentTime = Math.min(
+        media.duration,
+        media.currentTime + seekAmount,
+      );
+    },
+    [context.mediaRef, props.onClick, seekAmount],
+  );
+
+  return (
+    <MediaPlayerTooltip tooltip={`Forward ${seekAmount}s`} shortcut="→">
+      <Button
+        type="button"
+        aria-label={`Forward ${seekAmount} seconds`}
+        aria-controls={context.mediaId}
+        data-disabled={isDisabled ? "" : undefined}
+        data-slot="media-player-seek-forward"
+        disabled={isDisabled}
+        {...seekForwardProps}
+        ref={forwardedRef}
+        variant="ghost"
+        size="icon"
+        className={cn("size-8", className)}
+        onClick={onSeekForward}
+      >
+        {children ?? <FastForwardIcon />}
+      </Button>
+    </MediaPlayerTooltip>
+  );
+});
+MediaPlayerSeekForward.displayName = SEEK_FORWARD_NAME;
+
+interface MediaPlayerSeekBackwardProps
+  extends React.ComponentPropsWithoutRef<typeof Button> {
+  seconds?: number;
+}
+
+const MediaPlayerSeekBackward = React.forwardRef<
+  HTMLButtonElement,
+  MediaPlayerSeekBackwardProps
+>((props, forwardedRef) => {
+  const {
+    asChild,
+    children,
+    className,
+    seconds = 10,
+    ...seekBackwardProps
+  } = props;
+
+  const context = useMediaPlayerContext(SEEK_BACKWARD_NAME);
+  const isDisabled = props.disabled || context.disabled;
+  const seekAmount = seconds || 10;
+
+  const onSeekBackward = React.useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      props.onClick?.(event);
+
+      if (event.defaultPrevented) return;
+
+      const media = context.mediaRef.current;
+      if (!media) return;
+
+      media.currentTime = Math.max(0, media.currentTime - seekAmount);
+    },
+    [context.mediaRef, props.onClick, seekAmount],
+  );
+
+  return (
+    <MediaPlayerTooltip tooltip={`Back ${seekAmount}s`} shortcut="←">
+      <Button
+        type="button"
+        aria-label={`Back ${seekAmount} seconds`}
+        aria-controls={context.mediaId}
+        data-disabled={isDisabled ? "" : undefined}
+        data-slot="media-player-seek-backward"
+        disabled={isDisabled}
+        {...seekBackwardProps}
+        ref={forwardedRef}
+        variant="ghost"
+        size="icon"
+        className={cn("size-8", className)}
+        onClick={onSeekBackward}
+      >
+        {children ?? <RewindIcon />}
+      </Button>
+    </MediaPlayerTooltip>
+  );
+});
+MediaPlayerSeekBackward.displayName = SEEK_BACKWARD_NAME;
+
 const MediaPlayer = MediaPlayerRoot;
 const Root = MediaPlayerRoot;
 const Controls = MediaPlayerControls;
@@ -1649,6 +1804,8 @@ const Audio = MediaPlayerAudio;
 const PlaybackSpeed = MediaPlayerPlaybackSpeed;
 const Captions = MediaPlayerCaptions;
 const Download = MediaPlayerDownload;
+const SeekForward = MediaPlayerSeekForward;
+const SeekBackward = MediaPlayerSeekBackward;
 
 export {
   MediaPlayer,
@@ -1664,6 +1821,8 @@ export {
   MediaPlayerPlaybackSpeed,
   MediaPlayerCaptions,
   MediaPlayerDownload,
+  MediaPlayerSeekForward,
+  MediaPlayerSeekBackward,
   //
   Root,
   Controls,
@@ -1678,6 +1837,8 @@ export {
   PlaybackSpeed,
   Captions,
   Download,
+  SeekForward,
+  SeekBackward,
   //
   useStore as useMediaPlayer,
 };

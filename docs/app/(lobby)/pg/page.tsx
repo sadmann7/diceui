@@ -63,6 +63,8 @@ export default function PlaygroundPage() {
             <MediaPlayer.Download />
             <MediaPlayer.PiP />
             <MediaPlayer.Fullscreen />
+            <MediaPlayer.SeekBackward />
+            <MediaPlayer.SeekForward />
           </MediaPlayer.Controls>
         </MediaPlayer.Root>
       </ClientOnly>
