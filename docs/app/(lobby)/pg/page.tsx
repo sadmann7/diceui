@@ -46,12 +46,12 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <ClientOnly fallback={<Skeleton className="h-[500px] w-full" />}>
-        <video tabIndex={-1} src="/assets/data-table.mp4" controls>
+        {/* <video tabIndex={-1} src="/assets/skate.mp4" controls>
           <track kind="captions" />
-        </video>
+        </video> */}
         <MediaPlayer.Root>
           <MediaPlayer.Video>
-            <source src="/assets/data-table.mp4" type="video/mp4" />
+            <source src="/assets/skate.mp4" type="video/mp4" />
           </MediaPlayer.Video>
           <MediaPlayer.Controls>
             <MediaPlayer.Play />
