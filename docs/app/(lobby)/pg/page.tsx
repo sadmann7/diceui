@@ -50,8 +50,8 @@ export default function PlaygroundPage() {
           <track kind="captions" />
         </video>
         <MediaPlayer.Root>
-          <MediaPlayer.Video src="/assets/data-table.mp4">
-            <track kind="captions" />
+          <MediaPlayer.Video>
+            <source src="/assets/data-table.mp4" type="video/mp4" />
           </MediaPlayer.Video>
           <MediaPlayer.Controls>
             <MediaPlayer.Play />

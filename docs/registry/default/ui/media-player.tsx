@@ -40,6 +40,7 @@ import * as React from "react";
 const SEEK_THROTTLE_MS = 100;
 const POINTER_MOVE_THROTTLE_MS = 16;
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+const TOOLTIP_DELAY_MS = 240;
 
 const ROOT_NAME = "MediaPlayer";
 const CONTROLS_NAME = "MediaPlayerControls";
@@ -975,7 +976,7 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
     }, [buffered, duration]);
 
     const SeekSlider = (
-      <Tooltip delayDuration={240} open={isHoveringSeek}>
+      <Tooltip delayDuration={TOOLTIP_DELAY_MS} open={isHoveringSeek}>
         <TooltipTrigger asChild>
           <SliderPrimitive.Root
             aria-label="Seek time"
@@ -1358,13 +1359,7 @@ const MediaPlayerVideo = React.forwardRef<
   HTMLVideoElement,
   MediaPlayerVideoProps
 >((props, forwardedRef) => {
-  const {
-    asChild,
-    children,
-    className,
-    controls = false,
-    ...videoProps
-  } = props;
+  const { asChild, children, className, ...videoProps } = props;
 
   const context = useMediaPlayerContext(VIDEO_NAME);
   const isLooping = useStore((state) => state.media.isLooping);
@@ -1384,7 +1379,6 @@ const MediaPlayerVideo = React.forwardRef<
       loop={isLooping}
       playsInline
       preload="metadata"
-      controls={controls}
       className={cn("h-full w-full", className)}
     >
       {children}
@@ -1636,7 +1630,7 @@ function MediaPlayerTooltip({
   if (!tooltip && !shortcut) return <>{children}</>;
 
   return (
-    <Tooltip {...props}>
+    <Tooltip {...props} delayDuration={TOOLTIP_DELAY_MS}>
       <TooltipTrigger asChild>{children}</TooltipTrigger>
       <TooltipContent
         sideOffset={10}
