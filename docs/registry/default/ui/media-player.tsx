@@ -28,8 +28,6 @@ import {
   PictureInPictureIcon,
   PlayIcon,
   RewindIcon,
-  SkipBackIcon,
-  SkipForwardIcon,
   SubtitlesIcon,
   Volume1Icon,
   Volume2Icon,
@@ -40,7 +38,6 @@ import * as React from "react";
 const SEEK_THROTTLE_MS = 100;
 const POINTER_MOVE_THROTTLE_MS = 16;
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
-const TOOLTIP_DELAY_MS = 240;
 
 const ROOT_NAME = "MediaPlayer";
 const CONTROLS_NAME = "MediaPlayerControls";
@@ -811,15 +808,13 @@ const MediaPlayerPlay = React.forwardRef<
         ref={forwardedRef}
         variant="ghost"
         size="icon"
-        className={cn("size-8", className)}
+        className={cn(
+          "size-8 [&_svg:not([class*='fill-'])]:fill-current",
+          className,
+        )}
         onClick={isPlaying ? onPause : onPlay}
       >
-        {children ??
-          (isPlaying ? (
-            <PauseIcon className="fill-current" />
-          ) : (
-            <PlayIcon className="fill-current" />
-          ))}
+        {children ?? (isPlaying ? <PauseIcon /> : <PlayIcon />)}
       </Button>
     </MediaPlayerTooltip>
   );
@@ -976,7 +971,7 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
     }, [buffered, duration]);
 
     const SeekSlider = (
-      <Tooltip delayDuration={TOOLTIP_DELAY_MS} open={isHoveringSeek}>
+      <Tooltip delayDuration={100} open={isHoveringSeek}>
         <TooltipTrigger asChild>
           <SliderPrimitive.Root
             aria-label="Seek time"
@@ -1141,16 +1136,16 @@ const MediaPlayerVolume = React.forwardRef<
           data-slot="media-player-mute"
           variant="ghost"
           size="icon"
-          className="size-8"
+          className={cn("size-8", className)}
           disabled={isDisabled}
           onClick={onMute}
         >
           {isMuted ? (
-            <VolumeXIcon aria-hidden="true" />
+            <VolumeXIcon />
           ) : volume > 0.5 ? (
-            <Volume2Icon aria-hidden="true" />
+            <Volume2Icon />
           ) : (
-            <Volume1Icon aria-hidden="true" />
+            <Volume1Icon />
           )}
         </Button>
       </MediaPlayerTooltip>
@@ -1630,7 +1625,7 @@ function MediaPlayerTooltip({
   if (!tooltip && !shortcut) return <>{children}</>;
 
   return (
-    <Tooltip {...props} delayDuration={TOOLTIP_DELAY_MS}>
+    <Tooltip {...props} delayDuration={600}>
       <TooltipTrigger asChild>{children}</TooltipTrigger>
       <TooltipContent
         sideOffset={10}

@@ -55,16 +55,16 @@ export default function PlaygroundPage() {
           </MediaPlayer.Video>
           <MediaPlayer.Controls>
             <MediaPlayer.Play />
+            <MediaPlayer.SeekBackward />
+            <MediaPlayer.SeekForward />
             <MediaPlayer.Seek />
+            <MediaPlayer.Volume />
             <MediaPlayer.Time />
             <MediaPlayer.PlaybackSpeed />
             <MediaPlayer.Captions />
-            <MediaPlayer.Volume />
             <MediaPlayer.Download />
             <MediaPlayer.PiP />
             <MediaPlayer.Fullscreen />
-            <MediaPlayer.SeekBackward />
-            <MediaPlayer.SeekForward />
           </MediaPlayer.Controls>
         </MediaPlayer.Root>
       </ClientOnly>
