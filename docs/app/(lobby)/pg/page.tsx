@@ -46,26 +46,32 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <ClientOnly fallback={<Skeleton className="h-[500px] w-full" />}>
-        <video tabIndex={-1} src="/assets/skate.mp4" controls>
+        <video tabIndex={-1} src="/assets/data-table.mp4" controls>
           <track kind="captions" />
         </video>
         <MediaPlayer.Root>
           <MediaPlayer.Video>
-            <source src="/assets/skate.mp4" type="video/mp4" />
+            <source src="/assets/data-table.mp4" type="video/mp4" />
           </MediaPlayer.Video>
-          <MediaPlayer.Controls>
+          <MediaPlayer.Controls className="flex-col items-start">
             <MediaPlayer.Overlay />
-            <MediaPlayer.Play />
-            <MediaPlayer.SeekBackward />
-            <MediaPlayer.SeekForward />
             <MediaPlayer.Seek />
-            <MediaPlayer.Volume />
-            <MediaPlayer.Time />
-            <MediaPlayer.PlaybackSpeed />
-            <MediaPlayer.Captions />
-            <MediaPlayer.Download />
-            <MediaPlayer.PiP />
-            <MediaPlayer.Fullscreen />
+            <div className="flex w-full items-center gap-2">
+              <div className="flex flex-1 items-center gap-2">
+                <MediaPlayer.Play />
+                <MediaPlayer.SeekBackward />
+                <MediaPlayer.SeekForward />
+                <MediaPlayer.Volume />
+                <MediaPlayer.Time />
+              </div>
+              <div className="flex items-center gap-2">
+                <MediaPlayer.PlaybackSpeed />
+                <MediaPlayer.Captions />
+                <MediaPlayer.Download />
+                <MediaPlayer.PiP />
+                <MediaPlayer.Fullscreen />
+              </div>
+            </div>
           </MediaPlayer.Controls>
         </MediaPlayer.Root>
       </ClientOnly>

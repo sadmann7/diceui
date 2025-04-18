@@ -411,6 +411,7 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
               media.pause();
             }
             break;
+
           case "f":
             event.preventDefault();
             if (!document.fullscreenElement) {
@@ -424,6 +425,7 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
               document.exitFullscreen();
             }
             break;
+
           case "m": {
             event.preventDefault();
             const currentVolume = store.getState().media.volume;
@@ -444,22 +446,27 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
             }
             break;
           }
+
           case "arrowright":
             event.preventDefault();
             media.currentTime = Math.min(media.duration, media.currentTime + 5);
             break;
+
           case "arrowleft":
             event.preventDefault();
             media.currentTime = Math.max(0, media.currentTime - 5);
             break;
+
           case "arrowup":
             event.preventDefault();
             media.volume = Math.min(1, media.volume + 0.1);
             break;
+
           case "arrowdown":
             event.preventDefault();
             media.volume = Math.max(0, media.volume - 0.1);
             break;
+
           case "<": {
             event.preventDefault();
             const decreaseRate = store.getState().media.playbackRate;
@@ -474,6 +481,7 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
             });
             break;
           }
+
           case ">": {
             event.preventDefault();
             const increaseRate = store.getState().media.playbackRate;
@@ -491,6 +499,7 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
             });
             break;
           }
+
           case "c":
             event.preventDefault();
             if (
@@ -513,6 +522,7 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
               });
             }
             break;
+
           case "d": {
             event.preventDefault();
             if (media.currentSrc) {
@@ -525,6 +535,7 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
             }
             break;
           }
+
           case "p": {
             event.preventDefault();
             if (media instanceof HTMLVideoElement) {
@@ -742,8 +753,8 @@ const MediaPlayerControls = React.forwardRef<
       dir={context.dir}
       ref={forwardedRef}
       className={cn(
-        "dark absolute right-0 bottom-0 left-0 z-50 flex items-center gap-2 p-2",
-        "[:fullscreen_&]:absolute [:fullscreen_&]:right-0 [:fullscreen_&]:bottom-0 [:fullscreen_&]:left-0 [:fullscreen_&]:z-50 [:fullscreen_&]:p-4",
+        "dark absolute right-0 bottom-0 left-0 z-50 flex items-center gap-2 px-4 py-3",
+        "[:fullscreen_&]:absolute [:fullscreen_&]:right-0 [:fullscreen_&]:bottom-0 [:fullscreen_&]:left-0 [:fullscreen_&]:z-50 [:fullscreen_&]:px-6 [:fullscreen_&]:py-4",
         className,
       )}
       {...controlsProps}
@@ -1080,7 +1091,6 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
         <div
           role="group"
           aria-label="Video progress"
-          aria-valuetext={`${formattedCurrentTime} of ${formattedDuration}`}
           className="flex w-full items-center gap-2"
         >
           <span aria-label="Current time" className="text-sm">
@@ -1226,30 +1236,53 @@ const MediaPlayerVolume = React.forwardRef<
 MediaPlayerVolume.displayName = VOLUME_NAME;
 
 function formatTime(time: number) {
-  const minutes = Math.floor(time / 60);
+  const hours = Math.floor(time / 3600);
+  const minutes = Math.floor((time % 3600) / 60);
   const seconds = Math.floor(time % 60);
+
+  if (hours > 0) {
+    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  }
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
 interface MediaPlayerTimeProps extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
+  variant?: "default" | "remaining" | "duration";
 }
 
 const MediaPlayerTime = React.forwardRef<HTMLDivElement, MediaPlayerTimeProps>(
   (props, forwardedRef) => {
-    const { asChild, className, ...timeProps } = props;
+    const { asChild, className, variant = "default", ...timeProps } = props;
 
     const context = useMediaPlayerContext(TIME_NAME);
     const currentTime = useStore((state) => state.media.currentTime);
     const duration = useStore((state) => state.media.duration);
+
     const formattedCurrentTime = formatTime(currentTime);
     const formattedDuration = formatTime(duration);
+    const formattedRemainingTime = formatTime(duration - currentTime);
 
     const TimePrimitive = asChild ? Slot : "div";
 
+    if (variant === "remaining" || variant === "duration") {
+      return (
+        <TimePrimitive
+          aria-label={variant === "remaining" ? "Remaining time" : "Duration"}
+          data-slot="media-player-time"
+          dir={context.dir}
+          {...timeProps}
+          ref={forwardedRef}
+          className={cn("text-foreground/80 text-sm", className)}
+        >
+          {variant === "remaining" ? formattedRemainingTime : formattedDuration}
+        </TimePrimitive>
+      );
+    }
+
     return (
       <TimePrimitive
-        aria-valuetext={`${formattedCurrentTime} of ${formattedDuration}`}
+        aria-label="Time"
         data-slot="media-player-time"
         dir={context.dir}
         {...timeProps}
