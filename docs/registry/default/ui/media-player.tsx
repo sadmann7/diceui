@@ -43,9 +43,11 @@ const ROOT_NAME = "MediaPlayer";
 const CONTROLS_NAME = "MediaPlayerControls";
 const OVERLAY_NAME = "MediaPlayerOverlay";
 const PLAY_NAME = "MediaPlayerPlay";
+const SEEK_FORWARD_NAME = "MediaPlayerSeekForward";
+const SEEK_BACKWARD_NAME = "MediaPlayerSeekBackward";
 const SEEK_NAME = "MediaPlayerSeek";
-const VOLUME_NAME = "MediaPlayerVolume";
 const TIME_NAME = "MediaPlayerTime";
+const VOLUME_NAME = "MediaPlayerVolume";
 const FULLSCREEN_NAME = "MediaPlayerFullscreen";
 const VIDEO_NAME = "MediaPlayerVideo";
 const AUDIO_NAME = "MediaPlayerAudio";
@@ -53,17 +55,17 @@ const PIP_NAME = "MediaPlayerPiP";
 const PLAYBACK_SPEED_NAME = "MediaPlayerPlaybackSpeed";
 const CAPTIONS_NAME = "MediaPlayerCaptions";
 const DOWNLOAD_NAME = "MediaPlayerDownload";
-const SEEK_FORWARD_NAME = "MediaPlayerSeekForward";
-const SEEK_BACKWARD_NAME = "MediaPlayerSeekBackward";
 
 const MEDIA_PLAYER_ERRORS = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` must be used as root component`,
   [CONTROLS_NAME]: `\`${CONTROLS_NAME}\` must be within \`${ROOT_NAME}\``,
   [OVERLAY_NAME]: `\`${OVERLAY_NAME}\` must be within \`${ROOT_NAME}\``,
   [PLAY_NAME]: `\`${PLAY_NAME}\` must be within \`${ROOT_NAME}\``,
+  [SEEK_FORWARD_NAME]: `\`${SEEK_FORWARD_NAME}\` must be within \`${ROOT_NAME}\``,
+  [SEEK_BACKWARD_NAME]: `\`${SEEK_BACKWARD_NAME}\` must be within \`${ROOT_NAME}\``,
   [SEEK_NAME]: `\`${SEEK_NAME}\` must be within \`${ROOT_NAME}\``,
-  [VOLUME_NAME]: `\`${VOLUME_NAME}\` must be within \`${ROOT_NAME}\``,
   [TIME_NAME]: `\`${TIME_NAME}\` must be within \`${ROOT_NAME}\``,
+  [VOLUME_NAME]: `\`${VOLUME_NAME}\` must be within \`${ROOT_NAME}\``,
   [FULLSCREEN_NAME]: `\`${FULLSCREEN_NAME}\` must be within \`${ROOT_NAME}\``,
   [VIDEO_NAME]: `\`${VIDEO_NAME}\` must be within \`${ROOT_NAME}\``,
   [AUDIO_NAME]: `\`${AUDIO_NAME}\` must be within \`${ROOT_NAME}\``,
@@ -71,8 +73,6 @@ const MEDIA_PLAYER_ERRORS = {
   [PLAYBACK_SPEED_NAME]: `\`${PLAYBACK_SPEED_NAME}\` must be within \`${ROOT_NAME}\``,
   [CAPTIONS_NAME]: `\`${CAPTIONS_NAME}\` must be within \`${ROOT_NAME}\``,
   [DOWNLOAD_NAME]: `\`${DOWNLOAD_NAME}\` must be within \`${ROOT_NAME}\``,
-  [SEEK_FORWARD_NAME]: `\`${SEEK_FORWARD_NAME}\` must be within \`${ROOT_NAME}\``,
-  [SEEK_BACKWARD_NAME]: `\`${SEEK_BACKWARD_NAME}\` must be within \`${ROOT_NAME}\``,
 } as const;
 
 const useIsomorphicLayoutEffect =
@@ -438,10 +438,10 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
             } else {
               store.dispatch({
                 variant: "SET_VOLUME",
-                volume: currentVolume || 1,
+                volume: currentVolume ?? 1,
               });
               store.dispatch({ variant: "SET_MUTED", isMuted: false });
-              media.volume = currentVolume || 1;
+              media.volume = currentVolume ?? 1;
               media.muted = false;
             }
             break;
@@ -872,8 +872,8 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
   (props, forwardedRef) => {
     const {
       asChild,
-      className,
       withTime = false,
+      className,
       disabled,
       ...seekProps
     } = props;
@@ -1120,9 +1120,9 @@ const MediaPlayerVolume = React.forwardRef<
 >((props, forwardedRef) => {
   const {
     asChild,
+    expandable = false,
     className,
     disabled,
-    expandable = false,
     ...volumeProps
   } = props;
 
@@ -1774,7 +1774,6 @@ const MediaPlayerSeekForward = React.forwardRef<
 
   const context = useMediaPlayerContext(SEEK_FORWARD_NAME);
   const isDisabled = props.disabled || context.disabled;
-  const seekAmount = seconds ?? 10;
 
   const onSeekForward = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -1785,19 +1784,16 @@ const MediaPlayerSeekForward = React.forwardRef<
       const media = context.mediaRef.current;
       if (!media) return;
 
-      media.currentTime = Math.min(
-        media.duration,
-        media.currentTime + seekAmount,
-      );
+      media.currentTime = Math.min(media.duration, media.currentTime + seconds);
     },
-    [context.mediaRef, props.onClick, seekAmount],
+    [context.mediaRef, props.onClick, seconds],
   );
 
   return (
-    <MediaPlayerTooltip tooltip={`Forward ${seekAmount}s`} shortcut="→">
+    <MediaPlayerTooltip tooltip={`Forward ${seconds}s`} shortcut="→">
       <Button
         type="button"
-        aria-label={`Forward ${seekAmount} seconds`}
+        aria-label={`Forward ${seconds} seconds`}
         aria-controls={context.mediaId}
         data-disabled={isDisabled ? "" : undefined}
         data-slot="media-player-seek-forward"
@@ -1879,6 +1875,8 @@ const Root = MediaPlayerRoot;
 const Controls = MediaPlayerControls;
 const Overlay = MediaPlayerOverlay;
 const Play = MediaPlayerPlay;
+const SeekForward = MediaPlayerSeekForward;
+const SeekBackward = MediaPlayerSeekBackward;
 const Seek = MediaPlayerSeek;
 const Volume = MediaPlayerVolume;
 const Time = MediaPlayerTime;
@@ -1889,17 +1887,17 @@ const Audio = MediaPlayerAudio;
 const PlaybackSpeed = MediaPlayerPlaybackSpeed;
 const Captions = MediaPlayerCaptions;
 const Download = MediaPlayerDownload;
-const SeekForward = MediaPlayerSeekForward;
-const SeekBackward = MediaPlayerSeekBackward;
 
 export {
   MediaPlayer,
   MediaPlayerControls,
   MediaPlayerOverlay,
   MediaPlayerPlay,
+  MediaPlayerSeekForward,
+  MediaPlayerSeekBackward,
   MediaPlayerSeek,
-  MediaPlayerVolume,
   MediaPlayerTime,
+  MediaPlayerVolume,
   MediaPlayerFullscreen,
   MediaPlayerPiP,
   MediaPlayerVideo,
@@ -1907,15 +1905,15 @@ export {
   MediaPlayerPlaybackSpeed,
   MediaPlayerCaptions,
   MediaPlayerDownload,
-  MediaPlayerSeekForward,
-  MediaPlayerSeekBackward,
   //
   Root,
   Controls,
   Play,
+  SeekForward,
+  SeekBackward,
   Seek,
-  Volume,
   Time,
+  Volume,
   Fullscreen,
   PiP,
   Video,
@@ -1923,8 +1921,6 @@ export {
   PlaybackSpeed,
   Captions,
   Download,
-  SeekForward,
-  SeekBackward,
   Overlay,
   //
   useStore as useMediaPlayer,
