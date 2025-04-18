@@ -5,9 +5,12 @@ import {
   type CollisionDetection,
   DndContext,
   type DndContextProps,
+  type DragCancelEvent,
   type DragEndEvent,
   type DragOverEvent,
   DragOverlay,
+  type DragStartEvent,
+  type DraggableAttributes,
   type DraggableSyntheticListeners,
   type DropAnimation,
   type DroppableContainer,
@@ -42,7 +45,7 @@ import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { composeEventHandlers, useComposedRefs } from "@/lib/composition";
+import { useComposedRefs } from "@/lib/composition";
 import { cn } from "@/lib/utils";
 
 const directions: string[] = [
@@ -222,6 +225,7 @@ function Kanban<T>(props: KanbanProps<T>) {
     flatCursor = false,
     ...kanbanProps
   } = props;
+
   const id = React.useId();
   const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null);
   const lastOverIdRef = React.useRef<UniqueIdentifier | null>(null);
@@ -237,9 +241,7 @@ function Kanban<T>(props: KanbanProps<T>) {
   const getItemValue = React.useCallback(
     (item: T): UniqueIdentifier => {
       if (typeof item === "object" && !getItemValueProp) {
-        throw new Error(
-          "getItemValue is required when using array of objects.",
-        );
+        throw new Error("getItemValue is required when using array of objects");
       }
       return getItemValueProp
         ? getItemValueProp(item)
@@ -314,8 +316,22 @@ function Kanban<T>(props: KanbanProps<T>) {
     [activeId, value, getItemValue],
   );
 
+  const onDragStart = React.useCallback(
+    (event: DragStartEvent) => {
+      kanbanProps.onDragStart?.(event);
+
+      if (event.activatorEvent.defaultPrevented) return;
+      setActiveId(event.active.id);
+    },
+    [kanbanProps.onDragStart],
+  );
+
   const onDragOver = React.useCallback(
     (event: DragOverEvent) => {
+      kanbanProps.onDragOver?.(event);
+
+      if (event.activatorEvent.defaultPrevented) return;
+
       const { active, over } = event;
       if (!over) return;
 
@@ -367,11 +383,15 @@ function Kanban<T>(props: KanbanProps<T>) {
         hasMovedRef.current = true;
       }
     },
-    [value, getColumn, getItemValue, onValueChange],
+    [value, getColumn, getItemValue, onValueChange, kanbanProps.onDragOver],
   );
 
   const onDragEnd = React.useCallback(
     (event: DragEndEvent) => {
+      kanbanProps.onDragEnd?.(event);
+
+      if (event.activatorEvent.defaultPrevented) return;
+
       const { active, over } = event;
 
       if (!over) {
@@ -396,11 +416,7 @@ function Kanban<T>(props: KanbanProps<T>) {
           }
 
           if (onMove) {
-            onMove({
-              ...event,
-              activeIndex,
-              overIndex,
-            });
+            onMove({ ...event, activeIndex, overIndex });
           } else {
             onValueChange?.(newColumns);
           }
@@ -447,7 +463,26 @@ function Kanban<T>(props: KanbanProps<T>) {
       setActiveId(null);
       hasMovedRef.current = false;
     },
-    [value, getColumn, getItemValue, onValueChange, onMove],
+    [
+      value,
+      getColumn,
+      getItemValue,
+      onValueChange,
+      onMove,
+      kanbanProps.onDragEnd,
+    ],
+  );
+
+  const onDragCancel = React.useCallback(
+    (event: DragCancelEvent) => {
+      kanbanProps.onDragCancel?.(event);
+
+      if (event.activatorEvent.defaultPrevented) return;
+
+      setActiveId(null);
+      hasMovedRef.current = false;
+    },
+    [kanbanProps.onDragCancel],
   );
 
   const announcements: Announcements = React.useMemo(
@@ -593,18 +628,10 @@ function Kanban<T>(props: KanbanProps<T>) {
             strategy: MeasuringStrategy.Always,
           },
         }}
-        onDragStart={composeEventHandlers(
-          kanbanProps.onDragStart,
-          ({ active }) => {
-            setActiveId(active.id);
-          },
-        )}
-        onDragOver={composeEventHandlers(kanbanProps.onDragOver, onDragOver)}
-        onDragEnd={composeEventHandlers(kanbanProps.onDragEnd, onDragEnd)}
-        onDragCancel={composeEventHandlers(kanbanProps.onDragCancel, () => {
-          setActiveId(null);
-          hasMovedRef.current = false;
-        })}
+        onDragStart={onDragStart}
+        onDragOver={onDragOver}
+        onDragEnd={onDragEnd}
+        onDragCancel={onDragCancel}
         accessibility={{
           announcements,
           screenReaderInstructions: {
@@ -632,6 +659,7 @@ interface KanbanBoardProps extends React.ComponentPropsWithoutRef<"div"> {
 const KanbanBoard = React.forwardRef<HTMLDivElement, KanbanBoardProps>(
   (props, forwardedRef) => {
     const { asChild, className, ...boardProps } = props;
+
     const context = useKanbanContext(BOARD_NAME);
 
     const columns = React.useMemo(() => {
@@ -653,6 +681,7 @@ const KanbanBoard = React.forwardRef<HTMLDivElement, KanbanBoardProps>(
           <BoardPrimitive
             aria-orientation={context.orientation}
             data-orientation={context.orientation}
+            data-slot="kanban-board"
             {...boardProps}
             ref={forwardedRef}
             className={cn(
@@ -670,7 +699,7 @@ KanbanBoard.displayName = BOARD_NAME;
 
 interface KanbanColumnContextValue {
   id: string;
-  attributes: React.HTMLAttributes<HTMLElement>;
+  attributes: DraggableAttributes;
   listeners: DraggableSyntheticListeners | undefined;
   setActivatorNodeRef: (node: HTMLElement | null) => void;
   isDragging?: boolean;
@@ -695,7 +724,6 @@ interface KanbanColumnProps extends React.ComponentPropsWithoutRef<"div"> {
 const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
   (props, forwardedRef) => {
     const {
-      id = React.useId(),
       value,
       asChild,
       asHandle,
@@ -704,6 +732,8 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
       style,
       ...columnProps
     } = props;
+
+    const id = React.useId();
     const context = useKanbanContext(COLUMN_NAME);
     const inBoard = React.useContext(KanbanBoardContext);
     const inOverlay = React.useContext(KanbanOverlayContext);
@@ -774,11 +804,12 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
         >
           <ColumnPrimitive
             id={id}
+            data-disabled={disabled}
             data-dragging={isDragging ? "" : undefined}
+            data-slot="kanban-column"
             {...columnProps}
-            {...(asHandle ? attributes : {})}
-            {...(asHandle ? listeners : {})}
-            aria-disabled={disabled}
+            {...(asHandle && !disabled ? attributes : {})}
+            {...(asHandle && !disabled ? listeners : {})}
             ref={composedRef}
             style={composedStyle}
             className={cn(
@@ -811,8 +842,10 @@ const KanbanColumnHandle = React.forwardRef<
   KanbanColumnHandleProps
 >((props, forwardedRef) => {
   const { asChild, disabled, className, ...columnHandleProps } = props;
+
   const context = useKanbanContext(COLUMN_NAME);
   const columnContext = React.useContext(KanbanColumnContext);
+
   if (!columnContext) {
     throw new Error(KANBAN_ERRORS[COLUMN_HANDLE_NAME]);
   }
@@ -830,10 +863,12 @@ const KanbanColumnHandle = React.forwardRef<
     <HandlePrimitive
       type="button"
       aria-controls={columnContext.id}
+      data-disabled={isDisabled}
       data-dragging={columnContext.isDragging ? "" : undefined}
+      data-slot="kanban-column-handle"
       {...columnHandleProps}
-      {...columnContext.attributes}
-      {...columnContext.listeners}
+      {...(isDisabled ? {} : columnContext.attributes)}
+      {...(isDisabled ? {} : columnContext.listeners)}
       ref={composedRef}
       className={cn(
         "select-none disabled:pointer-events-none disabled:opacity-50",
@@ -850,7 +885,7 @@ KanbanColumnHandle.displayName = COLUMN_HANDLE_NAME;
 
 interface KanbanItemContextValue {
   id: string;
-  attributes: React.HTMLAttributes<HTMLElement>;
+  attributes: DraggableAttributes;
   listeners: DraggableSyntheticListeners | undefined;
   setActivatorNodeRef: (node: HTMLElement | null) => void;
   isDragging?: boolean;
@@ -872,7 +907,6 @@ interface KanbanItemProps extends React.ComponentPropsWithoutRef<"div"> {
 const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
   (props, forwardedRef) => {
     const {
-      id = React.useId(),
       value,
       style,
       asHandle,
@@ -881,6 +915,8 @@ const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
       className,
       ...itemProps
     } = props;
+
+    const id = React.useId();
     const context = useKanbanContext(ITEM_NAME);
     const inBoard = React.useContext(KanbanBoardContext);
     const inOverlay = React.useContext(KanbanOverlayContext);
@@ -934,11 +970,12 @@ const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
       <KanbanItemContext.Provider value={itemContext}>
         <ItemPrimitive
           id={id}
+          data-disabled={disabled}
           data-dragging={isDragging ? "" : undefined}
+          data-slot="kanban-item"
           {...itemProps}
-          {...(asHandle ? attributes : {})}
-          {...(asHandle ? listeners : {})}
-          tabIndex={disabled ? undefined : 0}
+          {...(asHandle && !disabled ? attributes : {})}
+          {...(asHandle && !disabled ? listeners : {})}
           ref={composedRef}
           style={composedStyle}
           className={cn(
@@ -970,6 +1007,7 @@ const KanbanItemHandle = React.forwardRef<
   KanbanItemHandleProps
 >((props, forwardedRef) => {
   const { asChild, disabled, className, ...itemHandleProps } = props;
+
   const itemContext = React.useContext(KanbanItemContext);
   if (!itemContext) {
     throw new Error(KANBAN_ERRORS[ITEM_HANDLE_NAME]);
@@ -989,10 +1027,12 @@ const KanbanItemHandle = React.forwardRef<
     <HandlePrimitive
       type="button"
       aria-controls={itemContext.id}
+      data-disabled={isDisabled}
       data-dragging={itemContext.isDragging ? "" : undefined}
+      data-slot="kanban-item-handle"
       {...itemHandleProps}
-      {...itemContext.attributes}
-      {...itemContext.listeners}
+      {...(isDisabled ? {} : itemContext.attributes)}
+      {...(isDisabled ? {} : itemContext.listeners)}
       ref={composedRef}
       className={cn(
         "select-none disabled:pointer-events-none disabled:opacity-50",
@@ -1033,6 +1073,7 @@ interface KanbanOverlayProps
 
 function KanbanOverlay(props: KanbanOverlayProps) {
   const { container: containerProp, children, ...overlayProps } = props;
+
   const context = useKanbanContext(OVERLAY_NAME);
 
   const [mounted, setMounted] = React.useState(false);

@@ -111,12 +111,12 @@ Individual sortable item component.
 <DataAttributesTable
   attributes={[
     {
-      title: "[data-dragging]",
-      value: "Present when the item is being dragged.",
+      title: "[data-disabled]",
+      value: "Present when the item is disabled.",
     },
     {
-      title: "[data-sortable-item]",
-      value: "Present on all sortable items.",
+      title: "[data-dragging]",
+      value: "Present when the item is being dragged.",
     },
   ]}
 />
@@ -132,6 +132,10 @@ A button component that acts as a drag handle for sortable items.
 
 <DataAttributesTable
   attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the item is disabled.",
+    },
     {
       title: "[data-dragging]",
       value: "Present when the parent sortable item is being dragged.",

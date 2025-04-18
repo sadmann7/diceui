@@ -100,6 +100,10 @@ Individual kanban column component.
 <DataAttributesTable
   attributes={[
     {
+      title: "[data-disabled]",
+      value: "Present when the column is disabled.",
+    },
+    {
       title: "[data-dragging]",
       value: "Present when the column is being dragged.",
     },
@@ -117,6 +121,10 @@ A button component that acts as a drag handle for kanban columns.
 
 <DataAttributesTable
   attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the column is disabled.",
+    },
     {
       title: "[data-dragging]",
       value: "Present when the parent column is being dragged.",
@@ -136,6 +144,10 @@ Individual kanban item component.
 <DataAttributesTable
   attributes={[
     {
+      title: "[data-disabled]",
+      value: "Present when the item is disabled.",
+    },
+    {
       title: "[data-dragging]",
       value: "Present when the item is being dragged.",
     },
@@ -152,7 +164,11 @@ A button component that acts as a drag handle for kanban items.
 />
 
 <DataAttributesTable
-  attributes={[
+  attributes={[ 
+    {
+      title: "[data-disabled]",
+      value: "Present when the item is disabled.",
+    },
     {
       title: "[data-dragging]",
       value: "Present when the parent item is being dragged.",
@@ -200,4 +216,4 @@ The overlay component that appears when an item or column is being dragged.
       description: "Cancels the drag operation and returns the item or column to its original position.",
     },
   ]}
-/> 
+/>
