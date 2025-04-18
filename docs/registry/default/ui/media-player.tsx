@@ -1053,7 +1053,6 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
             </SliderPrimitive.Track>
             <SliderPrimitive.Thumb
               aria-label="Seek thumb"
-              aria-valuetext={`${formattedCurrentTime} of ${formattedDuration}`}
               className="relative z-10 block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:outline-hidden focus-visible:ring-4 disabled:pointer-events-none disabled:opacity-50"
             />
           </SliderPrimitive.Root>
@@ -1112,13 +1111,20 @@ MediaPlayerSeek.displayName = SEEK_NAME;
 interface MediaPlayerVolumeProps
   extends React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root> {
   asChild?: boolean;
+  expandable?: boolean;
 }
 
 const MediaPlayerVolume = React.forwardRef<
   HTMLDivElement,
   MediaPlayerVolumeProps
 >((props, forwardedRef) => {
-  const { asChild, className, disabled, ...volumeProps } = props;
+  const {
+    asChild,
+    className,
+    disabled,
+    expandable = false,
+    ...volumeProps
+  } = props;
 
   const context = useMediaPlayerContext(VOLUME_NAME);
   const store = useStoreContext(VOLUME_NAME);
@@ -1170,7 +1176,11 @@ const MediaPlayerVolume = React.forwardRef<
       role="group"
       aria-label="Volume controls"
       data-disabled={isDisabled ? "" : undefined}
-      className="flex items-center gap-2"
+      className={cn(
+        "group flex items-center",
+        expandable ? "gap-0 group-hover:gap-2" : "gap-2",
+        className,
+      )}
     >
       <MediaPlayerTooltip tooltip="Volume" shortcut="M">
         <Button
@@ -1183,7 +1193,7 @@ const MediaPlayerVolume = React.forwardRef<
           data-slot="media-player-mute"
           variant="ghost"
           size="icon"
-          className={cn("size-8", className)}
+          className="size-8"
           disabled={isDisabled}
           onClick={onMute}
         >
@@ -1200,6 +1210,7 @@ const MediaPlayerVolume = React.forwardRef<
         id={sliderId}
         aria-label="Volume"
         aria-controls={context.mediaId}
+        aria-valuetext={`${Math.round(volume * 100)}% volume`}
         data-slider=""
         data-slot="media-player-volume"
         {...volumeProps}
@@ -1208,7 +1219,10 @@ const MediaPlayerVolume = React.forwardRef<
         max={1}
         step={0.1}
         className={cn(
-          "relative flex w-16 touch-none select-none items-center",
+          "relative flex touch-none select-none items-center",
+          expandable
+            ? "w-0 opacity-0 transition-[width,opacity] duration-200 ease-in-out group-hover:w-16 group-hover:opacity-100"
+            : "w-16",
           className,
         )}
         disabled={isDisabled}
@@ -1216,17 +1230,16 @@ const MediaPlayerVolume = React.forwardRef<
         onValueChange={onVolumeChange}
       >
         <SliderPrimitive.Track
-          className="relative h-1 w-full grow overflow-hidden rounded-full bg-secondary"
           aria-label="Volume track"
+          className="relative h-1 w-full grow overflow-hidden rounded-full bg-secondary"
         >
           <SliderPrimitive.Range
-            className="absolute h-full bg-primary"
             aria-label="Current volume"
+            className="absolute h-full bg-primary"
           />
         </SliderPrimitive.Track>
         <SliderPrimitive.Thumb
           aria-label="Volume thumb"
-          aria-valuetext={`${Math.round(volume * 100)}% volume`}
           className="block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:outline-hidden focus-visible:ring-4 disabled:pointer-events-none disabled:opacity-50"
         />
       </SliderPrimitive.Root>

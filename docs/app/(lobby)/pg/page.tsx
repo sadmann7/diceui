@@ -53,7 +53,7 @@ export default function PlaygroundPage() {
           <MediaPlayer.Video>
             <source src="/assets/data-table.mp4" type="video/mp4" />
           </MediaPlayer.Video>
-          <MediaPlayer.Controls className="flex-col items-start">
+          <MediaPlayer.Controls className="flex-col items-start gap-2.5">
             <MediaPlayer.Overlay />
             <MediaPlayer.Seek />
             <div className="flex w-full items-center gap-2">
@@ -61,7 +61,7 @@ export default function PlaygroundPage() {
                 <MediaPlayer.Play />
                 <MediaPlayer.SeekBackward />
                 <MediaPlayer.SeekForward />
-                <MediaPlayer.Volume />
+                <MediaPlayer.Volume expandable />
                 <MediaPlayer.Time />
               </div>
               <div className="flex items-center gap-2">
