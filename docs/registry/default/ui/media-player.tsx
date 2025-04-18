@@ -1486,7 +1486,7 @@ const MediaPlayerPlaybackSpeed = React.forwardRef<
         <MediaPlayerTooltip tooltip="Playback speed" shortcut={["<", ">"]}>
           <SelectTrigger
             aria-controls={context.mediaId}
-            className="h-8 w-16 justify-center border-none data-[state=open]:bg-accent data-[state=closed]:hover:bg-accent data-[state=closed]:dark:bg-transparent data-[state=closed]:dark:hover:bg-accent/50 [&[data-size]]:h-8 [&_svg]:hidden"
+            className="h-8 w-16 justify-center border-none aria-expanded:bg-accent aria-[expanded=true]:bg-accent/50 dark:bg-transparent dark:aria-[expanded=true]:bg-accent/50 dark:hover:bg-accent/50 [&[data-size]]:h-8 [&_svg]:hidden"
           >
             <SelectValue>{playbackRate}x</SelectValue>
           </SelectTrigger>
