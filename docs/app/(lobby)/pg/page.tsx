@@ -54,6 +54,7 @@ export default function PlaygroundPage() {
             <source src="/assets/skate.mp4" type="video/mp4" />
           </MediaPlayer.Video>
           <MediaPlayer.Controls>
+            <MediaPlayer.Overlay />
             <MediaPlayer.Play />
             <MediaPlayer.SeekBackward />
             <MediaPlayer.SeekForward />

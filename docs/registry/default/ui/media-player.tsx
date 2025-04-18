@@ -41,6 +41,7 @@ const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
 const ROOT_NAME = "MediaPlayer";
 const CONTROLS_NAME = "MediaPlayerControls";
+const OVERLAY_NAME = "MediaPlayerOverlay";
 const PLAY_NAME = "MediaPlayerPlay";
 const SEEK_NAME = "MediaPlayerSeek";
 const VOLUME_NAME = "MediaPlayerVolume";
@@ -58,6 +59,7 @@ const SEEK_BACKWARD_NAME = "MediaPlayerSeekBackward";
 const MEDIA_PLAYER_ERRORS = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` must be used as root component`,
   [CONTROLS_NAME]: `\`${CONTROLS_NAME}\` must be within \`${ROOT_NAME}\``,
+  [OVERLAY_NAME]: `\`${OVERLAY_NAME}\` must be within \`${ROOT_NAME}\``,
   [PLAY_NAME]: `\`${PLAY_NAME}\` must be within \`${ROOT_NAME}\``,
   [SEEK_NAME]: `\`${SEEK_NAME}\` must be within \`${ROOT_NAME}\``,
   [VOLUME_NAME]: `\`${VOLUME_NAME}\` must be within \`${ROOT_NAME}\``,
@@ -696,7 +698,7 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
             {...rootProps}
             ref={forwardedRef}
             className={cn(
-              "relative flex flex-col overflow-hidden rounded-lg bg-background outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+              "relative isolate flex flex-col overflow-hidden rounded-lg bg-background outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
               "[:fullscreen_&]:flex [:fullscreen_&]:h-full [:fullscreen_&]:max-h-screen [:fullscreen_&]:flex-col [:fullscreen_&]:justify-between",
               "[&_[data-slider]::before]:-top-6 [&_[data-slider]::before]:-bottom-2 [&_[data-slider]::before]:absolute [&_[data-slider]::before]:inset-x-0 [&_[data-slider]::before]:z-10 [&_[data-slider]::before]:h-12 [&_[data-slider]::before]:cursor-pointer [&_[data-slider]::before]:content-[''] [&_[data-slider]]:relative",
               className,
@@ -717,14 +719,13 @@ MediaPlayerRoot.displayName = ROOT_NAME;
 interface MediaPlayerControlsProps
   extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
-  blurry?: boolean;
 }
 
 const MediaPlayerControls = React.forwardRef<
   HTMLDivElement,
   MediaPlayerControlsProps
 >((props, forwardedRef) => {
-  const { asChild, className, blurry, ...controlsProps } = props;
+  const { asChild, className, ...controlsProps } = props;
 
   const context = useMediaPlayerContext(CONTROLS_NAME);
   const isFullscreen = useStore((state) => state.media.isFullscreen);
@@ -739,20 +740,47 @@ const MediaPlayerControls = React.forwardRef<
       data-slot="media-player-controls"
       data-state={isFullscreen ? "fullscreen" : "windowed"}
       dir={context.dir}
-      {...controlsProps}
       ref={forwardedRef}
       className={cn(
-        "dark absolute right-0 bottom-0 left-0 flex items-center gap-2 p-2",
-        "data-[state=fullscreen]:bg-gradient-to-t data-[state=fullscreen]:from-black/95 data-[state=fullscreen]:to-transparent [:fullscreen_&]:absolute [:fullscreen_&]:right-0 [:fullscreen_&]:bottom-0 [:fullscreen_&]:left-0 [:fullscreen_&]:z-50 [:fullscreen_&]:p-4",
-        "data-[state=fullscreen]:absolute data-[state=fullscreen]:right-0 data-[state=fullscreen]:bottom-0 data-[state=fullscreen]:left-0 data-[state=fullscreen]:z-50data-[state=fullscreen]:p-4",
-        blurry &&
-          "bg-gradient-to-t from-black/95 to-transparent [:fullscreen_&]:bg-gradient-to-t [:fullscreen_&]:from-black/95 [:fullscreen_&]:to-transparent",
+        "dark absolute right-0 bottom-0 left-0 z-50 flex items-center gap-2 p-2",
+        "[:fullscreen_&]:absolute [:fullscreen_&]:right-0 [:fullscreen_&]:bottom-0 [:fullscreen_&]:left-0 [:fullscreen_&]:z-50 [:fullscreen_&]:p-4",
+        className,
+      )}
+      {...controlsProps}
+    />
+  );
+});
+MediaPlayerControls.displayName = CONTROLS_NAME;
+
+interface MediaPlayerOverlayProps
+  extends React.ComponentPropsWithoutRef<"div"> {
+  asChild?: boolean;
+}
+
+const MediaPlayerOverlay = React.forwardRef<
+  HTMLDivElement,
+  MediaPlayerOverlayProps
+>((props, forwardedRef) => {
+  const { asChild, className, ...overlayProps } = props;
+
+  const isFullscreen = useStore((state) => state.media.isFullscreen);
+
+  const OverlayPrimitive = asChild ? Slot : "div";
+
+  return (
+    <OverlayPrimitive
+      data-state={isFullscreen ? "fullscreen" : "windowed"}
+      data-slot="media-player-overlay"
+      {...overlayProps}
+      ref={forwardedRef}
+      className={cn(
+        "-z-10 absolute inset-0 bg-gradient-to-t from-black/80 to-transparent",
         className,
       )}
     />
   );
 });
-MediaPlayerControls.displayName = CONTROLS_NAME;
+MediaPlayerOverlay.displayName = OVERLAY_NAME;
 
 interface MediaPlayerPlayProps
   extends React.ComponentPropsWithoutRef<typeof Button> {}
@@ -1803,6 +1831,7 @@ MediaPlayerSeekBackward.displayName = SEEK_BACKWARD_NAME;
 const MediaPlayer = MediaPlayerRoot;
 const Root = MediaPlayerRoot;
 const Controls = MediaPlayerControls;
+const Overlay = MediaPlayerOverlay;
 const Play = MediaPlayerPlay;
 const Seek = MediaPlayerSeek;
 const Volume = MediaPlayerVolume;
@@ -1820,6 +1849,7 @@ const SeekBackward = MediaPlayerSeekBackward;
 export {
   MediaPlayer,
   MediaPlayerControls,
+  MediaPlayerOverlay,
   MediaPlayerPlay,
   MediaPlayerSeek,
   MediaPlayerVolume,
@@ -1849,6 +1879,7 @@ export {
   Download,
   SeekForward,
   SeekBackward,
+  Overlay,
   //
   useStore as useMediaPlayer,
 };
