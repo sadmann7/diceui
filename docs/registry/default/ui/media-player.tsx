@@ -717,13 +717,14 @@ MediaPlayerRoot.displayName = ROOT_NAME;
 interface MediaPlayerControlsProps
   extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
+  blurry?: boolean;
 }
 
 const MediaPlayerControls = React.forwardRef<
   HTMLDivElement,
   MediaPlayerControlsProps
 >((props, forwardedRef) => {
-  const { asChild, className, ...controlsProps } = props;
+  const { asChild, className, blurry, ...controlsProps } = props;
 
   const context = useMediaPlayerContext(CONTROLS_NAME);
   const isFullscreen = useStore((state) => state.media.isFullscreen);
@@ -741,9 +742,11 @@ const MediaPlayerControls = React.forwardRef<
       {...controlsProps}
       ref={forwardedRef}
       className={cn(
-        "absolute right-0 bottom-0 left-0 flex items-center gap-2 bg-gradient-to-t from-background/80 to-transparent p-2",
-        "[:fullscreen_&]:absolute [:fullscreen_&]:right-0 [:fullscreen_&]:bottom-0 [:fullscreen_&]:left-0 [:fullscreen_&]:z-50 [:fullscreen_&]:bg-gradient-to-t [:fullscreen_&]:from-black/80 [:fullscreen_&]:to-transparent [:fullscreen_&]:p-4",
-        "data-[state=fullscreen]:absolute data-[state=fullscreen]:right-0 data-[state=fullscreen]:bottom-0 data-[state=fullscreen]:left-0 data-[state=fullscreen]:z-50 data-[state=fullscreen]:bg-gradient-to-t data-[state=fullscreen]:from-black/80 data-[state=fullscreen]:to-transparent data-[state=fullscreen]:p-4",
+        "dark absolute right-0 bottom-0 left-0 flex items-center gap-2 p-2",
+        "data-[state=fullscreen]:bg-gradient-to-t data-[state=fullscreen]:from-black/95 data-[state=fullscreen]:to-transparent [:fullscreen_&]:absolute [:fullscreen_&]:right-0 [:fullscreen_&]:bottom-0 [:fullscreen_&]:left-0 [:fullscreen_&]:z-50 [:fullscreen_&]:p-4",
+        "data-[state=fullscreen]:absolute data-[state=fullscreen]:right-0 data-[state=fullscreen]:bottom-0 data-[state=fullscreen]:left-0 data-[state=fullscreen]:z-50data-[state=fullscreen]:p-4",
+        blurry &&
+          "bg-gradient-to-t from-black/95 to-transparent [:fullscreen_&]:bg-gradient-to-t [:fullscreen_&]:from-black/95 [:fullscreen_&]:to-transparent",
         className,
       )}
     />
@@ -849,6 +852,11 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
     const [tooltipPositionX, setTooltipPositionX] = React.useState(0);
     const [isHoveringSeek, setIsHoveringSeek] = React.useState(false);
     const [hoverTime, setHoverTime] = React.useState(0);
+
+    const formattedCurrentTime = formatTime(currentTime);
+    const formattedDuration = formatTime(duration);
+    const formattedHoverTime = formatTime(hoverTime);
+    const formattedRemainingTime = formatTime(duration - currentTime);
 
     const isDisabled = disabled || context.disabled;
 
@@ -960,7 +968,7 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
           <div
             key={i}
             data-slot="media-player-seek-buffered"
-            className="absolute h-full bg-secondary-foreground/50"
+            className="absolute h-full bg-zinc-400"
             style={{
               left: `${startPercent}%`,
               width: `${widthPercent}%`,
@@ -975,7 +983,7 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
         <TooltipTrigger asChild>
           <SliderPrimitive.Root
             aria-label="Seek time"
-            aria-valuetext={`${formatTime(currentTime)} of ${formatTime(duration)}`}
+            aria-valuetext={`${formattedCurrentTime} of ${formattedDuration}`}
             aria-controls={context.mediaId}
             data-slider=""
             data-slot="media-player-seek"
@@ -995,18 +1003,18 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
             onPointerMove={onPointerMove}
           >
             <SliderPrimitive.Track
-              className="relative h-1 w-full grow overflow-hidden rounded-full bg-secondary"
               aria-label="Video progress"
+              className="relative h-1 w-full grow overflow-hidden rounded-full bg-zinc-500"
             >
               {bufferedRanges}
               <SliderPrimitive.Range
-                className="absolute h-full bg-primary"
                 aria-label="Current progress"
+                className="absolute h-full bg-primary"
               />
             </SliderPrimitive.Track>
             <SliderPrimitive.Thumb
               aria-label="Seek thumb"
-              aria-valuetext={`${formatTime(currentTime)} of ${formatTime(duration)}`}
+              aria-valuetext={`${formattedCurrentTime} of ${formattedDuration}`}
               className="relative z-10 block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:outline-hidden focus-visible:ring-4 disabled:pointer-events-none disabled:opacity-50"
             />
           </SliderPrimitive.Root>
@@ -1021,7 +1029,7 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
             className="pointer-events-none border bg-accent text-accent-foreground dark:bg-zinc-900 [&>span]:hidden"
             role="tooltip"
           >
-            {formatTime(hoverTime)} / {formatTime(duration)}
+            {formattedHoverTime} / {formattedDuration}
           </TooltipContent>
         )}
       </Tooltip>
@@ -1031,7 +1039,7 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
       <div
         role="presentation"
         data-slot="media-player-seek-wrapper"
-        className="relative w-full"
+        className={cn("relative w-full", className)}
         onPointerEnter={onPointerEnter}
         onPointerLeave={onPointerLeave}
       >
@@ -1044,14 +1052,15 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
         <div
           role="group"
           aria-label="Video progress"
+          aria-valuetext={`${formattedCurrentTime} of ${formattedDuration}`}
           className="flex w-full items-center gap-2"
         >
-          <span className="text-sm" aria-label="Current time">
-            {formatTime(currentTime)}
+          <span aria-label="Current time" className="text-sm">
+            {formattedCurrentTime}
           </span>
-          <div className={cn("w-full", className)}>{SeekWrapper}</div>
-          <span className="text-sm" aria-label="Time remaining">
-            {formatTime(duration - currentTime)}
+          {SeekWrapper}
+          <span aria-label="Remaining time" className="text-sm">
+            {formattedRemainingTime}
           </span>
         </div>
       );
@@ -1205,21 +1214,28 @@ const MediaPlayerTime = React.forwardRef<HTMLDivElement, MediaPlayerTimeProps>(
     const context = useMediaPlayerContext(TIME_NAME);
     const currentTime = useStore((state) => state.media.currentTime);
     const duration = useStore((state) => state.media.duration);
+    const formattedCurrentTime = formatTime(currentTime);
+    const formattedDuration = formatTime(duration);
 
     const TimePrimitive = asChild ? Slot : "div";
 
     return (
       <TimePrimitive
-        aria-valuetext={`${formatTime(currentTime)} of ${formatTime(duration)}`}
+        aria-valuetext={`${formattedCurrentTime} of ${formattedDuration}`}
         data-slot="media-player-time"
         dir={context.dir}
         {...timeProps}
         ref={forwardedRef}
-        className={cn("text-sm", className)}
+        className={cn(
+          "flex items-center gap-1 text-foreground/80 text-sm",
+          className,
+        )}
       >
-        <span>{formatTime(currentTime)}</span>
-        <span className="mx-1">/</span>
-        <span>{formatTime(duration)}</span>
+        <span aria-label="Current time">{formattedCurrentTime}</span>
+        <span role="presentation" aria-hidden="true">
+          /
+        </span>
+        <span aria-label="Duration">{formattedDuration}</span>
       </TimePrimitive>
     );
   },
@@ -1626,7 +1642,9 @@ function MediaPlayerTooltip({
 
   return (
     <Tooltip {...props} delayDuration={600}>
-      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipTrigger className="text-foreground" asChild>
+        {children}
+      </TooltipTrigger>
       <TooltipContent
         sideOffset={10}
         className="flex items-center gap-2 border bg-accent px-2 py-1 font-medium text-foreground dark:bg-zinc-900 [&>span]:hidden"
