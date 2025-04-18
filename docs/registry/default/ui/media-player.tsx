@@ -1642,7 +1642,10 @@ function MediaPlayerTooltip({
 
   return (
     <Tooltip {...props} delayDuration={600}>
-      <TooltipTrigger className="text-foreground" asChild>
+      <TooltipTrigger
+        className="text-foreground focus-visible:ring-ring/80"
+        asChild
+      >
         {children}
       </TooltipTrigger>
       <TooltipContent
