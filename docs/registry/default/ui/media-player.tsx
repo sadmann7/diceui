@@ -815,7 +815,7 @@ const MediaPlayerPlay = React.forwardRef<
 
   const isDisabled = disabled || context.disabled;
 
-  const onPlay = React.useCallback(
+  const onPlayToggle = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       props.onClick?.(event);
 
@@ -824,23 +824,13 @@ const MediaPlayerPlay = React.forwardRef<
       const media = context.mediaRef.current;
       if (!media) return;
 
-      media.play();
+      if (isPlaying) {
+        media.pause();
+      } else {
+        media.play();
+      }
     },
-    [context.mediaRef, props.onClick],
-  );
-
-  const onPause = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
-      props.onClick?.(event);
-
-      if (event.defaultPrevented) return;
-
-      const media = context.mediaRef.current;
-      if (!media) return;
-
-      media.pause();
-    },
-    [context.mediaRef, props.onClick],
+    [context.mediaRef, props.onClick, isPlaying],
   );
 
   return (
@@ -862,7 +852,7 @@ const MediaPlayerPlay = React.forwardRef<
           "size-8 [&_svg:not([class*='fill-'])]:fill-current",
           className,
         )}
-        onClick={isPlaying ? onPause : onPlay}
+        onClick={onPlayToggle}
       >
         {children ?? (isPlaying ? <PauseIcon /> : <PlayIcon />)}
       </Button>
@@ -1458,6 +1448,24 @@ const MediaPlayerVideo = React.forwardRef<
   const isLooping = useStore((state) => state.media.isLooping);
   const composedRef = useComposedRefs(forwardedRef, context.mediaRef);
 
+  const onVideoClick = React.useCallback(
+    (event: React.MouseEvent<HTMLVideoElement>) => {
+      props.onClick?.(event);
+
+      if (event.defaultPrevented) return;
+
+      const media = context.mediaRef.current;
+      if (!media) return;
+
+      if (media.paused) {
+        media.play();
+      } else {
+        media.pause();
+      }
+    },
+    [context.mediaRef, props.onClick],
+  );
+
   const VideoPrimitive = asChild ? Slot : "video";
 
   return (
@@ -1472,7 +1480,8 @@ const MediaPlayerVideo = React.forwardRef<
       loop={isLooping}
       playsInline
       preload="metadata"
-      className={cn("h-full w-full", className)}
+      className={cn("h-full w-full cursor-pointer", className)}
+      onClick={onVideoClick}
     >
       {children}
       <span id={context.descriptionId} className="sr-only">
