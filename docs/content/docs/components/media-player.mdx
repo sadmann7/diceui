@@ -27,6 +27,12 @@ npx shadcn@latest add "https://diceui.com/r/media-player"
      ```
   </Step>
   <Step>
+  Copy the composition utilities into your `lib/composition.ts` file.
+
+  <ComponentSource src="./lib/composition.ts" />
+
+  </Step>
+  <Step>
     Copy and paste the following code into your project.
 
     <ComponentSource name="media-player" />
@@ -67,15 +73,6 @@ import * as MediaPlayer from "@/components/ui/media-player";
 Use the `Audio` component instead of `Video` for audio playback.
 
 <ComponentTabs name="media-player-audio-demo" align="start" className="p-8" />
-
-```tsx
-<MediaPlayer.Root>
-  <MediaPlayer.Audio>
-    <source src="..." type="audio/mpeg" />
-  </MediaPlayer.Audio>
-  {/* ... controls */}
-</MediaPlayer.Root>
-```
 
 ## API Reference
 
@@ -263,6 +260,24 @@ Displays the current time, duration, or remaining time of the media.
   name="TimeProps"
 />
 
+### PlaybackSpeed
+
+A select dropdown to control the media playback speed.
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="PlaybackSpeedProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the select is disabled.",
+    },
+  ]}
+/>
+
 ### Loop
 
 A button to toggle loop mode.
@@ -325,24 +340,6 @@ A button to toggle picture in picture mode (video only).
     {
       title: "[data-state]",
       value: ["pip", "inline"],
-    },
-  ]}
-/>
-
-### PlaybackSpeed
-
-A select dropdown to control the media playback speed.
-
-<AutoTypeTable
-  path="./types/docs/media-player.ts"
-  name="PlaybackSpeedProps"
-/>
-
-<DataAttributesTable
-  attributes={[
-    {
-      title: "[data-disabled]",
-      value: "Present when the select is disabled.",
     },
   ]}
 />

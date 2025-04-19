@@ -1,6 +1,6 @@
 import type { SelectTrigger } from "@/components/ui/select";
 import type { CompositionProps, EmptyProps } from "@/types";
-import type { SliderProps } from "@radix-ui/react-slider";
+import type { Slider } from "@radix-ui/react-slider";
 
 export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
@@ -191,7 +191,9 @@ export interface SeekForwardProps
   seconds?: number;
 }
 
-export interface SeekProps extends SliderProps, CompositionProps {
+export interface SeekProps
+  extends React.ComponentPropsWithoutRef<typeof Slider>,
+    CompositionProps {
   /**
    * Whether to display the current time and remaining time alongside the seek bar.
    * @default false
@@ -204,7 +206,9 @@ export interface SeekProps extends SliderProps, CompositionProps {
   withTime?: boolean;
 }
 
-export interface VolumeProps extends SliderProps, CompositionProps {
+export interface VolumeProps
+  extends React.ComponentPropsWithoutRef<typeof Slider>,
+    CompositionProps {
   /**
    * Whether the volume slider should expand on hover.
    * @default false
@@ -247,6 +251,8 @@ export interface PlaybackSpeedProps
    */
   speeds?: number[];
 }
+
+export interface LoopProps extends EmptyProps<"button">, CompositionProps {}
 
 export interface PiPProps
   extends EmptyProps<"button">,

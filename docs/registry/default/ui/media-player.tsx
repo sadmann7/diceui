@@ -44,6 +44,8 @@ const SEEK_AMOUNT_LONG = 10;
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
 const ROOT_NAME = "MediaPlayer";
+const VIDEO_NAME = "MediaPlayerVideo";
+const AUDIO_NAME = "MediaPlayerAudio";
 const CONTROLS_NAME = "MediaPlayerControls";
 const OVERLAY_NAME = "MediaPlayerOverlay";
 const PLAY_NAME = "MediaPlayerPlay";
@@ -52,17 +54,17 @@ const SEEK_FORWARD_NAME = "MediaPlayerSeekForward";
 const SEEK_NAME = "MediaPlayerSeek";
 const VOLUME_NAME = "MediaPlayerVolume";
 const TIME_NAME = "MediaPlayerTime";
+const PLAYBACK_SPEED_NAME = "MediaPlayerPlaybackSpeed";
 const LOOP_NAME = "MediaPlayerLoop";
 const FULLSCREEN_NAME = "MediaPlayerFullscreen";
-const VIDEO_NAME = "MediaPlayerVideo";
-const AUDIO_NAME = "MediaPlayerAudio";
 const PIP_NAME = "MediaPlayerPiP";
-const PLAYBACK_SPEED_NAME = "MediaPlayerPlaybackSpeed";
 const CAPTIONS_NAME = "MediaPlayerCaptions";
 const DOWNLOAD_NAME = "MediaPlayerDownload";
 
 const MEDIA_PLAYER_ERRORS = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` must be used as root component`,
+  [VIDEO_NAME]: `\`${VIDEO_NAME}\` must be within \`${ROOT_NAME}\``,
+  [AUDIO_NAME]: `\`${AUDIO_NAME}\` must be within \`${ROOT_NAME}\``,
   [CONTROLS_NAME]: `\`${CONTROLS_NAME}\` must be within \`${ROOT_NAME}\``,
   [OVERLAY_NAME]: `\`${OVERLAY_NAME}\` must be within \`${ROOT_NAME}\``,
   [PLAY_NAME]: `\`${PLAY_NAME}\` must be within \`${ROOT_NAME}\``,
@@ -71,12 +73,10 @@ const MEDIA_PLAYER_ERRORS = {
   [SEEK_NAME]: `\`${SEEK_NAME}\` must be within \`${ROOT_NAME}\``,
   [VOLUME_NAME]: `\`${VOLUME_NAME}\` must be within \`${ROOT_NAME}\``,
   [TIME_NAME]: `\`${TIME_NAME}\` must be within \`${ROOT_NAME}\``,
+  [PLAYBACK_SPEED_NAME]: `\`${PLAYBACK_SPEED_NAME}\` must be within \`${ROOT_NAME}\``,
   [LOOP_NAME]: `\`${LOOP_NAME}\` must be within \`${ROOT_NAME}\``,
   [FULLSCREEN_NAME]: `\`${FULLSCREEN_NAME}\` must be within \`${ROOT_NAME}\``,
-  [VIDEO_NAME]: `\`${VIDEO_NAME}\` must be within \`${ROOT_NAME}\``,
-  [AUDIO_NAME]: `\`${AUDIO_NAME}\` must be within \`${ROOT_NAME}\``,
   [PIP_NAME]: `\`${PIP_NAME}\` must be within \`${ROOT_NAME}\``,
-  [PLAYBACK_SPEED_NAME]: `\`${PLAYBACK_SPEED_NAME}\` must be within \`${ROOT_NAME}\``,
   [CAPTIONS_NAME]: `\`${CAPTIONS_NAME}\` must be within \`${ROOT_NAME}\``,
   [DOWNLOAD_NAME]: `\`${DOWNLOAD_NAME}\` must be within \`${ROOT_NAME}\``,
 } as const;
@@ -120,6 +120,8 @@ function useDirection(dirProp?: Direction): Direction {
   return dirProp ?? contextDir ?? "ltr";
 }
 
+type LoopMode = "off" | "all" | "one";
+
 interface MediaState {
   isPlaying: boolean;
   isMuted: boolean;
@@ -129,7 +131,7 @@ interface MediaState {
   buffered: TimeRanges | null;
   isFullscreen: boolean;
   isLooping: boolean;
-  loopMode: "off" | "all" | "one";
+  loopMode: LoopMode;
   playbackRate: number;
   isPictureInPicture: boolean;
   captionsEnabled: boolean;
@@ -147,7 +149,7 @@ type StoreAction =
   | { variant: "SET_DURATION"; duration: number }
   | { variant: "SET_BUFFERED"; buffered: TimeRanges }
   | { variant: "SET_FULLSCREEN"; isFullscreen: boolean }
-  | { variant: "SET_LOOP_MODE"; loopMode: "off" | "all" | "one" }
+  | { variant: "SET_LOOP_MODE"; loopMode: LoopMode }
   | { variant: "SET_PLAYBACK_RATE"; playbackRate: number }
   | { variant: "SET_PICTURE_IN_PICTURE"; isPictureInPicture: boolean }
   | { variant: "SET_CAPTIONS_ENABLED"; captionsEnabled: boolean };
@@ -1658,6 +1660,76 @@ const MediaPlayerTime = React.forwardRef<HTMLDivElement, MediaPlayerTimeProps>(
 );
 MediaPlayerTime.displayName = TIME_NAME;
 
+interface MediaPlayerPlaybackSpeedProps
+  extends React.ComponentPropsWithoutRef<typeof SelectTrigger> {
+  speeds?: number[];
+}
+
+const MediaPlayerPlaybackSpeed = React.forwardRef<
+  React.ComponentRef<typeof SelectTrigger>,
+  MediaPlayerPlaybackSpeedProps
+>((props, forwardedRef) => {
+  const {
+    asChild,
+    speeds = SPEEDS,
+    className,
+    disabled,
+    ...playbackSpeedProps
+  } = props;
+
+  const context = useMediaPlayerContext(PLAYBACK_SPEED_NAME);
+  const store = useStoreContext(PLAYBACK_SPEED_NAME);
+  const playbackRate = useStore((state) => state.media.playbackRate);
+
+  const isDisabled = disabled || context.disabled;
+
+  const onPlaybackRateChange = React.useCallback(
+    (value: string) => {
+      const media = context.mediaRef.current;
+      if (!media) return;
+
+      const rate = Number.parseFloat(value);
+      media.playbackRate = rate;
+      store.dispatch({ variant: "SET_PLAYBACK_RATE", playbackRate: rate });
+    },
+    [context.mediaRef, store],
+  );
+
+  return (
+    <Select
+      data-slot="media-player-playback-speed"
+      value={playbackRate.toString()}
+      onValueChange={onPlaybackRateChange}
+    >
+      <MediaPlayerTooltip tooltip="Playback speed" shortcut={["<", ">"]}>
+        <SelectTrigger
+          aria-controls={context.mediaId}
+          disabled={isDisabled}
+          {...playbackSpeedProps}
+          ref={forwardedRef}
+          className={cn(
+            "h-8 w-16 justify-center border-none aria-expanded:bg-accent aria-[expanded=true]:bg-accent/50 dark:bg-transparent dark:aria-[expanded=true]:bg-accent/50 dark:hover:bg-accent/50 [&[data-size]]:h-8 [&_svg]:hidden",
+            className,
+          )}
+        >
+          <SelectValue>{playbackRate}x</SelectValue>
+        </SelectTrigger>
+      </MediaPlayerTooltip>
+      <SelectContent
+        align="center"
+        className="min-w-[var(--radix-select-trigger-width)]"
+      >
+        {speeds.map((speed) => (
+          <SelectItem key={speed} value={speed.toString()}>
+            {speed}x
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+});
+MediaPlayerPlaybackSpeed.displayName = PLAYBACK_SPEED_NAME;
+
 interface MediaPlayerLoopProps
   extends React.ComponentPropsWithoutRef<typeof Button> {
   mode?: "toggle" | "repeat";
@@ -1682,7 +1754,7 @@ const MediaPlayerLoop = React.forwardRef<
       const media = context.mediaRef.current;
       if (!media) return;
 
-      let nextLoopMode: "off" | "all" | "one" = "off";
+      let nextLoopMode: LoopMode = "off";
 
       if (mode === "toggle") {
         if (loopMode === "off") {
@@ -1891,76 +1963,6 @@ const MediaPlayerPiP = React.forwardRef<HTMLButtonElement, MediaPlayerPiPProps>(
   },
 );
 MediaPlayerPiP.displayName = PIP_NAME;
-
-interface MediaPlayerPlaybackSpeedProps
-  extends React.ComponentPropsWithoutRef<typeof SelectTrigger> {
-  speeds?: number[];
-}
-
-const MediaPlayerPlaybackSpeed = React.forwardRef<
-  React.ComponentRef<typeof SelectTrigger>,
-  MediaPlayerPlaybackSpeedProps
->((props, forwardedRef) => {
-  const {
-    asChild,
-    speeds = SPEEDS,
-    className,
-    disabled,
-    ...playbackSpeedProps
-  } = props;
-
-  const context = useMediaPlayerContext(PLAYBACK_SPEED_NAME);
-  const store = useStoreContext(PLAYBACK_SPEED_NAME);
-  const playbackRate = useStore((state) => state.media.playbackRate);
-
-  const isDisabled = disabled || context.disabled;
-
-  const onPlaybackRateChange = React.useCallback(
-    (value: string) => {
-      const media = context.mediaRef.current;
-      if (!media) return;
-
-      const rate = Number.parseFloat(value);
-      media.playbackRate = rate;
-      store.dispatch({ variant: "SET_PLAYBACK_RATE", playbackRate: rate });
-    },
-    [context.mediaRef, store],
-  );
-
-  return (
-    <Select
-      data-slot="media-player-playback-speed"
-      value={playbackRate.toString()}
-      onValueChange={onPlaybackRateChange}
-    >
-      <MediaPlayerTooltip tooltip="Playback speed" shortcut={["<", ">"]}>
-        <SelectTrigger
-          aria-controls={context.mediaId}
-          disabled={isDisabled}
-          {...playbackSpeedProps}
-          ref={forwardedRef}
-          className={cn(
-            "h-8 w-16 justify-center border-none aria-expanded:bg-accent aria-[expanded=true]:bg-accent/50 dark:bg-transparent dark:aria-[expanded=true]:bg-accent/50 dark:hover:bg-accent/50 [&[data-size]]:h-8 [&_svg]:hidden",
-            className,
-          )}
-        >
-          <SelectValue>{playbackRate}x</SelectValue>
-        </SelectTrigger>
-      </MediaPlayerTooltip>
-      <SelectContent
-        align="center"
-        className="min-w-[var(--radix-select-trigger-width)]"
-      >
-        {speeds.map((speed) => (
-          <SelectItem key={speed} value={speed.toString()}>
-            {speed}x
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
-  );
-});
-MediaPlayerPlaybackSpeed.displayName = PLAYBACK_SPEED_NAME;
 
 interface MediaPlayerCaptionsProps
   extends React.ComponentPropsWithoutRef<typeof Button> {}
@@ -2173,10 +2175,10 @@ export {
   MediaPlayerSeek,
   MediaPlayerVolume,
   MediaPlayerTime,
+  MediaPlayerPlaybackSpeed,
   MediaPlayerLoop,
   MediaPlayerFullscreen,
   MediaPlayerPiP,
-  MediaPlayerPlaybackSpeed,
   MediaPlayerCaptions,
   MediaPlayerDownload,
   //
@@ -2191,10 +2193,10 @@ export {
   Seek,
   Volume,
   Time,
+  PlaybackSpeed,
   Loop,
   Fullscreen,
   PiP,
-  PlaybackSpeed,
   Captions,
   Download,
   //
