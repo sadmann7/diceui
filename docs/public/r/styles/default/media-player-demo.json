@@ -1,0 +1,22 @@
+{
+  "name": "media-player-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@radix-ui/react-slot",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "button",
+    "select",
+    "slider",
+    "tooltip"
+  ],
+  "files": [
+    {
+      "path": "examples/media-player-demo.tsx",
+      "content": "import {\n  MediaPlayer,\n  MediaPlayerCaptions,\n  MediaPlayerControls,\n  MediaPlayerDownload,\n  MediaPlayerFullscreen,\n  MediaPlayerOverlay,\n  MediaPlayerPiP,\n  MediaPlayerPlay,\n  MediaPlayerPlaybackSpeed,\n  MediaPlayerSeek,\n  MediaPlayerSeekBackward,\n  MediaPlayerSeekForward,\n  MediaPlayerTime,\n  MediaPlayerVideo,\n  MediaPlayerVolume,\n} from \"@/registry/default/ui/media-player\";\nimport * as React from \"react\";\n\nconst VIDEO_URL =\n  \"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4\";\nconst CAPTIONS_URL =\n  \"https://gist.githubusercontent.com/samdutton/ca37f3adaf4e23679957b8083e061177/raw/e19399fbccbc069a2af4266e5120ae6bad62699a/sample.vtt\";\n\nexport default function MediaPlayerDemo() {\n  return (\n    <MediaPlayer\n      className=\"w-full max-w-2xl overflow-hidden rounded-lg\"\n      label=\"Big Buck Bunny Video Player\"\n      defaultPlaying\n      defaultMuted\n    >\n      <MediaPlayerVideo>\n        <source src={VIDEO_URL} type=\"video/mp4\" />\n        <track\n          src={CAPTIONS_URL}\n          kind=\"subtitles\"\n          srcLang=\"en\"\n          label=\"English\"\n          default\n        />\n      </MediaPlayerVideo>\n      <MediaPlayerOverlay />\n      <MediaPlayerControls className=\"gap-1.5\">\n        <MediaPlayerPlay />\n        <MediaPlayerSeekBackward />\n        <MediaPlayerSeekForward />\n        <MediaPlayerVolume expandable />\n        <MediaPlayerSeek withTime className=\"flex-1\" />\n        <MediaPlayerTime variant=\"remaining\" />\n        <MediaPlayerPlaybackSpeed />\n        <MediaPlayerCaptions />\n        <MediaPlayerPiP />\n        <MediaPlayerFullscreen />\n        <MediaPlayerDownload />\n      </MediaPlayerControls>\n    </MediaPlayer>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

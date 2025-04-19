@@ -1448,7 +1448,7 @@ const MediaPlayerVideo = React.forwardRef<
   const isLooping = useStore((state) => state.media.isLooping);
   const composedRef = useComposedRefs(forwardedRef, context.mediaRef);
 
-  const onVideoClick = React.useCallback(
+  const onPlayToggle = React.useCallback(
     (event: React.MouseEvent<HTMLVideoElement>) => {
       props.onClick?.(event);
 
@@ -1481,7 +1481,7 @@ const MediaPlayerVideo = React.forwardRef<
       playsInline
       preload="metadata"
       className={cn("h-full w-full cursor-pointer", className)}
-      onClick={onVideoClick}
+      onClick={onPlayToggle}
     >
       {children}
       <span id={context.descriptionId} className="sr-only">
