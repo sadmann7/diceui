@@ -1,6 +1,6 @@
+import type { SelectTrigger } from "@/components/ui/select";
 import type { CompositionProps, EmptyProps } from "@/types";
 import type { SliderProps } from "@radix-ui/react-slider";
-import type * as React from "react";
 
 export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
@@ -151,26 +151,15 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   disabled?: boolean;
 }
 
+export interface VideoProps extends EmptyProps<"video">, CompositionProps {}
+
+export interface AudioProps extends EmptyProps<"audio">, CompositionProps {}
+
 export interface ControlsProps extends EmptyProps<"div">, CompositionProps {}
 
 export interface OverlayProps extends EmptyProps<"div">, CompositionProps {}
 
 export interface PlayProps extends EmptyProps<"button">, CompositionProps {}
-
-export interface SeekForwardProps
-  extends EmptyProps<"button">,
-    CompositionProps {
-  /**
-   * The number of seconds to seek forward.
-   * @default 10
-   *
-   * ```ts
-   * // Seek forward 15 seconds
-   * <MediaPlayer.SeekForward seconds={15} />
-   * ```
-   */
-  seconds?: number;
-}
 
 export interface SeekBackwardProps
   extends EmptyProps<"button">,
@@ -182,6 +171,21 @@ export interface SeekBackwardProps
    * ```ts
    * // Seek backward 5 seconds
    * <MediaPlayer.SeekBackward seconds={5} />
+   * ```
+   */
+  seconds?: number;
+}
+
+export interface SeekForwardProps
+  extends EmptyProps<"button">,
+    CompositionProps {
+  /**
+   * The number of seconds to seek forward.
+   * @default 10
+   *
+   * ```ts
+   * // Seek forward 15 seconds
+   * <MediaPlayer.SeekForward seconds={15} />
    * ```
    */
   seconds?: number;
@@ -229,21 +233,8 @@ export interface TimeProps extends EmptyProps<"div">, CompositionProps {
   mode?: "progress" | "remaining" | "duration";
 }
 
-export interface FullscreenProps
-  extends EmptyProps<"button">,
-    CompositionProps {}
-
-export interface PiPProps
-  extends EmptyProps<"button">,
-    CompositionProps,
-    Pick<RootProps, "onPipError"> {}
-
-export interface VideoProps extends EmptyProps<"video">, CompositionProps {}
-
-export interface AudioProps extends EmptyProps<"audio">, CompositionProps {}
-
 export interface PlaybackSpeedProps
-  extends EmptyProps<"div">,
+  extends EmptyProps<typeof SelectTrigger>,
     CompositionProps {
   /**
    * An array of playback speed options.
@@ -256,6 +247,15 @@ export interface PlaybackSpeedProps
    */
   speeds?: number[];
 }
+
+export interface PiPProps
+  extends EmptyProps<"button">,
+    CompositionProps,
+    Pick<RootProps, "onPipError"> {}
+
+export interface FullscreenProps
+  extends EmptyProps<"button">,
+    CompositionProps {}
 
 export interface CaptionsProps extends EmptyProps<"button">, CompositionProps {}
 

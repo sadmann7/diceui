@@ -37,21 +37,22 @@ import {
 } from "lucide-react";
 import * as React from "react";
 
-const SEEK_THROTTLE_MS = 100;
 const POINTER_MOVE_THROTTLE_MS = 16;
-const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+const SEEK_THROTTLE_MS = 100;
 const SEEK_AMOUNT_SHORT = 5;
 const SEEK_AMOUNT_LONG = 10;
+const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
 const ROOT_NAME = "MediaPlayer";
 const CONTROLS_NAME = "MediaPlayerControls";
 const OVERLAY_NAME = "MediaPlayerOverlay";
 const PLAY_NAME = "MediaPlayerPlay";
-const SEEK_FORWARD_NAME = "MediaPlayerSeekForward";
 const SEEK_BACKWARD_NAME = "MediaPlayerSeekBackward";
+const SEEK_FORWARD_NAME = "MediaPlayerSeekForward";
 const SEEK_NAME = "MediaPlayerSeek";
-const TIME_NAME = "MediaPlayerTime";
 const VOLUME_NAME = "MediaPlayerVolume";
+const TIME_NAME = "MediaPlayerTime";
+const LOOP_NAME = "MediaPlayerLoop";
 const FULLSCREEN_NAME = "MediaPlayerFullscreen";
 const VIDEO_NAME = "MediaPlayerVideo";
 const AUDIO_NAME = "MediaPlayerAudio";
@@ -59,18 +60,18 @@ const PIP_NAME = "MediaPlayerPiP";
 const PLAYBACK_SPEED_NAME = "MediaPlayerPlaybackSpeed";
 const CAPTIONS_NAME = "MediaPlayerCaptions";
 const DOWNLOAD_NAME = "MediaPlayerDownload";
-const LOOP_NAME = "MediaPlayerLoop";
 
 const MEDIA_PLAYER_ERRORS = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` must be used as root component`,
   [CONTROLS_NAME]: `\`${CONTROLS_NAME}\` must be within \`${ROOT_NAME}\``,
   [OVERLAY_NAME]: `\`${OVERLAY_NAME}\` must be within \`${ROOT_NAME}\``,
   [PLAY_NAME]: `\`${PLAY_NAME}\` must be within \`${ROOT_NAME}\``,
-  [SEEK_FORWARD_NAME]: `\`${SEEK_FORWARD_NAME}\` must be within \`${ROOT_NAME}\``,
   [SEEK_BACKWARD_NAME]: `\`${SEEK_BACKWARD_NAME}\` must be within \`${ROOT_NAME}\``,
+  [SEEK_FORWARD_NAME]: `\`${SEEK_FORWARD_NAME}\` must be within \`${ROOT_NAME}\``,
   [SEEK_NAME]: `\`${SEEK_NAME}\` must be within \`${ROOT_NAME}\``,
-  [TIME_NAME]: `\`${TIME_NAME}\` must be within \`${ROOT_NAME}\``,
   [VOLUME_NAME]: `\`${VOLUME_NAME}\` must be within \`${ROOT_NAME}\``,
+  [TIME_NAME]: `\`${TIME_NAME}\` must be within \`${ROOT_NAME}\``,
+  [LOOP_NAME]: `\`${LOOP_NAME}\` must be within \`${ROOT_NAME}\``,
   [FULLSCREEN_NAME]: `\`${FULLSCREEN_NAME}\` must be within \`${ROOT_NAME}\``,
   [VIDEO_NAME]: `\`${VIDEO_NAME}\` must be within \`${ROOT_NAME}\``,
   [AUDIO_NAME]: `\`${AUDIO_NAME}\` must be within \`${ROOT_NAME}\``,
@@ -78,7 +79,6 @@ const MEDIA_PLAYER_ERRORS = {
   [PLAYBACK_SPEED_NAME]: `\`${PLAYBACK_SPEED_NAME}\` must be within \`${ROOT_NAME}\``,
   [CAPTIONS_NAME]: `\`${CAPTIONS_NAME}\` must be within \`${ROOT_NAME}\``,
   [DOWNLOAD_NAME]: `\`${DOWNLOAD_NAME}\` must be within \`${ROOT_NAME}\``,
-  [LOOP_NAME]: `\`${LOOP_NAME}\` must be within \`${ROOT_NAME}\``,
 } as const;
 
 const useIsomorphicLayoutEffect =
@@ -98,6 +98,17 @@ function useLazyRef<T>(fn: () => T) {
     ref.current = fn();
   }
   return ref as React.RefObject<T>;
+}
+
+function formatTime(time: number) {
+  const hours = Math.floor(time / 3600);
+  const minutes = Math.floor((time % 3600) / 60);
+  const seconds = Math.floor(time % 60);
+
+  if (hours > 0) {
+    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  }
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
 type Direction = "ltr" | "rtl";
@@ -856,6 +867,107 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
 );
 MediaPlayerRoot.displayName = ROOT_NAME;
 
+interface MediaPlayerVideoProps
+  extends React.ComponentPropsWithoutRef<"video"> {
+  asChild?: boolean;
+}
+
+const MediaPlayerVideo = React.forwardRef<
+  HTMLVideoElement,
+  MediaPlayerVideoProps
+>((props, forwardedRef) => {
+  const { asChild, children, className, ...videoProps } = props;
+
+  const context = useMediaPlayerContext(VIDEO_NAME);
+  const loopMode = useStore((state) => state.media.loopMode);
+  const composedRef = useComposedRefs(forwardedRef, context.mediaRef);
+
+  const onPlayToggle = React.useCallback(
+    (event: React.MouseEvent<HTMLVideoElement>) => {
+      props.onClick?.(event);
+
+      if (event.defaultPrevented) return;
+
+      const media = context.mediaRef.current;
+      if (!media) return;
+
+      if (media.paused) {
+        media.play();
+      } else {
+        media.pause();
+      }
+    },
+    [context.mediaRef, props.onClick],
+  );
+
+  const VideoPrimitive = asChild ? Slot : "video";
+
+  return (
+    <VideoPrimitive
+      aria-labelledby={context.labelId}
+      aria-describedby={context.descriptionId}
+      data-slot="media-player-video"
+      controlsList="nodownload noremoteplayback"
+      {...videoProps}
+      ref={composedRef}
+      id={context.mediaId}
+      loop={loopMode === "all"}
+      playsInline
+      preload="metadata"
+      className={cn("h-full w-full cursor-pointer", className)}
+      onClick={onPlayToggle}
+    >
+      {children}
+      <span id={context.descriptionId} className="sr-only">
+        Video player with custom controls for playback, volume, seeking, and
+        more. Use space bar to play/pause, arrow keys (←/→) to seek, and arrow
+        keys (↑/↓) to adjust volume.
+      </span>
+    </VideoPrimitive>
+  );
+});
+MediaPlayerVideo.displayName = VIDEO_NAME;
+
+interface MediaPlayerAudioProps
+  extends React.ComponentPropsWithoutRef<"audio"> {
+  asChild?: boolean;
+}
+
+const MediaPlayerAudio = React.forwardRef<
+  HTMLAudioElement,
+  MediaPlayerAudioProps
+>((props, forwardedRef) => {
+  const { asChild, children, className, ...audioProps } = props;
+
+  const context = useMediaPlayerContext(AUDIO_NAME);
+  const loopMode = useStore((state) => state.media.loopMode);
+  const composedRef = useComposedRefs(forwardedRef, context.mediaRef);
+
+  const AudioPrimitive = asChild ? Slot : "audio";
+
+  return (
+    <AudioPrimitive
+      aria-labelledby={context.labelId}
+      aria-describedby={context.descriptionId}
+      data-slot="media-player-audio"
+      {...audioProps}
+      ref={composedRef}
+      id={context.mediaId}
+      loop={loopMode === "all"}
+      preload="metadata"
+      className={cn("w-full", className)}
+    >
+      {children}
+      <span id={context.descriptionId} className="sr-only">
+        Audio player with custom controls for playback, volume, seeking, and
+        more. Use space bar to play/pause, Shift + arrow keys (←/→) to seek, and
+        arrow keys (↑/↓) to adjust volume.
+      </span>
+    </AudioPrimitive>
+  );
+});
+MediaPlayerAudio.displayName = AUDIO_NAME;
+
 interface MediaPlayerControlsProps
   extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
@@ -981,6 +1093,130 @@ const MediaPlayerPlay = React.forwardRef<
   );
 });
 MediaPlayerPlay.displayName = PLAY_NAME;
+
+interface MediaPlayerSeekBackwardProps
+  extends React.ComponentPropsWithoutRef<typeof Button> {
+  seconds?: number;
+}
+
+const MediaPlayerSeekBackward = React.forwardRef<
+  HTMLButtonElement,
+  MediaPlayerSeekBackwardProps
+>((props, forwardedRef) => {
+  const {
+    asChild,
+    children,
+    className,
+    seconds = SEEK_AMOUNT_SHORT,
+    ...seekBackwardProps
+  } = props;
+
+  const context = useMediaPlayerContext(SEEK_BACKWARD_NAME);
+  const isDisabled = props.disabled || context.disabled;
+
+  const isVideo = context.mediaRef.current instanceof HTMLVideoElement;
+
+  const onSeekBackward = React.useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      props.onClick?.(event);
+
+      if (event.defaultPrevented) return;
+
+      const media = context.mediaRef.current;
+      if (!media) return;
+
+      media.currentTime = Math.max(0, media.currentTime - seconds);
+    },
+    [context.mediaRef, props.onClick, seconds],
+  );
+
+  return (
+    <MediaPlayerTooltip
+      tooltip={`Back ${seconds}s`}
+      shortcut={isVideo ? ["←"] : ["Shift ←"]}
+    >
+      <Button
+        type="button"
+        aria-label={`Back ${seconds} seconds`}
+        aria-controls={context.mediaId}
+        data-disabled={isDisabled ? "" : undefined}
+        data-slot="media-player-seek-backward"
+        disabled={isDisabled}
+        {...seekBackwardProps}
+        ref={forwardedRef}
+        variant="ghost"
+        size="icon"
+        className={cn("size-8", className)}
+        onClick={onSeekBackward}
+      >
+        {children ?? <RewindIcon />}
+      </Button>
+    </MediaPlayerTooltip>
+  );
+});
+MediaPlayerSeekBackward.displayName = SEEK_BACKWARD_NAME;
+
+interface MediaPlayerSeekForwardProps
+  extends React.ComponentPropsWithoutRef<typeof Button> {
+  seconds?: number;
+}
+
+const MediaPlayerSeekForward = React.forwardRef<
+  HTMLButtonElement,
+  MediaPlayerSeekForwardProps
+>((props, forwardedRef) => {
+  const {
+    asChild,
+    children,
+    className,
+    seconds = SEEK_AMOUNT_LONG,
+    ...seekForwardProps
+  } = props;
+
+  const context = useMediaPlayerContext(SEEK_FORWARD_NAME);
+  const isDisabled = props.disabled || context.disabled;
+
+  const isVideo = context.mediaRef.current instanceof HTMLVideoElement;
+
+  const onSeekForward = React.useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      props.onClick?.(event);
+
+      if (event.defaultPrevented) return;
+
+      const media = context.mediaRef.current;
+      if (!media) return;
+
+      media.currentTime = Math.min(media.duration, media.currentTime + seconds);
+    },
+    [context.mediaRef, props.onClick, seconds],
+  );
+
+  return (
+    <MediaPlayerTooltip
+      tooltip={`Forward ${seconds}s`}
+      shortcut={isVideo ? ["→"] : ["Shift →"]}
+    >
+      <Button
+        type="button"
+        aria-label={`Forward ${seconds} seconds`}
+        aria-controls={context.mediaId}
+        data-disabled={isDisabled ? "" : undefined}
+        data-slot="media-player-seek-forward"
+        disabled={isDisabled}
+        {...seekForwardProps}
+        ref={forwardedRef}
+        variant="ghost"
+        size="icon"
+        className={cn("size-8", className)}
+        onClick={onSeekForward}
+      >
+        {children ?? <FastForwardIcon />}
+      </Button>
+    </MediaPlayerTooltip>
+  );
+});
+MediaPlayerSeekForward.displayName = SEEK_FORWARD_NAME;
 
 interface MediaPlayerSeekProps
   extends React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root> {
@@ -1365,17 +1601,6 @@ const MediaPlayerVolume = React.forwardRef<
 });
 MediaPlayerVolume.displayName = VOLUME_NAME;
 
-function formatTime(time: number) {
-  const hours = Math.floor(time / 3600);
-  const minutes = Math.floor((time % 3600) / 60);
-  const seconds = Math.floor(time % 60);
-
-  if (hours > 0) {
-    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-  }
-  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-}
-
 interface MediaPlayerTimeProps extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
   mode?: "progress" | "remaining" | "duration";
@@ -1432,591 +1657,6 @@ const MediaPlayerTime = React.forwardRef<HTMLDivElement, MediaPlayerTimeProps>(
   },
 );
 MediaPlayerTime.displayName = TIME_NAME;
-
-interface MediaPlayerFullscreenProps
-  extends React.ComponentPropsWithoutRef<typeof Button> {}
-
-const MediaPlayerFullscreen = React.forwardRef<
-  HTMLButtonElement,
-  MediaPlayerFullscreenProps
->((props, forwardedRef) => {
-  const { asChild, children, className, ...fullscreenProps } = props;
-
-  const context = useMediaPlayerContext(FULLSCREEN_NAME);
-  const store = useStoreContext(FULLSCREEN_NAME);
-  const isFullscreen = useStore((state) => state.media.isFullscreen);
-
-  const onFullscreen = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
-      props.onClick?.(event);
-
-      if (event.defaultPrevented) return;
-
-      const media = context.mediaRef.current;
-      if (!media) return;
-
-      if (!document.fullscreenElement) {
-        const container = media.closest('[data-slot="media-player"]');
-        if (container) {
-          container.requestFullscreen();
-        } else {
-          media.requestFullscreen();
-        }
-        store.dispatch({ variant: "SET_FULLSCREEN", isFullscreen: true });
-      } else {
-        document.exitFullscreen();
-        store.dispatch({ variant: "SET_FULLSCREEN", isFullscreen: false });
-      }
-    },
-    [context.mediaRef, props.onClick, store],
-  );
-
-  return (
-    <MediaPlayerTooltip tooltip="Fullscreen" shortcut="F">
-      <Button
-        type="button"
-        aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
-        data-state={isFullscreen ? "fullscreen" : "windowed"}
-        data-slot="media-player-fullscreen"
-        {...fullscreenProps}
-        ref={forwardedRef}
-        variant="ghost"
-        size="icon"
-        className={cn("size-8", className)}
-        onClick={onFullscreen}
-      >
-        {children ?? (isFullscreen ? <Minimize2Icon /> : <Maximize2Icon />)}
-      </Button>
-    </MediaPlayerTooltip>
-  );
-});
-MediaPlayerFullscreen.displayName = FULLSCREEN_NAME;
-
-interface MediaPlayerPiPProps
-  extends React.ComponentPropsWithoutRef<typeof Button> {
-  onPipError?: (error: unknown, mode: "enter" | "exit") => void;
-}
-
-const MediaPlayerPiP = React.forwardRef<HTMLButtonElement, MediaPlayerPiPProps>(
-  (props, forwardedRef) => {
-    const { asChild, children, className, onPipError, ...pipButtonProps } =
-      props;
-
-    const context = useMediaPlayerContext(PIP_NAME);
-    const isPictureInPicture = useStore(
-      (state) => state.media.isPictureInPicture,
-    );
-
-    const onPictureInPicture = React.useCallback(
-      (event: React.MouseEvent<HTMLButtonElement>) => {
-        props.onClick?.(event);
-
-        if (event.defaultPrevented) return;
-
-        const media = context.mediaRef.current;
-        if (!media || !(media instanceof HTMLVideoElement)) return;
-
-        if (document.pictureInPictureElement === media) {
-          document.exitPictureInPicture().catch((error) => {
-            onPipError?.(error, "exit");
-          });
-        } else {
-          media.requestPictureInPicture().catch((error) => {
-            onPipError?.(error, "enter");
-          });
-        }
-      },
-      [context.mediaRef, props.onClick, onPipError],
-    );
-
-    return (
-      <MediaPlayerTooltip tooltip="Picture in picture" shortcut="P">
-        <Button
-          type="button"
-          aria-label={isPictureInPicture ? "Exit pip" : "Enter pip"}
-          data-state={isPictureInPicture ? "pip" : "inline"}
-          data-slot="media-player-pip"
-          {...pipButtonProps}
-          ref={forwardedRef}
-          variant="ghost"
-          size="icon"
-          className={cn("size-8", className)}
-          onClick={onPictureInPicture}
-        >
-          {isPictureInPicture ? (
-            <PictureInPicture2Icon />
-          ) : (
-            <PictureInPictureIcon />
-          )}
-        </Button>
-      </MediaPlayerTooltip>
-    );
-  },
-);
-MediaPlayerPiP.displayName = PIP_NAME;
-
-interface MediaPlayerVideoProps
-  extends React.ComponentPropsWithoutRef<"video"> {
-  asChild?: boolean;
-}
-
-const MediaPlayerVideo = React.forwardRef<
-  HTMLVideoElement,
-  MediaPlayerVideoProps
->((props, forwardedRef) => {
-  const { asChild, children, className, ...videoProps } = props;
-
-  const context = useMediaPlayerContext(VIDEO_NAME);
-  const loopMode = useStore((state) => state.media.loopMode);
-  const composedRef = useComposedRefs(forwardedRef, context.mediaRef);
-
-  const onPlayToggle = React.useCallback(
-    (event: React.MouseEvent<HTMLVideoElement>) => {
-      props.onClick?.(event);
-
-      if (event.defaultPrevented) return;
-
-      const media = context.mediaRef.current;
-      if (!media) return;
-
-      if (media.paused) {
-        media.play();
-      } else {
-        media.pause();
-      }
-    },
-    [context.mediaRef, props.onClick],
-  );
-
-  const VideoPrimitive = asChild ? Slot : "video";
-
-  return (
-    <VideoPrimitive
-      aria-labelledby={context.labelId}
-      aria-describedby={context.descriptionId}
-      data-slot="media-player-video"
-      controlsList="nodownload noremoteplayback"
-      {...videoProps}
-      ref={composedRef}
-      id={context.mediaId}
-      loop={loopMode === "all"}
-      playsInline
-      preload="metadata"
-      className={cn("h-full w-full cursor-pointer", className)}
-      onClick={onPlayToggle}
-    >
-      {children}
-      <span id={context.descriptionId} className="sr-only">
-        Video player with custom controls for playback, volume, seeking, and
-        more. Use space bar to play/pause, arrow keys (←/→) to seek, and arrow
-        keys (↑/↓) to adjust volume.
-      </span>
-    </VideoPrimitive>
-  );
-});
-MediaPlayerVideo.displayName = VIDEO_NAME;
-
-interface MediaPlayerAudioProps
-  extends React.ComponentPropsWithoutRef<"audio"> {
-  asChild?: boolean;
-}
-
-const MediaPlayerAudio = React.forwardRef<
-  HTMLAudioElement,
-  MediaPlayerAudioProps
->((props, forwardedRef) => {
-  const { asChild, children, className, ...audioProps } = props;
-
-  const context = useMediaPlayerContext(AUDIO_NAME);
-  const loopMode = useStore((state) => state.media.loopMode);
-  const composedRef = useComposedRefs(forwardedRef, context.mediaRef);
-
-  const AudioPrimitive = asChild ? Slot : "audio";
-
-  return (
-    <AudioPrimitive
-      aria-labelledby={context.labelId}
-      aria-describedby={context.descriptionId}
-      data-slot="media-player-audio"
-      {...audioProps}
-      ref={composedRef}
-      id={context.mediaId}
-      loop={loopMode === "all"}
-      preload="metadata"
-      className={cn("w-full", className)}
-    >
-      {children}
-      <span id={context.descriptionId} className="sr-only">
-        Audio player with custom controls for playback, volume, seeking, and
-        more. Use space bar to play/pause, Shift + arrow keys (←/→) to seek, and
-        arrow keys (↑/↓) to adjust volume.
-      </span>
-    </AudioPrimitive>
-  );
-});
-MediaPlayerAudio.displayName = AUDIO_NAME;
-
-interface MediaPlayerPlaybackSpeedProps
-  extends React.ComponentPropsWithoutRef<"div"> {
-  asChild?: boolean;
-  speeds?: number[];
-}
-
-const MediaPlayerPlaybackSpeed = React.forwardRef<
-  HTMLDivElement,
-  MediaPlayerPlaybackSpeedProps
->((props, forwardedRef) => {
-  const { asChild, speeds = SPEEDS, className, ...playbackSpeedProps } = props;
-
-  const context = useMediaPlayerContext(PLAYBACK_SPEED_NAME);
-  const store = useStoreContext(PLAYBACK_SPEED_NAME);
-  const playbackRate = useStore((state) => state.media.playbackRate);
-
-  const onPlaybackRateChange = React.useCallback(
-    (value: string) => {
-      const media = context.mediaRef.current;
-      if (!media) return;
-
-      const rate = Number.parseFloat(value);
-      media.playbackRate = rate;
-      store.dispatch({ variant: "SET_PLAYBACK_RATE", playbackRate: rate });
-    },
-    [context.mediaRef, store],
-  );
-
-  const PlaybackSpeedPrimitive = asChild ? Slot : "div";
-
-  return (
-    <PlaybackSpeedPrimitive
-      data-slot="media-player-playback-speed"
-      dir={context.dir}
-      {...playbackSpeedProps}
-      ref={forwardedRef}
-      className={cn("flex items-center gap-1.5", className)}
-    >
-      <Select
-        value={playbackRate.toString()}
-        onValueChange={onPlaybackRateChange}
-      >
-        <MediaPlayerTooltip tooltip="Playback speed" shortcut={["<", ">"]}>
-          <SelectTrigger
-            aria-controls={context.mediaId}
-            className="h-8 w-16 justify-center border-none aria-expanded:bg-accent aria-[expanded=true]:bg-accent/50 dark:bg-transparent dark:aria-[expanded=true]:bg-accent/50 dark:hover:bg-accent/50 [&[data-size]]:h-8 [&_svg]:hidden"
-          >
-            <SelectValue>{playbackRate}x</SelectValue>
-          </SelectTrigger>
-        </MediaPlayerTooltip>
-        <SelectContent
-          align="center"
-          className="min-w-[var(--radix-select-trigger-width)]"
-        >
-          {speeds.map((speed) => (
-            <SelectItem key={speed} value={speed.toString()}>
-              {speed}x
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </PlaybackSpeedPrimitive>
-  );
-});
-MediaPlayerPlaybackSpeed.displayName = PLAYBACK_SPEED_NAME;
-
-interface MediaPlayerCaptionsProps
-  extends React.ComponentPropsWithoutRef<typeof Button> {}
-
-const MediaPlayerCaptions = React.forwardRef<
-  HTMLButtonElement,
-  MediaPlayerCaptionsProps
->((props, forwardedRef) => {
-  const { asChild, children, className, ...captionsProps } = props;
-
-  const context = useMediaPlayerContext(CAPTIONS_NAME);
-  const store = useStoreContext(CAPTIONS_NAME);
-  const captionsEnabled = useStore((state) => state.media.captionsEnabled);
-
-  const onToggleCaptions = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
-      props.onClick?.(event);
-
-      if (event.defaultPrevented) return;
-      const media = context.mediaRef.current;
-      if (!media) return;
-
-      if (media instanceof HTMLVideoElement && media.textTracks.length > 0) {
-        for (let i = 0; i < media.textTracks.length; i++) {
-          const track = media.textTracks[i];
-          if (
-            track &&
-            (track.kind === "captions" || track.kind === "subtitles")
-          ) {
-            track.mode = captionsEnabled ? "hidden" : "showing";
-          }
-        }
-      }
-
-      store.dispatch({
-        variant: "SET_CAPTIONS_ENABLED",
-        captionsEnabled: !captionsEnabled,
-      });
-    },
-    [context.mediaRef, props.onClick, store, captionsEnabled],
-  );
-
-  return (
-    <MediaPlayerTooltip tooltip="Captions" shortcut="C">
-      <Button
-        type="button"
-        aria-label={captionsEnabled ? "Disable captions" : "Enable captions"}
-        aria-controls={context.mediaId}
-        aria-pressed={captionsEnabled}
-        data-state={captionsEnabled ? "active" : "inactive"}
-        data-slot="media-player-captions"
-        {...captionsProps}
-        ref={forwardedRef}
-        variant="ghost"
-        size="icon"
-        className={cn("size-8", className)}
-        onClick={onToggleCaptions}
-      >
-        {children ??
-          (captionsEnabled ? <SubtitlesIcon /> : <CaptionsOffIcon />)}
-      </Button>
-    </MediaPlayerTooltip>
-  );
-});
-MediaPlayerCaptions.displayName = CAPTIONS_NAME;
-
-interface MediaPlayerDownloadProps
-  extends React.ComponentPropsWithoutRef<typeof Button> {}
-
-const MediaPlayerDownload = React.forwardRef<
-  HTMLButtonElement,
-  MediaPlayerDownloadProps
->((props, forwardedRef) => {
-  const { asChild, children, className, ...downloadProps } = props;
-
-  const context = useMediaPlayerContext(DOWNLOAD_NAME);
-  const mediaUrl = context.mediaRef.current?.currentSrc;
-
-  const onDownload = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
-      props.onClick?.(event);
-
-      if (event.defaultPrevented) return;
-
-      const media = context.mediaRef.current;
-      if (!media || !mediaUrl) return;
-
-      const link = document.createElement("a");
-      link.href = mediaUrl;
-      link.download = "";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    },
-    [context.mediaRef, mediaUrl, props.onClick],
-  );
-
-  return (
-    <MediaPlayerTooltip tooltip="Download" shortcut="D">
-      <Button
-        type="button"
-        aria-label="Download"
-        aria-controls={context.mediaId}
-        data-slot="media-player-download"
-        {...downloadProps}
-        ref={forwardedRef}
-        variant="ghost"
-        size="icon"
-        className={cn("size-8", className)}
-        onClick={onDownload}
-      >
-        {children ?? <DownloadIcon />}
-      </Button>
-    </MediaPlayerTooltip>
-  );
-});
-MediaPlayerDownload.displayName = DOWNLOAD_NAME;
-
-interface MediaPlayerTooltipProps
-  extends React.ComponentPropsWithoutRef<typeof Tooltip> {
-  tooltip?: string;
-  shortcut?: string | string[];
-}
-
-function MediaPlayerTooltip({
-  tooltip,
-  shortcut,
-  children,
-  ...props
-}: MediaPlayerTooltipProps) {
-  if (!tooltip && !shortcut) return <>{children}</>;
-
-  return (
-    <Tooltip {...props} delayDuration={600}>
-      <TooltipTrigger
-        className="text-foreground focus-visible:ring-ring/80"
-        asChild
-      >
-        {children}
-      </TooltipTrigger>
-      <TooltipContent
-        sideOffset={10}
-        className="flex items-center gap-2 border bg-accent px-2 py-1 font-medium text-foreground dark:bg-zinc-900 [&>span]:hidden"
-      >
-        <p>{tooltip}</p>
-        {Array.isArray(shortcut) ? (
-          <div className="flex items-center gap-1">
-            {shortcut.map((shortcutKey) => (
-              <kbd
-                key={shortcutKey}
-                className="select-none rounded border bg-secondary px-1.5 py-0.5 font-mono text-[0.7rem] text-foreground shadow-xs"
-              >
-                <abbr title={shortcutKey} className="no-underline">
-                  {shortcutKey}
-                </abbr>
-              </kbd>
-            ))}
-          </div>
-        ) : (
-          <kbd
-            key={shortcut}
-            className="select-none rounded border bg-secondary px-1.5 py-px font-mono text-[0.7rem] text-foreground shadow-xs"
-          >
-            <abbr title={shortcut} className="no-underline">
-              {shortcut}
-            </abbr>
-          </kbd>
-        )}
-      </TooltipContent>
-    </Tooltip>
-  );
-}
-
-interface MediaPlayerSeekForwardProps
-  extends React.ComponentPropsWithoutRef<typeof Button> {
-  seconds?: number;
-}
-
-const MediaPlayerSeekForward = React.forwardRef<
-  HTMLButtonElement,
-  MediaPlayerSeekForwardProps
->((props, forwardedRef) => {
-  const {
-    asChild,
-    children,
-    className,
-    seconds = SEEK_AMOUNT_LONG,
-    ...seekForwardProps
-  } = props;
-
-  const context = useMediaPlayerContext(SEEK_FORWARD_NAME);
-  const isDisabled = props.disabled || context.disabled;
-
-  const isVideo = context.mediaRef.current instanceof HTMLVideoElement;
-
-  const onSeekForward = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
-      props.onClick?.(event);
-
-      if (event.defaultPrevented) return;
-
-      const media = context.mediaRef.current;
-      if (!media) return;
-
-      media.currentTime = Math.min(media.duration, media.currentTime + seconds);
-    },
-    [context.mediaRef, props.onClick, seconds],
-  );
-
-  return (
-    <MediaPlayerTooltip
-      tooltip={`Forward ${seconds}s`}
-      shortcut={isVideo ? ["→"] : ["Shift →"]}
-    >
-      <Button
-        type="button"
-        aria-label={`Forward ${seconds} seconds`}
-        aria-controls={context.mediaId}
-        data-disabled={isDisabled ? "" : undefined}
-        data-slot="media-player-seek-forward"
-        disabled={isDisabled}
-        {...seekForwardProps}
-        ref={forwardedRef}
-        variant="ghost"
-        size="icon"
-        className={cn("size-8", className)}
-        onClick={onSeekForward}
-      >
-        {children ?? <FastForwardIcon />}
-      </Button>
-    </MediaPlayerTooltip>
-  );
-});
-MediaPlayerSeekForward.displayName = SEEK_FORWARD_NAME;
-
-interface MediaPlayerSeekBackwardProps
-  extends React.ComponentPropsWithoutRef<typeof Button> {
-  seconds?: number;
-}
-
-const MediaPlayerSeekBackward = React.forwardRef<
-  HTMLButtonElement,
-  MediaPlayerSeekBackwardProps
->((props, forwardedRef) => {
-  const {
-    asChild,
-    children,
-    className,
-    seconds = SEEK_AMOUNT_SHORT,
-    ...seekBackwardProps
-  } = props;
-
-  const context = useMediaPlayerContext(SEEK_BACKWARD_NAME);
-  const isDisabled = props.disabled || context.disabled;
-
-  const isVideo = context.mediaRef.current instanceof HTMLVideoElement;
-
-  const onSeekBackward = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
-      props.onClick?.(event);
-
-      if (event.defaultPrevented) return;
-
-      const media = context.mediaRef.current;
-      if (!media) return;
-
-      media.currentTime = Math.max(0, media.currentTime - seconds);
-    },
-    [context.mediaRef, props.onClick, seconds],
-  );
-
-  return (
-    <MediaPlayerTooltip
-      tooltip={`Back ${seconds}s`}
-      shortcut={isVideo ? ["←"] : ["Shift ←"]}
-    >
-      <Button
-        type="button"
-        aria-label={`Back ${seconds} seconds`}
-        aria-controls={context.mediaId}
-        data-disabled={isDisabled ? "" : undefined}
-        data-slot="media-player-seek-backward"
-        disabled={isDisabled}
-        {...seekBackwardProps}
-        ref={forwardedRef}
-        variant="ghost"
-        size="icon"
-        className={cn("size-8", className)}
-        onClick={onSeekBackward}
-      >
-        {children ?? <RewindIcon />}
-      </Button>
-    </MediaPlayerTooltip>
-  );
-});
-MediaPlayerSeekBackward.displayName = SEEK_BACKWARD_NAME;
 
 interface MediaPlayerLoopProps
   extends React.ComponentPropsWithoutRef<typeof Button> {
@@ -2098,8 +1738,8 @@ const MediaPlayerLoop = React.forwardRef<
         aria-label={getAriaLabel()}
         aria-controls={context.mediaId}
         aria-pressed={loopMode !== "off"}
-        data-state={loopMode} // 'off', 'all', 'one'
         data-disabled={isDisabled ? "" : undefined}
+        data-state={loopMode}
         data-slot="media-player-loop"
         disabled={isDisabled}
         {...loopProps}
@@ -2115,6 +1755,392 @@ const MediaPlayerLoop = React.forwardRef<
   );
 });
 MediaPlayerLoop.displayName = LOOP_NAME;
+
+interface MediaPlayerFullscreenProps
+  extends React.ComponentPropsWithoutRef<typeof Button> {}
+
+const MediaPlayerFullscreen = React.forwardRef<
+  HTMLButtonElement,
+  MediaPlayerFullscreenProps
+>((props, forwardedRef) => {
+  const { asChild, children, className, disabled, ...fullscreenProps } = props;
+
+  const context = useMediaPlayerContext(FULLSCREEN_NAME);
+  const store = useStoreContext(FULLSCREEN_NAME);
+  const isFullscreen = useStore((state) => state.media.isFullscreen);
+
+  const isDisabled = disabled || context.disabled;
+
+  const onFullscreen = React.useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      props.onClick?.(event);
+
+      if (event.defaultPrevented) return;
+
+      const media = context.mediaRef.current;
+      if (!media) return;
+
+      if (!document.fullscreenElement) {
+        const container = media.closest('[data-slot="media-player"]');
+        if (container) {
+          container.requestFullscreen();
+        } else {
+          media.requestFullscreen();
+        }
+        store.dispatch({ variant: "SET_FULLSCREEN", isFullscreen: true });
+      } else {
+        document.exitFullscreen();
+        store.dispatch({ variant: "SET_FULLSCREEN", isFullscreen: false });
+      }
+    },
+    [context.mediaRef, props.onClick, store],
+  );
+
+  return (
+    <MediaPlayerTooltip tooltip="Fullscreen" shortcut="F">
+      <Button
+        type="button"
+        aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+        data-disabled={isDisabled ? "" : undefined}
+        data-state={isFullscreen ? "fullscreen" : "windowed"}
+        data-slot="media-player-fullscreen"
+        disabled={isDisabled}
+        {...fullscreenProps}
+        ref={forwardedRef}
+        variant="ghost"
+        size="icon"
+        className={cn("size-8", className)}
+        onClick={onFullscreen}
+      >
+        {children ?? (isFullscreen ? <Minimize2Icon /> : <Maximize2Icon />)}
+      </Button>
+    </MediaPlayerTooltip>
+  );
+});
+MediaPlayerFullscreen.displayName = FULLSCREEN_NAME;
+
+interface MediaPlayerPiPProps
+  extends React.ComponentPropsWithoutRef<typeof Button> {
+  onPipError?: (error: unknown, mode: "enter" | "exit") => void;
+}
+
+const MediaPlayerPiP = React.forwardRef<HTMLButtonElement, MediaPlayerPiPProps>(
+  (props, forwardedRef) => {
+    const {
+      asChild,
+      children,
+      className,
+      onPipError,
+      disabled,
+      ...pipButtonProps
+    } = props;
+
+    const context = useMediaPlayerContext(PIP_NAME);
+    const isPictureInPicture = useStore(
+      (state) => state.media.isPictureInPicture,
+    );
+
+    const isDisabled = disabled || context.disabled;
+
+    const onPictureInPicture = React.useCallback(
+      (event: React.MouseEvent<HTMLButtonElement>) => {
+        props.onClick?.(event);
+
+        if (event.defaultPrevented) return;
+
+        const media = context.mediaRef.current;
+        if (!media || !(media instanceof HTMLVideoElement)) return;
+
+        if (document.pictureInPictureElement === media) {
+          document.exitPictureInPicture().catch((error) => {
+            onPipError?.(error, "exit");
+          });
+        } else {
+          media.requestPictureInPicture().catch((error) => {
+            onPipError?.(error, "enter");
+          });
+        }
+      },
+      [context.mediaRef, props.onClick, onPipError],
+    );
+
+    return (
+      <MediaPlayerTooltip tooltip="Picture in picture" shortcut="P">
+        <Button
+          type="button"
+          aria-label={isPictureInPicture ? "Exit pip" : "Enter pip"}
+          data-disabled={isDisabled ? "" : undefined}
+          data-state={isPictureInPicture ? "pip" : "inline"}
+          data-slot="media-player-pip"
+          disabled={isDisabled}
+          {...pipButtonProps}
+          ref={forwardedRef}
+          variant="ghost"
+          size="icon"
+          className={cn("size-8", className)}
+          onClick={onPictureInPicture}
+        >
+          {isPictureInPicture ? (
+            <PictureInPicture2Icon />
+          ) : (
+            <PictureInPictureIcon />
+          )}
+        </Button>
+      </MediaPlayerTooltip>
+    );
+  },
+);
+MediaPlayerPiP.displayName = PIP_NAME;
+
+interface MediaPlayerPlaybackSpeedProps
+  extends React.ComponentPropsWithoutRef<typeof SelectTrigger> {
+  speeds?: number[];
+}
+
+const MediaPlayerPlaybackSpeed = React.forwardRef<
+  React.ComponentRef<typeof SelectTrigger>,
+  MediaPlayerPlaybackSpeedProps
+>((props, forwardedRef) => {
+  const {
+    asChild,
+    speeds = SPEEDS,
+    className,
+    disabled,
+    ...playbackSpeedProps
+  } = props;
+
+  const context = useMediaPlayerContext(PLAYBACK_SPEED_NAME);
+  const store = useStoreContext(PLAYBACK_SPEED_NAME);
+  const playbackRate = useStore((state) => state.media.playbackRate);
+
+  const isDisabled = disabled || context.disabled;
+
+  const onPlaybackRateChange = React.useCallback(
+    (value: string) => {
+      const media = context.mediaRef.current;
+      if (!media) return;
+
+      const rate = Number.parseFloat(value);
+      media.playbackRate = rate;
+      store.dispatch({ variant: "SET_PLAYBACK_RATE", playbackRate: rate });
+    },
+    [context.mediaRef, store],
+  );
+
+  return (
+    <Select
+      data-slot="media-player-playback-speed"
+      value={playbackRate.toString()}
+      onValueChange={onPlaybackRateChange}
+    >
+      <MediaPlayerTooltip tooltip="Playback speed" shortcut={["<", ">"]}>
+        <SelectTrigger
+          aria-controls={context.mediaId}
+          disabled={isDisabled}
+          {...playbackSpeedProps}
+          ref={forwardedRef}
+          className={cn(
+            "h-8 w-16 justify-center border-none aria-expanded:bg-accent aria-[expanded=true]:bg-accent/50 dark:bg-transparent dark:aria-[expanded=true]:bg-accent/50 dark:hover:bg-accent/50 [&[data-size]]:h-8 [&_svg]:hidden",
+            className,
+          )}
+        >
+          <SelectValue>{playbackRate}x</SelectValue>
+        </SelectTrigger>
+      </MediaPlayerTooltip>
+      <SelectContent
+        align="center"
+        className="min-w-[var(--radix-select-trigger-width)]"
+      >
+        {speeds.map((speed) => (
+          <SelectItem key={speed} value={speed.toString()}>
+            {speed}x
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+});
+MediaPlayerPlaybackSpeed.displayName = PLAYBACK_SPEED_NAME;
+
+interface MediaPlayerCaptionsProps
+  extends React.ComponentPropsWithoutRef<typeof Button> {}
+
+const MediaPlayerCaptions = React.forwardRef<
+  HTMLButtonElement,
+  MediaPlayerCaptionsProps
+>((props, forwardedRef) => {
+  const { asChild, children, className, disabled, ...captionsProps } = props;
+
+  const context = useMediaPlayerContext(CAPTIONS_NAME);
+  const store = useStoreContext(CAPTIONS_NAME);
+  const captionsEnabled = useStore((state) => state.media.captionsEnabled);
+
+  const isDisabled = disabled || context.disabled;
+
+  const onToggleCaptions = React.useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      props.onClick?.(event);
+
+      if (event.defaultPrevented) return;
+      const media = context.mediaRef.current;
+      if (!media) return;
+
+      if (media instanceof HTMLVideoElement && media.textTracks.length > 0) {
+        for (let i = 0; i < media.textTracks.length; i++) {
+          const track = media.textTracks[i];
+          if (
+            track &&
+            (track.kind === "captions" || track.kind === "subtitles")
+          ) {
+            track.mode = captionsEnabled ? "hidden" : "showing";
+          }
+        }
+      }
+
+      store.dispatch({
+        variant: "SET_CAPTIONS_ENABLED",
+        captionsEnabled: !captionsEnabled,
+      });
+    },
+    [context.mediaRef, props.onClick, store, captionsEnabled],
+  );
+
+  return (
+    <MediaPlayerTooltip tooltip="Captions" shortcut="C">
+      <Button
+        type="button"
+        aria-label={captionsEnabled ? "Disable captions" : "Enable captions"}
+        aria-controls={context.mediaId}
+        aria-pressed={captionsEnabled}
+        data-state={captionsEnabled ? "active" : "inactive"}
+        data-disabled={isDisabled ? "" : undefined}
+        data-slot="media-player-captions"
+        disabled={isDisabled}
+        {...captionsProps}
+        ref={forwardedRef}
+        variant="ghost"
+        size="icon"
+        className={cn("size-8", className)}
+        onClick={onToggleCaptions}
+      >
+        {children ??
+          (captionsEnabled ? <SubtitlesIcon /> : <CaptionsOffIcon />)}
+      </Button>
+    </MediaPlayerTooltip>
+  );
+});
+MediaPlayerCaptions.displayName = CAPTIONS_NAME;
+
+interface MediaPlayerDownloadProps
+  extends React.ComponentPropsWithoutRef<typeof Button> {}
+
+const MediaPlayerDownload = React.forwardRef<
+  HTMLButtonElement,
+  MediaPlayerDownloadProps
+>((props, forwardedRef) => {
+  const { asChild, children, className, disabled, ...downloadProps } = props;
+
+  const context = useMediaPlayerContext(DOWNLOAD_NAME);
+  const mediaUrl = context.mediaRef.current?.currentSrc;
+
+  const isDisabled = disabled || context.disabled;
+
+  const onDownload = React.useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      props.onClick?.(event);
+
+      if (event.defaultPrevented) return;
+
+      const media = context.mediaRef.current;
+      if (!media || !mediaUrl) return;
+
+      const link = document.createElement("a");
+      link.href = mediaUrl;
+      link.download = "";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    },
+    [context.mediaRef, mediaUrl, props.onClick],
+  );
+
+  return (
+    <MediaPlayerTooltip tooltip="Download" shortcut="D">
+      <Button
+        type="button"
+        aria-label="Download"
+        aria-controls={context.mediaId}
+        data-disabled={isDisabled ? "" : undefined}
+        data-slot="media-player-download"
+        disabled={isDisabled}
+        {...downloadProps}
+        ref={forwardedRef}
+        variant="ghost"
+        size="icon"
+        className={cn("size-8", className)}
+        onClick={onDownload}
+      >
+        {children ?? <DownloadIcon />}
+      </Button>
+    </MediaPlayerTooltip>
+  );
+});
+MediaPlayerDownload.displayName = DOWNLOAD_NAME;
+
+interface MediaPlayerTooltipProps
+  extends React.ComponentPropsWithoutRef<typeof Tooltip> {
+  tooltip?: string;
+  shortcut?: string | string[];
+}
+
+function MediaPlayerTooltip({
+  tooltip,
+  shortcut,
+  children,
+  ...props
+}: MediaPlayerTooltipProps) {
+  if (!tooltip && !shortcut) return <>{children}</>;
+
+  return (
+    <Tooltip {...props} delayDuration={600}>
+      <TooltipTrigger
+        className="text-foreground focus-visible:ring-ring/80"
+        asChild
+      >
+        {children}
+      </TooltipTrigger>
+      <TooltipContent
+        sideOffset={10}
+        className="flex items-center gap-2 border bg-accent px-2 py-1 font-medium text-foreground dark:bg-zinc-900 [&>span]:hidden"
+      >
+        <p>{tooltip}</p>
+        {Array.isArray(shortcut) ? (
+          <div className="flex items-center gap-1">
+            {shortcut.map((shortcutKey) => (
+              <kbd
+                key={shortcutKey}
+                className="select-none rounded border bg-secondary px-1.5 py-0.5 font-mono text-[0.7rem] text-foreground shadow-xs"
+              >
+                <abbr title={shortcutKey} className="no-underline">
+                  {shortcutKey}
+                </abbr>
+              </kbd>
+            ))}
+          </div>
+        ) : (
+          <kbd
+            key={shortcut}
+            className="select-none rounded border bg-secondary px-1.5 py-px font-mono text-[0.7rem] text-foreground shadow-xs"
+          >
+            <abbr title={shortcut} className="no-underline">
+              {shortcut}
+            </abbr>
+          </kbd>
+        )}
+      </TooltipContent>
+    </Tooltip>
+  );
+}
 
 const MediaPlayer = MediaPlayerRoot;
 const Root = MediaPlayerRoot;
@@ -2137,40 +2163,40 @@ const Loop = MediaPlayerLoop;
 
 export {
   MediaPlayer,
+  MediaPlayerVideo,
+  MediaPlayerAudio,
   MediaPlayerControls,
   MediaPlayerOverlay,
   MediaPlayerPlay,
-  MediaPlayerSeekForward,
   MediaPlayerSeekBackward,
+  MediaPlayerSeekForward,
   MediaPlayerSeek,
-  MediaPlayerTime,
   MediaPlayerVolume,
+  MediaPlayerTime,
+  MediaPlayerLoop,
   MediaPlayerFullscreen,
   MediaPlayerPiP,
-  MediaPlayerVideo,
-  MediaPlayerAudio,
   MediaPlayerPlaybackSpeed,
   MediaPlayerCaptions,
   MediaPlayerDownload,
-  MediaPlayerLoop,
   //
   Root,
-  Controls,
-  Play,
-  SeekForward,
-  SeekBackward,
-  Seek,
-  Time,
-  Volume,
-  Fullscreen,
-  PiP,
   Video,
   Audio,
+  Controls,
+  Overlay,
+  Play,
+  SeekBackward,
+  SeekForward,
+  Seek,
+  Volume,
+  Time,
+  Loop,
+  Fullscreen,
+  PiP,
   PlaybackSpeed,
   Captions,
   Download,
-  Overlay,
-  Loop,
   //
   useStore as useMediaPlayer,
 };

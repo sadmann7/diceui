@@ -63,7 +63,7 @@ export default function PlaygroundPage() {
                 <MediaPlayer.Play />
                 <MediaPlayer.SeekBackward />
                 <MediaPlayer.SeekForward />
-                <MediaPlayer.Volume />
+                <MediaPlayer.Volume expandable />
                 <MediaPlayer.Time />
               </div>
               <div className="flex items-center gap-2">

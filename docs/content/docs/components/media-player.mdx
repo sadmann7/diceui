@@ -51,6 +51,7 @@ import * as MediaPlayer from "@/components/ui/media-player";
     <MediaPlayer.Seek />
     <MediaPlayer.Time />
     <MediaPlayer.PlaybackSpeed />
+    <MediaPlayer.Loop />
     <MediaPlayer.Captions />
     <MediaPlayer.PiP />
     <MediaPlayer.Fullscreen />
@@ -76,21 +77,6 @@ Use the `Audio` component instead of `Video` for audio playback.
 </MediaPlayer.Root>
 ```
 
-### With action menu` 
-
-Include only essential controls for a simpler player interface.
-
-{/* TODO: Add Basic Controls Demo Example */}
-
-```tsx
-<MediaPlayer.Controls>
-  <MediaPlayer.Play />
-  <MediaPlayer.Volume />
-  <MediaPlayer.Seek />
-  <MediaPlayer.Time />
-</MediaPlayer.Controls>
-```
-
 ## API Reference
 
 ### Root
@@ -109,6 +95,24 @@ The main container component for the media player.
       value: "Present when the media player is disabled.",
     },
   ]}
+/>
+
+### Video
+
+The video element, integrated with the player state.
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="VideoProps"
+/>
+
+### Audio
+
+The audio element, integrated with the player state.
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="AudioProps"
 />
 
 ### Controls
@@ -173,13 +177,13 @@ A button to play or pause the media.
   ]}
 />
 
-### SeekForward
+### SeekBackward
 
-A button to seek forward in the media.
+A button to seek backward in the media.
 
 <AutoTypeTable
   path="./types/docs/media-player.ts"
-  name="SeekForwardProps"
+  name="SeekBackwardProps"
 />
 
 <DataAttributesTable
@@ -191,13 +195,13 @@ A button to seek forward in the media.
   ]}
 />
 
-### SeekBackward
+### SeekForward
 
-A button to seek backward in the media.
+A button to seek forward in the media.
 
 <AutoTypeTable
   path="./types/docs/media-player.ts"
-  name="SeekBackwardProps"
+  name="SeekForwardProps"
 />
 
 <DataAttributesTable
@@ -227,15 +231,6 @@ A slider component to seek through the media playback.
   ]}
 />
 
-### Time
-
-Displays the current time, duration, or remaining time of the media.
-
-<AutoTypeTable
-  path="./types/docs/media-player.ts"
-  name="TimeProps"
-/>
-
 ### Volume
 
 A slider component to control the media volume.
@@ -259,6 +254,37 @@ A slider component to control the media volume.
   ]}
 />
 
+### Time
+
+Displays the current time, duration, or remaining time of the media.
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="TimeProps"
+/>
+
+### Loop
+
+A button to toggle loop mode.
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts" 
+  name="LoopProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the button is disabled.",
+    },
+    {
+      title: "[data-state]",
+      value: ["off", "all", "one"],
+    },   
+  ]}
+/>
+
 ### Fullscreen
 
 A button to toggle fullscreen mode.
@@ -271,15 +297,19 @@ A button to toggle fullscreen mode.
 <DataAttributesTable
   attributes={[
     {
+      title: "[data-disabled]",
+      value: "Present when the button is disabled.",
+    },
+    {
       title: "[data-state]",
       value: ["fullscreen", "windowed"],
     },
   ]}
 />
 
-### PiP (Picture-in-Picture)
+### PiP (Picture in picture)
 
-A button to toggle Picture-in-Picture mode (video only).
+A button to toggle picture in picture mode (video only).
 
 <AutoTypeTable
   path="./types/docs/media-player.ts"
@@ -289,28 +319,14 @@ A button to toggle Picture-in-Picture mode (video only).
 <DataAttributesTable
   attributes={[
     {
+      title: "[data-disabled]",
+      value: "Present when the button is disabled.",
+    },
+    {
       title: "[data-state]",
       value: ["pip", "inline"],
     },
   ]}
-/>
-
-### Video
-
-The HTML video element, integrated with the player state.
-
-<AutoTypeTable
-  path="./types/docs/media-player.ts"
-  name="VideoProps"
-/>
-
-### Audio
-
-The HTML audio element, integrated with the player state.
-
-<AutoTypeTable
-  path="./types/docs/media-player.ts"
-  name="AudioProps"
 />
 
 ### PlaybackSpeed
@@ -320,6 +336,15 @@ A select dropdown to control the media playback speed.
 <AutoTypeTable
   path="./types/docs/media-player.ts"
   name="PlaybackSpeedProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the select is disabled.",
+    },
+  ]}
 />
 
 ### Captions
@@ -333,6 +358,10 @@ A button to toggle captions or subtitles (video only).
 
 <DataAttributesTable
   attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the button is disabled.",
+    },
     {
       title: "[data-state]",
       value: ["active", "inactive"],
@@ -349,9 +378,16 @@ A button to download the media file.
   name="DownloadProps"
 />
 
-## Accessibility
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the button is disabled.",
+    },
+  ]}
+/>
 
-Adheres to the [ARIA Media Player Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/media-player/).
+## Accessibility
 
 ### Keyboard Interactions
 
@@ -362,12 +398,28 @@ Adheres to the [ARIA Media Player Pattern](https://www.w3.org/WAI/ARIA/apg/patte
       description: "Toggles play/pause.",
     },
     {
-      keys: ["ArrowRight"],
-      description: "Seeks forward 5 seconds.",
+      keys: ["ArrowRight",],
+      description: "Seeks forward 5 seconds (video only).",
     },
     {
       keys: ["ArrowLeft"],
-      description: "Seeks backward 5 seconds.",
+      description: "Seeks backward 5 seconds (video only).",
+    },
+    {
+      keys: ["J"],
+      description: "Seeks forward 10 seconds (video only).",
+    },
+    {
+      keys: ["K"],
+      description: "Seeks backward 10 seconds (video only).",
+    },
+    {
+      keys: ["Shift + ArrowRight"],
+      description: "Seeks forward 5 seconds (audio only).",
+    },
+    {
+      keys: ["Shift + ArrowLeft"],
+      description: "Seeks backward 5 seconds (audio only).",
     },
     {
       keys: ["ArrowUp"],
@@ -380,6 +432,10 @@ Adheres to the [ARIA Media Player Pattern](https://www.w3.org/WAI/ARIA/apg/patte
     {
       keys: ["M"],
       description: "Toggles mute.",
+    },
+    {
+      keys: ["R"],
+      description: "Toggles repeat mode.",
     },
     {
       keys: ["F"],
@@ -414,4 +470,5 @@ Adheres to the [ARIA Media Player Pattern](https://www.w3.org/WAI/ARIA/apg/patte
 
 ## Credits
 
-- [FASSounds](https://pixabay.com/users/fassounds-3433550/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=160166) - For the audio file
+- [FASSounds](https://pixabay.com/users/fassounds-3433550/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=160166) - For the audio file.
+- [Pika](https://pika.art) - For the video file.
