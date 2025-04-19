@@ -2066,7 +2066,7 @@ const MediaPlayerLoop = React.forwardRef<
       return loopMode === "all" ? "Disable loop" : "Enable loop";
     }
     if (loopMode === "off") return "Repeat all";
-    if (loopMode === "all") return "Repeat once";
+    if (loopMode === "all") return "Repeat one";
     return "Disable repeat";
   }, [loopMode, mode]);
 
@@ -2075,7 +2075,7 @@ const MediaPlayerLoop = React.forwardRef<
       return loopMode === "all" ? "Disable loop" : "Enable loop";
     }
     if (loopMode === "off") return "Enable repeat all";
-    if (loopMode === "all") return "Enable repeat once";
+    if (loopMode === "all") return "Enable repeat one";
     return "Disable repeat";
   }, [loopMode, mode]);
 
