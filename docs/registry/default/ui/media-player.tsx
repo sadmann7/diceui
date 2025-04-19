@@ -458,22 +458,33 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
 
           case "arrowright":
             event.preventDefault();
-            media.currentTime = Math.min(media.duration, media.currentTime + 5);
+            if (media instanceof HTMLVideoElement) {
+              media.currentTime = Math.min(
+                media.duration,
+                media.currentTime + 5,
+              );
+            }
             break;
 
           case "arrowleft":
             event.preventDefault();
-            media.currentTime = Math.max(0, media.currentTime - 5);
+            if (media instanceof HTMLVideoElement) {
+              media.currentTime = Math.max(0, media.currentTime - 5);
+            }
             break;
 
           case "arrowup":
             event.preventDefault();
-            media.volume = Math.min(1, media.volume + 0.1);
+            if (media instanceof HTMLVideoElement) {
+              media.volume = Math.min(1, media.volume + 0.1);
+            }
             break;
 
           case "arrowdown":
             event.preventDefault();
-            media.volume = Math.max(0, media.volume - 0.1);
+            if (media instanceof HTMLVideoElement) {
+              media.volume = Math.max(0, media.volume - 0.1);
+            }
             break;
 
           case "<": {
@@ -561,7 +572,7 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
             break;
           }
 
-          case "l": {
+          case "r": {
             event.preventDefault();
             const currentLoopMode = store.getState().media.loopMode;
             if (currentLoopMode === "one") {
@@ -572,6 +583,25 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
               }
             } else {
               store.dispatch({ variant: "SET_LOOP_MODE", loopMode: "one" });
+            }
+            break;
+          }
+
+          case "j": {
+            event.preventDefault();
+            if (media instanceof HTMLVideoElement) {
+              media.currentTime = Math.max(0, media.currentTime - 10);
+            }
+            break;
+          }
+
+          case "l": {
+            event.preventDefault();
+            if (media instanceof HTMLVideoElement) {
+              media.currentTime = Math.min(
+                media.duration,
+                media.currentTime + 10,
+              );
             }
             break;
           }
@@ -597,9 +627,6 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
           typeof initialVolumeProp === "number" &&
           media.volume !== initialVolumeProp
         ) {
-          console.log("Applying initial volume from prop:", {
-            initialVolumeProp,
-          });
           media.volume = initialVolumeProp;
         }
         initialVolumeSetRef.current = true;
@@ -685,12 +712,6 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
         ) {
           previousVolumeRef.current = media.volume;
         }
-        console.log("onVolumeChange event handler", {
-          volume: media.volume,
-          muted: media.muted,
-          dispatchingVolume: currentVolume,
-          dispatchingMuted: media.muted,
-        });
         store.dispatch({ variant: "SET_VOLUME", volume: currentVolume });
         store.dispatch({ variant: "SET_MUTED", isMuted: media.muted });
         propsRef.current.onVolumeChange?.(media.volume);
@@ -1883,7 +1904,7 @@ const MediaPlayerSeekForward = React.forwardRef<
   );
 
   return (
-    <MediaPlayerTooltip tooltip={`Forward ${seconds}s`} shortcut="→">
+    <MediaPlayerTooltip tooltip={`Forward ${seconds}s`} shortcut={["L", "→"]}>
       <Button
         type="button"
         aria-label={`Forward ${seconds} seconds`}
@@ -1941,7 +1962,7 @@ const MediaPlayerSeekBackward = React.forwardRef<
   );
 
   return (
-    <MediaPlayerTooltip tooltip={`Back ${seekAmount}s`} shortcut="←">
+    <MediaPlayerTooltip tooltip={`Back ${seekAmount}s`} shortcut={["J", "←"]}>
       <Button
         type="button"
         aria-label={`Back ${seekAmount} seconds`}
@@ -2042,7 +2063,7 @@ const MediaPlayerLoop = React.forwardRef<
   };
 
   return (
-    <MediaPlayerTooltip tooltip={getTooltipText()} shortcut="L">
+    <MediaPlayerTooltip tooltip={getTooltipText()} shortcut="R">
       <Button
         type="button"
         aria-label={getAriaLabel()}
