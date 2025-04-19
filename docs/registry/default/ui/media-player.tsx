@@ -111,6 +111,15 @@ function formatTime(time: number) {
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
+function getIsVideo(
+  mediaRef: React.RefObject<HTMLVideoElement | HTMLAudioElement | null>,
+) {
+  return (
+    typeof window !== "undefined" &&
+    mediaRef.current instanceof HTMLVideoElement
+  );
+}
+
 type Direction = "ltr" | "rtl";
 
 const DirectionContext = React.createContext<Direction | undefined>(undefined);
@@ -1116,7 +1125,7 @@ const MediaPlayerSeekBackward = React.forwardRef<
   const context = useMediaPlayerContext(SEEK_BACKWARD_NAME);
   const isDisabled = props.disabled || context.disabled;
 
-  const isVideo = context.mediaRef.current instanceof HTMLVideoElement;
+  const isVideo = getIsVideo(context.mediaRef);
 
   const onSeekBackward = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -1178,7 +1187,7 @@ const MediaPlayerSeekForward = React.forwardRef<
   const context = useMediaPlayerContext(SEEK_FORWARD_NAME);
   const isDisabled = props.disabled || context.disabled;
 
-  const isVideo = context.mediaRef.current instanceof HTMLVideoElement;
+  const isVideo = getIsVideo(context.mediaRef);
 
   const onSeekForward = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
