@@ -149,6 +149,26 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "media-player": {
+      name: "media-player",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["button","select","slider","tooltip"],
+      files: [{
+        path: "registry/default/ui/media-player.tsx",
+        type: "registry:ui",
+        target: ""
+      },{
+        path: "registry/default/lib/composition.ts",
+        type: "registry:lib",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/media-player.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "mention": {
       name: "mention",
       description: "",
@@ -840,6 +860,38 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/masonry-ssr-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "media-player-demo": {
+      name: "media-player-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","select","slider","tooltip"],
+      files: [{
+        path: "registry/default/examples/media-player-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/media-player-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "media-player-audio-demo": {
+      name: "media-player-audio-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","select","slider","tooltip"],
+      files: [{
+        path: "registry/default/examples/media-player-audio-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/media-player-audio-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",

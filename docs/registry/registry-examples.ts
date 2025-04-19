@@ -442,6 +442,30 @@ export const examples: Registry = [
     ],
   },
   {
+    name: "media-player-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    registryDependencies: ["button", "select", "slider", "tooltip"],
+    files: [
+      {
+        path: "examples/media-player-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "media-player-audio-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    registryDependencies: ["button", "select", "slider", "tooltip"],
+    files: [
+      {
+        path: "examples/media-player-audio-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "mention-demo",
     type: "registry:example",
     dependencies: ["@diceui/mention", "lucide-react"],
