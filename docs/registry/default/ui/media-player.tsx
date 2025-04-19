@@ -348,6 +348,7 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
     const listeners = useLazyRef(() => new Set<() => void>()).current;
 
     const mediaRef = React.useRef<HTMLVideoElement | HTMLAudioElement>(null);
+    const previousVolumeRef = React.useRef<number>(defaultVolume);
 
     const initialState = React.useMemo<MediaState>(
       () => ({
@@ -431,18 +432,25 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
             const currentVolume = store.getState().media.volume;
             const currentMuted = store.getState().media.isMuted;
             if (!currentMuted) {
+              previousVolumeRef.current =
+                currentVolume > 0 ? currentVolume : previousVolumeRef.current;
               store.dispatch({ variant: "SET_VOLUME", volume: 0 });
               store.dispatch({ variant: "SET_MUTED", isMuted: true });
-              media.volume = 0;
-              media.muted = true;
+              if (media) {
+                media.volume = 0;
+                media.muted = true;
+              }
             } else {
+              const restoredVolume = previousVolumeRef.current || 1;
               store.dispatch({
                 variant: "SET_VOLUME",
-                volume: currentVolume ?? 1,
+                volume: restoredVolume,
               });
               store.dispatch({ variant: "SET_MUTED", isMuted: false });
-              media.volume = currentVolume ?? 1;
-              media.muted = false;
+              if (media) {
+                media.volume = restoredVolume;
+                media.muted = false;
+              }
             }
             break;
           }

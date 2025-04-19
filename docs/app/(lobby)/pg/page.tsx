@@ -46,12 +46,12 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <ClientOnly fallback={<Skeleton className="h-[500px] w-full" />}>
-        <video tabIndex={-1} src="/assets/data-table.mp4" controls>
+        <video tabIndex={-1} src="/assets/cloud.mp4" controls>
           <track kind="captions" />
         </video>
         <MediaPlayer.Root>
           <MediaPlayer.Video>
-            <source src="/assets/data-table.mp4" type="video/mp4" />
+            <source src="/assets/cloud.mp4" type="video/mp4" />
           </MediaPlayer.Video>
           <MediaPlayer.Controls className="flex-col items-start gap-2.5">
             <MediaPlayer.Overlay />
