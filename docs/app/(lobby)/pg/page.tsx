@@ -45,12 +45,12 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <ClientOnly fallback={<Skeleton className="h-[500px] w-full" />}>
-        <video tabIndex={-1} src="/assets/cloud.mp4" controls>
-          <track kind="captions" />
-        </video>
+      {/* <video tabIndex={-1} src="/assets/cloud.mp4" controls autoPlay>
+        <track kind="captions" />
+      </video> */}
+      <ClientOnly fallback={<Skeleton className="h-[400px] w-full" />}>
         <MediaPlayer.Root>
-          <MediaPlayer.Video>
+          <MediaPlayer.Video autoPlay muted>
             <source src="/assets/cloud.mp4" type="video/mp4" />
           </MediaPlayer.Video>
           <MediaPlayer.Controls className="flex-col items-start gap-2.5">
@@ -61,7 +61,7 @@ export default function PlaygroundPage() {
                 <MediaPlayer.Play />
                 <MediaPlayer.SeekBackward />
                 <MediaPlayer.SeekForward />
-                <MediaPlayer.Volume expandable />
+                <MediaPlayer.Volume />
                 <MediaPlayer.Time />
               </div>
               <div className="flex items-center gap-2">

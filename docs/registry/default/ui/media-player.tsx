@@ -302,15 +302,13 @@ interface MediaPlayerRootProps
     "onTimeUpdate" | "onVolumeChange"
   > {
   defaultVolume?: number;
-  defaultMuted?: boolean;
-  defaultPlaying?: boolean;
-  defaultLoop?: boolean;
   onPlay?: () => void;
   onPause?: () => void;
   onEnded?: () => void;
   onTimeUpdate?: (time: number) => void;
   onVolumeChange?: (volume: number) => void;
   onMuted?: (muted: boolean) => void;
+  onPipError?: (error: unknown, mode: "enter" | "exit") => void;
   dir?: Direction;
   label?: string;
   asChild?: boolean;
@@ -321,15 +319,13 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
   (props, forwardedRef) => {
     const {
       defaultVolume = 1,
-      defaultMuted = false,
-      defaultPlaying = false,
-      defaultLoop = false,
       onPlay,
       onPause,
       onEnded,
       onTimeUpdate,
       onVolumeChange,
       onMuted,
+      onPipError,
       asChild,
       disabled = false,
       dir: dirProp,
@@ -348,24 +344,23 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
     const listeners = useLazyRef(() => new Set<() => void>()).current;
 
     const mediaRef = React.useRef<HTMLVideoElement | HTMLAudioElement>(null);
-    const previousVolumeRef = React.useRef<number>(defaultVolume);
+    const previousVolumeRef = React.useRef(defaultVolume);
 
-    const initialState = React.useMemo<MediaState>(
-      () => ({
-        isPlaying: defaultPlaying,
-        isMuted: defaultMuted,
-        volume: defaultVolume,
+    const initialState = React.useMemo<MediaState>(() => {
+      return {
+        isPlaying: mediaRef.current?.autoplay ?? false,
+        isMuted: mediaRef.current?.muted ?? false,
+        volume: mediaRef.current?.volume ?? defaultVolume,
         currentTime: 0,
         duration: 0,
         buffered: null,
         isFullscreen: false,
-        isLooping: defaultLoop,
+        isLooping: mediaRef.current?.loop ?? false,
         playbackRate: 1,
         isPictureInPicture: false,
         captionsEnabled: false,
-      }),
-      [defaultPlaying, defaultMuted, defaultVolume, defaultLoop],
-    );
+      };
+    }, [defaultVolume]);
 
     const store = React.useMemo(
       () => createStore(listeners, initialState),
@@ -549,17 +544,11 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
             if (media instanceof HTMLVideoElement) {
               if (document.pictureInPictureElement === media) {
                 document.exitPictureInPicture().catch((error) => {
-                  console.error(
-                    "Failed to exit Picture-in-Picture mode:",
-                    error,
-                  );
+                  propsRef.current.onPipError?.(error, "exit");
                 });
               } else {
                 media.requestPictureInPicture().catch((error) => {
-                  console.error(
-                    "Failed to enter Picture-in-Picture mode:",
-                    error,
-                  );
+                  propsRef.current.onPipError?.(error, "enter");
                 });
               }
             }
@@ -567,12 +556,45 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
           }
         }
       },
-      [store, propsRef.current.onKeyDown, disabled],
+      [
+        store,
+        propsRef.current.onKeyDown,
+        propsRef.current.onPipError,
+        disabled,
+      ],
     );
+
+    const initialVolumeSetRef = React.useRef(false);
 
     React.useEffect(() => {
       const media = mediaRef.current;
       if (!media) return;
+
+      if (!initialVolumeSetRef.current) {
+        const initialVolumeProp = propsRef.current.defaultVolume;
+        if (
+          typeof initialVolumeProp === "number" &&
+          media.volume !== initialVolumeProp
+        ) {
+          console.log("Applying initial volume from prop:", {
+            initialVolumeProp,
+          });
+          media.volume = initialVolumeProp;
+        }
+        initialVolumeSetRef.current = true;
+      }
+
+      if (media.muted !== store.getState().media.isMuted) {
+        const actualVolume = media.muted ? 0 : media.volume;
+        if (media.muted && store.getState().media.volume !== 0) {
+          previousVolumeRef.current = store.getState().media.volume;
+        }
+        store.dispatch({ variant: "SET_MUTED", isMuted: media.muted });
+        store.dispatch({ variant: "SET_VOLUME", volume: actualVolume });
+      }
+      if (media.volume !== store.getState().media.volume && !media.muted) {
+        store.dispatch({ variant: "SET_VOLUME", volume: media.volume });
+      }
 
       const onTimeUpdate = () => {
         store.dispatch({
@@ -623,7 +645,21 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
       };
 
       const onVolumeChange = () => {
-        store.dispatch({ variant: "SET_VOLUME", volume: media.volume });
+        const currentVolume = media.muted ? 0 : media.volume;
+        if (
+          media.muted &&
+          !store.getState().media.isMuted &&
+          media.volume > 0
+        ) {
+          previousVolumeRef.current = media.volume;
+        }
+        console.log("onVolumeChange event handler", {
+          volume: media.volume,
+          muted: media.muted,
+          dispatchingVolume: currentVolume,
+          dispatchingMuted: media.muted,
+        });
+        store.dispatch({ variant: "SET_VOLUME", volume: currentVolume });
         store.dispatch({ variant: "SET_MUTED", isMuted: media.muted });
         propsRef.current.onVolumeChange?.(media.volume);
         propsRef.current.onMuted?.(media.muted);
@@ -673,6 +709,14 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
         media.addEventListener("leavepictureinpicture", onExitedPiP);
       }
 
+      if (media.volume !== store.getState().media.volume) {
+        store.dispatch({ variant: "SET_VOLUME", volume: media.volume });
+      }
+
+      if (media.muted !== store.getState().media.isMuted) {
+        store.dispatch({ variant: "SET_MUTED", isMuted: media.muted });
+      }
+
       return () => {
         media.removeEventListener("timeupdate", onTimeUpdate);
         media.removeEventListener("durationchange", onDurationChange);
@@ -692,8 +736,9 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
       };
     }, [
       store,
-      propsRef.current.onTimeUpdate,
+      propsRef.current.defaultVolume,
       propsRef.current.onVolumeChange,
+      propsRef.current.onTimeUpdate,
       propsRef.current.onMuted,
       propsRef.current.onPlay,
       propsRef.current.onPause,
@@ -1155,19 +1200,17 @@ const MediaPlayerVolume = React.forwardRef<
     if (!media) return;
 
     if (!isMuted) {
-      previousVolumeRef.current = volume ?? previousVolumeRef.current;
-      media.volume = 0;
+      if (volume > 0) {
+        previousVolumeRef.current = volume;
+      }
       media.muted = true;
-      store.dispatch({ variant: "SET_VOLUME", volume: 0 });
-      store.dispatch({ variant: "SET_MUTED", isMuted: true });
     } else {
-      const restoredVolume = previousVolumeRef.current;
+      const restoredVolume =
+        previousVolumeRef.current > 0 ? previousVolumeRef.current : 1;
       media.volume = restoredVolume;
       media.muted = false;
-      store.dispatch({ variant: "SET_VOLUME", volume: restoredVolume });
-      store.dispatch({ variant: "SET_MUTED", isMuted: false });
     }
-  }, [context.mediaRef, store, volume, isMuted]);
+  }, [context.mediaRef, volume, isMuted]);
 
   return (
     <div
@@ -1374,11 +1417,14 @@ const MediaPlayerFullscreen = React.forwardRef<
 MediaPlayerFullscreen.displayName = FULLSCREEN_NAME;
 
 interface MediaPlayerPiPProps
-  extends React.ComponentPropsWithoutRef<typeof Button> {}
+  extends React.ComponentPropsWithoutRef<typeof Button> {
+  onPipError?: (error: unknown, mode: "enter" | "exit") => void;
+}
 
 const MediaPlayerPiP = React.forwardRef<HTMLButtonElement, MediaPlayerPiPProps>(
   (props, forwardedRef) => {
-    const { asChild, children, className, ...pipButtonProps } = props;
+    const { asChild, children, className, onPipError, ...pipButtonProps } =
+      props;
 
     const context = useMediaPlayerContext(PIP_NAME);
     const isPictureInPicture = useStore(
@@ -1396,15 +1442,15 @@ const MediaPlayerPiP = React.forwardRef<HTMLButtonElement, MediaPlayerPiPProps>(
 
         if (document.pictureInPictureElement === media) {
           document.exitPictureInPicture().catch((error) => {
-            console.error("Failed to exit Picture-in-Picture mode:", error);
+            onPipError?.(error, "exit");
           });
         } else {
           media.requestPictureInPicture().catch((error) => {
-            console.error("Failed to enter Picture-in-Picture mode:", error);
+            onPipError?.(error, "enter");
           });
         }
       },
-      [context.mediaRef, props.onClick],
+      [context.mediaRef, props.onClick, onPipError],
     );
 
     return (
@@ -1619,11 +1665,9 @@ const MediaPlayerCaptions = React.forwardRef<
       const media = context.mediaRef.current;
       if (!media) return;
 
-      // Toggle captions - this assumes you're using the tracks API
       if (media instanceof HTMLVideoElement && media.textTracks.length > 0) {
         for (let i = 0; i < media.textTracks.length; i++) {
           const track = media.textTracks[i];
-          // Only toggle if it's a caption or subtitle track
           if (
             track &&
             (track.kind === "captions" || track.kind === "subtitles")
