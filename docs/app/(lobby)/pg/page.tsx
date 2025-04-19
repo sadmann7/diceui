@@ -46,11 +46,11 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <MediaPlayerAudioDemo />
-      {/* <video tabIndex={-1} src="/assets/cloud.mp4" controls autoPlay>
-        <track kind="captions" />
-      </video> */}
-      {/* <ClientOnly fallback={<Skeleton className="h-[400px] w-full" />}>
+      <ClientOnly fallback={<Skeleton className="h-[400px] w-full" />}>
+        <MediaPlayerAudioDemo />
+        {/* <video tabIndex={-1} src="/assets/cloud.mp4" >
+          <track kind="captions" />
+        </video> */}
         <MediaPlayer.Root>
           <MediaPlayer.Video>
             <source src="/assets/cloud.mp4" type="video/mp4" />
@@ -76,7 +76,7 @@ export default function PlaygroundPage() {
             </div>
           </MediaPlayer.Controls>
         </MediaPlayer.Root>
-      </ClientOnly> */}
+      </ClientOnly>
       <div className="grid gap-8">
         <Combobox className="w-[15rem]">
           <ComboboxAnchor>

@@ -27,6 +27,8 @@ import {
   PictureInPicture2Icon,
   PictureInPictureIcon,
   PlayIcon,
+  Repeat1Icon,
+  RepeatIcon,
   RewindIcon,
   SubtitlesIcon,
   Volume1Icon,
@@ -55,6 +57,7 @@ const PIP_NAME = "MediaPlayerPiP";
 const PLAYBACK_SPEED_NAME = "MediaPlayerPlaybackSpeed";
 const CAPTIONS_NAME = "MediaPlayerCaptions";
 const DOWNLOAD_NAME = "MediaPlayerDownload";
+const LOOP_NAME = "MediaPlayerLoop";
 
 const MEDIA_PLAYER_ERRORS = {
   [ROOT_NAME]: `\`${ROOT_NAME}\` must be used as root component`,
@@ -73,6 +76,7 @@ const MEDIA_PLAYER_ERRORS = {
   [PLAYBACK_SPEED_NAME]: `\`${PLAYBACK_SPEED_NAME}\` must be within \`${ROOT_NAME}\``,
   [CAPTIONS_NAME]: `\`${CAPTIONS_NAME}\` must be within \`${ROOT_NAME}\``,
   [DOWNLOAD_NAME]: `\`${DOWNLOAD_NAME}\` must be within \`${ROOT_NAME}\``,
+  [LOOP_NAME]: `\`${LOOP_NAME}\` must be within \`${ROOT_NAME}\``,
 } as const;
 
 const useIsomorphicLayoutEffect =
@@ -112,6 +116,7 @@ interface MediaState {
   buffered: TimeRanges | null;
   isFullscreen: boolean;
   isLooping: boolean;
+  loopMode: "off" | "all" | "one";
   playbackRate: number;
   isPictureInPicture: boolean;
   captionsEnabled: boolean;
@@ -129,7 +134,7 @@ type StoreAction =
   | { variant: "SET_DURATION"; duration: number }
   | { variant: "SET_BUFFERED"; buffered: TimeRanges }
   | { variant: "SET_FULLSCREEN"; isFullscreen: boolean }
-  | { variant: "SET_LOOP"; isLooping: boolean }
+  | { variant: "SET_LOOP_MODE"; loopMode: "off" | "all" | "one" }
   | { variant: "SET_PLAYBACK_RATE"; playbackRate: number }
   | { variant: "SET_PICTURE_IN_PICTURE"; isPictureInPicture: boolean }
   | { variant: "SET_CAPTIONS_ENABLED"; captionsEnabled: boolean };
@@ -194,10 +199,10 @@ function createStore(listeners: Set<() => void>, initialState: MediaState) {
         };
         break;
 
-      case "SET_LOOP":
+      case "SET_LOOP_MODE":
         state = {
           ...state,
-          media: { ...state.media, isLooping: action.isLooping },
+          media: { ...state.media, loopMode: action.loopMode },
         };
         break;
 
@@ -356,6 +361,7 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
         buffered: null,
         isFullscreen: false,
         isLooping: mediaRef.current?.loop ?? false,
+        loopMode: mediaRef.current?.loop ? "all" : "off",
         playbackRate: 1,
         isPictureInPicture: false,
         captionsEnabled: false,
@@ -554,6 +560,21 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
             }
             break;
           }
+
+          case "l": {
+            event.preventDefault();
+            const currentLoopMode = store.getState().media.loopMode;
+            if (currentLoopMode === "one") {
+              if (media) {
+                media.currentTime = 0;
+                media.play();
+                store.dispatch({ variant: "SET_LOOP_MODE", loopMode: "off" });
+              }
+            } else {
+              store.dispatch({ variant: "SET_LOOP_MODE", loopMode: "one" });
+            }
+            break;
+          }
         }
       },
       [
@@ -642,6 +663,17 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
       const onEnded = () => {
         store.dispatch({ variant: "SET_PLAYING", isPlaying: false });
         propsRef.current.onEnded?.();
+        const currentLoopMode = store.getState().media.loopMode;
+        if (currentLoopMode === "one") {
+          if (media) {
+            media.currentTime = 0;
+            media.play();
+            store.dispatch({ variant: "SET_LOOP_MODE", loopMode: "off" });
+          }
+        } else {
+          store.dispatch({ variant: "SET_PLAYING", isPlaying: false });
+          propsRef.current.onEnded?.();
+        }
       };
 
       const onVolumeChange = () => {
@@ -1491,7 +1523,7 @@ const MediaPlayerVideo = React.forwardRef<
   const { asChild, children, className, ...videoProps } = props;
 
   const context = useMediaPlayerContext(VIDEO_NAME);
-  const isLooping = useStore((state) => state.media.isLooping);
+  const loopMode = useStore((state) => state.media.loopMode);
   const composedRef = useComposedRefs(forwardedRef, context.mediaRef);
 
   const onPlayToggle = React.useCallback(
@@ -1523,7 +1555,7 @@ const MediaPlayerVideo = React.forwardRef<
       {...videoProps}
       ref={composedRef}
       id={context.mediaId}
-      loop={isLooping}
+      loop={loopMode === "all"}
       playsInline
       preload="metadata"
       className={cn("h-full w-full cursor-pointer", className)}
@@ -1551,7 +1583,7 @@ const MediaPlayerAudio = React.forwardRef<
   const { asChild, children, className, ...audioProps } = props;
 
   const context = useMediaPlayerContext(AUDIO_NAME);
-  const isLooping = useStore((state) => state.media.isLooping);
+  const loopMode = useStore((state) => state.media.loopMode);
   const composedRef = useComposedRefs(forwardedRef, context.mediaRef);
 
   const AudioPrimitive = asChild ? Slot : "audio";
@@ -1564,7 +1596,7 @@ const MediaPlayerAudio = React.forwardRef<
       {...audioProps}
       ref={composedRef}
       id={context.mediaId}
-      loop={isLooping}
+      loop={loopMode === "all"}
       preload="metadata"
       className={cn("w-full", className)}
     >
@@ -1931,6 +1963,109 @@ const MediaPlayerSeekBackward = React.forwardRef<
 });
 MediaPlayerSeekBackward.displayName = SEEK_BACKWARD_NAME;
 
+interface MediaPlayerLoopProps
+  extends React.ComponentPropsWithoutRef<typeof Button> {
+  mode?: "toggle" | "repeat";
+}
+
+const MediaPlayerLoop = React.forwardRef<
+  HTMLButtonElement,
+  MediaPlayerLoopProps
+>((props, forwardedRef) => {
+  const { asChild, children, className, mode = "toggle", ...loopProps } = props;
+
+  const context = useMediaPlayerContext(LOOP_NAME);
+  const store = useStoreContext(LOOP_NAME);
+  const loopMode = useStore((state) => state.media.loopMode);
+  const isDisabled = props.disabled || context.disabled;
+
+  const onLoopToggle = React.useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      props.onClick?.(event);
+      if (event.defaultPrevented) return;
+
+      const media = context.mediaRef.current;
+      if (!media) return;
+
+      let nextLoopMode: "off" | "all" | "one" = "off";
+
+      if (mode === "toggle") {
+        if (loopMode === "off") {
+          nextLoopMode = "all";
+        } else {
+          // 'all' or 'one' goes to 'off'
+          nextLoopMode = "off";
+        }
+      } else {
+        // mode === 'repeat'
+        if (loopMode === "off") {
+          nextLoopMode = "all";
+        } else if (loopMode === "all") {
+          nextLoopMode = "one";
+        } else {
+          // loopMode === 'one'
+          nextLoopMode = "off";
+        }
+      }
+
+      media.loop = nextLoopMode === "all";
+      store.dispatch({ variant: "SET_LOOP_MODE", loopMode: nextLoopMode });
+    },
+    [context.mediaRef, props.onClick, store, loopMode, mode],
+  );
+
+  const getTooltipText = () => {
+    if (mode === "toggle") {
+      return loopMode === "all" ? "Disable loop" : "Enable loop";
+    }
+    // mode === 'repeat'
+    if (loopMode === "off") return "Repeat all";
+    if (loopMode === "all") return "Repeat once";
+    return "Disable repeat"; // loopMode === 'one'
+  };
+
+  const getAriaLabel = () => {
+    if (mode === "toggle") {
+      return loopMode === "all" ? "Disable loop" : "Enable loop";
+    }
+    // mode === 'repeat'
+    if (loopMode === "off") return "Enable repeat all";
+    if (loopMode === "all") return "Enable repeat once";
+    return "Disable repeat"; // loopMode === 'one'
+  };
+
+  const LoopIcon = () => {
+    if (loopMode === "one") return <Repeat1Icon />;
+    return (
+      <RepeatIcon className={cn(loopMode === "off" && "text-foreground/60")} />
+    );
+  };
+
+  return (
+    <MediaPlayerTooltip tooltip={getTooltipText()} shortcut="L">
+      <Button
+        type="button"
+        aria-label={getAriaLabel()}
+        aria-controls={context.mediaId}
+        aria-pressed={loopMode !== "off"}
+        data-state={loopMode} // 'off', 'all', 'one'
+        data-disabled={isDisabled ? "" : undefined}
+        data-slot="media-player-loop"
+        disabled={isDisabled}
+        {...loopProps}
+        ref={forwardedRef}
+        variant="ghost"
+        size="icon"
+        className={cn("size-8", className)}
+        onClick={onLoopToggle}
+      >
+        {children ?? <LoopIcon />}
+      </Button>
+    </MediaPlayerTooltip>
+  );
+});
+MediaPlayerLoop.displayName = LOOP_NAME;
+
 const MediaPlayer = MediaPlayerRoot;
 const Root = MediaPlayerRoot;
 const Controls = MediaPlayerControls;
@@ -1948,6 +2083,7 @@ const Audio = MediaPlayerAudio;
 const PlaybackSpeed = MediaPlayerPlaybackSpeed;
 const Captions = MediaPlayerCaptions;
 const Download = MediaPlayerDownload;
+const Loop = MediaPlayerLoop;
 
 export {
   MediaPlayer,
@@ -1966,6 +2102,7 @@ export {
   MediaPlayerPlaybackSpeed,
   MediaPlayerCaptions,
   MediaPlayerDownload,
+  MediaPlayerLoop,
   //
   Root,
   Controls,
@@ -1983,6 +2120,7 @@ export {
   Captions,
   Download,
   Overlay,
+  Loop,
   //
   useStore as useMediaPlayer,
 };

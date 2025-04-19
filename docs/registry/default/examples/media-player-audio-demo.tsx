@@ -2,11 +2,13 @@ import {
   MediaPlayer,
   MediaPlayerAudio,
   MediaPlayerControls,
+  MediaPlayerLoop,
   MediaPlayerPlay,
   MediaPlayerPlaybackSpeed,
   MediaPlayerSeek,
   MediaPlayerSeekBackward,
   MediaPlayerSeekForward,
+  MediaPlayerTime,
   MediaPlayerVolume,
 } from "@/registry/default/ui/media-player";
 
@@ -18,14 +20,14 @@ export default function MediaPlayerAudioDemo() {
       </MediaPlayerAudio>
       <MediaPlayerControls className="flex-col items-start gap-2.5">
         <MediaPlayerSeek withTime />
-        <div className="flex w-full items-center gap-2">
-          <div className="flex flex-1 items-center gap-2">
-            <MediaPlayerPlay />
-            <MediaPlayerSeekBackward />
-            <MediaPlayerSeekForward />
-            <MediaPlayerVolume expandable />
-          </div>
+        <div className="flex w-full items-center justify-center gap-2">
+          <MediaPlayerSeekBackward />
+          <MediaPlayerPlay />
+          <MediaPlayerSeekForward />
+          <MediaPlayerVolume />
+          <MediaPlayerTime />
           <MediaPlayerPlaybackSpeed />
+          <MediaPlayerLoop mode="repeat" />
         </div>
       </MediaPlayerControls>
     </MediaPlayer>
