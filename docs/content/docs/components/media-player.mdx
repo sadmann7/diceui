@@ -1,0 +1,471 @@
+---
+title: Media Player
+description: A fully featured media player component supporting video and audio playback with custom controls.
+preview: true
+links:
+  api: /docs/components/media-player#api-reference
+---
+
+<ComponentTabs name="media-player-demo" align="start" className="p-8" />
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/media-player"
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @radix-ui/react-slot @radix-ui/react-slider @radix-ui/react-tooltip lucide-react
+     ```
+  </Step>
+  <Step>
+  Copy the composition utilities into your `lib/composition.ts` file.
+
+  <ComponentSource src="./lib/composition.ts" />
+
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource name="media-player" />
+  </Step>
+</Steps>
+
+## Layout
+
+Import the parts, and compose them together.
+
+```tsx
+import * as MediaPlayer from "@/components/ui/media-player";
+
+<MediaPlayer.Root>
+  <MediaPlayer.Video>
+    <source src="..." type="video/mp4" />
+  </MediaPlayer.Video>
+  <MediaPlayer.Overlay />
+  <MediaPlayer.Controls>
+    <MediaPlayer.Play />
+    <MediaPlayer.Volume />
+    <MediaPlayer.Seek />
+    <MediaPlayer.Time />
+    <MediaPlayer.PlaybackSpeed />
+    <MediaPlayer.Loop />
+    <MediaPlayer.Captions />
+    <MediaPlayer.PiP />
+    <MediaPlayer.Fullscreen />
+    <MediaPlayer.Download />
+  </MediaPlayer.Controls>
+</MediaPlayer.Root>
+```
+
+## Examples
+
+### Audio Player
+
+Use the `Audio` component instead of `Video` for audio playback.
+
+<ComponentTabs name="media-player-audio-demo" align="start" className="p-8" />
+
+## API Reference
+
+### Root
+
+The main container component for the media player.
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="RootProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the media player is disabled.",
+    },
+  ]}
+/>
+
+### Video
+
+The video element, integrated with the player state.
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="VideoProps"
+/>
+
+### Audio
+
+The audio element, integrated with the player state.
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="AudioProps"
+/>
+
+### Controls
+
+A container for the media player controls.
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="ControlsProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the controls are disabled.",
+    },
+    {
+      title: "[data-state]",
+      value: ["fullscreen", "windowed"],
+    },
+  ]}
+/>
+
+### Overlay
+
+A gradient overlay displayed over the video, typically at the bottom where controls are placed.
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="OverlayProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-state]",
+      value: ["fullscreen", "windowed"],
+    },
+  ]}
+/>
+
+### Play
+
+A button to play or pause the media.
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="PlayProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the button is disabled.",
+    },
+    {
+      title: "[data-state]",
+      value: ["playing", "paused"],
+    },
+  ]}
+/>
+
+### SeekBackward
+
+A button to seek backward in the media.
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="SeekBackwardProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the button is disabled.",
+    },
+  ]}
+/>
+
+### SeekForward
+
+A button to seek forward in the media.
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="SeekForwardProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the button is disabled.",
+    },
+  ]}
+/>
+
+### Seek
+
+A slider component to seek through the media playback.
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="SeekProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the slider is disabled.",
+    },
+  ]}
+/>
+
+### Volume
+
+A slider component to control the media volume.
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="VolumeProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the volume control is disabled.",
+    },
+    {
+      title: "[data-state]",
+      value: ["muted", "unmuted"],
+      description: "Present on the mute button."
+    },
+  ]}
+/>
+
+### Time
+
+Displays the current time, duration, or remaining time of the media.
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="TimeProps"
+/>
+
+### PlaybackSpeed
+
+A select dropdown to control the media playback speed.
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="PlaybackSpeedProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the select is disabled.",
+    },
+  ]}
+/>
+
+### Loop
+
+A button to toggle loop mode.
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts" 
+  name="LoopProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the button is disabled.",
+    },
+    {
+      title: "[data-state]",
+      value: ["off", "all", "one"],
+    },   
+  ]}
+/>
+
+### Fullscreen
+
+A button to toggle fullscreen mode.
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="FullscreenProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the button is disabled.",
+    },
+    {
+      title: "[data-state]",
+      value: ["fullscreen", "windowed"],
+    },
+  ]}
+/>
+
+### PiP (Picture in picture)
+
+A button to toggle picture in picture mode (video only).
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="PiPProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the button is disabled.",
+    },
+    {
+      title: "[data-state]",
+      value: ["pip", "inline"],
+    },
+  ]}
+/>
+
+### Captions
+
+A button to toggle captions or subtitles (video only).
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="CaptionsProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the button is disabled.",
+    },
+    {
+      title: "[data-state]",
+      value: ["active", "inactive"],
+    },
+  ]}
+/>
+
+### Download
+
+A button to download the media file.
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="DownloadProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the button is disabled.",
+    },
+  ]}
+/>
+
+## Accessibility
+
+### Keyboard Interactions
+
+<KeyboardShortcutsTable
+  shortcuts={[
+    {
+      keys: ["Space", "K"],
+      description: "Toggles play/pause.",
+    },
+    {
+      keys: ["ArrowRight",],
+      description: "Seeks forward 5 seconds (video only).",
+    },
+    {
+      keys: ["ArrowLeft"],
+      description: "Seeks backward 5 seconds (video only).",
+    },
+    {
+      keys: ["J"],
+      description: "Seeks forward 10 seconds (video only).",
+    },
+    {
+      keys: ["K"],
+      description: "Seeks backward 10 seconds (video only).",
+    },
+    {
+      keys: ["Shift + ArrowRight"],
+      description: "Seeks forward 5 seconds (audio only).",
+    },
+    {
+      keys: ["Shift + ArrowLeft"],
+      description: "Seeks backward 5 seconds (audio only).",
+    },
+    {
+      keys: ["ArrowUp"],
+      description: "Increases volume.",
+    },
+    {
+      keys: ["ArrowDown"],
+      description: "Decreases volume.",
+    },
+    {
+      keys: ["M"],
+      description: "Toggles mute.",
+    },
+    {
+      keys: ["R"],
+      description: "Toggles repeat mode.",
+    },
+    {
+      keys: ["F"],
+      description: "Toggles fullscreen.",
+    },
+    {
+      keys: ["Escape"],
+      description: "Exits fullscreen when in fullscreen mode.",
+    },
+    {
+      keys: [">"],
+      description: "Increases playback speed.",
+    },
+    {
+      keys: ["<"],
+      description: "Decreases playback speed.",
+    },
+    {
+      keys: ["C"],
+      description: "Toggles captions.",
+    },
+    {
+      keys: ["P"],
+      description: "Toggles Picture-in-Picture.",
+    },
+    {
+      keys: ["D"],
+      description: "Downloads the media file.",
+    },
+  ]}
+/> 
+
+## Credits
+
+- [FASSounds](https://pixabay.com/users/fassounds-3433550/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=160166) - For the audio file.
+- [Pika](https://pika.art) - For the video file.

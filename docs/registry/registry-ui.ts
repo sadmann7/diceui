@@ -118,6 +118,22 @@ export const ui: Registry = [
     ],
   },
   {
+    name: "media-player",
+    type: "registry:ui",
+    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    registryDependencies: ["button", "select", "slider", "tooltip"],
+    files: [
+      {
+        path: "ui/media-player.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "lib/composition.ts",
+        type: "registry:lib",
+      },
+    ],
+  },
+  {
     name: "mention",
     type: "registry:ui",
     dependencies: ["@diceui/mention", "lucide-react"],

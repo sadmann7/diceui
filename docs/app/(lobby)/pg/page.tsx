@@ -29,6 +29,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import { ClientOnly } from "@/registry/default/components/client-only";
+import MediaPlayerAudioDemo from "@/registry/default/examples/media-player-audio-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -45,26 +46,34 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <ClientOnly fallback={<Skeleton className="h-[500px] w-full" />}>
-        <video tabIndex={-1} src="/assets/data-table.mp4" controls>
+      <ClientOnly fallback={<Skeleton className="h-[400px] w-full" />}>
+        <MediaPlayerAudioDemo />
+        {/* <video tabIndex={-1} src="/assets/cloud.mp4" >
           <track kind="captions" />
-        </video>
+        </video> */}
         <MediaPlayer.Root>
-          <MediaPlayer.Video src="/assets/data-table.mp4">
-            <track kind="captions" />
+          <MediaPlayer.Video>
+            <source src="/assets/cloud.mp4" type="video/mp4" />
           </MediaPlayer.Video>
-          <MediaPlayer.Controls>
-            <MediaPlayer.Play />
+          <MediaPlayer.Controls className="flex-col items-start gap-2.5">
+            <MediaPlayer.Overlay />
             <MediaPlayer.Seek />
-            <MediaPlayer.Time />
-            <MediaPlayer.PlaybackSpeed />
-            <MediaPlayer.Captions />
-            <MediaPlayer.Volume />
-            <MediaPlayer.Download />
-            <MediaPlayer.PiP />
-            <MediaPlayer.Fullscreen />
-            <MediaPlayer.SeekBackward />
-            <MediaPlayer.SeekForward />
+            <div className="flex w-full items-center gap-2">
+              <div className="flex flex-1 items-center gap-2">
+                <MediaPlayer.Play />
+                <MediaPlayer.SeekBackward />
+                <MediaPlayer.SeekForward />
+                <MediaPlayer.Volume expandable />
+                <MediaPlayer.Time />
+              </div>
+              <div className="flex items-center gap-2">
+                <MediaPlayer.PlaybackSpeed />
+                <MediaPlayer.Captions />
+                <MediaPlayer.Download />
+                <MediaPlayer.PiP />
+                <MediaPlayer.Fullscreen />
+              </div>
+            </div>
           </MediaPlayer.Controls>
         </MediaPlayer.Root>
       </ClientOnly>
