@@ -40,6 +40,8 @@ import * as React from "react";
 const SEEK_THROTTLE_MS = 100;
 const POINTER_MOVE_THROTTLE_MS = 16;
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+const SEEK_AMOUNT_SHORT = 5;
+const SEEK_AMOUNT_LONG = 10;
 
 const ROOT_NAME = "MediaPlayer";
 const CONTROLS_NAME = "MediaPlayerControls";
@@ -461,7 +463,12 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
             if (media instanceof HTMLVideoElement) {
               media.currentTime = Math.min(
                 media.duration,
-                media.currentTime + 5,
+                media.currentTime + SEEK_AMOUNT_SHORT,
+              );
+            } else if (media instanceof HTMLAudioElement && event.shiftKey) {
+              media.currentTime = Math.min(
+                media.duration,
+                media.currentTime + SEEK_AMOUNT_SHORT,
               );
             }
             break;
@@ -469,7 +476,15 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
           case "arrowleft":
             event.preventDefault();
             if (media instanceof HTMLVideoElement) {
-              media.currentTime = Math.max(0, media.currentTime - 5);
+              media.currentTime = Math.max(
+                0,
+                media.currentTime - SEEK_AMOUNT_SHORT,
+              );
+            } else if (media instanceof HTMLAudioElement && event.shiftKey) {
+              media.currentTime = Math.max(
+                0,
+                media.currentTime - SEEK_AMOUNT_SHORT,
+              );
             }
             break;
 
@@ -590,7 +605,10 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
           case "j": {
             event.preventDefault();
             if (media instanceof HTMLVideoElement) {
-              media.currentTime = Math.max(0, media.currentTime - 10);
+              media.currentTime = Math.max(
+                0,
+                media.currentTime - SEEK_AMOUNT_LONG,
+              );
             }
             break;
           }
@@ -600,7 +618,7 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
             if (media instanceof HTMLVideoElement) {
               media.currentTime = Math.min(
                 media.duration,
-                media.currentTime + 10,
+                media.currentTime + SEEK_AMOUNT_LONG,
               );
             }
             break;
@@ -1585,7 +1603,8 @@ const MediaPlayerVideo = React.forwardRef<
       {children}
       <span id={context.descriptionId} className="sr-only">
         Video player with custom controls for playback, volume, seeking, and
-        more. Use space bar to play/pause, arrow keys to seek and adjust volume.
+        more. Use space bar to play/pause, arrow keys (←/→) to seek, and arrow
+        keys (↑/↓) to adjust volume.
       </span>
     </VideoPrimitive>
   );
@@ -1624,7 +1643,8 @@ const MediaPlayerAudio = React.forwardRef<
       {children}
       <span id={context.descriptionId} className="sr-only">
         Audio player with custom controls for playback, volume, seeking, and
-        more. Use space bar to play/pause, arrow keys to seek and adjust volume.
+        more. Use space bar to play/pause, Shift + arrow keys (←/→) to seek, and
+        arrow keys (↑/↓) to adjust volume.
       </span>
     </AudioPrimitive>
   );
@@ -1882,12 +1902,14 @@ const MediaPlayerSeekForward = React.forwardRef<
     asChild,
     children,
     className,
-    seconds = 10,
+    seconds = SEEK_AMOUNT_LONG,
     ...seekForwardProps
   } = props;
 
   const context = useMediaPlayerContext(SEEK_FORWARD_NAME);
   const isDisabled = props.disabled || context.disabled;
+
+  const isVideo = context.mediaRef.current instanceof HTMLVideoElement;
 
   const onSeekForward = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -1904,7 +1926,10 @@ const MediaPlayerSeekForward = React.forwardRef<
   );
 
   return (
-    <MediaPlayerTooltip tooltip={`Forward ${seconds}s`} shortcut={["L", "→"]}>
+    <MediaPlayerTooltip
+      tooltip={`Forward ${seconds}s`}
+      shortcut={isVideo ? ["→"] : ["Shift →"]}
+    >
       <Button
         type="button"
         aria-label={`Forward ${seconds} seconds`}
@@ -1939,13 +1964,14 @@ const MediaPlayerSeekBackward = React.forwardRef<
     asChild,
     children,
     className,
-    seconds = 10,
+    seconds = SEEK_AMOUNT_SHORT,
     ...seekBackwardProps
   } = props;
 
   const context = useMediaPlayerContext(SEEK_BACKWARD_NAME);
   const isDisabled = props.disabled || context.disabled;
-  const seekAmount = seconds || 10;
+
+  const isVideo = context.mediaRef.current instanceof HTMLVideoElement;
 
   const onSeekBackward = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -1956,16 +1982,19 @@ const MediaPlayerSeekBackward = React.forwardRef<
       const media = context.mediaRef.current;
       if (!media) return;
 
-      media.currentTime = Math.max(0, media.currentTime - seekAmount);
+      media.currentTime = Math.max(0, media.currentTime - seconds);
     },
-    [context.mediaRef, props.onClick, seekAmount],
+    [context.mediaRef, props.onClick, seconds],
   );
 
   return (
-    <MediaPlayerTooltip tooltip={`Back ${seekAmount}s`} shortcut={["J", "←"]}>
+    <MediaPlayerTooltip
+      tooltip={`Back ${seconds}s`}
+      shortcut={isVideo ? ["←"] : ["Shift ←"]}
+    >
       <Button
         type="button"
-        aria-label={`Back ${seekAmount} seconds`}
+        aria-label={`Back ${seconds} seconds`}
         aria-controls={context.mediaId}
         data-disabled={isDisabled ? "" : undefined}
         data-slot="media-player-seek-backward"
@@ -2014,17 +2043,14 @@ const MediaPlayerLoop = React.forwardRef<
         if (loopMode === "off") {
           nextLoopMode = "all";
         } else {
-          // 'all' or 'one' goes to 'off'
           nextLoopMode = "off";
         }
       } else {
-        // mode === 'repeat'
         if (loopMode === "off") {
           nextLoopMode = "all";
         } else if (loopMode === "all") {
           nextLoopMode = "one";
         } else {
-          // loopMode === 'one'
           nextLoopMode = "off";
         }
       }
@@ -2035,32 +2061,30 @@ const MediaPlayerLoop = React.forwardRef<
     [context.mediaRef, props.onClick, store, loopMode, mode],
   );
 
-  const getTooltipText = () => {
+  const getTooltipText = React.useCallback(() => {
     if (mode === "toggle") {
       return loopMode === "all" ? "Disable loop" : "Enable loop";
     }
-    // mode === 'repeat'
     if (loopMode === "off") return "Repeat all";
     if (loopMode === "all") return "Repeat once";
-    return "Disable repeat"; // loopMode === 'one'
-  };
+    return "Disable repeat";
+  }, [loopMode, mode]);
 
-  const getAriaLabel = () => {
+  const getAriaLabel = React.useCallback(() => {
     if (mode === "toggle") {
       return loopMode === "all" ? "Disable loop" : "Enable loop";
     }
-    // mode === 'repeat'
     if (loopMode === "off") return "Enable repeat all";
     if (loopMode === "all") return "Enable repeat once";
-    return "Disable repeat"; // loopMode === 'one'
-  };
+    return "Disable repeat";
+  }, [loopMode, mode]);
 
-  const LoopIcon = () => {
+  const LoopIcon = React.useCallback(() => {
     if (loopMode === "one") return <Repeat1Icon />;
     return (
       <RepeatIcon className={cn(loopMode === "off" && "text-foreground/60")} />
     );
-  };
+  }, [loopMode]);
 
   return (
     <MediaPlayerTooltip tooltip={getTooltipText()} shortcut="R">
