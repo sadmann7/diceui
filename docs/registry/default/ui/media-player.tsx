@@ -1272,7 +1272,7 @@ const MediaPlayerVolume = React.forwardRef<
       >
         <SliderPrimitive.Track
           aria-label="Volume track"
-          className="relative h-1 w-full grow overflow-hidden rounded-full bg-secondary"
+          className="relative h-1 w-full grow overflow-hidden rounded-full bg-zinc-500"
         >
           <SliderPrimitive.Range
             aria-label="Current volume"

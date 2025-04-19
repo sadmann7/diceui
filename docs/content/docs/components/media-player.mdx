@@ -47,9 +47,9 @@ import * as MediaPlayer from "@/components/ui/media-player";
   <MediaPlayer.Overlay />
   <MediaPlayer.Controls>
     <MediaPlayer.Play />
-    <MediaPlayer.Volume expandable />
-    <MediaPlayer.Seek withTime />
-    <MediaPlayer.Time variant="remaining" />
+    <MediaPlayer.Volume />
+    <MediaPlayer.Seek />
+    <MediaPlayer.Time />
     <MediaPlayer.PlaybackSpeed />
     <MediaPlayer.Captions />
     <MediaPlayer.PiP />
@@ -65,7 +65,7 @@ import * as MediaPlayer from "@/components/ui/media-player";
 
 Use the `Audio` component instead of `Video` for audio playback.
 
-{/* TODO: Add Audio Player Demo Example */}
+<ComponentTabs name="media-player-audio-demo" align="start" className="p-8" />
 
 ```tsx
 <MediaPlayer.Root>
@@ -76,7 +76,7 @@ Use the `Audio` component instead of `Video` for audio playback.
 </MediaPlayer.Root>
 ```
 
-### Basic Controls
+### With action menu` 
 
 Include only essential controls for a simpler player interface.
 
@@ -386,6 +386,10 @@ Adheres to the [ARIA Media Player Pattern](https://www.w3.org/WAI/ARIA/apg/patte
       description: "Toggles fullscreen.",
     },
     {
+      keys: ["Escape"],
+      description: "Exits fullscreen when in fullscreen mode.",
+    },
+    {
       keys: [">"],
       description: "Increases playback speed.",
     },
@@ -407,3 +411,7 @@ Adheres to the [ARIA Media Player Pattern](https://www.w3.org/WAI/ARIA/apg/patte
     },
   ]}
 /> 
+
+## Credits
+
+- [FASSounds](https://pixabay.com/users/fassounds-3433550/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=160166) - For the audio file

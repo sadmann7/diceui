@@ -29,6 +29,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import { ClientOnly } from "@/registry/default/components/client-only";
+import MediaPlayerAudioDemo from "@/registry/default/examples/media-player-audio-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -45,12 +46,13 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
+      <MediaPlayerAudioDemo />
       {/* <video tabIndex={-1} src="/assets/cloud.mp4" controls autoPlay>
         <track kind="captions" />
       </video> */}
-      <ClientOnly fallback={<Skeleton className="h-[400px] w-full" />}>
+      {/* <ClientOnly fallback={<Skeleton className="h-[400px] w-full" />}>
         <MediaPlayer.Root>
-          <MediaPlayer.Video autoPlay muted>
+          <MediaPlayer.Video>
             <source src="/assets/cloud.mp4" type="video/mp4" />
           </MediaPlayer.Video>
           <MediaPlayer.Controls className="flex-col items-start gap-2.5">
@@ -74,7 +76,7 @@ export default function PlaygroundPage() {
             </div>
           </MediaPlayer.Controls>
         </MediaPlayer.Root>
-      </ClientOnly>
+      </ClientOnly> */}
       <div className="grid gap-8">
         <Combobox className="w-[15rem]">
           <ComboboxAnchor>

@@ -2,29 +2,12 @@ import type { CompositionProps, EmptyProps } from "@/types";
 import type { SliderProps } from "@radix-ui/react-slider";
 import type * as React from "react";
 
-export interface RootProps
-  extends Omit<
-      React.ComponentPropsWithoutRef<"div">,
-      "onTimeUpdate" | "onVolumeChange"
-    >,
-    CompositionProps {
+export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The default volume level (0-1).
    * @default 1
    */
   defaultVolume?: number;
-
-  /**
-   * Whether the media player should be muted by default.
-   * @default false
-   */
-  defaultMuted?: boolean;
-
-  /**
-   * Whether the media player should start playing automatically.
-   * @default false
-   */
-  defaultPlaying?: boolean;
 
   /**
    * Whether the media should loop by default.
@@ -61,6 +44,16 @@ export interface RootProps
    * Callback function triggered when the muted state changes.
    */
   onMuted?: (muted: boolean) => void;
+
+  /**
+   * Callback function triggered when triggering picture in picture (PiP) mode.
+   *
+   * The first argument is the unknown error that occurred.
+   * The second argument is the mode on which the error occurred.
+   * - `enter`: The error occurred when entering PIP.
+   * - `exit`: The error occurred when exiting PIP.
+   */
+  onPipError?: (error: unknown, mode: "enter" | "exit") => void;
 
   /**
    * The text direction of the component.
