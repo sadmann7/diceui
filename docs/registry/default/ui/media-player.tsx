@@ -316,6 +316,7 @@ interface MediaPlayerRootProps
   onVolumeChange?: (volume: number) => void;
   onMuted?: (muted: boolean) => void;
   onPipError?: (error: unknown, mode: "enter" | "exit") => void;
+  onFullscreenChange?: (fullscreen: boolean) => void;
   dir?: Direction;
   label?: string;
   asChild?: boolean;
@@ -333,6 +334,7 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
       onVolumeChange,
       onMuted,
       onPipError,
+      onFullscreenChange,
       asChild,
       disabled = false,
       dir: dirProp,
@@ -737,10 +739,12 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
       };
 
       const onFullscreenChange = () => {
+        const isFullscreen = !!document.fullscreenElement;
         store.dispatch({
           variant: "SET_FULLSCREEN",
-          isFullscreen: !!document.fullscreenElement,
+          isFullscreen: isFullscreen,
         });
+        propsRef.current.onFullscreenChange?.(isFullscreen);
       };
 
       const onEnteredPiP = () => {
@@ -814,6 +818,7 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
       propsRef.current.onPlay,
       propsRef.current.onPause,
       propsRef.current.onEnded,
+      propsRef.current.onFullscreenChange,
     ]);
 
     const RootPrimitive = asChild ? Slot : "div";
@@ -1373,12 +1378,12 @@ function formatTime(time: number) {
 
 interface MediaPlayerTimeProps extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
-  variant?: "default" | "remaining" | "duration";
+  mode?: "progress" | "remaining" | "duration";
 }
 
 const MediaPlayerTime = React.forwardRef<HTMLDivElement, MediaPlayerTimeProps>(
   (props, forwardedRef) => {
-    const { asChild, className, variant = "default", ...timeProps } = props;
+    const { asChild, className, mode = "progress", ...timeProps } = props;
 
     const context = useMediaPlayerContext(TIME_NAME);
     const currentTime = useStore((state) => state.media.currentTime);
@@ -1390,17 +1395,17 @@ const MediaPlayerTime = React.forwardRef<HTMLDivElement, MediaPlayerTimeProps>(
 
     const TimePrimitive = asChild ? Slot : "div";
 
-    if (variant === "remaining" || variant === "duration") {
+    if (mode === "remaining" || mode === "duration") {
       return (
         <TimePrimitive
-          aria-label={variant === "remaining" ? "Remaining time" : "Duration"}
+          aria-label={mode === "remaining" ? "Remaining time" : "Duration"}
           data-slot="media-player-time"
           dir={context.dir}
           {...timeProps}
           ref={forwardedRef}
           className={cn("text-foreground/80 text-sm", className)}
         >
-          {variant === "remaining" ? formattedRemainingTime : formattedDuration}
+          {mode === "remaining" ? formattedRemainingTime : formattedDuration}
         </TimePrimitive>
       );
     }
