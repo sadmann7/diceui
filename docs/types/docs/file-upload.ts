@@ -340,9 +340,14 @@ export interface ItemPreviewProps extends EmptyProps<"div">, CompositionProps {
   render: (file: File) => React.ReactNode;
 }
 
-export interface ItemMetadataProps
-  extends EmptyProps<"div">,
-    CompositionProps {}
+export interface ItemMetadataProps extends EmptyProps<"div">, CompositionProps {
+  /**
+   * The size of the metadata (file name, and size).
+   *
+   * @default "default"
+   */
+  size?: "default" | "sm";
+}
 
 export interface ItemProgressProps extends EmptyProps<"div">, CompositionProps {
   /**

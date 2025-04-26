@@ -935,8 +935,6 @@ const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
           ref={forwardedRef}
           className={cn(
             "relative flex items-center gap-2.5 rounded-md border p-3",
-            "has-[_[data-slot=file-upload-progress]]:[&.flex-row,&.flex-col]:flex-col",
-            "has-[_[data-slot=file-upload-progress]]:[&.flex-row,&.flex-col]:items-start",
             className,
           )}
         >
@@ -1027,18 +1025,16 @@ const FileUploadItemPreview = React.forwardRef<
 
   const itemContext = useFileUploadItemContext(ITEM_PREVIEW_NAME);
 
-  const isImage = itemContext.fileState?.file.type.startsWith("image/");
-
   const onPreviewRender = React.useCallback(
     (file: File) => {
       if (render) return render(file);
 
-      if (isImage) {
+      if (itemContext.fileState?.file.type.startsWith("image/")) {
         return (
           <img
             src={URL.createObjectURL(file)}
             alt={file.name}
-            className="size-full rounded object-cover"
+            className="size-full object-cover"
             onLoad={(event) => {
               if (!(event.target instanceof HTMLImageElement)) return;
               URL.revokeObjectURL(event.target.src);
@@ -1049,7 +1045,7 @@ const FileUploadItemPreview = React.forwardRef<
 
       return getFileIcon(file);
     },
-    [isImage, render],
+    [render, itemContext.fileState?.file.type],
   );
 
   if (!itemContext.fileState) return null;
@@ -1063,8 +1059,7 @@ const FileUploadItemPreview = React.forwardRef<
       {...previewProps}
       ref={forwardedRef}
       className={cn(
-        "relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-md",
-        isImage ? "object-cover" : "bg-accent/50 [&>svg]:size-7",
+        "relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded border bg-accent/50 [&>svg]:size-10",
         className,
       )}
     >
@@ -1078,13 +1073,20 @@ FileUploadItemPreview.displayName = ITEM_PREVIEW_NAME;
 interface FileUploadItemMetadataProps
   extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
+  size?: "default" | "sm";
 }
 
 const FileUploadItemMetadata = React.forwardRef<
   HTMLDivElement,
   FileUploadItemMetadataProps
 >((props, forwardedRef) => {
-  const { asChild, children, className, ...metadataProps } = props;
+  const {
+    asChild,
+    size = "default",
+    children,
+    className,
+    ...metadataProps
+  } = props;
 
   const context = useFileUploadContext(ITEM_METADATA_NAME);
   const itemContext = useFileUploadItemContext(ITEM_METADATA_NAME);
@@ -1105,13 +1107,19 @@ const FileUploadItemMetadata = React.forwardRef<
         <>
           <span
             id={itemContext.nameId}
-            className="truncate font-medium text-sm"
+            className={cn(
+              "truncate font-medium text-sm",
+              size === "sm" && "font-normal text-[13px] leading-snug",
+            )}
           >
             {itemContext.fileState.file.name}
           </span>
           <span
             id={itemContext.sizeId}
-            className="text-muted-foreground text-xs"
+            className={cn(
+              "truncate text-muted-foreground text-xs",
+              size === "sm" && "text-[11px]",
+            )}
           >
             {formatBytes(itemContext.fileState.file.size)}
           </span>

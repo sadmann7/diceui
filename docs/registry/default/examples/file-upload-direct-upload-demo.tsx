@@ -108,7 +108,7 @@ export default function FileUploadDirectUploadDemo() {
       </FileUploadDropzone>
       <FileUploadList>
         {files.map((file, index) => (
-          <FileUploadItem key={index} value={file}>
+          <FileUploadItem key={index} value={file} className="flex-col">
             <div className="flex w-full items-center gap-2">
               <FileUploadItemPreview />
               <FileUploadItemMetadata />
