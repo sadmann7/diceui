@@ -29,6 +29,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import { ClientOnly } from "@/registry/default/components/client-only";
+import FileUploadChatDemo from "@/registry/default/examples/file-upload-chat-demo";
 import FileUploadCircularProgressDemo from "@/registry/default/examples/file-upload-circular-progress-demo";
 import FileUploadFillProgressDemo from "@/registry/default/examples/file-upload-fill-progress-demo";
 import MediaPlayerAudioDemo from "@/registry/default/examples/media-player-audio-demo";
@@ -48,7 +49,7 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <FileUploadFillProgressDemo />
+      <FileUploadChatDemo />
       {/* <ClientOnly fallback={<Skeleton className="h-[400px] w-full" />}>
         <MediaPlayerAudioDemo />
         <video tabIndex={-1} src="/assets/cloud.mp4" >

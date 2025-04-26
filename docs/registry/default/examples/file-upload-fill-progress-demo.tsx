@@ -92,7 +92,7 @@ export default function FileUploadFillProgressDemo() {
       multiple
     >
       <FileUploadDropzone>
-        <div className="flex flex-col items-center gap-1">
+        <div className="flex flex-col items-center gap-1 text-center">
           <div className="flex items-center justify-center rounded-full border p-2.5">
             <Upload className="size-6 text-muted-foreground" />
           </div>

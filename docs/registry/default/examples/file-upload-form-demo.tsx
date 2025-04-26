@@ -92,7 +92,7 @@ export default function FileUploadFormDemo() {
                   }}
                   multiple
                 >
-                  <FileUploadDropzone className="flex-row border-dotted">
+                  <FileUploadDropzone className="flex-row flex-wrap border-dotted text-center">
                     <CloudUpload className="size-4" />
                     Drag and drop or
                     <FileUploadTrigger asChild>

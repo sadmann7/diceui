@@ -578,6 +578,8 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
 
     const RootPrimitive = asChild ? Slot : "div";
 
+    console.log({ filesStates: Array.from(store.getState().files.values()) });
+
     return (
       <DirectionContext.Provider value={dir}>
         <StoreContext.Provider value={store}>
@@ -932,7 +934,9 @@ const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
           {...itemProps}
           ref={forwardedRef}
           className={cn(
-            "relative flex items-center gap-2.5 rounded-md border p-3 has-[_[data-slot=file-upload-progress]]:flex-col has-[_[data-slot=file-upload-progress]]:items-start",
+            "relative flex items-center gap-2.5 rounded-md border p-3",
+            "has-[_[data-slot=file-upload-progress]]:[&.flex-row,&.flex-col]:flex-col",
+            "has-[_[data-slot=file-upload-progress]]:[&.flex-row,&.flex-col]:items-start",
             className,
           )}
         >
@@ -1059,7 +1063,7 @@ const FileUploadItemPreview = React.forwardRef<
       {...previewProps}
       ref={forwardedRef}
       className={cn(
-        "relative flex size-10 shrink-0 items-center justify-center rounded-md",
+        "relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-md",
         isImage ? "object-cover" : "bg-accent/50 [&>svg]:size-7",
         className,
       )}
@@ -1149,10 +1153,11 @@ const FileUploadItemProgress = React.forwardRef<
 
   const itemContext = useFileUploadItemContext(ITEM_PROGRESS_NAME);
 
-  const shouldRender =
-    forceMount || itemContext.fileState?.status !== "success";
+  if (!itemContext.fileState) return null;
 
-  if (!shouldRender || !itemContext.fileState) return null;
+  const shouldRender = forceMount || itemContext.fileState.progress !== 100;
+
+  if (!shouldRender) return null;
 
   const ItemProgressPrimitive = asChild ? Slot : "div";
 
