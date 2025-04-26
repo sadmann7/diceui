@@ -1129,99 +1129,137 @@ FileUploadItemMetadata.displayName = ITEM_METADATA_NAME;
 interface FileUploadItemProgressProps
   extends React.ComponentPropsWithoutRef<"div"> {
   asChild?: boolean;
-  circular?: boolean;
+  variant?: "linear" | "circular" | "fill";
   size?: number;
+  forceMount?: boolean;
 }
 
 const FileUploadItemProgress = React.forwardRef<
   HTMLDivElement,
   FileUploadItemProgressProps
 >((props, forwardedRef) => {
-  const { circular, size = 40, asChild, className, ...progressProps } = props;
+  const {
+    variant = "linear",
+    size = 40,
+    asChild,
+    forceMount,
+    className,
+    ...progressProps
+  } = props;
 
   const itemContext = useFileUploadItemContext(ITEM_PROGRESS_NAME);
 
-  if (!itemContext.fileState) return null;
+  const shouldRender =
+    forceMount || itemContext.fileState?.status !== "success";
+
+  if (!shouldRender || !itemContext.fileState) return null;
 
   const ItemProgressPrimitive = asChild ? Slot : "div";
 
-  if (circular) {
-    if (itemContext.fileState.status === "success") return null;
+  switch (variant) {
+    case "circular": {
+      const circumference = 2 * Math.PI * ((size - 4) / 2);
+      const strokeDashoffset =
+        circumference - (itemContext.fileState.progress / 100) * circumference;
 
-    const circumference = 2 * Math.PI * ((size - 4) / 2);
-    const strokeDashoffset =
-      circumference - (itemContext.fileState.progress / 100) * circumference;
-
-    return (
-      <ItemProgressPrimitive
-        role="progressbar"
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={itemContext.fileState.progress}
-        aria-valuetext={`${itemContext.fileState.progress}%`}
-        aria-labelledby={itemContext.nameId}
-        data-slot="file-upload-progress"
-        {...progressProps}
-        ref={forwardedRef}
-        className={cn(
-          "-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2",
-          className,
-        )}
-      >
-        <svg
-          className="rotate-[-90deg] transform"
-          width={size}
-          height={size}
-          viewBox={`0 0 ${size} ${size}`}
-          fill="none"
-          stroke="currentColor"
+      return (
+        <ItemProgressPrimitive
+          role="progressbar"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={itemContext.fileState.progress}
+          aria-valuetext={`${itemContext.fileState.progress}%`}
+          aria-labelledby={itemContext.nameId}
+          data-slot="file-upload-progress"
+          {...progressProps}
+          ref={forwardedRef}
+          className={cn(
+            "-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2",
+            className,
+          )}
         >
-          <circle
-            className="text-primary/20"
-            strokeWidth="2"
-            cx={size / 2}
-            cy={size / 2}
-            r={(size - 4) / 2}
-          />
-          <circle
-            className="text-primary transition-all"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeDasharray={circumference}
-            strokeDashoffset={strokeDashoffset}
-            cx={size / 2}
-            cy={size / 2}
-            r={(size - 4) / 2}
-          />
-        </svg>
-      </ItemProgressPrimitive>
-    );
-  }
+          <svg
+            className="rotate-[-90deg] transform"
+            width={size}
+            height={size}
+            viewBox={`0 0 ${size} ${size}`}
+            fill="none"
+            stroke="currentColor"
+          >
+            <circle
+              className="text-primary/20"
+              strokeWidth="2"
+              cx={size / 2}
+              cy={size / 2}
+              r={(size - 4) / 2}
+            />
+            <circle
+              className="text-primary transition-[stroke-dashoffset] duration-300 ease-linear"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeDasharray={circumference}
+              strokeDashoffset={strokeDashoffset}
+              cx={size / 2}
+              cy={size / 2}
+              r={(size - 4) / 2}
+            />
+          </svg>
+        </ItemProgressPrimitive>
+      );
+    }
 
-  return (
-    <ItemProgressPrimitive
-      role="progressbar"
-      aria-valuemin={0}
-      aria-valuemax={100}
-      aria-valuenow={itemContext.fileState.progress}
-      aria-valuetext={`${itemContext.fileState.progress}%`}
-      aria-labelledby={itemContext.nameId}
-      data-slot="file-upload-progress"
-      {...progressProps}
-      ref={forwardedRef}
-      className={cn(
-        "relative h-1.5 w-full overflow-hidden rounded-full bg-primary/20",
-        className,
-      )}
-    >
-      <div
-        className="h-full w-full flex-1 bg-primary transition-all"
-        style={{
-          transform: `translateX(-${100 - itemContext.fileState.progress}%)`,
-        }}
-      />
-    </ItemProgressPrimitive>
-  );
+    case "fill": {
+      const progressPercentage = itemContext.fileState.progress;
+      const topInset = 100 - progressPercentage;
+
+      return (
+        <ItemProgressPrimitive
+          role="progressbar"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={progressPercentage}
+          aria-valuetext={`${progressPercentage}%`}
+          aria-labelledby={itemContext.nameId}
+          data-slot="file-upload-progress"
+          {...progressProps}
+          ref={forwardedRef}
+          className={cn(
+            "absolute inset-0 bg-primary/50 transition-[clip-path] duration-300 ease-linear",
+            className,
+          )}
+          style={{
+            clipPath: `inset(${topInset}% 0% 0% 0%)`,
+          }}
+        />
+      );
+    }
+
+    default:
+      return (
+        <ItemProgressPrimitive
+          role="progressbar"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={itemContext.fileState.progress}
+          aria-valuetext={`${itemContext.fileState.progress}%`}
+          aria-labelledby={itemContext.nameId}
+          data-slot="file-upload-progress"
+          {...progressProps}
+          ref={forwardedRef}
+          className={cn(
+            "relative h-1.5 w-full overflow-hidden rounded-full bg-primary/20",
+            className,
+          )}
+        >
+          <div
+            className="h-full w-full flex-1 bg-primary transition-transform duration-300 ease-linear"
+            style={{
+              transform: `translateX(-${100 - itemContext.fileState.progress}%)`,
+            }}
+          />
+        </ItemProgressPrimitive>
+      );
+  }
 });
 FileUploadItemProgress.displayName = ITEM_PROGRESS_NAME;
 

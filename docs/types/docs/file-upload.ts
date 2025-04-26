@@ -346,31 +346,50 @@ export interface ItemMetadataProps
 
 export interface ItemProgressProps extends EmptyProps<"div">, CompositionProps {
   /**
-   * Whether to display the progress in a circular format.
+   * The visual style of the progress indicator.
+   *
+   * - `linear`: A standard horizontal progress bar (default).
+   * - `circular`: A circular progress indicator using stroke animation.
+   * - `fill`: A fill progress indicator.
    *
    * ```tsx
-   * // Linear progress
-   * <ItemProgress />
+   * // Linear progress (default)
+   * <ItemProgress variant="linear" />
    *
-   * // Circular progress
-   * <ItemProgress circular size={40} />
+   * // Circular stroke progress
+   * <ItemProgress variant="circular" size={40} />
+   *
+   * // Fill progress
+   * <ItemProgress variant="fill" />
    * ```
    *
-   * @default false
+   * @default "linear"
    */
-  circular?: boolean;
+  variant?: "linear" | "circular" | "fill";
 
   /**
-   * The size of the circular progress indicator.
-   * Only applies when circular is true.
+   * The size of the circular progress indicator (in pixels).
+   * Only applies when variant is `circular`.
    *
    * ```tsx
-   * <ItemProgress circular size={60} />
+   * <ItemProgress variant="circular" size={60} />
    * ```
    *
    * @default 40
    */
   size?: number;
+
+  /**
+   * Whether to force mount the progress indicator even if the file is not uploading.
+   * Useful for animating the progress indicator with animation libraries.
+   *
+   * ```tsx
+   * <ItemProgress forceMount />
+   * ```
+   *
+   * @default false
+   */
+  forceMount?: boolean;
 }
 
 export interface ItemDeleteProps

@@ -282,6 +282,18 @@ export const examples: Registry = [
     ],
   },
   {
+    name: "file-upload-fill-progress-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    registryDependencies: ["button", "lucide-react", "sonner"],
+    files: [
+      {
+        path: "examples/file-upload-fill-progress-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "file-upload-form-demo",
     type: "registry:example",
     dependencies: [
