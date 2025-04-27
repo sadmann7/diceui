@@ -714,6 +714,45 @@ const FileUploadDropzone = React.forwardRef<
     [store, context.inputRef, propsRef.current.onDrop],
   );
 
+  const onPaste = React.useCallback(
+    (event: React.ClipboardEvent<HTMLDivElement>) => {
+      propsRef.current?.onPaste?.(event);
+
+      if (event.defaultPrevented) return;
+
+      event.preventDefault();
+      store.dispatch({ variant: "SET_DRAG_OVER", dragOver: false });
+
+      const items = event.clipboardData?.items;
+      if (!items) return;
+
+      const files: File[] = [];
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (item?.kind === "file") {
+          const file = item.getAsFile();
+          if (file) {
+            files.push(file);
+          }
+        }
+      }
+
+      if (files.length === 0) return;
+
+      const inputElement = context.inputRef.current;
+      if (!inputElement) return;
+
+      const dataTransfer = new DataTransfer();
+      for (const file of files) {
+        dataTransfer.items.add(file);
+      }
+
+      inputElement.files = dataTransfer.files;
+      inputElement.dispatchEvent(new Event("change", { bubbles: true }));
+    },
+    [store, context.inputRef, propsRef],
+  );
+
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
       propsRef.current?.onKeyDown?.(event);
@@ -756,6 +795,7 @@ const FileUploadDropzone = React.forwardRef<
       onDragOver={onDragOver}
       onDrop={onDrop}
       onKeyDown={onKeyDown}
+      onPaste={onPaste}
     />
   );
 });

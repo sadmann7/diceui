@@ -31,6 +31,7 @@ import { tricks } from "@/lib/data";
 import { ClientOnly } from "@/registry/default/components/client-only";
 import FileUploadChatDemo from "@/registry/default/examples/file-upload-chat-demo";
 import FileUploadCircularProgressDemo from "@/registry/default/examples/file-upload-circular-progress-demo";
+import FileUploadDemo from "@/registry/default/examples/file-upload-demo";
 import FileUploadFillProgressDemo from "@/registry/default/examples/file-upload-fill-progress-demo";
 import MediaPlayerAudioDemo from "@/registry/default/examples/media-player-audio-demo";
 import {

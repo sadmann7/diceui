@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { uploadFiles } from "@/lib/uploadthing"; // Assuming this path is correct
-import { cn } from "@/lib/utils";
 import {
   FileUpload,
   FileUploadDropzone,
@@ -14,7 +13,6 @@ import {
   FileUploadItemProgress,
   FileUploadList,
   FileUploadTrigger,
-  useFileUpload,
 } from "@/registry/default/ui/file-upload";
 import { ArrowUp, Paperclip, Upload, X } from "lucide-react";
 import * as React from "react";
@@ -38,51 +36,53 @@ export default function FileUploadChatDemo() {
       files: File[],
       {
         onProgress,
-        onSuccess,
-        onError,
       }: {
         onProgress: (file: File, progress: number) => void;
-        onSuccess: (file: File) => void;
-        onError: (file: File, error: Error) => void;
       },
     ) => {
       try {
-        // Process each file individually
-        const uploadPromises = files.map(async (file) => {
-          try {
-            // Simulate file upload with progress
-            const totalChunks = 10;
-            let uploadedChunks = 0;
-
-            // Simulate chunk upload with delays
-            for (let i = 0; i < totalChunks; i++) {
-              // Simulate network delay (100-300ms per chunk)
-              await new Promise((resolve) =>
-                setTimeout(resolve, Math.random() * 200 + 100),
-              );
-
-              // Update progress for this specific file
-              uploadedChunks++;
-              const progress = (uploadedChunks / totalChunks) * 100;
-              onProgress(file, progress);
-            }
-
-            // Simulate server processing delay
-            await new Promise((resolve) => setTimeout(resolve, 500));
-            onSuccess(file);
-          } catch (error) {
-            onError(
-              file,
-              error instanceof Error ? error : new Error("Upload failed"),
-            );
-          }
+        setIsUploading(true);
+        const res = await uploadFiles("imageUploader", {
+          files,
+          onUploadProgress: ({ file, progress }) => {
+            onProgress(file, progress);
+          },
         });
 
-        // Wait for all uploads to complete
-        await Promise.all(uploadPromises);
+        toast.success("Uploaded files:", {
+          description: (
+            <pre className="mt-2 w-80 rounded-md bg-accent/30 p-4 text-accent-foreground">
+              <code>
+                {JSON.stringify(
+                  res.map((file) =>
+                    file.name.length > 25
+                      ? `${file.name.slice(0, 25)}...`
+                      : file.name,
+                  ),
+                  null,
+                  2,
+                )}
+              </code>
+            </pre>
+          ),
+        });
       } catch (error) {
-        // This handles any error that might occur outside the individual upload processes
-        console.error("Unexpected error during upload:", error);
+        setIsUploading(false);
+
+        if (error instanceof UploadThingError) {
+          const errorMessage =
+            error.data && "error" in error.data
+              ? error.data.error
+              : "Upload failed";
+          toast.error(errorMessage);
+          return;
+        }
+
+        toast.error(
+          error instanceof Error ? error.message : "An unknown error occurred",
+        );
+      } finally {
+        setIsUploading(false);
       }
     },
     [],
@@ -97,11 +97,10 @@ export default function FileUploadChatDemo() {
   const onSubmit = React.useCallback(
     (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
-      console.log({ input, files });
       setInput("");
       setFiles([]);
     },
-    [input, files],
+    [],
   );
 
   return (
@@ -112,14 +111,14 @@ export default function FileUploadChatDemo() {
       onFileReject={onFileReject}
       maxFiles={10}
       maxSize={5 * 1024 * 1024}
-      className="relative h-80 w-full rounded-md border p-4"
+      className="relative h-80 w-full max-w-md"
       disabled={isUploading}
       multiple
     >
       <FileUploadDropzone
+        tabIndex={-1}
         // Prevents the dropzone from triggering on click
         onClick={(event) => event.preventDefault()}
-        tabIndex={-1}
         className="absolute top-0 left-0 z-0 size-full origin-center scale-95 border-none bg-background/50 opacity-0 backdrop-blur transition-all duration-200 ease-out data-[dragging]:z-10 data-[dragging]:scale-100 data-[dragging]:opacity-100"
       >
         <div className="flex flex-col items-center gap-1 text-center">
@@ -141,7 +140,7 @@ export default function FileUploadChatDemo() {
           className="overflow-x-auto px-0 py-1"
         >
           {files.map((file, index) => (
-            <FileUploadItem key={index} value={file} className="p-1.5">
+            <FileUploadItem key={index} value={file} className="max-w-52 p-1.5">
               <FileUploadItemPreview className="size-8 [&>svg]:size-5">
                 <FileUploadItemProgress variant="fill" />
               </FileUploadItemPreview>
