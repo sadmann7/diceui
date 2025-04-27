@@ -75,17 +75,30 @@ Render a circular progress indicator instead of a linear one by enabling the `ci
 
 <ComponentTabs name="file-upload-circular-progress-demo" align="start" />
 
+### Fill Progress
+
+Render a fill progress indicator instead of a linear one by enabling the `fill` prop on the `ItemProgress` component.
+
+<ComponentTabs name="file-upload-fill-progress-demo" align="start" />
+
 ### With uploadthing
 
 Integrate with [uploadthing](https://uploadthing.com) for secure, type-safe file uploads with real-time progress tracking.
 
 <ComponentTabs name="file-upload-uploadthing-demo" align="start" className="p-8" />
 
+### With Chat Input
+
+Integrate file upload seamlessly into a chat input.
+
+<ComponentTabs name="file-upload-chat-input-demo"  align="start" className="p-8" />
+
 ### With Form
 
 Use the `value` and `onValueChange` props to handle file uploads with validation and submission.
 
 <ComponentTabs name="file-upload-form-demo" align="start" className="p-8" />
+
 
 ## API Reference
 
@@ -247,3 +260,8 @@ A button to clear all files from the list.
     },
   ]}
 />
+
+
+## Credits
+
+- [Building a Hold to Delete Component](https://emilkowal.ski/ui/building-a-hold-to-delete-component) - For the fill progress indicator.

@@ -657,6 +657,38 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "file-upload-fill-progress-demo": {
+      name: "file-upload-fill-progress-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","lucide-react","sonner"],
+      files: [{
+        path: "registry/default/examples/file-upload-fill-progress-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/file-upload-fill-progress-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "file-upload-chat-input-demo": {
+      name: "file-upload-chat-input-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","textarea","file-upload","lucide-react","sonner"],
+      files: [{
+        path: "registry/default/examples/file-upload-chat-input-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/file-upload-chat-input-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "file-upload-form-demo": {
       name: "file-upload-form-demo",
       description: "",

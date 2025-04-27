@@ -48,9 +48,9 @@ export default function PlaygroundPage() {
     <Shell>
       <ClientOnly fallback={<Skeleton className="h-[400px] w-full" />}>
         <MediaPlayerAudioDemo />
-        {/* <video tabIndex={-1} src="/assets/cloud.mp4" >
+        <video tabIndex={-1} src="/assets/cloud.mp4">
           <track kind="captions" />
-        </video> */}
+        </video>
         <MediaPlayer.Root>
           <MediaPlayer.Video>
             <source src="/assets/cloud.mp4" type="video/mp4" />

@@ -91,7 +91,7 @@ export default function FileUploadDirectUploadDemo() {
       multiple
     >
       <FileUploadDropzone>
-        <div className="flex flex-col items-center gap-1">
+        <div className="flex flex-col items-center gap-1 text-center">
           <div className="flex items-center justify-center rounded-full border p-2.5">
             <Upload className="size-6 text-muted-foreground" />
           </div>
@@ -108,7 +108,7 @@ export default function FileUploadDirectUploadDemo() {
       </FileUploadDropzone>
       <FileUploadList>
         {files.map((file, index) => (
-          <FileUploadItem key={index} value={file}>
+          <FileUploadItem key={index} value={file} className="flex-col">
             <div className="flex w-full items-center gap-2">
               <FileUploadItemPreview />
               <FileUploadItemMetadata />

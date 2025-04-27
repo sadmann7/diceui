@@ -16,7 +16,7 @@ import { Upload, X } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
 
-export default function FileUploadCircularProgressDemo() {
+export default function FileUploadFillProgressDemo() {
   const [files, setFiles] = React.useState<File[]>([]);
 
   const onUpload = React.useCallback(
@@ -110,8 +110,8 @@ export default function FileUploadCircularProgressDemo() {
       <FileUploadList orientation="horizontal">
         {files.map((file, index) => (
           <FileUploadItem key={index} value={file} className="p-0">
-            <FileUploadItemPreview className="size-20 [&>svg]:size-12">
-              <FileUploadItemProgress variant="circular" size={40} />
+            <FileUploadItemPreview className="size-20">
+              <FileUploadItemProgress variant="fill" />
             </FileUploadItemPreview>
             <FileUploadItemMetadata className="sr-only" />
             <FileUploadItemDelete asChild>
