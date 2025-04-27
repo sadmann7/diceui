@@ -294,6 +294,30 @@ export const examples: Registry = [
     ],
   },
   {
+    name: "file-upload-chat-input-demo",
+    type: "registry:example",
+    dependencies: [
+      "@radix-ui/react-slot",
+      "lucide-react",
+      "sonner",
+      "uploadthing",
+      "@uploadthing/react",
+    ],
+    registryDependencies: [
+      "button",
+      "textarea",
+      "file-upload",
+      "lucide-react",
+      "sonner",
+    ],
+    files: [
+      {
+        path: "examples/file-upload-chat-input-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "file-upload-form-demo",
     type: "registry:example",
     dependencies: [

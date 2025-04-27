@@ -55,7 +55,7 @@ export function ComponentTabs({
       <Tab
         value="Preview"
         className={cn(
-          "not-prose",
+          "not-prose relative",
           preventPreviewFocus &&
             "focus-visible:outline-hidden focus-visible:ring-0",
         )}

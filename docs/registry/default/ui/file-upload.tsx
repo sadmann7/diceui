@@ -684,6 +684,15 @@ const FileUploadDropzone = React.forwardRef<
 
       if (event.defaultPrevented) return;
 
+      const relatedTarget = event.relatedTarget;
+      if (
+        relatedTarget &&
+        relatedTarget instanceof Node &&
+        event.currentTarget.contains(relatedTarget)
+      ) {
+        return;
+      }
+
       event.preventDefault();
       store.dispatch({ variant: "SET_DRAG_OVER", dragOver: false });
     },

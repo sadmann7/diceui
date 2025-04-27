@@ -29,10 +29,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import { ClientOnly } from "@/registry/default/components/client-only";
-import FileUploadChatDemo from "@/registry/default/examples/file-upload-chat-demo";
-import FileUploadCircularProgressDemo from "@/registry/default/examples/file-upload-circular-progress-demo";
-import FileUploadDemo from "@/registry/default/examples/file-upload-demo";
-import FileUploadFillProgressDemo from "@/registry/default/examples/file-upload-fill-progress-demo";
 import MediaPlayerAudioDemo from "@/registry/default/examples/media-player-audio-demo";
 import {
   Combobox,
@@ -50,10 +46,9 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <FileUploadChatDemo />
-      {/* <ClientOnly fallback={<Skeleton className="h-[400px] w-full" />}>
+      <ClientOnly fallback={<Skeleton className="h-[400px] w-full" />}>
         <MediaPlayerAudioDemo />
-        <video tabIndex={-1} src="/assets/cloud.mp4" >
+        <video tabIndex={-1} src="/assets/cloud.mp4">
           <track kind="captions" />
         </video>
         <MediaPlayer.Root>
@@ -81,7 +76,7 @@ export default function PlaygroundPage() {
             </div>
           </MediaPlayer.Controls>
         </MediaPlayer.Root>
-      </ClientOnly> */}
+      </ClientOnly>
       <div className="grid gap-8">
         <Combobox className="w-[15rem]">
           <ComboboxAnchor>
