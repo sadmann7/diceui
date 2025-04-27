@@ -120,10 +120,7 @@ export default function FileUploadChatDemo() {
         // Prevents the dropzone from triggering on click
         onClick={(event) => event.preventDefault()}
         tabIndex={-1}
-        className={cn(
-          "absolute top-0 left-0 z-10 size-full border-none bg-background/80 backdrop-blur-sm",
-          "opacity-0 transition-opacity duration-200 data-[dragging]:opacity-100",
-        )}
+        className="absolute top-0 left-0 z-0 size-full origin-center scale-95 border-none bg-background/50 opacity-0 backdrop-blur transition-all duration-200 ease-out data-[dragging]:z-10 data-[dragging]:scale-100 data-[dragging]:opacity-100"
       >
         <div className="flex flex-col items-center gap-1 text-center">
           <div className="flex items-center justify-center rounded-full border p-2.5">
