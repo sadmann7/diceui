@@ -24,7 +24,7 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/r/:component(data-table.*)",
-        destination: "https://tablecn/r/:component.json",
+        destination: "https://tablecn.com/r/:component.json",
         permanent: true,
       },
       /**
