@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { uploadFiles } from "@/lib/uploadthing"; // Assuming this path is correct
+import { cn } from "@/lib/utils";
 import {
   FileUpload,
   FileUploadDropzone,
@@ -13,6 +14,7 @@ import {
   FileUploadItemProgress,
   FileUploadList,
   FileUploadTrigger,
+  useFileUpload,
 } from "@/registry/default/ui/file-upload";
 import { ArrowUp, Paperclip, Upload, X } from "lucide-react";
 import * as React from "react";
@@ -30,64 +32,6 @@ export default function FileUploadChatDemo() {
     },
     [],
   );
-
-  // const onUpload = React.useCallback(
-  //   async (
-  //     acceptedFiles: File[],
-  //     {
-  //       onProgress,
-  //     }: {
-  //       onProgress: (file: File, progress: number) => void;
-  //     },
-  //   ) => {
-  //     try {
-  //       setIsUploading(true);
-  //       const res = await uploadFiles("imageUploader", {
-  //         files: acceptedFiles,
-  //         onUploadProgress: ({ file, progress }) => {
-  //           const targetFile = file instanceof File ? file : new File([], file);
-  //           onProgress(targetFile, progress);
-  //         },
-  //       });
-
-  //       toast.success("Uploaded files:", {
-  //         description: (
-  //           <pre className="mt-2 w-80 rounded-md bg-accent/30 p-4 text-accent-foreground">
-  //             <code>
-  //               {JSON.stringify(
-  //                 res.map((file) =>
-  //                   file.name.length > 25
-  //                     ? `${file.name.slice(0, 25)}...`
-  //                     : file.name,
-  //                 ),
-  //                 null,
-  //                 2,
-  //               )}
-  //             </code>
-  //           </pre>
-  //         ),
-  //       });
-  //     } catch (error) {
-  //       setIsUploading(false);
-
-  //       if (error instanceof UploadThingError) {
-  //         const errorMessage =
-  //           error.data && "error" in error.data
-  //             ? error.data.error
-  //             : "Upload failed";
-  //         toast.error(errorMessage);
-  //         return;
-  //       }
-
-  //       toast.error(
-  //         error instanceof Error ? error.message : "An unknown error occurred",
-  //       );
-  //     } finally {
-  //       setIsUploading(false);
-  //     }
-  //   },
-  //   [],
-  // );
 
   const onUpload = React.useCallback(
     async (
@@ -172,7 +116,15 @@ export default function FileUploadChatDemo() {
       disabled={isUploading}
       multiple
     >
-      {/* <FileUploadDropzone className="absolute top-0 left-0 z-20 size-full border-none">
+      <FileUploadDropzone
+        // Prevents the dropzone from triggering on click
+        onClick={(event) => event.preventDefault()}
+        tabIndex={-1}
+        className={cn(
+          "absolute top-0 left-0 z-10 size-full border-none bg-background/80 backdrop-blur-sm",
+          "opacity-0 transition-opacity duration-200 data-[dragging]:opacity-100",
+        )}
+      >
         <div className="flex flex-col items-center gap-1 text-center">
           <div className="flex items-center justify-center rounded-full border p-2.5">
             <Upload className="size-6 text-muted-foreground" />
@@ -182,7 +134,7 @@ export default function FileUploadChatDemo() {
             Upload max 5 files each up to 5MB
           </p>
         </div>
-      </FileUploadDropzone> */}
+      </FileUploadDropzone>
       <form
         onSubmit={onSubmit}
         className="relative flex w-full flex-col gap-2.5 rounded-md border border-input px-3 py-2 outline-none focus-within:ring-1 focus-within:ring-ring/50"

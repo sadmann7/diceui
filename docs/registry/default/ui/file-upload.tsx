@@ -578,8 +578,6 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
 
     const RootPrimitive = asChild ? Slot : "div";
 
-    console.log({ filesStates: Array.from(store.getState().files.values()) });
-
     return (
       <DirectionContext.Provider value={dir}>
         <StoreContext.Provider value={store}>
@@ -745,9 +743,9 @@ const FileUploadDropzone = React.forwardRef<
       data-invalid={invalid ? "" : undefined}
       data-slot="file-upload-dropzone"
       dir={context.dir}
+      tabIndex={context.disabled ? undefined : 0}
       {...dropzoneProps}
       ref={forwardedRef}
-      tabIndex={context.disabled ? undefined : 0}
       className={cn(
         "relative flex select-none flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 outline-none transition-colors hover:bg-accent/30 focus-visible:border-ring/50 data-[disabled]:pointer-events-none data-[dragging]:border-primary data-[invalid]:border-destructive data-[invalid]:ring-destructive/20",
         className,
