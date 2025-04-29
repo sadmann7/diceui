@@ -1,6 +1,6 @@
-import type { Registry } from "@/registry/schema";
+import type { Registry } from "shadcn/registry";
 
-export const components: Registry = [
+export const components: Registry["items"] = [
   {
     name: "client-only",
     type: "registry:component",

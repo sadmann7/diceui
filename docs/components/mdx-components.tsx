@@ -8,7 +8,8 @@ import { PropsTable } from "@/components/props-table";
 import { Table, TableCell, TableHead, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import type { Page } from "fumadocs-core/source";
-import { createTypeTable } from "fumadocs-typescript/ui";
+import { createGenerator } from "fumadocs-typescript";
+import { AutoTypeTable } from "fumadocs-typescript/ui";
 import { CodeBlock, Pre } from "fumadocs-ui/components/codeblock";
 import { Heading } from "fumadocs-ui/components/heading";
 import { Step, Steps } from "fumadocs-ui/components/steps";
@@ -16,7 +17,7 @@ import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import defaultComponents from "fumadocs-ui/mdx";
 import type { MDXComponents } from "mdx/types";
 
-const { AutoTypeTable } = createTypeTable();
+const generator = createGenerator();
 
 export function useMdxComponents(
   components: Partial<MDXComponents>,
@@ -59,7 +60,7 @@ export function useMdxComponents(
     Step,
     AutoTypeTable: (props) => (
       <div className="auto-type-table">
-        <AutoTypeTable {...props} />
+        <AutoTypeTable {...props} generator={generator} />
       </div>
     ),
     CSSVariablesTable,

@@ -17,7 +17,8 @@ import {
   type registryItemTypeSchema,
   registrySchema,
 } from "../registry/schema";
-import { fixImport } from "./fix-imports.mjs";
+import { createTemplate } from "./create-template.mts";
+import { fixImport } from "./fix-imports.mts";
 
 const REGISTRY_PATH = path.join(process.cwd(), "public/r");
 
@@ -38,24 +39,6 @@ const project = new Project({
 async function createTempSourceFile(filename: string) {
   const dir = await fs.mkdtemp(path.join(tmpdir(), "shadcn-"));
   return path.join(dir, filename);
-}
-
-/**
- * A simple template function that replaces <%- variable %> with values from the data object
- * @param template The template string containing <%- variable %> placeholders
- * @returns A function that takes a data object and returns the interpolated string
- */
-function createTemplate(template: string) {
-  return (data: Record<string, unknown>) => {
-    return template.replace(/<%-(.*?)%>/g, (_match: string, key: string) => {
-      const props = key.trim().split(".");
-      let value: unknown = data;
-      for (const prop of props) {
-        value = (value as Record<string, unknown>)?.[prop];
-      }
-      return String(value ?? "");
-    });
-  };
 }
 
 // ----------------------------------------------------------------------------

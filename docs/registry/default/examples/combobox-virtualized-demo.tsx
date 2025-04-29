@@ -59,9 +59,8 @@ const generateItems = (count: number): Option[] => {
 const items = generateItems(10000);
 
 export default function ComboboxVirtualizedDemo() {
-  const [content, setContent] = React.useState<React.ComponentRef<
-    typeof ComboboxContent
-  > | null>(null);
+  const [content, setContent] =
+    React.useState<React.ComponentRef<"div"> | null>(null);
   const [value, setValue] = React.useState("");
   const [inputValue, setInputValue] = React.useState("");
   const deferredInputValue = useDeferredValue(inputValue);
