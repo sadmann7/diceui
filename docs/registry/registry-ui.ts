@@ -1,6 +1,6 @@
-import type { Registry } from "@/registry/schema";
+import type { Registry } from "shadcn/registry";
 
-export const ui: Registry = [
+export const ui: Registry["items"] = [
   {
     name: "checkbox-group",
     type: "registry:ui",
