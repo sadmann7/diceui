@@ -600,10 +600,10 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
                 tabIndex={-1}
                 accept={accept}
                 name={name}
+                className="sr-only"
                 disabled={disabled}
                 multiple={multiple}
                 required={required}
-                className="sr-only"
                 onChange={onInputChange}
               />
               <span id={labelId} className="sr-only">
@@ -795,7 +795,7 @@ const FileUploadDropzone = React.forwardRef<
       {...dropzoneProps}
       ref={forwardedRef}
       className={cn(
-        "relative flex select-none flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 outline-none transition-colors hover:bg-accent/30 focus-visible:border-ring/50 data-[disabled]:pointer-events-none data-[dragging]:border-primary data-[invalid]:border-destructive data-[invalid]:ring-destructive/20",
+        "relative flex select-none flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 outline-none transition-colors hover:bg-accent/30 focus-visible:border-ring/50 data-[disabled]:pointer-events-none data-[dragging]:border-primary/30 data-[invalid]:border-destructive data-[dragging]:bg-accent/30 data-[invalid]:ring-destructive/20",
         className,
       )}
       onClick={onClick}
@@ -1165,7 +1165,7 @@ const FileUploadItemMetadata = React.forwardRef<
             id={itemContext.sizeId}
             className={cn(
               "truncate text-muted-foreground text-xs",
-              size === "sm" && "text-[11px]",
+              size === "sm" && "text-[11px] leading-snug",
             )}
           >
             {formatBytes(itemContext.fileState.file.size)}
@@ -1187,9 +1187,9 @@ FileUploadItemMetadata.displayName = ITEM_METADATA_NAME;
 
 interface FileUploadItemProgressProps
   extends React.ComponentPropsWithoutRef<"div"> {
-  asChild?: boolean;
   variant?: "linear" | "circular" | "fill";
   size?: number;
+  asChild?: boolean;
   forceMount?: boolean;
 }
 
@@ -1420,20 +1420,8 @@ const FileUploadClear = React.forwardRef<
 });
 FileUploadClear.displayName = CLEAR_NAME;
 
-const FileUpload = FileUploadRoot;
-const Root = FileUploadRoot;
-const Trigger = FileUploadTrigger;
-const Dropzone = FileUploadDropzone;
-const List = FileUploadList;
-const Item = FileUploadItem;
-const ItemPreview = FileUploadItemPreview;
-const ItemMetadata = FileUploadItemMetadata;
-const ItemProgress = FileUploadItemProgress;
-const ItemDelete = FileUploadItemDelete;
-const Clear = FileUploadClear;
-
 export {
-  FileUpload,
+  FileUploadRoot as FileUpload,
   FileUploadDropzone,
   FileUploadTrigger,
   FileUploadList,
@@ -1444,16 +1432,18 @@ export {
   FileUploadItemDelete,
   FileUploadClear,
   //
-  Root,
-  Dropzone,
-  Trigger,
-  List,
-  Item,
-  ItemPreview,
-  ItemMetadata,
-  ItemProgress,
-  ItemDelete,
-  Clear,
+  FileUploadRoot as Root,
+  FileUploadDropzone as Dropzone,
+  FileUploadTrigger as Trigger,
+  FileUploadList as List,
+  FileUploadItem as Item,
+  FileUploadItemPreview as ItemPreview,
+  FileUploadItemMetadata as ItemMetadata,
+  FileUploadItemProgress as ItemProgress,
+  FileUploadItemDelete as ItemDelete,
+  FileUploadClear as Clear,
   //
   useStore as useFileUpload,
+  //
+  type FileUploadRootProps as FileUploadProps,
 };

@@ -10,6 +10,7 @@ import {
   FileUploadItemPreview,
   FileUploadItemProgress,
   FileUploadList,
+  type FileUploadProps,
   FileUploadTrigger,
 } from "@/registry/default/ui/file-upload";
 import { Upload, X } from "lucide-react";
@@ -19,19 +20,8 @@ import { toast } from "sonner";
 export default function FileUploadDirectUploadDemo() {
   const [files, setFiles] = React.useState<File[]>([]);
 
-  const onUpload = React.useCallback(
-    async (
-      files: File[],
-      {
-        onProgress,
-        onSuccess,
-        onError,
-      }: {
-        onProgress: (file: File, progress: number) => void;
-        onSuccess: (file: File) => void;
-        onError: (file: File, error: Error) => void;
-      },
-    ) => {
+  const onUpload: NonNullable<FileUploadProps["onUpload"]> = React.useCallback(
+    async (files, { onProgress, onSuccess, onError }) => {
       try {
         // Process each file individually
         const uploadPromises = files.map(async (file) => {

@@ -11,6 +11,7 @@ import {
   FileUploadItemPreview,
   FileUploadItemProgress,
   FileUploadList,
+  type FileUploadProps,
   FileUploadTrigger,
 } from "@/registry/default/ui/file-upload";
 import { Upload, X } from "lucide-react";
@@ -22,15 +23,8 @@ export default function FileUploadUploadThingDemo() {
   const [isUploading, setIsUploading] = React.useState(false);
   const [files, setFiles] = React.useState<File[]>([]);
 
-  const onUpload = React.useCallback(
-    async (
-      files: File[],
-      {
-        onProgress,
-      }: {
-        onProgress: (file: File, progress: number) => void;
-      },
-    ) => {
+  const onUpload: NonNullable<FileUploadProps["onUpload"]> = React.useCallback(
+    async (files, { onProgress }) => {
       try {
         setIsUploading(true);
         const res = await uploadFiles("imageUploader", {
