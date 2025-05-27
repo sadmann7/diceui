@@ -1,33 +1,40 @@
 import { Button } from "@/components/ui/button";
-import * as Editable from "@/registry/default/ui/editable";
+import {
+  Editable,
+  EditableArea,
+  EditableCancel,
+  EditableInput,
+  EditableLabel,
+  EditablePreview,
+  EditableSubmit,
+  EditableToolbar,
+  EditableTrigger,
+} from "@/registry/default/ui/editable";
 import * as React from "react";
 
 export default function EditableDemo() {
   return (
-    <Editable.Root
-      defaultValue="Click to edit"
-      placeholder="Enter your text here"
-    >
-      <Editable.Label>Fruit</Editable.Label>
-      <Editable.Area>
-        <Editable.Preview />
-        <Editable.Input />
-      </Editable.Area>
-      <Editable.Trigger asChild>
+    <Editable defaultValue="Click to edit" placeholder="Enter your text here">
+      <EditableLabel>Fruit</EditableLabel>
+      <EditableArea>
+        <EditablePreview />
+        <EditableInput />
+      </EditableArea>
+      <EditableTrigger asChild>
         <Button size="sm" className="w-fit">
           Edit
         </Button>
-      </Editable.Trigger>
-      <Editable.Toolbar>
-        <Editable.Submit asChild>
+      </EditableTrigger>
+      <EditableToolbar>
+        <EditableSubmit asChild>
           <Button size="sm">Save</Button>
-        </Editable.Submit>
-        <Editable.Cancel asChild>
+        </EditableSubmit>
+        <EditableCancel asChild>
           <Button variant="outline" size="sm">
             Cancel
           </Button>
-        </Editable.Cancel>
-      </Editable.Toolbar>
-    </Editable.Root>
+        </EditableCancel>
+      </EditableToolbar>
+    </Editable>
   );
 }

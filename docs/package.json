@@ -6,7 +6,7 @@
     "build": "next build",
     "build:registry": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/build-registry.mts",
     "postinstall": "pnpm --filter \"@diceui/*\" build && fumadocs-mdx",
-    "dev": "next dev --turbo",
+    "dev": "next dev",
     "start": "next start",
     "lint": "biome check .",
     "lint:fix": "biome check . --write",

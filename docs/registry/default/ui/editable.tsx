@@ -36,6 +36,7 @@ interface EditableContextValue {
   onCancel: () => void;
   onEdit: () => void;
   onSubmit: (value: string) => void;
+  onEnterKeyDown?: (event: KeyboardEvent) => void;
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
   dir?: Direction;
   maxLength?: number;
@@ -74,6 +75,7 @@ interface EditableRootProps
   onEdit?: () => void;
   onSubmit?: (value: string) => void;
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
+  onEnterKeyDown?: (event: KeyboardEvent) => void;
   dir?: Direction;
   maxLength?: number;
   name?: string;
@@ -100,6 +102,7 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
       onEdit: onEditProp,
       onSubmit: onSubmitProp,
       onEscapeKeyDown,
+      onEnterKeyDown,
       dir: dirProp,
       maxLength,
       name,
@@ -209,6 +212,7 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
         onEdit,
         onCancel,
         onEscapeKeyDown,
+        onEnterKeyDown,
         dir,
         maxLength,
         placeholder,
@@ -231,6 +235,7 @@ const EditableRoot = React.forwardRef<HTMLDivElement, EditableRootProps>(
         onCancel,
         onEdit,
         onEscapeKeyDown,
+        onEnterKeyDown,
         dir,
         maxLength,
         placeholder,
@@ -379,6 +384,23 @@ const EditablePreview = React.forwardRef<HTMLDivElement, EditablePreviewProps>(
       [previewProps.onFocus, onTrigger, context.triggerMode],
     );
 
+    const onKeyDown = React.useCallback(
+      (event: React.KeyboardEvent<HTMLDivElement>) => {
+        previewProps.onKeyDown?.(event);
+        if (event.defaultPrevented) return;
+
+        if (event.key === "Enter") {
+          const nativeEvent = event.nativeEvent;
+          if (context.onEnterKeyDown) {
+            context.onEnterKeyDown(nativeEvent);
+            if (nativeEvent.defaultPrevented) return;
+          }
+          onTrigger();
+        }
+      },
+      [previewProps.onKeyDown, onTrigger, context.onEnterKeyDown],
+    );
+
     const PreviewPrimitive = asChild ? Slot : "div";
 
     if (context.editing || context.readOnly) return null;
@@ -397,6 +419,7 @@ const EditablePreview = React.forwardRef<HTMLDivElement, EditablePreviewProps>(
         onClick={onClick}
         onDoubleClick={onDoubleClick}
         onFocus={onFocus}
+        onKeyDown={onKeyDown}
         className={cn(
           "cursor-text truncate rounded-sm border border-transparent py-1 text-base focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring data-disabled:cursor-not-allowed data-readonly:cursor-default data-empty:text-muted-foreground data-disabled:opacity-50 md:text-sm",
           className,

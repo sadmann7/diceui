@@ -36,9 +36,16 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   editing?: boolean;
 
   /**
+   * Event handler called when the `Enter` key is pressed.
+   *
+   * Can be used to prevent editing the input on `Enter` key press.
+   */
+  onEnterKeyDown?: (event: KeyboardEvent) => void;
+
+  /**
    * Event handler called when the `Escape` key is pressed.
    *
-   * Can be used to prevent input value from being reset on `Escape` key press.
+   * Can be used to prevent resetting the input value on `Escape` key press.
    */
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
 

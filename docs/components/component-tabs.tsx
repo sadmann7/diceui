@@ -55,7 +55,7 @@ export function ComponentTabs({
       <Tab
         value="Preview"
         className={cn(
-          "not-prose relative",
+          "not-prose relative rounded-none",
           preventPreviewFocus &&
             "focus-visible:outline-hidden focus-visible:ring-0",
         )}
@@ -79,7 +79,7 @@ export function ComponentTabs({
           </React.Suspense>
         </div>
       </Tab>
-      <Tab value="Code" className="component-block py-0">
+      <Tab value="Code" className="component-block rounded-none py-0">
         {Code}
       </Tab>
     </Tabs>

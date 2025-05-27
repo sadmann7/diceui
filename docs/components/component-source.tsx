@@ -21,7 +21,7 @@ export function ComponentSource({
   return (
     <CodeBlockWrapper
       expandButtonTitle="Expand"
-      className={cn("my-6 overflow-hidden rounded-md", className)}
+      className={cn("overflow-hidden rounded-md [&_pre]:px-4", className)}
       {...props}
     >
       {children}

@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@import "fumadocs-ui/css/black.css";
+@import "fumadocs-ui/css/shadcn.css";
 @import "fumadocs-ui/css/preset.css";
 
 @import "tw-animate-css";
@@ -208,22 +208,13 @@
   }
 }
 
-.diagram-space:active {
-  cursor: move;
-}
-
-.dragging,
-.dragging button {
-  pointer-events: none;
-}
-
 @utility component-block {
   & pre {
-    @apply max-h-[432.4px];
+    @apply max-h-[432.4px] px-4;
   }
 
-  [data-rehype-pretty-code-figure] figure {
-    @apply rounded-none! my-4!;
+  figure {
+    @apply rounded-none;
   }
 }
 
@@ -286,6 +277,10 @@
 }
 
 @layer components {
+  figure.not-prose {
+    @apply rounded-none!;
+  }
+
   [data-rehype-pretty-code-figure] figure {
     @apply border-none bg-secondary/50!;
   }
