@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -34,6 +33,7 @@ import {
   Volume2Icon,
   VolumeXIcon,
 } from "lucide-react";
+
 import * as React from "react";
 
 const POINTER_MOVE_THROTTLE_MS = 16;

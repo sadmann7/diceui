@@ -59,6 +59,7 @@
     "jotai": "^2.12.4",
     "lucide-react": "^0.511.0",
     "match-sorter": "^8.0.2",
+    "media-chrome": "^4.10.0",
     "motion": "^12.14.0",
     "nanoid": "^5.1.5",
     "next": "^15.3.2",
