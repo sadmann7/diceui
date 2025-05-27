@@ -24,19 +24,6 @@ const ITEM_PROGRESS_NAME = "FileUploadItemProgress";
 const ITEM_DELETE_NAME = "FileUploadItemDelete";
 const CLEAR_NAME = "FileUploadClear";
 
-const FILE_UPLOAD_ERRORS = {
-  [ROOT_NAME]: `\`${ROOT_NAME}\` must be used as root component`,
-  [DROPZONE_NAME]: `\`${DROPZONE_NAME}\` must be within \`${ROOT_NAME}\``,
-  [TRIGGER_NAME]: `\`${TRIGGER_NAME}\` must be within \`${ROOT_NAME}\``,
-  [LIST_NAME]: `\`${LIST_NAME}\` must be within \`${ROOT_NAME}\``,
-  [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${ROOT_NAME}\``,
-  [ITEM_PREVIEW_NAME]: `\`${ITEM_PREVIEW_NAME}\` must be within \`${ITEM_NAME}\``,
-  [ITEM_METADATA_NAME]: `\`${ITEM_METADATA_NAME}\` must be within \`${ITEM_NAME}\``,
-  [ITEM_PROGRESS_NAME]: `\`${ITEM_PROGRESS_NAME}\` must be within \`${ITEM_NAME}\``,
-  [ITEM_DELETE_NAME]: `\`${ITEM_DELETE_NAME}\` must be within \`${ITEM_NAME}\``,
-  [CLEAR_NAME]: `\`${CLEAR_NAME}\` must be within \`${ROOT_NAME}\``,
-} as const;
-
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
@@ -237,10 +224,10 @@ const StoreContext = React.createContext<ReturnType<typeof createStore> | null>(
 );
 StoreContext.displayName = ROOT_NAME;
 
-function useStoreContext(name: keyof typeof FILE_UPLOAD_ERRORS) {
+function useStoreContext(consumerName: string) {
   const context = React.useContext(StoreContext);
   if (!context) {
-    throw new Error(FILE_UPLOAD_ERRORS[name]);
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
   }
   return context;
 }
@@ -282,10 +269,10 @@ const FileUploadContext = React.createContext<FileUploadContextValue | null>(
   null,
 );
 
-function useFileUploadContext(name: keyof typeof FILE_UPLOAD_ERRORS) {
+function useFileUploadContext(consumerName: string) {
   const context = React.useContext(FileUploadContext);
   if (!context) {
-    throw new Error(FILE_UPLOAD_ERRORS[name]);
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
   }
   return context;
 }
@@ -579,40 +566,38 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
     const RootPrimitive = asChild ? Slot : "div";
 
     return (
-      <DirectionContext.Provider value={dir}>
-        <StoreContext.Provider value={store}>
-          <FileUploadContext.Provider value={contextValue}>
-            <RootPrimitive
-              data-disabled={disabled ? "" : undefined}
-              data-slot="file-upload"
-              dir={dir}
-              {...rootProps}
-              ref={forwardedRef}
-              className={cn("relative flex flex-col gap-2", className)}
-            >
-              {children}
-              <input
-                type="file"
-                id={inputId}
-                aria-labelledby={labelId}
-                aria-describedby={dropzoneId}
-                ref={inputRef}
-                tabIndex={-1}
-                accept={accept}
-                name={name}
-                disabled={disabled}
-                multiple={multiple}
-                required={required}
-                className="sr-only"
-                onChange={onInputChange}
-              />
-              <span id={labelId} className="sr-only">
-                {label ?? "File upload"}
-              </span>
-            </RootPrimitive>
-          </FileUploadContext.Provider>
-        </StoreContext.Provider>
-      </DirectionContext.Provider>
+      <StoreContext.Provider value={store}>
+        <FileUploadContext.Provider value={contextValue}>
+          <RootPrimitive
+            data-disabled={disabled ? "" : undefined}
+            data-slot="file-upload"
+            dir={dir}
+            {...rootProps}
+            ref={forwardedRef}
+            className={cn("relative flex flex-col gap-2", className)}
+          >
+            {children}
+            <input
+              type="file"
+              id={inputId}
+              aria-labelledby={labelId}
+              aria-describedby={dropzoneId}
+              ref={inputRef}
+              tabIndex={-1}
+              accept={accept}
+              name={name}
+              className="sr-only"
+              disabled={disabled}
+              multiple={multiple}
+              required={required}
+              onChange={onInputChange}
+            />
+            <span id={labelId} className="sr-only">
+              {label ?? "File upload"}
+            </span>
+          </RootPrimitive>
+        </FileUploadContext.Provider>
+      </StoreContext.Provider>
     );
   },
 );
@@ -795,7 +780,7 @@ const FileUploadDropzone = React.forwardRef<
       {...dropzoneProps}
       ref={forwardedRef}
       className={cn(
-        "relative flex select-none flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 outline-none transition-colors hover:bg-accent/30 focus-visible:border-ring/50 data-[disabled]:pointer-events-none data-[dragging]:border-primary data-[invalid]:border-destructive data-[invalid]:ring-destructive/20",
+        "relative flex select-none flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 outline-none transition-colors hover:bg-accent/30 focus-visible:border-ring/50 data-[disabled]:pointer-events-none data-[dragging]:border-primary/30 data-[invalid]:border-destructive data-[dragging]:bg-accent/30 data-[invalid]:ring-destructive/20",
         className,
       )}
       onClick={onClick}
@@ -910,10 +895,10 @@ interface FileUploadItemContextValue {
 const FileUploadItemContext =
   React.createContext<FileUploadItemContextValue | null>(null);
 
-function useFileUploadItemContext(name: keyof typeof FILE_UPLOAD_ERRORS) {
+function useFileUploadItemContext(consumerName: string) {
   const context = React.useContext(FileUploadItemContext);
   if (!context) {
-    throw new Error(FILE_UPLOAD_ERRORS[name]);
+    throw new Error(`\`${consumerName}\` must be used within \`${ITEM_NAME}\``);
   }
   return context;
 }
@@ -1165,7 +1150,7 @@ const FileUploadItemMetadata = React.forwardRef<
             id={itemContext.sizeId}
             className={cn(
               "truncate text-muted-foreground text-xs",
-              size === "sm" && "text-[11px]",
+              size === "sm" && "text-[11px] leading-snug",
             )}
           >
             {formatBytes(itemContext.fileState.file.size)}
@@ -1187,9 +1172,9 @@ FileUploadItemMetadata.displayName = ITEM_METADATA_NAME;
 
 interface FileUploadItemProgressProps
   extends React.ComponentPropsWithoutRef<"div"> {
-  asChild?: boolean;
   variant?: "linear" | "circular" | "fill";
   size?: number;
+  asChild?: boolean;
   forceMount?: boolean;
 }
 
@@ -1420,20 +1405,8 @@ const FileUploadClear = React.forwardRef<
 });
 FileUploadClear.displayName = CLEAR_NAME;
 
-const FileUpload = FileUploadRoot;
-const Root = FileUploadRoot;
-const Trigger = FileUploadTrigger;
-const Dropzone = FileUploadDropzone;
-const List = FileUploadList;
-const Item = FileUploadItem;
-const ItemPreview = FileUploadItemPreview;
-const ItemMetadata = FileUploadItemMetadata;
-const ItemProgress = FileUploadItemProgress;
-const ItemDelete = FileUploadItemDelete;
-const Clear = FileUploadClear;
-
 export {
-  FileUpload,
+  FileUploadRoot as FileUpload,
   FileUploadDropzone,
   FileUploadTrigger,
   FileUploadList,
@@ -1444,16 +1417,18 @@ export {
   FileUploadItemDelete,
   FileUploadClear,
   //
-  Root,
-  Dropzone,
-  Trigger,
-  List,
-  Item,
-  ItemPreview,
-  ItemMetadata,
-  ItemProgress,
-  ItemDelete,
-  Clear,
+  FileUploadRoot as Root,
+  FileUploadDropzone as Dropzone,
+  FileUploadTrigger as Trigger,
+  FileUploadList as List,
+  FileUploadItem as Item,
+  FileUploadItemPreview as ItemPreview,
+  FileUploadItemMetadata as ItemMetadata,
+  FileUploadItemProgress as ItemProgress,
+  FileUploadItemDelete as ItemDelete,
+  FileUploadClear as Clear,
   //
   useStore as useFileUpload,
+  //
+  type FileUploadRootProps as FileUploadProps,
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useComposedRefs } from "@/lib/composition";
+import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import { type VariantProps, cva } from "class-variance-authority";

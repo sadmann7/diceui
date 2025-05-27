@@ -13,7 +13,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useComposedRefs } from "@/lib/composition";
+import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import { Slot } from "@radix-ui/react-slot";
@@ -27,7 +27,6 @@ import {
   PictureInPicture2Icon,
   PictureInPictureIcon,
   PlayIcon,
-  Repeat1Icon,
   RepeatIcon,
   RewindIcon,
   SubtitlesIcon,
@@ -60,26 +59,6 @@ const FULLSCREEN_NAME = "MediaPlayerFullscreen";
 const PIP_NAME = "MediaPlayerPiP";
 const CAPTIONS_NAME = "MediaPlayerCaptions";
 const DOWNLOAD_NAME = "MediaPlayerDownload";
-
-const MEDIA_PLAYER_ERRORS = {
-  [ROOT_NAME]: `\`${ROOT_NAME}\` must be used as root component`,
-  [VIDEO_NAME]: `\`${VIDEO_NAME}\` must be within \`${ROOT_NAME}\``,
-  [AUDIO_NAME]: `\`${AUDIO_NAME}\` must be within \`${ROOT_NAME}\``,
-  [CONTROLS_NAME]: `\`${CONTROLS_NAME}\` must be within \`${ROOT_NAME}\``,
-  [OVERLAY_NAME]: `\`${OVERLAY_NAME}\` must be within \`${ROOT_NAME}\``,
-  [PLAY_NAME]: `\`${PLAY_NAME}\` must be within \`${ROOT_NAME}\``,
-  [SEEK_BACKWARD_NAME]: `\`${SEEK_BACKWARD_NAME}\` must be within \`${ROOT_NAME}\``,
-  [SEEK_FORWARD_NAME]: `\`${SEEK_FORWARD_NAME}\` must be within \`${ROOT_NAME}\``,
-  [SEEK_NAME]: `\`${SEEK_NAME}\` must be within \`${ROOT_NAME}\``,
-  [VOLUME_NAME]: `\`${VOLUME_NAME}\` must be within \`${ROOT_NAME}\``,
-  [TIME_NAME]: `\`${TIME_NAME}\` must be within \`${ROOT_NAME}\``,
-  [PLAYBACK_SPEED_NAME]: `\`${PLAYBACK_SPEED_NAME}\` must be within \`${ROOT_NAME}\``,
-  [LOOP_NAME]: `\`${LOOP_NAME}\` must be within \`${ROOT_NAME}\``,
-  [FULLSCREEN_NAME]: `\`${FULLSCREEN_NAME}\` must be within \`${ROOT_NAME}\``,
-  [PIP_NAME]: `\`${PIP_NAME}\` must be within \`${ROOT_NAME}\``,
-  [CAPTIONS_NAME]: `\`${CAPTIONS_NAME}\` must be within \`${ROOT_NAME}\``,
-  [DOWNLOAD_NAME]: `\`${DOWNLOAD_NAME}\` must be within \`${ROOT_NAME}\``,
-} as const;
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
@@ -129,8 +108,6 @@ function useDirection(dirProp?: Direction): Direction {
   return dirProp ?? contextDir ?? "ltr";
 }
 
-type LoopMode = "off" | "all" | "one";
-
 interface MediaState {
   isPlaying: boolean;
   isMuted: boolean;
@@ -140,7 +117,6 @@ interface MediaState {
   buffered: TimeRanges | null;
   isFullscreen: boolean;
   isLooping: boolean;
-  loopMode: LoopMode;
   playbackRate: number;
   isPictureInPicture: boolean;
   captionsEnabled: boolean;
@@ -158,7 +134,7 @@ type StoreAction =
   | { variant: "SET_DURATION"; duration: number }
   | { variant: "SET_BUFFERED"; buffered: TimeRanges }
   | { variant: "SET_FULLSCREEN"; isFullscreen: boolean }
-  | { variant: "SET_LOOP_MODE"; loopMode: LoopMode }
+  | { variant: "SET_LOOPING"; isLooping: boolean }
   | { variant: "SET_PLAYBACK_RATE"; playbackRate: number }
   | { variant: "SET_PICTURE_IN_PICTURE"; isPictureInPicture: boolean }
   | { variant: "SET_CAPTIONS_ENABLED"; captionsEnabled: boolean };
@@ -223,10 +199,10 @@ function createStore(listeners: Set<() => void>, initialState: MediaState) {
         };
         break;
 
-      case "SET_LOOP_MODE":
+      case "SET_LOOPING":
         state = {
           ...state,
-          media: { ...state.media, loopMode: action.loopMode },
+          media: { ...state.media, isLooping: action.isLooping },
         };
         break;
 
@@ -273,10 +249,12 @@ const StoreContext = React.createContext<ReturnType<typeof createStore> | null>(
 );
 StoreContext.displayName = ROOT_NAME;
 
-function useStoreContext(name: keyof typeof MEDIA_PLAYER_ERRORS) {
+function useStoreContext(consumerName: string, componentName = ROOT_NAME) {
   const context = React.useContext(StoreContext);
   if (!context) {
-    throw new Error(MEDIA_PLAYER_ERRORS[name]);
+    throw new Error(
+      `\`${consumerName}\` must be used within \`${componentName}\``,
+    );
   }
   return context;
 }
@@ -317,10 +295,15 @@ const MediaPlayerContext = React.createContext<MediaPlayerContextValue | null>(
   null,
 );
 
-function useMediaPlayerContext(name: keyof typeof MEDIA_PLAYER_ERRORS) {
+function useMediaPlayerContext(
+  consumerName: string,
+  componentName = ROOT_NAME,
+) {
   const context = React.useContext(MediaPlayerContext);
   if (!context) {
-    throw new Error(MEDIA_PLAYER_ERRORS[name]);
+    throw new Error(
+      `\`${consumerName}\` must be used within \`${componentName}\``,
+    );
   }
   return context;
 }
@@ -387,7 +370,6 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
         buffered: null,
         isFullscreen: false,
         isLooping: mediaRef.current?.loop ?? false,
-        loopMode: mediaRef.current?.loop ? "all" : "off",
         playbackRate: 1,
         isPictureInPicture: false,
         captionsEnabled: false,
@@ -613,16 +595,12 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
 
           case "r": {
             event.preventDefault();
-            const currentLoopMode = store.getState().media.loopMode;
-            if (currentLoopMode === "one") {
-              if (media) {
-                media.currentTime = 0;
-                media.play();
-                store.dispatch({ variant: "SET_LOOP_MODE", loopMode: "off" });
-              }
-            } else {
-              store.dispatch({ variant: "SET_LOOP_MODE", loopMode: "one" });
-            }
+            const currentLooping = store.getState().media.isLooping;
+            media.loop = !currentLooping;
+            store.dispatch({
+              variant: "SET_LOOPING",
+              isLooping: !currentLooping,
+            });
             break;
           }
 
@@ -732,17 +710,6 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
       const onEnded = () => {
         store.dispatch({ variant: "SET_PLAYING", isPlaying: false });
         propsRef.current.onEnded?.();
-        const currentLoopMode = store.getState().media.loopMode;
-        if (currentLoopMode === "one") {
-          if (media) {
-            media.currentTime = 0;
-            media.play();
-            store.dispatch({ variant: "SET_LOOP_MODE", loopMode: "off" });
-          }
-        } else {
-          store.dispatch({ variant: "SET_PLAYING", isPlaying: false });
-          propsRef.current.onEnded?.();
-        }
       };
 
       const onVolumeChange = () => {
@@ -890,7 +857,7 @@ const MediaPlayerVideo = React.forwardRef<
   const { asChild, children, className, ...videoProps } = props;
 
   const context = useMediaPlayerContext(VIDEO_NAME);
-  const loopMode = useStore((state) => state.media.loopMode);
+  const isLooping = useStore((state) => state.media.isLooping);
   const composedRef = useComposedRefs(forwardedRef, context.mediaRef);
 
   const onPlayToggle = React.useCallback(
@@ -922,7 +889,7 @@ const MediaPlayerVideo = React.forwardRef<
       {...videoProps}
       ref={composedRef}
       id={context.mediaId}
-      loop={loopMode === "all"}
+      loop={isLooping}
       playsInline
       preload="metadata"
       className={cn("h-full w-full cursor-pointer", className)}
@@ -951,7 +918,7 @@ const MediaPlayerAudio = React.forwardRef<
   const { asChild, children, className, ...audioProps } = props;
 
   const context = useMediaPlayerContext(AUDIO_NAME);
-  const loopMode = useStore((state) => state.media.loopMode);
+  const isLooping = useStore((state) => state.media.isLooping);
   const composedRef = useComposedRefs(forwardedRef, context.mediaRef);
 
   const AudioPrimitive = asChild ? Slot : "audio";
@@ -964,7 +931,7 @@ const MediaPlayerAudio = React.forwardRef<
       {...audioProps}
       ref={composedRef}
       id={context.mediaId}
-      loop={loopMode === "all"}
+      loop={isLooping}
       preload="metadata"
       className={cn("w-full", className)}
     >
@@ -1458,11 +1425,11 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
           aria-label="Video progress"
           className="flex w-full items-center gap-2"
         >
-          <span aria-label="Current time" className="text-sm">
+          <span aria-label="Current time" className="text-sm tabular-nums">
             {formattedCurrentTime}
           </span>
           {SeekWrapper}
-          <span aria-label="Remaining time" className="text-sm">
+          <span aria-label="Remaining time" className="text-sm tabular-nums">
             {formattedRemainingTime}
           </span>
         </div>
@@ -1639,7 +1606,7 @@ const MediaPlayerTime = React.forwardRef<HTMLDivElement, MediaPlayerTimeProps>(
           dir={context.dir}
           {...timeProps}
           ref={forwardedRef}
-          className={cn("text-foreground/80 text-sm", className)}
+          className={cn("text-foreground/80 text-sm tabular-nums", className)}
         >
           {mode === "remaining" ? formattedRemainingTime : formattedDuration}
         </TimePrimitive>
@@ -1658,11 +1625,15 @@ const MediaPlayerTime = React.forwardRef<HTMLDivElement, MediaPlayerTimeProps>(
           className,
         )}
       >
-        <span aria-label="Current time">{formattedCurrentTime}</span>
+        <span aria-label="Current time" className="tabular-nums">
+          {formattedCurrentTime}
+        </span>
         <span role="presentation" aria-hidden="true">
           /
         </span>
-        <span aria-label="Duration">{formattedDuration}</span>
+        <span aria-label="Duration" className="tabular-nums">
+          {formattedDuration}
+        </span>
       </TimePrimitive>
     );
   },
@@ -1740,19 +1711,17 @@ const MediaPlayerPlaybackSpeed = React.forwardRef<
 MediaPlayerPlaybackSpeed.displayName = PLAYBACK_SPEED_NAME;
 
 interface MediaPlayerLoopProps
-  extends React.ComponentPropsWithoutRef<typeof Button> {
-  mode?: "toggle" | "repeat";
-}
+  extends React.ComponentPropsWithoutRef<typeof Button> {}
 
 const MediaPlayerLoop = React.forwardRef<
   HTMLButtonElement,
   MediaPlayerLoopProps
 >((props, forwardedRef) => {
-  const { asChild, children, className, mode = "toggle", ...loopProps } = props;
+  const { asChild, children, className, ...loopProps } = props;
 
   const context = useMediaPlayerContext(LOOP_NAME);
   const store = useStoreContext(LOOP_NAME);
-  const loopMode = useStore((state) => state.media.loopMode);
+  const isLooping = useStore((state) => state.media.isLooping);
   const isDisabled = props.disabled || context.disabled;
 
   const onLoopToggle = React.useCallback(
@@ -1763,64 +1732,25 @@ const MediaPlayerLoop = React.forwardRef<
       const media = context.mediaRef.current;
       if (!media) return;
 
-      let nextLoopMode: LoopMode = "off";
-
-      if (mode === "toggle") {
-        if (loopMode === "off") {
-          nextLoopMode = "all";
-        } else {
-          nextLoopMode = "off";
-        }
-      } else {
-        if (loopMode === "off") {
-          nextLoopMode = "all";
-        } else if (loopMode === "all") {
-          nextLoopMode = "one";
-        } else {
-          nextLoopMode = "off";
-        }
-      }
-
-      media.loop = nextLoopMode === "all";
-      store.dispatch({ variant: "SET_LOOP_MODE", loopMode: nextLoopMode });
+      const nextLooping = !isLooping;
+      media.loop = nextLooping;
+      store.dispatch({ variant: "SET_LOOPING", isLooping: nextLooping });
     },
-    [context.mediaRef, props.onClick, store, loopMode, mode],
+    [context.mediaRef, props.onClick, store, isLooping],
   );
 
-  const getTooltipText = React.useCallback(() => {
-    if (mode === "toggle") {
-      return loopMode === "all" ? "Disable loop" : "Enable loop";
-    }
-    if (loopMode === "off") return "Repeat all";
-    if (loopMode === "all") return "Repeat one";
-    return "Disable repeat";
-  }, [loopMode, mode]);
-
-  const getAriaLabel = React.useCallback(() => {
-    if (mode === "toggle") {
-      return loopMode === "all" ? "Disable loop" : "Enable loop";
-    }
-    if (loopMode === "off") return "Enable repeat all";
-    if (loopMode === "all") return "Enable repeat one";
-    return "Disable repeat";
-  }, [loopMode, mode]);
-
-  const LoopIcon = React.useCallback(() => {
-    if (loopMode === "one") return <Repeat1Icon />;
-    return (
-      <RepeatIcon className={cn(loopMode === "off" && "text-foreground/60")} />
-    );
-  }, [loopMode]);
-
   return (
-    <MediaPlayerTooltip tooltip={getTooltipText()} shortcut="R">
+    <MediaPlayerTooltip
+      tooltip={isLooping ? "Disable loop" : "Enable loop"}
+      shortcut="R"
+    >
       <Button
         type="button"
-        aria-label={getAriaLabel()}
+        aria-label={isLooping ? "Disable loop" : "Enable loop"}
         aria-controls={context.mediaId}
-        aria-pressed={loopMode !== "off"}
+        aria-pressed={isLooping}
         data-disabled={isDisabled ? "" : undefined}
-        data-state={loopMode}
+        data-state={isLooping ? "looping" : "not-looping"}
         data-slot="media-player-loop"
         disabled={isDisabled}
         {...loopProps}
@@ -1830,7 +1760,9 @@ const MediaPlayerLoop = React.forwardRef<
         className={cn("size-8", className)}
         onClick={onLoopToggle}
       >
-        {children ?? <LoopIcon />}
+        {children ?? (
+          <RepeatIcon className={cn(!isLooping && "text-foreground/60")} />
+        )}
       </Button>
     </MediaPlayerTooltip>
   );
@@ -2121,7 +2053,7 @@ function MediaPlayerTooltip({
         {children}
       </TooltipTrigger>
       <TooltipContent
-        sideOffset={10}
+        sideOffset={6}
         className="flex items-center gap-2 border bg-accent px-2 py-1 font-medium text-foreground dark:bg-zinc-900 [&>span]:hidden"
       >
         <p>{tooltip}</p>
@@ -2153,27 +2085,8 @@ function MediaPlayerTooltip({
   );
 }
 
-const MediaPlayer = MediaPlayerRoot;
-const Root = MediaPlayerRoot;
-const Controls = MediaPlayerControls;
-const Overlay = MediaPlayerOverlay;
-const Play = MediaPlayerPlay;
-const SeekForward = MediaPlayerSeekForward;
-const SeekBackward = MediaPlayerSeekBackward;
-const Seek = MediaPlayerSeek;
-const Volume = MediaPlayerVolume;
-const Time = MediaPlayerTime;
-const Fullscreen = MediaPlayerFullscreen;
-const PiP = MediaPlayerPiP;
-const Video = MediaPlayerVideo;
-const Audio = MediaPlayerAudio;
-const PlaybackSpeed = MediaPlayerPlaybackSpeed;
-const Captions = MediaPlayerCaptions;
-const Download = MediaPlayerDownload;
-const Loop = MediaPlayerLoop;
-
 export {
-  MediaPlayer,
+  MediaPlayerRoot as MediaPlayer,
   MediaPlayerVideo,
   MediaPlayerAudio,
   MediaPlayerControls,
@@ -2191,23 +2104,23 @@ export {
   MediaPlayerCaptions,
   MediaPlayerDownload,
   //
-  Root,
-  Video,
-  Audio,
-  Controls,
-  Overlay,
-  Play,
-  SeekBackward,
-  SeekForward,
-  Seek,
-  Volume,
-  Time,
-  PlaybackSpeed,
-  Loop,
-  Fullscreen,
-  PiP,
-  Captions,
-  Download,
+  MediaPlayerRoot as Root,
+  MediaPlayerVideo as Video,
+  MediaPlayerAudio as Audio,
+  MediaPlayerControls as Controls,
+  MediaPlayerOverlay as Overlay,
+  MediaPlayerPlay as Play,
+  MediaPlayerSeekBackward as SeekBackward,
+  MediaPlayerSeekForward as SeekForward,
+  MediaPlayerSeek as Seek,
+  MediaPlayerVolume as Volume,
+  MediaPlayerTime as Time,
+  MediaPlayerPlaybackSpeed as PlaybackSpeed,
+  MediaPlayerLoop as Loop,
+  MediaPlayerFullscreen as Fullscreen,
+  MediaPlayerPiP as PiP,
+  MediaPlayerCaptions as Captions,
+  MediaPlayerDownload as Download,
   //
   useStore as useMediaPlayer,
 };

@@ -1,10 +1,9 @@
 @import "tailwindcss";
+
 @import "fumadocs-ui/css/black.css";
 @import "fumadocs-ui/css/preset.css";
 
 @import "tw-animate-css";
-
-@source "../node_modules/fumadocs-ui/dist/**/*.js";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -209,22 +208,13 @@
   }
 }
 
-.diagram-space:active {
-  cursor: move;
-}
-
-.dragging,
-.dragging button {
-  pointer-events: none;
-}
-
 @utility component-block {
   & pre {
-    @apply max-h-[432.4px];
+    @apply max-h-[432.4px] px-4;
   }
 
-  [data-rehype-pretty-code-figure] figure {
-    @apply rounded-none! my-4!;
+  figure {
+    @apply rounded-none;
   }
 }
 
@@ -266,12 +256,12 @@
 
   & table td:nth-child(2),
   & table th:nth-child(2) {
-    @apply w-[40%];
+    @apply w-[45%];
   }
 
   & table td:nth-child(3),
   & table th:nth-child(3) {
-    @apply w-[20%];
+    @apply w-[35%];
   }
 }
 
@@ -287,6 +277,10 @@
 }
 
 @layer components {
+  figure.not-prose {
+    @apply rounded-none!;
+  }
+
   [data-rehype-pretty-code-figure] figure {
     @apply border-none bg-secondary/50!;
   }

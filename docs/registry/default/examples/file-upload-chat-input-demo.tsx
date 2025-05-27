@@ -11,6 +11,7 @@ import {
   FileUploadItemPreview,
   FileUploadItemProgress,
   FileUploadList,
+  type FileUploadProps,
   FileUploadTrigger,
 } from "@/registry/default/ui/file-upload";
 import { ArrowUp, Paperclip, Upload, X } from "lucide-react";
@@ -29,19 +30,8 @@ export default function FileUploadChatInputDemo() {
     [],
   );
 
-  const onUpload = React.useCallback(
-    async (
-      files: File[],
-      {
-        onProgress,
-        onSuccess,
-        onError,
-      }: {
-        onProgress: (file: File, progress: number) => void;
-        onSuccess: (file: File) => void;
-        onError: (file: File, error: Error) => void;
-      },
-    ) => {
+  const onUpload: NonNullable<FileUploadProps["onUpload"]> = React.useCallback(
+    async (files, { onProgress, onSuccess, onError }) => {
       try {
         setIsUploading(true);
         // Process each file individually
@@ -110,7 +100,7 @@ export default function FileUploadChatInputDemo() {
       onFileReject={onFileReject}
       maxFiles={10}
       maxSize={5 * 1024 * 1024}
-      className="relative w-full max-w-md"
+      className="relative h-[400px] w-full items-center p-8"
       multiple
       disabled={isUploading}
     >
@@ -118,7 +108,7 @@ export default function FileUploadChatInputDemo() {
         tabIndex={-1}
         // Prevents the dropzone from triggering on click
         onClick={(event) => event.preventDefault()}
-        className="absolute inset-0 z-0 flex h-svh w-full items-center justify-center rounded-none border-none bg-background/50 p-0 opacity-0 backdrop-blur transition-opacity duration-200 ease-out data-[dragging]:z-10 data-[dragging]:opacity-100"
+        className="absolute top-0 left-0 z-0 flex size-full items-center justify-center rounded-none border-none bg-background/50 p-0 opacity-0 backdrop-blur transition-opacity duration-200 ease-out data-[dragging]:z-10 data-[dragging]:opacity-100"
       >
         <div className="flex flex-col items-center gap-1 text-center">
           <div className="flex items-center justify-center rounded-full border p-2.5">
@@ -132,7 +122,7 @@ export default function FileUploadChatInputDemo() {
       </FileUploadDropzone>
       <form
         onSubmit={onSubmit}
-        className="relative flex w-full flex-col gap-2.5 rounded-md border border-input px-3 py-2 outline-none focus-within:ring-1 focus-within:ring-ring/50"
+        className="relative flex w-full max-w-md flex-col gap-2.5 rounded-md border border-input px-3 py-2 outline-none focus-within:ring-1 focus-within:ring-ring/50"
       >
         <FileUploadList
           orientation="horizontal"

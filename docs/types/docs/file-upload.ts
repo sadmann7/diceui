@@ -342,7 +342,10 @@ export interface ItemPreviewProps extends EmptyProps<"div">, CompositionProps {
 
 export interface ItemMetadataProps extends EmptyProps<"div">, CompositionProps {
   /**
-   * The size of the metadata (file name, and size).
+   * The visual density of the displayed file metadata (name and size).
+   *
+   * - `default`: Standard text size and line height.
+   * - `sm`: Smaller text size and line height for a more compact look.
    *
    * @default "default"
    */
@@ -353,12 +356,12 @@ export interface ItemProgressProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The visual style of the progress indicator.
    *
-   * - `linear`: A standard horizontal progress bar (default).
+   * - `linear`: A standard horizontal progress bar.
    * - `circular`: A circular progress indicator using stroke animation.
-   * - `fill`: A fill progress indicator.
+   * - `fill`: A progress indicator that fills the container vertically based on progress.
    *
    * ```tsx
-   * // Linear progress (default)
+   * // Linear progress
    * <ItemProgress variant="linear" />
    *
    * // Circular stroke progress

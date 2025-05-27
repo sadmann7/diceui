@@ -6,7 +6,7 @@ links:
   api: /docs/components/media-player#api-reference
 ---
 
-<ComponentTabs name="media-player-demo" align="start" className="p-8" />
+<ComponentTabs name="media-player-demo" />
 
 ## Installation
 
@@ -27,9 +27,9 @@ npx shadcn@latest add "https://diceui.com/r/media-player"
      ```
   </Step>
   <Step>
-  Copy the composition utilities into your `lib/composition.ts` file.
+  Copy the refs composition utilities into your `lib/compose-refs.ts` file.
 
-  <ComponentSource src="./lib/composition.ts" />
+  <ComponentSource src="./lib/compose-refs.ts" />
 
   </Step>
   <Step>
@@ -72,7 +72,7 @@ import * as MediaPlayer from "@/components/ui/media-player";
 
 Use the `Audio` component instead of `Video` for audio playback.
 
-<ComponentTabs name="media-player-audio-demo" align="start" className="p-8" />
+<ComponentTabs name="media-player-audio-demo" className="block" />
 
 ## API Reference
 
