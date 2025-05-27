@@ -29,7 +29,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import { ClientOnly } from "@/registry/default/components/client-only";
-import MediaPlayerAudioDemo from "@/registry/default/examples/media-player-audio-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -47,10 +46,6 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <ClientOnly fallback={<Skeleton className="h-[400px] w-full" />}>
-        <MediaPlayerAudioDemo />
-        <video src="/assets/cloud.mp4" controls>
-          <track kind="captions" />
-        </video>
         <MediaPlayer.Root>
           <MediaPlayer.Video>
             <source src="/assets/cloud.mp4" type="video/mp4" />
