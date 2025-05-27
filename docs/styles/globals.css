@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@import "fumadocs-ui/css/shadcn.css";
+@import "fumadocs-ui/css/black.css";
 @import "fumadocs-ui/css/preset.css";
 
 @import "tw-animate-css";
@@ -256,12 +256,12 @@
 
   & table td:nth-child(2),
   & table th:nth-child(2) {
-    @apply w-[40%];
+    @apply w-[45%];
   }
 
   & table td:nth-child(3),
   & table th:nth-child(3) {
-    @apply w-[20%];
+    @apply w-[35%];
   }
 }
 

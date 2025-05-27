@@ -8,13 +8,12 @@ import {
   MediaPlayerSeek,
   MediaPlayerSeekBackward,
   MediaPlayerSeekForward,
-  MediaPlayerTime,
   MediaPlayerVolume,
 } from "@/registry/default/ui/media-player";
 
 export default function MediaPlayerAudioDemo() {
   return (
-    <MediaPlayer className="h-20">
+    <MediaPlayer className="h-20 bg-accent">
       <MediaPlayerAudio>
         <source src="/assets/lofi.mp3" type="audio/mp3" />
       </MediaPlayerAudio>
@@ -25,7 +24,6 @@ export default function MediaPlayerAudioDemo() {
           <MediaPlayerPlay />
           <MediaPlayerSeekForward />
           <MediaPlayerVolume />
-          <MediaPlayerTime />
           <MediaPlayerPlaybackSpeed />
           <MediaPlayerLoop />
         </div>

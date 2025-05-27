@@ -1425,11 +1425,11 @@ const MediaPlayerSeek = React.forwardRef<HTMLDivElement, MediaPlayerSeekProps>(
           aria-label="Video progress"
           className="flex w-full items-center gap-2"
         >
-          <span aria-label="Current time" className="text-sm">
+          <span aria-label="Current time" className="text-sm tabular-nums">
             {formattedCurrentTime}
           </span>
           {SeekWrapper}
-          <span aria-label="Remaining time" className="text-sm">
+          <span aria-label="Remaining time" className="text-sm tabular-nums">
             {formattedRemainingTime}
           </span>
         </div>
@@ -1606,7 +1606,7 @@ const MediaPlayerTime = React.forwardRef<HTMLDivElement, MediaPlayerTimeProps>(
           dir={context.dir}
           {...timeProps}
           ref={forwardedRef}
-          className={cn("text-foreground/80 text-sm", className)}
+          className={cn("text-foreground/80 text-sm tabular-nums", className)}
         >
           {mode === "remaining" ? formattedRemainingTime : formattedDuration}
         </TimePrimitive>
@@ -1625,11 +1625,15 @@ const MediaPlayerTime = React.forwardRef<HTMLDivElement, MediaPlayerTimeProps>(
           className,
         )}
       >
-        <span aria-label="Current time">{formattedCurrentTime}</span>
+        <span aria-label="Current time" className="tabular-nums">
+          {formattedCurrentTime}
+        </span>
         <span role="presentation" aria-hidden="true">
           /
         </span>
-        <span aria-label="Duration">{formattedDuration}</span>
+        <span aria-label="Duration" className="tabular-nums">
+          {formattedDuration}
+        </span>
       </TimePrimitive>
     );
   },
@@ -2049,7 +2053,7 @@ function MediaPlayerTooltip({
         {children}
       </TooltipTrigger>
       <TooltipContent
-        sideOffset={10}
+        sideOffset={6}
         className="flex items-center gap-2 border bg-accent px-2 py-1 font-medium text-foreground dark:bg-zinc-900 [&>span]:hidden"
       >
         <p>{tooltip}</p>
@@ -2082,41 +2086,41 @@ function MediaPlayerTooltip({
 }
 
 export {
-  MediaPlayerAudio as Audio,
-  MediaPlayerCaptions as Captions,
-  MediaPlayerControls as Controls,
-  MediaPlayerDownload as Download,
-  MediaPlayerFullscreen as Fullscreen,
-  MediaPlayerLoop as Loop,
   MediaPlayerRoot as MediaPlayer,
+  MediaPlayerVideo,
   MediaPlayerAudio,
-  MediaPlayerCaptions,
   MediaPlayerControls,
-  MediaPlayerDownload,
-  MediaPlayerFullscreen,
-  MediaPlayerLoop,
   MediaPlayerOverlay,
-  MediaPlayerPiP,
   MediaPlayerPlay,
-  MediaPlayerPlaybackSpeed,
-  MediaPlayerSeek,
   MediaPlayerSeekBackward,
   MediaPlayerSeekForward,
-  MediaPlayerTime,
-  MediaPlayerVideo,
+  MediaPlayerSeek,
   MediaPlayerVolume,
-  MediaPlayerOverlay as Overlay,
-  MediaPlayerPiP as PiP,
-  MediaPlayerPlay as Play,
-  MediaPlayerPlaybackSpeed as PlaybackSpeed,
+  MediaPlayerTime,
+  MediaPlayerPlaybackSpeed,
+  MediaPlayerLoop,
+  MediaPlayerFullscreen,
+  MediaPlayerPiP,
+  MediaPlayerCaptions,
+  MediaPlayerDownload,
   //
   MediaPlayerRoot as Root,
-  MediaPlayerSeek as Seek,
+  MediaPlayerVideo as Video,
+  MediaPlayerAudio as Audio,
+  MediaPlayerControls as Controls,
+  MediaPlayerOverlay as Overlay,
+  MediaPlayerPlay as Play,
   MediaPlayerSeekBackward as SeekBackward,
   MediaPlayerSeekForward as SeekForward,
+  MediaPlayerSeek as Seek,
+  MediaPlayerVolume as Volume,
   MediaPlayerTime as Time,
+  MediaPlayerPlaybackSpeed as PlaybackSpeed,
+  MediaPlayerLoop as Loop,
+  MediaPlayerFullscreen as Fullscreen,
+  MediaPlayerPiP as PiP,
+  MediaPlayerCaptions as Captions,
+  MediaPlayerDownload as Download,
   //
   useStore as useMediaPlayer,
-  MediaPlayerVideo as Video,
-  MediaPlayerVolume as Volume,
 };
