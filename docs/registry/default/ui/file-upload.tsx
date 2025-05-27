@@ -24,19 +24,6 @@ const ITEM_PROGRESS_NAME = "FileUploadItemProgress";
 const ITEM_DELETE_NAME = "FileUploadItemDelete";
 const CLEAR_NAME = "FileUploadClear";
 
-const FILE_UPLOAD_ERRORS = {
-  [ROOT_NAME]: `\`${ROOT_NAME}\` must be used as root component`,
-  [DROPZONE_NAME]: `\`${DROPZONE_NAME}\` must be within \`${ROOT_NAME}\``,
-  [TRIGGER_NAME]: `\`${TRIGGER_NAME}\` must be within \`${ROOT_NAME}\``,
-  [LIST_NAME]: `\`${LIST_NAME}\` must be within \`${ROOT_NAME}\``,
-  [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${ROOT_NAME}\``,
-  [ITEM_PREVIEW_NAME]: `\`${ITEM_PREVIEW_NAME}\` must be within \`${ITEM_NAME}\``,
-  [ITEM_METADATA_NAME]: `\`${ITEM_METADATA_NAME}\` must be within \`${ITEM_NAME}\``,
-  [ITEM_PROGRESS_NAME]: `\`${ITEM_PROGRESS_NAME}\` must be within \`${ITEM_NAME}\``,
-  [ITEM_DELETE_NAME]: `\`${ITEM_DELETE_NAME}\` must be within \`${ITEM_NAME}\``,
-  [CLEAR_NAME]: `\`${CLEAR_NAME}\` must be within \`${ROOT_NAME}\``,
-} as const;
-
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
@@ -237,10 +224,10 @@ const StoreContext = React.createContext<ReturnType<typeof createStore> | null>(
 );
 StoreContext.displayName = ROOT_NAME;
 
-function useStoreContext(name: keyof typeof FILE_UPLOAD_ERRORS) {
+function useStoreContext(consumerName: string) {
   const context = React.useContext(StoreContext);
   if (!context) {
-    throw new Error(FILE_UPLOAD_ERRORS[name]);
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
   }
   return context;
 }
@@ -282,10 +269,10 @@ const FileUploadContext = React.createContext<FileUploadContextValue | null>(
   null,
 );
 
-function useFileUploadContext(name: keyof typeof FILE_UPLOAD_ERRORS) {
+function useFileUploadContext(consumerName: string) {
   const context = React.useContext(FileUploadContext);
   if (!context) {
-    throw new Error(FILE_UPLOAD_ERRORS[name]);
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
   }
   return context;
 }
@@ -579,40 +566,38 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
     const RootPrimitive = asChild ? Slot : "div";
 
     return (
-      <DirectionContext.Provider value={dir}>
-        <StoreContext.Provider value={store}>
-          <FileUploadContext.Provider value={contextValue}>
-            <RootPrimitive
-              data-disabled={disabled ? "" : undefined}
-              data-slot="file-upload"
-              dir={dir}
-              {...rootProps}
-              ref={forwardedRef}
-              className={cn("relative flex flex-col gap-2", className)}
-            >
-              {children}
-              <input
-                type="file"
-                id={inputId}
-                aria-labelledby={labelId}
-                aria-describedby={dropzoneId}
-                ref={inputRef}
-                tabIndex={-1}
-                accept={accept}
-                name={name}
-                className="sr-only"
-                disabled={disabled}
-                multiple={multiple}
-                required={required}
-                onChange={onInputChange}
-              />
-              <span id={labelId} className="sr-only">
-                {label ?? "File upload"}
-              </span>
-            </RootPrimitive>
-          </FileUploadContext.Provider>
-        </StoreContext.Provider>
-      </DirectionContext.Provider>
+      <StoreContext.Provider value={store}>
+        <FileUploadContext.Provider value={contextValue}>
+          <RootPrimitive
+            data-disabled={disabled ? "" : undefined}
+            data-slot="file-upload"
+            dir={dir}
+            {...rootProps}
+            ref={forwardedRef}
+            className={cn("relative flex flex-col gap-2", className)}
+          >
+            {children}
+            <input
+              type="file"
+              id={inputId}
+              aria-labelledby={labelId}
+              aria-describedby={dropzoneId}
+              ref={inputRef}
+              tabIndex={-1}
+              accept={accept}
+              name={name}
+              className="sr-only"
+              disabled={disabled}
+              multiple={multiple}
+              required={required}
+              onChange={onInputChange}
+            />
+            <span id={labelId} className="sr-only">
+              {label ?? "File upload"}
+            </span>
+          </RootPrimitive>
+        </FileUploadContext.Provider>
+      </StoreContext.Provider>
     );
   },
 );
@@ -910,10 +895,10 @@ interface FileUploadItemContextValue {
 const FileUploadItemContext =
   React.createContext<FileUploadItemContextValue | null>(null);
 
-function useFileUploadItemContext(name: keyof typeof FILE_UPLOAD_ERRORS) {
+function useFileUploadItemContext(consumerName: string) {
   const context = React.useContext(FileUploadItemContext);
   if (!context) {
-    throw new Error(FILE_UPLOAD_ERRORS[name]);
+    throw new Error(`\`${consumerName}\` must be used within \`${ITEM_NAME}\``);
   }
   return context;
 }

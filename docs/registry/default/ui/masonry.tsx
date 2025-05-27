@@ -1,6 +1,6 @@
 "use client";
 
-import { useComposedRefs } from "@/lib/composition";
+import { useComposedRefs } from "@/lib/compose-refs";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 

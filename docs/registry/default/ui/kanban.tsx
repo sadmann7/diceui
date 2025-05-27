@@ -45,7 +45,7 @@ import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { useComposedRefs } from "@/lib/composition";
+import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 
 const directions: string[] = [
@@ -157,16 +157,6 @@ const ITEM_NAME = "KanbanItem";
 const ITEM_HANDLE_NAME = "KanbanItemHandle";
 const OVERLAY_NAME = "KanbanOverlay";
 
-const KANBAN_ERRORS = {
-  [ROOT_NAME]: `\`${ROOT_NAME}\` components must be within \`${ROOT_NAME}\``,
-  [BOARD_NAME]: `\`${BOARD_NAME}\` must be within \`${ROOT_NAME}\``,
-  [COLUMN_NAME]: `\`${COLUMN_NAME}\` must be within \`${BOARD_NAME}\``,
-  [COLUMN_HANDLE_NAME]: `\`${COLUMN_HANDLE_NAME}\` must be within \`${COLUMN_NAME}\``,
-  [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${COLUMN_NAME}\``,
-  [ITEM_HANDLE_NAME]: `\`${ITEM_HANDLE_NAME}\` must be within \`${ITEM_NAME}\``,
-  [OVERLAY_NAME]: `\`${OVERLAY_NAME}\` must be within \`${ROOT_NAME}\``,
-} as const;
-
 interface KanbanContextValue<T> {
   id: string;
   items: Record<UniqueIdentifier, T[]>;
@@ -184,10 +174,10 @@ const KanbanContext = React.createContext<KanbanContextValue<unknown> | null>(
 );
 KanbanContext.displayName = ROOT_NAME;
 
-function useKanbanContext(name: keyof typeof KANBAN_ERRORS) {
+function useKanbanContext(consumerName: string) {
   const context = React.useContext(KanbanContext);
   if (!context) {
-    throw new Error(KANBAN_ERRORS[name]);
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
   }
   return context;
 }
@@ -200,7 +190,7 @@ interface GetItemValue<T> {
   getItemValue: (item: T) => UniqueIdentifier;
 }
 
-type KanbanProps<T> = Omit<DndContextProps, "collisionDetection"> &
+type KanbanRootProps<T> = Omit<DndContextProps, "collisionDetection"> &
   GetItemValue<T> & {
     value: Record<UniqueIdentifier, T[]>;
     onValueChange?: (columns: Record<UniqueIdentifier, T[]>) => void;
@@ -212,7 +202,7 @@ type KanbanProps<T> = Omit<DndContextProps, "collisionDetection"> &
     flatCursor?: boolean;
   } & (T extends object ? GetItemValue<T> : Partial<GetItemValue<T>>);
 
-function Kanban<T>(props: KanbanProps<T>) {
+function KanbanRoot<T>(props: KanbanRootProps<T>) {
   const {
     value,
     onValueChange,
@@ -710,6 +700,16 @@ const KanbanColumnContext =
   React.createContext<KanbanColumnContextValue | null>(null);
 KanbanColumnContext.displayName = COLUMN_NAME;
 
+function useKanbanColumnContext(consumerName: string) {
+  const context = React.useContext(KanbanColumnContext);
+  if (!context) {
+    throw new Error(
+      `\`${consumerName}\` must be used within \`${COLUMN_NAME}\``,
+    );
+  }
+  return context;
+}
+
 const animateLayoutChanges: AnimateLayoutChanges = (args) =>
   defaultAnimateLayoutChanges({ ...args, wasDragging: true });
 
@@ -739,7 +739,9 @@ const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
     const inOverlay = React.useContext(KanbanOverlayContext);
 
     if (!inBoard && !inOverlay) {
-      throw new Error(KANBAN_ERRORS[COLUMN_NAME]);
+      throw new Error(
+        `\`${COLUMN_NAME}\` must be used within \`${BOARD_NAME}\` or \`${OVERLAY_NAME}\``,
+      );
     }
 
     if (value === "") {
@@ -844,11 +846,7 @@ const KanbanColumnHandle = React.forwardRef<
   const { asChild, disabled, className, ...columnHandleProps } = props;
 
   const context = useKanbanContext(COLUMN_NAME);
-  const columnContext = React.useContext(KanbanColumnContext);
-
-  if (!columnContext) {
-    throw new Error(KANBAN_ERRORS[COLUMN_HANDLE_NAME]);
-  }
+  const columnContext = useKanbanColumnContext(COLUMN_HANDLE_NAME);
 
   const isDisabled = disabled ?? columnContext.disabled;
 
@@ -897,6 +895,14 @@ const KanbanItemContext = React.createContext<KanbanItemContextValue | null>(
 );
 KanbanItemContext.displayName = ITEM_NAME;
 
+function useKanbanItemContext(consumerName: string) {
+  const context = React.useContext(KanbanItemContext);
+  if (!context) {
+    throw new Error(`\`${consumerName}\` must be used within \`${ITEM_NAME}\``);
+  }
+  return context;
+}
+
 interface KanbanItemProps extends React.ComponentPropsWithoutRef<"div"> {
   value: UniqueIdentifier;
   asHandle?: boolean;
@@ -922,7 +928,7 @@ const KanbanItem = React.forwardRef<HTMLDivElement, KanbanItemProps>(
     const inOverlay = React.useContext(KanbanOverlayContext);
 
     if (!inBoard && !inOverlay) {
-      throw new Error(KANBAN_ERRORS[ITEM_NAME]);
+      throw new Error(`\`${ITEM_NAME}\` must be used within \`${BOARD_NAME}\``);
     }
 
     const {
@@ -1008,11 +1014,8 @@ const KanbanItemHandle = React.forwardRef<
 >((props, forwardedRef) => {
   const { asChild, disabled, className, ...itemHandleProps } = props;
 
-  const itemContext = React.useContext(KanbanItemContext);
-  if (!itemContext) {
-    throw new Error(KANBAN_ERRORS[ITEM_HANDLE_NAME]);
-  }
   const context = useKanbanContext(ITEM_HANDLE_NAME);
+  const itemContext = useKanbanItemContext(ITEM_HANDLE_NAME);
 
   const isDisabled = disabled ?? itemContext.disabled;
 
@@ -1109,16 +1112,8 @@ function KanbanOverlay(props: KanbanOverlayProps) {
   );
 }
 
-const Root = Kanban;
-const Board = KanbanBoard;
-const Column = KanbanColumn;
-const ColumnHandle = KanbanColumnHandle;
-const Item = KanbanItem;
-const ItemHandle = KanbanItemHandle;
-const Overlay = KanbanOverlay;
-
 export {
-  Kanban,
+  KanbanRoot as Kanban,
   KanbanBoard,
   KanbanColumn,
   KanbanColumnHandle,
@@ -1126,11 +1121,11 @@ export {
   KanbanItemHandle,
   KanbanOverlay,
   //
-  Root,
-  Board,
-  Column,
-  ColumnHandle,
-  Item,
-  ItemHandle,
-  Overlay,
+  KanbanRoot as Root,
+  KanbanBoard as Board,
+  KanbanColumn as Column,
+  KanbanColumnHandle as ColumnHandle,
+  KanbanItem as Item,
+  KanbanItemHandle as ItemHandle,
+  KanbanOverlay as Overlay,
 };

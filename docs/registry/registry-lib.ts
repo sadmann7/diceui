@@ -13,11 +13,11 @@ export const lib: Registry["items"] = [
     ],
   },
   {
-    name: "composition",
+    name: "compose-refs",
     type: "registry:lib",
     files: [
       {
-        path: "lib/composition.ts",
+        path: "lib/compose-refs.ts",
         type: "registry:lib",
       },
     ],

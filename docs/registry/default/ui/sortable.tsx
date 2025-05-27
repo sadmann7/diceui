@@ -39,7 +39,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 
-import { useComposedRefs } from "@/lib/composition";
+import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import * as ReactDOM from "react-dom";
 
@@ -67,14 +67,6 @@ const ITEM_NAME = "SortableItem";
 const ITEM_HANDLE_NAME = "SortableItemHandle";
 const OVERLAY_NAME = "SortableOverlay";
 
-const SORTABLE_ERRORS = {
-  [ROOT_NAME]: `\`${ROOT_NAME}\` components must be within \`${ROOT_NAME}\``,
-  [CONTENT_NAME]: `\`${CONTENT_NAME}\` must be within \`${ROOT_NAME}\``,
-  [ITEM_NAME]: `\`${ITEM_NAME}\` must be within \`${CONTENT_NAME}\``,
-  [ITEM_HANDLE_NAME]: `\`${ITEM_HANDLE_NAME}\` must be within \`${ITEM_NAME}\``,
-  [OVERLAY_NAME]: `\`${OVERLAY_NAME}\` must be within \`${ROOT_NAME}\``,
-} as const;
-
 interface SortableRootContextValue<T> {
   id: string;
   items: UniqueIdentifier[];
@@ -90,10 +82,10 @@ const SortableRootContext =
   React.createContext<SortableRootContextValue<unknown> | null>(null);
 SortableRootContext.displayName = ROOT_NAME;
 
-function useSortableContext(name: keyof typeof SORTABLE_ERRORS) {
+function useSortableContext(consumerName: string) {
   const context = React.useContext(SortableRootContext);
   if (!context) {
-    throw new Error(SORTABLE_ERRORS[name]);
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
   }
   return context;
 }
@@ -106,7 +98,7 @@ interface GetItemValue<T> {
   getItemValue: (item: T) => UniqueIdentifier;
 }
 
-type SortableProps<T> = DndContextProps & {
+type SortableRootProps<T> = DndContextProps & {
   value: T[];
   onValueChange?: (items: T[]) => void;
   onMove?: (
@@ -117,7 +109,7 @@ type SortableProps<T> = DndContextProps & {
   flatCursor?: boolean;
 } & (T extends object ? GetItemValue<T> : Partial<GetItemValue<T>>);
 
-function Sortable<T>(props: SortableProps<T>) {
+function SortableRoot<T>(props: SortableRootProps<T>) {
   const {
     value,
     onValueChange,
@@ -373,6 +365,14 @@ const SortableItemContext =
   React.createContext<SortableItemContextValue | null>(null);
 SortableItemContext.displayName = ITEM_NAME;
 
+function useSortableItemContext(consumerName: string) {
+  const context = React.useContext(SortableItemContext);
+  if (!context) {
+    throw new Error(`\`${consumerName}\` must be used within \`${ITEM_NAME}\``);
+  }
+  return context;
+}
+
 interface SortableItemProps extends React.ComponentPropsWithoutRef<"div"> {
   value: UniqueIdentifier;
   asHandle?: boolean;
@@ -396,7 +396,9 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
     const inSortableOverlay = React.useContext(SortableOverlayContext);
 
     if (!inSortableContent && !inSortableOverlay) {
-      throw new Error(SORTABLE_ERRORS[ITEM_NAME]);
+      throw new Error(
+        `\`${ITEM_NAME}\` must be used within \`${CONTENT_NAME}\` or \`${OVERLAY_NAME}\``,
+      );
     }
 
     if (value === "") {
@@ -485,11 +487,8 @@ const SortableItemHandle = React.forwardRef<
 >((props, forwardedRef) => {
   const { asChild, disabled, className, ...itemHandleProps } = props;
 
-  const itemContext = React.useContext(SortableItemContext);
-  if (!itemContext) {
-    throw new Error(SORTABLE_ERRORS[ITEM_HANDLE_NAME]);
-  }
   const context = useSortableContext(ITEM_HANDLE_NAME);
+  const itemContext = useSortableItemContext(ITEM_HANDLE_NAME);
 
   const isDisabled = disabled ?? itemContext.disabled;
 
@@ -577,22 +576,16 @@ function SortableOverlay(props: SortableOverlayProps) {
   );
 }
 
-const Root = Sortable;
-const Content = SortableContent;
-const Item = SortableItem;
-const ItemHandle = SortableItemHandle;
-const Overlay = SortableOverlay;
-
 export {
-  Root,
-  Content,
-  Item,
-  ItemHandle,
-  Overlay,
-  //
-  Sortable,
+  SortableRoot as Sortable,
   SortableContent,
   SortableItem,
   SortableItemHandle,
   SortableOverlay,
+  //
+  SortableRoot as Root,
+  SortableContent as Content,
+  SortableItem as Item,
+  SortableItemHandle as ItemHandle,
+  SortableOverlay as Overlay,
 };

@@ -13,7 +13,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useComposedRefs } from "@/lib/composition";
+import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import { Slot } from "@radix-ui/react-slot";
@@ -249,10 +249,12 @@ const StoreContext = React.createContext<ReturnType<typeof createStore> | null>(
 );
 StoreContext.displayName = ROOT_NAME;
 
-function useStoreContext(name: string) {
+function useStoreContext(consumerName: string, componentName = ROOT_NAME) {
   const context = React.useContext(StoreContext);
   if (!context) {
-    throw new Error(`\`${name}\` must be used within \`${ROOT_NAME}\``);
+    throw new Error(
+      `\`${consumerName}\` must be used within \`${componentName}\``,
+    );
   }
   return context;
 }
@@ -293,10 +295,15 @@ const MediaPlayerContext = React.createContext<MediaPlayerContextValue | null>(
   null,
 );
 
-function useMediaPlayerContext(name: string) {
+function useMediaPlayerContext(
+  consumerName: string,
+  componentName = ROOT_NAME,
+) {
   const context = React.useContext(MediaPlayerContext);
   if (!context) {
-    throw new Error(`\`${name}\` must be used within \`${ROOT_NAME}\``);
+    throw new Error(
+      `\`${consumerName}\` must be used within \`${componentName}\``,
+    );
   }
   return context;
 }

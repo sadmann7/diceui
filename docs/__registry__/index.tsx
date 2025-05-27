@@ -273,17 +273,17 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
-    "composition": {
-      name: "composition",
+    "compose-refs": {
+      name: "compose-refs",
       description: "",
       type: "registry:lib",
       registryDependencies: undefined,
       files: [{
-        path: "registry/default/lib/composition.ts",
+        path: "registry/default/lib/compose-refs.ts",
         type: "registry:lib",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/lib/composition.ts")),
+      component: React.lazy(() => import("@/registry/default/lib/compose-refs.ts")),
       source: "",
       category: "",
       subcategory: "",
