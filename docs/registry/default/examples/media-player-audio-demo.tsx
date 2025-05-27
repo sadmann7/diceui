@@ -27,7 +27,7 @@ export default function MediaPlayerAudioDemo() {
           <MediaPlayerVolume />
           <MediaPlayerTime />
           <MediaPlayerPlaybackSpeed />
-          <MediaPlayerLoop mode="repeat" />
+          <MediaPlayerLoop />
         </div>
       </MediaPlayerControls>
     </MediaPlayer>

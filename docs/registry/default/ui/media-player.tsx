@@ -27,7 +27,6 @@ import {
   PictureInPicture2Icon,
   PictureInPictureIcon,
   PlayIcon,
-  Repeat1Icon,
   RepeatIcon,
   RewindIcon,
   SubtitlesIcon,
@@ -109,8 +108,6 @@ function useDirection(dirProp?: Direction): Direction {
   return dirProp ?? contextDir ?? "ltr";
 }
 
-type LoopMode = "off" | "all" | "one";
-
 interface MediaState {
   isPlaying: boolean;
   isMuted: boolean;
@@ -120,7 +117,6 @@ interface MediaState {
   buffered: TimeRanges | null;
   isFullscreen: boolean;
   isLooping: boolean;
-  loopMode: LoopMode;
   playbackRate: number;
   isPictureInPicture: boolean;
   captionsEnabled: boolean;
@@ -138,7 +134,7 @@ type StoreAction =
   | { variant: "SET_DURATION"; duration: number }
   | { variant: "SET_BUFFERED"; buffered: TimeRanges }
   | { variant: "SET_FULLSCREEN"; isFullscreen: boolean }
-  | { variant: "SET_LOOP_MODE"; loopMode: LoopMode }
+  | { variant: "SET_LOOPING"; isLooping: boolean }
   | { variant: "SET_PLAYBACK_RATE"; playbackRate: number }
   | { variant: "SET_PICTURE_IN_PICTURE"; isPictureInPicture: boolean }
   | { variant: "SET_CAPTIONS_ENABLED"; captionsEnabled: boolean };
@@ -203,10 +199,10 @@ function createStore(listeners: Set<() => void>, initialState: MediaState) {
         };
         break;
 
-      case "SET_LOOP_MODE":
+      case "SET_LOOPING":
         state = {
           ...state,
-          media: { ...state.media, loopMode: action.loopMode },
+          media: { ...state.media, isLooping: action.isLooping },
         };
         break;
 
@@ -367,7 +363,6 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
         buffered: null,
         isFullscreen: false,
         isLooping: mediaRef.current?.loop ?? false,
-        loopMode: mediaRef.current?.loop ? "all" : "off",
         playbackRate: 1,
         isPictureInPicture: false,
         captionsEnabled: false,
@@ -593,16 +588,12 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
 
           case "r": {
             event.preventDefault();
-            const currentLoopMode = store.getState().media.loopMode;
-            if (currentLoopMode === "one") {
-              if (media) {
-                media.currentTime = 0;
-                media.play();
-                store.dispatch({ variant: "SET_LOOP_MODE", loopMode: "off" });
-              }
-            } else {
-              store.dispatch({ variant: "SET_LOOP_MODE", loopMode: "one" });
-            }
+            const currentLooping = store.getState().media.isLooping;
+            media.loop = !currentLooping;
+            store.dispatch({
+              variant: "SET_LOOPING",
+              isLooping: !currentLooping,
+            });
             break;
           }
 
@@ -712,17 +703,6 @@ const MediaPlayerRoot = React.forwardRef<HTMLDivElement, MediaPlayerRootProps>(
       const onEnded = () => {
         store.dispatch({ variant: "SET_PLAYING", isPlaying: false });
         propsRef.current.onEnded?.();
-        const currentLoopMode = store.getState().media.loopMode;
-        if (currentLoopMode === "one") {
-          if (media) {
-            media.currentTime = 0;
-            media.play();
-            store.dispatch({ variant: "SET_LOOP_MODE", loopMode: "off" });
-          }
-        } else {
-          store.dispatch({ variant: "SET_PLAYING", isPlaying: false });
-          propsRef.current.onEnded?.();
-        }
       };
 
       const onVolumeChange = () => {
@@ -870,7 +850,7 @@ const MediaPlayerVideo = React.forwardRef<
   const { asChild, children, className, ...videoProps } = props;
 
   const context = useMediaPlayerContext(VIDEO_NAME);
-  const loopMode = useStore((state) => state.media.loopMode);
+  const isLooping = useStore((state) => state.media.isLooping);
   const composedRef = useComposedRefs(forwardedRef, context.mediaRef);
 
   const onPlayToggle = React.useCallback(
@@ -902,7 +882,7 @@ const MediaPlayerVideo = React.forwardRef<
       {...videoProps}
       ref={composedRef}
       id={context.mediaId}
-      loop={loopMode === "all"}
+      loop={isLooping}
       playsInline
       preload="metadata"
       className={cn("h-full w-full cursor-pointer", className)}
@@ -931,7 +911,7 @@ const MediaPlayerAudio = React.forwardRef<
   const { asChild, children, className, ...audioProps } = props;
 
   const context = useMediaPlayerContext(AUDIO_NAME);
-  const loopMode = useStore((state) => state.media.loopMode);
+  const isLooping = useStore((state) => state.media.isLooping);
   const composedRef = useComposedRefs(forwardedRef, context.mediaRef);
 
   const AudioPrimitive = asChild ? Slot : "audio";
@@ -944,7 +924,7 @@ const MediaPlayerAudio = React.forwardRef<
       {...audioProps}
       ref={composedRef}
       id={context.mediaId}
-      loop={loopMode === "all"}
+      loop={isLooping}
       preload="metadata"
       className={cn("w-full", className)}
     >
@@ -1720,19 +1700,17 @@ const MediaPlayerPlaybackSpeed = React.forwardRef<
 MediaPlayerPlaybackSpeed.displayName = PLAYBACK_SPEED_NAME;
 
 interface MediaPlayerLoopProps
-  extends React.ComponentPropsWithoutRef<typeof Button> {
-  mode?: "toggle" | "repeat";
-}
+  extends React.ComponentPropsWithoutRef<typeof Button> {}
 
 const MediaPlayerLoop = React.forwardRef<
   HTMLButtonElement,
   MediaPlayerLoopProps
 >((props, forwardedRef) => {
-  const { asChild, children, className, mode = "toggle", ...loopProps } = props;
+  const { asChild, children, className, ...loopProps } = props;
 
   const context = useMediaPlayerContext(LOOP_NAME);
   const store = useStoreContext(LOOP_NAME);
-  const loopMode = useStore((state) => state.media.loopMode);
+  const isLooping = useStore((state) => state.media.isLooping);
   const isDisabled = props.disabled || context.disabled;
 
   const onLoopToggle = React.useCallback(
@@ -1743,64 +1721,25 @@ const MediaPlayerLoop = React.forwardRef<
       const media = context.mediaRef.current;
       if (!media) return;
 
-      let nextLoopMode: LoopMode = "off";
-
-      if (mode === "toggle") {
-        if (loopMode === "off") {
-          nextLoopMode = "all";
-        } else {
-          nextLoopMode = "off";
-        }
-      } else {
-        if (loopMode === "off") {
-          nextLoopMode = "all";
-        } else if (loopMode === "all") {
-          nextLoopMode = "one";
-        } else {
-          nextLoopMode = "off";
-        }
-      }
-
-      media.loop = nextLoopMode === "all";
-      store.dispatch({ variant: "SET_LOOP_MODE", loopMode: nextLoopMode });
+      const nextLooping = !isLooping;
+      media.loop = nextLooping;
+      store.dispatch({ variant: "SET_LOOPING", isLooping: nextLooping });
     },
-    [context.mediaRef, props.onClick, store, loopMode, mode],
+    [context.mediaRef, props.onClick, store, isLooping],
   );
 
-  const getTooltipText = React.useCallback(() => {
-    if (mode === "toggle") {
-      return loopMode === "all" ? "Disable loop" : "Enable loop";
-    }
-    if (loopMode === "off") return "Repeat all";
-    if (loopMode === "all") return "Repeat one";
-    return "Disable repeat";
-  }, [loopMode, mode]);
-
-  const getAriaLabel = React.useCallback(() => {
-    if (mode === "toggle") {
-      return loopMode === "all" ? "Disable loop" : "Enable loop";
-    }
-    if (loopMode === "off") return "Enable repeat all";
-    if (loopMode === "all") return "Enable repeat one";
-    return "Disable repeat";
-  }, [loopMode, mode]);
-
-  const LoopIcon = React.useCallback(() => {
-    if (loopMode === "one") return <Repeat1Icon />;
-    return (
-      <RepeatIcon className={cn(loopMode === "off" && "text-foreground/60")} />
-    );
-  }, [loopMode]);
-
   return (
-    <MediaPlayerTooltip tooltip={getTooltipText()} shortcut="R">
+    <MediaPlayerTooltip
+      tooltip={isLooping ? "Disable loop" : "Enable loop"}
+      shortcut="R"
+    >
       <Button
         type="button"
-        aria-label={getAriaLabel()}
+        aria-label={isLooping ? "Disable loop" : "Enable loop"}
         aria-controls={context.mediaId}
-        aria-pressed={loopMode !== "off"}
+        aria-pressed={isLooping}
         data-disabled={isDisabled ? "" : undefined}
-        data-state={loopMode}
+        data-state={isLooping ? "looping" : "not-looping"}
         data-slot="media-player-loop"
         disabled={isDisabled}
         {...loopProps}
@@ -1810,7 +1749,9 @@ const MediaPlayerLoop = React.forwardRef<
         className={cn("size-8", className)}
         onClick={onLoopToggle}
       >
-        {children ?? <LoopIcon />}
+        {children ?? (
+          <RepeatIcon className={cn(!isLooping && "text-foreground/60")} />
+        )}
       </Button>
     </MediaPlayerTooltip>
   );
