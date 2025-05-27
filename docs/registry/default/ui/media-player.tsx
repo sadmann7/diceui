@@ -61,26 +61,6 @@ const PIP_NAME = "MediaPlayerPiP";
 const CAPTIONS_NAME = "MediaPlayerCaptions";
 const DOWNLOAD_NAME = "MediaPlayerDownload";
 
-const MEDIA_PLAYER_ERRORS = {
-  [ROOT_NAME]: `\`${ROOT_NAME}\` must be used as root component`,
-  [VIDEO_NAME]: `\`${VIDEO_NAME}\` must be within \`${ROOT_NAME}\``,
-  [AUDIO_NAME]: `\`${AUDIO_NAME}\` must be within \`${ROOT_NAME}\``,
-  [CONTROLS_NAME]: `\`${CONTROLS_NAME}\` must be within \`${ROOT_NAME}\``,
-  [OVERLAY_NAME]: `\`${OVERLAY_NAME}\` must be within \`${ROOT_NAME}\``,
-  [PLAY_NAME]: `\`${PLAY_NAME}\` must be within \`${ROOT_NAME}\``,
-  [SEEK_BACKWARD_NAME]: `\`${SEEK_BACKWARD_NAME}\` must be within \`${ROOT_NAME}\``,
-  [SEEK_FORWARD_NAME]: `\`${SEEK_FORWARD_NAME}\` must be within \`${ROOT_NAME}\``,
-  [SEEK_NAME]: `\`${SEEK_NAME}\` must be within \`${ROOT_NAME}\``,
-  [VOLUME_NAME]: `\`${VOLUME_NAME}\` must be within \`${ROOT_NAME}\``,
-  [TIME_NAME]: `\`${TIME_NAME}\` must be within \`${ROOT_NAME}\``,
-  [PLAYBACK_SPEED_NAME]: `\`${PLAYBACK_SPEED_NAME}\` must be within \`${ROOT_NAME}\``,
-  [LOOP_NAME]: `\`${LOOP_NAME}\` must be within \`${ROOT_NAME}\``,
-  [FULLSCREEN_NAME]: `\`${FULLSCREEN_NAME}\` must be within \`${ROOT_NAME}\``,
-  [PIP_NAME]: `\`${PIP_NAME}\` must be within \`${ROOT_NAME}\``,
-  [CAPTIONS_NAME]: `\`${CAPTIONS_NAME}\` must be within \`${ROOT_NAME}\``,
-  [DOWNLOAD_NAME]: `\`${DOWNLOAD_NAME}\` must be within \`${ROOT_NAME}\``,
-} as const;
-
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
@@ -273,10 +253,10 @@ const StoreContext = React.createContext<ReturnType<typeof createStore> | null>(
 );
 StoreContext.displayName = ROOT_NAME;
 
-function useStoreContext(name: keyof typeof MEDIA_PLAYER_ERRORS) {
+function useStoreContext(name: string) {
   const context = React.useContext(StoreContext);
   if (!context) {
-    throw new Error(MEDIA_PLAYER_ERRORS[name]);
+    throw new Error(`\`${name}\` must be used within \`${ROOT_NAME}\``);
   }
   return context;
 }
@@ -317,10 +297,10 @@ const MediaPlayerContext = React.createContext<MediaPlayerContextValue | null>(
   null,
 );
 
-function useMediaPlayerContext(name: keyof typeof MEDIA_PLAYER_ERRORS) {
+function useMediaPlayerContext(name: string) {
   const context = React.useContext(MediaPlayerContext);
   if (!context) {
-    throw new Error(MEDIA_PLAYER_ERRORS[name]);
+    throw new Error(`\`${name}\` must be used within \`${ROOT_NAME}\``);
   }
   return context;
 }
@@ -2153,61 +2133,42 @@ function MediaPlayerTooltip({
   );
 }
 
-const MediaPlayer = MediaPlayerRoot;
-const Root = MediaPlayerRoot;
-const Controls = MediaPlayerControls;
-const Overlay = MediaPlayerOverlay;
-const Play = MediaPlayerPlay;
-const SeekForward = MediaPlayerSeekForward;
-const SeekBackward = MediaPlayerSeekBackward;
-const Seek = MediaPlayerSeek;
-const Volume = MediaPlayerVolume;
-const Time = MediaPlayerTime;
-const Fullscreen = MediaPlayerFullscreen;
-const PiP = MediaPlayerPiP;
-const Video = MediaPlayerVideo;
-const Audio = MediaPlayerAudio;
-const PlaybackSpeed = MediaPlayerPlaybackSpeed;
-const Captions = MediaPlayerCaptions;
-const Download = MediaPlayerDownload;
-const Loop = MediaPlayerLoop;
-
 export {
-  MediaPlayer,
-  MediaPlayerVideo,
+  MediaPlayerAudio as Audio,
+  MediaPlayerCaptions as Captions,
+  MediaPlayerControls as Controls,
+  MediaPlayerDownload as Download,
+  MediaPlayerFullscreen as Fullscreen,
+  MediaPlayerLoop as Loop,
+  MediaPlayerRoot as MediaPlayer,
   MediaPlayerAudio,
+  MediaPlayerCaptions,
   MediaPlayerControls,
+  MediaPlayerDownload,
+  MediaPlayerFullscreen,
+  MediaPlayerLoop,
   MediaPlayerOverlay,
+  MediaPlayerPiP,
   MediaPlayerPlay,
+  MediaPlayerPlaybackSpeed,
+  MediaPlayerSeek,
   MediaPlayerSeekBackward,
   MediaPlayerSeekForward,
-  MediaPlayerSeek,
-  MediaPlayerVolume,
   MediaPlayerTime,
-  MediaPlayerPlaybackSpeed,
-  MediaPlayerLoop,
-  MediaPlayerFullscreen,
-  MediaPlayerPiP,
-  MediaPlayerCaptions,
-  MediaPlayerDownload,
+  MediaPlayerVideo,
+  MediaPlayerVolume,
+  MediaPlayerOverlay as Overlay,
+  MediaPlayerPiP as PiP,
+  MediaPlayerPlay as Play,
+  MediaPlayerPlaybackSpeed as PlaybackSpeed,
   //
-  Root,
-  Video,
-  Audio,
-  Controls,
-  Overlay,
-  Play,
-  SeekBackward,
-  SeekForward,
-  Seek,
-  Volume,
-  Time,
-  PlaybackSpeed,
-  Loop,
-  Fullscreen,
-  PiP,
-  Captions,
-  Download,
+  MediaPlayerRoot as Root,
+  MediaPlayerSeek as Seek,
+  MediaPlayerSeekBackward as SeekBackward,
+  MediaPlayerSeekForward as SeekForward,
+  MediaPlayerTime as Time,
   //
   useStore as useMediaPlayer,
+  MediaPlayerVideo as Video,
+  MediaPlayerVolume as Volume,
 };
