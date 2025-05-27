@@ -1,4 +1,5 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -12,6 +13,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import { Slot } from "@radix-ui/react-slot";
@@ -42,8 +44,6 @@ import {
   useMediaSelector,
 } from "media-chrome/react/media-store";
 import * as React from "react";
-
-const { formatTime } = timeUtils;
 
 const POINTER_MOVE_THROTTLE_MS = 16;
 const SEEK_THROTTLE_MS = 100;
@@ -83,6 +83,8 @@ interface MediaPlayerContextValue {
   descriptionId: string;
   dir: Direction;
   disabled: boolean;
+  isVideo: boolean;
+  mediaRef: React.RefObject<HTMLVideoElement | HTMLAudioElement | null>;
 }
 
 const MediaPlayerContext = React.createContext<MediaPlayerContextValue | null>(
@@ -132,7 +134,7 @@ function MediaPlayerRootImpl({
   onEnded: onEndedProp,
   onTimeUpdate: onTimeUpdateProp,
   onFullscreenChange: onFullscreenChangeProp,
-  onVolumeChange,
+  onVolumeChange: onVolumeChangeProp,
   onMuted,
   onPipError,
   asChild,
@@ -150,7 +152,16 @@ function MediaPlayerRootImpl({
   const dispatch = useMediaDispatch();
   const fullscreenRefCallback = useMediaFullscreenRef();
 
-  const mediaRef = React.useRef<HTMLVideoElement | HTMLAudioElement>(null);
+  const mediaRef = React.useRef<HTMLVideoElement | HTMLAudioElement | null>(
+    null,
+  );
+
+  const dir = useDirection(dirProp);
+
+  const isVideo = React.useMemo(() => {
+    if (typeof window === "undefined") return false;
+    return mediaRef.current instanceof HTMLVideoElement;
+  }, []);
 
   React.useEffect(() => {
     const media = mediaRef.current;
@@ -160,8 +171,8 @@ function MediaPlayerRootImpl({
     const onPause = () => onPauseProp?.();
     const onEnded = () => onEndedProp?.();
     const onTimeUpdate = () => onTimeUpdateProp?.(media.currentTime);
-    const handleVolumeChange = () => {
-      onVolumeChange?.(media.volume);
+    const onVolumeChange = () => {
+      onVolumeChangeProp?.(media.volume);
       onMuted?.(media.muted);
     };
 
@@ -169,21 +180,21 @@ function MediaPlayerRootImpl({
     media.addEventListener("pause", onPause);
     media.addEventListener("ended", onEnded);
     media.addEventListener("timeupdate", onTimeUpdate);
-    media.addEventListener("volumechange", handleVolumeChange);
+    media.addEventListener("volumechange", onVolumeChange);
 
     return () => {
       media.removeEventListener("play", onPlay);
       media.removeEventListener("pause", onPause);
       media.removeEventListener("ended", onEnded);
       media.removeEventListener("timeupdate", onTimeUpdate);
-      media.removeEventListener("volumechange", handleVolumeChange);
+      media.removeEventListener("volumechange", onVolumeChange);
     };
   }, [
     onPlayProp,
     onPauseProp,
     onEndedProp,
     onTimeUpdateProp,
-    onVolumeChange,
+    onVolumeChangeProp,
     onMuted,
   ]);
 
@@ -335,6 +346,12 @@ function MediaPlayerRootImpl({
           break;
 
         case "d": {
+          const hasDownload = media.querySelector(
+            '[data-slot="media-player-download"]',
+          );
+
+          if (!hasDownload) break;
+
           event.preventDefault();
           if (media.currentSrc) {
             const link = document.createElement("a");
@@ -404,19 +421,6 @@ function MediaPlayerRootImpl({
     [dispatch, disabled, rootImplProps.onKeyDown, onPipError],
   );
 
-  React.useEffect(() => {
-    const mediaElement = document.querySelector(`#${mediaId}`);
-
-    if (
-      mediaElement instanceof HTMLVideoElement ||
-      mediaElement instanceof HTMLAudioElement
-    ) {
-      mediaRef.current = mediaElement;
-    }
-  }, [mediaId]);
-
-  const dir = useDirection(dirProp);
-
   const contextValue = React.useMemo<MediaPlayerContextValue>(
     () => ({
       mediaId,
@@ -424,8 +428,10 @@ function MediaPlayerRootImpl({
       descriptionId,
       dir,
       disabled,
+      isVideo,
+      mediaRef,
     }),
-    [mediaId, labelId, descriptionId, dir, disabled],
+    [mediaId, labelId, descriptionId, dir, disabled, isVideo],
   );
 
   const RootPrimitive = asChild ? Slot : "div";
@@ -470,6 +476,7 @@ function MediaPlayerVideo(props: MediaPlayerVideoProps) {
   const context = useMediaPlayerContext(VIDEO_NAME);
   const dispatch = useMediaDispatch();
   const mediaRefCallback = useMediaRef();
+  const composedRef = useComposedRefs(context.mediaRef, mediaRefCallback);
 
   const onPlayToggle = React.useCallback(
     (event: React.MouseEvent<HTMLVideoElement>) => {
@@ -498,8 +505,8 @@ function MediaPlayerVideo(props: MediaPlayerVideoProps) {
       data-slot="media-player-video"
       controlsList="nodownload noremoteplayback"
       {...videoProps}
-      ref={mediaRefCallback}
       id={context.mediaId}
+      ref={composedRef}
       playsInline
       preload="metadata"
       className={cn("h-full w-full cursor-pointer", className)}
@@ -525,6 +532,7 @@ function MediaPlayerAudio(props: MediaPlayerAudioProps) {
 
   const context = useMediaPlayerContext(AUDIO_NAME);
   const mediaRefCallback = useMediaRef();
+  const composedRef = useComposedRefs(context.mediaRef, mediaRefCallback);
 
   const AudioPrimitive = asChild ? Slot : "audio";
 
@@ -534,8 +542,8 @@ function MediaPlayerAudio(props: MediaPlayerAudioProps) {
       aria-describedby={context.descriptionId}
       data-slot="media-player-audio"
       {...audioProps}
-      ref={mediaRefCallback}
       id={context.mediaId}
+      ref={composedRef}
       preload="metadata"
       className={cn("w-full", className)}
     >
@@ -682,11 +690,8 @@ function MediaPlayerSeekBackward(props: MediaPlayerSeekBackwardProps) {
   const mediaCurrentTime = useMediaSelector(
     (state) => state.mediaCurrentTime ?? 0,
   );
-  const isDisabled = props.disabled || context.disabled;
 
-  const isVideo =
-    typeof window !== "undefined" &&
-    document.querySelector(`#${context.mediaId}`) instanceof HTMLVideoElement;
+  const isDisabled = props.disabled || context.disabled;
 
   const onSeekBackward = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -705,7 +710,7 @@ function MediaPlayerSeekBackward(props: MediaPlayerSeekBackwardProps) {
   return (
     <MediaPlayerTooltip
       tooltip={`Back ${seconds}s`}
-      shortcut={isVideo ? ["←"] : ["Shift ←"]}
+      shortcut={context.isVideo ? ["←"] : ["Shift ←"]}
     >
       <Button
         type="button"
@@ -749,10 +754,6 @@ function MediaPlayerSeekForward(props: MediaPlayerSeekForwardProps) {
     useMediaSelector((state) => state.mediaSeekable) ?? [];
   const isDisabled = props.disabled || context.disabled;
 
-  const isVideo =
-    typeof window !== "undefined" &&
-    document.querySelector(`#${context.mediaId}`) instanceof HTMLVideoElement;
-
   const onSeekForward = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       props.onClick?.(event);
@@ -773,7 +774,7 @@ function MediaPlayerSeekForward(props: MediaPlayerSeekForwardProps) {
   return (
     <MediaPlayerTooltip
       tooltip={`Forward ${seconds}s`}
-      shortcut={isVideo ? ["→"] : ["Shift →"]}
+      shortcut={context.isVideo ? ["→"] : ["Shift →"]}
     >
       <Button
         type="button"
@@ -824,10 +825,13 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const [isHoveringSeek, setIsHoveringSeek] = React.useState(false);
   const [hoverTime, setHoverTime] = React.useState(0);
 
-  const formattedCurrentTime = formatTime(mediaCurrentTime, seekableEnd);
-  const formattedDuration = formatTime(seekableEnd, seekableEnd);
-  const formattedHoverTime = formatTime(hoverTime, seekableEnd);
-  const formattedRemainingTime = formatTime(
+  const formattedCurrentTime = timeUtils.formatTime(
+    mediaCurrentTime,
+    seekableEnd,
+  );
+  const formattedDuration = timeUtils.formatTime(seekableEnd, seekableEnd);
+  const formattedHoverTime = timeUtils.formatTime(hoverTime, seekableEnd);
+  const formattedRemainingTime = timeUtils.formatTime(
     seekableEnd - mediaCurrentTime,
     seekableEnd,
   );
@@ -1175,9 +1179,12 @@ function MediaPlayerTime(props: MediaPlayerTimeProps) {
   const [, seekableEnd = 0] =
     useMediaSelector((state) => state.mediaSeekable) ?? [];
 
-  const formattedCurrentTime = formatTime(mediaCurrentTime, seekableEnd);
-  const formattedDuration = formatTime(seekableEnd, seekableEnd);
-  const formattedRemainingTime = formatTime(
+  const formattedCurrentTime = timeUtils.formatTime(
+    mediaCurrentTime,
+    seekableEnd,
+  );
+  const formattedDuration = timeUtils.formatTime(seekableEnd, seekableEnd);
+  const formattedRemainingTime = timeUtils.formatTime(
     seekableEnd - mediaCurrentTime,
     seekableEnd,
   );
@@ -1300,9 +1307,7 @@ function MediaPlayerLoop(props: MediaPlayerLoopProps) {
 
   // Get media element to check loop state
   React.useEffect(() => {
-    const mediaElement = document.querySelector(
-      `#${context.mediaId}`,
-    ) as HTMLMediaElement | null;
+    const mediaElement = context.mediaRef.current;
     if (mediaElement) {
       setIsLooping(mediaElement.loop);
       const checkLoop = () => setIsLooping(mediaElement.loop);
@@ -1314,22 +1319,20 @@ function MediaPlayerLoop(props: MediaPlayerLoopProps) {
       });
       return () => observer.disconnect();
     }
-  }, [context.mediaId]);
+  }, [context.mediaRef]);
 
   const onLoopToggle = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       props.onClick?.(event);
       if (event.defaultPrevented) return;
 
-      const mediaElement = document.querySelector(
-        `#${context.mediaId}`,
-      ) as HTMLMediaElement | null;
+      const mediaElement = context.mediaRef.current;
       if (mediaElement) {
         mediaElement.loop = !mediaElement.loop;
         setIsLooping(mediaElement.loop);
       }
     },
-    [context.mediaId, props.onClick],
+    [context.mediaRef, props.onClick],
   );
 
   return (
@@ -1441,12 +1444,9 @@ function MediaPlayerPiP(props: MediaPlayerPiPProps) {
           : MediaActionTypes.MEDIA_ENTER_PIP_REQUEST,
       });
 
-      // Handle PiP errors through the media element directly
-      const mediaElement = document.querySelector(
-        `#${context.mediaId}`,
-      ) as HTMLVideoElement | null;
+      const mediaElement = context.mediaRef.current;
 
-      if (mediaElement) {
+      if (mediaElement instanceof HTMLVideoElement) {
         if (isPictureInPicture) {
           document.exitPictureInPicture().catch((error) => {
             onPipError?.(error, "exit");
@@ -1458,7 +1458,7 @@ function MediaPlayerPiP(props: MediaPlayerPiPProps) {
         }
       }
     },
-    [dispatch, props.onClick, isPictureInPicture, onPipError, context.mediaId],
+    [dispatch, props.onClick, isPictureInPicture, onPipError, context.mediaRef],
   );
 
   return (
@@ -1553,9 +1553,7 @@ function MediaPlayerDownload(props: MediaPlayerDownloadProps) {
 
       if (event.defaultPrevented) return;
 
-      const mediaElement = document.querySelector(
-        `#${context.mediaId}`,
-      ) as HTMLMediaElement | null;
+      const mediaElement = context.mediaRef.current;
 
       if (!mediaElement || !mediaElement.currentSrc) return;
 
@@ -1566,7 +1564,7 @@ function MediaPlayerDownload(props: MediaPlayerDownloadProps) {
       link.click();
       document.body.removeChild(link);
     },
-    [context.mediaId, props.onClick],
+    [context.mediaRef, props.onClick],
   );
 
   return (
