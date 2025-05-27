@@ -163,6 +163,19 @@ function MediaPlayerRootImpl({
     return mediaRef.current instanceof HTMLVideoElement;
   }, []);
 
+  const contextValue = React.useMemo<MediaPlayerContextValue>(
+    () => ({
+      mediaId,
+      labelId,
+      descriptionId,
+      dir,
+      disabled,
+      isVideo,
+      mediaRef,
+    }),
+    [mediaId, labelId, descriptionId, dir, disabled, isVideo],
+  );
+
   React.useEffect(() => {
     const media = mediaRef.current;
     if (!media) return;
@@ -419,19 +432,6 @@ function MediaPlayerRootImpl({
       }
     },
     [dispatch, disabled, rootImplProps.onKeyDown, onPipError],
-  );
-
-  const contextValue = React.useMemo<MediaPlayerContextValue>(
-    () => ({
-      mediaId,
-      labelId,
-      descriptionId,
-      dir,
-      disabled,
-      isVideo,
-      mediaRef,
-    }),
-    [mediaId, labelId, descriptionId, dir, disabled, isVideo],
   );
 
   const RootPrimitive = asChild ? Slot : "div";
