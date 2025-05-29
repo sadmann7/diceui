@@ -74,6 +74,99 @@ Use the `Audio` component instead of `Video` for audio playback.
 
 <ComponentTabs name="media-player-audio-demo" className="block" />
 
+### Live Streaming Player
+
+The media player includes support for live streaming with special controls and indicators:
+
+```tsx
+import * as MediaPlayer from "@/components/ui/media-player";
+
+export default function LivePlayer() {
+  return (
+    <MediaPlayer.Root isLive className="w-full max-w-4xl">
+      <MediaPlayer.Video
+        src="https://your-live-stream-url.m3u8"
+        poster="/stream-poster.jpg"
+      />
+      <MediaPlayer.Overlay />
+      <MediaPlayer.Controls>
+        <MediaPlayer.Play />
+        <MediaPlayer.Live />
+        <MediaPlayer.Volume />
+        <div className="flex-1" />
+        <MediaPlayer.Settings />
+        <MediaPlayer.Cast />
+        <MediaPlayer.AirPlay />
+        <MediaPlayer.Fullscreen />
+      </MediaPlayer.Controls>
+    </MediaPlayer.Root>
+  );
+}
+```
+
+### Advanced Player with All Features
+
+```tsx
+import * as MediaPlayer from "@/components/ui/media-player";
+
+export default function AdvancedPlayer() {
+  return (
+    <MediaPlayer.Root 
+      className="w-full max-w-4xl"
+      showPreview
+      onCastError={(error, mode) => {
+        console.error(`Cast ${mode} error:`, error);
+      }}
+      onAirPlayError={(error) => {
+        console.error("AirPlay error:", error);
+      }}
+    >
+      <MediaPlayer.Video
+        src="https://your-video-url.mp4"
+        poster="/video-poster.jpg"
+      >
+        <track
+          kind="subtitles"
+          src="/subtitles-en.vtt"
+          srcLang="en"
+          label="English"
+          default
+        />
+        <track
+          kind="subtitles"
+          src="/subtitles-es.vtt"
+          srcLang="es"
+          label="Español"
+        />
+      </MediaPlayer.Video>
+      
+      <MediaPlayer.Preview 
+        thumbnailSrc={(time) => `https://thumbnails.example.com/${Math.floor(time)}.jpg`}
+      />
+      
+      <MediaPlayer.Overlay />
+      
+      <MediaPlayer.Controls>
+        <MediaPlayer.Play />
+        <MediaPlayer.SeekBackward seconds={10} />
+        <MediaPlayer.SeekForward seconds={10} />
+        <MediaPlayer.Seek withTime />
+        <MediaPlayer.Volume expandable />
+        <div className="flex-1" />
+        <MediaPlayer.Loop />
+        <MediaPlayer.Captions />
+        <MediaPlayer.Settings speeds={[0.25, 0.5, 0.75, 1, 1.25, 1.5, 2]} />
+        <MediaPlayer.Download />
+        <MediaPlayer.Cast />
+        <MediaPlayer.AirPlay />
+        <MediaPlayer.PiP />
+        <MediaPlayer.Fullscreen />
+      </MediaPlayer.Controls>
+    </MediaPlayer.Root>
+  );
+}
+```
+
 ## API Reference
 
 ### Root
@@ -85,11 +178,21 @@ The main container component for the media player.
   name="RootProps"
 />
 
+**Extended Properties:**
+- `isLive?: boolean` - Whether the content is a live stream
+- `showPreview?: boolean` - Enable preview thumbnails on seek hover
+- `onCastError?: (error: unknown, mode: "enter" | "exit") => void` - Cast error handler
+- `onAirPlayError?: (error: unknown) => void` - AirPlay error handler
+
 <DataAttributesTable
   attributes={[
     {
       title: "[data-disabled]",
       value: "Present when the media player is disabled.",
+    },
+    {
+      title: "[data-live]",
+      value: "Present when the media is a live stream.",
     },
   ]}
 />
@@ -384,6 +487,103 @@ A button to download the media file.
   ]}
 />
 
+### Live
+
+A live indicator button that appears for live streams and allows seeking to the live edge.
+
+```tsx
+<MediaPlayer.Live />
+```
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the button is disabled.",
+    },
+    {
+      title: "[data-state]",
+      value: ["live", "behind"],
+      description: "Indicates if the viewer is at the live edge or behind."
+    },
+  ]}
+/>
+
+### Cast
+
+A button to initiate Google Cast for remote playback.
+
+```tsx
+<MediaPlayer.Cast 
+  onCastError={(error, mode) => {
+    console.error(`Cast ${mode} failed:`, error);
+  }}
+/>
+```
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the button is disabled.",
+    },
+    {
+      title: "[data-state]",
+      value: ["casting", "disconnected"],
+    },
+  ]}
+/>
+
+### AirPlay
+
+A button to initiate Apple AirPlay (only visible on supported devices).
+
+```tsx
+<MediaPlayer.AirPlay 
+  onAirPlayError={(error) => {
+    console.error("AirPlay failed:", error);
+  }}
+/>
+```
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the button is disabled.",
+    },
+  ]}
+/>
+
+### Settings
+
+A dropdown menu with playback speed controls and subtitle options.
+
+```tsx
+<MediaPlayer.Settings 
+  speeds={[0.5, 0.75, 1, 1.25, 1.5, 2]}
+/>
+```
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the button is disabled.",
+    },
+  ]}
+/>
+
+### Preview
+
+A preview thumbnail component that shows on seek hover (requires thumbnail source).
+
+```tsx
+<MediaPlayer.Preview 
+  thumbnailSrc={(time) => `https://thumbs.example.com/${Math.floor(time)}.jpg`}
+/>
+```
+
 ## Accessibility
 
 ### Keyboard Interactions
@@ -395,7 +595,7 @@ A button to download the media file.
       description: "Toggles play/pause.",
     },
     {
-      keys: ["ArrowRight",],
+      keys: ["ArrowRight"],
       description: "Seeks forward 5 seconds (video only).",
     },
     {
@@ -404,11 +604,11 @@ A button to download the media file.
     },
     {
       keys: ["J"],
-      description: "Seeks forward 10 seconds (video only).",
+      description: "Seeks backward 10 seconds (video only).",
     },
     {
-      keys: ["K"],
-      description: "Seeks backward 10 seconds (video only).",
+      keys: ["L"],
+      description: "Seeks forward 10 seconds (video only).",
     },
     {
       keys: ["Shift + ArrowRight"],
@@ -417,6 +617,18 @@ A button to download the media file.
     {
       keys: ["Shift + ArrowLeft"],
       description: "Seeks backward 5 seconds (audio only).",
+    },
+    {
+      keys: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
+      description: "Seeks to 0%-90% of duration (not available in live streams).",
+    },
+    {
+      keys: ["Home"],
+      description: "Seeks to beginning (not available in live streams).",
+    },
+    {
+      keys: ["End"],
+      description: "Seeks to end (not available in live streams).",
     },
     {
       keys: ["ArrowUp"],
