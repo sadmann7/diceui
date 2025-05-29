@@ -46,7 +46,7 @@ const triggerVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  },
+  }
 );
 
 interface RelativeTimeCardProps
@@ -98,11 +98,13 @@ const RelativeTimeCard = React.forwardRef<
 
   const date = React.useMemo(
     () => (dateProp instanceof Date ? dateProp : new Date(dateProp)),
-    [dateProp],
+    [dateProp]
   );
 
+  const locale = Intl.DateTimeFormat().resolvedOptions().locale;
+
   const [formattedTime, setFormattedTime] = React.useState<string>(() =>
-    date.toLocaleDateString(),
+    date.toLocaleDateString()
   );
 
   React.useEffect(() => {
@@ -132,7 +134,7 @@ const RelativeTimeCard = React.forwardRef<
         >
           {children ?? (
             <time dateTime={date.toISOString()} suppressHydrationWarning>
-              {new Intl.DateTimeFormat("en-US", {
+              {new Intl.DateTimeFormat(locale, {
                 month: "short",
                 day: "numeric",
                 year: "numeric",
@@ -185,24 +187,26 @@ const TimezoneCard = React.forwardRef<HTMLDivElement, TimezoneCardProps>(
   (props, forwardedRef) => {
     const { date, timezone, ...cardProps } = props;
 
+    const locale = Intl.DateTimeFormat().resolvedOptions().locale;
+
     const timezoneName = React.useMemo(
       () =>
         timezone ??
-        new Intl.DateTimeFormat("en-US", { timeZoneName: "shortOffset" })
+        new Intl.DateTimeFormat(locale, { timeZoneName: "shortOffset" })
           .formatToParts(date)
           .find((part) => part.type === "timeZoneName")?.value,
-      [date, timezone],
+      [date, timezone]
     );
 
     const { formattedDate, formattedTime } = React.useMemo(
       () => ({
-        formattedDate: new Intl.DateTimeFormat("en-US", {
+        formattedDate: new Intl.DateTimeFormat(locale, {
           month: "long",
           day: "numeric",
           year: "numeric",
           timeZone: timezone,
         }).format(date),
-        formattedTime: new Intl.DateTimeFormat("en-US", {
+        formattedTime: new Intl.DateTimeFormat(locale, {
           hour: "2-digit",
           minute: "2-digit",
           second: "2-digit",
@@ -210,7 +214,7 @@ const TimezoneCard = React.forwardRef<HTMLDivElement, TimezoneCardProps>(
           timeZone: timezone,
         }).format(date),
       }),
-      [date, timezone],
+      [date, timezone]
     );
 
     return (
@@ -229,7 +233,7 @@ const TimezoneCard = React.forwardRef<HTMLDivElement, TimezoneCardProps>(
         </time>
       </div>
     );
-  },
+  }
 );
 TimezoneCard.displayName = "TimezoneCard";
 
