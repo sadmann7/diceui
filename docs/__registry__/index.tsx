@@ -153,7 +153,7 @@ export const Index: Record<string, any> = {
       name: "media-player",
       description: "",
       type: "registry:ui",
-      registryDependencies: ["button","select","slider","tooltip"],
+      registryDependencies: ["badge","button","select","slider","tooltip","dropdown-menu"],
       files: [{
         path: "registry/default/ui/media-player.tsx",
         type: "registry:ui",
@@ -933,7 +933,7 @@ export const Index: Record<string, any> = {
       name: "media-player-advanced-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["button","select","slider","tooltip","dropdown-menu","badge"],
+      registryDependencies: ["badge","button","dropdown-menu","select","slider","tooltip"],
       files: [{
         path: "registry/default/examples/media-player-advanced-demo.tsx",
         type: "registry:example",
@@ -949,13 +949,29 @@ export const Index: Record<string, any> = {
       name: "media-player-hls-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["button","select","slider","tooltip","dropdown-menu","badge"],
+      registryDependencies: ["badge","button","dropdown-menu","select","slider","tooltip"],
       files: [{
         path: "registry/default/examples/media-player-hls-demo.tsx",
         type: "registry:example",
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/media-player-hls-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "media-player-settings-demo": {
+      name: "media-player-settings-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["badge","button","dropdown-menu","select","slider","tooltip"],
+      files: [{
+        path: "registry/default/examples/media-player-settings-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/media-player-settings-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",

@@ -480,7 +480,7 @@ export const examples: Registry["items"] = [
   {
     name: "media-player-demo",
     type: "registry:example",
-    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    dependencies: ["@radix-ui/react-slot", "lucide-react", "media-chrome"],
     registryDependencies: ["button", "select", "slider", "tooltip"],
     files: [
       {
@@ -492,7 +492,7 @@ export const examples: Registry["items"] = [
   {
     name: "media-player-audio-demo",
     type: "registry:example",
-    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    dependencies: ["@radix-ui/react-slot", "lucide-react", "media-chrome"],
     registryDependencies: ["button", "select", "slider", "tooltip"],
     files: [
       {
@@ -504,19 +504,14 @@ export const examples: Registry["items"] = [
   {
     name: "media-player-advanced-demo",
     type: "registry:example",
-    dependencies: [
-      "@radix-ui/react-slot",
-      "@radix-ui/react-slider",
-      "lucide-react",
-      "media-chrome",
-    ],
+    dependencies: ["@radix-ui/react-slot", "lucide-react", "media-chrome"],
     registryDependencies: [
+      "badge",
       "button",
+      "dropdown-menu",
       "select",
       "slider",
       "tooltip",
-      "dropdown-menu",
-      "badge",
     ],
     files: [
       {
@@ -528,23 +523,37 @@ export const examples: Registry["items"] = [
   {
     name: "media-player-hls-demo",
     type: "registry:example",
-    dependencies: [
-      "@radix-ui/react-slot",
-      "@radix-ui/react-slider",
-      "lucide-react",
-      "media-chrome",
-    ],
+    dependencies: ["@radix-ui/react-slot", "lucide-react", "media-chrome"],
     registryDependencies: [
+      "badge",
       "button",
+      "dropdown-menu",
       "select",
       "slider",
       "tooltip",
-      "dropdown-menu",
-      "badge",
     ],
     files: [
       {
         path: "examples/media-player-hls-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "media-player-settings-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "lucide-react", "media-chrome"],
+    registryDependencies: [
+      "badge",
+      "button",
+      "dropdown-menu",
+      "select",
+      "slider",
+      "tooltip",
+    ],
+    files: [
+      {
+        path: "examples/media-player-settings-demo.tsx",
         type: "registry:example",
       },
     ],

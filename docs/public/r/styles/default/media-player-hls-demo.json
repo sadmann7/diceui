@@ -3,17 +3,16 @@
   "type": "registry:example",
   "dependencies": [
     "@radix-ui/react-slot",
-    "@radix-ui/react-slider",
     "lucide-react",
     "media-chrome"
   ],
   "registryDependencies": [
+    "badge",
     "button",
+    "dropdown-menu",
     "select",
     "slider",
-    "tooltip",
-    "dropdown-menu",
-    "badge"
+    "tooltip"
   ],
   "files": [
     {

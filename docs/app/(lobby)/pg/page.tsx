@@ -29,6 +29,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import { ClientOnly } from "@/registry/default/components/client-only";
+import MediaPlayerSettingsDemo from "@/registry/default/examples/media-player-settings-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -46,7 +47,8 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <ClientOnly fallback={<Skeleton className="h-[400px] w-full" />}>
-        <MediaPlayer.Root>
+        <MediaPlayerSettingsDemo />
+        <MediaPlayer.Root className="hidden">
           <MediaPlayer.Video>
             <source src="/assets/cloud.mp4" type="video/mp4" />
           </MediaPlayer.Video>
@@ -62,8 +64,8 @@ export default function PlaygroundPage() {
                 <MediaPlayer.Time />
               </div>
               <div className="flex items-center gap-2">
+                <MediaPlayer.Settings />
                 <MediaPlayer.PlaybackSpeed />
-                <MediaPlayer.Captions />
                 <MediaPlayer.Download />
                 <MediaPlayer.PiP />
                 <MediaPlayer.Fullscreen />

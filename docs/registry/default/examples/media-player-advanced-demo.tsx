@@ -12,7 +12,6 @@ import {
   MediaPlayerOverlay,
   MediaPlayerPiP,
   MediaPlayerPlay,
-  MediaPlayerPlaybackSpeed,
   MediaPlayerResolution,
   MediaPlayerSeek,
   MediaPlayerSeekBackward,
@@ -27,19 +26,13 @@ export default function MediaPlayerAdvancedDemo() {
   return (
     <MediaPlayer className="w-full max-w-4xl">
       <MediaPlayerVideo
-        src="/assets/cloud.mp4"
-        poster="/assets/cloud-poster.jpg"
+        src="https://stream.mux.com/Sc89iWAyNkhJ3P1rQ02nrEdCFTnfT01CZ2KmaEcxXfB008.m3u8"
+        poster="https://image.mux.com/Sc89iWAyNkhJ3P1rQ02nrEdCFTnfT01CZ2KmaEcxXfB008/thumbnail.webp?time=13"
+        preload="metadata"
+        muted={false}
+        crossOrigin="anonymous"
         className="aspect-video"
-      >
-        <source src="/assets/cloud.mp4" type="video/mp4" />
-        <track
-          kind="subtitles"
-          src="/assets/subtitles-en.vtt"
-          srcLang="en"
-          label="English"
-          default
-        />
-      </MediaPlayerVideo>
+      />
       <MediaPlayerOverlay />
       <MediaPlayerLoading />
       <MediaPlayerControls className="flex-col items-start gap-2.5">
@@ -57,7 +50,6 @@ export default function MediaPlayerAdvancedDemo() {
             <MediaPlayerLoop />
             <MediaPlayerCaptions />
             <MediaPlayerResolution />
-            <MediaPlayerPlaybackSpeed speeds={[0.5, 0.75, 1, 1.25, 1.5, 2]} />
             <MediaPlayerSettings />
             <MediaPlayerDownload />
             <MediaPlayerCast />

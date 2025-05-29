@@ -91,6 +91,14 @@ const AIRPLAY_NAME = "MediaPlayerAirPlay";
 
 type Direction = "ltr" | "rtl";
 
+interface SubtitleTrack {
+  kind?: string;
+  label?: string;
+  language?: string;
+  id?: string;
+  selected?: boolean;
+}
+
 const DirectionContext = React.createContext<Direction | undefined>(undefined);
 
 function useDirection(dirProp?: Direction): Direction {
@@ -1886,11 +1894,15 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
   const mediaPlaybackRate = useMediaSelector(
     (state) => state.mediaPlaybackRate ?? 1,
   );
+  const mediaSubtitlesList = useMediaSelector(
+    (state) => state.mediaSubtitlesList ?? [],
+  );
   const mediaSubtitlesShowing = useMediaSelector(
-    (state) => state.mediaSubtitlesShowing,
+    (state) => state.mediaSubtitlesShowing ?? [],
   );
 
   const isDisabled = disabled || context.disabled;
+  const subtitlesOff = !mediaSubtitlesShowing?.length;
 
   const onPlaybackRateChange = React.useCallback(
     (rate: number) => {
@@ -1902,11 +1914,36 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
     [dispatch],
   );
 
-  const onToggleSubtitles = React.useCallback(() => {
+  const onToggleSubtitlesOff = React.useCallback(() => {
     dispatch({
       type: MediaActionTypes.MEDIA_TOGGLE_SUBTITLES_REQUEST,
+      detail: false,
     });
   }, [dispatch]);
+
+  const onShowSubtitleTrack = React.useCallback(
+    (subtitleTrack: SubtitleTrack) => {
+      // First turn off any existing subtitles
+      dispatch({
+        type: MediaActionTypes.MEDIA_TOGGLE_SUBTITLES_REQUEST,
+        detail: false,
+      });
+      // Then show the selected track
+      dispatch({
+        type: MediaActionTypes.MEDIA_SHOW_SUBTITLES_REQUEST,
+        detail: subtitleTrack,
+      });
+    },
+    [dispatch],
+  );
+
+  const getCurrentSubtitleLabel = React.useCallback(() => {
+    if (subtitlesOff) return "Off";
+    if (mediaSubtitlesShowing.length > 0) {
+      return mediaSubtitlesShowing[0]?.label || "On";
+    }
+    return "Off";
+  }, [subtitlesOff, mediaSubtitlesShowing]);
 
   return (
     <DropdownMenu>
@@ -1928,12 +1965,11 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
         </DropdownMenuTrigger>
       </MediaPlayerTooltip>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel>Settings</DropdownMenuLabel>
-        <DropdownMenuSeparator />
+        <DropdownMenuLabel className="sr-only">Settings</DropdownMenuLabel>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
-            <span>Speed</span>
-            <Badge variant="secondary" className="ml-auto text-xs">
+            <span className="flex-1">Speed</span>
+            <Badge variant="outline" className="rounded-sm">
               {mediaPlaybackRate}x
             </Badge>
           </DropdownMenuSubTrigger>
@@ -1952,15 +1988,44 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
             ))}
           </DropdownMenuSubContent>
         </DropdownMenuSub>
-        <DropdownMenuItem
-          onClick={onToggleSubtitles}
-          className="justify-between"
-        >
-          <span>Subtitles</span>
-          {mediaSubtitlesShowing?.length ? (
-            <CircleIcon className="size-2 fill-current" />
-          ) : null}
-        </DropdownMenuItem>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <span className="flex-1">Captions</span>
+            <Badge variant="outline" className="rounded-sm">
+              {getCurrentSubtitleLabel()}
+            </Badge>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            <DropdownMenuItem
+              onClick={onToggleSubtitlesOff}
+              className="justify-between"
+            >
+              <span>Off</span>
+              {subtitlesOff && <CircleIcon className="size-2 fill-current" />}
+            </DropdownMenuItem>
+            {mediaSubtitlesList.map((subtitleTrack: SubtitleTrack) => {
+              const isSelected = mediaSubtitlesShowing.some(
+                (showingSubtitle: SubtitleTrack) =>
+                  showingSubtitle.label === subtitleTrack.label,
+              );
+              return (
+                <DropdownMenuItem
+                  key={`${subtitleTrack.kind}-${subtitleTrack.label}-${subtitleTrack.language}`}
+                  onClick={() => onShowSubtitleTrack(subtitleTrack)}
+                  className="justify-between"
+                >
+                  <span>{subtitleTrack.label}</span>
+                  {isSelected && <CircleIcon className="size-2 fill-current" />}
+                </DropdownMenuItem>
+              );
+            })}
+            {!mediaSubtitlesList.length && (
+              <DropdownMenuItem disabled>
+                No captions available
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -1985,7 +2050,8 @@ function MediaPlayerResolution(props: MediaPlayerResolutionProps) {
     });
   }, [mediaRenditionList]);
 
-  const isDisabled = disabled || context.disabled;
+  const isDisabled =
+    disabled || context.disabled || !mediaRenditionList?.length;
 
   const onRenditionChange = React.useCallback(
     (renditionId: string) => {
@@ -2008,8 +2074,6 @@ function MediaPlayerResolution(props: MediaPlayerResolutionProps) {
     if (r.width) return `${r.width}p`;
     return r.id || "Auto";
   }, [currentRendition]);
-
-  if (!mediaRenditionList?.length) return null;
 
   return (
     <DropdownMenu>
@@ -2040,44 +2104,56 @@ function MediaPlayerResolution(props: MediaPlayerResolutionProps) {
           </Badge>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={() => onRenditionChange("auto")}
-          className="justify-between"
-        >
-          <span>Auto</span>
-          {!currentRendition && <CircleIcon className="size-2 fill-current" />}
-        </DropdownMenuItem>
-        {mediaRenditionList
-          .slice()
-          .sort((a: unknown, b: unknown) => {
-            const aHeight = (a as { height?: number }).height || 0;
-            const bHeight = (b as { height?: number }).height || 0;
-            return bHeight - aHeight;
-          })
-          .map((rendition: unknown) => {
-            const r = rendition as {
-              height?: number;
-              width?: number;
-              id?: string;
-              selected?: boolean;
-            };
-            const label = r.height
-              ? `${r.height}p`
-              : r.width
-                ? `${r.width}p`
-                : r.id || "Unknown";
+        {!mediaRenditionList?.length ? (
+          <DropdownMenuItem disabled>
+            No quality options available
+          </DropdownMenuItem>
+        ) : (
+          <>
+            <DropdownMenuItem
+              onClick={() => onRenditionChange("auto")}
+              className="justify-between"
+            >
+              <span>Auto</span>
+              {!currentRendition && (
+                <CircleIcon className="size-2 fill-current" />
+              )}
+            </DropdownMenuItem>
+            {mediaRenditionList
+              .slice()
+              .sort((a: unknown, b: unknown) => {
+                const aHeight = (a as { height?: number }).height || 0;
+                const bHeight = (b as { height?: number }).height || 0;
+                return bHeight - aHeight;
+              })
+              .map((rendition: unknown) => {
+                const r = rendition as {
+                  height?: number;
+                  width?: number;
+                  id?: string;
+                  selected?: boolean;
+                };
+                const label = r.height
+                  ? `${r.height}p`
+                  : r.width
+                    ? `${r.width}p`
+                    : r.id || "Unknown";
 
-            return (
-              <DropdownMenuItem
-                key={r.id}
-                onClick={() => onRenditionChange(r.id || "")}
-                className="justify-between"
-              >
-                <span>{label}</span>
-                {r.selected && <CircleIcon className="size-2 fill-current" />}
-              </DropdownMenuItem>
-            );
-          })}
+                return (
+                  <DropdownMenuItem
+                    key={r.id}
+                    onClick={() => onRenditionChange(r.id || "")}
+                    className="justify-between"
+                  >
+                    <span>{label}</span>
+                    {r.selected && (
+                      <CircleIcon className="size-2 fill-current" />
+                    )}
+                  </DropdownMenuItem>
+                );
+              })}
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
