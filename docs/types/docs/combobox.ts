@@ -30,95 +30,95 @@ export type RootProps<Multiple extends boolean = false> = Omit<
 
 export type LabelProps = Omit<
   ComboboxLabelProps,
-  keyof React.ComponentPropsWithoutRef<"label">
+  keyof React.ComponentProps<"label">
 >;
 
 export type AnchorProps = Omit<
   ComboboxAnchorProps,
-  keyof React.ComponentPropsWithoutRef<"div">
+  keyof React.ComponentProps<"div">
 >;
 
 export type TriggerProps = Omit<
   ComboboxTriggerProps,
-  keyof React.ComponentPropsWithoutRef<"button">
+  keyof React.ComponentProps<"button">
 >;
 
 export type InputProps = Omit<
   ComboboxInputProps,
-  keyof React.ComponentPropsWithoutRef<"input">
+  keyof React.ComponentProps<"input">
 >;
 
 export type CancelProps = Omit<
   ComboboxCancelProps,
-  keyof React.ComponentPropsWithoutRef<"button">
+  keyof React.ComponentProps<"button">
 >;
 
 export type PortalProps = Omit<
   ComboboxPortalProps,
-  keyof React.ComponentPropsWithoutRef<"div">
+  keyof React.ComponentProps<"div">
 >;
 
 export type ContentProps = Omit<
   ComboboxContentProps,
-  keyof React.ComponentPropsWithoutRef<"div">
+  keyof React.ComponentProps<"div">
 >;
 
 export type ArrowProps = Omit<
   ComboboxArrowProps,
-  keyof React.ComponentPropsWithoutRef<"svg">
+  keyof React.ComponentProps<"svg">
 >;
 
 export type LoadingProps = Omit<
   ComboboxLoadingProps,
-  keyof React.ComponentPropsWithoutRef<"div">
+  keyof React.ComponentProps<"div">
 >;
 
 export type EmptyProps = Omit<
   ComboboxEmptyProps,
-  keyof React.ComponentPropsWithoutRef<"div">
+  keyof React.ComponentProps<"div">
 >;
 
 export type GroupProps = Omit<
   ComboboxGroupProps,
-  keyof React.ComponentPropsWithoutRef<"div">
+  keyof React.ComponentProps<"div">
 >;
 
 export type GroupLabelProps = Omit<
   ComboboxGroupLabelProps,
-  keyof React.ComponentPropsWithoutRef<"div">
+  keyof React.ComponentProps<"div">
 >;
 
 export type ItemProps = Omit<
   ComboboxItemProps,
-  keyof Omit<React.ComponentPropsWithoutRef<"div">, "onSelect">
+  keyof Omit<React.ComponentProps<"div">, "onSelect">
 >;
 
 export type ItemTextProps = Omit<
   ComboboxItemTextProps,
-  keyof React.ComponentPropsWithoutRef<"span">
+  keyof React.ComponentProps<"span">
 >;
 
 export type ItemIndicatorProps = Omit<
   ComboboxItemIndicatorProps,
-  keyof React.ComponentPropsWithoutRef<"span">
+  keyof React.ComponentProps<"span">
 >;
 
 export type SeparatorProps = Omit<
   ComboboxSeparatorProps,
-  keyof React.ComponentPropsWithoutRef<"div">
+  keyof React.ComponentProps<"div">
 >;
 
 export type BadgeListProps = Omit<
   ComboboxBadgeListProps,
-  keyof React.ComponentPropsWithoutRef<"div">
+  keyof React.ComponentProps<"div">
 >;
 
 export type BadgeItemProps = Omit<
   ComboboxBadgeItemProps,
-  keyof React.ComponentPropsWithoutRef<"div">
+  keyof React.ComponentProps<"div">
 >;
 
 export type BadgeItemDeleteProps = Omit<
   ComboboxBadgeItemDeleteProps,
-  keyof React.ComponentPropsWithoutRef<"button">
+  keyof React.ComponentProps<"button">
 >;

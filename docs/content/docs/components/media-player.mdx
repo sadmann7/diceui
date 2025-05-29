@@ -51,6 +51,7 @@ import * as MediaPlayer from "@/components/ui/media-player";
     <source src="..." type="video/mp4" />
   </MediaPlayer.Video>
   <MediaPlayer.Overlay />
+  <MediaPlayer.Loading />
   <MediaPlayer.Controls>
     <MediaPlayer.Play />
     <MediaPlayer.Volume />
@@ -59,6 +60,7 @@ import * as MediaPlayer from "@/components/ui/media-player";
     <MediaPlayer.PlaybackSpeed />
     <MediaPlayer.Loop />
     <MediaPlayer.Captions />
+    <MediaPlayer.Resolution />
     <MediaPlayer.PiP />
     <MediaPlayer.Fullscreen />
     <MediaPlayer.Download />
@@ -73,6 +75,18 @@ import * as MediaPlayer from "@/components/ui/media-player";
 Use the `Audio` component instead of `Video` for audio playback.
 
 <ComponentTabs name="media-player-audio-demo" className="block" />
+
+### Advanced Player with All Features
+
+A comprehensive example showcasing all media player features including the new loading indicator and resolution selector.
+
+<ComponentTabs name="media-player-advanced-demo" className="block" />
+
+### HLS Streaming with Resolution Selector
+
+Example with HLS video stream that demonstrates the automatic resolution detection and quality selection.
+
+<ComponentTabs name="media-player-hls-demo" className="block" />
 
 ### Live Streaming Player
 
@@ -97,69 +111,6 @@ export default function LivePlayer() {
         <MediaPlayer.Settings />
         <MediaPlayer.Cast />
         <MediaPlayer.AirPlay />
-        <MediaPlayer.Fullscreen />
-      </MediaPlayer.Controls>
-    </MediaPlayer.Root>
-  );
-}
-```
-
-### Advanced Player with All Features
-
-```tsx
-import * as MediaPlayer from "@/components/ui/media-player";
-
-export default function AdvancedPlayer() {
-  return (
-    <MediaPlayer.Root 
-      className="w-full max-w-4xl"
-      showPreview
-      onCastError={(error, mode) => {
-        console.error(`Cast ${mode} error:`, error);
-      }}
-      onAirPlayError={(error) => {
-        console.error("AirPlay error:", error);
-      }}
-    >
-      <MediaPlayer.Video
-        src="https://your-video-url.mp4"
-        poster="/video-poster.jpg"
-      >
-        <track
-          kind="subtitles"
-          src="/subtitles-en.vtt"
-          srcLang="en"
-          label="English"
-          default
-        />
-        <track
-          kind="subtitles"
-          src="/subtitles-es.vtt"
-          srcLang="es"
-          label="Español"
-        />
-      </MediaPlayer.Video>
-      
-      <MediaPlayer.Preview 
-        thumbnailSrc={(time) => `https://thumbnails.example.com/${Math.floor(time)}.jpg`}
-      />
-      
-      <MediaPlayer.Overlay />
-      
-      <MediaPlayer.Controls>
-        <MediaPlayer.Play />
-        <MediaPlayer.SeekBackward seconds={10} />
-        <MediaPlayer.SeekForward seconds={10} />
-        <MediaPlayer.Seek withTime />
-        <MediaPlayer.Volume expandable />
-        <div className="flex-1" />
-        <MediaPlayer.Loop />
-        <MediaPlayer.Captions />
-        <MediaPlayer.Settings speeds={[0.25, 0.5, 0.75, 1, 1.25, 1.5, 2]} />
-        <MediaPlayer.Download />
-        <MediaPlayer.Cast />
-        <MediaPlayer.AirPlay />
-        <MediaPlayer.PiP />
         <MediaPlayer.Fullscreen />
       </MediaPlayer.Controls>
     </MediaPlayer.Root>
@@ -251,6 +202,64 @@ A gradient overlay displayed over the video, typically at the bottom where contr
     {
       title: "[data-state]",
       value: ["fullscreen", "windowed"],
+    },
+  ]}
+/>
+
+### Loading
+
+A loading indicator that appears when media is loading, similar to YouTube/Netflix style.
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="LoadingProps"
+/>
+
+**Features:**
+- Shows when `mediaLoading` state is true
+- Automatically hides when media has played and is no longer loading
+- Customizable appearance with children content
+- Positioned as overlay above video
+
+```tsx
+<MediaPlayer.Loading>
+  <div className="flex flex-col items-center gap-4">
+    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary"></div>
+    <p className="text-lg font-semibold">Loading your video...</p>
+  </div>
+</MediaPlayer.Loading>
+```
+
+### Resolution
+
+A dropdown menu to select video quality/resolution for videos with multiple renditions (HLS/DASH).
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="ResolutionProps"
+/>
+
+**Features:**
+- Only appears when multiple video renditions are available
+- Shows current quality in button (e.g., "1080p", "720p")
+- Includes "Auto" option for automatic quality selection
+- Sorts resolutions by quality (highest first)
+- Uses `mediaRenditionList` from media-chrome
+
+```tsx
+<MediaPlayer.Resolution />
+```
+
+**Supported formats:**
+- HLS (.m3u8) streams
+- DASH (.mpd) streams
+- Custom media elements with rendition support
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the button is disabled.",
     },
   ]}
 />

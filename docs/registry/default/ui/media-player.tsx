@@ -35,6 +35,7 @@ import {
   CircleIcon,
   DownloadIcon,
   FastForwardIcon,
+  Loader2Icon,
   Maximize2Icon,
   Minimize2Icon,
   MonitorSpeakerIcon,
@@ -46,6 +47,7 @@ import {
   RewindIcon,
   SettingsIcon,
   SubtitlesIcon,
+  VideoIcon,
   Volume1Icon,
   Volume2Icon,
   VolumeXIcon,
@@ -66,7 +68,6 @@ const SEEK_AMOUNT_SHORT = 5;
 const SEEK_AMOUNT_LONG = 10;
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
-// Component names for error messages
 const ROOT_NAME = "MediaPlayer";
 const VIDEO_NAME = "MediaPlayerVideo";
 const AUDIO_NAME = "MediaPlayerAudio";
@@ -139,7 +140,6 @@ interface MediaPlayerRootProps
   asChild?: boolean;
   disabled?: boolean;
   isLive?: boolean;
-  showPreview?: boolean;
 }
 
 function MediaPlayerRoot(props: MediaPlayerRootProps) {
@@ -166,7 +166,6 @@ function MediaPlayerRootImpl({
   dir: dirProp,
   label,
   isLive = false,
-  showPreview = false,
   children,
   className,
   ...rootImplProps
@@ -467,7 +466,7 @@ function MediaPlayerRootImpl({
         case "8":
         case "9": {
           event.preventDefault();
-          if (isLive) break; // Don't allow scrubbing in live streams
+          if (isLive) break;
           const percent = Number.parseInt(event.key) / 10;
           const seekTime = media.duration * percent;
           dispatch({
@@ -680,6 +679,43 @@ function MediaPlayerOverlay(props: MediaPlayerOverlayProps) {
         className,
       )}
     />
+  );
+}
+
+interface MediaPlayerLoadingProps
+  extends React.ComponentPropsWithoutRef<"div"> {
+  asChild?: boolean;
+}
+
+function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
+  const { asChild, className, ...loadingProps } = props;
+
+  const isLoading = useMediaSelector((state) => state.mediaLoading);
+  const hasPlayed = useMediaSelector((state) => state.mediaHasPlayed);
+
+  const shouldShow = isLoading && (!hasPlayed || isLoading);
+
+  if (!shouldShow) return null;
+
+  const LoadingPrimitive = asChild ? Slot : "div";
+
+  return (
+    <LoadingPrimitive
+      role="status"
+      aria-label="Loading media"
+      data-slot="media-player-loading"
+      {...loadingProps}
+      className={cn(
+        "absolute inset-0 z-40 flex items-center justify-center bg-black/20 backdrop-blur-sm",
+        "[:fullscreen_&]:z-40",
+        className,
+      )}
+    >
+      <div className="flex flex-col items-center gap-3">
+        <Loader2Icon className="size-12 animate-spin text-primary" />
+        <span className="font-medium text-foreground text-sm">Loading...</span>
+      </div>
+    </LoadingPrimitive>
   );
 }
 
@@ -1354,13 +1390,12 @@ function MediaPlayerLoop(props: MediaPlayerLoopProps) {
   const [isLooping, setIsLooping] = React.useState(false);
   const isDisabled = props.disabled || context.disabled;
 
-  // Get media element to check loop state
   React.useEffect(() => {
     const mediaElement = context.mediaRef.current;
     if (mediaElement) {
       setIsLooping(mediaElement.loop);
       const checkLoop = () => setIsLooping(mediaElement.loop);
-      // Listen for attribute changes
+
       const observer = new MutationObserver(checkLoop);
       observer.observe(mediaElement, {
         attributes: true,
@@ -1728,8 +1763,6 @@ function MediaPlayerCast(props: MediaPlayerCastProps) {
           : MediaActionTypes.MEDIA_EXIT_CAST_REQUEST,
       });
 
-      // Note: Actual Google Cast implementation would require Cast SDK
-      // This is a placeholder for the UI interaction
       if (newCastState) {
         console.log("Initiating Cast connection...");
       } else {
@@ -1778,7 +1811,6 @@ function MediaPlayerAirPlay(props: MediaPlayerAirPlayProps) {
   React.useEffect(() => {
     const mediaElement = context.mediaRef.current;
     if (mediaElement instanceof HTMLVideoElement) {
-      // Check if AirPlay is available
       setIsAirPlayAvailable("webkitShowPlaybackTargetPicker" in mediaElement);
     }
   }, [context.mediaRef]);
@@ -1854,7 +1886,6 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
   const mediaPlaybackRate = useMediaSelector(
     (state) => state.mediaPlaybackRate ?? 1,
   );
-  // Simplified: Only use basic subtitle support available in MediaState
   const mediaSubtitlesShowing = useMediaSelector(
     (state) => state.mediaSubtitlesShowing,
   );
@@ -1935,6 +1966,123 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
   );
 }
 
+interface MediaPlayerResolutionProps
+  extends React.ComponentPropsWithoutRef<typeof DropdownMenuTrigger> {}
+
+function MediaPlayerResolution(props: MediaPlayerResolutionProps) {
+  const { asChild, className, disabled, ...resolutionProps } = props;
+
+  const context = useMediaPlayerContext("MediaPlayerResolution");
+  const dispatch = useMediaDispatch();
+
+  const mediaRenditionList = useMediaSelector(
+    (state) => state.mediaRenditionList,
+  );
+  const currentRendition = React.useMemo(() => {
+    return mediaRenditionList?.find((rendition: unknown) => {
+      const r = rendition as { selected?: boolean };
+      return r.selected;
+    });
+  }, [mediaRenditionList]);
+
+  const isDisabled = disabled || context.disabled;
+
+  const onRenditionChange = React.useCallback(
+    (renditionId: string) => {
+      dispatch({
+        type: MediaActionTypes.MEDIA_RENDITION_REQUEST,
+        detail: renditionId === "auto" ? undefined : renditionId,
+      });
+    },
+    [dispatch],
+  );
+
+  const getCurrentQualityLabel = React.useCallback(() => {
+    if (!currentRendition) return "Auto";
+    const r = currentRendition as {
+      height?: number;
+      width?: number;
+      id?: string;
+    };
+    if (r.height) return `${r.height}p`;
+    if (r.width) return `${r.width}p`;
+    return r.id || "Auto";
+  }, [currentRendition]);
+
+  if (!mediaRenditionList?.length) return null;
+
+  return (
+    <DropdownMenu>
+      <MediaPlayerTooltip tooltip="Video quality">
+        <DropdownMenuTrigger asChild>
+          <Button
+            type="button"
+            aria-label="Video quality"
+            aria-controls={context.mediaId}
+            data-disabled={isDisabled ? "" : undefined}
+            data-slot="media-player-resolution"
+            disabled={isDisabled}
+            {...resolutionProps}
+            variant="ghost"
+            size="icon"
+            className={cn("size-8", className)}
+          >
+            <VideoIcon />
+          </Button>
+        </DropdownMenuTrigger>
+      </MediaPlayerTooltip>
+      <DropdownMenuContent align="end" className="w-48">
+        <DropdownMenuLabel className="flex items-center gap-2">
+          <VideoIcon className="size-4" />
+          Quality
+          <Badge variant="secondary" className="ml-auto text-xs">
+            {getCurrentQualityLabel()}
+          </Badge>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={() => onRenditionChange("auto")}
+          className="justify-between"
+        >
+          <span>Auto</span>
+          {!currentRendition && <CircleIcon className="size-2 fill-current" />}
+        </DropdownMenuItem>
+        {mediaRenditionList
+          .slice()
+          .sort((a: unknown, b: unknown) => {
+            const aHeight = (a as { height?: number }).height || 0;
+            const bHeight = (b as { height?: number }).height || 0;
+            return bHeight - aHeight;
+          })
+          .map((rendition: unknown) => {
+            const r = rendition as {
+              height?: number;
+              width?: number;
+              id?: string;
+              selected?: boolean;
+            };
+            const label = r.height
+              ? `${r.height}p`
+              : r.width
+                ? `${r.width}p`
+                : r.id || "Unknown";
+
+            return (
+              <DropdownMenuItem
+                key={r.id}
+                onClick={() => onRenditionChange(r.id || "")}
+                className="justify-between"
+              >
+                <span>{label}</span>
+                {r.selected && <CircleIcon className="size-2 fill-current" />}
+              </DropdownMenuItem>
+            );
+          })}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 interface MediaPlayerPreviewProps
   extends React.ComponentPropsWithoutRef<"div"> {
   thumbnailSrc?: string | ((time: number) => string);
@@ -1949,29 +2097,29 @@ function MediaPlayerPreview(props: MediaPlayerPreviewProps) {
   const previewRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    const handlePreview = (event: CustomEvent) => {
+    const onPreviewRequest = (event: CustomEvent) => {
       if (event.detail && typeof event.detail === "number") {
         setPreviewTime(event.detail);
         setIsVisible(true);
       }
     };
 
-    const handleHidePreview = () => {
+    const onHidePreview = () => {
       setIsVisible(false);
     };
 
     document.addEventListener(
       "mediapreviewrequest",
-      handlePreview as EventListener,
+      onPreviewRequest as EventListener,
     );
-    document.addEventListener("mediahidepreview", handleHidePreview);
+    document.addEventListener("mediahidepreview", onHidePreview);
 
     return () => {
       document.removeEventListener(
         "mediapreviewrequest",
-        handlePreview as EventListener,
+        onPreviewRequest as EventListener,
       );
-      document.removeEventListener("mediahidepreview", handleHidePreview);
+      document.removeEventListener("mediahidepreview", onHidePreview);
     };
   }, []);
 
@@ -2072,6 +2220,7 @@ export {
   MediaPlayerAudio,
   MediaPlayerControls,
   MediaPlayerOverlay,
+  MediaPlayerLoading,
   MediaPlayerPlay,
   MediaPlayerSeekBackward,
   MediaPlayerSeekForward,
@@ -2088,6 +2237,7 @@ export {
   MediaPlayerCast,
   MediaPlayerAirPlay,
   MediaPlayerSettings,
+  MediaPlayerResolution,
   MediaPlayerPreview,
   //
   MediaPlayerRoot as Root,
@@ -2095,6 +2245,7 @@ export {
   MediaPlayerAudio as Audio,
   MediaPlayerControls as Controls,
   MediaPlayerOverlay as Overlay,
+  MediaPlayerLoading as Loading,
   MediaPlayerPlay as Play,
   MediaPlayerSeekBackward as SeekBackward,
   MediaPlayerSeekForward as SeekForward,
@@ -2111,6 +2262,7 @@ export {
   MediaPlayerCast as Cast,
   MediaPlayerAirPlay as AirPlay,
   MediaPlayerSettings as Settings,
+  MediaPlayerResolution as Resolution,
   MediaPlayerPreview as Preview,
   //
   useMediaSelector as useMediaPlayer,

@@ -159,6 +159,67 @@ export interface ControlsProps extends EmptyProps<"div">, CompositionProps {}
 
 export interface OverlayProps extends EmptyProps<"div">, CompositionProps {}
 
+export interface LoadingProps extends EmptyProps<"div">, CompositionProps {
+  /**
+   * Custom content to display in the loading indicator.
+   * If not provided, a default spinner and "Loading..." text will be shown.
+   *
+   * ```tsx
+   * // Default loading indicator
+   * <MediaPlayer.Loading />
+   * ```
+   *
+   * ```tsx
+   * // Custom loading content
+   * <MediaPlayer.Loading>
+   *   <div className="flex flex-col items-center gap-4">
+   *     <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary"></div>
+   *     <p className="text-lg font-semibold">Loading your video...</p>
+   *     <p className="text-sm text-muted-foreground">Please wait...</p>
+   *   </div>
+   * </MediaPlayer.Loading>
+   * ```
+   */
+  children?: React.ReactNode;
+}
+
+export interface ResolutionProps
+  extends EmptyProps<"button">,
+    CompositionProps {
+  /**
+   * The resolution selector automatically detects available video renditions
+   * and provides a dropdown menu to select video quality.
+   *
+   * Only appears when multiple video renditions are available (e.g., HLS/DASH streams).
+   *
+   * Features:
+   * - Shows current quality in button (e.g., "1080p", "720p", "480p")
+   * - Includes "Auto" option for automatic quality selection
+   * - Sorts resolutions by quality (highest first)
+   * - Uses media-chrome's `mediaRenditionList` state
+   *
+   * ```tsx
+   * // Basic usage - shows when renditions are available
+   * <MediaPlayer.Resolution />
+   * ```
+   *
+   * ```tsx
+   * // Works with HLS streams
+   * <MediaPlayer.Root>
+   *   <MediaPlayer.Video src="stream.m3u8" />
+   *   <MediaPlayer.Controls>
+   *     <MediaPlayer.Resolution />
+   *   </MediaPlayer.Controls>
+   * </MediaPlayer.Root>
+   * ```
+   *
+   * Supported video formats:
+   * - HLS (.m3u8) - HTTP Live Streaming
+   * - DASH (.mpd) - Dynamic Adaptive Streaming
+   * - Custom media elements with rendition support
+   */
+}
+
 export interface PlayProps extends EmptyProps<"button">, CompositionProps {}
 
 export interface SeekBackwardProps
@@ -192,7 +253,10 @@ export interface SeekForwardProps
 }
 
 export interface SeekProps
-  extends React.ComponentPropsWithoutRef<typeof Slider>,
+  extends Omit<
+      React.ComponentProps<typeof Slider>,
+      keyof React.ComponentProps<"div">
+    >,
     CompositionProps {
   /**
    * Whether to display the current time and remaining time alongside the seek bar.
@@ -207,7 +271,10 @@ export interface SeekProps
 }
 
 export interface VolumeProps
-  extends React.ComponentPropsWithoutRef<typeof Slider>,
+  extends Omit<
+      React.ComponentProps<typeof Slider>,
+      keyof React.ComponentProps<"div">
+    >,
     CompositionProps {
   /**
    * Whether the volume slider should expand on hover.

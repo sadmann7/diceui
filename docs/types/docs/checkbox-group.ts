@@ -17,33 +17,33 @@ export type RootProps = Omit<
 
 export type LabelProps = Omit<
   CheckboxGroupLabelProps,
-  keyof React.ComponentPropsWithoutRef<"label">
+  keyof React.ComponentProps<"label">
 >;
 
 export type DescriptionProps = Omit<
   CheckboxGroupDescriptionProps,
-  keyof React.ComponentPropsWithoutRef<"div">
+  keyof React.ComponentProps<"div">
 >;
 
 export type MessageProps = Omit<
   CheckboxGroupMessageProps,
-  keyof React.ComponentPropsWithoutRef<"div">
+  keyof React.ComponentProps<"div">
 >;
 
 export type ListProps = Omit<
   CheckboxGroupListProps,
-  keyof React.ComponentPropsWithoutRef<"div">
+  keyof React.ComponentProps<"div">
 >;
 
 export type ItemProps = Omit<
   CheckboxGroupItemProps,
   keyof Omit<
-    React.ComponentPropsWithoutRef<"button">,
+    React.ComponentProps<"button">,
     "checked" | "defaultChecked" | "onCheckedChange"
   >
 >;
 
 export type IndicatorProps = Omit<
   CheckboxGroupIndicatorProps,
-  keyof React.ComponentPropsWithoutRef<"span">
+  keyof React.ComponentProps<"span">
 >;

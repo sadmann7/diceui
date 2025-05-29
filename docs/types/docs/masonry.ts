@@ -2,7 +2,7 @@ import type { CompositionProps } from "@/types";
 import type { SlotProps } from "@radix-ui/react-slot";
 
 export interface RootProps
-  extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"div">>,
+  extends Omit<SlotProps, keyof React.ComponentProps<"div">>,
     CompositionProps {
   /**
    * The width of each column in pixels.
@@ -100,5 +100,5 @@ export interface RootProps
 }
 
 export interface ItemProps
-  extends Omit<SlotProps, keyof React.ComponentPropsWithoutRef<"div">>,
+  extends Omit<SlotProps, keyof React.ComponentProps<"div">>,
     CompositionProps {}

@@ -14,30 +14,30 @@ export type RootProps = Omit<TagsInputRootProps, keyof ControlledProps<"div">>;
 
 export type LabelProps = Omit<
   TagsInputLabelProps,
-  keyof React.ComponentPropsWithoutRef<"label">
+  keyof React.ComponentProps<"label">
 >;
 
 export type ItemProps = Omit<
   TagsInputItemProps,
-  keyof React.ComponentPropsWithoutRef<"div">
+  keyof React.ComponentProps<"div">
 >;
 
 export type InputProps = Omit<
   TagsInputInputProps,
-  keyof React.ComponentPropsWithoutRef<"input">
+  keyof React.ComponentProps<"input">
 >;
 
 export type ItemDeleteProps = Omit<
   TagsInputItemDeleteProps,
-  keyof React.ComponentPropsWithoutRef<"button">
+  keyof React.ComponentProps<"button">
 >;
 
 export type ItemTextProps = Omit<
   TagsInputItemTextProps,
-  keyof React.ComponentPropsWithoutRef<"span">
+  keyof React.ComponentProps<"span">
 >;
 
 export type ClearProps = Omit<
   TagsInputClearProps,
-  keyof React.ComponentPropsWithoutRef<"button">
+  keyof React.ComponentProps<"button">
 >;

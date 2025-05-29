@@ -15,20 +15,20 @@ export type RootProps<Multiple extends boolean = false> = Omit<
 
 export type GroupProps = Omit<
   ListboxGroupProps,
-  keyof React.ComponentPropsWithoutRef<"div">
+  keyof React.ComponentProps<"div">
 >;
 
 export type GroupLabelProps = Omit<
   ListboxGroupLabelProps,
-  keyof React.ComponentPropsWithoutRef<"div">
+  keyof React.ComponentProps<"div">
 >;
 
 export type ItemProps = Omit<
   ListboxItemProps,
-  keyof Omit<React.ComponentPropsWithoutRef<"div">, "onSelect">
+  keyof Omit<React.ComponentProps<"div">, "onSelect">
 >;
 
 export type ItemIndicatorProps = Omit<
   ListboxItemIndicatorProps,
-  keyof React.ComponentPropsWithoutRef<"span">
+  keyof React.ComponentProps<"span">
 >;

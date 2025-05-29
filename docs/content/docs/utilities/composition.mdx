@@ -19,30 +19,18 @@ npx shadcn@latest add "https://diceui.com/r/composition"
   <Step>
     Copy and paste the following code into your project.
 
-    <ComponentSource src="./lib/composition.ts" />
+    <ComponentSource src="./lib/compose-refs.ts" />
   </Step>
 </Steps>
 
 ## Usage
 
-### Composing Event Handlers
-
-```tsx
-import { composeEventHandlers } from "@/lib/composition"
-
-export function Button({ onClick, ...props }) {
-  const handleClick = composeEventHandlers(onClick, (event) => {
-    console.log("Button clicked")
-  })
-
-  return <button onClick={handleClick} {...props} />
-}
-```
-
 ### Composing Refs
 
+#### useComposedRefs
+
 ```tsx
-import { useComposedRefs } from "@/lib/composition"
+import { useComposedRefs } from "@/lib/compose-refs"
 
 export function Input({ forwardedRef, ...props }) {
   const localRef = React.useRef(null)
@@ -52,16 +40,20 @@ export function Input({ forwardedRef, ...props }) {
 }
 ```
 
+#### composeRefs
+
+```tsx
+import { composeRefs } from "@/lib/compose-refs"
+
+export function Input({ forwardedRef, ...props }) {
+  const localRef = React.useRef(null)
+  const composedRefs = composeRefs(forwardedRef, localRef)
+
+  return <input ref={composedRefs} {...props} />
+} 
+```
+
 ## API Reference
-
-### composeEventHandlers
-
-A utility function that composes two event handlers into a single handler.
-
-<AutoTypeTable
-  path="./types/docs/utilities.ts"
-  name="ComposeEventHandlersProps"
-/>
 
 ### composeRefs
 
@@ -83,5 +75,4 @@ A React hook that composes multiple refs together.
 
 ## Credits
 
-- [Radix UI](https://github.com/radix-ui/primitives/blob/main/packages/core/primitive/src/primitive.tsx) - For the `composeEventHandlers` utility.
 - [Radix UI](https://github.com/radix-ui/primitives/blob/main/packages/react/compose-refs/src/compose-refs.tsx) - For the `composeRefs` and `useComposedRefs` utilities.
