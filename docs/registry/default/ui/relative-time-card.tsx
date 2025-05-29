@@ -17,7 +17,10 @@ import * as React from "react";
 function formatRelativeTime(date: Date): string {
   const now = new Date();
   const diff = now.getTime() - date.getTime();
-  const seconds = Math.floor(diff / 1000);
+  const isInFuture = diff < 0;
+  const absDiff = Math.abs(diff);
+
+  const seconds = Math.floor(absDiff / 1000);
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
   const days = Math.floor(hours / 24);
@@ -25,12 +28,24 @@ function formatRelativeTime(date: Date): string {
     `${n} ${word}${n === 1 ? "" : "s"}`;
 
   if (seconds < 5) return "just now";
-  if (seconds < 60) return `${plural(seconds, "second")} ago`;
-  if (minutes < 60)
-    return `${plural(minutes, "minute")} ${plural(seconds % 60, "second")} ago`;
-  if (hours < 24) return `${plural(hours, "hour")} ago`;
-  if (days < 7) return `${plural(days, "day")} ago`;
-  return date.toLocaleDateString();
+
+  if (isInFuture) {
+    if (seconds < 60) return `in ${plural(seconds, "second")}`;
+    if (minutes < 60) return `in ${plural(minutes, "minute")}`;
+    if (hours < 24) return `in ${plural(hours, "hour")}`;
+    if (days < 7) return `in ${plural(days, "day")}`;
+    return date.toLocaleDateString();
+  } else {
+    if (seconds < 60) return `${plural(seconds, "second")} ago`;
+    if (minutes < 60)
+      return `${plural(minutes, "minute")} ${plural(
+        seconds % 60,
+        "second"
+      )} ago`;
+    if (hours < 24) return `${plural(hours, "hour")} ago`;
+    if (days < 7) return `${plural(days, "day")} ago`;
+    return date.toLocaleDateString();
+  }
 }
 
 const triggerVariants = cva(
@@ -46,7 +61,7 @@ const triggerVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  },
+  }
 );
 
 interface RelativeTimeCardProps
@@ -98,11 +113,11 @@ const RelativeTimeCard = React.forwardRef<
 
   const date = React.useMemo(
     () => (dateProp instanceof Date ? dateProp : new Date(dateProp)),
-    [dateProp],
+    [dateProp]
   );
 
   const [formattedTime, setFormattedTime] = React.useState<string>(() =>
-    date.toLocaleDateString(),
+    date.toLocaleDateString()
   );
 
   React.useEffect(() => {
@@ -191,7 +206,7 @@ const TimezoneCard = React.forwardRef<HTMLDivElement, TimezoneCardProps>(
         new Intl.DateTimeFormat("en-US", { timeZoneName: "shortOffset" })
           .formatToParts(date)
           .find((part) => part.type === "timeZoneName")?.value,
-      [date, timezone],
+      [date, timezone]
     );
 
     const { formattedDate, formattedTime } = React.useMemo(
@@ -210,7 +225,7 @@ const TimezoneCard = React.forwardRef<HTMLDivElement, TimezoneCardProps>(
           timeZone: timezone,
         }).format(date),
       }),
-      [date, timezone],
+      [date, timezone]
     );
 
     return (
@@ -229,7 +244,7 @@ const TimezoneCard = React.forwardRef<HTMLDivElement, TimezoneCardProps>(
         </time>
       </div>
     );
-  },
+  }
 );
 TimezoneCard.displayName = "TimezoneCard";
 
