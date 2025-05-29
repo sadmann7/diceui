@@ -7,6 +7,7 @@ export default function RelativeTimeCardDemo() {
   const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
   const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
   const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 
   return (
     <div className="flex flex-col gap-6">
@@ -22,6 +23,14 @@ export default function RelativeTimeCardDemo() {
           <RelativeTimeCard date={oneHourAgo} variant="default" />
           <RelativeTimeCard date={oneHourAgo} variant="muted" />
           <RelativeTimeCard date={oneHourAgo} variant="ghost" />
+        </div>
+      </div>
+      <div className="flex flex-col gap-2">
+        <span className="text-muted-foreground text-sm">
+          With time in the future
+        </span>
+        <div className="flex items-center gap-4">
+          <RelativeTimeCard date={tomorrow} />
         </div>
       </div>
       <div className="flex flex-col gap-2">
