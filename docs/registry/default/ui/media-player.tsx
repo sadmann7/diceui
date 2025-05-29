@@ -42,7 +42,6 @@ import {
   PictureInPicture2Icon,
   PictureInPictureIcon,
   PlayIcon,
-  RadioIcon,
   RepeatIcon,
   RewindIcon,
   SettingsIcon,
@@ -50,7 +49,6 @@ import {
   Volume1Icon,
   Volume2Icon,
   VolumeXIcon,
-  WifiIcon,
 } from "lucide-react";
 import {
   MediaActionTypes,
@@ -63,12 +61,12 @@ import {
 } from "media-chrome/react/media-store";
 import * as React from "react";
 
-const POINTER_MOVE_THROTTLE_MS = 16;
 const SEEK_THROTTLE_MS = 100;
 const SEEK_AMOUNT_SHORT = 5;
 const SEEK_AMOUNT_LONG = 10;
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
+// Component names for error messages
 const ROOT_NAME = "MediaPlayer";
 const VIDEO_NAME = "MediaPlayerVideo";
 const AUDIO_NAME = "MediaPlayerAudio";
@@ -89,7 +87,6 @@ const SETTINGS_NAME = "MediaPlayerSettings";
 const LIVE_NAME = "MediaPlayerLive";
 const CAST_NAME = "MediaPlayerCast";
 const AIRPLAY_NAME = "MediaPlayerAirPlay";
-const PREVIEW_NAME = "MediaPlayerPreview";
 
 type Direction = "ltr" | "rtl";
 
@@ -127,7 +124,6 @@ interface MediaPlayerRootProps
     React.ComponentPropsWithoutRef<"div">,
     "onTimeUpdate" | "onVolumeChange"
   > {
-  defaultVolume?: number;
   onPlay?: () => void;
   onPause?: () => void;
   onEnded?: () => void;
@@ -155,7 +151,6 @@ function MediaPlayerRoot(props: MediaPlayerRootProps) {
 }
 
 function MediaPlayerRootImpl({
-  defaultVolume = 1,
   onPlay: onPlayProp,
   onPause: onPauseProp,
   onEnded: onEndedProp,
@@ -876,13 +871,7 @@ interface MediaPlayerSeekProps
 }
 
 function MediaPlayerSeek(props: MediaPlayerSeekProps) {
-  const {
-    asChild,
-    withTime = false,
-    className,
-    disabled,
-    ...seekProps
-  } = props;
+  const { withTime = false, className, disabled, ...seekProps } = props;
 
   const context = useMediaPlayerContext(SEEK_NAME);
   const dispatch = useMediaDispatch();
@@ -913,9 +902,6 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
   const isDisabled = disabled || context.disabled;
 
-  const pointerMoveThrottleTimeoutRef = React.useRef<NodeJS.Timeout | null>(
-    null,
-  );
   const seekThrottleTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
   const latestSeekValueRef = React.useRef<number | null>(null);
 
@@ -926,20 +912,12 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   }, [seekableEnd]);
 
   const onPointerLeave = React.useCallback(() => {
-    if (pointerMoveThrottleTimeoutRef.current) {
-      clearTimeout(pointerMoveThrottleTimeoutRef.current);
-      pointerMoveThrottleTimeoutRef.current = null;
-    }
     setIsHoveringSeek(false);
   }, []);
 
   const onPointerMove = React.useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
-      if (
-        !seekRef.current ||
-        seekableEnd <= 0 ||
-        pointerMoveThrottleTimeoutRef.current
-      ) {
+      if (!seekRef.current || seekableEnd <= 0) {
         return;
       }
 
@@ -955,10 +933,6 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
       setTooltipPositionX(centeredPosition);
       setHoverTime(calculatedHoverTime);
-
-      pointerMoveThrottleTimeoutRef.current = setTimeout(() => {
-        pointerMoveThrottleTimeoutRef.current = null;
-      }, POINTER_MOVE_THROTTLE_MS);
     },
     [seekableEnd],
   );
@@ -1374,7 +1348,7 @@ interface MediaPlayerLoopProps
   extends React.ComponentPropsWithoutRef<typeof Button> {}
 
 function MediaPlayerLoop(props: MediaPlayerLoopProps) {
-  const { asChild, children, className, ...loopProps } = props;
+  const { children, className, ...loopProps } = props;
 
   const context = useMediaPlayerContext(LOOP_NAME);
   const [isLooping, setIsLooping] = React.useState(false);
@@ -1445,7 +1419,7 @@ interface MediaPlayerFullscreenProps
   extends React.ComponentPropsWithoutRef<typeof Button> {}
 
 function MediaPlayerFullscreen(props: MediaPlayerFullscreenProps) {
-  const { asChild, children, className, disabled, ...fullscreenProps } = props;
+  const { children, className, disabled, ...fullscreenProps } = props;
 
   const context = useMediaPlayerContext(FULLSCREEN_NAME);
   const dispatch = useMediaDispatch();
@@ -1495,14 +1469,8 @@ interface MediaPlayerPiPProps
 }
 
 function MediaPlayerPiP(props: MediaPlayerPiPProps) {
-  const {
-    asChild,
-    children,
-    className,
-    onPipError,
-    disabled,
-    ...pipButtonProps
-  } = props;
+  const { children, className, onPipError, disabled, ...pipButtonProps } =
+    props;
 
   const context = useMediaPlayerContext(PIP_NAME);
   const dispatch = useMediaDispatch();
@@ -1568,7 +1536,7 @@ interface MediaPlayerCaptionsProps
   extends React.ComponentPropsWithoutRef<typeof Button> {}
 
 function MediaPlayerCaptions(props: MediaPlayerCaptionsProps) {
-  const { asChild, children, className, disabled, ...captionsProps } = props;
+  const { children, className, disabled, ...captionsProps } = props;
 
   const context = useMediaPlayerContext(CAPTIONS_NAME);
   const dispatch = useMediaDispatch();
@@ -1619,7 +1587,7 @@ interface MediaPlayerDownloadProps
   extends React.ComponentPropsWithoutRef<typeof Button> {}
 
 function MediaPlayerDownload(props: MediaPlayerDownloadProps) {
-  const { asChild, children, className, disabled, ...downloadProps } = props;
+  const { children, className, disabled, ...downloadProps } = props;
 
   const context = useMediaPlayerContext(DOWNLOAD_NAME);
 
@@ -1670,11 +1638,11 @@ interface MediaPlayerLiveProps
   extends React.ComponentPropsWithoutRef<typeof Button> {}
 
 function MediaPlayerLive(props: MediaPlayerLiveProps) {
-  const { asChild, children, className, disabled, ...liveProps } = props;
+  const { children, className, disabled, ...liveProps } = props;
 
   const context = useMediaPlayerContext(LIVE_NAME);
   const dispatch = useMediaDispatch();
-  const [seekableStart = 0, seekableEnd = 0] =
+  const [, seekableEnd = 0] =
     useMediaSelector((state) => state.mediaSeekable) ?? [];
   const mediaCurrentTime = useMediaSelector(
     (state) => state.mediaCurrentTime ?? 0,
@@ -1737,8 +1705,7 @@ interface MediaPlayerCastProps
 }
 
 function MediaPlayerCast(props: MediaPlayerCastProps) {
-  const { asChild, children, className, onCastError, disabled, ...castProps } =
-    props;
+  const { children, className, onCastError, disabled, ...castProps } = props;
 
   const context = useMediaPlayerContext(CAST_NAME);
   const dispatch = useMediaDispatch();
@@ -1799,14 +1766,8 @@ interface MediaPlayerAirPlayProps
 }
 
 function MediaPlayerAirPlay(props: MediaPlayerAirPlayProps) {
-  const {
-    asChild,
-    children,
-    className,
-    onAirPlayError,
-    disabled,
-    ...airPlayProps
-  } = props;
+  const { children, className, onAirPlayError, disabled, ...airPlayProps } =
+    props;
 
   const context = useMediaPlayerContext(AIRPLAY_NAME);
   const dispatch = useMediaDispatch();
@@ -1984,7 +1945,6 @@ function MediaPlayerPreview(props: MediaPlayerPreviewProps) {
 
   const [previewTime, setPreviewTime] = React.useState(0);
   const [isVisible, setIsVisible] = React.useState(false);
-  const [position, setPosition] = React.useState({ x: 0, y: 0 });
 
   const previewRef = React.useRef<HTMLDivElement>(null);
 
@@ -2033,8 +1993,6 @@ function MediaPlayerPreview(props: MediaPlayerPreviewProps) {
         className,
       )}
       style={{
-        left: position.x,
-        top: position.y,
         transform: "translate(-50%, -100%)",
       }}
       {...previewProps}
