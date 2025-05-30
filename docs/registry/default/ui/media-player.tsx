@@ -1008,6 +1008,9 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const seekRef = React.useRef<HTMLDivElement>(null);
   const [isHoveringSeek, setIsHoveringSeek] = React.useState(false);
   const [hoverTime, setHoverTime] = React.useState(0);
+  const [pendingSeekTime, setPendingSeekTime] = React.useState<number | null>(
+    null,
+  );
 
   const tooltipRef = React.useRef<HTMLDivElement>(null);
   const [tooltipStyle, setTooltipStyle] = React.useState<React.CSSProperties>({
@@ -1017,22 +1020,31 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     transform: "translateX(-50%)",
   });
 
-  const formattedCurrentTime = timeUtils.formatTime(
-    mediaCurrentTime,
-    seekableEnd,
-  );
+  const displayValue = pendingSeekTime ?? mediaCurrentTime;
+
+  const formattedCurrentTime = timeUtils.formatTime(displayValue, seekableEnd);
   const formattedDuration = timeUtils.formatTime(seekableEnd, seekableEnd);
   const formattedHoverTime = timeUtils.formatTime(hoverTime, seekableEnd);
   const formattedRemainingTime = timeUtils.formatTime(
-    seekableEnd - mediaCurrentTime,
+    seekableEnd - displayValue,
     seekableEnd,
   );
 
   const isDisabled = disabled || context.disabled;
 
   const seekThrottleTimeoutRef = React.useRef<number | null>(null);
-  const latestSeekValueRef = React.useRef<number | null>(null);
   const hoverTimeoutRef = React.useRef<number | null>(null);
+  const pendingSeekTimeRef = React.useRef<number | null>(null);
+
+  React.useEffect(() => {
+    if (pendingSeekTime !== null) {
+      const diff = Math.abs(mediaCurrentTime - pendingSeekTime);
+      if (diff < 0.5) {
+        setPendingSeekTime(null);
+        pendingSeekTimeRef.current = null;
+      }
+    }
+  }, [mediaCurrentTime, pendingSeekTime]);
 
   const bufferedProgress = React.useMemo(() => {
     if (!mediaBuffered?.length || seekableEnd <= 0) return 0;
@@ -1128,19 +1140,19 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const onSeek = React.useCallback(
     (value: number[]) => {
       const time = value[0] ?? 0;
-      latestSeekValueRef.current = time;
+
+      setPendingSeekTime(time);
+      pendingSeekTimeRef.current = time;
 
       if (seekThrottleTimeoutRef.current) {
         cancelAnimationFrame(seekThrottleTimeoutRef.current);
       }
 
       seekThrottleTimeoutRef.current = requestAnimationFrame(() => {
-        if (latestSeekValueRef.current !== null) {
-          dispatch({
-            type: MediaActionTypes.MEDIA_SEEK_REQUEST,
-            detail: latestSeekValueRef.current,
-          });
-        }
+        dispatch({
+          type: MediaActionTypes.MEDIA_SEEK_REQUEST,
+          detail: time,
+        });
         seekThrottleTimeoutRef.current = null;
       });
     },
@@ -1156,11 +1168,13 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         seekThrottleTimeoutRef.current = null;
       }
 
+      setPendingSeekTime(time);
+      pendingSeekTimeRef.current = time;
+
       dispatch({
         type: MediaActionTypes.MEDIA_SEEK_REQUEST,
         detail: time,
       });
-      latestSeekValueRef.current = null;
     },
     [dispatch],
   );
@@ -1194,7 +1208,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
           "relative flex w-full touch-none select-none items-center data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
           className,
         )}
-        value={[mediaCurrentTime]}
+        value={[displayValue]}
         onValueChange={onSeek}
         onValueCommit={onSeekCommit}
         onPointerMove={onPointerMove}

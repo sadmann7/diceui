@@ -2,7 +2,6 @@ import {
   MediaPlayer,
   MediaPlayerControls,
   MediaPlayerFullscreen,
-  MediaPlayerLoading,
   MediaPlayerOverlay,
   MediaPlayerPiP,
   MediaPlayerPlay,
@@ -36,7 +35,6 @@ export default function MediaPlayerSettingsDemo() {
           src="/assets/en-cc.vtt"
         />
       </MediaPlayerVideo>
-      <MediaPlayerLoading />
       <MediaPlayerControls className="flex-col items-start gap-2.5">
         <MediaPlayerOverlay />
         <MediaPlayerSeek />
