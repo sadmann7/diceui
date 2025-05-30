@@ -75,15 +75,7 @@ export default function PlaygroundPage() {
             />
           </video>
           <MediaControlBar>
-            <MediaLoadingIndicator mediaPaused={false} />
-            <MediaPlayButton />
-            <MediaSeekBackwardButton />
-            <MediaSeekForwardButton />
             <MediaTimeRange />
-            <MediaTimeDisplay showDuration />
-            <MediaMuteButton />
-            <MediaVolumeRange />
-            <MediaCaptionsButton />
           </MediaControlBar>
         </MediaController>
         <MediaPlayerSettingsDemo />

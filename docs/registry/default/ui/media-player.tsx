@@ -65,6 +65,10 @@ import * as React from "react";
 
 const SEEK_AMOUNT_SHORT = 5;
 const SEEK_AMOUNT_LONG = 10;
+const LOADING_DELAY_MS = 500;
+const ESTIMATED_SEEK_TOOLTIP_WIDTH = 80;
+const ESTIMATED_SEEK_TOOLTIP_HEIGHT = 30;
+const SEEK_TOOLTIP_MARGIN = 10;
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
 const ROOT_NAME = "MediaPlayer";
@@ -692,7 +696,7 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
   const {
     asChild,
     variant = "default",
-    delay = 500,
+    delay = LOADING_DELAY_MS,
     className,
     ...loadingProps
   } = props;
@@ -1002,13 +1006,15 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const mediaEnded = useMediaSelector((state) => state.mediaEnded);
 
   const seekRef = React.useRef<HTMLDivElement>(null);
-  const previewBoxRef = React.useRef<HTMLDivElement>(null);
-
   const [isHoveringSeek, setIsHoveringSeek] = React.useState(false);
   const [hoverTime, setHoverTime] = React.useState(0);
-  const [previewPosition, setPreviewPosition] = React.useState({
-    x: 0,
-    shift: 0,
+
+  const tooltipRef = React.useRef<HTMLDivElement>(null);
+  const [tooltipStyle, setTooltipStyle] = React.useState<React.CSSProperties>({
+    visibility: "hidden",
+    position: "fixed",
+    zIndex: 50,
+    transform: "translateX(-50%)",
   });
 
   const formattedCurrentTime = timeUtils.formatTime(
@@ -1061,47 +1067,62 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       hoverTimeoutRef.current = null;
     }
     setIsHoveringSeek(false);
+    setTooltipStyle((prev) => ({ ...prev, visibility: "hidden" }));
   }, []);
 
   const onPointerMove = React.useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
       if (!seekRef.current || seekableEnd <= 0) {
+        setTooltipStyle((prev) => ({ ...prev, visibility: "hidden" }));
         return;
       }
 
       const seekRect = seekRef.current.getBoundingClientRect();
+      const clientX = event.clientX;
 
-      const offsetX = event.clientX - seekRect.left;
-      const clampedOffsetX = Math.max(0, Math.min(offsetX, seekRect.width));
-      const relativeX = clampedOffsetX / seekRect.width;
+      const offsetXOnSeekBar = Math.max(
+        0,
+        Math.min(clientX - seekRect.left, seekRect.width),
+      );
+      const relativeX = offsetXOnSeekBar / seekRect.width;
       const calculatedHoverTime = relativeX * seekableEnd;
 
-      const estimatedPreviewBoxWidth = 80;
-      const boxPaddingLeft = 10;
-      const boxPaddingRight = 10;
-
-      const positionPercent = relativeX * 100;
-
-      let shift = 0;
-      const pointerX = relativeX * seekRect.width;
-      const minPos = estimatedPreviewBoxWidth / 2 + boxPaddingLeft;
-      const maxPos =
-        seekRect.width - estimatedPreviewBoxWidth / 2 - boxPaddingRight;
-
-      if (pointerX < minPos) {
-        shift = pointerX - estimatedPreviewBoxWidth / 2 - boxPaddingLeft;
-      } else if (pointerX > maxPos) {
-        shift =
-          pointerX +
-          estimatedPreviewBoxWidth / 2 -
-          seekRect.width +
-          boxPaddingRight;
-      }
-
-      setPreviewPosition({ x: positionPercent, shift });
       setHoverTime(calculatedHoverTime);
+
+      if (isHoveringSeek) {
+        const tooltipWidth =
+          tooltipRef.current?.offsetWidth || ESTIMATED_SEEK_TOOLTIP_WIDTH;
+        const tooltipHeight =
+          tooltipRef.current?.offsetHeight || ESTIMATED_SEEK_TOOLTIP_HEIGHT;
+
+        let x = clientX;
+        let y = seekRect.top - tooltipHeight - SEEK_TOOLTIP_MARGIN;
+
+        if (y < 0) {
+          y = seekRect.bottom + SEEK_TOOLTIP_MARGIN;
+        }
+
+        const effectiveLeft = x - tooltipWidth / 2;
+        const effectiveRight = x + tooltipWidth / 2;
+        const viewportWidth = window.innerWidth;
+
+        if (effectiveLeft < 0) {
+          x = tooltipWidth / 2;
+        } else if (effectiveRight > viewportWidth) {
+          x = viewportWidth - tooltipWidth / 2;
+        }
+
+        setTooltipStyle({
+          left: `${x}px`,
+          top: `${y}px`,
+          position: "fixed",
+          transform: "translateX(-50%)",
+          visibility: "visible",
+          zIndex: 50,
+        });
+      }
     },
-    [seekableEnd],
+    [seekableEnd, isHoveringSeek],
   );
 
   const onSeek = React.useCallback(
@@ -1201,16 +1222,11 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       </SliderPrimitive.Root>
       {isHoveringSeek && seekableEnd > 0 && (
         <div
-          className="pointer-events-none absolute bottom-full z-50 mb-2"
-          style={{
-            left: `${previewPosition.x}%`,
-            transform: `translateX(calc(-50% + ${previewPosition.shift}px))`,
-          }}
+          ref={tooltipRef}
+          style={tooltipStyle}
+          className="pointer-events-none z-50"
         >
-          <div
-            ref={previewBoxRef}
-            className="rounded border bg-accent px-2 py-1 text-accent-foreground text-xs tabular-nums shadow-lg dark:bg-zinc-900"
-          >
+          <div className="whitespace-nowrap rounded border bg-accent px-2 py-1 text-accent-foreground text-xs tabular-nums shadow-lg dark:bg-zinc-900">
             {formattedHoverTime} / {formattedDuration}
           </div>
         </div>
