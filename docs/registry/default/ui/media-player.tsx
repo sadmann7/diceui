@@ -65,7 +65,6 @@ import * as React from "react";
 
 const SEEK_AMOUNT_SHORT = 5;
 const SEEK_AMOUNT_LONG = 10;
-const LOADING_DELAY_MS = 500;
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
 const ROOT_NAME = "MediaPlayer";
@@ -684,16 +683,16 @@ function MediaPlayerOverlay(props: MediaPlayerOverlayProps) {
 }
 
 interface MediaPlayerLoadingProps extends React.ComponentProps<"div"> {
-  variant?: "default" | "dots" | "spinner";
-  delayMs?: number;
   asChild?: boolean;
+  delay?: number;
+  variant?: "default" | "dots" | "spinner";
 }
 
 function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
   const {
-    variant = "default",
-    delayMs = LOADING_DELAY_MS,
     asChild,
+    variant = "default",
+    delay = 500,
     className,
     ...loadingProps
   } = props;
@@ -714,7 +713,7 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
     const shouldShowLoading = isLoading && !isPaused;
 
     if (shouldShowLoading) {
-      const loadingDelay = hasPlayed ? delayMs : 0;
+      const loadingDelay = hasPlayed ? delay : 0;
 
       if (loadingDelay > 0) {
         timeoutRef.current = setTimeout(() => {
@@ -734,7 +733,7 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
         timeoutRef.current = null;
       }
     };
-  }, [isLoading, isPaused, hasPlayed, delayMs]);
+  }, [isLoading, isPaused, hasPlayed, delay]);
 
   React.useEffect(() => {
     return () => {
@@ -1010,7 +1009,6 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const [previewPosition, setPreviewPosition] = React.useState({
     x: 0,
     shift: 0,
-    side: "top" as "top" | "bottom",
   });
 
   const formattedCurrentTime = timeUtils.formatTime(
@@ -1046,68 +1044,6 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     return Math.min(1, seekableStart / seekableEnd);
   }, [mediaBuffered, mediaCurrentTime, seekableEnd, mediaEnded, seekableStart]);
 
-  const getTooltipPosition = React.useCallback(
-    ({
-      relativeX,
-      seekRect,
-    }: {
-      relativeX: number;
-      seekRect: DOMRect;
-    }) => {
-      const estimatedPreviewBoxWidth = 120;
-      const estimatedPreviewBoxHeight = 40;
-      const padding = 12;
-      const gap = 8;
-
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-
-      const pointerX = relativeX * seekRect.width;
-
-      const tooltipBottom = seekRect.top - gap - estimatedPreviewBoxHeight;
-      const tooltipTop = seekRect.bottom + gap + estimatedPreviewBoxHeight;
-
-      let side: "top" | "bottom" = "top";
-      const hasTopSpace = tooltipBottom >= padding;
-      const hasBottomSpace = tooltipTop <= viewportHeight - padding;
-
-      if (!hasTopSpace && hasBottomSpace) {
-        side = "bottom";
-      } else if (!hasTopSpace && !hasBottomSpace) {
-        const topSpace = seekRect.top;
-        const bottomSpace = viewportHeight - seekRect.bottom;
-        side = topSpace >= bottomSpace ? "top" : "bottom";
-      }
-
-      const seekLeft = seekRect.left;
-
-      const tooltipCenterX = seekLeft + pointerX;
-
-      const tooltipLeft = tooltipCenterX - estimatedPreviewBoxWidth / 2;
-      const tooltipRight = tooltipCenterX + estimatedPreviewBoxWidth / 2;
-
-      let shift = 0;
-
-      if (tooltipLeft < padding) {
-        shift = padding - tooltipLeft;
-      } else if (tooltipRight > viewportWidth - padding) {
-        shift = viewportWidth - padding - tooltipRight;
-      }
-
-      const maxShift = estimatedPreviewBoxWidth / 3;
-      shift = Math.max(-maxShift, Math.min(maxShift, shift));
-
-      const positionPercent = (pointerX / seekRect.width) * 100;
-
-      return {
-        x: positionPercent,
-        shift,
-        side,
-      };
-    },
-    [],
-  );
-
   const onPointerEnter = React.useCallback(() => {
     if (seekableEnd > 0) {
       if (hoverTimeoutRef.current) {
@@ -1140,12 +1076,32 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       const relativeX = clampedOffsetX / seekRect.width;
       const calculatedHoverTime = relativeX * seekableEnd;
 
-      const position = getTooltipPosition({ relativeX, seekRect });
+      const estimatedPreviewBoxWidth = 80;
+      const boxPaddingLeft = 10;
+      const boxPaddingRight = 10;
 
-      setPreviewPosition(position);
+      const positionPercent = relativeX * 100;
+
+      let shift = 0;
+      const pointerX = relativeX * seekRect.width;
+      const minPos = estimatedPreviewBoxWidth / 2 + boxPaddingLeft;
+      const maxPos =
+        seekRect.width - estimatedPreviewBoxWidth / 2 - boxPaddingRight;
+
+      if (pointerX < minPos) {
+        shift = pointerX - estimatedPreviewBoxWidth / 2 - boxPaddingLeft;
+      } else if (pointerX > maxPos) {
+        shift =
+          pointerX +
+          estimatedPreviewBoxWidth / 2 -
+          seekRect.width +
+          boxPaddingRight;
+      }
+
+      setPreviewPosition({ x: positionPercent, shift });
       setHoverTime(calculatedHoverTime);
     },
-    [seekableEnd, getTooltipPosition],
+    [seekableEnd],
   );
 
   const onSeek = React.useCallback(
@@ -1245,23 +1201,15 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       </SliderPrimitive.Root>
       {isHoveringSeek && seekableEnd > 0 && (
         <div
-          className="pointer-events-none absolute z-50"
+          className="pointer-events-none absolute bottom-full z-50 mb-2"
           style={{
             left: `${previewPosition.x}%`,
             transform: `translateX(calc(-50% + ${previewPosition.shift}px))`,
-            [previewPosition.side === "top" ? "bottom" : "top"]: "100%",
-            [previewPosition.side === "top" ? "marginBottom" : "marginTop"]:
-              "8px",
           }}
         >
           <div
             ref={previewBoxRef}
-            className={cn(
-              "rounded border bg-accent px-2 py-1 text-accent-foreground text-xs tabular-nums shadow-lg dark:bg-zinc-900",
-              "fade-in-0 zoom-in-95 animate-in duration-150",
-              previewPosition.side === "top" && "slide-in-from-bottom-2",
-              previewPosition.side === "bottom" && "slide-in-from-top-2",
-            )}
+            className="rounded border bg-accent px-2 py-1 text-accent-foreground text-xs tabular-nums shadow-lg dark:bg-zinc-900"
           >
             {formattedHoverTime} / {formattedDuration}
           </div>
