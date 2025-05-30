@@ -84,7 +84,6 @@ export default function PlaygroundPage() {
             <MediaCaptionsButton></MediaCaptionsButton>
           </MediaControlBar>
         </MediaController>
-
         <MediaPlayerSettingsDemo />
         <MediaPlayer.Root className="hidden">
           <MediaPlayer.Video>
