@@ -63,7 +63,6 @@ import {
 } from "media-chrome/react/media-store";
 import * as React from "react";
 
-const SEEK_THROTTLE_MS = 100;
 const SEEK_AMOUNT_SHORT = 5;
 const SEEK_AMOUNT_LONG = 10;
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
@@ -946,7 +945,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
   const isDisabled = disabled || context.disabled;
 
-  const seekThrottleTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  const seekThrottleTimeoutRef = React.useRef<number | null>(null);
   const latestSeekValueRef = React.useRef<number | null>(null);
 
   const onPointerEnter = React.useCallback(() => {
@@ -986,25 +985,21 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       const time = value[0] ?? 0;
       latestSeekValueRef.current = time;
 
-      if (!seekThrottleTimeoutRef.current) {
-        dispatch({
-          type: MediaActionTypes.MEDIA_SEEK_REQUEST,
-          detail: time,
-        });
-
-        seekThrottleTimeoutRef.current = setTimeout(() => {
-          seekThrottleTimeoutRef.current = null;
-          if (
-            latestSeekValueRef.current !== null &&
-            latestSeekValueRef.current !== time
-          ) {
-            dispatch({
-              type: MediaActionTypes.MEDIA_SEEK_REQUEST,
-              detail: latestSeekValueRef.current,
-            });
-          }
-        }, SEEK_THROTTLE_MS);
+      // Cancel any pending throttled update
+      if (seekThrottleTimeoutRef.current) {
+        cancelAnimationFrame(seekThrottleTimeoutRef.current);
       }
+
+      // Schedule update on next animation frame for smooth seeking
+      seekThrottleTimeoutRef.current = requestAnimationFrame(() => {
+        if (latestSeekValueRef.current !== null) {
+          dispatch({
+            type: MediaActionTypes.MEDIA_SEEK_REQUEST,
+            detail: latestSeekValueRef.current,
+          });
+        }
+        seekThrottleTimeoutRef.current = null;
+      });
     },
     [dispatch],
   );
@@ -1012,10 +1007,14 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const onSeekCommit = React.useCallback(
     (value: number[]) => {
       const time = value[0] ?? 0;
+
+      // Cancel any pending throttled update
       if (seekThrottleTimeoutRef.current) {
-        clearTimeout(seekThrottleTimeoutRef.current);
+        cancelAnimationFrame(seekThrottleTimeoutRef.current);
         seekThrottleTimeoutRef.current = null;
       }
+
+      // Immediate dispatch on commit for final accuracy
       dispatch({
         type: MediaActionTypes.MEDIA_SEEK_REQUEST,
         detail: time,
@@ -1046,6 +1045,15 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     });
   }, [mediaBuffered, seekableEnd]);
 
+  // Cleanup any pending animation frames on unmount
+  React.useEffect(() => {
+    return () => {
+      if (seekThrottleTimeoutRef.current) {
+        cancelAnimationFrame(seekThrottleTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const SeekSlider = (
     <Tooltip delayDuration={100} open={isHoveringSeek}>
       <TooltipTrigger asChild>
@@ -1060,7 +1068,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
           ref={seekRef}
           min={seekableStart}
           max={seekableEnd}
-          step={0.1}
+          step={0.01}
           className={cn(
             "relative flex w-full touch-none select-none items-center data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
             className,

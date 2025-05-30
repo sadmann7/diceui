@@ -1,5 +1,4 @@
 "use client";
-
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
@@ -42,11 +41,50 @@ import {
 import * as MediaPlayer from "@/registry/default/ui/media-player";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
+import {
+  MediaCaptionsButton,
+  MediaControlBar,
+  MediaController,
+  MediaMuteButton,
+  MediaPlayButton,
+  MediaSeekBackwardButton,
+  MediaSeekForwardButton,
+  MediaTimeDisplay,
+  MediaTimeRange,
+  MediaVolumeRange,
+} from "media-chrome/react";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
       <ClientOnly fallback={<Skeleton className="h-[400px] w-full" />}>
+        <MediaController>
+          <video
+            slot="media"
+            src="https://stream.mux.com/DS00Spx1CV902MCtPj5WknGlR102V5HFkDe/high.mp4"
+            preload="auto"
+            muted
+            crossOrigin=""
+          >
+            <track
+              label="English"
+              kind="captions"
+              srcLang="en"
+              src="/assets/en-cc.vtt"
+            />
+          </video>
+          <MediaControlBar>
+            <MediaPlayButton></MediaPlayButton>
+            <MediaSeekBackwardButton></MediaSeekBackwardButton>
+            <MediaSeekForwardButton></MediaSeekForwardButton>
+            <MediaTimeRange></MediaTimeRange>
+            <MediaTimeDisplay showDuration></MediaTimeDisplay>
+            <MediaMuteButton></MediaMuteButton>
+            <MediaVolumeRange></MediaVolumeRange>
+            <MediaCaptionsButton></MediaCaptionsButton>
+          </MediaControlBar>
+        </MediaController>
+
         <MediaPlayerSettingsDemo />
         <MediaPlayer.Root className="hidden">
           <MediaPlayer.Video>

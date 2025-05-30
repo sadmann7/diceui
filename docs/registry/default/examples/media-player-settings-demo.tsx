@@ -18,53 +18,23 @@ export default function MediaPlayerSettingsDemo() {
   return (
     <MediaPlayer>
       <MediaPlayerVideo
-        src="https://d2zihajmogu5jn.cloudfront.net/elephantsdream/ed_hd.mp4"
-        preload="metadata"
+        src="https://stream.mux.com/DS00Spx1CV902MCtPj5WknGlR102V5HFkDe/high.mp4"
+        preload="auto"
         crossOrigin=""
+        playsInline
+        className="aspect-video"
       >
+        <track
+          label="thumbnails"
+          default
+          kind="metadata"
+          src="https://image.mux.com/DS00Spx1CV902MCtPj5WknGlR102V5HFkDe/storyboard.vtt"
+        />
         <track
           label="English"
           kind="captions"
           srcLang="en"
-          src="https://media-chrome.mux.dev/examples/vanilla/vtt/elephantsdream/captions.en.vtt"
-          default
-        />
-        <track
-          label="Japanese"
-          kind="captions"
-          srcLang="ja"
-          src="https://media-chrome.mux.dev/examples/vanilla/vtt/elephantsdream/captions.ja.vtt"
-        />
-        <track
-          label="Swedish"
-          kind="captions"
-          srcLang="sv"
-          src="https://media-chrome.mux.dev/examples/vanilla/vtt/elephantsdream/captions.sv.vtt"
-        />
-        <track
-          label="Russian"
-          kind="captions"
-          srcLang="ru"
-          src="https://media-chrome.mux.dev/examples/vanilla/vtt/elephantsdream/captions.ru.vtt"
-        />
-        <track
-          label="Arabic"
-          kind="captions"
-          srcLang="ar"
-          src="https://media-chrome.mux.dev/examples/vanilla/vtt/elephantsdream/captions.ar.vtt"
-        />
-        <track
-          label="Subs English"
-          kind="subtitles"
-          srcLang="en"
-          src="https://media-chrome.mux.dev/examples/vanilla/vtt/elephantsdream/captions.en.vtt"
-          default
-        />
-        <track
-          label="Subs Japanese"
-          kind="subtitles"
-          srcLang="ja"
-          src="https://media-chrome.mux.dev/examples/vanilla/vtt/elephantsdream/captions.ja.vtt"
+          src="/assets/en-cc.vtt"
         />
       </MediaPlayerVideo>
       <MediaPlayerControls className="flex-col items-start gap-2.5">
