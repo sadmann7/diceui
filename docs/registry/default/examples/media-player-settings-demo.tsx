@@ -23,7 +23,6 @@ export default function MediaPlayerSettingsDemo() {
         preload="auto"
         crossOrigin=""
         playsInline
-        className="aspect-video"
       >
         <track
           label="thumbnails"

@@ -38,14 +38,12 @@ import {
   ComboboxItem,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
-import * as MediaPlayer from "@/registry/default/ui/media-player";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
 import {
   MediaCaptionsButton,
   MediaControlBar,
   MediaController,
-  MediaLoadingIndicator,
   MediaMuteButton,
   MediaPlayButton,
   MediaSeekBackwardButton,
@@ -64,7 +62,6 @@ export default function PlaygroundPage() {
             slot="media"
             src="https://stream.mux.com/DS00Spx1CV902MCtPj5WknGlR102V5HFkDe/high.mp4"
             preload="auto"
-            muted
             crossOrigin=""
           >
             <track
@@ -75,35 +72,17 @@ export default function PlaygroundPage() {
             />
           </video>
           <MediaControlBar>
+            <MediaPlayButton />
+            <MediaSeekBackwardButton />
+            <MediaSeekForwardButton />
             <MediaTimeRange />
+            <MediaTimeDisplay showDuration />
+            <MediaMuteButton />
+            <MediaVolumeRange />
+            <MediaCaptionsButton />
           </MediaControlBar>
         </MediaController>
         <MediaPlayerSettingsDemo />
-        <MediaPlayer.Root className="hidden">
-          <MediaPlayer.Video>
-            <source src="/assets/cloud.mp4" type="video/mp4" />
-          </MediaPlayer.Video>
-          <MediaPlayer.Controls className="flex-col items-start gap-2.5">
-            <MediaPlayer.Overlay />
-            <MediaPlayer.Seek />
-            <div className="flex w-full items-center gap-2">
-              <div className="flex flex-1 items-center gap-2">
-                <MediaPlayer.Play />
-                <MediaPlayer.SeekBackward />
-                <MediaPlayer.SeekForward />
-                <MediaPlayer.Volume expandable />
-                <MediaPlayer.Time />
-              </div>
-              <div className="flex items-center gap-2">
-                <MediaPlayer.Settings />
-                <MediaPlayer.PlaybackSpeed />
-                <MediaPlayer.Download />
-                <MediaPlayer.PiP />
-                <MediaPlayer.Fullscreen />
-              </div>
-            </div>
-          </MediaPlayer.Controls>
-        </MediaPlayer.Root>
       </ClientOnly>
       <div className="grid gap-8">
         <Combobox className="w-[15rem]">
