@@ -65,6 +65,12 @@ export default function PlaygroundPage() {
             crossOrigin=""
           >
             <track
+              label="thumbnails"
+              default
+              kind="metadata"
+              src="https://image.mux.com/DS00Spx1CV902MCtPj5WknGlR102V5HFkDe/storyboard.vtt"
+            />
+            <track
               label="English"
               kind="captions"
               srcLang="en"

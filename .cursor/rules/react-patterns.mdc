@@ -59,7 +59,55 @@ const [data, setData] = useState(null);
 
 ### ✅ Prefer: State machine
 ```tsx
-const [state, setState] = useState({ status: 'idle', data: null, error: null });
+type StoreSetState<T> = <K extends keyof T>(
+  key: K,
+  value: T[K],
+  opts?: unknown
+) => void
+
+type Store<T> = {
+  snapshot: () => T
+  subscribe: (callback: () => void) => () => void
+  setState: StoreSetState<T>
+  emit: () => void
+}
+
+function createStore<T>(
+  initialState: T,
+  onChange?: Partial<{
+    [K in keyof T]: (value: T[K], store: Store<T>) => void
+  }>
+): Store<T> {
+  let state = { ...initialState }
+  const listeners = new Set<() => void>()
+
+  const store: Store<T> = {
+    snapshot: () => state,
+    subscribe: (cb) => {
+      listeners.add(cb)
+      return () => listeners.delete(cb)
+    },
+    setState: (key, value, opts) => {
+      if (Object.is(state[key], value)) return
+      state[key] = value
+      onChange?.[key]?.(value, store)
+      store.emit()
+    },
+    emit: () => {
+      listeners.forEach((cb) => cb())
+    },
+  }
+
+  return store
+}
+
+function useStoreSelector<T extends StoreState, U>(
+  store: Store<T>,
+  selector: (state: T) => U
+): U {
+  const getSnapshot = () => selector(store.snapshot())
+  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot)
+}
 ```
 
 ### ❌ Avoid: Complex conditionals in JSX
