@@ -128,10 +128,7 @@ function useMediaPlayerContext(consumerName: string) {
 }
 
 interface MediaPlayerRootProps
-  extends Omit<
-    React.ComponentPropsWithoutRef<"div">,
-    "onTimeUpdate" | "onVolumeChange"
-  > {
+  extends Omit<React.ComponentProps<"div">, "onTimeUpdate" | "onVolumeChange"> {
   onPlay?: () => void;
   onPause?: () => void;
   onEnded?: () => void;
@@ -541,8 +538,7 @@ function MediaPlayerRootImpl({
   );
 }
 
-interface MediaPlayerVideoProps
-  extends React.ComponentPropsWithoutRef<"video"> {
+interface MediaPlayerVideoProps extends React.ComponentProps<"video"> {
   asChild?: boolean;
 }
 
@@ -598,8 +594,7 @@ function MediaPlayerVideo(props: MediaPlayerVideoProps) {
   );
 }
 
-interface MediaPlayerAudioProps
-  extends React.ComponentPropsWithoutRef<"audio"> {
+interface MediaPlayerAudioProps extends React.ComponentProps<"audio"> {
   asChild?: boolean;
 }
 
@@ -633,8 +628,7 @@ function MediaPlayerAudio(props: MediaPlayerAudioProps) {
   );
 }
 
-interface MediaPlayerControlsProps
-  extends React.ComponentPropsWithoutRef<"div"> {
+interface MediaPlayerControlsProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
@@ -664,8 +658,7 @@ function MediaPlayerControls(props: MediaPlayerControlsProps) {
   );
 }
 
-interface MediaPlayerOverlayProps
-  extends React.ComponentPropsWithoutRef<"div"> {
+interface MediaPlayerOverlayProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
@@ -689,20 +682,100 @@ function MediaPlayerOverlay(props: MediaPlayerOverlayProps) {
   );
 }
 
-interface MediaPlayerLoadingProps
-  extends React.ComponentPropsWithoutRef<"div"> {
+interface MediaPlayerLoadingProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
+  delay?: number;
+  variant?: "default" | "dots" | "spinner";
 }
 
 function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
-  const { asChild, className, ...loadingProps } = props;
+  const {
+    asChild,
+    variant = "default",
+    delay = 500,
+    className,
+    ...loadingProps
+  } = props;
 
   const isLoading = useMediaSelector((state) => state.mediaLoading);
+  const isPaused = useMediaSelector((state) => state.mediaPaused);
   const hasPlayed = useMediaSelector((state) => state.mediaHasPlayed);
 
-  const shouldShow = isLoading && (!hasPlayed || isLoading);
+  const [shouldRender, setShouldRender] = React.useState(false);
+  const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
-  if (!shouldShow) return null;
+  React.useEffect(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+
+    const shouldShowLoading = isLoading && !isPaused;
+
+    if (shouldShowLoading) {
+      const loadingDelay = hasPlayed ? delay : 0;
+
+      if (loadingDelay > 0) {
+        timeoutRef.current = setTimeout(() => {
+          setShouldRender(true);
+          timeoutRef.current = null;
+        }, loadingDelay);
+      } else {
+        setShouldRender(true);
+      }
+    } else {
+      setShouldRender(false);
+    }
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    };
+  }, [isLoading, isPaused, hasPlayed, delay]);
+
+  React.useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  const getLoadingIcon = React.useCallback(() => {
+    switch (variant) {
+      case "dots":
+        return (
+          <div className="flex items-center gap-1">
+            <div className="size-3 animate-bounce rounded-full bg-primary [animation-delay:-0.3s]" />
+            <div className="size-3 animate-bounce rounded-full bg-primary [animation-delay:-0.15s]" />
+            <div className="size-3 animate-bounce rounded-full bg-primary" />
+          </div>
+        );
+
+      case "spinner":
+        return (
+          <svg
+            className="size-12 animate-spin text-primary"
+            viewBox="0 0 100 100"
+            fill="none"
+          >
+            <path
+              d="M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50"
+              stroke="currentColor"
+              strokeWidth="8"
+              strokeLinecap="round"
+            />
+          </svg>
+        );
+
+      default:
+        return <Loader2Icon className="size-12 animate-spin text-primary" />;
+    }
+  }, [variant]);
+
+  if (!shouldRender) return null;
 
   const LoadingPrimitive = asChild ? Slot : "div";
 
@@ -710,24 +783,26 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
     <LoadingPrimitive
       role="status"
       aria-label="Loading media"
+      aria-live="polite"
+      data-loading={isLoading ? "" : undefined}
+      data-paused={isPaused ? "" : undefined}
       data-slot="media-player-loading"
+      data-variant={variant}
       {...loadingProps}
       className={cn(
-        "absolute inset-0 z-40 flex items-center justify-center bg-black/20 backdrop-blur-sm",
-        "[:fullscreen_&]:z-40",
+        "absolute inset-0 z-40 flex items-center justify-center",
+        "bg-black/10 backdrop-blur-[2px]",
+        "transition-opacity duration-150 ease-in-out",
+        "[:fullscreen_&]:z-50",
         className,
       )}
     >
-      <div className="flex flex-col items-center gap-3">
-        <Loader2Icon className="size-12 animate-spin text-primary" />
-        <span className="font-medium text-foreground text-sm">Loading...</span>
-      </div>
+      {getLoadingIcon()}
     </LoadingPrimitive>
   );
 }
 
-interface MediaPlayerPlayProps
-  extends React.ComponentPropsWithoutRef<typeof Button> {}
+interface MediaPlayerPlayProps extends React.ComponentProps<typeof Button> {}
 
 function MediaPlayerPlay(props: MediaPlayerPlayProps) {
   const { asChild, children, className, disabled, ...playButtonProps } = props;
@@ -785,7 +860,7 @@ function MediaPlayerPlay(props: MediaPlayerPlayProps) {
 }
 
 interface MediaPlayerSeekBackwardProps
-  extends React.ComponentPropsWithoutRef<typeof Button> {
+  extends React.ComponentProps<typeof Button> {
   seconds?: number;
 }
 
@@ -845,7 +920,7 @@ function MediaPlayerSeekBackward(props: MediaPlayerSeekBackwardProps) {
 }
 
 interface MediaPlayerSeekForwardProps
-  extends React.ComponentPropsWithoutRef<typeof Button> {
+  extends React.ComponentProps<typeof Button> {
   seconds?: number;
 }
 
@@ -909,7 +984,7 @@ function MediaPlayerSeekForward(props: MediaPlayerSeekForwardProps) {
 }
 
 interface MediaPlayerSeekProps
-  extends React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root> {
+  extends React.ComponentProps<typeof SliderPrimitive.Root> {
   withTime?: boolean;
 }
 
@@ -1177,7 +1252,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 }
 
 interface MediaPlayerVolumeProps
-  extends React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root> {
+  extends React.ComponentProps<typeof SliderPrimitive.Root> {
   asChild?: boolean;
   expandable?: boolean;
 }
@@ -1298,7 +1373,7 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
   );
 }
 
-interface MediaPlayerTimeProps extends React.ComponentPropsWithoutRef<"div"> {
+interface MediaPlayerTimeProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
   mode?: "progress" | "remaining" | "duration";
 }
@@ -1364,7 +1439,7 @@ function MediaPlayerTime(props: MediaPlayerTimeProps) {
 }
 
 interface MediaPlayerPlaybackSpeedProps
-  extends React.ComponentPropsWithoutRef<typeof SelectTrigger> {
+  extends React.ComponentProps<typeof SelectTrigger> {
   speeds?: number[];
 }
 
@@ -1429,8 +1504,7 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
   );
 }
 
-interface MediaPlayerLoopProps
-  extends React.ComponentPropsWithoutRef<typeof Button> {}
+interface MediaPlayerLoopProps extends React.ComponentProps<typeof Button> {}
 
 function MediaPlayerLoop(props: MediaPlayerLoopProps) {
   const { children, className, ...loopProps } = props;
@@ -1500,7 +1574,7 @@ function MediaPlayerLoop(props: MediaPlayerLoopProps) {
 }
 
 interface MediaPlayerFullscreenProps
-  extends React.ComponentPropsWithoutRef<typeof Button> {}
+  extends React.ComponentProps<typeof Button> {}
 
 function MediaPlayerFullscreen(props: MediaPlayerFullscreenProps) {
   const { children, className, disabled, ...fullscreenProps } = props;
@@ -1547,8 +1621,7 @@ function MediaPlayerFullscreen(props: MediaPlayerFullscreenProps) {
   );
 }
 
-interface MediaPlayerPiPProps
-  extends React.ComponentPropsWithoutRef<typeof Button> {
+interface MediaPlayerPiPProps extends React.ComponentProps<typeof Button> {
   onPipError?: (error: unknown, mode: "enter" | "exit") => void;
 }
 
@@ -1617,7 +1690,7 @@ function MediaPlayerPiP(props: MediaPlayerPiPProps) {
 }
 
 interface MediaPlayerCaptionsProps
-  extends React.ComponentPropsWithoutRef<typeof Button> {}
+  extends React.ComponentProps<typeof Button> {}
 
 function MediaPlayerCaptions(props: MediaPlayerCaptionsProps) {
   const { children, className, disabled, ...captionsProps } = props;
@@ -1668,7 +1741,7 @@ function MediaPlayerCaptions(props: MediaPlayerCaptionsProps) {
 }
 
 interface MediaPlayerDownloadProps
-  extends React.ComponentPropsWithoutRef<typeof Button> {}
+  extends React.ComponentProps<typeof Button> {}
 
 function MediaPlayerDownload(props: MediaPlayerDownloadProps) {
   const { children, className, disabled, ...downloadProps } = props;
@@ -1718,8 +1791,7 @@ function MediaPlayerDownload(props: MediaPlayerDownloadProps) {
   );
 }
 
-interface MediaPlayerLiveProps
-  extends React.ComponentPropsWithoutRef<typeof Button> {}
+interface MediaPlayerLiveProps extends React.ComponentProps<typeof Button> {}
 
 function MediaPlayerLive(props: MediaPlayerLiveProps) {
   const { children, className, disabled, ...liveProps } = props;
@@ -1783,8 +1855,7 @@ function MediaPlayerLive(props: MediaPlayerLiveProps) {
   );
 }
 
-interface MediaPlayerCastProps
-  extends React.ComponentPropsWithoutRef<typeof Button> {
+interface MediaPlayerCastProps extends React.ComponentProps<typeof Button> {
   onCastError?: (error: unknown, mode: "enter" | "exit") => void;
 }
 
@@ -1842,8 +1913,7 @@ function MediaPlayerCast(props: MediaPlayerCastProps) {
   );
 }
 
-interface MediaPlayerAirPlayProps
-  extends React.ComponentPropsWithoutRef<typeof Button> {
+interface MediaPlayerAirPlayProps extends React.ComponentProps<typeof Button> {
   onAirPlayError?: (error: unknown) => void;
 }
 
@@ -1916,7 +1986,7 @@ function MediaPlayerAirPlay(props: MediaPlayerAirPlayProps) {
 }
 
 interface MediaPlayerSettingsProps
-  extends React.ComponentPropsWithoutRef<typeof DropdownMenuTrigger> {
+  extends React.ComponentProps<typeof DropdownMenuTrigger> {
   speeds?: number[];
 }
 
@@ -2071,7 +2141,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
 }
 
 interface MediaPlayerResolutionProps
-  extends React.ComponentPropsWithoutRef<typeof DropdownMenuTrigger> {}
+  extends React.ComponentProps<typeof DropdownMenuTrigger> {}
 
 function MediaPlayerResolution(props: MediaPlayerResolutionProps) {
   const { asChild, className, disabled, ...resolutionProps } = props;
@@ -2198,8 +2268,7 @@ function MediaPlayerResolution(props: MediaPlayerResolutionProps) {
   );
 }
 
-interface MediaPlayerPreviewProps
-  extends React.ComponentPropsWithoutRef<"div"> {
+interface MediaPlayerPreviewProps extends React.ComponentProps<"div"> {
   thumbnailSrc?: string | ((time: number) => string);
 }
 
@@ -2272,8 +2341,7 @@ function MediaPlayerPreview(props: MediaPlayerPreviewProps) {
   );
 }
 
-interface MediaPlayerTooltipProps
-  extends React.ComponentPropsWithoutRef<typeof Tooltip> {
+interface MediaPlayerTooltipProps extends React.ComponentProps<typeof Tooltip> {
   tooltip?: string;
   shortcut?: string | string[];
 }
