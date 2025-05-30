@@ -21,7 +21,7 @@ export default function MediaPlayerHlsDemo() {
         className="aspect-video"
       />
       <MediaPlayerOverlay />
-      <MediaPlayerLoading className="bg-black/60" loadingDelay={200}>
+      <MediaPlayerLoading className="bg-black/60">
         <div className="flex flex-col items-center gap-4">
           <div className="h-16 w-16 animate-spin rounded-full border-primary border-b-2"></div>
           <p className="font-semibold text-lg text-white">
