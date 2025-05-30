@@ -45,6 +45,7 @@ import {
   MediaCaptionsButton,
   MediaControlBar,
   MediaController,
+  MediaLoadingIndicator,
   MediaMuteButton,
   MediaPlayButton,
   MediaSeekBackwardButton,
@@ -74,14 +75,15 @@ export default function PlaygroundPage() {
             />
           </video>
           <MediaControlBar>
-            <MediaPlayButton></MediaPlayButton>
-            <MediaSeekBackwardButton></MediaSeekBackwardButton>
-            <MediaSeekForwardButton></MediaSeekForwardButton>
-            <MediaTimeRange></MediaTimeRange>
-            <MediaTimeDisplay showDuration></MediaTimeDisplay>
-            <MediaMuteButton></MediaMuteButton>
-            <MediaVolumeRange></MediaVolumeRange>
-            <MediaCaptionsButton></MediaCaptionsButton>
+            <MediaLoadingIndicator mediaPaused={false} />
+            <MediaPlayButton />
+            <MediaSeekBackwardButton />
+            <MediaSeekForwardButton />
+            <MediaTimeRange />
+            <MediaTimeDisplay showDuration />
+            <MediaMuteButton />
+            <MediaVolumeRange />
+            <MediaCaptionsButton />
           </MediaControlBar>
         </MediaController>
         <MediaPlayerSettingsDemo />
