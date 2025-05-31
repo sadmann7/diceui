@@ -1021,10 +1021,8 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const seekRef = React.useRef<HTMLDivElement>(null);
   const tooltipRef = React.useRef<HTMLDivElement>(null);
 
-  // Use a single state object instead of multiple useState
   const [seekState, setSeekState] = React.useState<SeekState>(initialSeekState);
 
-  // Use refs for values that don't need to trigger re-renders
   const rafIdRef = React.useRef<number | null>(null);
   const seekThrottleTimeoutRef = React.useRef<number | null>(null);
   const hoverTimeoutRef = React.useRef<number | null>(null);
@@ -1090,12 +1088,10 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
   const onPreviewUpdate = React.useCallback(
     (time: number) => {
-      // Cancel any pending preview update
       if (previewDebounceRef.current) {
         cancelAnimationFrame(previewDebounceRef.current);
       }
 
-      // Debounce preview updates to reduce dispatch frequency
       previewDebounceRef.current = requestAnimationFrame(() => {
         dispatch({
           type: MediaActionTypes.MEDIA_PREVIEW_REQUEST,
@@ -1153,7 +1149,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     return Math.min(1, seekableStart / seekableEnd);
   }, [mediaBuffered, mediaCurrentTime, seekableEnd, mediaEnded, seekableStart]);
 
-  const updateTooltipPosition = React.useCallback((clientX: number) => {
+  const onTooltipPositionUpdate = React.useCallback((clientX: number) => {
     if (!seekRef.current || !tooltipRef.current) return;
 
     const tooltipWidth =
@@ -1191,7 +1187,6 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         clearTimeout(hoverTimeoutRef.current);
       }
 
-      // Immediately calculate initial position based on last known pointer position
       if (lastPointerXRef.current && seekRef.current) {
         const seekRect = seekRef.current.getBoundingClientRect();
         const clientX = Math.max(
@@ -1199,14 +1194,12 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
           Math.min(lastPointerXRef.current, seekRect.right),
         );
 
-        // Calculate initial tooltip position before making it visible
         requestAnimationFrame(() => {
-          updateTooltipPosition(clientX);
+          onTooltipPositionUpdate(clientX);
 
-          // Then make it visible after position is set
           hoverTimeoutRef.current = window.setTimeout(() => {
             setSeekState((prev) => ({ ...prev, isHovering: true }));
-          }, 16); // One frame delay to ensure position is applied
+          }, 16);
         });
       } else {
         hoverTimeoutRef.current = window.setTimeout(() => {
@@ -1214,7 +1207,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         }, 50);
       }
     }
-  }, [seekableEnd, updateTooltipPosition]);
+  }, [seekableEnd, onTooltipPositionUpdate]);
 
   const onPointerLeave = React.useCallback(() => {
     if (hoverTimeoutRef.current) {
@@ -1249,12 +1242,10 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
       lastPointerXRef.current = event.clientX;
 
-      // Cancel any pending animation frame
       if (rafIdRef.current) {
         cancelAnimationFrame(rafIdRef.current);
       }
 
-      // Use requestAnimationFrame for smooth updates
       rafIdRef.current = requestAnimationFrame(() => {
         const seekRect = seekRef.current?.getBoundingClientRect();
         if (!seekRect) return;
@@ -1280,7 +1271,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
             return;
           }
 
-          updateTooltipPosition(clientX);
+          onTooltipPositionUpdate(clientX);
         }
 
         rafIdRef.current = null;
@@ -1291,7 +1282,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       seekState.isHovering,
       seekState.tooltipPosition,
       onPreviewUpdate,
-      updateTooltipPosition,
+      onTooltipPositionUpdate,
     ],
   );
 
@@ -1355,12 +1346,12 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const currentChapterCue = getCurrentChapterCue(seekState.hoverTime);
   const previewThumbnail = getPreviewThumbnail(seekState.hoverTime);
 
-  const tooltipStyle = React.useMemo(() => {
+  const tooltipStyle = React.useMemo<React.CSSProperties>(() => {
     if (!seekState.tooltipPosition || !seekState.isHovering) {
       return {
-        visibility: "hidden" as const,
+        visibility: "hidden",
         opacity: 0,
-        pointerEvents: "none" as const,
+        pointerEvents: "none",
       };
     }
 
@@ -1372,8 +1363,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       visibility: "visible" as const,
       opacity: 1,
       zIndex: 50,
-      pointerEvents: "none" as const,
-      // Prevent any transition on first render
+      pointerEvents: "none",
       transition: seekState.hasInitialPosition
         ? "opacity 150ms ease-in-out"
         : "none",
@@ -1540,12 +1530,10 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
     (value: number[]) => {
       const volume = value[0] ?? 0;
 
-      // Cancel any pending animation frame
       if (volumeRafRef.current) {
         cancelAnimationFrame(volumeRafRef.current);
       }
 
-      // Use requestAnimationFrame for smooth volume updates
       volumeRafRef.current = requestAnimationFrame(() => {
         dispatch({
           type: MediaActionTypes.MEDIA_VOLUME_REQUEST,
