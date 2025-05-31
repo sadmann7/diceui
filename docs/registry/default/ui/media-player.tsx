@@ -1091,6 +1091,24 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     }
   }, [mediaCurrentTime, pendingSeekTime]);
 
+  React.useEffect(() => {
+    function onScroll() {
+      if (isHoveringSeek) {
+        setIsHoveringSeek(false);
+        setTooltipStyle((prev) => ({ ...prev, visibility: "hidden" }));
+        dispatch({
+          type: MediaActionTypes.MEDIA_PREVIEW_REQUEST,
+          detail: undefined,
+        });
+      }
+    }
+
+    document.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      document.removeEventListener("scroll", onScroll);
+    };
+  }, [isHoveringSeek, dispatch]);
+
   const bufferedProgress = React.useMemo(() => {
     if (!mediaBuffered?.length || seekableEnd <= 0) return 0;
 
@@ -1156,15 +1174,26 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       if (isHoveringSeek) {
         const tooltipElement = tooltipRef.current;
         const tooltipWidth =
-          tooltipElement?.offsetWidth || ESTIMATED_SEEK_TOOLTIP_WIDTH;
+          tooltipElement?.offsetWidth ?? ESTIMATED_SEEK_TOOLTIP_WIDTH;
         const tooltipHeight =
-          tooltipElement?.offsetHeight || ESTIMATED_SEEK_TOOLTIP_HEIGHT;
+          tooltipElement?.offsetHeight ?? ESTIMATED_SEEK_TOOLTIP_HEIGHT;
 
-        let x = clientX;
-        let y = seekRect.top - tooltipHeight - SEEK_TOOLTIP_MARGIN;
+        const currentSeekRect = seekRef.current.getBoundingClientRect();
+        const currentClientX = event.clientX;
+
+        if (
+          currentClientX < currentSeekRect.left ||
+          currentClientX > currentSeekRect.right
+        ) {
+          setTooltipStyle((prev) => ({ ...prev, visibility: "hidden" }));
+          return;
+        }
+
+        let x = currentClientX;
+        let y = currentSeekRect.top - tooltipHeight - SEEK_TOOLTIP_MARGIN;
 
         if (y < 0) {
-          y = seekRect.bottom + SEEK_TOOLTIP_MARGIN;
+          y = currentSeekRect.bottom + SEEK_TOOLTIP_MARGIN;
         }
 
         const halfTooltipWidth = tooltipWidth / 2;
