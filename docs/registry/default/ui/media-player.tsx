@@ -505,7 +505,7 @@ function MediaPlayerRootImpl({
         className={cn(
           "relative isolate flex flex-col overflow-hidden rounded-lg bg-background outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
           "[:fullscreen_&]:flex [:fullscreen_&]:h-full [:fullscreen_&]:max-h-screen [:fullscreen_&]:flex-col [:fullscreen_&]:justify-between",
-          "[&_[data-slider]::before]:-top-6 [&_[data-slider]::before]:-bottom-2 [&_[data-slider]::before]:absolute [&_[data-slider]::before]:inset-x-0 [&_[data-slider]::before]:z-10 [&_[data-slider]::before]:h-12 [&_[data-slider]::before]:cursor-pointer [&_[data-slider]::before]:content-[''] [&_[data-slider]]:relative",
+          "[&_[data-slider]::before]:-top-4 [&_[data-slider]::before]:-bottom-2 [&_[data-slider]::before]:absolute [&_[data-slider]::before]:inset-x-0 [&_[data-slider]::before]:z-10 [&_[data-slider]::before]:h-8 [&_[data-slider]::before]:cursor-pointer [&_[data-slider]::before]:content-[''] [&_[data-slider]]:relative",
           className,
         )}
       >
@@ -991,7 +991,9 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const mediaBuffered = useMediaSelector((state) => state.mediaBuffered);
   const mediaEnded = useMediaSelector((state) => state.mediaEnded);
 
-  const chapters = useMediaSelector((state) => state.mediaChaptersCues ?? []);
+  const chapterCues = useMediaSelector(
+    (state) => state.mediaChaptersCues ?? [],
+  );
   const mediaPreviewTime = useMediaSelector((state) => state.mediaPreviewTime);
   const mediaPreviewImage = useMediaSelector(
     (state) => state.mediaPreviewImage,
@@ -1031,15 +1033,13 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const hoverTimeoutRef = React.useRef<number | null>(null);
   const pendingSeekTimeRef = React.useRef<number | null>(null);
 
-  const getCurrentChapter = React.useCallback(
+  const getCurrentChapterCue = React.useCallback(
     (time: number) => {
-      if (withoutChapter || !chapters.length) return null;
+      if (withoutChapter || !chapterCues.length) return null;
 
-      return chapters.find(
-        (cue) => time >= cue.startTime && time < cue.endTime,
-      );
+      return chapterCues.find((c) => time >= c.startTime && time < c.endTime);
     },
-    [chapters, withoutChapter],
+    [chapterCues, withoutChapter],
   );
 
   const getPreviewThumbnail = React.useCallback(
@@ -1277,7 +1277,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     };
   }, []);
 
-  const currentChapter = !withoutChapter ? getCurrentChapter(hoverTime) : null;
+  const currentChapterCue = getCurrentChapterCue(hoverTime);
   const previewThumbnail = getPreviewThumbnail(hoverTime);
 
   const SeekSlider = (
@@ -1312,21 +1312,22 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
           />
           <SliderPrimitive.Range className="absolute h-full bg-primary" />
           {!withoutChapter &&
-            chapters.length > 1 &&
+            chapterCues.length > 1 &&
             seekableEnd > 0 &&
-            chapters.slice(1).map((chapter, index) => {
-              const position = (chapter.startTime / seekableEnd) * 100;
+            chapterCues.slice(1).map((chapterCue, index) => {
+              const position = (chapterCue.startTime / seekableEnd) * 100;
 
               return (
                 <div
-                  key={`chapter-${index}-${chapter.startTime}`}
-                  data-slot="media-player-seek-chapter"
-                  className="absolute top-0 h-full w-0.5 bg-white/60 dark:bg-white/40"
+                  key={`chapter-${index}-${chapterCue.startTime}`}
+                  role="presentation"
+                  aria-hidden="true"
+                  data-slot="media-player-seek-chapter-separator"
+                  className="absolute top-0 h-full w-[2.5px] bg-zinc-50 dark:bg-zinc-950"
                   style={{
                     left: `${position}%`,
                     transform: "translateX(-50%)",
                   }}
-                  aria-hidden="true"
                 />
               );
             })}
@@ -1362,9 +1363,9 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
                   )}
                 </div>
               )}
-              {currentChapter && (
+              {currentChapterCue && (
                 <div className="mb-1 max-w-48 rounded bg-accent px-2 py-1 text-center text-accent-foreground text-xs shadow-sm">
-                  {currentChapter.text}
+                  {currentChapterCue.text}
                 </div>
               )}
               <div className="whitespace-nowrap rounded-md border bg-accent px-3 py-1.5 text-accent-foreground text-xs tabular-nums shadow-lg dark:bg-zinc-900">
