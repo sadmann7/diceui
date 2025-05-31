@@ -228,7 +228,7 @@ A button to play or pause the media.
     },
     {
       title: "[data-state]",
-      value: ["playing", "paused"],
+      value: ["on", "off"],
     },
   ]}
 />
@@ -287,27 +287,6 @@ A slider component to seek through the media playback.
   ]}
 />
 
-### Preview
-
-A preview thumbnail component that shows on seek hover (requires thumbnail source).
-
-<AutoTypeTable
-  path="./types/docs/media-player.ts"
-  name="PreviewProps"
-/>
-
-**Features:**
-- Shows thumbnail previews when hovering over the seek bar
-- Supports both static and dynamic thumbnail sources
-- Automatically positions tooltip near cursor
-- Displays formatted time for the preview position
-
-```tsx
-<MediaPlayer.Preview 
-  thumbnailSrc={(time) => `https://thumbs.example.com/${Math.floor(time)}.jpg`}
-/>
-```
-
 ### Volume
 
 A slider component to control the media volume.
@@ -325,7 +304,7 @@ A slider component to control the media volume.
     },
     {
       title: "[data-state]",
-      value: ["muted", "unmuted"],
+      value: ["on", "off"],
       description: "Present on the mute button."
     },
   ]}
@@ -375,7 +354,7 @@ A button to toggle loop mode.
     },
     {
       title: "[data-state]",
-      value: ["off", "all", "one"],
+      value: ["on", "off"],
     },   
   ]}
 />
@@ -397,7 +376,7 @@ A button to toggle fullscreen mode.
     },
     {
       title: "[data-state]",
-      value: ["fullscreen", "windowed"],
+      value: ["on", "off"],
     },
   ]}
 />
@@ -419,7 +398,7 @@ A button to toggle picture in picture mode (video only).
     },
     {
       title: "[data-state]",
-      value: ["pip", "inline"],
+      value: ["on", "off"],
     },
   ]}
 />
@@ -441,7 +420,7 @@ A button to toggle captions or subtitles (video only).
     },
     {
       title: "[data-state]",
-      value: ["active", "inactive"],
+      value: ["on", "off"],
     },
   ]}
 />

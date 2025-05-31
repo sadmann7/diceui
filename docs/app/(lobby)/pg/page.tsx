@@ -46,7 +46,6 @@ import {
   MediaController,
   MediaMuteButton,
   MediaPlayButton,
-  MediaPreviewThumbnail,
   MediaSeekBackwardButton,
   MediaSeekForwardButton,
   MediaTimeDisplay,

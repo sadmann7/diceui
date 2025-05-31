@@ -162,6 +162,38 @@ export interface OverlayProps extends EmptyProps<"div">, CompositionProps {}
 
 export interface LoadingProps extends EmptyProps<"div">, CompositionProps {
   /**
+   * The delay in milliseconds before showing the loading indicator.
+   * @default 500
+   *
+   * ```ts
+   * // Show loading immediately
+   * <MediaPlayer.Loading delay={0} />
+   * ```
+   *
+   * ```ts
+   * // Custom delay
+   * <MediaPlayer.Loading delay={1000} />
+   * ```
+   */
+  delay?: number;
+
+  /**
+   * The visual variant of the loading indicator.
+   * @default "default"
+   *
+   * ```ts
+   * // Use dots animation
+   * <MediaPlayer.Loading variant="dots" />
+   * ```
+   *
+   * ```ts
+   * // Use spinner animation
+   * <MediaPlayer.Loading variant="spinner" />
+   * ```
+   */
+  variant?: "default" | "dots" | "spinner";
+
+  /**
    * Custom content to display in the loading indicator.
    * If not provided, a default spinner and "Loading..." text will be shown.
    *
@@ -185,7 +217,7 @@ export interface LoadingProps extends EmptyProps<"div">, CompositionProps {
 }
 
 export interface ResolutionProps
-  extends EmptyProps<"button">,
+  extends EmptyProps<typeof DropdownMenuTrigger>,
     CompositionProps {
   /**
    * The resolution selector automatically detects available video renditions
@@ -228,7 +260,7 @@ export interface SeekBackwardProps
     CompositionProps {
   /**
    * The number of seconds to seek backward.
-   * @default 10
+   * @default 5
    *
    * ```ts
    * // Seek backward 5 seconds
@@ -269,29 +301,46 @@ export interface SeekProps
    * ```
    */
   withTime?: boolean;
-}
 
-export interface PreviewProps extends EmptyProps<"div">, CompositionProps {
   /**
-   * Source for thumbnail previews when hovering over the seek bar.
-   * Can be a static URL or a function that returns a URL based on time.
+   * Custom preview thumbnail source for seek preview.
+   * Can be a string URL or a function that returns a URL based on time.
    *
    * ```ts
    * // Static thumbnail
-   * <MediaPlayer.Preview thumbnailSrc="/thumbnail.jpg" />
+   * <MediaPlayer.Seek previewThumbnailSrc="/thumbnail.jpg" />
    * ```
    *
    * ```ts
-   * // Dynamic thumbnails based on time
-   * const getThumbnail = (time: number) => {
-   *   const minutes = Math.floor(time / 60);
-   *   return `/thumbnails/thumb-${minutes}.jpg`;
-   * };
-   *
-   * <MediaPlayer.Preview thumbnailSrc={getThumbnail} />
+   * // Dynamic thumbnails
+   * <MediaPlayer.Seek
+   *   previewThumbnailSrc={(time) => `/thumbnails/${Math.floor(time)}.jpg`}
+   * />
    * ```
    */
-  thumbnailSrc?: string | ((time: number) => string);
+  previewThumbnailSrc?: string | ((time: number) => string);
+
+  /**
+   * Whether to disable preview thumbnails.
+   * @default false
+   *
+   * ```ts
+   * // Disable preview thumbnails
+   * <MediaPlayer.Seek withoutPreviewThumbnail />
+   * ```
+   */
+  withoutPreviewThumbnail?: boolean;
+
+  /**
+   * Whether to disable chapter markers on the seek bar.
+   * @default false
+   *
+   * ```ts
+   * // Disable chapter markers
+   * <MediaPlayer.Seek withoutChapter />
+   * ```
+   */
+  withoutChapter?: boolean;
 }
 
 export interface VolumeProps
