@@ -964,14 +964,6 @@ function MediaPlayerSeekForward(props: MediaPlayerSeekForwardProps) {
   );
 }
 
-interface MediaPlayerSeekProps
-  extends React.ComponentProps<typeof SliderPrimitive.Root> {
-  previewThumbnailSrc?: string | ((time: number) => string);
-  withTime?: boolean;
-  withoutPreviewThumbnail?: boolean;
-  withoutChapter?: boolean;
-}
-
 interface SeekState {
   isHovering: boolean;
   hoverTime: number;
@@ -980,13 +972,13 @@ interface SeekState {
   hasInitialPosition: boolean;
 }
 
-const initialSeekState: SeekState = {
-  isHovering: false,
-  hoverTime: 0,
-  pendingSeekTime: null,
-  tooltipPosition: null,
-  hasInitialPosition: false,
-};
+interface MediaPlayerSeekProps
+  extends React.ComponentProps<typeof SliderPrimitive.Root> {
+  previewThumbnailSrc?: string | ((time: number) => string);
+  withTime?: boolean;
+  withoutPreviewThumbnail?: boolean;
+  withoutChapter?: boolean;
+}
 
 function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const {
@@ -1023,7 +1015,13 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const seekRef = React.useRef<HTMLDivElement>(null);
   const tooltipRef = React.useRef<HTMLDivElement>(null);
 
-  const [seekState, setSeekState] = React.useState<SeekState>(initialSeekState);
+  const [seekState, setSeekState] = React.useState<SeekState>({
+    isHovering: false,
+    hoverTime: 0,
+    pendingSeekTime: null,
+    tooltipPosition: null,
+    hasInitialPosition: false,
+  });
 
   const rafIdRef = React.useRef<number | null>(null);
   const seekThrottleTimeoutRef = React.useRef<number | null>(null);
