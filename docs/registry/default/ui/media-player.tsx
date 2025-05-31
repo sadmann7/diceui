@@ -64,8 +64,8 @@ import * as React from "react";
 const SEEK_AMOUNT_SHORT = 5;
 const SEEK_AMOUNT_LONG = 10;
 const LOADING_DELAY_MS = 500;
-const ESTIMATED_SEEK_TOOLTIP_WIDTH = 80;
-const ESTIMATED_SEEK_TOOLTIP_HEIGHT = 30;
+const ESTIMATED_SEEK_TOOLTIP_WIDTH = 150; // Increased for thumbnails
+const ESTIMATED_SEEK_TOOLTIP_HEIGHT = 120; // Increased for thumbnails + text
 const SEEK_TOOLTIP_MARGIN = 10;
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
@@ -972,10 +972,21 @@ function MediaPlayerSeekForward(props: MediaPlayerSeekForwardProps) {
 interface MediaPlayerSeekProps
   extends React.ComponentProps<typeof SliderPrimitive.Root> {
   withTime?: boolean;
+  thumbnailSrc?: string | ((time: number) => string);
+  showThumbnails?: boolean;
+  showChapters?: boolean;
 }
 
 function MediaPlayerSeek(props: MediaPlayerSeekProps) {
-  const { withTime = false, className, disabled, ...seekProps } = props;
+  const {
+    withTime = false,
+    thumbnailSrc,
+    showThumbnails = true,
+    showChapters = true,
+    className,
+    disabled,
+    ...seekProps
+  } = props;
 
   const context = useMediaPlayerContext(SEEK_NAME);
   const dispatch = useMediaDispatch();
@@ -986,6 +997,13 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     useMediaSelector((state) => state.mediaSeekable) ?? [];
   const mediaBuffered = useMediaSelector((state) => state.mediaBuffered);
   const mediaEnded = useMediaSelector((state) => state.mediaEnded);
+
+  // Get chapter and subtitle tracks for thumbnail and chapter support
+  const mediaElement = context.mediaRef.current;
+  const [chapters, setChapters] = React.useState<TextTrackCue[]>([]);
+  const [thumbnailTrack, setThumbnailTrack] = React.useState<TextTrack | null>(
+    null,
+  );
 
   const seekRef = React.useRef<HTMLDivElement>(null);
   const [isHoveringSeek, setIsHoveringSeek] = React.useState(false);
@@ -1018,6 +1036,123 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const hoverTimeoutRef = React.useRef<number | null>(null);
   const pendingSeekTimeRef = React.useRef<number | null>(null);
 
+  // Parse tracks for chapters and thumbnails
+  React.useEffect(() => {
+    if (!mediaElement?.textTracks) return;
+
+    const updateTracks = () => {
+      const textTracks = Array.from(mediaElement.textTracks);
+
+      // Find chapter track
+      const chapterTrack = textTracks.find(
+        (track) => track.kind === "chapters",
+      );
+      if (chapterTrack) {
+        // Ensure track is active
+        if (chapterTrack.mode === "disabled") {
+          chapterTrack.mode = "hidden";
+        }
+        if (chapterTrack.cues) {
+          setChapters(Array.from(chapterTrack.cues));
+        }
+      }
+
+      // Find thumbnail track (metadata track with label "thumbnails")
+      const thumbTrack = textTracks.find(
+        (track) =>
+          track.kind === "metadata" &&
+          (track.label?.toLowerCase().includes("thumbnail") ||
+            track.label?.toLowerCase().includes("storyboard")),
+      );
+      if (thumbTrack) {
+        // Ensure track is active
+        if (thumbTrack.mode === "disabled") {
+          thumbTrack.mode = "hidden";
+        }
+        setThumbnailTrack(thumbTrack);
+      }
+    };
+
+    // Listen for track changes and cue changes
+    const onTracksChange = () => {
+      // Small delay to ensure tracks are fully loaded
+      setTimeout(updateTracks, 100);
+    };
+
+    // Initial update
+    updateTracks();
+
+    mediaElement.addEventListener("loadedmetadata", onTracksChange);
+    // Also listen for track load events
+    mediaElement.addEventListener("loadeddata", onTracksChange);
+
+    // Listen for when tracks are added
+    mediaElement.addEventListener("addtrack", onTracksChange);
+
+    return () => {
+      mediaElement.removeEventListener("loadedmetadata", onTracksChange);
+      mediaElement.removeEventListener("loadeddata", onTracksChange);
+      mediaElement.removeEventListener("addtrack", onTracksChange);
+    };
+  }, [mediaElement]);
+
+  // Get current chapter for hover time
+  const getCurrentChapter = React.useCallback(
+    (time: number) => {
+      if (!showChapters || !chapters.length) return null;
+
+      return chapters.find(
+        (cue) => time >= cue.startTime && time < cue.endTime,
+      );
+    },
+    [chapters, showChapters],
+  );
+
+  // Get thumbnail for hover time
+  const getThumbnailInfo = React.useCallback(
+    (time: number) => {
+      if (!showThumbnails) return null;
+
+      // Use prop-based thumbnail source first
+      if (thumbnailSrc) {
+        const src =
+          typeof thumbnailSrc === "function"
+            ? thumbnailSrc(time)
+            : thumbnailSrc;
+        return { src, coords: null };
+      }
+
+      // Try to get from VTT thumbnail track
+      if (thumbnailTrack?.cues) {
+        const cue = Array.from(thumbnailTrack.cues).find(
+          (cue) => time >= cue.startTime && time < cue.endTime,
+        );
+
+        if (cue) {
+          // Parse VTT thumbnail format (URL#xywh=x,y,w,h)
+          // Use type assertion since VTTCue has text property
+          const text = (cue as VTTCue).text;
+          if (!text) return null;
+
+          const parts = text.trim().split("#");
+          const url = parts[0];
+
+          if (parts[1]?.startsWith("xywh=")) {
+            const coords = parts[1].substring(5).split(",").map(Number);
+            if (coords.length === 4) {
+              return { src: url, coords };
+            }
+          }
+
+          return { src: url, coords: null };
+        }
+      }
+
+      return null;
+    },
+    [thumbnailSrc, thumbnailTrack, showThumbnails],
+  );
+
   React.useEffect(() => {
     if (pendingSeekTime !== null) {
       const diff = Math.abs(mediaCurrentTime - pendingSeekTime);
@@ -1049,9 +1184,10 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       if (hoverTimeoutRef.current) {
         clearTimeout(hoverTimeoutRef.current);
       }
+      // Reduced delay for better responsiveness
       hoverTimeoutRef.current = window.setTimeout(() => {
         setIsHoveringSeek(true);
-      }, 100);
+      }, 50);
     }
   }, [seekableEnd]);
 
@@ -1084,26 +1220,30 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       setHoverTime(calculatedHoverTime);
 
       if (isHoveringSeek) {
+        // Use a more accurate tooltip size estimation or get actual size
+        const tooltipElement = tooltipRef.current;
         const tooltipWidth =
-          tooltipRef.current?.offsetWidth || ESTIMATED_SEEK_TOOLTIP_WIDTH;
+          tooltipElement?.offsetWidth || ESTIMATED_SEEK_TOOLTIP_WIDTH;
         const tooltipHeight =
-          tooltipRef.current?.offsetHeight || ESTIMATED_SEEK_TOOLTIP_HEIGHT;
+          tooltipElement?.offsetHeight || ESTIMATED_SEEK_TOOLTIP_HEIGHT;
 
+        // Position tooltip above the seek bar
         let x = clientX;
         let y = seekRect.top - tooltipHeight - SEEK_TOOLTIP_MARGIN;
 
+        // If tooltip would go above viewport, position it below the seek bar
         if (y < 0) {
           y = seekRect.bottom + SEEK_TOOLTIP_MARGIN;
         }
 
-        const effectiveLeft = x - tooltipWidth / 2;
-        const effectiveRight = x + tooltipWidth / 2;
+        // Keep tooltip within horizontal viewport bounds
+        const halfTooltipWidth = tooltipWidth / 2;
         const viewportWidth = window.innerWidth;
 
-        if (effectiveLeft < 0) {
-          x = tooltipWidth / 2;
-        } else if (effectiveRight > viewportWidth) {
-          x = viewportWidth - tooltipWidth / 2;
+        if (x - halfTooltipWidth < 0) {
+          x = halfTooltipWidth;
+        } else if (x + halfTooltipWidth > viewportWidth) {
+          x = viewportWidth - halfTooltipWidth;
         }
 
         setTooltipStyle({
@@ -1113,6 +1253,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
           transform: "translateX(-50%)",
           visibility: "visible",
           zIndex: 50,
+          pointerEvents: "none",
         });
       }
     },
@@ -1172,6 +1313,10 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     };
   }, []);
 
+  // Get current chapter and thumbnail info for tooltip
+  const currentChapter = getCurrentChapter(hoverTime);
+  const thumbnailInfo = getThumbnailInfo(hoverTime);
+
   const SeekSlider = (
     <div className="relative w-full">
       <SliderPrimitive.Root
@@ -1222,8 +1367,42 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
           style={tooltipStyle}
           className="pointer-events-none z-50"
         >
-          <div className="whitespace-nowrap rounded border bg-accent px-2 py-1 text-accent-foreground text-xs tabular-nums shadow-lg dark:bg-zinc-900">
-            {formattedHoverTime} / {formattedDuration}
+          <div className="flex flex-col items-center">
+            {/* Thumbnail */}
+            {thumbnailInfo && (
+              <div className="mb-2 overflow-hidden rounded border bg-background">
+                {thumbnailInfo.coords ? (
+                  <div
+                    className="h-20 w-32"
+                    style={{
+                      backgroundImage: `url(${thumbnailInfo.src})`,
+                      backgroundPosition: `-${thumbnailInfo.coords[0]}px -${thumbnailInfo.coords[1]}px`,
+                      backgroundSize: "auto",
+                      backgroundRepeat: "no-repeat",
+                    }}
+                    aria-label={`Preview at ${formattedHoverTime}`}
+                  />
+                ) : (
+                  <img
+                    src={thumbnailInfo.src}
+                    alt={`Preview at ${formattedHoverTime}`}
+                    className="h-20 w-32 object-cover"
+                  />
+                )}
+              </div>
+            )}
+
+            {/* Chapter info */}
+            {currentChapter && (
+              <div className="mb-1 max-w-48 rounded bg-accent px-2 py-1 text-center text-accent-foreground text-xs">
+                {(currentChapter as VTTCue).text || "Chapter"}
+              </div>
+            )}
+
+            {/* Time */}
+            <div className="whitespace-nowrap rounded border bg-accent px-2 py-1 text-accent-foreground text-xs tabular-nums shadow-lg dark:bg-zinc-900">
+              {formattedHoverTime} / {formattedDuration}
+            </div>
           </div>
         </div>
       )}

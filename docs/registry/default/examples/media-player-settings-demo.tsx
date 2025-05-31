@@ -37,7 +37,7 @@ export default function MediaPlayerSettingsDemo() {
       </MediaPlayerVideo>
       <MediaPlayerControls className="flex-col items-start gap-2.5">
         <MediaPlayerOverlay />
-        <MediaPlayerSeek />
+        <MediaPlayerSeek showThumbnails showChapters />
         <div className="flex w-full items-center gap-2">
           <div className="flex flex-1 items-center gap-2">
             <MediaPlayerPlay />
