@@ -64,8 +64,8 @@ import * as React from "react";
 const SEEK_AMOUNT_SHORT = 5;
 const SEEK_AMOUNT_LONG = 10;
 const LOADING_DELAY_MS = 500;
-const ESTIMATED_SEEK_TOOLTIP_WIDTH = 200; // Increased for larger thumbnails
-const ESTIMATED_SEEK_TOOLTIP_HEIGHT = 160; // Increased for larger thumbnails + text
+const ESTIMATED_SEEK_TOOLTIP_WIDTH = 200;
+const ESTIMATED_SEEK_TOOLTIP_HEIGHT = 160;
 const SEEK_TOOLTIP_MARGIN = 10;
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
@@ -971,16 +971,16 @@ function MediaPlayerSeekForward(props: MediaPlayerSeekForwardProps) {
 
 interface MediaPlayerSeekProps
   extends React.ComponentProps<typeof SliderPrimitive.Root> {
-  withTime?: boolean;
   thumbnailSrc?: string | ((time: number) => string);
+  withTime?: boolean;
   showThumbnails?: boolean;
   showChapters?: boolean;
 }
 
 function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const {
-    withTime = false,
     thumbnailSrc,
+    withTime = false,
     showThumbnails = true,
     showChapters = true,
     className,
@@ -998,11 +998,13 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const mediaBuffered = useMediaSelector((state) => state.mediaBuffered);
   const mediaEnded = useMediaSelector((state) => state.mediaEnded);
 
-  // Get chapter and subtitle tracks for thumbnail and chapter support
-  const mediaElement = context.mediaRef.current;
-  const [chapters, setChapters] = React.useState<TextTrackCue[]>([]);
-  const [thumbnailTrack, setThumbnailTrack] = React.useState<TextTrack | null>(
-    null,
+  const chapters = useMediaSelector((state) => state.mediaChaptersCues ?? []);
+  const mediaPreviewTime = useMediaSelector((state) => state.mediaPreviewTime);
+  const mediaPreviewImage = useMediaSelector(
+    (state) => state.mediaPreviewImage,
+  );
+  const mediaPreviewCoords = useMediaSelector(
+    (state) => state.mediaPreviewCoords,
   );
 
   const seekRef = React.useRef<HTMLDivElement>(null);
@@ -1036,67 +1038,6 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const hoverTimeoutRef = React.useRef<number | null>(null);
   const pendingSeekTimeRef = React.useRef<number | null>(null);
 
-  // Parse tracks for chapters and thumbnails
-  React.useEffect(() => {
-    if (!mediaElement?.textTracks) return;
-
-    const updateTracks = () => {
-      const textTracks = Array.from(mediaElement.textTracks);
-
-      // Find chapter track
-      const chapterTrack = textTracks.find(
-        (track) => track.kind === "chapters",
-      );
-      if (chapterTrack) {
-        // Ensure track is active
-        if (chapterTrack.mode === "disabled") {
-          chapterTrack.mode = "hidden";
-        }
-        if (chapterTrack.cues) {
-          setChapters(Array.from(chapterTrack.cues));
-        }
-      }
-
-      // Find thumbnail track (metadata track with label "thumbnails")
-      const thumbTrack = textTracks.find(
-        (track) =>
-          track.kind === "metadata" &&
-          (track.label?.toLowerCase().includes("thumbnail") ||
-            track.label?.toLowerCase().includes("storyboard")),
-      );
-      if (thumbTrack) {
-        // Ensure track is active
-        if (thumbTrack.mode === "disabled") {
-          thumbTrack.mode = "hidden";
-        }
-        setThumbnailTrack(thumbTrack);
-      }
-    };
-
-    // Listen for track changes and cue changes
-    const onTracksChange = () => {
-      // Small delay to ensure tracks are fully loaded
-      setTimeout(updateTracks, 100);
-    };
-
-    // Initial update
-    updateTracks();
-
-    mediaElement.addEventListener("loadedmetadata", onTracksChange);
-    // Also listen for track load events
-    mediaElement.addEventListener("loadeddata", onTracksChange);
-
-    // Listen for when tracks are added
-    mediaElement.addEventListener("addtrack", onTracksChange);
-
-    return () => {
-      mediaElement.removeEventListener("loadedmetadata", onTracksChange);
-      mediaElement.removeEventListener("loadeddata", onTracksChange);
-      mediaElement.removeEventListener("addtrack", onTracksChange);
-    };
-  }, [mediaElement]);
-
-  // Get current chapter for hover time
   const getCurrentChapter = React.useCallback(
     (time: number) => {
       if (!showChapters || !chapters.length) return null;
@@ -1108,12 +1049,10 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     [chapters, showChapters],
   );
 
-  // Get thumbnail for hover time
   const getThumbnailInfo = React.useCallback(
     (time: number) => {
       if (!showThumbnails) return null;
 
-      // Use prop-based thumbnail source first
       if (thumbnailSrc) {
         const src =
           typeof thumbnailSrc === "function"
@@ -1122,35 +1061,36 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         return { src, coords: null };
       }
 
-      // Try to get from VTT thumbnail track
-      if (thumbnailTrack?.cues) {
-        const cue = Array.from(thumbnailTrack.cues).find(
-          (cue) => time >= cue.startTime && time < cue.endTime,
-        );
-
-        if (cue) {
-          // Parse VTT thumbnail format (URL#xywh=x,y,w,h)
-          // Use type assertion since VTTCue has text property
-          const text = (cue as VTTCue).text;
-          if (!text) return null;
-
-          const parts = text.trim().split("#");
-          const url = parts[0];
-
-          if (parts[1]?.startsWith("xywh=")) {
-            const coords = parts[1].substring(5).split(",").map(Number);
-            if (coords.length === 4) {
-              return { src: url, coords };
-            }
-          }
-
-          return { src: url, coords: null };
-        }
+      if (
+        mediaPreviewTime !== undefined &&
+        Math.abs(time - mediaPreviewTime) < 0.1 &&
+        mediaPreviewImage
+      ) {
+        return {
+          src: mediaPreviewImage,
+          coords: mediaPreviewCoords || null,
+        };
       }
 
       return null;
     },
-    [thumbnailSrc, thumbnailTrack, showThumbnails],
+    [
+      thumbnailSrc,
+      mediaPreviewTime,
+      mediaPreviewImage,
+      mediaPreviewCoords,
+      showThumbnails,
+    ],
+  );
+
+  const onPreviewUpdate = React.useCallback(
+    (time: number) => {
+      dispatch({
+        type: MediaActionTypes.MEDIA_PREVIEW_REQUEST,
+        detail: time,
+      });
+    },
+    [dispatch],
   );
 
   React.useEffect(() => {
@@ -1184,7 +1124,6 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       if (hoverTimeoutRef.current) {
         clearTimeout(hoverTimeoutRef.current);
       }
-      // Reduced delay for better responsiveness
       hoverTimeoutRef.current = window.setTimeout(() => {
         setIsHoveringSeek(true);
       }, 50);
@@ -1198,7 +1137,12 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     }
     setIsHoveringSeek(false);
     setTooltipStyle((prev) => ({ ...prev, visibility: "hidden" }));
-  }, []);
+
+    dispatch({
+      type: MediaActionTypes.MEDIA_PREVIEW_REQUEST,
+      detail: undefined,
+    });
+  }, [dispatch]);
 
   const onPointerMove = React.useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
@@ -1219,24 +1163,22 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
       setHoverTime(calculatedHoverTime);
 
+      onPreviewUpdate(calculatedHoverTime);
+
       if (isHoveringSeek) {
-        // Use a more accurate tooltip size estimation or get actual size
         const tooltipElement = tooltipRef.current;
         const tooltipWidth =
           tooltipElement?.offsetWidth || ESTIMATED_SEEK_TOOLTIP_WIDTH;
         const tooltipHeight =
           tooltipElement?.offsetHeight || ESTIMATED_SEEK_TOOLTIP_HEIGHT;
 
-        // Position tooltip above the seek bar
         let x = clientX;
         let y = seekRect.top - tooltipHeight - SEEK_TOOLTIP_MARGIN;
 
-        // If tooltip would go above viewport, position it below the seek bar
         if (y < 0) {
           y = seekRect.bottom + SEEK_TOOLTIP_MARGIN;
         }
 
-        // Keep tooltip within horizontal viewport bounds
         const halfTooltipWidth = tooltipWidth / 2;
         const viewportWidth = window.innerWidth;
 
@@ -1257,7 +1199,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         });
       }
     },
-    [seekableEnd, isHoveringSeek],
+    [seekableEnd, isHoveringSeek, onPreviewUpdate],
   );
 
   const onSeek = React.useCallback(
@@ -1313,8 +1255,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     };
   }, []);
 
-  // Get current chapter and thumbnail info for tooltip
-  const currentChapter = getCurrentChapter(hoverTime);
+  const currentChapter = showChapters ? getCurrentChapter(hoverTime) : null;
   const thumbnailInfo = getThumbnailInfo(hoverTime);
 
   const SeekSlider = (
@@ -1355,7 +1296,6 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
             aria-label="Current progress"
             className="absolute h-full bg-primary"
           />
-          {/* Chapter dividers */}
           {showChapters &&
             chapters.length > 1 &&
             seekableEnd > 0 &&
@@ -1364,6 +1304,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
               return (
                 <div
                   key={`chapter-${index}-${chapter.startTime}`}
+                  data-slot="media-player-seek-chapter"
                   className="absolute top-0 h-full w-0.5 bg-white/60 dark:bg-white/40"
                   style={{
                     left: `${position}%`,
@@ -1413,7 +1354,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
             {/* Chapter info */}
             {currentChapter && (
               <div className="mb-1 max-w-48 rounded bg-accent px-2 py-1 text-center text-accent-foreground text-xs shadow-sm">
-                {(currentChapter as VTTCue).text || "Chapter"}
+                {currentChapter.text}
               </div>
             )}
 
