@@ -1394,6 +1394,8 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         value={[displayValue]}
         onValueChange={onSeek}
         onValueCommit={onSeekCommit}
+        onPointerEnter={onPointerEnter}
+        onPointerLeave={onPointerLeave}
         onPointerMove={onPointerMove}
       >
         <SliderPrimitive.Track className="relative h-1 w-full grow overflow-hidden rounded-full bg-zinc-500">
@@ -1474,29 +1476,17 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     </div>
   );
 
-  const SeekWrapper = (
-    <div
-      role="presentation"
-      data-slot="media-player-seek-wrapper"
-      className={cn("relative w-full", className)}
-      onPointerEnter={onPointerEnter}
-      onPointerLeave={onPointerLeave}
-    >
-      {SeekSlider}
-    </div>
-  );
-
   if (withTime) {
     return (
       <div className="flex w-full items-center gap-2">
         <span className="text-sm tabular-nums">{formattedCurrentTime}</span>
-        {SeekWrapper}
+        {SeekSlider}
         <span className="text-sm tabular-nums">{formattedRemainingTime}</span>
       </div>
     );
   }
 
-  return SeekWrapper;
+  return SeekSlider;
 }
 
 interface MediaPlayerVolumeProps
