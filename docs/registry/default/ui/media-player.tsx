@@ -1418,7 +1418,9 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
       data-disabled={isDisabled ? "" : undefined}
       className={cn(
         "group flex items-center",
-        expandable ? "gap-0 group-hover:gap-2" : "gap-2",
+        expandable
+          ? "gap-0 group-focus-within:gap-2 group-hover:gap-2"
+          : "gap-2",
         className,
       )}
     >
@@ -1459,7 +1461,7 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
         className={cn(
           "relative flex touch-none select-none items-center",
           expandable
-            ? "w-0 opacity-0 transition-[width,opacity] duration-200 ease-in-out group-hover:w-16 group-hover:opacity-100"
+            ? "w-0 opacity-0 transition-[width,opacity] duration-200 ease-in-out group-focus-within:w-16 group-focus-within:opacity-100 group-hover:w-16 group-hover:opacity-100"
             : "w-16",
           className,
         )}
