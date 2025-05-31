@@ -652,17 +652,15 @@ function MediaPlayerOverlay(props: MediaPlayerOverlayProps) {
   const OverlayPrimitive = asChild ? Slot : "div";
 
   return (
-    <MediaPlayerPortal>
-      <OverlayPrimitive
-        data-slot="media-player-overlay"
-        data-state={isFullscreen ? "fullscreen" : "windowed"}
-        {...overlayProps}
-        className={cn(
-          "-z-10 absolute inset-0 bg-gradient-to-t from-black/80 to-transparent",
-          className,
-        )}
-      />
-    </MediaPlayerPortal>
+    <OverlayPrimitive
+      data-slot="media-player-overlay"
+      data-state={isFullscreen ? "fullscreen" : "windowed"}
+      {...overlayProps}
+      className={cn(
+        "-z-10 absolute inset-0 bg-gradient-to-t from-black/80 to-transparent",
+        className,
+      )}
+    />
   );
 }
 
