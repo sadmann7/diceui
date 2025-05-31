@@ -89,14 +89,6 @@ const SETTINGS_NAME = "MediaPlayerSettings";
 
 type Direction = "ltr" | "rtl";
 
-interface SubtitleTrack {
-  kind?: string;
-  label?: string;
-  language?: string;
-  id?: string;
-  selected?: boolean;
-}
-
 const DirectionContext = React.createContext<Direction | undefined>(undefined);
 
 function useDirection(dirProp?: Direction): Direction {
@@ -971,18 +963,18 @@ function MediaPlayerSeekForward(props: MediaPlayerSeekForwardProps) {
 
 interface MediaPlayerSeekProps
   extends React.ComponentProps<typeof SliderPrimitive.Root> {
-  thumbnailSrc?: string | ((time: number) => string);
+  previewThumbnailSrc?: string | ((time: number) => string);
   withTime?: boolean;
-  showThumbnails?: boolean;
-  showChapters?: boolean;
+  withoutPreviewThumbnail?: boolean;
+  withoutChapter?: boolean;
 }
 
 function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const {
-    thumbnailSrc,
+    previewThumbnailSrc,
     withTime = false,
-    showThumbnails = true,
-    showChapters = true,
+    withoutPreviewThumbnail = false,
+    withoutChapter = false,
     className,
     disabled,
     ...seekProps
@@ -1040,24 +1032,24 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
   const getCurrentChapter = React.useCallback(
     (time: number) => {
-      if (!showChapters || !chapters.length) return null;
+      if (withoutChapter || !chapters.length) return null;
 
       return chapters.find(
         (cue) => time >= cue.startTime && time < cue.endTime,
       );
     },
-    [chapters, showChapters],
+    [chapters, withoutChapter],
   );
 
-  const getThumbnailInfo = React.useCallback(
+  const getPreviewThumbnail = React.useCallback(
     (time: number) => {
-      if (!showThumbnails) return null;
+      if (withoutPreviewThumbnail) return null;
 
-      if (thumbnailSrc) {
+      if (previewThumbnailSrc) {
         const src =
-          typeof thumbnailSrc === "function"
-            ? thumbnailSrc(time)
-            : thumbnailSrc;
+          typeof previewThumbnailSrc === "function"
+            ? previewThumbnailSrc(time)
+            : previewThumbnailSrc;
         return { src, coords: null };
       }
 
@@ -1075,11 +1067,11 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       return null;
     },
     [
-      thumbnailSrc,
+      previewThumbnailSrc,
       mediaPreviewTime,
       mediaPreviewImage,
       mediaPreviewCoords,
-      showThumbnails,
+      withoutPreviewThumbnail,
     ],
   );
 
@@ -1255,8 +1247,8 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     };
   }, []);
 
-  const currentChapter = showChapters ? getCurrentChapter(hoverTime) : null;
-  const thumbnailInfo = getThumbnailInfo(hoverTime);
+  const currentChapter = !withoutChapter ? getCurrentChapter(hoverTime) : null;
+  const previewThumbnail = getPreviewThumbnail(hoverTime);
 
   const SeekSlider = (
     <div className="relative w-full">
@@ -1296,7 +1288,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
             aria-label="Current progress"
             className="absolute h-full bg-primary"
           />
-          {showChapters &&
+          {!withoutChapter &&
             chapters.length > 1 &&
             seekableEnd > 0 &&
             chapters.slice(1).map((chapter, index) => {
@@ -1327,14 +1319,14 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
           className="pointer-events-none z-50"
         >
           <div className="flex flex-col items-center">
-            {thumbnailInfo && (
+            {previewThumbnail && (
               <div className="mb-2 overflow-hidden rounded-md border bg-background p-1 shadow-lg dark:bg-zinc-900">
-                {thumbnailInfo.coords ? (
+                {previewThumbnail.coords ? (
                   <div
                     className="h-24 w-40 rounded"
                     style={{
-                      backgroundImage: `url(${thumbnailInfo.src})`,
-                      backgroundPosition: `-${thumbnailInfo.coords[0]}px -${thumbnailInfo.coords[1]}px`,
+                      backgroundImage: `url(${previewThumbnail.src})`,
+                      backgroundPosition: `-${previewThumbnail.coords[0]}px -${previewThumbnail.coords[1]}px`,
                       backgroundSize: "auto",
                       backgroundRepeat: "no-repeat",
                     }}
@@ -1342,7 +1334,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
                   />
                 ) : (
                   <img
-                    src={thumbnailInfo.src}
+                    src={previewThumbnail.src}
                     alt={`Preview at ${formattedHoverTime}`}
                     className="h-24 w-40 rounded object-cover"
                   />
@@ -1397,11 +1389,11 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 }
 
 interface MediaPlayerPreviewProps extends React.ComponentProps<"div"> {
-  thumbnailSrc?: string | ((time: number) => string);
+  previewThumbnailSrc?: string | ((time: number) => string);
 }
 
 function MediaPlayerPreview(props: MediaPlayerPreviewProps) {
-  const { thumbnailSrc, className, ...previewProps } = props;
+  const { previewThumbnailSrc, className, ...previewProps } = props;
 
   const [previewTime, setPreviewTime] = React.useState(0);
   const [isVisible, setIsVisible] = React.useState(false);
@@ -1436,11 +1428,11 @@ function MediaPlayerPreview(props: MediaPlayerPreviewProps) {
   }, []);
 
   const thumbnailUrl = React.useMemo(() => {
-    if (!thumbnailSrc) return null;
-    return typeof thumbnailSrc === "function"
-      ? thumbnailSrc(previewTime)
-      : thumbnailSrc;
-  }, [thumbnailSrc, previewTime]);
+    if (!previewThumbnailSrc) return null;
+    return typeof previewThumbnailSrc === "function"
+      ? previewThumbnailSrc(previewTime)
+      : previewThumbnailSrc;
+  }, [previewThumbnailSrc, previewTime]);
 
   if (!isVisible || !thumbnailUrl) return null;
 
@@ -2073,7 +2065,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
   }, [dispatch]);
 
   const onShowSubtitleTrack = React.useCallback(
-    (subtitleTrack: SubtitleTrack) => {
+    (subtitleTrack: (typeof mediaSubtitlesList)[number]) => {
       dispatch({
         type: MediaActionTypes.MEDIA_TOGGLE_SUBTITLES_REQUEST,
         detail: false,
@@ -2144,8 +2136,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
             {speeds.map((speed) => (
               <DropdownMenuItem
                 key={speed}
-                onClick={() => onPlaybackRateChange(speed)}
-                className="justify-between"
+                onSelect={() => onPlaybackRateChange(speed)}
               >
                 <span>{speed}x</span>
                 {mediaPlaybackRate === speed && (
@@ -2164,10 +2155,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
               </Badge>
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
-              <DropdownMenuItem
-                onClick={() => onRenditionChange("auto")}
-                className="justify-between"
-              >
+              <DropdownMenuItem onSelect={() => onRenditionChange("auto")}>
                 <span>Auto</span>
                 {!mediaRenditionSelected && (
                   <CircleIcon className="size-2 fill-current" />
@@ -2175,33 +2163,27 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
               </DropdownMenuItem>
               {mediaRenditionList
                 .slice()
-                .sort((a: unknown, b: unknown) => {
-                  const aHeight = (a as { height?: number }).height || 0;
-                  const bHeight = (b as { height?: number }).height || 0;
+                .sort((a, b) => {
+                  const aHeight = a.height ?? 0;
+                  const bHeight = b.height ?? 0;
                   return bHeight - aHeight;
                 })
-                .map((rendition: unknown) => {
-                  const r = rendition as {
-                    height?: number;
-                    width?: number;
-                    id?: string;
-                  };
+                .map((rendition) => {
                   const label =
-                    r.height && r.width
-                      ? `${r.height}×${r.width}`
-                      : r.height
-                        ? `${r.height}p`
-                        : r.width
-                          ? `${r.width}p`
-                          : r.id || "Unknown";
+                    rendition.height && rendition.width
+                      ? `${rendition.height}×${rendition.width}`
+                      : rendition.height
+                        ? `${rendition.height}p`
+                        : rendition.width
+                          ? `${rendition.width}p`
+                          : (rendition.id ?? "Unknown");
 
-                  const selected = r.id === mediaRenditionSelected;
+                  const selected = rendition.id === mediaRenditionSelected;
 
                   return (
                     <DropdownMenuItem
-                      key={r.id}
-                      onClick={() => onRenditionChange(r.id || "")}
-                      className="justify-between"
+                      key={rendition.id}
+                      onSelect={() => onRenditionChange(rendition.id ?? "")}
                     >
                       <span>{label}</span>
                       {selected && (
@@ -2221,23 +2203,19 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
             </Badge>
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
-            <DropdownMenuItem
-              onClick={onToggleSubtitlesOff}
-              className="justify-between"
-            >
+            <DropdownMenuItem onSelect={onToggleSubtitlesOff}>
               <span>Off</span>
               {subtitlesOff && <CircleIcon className="size-2 fill-current" />}
             </DropdownMenuItem>
-            {mediaSubtitlesList.map((subtitleTrack: SubtitleTrack) => {
+            {mediaSubtitlesList.map((subtitleTrack) => {
               const isSelected = mediaSubtitlesShowing.some(
-                (showingSubtitle: SubtitleTrack) =>
+                (showingSubtitle) =>
                   showingSubtitle.label === subtitleTrack.label,
               );
               return (
                 <DropdownMenuItem
                   key={`${subtitleTrack.kind}-${subtitleTrack.label}-${subtitleTrack.language}`}
-                  onClick={() => onShowSubtitleTrack(subtitleTrack)}
-                  className="justify-between"
+                  onSelect={() => onShowSubtitleTrack(subtitleTrack)}
                 >
                   <span>{subtitleTrack.label}</span>
                   {isSelected && <CircleIcon className="size-2 fill-current" />}
@@ -2338,10 +2316,7 @@ function MediaPlayerResolution(props: MediaPlayerResolutionProps) {
           </DropdownMenuItem>
         ) : (
           <>
-            <DropdownMenuItem
-              onClick={() => onRenditionChange("auto")}
-              className="justify-between"
-            >
+            <DropdownMenuItem onSelect={() => onRenditionChange("auto")}>
               <span>Auto</span>
               {!mediaRenditionSelected && (
                 <CircleIcon className="size-2 fill-current" />
@@ -2374,8 +2349,7 @@ function MediaPlayerResolution(props: MediaPlayerResolutionProps) {
                 return (
                   <DropdownMenuItem
                     key={r.id}
-                    onClick={() => onRenditionChange(r.id || "")}
-                    className="justify-between"
+                    onSelect={() => onRenditionChange(r.id ?? "")}
                   >
                     <span>{label}</span>
                     {selected && <CircleIcon className="size-2 fill-current" />}
