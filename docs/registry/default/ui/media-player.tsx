@@ -1194,9 +1194,10 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
           Math.min(lastPointerXRef.current, seekRect.right),
         );
 
-        requestAnimationFrame(() => {
-          onTooltipPositionUpdate(clientX);
+        // Immediately set the position before showing to prevent sliding
+        onTooltipPositionUpdate(clientX);
 
+        requestAnimationFrame(() => {
           hoverTimeoutRef.current = window.setTimeout(() => {
             setSeekState((prev) => ({ ...prev, isHovering: true }));
           }, 16);
@@ -1352,6 +1353,12 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         visibility: "hidden",
         opacity: 0,
         pointerEvents: "none",
+        position: "fixed" as const,
+        left: seekState.tooltipPosition?.x ?? 0,
+        top: seekState.tooltipPosition?.y ?? 0,
+        transform: "translateX(-50%)",
+        transition: "none",
+        willChange: "opacity",
       };
     }
 
@@ -1367,6 +1374,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       transition: seekState.hasInitialPosition
         ? "opacity 150ms ease-in-out"
         : "none",
+      willChange: "opacity",
     };
   }, [
     seekState.tooltipPosition,
@@ -1436,7 +1444,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
             <div
               ref={tooltipRef}
               style={tooltipStyle}
-              className="pointer-events-none z-50 [transition:none]"
+              className="pointer-events-none z-50 [backface-visibility:hidden] [contain:layout_style] [transition:none]"
               data-initial-render={!seekState.hasInitialPosition}
             >
               <div className="flex flex-col items-center">
