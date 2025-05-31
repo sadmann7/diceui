@@ -64,8 +64,8 @@ import * as React from "react";
 const SEEK_AMOUNT_SHORT = 5;
 const SEEK_AMOUNT_LONG = 10;
 const LOADING_DELAY_MS = 500;
-const ESTIMATED_SEEK_TOOLTIP_WIDTH = 150; // Increased for thumbnails
-const ESTIMATED_SEEK_TOOLTIP_HEIGHT = 120; // Increased for thumbnails + text
+const ESTIMATED_SEEK_TOOLTIP_WIDTH = 200; // Increased for larger thumbnails
+const ESTIMATED_SEEK_TOOLTIP_HEIGHT = 160; // Increased for larger thumbnails + text
 const SEEK_TOOLTIP_MARGIN = 10;
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
@@ -1355,6 +1355,24 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
             aria-label="Current progress"
             className="absolute h-full bg-primary"
           />
+          {/* Chapter dividers */}
+          {showChapters &&
+            chapters.length > 1 &&
+            seekableEnd > 0 &&
+            chapters.slice(1).map((chapter, index) => {
+              const position = (chapter.startTime / seekableEnd) * 100;
+              return (
+                <div
+                  key={`chapter-${index}-${chapter.startTime}`}
+                  className="absolute top-0 h-full w-0.5 bg-white/60 dark:bg-white/40"
+                  style={{
+                    left: `${position}%`,
+                    transform: "translateX(-50%)",
+                  }}
+                  aria-hidden="true"
+                />
+              );
+            })}
         </SliderPrimitive.Track>
         <SliderPrimitive.Thumb
           aria-label="Seek thumb"
@@ -1370,10 +1388,10 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
           <div className="flex flex-col items-center">
             {/* Thumbnail */}
             {thumbnailInfo && (
-              <div className="mb-2 overflow-hidden rounded border bg-background">
+              <div className="mb-2 overflow-hidden rounded-md border bg-background p-1 shadow-lg dark:bg-zinc-900">
                 {thumbnailInfo.coords ? (
                   <div
-                    className="h-20 w-32"
+                    className="h-24 w-40 rounded"
                     style={{
                       backgroundImage: `url(${thumbnailInfo.src})`,
                       backgroundPosition: `-${thumbnailInfo.coords[0]}px -${thumbnailInfo.coords[1]}px`,
@@ -1386,7 +1404,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
                   <img
                     src={thumbnailInfo.src}
                     alt={`Preview at ${formattedHoverTime}`}
-                    className="h-20 w-32 object-cover"
+                    className="h-24 w-40 rounded object-cover"
                   />
                 )}
               </div>
@@ -1394,13 +1412,13 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
             {/* Chapter info */}
             {currentChapter && (
-              <div className="mb-1 max-w-48 rounded bg-accent px-2 py-1 text-center text-accent-foreground text-xs">
+              <div className="mb-1 max-w-48 rounded bg-accent px-2 py-1 text-center text-accent-foreground text-xs shadow-sm">
                 {(currentChapter as VTTCue).text || "Chapter"}
               </div>
             )}
 
             {/* Time */}
-            <div className="whitespace-nowrap rounded border bg-accent px-2 py-1 text-accent-foreground text-xs tabular-nums shadow-lg dark:bg-zinc-900">
+            <div className="whitespace-nowrap rounded-md border bg-accent px-3 py-1.5 text-accent-foreground text-xs tabular-nums shadow-lg dark:bg-zinc-900">
               {formattedHoverTime} / {formattedDuration}
             </div>
           </div>
@@ -1506,7 +1524,7 @@ function MediaPlayerPreview(props: MediaPlayerPreviewProps) {
       <img
         src={thumbnailUrl}
         alt={`Preview at ${timeUtils.formatTime(previewTime, previewTime)}`}
-        className="h-20 w-32 rounded object-cover"
+        className="h-24 w-40 rounded object-cover"
       />
       <div className="mt-1 text-center text-xs">
         {timeUtils.formatTime(previewTime, previewTime)}
