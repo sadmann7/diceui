@@ -502,7 +502,7 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "media-player-advanced-demo",
+    name: "media-player-chapters-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot", "lucide-react", "media-chrome"],
     registryDependencies: [
@@ -515,26 +515,7 @@ export const examples: Registry["items"] = [
     ],
     files: [
       {
-        path: "examples/media-player-advanced-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "media-player-hls-demo",
-    type: "registry:example",
-    dependencies: ["@radix-ui/react-slot", "lucide-react", "media-chrome"],
-    registryDependencies: [
-      "badge",
-      "button",
-      "dropdown-menu",
-      "select",
-      "slider",
-      "tooltip",
-    ],
-    files: [
-      {
-        path: "examples/media-player-hls-demo.tsx",
+        path: "examples/media-player-chapters-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -554,6 +535,25 @@ export const examples: Registry["items"] = [
     files: [
       {
         path: "examples/media-player-settings-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "media-player-advanced-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "lucide-react", "media-chrome"],
+    registryDependencies: [
+      "badge",
+      "button",
+      "dropdown-menu",
+      "select",
+      "slider",
+      "tooltip",
+    ],
+    files: [
+      {
+        path: "examples/media-player-advanced-demo.tsx",
         type: "registry:example",
       },
     ],

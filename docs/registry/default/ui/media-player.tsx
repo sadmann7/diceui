@@ -1327,7 +1327,6 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
           className="pointer-events-none z-50"
         >
           <div className="flex flex-col items-center">
-            {/* Thumbnail */}
             {thumbnailInfo && (
               <div className="mb-2 overflow-hidden rounded-md border bg-background p-1 shadow-lg dark:bg-zinc-900">
                 {thumbnailInfo.coords ? (
@@ -1350,15 +1349,11 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
                 )}
               </div>
             )}
-
-            {/* Chapter info */}
             {currentChapter && (
               <div className="mb-1 max-w-48 rounded bg-accent px-2 py-1 text-center text-accent-foreground text-xs shadow-sm">
                 {currentChapter.text}
               </div>
             )}
-
-            {/* Time */}
             <div className="whitespace-nowrap rounded-md border bg-accent px-3 py-1.5 text-accent-foreground text-xs tabular-nums shadow-lg dark:bg-zinc-900">
               {formattedHoverTime} / {formattedDuration}
             </div>

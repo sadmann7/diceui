@@ -76,53 +76,23 @@ Use the `Audio` component instead of `Video` for audio playback.
 
 <ComponentTabs name="media-player-audio-demo" className="block" />
 
+### Chapters and Thumbnails
+
+Example with chapters and thumbnails.
+
+<ComponentTabs name="media-player-chapters-demo" />
+
+### Settings menu with playback speed, subtitle, and resolution options
+
+Media player with a settings menu with playback speed, subtitle option, and resolution selector.
+
+<ComponentTabs name="media-player-settings-demo" />
+
 ### Advanced Player with All Features
 
-A comprehensive example showcasing all media player features including the new loading indicator and resolution selector.
+A comprehensive example showcasing all media player features.
 
-<ComponentTabs name="media-player-advanced-demo" className="block" />
-
-### HLS Streaming with Resolution Selector
-
-Example with HLS video stream that demonstrates the automatic resolution detection and quality selection.
-
-<ComponentTabs name="media-player-hls-demo" className="block" />
-
-### Live Streaming Player
-
-The media player includes support for live streaming with special controls and indicators:
-
-```tsx
-import * as MediaPlayer from "@/components/ui/media-player";
-
-export default function LivePlayer() {
-  return (
-    <MediaPlayer.Root isLive className="w-full max-w-4xl">
-      <MediaPlayer.Video
-        src="https://your-live-stream-url.m3u8"
-        poster="/stream-poster.jpg"
-      />
-      <MediaPlayer.Overlay />
-      <MediaPlayer.Controls>
-        <MediaPlayer.Play />
-        <MediaPlayer.Live />
-        <MediaPlayer.Volume />
-        <div className="flex-1" />
-        <MediaPlayer.Settings />
-        <MediaPlayer.Cast />
-        <MediaPlayer.AirPlay />
-        <MediaPlayer.Fullscreen />
-      </MediaPlayer.Controls>
-    </MediaPlayer.Root>
-  );
-}
-```
-
-### Settings menu with playback speed and subtitle options
-
-Media player with a settings menu with playback speed, subtitle option, and other controls.
-
-<ComponentTabs name="media-player-settings-demo" className="block" />
+<ComponentTabs name="media-player-advanced-demo" />
 
 ## API Reference
 

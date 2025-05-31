@@ -3,8 +3,12 @@ import {
   MediaPlayerControls,
   MediaPlayerFullscreen,
   MediaPlayerOverlay,
+  MediaPlayerPiP,
   MediaPlayerPlay,
   MediaPlayerSeek,
+  MediaPlayerSeekBackward,
+  MediaPlayerSeekForward,
+  MediaPlayerSettings,
   MediaPlayerTime,
   MediaPlayerVideo,
   MediaPlayerVolume,
@@ -12,20 +16,18 @@ import {
 
 export default function MediaPlayerChaptersDemo() {
   return (
-    <MediaPlayer className="w-full max-w-4xl">
+    <MediaPlayer>
       <MediaPlayerVideo
-        playsInline
-        crossOrigin=""
         slot="media"
         src="https://stream.mux.com/Sc89iWAyNkhJ3P1rQ02nrEdCFTnfT01CZ2KmaEcxXfB008/low.mp4"
+        crossOrigin=""
+        playsInline
       >
-        {/* Chapter track for timeline segments */}
         <track
           default
           kind="chapters"
           src="https://media-chrome.mux.dev/examples/vanilla/vtt/elephantsdream/chapters.vtt"
         />
-        {/* Thumbnail track for seek preview */}
         <track
           default
           kind="metadata"
@@ -35,15 +37,18 @@ export default function MediaPlayerChaptersDemo() {
       </MediaPlayerVideo>
       <MediaPlayerControls className="flex-col items-start gap-2.5">
         <MediaPlayerOverlay />
-        {/* Seek bar with chapters and thumbnails using built-in media-chrome utilities */}
-        <MediaPlayerSeek showThumbnails showChapters className="w-full" />
+        <MediaPlayerSeek showThumbnails showChapters />
         <div className="flex w-full items-center gap-2">
           <div className="flex flex-1 items-center gap-2">
             <MediaPlayerPlay />
+            <MediaPlayerSeekBackward />
+            <MediaPlayerSeekForward />
             <MediaPlayerVolume expandable />
             <MediaPlayerTime />
           </div>
           <div className="flex items-center gap-2">
+            <MediaPlayerSettings />
+            <MediaPlayerPiP />
             <MediaPlayerFullscreen />
           </div>
         </div>
