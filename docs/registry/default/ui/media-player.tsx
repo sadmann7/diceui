@@ -143,29 +143,33 @@ function MediaPlayerRoot(props: MediaPlayerRootProps) {
   );
 }
 
-function MediaPlayerRootImpl({
-  onPlay: onPlayProp,
-  onPause: onPauseProp,
-  onEnded: onEndedProp,
-  onTimeUpdate: onTimeUpdateProp,
-  onFullscreenChange: onFullscreenChangeProp,
-  onVolumeChange: onVolumeChangeProp,
-  onMuted,
-  onPipError,
-  asChild,
-  disabled = false,
-  dir: dirProp,
-  label,
-  children,
-  className,
-  ...rootImplProps
-}: MediaPlayerRootProps) {
+function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
+  const {
+    ref,
+    onPlay: onPlayProp,
+    onPause: onPauseProp,
+    onEnded: onEndedProp,
+    onTimeUpdate: onTimeUpdateProp,
+    onFullscreenChange: onFullscreenChangeProp,
+    onVolumeChange: onVolumeChangeProp,
+    onMuted,
+    onPipError,
+    asChild,
+    disabled = false,
+    dir: dirProp,
+    label,
+    children,
+    className,
+    ...rootImplProps
+  } = props;
+
   const mediaId = React.useId();
   const labelId = React.useId();
   const descriptionId = React.useId();
 
   const dispatch = useMediaDispatch();
   const fullscreenRefCallback = useMediaFullscreenRef();
+  const composedRef = useComposedRefs(ref, fullscreenRefCallback);
 
   const mediaRef = React.useRef<HTMLVideoElement | HTMLAudioElement | null>(
     null,
@@ -501,7 +505,7 @@ function MediaPlayerRootImpl({
         tabIndex={disabled ? undefined : 0}
         onKeyDown={onKeyDown}
         {...rootImplProps}
-        ref={fullscreenRefCallback}
+        ref={composedRef}
         className={cn(
           "relative isolate flex flex-col overflow-hidden rounded-lg bg-background outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
           "[:fullscreen_&]:flex [:fullscreen_&]:h-full [:fullscreen_&]:max-h-screen [:fullscreen_&]:flex-col [:fullscreen_&]:justify-between",
