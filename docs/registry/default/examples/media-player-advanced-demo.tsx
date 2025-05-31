@@ -1,12 +1,9 @@
 import {
   MediaPlayer,
-  MediaPlayerAirPlay,
   MediaPlayerCaptions,
-  MediaPlayerCast,
   MediaPlayerControls,
   MediaPlayerDownload,
   MediaPlayerFullscreen,
-  MediaPlayerLive,
   MediaPlayerLoading,
   MediaPlayerLoop,
   MediaPlayerOverlay,
@@ -46,14 +43,11 @@ export default function MediaPlayerAdvancedDemo() {
             <MediaPlayerTime />
           </div>
           <div className="flex items-center gap-2">
-            <MediaPlayerLive />
             <MediaPlayerLoop />
             <MediaPlayerCaptions />
             <MediaPlayerResolution />
             <MediaPlayerSettings />
             <MediaPlayerDownload />
-            <MediaPlayerCast />
-            <MediaPlayerAirPlay />
             <MediaPlayerPiP />
             <MediaPlayerFullscreen />
           </div>

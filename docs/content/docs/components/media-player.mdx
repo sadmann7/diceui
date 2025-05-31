@@ -135,21 +135,11 @@ The main container component for the media player.
   name="RootProps"
 />
 
-**Extended Properties:**
-- `isLive?: boolean` - Whether the content is a live stream
-- `showPreview?: boolean` - Enable preview thumbnails on seek hover
-- `onCastError?: (error: unknown, mode: "enter" | "exit") => void` - Cast error handler
-- `onAirPlayError?: (error: unknown) => void` - AirPlay error handler
-
 <DataAttributesTable
   attributes={[
     {
       title: "[data-disabled]",
       value: "Present when the media player is disabled.",
-    },
-    {
-      title: "[data-live]",
-      value: "Present when the media is a live stream.",
     },
   ]}
 />
@@ -221,21 +211,6 @@ A loading indicator that appears when media is loading, similar to YouTube/Netfl
   name="LoadingProps"
 />
 
-**Features:**
-- Shows when `mediaLoading` state is true
-- Automatically hides when media has played and is no longer loading
-- Customizable appearance with children content
-- Positioned as overlay above video
-
-```tsx
-<MediaPlayer.Loading>
-  <div className="flex flex-col items-center gap-4">
-    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary"></div>
-    <p className="text-lg font-semibold">Loading your video...</p>
-  </div>
-</MediaPlayer.Loading>
-```
-
 ### Resolution
 
 A dropdown menu to select video quality/resolution for videos with multiple renditions (HLS/DASH).
@@ -251,10 +226,6 @@ A dropdown menu to select video quality/resolution for videos with multiple rend
 - Includes "Auto" option for automatic quality selection
 - Sorts resolutions by quality (highest first)
 - Uses `mediaRenditionList` from media-chrome
-
-```tsx
-<MediaPlayer.Resolution />
-```
 
 **Supported formats:**
 - HLS (.m3u8) streams
@@ -345,6 +316,27 @@ A slider component to seek through the media playback.
     },
   ]}
 />
+
+### Preview
+
+A preview thumbnail component that shows on seek hover (requires thumbnail source).
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="PreviewProps"
+/>
+
+**Features:**
+- Shows thumbnail previews when hovering over the seek bar
+- Supports both static and dynamic thumbnail sources
+- Automatically positions tooltip near cursor
+- Displays formatted time for the preview position
+
+```tsx
+<MediaPlayer.Preview 
+  thumbnailSrc={(time) => `https://thumbs.example.com/${Math.floor(time)}.jpg`}
+/>
+```
 
 ### Volume
 
@@ -502,77 +494,20 @@ A button to download the media file.
   ]}
 />
 
-### Live
-
-A live indicator button that appears for live streams and allows seeking to the live edge.
-
-```tsx
-<MediaPlayer.Live />
-```
-
-<DataAttributesTable
-  attributes={[
-    {
-      title: "[data-disabled]",
-      value: "Present when the button is disabled.",
-    },
-    {
-      title: "[data-state]",
-      value: ["live", "behind"],
-      description: "Indicates if the viewer is at the live edge or behind."
-    },
-  ]}
-/>
-
-### Cast
-
-A button to initiate Google Cast for remote playback.
-
-```tsx
-<MediaPlayer.Cast 
-  onCastError={(error, mode) => {
-    console.error(`Cast ${mode} failed:`, error);
-  }}
-/>
-```
-
-<DataAttributesTable
-  attributes={[
-    {
-      title: "[data-disabled]",
-      value: "Present when the button is disabled.",
-    },
-    {
-      title: "[data-state]",
-      value: ["casting", "disconnected"],
-    },
-  ]}
-/>
-
-### AirPlay
-
-A button to initiate Apple AirPlay (only visible on supported devices).
-
-```tsx
-<MediaPlayer.AirPlay 
-  onAirPlayError={(error) => {
-    console.error("AirPlay failed:", error);
-  }}
-/>
-```
-
-<DataAttributesTable
-  attributes={[
-    {
-      title: "[data-disabled]",
-      value: "Present when the button is disabled.",
-    },
-  ]}
-/>
-
 ### Settings
 
-A dropdown menu with playback speed controls and subtitle options.
+A dropdown menu with playback speed selector, resolution selector, and subtitle selector.
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="SettingsProps"
+/>
+
+**Features:**
+- Playback speed control with customizable speeds
+- Video quality/resolution selection (when available)
+- Captions/subtitles control
+- Organized in a clean dropdown interface
 
 ```tsx
 <MediaPlayer.Settings 
@@ -588,16 +523,6 @@ A dropdown menu with playback speed controls and subtitle options.
     },
   ]}
 />
-
-### Preview
-
-A preview thumbnail component that shows on seek hover (requires thumbnail source).
-
-```tsx
-<MediaPlayer.Preview 
-  thumbnailSrc={(time) => `https://thumbs.example.com/${Math.floor(time)}.jpg`}
-/>
-```
 
 ## Accessibility
 
@@ -635,15 +560,15 @@ A preview thumbnail component that shows on seek hover (requires thumbnail sourc
     },
     {
       keys: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
-      description: "Seeks to 0%-90% of duration (not available in live streams).",
+      description: "Seeks to 0%-90% of duration.",
     },
     {
       keys: ["Home"],
-      description: "Seeks to beginning (not available in live streams).",
+      description: "Seeks to beginning.",
     },
     {
       keys: ["End"],
-      description: "Seeks to end (not available in live streams).",
+      description: "Seeks to end.",
     },
     {
       keys: ["ArrowUp"],

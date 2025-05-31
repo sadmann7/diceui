@@ -1,3 +1,4 @@
+import type { DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import type { SelectTrigger } from "@/components/ui/select";
 import type { CompositionProps, EmptyProps } from "@/types";
 import type { Slider } from "@radix-ui/react-slider";
@@ -270,6 +271,29 @@ export interface SeekProps
   withTime?: boolean;
 }
 
+export interface PreviewProps extends EmptyProps<"div">, CompositionProps {
+  /**
+   * Source for thumbnail previews when hovering over the seek bar.
+   * Can be a static URL or a function that returns a URL based on time.
+   *
+   * ```ts
+   * // Static thumbnail
+   * <MediaPlayer.Preview thumbnailSrc="/thumbnail.jpg" />
+   * ```
+   *
+   * ```ts
+   * // Dynamic thumbnails based on time
+   * const getThumbnail = (time: number) => {
+   *   const minutes = Math.floor(time / 60);
+   *   return `/thumbnails/thumb-${minutes}.jpg`;
+   * };
+   *
+   * <MediaPlayer.Preview thumbnailSrc={getThumbnail} />
+   * ```
+   */
+  thumbnailSrc?: string | ((time: number) => string);
+}
+
 export interface VolumeProps
   extends Omit<
       React.ComponentProps<typeof Slider>,
@@ -333,3 +357,18 @@ export interface FullscreenProps
 export interface CaptionsProps extends EmptyProps<"button">, CompositionProps {}
 
 export interface DownloadProps extends EmptyProps<"button">, CompositionProps {}
+
+export interface SettingsProps
+  extends EmptyProps<typeof DropdownMenuTrigger>,
+    CompositionProps {
+  /**
+   * An array of playback speed options available in the settings menu.
+   * @default [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
+   *
+   * ```ts
+   * // Custom playback speeds in settings
+   * <MediaPlayer.Settings speeds={[0.5, 1, 1.5, 2]} />
+   * ```
+   */
+  speeds?: number[];
+}

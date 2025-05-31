@@ -88,9 +88,6 @@ const PIP_NAME = "MediaPlayerPiP";
 const CAPTIONS_NAME = "MediaPlayerCaptions";
 const DOWNLOAD_NAME = "MediaPlayerDownload";
 const SETTINGS_NAME = "MediaPlayerSettings";
-const LIVE_NAME = "MediaPlayerLive";
-const CAST_NAME = "MediaPlayerCast";
-const AIRPLAY_NAME = "MediaPlayerAirPlay";
 
 type Direction = "ltr" | "rtl";
 
@@ -141,13 +138,10 @@ interface MediaPlayerRootProps
   onMuted?: (muted: boolean) => void;
   onPipError?: (error: unknown, mode: "enter" | "exit") => void;
   onFullscreenChange?: (fullscreen: boolean) => void;
-  onCastError?: (error: unknown, mode: "enter" | "exit") => void;
-  onAirPlayError?: (error: unknown) => void;
   dir?: Direction;
   label?: string;
   asChild?: boolean;
   disabled?: boolean;
-  isLive?: boolean;
 }
 
 function MediaPlayerRoot(props: MediaPlayerRootProps) {
@@ -167,13 +161,10 @@ function MediaPlayerRootImpl({
   onVolumeChange: onVolumeChangeProp,
   onMuted,
   onPipError,
-  onCastError,
-  onAirPlayError,
   asChild,
   disabled = false,
   dir: dirProp,
   label,
-  isLive = false,
   children,
   className,
   ...rootImplProps
@@ -474,7 +465,6 @@ function MediaPlayerRootImpl({
         case "8":
         case "9": {
           event.preventDefault();
-          if (isLive) break;
           const percent = Number.parseInt(event.key) / 10;
           const seekTime = media.duration * percent;
           dispatch({
@@ -486,28 +476,24 @@ function MediaPlayerRootImpl({
 
         case "home": {
           event.preventDefault();
-          if (!isLive) {
-            dispatch({
-              type: MediaActionTypes.MEDIA_SEEK_REQUEST,
-              detail: 0,
-            });
-          }
+          dispatch({
+            type: MediaActionTypes.MEDIA_SEEK_REQUEST,
+            detail: 0,
+          });
           break;
         }
 
         case "end": {
           event.preventDefault();
-          if (!isLive) {
-            dispatch({
-              type: MediaActionTypes.MEDIA_SEEK_REQUEST,
-              detail: media.duration,
-            });
-          }
+          dispatch({
+            type: MediaActionTypes.MEDIA_SEEK_REQUEST,
+            detail: media.duration,
+          });
           break;
         }
       }
     },
-    [dispatch, disabled, rootImplProps.onKeyDown, onPipError, isLive],
+    [dispatch, disabled, rootImplProps.onKeyDown, onPipError],
   );
 
   const RootPrimitive = asChild ? Slot : "div";
@@ -520,7 +506,6 @@ function MediaPlayerRootImpl({
         aria-disabled={disabled}
         data-disabled={disabled ? "" : undefined}
         data-slot="media-player"
-        data-live={isLive ? "" : undefined}
         dir={dir}
         tabIndex={disabled ? undefined : 0}
         onKeyDown={onKeyDown}
@@ -978,7 +963,6 @@ function MediaPlayerSeekForward(props: MediaPlayerSeekForwardProps) {
         {...seekForwardProps}
         variant="ghost"
         size="icon"
-        className={cn("size-8", className)}
         onClick={onSeekForward}
       >
         {children ?? <FastForwardIcon />}
@@ -1279,6 +1263,79 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   }
 
   return SeekWrapper;
+}
+
+interface MediaPlayerPreviewProps extends React.ComponentProps<"div"> {
+  thumbnailSrc?: string | ((time: number) => string);
+}
+
+function MediaPlayerPreview(props: MediaPlayerPreviewProps) {
+  const { thumbnailSrc, className, ...previewProps } = props;
+
+  const [previewTime, setPreviewTime] = React.useState(0);
+  const [isVisible, setIsVisible] = React.useState(false);
+
+  const previewRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const onPreviewRequest = (event: CustomEvent) => {
+      if (event.detail && typeof event.detail === "number") {
+        setPreviewTime(event.detail);
+        setIsVisible(true);
+      }
+    };
+
+    const onHidePreview = () => {
+      setIsVisible(false);
+    };
+
+    document.addEventListener(
+      "mediapreviewrequest",
+      onPreviewRequest as EventListener,
+    );
+    document.addEventListener("mediahidepreview", onHidePreview);
+
+    return () => {
+      document.removeEventListener(
+        "mediapreviewrequest",
+        onPreviewRequest as EventListener,
+      );
+      document.removeEventListener("mediahidepreview", onHidePreview);
+    };
+  }, []);
+
+  const thumbnailUrl = React.useMemo(() => {
+    if (!thumbnailSrc) return null;
+    return typeof thumbnailSrc === "function"
+      ? thumbnailSrc(previewTime)
+      : thumbnailSrc;
+  }, [thumbnailSrc, previewTime]);
+
+  if (!isVisible || !thumbnailUrl) return null;
+
+  return (
+    <div
+      ref={previewRef}
+      data-slot="media-player-preview"
+      className={cn(
+        "pointer-events-none absolute z-50 rounded border bg-background p-1 shadow-lg",
+        className,
+      )}
+      style={{
+        transform: "translate(-50%, -100%)",
+      }}
+      {...previewProps}
+    >
+      <img
+        src={thumbnailUrl}
+        alt={`Preview at ${timeUtils.formatTime(previewTime, previewTime)}`}
+        className="h-20 w-32 rounded object-cover"
+      />
+      <div className="mt-1 text-center text-xs">
+        {timeUtils.formatTime(previewTime, previewTime)}
+      </div>
+    </div>
+  );
 }
 
 interface MediaPlayerVolumeProps
@@ -1821,200 +1878,6 @@ function MediaPlayerDownload(props: MediaPlayerDownloadProps) {
   );
 }
 
-interface MediaPlayerLiveProps extends React.ComponentProps<typeof Button> {}
-
-function MediaPlayerLive(props: MediaPlayerLiveProps) {
-  const { children, className, disabled, ...liveProps } = props;
-
-  const context = useMediaPlayerContext(LIVE_NAME);
-  const dispatch = useMediaDispatch();
-  const [, seekableEnd = 0] =
-    useMediaSelector((state) => state.mediaSeekable) ?? [];
-  const mediaCurrentTime = useMediaSelector(
-    (state) => state.mediaCurrentTime ?? 0,
-  );
-
-  const isDisabled = disabled || context.disabled;
-  const isLive = seekableEnd === Number.POSITIVE_INFINITY;
-  const isAtLiveEdge = isLive && Math.abs(seekableEnd - mediaCurrentTime) < 30;
-
-  const onSeekToLive = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
-      props.onClick?.(event);
-
-      if (event.defaultPrevented) return;
-
-      dispatch({
-        type: MediaActionTypes.MEDIA_SEEK_TO_LIVE_REQUEST,
-      });
-    },
-    [dispatch, props.onClick],
-  );
-
-  if (!isLive) return null;
-
-  return (
-    <MediaPlayerTooltip tooltip="Go to live">
-      <Button
-        type="button"
-        aria-label="Go to live"
-        aria-controls={context.mediaId}
-        data-disabled={isDisabled ? "" : undefined}
-        data-state={isAtLiveEdge ? "live" : "behind"}
-        data-slot="media-player-live"
-        disabled={isDisabled}
-        {...liveProps}
-        variant="ghost"
-        size="sm"
-        className={cn(
-          "h-6 gap-1.5 px-2 font-medium text-xs",
-          !isAtLiveEdge && "bg-destructive text-destructive",
-          className,
-        )}
-        onClick={onSeekToLive}
-      >
-        <div
-          className={cn(
-            "size-1.5 rounded-full",
-            isAtLiveEdge ? "animate-pulse bg-red-500" : "bg-red-400",
-          )}
-        />
-        {children ?? "LIVE"}
-      </Button>
-    </MediaPlayerTooltip>
-  );
-}
-
-interface MediaPlayerCastProps extends React.ComponentProps<typeof Button> {
-  onCastError?: (error: unknown, mode: "enter" | "exit") => void;
-}
-
-function MediaPlayerCast(props: MediaPlayerCastProps) {
-  const { children, className, onCastError, disabled, ...castProps } = props;
-
-  const context = useMediaPlayerContext(CAST_NAME);
-  const dispatch = useMediaDispatch();
-  const [isCasting, setIsCasting] = React.useState(false);
-
-  const isDisabled = disabled || context.disabled;
-
-  const onCast = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
-      props.onClick?.(event);
-
-      if (event.defaultPrevented) return;
-
-      const newCastState = !isCasting;
-      setIsCasting(newCastState);
-
-      dispatch({
-        type: newCastState
-          ? MediaActionTypes.MEDIA_ENTER_CAST_REQUEST
-          : MediaActionTypes.MEDIA_EXIT_CAST_REQUEST,
-      });
-
-      if (newCastState) {
-        console.log("Initiating Cast connection...");
-      } else {
-        console.log("Disconnecting from Cast device...");
-      }
-    },
-    [dispatch, props.onClick, isCasting],
-  );
-
-  return (
-    <MediaPlayerTooltip tooltip={isCasting ? "Stop casting" : "Cast"}>
-      <Button
-        type="button"
-        aria-label={isCasting ? "Stop casting" : "Cast"}
-        data-disabled={isDisabled ? "" : undefined}
-        data-state={isCasting ? "casting" : "disconnected"}
-        data-slot="media-player-cast"
-        disabled={isDisabled}
-        {...castProps}
-        variant="ghost"
-        size="icon"
-        className={cn("size-8", className)}
-        onClick={onCast}
-      >
-        {children ?? <CastIcon className={cn(isCasting && "text-blue-500")} />}
-      </Button>
-    </MediaPlayerTooltip>
-  );
-}
-
-interface MediaPlayerAirPlayProps extends React.ComponentProps<typeof Button> {
-  onAirPlayError?: (error: unknown) => void;
-}
-
-function MediaPlayerAirPlay(props: MediaPlayerAirPlayProps) {
-  const { children, className, onAirPlayError, disabled, ...airPlayProps } =
-    props;
-
-  const context = useMediaPlayerContext(AIRPLAY_NAME);
-  const dispatch = useMediaDispatch();
-  const [isAirPlayAvailable, setIsAirPlayAvailable] = React.useState(false);
-
-  const isDisabled = disabled || context.disabled;
-
-  React.useEffect(() => {
-    const mediaElement = context.mediaRef.current;
-    if (mediaElement instanceof HTMLVideoElement) {
-      setIsAirPlayAvailable("webkitShowPlaybackTargetPicker" in mediaElement);
-    }
-  }, [context.mediaRef]);
-
-  const onAirPlay = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
-      props.onClick?.(event);
-
-      if (event.defaultPrevented) return;
-
-      dispatch({
-        type: MediaActionTypes.MEDIA_AIRPLAY_REQUEST,
-      });
-
-      const mediaElement = context.mediaRef.current;
-      if (
-        mediaElement instanceof HTMLVideoElement &&
-        "webkitShowPlaybackTargetPicker" in mediaElement
-      ) {
-        try {
-          (
-            mediaElement as HTMLVideoElement & {
-              webkitShowPlaybackTargetPicker: () => void;
-            }
-          ).webkitShowPlaybackTargetPicker();
-        } catch (error) {
-          onAirPlayError?.(error);
-        }
-      }
-    },
-    [dispatch, props.onClick, onAirPlayError, context.mediaRef],
-  );
-
-  if (!isAirPlayAvailable) return null;
-
-  return (
-    <MediaPlayerTooltip tooltip="AirPlay">
-      <Button
-        type="button"
-        aria-label="AirPlay"
-        data-disabled={isDisabled ? "" : undefined}
-        data-slot="media-player-airplay"
-        disabled={isDisabled}
-        {...airPlayProps}
-        variant="ghost"
-        size="icon"
-        className={cn("size-8", className)}
-        onClick={onAirPlay}
-      >
-        {children ?? <MonitorSpeakerIcon />}
-      </Button>
-    </MediaPlayerTooltip>
-  );
-}
-
 interface MediaPlayerSettingsProps
   extends React.ComponentProps<typeof DropdownMenuTrigger> {
   speeds?: number[];
@@ -2041,6 +1904,12 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
   const mediaSubtitlesShowing = useMediaSelector(
     (state) => state.mediaSubtitlesShowing ?? [],
   );
+  const mediaRenditionList = useMediaSelector(
+    (state) => state.mediaRenditionList ?? [],
+  );
+  const mediaRenditionSelected = useMediaSelector(
+    (state) => state.mediaRenditionSelected,
+  );
 
   const isDisabled = disabled || context.disabled;
   const subtitlesOff = !mediaSubtitlesShowing?.length;
@@ -2050,6 +1919,16 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
       dispatch({
         type: MediaActionTypes.MEDIA_PLAYBACK_RATE_REQUEST,
         detail: rate,
+      });
+    },
+    [dispatch],
+  );
+
+  const onRenditionChange = React.useCallback(
+    (renditionId: string) => {
+      dispatch({
+        type: MediaActionTypes.MEDIA_RENDITION_REQUEST,
+        detail: renditionId === "auto" ? undefined : renditionId,
       });
     },
     [dispatch],
@@ -2083,6 +1962,24 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
     }
     return "Off";
   }, [subtitlesOff, mediaSubtitlesShowing]);
+
+  const getCurrentQualityLabel = React.useCallback(() => {
+    if (!mediaRenditionSelected) return "Auto";
+    const currentRendition = mediaRenditionList?.find((rendition: unknown) => {
+      const r = rendition as { id?: string };
+      return r.id === mediaRenditionSelected;
+    });
+    if (!currentRendition) return "Auto";
+    const r = currentRendition as {
+      height?: number;
+      width?: number;
+      id?: string;
+    };
+    if (r.height && r.width) return `${r.height}×${r.width}`;
+    if (r.height) return `${r.height}p`;
+    if (r.width) return `${r.width}p`;
+    return r.id || "Auto";
+  }, [mediaRenditionSelected, mediaRenditionList]);
 
   return (
     <DropdownMenu>
@@ -2127,6 +2024,64 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
             ))}
           </DropdownMenuSubContent>
         </DropdownMenuSub>
+        {context.isVideo && mediaRenditionList?.length > 0 && (
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
+              <span className="flex-1">Quality</span>
+              <Badge variant="outline" className="rounded-sm">
+                {getCurrentQualityLabel()}
+              </Badge>
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuItem
+                onClick={() => onRenditionChange("auto")}
+                className="justify-between"
+              >
+                <span>Auto</span>
+                {!mediaRenditionSelected && (
+                  <CircleIcon className="size-2 fill-current" />
+                )}
+              </DropdownMenuItem>
+              {mediaRenditionList
+                .slice()
+                .sort((a: unknown, b: unknown) => {
+                  const aHeight = (a as { height?: number }).height || 0;
+                  const bHeight = (b as { height?: number }).height || 0;
+                  return bHeight - aHeight;
+                })
+                .map((rendition: unknown) => {
+                  const r = rendition as {
+                    height?: number;
+                    width?: number;
+                    id?: string;
+                  };
+                  const label =
+                    r.height && r.width
+                      ? `${r.height}×${r.width}`
+                      : r.height
+                        ? `${r.height}p`
+                        : r.width
+                          ? `${r.width}p`
+                          : r.id || "Unknown";
+
+                  const selected = r.id === mediaRenditionSelected;
+
+                  return (
+                    <DropdownMenuItem
+                      key={r.id}
+                      onClick={() => onRenditionChange(r.id || "")}
+                      className="justify-between"
+                    >
+                      <span>{label}</span>
+                      {selected && (
+                        <CircleIcon className="size-2 fill-current" />
+                      )}
+                    </DropdownMenuItem>
+                  );
+                })}
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+        )}
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
             <span className="flex-1">Captions</span>
@@ -2180,14 +2135,11 @@ function MediaPlayerResolution(props: MediaPlayerResolutionProps) {
   const dispatch = useMediaDispatch();
 
   const mediaRenditionList = useMediaSelector(
-    (state) => state.mediaRenditionList,
+    (state) => state.mediaRenditionList ?? [],
   );
-  const currentRendition = React.useMemo(() => {
-    return mediaRenditionList?.find((rendition: unknown) => {
-      const r = rendition as { selected?: boolean };
-      return r.selected;
-    });
-  }, [mediaRenditionList]);
+  const mediaRenditionSelected = useMediaSelector(
+    (state) => state.mediaRenditionSelected,
+  );
 
   const isDisabled =
     disabled || context.disabled || !mediaRenditionList?.length;
@@ -2203,16 +2155,22 @@ function MediaPlayerResolution(props: MediaPlayerResolutionProps) {
   );
 
   const getCurrentQualityLabel = React.useCallback(() => {
+    if (!mediaRenditionSelected) return "Auto";
+    const currentRendition = mediaRenditionList?.find((rendition: unknown) => {
+      const r = rendition as { id?: string };
+      return r.id === mediaRenditionSelected;
+    });
     if (!currentRendition) return "Auto";
     const r = currentRendition as {
       height?: number;
       width?: number;
       id?: string;
     };
+    if (r.height && r.width) return `${r.height}×${r.width}`;
     if (r.height) return `${r.height}p`;
     if (r.width) return `${r.width}p`;
     return r.id || "Auto";
-  }, [currentRendition]);
+  }, [mediaRenditionSelected, mediaRenditionList]);
 
   return (
     <DropdownMenu>
@@ -2254,7 +2212,7 @@ function MediaPlayerResolution(props: MediaPlayerResolutionProps) {
               className="justify-between"
             >
               <span>Auto</span>
-              {!currentRendition && (
+              {!mediaRenditionSelected && (
                 <CircleIcon className="size-2 fill-current" />
               )}
             </DropdownMenuItem>
@@ -2270,13 +2228,17 @@ function MediaPlayerResolution(props: MediaPlayerResolutionProps) {
                   height?: number;
                   width?: number;
                   id?: string;
-                  selected?: boolean;
                 };
-                const label = r.height
-                  ? `${r.height}p`
-                  : r.width
-                    ? `${r.width}p`
-                    : r.id || "Unknown";
+                const label =
+                  r.height && r.width
+                    ? `${r.height}×${r.width}`
+                    : r.height
+                      ? `${r.height}p`
+                      : r.width
+                        ? `${r.width}p`
+                        : r.id || "Unknown";
+
+                const selected = r.id === mediaRenditionSelected;
 
                 return (
                   <DropdownMenuItem
@@ -2285,9 +2247,7 @@ function MediaPlayerResolution(props: MediaPlayerResolutionProps) {
                     className="justify-between"
                   >
                     <span>{label}</span>
-                    {r.selected && (
-                      <CircleIcon className="size-2 fill-current" />
-                    )}
+                    {selected && <CircleIcon className="size-2 fill-current" />}
                   </DropdownMenuItem>
                 );
               })}
@@ -2295,79 +2255,6 @@ function MediaPlayerResolution(props: MediaPlayerResolutionProps) {
         )}
       </DropdownMenuContent>
     </DropdownMenu>
-  );
-}
-
-interface MediaPlayerPreviewProps extends React.ComponentProps<"div"> {
-  thumbnailSrc?: string | ((time: number) => string);
-}
-
-function MediaPlayerPreview(props: MediaPlayerPreviewProps) {
-  const { thumbnailSrc, className, ...previewProps } = props;
-
-  const [previewTime, setPreviewTime] = React.useState(0);
-  const [isVisible, setIsVisible] = React.useState(false);
-
-  const previewRef = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    const onPreviewRequest = (event: CustomEvent) => {
-      if (event.detail && typeof event.detail === "number") {
-        setPreviewTime(event.detail);
-        setIsVisible(true);
-      }
-    };
-
-    const onHidePreview = () => {
-      setIsVisible(false);
-    };
-
-    document.addEventListener(
-      "mediapreviewrequest",
-      onPreviewRequest as EventListener,
-    );
-    document.addEventListener("mediahidepreview", onHidePreview);
-
-    return () => {
-      document.removeEventListener(
-        "mediapreviewrequest",
-        onPreviewRequest as EventListener,
-      );
-      document.removeEventListener("mediahidepreview", onHidePreview);
-    };
-  }, []);
-
-  const thumbnailUrl = React.useMemo(() => {
-    if (!thumbnailSrc) return null;
-    return typeof thumbnailSrc === "function"
-      ? thumbnailSrc(previewTime)
-      : thumbnailSrc;
-  }, [thumbnailSrc, previewTime]);
-
-  if (!isVisible || !thumbnailUrl) return null;
-
-  return (
-    <div
-      ref={previewRef}
-      data-slot="media-player-preview"
-      className={cn(
-        "pointer-events-none absolute z-50 rounded border bg-background p-1 shadow-lg",
-        className,
-      )}
-      style={{
-        transform: "translate(-50%, -100%)",
-      }}
-      {...previewProps}
-    >
-      <img
-        src={thumbnailUrl}
-        alt={`Preview at ${timeUtils.formatTime(previewTime, previewTime)}`}
-        className="h-20 w-32 rounded object-cover"
-      />
-      <div className="mt-1 text-center text-xs">
-        {timeUtils.formatTime(previewTime, previewTime)}
-      </div>
-    </div>
   );
 }
 
@@ -2446,9 +2333,6 @@ export {
   MediaPlayerPiP,
   MediaPlayerCaptions,
   MediaPlayerDownload,
-  MediaPlayerLive,
-  MediaPlayerCast,
-  MediaPlayerAirPlay,
   MediaPlayerSettings,
   MediaPlayerResolution,
   MediaPlayerPreview,
@@ -2471,9 +2355,6 @@ export {
   MediaPlayerPiP as PiP,
   MediaPlayerCaptions as Captions,
   MediaPlayerDownload as Download,
-  MediaPlayerLive as Live,
-  MediaPlayerCast as Cast,
-  MediaPlayerAirPlay as AirPlay,
   MediaPlayerSettings as Settings,
   MediaPlayerResolution as Resolution,
   MediaPlayerPreview as Preview,
