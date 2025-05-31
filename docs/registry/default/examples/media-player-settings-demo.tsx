@@ -18,21 +18,21 @@ export default function MediaPlayerSettingsDemo() {
   return (
     <MediaPlayer>
       <MediaPlayerVideo
-        src="https://stream.mux.com/DS00Spx1CV902MCtPj5WknGlR102V5HFkDe/high.mp4"
-        preload="auto"
+        playsInline
         crossOrigin=""
+        slot="media"
+        src="https://stream.mux.com/Sc89iWAyNkhJ3P1rQ02nrEdCFTnfT01CZ2KmaEcxXfB008/low.mp4"
       >
         <track
-          label="thumbnails"
           default
-          kind="metadata"
-          src="https://image.mux.com/DS00Spx1CV902MCtPj5WknGlR102V5HFkDe/storyboard.vtt"
+          kind="chapters"
+          src="https://media-chrome.mux.dev/examples/vanilla/vtt/elephantsdream/chapters.vtt"
         />
         <track
-          label="English"
-          kind="captions"
-          srcLang="en"
-          src="/assets/en-cc.vtt"
+          default
+          kind="metadata"
+          label="thumbnails"
+          src="https://image.mux.com/Sc89iWAyNkhJ3P1rQ02nrEdCFTnfT01CZ2KmaEcxXfB008/storyboard.vtt"
         />
       </MediaPlayerVideo>
       <MediaPlayerControls className="flex-col items-start gap-2.5">
