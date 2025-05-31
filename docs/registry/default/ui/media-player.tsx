@@ -60,12 +60,13 @@ import {
   useMediaSelector,
 } from "media-chrome/react/media-store";
 import * as React from "react";
+import * as ReactDOM from "react-dom";
 
 const SEEK_AMOUNT_SHORT = 5;
 const SEEK_AMOUNT_LONG = 10;
 const LOADING_DELAY_MS = 500;
-const ESTIMATED_SEEK_TOOLTIP_WIDTH = 200;
-const ESTIMATED_SEEK_TOOLTIP_HEIGHT = 160;
+const ESTIMATED_SEEK_TOOLTIP_WIDTH = 240;
+const ESTIMATED_SEEK_TOOLTIP_HEIGHT = 200;
 const SEEK_TOOLTIP_MARGIN = 10;
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
@@ -647,15 +648,17 @@ function MediaPlayerOverlay(props: MediaPlayerOverlayProps) {
   const OverlayPrimitive = asChild ? Slot : "div";
 
   return (
-    <OverlayPrimitive
-      data-slot="media-player-overlay"
-      data-state={isFullscreen ? "fullscreen" : "windowed"}
-      {...overlayProps}
-      className={cn(
-        "-z-10 absolute inset-0 bg-gradient-to-t from-black/80 to-transparent",
-        className,
-      )}
-    />
+    <MediaPlayerPortal>
+      <OverlayPrimitive
+        data-slot="media-player-overlay"
+        data-state={isFullscreen ? "fullscreen" : "windowed"}
+        {...overlayProps}
+        className={cn(
+          "-z-10 absolute inset-0 bg-gradient-to-t from-black/80 to-transparent",
+          className,
+        )}
+      />
+    </MediaPlayerPortal>
   );
 }
 
@@ -758,24 +761,26 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
   const LoadingPrimitive = asChild ? Slot : "div";
 
   return (
-    <LoadingPrimitive
-      role="status"
-      aria-live="polite"
-      data-loading={isLoading ? "" : undefined}
-      data-paused={isPaused ? "" : undefined}
-      data-slot="media-player-loading"
-      data-variant={variant}
-      {...loadingProps}
-      className={cn(
-        "absolute inset-0 z-40 flex items-center justify-center",
-        "bg-black/10 backdrop-blur-[2px]",
-        "transition-opacity duration-150 ease-in-out",
-        "[:fullscreen_&]:z-50",
-        className,
-      )}
-    >
-      {getLoadingIcon()}
-    </LoadingPrimitive>
+    <MediaPlayerPortal>
+      <LoadingPrimitive
+        role="status"
+        aria-live="polite"
+        data-loading={isLoading ? "" : undefined}
+        data-paused={isPaused ? "" : undefined}
+        data-slot="media-player-loading"
+        data-variant={variant}
+        {...loadingProps}
+        className={cn(
+          "absolute inset-0 z-40 flex items-center justify-center",
+          "bg-black/10 backdrop-blur-[2px]",
+          "transition-opacity duration-150 ease-in-out",
+          "[:fullscreen_&]:z-50",
+          className,
+        )}
+      >
+        {getLoadingIcon()}
+      </LoadingPrimitive>
+    </MediaPlayerPortal>
   );
 }
 
@@ -1092,15 +1097,15 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   }, [mediaCurrentTime, pendingSeekTime]);
 
   React.useEffect(() => {
+    if (!isHoveringSeek) return;
+
     function onScroll() {
-      if (isHoveringSeek) {
-        setIsHoveringSeek(false);
-        setTooltipStyle((prev) => ({ ...prev, visibility: "hidden" }));
-        dispatch({
-          type: MediaActionTypes.MEDIA_PREVIEW_REQUEST,
-          detail: undefined,
-        });
-      }
+      setIsHoveringSeek(false);
+      setTooltipStyle((prev) => ({ ...prev, visibility: "hidden" }));
+      dispatch({
+        type: MediaActionTypes.MEDIA_PREVIEW_REQUEST,
+        detail: undefined,
+      });
     }
 
     document.addEventListener("scroll", onScroll, { passive: true });
@@ -1311,6 +1316,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
             seekableEnd > 0 &&
             chapters.slice(1).map((chapter, index) => {
               const position = (chapter.startTime / seekableEnd) * 100;
+
               return (
                 <div
                   key={`chapter-${index}-${chapter.startTime}`}
@@ -1328,43 +1334,45 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         <SliderPrimitive.Thumb className="relative z-10 block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:outline-hidden focus-visible:ring-4 disabled:pointer-events-none disabled:opacity-50" />
       </SliderPrimitive.Root>
       {isHoveringSeek && seekableEnd > 0 && (
-        <div
-          ref={tooltipRef}
-          style={tooltipStyle}
-          className="pointer-events-none z-50"
-        >
-          <div className="flex flex-col items-center">
-            {previewThumbnail && (
-              <div className="mb-2 overflow-hidden rounded-md border bg-background p-1 shadow-lg dark:bg-zinc-900">
-                {previewThumbnail.coords ? (
-                  <div
-                    className="h-24 w-40 rounded"
-                    style={{
-                      backgroundImage: `url(${previewThumbnail.src})`,
-                      backgroundPosition: `-${previewThumbnail.coords[0]}px -${previewThumbnail.coords[1]}px`,
-                      backgroundSize: "auto",
-                      backgroundRepeat: "no-repeat",
-                    }}
-                  />
-                ) : (
-                  <img
-                    src={previewThumbnail.src}
-                    alt={`Preview at ${formattedHoverTime}`}
-                    className="h-24 w-40 rounded object-cover"
-                  />
-                )}
+        <MediaPlayerPortal>
+          <div
+            ref={tooltipRef}
+            style={tooltipStyle}
+            className="pointer-events-none z-50"
+          >
+            <div className="flex flex-col items-center">
+              {previewThumbnail && (
+                <div className="mb-2 overflow-hidden rounded-md border bg-background p-1 shadow-lg dark:bg-zinc-900">
+                  {previewThumbnail.coords ? (
+                    <div
+                      className="h-32 w-56 rounded"
+                      style={{
+                        backgroundImage: `url(${previewThumbnail.src})`,
+                        backgroundPosition: `-${previewThumbnail.coords[0]}px -${previewThumbnail.coords[1]}px`,
+                        backgroundSize: "auto",
+                        backgroundRepeat: "no-repeat",
+                      }}
+                    />
+                  ) : (
+                    <img
+                      src={previewThumbnail.src}
+                      alt={`Preview at ${formattedHoverTime}`}
+                      className="h-32 w-56 rounded object-cover"
+                    />
+                  )}
+                </div>
+              )}
+              {currentChapter && (
+                <div className="mb-1 max-w-48 rounded bg-accent px-2 py-1 text-center text-accent-foreground text-xs shadow-sm">
+                  {currentChapter.text}
+                </div>
+              )}
+              <div className="whitespace-nowrap rounded-md border bg-accent px-3 py-1.5 text-accent-foreground text-xs tabular-nums shadow-lg dark:bg-zinc-900">
+                {formattedHoverTime} / {formattedDuration}
               </div>
-            )}
-            {currentChapter && (
-              <div className="mb-1 max-w-48 rounded bg-accent px-2 py-1 text-center text-accent-foreground text-xs shadow-sm">
-                {currentChapter.text}
-              </div>
-            )}
-            <div className="whitespace-nowrap rounded-md border bg-accent px-3 py-1.5 text-accent-foreground text-xs tabular-nums shadow-lg dark:bg-zinc-900">
-              {formattedHoverTime} / {formattedDuration}
             </div>
           </div>
-        </div>
+        </MediaPlayerPortal>
       )}
     </div>
   );
@@ -2281,6 +2289,24 @@ function MediaPlayerResolution(props: MediaPlayerResolutionProps) {
       </DropdownMenuContent>
     </DropdownMenu>
   );
+}
+
+interface MediaPlayerPortalProps {
+  children: React.ReactNode;
+  container?: Element | DocumentFragment | null;
+}
+
+function MediaPlayerPortal({ children, container }: MediaPlayerPortalProps) {
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useLayoutEffect(() => setMounted(true), []);
+
+  const dynamicContainer =
+    container ?? (mounted ? globalThis.document?.body : null);
+
+  if (!dynamicContainer) return null;
+
+  return ReactDOM.createPortal(children, dynamicContainer);
 }
 
 interface MediaPlayerTooltipProps extends React.ComponentProps<typeof Tooltip> {
