@@ -147,10 +147,10 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
     onVolumeChange: onVolumeChangeProp,
     onMuted,
     onPipError,
-    asChild,
-    disabled = false,
     dir: dirProp,
     label,
+    asChild,
+    disabled = false,
     children,
     className,
     ref,
@@ -165,7 +165,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
 
   const rootRef = React.useRef<HTMLDivElement | null>(null);
   const fullscreenRef = useMediaFullscreenRef();
-  const composedRef = useComposedRefs(ref, fullscreenRef, rootRef);
+  const composedRef = useComposedRefs(ref, rootRef, fullscreenRef);
 
   const mediaRef = React.useRef<HTMLVideoElement | HTMLAudioElement | null>(
     null,
