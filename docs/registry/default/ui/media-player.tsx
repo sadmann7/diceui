@@ -96,6 +96,7 @@ interface MediaPlayerContextValue {
   descriptionId: string;
   dir: Direction;
   disabled: boolean;
+  rootRef: React.RefObject<HTMLDivElement | null>;
   mediaRef: React.RefObject<HTMLVideoElement | HTMLAudioElement | null>;
   portalContainer: Element | DocumentFragment | null;
   isVideo: boolean;
@@ -195,6 +196,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       labelId,
       descriptionId,
       dir,
+      rootRef,
       mediaRef,
       portalContainer,
       disabled,
@@ -1157,37 +1159,50 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     return Math.min(1, seekableStart / seekableEnd);
   }, [mediaBuffered, mediaCurrentTime, seekableEnd, mediaEnded, seekableStart]);
 
-  const onTooltipPositionUpdate = React.useCallback((clientX: number) => {
-    if (!seekRef.current || !tooltipRef.current) return;
+  const onTooltipPositionUpdate = React.useCallback(
+    (clientX: number) => {
+      if (!seekRef.current || !tooltipRef.current) return;
 
-    const tooltipWidth =
-      tooltipRef.current.offsetWidth || ESTIMATED_SEEK_TOOLTIP_WIDTH;
-    const tooltipHeight =
-      tooltipRef.current.offsetHeight || ESTIMATED_SEEK_TOOLTIP_HEIGHT;
-    const seekRect = seekRef.current.getBoundingClientRect();
+      const tooltipWidth =
+        tooltipRef.current.offsetWidth || ESTIMATED_SEEK_TOOLTIP_WIDTH;
+      const tooltipHeight =
+        tooltipRef.current.offsetHeight || ESTIMATED_SEEK_TOOLTIP_HEIGHT;
+      const seekRect = seekRef.current.getBoundingClientRect();
 
-    let x = clientX;
-    let y = seekRect.top - tooltipHeight - SEEK_TOOLTIP_MARGIN;
+      let x = clientX;
+      let y = seekRect.top - tooltipHeight - SEEK_TOOLTIP_MARGIN;
 
-    if (y < 0) {
-      y = seekRect.bottom + SEEK_TOOLTIP_MARGIN;
-    }
+      if (y < 0) {
+        y = seekRect.bottom + SEEK_TOOLTIP_MARGIN;
+      }
 
-    const halfTooltipWidth = tooltipWidth / 2;
-    const viewportWidth = window.innerWidth;
+      const halfTooltipWidth = tooltipWidth / 2;
 
-    if (x - halfTooltipWidth < 0) {
-      x = halfTooltipWidth;
-    } else if (x + halfTooltipWidth > viewportWidth) {
-      x = viewportWidth - halfTooltipWidth;
-    }
+      const rootRect = context.rootRef.current?.getBoundingClientRect();
 
-    setSeekState((prev) => ({
-      ...prev,
-      tooltipPosition: { x, y },
-      hasInitialPosition: true,
-    }));
-  }, []);
+      if (rootRect) {
+        if (x - halfTooltipWidth < rootRect.left) {
+          x = rootRect.left + halfTooltipWidth;
+        } else if (x + halfTooltipWidth > rootRect.right) {
+          x = rootRect.right - halfTooltipWidth;
+        }
+      } else {
+        const viewportWidth = window.innerWidth;
+        if (x - halfTooltipWidth < 0) {
+          x = halfTooltipWidth;
+        } else if (x + halfTooltipWidth > viewportWidth) {
+          x = viewportWidth - halfTooltipWidth;
+        }
+      }
+
+      setSeekState((prev) => ({
+        ...prev,
+        tooltipPosition: { x, y },
+        hasInitialPosition: true,
+      }));
+    },
+    [context],
+  );
 
   const onPointerEnter = React.useCallback(() => {
     if (seekableEnd > 0) {
