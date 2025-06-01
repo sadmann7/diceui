@@ -1202,7 +1202,6 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
           Math.min(lastPointerXRef.current, seekRect.right),
         );
 
-        // Immediately set the position before showing to prevent sliding
         onTooltipPositionUpdate(clientX);
 
         requestAnimationFrame(() => {
@@ -2448,7 +2447,7 @@ function MediaPlayerTooltip({
   if (!tooltip && !shortcut) return <>{children}</>;
 
   return (
-    <Tooltip {...props} delayDuration={240}>
+    <Tooltip {...props} delayDuration={300}>
       <TooltipTrigger
         className="text-foreground focus-visible:ring-ring/50"
         asChild
