@@ -290,17 +290,6 @@ export interface SeekProps
     >,
     CompositionProps {
   /**
-   * Whether to display the current time and remaining time alongside the seek bar.
-   * @default false
-   *
-   * ```ts
-   * // Show time display with seek bar
-   * <MediaPlayer.Seek withTime />
-   * ```
-   */
-  withTime?: boolean;
-
-  /**
    * Custom preview thumbnail source for seek preview.
    * Can be a string URL or a function that returns a URL based on time.
    *
@@ -319,28 +308,6 @@ export interface SeekProps
   previewThumbnailSrc?: string | ((time: number) => string);
 
   /**
-   * Whether to disable preview thumbnails.
-   * @default false
-   *
-   * ```ts
-   * // Disable preview thumbnails
-   * <MediaPlayer.Seek withoutPreviewThumbnail />
-   * ```
-   */
-  withoutPreviewThumbnail?: boolean;
-
-  /**
-   * Whether to disable chapter markers on the seek bar.
-   * @default false
-   *
-   * ```ts
-   * // Disable chapter markers
-   * <MediaPlayer.Seek withoutChapter />
-   * ```
-   */
-  withoutChapter?: boolean;
-
-  /**
    * The distance in pixels from the seek bar to position the tooltip.
    * @default 10
    *
@@ -350,6 +317,22 @@ export interface SeekProps
    * ```
    */
   sideOffset?: number;
+
+  /**
+   * Element(s) to use as collision boundaries.
+   * Defaults to the media player root element.
+   *
+   * ```ts
+   * // Custom collision boundary
+   * <MediaPlayer.Seek collisionBoundary={customElement} />
+   * ```
+   *
+   * ```ts
+   * // Multiple boundaries
+   * <MediaPlayer.Seek collisionBoundary={[element1, element2]} />
+   * ```
+   */
+  collisionBoundary?: Element | Element[];
 
   /**
    * The padding in pixels from the collision boundary.
@@ -373,20 +356,37 @@ export interface SeekProps
     | Partial<Record<"top" | "right" | "bottom" | "left", number>>;
 
   /**
-   * Element(s) to use as collision boundaries.
-   * Defaults to the media player root element.
+   * Whether to display the current time and remaining time alongside the seek bar.
+   * @default false
    *
    * ```ts
-   * // Custom collision boundary
-   * <MediaPlayer.Seek collisionBoundary={customElement} />
-   * ```
-   *
-   * ```ts
-   * // Multiple boundaries
-   * <MediaPlayer.Seek collisionBoundary={[element1, element2]} />
+   * // Show time display with seek bar
+   * <MediaPlayer.Seek withTime />
    * ```
    */
-  collisionBoundary?: Element | Element[];
+  withTime?: boolean;
+
+  /**
+   * Whether to disable preview thumbnails.
+   * @default false
+   *
+   * ```ts
+   * // Disable preview thumbnails
+   * <MediaPlayer.Seek withoutPreviewThumbnail />
+   * ```
+   */
+  withoutPreviewThumbnail?: boolean;
+
+  /**
+   * Whether to disable chapter markers on the seek bar.
+   * @default false
+   *
+   * ```ts
+   * // Disable chapter markers
+   * <MediaPlayer.Seek withoutChapter />
+   * ```
+   */
+  withoutChapter?: boolean;
 }
 
 export interface VolumeProps

@@ -985,14 +985,14 @@ interface SeekState {
 interface MediaPlayerSeekProps
   extends React.ComponentProps<typeof SliderPrimitive.Root> {
   previewThumbnailSrc?: string | ((time: number) => string);
-  withTime?: boolean;
-  withoutPreviewThumbnail?: boolean;
-  withoutChapter?: boolean;
   sideOffset?: number;
+  collisionBoundary?: Element | Element[];
   collisionPadding?:
     | number
     | Partial<Record<"top" | "right" | "bottom" | "left", number>>;
-  collisionBoundary?: Element | Element[];
+  withTime?: boolean;
+  withoutPreviewThumbnail?: boolean;
+  withoutChapter?: boolean;
 }
 
 function MediaPlayerSeek(props: MediaPlayerSeekProps) {
