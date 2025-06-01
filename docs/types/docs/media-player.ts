@@ -1,19 +1,12 @@
-import type { DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import type { SelectTrigger } from "@/components/ui/select";
+import type { Button } from "@/components/ui/button";
+import type {
+  DropdownMenu,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import type { CompositionProps, EmptyProps } from "@/types";
 import type { Slider } from "@radix-ui/react-slider";
 
 export interface RootProps extends EmptyProps<"div">, CompositionProps {
-  /**
-   * The default volume level (0-1).
-   * @default 1
-   *
-   * ```ts
-   * <MediaPlayer defaultVolume={0.5} />
-   * ```
-   */
-  defaultVolume?: number;
-
   /**
    * Callback function triggered when the media starts playing.
    *
@@ -341,6 +334,54 @@ export interface SeekProps
    * ```
    */
   withoutChapter?: boolean;
+
+  /**
+   * The distance in pixels from the seek bar to position the tooltip.
+   * @default 10
+   *
+   * ```ts
+   * // Custom tooltip distance
+   * <MediaPlayer.Seek sideOffset={15} />
+   * ```
+   */
+  sideOffset?: number;
+
+  /**
+   * The padding in pixels from the collision boundary.
+   * Can be a number for uniform padding or an object for per-side padding.
+   * @default 10
+   *
+   * ```ts
+   * // Uniform padding
+   * <MediaPlayer.Seek collisionPadding={20} />
+   * ```
+   *
+   * ```ts
+   * // Per-side padding
+   * <MediaPlayer.Seek
+   *   collisionPadding={{ top: 10, right: 15, bottom: 10, left: 15 }}
+   * />
+   * ```
+   */
+  collisionPadding?:
+    | number
+    | Partial<Record<"top" | "right" | "bottom" | "left", number>>;
+
+  /**
+   * Element(s) to use as collision boundaries.
+   * Defaults to the media player root element.
+   *
+   * ```ts
+   * // Custom collision boundary
+   * <MediaPlayer.Seek collisionBoundary={customElement} />
+   * ```
+   *
+   * ```ts
+   * // Multiple boundaries
+   * <MediaPlayer.Seek collisionBoundary={[element1, element2]} />
+   * ```
+   */
+  collisionBoundary?: Element | Element[];
 }
 
 export interface VolumeProps
@@ -378,7 +419,7 @@ export interface TimeProps extends EmptyProps<"div">, CompositionProps {
 }
 
 export interface PlaybackSpeedProps
-  extends EmptyProps<typeof SelectTrigger>,
+  extends EmptyProps<typeof DropdownMenuTrigger>,
     CompositionProps {
   /**
    * An array of playback speed options.
@@ -407,9 +448,83 @@ export interface CaptionsProps extends EmptyProps<"button">, CompositionProps {}
 
 export interface DownloadProps extends EmptyProps<"button">, CompositionProps {}
 
+interface MediaPlayerSettingsImplProps
+  extends React.ComponentProps<typeof DropdownMenuTrigger>,
+    React.ComponentProps<typeof Button>,
+    Omit<React.ComponentProps<typeof DropdownMenu>, "dir"> {}
+
 export interface SettingsProps
-  extends EmptyProps<typeof DropdownMenuTrigger>,
+  extends Omit<MediaPlayerSettingsImplProps, keyof React.ComponentProps<"div">>,
     CompositionProps {
+  /**
+   * Whether the settings menu is open by default.
+   * @default false
+   *
+   * ```ts
+   * // Open settings menu by default
+   * <MediaPlayer.Settings defaultOpen />
+   * ```
+   */
+  defaultOpen?: boolean;
+
+  /**
+   * Whether the settings menu is open.
+   * @default false
+   *
+   * ```ts
+   * // Open settings menu
+   * <MediaPlayer.Settings open />
+   * ```
+   */
+  open?: boolean;
+
+  /**
+   * Callback function triggered when the settings menu is opened or closed.
+   *
+   * ```ts
+   * // Open settings menu
+   * <MediaPlayer.Settings onOpenChange={setOpen} />
+   * ```
+   */
+  onOpenChange?: (open: boolean) => void;
+
+  /**
+   * Whether the settings menu is modal.
+   * @default false
+   *
+  /**
+   * Whether the settings menu is modal.
+   * @default false
+   *
+   * ```ts
+   * // Modal settings menu
+   * <MediaPlayer.Settings modal />
+   * ```
+   */
+  modal?: boolean;
+
+  /**
+   * The variant of the settings menu trigger.
+   * @default "default"
+   *
+   * ```ts
+   * // Outline settings menu
+   * <MediaPlayer.Settings variant="outline" />
+   * ```
+   */
+  variant?: MediaPlayerSettingsImplProps["variant"];
+
+  /**
+   * The size of the settings menu trigger.
+   * @default "default"
+   *
+   * ```ts
+   * // Small settings menu
+   * <MediaPlayer.Settings size="sm" />
+   * ```
+   */
+  size?: MediaPlayerSettingsImplProps["size"];
+
   /**
    * An array of playback speed options available in the settings menu.
    * @default [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]

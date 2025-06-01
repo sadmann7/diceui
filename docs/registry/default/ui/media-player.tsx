@@ -60,7 +60,6 @@ const SEEK_AMOUNT_LONG = 10;
 const LOADING_DELAY_MS = 500;
 const ESTIMATED_SEEK_TOOLTIP_WIDTH = 240;
 const ESTIMATED_SEEK_TOOLTIP_HEIGHT = 200;
-const SEEK_TOOLTIP_MARGIN = 10;
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
 const ROOT_NAME = "MediaPlayer";
@@ -988,11 +987,19 @@ interface MediaPlayerSeekProps
   withTime?: boolean;
   withoutPreviewThumbnail?: boolean;
   withoutChapter?: boolean;
+  sideOffset?: number;
+  collisionPadding?:
+    | number
+    | Partial<Record<"top" | "right" | "bottom" | "left", number>>;
+  collisionBoundary?: Element | Element[];
 }
 
 function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const {
     previewThumbnailSrc,
+    sideOffset = 10,
+    collisionPadding = 10,
+    collisionBoundary,
     withTime = false,
     withoutPreviewThumbnail = false,
     withoutChapter = false,
@@ -1159,6 +1166,33 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     return Math.min(1, seekableStart / seekableEnd);
   }, [mediaBuffered, mediaCurrentTime, seekableEnd, mediaEnded, seekableStart]);
 
+  const getCollisionPadding = React.useCallback(() => {
+    if (typeof collisionPadding === "number") {
+      return {
+        top: collisionPadding,
+        right: collisionPadding,
+        bottom: collisionPadding,
+        left: collisionPadding,
+      };
+    }
+    return {
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      ...collisionPadding,
+    };
+  }, [collisionPadding]);
+
+  const getCollisionBoundaries = React.useCallback(() => {
+    if (collisionBoundary) {
+      return Array.isArray(collisionBoundary)
+        ? collisionBoundary
+        : [collisionBoundary];
+    }
+    return [context.rootRef.current].filter(Boolean) as Element[];
+  }, [collisionBoundary, context.rootRef]);
+
   const onTooltipPositionUpdate = React.useCallback(
     (clientX: number) => {
       if (!seekRef.current || !tooltipRef.current) return;
@@ -1170,29 +1204,55 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       const seekRect = seekRef.current.getBoundingClientRect();
 
       let x = clientX;
-      let y = seekRect.top - tooltipHeight - SEEK_TOOLTIP_MARGIN;
+      let y = seekRect.top - tooltipHeight - sideOffset;
 
-      if (y < 0) {
-        y = seekRect.bottom + SEEK_TOOLTIP_MARGIN;
+      const padding = getCollisionPadding();
+      const boundaries = getCollisionBoundaries();
+
+      let minTop = 0;
+      let maxBottom = window.innerHeight;
+
+      for (const boundary of boundaries) {
+        const boundaryRect = boundary.getBoundingClientRect();
+        minTop = Math.max(minTop, boundaryRect.top + padding.top);
+        maxBottom = Math.min(maxBottom, boundaryRect.bottom - padding.bottom);
+      }
+
+      if (y < minTop) {
+        y = seekRect.bottom + sideOffset;
+        if (y + tooltipHeight > maxBottom) {
+          y = maxBottom - tooltipHeight - padding.bottom;
+        }
+      }
+
+      const viewportPadding = 10;
+      if (y < viewportPadding) {
+        y = viewportPadding;
+      } else if (y + tooltipHeight > window.innerHeight - viewportPadding) {
+        y = window.innerHeight - viewportPadding - tooltipHeight;
       }
 
       const halfTooltipWidth = tooltipWidth / 2;
 
-      const rootRect = context.rootRef.current?.getBoundingClientRect();
+      let minLeft = 0;
+      let maxRight = window.innerWidth;
 
-      if (rootRect) {
-        if (x - halfTooltipWidth < rootRect.left) {
-          x = rootRect.left + halfTooltipWidth;
-        } else if (x + halfTooltipWidth > rootRect.right) {
-          x = rootRect.right - halfTooltipWidth;
-        }
-      } else {
-        const viewportWidth = window.innerWidth;
-        if (x - halfTooltipWidth < 0) {
-          x = halfTooltipWidth;
-        } else if (x + halfTooltipWidth > viewportWidth) {
-          x = viewportWidth - halfTooltipWidth;
-        }
+      for (const boundary of boundaries) {
+        const boundaryRect = boundary.getBoundingClientRect();
+        minLeft = Math.max(minLeft, boundaryRect.left + padding.left);
+        maxRight = Math.min(maxRight, boundaryRect.right - padding.right);
+      }
+
+      if (x - halfTooltipWidth < minLeft) {
+        x = minLeft + halfTooltipWidth;
+      } else if (x + halfTooltipWidth > maxRight) {
+        x = maxRight - halfTooltipWidth;
+      }
+
+      if (x - halfTooltipWidth < viewportPadding) {
+        x = viewportPadding + halfTooltipWidth;
+      } else if (x + halfTooltipWidth > window.innerWidth - viewportPadding) {
+        x = window.innerWidth - viewportPadding - halfTooltipWidth;
       }
 
       setSeekState((prev) => ({
@@ -1201,7 +1261,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         hasInitialPosition: true,
       }));
     },
-    [context],
+    [getCollisionPadding, getCollisionBoundaries, sideOffset],
   );
 
   const onPointerEnter = React.useCallback(() => {
@@ -2085,7 +2145,9 @@ function MediaPlayerDownload(props: MediaPlayerDownloadProps) {
 }
 
 interface MediaPlayerSettingsProps
-  extends React.ComponentProps<typeof DropdownMenuTrigger> {
+  extends React.ComponentProps<typeof DropdownMenuTrigger>,
+    React.ComponentProps<typeof Button>,
+    Omit<React.ComponentProps<typeof DropdownMenu>, "dir"> {
   speeds?: number[];
 }
 
@@ -2094,6 +2156,10 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
     asChild,
     speeds = SPEEDS,
     className,
+    defaultOpen,
+    open,
+    onOpenChange,
+    modal = false,
     disabled,
     ...settingsProps
   } = props;
@@ -2185,7 +2251,12 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
   }, [mediaRenditionSelected, mediaRenditionList]);
 
   return (
-    <DropdownMenu modal={false}>
+    <DropdownMenu
+      modal={modal}
+      defaultOpen={defaultOpen}
+      open={open}
+      onOpenChange={onOpenChange}
+    >
       <MediaPlayerTooltip tooltip="Settings">
         <DropdownMenuTrigger asChild>
           <Button
