@@ -1345,11 +1345,18 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         setSeekState((prev) => ({
           ...prev,
           hoverTime: calculatedHoverTime,
+          isHovering:
+            prev.isHovering ||
+            (clientX >= seekRect.left && clientX <= seekRect.right),
         }));
 
         onPreviewUpdate(calculatedHoverTime);
 
-        if (seekState.isHovering || seekState.tooltipPosition) {
+        if (
+          seekState.isHovering ||
+          seekState.tooltipPosition ||
+          (clientX >= seekRect.left && clientX <= seekRect.right)
+        ) {
           if (clientX < seekRect.left || clientX > seekRect.right) {
             setSeekState((prev) => ({ ...prev, tooltipPosition: null }));
             return;
@@ -1400,11 +1407,22 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         seekThrottleTimeoutRef.current = null;
       }
 
-      setSeekState((prev) => ({ ...prev, pendingSeekTime: time }));
+      setSeekState((prev) => ({
+        ...prev,
+        pendingSeekTime: time,
+        isHovering: false,
+        tooltipPosition: null,
+        hasInitialPosition: false,
+      }));
 
       dispatch({
         type: MediaActionTypes.MEDIA_SEEK_REQUEST,
         detail: time,
+      });
+
+      dispatch({
+        type: MediaActionTypes.MEDIA_PREVIEW_REQUEST,
+        detail: undefined,
       });
     },
     [dispatch],
