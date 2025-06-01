@@ -6,6 +6,11 @@ import type {
 import type { CompositionProps, EmptyProps } from "@/types";
 import type { Slider } from "@radix-ui/react-slider";
 
+interface MediaPlayerDropdownMenuProps
+  extends React.ComponentProps<typeof DropdownMenuTrigger>,
+    React.ComponentProps<typeof Button>,
+    Omit<React.ComponentProps<typeof DropdownMenu>, "dir"> {}
+
 export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
    * Callback function triggered when the media starts playing.
@@ -419,16 +424,47 @@ export interface TimeProps extends EmptyProps<"div">, CompositionProps {
 }
 
 export interface PlaybackSpeedProps
-  extends EmptyProps<typeof DropdownMenuTrigger>,
+  extends Omit<
+      MediaPlayerDropdownMenuProps,
+      keyof React.ComponentProps<"button">
+    >,
     CompositionProps {
+  /**
+   * Whether the dropdown menu is open by default.
+   * @default false
+   */
+  defaultOpen?: boolean;
+
+  /**
+   * Whether the dropdown menu is open.
+   * @default false
+   */
+  open?: boolean;
+
+  /** Callback function triggered when the dropdown menu is opened or closed. */
+  onOpenChange?: (open: boolean) => void;
+
+  /**
+   * Whether the dropdown menu is modal.
+   * @default false
+   */
+  modal?: boolean;
+
+  /**
+   * The variant of the dropdown menu trigger.
+   * @default "default"
+   */
+  variant?: MediaPlayerDropdownMenuProps["variant"];
+
+  /**
+   * The size of the settings menu trigger.
+   * @default "default"
+   */
+  size?: MediaPlayerDropdownMenuProps["size"];
+
   /**
    * An array of playback speed options.
    * @default [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
-   *
-   * ```ts
-   * // Custom playback speeds
-   * <MediaPlayer.PlaybackSpeed speeds={[0.5, 1, 1.5, 2]} />
-   * ```
    */
   speeds?: number[];
 }
@@ -448,91 +484,6 @@ export interface CaptionsProps extends EmptyProps<"button">, CompositionProps {}
 
 export interface DownloadProps extends EmptyProps<"button">, CompositionProps {}
 
-interface MediaPlayerSettingsImplProps
-  extends React.ComponentProps<typeof DropdownMenuTrigger>,
-    React.ComponentProps<typeof Button>,
-    Omit<React.ComponentProps<typeof DropdownMenu>, "dir"> {}
-
 export interface SettingsProps
-  extends Omit<MediaPlayerSettingsImplProps, keyof React.ComponentProps<"div">>,
-    CompositionProps {
-  /**
-   * Whether the settings menu is open by default.
-   * @default false
-   *
-   * ```ts
-   * // Open settings menu by default
-   * <MediaPlayer.Settings defaultOpen />
-   * ```
-   */
-  defaultOpen?: boolean;
-
-  /**
-   * Whether the settings menu is open.
-   * @default false
-   *
-   * ```ts
-   * // Open settings menu
-   * <MediaPlayer.Settings open />
-   * ```
-   */
-  open?: boolean;
-
-  /**
-   * Callback function triggered when the settings menu is opened or closed.
-   *
-   * ```ts
-   * // Open settings menu
-   * <MediaPlayer.Settings onOpenChange={setOpen} />
-   * ```
-   */
-  onOpenChange?: (open: boolean) => void;
-
-  /**
-   * Whether the settings menu is modal.
-   * @default false
-   *
-  /**
-   * Whether the settings menu is modal.
-   * @default false
-   *
-   * ```ts
-   * // Modal settings menu
-   * <MediaPlayer.Settings modal />
-   * ```
-   */
-  modal?: boolean;
-
-  /**
-   * The variant of the settings menu trigger.
-   * @default "default"
-   *
-   * ```ts
-   * // Outline settings menu
-   * <MediaPlayer.Settings variant="outline" />
-   * ```
-   */
-  variant?: MediaPlayerSettingsImplProps["variant"];
-
-  /**
-   * The size of the settings menu trigger.
-   * @default "default"
-   *
-   * ```ts
-   * // Small settings menu
-   * <MediaPlayer.Settings size="sm" />
-   * ```
-   */
-  size?: MediaPlayerSettingsImplProps["size"];
-
-  /**
-   * An array of playback speed options available in the settings menu.
-   * @default [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
-   *
-   * ```ts
-   * // Custom playback speeds in settings
-   * <MediaPlayer.Settings speeds={[0.5, 1, 1.5, 2]} />
-   * ```
-   */
-  speeds?: number[];
-}
+  extends Omit<PlaybackSpeedProps, keyof React.ComponentProps<"button">>,
+    CompositionProps {}

@@ -1786,14 +1786,20 @@ function MediaPlayerTime(props: MediaPlayerTimeProps) {
 }
 
 interface MediaPlayerPlaybackSpeedProps
-  extends React.ComponentProps<typeof DropdownMenuTrigger> {
+  extends React.ComponentProps<typeof DropdownMenuTrigger>,
+    React.ComponentProps<typeof Button>,
+    Omit<React.ComponentProps<typeof DropdownMenu>, "dir"> {
   speeds?: number[];
 }
 
 function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
   const {
-    asChild,
+    open,
+    defaultOpen,
+    onOpenChange,
     speeds = SPEEDS,
+    asChild,
+    modal = false,
     className,
     disabled,
     ...playbackSpeedProps
@@ -1818,7 +1824,12 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
   );
 
   return (
-    <DropdownMenu modal={false}>
+    <DropdownMenu
+      modal={modal}
+      open={open}
+      defaultOpen={defaultOpen}
+      onOpenChange={onOpenChange}
+    >
       <MediaPlayerTooltip tooltip="Playback speed" shortcut={["<", ">"]}>
         <DropdownMenuTrigger asChild>
           <Button
@@ -1829,7 +1840,7 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
             variant="ghost"
             size="icon"
             className={cn(
-              "h-8 w-16 justify-center border-none data-[state=open]:bg-accent data-[state=open]:bg-accent/50 dark:bg-transparent dark:data-[state=open]:bg-accent/50 dark:hover:bg-accent/50",
+              "h-8 w-16 aria-[expanded=true]:bg-accent/50",
               className,
             )}
           >
@@ -1848,8 +1859,7 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
             className="justify-between"
             onSelect={() => onPlaybackRateChange(speed)}
           >
-            {speed}x
-            {mediaPlaybackRate === speed && <CheckIcon className="size-4" />}
+            {speed}x{mediaPlaybackRate === speed && <CheckIcon />}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
@@ -2056,7 +2066,7 @@ function MediaPlayerCaptions(props: MediaPlayerCaptionsProps) {
 
   const isDisabled = disabled || context.disabled;
 
-  const onToggleCaptions = React.useCallback(
+  const onCaptionsToggle = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       props.onClick?.(event);
 
@@ -2084,7 +2094,7 @@ function MediaPlayerCaptions(props: MediaPlayerCaptionsProps) {
         variant="ghost"
         size="icon"
         className={cn("size-8", className)}
-        onClick={onToggleCaptions}
+        onClick={onCaptionsToggle}
       >
         {children ??
           (showingSubtitles ? <SubtitlesIcon /> : <CaptionsOffIcon />)}
@@ -2144,22 +2154,17 @@ function MediaPlayerDownload(props: MediaPlayerDownloadProps) {
   );
 }
 
-interface MediaPlayerSettingsProps
-  extends React.ComponentProps<typeof DropdownMenuTrigger>,
-    React.ComponentProps<typeof Button>,
-    Omit<React.ComponentProps<typeof DropdownMenu>, "dir"> {
-  speeds?: number[];
-}
+interface MediaPlayerSettingsProps extends MediaPlayerPlaybackSpeedProps {}
 
 function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
   const {
-    asChild,
-    speeds = SPEEDS,
-    className,
-    defaultOpen,
     open,
+    defaultOpen,
     onOpenChange,
+    speeds = SPEEDS,
+    asChild,
     modal = false,
+    className,
     disabled,
     ...settingsProps
   } = props;
@@ -2206,7 +2211,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
     [dispatch],
   );
 
-  const onToggleSubtitlesOff = React.useCallback(() => {
+  const onSubtitlesToggle = React.useCallback(() => {
     dispatch({
       type: MediaActionTypes.MEDIA_TOGGLE_SUBTITLES_REQUEST,
       detail: false,
@@ -2253,8 +2258,8 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
   return (
     <DropdownMenu
       modal={modal}
-      defaultOpen={defaultOpen}
       open={open}
+      defaultOpen={defaultOpen}
       onOpenChange={onOpenChange}
     >
       <MediaPlayerTooltip tooltip="Settings">
@@ -2268,7 +2273,10 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
             {...settingsProps}
             variant="ghost"
             size="icon"
-            className={cn("size-8", className)}
+            className={cn(
+              "size-8 aria-[expanded=true]:bg-accent/50",
+              className,
+            )}
           >
             <SettingsIcon />
           </Button>
@@ -2362,7 +2370,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
           <DropdownMenuSubContent>
             <DropdownMenuItem
               className="justify-between"
-              onSelect={onToggleSubtitlesOff}
+              onSelect={onSubtitlesToggle}
             >
               Off
               {subtitlesOff && <CheckIcon className="size-4" />}
@@ -2550,7 +2558,7 @@ function MediaPlayerTooltip({
   if (!tooltip && !shortcut) return <>{children}</>;
 
   return (
-    <Tooltip {...props} delayDuration={300}>
+    <Tooltip {...props} delayDuration={600}>
       <TooltipTrigger
         className="text-foreground focus-visible:ring-ring/50"
         asChild
