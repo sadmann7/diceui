@@ -14,13 +14,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
@@ -31,7 +24,7 @@ import * as SliderPrimitive from "@radix-ui/react-slider";
 import { Slot } from "@radix-ui/react-slot";
 import {
   CaptionsOffIcon,
-  CircleIcon,
+  CheckIcon,
   DownloadIcon,
   FastForwardIcon,
   Loader2Icon,
@@ -103,8 +96,9 @@ interface MediaPlayerContextValue {
   descriptionId: string;
   dir: Direction;
   disabled: boolean;
-  isVideo: boolean;
   mediaRef: React.RefObject<HTMLVideoElement | HTMLAudioElement | null>;
+  portalContainer: Element | DocumentFragment | null;
+  isVideo: boolean;
 }
 
 const MediaPlayerContext = React.createContext<MediaPlayerContextValue | null>(
@@ -168,12 +162,25 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
   const descriptionId = React.useId();
 
   const dispatch = useMediaDispatch();
-  const fullscreenRefCallback = useMediaFullscreenRef();
-  const composedRef = useComposedRefs(ref, fullscreenRefCallback);
+
+  const rootRef = React.useRef<HTMLDivElement | null>(null);
+  const fullscreenRef = useMediaFullscreenRef();
+  const composedRef = useComposedRefs(ref, fullscreenRef, rootRef);
 
   const mediaRef = React.useRef<HTMLVideoElement | HTMLAudioElement | null>(
     null,
   );
+
+  const [mounted, setMounted] = React.useState(false);
+  React.useLayoutEffect(() => setMounted(true), []);
+
+  const isFullscreen = useMediaSelector((state) => state.mediaIsFullscreen);
+
+  const portalContainer = mounted
+    ? isFullscreen
+      ? rootRef.current
+      : globalThis.document.body
+    : null;
 
   const dir = useDirection(dirProp);
 
@@ -188,11 +195,12 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       labelId,
       descriptionId,
       dir,
+      mediaRef,
+      portalContainer,
       disabled,
       isVideo,
-      mediaRef,
     }),
-    [mediaId, labelId, descriptionId, dir, disabled, isVideo],
+    [mediaId, labelId, descriptionId, dir, portalContainer, disabled, isVideo],
   );
 
   React.useEffect(() => {
@@ -527,12 +535,12 @@ interface MediaPlayerVideoProps extends React.ComponentProps<"video"> {
 }
 
 function MediaPlayerVideo(props: MediaPlayerVideoProps) {
-  const { asChild, children, className, ...videoProps } = props;
+  const { asChild, children, className, ref, ...videoProps } = props;
 
   const context = useMediaPlayerContext(VIDEO_NAME);
   const dispatch = useMediaDispatch();
   const mediaRefCallback = useMediaRef();
-  const composedRef = useComposedRefs(context.mediaRef, mediaRefCallback);
+  const composedRef = useComposedRefs(ref, context.mediaRef, mediaRefCallback);
 
   const onPlayToggle = React.useCallback(
     (event: React.MouseEvent<HTMLVideoElement>) => {
@@ -582,11 +590,11 @@ interface MediaPlayerAudioProps extends React.ComponentProps<"audio"> {
 }
 
 function MediaPlayerAudio(props: MediaPlayerAudioProps) {
-  const { asChild, children, className, ...audioProps } = props;
+  const { asChild, children, className, ref, ...audioProps } = props;
 
   const context = useMediaPlayerContext(AUDIO_NAME);
   const mediaRefCallback = useMediaRef();
-  const composedRef = useComposedRefs(context.mediaRef, mediaRefCallback);
+  const composedRef = useComposedRefs(ref, context.mediaRef, mediaRefCallback);
 
   const AudioPrimitive = asChild ? Slot : "audio";
 
@@ -1687,7 +1695,7 @@ function MediaPlayerTime(props: MediaPlayerTimeProps) {
 }
 
 interface MediaPlayerPlaybackSpeedProps
-  extends React.ComponentProps<typeof SelectTrigger> {
+  extends React.ComponentProps<typeof DropdownMenuTrigger> {
   speeds?: number[];
 }
 
@@ -1709,8 +1717,7 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
   const isDisabled = disabled || context.disabled;
 
   const onPlaybackRateChange = React.useCallback(
-    (value: string) => {
-      const rate = Number.parseFloat(value);
+    (rate: number) => {
       dispatch({
         type: MediaActionTypes.MEDIA_PLAYBACK_RATE_REQUEST,
         detail: rate,
@@ -1720,35 +1727,42 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
   );
 
   return (
-    <Select
-      data-slot="media-player-playback-speed"
-      value={mediaPlaybackRate.toString()}
-      onValueChange={onPlaybackRateChange}
-    >
+    <DropdownMenu modal={false}>
       <MediaPlayerTooltip tooltip="Playback speed" shortcut={["<", ">"]}>
-        <SelectTrigger
-          aria-controls={context.mediaId}
-          disabled={isDisabled}
-          {...playbackSpeedProps}
-          className={cn(
-            "h-8 w-16 justify-center border-none aria-expanded:bg-accent aria-[expanded=true]:bg-accent/50 dark:bg-transparent dark:aria-[expanded=true]:bg-accent/50 dark:hover:bg-accent/50 [&[data-size]]:h-8 [&_svg]:hidden",
-            className,
-          )}
-        >
-          <SelectValue>{mediaPlaybackRate}x</SelectValue>
-        </SelectTrigger>
+        <DropdownMenuTrigger asChild>
+          <Button
+            type="button"
+            aria-controls={context.mediaId}
+            disabled={isDisabled}
+            {...playbackSpeedProps}
+            variant="ghost"
+            size="icon"
+            className={cn(
+              "h-8 w-16 justify-center border-none data-[state=open]:bg-accent data-[state=open]:bg-accent/50 dark:bg-transparent dark:data-[state=open]:bg-accent/50 dark:hover:bg-accent/50",
+              className,
+            )}
+          >
+            {mediaPlaybackRate}x
+          </Button>
+        </DropdownMenuTrigger>
       </MediaPlayerTooltip>
-      <SelectContent
+      <DropdownMenuContent
         align="center"
-        className="min-w-[var(--radix-select-trigger-width)]"
+        container={context.portalContainer}
+        className="min-w-[var(--radix-dropdown-menu-trigger-width)]"
       >
         {speeds.map((speed) => (
-          <SelectItem key={speed} value={speed.toString()}>
+          <DropdownMenuItem
+            key={speed}
+            className="justify-between"
+            onSelect={() => onPlaybackRateChange(speed)}
+          >
             {speed}x
-          </SelectItem>
+            {mediaPlaybackRate === speed && <CheckIcon className="size-4" />}
+          </DropdownMenuItem>
         ))}
-      </SelectContent>
-    </Select>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -2140,7 +2154,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
   }, [mediaRenditionSelected, mediaRenditionList]);
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <MediaPlayerTooltip tooltip="Settings">
         <DropdownMenuTrigger asChild>
           <Button
@@ -2158,7 +2172,12 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
           </Button>
         </DropdownMenuTrigger>
       </MediaPlayerTooltip>
-      <DropdownMenuContent align="end" side="top" className="w-56">
+      <DropdownMenuContent
+        align="end"
+        side="top"
+        container={context.portalContainer}
+        className="w-56"
+      >
         <DropdownMenuLabel className="sr-only">Settings</DropdownMenuLabel>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
@@ -2176,7 +2195,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
               >
                 {speed}x
                 {mediaPlaybackRate === speed && (
-                  <CircleIcon className="size-2 fill-current" />
+                  <CheckIcon className="size-4" />
                 )}
               </DropdownMenuItem>
             ))}
@@ -2196,9 +2215,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
                 onSelect={() => onRenditionChange("auto")}
               >
                 Auto
-                {!mediaRenditionSelected && (
-                  <CircleIcon className="size-2 fill-current" />
-                )}
+                {!mediaRenditionSelected && <CheckIcon className="size-4" />}
               </DropdownMenuItem>
               {mediaRenditionList
                 .slice()
@@ -2226,9 +2243,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
                       onSelect={() => onRenditionChange(rendition.id ?? "")}
                     >
                       {label}
-                      {selected && (
-                        <CircleIcon className="size-2 fill-current" />
-                      )}
+                      {selected && <CheckIcon className="size-4" />}
                     </DropdownMenuItem>
                   );
                 })}
@@ -2248,7 +2263,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
               onSelect={onToggleSubtitlesOff}
             >
               Off
-              {subtitlesOff && <CircleIcon className="size-2 fill-current" />}
+              {subtitlesOff && <CheckIcon className="size-4" />}
             </DropdownMenuItem>
             {mediaSubtitlesList.map((subtitleTrack) => {
               const isSelected = mediaSubtitlesShowing.some(
@@ -2262,7 +2277,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
                   onSelect={() => onShowSubtitleTrack(subtitleTrack)}
                 >
                   {subtitleTrack.label}
-                  {isSelected && <CircleIcon className="size-2 fill-current" />}
+                  {isSelected && <CheckIcon className="size-4" />}
                 </DropdownMenuItem>
               );
             })}
@@ -2323,7 +2338,7 @@ function MediaPlayerResolution(props: MediaPlayerResolutionProps) {
   }, [mediaRenditionSelected, mediaRenditionList]);
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <MediaPlayerTooltip tooltip="Video quality">
         <DropdownMenuTrigger asChild>
           <Button
@@ -2342,7 +2357,12 @@ function MediaPlayerResolution(props: MediaPlayerResolutionProps) {
           </Button>
         </DropdownMenuTrigger>
       </MediaPlayerTooltip>
-      <DropdownMenuContent align="end" side="top" className="w-48">
+      <DropdownMenuContent
+        align="end"
+        side="top"
+        container={context.portalContainer}
+        className="w-48"
+      >
         <DropdownMenuLabel className="flex items-center gap-2">
           <VideoIcon className="size-4" />
           Quality
@@ -2362,9 +2382,7 @@ function MediaPlayerResolution(props: MediaPlayerResolutionProps) {
               onSelect={() => onRenditionChange("auto")}
             >
               Auto
-              {!mediaRenditionSelected && (
-                <CircleIcon className="size-2 fill-current" />
-              )}
+              {!mediaRenditionSelected && <CheckIcon className="size-4" />}
             </DropdownMenuItem>
             {mediaRenditionList
               .slice()
@@ -2392,7 +2410,7 @@ function MediaPlayerResolution(props: MediaPlayerResolutionProps) {
                     onSelect={() => onRenditionChange(rendition.id ?? "")}
                   >
                     {label}
-                    {selected && <CircleIcon className="size-2 fill-current" />}
+                    {selected && <CheckIcon className="size-4" />}
                   </DropdownMenuItem>
                 );
               })}
@@ -2405,20 +2423,13 @@ function MediaPlayerResolution(props: MediaPlayerResolutionProps) {
 
 interface MediaPlayerPortalProps {
   children: React.ReactNode;
-  container?: Element | DocumentFragment | null;
 }
 
-function MediaPlayerPortal({ children, container }: MediaPlayerPortalProps) {
-  const [mounted, setMounted] = React.useState(false);
+function MediaPlayerPortal({ children }: MediaPlayerPortalProps) {
+  const context = useMediaPlayerContext("MediaPlayerPortal");
+  if (!context.portalContainer) return null;
 
-  React.useLayoutEffect(() => setMounted(true), []);
-
-  const dynamicContainer =
-    container ?? (mounted ? globalThis.document?.body : null);
-
-  if (!dynamicContainer) return null;
-
-  return ReactDOM.createPortal(children, dynamicContainer);
+  return ReactDOM.createPortal(children, context.portalContainer);
 }
 
 interface MediaPlayerTooltipProps extends React.ComponentProps<typeof Tooltip> {
@@ -2432,10 +2443,12 @@ function MediaPlayerTooltip({
   children,
   ...props
 }: MediaPlayerTooltipProps) {
+  const context = useMediaPlayerContext("MediaPlayerTooltip");
+
   if (!tooltip && !shortcut) return <>{children}</>;
 
   return (
-    <Tooltip {...props} delayDuration={600}>
+    <Tooltip {...props} delayDuration={240}>
       <TooltipTrigger
         className="text-foreground focus-visible:ring-ring/50"
         asChild
@@ -2443,6 +2456,7 @@ function MediaPlayerTooltip({
         {children}
       </TooltipTrigger>
       <TooltipContent
+        container={context.portalContainer}
         sideOffset={6}
         className="flex items-center gap-2 border bg-accent px-2 py-1 font-medium text-foreground dark:bg-zinc-900 [&>span]:hidden"
       >

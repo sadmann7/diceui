@@ -5,6 +5,7 @@ import {
   MediaPlayerOverlay,
   MediaPlayerPiP,
   MediaPlayerPlay,
+  MediaPlayerPlaybackSpeed,
   MediaPlayerSeek,
   MediaPlayerSeekBackward,
   MediaPlayerSeekForward,
@@ -44,6 +45,7 @@ export default function MediaPlayerSettingsDemo() {
             <MediaPlayerSeekBackward />
             <MediaPlayerSeekForward />
             <MediaPlayerVolume expandable />
+            <MediaPlayerPlaybackSpeed />
             <MediaPlayerTime />
           </div>
           <div className="flex items-center gap-2">
