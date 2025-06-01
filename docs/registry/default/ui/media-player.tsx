@@ -60,6 +60,7 @@ const SEEK_AMOUNT_LONG = 10;
 const LOADING_DELAY_MS = 500;
 const ESTIMATED_SEEK_TOOLTIP_WIDTH = 240;
 const ESTIMATED_SEEK_TOOLTIP_HEIGHT = 200;
+const POPOVER_SIDE_OFFSET = 26;
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
 const ROOT_NAME = "MediaPlayer";
@@ -1788,7 +1789,8 @@ function MediaPlayerTime(props: MediaPlayerTimeProps) {
 interface MediaPlayerPlaybackSpeedProps
   extends React.ComponentProps<typeof DropdownMenuTrigger>,
     React.ComponentProps<typeof Button>,
-    Omit<React.ComponentProps<typeof DropdownMenu>, "dir"> {
+    Omit<React.ComponentProps<typeof DropdownMenu>, "dir">,
+    Pick<React.ComponentProps<typeof DropdownMenuContent>, "sideOffset"> {
   speeds?: number[];
 }
 
@@ -1797,6 +1799,7 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
     open,
     defaultOpen,
     onOpenChange,
+    sideOffset = POPOVER_SIDE_OFFSET,
     speeds = SPEEDS,
     asChild,
     modal = false,
@@ -1852,6 +1855,7 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
         align="center"
         container={context.portalContainer}
         className="min-w-[var(--radix-dropdown-menu-trigger-width)]"
+        sideOffset={sideOffset}
       >
         {speeds.map((speed) => (
           <DropdownMenuItem
@@ -2161,6 +2165,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
     open,
     defaultOpen,
     onOpenChange,
+    sideOffset = POPOVER_SIDE_OFFSET,
     speeds = SPEEDS,
     asChild,
     modal = false,
@@ -2285,6 +2290,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
       <DropdownMenuContent
         align="end"
         side="top"
+        sideOffset={sideOffset}
         container={context.portalContainer}
         className="w-56"
       >
