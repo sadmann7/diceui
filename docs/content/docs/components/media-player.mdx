@@ -284,8 +284,47 @@ A slider component to seek through the media playback.
       title: "[data-disabled]",
       value: "Present when the slider is disabled.",
     },
+    {
+      title: "[data-slot='media-player-seek-buffered']",
+      value: "The buffered progress indicator within the track.",
+    },
+    {
+      title: "[data-slot='media-player-seek-hover-range']",
+      value: "The hover preview range indicator.",
+    },
+    {
+      title: "[data-slot='media-player-seek-chapter-separator']",
+      value: "Chapter separators displayed on the track.",
+    },
+    {
+      title: "[data-slot='media-player-seek-thumbnail']",
+      value: "The thumbnail preview container in the tooltip.",
+    },
+    {
+      title: "[data-slot='media-player-seek-chapter-title']",
+      value: "The chapter title in the tooltip.",
+    },
+    {
+      title: "[data-slot='media-player-seek-time']",
+      value: "The time display in the tooltip.",
+    },
   ]}
 />
+
+#### Styling
+
+```tsx
+<MediaPlayer.Seek 
+  className={
+    cn(
+      "[&_[data-slot='media-player-seek-buffered']]:bg-primary/60",
+      "[&_[data-slot='media-player-seek-hover-range']]:bg-primary/70",
+      "[&_[data-slot='media-player-seek-chapter-separator']]:w-1 [&_[data-slot='media-player-seek-chapter-separator']]:bg-muted",
+      "[&_[data-slot='media-player-seek-thumbnail']]:border-2 [&_[data-slot='media-player-seek-thumbnail']]:border-ring"
+    )
+  }
+/>
+```
 
 ### Volume
 

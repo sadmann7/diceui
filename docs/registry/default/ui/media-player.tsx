@@ -1489,15 +1489,25 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         onPointerLeave={onPointerLeave}
         onPointerMove={onPointerMove}
       >
-        <SliderPrimitive.Track className="relative h-1 w-full grow overflow-hidden rounded-full bg-zinc-500">
+        <SliderPrimitive.Track className="relative h-1 w-full grow overflow-hidden rounded-full bg-primary/40">
           <div
             data-slot="media-player-seek-buffered"
-            className="absolute h-full bg-zinc-400 will-change-[width]"
+            className="absolute h-full bg-primary/70 will-change-[width]"
             style={{
               width: `${bufferedProgress * 100}%`,
             }}
           />
           <SliderPrimitive.Range className="absolute h-full bg-primary will-change-[width]" />
+          {seekState.isHovering && seekableEnd > 0 && (
+            <div
+              data-slot="media-player-seek-hover-range"
+              className="absolute h-full bg-primary/70 will-change-[width,opacity]"
+              style={{
+                width: `${Math.min(100, (seekState.hoverTime / seekableEnd) * 100)}%`,
+                transition: "opacity 150ms ease-out",
+              }}
+            />
+          )}
           {!withoutChapter &&
             chapterCues.length > 1 &&
             seekableEnd > 0 &&
@@ -1561,7 +1571,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
                 )}
                 {currentChapterCue && (
                   <div
-                    data-slot="media-player-seek-chapter-cue"
+                    data-slot="media-player-seek-chapter-title"
                     className="line-clamp-2 max-w-48 text-balance text-center text-xs"
                   >
                     {currentChapterCue.text}
