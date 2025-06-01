@@ -139,7 +139,6 @@ function MediaPlayerRoot(props: MediaPlayerRootProps) {
 
 function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
   const {
-    ref,
     onPlay: onPlayProp,
     onPause: onPauseProp,
     onEnded: onEndedProp,
@@ -154,6 +153,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
     label,
     children,
     className,
+    ref,
     ...rootImplProps
   } = props;
 
