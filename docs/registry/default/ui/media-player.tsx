@@ -991,6 +991,7 @@ interface MediaPlayerSeekProps
     | number
     | Partial<Record<"top" | "right" | "bottom" | "left", number>>;
   withTime?: boolean;
+  withDurationPreview?: boolean;
   withoutPreviewThumbnail?: boolean;
   withoutChapter?: boolean;
 }
@@ -1002,6 +1003,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     collisionPadding = 10,
     collisionBoundary,
     withTime = false,
+    withDurationPreview = false,
     withoutPreviewThumbnail = false,
     withoutChapter = false,
     className,
@@ -1603,7 +1605,9 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
                     !(previewThumbnail || currentChapterCue) && "px-3 py-1.5",
                   )}
                 >
-                  {formattedHoverTime} / {formattedDuration}
+                  {withDurationPreview
+                    ? `${formattedHoverTime} / ${formattedDuration}`
+                    : formattedHoverTime}
                 </div>
               </div>
             </div>

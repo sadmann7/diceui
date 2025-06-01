@@ -367,7 +367,26 @@ export interface SeekProps
   withTime?: boolean;
 
   /**
+   * Whether to show duration preview in the seek tooltip.
+   * When true, displays "time / duration" format.
+   * When false, displays only "time".
+   * @default false
+   *
+   * ```ts
+   * // Show duration in tooltip
+   * <MediaPlayer.Seek withDurationPreview />
+   * ```
+   *
+   * ```ts
+   * // Show only time in tooltip
+   * <MediaPlayer.Seek withDurationPreview={false} />
+   * ```
+   */
+  withDurationPreview?: boolean;
+
+  /**
    * Whether to disable preview thumbnails.
+   * This will override the `previewThumbnailSrc` prop.
    * @default false
    *
    * ```ts

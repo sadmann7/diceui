@@ -13,9 +13,52 @@ links:
 
 ### CLI
 
-```package-install
-npx shadcn@latest add "https://diceui.com/r/media-player"
-```
+<Steps>
+  <Step>
+    Install the following dependencies:
+
+    ```package-install
+    npx shadcn@latest add "https://diceui.com/r/media-player"
+    ```
+  </Step>
+  <Step>
+    Update `DropdownMenuPortal` and `TooltipPortal` to add the container prop.
+
+    **DropdownMenu Update:**
+    ```diff
+    function DropdownMenuContent({
+      className,
+    + container,
+      sideOffset = 4,
+      ...props
+    -}: React.ComponentProps<typeof DropdownMenuPrimitive.Content>) {
+    +}: React.ComponentProps<typeof DropdownMenuPrimitive.Content> & {
+    +  container?: DropdownMenuPrimitive.DropdownMenuPortalProps["container"];
+    +}) {
+      return (
+    -    <DropdownMenuPrimitive.Portal>
+    +    <DropdownMenuPrimitive.Portal container={container}>
+    ```
+
+    **Tooltip Update:**
+    ```diff
+    function TooltipContent({
+      className,
+      sideOffset = 0,
+    + container,
+      children,
+      ...props
+    -}: React.ComponentProps<typeof TooltipPrimitive.Content>) {
+    +}: React.ComponentProps<typeof TooltipPrimitive.Content> & {
+    +  container?: TooltipPrimitive.TooltipPortalProps["container"];
+    +}) {
+      return (
+    -    <TooltipPrimitive.Portal>
+    +    <TooltipPrimitive.Portal container={container}>
+    ```
+  </Step>
+</Steps>
+
 
 ### Manual
 
@@ -26,6 +69,42 @@ npx shadcn@latest add "https://diceui.com/r/media-player"
      ```package-install
      @radix-ui/react-slot @radix-ui/react-slider @radix-ui/react-tooltip lucide-react
      ```
+  </Step>
+  <Step>
+    Update `DropdownMenuPortal` and `TooltipPortal` to add the container prop.
+
+    **DropdownMenu Update:**
+    ```diff
+    function DropdownMenuContent({
+      className,
+    + container,
+      sideOffset = 4,
+      ...props
+    -}: React.ComponentProps<typeof DropdownMenuPrimitive.Content>) {
+    +}: React.ComponentProps<typeof DropdownMenuPrimitive.Content> & {
+    +  container?: DropdownMenuPrimitive.DropdownMenuPortalProps["container"];
+    +}) {
+      return (
+    -    <DropdownMenuPrimitive.Portal>
+    +    <DropdownMenuPrimitive.Portal container={container}>
+    ```
+
+    **Tooltip Update:**
+    ```diff
+    function TooltipContent({
+      className,
+      sideOffset = 0,
+    + container,
+      children,
+      ...props
+    -}: React.ComponentProps<typeof TooltipPrimitive.Content>) {
+    +}: React.ComponentProps<typeof TooltipPrimitive.Content> & {
+    +  container?: TooltipPrimitive.TooltipPortalProps["container"];
+    +}) {
+      return (
+    -    <TooltipPrimitive.Portal>
+    +    <TooltipPrimitive.Portal container={container}>
+    ```
   </Step>
   <Step>
   Copy the refs composition utilities into your `lib/compose-refs.ts` file.
