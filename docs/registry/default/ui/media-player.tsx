@@ -1452,14 +1452,21 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
               ref={tooltipRef}
               style={tooltipStyle}
               className="pointer-events-none z-50 [backface-visibility:hidden] [contain:layout_style] [transition:none]"
-              data-initial-render={!seekState.hasInitialPosition}
             >
-              <div className="flex flex-col items-center">
+              <div
+                className={cn(
+                  "flex flex-col items-center gap-1.5 rounded-md border bg-background text-foreground shadow-sm dark:bg-zinc-900",
+                  !previewThumbnail && currentChapterCue && "px-3 py-1.5",
+                )}
+              >
                 {previewThumbnail && (
-                  <div className="mb-2 overflow-hidden rounded-md border bg-background p-1 shadow-lg transition-opacity duration-150 dark:bg-zinc-900">
+                  <div
+                    data-slot="media-player-seek-thumbnail"
+                    className="overflow-hidden rounded-md rounded-b-none"
+                  >
                     {previewThumbnail.coords ? (
                       <div
-                        className="h-32 w-56 rounded"
+                        className="h-32 w-56"
                         style={{
                           backgroundImage: `url(${previewThumbnail.src})`,
                           backgroundPosition: `-${previewThumbnail.coords[0]}px -${previewThumbnail.coords[1]}px`,
@@ -1471,17 +1478,27 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
                       <img
                         src={previewThumbnail.src}
                         alt={`Preview at ${formattedHoverTime}`}
-                        className="h-32 w-56 rounded object-cover"
+                        className="h-32 w-56 object-cover"
                       />
                     )}
                   </div>
                 )}
                 {currentChapterCue && (
-                  <div className="mb-1 max-w-48 rounded bg-accent px-2 py-1 text-center text-accent-foreground text-xs shadow-sm transition-opacity duration-150">
+                  <div
+                    data-slot="media-player-seek-chapter-cue"
+                    className="line-clamp-2 max-w-48 text-balance text-center text-xs"
+                  >
                     {currentChapterCue.text}
                   </div>
                 )}
-                <div className="whitespace-nowrap rounded-md border bg-accent px-3 py-1.5 text-accent-foreground text-xs tabular-nums shadow-lg transition-opacity duration-150 dark:bg-zinc-900">
+                <div
+                  data-slot="media-player-seek-time"
+                  className={cn(
+                    "whitespace-nowrap text-xs tabular-nums",
+                    previewThumbnail && "pb-1.5",
+                    !(previewThumbnail || currentChapterCue) && "px-3 py-1.5",
+                  )}
+                >
                   {formattedHoverTime} / {formattedDuration}
                 </div>
               </div>
