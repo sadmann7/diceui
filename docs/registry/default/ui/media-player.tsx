@@ -74,6 +74,7 @@ const SEEK_NAME = "MediaPlayerSeek";
 const VOLUME_NAME = "MediaPlayerVolume";
 const TIME_NAME = "MediaPlayerTime";
 const PLAYBACK_SPEED_NAME = "MediaPlayerPlaybackSpeed";
+const RESOLUTION_NAME = "MediaPlayerResolution";
 const LOOP_NAME = "MediaPlayerLoop";
 const FULLSCREEN_NAME = "MediaPlayerFullscreen";
 const PIP_NAME = "MediaPlayerPiP";
@@ -2457,7 +2458,7 @@ interface MediaPlayerResolutionProps
 function MediaPlayerResolution(props: MediaPlayerResolutionProps) {
   const { asChild, className, disabled, ...resolutionProps } = props;
 
-  const context = useMediaPlayerContext("MediaPlayerResolution");
+  const context = useMediaPlayerContext(RESOLUTION_NAME);
   const dispatch = useMediaDispatch();
 
   const mediaRenditionList = useMediaSelector(
