@@ -39,6 +39,7 @@ alwaysApply: true
   - Suspense boundaries
   - Event-driven patterns
   - State machines with delayed transitions
+  - requestAnimateFrame and queuMicrotask
 
 ## Code Quality Impact
 
@@ -62,7 +63,6 @@ const [data, setData] = useState(null);
 type StoreSetState<T> = <K extends keyof T>(
   key: K,
   value: T[K],
-  opts?: unknown
 ) => void
 
 type Store<T> = {
@@ -87,7 +87,7 @@ function createStore<T>(
       listeners.add(cb)
       return () => listeners.delete(cb)
     },
-    setState: (key, value, opts) => {
+    setState: (key, value) => {
       if (Object.is(state[key], value)) return
       state[key] = value
       onChange?.[key]?.(value, store)

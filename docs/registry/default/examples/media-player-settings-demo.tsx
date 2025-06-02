@@ -2,6 +2,7 @@ import {
   MediaPlayer,
   MediaPlayerControls,
   MediaPlayerFullscreen,
+  MediaPlayerLoading,
   MediaPlayerOverlay,
   MediaPlayerPiP,
   MediaPlayerPlay,
@@ -37,6 +38,7 @@ export default function MediaPlayerSettingsDemo() {
       </MediaPlayerVideo>
       <MediaPlayerControls className="flex-col items-start gap-2.5">
         <MediaPlayerOverlay />
+        <MediaPlayerLoading />
         <MediaPlayerSeek />
         <div className="flex w-full items-center gap-2">
           <div className="flex flex-1 items-center gap-2">
