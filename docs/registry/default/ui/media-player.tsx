@@ -59,7 +59,7 @@ const SEEK_AMOUNT_SHORT = 5;
 const SEEK_AMOUNT_LONG = 10;
 const LOADING_DELAY_MS = 500;
 const ESTIMATED_SEEK_TOOLTIP_WIDTH = 240;
-const ESTIMATED_SEEK_TOOLTIP_HEIGHT = 200;
+const SEEK_COLLISION_PADDING = 10;
 const POPOVER_SIDE_OFFSET = 26;
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
@@ -1000,7 +1000,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const {
     previewThumbnailSrc,
     sideOffset = 10,
-    collisionPadding = 10,
+    collisionPadding = SEEK_COLLISION_PADDING,
     collisionBoundary,
     withTime = false,
     withDurationPreview = false,
@@ -1198,42 +1198,17 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
   const onTooltipPositionUpdate = React.useCallback(
     (clientX: number) => {
-      if (!seekRef.current || !tooltipRef.current) return;
+      if (!seekRef.current) return;
 
       const tooltipWidth =
-        tooltipRef.current.offsetWidth || ESTIMATED_SEEK_TOOLTIP_WIDTH;
-      const tooltipHeight =
-        tooltipRef.current.offsetHeight || ESTIMATED_SEEK_TOOLTIP_HEIGHT;
+        tooltipRef.current?.offsetWidth || ESTIMATED_SEEK_TOOLTIP_WIDTH;
       const seekRect = seekRef.current.getBoundingClientRect();
 
       let x = clientX;
-      let y = seekRect.top - tooltipHeight - sideOffset;
+      const y = seekRect.top;
 
       const padding = getCollisionPadding();
       const boundaries = getCollisionBoundaries();
-
-      let minTop = 0;
-      let maxBottom = window.innerHeight;
-
-      for (const boundary of boundaries) {
-        const boundaryRect = boundary.getBoundingClientRect();
-        minTop = Math.max(minTop, boundaryRect.top + padding.top);
-        maxBottom = Math.min(maxBottom, boundaryRect.bottom - padding.bottom);
-      }
-
-      if (y < minTop) {
-        y = seekRect.bottom + sideOffset;
-        if (y + tooltipHeight > maxBottom) {
-          y = maxBottom - tooltipHeight - padding.bottom;
-        }
-      }
-
-      const viewportPadding = 10;
-      if (y < viewportPadding) {
-        y = viewportPadding;
-      } else if (y + tooltipHeight > window.innerHeight - viewportPadding) {
-        y = window.innerHeight - viewportPadding - tooltipHeight;
-      }
 
       const halfTooltipWidth = tooltipWidth / 2;
 
@@ -1252,6 +1227,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         x = maxRight - halfTooltipWidth;
       }
 
+      const viewportPadding = SEEK_COLLISION_PADDING;
       if (x - halfTooltipWidth < viewportPadding) {
         x = viewportPadding + halfTooltipWidth;
       } else if (x + halfTooltipWidth > window.innerWidth - viewportPadding) {
@@ -1264,7 +1240,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         hasInitialPosition: true,
       }));
     },
-    [getCollisionPadding, getCollisionBoundaries, sideOffset],
+    [getCollisionPadding, getCollisionBoundaries],
   );
 
   const onPointerEnter = React.useCallback(() => {
@@ -1459,7 +1435,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         position: "fixed" as const,
         left: seekState.tooltipPosition?.x ?? 0,
         top: seekState.tooltipPosition?.y ?? 0,
-        transform: "translateX(-50%)",
+        transform: `translateX(-50%) translateY(calc(-100% - ${sideOffset}px))`,
         transition: "none",
         willChange: "opacity",
       };
@@ -1469,7 +1445,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       left: `${seekState.tooltipPosition.x}px`,
       top: `${seekState.tooltipPosition.y}px`,
       position: "fixed" as const,
-      transform: "translateX(-50%)",
+      transform: `translateX(-50%) translateY(calc(-100% - ${sideOffset}px))`,
       visibility: "visible" as const,
       opacity: 1,
       zIndex: 50,
@@ -1483,6 +1459,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     seekState.tooltipPosition,
     seekState.isHovering,
     seekState.hasInitialPosition,
+    sideOffset,
   ]);
 
   const SeekSlider = (
@@ -1562,6 +1539,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
               <div
                 className={cn(
                   "flex flex-col items-center gap-1.5 rounded-md border bg-background text-foreground shadow-sm dark:bg-zinc-900",
+                  previewThumbnail && "min-h-10",
                   !previewThumbnail && currentChapterCue && "px-3 py-1.5",
                 )}
               >
@@ -1602,7 +1580,8 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
                   className={cn(
                     "whitespace-nowrap text-xs tabular-nums",
                     previewThumbnail && "pb-1.5",
-                    !(previewThumbnail || currentChapterCue) && "px-3 py-1.5",
+                    !(previewThumbnail || currentChapterCue) && "px-2.5 py-1",
+                    "flex items-center",
                   )}
                 >
                   {withDurationPreview
