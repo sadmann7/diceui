@@ -58,9 +58,9 @@ import * as ReactDOM from "react-dom";
 const SEEK_AMOUNT_SHORT = 5;
 const SEEK_AMOUNT_LONG = 10;
 const LOADING_DELAY_MS = 500;
-const ESTIMATED_SEEK_TOOLTIP_WIDTH = 240;
+const FLOATING_MENU_SIDE_OFFSET = 10;
 const SEEK_COLLISION_PADDING = 10;
-const POPOVER_SIDE_OFFSET = 26;
+const ESTIMATED_SEEK_TOOLTIP_WIDTH = 240;
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
 const ROOT_NAME = "MediaPlayer";
@@ -80,6 +80,8 @@ const PIP_NAME = "MediaPlayerPiP";
 const CAPTIONS_NAME = "MediaPlayerCaptions";
 const DOWNLOAD_NAME = "MediaPlayerDownload";
 const SETTINGS_NAME = "MediaPlayerSettings";
+const PORTAL_NAME = "MediaPlayerPortal";
+const TOOLTIP_NAME = "MediaPlayerTooltip";
 
 type Direction = "ltr" | "rtl";
 
@@ -999,7 +1001,7 @@ interface MediaPlayerSeekProps
 function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const {
     previewThumbnailSrc,
-    sideOffset = 10,
+    sideOffset = FLOATING_MENU_SIDE_OFFSET,
     collisionPadding = SEEK_COLLISION_PADDING,
     collisionBoundary,
     withTime = false,
@@ -1810,7 +1812,7 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
     open,
     defaultOpen,
     onOpenChange,
-    sideOffset = POPOVER_SIDE_OFFSET,
+    sideOffset = FLOATING_MENU_SIDE_OFFSET,
     speeds = SPEEDS,
     asChild,
     modal = false,
@@ -1863,10 +1865,10 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
         </DropdownMenuTrigger>
       </MediaPlayerTooltip>
       <DropdownMenuContent
-        align="center"
         container={context.portalContainer}
-        className="min-w-[var(--radix-dropdown-menu-trigger-width)]"
         sideOffset={sideOffset}
+        align="center"
+        className="min-w-[var(--radix-dropdown-menu-trigger-width)] data-[side=top]:mb-4"
       >
         {speeds.map((speed) => (
           <DropdownMenuItem
@@ -2176,7 +2178,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
     open,
     defaultOpen,
     onOpenChange,
-    sideOffset = POPOVER_SIDE_OFFSET,
+    sideOffset = FLOATING_MENU_SIDE_OFFSET,
     speeds = SPEEDS,
     asChild,
     modal = false,
@@ -2303,7 +2305,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
         side="top"
         sideOffset={sideOffset}
         container={context.portalContainer}
-        className="w-56"
+        className="w-56 data-[side=top]:mb-4"
       >
         <DropdownMenuLabel className="sr-only">Settings</DropdownMenuLabel>
         <DropdownMenuSub>
@@ -2553,7 +2555,7 @@ interface MediaPlayerPortalProps {
 }
 
 function MediaPlayerPortal({ children }: MediaPlayerPortalProps) {
-  const context = useMediaPlayerContext("MediaPlayerPortal");
+  const context = useMediaPlayerContext(PORTAL_NAME);
   if (!context.portalContainer) return null;
 
   return ReactDOM.createPortal(children, context.portalContainer);
@@ -2570,7 +2572,7 @@ function MediaPlayerTooltip({
   children,
   ...props
 }: MediaPlayerTooltipProps) {
-  const context = useMediaPlayerContext("MediaPlayerTooltip");
+  const context = useMediaPlayerContext(TOOLTIP_NAME);
 
   if (!tooltip && !shortcut) return <>{children}</>;
 
@@ -2584,8 +2586,8 @@ function MediaPlayerTooltip({
       </TooltipTrigger>
       <TooltipContent
         container={context.portalContainer}
-        sideOffset={6}
-        className="flex items-center gap-2 border bg-accent px-2 py-1 font-medium text-foreground dark:bg-zinc-900 [&>span]:hidden"
+        sideOffset={FLOATING_MENU_SIDE_OFFSET}
+        className="flex items-center gap-2 border bg-accent px-2 py-1 font-medium text-foreground data-[side=top]:mb-4 dark:bg-zinc-900 [&>span]:hidden"
       >
         <p>{tooltip}</p>
         {Array.isArray(shortcut) ? (
@@ -2637,8 +2639,9 @@ export {
   MediaPlayerPiP,
   MediaPlayerCaptions,
   MediaPlayerDownload,
-  MediaPlayerSettings,
   MediaPlayerResolution,
+  MediaPlayerSettings,
+  MediaPlayerPortal,
   //
   MediaPlayerRoot as Root,
   MediaPlayerVideo as Video,
@@ -2658,8 +2661,9 @@ export {
   MediaPlayerPiP as PiP,
   MediaPlayerCaptions as Captions,
   MediaPlayerDownload as Download,
-  MediaPlayerSettings as Settings,
   MediaPlayerResolution as Resolution,
+  MediaPlayerSettings as Settings,
+  MediaPlayerPortal as Portal,
   //
   useMediaSelector as useMediaPlayer,
 };
