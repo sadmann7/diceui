@@ -7,7 +7,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
@@ -38,7 +37,6 @@ import {
   RewindIcon,
   SettingsIcon,
   SubtitlesIcon,
-  VideoIcon,
   Volume1Icon,
   Volume2Icon,
   VolumeXIcon,
@@ -74,7 +72,6 @@ const SEEK_NAME = "MediaPlayerSeek";
 const VOLUME_NAME = "MediaPlayerVolume";
 const TIME_NAME = "MediaPlayerTime";
 const PLAYBACK_SPEED_NAME = "MediaPlayerPlaybackSpeed";
-const RESOLUTION_NAME = "MediaPlayerResolution";
 const LOOP_NAME = "MediaPlayerLoop";
 const FULLSCREEN_NAME = "MediaPlayerFullscreen";
 const PIP_NAME = "MediaPlayerPiP";
@@ -2452,134 +2449,6 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
   );
 }
 
-interface MediaPlayerResolutionProps
-  extends React.ComponentProps<typeof DropdownMenuTrigger> {}
-
-function MediaPlayerResolution(props: MediaPlayerResolutionProps) {
-  const { asChild, className, disabled, ...resolutionProps } = props;
-
-  const context = useMediaPlayerContext(RESOLUTION_NAME);
-  const dispatch = useMediaDispatch();
-
-  const mediaRenditionList = useMediaSelector(
-    (state) => state.mediaRenditionList ?? [],
-  );
-  const mediaRenditionSelected = useMediaSelector(
-    (state) => state.mediaRenditionSelected,
-  );
-
-  const isDisabled =
-    disabled || context.disabled || !mediaRenditionList?.length;
-
-  const onRenditionChange = React.useCallback(
-    (renditionId: string) => {
-      dispatch({
-        type: MediaActionTypes.MEDIA_RENDITION_REQUEST,
-        detail: renditionId === "auto" ? undefined : renditionId,
-      });
-    },
-    [dispatch],
-  );
-
-  const getCurrentQualityLabel = React.useCallback(() => {
-    if (!mediaRenditionSelected) return "Auto";
-
-    const currentRendition = mediaRenditionList?.find(
-      (rendition) => rendition.id === mediaRenditionSelected,
-    );
-    if (!currentRendition) return "Auto";
-
-    if (currentRendition.height && currentRendition.width)
-      return `${currentRendition.height}×${currentRendition.width}`;
-    if (currentRendition.height) return `${currentRendition.height}p`;
-    if (currentRendition.width) return `${currentRendition.width}p`;
-    return currentRendition.id ?? "Auto";
-  }, [mediaRenditionSelected, mediaRenditionList]);
-
-  return (
-    <DropdownMenu modal={false}>
-      <MediaPlayerTooltip tooltip="Video quality">
-        <DropdownMenuTrigger asChild>
-          <Button
-            type="button"
-            aria-controls={context.mediaId}
-            aria-label="Video quality"
-            data-disabled={isDisabled ? "" : undefined}
-            data-slot="media-player-resolution"
-            disabled={isDisabled}
-            {...resolutionProps}
-            variant="ghost"
-            size="icon"
-            className={cn("size-8", className)}
-          >
-            <VideoIcon />
-          </Button>
-        </DropdownMenuTrigger>
-      </MediaPlayerTooltip>
-      <DropdownMenuContent
-        align="end"
-        side="top"
-        container={context.portalContainer}
-        className="w-48"
-      >
-        <DropdownMenuLabel className="flex items-center gap-2">
-          <VideoIcon className="size-4" />
-          Quality
-          <Badge variant="secondary" className="ml-auto text-xs">
-            {getCurrentQualityLabel()}
-          </Badge>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {!mediaRenditionList?.length ? (
-          <DropdownMenuItem disabled>
-            No quality options available
-          </DropdownMenuItem>
-        ) : (
-          <>
-            <DropdownMenuItem
-              className="justify-between"
-              onSelect={() => onRenditionChange("auto")}
-            >
-              Auto
-              {!mediaRenditionSelected && <CheckIcon className="size-4" />}
-            </DropdownMenuItem>
-            {mediaRenditionList
-              .slice()
-              .sort((a, b) => {
-                const aHeight = a.height ?? 0;
-                const bHeight = b.height ?? 0;
-                return bHeight - aHeight;
-              })
-              .map((rendition) => {
-                const label =
-                  rendition.height && rendition.width
-                    ? `${rendition.height}×${rendition.width}`
-                    : rendition.height
-                      ? `${rendition.height}p`
-                      : rendition.width
-                        ? `${rendition.width}p`
-                        : (rendition.id ?? "Unknown");
-
-                const selected = rendition.id === mediaRenditionSelected;
-
-                return (
-                  <DropdownMenuItem
-                    key={rendition.id}
-                    className="justify-between"
-                    onSelect={() => onRenditionChange(rendition.id ?? "")}
-                  >
-                    {label}
-                    {selected && <CheckIcon className="size-4" />}
-                  </DropdownMenuItem>
-                );
-              })}
-          </>
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
-
 interface MediaPlayerPortalProps {
   children: React.ReactNode;
 }
@@ -2670,7 +2539,6 @@ export {
   MediaPlayerPiP,
   MediaPlayerCaptions,
   MediaPlayerDownload,
-  MediaPlayerResolution,
   MediaPlayerSettings,
   MediaPlayerPortal,
   //
@@ -2692,7 +2560,6 @@ export {
   MediaPlayerPiP as PiP,
   MediaPlayerCaptions as Captions,
   MediaPlayerDownload as Download,
-  MediaPlayerResolution as Resolution,
   MediaPlayerSettings as Settings,
   MediaPlayerPortal as Portal,
   //

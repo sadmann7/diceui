@@ -140,7 +140,6 @@ import * as MediaPlayer from "@/components/ui/media-player";
     <MediaPlayer.PlaybackSpeed />
     <MediaPlayer.Loop />
     <MediaPlayer.Captions />
-    <MediaPlayer.Resolution />
     <MediaPlayer.PiP />
     <MediaPlayer.Fullscreen />
     <MediaPlayer.Download />
@@ -164,7 +163,7 @@ Example with chapters and thumbnails.
 
 ### Settings menu with playback speed, subtitle, and resolution options
 
-Media player with a settings menu with playback speed, subtitle option, and resolution selector.
+Media player with a settings menu with playback speed, caption option, and resolution selector.
 
 <ComponentTabs name="media-player-settings-demo" />
 
@@ -259,36 +258,6 @@ A loading indicator that appears when media is loading, similar to YouTube/Netfl
 <AutoTypeTable
   path="./types/docs/media-player.ts"
   name="LoadingProps"
-/>
-
-### Resolution
-
-A dropdown menu to select video quality/resolution for videos with multiple renditions (HLS/DASH).
-
-<AutoTypeTable
-  path="./types/docs/media-player.ts"
-  name="ResolutionProps"
-/>
-
-**Features:**
-- Only appears when multiple video renditions are available
-- Shows current quality in button (e.g., "1080p", "720p")
-- Includes "Auto" option for automatic quality selection
-- Sorts resolutions by quality (highest first)
-- Uses `mediaRenditionList` from media-chrome
-
-**Supported formats:**
-- HLS (.m3u8) streams
-- DASH (.mpd) streams
-- Custom media elements with rendition support
-
-<DataAttributesTable
-  attributes={[
-    {
-      title: "[data-disabled]",
-      value: "Present when the button is disabled.",
-    },
-  ]}
 />
 
 ### Play
@@ -564,7 +533,7 @@ A button to download the media file.
 
 ### Settings
 
-A dropdown menu with playback speed selector, resolution selector, and subtitle selector.
+A dropdown menu with playback speed selector, caption selector, and resolution selector.
 
 <AutoTypeTable
   path="./types/docs/media-player.ts"

@@ -9,7 +9,6 @@ import {
   MediaPlayerOverlay,
   MediaPlayerPiP,
   MediaPlayerPlay,
-  MediaPlayerResolution,
   MediaPlayerSeek,
   MediaPlayerSeekBackward,
   MediaPlayerSeekForward,
@@ -45,7 +44,6 @@ export default function MediaPlayerAdvancedDemo() {
           <div className="flex items-center gap-2">
             <MediaPlayerLoop />
             <MediaPlayerCaptions />
-            <MediaPlayerResolution />
             <MediaPlayerSettings />
             <MediaPlayerDownload />
             <MediaPlayerPiP />

@@ -203,43 +203,6 @@ export interface LoadingProps extends EmptyProps<"div">, CompositionProps {
   variant?: "default" | "dots" | "spinner";
 }
 
-export interface ResolutionProps
-  extends EmptyProps<typeof DropdownMenuTrigger>,
-    CompositionProps {
-  /**
-   * The resolution selector automatically detects available video renditions
-   * and provides a dropdown menu to select video quality.
-   *
-   * Only appears when multiple video renditions are available (e.g., HLS/DASH streams).
-   *
-   * Features:
-   * - Shows current quality in button (e.g., "1080p", "720p", "480p")
-   * - Includes "Auto" option for automatic quality selection
-   * - Sorts resolutions by quality (highest first)
-   * - Uses media-chrome's `mediaRenditionList` state
-   *
-   * ```tsx
-   * // Basic usage - shows when renditions are available
-   * <MediaPlayer.Resolution />
-   * ```
-   *
-   * ```tsx
-   * // Works with HLS streams
-   * <MediaPlayer.Root>
-   *   <MediaPlayer.Video src="stream.m3u8" />
-   *   <MediaPlayer.Controls>
-   *     <MediaPlayer.Resolution />
-   *   </MediaPlayer.Controls>
-   * </MediaPlayer.Root>
-   * ```
-   *
-   * Supported video formats:
-   * - HLS (.m3u8) - HTTP Live Streaming
-   * - DASH (.mpd) - Dynamic Adaptive Streaming
-   * - Custom media elements with rendition support
-   */
-}
-
 export interface PlayProps extends EmptyProps<"button">, CompositionProps {}
 
 export interface SeekBackwardProps
