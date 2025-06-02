@@ -148,6 +148,17 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * ```
    */
   disabled?: boolean;
+
+  /**
+   * Whether to disable tooltips throughout the media player.
+   * @default false
+   *
+   * ```ts
+   * // Disable all tooltips
+   * <MediaPlayer disableTooltip />
+   * ```
+   */
+  disableTooltip?: boolean;
 }
 
 export interface VideoProps extends EmptyProps<"video">, CompositionProps {}
@@ -190,28 +201,6 @@ export interface LoadingProps extends EmptyProps<"div">, CompositionProps {
    * ```
    */
   variant?: "default" | "dots" | "spinner";
-
-  /**
-   * Custom content to display in the loading indicator.
-   * If not provided, a default spinner and "Loading..." text will be shown.
-   *
-   * ```tsx
-   * // Default loading indicator
-   * <MediaPlayer.Loading />
-   * ```
-   *
-   * ```tsx
-   * // Custom loading content
-   * <MediaPlayer.Loading>
-   *   <div className="flex flex-col items-center gap-4">
-   *     <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary"></div>
-   *     <p className="text-lg font-semibold">Loading your video...</p>
-   *     <p className="text-sm text-muted-foreground">Please wait...</p>
-   *   </div>
-   * </MediaPlayer.Loading>
-   * ```
-   */
-  children?: React.ReactNode;
 }
 
 export interface ResolutionProps
@@ -261,8 +250,8 @@ export interface SeekBackwardProps
    * @default 5
    *
    * ```ts
-   * // Seek backward 5 seconds
-   * <MediaPlayer.SeekBackward seconds={5} />
+   * // Seek backward 10 seconds
+   * <MediaPlayer.SeekBackward seconds={10} />
    * ```
    */
   seconds?: number;
@@ -295,17 +284,30 @@ export interface SeekProps
    *
    * ```ts
    * // Static thumbnail
-   * <MediaPlayer.Seek previewThumbnailSrc="/thumbnail.jpg" />
+   * <MediaPlayer.Seek tooltipThumbnailSrc="/thumbnail.jpg" />
    * ```
    *
    * ```ts
    * // Dynamic thumbnails
    * <MediaPlayer.Seek
-   *   previewThumbnailSrc={(time) => `/thumbnails/${Math.floor(time)}.jpg`}
+   *   tooltipThumbnailSrc={(time) => `/thumbnails/${Math.floor(time)}.jpg`}
    * />
    * ```
    */
-  previewThumbnailSrc?: string | ((time: number) => string);
+  tooltipThumbnailSrc?: string | ((time: number) => string);
+
+  /**
+   * The variant of the tooltip display.
+   * - `time`: Shows only the seek time (e.g., "1:23")
+   * - `time-duration`: Shows time and duration (e.g., "1:23 / 5:00")
+   * @default "time"
+   *
+   * ```ts
+   * // Show time and duration in tooltip
+   * <MediaPlayer.Seek tooltipVariant="time-duration" />
+   * ```
+   */
+  tooltipVariant?: "time" | "time-duration";
 
   /**
    * The distance in pixels from the seek bar to position the tooltip.
@@ -313,45 +315,45 @@ export interface SeekProps
    *
    * ```ts
    * // Custom tooltip distance
-   * <MediaPlayer.Seek sideOffset={15} />
+   * <MediaPlayer.Seek tooltipSideOffset={15} />
    * ```
    */
-  sideOffset?: number;
+  tooltipSideOffset?: number;
 
   /**
-   * Element(s) to use as collision boundaries.
+   * Element(s) to use as collision boundaries for tooltip positioning.
    * Defaults to the media player root element.
    *
    * ```ts
    * // Custom collision boundary
-   * <MediaPlayer.Seek collisionBoundary={customElement} />
+   * <MediaPlayer.Seek tooltipCollisionBoundary={customElement} />
    * ```
    *
    * ```ts
    * // Multiple boundaries
-   * <MediaPlayer.Seek collisionBoundary={[element1, element2]} />
+   * <MediaPlayer.Seek tooltipCollisionBoundary={[element1, element2]} />
    * ```
    */
-  collisionBoundary?: Element | Element[];
+  tooltipCollisionBoundary?: Element | Element[];
 
   /**
-   * The padding in pixels from the collision boundary.
+   * The padding in pixels from the collision boundary for tooltip positioning.
    * Can be a number for uniform padding or an object for per-side padding.
    * @default 10
    *
    * ```ts
    * // Uniform padding
-   * <MediaPlayer.Seek collisionPadding={20} />
+   * <MediaPlayer.Seek tooltipCollisionPadding={20} />
    * ```
    *
    * ```ts
    * // Per-side padding
    * <MediaPlayer.Seek
-   *   collisionPadding={{ top: 10, right: 15, bottom: 10, left: 15 }}
+   *   tooltipCollisionPadding={{ top: 10, right: 15, bottom: 10, left: 15 }}
    * />
    * ```
    */
-  collisionPadding?:
+  tooltipCollisionPadding?:
     | number
     | Partial<Record<"top" | "right" | "bottom" | "left", number>>;
 
@@ -367,45 +369,27 @@ export interface SeekProps
   withTime?: boolean;
 
   /**
-   * Whether to show duration preview in the seek tooltip.
-   * When true, displays "time / duration" format.
-   * When false, displays only "time".
-   * @default false
-   *
-   * ```ts
-   * // Show duration in tooltip
-   * <MediaPlayer.Seek withDurationPreview />
-   * ```
-   *
-   * ```ts
-   * // Show only time in tooltip
-   * <MediaPlayer.Seek withDurationPreview={false} />
-   * ```
-   */
-  withDurationPreview?: boolean;
-
-  /**
-   * Whether to disable preview thumbnails.
-   * This will override the `previewThumbnailSrc` prop.
-   * @default false
-   *
-   * ```ts
-   * // Disable preview thumbnails
-   * <MediaPlayer.Seek withoutPreviewThumbnail />
-   * ```
-   */
-  withoutPreviewThumbnail?: boolean;
-
-  /**
-   * Whether to disable chapter markers on the seek bar.
-   * @default false
+   * Whether to show chapter markers on the seek bar.
+   * @default true
    *
    * ```ts
    * // Disable chapter markers
-   * <MediaPlayer.Seek withoutChapter />
+   * <MediaPlayer.Seek withChapter={false} />
    * ```
    */
-  withoutChapter?: boolean;
+  withChapter?: boolean;
+
+  /**
+   * Whether to disable the seek tooltip entirely.
+   * This overrides the global `disableTooltip` prop for this component.
+   * @default false
+   *
+   * ```ts
+   * // Disable seek tooltip
+   * <MediaPlayer.Seek disableTooltip />
+   * ```
+   */
+  disableTooltip?: boolean;
 }
 
 export interface VolumeProps
@@ -470,16 +454,10 @@ export interface PlaybackSpeedProps
   modal?: boolean;
 
   /**
-   * The variant of the dropdown menu trigger.
-   * @default "default"
+   * The distance in pixels from the trigger to position the dropdown.
+   * @default 10
    */
-  variant?: MediaPlayerDropdownMenuProps["variant"];
-
-  /**
-   * The size of the settings menu trigger.
-   * @default "default"
-   */
-  size?: MediaPlayerDropdownMenuProps["size"];
+  sideOffset?: number;
 
   /**
    * An array of playback speed options.
@@ -505,4 +483,73 @@ export interface DownloadProps extends EmptyProps<"button">, CompositionProps {}
 
 export interface SettingsProps
   extends Omit<PlaybackSpeedProps, keyof React.ComponentProps<"button">>,
-    CompositionProps {}
+    CompositionProps {
+  /**
+   * The settings menu provides a unified interface for adjusting playback speed,
+   * video quality, and captions. It automatically detects available options
+   * and only shows relevant settings.
+   *
+   * Features:
+   * - Playback speed control (uses `speeds` prop)
+   * - Video quality selection (when multiple renditions available)
+   * - Captions/subtitles toggle and track selection
+   * - Organized in expandable submenus
+   *
+   * ```tsx
+   * // Basic usage with default speeds
+   * <MediaPlayer.Settings />
+   * ```
+   *
+   * ```tsx
+   * // Custom playback speeds
+   * <MediaPlayer.Settings speeds={[0.25, 0.5, 1, 1.5, 2]} />
+   * ```
+   *
+   * The component automatically adapts based on:
+   * - Available video renditions (HLS/DASH quality options)
+   * - Text tracks for captions/subtitles
+   * - Media type (video vs audio)
+   */
+}
+
+export interface PortalProps {
+  /**
+   * The content to render in the portal.
+   * This content will be rendered in the appropriate container
+   * based on the current fullscreen state.
+   */
+  children: React.ReactNode;
+}
+
+export interface TooltipProps extends React.ComponentProps<"div"> {
+  /**
+   * The tooltip text to display.
+   *
+   * ```tsx
+   * <MediaPlayer.Tooltip tooltip="Play video">
+   *   <button>▶</button>
+   * </MediaPlayer.Tooltip>
+   * ```
+   */
+  tooltip?: string;
+
+  /**
+   * Keyboard shortcut(s) to display in the tooltip.
+   * Can be a string for a single shortcut or an array for multiple shortcuts.
+   *
+   * ```tsx
+   * // Single shortcut
+   * <MediaPlayer.Tooltip tooltip="Play" shortcut="Space">
+   *   <button>▶</button>
+   * </MediaPlayer.Tooltip>
+   * ```
+   *
+   * ```tsx
+   * // Multiple shortcuts
+   * <MediaPlayer.Tooltip tooltip="Seek" shortcut={["←", "→"]}>
+   *   <button>Seek</button>
+   * </MediaPlayer.Tooltip>
+   * ```
+   */
+  shortcut?: string | string[];
+}
