@@ -95,11 +95,11 @@ interface MediaPlayerContextValue {
   labelId: string;
   descriptionId: string;
   dir: Direction;
-  disabled: boolean;
-  disableTooltip: boolean;
   rootRef: React.RefObject<HTMLDivElement | null>;
   mediaRef: React.RefObject<HTMLVideoElement | HTMLAudioElement | null>;
   portalContainer: Element | DocumentFragment | null;
+  disabled: boolean;
+  disableTooltip: boolean;
   isVideo: boolean;
 }
 
@@ -2075,6 +2075,7 @@ function MediaPlayerPiP(props: MediaPlayerPiPProps) {
     <MediaPlayerTooltip tooltip="Picture in picture" shortcut="P">
       <Button
         type="button"
+        aria-controls={context.mediaId}
         aria-label={isPictureInPicture ? "Exit pip" : "Enter pip"}
         data-disabled={isDisabled ? "" : undefined}
         data-slot="media-player-pip"
@@ -2104,7 +2105,7 @@ function MediaPlayerCaptions(props: MediaPlayerCaptionsProps) {
 
   const context = useMediaPlayerContext(CAPTIONS_NAME);
   const dispatch = useMediaDispatch();
-  const showingSubtitles = useMediaSelector(
+  const isSubtitlesActive = useMediaSelector(
     (state) => !!state.mediaSubtitlesShowing?.length,
   );
 
@@ -2128,11 +2129,11 @@ function MediaPlayerCaptions(props: MediaPlayerCaptionsProps) {
       <Button
         type="button"
         aria-controls={context.mediaId}
-        aria-label={showingSubtitles ? "Disable captions" : "Enable captions"}
-        aria-pressed={showingSubtitles}
+        aria-label={isSubtitlesActive ? "Disable captions" : "Enable captions"}
+        aria-pressed={isSubtitlesActive}
         data-disabled={isDisabled ? "" : undefined}
         data-slot="media-player-captions"
-        data-state={showingSubtitles ? "on" : "off"}
+        data-state={isSubtitlesActive ? "on" : "off"}
         disabled={isDisabled}
         {...captionsProps}
         variant="ghost"
@@ -2141,7 +2142,7 @@ function MediaPlayerCaptions(props: MediaPlayerCaptionsProps) {
         onClick={onCaptionsToggle}
       >
         {children ??
-          (showingSubtitles ? <SubtitlesIcon /> : <CaptionsOffIcon />)}
+          (isSubtitlesActive ? <SubtitlesIcon /> : <CaptionsOffIcon />)}
       </Button>
     </MediaPlayerTooltip>
   );
@@ -2311,6 +2312,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
         <DropdownMenuTrigger asChild>
           <Button
             type="button"
+            aria-controls={context.mediaId}
             aria-label="Settings"
             data-disabled={isDisabled ? "" : undefined}
             data-slot="media-player-settings"
