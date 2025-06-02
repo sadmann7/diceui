@@ -98,6 +98,7 @@ interface MediaPlayerContextValue {
   descriptionId: string;
   dir: Direction;
   disabled: boolean;
+  disableTooltip: boolean;
   rootRef: React.RefObject<HTMLDivElement | null>;
   mediaRef: React.RefObject<HTMLVideoElement | HTMLAudioElement | null>;
   portalContainer: Element | DocumentFragment | null;
@@ -130,6 +131,7 @@ interface MediaPlayerRootProps
   label?: string;
   asChild?: boolean;
   disabled?: boolean;
+  disableTooltip?: boolean;
 }
 
 function MediaPlayerRoot(props: MediaPlayerRootProps) {
@@ -154,6 +156,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
     label,
     asChild,
     disabled = false,
+    disableTooltip = false,
     children,
     className,
     ref,
@@ -203,8 +206,18 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       portalContainer,
       disabled,
       isVideo,
+      disableTooltip,
     }),
-    [mediaId, labelId, descriptionId, dir, portalContainer, disabled, isVideo],
+    [
+      mediaId,
+      labelId,
+      descriptionId,
+      dir,
+      portalContainer,
+      disabled,
+      isVideo,
+      disableTooltip,
+    ],
   );
 
   React.useEffect(() => {
@@ -968,6 +981,7 @@ function MediaPlayerSeekForward(props: MediaPlayerSeekForwardProps) {
         {...seekForwardProps}
         variant="ghost"
         size="icon"
+        className={cn("size-8", className)}
         onClick={onSeekForward}
       >
         {children ?? <FastForwardIcon />}
@@ -986,28 +1000,28 @@ interface SeekState {
 
 interface MediaPlayerSeekProps
   extends React.ComponentProps<typeof SliderPrimitive.Root> {
-  previewThumbnailSrc?: string | ((time: number) => string);
-  sideOffset?: number;
-  collisionBoundary?: Element | Element[];
-  collisionPadding?:
+  withTime?: boolean;
+  withChapter?: boolean;
+  tooltipThumbnailSrc?: string | ((time: number) => string);
+  tooltipVariant?: "time" | "time-duration";
+  disableTooltip?: boolean;
+  tooltipSideOffset?: number;
+  tooltipCollisionBoundary?: Element | Element[];
+  tooltipCollisionPadding?:
     | number
     | Partial<Record<"top" | "right" | "bottom" | "left", number>>;
-  withTime?: boolean;
-  withDurationPreview?: boolean;
-  withoutPreviewThumbnail?: boolean;
-  withoutChapter?: boolean;
 }
 
 function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const {
-    previewThumbnailSrc,
-    sideOffset = FLOATING_MENU_SIDE_OFFSET,
-    collisionPadding = SEEK_COLLISION_PADDING,
-    collisionBoundary,
     withTime = false,
-    withDurationPreview = false,
-    withoutPreviewThumbnail = false,
-    withoutChapter = false,
+    withChapter = true,
+    tooltipVariant = "time",
+    tooltipThumbnailSrc,
+    tooltipSideOffset = FLOATING_MENU_SIDE_OFFSET,
+    tooltipCollisionPadding = SEEK_COLLISION_PADDING,
+    tooltipCollisionBoundary,
+    disableTooltip = false,
     className,
     disabled,
     ...seekProps
@@ -1066,23 +1080,25 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
   const isDisabled = disabled || context.disabled;
 
+  const tooltipDisabled = disableTooltip || context.disableTooltip;
+
   const getCurrentChapterCue = React.useCallback(
     (time: number) => {
-      if (withoutChapter || !chapterCues.length) return null;
+      if (!withChapter || !chapterCues.length) return null;
       return chapterCues.find((c) => time >= c.startTime && time < c.endTime);
     },
-    [chapterCues, withoutChapter],
+    [chapterCues, withChapter],
   );
 
   const getPreviewThumbnail = React.useCallback(
     (time: number) => {
-      if (withoutPreviewThumbnail) return null;
+      if (tooltipDisabled) return null;
 
-      if (previewThumbnailSrc) {
+      if (tooltipThumbnailSrc) {
         const src =
-          typeof previewThumbnailSrc === "function"
-            ? previewThumbnailSrc(time)
-            : previewThumbnailSrc;
+          typeof tooltipThumbnailSrc === "function"
+            ? tooltipThumbnailSrc(time)
+            : tooltipThumbnailSrc;
         return { src, coords: null };
       }
 
@@ -1100,16 +1116,18 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       return null;
     },
     [
-      previewThumbnailSrc,
+      tooltipThumbnailSrc,
       mediaPreviewTime,
       mediaPreviewImage,
       mediaPreviewCoords,
-      withoutPreviewThumbnail,
+      tooltipDisabled,
     ],
   );
 
   const onPreviewUpdate = React.useCallback(
     (time: number) => {
+      if (tooltipDisabled) return;
+
       if (previewDebounceRef.current) {
         cancelAnimationFrame(previewDebounceRef.current);
       }
@@ -1122,7 +1140,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         previewDebounceRef.current = null;
       });
     },
-    [dispatch],
+    [dispatch, tooltipDisabled],
   );
 
   React.useEffect(() => {
@@ -1135,7 +1153,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   }, [mediaCurrentTime, seekState.pendingSeekTime]);
 
   React.useEffect(() => {
-    if (!seekState.isHovering) return;
+    if (!seekState.isHovering || tooltipDisabled) return;
 
     function onScroll() {
       setSeekState((prev) => ({
@@ -1153,7 +1171,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     return () => {
       document.removeEventListener("scroll", onScroll);
     };
-  }, [seekState.isHovering, dispatch]);
+  }, [seekState.isHovering, dispatch, tooltipDisabled]);
 
   const bufferedProgress = React.useMemo(() => {
     if (!mediaBuffered?.length || seekableEnd <= 0) return 0;
@@ -1172,12 +1190,12 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   }, [mediaBuffered, mediaCurrentTime, seekableEnd, mediaEnded, seekableStart]);
 
   const getCollisionPadding = React.useCallback(() => {
-    if (typeof collisionPadding === "number") {
+    if (typeof tooltipCollisionPadding === "number") {
       return {
-        top: collisionPadding,
-        right: collisionPadding,
-        bottom: collisionPadding,
-        left: collisionPadding,
+        top: tooltipCollisionPadding,
+        right: tooltipCollisionPadding,
+        bottom: tooltipCollisionPadding,
+        left: tooltipCollisionPadding,
       };
     }
     return {
@@ -1185,18 +1203,18 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       right: 0,
       bottom: 0,
       left: 0,
-      ...collisionPadding,
+      ...tooltipCollisionPadding,
     };
-  }, [collisionPadding]);
+  }, [tooltipCollisionPadding]);
 
   const getCollisionBoundaries = React.useCallback(() => {
-    if (collisionBoundary) {
-      return Array.isArray(collisionBoundary)
-        ? collisionBoundary
-        : [collisionBoundary];
+    if (tooltipCollisionBoundary) {
+      return Array.isArray(tooltipCollisionBoundary)
+        ? tooltipCollisionBoundary
+        : [tooltipCollisionBoundary];
     }
     return [context.rootRef.current].filter(Boolean) as Element[];
-  }, [collisionBoundary, context.rootRef]);
+  }, [tooltipCollisionBoundary, context.rootRef]);
 
   const onTooltipPositionUpdate = React.useCallback(
     (clientX: number) => {
@@ -1251,27 +1269,31 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         clearTimeout(hoverTimeoutRef.current);
       }
 
-      if (lastPointerXRef.current && seekRef.current) {
-        const seekRect = seekRef.current.getBoundingClientRect();
-        const clientX = Math.max(
-          seekRect.left,
-          Math.min(lastPointerXRef.current, seekRect.right),
-        );
+      if (!tooltipDisabled) {
+        if (lastPointerXRef.current && seekRef.current) {
+          const seekRect = seekRef.current.getBoundingClientRect();
+          const clientX = Math.max(
+            seekRect.left,
+            Math.min(lastPointerXRef.current, seekRect.right),
+          );
 
-        onTooltipPositionUpdate(clientX);
+          onTooltipPositionUpdate(clientX);
 
-        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            hoverTimeoutRef.current = window.setTimeout(() => {
+              setSeekState((prev) => ({ ...prev, isHovering: true }));
+            }, 16);
+          });
+        } else {
           hoverTimeoutRef.current = window.setTimeout(() => {
             setSeekState((prev) => ({ ...prev, isHovering: true }));
-          }, 16);
-        });
+          }, 50);
+        }
       } else {
-        hoverTimeoutRef.current = window.setTimeout(() => {
-          setSeekState((prev) => ({ ...prev, isHovering: true }));
-        }, 50);
+        setSeekState((prev) => ({ ...prev, isHovering: true }));
       }
     }
-  }, [seekableEnd, onTooltipPositionUpdate]);
+  }, [seekableEnd, onTooltipPositionUpdate, tooltipDisabled]);
 
   const onPointerLeave = React.useCallback(() => {
     if (hoverTimeoutRef.current) {
@@ -1294,11 +1316,13 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       hasInitialPosition: false,
     }));
 
-    dispatch({
-      type: MediaActionTypes.MEDIA_PREVIEW_REQUEST,
-      detail: undefined,
-    });
-  }, [dispatch]);
+    if (!tooltipDisabled) {
+      dispatch({
+        type: MediaActionTypes.MEDIA_PREVIEW_REQUEST,
+        detail: undefined,
+      });
+    }
+  }, [dispatch, tooltipDisabled]);
 
   const onPointerMove = React.useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
@@ -1330,19 +1354,21 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
             (clientX >= seekRect.left && clientX <= seekRect.right),
         }));
 
-        onPreviewUpdate(calculatedHoverTime);
+        if (!tooltipDisabled) {
+          onPreviewUpdate(calculatedHoverTime);
 
-        if (
-          seekState.isHovering ||
-          seekState.tooltipPosition ||
-          (clientX >= seekRect.left && clientX <= seekRect.right)
-        ) {
-          if (clientX < seekRect.left || clientX > seekRect.right) {
-            setSeekState((prev) => ({ ...prev, tooltipPosition: null }));
-            return;
+          if (
+            seekState.isHovering ||
+            seekState.tooltipPosition ||
+            (clientX >= seekRect.left && clientX <= seekRect.right)
+          ) {
+            if (clientX < seekRect.left || clientX > seekRect.right) {
+              setSeekState((prev) => ({ ...prev, tooltipPosition: null }));
+              return;
+            }
+
+            onTooltipPositionUpdate(clientX);
           }
-
-          onTooltipPositionUpdate(clientX);
         }
 
         rafIdRef.current = null;
@@ -1354,6 +1380,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       seekState.tooltipPosition,
       onPreviewUpdate,
       onTooltipPositionUpdate,
+      tooltipDisabled,
     ],
   );
 
@@ -1437,7 +1464,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         position: "fixed" as const,
         left: seekState.tooltipPosition?.x ?? 0,
         top: seekState.tooltipPosition?.y ?? 0,
-        transform: `translateX(-50%) translateY(calc(-100% - ${sideOffset}px))`,
+        transform: `translateX(-50%) translateY(calc(-100% - ${tooltipSideOffset}px))`,
         transition: "none",
         willChange: "opacity",
       };
@@ -1447,7 +1474,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       left: `${seekState.tooltipPosition.x}px`,
       top: `${seekState.tooltipPosition.y}px`,
       position: "fixed" as const,
-      transform: `translateX(-50%) translateY(calc(-100% - ${sideOffset}px))`,
+      transform: `translateX(-50%) translateY(calc(-100% - ${tooltipSideOffset}px))`,
       visibility: "visible" as const,
       opacity: 1,
       zIndex: 50,
@@ -1461,7 +1488,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     seekState.tooltipPosition,
     seekState.isHovering,
     seekState.hasInitialPosition,
-    sideOffset,
+    tooltipSideOffset,
   ]);
 
   const SeekSlider = (
@@ -1507,7 +1534,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
               }}
             />
           )}
-          {!withoutChapter &&
+          {withChapter &&
             chapterCues.length > 1 &&
             seekableEnd > 0 &&
             chapterCues.slice(1).map((chapterCue, index) => {
@@ -1530,7 +1557,9 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         </SliderPrimitive.Track>
         <SliderPrimitive.Thumb className="relative z-10 block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] will-change-transform hover:ring-4 focus-visible:outline-hidden focus-visible:ring-4 disabled:pointer-events-none disabled:opacity-50" />
       </SliderPrimitive.Root>
-      {(seekState.isHovering || seekState.tooltipPosition) &&
+      {!disableTooltip &&
+        !context.disableTooltip &&
+        (seekState.isHovering || seekState.tooltipPosition) &&
         seekableEnd > 0 && (
           <MediaPlayerPortal>
             <div
@@ -1586,7 +1615,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
                     "flex items-center",
                   )}
                 >
-                  {withDurationPreview
+                  {tooltipVariant === "time-duration"
                     ? `${formattedHoverTime} / ${formattedDuration}`
                     : formattedHoverTime}
                 </div>
@@ -2575,6 +2604,7 @@ function MediaPlayerTooltip({
   const context = useMediaPlayerContext(TOOLTIP_NAME);
 
   if (!tooltip && !shortcut) return <>{children}</>;
+  if (context.disableTooltip) return <>{children}</>;
 
   return (
     <Tooltip {...props} delayDuration={600}>

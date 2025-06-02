@@ -18,7 +18,7 @@ export default function MediaPlayerAudioDemo() {
         <source src="/assets/lofi.mp3" type="audio/mp3" />
       </MediaPlayerAudio>
       <MediaPlayerControls className="flex-col items-start gap-2.5">
-        <MediaPlayerSeek sideOffset={18} withTime />
+        <MediaPlayerSeek tooltipSideOffset={18} />
         <div className="flex w-full items-center justify-center gap-2">
           <MediaPlayerSeekBackward />
           <MediaPlayerPlay />
