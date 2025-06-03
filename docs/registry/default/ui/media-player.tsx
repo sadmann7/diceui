@@ -81,6 +81,8 @@ interface MediaPlayerContextValue {
   disabled: boolean;
   withoutTooltip: boolean;
   isVideo: boolean;
+  isMenuOpen: boolean;
+  setIsMenuOpen: (open: boolean) => void;
 }
 
 const MediaPlayerContext = React.createContext<MediaPlayerContextValue | null>(
@@ -150,6 +152,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
   const rootRef = React.useRef<HTMLDivElement | null>(null);
   const fullscreenRef = useMediaFullscreenRef();
   const composedRef = useComposedRefs(ref, rootRef, fullscreenRef);
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const mediaRef = React.useRef<HTMLVideoElement | HTMLAudioElement | null>(
     null,
@@ -185,6 +188,8 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       disabled,
       isVideo,
       withoutTooltip,
+      isMenuOpen,
+      setIsMenuOpen,
     }),
     [
       mediaId,
@@ -195,6 +200,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       disabled,
       isVideo,
       withoutTooltip,
+      isMenuOpen,
     ],
   );
 
@@ -974,10 +980,10 @@ interface SeekState {
 interface MediaPlayerSeekProps
   extends React.ComponentProps<typeof SliderPrimitive.Root> {
   withTime?: boolean;
-  withChapter?: boolean;
+  withoutChapter?: boolean;
+  withoutTooltip?: boolean;
   tooltipThumbnailSrc?: string | ((time: number) => string);
   tooltipVariant?: "time" | "time-duration";
-  withoutTooltip?: boolean;
   tooltipSideOffset?: number;
   tooltipCollisionBoundary?: Element | Element[];
   tooltipCollisionPadding?:
@@ -988,13 +994,13 @@ interface MediaPlayerSeekProps
 function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const {
     withTime = false,
-    withChapter = true,
+    withoutChapter = false,
+    withoutTooltip = false,
     tooltipVariant = "time",
     tooltipThumbnailSrc,
     tooltipSideOffset = FLOATING_MENU_SIDE_OFFSET,
     tooltipCollisionPadding = SEEK_COLLISION_PADDING,
     tooltipCollisionBoundary,
-    withoutTooltip = false,
     className,
     disabled,
     ...seekProps
@@ -1053,14 +1059,15 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
   const isDisabled = disabled || context.disabled;
 
-  const tooltipDisabled = withoutTooltip || context.withoutTooltip;
+  const tooltipDisabled =
+    withoutTooltip || context.withoutTooltip || context.isMenuOpen;
 
   const getCurrentChapterCue = React.useCallback(
     (time: number) => {
-      if (!withChapter || !chapterCues.length) return null;
+      if (withoutChapter || !chapterCues.length) return null;
       return chapterCues.find((c) => time >= c.startTime && time < c.endTime);
     },
-    [chapterCues, withChapter],
+    [chapterCues, withoutChapter],
   );
 
   const getPreviewThumbnail = React.useCallback(
@@ -1507,7 +1514,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
               }}
             />
           )}
-          {withChapter &&
+          {!withoutChapter &&
             chapterCues.length > 1 &&
             seekableEnd > 0 &&
             chapterCues.slice(1).map((chapterCue, index) => {
@@ -1796,7 +1803,7 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
   const {
     open,
     defaultOpen,
-    onOpenChange,
+    onOpenChange: onOpenChangeProp,
     sideOffset = FLOATING_MENU_SIDE_OFFSET,
     speeds = SPEEDS,
     asChild,
@@ -1822,6 +1829,14 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
       });
     },
     [dispatch],
+  );
+
+  const onOpenChange = React.useCallback(
+    (open: boolean) => {
+      context.setIsMenuOpen(open);
+      onOpenChangeProp?.(open);
+    },
+    [context, onOpenChangeProp],
   );
 
   return (
@@ -2163,7 +2178,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
   const {
     open,
     defaultOpen,
-    onOpenChange,
+    onOpenChange: onOpenChangeProp,
     sideOffset = FLOATING_MENU_SIDE_OFFSET,
     speeds = SPEEDS,
     asChild,
@@ -2258,6 +2273,14 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
     if (currentRendition.width) return `${currentRendition.width}p`;
     return currentRendition.id ?? "Auto";
   }, [mediaRenditionSelected, mediaRenditionList]);
+
+  const onOpenChange = React.useCallback(
+    (open: boolean) => {
+      context.setIsMenuOpen(open);
+      onOpenChangeProp?.(open);
+    },
+    [context, onOpenChangeProp],
+  );
 
   return (
     <DropdownMenu

@@ -155,10 +155,10 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    *
    * ```ts
    * // Disable all tooltips
-   * <MediaPlayer disableTooltip />
+   * <MediaPlayer withoutTooltip />
    * ```
    */
-  disableTooltip?: boolean;
+  withoutTooltip?: boolean;
 }
 
 export interface VideoProps extends EmptyProps<"video">, CompositionProps {}
@@ -242,6 +242,40 @@ export interface SeekProps
     >,
     CompositionProps {
   /**
+   * Whether to display the current time and remaining time alongside the seek bar.
+   * @default false
+   *
+   * ```ts
+   * // Show time display with seek bar
+   * <MediaPlayer.Seek withTime />
+   * ```
+   */
+  withTime?: boolean;
+
+  /**
+   * Whether to show chapter markers on the seek bar.
+   * @default true
+   *
+   * ```ts
+   * // Disable chapter markers
+   * <MediaPlayer.Seek withoutChapter />
+   * ```
+   */
+  withoutChapter?: boolean;
+
+  /**
+   * Whether to disable the seek tooltip entirely.
+   * This overrides the global `withoutTooltip` prop for this component.
+   * @default false
+   *
+   * ```ts
+   * // Disable seek tooltip
+   * <MediaPlayer.Seek withoutTooltip />
+   * ```
+   */
+  withoutTooltip?: boolean;
+
+  /**
    * Custom preview thumbnail source for seek preview.
    * Can be a string URL or a function that returns a URL based on time.
    *
@@ -319,40 +353,6 @@ export interface SeekProps
   tooltipCollisionPadding?:
     | number
     | Partial<Record<"top" | "right" | "bottom" | "left", number>>;
-
-  /**
-   * Whether to display the current time and remaining time alongside the seek bar.
-   * @default false
-   *
-   * ```ts
-   * // Show time display with seek bar
-   * <MediaPlayer.Seek withTime />
-   * ```
-   */
-  withTime?: boolean;
-
-  /**
-   * Whether to show chapter markers on the seek bar.
-   * @default true
-   *
-   * ```ts
-   * // Disable chapter markers
-   * <MediaPlayer.Seek withChapter={false} />
-   * ```
-   */
-  withChapter?: boolean;
-
-  /**
-   * Whether to disable the seek tooltip entirely.
-   * This overrides the global `disableTooltip` prop for this component.
-   * @default false
-   *
-   * ```ts
-   * // Disable seek tooltip
-   * <MediaPlayer.Seek disableTooltip />
-   * ```
-   */
-  disableTooltip?: boolean;
 }
 
 export interface VolumeProps
