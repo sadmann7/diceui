@@ -94,7 +94,9 @@ function createStore<T>(
       store.emit()
     },
     emit: () => {
-      listeners.forEach((cb) => cb())
+      for (const cb of listeners) {
+        cb()
+        }
     },
   }
 
