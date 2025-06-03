@@ -1079,7 +1079,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     [chapterCues, withoutChapter],
   );
 
-  const getPreviewThumbnail = React.useCallback(
+  const getThumbnail = React.useCallback(
     (time: number) => {
       if (tooltipDisabled) return null;
 
@@ -1470,7 +1470,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   }, []);
 
   const currentChapterCue = getCurrentChapterCue(seekState.hoverTime);
-  const previewThumbnail = getPreviewThumbnail(seekState.hoverTime);
+  const thumbnail = getThumbnail(seekState.hoverTime);
 
   const tooltipStyle = React.useMemo<React.CSSProperties>(() => {
     if (!seekState.tooltipPosition || !seekState.isHovering) {
@@ -1587,28 +1587,28 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
               <div
                 className={cn(
                   "flex flex-col items-center gap-1.5 rounded-md border bg-background text-foreground shadow-sm dark:bg-zinc-900",
-                  previewThumbnail && "min-h-10",
-                  !previewThumbnail && currentChapterCue && "px-3 py-1.5",
+                  thumbnail && "min-h-10",
+                  !thumbnail && currentChapterCue && "px-3 py-1.5",
                 )}
               >
-                {previewThumbnail && (
+                {thumbnail && (
                   <div
                     data-slot="media-player-seek-thumbnail"
                     className="overflow-hidden rounded-md rounded-b-none"
                   >
-                    {previewThumbnail.coords ? (
+                    {thumbnail.coords ? (
                       <div
                         className="h-32 w-56"
                         style={{
-                          backgroundImage: `url(${previewThumbnail.src})`,
-                          backgroundPosition: `-${previewThumbnail.coords[0]}px -${previewThumbnail.coords[1]}px`,
+                          backgroundImage: `url(${thumbnail.src})`,
+                          backgroundPosition: `-${thumbnail.coords[0]}px -${thumbnail.coords[1]}px`,
                           backgroundSize: "auto",
                           backgroundRepeat: "no-repeat",
                         }}
                       />
                     ) : (
                       <img
-                        src={previewThumbnail.src}
+                        src={thumbnail.src}
                         alt={`Preview at ${formattedHoverTime}`}
                         className="h-32 w-56 object-cover"
                       />
@@ -1627,8 +1627,8 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
                   data-slot="media-player-seek-time"
                   className={cn(
                     "whitespace-nowrap text-xs tabular-nums",
-                    previewThumbnail && "pb-1.5",
-                    !(previewThumbnail || currentChapterCue) && "px-2.5 py-1",
+                    thumbnail && "pb-1.5",
+                    !(thumbnail || currentChapterCue) && "px-2.5 py-1",
                     "flex items-center",
                   )}
                 >
