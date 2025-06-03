@@ -161,7 +161,9 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
   const [mounted, setMounted] = React.useState(false);
   React.useLayoutEffect(() => setMounted(true), []);
 
-  const isFullscreen = useMediaSelector((state) => state.mediaIsFullscreen);
+  const isFullscreen = useMediaSelector(
+    (state) => state.mediaIsFullscreen ?? false,
+  );
 
   const portalContainer = mounted
     ? isFullscreen
@@ -623,7 +625,9 @@ function MediaPlayerControls(props: MediaPlayerControlsProps) {
   const { asChild, className, ...controlsProps } = props;
 
   const context = useMediaPlayerContext("MediaPlayerControls");
-  const isFullscreen = useMediaSelector((state) => state.mediaIsFullscreen);
+  const isFullscreen = useMediaSelector(
+    (state) => state.mediaIsFullscreen ?? false,
+  );
 
   const ControlsPrimitive = asChild ? Slot : "div";
 
@@ -651,7 +655,9 @@ interface MediaPlayerOverlayProps extends React.ComponentProps<"div"> {
 function MediaPlayerOverlay(props: MediaPlayerOverlayProps) {
   const { asChild, className, ...overlayProps } = props;
 
-  const isFullscreen = useMediaSelector((state) => state.mediaIsFullscreen);
+  const isFullscreen = useMediaSelector(
+    (state) => state.mediaIsFullscreen ?? false,
+  );
 
   const OverlayPrimitive = asChild ? Slot : "div";
 
@@ -684,9 +690,9 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
     ...loadingProps
   } = props;
 
-  const isLoading = useMediaSelector((state) => state.mediaLoading);
-  const isPaused = useMediaSelector((state) => state.mediaPaused);
-  const hasPlayed = useMediaSelector((state) => state.mediaHasPlayed);
+  const isLoading = useMediaSelector((state) => state.mediaLoading ?? false);
+  const isPaused = useMediaSelector((state) => state.mediaPaused ?? true);
+  const hasPlayed = useMediaSelector((state) => state.mediaHasPlayed ?? false);
 
   const [shouldRender, setShouldRender] = React.useState(false);
   const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
@@ -797,7 +803,7 @@ function MediaPlayerPlay(props: MediaPlayerPlayProps) {
 
   const context = useMediaPlayerContext("MediaPlayerPlay");
   const dispatch = useMediaDispatch();
-  const mediaPaused = useMediaSelector((state) => state.mediaPaused);
+  const mediaPaused = useMediaSelector((state) => state.mediaPaused ?? true);
 
   const isDisabled = disabled || context.disabled;
 
@@ -924,8 +930,9 @@ function MediaPlayerSeekForward(props: MediaPlayerSeekForwardProps) {
   const mediaCurrentTime = useMediaSelector(
     (state) => state.mediaCurrentTime ?? 0,
   );
-  const [, seekableEnd] =
-    useMediaSelector((state) => state.mediaSeekable) ?? [];
+  const [, seekableEnd] = useMediaSelector(
+    (state) => state.mediaSeekable ?? [0, 0],
+  );
   const isDisabled = props.disabled || context.disabled;
 
   const onSeekForward = React.useCallback(
@@ -1011,10 +1018,11 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const mediaCurrentTime = useMediaSelector(
     (state) => state.mediaCurrentTime ?? 0,
   );
-  const [seekableStart = 0, seekableEnd = 0] =
-    useMediaSelector((state) => state.mediaSeekable) ?? [];
-  const mediaBuffered = useMediaSelector((state) => state.mediaBuffered);
-  const mediaEnded = useMediaSelector((state) => state.mediaEnded);
+  const [seekableStart = 0, seekableEnd = 0] = useMediaSelector(
+    (state) => state.mediaSeekable ?? [0, 0],
+  );
+  const mediaBuffered = useMediaSelector((state) => state.mediaBuffered ?? []);
+  const mediaEnded = useMediaSelector((state) => state.mediaEnded ?? false);
 
   const chapterCues = useMediaSelector(
     (state) => state.mediaChaptersCues ?? [],
@@ -1064,7 +1072,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
   const getCurrentChapterCue = React.useCallback(
     (time: number) => {
-      if (withoutChapter || !chapterCues.length) return null;
+      if (withoutChapter || chapterCues.length === 0) return null;
       return chapterCues.find((c) => time >= c.startTime && time < c.endTime);
     },
     [chapterCues, withoutChapter],
@@ -1154,7 +1162,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   }, [seekState.isHovering, dispatch, tooltipDisabled]);
 
   const bufferedProgress = React.useMemo(() => {
-    if (!mediaBuffered?.length || seekableEnd <= 0) return 0;
+    if (mediaBuffered.length === 0 || seekableEnd <= 0) return 0;
 
     if (mediaEnded) return 1;
 
@@ -1637,11 +1645,13 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
   const context = useMediaPlayerContext("MediaPlayerVolume");
   const dispatch = useMediaDispatch();
   const mediaVolume = useMediaSelector((state) => state.mediaVolume ?? 1);
-  const mediaMuted = useMediaSelector((state) => state.mediaMuted);
-  const mediaVolumeLevel = useMediaSelector((state) => state.mediaVolumeLevel);
+  const mediaMuted = useMediaSelector((state) => state.mediaMuted ?? false);
+  const mediaVolumeLevel = useMediaSelector(
+    (state) => state.mediaVolumeLevel ?? "high",
+  );
 
-  const volumeTriggerId = React.useId();
   const sliderId = React.useId();
+  const volumeTriggerId = React.useId();
 
   const isDisabled = disabled || context.disabled;
 
@@ -1744,8 +1754,9 @@ function MediaPlayerTime(props: MediaPlayerTimeProps) {
   const mediaCurrentTime = useMediaSelector(
     (state) => state.mediaCurrentTime ?? 0,
   );
-  const [, seekableEnd = 0] =
-    useMediaSelector((state) => state.mediaSeekable) ?? [];
+  const [, seekableEnd = 0] = useMediaSelector(
+    (state) => state.mediaSeekable ?? [0, 0],
+  );
 
   const formattedCurrentTime = timeUtils.formatTime(
     mediaCurrentTime,
@@ -1961,7 +1972,9 @@ function MediaPlayerFullscreen(props: MediaPlayerFullscreenProps) {
 
   const context = useMediaPlayerContext("MediaPlayerFullscreen");
   const dispatch = useMediaDispatch();
-  const isFullscreen = useMediaSelector((state) => state.mediaIsFullscreen);
+  const isFullscreen = useMediaSelector(
+    (state) => state.mediaIsFullscreen ?? false,
+  );
 
   const isDisabled = disabled || context.disabled;
 
@@ -2011,7 +2024,9 @@ function MediaPlayerPiP(props: MediaPlayerPiPProps) {
 
   const context = useMediaPlayerContext("MediaPlayerPiP");
   const dispatch = useMediaDispatch();
-  const isPictureInPicture = useMediaSelector((state) => state.mediaIsPip);
+  const isPictureInPicture = useMediaSelector(
+    (state) => state.mediaIsPip ?? false,
+  );
 
   const isDisabled = disabled || context.disabled;
 
@@ -2079,7 +2094,7 @@ function MediaPlayerCaptions(props: MediaPlayerCaptionsProps) {
   const context = useMediaPlayerContext("MediaPlayerCaptions");
   const dispatch = useMediaDispatch();
   const isSubtitlesActive = useMediaSelector(
-    (state) => !!state.mediaSubtitlesShowing?.length,
+    (state) => (state.mediaSubtitlesShowing ?? []).length > 0,
   );
 
   const isDisabled = disabled || context.disabled;
@@ -2208,7 +2223,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
   );
 
   const isDisabled = disabled || context.disabled;
-  const subtitlesOff = !mediaSubtitlesShowing?.length;
+  const isSubtitlesActive = (mediaSubtitlesShowing ?? []).length > 0;
 
   const onPlaybackRateChange = React.useCallback(
     (rate: number) => {
@@ -2252,12 +2267,12 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
   );
 
   const getCurrentSubtitleLabel = React.useCallback(() => {
-    if (subtitlesOff) return "Off";
+    if (!isSubtitlesActive) return "Off";
     if (mediaSubtitlesShowing.length > 0) {
       return mediaSubtitlesShowing[0]?.label ?? "On";
     }
     return "Off";
-  }, [subtitlesOff, mediaSubtitlesShowing]);
+  }, [isSubtitlesActive, mediaSubtitlesShowing]);
 
   const getCurrentQualityLabel = React.useCallback(() => {
     if (!mediaRenditionSelected) return "Auto";
@@ -2332,15 +2347,12 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
                 className="justify-between"
                 onSelect={() => onPlaybackRateChange(speed)}
               >
-                {speed}x
-                {mediaPlaybackRate === speed && (
-                  <CheckIcon className="size-4" />
-                )}
+                {speed}x{mediaPlaybackRate === speed && <CheckIcon />}
               </DropdownMenuItem>
             ))}
           </DropdownMenuSubContent>
         </DropdownMenuSub>
-        {context.isVideo && mediaRenditionList?.length > 0 && (
+        {context.isVideo && mediaRenditionList.length > 0 && (
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
               <span className="flex-1">Quality</span>
@@ -2354,7 +2366,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
                 onSelect={() => onRenditionChange("auto")}
               >
                 Auto
-                {!mediaRenditionSelected && <CheckIcon className="size-4" />}
+                {!mediaRenditionSelected && <CheckIcon />}
               </DropdownMenuItem>
               {mediaRenditionList
                 .slice()
@@ -2382,7 +2394,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
                       onSelect={() => onRenditionChange(rendition.id ?? "")}
                     >
                       {label}
-                      {selected && <CheckIcon className="size-4" />}
+                      {selected && <CheckIcon />}
                     </DropdownMenuItem>
                   );
                 })}
@@ -2402,7 +2414,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
               onSelect={onSubtitlesToggle}
             >
               Off
-              {subtitlesOff && <CheckIcon className="size-4" />}
+              {!isSubtitlesActive && <CheckIcon />}
             </DropdownMenuItem>
             {mediaSubtitlesList.map((subtitleTrack) => {
               const isSelected = mediaSubtitlesShowing.some(
@@ -2416,11 +2428,11 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
                   onSelect={() => onShowSubtitleTrack(subtitleTrack)}
                 >
                   {subtitleTrack.label}
-                  {isSelected && <CheckIcon className="size-4" />}
+                  {isSelected && <CheckIcon />}
                 </DropdownMenuItem>
               );
             })}
-            {!mediaSubtitlesList.length && (
+            {mediaSubtitlesList.length === 0 && (
               <DropdownMenuItem disabled>
                 No captions available
               </DropdownMenuItem>
