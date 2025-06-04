@@ -315,7 +315,9 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
               ? MediaActionTypes.MEDIA_UNMUTE_REQUEST
               : MediaActionTypes.MEDIA_MUTE_REQUEST,
           });
-          setShowVolumeIndicator(true);
+          if (mediaElement instanceof HTMLVideoElement) {
+            setShowVolumeIndicator(true);
+          }
           break;
         }
 
@@ -355,7 +357,9 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
               type: MediaActionTypes.MEDIA_VOLUME_REQUEST,
               detail: Math.min(1, mediaElement.volume + 0.1),
             });
-            setShowVolumeIndicator(true);
+            if (mediaElement instanceof HTMLVideoElement) {
+              setShowVolumeIndicator(true);
+            }
           }
           break;
 
@@ -366,7 +370,9 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
               type: MediaActionTypes.MEDIA_VOLUME_REQUEST,
               detail: Math.max(0, mediaElement.volume - 0.1),
             });
-            setShowVolumeIndicator(true);
+            if (mediaElement instanceof HTMLVideoElement) {
+              setShowVolumeIndicator(true);
+            }
           }
           break;
 
@@ -835,7 +841,7 @@ function MediaPlayerVolumeIndicator(props: MediaPlayerVolumeIndicatorProps) {
       animationTimeoutRef.current = null;
     }
 
-    if (context.showVolumeIndicator && context.isVideo) {
+    if (context.showVolumeIndicator) {
       setShouldRender(true);
       setIsAnimatingOut(false);
 
@@ -865,7 +871,7 @@ function MediaPlayerVolumeIndicator(props: MediaPlayerVolumeIndicatorProps) {
         animationTimeoutRef.current = null;
       }
     };
-  }, [context.showVolumeIndicator, context.isVideo, delay, context]);
+  }, [context.showVolumeIndicator, context.setShowVolumeIndicator, delay]);
 
   React.useEffect(() => {
     return () => {
@@ -878,7 +884,7 @@ function MediaPlayerVolumeIndicator(props: MediaPlayerVolumeIndicatorProps) {
     };
   }, []);
 
-  if (!shouldRender || !context.isVideo) return null;
+  if (!shouldRender) return null;
 
   const effectiveVolume = mediaMuted ? 0 : mediaVolume;
   const volumePercentage = Math.round(effectiveVolume * 100);
@@ -1318,7 +1324,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     return () => {
       document.removeEventListener("scroll", onScroll);
     };
-  }, [seekState.isHovering, dispatch, tooltipDisabled]);
+  }, [dispatch, seekState.isHovering, tooltipDisabled]);
 
   const bufferedProgress = React.useMemo(() => {
     if (mediaBuffered.length === 0 || seekableEnd <= 0) return 0;
@@ -1876,9 +1882,8 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
         ? MediaActionTypes.MEDIA_UNMUTE_REQUEST
         : MediaActionTypes.MEDIA_MUTE_REQUEST,
     });
-    // Show volume indicator when muting/unmuting
     context.setShowVolumeIndicator(true);
-  }, [dispatch, mediaMuted, context]);
+  }, [dispatch, context.setShowVolumeIndicator, mediaMuted]);
 
   const onVolumeChange = React.useCallback(
     (value: number[]) => {
@@ -1887,10 +1892,9 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
         type: MediaActionTypes.MEDIA_VOLUME_REQUEST,
         detail: volume,
       });
-      // Show volume indicator when changing volume via slider
       context.setShowVolumeIndicator(true);
     },
-    [dispatch, context],
+    [dispatch, context.setShowVolumeIndicator],
   );
 
   const effectiveVolume = mediaMuted ? 0 : mediaVolume;
@@ -2071,7 +2075,7 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
       context.setIsMenuOpen(open);
       onOpenChangeProp?.(open);
     },
-    [context, onOpenChangeProp],
+    [context.setIsMenuOpen, onOpenChangeProp],
   );
 
   return (
@@ -2322,7 +2326,6 @@ function MediaPlayerCaptions(props: MediaPlayerCaptionsProps) {
   );
 
   const isDisabled = disabled || context.disabled;
-
   const onCaptionsToggle = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       props.onClick?.(event);
@@ -2518,7 +2521,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
       context.setIsMenuOpen(open);
       onOpenChangeProp?.(open);
     },
-    [context, onOpenChangeProp],
+    [context.setIsMenuOpen, onOpenChangeProp],
   );
 
   return (
