@@ -82,6 +82,7 @@ interface MediaPlayerContextValue {
   portalContainer: Element | DocumentFragment | null;
   disabled: boolean;
   withoutTooltip: boolean;
+  tooltipSideOffset: number;
   isVideo: boolean;
   isMenuOpen: boolean;
   setIsMenuOpen: (open: boolean) => void;
@@ -114,6 +115,7 @@ interface MediaPlayerRootProps
   asChild?: boolean;
   disabled?: boolean;
   withoutTooltip?: boolean;
+  tooltipSideOffset?: number;
 }
 
 function MediaPlayerRoot(props: MediaPlayerRootProps) {
@@ -142,6 +144,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
     children,
     className,
     ref,
+    tooltipSideOffset = FLOATING_MENU_SIDE_OFFSET,
     ...rootImplProps
   } = props;
 
@@ -192,6 +195,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       disabled,
       isVideo,
       withoutTooltip,
+      tooltipSideOffset,
       isMenuOpen,
       setIsMenuOpen,
     }),
@@ -204,6 +208,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       disabled,
       isVideo,
       withoutTooltip,
+      tooltipSideOffset,
       isMenuOpen,
     ],
   );
@@ -699,8 +704,6 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
   const [shouldRender, setShouldRender] = React.useState(false);
   const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
-  console.log({ isLoading, isPaused, hasPlayed, shouldRender });
-
   React.useEffect(() => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -1007,7 +1010,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     withoutTooltip = false,
     tooltipVariant = "time",
     tooltipThumbnailSrc,
-    tooltipSideOffset = FLOATING_MENU_SIDE_OFFSET,
+    tooltipSideOffset,
     tooltipCollisionPadding = SEEK_COLLISION_PADDING,
     tooltipCollisionBoundary,
     className,
@@ -1078,6 +1081,9 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
   const tooltipDisabled =
     withoutTooltip || context.withoutTooltip || context.isMenuOpen;
+
+  const currentTooltipSideOffset =
+    tooltipSideOffset ?? context.tooltipSideOffset;
 
   const getCurrentChapterCue = React.useCallback(
     (time: number) => {
@@ -1489,7 +1495,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         position: "fixed" as const,
         left: seekState.tooltipPosition?.x ?? 0,
         top: seekState.tooltipPosition?.y ?? 0,
-        transform: `translateX(-50%) translateY(calc(-100% - ${tooltipSideOffset}px))`,
+        transform: `translateX(-50%) translateY(calc(-100% - ${currentTooltipSideOffset}px))`,
         transition: "none",
         willChange: "opacity",
       };
@@ -1499,7 +1505,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       left: `${seekState.tooltipPosition.x}px`,
       top: `${seekState.tooltipPosition.y}px`,
       position: "fixed" as const,
-      transform: `translateX(-50%) translateY(calc(-100% - ${tooltipSideOffset}px))`,
+      transform: `translateX(-50%) translateY(calc(-100% - ${currentTooltipSideOffset}px))`,
       visibility: "visible" as const,
       opacity: 1,
       zIndex: 50,
@@ -1513,7 +1519,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     seekState.tooltipPosition,
     seekState.isHovering,
     seekState.hasInitialPosition,
-    tooltipSideOffset,
+    currentTooltipSideOffset,
   ]);
 
   const spriteStyle = React.useMemo<React.CSSProperties>(() => {
@@ -1748,8 +1754,8 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
       className={cn(
         "group flex items-center",
         expandable
-          ? "gap-0 group-focus-within:gap-2 group-hover:gap-2"
-          : "gap-2",
+          ? "gap-0 group-focus-within:gap-2 group-hover:gap-1.5"
+          : "gap-1.5",
         className,
       )}
     >
@@ -1949,7 +1955,7 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
         container={context.portalContainer}
         sideOffset={sideOffset}
         align="center"
-        className="min-w-[var(--radix-dropdown-menu-trigger-width)] data-[side=top]:mb-4"
+        className="min-w-[var(--radix-dropdown-menu-trigger-width)] data-[side=top]:mb-3.5"
       >
         {speeds.map((speed) => (
           <DropdownMenuItem
@@ -2400,7 +2406,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
         side="top"
         sideOffset={sideOffset}
         container={context.portalContainer}
-        className="w-56 data-[side=top]:mb-4"
+        className="w-56 data-[side=top]:mb-3.5"
       >
         <DropdownMenuLabel className="sr-only">Settings</DropdownMenuLabel>
         <DropdownMenuSub>
@@ -2525,7 +2531,9 @@ function MediaPlayerPortal({ children }: MediaPlayerPortalProps) {
   return ReactDOM.createPortal(children, context.portalContainer);
 }
 
-interface MediaPlayerTooltipProps extends React.ComponentProps<typeof Tooltip> {
+interface MediaPlayerTooltipProps
+  extends React.ComponentProps<typeof Tooltip>,
+    Pick<React.ComponentProps<typeof TooltipContent>, "sideOffset"> {
   tooltip?: string;
   shortcut?: string | string[];
 }
@@ -2533,10 +2541,12 @@ interface MediaPlayerTooltipProps extends React.ComponentProps<typeof Tooltip> {
 function MediaPlayerTooltip({
   tooltip,
   shortcut,
+  sideOffset,
   children,
   ...props
 }: MediaPlayerTooltipProps) {
   const context = useMediaPlayerContext("MediaPlayerTooltip");
+  const currentSideOffset = sideOffset ?? context.tooltipSideOffset;
 
   if ((!tooltip && !shortcut) || context.withoutTooltip) return <>{children}</>;
 
@@ -2550,8 +2560,8 @@ function MediaPlayerTooltip({
       </TooltipTrigger>
       <TooltipContent
         container={context.portalContainer}
-        sideOffset={FLOATING_MENU_SIDE_OFFSET}
-        className="flex items-center gap-2 border bg-accent px-2 py-1 font-medium text-foreground data-[side=top]:mb-4 dark:bg-zinc-900 [&>span]:hidden"
+        sideOffset={currentSideOffset}
+        className="flex items-center gap-2 border bg-accent px-2 py-1 font-medium text-foreground data-[side=top]:mb-3.5 dark:bg-zinc-900 [&>span]:hidden"
       >
         <p>{tooltip}</p>
         {Array.isArray(shortcut) ? (
@@ -2605,6 +2615,7 @@ export {
   MediaPlayerDownload,
   MediaPlayerSettings,
   MediaPlayerPortal,
+  MediaPlayerTooltip,
   //
   MediaPlayerRoot as Root,
   MediaPlayerVideo as Video,
@@ -2626,6 +2637,7 @@ export {
   MediaPlayerDownload as Download,
   MediaPlayerSettings as Settings,
   MediaPlayerPortal as Portal,
+  MediaPlayerTooltip as Tooltip,
   //
   useMediaSelector as useMediaPlayer,
 };

@@ -10,9 +10,16 @@ import {
   MediaPlayerPlay,
   MediaPlayerSeek,
   MediaPlayerTime,
+  MediaPlayerTooltip,
   MediaPlayerVolume,
 } from "@/registry/default/ui/media-player";
-import { ListMusicIcon, PauseCircleIcon, PlayCircleIcon } from "lucide-react";
+import {
+  ListMusicIcon,
+  PauseCircleIcon,
+  PlayCircleIcon,
+  SkipBackIcon,
+  SkipForwardIcon,
+} from "lucide-react";
 import * as React from "react";
 
 interface Track {
@@ -76,7 +83,7 @@ export default function MediaPlayerPlaylistDemo() {
     onNextTrack();
   }, []);
 
-  const onPlayTrack = (index: number) => {
+  const onPlayTrack = React.useCallback((index: number) => {
     const trackToPlay = tracks[index];
     if (!trackToPlay) {
       console.error({ error: `Track at index ${index} not found.` });
@@ -89,7 +96,7 @@ export default function MediaPlayerPlaylistDemo() {
       audioRef.current.load();
       audioRef.current.play().catch((error) => console.error({ error }));
     }
-  };
+  }, []);
 
   const onTogglePlayPauseTrack = (index: number) => {
     if (index === currentTrackIndex) {
@@ -104,15 +111,15 @@ export default function MediaPlayerPlaylistDemo() {
     }
   };
 
-  const onNextTrack = () => {
+  const onNextTrack = React.useCallback(() => {
     const nextIndex = (currentTrackIndex + 1) % tracks.length;
     onPlayTrack(nextIndex);
-  };
+  }, [currentTrackIndex, onPlayTrack]);
 
-  const onPreviousTrack = () => {
+  const onPreviousTrack = React.useCallback(() => {
     const prevIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
     onPlayTrack(prevIndex);
-  };
+  }, [currentTrackIndex, onPlayTrack]);
 
   React.useEffect(() => {
     if (audioRef.current && currentTrack) {
@@ -129,143 +136,109 @@ export default function MediaPlayerPlaylistDemo() {
   }
 
   return (
-    <div className="w-full max-w-2xl overflow-hidden rounded-lg bg-card shadow-lg">
-      <MediaPlayer
-        onPlay={onPlay}
-        onPause={onPause}
-        onEnded={onEnded}
-        className="[&_[data-slot=media-player-controls]]:bg-transparent [&_[data-slot=media-player-controls]]:px-0 [&_[data-slot=media-player-controls]]:pb-0 [&_[data-slot=media-player-controls]]:dark:bg-transparent"
-      >
-        <div className="flex flex-col sm:flex-row">
-          <div className="flex flex-col items-center p-4 sm:w-1/3 sm:items-start">
-            <img
-              src={currentTrack.cover}
-              alt={currentTrack.title}
-              width={200}
-              height={200}
-              className="mb-4 aspect-square rounded-md object-cover"
-            />
-            <h2 className="font-semibold text-foreground text-xl">
-              {currentTrack.title}
-            </h2>
-            <p className="text-muted-foreground text-sm">
-              {currentTrack.artist}
-            </p>
-            <MediaPlayerControls className="mt-4 w-full p-0">
-              <MediaPlayerSeek className="w-full [&_[data-slider]]:h-8" />
-              <div className="mt-1 flex w-full items-center justify-between">
-                <MediaPlayerTime variant="progress" className="text-xs" />
-                <MediaPlayerTime variant="duration" className="text-xs" />
-              </div>
-              <div className="mt-2 flex w-full items-center justify-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={onPreviousTrack}
-                  aria-label="Previous track"
-                >
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <polygon points="19 20 9 12 19 4 19 20"></polygon>
-                    <line x1="5" y1="19" x2="5" y2="5"></line>
-                  </svg>
-                </Button>
-                <MediaPlayerPlay className="size-10" />
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={onNextTrack}
-                  aria-label="Next track"
-                >
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <polygon points="5 4 15 12 5 20 5 4"></polygon>
-                    <line x1="19" y1="5" x2="19" y2="19"></line>
-                  </svg>
-                </Button>
-              </div>
-              <div className="mt-2 flex w-full items-center gap-2">
-                <MediaPlayerVolume className="flex-grow" />
-              </div>
-            </MediaPlayerControls>
-          </div>
-
-          <div className="border-border border-t sm:w-2/3 sm:border-t-0 sm:border-l">
-            <div className="flex items-center justify-between border-border border-b p-4">
-              <h3 className="flex items-center font-medium text-foreground text-lg">
-                <ListMusicIcon className="mr-2 size-5" /> Playlist
-              </h3>
-              <span className="text-muted-foreground text-xs">{`${currentTrackIndex + 1} / ${tracks.length}`}</span>
-            </div>
-            <ScrollArea className="h-[360px] sm:h-[calc(200px+10rem)]">
-              {" "}
-              {/* Adjusted height */}
-              <div className="divide-y divide-border">
-                {tracks.map((track, index) => (
-                  <button
-                    key={track.id}
-                    onClick={() => onTogglePlayPauseTrack(index)}
-                    className={cn(
-                      "flex w-full items-center p-3 text-left transition-colors duration-150 hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
-                      index === currentTrackIndex && "bg-muted",
-                    )}
-                  >
-                    <img
-                      src={track.cover}
-                      alt={track.title}
-                      width={40}
-                      height={40}
-                      className="mr-3 aspect-square rounded object-cover"
-                    />
-                    <div className="flex-1">
-                      <p
-                        className={cn(
-                          "font-medium text-sm",
-                          index === currentTrackIndex && "text-primary",
-                        )}
-                      >
-                        {track.title}
-                      </p>
-                      <p className="text-muted-foreground text-xs">
-                        {track.artist}
-                      </p>
-                    </div>
-                    {index === currentTrackIndex && isPlaying ? (
-                      <PauseCircleIcon className="ml-3 size-5 text-primary" />
-                    ) : index === currentTrackIndex && !isPlaying ? (
-                      <PlayCircleIcon className="ml-3 size-5 text-muted-foreground" />
-                    ) : (
-                      <PlayCircleIcon className="ml-3 size-5 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
-                    )}
-                  </button>
-                ))}
-              </div>
-            </ScrollArea>
-          </div>
+    <MediaPlayer
+      onPlay={onPlay}
+      onPause={onPause}
+      onEnded={onEnded}
+      className="w-full max-w-2xl overflow-hidden rounded-lg border bg-background shadow-lg"
+    >
+      <MediaPlayerAudio
+        ref={audioRef}
+        src={currentTrack.src}
+        className="sr-only"
+      />
+      <div className="flex w-full flex-col items-center gap-4 py-4 md:items-start">
+        <div className="w-full overflow-hidden rounded-md rounded-b-none">
+          <img
+            src={currentTrack.cover}
+            alt={currentTrack.title}
+            className="aspect-video w-full object-cover transition-all hover:scale-105"
+          />
         </div>
-        {/* Hidden Audio Element, we pass the ref to the MediaPlayerAudio */}
-        <MediaPlayerAudio
-          ref={audioRef}
-          src={currentTrack.src}
-          className="sr-only"
-        />
-      </MediaPlayer>
-    </div>
+        <div className="flex flex-col gap-1 px-4">
+          <h2 className="font-semibold text-2xl text-foreground tracking-tight">
+            {currentTrack.title}
+          </h2>
+          <p className="text-muted-foreground text-sm">{currentTrack.artist}</p>
+        </div>
+        <div className="w-full border-t">
+          <div className="flex items-center justify-between border-border border-b p-4">
+            <div className="flex items-center gap-2">
+              <h3 className="font-medium text-lg tracking-tight">Playlist</h3>
+              <ListMusicIcon className="size-4" />
+            </div>
+            <span className="text-muted-foreground text-sm">{`${currentTrackIndex + 1} / ${tracks.length}`}</span>
+          </div>
+          <ScrollArea className="flex max-h-[240px] flex-col">
+            {tracks.map((track, index) => (
+              <button
+                key={track.id}
+                onClick={() => onTogglePlayPauseTrack(index)}
+                className={cn(
+                  "group flex w-full items-center gap-4 p-4 text-left transition-colors duration-150 hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                  index === currentTrackIndex && "bg-muted",
+                )}
+              >
+                <img
+                  src={track.cover}
+                  alt={track.title}
+                  className="aspect-square size-10 rounded object-cover"
+                />
+                <div className="flex flex-1 flex-col">
+                  <span
+                    className={cn(
+                      "font-medium leading-tight",
+                      index === currentTrackIndex && "text-primary",
+                    )}
+                  >
+                    {track.title}
+                  </span>
+                  <span className="text-muted-foreground text-sm">
+                    {track.artist}
+                  </span>
+                </div>
+                {index === currentTrackIndex && isPlaying ? (
+                  <PauseCircleIcon className="size-6 text-primary" />
+                ) : index === currentTrackIndex && !isPlaying ? (
+                  <PlayCircleIcon className="size-6 text-muted-foreground" />
+                ) : (
+                  <PlayCircleIcon className="size-6 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+                )}
+              </button>
+            ))}
+          </ScrollArea>
+        </div>
+        <MediaPlayerControls className="relative flex w-full flex-col gap-2.5">
+          <MediaPlayerSeek />
+          <div className="flex w-full items-center justify-center gap-2">
+            <MediaPlayerTooltip tooltip="Previous track">
+              <Button
+                aria-label="Previous track"
+                variant="ghost"
+                size="icon"
+                className="size-8"
+                onClick={onPreviousTrack}
+              >
+                <SkipBackIcon />
+              </Button>
+            </MediaPlayerTooltip>
+            <MediaPlayerPlay />
+            <MediaPlayerTooltip tooltip="Next track">
+              <Button
+                aria-label="Next track"
+                variant="ghost"
+                size="icon"
+                className="size-8"
+                onClick={onNextTrack}
+              >
+                <SkipForwardIcon />
+              </Button>
+            </MediaPlayerTooltip>
+            <MediaPlayerTime variant="progress" />
+            <MediaPlayerVolume className="ml-auto" />
+          </div>
+        </MediaPlayerControls>
+      </div>
+    </MediaPlayer>
   );
 }

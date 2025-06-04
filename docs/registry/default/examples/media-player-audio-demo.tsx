@@ -14,7 +14,7 @@ import {
 export default function MediaPlayerAudioDemo() {
   return (
     <MediaPlayer className="h-20 bg-accent/70 backdrop-blur-sm">
-      <MediaPlayerAudio>
+      <MediaPlayerAudio className="sr-only">
         <source src="/assets/lofi.mp3" type="audio/mp3" />
       </MediaPlayerAudio>
       <MediaPlayerControls className="flex-col items-start gap-2.5">
