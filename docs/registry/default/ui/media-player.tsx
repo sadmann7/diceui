@@ -53,15 +53,17 @@ import {
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-const SEEK_AMOUNT_SHORT = 5;
-const SEEK_AMOUNT_LONG = 10;
 const LOADING_DELAY_MS = 500;
 const FLOATING_MENU_SIDE_OFFSET = 10;
+const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+
+const SEEK_AMOUNT_SHORT = 5;
+const SEEK_AMOUNT_LONG = 10;
 const SEEK_COLLISION_PADDING = 10;
 const SEEK_TOOLTIP_WIDTH_FALLBACK = 240;
+
 const SPRITE_CONTAINER_WIDTH = 224;
 const SPRITE_CONTAINER_HEIGHT = 128;
-const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
 type Direction = "ltr" | "rtl";
 
@@ -79,13 +81,13 @@ interface MediaPlayerContextValue {
   dir: Direction;
   rootRef: React.RefObject<HTMLDivElement | null>;
   mediaRef: React.RefObject<HTMLVideoElement | HTMLAudioElement | null>;
-  portalContainer: Element | DocumentFragment | null;
-  disabled: boolean;
-  withoutTooltip: boolean;
-  tooltipSideOffset: number;
-  isVideo: boolean;
   isMenuOpen: boolean;
   setIsMenuOpen: (open: boolean) => void;
+  portalContainer: Element | DocumentFragment | null;
+  tooltipSideOffset: number;
+  disabled: boolean;
+  withoutTooltip: boolean;
+  isVideo: boolean;
 }
 
 const MediaPlayerContext = React.createContext<MediaPlayerContextValue | null>(
@@ -112,10 +114,10 @@ interface MediaPlayerRootProps
   onFullscreenChange?: (fullscreen: boolean) => void;
   dir?: Direction;
   label?: string;
+  tooltipSideOffset?: number;
   asChild?: boolean;
   disabled?: boolean;
   withoutTooltip?: boolean;
-  tooltipSideOffset?: number;
 }
 
 function MediaPlayerRoot(props: MediaPlayerRootProps) {
@@ -138,13 +140,13 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
     onPipError,
     dir: dirProp,
     label,
+    tooltipSideOffset = FLOATING_MENU_SIDE_OFFSET,
     asChild,
     disabled = false,
     withoutTooltip = false,
     children,
     className,
     ref,
-    tooltipSideOffset = FLOATING_MENU_SIDE_OFFSET,
     ...rootImplProps
   } = props;
 
@@ -191,25 +193,25 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       dir,
       rootRef,
       mediaRef,
+      isMenuOpen,
+      setIsMenuOpen,
       portalContainer,
+      tooltipSideOffset,
       disabled,
       isVideo,
       withoutTooltip,
-      tooltipSideOffset,
-      isMenuOpen,
-      setIsMenuOpen,
     }),
     [
       mediaId,
       labelId,
       descriptionId,
       dir,
+      isMenuOpen,
       portalContainer,
+      tooltipSideOffset,
       disabled,
       isVideo,
       withoutTooltip,
-      tooltipSideOffset,
-      isMenuOpen,
     ],
   );
 
@@ -743,38 +745,6 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
     };
   }, []);
 
-  const getLoadingIcon = React.useCallback(() => {
-    switch (variant) {
-      case "dots":
-        return (
-          <div className="flex items-center gap-1">
-            <div className="size-3 animate-bounce rounded-full bg-primary [animation-delay:-0.3s]" />
-            <div className="size-3 animate-bounce rounded-full bg-primary [animation-delay:-0.15s]" />
-            <div className="size-3 animate-bounce rounded-full bg-primary" />
-          </div>
-        );
-
-      case "spinner":
-        return (
-          <svg
-            className="size-12 animate-spin text-primary"
-            viewBox="0 0 100 100"
-            fill="none"
-          >
-            <path
-              d="M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50"
-              stroke="currentColor"
-              strokeWidth="8"
-              strokeLinecap="round"
-            />
-          </svg>
-        );
-
-      default:
-        return <Loader2Icon className="size-12 animate-spin text-primary" />;
-    }
-  }, [variant]);
-
   if (!shouldRender) return null;
 
   const LoadingPrimitive = asChild ? Slot : "div";
@@ -783,8 +753,6 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
     <LoadingPrimitive
       role="status"
       aria-live="polite"
-      data-loading={isLoading ? "" : undefined}
-      data-paused={isPaused ? "" : undefined}
       data-slot="media-player-loading"
       data-variant={variant}
       {...loadingProps}
@@ -796,7 +764,28 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
         className,
       )}
     >
-      {getLoadingIcon()}
+      {variant === "spinner" ? (
+        <svg
+          className="size-12 animate-spin text-primary"
+          viewBox="0 0 100 100"
+          fill="none"
+        >
+          <path
+            d="M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50"
+            stroke="currentColor"
+            strokeWidth="8"
+            strokeLinecap="round"
+          />
+        </svg>
+      ) : variant === "dots" ? (
+        <div className="flex items-center gap-1">
+          <div className="size-3 animate-bounce rounded-full bg-primary [animation-delay:-0.3s]" />
+          <div className="size-3 animate-bounce rounded-full bg-primary [animation-delay:-0.15s]" />
+          <div className="size-3 animate-bounce rounded-full bg-primary" />
+        </div>
+      ) : (
+        <Loader2Icon className="size-12 animate-spin text-primary" />
+      )}
     </LoadingPrimitive>
   );
 }
@@ -2521,14 +2510,19 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
 }
 
 interface MediaPlayerPortalProps {
-  children: React.ReactNode;
+  container?: Element | DocumentFragment | null;
+  children?: React.ReactNode;
 }
 
-function MediaPlayerPortal({ children }: MediaPlayerPortalProps) {
-  const context = useMediaPlayerContext("MediaPlayerPortal");
-  if (!context.portalContainer) return null;
+function MediaPlayerPortal(props: MediaPlayerPortalProps) {
+  const { container: containerProp, children } = props;
 
-  return ReactDOM.createPortal(children, context.portalContainer);
+  const context = useMediaPlayerContext("MediaPlayerPortal");
+  const container = containerProp ?? context.portalContainer;
+
+  if (!container) return null;
+
+  return ReactDOM.createPortal(children, container);
 }
 
 interface MediaPlayerTooltipProps
@@ -2538,20 +2532,16 @@ interface MediaPlayerTooltipProps
   shortcut?: string | string[];
 }
 
-function MediaPlayerTooltip({
-  tooltip,
-  shortcut,
-  sideOffset,
-  children,
-  ...props
-}: MediaPlayerTooltipProps) {
+function MediaPlayerTooltip(props: MediaPlayerTooltipProps) {
+  const { tooltip, shortcut, sideOffset, children, ...tooltipProps } = props;
+
   const context = useMediaPlayerContext("MediaPlayerTooltip");
   const currentSideOffset = sideOffset ?? context.tooltipSideOffset;
 
   if ((!tooltip && !shortcut) || context.withoutTooltip) return <>{children}</>;
 
   return (
-    <Tooltip {...props} delayDuration={600}>
+    <Tooltip {...tooltipProps} delayDuration={600}>
       <TooltipTrigger
         className="text-foreground focus-visible:ring-ring/50"
         asChild

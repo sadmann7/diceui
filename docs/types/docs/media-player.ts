@@ -135,6 +135,16 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   label?: string;
 
   /**
+   * The distance in pixels from the trigger to position the tooltip.
+   * @default 10
+   *
+   * ```ts
+   * <MediaPlayer tooltipSideOffset={15} />
+   * ```
+   */
+  tooltipSideOffset?: number;
+
+  /**
    * Whether the media player controls are disabled.
    * @default false
    *
