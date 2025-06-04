@@ -945,6 +945,22 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "media-player-playlist-demo": {
+      name: "media-player-playlist-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","scroll-area","media-player"],
+      files: [{
+        path: "registry/default/examples/media-player-playlist-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/media-player-playlist-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "mention-demo": {
       name: "mention-demo",
       description: "",

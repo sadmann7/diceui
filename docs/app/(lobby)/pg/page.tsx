@@ -29,6 +29,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import { ClientOnly } from "@/registry/default/components/client-only";
+import MediaPlayerPlaylistDemo from "@/registry/default/examples/media-player-playlist-demo";
 import MediaPlayerSettingsDemo from "@/registry/default/examples/media-player-settings-demo";
 import {
   Combobox,
@@ -91,6 +92,7 @@ export default function PlaygroundPage() {
         </MediaController>
       </ClientOnly>
       <MediaPlayerSettingsDemo />
+      <MediaPlayerPlaylistDemo />
       <div className="grid gap-8">
         <Combobox className="w-[15rem]">
           <ComboboxAnchor>
