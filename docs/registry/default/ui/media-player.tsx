@@ -207,30 +207,30 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
   );
 
   React.useEffect(() => {
-    const media = mediaRef.current;
-    if (!media) return;
+    const mediaElement = mediaRef.current;
+    if (!mediaElement) return;
 
     const onPlay = () => onPlayProp?.();
     const onPause = () => onPauseProp?.();
     const onEnded = () => onEndedProp?.();
-    const onTimeUpdate = () => onTimeUpdateProp?.(media.currentTime);
+    const onTimeUpdate = () => onTimeUpdateProp?.(mediaElement.currentTime);
     const onVolumeChange = () => {
-      onVolumeChangeProp?.(media.volume);
-      onMuted?.(media.muted);
+      onVolumeChangeProp?.(mediaElement.volume);
+      onMuted?.(mediaElement.muted);
     };
 
-    media.addEventListener("play", onPlay);
-    media.addEventListener("pause", onPause);
-    media.addEventListener("ended", onEnded);
-    media.addEventListener("timeupdate", onTimeUpdate);
-    media.addEventListener("volumechange", onVolumeChange);
+    mediaElement.addEventListener("play", onPlay);
+    mediaElement.addEventListener("pause", onPause);
+    mediaElement.addEventListener("ended", onEnded);
+    mediaElement.addEventListener("timeupdate", onTimeUpdate);
+    mediaElement.addEventListener("volumechange", onVolumeChange);
 
     return () => {
-      media.removeEventListener("play", onPlay);
-      media.removeEventListener("pause", onPause);
-      media.removeEventListener("ended", onEnded);
-      media.removeEventListener("timeupdate", onTimeUpdate);
-      media.removeEventListener("volumechange", onVolumeChange);
+      mediaElement.removeEventListener("play", onPlay);
+      mediaElement.removeEventListener("pause", onPause);
+      mediaElement.removeEventListener("ended", onEnded);
+      mediaElement.removeEventListener("timeupdate", onTimeUpdate);
+      mediaElement.removeEventListener("volumechange", onVolumeChange);
     };
   }, [
     onPlayProp,
@@ -262,10 +262,10 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
 
       if (event.defaultPrevented) return;
 
-      const media = mediaRef.current;
-      if (!media) return;
+      const mediaElement = mediaRef.current;
+      if (!mediaElement) return;
 
-      const isMediaFocused = document.activeElement === media;
+      const isMediaFocused = document.activeElement === mediaElement;
       const isPlayerFocused =
         document.activeElement?.closest('[data-slot="media-player"]') !== null;
 
@@ -276,7 +276,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
         case "k":
           event.preventDefault();
           dispatch({
-            type: media.paused
+            type: mediaElement.paused
               ? MediaActionTypes.MEDIA_PLAY_REQUEST
               : MediaActionTypes.MEDIA_PAUSE_REQUEST,
           });
@@ -294,7 +294,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
         case "m": {
           event.preventDefault();
           dispatch({
-            type: media.muted
+            type: mediaElement.muted
               ? MediaActionTypes.MEDIA_UNMUTE_REQUEST
               : MediaActionTypes.MEDIA_MUTE_REQUEST,
           });
@@ -304,14 +304,14 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
         case "arrowright":
           event.preventDefault();
           if (
-            media instanceof HTMLVideoElement ||
-            (media instanceof HTMLAudioElement && event.shiftKey)
+            mediaElement instanceof HTMLVideoElement ||
+            (mediaElement instanceof HTMLAudioElement && event.shiftKey)
           ) {
             dispatch({
               type: MediaActionTypes.MEDIA_SEEK_REQUEST,
               detail: Math.min(
-                media.duration,
-                media.currentTime + SEEK_AMOUNT_SHORT,
+                mediaElement.duration,
+                mediaElement.currentTime + SEEK_AMOUNT_SHORT,
               ),
             });
           }
@@ -320,39 +320,39 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
         case "arrowleft":
           event.preventDefault();
           if (
-            media instanceof HTMLVideoElement ||
-            (media instanceof HTMLAudioElement && event.shiftKey)
+            mediaElement instanceof HTMLVideoElement ||
+            (mediaElement instanceof HTMLAudioElement && event.shiftKey)
           ) {
             dispatch({
               type: MediaActionTypes.MEDIA_SEEK_REQUEST,
-              detail: Math.max(0, media.currentTime - SEEK_AMOUNT_SHORT),
+              detail: Math.max(0, mediaElement.currentTime - SEEK_AMOUNT_SHORT),
             });
           }
           break;
 
         case "arrowup":
           event.preventDefault();
-          if (media instanceof HTMLVideoElement) {
+          if (mediaElement instanceof HTMLVideoElement) {
             dispatch({
               type: MediaActionTypes.MEDIA_VOLUME_REQUEST,
-              detail: Math.min(1, media.volume + 0.1),
+              detail: Math.min(1, mediaElement.volume + 0.1),
             });
           }
           break;
 
         case "arrowdown":
           event.preventDefault();
-          if (media instanceof HTMLVideoElement) {
+          if (mediaElement instanceof HTMLVideoElement) {
             dispatch({
               type: MediaActionTypes.MEDIA_VOLUME_REQUEST,
-              detail: Math.max(0, media.volume - 0.1),
+              detail: Math.max(0, mediaElement.volume - 0.1),
             });
           }
           break;
 
         case "<": {
           event.preventDefault();
-          const currentRate = media.playbackRate;
+          const currentRate = mediaElement.playbackRate;
           const currentIndex = SPEEDS.indexOf(currentRate);
           const newIndex = Math.max(0, currentIndex - 1);
           const newRate = SPEEDS[newIndex] ?? 1;
@@ -365,7 +365,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
 
         case ">": {
           event.preventDefault();
-          const currentRate = media.playbackRate;
+          const currentRate = mediaElement.playbackRate;
           const currentIndex = SPEEDS.indexOf(currentRate);
           const newIndex = Math.min(SPEEDS.length - 1, currentIndex + 1);
           const newRate = SPEEDS[newIndex] ?? 1;
@@ -379,8 +379,8 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
         case "c":
           event.preventDefault();
           if (
-            media instanceof HTMLVideoElement &&
-            media.textTracks.length > 0
+            mediaElement instanceof HTMLVideoElement &&
+            mediaElement.textTracks.length > 0
           ) {
             dispatch({
               type: MediaActionTypes.MEDIA_TOGGLE_SUBTITLES_REQUEST,
@@ -389,16 +389,16 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
           break;
 
         case "d": {
-          const hasDownload = media.querySelector(
+          const hasDownload = mediaElement.querySelector(
             '[data-slot="media-player-download"]',
           );
 
           if (!hasDownload) break;
 
           event.preventDefault();
-          if (media.currentSrc) {
+          if (mediaElement.currentSrc) {
             const link = document.createElement("a");
-            link.href = media.currentSrc;
+            link.href = mediaElement.currentSrc;
             link.download = "";
             document.body.appendChild(link);
             link.click();
@@ -409,8 +409,8 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
 
         case "p": {
           event.preventDefault();
-          if (media instanceof HTMLVideoElement) {
-            const isPip = document.pictureInPictureElement === media;
+          if (mediaElement instanceof HTMLVideoElement) {
+            const isPip = document.pictureInPictureElement === mediaElement;
             dispatch({
               type: isPip
                 ? MediaActionTypes.MEDIA_EXIT_PIP_REQUEST
@@ -421,7 +421,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
                 onPipError?.(error, "exit");
               });
             } else {
-              media.requestPictureInPicture().catch((error) => {
+              mediaElement.requestPictureInPicture().catch((error) => {
                 onPipError?.(error, "enter");
               });
             }
@@ -431,16 +431,16 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
 
         case "r": {
           event.preventDefault();
-          media.loop = !media.loop;
+          mediaElement.loop = !mediaElement.loop;
           break;
         }
 
         case "j": {
           event.preventDefault();
-          if (media instanceof HTMLVideoElement) {
+          if (mediaElement instanceof HTMLVideoElement) {
             dispatch({
               type: MediaActionTypes.MEDIA_SEEK_REQUEST,
-              detail: Math.max(0, media.currentTime - SEEK_AMOUNT_LONG),
+              detail: Math.max(0, mediaElement.currentTime - SEEK_AMOUNT_LONG),
             });
           }
           break;
@@ -448,12 +448,12 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
 
         case "l": {
           event.preventDefault();
-          if (media instanceof HTMLVideoElement) {
+          if (mediaElement instanceof HTMLVideoElement) {
             dispatch({
               type: MediaActionTypes.MEDIA_SEEK_REQUEST,
               detail: Math.min(
-                media.duration,
-                media.currentTime + SEEK_AMOUNT_LONG,
+                mediaElement.duration,
+                mediaElement.currentTime + SEEK_AMOUNT_LONG,
               ),
             });
           }
@@ -472,7 +472,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
         case "9": {
           event.preventDefault();
           const percent = Number.parseInt(event.key) / 10;
-          const seekTime = media.duration * percent;
+          const seekTime = mediaElement.duration * percent;
           dispatch({
             type: MediaActionTypes.MEDIA_SEEK_REQUEST,
             detail: seekTime,
@@ -493,7 +493,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
           event.preventDefault();
           dispatch({
             type: MediaActionTypes.MEDIA_SEEK_REQUEST,
-            detail: media.duration,
+            detail: mediaElement.duration,
           });
           break;
         }
@@ -551,11 +551,11 @@ function MediaPlayerVideo(props: MediaPlayerVideoProps) {
 
       if (event.defaultPrevented) return;
 
-      const media = event.currentTarget;
-      if (!media) return;
+      const mediaElement = event.currentTarget;
+      if (!mediaElement) return;
 
       dispatch({
-        type: media.paused
+        type: mediaElement.paused
           ? MediaActionTypes.MEDIA_PLAY_REQUEST
           : MediaActionTypes.MEDIA_PAUSE_REQUEST,
       });
