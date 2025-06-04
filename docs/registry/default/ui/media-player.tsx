@@ -105,7 +105,7 @@ interface MediaPlayerRootProps
   onTimeUpdate?: (time: number) => void;
   onVolumeChange?: (volume: number) => void;
   onMuted?: (muted: boolean) => void;
-  onPipError?: (error: unknown, mode: "enter" | "exit") => void;
+  onPipError?: (error: unknown, state: "enter" | "exit") => void;
   onFullscreenChange?: (fullscreen: boolean) => void;
   dir?: Direction;
   label?: string;
@@ -1055,15 +1055,21 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
   const displayValue = seekState.pendingSeekTime ?? mediaCurrentTime;
 
-  const formattedCurrentTime = timeUtils.formatTime(displayValue, seekableEnd);
-  const formattedDuration = timeUtils.formatTime(seekableEnd, seekableEnd);
-  const formattedHoverTime = timeUtils.formatTime(
-    seekState.hoverTime,
-    seekableEnd,
+  const formattedCurrentTime = React.useMemo(
+    () => timeUtils.formatTime(displayValue, seekableEnd),
+    [displayValue, seekableEnd],
   );
-  const formattedRemainingTime = timeUtils.formatTime(
-    seekableEnd - displayValue,
-    seekableEnd,
+  const formattedDuration = React.useMemo(
+    () => timeUtils.formatTime(seekableEnd, seekableEnd),
+    [seekableEnd],
+  );
+  const formattedHoverTime = React.useMemo(
+    () => timeUtils.formatTime(seekState.hoverTime, seekableEnd),
+    [seekState.hoverTime, seekableEnd],
+  );
+  const formattedRemainingTime = React.useMemo(
+    () => timeUtils.formatTime(seekableEnd - displayValue, seekableEnd),
+    [displayValue, seekableEnd],
   );
 
   const isDisabled = disabled || context.disabled;
@@ -1508,6 +1514,30 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     tooltipSideOffset,
   ]);
 
+  const chapterSeparators = React.useMemo(() => {
+    if (withoutChapter || chapterCues.length <= 1 || seekableEnd <= 0) {
+      return null;
+    }
+
+    return chapterCues.slice(1).map((chapterCue, index) => {
+      const position = (chapterCue.startTime / seekableEnd) * 100;
+
+      return (
+        <div
+          key={`chapter-${index}-${chapterCue.startTime}`}
+          role="presentation"
+          aria-hidden="true"
+          data-slot="media-player-seek-chapter-separator"
+          className="absolute top-0 h-full w-[2.5px] bg-zinc-50 dark:bg-zinc-950"
+          style={{
+            left: `${position}%`,
+            transform: "translateX(-50%)",
+          }}
+        />
+      );
+    });
+  }, [chapterCues, seekableEnd, withoutChapter]);
+
   const SeekSlider = (
     <div className="relative w-full">
       <SliderPrimitive.Root
@@ -1551,26 +1581,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
               }}
             />
           )}
-          {!withoutChapter &&
-            chapterCues.length > 1 &&
-            seekableEnd > 0 &&
-            chapterCues.slice(1).map((chapterCue, index) => {
-              const position = (chapterCue.startTime / seekableEnd) * 100;
-
-              return (
-                <div
-                  key={`chapter-${index}-${chapterCue.startTime}`}
-                  role="presentation"
-                  aria-hidden="true"
-                  data-slot="media-player-seek-chapter-separator"
-                  className="absolute top-0 h-full w-[2.5px] bg-zinc-50 dark:bg-zinc-950"
-                  style={{
-                    left: `${position}%`,
-                    transform: "translateX(-50%)",
-                  }}
-                />
-              );
-            })}
+          {chapterSeparators}
         </SliderPrimitive.Track>
         <SliderPrimitive.Thumb className="relative z-10 block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] will-change-transform hover:ring-4 focus-visible:outline-hidden focus-visible:ring-4 disabled:pointer-events-none disabled:opacity-50" />
       </SliderPrimitive.Root>
@@ -1772,12 +1783,12 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
 }
 
 interface MediaPlayerTimeProps extends React.ComponentProps<"div"> {
+  variant?: "progress" | "remaining" | "duration";
   asChild?: boolean;
-  mode?: "progress" | "remaining" | "duration";
 }
 
 function MediaPlayerTime(props: MediaPlayerTimeProps) {
-  const { asChild, className, mode = "progress", ...timeProps } = props;
+  const { variant = "progress", asChild, className, ...timeProps } = props;
 
   const context = useMediaPlayerContext("MediaPlayerTime");
   const mediaCurrentTime = useMediaSelector(
@@ -1787,19 +1798,22 @@ function MediaPlayerTime(props: MediaPlayerTimeProps) {
     (state) => state.mediaSeekable ?? [0, 0],
   );
 
-  const formattedCurrentTime = timeUtils.formatTime(
-    mediaCurrentTime,
-    seekableEnd,
+  const formattedCurrentTime = React.useMemo(
+    () => timeUtils.formatTime(mediaCurrentTime, seekableEnd),
+    [mediaCurrentTime, seekableEnd],
   );
-  const formattedDuration = timeUtils.formatTime(seekableEnd, seekableEnd);
-  const formattedRemainingTime = timeUtils.formatTime(
-    seekableEnd - mediaCurrentTime,
-    seekableEnd,
+  const formattedDuration = React.useMemo(
+    () => timeUtils.formatTime(seekableEnd, seekableEnd),
+    [seekableEnd],
+  );
+  const formattedRemainingTime = React.useMemo(
+    () => timeUtils.formatTime(seekableEnd - mediaCurrentTime, seekableEnd),
+    [mediaCurrentTime, seekableEnd],
   );
 
   const TimePrimitive = asChild ? Slot : "div";
 
-  if (mode === "remaining" || mode === "duration") {
+  if (variant === "remaining" || variant === "duration") {
     return (
       <TimePrimitive
         data-slot="media-player-time"
@@ -1807,7 +1821,7 @@ function MediaPlayerTime(props: MediaPlayerTimeProps) {
         {...timeProps}
         className={cn("text-foreground/80 text-sm tabular-nums", className)}
       >
-        {mode === "remaining" ? formattedRemainingTime : formattedDuration}
+        {variant === "remaining" ? formattedRemainingTime : formattedDuration}
       </TimePrimitive>
     );
   }
@@ -2044,7 +2058,7 @@ function MediaPlayerFullscreen(props: MediaPlayerFullscreenProps) {
 }
 
 interface MediaPlayerPiPProps extends React.ComponentProps<typeof Button> {
-  onPipError?: (error: unknown, mode: "enter" | "exit") => void;
+  onPipError?: (error: unknown, state: "enter" | "exit") => void;
 }
 
 function MediaPlayerPiP(props: MediaPlayerPiPProps) {
@@ -2497,8 +2511,7 @@ function MediaPlayerTooltip({
 }: MediaPlayerTooltipProps) {
   const context = useMediaPlayerContext("MediaPlayerTooltip");
 
-  if (!tooltip && !shortcut) return <>{children}</>;
-  if (context.withoutTooltip) return <>{children}</>;
+  if ((!tooltip && !shortcut) || context.withoutTooltip) return <>{children}</>;
 
   return (
     <Tooltip {...props} delayDuration={600}>

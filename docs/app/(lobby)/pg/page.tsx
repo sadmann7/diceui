@@ -1,4 +1,5 @@
 "use client";
+
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
@@ -56,7 +57,7 @@ import {
 export default function PlaygroundPage() {
   return (
     <Shell>
-      {/* <ClientOnly fallback={<Skeleton className="h-[400px] w-full" />}>
+      <ClientOnly fallback={<Skeleton className="h-[400px] w-full" />}>
         <MediaController>
           <video
             playsInline
@@ -88,7 +89,7 @@ export default function PlaygroundPage() {
             <MediaCaptionsButton />
           </MediaControlBar>
         </MediaController>
-      </ClientOnly> */}
+      </ClientOnly>
       <MediaPlayerSettingsDemo />
       <div className="grid gap-8">
         <Combobox className="w-[15rem]">

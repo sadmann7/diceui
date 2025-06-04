@@ -91,14 +91,14 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   onMuted?: (muted: boolean) => void;
 
   /**
-   * Callback function triggered when triggering picture in picture (PiP) mode.
+   * Callback function triggered when triggering picture in picture (PiP) state.
    *
    * The first argument is the unknown error that occurred.
-   * The second argument is the mode on which the error occurred.
+   * The second argument is the state on which the error occurred.
    * - `enter`: The error occurred when entering PIP.
    * - `exit`: The error occurred when exiting PIP.
    */
-  onPipError?: (error: unknown, mode: "enter" | "exit") => void;
+  onPipError?: (error: unknown, state: "enter" | "exit") => void;
 
   /**
    * Callback function triggered when the fullscreen state changes.
@@ -375,7 +375,7 @@ export interface VolumeProps
 
 export interface TimeProps extends EmptyProps<"div">, CompositionProps {
   /**
-   * The format mode for displaying time.
+   * The format variant for displaying time.
    * - `progress`: Shows "currentTime / duration" (e.g., "1:23 / 5:00").
    * - `remaining`: Shows the remaining time (e.g., "3:37").
    * - `duration`: Shows the total duration (e.g., "5:00").
@@ -383,10 +383,10 @@ export interface TimeProps extends EmptyProps<"div">, CompositionProps {
    *
    * ```ts
    * // Show remaining time
-   * <MediaPlayer.Time mode="remaining" />
+   * <MediaPlayer.Time variant="remaining" />
    * ```
    */
-  mode?: "progress" | "remaining" | "duration";
+  variant?: "progress" | "remaining" | "duration";
 }
 
 export interface PlaybackSpeedProps
