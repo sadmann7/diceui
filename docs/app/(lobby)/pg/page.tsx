@@ -58,7 +58,7 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <ClientOnly fallback={<Skeleton className="h-[400px] w-full" />}>
-        <MediaController>
+        <MediaController userInteractive>
           <video
             playsInline
             muted

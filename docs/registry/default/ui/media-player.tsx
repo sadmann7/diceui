@@ -58,7 +58,9 @@ const SEEK_AMOUNT_LONG = 10;
 const LOADING_DELAY_MS = 500;
 const FLOATING_MENU_SIDE_OFFSET = 10;
 const SEEK_COLLISION_PADDING = 10;
-const ESTIMATED_SEEK_TOOLTIP_WIDTH = 240;
+const SEEK_TOOLTIP_WIDTH_FALLBACK = 240;
+const SPRITE_CONTAINER_WIDTH = 224;
+const SPRITE_CONTAINER_HEIGHT = 128;
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
 type Direction = "ltr" | "rtl";
@@ -1216,7 +1218,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       if (!seekRef.current) return;
 
       const tooltipWidth =
-        tooltipRef.current?.offsetWidth || ESTIMATED_SEEK_TOOLTIP_WIDTH;
+        tooltipRef.current?.offsetWidth ?? SEEK_TOOLTIP_WIDTH_FALLBACK;
       const seekRect = seekRef.current.getBoundingClientRect();
 
       let x = clientX;
@@ -1514,6 +1516,33 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     tooltipSideOffset,
   ]);
 
+  const spriteStyle = React.useMemo<React.CSSProperties>(() => {
+    if (!thumbnail?.coords || !thumbnail?.src) {
+      return {};
+    }
+
+    const coordX = thumbnail.coords[0];
+    const coordY = thumbnail.coords[1];
+
+    const spriteWidth = Number.parseFloat(thumbnail.coords[2] ?? "0");
+    const spriteHeight = Number.parseFloat(thumbnail.coords[3] ?? "0");
+
+    const scaleX = spriteWidth > 0 ? SPRITE_CONTAINER_WIDTH / spriteWidth : 1;
+    const scaleY =
+      spriteHeight > 0 ? SPRITE_CONTAINER_HEIGHT / spriteHeight : 1;
+    const scale = Math.min(scaleX, scaleY);
+
+    return {
+      width: `${spriteWidth}px`,
+      height: `${spriteHeight}px`,
+      backgroundImage: `url(${thumbnail.src})`,
+      backgroundPosition: `-${coordX}px -${coordY}px`,
+      backgroundRepeat: "no-repeat",
+      transform: `scale(${scale})`,
+      transformOrigin: "top left",
+    };
+  }, [thumbnail?.coords, thumbnail?.src]);
+
   const chapterSeparators = React.useMemo(() => {
     if (withoutChapter || chapterCues.length <= 1 || seekableEnd <= 0) {
       return null;
@@ -1602,51 +1631,22 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
                   !thumbnail && currentChapterCue && "px-3 py-1.5",
                 )}
               >
-                {thumbnail && (
+                {thumbnail?.src && (
                   <div
                     data-slot="media-player-seek-thumbnail"
-                    className="h-32 w-56 overflow-hidden rounded-md rounded-b-none"
+                    className="overflow-hidden rounded-md rounded-b-none"
+                    style={{
+                      width: `${SPRITE_CONTAINER_WIDTH}px`,
+                      height: `${SPRITE_CONTAINER_HEIGHT}px`,
+                    }}
                   >
                     {thumbnail.coords ? (
-                      (() => {
-                        const spriteWidth = Number.parseFloat(
-                          thumbnail.coords[2] ?? "0",
-                        );
-                        const spriteHeight = Number.parseFloat(
-                          thumbnail.coords[3] ?? "0",
-                        );
-                        const containerWidth = 224;
-                        const containerHeight = 128;
-
-                        const scaleX =
-                          spriteWidth && spriteWidth > 0
-                            ? containerWidth / spriteWidth
-                            : 1;
-                        const scaleY =
-                          spriteHeight && spriteHeight > 0
-                            ? containerHeight / spriteHeight
-                            : 1;
-                        const scale = Math.min(scaleX, scaleY);
-
-                        return (
-                          <div
-                            style={{
-                              width: `${spriteWidth}px`,
-                              height: `${spriteHeight}px`,
-                              backgroundImage: `url(${thumbnail.src})`,
-                              backgroundPosition: `-${thumbnail.coords[0]}px -${thumbnail.coords[1]}px`,
-                              backgroundRepeat: "no-repeat",
-                              transform: `scale(${scale})`,
-                              transformOrigin: "top left",
-                            }}
-                          />
-                        );
-                      })()
+                      <div style={spriteStyle} />
                     ) : (
                       <img
                         src={thumbnail.src}
                         alt={`Preview at ${formattedHoverTime}`}
-                        className="h-32 w-56 object-cover"
+                        className="size-full object-cover"
                       />
                     )}
                   </div>
