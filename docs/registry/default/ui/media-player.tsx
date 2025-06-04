@@ -446,26 +446,22 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
 
         case "j": {
           event.preventDefault();
-          if (mediaElement instanceof HTMLVideoElement) {
-            dispatch({
-              type: MediaActionTypes.MEDIA_SEEK_REQUEST,
-              detail: Math.max(0, mediaElement.currentTime - SEEK_AMOUNT_LONG),
-            });
-          }
+          dispatch({
+            type: MediaActionTypes.MEDIA_SEEK_REQUEST,
+            detail: Math.max(0, mediaElement.currentTime - SEEK_AMOUNT_LONG),
+          });
           break;
         }
 
         case "l": {
           event.preventDefault();
-          if (mediaElement instanceof HTMLVideoElement) {
-            dispatch({
-              type: MediaActionTypes.MEDIA_SEEK_REQUEST,
-              detail: Math.min(
-                mediaElement.duration,
-                mediaElement.currentTime + SEEK_AMOUNT_LONG,
-              ),
-            });
-          }
+          dispatch({
+            type: MediaActionTypes.MEDIA_SEEK_REQUEST,
+            detail: Math.min(
+              mediaElement.duration,
+              mediaElement.currentTime + SEEK_AMOUNT_LONG,
+            ),
+          });
           break;
         }
 
@@ -523,9 +519,9 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
         data-slot="media-player"
         dir={dir}
         tabIndex={disabled ? undefined : 0}
-        onKeyDown={onKeyDown}
         {...rootImplProps}
         ref={composedRef}
+        onKeyDown={onKeyDown}
         className={cn(
           "relative isolate flex flex-col overflow-hidden rounded-lg bg-background outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
           "[:fullscreen_&]:flex [:fullscreen_&]:h-full [:fullscreen_&]:max-h-screen [:fullscreen_&]:flex-col [:fullscreen_&]:justify-between",

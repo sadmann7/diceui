@@ -25,10 +25,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import { ClientOnly } from "@/registry/default/components/client-only";
+import MediaPlayerPlaylistDemo from "@/registry/default/examples/media-player-playlist-demo";
 import MediaPlayerSettingsDemo from "@/registry/default/examples/media-player-settings-demo";
 import {
   Combobox,
@@ -41,56 +40,12 @@ import {
 } from "@/registry/default/ui/combobox";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
-import {
-  MediaCaptionsButton,
-  MediaControlBar,
-  MediaController,
-  MediaMuteButton,
-  MediaPlayButton,
-  MediaSeekBackwardButton,
-  MediaSeekForwardButton,
-  MediaTimeDisplay,
-  MediaTimeRange,
-  MediaVolumeRange,
-} from "media-chrome/react";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <ClientOnly fallback={<Skeleton className="h-[400px] w-full" />}>
-        <MediaController userInteractive>
-          <video
-            playsInline
-            muted
-            crossOrigin=""
-            slot="media"
-            src="https://stream.mux.com/Sc89iWAyNkhJ3P1rQ02nrEdCFTnfT01CZ2KmaEcxXfB008/low.mp4"
-          >
-            <track
-              default
-              kind="chapters"
-              src="https://media-chrome.mux.dev/examples/vanilla/vtt/elephantsdream/chapters.vtt"
-            />
-            <track
-              default
-              kind="metadata"
-              label="thumbnails"
-              src="https://image.mux.com/Sc89iWAyNkhJ3P1rQ02nrEdCFTnfT01CZ2KmaEcxXfB008/storyboard.vtt"
-            />
-          </video>
-          <MediaControlBar>
-            <MediaPlayButton />
-            <MediaSeekBackwardButton />
-            <MediaSeekForwardButton />
-            <MediaTimeRange />
-            <MediaTimeDisplay showDuration />
-            <MediaMuteButton />
-            <MediaVolumeRange />
-            <MediaCaptionsButton />
-          </MediaControlBar>
-        </MediaController>
-      </ClientOnly>
       <MediaPlayerSettingsDemo />
+      <MediaPlayerPlaylistDemo />
       <div className="grid gap-8">
         <Combobox className="w-[15rem]">
           <ComboboxAnchor>

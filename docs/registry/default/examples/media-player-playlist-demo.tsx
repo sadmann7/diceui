@@ -183,6 +183,29 @@ export default function MediaPlayerPlaylistDemo() {
     }
   }, [currentTrack, currentTrackIndex, onLoadAndPlayTrack]);
 
+  const onKeyDown = React.useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      const isMediaFocused = event.currentTarget.contains(
+        document.activeElement,
+      );
+
+      if (!isMediaFocused) return;
+
+      switch (event.key.toLowerCase()) {
+        case "n":
+          event.preventDefault();
+          onNextTrack();
+          break;
+
+        case "p":
+          event.preventDefault();
+          onPreviousTrack();
+          break;
+      }
+    },
+    [onNextTrack, onPreviousTrack],
+  );
+
   if (!currentTrack) return null;
 
   return (
@@ -190,6 +213,7 @@ export default function MediaPlayerPlaylistDemo() {
       onPlay={onPlay}
       onPause={onPause}
       onEnded={onEnded}
+      onKeyDown={onKeyDown}
       className="w-full max-w-2xl overflow-hidden rounded-lg border bg-background shadow-lg"
     >
       <MediaPlayerAudio
@@ -202,7 +226,7 @@ export default function MediaPlayerPlaylistDemo() {
           <img
             src={currentTrack.cover}
             alt={currentTrack.title}
-            className="h-32 w-full object-cover"
+            className="h-40 w-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
           <div className="absolute right-0 bottom-0 left-0 p-4">
@@ -222,13 +246,13 @@ export default function MediaPlayerPlaylistDemo() {
             </div>
             <span className="text-muted-foreground text-sm">{`${currentTrackIndex + 1} / ${tracks.length}`}</span>
           </div>
-          <ScrollArea className="flex max-h-[200px] flex-col">
+          <ScrollArea className="max-h-[200px]">
             {tracks.map((track, index) => (
               <Button
                 key={track.id}
                 variant="ghost"
                 className={cn(
-                  "h-auto w-full rounded-none px-4 py-2 text-left",
+                  "h-auto w-full rounded-none px-4 py-3 text-left",
                   index === currentTrackIndex && "bg-accent",
                 )}
                 onClick={() => onTogglePlayPauseTrack(index)}
@@ -268,7 +292,7 @@ export default function MediaPlayerPlaylistDemo() {
         <MediaPlayerControls className="relative flex w-full flex-col gap-2.5">
           <MediaPlayerSeek />
           <div className="flex w-full items-center justify-center gap-2">
-            <MediaPlayerTooltip tooltip="Previous track">
+            <MediaPlayerTooltip tooltip="Previous track" shortcut="B">
               <Button
                 aria-label="Previous track"
                 variant="ghost"
@@ -281,7 +305,7 @@ export default function MediaPlayerPlaylistDemo() {
               </Button>
             </MediaPlayerTooltip>
             <MediaPlayerPlay />
-            <MediaPlayerTooltip tooltip="Next track">
+            <MediaPlayerTooltip tooltip="Next track" shortcut="N">
               <Button
                 aria-label="Next track"
                 variant="ghost"
