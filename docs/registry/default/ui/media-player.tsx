@@ -65,8 +65,6 @@ const SEEK_TOOLTIP_WIDTH_FALLBACK = 240;
 const SPRITE_CONTAINER_WIDTH = 224;
 const SPRITE_CONTAINER_HEIGHT = 128;
 
-const VOLUME_INDICATOR_DISPLAY_TIME = 2000;
-
 type Direction = "ltr" | "rtl";
 
 const DirectionContext = React.createContext<Direction | undefined>(undefined);
@@ -157,19 +155,19 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
   const labelId = React.useId();
   const descriptionId = React.useId();
 
-  const dispatch = useMediaDispatch();
-
   const rootRef = React.useRef<HTMLDivElement | null>(null);
   const fullscreenRef = useMediaFullscreenRef();
   const composedRef = useComposedRefs(ref, rootRef, fullscreenRef);
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
-  const [showVolumeIndicator, setShowVolumeIndicator] = React.useState(false);
-  const volumeIndicatorTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
-
+  const dir = useDirection(dirProp);
+  const dispatch = useMediaDispatch();
   const mediaRef = React.useRef<HTMLVideoElement | HTMLAudioElement | null>(
     null,
   );
+
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [showVolumeIndicator, setShowVolumeIndicator] = React.useState(false);
+  const volumeIndicatorTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   const [mounted, setMounted] = React.useState(false);
   React.useLayoutEffect(() => setMounted(true), []);
@@ -184,10 +182,8 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       : globalThis.document.body
     : null;
 
-  const dir = useDirection(dirProp);
-
   const isVideo = React.useMemo(() => {
-    if (typeof window === "undefined") return false;
+    if (!mediaRef.current) return false;
     return mediaRef.current instanceof HTMLVideoElement;
   }, []);
 
@@ -200,7 +196,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
 
     volumeIndicatorTimeoutRef.current = setTimeout(() => {
       setShowVolumeIndicator(false);
-    }, VOLUME_INDICATOR_DISPLAY_TIME);
+    }, 2000);
   }, []);
 
   const contextValue = React.useMemo<MediaPlayerContextValue>(
@@ -330,7 +326,9 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
 
         case "m": {
           event.preventDefault();
-          onVolumeIndicatorTrigger();
+          if (mediaElement instanceof HTMLVideoElement) {
+            onVolumeIndicatorTrigger();
+          }
           dispatch({
             type: mediaElement.muted
               ? MediaActionTypes.MEDIA_UNMUTE_REQUEST
@@ -839,18 +837,11 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
 }
 
 interface MediaPlayerVolumeIndicatorProps extends React.ComponentProps<"div"> {
-  delay?: number;
   asChild?: boolean;
 }
 
 function MediaPlayerVolumeIndicator(props: MediaPlayerVolumeIndicatorProps) {
-  const {
-    delay = VOLUME_INDICATOR_DISPLAY_TIME,
-    asChild,
-    className,
-    children,
-    ...indicatorProps
-  } = props;
+  const { asChild, className, ...indicatorProps } = props;
 
   const context = useMediaPlayerContext("MediaPlayerVolumeIndicator");
   const mediaVolume = useMediaSelector((state) => state.mediaVolume ?? 1);
