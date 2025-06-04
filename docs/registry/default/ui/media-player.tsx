@@ -85,6 +85,7 @@ interface MediaPlayerContextValue {
   mediaRef: React.RefObject<HTMLVideoElement | HTMLAudioElement | null>;
   isMenuOpen: boolean;
   setIsMenuOpen: (open: boolean) => void;
+  showVolumeIndicator: boolean;
   portalContainer: Element | DocumentFragment | null;
   tooltipSideOffset: number;
   disabled: boolean;
@@ -163,6 +164,9 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
   const composedRef = useComposedRefs(ref, rootRef, fullscreenRef);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
+  const [showVolumeIndicator, setShowVolumeIndicator] = React.useState(false);
+  const volumeIndicatorTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+
   const mediaRef = React.useRef<HTMLVideoElement | HTMLAudioElement | null>(
     null,
   );
@@ -187,6 +191,18 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
     return mediaRef.current instanceof HTMLVideoElement;
   }, []);
 
+  const onVolumeIndicatorTrigger = React.useCallback(() => {
+    setShowVolumeIndicator(true);
+
+    if (volumeIndicatorTimeoutRef.current) {
+      clearTimeout(volumeIndicatorTimeoutRef.current);
+    }
+
+    volumeIndicatorTimeoutRef.current = setTimeout(() => {
+      setShowVolumeIndicator(false);
+    }, VOLUME_INDICATOR_DISPLAY_TIME);
+  }, []);
+
   const contextValue = React.useMemo<MediaPlayerContextValue>(
     () => ({
       mediaId,
@@ -197,6 +213,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       mediaRef,
       isMenuOpen,
       setIsMenuOpen,
+      showVolumeIndicator,
       portalContainer,
       tooltipSideOffset,
       disabled,
@@ -209,6 +226,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       descriptionId,
       dir,
       isMenuOpen,
+      showVolumeIndicator,
       portalContainer,
       tooltipSideOffset,
       disabled,
@@ -265,6 +283,14 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
     };
   }, [onFullscreenChangeProp]);
 
+  React.useEffect(() => {
+    return () => {
+      if (volumeIndicatorTimeoutRef.current) {
+        clearTimeout(volumeIndicatorTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
       if (disabled) return;
@@ -304,6 +330,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
 
         case "m": {
           event.preventDefault();
+          onVolumeIndicatorTrigger();
           dispatch({
             type: mediaElement.muted
               ? MediaActionTypes.MEDIA_UNMUTE_REQUEST
@@ -344,6 +371,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
         case "arrowup":
           event.preventDefault();
           if (mediaElement instanceof HTMLVideoElement) {
+            onVolumeIndicatorTrigger();
             dispatch({
               type: MediaActionTypes.MEDIA_VOLUME_REQUEST,
               detail: Math.min(1, mediaElement.volume + 0.1),
@@ -354,6 +382,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
         case "arrowdown":
           event.preventDefault();
           if (mediaElement instanceof HTMLVideoElement) {
+            onVolumeIndicatorTrigger();
             dispatch({
               type: MediaActionTypes.MEDIA_VOLUME_REQUEST,
               detail: Math.max(0, mediaElement.volume - 0.1),
@@ -506,7 +535,25 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
         }
       }
     },
-    [dispatch, rootImplProps.onKeyDown, onPipError, disabled],
+    [
+      dispatch,
+      rootImplProps.onKeyDown,
+      onPipError,
+      onVolumeIndicatorTrigger,
+      disabled,
+    ],
+  );
+
+  const onKeyUp = React.useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      rootImplProps.onKeyUp?.(event);
+
+      const key = event.key.toLowerCase();
+      if (key === "arrowup" || key === "arrowdown" || key === "m") {
+        onVolumeIndicatorTrigger();
+      }
+    },
+    [rootImplProps.onKeyUp, onVolumeIndicatorTrigger],
   );
 
   const RootPrimitive = asChild ? Slot : "div";
@@ -524,6 +571,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
         {...rootImplProps}
         ref={composedRef}
         onKeyDown={onKeyDown}
+        onKeyUp={onKeyUp}
         className={cn(
           "relative isolate flex flex-col overflow-hidden rounded-lg bg-background outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
           "[:fullscreen_&]:flex [:fullscreen_&]:h-full [:fullscreen_&]:max-h-screen [:fullscreen_&]:flex-col [:fullscreen_&]:justify-between",
@@ -804,27 +852,25 @@ function MediaPlayerVolumeIndicator(props: MediaPlayerVolumeIndicatorProps) {
     ...indicatorProps
   } = props;
 
+  const context = useMediaPlayerContext("MediaPlayerVolumeIndicator");
   const mediaVolume = useMediaSelector((state) => state.mediaVolume ?? 1);
   const mediaMuted = useMediaSelector((state) => state.mediaMuted ?? false);
   const mediaVolumeLevel = useMediaSelector(
     (state) => state.mediaVolumeLevel ?? "high",
   );
 
-  const [shouldRender, setShouldRender] = React.useState(false);
-  const [isAnimatingOut, setIsAnimatingOut] = React.useState(false);
-
-  if (!shouldRender) return null;
+  if (!context.showVolumeIndicator) return null;
 
   const effectiveVolume = mediaMuted ? 0 : mediaVolume;
   const volumePercentage = Math.round(effectiveVolume * 100);
   const barCount = 10;
   const activeBars = Math.ceil(effectiveVolume * barCount);
 
-  const IndicatorPrimitive = asChild ? Slot : "div";
+  const VolumeIndicatorPrimitive = asChild ? Slot : "div";
 
   return (
     <MediaPlayerPortal>
-      <IndicatorPrimitive
+      <VolumeIndicatorPrimitive
         role="status"
         aria-live="polite"
         aria-label={`Volume ${mediaMuted ? "muted" : `${volumePercentage}%`}`}
@@ -833,25 +879,17 @@ function MediaPlayerVolumeIndicator(props: MediaPlayerVolumeIndicatorProps) {
         className={cn(
           "pointer-events-none absolute inset-0 z-40 flex items-center justify-center transition-opacity duration-200",
           "[:fullscreen_&]:z-50",
-          isAnimatingOut ? "opacity-0" : "opacity-100",
           className,
         )}
       >
-        <div
-          className={cn(
-            "flex flex-col items-center gap-3 rounded-lg bg-black/75 px-6 py-4 text-white shadow-lg backdrop-blur-sm transition-all duration-200 ease-out",
-            isAnimatingOut
-              ? "scale-95 opacity-0"
-              : "fade-in-0 zoom-in-95 scale-100 animate-in opacity-100",
-          )}
-        >
+        <div className="fade-in-0 zoom-in-95 flex animate-in flex-col items-center gap-3 rounded-lg bg-black/75 px-6 py-4 text-white shadow-lg backdrop-blur-sm duration-200">
           <div className="flex items-center gap-2">
             {mediaVolumeLevel === "off" || mediaMuted ? (
-              <VolumeXIcon className="h-6 w-6" />
+              <VolumeXIcon className="size-6" />
             ) : mediaVolumeLevel === "high" ? (
-              <Volume2Icon className="h-6 w-6" />
+              <Volume2Icon className="size-6" />
             ) : (
-              <Volume1Icon className="h-6 w-6" />
+              <Volume1Icon className="size-6" />
             )}
             <span className="font-medium text-sm tabular-nums">
               {mediaMuted ? "Muted" : `${volumePercentage}%`}
@@ -875,7 +913,7 @@ function MediaPlayerVolumeIndicator(props: MediaPlayerVolumeIndicatorProps) {
             ))}
           </div>
         </div>
-      </IndicatorPrimitive>
+      </VolumeIndicatorPrimitive>
     </MediaPlayerPortal>
   );
 }
