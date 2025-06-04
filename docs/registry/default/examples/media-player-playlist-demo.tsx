@@ -15,12 +15,14 @@ import {
 } from "@/registry/default/ui/media-player";
 import {
   ListMusicIcon,
+  Loader2Icon,
   PauseCircleIcon,
   PlayCircleIcon,
   SkipBackIcon,
   SkipForwardIcon,
 } from "lucide-react";
 import * as React from "react";
+import { toast } from "sonner";
 
 interface Track {
   id: string;
@@ -45,31 +47,14 @@ const tracks: Track[] = [
     src: "https://www.dropbox.com/s/mvvwaw1msplnteq/City%20Lights%20-%20The%20Lemming%20Shepherds.mp3?raw=1",
     cover: "https://picsum.photos/seed/citylights/200/200",
   },
-  {
-    id: "3",
-    title: "The Cradle of Your Soul",
-    artist: "Angelwing",
-    src: "https://www.dropbox.com/s/ayf4cwdytqafs70/The%20Calling%20%20-%20Angelwing.mp3?raw=1",
-    cover: "https://picsum.photos/seed/calling/200/200",
-  },
-  {
-    id: "4",
-    title: "Happy Days",
-    artist: "FSM Team",
-    src: "https://www.free-stock-music.com/music/fsm-team-happy-days.mp3",
-    cover: "https://picsum.photos/seed/happydays/200/200",
-  },
 ];
 
 export default function MediaPlayerPlaylistDemo() {
   const [currentTrackIndex, setCurrentTrackIndex] = React.useState(0);
   const [isPlaying, setIsPlaying] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
-
-  const currentTrack = React.useMemo(
-    () => tracks[currentTrackIndex],
-    [currentTrackIndex],
-  );
+  const shouldPlayAfterLoad = React.useRef(false);
 
   const onPlay = React.useCallback(() => {
     setIsPlaying(true);
@@ -83,29 +68,58 @@ export default function MediaPlayerPlaylistDemo() {
     onNextTrack();
   }, []);
 
-  const onPlayTrack = React.useCallback((index: number) => {
-    const trackToPlay = tracks[index];
-    if (!trackToPlay) {
-      console.error({ error: `Track at index ${index} not found.` });
-      return;
-    }
-    setCurrentTrackIndex(index);
-    setIsPlaying(true);
-    if (audioRef.current) {
-      audioRef.current.src = trackToPlay.src;
-      audioRef.current.load();
-      audioRef.current.play().catch((error) => console.error({ error }));
+  const onAudioPlay = React.useCallback(async () => {
+    if (!audioRef.current) return;
+
+    try {
+      await audioRef.current.play();
+      setIsPlaying(true);
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to play track",
+      );
+      setIsPlaying(false);
     }
   }, []);
+
+  const onLoadAndPlayTrack = React.useCallback(
+    async (index: number, shouldPlay = true) => {
+      const trackToPlay = tracks[index];
+      if (!trackToPlay) {
+        toast.error("Track not found");
+        return;
+      }
+
+      if (!audioRef.current) return;
+
+      if (!audioRef.current.paused) {
+        audioRef.current.pause();
+      }
+
+      setCurrentTrackIndex(index);
+      setIsLoading(true);
+      shouldPlayAfterLoad.current = shouldPlay;
+
+      audioRef.current.src = trackToPlay.src;
+      audioRef.current.load();
+    },
+    [],
+  );
+
+  const onPlayTrack = React.useCallback(
+    (index: number) => {
+      onLoadAndPlayTrack(index, true);
+    },
+    [onLoadAndPlayTrack],
+  );
 
   const onTogglePlayPauseTrack = (index: number) => {
     if (index === currentTrackIndex) {
       if (isPlaying) {
         audioRef.current?.pause();
       } else {
-        audioRef.current?.play().catch((error) => console.error({ error }));
+        onAudioPlay();
       }
-      setIsPlaying(!isPlaying);
     } else {
       onPlayTrack(index);
     }
@@ -121,19 +135,55 @@ export default function MediaPlayerPlaylistDemo() {
     onPlayTrack(prevIndex);
   }, [currentTrackIndex, onPlayTrack]);
 
-  React.useEffect(() => {
-    if (audioRef.current && currentTrack) {
-      audioRef.current.src = currentTrack.src;
-      audioRef.current.load();
-      if (isPlaying) {
-        audioRef.current.play().catch((error) => console.error({ error }));
-      }
-    }
-  }, [currentTrack?.src, isPlaying, currentTrack]);
+  const currentTrack = React.useMemo(
+    () => tracks[currentTrackIndex],
+    [currentTrackIndex],
+  );
 
-  if (!currentTrack) {
-    return <div>Loading track...</div>;
-  }
+  React.useEffect(() => {
+    const audioElement = audioRef.current;
+    if (!audioElement) return;
+
+    const onCanPlay = () => {
+      setIsLoading(false);
+      if (shouldPlayAfterLoad.current) {
+        onAudioPlay();
+        shouldPlayAfterLoad.current = false;
+      }
+    };
+
+    const onLoadStart = () => {
+      setIsLoading(true);
+    };
+
+    const onError = () => {
+      setIsLoading(false);
+      setIsPlaying(false);
+      toast.error("Failed to load track");
+    };
+
+    audioElement.addEventListener("canplay", onCanPlay);
+    audioElement.addEventListener("loadstart", onLoadStart);
+    audioElement.addEventListener("error", onError);
+
+    return () => {
+      audioElement.removeEventListener("canplay", onCanPlay);
+      audioElement.removeEventListener("loadstart", onLoadStart);
+      audioElement.removeEventListener("error", onError);
+    };
+  }, [onAudioPlay]);
+
+  React.useEffect(() => {
+    if (
+      audioRef.current &&
+      currentTrack &&
+      audioRef.current.src !== currentTrack.src
+    ) {
+      onLoadAndPlayTrack(currentTrackIndex, false);
+    }
+  }, [currentTrack, currentTrackIndex, onLoadAndPlayTrack]);
+
+  if (!currentTrack) return null;
 
   return (
     <MediaPlayer
@@ -147,42 +197,47 @@ export default function MediaPlayerPlaylistDemo() {
         src={currentTrack.src}
         className="sr-only"
       />
-      <div className="flex w-full flex-col items-center gap-4 py-4 md:items-start">
-        <div className="w-full overflow-hidden rounded-md rounded-b-none">
+      <div className="flex w-full flex-col items-center gap-4 md:items-start">
+        <div className="relative w-full overflow-hidden rounded-md rounded-b-none border-b">
           <img
             src={currentTrack.cover}
             alt={currentTrack.title}
-            className="aspect-video w-full object-cover transition-all hover:scale-105"
+            className="h-32 w-full object-cover"
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+          <div className="absolute right-0 bottom-0 left-0 p-4">
+            <h2 className="font-semibold text-2xl text-white tracking-tight drop-shadow-lg">
+              {currentTrack.title}
+            </h2>
+            <p className="text-sm text-white/90 drop-shadow-md">
+              {currentTrack.artist}
+            </p>
+          </div>
         </div>
-        <div className="flex flex-col gap-1 px-4">
-          <h2 className="font-semibold text-2xl text-foreground tracking-tight">
-            {currentTrack.title}
-          </h2>
-          <p className="text-muted-foreground text-sm">{currentTrack.artist}</p>
-        </div>
-        <div className="w-full border-t">
-          <div className="flex items-center justify-between border-border border-b p-4">
-            <div className="flex items-center gap-2">
+        <div className="w-full">
+          <div className="flex items-center border-border border-b px-4 pb-4">
+            <div className="flex flex-1 items-center gap-2">
               <h3 className="font-medium text-lg tracking-tight">Playlist</h3>
               <ListMusicIcon className="size-4" />
             </div>
             <span className="text-muted-foreground text-sm">{`${currentTrackIndex + 1} / ${tracks.length}`}</span>
           </div>
-          <ScrollArea className="flex max-h-[240px] flex-col">
+          <ScrollArea className="flex max-h-[200px] flex-col">
             {tracks.map((track, index) => (
-              <button
+              <Button
                 key={track.id}
-                onClick={() => onTogglePlayPauseTrack(index)}
+                variant="ghost"
                 className={cn(
-                  "group flex w-full items-center gap-4 p-4 text-left transition-colors duration-150 hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
-                  index === currentTrackIndex && "bg-muted",
+                  "h-auto w-full rounded-none px-4 py-2 text-left",
+                  index === currentTrackIndex && "bg-accent",
                 )}
+                onClick={() => onTogglePlayPauseTrack(index)}
+                disabled={isLoading}
               >
                 <img
                   src={track.cover}
                   alt={track.title}
-                  className="aspect-square size-10 rounded object-cover"
+                  className="aspect-square size-9 rounded object-cover"
                 />
                 <div className="flex flex-1 flex-col">
                   <span
@@ -197,14 +252,16 @@ export default function MediaPlayerPlaylistDemo() {
                     {track.artist}
                   </span>
                 </div>
-                {index === currentTrackIndex && isPlaying ? (
+                {index === currentTrackIndex && isLoading ? (
+                  <Loader2Icon className="size-6 animate-spin text-primary" />
+                ) : index === currentTrackIndex && isPlaying ? (
                   <PauseCircleIcon className="size-6 text-primary" />
                 ) : index === currentTrackIndex && !isPlaying ? (
                   <PlayCircleIcon className="size-6 text-muted-foreground" />
                 ) : (
                   <PlayCircleIcon className="size-6 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
                 )}
-              </button>
+              </Button>
             ))}
           </ScrollArea>
         </div>
@@ -218,6 +275,7 @@ export default function MediaPlayerPlaylistDemo() {
                 size="icon"
                 className="size-8"
                 onClick={onPreviousTrack}
+                disabled={isLoading}
               >
                 <SkipBackIcon />
               </Button>
@@ -230,6 +288,7 @@ export default function MediaPlayerPlaylistDemo() {
                 size="icon"
                 className="size-8"
                 onClick={onNextTrack}
+                disabled={isLoading}
               >
                 <SkipForwardIcon />
               </Button>
