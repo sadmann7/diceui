@@ -1605,18 +1605,43 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
                 {thumbnail && (
                   <div
                     data-slot="media-player-seek-thumbnail"
-                    className="overflow-hidden rounded-md rounded-b-none"
+                    className="h-32 w-56 overflow-hidden rounded-md rounded-b-none"
                   >
                     {thumbnail.coords ? (
-                      <div
-                        className="h-32 w-56"
-                        style={{
-                          backgroundImage: `url(${thumbnail.src})`,
-                          backgroundPosition: `-${thumbnail.coords[0]}px -${thumbnail.coords[1]}px`,
-                          backgroundSize: "auto",
-                          backgroundRepeat: "no-repeat",
-                        }}
-                      />
+                      (() => {
+                        const spriteWidth = Number.parseFloat(
+                          thumbnail.coords[2] ?? "0",
+                        );
+                        const spriteHeight = Number.parseFloat(
+                          thumbnail.coords[3] ?? "0",
+                        );
+                        const containerWidth = 224;
+                        const containerHeight = 128;
+
+                        const scaleX =
+                          spriteWidth && spriteWidth > 0
+                            ? containerWidth / spriteWidth
+                            : 1;
+                        const scaleY =
+                          spriteHeight && spriteHeight > 0
+                            ? containerHeight / spriteHeight
+                            : 1;
+                        const scale = Math.min(scaleX, scaleY);
+
+                        return (
+                          <div
+                            style={{
+                              width: `${spriteWidth}px`,
+                              height: `${spriteHeight}px`,
+                              backgroundImage: `url(${thumbnail.src})`,
+                              backgroundPosition: `-${thumbnail.coords[0]}px -${thumbnail.coords[1]}px`,
+                              backgroundRepeat: "no-repeat",
+                              transform: `scale(${scale})`,
+                              transformOrigin: "top left",
+                            }}
+                          />
+                        );
+                      })()
                     ) : (
                       <img
                         src={thumbnail.src}
