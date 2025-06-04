@@ -14,6 +14,7 @@ import {
   MediaPlayerTime,
   MediaPlayerVideo,
   MediaPlayerVolume,
+  MediaPlayerVolumeIndicator,
 } from "@/registry/default/ui/media-player";
 
 export default function MediaPlayerSettingsDemo() {
@@ -56,6 +57,7 @@ export default function MediaPlayerSettingsDemo() {
         />
       </MediaPlayerVideo>
       <MediaPlayerLoading />
+      <MediaPlayerVolumeIndicator />
       <MediaPlayerControls className="flex-col items-start gap-2.5">
         <MediaPlayerOverlay />
         <MediaPlayerSeek />

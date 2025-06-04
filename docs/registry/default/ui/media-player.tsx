@@ -65,6 +65,8 @@ const SEEK_TOOLTIP_WIDTH_FALLBACK = 240;
 const SPRITE_CONTAINER_WIDTH = 224;
 const SPRITE_CONTAINER_HEIGHT = 128;
 
+const VOLUME_INDICATOR_DISPLAY_TIME = 2000;
+
 type Direction = "ltr" | "rtl";
 
 const DirectionContext = React.createContext<Direction | undefined>(undefined);
@@ -83,6 +85,8 @@ interface MediaPlayerContextValue {
   mediaRef: React.RefObject<HTMLVideoElement | HTMLAudioElement | null>;
   isMenuOpen: boolean;
   setIsMenuOpen: (open: boolean) => void;
+  showVolumeIndicator: boolean;
+  setShowVolumeIndicator: (show: boolean) => void;
   portalContainer: Element | DocumentFragment | null;
   tooltipSideOffset: number;
   disabled: boolean;
@@ -160,6 +164,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
   const fullscreenRef = useMediaFullscreenRef();
   const composedRef = useComposedRefs(ref, rootRef, fullscreenRef);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [showVolumeIndicator, setShowVolumeIndicator] = React.useState(false);
 
   const mediaRef = React.useRef<HTMLVideoElement | HTMLAudioElement | null>(
     null,
@@ -195,6 +200,8 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       mediaRef,
       isMenuOpen,
       setIsMenuOpen,
+      showVolumeIndicator,
+      setShowVolumeIndicator,
       portalContainer,
       tooltipSideOffset,
       disabled,
@@ -207,6 +214,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       descriptionId,
       dir,
       isMenuOpen,
+      showVolumeIndicator,
       portalContainer,
       tooltipSideOffset,
       disabled,
@@ -307,6 +315,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
               ? MediaActionTypes.MEDIA_UNMUTE_REQUEST
               : MediaActionTypes.MEDIA_MUTE_REQUEST,
           });
+          setShowVolumeIndicator(true);
           break;
         }
 
@@ -346,6 +355,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
               type: MediaActionTypes.MEDIA_VOLUME_REQUEST,
               detail: Math.min(1, mediaElement.volume + 0.1),
             });
+            setShowVolumeIndicator(true);
           }
           break;
 
@@ -356,6 +366,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
               type: MediaActionTypes.MEDIA_VOLUME_REQUEST,
               detail: Math.max(0, mediaElement.volume - 0.1),
             });
+            setShowVolumeIndicator(true);
           }
           break;
 
@@ -504,7 +515,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
         }
       }
     },
-    [dispatch, disabled, rootImplProps.onKeyDown, onPipError],
+    [dispatch, rootImplProps.onKeyDown, onPipError, disabled],
   );
 
   const RootPrimitive = asChild ? Slot : "div";
@@ -533,6 +544,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
           {label ?? "Media player"}
         </span>
         {children}
+        <MediaPlayerVolumeIndicator />
       </RootPrimitive>
     </MediaPlayerContext.Provider>
   );
@@ -737,6 +749,7 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
       }
     };
   }, []);
@@ -1711,6 +1724,16 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
 
   const isDisabled = disabled || context.disabled;
 
+  const onMute = React.useCallback(() => {
+    dispatch({
+      type: mediaMuted
+        ? MediaActionTypes.MEDIA_UNMUTE_REQUEST
+        : MediaActionTypes.MEDIA_MUTE_REQUEST,
+    });
+    // Show volume indicator when muting/unmuting
+    context.setShowVolumeIndicator(true);
+  }, [dispatch, mediaMuted, context]);
+
   const onVolumeChange = React.useCallback(
     (value: number[]) => {
       const volume = value[0] ?? 0;
@@ -1718,17 +1741,11 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
         type: MediaActionTypes.MEDIA_VOLUME_REQUEST,
         detail: volume,
       });
+      // Show volume indicator when changing volume via slider
+      context.setShowVolumeIndicator(true);
     },
-    [dispatch],
+    [dispatch, context],
   );
-
-  const onMute = React.useCallback(() => {
-    dispatch({
-      type: mediaMuted
-        ? MediaActionTypes.MEDIA_UNMUTE_REQUEST
-        : MediaActionTypes.MEDIA_MUTE_REQUEST,
-    });
-  }, [dispatch, mediaMuted]);
 
   const effectiveVolume = mediaMuted ? 0 : mediaVolume;
 
@@ -2580,6 +2597,152 @@ function MediaPlayerTooltip(props: MediaPlayerTooltipProps) {
   );
 }
 
+interface MediaPlayerVolumeIndicatorProps extends React.ComponentProps<"div"> {
+  delay?: number;
+  asChild?: boolean;
+}
+
+function MediaPlayerVolumeIndicator(props: MediaPlayerVolumeIndicatorProps) {
+  const {
+    delay = VOLUME_INDICATOR_DISPLAY_TIME,
+    asChild,
+    className,
+    children,
+    ...indicatorProps
+  } = props;
+
+  const context = useMediaPlayerContext("MediaPlayerVolumeIndicator");
+  const mediaVolume = useMediaSelector((state) => state.mediaVolume ?? 1);
+  const mediaMuted = useMediaSelector((state) => state.mediaMuted ?? false);
+  const mediaVolumeLevel = useMediaSelector(
+    (state) => state.mediaVolumeLevel ?? "high",
+  );
+
+  const [shouldRender, setShouldRender] = React.useState(false);
+  const [isAnimatingOut, setIsAnimatingOut] = React.useState(false);
+  const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  const animationTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  React.useEffect(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    if (animationTimeoutRef.current) {
+      clearTimeout(animationTimeoutRef.current);
+      animationTimeoutRef.current = null;
+    }
+
+    if (context.showVolumeIndicator && context.isVideo) {
+      setShouldRender(true);
+      setIsAnimatingOut(false);
+
+      timeoutRef.current = setTimeout(() => {
+        setIsAnimatingOut(true);
+
+        animationTimeoutRef.current = setTimeout(() => {
+          setShouldRender(false);
+          context.setShowVolumeIndicator(false);
+          setIsAnimatingOut(false);
+          timeoutRef.current = null;
+          animationTimeoutRef.current = null;
+        }, 200);
+      }, delay);
+    } else {
+      setShouldRender(false);
+      setIsAnimatingOut(false);
+    }
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+      if (animationTimeoutRef.current) {
+        clearTimeout(animationTimeoutRef.current);
+        animationTimeoutRef.current = null;
+      }
+    };
+  }, [context.showVolumeIndicator, context.isVideo, delay, context]);
+
+  React.useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      if (animationTimeoutRef.current) {
+        clearTimeout(animationTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  if (!shouldRender || !context.isVideo) return null;
+
+  const effectiveVolume = mediaMuted ? 0 : mediaVolume;
+  const volumePercentage = Math.round(effectiveVolume * 100);
+  const barCount = 10;
+  const activeBars = Math.ceil(effectiveVolume * barCount);
+
+  const IndicatorPrimitive = asChild ? Slot : "div";
+
+  return (
+    <MediaPlayerPortal>
+      <IndicatorPrimitive
+        role="status"
+        aria-live="polite"
+        aria-label={`Volume ${mediaMuted ? "muted" : `${volumePercentage}%`}`}
+        data-slot="media-player-volume-indicator"
+        {...indicatorProps}
+        className={cn(
+          "pointer-events-none absolute inset-0 z-40 flex items-center justify-center transition-opacity duration-200",
+          "[:fullscreen_&]:z-50",
+          isAnimatingOut ? "opacity-0" : "opacity-100",
+          className,
+        )}
+      >
+        <div
+          className={cn(
+            "flex flex-col items-center gap-3 rounded-lg bg-black/75 px-6 py-4 text-white shadow-lg backdrop-blur-sm transition-all duration-200 ease-out",
+            isAnimatingOut
+              ? "scale-95 opacity-0"
+              : "fade-in-0 zoom-in-95 scale-100 animate-in opacity-100",
+          )}
+        >
+          <div className="flex items-center gap-2">
+            {mediaVolumeLevel === "off" || mediaMuted ? (
+              <VolumeXIcon className="h-6 w-6" />
+            ) : mediaVolumeLevel === "high" ? (
+              <Volume2Icon className="h-6 w-6" />
+            ) : (
+              <Volume1Icon className="h-6 w-6" />
+            )}
+            <span className="font-medium text-sm tabular-nums">
+              {mediaMuted ? "Muted" : `${volumePercentage}%`}
+            </span>
+          </div>
+          <div className="flex items-center gap-1">
+            {Array.from({ length: barCount }, (_, index) => (
+              <div
+                key={index}
+                className={cn(
+                  "w-1.5 rounded-full transition-all duration-150",
+                  index < activeBars && !mediaMuted
+                    ? "scale-100 bg-white"
+                    : "scale-90 bg-white/30",
+                )}
+                style={{
+                  height: `${12 + index * 2}px`,
+                  animationDelay: `${index * 50}ms`,
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      </IndicatorPrimitive>
+    </MediaPlayerPortal>
+  );
+}
+
 export {
   MediaPlayerRoot as MediaPlayer,
   MediaPlayerVideo,
@@ -2592,6 +2755,7 @@ export {
   MediaPlayerSeekForward,
   MediaPlayerSeek,
   MediaPlayerVolume,
+  MediaPlayerVolumeIndicator,
   MediaPlayerTime,
   MediaPlayerPlaybackSpeed,
   MediaPlayerLoop,
@@ -2614,6 +2778,7 @@ export {
   MediaPlayerSeekForward as SeekForward,
   MediaPlayerSeek as Seek,
   MediaPlayerVolume as Volume,
+  MediaPlayerVolumeIndicator as VolumeIndicator,
   MediaPlayerTime as Time,
   MediaPlayerPlaybackSpeed as PlaybackSpeed,
   MediaPlayerLoop as Loop,
