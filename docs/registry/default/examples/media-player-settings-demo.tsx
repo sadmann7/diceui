@@ -1,5 +1,6 @@
 import {
   MediaPlayer,
+  MediaPlayerCaptions,
   MediaPlayerControls,
   MediaPlayerFullscreen,
   MediaPlayerLoading,
@@ -19,10 +20,9 @@ export default function MediaPlayerSettingsDemo() {
   return (
     <MediaPlayer>
       <MediaPlayerVideo
-        playsInline
-        crossOrigin=""
-        slot="media"
         src="https://stream.mux.com/Sc89iWAyNkhJ3P1rQ02nrEdCFTnfT01CZ2KmaEcxXfB008/low.mp4"
+        crossOrigin=""
+        playsInline
       >
         <track
           default
@@ -34,6 +34,25 @@ export default function MediaPlayerSettingsDemo() {
           kind="metadata"
           label="thumbnails"
           src="https://image.mux.com/Sc89iWAyNkhJ3P1rQ02nrEdCFTnfT01CZ2KmaEcxXfB008/storyboard.vtt"
+        />
+        <track
+          label="English"
+          kind="captions"
+          srcLang="en"
+          src="https://media-chrome.mux.dev/examples/vanilla/vtt/elephantsdream/captions.en.vtt"
+          default={true}
+        />
+        <track
+          label="Japanese"
+          kind="captions"
+          srcLang="ja"
+          src="https://media-chrome.mux.dev/examples/vanilla/vtt/elephantsdream/captions.ja.vtt"
+        />
+        <track
+          label="Swedish"
+          kind="captions"
+          srcLang="sv"
+          src="https://media-chrome.mux.dev/examples/vanilla/vtt/elephantsdream/captions.sv.vtt"
         />
       </MediaPlayerVideo>
       <MediaPlayerControls className="flex-col items-start gap-2.5">
@@ -49,6 +68,7 @@ export default function MediaPlayerSettingsDemo() {
             <MediaPlayerTime />
           </div>
           <div className="flex items-center gap-2">
+            <MediaPlayerCaptions />
             <MediaPlayerSettings />
             <MediaPlayerPiP />
             <MediaPlayerFullscreen />

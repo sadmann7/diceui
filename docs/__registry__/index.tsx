@@ -929,22 +929,6 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
-    "media-player-chapters-demo": {
-      name: "media-player-chapters-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["badge","button","dropdown-menu","select","slider","tooltip"],
-      files: [{
-        path: "registry/default/examples/media-player-chapters-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/media-player-chapters-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
     "media-player-settings-demo": {
       name: "media-player-settings-demo",
       description: "",
@@ -956,22 +940,6 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/media-player-settings-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
-    "media-player-advanced-demo": {
-      name: "media-player-advanced-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["badge","button","dropdown-menu","select","slider","tooltip"],
-      files: [{
-        path: "registry/default/examples/media-player-advanced-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/media-player-advanced-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",

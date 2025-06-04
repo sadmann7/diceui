@@ -699,6 +699,8 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
   const [shouldRender, setShouldRender] = React.useState(false);
   const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
+  console.log({ isLoading, isPaused, hasPlayed, shouldRender });
+
   React.useEffect(() => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -775,26 +777,24 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
   const LoadingPrimitive = asChild ? Slot : "div";
 
   return (
-    <MediaPlayerPortal>
-      <LoadingPrimitive
-        role="status"
-        aria-live="polite"
-        data-loading={isLoading ? "" : undefined}
-        data-paused={isPaused ? "" : undefined}
-        data-slot="media-player-loading"
-        data-variant={variant}
-        {...loadingProps}
-        className={cn(
-          "absolute inset-0 z-40 flex items-center justify-center",
-          "bg-black/10 backdrop-blur-[2px]",
-          "transition-opacity duration-150 ease-in-out",
-          "[:fullscreen_&]:z-50",
-          className,
-        )}
-      >
-        {getLoadingIcon()}
-      </LoadingPrimitive>
-    </MediaPlayerPortal>
+    <LoadingPrimitive
+      role="status"
+      aria-live="polite"
+      data-loading={isLoading ? "" : undefined}
+      data-paused={isPaused ? "" : undefined}
+      data-slot="media-player-loading"
+      data-variant={variant}
+      {...loadingProps}
+      className={cn(
+        "absolute inset-0 z-40 flex items-center justify-center",
+        "bg-black/10 backdrop-blur-[2px]",
+        "transition-opacity duration-150 ease-in-out",
+        "[:fullscreen_&]:z-50",
+        className,
+      )}
+    >
+      {getLoadingIcon()}
+    </LoadingPrimitive>
   );
 }
 
@@ -1842,6 +1842,7 @@ function MediaPlayerTime(props: MediaPlayerTimeProps) {
     return (
       <TimePrimitive
         data-slot="media-player-time"
+        data-variant={variant}
         dir={context.dir}
         {...timeProps}
         className={cn("text-foreground/80 text-sm tabular-nums", className)}
@@ -1854,6 +1855,7 @@ function MediaPlayerTime(props: MediaPlayerTimeProps) {
   return (
     <TimePrimitive
       data-slot="media-player-time"
+      data-variant={variant}
       dir={context.dir}
       {...timeProps}
       className={cn(
