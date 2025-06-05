@@ -195,23 +195,11 @@ export interface LoadingProps extends EmptyProps<"div">, CompositionProps {
    * ```
    */
   delay?: number;
-
-  /**
-   * The visual variant of the loading indicator.
-   * @default "default"
-   *
-   * ```ts
-   * // Use dots animation
-   * <MediaPlayer.Loading variant="dots" />
-   * ```
-   *
-   * ```ts
-   * // Use spinner animation
-   * <MediaPlayer.Loading variant="spinner" />
-   * ```
-   */
-  variant?: "default" | "dots" | "spinner";
 }
+
+export interface VolumeIndicatorProps
+  extends EmptyProps<"div">,
+    CompositionProps {}
 
 export interface PlayProps extends EmptyProps<"button">, CompositionProps {}
 

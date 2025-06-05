@@ -733,13 +733,11 @@ function MediaPlayerOverlay(props: MediaPlayerOverlayProps) {
 
 interface MediaPlayerLoadingProps extends React.ComponentProps<"div"> {
   delay?: number;
-  variant?: "default" | "dots" | "spinner";
   asChild?: boolean;
 }
 
 function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
   const {
-    variant = "default",
     delay = LOADING_DELAY_MS,
     asChild,
     className,
@@ -803,36 +801,13 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
       role="status"
       aria-live="polite"
       data-slot="media-player-loading"
-      data-variant={variant}
       {...loadingProps}
       className={cn(
-        "pointer-events-none absolute inset-0 z-50 flex items-center justify-center",
-        "bg-black/10 backdrop-blur-[2px] transition-opacity duration-150 ease-in-out",
+        "fade-in-0 zoom-in-95 pointer-events-none absolute inset-0 z-50 flex animate-in items-center justify-center",
         className,
       )}
     >
-      {variant === "spinner" ? (
-        <svg
-          className="size-12 animate-spin text-primary"
-          viewBox="0 0 100 100"
-          fill="none"
-        >
-          <path
-            d="M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50"
-            stroke="currentColor"
-            strokeWidth="8"
-            strokeLinecap="round"
-          />
-        </svg>
-      ) : variant === "dots" ? (
-        <div className="flex items-center gap-1">
-          <div className="size-3 animate-bounce rounded-full bg-primary [animation-delay:-0.3s]" />
-          <div className="size-3 animate-bounce rounded-full bg-primary [animation-delay:-0.15s]" />
-          <div className="size-3 animate-bounce rounded-full bg-primary" />
-        </div>
-      ) : (
-        <Loader2Icon className="size-12 animate-spin text-primary" />
-      )}
+      <Loader2Icon className="size-20 animate-spin stroke-[1.5px] text-primary" />
     </LoadingPrimitive>
   );
 }
@@ -856,56 +831,54 @@ function MediaPlayerVolumeIndicator(props: MediaPlayerVolumeIndicatorProps) {
   const effectiveVolume = mediaMuted ? 0 : mediaVolume;
   const volumePercentage = Math.round(effectiveVolume * 100);
   const barCount = 10;
-  const activeBars = Math.ceil(effectiveVolume * barCount);
+  const activeBarCount = Math.ceil(effectiveVolume * barCount);
 
   const VolumeIndicatorPrimitive = asChild ? Slot : "div";
 
   return (
-    <MediaPlayerPortal>
-      <VolumeIndicatorPrimitive
-        role="status"
-        aria-live="polite"
-        aria-label={`Volume ${mediaMuted ? "muted" : `${volumePercentage}%`}`}
-        data-slot="media-player-volume-indicator"
-        {...indicatorProps}
-        className={cn(
-          "pointer-events-none absolute inset-0 z-50 flex items-center justify-center transition-opacity duration-200",
-          className,
-        )}
-      >
-        <div className="fade-in-0 zoom-in-95 flex animate-in flex-col items-center gap-3 rounded-lg bg-black/75 px-6 py-4 text-white shadow-lg backdrop-blur-sm duration-200">
-          <div className="flex items-center gap-2">
-            {mediaVolumeLevel === "off" || mediaMuted ? (
-              <VolumeXIcon className="size-6" />
-            ) : mediaVolumeLevel === "high" ? (
-              <Volume2Icon className="size-6" />
-            ) : (
-              <Volume1Icon className="size-6" />
-            )}
-            <span className="font-medium text-sm tabular-nums">
-              {mediaMuted ? "Muted" : `${volumePercentage}%`}
-            </span>
-          </div>
-          <div className="flex items-center gap-1">
-            {Array.from({ length: barCount }, (_, index) => (
-              <div
-                key={index}
-                className={cn(
-                  "w-1.5 rounded-full transition-all duration-150",
-                  index < activeBars && !mediaMuted
-                    ? "scale-100 bg-white"
-                    : "scale-90 bg-white/30",
-                )}
-                style={{
-                  height: `${12 + index * 2}px`,
-                  animationDelay: `${index * 50}ms`,
-                }}
-              />
-            ))}
-          </div>
+    <VolumeIndicatorPrimitive
+      role="status"
+      aria-live="polite"
+      aria-label={`Volume ${mediaMuted ? "muted" : `${volumePercentage}%`}`}
+      data-slot="media-player-volume-indicator"
+      {...indicatorProps}
+      className={cn(
+        "pointer-events-none absolute inset-0 z-50 flex items-center justify-center transition-opacity duration-200",
+        className,
+      )}
+    >
+      <div className="fade-in-0 zoom-in-95 flex animate-in flex-col items-center gap-3 rounded-lg bg-black/75 px-6 py-4 text-white shadow-lg backdrop-blur-sm duration-200">
+        <div className="flex items-center gap-2">
+          {mediaVolumeLevel === "off" || mediaMuted ? (
+            <VolumeXIcon className="size-6" />
+          ) : mediaVolumeLevel === "high" ? (
+            <Volume2Icon className="size-6" />
+          ) : (
+            <Volume1Icon className="size-6" />
+          )}
+          <span className="font-medium text-sm tabular-nums">
+            {mediaMuted ? "Muted" : `${volumePercentage}%`}
+          </span>
         </div>
-      </VolumeIndicatorPrimitive>
-    </MediaPlayerPortal>
+        <div className="flex items-center gap-1">
+          {Array.from({ length: barCount }, (_, index) => (
+            <div
+              key={index}
+              className={cn(
+                "w-1.5 rounded-full transition-all duration-150",
+                index < activeBarCount && !mediaMuted
+                  ? "scale-100 bg-white"
+                  : "scale-90 bg-white/30",
+              )}
+              style={{
+                height: `${12 + index * 2}px`,
+                animationDelay: `${index * 50}ms`,
+              }}
+            />
+          ))}
+        </div>
+      </div>
+    </VolumeIndicatorPrimitive>
   );
 }
 

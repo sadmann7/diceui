@@ -43,7 +43,6 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <MediaPlayerSettingsDemo />
       <div className="grid gap-8">
         <Combobox className="w-[15rem]">
           <ComboboxAnchor>
@@ -61,6 +60,7 @@ export default function PlaygroundPage() {
             ))}
           </ComboboxContent>
         </Combobox>
+        <MediaPlayerSettingsDemo />
         <Command defaultValue="heelflip" className="max-w-[15rem] border">
           <CommandInput placeholder="Search tricks..." />
           <CommandEmpty>No tricks found.</CommandEmpty>
