@@ -115,7 +115,6 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
 
   /**
    * The text direction of the component.
-   * @default "ltr"
    *
    * ```ts
    * // For RTL languages
@@ -126,21 +125,23 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
 
   /**
    * A label for the media player, used for accessibility.
-   * @default "Media player"
    *
    * ```ts
    * <MediaPlayer label="My custom video player" />
    * ```
+   *
+   * @default "Media player"
    */
   label?: string;
 
   /**
    * The distance in pixels from the trigger to position the tooltip.
-   * @default 10
    *
    * ```ts
    * <MediaPlayer tooltipSideOffset={15} />
    * ```
+   *
+   * @default 10
    */
   tooltipSideOffset?: number;
 
@@ -150,37 +151,34 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * Controls will show on pause/interaction and auto-hide after 3 seconds
    * of inactivity during playback. Also hides immediately on mouse leave.
    *
-   * @default false
-   *
    * ```ts
    * <MediaPlayer autohide />
    * ```
+   *
+   * @default false
+   *
    */
   autohide?: boolean;
 
   /**
    * Whether the media player controls are disabled.
-   * @default false
-   *
-   * ```ts
-   * // Disable player controls
-   * <MediaPlayer disabled />
-   * ```
    *
    * ```ts
    * <MediaPlayer disabled={isLoading} />
    * ```
+   *
+   * @default false
    */
   disabled?: boolean;
 
   /**
    * Whether to disable tooltips throughout the media player.
-   * @default false
    *
    * ```ts
-   * // Disable all tooltips
    * <MediaPlayer withoutTooltip />
    * ```
+   *
+   * @default false
    */
   withoutTooltip?: boolean;
 }
@@ -196,17 +194,12 @@ export interface OverlayProps extends EmptyProps<"div">, CompositionProps {}
 export interface LoadingProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The delay in milliseconds before showing the loading indicator.
+   *
+   * ```ts
+   * <MediaPlayer.Loading delay={400} />
+   * ```
+   *
    * @default 500
-   *
-   * ```ts
-   * // Show loading immediately
-   * <MediaPlayer.Loading delay={0} />
-   * ```
-   *
-   * ```ts
-   * // Custom delay
-   * <MediaPlayer.Loading delay={1000} />
-   * ```
    */
   delay?: number;
 }
@@ -222,12 +215,12 @@ export interface SeekBackwardProps
     CompositionProps {
   /**
    * The number of seconds to seek backward.
-   * @default 5
    *
    * ```ts
-   * // Seek backward 10 seconds
    * <MediaPlayer.SeekBackward seconds={10} />
    * ```
+   *
+   * @default 5
    */
   seconds?: number;
 }
@@ -237,12 +230,12 @@ export interface SeekForwardProps
     CompositionProps {
   /**
    * The number of seconds to seek forward.
-   * @default 10
    *
    * ```ts
-   * // Seek forward 15 seconds
    * <MediaPlayer.SeekForward seconds={15} />
    * ```
+   *
+   * @default 10
    */
   seconds?: number;
 }
@@ -255,35 +248,35 @@ export interface SeekProps
     CompositionProps {
   /**
    * Whether to display the current time and remaining time alongside the seek bar.
-   * @default false
    *
    * ```ts
-   * // Show time display with seek bar
    * <MediaPlayer.Seek withTime />
    * ```
+   *
+   * @default false
    */
   withTime?: boolean;
 
   /**
    * Whether to show chapter markers on the seek bar.
-   * @default true
    *
    * ```ts
-   * // Disable chapter markers
    * <MediaPlayer.Seek withoutChapter />
    * ```
+   *
+   * @default true
    */
   withoutChapter?: boolean;
 
   /**
    * Whether to disable the seek tooltip entirely.
    * This overrides the global `withoutTooltip` prop for this component.
-   * @default false
    *
    * ```ts
-   * // Disable seek tooltip
    * <MediaPlayer.Seek withoutTooltip />
    * ```
+   *
+   * @default false
    */
   withoutTooltip?: boolean;
 
@@ -309,23 +302,23 @@ export interface SeekProps
    * The variant of the tooltip display.
    * - `time`: Shows only the seek time (e.g., "1:23")
    * - `time-duration`: Shows time and duration (e.g., "1:23 / 5:00")
-   * @default "time"
    *
    * ```ts
-   * // Show time and duration in tooltip
    * <MediaPlayer.Seek tooltipVariant="time-duration" />
    * ```
+   *
+   * @default "time"
    */
   tooltipVariant?: "time" | "time-duration";
 
   /**
    * The distance in pixels from the seek bar to position the tooltip.
-   * @default 10
    *
    * ```ts
-   * // Custom tooltip distance
    * <MediaPlayer.Seek tooltipSideOffset={15} />
    * ```
+   *
+   * @default 10
    */
   tooltipSideOffset?: number;
 
@@ -334,12 +327,12 @@ export interface SeekProps
    * Defaults to the media player root element.
    *
    * ```ts
-   * // Custom collision boundary
-   * <MediaPlayer.Seek tooltipCollisionBoundary={customElement} />
+   * // Single collision boundary
+   * <MediaPlayer.Seek tooltipCollisionBoundary={element} />
    * ```
    *
    * ```ts
-   * // Multiple boundaries
+   * // Multiple collision boundaries
    * <MediaPlayer.Seek tooltipCollisionBoundary={[element1, element2]} />
    * ```
    */
@@ -348,7 +341,6 @@ export interface SeekProps
   /**
    * The padding in pixels from the collision boundary for tooltip positioning.
    * Can be a number for uniform padding or an object for per-side padding.
-   * @default 10
    *
    * ```ts
    * // Uniform padding
@@ -361,6 +353,8 @@ export interface SeekProps
    *   tooltipCollisionPadding={{ top: 10, right: 15, bottom: 10, left: 15 }}
    * />
    * ```
+   *
+   * @default 10
    */
   tooltipCollisionPadding?:
     | number
@@ -375,12 +369,12 @@ export interface VolumeProps
     CompositionProps {
   /**
    * Whether the volume slider should expand on hover.
-   * @default false
    *
    * ```ts
-   * // Expand volume slider on hover
    * <MediaPlayer.Volume expandable />
    * ```
+   *
+   * @default false
    */
   expandable?: boolean;
 }
@@ -391,12 +385,12 @@ export interface TimeProps extends EmptyProps<"div">, CompositionProps {
    * - `progress`: Shows "currentTime / duration" (e.g., "1:23 / 5:00").
    * - `remaining`: Shows the remaining time (e.g., "3:37").
    * - `duration`: Shows the total duration (e.g., "5:00").
-   * @default "progress"
    *
    * ```ts
-   * // Show remaining time
    * <MediaPlayer.Time variant="remaining" />
    * ```
+   *
+   * @default "progress"
    */
   variant?: "progress" | "remaining" | "duration";
 }

@@ -86,10 +86,10 @@ interface MediaPlayerContextValue {
   showVolumeIndicator: boolean;
   portalContainer: Element | DocumentFragment | null;
   tooltipSideOffset: number;
+  controlsVisible: boolean;
   disabled: boolean;
-  withoutTooltip: boolean;
   isVideo: boolean;
-  isControlsVisible: boolean;
+  withoutTooltip: boolean;
 }
 
 const MediaPlayerContext = React.createContext<MediaPlayerContextValue | null>(
@@ -170,7 +170,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
 
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
-  const [isControlsVisible, setIsControlsVisible] = React.useState(true);
+  const [controlsVisible, setControlsVisible] = React.useState(true);
   const hideControlsTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
   const lastMouseMoveRef = React.useRef<number>(Date.now());
 
@@ -209,7 +209,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
   }, []);
 
   const onControlsShow = React.useCallback(() => {
-    setIsControlsVisible(true);
+    setControlsVisible(true);
     lastMouseMoveRef.current = Date.now();
 
     if (hideControlsTimeoutRef.current) {
@@ -218,7 +218,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
 
     if (autohide && !mediaPaused && !isMenuOpen) {
       hideControlsTimeoutRef.current = setTimeout(() => {
-        setIsControlsVisible(false);
+        setControlsVisible(false);
       }, 3000);
     }
   }, [autohide, mediaPaused, isMenuOpen]);
@@ -230,7 +230,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       if (event.defaultPrevented) return;
 
       if (autohide && !mediaPaused && !isMenuOpen) {
-        setIsControlsVisible(false);
+        setControlsVisible(false);
       }
     },
     [autohide, mediaPaused, isMenuOpen, rootImplProps.onMouseLeave],
@@ -251,7 +251,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
 
   React.useEffect(() => {
     if (mediaPaused || isMenuOpen) {
-      setIsControlsVisible(true);
+      setControlsVisible(true);
       if (hideControlsTimeoutRef.current) {
         clearTimeout(hideControlsTimeoutRef.current);
       }
@@ -599,9 +599,9 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       showVolumeIndicator,
       portalContainer,
       tooltipSideOffset,
+      controlsVisible,
       disabled,
       isVideo,
-      isControlsVisible,
       withoutTooltip,
     }),
     [
@@ -613,9 +613,9 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       showVolumeIndicator,
       portalContainer,
       tooltipSideOffset,
+      controlsVisible,
       disabled,
       isVideo,
-      isControlsVisible,
       withoutTooltip,
     ],
   );
@@ -629,7 +629,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
         aria-describedby={descriptionId}
         aria-disabled={disabled}
         data-disabled={disabled ? "" : undefined}
-        data-controls-visible={isControlsVisible ? "" : undefined}
+        data-controls-visible={controlsVisible ? "" : undefined}
         data-slot="media-player"
         data-state={isFullscreen ? "fullscreen" : "windowed"}
         dir={dir}
@@ -762,7 +762,7 @@ function MediaPlayerControls(props: MediaPlayerControlsProps) {
       data-disabled={context.disabled ? "" : undefined}
       data-slot="media-player-controls"
       data-state={isFullscreen ? "fullscreen" : "windowed"}
-      data-visible={context.isControlsVisible ? "" : undefined}
+      data-visible={context.controlsVisible ? "" : undefined}
       dir={context.dir}
       className={cn(
         "dark pointer-events-none absolute right-0 bottom-0 left-0 z-50 flex items-center gap-2 px-4 py-3 opacity-0 transition-opacity duration-300 data-[visible]:pointer-events-auto data-[visible]:opacity-100",
@@ -792,7 +792,7 @@ function MediaPlayerOverlay(props: MediaPlayerOverlayProps) {
     <OverlayPrimitive
       data-slot="media-player-overlay"
       data-state={isFullscreen ? "fullscreen" : "windowed"}
-      data-visible={context.isControlsVisible ? "" : undefined}
+      data-visible={context.controlsVisible ? "" : undefined}
       {...overlayProps}
       className={cn(
         "pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-black/80 to-transparent opacity-0 transition-opacity duration-300 data-[visible]:opacity-100",
