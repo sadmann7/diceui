@@ -572,11 +572,10 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
         onKeyDown={onKeyDown}
         onKeyUp={onKeyUp}
         className={cn(
-          "relative isolate flex flex-col overflow-hidden rounded-lg bg-background outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+          "dark relative isolate flex flex-col overflow-hidden rounded-lg bg-background outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
           "[:fullscreen_&]:flex [:fullscreen_&]:h-full [:fullscreen_&]:max-h-screen [:fullscreen_&]:flex-col [:fullscreen_&]:justify-between",
           "[&_[data-slider]::before]:-top-4 [&_[data-slider]::before]:-bottom-2 [&_[data-slider]::before]:absolute [&_[data-slider]::before]:inset-x-0 [&_[data-slider]::before]:z-10 [&_[data-slider]::before]:h-8 [&_[data-slider]::before]:cursor-pointer [&_[data-slider]::before]:content-[''] [&_[data-slider]]:relative",
-          "[&_video::cue]:!bottom-[11%] [&_video::cue]:!mb-0 [&_video::cue]:!top-auto [&_video::-webkit-media-text-track-display]:!bottom-[11%] [&_video::-webkit-media-text-track-display]:!mb-0 [&_video::-webkit-media-text-track-display]:!top-auto [&_video::-webkit-media-text-track-display]:text-center [&_video::cue]:text-center [&_video]:relative",
-          "data-[state=fullscreen]:[&_video::cue]:!bottom-[9%] data-[state=fullscreen]:[&_video::-webkit-media-text-track-display]:!bottom-[9%]",
+          "[&_video::cue]:!bottom-[11%] [&_video::cue]:!mb-0 [&_video::cue]:!top-auto [&_video::-webkit-media-text-track-display]:!bottom-[11%] [&_video::-webkit-media-text-track-display]:!mb-0 [&_video::-webkit-media-text-track-display]:!top-auto data-[state=fullscreen]:[&_video::cue]:!bottom-[9%] data-[state=fullscreen]:[&_video::-webkit-media-text-track-display]:!bottom-[9%] [&_video::-webkit-media-text-track-display]:text-center [&_video::cue]:text-center [&_video]:relative",
           className,
         )}
       >
@@ -803,7 +802,7 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
       data-slot="media-player-loading"
       {...loadingProps}
       className={cn(
-        "fade-in-0 zoom-in-95 pointer-events-none absolute inset-0 z-50 flex animate-in items-center justify-center",
+        "fade-in-0 zoom-in-95 pointer-events-none absolute inset-0 z-50 flex animate-in items-center justify-center duration-200",
         className,
       )}
     >
@@ -843,11 +842,11 @@ function MediaPlayerVolumeIndicator(props: MediaPlayerVolumeIndicatorProps) {
       data-slot="media-player-volume-indicator"
       {...indicatorProps}
       className={cn(
-        "pointer-events-none absolute inset-0 z-50 flex items-center justify-center transition-opacity duration-200",
+        "pointer-events-none absolute inset-0 z-50 flex items-center justify-center",
         className,
       )}
     >
-      <div className="fade-in-0 zoom-in-95 flex animate-in flex-col items-center gap-3 rounded-lg bg-black/75 px-6 py-4 text-white shadow-lg backdrop-blur-sm duration-200">
+      <div className="fade-in-0 zoom-in-95 flex animate-in flex-col items-center gap-3 rounded-lg bg-black/30 px-6 py-4 text-white backdrop-blur-xs duration-200">
         <div className="flex items-center gap-2">
           {mediaVolumeLevel === "off" || mediaMuted ? (
             <VolumeXIcon className="size-6" />
