@@ -118,7 +118,7 @@ interface MediaPlayerRootProps
   label?: string;
   tooltipSideOffset?: number;
   asChild?: boolean;
-  autohide?: boolean;
+  autoHide?: boolean;
   disabled?: boolean;
   withoutTooltip?: boolean;
 }
@@ -145,7 +145,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
     label,
     tooltipSideOffset = FLOATING_MENU_SIDE_OFFSET,
     asChild,
-    autohide = false,
+    autoHide = false,
     disabled = false,
     withoutTooltip = false,
     children,
@@ -216,12 +216,12 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       clearTimeout(hideControlsTimeoutRef.current);
     }
 
-    if (autohide && !mediaPaused && !isMenuOpen) {
+    if (autoHide && !mediaPaused && !isMenuOpen) {
       hideControlsTimeoutRef.current = setTimeout(() => {
         setControlsVisible(false);
       }, 3000);
     }
-  }, [autohide, mediaPaused, isMenuOpen]);
+  }, [autoHide, mediaPaused, isMenuOpen]);
 
   const onMouseLeave = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
@@ -229,11 +229,11 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
 
       if (event.defaultPrevented) return;
 
-      if (autohide && !mediaPaused && !isMenuOpen) {
+      if (autoHide && !mediaPaused && !isMenuOpen) {
         setControlsVisible(false);
       }
     },
-    [autohide, mediaPaused, isMenuOpen, rootImplProps.onMouseLeave],
+    [autoHide, mediaPaused, isMenuOpen, rootImplProps.onMouseLeave],
   );
 
   const onMouseMove = React.useCallback(
@@ -242,11 +242,11 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
 
       if (event.defaultPrevented) return;
 
-      if (autohide) {
+      if (autoHide) {
         onControlsShow();
       }
     },
-    [autohide, rootImplProps.onMouseMove, onControlsShow],
+    [autoHide, rootImplProps.onMouseMove, onControlsShow],
   );
 
   React.useEffect(() => {
@@ -255,10 +255,10 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       if (hideControlsTimeoutRef.current) {
         clearTimeout(hideControlsTimeoutRef.current);
       }
-    } else if (autohide) {
+    } else if (autoHide) {
       onControlsShow();
     }
-  }, [mediaPaused, isMenuOpen, autohide, onControlsShow]);
+  }, [mediaPaused, isMenuOpen, autoHide, onControlsShow]);
 
   React.useEffect(() => {
     const mediaElement = mediaRef.current;
@@ -765,7 +765,7 @@ function MediaPlayerControls(props: MediaPlayerControlsProps) {
       data-visible={context.controlsVisible ? "" : undefined}
       dir={context.dir}
       className={cn(
-        "dark pointer-events-none absolute right-0 bottom-0 left-0 z-50 flex items-center gap-2 px-4 py-3 opacity-0 transition-opacity duration-300 data-[visible]:pointer-events-auto data-[visible]:opacity-100",
+        "dark pointer-events-none absolute right-0 bottom-0 left-0 z-50 flex items-center gap-2 px-4 py-3 opacity-0 transition-opacity duration-200 data-[visible]:pointer-events-auto data-[visible]:opacity-100",
         "[:fullscreen_&]:px-6 [:fullscreen_&]:py-4",
         className,
       )}
@@ -795,7 +795,7 @@ function MediaPlayerOverlay(props: MediaPlayerOverlayProps) {
       data-visible={context.controlsVisible ? "" : undefined}
       {...overlayProps}
       className={cn(
-        "pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-black/80 to-transparent opacity-0 transition-opacity duration-300 data-[visible]:opacity-100",
+        "-z-10 pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 transition-opacity duration-200 data-[visible]:opacity-100",
         className,
       )}
     />
