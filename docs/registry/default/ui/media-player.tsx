@@ -191,14 +191,10 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       : globalThis.document.body
     : null;
 
-  const isVideo = React.useMemo(() => {
-    if (!mediaRef.current) return false;
-
-    return (
-      mediaRef.current instanceof HTMLVideoElement ||
-      mediaRef.current.tagName?.toLowerCase() === "mux-player"
-    );
-  }, []);
+  const isVideo =
+    (typeof HTMLVideoElement !== "undefined" &&
+      mediaRef.current instanceof HTMLVideoElement) ||
+    mediaRef.current?.tagName?.toLowerCase() === "mux-player";
 
   const onVolumeIndicatorTrigger = React.useCallback(() => {
     if (isMenuOpen) return;
@@ -364,7 +360,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
 
         case "m": {
           event.preventDefault();
-          if (mediaElement instanceof HTMLVideoElement) {
+          if (isVideo) {
             onVolumeIndicatorTrigger();
           }
           dispatch({
@@ -378,7 +374,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
         case "arrowright":
           event.preventDefault();
           if (
-            mediaElement instanceof HTMLVideoElement ||
+            isVideo ||
             (mediaElement instanceof HTMLAudioElement && event.shiftKey)
           ) {
             dispatch({
@@ -394,7 +390,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
         case "arrowleft":
           event.preventDefault();
           if (
-            mediaElement instanceof HTMLVideoElement ||
+            isVideo ||
             (mediaElement instanceof HTMLAudioElement && event.shiftKey)
           ) {
             dispatch({
@@ -406,7 +402,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
 
         case "arrowup":
           event.preventDefault();
-          if (mediaElement instanceof HTMLVideoElement) {
+          if (isVideo) {
             onVolumeIndicatorTrigger();
             dispatch({
               type: MediaActionTypes.MEDIA_VOLUME_REQUEST,
@@ -417,7 +413,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
 
         case "arrowdown":
           event.preventDefault();
-          if (mediaElement instanceof HTMLVideoElement) {
+          if (isVideo) {
             onVolumeIndicatorTrigger();
             dispatch({
               type: MediaActionTypes.MEDIA_VOLUME_REQUEST,
@@ -454,10 +450,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
 
         case "c":
           event.preventDefault();
-          if (
-            mediaElement instanceof HTMLVideoElement &&
-            mediaElement.textTracks.length > 0
-          ) {
+          if (isVideo && mediaElement.textTracks.length > 0) {
             dispatch({
               type: MediaActionTypes.MEDIA_TOGGLE_SUBTITLES_REQUEST,
             });
@@ -485,7 +478,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
 
         case "p": {
           event.preventDefault();
-          if (mediaElement instanceof HTMLVideoElement) {
+          if (isVideo && "requestPictureInPicture" in mediaElement) {
             const isPip = document.pictureInPictureElement === mediaElement;
             dispatch({
               type: isPip
@@ -577,6 +570,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       onVolumeIndicatorTrigger,
       onPipError,
       disabled,
+      isVideo,
     ],
   );
 
@@ -2438,7 +2432,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
   const mediaRenditionList = useMediaSelector(
     (state) => state.mediaRenditionList ?? [],
   );
-  const mediaRenditionSelected = useMediaSelector(
+  const selectedRenditionId = useMediaSelector(
     (state) => state.mediaRenditionSelected,
   );
 
@@ -2486,7 +2480,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
     [dispatch],
   );
 
-  const getCurrentSubtitleLabel = React.useCallback(() => {
+  const selectedSubtitleLabel = React.useMemo(() => {
     if (!isSubtitlesActive) return "Off";
     if (mediaSubtitlesShowing.length > 0) {
       return mediaSubtitlesShowing[0]?.label ?? "On";
@@ -2494,18 +2488,18 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
     return "Off";
   }, [isSubtitlesActive, mediaSubtitlesShowing]);
 
-  const getCurrentQualityLabel = React.useCallback(() => {
-    if (!mediaRenditionSelected) return "Auto";
+  const selectedRenditionLabel = React.useMemo(() => {
+    if (!selectedRenditionId) return "Auto";
 
     const currentRendition = mediaRenditionList?.find(
-      (rendition) => rendition.id === mediaRenditionSelected,
+      (rendition) => rendition.id === selectedRenditionId,
     );
     if (!currentRendition) return "Auto";
 
     if (currentRendition.height) return `${currentRendition.height}p`;
     if (currentRendition.width) return `${currentRendition.width}p`;
     return currentRendition.id ?? "Auto";
-  }, [mediaRenditionSelected, mediaRenditionList]);
+  }, [selectedRenditionId, mediaRenditionList]);
 
   const onOpenChange = React.useCallback(
     (open: boolean) => {
@@ -2575,7 +2569,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
             <DropdownMenuSubTrigger>
               <span className="flex-1">Quality</span>
               <Badge variant="outline" className="rounded-sm">
-                {getCurrentQualityLabel()}
+                {selectedRenditionLabel}
               </Badge>
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
@@ -2584,7 +2578,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
                 onSelect={() => onRenditionChange("auto")}
               >
                 Auto
-                {!mediaRenditionSelected && <CheckIcon />}
+                {!selectedRenditionId && <CheckIcon />}
               </DropdownMenuItem>
               {mediaRenditionList
                 .slice()
@@ -2600,7 +2594,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
                       ? `${rendition.width}p`
                       : (rendition.id ?? "Unknown");
 
-                  const selected = rendition.id === mediaRenditionSelected;
+                  const selected = rendition.id === selectedRenditionId;
 
                   return (
                     <DropdownMenuItem
@@ -2620,7 +2614,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
           <DropdownMenuSubTrigger>
             <span className="flex-1">Captions</span>
             <Badge variant="outline" className="rounded-sm">
-              {getCurrentSubtitleLabel()}
+              {selectedSubtitleLabel}
             </Badge>
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent>

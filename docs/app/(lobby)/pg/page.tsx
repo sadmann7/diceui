@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import MediaPlayerHslDemo from "@/registry/default/examples/media-player-hsl-demo";
+import MediaPlayerHslDemo from "@/registry/default/examples/media-player-hls-demo";
 import {
   Combobox,
   ComboboxAnchor,
