@@ -237,15 +237,17 @@ const TimezoneCard = React.forwardRef<HTMLDivElement, TimezoneCardProps>(
         aria-label={`Time in ${timezoneName}: ${formattedDate} ${formattedTime}`}
         {...cardProps}
         ref={forwardedRef}
-        className="grid grid-cols-[auto_1fr_auto] items-center gap-2 text-muted-foreground text-sm"
+        className="flex items-center justify-between gap-2 text-muted-foreground text-sm"
       >
         <span className="w-fit rounded bg-accent px-1 font-medium text-xs">
           {timezoneName}
         </span>
-        <time dateTime={date.toISOString()}>{formattedDate}</time>
-        <time className="tabular-nums" dateTime={date.toISOString()}>
-          {formattedTime}
-        </time>
+        <div className="flex items-center gap-2">
+          <time dateTime={date.toISOString()}>{formattedDate}</time>
+          <time className="tabular-nums" dateTime={date.toISOString()}>
+            {formattedTime}
+          </time>
+        </div>
       </div>
     );
   }
