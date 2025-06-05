@@ -4,12 +4,11 @@
   "dependencies": [
     "@radix-ui/react-slot",
     "lucide-react",
-    "media-chrome"
+    "media-chrome",
+    "@mux/mux-video-react"
   ],
   "registryDependencies": [
-    "badge",
     "button",
-    "dropdown-menu",
     "select",
     "slider",
     "tooltip"
@@ -17,7 +16,7 @@
   "files": [
     {
       "path": "examples/media-player-hls-demo.tsx",
-      "content": "import {\n  MediaPlayer,\n  MediaPlayerControls,\n  MediaPlayerFullscreen,\n  MediaPlayerLoading,\n  MediaPlayerOverlay,\n  MediaPlayerPlay,\n  MediaPlayerResolution,\n  MediaPlayerSeek,\n  MediaPlayerSettings,\n  MediaPlayerTime,\n  MediaPlayerVideo,\n  MediaPlayerVolume,\n} from \"@/registry/default/ui/media-player\";\n\nexport default function MediaPlayerHlsDemo() {\n  return (\n    <MediaPlayer className=\"w-full max-w-4xl\">\n      <MediaPlayerVideo\n        src=\"https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8\"\n        className=\"aspect-video\"\n      />\n      <MediaPlayerOverlay />\n      <MediaPlayerLoading className=\"bg-black/60\">\n        <div className=\"flex flex-col items-center gap-4\">\n          <div className=\"h-16 w-16 animate-spin rounded-full border-primary border-b-2\"></div>\n          <p className=\"font-semibold text-lg text-white\">\n            Loading HLS Stream...\n          </p>\n          <p className=\"text-sm text-white/70\">Detecting video qualities</p>\n        </div>\n      </MediaPlayerLoading>\n      <MediaPlayerControls className=\"flex-col items-start gap-2.5\">\n        <MediaPlayerSeek withTime className=\"w-full\" />\n        <div className=\"flex w-full items-center justify-between\">\n          <div className=\"flex items-center gap-2\">\n            <MediaPlayerPlay />\n            <MediaPlayerVolume expandable />\n            <MediaPlayerTime mode=\"remaining\" />\n          </div>\n          <div className=\"flex items-center gap-2\">\n            <MediaPlayerResolution />\n            <MediaPlayerSettings />\n            <MediaPlayerFullscreen />\n          </div>\n        </div>\n      </MediaPlayerControls>\n    </MediaPlayer>\n  );\n}\n",
+      "content": "import {\n  MediaPlayer,\n  MediaPlayerCaptions,\n  MediaPlayerControls,\n  MediaPlayerFullscreen,\n  MediaPlayerLoading,\n  MediaPlayerOverlay,\n  MediaPlayerPiP,\n  MediaPlayerPlay,\n  MediaPlayerSeek,\n  MediaPlayerSeekBackward,\n  MediaPlayerSeekForward,\n  MediaPlayerSettings,\n  MediaPlayerTime,\n  MediaPlayerVideo,\n  MediaPlayerVolume,\n  MediaPlayerVolumeIndicator,\n} from \"@/registry/default/ui/media-player\";\nimport MuxVideo from \"@mux/mux-video-react\";\n\nexport default function MediaPlayerHlsDemo() {\n  return (\n    <MediaPlayer autoHide>\n      <MediaPlayerVideo asChild>\n        <MuxVideo playbackId=\"A3VXy02VoUinw01pwyomEO3bHnG4P32xzV7u1j1FSzjNg\" />\n      </MediaPlayerVideo>\n      <MediaPlayerLoading />\n      <MediaPlayerVolumeIndicator />\n      <MediaPlayerControls className=\"flex-col items-start gap-2.5\">\n        <MediaPlayerOverlay />\n        <MediaPlayerSeek />\n        <div className=\"flex w-full items-center gap-2\">\n          <div className=\"flex flex-1 items-center gap-2\">\n            <MediaPlayerPlay />\n            <MediaPlayerSeekBackward />\n            <MediaPlayerSeekForward />\n            <MediaPlayerVolume expandable />\n            <MediaPlayerTime />\n          </div>\n          <div className=\"flex items-center gap-2\">\n            <MediaPlayerCaptions />\n            <MediaPlayerSettings />\n            <MediaPlayerPiP />\n            <MediaPlayerFullscreen />\n          </div>\n        </div>\n      </MediaPlayerControls>\n    </MediaPlayer>\n  );\n}\n",
       "type": "registry:example",
       "target": ""
     }

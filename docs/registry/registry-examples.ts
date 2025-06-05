@@ -521,7 +521,7 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "media-player-hsl-demo",
+    name: "media-player-hls-demo",
     type: "registry:example",
     dependencies: [
       "@radix-ui/react-slot",
@@ -532,7 +532,7 @@ export const examples: Registry["items"] = [
     registryDependencies: ["button", "select", "slider", "tooltip"],
     files: [
       {
-        path: "examples/media-player-hsl-demo.tsx",
+        path: "examples/media-player-hls-demo.tsx",
         type: "registry:example",
       },
     ],

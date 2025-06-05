@@ -51,7 +51,7 @@ export const Index: Record<string, any> = {
         type: "registry:component",
         target: ""
       },{
-        path: "registry/default/lib/composition.ts",
+        path: "registry/default/lib/compose-refs.ts",
         type: "registry:lib",
         target: ""
       }],
@@ -87,7 +87,7 @@ export const Index: Record<string, any> = {
         type: "registry:ui",
         target: ""
       },{
-        path: "registry/default/lib/composition.ts",
+        path: "registry/default/lib/compose-refs.ts",
         type: "registry:lib",
         target: ""
       }],
@@ -139,7 +139,7 @@ export const Index: Record<string, any> = {
         type: "registry:ui",
         target: ""
       },{
-        path: "registry/default/lib/composition.ts",
+        path: "registry/default/lib/compose-refs.ts",
         type: "registry:lib",
         target: ""
       }],
@@ -159,7 +159,7 @@ export const Index: Record<string, any> = {
         type: "registry:ui",
         target: ""
       },{
-        path: "registry/default/lib/composition.ts",
+        path: "registry/default/lib/compose-refs.ts",
         type: "registry:lib",
         target: ""
       }],
@@ -211,7 +211,7 @@ export const Index: Record<string, any> = {
         type: "registry:ui",
         target: ""
       },{
-        path: "registry/default/lib/composition.ts",
+        path: "registry/default/lib/compose-refs.ts",
         type: "registry:lib",
         target: ""
       }],
@@ -231,7 +231,7 @@ export const Index: Record<string, any> = {
         type: "registry:ui",
         target: ""
       },{
-        path: "registry/default/lib/composition.ts",
+        path: "registry/default/lib/compose-refs.ts",
         type: "registry:lib",
         target: ""
       }],
@@ -945,17 +945,17 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
-    "media-player-hsl-demo": {
-      name: "media-player-hsl-demo",
+    "media-player-hls-demo": {
+      name: "media-player-hls-demo",
       description: "",
       type: "registry:example",
       registryDependencies: ["button","select","slider","tooltip"],
       files: [{
-        path: "registry/default/examples/media-player-hsl-demo.tsx",
+        path: "registry/default/examples/media-player-hls-demo.tsx",
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/examples/media-player-hsl-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/media-player-hls-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",
