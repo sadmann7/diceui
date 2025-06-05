@@ -574,6 +574,8 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
           "relative isolate flex flex-col overflow-hidden rounded-lg bg-background outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
           "[:fullscreen_&]:flex [:fullscreen_&]:h-full [:fullscreen_&]:max-h-screen [:fullscreen_&]:flex-col [:fullscreen_&]:justify-between",
           "[&_[data-slider]::before]:-top-4 [&_[data-slider]::before]:-bottom-2 [&_[data-slider]::before]:absolute [&_[data-slider]::before]:inset-x-0 [&_[data-slider]::before]:z-10 [&_[data-slider]::before]:h-8 [&_[data-slider]::before]:cursor-pointer [&_[data-slider]::before]:content-[''] [&_[data-slider]]:relative",
+          "[&_video::cue]:!bottom-[15%] [&_video::cue]:!mb-0 [&_video::cue]:!top-auto [&_video::-webkit-media-text-track-display]:!bottom-[15%] [&_video::-webkit-media-text-track-display]:!mb-0 [&_video::-webkit-media-text-track-display]:!top-auto [&_video::-webkit-media-text-track-display]:text-center [&_video::cue]:text-center [&_video]:relative",
+          "[:fullscreen_&_video::cue]:!bottom-[12%] [:fullscreen_&_video::cue]:!top-auto [:fullscreen_&_video::-webkit-media-text-track-display]:!bottom-[12%] [:fullscreen_&_video::-webkit-media-text-track-display]:!top-auto",
           className,
         )}
       >
