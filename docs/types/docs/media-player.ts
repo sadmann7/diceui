@@ -299,17 +299,17 @@ export interface SeekProps
   tooltipThumbnailSrc?: string | ((time: number) => string);
 
   /**
-   * The variant of the tooltip display.
-   * - `time`: Shows only the seek time (e.g., "1:23")
-   * - `time-duration`: Shows time and duration (e.g., "1:23 / 5:00")
+   * The variant of the tooltip time display.
+   * - `current`: Shows only the current time (e.g., "1:23")
+   * - `progress`: Shows the current time and duration (e.g., "1:23 / 5:00")
    *
    * ```ts
-   * <MediaPlayer.Seek tooltipVariant="time-duration" />
+   * <MediaPlayer.Seek tooltipTimeVariant="progress" />
    * ```
    *
-   * @default "time"
+   * @default "current"
    */
-  tooltipVariant?: "time" | "time-duration";
+  tooltipTimeVariant?: "current" | "progress";
 
   /**
    * The distance in pixels from the seek bar to position the tooltip.

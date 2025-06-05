@@ -758,15 +758,13 @@ function MediaPlayerControls(props: MediaPlayerControlsProps) {
 
   return (
     <ControlsPrimitive
-      role="group"
       data-disabled={context.disabled ? "" : undefined}
       data-slot="media-player-controls"
       data-state={isFullscreen ? "fullscreen" : "windowed"}
       data-visible={context.controlsVisible ? "" : undefined}
       dir={context.dir}
       className={cn(
-        "dark pointer-events-none absolute right-0 bottom-0 left-0 z-50 flex items-center gap-2 px-4 py-3 opacity-0 transition-opacity duration-200 data-[visible]:pointer-events-auto data-[visible]:opacity-100",
-        "[:fullscreen_&]:px-6 [:fullscreen_&]:py-4",
+        "dark pointer-events-none absolute right-0 bottom-0 left-0 z-50 flex items-center gap-2 px-4 py-3 opacity-0 transition-opacity duration-200 data-[visible]:pointer-events-auto data-[visible]:opacity-100 [:fullscreen_&]:px-6 [:fullscreen_&]:py-4",
         className,
       )}
       {...controlsProps}
@@ -1147,7 +1145,7 @@ interface MediaPlayerSeekProps
   withoutChapter?: boolean;
   withoutTooltip?: boolean;
   tooltipThumbnailSrc?: string | ((time: number) => string);
-  tooltipVariant?: "time" | "time-duration";
+  tooltipTimeVariant?: "current" | "progress";
   tooltipSideOffset?: number;
   tooltipCollisionBoundary?: Element | Element[];
   tooltipCollisionPadding?:
@@ -1160,7 +1158,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     withTime = false,
     withoutChapter = false,
     withoutTooltip = false,
-    tooltipVariant = "time",
+    tooltipTimeVariant = "current",
     tooltipThumbnailSrc,
     tooltipSideOffset,
     tooltipCollisionPadding = SEEK_COLLISION_PADDING,
@@ -1820,13 +1818,12 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
                 <div
                   data-slot="media-player-seek-time"
                   className={cn(
-                    "whitespace-nowrap text-xs tabular-nums",
+                    "whitespace-nowrap text-center text-xs tabular-nums",
                     thumbnail && "pb-1.5",
                     !(thumbnail || currentChapterCue) && "px-2.5 py-1",
-                    "flex items-center",
                   )}
                 >
-                  {tooltipVariant === "time-duration"
+                  {tooltipTimeVariant === "progress"
                     ? `${formattedHoverTime} / ${formattedDuration}`
                     : formattedHoverTime}
                 </div>
@@ -1901,7 +1898,6 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
 
   return (
     <div
-      role="group"
       data-disabled={isDisabled ? "" : undefined}
       className={cn(
         "group flex items-center",
@@ -2022,7 +2018,7 @@ function MediaPlayerTime(props: MediaPlayerTimeProps) {
       )}
     >
       <span className="tabular-nums">{formattedCurrentTime}</span>
-      <span role="presentation" aria-hidden="true">
+      <span role="separator" aria-hidden="true" tabIndex={-1}>
         /
       </span>
       <span className="tabular-nums">{formattedDuration}</span>
