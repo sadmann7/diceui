@@ -197,6 +197,8 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
   }, []);
 
   const onVolumeIndicatorTrigger = React.useCallback(() => {
+    if (isMenuOpen) return;
+
     setShowVolumeIndicator(true);
 
     if (volumeIndicatorTimeoutRef.current) {
@@ -206,7 +208,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
     volumeIndicatorTimeoutRef.current = setTimeout(() => {
       setShowVolumeIndicator(false);
     }, 2000);
-  }, []);
+  }, [isMenuOpen]);
 
   const onControlsShow = React.useCallback(() => {
     setControlsVisible(true);
@@ -651,6 +653,11 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
         <span id={labelId} className="sr-only">
           {label ?? "Media player"}
         </span>
+        <span id={descriptionId} className="sr-only">
+          {isVideo
+            ? "Video player with custom controls for playback, volume, seeking, and more. Use space bar to play/pause, arrow keys (←/→) to seek, and arrow keys (↑/↓) to adjust volume."
+            : "Audio player with custom controls for playback, volume, seeking, and more. Use space bar to play/pause, Shift + arrow keys (←/→) to seek, and arrow keys (↑/↓) to adjust volume."}
+        </span>
         {children}
         <MediaPlayerVolumeIndicator />
       </RootPrimitive>
@@ -663,7 +670,7 @@ interface MediaPlayerVideoProps extends React.ComponentProps<"video"> {
 }
 
 function MediaPlayerVideo(props: MediaPlayerVideoProps) {
-  const { asChild, children, ref, ...videoProps } = props;
+  const { asChild, ref, ...videoProps } = props;
 
   const context = useMediaPlayerContext("MediaPlayerVideo");
   const dispatch = useMediaDispatch();
@@ -699,14 +706,7 @@ function MediaPlayerVideo(props: MediaPlayerVideoProps) {
       id={context.mediaId}
       ref={composedRef}
       onClick={onPlayToggle}
-    >
-      {children}
-      <span id={context.descriptionId} className="sr-only">
-        Video player with custom controls for playback, volume, seeking, and
-        more. Use space bar to play/pause, arrow keys (←/→) to seek, and arrow
-        keys (↑/↓) to adjust volume.
-      </span>
-    </VideoPrimitive>
+    />
   );
 }
 
@@ -715,7 +715,7 @@ interface MediaPlayerAudioProps extends React.ComponentProps<"audio"> {
 }
 
 function MediaPlayerAudio(props: MediaPlayerAudioProps) {
-  const { asChild, children, ref, ...audioProps } = props;
+  const { asChild, ref, ...audioProps } = props;
 
   const context = useMediaPlayerContext("MediaPlayerAudio");
   const mediaRefCallback = useMediaRef();
@@ -731,14 +731,7 @@ function MediaPlayerAudio(props: MediaPlayerAudioProps) {
       {...audioProps}
       id={context.mediaId}
       ref={composedRef}
-    >
-      {children}
-      <span id={context.descriptionId} className="sr-only">
-        Audio player with custom controls for playback, volume, seeking, and
-        more. Use space bar to play/pause, Shift + arrow keys (←/→) to seek, and
-        arrow keys (↑/↓) to adjust volume.
-      </span>
-    </AudioPrimitive>
+    />
   );
 }
 
