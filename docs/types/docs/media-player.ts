@@ -145,6 +145,20 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   tooltipSideOffset?: number;
 
   /**
+   * Whether to enable auto-hiding behavior for `MediaPlayer.Controls` and `MediaPlayer.Overlay`.
+   *
+   * Controls will show on pause/interaction and auto-hide after 3 seconds
+   * of inactivity during playback. Also hides immediately on mouse leave.
+   *
+   * @default false
+   *
+   * ```ts
+   * <MediaPlayer autohide />
+   * ```
+   */
+  autohide?: boolean;
+
+  /**
    * Whether the media player controls are disabled.
    * @default false
    *

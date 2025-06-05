@@ -89,6 +89,7 @@ interface MediaPlayerContextValue {
   disabled: boolean;
   withoutTooltip: boolean;
   isVideo: boolean;
+  isControlsVisible: boolean;
 }
 
 const MediaPlayerContext = React.createContext<MediaPlayerContextValue | null>(
@@ -117,6 +118,7 @@ interface MediaPlayerRootProps
   label?: string;
   tooltipSideOffset?: number;
   asChild?: boolean;
+  autohide?: boolean;
   disabled?: boolean;
   withoutTooltip?: boolean;
 }
@@ -143,6 +145,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
     label,
     tooltipSideOffset = FLOATING_MENU_SIDE_OFFSET,
     asChild,
+    autohide = false,
     disabled = false,
     withoutTooltip = false,
     children,
@@ -166,12 +169,18 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
   );
 
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+
+  const [isControlsVisible, setIsControlsVisible] = React.useState(true);
+  const hideControlsTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  const lastMouseMoveRef = React.useRef<number>(Date.now());
+
   const [showVolumeIndicator, setShowVolumeIndicator] = React.useState(false);
   const volumeIndicatorTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   const [mounted, setMounted] = React.useState(false);
   React.useLayoutEffect(() => setMounted(true), []);
 
+  const mediaPaused = useMediaSelector((state) => state.mediaPaused ?? true);
   const isFullscreen = useMediaSelector(
     (state) => state.mediaIsFullscreen ?? false,
   );
@@ -199,37 +208,57 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
     }, 2000);
   }, []);
 
-  const contextValue = React.useMemo<MediaPlayerContextValue>(
-    () => ({
-      mediaId,
-      labelId,
-      descriptionId,
-      dir,
-      rootRef,
-      mediaRef,
-      isMenuOpen,
-      setIsMenuOpen,
-      showVolumeIndicator,
-      portalContainer,
-      tooltipSideOffset,
-      disabled,
-      isVideo,
-      withoutTooltip,
-    }),
-    [
-      mediaId,
-      labelId,
-      descriptionId,
-      dir,
-      isMenuOpen,
-      showVolumeIndicator,
-      portalContainer,
-      tooltipSideOffset,
-      disabled,
-      isVideo,
-      withoutTooltip,
-    ],
+  const onControlsShow = React.useCallback(() => {
+    setIsControlsVisible(true);
+    lastMouseMoveRef.current = Date.now();
+
+    if (hideControlsTimeoutRef.current) {
+      clearTimeout(hideControlsTimeoutRef.current);
+    }
+
+    if (autohide && !mediaPaused && !isMenuOpen) {
+      hideControlsTimeoutRef.current = setTimeout(() => {
+        setIsControlsVisible(false);
+      }, 3000);
+    }
+  }, [autohide, mediaPaused, isMenuOpen]);
+
+  const onMouseLeave = React.useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      rootImplProps.onMouseLeave?.(event);
+
+      if (event.defaultPrevented) return;
+
+      if (autohide && !mediaPaused && !isMenuOpen) {
+        setIsControlsVisible(false);
+      }
+    },
+    [autohide, mediaPaused, isMenuOpen, rootImplProps.onMouseLeave],
   );
+
+  const onMouseMove = React.useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      rootImplProps.onMouseMove?.(event);
+
+      if (event.defaultPrevented) return;
+
+      if (autohide) {
+        onControlsShow();
+      }
+    },
+    [autohide, rootImplProps.onMouseMove, onControlsShow],
+  );
+
+  React.useEffect(() => {
+    if (mediaPaused || isMenuOpen) {
+      setIsControlsVisible(true);
+      if (hideControlsTimeoutRef.current) {
+        clearTimeout(hideControlsTimeoutRef.current);
+      }
+    } else if (autohide) {
+      onControlsShow();
+    }
+  }, [mediaPaused, isMenuOpen, autohide, onControlsShow]);
 
   React.useEffect(() => {
     const mediaElement = mediaRef.current;
@@ -283,6 +312,9 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
     return () => {
       if (volumeIndicatorTimeoutRef.current) {
         clearTimeout(volumeIndicatorTimeoutRef.current);
+      }
+      if (hideControlsTimeoutRef.current) {
+        clearTimeout(hideControlsTimeoutRef.current);
       }
     };
   }, []);
@@ -536,8 +568,8 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
     [
       dispatch,
       rootImplProps.onKeyDown,
-      onPipError,
       onVolumeIndicatorTrigger,
+      onPipError,
       disabled,
     ],
   );
@@ -554,6 +586,40 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
     [rootImplProps.onKeyUp, onVolumeIndicatorTrigger],
   );
 
+  const contextValue = React.useMemo<MediaPlayerContextValue>(
+    () => ({
+      mediaId,
+      labelId,
+      descriptionId,
+      dir,
+      rootRef,
+      mediaRef,
+      isMenuOpen,
+      setIsMenuOpen,
+      showVolumeIndicator,
+      portalContainer,
+      tooltipSideOffset,
+      disabled,
+      isVideo,
+      isControlsVisible,
+      withoutTooltip,
+    }),
+    [
+      mediaId,
+      labelId,
+      descriptionId,
+      dir,
+      isMenuOpen,
+      showVolumeIndicator,
+      portalContainer,
+      tooltipSideOffset,
+      disabled,
+      isVideo,
+      isControlsVisible,
+      withoutTooltip,
+    ],
+  );
+
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
@@ -563,19 +629,22 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
         aria-describedby={descriptionId}
         aria-disabled={disabled}
         data-disabled={disabled ? "" : undefined}
+        data-controls-visible={isControlsVisible ? "" : undefined}
         data-slot="media-player"
         data-state={isFullscreen ? "fullscreen" : "windowed"}
         dir={dir}
         tabIndex={disabled ? undefined : 0}
         {...rootImplProps}
         ref={composedRef}
+        onMouseLeave={onMouseLeave}
+        onMouseMove={onMouseMove}
         onKeyDown={onKeyDown}
         onKeyUp={onKeyUp}
         className={cn(
           "dark relative isolate flex flex-col overflow-hidden rounded-lg bg-background outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
           "[:fullscreen_&]:flex [:fullscreen_&]:h-full [:fullscreen_&]:max-h-screen [:fullscreen_&]:flex-col [:fullscreen_&]:justify-between",
           "[&_[data-slider]::before]:-top-4 [&_[data-slider]::before]:-bottom-2 [&_[data-slider]::before]:absolute [&_[data-slider]::before]:inset-x-0 [&_[data-slider]::before]:z-10 [&_[data-slider]::before]:h-8 [&_[data-slider]::before]:cursor-pointer [&_[data-slider]::before]:content-[''] [&_[data-slider]]:relative",
-          "[&_video::cue]:!bottom-[11%] [&_video::cue]:!mb-0 [&_video::cue]:!top-auto [&_video::-webkit-media-text-track-display]:!bottom-[11%] [&_video::-webkit-media-text-track-display]:!mb-0 [&_video::-webkit-media-text-track-display]:!top-auto data-[state=fullscreen]:[&_video::cue]:!bottom-[9%] data-[state=fullscreen]:[&_video::-webkit-media-text-track-display]:!bottom-[9%] [&_video::-webkit-media-text-track-display]:text-center [&_video::cue]:text-center [&_video]:relative",
+          "[&_video::cue]:!bottom-[11%] [&_video::cue]:!mb-0 [&_video::cue]:!top-auto [&_video::-webkit-media-text-track-display]:!bottom-[11%] [&_video::-webkit-media-text-track-display]:!mb-0 [&_video::-webkit-media-text-track-display]:!top-auto data-[state=fullscreen]:[&_video::cue]:!bottom-[9%] data-[state=fullscreen]:[&_video::-webkit-media-text-track-display]:!bottom-[9%] data-[controls-visible]:[&_video::cue]:!bottom-[11%] data-[controls-visible]:[&_video::-webkit-media-text-track-display]:!bottom-[11%] data-[state=fullscreen]:data-[controls-visible]:[&_video::cue]:!bottom-[9%] data-[state=fullscreen]:data-[controls-visible]:[&_video::-webkit-media-text-track-display]:!bottom-[9%] [&_video::cue]:!bottom-[4%] [&_video::-webkit-media-text-track-display]:!bottom-[4%] data-[state=fullscreen]:[&_video::cue]:!bottom-[3%] data-[state=fullscreen]:[&_video::-webkit-media-text-track-display]:!bottom-[3%] [&_video::-webkit-media-text-track-display]:text-center [&_video::cue]:text-center [&_video]:relative",
           className,
         )}
       >
@@ -693,9 +762,10 @@ function MediaPlayerControls(props: MediaPlayerControlsProps) {
       data-disabled={context.disabled ? "" : undefined}
       data-slot="media-player-controls"
       data-state={isFullscreen ? "fullscreen" : "windowed"}
+      data-visible={context.isControlsVisible ? "" : undefined}
       dir={context.dir}
       className={cn(
-        "dark absolute right-0 bottom-0 left-0 z-50 flex items-center gap-2 px-4 py-3",
+        "dark pointer-events-none absolute right-0 bottom-0 left-0 z-50 flex items-center gap-2 px-4 py-3 opacity-0 transition-opacity duration-300 data-[visible]:pointer-events-auto data-[visible]:opacity-100",
         "[:fullscreen_&]:px-6 [:fullscreen_&]:py-4",
         className,
       )}
@@ -711,6 +781,7 @@ interface MediaPlayerOverlayProps extends React.ComponentProps<"div"> {
 function MediaPlayerOverlay(props: MediaPlayerOverlayProps) {
   const { asChild, className, ...overlayProps } = props;
 
+  const context = useMediaPlayerContext("MediaPlayerOverlay");
   const isFullscreen = useMediaSelector(
     (state) => state.mediaIsFullscreen ?? false,
   );
@@ -721,9 +792,10 @@ function MediaPlayerOverlay(props: MediaPlayerOverlayProps) {
     <OverlayPrimitive
       data-slot="media-player-overlay"
       data-state={isFullscreen ? "fullscreen" : "windowed"}
+      data-visible={context.isControlsVisible ? "" : undefined}
       {...overlayProps}
       className={cn(
-        "-z-10 absolute inset-0 bg-gradient-to-t from-black/80 to-transparent",
+        "pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-black/80 to-transparent opacity-0 transition-opacity duration-300 data-[visible]:opacity-100",
         className,
       )}
     />

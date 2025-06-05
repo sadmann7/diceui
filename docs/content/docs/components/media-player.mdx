@@ -181,6 +181,10 @@ The main container component for the media player.
 <DataAttributesTable
   attributes={[
     {
+      title: "[data-controls-visible]",
+      value: "Present when the controls are visible.",
+    },
+    {
       title: "[data-disabled]",
       value: "Present when the media player is disabled.",
     },
@@ -228,6 +232,10 @@ A container for the media player controls.
       title: "[data-state]",
       value: ["fullscreen", "windowed"],
     },
+    {
+      title: "[data-visible]",
+      value: "Present when the controls are visible.",
+    },
   ]}
 />
 
@@ -245,6 +253,10 @@ A gradient overlay displayed over the video, typically at the bottom where contr
     {
       title: "[data-state]",
       value: ["fullscreen", "windowed"],
+    },
+    {
+      title: "[data-visible]",
+      value: "Present when the controls are visible.",
     },
   ]}
 />
