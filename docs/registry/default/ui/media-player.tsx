@@ -193,7 +193,11 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
 
   const isVideo = React.useMemo(() => {
     if (!mediaRef.current) return false;
-    return mediaRef.current instanceof HTMLVideoElement;
+
+    return (
+      mediaRef.current instanceof HTMLVideoElement ||
+      mediaRef.current.tagName?.toLowerCase() === "mux-player"
+    );
   }, []);
 
   const onVolumeIndicatorTrigger = React.useCallback(() => {
@@ -794,13 +798,13 @@ function MediaPlayerOverlay(props: MediaPlayerOverlayProps) {
 }
 
 interface MediaPlayerLoadingProps extends React.ComponentProps<"div"> {
-  delay?: number;
+  delayMs?: number;
   asChild?: boolean;
 }
 
 function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
   const {
-    delay = LOADING_DELAY_MS,
+    delayMs = LOADING_DELAY_MS,
     asChild,
     className,
     children,
@@ -823,13 +827,13 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
     const shouldShowLoading = isLoading && !isPaused;
 
     if (shouldShowLoading) {
-      const loadingDelay = hasPlayed ? delay : 0;
+      const loadingDelayMs = hasPlayed ? delayMs : 0;
 
-      if (loadingDelay > 0) {
+      if (loadingDelayMs > 0) {
         timeoutRef.current = setTimeout(() => {
           setShouldRender(true);
           timeoutRef.current = null;
-        }, loadingDelay);
+        }, loadingDelayMs);
       } else {
         setShouldRender(true);
       }
@@ -843,7 +847,7 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
         timeoutRef.current = null;
       }
     };
-  }, [isLoading, isPaused, hasPlayed, delay]);
+  }, [isLoading, isPaused, hasPlayed, delayMs]);
 
   React.useEffect(() => {
     return () => {
@@ -2439,7 +2443,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
   );
 
   const isDisabled = disabled || context.disabled;
-  const isSubtitlesActive = (mediaSubtitlesShowing ?? []).length > 0;
+  const isSubtitlesActive = mediaSubtitlesShowing.length > 0;
 
   const onPlaybackRateChange = React.useCallback(
     (rate: number) => {
@@ -2498,8 +2502,6 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
     );
     if (!currentRendition) return "Auto";
 
-    if (currentRendition.height && currentRendition.width)
-      return `${currentRendition.height}×${currentRendition.width}`;
     if (currentRendition.height) return `${currentRendition.height}p`;
     if (currentRendition.width) return `${currentRendition.width}p`;
     return currentRendition.id ?? "Auto";
@@ -2592,14 +2594,11 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
                   return bHeight - aHeight;
                 })
                 .map((rendition) => {
-                  const label =
-                    rendition.height && rendition.width
-                      ? `${rendition.height}×${rendition.width}`
-                      : rendition.height
-                        ? `${rendition.height}p`
-                        : rendition.width
-                          ? `${rendition.width}p`
-                          : (rendition.id ?? "Unknown");
+                  const label = rendition.height
+                    ? `${rendition.height}p`
+                    : rendition.width
+                      ? `${rendition.width}p`
+                      : (rendition.id ?? "Unknown");
 
                   const selected = rendition.id === mediaRenditionSelected;
 

@@ -28,7 +28,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import MediaPlayerHslDemo from "@/registry/default/examples/media-player-hsl-demo";
-import MediaPlayerSettingsDemo from "@/registry/default/examples/media-player-settings-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -44,7 +43,6 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <MediaPlayerSettingsDemo />
       <MediaPlayerHslDemo />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>

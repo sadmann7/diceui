@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   MediaPlayer,
   MediaPlayerCaptions,
@@ -16,21 +17,23 @@ import {
   MediaPlayerVolume,
   MediaPlayerVolumeIndicator,
 } from "@/registry/default/ui/media-player";
-import MuxVideo from "@mux/mux-video-react";
+import dynamic from "next/dynamic.js";
+
+const MuxPlayer = dynamic(() => import("@mux/mux-player-react"), {
+  ssr: false,
+  loading: () => <Skeleton className="aspect-video w-full" />,
+});
 
 export default function MediaPlayerHslDemo() {
   return (
     <MediaPlayer autoHide>
       <MediaPlayerVideo asChild>
-        <MuxVideo
+        <MuxPlayer
           playbackId="Sc89iWAyNkhJ3P1rQ02nrEdCFTnfT01CZ2KmaEcxXfB008"
           metadata={{
             video_id: "hls-demo",
             video_title: "HSL Streaming Demo",
           }}
-          streamType="on-demand"
-          crossOrigin=""
-          playsInline
         />
       </MediaPlayerVideo>
       <MediaPlayerLoading />

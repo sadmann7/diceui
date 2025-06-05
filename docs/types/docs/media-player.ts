@@ -201,7 +201,18 @@ export interface LoadingProps extends EmptyProps<"div">, CompositionProps {
    *
    * @default 500
    */
-  delay?: number;
+  delayMs?: number;
+
+  /**
+   * Whether to force mount the loading indicator.
+   *
+   * ```ts
+   * <MediaPlayer.Loading forceMount />
+   * ```
+   *
+   * @default false
+   */
+  forceMount?: boolean;
 }
 
 export interface VolumeIndicatorProps
