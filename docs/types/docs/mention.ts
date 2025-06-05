@@ -13,25 +13,25 @@ export type RootProps = Omit<MentionRootProps, keyof ControlledProps<"div">>;
 
 export type LabelProps = Omit<
   MentionLabelProps,
-  keyof React.ComponentPropsWithoutRef<"label">
+  keyof React.ComponentProps<"label">
 >;
 
 export type InputProps = Omit<
   MentionInputProps,
-  keyof React.ComponentPropsWithoutRef<"input">
+  keyof React.ComponentProps<"input">
 >;
 
 export type ContentProps = Omit<
   MentionContentProps,
-  keyof React.ComponentPropsWithoutRef<"div">
+  keyof React.ComponentProps<"div">
 >;
 
 export type ItemProps = Omit<
   MentionItemProps,
-  keyof React.ComponentPropsWithoutRef<"div">
+  keyof React.ComponentProps<"div">
 >;
 
 export type PortalProps = Omit<
   MentionPortalProps,
-  keyof React.ComponentPropsWithoutRef<"div">
+  keyof React.ComponentProps<"div">
 >;

@@ -3,6 +3,7 @@ title: Media Player
 description: A fully featured media player component supporting video and audio playback with custom controls.
 preview: true
 links:
+  docs: https://www.media-chrome.org/docs/en/get-started
   api: /docs/components/media-player#api-reference
 ---
 
@@ -12,9 +13,52 @@ links:
 
 ### CLI
 
-```package-install
-npx shadcn@latest add "https://diceui.com/r/media-player"
-```
+<Steps>
+  <Step>
+    Install the following dependencies:
+
+    ```package-install
+    npx shadcn@latest add "https://diceui.com/r/media-player"
+    ```
+  </Step>
+  <Step>
+    Update `DropdownMenuPortal` and `TooltipPortal` to add the container prop.
+
+    **DropdownMenu Update:**
+    ```diff
+    function DropdownMenuContent({
+      className,
+    + container,
+      sideOffset = 4,
+      ...props
+    -}: React.ComponentProps<typeof DropdownMenuPrimitive.Content>) {
+    +}: React.ComponentProps<typeof DropdownMenuPrimitive.Content> & {
+    +  container?: DropdownMenuPrimitive.DropdownMenuPortalProps["container"];
+    +}) {
+      return (
+    -    <DropdownMenuPrimitive.Portal>
+    +    <DropdownMenuPrimitive.Portal container={container}>
+    ```
+
+    **Tooltip Update:**
+    ```diff
+    function TooltipContent({
+      className,
+      sideOffset = 0,
+    + container,
+      children,
+      ...props
+    -}: React.ComponentProps<typeof TooltipPrimitive.Content>) {
+    +}: React.ComponentProps<typeof TooltipPrimitive.Content> & {
+    +  container?: TooltipPrimitive.TooltipPortalProps["container"];
+    +}) {
+      return (
+    -    <TooltipPrimitive.Portal>
+    +    <TooltipPrimitive.Portal container={container}>
+    ```
+  </Step>
+</Steps>
+
 
 ### Manual
 
@@ -25,6 +69,42 @@ npx shadcn@latest add "https://diceui.com/r/media-player"
      ```package-install
      @radix-ui/react-slot @radix-ui/react-slider @radix-ui/react-tooltip lucide-react
      ```
+  </Step>
+  <Step>
+    Update `DropdownMenuPortal` and `TooltipPortal` to add the container prop.
+
+    **DropdownMenu Update:**
+    ```diff
+    function DropdownMenuContent({
+      className,
+    + container,
+      sideOffset = 4,
+      ...props
+    -}: React.ComponentProps<typeof DropdownMenuPrimitive.Content>) {
+    +}: React.ComponentProps<typeof DropdownMenuPrimitive.Content> & {
+    +  container?: DropdownMenuPrimitive.DropdownMenuPortalProps["container"];
+    +}) {
+      return (
+    -    <DropdownMenuPrimitive.Portal>
+    +    <DropdownMenuPrimitive.Portal container={container}>
+    ```
+
+    **Tooltip Update:**
+    ```diff
+    function TooltipContent({
+      className,
+      sideOffset = 0,
+    + container,
+      children,
+      ...props
+    -}: React.ComponentProps<typeof TooltipPrimitive.Content>) {
+    +}: React.ComponentProps<typeof TooltipPrimitive.Content> & {
+    +  container?: TooltipPrimitive.TooltipPortalProps["container"];
+    +}) {
+      return (
+    -    <TooltipPrimitive.Portal>
+    +    <TooltipPrimitive.Portal container={container}>
+    ```
   </Step>
   <Step>
   Copy the refs composition utilities into your `lib/compose-refs.ts` file.
@@ -51,6 +131,7 @@ import * as MediaPlayer from "@/components/ui/media-player";
     <source src="..." type="video/mp4" />
   </MediaPlayer.Video>
   <MediaPlayer.Overlay />
+  <MediaPlayer.Loading />
   <MediaPlayer.Controls>
     <MediaPlayer.Play />
     <MediaPlayer.Volume />
@@ -74,6 +155,18 @@ Use the `Audio` component instead of `Video` for audio playback.
 
 <ComponentTabs name="media-player-audio-demo" className="block" />
 
+### With Settings Menu
+
+Media player with a settings menu with playback speed, caption option, and resolution selector.
+
+<ComponentTabs name="media-player-settings-demo" className="block " />
+
+### With Playlist
+
+A media player example that includes a playlist, similar to music streaming applications.
+
+<ComponentTabs name="media-player-playlist-demo" />
+
 ## API Reference
 
 ### Root
@@ -88,8 +181,16 @@ The main container component for the media player.
 <DataAttributesTable
   attributes={[
     {
+      title: "[data-controls-visible]",
+      value: "Present when the controls are visible.",
+    },
+    {
       title: "[data-disabled]",
       value: "Present when the media player is disabled.",
+    },
+    {
+      title: "[data-state]",
+      value: ["fullscreen", "windowed"],
     },
   ]}
 />
@@ -131,6 +232,10 @@ A container for the media player controls.
       title: "[data-state]",
       value: ["fullscreen", "windowed"],
     },
+    {
+      title: "[data-visible]",
+      value: "Present when the controls are visible.",
+    },
   ]}
 />
 
@@ -149,7 +254,29 @@ A gradient overlay displayed over the video, typically at the bottom where contr
       title: "[data-state]",
       value: ["fullscreen", "windowed"],
     },
+    {
+      title: "[data-visible]",
+      value: "Present when the controls are visible.",
+    },
   ]}
+/>
+
+### Loading
+
+A loading indicator that appears when media is loading, similar to YouTube/Netflix style.
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="LoadingProps"
+/>
+
+### VolumeIndicator
+
+A volume indicator that appears when the volume is changed with keyboard interactions.
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="VolumeIndicatorProps"
 />
 
 ### Play
@@ -169,7 +296,7 @@ A button to play or pause the media.
     },
     {
       title: "[data-state]",
-      value: ["playing", "paused"],
+      value: ["on", "off"],
     },
   ]}
 />
@@ -225,8 +352,47 @@ A slider component to seek through the media playback.
       title: "[data-disabled]",
       value: "Present when the slider is disabled.",
     },
+    {
+      title: "[data-slot='media-player-seek-buffered']",
+      value: "The buffered progress indicator within the track.",
+    },
+    {
+      title: "[data-slot='media-player-seek-hover-range']",
+      value: "The hover preview range indicator.",
+    },
+    {
+      title: "[data-slot='media-player-seek-chapter-separator']",
+      value: "Chapter separators displayed on the track.",
+    },
+    {
+      title: "[data-slot='media-player-seek-thumbnail']",
+      value: "The thumbnail preview container in the tooltip.",
+    },
+    {
+      title: "[data-slot='media-player-seek-chapter-title']",
+      value: "The chapter title in the tooltip.",
+    },
+    {
+      title: "[data-slot='media-player-seek-time']",
+      value: "The time display in the tooltip.",
+    },
   ]}
 />
+
+#### Styling
+
+```tsx
+<MediaPlayer.Seek 
+  className={
+    cn(
+      "[&_[data-slot='media-player-seek-buffered']]:bg-primary/60",
+      "[&_[data-slot='media-player-seek-hover-range']]:bg-primary/70",
+      "[&_[data-slot='media-player-seek-chapter-separator']]:w-1 [&_[data-slot='media-player-seek-chapter-separator']]:bg-muted",
+      "[&_[data-slot='media-player-seek-thumbnail']]:border-2 [&_[data-slot='media-player-seek-thumbnail']]:border-ring"
+    )
+  }
+/>
+```
 
 ### Volume
 
@@ -245,7 +411,7 @@ A slider component to control the media volume.
     },
     {
       title: "[data-state]",
-      value: ["muted", "unmuted"],
+      value: ["on", "off"],
       description: "Present on the mute button."
     },
   ]}
@@ -295,7 +461,7 @@ A button to toggle loop mode.
     },
     {
       title: "[data-state]",
-      value: ["off", "all", "one"],
+      value: ["on", "off"],
     },   
   ]}
 />
@@ -317,7 +483,7 @@ A button to toggle fullscreen mode.
     },
     {
       title: "[data-state]",
-      value: ["fullscreen", "windowed"],
+      value: ["on", "off"],
     },
   ]}
 />
@@ -339,7 +505,7 @@ A button to toggle picture in picture mode (video only).
     },
     {
       title: "[data-state]",
-      value: ["pip", "inline"],
+      value: ["on", "off"],
     },
   ]}
 />
@@ -361,7 +527,7 @@ A button to toggle captions or subtitles (video only).
     },
     {
       title: "[data-state]",
-      value: ["active", "inactive"],
+      value: ["on", "off"],
     },
   ]}
 />
@@ -384,6 +550,36 @@ A button to download the media file.
   ]}
 />
 
+### Settings
+
+A dropdown menu with playback speed selector, caption selector, and resolution selector.
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="SettingsProps"
+/>
+
+**Features:**
+- Playback speed control with customizable speeds
+- Video quality/resolution selection (when available)
+- Captions/subtitles control
+- Organized in a clean dropdown interface
+
+```tsx
+<MediaPlayer.Settings 
+  speeds={[0.5, 0.75, 1, 1.25, 1.5, 2]}
+/>
+```
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the button is disabled.",
+    },
+  ]}
+/>
+
 ## Accessibility
 
 ### Keyboard Interactions
@@ -395,7 +591,7 @@ A button to download the media file.
       description: "Toggles play/pause.",
     },
     {
-      keys: ["ArrowRight",],
+      keys: ["ArrowRight"],
       description: "Seeks forward 5 seconds (video only).",
     },
     {
@@ -404,11 +600,11 @@ A button to download the media file.
     },
     {
       keys: ["J"],
-      description: "Seeks forward 10 seconds (video only).",
+      description: "Seeks backward 10 seconds (video only).",
     },
     {
-      keys: ["K"],
-      description: "Seeks backward 10 seconds (video only).",
+      keys: ["L"],
+      description: "Seeks forward 10 seconds (video only).",
     },
     {
       keys: ["Shift + ArrowRight"],
@@ -419,12 +615,24 @@ A button to download the media file.
       description: "Seeks backward 5 seconds (audio only).",
     },
     {
+      keys: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
+      description: "Seeks to 0%-90% of duration.",
+    },
+    {
+      keys: ["Home"],
+      description: "Seeks to beginning.",
+    },
+    {
+      keys: ["End"],
+      description: "Seeks to end.",
+    },
+    {
       keys: ["ArrowUp"],
-      description: "Increases volume.",
+      description: "Increases volume (video only).",
     },
     {
       keys: ["ArrowDown"],
-      description: "Decreases volume.",
+      description: "Decreases volume (video only).",
     },
     {
       keys: ["M"],
@@ -452,7 +660,7 @@ A button to download the media file.
     },
     {
       keys: ["C"],
-      description: "Toggles captions.",
+      description: "Toggles captions (video only, if available).",
     },
     {
       keys: ["P"],
@@ -460,7 +668,7 @@ A button to download the media file.
     },
     {
       keys: ["D"],
-      description: "Downloads the media file.",
+      description: "Downloads the media file (if download button is present).",
     },
   ]}
 /> 

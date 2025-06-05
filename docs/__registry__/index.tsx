@@ -153,7 +153,7 @@ export const Index: Record<string, any> = {
       name: "media-player",
       description: "",
       type: "registry:ui",
-      registryDependencies: ["button","select","slider","tooltip"],
+      registryDependencies: ["badge","button","select","slider","tooltip","dropdown-menu"],
       files: [{
         path: "registry/default/ui/media-player.tsx",
         type: "registry:ui",
@@ -924,6 +924,38 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/media-player-audio-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "media-player-settings-demo": {
+      name: "media-player-settings-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["badge","button","dropdown-menu","select","slider","tooltip"],
+      files: [{
+        path: "registry/default/examples/media-player-settings-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/media-player-settings-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "media-player-playlist-demo": {
+      name: "media-player-playlist-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","scroll-area","media-player"],
+      files: [{
+        path: "registry/default/examples/media-player-playlist-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/media-player-playlist-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",

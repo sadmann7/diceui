@@ -1,18 +1,17 @@
-import type { SelectTrigger } from "@/components/ui/select";
+import type { Button } from "@/components/ui/button";
+import type {
+  DropdownMenu,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import type { CompositionProps, EmptyProps } from "@/types";
 import type { Slider } from "@radix-ui/react-slider";
 
-export interface RootProps extends EmptyProps<"div">, CompositionProps {
-  /**
-   * The default volume level (0-1).
-   * @default 1
-   *
-   * ```ts
-   * <MediaPlayer defaultVolume={0.5} />
-   * ```
-   */
-  defaultVolume?: number;
+interface MediaPlayerDropdownMenuProps
+  extends React.ComponentProps<typeof DropdownMenuTrigger>,
+    React.ComponentProps<typeof Button>,
+    Omit<React.ComponentProps<typeof DropdownMenu>, "dir"> {}
 
+export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
    * Callback function triggered when the media starts playing.
    *
@@ -92,14 +91,14 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   onMuted?: (muted: boolean) => void;
 
   /**
-   * Callback function triggered when triggering picture in picture (PiP) mode.
+   * Callback function triggered when triggering picture in picture (PiP) state.
    *
    * The first argument is the unknown error that occurred.
-   * The second argument is the mode on which the error occurred.
+   * The second argument is the state on which the error occurred.
    * - `enter`: The error occurred when entering PIP.
    * - `exit`: The error occurred when exiting PIP.
    */
-  onPipError?: (error: unknown, mode: "enter" | "exit") => void;
+  onPipError?: (error: unknown, state: "enter" | "exit") => void;
 
   /**
    * Callback function triggered when the fullscreen state changes.
@@ -116,7 +115,6 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
 
   /**
    * The text direction of the component.
-   * @default "ltr"
    *
    * ```ts
    * // For RTL languages
@@ -127,28 +125,62 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
 
   /**
    * A label for the media player, used for accessibility.
-   * @default "Media player"
    *
    * ```ts
    * <MediaPlayer label="My custom video player" />
    * ```
+   *
+   * @default "Media player"
    */
   label?: string;
 
   /**
-   * Whether the media player controls are disabled.
-   * @default false
+   * The distance in pixels from the trigger to position the tooltip.
    *
    * ```ts
-   * // Disable player controls
-   * <MediaPlayer disabled />
+   * <MediaPlayer tooltipSideOffset={15} />
    * ```
+   *
+   * @default 10
+   */
+  tooltipSideOffset?: number;
+
+  /**
+   * Whether to enable auto-hiding behavior for controls and overlay components.
+   *
+   * Controls will show on pause/interaction and auto-hide after 3 seconds
+   * of inactivity during playback. Also hides immediately on mouse leave.
+   *
+   * ```ts
+   * <MediaPlayer autoHide />
+   * ```
+   *
+   * @default false
+   *
+   */
+  autoHide?: boolean;
+
+  /**
+   * Whether the media player controls are disabled.
    *
    * ```ts
    * <MediaPlayer disabled={isLoading} />
    * ```
+   *
+   * @default false
    */
   disabled?: boolean;
+
+  /**
+   * Whether to disable tooltips throughout the media player.
+   *
+   * ```ts
+   * <MediaPlayer withoutTooltip />
+   * ```
+   *
+   * @default false
+   */
+  withoutTooltip?: boolean;
 }
 
 export interface VideoProps extends EmptyProps<"video">, CompositionProps {}
@@ -159,6 +191,23 @@ export interface ControlsProps extends EmptyProps<"div">, CompositionProps {}
 
 export interface OverlayProps extends EmptyProps<"div">, CompositionProps {}
 
+export interface LoadingProps extends EmptyProps<"div">, CompositionProps {
+  /**
+   * The delay in milliseconds before showing the loading indicator.
+   *
+   * ```ts
+   * <MediaPlayer.Loading delay={400} />
+   * ```
+   *
+   * @default 500
+   */
+  delay?: number;
+}
+
+export interface VolumeIndicatorProps
+  extends EmptyProps<"div">,
+    CompositionProps {}
+
 export interface PlayProps extends EmptyProps<"button">, CompositionProps {}
 
 export interface SeekBackwardProps
@@ -166,12 +215,12 @@ export interface SeekBackwardProps
     CompositionProps {
   /**
    * The number of seconds to seek backward.
-   * @default 10
    *
    * ```ts
-   * // Seek backward 5 seconds
-   * <MediaPlayer.SeekBackward seconds={5} />
+   * <MediaPlayer.SeekBackward seconds={10} />
    * ```
+   *
+   * @default 5
    */
   seconds?: number;
 }
@@ -181,73 +230,207 @@ export interface SeekForwardProps
     CompositionProps {
   /**
    * The number of seconds to seek forward.
-   * @default 10
    *
    * ```ts
-   * // Seek forward 15 seconds
    * <MediaPlayer.SeekForward seconds={15} />
    * ```
+   *
+   * @default 10
    */
   seconds?: number;
 }
 
 export interface SeekProps
-  extends React.ComponentPropsWithoutRef<typeof Slider>,
+  extends Omit<
+      React.ComponentProps<typeof Slider>,
+      keyof React.ComponentProps<"div">
+    >,
     CompositionProps {
   /**
    * Whether to display the current time and remaining time alongside the seek bar.
-   * @default false
    *
    * ```ts
-   * // Show time display with seek bar
    * <MediaPlayer.Seek withTime />
    * ```
+   *
+   * @default false
    */
   withTime?: boolean;
+
+  /**
+   * Whether to show chapter markers on the seek bar.
+   *
+   * ```ts
+   * <MediaPlayer.Seek withoutChapter />
+   * ```
+   *
+   * @default true
+   */
+  withoutChapter?: boolean;
+
+  /**
+   * Whether to disable the seek tooltip entirely.
+   * This overrides the global `withoutTooltip` prop for this component.
+   *
+   * ```ts
+   * <MediaPlayer.Seek withoutTooltip />
+   * ```
+   *
+   * @default false
+   */
+  withoutTooltip?: boolean;
+
+  /**
+   * Custom preview thumbnail source for seek preview.
+   * Can be a string URL or a function that returns a URL based on time.
+   *
+   * ```ts
+   * // Static thumbnail
+   * <MediaPlayer.Seek tooltipThumbnailSrc="/thumbnail.jpg" />
+   * ```
+   *
+   * ```ts
+   * // Dynamic thumbnails
+   * <MediaPlayer.Seek
+   *   tooltipThumbnailSrc={(time) => `/thumbnails/${Math.floor(time)}.jpg`}
+   * />
+   * ```
+   */
+  tooltipThumbnailSrc?: string | ((time: number) => string);
+
+  /**
+   * The variant of the tooltip time display.
+   * - `current`: Shows only the current time (e.g., "1:23")
+   * - `progress`: Shows the current time and duration (e.g., "1:23 / 5:00")
+   *
+   * ```ts
+   * <MediaPlayer.Seek tooltipTimeVariant="progress" />
+   * ```
+   *
+   * @default "current"
+   */
+  tooltipTimeVariant?: "current" | "progress";
+
+  /**
+   * The distance in pixels from the seek bar to position the tooltip.
+   *
+   * ```ts
+   * <MediaPlayer.Seek tooltipSideOffset={15} />
+   * ```
+   *
+   * @default 10
+   */
+  tooltipSideOffset?: number;
+
+  /**
+   * Element(s) to use as collision boundaries for tooltip positioning.
+   * Defaults to the media player root element.
+   *
+   * ```ts
+   * // Single collision boundary
+   * <MediaPlayer.Seek tooltipCollisionBoundary={element} />
+   * ```
+   *
+   * ```ts
+   * // Multiple collision boundaries
+   * <MediaPlayer.Seek tooltipCollisionBoundary={[element1, element2]} />
+   * ```
+   */
+  tooltipCollisionBoundary?: Element | Element[];
+
+  /**
+   * The padding in pixels from the collision boundary for tooltip positioning.
+   * Can be a number for uniform padding or an object for per-side padding.
+   *
+   * ```ts
+   * // Uniform padding
+   * <MediaPlayer.Seek tooltipCollisionPadding={20} />
+   * ```
+   *
+   * ```ts
+   * // Per-side padding
+   * <MediaPlayer.Seek
+   *   tooltipCollisionPadding={{ top: 10, right: 15, bottom: 10, left: 15 }}
+   * />
+   * ```
+   *
+   * @default 10
+   */
+  tooltipCollisionPadding?:
+    | number
+    | Partial<Record<"top" | "right" | "bottom" | "left", number>>;
 }
 
 export interface VolumeProps
-  extends React.ComponentPropsWithoutRef<typeof Slider>,
+  extends Omit<
+      React.ComponentProps<typeof Slider>,
+      keyof React.ComponentProps<"div">
+    >,
     CompositionProps {
   /**
    * Whether the volume slider should expand on hover.
-   * @default false
    *
    * ```ts
-   * // Expand volume slider on hover
    * <MediaPlayer.Volume expandable />
    * ```
+   *
+   * @default false
    */
   expandable?: boolean;
 }
 
 export interface TimeProps extends EmptyProps<"div">, CompositionProps {
   /**
-   * The format mode for displaying time.
+   * The format variant for displaying time.
    * - `progress`: Shows "currentTime / duration" (e.g., "1:23 / 5:00").
    * - `remaining`: Shows the remaining time (e.g., "3:37").
    * - `duration`: Shows the total duration (e.g., "5:00").
-   * @default "progress"
    *
    * ```ts
-   * // Show remaining time
-   * <MediaPlayer.Time mode="remaining" />
+   * <MediaPlayer.Time variant="remaining" />
    * ```
+   *
+   * @default "progress"
    */
-  mode?: "progress" | "remaining" | "duration";
+  variant?: "progress" | "remaining" | "duration";
 }
 
 export interface PlaybackSpeedProps
-  extends EmptyProps<typeof SelectTrigger>,
+  extends Omit<
+      MediaPlayerDropdownMenuProps,
+      keyof React.ComponentProps<"button">
+    >,
     CompositionProps {
+  /**
+   * Whether the dropdown menu is open by default.
+   * @default false
+   */
+  defaultOpen?: boolean;
+
+  /**
+   * Whether the dropdown menu is open.
+   * @default false
+   */
+  open?: boolean;
+
+  /** Callback function triggered when the dropdown menu is opened or closed. */
+  onOpenChange?: (open: boolean) => void;
+
+  /**
+   * Whether the dropdown menu is modal.
+   * @default false
+   */
+  modal?: boolean;
+
+  /**
+   * The distance in pixels from the trigger to position the dropdown.
+   * @default 10
+   */
+  sideOffset?: number;
+
   /**
    * An array of playback speed options.
    * @default [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
-   *
-   * ```ts
-   * // Custom playback speeds
-   * <MediaPlayer.PlaybackSpeed speeds={[0.5, 1, 1.5, 2]} />
-   * ```
    */
   speeds?: number[];
 }
@@ -266,3 +449,76 @@ export interface FullscreenProps
 export interface CaptionsProps extends EmptyProps<"button">, CompositionProps {}
 
 export interface DownloadProps extends EmptyProps<"button">, CompositionProps {}
+
+export interface SettingsProps
+  extends Omit<PlaybackSpeedProps, keyof React.ComponentProps<"button">>,
+    CompositionProps {
+  /**
+   * The settings menu provides a unified interface for adjusting playback speed,
+   * video quality, and captions. It automatically detects available options
+   * and only shows relevant settings.
+   *
+   * Features:
+   * - Playback speed control (uses `speeds` prop)
+   * - Video quality selection (when multiple renditions available)
+   * - Captions/subtitles toggle and track selection
+   * - Organized in expandable submenus
+   *
+   * ```tsx
+   * // Basic usage with default speeds
+   * <MediaPlayer.Settings />
+   * ```
+   *
+   * ```tsx
+   * // Custom playback speeds
+   * <MediaPlayer.Settings speeds={[0.25, 0.5, 1, 1.5, 2]} />
+   * ```
+   *
+   * The component automatically adapts based on:
+   * - Available video renditions (HLS/DASH quality options)
+   * - Text tracks for captions/subtitles
+   * - Media type (video vs audio)
+   */
+}
+
+export interface PortalProps {
+  /**
+   * The content to render in the portal.
+   * This content will be rendered in the appropriate container
+   * based on the current fullscreen state.
+   */
+  children: React.ReactNode;
+}
+
+export interface TooltipProps extends React.ComponentProps<"div"> {
+  /**
+   * The tooltip text to display.
+   *
+   * ```tsx
+   * <MediaPlayer.Tooltip tooltip="Play video">
+   *   <button>▶</button>
+   * </MediaPlayer.Tooltip>
+   * ```
+   */
+  tooltip?: string;
+
+  /**
+   * Keyboard shortcut(s) to display in the tooltip.
+   * Can be a string for a single shortcut or an array for multiple shortcuts.
+   *
+   * ```tsx
+   * // Single shortcut
+   * <MediaPlayer.Tooltip tooltip="Play" shortcut="Space">
+   *   <button>▶</button>
+   * </MediaPlayer.Tooltip>
+   * ```
+   *
+   * ```tsx
+   * // Multiple shortcuts
+   * <MediaPlayer.Tooltip tooltip="Seek" shortcut={["←", "→"]}>
+   *   <button>Seek</button>
+   * </MediaPlayer.Tooltip>
+   * ```
+   */
+  shortcut?: string | string[];
+}

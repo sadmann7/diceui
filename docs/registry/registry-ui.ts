@@ -120,8 +120,15 @@ export const ui: Registry["items"] = [
   {
     name: "media-player",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "lucide-react"],
-    registryDependencies: ["button", "select", "slider", "tooltip"],
+    dependencies: ["@radix-ui/react-slot", "lucide-react", "media-chrome"],
+    registryDependencies: [
+      "badge",
+      "button",
+      "select",
+      "slider",
+      "tooltip",
+      "dropdown-menu",
+    ],
     files: [
       {
         path: "ui/media-player.tsx",

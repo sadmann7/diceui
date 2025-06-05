@@ -133,13 +133,16 @@
     "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot",
-      "lucide-react"
+      "lucide-react",
+      "media-chrome"
     ],
     "registryDependencies": [
+      "badge",
       "button",
       "select",
       "slider",
-      "tooltip"
+      "tooltip",
+      "dropdown-menu"
     ],
     "files": [
       {

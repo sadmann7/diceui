@@ -1,0 +1,25 @@
+{
+  "name": "media-player-advanced-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@radix-ui/react-slot",
+    "lucide-react",
+    "media-chrome"
+  ],
+  "registryDependencies": [
+    "badge",
+    "button",
+    "dropdown-menu",
+    "select",
+    "slider",
+    "tooltip"
+  ],
+  "files": [
+    {
+      "path": "examples/media-player-advanced-demo.tsx",
+      "content": "import {\n  MediaPlayer,\n  MediaPlayerCaptions,\n  MediaPlayerControls,\n  MediaPlayerDownload,\n  MediaPlayerFullscreen,\n  MediaPlayerLoading,\n  MediaPlayerLoop,\n  MediaPlayerOverlay,\n  MediaPlayerPiP,\n  MediaPlayerPlay,\n  MediaPlayerSeek,\n  MediaPlayerSeekBackward,\n  MediaPlayerSeekForward,\n  MediaPlayerSettings,\n  MediaPlayerTime,\n  MediaPlayerVideo,\n  MediaPlayerVolume,\n} from \"@/registry/default/ui/media-player\";\n\nexport default function MediaPlayerAdvancedDemo() {\n  return (\n    <MediaPlayer className=\"w-full max-w-4xl\">\n      <MediaPlayerVideo\n        src=\"https://stream.mux.com/Sc89iWAyNkhJ3P1rQ02nrEdCFTnfT01CZ2KmaEcxXfB008.m3u8\"\n        poster=\"https://image.mux.com/Sc89iWAyNkhJ3P1rQ02nrEdCFTnfT01CZ2KmaEcxXfB008/thumbnail.webp?time=13\"\n        preload=\"metadata\"\n        muted={false}\n        crossOrigin=\"anonymous\"\n        className=\"aspect-video\"\n      />\n      <MediaPlayerOverlay />\n      <MediaPlayerLoading />\n      <MediaPlayerControls className=\"flex-col items-start gap-2.5\">\n        <MediaPlayerSeek className=\"w-full\" />\n        <div className=\"flex w-full items-center justify-between\">\n          <div className=\"flex items-center gap-2\">\n            <MediaPlayerPlay />\n            <MediaPlayerSeekBackward seconds={10} />\n            <MediaPlayerSeekForward seconds={10} />\n            <MediaPlayerVolume expandable />\n            <MediaPlayerTime />\n          </div>\n          <div className=\"flex items-center gap-2\">\n            <MediaPlayerLoop />\n            <MediaPlayerCaptions />\n            <MediaPlayerSettings />\n            <MediaPlayerDownload />\n            <MediaPlayerPiP />\n            <MediaPlayerFullscreen />\n          </div>\n        </div>\n      </MediaPlayerControls>\n    </MediaPlayer>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}
