@@ -937,72 +937,75 @@ function onRafSchedule<T extends unknown[]>(
 function useResizeObserver(positioner: Positioner) {
   const [, setLayoutVersion] = React.useState(0);
 
-  if (typeof window === "undefined")
-    return {
-      disconnect: () => {},
-      observe: () => {},
-      unobserve: () => {},
-    };
-
-  const createResizeObserver = onDeepMemo(
-    [WeakMap],
-    (positioner: Positioner, onUpdate: () => void) => {
-      const updates: number[] = [];
-      const itemMap = new WeakMap<Element, number>();
-
-      const update = onRafSchedule(() => {
-        if (updates.length > 0) {
-          positioner.update(updates);
-          onUpdate();
-        }
-        updates.length = 0;
+  const createResizeObserver = React.useMemo(() => {
+    if (typeof window === "undefined") {
+      return () => ({
+        disconnect: () => {},
+        observe: () => {},
+        unobserve: () => {},
       });
+    }
 
-      function onItemResize(target: ItemElement) {
-        const height = target.offsetHeight;
-        if (height > 0) {
-          const index = itemMap.get(target);
-          if (index !== void 0) {
-            const position = positioner.get(index);
-            if (position !== void 0 && height !== position.height) {
-              updates.push(index, height);
+    return onDeepMemo(
+      [WeakMap],
+      (positioner: Positioner, onUpdate: () => void) => {
+        const updates: number[] = [];
+        const itemMap = new WeakMap<Element, number>();
+
+        const update = onRafSchedule(() => {
+          if (updates.length > 0) {
+            positioner.update(updates);
+            onUpdate();
+          }
+          updates.length = 0;
+        });
+
+        function onItemResize(target: ItemElement) {
+          const height = target.offsetHeight;
+          if (height > 0) {
+            const index = itemMap.get(target);
+            if (index !== void 0) {
+              const position = positioner.get(index);
+              if (position !== void 0 && height !== position.height) {
+                updates.push(index, height);
+              }
             }
           }
+          update();
         }
-        update();
-      }
 
-      const scheduledItemMap = new Map<
-        number,
-        OnRafScheduleReturn<[ItemElement]>
-      >();
-      function onResizeObserver(entries: ResizeObserverEntry[]) {
-        for (const entry of entries) {
-          if (!entry) continue;
-          const index = itemMap.get(entry.target);
+        const scheduledItemMap = new Map<
+          number,
+          OnRafScheduleReturn<[ItemElement]>
+        >();
+        function onResizeObserver(entries: ResizeObserverEntry[]) {
+          for (const entry of entries) {
+            if (!entry) continue;
+            const index = itemMap.get(entry.target);
 
-          if (index === void 0) continue;
-          let handler = scheduledItemMap.get(index);
-          if (!handler) {
-            handler = onRafSchedule(onItemResize);
-            scheduledItemMap.set(index, handler);
+            if (index === void 0) continue;
+            let handler = scheduledItemMap.get(index);
+            if (!handler) {
+              handler = onRafSchedule(onItemResize);
+              scheduledItemMap.set(index, handler);
+            }
+            handler(entry.target as ItemElement);
           }
-          handler(entry.target as ItemElement);
         }
-      }
 
-      const observer = new ResizeObserver(onResizeObserver);
-      const disconnect = observer.disconnect.bind(observer);
-      observer.disconnect = () => {
-        disconnect();
-        for (const [, scheduleItem] of scheduledItemMap) {
-          scheduleItem.cancel();
-        }
-      };
+        const observer = new ResizeObserver(onResizeObserver);
+        const disconnect = observer.disconnect.bind(observer);
+        observer.disconnect = () => {
+          disconnect();
+          for (const [, scheduleItem] of scheduledItemMap) {
+            scheduleItem.cancel();
+          }
+        };
 
-      return observer;
-    },
-  );
+        return observer;
+      },
+    );
+  }, []);
 
   const resizeObserver = createResizeObserver(positioner, () =>
     setLayoutVersion((prev) => prev + 1),

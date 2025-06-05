@@ -44,7 +44,7 @@ export const ui: Registry["items"] = [
         type: "registry:component",
       },
       {
-        path: "lib/composition.ts",
+        path: "lib/compose-refs.ts",
         type: "registry:lib",
       },
     ],
@@ -76,7 +76,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
       {
-        path: "lib/composition.ts",
+        path: "lib/compose-refs.ts",
         type: "registry:lib",
       },
     ],
@@ -112,7 +112,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
       {
-        path: "lib/composition.ts",
+        path: "lib/compose-refs.ts",
         type: "registry:lib",
       },
     ],
@@ -135,7 +135,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
       {
-        path: "lib/composition.ts",
+        path: "lib/compose-refs.ts",
         type: "registry:lib",
       },
     ],
@@ -173,7 +173,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
       {
-        path: "lib/composition.ts",
+        path: "lib/compose-refs.ts",
         type: "registry:lib",
       },
     ],
@@ -194,7 +194,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
       {
-        path: "lib/composition.ts",
+        path: "lib/compose-refs.ts",
         type: "registry:lib",
       },
     ],
