@@ -1,5 +1,11 @@
 # @diceui/combobox
 
+## 1.2.0
+
+### Minor Changes
+
+- 473a777: Prevent item selection on Enter when list is empty
+
 ## 1.1.0
 
 ### Minor Changes
