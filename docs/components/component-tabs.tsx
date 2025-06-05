@@ -54,16 +54,16 @@ export function ComponentTabs({
     <Tabs items={["Preview", "Code"]} className="rounded-md">
       <Tab
         value="Preview"
+        tabIndex={preventPreviewFocus ? -1 : 0}
         className={cn(
           "not-prose relative rounded-none",
           preventPreviewFocus &&
             "focus-visible:outline-hidden focus-visible:ring-0",
         )}
-        tabIndex={preventPreviewFocus ? -1 : 0}
       >
         <div
           className={cn(
-            "flex h-[400px] w-full justify-center p-10",
+            "flex h-[420px] w-full justify-center p-10",
             {
               "items-start": align === "start",
               "items-center": align === "center",
@@ -79,7 +79,10 @@ export function ComponentTabs({
           </React.Suspense>
         </div>
       </Tab>
-      <Tab value="Code" className="component-block rounded-none py-0">
+      <Tab
+        value="Code"
+        className="rounded-none py-0 **:[figure]:rounded-none **:[pre]:h-[424.5px] **:[pre]:px-4"
+      >
         {Code}
       </Tab>
     </Tabs>
