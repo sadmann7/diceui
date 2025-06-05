@@ -11,20 +11,11 @@ links:
 
 ## Installation
 
-### CLI
+> **Prerequisites:** Before installing the media player component, you'll need to update your existing shadcn/ui components to support portal containers.
 
 <Steps>
   <Step>
-    Install the following dependencies:
-
-    ```package-install
-    npx shadcn@latest add "https://diceui.com/r/media-player"
-    ```
-  </Step>
-  <Step>
-    Update `DropdownMenuPortal` and `TooltipPortal` to add the container prop.
-
-    **DropdownMenu Update:**
+    **DropdownMenu**
     ```diff
     function DropdownMenuContent({
       className,
@@ -39,8 +30,9 @@ links:
     -    <DropdownMenuPrimitive.Portal>
     +    <DropdownMenuPrimitive.Portal container={container}>
     ```
-
-    **Tooltip Update:**
+  </Step>
+  <Step>
+  **Tooltip**
     ```diff
     function TooltipContent({
       className,
@@ -59,52 +51,27 @@ links:
   </Step>
 </Steps>
 
+### CLI
+
+<Steps>
+  <Step>
+    After completing the prerequisite component updates, install the media player:
+
+    ```package-install
+    npx shadcn@latest add "https://diceui.com/r/media-player"
+    ```
+  </Step>
+</Steps>
 
 ### Manual
 
 <Steps>
   <Step>
-     Install the following dependencies:
+     After completing the prerequisite component updates, install the required dependencies:
 
      ```package-install
      @radix-ui/react-slot @radix-ui/react-slider @radix-ui/react-tooltip lucide-react
      ```
-  </Step>
-  <Step>
-    Update `DropdownMenuPortal` and `TooltipPortal` to add the container prop.
-
-    **DropdownMenu Update:**
-    ```diff
-    function DropdownMenuContent({
-      className,
-    + container,
-      sideOffset = 4,
-      ...props
-    -}: React.ComponentProps<typeof DropdownMenuPrimitive.Content>) {
-    +}: React.ComponentProps<typeof DropdownMenuPrimitive.Content> & {
-    +  container?: DropdownMenuPrimitive.DropdownMenuPortalProps["container"];
-    +}) {
-      return (
-    -    <DropdownMenuPrimitive.Portal>
-    +    <DropdownMenuPrimitive.Portal container={container}>
-    ```
-
-    **Tooltip Update:**
-    ```diff
-    function TooltipContent({
-      className,
-      sideOffset = 0,
-    + container,
-      children,
-      ...props
-    -}: React.ComponentProps<typeof TooltipPrimitive.Content>) {
-    +}: React.ComponentProps<typeof TooltipPrimitive.Content> & {
-    +  container?: TooltipPrimitive.TooltipPortalProps["container"];
-    +}) {
-      return (
-    -    <TooltipPrimitive.Portal>
-    +    <TooltipPrimitive.Portal container={container}>
-    ```
   </Step>
   <Step>
   Copy the refs composition utilities into your `lib/compose-refs.ts` file.
@@ -165,7 +132,7 @@ Media player with a settings menu with playback speed, caption option, and resol
 
 A media player example that includes a playlist, similar to music streaming applications.
 
-<ComponentTabs name="media-player-playlist-demo" />
+<ComponentTabs name="media-player-playlist-demo" fullPreview />
 
 ## API Reference
 

@@ -1,1 +1,1 @@
-export const ENABLE_REACT_SCAN = true;
+export const ENABLE_REACT_SCAN = false;

@@ -41,16 +41,12 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --color-subtle-foreground: var(--subtle-foreground);
-  --color-subtle-background: var(--subtle-background);
-  --color-canvas-foreground: var(--canvas-foreground);
-  --color-canvas: var(--canvas);
-  --color-dark-foreground: var(--dark-foreground);
-  --color-dark: var(--dark);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
   --animate-fade-up: fade-up 0.5s ease-out;
   --animate-fade-down: fade-down 0.5s ease-out;
 
@@ -118,8 +114,6 @@
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.705 0.015 286.067);
-  --subtle-background: oklch(0.98 0.0011 17.18);
-  --subtle-foreground: oklch(0.28 0.0117 248.25);
 }
 
 .dark {
@@ -156,8 +150,6 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.552 0.016 285.938);
-  --subtle-background: oklch(0.2 0.002 286.22);
-  --subtle-foreground: oklch(0.92 0.0063 255.48);
 }
 
 @layer base {
@@ -205,16 +197,6 @@
 
   @media (max-width: 640px) {
     @apply px-4;
-  }
-}
-
-@utility component-block {
-  & pre {
-    @apply max-h-[432.4px] px-4;
-  }
-
-  figure {
-    @apply rounded-none;
   }
 }
 
@@ -277,7 +259,7 @@
 }
 
 @layer components {
-  figure.not-prose {
+  [role="tabpanel"] figure.shiki {
     @apply rounded-none!;
   }
 
