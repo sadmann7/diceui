@@ -14,6 +14,10 @@ import { Slot } from "@radix-ui/react-slot";
 import { type VariantProps, cva } from "class-variance-authority";
 import * as React from "react";
 
+function pluralize(n: number, word: string) {
+  return `${n} ${word}${n === 1 ? "" : "s"}`;
+}
+
 function formatRelativeTime(date: Date): string {
   const now = new Date();
   const diff = now.getTime() - date.getTime();
@@ -24,28 +28,83 @@ function formatRelativeTime(date: Date): string {
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
   const days = Math.floor(hours / 24);
-  const plural = (n: number, word: string) =>
-    `${n} ${word}${n === 1 ? "" : "s"}`;
 
   if (seconds < 5) return "just now";
 
   if (isInFuture) {
-    if (seconds < 60) return `in ${plural(seconds, "second")}`;
-    if (minutes < 60) return `in ${plural(minutes, "minute")}`;
-    if (hours < 24) return `in ${plural(hours, "hour")}`;
-    if (days < 7) return `in ${plural(days, "day")}`;
-    return date.toLocaleDateString();
-  } else {
-    if (seconds < 60) return `${plural(seconds, "second")} ago`;
-    if (minutes < 60)
-      return `${plural(minutes, "minute")} ${plural(
-        seconds % 60,
-        "second"
-      )} ago`;
-    if (hours < 24) return `${plural(hours, "hour")} ago`;
-    if (days < 7) return `${plural(days, "day")} ago`;
+    if (seconds < 60) return `in ${pluralize(seconds, "second")}`;
+    if (minutes < 60) return `in ${pluralize(minutes, "minute")}`;
+    if (hours < 24) return `in ${pluralize(hours, "hour")}`;
+    if (days < 7) return `in ${pluralize(days, "day")}`;
     return date.toLocaleDateString();
   }
+
+  if (seconds < 60) return `${pluralize(seconds, "second")} ago`;
+  if (minutes < 60)
+    return `${pluralize(minutes, "minute")} ${pluralize(seconds % 60, "second")} ago`;
+  if (hours < 24) return `${pluralize(hours, "hour")} ago`;
+  if (days < 7) return `${pluralize(days, "day")} ago`;
+  return date.toLocaleDateString();
+}
+
+interface TimezoneCardProps extends React.ComponentPropsWithoutRef<"div"> {
+  date: Date;
+  timezone?: string;
+}
+
+function TimezoneCard(props: TimezoneCardProps) {
+  const { date, timezone, ...cardProps } = props;
+
+  const locale = React.useMemo(
+    () => Intl.DateTimeFormat().resolvedOptions().locale,
+    [],
+  );
+
+  const timezoneName = React.useMemo(
+    () =>
+      timezone ??
+      new Intl.DateTimeFormat(locale, { timeZoneName: "shortOffset" })
+        .formatToParts(date)
+        .find((part) => part.type === "timeZoneName")?.value,
+    [date, timezone, locale],
+  );
+
+  const { formattedDate, formattedTime } = React.useMemo(
+    () => ({
+      formattedDate: new Intl.DateTimeFormat(locale, {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+        timeZone: timezone,
+      }).format(date),
+      formattedTime: new Intl.DateTimeFormat(locale, {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+        timeZone: timezone,
+      }).format(date),
+    }),
+    [date, timezone, locale],
+  );
+
+  return (
+    <div
+      aria-label={`Time in ${timezoneName}: ${formattedDate} ${formattedTime}`}
+      {...cardProps}
+      className="flex items-center justify-between gap-2 text-muted-foreground text-sm"
+    >
+      <span className="w-fit rounded bg-accent px-1 font-medium text-xs">
+        {timezoneName}
+      </span>
+      <div className="flex items-center gap-2">
+        <time dateTime={date.toISOString()}>{formattedDate}</time>
+        <time className="tabular-nums" dateTime={date.toISOString()}>
+          {formattedTime}
+        </time>
+      </div>
+    </div>
+  );
 }
 
 const triggerVariants = cva(
@@ -61,7 +120,7 @@ const triggerVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  }
+  },
 );
 
 interface RelativeTimeCardProps
@@ -84,10 +143,7 @@ interface RelativeTimeCardProps
   updateInterval?: number;
 }
 
-const RelativeTimeCard = React.forwardRef<
-  HTMLButtonElement,
-  RelativeTimeCardProps
->((props, forwardedRef) => {
+function RelativeTimeCard(props: RelativeTimeCardProps) {
   const {
     date: dateProp,
     variant,
@@ -113,13 +169,16 @@ const RelativeTimeCard = React.forwardRef<
 
   const date = React.useMemo(
     () => (dateProp instanceof Date ? dateProp : new Date(dateProp)),
-    [dateProp]
+    [dateProp],
   );
 
-  const locale = Intl.DateTimeFormat().resolvedOptions().locale;
+  const locale = React.useMemo(
+    () => Intl.DateTimeFormat().resolvedOptions().locale,
+    [],
+  );
 
   const [formattedTime, setFormattedTime] = React.useState<string>(() =>
-    date.toLocaleDateString()
+    date.toLocaleDateString(),
   );
 
   React.useEffect(() => {
@@ -144,7 +203,6 @@ const RelativeTimeCard = React.forwardRef<
       <HoverCardTrigger asChild>
         <TriggerPrimitive
           {...triggerProps}
-          ref={forwardedRef}
           className={cn(triggerVariants({ variant, className }))}
         >
           {children ?? (
@@ -190,68 +248,6 @@ const RelativeTimeCard = React.forwardRef<
       </HoverCardContent>
     </HoverCard>
   );
-});
-RelativeTimeCard.displayName = "RelativeTimeCard";
-
-interface TimezoneCardProps extends React.ComponentPropsWithoutRef<"div"> {
-  date: Date;
-  timezone?: string;
 }
-
-const TimezoneCard = React.forwardRef<HTMLDivElement, TimezoneCardProps>(
-  (props, forwardedRef) => {
-    const { date, timezone, ...cardProps } = props;
-
-    const locale = Intl.DateTimeFormat().resolvedOptions().locale;
-
-    const timezoneName = React.useMemo(
-      () =>
-        timezone ??
-        new Intl.DateTimeFormat(locale, { timeZoneName: "shortOffset" })
-          .formatToParts(date)
-          .find((part) => part.type === "timeZoneName")?.value,
-      [date, timezone]
-    );
-
-    const { formattedDate, formattedTime } = React.useMemo(
-      () => ({
-        formattedDate: new Intl.DateTimeFormat(locale, {
-          month: "long",
-          day: "numeric",
-          year: "numeric",
-          timeZone: timezone,
-        }).format(date),
-        formattedTime: new Intl.DateTimeFormat(locale, {
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-          hour12: true,
-          timeZone: timezone,
-        }).format(date),
-      }),
-      [date, timezone]
-    );
-
-    return (
-      <div
-        aria-label={`Time in ${timezoneName}: ${formattedDate} ${formattedTime}`}
-        {...cardProps}
-        ref={forwardedRef}
-        className="flex items-center justify-between gap-2 text-muted-foreground text-sm"
-      >
-        <span className="w-fit rounded bg-accent px-1 font-medium text-xs">
-          {timezoneName}
-        </span>
-        <div className="flex items-center gap-2">
-          <time dateTime={date.toISOString()}>{formattedDate}</time>
-          <time className="tabular-nums" dateTime={date.toISOString()}>
-            {formattedTime}
-          </time>
-        </div>
-      </div>
-    );
-  }
-);
-TimezoneCard.displayName = "TimezoneCard";
 
 export { RelativeTimeCard };

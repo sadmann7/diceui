@@ -355,6 +355,7 @@ const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
         context.onSelectedTextChange,
         context.onValueChange,
         context.filterStore,
+        context.getIsListEmpty,
         context.disabled,
         context.hasBadgeList,
         context.modal,
