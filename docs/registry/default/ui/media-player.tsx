@@ -94,8 +94,8 @@ interface StoreState {
 }
 
 interface Store {
-  snapshot: () => StoreState;
-  subscribe: (callback: () => void) => () => void;
+  subscribe: (cb: () => void) => () => void;
+  getState: () => StoreState;
   setState: (
     key: keyof StoreState,
     value: StoreState[keyof StoreState],
@@ -111,11 +111,11 @@ function createStore(
   }>,
 ): Store {
   const store: Store = {
-    snapshot: () => stateRef.current,
     subscribe: (cb) => {
       listenersRef.current.add(cb);
       return () => listenersRef.current.delete(cb);
     },
+    getState: () => stateRef.current,
     setState: (key, value) => {
       if (Object.is(stateRef.current[key], value)) return;
       stateRef.current[key] = value;
@@ -136,7 +136,7 @@ function useStoreSelector<U>(selector: (state: StoreState) => U): U {
   const context = useMediaPlayerContext("useStoreSelector");
 
   const getSnapshot = React.useCallback(
-    () => selector(context.store.snapshot()),
+    () => selector(context.store.getState()),
     [context.store, selector],
   );
 
@@ -1456,65 +1456,74 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
   const displayValue = seekState.pendingSeekTime ?? mediaCurrentTime;
 
-  const formattedTimes = React.useMemo(
-    () => ({
-      current: timeUtils.formatTime(displayValue, seekableEnd),
-      duration: timeUtils.formatTime(seekableEnd, seekableEnd),
-      hover: timeUtils.formatTime(seekState.hoverTime, seekableEnd),
-      remaining: timeUtils.formatTime(seekableEnd - displayValue, seekableEnd),
-    }),
-    [displayValue, seekableEnd, seekState.hoverTime],
+  const formattedCurrentTime = React.useMemo(
+    () => timeUtils.formatTime(displayValue, seekableEnd),
+    [displayValue, seekableEnd],
+  );
+  const formattedDuration = React.useMemo(
+    () => timeUtils.formatTime(seekableEnd, seekableEnd),
+    [seekableEnd],
+  );
+  const formattedHoverTime = React.useMemo(
+    () => timeUtils.formatTime(seekState.hoverTime, seekableEnd),
+    [seekState.hoverTime, seekableEnd],
+  );
+  const formattedRemainingTime = React.useMemo(
+    () => timeUtils.formatTime(seekableEnd - displayValue, seekableEnd),
+    [displayValue, seekableEnd],
   );
 
   const isDisabled = disabled || context.disabled;
-  const menuOpen = useStoreSelector((state) => state.menuOpen);
-  const tooltipDisabled = withoutTooltip || context.withoutTooltip || menuOpen;
+
+  const tooltipDisabled =
+    withoutTooltip ||
+    context.withoutTooltip ||
+    context.store.getState().menuOpen;
 
   const currentTooltipSideOffset =
     tooltipSideOffset ?? context.tooltipSideOffset;
 
-  const currentChapterCue = React.useMemo(() => {
-    if (withoutChapter || chapterCues.length === 0) return null;
+  const getCurrentChapterCue = React.useCallback(
+    (time: number) => {
+      if (withoutChapter || chapterCues.length === 0) return null;
+      return chapterCues.find((c) => time >= c.startTime && time < c.endTime);
+    },
+    [chapterCues, withoutChapter],
+  );
 
-    return (
-      chapterCues.find(
-        (c) =>
-          seekState.hoverTime >= c.startTime && seekState.hoverTime < c.endTime,
-      ) ?? null
-    );
-  }, [chapterCues, withoutChapter, seekState.hoverTime]);
+  const getThumbnail = React.useCallback(
+    (time: number) => {
+      if (tooltipDisabled) return null;
 
-  const thumbnail = React.useMemo(() => {
-    if (tooltipDisabled) return null;
+      if (tooltipThumbnailSrc) {
+        const src =
+          typeof tooltipThumbnailSrc === "function"
+            ? tooltipThumbnailSrc(time)
+            : tooltipThumbnailSrc;
+        return { src, coords: null };
+      }
 
-    if (tooltipThumbnailSrc) {
-      const src =
-        typeof tooltipThumbnailSrc === "function"
-          ? tooltipThumbnailSrc(seekState.hoverTime)
-          : tooltipThumbnailSrc;
-      return { src, coords: null };
-    }
+      if (
+        mediaPreviewTime !== undefined &&
+        Math.abs(time - mediaPreviewTime) < 0.1 &&
+        mediaPreviewImage
+      ) {
+        return {
+          src: mediaPreviewImage,
+          coords: mediaPreviewCoords ?? null,
+        };
+      }
 
-    if (
-      mediaPreviewTime !== undefined &&
-      Math.abs(seekState.hoverTime - mediaPreviewTime) < 0.1 &&
-      mediaPreviewImage
-    ) {
-      return {
-        src: mediaPreviewImage,
-        coords: mediaPreviewCoords ?? null,
-      };
-    }
-
-    return null;
-  }, [
-    tooltipThumbnailSrc,
-    mediaPreviewTime,
-    mediaPreviewImage,
-    mediaPreviewCoords,
-    tooltipDisabled,
-    seekState.hoverTime,
-  ]);
+      return null;
+    },
+    [
+      tooltipThumbnailSrc,
+      mediaPreviewTime,
+      mediaPreviewImage,
+      mediaPreviewCoords,
+      tooltipDisabled,
+    ],
+  );
 
   const onPreviewUpdate = React.useCallback(
     (time: number) => {
@@ -1539,13 +1548,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     if (seekState.pendingSeekTime !== null) {
       const diff = Math.abs(mediaCurrentTime - seekState.pendingSeekTime);
       if (diff < 0.5) {
-        setSeekState((prev) => ({
-          ...prev,
-          pendingSeekTime: seekState.pendingSeekTime,
-          isHovering: false,
-          tooltipPosition: null,
-          hasInitialPosition: false,
-        }));
+        setSeekState((prev) => ({ ...prev, pendingSeekTime: null }));
       }
     }
   }, [mediaCurrentTime, seekState.pendingSeekTime]);
@@ -1558,7 +1561,6 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         ...prev,
         isHovering: false,
         tooltipPosition: null,
-        hasInitialPosition: false,
       }));
       dispatch({
         type: MediaActionTypes.MEDIA_PREVIEW_REQUEST,
@@ -1682,36 +1684,19 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
           requestAnimationFrame(() => {
             hoverTimeoutRef.current = window.setTimeout(() => {
-              setSeekState((prev) => ({
-                ...prev,
-                isHovering: true,
-                hoverTime: seekState.hoverTime,
-              }));
+              setSeekState((prev) => ({ ...prev, isHovering: true }));
             }, 16);
           });
         } else {
           hoverTimeoutRef.current = window.setTimeout(() => {
-            setSeekState((prev) => ({
-              ...prev,
-              isHovering: true,
-              hoverTime: seekState.hoverTime,
-            }));
+            setSeekState((prev) => ({ ...prev, isHovering: true }));
           }, 50);
         }
       } else {
-        setSeekState((prev) => ({
-          ...prev,
-          isHovering: true,
-          hoverTime: seekState.hoverTime,
-        }));
+        setSeekState((prev) => ({ ...prev, isHovering: true }));
       }
     }
-  }, [
-    seekableEnd,
-    onTooltipPositionUpdate,
-    tooltipDisabled,
-    seekState.hoverTime,
-  ]);
+  }, [seekableEnd, onTooltipPositionUpdate, tooltipDisabled]);
 
   const onPointerLeave = React.useCallback(() => {
     if (hoverTimeoutRef.current) {
@@ -1777,8 +1762,10 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
         setSeekState((prev) => ({
           ...prev,
-          isHovering: true,
           hoverTime: calculatedHoverTime,
+          isHovering:
+            prev.isHovering ||
+            (clientX >= seekRect.left && clientX <= seekRect.right),
         }));
 
         if (!tooltipDisabled) {
@@ -1790,12 +1777,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
             (clientX >= seekRect.left && clientX <= seekRect.right)
           ) {
             if (clientX < seekRect.left || clientX > seekRect.right) {
-              setSeekState((prev) => ({
-                ...prev,
-                isHovering: false,
-                tooltipPosition: null,
-                hasInitialPosition: false,
-              }));
+              setSeekState((prev) => ({ ...prev, tooltipPosition: null }));
               return;
             }
 
@@ -1820,13 +1802,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     (value: number[]) => {
       const time = value[0] ?? 0;
 
-      setSeekState((prev) => ({
-        ...prev,
-        pendingSeekTime: time,
-        isHovering: false,
-        tooltipPosition: null,
-        hasInitialPosition: false,
-      }));
+      setSeekState((prev) => ({ ...prev, pendingSeekTime: time }));
 
       if (seekThrottleTimeoutRef.current) {
         cancelAnimationFrame(seekThrottleTimeoutRef.current);
@@ -1904,6 +1880,9 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       }
     };
   }, []);
+
+  const currentChapterCue = getCurrentChapterCue(seekState.hoverTime);
+  const thumbnail = getThumbnail(seekState.hoverTime);
 
   const tooltipStyle = React.useMemo<React.CSSProperties>(() => {
     if (!seekState.tooltipPosition || !seekState.isHovering) {
@@ -1996,7 +1975,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     <div className="relative w-full">
       <SliderPrimitive.Root
         aria-controls={context.mediaId}
-        aria-valuetext={`${formattedTimes.current} of ${formattedTimes.duration}`}
+        aria-valuetext={`${formattedCurrentTime} of ${formattedDuration}`}
         data-slider=""
         data-slot="media-player-seek"
         disabled={isDisabled}
@@ -2070,7 +2049,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
                     ) : (
                       <img
                         src={thumbnail.src}
-                        alt={`Preview at ${formattedTimes.hover}`}
+                        alt={`Preview at ${formattedHoverTime}`}
                         className="size-full object-cover"
                       />
                     )}
@@ -2093,8 +2072,8 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
                   )}
                 >
                   {tooltipTimeVariant === "progress"
-                    ? `${formattedTimes.hover} / ${formattedTimes.duration}`
-                    : formattedTimes.hover}
+                    ? `${formattedHoverTime} / ${formattedDuration}`
+                    : formattedHoverTime}
                 </div>
               </div>
             </div>
@@ -2106,9 +2085,9 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   if (withTime) {
     return (
       <div className="flex w-full items-center gap-2">
-        <span className="text-sm tabular-nums">{formattedTimes.current}</span>
+        <span className="text-sm tabular-nums">{formattedCurrentTime}</span>
         {SeekSlider}
-        <span className="text-sm tabular-nums">{formattedTimes.remaining}</span>
+        <span className="text-sm tabular-nums">{formattedRemainingTime}</span>
       </div>
     );
   }

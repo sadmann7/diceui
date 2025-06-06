@@ -71,8 +71,8 @@ function useLazyRef<T>(fn: () => T) {
 }
 
 interface Store<T> {
-  snapshot: () => T
   subscribe: (callback: () => void) => () => void
+  getState: () => T
   setState: <K extends keyof T>(key: K, value: T[K]) => void
   notify: () => void
 }
@@ -85,11 +85,11 @@ function createStore<T>(
   }>
 ): Store<T> {
   const store: Store<T> = {
-    snapshot: () => stateRef.current,
-    subscribe: (cb) => {
-      listenersRef.current.add(cb);
+      subscribe: (cb) => {
+          listenersRef.current.add(cb);
       return () => listenersRef.current.delete(cb);
     },
+    getState: () => stateRef.current,
     setState: (key, value) => {
       if (Object.is(stateRef.current[key], value)) return;
       stateRef.current[key] = value;
