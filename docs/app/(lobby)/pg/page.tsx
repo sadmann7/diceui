@@ -45,7 +45,7 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <MediaPlayerSettingsDemo />
-      <MediaPlayerHlsDemo />
+      {/* <MediaPlayerHlsDemo /> */}
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />

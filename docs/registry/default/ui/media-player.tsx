@@ -123,19 +123,25 @@ function createStore<T>(
   return store;
 }
 
-function useStoreSelector<T, U>(store: Store<T>, selector: (state: T) => U): U {
+function useStoreSelector<U>(selector: (state: StoreState) => U): U {
+  const context = useMediaPlayerContext("useStoreSelector");
+
   const getSnapshot = React.useCallback(
-    () => selector(store.snapshot()),
-    [store, selector],
+    () => selector(context.store.snapshot()),
+    [context.store, selector],
   );
 
-  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
+  return React.useSyncExternalStore(
+    context.store.subscribe,
+    getSnapshot,
+    getSnapshot,
+  );
 }
 
 interface StoreState {
   controlsVisible: boolean;
-  isMenuOpen: boolean;
-  showVolumeIndicator: boolean;
+  menuOpen: boolean;
+  volumeIndicatorVisible: boolean;
 }
 
 interface MediaPlayerContextValue {
@@ -234,8 +240,8 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef(() => ({
     controlsVisible: true,
-    isMenuOpen: false,
-    showVolumeIndicator: false,
+    menuOpen: false,
+    volumeIndicatorVisible: false,
   }));
 
   const store = React.useMemo(
@@ -243,22 +249,20 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
     [listenersRef, stateRef],
   );
 
-  const controlsVisible = useStoreSelector(
-    store,
-    (state) => state.controlsVisible,
-  );
+  const menuOpen = stateRef.current.menuOpen;
+  const controlsVisible = stateRef.current.controlsVisible;
 
   const hideControlsTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
   const lastMouseMoveRef = React.useRef<number>(Date.now());
   const volumeIndicatorTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
-  const [mounted, setMounted] = React.useState(false);
-  React.useLayoutEffect(() => setMounted(true), []);
-
   const mediaPaused = useMediaSelector((state) => state.mediaPaused ?? true);
   const isFullscreen = useMediaSelector(
     (state) => state.mediaIsFullscreen ?? false,
   );
+
+  const [mounted, setMounted] = React.useState(false);
+  React.useLayoutEffect(() => setMounted(true), []);
 
   const portalContainer = mounted
     ? isFullscreen
@@ -272,18 +276,18 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
     mediaRef.current?.tagName?.toLowerCase() === "mux-player";
 
   const onVolumeIndicatorTrigger = React.useCallback(() => {
-    if (store.snapshot().isMenuOpen) return;
+    if (menuOpen) return;
 
-    store.setState("showVolumeIndicator", true);
+    store.setState("volumeIndicatorVisible", true);
 
     if (volumeIndicatorTimeoutRef.current) {
       clearTimeout(volumeIndicatorTimeoutRef.current);
     }
 
     volumeIndicatorTimeoutRef.current = setTimeout(() => {
-      store.setState("showVolumeIndicator", false);
+      store.setState("volumeIndicatorVisible", false);
     }, 2000);
-  }, [store]);
+  }, [store.setState, menuOpen]);
 
   const onControlsShow = React.useCallback(() => {
     store.setState("controlsVisible", true);
@@ -293,12 +297,12 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       clearTimeout(hideControlsTimeoutRef.current);
     }
 
-    if (autoHide && !mediaPaused && !store.snapshot().isMenuOpen) {
+    if (autoHide && !mediaPaused && !menuOpen) {
       hideControlsTimeoutRef.current = setTimeout(() => {
         store.setState("controlsVisible", false);
       }, 3000);
     }
-  }, [autoHide, mediaPaused, store]);
+  }, [store.setState, autoHide, mediaPaused, menuOpen]);
 
   const onMouseLeave = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
@@ -306,11 +310,17 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
 
       if (event.defaultPrevented) return;
 
-      if (autoHide && !mediaPaused && !store.snapshot().isMenuOpen) {
+      if (autoHide && !mediaPaused && !menuOpen) {
         store.setState("controlsVisible", false);
       }
     },
-    [autoHide, mediaPaused, store, rootImplProps.onMouseLeave],
+    [
+      store.setState,
+      rootImplProps.onMouseLeave,
+      autoHide,
+      mediaPaused,
+      menuOpen,
+    ],
   );
 
   const onMouseMove = React.useCallback(
@@ -327,7 +337,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
   );
 
   React.useEffect(() => {
-    if (mediaPaused || store.snapshot().isMenuOpen) {
+    if (mediaPaused || menuOpen) {
       store.setState("controlsVisible", true);
       if (hideControlsTimeoutRef.current) {
         clearTimeout(hideControlsTimeoutRef.current);
@@ -335,70 +345,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
     } else if (autoHide) {
       onControlsShow();
     }
-  }, [mediaPaused, store, autoHide, onControlsShow]);
-
-  React.useEffect(() => {
-    const mediaElement = mediaRef.current;
-    if (!mediaElement) return;
-
-    const onPlay = () => onPlayProp?.();
-    const onPause = () => onPauseProp?.();
-    const onEnded = () => onEndedProp?.();
-    const onTimeUpdate = () => onTimeUpdateProp?.(mediaElement.currentTime);
-    const onVolumeChange = () => {
-      onVolumeChangeProp?.(mediaElement.volume);
-      onMuted?.(mediaElement.muted);
-    };
-    const onError = () => onMediaError?.(mediaElement.error);
-
-    mediaElement.addEventListener("play", onPlay);
-    mediaElement.addEventListener("pause", onPause);
-    mediaElement.addEventListener("ended", onEnded);
-    mediaElement.addEventListener("timeupdate", onTimeUpdate);
-    mediaElement.addEventListener("volumechange", onVolumeChange);
-    mediaElement.addEventListener("error", onError);
-
-    return () => {
-      mediaElement.removeEventListener("play", onPlay);
-      mediaElement.removeEventListener("pause", onPause);
-      mediaElement.removeEventListener("ended", onEnded);
-      mediaElement.removeEventListener("timeupdate", onTimeUpdate);
-      mediaElement.removeEventListener("volumechange", onVolumeChange);
-      mediaElement.removeEventListener("error", onError);
-    };
-  }, [
-    onPlayProp,
-    onPauseProp,
-    onEndedProp,
-    onTimeUpdateProp,
-    onVolumeChangeProp,
-    onMuted,
-    onMediaError,
-  ]);
-
-  React.useEffect(() => {
-    if (!onFullscreenChangeProp) return;
-
-    const onFullscreenChange = () => {
-      onFullscreenChangeProp(!!document.fullscreenElement);
-    };
-
-    document.addEventListener("fullscreenchange", onFullscreenChange);
-    return () => {
-      document.removeEventListener("fullscreenchange", onFullscreenChange);
-    };
-  }, [onFullscreenChangeProp]);
-
-  React.useEffect(() => {
-    return () => {
-      if (volumeIndicatorTimeoutRef.current) {
-        clearTimeout(volumeIndicatorTimeoutRef.current);
-      }
-      if (hideControlsTimeoutRef.current) {
-        clearTimeout(hideControlsTimeoutRef.current);
-      }
-    };
-  }, []);
+  }, [store.setState, onControlsShow, mediaPaused, menuOpen, autoHide]);
 
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -665,6 +612,69 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
     [rootImplProps.onKeyUp, onVolumeIndicatorTrigger],
   );
 
+  React.useEffect(() => {
+    const mediaElement = mediaRef.current;
+    if (!mediaElement) return;
+
+    const onPlay = () => onPlayProp?.();
+    const onPause = () => onPauseProp?.();
+    const onEnded = () => onEndedProp?.();
+    const onTimeUpdate = () => onTimeUpdateProp?.(mediaElement.currentTime);
+    const onVolumeChange = () => {
+      onVolumeChangeProp?.(mediaElement.volume);
+      onMuted?.(mediaElement.muted);
+    };
+    const onError = () => onMediaError?.(mediaElement.error);
+
+    mediaElement.addEventListener("play", onPlay);
+    mediaElement.addEventListener("pause", onPause);
+    mediaElement.addEventListener("ended", onEnded);
+    mediaElement.addEventListener("timeupdate", onTimeUpdate);
+    mediaElement.addEventListener("volumechange", onVolumeChange);
+    mediaElement.addEventListener("error", onError);
+
+    return () => {
+      mediaElement.removeEventListener("play", onPlay);
+      mediaElement.removeEventListener("pause", onPause);
+      mediaElement.removeEventListener("ended", onEnded);
+      mediaElement.removeEventListener("timeupdate", onTimeUpdate);
+      mediaElement.removeEventListener("volumechange", onVolumeChange);
+      mediaElement.removeEventListener("error", onError);
+    };
+  }, [
+    onPlayProp,
+    onPauseProp,
+    onEndedProp,
+    onTimeUpdateProp,
+    onVolumeChangeProp,
+    onMuted,
+    onMediaError,
+  ]);
+
+  React.useEffect(() => {
+    if (!onFullscreenChangeProp) return;
+
+    const onFullscreenChange = () => {
+      onFullscreenChangeProp(!!document.fullscreenElement);
+    };
+
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    return () => {
+      document.removeEventListener("fullscreenchange", onFullscreenChange);
+    };
+  }, [onFullscreenChangeProp]);
+
+  React.useEffect(() => {
+    return () => {
+      if (volumeIndicatorTimeoutRef.current) {
+        clearTimeout(volumeIndicatorTimeoutRef.current);
+      }
+      if (hideControlsTimeoutRef.current) {
+        clearTimeout(hideControlsTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const contextValue = React.useMemo<MediaPlayerContextValue>(
     () => ({
       mediaId,
@@ -819,10 +829,7 @@ function MediaPlayerControls(props: MediaPlayerControlsProps) {
   const isFullscreen = useMediaSelector(
     (state) => state.mediaIsFullscreen ?? false,
   );
-  const controlsVisible = useStoreSelector(
-    context.store,
-    (state) => state.controlsVisible,
-  );
+  const controlsVisible = useStoreSelector((state) => state.controlsVisible);
 
   const ControlsPrimitive = asChild ? Slot : "div";
 
@@ -1100,18 +1107,16 @@ interface MediaPlayerVolumeIndicatorProps extends React.ComponentProps<"div"> {
 function MediaPlayerVolumeIndicator(props: MediaPlayerVolumeIndicatorProps) {
   const { asChild, className, ...indicatorProps } = props;
 
-  const context = useMediaPlayerContext("MediaPlayerVolumeIndicator");
   const mediaVolume = useMediaSelector((state) => state.mediaVolume ?? 1);
   const mediaMuted = useMediaSelector((state) => state.mediaMuted ?? false);
   const mediaVolumeLevel = useMediaSelector(
     (state) => state.mediaVolumeLevel ?? "high",
   );
-  const showVolumeIndicator = useStoreSelector(
-    context.store,
-    (state) => state.showVolumeIndicator,
+  const volumeIndicatorVisible = useStoreSelector(
+    (state) => state.volumeIndicatorVisible,
   );
 
-  if (!showVolumeIndicator) return null;
+  if (!volumeIndicatorVisible) return null;
 
   const effectiveVolume = mediaMuted ? 0 : mediaVolume;
   const volumePercentage = Math.round(effectiveVolume * 100);
@@ -1174,14 +1179,10 @@ interface MediaPlayerControlsOverlayProps extends React.ComponentProps<"div"> {
 function MediaPlayerControlsOverlay(props: MediaPlayerControlsOverlayProps) {
   const { asChild, className, ...overlayProps } = props;
 
-  const context = useMediaPlayerContext("MediaPlayerControlsOverlay");
   const isFullscreen = useMediaSelector(
     (state) => state.mediaIsFullscreen ?? false,
   );
-  const controlsVisible = useStoreSelector(
-    context.store,
-    (state) => state.controlsVisible,
-  );
+  const controlsVisible = useStoreSelector((state) => state.controlsVisible);
 
   const OverlayPrimitive = asChild ? Slot : "div";
 
@@ -1478,13 +1479,9 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   );
 
   const isDisabled = disabled || context.disabled;
-  const isMenuOpen = useStoreSelector(
-    context.store,
-    (state) => state.isMenuOpen,
-  );
+  const menuOpen = useStoreSelector((state) => state.menuOpen);
 
-  const tooltipDisabled =
-    withoutTooltip || context.withoutTooltip || isMenuOpen;
+  const tooltipDisabled = withoutTooltip || context.withoutTooltip || menuOpen;
 
   const currentTooltipSideOffset =
     tooltipSideOffset ?? context.tooltipSideOffset;
@@ -2322,7 +2319,7 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
 
   const onOpenChange = React.useCallback(
     (open: boolean) => {
-      context.store.setState("isMenuOpen", open);
+      context.store.setState("menuOpen", open);
       onOpenChangeProp?.(open);
     },
     [context.store, onOpenChangeProp],
@@ -2766,7 +2763,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
 
   const onOpenChange = React.useCallback(
     (open: boolean) => {
-      context.store.setState("isMenuOpen", open);
+      context.store.setState("menuOpen", open);
       onOpenChangeProp?.(open);
     },
     [context.store, onOpenChangeProp],
