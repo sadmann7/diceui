@@ -30,6 +30,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import { ClientOnly } from "@/registry/default/components/client-only";
 import MediaPlayerHslDemo from "@/registry/default/examples/media-player-hls-demo";
+import MediaPlayerSettingsDemo from "@/registry/default/examples/media-player-settings-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -45,6 +46,7 @@ import { ChevronDown } from "lucide-react";
 import {
   MediaControlBar,
   MediaController,
+  MediaErrorDialog,
   MediaMuteButton,
   MediaPlayButton,
   MediaSeekBackwardButton,
@@ -67,6 +69,7 @@ export default function PlaygroundPage() {
             crossOrigin=""
           />
           <MediaControlBar>
+            <MediaErrorDialog open />
             <MediaPlayButton />
             <MediaSeekBackwardButton />
             <MediaSeekForwardButton />
@@ -77,6 +80,7 @@ export default function PlaygroundPage() {
           </MediaControlBar>
         </MediaController>
       </ClientOnly>
+      <MediaPlayerSettingsDemo />
       <MediaPlayerHslDemo />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
