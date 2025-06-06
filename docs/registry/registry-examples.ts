@@ -538,6 +538,18 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "media-player-error-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "lucide-react", "media-chrome"],
+    registryDependencies: ["button", "slider", "tooltip"],
+    files: [
+      {
+        path: "examples/media-player-error-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "media-player-playlist-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot", "lucide-react", "media-chrome"],

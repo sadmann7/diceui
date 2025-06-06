@@ -70,16 +70,14 @@ type StoreAction =
 function createStore(
   listeners: Set<() => void>,
   files: Map<File, FileState>,
+  invalid: boolean,
   onValueChange?: (files: File[]) => void,
-  invalid?: boolean,
 ) {
-  const initialState: StoreState = {
+  let state: StoreState = {
     files,
     dragOver: false,
-    invalid: invalid ?? false,
+    invalid: invalid,
   };
-
-  let state = initialState;
 
   function reducer(state: StoreState, action: StoreAction): StoreState {
     switch (action.variant) {
@@ -338,22 +336,29 @@ function FileUploadRoot(props: FileUploadRootProps) {
   const isControlled = value !== undefined;
 
   const store = React.useMemo(
-    () => createStore(listeners, files, onValueChange, invalid),
-    [listeners, files, onValueChange, invalid],
+    () => createStore(listeners, files, invalid, onValueChange),
+    [listeners, files, invalid, onValueChange],
   );
 
-  const contextValue = React.useMemo<FileUploadContextValue>(
-    () => ({
-      dropzoneId,
-      inputId,
-      listId,
-      labelId,
-      dir,
-      disabled,
-      inputRef,
-    }),
-    [dropzoneId, inputId, listId, labelId, dir, disabled],
+  const acceptTypes = React.useMemo(
+    () => accept?.split(",").map((t) => t.trim()) ?? null,
+    [accept],
   );
+
+  const onProgress = useLazyRef(() => {
+    let frame = 0;
+    return (file: File, progress: number) => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        store.dispatch({
+          variant: "SET_PROGRESS",
+          file,
+          progress: Math.min(Math.max(0, progress), 100),
+        });
+      });
+    };
+  }).current;
 
   React.useEffect(() => {
     if (isControlled) {
@@ -417,8 +422,7 @@ function FileUploadRoot(props: FileUploadRootProps) {
           }
         }
 
-        if (accept) {
-          const acceptTypes = accept.split(",").map((t) => t.trim());
+        if (acceptTypes) {
           const fileType = file.type;
           const fileExtension = `.${file.name.split(".").pop()}`;
 
@@ -494,7 +498,7 @@ function FileUploadRoot(props: FileUploadRootProps) {
       maxFiles,
       onFileValidate,
       onFileReject,
-      accept,
+      acceptTypes,
       maxSize,
       disabled,
     ],
@@ -509,13 +513,7 @@ function FileUploadRoot(props: FileUploadRootProps) {
 
         if (onUpload) {
           await onUpload(files, {
-            onProgress: (file, progress) => {
-              store.dispatch({
-                variant: "SET_PROGRESS",
-                file,
-                progress: Math.min(Math.max(0, progress), 100),
-              });
-            },
+            onProgress,
             onSuccess: (file) => {
               store.dispatch({ variant: "SET_SUCCESS", file });
             },
@@ -544,7 +542,7 @@ function FileUploadRoot(props: FileUploadRootProps) {
         }
       }
     },
-    [store, onUpload],
+    [store, onUpload, onProgress],
   );
 
   const onInputChange = React.useCallback(
@@ -554,6 +552,19 @@ function FileUploadRoot(props: FileUploadRootProps) {
       event.target.value = "";
     },
     [onFilesChange],
+  );
+
+  const contextValue = React.useMemo<FileUploadContextValue>(
+    () => ({
+      dropzoneId,
+      inputId,
+      listId,
+      labelId,
+      dir,
+      disabled,
+      inputRef,
+    }),
+    [dropzoneId, inputId, listId, labelId, dir, disabled],
   );
 
   const RootPrimitive = asChild ? Slot : "div";
@@ -1033,20 +1044,30 @@ function FileUploadItemPreview(props: FileUploadItemPreviewProps) {
   const { render, asChild, children, className, ...previewProps } = props;
 
   const itemContext = useFileUploadItemContext(ITEM_PREVIEW_NAME);
+  const urlCache = useLazyRef(() => new WeakMap<File, string>()).current;
 
   const onPreviewRender = React.useCallback(
     (file: File) => {
       if (render) return render(file);
 
       if (itemContext.fileState?.file.type.startsWith("image/")) {
+        let url = urlCache.get(file);
+        if (!url) {
+          url = URL.createObjectURL(file);
+          urlCache.set(file, url);
+        }
         return (
           <img
-            src={URL.createObjectURL(file)}
+            src={url}
             alt={file.name}
             className="size-full object-cover"
             onLoad={(event) => {
               if (!(event.target instanceof HTMLImageElement)) return;
-              URL.revokeObjectURL(event.target.src);
+              const cachedUrl = urlCache.get(file);
+              if (cachedUrl) {
+                URL.revokeObjectURL(cachedUrl);
+                urlCache.delete(file);
+              }
             }}
           />
         );
@@ -1054,7 +1075,7 @@ function FileUploadItemPreview(props: FileUploadItemPreviewProps) {
 
       return getFileIcon(file);
     },
-    [render, itemContext.fileState?.file.type],
+    [render, itemContext.fileState?.file.type, urlCache],
   );
 
   if (!itemContext.fileState) return null;

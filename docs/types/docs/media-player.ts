@@ -91,6 +91,19 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   onMuted?: (muted: boolean) => void;
 
   /**
+   * Callback function triggered when a media error occurs.
+   *
+   * ```ts
+   * const onMediaError = (error: MediaError | null) => {
+   *   console.log({ error })
+   * }
+   *
+   * <MediaPlayer onMediaError={onMediaError} />
+   * ```
+   */
+  onMediaError?: (error: MediaError | null) => void;
+
+  /**
    * Callback function triggered when triggering picture in picture (PiP) state.
    *
    * The first argument is the unknown error that occurred.
@@ -189,30 +202,80 @@ export interface AudioProps extends EmptyProps<"audio">, CompositionProps {}
 
 export interface ControlsProps extends EmptyProps<"div">, CompositionProps {}
 
-export interface OverlayProps extends EmptyProps<"div">, CompositionProps {}
+export interface ControlsOverlayProps
+  extends EmptyProps<"div">,
+    CompositionProps {}
 
 export interface LoadingProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The delay in milliseconds before showing the loading indicator.
    *
    * ```ts
-   * <MediaPlayer.Loading delay={400} />
+   * <MediaPlayer.Loading delayMs={400} />
    * ```
    *
    * @default 500
    */
   delayMs?: number;
+}
 
+export interface ErrorProps extends EmptyProps<"div">, CompositionProps {
   /**
-   * Whether to force mount the loading indicator.
+   * The media error object. If not provided, will use the error from media state.
    *
    * ```ts
-   * <MediaPlayer.Loading forceMount />
+   * <MediaPlayer.Error error={customError} />
    * ```
-   *
-   * @default false
    */
-  forceMount?: boolean;
+  error?: MediaError | null;
+
+  /**
+   * Label for the error. If not provided, will be determined from the error type.
+   *
+   * ```ts
+   * <MediaPlayer.Error label="Custom Error Title" />
+   * ```
+   */
+  label?: string;
+
+  /**
+   * Description for the error. If not provided, will be determined from the error type.
+   *
+   * ```ts
+   * <MediaPlayer.Error description="Something went wrong with playback" />
+   * ```
+   */
+  description?: string;
+
+  /**
+   * Callback function triggered when the retry button is clicked.
+   * If not provided, the default behavior will reload the media.
+   *
+   * ```ts
+   * const onRetry = () => {
+   *   // Custom retry logic
+   *   console.log("Retrying media load")
+   * }
+   *
+   * <MediaPlayer.Error onRetry={onRetry} />
+   * ```
+   */
+  onRetry?: () => void;
+
+  /**
+   * Callback function triggered when the reload button is clicked.
+   * If not provided, the default behavior will reload the page.
+   *
+   * ```ts
+   * const onReload = () => {
+   *   // Custom reload logic
+   *   window.location.reload()
+   * }
+   *
+   * <MediaPlayer.Error onReload={onReload} />
+   * ```
+   */
+  onReload?: () => void;
 }
 
 export interface VolumeIndicatorProps
