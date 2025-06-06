@@ -77,6 +77,67 @@ function useDirection(dirProp?: Direction): Direction {
   return dirProp ?? contextDir ?? "ltr";
 }
 
+function useLazyRef<T>(fn: () => T) {
+  const ref = React.useRef<T | null>(null);
+
+  if (ref.current === null) {
+    ref.current = fn();
+  }
+
+  return ref as React.RefObject<T>;
+}
+
+interface Store<T> {
+  snapshot: () => T;
+  subscribe: (callback: () => void) => () => void;
+  setState: (key: keyof T, value: T[keyof T]) => void;
+  emit: () => void;
+}
+
+function createStore<T>(
+  listenersRef: React.RefObject<Set<() => void>>,
+  stateRef: React.RefObject<T>,
+  onChange?: Partial<{
+    [K in keyof T]: (value: T[K], store: Store<T>) => void;
+  }>,
+): Store<T> {
+  const store: Store<T> = {
+    snapshot: () => stateRef.current,
+    subscribe: (cb) => {
+      listenersRef.current.add(cb);
+      return () => listenersRef.current.delete(cb);
+    },
+    setState: (key, value) => {
+      if (Object.is(stateRef.current[key], value)) return;
+      stateRef.current[key] = value;
+      onChange?.[key]?.(value, store);
+      store.emit();
+    },
+    emit: () => {
+      for (const cb of listenersRef.current) {
+        cb();
+      }
+    },
+  };
+
+  return store;
+}
+
+function useStoreSelector<T, U>(store: Store<T>, selector: (state: T) => U): U {
+  const getSnapshot = React.useCallback(
+    () => selector(store.snapshot()),
+    [store, selector],
+  );
+
+  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
+}
+
+interface StoreState {
+  controlsVisible: boolean;
+  isMenuOpen: boolean;
+  showVolumeIndicator: boolean;
+}
+
 interface MediaPlayerContextValue {
   mediaId: string;
   labelId: string;
@@ -84,12 +145,9 @@ interface MediaPlayerContextValue {
   dir: Direction;
   rootRef: React.RefObject<HTMLDivElement | null>;
   mediaRef: React.RefObject<HTMLVideoElement | HTMLAudioElement | null>;
-  isMenuOpen: boolean;
-  setIsMenuOpen: (open: boolean) => void;
-  showVolumeIndicator: boolean;
+  store: Store<StoreState>;
   portalContainer: Element | DocumentFragment | null;
   tooltipSideOffset: number;
-  controlsVisible: boolean;
   disabled: boolean;
   isVideo: boolean;
   withoutTooltip: boolean;
@@ -173,13 +231,25 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
     null,
   );
 
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const listenersRef = useLazyRef(() => new Set<() => void>());
+  const stateRef = useLazyRef(() => ({
+    controlsVisible: true,
+    isMenuOpen: false,
+    showVolumeIndicator: false,
+  }));
 
-  const [controlsVisible, setControlsVisible] = React.useState(true);
+  const store = React.useMemo(
+    () => createStore<StoreState>(listenersRef, stateRef),
+    [listenersRef, stateRef],
+  );
+
+  const controlsVisible = useStoreSelector(
+    store,
+    (state) => state.controlsVisible,
+  );
+
   const hideControlsTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
   const lastMouseMoveRef = React.useRef<number>(Date.now());
-
-  const [showVolumeIndicator, setShowVolumeIndicator] = React.useState(false);
   const volumeIndicatorTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   const [mounted, setMounted] = React.useState(false);
@@ -202,33 +272,33 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
     mediaRef.current?.tagName?.toLowerCase() === "mux-player";
 
   const onVolumeIndicatorTrigger = React.useCallback(() => {
-    if (isMenuOpen) return;
+    if (store.snapshot().isMenuOpen) return;
 
-    setShowVolumeIndicator(true);
+    store.setState("showVolumeIndicator", true);
 
     if (volumeIndicatorTimeoutRef.current) {
       clearTimeout(volumeIndicatorTimeoutRef.current);
     }
 
     volumeIndicatorTimeoutRef.current = setTimeout(() => {
-      setShowVolumeIndicator(false);
+      store.setState("showVolumeIndicator", false);
     }, 2000);
-  }, [isMenuOpen]);
+  }, [store]);
 
   const onControlsShow = React.useCallback(() => {
-    setControlsVisible(true);
+    store.setState("controlsVisible", true);
     lastMouseMoveRef.current = Date.now();
 
     if (hideControlsTimeoutRef.current) {
       clearTimeout(hideControlsTimeoutRef.current);
     }
 
-    if (autoHide && !mediaPaused && !isMenuOpen) {
+    if (autoHide && !mediaPaused && !store.snapshot().isMenuOpen) {
       hideControlsTimeoutRef.current = setTimeout(() => {
-        setControlsVisible(false);
+        store.setState("controlsVisible", false);
       }, 3000);
     }
-  }, [autoHide, mediaPaused, isMenuOpen]);
+  }, [autoHide, mediaPaused, store]);
 
   const onMouseLeave = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
@@ -236,11 +306,11 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
 
       if (event.defaultPrevented) return;
 
-      if (autoHide && !mediaPaused && !isMenuOpen) {
-        setControlsVisible(false);
+      if (autoHide && !mediaPaused && !store.snapshot().isMenuOpen) {
+        store.setState("controlsVisible", false);
       }
     },
-    [autoHide, mediaPaused, isMenuOpen, rootImplProps.onMouseLeave],
+    [autoHide, mediaPaused, store, rootImplProps.onMouseLeave],
   );
 
   const onMouseMove = React.useCallback(
@@ -257,15 +327,15 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
   );
 
   React.useEffect(() => {
-    if (mediaPaused || isMenuOpen) {
-      setControlsVisible(true);
+    if (mediaPaused || store.snapshot().isMenuOpen) {
+      store.setState("controlsVisible", true);
       if (hideControlsTimeoutRef.current) {
         clearTimeout(hideControlsTimeoutRef.current);
       }
     } else if (autoHide) {
       onControlsShow();
     }
-  }, [mediaPaused, isMenuOpen, autoHide, onControlsShow]);
+  }, [mediaPaused, store, autoHide, onControlsShow]);
 
   React.useEffect(() => {
     const mediaElement = mediaRef.current;
@@ -603,12 +673,9 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       dir,
       rootRef,
       mediaRef,
-      isMenuOpen,
-      setIsMenuOpen,
-      showVolumeIndicator,
+      store,
       portalContainer,
       tooltipSideOffset,
-      controlsVisible,
       disabled,
       isVideo,
       withoutTooltip,
@@ -618,11 +685,9 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       labelId,
       descriptionId,
       dir,
-      isMenuOpen,
-      showVolumeIndicator,
+      store,
       portalContainer,
       tooltipSideOffset,
-      controlsVisible,
       disabled,
       isVideo,
       withoutTooltip,
@@ -754,6 +819,10 @@ function MediaPlayerControls(props: MediaPlayerControlsProps) {
   const isFullscreen = useMediaSelector(
     (state) => state.mediaIsFullscreen ?? false,
   );
+  const controlsVisible = useStoreSelector(
+    context.store,
+    (state) => state.controlsVisible,
+  );
 
   const ControlsPrimitive = asChild ? Slot : "div";
 
@@ -762,7 +831,7 @@ function MediaPlayerControls(props: MediaPlayerControlsProps) {
       data-disabled={context.disabled ? "" : undefined}
       data-slot="media-player-controls"
       data-state={isFullscreen ? "fullscreen" : "windowed"}
-      data-visible={context.controlsVisible ? "" : undefined}
+      data-visible={controlsVisible ? "" : undefined}
       dir={context.dir}
       className={cn(
         "dark pointer-events-none absolute right-0 bottom-0 left-0 z-50 flex items-center gap-2 px-4 py-3 opacity-0 transition-opacity duration-200 data-[visible]:pointer-events-auto data-[visible]:opacity-100 [:fullscreen_&]:px-6 [:fullscreen_&]:py-4",
@@ -1037,8 +1106,12 @@ function MediaPlayerVolumeIndicator(props: MediaPlayerVolumeIndicatorProps) {
   const mediaVolumeLevel = useMediaSelector(
     (state) => state.mediaVolumeLevel ?? "high",
   );
+  const showVolumeIndicator = useStoreSelector(
+    context.store,
+    (state) => state.showVolumeIndicator,
+  );
 
-  if (!context.showVolumeIndicator) return null;
+  if (!showVolumeIndicator) return null;
 
   const effectiveVolume = mediaMuted ? 0 : mediaVolume;
   const volumePercentage = Math.round(effectiveVolume * 100);
@@ -1105,6 +1178,10 @@ function MediaPlayerControlsOverlay(props: MediaPlayerControlsOverlayProps) {
   const isFullscreen = useMediaSelector(
     (state) => state.mediaIsFullscreen ?? false,
   );
+  const controlsVisible = useStoreSelector(
+    context.store,
+    (state) => state.controlsVisible,
+  );
 
   const OverlayPrimitive = asChild ? Slot : "div";
 
@@ -1112,7 +1189,7 @@ function MediaPlayerControlsOverlay(props: MediaPlayerControlsOverlayProps) {
     <OverlayPrimitive
       data-slot="media-player-controls-overlay"
       data-state={isFullscreen ? "fullscreen" : "windowed"}
-      data-visible={context.controlsVisible ? "" : undefined}
+      data-visible={controlsVisible ? "" : undefined}
       {...overlayProps}
       className={cn(
         "-z-10 pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 transition-opacity duration-200 data-[visible]:opacity-100",
@@ -1401,9 +1478,13 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   );
 
   const isDisabled = disabled || context.disabled;
+  const isMenuOpen = useStoreSelector(
+    context.store,
+    (state) => state.isMenuOpen,
+  );
 
   const tooltipDisabled =
-    withoutTooltip || context.withoutTooltip || context.isMenuOpen;
+    withoutTooltip || context.withoutTooltip || isMenuOpen;
 
   const currentTooltipSideOffset =
     tooltipSideOffset ?? context.tooltipSideOffset;
@@ -2241,10 +2322,10 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
 
   const onOpenChange = React.useCallback(
     (open: boolean) => {
-      context.setIsMenuOpen(open);
+      context.store.setState("isMenuOpen", open);
       onOpenChangeProp?.(open);
     },
-    [context.setIsMenuOpen, onOpenChangeProp],
+    [context.store, onOpenChangeProp],
   );
 
   return (
@@ -2685,10 +2766,10 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
 
   const onOpenChange = React.useCallback(
     (open: boolean) => {
-      context.setIsMenuOpen(open);
+      context.store.setState("isMenuOpen", open);
       onOpenChangeProp?.(open);
     },
-    [context.setIsMenuOpen, onOpenChangeProp],
+    [context.store, onOpenChangeProp],
   );
 
   return (
