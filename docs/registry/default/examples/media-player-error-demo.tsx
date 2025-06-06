@@ -1,33 +1,29 @@
 import {
   MediaPlayer,
-  MediaPlayerCaptions,
   MediaPlayerControls,
   MediaPlayerControlsOverlay,
   MediaPlayerError,
   MediaPlayerFullscreen,
-  MediaPlayerLoading,
   MediaPlayerPiP,
   MediaPlayerPlay,
+  MediaPlayerPlaybackSpeed,
   MediaPlayerSeek,
   MediaPlayerSeekBackward,
   MediaPlayerSeekForward,
-  MediaPlayerSettings,
   MediaPlayerTime,
   MediaPlayerVideo,
   MediaPlayerVolume,
-  MediaPlayerVolumeIndicator,
 } from "@/registry/default/ui/media-player";
-import MuxVideo from "@mux/mux-video-react";
 
-export default function MediaPlayerHlsDemo() {
+export default function MediaPlayerErrorDemo() {
   return (
-    <MediaPlayer autoHide>
-      <MediaPlayerVideo asChild>
-        <MuxVideo playbackId="A3VXy02VoUinw01pwyomEO3bHnG4P32xzV7u1j1FSzjNg" />
-      </MediaPlayerVideo>
-      <MediaPlayerLoading />
+    <MediaPlayer>
+      <MediaPlayerVideo
+        src="/assets/nonexistent-video.mp4"
+        playsInline
+        crossOrigin=""
+      />
       <MediaPlayerError />
-      <MediaPlayerVolumeIndicator />
       <MediaPlayerControls className="flex-col items-start gap-2.5">
         <MediaPlayerControlsOverlay />
         <MediaPlayerSeek />
@@ -40,8 +36,7 @@ export default function MediaPlayerHlsDemo() {
             <MediaPlayerTime />
           </div>
           <div className="flex items-center gap-2">
-            <MediaPlayerCaptions />
-            <MediaPlayerSettings />
+            <MediaPlayerPlaybackSpeed />
             <MediaPlayerPiP />
             <MediaPlayerFullscreen />
           </div>

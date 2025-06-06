@@ -97,10 +97,14 @@ import * as MediaPlayer from "@/components/ui/media-player";
   <MediaPlayer.Video>
     <source src="..." type="video/mp4" />
   </MediaPlayer.Video>
-  <MediaPlayer.Overlay />
   <MediaPlayer.Loading />
+  <MediaPlayer.Error />
+  <MediaPlayer.VolumeIndicator />
   <MediaPlayer.Controls>
+    <MediaPlayer.ControlsOverlay />
     <MediaPlayer.Play />
+    <MediaPlayer.SeekBackward />
+    <MediaPlayer.SeekForward />
     <MediaPlayer.Volume />
     <MediaPlayer.Seek />
     <MediaPlayer.Time />
@@ -135,6 +139,12 @@ Media player with HLS (HTTP Live Streaming) support for adaptive bitrate streami
 This example demonstrates using the [Mux Video React](https://github.com/muxinc/elements/tree/main/packages/mux-video-react) package as the video element to enable HLS playback.
 
 <ComponentTabs name="media-player-hls-demo" className="block" />
+
+### With Error Handling
+
+Media player with custom error handling and retry functionality.
+
+<ComponentTabs name="media-player-error-demo" className="block" />
 
 ### With Playlist
 
@@ -214,13 +224,13 @@ A container for the media player controls.
   ]}
 />
 
-### Overlay
+### ControlsOverlay
 
-A gradient overlay displayed over the video, typically at the bottom where controls are placed.
+Displays as a subtle backdrop that improves readability for media controls.
 
 <AutoTypeTable
   path="./types/docs/media-player.ts"
-  name="OverlayProps"
+  name="ControlsOverlayProps"
 />
 
 <DataAttributesTable
@@ -243,6 +253,24 @@ A loading indicator that appears when media is loading, similar to YouTube/Netfl
 <AutoTypeTable
   path="./types/docs/media-player.ts"
   name="LoadingProps"
+/>
+
+### Error
+
+An error component that displays when media playback encounters an error, with retry and reload options.
+
+<AutoTypeTable
+  path="./types/docs/media-player.ts"
+  name="ErrorProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-state]",
+      value: ["fullscreen", "windowed"],
+    },
+  ]}
 />
 
 ### VolumeIndicator

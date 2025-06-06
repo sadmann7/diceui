@@ -2,9 +2,10 @@ import {
   MediaPlayer,
   MediaPlayerCaptions,
   MediaPlayerControls,
+  MediaPlayerControlsOverlay,
+  MediaPlayerError,
   MediaPlayerFullscreen,
   MediaPlayerLoading,
-  MediaPlayerOverlay,
   MediaPlayerPiP,
   MediaPlayerPlay,
   MediaPlayerSeek,
@@ -41,7 +42,7 @@ export default function MediaPlayerSettingsDemo() {
           kind="captions"
           srcLang="en"
           src="https://media-chrome.mux.dev/examples/vanilla/vtt/elephantsdream/captions.en.vtt"
-          default={true}
+          default
         />
         <track
           label="Japanese"
@@ -57,9 +58,10 @@ export default function MediaPlayerSettingsDemo() {
         />
       </MediaPlayerVideo>
       <MediaPlayerLoading />
+      <MediaPlayerError />
       <MediaPlayerVolumeIndicator />
       <MediaPlayerControls className="flex-col items-start gap-2.5">
-        <MediaPlayerOverlay />
+        <MediaPlayerControlsOverlay />
         <MediaPlayerSeek />
         <div className="flex w-full items-center gap-2">
           <div className="flex flex-1 items-center gap-2">

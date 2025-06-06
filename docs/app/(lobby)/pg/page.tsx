@@ -25,10 +25,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import { ClientOnly } from "@/registry/default/components/client-only";
+import MediaPlayerErrorDemo from "@/registry/default/examples/media-player-error-demo";
 import MediaPlayerHslDemo from "@/registry/default/examples/media-player-hls-demo";
 import MediaPlayerSettingsDemo from "@/registry/default/examples/media-player-settings-demo";
 import {
@@ -41,47 +40,14 @@ import {
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
 import * as Mention from "@diceui/mention";
-import MuxVideo from "@mux/mux-video-react";
 import { ChevronDown } from "lucide-react";
-import {
-  MediaControlBar,
-  MediaController,
-  MediaErrorDialog,
-  MediaMuteButton,
-  MediaPlayButton,
-  MediaSeekBackwardButton,
-  MediaSeekForwardButton,
-  MediaTimeDisplay,
-  MediaTimeRange,
-  MediaVolumeRange,
-} from "media-chrome/react";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <ClientOnly fallback={<Skeleton className="aspect-video w-full" />}>
-        <MediaController>
-          <video
-            slot="media"
-            src="https://stream.mux.com/A3VXy02VoUinw01pwyomEO3bHnG4P32xzV7u1j1FSzjNg/high.mp4"
-            preload="auto"
-            muted
-            crossOrigin=""
-          />
-          <MediaControlBar>
-            <MediaErrorDialog open />
-            <MediaPlayButton />
-            <MediaSeekBackwardButton />
-            <MediaSeekForwardButton />
-            <MediaTimeRange />
-            <MediaTimeDisplay showDuration />
-            <MediaMuteButton />
-            <MediaVolumeRange />
-          </MediaControlBar>
-        </MediaController>
-      </ClientOnly>
       <MediaPlayerSettingsDemo />
       <MediaPlayerHslDemo />
+      <MediaPlayerErrorDemo />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />

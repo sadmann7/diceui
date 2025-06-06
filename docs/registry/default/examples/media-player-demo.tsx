@@ -1,8 +1,8 @@
 import {
   MediaPlayer,
   MediaPlayerControls,
+  MediaPlayerControlsOverlay,
   MediaPlayerFullscreen,
-  MediaPlayerOverlay,
   MediaPlayerPiP,
   MediaPlayerPlay,
   MediaPlayerPlaybackSpeed,
@@ -21,7 +21,7 @@ export default function MediaPlayerDemo() {
         <source src="/assets/cloud.mp4" type="video/mp4" />
       </MediaPlayerVideo>
       <MediaPlayerControls className="flex-col items-start gap-2.5">
-        <MediaPlayerOverlay />
+        <MediaPlayerControlsOverlay />
         <MediaPlayerSeek />
         <div className="flex w-full items-center gap-2">
           <div className="flex flex-1 items-center gap-2">

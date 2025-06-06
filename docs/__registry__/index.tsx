@@ -961,6 +961,22 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "media-player-error-demo": {
+      name: "media-player-error-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","slider","tooltip"],
+      files: [{
+        path: "registry/default/examples/media-player-error-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/media-player-error-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "media-player-playlist-demo": {
       name: "media-player-playlist-demo",
       description: "",
