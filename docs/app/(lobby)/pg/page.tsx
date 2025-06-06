@@ -28,6 +28,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import FileUploadDemo from "@/registry/default/examples/file-upload-demo";
+import FileUploadDirectUploadDemo from "@/registry/default/examples/file-upload-direct-upload-demo";
+import FileUploadFillProgressDemo from "@/registry/default/examples/file-upload-fill-progress-demo";
 import MediaPlayerHslDemo from "@/registry/default/examples/media-player-hls-demo";
 import {
   Combobox,
@@ -45,6 +47,7 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <FileUploadDemo />
+      <FileUploadDirectUploadDemo />
       {/* <MediaPlayerHslDemo /> */}
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>

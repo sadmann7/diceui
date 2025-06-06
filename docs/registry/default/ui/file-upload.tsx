@@ -50,173 +50,162 @@ interface FileState {
   status: "idle" | "uploading" | "error" | "success";
 }
 
-interface State {
+interface StoreState {
   files: Map<File, FileState>;
   dragOver: boolean;
   invalid: boolean;
 }
 
-interface Store {
-  subscribe: (callback: () => void) => () => void;
-  snapshot: () => State;
-  setState: <K extends keyof State>(key: K, value: State[K]) => void;
-  emit: () => void;
-  addFiles: (files: File[]) => void;
-  setFiles: (files: File[]) => void;
-  setFileProgress: (file: File, progress: number) => void;
-  setFileSuccess: (file: File) => void;
-  setFileError: (file: File, error: string) => void;
-  removeFile: (file: File) => void;
-  clearFiles: () => void;
-}
+type StoreAction =
+  | { variant: "ADD_FILES"; files: File[] }
+  | { variant: "SET_FILES"; files: File[] }
+  | { variant: "SET_PROGRESS"; file: File; progress: number }
+  | { variant: "SET_SUCCESS"; file: File }
+  | { variant: "SET_ERROR"; file: File; error: string }
+  | { variant: "REMOVE_FILE"; file: File }
+  | { variant: "SET_DRAG_OVER"; dragOver: boolean }
+  | { variant: "SET_INVALID"; invalid: boolean }
+  | { variant: "CLEAR" };
 
 function createStore(
-  listenersRef: React.RefObject<Set<() => void>>,
-  stateRef: React.RefObject<State>,
+  listeners: Set<() => void>,
+  files: Map<File, FileState>,
+  invalid: boolean,
   onValueChange?: (files: File[]) => void,
-): Store {
-  return {
-    subscribe: (cb: () => void) => {
-      listenersRef.current.add(cb);
-      return () => listenersRef.current.delete(cb);
-    },
-    snapshot: () => {
-      return stateRef.current;
-    },
-    setState: <K extends keyof State>(key: K, value: State[K]) => {
-      if (Object.is(stateRef.current[key], value)) return;
-      stateRef.current[key] = value;
+) {
+  let state: StoreState = {
+    files,
+    dragOver: false,
+    invalid: invalid,
+  };
 
-      if (key === "files" && onValueChange) {
-        const fileList = Array.from(stateRef.current.files.values()).map(
-          (fileState) => fileState.file,
-        );
-        onValueChange(fileList);
-      }
-
-      for (const listener of listenersRef.current) {
-        listener();
-      }
-    },
-    emit: () => {
-      for (const listener of listenersRef.current) {
-        listener();
-      }
-    },
-    addFiles: (files: File[]) => {
-      const newFilesMap = new Map(stateRef.current.files);
-      for (const file of files) {
-        newFilesMap.set(file, {
-          file,
-          progress: 0,
-          status: "idle",
-        });
-      }
-      stateRef.current.files = newFilesMap;
-
-      if (onValueChange) {
-        const fileList = Array.from(newFilesMap.values()).map(
-          (fileState) => fileState.file,
-        );
-        onValueChange(fileList);
-      }
-
-      for (const listener of listenersRef.current) {
-        listener();
-      }
-    },
-    setFiles: (files: File[]) => {
-      const newFilesMap = new Map<File, FileState>();
-      for (const file of files) {
-        const existingState = stateRef.current.files.get(file);
-        newFilesMap.set(
-          file,
-          existingState || {
+  function reducer(state: StoreState, action: StoreAction): StoreState {
+    switch (action.variant) {
+      case "ADD_FILES": {
+        for (const file of action.files) {
+          files.set(file, {
             file,
             progress: 0,
             status: "idle",
-          },
-        );
-      }
-      stateRef.current.files = newFilesMap;
-
-      if (onValueChange) {
-        onValueChange(files);
-      }
-
-      for (const listener of listenersRef.current) {
-        listener();
-      }
-    },
-    setFileProgress: (file: File, progress: number) => {
-      const fileState = stateRef.current.files.get(file);
-      if (fileState) {
-        stateRef.current.files.set(file, {
-          ...fileState,
-          progress: Math.min(Math.max(0, progress), 100),
-          status: "uploading",
-        });
-
-        for (const listener of listenersRef.current) {
-          listener();
+          });
         }
-      }
-    },
-    setFileSuccess: (file: File) => {
-      const fileState = stateRef.current.files.get(file);
-      if (fileState) {
-        stateRef.current.files.set(file, {
-          ...fileState,
-          progress: 100,
-          status: "success",
-        });
 
-        for (const listener of listenersRef.current) {
-          listener();
+        if (onValueChange) {
+          const fileList = Array.from(files.values()).map(
+            (fileState) => fileState.file,
+          );
+          onValueChange(fileList);
         }
+        return { ...state, files };
       }
-    },
-    setFileError: (file: File, error: string) => {
-      const fileState = stateRef.current.files.get(file);
-      if (fileState) {
-        stateRef.current.files.set(file, {
-          ...fileState,
-          error,
-          status: "error",
-        });
 
-        for (const listener of listenersRef.current) {
-          listener();
+      case "SET_FILES": {
+        const newFileSet = new Set(action.files);
+        for (const existingFile of files.keys()) {
+          if (!newFileSet.has(existingFile)) {
+            files.delete(existingFile);
+          }
         }
-      }
-    },
-    removeFile: (file: File) => {
-      stateRef.current.files.delete(file);
 
-      if (onValueChange) {
-        const fileList = Array.from(stateRef.current.files.values()).map(
-          (fileState) => fileState.file,
-        );
-        onValueChange(fileList);
-      }
-
-      for (const listener of listenersRef.current) {
-        listener();
-      }
-    },
-    clearFiles: () => {
-      stateRef.current.files.clear();
-      stateRef.current.invalid = false;
-
-      if (onValueChange) {
-        onValueChange([]);
+        for (const file of action.files) {
+          const existingState = files.get(file);
+          if (!existingState) {
+            files.set(file, {
+              file,
+              progress: 0,
+              status: "idle",
+            });
+          }
+        }
+        return { ...state, files };
       }
 
-      for (const listener of listenersRef.current) {
-        listener();
+      case "SET_PROGRESS": {
+        const fileState = files.get(action.file);
+        if (fileState) {
+          files.set(action.file, {
+            ...fileState,
+            progress: action.progress,
+            status: "uploading",
+          });
+        }
+        return { ...state, files };
       }
-    },
-  };
+
+      case "SET_SUCCESS": {
+        const fileState = files.get(action.file);
+        if (fileState) {
+          files.set(action.file, {
+            ...fileState,
+            progress: 100,
+            status: "success",
+          });
+        }
+        return { ...state, files };
+      }
+
+      case "SET_ERROR": {
+        const fileState = files.get(action.file);
+        if (fileState) {
+          files.set(action.file, {
+            ...fileState,
+            error: action.error,
+            status: "error",
+          });
+        }
+        return { ...state, files };
+      }
+
+      case "REMOVE_FILE": {
+        files.delete(action.file);
+
+        if (onValueChange) {
+          const fileList = Array.from(files.values()).map(
+            (fileState) => fileState.file,
+          );
+          onValueChange(fileList);
+        }
+        return { ...state, files };
+      }
+
+      case "SET_DRAG_OVER": {
+        return { ...state, dragOver: action.dragOver };
+      }
+
+      case "SET_INVALID": {
+        return { ...state, invalid: action.invalid };
+      }
+
+      case "CLEAR": {
+        files.clear();
+        if (onValueChange) {
+          onValueChange([]);
+        }
+        return { ...state, files, invalid: false };
+      }
+
+      default:
+        return state;
+    }
+  }
+
+  function getState() {
+    return state;
+  }
+
+  function dispatch(action: StoreAction) {
+    state = reducer(state, action);
+    for (const listener of listeners) {
+      listener();
+    }
+  }
+
+  function subscribe(listener: () => void) {
+    listeners.add(listener);
+    return () => listeners.delete(listener);
+  }
+
+  return { getState, dispatch, subscribe };
 }
 
 const StoreContext = React.createContext<ReturnType<typeof createStore> | null>(
@@ -231,13 +220,25 @@ function useStoreContext(consumerName: string) {
   return context;
 }
 
-function useStore<T>(selector: (state: State) => T): T {
+function useStore<T>(selector: (state: StoreState) => T): T {
   const store = useStoreContext(ROOT_NAME);
 
-  const getSnapshot = React.useCallback(
-    () => selector(store.snapshot()),
-    [selector, store],
+  const lastValueRef = useLazyRef<{ value: T; state: StoreState } | null>(
+    () => null,
   );
+
+  const getSnapshot = React.useCallback(() => {
+    const state = store.getState();
+    const prevValue = lastValueRef.current;
+
+    if (prevValue && prevValue.state === state) {
+      return prevValue.value;
+    }
+
+    const nextValue = selector(state);
+    lastValueRef.current = { value: nextValue, state };
+    return nextValue;
+  }, [store, selector, lastValueRef]);
 
   return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
@@ -329,44 +330,45 @@ function FileUploadRoot(props: FileUploadRootProps) {
   const labelId = React.useId();
 
   const dir = useDirection(dirProp);
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef(() => ({
-    files: new Map<File, FileState>(),
-    dragOver: false,
-    invalid: false,
-  }));
+  const listeners = useLazyRef(() => new Set<() => void>()).current;
+  const files = useLazyRef<Map<File, FileState>>(() => new Map()).current;
   const inputRef = React.useRef<HTMLInputElement>(null);
   const isControlled = value !== undefined;
 
-  console.log({ files: stateRef.current.files });
-
   const store = React.useMemo(
-    () => createStore(listenersRef, stateRef, onValueChange),
-    [listenersRef, stateRef, onValueChange],
+    () => createStore(listeners, files, invalid, onValueChange),
+    [listeners, files, invalid, onValueChange],
   );
 
-  const contextValue = React.useMemo<FileUploadContextValue>(
-    () => ({
-      dropzoneId,
-      inputId,
-      listId,
-      labelId,
-      dir,
-      disabled,
-      inputRef,
-    }),
-    [dropzoneId, inputId, listId, labelId, dir, disabled],
+  const acceptTypes = React.useMemo(
+    () => accept?.split(",").map((t) => t.trim()) ?? null,
+    [accept],
   );
+
+  const onProgress = useLazyRef(() => {
+    let frame = 0;
+    return (file: File, progress: number) => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        store.dispatch({
+          variant: "SET_PROGRESS",
+          file,
+          progress: Math.min(Math.max(0, progress), 100),
+        });
+      });
+    };
+  }).current;
 
   React.useEffect(() => {
     if (isControlled) {
-      store.setFiles(value);
+      store.dispatch({ variant: "SET_FILES", files: value });
     } else if (
       defaultValue &&
       defaultValue.length > 0 &&
-      !store.snapshot().files.size
+      !store.getState().files.size
     ) {
-      store.setFiles(defaultValue);
+      store.dispatch({ variant: "SET_FILES", files: defaultValue });
     }
   }, [value, defaultValue, isControlled, store]);
 
@@ -378,7 +380,7 @@ function FileUploadRoot(props: FileUploadRootProps) {
       let invalid = false;
 
       if (maxFiles) {
-        const currentCount = store.snapshot().files.size;
+        const currentCount = store.getState().files.size;
         const remainingSlotCount = Math.max(0, maxFiles - currentCount);
 
         if (remainingSlotCount < filesToProcess.length) {
@@ -420,8 +422,7 @@ function FileUploadRoot(props: FileUploadRootProps) {
           }
         }
 
-        if (accept) {
-          const acceptTypes = accept.split(",").map((t) => t.trim());
+        if (acceptTypes) {
           const fileType = file.type;
           const fileExtension = `.${file.name.split(".").pop()}`;
 
@@ -456,17 +457,17 @@ function FileUploadRoot(props: FileUploadRootProps) {
       }
 
       if (invalid) {
-        store.setState("invalid", true);
+        store.dispatch({ variant: "SET_INVALID", invalid });
         setTimeout(() => {
-          store.setState("invalid", false);
+          store.dispatch({ variant: "SET_INVALID", invalid: false });
         }, 2000);
       }
 
       if (acceptedFiles.length > 0) {
-        store.addFiles(acceptedFiles);
+        store.dispatch({ variant: "ADD_FILES", files: acceptedFiles });
 
         if (isControlled && onValueChange) {
-          const currentFiles = Array.from(store.snapshot().files.values()).map(
+          const currentFiles = Array.from(store.getState().files.values()).map(
             (f) => f.file,
           );
           onValueChange([...currentFiles]);
@@ -497,7 +498,7 @@ function FileUploadRoot(props: FileUploadRootProps) {
       maxFiles,
       onFileValidate,
       onFileReject,
-      accept,
+      acceptTypes,
       maxSize,
       disabled,
     ],
@@ -507,35 +508,41 @@ function FileUploadRoot(props: FileUploadRootProps) {
     async (files: File[]) => {
       try {
         for (const file of files) {
-          store.setFileProgress(file, 0);
+          store.dispatch({ variant: "SET_PROGRESS", file, progress: 0 });
         }
 
         if (onUpload) {
           await onUpload(files, {
-            onProgress: (file, progress) => {
-              store.setFileProgress(file, progress);
-            },
+            onProgress,
             onSuccess: (file) => {
-              store.setFileSuccess(file);
+              store.dispatch({ variant: "SET_SUCCESS", file });
             },
             onError: (file, error) => {
-              store.setFileError(file, error.message ?? "Upload failed");
+              store.dispatch({
+                variant: "SET_ERROR",
+                file,
+                error: error.message ?? "Upload failed",
+              });
             },
           });
         } else {
           for (const file of files) {
-            store.setFileSuccess(file);
+            store.dispatch({ variant: "SET_SUCCESS", file });
           }
         }
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : "Upload failed";
         for (const file of files) {
-          store.setFileError(file, errorMessage);
+          store.dispatch({
+            variant: "SET_ERROR",
+            file,
+            error: errorMessage,
+          });
         }
       }
     },
-    [store, onUpload],
+    [store, onUpload, onProgress],
   );
 
   const onInputChange = React.useCallback(
@@ -545,6 +552,19 @@ function FileUploadRoot(props: FileUploadRootProps) {
       event.target.value = "";
     },
     [onFilesChange],
+  );
+
+  const contextValue = React.useMemo<FileUploadContextValue>(
+    () => ({
+      dropzoneId,
+      inputId,
+      listId,
+      labelId,
+      dir,
+      disabled,
+      inputRef,
+    }),
+    [dropzoneId, inputId, listId, labelId, dir, disabled],
   );
 
   const RootPrimitive = asChild ? Slot : "div";
@@ -634,7 +654,7 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
       if (event.defaultPrevented) return;
 
       event.preventDefault();
-      store.setState("dragOver", true);
+      store.dispatch({ variant: "SET_DRAG_OVER", dragOver: true });
     },
     [store, onDragOverProp],
   );
@@ -646,7 +666,7 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
       if (event.defaultPrevented) return;
 
       event.preventDefault();
-      store.setState("dragOver", true);
+      store.dispatch({ variant: "SET_DRAG_OVER", dragOver: true });
     },
     [store, onDragEnterProp],
   );
@@ -667,7 +687,7 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
       }
 
       event.preventDefault();
-      store.setState("dragOver", false);
+      store.dispatch({ variant: "SET_DRAG_OVER", dragOver: false });
     },
     [store, onDragLeaveProp],
   );
@@ -679,7 +699,7 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
       if (event.defaultPrevented) return;
 
       event.preventDefault();
-      store.setState("dragOver", false);
+      store.dispatch({ variant: "SET_DRAG_OVER", dragOver: false });
 
       const files = Array.from(event.dataTransfer.files);
       const inputElement = context.inputRef.current;
@@ -703,7 +723,7 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
       if (event.defaultPrevented) return;
 
       event.preventDefault();
-      store.setState("dragOver", false);
+      store.dispatch({ variant: "SET_DRAG_OVER", dragOver: false });
 
       const items = event.clipboardData?.items;
       if (!items) return;
@@ -1024,20 +1044,30 @@ function FileUploadItemPreview(props: FileUploadItemPreviewProps) {
   const { render, asChild, children, className, ...previewProps } = props;
 
   const itemContext = useFileUploadItemContext(ITEM_PREVIEW_NAME);
+  const urlCache = useLazyRef(() => new WeakMap<File, string>()).current;
 
   const onPreviewRender = React.useCallback(
     (file: File) => {
       if (render) return render(file);
 
       if (itemContext.fileState?.file.type.startsWith("image/")) {
+        let url = urlCache.get(file);
+        if (!url) {
+          url = URL.createObjectURL(file);
+          urlCache.set(file, url);
+        }
         return (
           <img
-            src={URL.createObjectURL(file)}
+            src={url}
             alt={file.name}
             className="size-full object-cover"
             onLoad={(event) => {
               if (!(event.target instanceof HTMLImageElement)) return;
-              URL.revokeObjectURL(event.target.src);
+              const cachedUrl = urlCache.get(file);
+              if (cachedUrl) {
+                URL.revokeObjectURL(cachedUrl);
+                urlCache.delete(file);
+              }
             }}
           />
         );
@@ -1045,7 +1075,7 @@ function FileUploadItemPreview(props: FileUploadItemPreviewProps) {
 
       return getFileIcon(file);
     },
-    [render, itemContext.fileState?.file.type],
+    [render, itemContext.fileState?.file.type, urlCache],
   );
 
   if (!itemContext.fileState) return null;
@@ -1278,7 +1308,10 @@ function FileUploadItemDelete(props: FileUploadItemDeleteProps) {
 
       if (!itemContext.fileState || event.defaultPrevented) return;
 
-      store.removeFile(itemContext.fileState.file);
+      store.dispatch({
+        variant: "REMOVE_FILE",
+        file: itemContext.fileState.file,
+      });
     },
     [store, itemContext.fileState, onClickProp],
   );
@@ -1326,7 +1359,7 @@ function FileUploadClear(props: FileUploadClearProps) {
 
       if (event.defaultPrevented) return;
 
-      store.clearFiles();
+      store.dispatch({ variant: "CLEAR" });
     },
     [store, onClickProp],
   );
