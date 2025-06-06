@@ -25,11 +25,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import FileUploadDemo from "@/registry/default/examples/file-upload-demo";
-import FileUploadDirectUploadDemo from "@/registry/default/examples/file-upload-direct-upload-demo";
-import FileUploadFillProgressDemo from "@/registry/default/examples/file-upload-fill-progress-demo";
+import { ClientOnly } from "@/registry/default/components/client-only";
 import MediaPlayerHslDemo from "@/registry/default/examples/media-player-hls-demo";
 import {
   Combobox,
@@ -41,14 +40,44 @@ import {
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
 import * as Mention from "@diceui/mention";
+import MuxVideo from "@mux/mux-video-react";
 import { ChevronDown } from "lucide-react";
+import {
+  MediaControlBar,
+  MediaController,
+  MediaMuteButton,
+  MediaPlayButton,
+  MediaSeekBackwardButton,
+  MediaSeekForwardButton,
+  MediaTimeDisplay,
+  MediaTimeRange,
+  MediaVolumeRange,
+} from "media-chrome/react";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <FileUploadDemo />
-      <FileUploadDirectUploadDemo />
-      {/* <MediaPlayerHslDemo /> */}
+      <ClientOnly fallback={<Skeleton className="aspect-video w-full" />}>
+        <MediaController>
+          <video
+            slot="media"
+            src="https://stream.mux.com/A3VXy02VoUinw01pwyomEO3bHnG4P32xzV7u1j1FSzjNg/high.mp4"
+            preload="auto"
+            muted
+            crossOrigin=""
+          />
+          <MediaControlBar>
+            <MediaPlayButton />
+            <MediaSeekBackwardButton />
+            <MediaSeekForwardButton />
+            <MediaTimeRange />
+            <MediaTimeDisplay showDuration />
+            <MediaMuteButton />
+            <MediaVolumeRange />
+          </MediaControlBar>
+        </MediaController>
+      </ClientOnly>
+      <MediaPlayerHslDemo />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
