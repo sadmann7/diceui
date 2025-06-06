@@ -1385,64 +1385,6 @@ interface SeekState {
   hasInitialPosition: boolean;
 }
 
-type SeekAction =
-  | { type: "HOVER_START"; hoverTime: number }
-  | { type: "HOVER_END" }
-  | {
-      type: "HOVER_MOVE";
-      hoverTime: number;
-      position: { x: number; y: number };
-    }
-  | { type: "SEEK_START"; time: number }
-  | { type: "SEEK_COMMIT"; time: number }
-  | { type: "TOOLTIP_POSITION"; position: { x: number; y: number } };
-
-function seekReducer(state: SeekState, action: SeekAction): SeekState {
-  switch (action.type) {
-    case "HOVER_START":
-      return {
-        ...state,
-        isHovering: true,
-        hoverTime: action.hoverTime,
-      };
-    case "HOVER_END":
-      return {
-        ...state,
-        isHovering: false,
-        tooltipPosition: null,
-        hasInitialPosition: false,
-      };
-    case "HOVER_MOVE":
-      return {
-        ...state,
-        hoverTime: action.hoverTime,
-        tooltipPosition: action.position,
-        hasInitialPosition: true,
-      };
-    case "SEEK_START":
-      return {
-        ...state,
-        pendingSeekTime: action.time,
-      };
-    case "SEEK_COMMIT":
-      return {
-        ...state,
-        pendingSeekTime: action.time,
-        isHovering: false,
-        tooltipPosition: null,
-        hasInitialPosition: false,
-      };
-    case "TOOLTIP_POSITION":
-      return {
-        ...state,
-        tooltipPosition: action.position,
-        hasInitialPosition: true,
-      };
-    default:
-      return state;
-  }
-}
-
 interface MediaPlayerSeekProps
   extends React.ComponentProps<typeof SliderPrimitive.Root> {
   withTime?: boolean;
@@ -1498,7 +1440,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const tooltipRef = React.useRef<HTMLDivElement>(null);
   const justCommittedRef = React.useRef<boolean>(false);
 
-  const [seekState, seekDispatch] = React.useReducer(seekReducer, {
+  const [seekState, setSeekState] = React.useState<SeekState>({
     isHovering: false,
     hoverTime: 0,
     pendingSeekTime: null,
@@ -1597,7 +1539,13 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     if (seekState.pendingSeekTime !== null) {
       const diff = Math.abs(mediaCurrentTime - seekState.pendingSeekTime);
       if (diff < 0.5) {
-        seekDispatch({ type: "SEEK_COMMIT", time: seekState.pendingSeekTime });
+        setSeekState((prev) => ({
+          ...prev,
+          pendingSeekTime: seekState.pendingSeekTime,
+          isHovering: false,
+          tooltipPosition: null,
+          hasInitialPosition: false,
+        }));
       }
     }
   }, [mediaCurrentTime, seekState.pendingSeekTime]);
@@ -1606,7 +1554,12 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     if (!seekState.isHovering || tooltipDisabled) return;
 
     function onScroll() {
-      seekDispatch({ type: "HOVER_END" });
+      setSeekState((prev) => ({
+        ...prev,
+        isHovering: false,
+        tooltipPosition: null,
+        hasInitialPosition: false,
+      }));
       dispatch({
         type: MediaActionTypes.MEDIA_PREVIEW_REQUEST,
         detail: undefined,
@@ -1700,7 +1653,11 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         x = window.innerWidth - viewportPadding - halfTooltipWidth;
       }
 
-      seekDispatch({ type: "TOOLTIP_POSITION", position: { x, y } });
+      setSeekState((prev) => ({
+        ...prev,
+        tooltipPosition: { x, y },
+        hasInitialPosition: true,
+      }));
     },
     [getCollisionPadding, getCollisionBoundaries],
   );
@@ -1725,22 +1682,28 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
           requestAnimationFrame(() => {
             hoverTimeoutRef.current = window.setTimeout(() => {
-              seekDispatch({
-                type: "HOVER_START",
+              setSeekState((prev) => ({
+                ...prev,
+                isHovering: true,
                 hoverTime: seekState.hoverTime,
-              });
+              }));
             }, 16);
           });
         } else {
           hoverTimeoutRef.current = window.setTimeout(() => {
-            seekDispatch({
-              type: "HOVER_START",
+            setSeekState((prev) => ({
+              ...prev,
+              isHovering: true,
               hoverTime: seekState.hoverTime,
-            });
+            }));
           }, 50);
         }
       } else {
-        seekDispatch({ type: "HOVER_START", hoverTime: seekState.hoverTime });
+        setSeekState((prev) => ({
+          ...prev,
+          isHovering: true,
+          hoverTime: seekState.hoverTime,
+        }));
       }
     }
   }, [
@@ -1764,7 +1727,12 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       previewDebounceRef.current = null;
     }
 
-    seekDispatch({ type: "HOVER_END" });
+    setSeekState((prev) => ({
+      ...prev,
+      isHovering: false,
+      tooltipPosition: null,
+      hasInitialPosition: false,
+    }));
 
     justCommittedRef.current = false;
 
@@ -1807,11 +1775,11 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         const relativeX = offsetXOnSeekBar / seekRect.width;
         const calculatedHoverTime = relativeX * seekableEnd;
 
-        seekDispatch({
-          type: "HOVER_MOVE",
+        setSeekState((prev) => ({
+          ...prev,
+          isHovering: true,
           hoverTime: calculatedHoverTime,
-          position: { x: clientX, y: seekRect.top },
-        });
+        }));
 
         if (!tooltipDisabled) {
           onPreviewUpdate(calculatedHoverTime);
@@ -1822,7 +1790,12 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
             (clientX >= seekRect.left && clientX <= seekRect.right)
           ) {
             if (clientX < seekRect.left || clientX > seekRect.right) {
-              seekDispatch({ type: "HOVER_END" });
+              setSeekState((prev) => ({
+                ...prev,
+                isHovering: false,
+                tooltipPosition: null,
+                hasInitialPosition: false,
+              }));
               return;
             }
 
@@ -1847,7 +1820,13 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     (value: number[]) => {
       const time = value[0] ?? 0;
 
-      seekDispatch({ type: "SEEK_START", time });
+      setSeekState((prev) => ({
+        ...prev,
+        pendingSeekTime: time,
+        isHovering: false,
+        tooltipPosition: null,
+        hasInitialPosition: false,
+      }));
 
       if (seekThrottleTimeoutRef.current) {
         cancelAnimationFrame(seekThrottleTimeoutRef.current);
@@ -1886,7 +1865,13 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         previewDebounceRef.current = null;
       }
 
-      seekDispatch({ type: "SEEK_COMMIT", time });
+      setSeekState((prev) => ({
+        ...prev,
+        pendingSeekTime: time,
+        isHovering: false,
+        tooltipPosition: null,
+        hasInitialPosition: false,
+      }));
 
       justCommittedRef.current = true;
 
