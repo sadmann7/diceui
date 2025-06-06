@@ -87,21 +87,30 @@ function useLazyRef<T>(fn: () => T) {
   return ref as React.RefObject<T>;
 }
 
-interface Store<T> {
-  snapshot: () => T;
-  subscribe: (callback: () => void) => () => void;
-  setState: (key: keyof T, value: T[keyof T]) => void;
-  emit: () => void;
+interface StoreState {
+  controlsVisible: boolean;
+  menuOpen: boolean;
+  volumeIndicatorVisible: boolean;
 }
 
-function createStore<T>(
+interface Store {
+  snapshot: () => StoreState;
+  subscribe: (callback: () => void) => () => void;
+  setState: (
+    key: keyof StoreState,
+    value: StoreState[keyof StoreState],
+  ) => void;
+  notify: () => void;
+}
+
+function createStore(
   listenersRef: React.RefObject<Set<() => void>>,
-  stateRef: React.RefObject<T>,
-  onChange?: Partial<{
-    [K in keyof T]: (value: T[K], store: Store<T>) => void;
+  stateRef: React.RefObject<StoreState>,
+  onValueChange?: Partial<{
+    [K in keyof StoreState]: (value: StoreState[K], store: Store) => void;
   }>,
-): Store<T> {
-  const store: Store<T> = {
+): Store {
+  const store: Store = {
     snapshot: () => stateRef.current,
     subscribe: (cb) => {
       listenersRef.current.add(cb);
@@ -110,10 +119,10 @@ function createStore<T>(
     setState: (key, value) => {
       if (Object.is(stateRef.current[key], value)) return;
       stateRef.current[key] = value;
-      onChange?.[key]?.(value, store);
-      store.emit();
+      onValueChange?.[key]?.(value, store);
+      store.notify();
     },
-    emit: () => {
+    notify: () => {
       for (const cb of listenersRef.current) {
         cb();
       }
@@ -138,12 +147,6 @@ function useStoreSelector<U>(selector: (state: StoreState) => U): U {
   );
 }
 
-interface StoreState {
-  controlsVisible: boolean;
-  menuOpen: boolean;
-  volumeIndicatorVisible: boolean;
-}
-
 interface MediaPlayerContextValue {
   mediaId: string;
   labelId: string;
@@ -151,7 +154,7 @@ interface MediaPlayerContextValue {
   dir: Direction;
   rootRef: React.RefObject<HTMLDivElement | null>;
   mediaRef: React.RefObject<HTMLVideoElement | HTMLAudioElement | null>;
-  store: Store<StoreState>;
+  store: Store;
   portalContainer: Element | DocumentFragment | null;
   tooltipSideOffset: number;
   disabled: boolean;
@@ -245,7 +248,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
   }));
 
   const store = React.useMemo(
-    () => createStore<StoreState>(listenersRef, stateRef),
+    () => createStore(listenersRef, stateRef),
     [listenersRef, stateRef],
   );
 

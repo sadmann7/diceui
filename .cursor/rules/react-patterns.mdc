@@ -60,55 +60,66 @@ const [data, setData] = useState(null);
 
 ### ✅ Prefer: State machine
 ```tsx
-type StoreSetState<T> = <K extends keyof T>(
-  key: K,
-  value: T[K],
-) => void
+function useLazyRef<T>(fn: () => T) {
+  const ref = React.useRef<T | null>(null);
 
-type Store<T> = {
+  if (ref.current === null) {
+    ref.current = fn();
+  }
+
+  return ref as React.RefObject<T>;
+}
+
+interface Store<T> {
   snapshot: () => T
   subscribe: (callback: () => void) => () => void
-  setState: StoreSetState<T>
-  emit: () => void
+  setState: <K extends keyof T>(key: K, value: T[K]) => void
+  notify: () => void
 }
 
 function createStore<T>(
-  initialState: T,
-  onChange?: Partial<{
+  listenersRef: React.RefObject<Set<() => void>>,
+  stateRef: React.RefObject<T>,
+  onValueChange?: Partial<{
     [K in keyof T]: (value: T[K], store: Store<T>) => void
   }>
 ): Store<T> {
-  let state = { ...initialState }
-  const listeners = new Set<() => void>()
-
   const store: Store<T> = {
-    snapshot: () => state,
+    snapshot: () => stateRef.current,
     subscribe: (cb) => {
-      listeners.add(cb)
-      return () => listeners.delete(cb)
+      listenersRef.current.add(cb);
+      return () => listenersRef.current.delete(cb);
     },
     setState: (key, value) => {
-      if (Object.is(state[key], value)) return
-      state[key] = value
-      onChange?.[key]?.(value, store)
-      store.emit()
+      if (Object.is(stateRef.current[key], value)) return;
+      stateRef.current[key] = value;
+      onValueChange?.[key]?.(value, store);
+      store.notify();
     },
-    emit: () => {
-      for (const cb of listeners) {
-        cb()
-        }
+    notify: () => {
+      for (const cb of listenersRef.current) {
+        cb();
+      }
     },
-  }
+  };
 
-  return store
+  return store;
 }
 
-function useStoreSelector<T extends StoreState, U>(
+function useStoreSelector<T, U>(
   store: Store<T>,
   selector: (state: T) => U
 ): U {
-  const getSnapshot = () => selector(store.snapshot())
-  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot)
+  const getSnapshot = React.useCallback(
+    () => selector(store.snapshot()),
+    [store, selector]
+  );
+  
+  return React.useSyncExternalStore(
+    store.subscribe,
+    getSnapshot,
+    getSnapshot
+  );
 }
 ```
 
