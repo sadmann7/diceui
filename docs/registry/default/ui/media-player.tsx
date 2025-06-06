@@ -884,11 +884,11 @@ function MediaPlayerError(props: MediaPlayerErrorProps) {
 
   const error = errorProp ?? mediaError;
 
-  const [isReloadPending, startReloadTransition] = React.useTransition();
-  const [isRetryPending, startRetryTransition] = React.useTransition();
-
   const labelId = React.useId();
   const descriptionId = React.useId();
+
+  const [isReloadPending, startReloadTransition] = React.useTransition();
+  const [isRetryPending, startRetryTransition] = React.useTransition();
 
   const getErrorMessage = React.useCallback(
     (error: MediaError | null | undefined) => {
@@ -978,16 +978,14 @@ function MediaPlayerError(props: MediaPlayerErrorProps) {
     >
       {children ?? (
         <div className="flex max-w-md flex-col items-center gap-4 px-6 py-8 text-center">
-          <div className="flex flex-col gap-1.5">
-            <div className="flex items-center gap-2.5">
-              <AlertTriangleIcon className="size-8 text-destructive" />
-              <h3 id={labelId} className="font-semibold text-xl">
-                {label ?? getErrorLabel(error)}
-              </h3>
-            </div>
+          <AlertTriangleIcon className="size-12 text-destructive" />
+          <div className="flex flex-col gap-px text-center">
+            <h3 id={labelId} className="font-semibold text-xl tracking-tight">
+              {label ?? getErrorLabel(error)}
+            </h3>
             <p
               id={descriptionId}
-              className="text-muted-foreground text-sm leading-relaxed"
+              className="text-balance text-muted-foreground text-sm leading-relaxed"
             >
               {description ?? getErrorMessage(error)}
             </p>
