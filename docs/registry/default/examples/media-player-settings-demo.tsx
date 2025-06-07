@@ -20,11 +20,10 @@ import {
 
 export default function MediaPlayerSettingsDemo() {
   return (
-    <MediaPlayer>
+    <MediaPlayer autoHide>
       <MediaPlayerVideo
         src="https://stream.mux.com/Sc89iWAyNkhJ3P1rQ02nrEdCFTnfT01CZ2KmaEcxXfB008/low.mp4"
         crossOrigin=""
-        muted
         playsInline
       >
         <track
