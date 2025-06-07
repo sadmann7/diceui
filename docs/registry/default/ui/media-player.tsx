@@ -95,6 +95,7 @@ interface StoreState {
   controlsVisible: boolean;
   menuOpen: boolean;
   volumeIndicatorVisible: boolean;
+  dragging: boolean;
 }
 
 interface Store {
@@ -249,6 +250,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
     controlsVisible: true,
     menuOpen: false,
     volumeIndicatorVisible: false,
+    dragging: false,
   }));
 
   const store = React.useMemo(
@@ -256,8 +258,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
     [listenersRef, stateRef],
   );
 
-  const menuOpen = stateRef.current.menuOpen;
-  const controlsVisible = stateRef.current.controlsVisible;
+  const { controlsVisible, menuOpen, dragging } = stateRef.current;
 
   const hideControlsTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
   const lastMouseMoveRef = React.useRef<number>(Date.now());
@@ -290,12 +291,12 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       clearTimeout(hideControlsTimeoutRef.current);
     }
 
-    if (autoHide && !mediaPaused && !menuOpen) {
+    if (autoHide && !mediaPaused && !menuOpen && !dragging) {
       hideControlsTimeoutRef.current = setTimeout(() => {
         store.setState("controlsVisible", false);
       }, 3000);
     }
-  }, [store, autoHide, mediaPaused, menuOpen]);
+  }, [store, autoHide, mediaPaused, menuOpen, dragging]);
 
   const onVolumeIndicatorTrigger = React.useCallback(() => {
     if (menuOpen) return;
@@ -321,7 +322,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
 
       if (event.defaultPrevented) return;
 
-      if (autoHide && !mediaPaused && !menuOpen) {
+      if (autoHide && !mediaPaused && !menuOpen && !dragging) {
         store.setState("controlsVisible", false);
       }
     },
@@ -331,6 +332,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       autoHide,
       mediaPaused,
       menuOpen,
+      dragging,
     ],
   );
 
@@ -348,7 +350,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
   );
 
   React.useEffect(() => {
-    if (mediaPaused || menuOpen) {
+    if (mediaPaused || menuOpen || dragging) {
       store.setState("controlsVisible", true);
       if (hideControlsTimeoutRef.current) {
         clearTimeout(hideControlsTimeoutRef.current);
@@ -359,7 +361,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
     if (autoHide) {
       onControlsShow();
     }
-  }, [store, onControlsShow, autoHide, mediaPaused, menuOpen]);
+  }, [store, onControlsShow, autoHide, mediaPaused, menuOpen, dragging]);
 
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -1846,6 +1848,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       const time = value[0] ?? 0;
 
       setSeekState((prev) => ({ ...prev, pendingSeekTime: time }));
+      context.store.setState("dragging", true);
 
       if (seekThrottleRef.current) {
         cancelAnimationFrame(seekThrottleRef.current);
@@ -1859,7 +1862,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         seekThrottleRef.current = null;
       });
     },
-    [dispatch],
+    [dispatch, context.store],
   );
 
   const onSeekCommit = React.useCallback(
@@ -1893,6 +1896,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
       justCommittedRef.current = true;
       collisionDataRef.current = null;
+      context.store.setState("dragging", false);
 
       dispatch({
         type: MediaActionTypes.MEDIA_SEEK_REQUEST,
@@ -1904,7 +1908,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         detail: undefined,
       });
     },
-    [dispatch],
+    [dispatch, context.store],
   );
 
   React.useEffect(() => {
@@ -2150,12 +2154,25 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
   const onVolumeChange = React.useCallback(
     (value: number[]) => {
       const volume = value[0] ?? 0;
+      context.store.setState("dragging", true);
       dispatch({
         type: MediaActionTypes.MEDIA_VOLUME_REQUEST,
         detail: volume,
       });
     },
-    [dispatch],
+    [dispatch, context.store],
+  );
+
+  const onVolumeCommit = React.useCallback(
+    (value: number[]) => {
+      const volume = value[0] ?? 0;
+      context.store.setState("dragging", false);
+      dispatch({
+        type: MediaActionTypes.MEDIA_VOLUME_REQUEST,
+        detail: volume,
+      });
+    },
+    [dispatch, context.store],
   );
 
   const effectiveVolume = mediaMuted ? 0 : mediaVolume;
@@ -2216,6 +2233,7 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
         disabled={isDisabled}
         value={[effectiveVolume]}
         onValueChange={onVolumeChange}
+        onValueCommit={onVolumeCommit}
       >
         <SliderPrimitive.Track className="relative h-1 w-full grow overflow-hidden rounded-full bg-zinc-500">
           <SliderPrimitive.Range className="absolute h-full bg-primary will-change-[width]" />
