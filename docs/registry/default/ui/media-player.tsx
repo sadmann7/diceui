@@ -176,6 +176,7 @@ interface MediaPlayerContextValue {
   rootRef: React.RefObject<HTMLDivElement | null>;
   mediaRef: React.RefObject<HTMLVideoElement | HTMLAudioElement | null>;
   portalContainer: Element | DocumentFragment | null;
+  tooltipDelayDuration: number;
   tooltipSideOffset: number;
   disabled: boolean;
   isVideo: boolean;
@@ -207,6 +208,7 @@ interface MediaPlayerRootProps
   onFullscreenChange?: (fullscreen: boolean) => void;
   dir?: Direction;
   label?: string;
+  tooltipDelayDuration?: number;
   tooltipSideOffset?: number;
   asChild?: boolean;
   autoHide?: boolean;
@@ -250,6 +252,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
     onPipError,
     dir: dirProp,
     label,
+    tooltipDelayDuration = 600,
     tooltipSideOffset = FLOATING_MENU_SIDE_OFFSET,
     asChild,
     autoHide = false,
@@ -724,6 +727,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       rootRef,
       mediaRef,
       portalContainer,
+      tooltipDelayDuration,
       tooltipSideOffset,
       disabled,
       isVideo,
@@ -735,6 +739,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       descriptionId,
       dir,
       portalContainer,
+      tooltipDelayDuration,
       tooltipSideOffset,
       disabled,
       isVideo,
@@ -3012,15 +3017,23 @@ interface MediaPlayerTooltipProps
 }
 
 function MediaPlayerTooltip(props: MediaPlayerTooltipProps) {
-  const { tooltip, shortcut, sideOffset, children, ...tooltipProps } = props;
+  const {
+    tooltip,
+    shortcut,
+    delayDuration,
+    sideOffset,
+    children,
+    ...tooltipProps
+  } = props;
 
   const context = useMediaPlayerContext("MediaPlayerTooltip");
-  const currentSideOffset = sideOffset ?? context.tooltipSideOffset;
+  const tooltipDelayDuration = delayDuration ?? context.tooltipDelayDuration;
+  const tooltipSideOffset = sideOffset ?? context.tooltipSideOffset;
 
   if ((!tooltip && !shortcut) || context.withoutTooltip) return <>{children}</>;
 
   return (
-    <Tooltip {...tooltipProps} delayDuration={600}>
+    <Tooltip {...tooltipProps} delayDuration={tooltipDelayDuration}>
       <TooltipTrigger
         className="text-foreground focus-visible:ring-ring/50"
         asChild
@@ -3029,7 +3042,7 @@ function MediaPlayerTooltip(props: MediaPlayerTooltipProps) {
       </TooltipTrigger>
       <TooltipContent
         container={context.portalContainer}
-        sideOffset={currentSideOffset}
+        sideOffset={tooltipSideOffset}
         className="flex items-center gap-2 border bg-accent px-2 py-1 font-medium text-foreground data-[side=top]:mb-3.5 dark:bg-zinc-900 [&>span]:hidden"
       >
         <p>{tooltip}</p>
