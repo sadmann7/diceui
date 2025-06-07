@@ -72,12 +72,6 @@ const SEEK_TOOLTIP_Y = "--seek-tooltip-y";
 const SPRITE_CONTAINER_WIDTH = 224;
 const SPRITE_CONTAINER_HEIGHT = 128;
 
-// Seed with common values (0-60 seconds for most common durations)
-const timeCache = new Map<number, string>();
-for (let s = 0; s <= 60; s++) {
-  timeCache.set(s, timeUtils.formatTime(s, 60));
-}
-
 type Direction = "ltr" | "rtl";
 
 const DirectionContext = React.createContext<Direction | undefined>(undefined);
@@ -316,7 +310,6 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       store.setState("volumeIndicatorVisible", false);
     }, 2000);
 
-    // Show controls when volume indicator is triggered if autohide is enabled
     if (autoHide) {
       onControlsShow();
     }
@@ -1462,68 +1455,21 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     boundaries: Element[];
   } | null>(null);
 
-  const seekStateRef = React.useRef<SeekState>({
+  const [seekState, setSeekState] = React.useState<SeekState>({
     isHovering: false,
     pendingSeekTime: null,
     hasInitialPosition: false,
   });
 
-  const frameRef = React.useRef<number | null>(null);
+  const rafIdRef = React.useRef<number | null>(null);
   const seekThrottleRef = React.useRef<number | null>(null);
-  const lastSeekTimeRef = React.useRef<number>(0);
-  const isDraggingRef = React.useRef<boolean>(false);
-  const dragPositionRef = React.useRef<number | null>(null);
-
-  // Fast scheduler for visual updates (hover, tooltips)
-  const scheduleVisual = React.useCallback((cb: () => void) => {
-    if (frameRef.current !== null) {
-      cancelAnimationFrame(frameRef.current);
-    }
-    frameRef.current = requestAnimationFrame(() => {
-      cb();
-      frameRef.current = null;
-    });
-  }, []);
-
-  // Throttled scheduler for seek updates - more aggressive throttling during drag
-  const scheduleSeek = React.useCallback((cb: () => void) => {
-    const now = performance.now();
-    const timeSinceLastSeek = now - lastSeekTimeRef.current;
-
-    // During drag, throttle very conservatively (minimum 150ms between seeks)
-    // For single clicks, allow immediate execution
-    const minInterval = isDraggingRef.current ? 150 : 0;
-
-    if (seekThrottleRef.current !== null) {
-      console.log("[MediaPlayer] scheduleSeek clearing previous timeout");
-      clearTimeout(seekThrottleRef.current);
-    }
-
-    const delay = Math.max(0, minInterval - timeSinceLastSeek);
-    console.log("[MediaPlayer] scheduleSeek scheduling:", {
-      isDragging: isDraggingRef.current,
-      delay,
-      timeSinceLastSeek,
-      minInterval,
-    });
-
-    seekThrottleRef.current = window.setTimeout(() => {
-      console.log("[MediaPlayer] scheduleSeek timeout executing");
-      lastSeekTimeRef.current = performance.now();
-      cb();
-      seekThrottleRef.current = null;
-    }, delay);
-  }, []);
-
+  const hoverTimeoutRef = React.useRef<number | null>(null);
   const lastPointerXRef = React.useRef<number>(0);
+  const previewDebounceRef = React.useRef<number | null>(null);
 
-  const [lazyTooltip, setLazyTooltip] =
-    React.useState<React.ReactElement | null>(null);
+  const timeCache = React.useRef<Map<number, string>>(new Map());
 
-  const displayValue =
-    dragPositionRef.current ??
-    seekStateRef.current.pendingSeekTime ??
-    mediaCurrentTime;
+  const displayValue = seekState.pendingSeekTime ?? mediaCurrentTime;
 
   const isDisabled = disabled || context.disabled;
   const tooltipDisabled =
@@ -1538,18 +1484,15 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     const roundedTime = Math.floor(time);
     const key = roundedTime + duration * 10000;
 
-    if (timeCache.has(key)) {
-      return timeCache.get(key) as string;
+    if (timeCache.current.has(key)) {
+      return timeCache.current.get(key) as string;
     }
 
     const formatted = timeUtils.formatTime(time, duration);
-    timeCache.set(key, formatted);
+    timeCache.current.set(key, formatted);
 
-    if (timeCache.size > 100) {
-      timeCache.clear();
-      for (let s = 0; s <= 60; s++) {
-        timeCache.set(s, timeUtils.formatTime(s, 60));
-      }
+    if (timeCache.current.size > 100) {
+      timeCache.current.clear();
     }
 
     return formatted;
@@ -1628,14 +1571,19 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     (time: number) => {
       if (tooltipDisabled) return;
 
-      scheduleVisual(() => {
+      if (previewDebounceRef.current) {
+        cancelAnimationFrame(previewDebounceRef.current);
+      }
+
+      previewDebounceRef.current = requestAnimationFrame(() => {
         dispatch({
           type: MediaActionTypes.MEDIA_PREVIEW_REQUEST,
           detail: time,
         });
+        previewDebounceRef.current = null;
       });
     },
-    [dispatch, tooltipDisabled, scheduleVisual],
+    [dispatch, tooltipDisabled],
   );
 
   const onTooltipPositionUpdate = React.useCallback(
@@ -1687,11 +1635,11 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         tooltipRef.current.style.setProperty(SEEK_TOOLTIP_Y, `${y}px`);
       }
 
-      if (!seekStateRef.current.hasInitialPosition) {
-        seekStateRef.current.hasInitialPosition = true;
+      if (!seekState.hasInitialPosition) {
+        setSeekState((prev) => ({ ...prev, hasInitialPosition: true }));
       }
     },
-    [onCollisionDataUpdate],
+    [onCollisionDataUpdate, seekState.hasInitialPosition],
   );
 
   const onHoverProgressUpdate = React.useCallback(() => {
@@ -1708,30 +1656,23 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   }, [seekableEnd]);
 
   React.useEffect(() => {
-    if (seekStateRef.current.pendingSeekTime !== null) {
-      const diff = Math.abs(
-        mediaCurrentTime - seekStateRef.current.pendingSeekTime,
-      );
+    if (seekState.pendingSeekTime !== null) {
+      const diff = Math.abs(mediaCurrentTime - seekState.pendingSeekTime);
       if (diff < 0.5) {
-        console.log(
-          "[MediaPlayer] Clearing pendingSeekTime - media caught up:",
-          {
-            mediaCurrentTime,
-            pendingSeekTime: seekStateRef.current.pendingSeekTime,
-            diff,
-          },
-        );
-        seekStateRef.current.pendingSeekTime = null;
+        setSeekState((prev) => ({ ...prev, pendingSeekTime: null }));
       }
     }
-  }, [mediaCurrentTime]);
+  }, [mediaCurrentTime, seekState.pendingSeekTime]);
 
   React.useEffect(() => {
-    if (!seekStateRef.current.isHovering || tooltipDisabled) return;
+    if (!seekState.isHovering || tooltipDisabled) return;
 
     function onScroll() {
-      seekStateRef.current.isHovering = false;
-      seekStateRef.current.hasInitialPosition = false;
+      setSeekState((prev) => ({
+        ...prev,
+        isHovering: false,
+        hasInitialPosition: false,
+      }));
       dispatch({
         type: MediaActionTypes.MEDIA_PREVIEW_REQUEST,
         detail: undefined,
@@ -1742,43 +1683,25 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     return () => {
       document.removeEventListener("scroll", onScroll);
     };
-  }, [dispatch, tooltipDisabled]);
+  }, [dispatch, seekState.isHovering, tooltipDisabled]);
 
   const bufferedProgress = React.useMemo(() => {
     if (mediaBuffered.length === 0 || seekableEnd <= 0) return 0;
 
     if (mediaEnded) return 1;
 
-    // Optimize buffered progress calculation without .find()
-    let end = 0;
-    for (let i = 0; i < mediaBuffered.length; i++) {
-      const range = mediaBuffered[i];
-      if (
-        range &&
-        mediaCurrentTime >= range[0] &&
-        mediaCurrentTime <= range[1]
-      ) {
-        end = range[1];
-        break;
-      }
-    }
+    const containingRange = mediaBuffered.find(
+      ([start, end]) => start <= mediaCurrentTime && mediaCurrentTime <= end,
+    );
 
-    if (end) {
-      return Math.min(1, end / seekableEnd);
+    if (containingRange) {
+      return Math.min(1, containingRange[1] / seekableEnd);
     }
 
     return Math.min(1, seekableStart / seekableEnd);
   }, [mediaBuffered, mediaCurrentTime, seekableEnd, mediaEnded, seekableStart]);
 
-  const onTooltipEnsure = React.useCallback(() => {
-    if (!lazyTooltip && !tooltipDisabled && seekableEnd > 0) {
-      setLazyTooltip(<div key="tooltip-placeholder" />);
-    }
-  }, [lazyTooltip, tooltipDisabled, seekableEnd]);
-
   const onPointerEnter = React.useCallback(() => {
-    if (justCommittedRef.current) return;
-
     if (seekRef.current) {
       seekRectRef.current = seekRef.current.getBoundingClientRect();
     }
@@ -1786,8 +1709,13 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     collisionDataRef.current = null;
 
     if (seekableEnd > 0) {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+
+      const delay = justCommittedRef.current ? 16 : 50;
+
       if (!tooltipDisabled) {
-        onTooltipEnsure();
         if (lastPointerXRef.current && seekRectRef.current) {
           const clientX = Math.max(
             seekRectRef.current.left,
@@ -1795,47 +1723,82 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
           );
 
           onTooltipPositionUpdate(clientX);
+
+          requestAnimationFrame(() => {
+            hoverTimeoutRef.current = window.setTimeout(() => {
+              setSeekState((prev) => ({ ...prev, isHovering: true }));
+            }, delay);
+          });
+        } else {
+          hoverTimeoutRef.current = window.setTimeout(() => {
+            setSeekState((prev) => ({ ...prev, isHovering: true }));
+          }, delay);
         }
+      } else {
+        setSeekState((prev) => ({ ...prev, isHovering: true }));
       }
-      seekStateRef.current.isHovering = true;
     }
-  }, [onTooltipPositionUpdate, onTooltipEnsure, seekableEnd, tooltipDisabled]);
+  }, [seekableEnd, onTooltipPositionUpdate, tooltipDisabled]);
 
   const onPointerLeave = React.useCallback(() => {
-    scheduleVisual(() => {
-      seekStateRef.current.isHovering = false;
-      seekStateRef.current.hasInitialPosition = false;
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    if (rafIdRef.current) {
+      cancelAnimationFrame(rafIdRef.current);
+      rafIdRef.current = null;
+    }
+    if (previewDebounceRef.current) {
+      cancelAnimationFrame(previewDebounceRef.current);
+      previewDebounceRef.current = null;
+    }
 
-      justCommittedRef.current = false;
-      seekRectRef.current = null;
-      collisionDataRef.current = null;
+    setSeekState((prev) => ({
+      ...prev,
+      isHovering: false,
+      hasInitialPosition: false,
+    }));
 
-      if (!tooltipDisabled) {
-        dispatch({
-          type: MediaActionTypes.MEDIA_PREVIEW_REQUEST,
-          detail: undefined,
-        });
-      }
-    });
-  }, [dispatch, scheduleVisual, tooltipDisabled]);
+    justCommittedRef.current = false;
+    seekRectRef.current = null;
+    collisionDataRef.current = null;
+
+    if (!tooltipDisabled) {
+      dispatch({
+        type: MediaActionTypes.MEDIA_PREVIEW_REQUEST,
+        detail: undefined,
+      });
+    }
+  }, [dispatch, tooltipDisabled]);
 
   const onPointerMove = React.useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
-      if (!seekRectRef.current || seekableEnd <= 0) return;
+      if (seekableEnd <= 0) return;
+
+      if (!seekRectRef.current && seekRef.current) {
+        seekRectRef.current = seekRef.current.getBoundingClientRect();
+      }
+
+      if (!seekRectRef.current) return;
 
       lastPointerXRef.current = event.clientX;
 
-      scheduleVisual(() => {
-        if (justCommittedRef.current) {
-          console.log(
-            "[MediaPlayer] onPointerMove - ignoring due to justCommitted",
-          );
+      if (rafIdRef.current) {
+        cancelAnimationFrame(rafIdRef.current);
+      }
+
+      rafIdRef.current = requestAnimationFrame(() => {
+        const wasJustCommitted = justCommittedRef.current;
+        if (wasJustCommitted) {
           justCommittedRef.current = false;
-          return;
         }
 
         const seekRect = seekRectRef.current;
-        if (!seekRect) return;
+        if (!seekRect) {
+          rafIdRef.current = null;
+          return;
+        }
 
         const clientX = lastPointerXRef.current;
         const offsetXOnSeekBar = Math.max(
@@ -1849,12 +1812,12 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
         onHoverProgressUpdate();
 
-        const wasHovering = seekStateRef.current.isHovering;
+        const wasHovering = seekState.isHovering;
         const isCurrentlyHovering =
           clientX >= seekRect.left && clientX <= seekRect.right;
 
         if (!wasHovering && isCurrentlyHovering) {
-          seekStateRef.current.isHovering = true;
+          setSeekState((prev) => ({ ...prev, isHovering: true }));
         }
 
         if (!tooltipDisabled) {
@@ -1864,14 +1827,16 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
             onTooltipPositionUpdate(clientX);
           }
         }
+
+        rafIdRef.current = null;
       });
     },
     [
       onPreviewUpdate,
       onTooltipPositionUpdate,
       onHoverProgressUpdate,
-      scheduleVisual,
       seekableEnd,
+      seekState.isHovering,
       tooltipDisabled,
     ],
   );
@@ -1879,90 +1844,59 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const onSeek = React.useCallback(
     (value: number[]) => {
       const time = value[0] ?? 0;
-      const currentPendingTime = seekStateRef.current.pendingSeekTime;
 
-      console.log("[MediaPlayer] onSeek called:", {
-        time,
-        pendingSeekTime: currentPendingTime,
-        mediaCurrentTime,
-        isDragging: isDraggingRef.current,
-      });
+      setSeekState((prev) => ({ ...prev, pendingSeekTime: time }));
 
-      // Always update drag position for visual feedback
-      if (isDraggingRef.current) {
-        dragPositionRef.current = time;
+      if (seekThrottleRef.current) {
+        cancelAnimationFrame(seekThrottleRef.current);
       }
 
-      // Skip actual seeking if we're far behind on seeks and already have a recent pending request
-      const pendingDiff =
-        currentPendingTime !== null
-          ? Math.abs(mediaCurrentTime - currentPendingTime)
-          : 0;
-      const shouldSkipSeek =
-        isDraggingRef.current &&
-        pendingDiff > 1 &&
-        seekThrottleRef.current !== null;
-
-      if (shouldSkipSeek) {
-        console.log(
-          "[MediaPlayer] onSeek skipped actual seek - media too far behind, only updating visual",
-        );
-        return;
-      }
-
-      seekStateRef.current.pendingSeekTime = time;
-
-      scheduleSeek(() => {
-        console.log("[MediaPlayer] scheduleSeek executing seek request:", {
-          time,
-        });
+      seekThrottleRef.current = requestAnimationFrame(() => {
         dispatch({
           type: MediaActionTypes.MEDIA_SEEK_REQUEST,
           detail: time,
         });
+        seekThrottleRef.current = null;
       });
     },
-    [dispatch, scheduleSeek, mediaCurrentTime],
+    [dispatch],
   );
 
   const onSeekCommit = React.useCallback(
     (value: number[]) => {
       const time = value[0] ?? 0;
-      const finalSeekTime = dragPositionRef.current ?? time;
 
-      console.log("[MediaPlayer] onSeekCommit called:", {
-        time,
-        dragPosition: dragPositionRef.current,
-        finalSeekTime,
-        previousPendingSeekTime: seekStateRef.current.pendingSeekTime,
-        currentTime: mediaCurrentTime,
-      });
-
-      // Clear drag state
-      dragPositionRef.current = null;
-
-      // Cancel any pending seeks since we're committing
-      if (seekThrottleRef.current !== null) {
-        clearTimeout(seekThrottleRef.current);
+      if (seekThrottleRef.current) {
+        cancelAnimationFrame(seekThrottleRef.current);
         seekThrottleRef.current = null;
       }
 
-      // Immediate execution for commit - no throttling needed
-      seekStateRef.current.pendingSeekTime = finalSeekTime;
-      seekStateRef.current.isHovering = false;
-      seekStateRef.current.hasInitialPosition = false;
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+        hoverTimeoutRef.current = null;
+      }
+      if (rafIdRef.current) {
+        cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = null;
+      }
+      if (previewDebounceRef.current) {
+        cancelAnimationFrame(previewDebounceRef.current);
+        previewDebounceRef.current = null;
+      }
+
+      setSeekState((prev) => ({
+        ...prev,
+        pendingSeekTime: time,
+        isHovering: false,
+        hasInitialPosition: false,
+      }));
 
       justCommittedRef.current = true;
-      seekRectRef.current = null;
       collisionDataRef.current = null;
 
-      console.log(
-        "[MediaPlayer] onSeekCommit dispatching final seek request:",
-        { finalSeekTime },
-      );
       dispatch({
         type: MediaActionTypes.MEDIA_SEEK_REQUEST,
-        detail: finalSeekTime,
+        detail: time,
       });
 
       dispatch({
@@ -1970,16 +1904,22 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         detail: undefined,
       });
     },
-    [dispatch, mediaCurrentTime],
+    [dispatch],
   );
 
   React.useEffect(() => {
     return () => {
-      if (frameRef.current) {
-        cancelAnimationFrame(frameRef.current);
-      }
       if (seekThrottleRef.current) {
-        clearTimeout(seekThrottleRef.current);
+        cancelAnimationFrame(seekThrottleRef.current);
+      }
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+      if (rafIdRef.current) {
+        cancelAnimationFrame(rafIdRef.current);
+      }
+      if (previewDebounceRef.current) {
+        cancelAnimationFrame(previewDebounceRef.current);
       }
     };
   }, []);
@@ -2063,25 +2003,6 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         onPointerEnter={onPointerEnter}
         onPointerLeave={onPointerLeave}
         onPointerMove={onPointerMove}
-        onPointerDown={(event) => {
-          isDraggingRef.current = true;
-          console.log("[MediaPlayer] Slider onPointerDown - drag started:", {
-            clientX: event.clientX,
-            currentTime: mediaCurrentTime,
-            pendingSeekTime: seekStateRef.current.pendingSeekTime,
-            isDragging: isDraggingRef.current,
-          });
-        }}
-        onPointerUp={(event) => {
-          isDraggingRef.current = false;
-          console.log("[MediaPlayer] Slider onPointerUp - drag ended:", {
-            clientX: event.clientX,
-            currentTime: mediaCurrentTime,
-            pendingSeekTime: seekStateRef.current.pendingSeekTime,
-            dragPosition: dragPositionRef.current,
-            isDragging: isDraggingRef.current,
-          });
-        }}
       >
         <SliderPrimitive.Track className="relative h-1 w-full grow overflow-hidden rounded-full bg-primary/40">
           <div
@@ -2092,7 +2013,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
             }}
           />
           <SliderPrimitive.Range className="absolute h-full bg-primary will-change-[width]" />
-          {seekStateRef.current.isHovering && seekableEnd > 0 && (
+          {seekState.isHovering && seekableEnd > 0 && (
             <div
               data-slot="media-player-seek-hover-range"
               className="absolute h-full bg-primary/70 will-change-[width,opacity]"
@@ -2108,9 +2029,8 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       </SliderPrimitive.Root>
       {!withoutTooltip &&
         !context.withoutTooltip &&
-        seekStateRef.current.isHovering &&
-        seekableEnd > 0 &&
-        lazyTooltip && (
+        seekState.isHovering &&
+        seekableEnd > 0 && (
           <MediaPlayerPortal>
             <div
               ref={tooltipRef}
@@ -2120,10 +2040,8 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
                 left: `var(${SEEK_TOOLTIP_X}, 0px)`,
                 top: `var(${SEEK_TOOLTIP_Y}, 0px)`,
                 transform: `translateX(-50%) translateY(calc(-100% - ${currentTooltipSideOffset}px))`,
-                visibility: seekStateRef.current.hasInitialPosition
-                  ? "visible"
-                  : "hidden",
-                opacity: seekStateRef.current.hasInitialPosition ? 1 : 0,
+                visibility: seekState.hasInitialPosition ? "visible" : "hidden",
+                opacity: seekState.hasInitialPosition ? 1 : 0,
               }}
             >
               <div
