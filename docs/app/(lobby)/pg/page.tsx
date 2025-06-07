@@ -1,5 +1,3 @@
-"use client";
-
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,6 +25,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
+import MediaPlayerAudioDemo from "@/registry/default/examples/media-player-audio-demo";
 import MediaPlayerSettingsDemo from "@/registry/default/examples/media-player-settings-demo";
 import {
   Combobox,
@@ -44,6 +43,7 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <MediaPlayerSettingsDemo />
+      <MediaPlayerAudioDemo />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />

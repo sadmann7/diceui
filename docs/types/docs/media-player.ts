@@ -159,6 +159,18 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   tooltipSideOffset?: number;
 
   /**
+   * The delay in milliseconds before showing tooltips for control buttons and triggers.
+   * This does not affect the seek bar preview tooltip, which shows immediately on hover.
+   *
+   * ```ts
+   * <MediaPlayer tooltipDelayDuration={300} />
+   * ```
+   *
+   * @default 600
+   */
+  tooltipDelayDuration?: number;
+
+  /**
    * Whether to enable auto-hiding behavior for controls and overlay components.
    *
    * Controls will show on pause/interaction and auto-hide after 3 seconds
@@ -211,12 +223,12 @@ export interface LoadingProps extends EmptyProps<"div">, CompositionProps {
    * The delay in milliseconds before showing the loading indicator.
    *
    * ```ts
-   * <MediaPlayer.Loading delayMs={400} />
+   * <MediaPlayer.Loading delay={250} />
    * ```
    *
    * @default 500
    */
-  delayMs?: number;
+  delay?: number;
 }
 
 export interface ErrorProps extends EmptyProps<"div">, CompositionProps {
