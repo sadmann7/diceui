@@ -282,20 +282,6 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       mediaRef.current instanceof HTMLVideoElement) ||
     mediaRef.current?.tagName?.toLowerCase() === "mux-player";
 
-  const onVolumeIndicatorTrigger = React.useCallback(() => {
-    if (menuOpen) return;
-
-    store.setState("volumeIndicatorVisible", true);
-
-    if (volumeIndicatorTimeoutRef.current) {
-      clearTimeout(volumeIndicatorTimeoutRef.current);
-    }
-
-    volumeIndicatorTimeoutRef.current = setTimeout(() => {
-      store.setState("volumeIndicatorVisible", false);
-    }, 2000);
-  }, [store, menuOpen]);
-
   const onControlsShow = React.useCallback(() => {
     store.setState("controlsVisible", true);
     lastMouseMoveRef.current = Date.now();
@@ -310,6 +296,25 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       }, 3000);
     }
   }, [store, autoHide, mediaPaused, menuOpen]);
+
+  const onVolumeIndicatorTrigger = React.useCallback(() => {
+    if (menuOpen) return;
+
+    store.setState("volumeIndicatorVisible", true);
+
+    if (volumeIndicatorTimeoutRef.current) {
+      clearTimeout(volumeIndicatorTimeoutRef.current);
+    }
+
+    volumeIndicatorTimeoutRef.current = setTimeout(() => {
+      store.setState("volumeIndicatorVisible", false);
+    }, 2000);
+
+    // Show controls when volume indicator is triggered if autohide is enabled
+    if (autoHide) {
+      onControlsShow();
+    }
+  }, [store, menuOpen, autoHide, onControlsShow]);
 
   const onMouseLeave = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
