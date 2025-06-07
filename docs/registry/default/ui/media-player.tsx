@@ -2239,18 +2239,27 @@ function MediaPlayerTime(props: MediaPlayerTimeProps) {
     (state) => state.mediaSeekable ?? [0, 0],
   );
 
-  const formattedCurrentTime = React.useMemo(
-    () => timeUtils.formatTime(mediaCurrentTime, seekableEnd),
-    [mediaCurrentTime, seekableEnd],
-  );
-  const formattedDuration = React.useMemo(
-    () => timeUtils.formatTime(seekableEnd, seekableEnd),
-    [seekableEnd],
-  );
-  const formattedRemainingTime = React.useMemo(
-    () => timeUtils.formatTime(seekableEnd - mediaCurrentTime, seekableEnd),
-    [mediaCurrentTime, seekableEnd],
-  );
+  const times = React.useMemo(() => {
+    if (variant === "remaining") {
+      return {
+        remaining: timeUtils.formatTime(
+          seekableEnd - mediaCurrentTime,
+          seekableEnd,
+        ),
+      };
+    }
+
+    if (variant === "duration") {
+      return {
+        duration: timeUtils.formatTime(seekableEnd, seekableEnd),
+      };
+    }
+
+    return {
+      current: timeUtils.formatTime(mediaCurrentTime, seekableEnd),
+      duration: timeUtils.formatTime(seekableEnd, seekableEnd),
+    };
+  }, [variant, mediaCurrentTime, seekableEnd]);
 
   const TimePrimitive = asChild ? Slot : "div";
 
@@ -2263,7 +2272,7 @@ function MediaPlayerTime(props: MediaPlayerTimeProps) {
         {...timeProps}
         className={cn("text-foreground/80 text-sm tabular-nums", className)}
       >
-        {variant === "remaining" ? formattedRemainingTime : formattedDuration}
+        {times[variant]}
       </TimePrimitive>
     );
   }
@@ -2279,11 +2288,11 @@ function MediaPlayerTime(props: MediaPlayerTimeProps) {
         className,
       )}
     >
-      <span className="tabular-nums">{formattedCurrentTime}</span>
+      <span className="tabular-nums">{times.current}</span>
       <span role="separator" aria-hidden="true" tabIndex={-1}>
         /
       </span>
-      <span className="tabular-nums">{formattedDuration}</span>
+      <span className="tabular-nums">{times.duration}</span>
     </TimePrimitive>
   );
 }
@@ -3006,53 +3015,53 @@ function MediaPlayerTooltip(props: MediaPlayerTooltipProps) {
 }
 
 export {
-  MediaPlayerRoot as MediaPlayer,
-  MediaPlayerVideo,
-  MediaPlayerAudio,
-  MediaPlayerControls,
-  MediaPlayerControlsOverlay,
-  MediaPlayerLoading,
-  MediaPlayerError,
-  MediaPlayerVolumeIndicator,
-  MediaPlayerPlay,
-  MediaPlayerSeekBackward,
-  MediaPlayerSeekForward,
-  MediaPlayerSeek,
-  MediaPlayerVolume,
-  MediaPlayerTime,
-  MediaPlayerPlaybackSpeed,
-  MediaPlayerLoop,
-  MediaPlayerFullscreen,
-  MediaPlayerPiP,
-  MediaPlayerCaptions,
-  MediaPlayerDownload,
-  MediaPlayerSettings,
-  MediaPlayerPortal,
-  MediaPlayerTooltip,
-  //
-  MediaPlayerRoot as Root,
-  MediaPlayerVideo as Video,
   MediaPlayerAudio as Audio,
+  MediaPlayerCaptions as Captions,
   MediaPlayerControls as Controls,
   MediaPlayerControlsOverlay as ControlsOverlay,
-  MediaPlayerLoading as Loading,
-  MediaPlayerVolumeIndicator as VolumeIndicator,
+  MediaPlayerDownload as Download,
   MediaPlayerError as Error,
+  MediaPlayerFullscreen as Fullscreen,
+  MediaPlayerLoading as Loading,
+  MediaPlayerLoop as Loop,
+  MediaPlayerRoot as MediaPlayer,
+  MediaPlayerAudio,
+  MediaPlayerCaptions,
+  MediaPlayerControls,
+  MediaPlayerControlsOverlay,
+  MediaPlayerDownload,
+  MediaPlayerError,
+  MediaPlayerFullscreen,
+  MediaPlayerLoading,
+  MediaPlayerLoop,
+  MediaPlayerPiP,
+  MediaPlayerPlay,
+  MediaPlayerPlaybackSpeed,
+  MediaPlayerPortal,
+  MediaPlayerSeek,
+  MediaPlayerSeekBackward,
+  MediaPlayerSeekForward,
+  MediaPlayerSettings,
+  MediaPlayerTime,
+  MediaPlayerTooltip,
+  MediaPlayerVideo,
+  MediaPlayerVolume,
+  MediaPlayerVolumeIndicator,
+  MediaPlayerPiP as PiP,
   MediaPlayerPlay as Play,
+  MediaPlayerPlaybackSpeed as PlaybackSpeed,
+  MediaPlayerPortal as Portal,
+  //
+  MediaPlayerRoot as Root,
+  MediaPlayerSeek as Seek,
   MediaPlayerSeekBackward as SeekBackward,
   MediaPlayerSeekForward as SeekForward,
-  MediaPlayerSeek as Seek,
-  MediaPlayerVolume as Volume,
-  MediaPlayerTime as Time,
-  MediaPlayerPlaybackSpeed as PlaybackSpeed,
-  MediaPlayerLoop as Loop,
-  MediaPlayerFullscreen as Fullscreen,
-  MediaPlayerPiP as PiP,
-  MediaPlayerCaptions as Captions,
-  MediaPlayerDownload as Download,
   MediaPlayerSettings as Settings,
-  MediaPlayerPortal as Portal,
+  MediaPlayerTime as Time,
   MediaPlayerTooltip as Tooltip,
   //
   useMediaSelector as useMediaPlayer,
+  MediaPlayerVideo as Video,
+  MediaPlayerVolume as Volume,
+  MediaPlayerVolumeIndicator as VolumeIndicator,
 };
