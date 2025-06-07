@@ -65,6 +65,10 @@ const SEEK_AMOUNT_LONG = 10;
 const SEEK_COLLISION_PADDING = 10;
 const SEEK_TOOLTIP_WIDTH_FALLBACK = 240;
 
+const SEEK_HOVER_PERCENT = "--seek-hover-percent";
+const SEEK_TOOLTIP_X = "--seek-tooltip-x";
+const SEEK_TOOLTIP_Y = "--seek-tooltip-y";
+
 const SPRITE_CONTAINER_WIDTH = 224;
 const SPRITE_CONTAINER_HEIGHT = 128;
 
@@ -1632,8 +1636,8 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       tooltipYRef.current = y;
 
       if (tooltipRef.current) {
-        tooltipRef.current.style.setProperty("--tooltip-x", `${x}px`);
-        tooltipRef.current.style.setProperty("--tooltip-y", `${y}px`);
+        tooltipRef.current.style.setProperty(SEEK_TOOLTIP_X, `${x}px`);
+        tooltipRef.current.style.setProperty(SEEK_TOOLTIP_Y, `${y}px`);
       }
 
       if (!seekState.hasInitialPosition) {
@@ -1651,7 +1655,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       (hoverTimeRef.current / seekableEnd) * 100,
     );
     seekRef.current.style.setProperty(
-      "--hover-pct",
+      SEEK_HOVER_PERCENT,
       `${hoverPercent.toFixed(4)}%`,
     );
   }, [seekableEnd]);
@@ -1705,12 +1709,10 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const onPointerEnter = React.useCallback(() => {
     if (justCommittedRef.current) return;
 
-    // Cache seek rect once per hover session
     if (seekRef.current) {
       seekRectRef.current = seekRef.current.getBoundingClientRect();
     }
 
-    // Reset collision data cache
     collisionDataRef.current = null;
 
     if (seekableEnd > 0) {
@@ -1944,8 +1946,9 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
           role="presentation"
           aria-hidden="true"
           data-slot="media-player-seek-chapter-separator"
-          className="absolute top-0 h-full w-[2.5px] bg-zinc-50 dark:bg-zinc-950"
+          className="absolute top-0 h-full bg-zinc-50 dark:bg-zinc-950"
           style={{
+            width: "2.5px",
             left: `${position}%`,
             transform: "translateX(-50%)",
           }}
@@ -2019,7 +2022,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
               data-slot="media-player-seek-hover-range"
               className="absolute h-full bg-primary/70 will-change-[width,opacity]"
               style={{
-                width: "var(--hover-pct, 0%)",
+                width: `var(${SEEK_HOVER_PERCENT}, 0%)`,
                 transition: "opacity 150ms ease-out",
               }}
             />
@@ -2038,8 +2041,8 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
               className="pointer-events-none z-50 [backface-visibility:hidden] [contain:layout_style] [transition:opacity_150ms_ease-in-out]"
               style={{
                 position: "fixed" as const,
-                left: "var(--tooltip-x, 0px)",
-                top: "var(--tooltip-y, 0px)",
+                left: `var(${SEEK_TOOLTIP_X}, 0px)`,
+                top: `var(${SEEK_TOOLTIP_Y}, 0px)`,
                 transform: `translateX(-50%) translateY(calc(-100% - ${currentTooltipSideOffset}px))`,
                 visibility: seekState.hasInitialPosition ? "visible" : "hidden",
                 opacity: seekState.hasInitialPosition ? 1 : 0,
