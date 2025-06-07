@@ -161,7 +161,6 @@ interface MediaPlayerContextValue {
   store: Store;
   portalContainer: Element | DocumentFragment | null;
   tooltipSideOffset: number;
-  tooltipDelayDuration: number;
   disabled: boolean;
   isVideo: boolean;
   withoutTooltip: boolean;
@@ -193,7 +192,6 @@ interface MediaPlayerRootProps
   dir?: Direction;
   label?: string;
   tooltipSideOffset?: number;
-  tooltipDelayDuration?: number;
   asChild?: boolean;
   autoHide?: boolean;
   disabled?: boolean;
@@ -222,7 +220,6 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
     dir: dirProp,
     label,
     tooltipSideOffset = FLOATING_MENU_SIDE_OFFSET,
-    tooltipDelayDuration = 600,
     asChild,
     autoHide = false,
     disabled = false,
@@ -266,10 +263,10 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
   const lastMouseMoveRef = React.useRef<number>(Date.now());
   const volumeIndicatorTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
-  const { mediaPaused, isFullscreen } = useMediaSelector((state) => ({
-    mediaPaused: state.mediaPaused ?? true,
-    isFullscreen: state.mediaIsFullscreen ?? false,
-  }));
+  const mediaPaused = useMediaSelector((state) => state.mediaPaused ?? true);
+  const isFullscreen = useMediaSelector(
+    (state) => state.mediaIsFullscreen ?? false,
+  );
 
   const [mounted, setMounted] = React.useState(false);
   React.useLayoutEffect(() => setMounted(true), []);
@@ -313,6 +310,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       store.setState("volumeIndicatorVisible", false);
     }, 2000);
 
+    // Show controls when volume indicator is triggered if autohide is enabled
     if (autoHide) {
       onControlsShow();
     }
@@ -699,7 +697,6 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       store,
       portalContainer,
       tooltipSideOffset,
-      tooltipDelayDuration,
       disabled,
       isVideo,
       withoutTooltip,
@@ -712,7 +709,6 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       store,
       portalContainer,
       tooltipSideOffset,
-      tooltipDelayDuration,
       disabled,
       isVideo,
       withoutTooltip,
@@ -865,30 +861,26 @@ function MediaPlayerControls(props: MediaPlayerControlsProps) {
 }
 
 interface MediaPlayerLoadingProps extends React.ComponentProps<"div"> {
-  delay?: number;
+  delayMs?: number;
   asChild?: boolean;
 }
 
 function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
   const {
-    delay = LOADING_DELAY_MS,
+    delayMs = LOADING_DELAY_MS,
     asChild,
     className,
     children,
     ...loadingProps
   } = props;
 
-  const { mediaLoading, mediaPaused, mediaHasPlayed } = useMediaSelector(
-    (state) => ({
-      mediaLoading: state.mediaLoading ?? false,
-      mediaPaused: state.mediaPaused ?? true,
-      mediaHasPlayed: state.mediaHasPlayed ?? false,
-    }),
-  );
+  const isLoading = useMediaSelector((state) => state.mediaLoading ?? false);
+  const isPaused = useMediaSelector((state) => state.mediaPaused ?? true);
+  const hasPlayed = useMediaSelector((state) => state.mediaHasPlayed ?? false);
 
-  const shouldShowLoading = mediaLoading && !mediaPaused;
-  const shouldUseDelay = mediaHasPlayed && shouldShowLoading;
-  const loadingDelay = shouldUseDelay ? delay : 0;
+  const shouldShowLoading = isLoading && !isPaused;
+  const shouldUseDelay = hasPlayed && shouldShowLoading;
+  const loadingDelayMs = shouldUseDelay ? delayMs : 0;
 
   const [shouldRender, setShouldRender] = React.useState(false);
   const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
@@ -900,11 +892,11 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
     }
 
     if (shouldShowLoading) {
-      if (loadingDelay > 0) {
+      if (loadingDelayMs > 0) {
         timeoutRef.current = setTimeout(() => {
           setShouldRender(true);
           timeoutRef.current = null;
-        }, loadingDelay);
+        }, loadingDelayMs);
       } else {
         setShouldRender(true);
       }
@@ -918,7 +910,7 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
         timeoutRef.current = null;
       }
     };
-  }, [shouldShowLoading, loadingDelay]);
+  }, [shouldShowLoading, loadingDelayMs]);
 
   if (!shouldRender) return null;
 
@@ -963,10 +955,10 @@ function MediaPlayerError(props: MediaPlayerErrorProps) {
   } = props;
 
   const context = useMediaPlayerContext("MediaPlayerError");
-  const { mediaError, isFullscreen } = useMediaSelector((state) => ({
-    mediaError: state.mediaError,
-    isFullscreen: state.mediaIsFullscreen ?? false,
-  }));
+  const isFullscreen = useMediaSelector(
+    (state) => state.mediaIsFullscreen ?? false,
+  );
+  const mediaError = useMediaSelector((state) => state.mediaError);
 
   const error = errorProp ?? mediaError;
 
@@ -1119,12 +1111,10 @@ interface MediaPlayerVolumeIndicatorProps extends React.ComponentProps<"div"> {
 function MediaPlayerVolumeIndicator(props: MediaPlayerVolumeIndicatorProps) {
   const { asChild, className, ...indicatorProps } = props;
 
-  const { mediaVolume, mediaMuted, mediaVolumeLevel } = useMediaSelector(
-    (state) => ({
-      mediaVolume: state.mediaVolume ?? 1,
-      mediaMuted: state.mediaMuted ?? false,
-      mediaVolumeLevel: state.mediaVolumeLevel ?? "high",
-    }),
+  const mediaVolume = useMediaSelector((state) => state.mediaVolume ?? 1);
+  const mediaMuted = useMediaSelector((state) => state.mediaMuted ?? false);
+  const mediaVolumeLevel = useMediaSelector(
+    (state) => state.mediaVolumeLevel ?? "high",
   );
   const volumeIndicatorVisible = useStoreSelector(
     (state) => state.volumeIndicatorVisible,
@@ -1347,11 +1337,12 @@ function MediaPlayerSeekForward(props: MediaPlayerSeekForwardProps) {
 
   const context = useMediaPlayerContext("MediaPlayerSeekForward");
   const dispatch = useMediaDispatch();
-  const { mediaCurrentTime, seekableEnd } = useMediaSelector((state) => ({
-    mediaCurrentTime: state.mediaCurrentTime ?? 0,
-    seekableEnd: state.mediaSeekable?.[1] ?? 0,
-  }));
-
+  const mediaCurrentTime = useMediaSelector(
+    (state) => state.mediaCurrentTime ?? 0,
+  );
+  const [, seekableEnd] = useMediaSelector(
+    (state) => state.mediaSeekable ?? [0, 0],
+  );
   const isDisabled = disabled || context.disabled;
 
   const onSeekForward = React.useCallback(
@@ -1432,28 +1423,25 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
   const context = useMediaPlayerContext("MediaPlayerSeek");
   const dispatch = useMediaDispatch();
+  const mediaCurrentTime = useMediaSelector(
+    (state) => state.mediaCurrentTime ?? 0,
+  );
+  const [seekableStart = 0, seekableEnd = 0] = useMediaSelector(
+    (state) => state.mediaSeekable ?? [0, 0],
+  );
+  const mediaBuffered = useMediaSelector((state) => state.mediaBuffered ?? []);
+  const mediaEnded = useMediaSelector((state) => state.mediaEnded ?? false);
 
-  const {
-    seekableStart,
-    seekableEnd,
-    chapterCues,
-    mediaCurrentTime,
-    mediaPreviewTime,
-    mediaPreviewImage,
-    mediaPreviewCoords,
-    mediaBuffered,
-    mediaEnded,
-  } = useMediaSelector((state) => ({
-    seekableStart: state.mediaSeekable?.[0] ?? 0,
-    seekableEnd: state.mediaSeekable?.[1] ?? 0,
-    chapterCues: state.mediaChaptersCues ?? [],
-    mediaCurrentTime: state.mediaCurrentTime ?? 0,
-    mediaPreviewTime: state.mediaPreviewTime ?? 0,
-    mediaPreviewImage: state.mediaPreviewImage,
-    mediaPreviewCoords: state.mediaPreviewCoords,
-    mediaBuffered: state.mediaBuffered ?? [],
-    mediaEnded: state.mediaEnded ?? false,
-  }));
+  const chapterCues = useMediaSelector(
+    (state) => state.mediaChaptersCues ?? [],
+  );
+  const mediaPreviewTime = useMediaSelector((state) => state.mediaPreviewTime);
+  const mediaPreviewImage = useMediaSelector(
+    (state) => state.mediaPreviewImage,
+  );
+  const mediaPreviewCoords = useMediaSelector(
+    (state) => state.mediaPreviewCoords,
+  );
 
   const seekRef = React.useRef<HTMLDivElement>(null);
   const tooltipRef = React.useRef<HTMLDivElement>(null);
@@ -1599,7 +1587,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     [dispatch, tooltipDisabled],
   );
 
-  const onTooltipPositionUpdate = React.useCallback(
+  const updateTooltipPosition = React.useCallback(
     (clientX: number) => {
       if (!seekRef.current) return;
 
@@ -1735,7 +1723,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
             Math.min(lastPointerXRef.current, seekRectRef.current.right),
           );
 
-          onTooltipPositionUpdate(clientX);
+          updateTooltipPosition(clientX);
 
           requestAnimationFrame(() => {
             hoverTimeoutRef.current = window.setTimeout(() => {
@@ -1751,7 +1739,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         setSeekState((prev) => ({ ...prev, isHovering: true }));
       }
     }
-  }, [onTooltipPositionUpdate, seekableEnd, tooltipDisabled]);
+  }, [seekableEnd, updateTooltipPosition, tooltipDisabled]);
 
   const onPointerLeave = React.useCallback(() => {
     if (hoverTimeoutRef.current) {
@@ -1832,7 +1820,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
           onPreviewUpdate(calculatedHoverTime);
 
           if (isCurrentlyHovering) {
-            onTooltipPositionUpdate(clientX);
+            updateTooltipPosition(clientX);
           }
         }
 
@@ -1840,11 +1828,11 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       });
     },
     [
-      onPreviewUpdate,
-      onTooltipPositionUpdate,
-      onHoverProgressUpdate,
       seekableEnd,
       seekState.isHovering,
+      onPreviewUpdate,
+      updateTooltipPosition,
+      onHoverProgressUpdate,
       tooltipDisabled,
     ],
   );
@@ -2244,53 +2232,29 @@ function MediaPlayerTime(props: MediaPlayerTimeProps) {
   const { variant = "progress", asChild, className, ...timeProps } = props;
 
   const context = useMediaPlayerContext("MediaPlayerTime");
+  const mediaCurrentTime = useMediaSelector(
+    (state) => state.mediaCurrentTime ?? 0,
+  );
+  const [, seekableEnd = 0] = useMediaSelector(
+    (state) => state.mediaSeekable ?? [0, 0],
+  );
 
-  const { mediaCurrentTime, seekableEnd } = useMediaSelector((state) => ({
-    mediaCurrentTime: state.mediaCurrentTime ?? 0,
-    seekableEnd: state.mediaSeekable?.[1] ?? 0,
-  }));
-
-  const timeCache = React.useRef<Map<string, string>>(new Map());
-
-  const getCachedTime = React.useCallback((time: number, duration: number) => {
-    const key = `${Math.floor(time * 10)}-${Math.floor(duration * 10)}`;
-
-    const cached = timeCache.current.get(key);
-    if (cached) {
-      return cached;
-    }
-
-    const formatted = timeUtils.formatTime(time, duration);
-    timeCache.current.set(key, formatted);
-
-    if (timeCache.current.size > 50) {
-      timeCache.current.clear();
-    }
-
-    return formatted;
-  }, []);
-
-  const formattedTimes = React.useMemo(() => {
-    switch (variant) {
-      case "remaining":
-        return {
-          remaining: getCachedTime(seekableEnd - mediaCurrentTime, seekableEnd),
-        };
-      case "duration":
-        return {
-          duration: getCachedTime(seekableEnd, seekableEnd),
-        };
-      default:
-        return {
-          current: getCachedTime(mediaCurrentTime, seekableEnd),
-          duration: getCachedTime(seekableEnd, seekableEnd),
-        };
-    }
-  }, [variant, mediaCurrentTime, seekableEnd, getCachedTime]);
+  const formattedCurrentTime = React.useMemo(
+    () => timeUtils.formatTime(mediaCurrentTime, seekableEnd),
+    [mediaCurrentTime, seekableEnd],
+  );
+  const formattedDuration = React.useMemo(
+    () => timeUtils.formatTime(seekableEnd, seekableEnd),
+    [seekableEnd],
+  );
+  const formattedRemainingTime = React.useMemo(
+    () => timeUtils.formatTime(seekableEnd - mediaCurrentTime, seekableEnd),
+    [mediaCurrentTime, seekableEnd],
+  );
 
   const TimePrimitive = asChild ? Slot : "div";
 
-  if (variant === "duration" || variant === "remaining") {
+  if (variant === "remaining" || variant === "duration") {
     return (
       <TimePrimitive
         data-slot="media-player-time"
@@ -2299,7 +2263,7 @@ function MediaPlayerTime(props: MediaPlayerTimeProps) {
         {...timeProps}
         className={cn("text-foreground/80 text-sm tabular-nums", className)}
       >
-        {formattedTimes[variant]}
+        {variant === "remaining" ? formattedRemainingTime : formattedDuration}
       </TimePrimitive>
     );
   }
@@ -2315,11 +2279,11 @@ function MediaPlayerTime(props: MediaPlayerTimeProps) {
         className,
       )}
     >
-      <span className="tabular-nums">{formattedTimes.current}</span>
+      <span className="tabular-nums">{formattedCurrentTime}</span>
       <span role="separator" aria-hidden="true" tabIndex={-1}>
         /
       </span>
-      <span className="tabular-nums">{formattedTimes.duration}</span>
+      <span className="tabular-nums">{formattedDuration}</span>
     </TimePrimitive>
   );
 }
@@ -2733,19 +2697,21 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
   const context = useMediaPlayerContext("MediaPlayerSettings");
   const dispatch = useMediaDispatch();
 
-  const {
-    mediaPlaybackRate,
-    mediaSubtitlesList,
-    mediaSubtitlesShowing,
-    mediaRenditionList,
-    selectedRenditionId,
-  } = useMediaSelector((state) => ({
-    mediaPlaybackRate: state.mediaPlaybackRate ?? 1,
-    mediaSubtitlesList: state.mediaSubtitlesList ?? [],
-    mediaSubtitlesShowing: state.mediaSubtitlesShowing ?? [],
-    mediaRenditionList: state.mediaRenditionList ?? [],
-    selectedRenditionId: state.mediaRenditionSelected,
-  }));
+  const mediaPlaybackRate = useMediaSelector(
+    (state) => state.mediaPlaybackRate ?? 1,
+  );
+  const mediaSubtitlesList = useMediaSelector(
+    (state) => state.mediaSubtitlesList ?? [],
+  );
+  const mediaSubtitlesShowing = useMediaSelector(
+    (state) => state.mediaSubtitlesShowing ?? [],
+  );
+  const mediaRenditionList = useMediaSelector(
+    (state) => state.mediaRenditionList ?? [],
+  );
+  const selectedRenditionId = useMediaSelector(
+    (state) => state.mediaRenditionSelected,
+  );
 
   const isDisabled = disabled || context.disabled;
   const isSubtitlesActive = mediaSubtitlesShowing.length > 0;
@@ -2988,23 +2954,15 @@ interface MediaPlayerTooltipProps
 }
 
 function MediaPlayerTooltip(props: MediaPlayerTooltipProps) {
-  const {
-    tooltip,
-    shortcut,
-    delayDuration,
-    sideOffset,
-    children,
-    ...tooltipProps
-  } = props;
+  const { tooltip, shortcut, sideOffset, children, ...tooltipProps } = props;
 
   const context = useMediaPlayerContext("MediaPlayerTooltip");
-  const currentDelayDuration = delayDuration ?? context.tooltipDelayDuration;
   const currentSideOffset = sideOffset ?? context.tooltipSideOffset;
 
   if ((!tooltip && !shortcut) || context.withoutTooltip) return <>{children}</>;
 
   return (
-    <Tooltip {...tooltipProps} delayDuration={currentDelayDuration}>
+    <Tooltip {...tooltipProps} delayDuration={600}>
       <TooltipTrigger
         className="text-foreground focus-visible:ring-ring/50"
         asChild
@@ -3097,5 +3055,4 @@ export {
   MediaPlayerTooltip as Tooltip,
   //
   useMediaSelector as useMediaPlayer,
-  useStoreSelector as useMediaPlayerStore,
 };
