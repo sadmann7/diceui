@@ -57,15 +57,15 @@ interface StoreState {
 }
 
 type StoreAction =
-  | { variant: "ADD_FILES"; files: File[] }
-  | { variant: "SET_FILES"; files: File[] }
-  | { variant: "SET_PROGRESS"; file: File; progress: number }
-  | { variant: "SET_SUCCESS"; file: File }
-  | { variant: "SET_ERROR"; file: File; error: string }
-  | { variant: "REMOVE_FILE"; file: File }
-  | { variant: "SET_DRAG_OVER"; dragOver: boolean }
-  | { variant: "SET_INVALID"; invalid: boolean }
-  | { variant: "CLEAR" };
+  | { type: "ADD_FILES"; files: File[] }
+  | { type: "SET_FILES"; files: File[] }
+  | { type: "SET_PROGRESS"; file: File; progress: number }
+  | { type: "SET_SUCCESS"; file: File }
+  | { type: "SET_ERROR"; file: File; error: string }
+  | { type: "REMOVE_FILE"; file: File }
+  | { type: "SET_DRAG_OVER"; dragOver: boolean }
+  | { type: "SET_INVALID"; invalid: boolean }
+  | { type: "CLEAR" };
 
 function createStore(
   listeners: Set<() => void>,
@@ -80,7 +80,7 @@ function createStore(
   };
 
   function reducer(state: StoreState, action: StoreAction): StoreState {
-    switch (action.variant) {
+    switch (action.type) {
       case "ADD_FILES": {
         for (const file of action.files) {
           files.set(file, {
@@ -352,7 +352,7 @@ function FileUploadRoot(props: FileUploadRootProps) {
       frame = requestAnimationFrame(() => {
         frame = 0;
         store.dispatch({
-          variant: "SET_PROGRESS",
+          type: "SET_PROGRESS",
           file,
           progress: Math.min(Math.max(0, progress), 100),
         });
@@ -362,13 +362,13 @@ function FileUploadRoot(props: FileUploadRootProps) {
 
   React.useEffect(() => {
     if (isControlled) {
-      store.dispatch({ variant: "SET_FILES", files: value });
+      store.dispatch({ type: "SET_FILES", files: value });
     } else if (
       defaultValue &&
       defaultValue.length > 0 &&
       !store.getState().files.size
     ) {
-      store.dispatch({ variant: "SET_FILES", files: defaultValue });
+      store.dispatch({ type: "SET_FILES", files: defaultValue });
     }
   }, [value, defaultValue, isControlled, store]);
 
@@ -457,14 +457,14 @@ function FileUploadRoot(props: FileUploadRootProps) {
       }
 
       if (invalid) {
-        store.dispatch({ variant: "SET_INVALID", invalid });
+        store.dispatch({ type: "SET_INVALID", invalid });
         setTimeout(() => {
-          store.dispatch({ variant: "SET_INVALID", invalid: false });
+          store.dispatch({ type: "SET_INVALID", invalid: false });
         }, 2000);
       }
 
       if (acceptedFiles.length > 0) {
-        store.dispatch({ variant: "ADD_FILES", files: acceptedFiles });
+        store.dispatch({ type: "ADD_FILES", files: acceptedFiles });
 
         if (isControlled && onValueChange) {
           const currentFiles = Array.from(store.getState().files.values()).map(
@@ -508,18 +508,18 @@ function FileUploadRoot(props: FileUploadRootProps) {
     async (files: File[]) => {
       try {
         for (const file of files) {
-          store.dispatch({ variant: "SET_PROGRESS", file, progress: 0 });
+          store.dispatch({ type: "SET_PROGRESS", file, progress: 0 });
         }
 
         if (onUpload) {
           await onUpload(files, {
             onProgress,
             onSuccess: (file) => {
-              store.dispatch({ variant: "SET_SUCCESS", file });
+              store.dispatch({ type: "SET_SUCCESS", file });
             },
             onError: (file, error) => {
               store.dispatch({
-                variant: "SET_ERROR",
+                type: "SET_ERROR",
                 file,
                 error: error.message ?? "Upload failed",
               });
@@ -527,7 +527,7 @@ function FileUploadRoot(props: FileUploadRootProps) {
           });
         } else {
           for (const file of files) {
-            store.dispatch({ variant: "SET_SUCCESS", file });
+            store.dispatch({ type: "SET_SUCCESS", file });
           }
         }
       } catch (error) {
@@ -535,7 +535,7 @@ function FileUploadRoot(props: FileUploadRootProps) {
           error instanceof Error ? error.message : "Upload failed";
         for (const file of files) {
           store.dispatch({
-            variant: "SET_ERROR",
+            type: "SET_ERROR",
             file,
             error: errorMessage,
           });
@@ -654,7 +654,7 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
       if (event.defaultPrevented) return;
 
       event.preventDefault();
-      store.dispatch({ variant: "SET_DRAG_OVER", dragOver: true });
+      store.dispatch({ type: "SET_DRAG_OVER", dragOver: true });
     },
     [store, onDragOverProp],
   );
@@ -666,7 +666,7 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
       if (event.defaultPrevented) return;
 
       event.preventDefault();
-      store.dispatch({ variant: "SET_DRAG_OVER", dragOver: true });
+      store.dispatch({ type: "SET_DRAG_OVER", dragOver: true });
     },
     [store, onDragEnterProp],
   );
@@ -687,7 +687,7 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
       }
 
       event.preventDefault();
-      store.dispatch({ variant: "SET_DRAG_OVER", dragOver: false });
+      store.dispatch({ type: "SET_DRAG_OVER", dragOver: false });
     },
     [store, onDragLeaveProp],
   );
@@ -699,7 +699,7 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
       if (event.defaultPrevented) return;
 
       event.preventDefault();
-      store.dispatch({ variant: "SET_DRAG_OVER", dragOver: false });
+      store.dispatch({ type: "SET_DRAG_OVER", dragOver: false });
 
       const files = Array.from(event.dataTransfer.files);
       const inputElement = context.inputRef.current;
@@ -723,7 +723,7 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
       if (event.defaultPrevented) return;
 
       event.preventDefault();
-      store.dispatch({ variant: "SET_DRAG_OVER", dragOver: false });
+      store.dispatch({ type: "SET_DRAG_OVER", dragOver: false });
 
       const items = event.clipboardData?.items;
       if (!items) return;
@@ -1309,7 +1309,7 @@ function FileUploadItemDelete(props: FileUploadItemDeleteProps) {
       if (!itemContext.fileState || event.defaultPrevented) return;
 
       store.dispatch({
-        variant: "REMOVE_FILE",
+        type: "REMOVE_FILE",
         file: itemContext.fileState.file,
       });
     },
@@ -1359,7 +1359,7 @@ function FileUploadClear(props: FileUploadClearProps) {
 
       if (event.defaultPrevented) return;
 
-      store.dispatch({ variant: "CLEAR" });
+      store.dispatch({ type: "CLEAR" });
     },
     [store, onClickProp],
   );
