@@ -241,12 +241,12 @@ function MediaPlayerRoot(props: MediaPlayerRootProps) {
 
 function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
   const {
-    onPlay: onPlayProp,
-    onPause: onPauseProp,
-    onEnded: onEndedProp,
-    onTimeUpdate: onTimeUpdateProp,
-    onFullscreenChange: onFullscreenChangeProp,
-    onVolumeChange: onVolumeChangeProp,
+    onPlay,
+    onPause,
+    onEnded,
+    onTimeUpdate,
+    onFullscreenChange,
+    onVolumeChange,
     onMuted,
     onMediaError,
     onPipError,
@@ -663,43 +663,50 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
     const mediaElement = mediaRef.current;
     if (!mediaElement) return;
 
-    const onPlay = () => onPlayProp?.();
-    const onPause = () => onPauseProp?.();
-    const onEnded = () => onEndedProp?.();
-    const onTimeUpdate = () => onTimeUpdateProp?.(mediaElement.currentTime);
-    const onVolumeChange = () => {
-      onVolumeChangeProp?.(mediaElement.volume);
-      onMuted?.(mediaElement.muted);
-    };
-    const onError = () => onMediaError?.(mediaElement.error);
-
-    const onFullscreenChange = () => {
-      onFullscreenChangeProp?.(!!document.fullscreenElement);
-    };
-
-    mediaElement.addEventListener("play", onPlay);
-    mediaElement.addEventListener("pause", onPause);
-    mediaElement.addEventListener("ended", onEnded);
-    mediaElement.addEventListener("timeupdate", onTimeUpdate);
-    mediaElement.addEventListener("volumechange", onVolumeChange);
-    mediaElement.addEventListener("error", onError);
-
-    if (onFullscreenChangeProp) {
-      document.addEventListener("fullscreenchange", onFullscreenChange);
+    if (onPlay) mediaElement.addEventListener("play", onPlay);
+    if (onPause) mediaElement.addEventListener("pause", onPause);
+    if (onEnded) mediaElement.addEventListener("ended", onEnded);
+    if (onTimeUpdate)
+      mediaElement.addEventListener("timeupdate", () =>
+        onTimeUpdate?.(mediaElement.currentTime),
+      );
+    if (onVolumeChange)
+      mediaElement.addEventListener("volumechange", () => {
+        onVolumeChange?.(mediaElement.volume);
+        onMuted?.(mediaElement.muted);
+      });
+    if (onMediaError)
+      mediaElement.addEventListener("error", () =>
+        onMediaError?.(mediaElement.error),
+      );
+    if (onFullscreenChange) {
+      document.addEventListener("fullscreenchange", () =>
+        onFullscreenChange?.(!!document.fullscreenElement),
+      );
     }
 
     return () => {
-      mediaElement.removeEventListener("play", onPlay);
-      mediaElement.removeEventListener("pause", onPause);
-      mediaElement.removeEventListener("ended", onEnded);
-      mediaElement.removeEventListener("timeupdate", onTimeUpdate);
-      mediaElement.removeEventListener("volumechange", onVolumeChange);
-      mediaElement.removeEventListener("error", onError);
-
-      if (onFullscreenChangeProp) {
-        document.removeEventListener("fullscreenchange", onFullscreenChange);
+      if (onPlay) mediaElement.removeEventListener("play", onPlay);
+      if (onPause) mediaElement.removeEventListener("pause", onPause);
+      if (onEnded) mediaElement.removeEventListener("ended", onEnded);
+      if (onTimeUpdate)
+        mediaElement.removeEventListener("timeupdate", () =>
+          onTimeUpdate?.(mediaElement.currentTime),
+        );
+      if (onVolumeChange)
+        mediaElement.removeEventListener("volumechange", () => {
+          onVolumeChange?.(mediaElement.volume);
+          onMuted?.(mediaElement.muted);
+        });
+      if (onMediaError)
+        mediaElement.removeEventListener("error", () =>
+          onMediaError?.(mediaElement.error),
+        );
+      if (onFullscreenChange) {
+        document.removeEventListener("fullscreenchange", () =>
+          onFullscreenChange?.(!!document.fullscreenElement),
+        );
       }
-
       if (volumeIndicatorTimeoutRef.current) {
         clearTimeout(volumeIndicatorTimeoutRef.current);
       }
@@ -708,14 +715,14 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       }
     };
   }, [
-    onPlayProp,
-    onPauseProp,
-    onEndedProp,
-    onTimeUpdateProp,
-    onVolumeChangeProp,
+    onPlay,
+    onPause,
+    onEnded,
+    onTimeUpdate,
+    onVolumeChange,
     onMuted,
     onMediaError,
-    onFullscreenChangeProp,
+    onFullscreenChange,
   ]);
 
   const contextValue = React.useMemo<MediaPlayerContextValue>(
@@ -775,7 +782,6 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
           className,
         )}
       >
-        ``
         <span id={labelId} className="sr-only">
           {label ?? "Media player"}
         </span>
