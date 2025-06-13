@@ -100,7 +100,7 @@ function useLazyRef<T>(fn: () => T) {
 interface StoreState {
   controlsVisible: boolean;
   menuOpen: boolean;
-  thumbDragging: boolean;
+  dragging: boolean;
   volumeIndicatorVisible: boolean;
 }
 
@@ -221,7 +221,7 @@ function MediaPlayerRoot(props: MediaPlayerRootProps) {
   const stateRef = useLazyRef<StoreState>(() => ({
     controlsVisible: true,
     menuOpen: false,
-    thumbDragging: false,
+    dragging: false,
     volumeIndicatorVisible: false,
   }));
 
@@ -281,7 +281,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
   const store = useStoreContext(ROOT_NAME);
 
   const controlsVisible = useStoreSelector((state) => state.controlsVisible);
-  const thumbDragging = useStoreSelector((state) => state.thumbDragging);
+  const dragging = useStoreSelector((state) => state.dragging);
   const menuOpen = useStoreSelector((state) => state.menuOpen);
 
   const hideControlsTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
@@ -315,12 +315,12 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       clearTimeout(hideControlsTimeoutRef.current);
     }
 
-    if (autoHide && !mediaPaused && !menuOpen && !thumbDragging) {
+    if (autoHide && !mediaPaused && !menuOpen && !dragging) {
       hideControlsTimeoutRef.current = setTimeout(() => {
         store.setState("controlsVisible", false);
       }, 3000);
     }
-  }, [store.setState, autoHide, mediaPaused, menuOpen, thumbDragging]);
+  }, [store.setState, autoHide, mediaPaused, menuOpen, dragging]);
 
   const onVolumeIndicatorTrigger = React.useCallback(() => {
     if (menuOpen) return;
@@ -346,7 +346,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
 
       if (event.defaultPrevented) return;
 
-      if (autoHide && !mediaPaused && !menuOpen && !thumbDragging) {
+      if (autoHide && !mediaPaused && !menuOpen && !dragging) {
         store.setState("controlsVisible", false);
       }
     },
@@ -356,7 +356,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       autoHide,
       mediaPaused,
       menuOpen,
-      thumbDragging,
+      dragging,
     ],
   );
 
@@ -374,7 +374,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
   );
 
   React.useEffect(() => {
-    if (mediaPaused || menuOpen || thumbDragging) {
+    if (mediaPaused || menuOpen || dragging) {
       store.setState("controlsVisible", true);
       if (hideControlsTimeoutRef.current) {
         clearTimeout(hideControlsTimeoutRef.current);
@@ -391,7 +391,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
     autoHide,
     menuOpen,
     mediaPaused,
-    thumbDragging,
+    dragging,
   ]);
 
   const onKeyDown = React.useCallback(
@@ -1884,7 +1884,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       const time = value[0] ?? 0;
 
       setSeekState((prev) => ({ ...prev, pendingSeekTime: time }));
-      store.setState("thumbDragging", true);
+      store.setState("dragging", true);
 
       if (seekThrottleRef.current) {
         cancelAnimationFrame(seekThrottleRef.current);
@@ -1932,7 +1932,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
       justCommittedRef.current = true;
       collisionDataRef.current = null;
-      store.setState("thumbDragging", false);
+      store.setState("dragging", false);
 
       dispatch({
         type: MediaActionTypes.MEDIA_SEEK_REQUEST,
@@ -2191,7 +2191,7 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
   const onVolumeChange = React.useCallback(
     (value: number[]) => {
       const volume = value[0] ?? 0;
-      store.setState("thumbDragging", true);
+      store.setState("dragging", true);
       dispatch({
         type: MediaActionTypes.MEDIA_VOLUME_REQUEST,
         detail: volume,
@@ -2203,7 +2203,7 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
   const onVolumeCommit = React.useCallback(
     (value: number[]) => {
       const volume = value[0] ?? 0;
-      store.setState("thumbDragging", false);
+      store.setState("dragging", false);
       dispatch({
         type: MediaActionTypes.MEDIA_VOLUME_REQUEST,
         detail: volume,
