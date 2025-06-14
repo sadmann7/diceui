@@ -1443,6 +1443,7 @@ interface MediaPlayerSeekProps
     | number
     | Partial<Record<"top" | "right" | "bottom" | "left", number>>;
 }
+
 function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const {
     withTime = false,
@@ -1485,15 +1486,10 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const tooltipRef = React.useRef<HTMLDivElement>(null);
   const justCommittedRef = React.useRef<boolean>(false);
 
-  const hoverPercentRef = React.useRef(0);
-  const didDispatchPreviewRef = React.useRef(false);
-  const lastSeekTimeRef = React.useRef(0);
-  const lastPointerXRef = React.useRef(0);
-  const seekRectRef = React.useRef<DOMRect | null>(null);
-
   const hoverTimeRef = React.useRef(0);
   const tooltipXRef = React.useRef(0);
   const tooltipYRef = React.useRef(0);
+  const seekRectRef = React.useRef<DOMRect | null>(null);
   const collisionDataRef = React.useRef<{
     padding: { top: number; right: number; bottom: number; left: number };
     boundaries: Element[];
@@ -1508,6 +1504,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const rafIdRef = React.useRef<number | null>(null);
   const seekThrottleRef = React.useRef<number | null>(null);
   const hoverTimeoutRef = React.useRef<number | null>(null);
+  const lastPointerXRef = React.useRef<number>(0);
   const previewDebounceRef = React.useRef<number | null>(null);
 
   const timeCache = React.useRef<Map<number, string>>(new Map());
@@ -1543,47 +1540,6 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const duration = getCachedTime(seekableEnd, seekableEnd);
   const remainingTime = getCachedTime(seekableEnd - displayValue, seekableEnd);
 
-  const onSeekCommitImpl = React.useCallback(
-    (time: number) => {
-      const now = performance.now();
-      if (now - lastSeekTimeRef.current < 40) return;
-      lastSeekTimeRef.current = now;
-
-      const mediaElement = context.mediaRef.current;
-
-      if (
-        mediaElement &&
-        typeof mediaElement.fastSeek === "function" &&
-        context.isVideo
-      ) {
-        mediaElement.fastSeek(time);
-        return;
-      }
-
-      dispatch({
-        type: MediaActionTypes.MEDIA_SEEK_REQUEST,
-        detail: time,
-      });
-    },
-    [dispatch, context.mediaRef, context.isVideo],
-  );
-
-  const onPreviewCommit = React.useCallback(
-    (time: number) => {
-      if (tooltipDisabled || didDispatchPreviewRef.current) return;
-
-      didDispatchPreviewRef.current = true;
-      requestAnimationFrame(() => {
-        dispatch({
-          type: MediaActionTypes.MEDIA_PREVIEW_REQUEST,
-          detail: time,
-        });
-        didDispatchPreviewRef.current = false;
-      });
-    },
-    [dispatch, tooltipDisabled],
-  );
-
   const onCollisionDataUpdate = React.useCallback(() => {
     if (collisionDataRef.current) return collisionDataRef.current;
 
@@ -1595,13 +1551,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
             bottom: tooltipCollisionPadding,
             left: tooltipCollisionPadding,
           }
-        : {
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0,
-            ...tooltipCollisionPadding,
-          };
+        : { top: 0, right: 0, bottom: 0, left: 0, ...tooltipCollisionPadding };
 
     const boundaries = tooltipCollisionBoundary
       ? Array.isArray(tooltipCollisionBoundary)
@@ -1653,6 +1603,25 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       mediaPreviewCoords,
       tooltipDisabled,
     ],
+  );
+
+  const onPreviewUpdate = React.useCallback(
+    (time: number) => {
+      if (tooltipDisabled) return;
+
+      if (previewDebounceRef.current) {
+        cancelAnimationFrame(previewDebounceRef.current);
+      }
+
+      previewDebounceRef.current = requestAnimationFrame(() => {
+        dispatch({
+          type: MediaActionTypes.MEDIA_PREVIEW_REQUEST,
+          detail: time,
+        });
+        previewDebounceRef.current = null;
+      });
+    },
+    [dispatch, tooltipDisabled],
   );
 
   const onTooltipPositionUpdate = React.useCallback(
@@ -1711,79 +1680,18 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     [onCollisionDataUpdate, seekState.hasInitialPosition],
   );
 
-  const onPointerMove = React.useCallback(
-    (event: React.PointerEvent<HTMLDivElement>) => {
-      if (seekableEnd <= 0) return;
+  const onHoverProgressUpdate = React.useCallback(() => {
+    if (!seekRef.current || seekableEnd <= 0) return;
 
-      if (!seekRectRef.current && seekRef.current) {
-        seekRectRef.current = seekRef.current.getBoundingClientRect();
-      }
-
-      if (!seekRectRef.current) return;
-
-      lastPointerXRef.current = event.clientX;
-
-      if (rafIdRef.current) {
-        cancelAnimationFrame(rafIdRef.current);
-      }
-
-      rafIdRef.current = requestAnimationFrame(() => {
-        const wasJustCommitted = justCommittedRef.current;
-        if (wasJustCommitted) {
-          justCommittedRef.current = false;
-        }
-
-        const seekRect = seekRectRef.current;
-        if (!seekRect) {
-          rafIdRef.current = null;
-          return;
-        }
-
-        const clientX = lastPointerXRef.current;
-        const offsetXOnSeekBar = Math.max(
-          0,
-          Math.min(clientX - seekRect.left, seekRect.width),
-        );
-        const relativeX = offsetXOnSeekBar / seekRect.width;
-        const calculatedHoverTime = relativeX * seekableEnd;
-
-        hoverPercentRef.current = relativeX;
-        if (seekRef.current) {
-          seekRef.current.style.setProperty(
-            SEEK_HOVER_PERCENT,
-            `${(relativeX * 100).toFixed(4)}%`,
-          );
-        }
-
-        hoverTimeRef.current = calculatedHoverTime;
-
-        const wasHovering = seekState.isHovering;
-        const isCurrentlyHovering =
-          clientX >= seekRect.left && clientX <= seekRect.right;
-
-        if (!wasHovering && isCurrentlyHovering) {
-          setSeekState((prev) => ({ ...prev, isHovering: true }));
-        }
-
-        if (!tooltipDisabled) {
-          onPreviewCommit(calculatedHoverTime);
-
-          if (isCurrentlyHovering) {
-            onTooltipPositionUpdate(clientX);
-          }
-        }
-
-        rafIdRef.current = null;
-      });
-    },
-    [
-      onPreviewCommit,
-      onTooltipPositionUpdate,
-      seekableEnd,
-      seekState.isHovering,
-      tooltipDisabled,
-    ],
-  );
+    const hoverPercent = Math.min(
+      100,
+      (hoverTimeRef.current / seekableEnd) * 100,
+    );
+    seekRef.current.style.setProperty(
+      SEEK_HOVER_PERCENT,
+      `${hoverPercent.toFixed(4)}%`,
+    );
+  }, [seekableEnd]);
 
   React.useEffect(() => {
     if (seekState.pendingSeekTime !== null) {
@@ -1902,6 +1810,75 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     }
   }, [dispatch, tooltipDisabled]);
 
+  const onPointerMove = React.useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      if (seekableEnd <= 0) return;
+
+      if (!seekRectRef.current && seekRef.current) {
+        seekRectRef.current = seekRef.current.getBoundingClientRect();
+      }
+
+      if (!seekRectRef.current) return;
+
+      lastPointerXRef.current = event.clientX;
+
+      if (rafIdRef.current) {
+        cancelAnimationFrame(rafIdRef.current);
+      }
+
+      rafIdRef.current = requestAnimationFrame(() => {
+        const wasJustCommitted = justCommittedRef.current;
+        if (wasJustCommitted) {
+          justCommittedRef.current = false;
+        }
+
+        const seekRect = seekRectRef.current;
+        if (!seekRect) {
+          rafIdRef.current = null;
+          return;
+        }
+
+        const clientX = lastPointerXRef.current;
+        const offsetXOnSeekBar = Math.max(
+          0,
+          Math.min(clientX - seekRect.left, seekRect.width),
+        );
+        const relativeX = offsetXOnSeekBar / seekRect.width;
+        const calculatedHoverTime = relativeX * seekableEnd;
+
+        hoverTimeRef.current = calculatedHoverTime;
+
+        onHoverProgressUpdate();
+
+        const wasHovering = seekState.isHovering;
+        const isCurrentlyHovering =
+          clientX >= seekRect.left && clientX <= seekRect.right;
+
+        if (!wasHovering && isCurrentlyHovering) {
+          setSeekState((prev) => ({ ...prev, isHovering: true }));
+        }
+
+        if (!tooltipDisabled) {
+          onPreviewUpdate(calculatedHoverTime);
+
+          if (isCurrentlyHovering) {
+            onTooltipPositionUpdate(clientX);
+          }
+        }
+
+        rafIdRef.current = null;
+      });
+    },
+    [
+      onPreviewUpdate,
+      onTooltipPositionUpdate,
+      onHoverProgressUpdate,
+      seekableEnd,
+      seekState.isHovering,
+      tooltipDisabled,
+    ],
+  );
+
   const onSeek = React.useCallback(
     (value: number[]) => {
       const time = value[0] ?? 0;
@@ -1909,9 +1886,19 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       setSeekState((prev) => ({ ...prev, pendingSeekTime: time }));
       store.setState("dragging", true);
 
-      onSeekCommitImpl(time);
+      if (seekThrottleRef.current) {
+        cancelAnimationFrame(seekThrottleRef.current);
+      }
+
+      seekThrottleRef.current = requestAnimationFrame(() => {
+        dispatch({
+          type: MediaActionTypes.MEDIA_SEEK_REQUEST,
+          detail: time,
+        });
+        seekThrottleRef.current = null;
+      });
     },
-    [onSeekCommitImpl, store.setState],
+    [dispatch, store.setState],
   );
 
   const onSeekCommit = React.useCallback(
@@ -1947,14 +1934,17 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       collisionDataRef.current = null;
       store.setState("dragging", false);
 
-      onSeekCommitImpl(time);
+      dispatch({
+        type: MediaActionTypes.MEDIA_SEEK_REQUEST,
+        detail: time,
+      });
 
       dispatch({
         type: MediaActionTypes.MEDIA_PREVIEW_REQUEST,
         detail: undefined,
       });
     },
-    [onSeekCommitImpl, dispatch, store.setState],
+    [dispatch, store.setState],
   );
 
   React.useEffect(() => {
@@ -1992,8 +1982,9 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
           role="presentation"
           aria-hidden="true"
           data-slot="media-player-seek-chapter-separator"
-          className="absolute top-0 h-full w-[2.5px] bg-zinc-50 dark:bg-zinc-950"
+          className="absolute top-0 h-full bg-zinc-50 dark:bg-zinc-950"
           style={{
+            width: ".1563rem",
             left: `${position}%`,
             transform: "translateX(-50%)",
           }}
@@ -2030,10 +2021,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   }, [thumbnail?.coords, thumbnail?.src]);
 
   const SeekSlider = (
-    <div
-      data-slot="media-player-seek-container"
-      className="relative w-full will-change-contents"
-    >
+    <div data-slot="media-player-seek-container" className="relative w-full">
       <SliderPrimitive.Root
         aria-controls={context.mediaId}
         aria-valuetext={`${currentTime} of ${duration}`}
@@ -2086,12 +2074,12 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
           <MediaPlayerPortal>
             <div
               ref={tooltipRef}
-              className="pointer-events-none z-50 will-change-transform [backface-visibility:hidden] [contain:layout_style] [transition:opacity_150ms_ease-in-out]"
+              className="pointer-events-none z-50 [backface-visibility:hidden] [contain:layout_style] [transition:opacity_150ms_ease-in-out]"
               style={{
                 position: "fixed" as const,
                 left: `var(${SEEK_TOOLTIP_X}, 0rem)`,
                 top: `var(${SEEK_TOOLTIP_Y}, 0rem)`,
-                transform: `translate3d(-50%, calc(-100% - ${currentTooltipSideOffset}px), 0)`,
+                transform: `translateX(-50%) translateY(calc(-100% - ${currentTooltipSideOffset}px))`,
                 visibility: seekState.hasInitialPosition ? "visible" : "hidden",
                 opacity: seekState.hasInitialPosition ? 1 : 0,
               }}
@@ -2110,7 +2098,6 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
                     style={{
                       width: `${SPRITE_CONTAINER_WIDTH}px`,
                       height: `${SPRITE_CONTAINER_HEIGHT}px`,
-                      pointerEvents: "none",
                     }}
                   >
                     {thumbnail.coords ? (
@@ -2120,7 +2107,6 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
                         src={thumbnail.src}
                         alt={`Preview at ${hoverTime}`}
                         className="size-full object-cover"
-                        style={{ pointerEvents: "none" }}
                       />
                     )}
                   </div>
@@ -2136,7 +2122,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
                 <div
                   data-slot="media-player-seek-time"
                   className={cn(
-                    "whitespace-nowrap text-center text-xs tabular-nums will-change-transform",
+                    "whitespace-nowrap text-center text-xs tabular-nums",
                     thumbnail && "pb-1.5",
                     !(thumbnail || currentChapterCue) && "px-2.5 py-1",
                   )}
