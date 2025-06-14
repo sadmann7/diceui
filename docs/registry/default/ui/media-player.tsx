@@ -411,6 +411,8 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
 
       if (!isMediaFocused && !isPlayerFocused) return;
 
+      if (autoHide) onControlsShow();
+
       switch (event.key.toLowerCase()) {
         case " ":
         case "k":
@@ -644,6 +646,8 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       onPipError,
       disabled,
       isVideo,
+      onControlsShow,
+      autoHide,
     ],
   );
 
