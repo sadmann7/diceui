@@ -1884,7 +1884,10 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       const time = value[0] ?? 0;
 
       setSeekState((prev) => ({ ...prev, pendingSeekTime: time }));
-      store.setState("dragging", true);
+
+      if (!store.getState().dragging) {
+        store.setState("dragging", true);
+      }
 
       if (seekThrottleRef.current) {
         cancelAnimationFrame(seekThrottleRef.current);
@@ -1898,7 +1901,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         seekThrottleRef.current = null;
       });
     },
-    [dispatch, store.setState],
+    [dispatch, store.getState, store.setState],
   );
 
   const onSeekCommit = React.useCallback(
@@ -1932,7 +1935,10 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
       justCommittedRef.current = true;
       collisionDataRef.current = null;
-      store.setState("dragging", false);
+
+      if (store.getState().dragging) {
+        store.setState("dragging", false);
+      }
 
       dispatch({
         type: MediaActionTypes.MEDIA_SEEK_REQUEST,
@@ -1944,7 +1950,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         detail: undefined,
       });
     },
-    [dispatch, store.setState],
+    [dispatch, store.getState, store.setState],
   );
 
   React.useEffect(() => {
@@ -2191,19 +2197,27 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
   const onVolumeChange = React.useCallback(
     (value: number[]) => {
       const volume = value[0] ?? 0;
-      store.setState("dragging", true);
+
+      if (!store.getState().dragging) {
+        store.setState("dragging", true);
+      }
+
       dispatch({
         type: MediaActionTypes.MEDIA_VOLUME_REQUEST,
         detail: volume,
       });
     },
-    [dispatch, store.setState],
+    [dispatch, store.getState, store.setState],
   );
 
   const onVolumeCommit = React.useCallback(
     (value: number[]) => {
       const volume = value[0] ?? 0;
-      store.setState("dragging", false);
+
+      if (store.getState().dragging) {
+        store.setState("dragging", false);
+      }
+
       dispatch({
         type: MediaActionTypes.MEDIA_VOLUME_REQUEST,
         detail: volume,
