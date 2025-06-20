@@ -265,7 +265,7 @@ function useFileUploadContext(consumerName: string) {
   return context;
 }
 
-interface FileUploadRootProps
+export interface FileUploadRootProps
   extends Omit<
     React.ComponentPropsWithoutRef<"div">,
     "defaultValue" | "onChange"
