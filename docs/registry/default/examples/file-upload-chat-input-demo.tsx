@@ -150,10 +150,10 @@ export default function FileUploadChatInputDemo() {
           value={input}
           onChange={onInputChange}
           placeholder="Type your message here..."
-          className="w-full resize-none border-0 bg-transparent p-0 shadow-none focus-visible:ring-0 dark:bg-transparent"
+          className="field-sizing-content min-h-10 w-full resize-none border-0 bg-transparent p-0 shadow-none focus-visible:ring-0 dark:bg-transparent"
           disabled={isUploading}
         />
-        <div className="absolute right-[8px] bottom-[7px] flex items-center gap-1.5">
+        <div className="flex items-center justify-end gap-1.5">
           <FileUploadTrigger asChild>
             <Button
               type="button"
