@@ -70,6 +70,7 @@ type StoreAction =
 function createStore(
   listeners: Set<() => void>,
   files: Map<File, FileState>,
+  urlCache: WeakMap<File, string>,
   invalid: boolean,
   onValueChange?: (files: File[]) => void,
 ) {
@@ -157,6 +158,14 @@ function createStore(
       }
 
       case "REMOVE_FILE": {
+        if (urlCache) {
+          const cachedUrl = urlCache.get(action.file);
+          if (cachedUrl) {
+            URL.revokeObjectURL(cachedUrl);
+            urlCache.delete(action.file);
+          }
+        }
+
         files.delete(action.file);
 
         if (onValueChange) {
@@ -177,6 +186,16 @@ function createStore(
       }
 
       case "CLEAR": {
+        if (urlCache) {
+          for (const file of files.keys()) {
+            const cachedUrl = urlCache.get(file);
+            if (cachedUrl) {
+              URL.revokeObjectURL(cachedUrl);
+              urlCache.delete(file);
+            }
+          }
+        }
+
         files.clear();
         if (onValueChange) {
           onValueChange([]);
@@ -251,6 +270,7 @@ interface FileUploadContextValue {
   disabled: boolean;
   dir: Direction;
   inputRef: React.RefObject<HTMLInputElement | null>;
+  urlCache: WeakMap<File, string>;
 }
 
 const FileUploadContext = React.createContext<FileUploadContextValue | null>(
@@ -332,12 +352,13 @@ function FileUploadRoot(props: FileUploadRootProps) {
   const dir = useDirection(dirProp);
   const listeners = useLazyRef(() => new Set<() => void>()).current;
   const files = useLazyRef<Map<File, FileState>>(() => new Map()).current;
+  const urlCache = useLazyRef(() => new WeakMap<File, string>()).current;
   const inputRef = React.useRef<HTMLInputElement>(null);
   const isControlled = value !== undefined;
 
   const store = React.useMemo(
-    () => createStore(listeners, files, invalid, onValueChange),
-    [listeners, files, invalid, onValueChange],
+    () => createStore(listeners, files, urlCache, invalid, onValueChange),
+    [listeners, files, invalid, onValueChange, urlCache],
   );
 
   const acceptTypes = React.useMemo(
@@ -371,6 +392,17 @@ function FileUploadRoot(props: FileUploadRootProps) {
       store.dispatch({ type: "SET_FILES", files: defaultValue });
     }
   }, [value, defaultValue, isControlled, store]);
+
+  React.useEffect(() => {
+    return () => {
+      for (const file of files.keys()) {
+        const cachedUrl = urlCache.get(file);
+        if (cachedUrl) {
+          URL.revokeObjectURL(cachedUrl);
+        }
+      }
+    };
+  }, [files, urlCache]);
 
   const onFilesChange = React.useCallback(
     (originalFiles: File[]) => {
@@ -563,8 +595,9 @@ function FileUploadRoot(props: FileUploadRootProps) {
       dir,
       disabled,
       inputRef,
+      urlCache,
     }),
-    [dropzoneId, inputId, listId, labelId, dir, disabled],
+    [dropzoneId, inputId, listId, labelId, dir, disabled, urlCache],
   );
 
   const RootPrimitive = asChild ? Slot : "div";
@@ -1044,38 +1077,27 @@ function FileUploadItemPreview(props: FileUploadItemPreviewProps) {
   const { render, asChild, children, className, ...previewProps } = props;
 
   const itemContext = useFileUploadItemContext(ITEM_PREVIEW_NAME);
-  const urlCache = useLazyRef(() => new WeakMap<File, string>()).current;
+  const context = useFileUploadContext(ITEM_PREVIEW_NAME);
 
   const onPreviewRender = React.useCallback(
     (file: File) => {
       if (render) return render(file);
 
       if (itemContext.fileState?.file.type.startsWith("image/")) {
-        let url = urlCache.get(file);
+        let url = context.urlCache.get(file);
         if (!url) {
           url = URL.createObjectURL(file);
-          urlCache.set(file, url);
+          context.urlCache.set(file, url);
         }
+
         return (
-          <img
-            src={url}
-            alt={file.name}
-            className="size-full object-cover"
-            onLoad={(event) => {
-              if (!(event.target instanceof HTMLImageElement)) return;
-              const cachedUrl = urlCache.get(file);
-              if (cachedUrl) {
-                URL.revokeObjectURL(cachedUrl);
-                urlCache.delete(file);
-              }
-            }}
-          />
+          <img src={url} alt={file.name} className="size-full object-cover" />
         );
       }
 
       return getFileIcon(file);
     },
-    [render, itemContext.fileState?.file.type, urlCache],
+    [render, itemContext.fileState?.file.type, context.urlCache],
   );
 
   if (!itemContext.fileState) return null;
