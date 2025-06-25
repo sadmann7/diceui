@@ -1510,6 +1510,9 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const hoverTimeoutRef = React.useRef<number | null>(null);
   const lastPointerXRef = React.useRef<number>(0);
   const previewDebounceRef = React.useRef<number | null>(null);
+  const pointerEnterTimeRef = React.useRef<number>(0);
+  const lastMovementTimeRef = React.useRef<number>(0);
+  const movementCountRef = React.useRef<number>(0);
 
   const timeCache = React.useRef<Map<number, string>>(new Map());
 
@@ -1749,13 +1752,15 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     }
 
     collisionDataRef.current = null;
+    pointerEnterTimeRef.current = Date.now();
+    movementCountRef.current = 0;
 
     if (seekableEnd > 0) {
       if (hoverTimeoutRef.current) {
         clearTimeout(hoverTimeoutRef.current);
       }
 
-      const delay = justCommittedRef.current ? 16 : 50;
+      const delay = justCommittedRef.current ? 16 : 200;
 
       if (!tooltipDisabled) {
         if (lastPointerXRef.current && seekRectRef.current) {
@@ -1802,6 +1807,10 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       hasInitialPosition: false,
     }));
 
+    pointerEnterTimeRef.current = 0;
+    lastMovementTimeRef.current = 0;
+    movementCountRef.current = 0;
+
     justCommittedRef.current = false;
     seekRectRef.current = null;
     collisionDataRef.current = null;
@@ -1823,6 +1832,15 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       }
 
       if (!seekRectRef.current) return;
+
+      const currentTime = Date.now();
+      const timeSinceEnter = currentTime - pointerEnterTimeRef.current;
+      const timeSinceLastMove = currentTime - lastMovementTimeRef.current;
+
+      if (timeSinceLastMove > 0) {
+        movementCountRef.current++;
+      }
+      lastMovementTimeRef.current = currentTime;
 
       lastPointerXRef.current = event.clientX;
 
@@ -1858,11 +1876,21 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         const isCurrentlyHovering =
           clientX >= seekRect.left && clientX <= seekRect.right;
 
-        if (!wasHovering && isCurrentlyHovering) {
+        const timeThreshold = 150;
+        const movementThreshold = 10;
+        const timePeriod = Math.max(1, timeSinceEnter);
+        const movementRate = (movementCountRef.current / timePeriod) * 100;
+
+        const isIntentionalInteraction =
+          timeSinceEnter > timeThreshold ||
+          movementRate < movementThreshold ||
+          wasHovering;
+
+        if (!wasHovering && isCurrentlyHovering && isIntentionalInteraction) {
           setSeekState((prev) => ({ ...prev, isHovering: true }));
         }
 
-        if (!tooltipDisabled) {
+        if (!tooltipDisabled && (wasHovering || isIntentionalInteraction)) {
           onPreviewUpdate(calculatedHoverTime);
 
           if (isCurrentlyHovering) {
