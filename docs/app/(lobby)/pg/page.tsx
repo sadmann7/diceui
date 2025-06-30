@@ -25,7 +25,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import FileUploadChatInputDemo from "@/registry/default/examples/file-upload-chat-input-demo";
 import MediaPlayerSettingsDemo from "@/registry/default/examples/media-player-settings-demo";
 import {
   Combobox,
@@ -42,7 +41,6 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <FileUploadChatInputDemo />
       <MediaPlayerSettingsDemo />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>

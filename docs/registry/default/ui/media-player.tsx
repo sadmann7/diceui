@@ -411,6 +411,8 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
 
       if (!isMediaFocused && !isPlayerFocused) return;
 
+      if (autoHide) onControlsShow();
+
       switch (event.key.toLowerCase()) {
         case " ":
         case "k":
@@ -644,6 +646,8 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
       onPipError,
       disabled,
       isVideo,
+      onControlsShow,
+      autoHide,
     ],
   );
 
@@ -1505,7 +1509,12 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const seekThrottleRef = React.useRef<number | null>(null);
   const hoverTimeoutRef = React.useRef<number | null>(null);
   const lastPointerXRef = React.useRef<number>(0);
+  const lastPointerYRef = React.useRef<number>(0);
   const previewDebounceRef = React.useRef<number | null>(null);
+  const pointerEnterTimeRef = React.useRef<number>(0);
+  const horizontalMovementRef = React.useRef<number>(0);
+  const verticalMovementRef = React.useRef<number>(0);
+  const lastSeekCommitTimeRef = React.useRef<number>(0);
 
   const timeCache = React.useRef<Map<number, string>>(new Map());
 
@@ -1745,13 +1754,14 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     }
 
     collisionDataRef.current = null;
+    pointerEnterTimeRef.current = Date.now();
+    horizontalMovementRef.current = 0;
+    verticalMovementRef.current = 0;
 
     if (seekableEnd > 0) {
       if (hoverTimeoutRef.current) {
         clearTimeout(hoverTimeoutRef.current);
       }
-
-      const delay = justCommittedRef.current ? 16 : 50;
 
       if (!tooltipDisabled) {
         if (lastPointerXRef.current && seekRectRef.current) {
@@ -1759,21 +1769,8 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
             seekRectRef.current.left,
             Math.min(lastPointerXRef.current, seekRectRef.current.right),
           );
-
           onTooltipPositionUpdate(clientX);
-
-          requestAnimationFrame(() => {
-            hoverTimeoutRef.current = window.setTimeout(() => {
-              setSeekState((prev) => ({ ...prev, isHovering: true }));
-            }, delay);
-          });
-        } else {
-          hoverTimeoutRef.current = window.setTimeout(() => {
-            setSeekState((prev) => ({ ...prev, isHovering: true }));
-          }, delay);
         }
-      } else {
-        setSeekState((prev) => ({ ...prev, isHovering: true }));
       }
     }
   }, [seekableEnd, onTooltipPositionUpdate, tooltipDisabled]);
@@ -1802,6 +1799,13 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     seekRectRef.current = null;
     collisionDataRef.current = null;
 
+    pointerEnterTimeRef.current = 0;
+    horizontalMovementRef.current = 0;
+    verticalMovementRef.current = 0;
+    lastPointerXRef.current = 0;
+    lastPointerYRef.current = 0;
+    lastSeekCommitTimeRef.current = 0;
+
     if (!tooltipDisabled) {
       dispatch({
         type: MediaActionTypes.MEDIA_PREVIEW_REQUEST,
@@ -1820,7 +1824,19 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
       if (!seekRectRef.current) return;
 
-      lastPointerXRef.current = event.clientX;
+      const currentX = event.clientX;
+      const currentY = event.clientY;
+
+      if (lastPointerXRef.current !== 0 && lastPointerYRef.current !== 0) {
+        const deltaX = Math.abs(currentX - lastPointerXRef.current);
+        const deltaY = Math.abs(currentY - lastPointerYRef.current);
+
+        horizontalMovementRef.current += deltaX;
+        verticalMovementRef.current += deltaY;
+      }
+
+      lastPointerXRef.current = currentX;
+      lastPointerYRef.current = currentY;
 
       if (rafIdRef.current) {
         cancelAnimationFrame(rafIdRef.current);
@@ -1854,14 +1870,35 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         const isCurrentlyHovering =
           clientX >= seekRect.left && clientX <= seekRect.right;
 
-        if (!wasHovering && isCurrentlyHovering) {
+        const timeHovering = Date.now() - pointerEnterTimeRef.current;
+        const totalMovement =
+          horizontalMovementRef.current + verticalMovementRef.current;
+        const horizontalRatio =
+          totalMovement > 0 ? horizontalMovementRef.current / totalMovement : 0;
+
+        const timeSinceSeekCommit = Date.now() - lastSeekCommitTimeRef.current;
+        const isInSeekCooldown = timeSinceSeekCommit < 300;
+
+        const shouldShowTooltip =
+          !wasJustCommitted &&
+          !isInSeekCooldown &&
+          (timeHovering > 150 ||
+            horizontalRatio > 0.6 ||
+            (totalMovement < 10 && timeHovering > 50));
+
+        if (
+          !wasHovering &&
+          isCurrentlyHovering &&
+          shouldShowTooltip &&
+          !tooltipDisabled
+        ) {
           setSeekState((prev) => ({ ...prev, isHovering: true }));
         }
 
         if (!tooltipDisabled) {
           onPreviewUpdate(calculatedHoverTime);
 
-          if (isCurrentlyHovering) {
+          if (isCurrentlyHovering && (wasHovering || shouldShowTooltip)) {
             onTooltipPositionUpdate(clientX);
           }
         }
@@ -1884,7 +1921,10 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       const time = value[0] ?? 0;
 
       setSeekState((prev) => ({ ...prev, pendingSeekTime: time }));
-      store.setState("dragging", true);
+
+      if (!store.getState().dragging) {
+        store.setState("dragging", true);
+      }
 
       if (seekThrottleRef.current) {
         cancelAnimationFrame(seekThrottleRef.current);
@@ -1898,7 +1938,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         seekThrottleRef.current = null;
       });
     },
-    [dispatch, store.setState],
+    [dispatch, store.getState, store.setState],
   );
 
   const onSeekCommit = React.useCallback(
@@ -1932,7 +1972,16 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
       justCommittedRef.current = true;
       collisionDataRef.current = null;
-      store.setState("dragging", false);
+      lastSeekCommitTimeRef.current = Date.now();
+
+      // Reset movement tracking after seek commit
+      pointerEnterTimeRef.current = Date.now();
+      horizontalMovementRef.current = 0;
+      verticalMovementRef.current = 0;
+
+      if (store.getState().dragging) {
+        store.setState("dragging", false);
+      }
 
       dispatch({
         type: MediaActionTypes.MEDIA_SEEK_REQUEST,
@@ -1944,7 +1993,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         detail: undefined,
       });
     },
-    [dispatch, store.setState],
+    [dispatch, store.getState, store.setState],
   );
 
   React.useEffect(() => {
@@ -2191,19 +2240,27 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
   const onVolumeChange = React.useCallback(
     (value: number[]) => {
       const volume = value[0] ?? 0;
-      store.setState("dragging", true);
+
+      if (!store.getState().dragging) {
+        store.setState("dragging", true);
+      }
+
       dispatch({
         type: MediaActionTypes.MEDIA_VOLUME_REQUEST,
         detail: volume,
       });
     },
-    [dispatch, store.setState],
+    [dispatch, store.getState, store.setState],
   );
 
   const onVolumeCommit = React.useCallback(
     (value: number[]) => {
       const volume = value[0] ?? 0;
-      store.setState("dragging", false);
+
+      if (store.getState().dragging) {
+        store.setState("dragging", false);
+      }
+
       dispatch({
         type: MediaActionTypes.MEDIA_VOLUME_REQUEST,
         detail: volume,
