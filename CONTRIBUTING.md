@@ -178,7 +178,38 @@ pnpm test
 
 - Follow semantic versioning
 - Update CHANGELOG.md with changes
-- Use conventional commits
+- Use conventional commits with the following pattern:
+
+### Commit Convention
+
+Use the format: `type(scope): description`
+
+**Examples:**
+
+```text
+feat(media-player): optimize scrubbing performance
+fix(combobox): resolve keyboard navigation issue
+docs(mention): update API documentation
+refactor(shared): simplify utility functions
+test(tags-input): add validation tests
+```
+
+**Types:**
+
+- `feat`: new feature
+- `fix`: bug fix
+- `docs`: documentation changes
+- `refactor`: code refactoring
+- `test`: adding or updating tests
+- `chore`: maintenance tasks
+- `perf`: performance improvements
+- `ci`: continuous integration changes
+
+**Scope:**
+
+- Use the package/component name (e.g., `combobox`, `mention`, `tags-input`, `media-player`)
+- Use `shared` for shared utilities
+- Use `docs` for documentation-specific changes
 
 ## Code Style
 
