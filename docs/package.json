@@ -84,7 +84,7 @@
     "@types/react-dom": "^19.1.5",
     "postcss": "^8.5.3",
     "react-reconciler": "^0.32.0",
-    "react-scan": "^0.3.4",
+    "react-scan": "^0.4.3",
     "rehype-pretty-code": "^0.14.1",
     "rehype-slug": "^6.0.0",
     "remark-code-import": "^1.2.0",
