@@ -781,7 +781,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
         className={cn(
           "dark relative isolate flex flex-col overflow-hidden rounded-lg bg-background outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_video]:relative [&_video]:object-contain",
           "data-[state=fullscreen]:[&_video]:size-full [:fullscreen_&]:flex [:fullscreen_&]:h-full [:fullscreen_&]:max-h-screen [:fullscreen_&]:flex-col [:fullscreen_&]:justify-between",
-          "[&_[data-slider]::before]:-top-4 [&_[data-slider]::before]:-bottom-2 [&_[data-slider]::before]:absolute [&_[data-slider]::before]:inset-x-0 [&_[data-slider]::before]:z-10 [&_[data-slider]::before]:h-8 [&_[data-slider]::before]:cursor-pointer [&_[data-slider]::before]:content-[''] [&_[data-slider]]:relative",
+          "[&_[data-slider]::before]:-top-4 [&_[data-slider]::before]:-bottom-2 [&_[data-slider]::before]:absolute [&_[data-slider]::before]:inset-x-0 [&_[data-slider]::before]:z-10 [&_[data-slider]::before]:h-8 [&_[data-slider]::before]:content-[''] [&_[data-slider][data-scrubbing]::before]:cursor-pointer [&_[data-slider]]:relative",
           "[&_video::-webkit-media-text-track-display]:top-auto! [&_video::-webkit-media-text-track-display]:bottom-[4%]! [&_video::-webkit-media-text-track-display]:mb-0! data-[state=fullscreen]:data-[controls-visible]:[&_video::-webkit-media-text-track-display]:bottom-[9%]! data-[controls-visible]:[&_video::-webkit-media-text-track-display]:bottom-[13%]! data-[state=fullscreen]:[&_video::-webkit-media-text-track-display]:bottom-[7%]!",
           className,
         )}
@@ -1429,7 +1429,7 @@ function MediaPlayerSeekForward(props: MediaPlayerSeekForwardProps) {
 }
 
 interface SeekState {
-  isHovering: boolean;
+  isScrubbing: boolean;
   pendingSeekTime: number | null;
   hasInitialPosition: boolean;
 }
@@ -1500,7 +1500,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   } | null>(null);
 
   const [seekState, setSeekState] = React.useState<SeekState>({
-    isHovering: false,
+    isScrubbing: false,
     pendingSeekTime: null,
     hasInitialPosition: false,
   });
@@ -1712,12 +1712,12 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   }, [mediaCurrentTime, seekState.pendingSeekTime]);
 
   React.useEffect(() => {
-    if (!seekState.isHovering || tooltipDisabled) return;
+    if (!seekState.isScrubbing || tooltipDisabled) return;
 
     function onScroll() {
       setSeekState((prev) => ({
         ...prev,
-        isHovering: false,
+        isScrubbing: false,
         hasInitialPosition: false,
       }));
       dispatch({
@@ -1730,7 +1730,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     return () => {
       document.removeEventListener("scroll", onScroll);
     };
-  }, [dispatch, seekState.isHovering, tooltipDisabled]);
+  }, [dispatch, seekState.isScrubbing, tooltipDisabled]);
 
   const bufferedProgress = React.useMemo(() => {
     if (mediaBuffered.length === 0 || seekableEnd <= 0) return 0;
@@ -1866,7 +1866,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
         onHoverProgressUpdate();
 
-        const wasHovering = seekState.isHovering;
+        const wasScrubbing = seekState.isScrubbing;
         const isCurrentlyHovering =
           clientX >= seekRect.left && clientX <= seekRect.right;
 
@@ -1887,7 +1887,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
             (totalMovement < 10 && timeHovering > 50));
 
         if (
-          !wasHovering &&
+          !wasScrubbing &&
           isCurrentlyHovering &&
           shouldShowTooltip &&
           !tooltipDisabled
@@ -1898,7 +1898,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         if (!tooltipDisabled) {
           onPreviewUpdate(calculatedHoverTime);
 
-          if (isCurrentlyHovering && (wasHovering || shouldShowTooltip)) {
+          if (isCurrentlyHovering && (wasScrubbing || shouldShowTooltip)) {
             onTooltipPositionUpdate(clientX);
           }
         }
@@ -1911,7 +1911,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       onTooltipPositionUpdate,
       onHoverProgressUpdate,
       seekableEnd,
-      seekState.isHovering,
+      seekState.isScrubbing,
       tooltipDisabled,
     ],
   );
@@ -2073,6 +2073,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       <SliderPrimitive.Root
         aria-controls={context.mediaId}
         aria-valuetext={`${currentTime} of ${duration}`}
+        data-scrubbing={seekState.isScrubbing ? "" : undefined}
         data-slider=""
         data-slot="media-player-seek"
         disabled={isDisabled}
@@ -2101,7 +2102,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
             }}
           />
           <SliderPrimitive.Range className="absolute h-full bg-primary will-change-[width]" />
-          {seekState.isHovering && seekableEnd > 0 && (
+          {seekState.isScrubbing && seekableEnd > 0 && (
             <div
               data-slot="media-player-seek-hover-range"
               className="absolute h-full bg-primary/70 will-change-[width,opacity]"
@@ -2117,7 +2118,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       </SliderPrimitive.Root>
       {!withoutTooltip &&
         !context.withoutTooltip &&
-        seekState.isHovering &&
+        seekState.isScrubbing &&
         seekableEnd > 0 && (
           <MediaPlayerPortal>
             <div
