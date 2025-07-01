@@ -780,7 +780,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
         className={cn(
           "dark relative isolate flex flex-col overflow-hidden rounded-lg bg-background outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_video]:relative [&_video]:object-contain",
           "data-[state=fullscreen]:[&_video]:size-full [:fullscreen_&]:flex [:fullscreen_&]:h-full [:fullscreen_&]:max-h-screen [:fullscreen_&]:flex-col [:fullscreen_&]:justify-between",
-          "[&_[data-slider]::before]:-top-4 [&_[data-slider]::before]:-bottom-2 [&_[data-slider]::before]:absolute [&_[data-slider]::before]:inset-x-0 [&_[data-slider]::before]:z-10 [&_[data-slider]::before]:h-8 [&_[data-slider]::before]:cursor-pointer [&_[data-slider]::before]:content-[''] [&_[data-slider]]:relative",
+          "[&_[data-slider]::before]:-top-4 [&_[data-slider]::before]:-bottom-2 [&_[data-slider]::before]:absolute [&_[data-slider]::before]:inset-x-0 [&_[data-slider]::before]:z-10 [&_[data-slider]::before]:h-8 [&_[data-slider]::before]:cursor-pointer [&_[data-slider]::before]:content-[''] [&_[data-slider]]:relative [&_[data-slot='media-player-seek']:not([data-hovering])::before]:cursor-default",
           "[&_video::-webkit-media-text-track-display]:top-auto! [&_video::-webkit-media-text-track-display]:bottom-[4%]! [&_video::-webkit-media-text-track-display]:mb-0! data-[state=fullscreen]:data-[controls-visible]:[&_video::-webkit-media-text-track-display]:bottom-[9%]! data-[controls-visible]:[&_video::-webkit-media-text-track-display]:bottom-[13%]! data-[state=fullscreen]:[&_video::-webkit-media-text-track-display]:bottom-[7%]!",
           className,
         )}
@@ -2073,6 +2073,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       <SliderPrimitive.Root
         aria-controls={context.mediaId}
         aria-valuetext={`${currentTime} of ${duration}`}
+        data-hovering={seekState.isHovering ? "" : undefined}
         data-slider=""
         data-slot="media-player-seek"
         disabled={isDisabled}
