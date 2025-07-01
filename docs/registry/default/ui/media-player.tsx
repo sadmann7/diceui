@@ -62,12 +62,11 @@ const SETTINGS_NAME = "MediaPlayerSettings";
 const VOLUME_NAME = "MediaPlayerVolume";
 const PLAYBACK_SPEED_NAME = "MediaPlayerPlaybackSpeed";
 
-const LOADING_DELAY_MS = 500;
 const FLOATING_MENU_SIDE_OFFSET = 10;
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
-const SEEK_AMOUNT_SHORT = 5;
-const SEEK_AMOUNT_LONG = 10;
+const SEEK_STEP_SHORT = 5;
+const SEEK_STEP_LONG = 10;
 const SEEK_COLLISION_PADDING = 10;
 const SEEK_TOOLTIP_WIDTH_FALLBACK = 240;
 
@@ -99,8 +98,8 @@ function useLazyRef<T>(fn: () => T) {
 
 interface StoreState {
   controlsVisible: boolean;
-  menuOpen: boolean;
   dragging: boolean;
+  menuOpen: boolean;
   volumeIndicatorVisible: boolean;
 }
 
@@ -220,8 +219,8 @@ function MediaPlayerRoot(props: MediaPlayerRootProps) {
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<StoreState>(() => ({
     controlsVisible: true,
-    menuOpen: false,
     dragging: false,
+    menuOpen: false,
     volumeIndicatorVisible: false,
   }));
 
@@ -456,7 +455,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
               type: MediaActionTypes.MEDIA_SEEK_REQUEST,
               detail: Math.min(
                 mediaElement.duration,
-                mediaElement.currentTime + SEEK_AMOUNT_SHORT,
+                mediaElement.currentTime + SEEK_STEP_SHORT,
               ),
             });
           }
@@ -470,7 +469,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
           ) {
             dispatch({
               type: MediaActionTypes.MEDIA_SEEK_REQUEST,
-              detail: Math.max(0, mediaElement.currentTime - SEEK_AMOUNT_SHORT),
+              detail: Math.max(0, mediaElement.currentTime - SEEK_STEP_SHORT),
             });
           }
           break;
@@ -583,7 +582,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
           event.preventDefault();
           dispatch({
             type: MediaActionTypes.MEDIA_SEEK_REQUEST,
-            detail: Math.max(0, mediaElement.currentTime - SEEK_AMOUNT_LONG),
+            detail: Math.max(0, mediaElement.currentTime - SEEK_STEP_LONG),
           });
           break;
         }
@@ -594,7 +593,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
             type: MediaActionTypes.MEDIA_SEEK_REQUEST,
             detail: Math.min(
               mediaElement.duration,
-              mediaElement.currentTime + SEEK_AMOUNT_LONG,
+              mediaElement.currentTime + SEEK_STEP_LONG,
             ),
           });
           break;
@@ -781,7 +780,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
         className={cn(
           "dark relative isolate flex flex-col overflow-hidden rounded-lg bg-background outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_video]:relative [&_video]:object-contain",
           "data-[state=fullscreen]:[&_video]:size-full [:fullscreen_&]:flex [:fullscreen_&]:h-full [:fullscreen_&]:max-h-screen [:fullscreen_&]:flex-col [:fullscreen_&]:justify-between",
-          "[&_[data-slider]::before]:-top-4 [&_[data-slider]::before]:-bottom-2 [&_[data-slider]::before]:absolute [&_[data-slider]::before]:inset-x-0 [&_[data-slider]::before]:z-10 [&_[data-slider]::before]:h-8 [&_[data-slider]::before]:cursor-pointer [&_[data-slider]::before]:content-[''] [&_[data-slider]]:relative",
+          "[&_[data-slider]::before]:-top-4 [&_[data-slider]::before]:-bottom-2 [&_[data-slider]::before]:absolute [&_[data-slider]::before]:inset-x-0 [&_[data-slider]::before]:z-10 [&_[data-slider]::before]:h-8 [&_[data-slider]::before]:cursor-pointer [&_[data-slider]::before]:content-[''] [&_[data-slider]]:relative [&_[data-slot='media-player-seek']:not([data-hovering])::before]:cursor-default",
           "[&_video::-webkit-media-text-track-display]:top-auto! [&_video::-webkit-media-text-track-display]:bottom-[4%]! [&_video::-webkit-media-text-track-display]:mb-0! data-[state=fullscreen]:data-[controls-visible]:[&_video::-webkit-media-text-track-display]:bottom-[9%]! data-[controls-visible]:[&_video::-webkit-media-text-track-display]:bottom-[13%]! data-[state=fullscreen]:[&_video::-webkit-media-text-track-display]:bottom-[7%]!",
           className,
         )}
@@ -909,7 +908,7 @@ interface MediaPlayerLoadingProps extends React.ComponentProps<"div"> {
 
 function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
   const {
-    delayMs = LOADING_DELAY_MS,
+    delayMs = 500,
     asChild,
     className,
     children,
@@ -1308,7 +1307,7 @@ interface MediaPlayerSeekBackwardProps
 
 function MediaPlayerSeekBackward(props: MediaPlayerSeekBackwardProps) {
   const {
-    seconds = SEEK_AMOUNT_SHORT,
+    seconds = SEEK_STEP_SHORT,
     asChild,
     children,
     className,
@@ -1369,7 +1368,7 @@ interface MediaPlayerSeekForwardProps
 
 function MediaPlayerSeekForward(props: MediaPlayerSeekForwardProps) {
   const {
-    seconds = SEEK_AMOUNT_LONG,
+    seconds = SEEK_STEP_LONG,
     asChild,
     children,
     className,
@@ -2074,6 +2073,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       <SliderPrimitive.Root
         aria-controls={context.mediaId}
         aria-valuetext={`${currentTime} of ${duration}`}
+        data-hovering={seekState.isHovering ? "" : undefined}
         data-slider=""
         data-slot="media-player-seek"
         disabled={isDisabled}

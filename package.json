@@ -1,6 +1,6 @@
 {
   "name": "diceui",
-  "packageManager": "pnpm@10.11.1",
+  "packageManager": "pnpm@10.12.4",
   "private": true,
   "type": "module",
   "workspaces": ["docs", "packages/*"],
