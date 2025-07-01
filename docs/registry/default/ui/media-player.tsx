@@ -62,6 +62,7 @@ const SETTINGS_NAME = "MediaPlayerSettings";
 const VOLUME_NAME = "MediaPlayerVolume";
 const PLAYBACK_SPEED_NAME = "MediaPlayerPlaybackSpeed";
 
+const LOADING_DELAY_MS = 500;
 const FLOATING_MENU_SIDE_OFFSET = 10;
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
@@ -94,23 +95,6 @@ function useLazyRef<T>(fn: () => T) {
   }
 
   return ref as React.RefObject<T>;
-}
-
-function useRafThrottle<TArgs extends readonly unknown[], TReturn = void>(
-  callback: (...args: TArgs) => TReturn,
-) {
-  const callbackRef = React.useRef(callback);
-  callbackRef.current = callback;
-  const rafRef = React.useRef<number | null>(null);
-
-  return React.useCallback((...args: TArgs) => {
-    if (rafRef.current === null) {
-      rafRef.current = requestAnimationFrame(() => {
-        rafRef.current = null;
-        callbackRef.current(...args);
-      });
-    }
-  }, []);
 }
 
 interface StoreState {
@@ -925,7 +909,7 @@ interface MediaPlayerLoadingProps extends React.ComponentProps<"div"> {
 
 function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
   const {
-    delayMs = 500,
+    delayMs = LOADING_DELAY_MS,
     asChild,
     className,
     children,
@@ -1522,6 +1506,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   });
 
   const rafIdRef = React.useRef<number | null>(null);
+  const seekThrottleRef = React.useRef<number | null>(null);
   const hoverTimeoutRef = React.useRef<number | null>(null);
   const lastPointerXRef = React.useRef<number>(0);
   const lastPointerYRef = React.useRef<number>(0);
@@ -1705,8 +1690,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   );
 
   const onHoverProgressUpdate = React.useCallback(() => {
-    if (!seekRef.current || seekableEnd <= 0 || store.getState().dragging)
-      return;
+    if (!seekRef.current || seekableEnd <= 0) return;
 
     const hoverPercent = Math.min(
       100,
@@ -1716,7 +1700,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       SEEK_HOVER_PERCENT,
       `${hoverPercent.toFixed(4)}%`,
     );
-  }, [seekableEnd, store]);
+  }, [seekableEnd]);
 
   React.useEffect(() => {
     if (seekState.pendingSeekTime !== null) {
@@ -1932,31 +1916,39 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
     ],
   );
 
-  const throttledDispatch = useRafThrottle((time: number) => {
-    dispatch({
-      type: MediaActionTypes.MEDIA_SEEK_REQUEST,
-      detail: time,
-    });
-  });
-
   const onSeek = React.useCallback(
     (value: number[]) => {
       const time = value[0] ?? 0;
-      throttledDispatch(time);
 
-      if (seekRectRef.current && seekableEnd > 0) {
-        const ratio = time / seekableEnd;
-        const thumbX =
-          seekRectRef.current.left + ratio * seekRectRef.current.width;
-        onTooltipPositionUpdate(thumbX);
+      setSeekState((prev) => ({ ...prev, pendingSeekTime: time }));
+
+      if (!store.getState().dragging) {
+        store.setState("dragging", true);
       }
+
+      if (seekThrottleRef.current) {
+        cancelAnimationFrame(seekThrottleRef.current);
+      }
+
+      seekThrottleRef.current = requestAnimationFrame(() => {
+        dispatch({
+          type: MediaActionTypes.MEDIA_SEEK_REQUEST,
+          detail: time,
+        });
+        seekThrottleRef.current = null;
+      });
     },
-    [throttledDispatch, onTooltipPositionUpdate, seekableEnd],
+    [dispatch, store.getState, store.setState],
   );
 
   const onSeekCommit = React.useCallback(
     (value: number[]) => {
       const time = value[0] ?? 0;
+
+      if (seekThrottleRef.current) {
+        cancelAnimationFrame(seekThrottleRef.current);
+        seekThrottleRef.current = null;
+      }
 
       if (hoverTimeoutRef.current) {
         clearTimeout(hoverTimeoutRef.current);
@@ -2000,11 +1992,14 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         detail: undefined,
       });
     },
-    [dispatch, store],
+    [dispatch, store.getState, store.setState],
   );
 
   React.useEffect(() => {
     return () => {
+      if (seekThrottleRef.current) {
+        cancelAnimationFrame(seekThrottleRef.current);
+      }
       if (hoverTimeoutRef.current) {
         clearTimeout(hoverTimeoutRef.current);
       }
@@ -2090,20 +2085,9 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
           "relative flex w-full touch-none select-none items-center data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
           className,
         )}
-        defaultValue={[mediaCurrentTime]}
+        value={[displayValue]}
         onValueChange={onSeek}
         onValueCommit={onSeekCommit}
-        onPointerDown={() => {
-          if (!store.getState().dragging) {
-            store.setState("dragging", true);
-          }
-          setSeekState((prev) => ({ ...prev, isHovering: true }));
-        }}
-        onPointerUp={() => {
-          if (store.getState().dragging) {
-            store.setState("dragging", false);
-          }
-        }}
         onPointerEnter={onPointerEnter}
         onPointerLeave={onPointerLeave}
         onPointerMove={onPointerMove}
@@ -2131,71 +2115,74 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         </SliderPrimitive.Track>
         <SliderPrimitive.Thumb className="relative z-10 block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] will-change-transform hover:ring-4 focus-visible:outline-hidden focus-visible:ring-4 disabled:pointer-events-none disabled:opacity-50" />
       </SliderPrimitive.Root>
-      {!tooltipDisabled && seekState.isHovering && seekableEnd > 0 && (
-        <MediaPlayerPortal>
-          <div
-            ref={tooltipRef}
-            className="pointer-events-none z-50 [backface-visibility:hidden] [contain:layout_style] [transition:opacity_150ms_ease-in-out]"
-            style={{
-              position: "fixed" as const,
-              left: `var(${SEEK_TOOLTIP_X}, 0rem)`,
-              top: `var(${SEEK_TOOLTIP_Y}, 0rem)`,
-              transform: `translateX(-50%) translateY(calc(-100% - ${currentTooltipSideOffset}px))`,
-              visibility: seekState.hasInitialPosition ? "visible" : "hidden",
-              opacity: seekState.hasInitialPosition ? 1 : 0,
-            }}
-          >
+      {!withoutTooltip &&
+        !context.withoutTooltip &&
+        seekState.isHovering &&
+        seekableEnd > 0 && (
+          <MediaPlayerPortal>
             <div
-              className={cn(
-                "flex flex-col items-center gap-1.5 rounded-md border bg-background text-foreground shadow-sm dark:bg-zinc-900",
-                thumbnail && "min-h-10",
-                !thumbnail && currentChapterCue && "px-3 py-1.5",
-              )}
+              ref={tooltipRef}
+              className="pointer-events-none z-50 [backface-visibility:hidden] [contain:layout_style] [transition:opacity_150ms_ease-in-out]"
+              style={{
+                position: "fixed" as const,
+                left: `var(${SEEK_TOOLTIP_X}, 0rem)`,
+                top: `var(${SEEK_TOOLTIP_Y}, 0rem)`,
+                transform: `translateX(-50%) translateY(calc(-100% - ${currentTooltipSideOffset}px))`,
+                visibility: seekState.hasInitialPosition ? "visible" : "hidden",
+                opacity: seekState.hasInitialPosition ? 1 : 0,
+              }}
             >
-              {thumbnail?.src && (
-                <div
-                  data-slot="media-player-seek-thumbnail"
-                  className="overflow-hidden rounded-md rounded-b-none"
-                  style={{
-                    width: `${SPRITE_CONTAINER_WIDTH}px`,
-                    height: `${SPRITE_CONTAINER_HEIGHT}px`,
-                  }}
-                >
-                  {thumbnail.coords ? (
-                    <div style={spriteStyle} />
-                  ) : (
-                    <img
-                      src={thumbnail.src}
-                      alt={`Preview at ${hoverTime}`}
-                      className="size-full object-cover"
-                    />
-                  )}
-                </div>
-              )}
-              {currentChapterCue && (
-                <div
-                  data-slot="media-player-seek-chapter-title"
-                  className="line-clamp-2 max-w-48 text-balance text-center text-xs"
-                >
-                  {currentChapterCue.text}
-                </div>
-              )}
               <div
-                data-slot="media-player-seek-time"
                 className={cn(
-                  "whitespace-nowrap text-center text-xs tabular-nums",
-                  thumbnail && "pb-1.5",
-                  !(thumbnail || currentChapterCue) && "px-2.5 py-1",
+                  "flex flex-col items-center gap-1.5 rounded-md border bg-background text-foreground shadow-sm dark:bg-zinc-900",
+                  thumbnail && "min-h-10",
+                  !thumbnail && currentChapterCue && "px-3 py-1.5",
                 )}
               >
-                {tooltipTimeVariant === "progress"
-                  ? `${hoverTime} / ${duration}`
-                  : hoverTime}
+                {thumbnail?.src && (
+                  <div
+                    data-slot="media-player-seek-thumbnail"
+                    className="overflow-hidden rounded-md rounded-b-none"
+                    style={{
+                      width: `${SPRITE_CONTAINER_WIDTH}px`,
+                      height: `${SPRITE_CONTAINER_HEIGHT}px`,
+                    }}
+                  >
+                    {thumbnail.coords ? (
+                      <div style={spriteStyle} />
+                    ) : (
+                      <img
+                        src={thumbnail.src}
+                        alt={`Preview at ${hoverTime}`}
+                        className="size-full object-cover"
+                      />
+                    )}
+                  </div>
+                )}
+                {currentChapterCue && (
+                  <div
+                    data-slot="media-player-seek-chapter-title"
+                    className="line-clamp-2 max-w-48 text-balance text-center text-xs"
+                  >
+                    {currentChapterCue.text}
+                  </div>
+                )}
+                <div
+                  data-slot="media-player-seek-time"
+                  className={cn(
+                    "whitespace-nowrap text-center text-xs tabular-nums",
+                    thumbnail && "pb-1.5",
+                    !(thumbnail || currentChapterCue) && "px-2.5 py-1",
+                  )}
+                >
+                  {tooltipTimeVariant === "progress"
+                    ? `${hoverTime} / ${duration}`
+                    : hoverTime}
+                </div>
               </div>
             </div>
-          </div>
-        </MediaPlayerPortal>
-      )}
+          </MediaPlayerPortal>
+        )}
     </div>
   );
 
