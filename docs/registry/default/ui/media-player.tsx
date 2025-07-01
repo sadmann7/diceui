@@ -1532,24 +1532,12 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const lastSeekCommitTimeRef = React.useRef<number>(0);
 
   const timeCache = React.useRef<Map<number, string>>(new Map());
-  const pendingTimeRef = React.useRef(mediaCurrentTime);
 
-  React.useEffect(() => {
-    if (!store.getState().dragging && seekState.pendingSeekTime === null) {
-      pendingTimeRef.current = mediaCurrentTime;
-    }
-  }, [mediaCurrentTime, store, seekState.pendingSeekTime]);
-
-  const displayValue =
-    seekState.pendingSeekTime ?? pendingTimeRef.current ?? mediaCurrentTime;
+  const displayValue = seekState.pendingSeekTime ?? mediaCurrentTime;
 
   const isDisabled = disabled || context.disabled;
-  const isDragging = useStoreSelector((state) => state.dragging);
   const tooltipDisabled =
-    withoutTooltip ||
-    context.withoutTooltip ||
-    store.getState().menuOpen ||
-    isDragging;
+    withoutTooltip || context.withoutTooltip || store.getState().menuOpen;
 
   const currentTooltipSideOffset =
     tooltipSideOffset ?? context.tooltipSideOffset;
@@ -1954,10 +1942,16 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const onSeek = React.useCallback(
     (value: number[]) => {
       const time = value[0] ?? 0;
-      pendingTimeRef.current = time;
       throttledDispatch(time);
+
+      if (seekRectRef.current && seekableEnd > 0) {
+        const ratio = time / seekableEnd;
+        const thumbX =
+          seekRectRef.current.left + ratio * seekRectRef.current.width;
+        onTooltipPositionUpdate(thumbX);
+      }
     },
-    [throttledDispatch],
+    [throttledDispatch, onTooltipPositionUpdate, seekableEnd],
   );
 
   const onSeekCommit = React.useCallback(
@@ -2103,6 +2097,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
           if (!store.getState().dragging) {
             store.setState("dragging", true);
           }
+          setSeekState((prev) => ({ ...prev, isHovering: true }));
         }}
         onPointerUp={() => {
           if (store.getState().dragging) {
