@@ -62,12 +62,11 @@ const SETTINGS_NAME = "MediaPlayerSettings";
 const VOLUME_NAME = "MediaPlayerVolume";
 const PLAYBACK_SPEED_NAME = "MediaPlayerPlaybackSpeed";
 
-const LOADING_DELAY_MS = 500;
 const FLOATING_MENU_SIDE_OFFSET = 10;
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
-const SEEK_AMOUNT_SHORT = 5;
-const SEEK_AMOUNT_LONG = 10;
+const SEEK_STEP_SHORT = 5;
+const SEEK_STEP_LONG = 10;
 const SEEK_COLLISION_PADDING = 10;
 const SEEK_TOOLTIP_WIDTH_FALLBACK = 240;
 
@@ -473,7 +472,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
               type: MediaActionTypes.MEDIA_SEEK_REQUEST,
               detail: Math.min(
                 mediaElement.duration,
-                mediaElement.currentTime + SEEK_AMOUNT_SHORT,
+                mediaElement.currentTime + SEEK_STEP_SHORT,
               ),
             });
           }
@@ -487,7 +486,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
           ) {
             dispatch({
               type: MediaActionTypes.MEDIA_SEEK_REQUEST,
-              detail: Math.max(0, mediaElement.currentTime - SEEK_AMOUNT_SHORT),
+              detail: Math.max(0, mediaElement.currentTime - SEEK_STEP_SHORT),
             });
           }
           break;
@@ -600,7 +599,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
           event.preventDefault();
           dispatch({
             type: MediaActionTypes.MEDIA_SEEK_REQUEST,
-            detail: Math.max(0, mediaElement.currentTime - SEEK_AMOUNT_LONG),
+            detail: Math.max(0, mediaElement.currentTime - SEEK_STEP_LONG),
           });
           break;
         }
@@ -611,7 +610,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
             type: MediaActionTypes.MEDIA_SEEK_REQUEST,
             detail: Math.min(
               mediaElement.duration,
-              mediaElement.currentTime + SEEK_AMOUNT_LONG,
+              mediaElement.currentTime + SEEK_STEP_LONG,
             ),
           });
           break;
@@ -926,7 +925,7 @@ interface MediaPlayerLoadingProps extends React.ComponentProps<"div"> {
 
 function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
   const {
-    delayMs = LOADING_DELAY_MS,
+    delayMs = 500,
     asChild,
     className,
     children,
@@ -1325,7 +1324,7 @@ interface MediaPlayerSeekBackwardProps
 
 function MediaPlayerSeekBackward(props: MediaPlayerSeekBackwardProps) {
   const {
-    seconds = SEEK_AMOUNT_SHORT,
+    seconds = SEEK_STEP_SHORT,
     asChild,
     children,
     className,
@@ -1386,7 +1385,7 @@ interface MediaPlayerSeekForwardProps
 
 function MediaPlayerSeekForward(props: MediaPlayerSeekForwardProps) {
   const {
-    seconds = SEEK_AMOUNT_LONG,
+    seconds = SEEK_STEP_LONG,
     asChild,
     children,
     className,
@@ -1535,7 +1534,6 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const timeCache = React.useRef<Map<number, string>>(new Map());
   const pendingTimeRef = React.useRef(mediaCurrentTime);
 
-  // Keep pendingTimeRef in sync when not actively seeking
   React.useEffect(() => {
     if (!store.getState().dragging && seekState.pendingSeekTime === null) {
       pendingTimeRef.current = mediaCurrentTime;
@@ -1990,7 +1988,6 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       collisionDataRef.current = null;
       lastSeekCommitTimeRef.current = Date.now();
 
-      // Reset movement tracking after seek commit
       pointerEnterTimeRef.current = Date.now();
       horizontalMovementRef.current = 0;
       verticalMovementRef.current = 0;
