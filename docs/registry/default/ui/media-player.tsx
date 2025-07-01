@@ -99,8 +99,8 @@ function useLazyRef<T>(fn: () => T) {
 
 interface StoreState {
   controlsVisible: boolean;
-  menuOpen: boolean;
   dragging: boolean;
+  menuOpen: boolean;
   volumeIndicatorVisible: boolean;
 }
 
@@ -220,8 +220,8 @@ function MediaPlayerRoot(props: MediaPlayerRootProps) {
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<StoreState>(() => ({
     controlsVisible: true,
-    menuOpen: false,
     dragging: false,
+    menuOpen: false,
     volumeIndicatorVisible: false,
   }));
 
