@@ -14,7 +14,7 @@ export default function CheckboxGroupDemo() {
             className="h-4 w-4 shrink-0 rounded-sm border border-zinc-600 shadow-sm focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-zinc-500 data-invalid:border-red-500 dark:border-zinc-400 dark:data-invalid:border-red-400 dark:focus-visible:ring-zinc-400 [&[data-state=checked]:not([data-invalid])]:bg-zinc-900 [&[data-state=checked]:not([data-invalid])]:text-zinc-50 dark:[&[data-state=checked]:not([data-invalid])]:bg-zinc-100 dark:[&[data-state=checked]:not([data-invalid])]:text-zinc-900 [&[data-state=checked][data-invalid]]:bg-red-500 [&[data-state=checked][data-invalid]]:text-white dark:[&[data-state=checked][data-invalid]]:bg-red-400 [&[data-state=unchecked][data-invalid]]:bg-transparent"
           >
             <CheckboxGroup.Indicator>
-              <Check className="h-4 w-4" />
+              <Check className="size-3.5" />
             </CheckboxGroup.Indicator>
           </CheckboxGroup.Item>
           Kickflip
@@ -25,7 +25,7 @@ export default function CheckboxGroupDemo() {
             className="h-4 w-4 shrink-0 rounded-sm border border-zinc-600 shadow-sm focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-zinc-500 data-invalid:border-red-500 dark:border-zinc-400 dark:data-invalid:border-red-400 dark:focus-visible:ring-zinc-400 [&[data-state=checked]:not([data-invalid])]:bg-zinc-900 [&[data-state=checked]:not([data-invalid])]:text-zinc-50 dark:[&[data-state=checked]:not([data-invalid])]:bg-zinc-100 dark:[&[data-state=checked]:not([data-invalid])]:text-zinc-900 [&[data-state=checked][data-invalid]]:bg-red-500 [&[data-state=checked][data-invalid]]:text-white dark:[&[data-state=checked][data-invalid]]:bg-red-400 [&[data-state=unchecked][data-invalid]]:bg-transparent"
           >
             <CheckboxGroup.Indicator>
-              <Check className="h-4 w-4" />
+              <Check className="size-3.5" />
             </CheckboxGroup.Indicator>
           </CheckboxGroup.Item>
           Heelflip
@@ -36,7 +36,7 @@ export default function CheckboxGroupDemo() {
             className="h-4 w-4 shrink-0 rounded-sm border border-zinc-600 shadow-sm focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-zinc-500 data-invalid:border-red-500 dark:border-zinc-400 dark:data-invalid:border-red-400 dark:focus-visible:ring-zinc-400 [&[data-state=checked]:not([data-invalid])]:bg-zinc-900 [&[data-state=checked]:not([data-invalid])]:text-zinc-50 dark:[&[data-state=checked]:not([data-invalid])]:bg-zinc-100 dark:[&[data-state=checked]:not([data-invalid])]:text-zinc-900 [&[data-state=checked][data-invalid]]:bg-red-500 [&[data-state=checked][data-invalid]]:text-white dark:[&[data-state=checked][data-invalid]]:bg-red-400 [&[data-state=unchecked][data-invalid]]:bg-transparent"
           >
             <CheckboxGroup.Indicator>
-              <Check className="h-4 w-4" />
+              <Check className="size-3.5" />
             </CheckboxGroup.Indicator>
           </CheckboxGroup.Item>
           Tre Flip
@@ -47,7 +47,7 @@ export default function CheckboxGroupDemo() {
             className="h-4 w-4 shrink-0 rounded-sm border border-zinc-600 shadow-sm focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-zinc-500 data-invalid:border-red-500 dark:border-zinc-400 dark:data-invalid:border-red-400 dark:focus-visible:ring-zinc-400 [&[data-state=checked]:not([data-invalid])]:bg-zinc-900 [&[data-state=checked]:not([data-invalid])]:text-zinc-50 dark:[&[data-state=checked]:not([data-invalid])]:bg-zinc-100 dark:[&[data-state=checked]:not([data-invalid])]:text-zinc-900 [&[data-state=checked][data-invalid]]:bg-red-500 [&[data-state=checked][data-invalid]]:text-white dark:[&[data-state=checked][data-invalid]]:bg-red-400 [&[data-state=unchecked][data-invalid]]:bg-transparent"
           >
             <CheckboxGroup.Indicator>
-              <Check className="h-4 w-4" />
+              <Check className="size-3.5" />
             </CheckboxGroup.Indicator>
           </CheckboxGroup.Item>
           540 Flip
