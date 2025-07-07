@@ -63,10 +63,10 @@ const CheckboxGroupItem = React.forwardRef<
       {...props}
     >
       <CheckboxGroupPrimitive.Indicator
-        className="flex h-4 w-4 items-center justify-center text-current"
+        className="flex items-center justify-center text-current"
         asChild
       >
-        <Check />
+        <Check className="size-3.5" />
       </CheckboxGroupPrimitive.Indicator>
     </CheckboxGroupPrimitive.Item>
     {children}
