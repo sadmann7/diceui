@@ -2,11 +2,35 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import { Slot } from "@radix-ui/react-slot";
+import { PipetteIcon } from "lucide-react";
 import * as React from "react";
+
+// ============================================================================
+// EyeDropper API Types
+// @see https://gist.github.com/bkrmendy/f4582173f50fab209ddfef1377ab31e3
+// ============================================================================
+
+interface EyeDropper {
+  open: (options?: {
+    signal?: AbortSignal;
+  }) => Promise<{ sRGBHex: string }>;
+}
+
+declare global {
+  interface Window {
+    EyeDropper?: {
+      new (): EyeDropper;
+    };
+  }
+}
 
 // ============================================================================
 // Color Utilities
@@ -419,7 +443,6 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
     [listenersRef, stateRef, onStoreValueChange],
   );
 
-  // Update store when value prop changes
   React.useEffect(() => {
     if (valueProp !== undefined) {
       const color = hexToRgb(valueProp);
@@ -451,14 +474,40 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
   );
 }
 
-interface ColorPickerTriggerProps
+interface ColorPickerPanelProps extends React.ComponentProps<"div"> {
+  asChild?: boolean;
+}
+
+function ColorPickerPanel(props: ColorPickerPanelProps) {
+  const { asChild = false, className, children, ...panelProps } = props;
+
+  const PanelPrimitive = asChild ? Slot : "div";
+
+  return (
+    <PanelPrimitive
+      className={cn("flex flex-col gap-4", className)}
+      {...panelProps}
+    >
+      {children}
+    </PanelPrimitive>
+  );
+}
+
+interface ColorPickerPopoverProps
+  extends React.ComponentProps<typeof Popover> {}
+
+function ColorPickerPopover(props: ColorPickerPopoverProps) {
+  return <Popover {...props} />;
+}
+
+interface ColorPickerPopoverTriggerProps
   extends React.ComponentProps<typeof PopoverTrigger> {
   asChild?: boolean;
 }
 
-function ColorPickerTrigger(props: ColorPickerTriggerProps) {
+function ColorPickerPopoverTrigger(props: ColorPickerPopoverTriggerProps) {
   const { asChild = false, ...triggerProps } = props;
-  const context = useColorPickerContext("ColorPickerTrigger");
+  const context = useColorPickerContext("ColorPickerPopoverTrigger");
 
   const TriggerPrimitive = asChild ? Slot : Button;
 
@@ -469,17 +518,25 @@ function ColorPickerTrigger(props: ColorPickerTriggerProps) {
   );
 }
 
-interface ColorPickerContentProps
+interface ColorPickerPopoverContentProps
   extends React.ComponentProps<typeof PopoverContent> {
   asChild?: boolean;
 }
 
-function ColorPickerContent(props: ColorPickerContentProps) {
-  const { asChild = false, className, children, ...contentProps } = props;
+function ColorPickerPopoverContent(props: ColorPickerPopoverContentProps) {
+  const {
+    asChild = false,
+    className,
+    children,
+    ...popoverContentProps
+  } = props;
 
   return (
-    <PopoverContent className={cn("w-64 p-4", className)} {...contentProps}>
-      <div className="flex flex-col gap-4">{children}</div>
+    <PopoverContent
+      className={cn("w-64 p-4", className)}
+      {...popoverContentProps}
+    >
+      <ColorPickerPanel>{children}</ColorPickerPanel>
     </PopoverContent>
   );
 }
@@ -759,7 +816,6 @@ function ColorPickerInput(props: ColorPickerInputProps) {
       const value = event.target.value;
       setInputValue(value);
 
-      // Try to parse the color
       try {
         if (
           value.startsWith("#") &&
@@ -771,7 +827,7 @@ function ColorPickerInput(props: ColorPickerInputProps) {
           store.setState("hsv", newHsv);
         }
       } catch {
-        // Invalid color, ignore
+        // Invalid color, ignore it
       }
     },
     [store],
@@ -796,19 +852,15 @@ interface ColorPickerEyeDropperProps
 }
 
 function ColorPickerEyeDropper(props: ColorPickerEyeDropperProps) {
-  const { asChild = false, children, ...buttonProps } = props;
+  const { asChild = false, children, size, ...buttonProps } = props;
   const context = useColorPickerContext("ColorPickerEyeDropper");
   const store = useColorPickerStoreContext("ColorPickerEyeDropper");
 
   const onEyeDropper = React.useCallback(async () => {
-    if (!("EyeDropper" in window)) {
-      console.warn("EyeDropper API is not supported in this browser");
-      return;
-    }
+    if (!window.EyeDropper) return;
 
     try {
-      // @ts-ignore - EyeDropper is not in types yet
-      const eyeDropper = new EyeDropper();
+      const eyeDropper = new window.EyeDropper();
       const result = await eyeDropper.open();
 
       if (result.sRGBHex) {
@@ -818,34 +870,37 @@ function ColorPickerEyeDropper(props: ColorPickerEyeDropperProps) {
         store.setState("hsv", newHsv);
       }
     } catch (error) {
-      // User cancelled or error occurred
       console.warn("EyeDropper error:", error);
     }
   }, [store]);
 
   const hasEyeDropper = React.useMemo(() => {
-    return typeof window !== "undefined" && "EyeDropper" in window;
+    return typeof window !== "undefined" && !!window.EyeDropper;
   }, []);
 
   if (context.withoutEyeDropper || !hasEyeDropper) return null;
 
+  const buttonSize = size ?? (children ? "default" : "icon");
+
   return (
     <Button
       variant="outline"
-      size="sm"
+      size={buttonSize}
       onClick={onEyeDropper}
       disabled={context.disabled}
       {...buttonProps}
     >
-      {children ?? "🎯"}
+      {children ?? <PipetteIcon />}
     </Button>
   );
 }
 
 export {
   ColorPickerRoot as ColorPicker,
-  ColorPickerTrigger,
-  ColorPickerContent,
+  ColorPickerPanel,
+  ColorPickerPopover,
+  ColorPickerPopoverTrigger,
+  ColorPickerPopoverContent,
   ColorPickerArea,
   ColorPickerHueSlider,
   ColorPickerAlphaSlider,
@@ -854,8 +909,10 @@ export {
   ColorPickerEyeDropper,
   //
   ColorPickerRoot as Root,
-  ColorPickerTrigger as Trigger,
-  ColorPickerContent as Content,
+  ColorPickerPanel as Panel,
+  ColorPickerPopover as Popover,
+  ColorPickerPopoverTrigger as PopoverTrigger,
+  ColorPickerPopoverContent as PopoverContent,
   ColorPickerArea as Area,
   ColorPickerHueSlider as HueSlider,
   ColorPickerAlphaSlider as AlphaSlider,

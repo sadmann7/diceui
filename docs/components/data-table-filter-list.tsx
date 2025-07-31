@@ -114,8 +114,6 @@ export function DataTableFilterList<TData>({
   );
   const debouncedSetFilters = useDebouncedCallback(setFilters, debounceMs);
 
-  console.log({ filters });
-
   const [joinOperator, setJoinOperator] = useQueryState(
     JOIN_OPERATOR_KEY,
     parseAsStringEnum(["and", "or"]).withDefault("and").withOptions({
@@ -270,10 +268,7 @@ export function DataTableFilterList<TData>({
           </div>
           {filters.length > 0 ? (
             <SortableContent asChild>
-              <div
-                role="list"
-                className="flex max-h-[300px] flex-col gap-2 overflow-y-auto p-1"
-              >
+              <ul className="flex max-h-[300px] flex-col gap-2 overflow-y-auto p-1">
                 {filters.map((filter, index) => (
                   <DataTableFilterItem<TData>
                     key={filter.filterId}
@@ -287,7 +282,7 @@ export function DataTableFilterList<TData>({
                     onFilterRemove={onFilterRemove}
                   />
                 ))}
-              </div>
+              </ul>
             </SortableContent>
           ) : null}
           <div className="flex w-full items-center gap-2">
@@ -355,18 +350,17 @@ function DataTableFilterItem<TData>({
   const [showValueSelector, setShowValueSelector] = React.useState(false);
 
   const column = columns.find((column) => column.id === filter.id);
-  if (!column) return null;
 
   const joinOperatorListboxId = `${filterItemId}-join-operator-listbox`;
   const fieldListboxId = `${filterItemId}-field-listbox`;
   const operatorListboxId = `${filterItemId}-operator-listbox`;
   const inputId = `${filterItemId}-input`;
 
-  const columnMeta = column.columnDef.meta;
+  const columnMeta = column?.columnDef.meta;
   const filterOperators = getFilterOperators(filter.variant);
 
   const onItemKeyDown = React.useCallback(
-    (event: React.KeyboardEvent<HTMLDivElement>) => {
+    (event: React.KeyboardEvent<HTMLLIElement>) => {
       if (
         event.target instanceof HTMLInputElement ||
         event.target instanceof HTMLTextAreaElement
@@ -392,10 +386,11 @@ function DataTableFilterItem<TData>({
     ],
   );
 
+  if (!column) return null;
+
   return (
     <SortableItem value={filter.filterId} asChild>
-      <div
-        role="listitem"
+      <li
         id={filterItemId}
         tabIndex={-1}
         className="flex items-center gap-2"
@@ -437,7 +432,6 @@ function DataTableFilterItem<TData>({
         <Popover open={showFieldSelector} onOpenChange={setShowFieldSelector}>
           <PopoverTrigger asChild>
             <Button
-              role="combobox"
               aria-controls={fieldListboxId}
               variant="outline"
               size="sm"
@@ -555,7 +549,7 @@ function DataTableFilterItem<TData>({
             <GripVertical />
           </Button>
         </SortableItemHandle>
-      </div>
+      </li>
     </SortableItem>
   );
 }
@@ -784,7 +778,7 @@ function onFilterInputRender<TData>({
               <Calendar
                 aria-label={`Select ${columnMeta?.label} date range`}
                 mode="range"
-                initialFocus
+                captionLayout="dropdown"
                 selected={
                   dateValue.length === 2
                     ? {
@@ -811,7 +805,7 @@ function onFilterInputRender<TData>({
               <Calendar
                 aria-label={`Select ${columnMeta?.label} date`}
                 mode="single"
-                initialFocus
+                captionLayout="dropdown"
                 selected={
                   dateValue[0] ? new Date(Number(dateValue[0])) : undefined
                 }
