@@ -470,7 +470,7 @@ function ColorPickerRootImpl(props: ColorPickerRootImplProps) {
     format: formatProp = "hex",
     open: openProp,
     onOpenChange,
-    asChild = false,
+    asChild,
     store,
     ...rootProps
   } = props;
@@ -526,7 +526,7 @@ interface ColorPickerTriggerProps
 }
 
 function ColorPickerTrigger(props: ColorPickerTriggerProps) {
-  const { asChild = false, ...triggerProps } = props;
+  const { asChild, ...triggerProps } = props;
   const context = useColorPickerContext("ColorPickerTrigger");
 
   const TriggerPrimitive = asChild ? Slot : Button;
@@ -544,12 +544,7 @@ interface ColorPickerContentProps
 }
 
 function ColorPickerContent(props: ColorPickerContentProps) {
-  const {
-    asChild = false,
-    className,
-    children,
-    ...popoverContentProps
-  } = props;
+  const { asChild, className, children, ...popoverContentProps } = props;
 
   return (
     <PopoverContent
@@ -566,7 +561,7 @@ interface ColorPickerAreaProps extends React.ComponentProps<"div"> {
 }
 
 function ColorPickerArea(props: ColorPickerAreaProps) {
-  const { asChild = false, className, ...areaProps } = props;
+  const { asChild, className, ...areaProps } = props;
   const context = useColorPickerContext("ColorPickerArea");
   const store = useColorPickerStoreContext("ColorPickerArea");
 
@@ -663,7 +658,7 @@ interface ColorPickerHueSliderProps
 }
 
 function ColorPickerHueSlider(props: ColorPickerHueSliderProps) {
-  const { asChild = false, className, ...sliderProps } = props;
+  const { asChild, className, ...sliderProps } = props;
   const context = useColorPickerContext("ColorPickerHueSlider");
   const store = useColorPickerStoreContext("ColorPickerHueSlider");
 
@@ -710,7 +705,7 @@ interface ColorPickerAlphaSliderProps
 }
 
 function ColorPickerAlphaSlider(props: ColorPickerAlphaSliderProps) {
-  const { asChild = false, className, ...sliderProps } = props;
+  const { asChild, className, ...sliderProps } = props;
   const context = useColorPickerContext("ColorPickerAlphaSlider");
   const store = useColorPickerStoreContext("ColorPickerAlphaSlider");
 
@@ -772,37 +767,48 @@ interface ColorPickerSwatchProps extends React.ComponentProps<"div"> {
 }
 
 function ColorPickerSwatch(props: ColorPickerSwatchProps) {
-  const { asChild = false, className, ...swatchProps } = props;
+  const { asChild, className, ...swatchProps } = props;
   const context = useColorPickerContext("ColorPickerSwatch");
 
   const color = useColorPickerStore((state) => state.color);
 
-  const colorString = React.useMemo(() => {
-    return `rgba(${color?.r ?? 0}, ${color?.g ?? 0}, ${color?.b ?? 0}, ${color?.a ?? 1})`;
+  const backgroundStyle = React.useMemo(() => {
+    if (!color) {
+      return {
+        background:
+          "linear-gradient(to bottom right, transparent calc(50% - 1px), hsl(var(--destructive)) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px)) no-repeat",
+      };
+    }
+
+    const colorString = `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
+
+    if (color.a < 1) {
+      return {
+        background: `linear-gradient(${colorString}, ${colorString}), repeating-conic-gradient(hsl(var(--muted)) 0% 25%, hsl(var(--background)) 0% 50%) 0% 50% / 8px 8px`,
+      };
+    }
+
+    return {
+      backgroundColor: colorString,
+    };
   }, [color]);
 
   const SwatchPrimitive = asChild ? Slot : "div";
 
   return (
     <SwatchPrimitive
+      role="img"
       className={cn(
-        "h-8 w-full rounded border shadow-sm",
+        "box-border size-8 rounded-sm border shadow-sm",
         context.disabled && "opacity-50",
         className,
       )}
       style={{
-        background:
-          "linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%)",
-        backgroundSize: "8px 8px",
-        backgroundPosition: "0 0, 0 4px, 4px -4px, -4px 0px",
+        ...backgroundStyle,
+        forcedColorAdjust: "none",
       }}
       {...swatchProps}
-    >
-      <div
-        className="h-full w-full rounded"
-        style={{ backgroundColor: colorString }}
-      />
-    </SwatchPrimitive>
+    />
   );
 }
 
@@ -811,7 +817,7 @@ interface ColorPickerInputProps extends React.ComponentProps<typeof Input> {
 }
 
 function ColorPickerInput(props: ColorPickerInputProps) {
-  const { asChild = false, ...inputProps } = props;
+  const { asChild, ...inputProps } = props;
   const context = useColorPickerContext("ColorPickerInput");
   const store = useColorPickerStoreContext("ColorPickerInput");
 
@@ -868,7 +874,7 @@ interface ColorPickerEyeDropperProps
 }
 
 function ColorPickerEyeDropper(props: ColorPickerEyeDropperProps) {
-  const { asChild = false, children, size, ...buttonProps } = props;
+  const { asChild, children, size, ...buttonProps } = props;
   const context = useColorPickerContext("ColorPickerEyeDropper");
   const store = useColorPickerStoreContext("ColorPickerEyeDropper");
 

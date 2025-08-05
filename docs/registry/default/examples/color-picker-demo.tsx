@@ -28,6 +28,7 @@ export default function ColorPickerDemo() {
           <ColorPickerAlphaSlider />
         </div>
         <div className="flex items-center gap-2">
+          <ColorPickerSwatch className="flex-1" />
           <ColorPickerEyeDropper />
         </div>
         <ColorPickerInput />
