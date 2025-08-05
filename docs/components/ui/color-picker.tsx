@@ -344,9 +344,6 @@ function useColorPickerStoreSelector<U>(
 interface ColorPickerContextValue {
   dir: Direction;
   disabled: boolean;
-  withoutSwatch?: boolean;
-  withoutInput?: boolean;
-  withoutEyeDropper?: boolean;
 }
 
 const ColorPickerStoreContext = React.createContext<ColorPickerStore | null>(
@@ -370,6 +367,24 @@ function useColorPickerContext(consumerName: string) {
 // Components
 // ============================================================================
 
+function ColorPickerPopover({ children }: { children: React.ReactNode }) {
+  const store = useColorPickerStoreContext("ColorPickerPopover");
+  const open = useColorPickerStoreSelector((state) => state.open);
+
+  const onOpenChange = React.useCallback(
+    (newOpen: boolean) => {
+      store.setState("open", newOpen);
+    },
+    [store],
+  );
+
+  return (
+    <Popover open={open} onOpenChange={onOpenChange}>
+      {children}
+    </Popover>
+  );
+}
+
 interface ColorPickerRootProps
   extends Omit<React.ComponentProps<"div">, "onValueChange"> {
   value?: string;
@@ -378,9 +393,8 @@ interface ColorPickerRootProps
   dir?: Direction;
   disabled?: boolean;
   format?: "hex" | "rgb" | "hsl";
-  withoutSwatch?: boolean;
-  withoutInput?: boolean;
-  withoutEyeDropper?: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   asChild?: boolean;
 }
 
@@ -392,9 +406,8 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
     dir: dirProp,
     disabled = false,
     format: formatProp = "hex",
-    withoutSwatch = false,
-    withoutInput = false,
-    withoutEyeDropper = false,
+    open: openProp,
+    onOpenChange,
     asChild = false,
     ...rootProps
   } = props;
@@ -407,10 +420,10 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
     return {
       color,
       hsv: rgbToHsv(color),
-      open: false,
+      open: openProp ?? false,
       format: formatProp,
     };
-  }, [valueProp, defaultValue, formatProp]);
+  }, [valueProp, defaultValue, formatProp, openProp]);
 
   const stateRef = useLazyRef(() => initialColor);
   const listenersRef = useLazyRef(() => new Set<() => void>());
@@ -429,9 +442,11 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
           currentState?.format ?? "hex",
         );
         onValueChange?.(colorString);
+      } else if (key === "open") {
+        onOpenChange?.(value as boolean);
       }
     },
-    [onValueChange, stateRef],
+    [onValueChange, onOpenChange, stateRef],
   );
 
   const store = React.useMemo(
@@ -439,6 +454,7 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
       createColorPickerStore(listenersRef, stateRef, {
         color: (value) => onStoreValueChange("color", value),
         hsv: (value) => onStoreValueChange("hsv", value),
+        open: (value) => onStoreValueChange("open", value),
       }),
     [listenersRef, stateRef, onStoreValueChange],
   );
@@ -452,15 +468,18 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
     }
   }, [valueProp, store]);
 
+  React.useEffect(() => {
+    if (openProp !== undefined) {
+      store.setState("open", openProp);
+    }
+  }, [openProp, store]);
+
   const contextValue = React.useMemo<ColorPickerContextValue>(
     () => ({
       dir,
       disabled,
-      withoutSwatch,
-      withoutInput,
-      withoutEyeDropper,
     }),
-    [dir, disabled, withoutSwatch, withoutInput, withoutEyeDropper],
+    [dir, disabled],
   );
 
   const RootPrimitive = asChild ? Slot : "div";
@@ -468,46 +487,22 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
   return (
     <ColorPickerStoreContext.Provider value={store}>
       <ColorPickerContext.Provider value={contextValue}>
-        <RootPrimitive {...rootProps} />
+        <ColorPickerPopover>
+          <RootPrimitive {...rootProps} />
+        </ColorPickerPopover>
       </ColorPickerContext.Provider>
     </ColorPickerStoreContext.Provider>
   );
 }
 
-interface ColorPickerPanelProps extends React.ComponentProps<"div"> {
-  asChild?: boolean;
-}
-
-function ColorPickerPanel(props: ColorPickerPanelProps) {
-  const { asChild = false, className, children, ...panelProps } = props;
-
-  const PanelPrimitive = asChild ? Slot : "div";
-
-  return (
-    <PanelPrimitive
-      className={cn("flex flex-col gap-4", className)}
-      {...panelProps}
-    >
-      {children}
-    </PanelPrimitive>
-  );
-}
-
-interface ColorPickerPopoverProps
-  extends React.ComponentProps<typeof Popover> {}
-
-function ColorPickerPopover(props: ColorPickerPopoverProps) {
-  return <Popover {...props} />;
-}
-
-interface ColorPickerPopoverTriggerProps
+interface ColorPickerTriggerProps
   extends React.ComponentProps<typeof PopoverTrigger> {
   asChild?: boolean;
 }
 
-function ColorPickerPopoverTrigger(props: ColorPickerPopoverTriggerProps) {
+function ColorPickerTrigger(props: ColorPickerTriggerProps) {
   const { asChild = false, ...triggerProps } = props;
-  const context = useColorPickerContext("ColorPickerPopoverTrigger");
+  const context = useColorPickerContext("ColorPickerTrigger");
 
   const TriggerPrimitive = asChild ? Slot : Button;
 
@@ -518,12 +513,12 @@ function ColorPickerPopoverTrigger(props: ColorPickerPopoverTriggerProps) {
   );
 }
 
-interface ColorPickerPopoverContentProps
+interface ColorPickerContentProps
   extends React.ComponentProps<typeof PopoverContent> {
   asChild?: boolean;
 }
 
-function ColorPickerPopoverContent(props: ColorPickerPopoverContentProps) {
+function ColorPickerContent(props: ColorPickerContentProps) {
   const {
     asChild = false,
     className,
@@ -533,10 +528,10 @@ function ColorPickerPopoverContent(props: ColorPickerPopoverContentProps) {
 
   return (
     <PopoverContent
-      className={cn("w-64 p-4", className)}
+      className={cn("flex w-64 flex-col gap-4 p-4", className)}
       {...popoverContentProps}
     >
-      <ColorPickerPanel>{children}</ColorPickerPanel>
+      {children}
     </PopoverContent>
   );
 }
@@ -761,8 +756,6 @@ function ColorPickerSwatch(props: ColorPickerSwatchProps) {
     return `rgba(${color?.r ?? 0}, ${color?.g ?? 0}, ${color?.b ?? 0}, ${color?.a ?? 1})`;
   }, [color]);
 
-  if (context.withoutSwatch) return null;
-
   const SwatchPrimitive = asChild ? Slot : "div";
 
   return (
@@ -833,8 +826,6 @@ function ColorPickerInput(props: ColorPickerInputProps) {
     [store],
   );
 
-  if (context.withoutInput) return null;
-
   return (
     <Input
       value={inputValue}
@@ -878,7 +869,7 @@ function ColorPickerEyeDropper(props: ColorPickerEyeDropperProps) {
     return typeof window !== "undefined" && !!window.EyeDropper;
   }, []);
 
-  if (context.withoutEyeDropper || !hasEyeDropper) return null;
+  if (!hasEyeDropper) return null;
 
   const buttonSize = size ?? (children ? "default" : "icon");
 
@@ -897,10 +888,8 @@ function ColorPickerEyeDropper(props: ColorPickerEyeDropperProps) {
 
 export {
   ColorPickerRoot as ColorPicker,
-  ColorPickerPanel,
-  ColorPickerPopover,
-  ColorPickerPopoverTrigger,
-  ColorPickerPopoverContent,
+  ColorPickerTrigger,
+  ColorPickerContent,
   ColorPickerArea,
   ColorPickerHueSlider,
   ColorPickerAlphaSlider,
@@ -909,10 +898,8 @@ export {
   ColorPickerEyeDropper,
   //
   ColorPickerRoot as Root,
-  ColorPickerPanel as Panel,
-  ColorPickerPopover as Popover,
-  ColorPickerPopoverTrigger as PopoverTrigger,
-  ColorPickerPopoverContent as PopoverContent,
+  ColorPickerTrigger as Trigger,
+  ColorPickerContent as Content,
   ColorPickerArea as Area,
   ColorPickerHueSlider as HueSlider,
   ColorPickerAlphaSlider as AlphaSlider,
