@@ -502,12 +502,9 @@ function ColorPickerRootImpl(props: ColorPickerRootImplProps) {
 
   const open = useColorPickerStore((state) => state.open);
 
-  const onPopoverOpenChange = React.useCallback(
-    (newOpen: boolean) => {
-      store.setState("open", newOpen);
-    },
-    [store],
-  );
+  const onPopoverOpenChange = (newOpen: boolean) => {
+    store.setState("open", newOpen);
+  };
 
   const RootPrimitive = asChild ? Slot : "div";
 
@@ -618,10 +615,8 @@ function ColorPickerArea(props: ColorPickerAreaProps) {
     areaRef.current?.releasePointerCapture(event.pointerId);
   }, []);
 
-  const backgroundHue = React.useMemo(() => {
-    const hue = hsv?.h ?? 0;
-    return hsvToRgb({ h: hue, s: 100, v: 100, a: 1 });
-  }, [hsv?.h]);
+  const hue = hsv?.h ?? 0;
+  const backgroundHue = hsvToRgb({ h: hue, s: 100, v: 100, a: 1 });
 
   const AreaPrimitive = asChild ? Slot : "div";
 
@@ -723,9 +718,7 @@ function ColorPickerAlphaSlider(props: ColorPickerAlphaSliderProps) {
     [color, hsv, store],
   );
 
-  const gradientColor = React.useMemo(() => {
-    return `rgb(${color?.r ?? 0}, ${color?.g ?? 0}, ${color?.b ?? 0})`;
-  }, [color]);
+  const gradientColor = `rgb(${color?.r ?? 0}, ${color?.g ?? 0}, ${color?.b ?? 0})`;
 
   return (
     <SliderPrimitive.Root
@@ -771,6 +764,7 @@ function ColorPickerSwatch(props: ColorPickerSwatchProps) {
   const context = useColorPickerContext("ColorPickerSwatch");
 
   const color = useColorPickerStore((state) => state.color);
+  const format = useColorPickerStore((state) => state.format);
 
   const backgroundStyle = React.useMemo(() => {
     if (!color) {
@@ -793,11 +787,16 @@ function ColorPickerSwatch(props: ColorPickerSwatchProps) {
     };
   }, [color]);
 
+  const ariaLabel = !color
+    ? "No color selected"
+    : `Current color: ${colorToString(color, format ?? "hex")}`;
+
   const SwatchPrimitive = asChild ? Slot : "div";
 
   return (
     <SwatchPrimitive
-      role="img"
+      role={asChild ? undefined : "img"}
+      aria-label={ariaLabel}
       className={cn(
         "box-border size-8 rounded-sm border shadow-sm",
         context.disabled && "opacity-50",
@@ -896,9 +895,7 @@ function ColorPickerEyeDropper(props: ColorPickerEyeDropperProps) {
     }
   }, [store]);
 
-  const hasEyeDropper = React.useMemo(() => {
-    return typeof window !== "undefined" && !!window.EyeDropper;
-  }, []);
+  const hasEyeDropper = typeof window !== "undefined" && !!window.EyeDropper;
 
   if (!hasEyeDropper) return null;
 
