@@ -13,11 +13,9 @@ import { Slot } from "@radix-ui/react-slot";
 import { PipetteIcon } from "lucide-react";
 import * as React from "react";
 
-// ============================================================================
-// EyeDropper API Types
-// @see https://gist.github.com/bkrmendy/f4582173f50fab209ddfef1377ab31e3
-// ============================================================================
-
+/**
+ * @see https://gist.github.com/bkrmendy/f4582173f50fab209ddfef1377ab31e3
+ */
 interface EyeDropper {
   open: (options?: {
     signal?: AbortSignal;
@@ -31,10 +29,6 @@ declare global {
     };
   }
 }
-
-// ============================================================================
-// Color Utilities
-// ============================================================================
 
 interface ColorValue {
   r: number;
@@ -363,21 +357,19 @@ function useColorPickerContext(consumerName: string) {
   return context;
 }
 
-// ============================================================================
-// Components
-// ============================================================================
-
 interface ColorPickerRootProps
-  extends Omit<React.ComponentProps<"div">, "onValueChange"> {
+  extends Omit<React.ComponentProps<"div">, "onValueChange">,
+    Pick<
+      React.ComponentProps<typeof Popover>,
+      "defaultOpen" | "open" | "onOpenChange" | "modal"
+    > {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
   dir?: Direction;
-  disabled?: boolean;
   format?: "hex" | "rgb" | "hsl";
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
   asChild?: boolean;
+  disabled?: boolean;
 }
 
 function ColorPickerRoot(props: ColorPickerRootProps) {
@@ -386,10 +378,11 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
     defaultValue = "#000000",
     onValueChange,
     dir: dirProp,
-    disabled = false,
     format: formatProp = "hex",
+    defaultOpen,
     open: openProp,
     onOpenChange,
+    disabled = false,
     ...rootProps
   } = props;
 
@@ -399,10 +392,10 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
     return {
       color,
       hsv: rgbToHsv(color),
-      open: openProp ?? false,
+      open: openProp ?? defaultOpen ?? false,
       format: formatProp,
     };
-  }, [valueProp, defaultValue, formatProp, openProp]);
+  }, [valueProp, defaultValue, formatProp, openProp, defaultOpen]);
 
   const stateRef = useLazyRef(() => initialColor);
   const listenersRef = useLazyRef(() => new Set<() => void>());
@@ -446,34 +439,33 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
         defaultValue={defaultValue}
         onValueChange={onValueChange}
         dir={dirProp}
-        disabled={disabled}
         format={formatProp}
+        defaultOpen={defaultOpen}
         open={openProp}
         onOpenChange={onOpenChange}
-        store={store}
+        disabled={disabled}
       />
     </ColorPickerStoreContext.Provider>
   );
 }
 
-interface ColorPickerRootImplProps extends ColorPickerRootProps {
-  store: ColorPickerStore;
-}
-
-function ColorPickerRootImpl(props: ColorPickerRootImplProps) {
+function ColorPickerRootImpl(props: ColorPickerRootProps) {
   const {
     value: valueProp,
     defaultValue = "#000000",
     onValueChange,
     dir: dirProp,
-    disabled = false,
     format: formatProp = "hex",
+    defaultOpen,
     open: openProp,
     onOpenChange,
     asChild,
-    store,
+    disabled = false,
+    modal,
     ...rootProps
   } = props;
+
+  const store = useColorPickerStoreContext("ColorPickerRootImpl");
 
   const dir = useDirection(dirProp);
 
@@ -510,7 +502,12 @@ function ColorPickerRootImpl(props: ColorPickerRootImplProps) {
 
   return (
     <ColorPickerContext.Provider value={contextValue}>
-      <Popover open={open} onOpenChange={onPopoverOpenChange}>
+      <Popover
+        defaultOpen={defaultOpen}
+        open={open}
+        onOpenChange={onPopoverOpenChange}
+        modal={modal}
+      >
         <RootPrimitive {...rootProps} />
       </Popover>
     </ColorPickerContext.Provider>
