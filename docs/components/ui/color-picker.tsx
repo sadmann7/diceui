@@ -225,10 +225,6 @@ function rgbToHsl(color: ColorValue) {
   };
 }
 
-// ============================================================================
-// Store & Context
-// ============================================================================
-
 type Direction = "ltr" | "rtl";
 
 const DirectionContext = React.createContext<Direction | undefined>(undefined);
@@ -255,25 +251,25 @@ interface ColorPickerStoreState {
   format: "hex" | "rgb" | "hsl";
 }
 
+interface ColorPickerStoreCallbacks {
+  onColorChange?: (colorString: string) => void;
+  onOpenChange?: (open: boolean) => void;
+}
+
 interface ColorPickerStore {
   subscribe: (cb: () => void) => () => void;
   getState: () => ColorPickerStoreState;
-  setState: <K extends keyof ColorPickerStoreState>(
-    key: K,
-    value: ColorPickerStoreState[K],
-  ) => void;
+  setColor: (value: ColorValue) => void;
+  setHsv: (value: HSVColor) => void;
+  setOpen: (value: boolean) => void;
+  setFormat: (value: "hex" | "rgb" | "hsl") => void;
   notify: () => void;
 }
 
 function createColorPickerStore(
   listenersRef: React.RefObject<Set<() => void>>,
   stateRef: React.RefObject<ColorPickerStoreState>,
-  onValueChange?: Partial<{
-    [K in keyof ColorPickerStoreState]: (
-      value: ColorPickerStoreState[K],
-      store: ColorPickerStore,
-    ) => void;
-  }>,
+  callbacks?: ColorPickerStoreCallbacks,
 ): ColorPickerStore {
   const store: ColorPickerStore = {
     subscribe: (cb) => {
@@ -290,14 +286,52 @@ function createColorPickerStore(
         open: false,
         format: "hex" as const,
       },
-    setState: <K extends keyof ColorPickerStoreState>(
-      key: K,
-      value: ColorPickerStoreState[K],
-    ) => {
+    setColor: (value: ColorValue) => {
       if (!stateRef.current) return;
-      if (Object.is(stateRef.current[key], value)) return;
-      stateRef.current[key] = value;
-      onValueChange?.[key]?.(value, store);
+      if (Object.is(stateRef.current.color, value)) return;
+
+      const prevState = { ...stateRef.current };
+      stateRef.current.color = value;
+
+      if (callbacks?.onColorChange) {
+        const colorString = colorToString(value, prevState.format);
+        callbacks.onColorChange(colorString);
+      }
+
+      store.notify();
+    },
+    setHsv: (value: HSVColor) => {
+      if (!stateRef.current) return;
+      if (Object.is(stateRef.current.hsv, value)) return;
+
+      const prevState = { ...stateRef.current };
+      stateRef.current.hsv = value;
+
+      if (callbacks?.onColorChange) {
+        const colorValue = hsvToRgb(value);
+        const colorString = colorToString(colorValue, prevState.format);
+        callbacks.onColorChange(colorString);
+      }
+
+      store.notify();
+    },
+    setOpen: (value: boolean) => {
+      if (!stateRef.current) return;
+      if (Object.is(stateRef.current.open, value)) return;
+
+      stateRef.current.open = value;
+
+      if (callbacks?.onOpenChange) {
+        callbacks.onOpenChange(value);
+      }
+
+      store.notify();
+    },
+    setFormat: (value: "hex" | "rgb" | "hsl") => {
+      if (!stateRef.current) return;
+      if (Object.is(stateRef.current.format, value)) return;
+
+      stateRef.current.format = value;
       store.notify();
     },
     notify: () => {
@@ -400,35 +434,17 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
   const stateRef = useLazyRef(() => initialColor);
   const listenersRef = useLazyRef(() => new Set<() => void>());
 
-  const onStoreValueChange = React.useCallback(
-    (
-      key: keyof ColorPickerStoreState,
-      value: ColorPickerStoreState[typeof key],
-    ) => {
-      if (key === "color" || key === "hsv") {
-        const currentState = stateRef.current;
-        const colorValue =
-          key === "color" ? (value as ColorValue) : hsvToRgb(value as HSVColor);
-        const colorString = colorToString(
-          colorValue,
-          currentState?.format ?? "hex",
-        );
-        onValueChange?.(colorString);
-      } else if (key === "open") {
-        onOpenChange?.(value as boolean);
-      }
-    },
-    [onValueChange, onOpenChange, stateRef],
+  const storeCallbacks = React.useMemo<ColorPickerStoreCallbacks>(
+    () => ({
+      onColorChange: onValueChange,
+      onOpenChange: onOpenChange,
+    }),
+    [onValueChange, onOpenChange],
   );
 
   const store = React.useMemo(
-    () =>
-      createColorPickerStore(listenersRef, stateRef, {
-        color: (value) => onStoreValueChange("color", value),
-        hsv: (value) => onStoreValueChange("hsv", value),
-        open: (value) => onStoreValueChange("open", value),
-      }),
-    [listenersRef, stateRef, onStoreValueChange],
+    () => createColorPickerStore(listenersRef, stateRef, storeCallbacks),
+    [listenersRef, stateRef, storeCallbacks],
   );
 
   return (
@@ -473,14 +489,14 @@ function ColorPickerRootImpl(props: ColorPickerRootProps) {
     if (valueProp !== undefined) {
       const color = hexToRgb(valueProp);
       const hsv = rgbToHsv(color);
-      store.setState("color", color);
-      store.setState("hsv", hsv);
+      store.setColor(color);
+      store.setHsv(hsv);
     }
   }, [valueProp, store]);
 
   React.useEffect(() => {
     if (openProp !== undefined) {
-      store.setState("open", openProp);
+      store.setOpen(openProp);
     }
   }, [openProp, store]);
 
@@ -495,7 +511,7 @@ function ColorPickerRootImpl(props: ColorPickerRootProps) {
   const open = useColorPickerStore((state) => state.open);
 
   const onPopoverOpenChange = (newOpen: boolean) => {
-    store.setState("open", newOpen);
+    store.setOpen(newOpen);
   };
 
   const RootPrimitive = asChild ? Slot : "div";
@@ -581,8 +597,8 @@ function ColorPickerArea(props: ColorPickerAreaProps) {
         a: hsv?.a ?? 1,
       };
 
-      store.setState("hsv", newHsv);
-      store.setState("color", hsvToRgb(newHsv));
+      store.setHsv(newHsv);
+      store.setColor(hsvToRgb(newHsv));
     },
     [hsv, store],
   );
@@ -664,8 +680,8 @@ function ColorPickerHueSlider(props: ColorPickerHueSliderProps) {
         v: hsv?.v ?? 0,
         a: hsv?.a ?? 1,
       };
-      store.setState("hsv", newHsv);
-      store.setState("color", hsvToRgb(newHsv));
+      store.setHsv(newHsv);
+      store.setColor(hsvToRgb(newHsv));
     },
     [hsv, store],
   );
@@ -709,8 +725,8 @@ function ColorPickerAlphaSlider(props: ColorPickerAlphaSliderProps) {
       const alpha = (values[0] ?? 0) / 100;
       const newColor = { ...color, a: alpha };
       const newHsv = { ...hsv, a: alpha };
-      store.setState("color", newColor);
-      store.setState("hsv", newHsv);
+      store.setColor(newColor);
+      store.setHsv(newHsv);
     },
     [color, hsv, store],
   );
@@ -843,8 +859,8 @@ function ColorPickerInput(props: ColorPickerInputProps) {
         ) {
           const newColor = hexToRgb(value);
           const newHsv = rgbToHsv(newColor);
-          store.setState("color", newColor);
-          store.setState("hsv", newHsv);
+          store.setColor(newColor);
+          store.setHsv(newHsv);
         }
       } catch {
         // Invalid color, ignore it
@@ -884,8 +900,8 @@ function ColorPickerEyeDropper(props: ColorPickerEyeDropperProps) {
       if (result.sRGBHex) {
         const newColor = hexToRgb(result.sRGBHex);
         const newHsv = rgbToHsv(newColor);
-        store.setState("color", newColor);
-        store.setState("hsv", newHsv);
+        store.setColor(newColor);
+        store.setHsv(newHsv);
       }
     } catch (error) {
       console.warn("EyeDropper error:", error);
