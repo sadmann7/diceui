@@ -7,7 +7,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
+import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidden-input";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import { Slot } from "@radix-ui/react-slot";
 import { PipetteIcon } from "lucide-react";
@@ -372,6 +374,8 @@ function useColorPickerStore<U>(
 interface ColorPickerContextValue {
   dir: Direction;
   disabled: boolean;
+  readOnly?: boolean;
+  required?: boolean;
 }
 
 const ColorPickerStoreContext = React.createContext<ColorPickerStore | null>(
@@ -402,8 +406,11 @@ interface ColorPickerRootProps
   onValueChange?: (value: string) => void;
   dir?: Direction;
   format?: "hex" | "rgb" | "hsl";
+  name?: string;
   asChild?: boolean;
   disabled?: boolean;
+  readOnly?: boolean;
+  required?: boolean;
 }
 
 function ColorPickerRoot(props: ColorPickerRootProps) {
@@ -416,7 +423,10 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
     defaultOpen,
     open: openProp,
     onOpenChange,
+    name,
     disabled = false,
+    readOnly,
+    required,
     ...rootProps
   } = props;
 
@@ -459,7 +469,10 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
         defaultOpen={defaultOpen}
         open={openProp}
         onOpenChange={onOpenChange}
+        name={name}
         disabled={disabled}
+        readOnly={readOnly}
+        required={required}
       />
     </ColorPickerStoreContext.Provider>
   );
@@ -475,8 +488,12 @@ function ColorPickerRootImpl(props: ColorPickerRootProps) {
     defaultOpen,
     open: openProp,
     onOpenChange,
+    name,
+    ref,
     asChild,
     disabled = false,
+    readOnly,
+    required,
     modal,
     ...rootProps
   } = props;
@@ -484,6 +501,13 @@ function ColorPickerRootImpl(props: ColorPickerRootProps) {
   const store = useColorPickerStoreContext("ColorPickerRootImpl");
 
   const dir = useDirection(dirProp);
+
+  const [formTrigger, setFormTrigger] = React.useState<HTMLDivElement | null>(
+    null,
+  );
+  const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
+
+  const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
   React.useEffect(() => {
     if (valueProp !== undefined) {
@@ -504,8 +528,10 @@ function ColorPickerRootImpl(props: ColorPickerRootProps) {
     () => ({
       dir,
       disabled,
+      readOnly,
+      required,
     }),
-    [dir, disabled],
+    [dir, disabled, readOnly, required],
   );
 
   const open = useColorPickerStore((state) => state.open);
@@ -516,6 +542,11 @@ function ColorPickerRootImpl(props: ColorPickerRootProps) {
 
   const RootPrimitive = asChild ? Slot : "div";
 
+  const currentValue = useColorPickerStore((state) => {
+    const color = state.color;
+    return rgbToHex(color);
+  });
+
   return (
     <ColorPickerContext.Provider value={contextValue}>
       <Popover
@@ -524,7 +555,18 @@ function ColorPickerRootImpl(props: ColorPickerRootProps) {
         onOpenChange={onPopoverOpenChange}
         modal={modal}
       >
-        <RootPrimitive {...rootProps} />
+        <RootPrimitive {...rootProps} ref={composedRef} />
+        {isFormControl && (
+          <VisuallyHiddenInput
+            type="hidden"
+            control={formTrigger}
+            name={name}
+            value={currentValue}
+            disabled={disabled}
+            readOnly={readOnly}
+            required={required}
+          />
+        )}
       </Popover>
     </ColorPickerContext.Provider>
   );
