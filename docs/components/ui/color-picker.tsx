@@ -637,18 +637,35 @@ function ColorPickerArea(props: ColorPickerAreaProps) {
     <AreaPrimitive
       ref={areaRef}
       className={cn(
-        "relative h-32 w-full cursor-crosshair touch-none rounded border",
+        "relative h-32 w-full cursor-crosshair touch-none rounded-md border",
         context.disabled && "pointer-events-none opacity-50",
         className,
       )}
-      style={{
-        background: `linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, rgb(${backgroundHue.r}, ${backgroundHue.g}, ${backgroundHue.b}))`,
-      }}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       {...areaProps}
     >
+      <div className="absolute inset-0 overflow-hidden rounded-md">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundColor: `rgb(${backgroundHue.r}, ${backgroundHue.g}, ${backgroundHue.b})`,
+          }}
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background: "linear-gradient(to right, #fff, transparent)",
+          }}
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background: "linear-gradient(to bottom, transparent, #000)",
+          }}
+        />
+      </div>
       <div
         className="-translate-x-1/2 -translate-y-1/2 absolute h-3 w-3 rounded-full border-2 border-white shadow-sm"
         style={{
