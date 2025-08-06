@@ -637,7 +637,7 @@ function ColorPickerArea(props: ColorPickerAreaProps) {
     <AreaPrimitive
       ref={areaRef}
       className={cn(
-        "relative h-32 w-full cursor-crosshair touch-none rounded-md border",
+        "relative h-32 w-full cursor-crosshair touch-none rounded-sm border",
         context.disabled && "pointer-events-none opacity-50",
         className,
       )}
@@ -646,7 +646,7 @@ function ColorPickerArea(props: ColorPickerAreaProps) {
       onPointerUp={onPointerUp}
       {...areaProps}
     >
-      <div className="absolute inset-0 overflow-hidden rounded-md">
+      <div className="absolute inset-0 overflow-hidden rounded-sm">
         <div
           className="absolute inset-0"
           style={{
@@ -886,12 +886,20 @@ function ColorPickerInput(props: ColorPickerInputProps) {
     [store],
   );
 
+  const onFocus = React.useCallback(
+    (event: React.FocusEvent<HTMLInputElement>) => {
+      event.target.select();
+    },
+    [],
+  );
+
   return (
     <Input
+      placeholder="#000000"
       value={inputValue}
       onChange={onInputChange}
+      onFocus={onFocus}
       disabled={context.disabled}
-      placeholder="#000000"
       {...inputProps}
     />
   );
