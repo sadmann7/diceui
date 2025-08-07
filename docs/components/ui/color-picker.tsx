@@ -39,7 +39,8 @@ declare global {
   }
 }
 
-type ColorFormat = "hex" | "rgb" | "hsl";
+const colorFormats = ["hex", "rgb", "hsl", "hsb"] as const;
+type ColorFormat = (typeof colorFormats)[number];
 
 interface ColorValue {
   r: number;
@@ -193,6 +194,12 @@ function colorToString(color: ColorValue, format: ColorFormat = "hex"): string {
         ? `hsla(${hsl.h}, ${hsl.s}%, ${hsl.l}%, ${color.a})`
         : `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
     }
+    case "hsb": {
+      const hsv = rgbToHsv(color);
+      return color.a < 1
+        ? `hsba(${hsv.h}, ${hsv.s}%, ${hsv.v}%, ${color.a})`
+        : `hsb(${hsv.h}, ${hsv.s}%, ${hsv.v}%)`;
+    }
     default:
       return rgbToHex(color);
   }
@@ -231,6 +238,99 @@ function rgbToHsl(color: ColorValue) {
     s: Math.round(s * 100),
     l: Math.round(l * 100),
   };
+}
+
+function parseColorString(value: string): ColorValue | null {
+  const trimmed = value.trim();
+
+  // Parse hex colors
+  if (trimmed.startsWith("#")) {
+    const hexMatch = trimmed.match(/^#([a-fA-F0-9]{3}|[a-fA-F0-9]{6})$/);
+    if (hexMatch) {
+      return hexToRgb(trimmed);
+    }
+  }
+
+  // Parse rgb/rgba colors
+  const rgbMatch = trimmed.match(
+    /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+))?\s*\)$/,
+  );
+  if (rgbMatch) {
+    return {
+      r: Number.parseInt(rgbMatch[1] ?? "0", 10),
+      g: Number.parseInt(rgbMatch[2] ?? "0", 10),
+      b: Number.parseInt(rgbMatch[3] ?? "0", 10),
+      a: rgbMatch[4] ? Number.parseFloat(rgbMatch[4]) : 1,
+    };
+  }
+
+  // Parse hsl/hsla colors
+  const hslMatch = trimmed.match(
+    /^hsla?\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*(?:,\s*([\d.]+))?\s*\)$/,
+  );
+  if (hslMatch) {
+    const h = Number.parseInt(hslMatch[1] ?? "0", 10);
+    const s = Number.parseInt(hslMatch[2] ?? "0", 10) / 100;
+    const l = Number.parseInt(hslMatch[3] ?? "0", 10) / 100;
+    const a = hslMatch[4] ? Number.parseFloat(hslMatch[4]) : 1;
+
+    // Convert HSL to RGB
+    const c = (1 - Math.abs(2 * l - 1)) * s;
+    const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+    const m = l - c / 2;
+
+    let r = 0;
+    let g = 0;
+    let b = 0;
+
+    if (h >= 0 && h < 60) {
+      r = c;
+      g = x;
+      b = 0;
+    } else if (h >= 60 && h < 120) {
+      r = x;
+      g = c;
+      b = 0;
+    } else if (h >= 120 && h < 180) {
+      r = 0;
+      g = c;
+      b = x;
+    } else if (h >= 180 && h < 240) {
+      r = 0;
+      g = x;
+      b = c;
+    } else if (h >= 240 && h < 300) {
+      r = x;
+      g = 0;
+      b = c;
+    } else if (h >= 300 && h < 360) {
+      r = c;
+      g = 0;
+      b = x;
+    }
+
+    return {
+      r: Math.round((r + m) * 255),
+      g: Math.round((g + m) * 255),
+      b: Math.round((b + m) * 255),
+      a,
+    };
+  }
+
+  // Parse hsb/hsba colors
+  const hsbMatch = trimmed.match(
+    /^hsba?\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*(?:,\s*([\d.]+))?\s*\)$/,
+  );
+  if (hsbMatch) {
+    const h = Number.parseInt(hsbMatch[1] ?? "0", 10);
+    const s = Number.parseInt(hsbMatch[2] ?? "0", 10);
+    const v = Number.parseInt(hsbMatch[3] ?? "0", 10);
+    const a = hsbMatch[4] ? Number.parseFloat(hsbMatch[4]) : 1;
+
+    return hsvToRgb({ h, s, v, a });
+  }
+
+  return null;
 }
 
 type Direction = "ltr" | "rtl";
@@ -912,108 +1012,6 @@ function ColorPickerSwatch(props: ColorPickerSwatchProps) {
   );
 }
 
-interface ColorPickerInputProps extends React.ComponentProps<typeof Input> {
-  asChild?: boolean;
-}
-
-function ColorPickerInput(props: ColorPickerInputProps) {
-  const { asChild, ...inputProps } = props;
-  const context = useColorPickerContext("ColorPickerInput");
-  const store = useColorPickerStoreContext("ColorPickerInput");
-
-  const color = useColorPickerStore((state) => state.color);
-  const format = useColorPickerStore((state) => state.format);
-
-  const [inputValue, setInputValue] = React.useState("");
-
-  const colorString = React.useMemo(() => {
-    if (!color) return "#000000";
-    return colorToString(color, format);
-  }, [color, format]);
-
-  React.useEffect(() => {
-    setInputValue(colorString);
-  }, [colorString]);
-
-  const onInputChange = React.useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const value = event.target.value;
-      setInputValue(value);
-
-      try {
-        if (
-          value.startsWith("#") &&
-          (value.length === 4 || value.length === 7)
-        ) {
-          const currentAlpha = color?.a ?? 1;
-          const newColor = hexToRgb(value, currentAlpha);
-          const newHsv = rgbToHsv(newColor);
-          store.setColor(newColor);
-          store.setHsv(newHsv);
-        }
-      } catch {
-        // Invalid color, ignore it
-      }
-    },
-    [color, store],
-  );
-
-  const onFocus = React.useCallback(
-    (event: React.FocusEvent<HTMLInputElement>) => {
-      event.target.select();
-    },
-    [],
-  );
-
-  return (
-    <Input
-      placeholder="#000000"
-      value={inputValue}
-      onChange={onInputChange}
-      onFocus={onFocus}
-      disabled={context.disabled}
-      {...inputProps}
-    />
-  );
-}
-
-interface ColorPickerFormatSelectorProps
-  extends Omit<React.ComponentProps<typeof Select>, "value" | "onValueChange">,
-    Pick<React.ComponentProps<typeof SelectTrigger>, "size"> {}
-
-function ColorPickerFormatSelector(props: ColorPickerFormatSelectorProps) {
-  const { size, ...selectProps } = props;
-  const context = useColorPickerContext("ColorPickerFormatSelector");
-  const store = useColorPickerStoreContext("ColorPickerFormatSelector");
-
-  const format = useColorPickerStore((state) => state.format);
-
-  const onFormatChange = React.useCallback(
-    (value: ColorFormat) => {
-      store.setFormat(value);
-    },
-    [store],
-  );
-
-  return (
-    <Select
-      value={format}
-      onValueChange={onFormatChange}
-      disabled={context.disabled}
-      {...selectProps}
-    >
-      <SelectTrigger size={size}>
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="hex">HEX</SelectItem>
-        <SelectItem value="rgb">RGB</SelectItem>
-        <SelectItem value="hsl">HSL</SelectItem>
-      </SelectContent>
-    </Select>
-  );
-}
-
 interface ColorPickerEyeDropperProps
   extends React.ComponentProps<typeof Button> {
   asChild?: boolean;
@@ -1064,6 +1062,106 @@ function ColorPickerEyeDropper(props: ColorPickerEyeDropperProps) {
   );
 }
 
+interface ColorPickerFormatSelectProps
+  extends Omit<React.ComponentProps<typeof Select>, "value" | "onValueChange">,
+    Pick<React.ComponentProps<typeof SelectTrigger>, "size"> {}
+
+function ColorPickerFormatSelect(props: ColorPickerFormatSelectProps) {
+  const { size, ...selectProps } = props;
+  const context = useColorPickerContext("ColorPickerFormatSelector");
+  const store = useColorPickerStoreContext("ColorPickerFormatSelector");
+
+  const format = useColorPickerStore((state) => state.format);
+
+  const onFormatChange = React.useCallback(
+    (value: ColorFormat) => {
+      store.setFormat(value);
+    },
+    [store],
+  );
+
+  return (
+    <Select
+      value={format}
+      onValueChange={onFormatChange}
+      disabled={context.disabled}
+      {...selectProps}
+    >
+      <SelectTrigger size={size}>
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        {colorFormats.map((format) => (
+          <SelectItem key={format} value={format}>
+            {format.toUpperCase()}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}
+
+interface ColorPickerInputProps extends React.ComponentProps<typeof Input> {
+  asChild?: boolean;
+}
+
+function ColorPickerInput(props: ColorPickerInputProps) {
+  const { asChild, ...inputProps } = props;
+  const context = useColorPickerContext("ColorPickerInput");
+  const store = useColorPickerStoreContext("ColorPickerInput");
+
+  const color = useColorPickerStore((state) => state.color);
+  const format = useColorPickerStore((state) => state.format);
+
+  const [inputValue, setInputValue] = React.useState("");
+
+  const colorString = React.useMemo(() => {
+    if (!color) return "#000000";
+    return colorToString(color, format);
+  }, [color, format]);
+
+  React.useEffect(() => {
+    setInputValue(colorString);
+  }, [colorString]);
+
+  const onInputChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      setInputValue(value);
+
+      try {
+        const parsedColor = parseColorString(value);
+        if (parsedColor) {
+          const newHsv = rgbToHsv(parsedColor);
+          store.setColor(parsedColor);
+          store.setHsv(newHsv);
+        }
+      } catch {
+        // Invalid color, ignore it
+      }
+    },
+    [store],
+  );
+
+  const onFocus = React.useCallback(
+    (event: React.FocusEvent<HTMLInputElement>) => {
+      event.target.select();
+    },
+    [],
+  );
+
+  return (
+    <Input
+      placeholder="Enter color value"
+      value={inputValue}
+      onChange={onInputChange}
+      onFocus={onFocus}
+      disabled={context.disabled}
+      {...inputProps}
+    />
+  );
+}
+
 export {
   ColorPickerRoot as ColorPicker,
   ColorPickerTrigger,
@@ -1072,9 +1170,9 @@ export {
   ColorPickerHueSlider,
   ColorPickerAlphaSlider,
   ColorPickerSwatch,
-  ColorPickerInput,
-  ColorPickerFormatSelector,
   ColorPickerEyeDropper,
+  ColorPickerFormatSelect,
+  ColorPickerInput,
   //
   ColorPickerRoot as Root,
   ColorPickerTrigger as Trigger,
@@ -1083,9 +1181,9 @@ export {
   ColorPickerHueSlider as HueSlider,
   ColorPickerAlphaSlider as AlphaSlider,
   ColorPickerSwatch as Swatch,
-  ColorPickerInput as Input,
-  ColorPickerFormatSelector as FormatSelector,
   ColorPickerEyeDropper as EyeDropper,
+  ColorPickerFormatSelect as FormatSelect,
+  ColorPickerInput as Input,
   //
   useColorPickerStore as useColorPicker,
 };

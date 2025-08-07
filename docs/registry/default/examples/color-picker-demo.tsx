@@ -6,7 +6,7 @@ import {
   ColorPickerArea,
   ColorPickerContent,
   ColorPickerEyeDropper,
-  ColorPickerFormatSelector,
+  ColorPickerFormatSelect,
   ColorPickerHueSlider,
   ColorPickerInput,
   ColorPickerSwatch,
@@ -32,8 +32,8 @@ export default function ColorPickerDemo() {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <ColorPickerFormatSelect />
           <ColorPickerInput />
-          <ColorPickerFormatSelector />
         </div>
       </ColorPickerContent>
     </ColorPicker>
