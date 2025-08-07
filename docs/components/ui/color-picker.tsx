@@ -1178,7 +1178,7 @@ function ColorPickerInput(props: ColorPickerInputProps) {
 
   if (format === "hex") {
     return (
-      <HexInputs
+      <HexInput
         color={color}
         onColorChange={onColorChange}
         context={context}
@@ -1189,7 +1189,7 @@ function ColorPickerInput(props: ColorPickerInputProps) {
 
   if (format === "rgb") {
     return (
-      <RgbInputs
+      <RgbInput
         color={color}
         onColorChange={onColorChange}
         context={context}
@@ -1200,7 +1200,7 @@ function ColorPickerInput(props: ColorPickerInputProps) {
 
   if (format === "hsl") {
     return (
-      <HslInputs
+      <HslInput
         color={color}
         onColorChange={onColorChange}
         context={context}
@@ -1211,7 +1211,7 @@ function ColorPickerInput(props: ColorPickerInputProps) {
 
   if (format === "hsb") {
     return (
-      <HsbInputs
+      <HsbInput
         hsv={hsv}
         onColorChange={onColorChange}
         context={context}
@@ -1221,13 +1221,13 @@ function ColorPickerInput(props: ColorPickerInputProps) {
   }
 }
 
-interface FormatInputsProps extends ColorPickerInputProps {
+interface FormatInputProps extends ColorPickerInputProps {
   color: ColorValue;
   onColorChange: (color: ColorValue) => void;
   context: ColorPickerContextValue;
 }
 
-function HexInputs(props: FormatInputsProps) {
+function HexInput(props: FormatInputProps) {
   const {
     color,
     onColorChange,
@@ -1261,35 +1261,29 @@ function HexInputs(props: FormatInputsProps) {
     [color, onColorChange],
   );
 
-  const onFocus = React.useCallback(
-    (event: React.FocusEvent<HTMLInputElement>) => {
-      event.target.select();
-    },
-    [],
-  );
-
   return (
     <div className={cn("flex gap-2", className)}>
       <Input
+        aria-label="Hex color value"
         placeholder="#000000"
+        className="h-8 font-mono"
         value={hexValue}
         onChange={onHexChange}
-        onFocus={onFocus}
         disabled={context.disabled}
-        className="h-8 font-mono"
         {...inputProps}
       />
       {!withoutAlpha && (
         <Input
+          aria-label="Alpha transparency percentage"
           placeholder="100"
-          value={alphaValue}
-          onChange={onAlphaChange}
-          onFocus={onFocus}
-          disabled={context.disabled}
-          type="number"
+          inputMode="numeric"
+          pattern="[0-9]*"
           min="0"
           max="100"
-          className="h-8 w-20"
+          className="h-8 w-14"
+          value={alphaValue}
+          onChange={onAlphaChange}
+          disabled={context.disabled}
           {...inputProps}
         />
       )}
@@ -1297,7 +1291,7 @@ function HexInputs(props: FormatInputsProps) {
   );
 }
 
-function RgbInputs(props: FormatInputsProps) {
+function RgbInput(props: FormatInputProps) {
   const {
     color,
     onColorChange,
@@ -1324,62 +1318,59 @@ function RgbInputs(props: FormatInputsProps) {
     [color, onColorChange],
   );
 
-  const onFocus = React.useCallback(
-    (event: React.FocusEvent<HTMLInputElement>) => {
-      event.target.select();
-    },
-    [],
-  );
-
   return (
     <div className={cn("flex gap-2", className)}>
       <Input
+        aria-label="Red color component (0-255)"
         placeholder="0"
+        inputMode="numeric"
+        pattern="[0-9]*"
+        min="0"
+        max="255"
+        className="h-8 w-14"
         value={rValue}
         onChange={onChannelChange("r", 255)}
-        onFocus={onFocus}
         disabled={context.disabled}
-        type="number"
-        min="0"
-        max="255"
-        className="h-8 w-16"
         {...inputProps}
       />
       <Input
+        aria-label="Green color component (0-255)"
         placeholder="0"
+        inputMode="numeric"
+        pattern="[0-9]*"
+        min="0"
+        max="255"
+        className="h-8 w-14"
         value={gValue}
         onChange={onChannelChange("g", 255)}
-        onFocus={onFocus}
         disabled={context.disabled}
-        type="number"
-        min="0"
-        max="255"
-        className="h-8 w-16"
         {...inputProps}
       />
       <Input
+        aria-label="Blue color component (0-255)"
         placeholder="0"
         value={bValue}
         onChange={onChannelChange("b", 255)}
-        onFocus={onFocus}
         disabled={context.disabled}
-        type="number"
+        inputMode="numeric"
+        pattern="[0-9]*"
         min="0"
         max="255"
-        className="h-8 w-16"
+        className="h-8 w-14"
         {...inputProps}
       />
       {!withoutAlpha && (
         <Input
+          aria-label="Alpha transparency percentage"
           placeholder="100"
-          value={alphaValue}
-          onChange={onChannelChange("a", 100, true)}
-          onFocus={onFocus}
-          disabled={context.disabled}
-          type="number"
+          inputMode="numeric"
+          pattern="[0-9]*"
           min="0"
           max="100"
-          className="h-8 w-16"
+          className="h-8 w-14"
+          value={alphaValue}
+          onChange={onChannelChange("a", 100, true)}
+          disabled={context.disabled}
           {...inputProps}
         />
       )}
@@ -1387,7 +1378,7 @@ function RgbInputs(props: FormatInputsProps) {
   );
 }
 
-function HslInputs(props: FormatInputsProps) {
+function HslInput(props: FormatInputProps) {
   const {
     color,
     onColorChange,
@@ -1423,62 +1414,59 @@ function HslInputs(props: FormatInputsProps) {
     [color, onColorChange],
   );
 
-  const onFocus = React.useCallback(
-    (event: React.FocusEvent<HTMLInputElement>) => {
-      event.target.select();
-    },
-    [],
-  );
-
   return (
     <div className={cn("flex gap-2", className)}>
       <Input
+        aria-label="Hue degree (0-360)"
         placeholder="0"
-        value={hsl.h}
-        onChange={onHslChannelChange("h", 360)}
-        onFocus={onFocus}
-        disabled={context.disabled}
-        type="number"
+        inputMode="numeric"
+        pattern="[0-9]*"
         min="0"
         max="360"
-        className="h-8 w-16"
+        className="h-8 w-14"
+        value={hsl.h}
+        onChange={onHslChannelChange("h", 360)}
+        disabled={context.disabled}
         {...inputProps}
       />
       <Input
+        aria-label="Saturation percentage (0-100)"
         placeholder="0"
+        inputMode="numeric"
+        pattern="[0-9]*"
+        min="0"
+        max="100"
+        className="h-8 w-14"
         value={hsl.s}
         onChange={onHslChannelChange("s", 100)}
-        onFocus={onFocus}
         disabled={context.disabled}
-        type="number"
-        min="0"
-        max="100"
-        className="h-8 w-16"
         {...inputProps}
       />
       <Input
+        aria-label="Lightness percentage (0-100)"
         placeholder="0"
-        value={hsl.l}
-        onChange={onHslChannelChange("l", 100)}
-        onFocus={onFocus}
-        disabled={context.disabled}
-        type="number"
+        inputMode="numeric"
+        pattern="[0-9]*"
         min="0"
         max="100"
-        className="h-8 w-16"
+        className="h-8 w-14"
+        value={hsl.l}
+        onChange={onHslChannelChange("l", 100)}
+        disabled={context.disabled}
         {...inputProps}
       />
       {!withoutAlpha && (
         <Input
+          aria-label="Alpha transparency percentage"
           placeholder="100"
-          value={alphaValue}
-          onChange={onAlphaChange}
-          onFocus={onFocus}
-          disabled={context.disabled}
-          type="number"
+          inputMode="numeric"
+          pattern="[0-9]*"
           min="0"
           max="100"
-          className="h-8 w-16"
+          className="h-8 w-14"
+          value={alphaValue}
+          onChange={onAlphaChange}
+          disabled={context.disabled}
           {...inputProps}
         />
       )}
@@ -1486,11 +1474,11 @@ function HslInputs(props: FormatInputsProps) {
   );
 }
 
-interface HsbInputsProps extends Omit<FormatInputsProps, "color"> {
+interface HsbInputProps extends Omit<FormatInputProps, "color"> {
   hsv: HSVColorValue;
 }
 
-function HsbInputs(props: HsbInputsProps) {
+function HsbInput(props: HsbInputProps) {
   const {
     hsv,
     onColorChange,
@@ -1526,62 +1514,59 @@ function HsbInputs(props: HsbInputsProps) {
     [hsv, onColorChange],
   );
 
-  const onFocus = React.useCallback(
-    (event: React.FocusEvent<HTMLInputElement>) => {
-      event.target.select();
-    },
-    [],
-  );
-
   return (
     <div className={cn("flex gap-2", className)}>
       <Input
+        aria-label="Hue degree (0-360)"
         placeholder="0"
-        value={hsv?.h ?? 0}
-        onChange={onHsvChannelChange("h", 360)}
-        onFocus={onFocus}
-        disabled={context.disabled}
-        type="number"
+        inputMode="numeric"
+        pattern="[0-9]*"
         min="0"
         max="360"
-        className="h-8 w-16"
+        className="h-8 w-14"
+        value={hsv?.h ?? 0}
+        onChange={onHsvChannelChange("h", 360)}
+        disabled={context.disabled}
         {...inputProps}
       />
       <Input
+        aria-label="Saturation percentage (0-100)"
         placeholder="0"
+        inputMode="numeric"
+        pattern="[0-9]*"
+        min="0"
+        max="100"
+        className="h-8 w-14"
         value={hsv?.s ?? 0}
         onChange={onHsvChannelChange("s", 100)}
-        onFocus={onFocus}
         disabled={context.disabled}
-        type="number"
-        min="0"
-        max="100"
-        className="h-8 w-16"
         {...inputProps}
       />
       <Input
+        aria-label="Brightness percentage (0-100)"
         placeholder="0"
-        value={hsv?.v ?? 0}
-        onChange={onHsvChannelChange("v", 100)}
-        onFocus={onFocus}
-        disabled={context.disabled}
-        type="number"
+        inputMode="numeric"
+        pattern="[0-9]*"
         min="0"
         max="100"
-        className="h-8 w-16"
+        className="h-8 w-14"
+        value={hsv?.v ?? 0}
+        onChange={onHsvChannelChange("v", 100)}
+        disabled={context.disabled}
         {...inputProps}
       />
       {!withoutAlpha && (
         <Input
+          aria-label="Alpha transparency percentage"
           placeholder="100"
-          value={alphaValue}
-          onChange={onAlphaChange}
-          onFocus={onFocus}
-          disabled={context.disabled}
-          type="number"
+          inputMode="numeric"
+          pattern="[0-9]*"
           min="0"
           max="100"
-          className="h-8 w-16"
+          className="h-8 w-14"
+          value={alphaValue}
+          onChange={onAlphaChange}
+          disabled={context.disabled}
           {...inputProps}
         />
       )}
