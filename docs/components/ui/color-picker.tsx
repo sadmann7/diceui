@@ -46,16 +46,16 @@ interface HSVColor {
   a: number;
 }
 
-function hexToRgb(hex: string): ColorValue {
+function hexToRgb(hex: string, alpha?: number): ColorValue {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result
     ? {
         r: Number.parseInt(result[1] ?? "0", 16),
         g: Number.parseInt(result[2] ?? "0", 16),
         b: Number.parseInt(result[3] ?? "0", 16),
-        a: 1,
+        a: alpha ?? 1,
       }
-    : { r: 0, g: 0, b: 0, a: 1 };
+    : { r: 0, g: 0, b: 0, a: alpha ?? 1 };
 }
 
 function rgbToHex(color: ColorValue): string {
@@ -511,7 +511,8 @@ function ColorPickerRootImpl(props: ColorPickerRootProps) {
 
   React.useEffect(() => {
     if (valueProp !== undefined) {
-      const color = hexToRgb(valueProp);
+      const currentState = store.getState();
+      const color = hexToRgb(valueProp, currentState.color.a);
       const hsv = rgbToHsv(color);
       store.setColor(color);
       store.setHsv(hsv);
@@ -916,7 +917,8 @@ function ColorPickerInput(props: ColorPickerInputProps) {
           value.startsWith("#") &&
           (value.length === 4 || value.length === 7)
         ) {
-          const newColor = hexToRgb(value);
+          const currentAlpha = color?.a ?? 1;
+          const newColor = hexToRgb(value, currentAlpha);
           const newHsv = rgbToHsv(newColor);
           store.setColor(newColor);
           store.setHsv(newHsv);
@@ -925,7 +927,7 @@ function ColorPickerInput(props: ColorPickerInputProps) {
         // Invalid color, ignore it
       }
     },
-    [store],
+    [color, store],
   );
 
   const onFocus = React.useCallback(
@@ -957,6 +959,8 @@ function ColorPickerEyeDropper(props: ColorPickerEyeDropperProps) {
   const context = useColorPickerContext("ColorPickerEyeDropper");
   const store = useColorPickerStoreContext("ColorPickerEyeDropper");
 
+  const color = useColorPickerStore((state) => state.color);
+
   const onEyeDropper = React.useCallback(async () => {
     if (!window.EyeDropper) return;
 
@@ -965,7 +969,8 @@ function ColorPickerEyeDropper(props: ColorPickerEyeDropperProps) {
       const result = await eyeDropper.open();
 
       if (result.sRGBHex) {
-        const newColor = hexToRgb(result.sRGBHex);
+        const currentAlpha = color?.a ?? 1;
+        const newColor = hexToRgb(result.sRGBHex, currentAlpha);
         const newHsv = rgbToHsv(newColor);
         store.setColor(newColor);
         store.setHsv(newHsv);
@@ -973,7 +978,7 @@ function ColorPickerEyeDropper(props: ColorPickerEyeDropperProps) {
     } catch (error) {
       console.warn("EyeDropper error:", error);
     }
-  }, [store]);
+  }, [color, store]);
 
   const hasEyeDropper = typeof window !== "undefined" && !!window.EyeDropper;
 
