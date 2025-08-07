@@ -851,7 +851,7 @@ function ColorPickerSwatch(props: ColorPickerSwatchProps) {
 
     if (color.a < 1) {
       return {
-        background: `linear-gradient(${colorString}, ${colorString}), repeating-conic-gradient(hsl(var(--muted)) 0% 25%, hsl(var(--background)) 0% 50%) 0% 50% / 8px 8px`,
+        background: `linear-gradient(${colorString}, ${colorString}), repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%) 0% 50% / 8px 8px`,
       };
     }
 
