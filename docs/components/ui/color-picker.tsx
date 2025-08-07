@@ -7,6 +7,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidden-input";
@@ -31,6 +38,8 @@ declare global {
     };
   }
 }
+
+type ColorFormat = "hex" | "rgb" | "hsl";
 
 interface ColorValue {
   r: number;
@@ -170,10 +179,7 @@ function hsvToRgb(hsv: HSVColor): ColorValue {
   };
 }
 
-function colorToString(
-  color: ColorValue,
-  format: "hex" | "rgb" | "hsl" = "hex",
-): string {
+function colorToString(color: ColorValue, format: ColorFormat = "hex"): string {
   switch (format) {
     case "hex":
       return rgbToHex(color);
@@ -250,12 +256,13 @@ interface ColorPickerStoreState {
   color: ColorValue;
   hsv: HSVColor;
   open: boolean;
-  format: "hex" | "rgb" | "hsl";
+  format: ColorFormat;
 }
 
 interface ColorPickerStoreCallbacks {
   onColorChange?: (colorString: string) => void;
   onOpenChange?: (open: boolean) => void;
+  onFormatChange?: (format: ColorFormat) => void;
 }
 
 interface ColorPickerStore {
@@ -264,7 +271,7 @@ interface ColorPickerStore {
   setColor: (value: ColorValue) => void;
   setHsv: (value: HSVColor) => void;
   setOpen: (value: boolean) => void;
-  setFormat: (value: "hex" | "rgb" | "hsl") => void;
+  setFormat: (value: ColorFormat) => void;
   notify: () => void;
 }
 
@@ -286,7 +293,7 @@ function createColorPickerStore(
         color: { r: 0, g: 0, b: 0, a: 1 },
         hsv: { h: 0, s: 0, v: 0, a: 1 },
         open: false,
-        format: "hex" as const,
+        format: "hex" as ColorFormat,
       },
     setColor: (value: ColorValue) => {
       if (!stateRef.current) return;
@@ -329,11 +336,16 @@ function createColorPickerStore(
 
       store.notify();
     },
-    setFormat: (value: "hex" | "rgb" | "hsl") => {
+    setFormat: (value: ColorFormat) => {
       if (!stateRef.current) return;
       if (Object.is(stateRef.current.format, value)) return;
 
       stateRef.current.format = value;
+
+      if (callbacks?.onFormatChange) {
+        callbacks.onFormatChange(value);
+      }
+
       store.notify();
     },
     notify: () => {
@@ -405,7 +417,9 @@ interface ColorPickerRootProps
   defaultValue?: string;
   onValueChange?: (value: string) => void;
   dir?: Direction;
-  format?: "hex" | "rgb" | "hsl";
+  format?: ColorFormat;
+  defaultFormat?: ColorFormat;
+  onFormatChange?: (format: ColorFormat) => void;
   name?: string;
   asChild?: boolean;
   disabled?: boolean;
@@ -419,7 +433,9 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
     defaultValue = "#000000",
     onValueChange,
     dir: dirProp,
-    format: formatProp = "hex",
+    format: formatProp,
+    defaultFormat = "hex",
+    onFormatChange,
     defaultOpen,
     open: openProp,
     onOpenChange,
@@ -437,9 +453,16 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
       color,
       hsv: rgbToHsv(color),
       open: openProp ?? defaultOpen ?? false,
-      format: formatProp,
+      format: formatProp ?? defaultFormat,
     };
-  }, [valueProp, defaultValue, formatProp, openProp, defaultOpen]);
+  }, [
+    valueProp,
+    defaultValue,
+    formatProp,
+    defaultFormat,
+    openProp,
+    defaultOpen,
+  ]);
 
   const stateRef = useLazyRef(() => initialColor);
   const listenersRef = useLazyRef(() => new Set<() => void>());
@@ -448,8 +471,9 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
     () => ({
       onColorChange: onValueChange,
       onOpenChange: onOpenChange,
+      onFormatChange: onFormatChange,
     }),
-    [onValueChange, onOpenChange],
+    [onValueChange, onOpenChange, onFormatChange],
   );
 
   const store = React.useMemo(
@@ -466,6 +490,8 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
         onValueChange={onValueChange}
         dir={dirProp}
         format={formatProp}
+        defaultFormat={defaultFormat}
+        onFormatChange={onFormatChange}
         defaultOpen={defaultOpen}
         open={openProp}
         onOpenChange={onOpenChange}
@@ -484,7 +510,9 @@ function ColorPickerRootImpl(props: ColorPickerRootProps) {
     defaultValue = "#000000",
     onValueChange,
     dir: dirProp,
-    format: formatProp = "hex",
+    format: formatProp,
+    defaultFormat = "hex",
+    onFormatChange,
     defaultOpen,
     open: openProp,
     onOpenChange,
@@ -862,7 +890,7 @@ function ColorPickerSwatch(props: ColorPickerSwatchProps) {
 
   const ariaLabel = !color
     ? "No color selected"
-    : `Current color: ${colorToString(color, format ?? "hex")}`;
+    : `Current color: ${colorToString(color, format)}`;
 
   const SwatchPrimitive = asChild ? Slot : "div";
 
@@ -900,7 +928,7 @@ function ColorPickerInput(props: ColorPickerInputProps) {
 
   const colorString = React.useMemo(() => {
     if (!color) return "#000000";
-    return colorToString(color, format ?? "hex");
+    return colorToString(color, format);
   }, [color, format]);
 
   React.useEffect(() => {
@@ -946,6 +974,43 @@ function ColorPickerInput(props: ColorPickerInputProps) {
       disabled={context.disabled}
       {...inputProps}
     />
+  );
+}
+
+interface ColorPickerFormatSelectorProps
+  extends Omit<React.ComponentProps<typeof Select>, "value" | "onValueChange">,
+    Pick<React.ComponentProps<typeof SelectTrigger>, "size"> {}
+
+function ColorPickerFormatSelector(props: ColorPickerFormatSelectorProps) {
+  const { size, ...selectProps } = props;
+  const context = useColorPickerContext("ColorPickerFormatSelector");
+  const store = useColorPickerStoreContext("ColorPickerFormatSelector");
+
+  const format = useColorPickerStore((state) => state.format);
+
+  const onFormatChange = React.useCallback(
+    (value: ColorFormat) => {
+      store.setFormat(value);
+    },
+    [store],
+  );
+
+  return (
+    <Select
+      value={format}
+      onValueChange={onFormatChange}
+      disabled={context.disabled}
+      {...selectProps}
+    >
+      <SelectTrigger size={size}>
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="hex">HEX</SelectItem>
+        <SelectItem value="rgb">RGB</SelectItem>
+        <SelectItem value="hsl">HSL</SelectItem>
+      </SelectContent>
+    </Select>
   );
 }
 
@@ -1008,6 +1073,7 @@ export {
   ColorPickerAlphaSlider,
   ColorPickerSwatch,
   ColorPickerInput,
+  ColorPickerFormatSelector,
   ColorPickerEyeDropper,
   //
   ColorPickerRoot as Root,
@@ -1018,6 +1084,7 @@ export {
   ColorPickerAlphaSlider as AlphaSlider,
   ColorPickerSwatch as Swatch,
   ColorPickerInput as Input,
+  ColorPickerFormatSelector as FormatSelector,
   ColorPickerEyeDropper as EyeDropper,
   //
   useColorPickerStore as useColorPicker,
