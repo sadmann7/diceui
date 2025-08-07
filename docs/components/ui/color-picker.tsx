@@ -49,7 +49,7 @@ interface ColorValue {
   a: number;
 }
 
-interface HSVColor {
+interface HSVColorValue {
   h: number;
   s: number;
   v: number;
@@ -76,7 +76,7 @@ function rgbToHex(color: ColorValue): string {
   return `#${toHex(color.r)}${toHex(color.g)}${toHex(color.b)}`;
 }
 
-function rgbToHsv(color: ColorValue): HSVColor {
+function rgbToHsv(color: ColorValue): HSVColorValue {
   const r = color.r / 255;
   const g = color.g / 255;
   const b = color.b / 255;
@@ -113,7 +113,7 @@ function rgbToHsv(color: ColorValue): HSVColor {
   };
 }
 
-function hsvToRgb(hsv: HSVColor): ColorValue {
+function hsvToRgb(hsv: HSVColorValue): ColorValue {
   const h = hsv.h / 360;
   const s = hsv.s / 100;
   const v = hsv.v / 100;
@@ -404,7 +404,7 @@ function useLazyRef<T>(fn: () => T) {
 
 interface ColorPickerStoreState {
   color: ColorValue;
-  hsv: HSVColor;
+  hsv: HSVColorValue;
   open: boolean;
   format: ColorFormat;
 }
@@ -419,7 +419,7 @@ interface ColorPickerStore {
   subscribe: (cb: () => void) => () => void;
   getState: () => ColorPickerStoreState;
   setColor: (value: ColorValue) => void;
-  setHsv: (value: HSVColor) => void;
+  setHsv: (value: HSVColorValue) => void;
   setOpen: (value: boolean) => void;
   setFormat: (value: ColorFormat) => void;
   notify: () => void;
@@ -459,7 +459,7 @@ function createColorPickerStore(
 
       store.notify();
     },
-    setHsv: (value: HSVColor) => {
+    setHsv: (value: HSVColorValue) => {
       if (!stateRef.current) return;
       if (Object.is(stateRef.current.hsv, value)) return;
 
@@ -811,7 +811,7 @@ function ColorPickerArea(props: ColorPickerAreaProps) {
         Math.min(1, 1 - (clientY - rect.top) / rect.height),
       );
 
-      const newHsv: HSVColor = {
+      const newHsv: HSVColorValue = {
         h: hsv?.h ?? 0,
         s: Math.round(x * 100),
         v: Math.round(y * 100),
@@ -912,7 +912,7 @@ function ColorPickerHueSlider(props: ColorPickerHueSliderProps) {
 
   const onValueChange = React.useCallback(
     (values: number[]) => {
-      const newHsv: HSVColor = {
+      const newHsv: HSVColorValue = {
         h: values[0] ?? 0,
         s: hsv?.s ?? 0,
         v: hsv?.v ?? 0,
@@ -1151,20 +1151,49 @@ function ColorPickerFormatSelect(props: ColorPickerFormatSelectProps) {
   );
 }
 
-interface ColorPickerInputProps
-  extends Omit<React.ComponentProps<typeof Input>, "value" | "onChange"> {
-  asChild?: boolean;
-  withoutAlpha?: boolean;
+interface FormatInputsProps extends ColorPickerInputProps {
+  color: ColorValue;
+  onColorChange: (color: ColorValue) => void;
+  context: ColorPickerContextValue;
 }
 
-function ColorPickerInput(props: ColorPickerInputProps) {
-  const { asChild, withoutAlpha = false, className, ...inputProps } = props;
-  const context = useColorPickerContext("ColorPickerInput");
-  const store = useColorPickerStoreContext("ColorPickerInput");
+interface HsbInputsProps extends Omit<FormatInputsProps, "color"> {
+  hsv: HSVColorValue;
+}
 
-  const color = useColorPickerStore((state) => state.color);
-  const format = useColorPickerStore((state) => state.format);
-  const hsv = useColorPickerStore((state) => state.hsv);
+function HexInputs(props: FormatInputsProps) {
+  const {
+    color,
+    onColorChange,
+    context,
+    withoutAlpha,
+    className,
+    ...inputProps
+  } = props;
+
+  const hexValue = rgbToHex(color);
+  const alphaValue = Math.round((color?.a ?? 1) * 100);
+
+  const onHexChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      const parsedColor = parseColorString(value);
+      if (parsedColor) {
+        onColorChange({ ...parsedColor, a: color?.a ?? 1 });
+      }
+    },
+    [color, onColorChange],
+  );
+
+  const onAlphaChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = Number.parseInt(event.target.value, 10);
+      if (!Number.isNaN(value) && value >= 0 && value <= 100) {
+        onColorChange({ ...color, a: value / 100 });
+      }
+    },
+    [color, onColorChange],
+  );
 
   const onFocus = React.useCallback(
     (event: React.FocusEvent<HTMLInputElement>) => {
@@ -1172,6 +1201,339 @@ function ColorPickerInput(props: ColorPickerInputProps) {
     },
     [],
   );
+
+  return (
+    <div className={cn("flex gap-2", className)}>
+      <Input
+        placeholder="#000000"
+        value={hexValue}
+        onChange={onHexChange}
+        onFocus={onFocus}
+        disabled={context.disabled}
+        className="font-mono"
+        {...inputProps}
+      />
+      {!withoutAlpha && (
+        <Input
+          placeholder="100"
+          value={alphaValue}
+          onChange={onAlphaChange}
+          onFocus={onFocus}
+          disabled={context.disabled}
+          type="number"
+          min="0"
+          max="100"
+          className="w-20"
+          {...inputProps}
+        />
+      )}
+    </div>
+  );
+}
+
+function RgbInputs(props: FormatInputsProps) {
+  const {
+    color,
+    onColorChange,
+    context,
+    withoutAlpha,
+    className,
+    ...inputProps
+  } = props;
+
+  const rValue = Math.round(color?.r ?? 0);
+  const gValue = Math.round(color?.g ?? 0);
+  const bValue = Math.round(color?.b ?? 0);
+  const alphaValue = Math.round((color?.a ?? 1) * 100);
+
+  const onChannelChange = React.useCallback(
+    (channel: "r" | "g" | "b" | "a", max: number, isAlpha = false) =>
+      (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = Number.parseInt(event.target.value, 10);
+        if (!Number.isNaN(value) && value >= 0 && value <= max) {
+          const newValue = isAlpha ? value / 100 : value;
+          onColorChange({ ...color, [channel]: newValue });
+        }
+      },
+    [color, onColorChange],
+  );
+
+  const onFocus = React.useCallback(
+    (event: React.FocusEvent<HTMLInputElement>) => {
+      event.target.select();
+    },
+    [],
+  );
+
+  return (
+    <div className={cn("flex gap-2", className)}>
+      <Input
+        placeholder="0"
+        value={rValue}
+        onChange={onChannelChange("r", 255)}
+        onFocus={onFocus}
+        disabled={context.disabled}
+        type="number"
+        min="0"
+        max="255"
+        className="w-16"
+        {...inputProps}
+      />
+      <Input
+        placeholder="0"
+        value={gValue}
+        onChange={onChannelChange("g", 255)}
+        onFocus={onFocus}
+        disabled={context.disabled}
+        type="number"
+        min="0"
+        max="255"
+        className="w-16"
+        {...inputProps}
+      />
+      <Input
+        placeholder="0"
+        value={bValue}
+        onChange={onChannelChange("b", 255)}
+        onFocus={onFocus}
+        disabled={context.disabled}
+        type="number"
+        min="0"
+        max="255"
+        className="w-16"
+        {...inputProps}
+      />
+      {!withoutAlpha && (
+        <Input
+          placeholder="100"
+          value={alphaValue}
+          onChange={onChannelChange("a", 100, true)}
+          onFocus={onFocus}
+          disabled={context.disabled}
+          type="number"
+          min="0"
+          max="100"
+          className="w-16"
+          {...inputProps}
+        />
+      )}
+    </div>
+  );
+}
+
+function HslInputs(props: FormatInputsProps) {
+  const {
+    color,
+    onColorChange,
+    context,
+    withoutAlpha,
+    className,
+    ...inputProps
+  } = props;
+
+  const hsl = React.useMemo(() => rgbToHsl(color), [color]);
+  const alphaValue = Math.round((color?.a ?? 1) * 100);
+
+  const onHslChannelChange = React.useCallback(
+    (channel: "h" | "s" | "l", max: number) =>
+      (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = Number.parseInt(event.target.value, 10);
+        if (!Number.isNaN(value) && value >= 0 && value <= max) {
+          const newHsl = { ...hsl, [channel]: value };
+          const newColor = hslToRgb(newHsl, color?.a ?? 1);
+          onColorChange(newColor);
+        }
+      },
+    [hsl, color, onColorChange],
+  );
+
+  const onAlphaChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = Number.parseInt(event.target.value, 10);
+      if (!Number.isNaN(value) && value >= 0 && value <= 100) {
+        onColorChange({ ...color, a: value / 100 });
+      }
+    },
+    [color, onColorChange],
+  );
+
+  const onFocus = React.useCallback(
+    (event: React.FocusEvent<HTMLInputElement>) => {
+      event.target.select();
+    },
+    [],
+  );
+
+  return (
+    <div className={cn("flex gap-2", className)}>
+      <Input
+        placeholder="0"
+        value={hsl.h}
+        onChange={onHslChannelChange("h", 360)}
+        onFocus={onFocus}
+        disabled={context.disabled}
+        type="number"
+        min="0"
+        max="360"
+        className="w-16"
+        {...inputProps}
+      />
+      <Input
+        placeholder="0"
+        value={hsl.s}
+        onChange={onHslChannelChange("s", 100)}
+        onFocus={onFocus}
+        disabled={context.disabled}
+        type="number"
+        min="0"
+        max="100"
+        className="w-16"
+        {...inputProps}
+      />
+      <Input
+        placeholder="0"
+        value={hsl.l}
+        onChange={onHslChannelChange("l", 100)}
+        onFocus={onFocus}
+        disabled={context.disabled}
+        type="number"
+        min="0"
+        max="100"
+        className="w-16"
+        {...inputProps}
+      />
+      {!withoutAlpha && (
+        <Input
+          placeholder="100"
+          value={alphaValue}
+          onChange={onAlphaChange}
+          onFocus={onFocus}
+          disabled={context.disabled}
+          type="number"
+          min="0"
+          max="100"
+          className="w-16"
+          {...inputProps}
+        />
+      )}
+    </div>
+  );
+}
+
+function HsbInputs(props: HsbInputsProps) {
+  const {
+    hsv,
+    onColorChange,
+    context,
+    withoutAlpha,
+    className,
+    ...inputProps
+  } = props;
+
+  const alphaValue = Math.round((hsv?.a ?? 1) * 100);
+
+  const onHsvChannelChange = React.useCallback(
+    (channel: "h" | "s" | "v", max: number) =>
+      (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = Number.parseInt(event.target.value, 10);
+        if (!Number.isNaN(value) && value >= 0 && value <= max) {
+          const newHsv = { ...hsv, [channel]: value };
+          const newColor = hsvToRgb(newHsv);
+          onColorChange(newColor);
+        }
+      },
+    [hsv, onColorChange],
+  );
+
+  const onAlphaChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = Number.parseInt(event.target.value, 10);
+      if (!Number.isNaN(value) && value >= 0 && value <= 100) {
+        const currentColor = hsvToRgb(hsv);
+        onColorChange({ ...currentColor, a: value / 100 });
+      }
+    },
+    [hsv, onColorChange],
+  );
+
+  const onFocus = React.useCallback(
+    (event: React.FocusEvent<HTMLInputElement>) => {
+      event.target.select();
+    },
+    [],
+  );
+
+  return (
+    <div className={cn("flex gap-2", className)}>
+      <Input
+        placeholder="0"
+        value={hsv?.h ?? 0}
+        onChange={onHsvChannelChange("h", 360)}
+        onFocus={onFocus}
+        disabled={context.disabled}
+        type="number"
+        min="0"
+        max="360"
+        className="w-16"
+        {...inputProps}
+      />
+      <Input
+        placeholder="0"
+        value={hsv?.s ?? 0}
+        onChange={onHsvChannelChange("s", 100)}
+        onFocus={onFocus}
+        disabled={context.disabled}
+        type="number"
+        min="0"
+        max="100"
+        className="w-16"
+        {...inputProps}
+      />
+      <Input
+        placeholder="0"
+        value={hsv?.v ?? 0}
+        onChange={onHsvChannelChange("v", 100)}
+        onFocus={onFocus}
+        disabled={context.disabled}
+        type="number"
+        min="0"
+        max="100"
+        className="w-16"
+        {...inputProps}
+      />
+      {!withoutAlpha && (
+        <Input
+          placeholder="100"
+          value={alphaValue}
+          onChange={onAlphaChange}
+          onFocus={onFocus}
+          disabled={context.disabled}
+          type="number"
+          min="0"
+          max="100"
+          className="w-16"
+          {...inputProps}
+        />
+      )}
+    </div>
+  );
+}
+
+interface ColorPickerInputProps
+  extends Omit<
+    React.ComponentProps<typeof Input>,
+    "value" | "onChange" | "color"
+  > {
+  withoutAlpha?: boolean;
+}
+
+function ColorPickerInput(props: ColorPickerInputProps) {
+  const context = useColorPickerContext("ColorPickerInput");
+  const store = useColorPickerStoreContext("ColorPickerInput");
+
+  const color = useColorPickerStore((state) => state.color);
+  const format = useColorPickerStore((state) => state.format);
+  const hsv = useColorPickerStore((state) => state.hsv);
 
   const onColorChange = React.useCallback(
     (newColor: ColorValue) => {
@@ -1182,361 +1544,49 @@ function ColorPickerInput(props: ColorPickerInputProps) {
     [store],
   );
 
-  // Compute all values upfront
-  const hexValue = rgbToHex(color);
-  const alphaValue = Math.round((color?.a ?? 1) * 100);
-  const rValue = Math.round(color?.r ?? 0);
-  const gValue = Math.round(color?.g ?? 0);
-  const bValue = Math.round(color?.b ?? 0);
-  const hsl = rgbToHsl(color);
-
-  // Define all callbacks upfront
-  const onHexChange = React.useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const value = event.target.value;
-      try {
-        const parsedColor = parseColorString(value);
-        if (parsedColor) {
-          onColorChange({
-            ...parsedColor,
-            a: color?.a ?? 1,
-          });
-        }
-      } catch {
-        // Invalid color, ignore it
-      }
-    },
-    [color?.a, onColorChange],
-  );
-
-  const onAlphaChange = React.useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const value = Number.parseInt(event.target.value, 10);
-      if (!Number.isNaN(value) && value >= 0 && value <= 100) {
-        onColorChange({
-          ...color,
-          a: value / 100,
-        });
-      }
-    },
-    [color, onColorChange],
-  );
-
-  const onRChange = React.useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const value = Number.parseInt(event.target.value, 10);
-      if (!Number.isNaN(value) && value >= 0 && value <= 255) {
-        onColorChange({
-          ...color,
-          r: value,
-        });
-      }
-    },
-    [color, onColorChange],
-  );
-
-  const onGChange = React.useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const value = Number.parseInt(event.target.value, 10);
-      if (!Number.isNaN(value) && value >= 0 && value <= 255) {
-        onColorChange({
-          ...color,
-          g: value,
-        });
-      }
-    },
-    [color, onColorChange],
-  );
-
-  const onBChange = React.useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const value = Number.parseInt(event.target.value, 10);
-      if (!Number.isNaN(value) && value >= 0 && value <= 255) {
-        onColorChange({
-          ...color,
-          b: value,
-        });
-      }
-    },
-    [color, onColorChange],
-  );
-
-  const onHslHChange = React.useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const value = Number.parseInt(event.target.value, 10);
-      if (!Number.isNaN(value) && value >= 0 && value <= 360) {
-        const newHsl = { ...hsl, h: value };
-        const newColor = hslToRgb(newHsl, color?.a ?? 1);
-        onColorChange(newColor);
-      }
-    },
-    [hsl, color?.a, onColorChange],
-  );
-
-  const onHslSChange = React.useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const value = Number.parseInt(event.target.value, 10);
-      if (!Number.isNaN(value) && value >= 0 && value <= 100) {
-        const newHsl = { ...hsl, s: value };
-        const newColor = hslToRgb(newHsl, color?.a ?? 1);
-        onColorChange(newColor);
-      }
-    },
-    [hsl, color?.a, onColorChange],
-  );
-
-  const onHslLChange = React.useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const value = Number.parseInt(event.target.value, 10);
-      if (!Number.isNaN(value) && value >= 0 && value <= 100) {
-        const newHsl = { ...hsl, l: value };
-        const newColor = hslToRgb(newHsl, color?.a ?? 1);
-        onColorChange(newColor);
-      }
-    },
-    [hsl, color?.a, onColorChange],
-  );
-
-  const onHsvHChange = React.useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const value = Number.parseInt(event.target.value, 10);
-      if (!Number.isNaN(value) && value >= 0 && value <= 360) {
-        const newHsv = { ...hsv, h: value };
-        const newColor = hsvToRgb(newHsv);
-        onColorChange(newColor);
-      }
-    },
-    [hsv, onColorChange],
-  );
-
-  const onHsvSChange = React.useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const value = Number.parseInt(event.target.value, 10);
-      if (!Number.isNaN(value) && value >= 0 && value <= 100) {
-        const newHsv = { ...hsv, s: value };
-        const newColor = hsvToRgb(newHsv);
-        onColorChange(newColor);
-      }
-    },
-    [hsv, onColorChange],
-  );
-
-  const onHsvVChange = React.useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const value = Number.parseInt(event.target.value, 10);
-      if (!Number.isNaN(value) && value >= 0 && value <= 100) {
-        const newHsv = { ...hsv, v: value };
-        const newColor = hsvToRgb(newHsv);
-        onColorChange(newColor);
-      }
-    },
-    [hsv, onColorChange],
-  );
-
-  // Render based on format
   if (format === "hex") {
     return (
-      <div className={cn("flex gap-2", className)}>
-        <Input
-          placeholder="#000000"
-          value={hexValue}
-          onChange={onHexChange}
-          onFocus={onFocus}
-          disabled={context.disabled}
-          className="font-mono"
-          {...inputProps}
-        />
-        {!withoutAlpha && (
-          <Input
-            placeholder="100"
-            value={alphaValue}
-            onChange={onAlphaChange}
-            onFocus={onFocus}
-            disabled={context.disabled}
-            type="number"
-            min="0"
-            max="100"
-            className="w-20"
-            {...inputProps}
-          />
-        )}
-      </div>
+      <HexInputs
+        color={color}
+        onColorChange={onColorChange}
+        context={context}
+        {...props}
+      />
     );
   }
 
   if (format === "rgb") {
     return (
-      <div className={cn("flex gap-2", className)}>
-        <Input
-          placeholder="0"
-          value={rValue}
-          onChange={onRChange}
-          onFocus={onFocus}
-          disabled={context.disabled}
-          type="number"
-          min="0"
-          max="255"
-          className="w-16"
-          {...inputProps}
-        />
-        <Input
-          placeholder="0"
-          value={gValue}
-          onChange={onGChange}
-          onFocus={onFocus}
-          disabled={context.disabled}
-          type="number"
-          min="0"
-          max="255"
-          className="w-16"
-          {...inputProps}
-        />
-        <Input
-          placeholder="0"
-          value={bValue}
-          onChange={onBChange}
-          onFocus={onFocus}
-          disabled={context.disabled}
-          type="number"
-          min="0"
-          max="255"
-          className="w-16"
-          {...inputProps}
-        />
-        {!withoutAlpha && (
-          <Input
-            placeholder="100"
-            value={alphaValue}
-            onChange={onAlphaChange}
-            onFocus={onFocus}
-            disabled={context.disabled}
-            type="number"
-            min="0"
-            max="100"
-            className="w-16"
-            {...inputProps}
-          />
-        )}
-      </div>
+      <RgbInputs
+        color={color}
+        onColorChange={onColorChange}
+        context={context}
+        {...props}
+      />
     );
   }
 
   if (format === "hsl") {
     return (
-      <div className={cn("flex gap-2", className)}>
-        <Input
-          placeholder="0"
-          value={hsl.h}
-          onChange={onHslHChange}
-          onFocus={onFocus}
-          disabled={context.disabled}
-          type="number"
-          min="0"
-          max="360"
-          className="w-16"
-          {...inputProps}
-        />
-        <Input
-          placeholder="0"
-          value={hsl.s}
-          onChange={onHslSChange}
-          onFocus={onFocus}
-          disabled={context.disabled}
-          type="number"
-          min="0"
-          max="100"
-          className="w-16"
-          {...inputProps}
-        />
-        <Input
-          placeholder="0"
-          value={hsl.l}
-          onChange={onHslLChange}
-          onFocus={onFocus}
-          disabled={context.disabled}
-          type="number"
-          min="0"
-          max="100"
-          className="w-16"
-          {...inputProps}
-        />
-        {!withoutAlpha && (
-          <Input
-            placeholder="100"
-            value={alphaValue}
-            onChange={onAlphaChange}
-            onFocus={onFocus}
-            disabled={context.disabled}
-            type="number"
-            min="0"
-            max="100"
-            className="w-16"
-            {...inputProps}
-          />
-        )}
-      </div>
+      <HslInputs
+        color={color}
+        onColorChange={onColorChange}
+        context={context}
+        {...props}
+      />
     );
   }
 
   if (format === "hsb") {
     return (
-      <div className={cn("flex gap-2", className)}>
-        <Input
-          placeholder="0"
-          value={hsv?.h ?? 0}
-          onChange={onHsvHChange}
-          onFocus={onFocus}
-          disabled={context.disabled}
-          type="number"
-          min="0"
-          max="360"
-          className="w-16"
-          {...inputProps}
-        />
-        <Input
-          placeholder="0"
-          value={hsv?.s ?? 0}
-          onChange={onHsvSChange}
-          onFocus={onFocus}
-          disabled={context.disabled}
-          type="number"
-          min="0"
-          max="100"
-          className="w-16"
-          {...inputProps}
-        />
-        <Input
-          placeholder="0"
-          value={hsv?.v ?? 0}
-          onChange={onHsvVChange}
-          onFocus={onFocus}
-          disabled={context.disabled}
-          type="number"
-          min="0"
-          max="100"
-          className="w-16"
-          {...inputProps}
-        />
-        {!withoutAlpha && (
-          <Input
-            placeholder="100"
-            value={alphaValue}
-            onChange={onAlphaChange}
-            onFocus={onFocus}
-            disabled={context.disabled}
-            type="number"
-            min="0"
-            max="100"
-            className="w-16"
-            {...inputProps}
-          />
-        )}
-      </div>
+      <HsbInputs
+        hsv={hsv}
+        onColorChange={onColorChange}
+        context={context}
+        {...props}
+      />
     );
   }
-
-  // Fallback to original implementation
-  return null;
 }
 
 export {
