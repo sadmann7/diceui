@@ -21,6 +21,30 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "color-picker": {
+      name: "color-picker",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["button","input","popover","select"],
+      files: [{
+        path: "registry/default/ui/color-picker.tsx",
+        type: "registry:ui",
+        target: ""
+      },{
+        path: "registry/default/components/visually-hidden-input.tsx",
+        type: "registry:component",
+        target: ""
+      },{
+        path: "registry/default/lib/compose-refs.ts",
+        type: "registry:lib",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/color-picker.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "combobox": {
       name: "combobox",
       description: "",
@@ -337,22 +361,6 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
-    "checkbox-group-validation-demo": {
-      name: "checkbox-group-validation-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: undefined,
-      files: [{
-        path: "registry/default/examples/checkbox-group-validation-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/checkbox-group-validation-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
     "checkbox-group-multi-selection-demo": {
       name: "checkbox-group-multi-selection-demo",
       description: "",
@@ -369,6 +377,86 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "checkbox-group-validation-demo": {
+      name: "checkbox-group-validation-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/examples/checkbox-group-validation-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/checkbox-group-validation-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "color-picker-demo": {
+      name: "color-picker-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["color-picker"],
+      files: [{
+        path: "registry/default/examples/color-picker-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/color-picker-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "color-picker-controlled-demo": {
+      name: "color-picker-controlled-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["color-picker","button"],
+      files: [{
+        path: "registry/default/examples/color-picker-controlled-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/color-picker-controlled-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "color-picker-form-demo": {
+      name: "color-picker-form-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","color-picker","form"],
+      files: [{
+        path: "registry/default/examples/color-picker-form-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/color-picker-form-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "color-picker-inline-demo": {
+      name: "color-picker-inline-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["color-picker"],
+      files: [{
+        path: "registry/default/examples/color-picker-inline-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/color-picker-inline-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "combobox-demo": {
       name: "combobox-demo",
       description: "",
@@ -380,38 +468,6 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/combobox-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
-    "combobox-groups-demo": {
-      name: "combobox-groups-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["combobox"],
-      files: [{
-        path: "registry/default/examples/combobox-groups-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/combobox-groups-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
-    "combobox-multiple-demo": {
-      name: "combobox-multiple-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["combobox"],
-      files: [{
-        path: "registry/default/examples/combobox-multiple-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/combobox-multiple-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",
@@ -449,17 +505,33 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
-    "combobox-virtualized-demo": {
-      name: "combobox-virtualized-demo",
+    "combobox-groups-demo": {
+      name: "combobox-groups-demo",
       description: "",
       type: "registry:example",
       registryDependencies: ["combobox"],
       files: [{
-        path: "registry/default/examples/combobox-virtualized-demo.tsx",
+        path: "registry/default/examples/combobox-groups-demo.tsx",
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/examples/combobox-virtualized-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/combobox-groups-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "combobox-multiple-demo": {
+      name: "combobox-multiple-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["combobox"],
+      files: [{
+        path: "registry/default/examples/combobox-multiple-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/combobox-multiple-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",
@@ -476,6 +548,22 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/combobox-tags-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "combobox-virtualized-demo": {
+      name: "combobox-virtualized-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["combobox"],
+      files: [{
+        path: "registry/default/examples/combobox-virtualized-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/combobox-virtualized-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",
@@ -513,22 +601,6 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
-    "editable-double-click-demo": {
-      name: "editable-double-click-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["button"],
-      files: [{
-        path: "registry/default/examples/editable-double-click-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/editable-double-click-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
     "editable-autosize-demo": {
       name: "editable-autosize-demo",
       description: "",
@@ -545,17 +617,17 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
-    "editable-todo-list-demo": {
-      name: "editable-todo-list-demo",
+    "editable-double-click-demo": {
+      name: "editable-double-click-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["checkbox","button"],
+      registryDependencies: ["button"],
       files: [{
-        path: "registry/default/examples/editable-todo-list-demo.tsx",
+        path: "registry/default/examples/editable-double-click-demo.tsx",
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/examples/editable-todo-list-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/editable-double-click-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",
@@ -577,6 +649,22 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "editable-todo-list-demo": {
+      name: "editable-todo-list-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["checkbox","button"],
+      files: [{
+        path: "registry/default/examples/editable-todo-list-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/editable-todo-list-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "file-upload-demo": {
       name: "file-upload-demo",
       description: "",
@@ -588,86 +676,6 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/file-upload-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
-    "file-upload-validation-demo": {
-      name: "file-upload-validation-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["button"],
-      files: [{
-        path: "registry/default/examples/file-upload-validation-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/file-upload-validation-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
-    "file-upload-direct-upload-demo": {
-      name: "file-upload-direct-upload-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["button"],
-      files: [{
-        path: "registry/default/examples/file-upload-direct-upload-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/file-upload-direct-upload-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
-    "file-upload-uploadthing-demo": {
-      name: "file-upload-uploadthing-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["button","lucide-react","sonner"],
-      files: [{
-        path: "registry/default/examples/file-upload-uploadthing-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/file-upload-uploadthing-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
-    "file-upload-circular-progress-demo": {
-      name: "file-upload-circular-progress-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["button","lucide-react","sonner"],
-      files: [{
-        path: "registry/default/examples/file-upload-circular-progress-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/file-upload-circular-progress-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
-    "file-upload-fill-progress-demo": {
-      name: "file-upload-fill-progress-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["button","lucide-react","sonner"],
-      files: [{
-        path: "registry/default/examples/file-upload-fill-progress-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/file-upload-fill-progress-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",
@@ -689,6 +697,54 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "file-upload-circular-progress-demo": {
+      name: "file-upload-circular-progress-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","lucide-react","sonner"],
+      files: [{
+        path: "registry/default/examples/file-upload-circular-progress-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/file-upload-circular-progress-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "file-upload-direct-upload-demo": {
+      name: "file-upload-direct-upload-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button"],
+      files: [{
+        path: "registry/default/examples/file-upload-direct-upload-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/file-upload-direct-upload-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "file-upload-fill-progress-demo": {
+      name: "file-upload-fill-progress-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","lucide-react","sonner"],
+      files: [{
+        path: "registry/default/examples/file-upload-fill-progress-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/file-upload-fill-progress-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "file-upload-form-demo": {
       name: "file-upload-form-demo",
       description: "",
@@ -700,6 +756,38 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/file-upload-form-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "file-upload-uploadthing-demo": {
+      name: "file-upload-uploadthing-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","lucide-react","sonner"],
+      files: [{
+        path: "registry/default/examples/file-upload-uploadthing-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/file-upload-uploadthing-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "file-upload-validation-demo": {
+      name: "file-upload-validation-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button"],
+      files: [{
+        path: "registry/default/examples/file-upload-validation-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/file-upload-validation-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",
@@ -753,22 +841,6 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
-    "kbd-variants-demo": {
-      name: "kbd-variants-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: undefined,
-      files: [{
-        path: "registry/default/examples/kbd-variants-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/kbd-variants-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
     "kbd-multiple-demo": {
       name: "kbd-multiple-demo",
       description: "",
@@ -785,6 +857,22 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "kbd-variants-demo": {
+      name: "kbd-variants-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/examples/kbd-variants-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/kbd-variants-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "listbox-demo": {
       name: "listbox-demo",
       description: "",
@@ -796,22 +884,6 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/listbox-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
-    "listbox-horizontal-demo": {
-      name: "listbox-horizontal-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: undefined,
-      files: [{
-        path: "registry/default/examples/listbox-horizontal-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/listbox-horizontal-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",
@@ -844,6 +916,22 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/listbox-group-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "listbox-horizontal-demo": {
+      name: "listbox-horizontal-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/examples/listbox-horizontal-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/listbox-horizontal-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",
@@ -929,17 +1017,17 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
-    "media-player-settings-demo": {
-      name: "media-player-settings-demo",
+    "media-player-error-demo": {
+      name: "media-player-error-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["badge","button","dropdown-menu","select","slider","tooltip"],
+      registryDependencies: ["button","slider","tooltip"],
       files: [{
-        path: "registry/default/examples/media-player-settings-demo.tsx",
+        path: "registry/default/examples/media-player-error-demo.tsx",
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/examples/media-player-settings-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/media-player-error-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",
@@ -961,22 +1049,6 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
-    "media-player-error-demo": {
-      name: "media-player-error-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["button","slider","tooltip"],
-      files: [{
-        path: "registry/default/examples/media-player-error-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/media-player-error-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
     "media-player-playlist-demo": {
       name: "media-player-playlist-demo",
       description: "",
@@ -988,6 +1060,22 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/media-player-playlist-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "media-player-settings-demo": {
+      name: "media-player-settings-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["badge","button","dropdown-menu","select","slider","tooltip"],
+      files: [{
+        path: "registry/default/examples/media-player-settings-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/media-player-settings-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",
@@ -1057,22 +1145,6 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
-    "relative-time-card-variants-demo": {
-      name: "relative-time-card-variants-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["button","hover-card"],
-      files: [{
-        path: "registry/default/examples/relative-time-card-variants-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/relative-time-card-variants-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
     "relative-time-card-timezones-demo": {
       name: "relative-time-card-timezones-demo",
       description: "",
@@ -1084,6 +1156,22 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/relative-time-card-timezones-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "relative-time-card-variants-demo": {
+      name: "relative-time-card-variants-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","hover-card"],
+      files: [{
+        path: "registry/default/examples/relative-time-card-variants-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/relative-time-card-variants-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",
@@ -1105,22 +1193,6 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
-    "scroller-horizontal-demo": {
-      name: "scroller-horizontal-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: undefined,
-      files: [{
-        path: "registry/default/examples/scroller-horizontal-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/scroller-horizontal-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
     "scroller-hidden-demo": {
       name: "scroller-hidden-demo",
       description: "",
@@ -1132,6 +1204,22 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/scroller-hidden-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "scroller-horizontal-demo": {
+      name: "scroller-horizontal-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/examples/scroller-horizontal-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/scroller-horizontal-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",
@@ -1185,22 +1273,6 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
-    "sortable-primitive-values-demo": {
-      name: "sortable-primitive-values-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: undefined,
-      files: [{
-        path: "registry/default/examples/sortable-primitive-values-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/sortable-primitive-values-demo.tsx")),
-      source: "",
-      category: "",
-      subcategory: "",
-      chunks: []
-    },
     "sortable-handle-demo": {
       name: "sortable-handle-demo",
       description: "",
@@ -1212,6 +1284,22 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/sortable-handle-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "sortable-primitive-values-demo": {
+      name: "sortable-primitive-values-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/examples/sortable-primitive-values-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/sortable-primitive-values-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",

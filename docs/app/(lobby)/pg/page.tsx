@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import MediaPlayerSettingsDemo from "@/registry/default/examples/media-player-settings-demo";
+import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -41,7 +41,7 @@ import { ChevronDown } from "lucide-react";
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <MediaPlayerSettingsDemo />
+      <ColorPickerDemo />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
