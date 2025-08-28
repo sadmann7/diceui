@@ -652,9 +652,9 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
         onOpenChange={onOpenChange}
         name={name}
         disabled={disabled}
+        inline={inline}
         readOnly={readOnly}
         required={required}
-        inline={inline}
       />
     </ColorPickerStoreContext.Provider>
   );
@@ -676,10 +676,10 @@ function ColorPickerRootImpl(props: ColorPickerRootProps) {
     ref,
     asChild,
     disabled,
+    inline,
+    modal,
     readOnly,
     required,
-    modal,
-    inline,
     ...rootProps
   } = props;
 
@@ -714,25 +714,25 @@ function ColorPickerRootImpl(props: ColorPickerRootProps) {
     () => ({
       dir,
       disabled,
+      inline,
       readOnly,
       required,
-      inline,
     }),
-    [dir, disabled, readOnly, required, inline],
+    [dir, disabled, inline, readOnly, required],
   );
+
+  const value = useColorPickerStore((state) => rgbToHex(state.color));
 
   const open = useColorPickerStore((state) => state.open);
 
-  const onPopoverOpenChange = (newOpen: boolean) => {
-    store.setOpen(newOpen);
-  };
+  const onPopoverOpenChange = React.useCallback(
+    (newOpen: boolean) => {
+      store.setOpen(newOpen);
+    },
+    [store.setOpen],
+  );
 
   const RootPrimitive = asChild ? Slot : "div";
-
-  const currentValue = useColorPickerStore((state) => {
-    const color = state.color;
-    return rgbToHex(color);
-  });
 
   if (inline) {
     return (
@@ -743,7 +743,7 @@ function ColorPickerRootImpl(props: ColorPickerRootProps) {
             type="hidden"
             control={formTrigger}
             name={name}
-            value={currentValue}
+            value={value}
             disabled={disabled}
             readOnly={readOnly}
             required={required}
@@ -767,7 +767,7 @@ function ColorPickerRootImpl(props: ColorPickerRootProps) {
             type="hidden"
             control={formTrigger}
             name={name}
-            value={currentValue}
+            value={value}
             disabled={disabled}
             readOnly={readOnly}
             required={required}
