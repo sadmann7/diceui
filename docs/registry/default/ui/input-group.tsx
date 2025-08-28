@@ -158,15 +158,8 @@ interface InputGroupItemProps
 }
 
 function InputGroupItem(props: InputGroupItemProps) {
-  const {
-    asChild,
-    className,
-    position,
-    disabled,
-    required,
-    ref,
-    ...inputProps
-  } = props;
+  const { asChild, className, position, disabled, required, ...inputProps } =
+    props;
   const context = useInputGroupContext(ITEM_NAME);
 
   const isDisabled = disabled ?? context.disabled;
@@ -180,6 +173,9 @@ function InputGroupItem(props: InputGroupItemProps) {
       const target = event.currentTarget;
       const root = context.rootRef?.current;
       if (!root) return;
+
+      const cursorPosition = target.selectionStart ?? 0;
+      const textLength = target.value.length;
 
       const elements = Array.from(
         root.querySelectorAll(
@@ -198,20 +194,30 @@ function InputGroupItem(props: InputGroupItemProps) {
       let nextIndex = -1;
 
       if (context.orientation === "horizontal") {
-        if (event.key === "ArrowLeft" && currentIndex > 0) {
+        if (
+          event.key === "ArrowLeft" &&
+          currentIndex > 0 &&
+          cursorPosition === 0
+        ) {
           nextIndex = currentIndex - 1;
         } else if (
           event.key === "ArrowRight" &&
-          currentIndex < inputs.length - 1
+          currentIndex < inputs.length - 1 &&
+          cursorPosition === textLength
         ) {
           nextIndex = currentIndex + 1;
         }
       } else {
-        if (event.key === "ArrowUp" && currentIndex > 0) {
+        if (
+          event.key === "ArrowUp" &&
+          currentIndex > 0 &&
+          cursorPosition === 0
+        ) {
           nextIndex = currentIndex - 1;
         } else if (
           event.key === "ArrowDown" &&
-          currentIndex < inputs.length - 1
+          currentIndex < inputs.length - 1 &&
+          cursorPosition === textLength
         ) {
           nextIndex = currentIndex + 1;
         }
@@ -219,7 +225,18 @@ function InputGroupItem(props: InputGroupItemProps) {
 
       if (nextIndex !== -1) {
         event.preventDefault();
-        inputs[nextIndex]?.focus();
+        const targetInput = inputs[nextIndex];
+        if (targetInput) {
+          targetInput.focus();
+
+          const isNavigatingBackward =
+            (context.orientation === "horizontal" &&
+              event.key === "ArrowLeft") ||
+            (context.orientation === "vertical" && event.key === "ArrowUp");
+
+          const cursorPos = isNavigatingBackward ? targetInput.value.length : 0;
+          targetInput.setSelectionRange(cursorPos, cursorPos);
+        }
       }
     },
     [inputProps.onKeyDown, isDisabled, context.orientation, context.rootRef],
@@ -240,7 +257,6 @@ function InputGroupItem(props: InputGroupItemProps) {
       disabled={isDisabled}
       required={isRequired}
       {...inputProps}
-      ref={ref}
       onKeyDown={onKeyDown}
       className={cn(
         inputGroupItemVariants({

@@ -1,20 +1,20 @@
 ---
-title: Grouped Input
+title: Input Group
 description: A group of connected input fields that appear as a single visual unit.
 preview: true
 links:
  doc: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
- api: /docs/components/grouped-input#api-reference
+ api: /docs/components/input-group#api-reference
 ---
 
-<ComponentTabs name="grouped-input-demo" scalePreview />
+<ComponentTabs name="input-group-demo" scalePreview />
 
 ## Installation
 
 ### CLI
 
 ```package-install
-npx shadcn@latest add "https://diceui.com/r/grouped-input"
+npx shadcn@latest add "https://diceui.com/r/input-group"
 ```
 
 ### Manual
@@ -30,7 +30,7 @@ npx shadcn@latest add "https://diceui.com/r/grouped-input"
   <Step>
     Copy and paste the following code into your project.
 
-    <ComponentSource name="grouped-input" />
+    <ComponentSource name="input-group" />
   </Step>
 </Steps>
 
@@ -39,13 +39,13 @@ npx shadcn@latest add "https://diceui.com/r/grouped-input"
 Import the component and use it with different position props.
 
 ```tsx
-import { GroupedInput } from "@/components/ui/grouped-input";
+import { InputGroup, InputGroupItem } from "@/components/ui/input-group";
 
-<div className="flex">
-  <GroupedInput position="first" placeholder="First" />
-  <GroupedInput position="middle" placeholder="Middle" />
-  <GroupedInput position="last" placeholder="Last" />
-</div>
+<InputGroup>
+  <InputGroupItem position="first" placeholder="First" />
+  <InputGroupItem position="middle" placeholder="Middle" />
+  <InputGroupItem position="last" placeholder="Last" />
+</InputGroup>
 ```
 
 ## Examples
@@ -54,23 +54,38 @@ import { GroupedInput } from "@/components/ui/grouped-input";
 
 Use grouped inputs for structured form data like phone numbers or addresses.
 
-<ComponentTabs name="grouped-input-form-demo" />
+<ComponentTabs name="input-group-form-demo" />
 
 ### RGB Color Input
 
 Create color input controls using grouped inputs for RGB values.
 
-<ComponentTabs name="grouped-input-rgb-demo" />
+<ComponentTabs name="input-group-rgb-demo" />
+
+### Vertical Layout
+
+Display input groups in a vertical orientation.
+
+<ComponentTabs name="input-group-vertical-demo" />
 
 ## API Reference
 
-### GroupedInput
+### InputGroup
 
-The main grouped input component that extends the base Input component.
+The main input group container component.
 
 <AutoTypeTable
-  path="./types/docs/grouped-input.ts"
-  name="GroupedInputProps"
+  path="./types/docs/input-group.ts"
+  name="InputGroupRootProps"
+/>
+
+### InputGroupItem
+
+Individual input items within the input group.
+
+<AutoTypeTable
+  path="./types/docs/input-group.ts"
+  name="InputGroupItemProps"
 />
 
 The component supports all standard HTML input attributes and properties from the base Input component, plus the following:
@@ -100,6 +115,7 @@ All standard input keyboard interactions are supported:
 - **Shift + Tab**: Moves focus to the previous input in the group
 - **Enter**: Submits the form (if inside a form)
 - **Escape**: Blurs the current input
+- **Arrow Keys**: Navigate between inputs in horizontal/vertical orientation
 
 ### Screen Reader Support
 

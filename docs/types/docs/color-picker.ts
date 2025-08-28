@@ -2,7 +2,7 @@ import type { Button } from "@/components/ui/button";
 import type { Input } from "@/components/ui/input";
 import type { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { Select, SelectTrigger } from "@/components/ui/select";
-import type { CompositionProps, ControlledProps } from "@/types";
+import type { CompositionProps, ControlledProps, Direction } from "@/types";
 import type { Slider } from "@radix-ui/react-slider";
 import type * as React from "react";
 
@@ -41,7 +41,7 @@ export interface RootProps
    *
    * @default "ltr"
    */
-  dir?: "ltr" | "rtl";
+  dir?: Direction;
 
   /**
    * The current color format.
