@@ -4,8 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { CloudUpload, X } from "lucide-react";
 import * as React from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import * as z from "zod";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -26,7 +26,6 @@ import {
   FileUploadList,
   FileUploadTrigger,
 } from "@/registry/default/ui/file-upload";
-import { toast } from "sonner";
 
 const formSchema = z.object({
   files: z

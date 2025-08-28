@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import {
   ColorPicker,
@@ -13,7 +14,6 @@ import {
   ColorPickerSwatch,
   ColorPickerTrigger,
 } from "@/registry/default/ui/color-picker";
-import * as React from "react";
 
 const presetColors = [
   "#ef4444", // red

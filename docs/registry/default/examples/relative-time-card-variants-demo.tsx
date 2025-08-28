@@ -1,6 +1,6 @@
+import { Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RelativeTimeCard } from "@/registry/default/ui/relative-time-card";
-import { Clock } from "lucide-react";
 
 export default function RelativeTimeCardVariantsDemo() {
   const now = new Date();

@@ -1,6 +1,6 @@
 import {
-  Primitive,
   composeEventHandlers,
+  Primitive,
   useComposedRefs,
 } from "@diceui/shared";
 import * as React from "react";

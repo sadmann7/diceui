@@ -3,7 +3,10 @@
   "packageManager": "pnpm@10.12.4",
   "private": true,
   "type": "module",
-  "workspaces": ["docs", "packages/*"],
+  "workspaces": [
+    "docs",
+    "packages/*"
+  ],
   "scripts": {
     "clean": "rimraf --glob **/node_modules **/dist **/.source **/.turbo **/.next **/pnpm-lock.yaml **/.tsbuildinfo",
     "build": "turbo run build",
@@ -19,7 +22,7 @@
     "release": "changeset publish"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
+    "@biomejs/biome": "^2.2.2",
     "@changesets/cli": "^2.29.2",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",

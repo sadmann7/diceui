@@ -1,12 +1,12 @@
 "use client";
 
+import { Tab, Tabs } from "fumadocs-ui/components/tabs";
+import * as React from "react";
 import { Index } from "@/__registry__";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useConfig } from "@/hooks/use-config";
 import { cn } from "@/lib/utils";
 import { styles } from "@/registry/registry-styles";
-import { Tab, Tabs } from "fumadocs-ui/components/tabs";
-import * as React from "react";
 
 interface ComponentTabsProps extends React.ComponentPropsWithoutRef<"div"> {
   name: string;

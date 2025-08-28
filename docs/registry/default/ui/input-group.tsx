@@ -1,11 +1,11 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
-import { type VariantProps, cva } from "class-variance-authority";
+import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
-import { useComposedRefs } from "../lib/compose-refs";
+import { Input } from "@/components/ui/input";
+import { useComposedRefs } from "@/lib/compose-refs";
+import { cn } from "@/lib/utils";
 
 const ROOT_NAME = "InputGroup";
 const ITEM_NAME = "InputGroupItem";
@@ -23,7 +23,7 @@ interface InputGroupContextValue {
   id: string;
   rootRef: React.RefObject<HTMLDivElement | null>;
   dir?: Direction;
-  orientation: "horizontal" | "vertical";
+  orientation?: "horizontal" | "vertical";
   size?: "sm" | "default" | "lg";
   disabled?: boolean;
   invalid?: boolean;
@@ -60,17 +60,17 @@ const inputGroupItemVariants = cva("", {
     {
       position: "first",
       orientation: "vertical",
-      class: "rounded-e-md rounded-b-none",
+      class: "ms-0 rounded-e-md rounded-b-none border-l-1",
     },
     {
       position: "middle",
       orientation: "vertical",
-      class: "-mt-px rounded-none border-t-0 border-l-1",
+      class: "-mt-px ms-0 rounded-none border-t-0 border-l-1",
     },
     {
       position: "last",
       orientation: "vertical",
-      class: "-mt-px rounded-e-md rounded-t-none border-t-0 border-l-1",
+      class: "-mt-px ms-0 rounded-s-md rounded-t-none border-t-0 border-l-1",
     },
   ],
   defaultVariants: {

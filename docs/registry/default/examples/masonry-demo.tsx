@@ -1,6 +1,6 @@
+import * as React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import * as Masonry from "@/registry/default/ui/masonry";
-import * as React from "react";
 
 const items = [
   {

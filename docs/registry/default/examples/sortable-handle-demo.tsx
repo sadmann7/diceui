@@ -1,5 +1,7 @@
 "use client";
 
+import { GripVertical } from "lucide-react";
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -16,8 +18,6 @@ import {
   SortableItemHandle,
   SortableOverlay,
 } from "@/registry/default/ui/sortable";
-import { GripVertical } from "lucide-react";
-import * as React from "react";
 
 export default function SortableHandleDemo() {
   const [tricks, setTricks] = React.useState([

@@ -1,8 +1,8 @@
 "use client";
 
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import * as InputGroup from "@/registry/default/ui/input-group";
-import * as React from "react";
 
 export default function InputGroupFormDemo() {
   const [phoneNumber, setPhoneNumber] = React.useState({

@@ -1,5 +1,8 @@
 "use client";
 
+import { ArrowUp, Paperclip, Upload, X } from "lucide-react";
+import * as React from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -14,9 +17,6 @@ import {
   type FileUploadProps,
   FileUploadTrigger,
 } from "@/registry/default/ui/file-upload";
-import { ArrowUp, Paperclip, Upload, X } from "lucide-react";
-import * as React from "react";
-import { toast } from "sonner";
 
 export default function FileUploadChatInputDemo() {
   const [input, setInput] = React.useState("");

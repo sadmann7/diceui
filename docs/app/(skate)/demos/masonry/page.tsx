@@ -1,5 +1,7 @@
 "use client";
 
+import { Check, ChevronDown, Loader } from "lucide-react";
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -15,8 +17,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import * as Masonry from "@/registry/default/ui/masonry";
-import { Check, ChevronDown, Loader } from "lucide-react";
-import * as React from "react";
 
 const DEFAULT_ITEMS_PER_PAGE = 100;
 const DEFAULT_MAX_ITEM_COUNT = 5000;

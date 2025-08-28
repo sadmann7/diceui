@@ -1,5 +1,10 @@
 "use client";
 
+import * as SliderPrimitive from "@radix-ui/react-slider";
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
+import { PipetteIcon } from "lucide-react";
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -17,19 +22,12 @@ import {
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidden-input";
-import * as SliderPrimitive from "@radix-ui/react-slider";
-import { Slot } from "@radix-ui/react-slot";
-import { type VariantProps, cva } from "class-variance-authority";
-import { PipetteIcon } from "lucide-react";
-import * as React from "react";
 
 /**
  * @see https://gist.github.com/bkrmendy/f4582173f50fab209ddfef1377ab31e3
  */
 interface EyeDropper {
-  open: (options?: {
-    signal?: AbortSignal;
-  }) => Promise<{ sRGBHex: string }>;
+  open: (options?: { signal?: AbortSignal }) => Promise<{ sRGBHex: string }>;
 }
 
 declare global {

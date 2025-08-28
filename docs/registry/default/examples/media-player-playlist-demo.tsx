@@ -1,5 +1,15 @@
 "use client";
 
+import {
+  ListMusicIcon,
+  Loader2Icon,
+  PauseCircleIcon,
+  PlayCircleIcon,
+  SkipBackIcon,
+  SkipForwardIcon,
+} from "lucide-react";
+import * as React from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
@@ -13,16 +23,6 @@ import {
   MediaPlayerTooltip,
   MediaPlayerVolume,
 } from "@/registry/default/ui/media-player";
-import {
-  ListMusicIcon,
-  Loader2Icon,
-  PauseCircleIcon,
-  PlayCircleIcon,
-  SkipBackIcon,
-  SkipForwardIcon,
-} from "lucide-react";
-import * as React from "react";
-import { toast } from "sonner";
 
 interface Track {
   id: string;

@@ -1,9 +1,8 @@
+import type { DocsLayoutProps } from "fumadocs-ui/layouts/docs";
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
-
 import { Icons } from "@/components/icons";
 import { siteConfig } from "@/config/site";
 import { source } from "@/lib/source";
-import type { DocsLayoutProps } from "fumadocs-ui/layouts/docs";
 
 export const baseOptions: BaseLayoutProps = {
   nav: {

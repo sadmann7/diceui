@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import {
   Listbox,
   ListboxGroup,
@@ -7,7 +8,6 @@ import {
   ListboxItem,
   ListboxItemIndicator,
 } from "@/registry/default/ui/listbox";
-import * as React from "react";
 
 const tricks = {
   basic: [

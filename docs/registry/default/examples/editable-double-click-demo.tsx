@@ -1,6 +1,6 @@
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import * as Editable from "@/registry/default/ui/editable";
-import * as React from "react";
 
 export default function EditableDoubleClickDemo() {
   return (

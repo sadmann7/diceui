@@ -1,5 +1,8 @@
 "use client";
 
+import { Upload, X } from "lucide-react";
+import * as React from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   FileUpload,
@@ -13,9 +16,6 @@ import {
   type FileUploadProps,
   FileUploadTrigger,
 } from "@/registry/default/ui/file-upload";
-import { Upload, X } from "lucide-react";
-import * as React from "react";
-import { toast } from "sonner";
 
 export default function FileUploadDirectUploadDemo() {
   const [files, setFiles] = React.useState<File[]>([]);

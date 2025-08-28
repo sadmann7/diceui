@@ -1,6 +1,6 @@
+import { ImageResponse } from "next/og";
 import { siteConfig } from "@/config/site";
 import { loadFonts } from "@/lib/fonts";
-import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
 

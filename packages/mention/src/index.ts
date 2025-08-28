@@ -1,17 +1,12 @@
-export { MentionRoot, Root } from "./mention-root";
-export type { MentionRootProps } from "./mention-root";
-
-export { MentionLabel, Label } from "./mention-label";
-export type { MentionLabelProps } from "./mention-label";
-
-export { MentionInput, Input } from "./mention-input";
-export type { MentionInputProps } from "./mention-input";
-
-export { MentionPortal, Portal } from "./mention-portal";
-export type { MentionPortalProps } from "./mention-portal";
-
-export { MentionContent, Content } from "./mention-content";
 export type { MentionContentProps } from "./mention-content";
-
-export { MentionItem, Item } from "./mention-item";
+export { Content, MentionContent } from "./mention-content";
+export type { MentionInputProps } from "./mention-input";
+export { Input, MentionInput } from "./mention-input";
 export type { MentionItemProps } from "./mention-item";
+export { Item, MentionItem } from "./mention-item";
+export type { MentionLabelProps } from "./mention-label";
+export { Label, MentionLabel } from "./mention-label";
+export type { MentionPortalProps } from "./mention-portal";
+export { MentionPortal, Portal } from "./mention-portal";
+export type { MentionRootProps } from "./mention-root";
+export { MentionRoot, Root } from "./mention-root";

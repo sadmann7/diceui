@@ -1,10 +1,10 @@
+import type { Slider } from "@radix-ui/react-slider";
 import type { Button } from "@/components/ui/button";
 import type {
   DropdownMenu,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { CompositionProps, EmptyProps } from "@/types";
-import type { Slider } from "@radix-ui/react-slider";
 
 interface MediaPlayerDropdownMenuProps
   extends React.ComponentProps<typeof DropdownMenuTrigger>,

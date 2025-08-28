@@ -1,10 +1,10 @@
 "use client";
 
+import { Slot } from "@radix-ui/react-slot";
+import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidden-input";
-import { Slot } from "@radix-ui/react-slot";
-import * as React from "react";
 
 const ROOT_NAME = "Editable";
 const LABEL_NAME = "EditableLabel";

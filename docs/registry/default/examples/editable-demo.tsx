@@ -1,3 +1,4 @@
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import {
   Editable,
@@ -10,7 +11,6 @@ import {
   EditableToolbar,
   EditableTrigger,
 } from "@/registry/default/ui/editable";
-import * as React from "react";
 
 export default function EditableDemo() {
   return (

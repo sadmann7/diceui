@@ -1,11 +1,11 @@
 "use client";
 
+import { Edit, Trash2 } from "lucide-react";
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import * as Editable from "@/registry/default/ui/editable";
-import { Edit, Trash2 } from "lucide-react";
-import * as React from "react";
 
 interface Todo {
   id: string;

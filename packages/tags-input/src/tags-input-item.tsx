@@ -1,8 +1,8 @@
 import {
-  DATA_ITEM_ATTR,
-  Primitive,
   composeEventHandlers,
   createContext,
+  DATA_ITEM_ATTR,
+  Primitive,
   useId,
 } from "@diceui/shared";
 import * as React from "react";

@@ -1,5 +1,10 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as React from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -21,11 +26,6 @@ import {
   ColorPickerSwatch,
   ColorPickerTrigger,
 } from "@/registry/default/ui/color-picker";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as React from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import * as z from "zod";
 
 const formSchema = z.object({
   primaryColor: z

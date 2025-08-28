@@ -1,5 +1,5 @@
-import type { CompositionProps } from "@/types";
 import type { SlotProps } from "@radix-ui/react-slot";
+import type { CompositionProps } from "@/types";
 
 export interface RootProps
   extends Omit<SlotProps, keyof React.ComponentProps<"div">>,

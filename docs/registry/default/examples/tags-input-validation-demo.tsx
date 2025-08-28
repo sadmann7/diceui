@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-
+import { toast } from "sonner";
 import {
   TagsInput,
   TagsInputInput,
@@ -9,7 +9,6 @@ import {
   TagsInputLabel,
   TagsInputList,
 } from "@/registry/default/ui/tags-input";
-import { toast } from "sonner";
 
 export default function TagsInputValidationDemo() {
   const [tricks, setTricks] = React.useState<string[]>([]);

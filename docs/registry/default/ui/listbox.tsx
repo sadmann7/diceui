@@ -1,7 +1,7 @@
-import { cn } from "@/lib/utils";
 import * as ListboxPrimitive from "@diceui/listbox";
 import { Check } from "lucide-react";
 import * as React from "react";
+import { cn } from "@/lib/utils";
 
 const Listbox = React.forwardRef<
   React.ComponentRef<typeof ListboxPrimitive.Root>,

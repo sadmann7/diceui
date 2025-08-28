@@ -1,4 +1,4 @@
-import { Primitive, composeEventHandlers, composeRefs } from "@diceui/shared";
+import { composeEventHandlers, composeRefs, Primitive } from "@diceui/shared";
 import * as React from "react";
 import { useTagsInput } from "./tags-input-root";
 

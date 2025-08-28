@@ -1,4 +1,3 @@
-import type { ControlledProps } from "@/types";
 import type {
   ListboxGroupLabelProps,
   ListboxGroupProps,
@@ -7,6 +6,7 @@ import type {
   ListboxRootProps,
 } from "@diceui/listbox";
 import type * as React from "react";
+import type { ControlledProps } from "@/types";
 
 export type RootProps<Multiple extends boolean = false> = Omit<
   ListboxRootProps<Multiple>,

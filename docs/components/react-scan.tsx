@@ -1,9 +1,9 @@
 "use client";
 
-import { type Options, scan } from "react-scan";
-
-import { ENABLE_REACT_SCAN } from "@/lib/constants";
 import * as React from "react";
+import { type Options, scan } from "react-scan";
+import { ENABLE_REACT_SCAN } from "@/lib/constants";
+
 interface ReactScanProps
   extends Pick<Options, "enabled" | "trackUnnecessaryRenders"> {
   children?: React.ReactNode;

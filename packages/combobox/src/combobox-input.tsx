@@ -1,8 +1,8 @@
 import {
-  type HighlightingDirection,
-  Primitive,
   composeEventHandlers,
   dispatchDiscreteCustomEvent,
+  type HighlightingDirection,
+  Primitive,
   useComposedRefs,
 } from "@diceui/shared";
 import * as React from "react";

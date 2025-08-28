@@ -1,7 +1,7 @@
 import {
-  Primitive,
   composeEventHandlers,
   createContext,
+  Primitive,
   useId,
 } from "@diceui/shared";
 import * as React from "react";

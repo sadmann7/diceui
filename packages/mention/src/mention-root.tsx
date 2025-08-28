@@ -1,11 +1,10 @@
 import {
   type CollectionItem,
+  composeRefs,
+  createContext,
   type Direction,
   type HighlightingDirection,
   Primitive,
-  VisuallyHiddenInput,
-  composeRefs,
-  createContext,
   useCollection,
   useControllableState,
   useDirection,
@@ -13,6 +12,7 @@ import {
   useFormControl,
   useId,
   useListHighlighting,
+  VisuallyHiddenInput,
 } from "@diceui/shared";
 import type { VirtualElement } from "@floating-ui/react";
 import * as React from "react";

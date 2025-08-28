@@ -1,14 +1,11 @@
 import {
   type CollectionItem,
+  createContext,
   type Direction,
   type FilterStore,
+  forwardRef,
   type HighlightingDirection,
   Primitive,
-  VisuallyHiddenInput,
-  type WithDisplayName,
-  type WithForwardedRef,
-  createContext,
-  forwardRef,
   useAnchor,
   useCollection,
   useComposedRefs,
@@ -18,6 +15,9 @@ import {
   useFormControl,
   useId,
   useListHighlighting,
+  VisuallyHiddenInput,
+  type WithDisplayName,
+  type WithForwardedRef,
 } from "@diceui/shared";
 import * as React from "react";
 import type { AnchorElement } from "./combobox-anchor";

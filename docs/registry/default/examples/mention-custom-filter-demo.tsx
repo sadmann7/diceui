@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Mention,
@@ -7,7 +8,6 @@ import {
   MentionInput,
   MentionItem,
 } from "@/registry/default/ui/mention";
-import * as React from "react";
 
 const commands = [
   {

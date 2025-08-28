@@ -1,4 +1,4 @@
-import { promises as fs, existsSync, readFileSync } from "node:fs";
+import { existsSync, promises as fs, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { cwd } from "node:process";
@@ -765,7 +765,7 @@ async function buildThemes() {
     const themeCSS = [];
     for (const theme of baseColors) {
       themeCSS.push(
-        // @ts-ignore
+        // @ts-expect-error
         createTemplate(THEME_STYLES_WITH_VARIABLES)({
           colors: theme.cssVars,
           theme: theme.name,

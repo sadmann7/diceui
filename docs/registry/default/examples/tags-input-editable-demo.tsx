@@ -1,7 +1,7 @@
 "use client";
 
+import { RefreshCcw } from "lucide-react";
 import * as React from "react";
-
 import { Button } from "@/components/ui/button";
 import {
   TagsInput,
@@ -11,7 +11,6 @@ import {
   TagsInputLabel,
   TagsInputList,
 } from "@/registry/default/ui/tags-input";
-import { RefreshCcw } from "lucide-react";
 
 export default function TagsInputEditableDemo() {
   const [tricks, setTricks] = React.useState([

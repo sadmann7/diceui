@@ -1,6 +1,5 @@
-import * as React from "react";
-
 import { Portal as PortalPrimitive, type PortalProps } from "@diceui/shared";
+import * as React from "react";
 
 const PORTAL_NAME = "ComboboxPortal";
 

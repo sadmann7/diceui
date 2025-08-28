@@ -1,7 +1,7 @@
 "use client";
 
-import * as InputGroup from "@/registry/default/ui/input-group";
 import * as React from "react";
+import * as InputGroup from "@/registry/default/ui/input-group";
 
 export default function InputGroupVerticalDemo() {
   const [address, setAddress] = React.useState({

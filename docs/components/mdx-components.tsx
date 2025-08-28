@@ -1,12 +1,3 @@
-import { ComponentSource } from "@/components/component-source";
-import { ComponentTabs } from "@/components/component-tabs";
-import { CSSVariablesTable } from "@/components/css-variables-table";
-import { DataAttributesTable } from "@/components/data-attributes-table";
-import { Kbd } from "@/components/kbd";
-import { KeyboardShortcutsTable } from "@/components/keyboard-shortcuts-table";
-import { PropsTable } from "@/components/props-table";
-import { Table, TableCell, TableHead, TableRow } from "@/components/ui/table";
-import { cn } from "@/lib/utils";
 import type { Page } from "fumadocs-core/source";
 import { createGenerator } from "fumadocs-typescript";
 import { AutoTypeTable } from "fumadocs-typescript/ui";
@@ -16,6 +7,15 @@ import { Step, Steps } from "fumadocs-ui/components/steps";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import defaultComponents from "fumadocs-ui/mdx";
 import type { MDXComponents } from "mdx/types";
+import { ComponentSource } from "@/components/component-source";
+import { ComponentTabs } from "@/components/component-tabs";
+import { CSSVariablesTable } from "@/components/css-variables-table";
+import { DataAttributesTable } from "@/components/data-attributes-table";
+import { Kbd } from "@/components/kbd";
+import { KeyboardShortcutsTable } from "@/components/keyboard-shortcuts-table";
+import { PropsTable } from "@/components/props-table";
+import { Table, TableCell, TableHead, TableRow } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 
 const generator = createGenerator();
 

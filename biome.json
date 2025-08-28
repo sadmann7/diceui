@@ -1,22 +1,23 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
-  "organizeImports": {
-    "enabled": true
+  "$schema": "https://biomejs.dev/schemas/2.2.2/schema.json",
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": {
+          "level": "on"
+        }
+      }
+    }
   },
   "formatter": {
     "enabled": true,
     "indentWidth": 2,
-    "indentStyle": "space",
-    "ignore": [
-      "**/node_modules",
-      "**/dist",
-      "**/build",
-      "**/public",
-      "**/.turbo",
-      "**/.next",
-      "**/.source",
-      "__registry__"
-    ]
+    "indentStyle": "space"
+  },
+  "css": {
+    "parser": {
+      "cssModules": true
+    }
   },
   "linter": {
     "enabled": true,
@@ -31,6 +32,9 @@
         "noLabelWithoutControl": "off"
       },
       "correctness": {
+        "noNestedComponentDefinitions": "off",
+        "useUniqueElementIds": "off",
+        "noUnusedImports": "off",
         "noUnusedVariables": "warn",
         "useExhaustiveDependencies": "warn",
         "useHookAtTopLevel": "warn"
@@ -47,32 +51,24 @@
       },
       "suspicious": {
         "noAssignInExpressions": "off",
+        "noUnknownAtRules": "off",
         "noArrayIndexKey": "off"
       },
       "nursery": {
         "useSortedClasses": {
           "level": "warn",
+          "fix": "safe",
           "options": {
             "attributes": ["classList"],
             "functions": ["clsx", "cva", "tw"]
           }
         }
       }
-    },
-    "ignore": [
-      "**/node_modules",
-      "**/dist",
-      "**/build",
-      "**/public",
-      "**/.turbo",
-      "**/.next",
-      "**/.source",
-      "__registry__"
-    ]
+    }
   },
   "overrides": [
     {
-      "include": ["**/*.test.ts"]
+      "includes": ["**/*.test.ts"]
     }
   ],
   "vcs": {
@@ -81,15 +77,16 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignore": [
-      "**/node_modules",
-      "**/dist",
-      "**/build",
-      "**/public",
-      "**/.turbo",
-      "**/.next",
-      "**/.source",
-      "__registry__"
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/dist",
+      "!**/build",
+      "!**/public",
+      "!**/.turbo",
+      "!**/.next",
+      "!**/.source",
+      "!**/__registry__"
     ]
   }
 }

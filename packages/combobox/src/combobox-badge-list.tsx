@@ -1,4 +1,4 @@
-import { Primitive, createContext, useComposedRefs } from "@diceui/shared";
+import { createContext, Primitive, useComposedRefs } from "@diceui/shared";
 import * as React from "react";
 import { useComboboxContext } from "./combobox-root";
 

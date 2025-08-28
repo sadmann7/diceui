@@ -1,5 +1,10 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as React from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -20,11 +25,6 @@ import {
   EditableToolbar,
   EditableTrigger,
 } from "@/registry/default/ui/editable";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as React from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import * as z from "zod";
 
 const formSchema = z.object({
   name: z

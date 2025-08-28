@@ -1,4 +1,3 @@
-import { rehypeComponent } from "@/lib/rehype-component";
 import { getHighlighter } from "@shikijs/compat";
 import { rehypeCode, remarkGfm } from "fumadocs-core/mdx-plugins";
 import { fileGenerator, remarkDocGen, remarkInstall } from "fumadocs-docgen";
@@ -12,6 +11,7 @@ import rehypeSlug from "rehype-slug";
 import { codeImport } from "remark-code-import";
 import remarkMath from "remark-math";
 import { z } from "zod";
+import { rehypeComponent } from "@/lib/rehype-component";
 
 export default defineConfig({
   lastModifiedTime: "git",

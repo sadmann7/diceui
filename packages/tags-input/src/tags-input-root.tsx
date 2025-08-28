@@ -1,19 +1,18 @@
-import * as React from "react";
-
 import {
+  composeEventHandlers,
+  createContext,
   DATA_ITEM_ATTR,
   type Direction,
   Primitive,
-  VisuallyHiddenInput,
-  composeEventHandlers,
-  createContext,
   useComposedRefs,
   useControllableState,
   useDirection,
   useFormControl,
   useId,
   useItemCollection,
+  VisuallyHiddenInput,
 } from "@diceui/shared";
+import * as React from "react";
 import type { TagsInputInput } from "./tags-input-input";
 
 type InputValue = string;
