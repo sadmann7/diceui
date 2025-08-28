@@ -1,21 +1,21 @@
 import type { Button } from "@/components/ui/button";
 import type { Input } from "@/components/ui/input";
-import type {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import type { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { Select, SelectTrigger } from "@/components/ui/select";
-import type * as SliderPrimitive from "@radix-ui/react-slider";
+import type { CompositionProps, ControlledProps } from "@/types";
+import type { Slider } from "@radix-ui/react-slider";
+import type * as React from "react";
 
-import type { CompositionProps, EmptyProps } from "@/types";
+type ColorFormat = "hex" | "rgb" | "hsl" | "hsb";
 
-export type ColorFormat = "hex" | "rgb" | "hsl" | "hsb";
+type ButtonProps = React.ComponentProps<typeof Button>;
 
-export type Direction = "ltr" | "rtl";
+type SelectTriggerProps = React.ComponentProps<typeof SelectTrigger>;
+
+type SliderProps = React.ComponentProps<typeof Slider>;
 
 export interface RootProps
-  extends Omit<React.ComponentProps<"div">, "onValueChange">,
+  extends Omit<React.ComponentProps<"div">, keyof ControlledProps<"div">>,
     CompositionProps {
   /**
    * The current color value as a string.
@@ -41,7 +41,7 @@ export interface RootProps
    *
    * @default "ltr"
    */
-  dir?: Direction;
+  dir?: "ltr" | "rtl";
 
   /**
    * The current color format.
@@ -121,45 +121,71 @@ export interface RootProps
 }
 
 export interface TriggerProps
-  extends React.ComponentProps<typeof PopoverTrigger>,
+  extends Omit<
+      React.ComponentProps<typeof PopoverTrigger>,
+      keyof React.ComponentProps<"button">
+    >,
     CompositionProps {}
 
 export interface ContentProps
-  extends React.ComponentProps<typeof PopoverContent>,
+  extends Omit<
+      React.ComponentProps<typeof PopoverContent>,
+      keyof React.ComponentProps<"div">
+    >,
     CompositionProps {}
 
-export interface AreaProps extends EmptyProps<"div">, CompositionProps {}
+export interface AreaProps
+  extends Omit<React.ComponentProps<"div">, keyof React.ComponentProps<"div">>,
+    CompositionProps {}
 
 export interface HueSliderProps
-  extends React.ComponentProps<typeof SliderPrimitive.Root>,
+  extends Omit<SliderProps, keyof React.ComponentProps<"span">>,
     CompositionProps {}
 
 export interface AlphaSliderProps
-  extends React.ComponentProps<typeof SliderPrimitive.Root>,
+  extends Omit<SliderProps, keyof React.ComponentProps<"span">>,
     CompositionProps {}
 
-export interface SwatchProps extends EmptyProps<"div">, CompositionProps {}
+export interface SwatchProps
+  extends Omit<React.ComponentProps<"div">, keyof React.ComponentProps<"div">>,
+    CompositionProps {}
 
 export interface EyeDropperProps
-  extends React.ComponentProps<typeof Button>,
-    CompositionProps {}
+  extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
+    CompositionProps {
+  /**
+   * The variant of the eye dropper button.
+   *
+   * @default "default"
+   */
+  variant?: ButtonProps["variant"];
+
+  /**
+   * The size of the eye dropper button.
+   *
+   * @default "sm"
+   */
+  size?: ButtonProps["size"];
+}
 
 export interface FormatSelectProps
   extends Omit<React.ComponentProps<typeof Select>, "value" | "onValueChange">,
-    Pick<React.ComponentProps<typeof SelectTrigger>, "className"> {
+    Pick<SelectTriggerProps, "className">,
+    CompositionProps {
   /**
    * The size of the select trigger.
    *
    * @default "sm"
    */
-  size?: React.ComponentProps<typeof SelectTrigger>["size"];
+  size?: SelectTriggerProps["size"];
 }
 
 export interface InputProps
   extends Omit<
-    React.ComponentProps<typeof Input>,
-    "value" | "onChange" | "color"
-  > {
+      React.ComponentProps<typeof Input>,
+      "value" | "onChange" | "color"
+    >,
+    CompositionProps {
   /**
    * When `true`, hides the alpha channel input.
    *
