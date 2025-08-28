@@ -3,7 +3,7 @@ import type { DataTableConfig } from "@/config/data-table";
 import type { FilterItemSchema } from "@/lib/parsers";
 
 declare module "@tanstack/react-table" {
-  // biome-ignore lint/correctness/noUnusedVariables: <explanation>
+  // biome-ignore lint/correctness/noUnusedVariables: extending TanStack table interface for type augmentation
   interface ColumnMeta<TData extends RowData, TValue> {
     label?: string;
     placeholder?: string;

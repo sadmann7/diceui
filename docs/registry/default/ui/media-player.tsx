@@ -610,7 +610,7 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
         case "8":
         case "9": {
           event.preventDefault();
-          const percent = Number.parseInt(event.key) / 10;
+          const percent = Number.parseInt(event.key, 10) / 10;
           const seekTime = mediaElement.duration * percent;
           dispatch({
             type: MediaActionTypes.MEDIA_SEEK_REQUEST,
@@ -968,7 +968,9 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
         className,
       )}
     >
-      <Loader2Icon className="size-20 animate-spin stroke-[.0938rem] text-primary" />
+      {children ?? (
+        <Loader2Icon className="size-20 animate-spin stroke-[.0938rem] text-primary" />
+      )}
     </LoadingPrimitive>
   );
 }
@@ -1248,7 +1250,7 @@ function MediaPlayerControlsOverlay(props: MediaPlayerControlsOverlayProps) {
 interface MediaPlayerPlayProps extends React.ComponentProps<typeof Button> {}
 
 function MediaPlayerPlay(props: MediaPlayerPlayProps) {
-  const { asChild, children, className, disabled, ...playButtonProps } = props;
+  const { children, className, disabled, ...playButtonProps } = props;
 
   const context = useMediaPlayerContext("MediaPlayerPlay");
   const dispatch = useMediaDispatch();
@@ -1308,7 +1310,6 @@ interface MediaPlayerSeekBackwardProps
 function MediaPlayerSeekBackward(props: MediaPlayerSeekBackwardProps) {
   const {
     seconds = SEEK_STEP_SHORT,
-    asChild,
     children,
     className,
     disabled,
@@ -1369,7 +1370,6 @@ interface MediaPlayerSeekForwardProps
 function MediaPlayerSeekForward(props: MediaPlayerSeekForwardProps) {
   const {
     seconds = SEEK_STEP_LONG,
-    asChild,
     children,
     className,
     disabled,
@@ -2152,6 +2152,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
                     {thumbnail.coords ? (
                       <div style={spriteStyle} />
                     ) : (
+                      // biome-ignore lint/performance/noImgElement: dynamic thumbnail URLs from media don't work well with Next.js Image optimization
                       <img
                         src={thumbnail.src}
                         alt={`Preview at ${hoverTime}`}
@@ -2207,13 +2208,7 @@ interface MediaPlayerVolumeProps
 }
 
 function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
-  const {
-    asChild,
-    expandable = false,
-    className,
-    disabled,
-    ...volumeProps
-  } = props;
+  const { expandable = false, className, disabled, ...volumeProps } = props;
 
   const context = useMediaPlayerContext(VOLUME_NAME);
   const store = useStoreContext(VOLUME_NAME);
@@ -2404,7 +2399,7 @@ function MediaPlayerTime(props: MediaPlayerTimeProps) {
       )}
     >
       <span className="tabular-nums">{times.current}</span>
-      <span role="separator" aria-hidden="true" tabIndex={-1}>
+      <span role="separator" aria-hidden="true" aria-valuenow={0} tabIndex={-1}>
         /
       </span>
       <span className="tabular-nums">{times.duration}</span>
@@ -2427,7 +2422,6 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
     onOpenChange: onOpenChangeProp,
     sideOffset = FLOATING_MENU_SIDE_OFFSET,
     speeds = SPEEDS,
-    asChild,
     modal = false,
     className,
     disabled,
@@ -2631,7 +2625,11 @@ function MediaPlayerFullscreen(props: MediaPlayerFullscreenProps) {
   );
 }
 
-interface MediaPlayerPiPProps extends React.ComponentProps<typeof Button> {
+interface MediaPlayerPiPProps
+  extends Omit<React.ComponentProps<typeof Button>, "children"> {
+  children?:
+    | React.ReactNode
+    | ((isPictureInPicture: boolean) => React.ReactNode);
   onPipError?: (error: unknown, state: "enter" | "exit") => void;
 }
 
@@ -2692,11 +2690,14 @@ function MediaPlayerPiP(props: MediaPlayerPiPProps) {
         className={cn("size-8", className)}
         onClick={onPictureInPicture}
       >
-        {isPictureInPicture ? (
-          <PictureInPicture2Icon />
-        ) : (
-          <PictureInPictureIcon />
-        )}
+        {typeof children === "function"
+          ? children(isPictureInPicture)
+          : (children ??
+            (isPictureInPicture ? (
+              <PictureInPicture2Icon />
+            ) : (
+              <PictureInPictureIcon />
+            )))}
       </Button>
     </MediaPlayerTooltip>
   );
@@ -2812,7 +2813,6 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
     onOpenChange: onOpenChangeProp,
     sideOffset = FLOATING_MENU_SIDE_OFFSET,
     speeds = SPEEDS,
-    asChild,
     modal = false,
     className,
     disabled,

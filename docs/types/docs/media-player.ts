@@ -526,7 +526,33 @@ export interface LoopProps extends EmptyProps<"button">, CompositionProps {}
 export interface PiPProps
   extends EmptyProps<"button">,
     CompositionProps,
-    Pick<RootProps, "onPipError"> {}
+    Pick<RootProps, "onPipError"> {
+  /**
+   * The content to render inside the picture-in-picture button.
+   * Can be a React node or a function that receives the current PiP state.
+   *
+   * ```tsx
+   * // Static content
+   * <MediaPlayer.PiP>
+   *   <CustomPiPIcon />
+   * </MediaPlayer.PiP>
+   * ```
+   *
+   * ```tsx
+   * // Dynamic content based on PiP state
+   * <MediaPlayer.PiP>
+   *   {(isPictureInPicture) => (
+   *     isPictureInPicture ? <ExitPiPIcon /> : <EnterPiPIcon />
+   *   )}
+   * </MediaPlayer.PiP>
+   * ```
+   *
+   * @default PictureInPictureIcon when not in PiP, PictureInPicture2Icon when in PiP
+   */
+  children?:
+    | React.ReactNode
+    | ((isPictureInPicture: boolean) => React.ReactNode);
+}
 
 export interface FullscreenProps
   extends EmptyProps<"button">,

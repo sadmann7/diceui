@@ -12,14 +12,6 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
     const { autoFocus, ...inputProps } = props;
     const context = useTagsInput(INPUT_NAME);
 
-    const onTab = React.useCallback(
-      (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (!context.addOnTab) return;
-        onCustomKeydown(event);
-      },
-      [context.addOnTab],
-    );
-
     const onCustomKeydown = React.useCallback(
       (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.defaultPrevented) return;
@@ -36,6 +28,14 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
         event.preventDefault();
       },
       [context.onItemAdd, context.setHighlightedIndex],
+    );
+
+    const onTab = React.useCallback(
+      (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (!context.addOnTab) return;
+        onCustomKeydown(event);
+      },
+      [context.addOnTab, onCustomKeydown],
     );
 
     React.useEffect(() => {

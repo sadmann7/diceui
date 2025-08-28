@@ -90,6 +90,7 @@ function TimezoneCard(props: TimezoneCardProps) {
 
   return (
     <div
+      role="region"
       aria-label={`Time in ${timezoneName}: ${formattedDate} ${formattedTime}`}
       {...cardProps}
       className="flex items-center justify-between gap-2 text-muted-foreground text-sm"

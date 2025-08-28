@@ -30,9 +30,8 @@ function useCollection<TElement extends HTMLElement, TData = {}>({
   const itemMap = React.useRef<CollectionItemMap<TElement, TData>>(
     new Map(),
   ).current;
-  const groupMap = grouped
-    ? React.useRef<CollectionGroupMap<TElement>>(new Map()).current
-    : null;
+  const groupMapRef = React.useRef<CollectionGroupMap<TElement>>(new Map());
+  const groupMap = grouped ? groupMapRef.current : null;
 
   const getItems = React.useCallback(() => {
     const collectionNode = collectionRef.current;

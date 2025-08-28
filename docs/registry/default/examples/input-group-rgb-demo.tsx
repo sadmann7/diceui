@@ -71,9 +71,10 @@ export default function InputGroupRgbDemo() {
       </div>
       <div className="flex items-center gap-2">
         <div
+          role="img"
+          aria-label={`Color preview: ${colorPreview}`}
           className="h-8 w-8 rounded border"
           style={{ backgroundColor: colorPreview }}
-          aria-label={`Color preview: ${colorPreview}`}
         />
         <p className="text-muted-foreground text-sm">
           Current color:{" "}
