@@ -86,6 +86,18 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "grouped-input",
+    type: "registry:ui",
+    dependencies: ["class-variance-authority"],
+    registryDependencies: ["input"],
+    files: [
+      {
+        path: "ui/grouped-input.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "kanban",
     type: "registry:ui",
     dependencies: [

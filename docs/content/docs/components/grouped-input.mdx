@@ -1,0 +1,126 @@
+---
+title: Grouped Input
+description: A group of connected input fields that appear as a single visual unit.
+preview: true
+links:
+ doc: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
+ api: /docs/components/grouped-input#api-reference
+---
+
+<ComponentTabs name="grouped-input-demo" scalePreview />
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/grouped-input"
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     class-variance-authority
+     ```
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource name="grouped-input" />
+  </Step>
+</Steps>
+
+## Layout
+
+Import the component and use it with different position props.
+
+```tsx
+import { GroupedInput } from "@/components/ui/grouped-input";
+
+<div className="flex">
+  <GroupedInput position="first" placeholder="First" />
+  <GroupedInput position="middle" placeholder="Middle" />
+  <GroupedInput position="last" placeholder="Last" />
+</div>
+```
+
+## Examples
+
+### Form Input
+
+Use grouped inputs for structured form data like phone numbers or addresses.
+
+<ComponentTabs name="grouped-input-form-demo" />
+
+### RGB Color Input
+
+Create color input controls using grouped inputs for RGB values.
+
+<ComponentTabs name="grouped-input-rgb-demo" />
+
+## API Reference
+
+### GroupedInput
+
+The main grouped input component that extends the base Input component.
+
+<AutoTypeTable
+  path="./types/docs/grouped-input.ts"
+  name="GroupedInputProps"
+/>
+
+The component supports all standard HTML input attributes and properties from the base Input component, plus the following:
+
+- **position**: Controls the visual positioning and borders of the input within a group
+  - `first`: Removes right border radius, maintains left border
+  - `middle`: Removes all border radius, removes left border to prevent doubling
+  - `last`: Removes left border radius, removes left border to prevent doubling  
+  - `isolated`: Normal input styling (default)
+
+### Styling
+
+The component automatically handles:
+- Border radius removal for seamless connection
+- Border overlap prevention with negative margins
+- Focus ring z-index management
+- Webkit number input spinner removal
+- Firefox number input appearance normalization
+
+## Accessibility
+
+### Keyboard Interactions
+
+All standard input keyboard interactions are supported:
+
+- **Tab**: Moves focus to the next input in the group
+- **Shift + Tab**: Moves focus to the previous input in the group
+- **Enter**: Submits the form (if inside a form)
+- **Escape**: Blurs the current input
+
+### Screen Reader Support
+
+- Each input should have an appropriate `aria-label` or associated `<label>`
+- Related inputs can be grouped with `fieldset` and `legend` elements
+- Use `inputMode` and `pattern` attributes for better mobile experience
+
+### Best Practices
+
+1. **Labeling**: Provide clear labels for each input in the group
+2. **Validation**: Apply validation consistently across all inputs in the group
+3. **Error Handling**: Show errors at the group level when possible
+4. **Mobile**: Use appropriate `inputMode` for different input types
+5. **Tab Order**: Ensure logical tab order through the grouped inputs
+
+## Examples of Use Cases
+
+- **Phone Numbers**: Country code, area code, and number
+- **Credit Cards**: Card number split into 4-digit groups
+- **Dates**: Month, day, and year inputs
+- **Colors**: RGB, HSL, or HSB value inputs
+- **Addresses**: Street number, street name, unit number
+- **Time**: Hours, minutes, and seconds
+- **IP Addresses**: Four octets of an IP address

@@ -26,6 +26,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
+import GroupedInputDemo from "@/registry/default/examples/grouped-input-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -35,12 +36,14 @@ import {
   ComboboxItem,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
+import { GroupedInput } from "@/registry/default/ui/grouped-input";
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
+      <GroupedInputDemo />
       <ColorPickerDemo />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>

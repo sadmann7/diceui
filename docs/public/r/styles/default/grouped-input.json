@@ -1,0 +1,18 @@
+{
+  "name": "grouped-input",
+  "type": "registry:ui",
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "input"
+  ],
+  "files": [
+    {
+      "path": "ui/grouped-input.tsx",
+      "content": "import { Input } from \"@/components/ui/input\";\nimport { cn } from \"@/lib/utils\";\nimport { type VariantProps, cva } from \"class-variance-authority\";\nimport type * as React from \"react\";\n\nconst groupedInputVariants = cva(\"\", {\n  variants: {\n    position: {\n      first: \"rounded-e-none\",\n      middle: \"-ms-px rounded-none border-l-0\",\n      last: \"-ms-px rounded-s-none border-l-0\",\n      isolated: \"\",\n    },\n  },\n  defaultVariants: {\n    position: \"isolated\",\n  },\n});\n\ninterface GroupedInputProps\n  extends React.ComponentProps<\"input\">,\n    VariantProps<typeof groupedInputVariants> {}\n\nfunction GroupedInput({ className, position, ...props }: GroupedInputProps) {\n  return (\n    <Input\n      data-slot=\"grouped-input\"\n      className={cn(groupedInputVariants({ position }), className)}\n      {...props}\n    />\n  );\n}\n\nexport { GroupedInput };\n",
+      "type": "registry:ui",
+      "target": ""
+    }
+  ]
+}

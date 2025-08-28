@@ -380,6 +380,42 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "grouped-input-demo",
+    type: "registry:example",
+    dependencies: ["class-variance-authority"],
+    registryDependencies: ["input"],
+    files: [
+      {
+        path: "examples/grouped-input-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "grouped-input-form-demo",
+    type: "registry:example",
+    dependencies: ["class-variance-authority"],
+    registryDependencies: ["button", "input"],
+    files: [
+      {
+        path: "examples/grouped-input-form-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "grouped-input-rgb-demo",
+    type: "registry:example",
+    dependencies: ["class-variance-authority"],
+    registryDependencies: ["input"],
+    files: [
+      {
+        path: "examples/grouped-input-rgb-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "kanban-demo",
     type: "registry:example",
     dependencies: [

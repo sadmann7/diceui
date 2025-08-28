@@ -101,6 +101,22 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "grouped-input": {
+      name: "grouped-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["input"],
+      files: [{
+        path: "registry/default/ui/grouped-input.tsx",
+        type: "registry:ui",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/grouped-input.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "kanban": {
       name: "kanban",
       description: "",
@@ -788,6 +804,54 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/file-upload-validation-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "grouped-input-demo": {
+      name: "grouped-input-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["input"],
+      files: [{
+        path: "registry/default/examples/grouped-input-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/grouped-input-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "grouped-input-form-demo": {
+      name: "grouped-input-form-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","input"],
+      files: [{
+        path: "registry/default/examples/grouped-input-form-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/grouped-input-form-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "grouped-input-rgb-demo": {
+      name: "grouped-input-rgb-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["input"],
+      files: [{
+        path: "registry/default/examples/grouped-input-rgb-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/grouped-input-rgb-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",
