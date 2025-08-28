@@ -7,7 +7,7 @@ links:
  api: /docs/components/input-group#api-reference
 ---
 
-<ComponentTabs name="input-group-demo" scalePreview />
+<ComponentTabs name="input-group-demo" />
 
 ## Installation
 
@@ -109,13 +109,30 @@ The component automatically handles:
 
 ### Keyboard Interactions
 
-All standard input keyboard interactions are supported:
-
-- **Tab**: Moves focus to the next input in the group
-- **Shift + Tab**: Moves focus to the previous input in the group
-- **Enter**: Submits the form (if inside a form)
-- **Escape**: Blurs the current input
-- **Arrow Keys**: Navigate between inputs in horizontal/vertical orientation
+<KeyboardShortcutsTable
+  shortcuts={[
+    {
+      keys: ["Tab"],
+      description: "Moves focus to the next input in the group.",
+    },
+    {
+      keys: ["Shift", "Tab"],
+      description: "Moves focus to the previous input in the group.",
+    },
+    {
+      keys: ["Enter"],
+      description: "Submits the form (if inside a form).",
+    },
+    {
+      keys: ["Escape"],
+      description: "Blurs the current input.",
+    },
+    {
+      keys: ["Arrow Keys"],
+      description: "Navigate between inputs in horizontal/vertical orientation.",
+    },
+  ]}
+/>
 
 ### Screen Reader Support
 
@@ -130,13 +147,3 @@ All standard input keyboard interactions are supported:
 3. **Error Handling**: Show errors at the group level when possible
 4. **Mobile**: Use appropriate `inputMode` for different input types
 5. **Tab Order**: Ensure logical tab order through the grouped inputs
-
-## Examples of Use Cases
-
-- **Phone Numbers**: Country code, area code, and number
-- **Credit Cards**: Card number split into 4-digit groups
-- **Dates**: Month, day, and year inputs
-- **Colors**: RGB, HSL, or HSB value inputs
-- **Addresses**: Street number, street name, unit number
-- **Time**: Hours, minutes, and seconds
-- **IP Addresses**: Four octets of an IP address
