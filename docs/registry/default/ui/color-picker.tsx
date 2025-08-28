@@ -535,7 +535,8 @@ function useColorPickerStore<U>(
 
 interface ColorPickerContextValue {
   dir: Direction;
-  disabled: boolean;
+  disabled?: boolean;
+  inline?: boolean;
   readOnly?: boolean;
   required?: boolean;
 }
@@ -573,6 +574,7 @@ interface ColorPickerRootProps
   name?: string;
   asChild?: boolean;
   disabled?: boolean;
+  inline?: boolean;
   readOnly?: boolean;
   required?: boolean;
 }
@@ -590,7 +592,8 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
     open: openProp,
     onOpenChange,
     name,
-    disabled = false,
+    disabled,
+    inline,
     readOnly,
     required,
     ...rootProps
@@ -599,6 +602,7 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
   const initialColor = React.useMemo(() => {
     const colorString = valueProp ?? defaultValue;
     const color = hexToRgb(colorString);
+
     return {
       color,
       hsv: rgbToHsv(color),
@@ -649,6 +653,7 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
         disabled={disabled}
         readOnly={readOnly}
         required={required}
+        inline={inline}
       />
     </ColorPickerStoreContext.Provider>
   );
@@ -669,10 +674,11 @@ function ColorPickerRootImpl(props: ColorPickerRootProps) {
     name,
     ref,
     asChild,
-    disabled = false,
+    disabled,
     readOnly,
     required,
     modal,
+    inline,
     ...rootProps
   } = props;
 
@@ -709,8 +715,9 @@ function ColorPickerRootImpl(props: ColorPickerRootProps) {
       disabled,
       readOnly,
       required,
+      inline,
     }),
-    [dir, disabled, readOnly, required],
+    [dir, disabled, readOnly, required, inline],
   );
 
   const open = useColorPickerStore((state) => state.open);
@@ -725,6 +732,25 @@ function ColorPickerRootImpl(props: ColorPickerRootProps) {
     const color = state.color;
     return rgbToHex(color);
   });
+
+  if (inline) {
+    return (
+      <ColorPickerContext.Provider value={contextValue}>
+        <RootPrimitive {...rootProps} ref={composedRef} />
+        {isFormControl && (
+          <VisuallyHiddenInput
+            type="hidden"
+            control={formTrigger}
+            name={name}
+            value={currentValue}
+            disabled={disabled}
+            readOnly={readOnly}
+            required={required}
+          />
+        )}
+      </ColorPickerContext.Provider>
+    );
+  }
 
   return (
     <ColorPickerContext.Provider value={contextValue}>
@@ -776,6 +802,19 @@ interface ColorPickerContentProps
 
 function ColorPickerContent(props: ColorPickerContentProps) {
   const { asChild, className, children, ...popoverContentProps } = props;
+  const context = useColorPickerContext("ColorPickerContent");
+
+  if (context.inline) {
+    const ContentPrimitive = asChild ? Slot : "div";
+    return (
+      <ContentPrimitive
+        className={cn("flex w-80 flex-col gap-4 p-4", className)}
+        {...popoverContentProps}
+      >
+        {children}
+      </ContentPrimitive>
+    );
+  }
 
   return (
     <PopoverContent

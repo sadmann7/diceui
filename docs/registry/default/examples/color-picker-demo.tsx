@@ -11,7 +11,7 @@ import {
   ColorPickerInput,
   ColorPickerSwatch,
   ColorPickerTrigger,
-} from "@/components/ui/color-picker";
+} from "@/registry/default/ui/color-picker";
 import * as React from "react";
 
 export default function ColorPickerDemo() {
