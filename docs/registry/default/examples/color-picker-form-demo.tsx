@@ -54,23 +54,27 @@ export default function ColorPickerFormDemo() {
     },
   });
 
-  function onSubmit(input: FormValues) {
+  const onSubmit = React.useCallback((input: FormValues) => {
     toast.success(
       <div className="space-y-2">
         <div className="font-medium">Theme Colors Updated!</div>
         <pre className="w-full text-xs">{JSON.stringify(input, null, 2)}</pre>
       </div>,
     );
-  }
+  }, []);
+
+  const onReset = React.useCallback(() => {
+    form.reset();
+  }, [form]);
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex w-full max-w-md flex-col gap-6 rounded-md border p-6 shadow-sm"
+        className="flex w-full max-w-md flex-col gap-4 rounded-md border p-6 shadow-sm"
       >
-        <div className="flex flex-col gap-2">
-          <h3 className="text-lg font-semibold">Theme Colors</h3>
+        <div className="flex flex-col gap-1">
+          <h3 className="font-semibold text-lg">Theme Colors</h3>
           <p className="text-muted-foreground text-sm">
             Configure your application's color scheme
           </p>
@@ -204,8 +208,8 @@ export default function ColorPickerFormDemo() {
             </FormItem>
           )}
         />
-        <div className="flex justify-between gap-2 pt-4">
-          <Button type="button" variant="outline" onClick={() => form.reset()}>
+        <div className="flex justify-end gap-2">
+          <Button type="button" variant="outline" onClick={onReset}>
             Reset
           </Button>
           <Button type="submit">Save Theme</Button>
