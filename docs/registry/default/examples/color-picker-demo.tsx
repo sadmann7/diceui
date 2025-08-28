@@ -1,5 +1,3 @@
-"use client";
-
 import {
   ColorPicker,
   ColorPickerAlphaSlider,
@@ -12,13 +10,10 @@ import {
   ColorPickerSwatch,
   ColorPickerTrigger,
 } from "@/registry/default/ui/color-picker";
-import * as React from "react";
 
 export default function ColorPickerDemo() {
-  const [color, setColor] = React.useState("#3b82f6");
-
   return (
-    <ColorPicker value={color} onValueChange={setColor} defaultFormat="hex">
+    <ColorPicker defaultFormat="hex" defaultValue="#3b82f6">
       <ColorPickerTrigger asChild>
         <ColorPickerSwatch />
       </ColorPickerTrigger>

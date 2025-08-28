@@ -13,6 +13,31 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "color-picker",
+    type: "registry:ui",
+    dependencies: [
+      "@radix-ui/react-slider",
+      "@radix-ui/react-slot",
+      "class-variance-authority",
+      "lucide-react",
+    ],
+    registryDependencies: ["button", "input", "popover", "select"],
+    files: [
+      {
+        path: "ui/color-picker.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "components/visually-hidden-input.tsx",
+        type: "registry:component",
+      },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
+      },
+    ],
+  },
+  {
     name: "combobox",
     type: "registry:ui",
     dependencies: [

@@ -35,6 +35,17 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "checkbox-group-multi-selection-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/checkbox-group", "lucide-react"],
+    files: [
+      {
+        path: "examples/checkbox-group-multi-selection-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "checkbox-group-validation-demo",
     type: "registry:example",
     dependencies: ["@diceui/checkbox-group", "lucide-react"],
@@ -46,12 +57,46 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "checkbox-group-multi-selection-demo",
+    name: "color-picker-demo",
     type: "registry:example",
-    dependencies: ["@diceui/checkbox-group", "lucide-react"],
+    registryDependencies: ["color-picker"],
     files: [
       {
-        path: "examples/checkbox-group-multi-selection-demo.tsx",
+        path: "examples/color-picker-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "color-picker-controlled-demo",
+    type: "registry:example",
+    registryDependencies: ["color-picker", "button"],
+    files: [
+      {
+        path: "examples/color-picker-controlled-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "color-picker-form-demo",
+    type: "registry:example",
+    dependencies: ["@hookform/resolvers/zod", "react-hook-form", "zod"],
+    registryDependencies: ["button", "color-picker", "form"],
+    files: [
+      {
+        path: "examples/color-picker-form-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "color-picker-inline-demo",
+    type: "registry:example",
+    registryDependencies: ["color-picker"],
+    files: [
+      {
+        path: "examples/color-picker-inline-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -64,30 +109,6 @@ export const examples: Registry["items"] = [
     files: [
       {
         path: "examples/combobox-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "combobox-groups-demo",
-    type: "registry:example",
-    dependencies: ["@diceui/combobox", "lucide-react"],
-    registryDependencies: ["combobox"],
-    files: [
-      {
-        path: "examples/combobox-groups-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "combobox-multiple-demo",
-    type: "registry:example",
-    dependencies: ["@diceui/combobox", "lucide-react"],
-    registryDependencies: ["combobox"],
-    files: [
-      {
-        path: "examples/combobox-multiple-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -117,17 +138,25 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "combobox-virtualized-demo",
+    name: "combobox-groups-demo",
     type: "registry:example",
-    dependencies: [
-      "@diceui/combobox",
-      "@tanstack/react-virtual",
-      "lucide-react",
-    ],
+    dependencies: ["@diceui/combobox", "lucide-react"],
     registryDependencies: ["combobox"],
     files: [
       {
-        path: "examples/combobox-virtualized-demo.tsx",
+        path: "examples/combobox-groups-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "combobox-multiple-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/combobox", "lucide-react"],
+    registryDependencies: ["combobox"],
+    files: [
+      {
+        path: "examples/combobox-multiple-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -140,6 +169,22 @@ export const examples: Registry["items"] = [
     files: [
       {
         path: "examples/combobox-tags-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "combobox-virtualized-demo",
+    type: "registry:example",
+    dependencies: [
+      "@diceui/combobox",
+      "@tanstack/react-virtual",
+      "lucide-react",
+    ],
+    registryDependencies: ["combobox"],
+    files: [
+      {
+        path: "examples/combobox-virtualized-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -169,18 +214,6 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "editable-double-click-demo",
-    type: "registry:example",
-    dependencies: ["@radix-ui/react-slot"],
-    registryDependencies: ["button"],
-    files: [
-      {
-        path: "examples/editable-double-click-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
     name: "editable-autosize-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot"],
@@ -193,13 +226,13 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "editable-todo-list-demo",
+    name: "editable-double-click-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot"],
-    registryDependencies: ["checkbox", "button"],
+    registryDependencies: ["button"],
     files: [
       {
-        path: "examples/editable-todo-list-demo.tsx",
+        path: "examples/editable-double-click-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -217,6 +250,18 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "editable-todo-list-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot"],
+    registryDependencies: ["checkbox", "button"],
+    files: [
+      {
+        path: "examples/editable-todo-list-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "file-upload-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot", "lucide-react", "sonner"],
@@ -224,71 +269,6 @@ export const examples: Registry["items"] = [
     files: [
       {
         path: "examples/file-upload-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "file-upload-validation-demo",
-    type: "registry:example",
-    dependencies: ["@radix-ui/react-slot", "lucide-react", "sonner"],
-    registryDependencies: ["button"],
-    files: [
-      {
-        path: "examples/file-upload-validation-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "file-upload-direct-upload-demo",
-    type: "registry:example",
-    dependencies: ["@radix-ui/react-slot", "lucide-react", "sonner"],
-    registryDependencies: ["button"],
-    files: [
-      {
-        path: "examples/file-upload-direct-upload-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "file-upload-uploadthing-demo",
-    type: "registry:example",
-    dependencies: [
-      "@radix-ui/react-slot",
-      "lucide-react",
-      "uploadthing",
-      "@uploadthing/react",
-    ],
-    registryDependencies: ["button", "lucide-react", "sonner"],
-    files: [
-      {
-        path: "examples/file-upload-uploadthing-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "file-upload-circular-progress-demo",
-    type: "registry:example",
-    dependencies: ["@radix-ui/react-slot", "lucide-react"],
-    registryDependencies: ["button", "lucide-react", "sonner"],
-    files: [
-      {
-        path: "examples/file-upload-circular-progress-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "file-upload-fill-progress-demo",
-    type: "registry:example",
-    dependencies: ["@radix-ui/react-slot", "lucide-react"],
-    registryDependencies: ["button", "lucide-react", "sonner"],
-    files: [
-      {
-        path: "examples/file-upload-fill-progress-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -318,6 +298,42 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "file-upload-circular-progress-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    registryDependencies: ["button", "lucide-react", "sonner"],
+    files: [
+      {
+        path: "examples/file-upload-circular-progress-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "file-upload-direct-upload-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "lucide-react", "sonner"],
+    registryDependencies: ["button"],
+    files: [
+      {
+        path: "examples/file-upload-direct-upload-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "file-upload-fill-progress-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    registryDependencies: ["button", "lucide-react", "sonner"],
+    files: [
+      {
+        path: "examples/file-upload-fill-progress-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "file-upload-form-demo",
     type: "registry:example",
     dependencies: [
@@ -330,6 +346,35 @@ export const examples: Registry["items"] = [
     files: [
       {
         path: "examples/file-upload-form-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "file-upload-uploadthing-demo",
+    type: "registry:example",
+    dependencies: [
+      "@radix-ui/react-slot",
+      "lucide-react",
+      "uploadthing",
+      "@uploadthing/react",
+    ],
+    registryDependencies: ["button", "lucide-react", "sonner"],
+    files: [
+      {
+        path: "examples/file-upload-uploadthing-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "file-upload-validation-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "lucide-react", "sonner"],
+    registryDependencies: ["button"],
+    files: [
+      {
+        path: "examples/file-upload-validation-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -383,16 +428,6 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "kbd-variants-demo",
-    type: "registry:example",
-    files: [
-      {
-        path: "examples/kbd-variants-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
     name: "kbd-multiple-demo",
     type: "registry:example",
     files: [
@@ -403,21 +438,21 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "listbox-demo",
+    name: "kbd-variants-demo",
     type: "registry:example",
     files: [
       {
-        path: "examples/listbox-demo.tsx",
+        path: "examples/kbd-variants-demo.tsx",
         type: "registry:example",
       },
     ],
   },
   {
-    name: "listbox-horizontal-demo",
+    name: "listbox-demo",
     type: "registry:example",
     files: [
       {
-        path: "examples/listbox-horizontal-demo.tsx",
+        path: "examples/listbox-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -438,6 +473,16 @@ export const examples: Registry["items"] = [
     files: [
       {
         path: "examples/listbox-group-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "listbox-horizontal-demo",
+    type: "registry:example",
+    files: [
+      {
+        path: "examples/listbox-horizontal-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -502,20 +547,13 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "media-player-settings-demo",
+    name: "media-player-error-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot", "lucide-react", "media-chrome"],
-    registryDependencies: [
-      "badge",
-      "button",
-      "dropdown-menu",
-      "select",
-      "slider",
-      "tooltip",
-    ],
+    registryDependencies: ["button", "slider", "tooltip"],
     files: [
       {
-        path: "examples/media-player-settings-demo.tsx",
+        path: "examples/media-player-error-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -538,18 +576,6 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "media-player-error-demo",
-    type: "registry:example",
-    dependencies: ["@radix-ui/react-slot", "lucide-react", "media-chrome"],
-    registryDependencies: ["button", "slider", "tooltip"],
-    files: [
-      {
-        path: "examples/media-player-error-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
     name: "media-player-playlist-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot", "lucide-react", "media-chrome"],
@@ -557,6 +583,25 @@ export const examples: Registry["items"] = [
     files: [
       {
         path: "examples/media-player-playlist-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "media-player-settings-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "lucide-react", "media-chrome"],
+    registryDependencies: [
+      "badge",
+      "button",
+      "dropdown-menu",
+      "select",
+      "slider",
+      "tooltip",
+    ],
+    files: [
+      {
+        path: "examples/media-player-settings-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -609,17 +654,6 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "relative-time-card-variants-demo",
-    type: "registry:example",
-    registryDependencies: ["button", "hover-card"],
-    files: [
-      {
-        path: "examples/relative-time-card-variants-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
     name: "relative-time-card-timezones-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot"],
@@ -627,6 +661,17 @@ export const examples: Registry["items"] = [
     files: [
       {
         path: "examples/relative-time-card-timezones-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "relative-time-card-variants-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "hover-card"],
+    files: [
+      {
+        path: "examples/relative-time-card-variants-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -643,23 +688,23 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "scroller-horizontal-demo",
-    type: "registry:example",
-    dependencies: ["@radix-ui/react-slot"],
-    files: [
-      {
-        path: "examples/scroller-horizontal-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
     name: "scroller-hidden-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot"],
     files: [
       {
         path: "examples/scroller-hidden-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "scroller-horizontal-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot"],
+    files: [
+      {
+        path: "examples/scroller-horizontal-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -712,24 +757,6 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "sortable-primitive-values-demo",
-    type: "registry:example",
-    dependencies: [
-      "@dnd-kit/core",
-      "@dnd-kit/modifiers",
-      "@dnd-kit/sortable",
-      "@dnd-kit/utilities",
-      "@radix-ui/react-slot",
-      "lucide-react",
-    ],
-    files: [
-      {
-        path: "examples/sortable-primitive-values-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
     name: "sortable-handle-demo",
     type: "registry:example",
     dependencies: [
@@ -744,6 +771,24 @@ export const examples: Registry["items"] = [
     files: [
       {
         path: "examples/sortable-handle-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "sortable-primitive-values-demo",
+    type: "registry:example",
+    dependencies: [
+      "@dnd-kit/core",
+      "@dnd-kit/modifiers",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+      "@radix-ui/react-slot",
+      "lucide-react",
+    ],
+    files: [
+      {
+        path: "examples/sortable-primitive-values-demo.tsx",
         type: "registry:example",
       },
     ],
