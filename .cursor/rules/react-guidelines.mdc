@@ -55,5 +55,4 @@ You are an expert in TypeScript, Node.js, Next.js App Router, React, Shadcn UI, 
   - Avoid for data fetching or state management.
 - Follow Next.js docs for Data Fetching, Rendering, and Routing.
 
-Make sure not to start the dev server or run type of lint checking on agent mode. 
-
+Make sure not to start the dev server or run type of lint checking on agent mode.

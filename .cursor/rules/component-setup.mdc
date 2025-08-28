@@ -1,0 +1,125 @@
+---
+description: DiceUI component setup pipeline for creating new components with types, examples, registry entries, and documentation
+globs: 
+alwaysApply: false
+---
+
+# DiceUI Component Setup Rule
+
+You are an expert in TypeScript, React, and DiceUI component architecture. When a user asks you to create a new component using the pattern "@setup-component [component-name]", follow this comprehensive pipeline:
+
+## Pipeline Steps
+
+### 1. Create Component Types (@docs/types/docs/[component-name].ts)
+
+- Create TypeScript interfaces for all component parts
+- Follow the pattern from existing files like `color-picker.ts`
+- Include proper JSDoc comments with examples
+- Import necessary types from UI libraries and internal types
+- Define interfaces for Root, Content, Trigger, and any specific component parts
+- Include composition props and controlled/uncontrolled patterns
+
+### 2. Create Examples (@docs/registry/default/examples/)
+
+Create these example files:
+
+- `[component-name]-demo.tsx` - Basic usage example
+- `[component-name]-controlled-demo.tsx` - Controlled state example (if applicable)
+- `[component-name]-form-demo.tsx` - Form integration example (if applicable)
+- Additional variant demos as needed
+
+### 3. Update Registry Files
+
+Update these registry files:
+
+#### @docs/registry/registry-ui.ts
+
+Add UI component entry with:
+
+- Component name
+- Dependencies (external packages)
+- Registry dependencies (internal UI components)
+- File paths for UI component and any utilities
+
+#### @docs/registry/registry-examples.ts
+
+Add example entries for each demo file created:
+
+- Component name + "-demo" suffix
+- Dependencies and registry dependencies
+- File paths
+
+### 4. Create Documentation (@docs/content/docs/components/[component-name].mdx)
+
+Create comprehensive documentation including:
+
+- Title, description, and metadata
+- ComponentTabs for demo preview
+- Installation instructions (CLI and manual)
+- Layout/composition examples
+- Multiple example sections
+- Complete API reference with AutoTypeTable for each interface
+- Accessibility section with keyboard interactions
+- Any specific notes about browser support or limitations
+
+## Implementation Guidelines
+
+### Type Definitions
+
+- Use consistent naming: `RootProps`, `TriggerProps`, `ContentProps`, etc.
+- Extend from appropriate base components (Button, Input, etc.)
+- Include CompositionProps for all component interfaces
+- Add proper JSDoc with `@default` values and `@example` usage
+- Support both controlled and uncontrolled patterns where applicable
+
+### Example Components
+
+- Import from `@/registry/default/ui/[component-name]`
+- Use default export with descriptive function name
+- Show realistic usage scenarios
+- Include proper TypeScript typing
+- Follow DiceUI component composition patterns
+
+### Registry Entries
+
+- Maintain alphabetical order in both registry files
+- Include all necessary dependencies
+- Use proper file paths relative to registry
+- Match naming conventions exactly
+
+### Documentation Structure
+
+- Follow the established MDX pattern from existing component docs
+- Use ComponentTabs for interactive previews
+- Include comprehensive API documentation
+- Add accessibility considerations
+- Provide installation and setup instructions
+
+## Example Usage
+
+When user types: `@setup-component grouped-input`
+
+You should:
+
+1. Create `/docs/types/docs/grouped-input.ts` with proper interfaces
+2. Create example files like `grouped-input-demo.tsx`, `grouped-input-form-demo.tsx`
+3. Update `registry-ui.ts` with the component entry
+4. Update `registry-examples.ts` with example entries
+5. Create `grouped-input.mdx` documentation file
+
+## Code Style
+
+- Use functional components with TypeScript
+- Follow existing patterns for imports and exports
+- Use descriptive variable names
+- Maintain consistent formatting and structure
+- Add proper error handling and accessibility features
+
+## File Organization
+
+- Keep consistent file naming (kebab-case)
+- Follow existing directory structure
+- Maintain import path consistency
+- Use proper TypeScript module organization
+
+When implementing, create all files in the correct locations and ensure they follow the established patterns from existing components like color-picker, checkbox-group, etc.
