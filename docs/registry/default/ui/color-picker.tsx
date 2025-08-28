@@ -1300,32 +1300,46 @@ function HexInput(props: FormatInputProps) {
     [color, onColorChange],
   );
 
+  if (withoutAlpha) {
+    return (
+      <div className={cn("flex", className)}>
+        <Input
+          aria-label="Hex color value"
+          placeholder="#000000"
+          className="h-8 font-mono"
+          value={hexValue}
+          onChange={onHexChange}
+          disabled={context.disabled}
+          {...inputProps}
+        />
+      </div>
+    );
+  }
+
   return (
-    <div className={cn("flex gap-2", className)}>
+    <div className={cn("flex", className)}>
       <Input
         aria-label="Hex color value"
         placeholder="#000000"
-        className="h-8 font-mono"
+        className="h-8 flex-1 rounded-e-none font-mono focus:z-10"
         value={hexValue}
         onChange={onHexChange}
         disabled={context.disabled}
         {...inputProps}
       />
-      {!withoutAlpha && (
-        <Input
-          aria-label="Alpha transparency percentage"
-          placeholder="100"
-          inputMode="numeric"
-          pattern="[0-9]*"
-          min="0"
-          max="100"
-          className="h-8 w-14"
-          value={alphaValue}
-          onChange={onAlphaChange}
-          disabled={context.disabled}
-          {...inputProps}
-        />
-      )}
+      <Input
+        aria-label="Alpha transparency percentage"
+        placeholder="100"
+        inputMode="numeric"
+        pattern="[0-9]*"
+        min="0"
+        max="100"
+        className="-ms-px h-8 w-14 rounded-s-none [-moz-appearance:_textfield] focus:z-10 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
+        value={alphaValue}
+        onChange={onAlphaChange}
+        disabled={context.disabled}
+        {...inputProps}
+      />
     </div>
   );
 }
@@ -1358,7 +1372,7 @@ function RgbInput(props: FormatInputProps) {
   );
 
   return (
-    <div className={cn("flex gap-2", className)}>
+    <div className={cn("flex", className)}>
       <Input
         aria-label="Red color component (0-255)"
         placeholder="0"
@@ -1366,7 +1380,7 @@ function RgbInput(props: FormatInputProps) {
         pattern="[0-9]*"
         min="0"
         max="255"
-        className="h-8 w-14"
+        className="h-8 w-14 rounded-e-none [-moz-appearance:_textfield] focus:z-10 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
         value={rValue}
         onChange={onChannelChange("r", 255)}
         disabled={context.disabled}
@@ -1379,7 +1393,7 @@ function RgbInput(props: FormatInputProps) {
         pattern="[0-9]*"
         min="0"
         max="255"
-        className="h-8 w-14"
+        className="-ms-px h-8 w-14 rounded-none [-moz-appearance:_textfield] focus:z-10 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
         value={gValue}
         onChange={onChannelChange("g", 255)}
         disabled={context.disabled}
@@ -1395,7 +1409,10 @@ function RgbInput(props: FormatInputProps) {
         pattern="[0-9]*"
         min="0"
         max="255"
-        className="h-8 w-14"
+        className={cn(
+          "-ms-px h-8 w-14 [-moz-appearance:_textfield] focus:z-10 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none",
+          withoutAlpha ? "rounded-s-none" : "rounded-none",
+        )}
         {...inputProps}
       />
       {!withoutAlpha && (
@@ -1406,7 +1423,7 @@ function RgbInput(props: FormatInputProps) {
           pattern="[0-9]*"
           min="0"
           max="100"
-          className="h-8 w-14"
+          className="-ms-px h-8 w-14 rounded-s-none [-moz-appearance:_textfield] focus:z-10 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
           value={alphaValue}
           onChange={onChannelChange("a", 100, true)}
           disabled={context.disabled}
@@ -1454,7 +1471,7 @@ function HslInput(props: FormatInputProps) {
   );
 
   return (
-    <div className={cn("flex gap-2", className)}>
+    <div className={cn("flex", className)}>
       <Input
         aria-label="Hue degree (0-360)"
         placeholder="0"
@@ -1462,7 +1479,7 @@ function HslInput(props: FormatInputProps) {
         pattern="[0-9]*"
         min="0"
         max="360"
-        className="h-8 w-14"
+        className="h-8 w-14 rounded-e-none [-moz-appearance:_textfield] focus:z-10 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
         value={hsl.h}
         onChange={onHslChannelChange("h", 360)}
         disabled={context.disabled}
@@ -1475,7 +1492,7 @@ function HslInput(props: FormatInputProps) {
         pattern="[0-9]*"
         min="0"
         max="100"
-        className="h-8 w-14"
+        className="-ms-px h-8 w-14 rounded-none [-moz-appearance:_textfield] focus:z-10 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
         value={hsl.s}
         onChange={onHslChannelChange("s", 100)}
         disabled={context.disabled}
@@ -1488,7 +1505,10 @@ function HslInput(props: FormatInputProps) {
         pattern="[0-9]*"
         min="0"
         max="100"
-        className="h-8 w-14"
+        className={cn(
+          "-ms-px h-8 w-14 [-moz-appearance:_textfield] focus:z-10 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none",
+          withoutAlpha ? "rounded-s-none" : "rounded-none",
+        )}
         value={hsl.l}
         onChange={onHslChannelChange("l", 100)}
         disabled={context.disabled}
@@ -1502,7 +1522,7 @@ function HslInput(props: FormatInputProps) {
           pattern="[0-9]*"
           min="0"
           max="100"
-          className="h-8 w-14"
+          className="-ms-px h-8 w-14 rounded-s-none [-moz-appearance:_textfield] focus:z-10 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
           value={alphaValue}
           onChange={onAlphaChange}
           disabled={context.disabled}
@@ -1554,7 +1574,7 @@ function HsbInput(props: HsbInputProps) {
   );
 
   return (
-    <div className={cn("flex gap-2", className)}>
+    <div className={cn("flex", className)}>
       <Input
         aria-label="Hue degree (0-360)"
         placeholder="0"
@@ -1562,7 +1582,7 @@ function HsbInput(props: HsbInputProps) {
         pattern="[0-9]*"
         min="0"
         max="360"
-        className="h-8 w-14"
+        className="h-8 w-14 rounded-e-none [-moz-appearance:_textfield] focus:z-10 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
         value={hsv?.h ?? 0}
         onChange={onHsvChannelChange("h", 360)}
         disabled={context.disabled}
@@ -1575,7 +1595,7 @@ function HsbInput(props: HsbInputProps) {
         pattern="[0-9]*"
         min="0"
         max="100"
-        className="h-8 w-14"
+        className="-ms-px h-8 w-14 rounded-none [-moz-appearance:_textfield] focus:z-10 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
         value={hsv?.s ?? 0}
         onChange={onHsvChannelChange("s", 100)}
         disabled={context.disabled}
@@ -1588,7 +1608,10 @@ function HsbInput(props: HsbInputProps) {
         pattern="[0-9]*"
         min="0"
         max="100"
-        className="h-8 w-14"
+        className={cn(
+          "-ms-px h-8 w-14 [-moz-appearance:_textfield] focus:z-10 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none",
+          withoutAlpha ? "rounded-s-none" : "rounded-none",
+        )}
         value={hsv?.v ?? 0}
         onChange={onHsvChannelChange("v", 100)}
         disabled={context.disabled}
@@ -1602,7 +1625,7 @@ function HsbInput(props: HsbInputProps) {
           pattern="[0-9]*"
           min="0"
           max="100"
-          className="h-8 w-14"
+          className="-ms-px h-8 w-14 rounded-s-none [-moz-appearance:_textfield] focus:z-10 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
           value={alphaValue}
           onChange={onAlphaChange}
           disabled={context.disabled}
