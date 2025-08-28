@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidden-input";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import { Slot } from "@radix-ui/react-slot";
+import { type VariantProps, cva } from "class-variance-authority";
 import { PipetteIcon } from "lucide-react";
 import * as React from "react";
 
@@ -808,7 +809,7 @@ function ColorPickerContent(props: ColorPickerContentProps) {
     const ContentPrimitive = asChild ? Slot : "div";
     return (
       <ContentPrimitive
-        className={cn("flex w-80 flex-col gap-4 p-4", className)}
+        className={cn("flex w-[340px] flex-col gap-4 p-4", className)}
         {...popoverContentProps}
       >
         {children}
@@ -818,7 +819,7 @@ function ColorPickerContent(props: ColorPickerContentProps) {
 
   return (
     <PopoverContent
-      className={cn("flex w-80 flex-col gap-4 p-4", className)}
+      className={cn("flex w-[340px] flex-col gap-4 p-4", className)}
       {...popoverContentProps}
     >
       {children}
@@ -897,7 +898,7 @@ function ColorPickerArea(props: ColorPickerAreaProps) {
     <AreaPrimitive
       ref={areaRef}
       className={cn(
-        "relative h-32 w-full cursor-crosshair touch-none rounded-sm border",
+        "relative h-40 w-full cursor-crosshair touch-none rounded-sm border",
         context.disabled && "pointer-events-none opacity-50",
         className,
       )}
@@ -1260,6 +1261,36 @@ function ColorPickerInput(props: ColorPickerInputProps) {
   }
 }
 
+const groupedInputVariants = cva(
+  "h-8 [-moz-appearance:_textfield] focus-visible:z-10 focus-visible:ring-1 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none",
+  {
+    variants: {
+      position: {
+        first: "rounded-e-none",
+        middle: "-ms-px rounded-none border-l-0",
+        last: "-ms-px rounded-s-none border-l-0",
+        isolated: "",
+      },
+    },
+    defaultVariants: {
+      position: "isolated",
+    },
+  },
+);
+
+interface GroupedInputProps
+  extends React.ComponentProps<typeof Input>,
+    VariantProps<typeof groupedInputVariants> {}
+
+function GroupedInput({ className, position, ...props }: GroupedInputProps) {
+  return (
+    <Input
+      className={cn(groupedInputVariants({ position }), className)}
+      {...props}
+    />
+  );
+}
+
 interface FormatInputProps extends ColorPickerInputProps {
   color: ColorValue;
   onColorChange: (color: ColorValue) => void;
@@ -1303,10 +1334,11 @@ function HexInput(props: FormatInputProps) {
   if (withoutAlpha) {
     return (
       <div className={cn("flex", className)}>
-        <Input
+        <GroupedInput
+          position="isolated"
           aria-label="Hex color value"
           placeholder="#000000"
-          className="h-8 font-mono"
+          className="font-mono"
           value={hexValue}
           onChange={onHexChange}
           disabled={context.disabled}
@@ -1318,23 +1350,25 @@ function HexInput(props: FormatInputProps) {
 
   return (
     <div className={cn("flex items-center", className)}>
-      <Input
+      <GroupedInput
+        position="first"
         aria-label="Hex color value"
         placeholder="#000000"
-        className="h-8 flex-1 rounded-e-none font-mono focus:z-10 focus-visible:ring-1"
+        className="flex-1 font-mono"
         value={hexValue}
         onChange={onHexChange}
         disabled={context.disabled}
         {...inputProps}
       />
-      <Input
+      <GroupedInput
+        position="last"
         aria-label="Alpha transparency percentage"
         placeholder="100"
         inputMode="numeric"
         pattern="[0-9]*"
         min="0"
         max="100"
-        className="-ms-px h-8 w-14 rounded-s-none border-l-0 [-moz-appearance:_textfield] focus:z-10 focus-visible:ring-1 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
+        className="w-14"
         value={alphaValue}
         onChange={onAlphaChange}
         disabled={context.disabled}
@@ -1373,33 +1407,36 @@ function RgbInput(props: FormatInputProps) {
 
   return (
     <div className={cn("flex items-center", className)}>
-      <Input
+      <GroupedInput
+        position="first"
         aria-label="Red color component (0-255)"
         placeholder="0"
         inputMode="numeric"
         pattern="[0-9]*"
         min="0"
         max="255"
-        className="h-8 w-14 rounded-e-none [-moz-appearance:_textfield] focus:z-10 focus-visible:ring-1 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
+        className="w-14"
         value={rValue}
         onChange={onChannelChange("r", 255)}
         disabled={context.disabled}
         {...inputProps}
       />
-      <Input
+      <GroupedInput
+        position="middle"
         aria-label="Green color component (0-255)"
         placeholder="0"
         inputMode="numeric"
         pattern="[0-9]*"
         min="0"
         max="255"
-        className="-ms-px h-8 w-14 rounded-none border-l-0 [-moz-appearance:_textfield] focus:z-10 focus-visible:ring-1 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
+        className="w-14"
         value={gValue}
         onChange={onChannelChange("g", 255)}
         disabled={context.disabled}
         {...inputProps}
       />
-      <Input
+      <GroupedInput
+        position={withoutAlpha ? "last" : "middle"}
         aria-label="Blue color component (0-255)"
         placeholder="0"
         value={bValue}
@@ -1409,21 +1446,19 @@ function RgbInput(props: FormatInputProps) {
         pattern="[0-9]*"
         min="0"
         max="255"
-        className={cn(
-          "-ms-px h-8 w-14 border-l-0 [-moz-appearance:_textfield] focus:z-10 focus-visible:ring-1 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none",
-          withoutAlpha ? "rounded-s-none" : "rounded-none",
-        )}
+        className="w-14"
         {...inputProps}
       />
       {!withoutAlpha && (
-        <Input
+        <GroupedInput
+          position="last"
           aria-label="Alpha transparency percentage"
           placeholder="100"
           inputMode="numeric"
           pattern="[0-9]*"
           min="0"
           max="100"
-          className="-ms-px h-8 w-14 rounded-s-none border-l-0 [-moz-appearance:_textfield] focus:z-10 focus-visible:ring-1 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
+          className="w-14"
           value={alphaValue}
           onChange={onChannelChange("a", 100, true)}
           disabled={context.disabled}
@@ -1472,57 +1507,58 @@ function HslInput(props: FormatInputProps) {
 
   return (
     <div className={cn("flex items-center", className)}>
-      <Input
+      <GroupedInput
+        position="first"
         aria-label="Hue degree (0-360)"
         placeholder="0"
         inputMode="numeric"
         pattern="[0-9]*"
         min="0"
         max="360"
-        className="h-8 w-14 rounded-e-none [-moz-appearance:_textfield] focus:z-10 focus-visible:ring-1 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
+        className="w-14"
         value={hsl.h}
         onChange={onHslChannelChange("h", 360)}
         disabled={context.disabled}
         {...inputProps}
       />
-      <Input
+      <GroupedInput
+        position="middle"
         aria-label="Saturation percentage (0-100)"
         placeholder="0"
         inputMode="numeric"
         pattern="[0-9]*"
         min="0"
         max="100"
-        className="-ms-px h-8 w-14 rounded-none border-l-0 [-moz-appearance:_textfield] focus:z-10 focus-visible:ring-1 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
+        className="w-14"
         value={hsl.s}
         onChange={onHslChannelChange("s", 100)}
         disabled={context.disabled}
         {...inputProps}
       />
-      <Input
+      <GroupedInput
+        position={withoutAlpha ? "last" : "middle"}
         aria-label="Lightness percentage (0-100)"
         placeholder="0"
         inputMode="numeric"
         pattern="[0-9]*"
         min="0"
         max="100"
-        className={cn(
-          "-ms-px h-8 w-14 border-l-0 [-moz-appearance:_textfield] focus:z-10 focus-visible:ring-1 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none",
-          withoutAlpha ? "rounded-s-none" : "rounded-none",
-        )}
+        className="w-14"
         value={hsl.l}
         onChange={onHslChannelChange("l", 100)}
         disabled={context.disabled}
         {...inputProps}
       />
       {!withoutAlpha && (
-        <Input
+        <GroupedInput
+          position="last"
           aria-label="Alpha transparency percentage"
           placeholder="100"
           inputMode="numeric"
           pattern="[0-9]*"
           min="0"
           max="100"
-          className="-ms-px h-8 w-14 rounded-s-none border-l-0 [-moz-appearance:_textfield] focus:z-10 focus-visible:ring-1 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
+          className="w-14"
           value={alphaValue}
           onChange={onAlphaChange}
           disabled={context.disabled}
@@ -1575,57 +1611,58 @@ function HsbInput(props: HsbInputProps) {
 
   return (
     <div className={cn("flex items-center", className)}>
-      <Input
+      <GroupedInput
+        position="first"
         aria-label="Hue degree (0-360)"
         placeholder="0"
         inputMode="numeric"
         pattern="[0-9]*"
         min="0"
         max="360"
-        className="h-8 w-14 rounded-e-none [-moz-appearance:_textfield] focus:z-10 focus-visible:ring-1 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
+        className="w-14"
         value={hsv?.h ?? 0}
         onChange={onHsvChannelChange("h", 360)}
         disabled={context.disabled}
         {...inputProps}
       />
-      <Input
+      <GroupedInput
+        position="middle"
         aria-label="Saturation percentage (0-100)"
         placeholder="0"
         inputMode="numeric"
         pattern="[0-9]*"
         min="0"
         max="100"
-        className="-ms-px h-8 w-14 rounded-none border-l-0 [-moz-appearance:_textfield] focus:z-10 focus-visible:ring-1 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
+        className="w-14"
         value={hsv?.s ?? 0}
         onChange={onHsvChannelChange("s", 100)}
         disabled={context.disabled}
         {...inputProps}
       />
-      <Input
+      <GroupedInput
+        position={withoutAlpha ? "last" : "middle"}
         aria-label="Brightness percentage (0-100)"
         placeholder="0"
         inputMode="numeric"
         pattern="[0-9]*"
         min="0"
         max="100"
-        className={cn(
-          "-ms-px h-8 w-14 border-l-0 [-moz-appearance:_textfield] focus:z-10 focus-visible:ring-1 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none",
-          withoutAlpha ? "rounded-s-none" : "rounded-none",
-        )}
+        className="w-14"
         value={hsv?.v ?? 0}
         onChange={onHsvChannelChange("v", 100)}
         disabled={context.disabled}
         {...inputProps}
       />
       {!withoutAlpha && (
-        <Input
+        <GroupedInput
+          position="last"
           aria-label="Alpha transparency percentage"
           placeholder="100"
           inputMode="numeric"
           pattern="[0-9]*"
           min="0"
           max="100"
-          className="-ms-px h-8 w-14 rounded-s-none border-l-0 [-moz-appearance:_textfield] focus:z-10 focus-visible:ring-1 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
+          className="w-14"
           value={alphaValue}
           onChange={onAlphaChange}
           disabled={context.disabled}
