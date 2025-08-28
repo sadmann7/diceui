@@ -14,7 +14,7 @@ function getElementRef(element: React.ReactElement) {
   let getter = Object.getOwnPropertyDescriptor(element.props, "ref")?.get;
   let mayWarn = getter && "isReactWarning" in getter && getter.isReactWarning;
   if (mayWarn) {
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    // biome-ignore lint/suspicious/noExplicitAny: accessing internal React ref property
     return (element as any).ref;
   }
 
@@ -27,7 +27,7 @@ function getElementRef(element: React.ReactElement) {
 
   // Not DEV
   return (
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    // biome-ignore lint/suspicious/noExplicitAny: accessing internal React ref property
     (element.props as { ref?: React.Ref<unknown> }).ref || (element as any).ref
   );
 }

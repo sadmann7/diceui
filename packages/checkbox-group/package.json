@@ -5,7 +5,11 @@
   "publishConfig": {
     "access": "public"
   },
-  "keywords": ["checkbox-group", "checkbox", "react-checkbox-group"],
+  "keywords": [
+    "checkbox-group",
+    "checkbox",
+    "react-checkbox-group"
+  ],
   "author": "Sadman Sakib",
   "license": "MIT",
   "repository": {
@@ -23,7 +27,11 @@
       "require": "./dist/index.cjs"
     }
   },
-  "files": ["dist", "package.json", "README.md"],
+  "files": [
+    "dist",
+    "package.json",
+    "README.md"
+  ],
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup --clean",

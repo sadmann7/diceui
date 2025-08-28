@@ -1,5 +1,9 @@
 "use client";
 
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { ChevronDown } from "lucide-react";
+import * as React from "react";
+import { useDeferredValue } from "react";
 import {
   Combobox,
   ComboboxAnchor,
@@ -10,10 +14,6 @@ import {
   ComboboxLabel,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
-import { useVirtualizer } from "@tanstack/react-virtual";
-import { ChevronDown } from "lucide-react";
-import * as React from "react";
-import { useDeferredValue } from "react";
 
 interface Option {
   label: string;

@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import {
   ColorPicker,
   ColorPickerAlphaSlider,
@@ -10,7 +11,6 @@ import {
   ColorPickerInput,
   ColorPickerSwatch,
 } from "@/registry/default/ui/color-picker";
-import * as React from "react";
 
 export default function ColorPickerInlineDemo() {
   const [color, setColor] = React.useState("#f59e0b");

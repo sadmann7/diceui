@@ -1,4 +1,4 @@
-import { Primitive, composeEventHandlers } from "@diceui/shared";
+import { composeEventHandlers, Primitive } from "@diceui/shared";
 import * as React from "react";
 import { useTagsInputItem } from "./tags-input-item";
 import { useTagsInput } from "./tags-input-root";
@@ -31,7 +31,7 @@ const TagsInputItemDelete = React.forwardRef<
       ref={ref}
       onClick={composeEventHandlers(props.onClick, () => {
         if (disabled) return;
-        const index = context.value.findIndex((i) => i === itemContext.value);
+        const index = context.value.indexOf(itemContext.value);
         context.onItemRemove(index);
       })}
     />

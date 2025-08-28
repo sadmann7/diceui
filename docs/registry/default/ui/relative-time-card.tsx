@@ -1,18 +1,18 @@
 "use client";
 
+import type {
+  HoverCardContentProps,
+  HoverCardProps,
+} from "@radix-ui/react-hover-card";
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
+import * as React from "react";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { cn } from "@/lib/utils";
-import type {
-  HoverCardContentProps,
-  HoverCardProps,
-} from "@radix-ui/react-hover-card";
-import { Slot } from "@radix-ui/react-slot";
-import { type VariantProps, cva } from "class-variance-authority";
-import * as React from "react";
 
 function pluralize(n: number, word: string) {
   return `${n} ${word}${n === 1 ? "" : "s"}`;
@@ -90,6 +90,7 @@ function TimezoneCard(props: TimezoneCardProps) {
 
   return (
     <div
+      role="region"
       aria-label={`Time in ${timezoneName}: ${formattedDate} ${formattedTime}`}
       {...cardProps}
       className="flex items-center justify-between gap-2 text-muted-foreground text-sm"

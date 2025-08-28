@@ -380,6 +380,54 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "input-group-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    registryDependencies: ["input-group"],
+    files: [
+      {
+        path: "examples/input-group-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "input-group-form-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    registryDependencies: ["button", "input-group"],
+    files: [
+      {
+        path: "examples/input-group-form-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "input-group-rgb-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    registryDependencies: ["input-group"],
+    files: [
+      {
+        path: "examples/input-group-rgb-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "input-group-vertical-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    registryDependencies: ["input-group"],
+    files: [
+      {
+        path: "examples/input-group-vertical-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "kanban-demo",
     type: "registry:example",
     dependencies: [

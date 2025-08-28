@@ -1,4 +1,4 @@
-import { promises as fs, existsSync, readFileSync } from "node:fs";
+import { existsSync, promises as fs, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { cwd } from "node:process";
@@ -71,7 +71,7 @@ export const Index: Record<string, any> = {
       const type = item.type.split(":")[1];
       let sourceFilename = "";
 
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      // biome-ignore lint/suspicious/noExplicitAny: chunks can contain various types from AST parsing
       let chunks: any = [];
       if (item.type === "registry:block") {
         const file = resolveFiles[0];
@@ -377,7 +377,7 @@ async function buildStyles(registry: Registry) {
         continue;
       }
 
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      // biome-ignore lint/suspicious/noExplicitAny: files array can contain various registry item types
       let files: any[] = [];
       if (item.files) {
         files = await Promise.all(
@@ -532,7 +532,7 @@ async function buildThemes() {
     await fs.mkdir(colorsTargetPath, { recursive: true });
   }
 
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: color data structure varies by color type
   const colorsData: Record<string, any> = {};
   for (const [color, value] of Object.entries(colors)) {
     if (typeof value === "string") {
@@ -649,7 +649,7 @@ async function buildThemes() {
 }`;
 
   for (const baseColor of ["slate", "gray", "zinc", "neutral", "stone"]) {
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    // biome-ignore lint/suspicious/noExplicitAny: color data structure varies by color type
     const base: Record<string, any> = {
       inlineColors: {},
       cssVars: {},
@@ -671,8 +671,8 @@ async function buildThemes() {
           const [resolvedBase, scale] = resolvedColor.split("-");
           const color = scale
             ? colorsData[resolvedBase].find(
-                // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-                (item: any) => item.scale === Number.parseInt(scale),
+                // biome-ignore lint/suspicious/noExplicitAny: color items have dynamic structure
+                (item: any) => item.scale === Number.parseInt(scale, 10),
               )
             : colorsData[resolvedBase];
           if (color) {
@@ -765,7 +765,7 @@ async function buildThemes() {
     const themeCSS = [];
     for (const theme of baseColors) {
       themeCSS.push(
-        // @ts-ignore
+        // @ts-expect-error
         createTemplate(THEME_STYLES_WITH_VARIABLES)({
           colors: theme.cssVars,
           theme: theme.name,
@@ -784,7 +784,7 @@ async function buildThemes() {
     // ----------------------------------------------------------------------------
     rimraf.sync(path.join(REGISTRY_PATH, "themes"));
     for (const baseColor of ["slate", "gray", "zinc", "neutral", "stone"]) {
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      // biome-ignore lint/suspicious/noExplicitAny: theme payload structure varies by theme type
       const payload: Record<string, any> = {
         name: baseColor,
         label: baseColor.charAt(0).toUpperCase() + baseColor.slice(1),
@@ -800,8 +800,8 @@ async function buildThemes() {
             const [resolvedBase, scale] = resolvedColor.split("-");
             const color = scale
               ? colorsData[resolvedBase].find(
-                  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-                  (item: any) => item.scale === Number.parseInt(scale),
+                  // biome-ignore lint/suspicious/noExplicitAny: color items have dynamic structure
+                  (item: any) => item.scale === Number.parseInt(scale, 10),
                 )
               : colorsData[resolvedBase];
             if (color) {

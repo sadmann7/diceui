@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  TagsInput,
-  TagsInputInput,
-  TagsInputItem,
-  TagsInputLabel,
-  TagsInputList,
-} from "@/registry/default/ui/tags-input";
+import { MouseSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
 import * as React from "react";
 
 import {
@@ -15,8 +9,13 @@ import {
   SortableItem,
   SortableOverlay,
 } from "@/registry/default/ui/sortable";
-
-import { MouseSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
+import {
+  TagsInput,
+  TagsInputInput,
+  TagsInputItem,
+  TagsInputLabel,
+  TagsInputList,
+} from "@/registry/default/ui/tags-input";
 
 export default function TagsInputSortableDemo() {
   const [tricks, setTricks] = React.useState(["The 900", "FS 540"]);

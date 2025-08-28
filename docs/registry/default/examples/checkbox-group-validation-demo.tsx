@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import {
   CheckboxGroup,
   CheckboxGroupDescription,
@@ -8,7 +9,6 @@ import {
   CheckboxGroupList,
   CheckboxGroupMessage,
 } from "@/registry/default/ui/checkbox-group";
-import * as React from "react";
 
 export default function CheckboxGroupValidationDemo() {
   const [tricks, setTricks] = React.useState<string[]>(["stalefish", "fs-540"]);

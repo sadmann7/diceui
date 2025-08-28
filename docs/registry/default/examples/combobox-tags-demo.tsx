@@ -1,5 +1,7 @@
 "use client";
 
+import { ChevronDown } from "lucide-react";
+import * as React from "react";
 import {
   Combobox,
   ComboboxAnchor,
@@ -16,8 +18,6 @@ import {
   TagsInputInput,
   TagsInputItem,
 } from "@/registry/default/ui/tags-input";
-import { ChevronDown } from "lucide-react";
-import * as React from "react";
 
 const tricks = [
   "Kickflip",

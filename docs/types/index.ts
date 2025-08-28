@@ -16,6 +16,8 @@ export interface CompositionProps {
   asChild?: boolean;
 }
 
+export type Direction = "ltr" | "rtl";
+
 import type { ClientUploadedFileData } from "uploadthing/types";
 
 export interface UploadedFile<T = unknown> extends ClientUploadedFileData<T> {}

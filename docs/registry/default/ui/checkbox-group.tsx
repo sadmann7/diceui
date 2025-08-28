@@ -1,7 +1,7 @@
-import { cn } from "@/lib/utils";
 import * as CheckboxGroupPrimitive from "@diceui/checkbox-group";
 import { Check } from "lucide-react";
 import * as React from "react";
+import { cn } from "@/lib/utils";
 
 const CheckboxGroup = React.forwardRef<
   React.ComponentRef<typeof CheckboxGroupPrimitive.Root>,

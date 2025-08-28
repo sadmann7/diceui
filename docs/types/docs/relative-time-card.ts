@@ -1,8 +1,8 @@
-import type { CompositionProps, EmptyProps } from "@/types";
 import type {
   HoverCardContentProps,
   HoverCardProps,
 } from "@radix-ui/react-hover-card";
+import type { CompositionProps, EmptyProps } from "@/types";
 
 export interface RelativeTimeCardProps
   extends EmptyProps<"button">,

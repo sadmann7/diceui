@@ -1,5 +1,8 @@
 "use client";
 
+import { ChevronDown } from "lucide-react";
+import { matchSorter } from "match-sorter";
+import * as React from "react";
 import {
   Combobox,
   ComboboxAnchor,
@@ -10,9 +13,6 @@ import {
   ComboboxLabel,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
-import { ChevronDown } from "lucide-react";
-import { matchSorter } from "match-sorter";
-import * as React from "react";
 
 const tricks = [
   { label: "Kickflip", value: "kickflip" },

@@ -86,6 +86,18 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "input-group",
+    type: "registry:ui",
+    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    registryDependencies: ["input"],
+    files: [
+      {
+        path: "ui/input-group.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "kanban",
     type: "registry:ui",
     dependencies: [

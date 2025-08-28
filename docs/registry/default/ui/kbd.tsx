@@ -1,7 +1,7 @@
-import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
-import { type VariantProps, cva } from "class-variance-authority";
+import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
+import { cn } from "@/lib/utils";
 
 const kbdVariants = cva(
   "inline-flex w-fit items-center gap-1 font-medium font-mono text-[10px] text-foreground/70 sm:text-[11px]",

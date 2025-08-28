@@ -1,7 +1,7 @@
 "use client";
 
-import * as Sortable from "@/registry/default/ui/sortable";
 import * as React from "react";
+import * as Sortable from "@/registry/default/ui/sortable";
 
 interface Trick {
   id: string;

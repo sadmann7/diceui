@@ -1,8 +1,8 @@
 "use client";
 
-import { useComposedRefs } from "@/lib/compose-refs";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
+import { useComposedRefs } from "@/lib/compose-refs";
 
 const NODE_COLOR = {
   RED: 0,

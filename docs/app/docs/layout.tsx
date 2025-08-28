@@ -1,5 +1,5 @@
-import { docsOptions } from "@/config/layout";
 import { DocsLayout as DocsLayoutImpl } from "fumadocs-ui/layouts/docs";
+import { docsOptions } from "@/config/layout";
 
 interface DocsLayoutProps {
   children: React.ReactNode;

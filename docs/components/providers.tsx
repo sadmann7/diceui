@@ -1,10 +1,10 @@
 "use client";
 
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { RootProvider } from "fumadocs-ui/provider";
 import type { RootProviderProps } from "fumadocs-ui/provider/base";
-import { Provider as JotaiProvider, createStore } from "jotai";
+import { createStore, Provider as JotaiProvider } from "jotai";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const store = createStore();
 

@@ -21,9 +21,9 @@ function createContext<T extends object | null>(
     const { children, ...contextValue } = props;
 
     // Memoize the context value by its values
-    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     const value = React.useMemo(
       () => contextValue,
+      // biome-ignore lint/correctness/useExhaustiveDependencies: we want to memoize by all values
       Object.values(contextValue),
     ) as T;
 

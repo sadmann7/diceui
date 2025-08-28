@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import {
   FileArchiveIcon,
@@ -12,6 +11,7 @@ import {
   FileVideoIcon,
 } from "lucide-react";
 import * as React from "react";
+import { cn } from "@/lib/utils";
 
 const ROOT_NAME = "FileUpload";
 const DROPZONE_NAME = "FileUploadDropzone";
@@ -404,6 +404,47 @@ function FileUploadRoot(props: FileUploadRootProps) {
     };
   }, [files, urlCache]);
 
+  const onFilesUpload = React.useCallback(
+    async (files: File[]) => {
+      try {
+        for (const file of files) {
+          store.dispatch({ type: "SET_PROGRESS", file, progress: 0 });
+        }
+
+        if (onUpload) {
+          await onUpload(files, {
+            onProgress,
+            onSuccess: (file) => {
+              store.dispatch({ type: "SET_SUCCESS", file });
+            },
+            onError: (file, error) => {
+              store.dispatch({
+                type: "SET_ERROR",
+                file,
+                error: error.message ?? "Upload failed",
+              });
+            },
+          });
+        } else {
+          for (const file of files) {
+            store.dispatch({ type: "SET_SUCCESS", file });
+          }
+        }
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Upload failed";
+        for (const file of files) {
+          store.dispatch({
+            type: "SET_ERROR",
+            file,
+            error: errorMessage,
+          });
+        }
+      }
+    },
+    [store, onUpload, onProgress],
+  );
+
   const onFilesChange = React.useCallback(
     (originalFiles: File[]) => {
       if (disabled) return;
@@ -527,6 +568,7 @@ function FileUploadRoot(props: FileUploadRootProps) {
       onAccept,
       onFileAccept,
       onUpload,
+      onFilesUpload,
       maxFiles,
       onFileValidate,
       onFileReject,
@@ -534,47 +576,6 @@ function FileUploadRoot(props: FileUploadRootProps) {
       maxSize,
       disabled,
     ],
-  );
-
-  const onFilesUpload = React.useCallback(
-    async (files: File[]) => {
-      try {
-        for (const file of files) {
-          store.dispatch({ type: "SET_PROGRESS", file, progress: 0 });
-        }
-
-        if (onUpload) {
-          await onUpload(files, {
-            onProgress,
-            onSuccess: (file) => {
-              store.dispatch({ type: "SET_SUCCESS", file });
-            },
-            onError: (file, error) => {
-              store.dispatch({
-                type: "SET_ERROR",
-                file,
-                error: error.message ?? "Upload failed",
-              });
-            },
-          });
-        } else {
-          for (const file of files) {
-            store.dispatch({ type: "SET_SUCCESS", file });
-          }
-        }
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Upload failed";
-        for (const file of files) {
-          store.dispatch({
-            type: "SET_ERROR",
-            file,
-            error: errorMessage,
-          });
-        }
-      }
-    },
-    [store, onUpload, onProgress],
   );
 
   const onInputChange = React.useCallback(
@@ -1091,6 +1092,7 @@ function FileUploadItemPreview(props: FileUploadItemPreviewProps) {
         }
 
         return (
+          // biome-ignore lint/performance/noImgElement: dynamic file URLs from user uploads don't work well with Next.js Image optimization
           <img src={url} alt={file.name} className="size-full object-cover" />
         );
       }

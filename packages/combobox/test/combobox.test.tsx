@@ -44,7 +44,6 @@ describe("Combobox", () => {
     const {
       value,
       multiple,
-      children,
       badgeListOrientation = "horizontal",
       ...comboboxProps
     } = props;

@@ -1,3 +1,4 @@
+import MuxVideo from "@mux/mux-video-react";
 import {
   MediaPlayer,
   MediaPlayerCaptions,
@@ -17,7 +18,6 @@ import {
   MediaPlayerVolume,
   MediaPlayerVolumeIndicator,
 } from "@/registry/default/ui/media-player";
-import MuxVideo from "@mux/mux-video-react";
 
 export default function MediaPlayerHlsDemo() {
   return (

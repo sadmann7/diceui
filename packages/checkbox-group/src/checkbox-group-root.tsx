@@ -1,8 +1,8 @@
 import {
+  createContext,
   type Direction,
   type Orientation,
   Primitive,
-  createContext,
   useControllableState,
   useDirection,
   useId,
@@ -67,9 +67,6 @@ interface CheckboxGroupRootProps
    */
   required?: boolean;
 
-  /** The name of the checkbox group for form submission. */
-  name?: string;
-
   /**
    * The reading direction of the checkbox group.
    * @default "ltr"
@@ -98,7 +95,6 @@ const CheckboxGroupRoot = React.forwardRef<
     required = false,
     dir: dirProp,
     orientation = "vertical",
-    name,
     children,
     ...rootProps
   } = props;

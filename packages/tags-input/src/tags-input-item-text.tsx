@@ -61,7 +61,7 @@ function TagsInputEditableItemText() {
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (event.key === "Enter") {
-        const index = context.value.findIndex((v) => v === itemContext.value);
+        const index = context.value.indexOf(itemContext.value);
         context.onItemUpdate(index, editValue);
       } else if (event.key === "Escape") {
         setEditValue(itemContext.displayValue);

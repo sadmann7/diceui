@@ -1,9 +1,9 @@
 import {
-  DATA_ITEM_ATTR,
-  Primitive,
   composeEventHandlers,
   createContext,
+  DATA_ITEM_ATTR,
   dispatchDiscreteCustomEvent,
+  Primitive,
   useComposedRefs,
   useId,
   useIsomorphicLayoutEffect,

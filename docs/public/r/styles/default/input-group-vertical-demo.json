@@ -1,0 +1,19 @@
+{
+  "name": "input-group-vertical-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@radix-ui/react-slot",
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "input-group"
+  ],
+  "files": [
+    {
+      "path": "examples/input-group-vertical-demo.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport * as InputGroup from \"@/registry/default/ui/input-group\";\n\nexport default function InputGroupVerticalDemo() {\n  const [address, setAddress] = React.useState({\n    street: \"\",\n    city: \"\",\n    zipCode: \"\",\n  });\n\n  const onFieldChange =\n    (field: keyof typeof address) =>\n    (event: React.ChangeEvent<HTMLInputElement>) => {\n      setAddress((prev) => ({\n        ...prev,\n        [field]: event.target.value,\n      }));\n    };\n\n  return (\n    <div className=\"flex flex-col gap-4\">\n      <div className=\"flex flex-col gap-2\">\n        <label className=\"font-medium text-sm leading-none\">\n          Mailing Address\n        </label>\n        <InputGroup.Root\n          className=\"w-full max-w-sm\"\n          orientation=\"vertical\"\n          aria-label=\"Mailing address input\"\n        >\n          <InputGroup.Item\n            position=\"first\"\n            placeholder=\"Street Address\"\n            value={address.street}\n            onChange={onFieldChange(\"street\")}\n            aria-label=\"Street address\"\n          />\n          <InputGroup.Item\n            position=\"middle\"\n            placeholder=\"City\"\n            value={address.city}\n            onChange={onFieldChange(\"city\")}\n            aria-label=\"City\"\n          />\n          <InputGroup.Item\n            position=\"last\"\n            placeholder=\"ZIP Code\"\n            value={address.zipCode}\n            onChange={onFieldChange(\"zipCode\")}\n            aria-label=\"ZIP code\"\n          />\n        </InputGroup.Root>\n      </div>\n      <p className=\"text-muted-foreground text-sm\">\n        Use arrow keys (up/down) to navigate between fields in vertical\n        orientation.\n      </p>\n    </div>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

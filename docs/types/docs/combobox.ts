@@ -1,4 +1,3 @@
-import type { ControlledProps } from "@/types";
 import type {
   ComboboxAnchorProps,
   ComboboxArrowProps,
@@ -22,6 +21,7 @@ import type {
   ComboboxTriggerProps,
 } from "@diceui/combobox";
 import type * as React from "react";
+import type { ControlledProps } from "@/types";
 
 export type RootProps<Multiple extends boolean = false> = Omit<
   ComboboxRootProps<Multiple>,

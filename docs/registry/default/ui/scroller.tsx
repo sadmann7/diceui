@@ -1,9 +1,7 @@
 "use client";
 
-import { useComposedRefs } from "@/lib/compose-refs";
-import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
-import { type VariantProps, cva } from "class-variance-authority";
+import { cva, type VariantProps } from "class-variance-authority";
 import {
   ChevronDown,
   ChevronLeft,
@@ -11,6 +9,8 @@ import {
   ChevronUp,
 } from "lucide-react";
 import * as React from "react";
+import { useComposedRefs } from "@/lib/compose-refs";
+import { cn } from "@/lib/utils";
 
 const DATA_TOP_SCROLL = "data-top-scroll";
 const DATA_BOTTOM_SCROLL = "data-bottom-scroll";

@@ -1,9 +1,9 @@
 import {
-  DATA_ITEM_ATTR,
-  Primitive,
   composeEventHandlers,
   composeRefs,
   createContext,
+  DATA_ITEM_ATTR,
+  Primitive,
   useId,
   useIsomorphicLayoutEffect,
 } from "@diceui/shared";

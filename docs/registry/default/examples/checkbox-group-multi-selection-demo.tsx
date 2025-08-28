@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import {
   CheckboxGroup,
   CheckboxGroupDescription,
@@ -7,7 +8,6 @@ import {
   CheckboxGroupLabel,
   CheckboxGroupList,
 } from "@/registry/default/ui/checkbox-group";
-import * as React from "react";
 
 const tricks = [
   { label: "Kickflip", value: "kickflip" },

@@ -1,5 +1,15 @@
 "use client";
 
+import {
+  ListMusicIcon,
+  Loader2Icon,
+  PauseCircleIcon,
+  PlayCircleIcon,
+  SkipBackIcon,
+  SkipForwardIcon,
+} from "lucide-react";
+import * as React from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
@@ -13,16 +23,6 @@ import {
   MediaPlayerTooltip,
   MediaPlayerVolume,
 } from "@/registry/default/ui/media-player";
-import {
-  ListMusicIcon,
-  Loader2Icon,
-  PauseCircleIcon,
-  PlayCircleIcon,
-  SkipBackIcon,
-  SkipForwardIcon,
-} from "lucide-react";
-import * as React from "react";
-import { toast } from "sonner";
 
 interface Track {
   id: string;
@@ -64,24 +64,6 @@ export default function MediaPlayerPlaylistDemo() {
     setIsPlaying(false);
   }, []);
 
-  const onEnded = React.useCallback(() => {
-    onNextTrack();
-  }, []);
-
-  const onAudioPlay = React.useCallback(async () => {
-    if (!audioRef.current) return;
-
-    try {
-      await audioRef.current.play();
-      setIsPlaying(true);
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to play track",
-      );
-      setIsPlaying(false);
-    }
-  }, []);
-
   const onLoadAndPlayTrack = React.useCallback(
     async (index: number, shouldPlay = true) => {
       const trackToPlay = tracks[index];
@@ -113,27 +95,48 @@ export default function MediaPlayerPlaylistDemo() {
     [onLoadAndPlayTrack],
   );
 
-  const onTogglePlayPauseTrack = (index: number) => {
-    if (index === currentTrackIndex) {
-      if (isPlaying) {
-        audioRef.current?.pause();
-      } else {
-        onAudioPlay();
-      }
-    } else {
-      onPlayTrack(index);
-    }
-  };
+  const onPreviousTrack = React.useCallback(() => {
+    const prevIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+    onPlayTrack(prevIndex);
+  }, [currentTrackIndex, onPlayTrack]);
 
   const onNextTrack = React.useCallback(() => {
     const nextIndex = (currentTrackIndex + 1) % tracks.length;
     onPlayTrack(nextIndex);
   }, [currentTrackIndex, onPlayTrack]);
 
-  const onPreviousTrack = React.useCallback(() => {
-    const prevIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
-    onPlayTrack(prevIndex);
-  }, [currentTrackIndex, onPlayTrack]);
+  const onEnded = React.useCallback(() => {
+    onNextTrack();
+  }, [onNextTrack]);
+
+  const onAudioPlay = React.useCallback(async () => {
+    if (!audioRef.current) return;
+
+    try {
+      await audioRef.current.play();
+      setIsPlaying(true);
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to play track",
+      );
+      setIsPlaying(false);
+    }
+  }, []);
+
+  const onTogglePlayPauseTrack = React.useCallback(
+    (index: number) => {
+      if (index === currentTrackIndex) {
+        if (isPlaying) {
+          audioRef.current?.pause();
+        } else {
+          onAudioPlay();
+        }
+      } else {
+        onPlayTrack(index);
+      }
+    },
+    [currentTrackIndex, isPlaying, onAudioPlay, onPlayTrack],
+  );
 
   const currentTrack = React.useMemo(
     () => tracks[currentTrackIndex],
@@ -223,6 +226,7 @@ export default function MediaPlayerPlaylistDemo() {
       />
       <div className="flex w-full flex-col items-center gap-4 md:items-start">
         <div className="relative w-full overflow-hidden rounded-md rounded-b-none border-b">
+          {/* biome-ignore lint/performance/noImgElement: dynamic cover URLs from playlist tracks don't work well with Next.js Image optimization */}
           <img
             src={currentTrack.cover}
             alt={currentTrack.title}
@@ -258,6 +262,7 @@ export default function MediaPlayerPlaylistDemo() {
                 onClick={() => onTogglePlayPauseTrack(index)}
                 disabled={isLoading}
               >
+                {/* biome-ignore lint/performance/noImgElement: dynamic cover URLs from playlist tracks don't work well with Next.js Image optimization */}
                 <img
                   src={track.cover}
                   alt={track.title}

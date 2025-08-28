@@ -1,19 +1,18 @@
-import * as React from "react";
-
 import {
+  composeEventHandlers,
+  createContext,
   DATA_ITEM_ATTR,
   type Direction,
   Primitive,
-  VisuallyHiddenInput,
-  composeEventHandlers,
-  createContext,
   useComposedRefs,
   useControllableState,
   useDirection,
   useFormControl,
   useId,
   useItemCollection,
+  VisuallyHiddenInput,
 } from "@diceui/shared";
+import * as React from "react";
 import type { TagsInputInput } from "./tags-input-input";
 
 type InputValue = string;
@@ -145,13 +144,12 @@ interface TagsInputRootProps<T = InputValue>
   /**
    * The content of the tags input.
    *
-   * Can be a function that receives the current value as an argument,
-   * or a React node.
+   * Can be a React node or a function that receives the current value as an argument.
    * @default undefined
    */
   children?:
-    | ((context: { value: InputValue[] }) => React.ReactNode)
-    | React.ReactNode;
+    | React.ReactNode
+    | ((context: { value: InputValue[] }) => React.ReactNode);
 
   /**
    * The reading direction of the tags input.
@@ -207,7 +205,7 @@ const TagsInputRoot = React.forwardRef<
   const collectionRef = React.useRef<CollectionElement>(null);
   const inputRef = React.useRef<InputElement>(null);
 
-  const id = useId();
+  const id = useId(idProp);
   const inputId = useId();
   const labelId = useId();
 
@@ -577,7 +575,7 @@ const TagsInputRoot = React.forwardRef<
           }
         })}
       >
-        {typeof children === "function" ? <>{children({ value })}</> : children}
+        {typeof children === "function" ? children({ value }) : children}
         {isFormControl && name && (
           <VisuallyHiddenInput
             type="hidden"

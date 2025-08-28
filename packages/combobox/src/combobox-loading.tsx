@@ -25,12 +25,10 @@ interface ComboboxLoadingProps
 const ComboboxLoading = React.forwardRef<HTMLDivElement, ComboboxLoadingProps>(
   (props, forwardedRef) => {
     const context = useComboboxContext(LOADING_NAME);
-
-    if (!context.open) return null;
-
     const { value, max, label, ...progressProps } = props;
     const progress = useProgress({ value, max });
 
+    if (!context.open) return null;
     if (progress.state === "complete") return null;
 
     return (

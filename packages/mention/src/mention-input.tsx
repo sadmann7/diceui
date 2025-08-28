@@ -1,6 +1,6 @@
 import {
-  Primitive,
   composeEventHandlers,
+  Primitive,
   useComposedRefs,
 } from "@diceui/shared";
 import * as React from "react";
@@ -45,7 +45,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
 
     const getLineHeight = React.useCallback((input: InputElement) => {
       const style = window.getComputedStyle(input);
-      return Number.parseInt(style.lineHeight) ?? input.offsetHeight;
+      return Number.parseInt(style.lineHeight, 10) ?? input.offsetHeight;
     }, []);
 
     const calculatePosition = React.useCallback(

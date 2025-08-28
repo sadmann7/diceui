@@ -2,7 +2,7 @@
  * @see https://github.com/shadcn-ui/ui/blob/main/apps/www/components/page-header.tsx
  */
 
-import { type VariantProps, cva } from "class-variance-authority";
+import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 

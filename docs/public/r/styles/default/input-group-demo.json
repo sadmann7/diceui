@@ -1,0 +1,19 @@
+{
+  "name": "input-group-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@radix-ui/react-slot",
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "input-group"
+  ],
+  "files": [
+    {
+      "path": "examples/input-group-demo.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport * as InputGroup from \"@/registry/default/ui/input-group\";\n\nexport default function InputGroupDemo() {\n  const [values, setValues] = React.useState({\n    first: \"\",\n    second: \"\",\n    third: \"\",\n  });\n\n  const onValueChange =\n    (field: keyof typeof values) =>\n    (event: React.ChangeEvent<HTMLInputElement>) => {\n      setValues((prev) => ({\n        ...prev,\n        [field]: event.target.value,\n      }));\n    };\n\n  return (\n    <div className=\"flex flex-col gap-2\">\n      <label className=\"font-medium text-sm leading-none\">\n        Enter your details\n      </label>\n      <InputGroup.Root className=\"w-full max-w-sm\">\n        <InputGroup.Item\n          position=\"first\"\n          placeholder=\"First\"\n          value={values.first}\n          onChange={onValueChange(\"first\")}\n          aria-label=\"First name\"\n        />\n        <InputGroup.Item\n          position=\"middle\"\n          placeholder=\"Second\"\n          value={values.second}\n          onChange={onValueChange(\"second\")}\n          aria-label=\"Middle name\"\n        />\n        <InputGroup.Item\n          position=\"last\"\n          placeholder=\"Third\"\n          value={values.third}\n          onChange={onValueChange(\"third\")}\n          aria-label=\"Last name\"\n        />\n      </InputGroup.Root>\n    </div>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

@@ -5,9 +5,8 @@ import type {
   DropAnimation,
   UniqueIdentifier,
 } from "@dnd-kit/core";
-
-import type { CompositionProps, EmptyProps } from "@/types";
 import type { SortableContextProps } from "@dnd-kit/sortable";
+import type { CompositionProps, EmptyProps } from "@/types";
 
 export interface RootProps<TData> extends DndContextProps {
   /**

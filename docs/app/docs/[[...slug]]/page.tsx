@@ -1,6 +1,3 @@
-import { DynamicLink } from "@/components/dynamic-link";
-import { Mdx } from "@/components/mdx-components";
-import { source } from "@/lib/source";
 import {
   DocsBody,
   DocsDescription,
@@ -9,6 +6,9 @@ import {
 } from "fumadocs-ui/page";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { DynamicLink } from "@/components/dynamic-link";
+import { Mdx } from "@/components/mdx-components";
+import { source } from "@/lib/source";
 
 interface DocPageParams {
   params: Promise<{

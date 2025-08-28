@@ -1,5 +1,9 @@
 "use client";
 
+import { Upload, X } from "lucide-react";
+import * as React from "react";
+import { toast } from "sonner";
+import { UploadThingError } from "uploadthing/server";
 import { Button } from "@/components/ui/button";
 import { uploadFiles } from "@/lib/uploadthing";
 import {
@@ -14,10 +18,6 @@ import {
   type FileUploadProps,
   FileUploadTrigger,
 } from "@/registry/default/ui/file-upload";
-import { Upload, X } from "lucide-react";
-import * as React from "react";
-import { toast } from "sonner";
-import { UploadThingError } from "uploadthing/server";
 
 export default function FileUploadUploadThingDemo() {
   const [isUploading, setIsUploading] = React.useState(false);

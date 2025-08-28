@@ -1,4 +1,3 @@
-import type { CompositionProps, EmptyProps } from "@/types";
 import type {
   DndContextProps,
   DragEndEvent,
@@ -7,6 +6,7 @@ import type {
   UniqueIdentifier,
 } from "@dnd-kit/core";
 import type { SortableContextProps } from "@dnd-kit/sortable";
+import type { CompositionProps, EmptyProps } from "@/types";
 
 export interface RootProps<T> extends DndContextProps {
   /**

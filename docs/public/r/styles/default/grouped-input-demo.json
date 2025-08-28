@@ -1,0 +1,18 @@
+{
+  "name": "grouped-input-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "input"
+  ],
+  "files": [
+    {
+      "path": "examples/grouped-input-demo.tsx",
+      "content": "\"use client\";\n\nimport { GroupedInput } from \"@/registry/default/ui/grouped-input\";\nimport * as React from \"react\";\n\nexport default function GroupedInputDemo() {\n  const [values, setValues] = React.useState({\n    first: \"\",\n    second: \"\",\n    third: \"\",\n  });\n\n  const onValueChange =\n    (field: keyof typeof values) =>\n    (event: React.ChangeEvent<HTMLInputElement>) => {\n      setValues((prev) => ({\n        ...prev,\n        [field]: event.target.value,\n      }));\n    };\n\n  return (\n    <div className=\"flex w-full max-w-sm items-center space-x-0\">\n      <GroupedInput\n        position=\"first\"\n        placeholder=\"First\"\n        value={values.first}\n        onChange={onValueChange(\"first\")}\n      />\n      <GroupedInput\n        position=\"middle\"\n        placeholder=\"Second\"\n        value={values.second}\n        onChange={onValueChange(\"second\")}\n      />\n      <GroupedInput\n        position=\"last\"\n        placeholder=\"Third\"\n        value={values.third}\n        onChange={onValueChange(\"third\")}\n      />\n    </div>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

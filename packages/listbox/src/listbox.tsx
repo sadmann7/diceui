@@ -2,9 +2,9 @@ import * as React from "react";
 import { composeEventHandlers } from "./compose-event-handlers";
 import { useComposedRefs } from "./compose-refs";
 import {
+  forwardRef,
   type WithDisplayName,
   type WithForwardedRef,
-  forwardRef,
 } from "./forward-ref";
 import { Slot } from "./slot";
 import { VisuallyHiddenInput } from "./visually-hidden-input";
