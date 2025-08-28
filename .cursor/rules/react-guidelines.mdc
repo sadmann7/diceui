@@ -18,6 +18,7 @@ You are an expert in TypeScript, Node.js, Next.js App Router, React, Shadcn UI, 
 - Use onCallback instead of handleCallback
 - Use flex and gap instead of space-x-n and space-y-n
 - Use cn to compose class names
+- Just pass ref directly to the component because of react 19
 
 ## Naming Conventions
 

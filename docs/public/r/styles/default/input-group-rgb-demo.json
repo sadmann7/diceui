@@ -1,0 +1,19 @@
+{
+  "name": "input-group-rgb-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@radix-ui/react-slot",
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "input-group"
+  ],
+  "files": [
+    {
+      "path": "examples/input-group-rgb-demo.tsx",
+      "content": "\"use client\";\n\nimport * as InputGroup from \"@/registry/default/ui/input-group\";\nimport * as React from \"react\";\n\nexport default function InputGroupRgbDemo() {\n  const [rgb, setRgb] = React.useState({\n    r: 255,\n    g: 128,\n    b: 0,\n  });\n\n  const onChannelChange = React.useCallback(\n    (channel: keyof typeof rgb) =>\n      (event: React.ChangeEvent<HTMLInputElement>) => {\n        const value = Number.parseInt(event.target.value, 10);\n        if (!Number.isNaN(value) && value >= 0 && value <= 255) {\n          setRgb((prev) => ({\n            ...prev,\n            [channel]: value,\n          }));\n        }\n      },\n    [],\n  );\n\n  const colorPreview = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;\n\n  return (\n    <div className=\"flex flex-col gap-4\">\n      <div className=\"flex flex-col gap-2\">\n        <label className=\"font-medium text-sm leading-none\">RGB Color</label>\n        <InputGroup.Root className=\"w-fit\" aria-label=\"RGB color input\">\n          <InputGroup.Item\n            position=\"first\"\n            placeholder=\"255\"\n            value={rgb.r}\n            onChange={onChannelChange(\"r\")}\n            className=\"w-16\"\n            inputMode=\"numeric\"\n            pattern=\"[0-9]*\"\n            min=\"0\"\n            max=\"255\"\n            aria-label=\"Red channel (0-255)\"\n          />\n          <InputGroup.Item\n            position=\"middle\"\n            placeholder=\"128\"\n            value={rgb.g}\n            onChange={onChannelChange(\"g\")}\n            className=\"w-16\"\n            inputMode=\"numeric\"\n            pattern=\"[0-9]*\"\n            min=\"0\"\n            max=\"255\"\n            aria-label=\"Green channel (0-255)\"\n          />\n          <InputGroup.Item\n            position=\"last\"\n            placeholder=\"0\"\n            value={rgb.b}\n            onChange={onChannelChange(\"b\")}\n            className=\"w-16\"\n            inputMode=\"numeric\"\n            pattern=\"[0-9]*\"\n            min=\"0\"\n            max=\"255\"\n            aria-label=\"Blue channel (0-255)\"\n          />\n        </InputGroup.Root>\n      </div>\n      <div className=\"flex items-center gap-2\">\n        <div\n          className=\"h-8 w-8 rounded border\"\n          style={{ backgroundColor: colorPreview }}\n          aria-label={`Color preview: ${colorPreview}`}\n        />\n        <p className=\"text-muted-foreground text-sm\">\n          Current color:{\" \"}\n          <code className=\"rounded bg-muted px-1 py-0.5 font-mono text-xs\">\n            {colorPreview}\n          </code>\n        </p>\n      </div>\n    </div>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

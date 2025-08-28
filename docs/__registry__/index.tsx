@@ -101,17 +101,17 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
-    "grouped-input": {
-      name: "grouped-input",
+    "input-group": {
+      name: "input-group",
       description: "",
       type: "registry:ui",
       registryDependencies: ["input"],
       files: [{
-        path: "registry/default/ui/grouped-input.tsx",
+        path: "registry/default/ui/input-group.tsx",
         type: "registry:ui",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/ui/grouped-input.tsx")),
+      component: React.lazy(() => import("@/registry/default/ui/input-group.tsx")),
       source: "",
       category: "",
       subcategory: "",
@@ -809,49 +809,65 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
-    "grouped-input-demo": {
-      name: "grouped-input-demo",
+    "input-group-demo": {
+      name: "input-group-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["input"],
+      registryDependencies: ["input-group"],
       files: [{
-        path: "registry/default/examples/grouped-input-demo.tsx",
+        path: "registry/default/examples/input-group-demo.tsx",
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/examples/grouped-input-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/input-group-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",
       chunks: []
     },
-    "grouped-input-form-demo": {
-      name: "grouped-input-form-demo",
+    "input-group-form-demo": {
+      name: "input-group-form-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["button","input"],
+      registryDependencies: ["button","input-group"],
       files: [{
-        path: "registry/default/examples/grouped-input-form-demo.tsx",
+        path: "registry/default/examples/input-group-form-demo.tsx",
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/examples/grouped-input-form-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/input-group-form-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",
       chunks: []
     },
-    "grouped-input-rgb-demo": {
-      name: "grouped-input-rgb-demo",
+    "input-group-rgb-demo": {
+      name: "input-group-rgb-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["input"],
+      registryDependencies: ["input-group"],
       files: [{
-        path: "registry/default/examples/grouped-input-rgb-demo.tsx",
+        path: "registry/default/examples/input-group-rgb-demo.tsx",
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/examples/grouped-input-rgb-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/input-group-rgb-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "input-group-vertical-demo": {
+      name: "input-group-vertical-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["input-group"],
+      files: [{
+        path: "registry/default/examples/input-group-vertical-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/input-group-vertical-demo.tsx")),
       source: "",
       category: "",
       subcategory: "",

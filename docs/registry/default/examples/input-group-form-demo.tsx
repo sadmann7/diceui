@@ -1,10 +1,10 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { GroupedInput } from "@/registry/default/ui/grouped-input";
+import * as InputGroup from "@/registry/default/ui/input-group";
 import * as React from "react";
 
-export default function GroupedInputFormDemo() {
+export default function InputGroupFormDemo() {
   const [phoneNumber, setPhoneNumber] = React.useState({
     countryCode: "+1",
     areaCode: "",
@@ -22,9 +22,12 @@ export default function GroupedInputFormDemo() {
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <div className="space-y-2">
-        <label className="font-medium text-sm">Phone Number</label>
-        <div className="flex w-full max-w-sm items-center space-x-0">
-          <GroupedInput
+        <label className="font-medium text-sm leading-none">Phone Number</label>
+        <InputGroup.Root
+          className="w-full max-w-sm"
+          aria-label="Phone number input"
+        >
+          <InputGroup.Item
             position="first"
             placeholder="+1"
             value={phoneNumber.countryCode}
@@ -35,8 +38,9 @@ export default function GroupedInputFormDemo() {
               }))
             }
             className="w-16"
+            aria-label="Country code"
           />
-          <GroupedInput
+          <InputGroup.Item
             position="middle"
             placeholder="555"
             value={phoneNumber.areaCode}
@@ -47,8 +51,9 @@ export default function GroupedInputFormDemo() {
             maxLength={3}
             inputMode="numeric"
             pattern="[0-9]*"
+            aria-label="Area code"
           />
-          <GroupedInput
+          <InputGroup.Item
             position="last"
             placeholder="1234567"
             value={phoneNumber.number}
@@ -59,8 +64,9 @@ export default function GroupedInputFormDemo() {
             maxLength={7}
             inputMode="numeric"
             pattern="[0-9]*"
+            aria-label="Phone number"
           />
-        </div>
+        </InputGroup.Root>
       </div>
       <Button type="submit" size="sm">
         Submit

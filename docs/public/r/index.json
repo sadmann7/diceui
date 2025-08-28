@@ -96,9 +96,10 @@
     ]
   },
   {
-    "name": "grouped-input",
+    "name": "input-group",
     "type": "registry:ui",
     "dependencies": [
+      "@radix-ui/react-slot",
       "class-variance-authority"
     ],
     "registryDependencies": [
@@ -106,7 +107,7 @@
     ],
     "files": [
       {
-        "path": "ui/grouped-input.tsx",
+        "path": "ui/input-group.tsx",
         "type": "registry:ui"
       }
     ]

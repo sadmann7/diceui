@@ -380,37 +380,49 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "grouped-input-demo",
+    name: "input-group-demo",
     type: "registry:example",
-    dependencies: ["class-variance-authority"],
-    registryDependencies: ["input"],
+    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    registryDependencies: ["input-group"],
     files: [
       {
-        path: "examples/grouped-input-demo.tsx",
+        path: "examples/input-group-demo.tsx",
         type: "registry:example",
       },
     ],
   },
   {
-    name: "grouped-input-form-demo",
+    name: "input-group-form-demo",
     type: "registry:example",
-    dependencies: ["class-variance-authority"],
-    registryDependencies: ["button", "input"],
+    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    registryDependencies: ["button", "input-group"],
     files: [
       {
-        path: "examples/grouped-input-form-demo.tsx",
+        path: "examples/input-group-form-demo.tsx",
         type: "registry:example",
       },
     ],
   },
   {
-    name: "grouped-input-rgb-demo",
+    name: "input-group-rgb-demo",
     type: "registry:example",
-    dependencies: ["class-variance-authority"],
-    registryDependencies: ["input"],
+    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    registryDependencies: ["input-group"],
     files: [
       {
-        path: "examples/grouped-input-rgb-demo.tsx",
+        path: "examples/input-group-rgb-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "input-group-vertical-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    registryDependencies: ["input-group"],
+    files: [
+      {
+        path: "examples/input-group-vertical-demo.tsx",
         type: "registry:example",
       },
     ],

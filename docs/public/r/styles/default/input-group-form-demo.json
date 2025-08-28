@@ -1,0 +1,20 @@
+{
+  "name": "input-group-form-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@radix-ui/react-slot",
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "button",
+    "input-group"
+  ],
+  "files": [
+    {
+      "path": "examples/input-group-form-demo.tsx",
+      "content": "\"use client\";\n\nimport { Button } from \"@/components/ui/button\";\nimport * as InputGroup from \"@/registry/default/ui/input-group\";\nimport * as React from \"react\";\n\nexport default function InputGroupFormDemo() {\n  const [phoneNumber, setPhoneNumber] = React.useState({\n    countryCode: \"+1\",\n    areaCode: \"\",\n    number: \"\",\n  });\n\n  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {\n    event.preventDefault();\n    console.log(\n      \"Phone number:\",\n      `${phoneNumber.countryCode} ${phoneNumber.areaCode}-${phoneNumber.number}`,\n    );\n  };\n\n  return (\n    <form onSubmit={onSubmit} className=\"space-y-4\">\n      <div className=\"space-y-2\">\n        <label className=\"font-medium text-sm leading-none\">Phone Number</label>\n        <InputGroup.Root\n          className=\"w-full max-w-sm\"\n          aria-label=\"Phone number input\"\n        >\n          <InputGroup.Item\n            position=\"first\"\n            placeholder=\"+1\"\n            value={phoneNumber.countryCode}\n            onChange={(e) =>\n              setPhoneNumber((prev) => ({\n                ...prev,\n                countryCode: e.target.value,\n              }))\n            }\n            className=\"w-16\"\n            aria-label=\"Country code\"\n          />\n          <InputGroup.Item\n            position=\"middle\"\n            placeholder=\"555\"\n            value={phoneNumber.areaCode}\n            onChange={(e) =>\n              setPhoneNumber((prev) => ({ ...prev, areaCode: e.target.value }))\n            }\n            className=\"w-20\"\n            maxLength={3}\n            inputMode=\"numeric\"\n            pattern=\"[0-9]*\"\n            aria-label=\"Area code\"\n          />\n          <InputGroup.Item\n            position=\"last\"\n            placeholder=\"1234567\"\n            value={phoneNumber.number}\n            onChange={(e) =>\n              setPhoneNumber((prev) => ({ ...prev, number: e.target.value }))\n            }\n            className=\"flex-1\"\n            maxLength={7}\n            inputMode=\"numeric\"\n            pattern=\"[0-9]*\"\n            aria-label=\"Phone number\"\n          />\n        </InputGroup.Root>\n      </div>\n      <Button type=\"submit\" size=\"sm\">\n        Submit\n      </Button>\n    </form>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

@@ -1,9 +1,9 @@
 "use client";
 
-import { GroupedInput } from "@/registry/default/ui/grouped-input";
+import * as InputGroup from "@/registry/default/ui/input-group";
 import * as React from "react";
 
-export default function GroupedInputRgbDemo() {
+export default function InputGroupRgbDemo() {
   const [rgb, setRgb] = React.useState({
     r: 255,
     g: 128,
@@ -29,9 +29,9 @@ export default function GroupedInputRgbDemo() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <label className="font-medium text-sm">RGB Color</label>
-        <div className="flex items-center">
-          <GroupedInput
+        <label className="font-medium text-sm leading-none">RGB Color</label>
+        <InputGroup.Root className="w-fit" aria-label="RGB color input">
+          <InputGroup.Item
             position="first"
             placeholder="255"
             value={rgb.r}
@@ -43,7 +43,7 @@ export default function GroupedInputRgbDemo() {
             max="255"
             aria-label="Red channel (0-255)"
           />
-          <GroupedInput
+          <InputGroup.Item
             position="middle"
             placeholder="128"
             value={rgb.g}
@@ -55,7 +55,7 @@ export default function GroupedInputRgbDemo() {
             max="255"
             aria-label="Green channel (0-255)"
           />
-          <GroupedInput
+          <InputGroup.Item
             position="last"
             placeholder="0"
             value={rgb.b}
@@ -67,14 +67,21 @@ export default function GroupedInputRgbDemo() {
             max="255"
             aria-label="Blue channel (0-255)"
           />
-        </div>
+        </InputGroup.Root>
       </div>
-      <p className="text-muted-foreground text-sm">
-        Current color:{" "}
-        <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">
-          {colorPreview}
-        </code>
-      </p>
+      <div className="flex items-center gap-2">
+        <div
+          className="h-8 w-8 rounded border"
+          style={{ backgroundColor: colorPreview }}
+          aria-label={`Color preview: ${colorPreview}`}
+        />
+        <p className="text-muted-foreground text-sm">
+          Current color:{" "}
+          <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">
+            {colorPreview}
+          </code>
+        </p>
+      </div>
     </div>
   );
 }
