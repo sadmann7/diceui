@@ -1153,10 +1153,10 @@ function ColorPickerEyeDropper(props: ColorPickerEyeDropperProps) {
 
 interface ColorPickerFormatSelectProps
   extends Omit<React.ComponentProps<typeof Select>, "value" | "onValueChange">,
-    Pick<React.ComponentProps<typeof SelectTrigger>, "size"> {}
+    Pick<React.ComponentProps<typeof SelectTrigger>, "size" | "className"> {}
 
 function ColorPickerFormatSelect(props: ColorPickerFormatSelectProps) {
-  const { size, ...selectProps } = props;
+  const { size, className, ...selectProps } = props;
   const context = useColorPickerContext("ColorPickerFormatSelector");
   const store = useColorPickerStoreContext("ColorPickerFormatSelector");
 
@@ -1176,7 +1176,7 @@ function ColorPickerFormatSelect(props: ColorPickerFormatSelectProps) {
       disabled={context.disabled}
       {...selectProps}
     >
-      <SelectTrigger size={size ?? "sm"}>
+      <SelectTrigger size={size ?? "sm"} className={cn(className)}>
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
