@@ -35,9 +35,7 @@
         "noNestedComponentDefinitions": "off",
         "useUniqueElementIds": "off",
         "noUnusedImports": "off",
-        "noUnusedVariables": {
-          "level": "warn"
-        },
+        "noUnusedVariables": "warn",
         "useExhaustiveDependencies": "warn",
         "useHookAtTopLevel": "warn"
       },

@@ -174,7 +174,7 @@ describe("CheckboxGroup", () => {
 
     render(
       <form onSubmit={onSubmit} data-testid="form">
-        <CheckboxGroup.Root name="tricks" required>
+        <CheckboxGroup.Root required>
           <CheckboxGroup.List>
             <CheckboxGroup.Item value="kickflip">Kickflip</CheckboxGroup.Item>
             <CheckboxGroup.Item value="heelflip">Heelflip</CheckboxGroup.Item>

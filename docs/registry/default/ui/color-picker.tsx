@@ -661,12 +661,7 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
 function ColorPickerRootImpl(props: ColorPickerRootProps) {
   const {
     value: valueProp,
-    defaultValue = "#000000",
-    onValueChange,
     dir: dirProp,
-    format: formatProp,
-    defaultFormat = "hex",
-    onFormatChange,
     defaultOpen,
     open: openProp,
     onOpenChange,
@@ -726,8 +721,9 @@ function ColorPickerRootImpl(props: ColorPickerRootProps) {
   const onPopoverOpenChange = React.useCallback(
     (newOpen: boolean) => {
       store.setOpen(newOpen);
+      onOpenChange?.(newOpen);
     },
-    [store.setOpen],
+    [store.setOpen, onOpenChange],
   );
 
   const RootPrimitive = asChild ? Slot : "div";
@@ -777,9 +773,7 @@ function ColorPickerRootImpl(props: ColorPickerRootProps) {
 }
 
 interface ColorPickerTriggerProps
-  extends React.ComponentProps<typeof PopoverTrigger> {
-  asChild?: boolean;
-}
+  extends React.ComponentProps<typeof PopoverTrigger> {}
 
 function ColorPickerTrigger(props: ColorPickerTriggerProps) {
   const { asChild, ...triggerProps } = props;
@@ -795,9 +789,7 @@ function ColorPickerTrigger(props: ColorPickerTriggerProps) {
 }
 
 interface ColorPickerContentProps
-  extends React.ComponentProps<typeof PopoverContent> {
-  asChild?: boolean;
-}
+  extends React.ComponentProps<typeof PopoverContent> {}
 
 function ColorPickerContent(props: ColorPickerContentProps) {
   const { asChild, className, children, ...popoverContentProps } = props;
@@ -805,6 +797,7 @@ function ColorPickerContent(props: ColorPickerContentProps) {
 
   if (context.inline) {
     const ContentPrimitive = asChild ? Slot : "div";
+
     return (
       <ContentPrimitive
         className={cn("flex w-[340px] flex-col gap-4 p-4", className)}
@@ -817,6 +810,7 @@ function ColorPickerContent(props: ColorPickerContentProps) {
 
   return (
     <PopoverContent
+      asChild={asChild}
       className={cn("flex w-[340px] flex-col gap-4 p-4", className)}
       {...popoverContentProps}
     >
@@ -937,12 +931,10 @@ function ColorPickerArea(props: ColorPickerAreaProps) {
 }
 
 interface ColorPickerHueSliderProps
-  extends React.ComponentProps<typeof SliderPrimitive.Root> {
-  asChild?: boolean;
-}
+  extends React.ComponentProps<typeof SliderPrimitive.Root> {}
 
 function ColorPickerHueSlider(props: ColorPickerHueSliderProps) {
-  const { asChild, className, ...sliderProps } = props;
+  const { className, ...sliderProps } = props;
   const context = useColorPickerContext("ColorPickerHueSlider");
   const store = useColorPickerStoreContext("ColorPickerHueSlider");
 
@@ -984,12 +976,10 @@ function ColorPickerHueSlider(props: ColorPickerHueSliderProps) {
 }
 
 interface ColorPickerAlphaSliderProps
-  extends React.ComponentProps<typeof SliderPrimitive.Root> {
-  asChild?: boolean;
-}
+  extends React.ComponentProps<typeof SliderPrimitive.Root> {}
 
 function ColorPickerAlphaSlider(props: ColorPickerAlphaSliderProps) {
-  const { asChild, className, ...sliderProps } = props;
+  const { className, ...sliderProps } = props;
   const context = useColorPickerContext("ColorPickerAlphaSlider");
   const store = useColorPickerStoreContext("ColorPickerAlphaSlider");
 
@@ -1101,12 +1091,10 @@ function ColorPickerSwatch(props: ColorPickerSwatchProps) {
 }
 
 interface ColorPickerEyeDropperProps
-  extends React.ComponentProps<typeof Button> {
-  asChild?: boolean;
-}
+  extends React.ComponentProps<typeof Button> {}
 
 function ColorPickerEyeDropper(props: ColorPickerEyeDropperProps) {
-  const { asChild, children, size, ...buttonProps } = props;
+  const { children, size, ...buttonProps } = props;
   const context = useColorPickerContext("ColorPickerEyeDropper");
   const store = useColorPickerStoreContext("ColorPickerEyeDropper");
 
