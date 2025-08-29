@@ -24,65 +24,47 @@ export default function InputGroupRgbDemo() {
     [],
   );
 
-  const colorPreview = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
-
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-2">
-        <label className="font-medium text-sm leading-none">RGB Color</label>
-        <InputGroup.Root className="w-fit" aria-label="RGB color input">
-          <InputGroup.Item
-            position="first"
-            placeholder="255"
-            value={rgb.r}
-            onChange={onChannelChange("r")}
-            className="w-16"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            min="0"
-            max="255"
-            aria-label="Red channel (0-255)"
-          />
-          <InputGroup.Item
-            position="middle"
-            placeholder="128"
-            value={rgb.g}
-            onChange={onChannelChange("g")}
-            className="w-16"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            min="0"
-            max="255"
-            aria-label="Green channel (0-255)"
-          />
-          <InputGroup.Item
-            position="last"
-            placeholder="0"
-            value={rgb.b}
-            onChange={onChannelChange("b")}
-            className="w-16"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            min="0"
-            max="255"
-            aria-label="Blue channel (0-255)"
-          />
-        </InputGroup.Root>
-      </div>
-      <div className="flex items-center gap-2">
-        <div
-          role="img"
-          aria-label={`Color preview: ${colorPreview}`}
-          className="h-8 w-8 rounded border"
-          style={{ backgroundColor: colorPreview }}
+    <div className="flex flex-col gap-2">
+      <label className="font-medium text-sm leading-none">RGB Color</label>
+      <InputGroup.Root className="w-fit" aria-label="RGB color input">
+        <InputGroup.Item
+          position="first"
+          placeholder="255"
+          value={rgb.r}
+          onChange={onChannelChange("r")}
+          className="w-16"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          min="0"
+          max="255"
+          aria-label="Red channel (0-255)"
         />
-        <p className="text-muted-foreground text-sm">
-          Current color:{" "}
-          <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">
-            {colorPreview}
-          </code>
-        </p>
-      </div>
+        <InputGroup.Item
+          position="middle"
+          placeholder="128"
+          value={rgb.g}
+          onChange={onChannelChange("g")}
+          className="w-16"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          min="0"
+          max="255"
+          aria-label="Green channel (0-255)"
+        />
+        <InputGroup.Item
+          position="last"
+          placeholder="0"
+          value={rgb.b}
+          onChange={onChannelChange("b")}
+          className="w-16"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          min="0"
+          max="255"
+          aria-label="Blue channel (0-255)"
+        />
+      </InputGroup.Root>
     </div>
   );
 }

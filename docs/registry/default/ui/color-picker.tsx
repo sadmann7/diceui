@@ -583,7 +583,6 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
     value: valueProp,
     defaultValue = "#000000",
     onValueChange,
-    dir: dirProp,
     format: formatProp,
     defaultFormat = "hex",
     onFormatChange,
@@ -639,12 +638,6 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
       <ColorPickerRootImpl
         {...rootProps}
         value={valueProp}
-        defaultValue={defaultValue}
-        onValueChange={onValueChange}
-        dir={dirProp}
-        format={formatProp}
-        defaultFormat={defaultFormat}
-        onFormatChange={onFormatChange}
         defaultOpen={defaultOpen}
         open={openProp}
         onOpenChange={onOpenChange}
@@ -658,7 +651,16 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
   );
 }
 
-function ColorPickerRootImpl(props: ColorPickerRootProps) {
+function ColorPickerRootImpl(
+  props: Omit<
+    ColorPickerRootProps,
+    | "defaultValue"
+    | "onValueChange"
+    | "format"
+    | "defaultFormat"
+    | "onFormatChange"
+  >,
+) {
   const {
     value: valueProp,
     dir: dirProp,

@@ -183,7 +183,7 @@ export interface FormatSelectProps
 export interface InputProps
   extends Omit<
       React.ComponentProps<typeof Input>,
-      "value" | "onChange" | "color"
+      "value" | "onChange" | "color" | keyof React.ComponentProps<"input">
     >,
     CompositionProps {
   /**

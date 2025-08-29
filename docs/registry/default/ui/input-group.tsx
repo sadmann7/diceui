@@ -4,7 +4,6 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 import { Input } from "@/components/ui/input";
-import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 
 const ROOT_NAME = "InputGroup";
@@ -20,8 +19,6 @@ function useDirection(dirProp?: Direction): Direction {
 }
 
 interface InputGroupContextValue {
-  id: string;
-  rootRef: React.RefObject<HTMLDivElement | null>;
   dir?: Direction;
   orientation?: "horizontal" | "vertical";
   size?: "sm" | "default" | "lg";
@@ -96,7 +93,6 @@ function InputGroupRoot(props: InputGroupRootProps) {
     orientation = "horizontal",
     size = "default",
     className,
-    ref,
     asChild,
     disabled,
     invalid,
@@ -107,13 +103,8 @@ function InputGroupRoot(props: InputGroupRootProps) {
   const id = React.useId();
   const dir = useDirection(dirProp);
 
-  const rootRef = React.useRef<HTMLDivElement>(null);
-  const composedRef = useComposedRefs(ref, rootRef);
-
   const contextValue = React.useMemo<InputGroupContextValue>(
     () => ({
-      id,
-      rootRef,
       dir,
       orientation,
       size,
@@ -121,7 +112,7 @@ function InputGroupRoot(props: InputGroupRootProps) {
       invalid,
       required,
     }),
-    [id, dir, orientation, size, disabled, invalid, required],
+    [dir, orientation, size, disabled, invalid, required],
   );
 
   const RootPrimitive = asChild ? Slot : "div";
@@ -138,7 +129,6 @@ function InputGroupRoot(props: InputGroupRootProps) {
         data-required={required ? "" : undefined}
         {...rootProps}
         id={id}
-        ref={composedRef}
         dir={dir}
         className={cn(
           "flex",
@@ -165,83 +155,6 @@ function InputGroupItem(props: InputGroupItemProps) {
   const isDisabled = disabled ?? context.disabled;
   const isRequired = required ?? context.required;
 
-  const onKeyDown = React.useCallback(
-    (event: React.KeyboardEvent<HTMLInputElement>) => {
-      inputProps.onKeyDown?.(event);
-      if (event.defaultPrevented || isDisabled) return;
-
-      const target = event.currentTarget;
-      const root = context.rootRef?.current;
-      if (!root) return;
-
-      const cursorPosition = target.selectionStart ?? 0;
-      const textLength = target.value.length;
-
-      const elements = Array.from(
-        root.querySelectorAll(
-          'input[data-slot="input-group-item"]:not([disabled])',
-        ),
-      );
-
-      const inputs = elements.filter(
-        (el): el is HTMLInputElement => el instanceof HTMLInputElement,
-      );
-
-      const currentIndex = inputs.indexOf(target);
-
-      if (currentIndex === -1) return;
-
-      let nextIndex = -1;
-
-      if (context.orientation === "horizontal") {
-        if (
-          event.key === "ArrowLeft" &&
-          currentIndex > 0 &&
-          cursorPosition === 0
-        ) {
-          nextIndex = currentIndex - 1;
-        } else if (
-          event.key === "ArrowRight" &&
-          currentIndex < inputs.length - 1 &&
-          cursorPosition === textLength
-        ) {
-          nextIndex = currentIndex + 1;
-        }
-      } else {
-        if (
-          event.key === "ArrowUp" &&
-          currentIndex > 0 &&
-          cursorPosition === 0
-        ) {
-          nextIndex = currentIndex - 1;
-        } else if (
-          event.key === "ArrowDown" &&
-          currentIndex < inputs.length - 1 &&
-          cursorPosition === textLength
-        ) {
-          nextIndex = currentIndex + 1;
-        }
-      }
-
-      if (nextIndex !== -1) {
-        event.preventDefault();
-        const targetInput = inputs[nextIndex];
-        if (targetInput) {
-          targetInput.focus();
-
-          const isNavigatingBackward =
-            (context.orientation === "horizontal" &&
-              event.key === "ArrowLeft") ||
-            (context.orientation === "vertical" && event.key === "ArrowUp");
-
-          const cursorPos = isNavigatingBackward ? targetInput.value.length : 0;
-          targetInput.setSelectionRange(cursorPos, cursorPos);
-        }
-      }
-    },
-    [inputProps.onKeyDown, isDisabled, context.orientation, context.rootRef],
-  );
-
   const InputPrimitive = asChild ? Slot : Input;
 
   return (
@@ -257,7 +170,6 @@ function InputGroupItem(props: InputGroupItemProps) {
       disabled={isDisabled}
       required={isRequired}
       {...inputProps}
-      onKeyDown={onKeyDown}
       className={cn(
         inputGroupItemVariants({
           position,

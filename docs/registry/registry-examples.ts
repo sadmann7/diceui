@@ -427,6 +427,7 @@ export const examples: Registry["items"] = [
       },
     ],
   },
+
   {
     name: "kanban-demo",
     type: "registry:example",
