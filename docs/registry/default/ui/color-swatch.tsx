@@ -34,9 +34,9 @@ function ColorSwatch(props: ColorSwatchProps) {
   const {
     value,
     size = "default",
+    asChild = false,
     disabled = false,
     withoutTransparency = false,
-    asChild,
     className,
     style,
     ...colorSwatchProps
