@@ -27,8 +27,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
-import InputGroupArrowNavigationDemo from "@/registry/default/examples/input-group-arrow-navigation-demo";
+import InputGroupDemo from "@/registry/default/examples/input-group-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -42,7 +41,7 @@ import {
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <InputGroupArrowNavigationDemo />
+      <InputGroupDemo />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />

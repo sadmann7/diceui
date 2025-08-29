@@ -49,23 +49,6 @@ export interface InputGroupRootProps
    * @default false
    */
   required?: boolean;
-
-  /**
-   * Whether to enable arrow key navigation between inputs.
-   * When enabled, users can navigate between inputs using arrow keys
-   * when the cursor is at the start/end of the input text.
-   * @default false
-   */
-  arrowNavigation?: boolean;
-
-  /**
-   * Whether to enable looping navigation when using arrow keys.
-   * When enabled with arrowNavigation, navigation wraps around
-   * from the last input to the first and vice versa.
-   * Only takes effect when arrowNavigation is true.
-   * @default false
-   */
-  loop?: boolean;
 }
 
 export interface InputGroupItemProps

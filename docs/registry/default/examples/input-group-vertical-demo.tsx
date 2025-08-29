@@ -31,7 +31,6 @@ export default function InputGroupVerticalDemo() {
           aria-label="Mailing address input"
           className="w-full max-w-sm"
           orientation="vertical"
-          loop
         >
           <InputGroupItem
             aria-label="Street address"

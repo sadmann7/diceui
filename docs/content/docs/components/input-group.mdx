@@ -68,14 +68,6 @@ Display input groups in a vertical orientation.
 
 <ComponentTabs name="input-group-vertical-demo" />
 
-### With Arrow Navigation
-
-Use the `arrowNavigation` prop to enable arrow key navigation between inputs for enhanced keyboard accessibility.
-
-<ComponentTabs name="input-group-arrow-navigation-demo" />
-
-**Note**: Arrow navigation only activates when the cursor is at the beginning (for left/up arrows) or end (for right/down arrows) of the input text, preserving normal text editing behavior.
-
 ## API Reference
 
 ### InputGroup
@@ -115,16 +107,7 @@ The component automatically handles:
 
 ## Accessibility
 
-The InputGroup component follows standard web accessibility practices. By default, users navigate between inputs using Tab and Shift+Tab keys, which is the expected behavior for form controls.
-
-### Arrow Navigation
-
-The optional `arrowNavigation` prop provides enhanced keyboard navigation for power users:
-
-- **Default behavior**: Standard Tab/Shift+Tab navigation (recommended for most use cases)
-- **Enhanced behavior**: Arrow key navigation between inputs when `arrowNavigation={true}`
-- **Smart activation**: Arrow navigation only triggers when the cursor is at text boundaries, preserving normal text editing
-- **Screen reader friendly**: Maintains proper focus management and ARIA relationships
+The InputGroup component follows standard web accessibility practices. Users navigate between inputs using Tab and Shift+Tab keys, which is the expected behavior for form controls.
 
 ### Keyboard Interactions
 
@@ -137,18 +120,6 @@ The optional `arrowNavigation` prop provides enhanced keyboard navigation for po
     {
       keys: ["Shift", "Tab"],
       description: "Moves focus to the previous input in the group.",
-    },
-    {
-      keys: ["Enter"],
-      description: "Submits the form (if inside a form).",
-    },
-    {
-      keys: ["ArrowLeft", "ArrowRight"],
-      description: "When arrowNavigation is enabled and cursor is at start/end of text, moves focus between inputs in horizontal orientation.",
-    },
-    {
-      keys: ["ArrowUp", "ArrowDown"],
-      description: "When arrowNavigation is enabled and cursor is at start/end of text, moves focus between inputs in vertical orientation.",
     },
   ]}
 />
