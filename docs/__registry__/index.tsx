@@ -281,6 +281,22 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "color-swatch": {
+      name: "color-swatch",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/ui/color-swatch.tsx",
+        type: "registry:ui",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/color-swatch.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "tags-input": {
       name: "tags-input",
       description: "",
@@ -413,7 +429,7 @@ export const Index: Record<string, any> = {
       name: "color-picker-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["color-picker"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/examples/color-picker-demo.tsx",
         type: "registry:example",
@@ -429,7 +445,7 @@ export const Index: Record<string, any> = {
       name: "color-picker-controlled-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["color-picker","button"],
+      registryDependencies: ["button"],
       files: [{
         path: "registry/default/examples/color-picker-controlled-demo.tsx",
         type: "registry:example",
@@ -445,7 +461,7 @@ export const Index: Record<string, any> = {
       name: "color-picker-form-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["button","color-picker","form"],
+      registryDependencies: ["button","form"],
       files: [{
         path: "registry/default/examples/color-picker-form-demo.tsx",
         type: "registry:example",
@@ -461,7 +477,7 @@ export const Index: Record<string, any> = {
       name: "color-picker-inline-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["color-picker"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/examples/color-picker-inline-demo.tsx",
         type: "registry:example",
@@ -477,7 +493,7 @@ export const Index: Record<string, any> = {
       name: "combobox-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["combobox"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/examples/combobox-demo.tsx",
         type: "registry:example",
@@ -493,7 +509,7 @@ export const Index: Record<string, any> = {
       name: "combobox-custom-filter-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["combobox"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/examples/combobox-custom-filter-demo.tsx",
         type: "registry:example",
@@ -509,7 +525,7 @@ export const Index: Record<string, any> = {
       name: "combobox-debounced-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["combobox"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/examples/combobox-debounced-demo.tsx",
         type: "registry:example",
@@ -525,7 +541,7 @@ export const Index: Record<string, any> = {
       name: "combobox-groups-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["combobox"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/examples/combobox-groups-demo.tsx",
         type: "registry:example",
@@ -541,7 +557,7 @@ export const Index: Record<string, any> = {
       name: "combobox-multiple-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["combobox"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/examples/combobox-multiple-demo.tsx",
         type: "registry:example",
@@ -557,7 +573,7 @@ export const Index: Record<string, any> = {
       name: "combobox-tags-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["combobox","tags-input"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/examples/combobox-tags-demo.tsx",
         type: "registry:example",
@@ -573,7 +589,7 @@ export const Index: Record<string, any> = {
       name: "combobox-virtualized-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["combobox"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/examples/combobox-virtualized-demo.tsx",
         type: "registry:example",
@@ -589,7 +605,7 @@ export const Index: Record<string, any> = {
       name: "data-table-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["data-table"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/examples/data-table-demo.tsx",
         type: "registry:example",
@@ -701,7 +717,7 @@ export const Index: Record<string, any> = {
       name: "file-upload-chat-input-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["button","textarea","file-upload","lucide-react","sonner"],
+      registryDependencies: ["button","textarea","lucide-react","sonner"],
       files: [{
         path: "registry/default/examples/file-upload-chat-input-demo.tsx",
         type: "registry:example",
@@ -813,7 +829,7 @@ export const Index: Record<string, any> = {
       name: "input-group-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["input-group"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/examples/input-group-demo.tsx",
         type: "registry:example",
@@ -829,7 +845,7 @@ export const Index: Record<string, any> = {
       name: "input-group-form-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["button","input-group"],
+      registryDependencies: ["button"],
       files: [{
         path: "registry/default/examples/input-group-form-demo.tsx",
         type: "registry:example",
@@ -845,7 +861,7 @@ export const Index: Record<string, any> = {
       name: "input-group-rgb-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["input-group"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/examples/input-group-rgb-demo.tsx",
         type: "registry:example",
@@ -861,7 +877,7 @@ export const Index: Record<string, any> = {
       name: "input-group-vertical-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["input-group"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/examples/input-group-vertical-demo.tsx",
         type: "registry:example",
@@ -1133,7 +1149,7 @@ export const Index: Record<string, any> = {
       name: "media-player-playlist-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["button","scroll-area","media-player"],
+      registryDependencies: ["button","scroll-area"],
       files: [{
         path: "registry/default/examples/media-player-playlist-demo.tsx",
         type: "registry:example",
@@ -1165,7 +1181,7 @@ export const Index: Record<string, any> = {
       name: "mention-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["mention"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/examples/mention-demo.tsx",
         type: "registry:example",
@@ -1181,7 +1197,7 @@ export const Index: Record<string, any> = {
       name: "mention-custom-filter-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["mention"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/examples/mention-custom-filter-demo.tsx",
         type: "registry:example",
@@ -1197,7 +1213,7 @@ export const Index: Record<string, any> = {
       name: "mention-custom-trigger-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["mention"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/examples/mention-custom-trigger-demo.tsx",
         type: "registry:example",
@@ -1385,6 +1401,54 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "color-swatch-demo": {
+      name: "color-swatch-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/examples/color-swatch-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/color-swatch-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "color-swatch-sizes-demo": {
+      name: "color-swatch-sizes-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/examples/color-swatch-sizes-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/color-swatch-sizes-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
+    "color-swatch-transparency-demo": {
+      name: "color-swatch-transparency-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/examples/color-swatch-transparency-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/color-swatch-transparency-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "tags-input-demo": {
       name: "tags-input-demo",
       description: "",
@@ -1405,7 +1469,7 @@ export const Index: Record<string, any> = {
       name: "tags-input-editable-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["tags-input","button"],
+      registryDependencies: ["button"],
       files: [{
         path: "registry/default/examples/tags-input-editable-demo.tsx",
         type: "registry:example",
@@ -1421,7 +1485,7 @@ export const Index: Record<string, any> = {
       name: "tags-input-sortable-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["tags-input","sortable","button"],
+      registryDependencies: ["button"],
       files: [{
         path: "registry/default/examples/tags-input-sortable-demo.tsx",
         type: "registry:example",
@@ -1437,7 +1501,7 @@ export const Index: Record<string, any> = {
       name: "tags-input-validation-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["tags-input","button"],
+      registryDependencies: ["button"],
       files: [{
         path: "registry/default/examples/tags-input-validation-demo.tsx",
         type: "registry:example",

@@ -237,6 +237,17 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "color-swatch",
+    type: "registry:ui",
+    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    files: [
+      {
+        path: "ui/color-swatch.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "tags-input",
     type: "registry:ui",
     dependencies: ["@diceui/tags-input", "lucide-react"],

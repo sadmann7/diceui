@@ -59,7 +59,6 @@ export const examples: Registry["items"] = [
   {
     name: "color-picker-demo",
     type: "registry:example",
-    registryDependencies: ["color-picker"],
     files: [
       {
         path: "examples/color-picker-demo.tsx",
@@ -70,7 +69,7 @@ export const examples: Registry["items"] = [
   {
     name: "color-picker-controlled-demo",
     type: "registry:example",
-    registryDependencies: ["color-picker", "button"],
+    registryDependencies: ["button"],
     files: [
       {
         path: "examples/color-picker-controlled-demo.tsx",
@@ -82,7 +81,7 @@ export const examples: Registry["items"] = [
     name: "color-picker-form-demo",
     type: "registry:example",
     dependencies: ["@hookform/resolvers/zod", "react-hook-form", "zod"],
-    registryDependencies: ["button", "color-picker", "form"],
+    registryDependencies: ["button", "form"],
     files: [
       {
         path: "examples/color-picker-form-demo.tsx",
@@ -93,7 +92,6 @@ export const examples: Registry["items"] = [
   {
     name: "color-picker-inline-demo",
     type: "registry:example",
-    registryDependencies: ["color-picker"],
     files: [
       {
         path: "examples/color-picker-inline-demo.tsx",
@@ -105,7 +103,6 @@ export const examples: Registry["items"] = [
     name: "combobox-demo",
     type: "registry:example",
     dependencies: ["@diceui/combobox", "lucide-react"],
-    registryDependencies: ["combobox"],
     files: [
       {
         path: "examples/combobox-demo.tsx",
@@ -117,7 +114,6 @@ export const examples: Registry["items"] = [
     name: "combobox-custom-filter-demo",
     type: "registry:example",
     dependencies: ["@diceui/combobox", "lucide-react"],
-    registryDependencies: ["combobox"],
     files: [
       {
         path: "examples/combobox-custom-filter-demo.tsx",
@@ -129,7 +125,6 @@ export const examples: Registry["items"] = [
     name: "combobox-debounced-demo",
     type: "registry:example",
     dependencies: ["@diceui/combobox", "lucide-react"],
-    registryDependencies: ["combobox"],
     files: [
       {
         path: "examples/combobox-debounced-demo.tsx",
@@ -141,7 +136,6 @@ export const examples: Registry["items"] = [
     name: "combobox-groups-demo",
     type: "registry:example",
     dependencies: ["@diceui/combobox", "lucide-react"],
-    registryDependencies: ["combobox"],
     files: [
       {
         path: "examples/combobox-groups-demo.tsx",
@@ -153,7 +147,6 @@ export const examples: Registry["items"] = [
     name: "combobox-multiple-demo",
     type: "registry:example",
     dependencies: ["@diceui/combobox", "lucide-react"],
-    registryDependencies: ["combobox"],
     files: [
       {
         path: "examples/combobox-multiple-demo.tsx",
@@ -165,7 +158,6 @@ export const examples: Registry["items"] = [
     name: "combobox-tags-demo",
     type: "registry:example",
     dependencies: ["@diceui/combobox", "@diceui/tags-input", "lucide-react"],
-    registryDependencies: ["combobox", "tags-input"],
     files: [
       {
         path: "examples/combobox-tags-demo.tsx",
@@ -181,7 +173,6 @@ export const examples: Registry["items"] = [
       "@tanstack/react-virtual",
       "lucide-react",
     ],
-    registryDependencies: ["combobox"],
     files: [
       {
         path: "examples/combobox-virtualized-demo.tsx",
@@ -193,7 +184,6 @@ export const examples: Registry["items"] = [
     name: "data-table-demo",
     type: "registry:example",
     dependencies: ["@diceui/data-table", "lucide-react"],
-    registryDependencies: ["data-table"],
     files: [
       {
         path: "examples/data-table-demo.tsx",
@@ -283,13 +273,7 @@ export const examples: Registry["items"] = [
       "uploadthing",
       "@uploadthing/react",
     ],
-    registryDependencies: [
-      "button",
-      "textarea",
-      "file-upload",
-      "lucide-react",
-      "sonner",
-    ],
+    registryDependencies: ["button", "textarea", "lucide-react", "sonner"],
     files: [
       {
         path: "examples/file-upload-chat-input-demo.tsx",
@@ -383,7 +367,6 @@ export const examples: Registry["items"] = [
     name: "input-group-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
-    registryDependencies: ["input-group"],
     files: [
       {
         path: "examples/input-group-demo.tsx",
@@ -395,7 +378,7 @@ export const examples: Registry["items"] = [
     name: "input-group-form-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
-    registryDependencies: ["button", "input-group"],
+    registryDependencies: ["button"],
     files: [
       {
         path: "examples/input-group-form-demo.tsx",
@@ -407,7 +390,6 @@ export const examples: Registry["items"] = [
     name: "input-group-rgb-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
-    registryDependencies: ["input-group"],
     files: [
       {
         path: "examples/input-group-rgb-demo.tsx",
@@ -419,7 +401,6 @@ export const examples: Registry["items"] = [
     name: "input-group-vertical-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
-    registryDependencies: ["input-group"],
     files: [
       {
         path: "examples/input-group-vertical-demo.tsx",
@@ -628,7 +609,7 @@ export const examples: Registry["items"] = [
     name: "media-player-playlist-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot", "lucide-react", "media-chrome"],
-    registryDependencies: ["button", "scroll-area", "media-player"],
+    registryDependencies: ["button", "scroll-area"],
     files: [
       {
         path: "examples/media-player-playlist-demo.tsx",
@@ -659,7 +640,6 @@ export const examples: Registry["items"] = [
     name: "mention-demo",
     type: "registry:example",
     dependencies: ["@diceui/mention", "lucide-react"],
-    registryDependencies: ["mention"],
     files: [
       {
         path: "examples/mention-demo.tsx",
@@ -671,7 +651,6 @@ export const examples: Registry["items"] = [
     name: "mention-custom-filter-demo",
     type: "registry:example",
     dependencies: ["@diceui/mention", "lucide-react"],
-    registryDependencies: ["mention"],
     files: [
       {
         path: "examples/mention-custom-filter-demo.tsx",
@@ -683,7 +662,6 @@ export const examples: Registry["items"] = [
     name: "mention-custom-trigger-demo",
     type: "registry:example",
     dependencies: ["@diceui/mention", "lucide-react"],
-    registryDependencies: ["mention"],
     files: [
       {
         path: "examples/mention-custom-trigger-demo.tsx",
@@ -843,6 +821,36 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "color-swatch-demo",
+    type: "registry:example",
+    files: [
+      {
+        path: "examples/color-swatch-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "color-swatch-sizes-demo",
+    type: "registry:example",
+    files: [
+      {
+        path: "examples/color-swatch-sizes-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "color-swatch-transparency-demo",
+    type: "registry:example",
+    files: [
+      {
+        path: "examples/color-swatch-transparency-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "tags-input-demo",
     type: "registry:example",
     dependencies: ["@diceui/tags-input", "lucide-react"],
@@ -857,7 +865,7 @@ export const examples: Registry["items"] = [
     name: "tags-input-editable-demo",
     type: "registry:example",
     dependencies: ["@diceui/tags-input", "lucide-react"],
-    registryDependencies: ["tags-input", "button"],
+    registryDependencies: ["button"],
     files: [
       {
         path: "examples/tags-input-editable-demo.tsx",
@@ -877,7 +885,7 @@ export const examples: Registry["items"] = [
       "@radix-ui/react-slot",
       "lucide-react",
     ],
-    registryDependencies: ["tags-input", "sortable", "button"],
+    registryDependencies: ["button"],
     files: [
       {
         path: "examples/tags-input-sortable-demo.tsx",
@@ -889,7 +897,7 @@ export const examples: Registry["items"] = [
     name: "tags-input-validation-demo",
     type: "registry:example",
     dependencies: ["@diceui/tags-input", "lucide-react"],
-    registryDependencies: ["tags-input", "button"],
+    registryDependencies: ["button"],
     files: [
       {
         path: "examples/tags-input-validation-demo.tsx",

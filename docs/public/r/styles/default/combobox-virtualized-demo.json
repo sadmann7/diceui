@@ -6,9 +6,6 @@
     "@tanstack/react-virtual",
     "lucide-react"
   ],
-  "registryDependencies": [
-    "combobox"
-  ],
   "files": [
     {
       "path": "examples/combobox-virtualized-demo.tsx",
