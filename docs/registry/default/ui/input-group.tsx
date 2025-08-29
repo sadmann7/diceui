@@ -20,13 +20,14 @@ function useDirection(dirProp?: Direction): Direction {
 }
 
 interface InputGroupContextValue {
-  id: string;
   rootRef: React.RefObject<HTMLDivElement | null>;
   dir?: Direction;
   orientation?: "horizontal" | "vertical";
   size?: "sm" | "default" | "lg";
+  arrowNavigation?: boolean;
   disabled?: boolean;
   invalid?: boolean;
+  loop?: boolean;
   required?: boolean;
 }
 
@@ -85,8 +86,10 @@ interface InputGroupRootProps extends React.ComponentProps<"div"> {
   orientation?: "horizontal" | "vertical";
   size?: "sm" | "default" | "lg";
   asChild?: boolean;
+  arrowNavigation?: boolean;
   disabled?: boolean;
   invalid?: boolean;
+  loop?: boolean;
   required?: boolean;
 }
 
@@ -97,9 +100,11 @@ function InputGroupRoot(props: InputGroupRootProps) {
     size = "default",
     className,
     ref,
+    arrowNavigation,
     asChild,
     disabled,
     invalid,
+    loop,
     required,
     ...rootProps
   } = props;
@@ -112,16 +117,26 @@ function InputGroupRoot(props: InputGroupRootProps) {
 
   const contextValue = React.useMemo<InputGroupContextValue>(
     () => ({
-      id,
       rootRef,
       dir,
       orientation,
       size,
       disabled,
       invalid,
+      loop,
       required,
+      arrowNavigation,
     }),
-    [id, dir, orientation, size, disabled, invalid, required],
+    [
+      dir,
+      orientation,
+      size,
+      arrowNavigation,
+      disabled,
+      invalid,
+      loop,
+      required,
+    ],
   );
 
   const RootPrimitive = asChild ? Slot : "div";
@@ -168,7 +183,8 @@ function InputGroupItem(props: InputGroupItemProps) {
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent<HTMLInputElement>) => {
       inputProps.onKeyDown?.(event);
-      if (event.defaultPrevented || isDisabled) return;
+      if (event.defaultPrevented || isDisabled || !context.arrowNavigation)
+        return;
 
       const target = event.currentTarget;
       const root = context.rootRef?.current;
@@ -194,32 +210,35 @@ function InputGroupItem(props: InputGroupItemProps) {
       let nextIndex = -1;
 
       if (context.orientation === "horizontal") {
-        if (
-          event.key === "ArrowLeft" &&
-          currentIndex > 0 &&
-          cursorPosition === 0
-        ) {
-          nextIndex = currentIndex - 1;
+        if (event.key === "ArrowLeft" && cursorPosition === 0) {
+          if (currentIndex > 0) {
+            nextIndex = currentIndex - 1;
+          } else if (context.loop) {
+            nextIndex = inputs.length - 1;
+          }
         } else if (
           event.key === "ArrowRight" &&
-          currentIndex < inputs.length - 1 &&
           cursorPosition === textLength
         ) {
-          nextIndex = currentIndex + 1;
+          if (currentIndex < inputs.length - 1) {
+            nextIndex = currentIndex + 1;
+          } else if (context.loop) {
+            nextIndex = 0;
+          }
         }
       } else {
-        if (
-          event.key === "ArrowUp" &&
-          currentIndex > 0 &&
-          cursorPosition === 0
-        ) {
-          nextIndex = currentIndex - 1;
-        } else if (
-          event.key === "ArrowDown" &&
-          currentIndex < inputs.length - 1 &&
-          cursorPosition === textLength
-        ) {
-          nextIndex = currentIndex + 1;
+        if (event.key === "ArrowUp" && cursorPosition === 0) {
+          if (currentIndex > 0) {
+            nextIndex = currentIndex - 1;
+          } else if (context.loop) {
+            nextIndex = inputs.length - 1;
+          }
+        } else if (event.key === "ArrowDown" && cursorPosition === textLength) {
+          if (currentIndex < inputs.length - 1) {
+            nextIndex = currentIndex + 1;
+          } else if (context.loop) {
+            nextIndex = 0;
+          }
         }
       }
 
@@ -239,7 +258,14 @@ function InputGroupItem(props: InputGroupItemProps) {
         }
       }
     },
-    [inputProps.onKeyDown, isDisabled, context.orientation, context.rootRef],
+    [
+      inputProps.onKeyDown,
+      isDisabled,
+      context.orientation,
+      context.rootRef,
+      context.loop,
+      context.arrowNavigation,
+    ],
   );
 
   const InputPrimitive = asChild ? Slot : Input;

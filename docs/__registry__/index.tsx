@@ -873,6 +873,22 @@ export const Index: Record<string, any> = {
       subcategory: "",
       chunks: []
     },
+    "input-group-arrow-navigation-demo": {
+      name: "input-group-arrow-navigation-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["input-group","badge","switch","label"],
+      files: [{
+        path: "registry/default/examples/input-group-arrow-navigation-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/input-group-arrow-navigation-demo.tsx")),
+      source: "",
+      category: "",
+      subcategory: "",
+      chunks: []
+    },
     "kanban-demo": {
       name: "kanban-demo",
       description: "",

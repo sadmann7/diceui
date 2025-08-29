@@ -428,6 +428,18 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "input-group-arrow-navigation-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    registryDependencies: ["input-group", "badge", "switch", "label"],
+    files: [
+      {
+        path: "examples/input-group-arrow-navigation-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "kanban-demo",
     type: "registry:example",
     dependencies: [
