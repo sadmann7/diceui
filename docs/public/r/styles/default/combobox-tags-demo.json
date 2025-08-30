@@ -6,10 +6,6 @@
     "@diceui/tags-input",
     "lucide-react"
   ],
-  "registryDependencies": [
-    "combobox",
-    "tags-input"
-  ],
   "files": [
     {
       "path": "examples/combobox-tags-demo.tsx",

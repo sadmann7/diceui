@@ -11,8 +11,6 @@
     "lucide-react"
   ],
   "registryDependencies": [
-    "tags-input",
-    "sortable",
     "button"
   ],
   "files": [

@@ -651,16 +651,17 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
   );
 }
 
-function ColorPickerRootImpl(
-  props: Omit<
+interface ColorPickerRootImplProps
+  extends Omit<
     ColorPickerRootProps,
     | "defaultValue"
     | "onValueChange"
     | "format"
     | "defaultFormat"
     | "onFormatChange"
-  >,
-) {
+  > {}
+
+function ColorPickerRootImpl(props: ColorPickerRootImplProps) {
   const {
     value: valueProp,
     dir: dirProp,
@@ -1083,7 +1084,7 @@ function ColorPickerSwatch(props: ColorPickerSwatchProps) {
 
   return (
     <SwatchPrimitive
-      role={asChild ? undefined : "img"}
+      role="img"
       aria-label={ariaLabel}
       data-slot="color-picker-swatch"
       {...swatchProps}

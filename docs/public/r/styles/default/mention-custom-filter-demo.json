@@ -5,9 +5,6 @@
     "@diceui/mention",
     "lucide-react"
   ],
-  "registryDependencies": [
-    "mention"
-  ],
   "files": [
     {
       "path": "examples/mention-custom-filter-demo.tsx",

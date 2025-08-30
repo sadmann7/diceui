@@ -5,9 +5,6 @@
     "@diceui/data-table",
     "lucide-react"
   ],
-  "registryDependencies": [
-    "data-table"
-  ],
   "files": [
     {
       "path": "examples/data-table-demo.tsx",

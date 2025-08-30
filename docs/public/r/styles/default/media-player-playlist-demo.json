@@ -8,8 +8,7 @@
   ],
   "registryDependencies": [
     "button",
-    "scroll-area",
-    "media-player"
+    "scroll-area"
   ],
   "files": [
     {

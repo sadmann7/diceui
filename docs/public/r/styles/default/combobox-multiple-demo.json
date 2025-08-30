@@ -5,9 +5,6 @@
     "@diceui/combobox",
     "lucide-react"
   ],
-  "registryDependencies": [
-    "combobox"
-  ],
   "files": [
     {
       "path": "examples/combobox-multiple-demo.tsx",
