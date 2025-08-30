@@ -114,23 +114,3 @@ The component automatically detects transparent colors by checking for:
 - Any color format that includes transparency information
 
 When transparency is detected, a checkerboard pattern is displayed behind the color to show the transparency effect. Use the `withoutTransparency` prop to disable this behavior.
-
-## Usage with Forms
-
-The color swatch component can be used as a form control by utilizing the `asChild` prop:
-
-```tsx
-<ColorSwatch asChild>
-  <button type="button" onClick={handleColorSelect}>
-    <span className="sr-only">Select color</span>
-  </button>
-</ColorSwatch>
-```
-
-## Styling
-
-The component uses CSS custom properties for styling:
-
-- Uses `forcedColorAdjust: none` to maintain color accuracy in high contrast mode
-- Supports all standard HTML div attributes and styling
-- Can be customized with additional CSS classes via the `className` prop
