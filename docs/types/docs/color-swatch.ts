@@ -1,21 +1,12 @@
-import type * as React from "react";
 import type { CompositionProps, EmptyProps } from "@/types";
 
-/**
- * Props for the ColorSwatch component.
- *
- * @example
- * ```tsx
- * <ColorSwatch value="#ff0000" />
- * ```
- */
 export interface ColorSwatchProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The color value to display. Can be any valid CSS color value.
    * @default undefined
    * @example "#ff0000" | "rgb(255, 0, 0)" | "hsl(0, 100%, 50%)" | "rgba(255, 0, 0, 0.5)"
    */
-  value?: string;
+  color?: string;
 
   /**
    * The size of the color swatch.
@@ -34,10 +25,4 @@ export interface ColorSwatchProps extends EmptyProps<"div">, CompositionProps {
    * @default false
    */
   disabled?: boolean;
-
-  /**
-   * Render as a child component.
-   * @default false
-   */
-  asChild?: boolean;
 }
