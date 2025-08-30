@@ -1084,7 +1084,7 @@ function ColorPickerSwatch(props: ColorPickerSwatchProps) {
 
   return (
     <SwatchPrimitive
-      role={asChild ? undefined : "img"}
+      role="img"
       aria-label={ariaLabel}
       data-slot="color-picker-swatch"
       {...swatchProps}

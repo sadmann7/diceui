@@ -6,7 +6,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const colorSwatchVariants = cva(
-  "box-border rounded-sm border shadow-sm data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+  "box-border rounded-sm border shadow-sm [background-clip:padding-box] data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
   {
     variants: {
       size: {
@@ -21,63 +21,92 @@ const colorSwatchVariants = cva(
   },
 );
 
+function getIsCssColor(v: string): boolean {
+  try {
+    return typeof CSS !== "undefined" && typeof CSS.supports === "function"
+      ? CSS.supports("color", v)
+      : true;
+  } catch {
+    return false;
+  }
+}
+
+function getHasAlpha(v: string): boolean {
+  const s = v.trim().toLowerCase();
+
+  if (s === "transparent") return true;
+
+  if (/^#(?:[0-9a-f]{4}|[0-9a-f]{8})$/i.test(s)) return true;
+
+  if (/\b(?:rgba|hsla)\s*\(/i.test(s)) return true;
+
+  if (
+    /\b(?:rgb|hsl|lab|lch|oklab|oklch|color)\s*\([^)]*\/\s*[\d.]+%?\s*\)/i.test(
+      s,
+    )
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
 interface ColorSwatchProps
-  extends React.ComponentProps<"div">,
+  extends Omit<React.ComponentProps<"div">, "children">,
     VariantProps<typeof colorSwatchVariants> {
-  value?: string;
+  color?: string;
   asChild?: boolean;
   disabled?: boolean;
   withoutTransparency?: boolean;
 }
 
-function ColorSwatch(props: ColorSwatchProps) {
-  const {
-    value,
-    size = "default",
-    asChild = false,
-    disabled = false,
-    withoutTransparency = false,
-    className,
-    style,
-    ...colorSwatchProps
-  } = props;
+function ColorSwatch({
+  color,
+  size = "default",
+  asChild = false,
+  disabled = false,
+  withoutTransparency = false,
+  className,
+  style,
+  ...props
+}: ColorSwatchProps) {
+  const colorValue = color?.trim();
 
-  const backgroundStyle = React.useMemo(() => {
-    if (!value) {
+  const backgroundStyle = React.useMemo<React.CSSProperties>(() => {
+    if (!colorValue) {
       return {
         background:
           "linear-gradient(to bottom right, transparent calc(50% - 1px), hsl(var(--destructive)) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px)) no-repeat",
       };
     }
 
-    const hasTransparency =
-      value.includes("rgba") ||
-      value.includes("hsla") ||
-      (value.includes("rgb") && value.split(",").length === 4) ||
-      (value.includes("hsl") && value.split(",").length === 4);
+    if (!getIsCssColor(colorValue)) {
+      return { backgroundColor: "transparent" };
+    }
 
-    if (hasTransparency && !withoutTransparency) {
+    if (!withoutTransparency && getHasAlpha(colorValue)) {
       return {
-        background: `linear-gradient(${value}, ${value}), repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%) 0% 50% / 8px 8px`,
+        background: `linear-gradient(${colorValue}, ${colorValue}), repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%) 0% 50% / 10px 10px`,
       };
     }
 
-    return {
-      backgroundColor: value,
-    };
-  }, [value, withoutTransparency]);
+    return { backgroundColor: colorValue };
+  }, [colorValue, withoutTransparency]);
 
-  const ariaLabel = !value ? "No color selected" : `Color swatch: ${value}`;
+  const ariaLabel = !colorValue
+    ? "No color selected"
+    : `Color swatch: ${colorValue}`;
 
-  const ColorSwatchPrimitive = asChild ? Slot : "div";
+  const Primitive = asChild ? Slot : "div";
 
   return (
-    <ColorSwatchPrimitive
+    <Primitive
       role="img"
       aria-label={ariaLabel}
+      aria-disabled={disabled || undefined}
       data-slot="color-swatch"
       data-disabled={disabled ? "" : undefined}
-      {...colorSwatchProps}
+      {...props}
       className={cn(colorSwatchVariants({ size }), className)}
       style={{
         ...backgroundStyle,
