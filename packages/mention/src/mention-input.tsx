@@ -204,19 +204,6 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         const isImmediatelyAfterTrigger =
           currentPosition === lastTriggerIndex + 1;
 
-        // Check if there's any text after the cursor position
-        const textAfterCursor = value.slice(currentPosition).trim();
-        const hasCompletedText =
-          textAfterCursor.length > 0 && !textAfterCursor.startsWith(" ");
-        if (hasCompletedText) {
-          if (context.open) {
-            context.onOpenChange(false);
-            context.onHighlightedItemChange(null);
-            context.filterStore.search = "";
-          }
-          return false;
-        }
-
         if (
           isValidMention &&
           (isCursorAfterTrigger || isImmediatelyAfterTrigger)

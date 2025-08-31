@@ -305,7 +305,23 @@ const MentionRoot = React.forwardRef<RootElement, MentionRootProps>(
           end: triggerIndex + mentionText.length,
         };
 
-        setMentions((prev) => [...prev, newMention]);
+        setMentions(prev => {
+          const updatedMentions = prev.map((mention) => {
+            // If the mention starts after the new mention, update its position
+            if (mention.start >= newMention.start) {
+              return {
+                ...mention,
+                start: mention.start + mentionText.length,
+                end: mention.end + mentionText.length + 1,
+              };
+            }
+
+            return mention;
+          });
+          // Add new mention and sort mentions by order
+          const withNewMention = [...updatedMentions, newMention].sort((a, b) => a.start - b.start);
+          return withNewMention;
+        });
 
         input.value = newValue;
         setInputValue(newValue);
