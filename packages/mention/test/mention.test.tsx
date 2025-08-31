@@ -338,4 +338,77 @@ describe("Mention", () => {
     expect(input).toHaveAttribute("aria-expanded", "false");
     expect(label).toHaveAttribute("for", input.id);
   });
+
+  test("allows mentions at the beginning of text after writing something and going back", async () => {
+    const onOpenChange = vi.fn();
+    renderMention({ onOpenChange });
+    
+    const input = screen.getByPlaceholderText(placeholder);
+    
+    if (!(input instanceof HTMLInputElement)) {
+      throw new Error("Input element not found");
+    }
+
+    // First type "hello world"
+    await userEvent.type(input, "hello world");
+    expect(input.value).toBe("hello world");
+
+    // Go back to the beginning and type "@"
+    input.setSelectionRange(0, 0);
+    await userEvent.keyboard("@");
+
+    // Should open mention list
+    await waitFor(() => {
+      expect(onOpenChange).toHaveBeenCalledWith(true);
+      expect(screen.getByRole("listbox")).toBeInTheDocument();
+    });
+  });
+
+  test("allows mentions in middle of text", async () => {
+    const onOpenChange = vi.fn();
+    renderMention({ onOpenChange });
+    
+    const input = screen.getByPlaceholderText(placeholder);
+    
+    if (!(input instanceof HTMLInputElement)) {
+      throw new Error("Input element not found");
+    }
+
+    // First type "hello world"
+    await userEvent.type(input, "hello world");
+    expect(input.value).toBe("hello world");
+    
+    // Type "@" after "hello "
+    input.setSelectionRange(6, 6); // Position cursor after "hello "
+    await userEvent.keyboard("@");
+
+    // Should open mention list
+    await waitFor(() => {
+      expect(onOpenChange).toHaveBeenCalledWith(true);
+      expect(screen.getByRole("listbox")).toBeInTheDocument();
+    });
+  });
+
+  test("prevents mentions in middle of words", async () => {
+    const onOpenChange = vi.fn();
+    renderMention({ onOpenChange });
+    
+    const input = screen.getByPlaceholderText(placeholder);
+    
+    if (!(input instanceof HTMLInputElement)) {
+      throw new Error("Input element not found");
+    }
+    
+    await userEvent.type(input, "helloworld");
+    input.setSelectionRange(5, 5); // Position cursor in the middle
+
+    // Type a @
+    await userEvent.keyboard("@");
+    
+    // Should NOT open mention list
+    await waitFor(() => {
+      expect(onOpenChange).not.toHaveBeenCalledWith(true);
+      expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+    });
+  });
 });
