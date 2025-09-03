@@ -12,8 +12,8 @@ import { colorMapping, colors } from "../registry/registry-colors";
 import { styles } from "../registry/registry-styles";
 import {
   type Registry,
-  type RegistryEntry,
-  registryEntrySchema,
+  type RegistryItem,
+  registryItemSchema,
   type registryItemTypeSchema,
   registrySchema,
 } from "../registry/schema";
@@ -30,6 +30,8 @@ const REGISTRY_INDEX_WHITELIST: z.infer<typeof registryItemTypeSchema>[] = [
   "registry:block",
   "registry:example",
   "registry:component",
+  "registry:internal",
+  "registry:style",
 ];
 
 const project = new Project({
@@ -57,7 +59,7 @@ export const Index: Record<string, any> = {
     index += `  "${style.name}": {`;
 
     // Build style index.
-    for (const item of registry) {
+    for (const item of registry.items) {
       const resolveFiles = item.files?.map(
         (file) =>
           `registry/${style.name}/${
@@ -302,8 +304,6 @@ export const Index: Record<string, any> = {
       })}],
       component: React.lazy(() => import("${componentPath}")),
       source: "${sourceFilename}",
-      category: "${item.category ?? ""}",
-      subcategory: "${item.subcategory ?? ""}",
       chunks: [${chunks.map(
         (chunk) => `{
         name: "${chunk.name}",
@@ -329,7 +329,7 @@ export const Index: Record<string, any> = {
   // ----------------------------------------------------------------------------
   // Build registry/index.json.
   // ----------------------------------------------------------------------------
-  const items = registry
+  const items = registry.items
     .filter((item) => ["registry:ui"].includes(item.type))
     .map((item) => {
       return {
@@ -372,7 +372,7 @@ async function buildStyles(registry: Registry) {
       await fs.mkdir(targetPath, { recursive: true });
     }
 
-    for (const item of registry) {
+    for (const item of registry.items) {
       if (!REGISTRY_INDEX_WHITELIST.includes(item.type)) {
         continue;
       }
@@ -451,15 +451,10 @@ async function buildStyles(registry: Registry) {
         );
       }
 
-      const payload = registryEntrySchema
-        .omit({
-          category: true,
-          subcategory: true,
-        })
-        .safeParse({
-          ...item,
-          files,
-        });
+      const payload = registryItemSchema.safeParse({
+        ...item,
+        files,
+      });
 
       if (payload.success) {
         await fs.writeFile(
@@ -500,7 +495,7 @@ async function buildStylesIndex() {
     //   dependencies.push("@radix-ui/react-icons")
     // }
 
-    const payload: RegistryEntry = {
+    const payload: RegistryItem = {
       name: style.name,
       type: "registry:style",
       dependencies,
