@@ -104,8 +104,8 @@ function ColorSwatch({
       role="img"
       aria-label={ariaLabel}
       aria-disabled={disabled || undefined}
-      data-slot="color-swatch"
       data-disabled={disabled ? "" : undefined}
+      data-slot="color-swatch"
       {...props}
       className={cn(colorSwatchVariants({ size }), className)}
       style={{

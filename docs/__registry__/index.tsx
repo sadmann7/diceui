@@ -5,6 +5,24 @@ import * as React from "react"
 
 export const Index: Record<string, any> = {
   "default": {
+    "index": {
+      name: "index",
+      description: "",
+      type: "registry:style",
+      registryDependencies: ["utils"],
+      files: [],
+      source: "",
+      chunks: []
+    },
+    "style": {
+      name: "style",
+      description: "",
+      type: "registry:style",
+      registryDependencies: ["utils"],
+      files: [],
+      source: "",
+      chunks: []
+    },
     "checkbox-group": {
       name: "checkbox-group",
       description: "",
@@ -17,8 +35,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/ui/checkbox-group.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "color-picker": {
@@ -41,8 +57,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/ui/color-picker.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "combobox": {
@@ -57,8 +71,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/ui/combobox.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "editable": {
@@ -81,8 +93,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/ui/editable.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "file-upload": {
@@ -97,8 +107,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/ui/file-upload.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "input-group": {
@@ -113,8 +121,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/ui/input-group.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "kanban": {
@@ -133,8 +139,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/ui/kanban.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "kbd": {
@@ -149,8 +153,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/ui/kbd.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "listbox": {
@@ -165,8 +167,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/ui/listbox.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "masonry": {
@@ -185,8 +185,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/ui/masonry.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "media-player": {
@@ -205,8 +203,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/ui/media-player.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "mention": {
@@ -221,8 +217,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/ui/mention.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "relative-time-card": {
@@ -237,8 +231,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/ui/relative-time-card.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "scroller": {
@@ -257,8 +249,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/ui/scroller.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "sortable": {
@@ -277,8 +267,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/ui/sortable.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "color-swatch": {
@@ -293,8 +281,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/ui/color-swatch.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "tags-input": {
@@ -309,8 +295,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/ui/tags-input.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "utils": {
@@ -325,8 +309,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/lib/utils.ts")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "compose-refs": {
@@ -341,8 +323,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/lib/compose-refs.ts")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "checkbox-group-demo": {
@@ -357,8 +337,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/checkbox-group-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "checkbox-group-animated-demo": {
@@ -373,8 +351,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/checkbox-group-animated-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "checkbox-group-horizontal-demo": {
@@ -389,8 +365,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/checkbox-group-horizontal-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "checkbox-group-multi-selection-demo": {
@@ -405,8 +379,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/checkbox-group-multi-selection-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "checkbox-group-validation-demo": {
@@ -421,8 +393,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/checkbox-group-validation-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "color-picker-demo": {
@@ -437,8 +407,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/color-picker-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "color-picker-controlled-demo": {
@@ -453,8 +421,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/color-picker-controlled-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "color-picker-form-demo": {
@@ -469,8 +435,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/color-picker-form-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "color-picker-inline-demo": {
@@ -485,8 +449,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/color-picker-inline-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "combobox-demo": {
@@ -501,8 +463,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/combobox-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "combobox-custom-filter-demo": {
@@ -517,8 +477,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/combobox-custom-filter-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "combobox-debounced-demo": {
@@ -533,8 +491,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/combobox-debounced-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "combobox-groups-demo": {
@@ -549,8 +505,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/combobox-groups-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "combobox-multiple-demo": {
@@ -565,8 +519,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/combobox-multiple-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "combobox-tags-demo": {
@@ -581,8 +533,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/combobox-tags-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "combobox-virtualized-demo": {
@@ -597,8 +547,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/combobox-virtualized-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "data-table-demo": {
@@ -613,8 +561,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/data-table-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "editable-demo": {
@@ -629,8 +575,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/editable-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "editable-autosize-demo": {
@@ -645,8 +589,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/editable-autosize-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "editable-double-click-demo": {
@@ -661,8 +603,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/editable-double-click-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "editable-form-demo": {
@@ -677,8 +617,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/editable-form-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "editable-todo-list-demo": {
@@ -693,8 +631,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/editable-todo-list-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "file-upload-demo": {
@@ -709,8 +645,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/file-upload-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "file-upload-chat-input-demo": {
@@ -725,8 +659,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/file-upload-chat-input-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "file-upload-circular-progress-demo": {
@@ -741,8 +673,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/file-upload-circular-progress-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "file-upload-direct-upload-demo": {
@@ -757,8 +687,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/file-upload-direct-upload-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "file-upload-fill-progress-demo": {
@@ -773,8 +701,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/file-upload-fill-progress-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "file-upload-form-demo": {
@@ -789,8 +715,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/file-upload-form-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "file-upload-uploadthing-demo": {
@@ -805,8 +729,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/file-upload-uploadthing-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "file-upload-validation-demo": {
@@ -821,8 +743,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/file-upload-validation-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "input-group-demo": {
@@ -837,8 +757,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/input-group-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "input-group-form-demo": {
@@ -853,8 +771,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/input-group-form-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "input-group-rgb-demo": {
@@ -869,8 +785,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/input-group-rgb-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "input-group-vertical-demo": {
@@ -885,8 +799,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/input-group-vertical-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "kanban-demo": {
@@ -901,8 +813,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/kanban-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "kanban-dynamic-overlay-demo": {
@@ -917,8 +827,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/kanban-dynamic-overlay-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "kbd-demo": {
@@ -933,8 +841,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/kbd-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "kbd-multiple-demo": {
@@ -949,8 +855,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/kbd-multiple-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "kbd-variants-demo": {
@@ -965,8 +869,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/kbd-variants-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "listbox-demo": {
@@ -981,8 +883,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/listbox-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "listbox-grid-demo": {
@@ -997,8 +897,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/listbox-grid-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "listbox-group-demo": {
@@ -1013,8 +911,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/listbox-group-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "listbox-horizontal-demo": {
@@ -1029,8 +925,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/listbox-horizontal-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "masonry-demo": {
@@ -1045,8 +939,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/masonry-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "masonry-linear-demo": {
@@ -1061,8 +953,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/masonry-linear-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "masonry-ssr-demo": {
@@ -1077,8 +967,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/masonry-ssr-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "media-player-demo": {
@@ -1093,8 +981,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/media-player-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "media-player-audio-demo": {
@@ -1109,8 +995,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/media-player-audio-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "media-player-error-demo": {
@@ -1125,8 +1009,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/media-player-error-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "media-player-hls-demo": {
@@ -1141,8 +1023,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/media-player-hls-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "media-player-playlist-demo": {
@@ -1157,8 +1037,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/media-player-playlist-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "media-player-settings-demo": {
@@ -1173,8 +1051,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/media-player-settings-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "mention-demo": {
@@ -1189,8 +1065,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/mention-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "mention-custom-filter-demo": {
@@ -1205,8 +1079,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/mention-custom-filter-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "mention-custom-trigger-demo": {
@@ -1221,8 +1093,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/mention-custom-trigger-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "relative-time-card-demo": {
@@ -1237,8 +1107,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/relative-time-card-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "relative-time-card-timezones-demo": {
@@ -1253,8 +1121,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/relative-time-card-timezones-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "relative-time-card-variants-demo": {
@@ -1269,8 +1135,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/relative-time-card-variants-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "scroller-demo": {
@@ -1285,8 +1149,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/scroller-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "scroller-hidden-demo": {
@@ -1301,8 +1163,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/scroller-hidden-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "scroller-horizontal-demo": {
@@ -1317,8 +1177,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/scroller-horizontal-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "scroller-navigation-demo": {
@@ -1333,8 +1191,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/scroller-navigation-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "sortable-demo": {
@@ -1349,8 +1205,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/sortable-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "sortable-dynamic-overlay-demo": {
@@ -1365,8 +1219,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/sortable-dynamic-overlay-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "sortable-handle-demo": {
@@ -1381,8 +1233,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/sortable-handle-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "sortable-primitive-values-demo": {
@@ -1397,8 +1247,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/sortable-primitive-values-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "color-swatch-demo": {
@@ -1413,8 +1261,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/color-swatch-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "color-swatch-sizes-demo": {
@@ -1429,8 +1275,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/color-swatch-sizes-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "color-swatch-transparency-demo": {
@@ -1445,8 +1289,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/color-swatch-transparency-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "tags-input-demo": {
@@ -1461,8 +1303,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/tags-input-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "tags-input-editable-demo": {
@@ -1477,8 +1317,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/tags-input-editable-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "tags-input-sortable-demo": {
@@ -1493,8 +1331,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/tags-input-sortable-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "tags-input-validation-demo": {
@@ -1509,8 +1345,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/examples/tags-input-validation-demo.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "client-only": {
@@ -1525,8 +1359,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/components/client-only.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "direction-provider": {
@@ -1541,8 +1373,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/components/direction-provider.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "portal": {
@@ -1557,8 +1387,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/components/portal.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "presence": {
@@ -1573,8 +1401,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/components/presence.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "visually-hidden": {
@@ -1589,8 +1415,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/components/visually-hidden.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
     "visually-hidden-input": {
@@ -1605,8 +1429,6 @@ export const Index: Record<string, any> = {
       }],
       component: React.lazy(() => import("@/registry/default/components/visually-hidden-input.tsx")),
       source: "",
-      category: "",
-      subcategory: "",
       chunks: []
     },
   },

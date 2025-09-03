@@ -64,7 +64,7 @@ export const Index: Record<string, any> = {
         (file) =>
           `registry/${style.name}/${
             typeof file === "string" ? file : file.path
-          }`,
+          }`
       );
       if (!resolveFiles) {
         continue;
@@ -168,7 +168,7 @@ export const Index: Record<string, any> = {
             containerAttr?.remove();
 
             const parentJsxElement = component.getParentIfKindOrThrow(
-              SyntaxKind.JsxElement,
+              SyntaxKind.JsxElement
             );
 
             // Find all opening tags on component.
@@ -182,7 +182,7 @@ export const Index: Record<string, any> = {
                   .getDescendantsOfKind(SyntaxKind.JsxSelfClosingElement)
                   .map((node) => {
                     return node.getTagNameNode().getText();
-                  }),
+                  })
               );
 
             const componentImports = new Map<
@@ -200,13 +200,13 @@ export const Index: Record<string, any> = {
 
                 componentImports.set(
                   importLine.module,
-                  importLine?.isDefault ? newImports : Array.from(newImports),
+                  importLine?.isDefault ? newImports : Array.from(newImports)
                 );
               }
             }
 
             const componnetImportLines = Array.from(
-              componentImports.keys(),
+              componentImports.keys()
             ).map((key) => {
               const values = componentImports.get(key);
               const specifier = Array.isArray(values)
@@ -228,7 +228,7 @@ export const Index: Record<string, any> = {
             const targetFile = file.replace(item.name, `${chunkName}`);
             const targetFilePath = path.join(
               cwd(),
-              `registry/${style.name}/${type}/${chunkName}.tsx`,
+              `registry/${style.name}/${type}/${chunkName}.tsx`
             );
 
             // Write component file.
@@ -244,7 +244,7 @@ export const Index: Record<string, any> = {
                 className: containerClassName,
               },
             };
-          }),
+          })
         );
 
         // // Write the source file for blocks only.
@@ -254,7 +254,7 @@ export const Index: Record<string, any> = {
           const files = item.files.map((file) =>
             typeof file === "string"
               ? { type: "registry:page", path: file }
-              : file,
+              : file
           );
           if (files?.length) {
             sourceFilename = `__registry__/${style.name}/${files[0].path}`;
@@ -276,12 +276,18 @@ export const Index: Record<string, any> = {
         const files = item.files.map((file) =>
           typeof file === "string"
             ? { type: "registry:page", path: file }
-            : file,
+            : file
         );
         if (files?.length) {
           componentPath = `@/registry/${style.name}/${files[0].path}`;
         }
       }
+
+      // Skip component generation for metadata-only entries
+      const shouldGenerateComponent =
+        item.files &&
+        item.files.length > 0 &&
+        !["index", "style"].includes(item.name);
 
       index += `
     "${item.name}": {
@@ -301,8 +307,12 @@ export const Index: Record<string, any> = {
         type: "${file.type}",
         target: "${file.target ?? ""}"
       }`;
-      })}],
-      component: React.lazy(() => import("${componentPath}")),
+      })}],${
+        shouldGenerateComponent
+          ? `
+      component: React.lazy(() => import("${componentPath}")),`
+          : ""
+      }
       source: "${sourceFilename}",
       chunks: [${chunks.map(
         (chunk) => `{
@@ -313,7 +323,7 @@ export const Index: Record<string, any> = {
         container: {
           className: "${chunk.container.className}"
         }
-      }`,
+      }`
       )}]
     },`;
     }
@@ -352,7 +362,7 @@ export const Index: Record<string, any> = {
   await fs.writeFile(
     path.join(REGISTRY_PATH, "index.json"),
     registryJson,
-    "utf8",
+    "utf8"
   );
 
   // Write style index.
@@ -396,7 +406,7 @@ async function buildStyles(registry: Registry) {
             try {
               content = await fs.readFile(
                 path.join(process.cwd(), "registry", style.name, file.path),
-                "utf8",
+                "utf8"
               );
 
               // Only fix imports for v0- blocks.
@@ -447,7 +457,7 @@ async function buildStyles(registry: Registry) {
               content: sourceFile.getText(),
               target,
             };
-          }),
+          })
         );
       }
 
@@ -460,7 +470,7 @@ async function buildStyles(registry: Registry) {
         await fs.writeFile(
           path.join(targetPath, `${item.name}.json`),
           JSON.stringify(payload.data, null, 2),
-          "utf8",
+          "utf8"
         );
       }
     }
@@ -473,7 +483,7 @@ async function buildStyles(registry: Registry) {
   await fs.writeFile(
     path.join(REGISTRY_PATH, "styles/index.json"),
     stylesJson,
-    "utf8",
+    "utf8"
   );
 }
 
@@ -512,7 +522,7 @@ async function buildStylesIndex() {
     await fs.writeFile(
       path.join(targetPath, "index.json"),
       JSON.stringify(payload, null, 2),
-      "utf8",
+      "utf8"
     );
   }
 }
@@ -541,7 +551,7 @@ async function buildThemes() {
         rgbChannel: item.rgb.replace(/^rgb\((\d+),(\d+),(\d+)\)$/, "$1 $2 $3"),
         hslChannel: item.hsl.replace(
           /^hsl\(([\d.]+),([\d.]+%),([\d.]+%)\)$/,
-          "$1 $2 $3",
+          "$1 $2 $3"
         ),
       }));
       continue;
@@ -553,7 +563,7 @@ async function buildThemes() {
         rgbChannel: value.rgb.replace(/^rgb\((\d+),(\d+),(\d+)\)$/, "$1 $2 $3"),
         hslChannel: value.hsl.replace(
           /^hsl\(([\d.]+),([\d.]+%),([\d.]+%)\)$/,
-          "$1 $2 $3",
+          "$1 $2 $3"
         ),
       };
     }
@@ -562,7 +572,7 @@ async function buildThemes() {
   await fs.writeFile(
     path.join(colorsTargetPath, "index.json"),
     JSON.stringify(colorsData, null, 2),
-    "utf8",
+    "utf8"
   );
 
   // ----------------------------------------------------------------------------
@@ -667,7 +677,7 @@ async function buildThemes() {
           const color = scale
             ? colorsData[resolvedBase].find(
                 // biome-ignore lint/suspicious/noExplicitAny: color items have dynamic structure
-                (item: any) => item.scale === Number.parseInt(scale, 10),
+                (item: any) => item.scale === Number.parseInt(scale, 10)
               )
             : colorsData[resolvedBase];
           if (color) {
@@ -686,7 +696,7 @@ async function buildThemes() {
     await fs.writeFile(
       path.join(REGISTRY_PATH, `colors/${baseColor}.json`),
       JSON.stringify(base, null, 2),
-      "utf8",
+      "utf8"
     );
 
     // ----------------------------------------------------------------------------
@@ -764,14 +774,14 @@ async function buildThemes() {
         createTemplate(THEME_STYLES_WITH_VARIABLES)({
           colors: theme.cssVars,
           theme: theme.name,
-        }),
+        })
       );
     }
 
     await fs.writeFile(
       path.join(REGISTRY_PATH, "themes.css"),
       themeCSS.join("\n"),
-      "utf8",
+      "utf8"
     );
 
     // ----------------------------------------------------------------------------
@@ -796,7 +806,7 @@ async function buildThemes() {
             const color = scale
               ? colorsData[resolvedBase].find(
                   // biome-ignore lint/suspicious/noExplicitAny: color items have dynamic structure
-                  (item: any) => item.scale === Number.parseInt(scale, 10),
+                  (item: any) => item.scale === Number.parseInt(scale, 10)
                 )
               : colorsData[resolvedBase];
             if (color) {
@@ -816,7 +826,7 @@ async function buildThemes() {
       await fs.writeFile(
         path.join(targetPath, `${payload.name}.json`),
         JSON.stringify(payload, null, 2),
-        "utf8",
+        "utf8"
       );
     }
   }
