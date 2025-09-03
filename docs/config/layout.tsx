@@ -10,7 +10,7 @@ export const baseOptions: BaseLayoutProps = {
   nav: {
     title: (
       <>
-        <Icons.logo className="size-4" aria-hidden="true" />
+        <Icons.logo className="size-4" />
         <span className="font-medium [.uwu_&]:hidden [header_&]:text-[15px]">
           {siteConfig.name}
         </span>
@@ -26,7 +26,7 @@ export const baseOptions: BaseLayoutProps = {
       type: "icon",
       url: siteConfig.links.github,
       text: "Github",
-      icon: <Icons.gitHub className="size-4" aria-hidden="true" />,
+      icon: <Icons.gitHub className="size-4" />,
       external: true,
     },
   ],
