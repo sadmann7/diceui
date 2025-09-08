@@ -19,8 +19,8 @@ import {
   Stepper,
   StepperContent,
   StepperDescription,
+  StepperIndicator,
   StepperItem,
-  StepperItemIndicator,
   StepperList,
   StepperSeparator,
   StepperTitle,
@@ -116,10 +116,8 @@ export default function StepperFormDemo() {
           <StepperList>
             {steps.map((step, index) => (
               <StepperItem key={step.value} value={step.value}>
-                <StepperTrigger value={step.value}>
-                  <StepperItemIndicator value={step.value}>
-                    {index + 1}
-                  </StepperItemIndicator>
+                <StepperTrigger>
+                  <StepperIndicator>{index + 1}</StepperIndicator>
                 </StepperTrigger>
                 <div className="mt-2 flex flex-col items-center gap-1">
                   <StepperTitle>{step.title}</StepperTitle>

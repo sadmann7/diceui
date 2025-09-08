@@ -102,13 +102,6 @@ export interface TriggerProps
   extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
     CompositionProps {
   /**
-   * The unique value for this step trigger.
-   *
-   * @example "step-1"
-   */
-  value: string;
-
-  /**
    * The variant of the trigger button.
    *
    * @default "ghost"
@@ -123,16 +116,7 @@ export interface TriggerProps
   size?: ButtonProps["size"];
 }
 
-export interface ItemIndicatorProps
-  extends EmptyProps<"div">,
-    CompositionProps {
-  /**
-   * The unique value for this step indicator.
-   *
-   * @example "step-1"
-   */
-  value: string;
-
+export interface IndicatorProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The display content for the indicator (e.g., step number).
    *

@@ -13,7 +13,7 @@ const ROOT_NAME = "Stepper";
 const LIST_NAME = "StepperList";
 const ITEM_NAME = "StepperItem";
 const TRIGGER_NAME = "StepperTrigger";
-const ITEM_INDICATOR_NAME = "StepperItemIndicator";
+const INDICATOR_NAME = "StepperIndicator";
 const SEPARATOR_NAME = "StepperSeparator";
 const TITLE_NAME = "StepperTitle";
 const DESCRIPTION_NAME = "StepperDescription";
@@ -495,13 +495,11 @@ function StepperItem(props: StepperItemProps) {
 }
 
 interface StepperTriggerProps extends React.ComponentProps<typeof Button> {
-  value: string;
   asChild?: boolean;
 }
 
 function StepperTrigger(props: StepperTriggerProps) {
   const {
-    value: stepValue,
     variant = "ghost",
     size = "icon",
     className,
@@ -515,6 +513,7 @@ function StepperTrigger(props: StepperTriggerProps) {
   const itemContext = useStepperItemContext(TRIGGER_NAME);
   const store = useStoreContext(TRIGGER_NAME);
   const currentValue = useStore((state) => state.currentValue);
+  const stepValue = itemContext.value;
   const stepState = useStore((state) => state.steps.get(stepValue));
   const globalDisabled = useStore((state) => state.disabled);
 
@@ -577,22 +576,16 @@ const stepperIndicatorVariants = cva(
   },
 );
 
-interface StepperItemIndicatorProps extends React.ComponentProps<"div"> {
-  value: string;
+interface StepperIndicatorProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-function StepperItemIndicator(props: StepperItemIndicatorProps) {
-  const {
-    value: stepValue,
-    className,
-    children,
-    ref,
-    asChild,
-    ...indicatorProps
-  } = props;
-  const context = useStepperContext(ITEM_INDICATOR_NAME);
+function StepperIndicator(props: StepperIndicatorProps) {
+  const { className, children, ref, asChild, ...indicatorProps } = props;
+  const context = useStepperContext(INDICATOR_NAME);
+  const itemContext = useStepperItemContext(INDICATOR_NAME);
   const currentValue = useStore((state) => state.currentValue);
+  const stepValue = itemContext.value;
   const stepState = useStore((state) => state.steps.get(stepValue));
 
   const isActive = stepValue === currentValue;
@@ -751,7 +744,7 @@ export {
   StepperContent as Content,
   StepperDescription as Description,
   StepperItem as Item,
-  StepperItemIndicator as ItemIndicator,
+  StepperIndicator as ItemIndicator,
   StepperList as List,
   StepperRoot as Root,
   StepperSeparator as Separator,
@@ -762,7 +755,7 @@ export {
   StepperContent,
   StepperDescription,
   StepperItem,
-  StepperItemIndicator,
+  StepperIndicator,
   StepperList,
   StepperSeparator,
   StepperTitle,
