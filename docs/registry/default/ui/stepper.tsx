@@ -31,18 +31,6 @@ function useStepperContext(consumerName?: string) {
   return context;
 }
 
-const stepperVariants = cva("flex", {
-  variants: {
-    orientation: {
-      horizontal: "flex-row",
-      vertical: "flex-col",
-    },
-  },
-  defaultVariants: {
-    orientation: "horizontal",
-  },
-});
-
 interface StepperRootProps extends React.ComponentProps<"div"> {
   value?: string;
   defaultValue?: string;
@@ -55,9 +43,7 @@ interface StepperRootProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-function Stepper(
-  props: StepperRootProps & VariantProps<typeof stepperVariants>,
-) {
+function Stepper(props: StepperRootProps) {
   const {
     value: controlledValue,
     defaultValue,
@@ -108,7 +94,7 @@ function Stepper(
     <StepperContext.Provider value={contextValue}>
       <div
         ref={composedRef}
-        className={cn(stepperVariants({ orientation }), className)}
+        className={cn("flex flex-col gap-4", className)}
         {...rootProps}
       >
         {children}
@@ -393,4 +379,14 @@ export {
   StepperTitle,
   StepperDescription,
   StepperContent,
+  //
+  Stepper as Root,
+  StepperList as List,
+  StepperItem as Item,
+  StepperTrigger as Trigger,
+  StepperIndicator as Indicator,
+  StepperSeparator as Separator,
+  StepperTitle as Title,
+  StepperDescription as Description,
+  StepperContent as Content,
 };
