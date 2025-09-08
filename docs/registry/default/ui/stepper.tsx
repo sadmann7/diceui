@@ -57,8 +57,7 @@ interface Store {
   notify: () => void;
   addStep: (value: string, completed: boolean, disabled: boolean) => void;
   removeStep: (value: string) => void;
-  setStepCompleted: (value: string, completed: boolean) => void;
-  setStepDisabled: (value: string, disabled: boolean) => void;
+  setStep: (value: string, updates: Partial<Omit<StepState, "value">>) => void;
 }
 
 function createStore(
@@ -118,23 +117,18 @@ function createStore(
         store.notify();
       }
     },
-    setStepCompleted: (value, completed) => {
+    setStep: (value, updates) => {
       const state = stateRef.current;
       if (state) {
         const step = state.steps.get(value);
         if (step) {
-          state.steps.set(value, { ...step, completed });
-          onValueComplete?.(value, completed);
-          store.notify();
-        }
-      }
-    },
-    setStepDisabled: (value, disabled) => {
-      const state = stateRef.current;
-      if (state) {
-        const step = state.steps.get(value);
-        if (step) {
-          state.steps.set(value, { ...step, disabled });
+          const updatedStep = { ...step, ...updates };
+          state.steps.set(value, updatedStep);
+
+          if ("completed" in updates && updates.completed !== step.completed) {
+            onValueComplete?.(value, updates.completed ?? false);
+          }
+
           store.notify();
         }
       }
@@ -449,17 +443,13 @@ function StepperItem(props: StepperItemProps) {
   }, [store, value, completed, disabled, onValueAdd, onValueRemove]);
 
   useIsomorphicLayoutEffect(() => {
-    store.setStepCompleted(value, completed);
-  }, [store, value, completed]);
-
-  useIsomorphicLayoutEffect(() => {
-    store.setStepDisabled(value, disabled);
-  }, [store, value, disabled]);
+    store.setStep(value, { completed, disabled });
+  }, [store, value, completed, disabled]);
 
   const stepState = useStore((state) => state.steps.get(value));
   const isActive = currentValue === value;
 
-  const itemContextValue = React.useMemo(
+  const itemContextValue = React.useMemo<StepperItemContextValue>(
     () => ({
       value,
       stepState,
