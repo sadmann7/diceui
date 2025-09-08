@@ -225,6 +225,12 @@ function useDirection(dirProp?: Direction): Direction {
 }
 
 function StepperRoot(props: StepperRootProps) {
+  const {
+    orientation = "horizontal",
+    disabled = false,
+    clickable = true,
+    ...rootProps
+  } = props;
   const listeners = useLazyRef(() => new Set<() => void>());
   const steps = useLazyRef<Map<string, StepState>>(() => new Map());
 
@@ -233,16 +239,16 @@ function StepperRoot(props: StepperRootProps) {
       createStore(
         listeners.current,
         steps.current,
-        props.orientation ?? "horizontal",
-        props.disabled ?? false,
-        props.clickable ?? true,
+        orientation,
+        disabled,
+        clickable,
       ),
-    [listeners, steps, props.orientation, props.disabled, props.clickable],
+    [listeners, steps, orientation, disabled, clickable],
   );
 
   return (
     <StoreContext.Provider value={store}>
-      <StepperRootImpl {...props} />
+      <StepperRootImpl {...rootProps} />
     </StoreContext.Provider>
   );
 }
