@@ -55,6 +55,10 @@ interface Store {
   snapshot: () => StoreState;
   setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
   notify: () => void;
+  addStep: (value: string, completed: boolean, disabled: boolean) => void;
+  removeStep: (value: string) => void;
+  setStepCompleted: (value: string, completed: boolean) => void;
+  setStepDisabled: (value: string, disabled: boolean) => void;
 }
 
 function createStore(
@@ -62,12 +66,7 @@ function createStore(
   stateRef: React.RefObject<StoreState>,
   onValueChange?: (value: string) => void,
   onValueComplete?: (value: string, completed: boolean) => void,
-): Store & {
-  addStep: (value: string, completed?: boolean, disabled?: boolean) => void;
-  removeStep: (value: string) => void;
-  setStepCompleted: (value: string, completed: boolean) => void;
-  setStepDisabled: (value: string, disabled: boolean) => void;
-} {
+): Store {
   const store: Store = {
     subscribe: (cb) => {
       if (listenersRef.current) {
@@ -104,59 +103,48 @@ function createStore(
         }
       }
     },
-  };
-
-  const addStep = (value: string, completed = false, disabled = false) => {
-    const state = stateRef.current;
-    if (state) {
-      const newStep: StepState = { value, completed, disabled };
-      state.steps.set(value, newStep);
-      store.notify();
-    }
-  };
-
-  const removeStep = (value: string) => {
-    const state = stateRef.current;
-    if (state) {
-      state.steps.delete(value);
-      store.notify();
-    }
-  };
-
-  const setStepCompleted = (value: string, completed: boolean) => {
-    const state = stateRef.current;
-    if (state) {
-      const step = state.steps.get(value);
-      if (step) {
-        state.steps.set(value, { ...step, completed });
-        onValueComplete?.(value, completed);
+    addStep: (value, completed, disabled) => {
+      const state = stateRef.current;
+      if (state) {
+        const newStep: StepState = { value, completed, disabled };
+        state.steps.set(value, newStep);
         store.notify();
       }
-    }
-  };
-
-  const setStepDisabled = (value: string, disabled: boolean) => {
-    const state = stateRef.current;
-    if (state) {
-      const step = state.steps.get(value);
-      if (step) {
-        state.steps.set(value, { ...step, disabled });
+    },
+    removeStep: (value) => {
+      const state = stateRef.current;
+      if (state) {
+        state.steps.delete(value);
         store.notify();
       }
-    }
+    },
+    setStepCompleted: (value, completed) => {
+      const state = stateRef.current;
+      if (state) {
+        const step = state.steps.get(value);
+        if (step) {
+          state.steps.set(value, { ...step, completed });
+          onValueComplete?.(value, completed);
+          store.notify();
+        }
+      }
+    },
+    setStepDisabled: (value, disabled) => {
+      const state = stateRef.current;
+      if (state) {
+        const step = state.steps.get(value);
+        if (step) {
+          state.steps.set(value, { ...step, disabled });
+          store.notify();
+        }
+      }
+    },
   };
 
-  return { ...store, addStep, removeStep, setStepCompleted, setStepDisabled };
+  return store;
 }
 
-type ExtendedStore = Store & {
-  addStep: (value: string, completed?: boolean, disabled?: boolean) => void;
-  removeStep: (value: string) => void;
-  setStepCompleted: (value: string, completed: boolean) => void;
-  setStepDisabled: (value: string, disabled: boolean) => void;
-};
-
-const StoreContext = React.createContext<ExtendedStore | null>(null);
+const StoreContext = React.createContext<Store | null>(null);
 
 function useStoreContext(consumerName: string) {
   const context = React.useContext(StoreContext);
