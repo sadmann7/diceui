@@ -1,7 +1,7 @@
 "use client";
 
 import { Slot } from "@radix-ui/react-slot";
-import { cva, type VariantProps } from "class-variance-authority";
+import { cva } from "class-variance-authority";
 import { Check } from "lucide-react";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
@@ -47,7 +47,7 @@ interface StoreState {
   currentValue?: string;
   orientation: Orientation;
   disabled: boolean;
-  clickable: boolean;
+  nonInteractive: boolean;
 }
 
 interface Store {
@@ -81,7 +81,7 @@ function createStore(
         currentValue: undefined,
         orientation: "horizontal",
         disabled: false,
-        clickable: true,
+        nonInteractive: false,
       },
     setState: (key, value) => {
       const state = stateRef.current;
@@ -167,7 +167,7 @@ function useStore<T>(selector: (state: StoreState) => T): T {
 
 interface StepperContextValue {
   disabled: boolean;
-  clickable: boolean;
+  nonInteractive: boolean;
   dir: Direction;
   onValueAdd?: (value: string) => void;
   onValueRemove?: (value: string) => void;
@@ -195,7 +195,7 @@ interface StepperRootProps extends React.ComponentProps<"div"> {
   dir?: Direction;
   orientation?: Orientation;
   disabled?: boolean;
-  clickable?: boolean;
+  nonInteractive?: boolean;
   name?: string;
   label?: string;
   asChild?: boolean;
@@ -209,7 +209,7 @@ function StepperRoot(props: StepperRootProps) {
   const {
     orientation = "horizontal",
     disabled = false,
-    clickable = true,
+    nonInteractive = false,
     onValueChange,
     onValueComplete,
     ...rootProps
@@ -221,7 +221,7 @@ function StepperRoot(props: StepperRootProps) {
     currentValue: undefined,
     orientation,
     disabled,
-    clickable,
+    nonInteractive,
   }));
 
   const store = React.useMemo(
@@ -245,7 +245,7 @@ function StepperRootImpl(props: StepperRootProps) {
     dir: dirProp,
     orientation = "horizontal",
     disabled = false,
-    clickable = true,
+    nonInteractive = false,
     name,
     label,
     className,
@@ -285,14 +285,14 @@ function StepperRootImpl(props: StepperRootProps) {
   const contextValue = React.useMemo<StepperContextValue>(
     () => ({
       disabled,
-      clickable,
+      nonInteractive,
       dir,
       onValueAdd,
       onValueRemove,
       listId,
       labelId,
     }),
-    [disabled, clickable, dir, onValueAdd, onValueRemove, listId, labelId],
+    [disabled, nonInteractive, dir, onValueAdd, onValueRemove, listId, labelId],
   );
 
   const RootPrimitive = props.asChild ? Slot : "div";
@@ -523,10 +523,10 @@ function StepperItemTrigger(props: StepperItemTriggerProps) {
   const isActive = currentValue === stepValue;
 
   const onStepClick = React.useCallback(() => {
-    if (!isDisabled && context.clickable) {
+    if (!isDisabled && !context.nonInteractive) {
       store.setState("currentValue", stepValue);
     }
-  }, [isDisabled, context.clickable, store, stepValue]);
+  }, [isDisabled, context.nonInteractive, store, stepValue]);
 
   const TriggerPrimitive = asChild ? Slot : Button;
 
@@ -791,25 +791,25 @@ function useStepperActions() {
 }
 
 export {
-  StepperRoot as Stepper,
-  StepperList,
-  StepperItem,
-  StepperItemTrigger,
-  StepperItemIndicator,
-  StepperItemSeparator,
-  StepperItemTitle,
-  StepperItemDescription,
-  StepperContent,
-  //
-  StepperRoot as Root,
-  StepperList as List,
+  StepperContent as Content,
   StepperItem as Item,
-  StepperItemTrigger as ItemTrigger,
+  StepperItemDescription as ItemDescription,
   StepperItemIndicator as ItemIndicator,
   StepperItemSeparator as ItemSeparator,
   StepperItemTitle as ItemTitle,
-  StepperItemDescription as ItemDescription,
-  StepperContent as Content,
+  StepperItemTrigger as ItemTrigger,
+  StepperList as List,
+  //
+  StepperRoot as Root,
+  StepperRoot as Stepper,
+  StepperContent,
+  StepperItem,
+  StepperItemDescription,
+  StepperItemIndicator,
+  StepperItemSeparator,
+  StepperItemTitle,
+  StepperItemTrigger,
+  StepperList,
   //
   useStore as useStepper,
   useStepperActions,

@@ -61,11 +61,11 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   disabled?: boolean;
 
   /**
-   * When `true`, allows clicking on steps to navigate to them.
+   * When `true`, prevents interaction with step navigation.
    *
-   * @default true
+   * @default false
    */
-  clickable?: boolean;
+  nonInteractive?: boolean;
 
   /**
    * The name of the stepper. Used for form submission.
