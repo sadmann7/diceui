@@ -125,14 +125,7 @@ export interface IndicatorProps extends EmptyProps<"div">, CompositionProps {
   children?: React.ReactNode;
 }
 
-export interface SeparatorProps extends EmptyProps<"div">, CompositionProps {
-  /**
-   * When `true`, marks this separator as completed.
-   *
-   * @default false
-   */
-  completed?: boolean;
-}
+export interface SeparatorProps extends EmptyProps<"div">, CompositionProps {}
 
 export interface TitleProps extends EmptyProps<"span">, CompositionProps {}
 

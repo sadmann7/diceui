@@ -133,6 +133,15 @@ A single step item in the stepper.
   name="ItemProps"
 />
 
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-state]",
+      value: "\"inactive\" | \"active\" | \"completed\" - The current state of the step.",
+    },
+  ]}
+/>
+
 ### Trigger
 
 The clickable trigger for each step, typically wrapping the indicator.
@@ -140,6 +149,15 @@ The clickable trigger for each step, typically wrapping the indicator.
 <AutoTypeTable
   path="./types/docs/stepper.ts"
   name="TriggerProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-state]",
+      value: ["inactive", "active", "completed"],
+    },
+  ]}
 />
 
 ### ItemIndicator
@@ -155,7 +173,7 @@ The visual indicator showing the step number or completion status.
   attributes={[
     {
       title: "[data-state]",
-      value: "\"inactive\" | \"active\" | \"completed\" - The current state of the step.",
+      value: ["inactive", "active", "completed"],
     },
   ]}
 />
@@ -167,6 +185,15 @@ The line connecting steps, showing progress between them.
 <AutoTypeTable
   path="./types/docs/stepper.ts"
   name="SeparatorProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-state]",
+      value: ["inactive", "active", "completed"],
+    },
+  ]}
 />
 
 ### Title

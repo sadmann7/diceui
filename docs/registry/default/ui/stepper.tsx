@@ -36,6 +36,20 @@ type Direction = "ltr" | "rtl";
 
 type Orientation = "horizontal" | "vertical";
 
+type DataState = "inactive" | "active" | "completed";
+
+function getDataState(
+  currentValue: string | undefined,
+  stepState: StepState | undefined,
+): DataState {
+  const isCompleted = stepState?.completed ?? false;
+  const isActive = currentValue === stepState?.value;
+
+  if (isCompleted) return "completed";
+  if (isActive) return "active";
+  return "inactive";
+}
+
 interface StepState {
   value: string;
   completed: boolean;
@@ -160,13 +174,11 @@ function useStore<T>(selector: (state: StoreState) => T): T {
 }
 
 interface StepperContextValue {
+  dir: Direction;
   disabled: boolean;
   nonInteractive: boolean;
-  dir: Direction;
   onValueAdd?: (value: string) => void;
   onValueRemove?: (value: string) => void;
-  listId: string;
-  labelId: string;
 }
 
 const StepperContext = React.createContext<StepperContextValue | null>(null);
@@ -252,7 +264,6 @@ function StepperRootImpl(props: StepperRootProps) {
   const store = useStoreContext("StepperImpl");
   const isControlled = controlledValue !== undefined;
 
-  const listId = React.useId();
   const labelId = React.useId();
 
   const [formTrigger, setFormTrigger] = React.useState<HTMLDivElement | null>(
@@ -278,15 +289,13 @@ function StepperRootImpl(props: StepperRootProps) {
 
   const contextValue = React.useMemo<StepperContextValue>(
     () => ({
+      dir,
       disabled,
       nonInteractive,
-      dir,
       onValueAdd,
       onValueRemove,
-      listId,
-      labelId,
     }),
-    [disabled, nonInteractive, dir, onValueAdd, onValueRemove, listId, labelId],
+    [dir, disabled, nonInteractive, onValueAdd, onValueRemove],
   );
 
   const RootPrimitive = props.asChild ? Slot : "div";
@@ -349,13 +358,12 @@ function StepperList(props: StepperListProps) {
   return (
     <ListPrimitive
       ref={ref}
-      id={context.listId}
       role="tablist"
       aria-orientation={orientation}
       data-orientation={orientation}
       data-slot="stepper-list"
       dir={context.dir}
-      className={cn(stepperListVariants({ orientation }), className)}
+      className={cn(stepperListVariants({ orientation, className }))}
       {...listProps}
     >
       {children}
@@ -447,7 +455,7 @@ function StepperItem(props: StepperItemProps) {
   }, [store, value, completed, disabled]);
 
   const stepState = useStore((state) => state.steps.get(value));
-  const isActive = currentValue === value;
+  const state = getDataState(currentValue, stepState);
 
   const itemContextValue = React.useMemo<StepperItemContextValue>(
     () => ({
@@ -469,13 +477,12 @@ function StepperItem(props: StepperItemProps) {
         ref={ref}
         role="presentation"
         data-value={value}
-        data-completed={stepState?.completed ? "" : undefined}
+        data-state={state}
         data-disabled={stepState?.disabled ? "" : undefined}
-        data-active={isActive ? "" : undefined}
         data-orientation={orientation}
         data-slot="stepper-item"
         dir={context.dir}
-        className={cn(stepperItemVariants({ orientation }), className)}
+        className={cn(stepperItemVariants({ orientation, className }))}
         {...itemProps}
       >
         {children}
@@ -510,6 +517,7 @@ function StepperTrigger(props: StepperTriggerProps) {
   const isDisabled =
     globalDisabled || stepState?.disabled || triggerProps.disabled;
   const isActive = currentValue === stepValue;
+  const state = getDataState(currentValue, stepState);
 
   const onStepClick = React.useCallback(() => {
     if (!isDisabled && !context.nonInteractive) {
@@ -530,8 +538,7 @@ function StepperTrigger(props: StepperTriggerProps) {
       tabIndex={isActive ? 0 : -1}
       variant={variant}
       size={size}
-      data-active={isActive ? "" : undefined}
-      data-completed={stepState?.completed ? "" : undefined}
+      data-state={state}
       data-disabled={isDisabled ? "" : undefined}
       data-slot="stepper-item-trigger"
       className={cn("rounded-full", className)}
@@ -578,9 +585,7 @@ function StepperIndicator(props: StepperIndicatorProps) {
   const stepValue = itemContext.value;
   const stepState = useStore((state) => state.steps.get(stepValue));
 
-  const isActive = stepValue === currentValue;
-  const isCompleted = stepState?.completed ?? false;
-  const state = isCompleted ? "completed" : isActive ? "active" : "inactive";
+  const state = getDataState(currentValue, stepState);
 
   const IndicatorPrimitive = asChild ? Slot : "div";
 
@@ -588,13 +593,12 @@ function StepperIndicator(props: StepperIndicatorProps) {
     <IndicatorPrimitive
       ref={ref}
       data-state={state}
-      data-active={isActive ? "" : undefined}
       data-slot="stepper-item-indicator"
       dir={context.dir}
-      className={cn(stepperIndicatorVariants({ state }), className)}
+      className={cn(stepperIndicatorVariants({ state, className }))}
       {...indicatorProps}
     >
-      {isCompleted ? <Check className="size-4" /> : children}
+      {stepState?.completed ? <Check className="size-4" /> : children}
     </IndicatorPrimitive>
   );
 }
@@ -618,22 +622,17 @@ const stepperSeparatorVariants = cva("bg-border transition-colors", {
 });
 
 interface StepperSeparatorProps extends React.ComponentProps<"div"> {
-  completed?: boolean;
   asChild?: boolean;
 }
 
 function StepperSeparator(props: StepperSeparatorProps) {
-  const {
-    className,
-    completed = false,
-    asChild,
-    ref,
-    ...separatorProps
-  } = props;
+  const { className, asChild, ref, ...separatorProps } = props;
   const context = useStepperContext(SEPARATOR_NAME);
+  const itemContext = useStepperItemContext(SEPARATOR_NAME);
+  const currentValue = useStore((state) => state.currentValue);
   const orientation = useStore((state) => state.orientation);
 
-  const state = completed ? "completed" : "inactive";
+  const state = getDataState(currentValue, itemContext.stepState);
 
   const SeparatorPrimitive = asChild ? Slot : "div";
 
@@ -645,7 +644,7 @@ function StepperSeparator(props: StepperSeparatorProps) {
       data-slot="stepper-item-separator"
       dir={context.dir}
       className={cn(
-        stepperSeparatorVariants({ orientation, state }),
+        stepperSeparatorVariants({ orientation, state, className }),
         className,
       )}
       {...separatorProps}
