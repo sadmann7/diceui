@@ -1,0 +1,12 @@
+{
+  "name": "stepper-demo",
+  "type": "registry:example",
+  "files": [
+    {
+      "path": "examples/stepper-demo.tsx",
+      "content": "import {\n  Stepper,\n  StepperContent,\n  StepperItem,\n  StepperItemDescription,\n  StepperItemIndicator,\n  StepperItemSeparator,\n  StepperItemTitle,\n  StepperItemTrigger,\n  StepperList,\n} from \"@/registry/default/ui/stepper\";\n\nconst steps = [\n  {\n    value: \"account\",\n    title: \"Account Setup\",\n    description: \"Create your account and verify email\",\n  },\n  {\n    value: \"profile\",\n    title: \"Profile Information\",\n    description: \"Add your personal details and preferences\",\n  },\n  {\n    value: \"payment\",\n    title: \"Payment Details\",\n    description: \"Set up billing and payment methods\",\n  },\n  {\n    value: \"complete\",\n    title: \"Complete Setup\",\n    description: \"Review and finish your account setup\",\n  },\n];\n\nexport default function StepperDemo() {\n  return (\n    <Stepper defaultValue=\"profile\">\n      <StepperList>\n        {steps.map((step, index) => (\n          <StepperItem key={step.value} value={step.value}>\n            <StepperItemTrigger value={step.value}>\n              <StepperItemIndicator value={step.value}>\n                {index + 1}\n              </StepperItemIndicator>\n            </StepperItemTrigger>\n            <div className=\"mt-2 flex flex-col items-center gap-1\">\n              <StepperItemTitle>{step.title}</StepperItemTitle>\n              <StepperItemDescription>\n                {step.description}\n              </StepperItemDescription>\n            </div>\n            {index < steps.length - 1 && (\n              <StepperItemSeparator completed={index < 1} />\n            )}\n          </StepperItem>\n        ))}\n      </StepperList>\n      {steps.map((step) => (\n        <StepperContent key={step.value} value={step.value}>\n          <div className=\"rounded-lg border p-6 text-center\">\n            <h3 className=\"mb-2 font-semibold text-lg\">{step.title}</h3>\n            <p className=\"mb-4 text-muted-foreground\">{step.description}</p>\n            <p className=\"text-sm\">Content for {step.title} goes here.</p>\n          </div>\n        </StepperContent>\n      ))}\n    </Stepper>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

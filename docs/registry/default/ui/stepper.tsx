@@ -191,7 +191,6 @@ interface StepperContextValue {
   dir: Direction;
   onValueAdd?: (value: string) => void;
   onValueRemove?: (value: string) => void;
-  // Accessibility IDs
   listId: string;
   labelId: string;
 }
@@ -225,7 +224,7 @@ function useDirection(dirProp?: Direction): Direction {
   return dirProp ?? "ltr";
 }
 
-function Stepper(props: StepperRootProps) {
+function StepperRoot(props: StepperRootProps) {
   const listeners = useLazyRef(() => new Set<() => void>());
   const steps = useLazyRef<Map<string, StepState>>(() => new Map());
 
@@ -243,17 +242,17 @@ function Stepper(props: StepperRootProps) {
 
   return (
     <StoreContext.Provider value={store}>
-      <StepperImpl {...props} />
+      <StepperRootImpl {...props} />
     </StoreContext.Provider>
   );
 }
 
-function StepperImpl(props: StepperRootProps) {
+function StepperRootImpl(props: StepperRootProps) {
   const {
     value: controlledValue,
     defaultValue,
-    onValueChange,
-    onValueComplete,
+    onValueChange: onValueChangeProp,
+    onValueComplete: onValueCompleteProp,
     onValueAdd,
     onValueRemove,
     dir: dirProp,
@@ -271,7 +270,6 @@ function StepperImpl(props: StepperRootProps) {
   const store = useStoreContext("StepperImpl");
   const isControlled = controlledValue !== undefined;
 
-  // Generate accessibility IDs
   const listId = React.useId();
   const labelId = React.useId();
 
@@ -281,27 +279,24 @@ function StepperImpl(props: StepperRootProps) {
   const composedRef = useComposedRefs(ref, setFormTrigger);
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
-  // Memoize callbacks
-  const onValueChangeCallback = React.useCallback(
+  const onValueChange = React.useCallback(
     (value: string) => {
-      onValueChange?.(value);
+      onValueChangeProp?.(value);
     },
-    [onValueChange],
+    [onValueChangeProp],
   );
 
-  const onValueCompleteCallback = React.useCallback(
+  const onValueComplete = React.useCallback(
     (value: string, completed: boolean) => {
-      onValueComplete?.(value, completed);
+      onValueCompleteProp?.(value, completed);
     },
-    [onValueComplete],
+    [onValueCompleteProp],
   );
 
-  // Update store with callbacks
   React.useEffect(() => {
-    store.setCallbacks(onValueChangeCallback, onValueCompleteCallback);
-  }, [store, onValueChangeCallback, onValueCompleteCallback]);
+    store.setCallbacks(onValueChange, onValueComplete);
+  }, [store, onValueChange, onValueComplete]);
 
-  // Initialize current value
   React.useEffect(() => {
     const currentValue = controlledValue ?? defaultValue;
     if (currentValue) {
@@ -309,7 +304,6 @@ function StepperImpl(props: StepperRootProps) {
     }
   }, [controlledValue, defaultValue, store]);
 
-  // Sync controlled value
   React.useEffect(() => {
     if (isControlled && controlledValue) {
       store.dispatch({ type: "SET_CURRENT", value: controlledValue });
@@ -418,7 +412,6 @@ const stepperItemVariants = cva("flex w-full", {
 interface StepperItemContextValue {
   value: string;
   stepState: StepState | undefined;
-  // Accessibility IDs for linking components
   triggerId: string;
   contentId: string;
   titleId: string;
@@ -543,7 +536,7 @@ function StepperItemTrigger(props: StepperItemTriggerProps) {
   const {
     value: stepValue,
     variant = "ghost",
-    size = "sm",
+    size = "icon",
     className,
     children,
     asChild = false,
@@ -584,7 +577,7 @@ function StepperItemTrigger(props: StepperItemTriggerProps) {
       data-completed={stepState?.completed ? "" : undefined}
       data-disabled={isDisabled ? "" : undefined}
       data-slot="stepper-item-trigger"
-      className={cn("p-0", className)}
+      className={cn("rounded-full", className)}
       disabled={isDisabled}
       onClick={onStepClick}
       {...triggerProps}
@@ -604,9 +597,9 @@ const stepperIndicatorVariants = cva(
         completed: "border-primary bg-primary text-primary-foreground",
       },
       size: {
-        sm: "h-6 w-6 text-xs",
-        default: "h-8 w-8 text-sm",
-        lg: "h-10 w-10 text-base",
+        sm: "size-6 text-xs",
+        default: "size-8 text-sm",
+        lg: "size-10 text-base",
       },
     },
     defaultVariants: {
@@ -650,7 +643,7 @@ function StepperItemIndicator(props: StepperItemIndicatorProps) {
       className={cn(stepperIndicatorVariants({ state }), className)}
       {...indicatorProps}
     >
-      {isCompleted ? <Check className="h-4 w-4" /> : children}
+      {isCompleted ? <Check className="size-4" /> : children}
     </IndicatorPrimitive>
   );
 }
@@ -772,12 +765,9 @@ function StepperContent(props: StepperContentProps) {
   const context = useStepperContext(CONTENT_NAME);
   const currentValue = useStore((state) => state.currentValue);
 
-  // Generate a unique content ID for this content panel
   const contentId = React.useId();
 
-  if (stepValue !== currentValue) {
-    return null;
-  }
+  if (stepValue !== currentValue) return null;
 
   const ContentPrimitive = asChild ? Slot : "div";
 
@@ -798,7 +788,6 @@ function StepperContent(props: StepperContentProps) {
   );
 }
 
-// Helper hooks for programmatic control
 function useStepperActions() {
   const store = useStoreContext("useStepperActions");
 
@@ -834,7 +823,7 @@ function useStepperActions() {
 }
 
 export {
-  Stepper,
+  StepperRoot as Stepper,
   StepperList,
   StepperItem,
   StepperItemTrigger,
@@ -844,7 +833,7 @@ export {
   StepperItemDescription,
   StepperContent,
   //
-  Stepper as Root,
+  StepperRoot as Root,
   StepperList as List,
   StepperItem as Item,
   StepperItemTrigger as ItemTrigger,
