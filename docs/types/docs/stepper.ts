@@ -98,7 +98,7 @@ export interface ItemProps extends EmptyProps<"li">, CompositionProps {
   disabled?: boolean;
 }
 
-export interface ItemTriggerProps
+export interface TriggerProps
   extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
     CompositionProps {
   /**
@@ -141,9 +141,7 @@ export interface ItemIndicatorProps
   children?: React.ReactNode;
 }
 
-export interface ItemSeparatorProps
-  extends EmptyProps<"div">,
-    CompositionProps {
+export interface SeparatorProps extends EmptyProps<"div">, CompositionProps {
   /**
    * When `true`, marks this separator as completed.
    *
@@ -152,9 +150,9 @@ export interface ItemSeparatorProps
   completed?: boolean;
 }
 
-export interface ItemTitleProps extends EmptyProps<"span">, CompositionProps {}
+export interface TitleProps extends EmptyProps<"span">, CompositionProps {}
 
-export interface ItemDescriptionProps
+export interface DescriptionProps
   extends EmptyProps<"span">,
     CompositionProps {}
 

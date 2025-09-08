@@ -3,13 +3,13 @@ import { Button } from "@/components/ui/button";
 import {
   Stepper,
   StepperContent,
+  StepperDescription,
   StepperItem,
-  StepperItemDescription,
   StepperItemIndicator,
-  StepperItemSeparator,
-  StepperItemTitle,
-  StepperItemTrigger,
   StepperList,
+  StepperSeparator,
+  StepperTitle,
+  StepperTrigger,
 } from "@/registry/default/ui/stepper";
 
 const steps = [
@@ -57,19 +57,17 @@ export default function StepperControlledDemo() {
       <StepperList>
         {steps.map((step, index) => (
           <StepperItem key={step.value} value={step.value}>
-            <StepperItemTrigger value={step.value}>
+            <StepperTrigger value={step.value}>
               <StepperItemIndicator value={step.value}>
                 {index + 1}
               </StepperItemIndicator>
-            </StepperItemTrigger>
+            </StepperTrigger>
             <div className="mt-2 flex flex-col items-center gap-1">
-              <StepperItemTitle>{step.title}</StepperItemTitle>
-              <StepperItemDescription>
-                {step.description}
-              </StepperItemDescription>
+              <StepperTitle>{step.title}</StepperTitle>
+              <StepperDescription>{step.description}</StepperDescription>
             </div>
             {index < steps.length - 1 && (
-              <StepperItemSeparator completed={index < currentIndex} />
+              <StepperSeparator completed={index < currentIndex} />
             )}
           </StepperItem>
         ))}

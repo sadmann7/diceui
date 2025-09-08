@@ -42,39 +42,39 @@ Import the parts, and compose them together.
 import {
   Stepper,
   StepperContent,
-  StepperItemDescription,
+  StepperDescription,
   StepperItemIndicator,
   StepperItem,
   StepperList,
-  StepperItemSeparator,
-  StepperItemTitle,
-  StepperItemTrigger,
+  StepperSeparator,
+  StepperTitle,
+  StepperTrigger,
 } from "@/components/ui/stepper";
 
 <Stepper defaultValue="step-1">
   <StepperList>
     <StepperItem value="step-1">
-      <StepperItemTrigger value="step-1">
+      <StepperTrigger value="step-1">
         <StepperItemIndicator value="step-1">1</StepperItemIndicator>
-      </StepperItemTrigger>
-      <StepperItemTitle>Step 1</StepperItemTitle>
-      <StepperItemDescription>First step description</StepperItemDescription>
-      <StepperItemSeparator />
+      </StepperTrigger>
+      <StepperTitle>Step 1</StepperTitle>
+      <StepperDescription>First step description</StepperDescription>
+      <StepperSeparator />
     </StepperItem>
     <StepperItem value="step-2">
-      <StepperItemTrigger value="step-2">
+      <StepperTrigger value="step-2">
         <StepperItemIndicator value="step-2">2</StepperItemIndicator>
-      </StepperItemTrigger>
-      <StepperItemTitle>Step 2</StepperItemTitle>
-      <StepperItemDescription>Second step description</StepperItemDescription>
-      <StepperItemSeparator />
+      </StepperTrigger>
+      <StepperTitle>Step 2</StepperTitle>
+      <StepperDescription>Second step description</StepperDescription>
+      <StepperSeparator />
     </StepperItem>
     <StepperItem value="step-3">
-      <StepperItemTrigger value="step-3">
+      <StepperTrigger value="step-3">
         <StepperItemIndicator value="step-3">3</StepperItemIndicator>
-      </StepperItemTrigger>
-      <StepperItemTitle>Step 3</StepperItemTitle>
-      <StepperItemDescription>Final step description</StepperItemDescription>
+      </StepperTrigger>
+      <StepperTitle>Step 3</StepperTitle>
+      <StepperDescription>Final step description</StepperDescription>
     </StepperItem>
   </StepperList>
 
@@ -133,13 +133,13 @@ A single step item in the stepper.
   name="ItemProps"
 />
 
-### ItemTrigger
+### Trigger
 
 The clickable trigger for each step, typically wrapping the indicator.
 
 <AutoTypeTable
   path="./types/docs/stepper.ts"
-  name="ItemTriggerProps"
+  name="TriggerProps"
 />
 
 ### ItemIndicator
@@ -160,31 +160,31 @@ The visual indicator showing the step number or completion status.
   ]}
 />
 
-### ItemSeparator
+### Separator
 
 The line connecting steps, showing progress between them.
 
 <AutoTypeTable
   path="./types/docs/stepper.ts"
-  name="ItemSeparatorProps"
+  name="SeparatorProps"
 />
 
-### ItemTitle
+### Title
 
 The title text for each step.
 
 <AutoTypeTable
   path="./types/docs/stepper.ts"
-  name="ItemTitleProps"
+  name="TitleProps"
 />
 
-### ItemDescription
+### Description
 
 The description text for each step.
 
 <AutoTypeTable
   path="./types/docs/stepper.ts"
-  name="ItemDescriptionProps"
+  name="DescriptionProps"
 />
 
 ### Content

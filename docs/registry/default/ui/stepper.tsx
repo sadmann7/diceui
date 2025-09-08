@@ -12,11 +12,11 @@ import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidd
 const ROOT_NAME = "Stepper";
 const LIST_NAME = "StepperList";
 const ITEM_NAME = "StepperItem";
-const ITEM_TRIGGER_NAME = "StepperItemTrigger";
+const TRIGGER_NAME = "StepperTrigger";
 const ITEM_INDICATOR_NAME = "StepperItemIndicator";
-const ITEM_SEPARATOR_NAME = "StepperItemSeparator";
-const ITEM_TITLE_NAME = "StepperItemTitle";
-const ITEM_DESCRIPTION_NAME = "StepperItemDescription";
+const SEPARATOR_NAME = "StepperSeparator";
+const TITLE_NAME = "StepperTitle";
+const DESCRIPTION_NAME = "StepperDescription";
 const CONTENT_NAME = "StepperContent";
 
 function useLazyRef<T>(fn: () => T) {
@@ -494,12 +494,12 @@ function StepperItem(props: StepperItemProps) {
   );
 }
 
-interface StepperItemTriggerProps extends React.ComponentProps<typeof Button> {
+interface StepperTriggerProps extends React.ComponentProps<typeof Button> {
   value: string;
   asChild?: boolean;
 }
 
-function StepperItemTrigger(props: StepperItemTriggerProps) {
+function StepperTrigger(props: StepperTriggerProps) {
   const {
     value: stepValue,
     variant = "ghost",
@@ -511,9 +511,9 @@ function StepperItemTrigger(props: StepperItemTriggerProps) {
     ...triggerProps
   } = props;
 
-  const context = useStepperContext(ITEM_TRIGGER_NAME);
-  const itemContext = useStepperItemContext(ITEM_TRIGGER_NAME);
-  const store = useStoreContext(ITEM_TRIGGER_NAME);
+  const context = useStepperContext(TRIGGER_NAME);
+  const itemContext = useStepperItemContext(TRIGGER_NAME);
+  const store = useStoreContext(TRIGGER_NAME);
   const currentValue = useStore((state) => state.currentValue);
   const stepState = useStore((state) => state.steps.get(stepValue));
   const globalDisabled = useStore((state) => state.disabled);
@@ -634,12 +634,12 @@ const stepperSeparatorVariants = cva("bg-border transition-colors", {
   },
 });
 
-interface StepperItemSeparatorProps extends React.ComponentProps<"div"> {
+interface StepperSeparatorProps extends React.ComponentProps<"div"> {
   completed?: boolean;
   asChild?: boolean;
 }
 
-function StepperItemSeparator(props: StepperItemSeparatorProps) {
+function StepperSeparator(props: StepperSeparatorProps) {
   const {
     className,
     completed = false,
@@ -647,7 +647,7 @@ function StepperItemSeparator(props: StepperItemSeparatorProps) {
     ref,
     ...separatorProps
   } = props;
-  const context = useStepperContext(ITEM_SEPARATOR_NAME);
+  const context = useStepperContext(SEPARATOR_NAME);
   const orientation = useStore((state) => state.orientation);
 
   const state = completed ? "completed" : "inactive";
@@ -670,14 +670,14 @@ function StepperItemSeparator(props: StepperItemSeparatorProps) {
   );
 }
 
-interface StepperItemTitleProps extends React.ComponentProps<"span"> {
+interface StepperTitleProps extends React.ComponentProps<"span"> {
   asChild?: boolean;
 }
 
-function StepperItemTitle(props: StepperItemTitleProps) {
+function StepperTitle(props: StepperTitleProps) {
   const { className, asChild, ref, ...titleProps } = props;
-  const context = useStepperContext(ITEM_TITLE_NAME);
-  const itemContext = useStepperItemContext(ITEM_TITLE_NAME);
+  const context = useStepperContext(TITLE_NAME);
+  const itemContext = useStepperItemContext(TITLE_NAME);
 
   const TitlePrimitive = asChild ? Slot : "span";
 
@@ -693,14 +693,14 @@ function StepperItemTitle(props: StepperItemTitleProps) {
   );
 }
 
-interface StepperItemDescriptionProps extends React.ComponentProps<"span"> {
+interface StepperDescriptionProps extends React.ComponentProps<"span"> {
   asChild?: boolean;
 }
 
-function StepperItemDescription(props: StepperItemDescriptionProps) {
+function StepperDescription(props: StepperDescriptionProps) {
   const { className, asChild, ref, ...descriptionProps } = props;
-  const context = useStepperContext(ITEM_DESCRIPTION_NAME);
-  const itemContext = useStepperItemContext(ITEM_DESCRIPTION_NAME);
+  const context = useStepperContext(DESCRIPTION_NAME);
+  const itemContext = useStepperItemContext(DESCRIPTION_NAME);
 
   const DescriptionPrimitive = asChild ? Slot : "span";
 
@@ -722,14 +722,7 @@ interface StepperContentProps extends React.ComponentProps<"div"> {
 }
 
 function StepperContent(props: StepperContentProps) {
-  const {
-    value: stepValue,
-    className,
-    children,
-    asChild,
-    ref,
-    ...contentProps
-  } = props;
+  const { value: stepValue, className, asChild, ref, ...contentProps } = props;
   const context = useStepperContext(CONTENT_NAME);
   const currentValue = useStore((state) => state.currentValue);
 
@@ -750,69 +743,30 @@ function StepperContent(props: StepperContentProps) {
       dir={context.dir}
       className={cn("mt-4", className)}
       {...contentProps}
-    >
-      {children}
-    </ContentPrimitive>
-  );
-}
-
-function useStepperActions() {
-  const store = useStoreContext("useStepperActions");
-
-  const onValueComplete = React.useCallback(
-    (value: string, completed: boolean = true) => {
-      store.setStepCompleted(value, completed);
-    },
-    [store],
-  );
-
-  const onValueDisable = React.useCallback(
-    (value: string, disabled: boolean = true) => {
-      store.setStepDisabled(value, disabled);
-    },
-    [store],
-  );
-
-  const onValueNavigate = React.useCallback(
-    (value: string) => {
-      store.setState("currentValue", value);
-    },
-    [store],
-  );
-
-  return React.useMemo(
-    () => ({
-      onValueComplete,
-      onValueDisable,
-      onValueNavigate,
-    }),
-    [onValueComplete, onValueDisable, onValueNavigate],
+    />
   );
 }
 
 export {
   StepperContent as Content,
+  StepperDescription as Description,
   StepperItem as Item,
-  StepperItemDescription as ItemDescription,
   StepperItemIndicator as ItemIndicator,
-  StepperItemSeparator as ItemSeparator,
-  StepperItemTitle as ItemTitle,
-  StepperItemTrigger as ItemTrigger,
   StepperList as List,
-  //
   StepperRoot as Root,
+  StepperSeparator as Separator,
+  StepperTitle as Title,
+  StepperTrigger as Trigger,
+  //
   StepperRoot as Stepper,
   StepperContent,
+  StepperDescription,
   StepperItem,
-  StepperItemDescription,
   StepperItemIndicator,
-  StepperItemSeparator,
-  StepperItemTitle,
-  StepperItemTrigger,
   StepperList,
+  StepperSeparator,
+  StepperTitle,
+  StepperTrigger,
   //
   useStore as useStepper,
-  useStepperActions,
-  //
-  type StepperRootProps as StepperProps,
 };
