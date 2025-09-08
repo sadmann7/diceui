@@ -1,0 +1,299 @@
+---
+title: Stepper
+description: A stepper component that guides users through a multi-step process with clear visual progress indicators.
+preview: true
+links:
+ api: /docs/components/stepper#api-reference
+---
+
+<ComponentTabs name="stepper-demo" />
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/stepper"
+
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @radix-ui/react-slot class-variance-authority lucide-react
+     ```
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource name="stepper" />
+  </Step>
+</Steps>
+
+## Layout
+
+Import the parts, and compose them together.
+
+```tsx
+import {
+  Stepper,
+  StepperContent,
+  StepperDescription,
+  StepperIndicator,
+  StepperItem,
+  StepperList,
+  StepperSeparator,
+  StepperTitle,
+  StepperTrigger,
+} from "@/components/ui/stepper";
+
+<Stepper defaultValue="step-1">
+  <StepperList>
+    <StepperItem value="step-1">
+      <StepperTrigger value="step-1">
+        <StepperIndicator value="step-1">1</StepperIndicator>
+      </StepperTrigger>
+      <StepperTitle>Step 1</StepperTitle>
+      <StepperDescription>First step description</StepperDescription>
+      <StepperSeparator />
+    </StepperItem>
+    <StepperItem value="step-2">
+      <StepperTrigger value="step-2">
+        <StepperIndicator value="step-2">2</StepperIndicator>
+      </StepperTrigger>
+      <StepperTitle>Step 2</StepperTitle>
+      <StepperDescription>Second step description</StepperDescription>
+      <StepperSeparator />
+    </StepperItem>
+    <StepperItem value="step-3">
+      <StepperTrigger value="step-3">
+        <StepperIndicator value="step-3">3</StepperIndicator>
+      </StepperTrigger>
+      <StepperTitle>Step 3</StepperTitle>
+      <StepperDescription>Final step description</StepperDescription>
+    </StepperItem>
+  </StepperList>
+
+  <StepperContent value="step-1">Content for step 1</StepperContent>
+  <StepperContent value="step-2">Content for step 2</StepperContent>
+  <StepperContent value="step-3">Content for step 3</StepperContent>
+</Stepper>
+```
+
+## Examples
+
+### Controlled State
+
+A stepper with controlled state management and navigation buttons.
+
+<ComponentTabs name="stepper-controlled-demo" />
+
+### With Form
+
+A stepper integrated with form validation, showing step-by-step form completion.
+
+<ComponentTabs name="stepper-form-demo" />
+
+### Vertical Layout
+
+A stepper with vertical orientation for compact layouts.
+
+<ComponentTabs name="stepper-vertical-demo" />
+
+## API Reference
+
+### Root
+
+The main container component for the stepper.
+
+<AutoTypeTable
+  path="./types/docs/stepper.ts"
+  name="RootProps"
+/>
+
+### List
+
+The container for stepper items, typically an ordered list.
+
+<AutoTypeTable
+  path="./types/docs/stepper.ts"
+  name="ListProps"
+/>
+
+### Item
+
+A single step item in the stepper.
+
+<AutoTypeTable
+  path="./types/docs/stepper.ts"
+  name="ItemProps"
+/>
+
+### Trigger
+
+The clickable trigger for each step, typically wrapping the indicator.
+
+<AutoTypeTable
+  path="./types/docs/stepper.ts"
+  name="TriggerProps"
+/>
+
+### Indicator
+
+The visual indicator showing the step number or completion status.
+
+<AutoTypeTable
+  path="./types/docs/stepper.ts"
+  name="IndicatorProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-state]",
+      value: "\"inactive\" | \"active\" | \"completed\" - The current state of the step.",
+    },
+  ]}
+/>
+
+### Separator
+
+The line connecting steps, showing progress between them.
+
+<AutoTypeTable
+  path="./types/docs/stepper.ts"
+  name="SeparatorProps"
+/>
+
+### Title
+
+The title text for each step.
+
+<AutoTypeTable
+  path="./types/docs/stepper.ts"
+  name="TitleProps"
+/>
+
+### Description
+
+The description text for each step.
+
+<AutoTypeTable
+  path="./types/docs/stepper.ts"
+  name="DescriptionProps"
+/>
+
+### Content
+
+The content area that displays for the active step.
+
+<AutoTypeTable
+  path="./types/docs/stepper.ts"
+  name="ContentProps"
+/>
+
+## Accessibility
+
+### Keyboard Interactions
+
+<KeyboardShortcutsTable
+  shortcuts={[
+    {
+      keys: ["Tab"],
+      description: "Moves focus to the next focusable element.",
+    },
+    {
+      keys: ["Shift + Tab"],
+      description: "Moves focus to the previous focusable element.",
+    },
+    {
+      keys: ["Enter", "Space"],
+      description: "Activates the focused step when clickable is enabled.",
+    },
+    {
+      keys: ["ArrowLeft", "ArrowUp"],
+      description: "Moves focus to the previous step trigger.",
+    },
+    {
+      keys: ["ArrowRight", "ArrowDown"],
+      description: "Moves focus to the next step trigger.",
+    },
+    {
+      keys: ["Home"],
+      description: "Moves focus to the first step trigger.",
+    },
+    {
+      keys: ["End"],
+      description: "Moves focus to the last step trigger.",
+    },
+  ]}
+/>
+
+### ARIA Labels
+
+- The stepper list uses `role="list"` and each item uses `role="listitem"`
+- Step indicators include appropriate `aria-label` attributes describing their state
+- Completed steps are marked with `aria-current="step"` for the active step
+- The content areas are properly associated with their corresponding step triggers
+
+## Usage Guidelines
+
+### Step Values
+
+The stepper uses string values to identify steps, following Radix UI patterns:
+
+- Each step must have a unique `value` prop (e.g., "step-1", "personal-info", "checkout")
+- Use descriptive values that make sense in your application context
+- The stepper's `value`/`defaultValue` should match one of the step values
+
+### Step States
+
+The stepper automatically manages three states for each step:
+
+- **Inactive**: Steps that haven't been reached yet
+- **Active**: The current step the user is on (matches the stepper's value)
+- **Completed**: Steps marked as completed using the `data-completed` attribute
+
+### Navigation
+
+- By default, steps are clickable and users can navigate between them
+- Use the `clickable={false}` prop to prevent clicking on steps
+- Individual steps can be disabled using the `disabled` prop on `StepperItem`
+
+### Orientation
+
+- **Horizontal**: Default layout, steps flow left to right
+- **Vertical**: Compact layout, steps flow top to bottom
+
+### Form Integration
+
+When using with forms:
+
+1. Validate each step before allowing progression
+2. Use controlled state to manage the current step value
+3. Implement proper error handling and validation feedback
+4. Consider saving progress between steps for better UX
+
+## Examples in Practice
+
+### Multi-step Form
+
+Perfect for breaking down complex forms into manageable sections:
+
+- User registration flows
+- Checkout processes  
+- Onboarding wizards
+- Settings configuration
+
+### Progress Tracking
+
+Ideal for showing progress through predefined workflows:
+
+- Order status tracking
+- Project milestones
+- Tutorial progress
+- Installation steps
