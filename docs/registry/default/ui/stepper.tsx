@@ -9,24 +9,199 @@ import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidden-input";
 
+const ROOT_NAME = "Stepper";
+const LIST_NAME = "StepperList";
+const ITEM_NAME = "StepperItem";
+const ITEM_TRIGGER_NAME = "StepperItemTrigger";
+const ITEM_INDICATOR_NAME = "StepperItemIndicator";
+const ITEM_SEPARATOR_NAME = "StepperItemSeparator";
+const ITEM_TITLE_NAME = "StepperItemTitle";
+const ITEM_DESCRIPTION_NAME = "StepperItemDescription";
+const CONTENT_NAME = "StepperContent";
+
+function useLazyRef<T>(fn: () => T) {
+  const ref = React.useRef<T | null>(null);
+
+  if (ref.current === null) {
+    ref.current = fn();
+  }
+
+  return ref as React.RefObject<T>;
+}
+
 type Direction = "ltr" | "rtl";
 
-interface StepperContextValue {
-  value?: string;
-  onValueChange?: (value: string) => void;
+interface StepState {
+  value: string;
+  completed: boolean;
+  disabled: boolean;
+}
+
+interface StoreState {
+  steps: Map<string, StepState>;
+  currentValue?: string;
   orientation: "horizontal" | "vertical";
   disabled: boolean;
   clickable: boolean;
 }
 
+type StoreAction =
+  | { type: "ADD_STEP"; value: string; completed?: boolean; disabled?: boolean }
+  | { type: "SET_CURRENT"; value: string }
+  | { type: "SET_COMPLETED"; value: string; completed: boolean }
+  | { type: "SET_DISABLED"; value: string; disabled: boolean }
+  | { type: "SET_GLOBAL_DISABLED"; disabled: boolean }
+  | { type: "REMOVE_STEP"; value: string };
+
+function createStore(
+  listeners: Set<() => void>,
+  steps: Map<string, StepState>,
+  orientation: "horizontal" | "vertical",
+  disabled: boolean,
+  clickable: boolean,
+) {
+  let state: StoreState = {
+    steps,
+    currentValue: undefined,
+    orientation,
+    disabled,
+    clickable,
+  };
+
+  let onValueChange: ((value: string) => void) | undefined;
+  let onValueComplete:
+    | ((value: string, completed: boolean) => void)
+    | undefined;
+
+  function reducer(state: StoreState, action: StoreAction): StoreState {
+    switch (action.type) {
+      case "ADD_STEP": {
+        const newStep: StepState = {
+          value: action.value,
+          completed: action.completed ?? false,
+          disabled: action.disabled ?? false,
+        };
+        steps.set(action.value, newStep);
+        return { ...state, steps };
+      }
+
+      case "SET_CURRENT": {
+        const newState = { ...state, currentValue: action.value };
+        onValueChange?.(action.value);
+        return newState;
+      }
+
+      case "SET_COMPLETED": {
+        const step = steps.get(action.value);
+        if (step) {
+          const newCompleted = action.completed;
+          steps.set(action.value, { ...step, completed: newCompleted });
+          onValueComplete?.(action.value, newCompleted);
+        }
+        return { ...state, steps };
+      }
+
+      case "SET_DISABLED": {
+        const step = steps.get(action.value);
+        if (step) {
+          steps.set(action.value, { ...step, disabled: action.disabled });
+        }
+        return { ...state, steps };
+      }
+
+      case "SET_GLOBAL_DISABLED": {
+        return { ...state, disabled: action.disabled };
+      }
+
+      case "REMOVE_STEP": {
+        steps.delete(action.value);
+        return { ...state, steps };
+      }
+
+      default:
+        return state;
+    }
+  }
+
+  function getState() {
+    return state;
+  }
+
+  function dispatch(action: StoreAction) {
+    state = reducer(state, action);
+    for (const listener of listeners) {
+      listener();
+    }
+  }
+
+  function subscribe(listener: () => void) {
+    listeners.add(listener);
+    return () => listeners.delete(listener);
+  }
+
+  function setCallbacks(
+    valueChange?: (value: string) => void,
+    valueComplete?: (value: string, completed: boolean) => void,
+  ) {
+    onValueChange = valueChange;
+    onValueComplete = valueComplete;
+  }
+
+  return { getState, dispatch, subscribe, setCallbacks };
+}
+
+const StoreContext = React.createContext<ReturnType<typeof createStore> | null>(
+  null,
+);
+
+function useStoreContext(consumerName: string) {
+  const context = React.useContext(StoreContext);
+  if (!context) {
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
+  }
+  return context;
+}
+
+function useStore<T>(selector: (state: StoreState) => T): T {
+  const store = useStoreContext("useStore");
+
+  const lastValueRef = useLazyRef<{ value: T; state: StoreState } | null>(
+    () => null,
+  );
+
+  const getSnapshot = React.useCallback(() => {
+    const state = store.getState();
+    const prevValue = lastValueRef.current;
+
+    if (prevValue && prevValue.state === state) {
+      return prevValue.value;
+    }
+
+    const nextValue = selector(state);
+    lastValueRef.current = { value: nextValue, state };
+    return nextValue;
+  }, [store, selector, lastValueRef]);
+
+  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
+}
+
+interface StepperContextValue {
+  disabled: boolean;
+  clickable: boolean;
+  dir: Direction;
+  onValueAdd?: (value: string) => void;
+  onValueRemove?: (value: string) => void;
+  // Accessibility IDs
+  listId: string;
+  labelId: string;
+}
+
 const StepperContext = React.createContext<StepperContextValue | null>(null);
 
-function useStepperContext(consumerName?: string) {
+function useStepperContext(consumerName: string) {
   const context = React.useContext(StepperContext);
   if (!context) {
-    throw new Error(
-      `${consumerName || "Stepper component"} must be used within a Stepper`,
-    );
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
   }
   return context;
 }
@@ -35,6 +210,9 @@ interface StepperRootProps extends React.ComponentProps<"div"> {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
+  onValueComplete?: (value: string, completed: boolean) => void;
+  onValueAdd?: (value: string) => void;
+  onValueRemove?: (value: string) => void;
   dir?: Direction;
   orientation?: "horizontal" | "vertical";
   disabled?: boolean;
@@ -43,11 +221,42 @@ interface StepperRootProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
+function useDirection(dirProp?: Direction): Direction {
+  return dirProp ?? "ltr";
+}
+
 function Stepper(props: StepperRootProps) {
+  const listeners = useLazyRef(() => new Set<() => void>());
+  const steps = useLazyRef<Map<string, StepState>>(() => new Map());
+
+  const store = React.useMemo(
+    () =>
+      createStore(
+        listeners.current,
+        steps.current,
+        props.orientation ?? "horizontal",
+        props.disabled ?? false,
+        props.clickable ?? true,
+      ),
+    [listeners, steps, props.orientation, props.disabled, props.clickable],
+  );
+
+  return (
+    <StoreContext.Provider value={store}>
+      <StepperImpl {...props} />
+    </StoreContext.Provider>
+  );
+}
+
+function StepperImpl(props: StepperRootProps) {
   const {
     value: controlledValue,
     defaultValue,
     onValueChange,
+    onValueComplete,
+    onValueAdd,
+    onValueRemove,
+    dir: dirProp,
     orientation = "horizontal",
     disabled = false,
     clickable = true,
@@ -58,8 +267,13 @@ function Stepper(props: StepperRootProps) {
     ...rootProps
   } = props;
 
-  const [internalValue, setInternalValue] = React.useState(defaultValue);
-  const value = controlledValue ?? internalValue;
+  const dir = useDirection(dirProp);
+  const store = useStoreContext("StepperImpl");
+  const isControlled = controlledValue !== undefined;
+
+  // Generate accessibility IDs
+  const listId = React.useId();
+  const labelId = React.useId();
 
   const [formTrigger, setFormTrigger] = React.useState<HTMLDivElement | null>(
     null,
@@ -67,44 +281,81 @@ function Stepper(props: StepperRootProps) {
   const composedRef = useComposedRefs(ref, setFormTrigger);
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
-  const handleValueChange = React.useCallback(
-    (newValue: string) => {
-      if (!disabled && clickable) {
-        if (controlledValue === undefined) {
-          setInternalValue(newValue);
-        }
-        onValueChange?.(newValue);
-      }
+  // Memoize callbacks
+  const onValueChangeCallback = React.useCallback(
+    (value: string) => {
+      onValueChange?.(value);
     },
-    [disabled, clickable, controlledValue, onValueChange],
+    [onValueChange],
   );
+
+  const onValueCompleteCallback = React.useCallback(
+    (value: string, completed: boolean) => {
+      onValueComplete?.(value, completed);
+    },
+    [onValueComplete],
+  );
+
+  // Update store with callbacks
+  React.useEffect(() => {
+    store.setCallbacks(onValueChangeCallback, onValueCompleteCallback);
+  }, [store, onValueChangeCallback, onValueCompleteCallback]);
+
+  // Initialize current value
+  React.useEffect(() => {
+    const currentValue = controlledValue ?? defaultValue;
+    if (currentValue) {
+      store.dispatch({ type: "SET_CURRENT", value: currentValue });
+    }
+  }, [controlledValue, defaultValue, store]);
+
+  // Sync controlled value
+  React.useEffect(() => {
+    if (isControlled && controlledValue) {
+      store.dispatch({ type: "SET_CURRENT", value: controlledValue });
+    }
+  }, [controlledValue, isControlled, store]);
+
+  const currentValue = useStore((state) => state.currentValue);
 
   const contextValue = React.useMemo(
     () => ({
-      value,
-      onValueChange: handleValueChange,
-      orientation,
       disabled,
       clickable,
+      dir,
+      onValueAdd,
+      onValueRemove,
+      listId,
+      labelId,
     }),
-    [value, handleValueChange, orientation, disabled, clickable],
+    [disabled, clickable, dir, onValueAdd, onValueRemove, listId, labelId],
   );
+
+  const RootPrimitive = props.asChild ? Slot : "div";
 
   return (
     <StepperContext.Provider value={contextValue}>
-      <div
+      <RootPrimitive
         ref={composedRef}
+        aria-labelledby={labelId}
+        data-disabled={disabled ? "" : undefined}
+        data-orientation={orientation}
+        data-slot="stepper"
+        dir={dir}
         className={cn("flex flex-col gap-4", className)}
         {...rootProps}
       >
+        <span id={labelId} className="sr-only">
+          Stepper navigation
+        </span>
         {children}
-      </div>
+      </RootPrimitive>
       {isFormControl && name && (
         <VisuallyHiddenInput
           type="hidden"
           control={formTrigger}
           name={name}
-          value={value || ""}
+          value={currentValue || ""}
           disabled={disabled}
         />
       )}
@@ -112,7 +363,7 @@ function Stepper(props: StepperRootProps) {
   );
 }
 
-const stepperListVariants = cva("flex items-start", {
+const stepperListVariants = cva("flex gap-4", {
   variants: {
     orientation: {
       horizontal: "flex-row items-center",
@@ -129,21 +380,30 @@ interface StepperListProps extends React.ComponentProps<"ol"> {
 }
 
 function StepperList(props: StepperListProps) {
-  const { className, children, ref, ...listProps } = props;
-  const { orientation } = useStepperContext("StepperList");
+  const { className, children, ref, asChild, ...listProps } = props;
+  const context = useStepperContext(LIST_NAME);
+  const orientation = useStore((state) => state.orientation);
+
+  const ListPrimitive = asChild ? Slot : "ol";
 
   return (
-    <ol
+    <ListPrimitive
       ref={ref}
+      id={context.listId}
+      role="tablist"
+      aria-orientation={orientation}
+      data-orientation={orientation}
+      data-slot="stepper-list"
+      dir={context.dir}
       className={cn(stepperListVariants({ orientation }), className)}
       {...listProps}
     >
       {children}
-    </ol>
+    </ListPrimitive>
   );
 }
 
-const stepperItemVariants = cva("flex", {
+const stepperItemVariants = cva("flex w-full", {
   variants: {
     orientation: {
       horizontal: "flex-col items-center text-center",
@@ -155,6 +415,28 @@ const stepperItemVariants = cva("flex", {
   },
 });
 
+interface StepperItemContextValue {
+  value: string;
+  stepState: StepState | undefined;
+  // Accessibility IDs for linking components
+  triggerId: string;
+  contentId: string;
+  titleId: string;
+  descriptionId: string;
+}
+
+const StepperItemContext = React.createContext<StepperItemContextValue | null>(
+  null,
+);
+
+function useStepperItemContext(consumerName: string) {
+  const context = React.useContext(StepperItemContext);
+  if (!context) {
+    throw new Error(`\`${consumerName}\` must be used within \`${ITEM_NAME}\``);
+  }
+  return context;
+}
+
 interface StepperItemProps extends React.ComponentProps<"li"> {
   value: string;
   completed?: boolean;
@@ -163,27 +445,101 @@ interface StepperItemProps extends React.ComponentProps<"li"> {
 }
 
 function StepperItem(props: StepperItemProps) {
-  const { value, className, children, ref, ...itemProps } = props;
-  const { orientation } = useStepperContext("StepperItem");
+  const {
+    value,
+    completed = false,
+    disabled = false,
+    className,
+    children,
+    ref,
+    asChild,
+    ...itemProps
+  } = props;
+  const context = useStepperContext(ITEM_NAME);
+  const store = useStoreContext(ITEM_NAME);
+  const orientation = useStore((state) => state.orientation);
+  const currentValue = useStore((state) => state.currentValue);
+
+  const triggerId = React.useId();
+  const contentId = React.useId();
+  const titleId = React.useId();
+  const descriptionId = React.useId();
+
+  const onValueAdd = React.useCallback(() => {
+    context.onValueAdd?.(value);
+  }, [context.onValueAdd, value]);
+
+  const onValueRemove = React.useCallback(() => {
+    context.onValueRemove?.(value);
+  }, [context.onValueRemove, value]);
+
+  React.useEffect(() => {
+    store.dispatch({
+      type: "ADD_STEP",
+      value,
+      completed,
+      disabled,
+    });
+    onValueAdd();
+
+    return () => {
+      store.dispatch({ type: "REMOVE_STEP", value });
+      onValueRemove();
+    };
+  }, [store, value, completed, disabled, onValueAdd, onValueRemove]);
+
+  React.useEffect(() => {
+    store.dispatch({ type: "SET_COMPLETED", value, completed });
+  }, [store, value, completed]);
+
+  React.useEffect(() => {
+    store.dispatch({ type: "SET_DISABLED", value, disabled });
+  }, [store, value, disabled]);
+
+  const stepState = useStore((state) => state.steps.get(value));
+  const isActive = currentValue === value;
+
+  const itemContextValue = React.useMemo(
+    () => ({
+      value,
+      stepState,
+      triggerId,
+      contentId,
+      titleId,
+      descriptionId,
+    }),
+    [value, stepState, triggerId, contentId, titleId, descriptionId],
+  );
+
+  const ItemPrimitive = asChild ? Slot : "li";
 
   return (
-    <li
-      ref={ref}
-      className={cn(stepperItemVariants({ orientation }), className)}
-      data-value={value}
-      {...itemProps}
-    >
-      {children}
-    </li>
+    <StepperItemContext.Provider value={itemContextValue}>
+      <ItemPrimitive
+        ref={ref}
+        role="presentation"
+        data-value={value}
+        data-completed={stepState?.completed ? "" : undefined}
+        data-disabled={stepState?.disabled ? "" : undefined}
+        data-active={isActive ? "" : undefined}
+        data-orientation={orientation}
+        data-slot="stepper-item"
+        dir={context.dir}
+        className={cn(stepperItemVariants({ orientation }), className)}
+        {...itemProps}
+      >
+        {children}
+      </ItemPrimitive>
+    </StepperItemContext.Provider>
   );
 }
 
-interface StepperTriggerProps extends React.ComponentProps<typeof Button> {
+interface StepperItemTriggerProps extends React.ComponentProps<typeof Button> {
   value: string;
   asChild?: boolean;
 }
 
-function StepperTrigger(props: StepperTriggerProps) {
+function StepperItemTrigger(props: StepperItemTriggerProps) {
   const {
     value: stepValue,
     variant = "ghost",
@@ -194,30 +550,47 @@ function StepperTrigger(props: StepperTriggerProps) {
     ref,
     ...triggerProps
   } = props;
-  const { onValueChange, disabled, clickable } =
-    useStepperContext("StepperTrigger");
-  const isDisabled = disabled || triggerProps.disabled;
+  const context = useStepperContext(ITEM_TRIGGER_NAME);
+  const itemContext = useStepperItemContext(ITEM_TRIGGER_NAME);
+  const store = useStoreContext(ITEM_TRIGGER_NAME);
+  const currentValue = useStore((state) => state.currentValue);
+  const stepState = useStore((state) => state.steps.get(stepValue));
+  const globalDisabled = useStore((state) => state.disabled);
 
-  const handleClick = () => {
-    if (!isDisabled && clickable) {
-      onValueChange?.(stepValue);
+  const isDisabled =
+    globalDisabled || stepState?.disabled || triggerProps.disabled;
+  const isActive = currentValue === stepValue;
+
+  const onStepClick = React.useCallback(() => {
+    if (!isDisabled && context.clickable) {
+      store.dispatch({ type: "SET_CURRENT", value: stepValue });
     }
-  };
+  }, [isDisabled, context.clickable, store, stepValue]);
 
-  const Comp = asChild ? Slot : Button;
+  const TriggerPrimitive = asChild ? Slot : Button;
 
   return (
-    <Comp
+    <TriggerPrimitive
       ref={ref}
+      id={itemContext.triggerId}
+      role="tab"
+      aria-selected={isActive}
+      aria-controls={itemContext.contentId}
+      aria-describedby={`${itemContext.titleId} ${itemContext.descriptionId}`}
+      tabIndex={isActive ? 0 : -1}
       variant={variant}
       size={size}
+      data-active={isActive ? "" : undefined}
+      data-completed={stepState?.completed ? "" : undefined}
+      data-disabled={isDisabled ? "" : undefined}
+      data-slot="stepper-item-trigger"
       className={cn("p-0", className)}
       disabled={isDisabled}
-      onClick={handleClick}
+      onClick={onStepClick}
       {...triggerProps}
     >
       {children}
-    </Comp>
+    </TriggerPrimitive>
   );
 }
 
@@ -243,35 +616,42 @@ const stepperIndicatorVariants = cva(
   },
 );
 
-interface StepperIndicatorProps extends React.ComponentProps<"div"> {
+interface StepperItemIndicatorProps extends React.ComponentProps<"div"> {
   value: string;
-  "data-completed"?: boolean;
   asChild?: boolean;
 }
 
-function StepperIndicator(props: StepperIndicatorProps) {
+function StepperItemIndicator(props: StepperItemIndicatorProps) {
   const {
     value: stepValue,
     className,
     children,
     ref,
+    asChild,
     ...indicatorProps
   } = props;
-  const { value } = useStepperContext("StepperIndicator");
+  const context = useStepperContext(ITEM_INDICATOR_NAME);
+  const currentValue = useStore((state) => state.currentValue);
+  const stepState = useStore((state) => state.steps.get(stepValue));
 
-  const isActive = stepValue === value;
-  const isCompleted = indicatorProps["data-completed"] === true;
+  const isActive = stepValue === currentValue;
+  const isCompleted = stepState?.completed ?? false;
   const state = isCompleted ? "completed" : isActive ? "active" : "inactive";
 
+  const IndicatorPrimitive = asChild ? Slot : "div";
+
   return (
-    <div
+    <IndicatorPrimitive
       ref={ref}
-      className={cn(stepperIndicatorVariants({ state }), className)}
       data-state={state}
+      data-active={isActive ? "" : undefined}
+      data-slot="stepper-item-indicator"
+      dir={context.dir}
+      className={cn(stepperIndicatorVariants({ state }), className)}
       {...indicatorProps}
     >
       {isCompleted ? <Check className="h-4 w-4" /> : children}
-    </div>
+    </IndicatorPrimitive>
   );
 }
 
@@ -293,21 +673,33 @@ const stepperSeparatorVariants = cva("bg-border transition-colors", {
   },
 });
 
-interface StepperSeparatorProps extends React.ComponentProps<"div"> {
-  "data-completed"?: boolean;
+interface StepperItemSeparatorProps extends React.ComponentProps<"div"> {
+  completed?: boolean;
   asChild?: boolean;
 }
 
-function StepperSeparator(props: StepperSeparatorProps) {
-  const { className, ref, ...separatorProps } = props;
-  const { orientation } = useStepperContext("StepperSeparator");
+function StepperItemSeparator(props: StepperItemSeparatorProps) {
+  const {
+    className,
+    completed = false,
+    asChild,
+    ref,
+    ...separatorProps
+  } = props;
+  const context = useStepperContext(ITEM_SEPARATOR_NAME);
+  const orientation = useStore((state) => state.orientation);
 
-  const isCompleted = separatorProps["data-completed"] === true;
-  const state = isCompleted ? "completed" : "inactive";
+  const state = completed ? "completed" : "inactive";
+
+  const SeparatorPrimitive = asChild ? Slot : "div";
 
   return (
-    <div
+    <SeparatorPrimitive
       ref={ref}
+      data-state={state}
+      data-orientation={orientation}
+      data-slot="stepper-item-separator"
+      dir={context.dir}
       className={cn(
         stepperSeparatorVariants({ orientation, state }),
         className,
@@ -317,32 +709,46 @@ function StepperSeparator(props: StepperSeparatorProps) {
   );
 }
 
-interface StepperTitleProps extends React.ComponentProps<"span"> {
+interface StepperItemTitleProps extends React.ComponentProps<"span"> {
   asChild?: boolean;
 }
 
-function StepperTitle(props: StepperTitleProps) {
-  const { className, ref, ...titleProps } = props;
+function StepperItemTitle(props: StepperItemTitleProps) {
+  const { className, asChild, ref, ...titleProps } = props;
+  const context = useStepperContext(ITEM_TITLE_NAME);
+  const itemContext = useStepperItemContext(ITEM_TITLE_NAME);
+
+  const TitlePrimitive = asChild ? Slot : "span";
 
   return (
-    <span
+    <TitlePrimitive
       ref={ref}
+      id={itemContext.titleId}
+      data-slot="stepper-item-title"
+      dir={context.dir}
       className={cn("font-medium text-sm", className)}
       {...titleProps}
     />
   );
 }
 
-interface StepperDescriptionProps extends React.ComponentProps<"span"> {
+interface StepperItemDescriptionProps extends React.ComponentProps<"span"> {
   asChild?: boolean;
 }
 
-function StepperDescription(props: StepperDescriptionProps) {
-  const { className, ref, ...descriptionProps } = props;
+function StepperItemDescription(props: StepperItemDescriptionProps) {
+  const { className, asChild, ref, ...descriptionProps } = props;
+  const context = useStepperContext(ITEM_DESCRIPTION_NAME);
+  const itemContext = useStepperItemContext(ITEM_DESCRIPTION_NAME);
+
+  const DescriptionPrimitive = asChild ? Slot : "span";
 
   return (
-    <span
+    <DescriptionPrimitive
       ref={ref}
+      id={itemContext.descriptionId}
+      data-slot="stepper-item-description"
+      dir={context.dir}
       className={cn("text-muted-foreground text-xs", className)}
       {...descriptionProps}
     />
@@ -355,17 +761,75 @@ interface StepperContentProps extends React.ComponentProps<"div"> {
 }
 
 function StepperContent(props: StepperContentProps) {
-  const { value: stepValue, className, children, ref, ...contentProps } = props;
-  const { value } = useStepperContext("StepperContent");
+  const {
+    value: stepValue,
+    className,
+    children,
+    asChild,
+    ref,
+    ...contentProps
+  } = props;
+  const context = useStepperContext(CONTENT_NAME);
+  const currentValue = useStore((state) => state.currentValue);
 
-  if (stepValue !== value) {
+  // Generate a unique content ID for this content panel
+  const contentId = React.useId();
+
+  if (stepValue !== currentValue) {
     return null;
   }
 
+  const ContentPrimitive = asChild ? Slot : "div";
+
   return (
-    <div ref={ref} className={cn("mt-4", className)} {...contentProps}>
+    <ContentPrimitive
+      ref={ref}
+      id={contentId}
+      role="tabpanel"
+      aria-label={`Content for step ${stepValue}`}
+      data-value={stepValue}
+      data-slot="stepper-content"
+      dir={context.dir}
+      className={cn("mt-4", className)}
+      {...contentProps}
+    >
       {children}
-    </div>
+    </ContentPrimitive>
+  );
+}
+
+// Helper hooks for programmatic control
+function useStepperActions() {
+  const store = useStoreContext("useStepperActions");
+
+  const onValueComplete = React.useCallback(
+    (value: string, completed: boolean = true) => {
+      store.dispatch({ type: "SET_COMPLETED", value, completed });
+    },
+    [store],
+  );
+
+  const onValueDisable = React.useCallback(
+    (value: string, disabled: boolean = true) => {
+      store.dispatch({ type: "SET_DISABLED", value, disabled });
+    },
+    [store],
+  );
+
+  const onValueNavigate = React.useCallback(
+    (value: string) => {
+      store.dispatch({ type: "SET_CURRENT", value });
+    },
+    [store],
+  );
+
+  return React.useMemo(
+    () => ({
+      onValueComplete,
+      onValueDisable,
+      onValueNavigate,
+    }),
+    [onValueComplete, onValueDisable, onValueNavigate],
   );
 }
 
@@ -373,20 +837,25 @@ export {
   Stepper,
   StepperList,
   StepperItem,
-  StepperTrigger,
-  StepperIndicator,
-  StepperSeparator,
-  StepperTitle,
-  StepperDescription,
+  StepperItemTrigger,
+  StepperItemIndicator,
+  StepperItemSeparator,
+  StepperItemTitle,
+  StepperItemDescription,
   StepperContent,
   //
   Stepper as Root,
   StepperList as List,
   StepperItem as Item,
-  StepperTrigger as Trigger,
-  StepperIndicator as Indicator,
-  StepperSeparator as Separator,
-  StepperTitle as Title,
-  StepperDescription as Description,
+  StepperItemTrigger as ItemTrigger,
+  StepperItemIndicator as ItemIndicator,
+  StepperItemSeparator as ItemSeparator,
+  StepperItemTitle as ItemTitle,
+  StepperItemDescription as ItemDescription,
   StepperContent as Content,
+  //
+  useStore as useStepper,
+  useStepperActions,
+  //
+  type StepperRootProps as StepperProps,
 };

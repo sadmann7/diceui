@@ -25,6 +25,21 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   onValueChange?: (value: string) => void;
 
   /**
+   * Event handler called when a step is completed.
+   */
+  onValueComplete?: (value: string) => void;
+
+  /**
+   * Event handler called when a step is added to the stepper.
+   */
+  onValueAdd?: (value: string) => void;
+
+  /**
+   * Event handler called when a step is removed from the stepper.
+   */
+  onValueRemove?: (value: string) => void;
+
+  /**
    * The reading direction of the stepper.
    *
    * @default "ltr"
@@ -83,7 +98,7 @@ export interface ItemProps extends EmptyProps<"li">, CompositionProps {
   disabled?: boolean;
 }
 
-export interface TriggerProps
+export interface ItemTriggerProps
   extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
     CompositionProps {
   /**
@@ -108,7 +123,9 @@ export interface TriggerProps
   size?: ButtonProps["size"];
 }
 
-export interface IndicatorProps extends EmptyProps<"div">, CompositionProps {
+export interface ItemIndicatorProps
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * The unique value for this step indicator.
    *
@@ -122,23 +139,22 @@ export interface IndicatorProps extends EmptyProps<"div">, CompositionProps {
    * @example 1
    */
   children?: React.ReactNode;
-
-  /**
-   * When `true`, marks this step as completed.
-   */
-  "data-completed"?: boolean;
 }
 
-export interface SeparatorProps extends EmptyProps<"div">, CompositionProps {
+export interface ItemSeparatorProps
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * When `true`, marks this separator as completed.
+   *
+   * @default false
    */
-  "data-completed"?: boolean;
+  completed?: boolean;
 }
 
-export interface TitleProps extends EmptyProps<"span">, CompositionProps {}
+export interface ItemTitleProps extends EmptyProps<"span">, CompositionProps {}
 
-export interface DescriptionProps
+export interface ItemDescriptionProps
   extends EmptyProps<"span">,
     CompositionProps {}
 

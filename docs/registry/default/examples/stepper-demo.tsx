@@ -1,13 +1,13 @@
 import {
   Stepper,
   StepperContent,
-  StepperDescription,
-  StepperIndicator,
   StepperItem,
+  StepperItemDescription,
+  StepperItemIndicator,
+  StepperItemSeparator,
+  StepperItemTitle,
+  StepperItemTrigger,
   StepperList,
-  StepperSeparator,
-  StepperTitle,
-  StepperTrigger,
 } from "@/registry/default/ui/stepper";
 
 const steps = [
@@ -39,17 +39,19 @@ export default function StepperDemo() {
       <StepperList>
         {steps.map((step, index) => (
           <StepperItem key={step.value} value={step.value}>
-            <StepperTrigger value={step.value}>
-              <StepperIndicator value={step.value} data-completed={index < 1}>
+            <StepperItemTrigger value={step.value}>
+              <StepperItemIndicator value={step.value}>
                 {index + 1}
-              </StepperIndicator>
-            </StepperTrigger>
+              </StepperItemIndicator>
+            </StepperItemTrigger>
             <div className="mt-2 flex flex-col items-center gap-1">
-              <StepperTitle>{step.title}</StepperTitle>
-              <StepperDescription>{step.description}</StepperDescription>
+              <StepperItemTitle>{step.title}</StepperItemTitle>
+              <StepperItemDescription>
+                {step.description}
+              </StepperItemDescription>
             </div>
             {index < steps.length - 1 && (
-              <StepperSeparator data-completed={index < 1} />
+              <StepperItemSeparator completed={index < 1} />
             )}
           </StepperItem>
         ))}

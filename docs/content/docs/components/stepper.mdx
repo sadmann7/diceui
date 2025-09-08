@@ -42,39 +42,39 @@ Import the parts, and compose them together.
 import {
   Stepper,
   StepperContent,
-  StepperDescription,
-  StepperIndicator,
+  StepperItemDescription,
+  StepperItemIndicator,
   StepperItem,
   StepperList,
-  StepperSeparator,
-  StepperTitle,
-  StepperTrigger,
+  StepperItemSeparator,
+  StepperItemTitle,
+  StepperItemTrigger,
 } from "@/components/ui/stepper";
 
 <Stepper defaultValue="step-1">
   <StepperList>
     <StepperItem value="step-1">
-      <StepperTrigger value="step-1">
-        <StepperIndicator value="step-1">1</StepperIndicator>
-      </StepperTrigger>
-      <StepperTitle>Step 1</StepperTitle>
-      <StepperDescription>First step description</StepperDescription>
-      <StepperSeparator />
+      <StepperItemTrigger value="step-1">
+        <StepperItemIndicator value="step-1">1</StepperItemIndicator>
+      </StepperItemTrigger>
+      <StepperItemTitle>Step 1</StepperItemTitle>
+      <StepperItemDescription>First step description</StepperItemDescription>
+      <StepperItemSeparator />
     </StepperItem>
     <StepperItem value="step-2">
-      <StepperTrigger value="step-2">
-        <StepperIndicator value="step-2">2</StepperIndicator>
-      </StepperTrigger>
-      <StepperTitle>Step 2</StepperTitle>
-      <StepperDescription>Second step description</StepperDescription>
-      <StepperSeparator />
+      <StepperItemTrigger value="step-2">
+        <StepperItemIndicator value="step-2">2</StepperItemIndicator>
+      </StepperItemTrigger>
+      <StepperItemTitle>Step 2</StepperItemTitle>
+      <StepperItemDescription>Second step description</StepperItemDescription>
+      <StepperItemSeparator />
     </StepperItem>
     <StepperItem value="step-3">
-      <StepperTrigger value="step-3">
-        <StepperIndicator value="step-3">3</StepperIndicator>
-      </StepperTrigger>
-      <StepperTitle>Step 3</StepperTitle>
-      <StepperDescription>Final step description</StepperDescription>
+      <StepperItemTrigger value="step-3">
+        <StepperItemIndicator value="step-3">3</StepperItemIndicator>
+      </StepperItemTrigger>
+      <StepperItemTitle>Step 3</StepperItemTitle>
+      <StepperItemDescription>Final step description</StepperItemDescription>
     </StepperItem>
   </StepperList>
 
@@ -133,22 +133,22 @@ A single step item in the stepper.
   name="ItemProps"
 />
 
-### Trigger
+### ItemTrigger
 
 The clickable trigger for each step, typically wrapping the indicator.
 
 <AutoTypeTable
   path="./types/docs/stepper.ts"
-  name="TriggerProps"
+  name="ItemTriggerProps"
 />
 
-### Indicator
+### ItemIndicator
 
 The visual indicator showing the step number or completion status.
 
 <AutoTypeTable
   path="./types/docs/stepper.ts"
-  name="IndicatorProps"
+  name="ItemIndicatorProps"
 />
 
 <DataAttributesTable
@@ -160,31 +160,31 @@ The visual indicator showing the step number or completion status.
   ]}
 />
 
-### Separator
+### ItemSeparator
 
 The line connecting steps, showing progress between them.
 
 <AutoTypeTable
   path="./types/docs/stepper.ts"
-  name="SeparatorProps"
+  name="ItemSeparatorProps"
 />
 
-### Title
+### ItemTitle
 
 The title text for each step.
 
 <AutoTypeTable
   path="./types/docs/stepper.ts"
-  name="TitleProps"
+  name="ItemTitleProps"
 />
 
-### Description
+### ItemDescription
 
 The description text for each step.
 
 <AutoTypeTable
   path="./types/docs/stepper.ts"
-  name="DescriptionProps"
+  name="ItemDescriptionProps"
 />
 
 ### Content
@@ -235,10 +235,11 @@ The content area that displays for the active step.
 
 ### ARIA Labels
 
-- The stepper list uses `role="list"` and each item uses `role="listitem"`
-- Step indicators include appropriate `aria-label` attributes describing their state
-- Completed steps are marked with `aria-current="step"` for the active step
-- The content areas are properly associated with their corresponding step triggers
+- The stepper list uses `role="tablist"` with proper `aria-orientation`
+- Step triggers use `role="tab"` with `aria-selected` for the active state
+- Step triggers are linked to content using `aria-controls` and `aria-describedby`
+- Step content uses `role="tabpanel"` with appropriate `aria-label`
+- Step items use `role="presentation"` to avoid redundant semantics
 
 ## Usage Guidelines
 
@@ -252,11 +253,11 @@ The stepper uses string values to identify steps, following Radix UI patterns:
 
 ### Step States
 
-The stepper automatically manages three states for each step:
+The stepper automatically manages three states for each step through the store:
 
 - **Inactive**: Steps that haven't been reached yet
 - **Active**: The current step the user is on (matches the stepper's value)
-- **Completed**: Steps marked as completed using the `data-completed` attribute
+- **Completed**: Steps marked as completed through the store's state management
 
 ### Navigation
 
