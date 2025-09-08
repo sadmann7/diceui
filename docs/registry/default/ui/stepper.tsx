@@ -29,7 +29,12 @@ function useLazyRef<T>(fn: () => T) {
   return ref as React.RefObject<T>;
 }
 
+const useIsomorphicLayoutEffect =
+  typeof window === "undefined" ? React.useEffect : React.useLayoutEffect;
+
 type Direction = "ltr" | "rtl";
+
+type Orientation = "horizontal" | "vertical";
 
 interface StepState {
   value: string;
@@ -40,119 +45,118 @@ interface StepState {
 interface StoreState {
   steps: Map<string, StepState>;
   currentValue?: string;
-  orientation: "horizontal" | "vertical";
+  orientation: Orientation;
   disabled: boolean;
   clickable: boolean;
 }
 
-type StoreAction =
-  | { type: "ADD_STEP"; value: string; completed?: boolean; disabled?: boolean }
-  | { type: "SET_CURRENT"; value: string }
-  | { type: "SET_COMPLETED"; value: string; completed: boolean }
-  | { type: "SET_DISABLED"; value: string; disabled: boolean }
-  | { type: "SET_GLOBAL_DISABLED"; disabled: boolean }
-  | { type: "REMOVE_STEP"; value: string };
-
-function createStore(
-  listeners: Set<() => void>,
-  steps: Map<string, StepState>,
-  orientation: "horizontal" | "vertical",
-  disabled: boolean,
-  clickable: boolean,
-) {
-  let state: StoreState = {
-    steps,
-    currentValue: undefined,
-    orientation,
-    disabled,
-    clickable,
-  };
-
-  let onValueChange: ((value: string) => void) | undefined;
-  let onValueComplete:
-    | ((value: string, completed: boolean) => void)
-    | undefined;
-
-  function reducer(state: StoreState, action: StoreAction): StoreState {
-    switch (action.type) {
-      case "ADD_STEP": {
-        const newStep: StepState = {
-          value: action.value,
-          completed: action.completed ?? false,
-          disabled: action.disabled ?? false,
-        };
-        steps.set(action.value, newStep);
-        return { ...state, steps };
-      }
-
-      case "SET_CURRENT": {
-        const newState = { ...state, currentValue: action.value };
-        onValueChange?.(action.value);
-        return newState;
-      }
-
-      case "SET_COMPLETED": {
-        const step = steps.get(action.value);
-        if (step) {
-          const newCompleted = action.completed;
-          steps.set(action.value, { ...step, completed: newCompleted });
-          onValueComplete?.(action.value, newCompleted);
-        }
-        return { ...state, steps };
-      }
-
-      case "SET_DISABLED": {
-        const step = steps.get(action.value);
-        if (step) {
-          steps.set(action.value, { ...step, disabled: action.disabled });
-        }
-        return { ...state, steps };
-      }
-
-      case "SET_GLOBAL_DISABLED": {
-        return { ...state, disabled: action.disabled };
-      }
-
-      case "REMOVE_STEP": {
-        steps.delete(action.value);
-        return { ...state, steps };
-      }
-
-      default:
-        return state;
-    }
-  }
-
-  function getState() {
-    return state;
-  }
-
-  function dispatch(action: StoreAction) {
-    state = reducer(state, action);
-    for (const listener of listeners) {
-      listener();
-    }
-  }
-
-  function subscribe(listener: () => void) {
-    listeners.add(listener);
-    return () => listeners.delete(listener);
-  }
-
-  function setCallbacks(
-    valueChange?: (value: string) => void,
-    valueComplete?: (value: string, completed: boolean) => void,
-  ) {
-    onValueChange = valueChange;
-    onValueComplete = valueComplete;
-  }
-
-  return { getState, dispatch, subscribe, setCallbacks };
+interface Store {
+  subscribe: (callback: () => void) => () => void;
+  snapshot: () => StoreState;
+  setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
+  notify: () => void;
 }
 
-const StoreContext = React.createContext<ReturnType<typeof createStore> | null>(
-  null,
-);
+function createStore(
+  listenersRef: React.RefObject<Set<() => void>>,
+  stateRef: React.RefObject<StoreState>,
+  onValueChange?: (value: string) => void,
+  onValueComplete?: (value: string, completed: boolean) => void,
+): Store & {
+  addStep: (value: string, completed?: boolean, disabled?: boolean) => void;
+  removeStep: (value: string) => void;
+  setStepCompleted: (value: string, completed: boolean) => void;
+  setStepDisabled: (value: string, disabled: boolean) => void;
+} {
+  const store: Store = {
+    subscribe: (cb) => {
+      if (listenersRef.current) {
+        listenersRef.current.add(cb);
+        return () => listenersRef.current?.delete(cb);
+      }
+      return () => {};
+    },
+    snapshot: () =>
+      stateRef.current ?? {
+        steps: new Map(),
+        currentValue: undefined,
+        orientation: "horizontal",
+        disabled: false,
+        clickable: true,
+      },
+    setState: (key, value) => {
+      const state = stateRef.current;
+      if (!state || Object.is(state[key], value)) return;
+
+      if (key === "currentValue") {
+        state.currentValue = value as string;
+        onValueChange?.(value as string);
+      } else {
+        state[key] = value;
+      }
+
+      store.notify();
+    },
+    notify: () => {
+      if (listenersRef.current) {
+        for (const cb of listenersRef.current) {
+          cb();
+        }
+      }
+    },
+  };
+
+  const addStep = (value: string, completed = false, disabled = false) => {
+    const state = stateRef.current;
+    if (state) {
+      const newStep: StepState = { value, completed, disabled };
+      state.steps.set(value, newStep);
+      store.notify();
+    }
+  };
+
+  const removeStep = (value: string) => {
+    const state = stateRef.current;
+    if (state) {
+      state.steps.delete(value);
+      store.notify();
+    }
+  };
+
+  const setStepCompleted = (value: string, completed: boolean) => {
+    const state = stateRef.current;
+    if (state) {
+      const step = state.steps.get(value);
+      if (step) {
+        state.steps.set(value, { ...step, completed });
+        onValueComplete?.(value, completed);
+        store.notify();
+      }
+    }
+  };
+
+  const setStepDisabled = (value: string, disabled: boolean) => {
+    const state = stateRef.current;
+    if (state) {
+      const step = state.steps.get(value);
+      if (step) {
+        state.steps.set(value, { ...step, disabled });
+        store.notify();
+      }
+    }
+  };
+
+  return { ...store, addStep, removeStep, setStepCompleted, setStepDisabled };
+}
+
+type ExtendedStore = Store & {
+  addStep: (value: string, completed?: boolean, disabled?: boolean) => void;
+  removeStep: (value: string) => void;
+  setStepCompleted: (value: string, completed: boolean) => void;
+  setStepDisabled: (value: string, disabled: boolean) => void;
+};
+
+const StoreContext = React.createContext<ExtendedStore | null>(null);
 
 function useStoreContext(consumerName: string) {
   const context = React.useContext(StoreContext);
@@ -165,22 +169,10 @@ function useStoreContext(consumerName: string) {
 function useStore<T>(selector: (state: StoreState) => T): T {
   const store = useStoreContext("useStore");
 
-  const lastValueRef = useLazyRef<{ value: T; state: StoreState } | null>(
-    () => null,
+  const getSnapshot = React.useCallback(
+    () => selector(store.snapshot()),
+    [store, selector],
   );
-
-  const getSnapshot = React.useCallback(() => {
-    const state = store.getState();
-    const prevValue = lastValueRef.current;
-
-    if (prevValue && prevValue.state === state) {
-      return prevValue.value;
-    }
-
-    const nextValue = selector(state);
-    lastValueRef.current = { value: nextValue, state };
-    return nextValue;
-  }, [store, selector, lastValueRef]);
 
   return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
@@ -213,10 +205,11 @@ interface StepperRootProps extends React.ComponentProps<"div"> {
   onValueAdd?: (value: string) => void;
   onValueRemove?: (value: string) => void;
   dir?: Direction;
-  orientation?: "horizontal" | "vertical";
+  orientation?: Orientation;
   disabled?: boolean;
   clickable?: boolean;
   name?: string;
+  label?: string;
   asChild?: boolean;
 }
 
@@ -229,21 +222,23 @@ function StepperRoot(props: StepperRootProps) {
     orientation = "horizontal",
     disabled = false,
     clickable = true,
+    onValueChange,
+    onValueComplete,
     ...rootProps
   } = props;
-  const listeners = useLazyRef(() => new Set<() => void>());
-  const steps = useLazyRef<Map<string, StepState>>(() => new Map());
+
+  const listenersRef = useLazyRef(() => new Set<() => void>());
+  const stateRef = useLazyRef<StoreState>(() => ({
+    steps: new Map(),
+    currentValue: undefined,
+    orientation,
+    disabled,
+    clickable,
+  }));
 
   const store = React.useMemo(
-    () =>
-      createStore(
-        listeners.current,
-        steps.current,
-        orientation,
-        disabled,
-        clickable,
-      ),
-    [listeners, steps, orientation, disabled, clickable],
+    () => createStore(listenersRef, stateRef, onValueChange, onValueComplete),
+    [listenersRef, stateRef, onValueChange, onValueComplete],
   );
 
   return (
@@ -257,8 +252,6 @@ function StepperRootImpl(props: StepperRootProps) {
   const {
     value: controlledValue,
     defaultValue,
-    onValueChange: onValueChangeProp,
-    onValueComplete: onValueCompleteProp,
     onValueAdd,
     onValueRemove,
     dir: dirProp,
@@ -266,6 +259,7 @@ function StepperRootImpl(props: StepperRootProps) {
     disabled = false,
     clickable = true,
     name,
+    label,
     className,
     children,
     ref,
@@ -285,40 +279,22 @@ function StepperRootImpl(props: StepperRootProps) {
   const composedRef = useComposedRefs(ref, setFormTrigger);
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
-  const onValueChange = React.useCallback(
-    (value: string) => {
-      onValueChangeProp?.(value);
-    },
-    [onValueChangeProp],
-  );
-
-  const onValueComplete = React.useCallback(
-    (value: string, completed: boolean) => {
-      onValueCompleteProp?.(value, completed);
-    },
-    [onValueCompleteProp],
-  );
-
-  React.useEffect(() => {
-    store.setCallbacks(onValueChange, onValueComplete);
-  }, [store, onValueChange, onValueComplete]);
-
   React.useEffect(() => {
     const currentValue = controlledValue ?? defaultValue;
     if (currentValue) {
-      store.dispatch({ type: "SET_CURRENT", value: currentValue });
+      store.setState("currentValue", currentValue);
     }
   }, [controlledValue, defaultValue, store]);
 
   React.useEffect(() => {
     if (isControlled && controlledValue) {
-      store.dispatch({ type: "SET_CURRENT", value: controlledValue });
+      store.setState("currentValue", controlledValue);
     }
   }, [controlledValue, isControlled, store]);
 
   const currentValue = useStore((state) => state.currentValue);
 
-  const contextValue = React.useMemo(
+  const contextValue = React.useMemo<StepperContextValue>(
     () => ({
       disabled,
       clickable,
@@ -337,7 +313,7 @@ function StepperRootImpl(props: StepperRootProps) {
     <StepperContext.Provider value={contextValue}>
       <RootPrimitive
         ref={composedRef}
-        aria-labelledby={labelId}
+        aria-labelledby={labelId ?? undefined}
         data-disabled={disabled ? "" : undefined}
         data-orientation={orientation}
         data-slot="stepper"
@@ -345,17 +321,19 @@ function StepperRootImpl(props: StepperRootProps) {
         className={cn("flex flex-col gap-4", className)}
         {...rootProps}
       >
-        <span id={labelId} className="sr-only">
-          Stepper navigation
-        </span>
+        {label && (
+          <span id={labelId} className="sr-only">
+            {label}
+          </span>
+        )}
         {children}
       </RootPrimitive>
-      {isFormControl && name && (
+      {isFormControl && (
         <VisuallyHiddenInput
           type="hidden"
           control={formTrigger}
           name={name}
-          value={currentValue || ""}
+          value={currentValue}
           disabled={disabled}
         />
       )}
@@ -472,27 +450,22 @@ function StepperItem(props: StepperItemProps) {
     context.onValueRemove?.(value);
   }, [context.onValueRemove, value]);
 
-  React.useEffect(() => {
-    store.dispatch({
-      type: "ADD_STEP",
-      value,
-      completed,
-      disabled,
-    });
+  useIsomorphicLayoutEffect(() => {
+    store.addStep(value, completed, disabled);
     onValueAdd();
 
     return () => {
-      store.dispatch({ type: "REMOVE_STEP", value });
+      store.removeStep(value);
       onValueRemove();
     };
   }, [store, value, completed, disabled, onValueAdd, onValueRemove]);
 
-  React.useEffect(() => {
-    store.dispatch({ type: "SET_COMPLETED", value, completed });
+  useIsomorphicLayoutEffect(() => {
+    store.setStepCompleted(value, completed);
   }, [store, value, completed]);
 
-  React.useEffect(() => {
-    store.dispatch({ type: "SET_DISABLED", value, disabled });
+  useIsomorphicLayoutEffect(() => {
+    store.setStepDisabled(value, disabled);
   }, [store, value, disabled]);
 
   const stepState = useStore((state) => state.steps.get(value));
@@ -549,6 +522,7 @@ function StepperItemTrigger(props: StepperItemTriggerProps) {
     ref,
     ...triggerProps
   } = props;
+
   const context = useStepperContext(ITEM_TRIGGER_NAME);
   const itemContext = useStepperItemContext(ITEM_TRIGGER_NAME);
   const store = useStoreContext(ITEM_TRIGGER_NAME);
@@ -562,7 +536,7 @@ function StepperItemTrigger(props: StepperItemTriggerProps) {
 
   const onStepClick = React.useCallback(() => {
     if (!isDisabled && context.clickable) {
-      store.dispatch({ type: "SET_CURRENT", value: stepValue });
+      store.setState("currentValue", stepValue);
     }
   }, [isDisabled, context.clickable, store, stepValue]);
 
@@ -799,21 +773,21 @@ function useStepperActions() {
 
   const onValueComplete = React.useCallback(
     (value: string, completed: boolean = true) => {
-      store.dispatch({ type: "SET_COMPLETED", value, completed });
+      store.setStepCompleted(value, completed);
     },
     [store],
   );
 
   const onValueDisable = React.useCallback(
     (value: string, disabled: boolean = true) => {
-      store.dispatch({ type: "SET_DISABLED", value, disabled });
+      store.setStepDisabled(value, disabled);
     },
     [store],
   );
 
   const onValueNavigate = React.useCallback(
     (value: string) => {
-      store.dispatch({ type: "SET_CURRENT", value });
+      store.setState("currentValue", value);
     },
     [store],
   );
