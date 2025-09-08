@@ -64,9 +64,7 @@ export default function StepperControlledDemo() {
               <StepperTitle>{step.title}</StepperTitle>
               <StepperDescription>{step.description}</StepperDescription>
             </div>
-            {index < steps.length - 1 && (
-              <StepperSeparator completed={index < currentIndex} />
-            )}
+            {index < steps.length - 1 && <StepperSeparator />}
           </StepperItem>
         ))}
       </StepperList>

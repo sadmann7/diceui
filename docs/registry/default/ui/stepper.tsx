@@ -540,7 +540,7 @@ function StepperTrigger(props: StepperTriggerProps) {
       size={size}
       data-state={state}
       data-disabled={isDisabled ? "" : undefined}
-      data-slot="stepper-item-trigger"
+      data-slot="stepper-trigger"
       className={cn("rounded-full", className)}
       disabled={isDisabled}
       onClick={onStepClick}
@@ -593,7 +593,7 @@ function StepperIndicator(props: StepperIndicatorProps) {
     <IndicatorPrimitive
       ref={ref}
       data-state={state}
-      data-slot="stepper-item-indicator"
+      data-slot="stepper-indicator"
       dir={context.dir}
       className={cn(stepperIndicatorVariants({ state, className }))}
       {...indicatorProps}
@@ -641,11 +641,10 @@ function StepperSeparator(props: StepperSeparatorProps) {
       ref={ref}
       data-state={state}
       data-orientation={orientation}
-      data-slot="stepper-item-separator"
+      data-slot="stepper-separator"
       dir={context.dir}
       className={cn(
         stepperSeparatorVariants({ orientation, state, className }),
-        className,
       )}
       {...separatorProps}
     />
