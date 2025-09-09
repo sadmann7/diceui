@@ -35,7 +35,7 @@ const steps = [
 
 export default function StepperDemo() {
   return (
-    <Stepper defaultValue="profile" activationMode="automatic">
+    <Stepper defaultValue="profile">
       <StepperList>
         {steps.map((step, index) => (
           <StepperItem key={step.value} value={step.value}>

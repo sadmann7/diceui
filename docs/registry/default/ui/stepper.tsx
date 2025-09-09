@@ -132,11 +132,6 @@ interface StepState {
 interface StoreState {
   steps: Map<string, StepState>;
   value?: string;
-  orientation: Orientation;
-  disabled: boolean;
-  nonInteractive: boolean;
-  loop: boolean;
-  activationMode: ActivationMode;
 }
 
 interface Store {
@@ -167,11 +162,6 @@ function createStore(
       stateRef.current ?? {
         steps: new Map(),
         value: undefined,
-        orientation: "horizontal",
-        disabled: false,
-        nonInteractive: false,
-        loop: false,
-        activationMode: "automatic",
       },
     setState: (key, value) => {
       const state = stateRef.current;
@@ -282,8 +272,11 @@ function useFocusContext(consumerName: string) {
 interface StepperContextValue {
   id: string;
   dir: Direction;
+  orientation: Orientation;
+  activationMode: ActivationMode;
   disabled: boolean;
   nonInteractive: boolean;
+  loop: boolean;
   onValueAdd?: (value: string) => void;
   onValueRemove?: (value: string) => void;
 }
@@ -334,11 +327,6 @@ function StepperRoot(props: StepperRootProps) {
   const stateRef = useLazyRef<StoreState>(() => ({
     steps: new Map(),
     value: value ?? defaultValue,
-    orientation,
-    disabled,
-    nonInteractive,
-    loop,
-    activationMode,
   }));
 
   const store = React.useMemo(
@@ -348,7 +336,14 @@ function StepperRoot(props: StepperRootProps) {
 
   return (
     <StoreContext.Provider value={store}>
-      <StepperRootImpl {...rootProps} />
+      <StepperRootImpl
+        {...rootProps}
+        activationMode={activationMode}
+        orientation={orientation}
+        disabled={disabled}
+        nonInteractive={nonInteractive}
+        loop={loop}
+      />
     </StoreContext.Provider>
   );
 }
@@ -361,9 +356,11 @@ function StepperRootImpl(props: StepperRootProps) {
     id: idProp,
     dir: dirProp,
     orientation = "horizontal",
-    asChild = false,
+    activationMode = "automatic",
+    asChild,
     disabled = false,
     nonInteractive = false,
+    loop = false,
     name,
     label,
     className,
@@ -398,12 +395,25 @@ function StepperRootImpl(props: StepperRootProps) {
     () => ({
       id: rootId,
       dir,
+      orientation,
+      activationMode,
       disabled,
       nonInteractive,
+      loop,
       onValueAdd,
       onValueRemove,
     }),
-    [rootId, dir, disabled, nonInteractive, onValueAdd, onValueRemove],
+    [
+      rootId,
+      dir,
+      orientation,
+      activationMode,
+      disabled,
+      nonInteractive,
+      loop,
+      onValueAdd,
+      onValueRemove,
+    ],
   );
 
   const RootPrimitive = asChild ? Slot : "div";
@@ -461,8 +471,9 @@ interface StepperListProps extends React.ComponentProps<"ol"> {
 
 function StepperList(props: StepperListProps) {
   const { className, children, asChild, ref, ...listProps } = props;
+
   const context = useStepperContext(LIST_NAME);
-  const orientation = useStore((state) => state.orientation);
+  const orientation = context.orientation;
   const currentValue = useStore((state) => state.value);
 
   const [tabStopId, setTabStopId] = React.useState<string | null>(null);
@@ -658,16 +669,16 @@ function StepperItem(props: StepperItemProps) {
     value: itemValue,
     completed = false,
     disabled = false,
+    asChild,
     className,
     children,
-    asChild,
     ref,
     ...itemProps
   } = props;
 
   const context = useStepperContext(ITEM_NAME);
   const store = useStoreContext(ITEM_NAME);
-  const orientation = useStore((state) => state.orientation);
+  const orientation = context.orientation;
   const value = useStore((state) => state.value);
 
   const onValueAdd = React.useCallback(() => {
@@ -733,8 +744,8 @@ function StepperTrigger(props: StepperTriggerProps) {
   const {
     variant = "ghost",
     size = "icon",
+    asChild,
     className,
-    asChild = false,
     ref,
     ...triggerProps
   } = props;
@@ -746,10 +757,9 @@ function StepperTrigger(props: StepperTriggerProps) {
   const value = useStore((state) => state.value);
   const itemValue = itemContext.value;
   const stepState = useStore((state) => state.steps.get(itemValue));
-  const globalDisabled = useStore((state) => state.disabled);
-  const activationMode = useStore((state) => state.activationMode);
-  const orientation = useStore((state) => state.orientation);
-  const loop = useStore((state) => state.loop);
+  const activationMode = context.activationMode;
+  const orientation = context.orientation;
+  const loop = context.loop;
 
   const steps = useStore((state) => state.steps);
   const stepIndex = Array.from(steps.keys()).indexOf(itemValue);
@@ -763,7 +773,7 @@ function StepperTrigger(props: StepperTriggerProps) {
   const descriptionId = getId(context.id, "description", itemValue);
 
   const isDisabled =
-    globalDisabled || stepState?.disabled || triggerProps.disabled;
+    context.disabled || stepState?.disabled || triggerProps.disabled;
   const isActive = value === itemValue;
   const isTabStop = focusContext.tabStopId === triggerId;
   const dataState = getDataState(value, itemValue, stepState);
@@ -1059,7 +1069,7 @@ function StepperSeparator(props: StepperSeparatorProps) {
   const context = useStepperContext(SEPARATOR_NAME);
   const itemContext = useStepperItemContext(SEPARATOR_NAME);
   const value = useStore((state) => state.value);
-  const orientation = useStore((state) => state.orientation);
+  const orientation = context.orientation;
 
   const steps = useStore((state) => state.steps);
   const stepIndex = Array.from(steps.keys()).indexOf(itemContext.value);
