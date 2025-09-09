@@ -206,7 +206,7 @@ function createStore(
       if (state) {
         const step = state.steps.get(value);
         if (step) {
-          const updatedStep = { ...step, ...updates };
+          const updatedStep: StepState = { ...step, ...updates };
           state.steps.set(value, updatedStep);
 
           if ("completed" in updates && updates.completed !== step.completed) {
@@ -808,6 +808,7 @@ function StepperTrigger(props: StepperTriggerProps) {
         active: isActive,
         disabled: !!isDisabled,
       });
+
       if (!isDisabled) {
         focusContext.onFocusableItemAdd();
       }
@@ -852,11 +853,7 @@ function StepperTrigger(props: StepperTriggerProps) {
       if (event.defaultPrevented) return;
 
       focusContext.onItemFocus(triggerId);
-      /**
-       * Our focus management will focus the trigger when navigating with arrow keys.
-       * In automatic mode, we "activate" it immediately. In manual mode, user must
-       * press Enter/Space to activate.
-       */
+
       if (
         isArrowKeyPressedRef.current &&
         triggerElement &&
@@ -884,7 +881,6 @@ function StepperTrigger(props: StepperTriggerProps) {
         return;
       }
 
-      // Handle manual activation with Enter/Space in manual mode
       if (
         (event.key === "Enter" || event.key === " ") &&
         activationMode === "manual" &&
@@ -931,7 +927,7 @@ function StepperTrigger(props: StepperTriggerProps) {
         }
 
         // Imperative focus during keydown is risky so we prevent React's batching updates
-        setTimeout(() => focusFirst(candidateNodes));
+        queueMicrotask(() => focusFirst(candidateNodes));
       }
 
       triggerProps.onKeyDown?.(event as React.KeyboardEvent<HTMLButtonElement>);
