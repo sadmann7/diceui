@@ -756,13 +756,11 @@ function StepperTrigger(props: StepperTriggerProps) {
   const orientation = useStore((state) => state.orientation);
   const loop = useStore((state) => state.loop);
 
-  // Use store steps for reliable counting and positioning
-  const storeSteps = useStore((state) => state.steps);
-  const storeStepsArray = Array.from(storeSteps.keys());
-  const storeCurrentIndex = storeStepsArray.indexOf(itemValue);
+  const steps = useStore((state) => state.steps);
+  const stepIndex = Array.from(steps.keys()).indexOf(itemValue);
 
-  const stepPosition = storeCurrentIndex + 1;
-  const stepCount = storeSteps.size;
+  const stepPosition = stepIndex + 1;
+  const stepCount = steps.size;
 
   const triggerId = getId(context.id, "trigger", itemValue);
   const contentId = getId(context.id, "content", itemValue);
@@ -1068,14 +1066,12 @@ function StepperSeparator(props: StepperSeparatorProps) {
   const value = useStore((state) => state.value);
   const orientation = useStore((state) => state.orientation);
 
-  // Use store steps for reliable counting
-  const storeSteps = useStore((state) => state.steps);
-  const storeStepsArray = Array.from(storeSteps.keys());
-  const storeCurrentIndex = storeStepsArray.indexOf(itemContext.value);
+  const steps = useStore((state) => state.steps);
+  const stepIndex = Array.from(steps.keys()).indexOf(itemContext.value);
 
-  const isLastItem = storeCurrentIndex === storeSteps.size - 1;
+  const isLastStep = stepIndex === steps.size - 1;
 
-  if (isLastItem && !forceMount) {
+  if (isLastStep && !forceMount) {
     return null;
   }
 
