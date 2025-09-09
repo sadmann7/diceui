@@ -141,12 +141,12 @@ interface StoreState {
 
 interface Store {
   subscribe: (callback: () => void) => () => void;
-  snapshot: () => StoreState;
+  getState: () => StoreState;
   setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
   notify: () => void;
   addStep: (value: string, completed: boolean, disabled: boolean) => void;
   removeStep: (value: string) => void;
-  setStep: (value: string, updates: Partial<Omit<StepState, "value">>) => void;
+  setStep: (value: string, completed: boolean, disabled: boolean) => void;
 }
 
 function createStore(
@@ -163,7 +163,7 @@ function createStore(
       }
       return () => {};
     },
-    snapshot: () =>
+    getState: () =>
       stateRef.current ?? {
         steps: new Map(),
         value: undefined,
@@ -208,16 +208,16 @@ function createStore(
         store.notify();
       }
     },
-    setStep: (value, updates) => {
+    setStep: (value, completed, disabled) => {
       const state = stateRef.current;
       if (state) {
         const step = state.steps.get(value);
         if (step) {
-          const updatedStep: StepState = { ...step, ...updates };
+          const updatedStep: StepState = { ...step, completed, disabled };
           state.steps.set(value, updatedStep);
 
-          if ("completed" in updates && updates.completed !== step.completed) {
-            onValueComplete?.(value, updates.completed ?? false);
+          if (completed !== step.completed) {
+            onValueComplete?.(value, completed);
           }
 
           store.notify();
@@ -243,7 +243,7 @@ function useStore<T>(selector: (state: StoreState) => T): T {
   const store = useStoreContext("useStore");
 
   const getSnapshot = React.useCallback(
-    () => selector(store.snapshot()),
+    () => selector(store.getState()),
     [store, selector],
   );
 
@@ -689,7 +689,7 @@ function StepperItem(props: StepperItemProps) {
   }, [store, itemValue, completed, disabled, onValueAdd, onValueRemove]);
 
   useIsomorphicLayoutEffect(() => {
-    store.setStep(itemValue, { completed, disabled });
+    store.setStep(itemValue, completed, disabled);
   }, [store, itemValue, completed, disabled]);
 
   const stepState = useStore((state) => state.steps.get(itemValue));
