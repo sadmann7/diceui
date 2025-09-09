@@ -23,6 +23,16 @@ const ENTRY_FOCUS = "stepperFocusGroup.onEntryFocus";
 const EVENT_OPTIONS = { bubbles: false, cancelable: true };
 const ARROW_KEYS = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
 
+function getId(
+  id: string,
+  variant: "trigger" | "content" | "title" | "description",
+  value: string,
+) {
+  return `${id}-${variant}-${value}`;
+}
+
+type FocusIntent = "first" | "last" | "prev" | "next";
+
 const MAP_KEY_TO_FOCUS_INTENT: Record<string, FocusIntent> = {
   ArrowLeft: "prev",
   ArrowUp: "prev",
@@ -34,9 +44,7 @@ const MAP_KEY_TO_FOCUS_INTENT: Record<string, FocusIntent> = {
   End: "last",
 };
 
-type FocusIntent = "first" | "last" | "prev" | "next";
-
-function getDirectionAwareKey({ key, dir }: { key: string; dir?: Direction }) {
+function getDirectionAwareKey(key: string, dir?: Direction) {
   if (dir !== "rtl") return key;
   return key === "ArrowLeft"
     ? "ArrowRight"
@@ -45,16 +53,12 @@ function getDirectionAwareKey({ key, dir }: { key: string; dir?: Direction }) {
       : key;
 }
 
-function getFocusIntent({
-  event,
-  orientation,
-  dir,
-}: {
-  event: React.KeyboardEvent;
-  orientation?: Orientation;
-  dir?: Direction;
-}) {
-  const key = getDirectionAwareKey({ key: event.key, dir: dir });
+function getFocusIntent(
+  event: React.KeyboardEvent<TriggerElement>,
+  dir?: Direction,
+  orientation?: Orientation,
+) {
+  const key = getDirectionAwareKey(event.key, dir);
   if (orientation === "vertical" && ["ArrowLeft", "ArrowRight"].includes(key))
     return undefined;
   if (orientation === "horizontal" && ["ArrowUp", "ArrowDown"].includes(key))
@@ -102,15 +106,11 @@ type Orientation = "horizontal" | "vertical";
 
 type DataState = "inactive" | "active" | "completed";
 
-function getDataState({
-  value,
-  stepState,
-  itemValue,
-}: {
-  value: string | undefined;
-  stepState: StepState | undefined;
-  itemValue: string;
-}): DataState {
+function getDataState(
+  value: string | undefined,
+  itemValue: string,
+  stepState: StepState | undefined,
+): DataState {
   const isCompleted = stepState?.completed ?? false;
   const effectiveStepValue = stepState?.value ?? itemValue;
   const isActive = value !== undefined && value === effectiveStepValue;
@@ -278,6 +278,7 @@ function useFocusContext(consumerName: string) {
 }
 
 interface StepperContextValue {
+  id: string;
   dir: Direction;
   disabled: boolean;
   nonInteractive: boolean;
@@ -371,6 +372,7 @@ function StepperRootImpl(props: StepperRootProps) {
   const dir = useDirection(dirProp);
   const store = useStoreContext("StepperImpl");
 
+  const id = React.useId();
   const labelId = React.useId();
 
   const [formTrigger, setFormTrigger] = React.useState<HTMLDivElement | null>(
@@ -389,13 +391,14 @@ function StepperRootImpl(props: StepperRootProps) {
 
   const contextValue = React.useMemo<StepperContextValue>(
     () => ({
+      id,
       dir,
       disabled,
       nonInteractive,
       onValueAdd,
       onValueRemove,
     }),
-    [dir, disabled, nonInteractive, onValueAdd, onValueRemove],
+    [id, dir, disabled, nonInteractive, onValueAdd, onValueRemove],
   );
 
   const RootPrimitive = props.asChild ? Slot : "div";
@@ -628,10 +631,6 @@ const stepperItemVariants = cva("flex w-full", {
 interface StepperItemContextValue {
   value: string;
   stepState: StepState | undefined;
-  triggerId: string;
-  contentId: string;
-  titleId: string;
-  descriptionId: string;
 }
 
 const StepperItemContext = React.createContext<StepperItemContextValue | null>(
@@ -670,11 +669,6 @@ function StepperItem(props: StepperItemProps) {
   const orientation = useStore((state) => state.orientation);
   const value = useStore((state) => state.value);
 
-  const triggerId = React.useId();
-  const contentId = React.useId();
-  const titleId = React.useId();
-  const descriptionId = React.useId();
-
   const onValueAdd = React.useCallback(() => {
     context.onValueAdd?.(itemValue);
   }, [context.onValueAdd, itemValue]);
@@ -698,18 +692,14 @@ function StepperItem(props: StepperItemProps) {
   }, [store, itemValue, completed, disabled]);
 
   const stepState = useStore((state) => state.steps.get(itemValue));
-  const dataState = getDataState({ value, itemValue, stepState });
+  const dataState = getDataState(value, itemValue, stepState);
 
   const itemContextValue = React.useMemo<StepperItemContextValue>(
     () => ({
       value: itemValue,
       stepState,
-      triggerId,
-      contentId,
-      titleId,
-      descriptionId,
     }),
-    [itemValue, stepState, triggerId, contentId, titleId, descriptionId],
+    [itemValue, stepState],
   );
 
   const ItemPrimitive = asChild ? Slot : "li";
@@ -760,12 +750,16 @@ function StepperTrigger(props: StepperTriggerProps) {
   const stepState = useStore((state) => state.steps.get(itemValue));
   const globalDisabled = useStore((state) => state.disabled);
 
+  const triggerId = getId(context.id, "trigger", itemValue);
+  const contentId = getId(context.id, "content", itemValue);
+  const titleId = getId(context.id, "title", itemValue);
+  const descriptionId = getId(context.id, "description", itemValue);
+
   const isDisabled =
     globalDisabled || stepState?.disabled || triggerProps.disabled;
   const isActive = value === itemValue;
-  const isCurrentTabStop =
-    focusContext.currentTabStopId === itemContext.triggerId;
-  const dataState = getDataState({ value, stepState, itemValue });
+  const isCurrentTabStop = focusContext.currentTabStopId === triggerId;
+  const dataState = getDataState(value, itemValue, stepState);
 
   const [triggerElement, setTriggerElement] =
     React.useState<HTMLElement | null>(null);
@@ -792,7 +786,7 @@ function StepperTrigger(props: StepperTriggerProps) {
   React.useEffect(() => {
     if (triggerElement) {
       focusContext.onItemRegister({
-        id: itemContext.triggerId,
+        id: triggerId,
         element: triggerElement,
         value: itemValue,
         active: isActive,
@@ -803,7 +797,7 @@ function StepperTrigger(props: StepperTriggerProps) {
       }
 
       return () => {
-        focusContext.onItemUnregister(itemContext.triggerId);
+        focusContext.onItemUnregister(triggerId);
         if (!isDisabled) {
           focusContext.onFocusableItemRemove();
         }
@@ -812,7 +806,7 @@ function StepperTrigger(props: StepperTriggerProps) {
   }, [
     triggerElement,
     focusContext,
-    itemContext.triggerId,
+    triggerId,
     itemValue,
     isActive,
     isDisabled,
@@ -841,7 +835,7 @@ function StepperTrigger(props: StepperTriggerProps) {
       triggerProps.onFocus?.(event);
       if (event.defaultPrevented) return;
 
-      focusContext.onItemFocus(itemContext.triggerId);
+      focusContext.onItemFocus(triggerId);
       /**
        * Our focus management will focus the trigger when navigating with arrow keys
        * and we need to "activate" it in that case. We click it to "activate" it (instead
@@ -851,7 +845,7 @@ function StepperTrigger(props: StepperTriggerProps) {
         triggerElement.click();
       }
     },
-    [focusContext, itemContext.triggerId, triggerElement, triggerProps.onFocus],
+    [focusContext, triggerId, triggerElement, triggerProps.onFocus],
   );
 
   const onKeyDown = React.useCallback(
@@ -871,11 +865,11 @@ function StepperTrigger(props: StepperTriggerProps) {
 
       if (event.target !== event.currentTarget) return;
 
-      const focusIntent = getFocusIntent({
+      const focusIntent = getFocusIntent(
         event,
-        orientation: focusContext.orientation,
-        dir: focusContext.dir,
-      });
+        focusContext.dir,
+        focusContext.orientation,
+      );
 
       if (focusIntent !== undefined) {
         if (event.metaKey || event.ctrlKey || event.altKey || event.shiftKey)
@@ -914,11 +908,11 @@ function StepperTrigger(props: StepperTriggerProps) {
       if (isDisabled) {
         event.preventDefault();
       } else {
-        focusContext.onItemFocus(itemContext.triggerId);
+        focusContext.onItemFocus(triggerId);
       }
       triggerProps.onMouseDown?.(event);
     },
-    [focusContext, itemContext.triggerId, isDisabled, triggerProps.onMouseDown],
+    [focusContext, triggerId, isDisabled, triggerProps.onMouseDown],
   );
 
   const TriggerPrimitive = asChild ? Slot : Button;
@@ -926,11 +920,11 @@ function StepperTrigger(props: StepperTriggerProps) {
   return (
     <TriggerPrimitive
       ref={composedRef}
-      id={itemContext.triggerId}
+      id={triggerId}
       role="tab"
       aria-selected={isActive}
-      aria-controls={itemContext.contentId}
-      aria-describedby={`${itemContext.titleId} ${itemContext.descriptionId}`}
+      aria-controls={contentId}
+      aria-describedby={`${titleId} ${descriptionId}`}
       tabIndex={isCurrentTabStop ? 0 : -1}
       variant={variant}
       size={size}
@@ -982,7 +976,7 @@ function StepperIndicator(props: StepperIndicatorProps) {
   const itemValue = itemContext.value;
   const stepState = useStore((state) => state.steps.get(itemValue));
 
-  const dataState = getDataState({ value, stepState, itemValue });
+  const dataState = getDataState(value, itemValue, stepState);
 
   const IndicatorPrimitive = asChild ? Slot : "div";
 
@@ -1027,11 +1021,11 @@ function StepperSeparator(props: StepperSeparatorProps) {
   const value = useStore((state) => state.value);
   const orientation = useStore((state) => state.orientation);
 
-  const dataState = getDataState({
+  const dataState = getDataState(
     value,
-    stepState: itemContext.stepState,
-    itemValue: itemContext.value,
-  });
+    itemContext.value,
+    itemContext.stepState,
+  );
 
   const SeparatorPrimitive = asChild ? Slot : "div";
 
@@ -1058,12 +1052,14 @@ function StepperTitle(props: StepperTitleProps) {
   const context = useStepperContext(TITLE_NAME);
   const itemContext = useStepperItemContext(TITLE_NAME);
 
+  const titleId = getId(context.id, "title", itemContext.value);
+
   const TitlePrimitive = asChild ? Slot : "span";
 
   return (
     <TitlePrimitive
       ref={ref}
-      id={itemContext.titleId}
+      id={titleId}
       data-slot="title"
       dir={context.dir}
       className={cn("font-medium text-sm", className)}
@@ -1081,12 +1077,14 @@ function StepperDescription(props: StepperDescriptionProps) {
   const context = useStepperContext(DESCRIPTION_NAME);
   const itemContext = useStepperItemContext(DESCRIPTION_NAME);
 
+  const descriptionId = getId(context.id, "description", itemContext.value);
+
   const DescriptionPrimitive = asChild ? Slot : "span";
 
   return (
     <DescriptionPrimitive
       ref={ref}
-      id={itemContext.descriptionId}
+      id={descriptionId}
       data-slot="description"
       dir={context.dir}
       className={cn("text-muted-foreground text-xs", className)}
@@ -1106,7 +1104,8 @@ function StepperContent(props: StepperContentProps) {
   const context = useStepperContext(CONTENT_NAME);
   const value = useStore((state) => state.value);
 
-  const contentId = React.useId();
+  const contentId = getId(context.id, "content", valueProp);
+  const triggerId = getId(context.id, "trigger", valueProp);
 
   if (valueProp !== value) return null;
 
@@ -1117,7 +1116,7 @@ function StepperContent(props: StepperContentProps) {
       ref={ref}
       id={contentId}
       role="tabpanel"
-      aria-label={`Content for step ${valueProp}`}
+      aria-labelledby={triggerId}
       data-value={valueProp}
       data-slot="stepper-content"
       dir={context.dir}
