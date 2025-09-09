@@ -116,6 +116,13 @@ function getDataState(
   return "inactive";
 }
 
+const DirectionContext = React.createContext<Direction | undefined>(undefined);
+
+function useDirection(dirProp?: Direction): Direction {
+  const contextDir = React.useContext(DirectionContext);
+  return dirProp ?? contextDir ?? "ltr";
+}
+
 interface StepState {
   value: string;
   completed: boolean;
@@ -301,16 +308,12 @@ interface StepperRootProps extends React.ComponentProps<"div"> {
   activationMode?: ActivationMode;
   dir?: Direction;
   orientation?: Orientation;
+  asChild?: boolean;
   disabled?: boolean;
   loop?: boolean;
   nonInteractive?: boolean;
   name?: string;
   label?: string;
-  asChild?: boolean;
-}
-
-function useDirection(dirProp?: Direction): Direction {
-  return dirProp ?? "ltr";
 }
 
 function StepperRoot(props: StepperRootProps) {
@@ -358,6 +361,7 @@ function StepperRootImpl(props: StepperRootProps) {
     id: idProp,
     dir: dirProp,
     orientation = "horizontal",
+    asChild = false,
     disabled = false,
     nonInteractive = false,
     name,
@@ -402,18 +406,18 @@ function StepperRootImpl(props: StepperRootProps) {
     [rootId, dir, disabled, nonInteractive, onValueAdd, onValueRemove],
   );
 
-  const RootPrimitive = props.asChild ? Slot : "div";
+  const RootPrimitive = asChild ? Slot : "div";
 
   return (
     <StepperContext.Provider value={contextValue}>
       <RootPrimitive
+        id={rootId}
         aria-labelledby={labelId ?? undefined}
         data-disabled={disabled ? "" : undefined}
         data-orientation={orientation}
         data-slot="stepper"
         dir={dir}
         {...rootProps}
-        id={rootId}
         ref={composedRef}
         className={cn("flex flex-col gap-6", className)}
       >
