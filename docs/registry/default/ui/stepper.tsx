@@ -351,111 +351,19 @@ interface StepperListProps extends React.ComponentProps<"ol"> {
 function StepperList(props: StepperListProps) {
   const { className, children, ref, asChild, ...listProps } = props;
   const context = useStepperContext(LIST_NAME);
-  const store = useStoreContext(LIST_NAME);
   const orientation = useStore((state) => state.orientation);
-  const currentValue = useStore((state) => state.currentValue);
-  const steps = useStore((state) => state.steps);
-
-  const [listRef, setListRef] = React.useState<HTMLOListElement | null>(null);
-  const composedRef = useComposedRefs(ref, setListRef);
-
-  const onKeyDown = React.useCallback(
-    (event: React.KeyboardEvent) => {
-      if (!listRef) return;
-
-      const stepValues = Array.from(steps.keys());
-      const currentIndex = stepValues.indexOf(currentValue || "");
-
-      let targetIndex = -1;
-      let preventDefault = false;
-
-      switch (event.key) {
-        case "ArrowLeft":
-        case "ArrowUp": {
-          preventDefault = true;
-          if (orientation === "horizontal") {
-            targetIndex =
-              event.key === "ArrowLeft"
-                ? Math.max(0, currentIndex - 1)
-                : currentIndex;
-          } else {
-            targetIndex =
-              event.key === "ArrowUp"
-                ? Math.max(0, currentIndex - 1)
-                : currentIndex;
-          }
-          break;
-        }
-        case "ArrowRight":
-        case "ArrowDown": {
-          preventDefault = true;
-          if (orientation === "horizontal") {
-            targetIndex =
-              event.key === "ArrowRight"
-                ? Math.min(stepValues.length - 1, currentIndex + 1)
-                : currentIndex;
-          } else {
-            targetIndex =
-              event.key === "ArrowDown"
-                ? Math.min(stepValues.length - 1, currentIndex + 1)
-                : currentIndex;
-          }
-          break;
-        }
-        case "Home": {
-          preventDefault = true;
-          targetIndex = 0;
-          break;
-        }
-        case "End": {
-          preventDefault = true;
-          targetIndex = stepValues.length - 1;
-          break;
-        }
-      }
-
-      if (preventDefault) {
-        event.preventDefault();
-      }
-
-      if (
-        targetIndex >= 0 &&
-        targetIndex !== currentIndex &&
-        targetIndex < stepValues.length
-      ) {
-        const targetValue = stepValues[targetIndex];
-        if (!targetValue) return;
-        const targetStep = steps.get(targetValue);
-
-        // Only navigate if the step is not disabled
-        if (targetStep && !targetStep.disabled && !context.disabled) {
-          store.setState("currentValue", targetValue);
-
-          // Focus the target trigger
-          const targetTrigger = listRef.querySelector(
-            `[data-value="${targetValue}"] [role="tab"]`,
-          ) as HTMLElement;
-          if (targetTrigger) {
-            targetTrigger.focus();
-          }
-        }
-      }
-    },
-    [listRef, steps, currentValue, orientation, store, context.disabled],
-  );
 
   const ListPrimitive = asChild ? Slot : "ol";
 
   return (
     <ListPrimitive
-      ref={composedRef}
+      ref={ref}
       role="tablist"
       aria-orientation={orientation}
       data-orientation={orientation}
       data-slot="stepper-list"
       dir={context.dir}
       className={cn(stepperListVariants({ orientation, className }))}
-      onKeyDown={onKeyDown}
       {...listProps}
     >
       {children}
@@ -617,19 +525,6 @@ function StepperTrigger(props: StepperTriggerProps) {
     }
   }, [isDisabled, context.nonInteractive, store, stepValue]);
 
-  const onKeyDown = React.useCallback(
-    (event: React.KeyboardEvent) => {
-      // Handle Enter and Space key activation
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        if (!isDisabled && !context.nonInteractive) {
-          store.setState("currentValue", stepValue);
-        }
-      }
-    },
-    [isDisabled, context.nonInteractive, store, stepValue],
-  );
-
   const TriggerPrimitive = asChild ? Slot : Button;
 
   return (
@@ -649,7 +544,6 @@ function StepperTrigger(props: StepperTriggerProps) {
       className={cn("rounded-full", className)}
       disabled={isDisabled}
       onClick={onStepClick}
-      onKeyDown={onKeyDown}
       {...triggerProps}
     >
       {children}
