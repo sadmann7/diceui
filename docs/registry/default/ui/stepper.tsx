@@ -102,15 +102,18 @@ type Orientation = "horizontal" | "vertical";
 
 type DataState = "inactive" | "active" | "completed";
 
-function getDataState(
-  currentValue: string | undefined,
-  stepState: StepState | undefined,
-  stepValue?: string,
-): DataState {
+function getDataState({
+  value,
+  stepState,
+  itemValue,
+}: {
+  value: string | undefined;
+  stepState: StepState | undefined;
+  itemValue: string;
+}): DataState {
   const isCompleted = stepState?.completed ?? false;
-  const effectiveStepValue = stepState?.value ?? stepValue;
-  const isActive =
-    currentValue !== undefined && currentValue === effectiveStepValue;
+  const effectiveStepValue = stepState?.value ?? itemValue;
+  const isActive = value !== undefined && value === effectiveStepValue;
 
   if (isCompleted) return "completed";
   if (isActive) return "active";
@@ -169,9 +172,9 @@ function createStore(
       const state = stateRef.current;
       if (!state || Object.is(state[key], value)) return;
 
-      if (key === "value") {
-        state.value = value as string;
-        onValueChange?.(value as string);
+      if (key === "value" && typeof value === "string") {
+        state.value = value;
+        onValueChange?.(value);
       } else {
         state[key] = value;
       }
@@ -190,9 +193,6 @@ function createStore(
       if (state) {
         const newStep: StepState = { value, completed, disabled };
         state.steps.set(value, newStep);
-
-        // No need for complex initial value logic since it's set during store creation
-
         store.notify();
       }
     },
@@ -332,7 +332,7 @@ function StepperRoot(props: StepperRootProps) {
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<StoreState>(() => ({
     steps: new Map(),
-    value: value ?? defaultValue, // Set initial value immediately
+    value: value ?? defaultValue,
     orientation,
     disabled,
     nonInteractive,
@@ -384,8 +384,6 @@ function StepperRootImpl(props: StepperRootProps) {
       store.setState("value", valueProp);
     }
   }, [valueProp, store]);
-
-  // No need for hydration fallback since initial value is set synchronously
 
   const value = useStore((state) => state.value);
 
@@ -657,7 +655,7 @@ interface StepperItemProps extends React.ComponentProps<"li"> {
 
 function StepperItem(props: StepperItemProps) {
   const {
-    value,
+    value: itemValue,
     completed = false,
     disabled = false,
     className,
@@ -666,10 +664,11 @@ function StepperItem(props: StepperItemProps) {
     ref,
     ...itemProps
   } = props;
+
   const context = useStepperContext(ITEM_NAME);
   const store = useStoreContext(ITEM_NAME);
   const orientation = useStore((state) => state.orientation);
-  const currentValue = useStore((state) => state.value);
+  const value = useStore((state) => state.value);
 
   const triggerId = React.useId();
   const contentId = React.useId();
@@ -677,40 +676,40 @@ function StepperItem(props: StepperItemProps) {
   const descriptionId = React.useId();
 
   const onValueAdd = React.useCallback(() => {
-    context.onValueAdd?.(value);
-  }, [context.onValueAdd, value]);
+    context.onValueAdd?.(itemValue);
+  }, [context.onValueAdd, itemValue]);
 
   const onValueRemove = React.useCallback(() => {
-    context.onValueRemove?.(value);
-  }, [context.onValueRemove, value]);
+    context.onValueRemove?.(itemValue);
+  }, [context.onValueRemove, itemValue]);
 
   useIsomorphicLayoutEffect(() => {
-    store.addStep(value, completed, disabled);
+    store.addStep(itemValue, completed, disabled);
     onValueAdd();
 
     return () => {
-      store.removeStep(value);
+      store.removeStep(itemValue);
       onValueRemove();
     };
-  }, [store, value, completed, disabled, onValueAdd, onValueRemove]);
+  }, [store, itemValue, completed, disabled, onValueAdd, onValueRemove]);
 
   useIsomorphicLayoutEffect(() => {
-    store.setStep(value, { completed, disabled });
-  }, [store, value, completed, disabled]);
+    store.setStep(itemValue, { completed, disabled });
+  }, [store, itemValue, completed, disabled]);
 
-  const stepState = useStore((state) => state.steps.get(value));
-  const state = getDataState(currentValue, stepState, value);
+  const stepState = useStore((state) => state.steps.get(itemValue));
+  const dataState = getDataState({ value, itemValue, stepState });
 
   const itemContextValue = React.useMemo<StepperItemContextValue>(
     () => ({
-      value,
+      value: itemValue,
       stepState,
       triggerId,
       contentId,
       titleId,
       descriptionId,
     }),
-    [value, stepState, triggerId, contentId, titleId, descriptionId],
+    [itemValue, stepState, triggerId, contentId, titleId, descriptionId],
   );
 
   const ItemPrimitive = asChild ? Slot : "li";
@@ -720,8 +719,8 @@ function StepperItem(props: StepperItemProps) {
       <ItemPrimitive
         ref={ref}
         role="presentation"
-        data-value={value}
-        data-state={state}
+        data-value={itemValue}
+        data-state={dataState}
         data-disabled={stepState?.disabled ? "" : undefined}
         data-orientation={orientation}
         data-slot="stepper-item"
@@ -756,17 +755,17 @@ function StepperTrigger(props: StepperTriggerProps) {
   const itemContext = useStepperItemContext(TRIGGER_NAME);
   const store = useStoreContext(TRIGGER_NAME);
   const focusContext = useFocusContext(TRIGGER_NAME);
-  const currentValue = useStore((state) => state.value);
-  const stepValue = itemContext.value;
-  const stepState = useStore((state) => state.steps.get(stepValue));
+  const value = useStore((state) => state.value);
+  const itemValue = itemContext.value;
+  const stepState = useStore((state) => state.steps.get(itemValue));
   const globalDisabled = useStore((state) => state.disabled);
 
   const isDisabled =
     globalDisabled || stepState?.disabled || triggerProps.disabled;
-  const isActive = currentValue === stepValue;
+  const isActive = value === itemValue;
   const isCurrentTabStop =
     focusContext.currentTabStopId === itemContext.triggerId;
-  const state = getDataState(currentValue, stepState, stepValue);
+  const dataState = getDataState({ value, stepState, itemValue });
 
   const [triggerElement, setTriggerElement] =
     React.useState<HTMLElement | null>(null);
@@ -795,7 +794,7 @@ function StepperTrigger(props: StepperTriggerProps) {
       focusContext.onItemRegister({
         id: itemContext.triggerId,
         element: triggerElement,
-        value: stepValue,
+        value: itemValue,
         active: isActive,
         disabled: !!isDisabled,
       });
@@ -814,7 +813,7 @@ function StepperTrigger(props: StepperTriggerProps) {
     triggerElement,
     focusContext,
     itemContext.triggerId,
-    stepValue,
+    itemValue,
     isActive,
     isDisabled,
   ]);
@@ -825,14 +824,14 @@ function StepperTrigger(props: StepperTriggerProps) {
       if (event.defaultPrevented) return;
 
       if (!isDisabled && !context.nonInteractive) {
-        store.setState("value", stepValue);
+        store.setState("value", itemValue);
       }
     },
     [
       isDisabled,
       context.nonInteractive,
       store,
-      stepValue,
+      itemValue,
       triggerProps.onClick,
     ],
   );
@@ -935,7 +934,7 @@ function StepperTrigger(props: StepperTriggerProps) {
       tabIndex={isCurrentTabStop ? 0 : -1}
       variant={variant}
       size={size}
-      data-state={state}
+      data-state={dataState}
       data-disabled={isDisabled ? "" : undefined}
       data-slot="stepper-trigger"
       className={cn("rounded-full", className)}
@@ -979,18 +978,18 @@ function StepperIndicator(props: StepperIndicatorProps) {
   const { className, children, asChild, ref, ...indicatorProps } = props;
   const context = useStepperContext(INDICATOR_NAME);
   const itemContext = useStepperItemContext(INDICATOR_NAME);
-  const currentValue = useStore((state) => state.value);
-  const stepValue = itemContext.value;
-  const stepState = useStore((state) => state.steps.get(stepValue));
+  const value = useStore((state) => state.value);
+  const itemValue = itemContext.value;
+  const stepState = useStore((state) => state.steps.get(itemValue));
 
-  const state = getDataState(currentValue, stepState, stepValue);
+  const dataState = getDataState({ value, stepState, itemValue });
 
   const IndicatorPrimitive = asChild ? Slot : "div";
 
   return (
     <IndicatorPrimitive
       ref={ref}
-      data-state={state}
+      data-state={dataState}
       data-slot="stepper-indicator"
       dir={context.dir}
       className={cn(stepperIndicatorVariants({ className }))}
@@ -1022,23 +1021,24 @@ interface StepperSeparatorProps extends React.ComponentProps<"div"> {
 
 function StepperSeparator(props: StepperSeparatorProps) {
   const { className, asChild, ref, ...separatorProps } = props;
+
   const context = useStepperContext(SEPARATOR_NAME);
   const itemContext = useStepperItemContext(SEPARATOR_NAME);
-  const currentValue = useStore((state) => state.value);
+  const value = useStore((state) => state.value);
   const orientation = useStore((state) => state.orientation);
 
-  const state = getDataState(
-    currentValue,
-    itemContext.stepState,
-    itemContext.value,
-  );
+  const dataState = getDataState({
+    value,
+    stepState: itemContext.stepState,
+    itemValue: itemContext.value,
+  });
 
   const SeparatorPrimitive = asChild ? Slot : "div";
 
   return (
     <SeparatorPrimitive
       ref={ref}
-      data-state={state}
+      data-state={dataState}
       data-orientation={orientation}
       data-slot="stepper-separator"
       dir={context.dir}
@@ -1054,6 +1054,7 @@ interface StepperTitleProps extends React.ComponentProps<"span"> {
 
 function StepperTitle(props: StepperTitleProps) {
   const { className, asChild, ref, ...titleProps } = props;
+
   const context = useStepperContext(TITLE_NAME);
   const itemContext = useStepperItemContext(TITLE_NAME);
 
@@ -1101,6 +1102,7 @@ interface StepperContentProps extends React.ComponentProps<"div"> {
 
 function StepperContent(props: StepperContentProps) {
   const { value: valueProp, className, asChild, ref, ...contentProps } = props;
+
   const context = useStepperContext(CONTENT_NAME);
   const value = useStore((state) => state.value);
 
