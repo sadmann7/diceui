@@ -42,6 +42,7 @@ import {
 export default function PlaygroundPage() {
   return (
     <Shell>
+      <StepperDemo />
       <Tabs value="stepper">
         <TabsList>
           <TabsTrigger value="stepper">Stepper</TabsTrigger>
@@ -49,7 +50,6 @@ export default function PlaygroundPage() {
           <TabsTrigger value="command">Command</TabsTrigger>
         </TabsList>
       </Tabs>
-      <StepperDemo />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
