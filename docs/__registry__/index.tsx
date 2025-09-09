@@ -1397,6 +1397,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "stepper-loop-demo": {
+      name: "stepper-loop-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/examples/stepper-loop-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/stepper-loop-demo.tsx")),
+      source: "",
+      chunks: []
+    },
     "stepper-vertical-demo": {
       name: "stepper-vertical-demo",
       description: "",

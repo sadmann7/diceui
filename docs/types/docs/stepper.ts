@@ -61,6 +61,12 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   disabled?: boolean;
 
   /**
+   * Whether keyboard navigation should loop around
+   * @defaultValue false
+   */
+  loop?: boolean;
+
+  /**
    * When `true`, prevents interaction with step navigation.
    *
    * @default false
