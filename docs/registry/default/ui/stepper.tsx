@@ -75,13 +75,7 @@ function focusFirst(candidates: HTMLElement[], preventScroll = false) {
   }
 }
 
-function wrapArray<T>({
-  array,
-  startIndex,
-}: {
-  array: T[];
-  startIndex: number;
-}) {
+function wrapArray<T>(array: T[], startIndex: number) {
   return array.map<T>(
     (_, index) => array[(startIndex + index) % array.length] as T,
   );
@@ -887,7 +881,7 @@ function StepperTrigger(props: StepperTriggerProps) {
             event.currentTarget as HTMLElement,
           );
           candidateNodes = focusContext.loop
-            ? wrapArray({ array: candidateNodes, startIndex: currentIndex + 1 })
+            ? wrapArray(candidateNodes, currentIndex + 1)
             : candidateNodes.slice(currentIndex + 1);
         }
 
