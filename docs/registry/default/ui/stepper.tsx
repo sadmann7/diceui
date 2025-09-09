@@ -98,6 +98,8 @@ type Direction = "ltr" | "rtl";
 
 type Orientation = "horizontal" | "vertical";
 
+type ActivationMode = "automatic" | "manual";
+
 type DataState = "inactive" | "active" | "completed";
 
 function getDataState(
@@ -127,6 +129,7 @@ interface StoreState {
   disabled: boolean;
   nonInteractive: boolean;
   loop: boolean;
+  activationMode: ActivationMode;
 }
 
 interface Store {
@@ -161,6 +164,7 @@ function createStore(
         disabled: false,
         nonInteractive: false,
         loop: false,
+        activationMode: "automatic",
       },
     setState: (key, value) => {
       const state = stateRef.current;
@@ -297,6 +301,7 @@ interface StepperRootProps extends React.ComponentProps<"div"> {
   onValueComplete?: (value: string, completed: boolean) => void;
   onValueAdd?: (value: string) => void;
   onValueRemove?: (value: string) => void;
+  activationMode?: ActivationMode;
   dir?: Direction;
   orientation?: Orientation;
   disabled?: boolean;
@@ -315,6 +320,7 @@ function StepperRoot(props: StepperRootProps) {
   const {
     value,
     defaultValue,
+    activationMode = "automatic",
     orientation = "horizontal",
     disabled = false,
     loop = false,
@@ -332,6 +338,7 @@ function StepperRoot(props: StepperRootProps) {
     disabled,
     nonInteractive,
     loop,
+    activationMode,
   }));
 
   const store = React.useMemo(
@@ -752,6 +759,12 @@ function StepperTrigger(props: StepperTriggerProps) {
   const itemValue = itemContext.value;
   const stepState = useStore((state) => state.steps.get(itemValue));
   const globalDisabled = useStore((state) => state.disabled);
+  const activationMode = useStore((state) => state.activationMode);
+
+  const stepItems = focusContext.getItems();
+  const currentIndex = stepItems.findIndex((item) => item.value === itemValue);
+  const stepPosition = currentIndex + 1;
+  const stepCount = stepItems.length;
 
   const triggerId = getId(context.id, "trigger", itemValue);
   const contentId = getId(context.id, "content", itemValue);
@@ -840,15 +853,25 @@ function StepperTrigger(props: StepperTriggerProps) {
 
       focusContext.onItemFocus(triggerId);
       /**
-       * Our focus management will focus the trigger when navigating with arrow keys
-       * and we need to "activate" it in that case. We click it to "activate" it (instead
-       * of updating the store directly) so that the step change event fires.
+       * Our focus management will focus the trigger when navigating with arrow keys.
+       * In automatic mode, we "activate" it immediately. In manual mode, user must
+       * press Enter/Space to activate.
        */
-      if (isArrowKeyPressedRef.current && triggerElement) {
+      if (
+        isArrowKeyPressedRef.current &&
+        triggerElement &&
+        activationMode === "automatic"
+      ) {
         triggerElement.click();
       }
     },
-    [focusContext, triggerId, triggerElement, triggerProps.onFocus],
+    [
+      focusContext,
+      triggerId,
+      triggerElement,
+      activationMode,
+      triggerProps.onFocus,
+    ],
   );
 
   const onKeyDown = React.useCallback(
@@ -858,6 +881,19 @@ function StepperTrigger(props: StepperTriggerProps) {
 
       if (event.key === "Enter" && context.nonInteractive) {
         event.preventDefault();
+        return;
+      }
+
+      // Handle manual activation with Enter/Space in manual mode
+      if (
+        (event.key === "Enter" || event.key === " ") &&
+        activationMode === "manual" &&
+        !context.nonInteractive
+      ) {
+        event.preventDefault();
+        if (!isDisabled && triggerElement) {
+          triggerElement.click();
+        }
         return;
       }
 
@@ -900,7 +936,14 @@ function StepperTrigger(props: StepperTriggerProps) {
 
       triggerProps.onKeyDown?.(event as React.KeyboardEvent<HTMLButtonElement>);
     },
-    [focusContext, context.nonInteractive, triggerProps.onKeyDown],
+    [
+      focusContext,
+      context.nonInteractive,
+      activationMode,
+      isDisabled,
+      triggerElement,
+      triggerProps.onKeyDown,
+    ],
   );
 
   const onMouseDown = React.useCallback(
@@ -926,8 +969,11 @@ function StepperTrigger(props: StepperTriggerProps) {
       id={triggerId}
       role="tab"
       aria-selected={isActive}
+      aria-current={isActive ? "step" : undefined}
       aria-controls={contentId}
       aria-describedby={`${titleId} ${descriptionId}`}
+      aria-setsize={stepCount}
+      aria-posinset={stepPosition}
       tabIndex={isCurrentTabStop ? 0 : -1}
       variant={variant}
       size={size}

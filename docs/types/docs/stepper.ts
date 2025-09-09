@@ -40,6 +40,18 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   onValueRemove?: (value: string) => void;
 
   /**
+   * Controls how steps are activated during keyboard navigation.
+   *
+   * - `"automatic"`: Arrow keys immediately activate the focused step (selection follows focus)
+   * - `"manual"`: Arrow keys only move focus, Enter/Space keys activate the focused step
+   *
+   * @default "automatic"
+   *
+   * @see {@link https://www.w3.org/WAI/ARIA/apg/patterns/tabs/ WAI-ARIA Tabs Pattern}
+   */
+  activationMode?: "automatic" | "manual";
+
+  /**
    * The reading direction of the stepper.
    *
    * @default "ltr"
