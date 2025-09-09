@@ -43,7 +43,7 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <StepperDemo />
-      <Tabs value="command">
+      <Tabs defaultValue="command">
         <TabsList>
           <TabsTrigger value="stepper">Stepper</TabsTrigger>
           <TabsTrigger value="combobox">Combobox</TabsTrigger>

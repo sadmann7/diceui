@@ -488,7 +488,16 @@ function StepperList(props: StepperListProps) {
   }, []);
 
   const getItems = React.useCallback(() => {
-    return Array.from(itemsRef.current.values());
+    return Array.from(itemsRef.current.values()).sort((a, b) => {
+      const position = a.element.compareDocumentPosition(b.element);
+      if (position & Node.DOCUMENT_POSITION_FOLLOWING) {
+        return -1;
+      }
+      if (position & Node.DOCUMENT_POSITION_PRECEDING) {
+        return 1;
+      }
+      return 0;
+    });
   }, []);
 
   const onEntryFocus = React.useCallback(
