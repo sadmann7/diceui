@@ -856,18 +856,23 @@ function StepperTrigger(props: StepperTriggerProps) {
       focusContext.onItemFocus(triggerId);
 
       if (
-        isArrowKeyPressedRef.current &&
-        triggerElement &&
-        activationMode === "automatic"
+        !isActive &&
+        !isDisabled &&
+        activationMode !== "manual" &&
+        !context.nonInteractive
       ) {
-        triggerElement.click();
+        store.setState("value", itemValue);
       }
     },
     [
       focusContext,
       triggerId,
-      triggerElement,
       activationMode,
+      isActive,
+      isDisabled,
+      context.nonInteractive,
+      store,
+      itemValue,
       triggerProps.onFocus,
     ],
   );
