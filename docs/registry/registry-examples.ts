@@ -947,6 +947,16 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "stepper-activation-modes-demo",
+    type: "registry:example",
+    files: [
+      {
+        path: "examples/stepper-activation-modes-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "tags-input-validation-demo",
     type: "registry:example",
     dependencies: ["@diceui/tags-input", "lucide-react"],
