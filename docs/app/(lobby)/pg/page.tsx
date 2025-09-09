@@ -28,6 +28,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import StepperDemo from "@/registry/default/examples/stepper-demo";
+import StepperVerticalDemo from "@/registry/default/examples/stepper-vertical-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -42,6 +43,7 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <StepperDemo />
+      <StepperVerticalDemo />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
