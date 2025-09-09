@@ -21,6 +21,7 @@ const CONTENT_NAME = "StepperContent";
 
 const ENTRY_FOCUS = "stepperFocusGroup.onEntryFocus";
 const EVENT_OPTIONS = { bubbles: false, cancelable: true };
+const ARROW_KEYS = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
 
 const MAP_KEY_TO_FOCUS_INTENT: Record<string, FocusIntent> = {
   ArrowLeft: "prev",
@@ -35,7 +36,7 @@ const MAP_KEY_TO_FOCUS_INTENT: Record<string, FocusIntent> = {
 
 type FocusIntent = "first" | "last" | "prev" | "next";
 
-function getDirectionAwareKey(key: string, dir?: Direction) {
+function getDirectionAwareKey({ key, dir }: { key: string; dir?: Direction }) {
   if (dir !== "rtl") return key;
   return key === "ArrowLeft"
     ? "ArrowRight"
@@ -44,12 +45,16 @@ function getDirectionAwareKey(key: string, dir?: Direction) {
       : key;
 }
 
-function getFocusIntent(
-  event: React.KeyboardEvent,
-  orientation?: Orientation,
-  dir?: Direction,
-) {
-  const key = getDirectionAwareKey(event.key, dir);
+function getFocusIntent({
+  event,
+  orientation,
+  dir,
+}: {
+  event: React.KeyboardEvent;
+  orientation?: Orientation;
+  dir?: Direction;
+}) {
+  const key = getDirectionAwareKey({ key: event.key, dir: dir });
   if (orientation === "vertical" && ["ArrowLeft", "ArrowRight"].includes(key))
     return undefined;
   if (orientation === "horizontal" && ["ArrowUp", "ArrowDown"].includes(key))
@@ -66,7 +71,13 @@ function focusFirst(candidates: HTMLElement[], preventScroll = false) {
   }
 }
 
-function wrapArray<T>(array: T[], startIndex: number) {
+function wrapArray<T>({
+  array,
+  startIndex,
+}: {
+  array: T[];
+  startIndex: number;
+}) {
   return array.map<T>(
     (_, index) => array[(startIndex + index) % array.length] as T,
   );
@@ -227,13 +238,12 @@ function useStore<T>(selector: (state: StoreState) => T): T {
   return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
 
-// Focus collection for managing focusable triggers
-interface TriggerData {
+interface ItemData {
   id: string;
   element: HTMLElement;
   value: string;
-  focusable: boolean;
   active: boolean;
+  disabled: boolean;
 }
 
 interface FocusContextValue {
@@ -245,15 +255,9 @@ interface FocusContextValue {
   onItemShiftTab: () => void;
   onFocusableItemAdd: () => void;
   onFocusableItemRemove: () => void;
-  registerTrigger: (
-    id: string,
-    element: HTMLElement,
-    value: string,
-    focusable: boolean,
-    active: boolean,
-  ) => void;
-  unregisterTrigger: (id: string) => void;
-  getTriggers: () => TriggerData[];
+  registerItem: (item: ItemData) => void;
+  unregisterItem: (id: string) => void;
+  getItems: () => ItemData[];
 }
 
 const FocusContext = React.createContext<FocusContextValue | null>(null);
@@ -449,7 +453,7 @@ interface StepperListProps extends React.ComponentProps<"ol"> {
 }
 
 function StepperList(props: StepperListProps) {
-  const { className, children, ref, asChild, ...listProps } = props;
+  const { className, children, asChild, ref, ...listProps } = props;
   const context = useStepperContext(LIST_NAME);
   const orientation = useStore((state) => state.orientation);
   const loop = useStore((state) => state.loop);
@@ -460,7 +464,7 @@ function StepperList(props: StepperListProps) {
   const [isTabbingBackOut, setIsTabbingBackOut] = React.useState(false);
   const [focusableItemsCount, setFocusableItemsCount] = React.useState(0);
   const isClickFocusRef = React.useRef(false);
-  const triggersRef = React.useRef<Map<string, TriggerData>>(new Map());
+  const itemsRef = React.useRef<Map<string, ItemData>>(new Map());
   const listRef = React.useRef<HTMLElement>(null);
   const composedRefs = useComposedRefs(ref, listRef);
 
@@ -480,45 +484,30 @@ function StepperList(props: StepperListProps) {
     setFocusableItemsCount((prevCount) => prevCount - 1);
   }, []);
 
-  const registerTrigger = React.useCallback(
-    (
-      id: string,
-      element: HTMLElement,
-      value: string,
-      focusable: boolean,
-      active: boolean,
-    ) => {
-      triggersRef.current.set(id, { id, element, value, focusable, active });
-    },
-    [],
-  );
-
-  const unregisterTrigger = React.useCallback((id: string) => {
-    triggersRef.current.delete(id);
+  const registerItem = React.useCallback((item: ItemData) => {
+    itemsRef.current.set(item.id, item);
   }, []);
 
-  const getTriggers = React.useCallback(() => {
-    return Array.from(triggersRef.current.values());
+  const unregisterItem = React.useCallback((id: string) => {
+    itemsRef.current.delete(id);
+  }, []);
+
+  const getItems = React.useCallback(() => {
+    return Array.from(itemsRef.current.values());
   }, []);
 
   const onEntryFocus = React.useCallback(
     (event: Event) => {
       if (!event.defaultPrevented) {
-        const triggers = Array.from(triggersRef.current.values()).filter(
-          (trigger) => trigger.focusable,
+        const items = Array.from(itemsRef.current.values()).filter(
+          (item) => !item.disabled,
         );
-        const activeTrigger = triggers.find((trigger) => trigger.active);
-        const currentTrigger = triggers.find(
-          (trigger) => trigger.id === currentTabStopId,
-        );
-        const candidateTriggers = [
-          activeTrigger,
-          currentTrigger,
-          ...triggers,
-        ].filter(Boolean) as TriggerData[];
-        const candidateNodes = candidateTriggers.map(
-          (trigger) => trigger.element,
-        );
+        const activeItem = items.find((item) => item.active);
+        const currentItem = items.find((item) => item.id === currentTabStopId);
+        const candidateItems = [activeItem, currentItem, ...items].filter(
+          Boolean,
+        ) as ItemData[];
+        const candidateNodes = candidateItems.map((item) => item.element);
         focusFirst(candidateNodes, false);
       }
     },
@@ -543,9 +532,9 @@ function StepperList(props: StepperListProps) {
       onItemShiftTab,
       onFocusableItemAdd,
       onFocusableItemRemove,
-      registerTrigger,
-      unregisterTrigger,
-      getTriggers,
+      registerItem,
+      unregisterItem,
+      getItems,
     }),
     [
       currentTabStopId,
@@ -556,9 +545,9 @@ function StepperList(props: StepperListProps) {
       onItemShiftTab,
       onFocusableItemAdd,
       onFocusableItemRemove,
-      registerTrigger,
-      unregisterTrigger,
-      getTriggers,
+      registerItem,
+      unregisterItem,
+      getItems,
     ],
   );
 
@@ -652,8 +641,8 @@ function StepperItem(props: StepperItemProps) {
     disabled = false,
     className,
     children,
-    ref,
     asChild,
+    ref,
     ...itemProps
   } = props;
   const context = useStepperContext(ITEM_NAME);
@@ -752,7 +741,6 @@ function StepperTrigger(props: StepperTriggerProps) {
   const isDisabled =
     globalDisabled || stepState?.disabled || triggerProps.disabled;
   const isActive = currentValue === stepValue;
-  const isFocusable = !isDisabled;
   const isCurrentTabStop =
     focusContext.currentTabStopId === itemContext.triggerId;
   const state = getDataState(currentValue, stepState);
@@ -760,30 +748,52 @@ function StepperTrigger(props: StepperTriggerProps) {
   const [triggerElement, setTriggerElement] =
     React.useState<HTMLElement | null>(null);
   const composedRef = useComposedRefs(ref, setTriggerElement);
+  const isArrowKeyPressedRef = React.useRef(false);
 
   React.useEffect(() => {
-    if (triggerElement && isFocusable) {
-      focusContext.registerTrigger(
-        itemContext.triggerId,
-        triggerElement,
-        stepValue,
-        isFocusable,
-        isActive,
-      );
-      focusContext.onFocusableItemAdd();
+    function onKeyDown(event: KeyboardEvent) {
+      if (ARROW_KEYS.includes(event.key)) {
+        isArrowKeyPressedRef.current = true;
+      }
+    }
+    function onKeyUp() {
+      isArrowKeyPressedRef.current = false;
+    }
+    document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("keyup", onKeyUp);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("keyup", onKeyUp);
+    };
+  }, []);
+
+  React.useEffect(() => {
+    if (triggerElement) {
+      focusContext.registerItem({
+        id: itemContext.triggerId,
+        element: triggerElement,
+        value: stepValue,
+        active: isActive,
+        disabled: !!isDisabled,
+      });
+      if (!isDisabled) {
+        focusContext.onFocusableItemAdd();
+      }
 
       return () => {
-        focusContext.unregisterTrigger(itemContext.triggerId);
-        focusContext.onFocusableItemRemove();
+        focusContext.unregisterItem(itemContext.triggerId);
+        if (!isDisabled) {
+          focusContext.onFocusableItemRemove();
+        }
       };
     }
   }, [
     triggerElement,
-    isFocusable,
     focusContext,
     itemContext.triggerId,
     stepValue,
     isActive,
+    isDisabled,
   ]);
 
   const onStepClick = React.useCallback(() => {
@@ -794,6 +804,11 @@ function StepperTrigger(props: StepperTriggerProps) {
 
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent<HTMLElement>) => {
+      if (event.key === "Enter" && context.nonInteractive) {
+        event.preventDefault();
+        return;
+      }
+
       if (event.key === "Tab" && event.shiftKey) {
         focusContext.onItemShiftTab();
         return;
@@ -801,21 +816,19 @@ function StepperTrigger(props: StepperTriggerProps) {
 
       if (event.target !== event.currentTarget) return;
 
-      const focusIntent = getFocusIntent(
+      const focusIntent = getFocusIntent({
         event,
-        focusContext.orientation,
-        focusContext.dir,
-      );
+        orientation: focusContext.orientation,
+        dir: focusContext.dir,
+      });
 
       if (focusIntent !== undefined) {
         if (event.metaKey || event.ctrlKey || event.altKey || event.shiftKey)
           return;
         event.preventDefault();
 
-        const triggers = focusContext
-          .getTriggers()
-          .filter((trigger) => trigger.focusable);
-        let candidateNodes = triggers.map((trigger) => trigger.element);
+        const items = focusContext.getItems().filter((item) => !item.disabled);
+        let candidateNodes = items.map((item) => item.element);
 
         if (focusIntent === "last") {
           candidateNodes.reverse();
@@ -825,7 +838,7 @@ function StepperTrigger(props: StepperTriggerProps) {
             event.currentTarget as HTMLElement,
           );
           candidateNodes = focusContext.loop
-            ? wrapArray(candidateNodes, currentIndex + 1)
+            ? wrapArray({ array: candidateNodes, startIndex: currentIndex + 1 })
             : candidateNodes.slice(currentIndex + 1);
         }
 
@@ -835,7 +848,7 @@ function StepperTrigger(props: StepperTriggerProps) {
 
       triggerProps.onKeyDown?.(event as React.KeyboardEvent<HTMLButtonElement>);
     },
-    [focusContext, triggerProps.onKeyDown],
+    [focusContext, context.nonInteractive, triggerProps.onKeyDown],
   );
 
   const TriggerPrimitive = asChild ? Slot : Button;
@@ -858,8 +871,8 @@ function StepperTrigger(props: StepperTriggerProps) {
       disabled={isDisabled}
       onClick={onStepClick}
       onMouseDown={(event) => {
-        // Prevent focusing non-focusable items on mousedown
-        if (!isFocusable) {
+        // Prevent focusing disabled items on mousedown
+        if (isDisabled) {
           event.preventDefault();
         } else {
           focusContext.onItemFocus(itemContext.triggerId);
@@ -868,6 +881,14 @@ function StepperTrigger(props: StepperTriggerProps) {
       }}
       onFocus={(event) => {
         focusContext.onItemFocus(itemContext.triggerId);
+        /**
+         * Our focus management will focus the trigger when navigating with arrow keys
+         * and we need to "activate" it in that case. We click it to "activate" it (instead
+         * of updating the store directly) so that the step change event fires.
+         */
+        if (isArrowKeyPressedRef.current && triggerElement) {
+          triggerElement.click();
+        }
         triggerProps.onFocus?.(event);
       }}
       onKeyDown={onKeyDown}
@@ -905,7 +926,7 @@ interface StepperIndicatorProps extends React.ComponentProps<"div"> {
 }
 
 function StepperIndicator(props: StepperIndicatorProps) {
-  const { className, children, ref, asChild, ...indicatorProps } = props;
+  const { className, children, asChild, ref, ...indicatorProps } = props;
   const context = useStepperContext(INDICATOR_NAME);
   const itemContext = useStepperItemContext(INDICATOR_NAME);
   const currentValue = useStore((state) => state.currentValue);
@@ -993,7 +1014,7 @@ function StepperTitle(props: StepperTitleProps) {
     <TitlePrimitive
       ref={ref}
       id={itemContext.titleId}
-      data-slot="stepper-item-title"
+      data-slot="title"
       dir={context.dir}
       className={cn("font-medium text-sm", className)}
       {...titleProps}
@@ -1016,7 +1037,7 @@ function StepperDescription(props: StepperDescriptionProps) {
     <DescriptionPrimitive
       ref={ref}
       id={itemContext.descriptionId}
-      data-slot="stepper-item-description"
+      data-slot="description"
       dir={context.dir}
       className={cn("text-muted-foreground text-xs", className)}
       {...descriptionProps}
