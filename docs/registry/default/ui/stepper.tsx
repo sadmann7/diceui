@@ -252,7 +252,7 @@ interface ItemData {
 }
 
 interface FocusContextValue {
-  currentTabStopId: string | null;
+  tabStopId: string | null;
   onItemFocus: (tabStopId: string) => void;
   onItemShiftTab: () => void;
   onFocusableItemAdd: () => void;
@@ -355,6 +355,7 @@ function StepperRootImpl(props: StepperRootProps) {
     value: valueProp,
     onValueAdd,
     onValueRemove,
+    id: idProp,
     dir: dirProp,
     orientation = "horizontal",
     disabled = false,
@@ -373,6 +374,8 @@ function StepperRootImpl(props: StepperRootProps) {
   const id = React.useId();
   const labelId = React.useId();
 
+  const rootId = idProp ?? id;
+
   const [formTrigger, setFormTrigger] = React.useState<HTMLDivElement | null>(
     null,
   );
@@ -389,14 +392,14 @@ function StepperRootImpl(props: StepperRootProps) {
 
   const contextValue = React.useMemo<StepperContextValue>(
     () => ({
-      id,
+      id: rootId,
       dir,
       disabled,
       nonInteractive,
       onValueAdd,
       onValueRemove,
     }),
-    [id, dir, disabled, nonInteractive, onValueAdd, onValueRemove],
+    [rootId, dir, disabled, nonInteractive, onValueAdd, onValueRemove],
   );
 
   const RootPrimitive = props.asChild ? Slot : "div";
@@ -404,14 +407,15 @@ function StepperRootImpl(props: StepperRootProps) {
   return (
     <StepperContext.Provider value={contextValue}>
       <RootPrimitive
-        ref={composedRef}
         aria-labelledby={labelId ?? undefined}
         data-disabled={disabled ? "" : undefined}
         data-orientation={orientation}
         data-slot="stepper"
         dir={dir}
-        className={cn("flex flex-col gap-6", className)}
         {...rootProps}
+        id={rootId}
+        ref={composedRef}
+        className={cn("flex flex-col gap-6", className)}
       >
         {label && (
           <span id={labelId} className="sr-only">
@@ -456,18 +460,16 @@ function StepperList(props: StepperListProps) {
   const context = useStepperContext(LIST_NAME);
   const orientation = useStore((state) => state.orientation);
 
-  const [currentTabStopId, setCurrentTabStopId] = React.useState<string | null>(
-    null,
-  );
+  const [tabStopId, setTabStopId] = React.useState<string | null>(null);
   const [isTabbingBackOut, setIsTabbingBackOut] = React.useState(false);
-  const [focusableItemsCount, setFocusableItemsCount] = React.useState(0);
+  const [focusableItemCount, setFocusableItemCount] = React.useState(0);
   const isClickFocusRef = React.useRef(false);
   const itemsRef = React.useRef<Map<string, ItemData>>(new Map());
   const listRef = React.useRef<HTMLElement>(null);
   const composedRefs = useComposedRefs(ref, listRef);
 
   const onItemFocus = React.useCallback((tabStopId: string) => {
-    setCurrentTabStopId(tabStopId);
+    setTabStopId(tabStopId);
   }, []);
 
   const onItemShiftTab = React.useCallback(() => {
@@ -475,11 +477,11 @@ function StepperList(props: StepperListProps) {
   }, []);
 
   const onFocusableItemAdd = React.useCallback(() => {
-    setFocusableItemsCount((prevCount) => prevCount + 1);
+    setFocusableItemCount((prevCount) => prevCount + 1);
   }, []);
 
   const onFocusableItemRemove = React.useCallback(() => {
-    setFocusableItemsCount((prevCount) => prevCount - 1);
+    setFocusableItemCount((prevCount) => prevCount - 1);
   }, []);
 
   const onItemRegister = React.useCallback((item: ItemData) => {
@@ -510,7 +512,7 @@ function StepperList(props: StepperListProps) {
           (item) => !item.disabled,
         );
         const activeItem = items.find((item) => item.active);
-        const currentItem = items.find((item) => item.id === currentTabStopId);
+        const currentItem = items.find((item) => item.id === tabStopId);
         const candidateItems = [activeItem, currentItem, ...items].filter(
           Boolean,
         ) as ItemData[];
@@ -518,7 +520,7 @@ function StepperList(props: StepperListProps) {
         focusFirst(candidateNodes, false);
       }
     },
-    [currentTabStopId],
+    [tabStopId],
   );
 
   React.useEffect(() => {
@@ -571,7 +573,7 @@ function StepperList(props: StepperListProps) {
 
   const focusContextValue = React.useMemo<FocusContextValue>(
     () => ({
-      currentTabStopId,
+      tabStopId,
       onItemFocus,
       onItemShiftTab,
       onFocusableItemAdd,
@@ -581,7 +583,7 @@ function StepperList(props: StepperListProps) {
       getItems,
     }),
     [
-      currentTabStopId,
+      tabStopId,
       onItemFocus,
       onItemShiftTab,
       onFocusableItemAdd,
@@ -597,18 +599,18 @@ function StepperList(props: StepperListProps) {
   return (
     <FocusContext.Provider value={focusContextValue}>
       <ListPrimitive
-        ref={composedRefs}
         role="tablist"
         aria-orientation={orientation}
         data-orientation={orientation}
         data-slot="stepper-list"
         dir={context.dir}
-        tabIndex={isTabbingBackOut || focusableItemsCount === 0 ? -1 : 0}
+        tabIndex={isTabbingBackOut || focusableItemCount === 0 ? -1 : 0}
+        {...listProps}
+        ref={composedRefs}
         className={cn(stepperListVariants({ orientation, className }))}
         onBlur={onBlur}
         onFocus={onFocus}
         onMouseDown={onMouseDown}
-        {...listProps}
       >
         {children}
       </ListPrimitive>
@@ -707,16 +709,14 @@ function StepperItem(props: StepperItemProps) {
   return (
     <StepperItemContext.Provider value={itemContextValue}>
       <ItemPrimitive
-        ref={ref}
-        role="presentation"
-        data-value={itemValue}
-        data-state={dataState}
         data-disabled={stepState?.disabled ? "" : undefined}
         data-orientation={orientation}
+        data-state={dataState}
         data-slot="stepper-item"
         dir={context.dir}
-        className={cn(stepperItemVariants({ orientation, className }))}
         {...itemProps}
+        ref={ref}
+        className={cn(stepperItemVariants({ orientation, className }))}
       >
         {children}
       </ItemPrimitive>
@@ -735,7 +735,6 @@ function StepperTrigger(props: StepperTriggerProps) {
     variant = "ghost",
     size = "icon",
     className,
-    children,
     asChild = false,
     ref,
     ...triggerProps
@@ -766,7 +765,7 @@ function StepperTrigger(props: StepperTriggerProps) {
   const isDisabled =
     globalDisabled || stepState?.disabled || triggerProps.disabled;
   const isActive = value === itemValue;
-  const isCurrentTabStop = focusContext.currentTabStopId === triggerId;
+  const isTabStop = focusContext.tabStopId === triggerId;
   const dataState = getDataState(value, itemValue, stepState);
 
   const [triggerElement, setTriggerElement] =
@@ -797,7 +796,7 @@ function StepperTrigger(props: StepperTriggerProps) {
         id: triggerId,
         element: triggerElement,
         value: itemValue,
-        active: isActive,
+        active: isTabStop,
         disabled: !!isDisabled,
       });
 
@@ -817,7 +816,7 @@ function StepperTrigger(props: StepperTriggerProps) {
     focusContext,
     triggerId,
     itemValue,
-    isActive,
+    isTabStop,
     isDisabled,
   ]);
 
@@ -952,31 +951,29 @@ function StepperTrigger(props: StepperTriggerProps) {
 
   return (
     <TriggerPrimitive
-      ref={composedRef}
       id={triggerId}
       role="tab"
-      aria-selected={isActive}
-      aria-current={isActive ? "step" : undefined}
       aria-controls={contentId}
+      aria-current={isActive ? "step" : undefined}
       aria-describedby={`${titleId} ${descriptionId}`}
-      aria-setsize={stepCount}
       aria-posinset={stepPosition}
-      tabIndex={isCurrentTabStop ? 0 : -1}
+      aria-selected={isActive}
+      aria-setsize={stepCount}
+      data-disabled={isDisabled ? "" : undefined}
+      data-state={dataState}
+      data-slot="stepper-trigger"
+      disabled={isDisabled}
+      tabIndex={isTabStop ? 0 : -1}
+      {...triggerProps}
+      ref={composedRef}
       variant={variant}
       size={size}
-      data-state={dataState}
-      data-disabled={isDisabled ? "" : undefined}
-      data-slot="stepper-trigger"
       className={cn("rounded-full", className)}
-      disabled={isDisabled}
       onClick={onClick}
       onFocus={onFocus}
       onKeyDown={onKeyDown}
       onMouseDown={onMouseDown}
-      {...triggerProps}
-    >
-      {children}
-    </TriggerPrimitive>
+    />
   );
 }
 
@@ -1018,12 +1015,12 @@ function StepperIndicator(props: StepperIndicatorProps) {
 
   return (
     <IndicatorPrimitive
-      ref={ref}
       data-state={dataState}
       data-slot="stepper-indicator"
       dir={context.dir}
-      className={cn(stepperIndicatorVariants({ className }))}
       {...indicatorProps}
+      ref={ref}
+      className={cn(stepperIndicatorVariants({ className }))}
     >
       {stepState?.completed ? <Check className="size-4" /> : children}
     </IndicatorPrimitive>
@@ -1035,7 +1032,7 @@ const stepperSeparatorVariants = cva(
   {
     variants: {
       orientation: {
-        horizontal: "mx-2 h-px flex-1",
+        horizontal: "mx-2 h-px w-full",
         vertical: "mr-1 ml-3 h-8 w-px",
       },
     },
@@ -1047,15 +1044,33 @@ const stepperSeparatorVariants = cva(
 
 interface StepperSeparatorProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
+  forceMount?: boolean;
 }
 
 function StepperSeparator(props: StepperSeparatorProps) {
-  const { className, asChild, ref, ...separatorProps } = props;
+  const {
+    className,
+    asChild,
+    forceMount = false,
+    ref,
+    ...separatorProps
+  } = props;
 
   const context = useStepperContext(SEPARATOR_NAME);
   const itemContext = useStepperItemContext(SEPARATOR_NAME);
+  const focusContext = useFocusContext(SEPARATOR_NAME);
   const value = useStore((state) => state.value);
   const orientation = useStore((state) => state.orientation);
+
+  const stepItems = focusContext.getItems();
+  const currentIndex = stepItems.findIndex(
+    (item) => item.value === itemContext.value,
+  );
+  const isLastItem = currentIndex === stepItems.length - 1;
+
+  if (isLastItem && !forceMount) {
+    return null;
+  }
 
   const dataState = getDataState(
     value,
@@ -1067,13 +1082,16 @@ function StepperSeparator(props: StepperSeparatorProps) {
 
   return (
     <SeparatorPrimitive
-      ref={ref}
-      data-state={dataState}
+      role="separator"
+      aria-hidden="true"
+      aria-orientation={orientation}
       data-orientation={orientation}
+      data-state={dataState}
       data-slot="stepper-separator"
       dir={context.dir}
-      className={cn(stepperSeparatorVariants({ orientation, className }))}
       {...separatorProps}
+      ref={ref}
+      className={cn(stepperSeparatorVariants({ orientation, className }))}
     />
   );
 }
@@ -1094,12 +1112,12 @@ function StepperTitle(props: StepperTitleProps) {
 
   return (
     <TitlePrimitive
-      ref={ref}
       id={titleId}
       data-slot="title"
       dir={context.dir}
-      className={cn("font-medium text-sm", className)}
       {...titleProps}
+      ref={ref}
+      className={cn("font-medium text-sm", className)}
     />
   );
 }
@@ -1119,12 +1137,12 @@ function StepperDescription(props: StepperDescriptionProps) {
 
   return (
     <DescriptionPrimitive
-      ref={ref}
       id={descriptionId}
       data-slot="description"
       dir={context.dir}
-      className={cn("text-muted-foreground text-xs", className)}
       {...descriptionProps}
+      ref={ref}
+      className={cn("text-muted-foreground text-xs", className)}
     />
   );
 }
@@ -1135,7 +1153,7 @@ interface StepperContentProps extends React.ComponentProps<"div"> {
 }
 
 function StepperContent(props: StepperContentProps) {
-  const { value: valueProp, className, asChild, ref, ...contentProps } = props;
+  const { value: valueProp, asChild, ref, ...contentProps } = props;
 
   const context = useStepperContext(CONTENT_NAME);
   const value = useStore((state) => state.value);
@@ -1149,15 +1167,13 @@ function StepperContent(props: StepperContentProps) {
 
   return (
     <ContentPrimitive
-      ref={ref}
       id={contentId}
       role="tabpanel"
       aria-labelledby={triggerId}
-      data-value={valueProp}
       data-slot="stepper-content"
       dir={context.dir}
-      className={cn(className)}
       {...contentProps}
+      ref={ref}
     />
   );
 }

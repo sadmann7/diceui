@@ -48,7 +48,7 @@ export default function StepperLoopDemo() {
                   <StepperTitle>{step.title}</StepperTitle>
                   <StepperDescription>{step.description}</StepperDescription>
                 </div>
-                {index < steps.length - 1 && <StepperSeparator />}
+                <StepperSeparator />
               </StepperItem>
             ))}
           </StepperList>
@@ -80,7 +80,7 @@ export default function StepperLoopDemo() {
                   <StepperTitle>{step.title}</StepperTitle>
                   <StepperDescription>{step.description}</StepperDescription>
                 </div>
-                {index < steps.length - 1 && <StepperSeparator />}
+                <StepperSeparator />
               </StepperItem>
             ))}
           </StepperList>
