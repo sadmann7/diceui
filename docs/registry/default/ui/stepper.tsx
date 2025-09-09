@@ -1,7 +1,6 @@
 "use client";
 
 import { Slot } from "@radix-ui/react-slot";
-import { cva } from "class-variance-authority";
 import { Check } from "lucide-react";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
@@ -106,13 +105,57 @@ function getDataState(
   value: string | undefined,
   itemValue: string,
   stepState: StepState | undefined,
+  steps: Map<string, StepState>,
+  variant: "step" | "separator" = "step",
 ): DataState {
-  const isCompleted = stepState?.completed ?? false;
-  const effectiveStepValue = stepState?.value ?? itemValue;
-  const isActive = value !== undefined && value === effectiveStepValue;
+  const stepKeys = Array.from(steps.keys());
+  const currentIndex = stepKeys.indexOf(itemValue);
 
-  if (isCompleted) return "completed";
-  if (isActive) return "active";
+  if (variant === "separator") {
+    const nextIndex = currentIndex + 1;
+
+    if (nextIndex >= stepKeys.length) {
+      return "inactive";
+    }
+
+    const nextStepValue = stepKeys[nextIndex];
+    if (!nextStepValue) {
+      return "inactive";
+    }
+
+    const nextStepState = steps.get(nextStepValue);
+
+    if (nextStepState?.completed) {
+      return "completed";
+    }
+
+    if (value && stepKeys.indexOf(value) > nextIndex) {
+      return "completed";
+    }
+
+    if (value === nextStepValue) {
+      return "active";
+    }
+
+    return "inactive";
+  }
+
+  if (stepState?.completed) {
+    return "completed";
+  }
+
+  if (value === itemValue) {
+    return "active";
+  }
+
+  if (value) {
+    const activeIndex = stepKeys.indexOf(value);
+
+    if (activeIndex > currentIndex) {
+      return "completed";
+    }
+  }
+
   return "inactive";
 }
 
@@ -451,18 +494,6 @@ function StepperRootImpl(props: StepperRootProps) {
   );
 }
 
-const stepperListVariants = cva("flex gap-4 outline-none", {
-  variants: {
-    orientation: {
-      horizontal: "flex-row items-center",
-      vertical: "flex-col items-start",
-    },
-  },
-  defaultVariants: {
-    orientation: "horizontal",
-  },
-});
-
 type ListElement = React.ComponentRef<typeof StepperList>;
 
 interface StepperListProps extends React.ComponentProps<"ol"> {
@@ -617,7 +648,10 @@ function StepperList(props: StepperListProps) {
         tabIndex={isTabbingBackOut || focusableItemCount === 0 ? -1 : 0}
         {...listProps}
         ref={composedRefs}
-        className={cn(stepperListVariants({ orientation, className }))}
+        className={cn(
+          "flex gap-4 outline-none data-[orientation=horizontal]:flex-row data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-start data-[orientation=horizontal]:items-center",
+          className,
+        )}
         onBlur={onBlur}
         onFocus={onFocus}
         onMouseDown={onMouseDown}
@@ -627,18 +661,6 @@ function StepperList(props: StepperListProps) {
     </FocusContext.Provider>
   );
 }
-
-const stepperItemVariants = cva("flex w-full", {
-  variants: {
-    orientation: {
-      horizontal: "flex-col items-center text-center",
-      vertical: "flex-row items-start gap-4 text-left",
-    },
-  },
-  defaultVariants: {
-    orientation: "horizontal",
-  },
-});
 
 interface StepperItemContextValue {
   value: string;
@@ -704,7 +726,8 @@ function StepperItem(props: StepperItemProps) {
   }, [store, itemValue, completed, disabled]);
 
   const stepState = useStore((state) => state.steps.get(itemValue));
-  const dataState = getDataState(value, itemValue, stepState);
+  const steps = useStore((state) => state.steps);
+  const dataState = getDataState(value, itemValue, stepState, steps, "step");
 
   const itemContextValue = React.useMemo<StepperItemContextValue>(
     () => ({
@@ -726,7 +749,10 @@ function StepperItem(props: StepperItemProps) {
         dir={context.dir}
         {...itemProps}
         ref={ref}
-        className={cn(stepperItemVariants({ orientation, className }))}
+        className={cn(
+          "relative flex w-full data-[orientation=vertical]:flex-row data-[orientation=horizontal]:flex-col data-[orientation=vertical]:items-start data-[orientation=horizontal]:items-center data-[orientation=vertical]:gap-4 data-[orientation=vertical]:text-left data-[orientation=horizontal]:text-center",
+          className,
+        )}
       >
         {children}
       </ItemPrimitive>
@@ -776,7 +802,7 @@ function StepperTrigger(props: StepperTriggerProps) {
     context.disabled || stepState?.disabled || triggerProps.disabled;
   const isActive = value === itemValue;
   const isTabStop = focusContext.tabStopId === triggerId;
-  const dataState = getDataState(value, itemValue, stepState);
+  const dataState = getDataState(value, itemValue, stepState, steps, "step");
 
   const [triggerElement, setTriggerElement] =
     React.useState<HTMLElement | null>(null);
@@ -992,28 +1018,10 @@ function StepperTrigger(props: StepperTriggerProps) {
   );
 }
 
-const stepperIndicatorVariants = cva(
-  [
-    "flex items-center justify-center rounded-full border-2 border-muted bg-background font-medium text-muted-foreground transition-colors",
-    "data-[state=active]:border-primary data-[state=active]:bg-primary data-[state=active]:text-primary-foreground",
-    "data-[state=completed]:border-primary data-[state=completed]:bg-primary data-[state=completed]:text-primary-foreground",
-  ],
-  {
-    variants: {
-      size: {
-        sm: "size-6 text-xs",
-        default: "size-8 text-sm",
-        lg: "size-10 text-base",
-      },
-    },
-    defaultVariants: {
-      size: "default",
-    },
-  },
-);
-
-interface StepperIndicatorProps extends React.ComponentProps<"div"> {
+interface StepperIndicatorProps
+  extends Omit<React.ComponentProps<"div">, "children"> {
   asChild?: boolean;
+  children?: React.ReactNode | ((dataState: DataState) => React.ReactNode);
 }
 
 function StepperIndicator(props: StepperIndicatorProps) {
@@ -1023,8 +1031,9 @@ function StepperIndicator(props: StepperIndicatorProps) {
   const value = useStore((state) => state.value);
   const itemValue = itemContext.value;
   const stepState = useStore((state) => state.steps.get(itemValue));
+  const steps = useStore((state) => state.steps);
 
-  const dataState = getDataState(value, itemValue, stepState);
+  const dataState = getDataState(value, itemValue, stepState, steps, "step");
 
   const IndicatorPrimitive = asChild ? Slot : "div";
 
@@ -1035,27 +1044,21 @@ function StepperIndicator(props: StepperIndicatorProps) {
       dir={context.dir}
       {...indicatorProps}
       ref={ref}
-      className={cn(stepperIndicatorVariants({ className }))}
+      className={cn(
+        "flex size-7 shrink-0 items-center justify-center rounded-full border-2 border-muted bg-background font-medium text-muted-foreground text-sm transition-colors data-[state=active]:border-primary data-[state=completed]:border-primary data-[state=active]:bg-primary data-[state=completed]:bg-primary data-[state=active]:text-primary-foreground data-[state=completed]:text-primary-foreground",
+        className,
+      )}
     >
-      {stepState?.completed ? <Check className="size-4" /> : children}
+      {typeof children === "function" ? (
+        children(dataState)
+      ) : dataState === "completed" ? (
+        <Check className="size-4" />
+      ) : (
+        children
+      )}
     </IndicatorPrimitive>
   );
 }
-
-const stepperSeparatorVariants = cva(
-  "bg-border transition-colors data-[state=active]:bg-primary data-[state=completed]:bg-primary",
-  {
-    variants: {
-      orientation: {
-        horizontal: "mx-2 h-px w-full",
-        vertical: "mr-1 ml-3 h-8 w-px",
-      },
-    },
-    defaultVariants: {
-      orientation: "horizontal",
-    },
-  },
-);
 
 interface StepperSeparatorProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
@@ -1089,6 +1092,8 @@ function StepperSeparator(props: StepperSeparatorProps) {
     value,
     itemContext.value,
     itemContext.stepState,
+    steps,
+    "separator",
   );
 
   const SeparatorPrimitive = asChild ? Slot : "div";
@@ -1104,7 +1109,10 @@ function StepperSeparator(props: StepperSeparatorProps) {
       dir={context.dir}
       {...separatorProps}
       ref={ref}
-      className={cn(stepperSeparatorVariants({ orientation, className }))}
+      className={cn(
+        "bg-border transition-colors transition-colors data-[orientation=horizontal]:h-px data-[orientation=vertical]:h-8 data-[orientation=horizontal]:w-full data-[orientation=vertical]:w-px data-[state=active]:bg-primary data-[state=active]:bg-primary data-[state=completed]:bg-primary data-[state=completed]:bg-primary",
+        className,
+      )}
     />
   );
 }
@@ -1199,18 +1207,18 @@ export {
   StepperList as List,
   StepperRoot as Root,
   StepperSeparator as Separator,
-  StepperTitle as Title,
-  StepperTrigger as Trigger,
   //
   StepperRoot as Stepper,
   StepperContent,
   StepperDescription,
-  StepperItem,
   StepperIndicator,
+  StepperItem,
   StepperList,
   StepperSeparator,
   StepperTitle,
   StepperTrigger,
+  StepperTitle as Title,
+  StepperTrigger as Trigger,
   //
   useStore as useStepper,
 };
