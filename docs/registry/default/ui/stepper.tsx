@@ -253,9 +253,6 @@ interface ItemData {
 
 interface FocusContextValue {
   currentTabStopId: string | null;
-  orientation: Orientation;
-  dir: Direction;
-  loop: boolean;
   onItemFocus: (tabStopId: string) => void;
   onItemShiftTab: () => void;
   onFocusableItemAdd: () => void;
@@ -458,7 +455,6 @@ function StepperList(props: StepperListProps) {
   const { className, children, asChild, ref, ...listProps } = props;
   const context = useStepperContext(LIST_NAME);
   const orientation = useStore((state) => state.orientation);
-  const loop = useStore((state) => state.loop);
 
   const [currentTabStopId, setCurrentTabStopId] = React.useState<string | null>(
     null,
@@ -576,9 +572,6 @@ function StepperList(props: StepperListProps) {
   const focusContextValue = React.useMemo<FocusContextValue>(
     () => ({
       currentTabStopId,
-      orientation,
-      dir: context.dir,
-      loop,
       onItemFocus,
       onItemShiftTab,
       onFocusableItemAdd,
@@ -589,9 +582,6 @@ function StepperList(props: StepperListProps) {
     }),
     [
       currentTabStopId,
-      orientation,
-      context.dir,
-      loop,
       onItemFocus,
       onItemShiftTab,
       onFocusableItemAdd,
@@ -760,6 +750,8 @@ function StepperTrigger(props: StepperTriggerProps) {
   const stepState = useStore((state) => state.steps.get(itemValue));
   const globalDisabled = useStore((state) => state.disabled);
   const activationMode = useStore((state) => state.activationMode);
+  const orientation = useStore((state) => state.orientation);
+  const loop = useStore((state) => state.loop);
 
   const stepItems = focusContext.getItems();
   const currentIndex = stepItems.findIndex((item) => item.value === itemValue);
@@ -900,11 +892,7 @@ function StepperTrigger(props: StepperTriggerProps) {
 
       if (event.target !== event.currentTarget) return;
 
-      const focusIntent = getFocusIntent(
-        event,
-        focusContext.dir,
-        focusContext.orientation,
-      );
+      const focusIntent = getFocusIntent(event, context.dir, orientation);
 
       if (focusIntent !== undefined) {
         if (event.metaKey || event.ctrlKey || event.altKey || event.shiftKey)
@@ -921,7 +909,7 @@ function StepperTrigger(props: StepperTriggerProps) {
           const currentIndex = candidateNodes.indexOf(
             event.currentTarget as HTMLElement,
           );
-          candidateNodes = focusContext.loop
+          candidateNodes = loop
             ? wrapArray(candidateNodes, currentIndex + 1)
             : candidateNodes.slice(currentIndex + 1);
         }
@@ -935,7 +923,10 @@ function StepperTrigger(props: StepperTriggerProps) {
     [
       focusContext,
       context.nonInteractive,
+      context.dir,
       activationMode,
+      orientation,
+      loop,
       isDisabled,
       triggerElement,
       triggerProps.onKeyDown,
