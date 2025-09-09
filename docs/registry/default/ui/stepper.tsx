@@ -463,6 +463,7 @@ function StepperList(props: StepperListProps) {
   const { className, children, asChild, ref, ...listProps } = props;
   const context = useStepperContext(LIST_NAME);
   const orientation = useStore((state) => state.orientation);
+  const currentValue = useStore((state) => state.value);
 
   const [tabStopId, setTabStopId] = React.useState<string | null>(null);
   const [isTabbingBackOut, setIsTabbingBackOut] = React.useState(false);
@@ -509,32 +510,6 @@ function StepperList(props: StepperListProps) {
     });
   }, []);
 
-  const onEntryFocus = React.useCallback(
-    (event: Event) => {
-      if (!event.defaultPrevented) {
-        const items = Array.from(itemsRef.current.values()).filter(
-          (item) => !item.disabled,
-        );
-        const activeItem = items.find((item) => item.active);
-        const currentItem = items.find((item) => item.id === tabStopId);
-        const candidateItems = [activeItem, currentItem, ...items].filter(
-          Boolean,
-        ) as ItemData[];
-        const candidateNodes = candidateItems.map((item) => item.element);
-        focusFirst(candidateNodes, false);
-      }
-    },
-    [tabStopId],
-  );
-
-  React.useEffect(() => {
-    const node = listRef.current;
-    if (node) {
-      node.addEventListener(ENTRY_FOCUS, onEntryFocus);
-      return () => node.removeEventListener(ENTRY_FOCUS, onEntryFocus);
-    }
-  }, [onEntryFocus]);
-
   const onBlur = React.useCallback(
     (event: React.FocusEvent<ListElement>) => {
       listProps.onBlur?.(event);
@@ -558,10 +533,30 @@ function StepperList(props: StepperListProps) {
       ) {
         const entryFocusEvent = new CustomEvent(ENTRY_FOCUS, EVENT_OPTIONS);
         event.currentTarget.dispatchEvent(entryFocusEvent);
+
+        if (!entryFocusEvent.defaultPrevented) {
+          const items = Array.from(itemsRef.current.values()).filter(
+            (item) => !item.disabled,
+          );
+          const selectedItem = currentValue
+            ? items.find((item) => item.value === currentValue)
+            : undefined;
+          const activeItem = items.find((item) => item.active);
+          const currentItem = items.find((item) => item.id === tabStopId);
+
+          const candidateItems = [
+            selectedItem,
+            activeItem,
+            currentItem,
+            ...items,
+          ].filter(Boolean) as ItemData[];
+          const candidateNodes = candidateItems.map((item) => item.element);
+          focusFirst(candidateNodes, false);
+        }
       }
       isClickFocusRef.current = false;
     },
-    [listProps.onFocus, isTabbingBackOut],
+    [listProps.onFocus, isTabbingBackOut, currentValue, tabStopId],
   );
 
   const onMouseDown = React.useCallback(
