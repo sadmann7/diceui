@@ -927,6 +927,16 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "stepper-loop-demo",
+    type: "registry:example",
+    files: [
+      {
+        path: "examples/stepper-loop-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "stepper-vertical-demo",
     type: "registry:example",
     files: [
