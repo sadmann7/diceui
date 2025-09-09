@@ -103,11 +103,14 @@ type Orientation = "horizontal" | "vertical";
 type DataState = "inactive" | "active" | "completed";
 
 function getDataState(
-  value: string | undefined,
+  currentValue: string | undefined,
   stepState: StepState | undefined,
+  stepValue?: string,
 ): DataState {
   const isCompleted = stepState?.completed ?? false;
-  const isActive = value !== undefined && value === stepState?.value;
+  const effectiveStepValue = stepState?.value ?? stepValue;
+  const isActive =
+    currentValue !== undefined && currentValue === effectiveStepValue;
 
   if (isCompleted) return "completed";
   if (isActive) return "active";
@@ -156,10 +159,11 @@ function createStore(
     snapshot: () =>
       stateRef.current ?? {
         steps: new Map(),
-        currentValue: undefined,
+        value: undefined,
         orientation: "horizontal",
         disabled: false,
         nonInteractive: false,
+        loop: false,
       },
     setState: (key, value) => {
       const state = stateRef.current;
@@ -186,6 +190,9 @@ function createStore(
       if (state) {
         const newStep: StepState = { value, completed, disabled };
         state.steps.set(value, newStep);
+
+        // No need for complex initial value logic since it's set during store creation
+
         store.notify();
       }
     },
@@ -325,7 +332,7 @@ function StepperRoot(props: StepperRootProps) {
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<StoreState>(() => ({
     steps: new Map(),
-    value: value ?? defaultValue ?? undefined,
+    value: value ?? defaultValue, // Set initial value immediately
     orientation,
     disabled,
     nonInteractive,
@@ -377,6 +384,8 @@ function StepperRootImpl(props: StepperRootProps) {
       store.setState("value", valueProp);
     }
   }, [valueProp, store]);
+
+  // No need for hydration fallback since initial value is set synchronously
 
   const value = useStore((state) => state.value);
 
@@ -690,7 +699,7 @@ function StepperItem(props: StepperItemProps) {
   }, [store, value, completed, disabled]);
 
   const stepState = useStore((state) => state.steps.get(value));
-  const state = getDataState(currentValue, stepState);
+  const state = getDataState(currentValue, stepState, value);
 
   const itemContextValue = React.useMemo<StepperItemContextValue>(
     () => ({
@@ -757,7 +766,7 @@ function StepperTrigger(props: StepperTriggerProps) {
   const isActive = currentValue === stepValue;
   const isCurrentTabStop =
     focusContext.currentTabStopId === itemContext.triggerId;
-  const state = getDataState(currentValue, stepState);
+  const state = getDataState(currentValue, stepState, stepValue);
 
   const [triggerElement, setTriggerElement] =
     React.useState<HTMLElement | null>(null);
@@ -974,7 +983,7 @@ function StepperIndicator(props: StepperIndicatorProps) {
   const stepValue = itemContext.value;
   const stepState = useStore((state) => state.steps.get(stepValue));
 
-  const state = getDataState(currentValue, stepState);
+  const state = getDataState(currentValue, stepState, stepValue);
 
   const IndicatorPrimitive = asChild ? Slot : "div";
 
@@ -1018,7 +1027,11 @@ function StepperSeparator(props: StepperSeparatorProps) {
   const currentValue = useStore((state) => state.value);
   const orientation = useStore((state) => state.orientation);
 
-  const state = getDataState(currentValue, itemContext.stepState);
+  const state = getDataState(
+    currentValue,
+    itemContext.stepState,
+    itemContext.value,
+  );
 
   const SeparatorPrimitive = asChild ? Slot : "div";
 
