@@ -325,7 +325,7 @@ function StepperRoot(props: StepperRootProps) {
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<StoreState>(() => ({
     steps: new Map(),
-    currentValue: value ?? defaultValue ?? undefined,
+    value: value ?? defaultValue ?? undefined,
     orientation,
     disabled,
     nonInteractive,

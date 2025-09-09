@@ -25,11 +25,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import StepperDemo from "@/registry/default/examples/stepper-demo";
-import StepperLoopDemo from "@/registry/default/examples/stepper-loop-demo";
-import StepperVerticalDemo from "@/registry/default/examples/stepper-vertical-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -43,9 +42,14 @@ import {
 export default function PlaygroundPage() {
   return (
     <Shell>
+      <Tabs value="stepper">
+        <TabsList>
+          <TabsTrigger value="stepper">Stepper</TabsTrigger>
+          <TabsTrigger value="combobox">Combobox</TabsTrigger>
+          <TabsTrigger value="command">Command</TabsTrigger>
+        </TabsList>
+      </Tabs>
       <StepperDemo />
-      <StepperVerticalDemo />
-      <StepperLoopDemo />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
