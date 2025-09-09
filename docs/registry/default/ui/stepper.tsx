@@ -756,10 +756,13 @@ function StepperTrigger(props: StepperTriggerProps) {
   const orientation = useStore((state) => state.orientation);
   const loop = useStore((state) => state.loop);
 
-  const stepItems = focusContext.getItems();
-  const currentIndex = stepItems.findIndex((item) => item.value === itemValue);
-  const stepPosition = currentIndex + 1;
-  const stepCount = stepItems.length;
+  // Use store steps for reliable counting and positioning
+  const storeSteps = useStore((state) => state.steps);
+  const storeStepsArray = Array.from(storeSteps.keys());
+  const storeCurrentIndex = storeStepsArray.indexOf(itemValue);
+
+  const stepPosition = storeCurrentIndex + 1;
+  const stepCount = storeSteps.size;
 
   const triggerId = getId(context.id, "trigger", itemValue);
   const contentId = getId(context.id, "content", itemValue);
@@ -1062,15 +1065,15 @@ function StepperSeparator(props: StepperSeparatorProps) {
 
   const context = useStepperContext(SEPARATOR_NAME);
   const itemContext = useStepperItemContext(SEPARATOR_NAME);
-  const focusContext = useFocusContext(SEPARATOR_NAME);
   const value = useStore((state) => state.value);
   const orientation = useStore((state) => state.orientation);
 
-  const stepItems = focusContext.getItems();
-  const currentIndex = stepItems.findIndex(
-    (item) => item.value === itemContext.value,
-  );
-  const isLastItem = currentIndex === stepItems.length - 1;
+  // Use store steps for reliable counting
+  const storeSteps = useStore((state) => state.steps);
+  const storeStepsArray = Array.from(storeSteps.keys());
+  const storeCurrentIndex = storeStepsArray.indexOf(itemContext.value);
+
+  const isLastItem = storeCurrentIndex === storeSteps.size - 1;
 
   if (isLastItem && !forceMount) {
     return null;
