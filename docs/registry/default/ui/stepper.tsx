@@ -113,8 +113,6 @@ function getDataState(
   if (stepState?.completed) return "completed";
 
   if (value === itemValue) {
-    // For separators, don't return "active" when on the current step
-    // Separators should only be completed when we've moved past the step
     return variant === "separator" ? "inactive" : "active";
   }
 
