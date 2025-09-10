@@ -343,6 +343,12 @@ function StepperRoot(props: StepperRootProps) {
     [listenersRef, stateRef, onValueChange, onValueComplete],
   );
 
+  React.useEffect(() => {
+    if (value !== undefined) {
+      store.setState("value", value);
+    }
+  }, [value, store]);
+
   return (
     <StoreContext.Provider value={store}>
       <StepperRootImpl
@@ -359,7 +365,6 @@ function StepperRoot(props: StepperRootProps) {
 
 function StepperRootImpl(props: StepperRootProps) {
   const {
-    value: valueProp,
     onValueAdd,
     onValueRemove,
     id: idProp,
@@ -379,7 +384,6 @@ function StepperRootImpl(props: StepperRootProps) {
   } = props;
 
   const dir = useDirection(dirProp);
-  const store = useStoreContext("StepperImpl");
 
   const id = React.useId();
   const labelId = React.useId();
@@ -391,12 +395,6 @@ function StepperRootImpl(props: StepperRootProps) {
   );
   const composedRef = useComposedRefs(ref, setFormTrigger);
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
-
-  React.useEffect(() => {
-    if (valueProp !== undefined) {
-      store.setState("value", valueProp);
-    }
-  }, [valueProp, store]);
 
   const value = useStore((state) => state.value);
 
@@ -971,7 +969,7 @@ function StepperTrigger(props: StepperTriggerProps) {
       {...triggerProps}
       ref={composedRef}
       className={cn(
-        "inline-flex shrink-0 items-center justify-center gap-3 whitespace-pre text-left outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        "inline-flex items-center justify-center gap-3 text-left outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
         "not-has-[[data-slot=description]]:rounded-full not-has-[[data-slot=title]]:rounded-full",
         className,
       )}
@@ -985,8 +983,8 @@ function StepperTrigger(props: StepperTriggerProps) {
 
 interface StepperIndicatorProps
   extends Omit<React.ComponentProps<"div">, "children"> {
-  asChild?: boolean;
   children?: React.ReactNode | ((dataState: DataState) => React.ReactNode);
+  asChild?: boolean;
 }
 
 function StepperIndicator(props: StepperIndicatorProps) {

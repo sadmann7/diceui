@@ -54,8 +54,6 @@ export default function StepperControlledDemo() {
     setCurrentStep(stepValue);
   }, []);
 
-  console.log({ currentStep });
-
   return (
     <Stepper value={currentStep} onValueChange={goToStep}>
       <StepperList>
@@ -72,37 +70,41 @@ export default function StepperControlledDemo() {
                 <StepperDescription>{step.description}</StepperDescription>
               </div>
             </StepperTrigger>
-            <StepperSeparator />
+            <StepperSeparator className="mx-4" />
           </StepperItem>
         ))}
       </StepperList>
       {steps.map((step) => (
-        <StepperContent key={step.value} value={step.value}>
-          <div className="rounded-lg border p-6">
-            <h3 className="mb-2 font-semibold text-lg">{step.title}</h3>
-            <p className="mb-4 text-muted-foreground">{step.description}</p>
-            <p className="mb-6 text-sm">
-              This is the content for {step.title}. You can add forms,
-              information, or any other content here.
-            </p>
-            <div className="flex justify-between">
-              <Button
-                variant="outline"
-                onClick={prevStep}
-                disabled={currentIndex === 0}
-              >
-                Previous
-              </Button>
-              <div className="text-muted-foreground text-sm">
-                Step {currentIndex + 1} of {steps.length}
-              </div>
-              <Button
-                onClick={nextStep}
-                disabled={currentIndex === steps.length - 1}
-              >
-                {currentIndex === steps.length - 1 ? "Complete" : "Next"}
-              </Button>
+        <StepperContent
+          key={step.value}
+          value={step.value}
+          className="flex flex-col gap-4 rounded-md border bg-card p-4 text-card-foreground"
+        >
+          <div className="flex flex-col gap-px">
+            <h3 className="font-semibold text-lg">{step.title}</h3>
+            <p className="text-muted-foreground">{step.description}</p>
+          </div>
+          <p className="text-sm">
+            This is the content for {step.title}. You can add forms,
+            information, or any other content here.
+          </p>
+          <div className="flex justify-between">
+            <Button
+              variant="outline"
+              onClick={prevStep}
+              disabled={currentIndex === 0}
+            >
+              Previous
+            </Button>
+            <div className="text-muted-foreground text-sm">
+              Step {currentIndex + 1} of {steps.length}
             </div>
+            <Button
+              onClick={nextStep}
+              disabled={currentIndex === steps.length - 1}
+            >
+              {currentIndex === steps.length - 1 ? "Complete" : "Next"}
+            </Button>
           </div>
         </StepperContent>
       ))}
