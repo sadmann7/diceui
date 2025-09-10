@@ -33,10 +33,14 @@ const steps = [
 
 export default function StepperDemo() {
   return (
-    <Stepper defaultValue="profile">
+    <Stepper defaultValue="profile" className="w-full max-w-md">
       <StepperList>
         {steps.map((step, index) => (
-          <StepperItem key={step.value} value={step.value}>
+          <StepperItem
+            key={step.value}
+            value={step.value}
+            className="not-last:w-full"
+          >
             <StepperTrigger>
               <StepperIndicator>{index + 1}</StepperIndicator>
             </StepperTrigger>
@@ -45,12 +49,16 @@ export default function StepperDemo() {
         ))}
       </StepperList>
       {steps.map((step) => (
-        <StepperContent key={step.value} value={step.value}>
-          <div className="rounded-lg border p-6 text-center">
-            <h3 className="mb-2 font-semibold text-lg">{step.title}</h3>
-            <p className="mb-4 text-muted-foreground">{step.description}</p>
-            <p className="text-sm">Content for {step.title} goes here.</p>
+        <StepperContent
+          key={step.value}
+          value={step.value}
+          className="flex flex-col items-center gap-4 rounded-md border bg-card p-4 text-card-foreground"
+        >
+          <div className="flex flex-col items-center gap-px text-center">
+            <h3 className="font-semibold text-lg">{step.title}</h3>
+            <p className="text-muted-foreground">{step.description}</p>
           </div>
+          <p className="text-sm">Content for {step.title} goes here.</p>
         </StepperContent>
       ))}
     </Stepper>

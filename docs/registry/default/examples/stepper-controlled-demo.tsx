@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -52,18 +54,24 @@ export default function StepperControlledDemo() {
     setCurrentStep(stepValue);
   }, []);
 
+  console.log({ currentStep });
+
   return (
     <Stepper value={currentStep} onValueChange={goToStep}>
       <StepperList>
         {steps.map((step, index) => (
-          <StepperItem key={step.value} value={step.value}>
+          <StepperItem
+            key={step.value}
+            value={step.value}
+            className="not-last:w-full gap-4"
+          >
             <StepperTrigger>
               <StepperIndicator>{index + 1}</StepperIndicator>
+              <div className="flex flex-col gap-1">
+                <StepperTitle>{step.title}</StepperTitle>
+                <StepperDescription>{step.description}</StepperDescription>
+              </div>
             </StepperTrigger>
-            <div className="mt-2 flex flex-col items-center gap-1">
-              <StepperTitle>{step.title}</StepperTitle>
-              <StepperDescription>{step.description}</StepperDescription>
-            </div>
             <StepperSeparator />
           </StepperItem>
         ))}

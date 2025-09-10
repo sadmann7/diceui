@@ -431,7 +431,7 @@ function StepperRootImpl(props: StepperRootProps) {
     <StepperContext.Provider value={contextValue}>
       <RootPrimitive
         id={rootId}
-        aria-labelledby={labelId ?? undefined}
+        aria-labelledby={label ? labelId : undefined}
         data-disabled={disabled ? "" : undefined}
         data-orientation={orientation}
         data-slot="stepper"
@@ -719,7 +719,7 @@ function StepperItem(props: StepperItemProps) {
         {...itemProps}
         ref={ref}
         className={cn(
-          "relative flex not-last:flex-1 items-center",
+          "relative flex items-center",
           orientation === "horizontal" ? "flex-row" : "flex-col",
           className,
         )}
@@ -971,7 +971,7 @@ function StepperTrigger(props: StepperTriggerProps) {
       {...triggerProps}
       ref={composedRef}
       className={cn(
-        "inline-flex shrink-0 items-center justify-center gap-3 text-left outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        "inline-flex shrink-0 items-center justify-center gap-3 whitespace-pre text-left outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
         "not-has-[[data-slot=description]]:rounded-full not-has-[[data-slot=title]]:rounded-full",
         className,
       )}
