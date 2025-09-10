@@ -36,17 +36,17 @@ const steps = [
 export default function StepperVerticalDemo() {
   return (
     <Stepper defaultValue="shipped" orientation="vertical">
-      <StepperList>
+      <StepperList className="gap-4">
         {steps.map((step, index) => (
           <StepperItem key={step.value} value={step.value}>
             <StepperTrigger>
               <StepperIndicator>{index + 1}</StepperIndicator>
+              <div className="flex flex-col gap-1">
+                <StepperTitle>{step.title}</StepperTitle>
+                <StepperDescription>{step.description}</StepperDescription>
+              </div>
             </StepperTrigger>
-            <div className="flex flex-col gap-1">
-              <StepperTitle>{step.title}</StepperTitle>
-              <StepperDescription>{step.description}</StepperDescription>
-            </div>
-            <StepperSeparator />
+            <StepperSeparator className="-order-1 -translate-x-1/2 -z-10 absolute inset-y-0 top-5 left-3.5" />
           </StepperItem>
         ))}
       </StepperList>

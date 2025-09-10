@@ -3,7 +3,6 @@
 import { Slot } from "@radix-ui/react-slot";
 import { Check } from "lucide-react";
 import * as React from "react";
-import { Button } from "@/components/ui/button";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidden-input";
@@ -58,9 +57,9 @@ function getFocusIntent(
   orientation?: Orientation,
 ) {
   const key = getDirectionAwareKey(event.key, dir);
-  if (orientation === "vertical" && ["ArrowLeft", "ArrowRight"].includes(key))
-    return undefined;
   if (orientation === "horizontal" && ["ArrowUp", "ArrowDown"].includes(key))
+    return undefined;
+  if (orientation === "vertical" && ["ArrowLeft", "ArrowRight"].includes(key))
     return undefined;
   return MAP_KEY_TO_FOCUS_INTENT[key];
 }
@@ -106,13 +105,18 @@ function getDataState(
   itemValue: string,
   stepState: StepState | undefined,
   steps: Map<string, StepState>,
+  variant: "item" | "separator" = "item",
 ): DataState {
   const stepKeys = Array.from(steps.keys());
   const currentIndex = stepKeys.indexOf(itemValue);
 
   if (stepState?.completed) return "completed";
 
-  if (value === itemValue) return "active";
+  if (value === itemValue) {
+    // For separators, don't return "active" when on the current step
+    // Separators should only be completed when we've moved past the step
+    return variant === "separator" ? "inactive" : "active";
+  }
 
   if (value) {
     const activeIndex = stepKeys.indexOf(value);
@@ -613,7 +617,10 @@ function StepperList(props: StepperListProps) {
         {...listProps}
         ref={composedRefs}
         className={cn(
-          "flex gap-4 outline-none data-[orientation=horizontal]:flex-row data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-start data-[orientation=horizontal]:items-center",
+          "flex outline-none",
+          orientation === "horizontal"
+            ? "flex-row items-center"
+            : "flex-col items-start",
           className,
         )}
         onBlur={onBlur}
@@ -714,7 +721,8 @@ function StepperItem(props: StepperItemProps) {
         {...itemProps}
         ref={ref}
         className={cn(
-          "relative flex w-full data-[orientation=vertical]:flex-row data-[orientation=horizontal]:flex-col data-[orientation=vertical]:items-start data-[orientation=horizontal]:items-center data-[orientation=vertical]:gap-4 data-[orientation=vertical]:text-left data-[orientation=horizontal]:text-center",
+          "relative flex not-last:flex-1 items-center",
+          orientation === "horizontal" ? "flex-row" : "flex-col",
           className,
         )}
       >
@@ -726,19 +734,12 @@ function StepperItem(props: StepperItemProps) {
 
 type TriggerElement = React.ComponentRef<typeof StepperTrigger>;
 
-interface StepperTriggerProps extends React.ComponentProps<typeof Button> {
+interface StepperTriggerProps extends React.ComponentProps<"button"> {
   asChild?: boolean;
 }
 
 function StepperTrigger(props: StepperTriggerProps) {
-  const {
-    variant = "ghost",
-    size = "icon",
-    asChild,
-    className,
-    ref,
-    ...triggerProps
-  } = props;
+  const { asChild, className, ref, ...triggerProps } = props;
 
   const context = useStepperContext(TRIGGER_NAME);
   const itemContext = useStepperItemContext(TRIGGER_NAME);
@@ -952,7 +953,7 @@ function StepperTrigger(props: StepperTriggerProps) {
     [focusContext, triggerId, isDisabled, triggerProps.onMouseDown],
   );
 
-  const TriggerPrimitive = asChild ? Slot : Button;
+  const TriggerPrimitive = asChild ? Slot : "button";
 
   return (
     <TriggerPrimitive
@@ -971,9 +972,11 @@ function StepperTrigger(props: StepperTriggerProps) {
       tabIndex={isTabStop ? 0 : -1}
       {...triggerProps}
       ref={composedRef}
-      variant={variant}
-      size={size}
-      className={cn("rounded-full", className)}
+      className={cn(
+        "inline-flex shrink-0 items-center justify-center gap-3 text-left outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        "not-has-[[data-slot=description]]:rounded-full not-has-[[data-slot=title]]:rounded-full",
+        className,
+      )}
       onClick={onClick}
       onFocus={onFocus}
       onKeyDown={onKeyDown}
@@ -1057,6 +1060,7 @@ function StepperSeparator(props: StepperSeparatorProps) {
     itemContext.value,
     itemContext.stepState,
     steps,
+    "separator",
   );
 
   const SeparatorPrimitive = asChild ? Slot : "div";
@@ -1073,7 +1077,8 @@ function StepperSeparator(props: StepperSeparatorProps) {
       {...separatorProps}
       ref={ref}
       className={cn(
-        "bg-border transition-colors transition-colors data-[orientation=horizontal]:h-px data-[orientation=vertical]:h-8 data-[orientation=horizontal]:w-full data-[orientation=vertical]:w-px data-[state=active]:bg-primary data-[state=active]:bg-primary data-[state=completed]:bg-primary data-[state=completed]:bg-primary",
+        "bg-border transition-colors data-[state=active]:bg-primary data-[state=completed]:bg-primary",
+        orientation === "horizontal" ? "h-px w-full" : "h-10 w-px",
         className,
       )}
     />
@@ -1137,7 +1142,7 @@ interface StepperContentProps extends React.ComponentProps<"div"> {
 }
 
 function StepperContent(props: StepperContentProps) {
-  const { value: valueProp, asChild, ref, ...contentProps } = props;
+  const { value: valueProp, asChild, ref, className, ...contentProps } = props;
 
   const context = useStepperContext(CONTENT_NAME);
   const value = useStore((state) => state.value);
@@ -1158,6 +1163,7 @@ function StepperContent(props: StepperContentProps) {
       dir={context.dir}
       {...contentProps}
       ref={ref}
+      className={cn("flex-1 outline-none", className)}
     />
   );
 }

@@ -1,12 +1,10 @@
 import {
   Stepper,
   StepperContent,
-  StepperDescription,
   StepperIndicator,
   StepperItem,
   StepperList,
   StepperSeparator,
-  StepperTitle,
   StepperTrigger,
 } from "@/registry/default/ui/stepper";
 
@@ -36,16 +34,12 @@ const steps = [
 export default function StepperDemo() {
   return (
     <Stepper defaultValue="profile">
-      <StepperList className="gap-0">
+      <StepperList>
         {steps.map((step, index) => (
           <StepperItem key={step.value} value={step.value}>
             <StepperTrigger>
               <StepperIndicator>{index + 1}</StepperIndicator>
             </StepperTrigger>
-            <div className="mt-2 flex flex-col items-center gap-1">
-              <StepperTitle>{step.title}</StepperTitle>
-              <StepperDescription>{step.description}</StepperDescription>
-            </div>
             <StepperSeparator />
           </StepperItem>
         ))}
