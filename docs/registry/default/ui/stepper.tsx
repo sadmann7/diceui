@@ -106,54 +106,18 @@ function getDataState(
   itemValue: string,
   stepState: StepState | undefined,
   steps: Map<string, StepState>,
-  variant: "step" | "separator" = "step",
 ): DataState {
   const stepKeys = Array.from(steps.keys());
   const currentIndex = stepKeys.indexOf(itemValue);
 
-  if (variant === "separator") {
-    const nextIndex = currentIndex + 1;
+  if (stepState?.completed) return "completed";
 
-    if (nextIndex >= stepKeys.length) {
-      return "inactive";
-    }
-
-    const nextStepValue = stepKeys[nextIndex];
-    if (!nextStepValue) {
-      return "inactive";
-    }
-
-    const nextStepState = steps.get(nextStepValue);
-
-    if (nextStepState?.completed) {
-      return "completed";
-    }
-
-    if (value && stepKeys.indexOf(value) > nextIndex) {
-      return "completed";
-    }
-
-    if (value === nextStepValue) {
-      return "active";
-    }
-
-    return "inactive";
-  }
-
-  if (stepState?.completed) {
-    return "completed";
-  }
-
-  if (value === itemValue) {
-    return "active";
-  }
+  if (value === itemValue) return "active";
 
   if (value) {
     const activeIndex = stepKeys.indexOf(value);
 
-    if (activeIndex > currentIndex) {
-      return "completed";
-    }
+    if (activeIndex > currentIndex) return "completed";
   }
 
   return "inactive";
@@ -727,7 +691,7 @@ function StepperItem(props: StepperItemProps) {
 
   const stepState = useStore((state) => state.steps.get(itemValue));
   const steps = useStore((state) => state.steps);
-  const dataState = getDataState(value, itemValue, stepState, steps, "step");
+  const dataState = getDataState(value, itemValue, stepState, steps);
 
   const itemContextValue = React.useMemo<StepperItemContextValue>(
     () => ({
@@ -802,7 +766,7 @@ function StepperTrigger(props: StepperTriggerProps) {
     context.disabled || stepState?.disabled || triggerProps.disabled;
   const isActive = value === itemValue;
   const isTabStop = focusContext.tabStopId === triggerId;
-  const dataState = getDataState(value, itemValue, stepState, steps, "step");
+  const dataState = getDataState(value, itemValue, stepState, steps);
 
   const [triggerElement, setTriggerElement] =
     React.useState<HTMLElement | null>(null);
@@ -1033,7 +997,7 @@ function StepperIndicator(props: StepperIndicatorProps) {
   const stepState = useStore((state) => state.steps.get(itemValue));
   const steps = useStore((state) => state.steps);
 
-  const dataState = getDataState(value, itemValue, stepState, steps, "step");
+  const dataState = getDataState(value, itemValue, stepState, steps);
 
   const IndicatorPrimitive = asChild ? Slot : "div";
 
@@ -1093,7 +1057,6 @@ function StepperSeparator(props: StepperSeparatorProps) {
     itemContext.value,
     itemContext.stepState,
     steps,
-    "separator",
   );
 
   const SeparatorPrimitive = asChild ? Slot : "div";
