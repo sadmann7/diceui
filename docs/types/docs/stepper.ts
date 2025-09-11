@@ -90,11 +90,6 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * Provides screen readers with context about the stepper.
    */
   label?: string;
-
-  /**
-   * The name of the stepper. Used for form submission.
-   */
-  name?: string;
 }
 
 export interface ListProps extends EmptyProps<"ol">, CompositionProps {}

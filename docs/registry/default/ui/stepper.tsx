@@ -296,7 +296,6 @@ interface StepperRootProps extends DivProps {
   disabled?: boolean;
   loop?: boolean;
   nonInteractive?: boolean;
-  name?: string;
   label?: string;
 }
 
@@ -357,11 +356,9 @@ function StepperRootImpl(props: StepperRootProps) {
     disabled = false,
     nonInteractive = false,
     loop = false,
-    name,
     label,
     className,
     children,
-    ref,
     ...rootProps
   } = props;
 
@@ -371,14 +368,6 @@ function StepperRootImpl(props: StepperRootProps) {
   const labelId = React.useId();
 
   const rootId = idProp ?? id;
-
-  const [formTrigger, setFormTrigger] = React.useState<HTMLDivElement | null>(
-    null,
-  );
-  const composedRef = useComposedRefs(ref, setFormTrigger);
-  const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
-
-  const value = useStore((state) => state.value);
 
   const contextValue = React.useMemo<StepperContextValue>(
     () => ({
@@ -417,7 +406,6 @@ function StepperRootImpl(props: StepperRootProps) {
         data-slot="stepper"
         dir={dir}
         {...rootProps}
-        ref={composedRef}
         className={cn("flex flex-col gap-6", className)}
       >
         {label && (
@@ -427,15 +415,6 @@ function StepperRootImpl(props: StepperRootProps) {
         )}
         {children}
       </RootPrimitive>
-      {isFormControl && (
-        <VisuallyHiddenInput
-          type="hidden"
-          control={formTrigger}
-          name={name}
-          value={value}
-          disabled={disabled}
-        />
-      )}
     </StepperContext.Provider>
   );
 }

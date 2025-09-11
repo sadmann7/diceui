@@ -86,6 +86,12 @@ import {
 
 ## Examples
 
+### Vertical Layout
+
+A stepper with vertical orientation for compact layouts.
+
+<ComponentTabs name="stepper-vertical-demo" />
+
 ### Controlled State
 
 A stepper with controlled state management and navigation buttons.
@@ -97,24 +103,6 @@ A stepper with controlled state management and navigation buttons.
 A stepper integrated with form validation, showing step-by-step form completion.
 
 <ComponentTabs name="stepper-form-demo" />
-
-### With Loop Navigation
-
-A stepper with loop navigation, allowing users to navigate between the first and last step.
-
-<ComponentTabs name="stepper-loop-demo" />
-
-### Vertical Layout
-
-A stepper with vertical orientation for compact layouts.
-
-<ComponentTabs name="stepper-vertical-demo" />
-
-### With Activation Modes
-
-A stepper with activation modes, allowing users to navigate between steps using arrow keys or enter/space keys.
-
-<ComponentTabs name="stepper-activation-modes-demo" />
 
 ## API Reference
 
@@ -271,69 +259,3 @@ The content area that displays for the active step.
     },
   ]}
 />
-
-### ARIA Labels
-
-- The stepper list uses `role="tablist"` with proper `aria-orientation`
-- Step triggers use `role="tab"` with `aria-selected` for the active state
-- Step triggers are linked to content using `aria-controls` and `aria-describedby`
-- Step content uses `role="tabpanel"` with appropriate `aria-label`
-- Step items use `role="presentation"` to avoid redundant semantics
-
-## Usage Guidelines
-
-### Step Values
-
-The stepper uses string values to identify steps, following Radix UI patterns:
-
-- Each step must have a unique `value` prop (e.g., "step-1", "personal-info", "checkout")
-- Use descriptive values that make sense in your application context
-- The stepper's `value`/`defaultValue` should match one of the step values
-
-### Step States
-
-The stepper automatically manages three states for each step through the store:
-
-- **Inactive**: Steps that haven't been reached yet
-- **Active**: The current step the user is on (matches the stepper's value)
-- **Completed**: Steps marked as completed through the store's state management
-
-### Navigation
-
-- By default, steps are clickable and users can navigate between them
-- Use the `clickable={false}` prop to prevent clicking on steps
-- Individual steps can be disabled using the `disabled` prop on `StepperItem`
-
-### Orientation
-
-- **Horizontal**: Default layout, steps flow left to right
-- **Vertical**: Compact layout, steps flow top to bottom
-
-### Form Integration
-
-When using with forms:
-
-1. Validate each step before allowing progression
-2. Use controlled state to manage the current step value
-3. Implement proper error handling and validation feedback
-4. Consider saving progress between steps for better UX
-
-## Examples in Practice
-
-### Multi-step Form
-
-Perfect for breaking down complex forms into manageable sections:
-
-- User registration flows
-- Checkout processes  
-- Onboarding wizards
-- Settings configuration
-
-### Progress Tracking
-
-Ideal for showing progress through predefined workflows:
-
-- Order status tracking
-- Project milestones
-- Tutorial progress
-- Installation steps
