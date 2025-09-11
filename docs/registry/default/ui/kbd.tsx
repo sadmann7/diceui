@@ -1,6 +1,6 @@
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-import * as React from "react";
+import type * as React from "react";
 import { cn } from "@/lib/utils";
 
 const kbdVariants = cva(
@@ -27,35 +27,29 @@ const kbdVariants = cva(
 );
 
 interface KbdRootProps
-  extends React.ComponentPropsWithoutRef<"kbd">,
+  extends React.ComponentProps<"kbd">,
     VariantProps<typeof kbdVariants> {
   asChild?: boolean;
 }
 
-const KbdRoot = React.forwardRef<HTMLElement, KbdRootProps>(
-  (props, forwardedRef) => {
-    const {
-      variant = "default",
-      size = "default",
-      asChild,
-      className,
-      ...rootProps
-    } = props;
+function KbdRoot({
+  variant = "default",
+  size = "default",
+  asChild,
+  className,
+  ...rootProps
+}: KbdRootProps) {
+  const RootPrimitive = asChild ? Slot : "kbd";
 
-    const RootPrimitive = asChild ? Slot : "kbd";
-
-    return (
-      <RootPrimitive
-        role="group"
-        data-slot="kbd"
-        {...rootProps}
-        ref={forwardedRef}
-        className={cn(kbdVariants({ size, variant, className }))}
-      />
-    );
-  },
-);
-KbdRoot.displayName = "KbdRoot";
+  return (
+    <RootPrimitive
+      role="group"
+      data-slot="kbd"
+      {...rootProps}
+      className={cn(kbdVariants({ size, variant, className }))}
+    />
+  );
+}
 
 const KEY_DESCRIPTIONS: Record<string, string> = {
   "⌘": "Command",
@@ -83,70 +77,63 @@ const KEY_DESCRIPTIONS: Record<string, string> = {
   "↔": "Left/Right",
 } as const;
 
-interface KbdKeyProps extends React.ComponentPropsWithoutRef<"span"> {
+interface KbdKeyProps extends React.ComponentProps<"span"> {
   asChild?: boolean;
 }
 
-const KbdKey = React.forwardRef<HTMLSpanElement, KbdKeyProps>(
-  (props, forwardedRef) => {
-    const {
-      asChild,
-      className,
-      children,
-      title: titleProp,
-      ...keyProps
-    } = props;
+function KbdKey({
+  asChild,
+  className,
+  children,
+  title: titleProp,
+  ...keyProps
+}: KbdKeyProps) {
+  const keyText = children?.toString() ?? "";
+  const title = titleProp ?? KEY_DESCRIPTIONS[keyText] ?? keyText;
 
-    const keyText = children?.toString() ?? "";
-    const title = titleProp ?? KEY_DESCRIPTIONS[keyText] ?? keyText;
+  const KeyPrimitive = asChild ? Slot : "span";
 
-    const KeyPrimitive = asChild ? Slot : "span";
-
-    return (
-      <abbr title={title} className="no-underline">
-        <KeyPrimitive
-          data-slot="kbd-key"
-          {...keyProps}
-          ref={forwardedRef}
-          className={cn(
-            "inline-flex items-center justify-center rounded",
-            className,
-          )}
-        >
-          {children}
-        </KeyPrimitive>
-      </abbr>
-    );
-  },
-);
-KbdKey.displayName = "KbdKey";
-
-interface KbdSeparatorProps extends React.ComponentPropsWithoutRef<"span"> {
-  asChild?: boolean;
-}
-
-const KbdSeparator = React.forwardRef<HTMLSpanElement, KbdSeparatorProps>(
-  (props, forwardedRef) => {
-    const { asChild, children = "+", className, ...separatorProps } = props;
-
-    const SeparatorPrimitive = asChild ? Slot : "span";
-
-    return (
-      <SeparatorPrimitive
-        role="separator"
-        aria-orientation="horizontal"
-        aria-hidden="true"
-        data-slot="kbd-separator"
-        {...separatorProps}
-        ref={forwardedRef}
-        className={cn("text-foreground/70", className)}
+  return (
+    <abbr title={title} className="no-underline">
+      <KeyPrimitive
+        data-slot="kbd-key"
+        {...keyProps}
+        className={cn(
+          "inline-flex items-center justify-center rounded",
+          className,
+        )}
       >
         {children}
-      </SeparatorPrimitive>
-    );
-  },
-);
-KbdSeparator.displayName = "KbdSeparator";
+      </KeyPrimitive>
+    </abbr>
+  );
+}
+
+interface KbdSeparatorProps extends React.ComponentProps<"span"> {
+  asChild?: boolean;
+}
+
+function KbdSeparator({
+  asChild,
+  children = "+",
+  className,
+  ...separatorProps
+}: KbdSeparatorProps) {
+  const SeparatorPrimitive = asChild ? Slot : "span";
+
+  return (
+    <SeparatorPrimitive
+      role="separator"
+      aria-orientation="horizontal"
+      aria-hidden="true"
+      data-slot="kbd-separator"
+      {...separatorProps}
+      className={cn("text-foreground/70", className)}
+    >
+      {children}
+    </SeparatorPrimitive>
+  );
+}
 
 const Kbd = KbdRoot;
 const Root = KbdRoot;
