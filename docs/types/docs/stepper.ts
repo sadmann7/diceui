@@ -84,12 +84,6 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * @default false
    */
   nonInteractive?: boolean;
-
-  /**
-   * An accessible label for the stepper.
-   * Provides screen readers with context about the stepper.
-   */
-  label?: string;
 }
 
 export interface ListProps extends EmptyProps<"ol">, CompositionProps {}

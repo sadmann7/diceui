@@ -296,7 +296,6 @@ interface StepperRootProps extends DivProps {
   disabled?: boolean;
   loop?: boolean;
   nonInteractive?: boolean;
-  label?: string;
 }
 
 function StepperRoot(props: StepperRootProps) {
@@ -315,9 +314,7 @@ function StepperRoot(props: StepperRootProps) {
     disabled = false,
     nonInteractive = false,
     loop = false,
-    label,
     className,
-    children,
     ...rootProps
   } = props;
 
@@ -341,7 +338,6 @@ function StepperRoot(props: StepperRootProps) {
   const dir = useDirection(dirProp);
 
   const id = React.useId();
-  const labelId = React.useId();
 
   const rootId = idProp ?? id;
 
@@ -377,21 +373,17 @@ function StepperRoot(props: StepperRootProps) {
       <StepperContext.Provider value={contextValue}>
         <RootPrimitive
           id={rootId}
-          aria-labelledby={label ? labelId : undefined}
           data-disabled={disabled ? "" : undefined}
           data-orientation={orientation}
           data-slot="stepper"
           dir={dir}
           {...rootProps}
-          className={cn("flex flex-col gap-6", className)}
-        >
-          {label && (
-            <span id={labelId} className="sr-only">
-              {label}
-            </span>
+          className={cn(
+            "flex gap-6",
+            orientation === "horizontal" ? "flex-col" : "flex-row",
+            className,
           )}
-          {children}
-        </RootPrimitive>
+        />
       </StepperContext.Provider>
     </StoreContext.Provider>
   );
@@ -874,7 +866,6 @@ function StepperTrigger(props: StepperTriggerProps) {
             : candidateNodes.slice(currentIndex + 1);
         }
 
-        // Imperative focus during keydown is risky so we prevent React's batching updates
         queueMicrotask(() => focusFirst(candidateNodes));
       }
     },
@@ -925,7 +916,7 @@ function StepperTrigger(props: StepperTriggerProps) {
       {...triggerProps}
       ref={composedRef}
       className={cn(
-        "inline-flex items-center justify-center gap-3 text-left outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        "inline-flex items-center justify-center gap-3 rounded-md text-left outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
         "not-has-[[data-slot=description]]:rounded-full not-has-[[data-slot=title]]:rounded-full",
         className,
       )}

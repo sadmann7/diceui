@@ -39,49 +39,21 @@ npx shadcn@latest add "https://diceui.com/r/stepper"
 Import the parts, and compose them together.
 
 ```tsx
-import {
-  Stepper,
-  StepperContent,
-  StepperDescription,
-  StepperItemIndicator,
-  StepperItem,
-  StepperList,
-  StepperSeparator,
-  StepperTitle,
-  StepperTrigger,
-} from "@/components/ui/stepper";
+import * as Stepper from "@/components/ui/stepper";
 
-<Stepper defaultValue="step-1">
-  <StepperList>
-    <StepperItem value="step-1">
-      <StepperTrigger value="step-1">
-        <StepperItemIndicator value="step-1">1</StepperItemIndicator>
-      </StepperTrigger>
-      <StepperTitle>Step 1</StepperTitle>
-      <StepperDescription>First step description</StepperDescription>
+<Stepper.Root>
+  <Stepper.List>
+    <Stepper.Item >
+      <Stepper.Trigger>
+        <Stepper.ItemIndicator />
+      </Stepper.Trigger>
+      <Stepper.Title />
+      <Stepper.Description />
       <StepperSeparator />
-    </StepperItem>
-    <StepperItem value="step-2">
-      <StepperTrigger value="step-2">
-        <StepperItemIndicator value="step-2">2</StepperItemIndicator>
-      </StepperTrigger>
-      <StepperTitle>Step 2</StepperTitle>
-      <StepperDescription>Second step description</StepperDescription>
-      <StepperSeparator />
-    </StepperItem>
-    <StepperItem value="step-3">
-      <StepperTrigger value="step-3">
-        <StepperItemIndicator value="step-3">3</StepperItemIndicator>
-      </StepperTrigger>
-      <StepperTitle>Step 3</StepperTitle>
-      <StepperDescription>Final step description</StepperDescription>
-    </StepperItem>
-  </StepperList>
-
-  <StepperContent value="step-1">Content for step 1</StepperContent>
-  <StepperContent value="step-2">Content for step 2</StepperContent>
-  <StepperContent value="step-3">Content for step 3</StepperContent>
-</Stepper>
+    </Stepper.Item>
+  </Stepper.List>
+  <Stepper.Conten />
+</Stepper.Root>
 ```
 
 ## Examples
@@ -90,7 +62,7 @@ import {
 
 A stepper with vertical orientation for compact layouts.
 
-<ComponentTabs name="stepper-vertical-demo" />
+<ComponentTabs name="stepper-vertical-demo" fullPreview />
 
 ### Controlled State
 

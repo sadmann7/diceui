@@ -36,28 +36,34 @@ const steps = [
 export default function StepperVerticalDemo() {
   return (
     <Stepper defaultValue="shipped" orientation="vertical">
-      <StepperList className="gap-4">
+      <StepperList>
         {steps.map((step, index) => (
           <StepperItem key={step.value} value={step.value}>
-            <StepperTrigger>
+            <StepperTrigger className="not-last:pb-6">
               <StepperIndicator>{index + 1}</StepperIndicator>
               <div className="flex flex-col gap-1">
                 <StepperTitle>{step.title}</StepperTitle>
                 <StepperDescription>{step.description}</StepperDescription>
               </div>
             </StepperTrigger>
-            <StepperSeparator className="-order-1 -translate-x-1/2 -z-10 absolute inset-y-0 top-5 left-3.5" />
+            <StepperSeparator className="-order-1 -translate-x-1/2 -z-10 absolute inset-y-0 top-5 left-3.5 h-full" />
           </StepperItem>
         ))}
       </StepperList>
       {steps.map((step) => (
-        <StepperContent key={step.value} value={step.value}>
-          <div className="ml-12 rounded-lg border p-4">
-            <h4 className="mb-2 font-semibold">{step.title}</h4>
-            <p className="text-muted-foreground text-sm">
-              Additional details and actions for this step can be placed here.
-            </p>
+        <StepperContent
+          key={step.value}
+          value={step.value}
+          className="flex flex-col gap-4 rounded-lg border bg-card p-6 text-card-foreground"
+        >
+          <div className="flex flex-col gap-px">
+            <h4 className="font-semibold">{step.title}</h4>
+            <p className="text-muted-foreground text-sm">{step.description}</p>
           </div>
+          <p className="text-sm">
+            This is the content for {step.title}. You can add forms,
+            information, or any other content here.
+          </p>
         </StepperContent>
       ))}
     </Stepper>
