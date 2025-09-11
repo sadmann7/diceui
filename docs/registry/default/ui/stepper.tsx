@@ -5,7 +5,6 @@ import { Check } from "lucide-react";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
-import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidden-input";
 
 const ROOT_NAME = "Stepper";
 const LIST_NAME = "StepperList";
@@ -1120,25 +1119,25 @@ function StepperContent(props: StepperContentProps) {
 }
 
 export {
-  StepperContent as Content,
-  StepperDescription as Description,
-  StepperItem as Item,
-  StepperIndicator as ItemIndicator,
-  StepperList as List,
   StepperRoot as Root,
+  StepperList as List,
+  StepperItem as Item,
+  StepperTrigger as Trigger,
+  StepperIndicator as ItemIndicator,
   StepperSeparator as Separator,
+  StepperTitle as Title,
+  StepperDescription as Description,
+  StepperContent as Content,
   //
   StepperRoot as Stepper,
-  StepperContent,
-  StepperDescription,
-  StepperIndicator,
-  StepperItem,
   StepperList,
+  StepperItem,
+  StepperTrigger,
+  StepperIndicator,
   StepperSeparator,
   StepperTitle,
-  StepperTrigger,
-  StepperTitle as Title,
-  StepperTrigger as Trigger,
+  StepperDescription,
+  StepperContent,
   //
   useStore as useStepper,
 };
