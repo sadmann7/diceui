@@ -717,7 +717,7 @@ function StepperItem(props: StepperItemProps) {
         {...itemProps}
         ref={ref}
         className={cn(
-          "relative flex items-center",
+          "relative flex not-last:flex-1 items-center",
           orientation === "horizontal" ? "flex-row" : "flex-col",
           className,
         )}
@@ -1074,7 +1074,7 @@ function StepperSeparator(props: StepperSeparatorProps) {
       ref={ref}
       className={cn(
         "bg-border transition-colors data-[state=active]:bg-primary data-[state=completed]:bg-primary",
-        orientation === "horizontal" ? "h-px w-full" : "h-10 w-px",
+        orientation === "horizontal" ? "h-px flex-1" : "h-10 w-px",
         className,
       )}
     />

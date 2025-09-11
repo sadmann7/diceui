@@ -58,11 +58,7 @@ export default function StepperControlledDemo() {
     <Stepper value={currentStep} onValueChange={goToStep}>
       <StepperList>
         {steps.map((step, index) => (
-          <StepperItem
-            key={step.value}
-            value={step.value}
-            className="not-last:w-full gap-4"
-          >
+          <StepperItem key={step.value} value={step.value} className="gap-4">
             <StepperTrigger>
               <StepperIndicator>{index + 1}</StepperIndicator>
               <div className="flex flex-col gap-1">

@@ -118,17 +118,17 @@ export default function StepperFormDemo() {
               <StepperItem key={step.value} value={step.value}>
                 <StepperTrigger>
                   <StepperIndicator>{index + 1}</StepperIndicator>
+                  <div className="flex flex-col gap-px">
+                    <StepperTitle>{step.title}</StepperTitle>
+                    <StepperDescription>{step.description}</StepperDescription>
+                  </div>
                 </StepperTrigger>
-                <div className="mt-2 flex flex-col items-center gap-1">
-                  <StepperTitle>{step.title}</StepperTitle>
-                  <StepperDescription>{step.description}</StepperDescription>
-                </div>
-                <StepperSeparator />
+                <StepperSeparator className="mx-4" />
               </StepperItem>
             ))}
           </StepperList>
           <StepperContent value="personal">
-            <div className="space-y-4">
+            <div className="flex flex-col gap-4">
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
@@ -195,7 +195,7 @@ export default function StepperFormDemo() {
             />
           </StepperContent>
           <StepperContent value="professional">
-            <div className="space-y-4">
+            <div className="flex flex-col gap-4">
               <FormField
                 control={form.control}
                 name="company"
@@ -227,7 +227,7 @@ export default function StepperFormDemo() {
               />
             </div>
           </StepperContent>
-          <div className="mt-6 flex justify-between">
+          <div className="mt-4 flex justify-between">
             <Button
               type="button"
               variant="outline"
