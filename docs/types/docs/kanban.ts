@@ -233,17 +233,16 @@ export interface OverlayProps
   /**
    * The children of the overlay component.
    *
-   * Can be a function that receives the value and variant of the active item,
-   * or a React node.
-   *
+   * Can be a React node or a function that receives the value and variant of the active item.
    * ```ts
-   * children={(params) => <div>{params.value}</div>}
+   * children={<Skeleton className="size-full" />}
+   * children={(params) => <div className="size-full">{params.value}</div>}
    * ```
    */
   children?:
+    | React.ReactNode
     | ((params: {
         value: UniqueIdentifier;
         variant: "column" | "item";
-      }) => React.ReactNode)
-    | React.ReactNode;
+      }) => React.ReactNode);
 }

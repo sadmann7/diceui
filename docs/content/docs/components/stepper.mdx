@@ -1,0 +1,233 @@
+---
+title: Stepper
+description: A stepper component that guides users through a multi-step process with clear visual progress indicators.
+preview: true
+links:
+ api: /docs/components/stepper#api-reference
+---
+
+<ComponentTabs name="stepper-demo" />
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/stepper"
+
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @radix-ui/react-slot class-variance-authority lucide-react
+     ```
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource name="stepper" />
+  </Step>
+</Steps>
+
+## Layout
+
+Import the parts, and compose them together.
+
+```tsx
+import * as Stepper from "@/components/ui/stepper";
+
+<Stepper.Root>
+  <Stepper.List>
+    <Stepper.Item >
+      <Stepper.Trigger>
+        <Stepper.Indicator />
+      </Stepper.Trigger>
+      <Stepper.Title />
+      <Stepper.Description />
+      <Stepper.Separator />
+    </Stepper.Item>
+  </Stepper.List>
+  <Stepper.Content />
+</Stepper.Root>
+```
+
+## Examples
+
+### Vertical Layout
+
+A stepper with vertical orientation for compact layouts.
+
+<ComponentTabs name="stepper-vertical-demo" fullPreview />
+
+### Controlled State
+
+A stepper with controlled state management and navigation buttons.
+
+<ComponentTabs name="stepper-controlled-demo" scalePreview />
+
+### With Form
+
+A stepper integrated with form validation, showing step-by-step form completion.
+
+<ComponentTabs name="stepper-form-demo" scalePreview />
+
+## API Reference
+
+### Root
+
+The main container component for the stepper.
+
+<AutoTypeTable
+  path="./types/docs/stepper.ts"
+  name="RootProps"
+/>
+
+### List
+
+The container for stepper items, typically an ordered list.
+
+<AutoTypeTable
+  path="./types/docs/stepper.ts"
+  name="ListProps"
+/>
+
+### Item
+
+A single step item in the stepper.
+
+<AutoTypeTable
+  path="./types/docs/stepper.ts"
+  name="ItemProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-state]",
+      value: "\"inactive\" | \"active\" | \"completed\" - The current state of the step.",
+    },
+  ]}
+/>
+
+### Trigger
+
+The clickable trigger for each step, typically wrapping the indicator.
+
+<AutoTypeTable
+  path="./types/docs/stepper.ts"
+  name="TriggerProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-state]",
+      value: ["inactive", "active", "completed"],
+    },
+  ]}
+/>
+
+### Indicator
+
+The visual indicator showing the step number or completion status.
+
+<AutoTypeTable
+  path="./types/docs/stepper.ts"
+  name="IndicatorProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-state]",
+      value: ["inactive", "active", "completed"],
+    },
+  ]}
+/>
+
+### Separator
+
+The line connecting steps, showing progress between them.
+
+<AutoTypeTable
+  path="./types/docs/stepper.ts"
+  name="SeparatorProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-state]",
+      value: ["inactive", "active", "completed"],
+    },
+  ]}
+/>
+
+### Title
+
+The title text for each step.
+
+<AutoTypeTable
+  path="./types/docs/stepper.ts"
+  name="TitleProps"
+/>
+
+### Description
+
+The description text for each step.
+
+<AutoTypeTable
+  path="./types/docs/stepper.ts"
+  name="DescriptionProps"
+/>
+
+### Content
+
+The content area that displays for the active step.
+
+<AutoTypeTable
+  path="./types/docs/stepper.ts"
+  name="ContentProps"
+/>
+
+## Accessibility
+
+### Keyboard Interactions
+
+<KeyboardShortcutsTable
+  shortcuts={[
+    {
+      keys: ["Tab"],
+      description: "Moves focus to the next focusable element.",
+    },
+    {
+      keys: ["Shift + Tab"],
+      description: "Moves focus to the previous focusable element.",
+    },
+    {
+      keys: ["Enter", "Space"],
+      description: "Activates the focused step when clickable is enabled.",
+    },
+    {
+      keys: ["ArrowLeft", "ArrowUp"],
+      description: "Moves focus to the previous step trigger.",
+    },
+    {
+      keys: ["ArrowRight", "ArrowDown"],
+      description: "Moves focus to the next step trigger.",
+    },
+    {
+      keys: ["Home"],
+      description: "Moves focus to the first step trigger.",
+    },
+    {
+      keys: ["End"],
+      description: "Moves focus to the last step trigger.",
+    },
+  ]}
+/>

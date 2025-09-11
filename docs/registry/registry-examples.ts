@@ -894,6 +894,49 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "stepper-demo",
+    type: "registry:example",
+    files: [
+      {
+        path: "examples/stepper-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "stepper-controlled-demo",
+    type: "registry:example",
+    registryDependencies: ["button"],
+    files: [
+      {
+        path: "examples/stepper-controlled-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "stepper-form-demo",
+    type: "registry:example",
+    dependencies: ["@hookform/resolvers/zod", "react-hook-form", "zod"],
+    registryDependencies: ["button", "form", "input", "textarea"],
+    files: [
+      {
+        path: "examples/stepper-form-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "stepper-vertical-demo",
+    type: "registry:example",
+    files: [
+      {
+        path: "examples/stepper-vertical-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "tags-input-validation-demo",
     type: "registry:example",
     dependencies: ["@diceui/tags-input", "lucide-react"],

@@ -37,10 +37,10 @@ const formSchema = z.object({
     .max(100, "Title must be less than 100 characters"),
 });
 
-type FormValues = z.infer<typeof formSchema>;
+type FormSchema = z.infer<typeof formSchema>;
 
 export default function EditableFormDemo() {
-  const form = useForm<FormValues>({
+  const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "Rodney Mullen",
@@ -48,11 +48,11 @@ export default function EditableFormDemo() {
     },
   });
 
-  function onSubmit(input: FormValues) {
+  const onSubmit = React.useCallback((input: FormSchema) => {
     toast.success(
       <pre className="w-full">{JSON.stringify(input, null, 2)}</pre>,
     );
-  }
+  }, []);
 
   return (
     <Form {...form}>

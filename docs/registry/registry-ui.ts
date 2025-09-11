@@ -38,6 +38,17 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "color-swatch",
+    type: "registry:ui",
+    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    files: [
+      {
+        path: "ui/color-swatch.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "combobox",
     type: "registry:ui",
     dependencies: [
@@ -237,13 +248,22 @@ export const ui: Registry["items"] = [
     ],
   },
   {
-    name: "color-swatch",
+    name: "stepper",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    dependencies: [
+      "@radix-ui/react-slot",
+      "class-variance-authority",
+      "lucide-react",
+    ],
+    registryDependencies: ["button"],
     files: [
       {
-        path: "ui/color-swatch.tsx",
+        path: "ui/stepper.tsx",
         type: "registry:ui",
+      },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
       },
     ],
   },

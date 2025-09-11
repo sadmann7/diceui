@@ -59,6 +59,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "color-swatch": {
+      name: "color-swatch",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/ui/color-swatch.tsx",
+        type: "registry:ui",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/color-swatch.tsx")),
+      source: "",
+      chunks: []
+    },
     "combobox": {
       name: "combobox",
       description: "",
@@ -269,17 +283,21 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "color-swatch": {
-      name: "color-swatch",
+    "stepper": {
+      name: "stepper",
       description: "",
       type: "registry:ui",
-      registryDependencies: undefined,
+      registryDependencies: ["button"],
       files: [{
-        path: "registry/default/ui/color-swatch.tsx",
+        path: "registry/default/ui/stepper.tsx",
         type: "registry:ui",
         target: ""
+      },{
+        path: "registry/default/lib/compose-refs.ts",
+        type: "registry:lib",
+        target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/ui/color-swatch.tsx")),
+      component: React.lazy(() => import("@/registry/default/ui/stepper.tsx")),
       source: "",
       chunks: []
     },
@@ -1330,6 +1348,62 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/tags-input-sortable-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "stepper-demo": {
+      name: "stepper-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/examples/stepper-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/stepper-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "stepper-controlled-demo": {
+      name: "stepper-controlled-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button"],
+      files: [{
+        path: "registry/default/examples/stepper-controlled-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/stepper-controlled-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "stepper-form-demo": {
+      name: "stepper-form-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","form","input","textarea"],
+      files: [{
+        path: "registry/default/examples/stepper-form-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/stepper-form-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "stepper-vertical-demo": {
+      name: "stepper-vertical-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/examples/stepper-vertical-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/stepper-vertical-demo.tsx")),
       source: "",
       chunks: []
     },

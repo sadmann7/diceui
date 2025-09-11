@@ -90,10 +90,6 @@ function useSortableContext(consumerName: string) {
 }
 
 interface GetItemValue<T> {
-  /**
-   * Callback that returns a unique identifier for each sortable item. Required for array of objects.
-   * @example getItemValue={(item) => item.id}
-   */
   getItemValue: (item: T) => UniqueIdentifier;
 }
 
@@ -539,8 +535,8 @@ interface SortableOverlayProps
   extends Omit<React.ComponentPropsWithoutRef<typeof DragOverlay>, "children"> {
   container?: Element | DocumentFragment | null;
   children?:
-    | ((params: { value: UniqueIdentifier }) => React.ReactNode)
-    | React.ReactNode;
+    | React.ReactNode
+    | ((params: { value: UniqueIdentifier }) => React.ReactNode);
 }
 
 function SortableOverlay(props: SortableOverlayProps) {
