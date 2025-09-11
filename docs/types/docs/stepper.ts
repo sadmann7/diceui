@@ -132,10 +132,13 @@ export interface TriggerProps
 export interface IndicatorProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The display content for the indicator (e.g., step number).
+   *
    * Can be a React node or a function that receives the current data state.
    *
-   * @example 1
-   * @example (dataState) => dataState === "completed" ? <CheckIcon /> : <span>1</span>
+   * ```ts
+   * children={1}
+   * children={(dataState) => dataState === "completed" ? <CheckIcon /> : <span>1</span>}
+   * ```
    */
   children?:
     | React.ReactNode

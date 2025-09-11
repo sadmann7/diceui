@@ -941,8 +941,7 @@ function StepperIndicator(props: StepperIndicatorProps) {
   const stepState = useStore((state) => state.steps.get(itemValue));
   const steps = useStore((state) => state.steps);
 
-  const stepIndex = Array.from(steps.keys()).indexOf(itemValue);
-  const stepPosition = stepIndex + 1;
+  const stepPosition = Array.from(steps.keys()).indexOf(itemValue) + 1;
 
   const dataState = getDataState(value, itemValue, stepState, steps);
 

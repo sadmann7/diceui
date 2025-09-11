@@ -226,14 +226,14 @@ export interface OverlayProps
   /**
    * The children of the sortable component.
    *
-   * Can be a function that receives the value of the active item as an argument,
-   * or a React node.
+   * Can be a React node or a function that receives the value of the active item as an argument.
    *
    * ```ts
-   * children={(params) => <div>{params.value}</div>}
+   * children={<Skeleton className="size-full" />}
+   * children={(params) => <div className="size-full">{params.value}</div>}
    * ```
    */
   children?:
-    | ((params: { value: UniqueIdentifier }) => React.ReactNode)
-    | React.ReactNode;
+    | React.ReactNode
+    | ((params: { value: UniqueIdentifier }) => React.ReactNode);
 }
