@@ -27,7 +27,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
    * Event handler called when a step is completed.
    */
-  onValueComplete?: (value: string) => void;
+  onValueComplete?: (value: string, completed: boolean) => void;
 
   /**
    * Event handler called when a step is added to the stepper.
@@ -86,6 +86,12 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   nonInteractive?: boolean;
 
   /**
+   * An accessible label for the stepper.
+   * Provides screen readers with context about the stepper.
+   */
+  label?: string;
+
+  /**
    * The name of the stepper. Used for form submission.
    */
   name?: string;
@@ -137,10 +143,14 @@ export interface TriggerProps
 export interface IndicatorProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The display content for the indicator (e.g., step number).
+   * Can be a React node or a function that receives the current data state.
    *
    * @example 1
+   * @example (dataState) => dataState === "completed" ? <CheckIcon /> : <span>1</span>
    */
-  children?: React.ReactNode;
+  children?:
+    | React.ReactNode
+    | ((dataState: "inactive" | "active" | "completed") => React.ReactNode);
 }
 
 export interface SeparatorProps extends EmptyProps<"div">, CompositionProps {}
@@ -158,4 +168,12 @@ export interface ContentProps extends EmptyProps<"div">, CompositionProps {
    * @example "step-1"
    */
   value: string;
+
+  /**
+   * Used to force mounting of content when not active.
+   * Useful for controlling animations with external animation libraries.
+   *
+   * @default false
+   */
+  forceMount?: boolean;
 }

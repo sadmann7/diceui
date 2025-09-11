@@ -100,6 +100,10 @@ type ActivationMode = "automatic" | "manual";
 
 type DataState = "inactive" | "active" | "completed";
 
+interface DivProps extends React.ComponentProps<"div"> {
+  asChild?: boolean;
+}
+
 function getDataState(
   value: string | undefined,
   itemValue: string,
@@ -257,27 +261,6 @@ interface ItemData {
   disabled: boolean;
 }
 
-interface FocusContextValue {
-  tabStopId: string | null;
-  onItemFocus: (tabStopId: string) => void;
-  onItemShiftTab: () => void;
-  onFocusableItemAdd: () => void;
-  onFocusableItemRemove: () => void;
-  onItemRegister: (item: ItemData) => void;
-  onItemUnregister: (id: string) => void;
-  getItems: () => ItemData[];
-}
-
-const FocusContext = React.createContext<FocusContextValue | null>(null);
-
-function useFocusContext(consumerName: string) {
-  const context = React.useContext(FocusContext);
-  if (!context) {
-    throw new Error(`\`${consumerName}\` must be used within a focus provider`);
-  }
-  return context;
-}
-
 interface StepperContextValue {
   id: string;
   dir: Direction;
@@ -300,7 +283,7 @@ function useStepperContext(consumerName: string) {
   return context;
 }
 
-interface StepperRootProps extends React.ComponentProps<"div"> {
+interface StepperRootProps extends DivProps {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
@@ -310,7 +293,6 @@ interface StepperRootProps extends React.ComponentProps<"div"> {
   activationMode?: ActivationMode;
   dir?: Direction;
   orientation?: Orientation;
-  asChild?: boolean;
   disabled?: boolean;
   loop?: boolean;
   nonInteractive?: boolean;
@@ -458,9 +440,30 @@ function StepperRootImpl(props: StepperRootProps) {
   );
 }
 
+interface FocusContextValue {
+  tabStopId: string | null;
+  onItemFocus: (tabStopId: string) => void;
+  onItemShiftTab: () => void;
+  onFocusableItemAdd: () => void;
+  onFocusableItemRemove: () => void;
+  onItemRegister: (item: ItemData) => void;
+  onItemUnregister: (id: string) => void;
+  getItems: () => ItemData[];
+}
+
+const FocusContext = React.createContext<FocusContextValue | null>(null);
+
+function useFocusContext(consumerName: string) {
+  const context = React.useContext(FocusContext);
+  if (!context) {
+    throw new Error(`\`${consumerName}\` must be used within a focus provider`);
+  }
+  return context;
+}
+
 type ListElement = React.ComponentRef<typeof StepperList>;
 
-interface StepperListProps extends React.ComponentProps<"ol"> {
+interface StepperListProps extends DivProps {
   asChild?: boolean;
 }
 
@@ -599,7 +602,7 @@ function StepperList(props: StepperListProps) {
     ],
   );
 
-  const ListPrimitive = asChild ? Slot : "ol";
+  const ListPrimitive = asChild ? Slot : "div";
 
   return (
     <FocusContext.Provider value={focusContextValue}>
@@ -646,11 +649,10 @@ function useStepperItemContext(consumerName: string) {
   return context;
 }
 
-interface StepperItemProps extends React.ComponentProps<"li"> {
+interface StepperItemProps extends DivProps {
   value: string;
   completed?: boolean;
   disabled?: boolean;
-  asChild?: boolean;
 }
 
 function StepperItem(props: StepperItemProps) {
@@ -704,7 +706,7 @@ function StepperItem(props: StepperItemProps) {
     [itemValue, stepState],
   );
 
-  const ItemPrimitive = asChild ? Slot : "li";
+  const ItemPrimitive = asChild ? Slot : "div";
 
   return (
     <StepperItemContext.Provider value={itemContextValue}>
@@ -918,8 +920,6 @@ function StepperTrigger(props: StepperTriggerProps) {
         // Imperative focus during keydown is risky so we prevent React's batching updates
         queueMicrotask(() => focusFirst(candidateNodes));
       }
-
-      triggerProps.onKeyDown?.(event as React.KeyboardEvent<HTMLButtonElement>);
     },
     [
       focusContext,
@@ -944,7 +944,6 @@ function StepperTrigger(props: StepperTriggerProps) {
       } else {
         focusContext.onItemFocus(triggerId);
       }
-      triggerProps.onMouseDown?.(event);
     },
     [focusContext, triggerId, isDisabled, triggerProps.onMouseDown],
   );
@@ -981,10 +980,8 @@ function StepperTrigger(props: StepperTriggerProps) {
   );
 }
 
-interface StepperIndicatorProps
-  extends Omit<React.ComponentProps<"div">, "children"> {
+interface StepperIndicatorProps extends Omit<DivProps, "children"> {
   children?: React.ReactNode | ((dataState: DataState) => React.ReactNode);
-  asChild?: boolean;
 }
 
 function StepperIndicator(props: StepperIndicatorProps) {
@@ -1023,8 +1020,7 @@ function StepperIndicator(props: StepperIndicatorProps) {
   );
 }
 
-interface StepperSeparatorProps extends React.ComponentProps<"div"> {
-  asChild?: boolean;
+interface StepperSeparatorProps extends DivProps {
   forceMount?: boolean;
 }
 
@@ -1132,13 +1128,20 @@ function StepperDescription(props: StepperDescriptionProps) {
   );
 }
 
-interface StepperContentProps extends React.ComponentProps<"div"> {
+interface StepperContentProps extends DivProps {
   value: string;
-  asChild?: boolean;
+  forceMount?: boolean;
 }
 
 function StepperContent(props: StepperContentProps) {
-  const { value: valueProp, asChild, ref, className, ...contentProps } = props;
+  const {
+    value: valueProp,
+    asChild,
+    forceMount = false,
+    ref,
+    className,
+    ...contentProps
+  } = props;
 
   const context = useStepperContext(CONTENT_NAME);
   const value = useStore((state) => state.value);
@@ -1146,7 +1149,7 @@ function StepperContent(props: StepperContentProps) {
   const contentId = getId(context.id, "content", valueProp);
   const triggerId = getId(context.id, "trigger", valueProp);
 
-  if (valueProp !== value) return null;
+  if (valueProp !== value && !forceMount) return null;
 
   const ContentPrimitive = asChild ? Slot : "div";
 
