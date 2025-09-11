@@ -941,6 +941,9 @@ function StepperIndicator(props: StepperIndicatorProps) {
   const stepState = useStore((state) => state.steps.get(itemValue));
   const steps = useStore((state) => state.steps);
 
+  const stepIndex = Array.from(steps.keys()).indexOf(itemValue);
+  const stepPosition = stepIndex + 1;
+
   const dataState = getDataState(value, itemValue, stepState, steps);
 
   const IndicatorPrimitive = asChild ? Slot : "div";
@@ -959,10 +962,12 @@ function StepperIndicator(props: StepperIndicatorProps) {
     >
       {typeof children === "function" ? (
         children(dataState)
+      ) : children ? (
+        children
       ) : dataState === "completed" ? (
         <Check className="size-4" />
       ) : (
-        children
+        stepPosition
       )}
     </IndicatorPrimitive>
   );

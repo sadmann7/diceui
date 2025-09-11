@@ -35,10 +35,10 @@ export default function StepperDemo() {
   return (
     <Stepper defaultValue="profile" className="w-full max-w-md">
       <StepperList>
-        {steps.map((step, index) => (
+        {steps.map((step) => (
           <StepperItem key={step.value} value={step.value}>
             <StepperTrigger>
-              <StepperIndicator>{index + 1}</StepperIndicator>
+              <StepperIndicator />
             </StepperTrigger>
             <StepperSeparator />
           </StepperItem>

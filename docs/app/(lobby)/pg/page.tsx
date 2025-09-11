@@ -28,7 +28,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import StepperControlledDemo from "@/registry/default/examples/stepper-controlled-demo";
+import StepperDemo from "@/registry/default/examples/stepper-demo";
 import StepperVerticalDemo from "@/registry/default/examples/stepper-vertical-demo";
 import {
   Combobox,
@@ -43,6 +43,7 @@ import {
 export default function PlaygroundPage() {
   return (
     <Shell>
+      <StepperDemo />
       <StepperVerticalDemo />
       <Tabs defaultValue="command">
         <TabsList>
