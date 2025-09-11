@@ -1,0 +1,491 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "diceui",
+  "homepage": "https://diceui.com",
+  "items": [
+    {
+      "name": "checkbox-group",
+      "type": "registry:component",
+      "title": "Checkbox Group",
+      "description": "A group of checkboxes with support for controlled and uncontrolled state.",
+      "files": [
+        {
+          "path": "registry/default/ui/checkbox-group.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "color-picker",
+      "type": "registry:component",
+      "title": "Color Picker",
+      "description": "A color picker component with HSL, RGB, and hex input support.",
+      "files": [
+        {
+          "path": "registry/default/ui/color-picker.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/default/components/visually-hidden-input.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/default/lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "color-swatch",
+      "type": "registry:component",
+      "title": "Color Swatch",
+      "description": "A color swatch component for displaying colors with various sizes and transparency support.",
+      "files": [
+        {
+          "path": "registry/default/ui/color-swatch.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "combobox",
+      "type": "registry:component",
+      "title": "Combobox",
+      "description": "A combobox component with search, filtering, and selection capabilities.",
+      "files": [
+        {
+          "path": "registry/default/ui/combobox.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "editable",
+      "type": "registry:component",
+      "title": "Editable",
+      "description": "An editable text component with inline editing capabilities.",
+      "files": [
+        {
+          "path": "registry/default/ui/editable.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/default/components/visually-hidden-input.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/default/lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "file-upload",
+      "type": "registry:component",
+      "title": "File Upload",
+      "description": "A file upload component with drag and drop support and progress tracking.",
+      "files": [
+        {
+          "path": "registry/default/ui/file-upload.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "input-group",
+      "type": "registry:component",
+      "title": "Input Group",
+      "description": "A group of input components with support for labels and validation.",
+      "files": [
+        {
+          "path": "registry/default/ui/input-group.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "kanban",
+      "type": "registry:component",
+      "title": "Kanban",
+      "description": "A kanban board component with drag and drop functionality.",
+      "files": [
+        {
+          "path": "registry/default/ui/kanban.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/default/lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "kbd",
+      "type": "registry:component",
+      "title": "Keyboard Key",
+      "description": "A component for displaying keyboard shortcuts and key combinations.",
+      "files": [
+        {
+          "path": "registry/default/ui/kbd.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "listbox",
+      "type": "registry:component",
+      "title": "Listbox",
+      "description": "A listbox component for selecting items from a list with keyboard navigation.",
+      "files": [
+        {
+          "path": "registry/default/ui/listbox.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "masonry",
+      "type": "registry:component",
+      "title": "Masonry",
+      "description": "A masonry layout component for creating Pinterest-style grids.",
+      "files": [
+        {
+          "path": "registry/default/ui/masonry.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/default/lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "media-player",
+      "type": "registry:component",
+      "title": "Media Player",
+      "description": "A media player component with controls for audio and video playback.",
+      "files": [
+        {
+          "path": "registry/default/ui/media-player.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/default/lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "mention",
+      "type": "registry:component",
+      "title": "Mention",
+      "description": "A mention component for @mentions in text input with autocomplete.",
+      "files": [
+        {
+          "path": "registry/default/ui/mention.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "relative-time-card",
+      "type": "registry:component",
+      "title": "Relative Time Card",
+      "description": "A card component that displays relative time with hover details.",
+      "files": [
+        {
+          "path": "registry/default/ui/relative-time-card.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "scroller",
+      "type": "registry:component",
+      "title": "Scroller",
+      "description": "A custom scrollbar component with smooth scrolling and navigation indicators.",
+      "files": [
+        {
+          "path": "registry/default/ui/scroller.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/default/lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "sortable",
+      "type": "registry:component",
+      "title": "Sortable",
+      "description": "A sortable list component with drag and drop reordering.",
+      "files": [
+        {
+          "path": "registry/default/ui/sortable.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/default/lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "stepper",
+      "type": "registry:component",
+      "title": "Stepper",
+      "description": "A stepper component for multi-step forms and workflows.",
+      "files": [
+        {
+          "path": "registry/default/ui/stepper.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/default/lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "tags-input",
+      "type": "registry:component",
+      "title": "Tags Input",
+      "description": "A tags input component for adding and removing tags with keyboard support.",
+      "files": [
+        {
+          "path": "registry/default/ui/tags-input.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "checkbox-group-demo",
+      "type": "registry:component",
+      "title": "Checkbox Group Demo",
+      "description": "Example showing how to use the checkbox group component.",
+      "files": [
+        {
+          "path": "registry/default/examples/checkbox-group-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "color-picker-demo",
+      "type": "registry:component",
+      "title": "Color Picker Demo",
+      "description": "Example showing how to use the color picker component.",
+      "files": [
+        {
+          "path": "registry/default/examples/color-picker-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "combobox-demo",
+      "type": "registry:component",
+      "title": "Combobox Demo",
+      "description": "Example showing how to use the combobox component.",
+      "files": [
+        {
+          "path": "registry/default/examples/combobox-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "editable-demo",
+      "type": "registry:component",
+      "title": "Editable Demo",
+      "description": "Example showing how to use the editable component.",
+      "files": [
+        {
+          "path": "registry/default/examples/editable-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "file-upload-demo",
+      "type": "registry:component",
+      "title": "File Upload Demo",
+      "description": "Example showing how to use the file upload component.",
+      "files": [
+        {
+          "path": "registry/default/examples/file-upload-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "input-group-demo",
+      "type": "registry:component",
+      "title": "Input Group Demo",
+      "description": "Example showing how to use the input group component.",
+      "files": [
+        {
+          "path": "registry/default/examples/input-group-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "kanban-demo",
+      "type": "registry:component",
+      "title": "Kanban Demo",
+      "description": "Example showing how to use the kanban component.",
+      "files": [
+        {
+          "path": "registry/default/examples/kanban-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "kbd-demo",
+      "type": "registry:component",
+      "title": "Keyboard Key Demo",
+      "description": "Example showing how to use the kbd component.",
+      "files": [
+        {
+          "path": "registry/default/examples/kbd-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "listbox-demo",
+      "type": "registry:component",
+      "title": "Listbox Demo",
+      "description": "Example showing how to use the listbox component.",
+      "files": [
+        {
+          "path": "registry/default/examples/listbox-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "masonry-demo",
+      "type": "registry:component",
+      "title": "Masonry Demo",
+      "description": "Example showing how to use the masonry component.",
+      "files": [
+        {
+          "path": "registry/default/examples/masonry-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "media-player-demo",
+      "type": "registry:component",
+      "title": "Media Player Demo",
+      "description": "Example showing how to use the media player component.",
+      "files": [
+        {
+          "path": "registry/default/examples/media-player-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "mention-demo",
+      "type": "registry:component",
+      "title": "Mention Demo",
+      "description": "Example showing how to use the mention component.",
+      "files": [
+        {
+          "path": "registry/default/examples/mention-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "relative-time-card-demo",
+      "type": "registry:component",
+      "title": "Relative Time Card Demo",
+      "description": "Example showing how to use the relative time card component.",
+      "files": [
+        {
+          "path": "registry/default/examples/relative-time-card-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "scroller-demo",
+      "type": "registry:component",
+      "title": "Scroller Demo",
+      "description": "Example showing how to use the scroller component.",
+      "files": [
+        {
+          "path": "registry/default/examples/scroller-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "sortable-demo",
+      "type": "registry:component",
+      "title": "Sortable Demo",
+      "description": "Example showing how to use the sortable component.",
+      "files": [
+        {
+          "path": "registry/default/examples/sortable-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "stepper-demo",
+      "type": "registry:component",
+      "title": "Stepper Demo",
+      "description": "Example showing how to use the stepper component.",
+      "files": [
+        {
+          "path": "registry/default/examples/stepper-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "tags-input-demo",
+      "type": "registry:component",
+      "title": "Tags Input Demo",
+      "description": "Example showing how to use the tags input component.",
+      "files": [
+        {
+          "path": "registry/default/examples/tags-input-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "utils",
+      "type": "registry:lib",
+      "title": "Utils",
+      "description": "Utility functions for class name composition and other common tasks.",
+      "files": [
+        {
+          "path": "registry/default/lib/utils.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "compose-refs",
+      "type": "registry:lib",
+      "title": "Compose Refs",
+      "description": "Utility for composing multiple React refs into a single ref.",
+      "files": [
+        {
+          "path": "registry/default/lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    }
+  ]
+}
