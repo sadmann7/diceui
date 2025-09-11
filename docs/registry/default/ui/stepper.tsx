@@ -303,13 +303,21 @@ function StepperRoot(props: StepperRootProps) {
   const {
     value,
     defaultValue,
-    activationMode = "automatic",
-    orientation = "horizontal",
-    disabled = false,
-    loop = false,
-    nonInteractive = false,
     onValueChange,
     onValueComplete,
+    onValueAdd,
+    onValueRemove,
+    id: idProp,
+    dir: dirProp,
+    orientation = "horizontal",
+    activationMode = "automatic",
+    asChild,
+    disabled = false,
+    nonInteractive = false,
+    loop = false,
+    label,
+    className,
+    children,
     ...rootProps
   } = props;
 
@@ -329,38 +337,6 @@ function StepperRoot(props: StepperRootProps) {
       store.setState("value", value);
     }
   }, [value, store]);
-
-  return (
-    <StoreContext.Provider value={store}>
-      <StepperRootImpl
-        {...rootProps}
-        activationMode={activationMode}
-        orientation={orientation}
-        disabled={disabled}
-        nonInteractive={nonInteractive}
-        loop={loop}
-      />
-    </StoreContext.Provider>
-  );
-}
-
-function StepperRootImpl(props: StepperRootProps) {
-  const {
-    onValueAdd,
-    onValueRemove,
-    id: idProp,
-    dir: dirProp,
-    orientation = "horizontal",
-    activationMode = "automatic",
-    asChild,
-    disabled = false,
-    nonInteractive = false,
-    loop = false,
-    label,
-    className,
-    children,
-    ...rootProps
-  } = props;
 
   const dir = useDirection(dirProp);
 
@@ -397,25 +373,27 @@ function StepperRootImpl(props: StepperRootProps) {
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
-    <StepperContext.Provider value={contextValue}>
-      <RootPrimitive
-        id={rootId}
-        aria-labelledby={label ? labelId : undefined}
-        data-disabled={disabled ? "" : undefined}
-        data-orientation={orientation}
-        data-slot="stepper"
-        dir={dir}
-        {...rootProps}
-        className={cn("flex flex-col gap-6", className)}
-      >
-        {label && (
-          <span id={labelId} className="sr-only">
-            {label}
-          </span>
-        )}
-        {children}
-      </RootPrimitive>
-    </StepperContext.Provider>
+    <StoreContext.Provider value={store}>
+      <StepperContext.Provider value={contextValue}>
+        <RootPrimitive
+          id={rootId}
+          aria-labelledby={label ? labelId : undefined}
+          data-disabled={disabled ? "" : undefined}
+          data-orientation={orientation}
+          data-slot="stepper"
+          dir={dir}
+          {...rootProps}
+          className={cn("flex flex-col gap-6", className)}
+        >
+          {label && (
+            <span id={labelId} className="sr-only">
+              {label}
+            </span>
+          )}
+          {children}
+        </RootPrimitive>
+      </StepperContext.Provider>
+    </StoreContext.Provider>
   );
 }
 
