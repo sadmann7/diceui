@@ -2,34 +2,14 @@
 
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-import type * as React from "react";
+import * as React from "react";
 import { cn } from "@/lib/utils";
 
-interface DivProps extends React.ComponentProps<"div"> {
-  asChild?: boolean;
-}
-
-const stackVariants = cva("flex", {
+const stackVariants = cva("flex items-center", {
   variants: {
-    direction: {
-      horizontal: "flex-row",
-      vertical: "flex-col",
-    },
-    align: {
-      start: "",
-      center: "",
-      end: "",
-    },
-    spacing: {
-      xs: "gap-1",
-      sm: "gap-2",
-      md: "gap-3",
-      lg: "gap-4",
-      xl: "gap-6",
-    },
-    overlap: {
-      true: "",
-      false: "",
+    orientation: {
+      horizontal: "-space-x-1 flex-row",
+      vertical: "-space-y-1 flex-col",
     },
     reverse: {
       true: "",
@@ -37,142 +17,38 @@ const stackVariants = cva("flex", {
     },
   },
   compoundVariants: [
-    // alignment
     {
-      direction: "horizontal",
-      align: "start",
-      className: "items-start",
-    },
-    {
-      direction: "horizontal",
-      align: "center",
-      className: "items-center",
-    },
-    {
-      direction: "horizontal",
-      align: "end",
-      className: "items-end",
-    },
-    {
-      direction: "vertical",
-      align: "start",
-      className: "justify-start",
-    },
-    {
-      direction: "vertical",
-      align: "center",
-      className: "justify-center",
-    },
-    {
-      direction: "vertical",
-      align: "end",
-      className: "justify-end",
-    },
-    {
-      direction: "horizontal",
+      orientation: "horizontal",
       reverse: true,
       className: "flex-row-reverse",
     },
     {
-      direction: "vertical",
+      orientation: "vertical",
       reverse: true,
       className: "flex-col-reverse",
     },
-    {
-      direction: "horizontal",
-      overlap: true,
-      spacing: "xs",
-      className: "-space-x-1",
-    },
-    {
-      direction: "horizontal",
-      overlap: true,
-      spacing: "sm",
-      className: "-space-x-2",
-    },
-    {
-      direction: "horizontal",
-      overlap: true,
-      spacing: "md",
-      className: "-space-x-3",
-    },
-    {
-      direction: "horizontal",
-      overlap: true,
-      spacing: "lg",
-      className: "-space-x-4",
-    },
-    {
-      direction: "horizontal",
-      overlap: true,
-      spacing: "xl",
-      className: "-space-x-6",
-    },
-    {
-      direction: "vertical",
-      overlap: true,
-      spacing: "xs",
-      className: "-space-y-1",
-    },
-    {
-      direction: "vertical",
-      overlap: true,
-      spacing: "sm",
-      className: "-space-y-2",
-    },
-    {
-      direction: "vertical",
-      overlap: true,
-      spacing: "md",
-      className: "-space-y-3",
-    },
-    {
-      direction: "vertical",
-      overlap: true,
-      spacing: "lg",
-      className: "-space-y-4",
-    },
-    {
-      direction: "vertical",
-      overlap: true,
-      spacing: "xl",
-      className: "-space-y-6",
-    },
-    {
-      direction: "horizontal",
-      reverse: true,
-      overlap: true,
-      className: "space-x-reverse",
-    },
-    {
-      direction: "vertical",
-      reverse: true,
-      overlap: true,
-      className: "space-y-reverse",
-    },
-    {
-      overlap: true,
-      className: "gap-0",
-    },
   ],
   defaultVariants: {
-    direction: "horizontal",
-    align: "center",
-    spacing: "sm",
-    overlap: false,
+    orientation: "horizontal",
     reverse: false,
   },
 });
 
-function StackRoot(props: DivProps & VariantProps<typeof stackVariants>) {
+interface StackProps
+  extends React.ComponentProps<"div">,
+    VariantProps<typeof stackVariants> {
+  size?: number;
+  asChild?: boolean;
+}
+
+function Stack(props: StackProps) {
   const {
-    direction,
-    align,
-    spacing,
-    overlap,
-    reverse,
+    orientation,
+    size = 40,
     asChild,
+    reverse,
     className,
+    children,
     ...rootProps
   } = props;
 
@@ -180,38 +56,53 @@ function StackRoot(props: DivProps & VariantProps<typeof stackVariants>) {
 
   return (
     <RootPrimitive
-      data-direction={direction}
-      data-overlap={overlap ? "" : undefined}
+      data-orientation={orientation}
       data-slot="stack"
       {...rootProps}
-      className={cn(
-        stackVariants({ direction, align, spacing, overlap, reverse }),
-        className,
-      )}
-    />
+      className={cn(stackVariants({ orientation, reverse }), className)}
+    >
+      {React.Children.map(children, (child, index) => {
+        if (!React.isValidElement(child)) return null;
+
+        return (
+          <StackItem key={index} child={child} index={index} size={size} />
+        );
+      })}
+    </RootPrimitive>
   );
 }
 
-function StackItem(props: DivProps) {
-  const { asChild, className, children, ...itemProps } = props;
+interface StackItemProps extends React.ComponentProps<"div"> {
+  child: React.ReactElement;
+  index: number;
+  size: number;
+}
 
-  const ItemPrimitive = asChild ? Slot : "div";
+function StackItem(props: StackItemProps) {
+  const { child, index, size, style, ...itemProps } = props;
+
+  const composedStyle = React.useMemo(
+    () => ({
+      width: size,
+      height: size,
+      maskImage: index
+        ? `radial-gradient(circle ${size / 2}px at -${size / 4 + size / 10}px 50%, transparent 99%, white 100%)`
+        : "",
+      ...style,
+    }),
+    [size, index, style],
+  );
 
   return (
-    <ItemPrimitive
+    <Slot
       data-slot="stack-item"
+      className="size-full shrink-0 overflow-hidden rounded-full"
+      style={composedStyle}
       {...itemProps}
-      className={cn("relative shrink-0 [&:not(:first-child)]:z-[1]", className)}
     >
-      {children}
-    </ItemPrimitive>
+      {child}
+    </Slot>
   );
 }
 
-export {
-  StackRoot as Root,
-  StackItem as Item,
-  //
-  StackRoot as Stack,
-  StackItem,
-};
+export { Stack };

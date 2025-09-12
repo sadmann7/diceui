@@ -1,55 +1,47 @@
-import * as Stack from "@/registry/default/ui/stack";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
+import { Stack } from "@/registry/default/ui/stack";
+
+const avatars = [
+  { name: "John Doe", initials: "JD", color: "bg-blue-500" },
+  { name: "Jane Smith", initials: "JS", color: "bg-green-500" },
+  { name: "Bob Wilson", initials: "BW", color: "bg-red-500" },
+  { name: "Alice Brown", initials: "AB", color: "bg-purple-500" },
+  { name: "Charlie Davis", initials: "CD", color: "bg-yellow-500" },
+  { name: "Diana Miller", initials: "DM", color: "bg-pink-500" },
+];
 
 export default function StackDemo() {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Basic Stack</h3>
-        <Stack.Root spacing="md">
-          <Stack.Item>
-            <div className="size-8 rounded bg-blue-500" />
-          </Stack.Item>
-          <Stack.Item>
-            <div className="size-8 rounded bg-green-500" />
-          </Stack.Item>
-          <Stack.Item>
-            <div className="size-8 rounded bg-red-500" />
-          </Stack.Item>
-          <Stack.Item>
-            <div className="size-8 rounded bg-yellow-500" />
-          </Stack.Item>
-        </Stack.Root>
+        <h3 className="font-medium text-sm">Avatar Stack</h3>
+        <Stack size={40}>
+          {avatars.slice(0, 4).map((avatar, index) => (
+            <Avatar key={index}>
+              <AvatarFallback className={cn(avatar.color)}>
+                {avatar.initials}
+              </AvatarFallback>
+            </Avatar>
+          ))}
+        </Stack>
       </div>
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Vertical Stack</h3>
-        <Stack.Root direction="vertical" spacing="sm">
-          <Stack.Item>
-            <div className="h-6 w-20 rounded bg-purple-500" />
-          </Stack.Item>
-          <Stack.Item>
-            <div className="h-6 w-16 rounded bg-pink-500" />
-          </Stack.Item>
-          <Stack.Item>
-            <div className="h-6 w-24 rounded bg-indigo-500" />
-          </Stack.Item>
-        </Stack.Root>
-      </div>
-      <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Overlapping Stack</h3>
-        <Stack.Root overlap spacing="sm">
-          <Stack.Item>
-            <div className="size-10 rounded-full border-2 border-background bg-blue-500" />
-          </Stack.Item>
-          <Stack.Item>
-            <div className="size-10 rounded-full border-2 border-background bg-green-500" />
-          </Stack.Item>
-          <Stack.Item>
-            <div className="size-10 rounded-full border-2 border-background bg-red-500" />
-          </Stack.Item>
-          <Stack.Item>
-            <div className="size-10 rounded-full border-2 border-background bg-yellow-500" />
-          </Stack.Item>
-        </Stack.Root>
+        <h3 className="font-medium text-sm">Avatar Stack with Count</h3>
+        <Stack size={40}>
+          {avatars.slice(0, 3).map((avatar, index) => (
+            <Avatar key={index}>
+              <AvatarFallback className={cn(avatar.color)}>
+                {avatar.initials}
+              </AvatarFallback>
+            </Avatar>
+          ))}
+          <Avatar className="size-full rounded-full bg-muted">
+            <AvatarFallback className="rounded-full font-medium text-muted-foreground text-xs">
+              +3
+            </AvatarFallback>
+          </Avatar>
+        </Stack>
       </div>
     </div>
   );
