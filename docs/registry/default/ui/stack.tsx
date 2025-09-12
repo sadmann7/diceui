@@ -36,6 +36,7 @@ interface StackProps
   extends React.ComponentProps<"div">,
     VariantProps<typeof stackVariants> {
   size?: number;
+  max?: number;
   asChild?: boolean;
 }
 
@@ -43,12 +44,23 @@ function Stack(props: StackProps) {
   const {
     orientation = "horizontal",
     size = 40,
+    max,
     asChild,
     reverse,
     className,
     children,
     ...rootProps
   } = props;
+
+  const childrenArray = React.Children.toArray(children).filter(
+    React.isValidElement,
+  );
+  const totalItems = childrenArray.length;
+  const shouldTruncate = max && totalItems > max;
+  const visibleItems = shouldTruncate
+    ? childrenArray.slice(0, max - 1)
+    : childrenArray;
+  const overflowCount = shouldTruncate ? totalItems - (max - 1) : 0;
 
   const RootPrimitive = asChild ? Slot : "div";
 
@@ -59,19 +71,28 @@ function Stack(props: StackProps) {
       {...rootProps}
       className={cn(stackVariants({ orientation, reverse }), className)}
     >
-      {React.Children.map(children, (child, index) => {
-        if (!React.isValidElement(child)) return null;
-
-        return (
-          <StackItem
-            key={index}
-            child={child}
-            index={index}
-            size={size}
-            orientation={orientation}
-          />
-        );
-      })}
+      {visibleItems.map((child, index: number) => (
+        <StackItem
+          key={index}
+          child={child}
+          index={index}
+          size={size}
+          orientation={orientation}
+        />
+      ))}
+      {shouldTruncate && (
+        <StackItem
+          key="overflow"
+          child={
+            <div className="flex size-full items-center justify-center rounded-full bg-muted font-medium text-muted-foreground text-xs">
+              +{overflowCount}
+            </div>
+          }
+          index={visibleItems.length}
+          size={size}
+          orientation={orientation}
+        />
+      )}
     </RootPrimitive>
   );
 }

@@ -49,19 +49,16 @@ export default function StackDemo() {
         </Stack>
       </div>
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Avatar Stack with Count</h3>
-        <Stack>
-          {avatars.slice(0, 3).map((avatar, index) => (
+        <h3 className="font-medium text-sm">
+          Avatar Stack with Auto Truncation (max 4)
+        </h3>
+        <Stack dir="ltr" max={4}>
+          {avatars.map((avatar, index) => (
             <Avatar key={index}>
               <AvatarImage src={avatar.src} />
               <AvatarFallback>{avatar.fallback}</AvatarFallback>
             </Avatar>
           ))}
-          <Avatar className="size-full rounded-full bg-muted">
-            <AvatarFallback className="rounded-full font-medium text-muted-foreground text-xs">
-              +3
-            </AvatarFallback>
-          </Avatar>
         </Stack>
       </div>
     </div>
