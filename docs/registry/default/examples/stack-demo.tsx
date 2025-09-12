@@ -16,7 +16,7 @@ export default function StackDemo() {
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-3">
         <h3 className="font-medium text-sm">Avatar Stack</h3>
-        <Stack size={40} orientation="vertical">
+        <Stack size={40}>
           {avatars.slice(0, 4).map((avatar, index) => (
             <Avatar key={index}>
               <AvatarFallback className={cn(avatar.color)}>
