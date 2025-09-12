@@ -3,7 +3,7 @@ export type SiteConfig = typeof siteConfig;
 export const siteConfig = {
   name: "Dice UI",
   description:
-    "A collection of composable, unstyled UI primitives for building accessible web applications.",
+    "Accessible shadcn/ui components built with React, TypeScript, and Tailwind CSS. Copy-paste ready, and customizable.",
   url: "https://diceui.com",
   ogImage: "https://diceui.com/opengraph-image.png",
   links: {
