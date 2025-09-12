@@ -58,47 +58,6 @@ export default function StackAvatarDemo() {
           </Stack.Item>
         </Stack.Root>
       </div>
-
-      <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Large Avatar Stack</h3>
-        <Stack.Root overlap spacing="md">
-          {avatars.map((avatar, index) => (
-            <Stack.Item key={index}>
-              <Avatar
-                className={cn(
-                  "h-12 w-12 border-2 border-background",
-                  avatar.color,
-                )}
-              >
-                <AvatarFallback
-                  className={cn("font-medium text-white", avatar.color)}
-                >
-                  {avatar.initials}
-                </AvatarFallback>
-              </Avatar>
-            </Stack.Item>
-          ))}
-        </Stack.Root>
-      </div>
-
-      <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Reversed Avatar Stack</h3>
-        <Stack.Root overlap spacing="sm" reverse>
-          {avatars.slice(0, 4).map((avatar, index) => (
-            <Stack.Item key={index}>
-              <Avatar
-                className={cn("border-2 border-background", avatar.color)}
-              >
-                <AvatarFallback
-                  className={cn("font-medium text-sm text-white", avatar.color)}
-                >
-                  {avatar.initials}
-                </AvatarFallback>
-              </Avatar>
-            </Stack.Item>
-          ))}
-        </Stack.Root>
-      </div>
     </div>
   );
 }
