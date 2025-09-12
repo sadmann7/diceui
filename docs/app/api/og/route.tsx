@@ -4,11 +4,6 @@ import { loadFonts } from "@/lib/fonts";
 
 export const runtime = "edge";
 
-export const size = {
-  width: 1200,
-  height: 630,
-};
-
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -45,7 +40,8 @@ export async function GET(request: Request) {
         </div>
       </div>,
       {
-        ...size,
+        width: 1200,
+        height: 630,
         fonts,
       },
     );
