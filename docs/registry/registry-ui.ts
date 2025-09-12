@@ -248,17 +248,6 @@ export const ui: Registry["items"] = [
     ],
   },
   {
-    name: "stack",
-    type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
-    files: [
-      {
-        path: "ui/stack.tsx",
-        type: "registry:ui",
-      },
-    ],
-  },
-  {
     name: "stepper",
     type: "registry:ui",
     dependencies: [
