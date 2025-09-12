@@ -1,5 +1,3 @@
-"use client";
-
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
@@ -79,7 +77,7 @@ function Stack(props: StackProps) {
 }
 
 interface StackItemProps
-  extends React.ComponentProps<"div">,
+  extends React.ComponentProps<typeof Slot>,
     Pick<StackProps, "orientation"> {
   child: React.ReactElement;
   index: number;
@@ -92,12 +90,12 @@ function StackItem(props: StackItemProps) {
     index,
     size,
     orientation,
-    style: styleProp,
     className,
+    style: styleProp,
     ...itemProps
   } = props;
 
-  const style = React.useMemo(() => {
+  const style = React.useMemo<React.CSSProperties>(() => {
     let maskImage = "";
     if (index > 0) {
       const maskRadius = size / 2;

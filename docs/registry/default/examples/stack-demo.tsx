@@ -16,7 +16,7 @@ export default function StackDemo() {
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-3">
         <h3 className="font-medium text-sm">Avatar Stack</h3>
-        <Stack size={40}>
+        <Stack>
           {avatars.slice(0, 4).map((avatar, index) => (
             <Avatar key={index}>
               <AvatarFallback className={cn(avatar.color)}>
@@ -28,7 +28,7 @@ export default function StackDemo() {
       </div>
       <div className="flex flex-col gap-3">
         <h3 className="font-medium text-sm">Avatar Stack with Count</h3>
-        <Stack size={40}>
+        <Stack>
           {avatars.slice(0, 3).map((avatar, index) => (
             <Avatar key={index}>
               <AvatarFallback className={cn(avatar.color)}>
