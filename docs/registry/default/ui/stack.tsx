@@ -120,7 +120,7 @@ function StackItem(props: StackItemProps) {
     <Slot
       data-slot="stack-item"
       className={cn(
-        "size-full shrink-0 overflow-hidden rounded-full",
+        "size-full shrink-0 overflow-hidden rounded-full [&_img]:size-full [&_img]:object-cover",
         className,
       )}
       style={style}

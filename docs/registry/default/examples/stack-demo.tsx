@@ -1,14 +1,37 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { cn } from "@/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Stack } from "@/registry/default/ui/stack";
 
 const avatars = [
-  { name: "John Doe", initials: "JD", color: "bg-blue-500" },
-  { name: "Jane Smith", initials: "JS", color: "bg-green-500" },
-  { name: "Bob Wilson", initials: "BW", color: "bg-red-500" },
-  { name: "Alice Brown", initials: "AB", color: "bg-purple-500" },
-  { name: "Charlie Davis", initials: "CD", color: "bg-yellow-500" },
-  { name: "Diana Miller", initials: "DM", color: "bg-pink-500" },
+  {
+    name: "shadcn",
+    src: "https://github.com/shadcn.png",
+    fallback: "CN",
+  },
+  {
+    name: "Ethan Niser",
+    src: "https://github.com/ethanniser.png",
+    fallback: "EN",
+  },
+  {
+    name: "Guillermo Rauch",
+    src: "https://github.com/rauchg.png",
+    fallback: "GR",
+  },
+  {
+    name: "Lee Robinson",
+    src: "https://github.com/leerob.png",
+    fallback: "LR",
+  },
+  {
+    name: "Evil Rabbit",
+    src: "https://github.com/evilrabbit.png",
+    fallback: "ER",
+  },
+  {
+    name: "Tim Neutkens",
+    src: "https://github.com/timneutkens.png",
+    fallback: "TN",
+  },
 ];
 
 export default function StackDemo() {
@@ -19,9 +42,8 @@ export default function StackDemo() {
         <Stack>
           {avatars.slice(0, 4).map((avatar, index) => (
             <Avatar key={index}>
-              <AvatarFallback className={cn(avatar.color)}>
-                {avatar.initials}
-              </AvatarFallback>
+              <AvatarImage src={avatar.src} />
+              <AvatarFallback>{avatar.fallback}</AvatarFallback>
             </Avatar>
           ))}
         </Stack>
@@ -31,9 +53,8 @@ export default function StackDemo() {
         <Stack>
           {avatars.slice(0, 3).map((avatar, index) => (
             <Avatar key={index}>
-              <AvatarFallback className={cn(avatar.color)}>
-                {avatar.initials}
-              </AvatarFallback>
+              <AvatarImage src={avatar.src} />
+              <AvatarFallback>{avatar.fallback}</AvatarFallback>
             </Avatar>
           ))}
           <Avatar className="size-full rounded-full bg-muted">
