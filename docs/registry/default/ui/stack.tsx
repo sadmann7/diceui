@@ -43,7 +43,7 @@ interface StackProps
 
 function Stack(props: StackProps) {
   const {
-    orientation,
+    orientation = "horizontal",
     size = 40,
     asChild,
     reverse,
@@ -65,39 +65,67 @@ function Stack(props: StackProps) {
         if (!React.isValidElement(child)) return null;
 
         return (
-          <StackItem key={index} child={child} index={index} size={size} />
+          <StackItem
+            key={index}
+            child={child}
+            index={index}
+            size={size}
+            orientation={orientation}
+          />
         );
       })}
     </RootPrimitive>
   );
 }
 
-interface StackItemProps extends React.ComponentProps<"div"> {
+interface StackItemProps
+  extends React.ComponentProps<"div">,
+    Pick<StackProps, "orientation"> {
   child: React.ReactElement;
   index: number;
   size: number;
 }
 
 function StackItem(props: StackItemProps) {
-  const { child, index, size, style, ...itemProps } = props;
+  const {
+    child,
+    index,
+    size,
+    orientation,
+    style: styleProp,
+    className,
+    ...itemProps
+  } = props;
 
-  const composedStyle = React.useMemo(
-    () => ({
+  const style = React.useMemo(() => {
+    let maskImage = "";
+    if (index > 0) {
+      const maskRadius = size / 2;
+      const maskOffset = size / 4 + size / 10;
+
+      if (orientation === "vertical") {
+        maskImage = `radial-gradient(circle ${maskRadius}px at 50% -${maskOffset}px, transparent 99%, white 100%)`;
+      } else {
+        maskImage = `radial-gradient(circle ${maskRadius}px at -${maskOffset}px 50%, transparent 99%, white 100%)`;
+      }
+    }
+
+    return {
       width: size,
       height: size,
-      maskImage: index
-        ? `radial-gradient(circle ${size / 2}px at -${size / 4 + size / 10}px 50%, transparent 99%, white 100%)`
-        : "",
-      ...style,
-    }),
-    [size, index, style],
-  );
+      maskImage,
+      ...styleProp,
+    };
+  }, [size, index, orientation, styleProp]);
 
   return (
     <Slot
       data-slot="stack-item"
-      className="size-full shrink-0 overflow-hidden rounded-full"
-      style={composedStyle}
+      className={cn(
+        "size-full shrink-0 overflow-hidden rounded-full",
+        className,
+      )}
+      style={style}
       {...itemProps}
     >
       {child}
