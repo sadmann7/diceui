@@ -28,8 +28,9 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import StepperDemo from "@/registry/default/examples/stepper-demo";
-import StepperVerticalDemo from "@/registry/default/examples/stepper-vertical-demo";
+import StackAvatarDemo from "@/registry/default/examples/stack-avatar-demo";
+import StackBadgesDemo from "@/registry/default/examples/stack-badges-demo";
+import StackDemo from "@/registry/default/examples/stack-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -43,8 +44,9 @@ import {
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <StepperDemo />
-      <StepperVerticalDemo />
+      {/* <StackDemo /> */}
+      <StackAvatarDemo />
+      {/* <StackBadgesDemo /> */}
       <Tabs defaultValue="command">
         <TabsList>
           <TabsTrigger value="stepper">Stepper</TabsTrigger>
