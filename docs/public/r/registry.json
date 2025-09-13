@@ -248,6 +248,18 @@
       ]
     },
     {
+      "name": "stack",
+      "type": "registry:component",
+      "title": "Stack",
+      "description": "A stack component for displaying overlapping elements with various orientations and directions.",
+      "files": [
+        {
+          "path": "registry/default/ui/stack.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "tags-input",
       "type": "registry:component",
       "title": "Tags Input",
@@ -447,6 +459,54 @@
       "files": [
         {
           "path": "registry/default/examples/stepper-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "stack-demo",
+      "type": "registry:component",
+      "title": "Stack Demo",
+      "description": "Example showing how to use the stack component.",
+      "files": [
+        {
+          "path": "registry/default/examples/stack-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "stack-icons-demo",
+      "type": "registry:component",
+      "title": "Stack Icons Demo",
+      "description": "Example showing how to use the stack component with icons.",
+      "files": [
+        {
+          "path": "registry/default/examples/stack-icons-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "stack-rtl-demo",
+      "type": "registry:component",
+      "title": "Stack RTL Demo",
+      "description": "Example showing how to use the stack component with RTL direction.",
+      "files": [
+        {
+          "path": "registry/default/examples/stack-rtl-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "stack-truncation-demo",
+      "type": "registry:component",
+      "title": "Stack Truncation Demo",
+      "description": "Example showing how to use the stack component with truncation.",
+      "files": [
+        {
+          "path": "registry/default/examples/stack-truncation-demo.tsx",
           "type": "registry:example"
         }
       ]

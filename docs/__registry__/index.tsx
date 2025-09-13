@@ -301,6 +301,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "stack": {
+      name: "stack",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/ui/stack.tsx",
+        type: "registry:ui",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/stack.tsx")),
+      source: "",
+      chunks: []
+    },
     "tags-input": {
       name: "tags-input",
       description: "",
@@ -1309,48 +1323,6 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "tags-input-demo": {
-      name: "tags-input-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: undefined,
-      files: [{
-        path: "registry/default/examples/tags-input-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/tags-input-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "tags-input-editable-demo": {
-      name: "tags-input-editable-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["button"],
-      files: [{
-        path: "registry/default/examples/tags-input-editable-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/tags-input-editable-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "tags-input-sortable-demo": {
-      name: "tags-input-sortable-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["button"],
-      files: [{
-        path: "registry/default/examples/tags-input-sortable-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/tags-input-sortable-demo.tsx")),
-      source: "",
-      chunks: []
-    },
     "stepper-demo": {
       name: "stepper-demo",
       description: "",
@@ -1404,6 +1376,104 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/stepper-vertical-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "stack-demo": {
+      name: "stack-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["avatar"],
+      files: [{
+        path: "registry/default/examples/stack-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/stack-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "stack-truncation-demo": {
+      name: "stack-truncation-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["avatar"],
+      files: [{
+        path: "registry/default/examples/stack-truncation-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/stack-truncation-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "stack-rtl-demo": {
+      name: "stack-rtl-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["avatar"],
+      files: [{
+        path: "registry/default/examples/stack-rtl-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/stack-rtl-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "stack-icons-demo": {
+      name: "stack-icons-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/examples/stack-icons-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/stack-icons-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "tags-input-demo": {
+      name: "tags-input-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/examples/tags-input-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/tags-input-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "tags-input-editable-demo": {
+      name: "tags-input-editable-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button"],
+      files: [{
+        path: "registry/default/examples/tags-input-editable-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/tags-input-editable-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "tags-input-sortable-demo": {
+      name: "tags-input-sortable-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button"],
+      files: [{
+        path: "registry/default/examples/tags-input-sortable-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/tags-input-sortable-demo.tsx")),
       source: "",
       chunks: []
     },

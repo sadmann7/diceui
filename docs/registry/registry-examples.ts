@@ -851,49 +851,6 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "tags-input-demo",
-    type: "registry:example",
-    dependencies: ["@diceui/tags-input", "lucide-react"],
-    files: [
-      {
-        path: "examples/tags-input-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "tags-input-editable-demo",
-    type: "registry:example",
-    dependencies: ["@diceui/tags-input", "lucide-react"],
-    registryDependencies: ["button"],
-    files: [
-      {
-        path: "examples/tags-input-editable-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "tags-input-sortable-demo",
-    type: "registry:example",
-    dependencies: [
-      "@diceui/tags-input",
-      "@dnd-kit/core",
-      "@dnd-kit/modifiers",
-      "@dnd-kit/sortable",
-      "@dnd-kit/utilities",
-      "@radix-ui/react-slot",
-      "lucide-react",
-    ],
-    registryDependencies: ["button"],
-    files: [
-      {
-        path: "examples/tags-input-sortable-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
     name: "stepper-demo",
     type: "registry:example",
     files: [
@@ -932,6 +889,93 @@ export const examples: Registry["items"] = [
     files: [
       {
         path: "examples/stepper-vertical-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "stack-demo",
+    type: "registry:example",
+    registryDependencies: ["avatar"],
+    files: [
+      {
+        path: "examples/stack-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "stack-truncation-demo",
+    type: "registry:example",
+    registryDependencies: ["avatar"],
+    files: [
+      {
+        path: "examples/stack-truncation-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "stack-rtl-demo",
+    type: "registry:example",
+    registryDependencies: ["avatar"],
+    files: [
+      {
+        path: "examples/stack-rtl-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "stack-icons-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    files: [
+      {
+        path: "examples/stack-icons-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "tags-input-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/tags-input", "lucide-react"],
+    files: [
+      {
+        path: "examples/tags-input-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "tags-input-editable-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/tags-input", "lucide-react"],
+    registryDependencies: ["button"],
+    files: [
+      {
+        path: "examples/tags-input-editable-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "tags-input-sortable-demo",
+    type: "registry:example",
+    dependencies: [
+      "@diceui/tags-input",
+      "@dnd-kit/core",
+      "@dnd-kit/modifiers",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+      "@radix-ui/react-slot",
+      "lucide-react",
+    ],
+    registryDependencies: ["button"],
+    files: [
+      {
+        path: "examples/tags-input-sortable-demo.tsx",
         type: "registry:example",
       },
     ],
