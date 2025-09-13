@@ -136,11 +136,11 @@ function StackItem(props: StackItemProps) {
     reverse = false,
     itemCount,
     className,
-    style: styleProp,
+    style,
     ...itemProps
   } = props;
 
-  const style = React.useMemo<React.CSSProperties>(() => {
+  const maskStyle = React.useMemo<React.CSSProperties>(() => {
     let maskImage = "";
 
     let shouldMask = false;
@@ -190,9 +190,8 @@ function StackItem(props: StackItemProps) {
       width: size,
       height: size,
       maskImage,
-      ...styleProp,
     };
-  }, [size, index, orientation, dir, reverse, itemCount, styleProp]);
+  }, [size, index, orientation, dir, reverse, itemCount]);
 
   return (
     <Slot
@@ -201,7 +200,10 @@ function StackItem(props: StackItemProps) {
         "size-full shrink-0 overflow-hidden rounded-full [&_img]:size-full",
         className,
       )}
-      style={style}
+      style={{
+        ...maskStyle,
+        ...style,
+      }}
       {...itemProps}
     >
       {child}
