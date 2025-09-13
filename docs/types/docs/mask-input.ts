@@ -2,13 +2,36 @@ import type * as React from "react";
 import type { CozyProps } from "@/types";
 
 export interface MaskPattern {
-  /** The pattern string where # represents input characters and other characters are literals */
+  /**
+   * The pattern string where # represents input characters and other characters are literals
+   * ```ts
+   * pattern: "###-###-####"
+   * ```
+   */
   pattern: string;
-  /** The placeholder text to show when focused */
+
+  /**
+   * The placeholder text to show when focused
+   * ```ts
+   * placeholder: "(___) ___-____"
+   * ```
+   */
   placeholder: string;
-  /** Transform function to clean/format input before applying mask */
+
+  /**
+   * Transform function to clean/format input before applying mask
+   * ```ts
+   * transform: (value) => value.replace(/[^0-9]/g, "")
+   * ```
+   */
   transform?: (value: string) => string;
-  /** Validation function to check if the unmasked value is valid */
+
+  /**
+   * Validation function to check if the unmasked value is valid
+   * ```ts
+   * validate: (value) => value.length === 10
+   * ```
+   */
   validate?: (value: string) => boolean;
 }
 
@@ -61,7 +84,7 @@ export interface MaskInputProps extends CozyProps<"input"> {
   onValueChange?: (
     maskedValue: string,
     unmaskedValue: string,
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => void;
 
   /** Validation callback */

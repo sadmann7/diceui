@@ -1,0 +1,18 @@
+{
+  "name": "mask-input-custom-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@radix-ui/react-slot"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "path": "examples/mask-input-custom-demo.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Label } from \"@/components/ui/label\";\nimport { MaskInput, type MaskPattern } from \"@/registry/default/ui/mask-input\";\n\n// Custom license plate pattern (e.g., ABC-1234)\nconst licensePattern: MaskPattern = {\n  pattern: \"###-####\",\n  placeholder: \"ABC-1234\",\n  transform: (value) => value.replace(/[^A-Z0-9]/gi, \"\").toUpperCase(),\n  validate: (value) => {\n    const cleaned = value.replace(/[^A-Z0-9]/gi, \"\");\n    return cleaned.length === 7 && /^[A-Z]{3}[0-9]{4}$/.test(cleaned);\n  },\n};\n\n// Custom product code pattern (e.g., PRD-ABC-123)\nconst productCodePattern: MaskPattern = {\n  pattern: \"PRD-###-###\",\n  placeholder: \"PRD-ABC-123\",\n  transform: (value) => value.replace(/[^A-Z0-9]/gi, \"\").toUpperCase(),\n  validate: (value) => {\n    const cleaned = value.replace(/[^A-Z0-9]/gi, \"\");\n    return cleaned.length === 9;\n  },\n};\n\nexport default function MaskInputCustomDemo() {\n  const [licenseValue, setLicenseValue] = React.useState(\"\");\n  const [productCodeValue, setProductCodeValue] = React.useState(\"\");\n\n  return (\n    <div className=\"flex w-full max-w-sm flex-col gap-6\">\n      <div className=\"flex flex-col gap-2\">\n        <Label htmlFor=\"license\">License Plate</Label>\n        <MaskInput\n          id=\"license\"\n          mask={licensePattern}\n          value={licenseValue}\n          onValueChange={setLicenseValue}\n          placeholder=\"ABC-1234\"\n        />\n        <p className=\"text-muted-foreground text-sm\">\n          Enter license plate (3 letters, 4 numbers)\n        </p>\n      </div>\n\n      <div className=\"flex flex-col gap-2\">\n        <Label htmlFor=\"product\">Product Code</Label>\n        <MaskInput\n          id=\"product\"\n          mask={productCodePattern}\n          value={productCodeValue}\n          onValueChange={setProductCodeValue}\n          placeholder=\"PRD-ABC-123\"\n        />\n        <p className=\"text-muted-foreground text-sm\">\n          Enter product code (PRD-XXX-XXX format)\n        </p>\n      </div>\n    </div>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

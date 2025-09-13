@@ -1,0 +1,18 @@
+{
+  "name": "mask-input-patterns-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@radix-ui/react-slot"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "path": "examples/mask-input-patterns-demo.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Label } from \"@/components/ui/label\";\nimport { MaskInput } from \"@/registry/default/ui/mask-input\";\n\nexport default function MaskInputPatternsDemo() {\n  const [values, setValues] = React.useState({\n    phone: \"\",\n    ssn: \"\",\n    date: \"\",\n    time: \"\",\n    creditCard: \"\",\n    zipCode: \"\",\n  });\n\n  const handleValueChange =\n    (field: keyof typeof values) => (maskedValue: string) => {\n      setValues((prev) => ({\n        ...prev,\n        [field]: maskedValue,\n      }));\n    };\n\n  return (\n    <div className=\"grid w-full max-w-2xl grid-cols-1 gap-6 md:grid-cols-2\">\n      <div className=\"space-y-2\">\n        <Label htmlFor=\"phone\">Phone Number</Label>\n        <MaskInput\n          id=\"phone\"\n          mask=\"phone\"\n          value={values.phone}\n          onValueChange={handleValueChange(\"phone\")}\n          placeholder=\"(555) 123-4567\"\n        />\n      </div>\n\n      <div className=\"space-y-2\">\n        <Label htmlFor=\"ssn\">Social Security Number</Label>\n        <MaskInput\n          id=\"ssn\"\n          mask=\"ssn\"\n          value={values.ssn}\n          onValueChange={handleValueChange(\"ssn\")}\n          placeholder=\"123-45-6789\"\n        />\n      </div>\n\n      <div className=\"space-y-2\">\n        <Label htmlFor=\"date\">Date</Label>\n        <MaskInput\n          id=\"date\"\n          mask=\"date\"\n          value={values.date}\n          onValueChange={handleValueChange(\"date\")}\n          placeholder=\"mm/dd/yyyy\"\n        />\n      </div>\n\n      <div className=\"space-y-2\">\n        <Label htmlFor=\"time\">Time</Label>\n        <MaskInput\n          id=\"time\"\n          mask=\"time\"\n          value={values.time}\n          onValueChange={handleValueChange(\"time\")}\n          placeholder=\"hh:mm\"\n        />\n      </div>\n\n      <div className=\"space-y-2\">\n        <Label htmlFor=\"creditCard\">Credit Card</Label>\n        <MaskInput\n          id=\"creditCard\"\n          mask=\"creditCard\"\n          value={values.creditCard}\n          onValueChange={handleValueChange(\"creditCard\")}\n          placeholder=\"1234 5678 9012 3456\"\n        />\n      </div>\n\n      <div className=\"space-y-2\">\n        <Label htmlFor=\"zipCode\">ZIP Code</Label>\n        <MaskInput\n          id=\"zipCode\"\n          mask=\"zipCode\"\n          value={values.zipCode}\n          onValueChange={handleValueChange(\"zipCode\")}\n          placeholder=\"12345\"\n        />\n      </div>\n    </div>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}
