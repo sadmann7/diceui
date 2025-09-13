@@ -73,6 +73,7 @@ function Stack(props: StackProps) {
     ? childrenArray.slice(0, max - 1)
     : childrenArray;
   const overflowCount = shouldTruncate ? itemCount - (max - 1) : 0;
+  const totalRenderedItems = shouldTruncate ? max : itemCount;
 
   const RootPrimitive = asChild ? Slot : "div";
 
@@ -88,7 +89,7 @@ function Stack(props: StackProps) {
           key={index}
           child={child}
           index={index}
-          itemCount={itemCount}
+          itemCount={totalRenderedItems}
           orientation={orientation}
           dir={dir}
           size={size}
@@ -104,7 +105,7 @@ function Stack(props: StackProps) {
             </div>
           }
           index={visibleItems.length}
-          itemCount={itemCount + 1}
+          itemCount={totalRenderedItems}
           orientation={orientation}
           dir={dir}
           size={size}
@@ -142,7 +143,13 @@ function StackItem(props: StackItemProps) {
   const style = React.useMemo<React.CSSProperties>(() => {
     let maskImage = "";
 
-    const shouldMask = reverse ? index < itemCount - 1 : index > 0;
+    let shouldMask = false;
+
+    if (orientation === "vertical" && dir === "rtl" && reverse) {
+      shouldMask = index !== itemCount - 1;
+    } else {
+      shouldMask = reverse ? index < itemCount - 1 : index > 0;
+    }
 
     if (shouldMask) {
       const maskRadius = size / 2;
