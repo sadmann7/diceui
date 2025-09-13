@@ -48,6 +48,7 @@ interface StackProps
   size?: number;
   max?: number;
   asChild?: boolean;
+  reverse?: boolean;
 }
 
 function Stack(props: StackProps) {
@@ -57,6 +58,7 @@ function Stack(props: StackProps) {
     size = 40,
     max,
     asChild,
+    reverse = false,
     className,
     children,
     ...rootProps
@@ -65,12 +67,12 @@ function Stack(props: StackProps) {
   const childrenArray = React.Children.toArray(children).filter(
     React.isValidElement,
   );
-  const totalItems = childrenArray.length;
-  const shouldTruncate = max && totalItems > max;
+  const itemCount = childrenArray.length;
+  const shouldTruncate = max && itemCount > max;
   const visibleItems = shouldTruncate
     ? childrenArray.slice(0, max - 1)
     : childrenArray;
-  const overflowCount = shouldTruncate ? totalItems - (max - 1) : 0;
+  const overflowCount = shouldTruncate ? itemCount - (max - 1) : 0;
 
   const RootPrimitive = asChild ? Slot : "div";
 
@@ -89,6 +91,8 @@ function Stack(props: StackProps) {
           size={size}
           orientation={orientation}
           dir={dir}
+          reverse={reverse}
+          itemCount={itemCount}
         />
       ))}
       {shouldTruncate && (
@@ -103,6 +107,8 @@ function Stack(props: StackProps) {
           size={size}
           orientation={orientation}
           dir={dir}
+          reverse={reverse}
+          itemCount={itemCount + 1}
         />
       )}
     </RootPrimitive>
@@ -115,6 +121,8 @@ interface StackItemProps
   child: React.ReactElement;
   index: number;
   size: number;
+  reverse?: boolean;
+  itemCount: number;
 }
 
 function StackItem(props: StackItemProps) {
@@ -124,6 +132,8 @@ function StackItem(props: StackItemProps) {
     size,
     orientation,
     dir = "ltr",
+    reverse = false,
+    itemCount,
     className,
     style: styleProp,
     ...itemProps
@@ -132,21 +142,39 @@ function StackItem(props: StackItemProps) {
   const style = React.useMemo<React.CSSProperties>(() => {
     let maskImage = "";
 
-    if (index > 0) {
+    const shouldMask = reverse ? index < itemCount - 1 : index > 0;
+
+    if (shouldMask) {
       const maskRadius = size / 2;
       const maskOffset = size / 4 + size / 10;
 
       if (orientation === "vertical") {
         if (dir === "ltr") {
-          maskImage = `radial-gradient(circle ${maskRadius}px at 50% -${maskOffset}px, transparent 99%, white 100%)`;
+          if (reverse) {
+            maskImage = `radial-gradient(circle ${maskRadius}px at 50% ${size + maskOffset}px, transparent 99%, white 100%)`;
+          } else {
+            maskImage = `radial-gradient(circle ${maskRadius}px at 50% -${maskOffset}px, transparent 99%, white 100%)`;
+          }
         } else {
-          maskImage = `radial-gradient(circle ${maskRadius}px at 50% ${size + maskOffset}px, transparent 99%, white 100%)`;
+          if (reverse) {
+            maskImage = `radial-gradient(circle ${maskRadius}px at 50% -${maskOffset}px, transparent 99%, white 100%)`;
+          } else {
+            maskImage = `radial-gradient(circle ${maskRadius}px at 50% ${size + maskOffset}px, transparent 99%, white 100%)`;
+          }
         }
       } else {
         if (dir === "ltr") {
-          maskImage = `radial-gradient(circle ${maskRadius}px at -${maskOffset}px 50%, transparent 99%, white 100%)`;
+          if (reverse) {
+            maskImage = `radial-gradient(circle ${maskRadius}px at ${size + maskOffset}px 50%, transparent 99%, white 100%)`;
+          } else {
+            maskImage = `radial-gradient(circle ${maskRadius}px at -${maskOffset}px 50%, transparent 99%, white 100%)`;
+          }
         } else {
-          maskImage = `radial-gradient(circle ${maskRadius}px at ${size + maskOffset}px 50%, transparent 99%, white 100%)`;
+          if (reverse) {
+            maskImage = `radial-gradient(circle ${maskRadius}px at -${maskOffset}px 50%, transparent 99%, white 100%)`;
+          } else {
+            maskImage = `radial-gradient(circle ${maskRadius}px at ${size + maskOffset}px 50%, transparent 99%, white 100%)`;
+          }
         }
       }
     }
@@ -157,13 +185,13 @@ function StackItem(props: StackItemProps) {
       maskImage,
       ...styleProp,
     };
-  }, [size, index, orientation, dir, styleProp]);
+  }, [size, index, orientation, dir, reverse, itemCount, styleProp]);
 
   return (
     <Slot
       data-slot="stack-item"
       className={cn(
-        "size-full shrink-0 overflow-hidden rounded-full [&_img]:size-full [&_img]:object-cover",
+        "size-full shrink-0 overflow-hidden rounded-full [&_img]:size-full",
         className,
       )}
       style={style}
