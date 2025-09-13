@@ -22,7 +22,6 @@ export interface StackProps extends EmptyProps<"div">, CompositionProps {
    * Render as a child element, inheriting props from the parent.
    * @default false
    */
-  asChild?: boolean;
 
   /**
    * Reverse the stacking order.
