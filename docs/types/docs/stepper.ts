@@ -1,6 +1,11 @@
 import type * as React from "react";
 import type { Button } from "@/components/ui/button";
-import type { CompositionProps, Direction, EmptyProps } from "@/types";
+import type {
+  CompositionProps,
+  Direction,
+  EmptyProps,
+  Orientation,
+} from "@/types";
 
 type ButtonProps = React.ComponentProps<typeof Button>;
 
@@ -63,7 +68,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    *
    * @default "horizontal"
    */
-  orientation?: "horizontal" | "vertical";
+  orientation?: Orientation;
 
   /**
    * When `true`, prevents the user from interacting with the stepper.

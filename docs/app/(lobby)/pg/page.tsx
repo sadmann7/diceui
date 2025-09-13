@@ -1,6 +1,7 @@
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
 import { Shell } from "@/components/shell";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -25,11 +26,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import StepperDemo from "@/registry/default/examples/stepper-demo";
-import StepperVerticalDemo from "@/registry/default/examples/stepper-vertical-demo";
+import StackDemo from "@/registry/default/examples/stack-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -43,18 +42,37 @@ import {
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <StepperDemo />
-      <StepperVerticalDemo />
-      <Tabs defaultValue="command">
-        <TabsList>
-          <TabsTrigger value="stepper">Stepper</TabsTrigger>
-          <TabsTrigger value="combobox">Combobox</TabsTrigger>
-          <TabsTrigger value="command">Command</TabsTrigger>
-        </TabsList>
-        <TabsContent value="stepper">Stepper</TabsContent>
-        <TabsContent value="combobox">Combobox</TabsContent>
-        <TabsContent value="command">Command</TabsContent>
-      </Tabs>
+      <StackDemo />
+      <div className="flex flex-row flex-wrap items-center gap-12">
+        <Avatar>
+          <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+          <AvatarFallback>CN</AvatarFallback>
+        </Avatar>
+        <Avatar className="rounded-lg">
+          <AvatarImage
+            src="https://github.com/evilrabbit.png"
+            alt="@evilrabbit"
+          />
+          <AvatarFallback>ER</AvatarFallback>
+        </Avatar>
+        <div className="-space-x-2 flex *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-background *:data-[slot=avatar]:grayscale">
+          <Avatar>
+            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
+          <Avatar>
+            <AvatarImage src="https://github.com/leerob.png" alt="@leerob" />
+            <AvatarFallback>LR</AvatarFallback>
+          </Avatar>
+          <Avatar>
+            <AvatarImage
+              src="https://github.com/evilrabbit.png"
+              alt="@evilrabbit"
+            />
+            <AvatarFallback>ER</AvatarFallback>
+          </Avatar>
+        </div>
+      </div>
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />

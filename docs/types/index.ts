@@ -18,6 +18,8 @@ export interface CompositionProps {
 
 export type Direction = "ltr" | "rtl";
 
+export type Orientation = "horizontal" | "vertical";
+
 import type { ClientUploadedFileData } from "uploadthing/types";
 
 export interface UploadedFile<T = unknown> extends ClientUploadedFileData<T> {}
