@@ -32,10 +32,10 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * Callback called when files are added, removed, or changed.
    *
    * ```ts
-   * const onValueChange = (files: File[]) => {
+   * onValueChange={(files) => {
+   *   // Retrieve the updated files
    *   console.log({ files })
-   *   // Handle the updated files
-   * }
+   * }}
    * ```
    */
   onValueChange?: (files: File[]) => void;
@@ -45,26 +45,34 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * This is called after all validation checks pass.
    *
    * ```ts
-   * const onAccept = (files: File[]) => {
+   * onAccept={(files) => {
    *   // All files have passed validation
    *   startUpload(files)
-   * }
+   * }}
    * ```
    */
   onAccept?: (files: File[]) => void;
 
-  /** Callback called when a file is accepted. */
+  /**
+   * Callback called when a file is accepted.
+   * ```ts
+   * onFileAccept={(file) => {
+   *   // All files have passed validation
+   *   startUpload(files)
+   * }}
+   * ```
+   */
   onFileAccept?: (file: File) => void;
 
   /**
    * Callback called when a file is rejected.
    *
    * ```ts
-   * const onFileReject = (file: File, message: string) => {
+   * onFileReject={(file, message) => {
    *   toast(message, {
    *     description: `"${file.name.length > 20 ? `${file.name.slice(0, 20)}...` : file.name}" has been rejected`,
    *   });
-   * }
+   * }}
    * ```
    */
   onFileReject?: (file: File, message: string) => void;
@@ -76,7 +84,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * This will override the default validation message from `onFileReject`.
    *
    * ```ts
-   * const onFileValidate = (file: File) => {
+   * onFileValidate={(file) => {
    *   if (file.size > 5 * 1024 * 1024) {
    *     return "File size must be less than 5MB"
    *   }
@@ -86,7 +94,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    *   }
    *
    *   return null
-   * }
+   * }}
    * ```
    */
   onFileValidate?: (file: File) => string | null | undefined;
@@ -96,10 +104,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * This can be used to upload files directly to a storage bucket.
    *
    * ```ts
-   * const onUpload = async (
-   *   files: File[],
-   *   { onProgress, onSuccess, onError }
-   * ) => {
+   * onUpload={async (files, { onProgress, onSuccess, onError }) => {
    *   try {
    *     for (const file of files) {
    *       // Example upload to S3 or similar
@@ -122,7 +127,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    *   } catch (error) {
    *     onError(file, error)
    *   }
-   * }
+   * }}
    * ```
    */
   onUpload?: (
@@ -276,11 +281,11 @@ export interface ListProps extends EmptyProps<"div">, CompositionProps {
    *
    * ```tsx
    * // Horizontal list
-   * <List orientation="horizontal">
+   * <FileUploadList orientation="horizontal">
    *   {files.map((file) => (
-   *     <Item key={file.name} value={file} />
+   *     <FileUploadItem key={file.name} value={file} />
    *   ))}
-   * </List>
+   * </FileUploadList>
    * ```
    *
    * @default "vertical"
@@ -292,15 +297,15 @@ export interface ListProps extends EmptyProps<"div">, CompositionProps {
    * Useful for animating the list with animation libraries.
    *
    * ```tsx
-   * <List forceMount>
+   * <FileUploadList forceMount>
    *   {files.length === 0 ? (
    *     <p>No files uploaded</p>
    *   ) : (
    *     files.map((file) => (
-   *       <Item key={file.name} value={file} />
+   *       <FileUploadItem key={file.name} value={file} />
    *     ))
    *   )}
-   * </List>
+   * </FileUploadList>
    * ```
    */
   forceMount?: boolean;
@@ -311,11 +316,11 @@ export interface ItemProps extends EmptyProps<"div">, CompositionProps {
    * The file to display in the item.
    *
    * ```tsx
-   * <Item value={file}>
-   *   <ItemPreview />
-   *   <ItemMetadata />
-   *   <ItemDelete />
-   * </Item>
+   * <FileUploadItem value={file}>
+   *   <FileUploadItemPreview />
+   *   <FileUploadItemMetadata />
+   *   <FileUploadItemDelete />
+   * </FileUploadItem>
    * ```
    */
   value: File;
@@ -327,7 +332,7 @@ export interface ItemPreviewProps extends EmptyProps<"div">, CompositionProps {
    * Override the default preview.
    *
    * ```tsx
-   * <ItemPreview
+   * <FileUploadItemPreview
    *   render={(file) => {
    *     if (file.type.startsWith("image/")) {
    *       return <img src={URL.createObjectURL(file)} alt={file.name} />
@@ -362,13 +367,13 @@ export interface ItemProgressProps extends EmptyProps<"div">, CompositionProps {
    *
    * ```tsx
    * // Linear progress
-   * <ItemProgress variant="linear" />
+   * <FileUploadItemProgress variant="linear" />
    *
    * // Circular stroke progress
-   * <ItemProgress variant="circular" size={40} />
+   * <FileUploadItemProgress variant="circular" size={40} />
    *
    * // Fill progress
-   * <ItemProgress variant="fill" />
+   * <FileUploadItemProgress variant="fill" />
    * ```
    *
    * @default "linear"
@@ -380,7 +385,7 @@ export interface ItemProgressProps extends EmptyProps<"div">, CompositionProps {
    * Only applies when variant is `circular`.
    *
    * ```tsx
-   * <ItemProgress variant="circular" size={60} />
+   * <FileUploadItemProgress variant="circular" size={60} />
    * ```
    *
    * @default 40
@@ -392,7 +397,7 @@ export interface ItemProgressProps extends EmptyProps<"div">, CompositionProps {
    * Useful for animating the progress indicator with animation libraries.
    *
    * ```tsx
-   * <ItemProgress forceMount />
+   * <FileUploadItemProgress forceMount />
    * ```
    *
    * @default false
@@ -410,7 +415,7 @@ export interface ClearProps extends EmptyProps<"button">, CompositionProps {
    * Useful for animating the clear button with animation libraries.
    *
    * ```tsx
-   * <Clear forceMount />
+   * <FileUploadClear forceMount />
    * ```
    *
    * @default false

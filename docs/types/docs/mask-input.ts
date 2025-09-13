@@ -4,6 +4,7 @@ import type { CozyProps } from "@/types";
 export interface MaskPattern {
   /**
    * The pattern string where # represents input characters and other characters are literals
+   *
    * ```ts
    * pattern: "###-###-####"
    * ```
@@ -12,6 +13,7 @@ export interface MaskPattern {
 
   /**
    * The placeholder text to show when focused
+   *
    * ```ts
    * placeholder: "(___) ___-____"
    * ```
@@ -20,6 +22,7 @@ export interface MaskPattern {
 
   /**
    * Transform function to clean/format input before applying mask
+   *
    * ```ts
    * transform: (value) => value.replace(/[^0-9]/g, "")
    * ```
@@ -28,6 +31,7 @@ export interface MaskPattern {
 
   /**
    * Validation function to check if the unmasked value is valid
+   *
    * ```ts
    * validate: (value) => value.length === 10
    * ```
@@ -87,12 +91,26 @@ export interface MaskInputProps extends CozyProps<"input"> {
     event: React.ChangeEvent<HTMLInputElement>,
   ) => void;
 
-  /** Validation callback */
+  /**
+   * Validation callback called when the input value changes.
+   *
+   * ```ts
+   * onValidate={(isValid, unmaskedValue) => {
+   *   if (isValid) {
+   *     console.log('Valid input:', unmaskedValue);
+   *     // Handle valid state (e.g., remove error styling)
+   *   } else {
+   *     console.log('Invalid input:', unmaskedValue);
+   *     // Handle invalid state (e.g., show error message)
+   *   }
+   * }}
+   * ```
+   */
   onValidate?: (isValid: boolean, unmaskedValue: string) => void;
 
-  /** Whether the input has validation errors */
+  /** Whether the input has validation errors. */
   invalid?: boolean;
 
-  /** Whether to disable masking */
+  /** Whether to disable masking. */
   withoutMask?: boolean;
 }
