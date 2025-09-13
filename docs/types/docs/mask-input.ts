@@ -96,7 +96,7 @@ export interface MaskInputProps extends CozyProps<"input"> {
   onValueChange?: (
     maskedValue: string,
     unmaskedValue: string,
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => void;
 
   /**
