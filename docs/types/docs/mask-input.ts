@@ -1,5 +1,5 @@
 import type * as React from "react";
-import type { CompositionProps, EmptyProps } from "@/types";
+import type { CozyProps } from "@/types";
 
 export interface MaskPattern {
   /** The pattern string where # represents input characters and other characters are literals */
@@ -22,7 +22,7 @@ export type MaskPatternKey =
   | "zipCode"
   | "zipCodeExtended";
 
-export interface MaskInputProps extends React.ComponentProps<"input"> {
+export interface MaskInputProps extends CozyProps<"input"> {
   /**
    * Predefined mask type or custom mask pattern.
    * Can be a predefined mask type or a custom mask pattern.
@@ -61,18 +61,15 @@ export interface MaskInputProps extends React.ComponentProps<"input"> {
   onValueChange?: (
     maskedValue: string,
     unmaskedValue: string,
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<HTMLInputElement>
   ) => void;
 
   /** Validation callback */
   onValidate?: (isValid: boolean, unmaskedValue: string) => void;
 
-  /** Whether to disable masking */
-  withoutMask?: boolean;
-
   /** Whether the input has validation errors */
   invalid?: boolean;
 
-  /** Render as child component using Slot */
-  asChild?: boolean;
+  /** Whether to disable masking */
+  withoutMask?: boolean;
 }
