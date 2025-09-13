@@ -9,6 +9,8 @@ export default function MaskInputDemo() {
   const [phoneValue, setPhoneValue] = React.useState("");
   const [dateValue, setDateValue] = React.useState("");
   const [isValid, setIsValid] = React.useState(true);
+  const [currencyValue, setCurrencyValue] = React.useState("");
+  const [percentageValue, setPercentageValue] = React.useState("");
 
   return (
     <div className="flex w-full max-w-sm flex-col gap-6">
@@ -43,6 +45,29 @@ export default function MaskInputDemo() {
             Please enter a valid date
           </p>
         )}
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <Label htmlFor={`${id}-currency`}>Currency</Label>
+        <MaskInput
+          id={`${id}-currency`}
+          mask="currency"
+          value={currencyValue}
+          onValueChange={setCurrencyValue}
+          placeholder="$0.00"
+        />
+        <p className="text-muted-foreground text-sm">Enter your currency</p>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <Label htmlFor={`${id}-percentage`}>Percentage</Label>
+        <MaskInput
+          id={`${id}-percentage`}
+          mask="percentage"
+          value={percentageValue}
+          onValueChange={setPercentageValue}
+          placeholder="0.00%"
+        />
       </div>
     </div>
   );

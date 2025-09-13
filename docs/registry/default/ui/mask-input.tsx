@@ -19,7 +19,15 @@ type MaskPatternKey =
   | "time"
   | "creditCard"
   | "zipCode"
-  | "zipCodeExtended";
+  | "zipCodeExtended"
+  | "currency"
+  | "currencyEur"
+  | "percentage"
+  | "licensePlate"
+  | "ipAddress"
+  | "macAddress"
+  | "isbn"
+  | "ein";
 
 const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
   phone: {
@@ -77,6 +85,97 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
     transform: (value) => value.replace(/\D/g, ""),
     validate: (value) => /^\d{9}$/.test(value.replace(/\D/g, "")),
   },
+  currency: {
+    pattern: "$###,###.##",
+    placeholder: "$0.00",
+    transform: (value) => {
+      // Remove everything except digits and decimal point
+      const cleaned = value.replace(/[^\d.]/g, "");
+      // Ensure only one decimal point
+      const parts = cleaned.split(".");
+      if (parts.length > 2) {
+        return parts[0] + "." + parts.slice(1).join("");
+      }
+      // Limit to 2 decimal places
+      if (parts[1] && parts[1].length > 2) {
+        return parts[0] + "." + parts[1].substring(0, 2);
+      }
+      return cleaned;
+    },
+    validate: (value) => /^\d+(\.\d{1,2})?$/.test(value),
+  },
+  currencyEur: {
+    pattern: "€###,###.##",
+    placeholder: "€0.00",
+    transform: (value) => {
+      const cleaned = value.replace(/[^\d.]/g, "");
+      const parts = cleaned.split(".");
+      if (parts.length > 2) {
+        return parts[0] + "." + parts.slice(1).join("");
+      }
+      if (parts[1] && parts[1].length > 2) {
+        return parts[0] + "." + parts[1].substring(0, 2);
+      }
+      return cleaned;
+    },
+    validate: (value) => /^\d+(\.\d{1,2})?$/.test(value),
+  },
+  percentage: {
+    pattern: "##.##%",
+    placeholder: "0.00%",
+    transform: (value) => {
+      const cleaned = value.replace(/[^\d.]/g, "");
+      const parts = cleaned.split(".");
+      if (parts.length > 2) {
+        return parts[0] + "." + parts.slice(1).join("");
+      }
+      if (parts[1] && parts[1].length > 2) {
+        return parts[0] + "." + parts[1].substring(0, 2);
+      }
+      return cleaned;
+    },
+    validate: (value) => {
+      const num = parseFloat(value);
+      return !Number.isNaN(num) && num >= 0 && num <= 100;
+    },
+  },
+  licensePlate: {
+    pattern: "###-###",
+    placeholder: "ABC-123",
+    transform: (value) => value.replace(/[^A-Z0-9]/gi, "").toUpperCase(),
+    validate: (value) => /^[A-Z0-9]{6}$/.test(value),
+  },
+  ipAddress: {
+    pattern: "###.###.###.###",
+    placeholder: "192.168.1.1",
+    transform: (value) => value.replace(/[^\d.]/g, ""),
+    validate: (value) => {
+      const parts = value.split(".");
+      if (parts.length !== 4) return false;
+      return parts.every((part) => {
+        const num = parseInt(part, 10);
+        return !Number.isNaN(num) && num >= 0 && num <= 255;
+      });
+    },
+  },
+  macAddress: {
+    pattern: "##:##:##:##:##:##",
+    placeholder: "00:1B:44:11:3A:B7",
+    transform: (value) => value.replace(/[^A-F0-9]/gi, "").toUpperCase(),
+    validate: (value) => /^[A-F0-9]{12}$/.test(value),
+  },
+  isbn: {
+    pattern: "###-#-###-#####-#",
+    placeholder: "978-0-123-45678-9",
+    transform: (value) => value.replace(/\D/g, ""),
+    validate: (value) => /^\d{13}$/.test(value.replace(/\D/g, "")),
+  },
+  ein: {
+    pattern: "##-#######",
+    placeholder: "12-3456789",
+    transform: (value) => value.replace(/\D/g, ""),
+    validate: (value) => /^\d{9}$/.test(value.replace(/\D/g, "")),
+  },
 };
 
 function applyMask(
@@ -85,6 +184,18 @@ function applyMask(
   transform?: (value: string) => string,
 ): string {
   const cleanValue = transform ? transform(value) : value;
+
+  // Special handling for currency patterns
+  if (pattern.includes("$") || pattern.includes("€")) {
+    return applyCurrencyMask(cleanValue, pattern);
+  }
+
+  // Special handling for percentage
+  if (pattern.includes("%")) {
+    return applyPercentageMask(cleanValue, pattern);
+  }
+
+  // Default mask application for other patterns
   let masked = "";
   let valueIndex = 0;
 
@@ -101,6 +212,43 @@ function applyMask(
   }
 
   return masked;
+}
+
+function applyCurrencyMask(value: string, pattern: string): string {
+  if (!value) return "";
+
+  const currencySymbol = pattern.includes("$") ? "$" : "€";
+  const parts = value.split(".");
+  let integerPart = parts[0] || "";
+  const decimalPart = parts[1] || "";
+
+  // Add commas to integer part (only if there are digits)
+  if (integerPart && integerPart.length > 3) {
+    integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
+  let result = currencySymbol + (integerPart || "0");
+
+  // Only add decimal part if user has typed a decimal point or decimal digits
+  if (value.includes(".")) {
+    result += "." + (decimalPart || "").substring(0, 2);
+  }
+
+  return result;
+}
+
+function applyPercentageMask(value: string, _pattern: string): string {
+  if (!value) return "";
+
+  const parts = value.split(".");
+  let result = parts[0] || "0";
+
+  // Only add decimal part if user has typed a decimal point
+  if (value.includes(".")) {
+    result += "." + (parts[1] || "").substring(0, 2);
+  }
+
+  return result + "%";
 }
 
 function getUnmaskedValue(
@@ -198,56 +346,108 @@ function MaskInput(props: MaskInputProps) {
         if (inputRef.current && newValue !== inputValue) {
           inputRef.current.value = newValue;
 
-          // Calculate new cursor position based on unmasked characters entered
-          const previousUnmasked = getUnmaskedValue(
-            previousValue,
-            maskPattern.transform,
-          );
-          const currentUnmasked = getUnmaskedValue(
-            newValue,
-            maskPattern.transform,
-          );
-
-          let newCursorPosition = 0;
-          let unmaskedIndex = 0;
-
-          // Find the cursor position by counting unmasked characters
-          for (
-            let i = 0;
-            i < newValue.length && unmaskedIndex < currentUnmasked.length;
-            i++
+          // Special cursor handling for currency and percentage patterns
+          if (
+            maskPattern.pattern.includes("$") ||
+            maskPattern.pattern.includes("€") ||
+            maskPattern.pattern.includes("%")
           ) {
-            const patternChar = maskPattern.pattern[i];
-            if (patternChar === "#") {
-              unmaskedIndex++;
-              if (unmaskedIndex <= currentUnmasked.length) {
-                newCursorPosition = i + 1;
-              }
-            }
-          }
+            const previousUnmasked = getUnmaskedValue(
+              previousValue,
+              maskPattern.transform,
+            );
+            const currentUnmasked = getUnmaskedValue(
+              newValue,
+              maskPattern.transform,
+            );
 
-          // If we're at the end of input, position cursor after last character
-          if (currentUnmasked.length > previousUnmasked.length) {
-            // Find the position after the last entered character
-            let charCount = 0;
-            for (let i = 0; i < newValue.length; i++) {
-              if (maskPattern.pattern[i] === "#") {
-                charCount++;
-                if (charCount === currentUnmasked.length) {
+            let newCursorPosition = newValue.length;
+
+            // More precise cursor positioning for dynamic patterns
+            if (currentUnmasked.length > previousUnmasked.length) {
+              // New character was added - position cursor at the end
+              newCursorPosition = newValue.length;
+            } else if (currentUnmasked.length < previousUnmasked.length) {
+              // Character was deleted - position cursor appropriately
+              const deletedCount =
+                previousUnmasked.length - currentUnmasked.length;
+              if (deletedCount === 1) {
+                // Single character deletion - position cursor based on remaining content
+                newCursorPosition = newValue.length;
+              }
+            } else {
+              // Same length - likely a replacement or formatting change
+              newCursorPosition = newValue.length;
+            }
+
+            // Ensure cursor doesn't go before the currency symbol or after the % symbol
+            if (
+              maskPattern.pattern.includes("$") ||
+              maskPattern.pattern.includes("€")
+            ) {
+              newCursorPosition = Math.max(1, newCursorPosition); // After currency symbol
+            } else if (maskPattern.pattern.includes("%")) {
+              newCursorPosition = Math.min(
+                newValue.length - 1,
+                newCursorPosition,
+              ); // Before % symbol
+            }
+
+            inputRef.current.setSelectionRange(
+              newCursorPosition,
+              newCursorPosition,
+            );
+          } else {
+            // Original cursor logic for fixed patterns
+            const previousUnmasked = getUnmaskedValue(
+              previousValue,
+              maskPattern.transform,
+            );
+            const currentUnmasked = getUnmaskedValue(
+              newValue,
+              maskPattern.transform,
+            );
+
+            let newCursorPosition = 0;
+            let unmaskedIndex = 0;
+
+            // Find the cursor position by counting unmasked characters
+            for (
+              let i = 0;
+              i < newValue.length && unmaskedIndex < currentUnmasked.length;
+              i++
+            ) {
+              const patternChar = maskPattern.pattern[i];
+              if (patternChar === "#") {
+                unmaskedIndex++;
+                if (unmaskedIndex <= currentUnmasked.length) {
                   newCursorPosition = i + 1;
-                  break;
                 }
               }
             }
+
+            // If we're at the end of input, position cursor after last character
+            if (currentUnmasked.length > previousUnmasked.length) {
+              // Find the position after the last entered character
+              let charCount = 0;
+              for (let i = 0; i < newValue.length; i++) {
+                if (maskPattern.pattern[i] === "#") {
+                  charCount++;
+                  if (charCount === currentUnmasked.length) {
+                    newCursorPosition = i + 1;
+                    break;
+                  }
+                }
+              }
+            }
+
+            newCursorPosition = Math.min(newCursorPosition, newValue.length);
+
+            inputRef.current.setSelectionRange(
+              newCursorPosition,
+              newCursorPosition,
+            );
           }
-
-          newCursorPosition = Math.min(newCursorPosition, newValue.length);
-
-          // Set cursor position immediately for better responsiveness
-          inputRef.current.setSelectionRange(
-            newCursorPosition,
-            newCursorPosition,
-          );
         }
       }
 
@@ -391,6 +591,17 @@ function MaskInput(props: MaskInputProps) {
         const cursorPosition = target.selectionStart || 0;
         const currentValue = target.value;
 
+        // Special handling for currency and percentage patterns
+        if (
+          maskPattern.pattern.includes("$") ||
+          maskPattern.pattern.includes("€") ||
+          maskPattern.pattern.includes("%")
+        ) {
+          // For currency/percentage, let the normal backspace work
+          // The transform function will handle the cleanup
+          return;
+        }
+
         if (cursorPosition > 0) {
           const charBeforeCursor = currentValue[cursorPosition - 1];
           // If the character before cursor is a mask character, move cursor back further
@@ -452,6 +663,9 @@ export {
   MaskInput,
   MASK_PATTERNS,
   applyMask,
+  applyCurrencyMask,
+  applyPercentageMask,
   getUnmaskedValue,
   type MaskPattern,
+  type MaskPatternKey,
 };

@@ -47,7 +47,15 @@ export type MaskPatternKey =
   | "time"
   | "creditCard"
   | "zipCode"
-  | "zipCodeExtended";
+  | "zipCodeExtended"
+  | "currency"
+  | "currencyEur"
+  | "percentage"
+  | "licensePlate"
+  | "ipAddress"
+  | "macAddress"
+  | "isbn"
+  | "ein";
 
 export interface MaskInputProps extends CozyProps<"input"> {
   /**
@@ -88,7 +96,7 @@ export interface MaskInputProps extends CozyProps<"input"> {
   onValueChange?: (
     maskedValue: string,
     unmaskedValue: string,
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<HTMLInputElement>
   ) => void;
 
   /**
