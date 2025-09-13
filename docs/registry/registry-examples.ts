@@ -408,6 +408,59 @@ export const examples: Registry["items"] = [
       },
     ],
   },
+  {
+    name: "mask-input-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot"],
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "examples/mask-input-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "mask-input-patterns-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot"],
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "examples/mask-input-patterns-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "mask-input-custom-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot"],
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "examples/mask-input-custom-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "mask-input-form-demo",
+    type: "registry:example",
+    dependencies: [
+      "@radix-ui/react-slot",
+      "@hookform/resolvers/zod",
+      "react-hook-form",
+      "zod",
+    ],
+    registryDependencies: ["button", "form", "utils"],
+    files: [
+      {
+        path: "examples/mask-input-form-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
 
   {
     name: "kanban-demo",

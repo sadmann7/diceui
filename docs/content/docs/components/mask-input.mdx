@@ -1,0 +1,187 @@
+---
+title: Mask Input
+description: A masked input component that formats user input according to predefined patterns like phone numbers, dates, and credit cards.
+preview: true
+links:
+  api: /docs/components/mask-input#api-reference
+---
+
+<ComponentTabs name="mask-input-demo" />
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/mask-input"
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @radix-ui/react-slot
+     ```
+  </Step>
+  <Step>
+    Copy the refs composition utilities into your `lib/compose-refs.ts` file.
+
+    <ComponentSource src="./lib/compose-refs.ts" />
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource name="mask-input" />
+  </Step>
+</Steps>
+
+## Layout
+
+Import the parts and compose them together.
+
+```tsx
+import * as MaskInput from "@/components/ui/mask-input";
+
+<MaskInput.Root>
+  <MaskInput.Label />
+  <MaskInput.Field />
+  <MaskInput.Description />
+  <MaskInput.Error />
+</MaskInput.Root>
+```
+
+## Examples
+
+### Built-in Patterns
+
+Use predefined mask patterns for common input formats.
+
+<ComponentTabs name="mask-input-patterns-demo" />
+
+### Custom Patterns
+
+Create custom mask patterns for specific formatting needs.
+
+<ComponentTabs name="mask-input-custom-demo" />
+
+### Form Integration
+
+Integrate masked inputs with form validation using react-hook-form.
+
+<ComponentTabs name="mask-input-form-demo" />
+
+## Built-in Mask Patterns
+
+The component includes several predefined mask patterns:
+
+| Pattern | Format | Example | Description |
+|---------|--------|---------|-------------|
+| `phone` | `(###) ###-####` | (555) 123-4567 | US phone number |
+| `ssn` | `###-##-####` | 123-45-6789 | Social Security Number |
+| `date` | `##/##/####` | 12/25/2023 | Date (MM/DD/YYYY) |
+| `time` | `##:##` | 14:30 | Time (HH:MM) |
+| `creditCard` | `#### #### #### ####` | 1234 5678 9012 3456 | Credit card number |
+| `zipCode` | `#####` | 12345 | US ZIP code |
+| `zipCodeExtended` | `#####-####` | 12345-6789 | US ZIP+4 code |
+
+## Custom Mask Patterns
+
+Create custom patterns using the `MaskPattern` interface:
+
+```tsx
+const customPattern: MaskPattern = {
+  pattern: "###-###-####",
+  placeholder: "ABC-123-4567",
+  transform: (value) => value.replace(/[^A-Z0-9]/gi, "").toUpperCase(),
+  validate: (value) => value.length === 10,
+};
+
+<MaskInput.Field customPattern={customPattern} />
+```
+
+### Pattern Properties
+
+- **`pattern`**: Template string where `#` represents input characters and other characters are literals
+- **`placeholder`**: Placeholder text shown when the input is focused
+- **`transform`**: Function to clean/format input before applying the mask
+- **`validate`**: Function to validate the unmasked value
+
+## API Reference
+
+### Root
+
+The main container component for the masked input.
+
+<AutoTypeTable
+  path="./types/docs/mask-input.ts"
+  name="RootProps"
+/>
+
+### Field
+
+The input field component that handles masking and user input.
+
+<AutoTypeTable
+  path="./types/docs/mask-input.ts"
+  name="FieldProps"
+/>
+
+### Label
+
+Label component for the masked input field.
+
+<AutoTypeTable
+  path="./types/docs/mask-input.ts"
+  name="LabelProps"
+/>
+
+### Description
+
+Description component for additional context.
+
+<AutoTypeTable
+  path="./types/docs/mask-input.ts"
+  name="DescriptionProps"
+/>
+
+### Error
+
+Error message component for validation feedback.
+
+<AutoTypeTable
+  path="./types/docs/mask-input.ts"
+  name="ErrorProps"
+/>
+
+## Data Attributes
+
+### Root
+
+| Attribute | Values | Description |
+|-----------|--------|-------------|
+| `data-slot` | `"mask-input"` | Component identifier |
+| `data-disabled` | `""` | Present when disabled |
+| `data-readonly` | `""` | Present when read-only |
+| `data-required` | `""` | Present when required |
+| `data-invalid` | `""` | Present when invalid |
+
+### Field
+
+| Attribute | Values | Description |
+|-----------|--------|-------------|
+| `data-slot` | `"mask-input-field"` | Component identifier |
+| `data-disabled` | `""` | Present when disabled |
+| `data-readonly` | `""` | Present when read-only |
+| `data-required` | `""` | Present when required |
+| `data-invalid` | `""` | Present when invalid |
+
+## Accessibility
+
+- Uses semantic HTML elements
+- Supports keyboard navigation
+- Includes proper ARIA attributes
+- Compatible with screen readers
+- Supports form validation states
