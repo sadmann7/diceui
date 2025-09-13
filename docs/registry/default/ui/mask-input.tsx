@@ -1,5 +1,6 @@
 "use client";
 
+import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
@@ -11,7 +12,16 @@ interface MaskPattern {
   validate?: (value: string) => boolean;
 }
 
-const MASK_PATTERNS: Record<string, MaskPattern> = {
+type MaskPatternKey =
+  | "phone"
+  | "ssn"
+  | "date"
+  | "time"
+  | "creditCard"
+  | "zipCode"
+  | "zipCodeExtended";
+
+const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
   phone: {
     pattern: "(###) ###-####",
     placeholder: "(___) ___-____",
@@ -111,10 +121,10 @@ interface MaskInputProps extends React.ComponentProps<"input"> {
     event: React.ChangeEvent<InputElement>,
   ) => void;
   onValidate?: (isValid: boolean, value: string) => void;
-  withoutMask?: boolean;
-  mask?: string | MaskPattern;
-  customPattern?: MaskPattern;
+  mask?: MaskPatternKey | MaskPattern;
+  asChild?: boolean;
   invalid?: boolean;
+  withoutMask?: boolean;
 }
 
 function MaskInput(props: MaskInputProps) {
@@ -126,9 +136,10 @@ function MaskInput(props: MaskInputProps) {
     onBlur: onBlurProp,
     onFocus: onFocusProp,
     onKeyDown: onKeyDownProp,
+    onPaste: onPasteProp,
     mask,
-    customPattern,
     placeholder: placeholderProp,
+    asChild = false,
     disabled = false,
     invalid = false,
     readOnly = false,
@@ -148,12 +159,11 @@ function MaskInput(props: MaskInputProps) {
   const value = isControlled ? valueProp : internalValue;
 
   const maskPattern = React.useMemo(() => {
-    if (customPattern) return customPattern;
     if (typeof mask === "string") {
       return MASK_PATTERNS[mask];
     }
     return mask;
-  }, [mask, customPattern]);
+  }, [mask]);
 
   const placeholder = React.useMemo(() => {
     if (placeholderProp) return placeholderProp;
@@ -175,6 +185,8 @@ function MaskInput(props: MaskInputProps) {
       let unmaskedValue = inputValue;
 
       if (maskPattern) {
+        const previousValue = inputRef.current?.value || "";
+
         unmaskedValue = getUnmaskedValue(inputValue, maskPattern.transform);
         newValue = applyMask(
           unmaskedValue,
@@ -182,25 +194,60 @@ function MaskInput(props: MaskInputProps) {
           maskPattern.transform,
         );
 
-        // Update the input value to show the masked format
+        // Calculate the correct cursor position based on the change
         if (inputRef.current && newValue !== inputValue) {
-          const cursorPosition = event.target.selectionStart || 0;
           inputRef.current.value = newValue;
 
-          // Adjust cursor position
-          let newCursorPosition = cursorPosition;
-          if (newValue.length > inputValue.length) {
-            newCursorPosition = Math.min(cursorPosition + 1, newValue.length);
+          // Calculate new cursor position based on unmasked characters entered
+          const previousUnmasked = getUnmaskedValue(
+            previousValue,
+            maskPattern.transform,
+          );
+          const currentUnmasked = getUnmaskedValue(
+            newValue,
+            maskPattern.transform,
+          );
+
+          let newCursorPosition = 0;
+          let unmaskedIndex = 0;
+
+          // Find the cursor position by counting unmasked characters
+          for (
+            let i = 0;
+            i < newValue.length && unmaskedIndex < currentUnmasked.length;
+            i++
+          ) {
+            const patternChar = maskPattern.pattern[i];
+            if (patternChar === "#") {
+              unmaskedIndex++;
+              if (unmaskedIndex <= currentUnmasked.length) {
+                newCursorPosition = i + 1;
+              }
+            }
           }
 
-          requestAnimationFrame(() => {
-            if (inputRef.current) {
-              inputRef.current.setSelectionRange(
-                newCursorPosition,
-                newCursorPosition,
-              );
+          // If we're at the end of input, position cursor after last character
+          if (currentUnmasked.length > previousUnmasked.length) {
+            // Find the position after the last entered character
+            let charCount = 0;
+            for (let i = 0; i < newValue.length; i++) {
+              if (maskPattern.pattern[i] === "#") {
+                charCount++;
+                if (charCount === currentUnmasked.length) {
+                  newCursorPosition = i + 1;
+                  break;
+                }
+              }
             }
-          });
+          }
+
+          newCursorPosition = Math.min(newCursorPosition, newValue.length);
+
+          // Set cursor position immediately for better responsiveness
+          inputRef.current.setSelectionRange(
+            newCursorPosition,
+            newCursorPosition,
+          );
         }
       }
 
@@ -239,6 +286,100 @@ function MaskInput(props: MaskInputProps) {
     [onBlurProp],
   );
 
+  const onPaste = React.useCallback(
+    (event: React.ClipboardEvent<InputElement>) => {
+      onPasteProp?.(event);
+      if (event.defaultPrevented) return;
+
+      if (!maskPattern) return;
+
+      event.preventDefault();
+      const pastedText = event.clipboardData.getData("text");
+      const target = event.target as InputElement;
+      const cursorPosition = target.selectionStart || 0;
+      const currentValue = target.value;
+
+      // Get the unmasked pasted text
+      const unmaskedPasted = getUnmaskedValue(
+        pastedText,
+        maskPattern.transform,
+      );
+
+      // Get current unmasked value
+      const currentUnmasked = getUnmaskedValue(
+        currentValue,
+        maskPattern.transform,
+      );
+
+      // Calculate where to insert in the unmasked value
+      let insertPosition = 0;
+      let charCount = 0;
+      for (let i = 0; i < cursorPosition && i < currentValue.length; i++) {
+        if (
+          maskPattern.pattern[charCount] === "#" &&
+          currentValue[i] !== maskPattern.placeholder?.[i]
+        ) {
+          insertPosition++;
+        }
+        if (
+          maskPattern.pattern[charCount] === "#" ||
+          currentValue[i] === maskPattern.pattern[charCount]
+        ) {
+          charCount++;
+        }
+      }
+
+      // Create new unmasked value with pasted content
+      const newUnmaskedValue =
+        currentUnmasked.slice(0, insertPosition) +
+        unmaskedPasted +
+        currentUnmasked.slice(insertPosition);
+
+      // Apply mask to the new value
+      const newMaskedValue = applyMask(
+        newUnmaskedValue,
+        maskPattern.pattern,
+        maskPattern.transform,
+      );
+
+      // Update the input
+      target.value = newMaskedValue;
+
+      // Position cursor after pasted content
+      let newCursorPosition = 0;
+      let unmaskedIndex = 0;
+      const targetUnmaskedLength = insertPosition + unmaskedPasted.length;
+
+      for (
+        let i = 0;
+        i < newMaskedValue.length && unmaskedIndex < targetUnmaskedLength;
+        i++
+      ) {
+        if (maskPattern.pattern[i] === "#") {
+          unmaskedIndex++;
+          if (unmaskedIndex <= targetUnmaskedLength) {
+            newCursorPosition = i + 1;
+          }
+        }
+      }
+
+      target.setSelectionRange(newCursorPosition, newCursorPosition);
+
+      // Trigger change event
+      const syntheticEvent = {
+        ...event,
+        target: {
+          ...target,
+          value: newMaskedValue,
+          selectionStart: newCursorPosition,
+        },
+      } as unknown as React.ChangeEvent<InputElement>;
+
+      onValueChange(syntheticEvent);
+    },
+    [maskPattern, onValueChange, onPasteProp],
+  );
+
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent<InputElement>) => {
       onKeyDownProp?.(event);
@@ -275,8 +416,10 @@ function MaskInput(props: MaskInputProps) {
     [maskPattern, onKeyDownProp, onValueChange],
   );
 
+  const InputPrimitive = asChild ? Slot : "input";
+
   return (
-    <input
+    <InputPrimitive
       aria-invalid={invalid}
       data-disabled={disabled ? "" : undefined}
       data-readonly={readOnly ? "" : undefined}
@@ -300,6 +443,7 @@ function MaskInput(props: MaskInputProps) {
       onFocus={onFocus}
       onBlur={onBlur}
       onKeyDown={onKeyDown}
+      onPaste={onPaste}
     />
   );
 }

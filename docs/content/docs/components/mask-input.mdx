@@ -38,20 +38,32 @@ npx shadcn@latest add "https://diceui.com/r/mask-input"
   </Step>
 </Steps>
 
-## Layout
+## Usage
 
-Import the parts and compose them together.
+Import and use the component directly.
 
 ```tsx
-import * as MaskInput from "@/components/ui/mask-input";
+import { MaskInput } from "@/components/ui/mask-input";
 
-<MaskInput.Root>
-  <MaskInput.Label />
-  <MaskInput.Field />
-  <MaskInput.Description />
-  <MaskInput.Error />
-</MaskInput.Root>
+<MaskInput 
+  mask="phone" 
+  placeholder="Enter phone number"
+  onValueChange={(masked, unmasked) => {
+    console.log('Masked:', masked);     // "(555) 123-4567"
+    console.log('Unmasked:', unmasked); // "5551234567"
+  }}
+/>
 ```
+
+## Features
+
+- **Smart cursor positioning** - Cursor stays in the correct position during typing and pasting
+- **Paste support** - Intelligently handles pasted content with proper formatting
+- **Built-in patterns** - Common formats like phone, SSN, date, credit card, etc.
+- **Custom patterns** - Create your own mask patterns with validation
+- **TypeScript support** - Full type safety with IntelliSense
+- **Accessibility** - ARIA attributes and keyboard navigation
+- **Form integration** - Works seamlessly with form libraries
 
 ## Examples
 
@@ -99,7 +111,7 @@ const customPattern: MaskPattern = {
   validate: (value) => value.length === 10,
 };
 
-<MaskInput.Field customPattern={customPattern} />
+<MaskInput mask={customPattern} />
 ```
 
 ### Pattern Properties
@@ -111,77 +123,85 @@ const customPattern: MaskPattern = {
 
 ## API Reference
 
-### Root
+### MaskInput
 
-The main container component for the masked input.
+The main masked input component that handles formatting and user input.
 
 <AutoTypeTable
   path="./types/docs/mask-input.ts"
-  name="RootProps"
+  name="MaskInputProps"
 />
 
-### Field
+### MaskPattern
 
-The input field component that handles masking and user input.
+Interface for creating custom mask patterns.
 
 <AutoTypeTable
   path="./types/docs/mask-input.ts"
-  name="FieldProps"
+  name="MaskPattern"
 />
 
-### Label
+### MaskPatternKey
 
-Label component for the masked input field.
-
-<AutoTypeTable
-  path="./types/docs/mask-input.ts"
-  name="LabelProps"
-/>
-
-### Description
-
-Description component for additional context.
+Predefined mask pattern keys for common input formats.
 
 <AutoTypeTable
   path="./types/docs/mask-input.ts"
-  name="DescriptionProps"
-/>
-
-### Error
-
-Error message component for validation feedback.
-
-<AutoTypeTable
-  path="./types/docs/mask-input.ts"
-  name="ErrorProps"
+  name="MaskPatternKey"
 />
 
 ## Data Attributes
 
-### Root
-
-| Attribute | Values | Description |
-|-----------|--------|-------------|
-| `data-slot` | `"mask-input"` | Component identifier |
-| `data-disabled` | `""` | Present when disabled |
-| `data-readonly` | `""` | Present when read-only |
-| `data-required` | `""` | Present when required |
-| `data-invalid` | `""` | Present when invalid |
-
-### Field
-
-| Attribute | Values | Description |
-|-----------|--------|-------------|
-| `data-slot` | `"mask-input-field"` | Component identifier |
-| `data-disabled` | `""` | Present when disabled |
-| `data-readonly` | `""` | Present when read-only |
-| `data-required` | `""` | Present when required |
-| `data-invalid` | `""` | Present when invalid |
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the input is disabled.",
+    },
+    {
+      title: "[data-invalid]",
+      value: "Present when the input has validation errors.",
+    },
+    {
+      title: "[data-readonly]",
+      value: "Present when the input is read-only.",
+    },
+    {
+      title: "[data-required]",
+      value: "Present when the input is required.",
+    },
+  ]}
+/>
 
 ## Accessibility
 
-- Uses semantic HTML elements
-- Supports keyboard navigation
-- Includes proper ARIA attributes
-- Compatible with screen readers
-- Supports form validation states
+### Keyboard Interactions
+
+<KeyboardShortcutsTable
+  shortcuts={[
+    {
+      keys: ["Tab"],
+      description: "Moves focus to or away from the input.",
+    },
+    {
+      keys: ["Shift + Tab"],
+      description: "Moves focus to the previous focusable element.",
+    },
+    {
+      keys: ["Backspace"],
+      description: "Removes the previous character, intelligently handling mask characters.",
+    },
+    {
+      keys: ["Delete"],
+      description: "Removes the next character.",
+    },
+    {
+      keys: ["Ctrl + V", "Cmd + V"],
+      description: "Pastes content with intelligent mask formatting.",
+    },
+    {
+      keys: ["Ctrl + A", "Cmd + A"],
+      description: "Selects all input content.",
+    },
+  ]}
+/>

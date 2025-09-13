@@ -1,4 +1,5 @@
 import type * as React from "react";
+import type { CompositionProps, EmptyProps } from "@/types";
 
 export interface MaskPattern {
   /** The pattern string where # represents input characters and other characters are literals */
@@ -11,59 +12,67 @@ export interface MaskPattern {
   validate?: (value: string) => boolean;
 }
 
-export interface RootProps extends React.ComponentProps<"div"> {
-  /** Predefined mask type or custom mask pattern */
-  mask?: string | MaskPattern;
-  /** Custom pattern object for advanced masking */
-  customPattern?: MaskPattern;
-  /** Text direction */
-  dir?: "ltr" | "rtl";
-  /** Whether the input is disabled */
-  disabled?: boolean;
-  /** Whether the input is read-only */
-  readOnly?: boolean;
-  /** Whether the input is required */
-  required?: boolean;
-  /** Whether the input has validation errors */
-  invalid?: boolean;
-  /** Render as child component */
-  asChild?: boolean;
-}
+/** Predefined mask pattern keys for common input formats */
+export type MaskPatternKey =
+  | "phone"
+  | "ssn"
+  | "date"
+  | "time"
+  | "creditCard"
+  | "zipCode"
+  | "zipCodeExtended";
 
-export interface FieldProps
-  extends Omit<
-    React.ComponentProps<"input">,
-    "onChange" | "value" | "defaultValue"
-  > {
+export interface MaskInputProps extends React.ComponentProps<"input"> {
+  /**
+   * Predefined mask type or custom mask pattern.
+   * Can be a predefined mask type or a custom mask pattern.
+   *
+   * ```ts
+   * // Predefined mask type
+   * mask="phone"
+   *
+   * // Custom mask pattern
+   * mask={{
+   *   pattern: "###-###-####",
+   *   placeholder: "123-456-7890",
+   *   transform: (value) => value.replace(/[^0-9]/g, ""),
+   *   validate: (value) => value.length === 10,
+   * }}
+   * ```
+   */
+  mask?: MaskPatternKey | MaskPattern;
+
   /** Controlled value */
   value?: string;
+
   /** Default uncontrolled value */
   defaultValue?: string;
-  /** Change handler with masked and unmasked values */
-  onChange?: (
+
+  /**
+   * Change handler with masked and unmasked values.
+   *
+   * ```ts
+   * onValueChange={(masked, unmasked, event) => {
+   *   console.log('Masked:', masked);     // "(555) 123-4567"
+   *   console.log('Unmasked:', unmasked); // "5551234567"
+   * }}
+   * ```
+   */
+  onValueChange?: (
     maskedValue: string,
     unmaskedValue: string,
     event: React.ChangeEvent<HTMLInputElement>,
   ) => void;
+
   /** Validation callback */
-  onValidation?: (isValid: boolean, unmaskedValue: string) => void;
-  /** Whether to show mask placeholder when focused */
-  showMask?: boolean;
-  /** Render as child component */
-  asChild?: boolean;
-}
+  onValidate?: (isValid: boolean, unmaskedValue: string) => void;
 
-export interface LabelProps extends React.ComponentProps<"label"> {
-  /** Render as child component */
-  asChild?: boolean;
-}
+  /** Whether to disable masking */
+  withoutMask?: boolean;
 
-export interface DescriptionProps extends React.ComponentProps<"div"> {
-  /** Render as child component */
-  asChild?: boolean;
-}
+  /** Whether the input has validation errors */
+  invalid?: boolean;
 
-export interface ErrorProps extends React.ComponentProps<"div"> {
-  /** Render as child component */
+  /** Render as child component using Slot */
   asChild?: boolean;
 }

@@ -154,7 +154,6 @@ export const ui: Registry["items"] = [
     name: "mask-input",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot"],
-    registryDependencies: ["utils"],
     files: [
       {
         path: "ui/mask-input.tsx",
