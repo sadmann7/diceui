@@ -88,11 +88,11 @@ function Stack(props: StackProps) {
           key={index}
           child={child}
           index={index}
-          size={size}
+          itemCount={itemCount}
           orientation={orientation}
           dir={dir}
+          size={size}
           reverse={reverse}
-          itemCount={itemCount}
         />
       ))}
       {shouldTruncate && (
@@ -104,11 +104,11 @@ function Stack(props: StackProps) {
             </div>
           }
           index={visibleItems.length}
-          size={size}
+          itemCount={itemCount + 1}
           orientation={orientation}
           dir={dir}
+          size={size}
           reverse={reverse}
-          itemCount={itemCount + 1}
         />
       )}
     </RootPrimitive>
@@ -120,9 +120,9 @@ interface StackItemProps
     VariantProps<typeof stackVariants> {
   child: React.ReactElement;
   index: number;
-  size: number;
-  reverse?: boolean;
   itemCount: number;
+  size: number;
+  reverse: boolean;
 }
 
 function StackItem(props: StackItemProps) {
