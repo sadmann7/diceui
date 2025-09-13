@@ -6,8 +6,8 @@ import { cn } from "@/lib/utils";
 const stackVariants = cva("flex items-center", {
   variants: {
     orientation: {
-      horizontal: "-space-x-1 flex-row",
-      vertical: "-space-y-1 flex-col",
+      horizontal: "flex-row",
+      vertical: "flex-col",
     },
     reverse: {
       true: "",
@@ -17,13 +17,23 @@ const stackVariants = cva("flex items-center", {
   compoundVariants: [
     {
       orientation: "horizontal",
+      reverse: false,
+      className: "-space-x-1",
+    },
+    {
+      orientation: "horizontal",
       reverse: true,
-      className: "flex-row-reverse",
+      className: "-space-x-1 flex-row-reverse space-x-reverse",
+    },
+    {
+      orientation: "vertical",
+      reverse: false,
+      className: "-space-y-1",
     },
     {
       orientation: "vertical",
       reverse: true,
-      className: "flex-col-reverse",
+      className: "-space-y-1 flex-col-reverse space-y-reverse",
     },
   ],
   defaultVariants: {
@@ -78,6 +88,7 @@ function Stack(props: StackProps) {
           index={index}
           size={size}
           orientation={orientation}
+          reverse={reverse}
         />
       ))}
       {shouldTruncate && (
@@ -91,6 +102,7 @@ function Stack(props: StackProps) {
           index={visibleItems.length}
           size={size}
           orientation={orientation}
+          reverse={reverse}
         />
       )}
     </RootPrimitive>
@@ -99,7 +111,7 @@ function Stack(props: StackProps) {
 
 interface StackItemProps
   extends React.ComponentProps<typeof Slot>,
-    Pick<StackProps, "orientation"> {
+    Pick<StackProps, "orientation" | "reverse"> {
   child: React.ReactElement;
   index: number;
   size: number;
@@ -111,6 +123,7 @@ function StackItem(props: StackItemProps) {
     index,
     size,
     orientation,
+    reverse,
     className,
     style: styleProp,
     ...itemProps
@@ -123,9 +136,17 @@ function StackItem(props: StackItemProps) {
       const maskOffset = size / 4 + size / 10;
 
       if (orientation === "vertical") {
-        maskImage = `radial-gradient(circle ${maskRadius}px at 50% -${maskOffset}px, transparent 99%, white 100%)`;
+        if (reverse) {
+          maskImage = `radial-gradient(circle ${maskRadius}px at 50% ${size + maskOffset}px, transparent 99%, white 100%)`;
+        } else {
+          maskImage = `radial-gradient(circle ${maskRadius}px at 50% -${maskOffset}px, transparent 99%, white 100%)`;
+        }
       } else {
-        maskImage = `radial-gradient(circle ${maskRadius}px at -${maskOffset}px 50%, transparent 99%, white 100%)`;
+        if (reverse) {
+          maskImage = `radial-gradient(circle ${maskRadius}px at ${size + maskOffset}px 50%, transparent 99%, white 100%)`;
+        } else {
+          maskImage = `radial-gradient(circle ${maskRadius}px at -${maskOffset}px 50%, transparent 99%, white 100%)`;
+        }
       }
     }
 
@@ -135,7 +156,7 @@ function StackItem(props: StackItemProps) {
       maskImage,
       ...styleProp,
     };
-  }, [size, index, orientation, styleProp]);
+  }, [size, index, orientation, reverse, styleProp]);
 
   return (
     <Slot

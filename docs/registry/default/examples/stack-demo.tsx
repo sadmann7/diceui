@@ -52,7 +52,7 @@ export default function StackDemo() {
         <h3 className="font-medium text-sm">
           Avatar Stack with Auto Truncation (max 4)
         </h3>
-        <Stack dir="ltr" max={4}>
+        <Stack reverse max={4}>
           {avatars.map((avatar, index) => (
             <Avatar key={index}>
               <AvatarImage src={avatar.src} />
