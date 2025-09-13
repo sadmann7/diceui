@@ -282,33 +282,6 @@ function getUnmaskedValue(
   return transform ? transform(value) : value.replace(/\D/g, "");
 }
 
-function calculateCursorPosition(
-  maskedValue: string,
-  pattern: string,
-  currentUnmaskedLength: number,
-  _previousUnmaskedLength: number,
-): number {
-  // For dynamic patterns (currency, percentage), position at end
-  if (pattern.includes("$") || pattern.includes("€") || pattern.includes("%")) {
-    return maskedValue.length;
-  }
-
-  // For fixed patterns, find position after the last user character
-  let position = 0;
-  let unmaskedCount = 0;
-
-  for (let i = 0; i < pattern.length && i < maskedValue.length; i++) {
-    if (pattern[i] === "#") {
-      unmaskedCount++;
-      if (unmaskedCount <= currentUnmaskedLength) {
-        position = i + 1;
-      }
-    }
-  }
-
-  return position;
-}
-
 function toUnmaskedIndex(
   masked: string,
   pattern: string,
@@ -472,8 +445,6 @@ function MaskInput(props: MaskInputProps) {
       }
 
       if (maskPattern) {
-        const previousValue = inputRef.current?.value ?? "";
-
         unmaskedValue = getUnmaskedValue(inputValue, maskPattern.transform);
         newValue = applyMask(
           unmaskedValue,
@@ -494,21 +465,39 @@ function MaskInput(props: MaskInputProps) {
           } else {
             inputRef.current.value = newValue;
 
-            const previousUnmasked = getUnmaskedValue(
-              previousValue,
-              maskPattern.transform,
-            );
             const currentUnmasked = getUnmaskedValue(
               newValue,
               maskPattern.transform,
             );
 
-            let newCursorPosition = calculateCursorPosition(
-              newValue,
-              maskPattern.pattern,
-              currentUnmasked.length,
-              previousUnmasked.length,
-            );
+            // Calculate cursor position
+            let newCursorPosition: number;
+            // For dynamic patterns (currency, percentage), position at end
+            if (
+              maskPattern.pattern.includes("$") ||
+              maskPattern.pattern.includes("€") ||
+              maskPattern.pattern.includes("%")
+            ) {
+              newCursorPosition = newValue.length;
+            } else {
+              // For fixed patterns, find position after the last user character
+              let position = 0;
+              let unmaskedCount = 0;
+
+              for (
+                let i = 0;
+                i < maskPattern.pattern.length && i < newValue.length;
+                i++
+              ) {
+                if (maskPattern.pattern[i] === "#") {
+                  unmaskedCount++;
+                  if (unmaskedCount <= currentUnmasked.length) {
+                    position = i + 1;
+                  }
+                }
+              }
+              newCursorPosition = position;
+            }
 
             // Apply pattern-specific cursor constraints
             if (
@@ -579,6 +568,8 @@ function MaskInput(props: MaskInputProps) {
   const onCompositionStart = React.useCallback(
     (event: React.CompositionEvent<InputElement>) => {
       onCompositionStartProp?.(event);
+      if (event.defaultPrevented) return;
+
       setComposing(true);
     },
     [onCompositionStartProp],
@@ -587,6 +578,8 @@ function MaskInput(props: MaskInputProps) {
   const onCompositionEnd = React.useCallback(
     (event: React.CompositionEvent<InputElement>) => {
       onCompositionEndProp?.(event);
+      if (event.defaultPrevented) return;
+
       setComposing(false);
       // Apply masking after composition ends
       onValueChange(event as unknown as React.ChangeEvent<InputElement>);
@@ -837,14 +830,16 @@ function MaskInput(props: MaskInputProps) {
 
 export {
   MaskInput,
+  //
   MASK_PATTERNS,
+  //
   applyMask,
   applyCurrencyMask,
   applyPercentageMask,
   getUnmaskedValue,
-  calculateCursorPosition,
   toUnmaskedIndex,
   fromUnmaskedIndex,
+  //
   type MaskPattern,
   type MaskPatternKey,
 };
