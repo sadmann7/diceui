@@ -1,20 +1,8 @@
 "use client";
 
-import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
-
-const ROOT_NAME = "MaskInput";
-
-type Direction = "ltr" | "rtl";
-
-const DirectionContext = React.createContext<Direction | undefined>(undefined);
-
-function useDirection(dirProp?: Direction): Direction {
-  const contextDir = React.useContext(DirectionContext);
-  return dirProp ?? contextDir ?? "ltr";
-}
 
 interface MaskPattern {
   pattern: string;
@@ -112,169 +100,76 @@ function getUnmaskedValue(
   return transform ? transform(value) : value.replace(/\D/g, "");
 }
 
-interface MaskInputContextValue {
-  mask?: string | MaskPattern;
-  customPattern?: MaskPattern;
-  dir: Direction;
-  disabled: boolean;
-  readOnly: boolean;
-  required: boolean;
-  invalid: boolean;
-}
+type InputElement = React.ComponentRef<typeof MaskInput>;
 
-const MaskInputContext = React.createContext<MaskInputContextValue | null>(
-  null,
-);
-
-function useMaskInputContext(consumerName: string) {
-  const context = React.useContext(MaskInputContext);
-  if (!context) {
-    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
-  }
-  return context;
-}
-
-interface MaskInputRootProps extends React.ComponentProps<"div"> {
-  mask?: string | MaskPattern;
-  customPattern?: MaskPattern;
-  dir?: Direction;
-  disabled?: boolean;
-  readOnly?: boolean;
-  required?: boolean;
-  invalid?: boolean;
-  asChild?: boolean;
-}
-
-function MaskInputRoot(props: MaskInputRootProps) {
-  const {
-    mask,
-    customPattern,
-    dir: dirProp,
-    disabled = false,
-    readOnly = false,
-    required = false,
-    invalid = false,
-    asChild,
-    className,
-    ...rootProps
-  } = props;
-
-  const dir = useDirection(dirProp);
-
-  const contextValue = React.useMemo<MaskInputContextValue>(
-    () => ({
-      mask,
-      customPattern,
-      dir,
-      disabled,
-      readOnly,
-      required,
-      invalid,
-    }),
-    [mask, customPattern, dir, disabled, readOnly, required, invalid],
-  );
-
-  const RootPrimitive = asChild ? Slot : "div";
-
-  return (
-    <MaskInputContext.Provider value={contextValue}>
-      <RootPrimitive
-        data-slot="mask-input"
-        data-disabled={disabled ? "" : undefined}
-        data-readonly={readOnly ? "" : undefined}
-        data-required={required ? "" : undefined}
-        data-invalid={invalid ? "" : undefined}
-        dir={dir}
-        {...rootProps}
-        className={cn("relative", className)}
-      />
-    </MaskInputContext.Provider>
-  );
-}
-
-interface MaskInputFieldProps
-  extends Omit<
-    React.ComponentProps<"input">,
-    "onChange" | "value" | "defaultValue"
-  > {
+interface MaskInputProps extends React.ComponentProps<"input"> {
   value?: string;
   defaultValue?: string;
-  onChange?: (
+  onValueChange?: (
     value: string,
     unmaskedValue: string,
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<InputElement>,
   ) => void;
-  onValidation?: (isValid: boolean, value: string) => void;
-  showMask?: boolean;
+  onValidate?: (isValid: boolean, value: string) => void;
+  withoutMask?: boolean;
   mask?: string | MaskPattern;
   customPattern?: MaskPattern;
-  asChild?: boolean;
+  invalid?: boolean;
 }
 
-function MaskInputField(props: MaskInputFieldProps) {
+function MaskInput(props: MaskInputProps) {
   const {
     value: valueProp,
     defaultValue,
-    onChange,
-    onValidation,
-    showMask = true,
-    mask: maskProp,
-    customPattern: customPatternProp,
-    asChild,
-    className,
+    onValueChange: onValueChangeProp,
+    onValidate,
+    onBlur: onBlurProp,
+    onFocus: onFocusProp,
+    onKeyDown: onKeyDownProp,
+    mask,
+    customPattern,
     placeholder: placeholderProp,
-    onFocus,
-    onBlur,
-    onKeyDown,
-    disabled: disabledProp,
-    readOnly: readOnlyProp,
-    required: requiredProp,
+    disabled = false,
+    invalid = false,
+    readOnly = false,
+    required = false,
+    withoutMask = false,
+    className,
+    ref,
     ...inputProps
   } = props;
 
-  const context = useMaskInputContext("MaskInputField");
   const [internalValue, setInternalValue] = React.useState(defaultValue || "");
   const [isFocused, setIsFocused] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const composedRef = useComposedRefs(
-    props.ref as React.Ref<HTMLInputElement>,
-    inputRef,
-  );
+  const composedRef = useComposedRefs(ref, inputRef);
 
   const isControlled = valueProp !== undefined;
   const value = isControlled ? valueProp : internalValue;
 
   const maskPattern = React.useMemo(() => {
-    // Prioritize prop values over context values
-    const mask = maskProp ?? context.mask;
-    const customPattern = customPatternProp ?? context.customPattern;
-
     if (customPattern) return customPattern;
     if (typeof mask === "string") {
       return MASK_PATTERNS[mask];
     }
     return mask;
-  }, [maskProp, customPatternProp, context.mask, context.customPattern]);
-
-  const disabled = disabledProp ?? context.disabled;
-  const readOnly = readOnlyProp ?? context.readOnly;
-  const required = requiredProp ?? context.required;
+  }, [mask, customPattern]);
 
   const placeholder = React.useMemo(() => {
     if (placeholderProp) return placeholderProp;
-    if (showMask && maskPattern && isFocused) {
+    if (!withoutMask && maskPattern && isFocused) {
       return maskPattern.placeholder;
     }
     return maskPattern?.placeholder || placeholderProp;
-  }, [placeholderProp, showMask, maskPattern, isFocused]);
+  }, [placeholderProp, withoutMask, maskPattern, isFocused]);
 
   const displayValue = React.useMemo(() => {
     if (!maskPattern || !value) return value;
     return applyMask(value, maskPattern.pattern, maskPattern.transform);
   }, [value, maskPattern]);
 
-  const handleChange = React.useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onValueChange = React.useCallback(
+    (event: React.ChangeEvent<InputElement>) => {
       const inputValue = event.target.value;
       let newValue = inputValue;
       let unmaskedValue = inputValue;
@@ -314,37 +209,44 @@ function MaskInputField(props: MaskInputFieldProps) {
       }
 
       // Validate if validation function is provided
-      if (onValidation && maskPattern?.validate) {
+      if (onValidate && maskPattern?.validate) {
         const isValid = maskPattern.validate(unmaskedValue);
-        onValidation(isValid, unmaskedValue);
+        onValidate(isValid, unmaskedValue);
       }
 
-      onChange?.(newValue, unmaskedValue, event);
+      onValueChangeProp?.(newValue, unmaskedValue, event);
     },
-    [maskPattern, isControlled, onChange, onValidation],
+    [maskPattern, isControlled, onValueChangeProp, onValidate],
   );
 
-  const handleFocus = React.useCallback(
-    (event: React.FocusEvent<HTMLInputElement>) => {
+  const onFocus = React.useCallback(
+    (event: React.FocusEvent<InputElement>) => {
+      onFocusProp?.(event);
+      if (event.defaultPrevented) return;
+
       setIsFocused(true);
-      onFocus?.(event);
     },
-    [onFocus],
+    [onFocusProp],
   );
 
-  const handleBlur = React.useCallback(
-    (event: React.FocusEvent<HTMLInputElement>) => {
+  const onBlur = React.useCallback(
+    (event: React.FocusEvent<InputElement>) => {
+      onBlurProp?.(event);
+      if (event.defaultPrevented) return;
+
       setIsFocused(false);
-      onBlur?.(event);
     },
-    [onBlur],
+    [onBlurProp],
   );
 
-  const handleKeyDown = React.useCallback(
-    (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const onKeyDown = React.useCallback(
+    (event: React.KeyboardEvent<InputElement>) => {
+      onKeyDownProp?.(event);
+      if (event.defaultPrevented) return;
+
       // Handle backspace to remove mask characters properly
       if (event.key === "Backspace" && maskPattern) {
-        const target = event.target as HTMLInputElement;
+        const target = event.target as InputElement;
         const cursorPosition = target.selectionStart || 0;
         const currentValue = target.value;
 
@@ -362,23 +264,25 @@ function MaskInputField(props: MaskInputFieldProps) {
             const syntheticEvent = {
               ...event,
               target: { ...target, value: newValue },
-            } as React.ChangeEvent<HTMLInputElement>;
+            } as React.ChangeEvent<InputElement>;
 
-            handleChange(syntheticEvent);
+            onValueChange(syntheticEvent);
             return;
           }
         }
       }
-
-      onKeyDown?.(event);
     },
-    [maskPattern, onKeyDown, handleChange],
+    [maskPattern, onKeyDownProp, onValueChange],
   );
 
-  const InputPrimitive = asChild ? Slot : "input";
-
   return (
-    <InputPrimitive
+    <input
+      aria-invalid={invalid}
+      data-disabled={disabled ? "" : undefined}
+      data-readonly={readOnly ? "" : undefined}
+      data-required={required ? "" : undefined}
+      data-invalid={invalid ? "" : undefined}
+      data-slot="mask-input"
       {...inputProps}
       ref={composedRef}
       value={displayValue}
@@ -386,112 +290,22 @@ function MaskInputField(props: MaskInputFieldProps) {
       disabled={disabled}
       readOnly={readOnly}
       required={required}
-      aria-invalid={context.invalid}
-      data-slot="mask-input-field"
-      data-disabled={disabled ? "" : undefined}
-      data-readonly={readOnly ? "" : undefined}
-      data-required={required ? "" : undefined}
-      data-invalid={context.invalid ? "" : undefined}
       className={cn(
         "flex h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs outline-none transition-[color,box-shadow] selection:bg-primary selection:text-primary-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-input/30",
         "focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
         "aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
         className,
       )}
-      onChange={handleChange}
-      onFocus={handleFocus}
-      onBlur={handleBlur}
-      onKeyDown={handleKeyDown}
-    />
-  );
-}
-
-interface MaskInputLabelProps extends React.ComponentProps<"label"> {
-  asChild?: boolean;
-}
-
-function MaskInputLabel(props: MaskInputLabelProps) {
-  const { asChild, className, ...labelProps } = props;
-  const context = useMaskInputContext("MaskInputLabel");
-
-  const LabelPrimitive = asChild ? Slot : "label";
-
-  return (
-    <LabelPrimitive
-      data-slot="mask-input-label"
-      data-disabled={context.disabled ? "" : undefined}
-      data-required={context.required ? "" : undefined}
-      data-invalid={context.invalid ? "" : undefined}
-      {...labelProps}
-      className={cn(
-        "font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
-        context.invalid && "text-destructive",
-        className,
-      )}
-    />
-  );
-}
-
-interface MaskInputDescriptionProps extends React.ComponentProps<"div"> {
-  asChild?: boolean;
-}
-
-function MaskInputDescription(props: MaskInputDescriptionProps) {
-  const { asChild, className, ...descriptionProps } = props;
-  const context = useMaskInputContext("MaskInputDescription");
-
-  const DescriptionPrimitive = asChild ? Slot : "div";
-
-  return (
-    <DescriptionPrimitive
-      data-slot="mask-input-description"
-      data-disabled={context.disabled ? "" : undefined}
-      data-invalid={context.invalid ? "" : undefined}
-      {...descriptionProps}
-      className={cn(
-        "text-muted-foreground text-sm",
-        context.invalid && "text-destructive",
-        className,
-      )}
-    />
-  );
-}
-
-interface MaskInputErrorProps extends React.ComponentProps<"div"> {
-  asChild?: boolean;
-}
-
-function MaskInputError(props: MaskInputErrorProps) {
-  const { asChild, className, ...errorProps } = props;
-  const context = useMaskInputContext("MaskInputError");
-
-  if (!context.invalid) return null;
-
-  const ErrorPrimitive = asChild ? Slot : "div";
-
-  return (
-    <ErrorPrimitive
-      data-slot="mask-input-error"
-      data-invalid={context.invalid ? "" : undefined}
-      {...errorProps}
-      className={cn("font-medium text-destructive text-sm", className)}
+      onChange={onValueChange}
+      onFocus={onFocus}
+      onBlur={onBlur}
+      onKeyDown={onKeyDown}
     />
   );
 }
 
 export {
-  MaskInputRoot as Root,
-  MaskInputField as Field,
-  MaskInputLabel as Label,
-  MaskInputDescription as Description,
-  MaskInputError as Error,
-  //
-  MaskInputRoot as MaskInput,
-  MaskInputField,
-  MaskInputLabel,
-  MaskInputDescription,
-  MaskInputError,
-  //
+  MaskInput,
   MASK_PATTERNS,
   applyMask,
   getUnmaskedValue,

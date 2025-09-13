@@ -1,51 +1,49 @@
 "use client";
 
 import * as React from "react";
-import {
-  MaskInput,
-  MaskInputDescription,
-  MaskInputError,
-  MaskInputField,
-  MaskInputLabel,
-} from "@/registry/default/ui/mask-input";
+import { Label } from "@/components/ui/label";
+import { MaskInput } from "@/registry/default/ui/mask-input";
 
 export default function MaskInputDemo() {
+  const id = React.useId();
   const [phoneValue, setPhoneValue] = React.useState("");
   const [dateValue, setDateValue] = React.useState("");
   const [isValid, setIsValid] = React.useState(true);
 
   return (
     <div className="flex w-full max-w-sm flex-col gap-6">
-      <MaskInput>
-        <MaskInputLabel>Phone Number</MaskInputLabel>
-        <MaskInputField
+      <div className="flex flex-col gap-2">
+        <Label htmlFor={`${id}-phone`}>Phone Number</Label>
+        <MaskInput
+          id={`${id}-phone`}
           mask="phone"
           value={phoneValue}
-          onChange={(maskedValue) => {
-            setPhoneValue(maskedValue);
-          }}
+          onValueChange={setPhoneValue}
           placeholder="Enter your phone number"
         />
-        <MaskInputDescription>
+        <p className="text-muted-foreground text-sm">
           Enter your phone number with area code
-        </MaskInputDescription>
-      </MaskInput>
-      <MaskInput invalid={!isValid}>
-        <MaskInputLabel>Birth Date</MaskInputLabel>
-        <MaskInputField
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <Label htmlFor={`${id}-date`}>Birth Date</Label>
+        <MaskInput
+          id={`${id}-date`}
           mask="date"
           value={dateValue}
-          onChange={(maskedValue) => {
-            setDateValue(maskedValue);
-          }}
-          onValidation={(valid) => {
-            setIsValid(valid);
-          }}
+          onValueChange={setDateValue}
+          onValidate={setIsValid}
           placeholder="mm/dd/yyyy"
+          className={!isValid ? "border-destructive" : ""}
         />
-        <MaskInputDescription>Enter your birth date</MaskInputDescription>
-        <MaskInputError>Please enter a valid date</MaskInputError>
-      </MaskInput>
+        <p className="text-muted-foreground text-sm">Enter your birth date</p>
+        {!isValid && (
+          <p className="font-medium text-destructive text-sm">
+            Please enter a valid date
+          </p>
+        )}
+      </div>
     </div>
   );
 }

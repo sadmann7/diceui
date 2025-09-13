@@ -15,7 +15,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { MaskInput, MaskInputField } from "@/registry/default/ui/mask-input";
+import { MaskInput } from "@/registry/default/ui/mask-input";
 
 const formSchema = z.object({
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
@@ -55,16 +55,15 @@ export default function MaskInputFormDemo() {
             <FormItem>
               <FormLabel>Phone Number</FormLabel>
               <FormControl>
-                <MaskInput invalid={!!form.formState.errors.phone}>
-                  <MaskInputField
-                    mask="phone"
-                    value={field.value}
-                    onChange={(maskedValue, unmaskedValue) => {
-                      field.onChange(unmaskedValue);
-                    }}
-                    placeholder="(555) 123-4567"
-                  />
-                </MaskInput>
+                <MaskInput
+                  mask="phone"
+                  value={field.value}
+                  onValueChange={(maskedValue, unmaskedValue) => {
+                    field.onChange(unmaskedValue);
+                  }}
+                  placeholder="(555) 123-4567"
+                  invalid={!!form.formState.errors.phone}
+                />
               </FormControl>
               <FormDescription>Enter your primary phone number</FormDescription>
               <FormMessage />
@@ -79,16 +78,15 @@ export default function MaskInputFormDemo() {
             <FormItem>
               <FormLabel>Social Security Number</FormLabel>
               <FormControl>
-                <MaskInput invalid={!!form.formState.errors.ssn}>
-                  <MaskInputField
-                    mask="ssn"
-                    value={field.value}
-                    onChange={(maskedValue, unmaskedValue) => {
-                      field.onChange(unmaskedValue);
-                    }}
-                    placeholder="123-45-6789"
-                  />
-                </MaskInput>
+                <MaskInput
+                  mask="ssn"
+                  value={field.value}
+                  onValueChange={(maskedValue, unmaskedValue) => {
+                    field.onChange(unmaskedValue);
+                  }}
+                  placeholder="123-45-6789"
+                  invalid={!!form.formState.errors.ssn}
+                />
               </FormControl>
               <FormDescription>
                 Enter your social security number
@@ -105,16 +103,15 @@ export default function MaskInputFormDemo() {
             <FormItem>
               <FormLabel>Birth Date</FormLabel>
               <FormControl>
-                <MaskInput invalid={!!form.formState.errors.birthDate}>
-                  <MaskInputField
-                    mask="date"
-                    value={field.value}
-                    onChange={(maskedValue, unmaskedValue) => {
-                      field.onChange(unmaskedValue);
-                    }}
-                    placeholder="mm/dd/yyyy"
-                  />
-                </MaskInput>
+                <MaskInput
+                  mask="date"
+                  value={field.value}
+                  onValueChange={(maskedValue, unmaskedValue) => {
+                    field.onChange(unmaskedValue);
+                  }}
+                  placeholder="mm/dd/yyyy"
+                  invalid={!!form.formState.errors.birthDate}
+                />
               </FormControl>
               <FormDescription>Enter your date of birth</FormDescription>
               <FormMessage />
@@ -129,16 +126,15 @@ export default function MaskInputFormDemo() {
             <FormItem>
               <FormLabel>Emergency Contact</FormLabel>
               <FormControl>
-                <MaskInput invalid={!!form.formState.errors.emergencyContact}>
-                  <MaskInputField
-                    mask="phone"
-                    value={field.value}
-                    onChange={(maskedValue, unmaskedValue) => {
-                      field.onChange(unmaskedValue);
-                    }}
-                    placeholder="(555) 987-6543"
-                  />
-                </MaskInput>
+                <MaskInput
+                  mask="phone"
+                  value={field.value}
+                  onValueChange={(maskedValue, unmaskedValue) => {
+                    field.onChange(unmaskedValue);
+                  }}
+                  placeholder="(555) 987-6543"
+                  invalid={!!form.formState.errors.emergencyContact}
+                />
               </FormControl>
               <FormDescription>
                 Enter emergency contact phone number

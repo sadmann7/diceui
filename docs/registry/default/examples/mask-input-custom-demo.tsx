@@ -1,13 +1,8 @@
 "use client";
 
 import * as React from "react";
-import {
-  MaskInput,
-  MaskInputDescription,
-  MaskInputField,
-  MaskInputLabel,
-  type MaskPattern,
-} from "@/registry/default/ui/mask-input";
+import { Label } from "@/components/ui/label";
+import { MaskInput, type MaskPattern } from "@/registry/default/ui/mask-input";
 
 export default function MaskInputCustomDemo() {
   const [licenseValue, setLicenseValue] = React.useState("");
@@ -37,35 +32,33 @@ export default function MaskInputCustomDemo() {
 
   return (
     <div className="flex w-full max-w-sm flex-col gap-6">
-      <MaskInput>
-        <MaskInputLabel>License Plate</MaskInputLabel>
-        <MaskInputField
+      <div className="space-y-2">
+        <Label htmlFor="license">License Plate</Label>
+        <MaskInput
+          id="license"
           customPattern={licensePattern}
           value={licenseValue}
-          onChange={(maskedValue) => {
-            setLicenseValue(maskedValue);
-          }}
+          onValueChange={setLicenseValue}
           placeholder="ABC-1234"
         />
-        <MaskInputDescription>
+        <p className="text-muted-foreground text-sm">
           Enter license plate (3 letters, 4 numbers)
-        </MaskInputDescription>
-      </MaskInput>
+        </p>
+      </div>
 
-      <MaskInput>
-        <MaskInputLabel>Product Code</MaskInputLabel>
-        <MaskInputField
+      <div className="space-y-2">
+        <Label htmlFor="product">Product Code</Label>
+        <MaskInput
+          id="product"
           customPattern={productCodePattern}
           value={productCodeValue}
-          onChange={(maskedValue) => {
-            setProductCodeValue(maskedValue);
-          }}
+          onValueChange={setProductCodeValue}
           placeholder="PRD-ABC-123"
         />
-        <MaskInputDescription>
+        <p className="text-muted-foreground text-sm">
           Enter product code (PRD-XXX-XXX format)
-        </MaskInputDescription>
-      </MaskInput>
+        </p>
+      </div>
     </div>
   );
 }
