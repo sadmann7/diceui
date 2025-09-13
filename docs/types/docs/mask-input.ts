@@ -13,12 +13,13 @@ export interface MaskPattern {
 
   /**
    * The placeholder text to show when focused
+   * This will be shown when the input is focused and the mask is not applied
    *
    * ```ts
    * placeholder: "(___) ___-____"
    * ```
    */
-  placeholder: string;
+  placeholder?: string;
 
   /**
    * Transform function to clean/format input before applying mask
