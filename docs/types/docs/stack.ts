@@ -8,6 +8,18 @@ import type {
 
 export interface StackProps extends EmptyProps<"div">, CompositionProps {
   /**
+   * The orientation of the stack.
+   * @default "horizontal"
+   */
+  orientation?: Orientation;
+
+  /**
+   * The reading direction of the stack.
+   * @default "ltr"
+   */
+  dir?: Direction;
+
+  /**
    * The size of each stack item in pixels.
    * @default 40
    */
@@ -19,25 +31,8 @@ export interface StackProps extends EmptyProps<"div">, CompositionProps {
   max?: number;
 
   /**
-   * Render as a child element, inheriting props from the parent.
-   * @default false
-   */
-
-  /**
    * Reverse the stacking order.
    * @default false
    */
   reverse?: boolean;
-
-  /**
-   * The orientation of the stack.
-   * @default "horizontal"
-   */
-  orientation?: Orientation;
-
-  /**
-   * The reading direction of the stack.
-   * @default "ltr"
-   */
-  dir?: Direction;
 }
