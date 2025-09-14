@@ -11,9 +11,7 @@ export default function MaskInputDemo() {
   const [dollarValue, setDollarValue] = React.useState("");
   const [euroValue, setEuroValue] = React.useState("");
   const [percentageValue, setPercentageValue] = React.useState("");
-  const [isDateValid, setIsDateValid] = React.useState(true);
-
-  console.log({ dollarValue, euroValue });
+  const [ipv4Value, setIpv4Value] = React.useState("");
 
   return (
     <div className="grid gap-6 md:grid-cols-2">
@@ -38,15 +36,8 @@ export default function MaskInputDemo() {
           placeholder="mm/dd/yyyy"
           value={dateValue}
           onValueChange={setDateValue}
-          onValidate={setIsDateValid}
-          invalid={!isDateValid}
         />
         <p className="text-muted-foreground text-sm">Enter your birth date</p>
-        {!isDateValid && (
-          <p className="font-medium text-destructive text-sm">
-            Please enter a valid date
-          </p>
-        )}
       </div>
       <div className="flex flex-col gap-2">
         <Label htmlFor={`${id}-dollar`}>Dollar</Label>
@@ -59,7 +50,6 @@ export default function MaskInputDemo() {
         />
         <p className="text-muted-foreground text-sm">Enter your currency</p>
       </div>
-
       <div className="flex flex-col gap-2">
         <Label htmlFor={`${id}-euro`}>Euro (German)</Label>
         <MaskInput
@@ -73,7 +63,6 @@ export default function MaskInputDemo() {
         />
         <p className="text-muted-foreground text-sm">Enter your currency</p>
       </div>
-
       <div className="flex flex-col gap-2">
         <Label htmlFor={`${id}-percentage`}>Percentage</Label>
         <MaskInput
@@ -84,6 +73,16 @@ export default function MaskInputDemo() {
           onValueChange={setPercentageValue}
         />
         <p className="text-muted-foreground text-sm">Enter your percentage</p>
+      </div>
+      <div className="flex flex-col gap-2">
+        <Label htmlFor={`${id}-ipv4`}>IPv4</Label>
+        <MaskInput
+          id={`${id}-ipv4`}
+          mask="ipv4"
+          placeholder="192.168.1.1"
+          value={ipv4Value}
+          onValueChange={setIpv4Value}
+        />
       </div>
     </div>
   );
