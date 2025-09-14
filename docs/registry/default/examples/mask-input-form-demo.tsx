@@ -46,7 +46,7 @@ export default function MaskInputFormDemo() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full max-w-md space-y-6"
+        className="grid gap-6 md:grid-cols-2"
       >
         <FormField
           control={form.control}
@@ -58,7 +58,7 @@ export default function MaskInputFormDemo() {
                 <MaskInput
                   mask="phone"
                   value={field.value}
-                  onValueChange={(maskedValue, unmaskedValue) => {
+                  onValueChange={(_maskedValue, unmaskedValue) => {
                     field.onChange(unmaskedValue);
                   }}
                   placeholder="(555) 123-4567"
@@ -81,7 +81,7 @@ export default function MaskInputFormDemo() {
                 <MaskInput
                   mask="ssn"
                   value={field.value}
-                  onValueChange={(maskedValue, unmaskedValue) => {
+                  onValueChange={(_maskedValue, unmaskedValue) => {
                     field.onChange(unmaskedValue);
                   }}
                   placeholder="123-45-6789"
@@ -106,7 +106,7 @@ export default function MaskInputFormDemo() {
                 <MaskInput
                   mask="date"
                   value={field.value}
-                  onValueChange={(maskedValue, unmaskedValue) => {
+                  onValueChange={(_maskedValue, unmaskedValue) => {
                     field.onChange(unmaskedValue);
                   }}
                   placeholder="mm/dd/yyyy"
@@ -129,7 +129,7 @@ export default function MaskInputFormDemo() {
                 <MaskInput
                   mask="phone"
                   value={field.value}
-                  onValueChange={(maskedValue, unmaskedValue) => {
+                  onValueChange={(_maskedValue, unmaskedValue) => {
                     field.onChange(unmaskedValue);
                   }}
                   placeholder="(555) 987-6543"
@@ -143,10 +143,12 @@ export default function MaskInputFormDemo() {
             </FormItem>
           )}
         />
-
-        <Button type="submit" className="w-full">
-          Submit Form
-        </Button>
+        <div className="flex w-full justify-end gap-2 md:col-span-2">
+          <Button type="button" variant="outline" onClick={() => form.reset()}>
+            Reset
+          </Button>
+          <Button type="submit">Submit</Button>
+        </div>
       </form>
     </Form>
   );

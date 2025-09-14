@@ -1,5 +1,5 @@
 import type * as React from "react";
-import type { CozyProps } from "@/types";
+import type { CompositionProps, EmptyProps } from "@/types";
 
 export interface MaskPattern {
   /**
@@ -66,7 +66,7 @@ export type ValidationMode =
   | "onTouched" // Validate on first blur, then on every change
   | "all"; // Validate on both blur and change events
 
-export interface MaskInputProps extends CozyProps<"input"> {
+export interface MaskInputProps extends EmptyProps<"input">, CompositionProps {
   /** Controlled value */
   value?: string;
 

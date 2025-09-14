@@ -11,9 +11,9 @@ export default function MaskInputDemo() {
   const [isValid, setIsValid] = React.useState(true);
   const [currencyValue, setCurrencyValue] = React.useState("");
   const [percentageValue, setPercentageValue] = React.useState("");
-  const [ipValue, setIpValue] = React.useState("");
+
   return (
-    <div className="flex w-full max-w-sm flex-col gap-6">
+    <div className="grid gap-6 md:grid-cols-2">
       <div className="flex flex-col gap-2">
         <Label htmlFor={`${id}-phone`}>Phone Number</Label>
         <MaskInput
@@ -67,17 +67,7 @@ export default function MaskInputDemo() {
           onValueChange={setPercentageValue}
           placeholder="0.00%"
         />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Label htmlFor={`${id}-ip`}>IPv4 Address</Label>
-        <MaskInput
-          id={`${id}-ip`}
-          mask="ipv4"
-          value={ipValue}
-          onValueChange={setIpValue}
-          placeholder="192.168.1.1"
-        />
+        <p className="text-muted-foreground text-sm">Enter your percentage</p>
       </div>
     </div>
   );
