@@ -231,15 +231,36 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
     placeholder: "192.168.1.1",
     transform: (value) => value.replace(/[^0-9.]/g, ""),
     validate: (value) => {
-      const segments = value.split(".");
-      if (segments.length > 4) return false;
+      // Handle both formats: "192.168.1.1" and "192168001001"
+      if (value.includes(".")) {
+        // Dot-separated format
+        const segments = value.split(".");
+        if (segments.length > 4) return false;
 
-      return segments.every((segment) => {
-        if (segment === "") return true; // Allow incomplete segments
-        if (!/^\d{1,3}$/.test(segment)) return false;
-        const num = parseInt(segment, 10);
-        return num >= 0 && num <= 255;
-      });
+        return segments.every((segment) => {
+          if (segment === "") return true; // Allow incomplete segments
+          if (!/^\d{1,3}$/.test(segment)) return false;
+          const num = parseInt(segment, 10);
+          return num >= 0 && num <= 255;
+        });
+      } else {
+        // Digits-only format: validate as chunks of 3 digits max
+        if (!/^\d+$/.test(value)) return false;
+        if (value.length > 12) return false; // Max 4 segments * 3 digits each
+
+        // Split into 3-digit chunks and validate each
+        const chunks = [];
+        for (let i = 0; i < value.length; i += 3) {
+          chunks.push(value.substring(i, i + 3));
+        }
+
+        if (chunks.length > 4) return false;
+
+        return chunks.every((chunk) => {
+          const num = parseInt(chunk, 10);
+          return num >= 0 && num <= 255;
+        });
+      }
     },
   },
   macAddress: {
@@ -361,15 +382,42 @@ function applyCurrencyMask(
 
   const num = Number(`${intValue}.${fracValue || ""}`);
 
-  if (Number.isNaN(num)) return "";
+  if (Number.isNaN(num)) {
+    // For invalid values, still show currency symbol with the cleaned input
+    const cleanedDigits = value.replace(/[^\d]/g, "");
+    if (!cleanedDigits) return "";
+    return `${currencySymbol}${cleanedDigits}`;
+  }
+
+  // Check if user explicitly typed a decimal separator
+  const hasExplicitDecimal =
+    value.includes(".") || value.includes(decimalSeparator);
 
   try {
-    return new Intl.NumberFormat(locale, {
+    const result = new Intl.NumberFormat(locale, {
       style: "currency",
       currency: currency,
       minimumFractionDigits: fracValue ? fracValue.length : 0,
       maximumFractionDigits: 2,
     }).format(num);
+
+    // If user typed a trailing dot with no decimals, preserve it
+    if (hasExplicitDecimal && !fracValue) {
+      // For left-side currencies like $123, insert dot before the last digit
+      // For right-side currencies like 123 €, insert dot before the currency symbol
+      if (result.match(/^[^\d\s]+/)) {
+        // Left-side currency: $123 -> $123.
+        return result.replace(/(\d)$/, `$1${decimalSeparator}`);
+      } else {
+        // Right-side currency: 123 € -> 123. €
+        return result.replace(
+          /(\d)(\s*)([^\d\s]+)$/,
+          `$1${decimalSeparator}$2$3`,
+        );
+      }
+    }
+
+    return result;
   } catch {
     // Fallback to manual formatting
     const formattedInt = intValue.replace(
@@ -377,7 +425,7 @@ function applyCurrencyMask(
       groupSeparator,
     );
     let result = `${currencySymbol}${formattedInt}`;
-    if (value.includes(decimalSeparator) || value.includes(".")) {
+    if (hasExplicitDecimal) {
       result += `${decimalSeparator}${fracValue}`;
     }
 

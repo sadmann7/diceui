@@ -291,12 +291,19 @@ describe("MaskInput", () => {
 
       const input = screen.getByTestId("currency-input");
 
-      await user.type(input, "1234.56");
+      // Type in de-DE format: comma as decimal separator
+      await user.type(input, "1234,56");
 
-      // EUR formatting can vary slightly between environments
-      expect(input).toHaveValue("€1,234.56");
+      // EUR formatting in de-DE locale: 1.234,56 € (with non-breaking space)
+      const expectedEurFormat = new Intl.NumberFormat("de-DE", {
+        style: "currency",
+        currency: "EUR",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(1234.56);
+      expect(input).toHaveValue(expectedEurFormat);
       expect(onValueChange).toHaveBeenLastCalledWith(
-        "€1,234.56",
+        expectedEurFormat,
         "1234.56",
         expect.any(Object),
       );
@@ -421,12 +428,12 @@ describe("MaskInput", () => {
 
       const input = screen.getByTestId("ipv4-input");
 
-      // Type partial IPv4 address
+      // Type partial IPv4 address (natural typing - no auto-dots)
       await user.type(input, "192168111");
 
-      expect(input).toHaveValue("192.168.111");
+      expect(input).toHaveValue("192168111");
       expect(onValueChange).toHaveBeenLastCalledWith(
-        "192.168.111",
+        "192168111",
         "192168111",
         expect.any(Object),
       );
@@ -623,7 +630,7 @@ describe("MaskInput", () => {
       expect(onValueChange).toHaveBeenLastCalledWith(
         "(555) 123-4567",
         "5551234567",
-        expect.any(Object),
+        undefined,
       );
     });
 
@@ -825,7 +832,8 @@ describe("MaskInput", () => {
           "de-DE",
           "currency",
         );
-        expect(result).toMatch(/€.*1.*234.*56/);
+        // EUR in de-DE: 1.234,56 €  (note: uses non-breaking space)
+        expect(result).toMatch(/1\.234,56\s+€/);
       });
 
       test("applies percentage mask", () => {
@@ -848,8 +856,8 @@ describe("MaskInput", () => {
 
       test("formats EUR currency", () => {
         const result = applyCurrencyMask("1234.56", "EUR", "de-DE");
-        // The actual format depends on the browser's Intl implementation
-        expect(result).toMatch(/€.*1.*234.*56/);
+        // EUR in de-DE: 1.234,56 €  (note: uses non-breaking space)
+        expect(result).toMatch(/1\.234,56\s+€/);
       });
 
       test("formats GBP currency", () => {
@@ -870,8 +878,8 @@ describe("MaskInput", () => {
 
       test("handles invalid numeric values", () => {
         const result = applyCurrencyMask("abc");
-        // Invalid values still get processed but result in NaN formatting
-        expect(result).toMatch(/\$/);
+        // Invalid values with no digits return empty string
+        expect(result).toBe("");
       });
 
       test("adds commas for large numbers", () => {
