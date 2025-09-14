@@ -855,7 +855,7 @@ export const Index: Record<string, any> = {
       name: "mask-input-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["utils"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/examples/mask-input-demo.tsx",
         type: "registry:example",
@@ -869,7 +869,7 @@ export const Index: Record<string, any> = {
       name: "mask-input-patterns-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["utils"],
+      registryDependencies: ["label"],
       files: [{
         path: "registry/default/examples/mask-input-patterns-demo.tsx",
         type: "registry:example",
@@ -883,7 +883,7 @@ export const Index: Record<string, any> = {
       name: "mask-input-custom-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["utils"],
+      registryDependencies: ["label"],
       files: [{
         path: "registry/default/examples/mask-input-custom-demo.tsx",
         type: "registry:example",
@@ -893,11 +893,25 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "mask-input-validation-modes-demo": {
+      name: "mask-input-validation-modes-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["badge","card","label"],
+      files: [{
+        path: "registry/default/examples/mask-input-validation-modes-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/mask-input-validation-modes-demo.tsx")),
+      source: "",
+      chunks: []
+    },
     "mask-input-form-demo": {
       name: "mask-input-form-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["button","form","utils"],
+      registryDependencies: ["button","form"],
       files: [{
         path: "registry/default/examples/mask-input-form-demo.tsx",
         type: "registry:example",

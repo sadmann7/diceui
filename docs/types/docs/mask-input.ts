@@ -58,6 +58,14 @@ export type MaskPatternKey =
   | "isbn"
   | "ein";
 
+/** Validation modes that control when validation occurs */
+export type ValidationMode =
+  | "onChange" // Validate on every change (current behavior)
+  | "onBlur" // Validate only when field loses focus
+  | "onSubmit" // Validate only on form submission (no automatic validation)
+  | "onTouched" // Validate on first blur, then on every change
+  | "all"; // Validate on both blur and change events
+
 export interface MaskInputProps extends CozyProps<"input"> {
   /**
    * Predefined mask type or custom mask pattern.
@@ -116,6 +124,28 @@ export interface MaskInputProps extends CozyProps<"input"> {
    * ```
    */
   onValidate?: (isValid: boolean, unmaskedValue: string) => void;
+
+  /**
+   * Controls when validation occurs. Similar to react-hook-form validation modes.
+   *
+   * ```ts
+   * // Validate on every keystroke (default)
+   * validationMode="onChange"
+   *
+   * // Validate only when field loses focus
+   * validationMode="onBlur"
+   *
+   * // Validate on first blur, then on every change
+   * validationMode="onTouched"
+   *
+   * // No automatic validation
+   * validationMode="onSubmit"
+   *
+   * // Validate on both blur and change
+   * validationMode="all"
+   * ```
+   */
+  validationMode?: ValidationMode;
 
   /** Whether the input has validation errors. */
   invalid?: boolean;

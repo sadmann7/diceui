@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
+import EditableFormDemo from "@/registry/default/examples/editable-form-demo";
 import MaskInputDemo from "@/registry/default/examples/mask-input-demo";
 import {
   Combobox,
@@ -41,6 +42,7 @@ import {
 export default function PlaygroundPage() {
   return (
     <Shell>
+      <EditableFormDemo />
       <MaskInputDemo />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>

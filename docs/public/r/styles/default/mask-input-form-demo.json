@@ -9,8 +9,7 @@
   ],
   "registryDependencies": [
     "button",
-    "form",
-    "utils"
+    "form"
   ],
   "files": [
     {

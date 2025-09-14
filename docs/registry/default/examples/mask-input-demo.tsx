@@ -36,6 +36,7 @@ export default function MaskInputDemo() {
           value={dateValue}
           onValueChange={setDateValue}
           onValidate={setIsValid}
+          validationMode="onBlur"
           placeholder="mm/dd/yyyy"
           className={!isValid ? "border-destructive" : ""}
         />

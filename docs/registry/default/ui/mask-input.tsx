@@ -315,6 +315,13 @@ function fromUnmaskedIndex(
 
 type InputElement = HTMLInputElement;
 
+type ValidationMode =
+  | "onChange" // Validate on every change (current behavior)
+  | "onBlur" // Validate only when field loses focus
+  | "onSubmit" // Validate only on form submission (no automatic validation)
+  | "onTouched" // Validate on first blur, then on every change
+  | "all"; // Validate on both blur and change events
+
 interface MaskInputProps extends React.ComponentProps<"input"> {
   value?: string;
   defaultValue?: string;
@@ -328,6 +335,7 @@ interface MaskInputProps extends React.ComponentProps<"input"> {
   asChild?: boolean;
   invalid?: boolean;
   withoutMask?: boolean;
+  validationMode?: ValidationMode;
 }
 
 function MaskInput(props: MaskInputProps) {
@@ -350,6 +358,7 @@ function MaskInput(props: MaskInputProps) {
     readOnly = false,
     required = false,
     withoutMask = false,
+    validationMode = "onChange",
     className,
     ref,
     ...inputProps
@@ -358,6 +367,7 @@ function MaskInput(props: MaskInputProps) {
   const [internalValue, setInternalValue] = React.useState(defaultValue ?? "");
   const [isFocused, setIsFocused] = React.useState(false);
   const [composing, setComposing] = React.useState(false);
+  const [touched, setTouched] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const composedRef = useComposedRefs(ref, inputRef);
 
@@ -420,6 +430,40 @@ function MaskInput(props: MaskInputProps) {
     return undefined;
   }, [maskPattern, mask, inputProps.inputMode]);
 
+  // Helper function to determine if validation should run
+  const shouldValidate = React.useCallback(
+    (trigger: "change" | "blur") => {
+      if (!onValidate || !maskPattern?.validate) return false;
+
+      switch (validationMode) {
+        case "onChange":
+          return trigger === "change";
+        case "onBlur":
+          return trigger === "blur";
+        case "onSubmit":
+          return false; // Never validate automatically
+        case "onTouched":
+          return touched ? trigger === "change" : trigger === "blur";
+        case "all":
+          return true; // Validate on both change and blur
+        default:
+          return trigger === "change"; // Default to onChange behavior
+      }
+    },
+    [onValidate, maskPattern, validationMode, touched],
+  );
+
+  // Helper function to perform validation
+  const performValidation = React.useCallback(
+    (unmaskedValue: string) => {
+      if (onValidate && maskPattern?.validate) {
+        const isValid = maskPattern.validate(unmaskedValue);
+        onValidate(isValid, unmaskedValue);
+      }
+    },
+    [onValidate, maskPattern],
+  );
+
   const onValueChange = React.useCallback(
     (event: React.ChangeEvent<InputElement>) => {
       const inputValue = event.target.value;
@@ -439,7 +483,11 @@ function MaskInput(props: MaskInputProps) {
         if (!isControlled) {
           setInternalValue(inputValue);
         }
-        onValidate?.(true, inputValue);
+        // Validate based on mode for non-masked inputs
+        if (shouldValidate("change")) {
+          // For non-masked inputs, we assume they're always valid unless there's a custom validator
+          onValidate?.(true, inputValue);
+        }
         onValueChangeProp?.(inputValue, inputValue, event);
         return;
       }
@@ -526,10 +574,9 @@ function MaskInput(props: MaskInputProps) {
         setInternalValue(newValue);
       }
 
-      // Validate if validation function is provided
-      if (onValidate && maskPattern?.validate) {
-        const isValid = maskPattern.validate(unmaskedValue);
-        onValidate(isValid, unmaskedValue);
+      // Validate based on validation mode
+      if (shouldValidate("change")) {
+        performValidation(unmaskedValue);
       }
 
       onValueChangeProp?.(newValue, unmaskedValue, event);
@@ -542,6 +589,8 @@ function MaskInput(props: MaskInputProps) {
       composing,
       withoutMask,
       asChild,
+      shouldValidate,
+      performValidation,
     ],
   );
 
@@ -561,8 +610,22 @@ function MaskInput(props: MaskInputProps) {
       if (event.defaultPrevented) return;
 
       setIsFocused(false);
+
+      // Mark as touched for onTouched validation mode
+      if (!touched) {
+        setTouched(true);
+      }
+
+      // Validate on blur if validation mode requires it
+      if (shouldValidate("blur")) {
+        const currentValue = event.target.value;
+        const unmaskedValue = maskPattern
+          ? getUnmaskedValue(currentValue, maskPattern.transform)
+          : currentValue;
+        performValidation(unmaskedValue);
+      }
     },
-    [onBlurProp],
+    [onBlurProp, touched, shouldValidate, performValidation, maskPattern],
   );
 
   const onCompositionStart = React.useCallback(
@@ -698,9 +761,8 @@ function MaskInput(props: MaskInputProps) {
         setInternalValue(newMaskedValue);
       }
 
-      if (onValidate && maskPattern?.validate) {
-        const isValid = maskPattern.validate(newUnmaskedValue);
-        onValidate(isValid, newUnmaskedValue);
+      if (shouldValidate("change")) {
+        performValidation(newUnmaskedValue);
       }
 
       onValueChangeProp?.(
@@ -709,7 +771,14 @@ function MaskInput(props: MaskInputProps) {
         event as unknown as React.ChangeEvent<InputElement>,
       );
     },
-    [maskPattern, onPasteProp, isControlled, onValueChangeProp, onValidate],
+    [
+      maskPattern,
+      onPasteProp,
+      isControlled,
+      onValueChangeProp,
+      shouldValidate,
+      performValidation,
+    ],
   );
 
   const onKeyDown = React.useCallback(
@@ -842,4 +911,5 @@ export {
   //
   type MaskPattern,
   type MaskPatternKey,
+  type ValidationMode,
 };

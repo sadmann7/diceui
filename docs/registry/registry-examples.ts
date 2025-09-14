@@ -412,7 +412,6 @@ export const examples: Registry["items"] = [
     name: "mask-input-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot"],
-    registryDependencies: ["utils"],
     files: [
       {
         path: "examples/mask-input-demo.tsx",
@@ -424,7 +423,7 @@ export const examples: Registry["items"] = [
     name: "mask-input-patterns-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot"],
-    registryDependencies: ["utils"],
+    registryDependencies: ["label"],
     files: [
       {
         path: "examples/mask-input-patterns-demo.tsx",
@@ -436,10 +435,22 @@ export const examples: Registry["items"] = [
     name: "mask-input-custom-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot"],
-    registryDependencies: ["utils"],
+    registryDependencies: ["label"],
     files: [
       {
         path: "examples/mask-input-custom-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "mask-input-validation-modes-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot"],
+    registryDependencies: ["badge", "card", "label"],
+    files: [
+      {
+        path: "examples/mask-input-validation-modes-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -453,7 +464,7 @@ export const examples: Registry["items"] = [
       "react-hook-form",
       "zod",
     ],
-    registryDependencies: ["button", "form", "utils"],
+    registryDependencies: ["button", "form"],
     files: [
       {
         path: "examples/mask-input-form-demo.tsx",
