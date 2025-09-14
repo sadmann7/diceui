@@ -465,7 +465,7 @@ function fromUnmaskedIndex(
   return masked.length;
 }
 
-type InputElement = HTMLInputElement;
+type InputElement = React.ComponentRef<"input">;
 
 type ValidationMode = "onChange" | "onBlur" | "onSubmit" | "onTouched" | "all";
 
