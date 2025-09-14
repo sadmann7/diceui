@@ -67,25 +67,6 @@ export type ValidationMode =
   | "all"; // Validate on both blur and change events
 
 export interface MaskInputProps extends CozyProps<"input"> {
-  /**
-   * Predefined mask type or custom mask pattern.
-   * Can be a predefined mask type or a custom mask pattern.
-   *
-   * ```ts
-   * // Predefined mask type
-   * mask="phone"
-   *
-   * // Custom mask pattern
-   * mask={{
-   *   pattern: "###-###-####",
-   *   placeholder: "123-456-7890",
-   *   transform: (value) => value.replace(/[^0-9]/g, ""),
-   *   validate: (value) => value.length === 10,
-   * }}
-   * ```
-   */
-  mask?: MaskPatternKey | MaskPattern;
-
   /** Controlled value */
   value?: string;
 
@@ -105,7 +86,7 @@ export interface MaskInputProps extends CozyProps<"input"> {
   onValueChange?: (
     maskedValue: string,
     unmaskedValue: string,
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<HTMLInputElement>
   ) => void;
 
   /**
@@ -146,6 +127,25 @@ export interface MaskInputProps extends CozyProps<"input"> {
    * ```
    */
   validationMode?: ValidationMode;
+
+  /**
+   * Predefined mask type or custom mask pattern.
+   * Can be a predefined mask type or a custom mask pattern.
+   *
+   * ```ts
+   * // Predefined mask type
+   * mask="phone"
+   *
+   * // Custom mask pattern
+   * mask={{
+   *   pattern: "###-###-####",
+   *   placeholder: "123-456-7890",
+   *   transform: (value) => value.replace(/[^0-9]/g, ""),
+   *   validate: (value) => value.length === 10,
+   * }}
+   * ```
+   */
+  mask?: MaskPatternKey | MaskPattern;
 
   /** Whether the input has validation errors. */
   invalid?: boolean;

@@ -315,12 +315,7 @@ function fromUnmaskedIndex(
 
 type InputElement = HTMLInputElement;
 
-type ValidationMode =
-  | "onChange" // Validate on every change (current behavior)
-  | "onBlur" // Validate only when field loses focus
-  | "onSubmit" // Validate only on form submission (no automatic validation)
-  | "onTouched" // Validate on first blur, then on every change
-  | "all"; // Validate on both blur and change events
+type ValidationMode = "onChange" | "onBlur" | "onSubmit" | "onTouched" | "all";
 
 interface MaskInputProps extends React.ComponentProps<"input"> {
   value?: string;
@@ -331,11 +326,11 @@ interface MaskInputProps extends React.ComponentProps<"input"> {
     event: React.ChangeEvent<InputElement>,
   ) => void;
   onValidate?: (isValid: boolean, unmaskedValue: string) => void;
+  validationMode?: ValidationMode;
   mask?: MaskPatternKey | MaskPattern;
   asChild?: boolean;
   invalid?: boolean;
   withoutMask?: boolean;
-  validationMode?: ValidationMode;
 }
 
 function MaskInput(props: MaskInputProps) {
@@ -350,6 +345,7 @@ function MaskInput(props: MaskInputProps) {
     onPaste: onPasteProp,
     onCompositionStart: onCompositionStartProp,
     onCompositionEnd: onCompositionEndProp,
+    validationMode = "onChange",
     mask,
     placeholder: placeholderProp,
     asChild = false,
@@ -358,7 +354,6 @@ function MaskInput(props: MaskInputProps) {
     readOnly = false,
     required = false,
     withoutMask = false,
-    validationMode = "onChange",
     className,
     ref,
     ...inputProps
@@ -878,18 +873,18 @@ function MaskInput(props: MaskInputProps) {
         "aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
         className,
       )}
+      placeholder={placeholder}
       ref={composedRef}
       value={displayValue}
-      placeholder={placeholder}
       disabled={disabled}
+      maxLength={calculatedMaxLength}
       readOnly={readOnly}
       required={required}
-      maxLength={calculatedMaxLength}
       inputMode={calculatedInputMode}
-      onChange={onValueChange}
       onFocus={onFocus}
       onBlur={onBlur}
       onKeyDown={onKeyDown}
+      onChange={onValueChange}
       onPaste={onPaste}
       onCompositionStart={onCompositionStart}
       onCompositionEnd={onCompositionEnd}
