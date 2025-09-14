@@ -13,6 +13,8 @@ export default function MaskInputDemo() {
   const [percentageValue, setPercentageValue] = React.useState("");
   const [isDateValid, setIsDateValid] = React.useState(true);
 
+  console.log({ dollarValue, euroValue });
+
   return (
     <div className="grid gap-6 md:grid-cols-2">
       <div className="flex flex-col gap-2">
@@ -59,13 +61,13 @@ export default function MaskInputDemo() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor={`${id}-euro`}>Euro</Label>
+        <Label htmlFor={`${id}-euro`}>Euro (German)</Label>
         <MaskInput
           id={`${id}-euro`}
           mask="currency"
           currency="EUR"
           locale="de-DE"
-          placeholder="€0.00"
+          placeholder="0,00 €"
           value={euroValue}
           onValueChange={setEuroValue}
         />

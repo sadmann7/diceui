@@ -108,16 +108,92 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
   currency: {
     pattern: "$###,###.##",
     placeholder: "$0.00",
-    transform: (value) => {
-      const cleaned = value.replace(/[^\d.]/g, "");
-      const parts = cleaned.split(".");
-      if (parts.length > 2) {
-        return `${parts[0]}.${parts.slice(1).join("")}`;
+    transform: (value, { currency = "USD", locale = "en-US" } = {}) => {
+      // Get locale-specific decimal separator to understand the input format
+      let localeDecimalSeparator = ".";
+
+      try {
+        const formatter = new Intl.NumberFormat(locale, {
+          style: "currency",
+          currency: currency,
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 2,
+        });
+        const parts = formatter.formatToParts(1234.5);
+        const decimalPart = parts.find((part) => part.type === "decimal");
+
+        if (decimalPart) localeDecimalSeparator = decimalPart.value;
+      } catch {
+        // Keep defaults
       }
-      if (parts[1] && parts[1].length > 2) {
-        return `${parts[0]}.${parts[1].substring(0, 2)}`;
+
+      // Allow digits and common decimal separators (. and ,)
+      const cleaned = value.replace(/[^\d.,]/g, "");
+
+      // Check if we actually have decimal separators
+      const dotIndex = cleaned.indexOf(".");
+      const commaIndex = cleaned.indexOf(",");
+
+      // Smart detection: distinguish between grouping and decimal separators based on locale
+      let hasDecimalSeparator = false;
+      let decimalIndex = -1;
+
+      // If locale uses comma as decimal separator (like de-DE)
+      if (localeDecimalSeparator === ",") {
+        // In German locale: comma = decimal, dot = thousands
+        if (commaIndex !== -1) {
+          const afterComma = cleaned.substring(commaIndex + 1);
+
+          // Heuristic: if comma has 1-2 digits after, likely decimal
+          // If comma has 3+ digits after, could be thousands (but unusual)
+          const looksLikeDecimal = afterComma.length <= 2;
+
+          if (looksLikeDecimal) {
+            hasDecimalSeparator = true;
+            decimalIndex = commaIndex;
+          }
+        }
+      } else {
+        // Default behavior for dot-decimal locales (like en-US)
+        if (dotIndex !== -1) {
+          const afterDot = cleaned.substring(dotIndex + 1);
+
+          // In en-US: if dot has 1-2 digits after, likely decimal
+          const looksLikeDecimal = afterDot.length <= 2;
+
+          if (looksLikeDecimal) {
+            hasDecimalSeparator = true;
+            decimalIndex = dotIndex;
+          }
+        }
+
+        if (commaIndex !== -1 && !hasDecimalSeparator) {
+          const afterComma = cleaned.substring(commaIndex + 1);
+
+          // If comma is at position 1-3 with 3+ digits after, likely thousands separator
+          const looksLikeThousands = commaIndex <= 3 && afterComma.length >= 3;
+
+          if (!looksLikeThousands) {
+            hasDecimalSeparator = true;
+            decimalIndex = commaIndex;
+          }
+        }
       }
-      return cleaned;
+
+      if (hasDecimalSeparator && decimalIndex !== -1) {
+        const beforeDecimal = cleaned
+          .substring(0, decimalIndex)
+          .replace(/[.,]/g, "");
+        const afterDecimal = cleaned
+          .substring(decimalIndex + 1)
+          .replace(/[.,]/g, "");
+        const result = `${beforeDecimal}.${afterDecimal.substring(0, 2)}`;
+        return result;
+      }
+
+      // Remove all separators (treat as thousands separators) and return digits only
+      const digitsOnly = cleaned.replace(/[.,]/g, "");
+      return digitsOnly;
     },
     validate: (value) => {
       if (!/^\d+(\.\d{1,2})?$/.test(value)) return false;
@@ -153,19 +229,16 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
   ipv4: {
     pattern: "###.###.###.###",
     placeholder: "192.168.1.1",
-    transform: (value) => value.replace(/\D/g, ""),
+    transform: (value) => value.replace(/[^0-9.]/g, ""),
     validate: (value) => {
-      if (!/^\d+$/.test(value) || value.length > 12) return false;
+      const segments = value.split(".");
+      if (segments.length > 4) return false;
 
-      const chunks = [];
-      for (let i = 0; i < value.length; i += 3) {
-        chunks.push(value.slice(i, i + 3));
-      }
-
-      return chunks.every((chunk) => {
-        if (!chunk) return true;
-        const num = parseInt(chunk, 10);
-        return !Number.isNaN(num) && num >= 0 && num <= 255;
+      return segments.every((segment) => {
+        if (segment === "") return true; // Allow incomplete segments
+        if (!/^\d{1,3}$/.test(segment)) return false;
+        const num = parseInt(segment, 10);
+        return num >= 0 && num <= 255;
       });
     },
   },
@@ -211,6 +284,11 @@ function applyMask(
     return applyPercentageMask(cleanValue);
   }
 
+  // Special handling for IPv4 - allow natural dot-separated input
+  if (maskType === "ipv4") {
+    return cleanValue; // Return the transformed value directly
+  }
+
   let masked = "";
   let valueIndex = 0;
 
@@ -237,37 +315,74 @@ function applyCurrencyMask(
   if (!value) return "";
 
   let currencySymbol = "$";
+  let decimalSeparator = ".";
+  let groupSeparator = ",";
+
   try {
     const formatter = new Intl.NumberFormat(locale, {
       style: "currency",
       currency: currency,
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
+      maximumFractionDigits: 2,
     });
-    const parts = formatter.formatToParts(0);
+    const parts = formatter.formatToParts(1234.5);
     const currencyPart = parts.find((part) => part.type === "currency");
-    if (currencyPart) {
-      currencySymbol = currencyPart.value;
-    }
+    const decimalPart = parts.find((part) => part.type === "decimal");
+    const groupPart = parts.find((part) => part.type === "group");
+
+    if (currencyPart) currencySymbol = currencyPart.value;
+    if (decimalPart) decimalSeparator = decimalPart.value;
+    if (groupPart) groupSeparator = groupPart.value;
   } catch {
     currencySymbol = "$";
+    decimalSeparator = ".";
+    groupSeparator = ",";
   }
 
-  const parts = value.split(".");
-  let integerPart = parts[0] ?? "";
-  const decimalPart = parts[1] ?? "";
+  // Normalize input by replacing locale decimal with "." for parsing
+  const normalizedValue = value
+    .replace(
+      new RegExp(
+        `\\${groupSeparator.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`,
+        "g",
+      ),
+      "",
+    )
+    .replace(decimalSeparator, ".");
 
-  if (integerPart && integerPart.length > 3) {
-    integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const parts = normalizedValue.split(".");
+  const integerPart = parts[0] ?? "";
+  const fractionalPart = parts[1] ?? "";
+
+  if (!integerPart && !fractionalPart) return "";
+
+  const intValue = integerPart || "0";
+  const fracValue = fractionalPart.slice(0, 2);
+
+  const num = Number(`${intValue}.${fracValue || ""}`);
+
+  if (Number.isNaN(num)) return "";
+
+  try {
+    return new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency: currency,
+      minimumFractionDigits: fracValue ? fracValue.length : 0,
+      maximumFractionDigits: 2,
+    }).format(num);
+  } catch {
+    // Fallback to manual formatting
+    const formattedInt = intValue.replace(
+      /\B(?=(\d{3})+(?!\d))/g,
+      groupSeparator,
+    );
+    let result = `${currencySymbol}${formattedInt}`;
+    if (value.includes(decimalSeparator) || value.includes(".")) {
+      result += `${decimalSeparator}${fracValue}`;
+    }
+
+    return result;
   }
-
-  let result = `${currencySymbol}${integerPart || "0"}`;
-
-  if (value.includes(".")) {
-    result += `.${decimalPart.substring(0, 2)}`;
-  }
-
-  return result;
 }
 
 function applyPercentageMask(value: string): string {
@@ -285,9 +400,16 @@ function applyPercentageMask(value: string): string {
 
 function getUnmaskedValue(
   value: string,
-  transform?: (value: string) => string,
+  transform?: (
+    value: string,
+    options?: { currency?: string; locale?: string },
+  ) => string,
+  currency?: string,
+  locale?: string,
 ): string {
-  return transform ? transform(value) : value.replace(/\D/g, "");
+  return transform
+    ? transform(value, { currency, locale })
+    : value.replace(/\D/g, "");
 }
 
 function toUnmaskedIndex(
@@ -321,7 +443,7 @@ function fromUnmaskedIndex(
   return masked.length;
 }
 
-type InputElement = React.ComponentRef<typeof MaskInput>;
+type InputElement = HTMLInputElement;
 
 type ValidationMode = "onChange" | "onBlur" | "onSubmit" | "onTouched" | "all";
 
@@ -331,7 +453,7 @@ interface MaskInputProps extends React.ComponentProps<"input"> {
   onValueChange?: (
     maskedValue: string,
     unmaskedValue: string,
-    event: React.ChangeEvent<InputElement>,
+    event?: React.ChangeEvent<InputElement>,
   ) => void;
   onValidate?: (isValid: boolean, unmaskedValue: string) => void;
   validationMode?: ValidationMode;
@@ -416,7 +538,17 @@ function MaskInput(props: MaskInputProps) {
           } catch {
             currencySymbol = "$";
           }
-          return `${currencySymbol}0.00`;
+          try {
+            const formatter = new Intl.NumberFormat(locale, {
+              style: "currency",
+              currency: currency,
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            });
+            return formatter.format(0);
+          } catch {
+            return `${currencySymbol}0.00`;
+          }
         }
         if (maskType === "percentage" || maskPattern.pattern.includes("%")) {
           return "0.00%";
@@ -492,13 +624,22 @@ function MaskInput(props: MaskInputProps) {
     if (inputProps.inputMode) return inputProps.inputMode;
     if (!maskPattern) return undefined;
 
+    // Use decimal for patterns that need decimal point input
+    if (
+      maskType === "currency" ||
+      maskType === "percentage" ||
+      maskType === "ipv4"
+    ) {
+      return "decimal";
+    }
+
     const numericPatterns =
       /^(phone|zipCode|zipCodeExtended|ssn|ein|time|date|creditCard)$/;
     if (typeof mask === "string" && numericPatterns.test(mask)) {
       return "numeric";
     }
     return undefined;
-  }, [maskPattern, mask, inputProps.inputMode]);
+  }, [maskPattern, mask, maskType, inputProps.inputMode]);
 
   const shouldValidate = React.useCallback(
     (trigger: "change" | "blur") => {
@@ -557,7 +698,12 @@ function MaskInput(props: MaskInputProps) {
       }
 
       if (maskPattern) {
-        unmaskedValue = getUnmaskedValue(inputValue, maskPattern.transform);
+        unmaskedValue = getUnmaskedValue(
+          inputValue,
+          maskPattern.transform,
+          currency,
+          locale,
+        );
         newValue = applyMask(
           unmaskedValue,
           maskPattern.pattern,
@@ -573,6 +719,8 @@ function MaskInput(props: MaskInputProps) {
           const currentUnmasked = getUnmaskedValue(
             newValue,
             maskPattern.transform,
+            currency,
+            locale,
           );
 
           let newCursorPosition: number;
@@ -581,7 +729,36 @@ function MaskInput(props: MaskInputProps) {
             maskPattern.pattern.includes("€") ||
             maskPattern.pattern.includes("%")
           ) {
-            newCursorPosition = newValue.length;
+            // For currency, check if currency symbol is at the end (right-side currency)
+            if (maskType === "currency") {
+              try {
+                const formatter = new Intl.NumberFormat(locale, {
+                  style: "currency",
+                  currency: currency,
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
+                });
+                const sampleFormat = formatter.format(123);
+                const currencyAtEnd = /\d\s*[^\d\s]+$/.test(sampleFormat); // Pattern like "123 €"
+
+                if (currencyAtEnd) {
+                  // Right-side currency: position cursor before the currency symbol
+                  const match = newValue.match(/(\d)\s*([^\d\s]+)$/);
+                  if (match?.[1]) {
+                    newCursorPosition = newValue.lastIndexOf(match[1]) + 1;
+                  } else {
+                    newCursorPosition = newValue.length;
+                  }
+                } else {
+                  // Left-side currency: position cursor at the end
+                  newCursorPosition = newValue.length;
+                }
+              } catch {
+                newCursorPosition = newValue.length;
+              }
+            } else {
+              newCursorPosition = newValue.length;
+            }
           } else {
             let position = 0;
             let unmaskedCount = 0;
@@ -605,7 +782,29 @@ function MaskInput(props: MaskInputProps) {
             maskPattern.pattern.includes("$") ||
             maskPattern.pattern.includes("€")
           ) {
-            newCursorPosition = Math.max(1, newCursorPosition);
+            // For left-side currencies, ensure cursor is after the symbol
+            if (maskType === "currency") {
+              try {
+                const formatter = new Intl.NumberFormat(locale, {
+                  style: "currency",
+                  currency: currency,
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
+                });
+                const sampleFormat = formatter.format(123);
+                const currencyAtEnd = /\d\s*[^\d\s]+$/.test(sampleFormat);
+
+                if (!currencyAtEnd) {
+                  // Left-side currency: ensure cursor is after the currency symbol
+                  newCursorPosition = Math.max(1, newCursorPosition);
+                }
+                // For right-side currency, don't adjust - keep the position we calculated above
+              } catch {
+                newCursorPosition = Math.max(1, newCursorPosition);
+              }
+            } else {
+              newCursorPosition = Math.max(1, newCursorPosition);
+            }
           } else if (maskPattern.pattern.includes("%")) {
             newCursorPosition = Math.min(
               newValue.length - 1,
@@ -671,12 +870,25 @@ function MaskInput(props: MaskInputProps) {
       if (shouldValidate("blur")) {
         const currentValue = event.target.value;
         const unmaskedValue = maskPattern
-          ? getUnmaskedValue(currentValue, maskPattern.transform)
+          ? getUnmaskedValue(
+              currentValue,
+              maskPattern.transform,
+              currency,
+              locale,
+            )
           : currentValue;
         onInputValidate(unmaskedValue);
       }
     },
-    [onBlurProp, touched, shouldValidate, onInputValidate, maskPattern],
+    [
+      onBlurProp,
+      touched,
+      shouldValidate,
+      onInputValidate,
+      maskPattern,
+      currency,
+      locale,
+    ],
   );
 
   const onCompositionStart = React.useCallback(
@@ -695,7 +907,15 @@ function MaskInput(props: MaskInputProps) {
       if (event.defaultPrevented) return;
 
       setComposing(false);
-      onValueChange(event as unknown as React.ChangeEvent<InputElement>);
+      // Create a proper synthetic change event for composition end
+      const target = event.target as InputElement;
+      const changeEvent = {
+        ...event,
+        target,
+        currentTarget: target,
+        type: "change",
+      } as React.ChangeEvent<InputElement>;
+      onValueChange(changeEvent);
     },
     [onCompositionEndProp, onValueChange],
   );
@@ -705,7 +925,7 @@ function MaskInput(props: MaskInputProps) {
       onPasteProp?.(event);
       if (event.defaultPrevented) return;
 
-      if (!maskPattern) return;
+      if (withoutMask || !maskPattern) return;
 
       event.preventDefault();
       const pastedText = event.clipboardData.getData("text");
@@ -716,11 +936,15 @@ function MaskInput(props: MaskInputProps) {
       const unmaskedPasted = getUnmaskedValue(
         pastedText,
         maskPattern.transform,
+        currency,
+        locale,
       );
 
       const currentUnmasked = getUnmaskedValue(
         currentValue,
         maskPattern.transform,
+        currency,
+        locale,
       );
 
       let insertPosition = 0;
@@ -805,11 +1029,7 @@ function MaskInput(props: MaskInputProps) {
         onInputValidate(newUnmaskedValue);
       }
 
-      onValueChangeProp?.(
-        newMaskedValue,
-        newUnmaskedValue,
-        event as unknown as React.ChangeEvent<InputElement>,
-      );
+      onValueChangeProp?.(newMaskedValue, newUnmaskedValue, undefined);
     },
     [
       maskPattern,
@@ -821,6 +1041,7 @@ function MaskInput(props: MaskInputProps) {
       currency,
       locale,
       maskType,
+      withoutMask,
     ],
   );
 
@@ -829,13 +1050,18 @@ function MaskInput(props: MaskInputProps) {
       onKeyDownProp?.(event);
       if (event.defaultPrevented) return;
 
-      if (event.key === "Backspace" && maskPattern) {
+      if (withoutMask || !maskPattern) return;
+
+      if (event.key === "Backspace") {
         const target = event.target as InputElement;
         const cursorPosition = target.selectionStart ?? 0;
         const selectionEnd = target.selectionEnd ?? 0;
         const currentValue = target.value;
 
+        // For currency and percentage, let default backspace behavior handle it
         if (
+          maskType === "currency" ||
+          maskType === "percentage" ||
           maskPattern.pattern.includes("$") ||
           maskPattern.pattern.includes("€") ||
           maskPattern.pattern.includes("%")
@@ -864,6 +1090,8 @@ function MaskInput(props: MaskInputProps) {
               const currentUnmasked = getUnmaskedValue(
                 currentValue,
                 maskPattern.transform,
+                currency,
+                locale,
               );
               const nextUnmasked =
                 currentUnmasked.slice(0, uIdx - 1) +
@@ -885,19 +1113,91 @@ function MaskInput(props: MaskInputProps) {
               );
               target.setSelectionRange(nextCaret, nextCaret);
 
-              const syntheticEvent = {
-                ...event,
-                target: { ...target, value: nextMasked },
-              } as React.ChangeEvent<InputElement>;
+              onValueChangeProp?.(nextMasked, nextUnmasked, undefined);
+            }
+            return;
+          }
+        }
+      }
 
-              onValueChange(syntheticEvent);
+      if (event.key === "Delete") {
+        const target = event.target as InputElement;
+        const cursorPosition = target.selectionStart ?? 0;
+        const selectionEnd = target.selectionEnd ?? 0;
+        const currentValue = target.value;
+
+        // For currency and percentage, let default delete behavior handle it
+        if (
+          maskType === "currency" ||
+          maskType === "percentage" ||
+          maskPattern.pattern.includes("$") ||
+          maskPattern.pattern.includes("€") ||
+          maskPattern.pattern.includes("%")
+        ) {
+          return;
+        }
+
+        if (cursorPosition !== selectionEnd) {
+          return;
+        }
+
+        if (cursorPosition < currentValue.length) {
+          const charAtCursor = currentValue[cursorPosition];
+
+          const isLiteral = maskPattern.pattern[cursorPosition] !== "#";
+
+          if (charAtCursor && isLiteral) {
+            event.preventDefault();
+
+            const uIdx = toUnmaskedIndex(
+              currentValue,
+              maskPattern.pattern,
+              cursorPosition,
+            );
+            const currentUnmasked = getUnmaskedValue(
+              currentValue,
+              maskPattern.transform,
+              currency,
+              locale,
+            );
+
+            if (uIdx < currentUnmasked.length) {
+              const nextUnmasked =
+                currentUnmasked.slice(0, uIdx) +
+                currentUnmasked.slice(uIdx + 1);
+              const nextMasked = applyMask(
+                nextUnmasked,
+                maskPattern.pattern,
+                maskPattern.transform,
+                currency,
+                locale,
+                maskType,
+              );
+
+              target.value = nextMasked;
+              const nextCaret = fromUnmaskedIndex(
+                nextMasked,
+                maskPattern.pattern,
+                uIdx,
+              );
+              target.setSelectionRange(nextCaret, nextCaret);
+
+              onValueChangeProp?.(nextMasked, nextUnmasked, undefined);
             }
             return;
           }
         }
       }
     },
-    [maskPattern, onKeyDownProp, onValueChange, currency, locale, maskType],
+    [
+      maskPattern,
+      onKeyDownProp,
+      onValueChangeProp,
+      currency,
+      locale,
+      maskType,
+      withoutMask,
+    ],
   );
 
   const InputPrimitive = asChild ? Slot : "input";
