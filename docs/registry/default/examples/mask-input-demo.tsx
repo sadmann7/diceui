@@ -70,10 +70,10 @@ export default function MaskInputDemo() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor={`${id}-ip`}>IP Address</Label>
+        <Label htmlFor={`${id}-ip`}>IPv4 Address</Label>
         <MaskInput
           id={`${id}-ip`}
-          mask="ipAddress"
+          mask="ipv4"
           value={ipValue}
           onValueChange={setIpValue}
           placeholder="192.168.1.1"

@@ -24,7 +24,7 @@ type MaskPatternKey =
   | "currencyEur"
   | "percentage"
   | "licensePlate"
-  | "ipAddress"
+  | "ipv4"
   | "macAddress"
   | "isbn"
   | "ein";
@@ -161,16 +161,21 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
     transform: (value) => value.replace(/[^A-Z0-9]/gi, "").toUpperCase(),
     validate: (value) => /^[A-Z0-9]{6}$/.test(value),
   },
-  ipAddress: {
+  ipv4: {
     pattern: "###.###.###.###",
     placeholder: "192.168.1.1",
-    transform: (value) => value.replace(/[^\d.]/g, ""),
+    transform: (value) => value.replace(/\D/g, ""),
     validate: (value) => {
-      const parts = value.split(".");
-      if (parts.length !== 4) return false;
-      return parts.every((part) => {
-        if (!part || (part.length > 1 && part.startsWith("0"))) return false;
-        const num = parseInt(part, 10);
+      if (!/^\d+$/.test(value) || value.length > 12) return false;
+
+      const chunks = [];
+      for (let i = 0; i < value.length; i += 3) {
+        chunks.push(value.slice(i, i + 3));
+      }
+
+      return chunks.every((chunk) => {
+        if (!chunk) return true;
+        const num = parseInt(chunk, 10);
         return !Number.isNaN(num) && num >= 0 && num <= 255;
       });
     },

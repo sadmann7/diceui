@@ -323,21 +323,21 @@ describe("MaskInput", () => {
       );
     });
 
-    test("ipAddress mask pattern", async () => {
+    test("ipv4 mask pattern", async () => {
       const user = userEvent.setup();
       const onValueChange = vi.fn();
 
       render(
         <MaskInput
-          mask="ipAddress"
+          mask="ipv4"
           onValueChange={onValueChange}
-          data-testid="ip-input"
+          data-testid="ipv4-input"
         />,
       );
 
-      const input = screen.getByTestId("ip-input");
+      const input = screen.getByTestId("ipv4-input");
 
-      // Type partial IP address
+      // Type partial IPv4 address
       await user.type(input, "192168111");
 
       expect(input).toHaveValue("192.168.111");
@@ -815,12 +815,13 @@ describe("MaskInput", () => {
       expect(validate?.("1460")).toBe(false); // Invalid minute
     });
 
-    test("ipAddress pattern validation", () => {
-      const { validate } = MASK_PATTERNS.ipAddress;
-      expect(validate?.("192.168.1.1")).toBe(true);
-      expect(validate?.("256.168.1.1")).toBe(false); // Invalid octet
-      expect(validate?.("192.168.1")).toBe(false); // Incomplete
-      expect(validate?.("192.168.01.1")).toBe(false); // Leading zero
+    test("ipv4 pattern validation", () => {
+      const { validate } = MASK_PATTERNS.ipv4;
+      expect(validate?.("192168001001")).toBe(true); // Valid unmasked IPv4 (192.168.001.001 -> chunks: 192, 168, 001, 001)
+      expect(validate?.("256168001001")).toBe(false); // Invalid octet (256 > 255)
+      expect(validate?.("192168001")).toBe(true); // Incomplete but valid partial (192.168.001)
+      expect(validate?.("192168111")).toBe(true); // Valid partial (192.168.111)
+      expect(validate?.("1921680010011")).toBe(false); // Too long (> 12 digits)
     });
 
     test("currency pattern validation", () => {

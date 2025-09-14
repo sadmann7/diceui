@@ -53,7 +53,7 @@ export type MaskPatternKey =
   | "currencyEur"
   | "percentage"
   | "licensePlate"
-  | "ipAddress"
+  | "ipv4"
   | "macAddress"
   | "isbn"
   | "ein";
