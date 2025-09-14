@@ -362,7 +362,7 @@ function MaskInput(props: MaskInputProps) {
   } = props;
 
   const [internalValue, setInternalValue] = React.useState(defaultValue ?? "");
-  const [isFocused, setIsFocused] = React.useState(false);
+  const [focused, setFocused] = React.useState(false);
   const [composing, setComposing] = React.useState(false);
   const [touched, setTouched] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -382,13 +382,13 @@ function MaskInput(props: MaskInputProps) {
     if (withoutMask) return placeholderProp;
 
     if (placeholderProp) {
-      return isFocused
+      return focused
         ? (maskPattern?.placeholder ?? placeholderProp)
         : placeholderProp;
     }
 
-    return isFocused ? maskPattern?.placeholder : undefined;
-  }, [placeholderProp, withoutMask, maskPattern, isFocused]);
+    return focused ? maskPattern?.placeholder : undefined;
+  }, [placeholderProp, withoutMask, maskPattern, focused]);
 
   const displayValue = React.useMemo(() => {
     if (withoutMask || !maskPattern || !value) return value ?? "";
@@ -481,66 +481,57 @@ function MaskInput(props: MaskInputProps) {
         );
 
         if (inputRef.current && newValue !== inputValue) {
-          if (asChild && inputRef.current.tagName !== "INPUT") {
-            if (process.env.NODE_ENV === "development") {
-              console.warn(
-                "MaskInput: asChild should only be used with input elements for proper cursor positioning",
-              );
-            }
-            inputRef.current.value = newValue;
+          inputRef.current.value = newValue;
+
+          const currentUnmasked = getUnmaskedValue(
+            newValue,
+            maskPattern.transform,
+          );
+
+          let newCursorPosition: number;
+          if (
+            maskPattern.pattern.includes("$") ||
+            maskPattern.pattern.includes("€") ||
+            maskPattern.pattern.includes("%")
+          ) {
+            newCursorPosition = newValue.length;
           } else {
-            inputRef.current.value = newValue;
+            let position = 0;
+            let unmaskedCount = 0;
 
-            const currentUnmasked = getUnmaskedValue(
-              newValue,
-              maskPattern.transform,
-            );
-
-            let newCursorPosition: number;
-            if (
-              maskPattern.pattern.includes("$") ||
-              maskPattern.pattern.includes("€") ||
-              maskPattern.pattern.includes("%")
+            for (
+              let i = 0;
+              i < maskPattern.pattern.length && i < newValue.length;
+              i++
             ) {
-              newCursorPosition = newValue.length;
-            } else {
-              let position = 0;
-              let unmaskedCount = 0;
-
-              for (
-                let i = 0;
-                i < maskPattern.pattern.length && i < newValue.length;
-                i++
-              ) {
-                if (maskPattern.pattern[i] === "#") {
-                  unmaskedCount++;
-                  if (unmaskedCount <= currentUnmasked.length) {
-                    position = i + 1;
-                  }
+              if (maskPattern.pattern[i] === "#") {
+                unmaskedCount++;
+                if (unmaskedCount <= currentUnmasked.length) {
+                  position = i + 1;
                 }
               }
-              newCursorPosition = position;
             }
+            newCursorPosition = position;
+          }
 
-            if (
-              maskPattern.pattern.includes("$") ||
-              maskPattern.pattern.includes("€")
-            ) {
-              newCursorPosition = Math.max(1, newCursorPosition);
-            } else if (maskPattern.pattern.includes("%")) {
-              newCursorPosition = Math.min(
-                newValue.length - 1,
-                newCursorPosition,
-              );
-            }
-
-            newCursorPosition = Math.min(newCursorPosition, newValue.length);
-
-            inputRef.current.setSelectionRange(
-              newCursorPosition,
+          if (
+            maskPattern.pattern.includes("$") ||
+            maskPattern.pattern.includes("€")
+          ) {
+            newCursorPosition = Math.max(1, newCursorPosition);
+          } else if (maskPattern.pattern.includes("%")) {
+            newCursorPosition = Math.min(
+              newValue.length - 1,
               newCursorPosition,
             );
           }
+
+          newCursorPosition = Math.min(newCursorPosition, newValue.length);
+
+          inputRef.current.setSelectionRange(
+            newCursorPosition,
+            newCursorPosition,
+          );
         }
       }
 
@@ -559,11 +550,10 @@ function MaskInput(props: MaskInputProps) {
       isControlled,
       onValueChangeProp,
       onValidate,
-      composing,
-      withoutMask,
-      asChild,
-      shouldValidate,
       onInputValidate,
+      composing,
+      shouldValidate,
+      withoutMask,
     ],
   );
 
@@ -572,7 +562,7 @@ function MaskInput(props: MaskInputProps) {
       onFocusProp?.(event);
       if (event.defaultPrevented) return;
 
-      setIsFocused(true);
+      setFocused(true);
     },
     [onFocusProp],
   );
@@ -582,7 +572,7 @@ function MaskInput(props: MaskInputProps) {
       onBlurProp?.(event);
       if (event.defaultPrevented) return;
 
-      setIsFocused(false);
+      setFocused(false);
 
       if (!touched) {
         setTouched(true);
