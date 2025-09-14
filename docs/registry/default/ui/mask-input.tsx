@@ -10,8 +10,6 @@ interface MaskPattern {
   placeholder?: string;
   transform?: (value: string) => string;
   validate?: (value: string) => boolean;
-  thousandsSeparator?: string;
-  decimalSeparator?: string;
 }
 
 type MaskPatternKey =
@@ -111,8 +109,6 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
   currency: {
     pattern: "$###,###.##",
     placeholder: "$0.00",
-    thousandsSeparator: ",",
-    decimalSeparator: ".",
     transform: (value) => {
       const cleaned = value.replace(/[^\d.]/g, "");
       const parts = cleaned.split(".");
@@ -131,24 +127,22 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
     },
   },
   currencyEur: {
-    pattern: "€###.###,##",
-    placeholder: "€0,00",
-    thousandsSeparator: ".",
-    decimalSeparator: ",",
+    pattern: "€###,###.##",
+    placeholder: "€0.00",
     transform: (value) => {
-      const cleaned = value.replace(/[^\d,]/g, "");
-      const parts = cleaned.split(",");
+      const cleaned = value.replace(/[^\d.]/g, "");
+      const parts = cleaned.split(".");
       if (parts.length > 2) {
-        return `${parts[0]},${parts.slice(1).join("")}`;
+        return `${parts[0]}.${parts.slice(1).join("")}`;
       }
       if (parts[1] && parts[1].length > 2) {
-        return `${parts[0]},${parts[1].substring(0, 2)}`;
+        return `${parts[0]}.${parts[1].substring(0, 2)}`;
       }
       return cleaned;
     },
     validate: (value) => {
-      if (!/^\d+(,\d{1,2})?$/.test(value)) return false;
-      const num = parseFloat(value.replace(",", "."));
+      if (!/^\d+(\.\d{1,2})?$/.test(value)) return false;
+      const num = parseFloat(value);
       return !Number.isNaN(num) && num >= 0 && num <= 999999999.99;
     },
   },
@@ -184,17 +178,14 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
     validate: (value) => {
       if (!/^\d+$/.test(value) || value.length > 12) return false;
 
-      const octets = [];
+      const chunks = [];
       for (let i = 0; i < value.length; i += 3) {
-        const octet = value.slice(i, i + 3);
-        if (octet) {
-          octets.push(octet);
-        }
+        chunks.push(value.slice(i, i + 3));
       }
 
-      return octets.every((octet) => {
-        if (!octet) return true;
-        const num = Number(octet);
+      return chunks.every((chunk) => {
+        if (!chunk) return true;
+        const num = parseInt(chunk, 10);
         return !Number.isNaN(num) && num >= 0 && num <= 255;
       });
     },
@@ -223,18 +214,11 @@ function applyMask(
   value: string,
   pattern: string,
   transform?: (value: string) => string,
-  thousandsSeparator?: string,
-  decimalSeparator?: string,
 ): string {
   const cleanValue = transform ? transform(value) : value;
 
   if (pattern.includes("$") || pattern.includes("€")) {
-    return applyCurrencyMask(
-      cleanValue,
-      pattern,
-      thousandsSeparator,
-      decimalSeparator,
-    );
+    return applyCurrencyMask(cleanValue, pattern);
   }
 
   if (pattern.includes("%")) {
@@ -259,30 +243,22 @@ function applyMask(
   return masked;
 }
 
-function applyCurrencyMask(
-  value: string,
-  pattern: string,
-  thousandsSeparator: string = ",",
-  decimalSeparator: string = ".",
-): string {
+function applyCurrencyMask(value: string, pattern: string): string {
   if (!value) return "";
 
   const currencySymbol = pattern.includes("$") ? "$" : "€";
-  const parts = value.split(decimalSeparator);
+  const parts = value.split(".");
   let integerPart = parts[0] ?? "";
   const decimalPart = parts[1] ?? "";
 
   if (integerPart && integerPart.length > 3) {
-    integerPart = integerPart.replace(
-      /\B(?=(\d{3})+(?!\d))/g,
-      thousandsSeparator,
-    );
+    integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
   let result = `${currencySymbol}${integerPart ?? "0"}`;
 
-  if (value.includes(decimalSeparator)) {
-    result += `${decimalSeparator}${(decimalPart ?? "").substring(0, 2)}`;
+  if (value.includes(".")) {
+    result += `.${(decimalPart ?? "").substring(0, 2)}`;
   }
 
   return result;
@@ -416,13 +392,7 @@ function MaskInput(props: MaskInputProps) {
 
   const displayValue = React.useMemo(() => {
     if (withoutMask || !maskPattern || !value) return value ?? "";
-    return applyMask(
-      value,
-      maskPattern.pattern,
-      maskPattern.transform,
-      maskPattern.thousandsSeparator,
-      maskPattern.decimalSeparator,
-    );
+    return applyMask(value, maskPattern.pattern, maskPattern.transform);
   }, [value, maskPattern, withoutMask]);
 
   const tokenCount = React.useMemo(() => {
@@ -508,12 +478,10 @@ function MaskInput(props: MaskInputProps) {
           unmaskedValue,
           maskPattern.pattern,
           maskPattern.transform,
-          maskPattern.thousandsSeparator,
-          maskPattern.decimalSeparator,
         );
 
         if (inputRef.current && newValue !== inputValue) {
-          if (asChild && inputRef.current.tagName.toLowerCase() !== "input") {
+          if (asChild && inputRef.current.tagName !== "INPUT") {
             if (process.env.NODE_ENV === "development") {
               console.warn(
                 "MaskInput: asChild should only be used with input elements for proper cursor positioning",
@@ -723,8 +691,6 @@ function MaskInput(props: MaskInputProps) {
         newUnmaskedValue,
         maskPattern.pattern,
         maskPattern.transform,
-        maskPattern.thousandsSeparator,
-        maskPattern.decimalSeparator,
       );
 
       target.value = newMaskedValue;
@@ -820,8 +786,6 @@ function MaskInput(props: MaskInputProps) {
                 nextUnmasked,
                 maskPattern.pattern,
                 maskPattern.transform,
-                maskPattern.thousandsSeparator,
-                maskPattern.decimalSeparator,
               );
 
               target.value = nextMasked;
