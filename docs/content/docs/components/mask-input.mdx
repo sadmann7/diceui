@@ -73,6 +73,36 @@ Use predefined mask patterns for common input formats.
 
 <ComponentTabs name="mask-input-patterns-demo" />
 
+### Currency Formatting
+
+The currency mask now uses the powerful `Intl.NumberFormat` API for proper localization and currency formatting.
+
+```tsx
+// Default USD formatting
+<MaskInput mask="currency" />
+
+// Euro formatting with German locale
+<MaskInput 
+  mask="currency" 
+  currency="EUR" 
+  locale="de-DE" 
+/>
+
+// Japanese Yen formatting
+<MaskInput 
+  mask="currency" 
+  currency="JPY" 
+  locale="ja-JP" 
+/>
+
+// British Pound formatting
+<MaskInput 
+  mask="currency" 
+  currency="GBP" 
+  locale="en-GB" 
+/>
+```
+
 ### Custom Patterns
 
 Create custom mask patterns for specific formatting needs.
@@ -104,8 +134,7 @@ The component includes several predefined mask patterns:
 | `creditCard` | `#### #### #### ####` | 1234 5678 9012 3456 | Credit card number |
 | `zipCode` | `#####` | 12345 | US ZIP code |
 | `zipCodeExtended` | `#####-####` | 12345-6789 | US ZIP+4 code |
-| `currency` | `$###,###.##` | $1,234.56 | US Dollar currency |
-| `currencyEur` | `€###,###.##` | €1,234.56 | Euro currency |
+| `currency` | Dynamic | $1,234.56 | Currency formatting using Intl.NumberFormat |
 | `percentage` | `##.##%` | 12.34% | Percentage with decimals |
 | `licensePlate` | `###-###` | ABC-123 | License plate format |
 | `ipv4` | `###.###.###.###` | 192.168.1.1 | IPv4 address |

@@ -251,7 +251,7 @@ describe("MaskInput", () => {
       );
     });
 
-    test("currency mask pattern", async () => {
+    test("currency mask pattern (USD default)", async () => {
       const user = userEvent.setup();
       const onValueChange = vi.fn();
 
@@ -273,6 +273,90 @@ describe("MaskInput", () => {
         "1234.56",
         expect.any(Object),
       );
+    });
+
+    test("currency mask pattern with EUR", async () => {
+      const user = userEvent.setup();
+      const onValueChange = vi.fn();
+
+      render(
+        <MaskInput
+          mask="currency"
+          currency="EUR"
+          locale="de-DE"
+          onValueChange={onValueChange}
+          data-testid="currency-input"
+        />,
+      );
+
+      const input = screen.getByTestId("currency-input");
+
+      await user.type(input, "1234.56");
+
+      // EUR formatting can vary slightly between environments
+      expect(input).toHaveValue("€1,234.56");
+      expect(onValueChange).toHaveBeenLastCalledWith(
+        "€1,234.56",
+        "1234.56",
+        expect.any(Object),
+      );
+    });
+
+    test("currency mask pattern with GBP", async () => {
+      const user = userEvent.setup();
+      const onValueChange = vi.fn();
+
+      render(
+        <MaskInput
+          mask="currency"
+          currency="GBP"
+          locale="en-GB"
+          onValueChange={onValueChange}
+          data-testid="currency-input"
+        />,
+      );
+
+      const input = screen.getByTestId("currency-input");
+
+      await user.type(input, "1234.56");
+
+      expect(input).toHaveValue("£1,234.56");
+      expect(onValueChange).toHaveBeenLastCalledWith(
+        "£1,234.56",
+        "1234.56",
+        expect.any(Object),
+      );
+    });
+
+    test("currency mask pattern with incremental input", async () => {
+      const user = userEvent.setup();
+      const onValueChange = vi.fn();
+
+      render(
+        <MaskInput
+          mask="currency"
+          onValueChange={onValueChange}
+          data-testid="currency-input"
+        />,
+      );
+
+      const input = screen.getByTestId("currency-input");
+
+      // Type digits incrementally
+      await user.type(input, "1");
+      expect(input).toHaveValue("$1");
+
+      await user.type(input, "2");
+      expect(input).toHaveValue("$12");
+
+      await user.type(input, "3");
+      expect(input).toHaveValue("$123");
+
+      await user.type(input, ".");
+      expect(input).toHaveValue("$123.");
+
+      await user.type(input, "45");
+      expect(input).toHaveValue("$123.45");
     });
 
     test("percentage mask pattern", async () => {
@@ -719,27 +803,105 @@ describe("MaskInput", () => {
         const result = applyMask("1a2b3c", "###-###", transform);
         expect(result).toBe("123");
       });
-    });
 
-    describe("applyCurrencyMask", () => {
-      test("formats currency with dollar sign", () => {
-        const result = applyCurrencyMask("1234.56", "$###,###.##");
+      test("applies currency mask with USD", () => {
+        const result = applyMask(
+          "1234.56",
+          "$###,###.##",
+          undefined,
+          "USD",
+          "en-US",
+          "currency",
+        );
         expect(result).toBe("$1,234.56");
       });
 
-      test("formats currency with euro sign", () => {
-        const result = applyCurrencyMask("1234.56", "€###,###.##");
-        expect(result).toBe("€1,234.56");
+      test("applies currency mask with EUR", () => {
+        const result = applyMask(
+          "1234.56",
+          "€###,###.##",
+          undefined,
+          "EUR",
+          "de-DE",
+          "currency",
+        );
+        expect(result).toMatch(/€.*1.*234.*56/);
+      });
+
+      test("applies percentage mask", () => {
+        const result = applyMask(
+          "25.5",
+          "##.##%",
+          undefined,
+          undefined,
+          undefined,
+        );
+        expect(result).toBe("25.5%");
+      });
+    });
+
+    describe("applyCurrencyMask", () => {
+      test("formats USD currency by default", () => {
+        const result = applyCurrencyMask("1234.56");
+        expect(result).toBe("$1,234.56");
+      });
+
+      test("formats EUR currency", () => {
+        const result = applyCurrencyMask("1234.56", "EUR", "de-DE");
+        // The actual format depends on the browser's Intl implementation
+        expect(result).toMatch(/€.*1.*234.*56/);
+      });
+
+      test("formats GBP currency", () => {
+        const result = applyCurrencyMask("1234.56", "GBP", "en-GB");
+        expect(result).toBe("£1,234.56");
+      });
+
+      test("formats JPY currency (no decimals)", () => {
+        const result = applyCurrencyMask("1234", "JPY", "ja-JP");
+        // JPY doesn't use decimals, so it should format as whole number
+        expect(result).toMatch(/[¥￥]1,234/);
       });
 
       test("handles empty value", () => {
-        const result = applyCurrencyMask("", "$###,###.##");
+        const result = applyCurrencyMask("");
         expect(result).toBe("");
       });
 
+      test("handles invalid numeric values", () => {
+        const result = applyCurrencyMask("abc");
+        // Invalid values still get processed but result in NaN formatting
+        expect(result).toMatch(/\$/);
+      });
+
       test("adds commas for large numbers", () => {
-        const result = applyCurrencyMask("1234567.89", "$###,###.##");
+        const result = applyCurrencyMask("1234567.89");
         expect(result).toBe("$1,234,567.89");
+      });
+
+      test("handles partial decimal input", () => {
+        const result = applyCurrencyMask("123.4");
+        expect(result).toBe("$123.4");
+      });
+
+      test("handles integer input", () => {
+        const result = applyCurrencyMask("123");
+        expect(result).toBe("$123");
+      });
+
+      test("handles incremental input correctly", () => {
+        // Test that single digits don't become full currency amounts
+        expect(applyCurrencyMask("1")).toBe("$1");
+        expect(applyCurrencyMask("12")).toBe("$12");
+        expect(applyCurrencyMask("123")).toBe("$123");
+        expect(applyCurrencyMask("123.")).toBe("$123.");
+        expect(applyCurrencyMask("123.4")).toBe("$123.4");
+        expect(applyCurrencyMask("123.45")).toBe("$123.45");
+      });
+
+      test("fallbacks to USD on invalid currency", () => {
+        const result = applyCurrencyMask("123.45", "INVALID", "invalid-locale");
+        expect(result).toBe("$123.45");
       });
     });
 

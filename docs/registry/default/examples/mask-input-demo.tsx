@@ -10,9 +10,7 @@ export default function MaskInputDemo() {
   const [dateValue, setDateValue] = React.useState("");
   const [currencyValue, setCurrencyValue] = React.useState("");
   const [percentageValue, setPercentageValue] = React.useState("");
-  const [ipValue, setIpValue] = React.useState("");
   const [isDateValid, setIsDateValid] = React.useState(true);
-  const [isIpValid, setIsIpValid] = React.useState(true);
 
   return (
     <div className="grid gap-6 md:grid-cols-2">
@@ -68,24 +66,6 @@ export default function MaskInputDemo() {
           onValueChange={setPercentageValue}
         />
         <p className="text-muted-foreground text-sm">Enter your percentage</p>
-      </div>
-      <div className="flex flex-col gap-2">
-        <Label htmlFor={`${id}-ip`}>IP Address</Label>
-        <MaskInput
-          id={`${id}-ip`}
-          mask="ipv4"
-          placeholder="192.168.1.1"
-          value={ipValue}
-          onValueChange={setIpValue}
-          onValidate={setIsIpValid}
-          invalid={!isIpValid}
-        />
-        <p className="text-muted-foreground text-sm">Enter your IP address</p>
-        {!isIpValid && (
-          <p className="font-medium text-destructive text-sm">
-            Please enter a valid IP address
-          </p>
-        )}
       </div>
     </div>
   );

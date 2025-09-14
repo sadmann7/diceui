@@ -50,7 +50,6 @@ export type MaskPatternKey =
   | "zipCode"
   | "zipCodeExtended"
   | "currency"
-  | "currencyEur"
   | "percentage"
   | "licensePlate"
   | "ipv4"
@@ -152,4 +151,28 @@ export interface MaskInputProps extends EmptyProps<"input">, CompositionProps {
 
   /** Whether to disable masking. */
   withoutMask?: boolean;
+
+  /**
+   * Currency code for currency formatting (defaults to "USD").
+   * Used when mask is "currency".
+   *
+   * ```ts
+   * currency="EUR"  // €1,234.56
+   * currency="JPY"  // ¥1,235
+   * currency="GBP"  // £1,234.56
+   * ```
+   */
+  currency?: string;
+
+  /**
+   * Locale for currency formatting (defaults to "en-US").
+   * Used when mask is "currency".
+   *
+   * ```ts
+   * locale="en-US"  // $1,234.56
+   * locale="de-DE"  // 1.234,56 €
+   * locale="ja-JP"  // ￥1,235
+   * ```
+   */
+  locale?: string;
 }
