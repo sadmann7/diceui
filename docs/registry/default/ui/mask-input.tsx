@@ -53,13 +53,10 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
       const day = parseInt(cleaned.substring(2, 4), 10);
       const year = parseInt(cleaned.substring(4, 8), 10);
 
-      // Basic range checks
       if (month < 1 || month > 12 || day < 1 || year < 1900) return false;
 
-      // Days per month validation
       const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
-      // Check for leap year
       const isLeapYear =
         (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
       if (isLeapYear && month === 2) {
@@ -103,14 +100,11 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
     pattern: "$###,###.##",
     placeholder: "$0.00",
     transform: (value) => {
-      // Remove everything except digits and decimal point
       const cleaned = value.replace(/[^\d.]/g, "");
-      // Ensure only one decimal point
       const parts = cleaned.split(".");
       if (parts.length > 2) {
         return `${parts[0]}.${parts.slice(1).join("")}`;
       }
-      // Limit to 2 decimal places
       if (parts[1] && parts[1].length > 2) {
         return `${parts[0]}.${parts[1].substring(0, 2)}`;
       }
@@ -175,7 +169,6 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
       const parts = value.split(".");
       if (parts.length !== 4) return false;
       return parts.every((part) => {
-        // Check for empty parts or leading zeros (except "0" itself)
         if (!part || (part.length > 1 && part.startsWith("0"))) return false;
         const num = parseInt(part, 10);
         return !Number.isNaN(num) && num >= 0 && num <= 255;
@@ -209,17 +202,14 @@ function applyMask(
 ): string {
   const cleanValue = transform ? transform(value) : value;
 
-  // Special handling for currency patterns
   if (pattern.includes("$") || pattern.includes("€")) {
     return applyCurrencyMask(cleanValue, pattern);
   }
 
-  // Special handling for percentage
   if (pattern.includes("%")) {
     return applyPercentageMask(cleanValue);
   }
 
-  // Default mask application for other patterns
   let masked = "";
   let valueIndex = 0;
 
@@ -243,19 +233,17 @@ function applyCurrencyMask(value: string, pattern: string): string {
 
   const currencySymbol = pattern.includes("$") ? "$" : "€";
   const parts = value.split(".");
-  let integerPart = parts[0] || "";
-  const decimalPart = parts[1] || "";
+  let integerPart = parts[0] ?? "";
+  const decimalPart = parts[1] ?? "";
 
-  // Add commas to integer part (only if there are digits)
   if (integerPart && integerPart.length > 3) {
     integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
-  let result = `${currencySymbol}${integerPart || "0"}`;
+  let result = `${currencySymbol}${integerPart ?? "0"}`;
 
-  // Only add decimal part if user has typed a decimal point or decimal digits
   if (value.includes(".")) {
-    result += `.${(decimalPart || "").substring(0, 2)}`;
+    result += `.${(decimalPart ?? "").substring(0, 2)}`;
   }
 
   return result;
@@ -265,11 +253,10 @@ function applyPercentageMask(value: string): string {
   if (!value) return "";
 
   const parts = value.split(".");
-  let result = parts[0] || "0";
+  let result = parts[0] ?? "0";
 
-  // Only add decimal part if user has typed a decimal point
   if (value.includes(".")) {
-    result += `.${(parts[1] || "").substring(0, 2)}`;
+    result += `.${(parts[1] ?? "").substring(0, 2)}`;
   }
 
   return `${result}%`;
@@ -313,7 +300,7 @@ function fromUnmaskedIndex(
   return masked.length;
 }
 
-type InputElement = HTMLInputElement;
+type InputElement = React.ComponentRef<typeof MaskInput>;
 
 type ValidationMode = "onChange" | "onBlur" | "onSubmit" | "onTouched" | "all";
 
@@ -377,24 +364,14 @@ function MaskInput(props: MaskInputProps) {
   }, [mask]);
 
   const placeholder = React.useMemo(() => {
-    // Smart placeholder merging:
-    // - When not focused: show root placeholder (if provided)
-    // - When focused: show mask placeholder (if no root placeholder) or root placeholder
-    // - When withoutMask: only show root placeholder
-
-    if (withoutMask) {
-      return placeholderProp;
-    }
+    if (withoutMask) return placeholderProp;
 
     if (placeholderProp) {
-      // If root placeholder exists, show mask placeholder when focused (for pattern guidance)
-      // and root placeholder when not focused (for context)
       return isFocused
         ? (maskPattern?.placeholder ?? placeholderProp)
         : placeholderProp;
     }
 
-    // No root placeholder - use mask placeholder when focused
     return isFocused ? maskPattern?.placeholder : undefined;
   }, [placeholderProp, withoutMask, maskPattern, isFocused]);
 
@@ -403,7 +380,6 @@ function MaskInput(props: MaskInputProps) {
     return applyMask(value, maskPattern.pattern, maskPattern.transform);
   }, [value, maskPattern, withoutMask]);
 
-  // Calculate maxLength and inputMode for fixed patterns
   const tokenCount = React.useMemo(() => {
     if (!maskPattern || /[€$%]/.test(maskPattern.pattern)) return undefined;
     return maskPattern.pattern.match(/#/g)?.length ?? 0;
@@ -425,7 +401,6 @@ function MaskInput(props: MaskInputProps) {
     return undefined;
   }, [maskPattern, mask, inputProps.inputMode]);
 
-  // Helper function to determine if validation should run
   const shouldValidate = React.useCallback(
     (trigger: "change" | "blur") => {
       if (!onValidate || !maskPattern?.validate) return false;
@@ -436,20 +411,19 @@ function MaskInput(props: MaskInputProps) {
         case "onBlur":
           return trigger === "blur";
         case "onSubmit":
-          return false; // Never validate automatically
+          return false;
         case "onTouched":
           return touched ? trigger === "change" : trigger === "blur";
         case "all":
-          return true; // Validate on both change and blur
+          return true;
         default:
-          return trigger === "change"; // Default to onChange behavior
+          return trigger === "change";
       }
     },
     [onValidate, maskPattern, validationMode, touched],
   );
 
-  // Helper function to perform validation
-  const performValidation = React.useCallback(
+  const onInputValidate = React.useCallback(
     (unmaskedValue: string) => {
       if (onValidate && maskPattern?.validate) {
         const isValid = maskPattern.validate(unmaskedValue);
@@ -465,7 +439,6 @@ function MaskInput(props: MaskInputProps) {
       let newValue = inputValue;
       let unmaskedValue = inputValue;
 
-      // Skip masking during IME composition
       if (composing) {
         if (!isControlled) {
           setInternalValue(inputValue);
@@ -473,14 +446,11 @@ function MaskInput(props: MaskInputProps) {
         return;
       }
 
-      // Early exit when masking is disabled
       if (withoutMask || !maskPattern) {
         if (!isControlled) {
           setInternalValue(inputValue);
         }
-        // Validate based on mode for non-masked inputs
         if (shouldValidate("change")) {
-          // For non-masked inputs, we assume they're always valid unless there's a custom validator
           onValidate?.(true, inputValue);
         }
         onValueChangeProp?.(inputValue, inputValue, event);
@@ -495,9 +465,7 @@ function MaskInput(props: MaskInputProps) {
           maskPattern.transform,
         );
 
-        // Calculate the correct cursor position based on the change
         if (inputRef.current && newValue !== inputValue) {
-          // Guard against non-input elements when using asChild
           if (asChild && inputRef.current.tagName !== "INPUT") {
             if (process.env.NODE_ENV === "development") {
               console.warn(
@@ -513,9 +481,7 @@ function MaskInput(props: MaskInputProps) {
               maskPattern.transform,
             );
 
-            // Calculate cursor position
             let newCursorPosition: number;
-            // For dynamic patterns (currency, percentage), position at end
             if (
               maskPattern.pattern.includes("$") ||
               maskPattern.pattern.includes("€") ||
@@ -523,7 +489,6 @@ function MaskInput(props: MaskInputProps) {
             ) {
               newCursorPosition = newValue.length;
             } else {
-              // For fixed patterns, find position after the last user character
               let position = 0;
               let unmaskedCount = 0;
 
@@ -542,17 +507,16 @@ function MaskInput(props: MaskInputProps) {
               newCursorPosition = position;
             }
 
-            // Apply pattern-specific cursor constraints
             if (
               maskPattern.pattern.includes("$") ||
               maskPattern.pattern.includes("€")
             ) {
-              newCursorPosition = Math.max(1, newCursorPosition); // After currency symbol
+              newCursorPosition = Math.max(1, newCursorPosition);
             } else if (maskPattern.pattern.includes("%")) {
               newCursorPosition = Math.min(
                 newValue.length - 1,
                 newCursorPosition,
-              ); // Before % symbol
+              );
             }
 
             newCursorPosition = Math.min(newCursorPosition, newValue.length);
@@ -569,9 +533,8 @@ function MaskInput(props: MaskInputProps) {
         setInternalValue(newValue);
       }
 
-      // Validate based on validation mode
       if (shouldValidate("change")) {
-        performValidation(unmaskedValue);
+        onInputValidate(unmaskedValue);
       }
 
       onValueChangeProp?.(newValue, unmaskedValue, event);
@@ -585,7 +548,7 @@ function MaskInput(props: MaskInputProps) {
       withoutMask,
       asChild,
       shouldValidate,
-      performValidation,
+      onInputValidate,
     ],
   );
 
@@ -606,21 +569,19 @@ function MaskInput(props: MaskInputProps) {
 
       setIsFocused(false);
 
-      // Mark as touched for onTouched validation mode
       if (!touched) {
         setTouched(true);
       }
 
-      // Validate on blur if validation mode requires it
       if (shouldValidate("blur")) {
         const currentValue = event.target.value;
         const unmaskedValue = maskPattern
           ? getUnmaskedValue(currentValue, maskPattern.transform)
           : currentValue;
-        performValidation(unmaskedValue);
+        onInputValidate(unmaskedValue);
       }
     },
-    [onBlurProp, touched, shouldValidate, performValidation, maskPattern],
+    [onBlurProp, touched, shouldValidate, onInputValidate, maskPattern],
   );
 
   const onCompositionStart = React.useCallback(
@@ -639,7 +600,6 @@ function MaskInput(props: MaskInputProps) {
       if (event.defaultPrevented) return;
 
       setComposing(false);
-      // Apply masking after composition ends
       onValueChange(event as unknown as React.ChangeEvent<InputElement>);
     },
     [onCompositionEndProp, onValueChange],
@@ -658,19 +618,16 @@ function MaskInput(props: MaskInputProps) {
       const cursorPosition = target.selectionStart ?? 0;
       const currentValue = target.value;
 
-      // Get the unmasked pasted text
       const unmaskedPasted = getUnmaskedValue(
         pastedText,
         maskPattern.transform,
       );
 
-      // Get current unmasked value
       const currentUnmasked = getUnmaskedValue(
         currentValue,
         maskPattern.transform,
       );
 
-      // Calculate where to insert in the unmasked value
       let insertPosition = 0;
       let patternIndex = 0;
 
@@ -685,7 +642,6 @@ function MaskInput(props: MaskInputProps) {
         const patternChar = maskPattern.pattern[patternIndex];
 
         if (patternChar === "#") {
-          // This is a user-inputtable position
           if (
             currentChar &&
             currentChar !== (maskPattern.placeholder?.[i] ?? "_")
@@ -694,16 +650,13 @@ function MaskInput(props: MaskInputProps) {
           }
           patternIndex++;
         } else if (currentChar === patternChar) {
-          // This is a literal character that matches the pattern
           patternIndex++;
         } else {
-          // Mismatch - try to sync up
           break;
         }
       }
 
-      // Limit pasted content to remaining pattern capacity
-      const maxLength = maskPattern.pattern.split("#").length - 1; // Count of # characters
+      const maxLength = maskPattern.pattern.split("#").length - 1;
       const availableLength = maxLength - currentUnmasked.length;
       const limitedPasted = unmaskedPasted.slice(
         0,
@@ -711,27 +664,22 @@ function MaskInput(props: MaskInputProps) {
       );
 
       if (limitedPasted.length === 0) {
-        // Nothing to paste
         return;
       }
 
-      // Create new unmasked value with pasted content
       const newUnmaskedValue =
         currentUnmasked.slice(0, insertPosition) +
         limitedPasted +
         currentUnmasked.slice(insertPosition);
 
-      // Apply mask to the new value
       const newMaskedValue = applyMask(
         newUnmaskedValue,
         maskPattern.pattern,
         maskPattern.transform,
       );
 
-      // Update the input
       target.value = newMaskedValue;
 
-      // Position cursor after pasted content
       let newCursorPosition = 0;
       let unmaskedIndex = 0;
       const targetUnmaskedLength = insertPosition + limitedPasted.length;
@@ -751,13 +699,12 @@ function MaskInput(props: MaskInputProps) {
 
       target.setSelectionRange(newCursorPosition, newCursorPosition);
 
-      // Call the value change handler directly
       if (!isControlled) {
         setInternalValue(newMaskedValue);
       }
 
       if (shouldValidate("change")) {
-        performValidation(newUnmaskedValue);
+        onInputValidate(newUnmaskedValue);
       }
 
       onValueChangeProp?.(
@@ -772,7 +719,7 @@ function MaskInput(props: MaskInputProps) {
       isControlled,
       onValueChangeProp,
       shouldValidate,
-      performValidation,
+      onInputValidate,
     ],
   );
 
@@ -781,39 +728,32 @@ function MaskInput(props: MaskInputProps) {
       onKeyDownProp?.(event);
       if (event.defaultPrevented) return;
 
-      // Handle backspace to remove mask characters properly
       if (event.key === "Backspace" && maskPattern) {
         const target = event.target as InputElement;
         const cursorPosition = target.selectionStart ?? 0;
         const selectionEnd = target.selectionEnd ?? 0;
         const currentValue = target.value;
 
-        // Special handling for currency and percentage patterns
         if (
           maskPattern.pattern.includes("$") ||
           maskPattern.pattern.includes("€") ||
           maskPattern.pattern.includes("%")
         ) {
-          // For currency/percentage, let the normal backspace work
-          // The transform function will handle the cleanup
           return;
         }
 
-        // Handle text selection deletion
         if (cursorPosition !== selectionEnd) {
-          return; // Let default behavior handle selection deletion
+          return;
         }
 
         if (cursorPosition > 0) {
           const charBeforeCursor = currentValue[cursorPosition - 1];
 
-          // Check if character is a mask literal (not a user-inputtable character)
           const isLiteral = maskPattern.pattern[cursorPosition - 1] !== "#";
 
           if (charBeforeCursor && isLiteral) {
             event.preventDefault();
 
-            // Use proper caret to unmasked index mapping
             const uIdx = toUnmaskedIndex(
               currentValue,
               maskPattern.pattern,
