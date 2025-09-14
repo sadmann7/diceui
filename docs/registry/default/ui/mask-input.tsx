@@ -5,10 +5,15 @@ import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 
+interface TransformCtx {
+  currency?: string;
+  locale?: string;
+}
+
 interface MaskPattern {
   pattern: string;
   placeholder?: string;
-  transform?: (value: string) => string;
+  transform?: (value: string, ctx?: TransformCtx) => string;
   validate?: (value: string) => boolean;
 }
 
@@ -134,35 +139,69 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
       let hasDecimalSeparator = false;
       let decimalIndex = -1;
 
+      // For comma-decimal locales (like de-DE), we need to distinguish between:
+      // - Dots as thousands separators (e.g., "1.234")
+      // - Commas as decimal separators (e.g., "1.234,56")
       if (localeDecimalSeparator === ",") {
-        if (commaIndex !== -1) {
-          const afterComma = cleaned.substring(commaIndex + 1);
-
-          const looksLikeDecimal = afterComma.length <= 2;
-
-          if (looksLikeDecimal) {
+        // First check for comma as decimal separator (user input)
+        const lastCommaIndex = cleaned.lastIndexOf(",");
+        if (lastCommaIndex !== -1) {
+          const afterComma = cleaned.substring(lastCommaIndex + 1);
+          // In German format, decimal part should be 1-2 digits only
+          if (afterComma.length <= 2 && /^\d*$/.test(afterComma)) {
             hasDecimalSeparator = true;
-            decimalIndex = commaIndex;
+            decimalIndex = lastCommaIndex;
           }
         }
-      } else {
-        if (dotIndex !== -1) {
+
+        // Also check for dot as decimal separator (from our own processing)
+        // This handles cases where we've already converted "1.2345" -> "1234.5"
+        if (!hasDecimalSeparator && dotIndex !== -1) {
           const afterDot = cleaned.substring(dotIndex + 1);
-
-          const looksLikeDecimal = afterDot.length <= 2;
-
-          if (looksLikeDecimal) {
+          // If it looks like a simple decimal (1-2 digits), treat it as such
+          if (afterDot.length <= 2 && /^\d*$/.test(afterDot)) {
             hasDecimalSeparator = true;
             decimalIndex = dotIndex;
           }
         }
 
-        if (commaIndex !== -1 && !hasDecimalSeparator) {
+        // If no comma decimal found, check if there's a pattern like "12345" that should be "1234.5"
+        // This handles cases where formatted input like "1.2345" should be interpreted as "1234.5"
+        // ONLY for comma-decimal locales where dots are thousands separators
+        if (!hasDecimalSeparator && cleaned.length >= 4) {
+          // Check if this looks like a formatted number with thousands separator followed by decimal digits
+          // Pattern: digits + dot + exactly 3 digits + more digits (e.g., "1.2345" -> "1234.5")
+          const match = cleaned.match(/^(\d+)\.(\d{3})(\d{1,2})$/);
+          if (match) {
+            const [, beforeDot, thousandsPart, decimalPart] = match;
+            // Reconstruct as integer part + decimal part
+            const integerPart = (beforeDot || "") + (thousandsPart || "");
+            const result = `${integerPart}.${decimalPart}`;
+            return result;
+          }
+        }
+      } else {
+        // For dot-decimal locales, look for the last dot as decimal separator
+        const lastDotIndex = cleaned.lastIndexOf(".");
+        if (lastDotIndex !== -1) {
+          const afterDot = cleaned.substring(lastDotIndex + 1);
+          // Decimal part should be 1-2 digits
+          if (afterDot.length <= 2 && /^\d*$/.test(afterDot)) {
+            hasDecimalSeparator = true;
+            decimalIndex = lastDotIndex;
+          }
+        }
+
+        // If no dot decimal found, check comma as fallback
+        if (!hasDecimalSeparator && commaIndex !== -1) {
           const afterComma = cleaned.substring(commaIndex + 1);
-
+          // Only treat comma as decimal if it looks like decimal (not thousands)
           const looksLikeThousands = commaIndex <= 3 && afterComma.length >= 3;
-
-          if (!looksLikeThousands) {
+          if (
+            !looksLikeThousands &&
+            afterComma.length <= 2 &&
+            /^\d*$/.test(afterComma)
+          ) {
             hasDecimalSeparator = true;
             decimalIndex = commaIndex;
           }
@@ -176,6 +215,13 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
         const afterDecimal = cleaned
           .substring(decimalIndex + 1)
           .replace(/[.,]/g, "");
+
+        // Handle trailing decimal separator (e.g., "1234," or "1234.")
+        if (afterDecimal === "") {
+          const result = `${beforeDecimal}.`;
+          return result;
+        }
+
         const result = `${beforeDecimal}.${afterDecimal.substring(0, 2)}`;
         return result;
       }
@@ -270,12 +316,12 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
 function applyMask(
   value: string,
   pattern: string,
-  transform?: (value: string) => string,
+  transform?: (value: string, ctx?: TransformCtx) => string,
   currency?: string,
   locale?: string,
   maskType?: string,
 ): string {
-  const cleanValue = transform ? transform(value) : value;
+  const cleanValue = transform ? transform(value, { currency, locale }) : value;
 
   if (
     pattern.includes("$") ||
@@ -383,12 +429,14 @@ function applyCurrencyMask(
 
     if (hasExplicitDecimal && !fracValue) {
       if (result.match(/^[^\d\s]+/)) {
-        return result.replace(/(\d)$/, `$1${decimalSeparator}`);
+        const finalResult = result.replace(/(\d)$/, `$1${decimalSeparator}`);
+        return finalResult;
       } else {
-        return result.replace(
+        const finalResult = result.replace(
           /(\d)(\s*)([^\d\s]+)$/,
           `$1${decimalSeparator}$2$3`,
         );
+        return finalResult;
       }
     }
 
@@ -422,10 +470,7 @@ function applyPercentageMask(value: string): string {
 
 function getUnmaskedValue(
   value: string,
-  transform?: (
-    value: string,
-    options?: { currency?: string; locale?: string },
-  ) => string,
+  transform?: (value: string, ctx?: TransformCtx) => string,
   currency?: string,
   locale?: string,
 ): string {
@@ -586,23 +631,17 @@ function MaskInput(props: MaskInputProps) {
         maskPattern.pattern.includes("$") ||
         maskPattern.pattern.includes("€")
       ) {
-        let currencySymbol = "$";
         try {
           const formatter = new Intl.NumberFormat(locale, {
             style: "currency",
             currency: currency,
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
           });
-          const parts = formatter.formatToParts(0);
-          const currencyPart = parts.find((part) => part.type === "currency");
-          if (currencyPart) {
-            currencySymbol = currencyPart.value;
-          }
+          return formatter.format(0);
         } catch {
-          currencySymbol = "$";
+          return "$0.00";
         }
-        return `${currencySymbol}0.00`;
       }
       if (maskType === "percentage" || maskPattern.pattern.includes("%")) {
         return "0.00%";
@@ -918,21 +957,56 @@ function MaskInput(props: MaskInputProps) {
   );
 
   const onCompositionEnd = React.useCallback(
-    (event: React.CompositionEvent<InputElement>) => {
-      onCompositionEndProp?.(event);
-      if (event.defaultPrevented) return;
+    (e: React.CompositionEvent<InputElement>) => {
+      onCompositionEndProp?.(e);
+      if (e.defaultPrevented) return;
 
       setComposing(false);
-      const target = event.target as InputElement;
-      const changeEvent = {
-        ...event,
-        target,
-        currentTarget: target,
-        type: "change",
-      } as React.ChangeEvent<InputElement>;
-      onValueChange(changeEvent);
+
+      // Re-run masking with the live value without faking a React event
+      const el = inputRef.current;
+      if (!el) return;
+      const inputValue = el.value;
+
+      if (!maskPattern || withoutMask) {
+        if (!isControlled) setInternalValue(inputValue);
+        if (shouldValidate("change")) onValidate?.(true, inputValue);
+        onValueChangeProp?.(inputValue, inputValue);
+        return;
+      }
+
+      const unmasked = getUnmaskedValue(
+        inputValue,
+        maskPattern.transform,
+        currency,
+        locale,
+      );
+      const masked = applyMask(
+        unmasked,
+        maskPattern.pattern,
+        maskPattern.transform,
+        currency,
+        locale,
+        maskType,
+      );
+
+      if (!isControlled) setInternalValue(masked);
+      if (shouldValidate("change")) onInputValidate(unmasked);
+      onValueChangeProp?.(masked, unmasked);
     },
-    [onCompositionEndProp, onValueChange],
+    [
+      onCompositionEndProp,
+      maskPattern,
+      withoutMask,
+      isControlled,
+      shouldValidate,
+      onValidate,
+      onValueChangeProp,
+      currency,
+      locale,
+      maskType,
+      onInputValidate,
+    ],
   );
 
   const onPaste = React.useCallback(
@@ -1044,7 +1118,7 @@ function MaskInput(props: MaskInputProps) {
         onInputValidate(newUnmaskedValue);
       }
 
-      onValueChangeProp?.(newMaskedValue, newUnmaskedValue, undefined);
+      onValueChangeProp?.(newMaskedValue, newUnmaskedValue);
     },
     [
       maskPattern,
@@ -1127,7 +1201,7 @@ function MaskInput(props: MaskInputProps) {
               );
               target.setSelectionRange(nextCaret, nextCaret);
 
-              onValueChangeProp?.(nextMasked, nextUnmasked, undefined);
+              onValueChangeProp?.(nextMasked, nextUnmasked);
             }
             return;
           }
@@ -1195,7 +1269,7 @@ function MaskInput(props: MaskInputProps) {
               );
               target.setSelectionRange(nextCaret, nextCaret);
 
-              onValueChangeProp?.(nextMasked, nextUnmasked, undefined);
+              onValueChangeProp?.(nextMasked, nextUnmasked);
             }
             return;
           }
