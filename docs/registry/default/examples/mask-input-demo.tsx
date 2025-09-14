@@ -10,8 +10,8 @@ export default function MaskInputDemo() {
   const [dateValue, setDateValue] = React.useState("");
   const [dollarValue, setDollarValue] = React.useState("");
   const [euroValue, setEuroValue] = React.useState("");
+  const [creditCardValue, setCreditCardValue] = React.useState("");
   const [percentageValue, setPercentageValue] = React.useState("");
-  const [ipv4Value, setIpv4Value] = React.useState("");
 
   return (
     <div className="grid gap-6 md:grid-cols-2">
@@ -22,7 +22,10 @@ export default function MaskInputDemo() {
           mask="phone"
           placeholder="Enter your phone number"
           value={phoneValue}
-          onValueChange={setPhoneValue}
+          onValueChange={(maskedValue, unmaskedValue) => {
+            console.log({ maskedValue, unmaskedValue });
+            setPhoneValue(unmaskedValue);
+          }}
         />
         <p className="text-muted-foreground text-sm">
           Enter your phone number with area code
@@ -64,6 +67,17 @@ export default function MaskInputDemo() {
         <p className="text-muted-foreground text-sm">Enter your currency</p>
       </div>
       <div className="flex flex-col gap-2">
+        <Label htmlFor={`${id}-creditCard`}>Credit Card</Label>
+        <MaskInput
+          id={`${id}-creditCard`}
+          mask="creditCard"
+          placeholder="4242 4242 4242 4242"
+          value={creditCardValue}
+          onValueChange={setCreditCardValue}
+        />
+        <p className="text-muted-foreground text-sm">Enter your IPv4 address</p>
+      </div>
+      <div className="flex flex-col gap-2">
         <Label htmlFor={`${id}-percentage`}>Percentage</Label>
         <MaskInput
           id={`${id}-percentage`}
@@ -73,16 +87,6 @@ export default function MaskInputDemo() {
           onValueChange={setPercentageValue}
         />
         <p className="text-muted-foreground text-sm">Enter your percentage</p>
-      </div>
-      <div className="flex flex-col gap-2">
-        <Label htmlFor={`${id}-ipv4`}>IPv4</Label>
-        <MaskInput
-          id={`${id}-ipv4`}
-          mask="ipv4"
-          placeholder="192.168.1.1"
-          value={ipv4Value}
-          onValueChange={setIpv4Value}
-        />
       </div>
     </div>
   );

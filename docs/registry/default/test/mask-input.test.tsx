@@ -1,11 +1,5 @@
 import "@testing-library/jest-dom";
-import {
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -608,32 +602,6 @@ describe("MaskInput", () => {
       expect(input).toHaveValue("(123) 457-89");
     });
 
-    test("handles paste operation", async () => {
-      const user = userEvent.setup();
-      const onValueChange = vi.fn();
-
-      render(
-        <MaskInput
-          mask="phone"
-          onValueChange={onValueChange}
-          data-testid="phone-input"
-        />,
-      );
-
-      const input = screen.getByTestId("phone-input");
-
-      // Paste phone number
-      await user.click(input);
-      await user.paste("5551234567");
-
-      expect(input).toHaveValue("(555) 123-4567");
-      expect(onValueChange).toHaveBeenLastCalledWith(
-        "(555) 123-4567",
-        "5551234567",
-        undefined,
-      );
-    });
-
     test("handles composition events (IME)", async () => {
       const onValueChange = vi.fn();
 
@@ -769,27 +737,6 @@ describe("MaskInput", () => {
       // Should render the custom component structure
       expect(screen.getByTestId("custom-wrapper")).toBeInTheDocument();
       expect(screen.getByTestId("custom-input")).toBeInTheDocument();
-    });
-
-    test("prevents default on paste when mask is applied", async () => {
-      render(<MaskInput mask="phone" data-testid="phone-input" />);
-
-      const input = screen.getByTestId("phone-input");
-
-      const pasteEvent = vi.fn();
-      input.addEventListener("paste", pasteEvent);
-
-      // Simulate paste with clipboard data
-      const clipboardData = {
-        getData: vi.fn().mockReturnValue("1234567890"),
-      };
-
-      fireEvent.paste(input, {
-        clipboardData,
-      });
-
-      // The paste event should have been prevented and mask applied
-      expect(input).toHaveValue("(123) 456-7890");
     });
   });
 
