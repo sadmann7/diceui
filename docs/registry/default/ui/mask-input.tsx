@@ -236,7 +236,6 @@ function applyCurrencyMask(
 ): string {
   if (!value) return "";
 
-  // Get the currency symbol using Intl.NumberFormat
   let currencySymbol = "$";
   try {
     const formatter = new Intl.NumberFormat(locale, {
@@ -251,23 +250,19 @@ function applyCurrencyMask(
       currencySymbol = currencyPart.value;
     }
   } catch {
-    // Fallback to $ if there's an error
     currencySymbol = "$";
   }
 
-  // Handle incremental input building
   const parts = value.split(".");
   let integerPart = parts[0] ?? "";
   const decimalPart = parts[1] ?? "";
 
-  // Add thousands separators to integer part if it's long enough
   if (integerPart && integerPart.length > 3) {
     integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
   let result = `${currencySymbol}${integerPart || "0"}`;
 
-  // Add decimal part if user has typed a decimal point
   if (value.includes(".")) {
     result += `.${decimalPart.substring(0, 2)}`;
   }
@@ -399,13 +394,78 @@ function MaskInput(props: MaskInputProps) {
     if (withoutMask) return placeholderProp;
 
     if (placeholderProp) {
-      return focused
-        ? (maskPattern?.placeholder ?? placeholderProp)
-        : placeholderProp;
+      if (focused && maskPattern) {
+        if (
+          maskType === "currency" ||
+          maskPattern.pattern.includes("$") ||
+          maskPattern.pattern.includes("€")
+        ) {
+          let currencySymbol = "$";
+          try {
+            const formatter = new Intl.NumberFormat(locale, {
+              style: "currency",
+              currency: currency,
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            });
+            const parts = formatter.formatToParts(0);
+            const currencyPart = parts.find((part) => part.type === "currency");
+            if (currencyPart) {
+              currencySymbol = currencyPart.value;
+            }
+          } catch {
+            currencySymbol = "$";
+          }
+          return `${currencySymbol}0.00`;
+        }
+        if (maskType === "percentage" || maskPattern.pattern.includes("%")) {
+          return "0.00%";
+        }
+        return maskPattern?.placeholder ?? placeholderProp;
+      }
+      return placeholderProp;
     }
 
-    return focused ? maskPattern?.placeholder : undefined;
-  }, [placeholderProp, withoutMask, maskPattern, focused]);
+    if (focused && maskPattern) {
+      if (
+        maskType === "currency" ||
+        maskPattern.pattern.includes("$") ||
+        maskPattern.pattern.includes("€")
+      ) {
+        let currencySymbol = "$";
+        try {
+          const formatter = new Intl.NumberFormat(locale, {
+            style: "currency",
+            currency: currency,
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          });
+          const parts = formatter.formatToParts(0);
+          const currencyPart = parts.find((part) => part.type === "currency");
+          if (currencyPart) {
+            currencySymbol = currencyPart.value;
+          }
+        } catch {
+          currencySymbol = "$";
+        }
+        return `${currencySymbol}0.00`;
+      }
+      if (maskType === "percentage" || maskPattern.pattern.includes("%")) {
+        return "0.00%";
+      }
+      return maskPattern?.placeholder;
+    }
+
+    return undefined;
+  }, [
+    placeholderProp,
+    withoutMask,
+    maskPattern,
+    focused,
+    maskType,
+    currency,
+    locale,
+  ]);
 
   const displayValue = React.useMemo(() => {
     if (withoutMask || !maskPattern || !value) return value ?? "";

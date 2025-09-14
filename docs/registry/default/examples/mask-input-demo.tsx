@@ -8,7 +8,8 @@ export default function MaskInputDemo() {
   const id = React.useId();
   const [phoneValue, setPhoneValue] = React.useState("");
   const [dateValue, setDateValue] = React.useState("");
-  const [currencyValue, setCurrencyValue] = React.useState("");
+  const [dollarValue, setDollarValue] = React.useState("");
+  const [euroValue, setEuroValue] = React.useState("");
   const [percentageValue, setPercentageValue] = React.useState("");
   const [isDateValid, setIsDateValid] = React.useState(true);
 
@@ -46,16 +47,31 @@ export default function MaskInputDemo() {
         )}
       </div>
       <div className="flex flex-col gap-2">
-        <Label htmlFor={`${id}-currency`}>Currency</Label>
+        <Label htmlFor={`${id}-dollar`}>Dollar</Label>
         <MaskInput
-          id={`${id}-currency`}
+          id={`${id}-dollar`}
           mask="currency"
           placeholder="$0.00"
-          value={currencyValue}
-          onValueChange={setCurrencyValue}
+          value={dollarValue}
+          onValueChange={setDollarValue}
         />
         <p className="text-muted-foreground text-sm">Enter your currency</p>
       </div>
+
+      <div className="flex flex-col gap-2">
+        <Label htmlFor={`${id}-euro`}>Euro</Label>
+        <MaskInput
+          id={`${id}-euro`}
+          mask="currency"
+          currency="EUR"
+          locale="de-DE"
+          placeholder="€0.00"
+          value={euroValue}
+          onValueChange={setEuroValue}
+        />
+        <p className="text-muted-foreground text-sm">Enter your currency</p>
+      </div>
+
       <div className="flex flex-col gap-2">
         <Label htmlFor={`${id}-percentage`}>Percentage</Label>
         <MaskInput
