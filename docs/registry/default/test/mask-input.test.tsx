@@ -337,13 +337,15 @@ describe("MaskInput", () => {
 
       const input = screen.getByTestId("ip-input");
 
-      // Type a shorter IP to test the pattern - test actual behavior
+      // Type partial IP address
       await user.type(input, "192168111");
 
-      // The IP address mask has some issues, let's test what it actually produces
-      // Based on the error, it seems to produce "192..........1."
-      expect(input).toHaveValue("192..........1.");
-      expect(onValueChange).toHaveBeenCalled();
+      expect(input).toHaveValue("192.168.111");
+      expect(onValueChange).toHaveBeenLastCalledWith(
+        "192.168.111",
+        "192168111",
+        expect.any(Object),
+      );
     });
   });
 
@@ -383,7 +385,7 @@ describe("MaskInput", () => {
       const onValidate = vi.fn();
       const customMask: MaskPattern = {
         pattern: "###",
-        validate: (value) => parseInt(value) > 100,
+        validate: (value) => parseInt(value, 10) > 100,
       };
 
       render(
@@ -504,14 +506,14 @@ describe("MaskInput", () => {
       await user.type(input, "1234567890");
       expect(input).toHaveValue("(123) 456-7890");
 
-      // Backspace should remove digits properly
+      // Backspace should remove the last digit
       await user.keyboard("{Backspace}");
       expect(input).toHaveValue("(123) 456-789");
 
-      // Test backspace behavior - the actual behavior may differ from expected
+      // Test backspace at specific position - should remove the digit before cursor
       input.setSelectionRange(9, 9); // Position after "456-"
       await user.keyboard("{Backspace}");
-      // The actual implementation behavior - test what it actually does
+      // Should remove the '6' digit, resulting in "(123) 457-89"
       expect(input).toHaveValue("(123) 457-89");
     });
 
