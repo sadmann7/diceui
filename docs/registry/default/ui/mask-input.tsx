@@ -5,7 +5,10 @@ import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 
-type TransformCtx = { currency?: string; locale?: string };
+interface TransformCtx {
+  currency?: string;
+  locale?: string;
+}
 
 interface MaskPattern {
   pattern: string;
@@ -136,63 +139,45 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
       let hasDecimalSeparator = false;
       let decimalIndex = -1;
 
-      // For comma-decimal locales (like de-DE), we need to distinguish between:
-      // - Dots as thousands separators (e.g., "1.234")
-      // - Commas as decimal separators (e.g., "1.234,56")
       if (localeDecimalSeparator === ",") {
-        // First check for comma as decimal separator (user input)
         const lastCommaIndex = cleaned.lastIndexOf(",");
         if (lastCommaIndex !== -1) {
           const afterComma = cleaned.substring(lastCommaIndex + 1);
-          // In German format, decimal part should be 1-2 digits only
           if (afterComma.length <= 2 && /^\d*$/.test(afterComma)) {
             hasDecimalSeparator = true;
             decimalIndex = lastCommaIndex;
           }
         }
 
-        // Also check for dot as decimal separator (from our own processing)
-        // This handles cases where we've already converted "1.2345" -> "1234.5"
         if (!hasDecimalSeparator && dotIndex !== -1) {
           const afterDot = cleaned.substring(dotIndex + 1);
-          // If it looks like a simple decimal (1-2 digits), treat it as such
           if (afterDot.length <= 2 && /^\d*$/.test(afterDot)) {
             hasDecimalSeparator = true;
             decimalIndex = dotIndex;
           }
         }
 
-        // If no comma decimal found, check if there's a pattern like "12345" that should be "1234.5"
-        // This handles cases where formatted input like "1.2345" should be interpreted as "1234.5"
-        // ONLY for comma-decimal locales where dots are thousands separators
         if (!hasDecimalSeparator && cleaned.length >= 4) {
-          // Check if this looks like a formatted number with thousands separator followed by decimal digits
-          // Pattern: digits + dot + exactly 3 digits + more digits (e.g., "1.2345" -> "1234.5")
           const match = cleaned.match(/^(\d+)\.(\d{3})(\d{1,2})$/);
           if (match) {
             const [, beforeDot, thousandsPart, decimalPart] = match;
-            // Reconstruct as integer part + decimal part
             const integerPart = (beforeDot || "") + (thousandsPart || "");
             const result = `${integerPart}.${decimalPart}`;
             return result;
           }
         }
       } else {
-        // For dot-decimal locales, look for the last dot as decimal separator
         const lastDotIndex = cleaned.lastIndexOf(".");
         if (lastDotIndex !== -1) {
           const afterDot = cleaned.substring(lastDotIndex + 1);
-          // Decimal part should be 1-2 digits
           if (afterDot.length <= 2 && /^\d*$/.test(afterDot)) {
             hasDecimalSeparator = true;
             decimalIndex = lastDotIndex;
           }
         }
 
-        // If no dot decimal found, check comma as fallback
         if (!hasDecimalSeparator && commaIndex !== -1) {
           const afterComma = cleaned.substring(commaIndex + 1);
-          // Only treat comma as decimal if it looks like decimal (not thousands)
           const looksLikeThousands = commaIndex <= 3 && afterComma.length >= 3;
           if (
             !looksLikeThousands &&
@@ -213,7 +198,6 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
           .substring(decimalIndex + 1)
           .replace(/[.,]/g, "");
 
-        // Handle trailing decimal separator (e.g., "1234," or "1234.")
         if (afterDecimal === "") {
           const result = `${beforeDecimal}.`;
           return result;
@@ -274,7 +258,7 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
         });
       } else {
         if (!/^\d+$/.test(value)) return false;
-        if (value.length > 12) return false; // Max 4 segments * 3 digits each
+        if (value.length > 12) return false;
 
         const chunks = [];
         for (let i = 0; i < value.length; i += 3) {
@@ -681,7 +665,6 @@ function MaskInput(props: MaskInputProps) {
     if (inputProps.inputMode) return inputProps.inputMode;
     if (!maskPattern) return undefined;
 
-    // Use decimal for patterns that need decimal point input
     if (
       maskType === "currency" ||
       maskType === "percentage" ||
@@ -959,10 +942,9 @@ function MaskInput(props: MaskInputProps) {
 
       setComposing(false);
 
-      // Re-run masking with the live value without faking a React event
-      const el = inputRef.current;
-      if (!el) return;
-      const inputValue = el.value;
+      const inputElement = inputRef.current;
+      if (!inputElement) return;
+      const inputValue = inputElement.value;
 
       if (!maskPattern || withoutMask) {
         if (!isControlled) setInternalValue(inputValue);
