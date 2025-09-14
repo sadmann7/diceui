@@ -28,7 +28,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import MaskInputDemo from "@/registry/default/examples/mask-input-demo";
-import MaskInputValidationModesDemo from "@/registry/default/examples/mask-input-validation-modes-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -43,7 +42,6 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <MaskInputDemo />
-      <MaskInputValidationModesDemo />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
