@@ -36,6 +36,11 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
+        source: "/r/registry",
+        destination: "/r/registry.json",
+        permanent: true,
+      },
+      {
         source: "/r/:name((?!index\\.json|registry\\.json|styles/).*)",
         destination: "/r/styles/default/:name.json",
         permanent: true,
