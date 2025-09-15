@@ -1,6 +1,46 @@
 import type * as React from "react";
 import type { CompositionProps, EmptyProps } from "@/types";
 
+export interface TransformOptions {
+  /**
+   * The currency to format the value in
+   *
+   * ```ts
+   * currency: "USD"
+   * ```
+   */
+  currency?: string;
+
+  /**
+   * The locale to format the value in
+   *
+   * ```ts
+   * locale: "en-US"
+   * ```
+   */
+  locale?: string;
+}
+
+export interface ValidateOptions {
+  /**
+   * The minimum value to validate
+   *
+   * ```ts
+   * min: 0
+   * ```
+   */
+  min?: number;
+
+  /**
+   * The maximum value to validate
+   *
+   * ```ts
+   * max: 100
+   * ```
+   */
+  max?: number;
+}
+
 export interface MaskPattern {
   /**
    * The pattern string where # represents input characters and other characters are literals
@@ -25,19 +65,19 @@ export interface MaskPattern {
    * Transform function to clean/format input before applying mask
    *
    * ```ts
-   * transform: (value) => value.replace(/[^0-9]/g, "")
+   * transform: (value, opts) => value.replace(/[^0-9]/g, "")
    * ```
    */
-  transform?: (value: string) => string;
+  transform?: (value: string, opts?: TransformOptions) => string;
 
   /**
    * Validation function to check if the unmasked value is valid
    *
    * ```ts
-   * validate: (value) => value.length === 10
+   * validate: (value, opts) => value.length === 10
    * ```
    */
-  validate?: (value: string) => boolean;
+  validate?: (value: string, opts?: ValidateOptions) => boolean;
 }
 
 /** Predefined mask pattern keys for common input formats */
@@ -85,7 +125,7 @@ export interface MaskInputProps extends EmptyProps<"input">, CompositionProps {
   onValueChange?: (
     maskedValue: string,
     unmaskedValue: string,
-    event: React.ChangeEvent<HTMLInputElement>,
+    event?: React.ChangeEvent<HTMLInputElement>,
   ) => void;
 
   /**
@@ -145,6 +185,9 @@ export interface MaskInputProps extends EmptyProps<"input">, CompositionProps {
    * ```
    */
   mask?: MaskPatternKey | MaskPattern;
+
+  /** Whether to render as child component using Radix Slot */
+  asChild?: boolean;
 
   /** Whether the input has validation errors. */
   invalid?: boolean;

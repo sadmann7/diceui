@@ -5,6 +5,9 @@ import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 
+const PAST_YEARS_LIMIT = 120;
+const FUTURE_YEARS_LIMIT = 10;
+
 interface TransformOptions {
   currency?: string;
   locale?: string;
@@ -63,8 +66,8 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
       const year = parseInt(cleaned.substring(4, 8), 10);
 
       const currentYear = new Date().getFullYear();
-      const minYear = currentYear - 120;
-      const maxYear = currentYear + 10;
+      const minYear = currentYear - PAST_YEARS_LIMIT;
+      const maxYear = currentYear + FUTURE_YEARS_LIMIT;
       if (
         month < 1 ||
         month > 12 ||
@@ -1287,9 +1290,9 @@ function MaskInput(props: MaskInputProps) {
     <InputPrimitive
       aria-invalid={invalid}
       data-disabled={disabled ? "" : undefined}
+      data-invalid={invalid ? "" : undefined}
       data-readonly={readOnly ? "" : undefined}
       data-required={required ? "" : undefined}
-      data-invalid={invalid ? "" : undefined}
       data-slot="mask-input"
       {...inputProps}
       className={cn(

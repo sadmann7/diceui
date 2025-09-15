@@ -48,7 +48,7 @@ import { MaskInput } from "@/components/ui/mask-input";
 <MaskInput 
   mask="phone" 
   placeholder="Enter phone number"
-  onValueChange={(masked, unmasked) => {
+  onValueChange={(masked, unmasked, event) => {
     console.log('Masked:', masked);     // "(555) 123-4567"
     console.log('Unmasked:', unmasked); // "5551234567"
   }}
@@ -64,6 +64,7 @@ import { MaskInput } from "@/components/ui/mask-input";
 - **TypeScript support** - Full type safety with IntelliSense
 - **Accessibility** - ARIA attributes and keyboard navigation
 - **Form integration** - Works seamlessly with form libraries
+- **Composition support** - Use `asChild` prop to render as a different component using Radix Slot
 
 ## Examples
 
@@ -150,19 +151,12 @@ Create custom patterns using the `MaskPattern` interface:
 const customPattern: MaskPattern = {
   pattern: "###-###-####",
   placeholder: "ABC-123-4567",
-  transform: (value) => value.replace(/[^A-Z0-9]/gi, "").toUpperCase(),
-  validate: (value) => value.length === 10,
+  transform: (value, opts) => value.replace(/[^A-Z0-9]/gi, "").toUpperCase(),
+  validate: (value, opts) => value.length === 10,
 };
 
 <MaskInput mask={customPattern} />
 ```
-
-### Pattern Properties
-
-- **`pattern`**: Template string where `#` represents input characters and other characters are literals
-- **`placeholder`**: Placeholder text shown when the input is focused
-- **`transform`**: Function to clean/format input before applying the mask
-- **`validate`**: Function to validate the unmasked value
 
 ## API Reference
 
@@ -188,9 +182,39 @@ Interface for creating custom mask patterns.
 
 Predefined mask pattern keys for common input formats.
 
+| Pattern | Description |
+|---------|-------------|
+| `phone` | US phone number |
+| `ssn` | Social Security Number |
+| `date` | Date (MM/DD/YYYY) |
+| `time` | Time (HH:MM) |
+| `creditCard` | Credit card number |
+| `zipCode` | US ZIP code |
+| `zipCodeExtended` | US ZIP+4 code |
+| `currency` | Currency formatting using Intl.NumberFormat |
+| `percentage` | Percentage with decimals |
+| `licensePlate` | License plate format |
+| `ipv4` | IPv4 address |
+| `macAddress` | MAC address |
+| `isbn` | ISBN-13 book identifier |
+| `ein` | Employer Identification Number |
+
+### TransformOptions
+
+Options passed to the transform function for advanced formatting.
+
 <AutoTypeTable
   path="./types/docs/mask-input.ts"
-  name="MaskPatternKey"
+  name="TransformOptions"
+/>
+
+### ValidateOptions
+
+Options passed to the validate function for enhanced validation.
+
+<AutoTypeTable
+  path="./types/docs/mask-input.ts"
+  name="ValidateOptions"
 />
 
 ## Data Attributes

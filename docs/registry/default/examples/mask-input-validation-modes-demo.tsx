@@ -92,7 +92,7 @@ export default function MaskInputValidationModesDemo() {
   );
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div className="grid w-full gap-4 sm:grid-cols-2">
       {modes.map((mode) => (
         <ValidationModeCard
           key={mode.value}
@@ -175,7 +175,7 @@ function ValidationModeCard({
         <span className="text-muted-foreground text-xs">
           {validationState.message ||
             (mode.value === "onSubmit" && !submitAttempted
-              ? "Click 'Validate' to check..."
+              ? "Click 'Submit' to check..."
               : "Start typing to see validation...")}
         </span>
       </div>
