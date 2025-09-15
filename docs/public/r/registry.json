@@ -160,6 +160,18 @@
       ]
     },
     {
+      "name": "mask-input",
+      "type": "registry:component",
+      "title": "Mask Input",
+      "description": "An input component with customizable input masking and validation patterns.",
+      "files": [
+        {
+          "path": "registry/default/ui/mask-input.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "media-player",
       "type": "registry:component",
       "title": "Media Player",
@@ -387,6 +399,66 @@
       "files": [
         {
           "path": "registry/default/examples/masonry-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "mask-input-demo",
+      "type": "registry:component",
+      "title": "Mask Input Demo",
+      "description": "Example showing how to use the mask input component.",
+      "files": [
+        {
+          "path": "registry/default/examples/mask-input-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "mask-input-custom-demo",
+      "type": "registry:component",
+      "title": "Mask Input Custom Demo",
+      "description": "Example showing how to use the mask input component with custom patterns.",
+      "files": [
+        {
+          "path": "registry/default/examples/mask-input-custom-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "mask-input-form-demo",
+      "type": "registry:component",
+      "title": "Mask Input Form Demo",
+      "description": "Example showing how to use the mask input component in forms.",
+      "files": [
+        {
+          "path": "registry/default/examples/mask-input-form-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "mask-input-patterns-demo",
+      "type": "registry:component",
+      "title": "Mask Input Patterns Demo",
+      "description": "Example showing various mask patterns for the mask input component.",
+      "files": [
+        {
+          "path": "registry/default/examples/mask-input-patterns-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "mask-input-validation-modes-demo",
+      "type": "registry:component",
+      "title": "Mask Input Validation Modes Demo",
+      "description": "Example showing different validation modes for the mask input component.",
+      "files": [
+        {
+          "path": "registry/default/examples/mask-input-validation-modes-demo.tsx",
           "type": "registry:example"
         }
       ]

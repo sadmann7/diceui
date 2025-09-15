@@ -212,8 +212,8 @@ export interface ItemHandleProps
 
 export interface OverlayProps
   extends Omit<
-    React.ComponentPropsWithoutRef<typeof DragOverlay>,
-    keyof React.ComponentPropsWithoutRef<"div">
+    React.ComponentProps<typeof DragOverlay>,
+    keyof React.ComponentProps<"div">
   > {
   /**
    * The container to render the overlay in.
