@@ -428,7 +428,7 @@ function StepperList(props: StepperListProps) {
   const isClickFocusRef = React.useRef(false);
   const itemsRef = React.useRef<Map<string, ItemData>>(new Map());
   const listRef = React.useRef<HTMLElement>(null);
-  const composedRefs = useComposedRefs(ref, listRef);
+  const composedRef = useComposedRefs(ref, listRef);
 
   const onItemFocus = React.useCallback((tabStopId: string) => {
     setTabStopId(tabStopId);
@@ -562,7 +562,7 @@ function StepperList(props: StepperListProps) {
         dir={context.dir}
         tabIndex={isTabbingBackOut || focusableItemCount === 0 ? -1 : 0}
         {...listProps}
-        ref={composedRefs}
+        ref={composedRef}
         className={cn(
           "flex outline-none",
           orientation === "horizontal"

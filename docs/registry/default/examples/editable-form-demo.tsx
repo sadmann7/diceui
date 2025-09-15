@@ -69,7 +69,10 @@ export default function EditableFormDemo() {
                 <Editable
                   defaultValue={field.value}
                   onSubmit={field.onChange}
-                  invalid={!!form.formState.errors.name}
+                  invalid={
+                    !!form.formState.errors.name &&
+                    !!form.formState.touchedFields.name
+                  }
                 >
                   <FormLabel asChild>
                     <EditableLabel>Name</EditableLabel>
@@ -112,7 +115,10 @@ export default function EditableFormDemo() {
                 <Editable
                   defaultValue={field.value}
                   onSubmit={field.onChange}
-                  invalid={!!form.formState.errors.title}
+                  invalid={
+                    !!form.formState.errors.title &&
+                    !!form.formState.touchedFields.title
+                  }
                 >
                   <FormLabel asChild>
                     <EditableLabel>Title</EditableLabel>

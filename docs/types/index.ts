@@ -16,6 +16,9 @@ export interface CompositionProps {
   asChild?: boolean;
 }
 
+export type CozyProps<T extends React.ElementType> = EmptyProps<T> &
+  ControlledProps<T>;
+
 export type Direction = "ltr" | "rtl";
 
 export type Orientation = "horizontal" | "vertical";

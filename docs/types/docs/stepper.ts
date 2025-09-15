@@ -26,21 +26,45 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
 
   /**
    * Event handler called when the active step changes.
+   *
+   * ```ts
+   * onValueChange={(value) => {
+   *   console.log(value)
+   * }}
+   * ```
    */
   onValueChange?: (value: string) => void;
 
   /**
    * Event handler called when a step is completed.
+   *
+   * ```ts
+   * onValueComplete={(value, completed) => {
+   *   console.log(value, completed)
+   * }}
+   * ```
    */
   onValueComplete?: (value: string, completed: boolean) => void;
 
   /**
    * Event handler called when a step is added to the stepper.
+   *
+   * ```ts
+   * onValueAdd={(value) => {
+   *   console.log(value)
+   * }}
+   * ```
    */
   onValueAdd?: (value: string) => void;
 
   /**
    * Event handler called when a step is removed from the stepper.
+   *
+   * ```ts
+   * onValueRemove={(value) => {
+   *   console.log(value)
+   * }}
+   * ```
    */
   onValueRemove?: (value: string) => void;
 
