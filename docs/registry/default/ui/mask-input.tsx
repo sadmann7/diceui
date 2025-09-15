@@ -38,7 +38,6 @@ const REGEX_CACHE = {
   hashPattern: /#/g,
   currencyAtEnd: /\d\s*[^\d\s]+$/,
   percentageChars: /[^\d.]/g,
-  // Pre-compiled validation patterns
   phone: /^\d{10}$/,
   ssn: /^\d{9}$/,
   zipCode: /^\d{5}$/,
@@ -230,7 +229,6 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
       )
         return false;
 
-      // Use cached days array and avoid array mutation
       const maxDays =
         month === 2 &&
         ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0)
@@ -670,7 +668,6 @@ interface MaskInputProps extends React.ComponentProps<"input"> {
   locale?: string;
 }
 
-// Helper function to calculate cursor position for currency masks
 function getCurrencyCaretPosition(
   newValue: string,
   mask: MaskPatternKey | MaskPattern | undefined,
@@ -696,7 +693,6 @@ function getCurrencyCaretPosition(
   }
 }
 
-// Helper function to calculate cursor position for pattern masks
 function getPatternCaretPosition(
   newValue: string,
   maskPattern: MaskPattern,
@@ -842,8 +838,6 @@ function MaskInput(props: MaskInputProps) {
   const calculatedMaxLength = tokenCount
     ? maskPattern?.pattern.length
     : maxLength;
-
-  // Use pre-compiled pattern instead of creating new one
 
   const calculatedInputMode = React.useMemo(() => {
     if (inputMode) return inputMode;
