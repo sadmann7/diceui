@@ -5,7 +5,7 @@ import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 
-interface TransformCtx {
+interface TransformOptions {
   currency?: string;
   locale?: string;
 }
@@ -13,7 +13,7 @@ interface TransformCtx {
 interface MaskPattern {
   pattern: string;
   placeholder?: string;
-  transform?: (value: string, ctx?: TransformCtx) => string;
+  transform?: (value: string, opts?: TransformOptions) => string;
   validate?: (value: string) => boolean;
 }
 
@@ -304,15 +304,11 @@ function applyMask(
   pattern: string,
   currency?: string,
   locale?: string,
-  maskType?: string,
+  mask?: MaskPatternKey | MaskPattern,
 ): string {
   const cleanValue = value;
 
-  if (
-    pattern.includes("$") ||
-    pattern.includes("€") ||
-    maskType === "currency"
-  ) {
+  if (pattern.includes("$") || pattern.includes("€") || mask === "currency") {
     return applyCurrencyMask(cleanValue, currency, locale);
   }
 
@@ -320,7 +316,7 @@ function applyMask(
     return applyPercentageMask(cleanValue);
   }
 
-  if (maskType === "ipv4") {
+  if (mask === "ipv4") {
     return cleanValue;
   }
 
@@ -455,7 +451,7 @@ function applyPercentageMask(value: string): string {
 
 function getUnmaskedValue(
   value: string,
-  transform?: (value: string, ctx?: TransformCtx) => string,
+  transform?: (value: string, opts?: TransformOptions) => string,
   currency?: string,
   locale?: string,
 ): string {
@@ -562,15 +558,13 @@ function MaskInput(props: MaskInputProps) {
     return mask;
   }, [mask]);
 
-  const maskType = typeof mask === "string" ? mask : undefined;
-
   const placeholder = React.useMemo(() => {
     if (withoutMask) return placeholderProp;
 
     if (placeholderProp) {
       if (focused && maskPattern) {
         if (
-          maskType === "currency" ||
+          mask === "currency" ||
           maskPattern.pattern.includes("$") ||
           maskPattern.pattern.includes("€")
         ) {
@@ -602,7 +596,7 @@ function MaskInput(props: MaskInputProps) {
             return `${currencySymbol}0.00`;
           }
         }
-        if (maskType === "percentage" || maskPattern.pattern.includes("%")) {
+        if (mask === "percentage" || maskPattern.pattern.includes("%")) {
           return "0.00%";
         }
         return maskPattern?.placeholder ?? placeholderProp;
@@ -612,7 +606,7 @@ function MaskInput(props: MaskInputProps) {
 
     if (focused && maskPattern) {
       if (
-        maskType === "currency" ||
+        mask === "currency" ||
         maskPattern.pattern.includes("$") ||
         maskPattern.pattern.includes("€")
       ) {
@@ -628,7 +622,7 @@ function MaskInput(props: MaskInputProps) {
           return "$0.00";
         }
       }
-      if (maskType === "percentage" || maskPattern.pattern.includes("%")) {
+      if (mask === "percentage" || maskPattern.pattern.includes("%")) {
         return "0.00%";
       }
       return maskPattern?.placeholder;
@@ -640,7 +634,7 @@ function MaskInput(props: MaskInputProps) {
     withoutMask,
     maskPattern,
     focused,
-    maskType,
+    mask,
     currency,
     locale,
   ]);
@@ -653,8 +647,8 @@ function MaskInput(props: MaskInputProps) {
       currency,
       locale,
     );
-    return applyMask(unmasked, maskPattern.pattern, currency, locale, maskType);
-  }, [value, maskPattern, withoutMask, currency, locale, maskType]);
+    return applyMask(unmasked, maskPattern.pattern, currency, locale, mask);
+  }, [value, maskPattern, withoutMask, currency, locale, mask]);
 
   const tokenCount = React.useMemo(() => {
     if (!maskPattern || /[€$%]/.test(maskPattern.pattern)) return undefined;
@@ -669,11 +663,7 @@ function MaskInput(props: MaskInputProps) {
     if (inputProps.inputMode) return inputProps.inputMode;
     if (!maskPattern) return undefined;
 
-    if (
-      maskType === "currency" ||
-      maskType === "percentage" ||
-      maskType === "ipv4"
-    ) {
+    if (mask === "currency" || mask === "percentage" || mask === "ipv4") {
       return "decimal";
     }
 
@@ -683,7 +673,7 @@ function MaskInput(props: MaskInputProps) {
       return "numeric";
     }
     return undefined;
-  }, [maskPattern, mask, maskType, inputProps.inputMode]);
+  }, [maskPattern, mask, inputProps.inputMode]);
 
   const shouldValidate = React.useCallback(
     (trigger: "change" | "blur") => {
@@ -753,7 +743,7 @@ function MaskInput(props: MaskInputProps) {
           maskPattern.pattern,
           currency,
           locale,
-          maskType,
+          mask,
         );
 
         if (inputRef.current && newValue !== inputValue) {
@@ -774,7 +764,7 @@ function MaskInput(props: MaskInputProps) {
             maskPattern.pattern.includes("€") ||
             maskPattern.pattern.includes("%")
           ) {
-            if (maskType === "currency") {
+            if (mask === "currency") {
               try {
                 const formatter = new Intl.NumberFormat(locale, {
                   style: "currency",
@@ -824,7 +814,7 @@ function MaskInput(props: MaskInputProps) {
             maskPattern.pattern.includes("$") ||
             maskPattern.pattern.includes("€")
           ) {
-            if (maskType === "currency") {
+            if (mask === "currency") {
               try {
                 const formatter = new Intl.NumberFormat(locale, {
                   style: "currency",
@@ -878,7 +868,7 @@ function MaskInput(props: MaskInputProps) {
       withoutMask,
       currency,
       locale,
-      maskType,
+      mask,
     ],
   );
 
@@ -967,7 +957,7 @@ function MaskInput(props: MaskInputProps) {
         maskPattern.pattern,
         currency,
         locale,
-        maskType,
+        mask,
       );
 
       if (!isControlled) setInternalValue(masked);
@@ -984,7 +974,7 @@ function MaskInput(props: MaskInputProps) {
       onValueChangeProp,
       currency,
       locale,
-      maskType,
+      mask,
       onInputValidate,
     ],
   );
@@ -996,7 +986,7 @@ function MaskInput(props: MaskInputProps) {
 
       if (withoutMask || !maskPattern) return;
 
-      if (maskType === "ipv4") return;
+      if (mask === "ipv4") return;
 
       const target = event.target as InputElement;
       if (!(target instanceof HTMLInputElement)) return;
@@ -1025,13 +1015,13 @@ function MaskInput(props: MaskInputProps) {
         maskPattern.pattern,
         currency,
         locale,
-        maskType,
+        mask,
       );
 
       target.value = newMaskedValue;
 
       if (
-        maskType === "currency" ||
+        mask === "currency" ||
         maskPattern.pattern.includes("$") ||
         maskPattern.pattern.includes("€")
       ) {
@@ -1096,7 +1086,7 @@ function MaskInput(props: MaskInputProps) {
       onPasteProp,
       withoutMask,
       maskPattern,
-      maskType,
+      mask,
       currency,
       locale,
       isControlled,
@@ -1113,7 +1103,7 @@ function MaskInput(props: MaskInputProps) {
 
       if (withoutMask || !maskPattern) return;
 
-      if (maskType === "ipv4") return;
+      if (mask === "ipv4") return;
 
       if (event.key === "Backspace") {
         const target = event.target as InputElement;
@@ -1123,8 +1113,8 @@ function MaskInput(props: MaskInputProps) {
         const currentValue = target.value;
 
         if (
-          maskType === "currency" ||
-          maskType === "percentage" ||
+          mask === "currency" ||
+          mask === "percentage" ||
           maskPattern.pattern.includes("$") ||
           maskPattern.pattern.includes("€") ||
           maskPattern.pattern.includes("%")
@@ -1164,7 +1154,7 @@ function MaskInput(props: MaskInputProps) {
                 maskPattern.pattern,
                 currency,
                 locale,
-                maskType,
+                mask,
               );
 
               target.value = nextMasked;
@@ -1190,8 +1180,8 @@ function MaskInput(props: MaskInputProps) {
         const currentValue = target.value;
 
         if (
-          maskType === "currency" ||
-          maskType === "percentage" ||
+          mask === "currency" ||
+          mask === "percentage" ||
           maskPattern.pattern.includes("$") ||
           maskPattern.pattern.includes("€") ||
           maskPattern.pattern.includes("%")
@@ -1232,7 +1222,7 @@ function MaskInput(props: MaskInputProps) {
                 maskPattern.pattern,
                 currency,
                 locale,
-                maskType,
+                mask,
               );
 
               target.value = nextMasked;
@@ -1256,7 +1246,7 @@ function MaskInput(props: MaskInputProps) {
       onValueChangeProp,
       currency,
       locale,
-      maskType,
+      mask,
       withoutMask,
     ],
   );
