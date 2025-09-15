@@ -54,10 +54,13 @@ const REGEX_CACHE = {
 
 function getCachedFormatter(
   locale: string,
-  currency: string,
   opts: Intl.NumberFormatOptions,
 ): Intl.NumberFormat {
-  const { minimumFractionDigits = 0, maximumFractionDigits = 2 } = opts;
+  const {
+    currency,
+    minimumFractionDigits = 0,
+    maximumFractionDigits = 2,
+  } = opts;
 
   const key = `${locale}|${currency}|${minimumFractionDigits}|${maximumFractionDigits}`;
 
@@ -89,7 +92,12 @@ function getCachedFormatter(
   return formatter;
 }
 
-function getCachedCurrencySymbols(locale: string, currency: string) {
+function getCachedCurrencySymbols(opts: {
+  locale: string;
+  currency: string;
+}): CurrencySymbols {
+  const { locale, currency } = opts;
+
   const key = `${locale}|${currency}`;
   const cached = currencySymbolsCache.get(key);
   if (cached) {
@@ -101,7 +109,8 @@ function getCachedCurrencySymbols(locale: string, currency: string) {
   let groupSeparator = ",";
 
   try {
-    const formatter = getCachedFormatter(locale, currency, {
+    const formatter = getCachedFormatter(locale, {
+      currency,
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
     });
@@ -126,7 +135,9 @@ function getCachedCurrencySymbols(locale: string, currency: string) {
   return symbols;
 }
 
-function isCurrencyAtEnd(locale: string, currency: string): boolean {
+function isCurrencyAtEnd(opts: { locale: string; currency: string }): boolean {
+  const { locale, currency } = opts;
+
   const key = `${locale}|${currency}`;
   const cached = currencyAtEndCache.get(key);
   if (cached !== undefined) {
@@ -134,7 +145,8 @@ function isCurrencyAtEnd(locale: string, currency: string): boolean {
   }
 
   try {
-    const formatter = getCachedFormatter(locale, currency, {
+    const formatter = getCachedFormatter(locale, {
+      currency,
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     });
@@ -148,10 +160,12 @@ function isCurrencyAtEnd(locale: string, currency: string): boolean {
   }
 }
 
-function isCurrencyMask(
-  mask: MaskPatternKey | MaskPattern | undefined,
-  pattern?: string,
-): boolean {
+function isCurrencyMask(opts: {
+  mask: MaskPatternKey | MaskPattern | undefined;
+  pattern?: string;
+}): boolean {
+  const { mask, pattern } = opts;
+
   return (
     mask === "currency" ||
     Boolean(pattern && (pattern.includes("$") || pattern.includes("€")))
@@ -285,7 +299,8 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
       let localeDecimalSeparator = ".";
 
       try {
-        const formatter = getCachedFormatter(locale, currency, {
+        const formatter = getCachedFormatter(locale, {
+          currency,
           minimumFractionDigits: 0,
           maximumFractionDigits: 2,
         });
@@ -524,7 +539,7 @@ function applyCurrencyMask(opts: {
     currency: currencySymbol,
     decimal: decimalSeparator,
     group: groupSeparator,
-  } = getCachedCurrencySymbols(locale, currency);
+  } = getCachedCurrencySymbols({ locale, currency });
 
   const normalizedValue = value
     .replace(
@@ -557,7 +572,8 @@ function applyCurrencyMask(opts: {
     value.includes(".") || value.includes(decimalSeparator);
 
   try {
-    const formatter = getCachedFormatter(locale, currency, {
+    const formatter = getCachedFormatter(locale, {
+      currency,
       minimumFractionDigits: fracValue ? fracValue.length : 0,
       maximumFractionDigits: 2,
     });
@@ -606,9 +622,9 @@ function applyPercentageMask(value: string): string {
 
 function getUnmaskedValue(opts: {
   value: string;
-  transform?: (value: string, opts?: TransformOptions) => string;
   currency?: string;
   locale?: string;
+  transform?: (value: string, opts?: TransformOptions) => string;
 }): string {
   const { value, transform, currency, locale } = opts;
 
@@ -661,11 +677,11 @@ interface MaskInputProps extends React.ComponentProps<"input"> {
   onValidate?: (isValid: boolean, unmaskedValue: string) => void;
   validationMode?: "onChange" | "onBlur" | "onSubmit" | "onTouched" | "all";
   mask?: MaskPatternKey | MaskPattern;
+  currency?: string;
+  locale?: string;
   asChild?: boolean;
   invalid?: boolean;
   withoutMask?: boolean;
-  currency?: string;
-  locale?: string;
 }
 
 function getCurrencyCaretPosition(
@@ -674,10 +690,7 @@ function getCurrencyCaretPosition(
   transformOpts: { currency: string; locale: string },
 ): number {
   if (mask === "currency") {
-    const currencyAtEnd = isCurrencyAtEnd(
-      transformOpts.locale,
-      transformOpts.currency,
-    );
+    const currencyAtEnd = isCurrencyAtEnd(transformOpts);
     if (currencyAtEnd) {
       const match = newValue.match(/(\d)\s*([^\d\s]+)$/);
       if (match?.[1]) {
@@ -774,15 +787,20 @@ function MaskInput(props: MaskInputProps) {
 
     if (placeholder) {
       if (focused && maskPattern) {
-        if (isCurrencyMask(mask, maskPattern.pattern)) {
+        if (isCurrencyMask({ mask, pattern: maskPattern.pattern })) {
           try {
-            const formatter = getCachedFormatter(locale, currency, {
+            const formatter = getCachedFormatter(locale, {
+              currency,
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             });
             return formatter.format(0);
           } catch {
-            return `${getCachedFormatter(DEFAULT_LOCALE, DEFAULT_CURRENCY, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(0)}`;
+            return `${getCachedFormatter(DEFAULT_LOCALE, {
+              currency: DEFAULT_CURRENCY,
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            }).format(0)}`;
           }
         }
         if (mask === "percentage" || maskPattern.pattern.includes("%")) {
@@ -794,9 +812,10 @@ function MaskInput(props: MaskInputProps) {
     }
 
     if (focused && maskPattern) {
-      if (isCurrencyMask(mask, maskPattern.pattern)) {
+      if (isCurrencyMask({ mask, pattern: maskPattern.pattern })) {
         try {
-          const formatter = getCachedFormatter(locale, currency, {
+          const formatter = getCachedFormatter(locale, {
+            currency,
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           });
@@ -950,12 +969,9 @@ function MaskInput(props: MaskInputProps) {
             );
           }
 
-          if (isCurrencyMask(mask, maskPattern.pattern)) {
+          if (isCurrencyMask({ mask, pattern: maskPattern.pattern })) {
             if (mask === "currency") {
-              const currencyAtEnd = isCurrencyAtEnd(
-                transformOpts.locale,
-                transformOpts.currency,
-              );
+              const currencyAtEnd = isCurrencyAtEnd(transformOpts);
               if (!currencyAtEnd) {
                 newCursorPosition = Math.max(1, newCursorPosition);
               }
@@ -1140,11 +1156,8 @@ function MaskInput(props: MaskInputProps) {
 
       target.value = newMaskedValue;
 
-      if (isCurrencyMask(mask, maskPattern.pattern)) {
-        const currencyAtEnd = isCurrencyAtEnd(
-          transformOpts.locale,
-          transformOpts.currency,
-        );
+      if (isCurrencyMask({ mask, pattern: maskPattern.pattern })) {
+        const currencyAtEnd = isCurrencyAtEnd(transformOpts);
         const caret = currencyAtEnd
           ? newMaskedValue.search(/\s*[^\d\s]+$/)
           : newMaskedValue.length;

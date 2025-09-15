@@ -181,15 +181,6 @@ export interface MaskInputProps extends EmptyProps<"input">, CompositionProps {
    */
   mask?: MaskPatternKey | MaskPattern;
 
-  /** Whether to render as child component using Radix Slot */
-  asChild?: boolean;
-
-  /** Whether the input has validation errors. */
-  invalid?: boolean;
-
-  /** Whether to disable masking. */
-  withoutMask?: boolean;
-
   /**
    * Currency code for currency formatting (defaults to "USD").
    * Used when mask is "currency".
@@ -213,4 +204,13 @@ export interface MaskInputProps extends EmptyProps<"input">, CompositionProps {
    * ```
    */
   locale?: string;
+
+  /** Whether to render as child component using Radix Slot */
+  asChild?: boolean;
+
+  /** Whether the input has validation errors. */
+  invalid?: boolean;
+
+  /** Whether to disable masking. */
+  withoutMask?: boolean;
 }
