@@ -62,7 +62,7 @@ export default function MaskInputDemo() {
   );
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid w-full gap-6 md:grid-cols-2 lg:grid-cols-3">
       <div className="flex flex-col gap-2">
         <Label htmlFor={`${id}-phone`}>Phone Number</Label>
         <MaskInput

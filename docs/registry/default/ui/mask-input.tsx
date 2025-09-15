@@ -780,9 +780,9 @@ function MaskInput(props: MaskInputProps) {
         });
 
         if (inputRef.current && newValue !== inputValue) {
-          const el = inputRef.current;
-          if (!(el instanceof HTMLInputElement)) return;
-          el.value = newValue;
+          const inputElement = inputRef.current;
+          if (!(inputElement instanceof HTMLInputElement)) return;
+          inputElement.value = newValue;
 
           const currentUnmasked = getUnmaskedValue({
             value: newValue,
@@ -876,7 +876,7 @@ function MaskInput(props: MaskInputProps) {
 
           newCursorPosition = Math.min(newCursorPosition, newValue.length);
 
-          el.setSelectionRange(newCursorPosition, newCursorPosition);
+          inputElement.setSelectionRange(newCursorPosition, newCursorPosition);
         }
       }
 
