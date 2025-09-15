@@ -97,18 +97,6 @@ export const ui: Registry["items"] = [
     ],
   },
   {
-    name: "image-crop",
-    type: "registry:ui",
-    dependencies: ["lucide-react"],
-    registryDependencies: ["button", "slider"],
-    files: [
-      {
-        path: "ui/image-crop.tsx",
-        type: "registry:ui",
-      },
-    ],
-  },
-  {
     name: "input-group",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "class-variance-authority"],

@@ -364,61 +364,6 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "image-crop-demo",
-    type: "registry:example",
-    dependencies: ["lucide-react"],
-    registryDependencies: ["button", "slider"],
-    files: [
-      {
-        path: "examples/image-crop-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "image-crop-controlled-demo",
-    type: "registry:example",
-    dependencies: ["lucide-react"],
-    registryDependencies: ["button", "slider", "input", "label"],
-    files: [
-      {
-        path: "examples/image-crop-controlled-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "image-crop-form-demo",
-    type: "registry:example",
-    dependencies: ["lucide-react"],
-    registryDependencies: [
-      "button",
-      "slider",
-      "input",
-      "label",
-      "card",
-      "avatar",
-    ],
-    files: [
-      {
-        path: "examples/image-crop-form-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "image-crop-shapes-demo",
-    type: "registry:example",
-    dependencies: ["lucide-react"],
-    registryDependencies: ["button", "slider", "label"],
-    files: [
-      {
-        path: "examples/image-crop-shapes-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
     name: "input-group-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot", "class-variance-authority"],

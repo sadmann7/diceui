@@ -92,18 +92,6 @@
       ]
     },
     {
-      "name": "image-crop",
-      "type": "registry:component",
-      "title": "Image Crop",
-      "description": "A comprehensive image cropping component with zoom, rotation, and different crop shapes.",
-      "files": [
-        {
-          "path": "registry/default/ui/image-crop.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
       "name": "input-group",
       "type": "registry:component",
       "title": "Input Group",
@@ -351,54 +339,6 @@
       "files": [
         {
           "path": "registry/default/examples/file-upload-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "image-crop-demo",
-      "type": "registry:component",
-      "title": "Image Crop Demo",
-      "description": "Basic example showing how to use the image crop component.",
-      "files": [
-        {
-          "path": "registry/default/examples/image-crop-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "image-crop-controlled-demo",
-      "type": "registry:component",
-      "title": "Image Crop Controlled Demo",
-      "description": "Example showing controlled image cropping with external state management.",
-      "files": [
-        {
-          "path": "registry/default/examples/image-crop-controlled-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "image-crop-form-demo",
-      "type": "registry:component",
-      "title": "Image Crop Form Demo",
-      "description": "Example showing image cropping integrated into a form for profile pictures.",
-      "files": [
-        {
-          "path": "registry/default/examples/image-crop-form-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "image-crop-shapes-demo",
-      "type": "registry:component",
-      "title": "Image Crop Shapes Demo",
-      "description": "Example showing different crop shapes (rectangle and circle) with customizable options.",
-      "files": [
-        {
-          "path": "registry/default/examples/image-crop-shapes-demo.tsx",
           "type": "registry:example"
         }
       ]
