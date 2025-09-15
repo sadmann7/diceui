@@ -754,7 +754,8 @@ describe("MaskInput", () => {
 
       test("applies transform function", () => {
         const transform = (value: string) => value.replace(/\D/g, "");
-        const result = applyMask("1a2b3c", "###-###", transform);
+        const unmasked = transform("1a2b3c");
+        const result = applyMask(unmasked, "###-###");
         expect(result).toBe("123");
       });
 
@@ -762,7 +763,6 @@ describe("MaskInput", () => {
         const result = applyMask(
           "1234.56",
           "$###,###.##",
-          undefined,
           "USD",
           "en-US",
           "currency",
@@ -774,7 +774,6 @@ describe("MaskInput", () => {
         const result = applyMask(
           "1234.56",
           "€###,###.##",
-          undefined,
           "EUR",
           "de-DE",
           "currency",
@@ -784,13 +783,7 @@ describe("MaskInput", () => {
       });
 
       test("applies percentage mask", () => {
-        const result = applyMask(
-          "25.5",
-          "##.##%",
-          undefined,
-          undefined,
-          undefined,
-        );
+        const result = applyMask("25.5", "##.##%");
         expect(result).toBe("25.5%");
       });
     });

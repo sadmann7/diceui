@@ -96,7 +96,12 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
     pattern: "#### #### #### ####",
     placeholder: "____ ____ ____ ____",
     transform: (value) => value.replace(/\D/g, ""),
-    validate: (value) => /^\d{16}$/.test(value.replace(/\D/g, "")),
+    validate: (value) => {
+      const cleaned = value.replace(/\D/g, "");
+      return (
+        cleaned.length >= 15 && cleaned.length <= 19 && /^\d+$/.test(cleaned)
+      );
+    },
   },
   zipCode: {
     pattern: "#####",
@@ -295,14 +300,13 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
 };
 
 function applyMask(
-  value: string,
+  value: string, // already unmasked
   pattern: string,
-  transform?: (value: string, ctx?: TransformCtx) => string,
   currency?: string,
   locale?: string,
   maskType?: string,
 ): string {
-  const cleanValue = transform ? transform(value, { currency, locale }) : value;
+  const cleanValue = value; // no transform here
 
   if (
     pattern.includes("$") ||
@@ -511,6 +515,7 @@ interface MaskInputProps extends React.ComponentProps<"input"> {
   withoutMask?: boolean;
   currency?: string;
   locale?: string;
+  ref?: React.Ref<InputElement>;
 }
 
 function MaskInput(props: MaskInputProps) {
@@ -522,6 +527,7 @@ function MaskInput(props: MaskInputProps) {
     onBlur: onBlurProp,
     onFocus: onFocusProp,
     onKeyDown: onKeyDownProp,
+    onPaste: onPasteProp,
     onCompositionStart: onCompositionStartProp,
     onCompositionEnd: onCompositionEndProp,
     validationMode = "onChange",
@@ -642,14 +648,13 @@ function MaskInput(props: MaskInputProps) {
 
   const displayValue = React.useMemo(() => {
     if (withoutMask || !maskPattern || !value) return value ?? "";
-    return applyMask(
+    const unmasked = getUnmaskedValue(
       value,
-      maskPattern.pattern,
       maskPattern.transform,
       currency,
       locale,
-      maskType,
     );
+    return applyMask(unmasked, maskPattern.pattern, currency, locale, maskType);
   }, [value, maskPattern, withoutMask, currency, locale, maskType]);
 
   const tokenCount = React.useMemo(() => {
@@ -747,14 +752,15 @@ function MaskInput(props: MaskInputProps) {
         newValue = applyMask(
           unmaskedValue,
           maskPattern.pattern,
-          maskPattern.transform,
           currency,
           locale,
           maskType,
         );
 
         if (inputRef.current && newValue !== inputValue) {
-          inputRef.current.value = newValue;
+          const el = inputRef.current;
+          if (!(el instanceof HTMLInputElement)) return;
+          el.value = newValue;
 
           const currentUnmasked = getUnmaskedValue(
             newValue,
@@ -848,10 +854,7 @@ function MaskInput(props: MaskInputProps) {
 
           newCursorPosition = Math.min(newCursorPosition, newValue.length);
 
-          inputRef.current.setSelectionRange(
-            newCursorPosition,
-            newCursorPosition,
-          );
+          el.setSelectionRange(newCursorPosition, newCursorPosition);
         }
       }
 
@@ -944,6 +947,7 @@ function MaskInput(props: MaskInputProps) {
 
       const inputElement = inputRef.current;
       if (!inputElement) return;
+      if (!(inputElement instanceof HTMLInputElement)) return;
       const inputValue = inputElement.value;
 
       if (!maskPattern || withoutMask) {
@@ -962,7 +966,6 @@ function MaskInput(props: MaskInputProps) {
       const masked = applyMask(
         unmasked,
         maskPattern.pattern,
-        maskPattern.transform,
         currency,
         locale,
         maskType,
@@ -987,6 +990,127 @@ function MaskInput(props: MaskInputProps) {
     ],
   );
 
+  const onPaste = React.useCallback(
+    (event: React.ClipboardEvent<InputElement>) => {
+      onPasteProp?.(event);
+      if (event.defaultPrevented) return;
+
+      if (withoutMask || !maskPattern) return;
+
+      // Skip mask-aware paste for IPv4
+      if (maskType === "ipv4") return;
+
+      const target = event.target as InputElement;
+      if (!(target instanceof HTMLInputElement)) return;
+
+      const pastedData = event.clipboardData.getData("text");
+      if (!pastedData) return;
+
+      event.preventDefault();
+
+      const currentValue = target.value;
+      const selectionStart = target.selectionStart ?? 0;
+      const selectionEnd = target.selectionEnd ?? 0;
+
+      // Remove selected text and insert pasted data
+      const beforeSelection = currentValue.slice(0, selectionStart);
+      const afterSelection = currentValue.slice(selectionEnd);
+      const newInputValue = beforeSelection + pastedData + afterSelection;
+
+      const unmasked = getUnmaskedValue(
+        newInputValue,
+        maskPattern.transform,
+        currency,
+        locale,
+      );
+      const newMaskedValue = applyMask(
+        unmasked,
+        maskPattern.pattern,
+        currency,
+        locale,
+        maskType,
+      );
+
+      target.value = newMaskedValue;
+
+      // Handle caret positioning for currency/percentage
+      if (
+        maskType === "currency" ||
+        maskPattern.pattern.includes("$") ||
+        maskPattern.pattern.includes("€")
+      ) {
+        try {
+          const sample = new Intl.NumberFormat(locale, {
+            style: "currency",
+            currency,
+            minimumFractionDigits: 0,
+          }).format(1);
+          const currencyAtEnd = /\d\s*[^\d\s]+$/.test(sample);
+          const caret = currencyAtEnd
+            ? newMaskedValue.search(/\s*[^\d\s]+$/) // before trailing symbol
+            : newMaskedValue.length; // after number when symbol is leading
+          target.setSelectionRange(caret, caret);
+        } catch {
+          target.setSelectionRange(
+            newMaskedValue.length,
+            newMaskedValue.length,
+          );
+        }
+        return;
+      }
+
+      if (maskPattern.pattern.includes("%")) {
+        target.setSelectionRange(
+          newMaskedValue.length - 1,
+          newMaskedValue.length - 1,
+        );
+        return;
+      }
+
+      // Default caret positioning for other patterns
+      let newCursorPosition = newMaskedValue.length;
+      try {
+        const unmaskedCount = unmasked.length;
+        let position = 0;
+        let count = 0;
+
+        for (
+          let i = 0;
+          i < maskPattern.pattern.length && i < newMaskedValue.length;
+          i++
+        ) {
+          if (maskPattern.pattern[i] === "#") {
+            count++;
+            if (count <= unmaskedCount) {
+              position = i + 1;
+            }
+          }
+        }
+        newCursorPosition = position;
+      } catch {
+        // fallback to end
+      }
+
+      target.setSelectionRange(newCursorPosition, newCursorPosition);
+
+      if (!isControlled) setInternalValue(newMaskedValue);
+      if (shouldValidate("change")) onInputValidate(unmasked);
+      onValueChangeProp?.(newMaskedValue, unmasked);
+    },
+    [
+      onPasteProp,
+      withoutMask,
+      maskPattern,
+      maskType,
+      currency,
+      locale,
+      isControlled,
+      shouldValidate,
+      onInputValidate,
+      onValueChangeProp,
+    ],
+  );
+
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent<InputElement>) => {
       onKeyDownProp?.(event);
@@ -994,8 +1118,12 @@ function MaskInput(props: MaskInputProps) {
 
       if (withoutMask || !maskPattern) return;
 
+      // Skip mask-aware keyDown for IPv4
+      if (maskType === "ipv4") return;
+
       if (event.key === "Backspace") {
         const target = event.target as InputElement;
+        if (!(target instanceof HTMLInputElement)) return;
         const cursorPosition = target.selectionStart ?? 0;
         const selectionEnd = target.selectionEnd ?? 0;
         const currentValue = target.value;
@@ -1040,7 +1168,6 @@ function MaskInput(props: MaskInputProps) {
               const nextMasked = applyMask(
                 nextUnmasked,
                 maskPattern.pattern,
-                maskPattern.transform,
                 currency,
                 locale,
                 maskType,
@@ -1063,6 +1190,7 @@ function MaskInput(props: MaskInputProps) {
 
       if (event.key === "Delete") {
         const target = event.target as InputElement;
+        if (!(target instanceof HTMLInputElement)) return;
         const cursorPosition = target.selectionStart ?? 0;
         const selectionEnd = target.selectionEnd ?? 0;
         const currentValue = target.value;
@@ -1108,7 +1236,6 @@ function MaskInput(props: MaskInputProps) {
               const nextMasked = applyMask(
                 nextUnmasked,
                 maskPattern.pattern,
-                maskPattern.transform,
                 currency,
                 locale,
                 maskType,
@@ -1168,6 +1295,7 @@ function MaskInput(props: MaskInputProps) {
       onFocus={onFocus}
       onBlur={onBlur}
       onKeyDown={onKeyDown}
+      onPaste={onPaste}
       onChange={onValueChange}
       onCompositionStart={onCompositionStart}
       onCompositionEnd={onCompositionEnd}
