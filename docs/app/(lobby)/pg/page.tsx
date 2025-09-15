@@ -1,5 +1,3 @@
-import * as Mention from "@diceui/mention";
-import { ChevronDown } from "lucide-react";
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,6 +35,8 @@ import {
   ComboboxItem,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
+import * as Mention from "@diceui/mention";
+import { ChevronDown } from "lucide-react";
 
 export default function PlaygroundPage() {
   return (
