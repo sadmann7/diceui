@@ -7,6 +7,81 @@ import { cn } from "@/lib/utils";
 
 const PAST_YEARS_LIMIT = 120;
 const FUTURE_YEARS_LIMIT = 10;
+const DEFAULT_CURRENCY = "USD";
+const DEFAULT_LOCALE = "en-US";
+
+const formattersCache = new Map<string, Intl.NumberFormat>();
+
+const REGEX_CACHE = {
+  digitsOnly: /^\d+$/,
+  nonDigits: /\D/g,
+  nonAlphaNumeric: /[^A-Z0-9]/gi,
+  nonNumericDot: /[^0-9.]/g,
+  nonCurrencyChars: /[^\d.,]/g,
+  hashPattern: /#/g,
+  currencyAtEnd: /\d\s*[^\d\s]+$/,
+  percentageChars: /[^\d.]/g,
+} as const;
+
+function getCachedFormatter(
+  locale: string,
+  currency: string,
+  opts: Intl.NumberFormatOptions,
+): Intl.NumberFormat {
+  const { minimumFractionDigits = 0, maximumFractionDigits = 2 } = opts;
+
+  const key = `${locale}|${currency}|${minimumFractionDigits}|${maximumFractionDigits}`;
+
+  if (!formattersCache.has(key)) {
+    try {
+      formattersCache.set(
+        key,
+        new Intl.NumberFormat(locale, {
+          style: "currency",
+          currency,
+          ...opts,
+        }),
+      );
+    } catch {
+      formattersCache.set(
+        key,
+        new Intl.NumberFormat(DEFAULT_LOCALE, {
+          style: "currency",
+          currency: DEFAULT_CURRENCY,
+          ...opts,
+        }),
+      );
+    }
+  }
+  const formatter = formattersCache.get(key);
+  if (!formatter) {
+    throw new Error(`Failed to create formatter for ${key}`);
+  }
+  return formatter;
+}
+
+function isCurrencyAtEnd(locale: string, currency: string): boolean {
+  try {
+    const formatter = getCachedFormatter(locale, currency, {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    });
+    const sample = formatter.format(123);
+    return REGEX_CACHE.currencyAtEnd.test(sample);
+  } catch {
+    return false;
+  }
+}
+
+function isCurrencyMask(
+  mask: MaskPatternKey | MaskPattern | undefined,
+  pattern?: string,
+): boolean {
+  return (
+    mask === "currency" ||
+    Boolean(pattern && (pattern.includes("$") || pattern.includes("€")))
+  );
+}
 
 interface TransformOptions {
   currency?: string;
@@ -45,21 +120,23 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
   phone: {
     pattern: "(###) ###-####",
     placeholder: "(___) ___-____",
-    transform: (value) => value.replace(/\D/g, ""),
-    validate: (value) => /^\d{10}$/.test(value.replace(/\D/g, "")),
+    transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
+    validate: (value) =>
+      /^\d{10}$/.test(value.replace(REGEX_CACHE.nonDigits, "")),
   },
   ssn: {
     pattern: "###-##-####",
     placeholder: "___-__-____",
-    transform: (value) => value.replace(/\D/g, ""),
-    validate: (value) => /^\d{9}$/.test(value.replace(/\D/g, "")),
+    transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
+    validate: (value) =>
+      /^\d{9}$/.test(value.replace(REGEX_CACHE.nonDigits, "")),
   },
   date: {
     pattern: "##/##/####",
     placeholder: "mm/dd/yyyy",
-    transform: (value) => value.replace(/\D/g, ""),
+    transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
     validate: (value) => {
-      const cleaned = value.replace(/\D/g, "");
+      const cleaned = value.replace(REGEX_CACHE.nonDigits, "");
       if (cleaned.length !== 8) return false;
       const month = parseInt(cleaned.substring(0, 2), 10);
       const day = parseInt(cleaned.substring(2, 4), 10);
@@ -91,9 +168,9 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
   time: {
     pattern: "##:##",
     placeholder: "hh:mm",
-    transform: (value) => value.replace(/\D/g, ""),
+    transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
     validate: (value) => {
-      const cleaned = value.replace(/\D/g, "");
+      const cleaned = value.replace(REGEX_CACHE.nonDigits, "");
       if (cleaned.length !== 4) return false;
       const hours = parseInt(cleaned.substring(0, 2), 10);
       const minutes = parseInt(cleaned.substring(2, 4), 10);
@@ -103,36 +180,41 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
   creditCard: {
     pattern: "#### #### #### ####",
     placeholder: "____ ____ ____ ____",
-    transform: (value) => value.replace(/\D/g, ""),
+    transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
     validate: (value) => {
-      const cleaned = value.replace(/\D/g, "");
+      const cleaned = value.replace(REGEX_CACHE.nonDigits, "");
       return (
-        cleaned.length >= 15 && cleaned.length <= 19 && /^\d+$/.test(cleaned)
+        cleaned.length >= 15 &&
+        cleaned.length <= 19 &&
+        REGEX_CACHE.digitsOnly.test(cleaned)
       );
     },
   },
   zipCode: {
     pattern: "#####",
     placeholder: "_____",
-    transform: (value) => value.replace(/\D/g, ""),
-    validate: (value) => /^\d{5}$/.test(value.replace(/\D/g, "")),
+    transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
+    validate: (value) =>
+      /^\d{5}$/.test(value.replace(REGEX_CACHE.nonDigits, "")),
   },
   zipCodeExtended: {
     pattern: "#####-####",
     placeholder: "_____-____",
-    transform: (value) => value.replace(/\D/g, ""),
-    validate: (value) => /^\d{9}$/.test(value.replace(/\D/g, "")),
+    transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
+    validate: (value) =>
+      /^\d{9}$/.test(value.replace(REGEX_CACHE.nonDigits, "")),
   },
   currency: {
     pattern: "$###,###.##",
     placeholder: "$0.00",
-    transform: (value, { currency = "USD", locale = "en-US" } = {}) => {
+    transform: (
+      value,
+      { currency = DEFAULT_CURRENCY, locale = DEFAULT_LOCALE } = {},
+    ) => {
       let localeDecimalSeparator = ".";
 
       try {
-        const formatter = new Intl.NumberFormat(locale, {
-          style: "currency",
-          currency: currency,
+        const formatter = getCachedFormatter(locale, currency, {
           minimumFractionDigits: 0,
           maximumFractionDigits: 2,
         });
@@ -144,7 +226,7 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
         // Keep defaults
       }
 
-      const cleaned = value.replace(/[^\d.,]/g, "");
+      const cleaned = value.replace(REGEX_CACHE.nonCurrencyChars, "");
 
       const dotIndex = cleaned.indexOf(".");
       const commaIndex = cleaned.indexOf(",");
@@ -233,7 +315,7 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
     pattern: "##.##%",
     placeholder: "0.00%",
     transform: (value) => {
-      const cleaned = value.replace(/[^\d.]/g, "");
+      const cleaned = value.replace(REGEX_CACHE.percentageChars, "");
       const parts = cleaned.split(".");
       if (parts.length > 2) {
         return `${parts[0]}.${parts.slice(1).join("")}`;
@@ -253,13 +335,14 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
   licensePlate: {
     pattern: "###-###",
     placeholder: "ABC-123",
-    transform: (value) => value.replace(/[^A-Z0-9]/gi, "").toUpperCase(),
+    transform: (value) =>
+      value.replace(REGEX_CACHE.nonAlphaNumeric, "").toUpperCase(),
     validate: (value) => /^[A-Z0-9]{6}$/.test(value),
   },
   ipv4: {
     pattern: "###.###.###.###",
     placeholder: "192.168.1.1",
-    transform: (value) => value.replace(/[^0-9.]/g, ""),
+    transform: (value) => value.replace(REGEX_CACHE.nonNumericDot, ""),
     validate: (value) => {
       if (value.includes(".")) {
         const segments = value.split(".");
@@ -272,7 +355,7 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
           return num >= 0 && num <= 255;
         });
       } else {
-        if (!/^\d+$/.test(value)) return false;
+        if (!REGEX_CACHE.digitsOnly.test(value)) return false;
         if (value.length > 12) return false;
 
         const chunks = [];
@@ -292,20 +375,23 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
   macAddress: {
     pattern: "##:##:##:##:##:##",
     placeholder: "00:1B:44:11:3A:B7",
-    transform: (value) => value.replace(/[^A-F0-9]/gi, "").toUpperCase(),
+    transform: (value) =>
+      value.replace(REGEX_CACHE.nonAlphaNumeric, "").toUpperCase(),
     validate: (value) => /^[A-F0-9]{12}$/.test(value),
   },
   isbn: {
     pattern: "###-#-###-#####-#",
     placeholder: "978-0-123-45678-9",
-    transform: (value) => value.replace(/\D/g, ""),
-    validate: (value) => /^\d{13}$/.test(value.replace(/\D/g, "")),
+    transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
+    validate: (value) =>
+      /^\d{13}$/.test(value.replace(REGEX_CACHE.nonDigits, "")),
   },
   ein: {
     pattern: "##-#######",
     placeholder: "12-3456789",
-    transform: (value) => value.replace(/\D/g, ""),
-    validate: (value) => /^\d{9}$/.test(value.replace(/\D/g, "")),
+    transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
+    validate: (value) =>
+      /^\d{9}$/.test(value.replace(REGEX_CACHE.nonDigits, "")),
   },
 };
 
@@ -321,7 +407,11 @@ function applyMask(opts: {
   const cleanValue = value;
 
   if (pattern.includes("$") || pattern.includes("€") || mask === "currency") {
-    return applyCurrencyMask({ value: cleanValue, currency, locale });
+    return applyCurrencyMask({
+      value: cleanValue,
+      currency: currency ?? DEFAULT_CURRENCY,
+      locale: locale ?? DEFAULT_LOCALE,
+    });
   }
 
   if (pattern.includes("%")) {
@@ -332,22 +422,22 @@ function applyMask(opts: {
     return cleanValue;
   }
 
-  let masked = "";
+  const maskedChars: string[] = [];
   let valueIndex = 0;
 
   for (let i = 0; i < pattern.length && valueIndex < cleanValue.length; i++) {
     const patternChar = pattern[i];
     const valueChar = cleanValue[valueIndex];
 
-    if (patternChar === "#") {
-      masked += valueChar;
+    if (patternChar === "#" && valueChar) {
+      maskedChars.push(valueChar);
       valueIndex++;
-    } else {
-      masked += patternChar;
+    } else if (patternChar) {
+      maskedChars.push(patternChar);
     }
   }
 
-  return masked;
+  return maskedChars.join("");
 }
 
 function applyCurrencyMask(opts: {
@@ -355,7 +445,7 @@ function applyCurrencyMask(opts: {
   currency?: string;
   locale?: string;
 }): string {
-  const { value, currency = "USD", locale = "en-US" } = opts;
+  const { value, currency = DEFAULT_CURRENCY, locale = DEFAULT_LOCALE } = opts;
 
   if (!value) return "";
 
@@ -364,9 +454,7 @@ function applyCurrencyMask(opts: {
   let groupSeparator = ",";
 
   try {
-    const formatter = new Intl.NumberFormat(locale, {
-      style: "currency",
-      currency: currency,
+    const formatter = getCachedFormatter(locale, currency, {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
     });
@@ -415,12 +503,11 @@ function applyCurrencyMask(opts: {
     value.includes(".") || value.includes(decimalSeparator);
 
   try {
-    const result = new Intl.NumberFormat(locale, {
-      style: "currency",
-      currency: currency,
+    const formatter = getCachedFormatter(locale, currency, {
       minimumFractionDigits: fracValue ? fracValue.length : 0,
       maximumFractionDigits: 2,
-    }).format(num);
+    });
+    const result = formatter.format(num);
 
     if (hasExplicitDecimal && !fracValue) {
       if (result.match(/^[^\d\s]+/)) {
@@ -473,7 +560,7 @@ function getUnmaskedValue(opts: {
 
   return transform
     ? transform(value, { currency, locale })
-    : value.replace(/\D/g, "");
+    : value.replace(REGEX_CACHE.nonDigits, "");
 }
 
 function toUnmaskedIndex(opts: {
@@ -547,17 +634,19 @@ function MaskInput(props: MaskInputProps) {
     onCompositionEnd: onCompositionEndProp,
     validationMode = "onChange",
     mask,
-    placeholder: placeholderProp,
+    placeholder,
+    inputMode,
     min,
     max,
+    maxLength,
     asChild = false,
     disabled = false,
     invalid = false,
     readOnly = false,
     required = false,
     withoutMask = false,
-    currency = "USD",
-    locale = "en-US",
+    currency = DEFAULT_CURRENCY,
+    locale = DEFAULT_LOCALE,
     className,
     ref,
     ...inputProps
@@ -580,62 +669,42 @@ function MaskInput(props: MaskInputProps) {
     return mask;
   }, [mask]);
 
-  const placeholder = React.useMemo(() => {
-    if (withoutMask) return placeholderProp;
+  const transformOpts = React.useMemo(
+    () => ({
+      currency,
+      locale,
+    }),
+    [currency, locale],
+  );
 
-    if (placeholderProp) {
+  const placeholderValue = React.useMemo(() => {
+    if (withoutMask) return placeholder;
+
+    if (placeholder) {
       if (focused && maskPattern) {
-        if (
-          mask === "currency" ||
-          maskPattern.pattern.includes("$") ||
-          maskPattern.pattern.includes("€")
-        ) {
-          let currencySymbol = "$";
+        if (isCurrencyMask(mask, maskPattern.pattern)) {
           try {
-            const formatter = new Intl.NumberFormat(locale, {
-              style: "currency",
-              currency: currency,
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-            });
-            const parts = formatter.formatToParts(0);
-            const currencyPart = parts.find((part) => part.type === "currency");
-            if (currencyPart) {
-              currencySymbol = currencyPart.value;
-            }
-          } catch {
-            currencySymbol = "$";
-          }
-          try {
-            const formatter = new Intl.NumberFormat(locale, {
-              style: "currency",
-              currency: currency,
+            const formatter = getCachedFormatter(locale, currency, {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             });
             return formatter.format(0);
           } catch {
-            return `${currencySymbol}0.00`;
+            return `${getCachedFormatter(DEFAULT_LOCALE, DEFAULT_CURRENCY, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(0)}`;
           }
         }
         if (mask === "percentage" || maskPattern.pattern.includes("%")) {
           return "0.00%";
         }
-        return maskPattern?.placeholder ?? placeholderProp;
+        return maskPattern?.placeholder ?? placeholder;
       }
-      return placeholderProp;
+      return placeholder;
     }
 
     if (focused && maskPattern) {
-      if (
-        mask === "currency" ||
-        maskPattern.pattern.includes("$") ||
-        maskPattern.pattern.includes("€")
-      ) {
+      if (isCurrencyMask(mask, maskPattern.pattern)) {
         try {
-          const formatter = new Intl.NumberFormat(locale, {
-            style: "currency",
-            currency: currency,
+          const formatter = getCachedFormatter(locale, currency, {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           });
@@ -651,57 +720,50 @@ function MaskInput(props: MaskInputProps) {
     }
 
     return undefined;
-  }, [
-    placeholderProp,
-    withoutMask,
-    maskPattern,
-    focused,
-    mask,
-    currency,
-    locale,
-  ]);
+  }, [placeholder, withoutMask, maskPattern, focused, mask, currency, locale]);
 
   const displayValue = React.useMemo(() => {
     if (withoutMask || !maskPattern || !value) return value ?? "";
     const unmasked = getUnmaskedValue({
       value,
       transform: maskPattern.transform,
-      currency,
-      locale,
+      ...transformOpts,
     });
     return applyMask({
       value: unmasked,
       pattern: maskPattern.pattern,
-      currency,
-      locale,
+      ...transformOpts,
       mask,
     });
-  }, [value, maskPattern, withoutMask, currency, locale, mask]);
+  }, [value, maskPattern, withoutMask, transformOpts, mask]);
 
   const tokenCount = React.useMemo(() => {
     if (!maskPattern || /[€$%]/.test(maskPattern.pattern)) return undefined;
-    return maskPattern.pattern.match(/#/g)?.length ?? 0;
+    return maskPattern.pattern.match(REGEX_CACHE.hashPattern)?.length ?? 0;
   }, [maskPattern]);
 
   const calculatedMaxLength = tokenCount
     ? maskPattern?.pattern.length
-    : inputProps.maxLength;
+    : maxLength;
+
+  const numericPatterns = React.useMemo(
+    () => /^(phone|zipCode|zipCodeExtended|ssn|ein|time|date|creditCard)$/,
+    [],
+  );
 
   const calculatedInputMode = React.useMemo(() => {
-    if (inputProps.inputMode) return inputProps.inputMode;
+    if (inputMode) return inputMode;
     if (!maskPattern) return undefined;
 
     if (mask === "currency" || mask === "percentage" || mask === "ipv4") {
       return "decimal";
     }
 
-    const numericPatterns =
-      /^(phone|zipCode|zipCodeExtended|ssn|ein|time|date|creditCard)$/;
     if (typeof mask === "string" && numericPatterns.test(mask)) {
       return "numeric";
     }
     return undefined;
-  }, [maskPattern, mask, inputProps.inputMode]);
+  }, [maskPattern, mask, inputMode, numericPatterns]);
 
   const shouldValidate = React.useCallback(
     (trigger: "change" | "blur") => {
@@ -725,19 +787,22 @@ function MaskInput(props: MaskInputProps) {
     [onValidate, maskPattern, validationMode, touched],
   );
 
+  const validationOpts = React.useMemo(
+    () => ({
+      min: typeof min === "string" ? parseFloat(min) : min,
+      max: typeof max === "string" ? parseFloat(max) : max,
+    }),
+    [min, max],
+  );
+
   const onInputValidate = React.useCallback(
     (unmaskedValue: string) => {
       if (onValidate && maskPattern?.validate) {
-        const minValue = typeof min === "string" ? parseFloat(min) : min;
-        const maxValue = typeof max === "string" ? parseFloat(max) : max;
-        const isValid = maskPattern.validate(unmaskedValue, {
-          min: minValue,
-          max: maxValue,
-        });
+        const isValid = maskPattern.validate(unmaskedValue, validationOpts);
         onValidate(isValid, unmaskedValue);
       }
     },
-    [onValidate, maskPattern, min, max],
+    [onValidate, maskPattern, validationOpts],
   );
 
   const onValueChange = React.useCallback(
@@ -747,19 +812,13 @@ function MaskInput(props: MaskInputProps) {
       let unmaskedValue = inputValue;
 
       if (composing) {
-        if (!isControlled) {
-          setInternalValue(inputValue);
-        }
+        if (!isControlled) setInternalValue(inputValue);
         return;
       }
 
       if (withoutMask || !maskPattern) {
-        if (!isControlled) {
-          setInternalValue(inputValue);
-        }
-        if (shouldValidate("change")) {
-          onValidate?.(true, inputValue);
-        }
+        if (!isControlled) setInternalValue(inputValue);
+        if (shouldValidate("change")) onValidate?.(true, inputValue);
         onValueChangeProp?.(inputValue, inputValue, event);
         return;
       }
@@ -768,14 +827,12 @@ function MaskInput(props: MaskInputProps) {
         unmaskedValue = getUnmaskedValue({
           value: inputValue,
           transform: maskPattern.transform,
-          currency,
-          locale,
+          ...transformOpts,
         });
         newValue = applyMask({
           value: unmaskedValue,
           pattern: maskPattern.pattern,
-          currency,
-          locale,
+          ...transformOpts,
           mask,
         });
 
@@ -787,8 +844,7 @@ function MaskInput(props: MaskInputProps) {
           const currentUnmasked = getUnmaskedValue({
             value: newValue,
             transform: maskPattern.transform,
-            currency,
-            locale,
+            ...transformOpts,
           });
 
           let newCursorPosition: number;
@@ -798,27 +854,18 @@ function MaskInput(props: MaskInputProps) {
             maskPattern.pattern.includes("%")
           ) {
             if (mask === "currency") {
-              try {
-                const formatter = new Intl.NumberFormat(locale, {
-                  style: "currency",
-                  currency: currency,
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 0,
-                });
-                const sampleFormat = formatter.format(123);
-                const currencyAtEnd = /\d\s*[^\d\s]+$/.test(sampleFormat);
-
-                if (currencyAtEnd) {
-                  const match = newValue.match(/(\d)\s*([^\d\s]+)$/);
-                  if (match?.[1]) {
-                    newCursorPosition = newValue.lastIndexOf(match[1]) + 1;
-                  } else {
-                    newCursorPosition = newValue.length;
-                  }
+              const currencyAtEnd = isCurrencyAtEnd(
+                transformOpts.locale,
+                transformOpts.currency,
+              );
+              if (currencyAtEnd) {
+                const match = newValue.match(/(\d)\s*([^\d\s]+)$/);
+                if (match?.[1]) {
+                  newCursorPosition = newValue.lastIndexOf(match[1]) + 1;
                 } else {
                   newCursorPosition = newValue.length;
                 }
-              } catch {
+              } else {
                 newCursorPosition = newValue.length;
               }
             } else {
@@ -843,25 +890,13 @@ function MaskInput(props: MaskInputProps) {
             newCursorPosition = position;
           }
 
-          if (
-            maskPattern.pattern.includes("$") ||
-            maskPattern.pattern.includes("€")
-          ) {
+          if (isCurrencyMask(mask, maskPattern.pattern)) {
             if (mask === "currency") {
-              try {
-                const formatter = new Intl.NumberFormat(locale, {
-                  style: "currency",
-                  currency: currency,
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 0,
-                });
-                const sampleFormat = formatter.format(123);
-                const currencyAtEnd = /\d\s*[^\d\s]+$/.test(sampleFormat);
-
-                if (!currencyAtEnd) {
-                  newCursorPosition = Math.max(1, newCursorPosition);
-                }
-              } catch {
+              const currencyAtEnd = isCurrencyAtEnd(
+                transformOpts.locale,
+                transformOpts.currency,
+              );
+              if (!currencyAtEnd) {
                 newCursorPosition = Math.max(1, newCursorPosition);
               }
             } else {
@@ -899,8 +934,7 @@ function MaskInput(props: MaskInputProps) {
       composing,
       shouldValidate,
       withoutMask,
-      currency,
-      locale,
+      transformOpts,
       mask,
     ],
   );
@@ -932,8 +966,7 @@ function MaskInput(props: MaskInputProps) {
           ? getUnmaskedValue({
               value: currentValue,
               transform: maskPattern.transform,
-              currency,
-              locale,
+              ...transformOpts,
             })
           : currentValue;
         onInputValidate(unmaskedValue);
@@ -945,8 +978,7 @@ function MaskInput(props: MaskInputProps) {
       shouldValidate,
       onInputValidate,
       maskPattern,
-      currency,
-      locale,
+      transformOpts,
     ],
   );
 
@@ -982,14 +1014,12 @@ function MaskInput(props: MaskInputProps) {
       const unmasked = getUnmaskedValue({
         value: inputValue,
         transform: maskPattern.transform,
-        currency,
-        locale,
+        ...transformOpts,
       });
       const masked = applyMask({
         value: unmasked,
         pattern: maskPattern.pattern,
-        currency,
-        locale,
+        ...transformOpts,
         mask,
       });
 
@@ -1005,8 +1035,7 @@ function MaskInput(props: MaskInputProps) {
       shouldValidate,
       onValidate,
       onValueChangeProp,
-      currency,
-      locale,
+      transformOpts,
       mask,
       onInputValidate,
     ],
@@ -1040,41 +1069,26 @@ function MaskInput(props: MaskInputProps) {
       const unmasked = getUnmaskedValue({
         value: newInputValue,
         transform: maskPattern.transform,
-        currency,
-        locale,
+        ...transformOpts,
       });
       const newMaskedValue = applyMask({
         value: unmasked,
         pattern: maskPattern.pattern,
-        currency,
-        locale,
+        ...transformOpts,
         mask,
       });
 
       target.value = newMaskedValue;
 
-      if (
-        mask === "currency" ||
-        maskPattern.pattern.includes("$") ||
-        maskPattern.pattern.includes("€")
-      ) {
-        try {
-          const sample = new Intl.NumberFormat(locale, {
-            style: "currency",
-            currency,
-            minimumFractionDigits: 0,
-          }).format(1);
-          const currencyAtEnd = /\d\s*[^\d\s]+$/.test(sample);
-          const caret = currencyAtEnd
-            ? newMaskedValue.search(/\s*[^\d\s]+$/)
-            : newMaskedValue.length;
-          target.setSelectionRange(caret, caret);
-        } catch {
-          target.setSelectionRange(
-            newMaskedValue.length,
-            newMaskedValue.length,
-          );
-        }
+      if (isCurrencyMask(mask, maskPattern.pattern)) {
+        const currencyAtEnd = isCurrencyAtEnd(
+          transformOpts.locale,
+          transformOpts.currency,
+        );
+        const caret = currencyAtEnd
+          ? newMaskedValue.search(/\s*[^\d\s]+$/)
+          : newMaskedValue.length;
+        target.setSelectionRange(caret, caret);
         return;
       }
 
@@ -1120,8 +1134,7 @@ function MaskInput(props: MaskInputProps) {
       withoutMask,
       maskPattern,
       mask,
-      currency,
-      locale,
+      transformOpts,
       isControlled,
       shouldValidate,
       onInputValidate,
@@ -1176,8 +1189,7 @@ function MaskInput(props: MaskInputProps) {
               const currentUnmasked = getUnmaskedValue({
                 value: currentValue,
                 transform: maskPattern.transform,
-                currency,
-                locale,
+                ...transformOpts,
               });
               const nextUnmasked =
                 currentUnmasked.slice(0, unmaskedIndex - 1) +
@@ -1185,8 +1197,7 @@ function MaskInput(props: MaskInputProps) {
               const nextMasked = applyMask({
                 value: nextUnmasked,
                 pattern: maskPattern.pattern,
-                currency,
-                locale,
+                ...transformOpts,
                 mask,
               });
 
@@ -1242,8 +1253,7 @@ function MaskInput(props: MaskInputProps) {
             const currentUnmasked = getUnmaskedValue({
               value: currentValue,
               transform: maskPattern.transform,
-              currency,
-              locale,
+              ...transformOpts,
             });
 
             if (unmaskedIndex < currentUnmasked.length) {
@@ -1253,8 +1263,7 @@ function MaskInput(props: MaskInputProps) {
               const nextMasked = applyMask({
                 value: nextUnmasked,
                 pattern: maskPattern.pattern,
-                currency,
-                locale,
+                ...transformOpts,
                 mask,
               });
 
@@ -1277,8 +1286,7 @@ function MaskInput(props: MaskInputProps) {
       maskPattern,
       onKeyDownProp,
       onValueChangeProp,
-      currency,
-      locale,
+      transformOpts,
       mask,
       withoutMask,
     ],
@@ -1301,7 +1309,7 @@ function MaskInput(props: MaskInputProps) {
         "aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
         className,
       )}
-      placeholder={placeholder}
+      placeholder={placeholderValue}
       ref={composedRef}
       value={displayValue}
       disabled={disabled}
