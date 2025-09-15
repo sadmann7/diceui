@@ -38,7 +38,7 @@ npx shadcn@latest add "https://diceui.com/r/mask-input"
   </Step>
 </Steps>
 
-## Usage
+## Layout
 
 Import and use the component directly.
 
@@ -48,7 +48,7 @@ import { MaskInput } from "@/components/ui/mask-input";
 <MaskInput 
   mask="phone" 
   placeholder="Enter phone number"
-  onValueChange={(masked, unmasked, event) => {
+  onValueChange={(masked, unmasked) => {
     console.log('Masked:', masked);     // "(555) 123-4567"
     console.log('Unmasked:', unmasked); // "5551234567"
   }}

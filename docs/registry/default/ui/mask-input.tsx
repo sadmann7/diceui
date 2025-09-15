@@ -605,11 +605,7 @@ type ValidationMode = "onChange" | "onBlur" | "onSubmit" | "onTouched" | "all";
 interface MaskInputProps extends React.ComponentProps<"input"> {
   value?: string;
   defaultValue?: string;
-  onValueChange?: (
-    maskedValue: string,
-    unmaskedValue: string,
-    event?: React.ChangeEvent<InputElement>,
-  ) => void;
+  onValueChange?: (maskedValue: string, unmaskedValue: string) => void;
   onValidate?: (isValid: boolean, unmaskedValue: string) => void;
   validationMode?: ValidationMode;
   mask?: MaskPatternKey | MaskPattern;
@@ -634,6 +630,8 @@ function MaskInput(props: MaskInputProps) {
     onCompositionEnd: onCompositionEndProp,
     validationMode = "onChange",
     mask,
+    currency = DEFAULT_CURRENCY,
+    locale = DEFAULT_LOCALE,
     placeholder,
     inputMode,
     min,
@@ -645,8 +643,6 @@ function MaskInput(props: MaskInputProps) {
     readOnly = false,
     required = false,
     withoutMask = false,
-    currency = DEFAULT_CURRENCY,
-    locale = DEFAULT_LOCALE,
     className,
     ref,
     ...inputProps
@@ -819,7 +815,7 @@ function MaskInput(props: MaskInputProps) {
       if (withoutMask || !maskPattern) {
         if (!isControlled) setInternalValue(inputValue);
         if (shouldValidate("change")) onValidate?.(true, inputValue);
-        onValueChangeProp?.(inputValue, inputValue, event);
+        onValueChangeProp?.(inputValue, inputValue);
         return;
       }
 
@@ -923,7 +919,7 @@ function MaskInput(props: MaskInputProps) {
         onInputValidate(unmaskedValue);
       }
 
-      onValueChangeProp?.(newValue, unmaskedValue, event);
+      onValueChangeProp?.(newValue, unmaskedValue);
     },
     [
       maskPattern,
@@ -1209,7 +1205,7 @@ function MaskInput(props: MaskInputProps) {
               });
               target.setSelectionRange(nextCaret, nextCaret);
 
-              onValueChangeProp?.(nextMasked, nextUnmasked, undefined);
+              onValueChangeProp?.(nextMasked, nextUnmasked);
             }
             return;
           }
@@ -1275,7 +1271,7 @@ function MaskInput(props: MaskInputProps) {
               });
               target.setSelectionRange(nextCaret, nextCaret);
 
-              onValueChangeProp?.(nextMasked, nextUnmasked, undefined);
+              onValueChangeProp?.(nextMasked, nextUnmasked);
             }
             return;
           }

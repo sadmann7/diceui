@@ -116,17 +116,13 @@ export interface MaskInputProps extends EmptyProps<"input">, CompositionProps {
    * Change handler with masked and unmasked values.
    *
    * ```ts
-   * onValueChange={(masked, unmasked, event) => {
+   * onValueChange={(masked, unmasked) => {
    *   console.log('Masked:', masked);     // "(555) 123-4567"
    *   console.log('Unmasked:', unmasked); // "5551234567"
    * }}
    * ```
    */
-  onValueChange?: (
-    maskedValue: string,
-    unmaskedValue: string,
-    event?: React.ChangeEvent<HTMLInputElement>,
-  ) => void;
+  onValueChange?: (maskedValue: string, unmaskedValue: string) => void;
 
   /**
    * Validation callback called when the input value changes.
