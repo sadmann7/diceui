@@ -743,112 +743,140 @@ describe("MaskInput", () => {
   describe("Utility Functions", () => {
     describe("applyMask", () => {
       test("applies basic pattern mask", () => {
-        const result = applyMask("1234567890", "(###) ###-####");
+        const result = applyMask({
+          value: "1234567890",
+          pattern: "(###) ###-####",
+        });
         expect(result).toBe("(123) 456-7890");
       });
 
       test("handles partial input", () => {
-        const result = applyMask("123", "(###) ###-####");
+        const result = applyMask({
+          value: "123",
+          pattern: "(###) ###-####",
+        });
         expect(result).toBe("(123");
       });
 
       test("applies transform function", () => {
         const transform = (value: string) => value.replace(/\D/g, "");
         const unmasked = transform("1a2b3c");
-        const result = applyMask(unmasked, "###-###");
+        const result = applyMask({
+          value: unmasked,
+          pattern: "###-###",
+        });
         expect(result).toBe("123");
       });
 
       test("applies currency mask with USD", () => {
-        const result = applyMask(
-          "1234.56",
-          "$###,###.##",
-          "USD",
-          "en-US",
-          "currency",
-        );
+        const result = applyMask({
+          value: "1234.56",
+          pattern: "$###,###.##",
+          currency: "USD",
+          locale: "en-US",
+          mask: "currency",
+        });
         expect(result).toBe("$1,234.56");
       });
 
       test("applies currency mask with EUR", () => {
-        const result = applyMask(
-          "1234.56",
-          "€###,###.##",
-          "EUR",
-          "de-DE",
-          "currency",
-        );
+        const result = applyMask({
+          value: "1234.56",
+          pattern: "€###,###.##",
+          currency: "EUR",
+          locale: "de-DE",
+          mask: "currency",
+        });
         // EUR in de-DE: 1.234,56 €  (note: uses non-breaking space)
         expect(result).toMatch(/1\.234,56\s+€/);
       });
 
       test("applies percentage mask", () => {
-        const result = applyMask("25.5", "##.##%");
+        const result = applyMask({
+          value: "25.5",
+          pattern: "##.##%",
+        });
         expect(result).toBe("25.5%");
       });
     });
 
     describe("applyCurrencyMask", () => {
       test("formats USD currency by default", () => {
-        const result = applyCurrencyMask("1234.56");
+        const result = applyCurrencyMask({ value: "1234.56" });
         expect(result).toBe("$1,234.56");
       });
 
       test("formats EUR currency", () => {
-        const result = applyCurrencyMask("1234.56", "EUR", "de-DE");
+        const result = applyCurrencyMask({
+          value: "1234.56",
+          currency: "EUR",
+          locale: "de-DE",
+        });
         // EUR in de-DE: 1.234,56 €  (note: uses non-breaking space)
         expect(result).toMatch(/1\.234,56\s+€/);
       });
 
       test("formats GBP currency", () => {
-        const result = applyCurrencyMask("1234.56", "GBP", "en-GB");
+        const result = applyCurrencyMask({
+          value: "1234.56",
+          currency: "GBP",
+          locale: "en-GB",
+        });
         expect(result).toBe("£1,234.56");
       });
 
       test("formats JPY currency (no decimals)", () => {
-        const result = applyCurrencyMask("1234", "JPY", "ja-JP");
+        const result = applyCurrencyMask({
+          value: "1234",
+          currency: "JPY",
+          locale: "ja-JP",
+        });
         // JPY doesn't use decimals, so it should format as whole number
         expect(result).toMatch(/[¥￥]1,234/);
       });
 
       test("handles empty value", () => {
-        const result = applyCurrencyMask("");
+        const result = applyCurrencyMask({ value: "" });
         expect(result).toBe("");
       });
 
       test("handles invalid numeric values", () => {
-        const result = applyCurrencyMask("abc");
+        const result = applyCurrencyMask({ value: "abc" });
         // Invalid values with no digits return empty string
         expect(result).toBe("");
       });
 
       test("adds commas for large numbers", () => {
-        const result = applyCurrencyMask("1234567.89");
+        const result = applyCurrencyMask({ value: "1234567.89" });
         expect(result).toBe("$1,234,567.89");
       });
 
       test("handles partial decimal input", () => {
-        const result = applyCurrencyMask("123.4");
+        const result = applyCurrencyMask({ value: "123.4" });
         expect(result).toBe("$123.4");
       });
 
       test("handles integer input", () => {
-        const result = applyCurrencyMask("123");
+        const result = applyCurrencyMask({ value: "123" });
         expect(result).toBe("$123");
       });
 
       test("handles incremental input correctly", () => {
         // Test that single digits don't become full currency amounts
-        expect(applyCurrencyMask("1")).toBe("$1");
-        expect(applyCurrencyMask("12")).toBe("$12");
-        expect(applyCurrencyMask("123")).toBe("$123");
-        expect(applyCurrencyMask("123.")).toBe("$123.");
-        expect(applyCurrencyMask("123.4")).toBe("$123.4");
-        expect(applyCurrencyMask("123.45")).toBe("$123.45");
+        expect(applyCurrencyMask({ value: "1" })).toBe("$1");
+        expect(applyCurrencyMask({ value: "12" })).toBe("$12");
+        expect(applyCurrencyMask({ value: "123" })).toBe("$123");
+        expect(applyCurrencyMask({ value: "123." })).toBe("$123.");
+        expect(applyCurrencyMask({ value: "123.4" })).toBe("$123.4");
+        expect(applyCurrencyMask({ value: "123.45" })).toBe("$123.45");
       });
 
       test("fallbacks to USD on invalid currency", () => {
-        const result = applyCurrencyMask("123.45", "INVALID", "invalid-locale");
+        const result = applyCurrencyMask({
+          value: "123.45",
+          currency: "INVALID",
+          locale: "invalid-locale",
+        });
         expect(result).toBe("$123.45");
       });
     });
@@ -872,14 +900,17 @@ describe("MaskInput", () => {
 
     describe("getUnmaskedValue", () => {
       test("removes non-digits by default", () => {
-        const result = getUnmaskedValue("(123) 456-7890");
+        const result = getUnmaskedValue({ value: "(123) 456-7890" });
         expect(result).toBe("1234567890");
       });
 
       test("applies custom transform", () => {
         const transform = (value: string) =>
           value.replace(/[^A-Z0-9]/gi, "").toUpperCase();
-        const result = getUnmaskedValue("abc-123", transform);
+        const result = getUnmaskedValue({
+          value: "abc-123",
+          transform,
+        });
         expect(result).toBe("ABC123");
       });
     });
@@ -888,14 +919,14 @@ describe("MaskInput", () => {
       test("converts masked position to unmasked position", () => {
         const masked = "(123) 456-7890";
         const pattern = "(###) ###-####";
-        const result = toUnmaskedIndex(masked, pattern, 9); // Position after "456-"
+        const result = toUnmaskedIndex({ masked, pattern, caret: 9 }); // Position after "456-"
         expect(result).toBe(6); // 6th digit in unmasked value
       });
 
       test("converts unmasked position to masked position", () => {
         const masked = "(123) 456-7890";
         const pattern = "(###) ###-####";
-        const result = fromUnmaskedIndex(masked, pattern, 6); // 6th digit
+        const result = fromUnmaskedIndex({ masked, pattern, unmaskedIndex: 6 }); // 6th digit
         expect(result).toBe(9); // Position after "456-" in masked value (0-indexed)
       });
     });

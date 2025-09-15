@@ -299,17 +299,19 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
   },
 };
 
-function applyMask(
-  value: string,
-  pattern: string,
-  currency?: string,
-  locale?: string,
-  mask?: MaskPatternKey | MaskPattern,
-): string {
+function applyMask(options: {
+  value: string;
+  pattern: string;
+  currency?: string;
+  locale?: string;
+  mask?: MaskPatternKey | MaskPattern;
+}): string {
+  const { value, pattern, currency, locale, mask } = options;
+
   const cleanValue = value;
 
   if (pattern.includes("$") || pattern.includes("€") || mask === "currency") {
-    return applyCurrencyMask(cleanValue, currency, locale);
+    return applyCurrencyMask({ value: cleanValue, currency, locale });
   }
 
   if (pattern.includes("%")) {
@@ -338,11 +340,13 @@ function applyMask(
   return masked;
 }
 
-function applyCurrencyMask(
-  value: string,
-  currency = "USD",
-  locale = "en-US",
-): string {
+function applyCurrencyMask(options: {
+  value: string;
+  currency?: string;
+  locale?: string;
+}): string {
+  const { value, currency = "USD", locale = "en-US" } = options;
+
   if (!value) return "";
 
   let currencySymbol = "$";
@@ -449,22 +453,26 @@ function applyPercentageMask(value: string): string {
   return `${result}%`;
 }
 
-function getUnmaskedValue(
-  value: string,
-  transform?: (value: string, opts?: TransformOptions) => string,
-  currency?: string,
-  locale?: string,
-): string {
+function getUnmaskedValue(options: {
+  value: string;
+  transform?: (value: string, opts?: TransformOptions) => string;
+  currency?: string;
+  locale?: string;
+}): string {
+  const { value, transform, currency, locale } = options;
+
   return transform
     ? transform(value, { currency, locale })
     : value.replace(/\D/g, "");
 }
 
-function toUnmaskedIndex(
-  masked: string,
-  pattern: string,
-  caret: number,
-): number {
+function toUnmaskedIndex(options: {
+  masked: string;
+  pattern: string;
+  caret: number;
+}): number {
+  const { masked, pattern, caret } = options;
+
   let idx = 0;
   for (let i = 0; i < caret && i < masked.length && i < pattern.length; i++) {
     if (pattern[i] === "#") {
@@ -474,16 +482,18 @@ function toUnmaskedIndex(
   return idx;
 }
 
-function fromUnmaskedIndex(
-  masked: string,
-  pattern: string,
-  uIdx: number,
-): number {
+function fromUnmaskedIndex(options: {
+  masked: string;
+  pattern: string;
+  unmaskedIndex: number;
+}): number {
+  const { masked, pattern, unmaskedIndex } = options;
+
   let seen = 0;
   for (let i = 0; i < masked.length && i < pattern.length; i++) {
     if (pattern[i] === "#") {
       seen++;
-      if (seen === uIdx) {
+      if (seen === unmaskedIndex) {
         return i + 1;
       }
     }
@@ -641,13 +651,19 @@ function MaskInput(props: MaskInputProps) {
 
   const displayValue = React.useMemo(() => {
     if (withoutMask || !maskPattern || !value) return value ?? "";
-    const unmasked = getUnmaskedValue(
+    const unmasked = getUnmaskedValue({
       value,
-      maskPattern.transform,
+      transform: maskPattern.transform,
       currency,
       locale,
-    );
-    return applyMask(unmasked, maskPattern.pattern, currency, locale, mask);
+    });
+    return applyMask({
+      value: unmasked,
+      pattern: maskPattern.pattern,
+      currency,
+      locale,
+      mask,
+    });
   }, [value, maskPattern, withoutMask, currency, locale, mask]);
 
   const tokenCount = React.useMemo(() => {
@@ -732,31 +748,31 @@ function MaskInput(props: MaskInputProps) {
       }
 
       if (maskPattern) {
-        unmaskedValue = getUnmaskedValue(
-          inputValue,
-          maskPattern.transform,
+        unmaskedValue = getUnmaskedValue({
+          value: inputValue,
+          transform: maskPattern.transform,
           currency,
           locale,
-        );
-        newValue = applyMask(
-          unmaskedValue,
-          maskPattern.pattern,
+        });
+        newValue = applyMask({
+          value: unmaskedValue,
+          pattern: maskPattern.pattern,
           currency,
           locale,
           mask,
-        );
+        });
 
         if (inputRef.current && newValue !== inputValue) {
           const el = inputRef.current;
           if (!(el instanceof HTMLInputElement)) return;
           el.value = newValue;
 
-          const currentUnmasked = getUnmaskedValue(
-            newValue,
-            maskPattern.transform,
+          const currentUnmasked = getUnmaskedValue({
+            value: newValue,
+            transform: maskPattern.transform,
             currency,
             locale,
-          );
+          });
 
           let newCursorPosition: number;
           if (
@@ -896,12 +912,12 @@ function MaskInput(props: MaskInputProps) {
       if (shouldValidate("blur")) {
         const currentValue = event.target.value;
         const unmaskedValue = maskPattern
-          ? getUnmaskedValue(
-              currentValue,
-              maskPattern.transform,
+          ? getUnmaskedValue({
+              value: currentValue,
+              transform: maskPattern.transform,
               currency,
               locale,
-            )
+            })
           : currentValue;
         onInputValidate(unmaskedValue);
       }
@@ -946,19 +962,19 @@ function MaskInput(props: MaskInputProps) {
         return;
       }
 
-      const unmasked = getUnmaskedValue(
-        inputValue,
-        maskPattern.transform,
+      const unmasked = getUnmaskedValue({
+        value: inputValue,
+        transform: maskPattern.transform,
         currency,
         locale,
-      );
-      const masked = applyMask(
-        unmasked,
-        maskPattern.pattern,
+      });
+      const masked = applyMask({
+        value: unmasked,
+        pattern: maskPattern.pattern,
         currency,
         locale,
         mask,
-      );
+      });
 
       if (!isControlled) setInternalValue(masked);
       if (shouldValidate("change")) onInputValidate(unmasked);
@@ -1004,19 +1020,19 @@ function MaskInput(props: MaskInputProps) {
       const afterSelection = currentValue.slice(selectionEnd);
       const newInputValue = beforeSelection + pastedData + afterSelection;
 
-      const unmasked = getUnmaskedValue(
-        newInputValue,
-        maskPattern.transform,
+      const unmasked = getUnmaskedValue({
+        value: newInputValue,
+        transform: maskPattern.transform,
         currency,
         locale,
-      );
-      const newMaskedValue = applyMask(
-        unmasked,
-        maskPattern.pattern,
+      });
+      const newMaskedValue = applyMask({
+        value: unmasked,
+        pattern: maskPattern.pattern,
         currency,
         locale,
         mask,
-      );
+      });
 
       target.value = newMaskedValue;
 
@@ -1134,35 +1150,35 @@ function MaskInput(props: MaskInputProps) {
           if (charBeforeCursor && isLiteral) {
             event.preventDefault();
 
-            const uIdx = toUnmaskedIndex(
-              currentValue,
-              maskPattern.pattern,
-              cursorPosition,
-            );
-            if (uIdx > 0) {
-              const currentUnmasked = getUnmaskedValue(
-                currentValue,
-                maskPattern.transform,
+            const unmaskedIndex = toUnmaskedIndex({
+              masked: currentValue,
+              pattern: maskPattern.pattern,
+              caret: cursorPosition,
+            });
+            if (unmaskedIndex > 0) {
+              const currentUnmasked = getUnmaskedValue({
+                value: currentValue,
+                transform: maskPattern.transform,
                 currency,
                 locale,
-              );
+              });
               const nextUnmasked =
-                currentUnmasked.slice(0, uIdx - 1) +
-                currentUnmasked.slice(uIdx);
-              const nextMasked = applyMask(
-                nextUnmasked,
-                maskPattern.pattern,
+                currentUnmasked.slice(0, unmaskedIndex - 1) +
+                currentUnmasked.slice(unmaskedIndex);
+              const nextMasked = applyMask({
+                value: nextUnmasked,
+                pattern: maskPattern.pattern,
                 currency,
                 locale,
                 mask,
-              );
+              });
 
               target.value = nextMasked;
-              const nextCaret = fromUnmaskedIndex(
-                nextMasked,
-                maskPattern.pattern,
-                uIdx - 1,
-              );
+              const nextCaret = fromUnmaskedIndex({
+                masked: nextMasked,
+                pattern: maskPattern.pattern,
+                unmaskedIndex: unmaskedIndex - 1,
+              });
               target.setSelectionRange(nextCaret, nextCaret);
 
               onValueChangeProp?.(nextMasked, nextUnmasked, undefined);
@@ -1201,36 +1217,36 @@ function MaskInput(props: MaskInputProps) {
           if (charAtCursor && isLiteral) {
             event.preventDefault();
 
-            const uIdx = toUnmaskedIndex(
-              currentValue,
-              maskPattern.pattern,
-              cursorPosition,
-            );
-            const currentUnmasked = getUnmaskedValue(
-              currentValue,
-              maskPattern.transform,
+            const unmaskedIndex = toUnmaskedIndex({
+              masked: currentValue,
+              pattern: maskPattern.pattern,
+              caret: cursorPosition,
+            });
+            const currentUnmasked = getUnmaskedValue({
+              value: currentValue,
+              transform: maskPattern.transform,
               currency,
               locale,
-            );
+            });
 
-            if (uIdx < currentUnmasked.length) {
+            if (unmaskedIndex < currentUnmasked.length) {
               const nextUnmasked =
-                currentUnmasked.slice(0, uIdx) +
-                currentUnmasked.slice(uIdx + 1);
-              const nextMasked = applyMask(
-                nextUnmasked,
-                maskPattern.pattern,
+                currentUnmasked.slice(0, unmaskedIndex) +
+                currentUnmasked.slice(unmaskedIndex + 1);
+              const nextMasked = applyMask({
+                value: nextUnmasked,
+                pattern: maskPattern.pattern,
                 currency,
                 locale,
                 mask,
-              );
+              });
 
               target.value = nextMasked;
-              const nextCaret = fromUnmaskedIndex(
-                nextMasked,
-                maskPattern.pattern,
-                uIdx,
-              );
+              const nextCaret = fromUnmaskedIndex({
+                masked: nextMasked,
+                pattern: maskPattern.pattern,
+                unmaskedIndex: unmaskedIndex,
+              });
               target.setSelectionRange(nextCaret, nextCaret);
 
               onValueChangeProp?.(nextMasked, nextUnmasked, undefined);
