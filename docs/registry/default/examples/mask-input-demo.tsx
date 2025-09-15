@@ -4,14 +4,62 @@ import * as React from "react";
 import { Label } from "@/components/ui/label";
 import { MaskInput } from "@/registry/default/ui/mask-input";
 
+interface Input {
+  phone: string;
+  date: string;
+  dollar: string;
+  euro: string;
+  creditCard: string;
+  percentage: string;
+}
+
+interface Validation {
+  phone: boolean;
+  date: boolean;
+  dollar: boolean;
+  euro: boolean;
+  creditCard: boolean;
+  percentage: boolean;
+}
+
 export default function MaskInputDemo() {
   const id = React.useId();
-  const [phoneValue, setPhoneValue] = React.useState("");
-  const [dateValue, setDateValue] = React.useState("");
-  const [dollarValue, setDollarValue] = React.useState("");
-  const [euroValue, setEuroValue] = React.useState("");
-  const [creditCardValue, setCreditCardValue] = React.useState("");
-  const [percentageValue, setPercentageValue] = React.useState("");
+  const [input, setInput] = React.useState<Input>({
+    phone: "",
+    date: "",
+    dollar: "",
+    euro: "",
+    creditCard: "",
+    percentage: "",
+  });
+  const [validation, setValidation] = React.useState<Validation>({
+    phone: true,
+    date: true,
+    dollar: true,
+    euro: true,
+    creditCard: true,
+    percentage: true,
+  });
+
+  const onValueChange = React.useCallback(
+    (field: keyof Input) => (maskedValue: string) => {
+      setInput((prev) => ({
+        ...prev,
+        [field]: maskedValue,
+      }));
+    },
+    [],
+  );
+
+  const onValidate = React.useCallback(
+    (field: keyof Validation) => (isValid: boolean) => {
+      setValidation((prev) => ({
+        ...prev,
+        [field]: isValid,
+      }));
+    },
+    [],
+  );
 
   return (
     <div className="grid gap-6 md:grid-cols-2">
@@ -21,11 +69,10 @@ export default function MaskInputDemo() {
           id={`${id}-phone`}
           mask="phone"
           placeholder="Enter your phone number"
-          value={phoneValue}
-          onValueChange={(maskedValue, unmaskedValue) => {
-            console.log({ maskedValue, unmaskedValue });
-            setPhoneValue(unmaskedValue);
-          }}
+          value={input.phone}
+          onValueChange={onValueChange("phone")}
+          onValidate={onValidate("phone")}
+          invalid={!validation.phone}
         />
         <p className="text-muted-foreground text-sm">
           Enter your phone number with area code
@@ -37,8 +84,10 @@ export default function MaskInputDemo() {
           id={`${id}-date`}
           mask="date"
           placeholder="mm/dd/yyyy"
-          value={dateValue}
-          onValueChange={setDateValue}
+          value={input.date}
+          onValueChange={onValueChange("date")}
+          onValidate={onValidate("date")}
+          invalid={!validation.date}
         />
         <p className="text-muted-foreground text-sm">Enter your birth date</p>
       </div>
@@ -48,8 +97,10 @@ export default function MaskInputDemo() {
           id={`${id}-dollar`}
           mask="currency"
           placeholder="$0.00"
-          value={dollarValue}
-          onValueChange={setDollarValue}
+          value={input.dollar}
+          onValueChange={onValueChange("dollar")}
+          onValidate={onValidate("dollar")}
+          invalid={!validation.dollar}
         />
         <p className="text-muted-foreground text-sm">Enter your currency</p>
       </div>
@@ -61,8 +112,10 @@ export default function MaskInputDemo() {
           currency="EUR"
           locale="de-DE"
           placeholder="0,00 €"
-          value={euroValue}
-          onValueChange={setEuroValue}
+          value={input.euro}
+          onValueChange={onValueChange("euro")}
+          onValidate={onValidate("euro")}
+          invalid={!validation.euro}
         />
         <p className="text-muted-foreground text-sm">Enter your currency</p>
       </div>
@@ -72,10 +125,14 @@ export default function MaskInputDemo() {
           id={`${id}-creditCard`}
           mask="creditCard"
           placeholder="4242 4242 4242 4242"
-          value={creditCardValue}
-          onValueChange={setCreditCardValue}
+          value={input.creditCard}
+          onValueChange={onValueChange("creditCard")}
+          onValidate={onValidate("creditCard")}
+          invalid={!validation.creditCard}
         />
-        <p className="text-muted-foreground text-sm">Enter your IPv4 address</p>
+        <p className="text-muted-foreground text-sm">
+          Enter your credit card number
+        </p>
       </div>
       <div className="flex flex-col gap-2">
         <Label htmlFor={`${id}-percentage`}>Percentage</Label>
@@ -83,8 +140,10 @@ export default function MaskInputDemo() {
           id={`${id}-percentage`}
           mask="percentage"
           placeholder="0.00%"
-          value={percentageValue}
-          onValueChange={setPercentageValue}
+          value={input.percentage}
+          onValueChange={onValueChange("percentage")}
+          onValidate={onValidate("percentage")}
+          invalid={!validation.percentage}
         />
         <p className="text-muted-foreground text-sm">Enter your percentage</p>
       </div>

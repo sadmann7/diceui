@@ -218,7 +218,7 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
     validate: (value) => {
       if (!/^\d+(\.\d{1,2})?$/.test(value)) return false;
       const num = parseFloat(value);
-      return !Number.isNaN(num) && num >= 0 && num <= 999999999.99;
+      return !Number.isNaN(num) && num >= 0;
     },
   },
   percentage: {
@@ -300,13 +300,13 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
 };
 
 function applyMask(
-  value: string, // already unmasked
+  value: string,
   pattern: string,
   currency?: string,
   locale?: string,
   maskType?: string,
 ): string {
-  const cleanValue = value; // no transform here
+  const cleanValue = value;
 
   if (
     pattern.includes("$") ||
@@ -515,7 +515,6 @@ interface MaskInputProps extends React.ComponentProps<"input"> {
   withoutMask?: boolean;
   currency?: string;
   locale?: string;
-  ref?: React.Ref<InputElement>;
 }
 
 function MaskInput(props: MaskInputProps) {
@@ -997,7 +996,6 @@ function MaskInput(props: MaskInputProps) {
 
       if (withoutMask || !maskPattern) return;
 
-      // Skip mask-aware paste for IPv4
       if (maskType === "ipv4") return;
 
       const target = event.target as InputElement;
@@ -1012,7 +1010,6 @@ function MaskInput(props: MaskInputProps) {
       const selectionStart = target.selectionStart ?? 0;
       const selectionEnd = target.selectionEnd ?? 0;
 
-      // Remove selected text and insert pasted data
       const beforeSelection = currentValue.slice(0, selectionStart);
       const afterSelection = currentValue.slice(selectionEnd);
       const newInputValue = beforeSelection + pastedData + afterSelection;
@@ -1033,7 +1030,6 @@ function MaskInput(props: MaskInputProps) {
 
       target.value = newMaskedValue;
 
-      // Handle caret positioning for currency/percentage
       if (
         maskType === "currency" ||
         maskPattern.pattern.includes("$") ||
@@ -1047,8 +1043,8 @@ function MaskInput(props: MaskInputProps) {
           }).format(1);
           const currencyAtEnd = /\d\s*[^\d\s]+$/.test(sample);
           const caret = currencyAtEnd
-            ? newMaskedValue.search(/\s*[^\d\s]+$/) // before trailing symbol
-            : newMaskedValue.length; // after number when symbol is leading
+            ? newMaskedValue.search(/\s*[^\d\s]+$/)
+            : newMaskedValue.length;
           target.setSelectionRange(caret, caret);
         } catch {
           target.setSelectionRange(
@@ -1067,7 +1063,6 @@ function MaskInput(props: MaskInputProps) {
         return;
       }
 
-      // Default caret positioning for other patterns
       let newCursorPosition = newMaskedValue.length;
       try {
         const unmaskedCount = unmasked.length;
@@ -1118,7 +1113,6 @@ function MaskInput(props: MaskInputProps) {
 
       if (withoutMask || !maskPattern) return;
 
-      // Skip mask-aware keyDown for IPv4
       if (maskType === "ipv4") return;
 
       if (event.key === "Backspace") {
