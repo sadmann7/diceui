@@ -11,9 +11,9 @@ import {
   getUnmaskedValue,
   MASK_PATTERNS,
   MaskInput,
+  type MaskInputProps,
   type MaskPattern,
   toUnmaskedIndex,
-  type ValidationMode,
 } from "@/registry/default/ui/mask-input";
 
 // Mock ResizeObserver
@@ -121,7 +121,6 @@ describe("MaskInput", () => {
       expect(onValueChange).toHaveBeenLastCalledWith(
         "(123) 456-7890",
         "1234567890",
-        expect.any(Object),
       );
     });
 
@@ -145,7 +144,6 @@ describe("MaskInput", () => {
       expect(onValueChange).toHaveBeenLastCalledWith(
         "123-45-6789",
         "123456789",
-        expect.any(Object),
       );
     });
 
@@ -166,11 +164,7 @@ describe("MaskInput", () => {
       await user.type(input, "12252023");
 
       expect(input).toHaveValue("12/25/2023");
-      expect(onValueChange).toHaveBeenLastCalledWith(
-        "12/25/2023",
-        "12252023",
-        expect.any(Object),
-      );
+      expect(onValueChange).toHaveBeenLastCalledWith("12/25/2023", "12252023");
     });
 
     test("time mask pattern", async () => {
@@ -190,11 +184,7 @@ describe("MaskInput", () => {
       await user.type(input, "1430");
 
       expect(input).toHaveValue("14:30");
-      expect(onValueChange).toHaveBeenLastCalledWith(
-        "14:30",
-        "1430",
-        expect.any(Object),
-      );
+      expect(onValueChange).toHaveBeenLastCalledWith("14:30", "1430");
     });
 
     test("creditCard mask pattern", async () => {
@@ -217,7 +207,6 @@ describe("MaskInput", () => {
       expect(onValueChange).toHaveBeenLastCalledWith(
         "1234 5678 9012 3456",
         "1234567890123456",
-        expect.any(Object),
       );
     });
 
@@ -238,11 +227,7 @@ describe("MaskInput", () => {
       await user.type(input, "12345");
 
       expect(input).toHaveValue("12345");
-      expect(onValueChange).toHaveBeenLastCalledWith(
-        "12345",
-        "12345",
-        expect.any(Object),
-      );
+      expect(onValueChange).toHaveBeenLastCalledWith("12345", "12345");
     });
 
     test("currency mask pattern (USD default)", async () => {
@@ -262,11 +247,7 @@ describe("MaskInput", () => {
       await user.type(input, "1234.56");
 
       expect(input).toHaveValue("$1,234.56");
-      expect(onValueChange).toHaveBeenLastCalledWith(
-        "$1,234.56",
-        "1234.56",
-        expect.any(Object),
-      );
+      expect(onValueChange).toHaveBeenLastCalledWith("$1,234.56", "1234.56");
     });
 
     test("currency mask pattern with EUR", async () => {
@@ -299,7 +280,6 @@ describe("MaskInput", () => {
       expect(onValueChange).toHaveBeenLastCalledWith(
         expectedEurFormat,
         "1234.56",
-        expect.any(Object),
       );
     });
 
@@ -322,11 +302,7 @@ describe("MaskInput", () => {
       await user.type(input, "1234.56");
 
       expect(input).toHaveValue("£1,234.56");
-      expect(onValueChange).toHaveBeenLastCalledWith(
-        "£1,234.56",
-        "1234.56",
-        expect.any(Object),
-      );
+      expect(onValueChange).toHaveBeenLastCalledWith("£1,234.56", "1234.56");
     });
 
     test("currency mask pattern with incremental input", async () => {
@@ -377,11 +353,7 @@ describe("MaskInput", () => {
       await user.type(input, "25.5");
 
       expect(input).toHaveValue("25.5%");
-      expect(onValueChange).toHaveBeenLastCalledWith(
-        "25.5%",
-        "25.5",
-        expect.any(Object),
-      );
+      expect(onValueChange).toHaveBeenLastCalledWith("25.5%", "25.5");
     });
 
     test("licensePlate mask pattern", async () => {
@@ -401,11 +373,7 @@ describe("MaskInput", () => {
       await user.type(input, "abc123");
 
       expect(input).toHaveValue("ABC-123");
-      expect(onValueChange).toHaveBeenLastCalledWith(
-        "ABC-123",
-        "ABC123",
-        expect.any(Object),
-      );
+      expect(onValueChange).toHaveBeenLastCalledWith("ABC-123", "ABC123");
     });
 
     test("ipv4 mask pattern", async () => {
@@ -426,11 +394,7 @@ describe("MaskInput", () => {
       await user.type(input, "192168111");
 
       expect(input).toHaveValue("192168111");
-      expect(onValueChange).toHaveBeenLastCalledWith(
-        "192168111",
-        "192168111",
-        expect.any(Object),
-      );
+      expect(onValueChange).toHaveBeenLastCalledWith("192168111", "192168111");
     });
   });
 
@@ -458,11 +422,7 @@ describe("MaskInput", () => {
       await user.type(input, "ab12cd");
 
       expect(input).toHaveValue("AB-12-CD");
-      expect(onValueChange).toHaveBeenLastCalledWith(
-        "AB-12-CD",
-        "AB12CD",
-        expect.any(Object),
-      );
+      expect(onValueChange).toHaveBeenLastCalledWith("AB-12-CD", "AB12CD");
     });
 
     test("handles custom validation", async () => {
@@ -495,7 +455,9 @@ describe("MaskInput", () => {
   });
 
   describe("Validation Modes", () => {
-    const createValidationTest = (mode: ValidationMode) => {
+    const createValidationTest = (
+      mode: NonNullable<MaskInputProps["validationMode"]>,
+    ) => {
       return async () => {
         const user = userEvent.setup();
         const onValidate = vi.fn();
@@ -681,7 +643,6 @@ describe("MaskInput", () => {
       expect(onValueChange).toHaveBeenLastCalledWith(
         "1234567890",
         "1234567890",
-        expect.any(Object),
       );
     });
 

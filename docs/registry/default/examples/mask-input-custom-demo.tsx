@@ -51,8 +51,8 @@ const productCodePattern: MaskPattern = {
 export default function MaskInputCustomDemo() {
   const [licenseValue, setLicenseValue] = React.useState("");
   const [productCodeValue, setProductCodeValue] = React.useState("");
-  const [isLicenseValid, setIsLicenseValid] = React.useState(false);
-  const [isProductCodeValid, setIsProductCodeValid] = React.useState(false);
+  const [isLicenseValid, setIsLicenseValid] = React.useState(true);
+  const [isProductCodeValid, setIsProductCodeValid] = React.useState(true);
 
   return (
     <div className="flex w-full max-w-sm flex-col gap-6">
@@ -71,7 +71,6 @@ export default function MaskInputCustomDemo() {
           Enter license plate (3 letters, 4 numbers)
         </p>
       </div>
-
       <div className="flex flex-col gap-2">
         <Label htmlFor="product">Product code</Label>
         <MaskInput

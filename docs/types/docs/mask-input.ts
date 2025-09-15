@@ -1,4 +1,3 @@
-import type * as React from "react";
 import type { CompositionProps, EmptyProps } from "@/types";
 
 export interface TransformOptions {
@@ -116,17 +115,13 @@ export interface MaskInputProps extends EmptyProps<"input">, CompositionProps {
    * Change handler with masked and unmasked values.
    *
    * ```ts
-   * onValueChange={(masked, unmasked, event) => {
+   * onValueChange={(masked, unmasked) => {
    *   console.log('Masked:', masked);     // "(555) 123-4567"
    *   console.log('Unmasked:', unmasked); // "5551234567"
    * }}
    * ```
    */
-  onValueChange?: (
-    maskedValue: string,
-    unmaskedValue: string,
-    event?: React.ChangeEvent<HTMLInputElement>,
-  ) => void;
+  onValueChange?: (maskedValue: string, unmaskedValue: string) => void;
 
   /**
    * Validation callback called when the input value changes.
@@ -186,15 +181,6 @@ export interface MaskInputProps extends EmptyProps<"input">, CompositionProps {
    */
   mask?: MaskPatternKey | MaskPattern;
 
-  /** Whether to render as child component using Radix Slot */
-  asChild?: boolean;
-
-  /** Whether the input has validation errors. */
-  invalid?: boolean;
-
-  /** Whether to disable masking. */
-  withoutMask?: boolean;
-
   /**
    * Currency code for currency formatting (defaults to "USD").
    * Used when mask is "currency".
@@ -218,4 +204,13 @@ export interface MaskInputProps extends EmptyProps<"input">, CompositionProps {
    * ```
    */
   locale?: string;
+
+  /** Whether to render as child component using Radix Slot */
+  asChild?: boolean;
+
+  /** Whether the input has validation errors. */
+  invalid?: boolean;
+
+  /** Whether to disable masking. */
+  withoutMask?: boolean;
 }
