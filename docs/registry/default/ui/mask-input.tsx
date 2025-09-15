@@ -7,11 +7,27 @@ import { cn } from "@/lib/utils";
 
 const PAST_YEARS_LIMIT = 120;
 const FUTURE_YEARS_LIMIT = 10;
-
 const DEFAULT_CURRENCY = "USD";
 const DEFAULT_LOCALE = "en-US";
 
+const NUMERIC_MASK_PATTERNS =
+  /^(phone|zipCode|zipCodeExtended|ssn|ein|time|date|creditCard)$/;
+const CURRENCY_PERCENTAGE_SYMBOLS = /[€$%]/;
+const CURRENCY_FALLBACK = "$0.00";
+const ZERO_PERCENTAGE = "0.00%";
+
+interface CurrencySymbols {
+  currency: string;
+  decimal: string;
+  group: string;
+}
+
 const formattersCache = new Map<string, Intl.NumberFormat>();
+const currencyAtEndCache = new Map<string, boolean>();
+const currencySymbolsCache = new Map<string, CurrencySymbols>();
+const daysInMonthCache = [
+  31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31,
+] as const;
 
 const REGEX_CACHE = {
   digitsOnly: /^\d+$/,
@@ -22,6 +38,19 @@ const REGEX_CACHE = {
   hashPattern: /#/g,
   currencyAtEnd: /\d\s*[^\d\s]+$/,
   percentageChars: /[^\d.]/g,
+  // Pre-compiled validation patterns
+  phone: /^\d{10}$/,
+  ssn: /^\d{9}$/,
+  zipCode: /^\d{5}$/,
+  zipCodeExtended: /^\d{9}$/,
+  isbn: /^\d{13}$/,
+  ein: /^\d{9}$/,
+  time: /^\d{4}$/,
+  creditCard: /^\d{15,19}$/,
+  licensePlate: /^[A-Z0-9]{6}$/,
+  macAddress: /^[A-F0-9]{12}$/,
+  currencyValidation: /^\d+(\.\d{1,2})?$/,
+  ipv4Segment: /^\d{1,3}$/,
 } as const;
 
 function getCachedFormatter(
@@ -61,15 +90,61 @@ function getCachedFormatter(
   return formatter;
 }
 
+function getCachedCurrencySymbols(locale: string, currency: string) {
+  const key = `${locale}|${currency}`;
+  const cached = currencySymbolsCache.get(key);
+  if (cached) {
+    return cached;
+  }
+
+  let currencySymbol = "$";
+  let decimalSeparator = ".";
+  let groupSeparator = ",";
+
+  try {
+    const formatter = getCachedFormatter(locale, currency, {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    });
+    const parts = formatter.formatToParts(1234.5);
+    const currencyPart = parts.find((part) => part.type === "currency");
+    const decimalPart = parts.find((part) => part.type === "decimal");
+    const groupPart = parts.find((part) => part.type === "group");
+
+    if (currencyPart) currencySymbol = currencyPart.value;
+    if (decimalPart) decimalSeparator = decimalPart.value;
+    if (groupPart) groupSeparator = groupPart.value;
+  } catch {
+    // Keep defaults
+  }
+
+  const symbols: CurrencySymbols = {
+    currency: currencySymbol,
+    decimal: decimalSeparator,
+    group: groupSeparator,
+  };
+  currencySymbolsCache.set(key, symbols);
+  return symbols;
+}
+
 function isCurrencyAtEnd(locale: string, currency: string): boolean {
+  const key = `${locale}|${currency}`;
+  const cached = currencyAtEndCache.get(key);
+  if (cached !== undefined) {
+    return cached;
+  }
+
   try {
     const formatter = getCachedFormatter(locale, currency, {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     });
     const sample = formatter.format(123);
-    return REGEX_CACHE.currencyAtEnd.test(sample);
+    const result = REGEX_CACHE.currencyAtEnd.test(sample);
+    currencyAtEndCache.set(key, result);
+    return result;
   } catch {
+    currencyAtEndCache.set(key, false);
     return false;
   }
 }
@@ -123,14 +198,14 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
     placeholder: "(___) ___-____",
     transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
     validate: (value) =>
-      /^\d{10}$/.test(value.replace(REGEX_CACHE.nonDigits, "")),
+      REGEX_CACHE.phone.test(value.replace(REGEX_CACHE.nonDigits, "")),
   },
   ssn: {
     pattern: "###-##-####",
     placeholder: "___-__-____",
     transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
     validate: (value) =>
-      /^\d{9}$/.test(value.replace(REGEX_CACHE.nonDigits, "")),
+      REGEX_CACHE.ssn.test(value.replace(REGEX_CACHE.nonDigits, "")),
   },
   date: {
     pattern: "##/##/####",
@@ -155,15 +230,14 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
       )
         return false;
 
-      const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+      // Use cached days array and avoid array mutation
+      const maxDays =
+        month === 2 &&
+        ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0)
+          ? 29
+          : (daysInMonthCache[month - 1] ?? 31);
 
-      const isLeapYear =
-        (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
-      if (isLeapYear && month === 2) {
-        daysInMonth[1] = 29;
-      }
-
-      return day <= (daysInMonth[month - 1] ?? 31);
+      return day <= maxDays;
     },
   },
   time: {
@@ -172,10 +246,10 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
     transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
     validate: (value) => {
       const cleaned = value.replace(REGEX_CACHE.nonDigits, "");
-      if (cleaned.length !== 4) return false;
+      if (!REGEX_CACHE.time.test(cleaned)) return false;
       const hours = parseInt(cleaned.substring(0, 2), 10);
       const minutes = parseInt(cleaned.substring(2, 4), 10);
-      return hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59;
+      return hours <= 23 && minutes <= 59;
     },
   },
   creditCard: {
@@ -184,11 +258,7 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
     transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
     validate: (value) => {
       const cleaned = value.replace(REGEX_CACHE.nonDigits, "");
-      return (
-        cleaned.length >= 15 &&
-        cleaned.length <= 19 &&
-        REGEX_CACHE.digitsOnly.test(cleaned)
-      );
+      return REGEX_CACHE.creditCard.test(cleaned);
     },
   },
   zipCode: {
@@ -196,14 +266,16 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
     placeholder: "_____",
     transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
     validate: (value) =>
-      /^\d{5}$/.test(value.replace(REGEX_CACHE.nonDigits, "")),
+      REGEX_CACHE.zipCode.test(value.replace(REGEX_CACHE.nonDigits, "")),
   },
   zipCodeExtended: {
     pattern: "#####-####",
     placeholder: "_____-____",
     transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
     validate: (value) =>
-      /^\d{9}$/.test(value.replace(REGEX_CACHE.nonDigits, "")),
+      REGEX_CACHE.zipCodeExtended.test(
+        value.replace(REGEX_CACHE.nonDigits, ""),
+      ),
   },
   currency: {
     pattern: "$###,###.##",
@@ -307,7 +379,7 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
       return digitsOnly;
     },
     validate: (value) => {
-      if (!/^\d+(\.\d{1,2})?$/.test(value)) return false;
+      if (!REGEX_CACHE.currencyValidation.test(value)) return false;
       const num = parseFloat(value);
       return !Number.isNaN(num) && num >= 0;
     },
@@ -338,7 +410,7 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
     placeholder: "ABC-123",
     transform: (value) =>
       value.replace(REGEX_CACHE.nonAlphaNumeric, "").toUpperCase(),
-    validate: (value) => /^[A-Z0-9]{6}$/.test(value),
+    validate: (value) => REGEX_CACHE.licensePlate.test(value),
   },
   ipv4: {
     pattern: "###.###.###.###",
@@ -351,9 +423,9 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
 
         return segments.every((segment) => {
           if (segment === "") return true;
-          if (!/^\d{1,3}$/.test(segment)) return false;
+          if (!REGEX_CACHE.ipv4Segment.test(segment)) return false;
           const num = parseInt(segment, 10);
-          return num >= 0 && num <= 255;
+          return num <= 255;
         });
       } else {
         if (!REGEX_CACHE.digitsOnly.test(value)) return false;
@@ -378,21 +450,21 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
     placeholder: "00:1B:44:11:3A:B7",
     transform: (value) =>
       value.replace(REGEX_CACHE.nonAlphaNumeric, "").toUpperCase(),
-    validate: (value) => /^[A-F0-9]{12}$/.test(value),
+    validate: (value) => REGEX_CACHE.macAddress.test(value),
   },
   isbn: {
     pattern: "###-#-###-#####-#",
     placeholder: "978-0-123-45678-9",
     transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
     validate: (value) =>
-      /^\d{13}$/.test(value.replace(REGEX_CACHE.nonDigits, "")),
+      REGEX_CACHE.isbn.test(value.replace(REGEX_CACHE.nonDigits, "")),
   },
   ein: {
     pattern: "##-#######",
     placeholder: "12-3456789",
     transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
     validate: (value) =>
-      /^\d{9}$/.test(value.replace(REGEX_CACHE.nonDigits, "")),
+      REGEX_CACHE.ein.test(value.replace(REGEX_CACHE.nonDigits, "")),
   },
 };
 
@@ -450,28 +522,11 @@ function applyCurrencyMask(opts: {
 
   if (!value) return "";
 
-  let currencySymbol = "$";
-  let decimalSeparator = ".";
-  let groupSeparator = ",";
-
-  try {
-    const formatter = getCachedFormatter(locale, currency, {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2,
-    });
-    const parts = formatter.formatToParts(1234.5);
-    const currencyPart = parts.find((part) => part.type === "currency");
-    const decimalPart = parts.find((part) => part.type === "decimal");
-    const groupPart = parts.find((part) => part.type === "group");
-
-    if (currencyPart) currencySymbol = currencyPart.value;
-    if (decimalPart) decimalSeparator = decimalPart.value;
-    if (groupPart) groupSeparator = groupPart.value;
-  } catch {
-    currencySymbol = "$";
-    decimalSeparator = ".";
-    groupSeparator = ",";
-  }
+  const {
+    currency: currencySymbol,
+    decimal: decimalSeparator,
+    group: groupSeparator,
+  } = getCachedCurrencySymbols(locale, currency);
 
   const normalizedValue = value
     .replace(
@@ -489,10 +544,10 @@ function applyCurrencyMask(opts: {
 
   if (!integerPart && !fractionalPart) return "";
 
-  const intValue = integerPart || "0";
+  const intValue = integerPart ?? "0";
   const fracValue = fractionalPart.slice(0, 2);
 
-  const num = Number(`${intValue}.${fracValue || ""}`);
+  const num = Number(`${intValue}.${fracValue ?? ""}`);
 
   if (Number.isNaN(num)) {
     const cleanedDigits = value.replace(/[^\d]/g, "");
@@ -615,6 +670,52 @@ interface MaskInputProps extends React.ComponentProps<"input"> {
   locale?: string;
 }
 
+// Helper function to calculate cursor position for currency masks
+function getCurrencyCaretPosition(
+  newValue: string,
+  mask: MaskPatternKey | MaskPattern | undefined,
+  transformOpts: { currency: string; locale: string },
+): number {
+  if (mask === "currency") {
+    const currencyAtEnd = isCurrencyAtEnd(
+      transformOpts.locale,
+      transformOpts.currency,
+    );
+    if (currencyAtEnd) {
+      const match = newValue.match(/(\d)\s*([^\d\s]+)$/);
+      if (match?.[1]) {
+        return newValue.lastIndexOf(match[1]) + 1;
+      } else {
+        return newValue.length;
+      }
+    } else {
+      return newValue.length;
+    }
+  } else {
+    return newValue.length;
+  }
+}
+
+// Helper function to calculate cursor position for pattern masks
+function getPatternCaretPosition(
+  newValue: string,
+  maskPattern: MaskPattern,
+  currentUnmasked: string,
+): number {
+  let position = 0;
+  let unmaskedCount = 0;
+
+  for (let i = 0; i < maskPattern.pattern.length && i < newValue.length; i++) {
+    if (maskPattern.pattern[i] === "#") {
+      unmaskedCount++;
+      if (unmaskedCount <= currentUnmasked.length) {
+        position = i + 1;
+      }
+    }
+  }
+  return position;
+}
+
 function MaskInput(props: MaskInputProps) {
   const {
     value: valueProp,
@@ -689,7 +790,7 @@ function MaskInput(props: MaskInputProps) {
           }
         }
         if (mask === "percentage" || maskPattern.pattern.includes("%")) {
-          return "0.00%";
+          return ZERO_PERCENTAGE;
         }
         return maskPattern?.placeholder ?? placeholder;
       }
@@ -705,11 +806,11 @@ function MaskInput(props: MaskInputProps) {
           });
           return formatter.format(0);
         } catch {
-          return "$0.00";
+          return CURRENCY_FALLBACK;
         }
       }
       if (mask === "percentage" || maskPattern.pattern.includes("%")) {
-        return "0.00%";
+        return ZERO_PERCENTAGE;
       }
       return maskPattern?.placeholder;
     }
@@ -733,7 +834,8 @@ function MaskInput(props: MaskInputProps) {
   }, [value, maskPattern, withoutMask, transformOpts, mask]);
 
   const tokenCount = React.useMemo(() => {
-    if (!maskPattern || /[€$%]/.test(maskPattern.pattern)) return undefined;
+    if (!maskPattern || CURRENCY_PERCENTAGE_SYMBOLS.test(maskPattern.pattern))
+      return undefined;
     return maskPattern.pattern.match(REGEX_CACHE.hashPattern)?.length ?? 0;
   }, [maskPattern]);
 
@@ -741,10 +843,7 @@ function MaskInput(props: MaskInputProps) {
     ? maskPattern?.pattern.length
     : maxLength;
 
-  const numericPatterns = React.useMemo(
-    () => /^(phone|zipCode|zipCodeExtended|ssn|ein|time|date|creditCard)$/,
-    [],
-  );
+  // Use pre-compiled pattern instead of creating new one
 
   const calculatedInputMode = React.useMemo(() => {
     if (inputMode) return inputMode;
@@ -754,11 +853,11 @@ function MaskInput(props: MaskInputProps) {
       return "decimal";
     }
 
-    if (typeof mask === "string" && numericPatterns.test(mask)) {
+    if (typeof mask === "string" && NUMERIC_MASK_PATTERNS.test(mask)) {
       return "numeric";
     }
     return undefined;
-  }, [maskPattern, mask, inputMode, numericPatterns]);
+  }, [maskPattern, mask, inputMode]);
 
   const shouldValidate = React.useCallback(
     (trigger: "change" | "blur") => {
@@ -797,7 +896,7 @@ function MaskInput(props: MaskInputProps) {
         onValidate(isValid, unmaskedValue);
       }
     },
-    [onValidate, maskPattern, validationOpts],
+    [onValidate, maskPattern?.validate, validationOpts],
   );
 
   const onValueChange = React.useCallback(
@@ -843,46 +942,18 @@ function MaskInput(props: MaskInputProps) {
           });
 
           let newCursorPosition: number;
-          if (
-            maskPattern.pattern.includes("$") ||
-            maskPattern.pattern.includes("€") ||
-            maskPattern.pattern.includes("%")
-          ) {
-            if (mask === "currency") {
-              const currencyAtEnd = isCurrencyAtEnd(
-                transformOpts.locale,
-                transformOpts.currency,
-              );
-              if (currencyAtEnd) {
-                const match = newValue.match(/(\d)\s*([^\d\s]+)$/);
-                if (match?.[1]) {
-                  newCursorPosition = newValue.lastIndexOf(match[1]) + 1;
-                } else {
-                  newCursorPosition = newValue.length;
-                }
-              } else {
-                newCursorPosition = newValue.length;
-              }
-            } else {
-              newCursorPosition = newValue.length;
-            }
+          if (CURRENCY_PERCENTAGE_SYMBOLS.test(maskPattern.pattern)) {
+            newCursorPosition = getCurrencyCaretPosition(
+              newValue,
+              mask,
+              transformOpts,
+            );
           } else {
-            let position = 0;
-            let unmaskedCount = 0;
-
-            for (
-              let i = 0;
-              i < maskPattern.pattern.length && i < newValue.length;
-              i++
-            ) {
-              if (maskPattern.pattern[i] === "#") {
-                unmaskedCount++;
-                if (unmaskedCount <= currentUnmasked.length) {
-                  position = i + 1;
-                }
-              }
-            }
-            newCursorPosition = position;
+            newCursorPosition = getPatternCaretPosition(
+              newValue,
+              maskPattern,
+              currentUnmasked,
+            );
           }
 
           if (isCurrencyMask(mask, maskPattern.pattern)) {
