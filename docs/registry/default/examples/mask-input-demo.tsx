@@ -62,7 +62,7 @@ export default function MaskInputDemo() {
   );
 
   return (
-    <div className="grid gap-6 md:grid-cols-2">
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       <div className="flex flex-col gap-2">
         <Label htmlFor={`${id}-phone`}>Phone Number</Label>
         <MaskInput
@@ -135,17 +135,21 @@ export default function MaskInputDemo() {
         </p>
       </div>
       <div className="flex flex-col gap-2">
-        <Label htmlFor={`${id}-percentage`}>Percentage</Label>
+        <Label htmlFor={`${id}-percentage`}>Percentage (0-100%)</Label>
         <MaskInput
           id={`${id}-percentage`}
           mask="percentage"
           placeholder="0.00%"
+          min={0}
+          max={100}
           value={input.percentage}
           onValueChange={onValueChange("percentage")}
           onValidate={onValidate("percentage")}
           invalid={!validation.percentage}
         />
-        <p className="text-muted-foreground text-sm">Enter your percentage</p>
+        <p className="text-muted-foreground text-sm">
+          Enter a percentage between 0% and 100%
+        </p>
       </div>
     </div>
   );

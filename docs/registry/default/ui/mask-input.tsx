@@ -10,11 +10,16 @@ interface TransformOptions {
   locale?: string;
 }
 
+interface ValidateOptions {
+  min?: number;
+  max?: number;
+}
+
 interface MaskPattern {
   pattern: string;
   placeholder?: string;
   transform?: (value: string, opts?: TransformOptions) => string;
-  validate?: (value: string) => boolean;
+  validate?: (value: string, opts?: ValidateOptions) => boolean;
 }
 
 type MaskPatternKey =
@@ -235,9 +240,11 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
       }
       return cleaned;
     },
-    validate: (value) => {
+    validate: (value, opts = {}) => {
       const num = parseFloat(value);
-      return !Number.isNaN(num) && num >= 0 && num <= 100;
+      const min = opts.min ?? 0;
+      const max = opts.max ?? 100;
+      return !Number.isNaN(num) && num >= min && num <= max;
     },
   },
   licensePlate: {
@@ -299,14 +306,14 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
   },
 };
 
-function applyMask(options: {
+function applyMask(opts: {
   value: string;
   pattern: string;
   currency?: string;
   locale?: string;
   mask?: MaskPatternKey | MaskPattern;
 }): string {
-  const { value, pattern, currency, locale, mask } = options;
+  const { value, pattern, currency, locale, mask } = opts;
 
   const cleanValue = value;
 
@@ -340,12 +347,12 @@ function applyMask(options: {
   return masked;
 }
 
-function applyCurrencyMask(options: {
+function applyCurrencyMask(opts: {
   value: string;
   currency?: string;
   locale?: string;
 }): string {
-  const { value, currency = "USD", locale = "en-US" } = options;
+  const { value, currency = "USD", locale = "en-US" } = opts;
 
   if (!value) return "";
 
@@ -453,25 +460,25 @@ function applyPercentageMask(value: string): string {
   return `${result}%`;
 }
 
-function getUnmaskedValue(options: {
+function getUnmaskedValue(opts: {
   value: string;
   transform?: (value: string, opts?: TransformOptions) => string;
   currency?: string;
   locale?: string;
 }): string {
-  const { value, transform, currency, locale } = options;
+  const { value, transform, currency, locale } = opts;
 
   return transform
     ? transform(value, { currency, locale })
     : value.replace(/\D/g, "");
 }
 
-function toUnmaskedIndex(options: {
+function toUnmaskedIndex(opts: {
   masked: string;
   pattern: string;
   caret: number;
 }): number {
-  const { masked, pattern, caret } = options;
+  const { masked, pattern, caret } = opts;
 
   let idx = 0;
   for (let i = 0; i < caret && i < masked.length && i < pattern.length; i++) {
@@ -482,12 +489,12 @@ function toUnmaskedIndex(options: {
   return idx;
 }
 
-function fromUnmaskedIndex(options: {
+function fromUnmaskedIndex(opts: {
   masked: string;
   pattern: string;
   unmaskedIndex: number;
 }): number {
-  const { masked, pattern, unmaskedIndex } = options;
+  const { masked, pattern, unmaskedIndex } = opts;
 
   let seen = 0;
   for (let i = 0; i < masked.length && i < pattern.length; i++) {
@@ -538,6 +545,8 @@ function MaskInput(props: MaskInputProps) {
     validationMode = "onChange",
     mask,
     placeholder: placeholderProp,
+    min,
+    max,
     asChild = false,
     disabled = false,
     invalid = false,
@@ -716,11 +725,16 @@ function MaskInput(props: MaskInputProps) {
   const onInputValidate = React.useCallback(
     (unmaskedValue: string) => {
       if (onValidate && maskPattern?.validate) {
-        const isValid = maskPattern.validate(unmaskedValue);
+        const minValue = typeof min === "string" ? parseFloat(min) : min;
+        const maxValue = typeof max === "string" ? parseFloat(max) : max;
+        const isValid = maskPattern.validate(unmaskedValue, {
+          min: minValue,
+          max: maxValue,
+        });
         onValidate(isValid, unmaskedValue);
       }
     },
-    [onValidate, maskPattern],
+    [onValidate, maskPattern, min, max],
   );
 
   const onValueChange = React.useCallback(
@@ -1292,6 +1306,8 @@ function MaskInput(props: MaskInputProps) {
       readOnly={readOnly}
       required={required}
       inputMode={calculatedInputMode}
+      min={min}
+      max={max}
       onFocus={onFocus}
       onBlur={onBlur}
       onKeyDown={onKeyDown}
