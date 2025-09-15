@@ -1,0 +1,20 @@
+{
+  "name": "image-crop-shapes-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "button",
+    "slider",
+    "label"
+  ],
+  "files": [
+    {
+      "path": "examples/image-crop-shapes-demo.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Button } from \"@/components/ui/button\";\nimport { Label } from \"@/components/ui/label\";\nimport * as ImageCrop from \"@/registry/default/ui/image-crop\";\n\nexport default function ImageCropShapesDemo() {\n  const [cropValue, setCropValue] = React.useState({\n    x: 25,\n    y: 25,\n    width: 50,\n    height: 50,\n  });\n  const [zoom, setZoom] = React.useState(1);\n  const [rotation, setRotation] = React.useState(0);\n  const [cropShape, setCropShape] = React.useState<\"rect\" | \"round\">(\"rect\");\n  const [showGrid, setShowGrid] = React.useState(true);\n\n  const shapes = [\n    { label: \"Rectangle\", value: \"rect\" as const },\n    { label: \"Circle\", value: \"round\" as const },\n  ];\n\n  return (\n    <div className=\"mx-auto w-full max-w-2xl space-y-6\">\n      <div className=\"space-y-4\">\n        <div className=\"flex items-center gap-4\">\n          <div className=\"space-y-2\">\n            <Label>Crop Shape</Label>\n            <div className=\"flex gap-2\">\n              {shapes.map((shape) => (\n                <Button\n                  key={shape.value}\n                  variant={cropShape === shape.value ? \"default\" : \"outline\"}\n                  size=\"sm\"\n                  onClick={() => setCropShape(shape.value)}\n                >\n                  {shape.label}\n                </Button>\n              ))}\n            </div>\n          </div>\n\n          <div className=\"space-y-2\">\n            <Label>Options</Label>\n            <Button\n              variant={showGrid ? \"default\" : \"outline\"}\n              size=\"sm\"\n              onClick={() => setShowGrid(!showGrid)}\n            >\n              {showGrid ? \"Hide\" : \"Show\"} Grid\n            </Button>\n          </div>\n        </div>\n      </div>\n\n      <ImageCrop.Root\n        src=\"/placeholder.svg?height=500&width=500\"\n        alt=\"Shape demo image\"\n        value={cropValue}\n        onValueChange={setCropValue}\n        zoom={zoom}\n        onZoomChange={setZoom}\n        rotation={rotation}\n        onRotationChange={setRotation}\n        aspect={1}\n        cropShape={cropShape}\n        showGrid={showGrid}\n        onCropComplete={(croppedArea, croppedAreaPixels) => {\n          console.log(\"Crop complete:\", { croppedArea, croppedAreaPixels });\n        }}\n      >\n        <ImageCrop.CropArea />\n\n        <ImageCrop.Controls>\n          <ImageCrop.ZoomSlider />\n          <ImageCrop.RotateButton direction=\"left\" />\n          <ImageCrop.RotateButton direction=\"right\" />\n          <ImageCrop.ResetButton />\n          <ImageCrop.CropButton />\n        </ImageCrop.Controls>\n      </ImageCrop.Root>\n\n      <div className=\"space-y-1 text-muted-foreground text-sm\">\n        <p>\n          <strong>Rectangle:</strong> Standard rectangular crop area with resize\n          handles\n        </p>\n        <p>\n          <strong>Circle:</strong> Circular crop area perfect for profile\n          pictures\n        </p>\n        <p>\n          <strong>Grid:</strong> Shows rule-of-thirds lines to help with\n          composition\n        </p>\n      </div>\n    </div>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

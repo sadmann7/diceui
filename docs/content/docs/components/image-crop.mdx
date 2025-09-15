@@ -1,0 +1,275 @@
+---
+title: Image Crop
+description: A comprehensive image cropping component with zoom, rotation, and different crop shapes.
+component: true
+---
+
+<ComponentTabs name="image-crop" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add https://diceui.com/r/image-crop
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Install the following dependencies:</Step>
+
+```bash
+npm install lucide-react
+```
+
+<Step>Add the following component to your project:</Step>
+
+<ComponentSource name="image-crop" />
+
+<Step>Update your `tailwind.config.js`</Step>
+
+Add the following to your `tailwind.config.js` file:
+
+```js title="tailwind.config.js" {5-6}
+module.exports = {
+  theme: {
+    extend: {
+      cursor: {
+        'grab': 'grab',
+        'grabbing': 'grabbing',
+      },
+    },
+  },
+}
+```
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+The Image Crop component provides a complete solution for cropping images with features like zoom, rotation, and different crop shapes.
+
+```tsx
+import * as ImageCrop from "@/components/ui/image-crop"
+
+export function ImageCropExample() {
+  const [cropValue, setCropValue] = React.useState({
+    x: 25,
+    y: 25,
+    width: 50,
+    height: 50,
+  })
+  const [zoom, setZoom] = React.useState(1)
+  const [rotation, setRotation] = React.useState(0)
+
+  return (
+    <ImageCrop.Root
+      src="/path/to/image.jpg"
+      value={cropValue}
+      onValueChange={setCropValue}
+      zoom={zoom}
+      onZoomChange={setZoom}
+      rotation={rotation}
+      onRotationChange={setRotation}
+    >
+      <ImageCrop.CropArea />
+      <ImageCrop.Controls>
+        <ImageCrop.ZoomSlider />
+        <ImageCrop.RotateButton direction="left" />
+        <ImageCrop.RotateButton direction="right" />
+        <ImageCrop.ResetButton />
+        <ImageCrop.CropButton />
+      </ImageCrop.Controls>
+    </ImageCrop.Root>
+  )
+}
+```
+
+## Examples
+
+### Basic Usage
+
+<ComponentTabs name="image-crop-demo" />
+
+A simple image crop component with basic controls.
+
+### Controlled State
+
+<ComponentTabs name="image-crop-controlled-demo" />
+
+Example showing how to control the crop state externally with real-time feedback.
+
+### Form Integration
+
+<ComponentTabs name="image-crop-form-demo" />
+
+Integration with forms for profile picture uploads and cropping.
+
+### Different Shapes
+
+<ComponentTabs name="image-crop-shapes-demo" />
+
+Examples of different crop shapes including rectangle and circle crops.
+
+## Layout
+
+The Image Crop component uses a compound component pattern:
+
+```tsx
+<ImageCrop.Root>
+  <ImageCrop.CropArea />
+  <ImageCrop.Controls>
+    <ImageCrop.ZoomSlider />
+    <ImageCrop.RotateButton direction="left" />
+    <ImageCrop.RotateButton direction="right" />
+    <ImageCrop.ResetButton />
+    <ImageCrop.CropButton />
+  </ImageCrop.Controls>
+</ImageCrop.Root>
+```
+
+## API Reference
+
+### Root
+
+The root container that manages all crop state and provides context.
+
+<AutoTypeTable path="docs/image-crop" name="RootProps" />
+
+### CropArea
+
+The main cropping area where the image is displayed with crop overlay.
+
+<AutoTypeTable path="docs/image-crop" name="CropAreaProps" />
+
+### Image
+
+The image element within the crop area (usually not used directly).
+
+<AutoTypeTable path="docs/image-crop" name="ImageProps" />
+
+### Controls
+
+Container for crop control buttons and sliders.
+
+<AutoTypeTable path="docs/image-crop" name="ControlsProps" />
+
+### ZoomSlider
+
+Slider for controlling the zoom level of the image.
+
+<AutoTypeTable path="docs/image-crop" name="ZoomSliderProps" />
+
+### RotateButton
+
+Button for rotating the image in 90-degree increments.
+
+<AutoTypeTable path="docs/image-crop" name="RotateButtonProps" />
+
+### ResetButton
+
+Button for resetting all crop settings to their default values.
+
+<AutoTypeTable path="docs/image-crop" name="ResetButtonProps" />
+
+### CropButton
+
+Button for applying the crop and downloading the result.
+
+<AutoTypeTable path="docs/image-crop" name="CropButtonProps" />
+
+## Data Types
+
+### CropValue
+
+<AutoTypeTable path="docs/image-crop" name="CropValue" />
+
+### Area
+
+<AutoTypeTable path="docs/image-crop" name="Area" />
+
+### Point
+
+<AutoTypeTable path="docs/image-crop" name="Point" />
+
+## Accessibility
+
+The Image Crop component includes several accessibility features:
+
+### Keyboard Support
+
+<KeyboardShortcutsTable>
+  <KeyboardShortcutsTableHeader>
+    <KeyboardShortcutsTableRow>
+      <KeyboardShortcutsTableHead>Key</KeyboardShortcutsTableHead>
+      <KeyboardShortcutsTableHead>Description</KeyboardShortcutsTableHead>
+    </KeyboardShortcutsTableRow>
+  </KeyboardShortcutsTableHeader>
+  <KeyboardShortcutsTableBody>
+    <KeyboardShortcutsTableRow>
+      <KeyboardShortcutsTableCell>
+        <Kbd>Tab</Kbd>
+      </KeyboardShortcutsTableCell>
+      <KeyboardShortcutsTableCell>
+        Navigate between crop controls
+      </KeyboardShortcutsTableCell>
+    </KeyboardShortcutsTableRow>
+    <KeyboardShortcutsTableRow>
+      <KeyboardShortcutsTableCell>
+        <Kbd>Space</Kbd> / <Kbd>Enter</Kbd>
+      </KeyboardShortcutsTableCell>
+      <KeyboardShortcutsTableCell>
+        Activate buttons (rotate, reset, crop)
+      </KeyboardShortcutsTableCell>
+    </KeyboardShortcutsTableRow>
+    <KeyboardShortcutsTableRow>
+      <KeyboardShortcutsTableCell>
+        <Kbd>←</Kbd> <Kbd>→</Kbd>
+      </KeyboardShortcutsTableCell>
+      <KeyboardShortcutsTableCell>
+        Adjust zoom level when slider is focused
+      </KeyboardShortcutsTableCell>
+    </KeyboardShortcutsTableRow>
+  </KeyboardShortcutsTableBody>
+</KeyboardShortcutsTable>
+
+### Screen Reader Support
+
+- All interactive elements have proper ARIA labels
+- Crop area changes are announced to screen readers
+- Button states are communicated clearly
+
+## Features
+
+- **Multiple Crop Shapes**: Support for rectangular and circular crops
+- **Zoom Control**: Smooth zooming with configurable min/max levels  
+- **Rotation**: 90-degree rotation increments
+- **Drag & Drop**: Intuitive drag-to-reposition crop area
+- **Grid Overlay**: Optional rule-of-thirds grid for better composition
+- **Responsive**: Works on mobile and desktop devices
+- **Customizable**: Extensive theming and styling options
+- **Export Options**: Multiple output formats (JPEG, PNG, WebP)
+- **Form Integration**: Easy integration with form libraries
+
+## Notes
+
+- The component requires a valid image URL to function
+- Cropped images are processed client-side using HTML5 Canvas
+- For production use, consider implementing server-side image processing
+- The component handles CORS issues by setting `crossOrigin="anonymous"` on images
+- Mobile touch events are supported for drag interactions

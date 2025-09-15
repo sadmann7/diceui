@@ -123,6 +123,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "image-crop": {
+      name: "image-crop",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["button","slider"],
+      files: [{
+        path: "registry/default/ui/image-crop.tsx",
+        type: "registry:ui",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/image-crop.tsx")),
+      source: "",
+      chunks: []
+    },
     "input-group": {
       name: "input-group",
       description: "",
@@ -792,6 +806,62 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/file-upload-validation-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "image-crop-demo": {
+      name: "image-crop-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","slider"],
+      files: [{
+        path: "registry/default/examples/image-crop-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/image-crop-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "image-crop-controlled-demo": {
+      name: "image-crop-controlled-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","slider","input","label"],
+      files: [{
+        path: "registry/default/examples/image-crop-controlled-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/image-crop-controlled-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "image-crop-form-demo": {
+      name: "image-crop-form-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","slider","input","label","card","avatar"],
+      files: [{
+        path: "registry/default/examples/image-crop-form-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/image-crop-form-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "image-crop-shapes-demo": {
+      name: "image-crop-shapes-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","slider","label"],
+      files: [{
+        path: "registry/default/examples/image-crop-shapes-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/image-crop-shapes-demo.tsx")),
       source: "",
       chunks: []
     },
