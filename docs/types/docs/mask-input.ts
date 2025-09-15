@@ -1,4 +1,3 @@
-import type * as React from "react";
 import type { CompositionProps, EmptyProps } from "@/types";
 
 export interface TransformOptions {

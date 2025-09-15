@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 
 const PAST_YEARS_LIMIT = 120;
 const FUTURE_YEARS_LIMIT = 10;
+
 const DEFAULT_CURRENCY = "USD";
 const DEFAULT_LOCALE = "en-US";
 
@@ -600,14 +601,12 @@ function fromUnmaskedIndex(opts: {
 
 type InputElement = React.ComponentRef<"input">;
 
-type ValidationMode = "onChange" | "onBlur" | "onSubmit" | "onTouched" | "all";
-
 interface MaskInputProps extends React.ComponentProps<"input"> {
   value?: string;
   defaultValue?: string;
   onValueChange?: (maskedValue: string, unmaskedValue: string) => void;
   onValidate?: (isValid: boolean, unmaskedValue: string) => void;
-  validationMode?: ValidationMode;
+  validationMode?: "onChange" | "onBlur" | "onSubmit" | "onTouched" | "all";
   mask?: MaskPatternKey | MaskPattern;
   asChild?: boolean;
   invalid?: boolean;
@@ -1339,6 +1338,5 @@ export {
   fromUnmaskedIndex,
   //
   type MaskPattern,
-  type MaskPatternKey,
-  type ValidationMode,
+  type MaskInputProps,
 };

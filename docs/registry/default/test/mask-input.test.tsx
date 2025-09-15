@@ -11,9 +11,9 @@ import {
   getUnmaskedValue,
   MASK_PATTERNS,
   MaskInput,
+  type MaskInputProps,
   type MaskPattern,
   toUnmaskedIndex,
-  type ValidationMode,
 } from "@/registry/default/ui/mask-input";
 
 // Mock ResizeObserver
@@ -455,7 +455,9 @@ describe("MaskInput", () => {
   });
 
   describe("Validation Modes", () => {
-    const createValidationTest = (mode: ValidationMode) => {
+    const createValidationTest = (
+      mode: NonNullable<MaskInputProps["validationMode"]>,
+    ) => {
       return async () => {
         const user = userEvent.setup();
         const onValidate = vi.fn();
