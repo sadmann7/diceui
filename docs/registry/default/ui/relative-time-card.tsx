@@ -47,7 +47,7 @@ function formatRelativeTime(date: Date): string {
   return date.toLocaleDateString();
 }
 
-interface TimezoneCardProps extends React.ComponentPropsWithoutRef<"div"> {
+interface TimezoneCardProps extends React.ComponentProps<"div"> {
   date: Date;
   timezone?: string;
 }
@@ -125,7 +125,7 @@ const triggerVariants = cva(
 );
 
 interface RelativeTimeCardProps
-  extends React.ComponentPropsWithoutRef<"button">,
+  extends React.ComponentProps<"button">,
     HoverCardProps,
     Pick<
       HoverCardContentProps,
