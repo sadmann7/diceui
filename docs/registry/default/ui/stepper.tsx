@@ -310,7 +310,7 @@ function useStepperContext(consumerName: string) {
   return context;
 }
 
-interface StepperProps extends DivProps {
+interface StepperRootProps extends DivProps {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
@@ -329,7 +329,7 @@ interface StepperProps extends DivProps {
   nonInteractive?: boolean;
 }
 
-function Stepper(props: StepperProps) {
+function StepperRoot(props: StepperRootProps) {
   const {
     value,
     defaultValue,
@@ -1160,7 +1160,7 @@ function StepperContent(props: StepperContentProps) {
 }
 
 export {
-  Stepper as Root,
+  StepperRoot as Root,
   StepperList as List,
   StepperItem as Item,
   StepperTrigger as Trigger,
@@ -1170,7 +1170,7 @@ export {
   StepperDescription as Description,
   StepperContent as Content,
   //
-  Stepper,
+  StepperRoot as Stepper,
   StepperList,
   StepperItem,
   StepperTrigger,
@@ -1182,5 +1182,5 @@ export {
   //
   useStore as useStepper,
   //
-  type StepperProps,
+  type StepperRootProps as StepperProps,
 };
