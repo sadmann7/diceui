@@ -37,10 +37,10 @@ export default function StepperVerticalDemo() {
   return (
     <Stepper defaultValue="shipped" orientation="vertical">
       <StepperList>
-        {steps.map((step, index) => (
+        {steps.map((step) => (
           <StepperItem key={step.value} value={step.value}>
             <StepperTrigger className="not-last:pb-6">
-              <StepperIndicator>{index + 1}</StepperIndicator>
+              <StepperIndicator />
               <div className="flex flex-col gap-1">
                 <StepperTitle>{step.title}</StepperTitle>
                 <StepperDescription>{step.description}</StepperDescription>

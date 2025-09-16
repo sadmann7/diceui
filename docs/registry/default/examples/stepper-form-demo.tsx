@@ -24,6 +24,7 @@ import {
   StepperIndicator,
   StepperItem,
   StepperList,
+  type StepperProps,
   StepperSeparator,
   StepperTitle,
   StepperTrigger,
@@ -82,27 +83,42 @@ export default function StepperFormDemo() {
 
   const currentIndex = steps.findIndex((step) => step.value === currentStep);
 
-  const validateStep = React.useCallback(
-    async (stepValue: string) => {
-      const step = steps.find((s) => s.value === stepValue);
-      if (!step) return false;
-      const isValid = await form.trigger(step.fields);
+  const onValidate: NonNullable<StepperProps["onValidate"]> = React.useCallback(
+    async (_value, direction) => {
+      if (direction === "prev") return true;
+
+      const currentStepData = steps.find((s) => s.value === currentStep);
+      if (!currentStepData) return true;
+
+      const isValid = await form.trigger(currentStepData.fields);
+
+      if (!isValid) {
+        toast.info("Please complete all required fields to continue");
+      }
+
       return isValid;
     },
-    [form],
+    [form, currentStep],
   );
 
-  const nextStep = React.useCallback(async () => {
-    const isValid = await validateStep(currentStep);
-    if (isValid) {
-      const nextIndex = Math.min(currentIndex + 1, steps.length - 1);
-      setCurrentStep(steps[nextIndex]?.value ?? "");
+  const onValueChange = React.useCallback((value: string) => {
+    setCurrentStep(value);
+  }, []);
+
+  const nextStep = React.useCallback(() => {
+    const nextIndex = Math.min(currentIndex + 1, steps.length - 1);
+    const nextStepValue = steps[nextIndex]?.value;
+    if (nextStepValue) {
+      setCurrentStep(nextStepValue);
     }
-  }, [currentIndex, currentStep, validateStep]);
+  }, [currentIndex]);
 
   const prevStep = React.useCallback(() => {
     const prevIndex = Math.max(currentIndex - 1, 0);
-    setCurrentStep(steps[prevIndex]?.value ?? "");
+    const prevStepValue = steps[prevIndex]?.value;
+    if (prevStepValue) {
+      setCurrentStep(prevStepValue);
+    }
   }, [currentIndex]);
 
   const onSubmit = React.useCallback((input: FormSchema) => {
@@ -114,12 +130,16 @@ export default function StepperFormDemo() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <Stepper value={currentStep}>
+        <Stepper
+          value={currentStep}
+          onValueChange={onValueChange}
+          onValidate={onValidate}
+        >
           <StepperList>
-            {steps.map((step, index) => (
+            {steps.map((step) => (
               <StepperItem key={step.value} value={step.value}>
                 <StepperTrigger>
-                  <StepperIndicator>{index + 1}</StepperIndicator>
+                  <StepperIndicator />
                   <div className="flex flex-col gap-px">
                     <StepperTitle>{step.title}</StepperTitle>
                     <StepperDescription>{step.description}</StepperDescription>
