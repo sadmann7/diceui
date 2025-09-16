@@ -516,8 +516,10 @@ function CropperRoot(props: CropperRootProps) {
 }
 
 interface CropperContentProps extends DivProps {
-  onTouchInteractionFilter?: (e: React.TouchEvent<HTMLDivElement>) => boolean;
-  onWheelInteractionFilter?: (e: WheelEvent) => boolean;
+  onTouchInteractionFilter?: (
+    event: React.TouchEvent<HTMLDivElement>,
+  ) => boolean;
+  onWheelInteractionFilter?: (event: WheelEvent) => boolean;
 }
 
 function CropperContent(props: CropperContentProps) {
@@ -551,9 +553,9 @@ function CropperContent(props: CropperContentProps) {
   const wheelTimer = React.useRef<number | null>(null);
 
   const getMousePoint = React.useCallback(
-    (e: MouseEvent | React.MouseEvent) => ({
-      x: Number(e.clientX),
-      y: Number(e.clientY),
+    (event: MouseEvent | React.MouseEvent) => ({
+      x: Number(event.clientX),
+      y: Number(event.clientY),
     }),
     [],
   );
@@ -789,14 +791,14 @@ function CropperContent(props: CropperContentProps) {
   );
 
   const onWheel = React.useCallback(
-    (e: WheelEvent) => {
-      if (onWheelInteractionFilter && !onWheelInteractionFilter(e)) {
+    (event: WheelEvent) => {
+      if (onWheelInteractionFilter && !onWheelInteractionFilter(event)) {
         return;
       }
 
-      e.preventDefault();
-      const point = getMousePoint(e);
-      const newZoom = zoom - (e.deltaY * context.zoomSpeed) / 200;
+      event.preventDefault();
+      const point = getMousePoint(event);
+      const newZoom = zoom - (event.deltaY * context.zoomSpeed) / 200;
       setNewZoom(newZoom, point, true);
 
       store.setState("hasWheelJustStarted", true);
