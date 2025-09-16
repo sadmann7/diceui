@@ -948,6 +948,18 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "stepper-validation-demo",
+    type: "registry:example",
+    dependencies: ["@hookform/resolvers", "react-hook-form", "sonner", "zod"],
+    registryDependencies: ["form"],
+    files: [
+      {
+        path: "examples/stepper-validation-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "stepper-vertical-demo",
     type: "registry:example",
     files: [

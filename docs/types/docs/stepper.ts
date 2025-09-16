@@ -47,6 +47,24 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   onValueComplete?: (value: string, completed: boolean) => void;
 
   /**
+   * Event handler called to validate the current step before changing steps.
+   *
+   * Accepts the current step value and the direction of the change (next or prev), and returns a boolean or Promise<boolean>.
+   *
+   * ```ts
+   * onValidate={(value, direction) => {
+   *   if (direction === "prev") return true
+   *   // Validate the current step
+   *   return validateCurrentStep(value)
+   * }}
+   * ```
+   */
+  onValidate?: (
+    value: string,
+    direction: "next" | "prev",
+  ) => boolean | Promise<boolean>;
+
+  /**
    * Event handler called when a step is added to the stepper.
    *
    * ```ts
