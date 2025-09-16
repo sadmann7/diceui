@@ -279,14 +279,13 @@ function createStore(
 
       state[key] = value;
 
-      // Call appropriate callbacks
       if (
         key === "crop" &&
         typeof value === "object" &&
         value &&
         "x" in value
       ) {
-        onCropChange?.(value as Point);
+        onCropChange?.(value);
       } else if (key === "zoom" && typeof value === "number") {
         onZoomChange?.(value);
       } else if (key === "rotation" && typeof value === "number") {
@@ -517,8 +516,8 @@ function CropperRoot(props: CropperRootProps) {
 }
 
 interface CropperContentProps extends DivProps {
-  onTouchRequest?: (e: React.TouchEvent<HTMLDivElement>) => boolean;
-  onWheelRequest?: (e: WheelEvent) => boolean;
+  onTouchInteractionFilter?: (e: React.TouchEvent<HTMLDivElement>) => boolean;
+  onWheelInteractionFilter?: (e: WheelEvent) => boolean;
 }
 
 function CropperContent(props: CropperContentProps) {
@@ -527,8 +526,8 @@ function CropperContent(props: CropperContentProps) {
     children,
     asChild,
     ref,
-    onTouchRequest,
-    onWheelRequest,
+    onTouchInteractionFilter,
+    onWheelInteractionFilter,
     ...containerProps
   } = props;
 
@@ -690,17 +689,17 @@ function CropperContent(props: CropperContentProps) {
   }, [store]);
 
   const onMouseMove = React.useCallback(
-    (e: MouseEvent) => onDrag(getMousePoint(e)),
+    (event: MouseEvent) => onDrag(getMousePoint(event)),
     [getMousePoint, onDrag],
   );
 
   const onMouseDown = React.useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      e.preventDefault();
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      event.preventDefault();
       document.addEventListener("mousemove", onMouseMove);
       document.addEventListener("mouseup", onDragStopped);
       saveContainerPosition();
-      onDragStart(getMousePoint(e));
+      onDragStart(getMousePoint(event));
     },
     [
       getMousePoint,
@@ -712,12 +711,12 @@ function CropperContent(props: CropperContentProps) {
   );
 
   const onTouchMove = React.useCallback(
-    (e: TouchEvent) => {
-      e.preventDefault();
-      if (e.touches.length === 2) {
+    (event: TouchEvent) => {
+      event.preventDefault();
+      if (event.touches.length === 2) {
         // Pinch move
-        const touch0 = e.touches[0];
-        const touch1 = e.touches[1];
+        const touch0 = event.touches[0];
+        const touch1 = event.touches[1];
         if (touch0 && touch1) {
           const pointA = getTouchPoint(touch0);
           const pointB = getTouchPoint(touch1);
@@ -741,8 +740,8 @@ function CropperContent(props: CropperContentProps) {
             lastPinchRotation.current = rotationAngle;
           });
         }
-      } else if (e.touches.length === 1) {
-        const touch0 = e.touches[0];
+      } else if (event.touches.length === 1) {
+        const touch0 = event.touches[0];
         if (touch0) {
           onDrag(getTouchPoint(touch0));
         }
@@ -752,8 +751,8 @@ function CropperContent(props: CropperContentProps) {
   );
 
   const onTouchStart = React.useCallback(
-    (e: React.TouchEvent<HTMLDivElement>) => {
-      if (onTouchRequest && !onTouchRequest(e)) {
+    (event: React.TouchEvent<HTMLDivElement>) => {
+      if (onTouchInteractionFilter && !onTouchInteractionFilter(event)) {
         return;
       }
 
@@ -761,10 +760,10 @@ function CropperContent(props: CropperContentProps) {
       document.addEventListener("touchend", onDragStopped);
       saveContainerPosition();
 
-      if (e.touches.length === 2) {
+      if (event.touches.length === 2) {
         // Pinch start
-        const touch0 = e.touches[0];
-        const touch1 = e.touches[1];
+        const touch0 = event.touches[0];
+        const touch1 = event.touches[1];
         if (touch0 && touch1) {
           const pointA = getTouchPoint(touch0);
           const pointB = getTouchPoint(touch1);
@@ -772,15 +771,15 @@ function CropperContent(props: CropperContentProps) {
           lastPinchRotation.current = getRotationBetweenPoints(pointA, pointB);
           onDragStart(getCenter(pointA, pointB));
         }
-      } else if (e.touches.length === 1) {
-        const touch0 = e.touches[0];
+      } else if (event.touches.length === 1) {
+        const touch0 = event.touches[0];
         if (touch0) {
           onDragStart(getTouchPoint(touch0));
         }
       }
     },
     [
-      onTouchRequest,
+      onTouchInteractionFilter,
       onDragStopped,
       onTouchMove,
       saveContainerPosition,
@@ -791,7 +790,7 @@ function CropperContent(props: CropperContentProps) {
 
   const onWheel = React.useCallback(
     (e: WheelEvent) => {
-      if (onWheelRequest && !onWheelRequest(e)) {
+      if (onWheelInteractionFilter && !onWheelInteractionFilter(e)) {
         return;
       }
 
@@ -811,7 +810,14 @@ function CropperContent(props: CropperContentProps) {
         store.setState("isDragging", false);
       }, 250);
     },
-    [onWheelRequest, getMousePoint, zoom, context.zoomSpeed, setNewZoom, store],
+    [
+      onWheelInteractionFilter,
+      getMousePoint,
+      zoom,
+      context.zoomSpeed,
+      setNewZoom,
+      store,
+    ],
   );
 
   const onKeyDown = React.useCallback(
@@ -989,34 +995,15 @@ function CropperImage(props: CropperImageProps) {
     if (container) {
       const containerRect = container.getBoundingClientRect();
 
-      // Only calculate crop size if container has dimensions
-      if (containerRect.width > 0 && containerRect.height > 0) {
-        const cropSize = getCropSize(
-          mediaSize.width,
-          mediaSize.height,
-          containerRect.width,
-          containerRect.height,
-          context.aspect,
-          rotation,
-        );
-        store.setState("cropSize", cropSize);
-      } else {
-        // Retry after a short delay to allow layout to complete
-        setTimeout(() => {
-          const retryRect = container.getBoundingClientRect();
-          if (retryRect.width > 0 && retryRect.height > 0) {
-            const cropSize = getCropSize(
-              mediaSize.width,
-              mediaSize.height,
-              retryRect.width,
-              retryRect.height,
-              context.aspect,
-              rotation,
-            );
-            store.setState("cropSize", cropSize);
-          }
-        }, 100);
-      }
+      const cropSize = getCropSize(
+        mediaSize.width,
+        mediaSize.height,
+        containerRect.width,
+        containerRect.height,
+        context.aspect,
+        rotation,
+      );
+      store.setState("cropSize", cropSize);
     }
 
     onLoad?.(
