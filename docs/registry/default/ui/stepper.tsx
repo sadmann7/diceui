@@ -95,6 +95,8 @@ type Direction = "ltr" | "rtl";
 
 type Orientation = "horizontal" | "vertical";
 
+type NavigationDirection = "next" | "prev";
+
 type ActivationMode = "automatic" | "manual";
 
 type DataState = "inactive" | "active" | "completed";
@@ -152,7 +154,7 @@ interface Store {
   setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
   setStateWithValidation: (
     value: string,
-    direction: "next" | "prev",
+    direction: NavigationDirection,
   ) => Promise<boolean>;
   notify: () => void;
   addStep: (value: string, completed: boolean, disabled: boolean) => void;
@@ -169,7 +171,7 @@ function createStore(
   onValueRemove?: (value: string) => void,
   onValidate?: (
     value: string,
-    direction: "next" | "prev",
+    direction: NavigationDirection,
   ) => boolean | Promise<boolean>,
 ): Store {
   const store: Store = {
@@ -308,7 +310,7 @@ function useStepperContext(consumerName: string) {
   return context;
 }
 
-interface StepperRootProps extends DivProps {
+interface StepperProps extends DivProps {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
@@ -317,7 +319,7 @@ interface StepperRootProps extends DivProps {
   onValueRemove?: (value: string) => void;
   onValidate?: (
     value: string,
-    direction: "next" | "prev",
+    direction: NavigationDirection,
   ) => boolean | Promise<boolean>;
   activationMode?: ActivationMode;
   dir?: Direction;
@@ -327,7 +329,7 @@ interface StepperRootProps extends DivProps {
   nonInteractive?: boolean;
 }
 
-function StepperRoot(props: StepperRootProps) {
+function Stepper(props: StepperProps) {
   const {
     value,
     defaultValue,
@@ -799,7 +801,7 @@ function StepperTrigger(props: StepperTriggerProps) {
       if (event.defaultPrevented) return;
 
       if (!isDisabled && !context.nonInteractive) {
-        const currentStepIndex = Array.from(steps.keys()).indexOf(value || "");
+        const currentStepIndex = Array.from(steps.keys()).indexOf(value ?? "");
         const targetStepIndex = Array.from(steps.keys()).indexOf(itemValue);
         const direction = targetStepIndex > currentStepIndex ? "next" : "prev";
 
@@ -1158,7 +1160,7 @@ function StepperContent(props: StepperContentProps) {
 }
 
 export {
-  StepperRoot as Root,
+  Stepper as Root,
   StepperList as List,
   StepperItem as Item,
   StepperTrigger as Trigger,
@@ -1168,7 +1170,7 @@ export {
   StepperDescription as Description,
   StepperContent as Content,
   //
-  StepperRoot as Stepper,
+  Stepper,
   StepperList,
   StepperItem,
   StepperTrigger,
@@ -1180,5 +1182,5 @@ export {
   //
   useStore as useStepper,
   //
-  type StepperRootProps as StepperProps,
+  type StepperProps,
 };
