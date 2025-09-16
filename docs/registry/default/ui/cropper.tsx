@@ -1,12 +1,13 @@
 "use client";
 
 import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 
 const ROOT_NAME = "Cropper";
-const CONTAINER_NAME = "CropperContainer";
+const CONTENT_NAME = "CropperContent";
 const IMAGE_NAME = "CropperImage";
 const VIDEO_NAME = "CropperVideo";
 const AREA_NAME = "CropperArea";
@@ -449,15 +450,21 @@ function CropperRoot(props: CropperRootProps) {
   );
 
   React.useEffect(() => {
-    store.setState("crop", crop);
+    if (crop !== undefined) {
+      store.setState("crop", crop);
+    }
   }, [crop, store]);
 
   React.useEffect(() => {
-    store.setState("zoom", zoom);
+    if (zoom !== undefined) {
+      store.setState("zoom", zoom);
+    }
   }, [zoom, store]);
 
   React.useEffect(() => {
-    store.setState("rotation", rotation);
+    if (rotation !== undefined) {
+      store.setState("rotation", rotation);
+    }
   }, [rotation, store]);
 
   const id = React.useId();
@@ -509,13 +516,12 @@ function CropperRoot(props: CropperRootProps) {
   );
 }
 
-// Container component
-interface CropperContainerProps extends DivProps {
+interface CropperContentProps extends DivProps {
   onTouchRequest?: (e: React.TouchEvent<HTMLDivElement>) => boolean;
   onWheelRequest?: (e: WheelEvent) => boolean;
 }
 
-function CropperContainer(props: CropperContainerProps) {
+function CropperContent(props: CropperContentProps) {
   const {
     className,
     children,
@@ -526,8 +532,8 @@ function CropperContainer(props: CropperContainerProps) {
     ...containerProps
   } = props;
 
-  const context = useCropperContext(CONTAINER_NAME);
-  const store = useStoreContext(CONTAINER_NAME);
+  const context = useCropperContext(CONTENT_NAME);
+  const store = useStoreContext(CONTENT_NAME);
   const crop = useStore((state) => state.crop);
   const zoom = useStore((state) => state.zoom);
   const rotation = useStore((state) => state.rotation);
@@ -933,13 +939,28 @@ function CropperContainer(props: CropperContainerProps) {
   );
 }
 
-// Image component
-interface CropperImageProps extends React.ComponentProps<"img"> {
+const cropperMediaVariants = cva("will-change-transform", {
+  variants: {
+    objectFit: {
+      contain: "absolute inset-0 m-auto max-h-full max-w-full",
+      cover: "h-auto w-full",
+      "horizontal-cover": "h-auto w-full",
+      "vertical-cover": "h-full w-auto",
+    },
+  },
+  defaultVariants: {
+    objectFit: "contain",
+  },
+});
+
+interface CropperImageProps
+  extends React.ComponentProps<"img">,
+    VariantProps<typeof cropperMediaVariants> {
   asChild?: boolean;
 }
 
 function CropperImage(props: CropperImageProps) {
-  const { className, asChild, ref, onLoad, ...imageProps } = props;
+  const { className, asChild, ref, onLoad, objectFit, ...imageProps } = props;
 
   const context = useCropperContext(IMAGE_NAME);
   const store = useStoreContext(IMAGE_NAME);
@@ -1011,20 +1032,6 @@ function CropperImage(props: CropperImageProps) {
     }
   }, [onMediaLoad]);
 
-  const objectFitClass = React.useMemo(() => {
-    switch (context.objectFit) {
-      case "contain":
-        return "max-w-full max-h-full absolute inset-0 m-auto";
-      case "horizontal-cover":
-        return "w-full h-auto";
-      case "vertical-cover":
-        return "w-auto h-full";
-      case "cover":
-      default:
-        return "w-full h-auto";
-    }
-  }, [context.objectFit]);
-
   const ImagePrimitive = asChild ? Slot : "img";
 
   return (
@@ -1032,7 +1039,12 @@ function CropperImage(props: CropperImageProps) {
       data-slot="cropper-image"
       {...imageProps}
       ref={composedRef}
-      className={cn("will-change-transform", objectFitClass, className)}
+      className={cn(
+        cropperMediaVariants({
+          objectFit: objectFit ?? context.objectFit,
+        }),
+        className,
+      )}
       style={{
         transform: `translate(${crop.x}px, ${crop.y}px) rotate(${rotation}deg) scale(${zoom})`,
         ...imageProps.style,
@@ -1042,13 +1054,21 @@ function CropperImage(props: CropperImageProps) {
   );
 }
 
-// Video component
-interface CropperVideoProps extends React.ComponentProps<"video"> {
+interface CropperVideoProps
+  extends React.ComponentProps<"video">,
+    VariantProps<typeof cropperMediaVariants> {
   asChild?: boolean;
 }
 
 function CropperVideo(props: CropperVideoProps) {
-  const { className, asChild, ref, onLoadedMetadata, ...videoProps } = props;
+  const {
+    className,
+    asChild,
+    ref,
+    onLoadedMetadata,
+    objectFit,
+    ...videoProps
+  } = props;
 
   const context = useCropperContext(VIDEO_NAME);
   const store = useStoreContext(VIDEO_NAME);
@@ -1114,20 +1134,6 @@ function CropperVideo(props: CropperVideoProps) {
     );
   }, [store, context.aspect, context.containerRef, rotation, onLoadedMetadata]);
 
-  const objectFitClass = React.useMemo(() => {
-    switch (context.objectFit) {
-      case "contain":
-        return "max-w-full max-h-full absolute inset-0 m-auto";
-      case "horizontal-cover":
-        return "w-full h-auto";
-      case "vertical-cover":
-        return "w-auto h-full";
-      case "cover":
-      default:
-        return "w-full h-auto";
-    }
-  }, [context.objectFit]);
-
   const VideoPrimitive = asChild ? Slot : "video";
 
   return (
@@ -1140,7 +1146,12 @@ function CropperVideo(props: CropperVideoProps) {
       controls={false}
       {...videoProps}
       ref={composedRef}
-      className={cn("will-change-transform", objectFitClass, className)}
+      className={cn(
+        cropperMediaVariants({
+          objectFit: objectFit ?? context.objectFit,
+        }),
+        className,
+      )}
       style={{
         transform: `translate(${crop.x}px, ${crop.y}px) rotate(${rotation}deg) scale(${zoom})`,
         ...videoProps.style,
@@ -1150,8 +1161,29 @@ function CropperVideo(props: CropperVideoProps) {
   );
 }
 
-// Crop area component
-interface CropperAreaProps extends DivProps {
+const cropperAreaVariants = cva(
+  "-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2 box-border overflow-hidden border border-white/50 shadow-[0_0_0_9999em_rgba(0,0,0,0.5)]",
+  {
+    variants: {
+      shape: {
+        rect: "",
+        round: "rounded-full",
+      },
+      showGrid: {
+        true: "before:absolute before:top-0 before:right-1/3 before:bottom-0 before:left-1/3 before:box-border before:border before:border-white/50 before:border-t-0 before:border-b-0 before:content-[''] after:absolute after:top-1/3 after:right-0 after:bottom-1/3 after:left-0 after:box-border after:border after:border-white/50 after:border-r-0 after:border-l-0 after:content-['']",
+        false: "",
+      },
+    },
+    defaultVariants: {
+      shape: "rect",
+      showGrid: false,
+    },
+  },
+);
+
+interface CropperAreaProps
+  extends DivProps,
+    VariantProps<typeof cropperAreaVariants> {
   roundCropAreaPixels?: boolean;
 }
 
@@ -1161,6 +1193,8 @@ function CropperArea(props: CropperAreaProps) {
     asChild,
     ref,
     roundCropAreaPixels = false,
+    shape,
+    showGrid,
     ...areaProps
   } = props;
 
@@ -1177,15 +1211,10 @@ function CropperArea(props: CropperAreaProps) {
       {...areaProps}
       ref={ref}
       className={cn(
-        "-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2 box-border overflow-hidden border border-white/50",
-        "shadow-[0_0_0_9999em_rgba(0,0,0,0.5)]",
-        {
-          "rounded-full": context.cropShape === "round",
-          "before:absolute before:top-0 before:right-1/3 before:bottom-0 before:left-1/3 before:box-border before:border before:border-white/50 before:border-t-0 before:border-b-0 before:content-['']":
-            context.showGrid,
-          "after:absolute after:top-1/3 after:right-0 after:bottom-1/3 after:left-0 after:box-border after:border after:border-white/50 after:border-r-0 after:border-l-0 after:content-['']":
-            context.showGrid,
-        },
+        cropperAreaVariants({
+          shape: shape ?? context.cropShape,
+          showGrid: showGrid ?? context.showGrid,
+        }),
         className,
       )}
       style={{
@@ -1203,19 +1232,21 @@ function CropperArea(props: CropperAreaProps) {
 
 export {
   CropperRoot as Root,
-  CropperContainer as Container,
+  CropperContent as Content,
   CropperImage as Image,
   CropperVideo as Video,
   CropperArea as Area,
   //
   CropperRoot as Cropper,
-  CropperContainer,
+  CropperContent,
   CropperImage,
   CropperVideo,
   CropperArea,
   //
   useStore as useCropper,
+  //
   computeCroppedArea,
+  //
   type Point,
   type Size,
   type Area as CropArea,

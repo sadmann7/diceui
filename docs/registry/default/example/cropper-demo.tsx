@@ -17,7 +17,7 @@ import {
   type CropArea,
   Cropper,
   CropperArea,
-  CropperContainer,
+  CropperContent,
   CropperImage,
   type CropShape,
   type ObjectFit,
@@ -26,7 +26,7 @@ import {
 } from "@/registry/default/ui/cropper";
 
 const DEMO_IMAGE =
-  "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=800&h=600&fit=crop&crop=face";
+  "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1920&h=1080&fit=crop&auto=format&fm=webp&q=80";
 
 export default function CropperDemo() {
   const [crop, setCrop] = React.useState<Point>({ x: 0, y: 0 });
@@ -101,10 +101,10 @@ export default function CropperDemo() {
                 onRotationChange={onRotationChange}
                 onCropComplete={onCropComplete}
               >
-                <CropperContainer>
+                <CropperContent>
                   <CropperImage src={DEMO_IMAGE} alt="Crop me" />
                   <CropperArea />
-                </CropperContainer>
+                </CropperContent>
               </Cropper>
             </div>
             <div className="mt-4 flex gap-2">
@@ -308,13 +308,13 @@ export function VideoCropperDemo() {
             onZoomChange={setZoom}
             onRotationChange={setRotation}
           >
-            <CropperContainer>
+            <CropperContent>
               {/* Note: In a real implementation, you'd use CropperVideo with a video source */}
               <div className="flex h-full items-center justify-center bg-muted text-muted-foreground">
                 Video cropping would work similarly with CropperVideo component
               </div>
               <CropperArea />
-            </CropperContainer>
+            </CropperContent>
           </Cropper>
         </div>
       </CardContent>
@@ -342,10 +342,10 @@ export function SimpleCropperDemo() {
             onCropChange={setCrop}
             onZoomChange={setZoom}
           >
-            <CropperContainer>
+            <CropperContent>
               <CropperImage src={DEMO_IMAGE} alt="Profile picture" />
               <CropperArea />
-            </CropperContainer>
+            </CropperContent>
           </Cropper>
         </div>
 
