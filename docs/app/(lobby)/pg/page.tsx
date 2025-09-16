@@ -28,6 +28,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
+import EditableDemo from "@/registry/default/examples/editable-demo";
 import StepperControlledDemo from "@/registry/default/examples/stepper-controlled-demo";
 import StepperFormDemo from "@/registry/default/examples/stepper-form-demo";
 import StepperValidationDemo from "@/registry/default/examples/stepper-validation-demo";
@@ -44,9 +45,7 @@ import {
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <StepperControlledDemo />
-      <StepperFormDemo />
-      <StepperValidationDemo />
+      <EditableDemo />
       <ColorPickerDemo />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
