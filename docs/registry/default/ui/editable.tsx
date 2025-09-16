@@ -203,15 +203,15 @@ function EditableRoot(props: EditableRootProps) {
         value={value}
         defaultValue={defaultValue}
         editing={editing}
-        onValueChange={onValueChange}
-        onEditingChange={onEditingChange}
         {...rootProps}
       />
     </StoreContext.Provider>
   );
 }
 
-function EditableRootImpl(props: EditableRootProps) {
+function EditableRootImpl(
+  props: Omit<EditableRootProps, "onValueChange" | "onEditingChange">,
+) {
   const {
     defaultValue = "",
     value: valueProp,
