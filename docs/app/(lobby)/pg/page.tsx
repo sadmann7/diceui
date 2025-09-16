@@ -30,6 +30,7 @@ import { tricks } from "@/lib/data";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
 import StepperControlledDemo from "@/registry/default/examples/stepper-controlled-demo";
 import StepperFormDemo from "@/registry/default/examples/stepper-form-demo";
+import StepperValidationDemo from "@/registry/default/examples/stepper-validation-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -45,6 +46,7 @@ export default function PlaygroundPage() {
     <Shell>
       <StepperControlledDemo />
       <StepperFormDemo />
+      <StepperValidationDemo />
       <ColorPickerDemo />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>

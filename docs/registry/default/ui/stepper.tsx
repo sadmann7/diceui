@@ -150,6 +150,10 @@ interface Store {
   subscribe: (callback: () => void) => () => void;
   getState: () => StoreState;
   setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
+  setStateWithValidation: (
+    value: string,
+    direction: "next" | "prev",
+  ) => Promise<boolean>;
   notify: () => void;
   addStep: (value: string, completed: boolean, disabled: boolean) => void;
   removeStep: (value: string) => void;
@@ -161,6 +165,10 @@ function createStore(
   stateRef: React.RefObject<StoreState>,
   onValueChange?: (value: string) => void,
   onValueComplete?: (value: string, completed: boolean) => void,
+  onValidate?: (
+    value: string,
+    direction: "next" | "prev",
+  ) => boolean | Promise<boolean>,
 ): Store {
   const store: Store = {
     subscribe: (cb) => {
@@ -187,6 +195,23 @@ function createStore(
       }
 
       store.notify();
+    },
+    setStateWithValidation: async (value, direction) => {
+      if (!onValidate) {
+        store.setState("value", value);
+        return true;
+      }
+
+      try {
+        const isValid = await onValidate(value, direction);
+        if (isValid) {
+          store.setState("value", value);
+        }
+        return isValid;
+      } catch (error) {
+        console.error("Validation error:", error);
+        return false;
+      }
     },
     notify: () => {
       if (listenersRef.current) {
@@ -289,6 +314,10 @@ interface StepperRootProps extends DivProps {
   onValueComplete?: (value: string, completed: boolean) => void;
   onValueAdd?: (value: string) => void;
   onValueRemove?: (value: string) => void;
+  onValidate?: (
+    value: string,
+    direction: "next" | "prev",
+  ) => boolean | Promise<boolean>;
   activationMode?: ActivationMode;
   dir?: Direction;
   orientation?: Orientation;
@@ -305,6 +334,7 @@ function StepperRoot(props: StepperRootProps) {
     onValueComplete,
     onValueAdd,
     onValueRemove,
+    onValidate,
     id: idProp,
     dir: dirProp,
     orientation = "horizontal",
@@ -324,8 +354,15 @@ function StepperRoot(props: StepperRootProps) {
   }));
 
   const store = React.useMemo(
-    () => createStore(listenersRef, stateRef, onValueChange, onValueComplete),
-    [listenersRef, stateRef, onValueChange, onValueComplete],
+    () =>
+      createStore(
+        listenersRef,
+        stateRef,
+        onValueChange,
+        onValueComplete,
+        onValidate,
+      ),
+    [listenersRef, stateRef, onValueChange, onValueComplete, onValidate],
   );
 
   React.useEffect(() => {
@@ -768,12 +805,16 @@ function StepperTrigger(props: StepperTriggerProps) {
   ]);
 
   const onClick = React.useCallback(
-    (event: React.MouseEvent<TriggerElement>) => {
+    async (event: React.MouseEvent<TriggerElement>) => {
       triggerProps.onClick?.(event);
       if (event.defaultPrevented) return;
 
       if (!isDisabled && !context.nonInteractive) {
-        store.setState("value", itemValue);
+        const currentStepIndex = Array.from(steps.keys()).indexOf(value || "");
+        const targetStepIndex = Array.from(steps.keys()).indexOf(itemValue);
+        const direction = targetStepIndex > currentStepIndex ? "next" : "prev";
+
+        await store.setStateWithValidation(itemValue, direction);
       }
     },
     [
@@ -781,12 +822,14 @@ function StepperTrigger(props: StepperTriggerProps) {
       context.nonInteractive,
       store,
       itemValue,
+      value,
+      steps,
       triggerProps.onClick,
     ],
   );
 
   const onFocus = React.useCallback(
-    (event: React.FocusEvent<TriggerElement>) => {
+    async (event: React.FocusEvent<TriggerElement>) => {
       triggerProps.onFocus?.(event);
       if (event.defaultPrevented) return;
 
@@ -798,7 +841,11 @@ function StepperTrigger(props: StepperTriggerProps) {
         activationMode !== "manual" &&
         !context.nonInteractive
       ) {
-        store.setState("value", itemValue);
+        const currentStepIndex = Array.from(steps.keys()).indexOf(value || "");
+        const targetStepIndex = Array.from(steps.keys()).indexOf(itemValue);
+        const direction = targetStepIndex > currentStepIndex ? "next" : "prev";
+
+        await store.setStateWithValidation(itemValue, direction);
       }
     },
     [
@@ -810,6 +857,8 @@ function StepperTrigger(props: StepperTriggerProps) {
       context.nonInteractive,
       store,
       itemValue,
+      value,
+      steps,
       triggerProps.onFocus,
     ],
   );
@@ -1141,4 +1190,6 @@ export {
   StepperContent,
   //
   useStore as useStepper,
+  //
+  type StepperRootProps as StepperProps,
 };
