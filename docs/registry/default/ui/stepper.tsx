@@ -901,6 +901,7 @@ function StepperTrigger(props: StepperTriggerProps) {
     <TriggerPrimitive
       id={triggerId}
       role="tab"
+      type="button"
       aria-controls={contentId}
       aria-current={isActive ? "step" : undefined}
       aria-describedby={`${titleId} ${descriptionId}`}

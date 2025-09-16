@@ -116,10 +116,10 @@ export default function StepperFormDemo() {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <Stepper value={currentStep}>
           <StepperList>
-            {steps.map((step, index) => (
+            {steps.map((step) => (
               <StepperItem key={step.value} value={step.value}>
                 <StepperTrigger>
-                  <StepperIndicator>{index + 1}</StepperIndicator>
+                  <StepperIndicator />
                   <div className="flex flex-col gap-px">
                     <StepperTitle>{step.title}</StepperTitle>
                     <StepperDescription>{step.description}</StepperDescription>
