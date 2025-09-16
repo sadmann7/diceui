@@ -525,12 +525,11 @@ interface CropperContentProps extends DivProps {
 function CropperContent(props: CropperContentProps) {
   const {
     className,
-    children,
     asChild,
     ref,
     onTouchInteractionFilter,
     onWheelInteractionFilter,
-    ...containerProps
+    ...contentProps
   } = props;
 
   const context = useCropperContext(CONTENT_NAME);
@@ -921,13 +920,13 @@ function CropperContent(props: CropperContentProps) {
     };
   }, [context.containerRef, context.zoomWithScroll, onWheel]);
 
-  const ContainerPrimitive = asChild ? Slot : "div";
+  const ContentPrimitive = asChild ? Slot : "div";
 
   return (
-    <ContainerPrimitive
-      data-slot="cropper-container"
+    <ContentPrimitive
+      data-slot="cropper-content"
       tabIndex={0}
-      {...containerProps}
+      {...contentProps}
       ref={composedRef}
       className={cn(
         "absolute inset-0 flex cursor-move touch-none select-none items-center justify-center overflow-hidden outline-none",
@@ -937,9 +936,7 @@ function CropperContent(props: CropperContentProps) {
       onTouchStart={onTouchStart}
       onKeyDown={onKeyDown}
       onKeyUp={onKeyUp}
-    >
-      {children}
-    </ContainerPrimitive>
+    />
   );
 }
 
