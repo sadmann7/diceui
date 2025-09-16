@@ -335,7 +335,7 @@ function useStore<T>(selector: (state: StoreState) => T): T {
 
 interface CropperContextValue {
   id: string;
-  aspect: number;
+  aspectRatio: number;
   minZoom: number;
   maxZoom: number;
   cropShape: CropShape;
@@ -362,7 +362,7 @@ interface CropperRootProps extends DivProps {
   crop?: Point;
   zoom?: number;
   rotation?: number;
-  aspect?: number;
+  aspectRatio?: number;
   minZoom?: number;
   maxZoom?: number;
   cropShape?: CropShape;
@@ -386,7 +386,7 @@ function CropperRoot(props: CropperRootProps) {
     crop = { x: 0, y: 0 },
     zoom = 1,
     rotation = 0,
-    aspect = 4 / 3,
+    aspectRatio = 4 / 3,
     minZoom = 1,
     maxZoom = 3,
     cropShape = "rect",
@@ -472,7 +472,7 @@ function CropperRoot(props: CropperRootProps) {
   const contextValue = React.useMemo<CropperContextValue>(
     () => ({
       id: rootId,
-      aspect,
+      aspectRatio,
       minZoom,
       maxZoom,
       cropShape,
@@ -486,7 +486,7 @@ function CropperRoot(props: CropperRootProps) {
     }),
     [
       rootId,
-      aspect,
+      aspectRatio,
       minZoom,
       maxZoom,
       cropShape,
@@ -1002,7 +1002,7 @@ function CropperImage(props: CropperImageProps) {
         mediaSize.height,
         containerRect.width,
         containerRect.height,
-        context.aspect,
+        context.aspectRatio,
         rotation,
       );
       store.setState("cropSize", cropSize);
@@ -1011,7 +1011,7 @@ function CropperImage(props: CropperImageProps) {
     onLoad?.(
       new Event("load") as unknown as React.SyntheticEvent<HTMLImageElement>,
     );
-  }, [store, context.aspect, context.containerRef, rotation, onLoad]);
+  }, [store, context.aspectRatio, context.containerRef, rotation, onLoad]);
 
   // Handle images that are already loaded
   React.useEffect(() => {
@@ -1093,7 +1093,7 @@ function CropperVideo(props: CropperVideoProps) {
           mediaSize.height,
           containerRect.width,
           containerRect.height,
-          context.aspect,
+          context.aspectRatio,
           rotation,
         );
         store.setState("cropSize", cropSize);
@@ -1107,7 +1107,7 @@ function CropperVideo(props: CropperVideoProps) {
               mediaSize.height,
               retryRect.width,
               retryRect.height,
-              context.aspect,
+              context.aspectRatio,
               rotation,
             );
             store.setState("cropSize", cropSize);
@@ -1121,7 +1121,13 @@ function CropperVideo(props: CropperVideoProps) {
         "loadedmetadata",
       ) as unknown as React.SyntheticEvent<HTMLVideoElement>,
     );
-  }, [store, context.aspect, context.containerRef, rotation, onLoadedMetadata]);
+  }, [
+    store,
+    context.aspectRatio,
+    context.containerRef,
+    rotation,
+    onLoadedMetadata,
+  ]);
 
   const VideoPrimitive = asChild ? Slot : "video";
 

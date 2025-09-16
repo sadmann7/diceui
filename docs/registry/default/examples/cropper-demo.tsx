@@ -26,7 +26,7 @@ export function CropperDemo() {
           <Cropper
             crop={crop}
             zoom={zoom}
-            aspect={1}
+            aspectRatio={1}
             onCropChange={setCrop}
             onZoomChange={setZoom}
           >
