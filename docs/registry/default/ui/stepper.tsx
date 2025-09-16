@@ -165,6 +165,8 @@ function createStore(
   stateRef: React.RefObject<StoreState>,
   onValueChange?: (value: string) => void,
   onValueComplete?: (value: string, completed: boolean) => void,
+  onValueAdd?: (value: string) => void,
+  onValueRemove?: (value: string) => void,
   onValidate?: (
     value: string,
     direction: "next" | "prev",
@@ -208,16 +210,8 @@ function createStore(
           store.setState("value", value);
         }
         return isValid;
-      } catch (error) {
-        console.error("Validation error:", error);
+      } catch {
         return false;
-      }
-    },
-    notify: () => {
-      if (listenersRef.current) {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
       }
     },
     addStep: (value, completed, disabled) => {
@@ -225,6 +219,7 @@ function createStore(
       if (state) {
         const newStep: StepState = { value, completed, disabled };
         state.steps.set(value, newStep);
+        onValueAdd?.(value);
         store.notify();
       }
     },
@@ -232,6 +227,7 @@ function createStore(
       const state = stateRef.current;
       if (state) {
         state.steps.delete(value);
+        onValueRemove?.(value);
         store.notify();
       }
     },
@@ -248,6 +244,13 @@ function createStore(
           }
 
           store.notify();
+        }
+      }
+    },
+    notify: () => {
+      if (listenersRef.current) {
+        for (const cb of listenersRef.current) {
+          cb();
         }
       }
     },
@@ -293,8 +296,6 @@ interface StepperContextValue {
   disabled: boolean;
   nonInteractive: boolean;
   loop: boolean;
-  onValueAdd?: (value: string) => void;
-  onValueRemove?: (value: string) => void;
 }
 
 const StepperContext = React.createContext<StepperContextValue | null>(null);
@@ -360,9 +361,19 @@ function StepperRoot(props: StepperRootProps) {
         stateRef,
         onValueChange,
         onValueComplete,
+        onValueAdd,
+        onValueRemove,
         onValidate,
       ),
-    [listenersRef, stateRef, onValueChange, onValueComplete, onValidate],
+    [
+      listenersRef,
+      stateRef,
+      onValueChange,
+      onValueComplete,
+      onValueAdd,
+      onValueRemove,
+      onValidate,
+    ],
   );
 
   React.useEffect(() => {
@@ -386,20 +397,8 @@ function StepperRoot(props: StepperRootProps) {
       disabled,
       nonInteractive,
       loop,
-      onValueAdd,
-      onValueRemove,
     }),
-    [
-      rootId,
-      dir,
-      orientation,
-      activationMode,
-      disabled,
-      nonInteractive,
-      loop,
-      onValueAdd,
-      onValueRemove,
-    ],
+    [rootId, dir, orientation, activationMode, disabled, nonInteractive, loop],
   );
 
   const RootPrimitive = asChild ? Slot : "div";
@@ -657,23 +656,13 @@ function StepperItem(props: StepperItemProps) {
   const orientation = context.orientation;
   const value = useStore((state) => state.value);
 
-  const onValueAdd = React.useCallback(() => {
-    context.onValueAdd?.(itemValue);
-  }, [context.onValueAdd, itemValue]);
-
-  const onValueRemove = React.useCallback(() => {
-    context.onValueRemove?.(itemValue);
-  }, [context.onValueRemove, itemValue]);
-
   useIsomorphicLayoutEffect(() => {
     store.addStep(itemValue, completed, disabled);
-    onValueAdd();
 
     return () => {
       store.removeStep(itemValue);
-      onValueRemove();
     };
-  }, [store, itemValue, completed, disabled, onValueAdd, onValueRemove]);
+  }, [store, itemValue, completed, disabled]);
 
   useIsomorphicLayoutEffect(() => {
     store.setStep(itemValue, completed, disabled);
