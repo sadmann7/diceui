@@ -683,33 +683,9 @@ function CropperContent(props: CropperContentProps) {
     [cropSize, mediaSize, context.restrictPosition, zoom, rotation, store],
   );
 
-  const onDragStopped = React.useCallback(() => {
-    store.setState("isDragging", false);
-    if (rafDragTimeout.current) {
-      window.cancelAnimationFrame(rafDragTimeout.current);
-    }
-  }, [store]);
-
   const onMouseMove = React.useCallback(
     (event: MouseEvent) => onDrag(getMousePoint(event)),
     [getMousePoint, onDrag],
-  );
-
-  const onMouseDown = React.useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
-      event.preventDefault();
-      document.addEventListener("mousemove", onMouseMove);
-      document.addEventListener("mouseup", onDragStopped);
-      saveContainerPosition();
-      onDragStart(getMousePoint(event));
-    },
-    [
-      getMousePoint,
-      onDragStart,
-      onDragStopped,
-      onMouseMove,
-      saveContainerPosition,
-    ],
   );
 
   const onTouchMove = React.useCallback(
@@ -750,6 +726,38 @@ function CropperContent(props: CropperContentProps) {
       }
     },
     [getTouchPoint, onDrag, zoom, setNewZoom, rotation, store],
+  );
+
+  const cleanEvents = React.useCallback(() => {
+    document.removeEventListener("mousemove", onMouseMove);
+    document.removeEventListener("touchmove", onTouchMove);
+  }, [onMouseMove, onTouchMove]);
+
+  const onDragStopped = React.useCallback(() => {
+    store.setState("isDragging", false);
+    if (rafDragTimeout.current) {
+      window.cancelAnimationFrame(rafDragTimeout.current);
+    }
+    document.removeEventListener("mouseup", onDragStopped);
+    document.removeEventListener("touchend", onDragStopped);
+    cleanEvents();
+  }, [store, cleanEvents]);
+
+  const onMouseDown = React.useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      event.preventDefault();
+      document.addEventListener("mousemove", onMouseMove);
+      document.addEventListener("mouseup", onDragStopped);
+      saveContainerPosition();
+      onDragStart(getMousePoint(event));
+    },
+    [
+      getMousePoint,
+      onDragStart,
+      onDragStopped,
+      onMouseMove,
+      saveContainerPosition,
+    ],
   );
 
   const onTouchStart = React.useCallback(
@@ -898,18 +906,6 @@ function CropperContent(props: CropperContentProps) {
     },
     [store],
   );
-
-  // Event cleanup
-  React.useEffect(() => {
-    const cleanEvents = () => {
-      document.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("mouseup", onDragStopped);
-      document.removeEventListener("touchmove", onTouchMove);
-      document.removeEventListener("touchend", onDragStopped);
-    };
-
-    return cleanEvents;
-  }, [onMouseMove, onDragStopped, onTouchMove]);
 
   // Wheel event setup
   React.useEffect(() => {
