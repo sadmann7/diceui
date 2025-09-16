@@ -11,30 +11,29 @@ const IMAGE_NAME = "CropperImage";
 const VIDEO_NAME = "CropperVideo";
 const AREA_NAME = "CropperArea";
 
-// Types
-type Point = {
+interface Point {
   x: number;
   y: number;
-};
+}
 
-type Size = {
+interface Size {
   width: number;
   height: number;
-};
+}
 
-type Area = {
+interface Area {
   width: number;
   height: number;
   x: number;
   y: number;
-};
+}
 
-type MediaSize = {
+interface MediaSize {
   width: number;
   height: number;
   naturalWidth: number;
   naturalHeight: number;
-};
+}
 
 type CropShape = "rect" | "round";
 type ObjectFit = "contain" | "cover" | "horizontal-cover" | "vertical-cover";
@@ -43,7 +42,6 @@ interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-// Helper functions
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
@@ -228,7 +226,6 @@ function useLazyRef<T>(fn: () => T) {
   return ref as React.RefObject<T>;
 }
 
-// Store types and implementation
 interface StoreState {
   crop: Point;
   zoom: number;
@@ -336,7 +333,6 @@ function useStore<T>(selector: (state: StoreState) => T): T {
   return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
 
-// Context types
 interface CropperContextValue {
   id: string;
   aspect: number;
@@ -362,7 +358,6 @@ function useCropperContext(consumerName: string) {
   return context;
 }
 
-// Root component
 interface CropperRootProps extends DivProps {
   crop?: Point;
   zoom?: number;
