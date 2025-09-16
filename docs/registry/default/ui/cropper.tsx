@@ -252,8 +252,8 @@ function createStore(
   onCropChange?: (crop: Point) => void,
   onZoomChange?: (zoom: number) => void,
   onRotationChange?: (rotation: number) => void,
-  onCropComplete?: (croppedArea: Area, croppedAreaPixels: Area) => void,
-  onCropAreaChange?: (croppedArea: Area, croppedAreaPixels: Area) => void,
+  _onCropComplete?: (croppedArea: Area, croppedAreaPixels: Area) => void,
+  _onCropAreaChange?: (croppedArea: Area, croppedAreaPixels: Area) => void,
   onInteractionStart?: () => void,
   onInteractionEnd?: () => void,
 ): Store {
@@ -349,6 +349,7 @@ interface CropperContextValue {
   zoomWithScroll: boolean;
   restrictPosition: boolean;
   keyboardStep: number;
+  containerRef: React.RefObject<HTMLDivElement | null>;
 }
 
 const CropperContext = React.createContext<CropperContextValue | null>(null);
@@ -424,6 +425,8 @@ function CropperRoot(props: CropperRootProps) {
     hasWheelJustStarted: false,
   }));
 
+  const containerRef = React.useRef<HTMLDivElement | null>(null);
+
   const store = React.useMemo(
     () =>
       createStore(
@@ -478,6 +481,7 @@ function CropperRoot(props: CropperRootProps) {
       zoomWithScroll,
       restrictPosition,
       keyboardStep,
+      containerRef,
     }),
     [
       rootId,
@@ -503,7 +507,7 @@ function CropperRoot(props: CropperRootProps) {
           id={rootId}
           data-slot="cropper"
           {...rootProps}
-          className={cn("relative overflow-hidden", className)}
+          className={cn("relative h-full overflow-hidden", className)}
         />
       </CropperContext.Provider>
     </StoreContext.Provider>
@@ -535,8 +539,8 @@ function CropperContainer(props: CropperContainerProps) {
   const mediaSize = useStore((state) => state.mediaSize);
   const cropSize = useStore((state) => state.cropSize);
 
-  const containerRef = React.useRef<HTMLDivElement>(null);
-  const composedRef = useComposedRefs(ref, containerRef);
+  const composedRef = useComposedRefs(ref, context.containerRef);
+
   const dragStartPosition = React.useRef<Point>({ x: 0, y: 0 });
   const dragStartCrop = React.useRef<Point>({ x: 0, y: 0 });
   const containerPosition = React.useRef<Point>({ x: 0, y: 0 });
@@ -563,24 +567,25 @@ function CropperContainer(props: CropperContainerProps) {
   );
 
   const saveContainerPosition = React.useCallback(() => {
-    if (containerRef.current) {
-      const bounds = containerRef.current.getBoundingClientRect();
+    if (context.containerRef?.current) {
+      const bounds = context.containerRef.current.getBoundingClientRect();
       containerPosition.current = { x: bounds.left, y: bounds.top };
     }
-  }, []);
+  }, [context.containerRef]);
 
   const getPointOnContainer = React.useCallback(
     ({ x, y }: Point, containerTopLeft: Point): Point => {
-      if (!containerRef.current) {
+      if (!context.containerRef?.current) {
         throw new Error("The Cropper is not mounted");
       }
-      const containerRect = containerRef.current.getBoundingClientRect();
+      const containerRect =
+        context.containerRef.current.getBoundingClientRect();
       return {
         x: containerRect.width / 2 - (x - containerTopLeft.x),
         y: containerRect.height / 2 - (y - containerTopLeft.y),
       };
     },
-    [],
+    [context.containerRef],
   );
 
   const getPointOnMedia = React.useCallback(
@@ -683,6 +688,11 @@ function CropperContainer(props: CropperContainerProps) {
     }
   }, [store]);
 
+  const onMouseMove = React.useCallback(
+    (e: MouseEvent) => onDrag(getMousePoint(e)),
+    [getMousePoint, onDrag],
+  );
+
   const onMouseDown = React.useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       e.preventDefault();
@@ -691,48 +701,12 @@ function CropperContainer(props: CropperContainerProps) {
       saveContainerPosition();
       onDragStart(getMousePoint(e));
     },
-    [getMousePoint, onDragStart, onDragStopped, saveContainerPosition],
-  );
-
-  const onMouseMove = React.useCallback(
-    (e: MouseEvent) => onDrag(getMousePoint(e)),
-    [getMousePoint, onDrag],
-  );
-
-  const onTouchStart = React.useCallback(
-    (e: React.TouchEvent<HTMLDivElement>) => {
-      if (onTouchRequest && !onTouchRequest(e)) {
-        return;
-      }
-
-      document.addEventListener("touchmove", onTouchMove, { passive: false });
-      document.addEventListener("touchend", onDragStopped);
-      saveContainerPosition();
-
-      if (e.touches.length === 2) {
-        // Pinch start
-        const touch0 = e.touches[0];
-        const touch1 = e.touches[1];
-        if (touch0 && touch1) {
-          const pointA = getTouchPoint(touch0);
-          const pointB = getTouchPoint(touch1);
-          lastPinchDistance.current = getDistanceBetweenPoints(pointA, pointB);
-          lastPinchRotation.current = getRotationBetweenPoints(pointA, pointB);
-          onDragStart(getCenter(pointA, pointB));
-        }
-      } else if (e.touches.length === 1) {
-        const touch0 = e.touches[0];
-        if (touch0) {
-          onDragStart(getTouchPoint(touch0));
-        }
-      }
-    },
     [
-      onTouchRequest,
-      onDragStopped,
-      saveContainerPosition,
-      getTouchPoint,
+      getMousePoint,
       onDragStart,
+      onDragStopped,
+      onMouseMove,
+      saveContainerPosition,
     ],
   );
 
@@ -774,6 +748,44 @@ function CropperContainer(props: CropperContainerProps) {
       }
     },
     [getTouchPoint, onDrag, zoom, setNewZoom, rotation, store],
+  );
+
+  const onTouchStart = React.useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      if (onTouchRequest && !onTouchRequest(e)) {
+        return;
+      }
+
+      document.addEventListener("touchmove", onTouchMove, { passive: false });
+      document.addEventListener("touchend", onDragStopped);
+      saveContainerPosition();
+
+      if (e.touches.length === 2) {
+        // Pinch start
+        const touch0 = e.touches[0];
+        const touch1 = e.touches[1];
+        if (touch0 && touch1) {
+          const pointA = getTouchPoint(touch0);
+          const pointB = getTouchPoint(touch1);
+          lastPinchDistance.current = getDistanceBetweenPoints(pointA, pointB);
+          lastPinchRotation.current = getRotationBetweenPoints(pointA, pointB);
+          onDragStart(getCenter(pointA, pointB));
+        }
+      } else if (e.touches.length === 1) {
+        const touch0 = e.touches[0];
+        if (touch0) {
+          onDragStart(getTouchPoint(touch0));
+        }
+      }
+    },
+    [
+      onTouchRequest,
+      onDragStopped,
+      onTouchMove,
+      saveContainerPosition,
+      getTouchPoint,
+      onDragStart,
+    ],
   );
 
   const onWheel = React.useCallback(
@@ -892,7 +904,7 @@ function CropperContainer(props: CropperContainerProps) {
 
   // Wheel event setup
   React.useEffect(() => {
-    const container = containerRef.current;
+    const container = context.containerRef?.current;
     if (!container || !context.zoomWithScroll) return;
 
     container.addEventListener("wheel", onWheel, { passive: false });
@@ -902,7 +914,7 @@ function CropperContainer(props: CropperContainerProps) {
         clearTimeout(wheelTimer.current);
       }
     };
-  }, [context.zoomWithScroll, onWheel]);
+  }, [context.containerRef, context.zoomWithScroll, onWheel]);
 
   const ContainerPrimitive = asChild ? Slot : "div";
 
@@ -957,24 +969,52 @@ function CropperImage(props: CropperImageProps) {
     store.setState("mediaSize", mediaSize);
 
     // Calculate crop size based on container
-    const container = img.closest(
-      '[data-slot="cropper-container"]',
-    ) as HTMLElement;
+    const container = context.containerRef?.current;
     if (container) {
       const containerRect = container.getBoundingClientRect();
-      const cropSize = getCropSize(
-        mediaSize.width,
-        mediaSize.height,
-        containerRect.width,
-        containerRect.height,
-        context.aspect,
-        rotation,
-      );
-      store.setState("cropSize", cropSize);
+
+      // Only calculate crop size if container has dimensions
+      if (containerRect.width > 0 && containerRect.height > 0) {
+        const cropSize = getCropSize(
+          mediaSize.width,
+          mediaSize.height,
+          containerRect.width,
+          containerRect.height,
+          context.aspect,
+          rotation,
+        );
+        store.setState("cropSize", cropSize);
+      } else {
+        // Retry after a short delay to allow layout to complete
+        setTimeout(() => {
+          const retryRect = container.getBoundingClientRect();
+          if (retryRect.width > 0 && retryRect.height > 0) {
+            const cropSize = getCropSize(
+              mediaSize.width,
+              mediaSize.height,
+              retryRect.width,
+              retryRect.height,
+              context.aspect,
+              rotation,
+            );
+            store.setState("cropSize", cropSize);
+          }
+        }, 100);
+      }
     }
 
-    onLoad?.(new Event("load") as any);
-  }, [store, context.aspect, rotation, onLoad]);
+    onLoad?.(
+      new Event("load") as unknown as React.SyntheticEvent<HTMLImageElement>,
+    );
+  }, [store, context.aspect, context.containerRef, rotation, onLoad]);
+
+  // Handle images that are already loaded
+  React.useEffect(() => {
+    const img = imageRef.current;
+    if (img?.complete && img.naturalWidth > 0) {
+      onMediaLoad();
+    }
+  }, [onMediaLoad]);
 
   const objectFitClass = React.useMemo(() => {
     switch (context.objectFit) {
@@ -1038,24 +1078,46 @@ function CropperVideo(props: CropperVideoProps) {
     store.setState("mediaSize", mediaSize);
 
     // Calculate crop size based on container
-    const container = video.closest(
-      '[data-slot="cropper-container"]',
-    ) as HTMLElement;
+    const container = context.containerRef?.current;
     if (container) {
       const containerRect = container.getBoundingClientRect();
-      const cropSize = getCropSize(
-        mediaSize.width,
-        mediaSize.height,
-        containerRect.width,
-        containerRect.height,
-        context.aspect,
-        rotation,
-      );
-      store.setState("cropSize", cropSize);
+
+      // Only calculate crop size if container has dimensions
+      if (containerRect.width > 0 && containerRect.height > 0) {
+        const cropSize = getCropSize(
+          mediaSize.width,
+          mediaSize.height,
+          containerRect.width,
+          containerRect.height,
+          context.aspect,
+          rotation,
+        );
+        store.setState("cropSize", cropSize);
+      } else {
+        // Retry after a short delay to allow layout to complete
+        setTimeout(() => {
+          const retryRect = container.getBoundingClientRect();
+          if (retryRect.width > 0 && retryRect.height > 0) {
+            const cropSize = getCropSize(
+              mediaSize.width,
+              mediaSize.height,
+              retryRect.width,
+              retryRect.height,
+              context.aspect,
+              rotation,
+            );
+            store.setState("cropSize", cropSize);
+          }
+        }, 100);
+      }
     }
 
-    onLoadedMetadata?.(new Event("loadedmetadata") as any);
-  }, [store, context.aspect, rotation, onLoadedMetadata]);
+    onLoadedMetadata?.(
+      new Event(
+        "loadedmetadata",
+      ) as unknown as React.SyntheticEvent<HTMLVideoElement>,
+    );
+  }, [store, context.aspect, context.containerRef, rotation, onLoadedMetadata]);
 
   const objectFitClass = React.useMemo(() => {
     switch (context.objectFit) {
