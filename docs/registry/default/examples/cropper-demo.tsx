@@ -2,6 +2,8 @@
 
 import * as React from "react";
 import { toast } from "sonner";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 import {
   type CropArea,
   Cropper,
@@ -13,7 +15,9 @@ import {
 } from "@/registry/default/ui/cropper";
 
 export function CropperDemo() {
+  const id = React.useId();
   const [crop, setCrop] = React.useState<Point>({ x: 0, y: 0 });
+  const [zoom, setZoom] = React.useState(1);
   const [croppedImageUrl, setCroppedImageUrl] = React.useState<string | null>(
     null,
   );
@@ -23,7 +27,6 @@ export function CropperDemo() {
   const generateCroppedImage = React.useCallback(
     async (cropPixels: CropArea) => {
       try {
-        // Create a canvas to perform the crop
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
         if (!ctx) {
@@ -31,25 +34,21 @@ export function CropperDemo() {
           return;
         }
 
-        // Create an image element
-        const img = new Image();
+        const image = new Image();
 
-        // Handle CORS for external images
-        img.crossOrigin = "anonymous";
+        image.crossOrigin = "anonymous";
 
         const imageUrl =
           "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1920&h=1080&fit=crop&auto=format&fm=webp&q=80";
 
         return new Promise<void>((resolve, reject) => {
-          img.onload = () => {
+          image.onload = () => {
             try {
-              // Set canvas dimensions to the crop size
               canvas.width = cropPixels.width;
               canvas.height = cropPixels.height;
 
-              // Draw the cropped portion of the image
               ctx.drawImage(
-                img,
+                image,
                 cropPixels.x,
                 cropPixels.y,
                 cropPixels.width,
@@ -85,11 +84,11 @@ export function CropperDemo() {
             }
           };
 
-          img.onerror = () => {
+          image.onerror = () => {
             reject(new Error("Image load failed"));
           };
 
-          img.src = imageUrl;
+          image.src = imageUrl;
         });
       } catch (error) {
         toast.error(
@@ -105,7 +104,6 @@ export function CropperDemo() {
   const onCropAreaChange: NonNullable<CropperProps["onCropAreaChange"]> =
     React.useCallback(
       (_croppedArea, croppedAreaPixels) => {
-        // Debounce the crop generation to avoid excessive calls during dragging
         if (debounceTimeoutRef.current) {
           clearTimeout(debounceTimeoutRef.current);
         }
@@ -114,12 +112,11 @@ export function CropperDemo() {
           if (croppedAreaPixels) {
             generateCroppedImage(croppedAreaPixels);
           }
-        }, 300); // 300ms debounce
+        }, 300);
       },
       [generateCroppedImage],
     );
 
-  // Clean up blob URL and timeout on unmount
   React.useEffect(() => {
     return () => {
       if (croppedImageUrl) {
@@ -136,7 +133,9 @@ export function CropperDemo() {
       <Cropper
         aspectRatio={1}
         crop={crop}
+        zoom={zoom}
         onCropChange={setCrop}
+        onZoomChange={setZoom}
         onCropAreaChange={onCropAreaChange}
         className="min-h-72"
       >
@@ -148,6 +147,17 @@ export function CropperDemo() {
           <CropperArea />
         </CropperContent>
       </Cropper>
+      <div className="flex flex-col gap-2">
+        <Label htmlFor={`${id}-zoom`}>Zoom: {zoom.toFixed(2)}</Label>
+        <Slider
+          id={`${id}-zoom`}
+          value={[zoom]}
+          onValueChange={([value]) => setZoom(value ?? 1)}
+          min={1}
+          max={3}
+          step={0.1}
+        />
+      </div>
       {croppedImageUrl && (
         <div className="flex flex-col gap-2">
           <h3 className="font-medium text-sm">Cropped Image Preview:</h3>

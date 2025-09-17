@@ -19,6 +19,13 @@ interface Point {
   y: number;
 }
 
+interface GestureEvent extends UIEvent {
+  rotation: number;
+  scale: number;
+  clientX: number;
+  clientY: number;
+}
+
 interface Size {
   width: number;
   height: number;
@@ -655,6 +662,9 @@ function CropperContent(props: CropperContentProps) {
   const rafDragTimeoutRef = React.useRef<number | null>(null);
   const rafPinchTimeoutRef = React.useRef<number | null>(null);
   const wheelTimerRef = React.useRef<number | null>(null);
+  const isTouchingRef = React.useRef(false);
+  const gestureZoomStartRef = React.useRef(0);
+  const gestureRotationStartRef = React.useRef(0);
 
   const cleanupRefs = React.useCallback(() => {
     if (rafDragTimeoutRef.current) {
@@ -669,6 +679,7 @@ function CropperContent(props: CropperContentProps) {
       clearTimeout(wheelTimerRef.current);
       wheelTimerRef.current = null;
     }
+    isTouchingRef.current = false;
   }, []);
 
   const getMousePoint = React.useCallback(
@@ -808,6 +819,7 @@ function CropperContent(props: CropperContentProps) {
 
   const onTouchMove = React.useCallback(
     (event: TouchEvent) => {
+      // Prevent whole page from scrolling on iOS
       event.preventDefault();
       if (event.touches.length === 2) {
         const touch0 = event.touches[0];
@@ -845,18 +857,87 @@ function CropperContent(props: CropperContentProps) {
     [getTouchPoint, onDrag, zoom, onZoomChange, rotation, store],
   );
 
+  // Gesture event handlers for Safari iOS
+  const onGestureChange = React.useCallback(
+    (event: GestureEvent) => {
+      event.preventDefault();
+      if (isTouchingRef.current) {
+        // Avoid conflict between gesture and touch events
+        return;
+      }
+
+      const point = { x: Number(event.clientX), y: Number(event.clientY) };
+      const newZoom = gestureZoomStartRef.current - 1 + event.scale;
+      onZoomChange(newZoom, point, true);
+
+      const newRotation = gestureRotationStartRef.current + event.rotation;
+      store.setState("rotation", newRotation);
+    },
+    [onZoomChange, store],
+  );
+
+  const onGestureEnd = React.useCallback(() => {
+    document.removeEventListener(
+      "gesturechange",
+      onGestureChange as EventListener,
+    );
+    document.removeEventListener("gestureend", onGestureEnd as EventListener);
+  }, [onGestureChange]);
+
+  const onGestureStart = React.useCallback(
+    (event: GestureEvent) => {
+      event.preventDefault();
+      document.addEventListener(
+        "gesturechange",
+        onGestureChange as EventListener,
+      );
+      document.addEventListener("gestureend", onGestureEnd as EventListener);
+      gestureZoomStartRef.current = zoom;
+      gestureRotationStartRef.current = rotation;
+    },
+    [zoom, rotation, onGestureChange, onGestureEnd],
+  );
+
   const cleanEvents = React.useCallback(() => {
     document.removeEventListener("mousemove", onMouseMove);
     document.removeEventListener("touchmove", onTouchMove);
-  }, [onMouseMove, onTouchMove]);
+    document.removeEventListener(
+      "gesturechange",
+      onGestureChange as EventListener,
+    );
+    document.removeEventListener("gestureend", onGestureEnd as EventListener);
+  }, [onMouseMove, onTouchMove, onGestureChange, onGestureEnd]);
 
   const onDragStopped = React.useCallback(() => {
+    isTouchingRef.current = false;
     store.setState("isDragging", false);
     cleanupRefs();
     document.removeEventListener("mouseup", onDragStopped);
     document.removeEventListener("touchend", onDragStopped);
     cleanEvents();
   }, [store, cleanEvents, cleanupRefs]);
+
+  const normalizeWheel = React.useCallback((event: WheelEvent) => {
+    // Normalize wheel delta values across browsers and devices
+    let deltaX = event.deltaX;
+    let deltaY = event.deltaY;
+    let deltaZ = event.deltaZ;
+
+    // Normalize the delta values
+    if (event.deltaMode === 1) {
+      // DOM_DELTA_LINE
+      deltaX *= 16;
+      deltaY *= 16;
+      deltaZ *= 16;
+    } else if (event.deltaMode === 2) {
+      // DOM_DELTA_PAGE
+      deltaX *= 400;
+      deltaY *= 400;
+      deltaZ *= 400;
+    }
+
+    return { deltaX, deltaY, deltaZ };
+  }, []);
 
   const onWheelZoom = React.useCallback(
     (event: WheelEvent) => {
@@ -865,7 +946,8 @@ function CropperContent(props: CropperContentProps) {
 
       event.preventDefault();
       const point = getMousePoint(event);
-      const newZoom = zoom - (event.deltaY * context.zoomSpeed) / 200;
+      const { deltaY } = normalizeWheel(event);
+      const newZoom = zoom - (deltaY * context.zoomSpeed) / 200;
       onZoomChange(newZoom, point, true);
 
       store.setState("hasWheelJustStarted", true);
@@ -886,6 +968,7 @@ function CropperContent(props: CropperContentProps) {
       onZoomChange,
       store,
       contentProps.onWheelZoom,
+      normalizeWheel,
     ],
   );
 
@@ -985,6 +1068,7 @@ function CropperContent(props: CropperContentProps) {
       contentProps.onTouchStart?.(event);
       if (event.defaultPrevented) return;
 
+      isTouchingRef.current = true;
       document.addEventListener("touchmove", onTouchMove, { passive: false });
       document.addEventListener("touchend", onDragStopped);
       saveContentPosition();
@@ -1023,16 +1107,44 @@ function CropperContent(props: CropperContentProps) {
     ],
   );
 
+  // Prevent Safari on iOS >= 10 from zooming the page
+  const preventZoomSafari = React.useCallback(
+    (e: Event) => e.preventDefault(),
+    [],
+  );
+
   React.useEffect(() => {
     const content = context.contentRef?.current;
-    if (!content || !context.zoomOnScroll) return;
+    if (!content) return;
 
-    content.addEventListener("wheel", onWheelZoom, { passive: false });
+    // Add wheel event listener for zoom on scroll
+    if (context.zoomOnScroll) {
+      content.addEventListener("wheel", onWheelZoom, { passive: false });
+    }
+
+    // Add gesture event listener for Safari iOS
+    content.addEventListener("gesturestart", preventZoomSafari);
+    content.addEventListener("gesturestart", onGestureStart as EventListener);
+
     return () => {
-      content.removeEventListener("wheel", onWheelZoom);
+      if (context.zoomOnScroll) {
+        content.removeEventListener("wheel", onWheelZoom);
+      }
+      content.removeEventListener("gesturestart", preventZoomSafari);
+      content.removeEventListener(
+        "gesturestart",
+        onGestureStart as EventListener,
+      );
       cleanupRefs();
     };
-  }, [context.contentRef, context.zoomOnScroll, onWheelZoom, cleanupRefs]);
+  }, [
+    context.contentRef,
+    context.zoomOnScroll,
+    onWheelZoom,
+    cleanupRefs,
+    preventZoomSafari,
+    onGestureStart,
+  ]);
 
   React.useEffect(() => {
     return cleanupRefs;
