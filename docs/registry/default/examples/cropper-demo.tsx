@@ -17,7 +17,7 @@ export function CropperDemo() {
       aspectRatio={1}
       crop={crop}
       onCropChange={setCrop}
-      className="min-h-72"
+      className="min-h-72 max-w-lg"
     >
       <CropperContent>
         <CropperImage

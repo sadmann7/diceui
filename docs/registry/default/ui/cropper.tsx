@@ -252,6 +252,8 @@ function createStore(
   onRotationChange?: (rotation: number) => void,
   _onCropComplete?: (croppedArea: Area, croppedAreaPixels: Area) => void,
   _onCropAreaChange?: (croppedArea: Area, croppedAreaPixels: Area) => void,
+  onCropSizeChange?: (cropSize: Size) => void,
+  onMediaLoaded?: (mediaSize: MediaSize) => void,
   onInteractionStart?: () => void,
   onInteractionEnd?: () => void,
 ): Store {
@@ -290,6 +292,20 @@ function createStore(
         onZoomChange?.(value);
       } else if (key === "rotation" && typeof value === "number") {
         onRotationChange?.(value);
+      } else if (
+        key === "cropSize" &&
+        typeof value === "object" &&
+        value &&
+        "width" in value
+      ) {
+        onCropSizeChange?.(value);
+      } else if (
+        key === "mediaSize" &&
+        typeof value === "object" &&
+        value &&
+        "naturalWidth" in value
+      ) {
+        onMediaLoaded?.(value);
       } else if (key === "isDragging") {
         if (value) {
           onInteractionStart?.();
@@ -377,6 +393,8 @@ interface CropperRootProps extends DivProps {
   onRotationChange?: (rotation: number) => void;
   onCropComplete?: (croppedArea: Area, croppedAreaPixels: Area) => void;
   onCropAreaChange?: (croppedArea: Area, croppedAreaPixels: Area) => void;
+  onCropSizeChange?: (cropSize: Size) => void;
+  onMediaLoaded?: (mediaSize: MediaSize) => void;
   onInteractionStart?: () => void;
   onInteractionEnd?: () => void;
 }
@@ -401,6 +419,8 @@ function CropperRoot(props: CropperRootProps) {
     onRotationChange,
     onCropComplete,
     onCropAreaChange,
+    onCropSizeChange,
+    onMediaLoaded,
     onInteractionStart,
     onInteractionEnd,
     id: idProp,
@@ -432,6 +452,8 @@ function CropperRoot(props: CropperRootProps) {
         onRotationChange,
         onCropComplete,
         onCropAreaChange,
+        onCropSizeChange,
+        onMediaLoaded,
         onInteractionStart,
         onInteractionEnd,
       ),
@@ -443,6 +465,8 @@ function CropperRoot(props: CropperRootProps) {
       onRotationChange,
       onCropComplete,
       onCropAreaChange,
+      onCropSizeChange,
+      onMediaLoaded,
       onInteractionStart,
       onInteractionEnd,
     ],
@@ -968,38 +992,123 @@ function CropperImage(props: CropperImageProps) {
   const imageRef = React.useRef<HTMLImageElement>(null);
   const composedRef = useComposedRefs(ref, imageRef);
 
-  const onMediaLoad = React.useCallback(() => {
+  const computeSizes = React.useCallback(() => {
     const img = imageRef.current;
-    if (!img) return;
+    const content = context.contentRef?.current;
+    if (!img || !content) return;
+
+    const contentRect = content.getBoundingClientRect();
+    const containerAspect = contentRect.width / contentRect.height;
+    const naturalWidth = img.naturalWidth;
+    const naturalHeight = img.naturalHeight;
+    const isMediaScaledDown =
+      img.offsetWidth < naturalWidth || img.offsetHeight < naturalHeight;
+    const mediaAspect = naturalWidth / naturalHeight;
+
+    // We do not rely on the offsetWidth/offsetHeight if the media is scaled down
+    // as the values they report are rounded. That will result in precision losses
+    // when calculating zoom. We use the fact that the media is positioned relative
+    // to the container. That allows us to use the container's dimensions
+    // and natural aspect ratio of the media to calculate accurate media size.
+    let renderedMediaSize: Size;
+
+    if (isMediaScaledDown) {
+      const objectFit = context.objectFit;
+      switch (objectFit) {
+        case "contain":
+          renderedMediaSize =
+            containerAspect > mediaAspect
+              ? {
+                  width: contentRect.height * mediaAspect,
+                  height: contentRect.height,
+                }
+              : {
+                  width: contentRect.width,
+                  height: contentRect.width / mediaAspect,
+                };
+          break;
+        case "horizontal-cover":
+          renderedMediaSize = {
+            width: contentRect.width,
+            height: contentRect.width / mediaAspect,
+          };
+          break;
+        case "vertical-cover":
+          renderedMediaSize = {
+            width: contentRect.height * mediaAspect,
+            height: contentRect.height,
+          };
+          break;
+        case "cover":
+          renderedMediaSize =
+            containerAspect < mediaAspect
+              ? {
+                  width: contentRect.width,
+                  height: contentRect.width / mediaAspect,
+                }
+              : {
+                  width: contentRect.height * mediaAspect,
+                  height: contentRect.height,
+                };
+          break;
+        default:
+          renderedMediaSize =
+            containerAspect > mediaAspect
+              ? {
+                  width: contentRect.height * mediaAspect,
+                  height: contentRect.height,
+                }
+              : {
+                  width: contentRect.width,
+                  height: contentRect.width / mediaAspect,
+                };
+          break;
+      }
+    } else {
+      renderedMediaSize = {
+        width: img.offsetWidth,
+        height: img.offsetHeight,
+      };
+    }
 
     const mediaSize: MediaSize = {
-      width: img.offsetWidth,
-      height: img.offsetHeight,
-      naturalWidth: img.naturalWidth,
-      naturalHeight: img.naturalHeight,
+      ...renderedMediaSize,
+      naturalWidth,
+      naturalHeight,
     };
 
     store.setState("mediaSize", mediaSize);
 
-    const content = context.contentRef?.current;
-    if (content) {
-      const contentRect = content.getBoundingClientRect();
+    const cropSize = getCropSize(
+      mediaSize.width,
+      mediaSize.height,
+      contentRect.width,
+      contentRect.height,
+      context.aspectRatio,
+      rotation,
+    );
 
-      const cropSize = getCropSize(
-        mediaSize.width,
-        mediaSize.height,
-        contentRect.width,
-        contentRect.height,
-        context.aspectRatio,
-        rotation,
-      );
-      store.setState("cropSize", cropSize);
-    }
+    store.setState("cropSize", cropSize);
+
+    return { mediaSize, cropSize };
+  }, [
+    store,
+    context.aspectRatio,
+    context.contentRef,
+    context.objectFit,
+    rotation,
+  ]);
+
+  const onMediaLoad = React.useCallback(() => {
+    const img = imageRef.current;
+    if (!img) return;
+
+    computeSizes();
 
     onLoad?.(
       new Event("load") as unknown as React.SyntheticEvent<HTMLImageElement>,
     );
-  }, [store, context.aspectRatio, context.contentRef, rotation, onLoad]);
+  }, [computeSizes, onLoad]);
 
   React.useEffect(() => {
     const image = imageRef.current;
@@ -1007,6 +1116,46 @@ function CropperImage(props: CropperImageProps) {
       onMediaLoad();
     }
   }, [onMediaLoad]);
+
+  React.useEffect(() => {
+    const content = context.contentRef?.current;
+    if (!content) {
+      return;
+    }
+
+    if (typeof window.ResizeObserver !== "undefined") {
+      let isFirstResize = true;
+      const resizeObserver = new window.ResizeObserver(() => {
+        if (isFirstResize) {
+          isFirstResize = false;
+          return;
+        }
+
+        const image = imageRef.current;
+        if (image?.complete && image.naturalWidth > 0) {
+          computeSizes();
+        }
+      });
+
+      resizeObserver.observe(content);
+
+      return () => {
+        resizeObserver.disconnect();
+      };
+    } else {
+      function onWindowResize() {
+        const image = imageRef.current;
+        if (image?.complete && image.naturalWidth > 0) {
+          computeSizes();
+        }
+      }
+
+      window.addEventListener("resize", onWindowResize);
+      return () => {
+        window.removeEventListener("resize", onWindowResize);
+      };
+    }
+  }, [context.contentRef, computeSizes]);
 
   const ImagePrimitive = asChild ? Slot : "img";
 
@@ -1055,48 +1204,160 @@ function CropperVideo(props: CropperVideoProps) {
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const composedRef = useComposedRefs(ref, videoRef);
 
-  const onMediaLoad = React.useCallback(() => {
+  const computeSizes = React.useCallback(() => {
     const video = videoRef.current;
-    if (!video) return;
+    const content = context.contentRef?.current;
+    if (!video || !content) return;
+
+    const contentRect = content.getBoundingClientRect();
+    const containerAspect = contentRect.width / contentRect.height;
+    const naturalWidth = video.videoWidth;
+    const naturalHeight = video.videoHeight;
+    const isMediaScaledDown =
+      video.offsetWidth < naturalWidth || video.offsetHeight < naturalHeight;
+    const mediaAspect = naturalWidth / naturalHeight;
+
+    let renderedMediaSize: Size;
+
+    if (isMediaScaledDown) {
+      const objectFit = context.objectFit;
+      switch (objectFit) {
+        case "contain":
+          renderedMediaSize =
+            containerAspect > mediaAspect
+              ? {
+                  width: contentRect.height * mediaAspect,
+                  height: contentRect.height,
+                }
+              : {
+                  width: contentRect.width,
+                  height: contentRect.width / mediaAspect,
+                };
+          break;
+        case "horizontal-cover":
+          renderedMediaSize = {
+            width: contentRect.width,
+            height: contentRect.width / mediaAspect,
+          };
+          break;
+        case "vertical-cover":
+          renderedMediaSize = {
+            width: contentRect.height * mediaAspect,
+            height: contentRect.height,
+          };
+          break;
+        case "cover":
+          renderedMediaSize =
+            containerAspect < mediaAspect
+              ? {
+                  width: contentRect.width,
+                  height: contentRect.width / mediaAspect,
+                }
+              : {
+                  width: contentRect.height * mediaAspect,
+                  height: contentRect.height,
+                };
+          break;
+        default:
+          renderedMediaSize =
+            containerAspect > mediaAspect
+              ? {
+                  width: contentRect.height * mediaAspect,
+                  height: contentRect.height,
+                }
+              : {
+                  width: contentRect.width,
+                  height: contentRect.width / mediaAspect,
+                };
+          break;
+      }
+    } else {
+      renderedMediaSize = {
+        width: video.offsetWidth,
+        height: video.offsetHeight,
+      };
+    }
 
     const mediaSize: MediaSize = {
-      width: video.offsetWidth,
-      height: video.offsetHeight,
-      naturalWidth: video.videoWidth,
-      naturalHeight: video.videoHeight,
+      ...renderedMediaSize,
+      naturalWidth,
+      naturalHeight,
     };
 
     store.setState("mediaSize", mediaSize);
 
-    const content = context.contentRef?.current;
-    if (content) {
-      const contentRect = content.getBoundingClientRect();
+    const cropSize = getCropSize(
+      mediaSize.width,
+      mediaSize.height,
+      contentRect.width,
+      contentRect.height,
+      context.aspectRatio,
+      rotation,
+    );
 
-      if (contentRect.width > 0 && contentRect.height > 0) {
-        const cropSize = getCropSize(
-          mediaSize.width,
-          mediaSize.height,
-          contentRect.width,
-          contentRect.height,
-          context.aspectRatio,
-          rotation,
-        );
-        store.setState("cropSize", cropSize);
-      }
-    }
+    store.setState("cropSize", cropSize);
+
+    return { mediaSize, cropSize };
+  }, [
+    store,
+    context.aspectRatio,
+    context.contentRef,
+    context.objectFit,
+    rotation,
+  ]);
+
+  const onMediaLoad = React.useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    computeSizes();
 
     onLoadedMetadata?.(
       new Event(
         "loadedmetadata",
       ) as unknown as React.SyntheticEvent<HTMLVideoElement>,
     );
-  }, [
-    store,
-    context.aspectRatio,
-    context.contentRef,
-    rotation,
-    onLoadedMetadata,
-  ]);
+  }, [computeSizes, onLoadedMetadata]);
+
+  React.useEffect(() => {
+    const content = context.contentRef?.current;
+    if (!content) {
+      return;
+    }
+
+    if (typeof window.ResizeObserver !== "undefined") {
+      let isFirstResize = true;
+      const resizeObserver = new window.ResizeObserver(() => {
+        if (isFirstResize) {
+          isFirstResize = false;
+          return;
+        }
+
+        const video = videoRef.current;
+        if (video && video.videoWidth > 0 && video.videoHeight > 0) {
+          computeSizes();
+        }
+      });
+
+      resizeObserver.observe(content);
+
+      return () => {
+        resizeObserver.disconnect();
+      };
+    } else {
+      function onWindowResize() {
+        const video = videoRef.current;
+        if (video && video.videoWidth > 0 && video.videoHeight > 0) {
+          computeSizes();
+        }
+      }
+
+      window.addEventListener("resize", onWindowResize);
+      return () => {
+        window.removeEventListener("resize", onWindowResize);
+      };
+    }
+  }, [context.contentRef, computeSizes]);
 
   const VideoPrimitive = asChild ? Slot : "video";
 
