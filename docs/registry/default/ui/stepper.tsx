@@ -749,6 +749,7 @@ function StepperTrigger(props: StepperTriggerProps) {
     React.useState<HTMLElement | null>(null);
   const composedRef = useComposedRefs(ref, setTriggerElement);
   const isArrowKeyPressedRef = React.useRef(false);
+  const isMouseClickRef = React.useRef(false);
 
   React.useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -828,11 +829,14 @@ function StepperTrigger(props: StepperTriggerProps) {
 
       focusContext.onItemFocus(triggerId);
 
+      const isKeyboardFocus = !isMouseClickRef.current;
+
       if (
         !isActive &&
         !isDisabled &&
         activationMode !== "manual" &&
-        !context.nonInteractive
+        !context.nonInteractive &&
+        isKeyboardFocus
       ) {
         const currentStepIndex = Array.from(steps.keys()).indexOf(value || "");
         const targetStepIndex = Array.from(steps.keys()).indexOf(itemValue);
@@ -840,6 +844,8 @@ function StepperTrigger(props: StepperTriggerProps) {
 
         await store.setStateWithValidation(itemValue, direction);
       }
+
+      isMouseClickRef.current = false;
     },
     [
       focusContext,
@@ -960,6 +966,8 @@ function StepperTrigger(props: StepperTriggerProps) {
     (event: React.MouseEvent<TriggerElement>) => {
       triggerProps.onMouseDown?.(event);
       if (event.defaultPrevented) return;
+
+      isMouseClickRef.current = true;
 
       if (isDisabled) {
         event.preventDefault();
