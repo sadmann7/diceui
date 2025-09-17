@@ -52,7 +52,7 @@ interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-const MAX_CACHE_SIZE = 200; // Increased cache size for better performance
+const MAX_CACHE_SIZE = 200;
 const DPR = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
 
 const rotationSizeCache = new Map<string, Size>();
@@ -67,38 +67,31 @@ function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
 }
 
-// Quantization functions for cache key optimization
-// More aggressive quantization for better cache hit rates during drag operations
 function quantize(n: number, step = 2 / DPR): number {
   return Math.round(n / step) * step;
 }
 
 function quantizePosition(n: number, step = 4 / DPR): number {
-  // More aggressive quantization for position values during drag
   return Math.round(n / step) * step;
 }
 
 function quantizeZoom(n: number, step = 0.01): number {
-  // Slightly less aggressive for zoom to maintain precision
   return Math.round(n / step) * step;
 }
 
 function quantizeRotation(n: number, step = 1.0): number {
-  // 1-degree increments for rotation
   return Math.round(n / step) * step;
 }
 
-// Device pixel snapping for sharp edges
 function snapToDevicePixel(n: number): number {
   return Math.round(n * DPR) / DPR;
 }
 
-// LRU cache operations with fuzzy matching for better hit rates
 function lruGet<K, V>(map: Map<K, V>, key: K): V | undefined {
   const v = map.get(key);
   if (v !== undefined) {
     map.delete(key);
-    map.set(key, v); // move to back (MRU)
+    map.set(key, v);
   }
   return v;
 }
@@ -114,7 +107,6 @@ function lruSet<K, V>(
   }
   map.set(key, val);
   if (map.size > max) {
-    // delete LRU (first)
     const firstKey = map.keys().next().value;
     if (firstKey !== undefined) {
       map.delete(firstKey);
@@ -169,7 +161,6 @@ function getCropSize(
   aspect: number,
   rotation = 0,
 ): Size {
-  // Use more aggressive quantization for crop size calculation
   const cacheKey = `${quantize(mediaWidth, 8)}-${quantize(mediaHeight, 8)}-${quantize(contentWidth, 8)}-${quantize(contentHeight, 8)}-${quantize(aspect, 0.01)}-${quantizeRotation(rotation)}`;
 
   const cached = lruGet(cropSizeCache, cacheKey);
@@ -202,11 +193,9 @@ function restrictPosition(
   zoom: number,
   rotation = 0,
 ): Point {
-  // Early exit for very small position changes (sub-pixel precision not needed)
   const quantizedX = quantizePosition(position.x);
   const quantizedY = quantizePosition(position.y);
 
-  // Create quantized cache key for better hit rates - use more aggressive quantization for positions
   const cacheKey = `${quantizedX}-${quantizedY}-${quantize(mediaSize.width)}-${quantize(mediaSize.height)}-${quantize(cropSize.width)}-${quantize(cropSize.height)}-${quantizeZoom(zoom)}-${quantizeRotation(rotation)}`;
 
   const cached = lruGet(restrictPositionCache, cacheKey);
@@ -222,7 +211,7 @@ function restrictPosition(
   const maxPositionX = width * zoom * 0.5 - cropSize.width * 0.5;
   const maxPositionY = height * zoom * 0.5 - cropSize.height * 0.5;
 
-  const result = {
+  const result: Point = {
     x: clamp(position.x, -maxPositionX, maxPositionX),
     y: clamp(position.y, -maxPositionY, maxPositionY),
   };
@@ -240,7 +229,6 @@ function computeCroppedArea(
   rotation = 0,
   restrictPosition = true,
 ): { croppedAreaPercentages: Area; croppedAreaPixels: Area } {
-  // Create quantized cache key for better hit rates - use aggressive quantization for crop positions
   const cacheKey = `${quantizePosition(crop.x)}-${quantizePosition(crop.y)}-${quantize(mediaSize.width)}-${quantize(mediaSize.height)}-${quantize(mediaSize.naturalWidth)}-${quantize(mediaSize.naturalHeight)}-${quantize(cropSize.width)}-${quantize(cropSize.height)}-${quantize(aspect, 0.01)}-${quantizeZoom(zoom)}-${quantizeRotation(rotation)}-${restrictPosition}`;
 
   const cached = lruGet(croppedAreaCache, cacheKey);
@@ -298,7 +286,7 @@ function computeCroppedArea(
   const isImageWiderThanHigh =
     mediaNaturalBBoxSize.width >= mediaNaturalBBoxSize.height * aspect;
 
-  const sizePixels = isImageWiderThanHigh
+  const sizePixels: Size = isImageWiderThanHigh
     ? {
         width: Math.round(heightInPixels * aspect),
         height: heightInPixels,
@@ -468,7 +456,6 @@ function createStore(
         }
       }
 
-      // Use throttled crop area change for better performance
       if (
         (key === "crop" || key === "zoom" || key === "rotation") &&
         onCropAreaChange
@@ -489,7 +476,7 @@ function createStore(
     },
     batch: (fn: () => void) => {
       if (isBatching) {
-        fn(); // already batching, just execute
+        fn();
         return;
       }
       isBatching = true;
@@ -766,7 +753,7 @@ function CropperContent(props: CropperContentProps) {
   const gestureZoomStartRef = React.useRef(0);
   const gestureRotationStartRef = React.useRef(0);
 
-  const cleanupRefs = React.useCallback(() => {
+  const onRefsCleanup = React.useCallback(() => {
     if (rafDragTimeoutRef.current) {
       cancelAnimationFrame(rafDragTimeoutRef.current);
       rafDragTimeoutRef.current = null;
@@ -782,9 +769,7 @@ function CropperContent(props: CropperContentProps) {
     isTouchingRef.current = false;
   }, []);
 
-  // Cleanup function for caches when component unmounts
-  const cleanupCaches = React.useCallback(() => {
-    // Clear caches periodically to prevent memory leaks
+  const onCachesCleanup = React.useCallback(() => {
     if (restrictPositionCache.size > MAX_CACHE_SIZE * 1.5) {
       restrictPositionCache.clear();
     }
@@ -809,7 +794,7 @@ function CropperContent(props: CropperContentProps) {
     [],
   );
 
-  const saveContentPosition = React.useCallback(() => {
+  const onContentPositionChange = React.useCallback(() => {
     if (context.contentRef?.current) {
       const bounds = context.contentRef.current.getBoundingClientRect();
       contentPositionRef.current = { x: bounds.left, y: bounds.top };
@@ -903,8 +888,6 @@ function CropperContent(props: CropperContentProps) {
         const offsetX = x - dragStartPositionRef.current.x;
         const offsetY = y - dragStartPositionRef.current.y;
 
-        // Early exit if no movement to avoid unnecessary calculations
-        // Use more aggressive threshold to reduce cache pollution
         if (Math.abs(offsetX) < 2 && Math.abs(offsetY) < 2) {
           return;
         }
@@ -924,7 +907,6 @@ function CropperContent(props: CropperContentProps) {
             )
           : requestedPosition;
 
-        // Only update if position actually changed (more aggressive threshold)
         const currentCrop = store.getState().crop;
         if (
           Math.abs(newPosition.x - currentCrop.x) > 1 ||
@@ -944,14 +926,12 @@ function CropperContent(props: CropperContentProps) {
 
   const onTouchMove = React.useCallback(
     (event: TouchEvent) => {
-      // Prevent whole page from scrolling on iOS
       event.preventDefault();
       if (event.touches.length === 2) {
-        const touch0 = event.touches[0];
-        const touch1 = event.touches[1];
-        if (touch0 && touch1) {
-          const pointA = getTouchPoint(touch0);
-          const pointB = getTouchPoint(touch1);
+        const [firstTouch, secondTouch] = event.touches ?? [];
+        if (firstTouch && secondTouch) {
+          const pointA = getTouchPoint(firstTouch);
+          const pointB = getTouchPoint(secondTouch);
           const center = getCenter(pointA, pointB);
           onDrag(center);
 
@@ -963,7 +943,6 @@ function CropperContent(props: CropperContentProps) {
             const distance = getDistanceBetweenPoints(pointA, pointB);
             const distanceRatio = distance / lastPinchDistanceRef.current;
 
-            // Only update if the change is significant enough to avoid excessive calculations
             if (Math.abs(distanceRatio - 1) > 0.01) {
               const newZoom = zoom * distanceRatio;
               onZoomChange(newZoom, center, false);
@@ -973,7 +952,6 @@ function CropperContent(props: CropperContentProps) {
             const rotationAngle = getRotationBetweenPoints(pointA, pointB);
             const rotationDiff = rotationAngle - lastPinchRotationRef.current;
 
-            // Only update rotation if the change is significant
             if (Math.abs(rotationDiff) > 0.5) {
               const newRotation = rotation + rotationDiff;
               store.setState("rotation", newRotation);
@@ -982,21 +960,19 @@ function CropperContent(props: CropperContentProps) {
           });
         }
       } else if (event.touches.length === 1) {
-        const touch0 = event.touches[0];
-        if (touch0) {
-          onDrag(getTouchPoint(touch0));
+        const firstTouch = event.touches[0];
+        if (firstTouch) {
+          onDrag(getTouchPoint(firstTouch));
         }
       }
     },
     [getTouchPoint, onDrag, zoom, onZoomChange, rotation, store],
   );
 
-  // Gesture event handlers for Safari iOS
   const onGestureChange = React.useCallback(
     (event: GestureEvent) => {
       event.preventDefault();
       if (isTouchingRef.current) {
-        // Avoid conflict between gesture and touch events
         return;
       }
 
@@ -1045,26 +1021,22 @@ function CropperContent(props: CropperContentProps) {
   const onDragStopped = React.useCallback(() => {
     isTouchingRef.current = false;
     store.setState("isDragging", false);
-    cleanupRefs();
+    onRefsCleanup();
     document.removeEventListener("mouseup", onDragStopped);
     document.removeEventListener("touchend", onDragStopped);
     cleanEvents();
-  }, [store, cleanEvents, cleanupRefs]);
+  }, [store, cleanEvents, onRefsCleanup]);
 
   const normalizeWheel = React.useCallback((event: WheelEvent) => {
-    // Normalize wheel delta values across browsers and devices
     let deltaX = event.deltaX;
     let deltaY = event.deltaY;
     let deltaZ = event.deltaZ;
 
-    // Normalize the delta values
     if (event.deltaMode === 1) {
-      // DOM_DELTA_LINE
       deltaX *= 16;
       deltaY *= 16;
       deltaZ *= 16;
     } else if (event.deltaMode === 2) {
-      // DOM_DELTA_PAGE
       deltaX *= 400;
       deltaY *= 400;
       deltaZ *= 400;
@@ -1084,7 +1056,6 @@ function CropperContent(props: CropperContentProps) {
       const newZoom = zoom - (deltaY * context.zoomSpeed) / 200;
       onZoomChange(newZoom, point, true);
 
-      // Batch state updates for better performance
       store.batch(() => {
         const currentState = store.getState();
         if (!currentState.hasWheelJustStarted) {
@@ -1194,7 +1165,7 @@ function CropperContent(props: CropperContentProps) {
       event.preventDefault();
       document.addEventListener("mousemove", onMouseMove);
       document.addEventListener("mouseup", onDragStopped);
-      saveContentPosition();
+      onContentPositionChange();
       onDragStart(getMousePoint(event));
     },
     [
@@ -1202,7 +1173,7 @@ function CropperContent(props: CropperContentProps) {
       onDragStart,
       onDragStopped,
       onMouseMove,
-      saveContentPosition,
+      onContentPositionChange,
       contentProps.onMouseDown,
     ],
   );
@@ -1215,7 +1186,7 @@ function CropperContent(props: CropperContentProps) {
       isTouchingRef.current = true;
       document.addEventListener("touchmove", onTouchMove, { passive: false });
       document.addEventListener("touchend", onDragStopped);
-      saveContentPosition();
+      onContentPositionChange();
 
       if (event.touches.length === 2) {
         const [firstTouch, secondTouch] = event.touches
@@ -1244,16 +1215,15 @@ function CropperContent(props: CropperContentProps) {
     [
       onDragStopped,
       onTouchMove,
-      saveContentPosition,
+      onContentPositionChange,
       getTouchPoint,
       onDragStart,
       contentProps.onTouchStart,
     ],
   );
 
-  // Prevent Safari on iOS >= 10 from zooming the page
   const preventZoomSafari = React.useCallback(
-    (e: Event) => e.preventDefault(),
+    (event: Event) => event.preventDefault(),
     [],
   );
 
@@ -1261,12 +1231,10 @@ function CropperContent(props: CropperContentProps) {
     const content = context.contentRef?.current;
     if (!content) return;
 
-    // Add wheel event listener for zoom on scroll
     if (context.zoomOnScroll) {
       content.addEventListener("wheel", onWheelZoom, { passive: false });
     }
 
-    // Add gesture event listener for Safari iOS
     content.addEventListener("gesturestart", preventZoomSafari);
     content.addEventListener("gesturestart", onGestureStart as EventListener);
 
@@ -1279,23 +1247,23 @@ function CropperContent(props: CropperContentProps) {
         "gesturestart",
         onGestureStart as EventListener,
       );
-      cleanupRefs();
+      onRefsCleanup();
     };
   }, [
     context.contentRef,
     context.zoomOnScroll,
     onWheelZoom,
-    cleanupRefs,
+    onRefsCleanup,
     preventZoomSafari,
     onGestureStart,
   ]);
 
   React.useEffect(() => {
     return () => {
-      cleanupRefs();
-      cleanupCaches();
+      onRefsCleanup();
+      onCachesCleanup();
     };
-  }, [cleanupRefs, cleanupCaches]);
+  }, [onRefsCleanup, onCachesCleanup]);
 
   const ContentPrimitive = asChild ? Slot : "div";
 
@@ -1525,7 +1493,6 @@ function CropperImage(props: CropperImageProps) {
           return;
         }
 
-        // Use requestIdleCallback for non-critical resize handling
         const callback = () => {
           const image = imageRef.current;
           if (image?.complete && image.naturalWidth > 0) {
@@ -1536,7 +1503,7 @@ function CropperImage(props: CropperImageProps) {
         if ("requestIdleCallback" in window) {
           requestIdleCallback(callback);
         } else {
-          setTimeout(callback, 16); // Fallback for browsers without requestIdleCallback
+          setTimeout(callback, 16);
         }
       });
 
@@ -1655,7 +1622,6 @@ function CropperVideo(props: CropperVideoProps) {
           return;
         }
 
-        // Use requestIdleCallback for non-critical resize handling
         const callback = () => {
           const video = videoRef.current;
           if (video && video.videoWidth > 0 && video.videoHeight > 0) {
@@ -1666,7 +1632,7 @@ function CropperVideo(props: CropperVideoProps) {
         if ("requestIdleCallback" in window) {
           requestIdleCallback(callback);
         } else {
-          setTimeout(callback, 16); // Fallback for browsers without requestIdleCallback
+          setTimeout(callback, 16);
         }
       });
 
@@ -1784,8 +1750,6 @@ function CropperArea(props: CropperAreaProps) {
     />
   );
 }
-
-// Get cache statistics for performance monitoring
 
 export {
   CropperRoot as Root,
