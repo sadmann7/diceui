@@ -43,37 +43,59 @@ interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-function clamp(value: number, min: number, max: number) {
+const MAX_CACHE_SIZE = 100;
+const rotationSizeCache = new Map<string, Size>();
+const cropSizeCache = new Map<string, Size>();
+
+function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
 }
 
-function getDistanceBetweenPoints(pointA: Point, pointB: Point) {
+function getDistanceBetweenPoints(pointA: Point, pointB: Point): number {
   return Math.sqrt((pointA.y - pointB.y) ** 2 + (pointA.x - pointB.x) ** 2);
 }
 
 function getCenter(a: Point, b: Point): Point {
   return {
-    x: (b.x + a.x) / 2,
-    y: (b.y + a.y) / 2,
+    x: (b.x + a.x) * 0.5,
+    y: (b.y + a.y) * 0.5,
   };
 }
 
-function getRotationBetweenPoints(pointA: Point, pointB: Point) {
+function getRotationBetweenPoints(pointA: Point, pointB: Point): number {
   return (Math.atan2(pointB.y - pointA.y, pointB.x - pointA.x) * 180) / Math.PI;
 }
 
-function getRadianAngle(degreeValue: number) {
+function getRadianAngle(degreeValue: number): number {
   return (degreeValue * Math.PI) / 180;
 }
 
 function rotateSize(width: number, height: number, rotation: number): Size {
+  const cacheKey = `${width}-${height}-${rotation}`;
+
+  const cached = rotationSizeCache.get(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   const rotRad = getRadianAngle(rotation);
-  return {
-    width:
-      Math.abs(Math.cos(rotRad) * width) + Math.abs(Math.sin(rotRad) * height),
-    height:
-      Math.abs(Math.sin(rotRad) * width) + Math.abs(Math.cos(rotRad) * height),
+  const cosRot = Math.cos(rotRad);
+  const sinRot = Math.sin(rotRad);
+
+  const result: Size = {
+    width: Math.abs(cosRot * width) + Math.abs(sinRot * height),
+    height: Math.abs(sinRot * width) + Math.abs(cosRot * height),
   };
+
+  if (rotationSizeCache.size >= MAX_CACHE_SIZE) {
+    const firstKey = rotationSizeCache.keys().next().value;
+    if (firstKey) {
+      rotationSizeCache.delete(firstKey);
+    }
+  }
+
+  rotationSizeCache.set(cacheKey, result);
+  return result;
 }
 
 function getCropSize(
@@ -84,21 +106,37 @@ function getCropSize(
   aspect: number,
   rotation = 0,
 ): Size {
+  const cacheKey = `${mediaWidth}-${mediaHeight}-${contentWidth}-${contentHeight}-${aspect}-${rotation}`;
+
+  const cached = cropSizeCache.get(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   const { width, height } = rotateSize(mediaWidth, mediaHeight, rotation);
   const fittingWidth = Math.min(width, contentWidth);
   const fittingHeight = Math.min(height, contentHeight);
 
-  if (fittingWidth > fittingHeight * aspect) {
-    return {
-      width: fittingHeight * aspect,
-      height: fittingHeight,
-    };
+  const result: Size =
+    fittingWidth > fittingHeight * aspect
+      ? {
+          width: fittingHeight * aspect,
+          height: fittingHeight,
+        }
+      : {
+          width: fittingWidth,
+          height: fittingWidth / aspect,
+        };
+
+  if (cropSizeCache.size >= MAX_CACHE_SIZE) {
+    const firstKey = cropSizeCache.keys().next().value;
+    if (firstKey) {
+      cropSizeCache.delete(firstKey);
+    }
   }
 
-  return {
-    width: fittingWidth,
-    height: fittingWidth / aspect,
-  };
+  cropSizeCache.set(cacheKey, result);
+  return result;
 }
 
 function restrictPosition(
@@ -114,19 +152,12 @@ function restrictPosition(
     rotation,
   );
 
-  const restrictPositionCoord = (
-    pos: number,
-    mediaS: number,
-    cropS: number,
-    z: number,
-  ): number => {
-    const maxPosition = (mediaS * z) / 2 - cropS / 2;
-    return clamp(pos, -maxPosition, maxPosition);
-  };
+  const maxPositionX = width * zoom * 0.5 - cropSize.width * 0.5;
+  const maxPositionY = height * zoom * 0.5 - cropSize.height * 0.5;
 
   return {
-    x: restrictPositionCoord(position.x, width, cropSize.width, zoom),
-    y: restrictPositionCoord(position.y, height, cropSize.height, zoom),
+    x: clamp(position.x, -maxPositionX, maxPositionX),
+    y: clamp(position.y, -maxPositionY, maxPositionY),
   };
 }
 
@@ -150,7 +181,7 @@ function computeCroppedArea(
     rotation,
   );
 
-  const croppedAreaPercentages = {
+  const croppedAreaPercentages: Area = {
     x: limitAreaFn(
       100,
       (((mediaBBoxSize.width - cropSize.width / zoom) / 2 - crop.x / zoom) /
@@ -198,7 +229,7 @@ function computeCroppedArea(
         height: Math.round(widthInPixels / aspect),
       };
 
-  const croppedAreaPixels = {
+  const croppedAreaPixels: Area = {
     ...sizePixels,
     x: Math.round(
       limitAreaFn(
@@ -399,7 +430,7 @@ interface CropperRootProps extends DivProps {
   onInteractionEnd?: () => void;
 }
 
-function CropperRoot(props: CropperRootProps) {
+const CropperRoot = React.memo(function CropperRoot(props: CropperRootProps) {
   const {
     crop = { x: 0, y: 0 },
     zoom = 1,
@@ -473,22 +504,39 @@ function CropperRoot(props: CropperRootProps) {
   );
 
   React.useEffect(() => {
+    const updates: Partial<StoreState> = {};
+    let hasUpdates = false;
+
     if (crop !== undefined) {
-      store.setState("crop", crop);
+      const currentState = store.getState();
+      if (!Object.is(currentState.crop, crop)) {
+        updates.crop = crop;
+        hasUpdates = true;
+      }
     }
-  }, [crop, store]);
 
-  React.useEffect(() => {
     if (zoom !== undefined) {
-      store.setState("zoom", zoom);
+      const currentState = store.getState();
+      if (currentState.zoom !== zoom) {
+        updates.zoom = zoom;
+        hasUpdates = true;
+      }
     }
-  }, [zoom, store]);
 
-  React.useEffect(() => {
     if (rotation !== undefined) {
-      store.setState("rotation", rotation);
+      const currentState = store.getState();
+      if (currentState.rotation !== rotation) {
+        updates.rotation = rotation;
+        hasUpdates = true;
+      }
     }
-  }, [rotation, store]);
+
+    if (hasUpdates) {
+      Object.entries(updates).forEach(([key, value]) => {
+        store.setState(key as keyof StoreState, value);
+      });
+    }
+  }, [crop, zoom, rotation, store]);
 
   const id = React.useId();
   const rootId = idProp ?? id;
@@ -537,7 +585,7 @@ function CropperRoot(props: CropperRootProps) {
       </CropperContext.Provider>
     </StoreContext.Provider>
   );
-}
+});
 
 interface CropperContentProps extends DivProps {
   onTouchInteractionFilter?: (
@@ -546,7 +594,9 @@ interface CropperContentProps extends DivProps {
   onWheelInteractionFilter?: (event: WheelEvent) => boolean;
 }
 
-function CropperContent(props: CropperContentProps) {
+const CropperContent = React.memo(function CropperContent(
+  props: CropperContentProps,
+) {
   const {
     className,
     asChild,
@@ -574,6 +624,22 @@ function CropperContent(props: CropperContentProps) {
   const rafDragTimeout = React.useRef<number | null>(null);
   const rafPinchTimeout = React.useRef<number | null>(null);
   const wheelTimer = React.useRef<number | null>(null);
+
+  // Cleanup function for RAF and timers
+  const cleanupRefs = React.useCallback(() => {
+    if (rafDragTimeout.current) {
+      cancelAnimationFrame(rafDragTimeout.current);
+      rafDragTimeout.current = null;
+    }
+    if (rafPinchTimeout.current) {
+      cancelAnimationFrame(rafPinchTimeout.current);
+      rafPinchTimeout.current = null;
+    }
+    if (wheelTimer.current) {
+      clearTimeout(wheelTimer.current);
+      wheelTimer.current = null;
+    }
+  }, []);
 
   const getMousePoint = React.useCallback(
     (event: MouseEvent | React.MouseEvent) => ({
@@ -675,10 +741,10 @@ function CropperContent(props: CropperContentProps) {
   const onDrag = React.useCallback(
     ({ x, y }: Point) => {
       if (rafDragTimeout.current) {
-        window.cancelAnimationFrame(rafDragTimeout.current);
+        cancelAnimationFrame(rafDragTimeout.current);
       }
 
-      rafDragTimeout.current = window.requestAnimationFrame(() => {
+      rafDragTimeout.current = requestAnimationFrame(() => {
         if (!cropSize || !mediaSize) return;
         if (x === undefined || y === undefined) return;
 
@@ -723,10 +789,10 @@ function CropperContent(props: CropperContentProps) {
           onDrag(center);
 
           if (rafPinchTimeout.current) {
-            window.cancelAnimationFrame(rafPinchTimeout.current);
+            cancelAnimationFrame(rafPinchTimeout.current);
           }
 
-          rafPinchTimeout.current = window.requestAnimationFrame(() => {
+          rafPinchTimeout.current = requestAnimationFrame(() => {
             const distance = getDistanceBetweenPoints(pointA, pointB);
             const newZoom = zoom * (distance / lastPinchDistance.current);
             setNewZoom(newZoom, center, false);
@@ -756,13 +822,11 @@ function CropperContent(props: CropperContentProps) {
 
   const onDragStopped = React.useCallback(() => {
     store.setState("isDragging", false);
-    if (rafDragTimeout.current) {
-      window.cancelAnimationFrame(rafDragTimeout.current);
-    }
+    cleanupRefs();
     document.removeEventListener("mouseup", onDragStopped);
     document.removeEventListener("touchend", onDragStopped);
     cleanEvents();
-  }, [store, cleanEvents]);
+  }, [store, cleanEvents, cleanupRefs]);
 
   const onMouseDown = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
@@ -934,11 +998,14 @@ function CropperContent(props: CropperContentProps) {
     content.addEventListener("wheel", onWheel, { passive: false });
     return () => {
       content.removeEventListener("wheel", onWheel);
-      if (wheelTimer.current) {
-        clearTimeout(wheelTimer.current);
-      }
+      cleanupRefs();
     };
-  }, [context.contentRef, context.zoomWithScroll, onWheel]);
+  }, [context.contentRef, context.zoomWithScroll, onWheel, cleanupRefs]);
+
+  // Cleanup on unmount
+  React.useEffect(() => {
+    return cleanupRefs;
+  }, [cleanupRefs]);
 
   const ContentPrimitive = asChild ? Slot : "div";
 
@@ -958,7 +1025,7 @@ function CropperContent(props: CropperContentProps) {
       onKeyUp={onKeyUp}
     />
   );
-}
+});
 
 const cropperMediaVariants = cva("will-change-transform", {
   variants: {
@@ -974,42 +1041,27 @@ const cropperMediaVariants = cva("will-change-transform", {
   },
 });
 
-interface CropperImageProps
-  extends React.ComponentProps<"img">,
-    VariantProps<typeof cropperMediaVariants> {
-  asChild?: boolean;
-}
-
-function CropperImage(props: CropperImageProps) {
-  const { className, asChild, ref, onLoad, objectFit, ...imageProps } = props;
-
-  const context = useCropperContext(IMAGE_NAME);
-  const store = useStoreContext(IMAGE_NAME);
-  const crop = useStore((state) => state.crop);
-  const zoom = useStore((state) => state.zoom);
-  const rotation = useStore((state) => state.rotation);
-
-  const imageRef = React.useRef<HTMLImageElement>(null);
-  const composedRef = useComposedRefs(ref, imageRef);
-
+// Shared media computation logic to avoid duplication
+function useMediaComputation<T extends HTMLImageElement | HTMLVideoElement>(
+  mediaRef: React.RefObject<T | null>,
+  context: CropperContextValue,
+  store: Store,
+  rotation: number,
+  getNaturalDimensions: (media: T) => { width: number; height: number },
+) {
   const computeSizes = React.useCallback(() => {
-    const img = imageRef.current;
+    const media = mediaRef.current;
     const content = context.contentRef?.current;
-    if (!img || !content) return;
+    if (!media || !content) return;
 
     const contentRect = content.getBoundingClientRect();
     const containerAspect = contentRect.width / contentRect.height;
-    const naturalWidth = img.naturalWidth;
-    const naturalHeight = img.naturalHeight;
+    const { width: naturalWidth, height: naturalHeight } =
+      getNaturalDimensions(media);
     const isMediaScaledDown =
-      img.offsetWidth < naturalWidth || img.offsetHeight < naturalHeight;
+      media.offsetWidth < naturalWidth || media.offsetHeight < naturalHeight;
     const mediaAspect = naturalWidth / naturalHeight;
 
-    // We do not rely on the offsetWidth/offsetHeight if the media is scaled down
-    // as the values they report are rounded. That will result in precision losses
-    // when calculating zoom. We use the fact that the media is positioned relative
-    // to the container. That allows us to use the container's dimensions
-    // and natural aspect ratio of the media to calculate accurate media size.
     let renderedMediaSize: Size;
 
     if (isMediaScaledDown) {
@@ -1066,8 +1118,8 @@ function CropperImage(props: CropperImageProps) {
       }
     } else {
       renderedMediaSize = {
-        width: img.offsetWidth,
-        height: img.offsetHeight,
+        width: media.offsetWidth,
+        height: media.offsetHeight,
       };
     }
 
@@ -1092,12 +1144,53 @@ function CropperImage(props: CropperImageProps) {
 
     return { mediaSize, cropSize };
   }, [
-    store,
+    mediaRef,
     context.aspectRatio,
     context.contentRef,
     context.objectFit,
+    store,
     rotation,
+    getNaturalDimensions,
   ]);
+
+  return { computeSizes };
+}
+
+interface CropperImageProps
+  extends React.ComponentProps<"img">,
+    VariantProps<typeof cropperMediaVariants> {
+  asChild?: boolean;
+}
+
+const CropperImage = React.memo(function CropperImage(
+  props: CropperImageProps,
+) {
+  const { className, asChild, ref, onLoad, objectFit, ...imageProps } = props;
+
+  const context = useCropperContext(IMAGE_NAME);
+  const store = useStoreContext(IMAGE_NAME);
+  const crop = useStore((state) => state.crop);
+  const zoom = useStore((state) => state.zoom);
+  const rotation = useStore((state) => state.rotation);
+
+  const imageRef = React.useRef<HTMLImageElement>(null);
+  const composedRef = useComposedRefs(ref, imageRef);
+
+  const getNaturalDimensions = React.useCallback(
+    (img: HTMLImageElement) => ({
+      width: img.naturalWidth,
+      height: img.naturalHeight,
+    }),
+    [],
+  );
+
+  const { computeSizes } = useMediaComputation(
+    imageRef,
+    context,
+    store,
+    rotation,
+    getNaturalDimensions,
+  );
 
   const onMediaLoad = React.useCallback(() => {
     const img = imageRef.current;
@@ -1123,9 +1216,9 @@ function CropperImage(props: CropperImageProps) {
       return;
     }
 
-    if (typeof window.ResizeObserver !== "undefined") {
+    if (typeof ResizeObserver !== "undefined") {
       let isFirstResize = true;
-      const resizeObserver = new window.ResizeObserver(() => {
+      const resizeObserver = new ResizeObserver(() => {
         if (isFirstResize) {
           isFirstResize = false;
           return;
@@ -1143,12 +1236,12 @@ function CropperImage(props: CropperImageProps) {
         resizeObserver.disconnect();
       };
     } else {
-      function onWindowResize() {
+      const onWindowResize = () => {
         const image = imageRef.current;
         if (image?.complete && image.naturalWidth > 0) {
           computeSizes();
         }
-      }
+      };
 
       window.addEventListener("resize", onWindowResize);
       return () => {
@@ -1177,7 +1270,7 @@ function CropperImage(props: CropperImageProps) {
       onLoad={onMediaLoad}
     />
   );
-}
+});
 
 interface CropperVideoProps
   extends React.ComponentProps<"video">,
@@ -1185,7 +1278,9 @@ interface CropperVideoProps
   asChild?: boolean;
 }
 
-function CropperVideo(props: CropperVideoProps) {
+const CropperVideo = React.memo(function CropperVideo(
+  props: CropperVideoProps,
+) {
   const {
     className,
     asChild,
@@ -1204,107 +1299,21 @@ function CropperVideo(props: CropperVideoProps) {
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const composedRef = useComposedRefs(ref, videoRef);
 
-  const computeSizes = React.useCallback(() => {
-    const video = videoRef.current;
-    const content = context.contentRef?.current;
-    if (!video || !content) return;
+  const getNaturalDimensions = React.useCallback(
+    (video: HTMLVideoElement) => ({
+      width: video.videoWidth,
+      height: video.videoHeight,
+    }),
+    [],
+  );
 
-    const contentRect = content.getBoundingClientRect();
-    const containerAspect = contentRect.width / contentRect.height;
-    const naturalWidth = video.videoWidth;
-    const naturalHeight = video.videoHeight;
-    const isMediaScaledDown =
-      video.offsetWidth < naturalWidth || video.offsetHeight < naturalHeight;
-    const mediaAspect = naturalWidth / naturalHeight;
-
-    let renderedMediaSize: Size;
-
-    if (isMediaScaledDown) {
-      const objectFit = context.objectFit;
-      switch (objectFit) {
-        case "contain":
-          renderedMediaSize =
-            containerAspect > mediaAspect
-              ? {
-                  width: contentRect.height * mediaAspect,
-                  height: contentRect.height,
-                }
-              : {
-                  width: contentRect.width,
-                  height: contentRect.width / mediaAspect,
-                };
-          break;
-        case "horizontal-cover":
-          renderedMediaSize = {
-            width: contentRect.width,
-            height: contentRect.width / mediaAspect,
-          };
-          break;
-        case "vertical-cover":
-          renderedMediaSize = {
-            width: contentRect.height * mediaAspect,
-            height: contentRect.height,
-          };
-          break;
-        case "cover":
-          renderedMediaSize =
-            containerAspect < mediaAspect
-              ? {
-                  width: contentRect.width,
-                  height: contentRect.width / mediaAspect,
-                }
-              : {
-                  width: contentRect.height * mediaAspect,
-                  height: contentRect.height,
-                };
-          break;
-        default:
-          renderedMediaSize =
-            containerAspect > mediaAspect
-              ? {
-                  width: contentRect.height * mediaAspect,
-                  height: contentRect.height,
-                }
-              : {
-                  width: contentRect.width,
-                  height: contentRect.width / mediaAspect,
-                };
-          break;
-      }
-    } else {
-      renderedMediaSize = {
-        width: video.offsetWidth,
-        height: video.offsetHeight,
-      };
-    }
-
-    const mediaSize: MediaSize = {
-      ...renderedMediaSize,
-      naturalWidth,
-      naturalHeight,
-    };
-
-    store.setState("mediaSize", mediaSize);
-
-    const cropSize = getCropSize(
-      mediaSize.width,
-      mediaSize.height,
-      contentRect.width,
-      contentRect.height,
-      context.aspectRatio,
-      rotation,
-    );
-
-    store.setState("cropSize", cropSize);
-
-    return { mediaSize, cropSize };
-  }, [
+  const { computeSizes } = useMediaComputation(
+    videoRef,
+    context,
     store,
-    context.aspectRatio,
-    context.contentRef,
-    context.objectFit,
     rotation,
-  ]);
+    getNaturalDimensions,
+  );
 
   const onMediaLoad = React.useCallback(() => {
     const video = videoRef.current;
@@ -1325,9 +1334,9 @@ function CropperVideo(props: CropperVideoProps) {
       return;
     }
 
-    if (typeof window.ResizeObserver !== "undefined") {
+    if (typeof ResizeObserver !== "undefined") {
       let isFirstResize = true;
-      const resizeObserver = new window.ResizeObserver(() => {
+      const resizeObserver = new ResizeObserver(() => {
         if (isFirstResize) {
           isFirstResize = false;
           return;
@@ -1345,12 +1354,12 @@ function CropperVideo(props: CropperVideoProps) {
         resizeObserver.disconnect();
       };
     } else {
-      function onWindowResize() {
+      const onWindowResize = () => {
         const video = videoRef.current;
         if (video && video.videoWidth > 0 && video.videoHeight > 0) {
           computeSizes();
         }
-      }
+      };
 
       window.addEventListener("resize", onWindowResize);
       return () => {
@@ -1384,7 +1393,7 @@ function CropperVideo(props: CropperVideoProps) {
       onLoadedMetadata={onMediaLoad}
     />
   );
-}
+});
 
 const cropperAreaVariants = cva(
   "-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2 box-border overflow-hidden border border-white/50 shadow-[0_0_0_9999em_rgba(0,0,0,0.5)]",
@@ -1412,7 +1421,7 @@ interface CropperAreaProps
   roundCropAreaPixels?: boolean;
 }
 
-function CropperArea(props: CropperAreaProps) {
+const CropperArea = React.memo(function CropperArea(props: CropperAreaProps) {
   const {
     className,
     asChild,
@@ -1453,7 +1462,7 @@ function CropperArea(props: CropperAreaProps) {
       }}
     />
   );
-}
+});
 
 export {
   CropperRoot as Root,
