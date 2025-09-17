@@ -87,14 +87,11 @@ export default function StepperValidationDemo() {
 
   const onValidate: NonNullable<StepperProps["onValidate"]> = React.useCallback(
     async (_value, direction) => {
-      // Allow backward navigation without validation
       if (direction === "prev") return true;
 
-      // Find current step to validate
       const currentStepData = steps.find((s) => s.value === currentStep);
       if (!currentStepData) return true;
 
-      // Validate current step fields using React Hook Form
       const isValid = await form.trigger(currentStepData.fields);
 
       if (!isValid) {
@@ -144,11 +141,7 @@ export default function StepperValidationDemo() {
         >
           <StepperList>
             {steps.map((step) => (
-              <StepperItem
-                key={step.value}
-                value={step.value}
-                className="gap-4"
-              >
+              <StepperItem key={step.value} value={step.value}>
                 <StepperTrigger>
                   <StepperIndicator />
                   <div className="flex flex-col gap-1">
@@ -160,157 +153,119 @@ export default function StepperValidationDemo() {
               </StepperItem>
             ))}
           </StepperList>
-
           <StepperContent
             value="account"
-            className="flex flex-col gap-4 rounded-md border bg-card p-6 text-card-foreground"
+            className="flex flex-col gap-4 rounded-md border bg-card p-4 text-card-foreground"
           >
-            <div className="flex flex-col gap-px">
-              <h3 className="font-semibold text-lg">Account Setup</h3>
-              <p className="text-muted-foreground text-sm">
-                Create your account with a unique username and email address.
-              </p>
-            </div>
-            <div className="flex flex-col gap-4">
-              <FormField
-                control={form.control}
-                name="username"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Username</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter username" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="Enter email"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter username" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input type="email" placeholder="Enter email" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </StepperContent>
-
           <StepperContent
             value="profile"
-            className="flex flex-col gap-4 rounded-md border bg-card p-6 text-card-foreground"
+            className="flex flex-col gap-4 rounded-md border bg-card p-4 text-card-foreground"
           >
-            <div className="flex flex-col gap-px">
-              <h3 className="font-semibold text-lg">Profile Information</h3>
-              <p className="text-muted-foreground text-sm">
-                Tell us more about yourself to complete your profile.
-              </p>
-            </div>
-            <div className="flex flex-col gap-4">
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="firstName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>First Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter first name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="lastName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Last Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter last name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+            <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="bio"
+                name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Bio</FormLabel>
+                    <FormLabel>First Name</FormLabel>
                     <FormControl>
-                      <Textarea
-                        placeholder="Tell us about yourself..."
-                        className="min-h-[100px]"
-                        {...field}
-                      />
+                      <Input placeholder="Enter first name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Last Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter last name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
+            <FormField
+              control={form.control}
+              name="bio"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Bio</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Tell us about yourself..."
+                      className="min-h-[80px]"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </StepperContent>
-
           <StepperContent
             value="review"
-            className="flex flex-col gap-4 rounded-md border bg-card p-6 text-card-foreground"
+            className="grid grid-cols-2 gap-4 rounded-md border bg-card p-4 text-card-foreground lg:grid-cols-3"
           >
-            <div className="flex flex-col gap-px">
-              <h3 className="font-semibold text-lg">Review Your Information</h3>
-              <p className="text-muted-foreground text-sm">
-                Please review your information before completing the setup.
+            <div className="flex flex-col gap-1 rounded-md border p-2">
+              <span className="font-medium text-sm">Username</span>
+              <p className="text-sm">
+                {form.watch("username") ?? "Not provided"}
               </p>
             </div>
-            <div className="flex flex-col gap-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1">
-                  <span className="font-medium text-sm">Username</span>
-                  <p className="text-sm">
-                    {form.watch("username") || "Not provided"}
-                  </p>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <span className="font-medium text-sm">Email</span>
-                  <p className="text-sm">
-                    {form.watch("email") || "Not provided"}
-                  </p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1">
-                  <span className="font-medium text-sm">First Name</span>
-                  <p className="text-sm">
-                    {form.watch("firstName") || "Not provided"}
-                  </p>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <span className="font-medium text-sm">Last Name</span>
-                  <p className="text-sm">
-                    {form.watch("lastName") || "Not provided"}
-                  </p>
-                </div>
-              </div>
-              <div className="flex flex-col gap-1">
-                <span className="font-medium text-sm">Bio</span>
-                <p className="text-sm">{form.watch("bio") || "Not provided"}</p>
-              </div>
+            <div className="flex flex-col gap-1 rounded-md border p-2">
+              <span className="font-medium text-sm">Email</span>
+              <p className="text-sm">{form.watch("email") ?? "Not provided"}</p>
+            </div>
+            <div className="flex flex-col gap-1 rounded-md border p-2">
+              <span className="font-medium text-sm">First Name</span>
+              <p className="text-sm">
+                {form.watch("firstName") ?? "Not provided"}
+              </p>
+            </div>
+            <div className="flex flex-col gap-1 rounded-md border p-2">
+              <span className="font-medium text-sm">Last Name</span>
+              <p className="text-sm">
+                {form.watch("lastName") ?? "Not provided"}
+              </p>
+            </div>
+            <div className="flex flex-col gap-1 rounded-md border p-2">
+              <span className="font-medium text-sm">Bio</span>
+              <p className="text-sm">{form.watch("bio") ?? "Not provided"}</p>
             </div>
           </StepperContent>
-
-          <div className="mt-4 flex justify-between">
+          <div className="flex justify-between">
             <Button
               type="button"
               variant="outline"
