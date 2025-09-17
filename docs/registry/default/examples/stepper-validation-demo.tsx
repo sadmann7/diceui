@@ -101,8 +101,6 @@ export default function StepperValidationDemo() {
         toast.info("Please complete all required fields to continue", {
           description: "Fix the validation errors and try again.",
         });
-      } else {
-        toast.success("Step validated successfully!");
       }
 
       return isValid;
