@@ -237,9 +237,7 @@ export default function StepperFormDemo() {
           </StepperContent>
           <div className="mt-4 flex justify-between">
             <StepperPrevTrigger asChild>
-              <Button type="button" variant="outline">
-                Previous
-              </Button>
+              <Button variant="outline">Previous</Button>
             </StepperPrevTrigger>
             <div className="text-muted-foreground text-sm">
               Step {currentIndex + 1} of {steps.length}
@@ -248,7 +246,7 @@ export default function StepperFormDemo() {
               <Button type="submit">Complete</Button>
             ) : (
               <StepperNextTrigger asChild>
-                <Button type="button">Next</Button>
+                <Button>Next</Button>
               </StepperNextTrigger>
             )}
           </div>

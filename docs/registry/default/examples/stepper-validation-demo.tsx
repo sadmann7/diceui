@@ -264,7 +264,7 @@ export default function StepperValidationDemo() {
               <Button type="submit">Complete Setup</Button>
             ) : (
               <StepperNextTrigger asChild>
-                <Button type="button">Next</Button>
+                <Button>Next</Button>
               </StepperNextTrigger>
             )}
           </div>
