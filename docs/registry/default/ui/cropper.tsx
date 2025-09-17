@@ -12,6 +12,8 @@ const IMAGE_NAME = "CropperImage";
 const VIDEO_NAME = "CropperVideo";
 const AREA_NAME = "CropperArea";
 
+const ARROW_KEYS = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
+
 interface Point {
   x: number;
   y: number;
@@ -417,6 +419,8 @@ function useStore<T>(selector: (state: StoreState) => T): T {
   return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
 
+type ContentElement = React.ComponentRef<typeof CropperContent>;
+
 interface CropperContextValue {
   id: string;
   aspectRatio: number;
@@ -429,7 +433,7 @@ interface CropperContextValue {
   restrictPosition: boolean;
   withGrid: boolean;
   keyboardStep: number;
-  contentRef: React.RefObject<HTMLDivElement | null>;
+  contentRef: React.RefObject<ContentElement | null>;
 }
 
 const CropperContext = React.createContext<CropperContextValue | null>(null);
@@ -441,8 +445,6 @@ function useCropperContext(consumerName: string) {
   }
   return context;
 }
-
-type ContentElement = React.ComponentRef<typeof CropperContent>;
 
 interface CropperRootProps extends DivProps {
   crop?: Point;
@@ -628,20 +630,8 @@ function CropperRoot(props: CropperRootProps) {
   );
 }
 
-interface CropperContentProps extends DivProps {
-  onTouchStartFilter?: (event: React.TouchEvent<HTMLDivElement>) => boolean;
-  onWheelFilter?: (event: WheelEvent) => boolean;
-}
-
-function CropperContent(props: CropperContentProps) {
-  const {
-    className,
-    asChild,
-    ref,
-    onTouchStartFilter,
-    onWheelFilter,
-    ...contentProps
-  } = props;
+function CropperContent(props: DivProps) {
+  const { className, asChild, ref, ...contentProps } = props;
 
   const context = useCropperContext(CONTENT_NAME);
   const store = useStoreContext(CONTENT_NAME);
@@ -653,27 +643,27 @@ function CropperContent(props: CropperContentProps) {
 
   const composedRef = useComposedRefs(ref, context.contentRef);
 
-  const dragStartPosition = React.useRef<Point>({ x: 0, y: 0 });
-  const dragStartCrop = React.useRef<Point>({ x: 0, y: 0 });
-  const contentPosition = React.useRef<Point>({ x: 0, y: 0 });
-  const lastPinchDistance = React.useRef(0);
-  const lastPinchRotation = React.useRef(0);
-  const rafDragTimeout = React.useRef<number | null>(null);
-  const rafPinchTimeout = React.useRef<number | null>(null);
-  const wheelTimer = React.useRef<number | null>(null);
+  const dragStartPositionRef = React.useRef<Point>({ x: 0, y: 0 });
+  const dragStartCropRef = React.useRef<Point>({ x: 0, y: 0 });
+  const contentPositionRef = React.useRef<Point>({ x: 0, y: 0 });
+  const lastPinchDistanceRef = React.useRef(0);
+  const lastPinchRotationRef = React.useRef(0);
+  const rafDragTimeoutRef = React.useRef<number | null>(null);
+  const rafPinchTimeoutRef = React.useRef<number | null>(null);
+  const wheelTimerRef = React.useRef<number | null>(null);
 
   const cleanupRefs = React.useCallback(() => {
-    if (rafDragTimeout.current) {
-      cancelAnimationFrame(rafDragTimeout.current);
-      rafDragTimeout.current = null;
+    if (rafDragTimeoutRef.current) {
+      cancelAnimationFrame(rafDragTimeoutRef.current);
+      rafDragTimeoutRef.current = null;
     }
-    if (rafPinchTimeout.current) {
-      cancelAnimationFrame(rafPinchTimeout.current);
-      rafPinchTimeout.current = null;
+    if (rafPinchTimeoutRef.current) {
+      cancelAnimationFrame(rafPinchTimeoutRef.current);
+      rafPinchTimeoutRef.current = null;
     }
-    if (wheelTimer.current) {
-      clearTimeout(wheelTimer.current);
-      wheelTimer.current = null;
+    if (wheelTimerRef.current) {
+      clearTimeout(wheelTimerRef.current);
+      wheelTimerRef.current = null;
     }
   }, []);
 
@@ -696,7 +686,7 @@ function CropperContent(props: CropperContentProps) {
   const saveContentPosition = React.useCallback(() => {
     if (context.contentRef?.current) {
       const bounds = context.contentRef.current.getBoundingClientRect();
-      contentPosition.current = { x: bounds.left, y: bounds.top };
+      contentPositionRef.current = { x: bounds.left, y: bounds.top };
     }
   }, [context.contentRef]);
 
@@ -724,14 +714,14 @@ function CropperContent(props: CropperContentProps) {
     [crop, zoom],
   );
 
-  const setNewZoom = React.useCallback(
+  const onZoomChange = React.useCallback(
     (newZoom: number, point: Point, shouldUpdatePosition = true) => {
       if (!cropSize || !mediaSize) return;
 
       const clampedZoom = clamp(newZoom, context.minZoom, context.maxZoom);
 
       if (shouldUpdatePosition) {
-        const zoomPoint = getPointOnContent(point, contentPosition.current);
+        const zoomPoint = getPointOnContent(point, contentPositionRef.current);
         const zoomTarget = getPointOnMedia(zoomPoint);
         const requestedPosition = {
           x: zoomTarget.x * clampedZoom - zoomPoint.x,
@@ -767,8 +757,8 @@ function CropperContent(props: CropperContentProps) {
 
   const onDragStart = React.useCallback(
     ({ x, y }: Point) => {
-      dragStartPosition.current = { x, y };
-      dragStartCrop.current = { ...crop };
+      dragStartPositionRef.current = { x, y };
+      dragStartCropRef.current = { ...crop };
       store.setState("isDragging", true);
     },
     [crop, store],
@@ -776,19 +766,19 @@ function CropperContent(props: CropperContentProps) {
 
   const onDrag = React.useCallback(
     ({ x, y }: Point) => {
-      if (rafDragTimeout.current) {
-        cancelAnimationFrame(rafDragTimeout.current);
+      if (rafDragTimeoutRef.current) {
+        cancelAnimationFrame(rafDragTimeoutRef.current);
       }
 
-      rafDragTimeout.current = requestAnimationFrame(() => {
+      rafDragTimeoutRef.current = requestAnimationFrame(() => {
         if (!cropSize || !mediaSize) return;
         if (x === undefined || y === undefined) return;
 
-        const offsetX = x - dragStartPosition.current.x;
-        const offsetY = y - dragStartPosition.current.y;
+        const offsetX = x - dragStartPositionRef.current.x;
+        const offsetY = y - dragStartPositionRef.current.y;
         const requestedPosition = {
-          x: dragStartCrop.current.x + offsetX,
-          y: dragStartCrop.current.y + offsetY,
+          x: dragStartCropRef.current.x + offsetX,
+          y: dragStartCropRef.current.y + offsetY,
         };
 
         const newPosition = context.restrictPosition
@@ -824,21 +814,21 @@ function CropperContent(props: CropperContentProps) {
           const center = getCenter(pointA, pointB);
           onDrag(center);
 
-          if (rafPinchTimeout.current) {
-            cancelAnimationFrame(rafPinchTimeout.current);
+          if (rafPinchTimeoutRef.current) {
+            cancelAnimationFrame(rafPinchTimeoutRef.current);
           }
 
-          rafPinchTimeout.current = requestAnimationFrame(() => {
+          rafPinchTimeoutRef.current = requestAnimationFrame(() => {
             const distance = getDistanceBetweenPoints(pointA, pointB);
-            const newZoom = zoom * (distance / lastPinchDistance.current);
-            setNewZoom(newZoom, center, false);
-            lastPinchDistance.current = distance;
+            const newZoom = zoom * (distance / lastPinchDistanceRef.current);
+            onZoomChange(newZoom, center, false);
+            lastPinchDistanceRef.current = distance;
 
             const rotationAngle = getRotationBetweenPoints(pointA, pointB);
             const newRotation =
-              rotation + (rotationAngle - lastPinchRotation.current);
+              rotation + (rotationAngle - lastPinchRotationRef.current);
             store.setState("rotation", newRotation);
-            lastPinchRotation.current = rotationAngle;
+            lastPinchRotationRef.current = rotationAngle;
           });
         }
       } else if (event.touches.length === 1) {
@@ -848,7 +838,7 @@ function CropperContent(props: CropperContentProps) {
         }
       }
     },
-    [getTouchPoint, onDrag, zoom, setNewZoom, rotation, store],
+    [getTouchPoint, onDrag, zoom, onZoomChange, rotation, store],
   );
 
   const cleanEvents = React.useCallback(() => {
@@ -864,102 +854,62 @@ function CropperContent(props: CropperContentProps) {
     cleanEvents();
   }, [store, cleanEvents, cleanupRefs]);
 
-  const onMouseDown = React.useCallback(
-    (event: React.MouseEvent<ContentElement>) => {
-      event.preventDefault();
-      document.addEventListener("mousemove", onMouseMove);
-      document.addEventListener("mouseup", onDragStopped);
-      saveContentPosition();
-      onDragStart(getMousePoint(event));
-    },
-    [
-      getMousePoint,
-      onDragStart,
-      onDragStopped,
-      onMouseMove,
-      saveContentPosition,
-    ],
-  );
-
-  const onTouchStart = React.useCallback(
-    (event: React.TouchEvent<ContentElement>) => {
-      if (onTouchStartFilter && !onTouchStartFilter(event)) {
-        return;
-      }
-
-      document.addEventListener("touchmove", onTouchMove, { passive: false });
-      document.addEventListener("touchend", onDragStopped);
-      saveContentPosition();
-
-      if (event.touches.length === 2) {
-        const touch0 = event.touches[0];
-        const touch1 = event.touches[1];
-        if (touch0 && touch1) {
-          const pointA = getTouchPoint(touch0);
-          const pointB = getTouchPoint(touch1);
-          lastPinchDistance.current = getDistanceBetweenPoints(pointA, pointB);
-          lastPinchRotation.current = getRotationBetweenPoints(pointA, pointB);
-          onDragStart(getCenter(pointA, pointB));
-        }
-      } else if (event.touches.length === 1) {
-        const touch0 = event.touches[0];
-        if (touch0) {
-          onDragStart(getTouchPoint(touch0));
-        }
-      }
-    },
-    [
-      onTouchStartFilter,
-      onDragStopped,
-      onTouchMove,
-      saveContentPosition,
-      getTouchPoint,
-      onDragStart,
-    ],
-  );
-
   const onWheel = React.useCallback(
     (event: WheelEvent) => {
-      if (onWheelFilter && !onWheelFilter(event)) {
-        return;
-      }
-
       event.preventDefault();
       const point = getMousePoint(event);
       const newZoom = zoom - (event.deltaY * context.zoomSpeed) / 200;
-      setNewZoom(newZoom, point, true);
+      onZoomChange(newZoom, point, true);
 
       store.setState("hasWheelJustStarted", true);
       store.setState("isDragging", true);
 
-      if (wheelTimer.current) {
-        clearTimeout(wheelTimer.current);
+      if (wheelTimerRef.current) {
+        clearTimeout(wheelTimerRef.current);
       }
-      wheelTimer.current = window.setTimeout(() => {
+      wheelTimerRef.current = window.setTimeout(() => {
         store.setState("hasWheelJustStarted", false);
         store.setState("isDragging", false);
       }, 250);
     },
-    [onWheelFilter, getMousePoint, zoom, context.zoomSpeed, setNewZoom, store],
+    [getMousePoint, zoom, context.zoomSpeed, onZoomChange, store],
+  );
+
+  const onKeyUp = React.useCallback(
+    (event: React.KeyboardEvent<ContentElement>) => {
+      props.onKeyUp?.(event);
+      if (event.defaultPrevented) return;
+
+      const arrowKeys = new Set(ARROW_KEYS);
+
+      if (arrowKeys.has(event.key)) {
+        event.preventDefault();
+        store.setState("isDragging", false);
+      }
+    },
+    [store, props.onKeyUp],
   );
 
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent<ContentElement>) => {
       if (!cropSize || !mediaSize) return;
 
+      props.onKeyDown?.(event);
+      if (event.defaultPrevented) return;
+
       let step = context.keyboardStep;
       if (event.shiftKey) {
         step *= 0.2;
       }
 
-      const keyHandlers = {
+      const keyHandlers: Record<string, () => Point> = {
         ArrowUp: () => ({ ...crop, y: crop.y - step }),
         ArrowDown: () => ({ ...crop, y: crop.y + step }),
         ArrowLeft: () => ({ ...crop, x: crop.x - step }),
         ArrowRight: () => ({ ...crop, x: crop.x + step }),
       } as const;
 
-      const handler = keyHandlers[event.key as keyof typeof keyHandlers];
+      const handler = keyHandlers[event.key];
       if (!handler) return;
 
       event.preventDefault();
@@ -991,24 +941,72 @@ function CropperContent(props: CropperContentProps) {
       zoom,
       rotation,
       store,
+      props.onKeyDown,
     ],
   );
 
-  const onKeyUp = React.useCallback(
-    (event: React.KeyboardEvent<ContentElement>) => {
-      const arrowKeys = new Set([
-        "ArrowUp",
-        "ArrowDown",
-        "ArrowLeft",
-        "ArrowRight",
-      ]);
+  const onMouseDown = React.useCallback(
+    (event: React.MouseEvent<ContentElement>) => {
+      props.onMouseDown?.(event);
+      if (event.defaultPrevented) return;
 
-      if (arrowKeys.has(event.key)) {
-        event.preventDefault();
-        store.setState("isDragging", false);
+      event.preventDefault();
+      document.addEventListener("mousemove", onMouseMove);
+      document.addEventListener("mouseup", onDragStopped);
+      saveContentPosition();
+      onDragStart(getMousePoint(event));
+    },
+    [
+      getMousePoint,
+      onDragStart,
+      onDragStopped,
+      onMouseMove,
+      saveContentPosition,
+      props.onMouseDown,
+    ],
+  );
+
+  const onTouchStart = React.useCallback(
+    (event: React.TouchEvent<ContentElement>) => {
+      props.onTouchStart?.(event);
+      if (event.defaultPrevented) return;
+
+      document.addEventListener("touchmove", onTouchMove, { passive: false });
+      document.addEventListener("touchend", onDragStopped);
+      saveContentPosition();
+
+      if (event.touches.length === 2) {
+        const [firstTouch, secondTouch] = event.touches
+          ? Array.from(event.touches)
+          : [];
+        if (firstTouch && secondTouch) {
+          const pointA = getTouchPoint(firstTouch);
+          const pointB = getTouchPoint(secondTouch);
+          lastPinchDistanceRef.current = getDistanceBetweenPoints(
+            pointA,
+            pointB,
+          );
+          lastPinchRotationRef.current = getRotationBetweenPoints(
+            pointA,
+            pointB,
+          );
+          onDragStart(getCenter(pointA, pointB));
+        }
+      } else if (event.touches.length === 1) {
+        const firstTouch = event.touches[0];
+        if (firstTouch) {
+          onDragStart(getTouchPoint(firstTouch));
+        }
       }
     },
-    [store],
+    [
+      onDragStopped,
+      onTouchMove,
+      saveContentPosition,
+      getTouchPoint,
+      onDragStart,
+      props.onTouchStart,
+    ],
   );
 
   React.useEffect(() => {
@@ -1038,10 +1036,10 @@ function CropperContent(props: CropperContentProps) {
         "absolute inset-0 flex cursor-move touch-none select-none items-center justify-center overflow-hidden outline-none",
         className,
       )}
+      onKeyUp={onKeyUp}
+      onKeyDown={onKeyDown}
       onMouseDown={onMouseDown}
       onTouchStart={onTouchStart}
-      onKeyDown={onKeyDown}
-      onKeyUp={onKeyUp}
     />
   );
 }
@@ -1067,7 +1065,7 @@ interface UseMediaComputationProps<
   context: CropperContextValue;
   store: Store;
   rotation: number;
-  getNaturalDimensions: (media: T) => { width: number; height: number };
+  getNaturalDimensions: (media: T) => Size;
 }
 
 function useMediaComputation<T extends HTMLImageElement | HTMLVideoElement>({
