@@ -1,3 +1,6 @@
+"use client";
+
+import * as React from "react";
 import {
   Stepper,
   StepperContent,
@@ -5,6 +8,7 @@ import {
   StepperIndicator,
   StepperItem,
   StepperList,
+  type StepperProps,
   StepperSeparator,
   StepperTitle,
   StepperTrigger,

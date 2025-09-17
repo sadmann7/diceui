@@ -156,6 +156,7 @@ interface Store {
     value: string,
     direction: NavigationDirection,
   ) => Promise<boolean>;
+  hasValidation: () => boolean;
   notify: () => void;
   addStep: (value: string, completed: boolean, disabled: boolean) => void;
   removeStep: (value: string) => void;
@@ -216,6 +217,7 @@ function createStore(
         return false;
       }
     },
+    hasValidation: () => !!onValidate,
     addStep: (value, completed, disabled) => {
       const state = stateRef.current;
       if (state) {
@@ -855,7 +857,7 @@ function StepperTrigger(props: StepperTriggerProps) {
   );
 
   const onKeyDown = React.useCallback(
-    (event: React.KeyboardEvent<TriggerElement>) => {
+    async (event: React.KeyboardEvent<TriggerElement>) => {
       triggerProps.onKeyDown?.(event);
       if (event.defaultPrevented) return;
 
@@ -905,6 +907,35 @@ function StepperTrigger(props: StepperTriggerProps) {
             : candidateNodes.slice(currentIndex + 1);
         }
 
+        if (store.hasValidation() && candidateNodes.length > 0) {
+          const nextElement = candidateNodes[0];
+          const nextItem = items.find((item) => item.element === nextElement);
+
+          if (nextItem && nextItem.value !== itemValue) {
+            const currentStepIndex = Array.from(steps.keys()).indexOf(
+              value || "",
+            );
+            const targetStepIndex = Array.from(steps.keys()).indexOf(
+              nextItem.value,
+            );
+            const direction: NavigationDirection =
+              targetStepIndex > currentStepIndex ? "next" : "prev";
+
+            if (direction === "next") {
+              const isValid = await store.setStateWithValidation(
+                nextItem.value,
+                direction,
+              );
+              if (!isValid) return;
+            } else {
+              store.setState("value", nextItem.value);
+            }
+
+            queueMicrotask(() => nextElement?.focus());
+            return;
+          }
+        }
+
         queueMicrotask(() => focusFirst(candidateNodes));
       }
     },
@@ -918,6 +949,10 @@ function StepperTrigger(props: StepperTriggerProps) {
       isDisabled,
       triggerElement,
       triggerProps.onKeyDown,
+      store,
+      itemValue,
+      value,
+      steps,
     ],
   );
 
