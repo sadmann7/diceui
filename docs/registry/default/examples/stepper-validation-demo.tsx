@@ -23,6 +23,8 @@ import {
   StepperIndicator,
   StepperItem,
   StepperList,
+  StepperNextTrigger,
+  StepperPrevTrigger,
   type StepperProps,
   StepperSeparator,
   StepperTitle,
@@ -108,22 +110,6 @@ export default function StepperValidationDemo() {
   const onValueChange = React.useCallback((value: string) => {
     setCurrentStep(value);
   }, []);
-
-  const nextStep = React.useCallback(() => {
-    const nextIndex = Math.min(currentIndex + 1, steps.length - 1);
-    const nextStepValue = steps[nextIndex]?.value;
-    if (nextStepValue) {
-      setCurrentStep(nextStepValue);
-    }
-  }, [currentIndex]);
-
-  const prevStep = React.useCallback(() => {
-    const prevIndex = Math.max(currentIndex - 1, 0);
-    const prevStepValue = steps[prevIndex]?.value;
-    if (prevStepValue) {
-      setCurrentStep(prevStepValue);
-    }
-  }, [currentIndex]);
 
   const onSubmit = React.useCallback((input: FormSchema) => {
     toast.success(
@@ -266,23 +252,20 @@ export default function StepperValidationDemo() {
             </div>
           </StepperContent>
           <div className="flex justify-between">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={prevStep}
-              disabled={currentIndex === 0}
-            >
-              Previous
-            </Button>
+            <StepperPrevTrigger asChild>
+              <Button type="button" variant="outline">
+                Previous
+              </Button>
+            </StepperPrevTrigger>
             <div className="text-muted-foreground text-sm">
               Step {currentIndex + 1} of {steps.length}
             </div>
             {currentIndex === steps.length - 1 ? (
               <Button type="submit">Complete Setup</Button>
             ) : (
-              <Button type="button" onClick={nextStep}>
-                Next
-              </Button>
+              <StepperNextTrigger asChild>
+                <Button type="button">Next</Button>
+              </StepperNextTrigger>
             )}
           </div>
         </Stepper>
