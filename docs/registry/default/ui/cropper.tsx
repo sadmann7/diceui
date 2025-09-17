@@ -630,7 +630,11 @@ function CropperRoot(props: CropperRootProps) {
   );
 }
 
-function CropperContent(props: DivProps) {
+interface CropperContentProps extends DivProps {
+  onWheelZoom?: (event: WheelEvent) => void;
+}
+
+function CropperContent(props: CropperContentProps) {
   const { className, asChild, ref, ...contentProps } = props;
 
   const context = useCropperContext(CONTENT_NAME);
@@ -854,8 +858,11 @@ function CropperContent(props: DivProps) {
     cleanEvents();
   }, [store, cleanEvents, cleanupRefs]);
 
-  const onWheel = React.useCallback(
+  const onWheelZoom = React.useCallback(
     (event: WheelEvent) => {
+      contentProps.onWheelZoom?.(event);
+      if (event.defaultPrevented) return;
+
       event.preventDefault();
       const point = getMousePoint(event);
       const newZoom = zoom - (event.deltaY * context.zoomSpeed) / 200;
@@ -872,12 +879,19 @@ function CropperContent(props: DivProps) {
         store.setState("isDragging", false);
       }, 250);
     },
-    [getMousePoint, zoom, context.zoomSpeed, onZoomChange, store],
+    [
+      getMousePoint,
+      zoom,
+      context.zoomSpeed,
+      onZoomChange,
+      store,
+      contentProps.onWheelZoom,
+    ],
   );
 
   const onKeyUp = React.useCallback(
     (event: React.KeyboardEvent<ContentElement>) => {
-      props.onKeyUp?.(event);
+      contentProps.onKeyUp?.(event);
       if (event.defaultPrevented) return;
 
       const arrowKeys = new Set(ARROW_KEYS);
@@ -887,14 +901,14 @@ function CropperContent(props: DivProps) {
         store.setState("isDragging", false);
       }
     },
-    [store, props.onKeyUp],
+    [store, contentProps.onKeyUp],
   );
 
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent<ContentElement>) => {
       if (!cropSize || !mediaSize) return;
 
-      props.onKeyDown?.(event);
+      contentProps.onKeyDown?.(event);
       if (event.defaultPrevented) return;
 
       let step = context.keyboardStep;
@@ -941,13 +955,13 @@ function CropperContent(props: DivProps) {
       zoom,
       rotation,
       store,
-      props.onKeyDown,
+      contentProps.onKeyDown,
     ],
   );
 
   const onMouseDown = React.useCallback(
     (event: React.MouseEvent<ContentElement>) => {
-      props.onMouseDown?.(event);
+      contentProps.onMouseDown?.(event);
       if (event.defaultPrevented) return;
 
       event.preventDefault();
@@ -962,13 +976,13 @@ function CropperContent(props: DivProps) {
       onDragStopped,
       onMouseMove,
       saveContentPosition,
-      props.onMouseDown,
+      contentProps.onMouseDown,
     ],
   );
 
   const onTouchStart = React.useCallback(
     (event: React.TouchEvent<ContentElement>) => {
-      props.onTouchStart?.(event);
+      contentProps.onTouchStart?.(event);
       if (event.defaultPrevented) return;
 
       document.addEventListener("touchmove", onTouchMove, { passive: false });
@@ -1005,7 +1019,7 @@ function CropperContent(props: DivProps) {
       saveContentPosition,
       getTouchPoint,
       onDragStart,
-      props.onTouchStart,
+      contentProps.onTouchStart,
     ],
   );
 
@@ -1013,12 +1027,12 @@ function CropperContent(props: DivProps) {
     const content = context.contentRef?.current;
     if (!content || !context.zoomOnScroll) return;
 
-    content.addEventListener("wheel", onWheel, { passive: false });
+    content.addEventListener("wheel", onWheelZoom, { passive: false });
     return () => {
-      content.removeEventListener("wheel", onWheel);
+      content.removeEventListener("wheel", onWheelZoom);
       cleanupRefs();
     };
-  }, [context.contentRef, context.zoomOnScroll, onWheel, cleanupRefs]);
+  }, [context.contentRef, context.zoomOnScroll, onWheelZoom, cleanupRefs]);
 
   React.useEffect(() => {
     return cleanupRefs;
