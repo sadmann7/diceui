@@ -278,11 +278,12 @@ interface Store {
 function createStore(
   listenersRef: React.RefObject<Set<() => void>>,
   stateRef: React.RefObject<StoreState>,
+  aspectRatio: number,
   onCropChange?: (crop: Point) => void,
   onZoomChange?: (zoom: number) => void,
   onRotationChange?: (rotation: number) => void,
-  _onCropComplete?: (croppedArea: Area, croppedAreaPixels: Area) => void,
-  _onCropAreaChange?: (croppedArea: Area, croppedAreaPixels: Area) => void,
+  onCropComplete?: (croppedArea: Area, croppedAreaPixels: Area) => void,
+  onCropAreaChange?: (croppedArea: Area, croppedAreaPixels: Area) => void,
   onCropSizeChange?: (cropSize: Size) => void,
   onMediaLoaded?: (mediaSize: MediaSize) => void,
   onInteractionStart?: () => void,
@@ -342,6 +343,42 @@ function createStore(
           onInteractionStart?.();
         } else {
           onInteractionEnd?.();
+          const currentState = stateRef.current;
+          if (
+            currentState?.mediaSize &&
+            currentState.cropSize &&
+            onCropComplete
+          ) {
+            const { croppedAreaPercentages, croppedAreaPixels } =
+              computeCroppedArea(
+                currentState.crop,
+                currentState.mediaSize,
+                currentState.cropSize,
+                aspectRatio,
+                currentState.zoom,
+                currentState.rotation,
+              );
+            onCropComplete(croppedAreaPercentages, croppedAreaPixels);
+          }
+        }
+      }
+
+      if (
+        (key === "crop" || key === "zoom" || key === "rotation") &&
+        onCropAreaChange
+      ) {
+        const currentState = stateRef.current;
+        if (currentState?.mediaSize && currentState.cropSize) {
+          const { croppedAreaPercentages, croppedAreaPixels } =
+            computeCroppedArea(
+              currentState.crop,
+              currentState.mediaSize,
+              currentState.cropSize,
+              aspectRatio,
+              currentState.zoom,
+              currentState.rotation,
+            );
+          onCropAreaChange(croppedAreaPercentages, croppedAreaPixels);
         }
       }
 
@@ -440,7 +477,7 @@ const CropperRoot = React.memo(function CropperRoot(props: CropperRootProps) {
     maxZoom = 3,
     cropShape = "rect",
     objectFit = "contain",
-    showGrid = true,
+    showGrid = false,
     zoomSpeed = 1,
     zoomWithScroll = true,
     restrictPosition = true,
@@ -478,6 +515,7 @@ const CropperRoot = React.memo(function CropperRoot(props: CropperRootProps) {
       createStore(
         listenersRef,
         stateRef,
+        aspectRatio,
         onCropChange,
         onZoomChange,
         onRotationChange,
@@ -491,6 +529,7 @@ const CropperRoot = React.memo(function CropperRoot(props: CropperRootProps) {
     [
       listenersRef,
       stateRef,
+      aspectRatio,
       onCropChange,
       onZoomChange,
       onRotationChange,
@@ -625,7 +664,6 @@ const CropperContent = React.memo(function CropperContent(
   const rafPinchTimeout = React.useRef<number | null>(null);
   const wheelTimer = React.useRef<number | null>(null);
 
-  // Cleanup function for RAF and timers
   const cleanupRefs = React.useCallback(() => {
     if (rafDragTimeout.current) {
       cancelAnimationFrame(rafDragTimeout.current);
@@ -1002,7 +1040,6 @@ const CropperContent = React.memo(function CropperContent(
     };
   }, [context.contentRef, context.zoomWithScroll, onWheel, cleanupRefs]);
 
-  // Cleanup on unmount
   React.useEffect(() => {
     return cleanupRefs;
   }, [cleanupRefs]);
@@ -1041,7 +1078,6 @@ const cropperMediaVariants = cva("will-change-transform", {
   },
 });
 
-// Shared media computation logic to avoid duplication
 function useMediaComputation<T extends HTMLImageElement | HTMLVideoElement>(
   mediaRef: React.RefObject<T | null>,
   context: CropperContextValue,
@@ -1481,6 +1517,7 @@ export {
   //
   computeCroppedArea,
   //
+  type CropperRootProps as CropperProps,
   type Point,
   type Size,
   type Area as CropArea,
