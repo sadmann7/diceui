@@ -36,7 +36,7 @@ interface MediaSize {
   naturalHeight: number;
 }
 
-type CropShape = "rect" | "round";
+type Shape = "rectangular" | "circular";
 type ObjectFit = "contain" | "cover" | "horizontal-cover" | "vertical-cover";
 
 interface DivProps extends React.ComponentProps<"div"> {
@@ -216,10 +216,10 @@ function computeCroppedArea(
       (croppedAreaPercentages.height * mediaNaturalBBoxSize.height) / 100,
     ),
   );
-  const isImgWiderThanHigh =
+  const isImageWiderThanHigh =
     mediaNaturalBBoxSize.width >= mediaNaturalBBoxSize.height * aspect;
 
-  const sizePixels = isImgWiderThanHigh
+  const sizePixels = isImageWiderThanHigh
     ? {
         width: Math.round(heightInPixels * aspect),
         height: heightInPixels,
@@ -422,12 +422,12 @@ interface CropperContextValue {
   aspectRatio: number;
   minZoom: number;
   maxZoom: number;
-  cropShape: CropShape;
+  shape: Shape;
   objectFit: ObjectFit;
-  showGrid: boolean;
   zoomSpeed: number;
-  zoomWithScroll: boolean;
+  zoomOnScroll: boolean;
   restrictPosition: boolean;
+  withGrid: boolean;
   keyboardStep: number;
   contentRef: React.RefObject<HTMLDivElement | null>;
 }
@@ -442,19 +442,21 @@ function useCropperContext(consumerName: string) {
   return context;
 }
 
+type ContentElement = React.ComponentRef<typeof CropperContent>;
+
 interface CropperRootProps extends DivProps {
   crop?: Point;
   zoom?: number;
-  rotation?: number;
-  aspectRatio?: number;
   minZoom?: number;
   maxZoom?: number;
-  cropShape?: CropShape;
+  rotation?: number;
+  aspectRatio?: number;
+  shape?: Shape;
   objectFit?: ObjectFit;
-  showGrid?: boolean;
   zoomSpeed?: number;
-  zoomWithScroll?: boolean;
+  zoomOnScroll?: boolean;
   restrictPosition?: boolean;
+  withGrid?: boolean;
   keyboardStep?: number;
   onCropChange?: (crop: Point) => void;
   onZoomChange?: (zoom: number) => void;
@@ -467,7 +469,7 @@ interface CropperRootProps extends DivProps {
   onInteractionEnd?: () => void;
 }
 
-const CropperRoot = React.memo(function CropperRoot(props: CropperRootProps) {
+function CropperRoot(props: CropperRootProps) {
   const {
     crop = { x: 0, y: 0 },
     zoom = 1,
@@ -475,11 +477,11 @@ const CropperRoot = React.memo(function CropperRoot(props: CropperRootProps) {
     aspectRatio = 4 / 3,
     minZoom = 1,
     maxZoom = 3,
-    cropShape = "rect",
+    shape = "rectangular",
     objectFit = "contain",
-    showGrid = false,
+    withGrid = false,
     zoomSpeed = 1,
-    zoomWithScroll = true,
+    zoomOnScroll = true,
     restrictPosition = true,
     keyboardStep = 1,
     onCropChange,
@@ -508,7 +510,7 @@ const CropperRoot = React.memo(function CropperRoot(props: CropperRootProps) {
     hasWheelJustStarted: false,
   }));
 
-  const contentRef = React.useRef<HTMLDivElement | null>(null);
+  const contentRef = React.useRef<ContentElement>(null);
 
   const store = React.useMemo(
     () =>
@@ -586,11 +588,11 @@ const CropperRoot = React.memo(function CropperRoot(props: CropperRootProps) {
       aspectRatio,
       minZoom,
       maxZoom,
-      cropShape,
+      shape,
       objectFit,
-      showGrid,
+      withGrid,
       zoomSpeed,
-      zoomWithScroll,
+      zoomOnScroll,
       restrictPosition,
       keyboardStep,
       contentRef,
@@ -600,11 +602,11 @@ const CropperRoot = React.memo(function CropperRoot(props: CropperRootProps) {
       aspectRatio,
       minZoom,
       maxZoom,
-      cropShape,
+      shape,
       objectFit,
-      showGrid,
+      withGrid,
       zoomSpeed,
-      zoomWithScroll,
+      zoomOnScroll,
       restrictPosition,
       keyboardStep,
     ],
@@ -624,24 +626,20 @@ const CropperRoot = React.memo(function CropperRoot(props: CropperRootProps) {
       </CropperContext.Provider>
     </StoreContext.Provider>
   );
-});
-
-interface CropperContentProps extends DivProps {
-  onTouchInteractionFilter?: (
-    event: React.TouchEvent<HTMLDivElement>,
-  ) => boolean;
-  onWheelInteractionFilter?: (event: WheelEvent) => boolean;
 }
 
-const CropperContent = React.memo(function CropperContent(
-  props: CropperContentProps,
-) {
+interface CropperContentProps extends DivProps {
+  onTouchStartFilter?: (event: React.TouchEvent<HTMLDivElement>) => boolean;
+  onWheelFilter?: (event: WheelEvent) => boolean;
+}
+
+function CropperContent(props: CropperContentProps) {
   const {
     className,
     asChild,
     ref,
-    onTouchInteractionFilter,
-    onWheelInteractionFilter,
+    onTouchStartFilter,
+    onWheelFilter,
     ...contentProps
   } = props;
 
@@ -705,7 +703,7 @@ const CropperContent = React.memo(function CropperContent(
   const getPointOnContent = React.useCallback(
     ({ x, y }: Point, contentTopLeft: Point): Point => {
       if (!context.contentRef?.current) {
-        throw new Error("The Cropper is not mounted");
+        return { x: 0, y: 0 };
       }
       const contentRect = context.contentRef.current.getBoundingClientRect();
       return {
@@ -867,7 +865,7 @@ const CropperContent = React.memo(function CropperContent(
   }, [store, cleanEvents, cleanupRefs]);
 
   const onMouseDown = React.useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
+    (event: React.MouseEvent<ContentElement>) => {
       event.preventDefault();
       document.addEventListener("mousemove", onMouseMove);
       document.addEventListener("mouseup", onDragStopped);
@@ -884,8 +882,8 @@ const CropperContent = React.memo(function CropperContent(
   );
 
   const onTouchStart = React.useCallback(
-    (event: React.TouchEvent<HTMLDivElement>) => {
-      if (onTouchInteractionFilter && !onTouchInteractionFilter(event)) {
+    (event: React.TouchEvent<ContentElement>) => {
+      if (onTouchStartFilter && !onTouchStartFilter(event)) {
         return;
       }
 
@@ -911,7 +909,7 @@ const CropperContent = React.memo(function CropperContent(
       }
     },
     [
-      onTouchInteractionFilter,
+      onTouchStartFilter,
       onDragStopped,
       onTouchMove,
       saveContentPosition,
@@ -922,7 +920,7 @@ const CropperContent = React.memo(function CropperContent(
 
   const onWheel = React.useCallback(
     (event: WheelEvent) => {
-      if (onWheelInteractionFilter && !onWheelInteractionFilter(event)) {
+      if (onWheelFilter && !onWheelFilter(event)) {
         return;
       }
 
@@ -942,18 +940,11 @@ const CropperContent = React.memo(function CropperContent(
         store.setState("isDragging", false);
       }, 250);
     },
-    [
-      onWheelInteractionFilter,
-      getMousePoint,
-      zoom,
-      context.zoomSpeed,
-      setNewZoom,
-      store,
-    ],
+    [onWheelFilter, getMousePoint, zoom, context.zoomSpeed, setNewZoom, store],
   );
 
   const onKeyDown = React.useCallback(
-    (event: React.KeyboardEvent<HTMLDivElement>) => {
+    (event: React.KeyboardEvent<ContentElement>) => {
       if (!cropSize || !mediaSize) return;
 
       let step = context.keyboardStep;
@@ -1004,7 +995,7 @@ const CropperContent = React.memo(function CropperContent(
   );
 
   const onKeyUp = React.useCallback(
-    (event: React.KeyboardEvent<HTMLDivElement>) => {
+    (event: React.KeyboardEvent<ContentElement>) => {
       const arrowKeys = new Set([
         "ArrowUp",
         "ArrowDown",
@@ -1022,14 +1013,14 @@ const CropperContent = React.memo(function CropperContent(
 
   React.useEffect(() => {
     const content = context.contentRef?.current;
-    if (!content || !context.zoomWithScroll) return;
+    if (!content || !context.zoomOnScroll) return;
 
     content.addEventListener("wheel", onWheel, { passive: false });
     return () => {
       content.removeEventListener("wheel", onWheel);
       cleanupRefs();
     };
-  }, [context.contentRef, context.zoomWithScroll, onWheel, cleanupRefs]);
+  }, [context.contentRef, context.zoomOnScroll, onWheel, cleanupRefs]);
 
   React.useEffect(() => {
     return cleanupRefs;
@@ -1053,7 +1044,7 @@ const CropperContent = React.memo(function CropperContent(
       onKeyUp={onKeyUp}
     />
   );
-});
+}
 
 const cropperMediaVariants = cva("will-change-transform", {
   variants: {
@@ -1191,10 +1182,9 @@ interface CropperImageProps
   asChild?: boolean;
 }
 
-const CropperImage = React.memo(function CropperImage(
-  props: CropperImageProps,
-) {
-  const { className, asChild, ref, onLoad, objectFit, ...imageProps } = props;
+function CropperImage(props: CropperImageProps) {
+  const { className, style, asChild, ref, onLoad, objectFit, ...imageProps } =
+    props;
 
   const context = useCropperContext(IMAGE_NAME);
   const store = useStoreContext(IMAGE_NAME);
@@ -1206,9 +1196,9 @@ const CropperImage = React.memo(function CropperImage(
   const composedRef = useComposedRefs(ref, imageRef);
 
   const getNaturalDimensions = React.useCallback(
-    (img: HTMLImageElement) => ({
-      width: img.naturalWidth,
-      height: img.naturalHeight,
+    (image: HTMLImageElement) => ({
+      width: image.naturalWidth,
+      height: image.naturalHeight,
     }),
     [],
   );
@@ -1222,8 +1212,8 @@ const CropperImage = React.memo(function CropperImage(
   });
 
   const onMediaLoad = React.useCallback(() => {
-    const img = imageRef.current;
-    if (!img) return;
+    const image = imageRef.current;
+    if (!image) return;
 
     computeSizes();
 
@@ -1289,17 +1279,17 @@ const CropperImage = React.memo(function CropperImage(
       className={cn(
         cropperMediaVariants({
           objectFit: objectFit ?? context.objectFit,
+          className,
         }),
-        className,
       )}
       style={{
         transform: `translate(${crop.x}px, ${crop.y}px) rotate(${rotation}deg) scale(${zoom})`,
-        ...imageProps.style,
+        ...style,
       }}
       onLoad={onMediaLoad}
     />
   );
-});
+}
 
 interface CropperVideoProps
   extends React.ComponentProps<"video">,
@@ -1307,11 +1297,10 @@ interface CropperVideoProps
   asChild?: boolean;
 }
 
-const CropperVideo = React.memo(function CropperVideo(
-  props: CropperVideoProps,
-) {
+function CropperVideo(props: CropperVideoProps) {
   const {
     className,
+    style,
     asChild,
     ref,
     onLoadedMetadata,
@@ -1412,34 +1401,34 @@ const CropperVideo = React.memo(function CropperVideo(
       className={cn(
         cropperMediaVariants({
           objectFit: objectFit ?? context.objectFit,
+          className,
         }),
-        className,
       )}
       style={{
         transform: `translate(${crop.x}px, ${crop.y}px) rotate(${rotation}deg) scale(${zoom})`,
-        ...videoProps.style,
+        ...style,
       }}
       onLoadedMetadata={onMediaLoad}
     />
   );
-});
+}
 
 const cropperAreaVariants = cva(
   "-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2 box-border overflow-hidden border border-white/50 shadow-[0_0_0_9999em_rgba(0,0,0,0.5)]",
   {
     variants: {
       shape: {
-        rect: "",
-        round: "rounded-full",
+        rectangular: "",
+        circular: "rounded-full",
       },
-      showGrid: {
+      withGrid: {
         true: "before:absolute before:top-0 before:right-1/3 before:bottom-0 before:left-1/3 before:box-border before:border before:border-white/50 before:border-t-0 before:border-b-0 before:content-[''] after:absolute after:top-1/3 after:right-0 after:bottom-1/3 after:left-0 after:box-border after:border after:border-white/50 after:border-r-0 after:border-l-0 after:content-['']",
         false: "",
       },
     },
     defaultVariants: {
-      shape: "rect",
-      showGrid: false,
+      shape: "rectangular",
+      withGrid: false,
     },
   },
 );
@@ -1447,17 +1436,18 @@ const cropperAreaVariants = cva(
 interface CropperAreaProps
   extends DivProps,
     VariantProps<typeof cropperAreaVariants> {
-  roundCropAreaPixels?: boolean;
+  snapPixels?: boolean;
 }
 
-const CropperArea = React.memo(function CropperArea(props: CropperAreaProps) {
+function CropperArea(props: CropperAreaProps) {
   const {
     className,
+    style,
     asChild,
     ref,
-    roundCropAreaPixels = false,
+    snapPixels = false,
     shape,
-    showGrid,
+    withGrid,
     ...areaProps
   } = props;
 
@@ -1475,23 +1465,19 @@ const CropperArea = React.memo(function CropperArea(props: CropperAreaProps) {
       ref={ref}
       className={cn(
         cropperAreaVariants({
-          shape: shape ?? context.cropShape,
-          showGrid: showGrid ?? context.showGrid,
+          shape: shape ?? context.shape,
+          withGrid: withGrid ?? context.withGrid,
+          className,
         }),
-        className,
       )}
       style={{
-        width: roundCropAreaPixels
-          ? Math.round(cropSize.width)
-          : cropSize.width,
-        height: roundCropAreaPixels
-          ? Math.round(cropSize.height)
-          : cropSize.height,
-        ...areaProps.style,
+        width: snapPixels ? Math.round(cropSize.width) : cropSize.width,
+        height: snapPixels ? Math.round(cropSize.height) : cropSize.height,
+        ...style,
       }}
     />
   );
-});
+}
 
 export {
   CropperRoot as Root,
@@ -1515,6 +1501,6 @@ export {
   type Size,
   type Area as CropArea,
   type MediaSize,
-  type CropShape,
+  type Shape,
   type ObjectFit,
 };
