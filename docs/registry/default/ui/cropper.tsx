@@ -961,28 +961,19 @@ const CropperContent = React.memo(function CropperContent(
         step *= 0.2;
       }
 
-      let newCrop = { ...crop };
+      const keyHandlers = {
+        ArrowUp: () => ({ ...crop, y: crop.y - step }),
+        ArrowDown: () => ({ ...crop, y: crop.y + step }),
+        ArrowLeft: () => ({ ...crop, x: crop.x - step }),
+        ArrowRight: () => ({ ...crop, x: crop.x + step }),
+      } as const;
 
-      switch (event.key) {
-        case "ArrowUp":
-          newCrop.y -= step;
-          event.preventDefault();
-          break;
-        case "ArrowDown":
-          newCrop.y += step;
-          event.preventDefault();
-          break;
-        case "ArrowLeft":
-          newCrop.x -= step;
-          event.preventDefault();
-          break;
-        case "ArrowRight":
-          newCrop.x += step;
-          event.preventDefault();
-          break;
-        default:
-          return;
-      }
+      const handler = keyHandlers[event.key as keyof typeof keyHandlers];
+      if (!handler) return;
+
+      event.preventDefault();
+
+      let newCrop = handler();
 
       if (context.restrictPosition) {
         newCrop = restrictPosition(
@@ -1014,16 +1005,16 @@ const CropperContent = React.memo(function CropperContent(
 
   const onKeyUp = React.useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
-      switch (event.key) {
-        case "ArrowUp":
-        case "ArrowDown":
-        case "ArrowLeft":
-        case "ArrowRight":
-          event.preventDefault();
-          store.setState("isDragging", false);
-          break;
-        default:
-          return;
+      const arrowKeys = new Set([
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight",
+      ]);
+
+      if (arrowKeys.has(event.key)) {
+        event.preventDefault();
+        store.setState("isDragging", false);
       }
     },
     [store],
@@ -1078,13 +1069,23 @@ const cropperMediaVariants = cva("will-change-transform", {
   },
 });
 
-function useMediaComputation<T extends HTMLImageElement | HTMLVideoElement>(
-  mediaRef: React.RefObject<T | null>,
-  context: CropperContextValue,
-  store: Store,
-  rotation: number,
-  getNaturalDimensions: (media: T) => { width: number; height: number },
-) {
+interface UseMediaComputationProps<
+  T extends HTMLImageElement | HTMLVideoElement,
+> {
+  mediaRef: React.RefObject<T | null>;
+  context: CropperContextValue;
+  store: Store;
+  rotation: number;
+  getNaturalDimensions: (media: T) => { width: number; height: number };
+}
+
+function useMediaComputation<T extends HTMLImageElement | HTMLVideoElement>({
+  mediaRef,
+  context,
+  store,
+  rotation,
+  getNaturalDimensions,
+}: UseMediaComputationProps<T>) {
   const computeSizes = React.useCallback(() => {
     const media = mediaRef.current;
     const content = context.contentRef?.current;
@@ -1101,56 +1102,49 @@ function useMediaComputation<T extends HTMLImageElement | HTMLVideoElement>(
     let renderedMediaSize: Size;
 
     if (isMediaScaledDown) {
-      switch (context.objectFit) {
-        case "contain":
-          renderedMediaSize =
-            containerAspect > mediaAspect
-              ? {
-                  width: contentRect.height * mediaAspect,
-                  height: contentRect.height,
-                }
-              : {
-                  width: contentRect.width,
-                  height: contentRect.width / mediaAspect,
-                };
-          break;
-        case "horizontal-cover":
-          renderedMediaSize = {
-            width: contentRect.width,
-            height: contentRect.width / mediaAspect,
-          };
-          break;
-        case "vertical-cover":
-          renderedMediaSize = {
-            width: contentRect.height * mediaAspect,
-            height: contentRect.height,
-          };
-          break;
-        case "cover":
-          renderedMediaSize =
-            containerAspect < mediaAspect
-              ? {
-                  width: contentRect.width,
-                  height: contentRect.width / mediaAspect,
-                }
-              : {
-                  width: contentRect.height * mediaAspect,
-                  height: contentRect.height,
-                };
-          break;
-        default:
-          renderedMediaSize =
-            containerAspect > mediaAspect
-              ? {
-                  width: contentRect.height * mediaAspect,
-                  height: contentRect.height,
-                }
-              : {
-                  width: contentRect.width,
-                  height: contentRect.width / mediaAspect,
-                };
-          break;
-      }
+      const objectFitHandlers = {
+        contain: () =>
+          containerAspect > mediaAspect
+            ? {
+                width: contentRect.height * mediaAspect,
+                height: contentRect.height,
+              }
+            : {
+                width: contentRect.width,
+                height: contentRect.width / mediaAspect,
+              },
+        "horizontal-cover": () => ({
+          width: contentRect.width,
+          height: contentRect.width / mediaAspect,
+        }),
+        "vertical-cover": () => ({
+          width: contentRect.height * mediaAspect,
+          height: contentRect.height,
+        }),
+        cover: () =>
+          containerAspect < mediaAspect
+            ? {
+                width: contentRect.width,
+                height: contentRect.width / mediaAspect,
+              }
+            : {
+                width: contentRect.height * mediaAspect,
+                height: contentRect.height,
+              },
+      } as const;
+
+      const handler = objectFitHandlers[context.objectFit];
+      renderedMediaSize = handler
+        ? handler()
+        : containerAspect > mediaAspect
+          ? {
+              width: contentRect.height * mediaAspect,
+              height: contentRect.height,
+            }
+          : {
+              width: contentRect.width,
+              height: contentRect.width / mediaAspect,
+            };
     } else {
       renderedMediaSize = {
         width: media.offsetWidth,
@@ -1219,13 +1213,13 @@ const CropperImage = React.memo(function CropperImage(
     [],
   );
 
-  const { computeSizes } = useMediaComputation(
-    imageRef,
+  const { computeSizes } = useMediaComputation({
+    mediaRef: imageRef,
     context,
     store,
     rotation,
     getNaturalDimensions,
-  );
+  });
 
   const onMediaLoad = React.useCallback(() => {
     const img = imageRef.current;
@@ -1342,13 +1336,13 @@ const CropperVideo = React.memo(function CropperVideo(
     [],
   );
 
-  const { computeSizes } = useMediaComputation(
-    videoRef,
+  const { computeSizes } = useMediaComputation({
+    mediaRef: videoRef,
     context,
     store,
     rotation,
     getNaturalDimensions,
-  );
+  });
 
   const onMediaLoad = React.useCallback(() => {
     const video = videoRef.current;
