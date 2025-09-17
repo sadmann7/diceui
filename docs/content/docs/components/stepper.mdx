@@ -53,6 +53,10 @@ import * as Stepper from "@/components/ui/stepper";
     </Stepper.Item>
   </Stepper.List>
   <Stepper.Content />
+  <div>
+    <Stepper.PrevTrigger />
+    <Stepper.NextTrigger />
+  </div>
 </Stepper.Root>
 ```
 
@@ -199,6 +203,24 @@ The content area that displays for the active step.
 <AutoTypeTable
   path="./types/docs/stepper.ts"
   name="ContentProps"
+/>
+
+### PrevTrigger
+
+A navigation button that moves to the previous step. Automatically disabled on the first step and skips validation when navigating backwards.
+
+<AutoTypeTable
+  path="./types/docs/stepper.ts"
+  name="PrevTriggerProps"
+/>
+
+### NextTrigger
+
+A navigation button that moves to the next step. Automatically disabled on the last step and respects validation rules when navigating forwards.
+
+<AutoTypeTable
+  path="./types/docs/stepper.ts"
+  name="NextTriggerProps"
 />
 
 ## Accessibility
