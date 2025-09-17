@@ -15,6 +15,8 @@ const SEPARATOR_NAME = "StepperSeparator";
 const TITLE_NAME = "StepperTitle";
 const DESCRIPTION_NAME = "StepperDescription";
 const CONTENT_NAME = "StepperContent";
+const PREV_TRIGGER_NAME = "StepperPrevTrigger";
+const NEXT_TRIGGER_NAME = "StepperNextTrigger";
 
 const ENTRY_FOCUS = "stepperFocusGroup.onEntryFocus";
 const EVENT_OPTIONS = { bubbles: false, cancelable: true };
@@ -102,6 +104,10 @@ type ActivationMode = "automatic" | "manual";
 type DataState = "inactive" | "active" | "completed";
 
 interface DivProps extends React.ComponentProps<"div"> {
+  asChild?: boolean;
+}
+
+interface ButtonProps extends React.ComponentProps<"button"> {
   asChild?: boolean;
 }
 
@@ -710,11 +716,7 @@ function StepperItem(props: StepperItemProps) {
 
 type TriggerElement = React.ComponentRef<typeof StepperTrigger>;
 
-interface StepperTriggerProps extends React.ComponentProps<"button"> {
-  asChild?: boolean;
-}
-
-function StepperTrigger(props: StepperTriggerProps) {
+function StepperTrigger(props: ButtonProps) {
   const { asChild, className, ref, ...triggerProps } = props;
 
   const context = useStepperContext(TRIGGER_NAME);
@@ -746,7 +748,7 @@ function StepperTrigger(props: StepperTriggerProps) {
   const dataState = getDataState(value, itemValue, stepState, steps);
 
   const [triggerElement, setTriggerElement] =
-    React.useState<HTMLElement | null>(null);
+    React.useState<TriggerElement | null>(null);
   const composedRef = useComposedRefs(ref, setTriggerElement);
   const isArrowKeyPressedRef = React.useRef(false);
   const isMouseClickRef = React.useRef(false);
@@ -1202,6 +1204,84 @@ function StepperContent(props: StepperContentProps) {
   );
 }
 
+function StepperPrevTrigger(props: ButtonProps) {
+  const { asChild, disabled, ...prevTriggerProps } = props;
+
+  const store = useStoreContext(PREV_TRIGGER_NAME);
+  const value = useStore((state) => state.value);
+  const steps = useStore((state) => state.steps);
+
+  const stepKeys = Array.from(steps.keys());
+  const currentIndex = value ? stepKeys.indexOf(value) : -1;
+  const isDisabled = disabled || currentIndex <= 0;
+
+  const onClick = React.useCallback(
+    async (event: React.MouseEvent<HTMLButtonElement>) => {
+      prevTriggerProps.onClick?.(event);
+      if (event.defaultPrevented || isDisabled) return;
+
+      const prevIndex = Math.max(currentIndex - 1, 0);
+      const prevStepValue = stepKeys[prevIndex];
+
+      if (prevStepValue) {
+        store.setState("value", prevStepValue);
+      }
+    },
+    [prevTriggerProps.onClick, isDisabled, currentIndex, stepKeys, store],
+  );
+
+  const PrevTriggerPrimitive = asChild ? Slot : "button";
+
+  return (
+    <PrevTriggerPrimitive
+      type="button"
+      data-slot="stepper-prev-trigger"
+      disabled={isDisabled}
+      {...prevTriggerProps}
+      onClick={onClick}
+    />
+  );
+}
+
+function StepperNextTrigger(props: ButtonProps) {
+  const { asChild, disabled, ...nextTriggerProps } = props;
+
+  const store = useStoreContext(NEXT_TRIGGER_NAME);
+  const value = useStore((state) => state.value);
+  const steps = useStore((state) => state.steps);
+
+  const stepKeys = Array.from(steps.keys());
+  const currentIndex = value ? stepKeys.indexOf(value) : -1;
+  const isDisabled = disabled || currentIndex >= stepKeys.length - 1;
+
+  const onClick = React.useCallback(
+    async (event: React.MouseEvent<HTMLButtonElement>) => {
+      nextTriggerProps.onClick?.(event);
+      if (event.defaultPrevented || isDisabled) return;
+
+      const nextIndex = Math.min(currentIndex + 1, stepKeys.length - 1);
+      const nextStepValue = stepKeys[nextIndex];
+
+      if (nextStepValue) {
+        await store.setStateWithValidation(nextStepValue, "next");
+      }
+    },
+    [nextTriggerProps.onClick, isDisabled, currentIndex, stepKeys, store],
+  );
+
+  const NextTriggerPrimitive = asChild ? Slot : "button";
+
+  return (
+    <NextTriggerPrimitive
+      type="button"
+      data-slot="stepper-next-trigger"
+      disabled={isDisabled}
+      {...nextTriggerProps}
+      onClick={onClick}
+    />
+  );
+}
+
 export {
   StepperRoot as Root,
   StepperList as List,
@@ -1212,6 +1292,8 @@ export {
   StepperTitle as Title,
   StepperDescription as Description,
   StepperContent as Content,
+  StepperPrevTrigger as PrevTrigger,
+  StepperNextTrigger as NextTrigger,
   //
   StepperRoot as Stepper,
   StepperList,
@@ -1222,6 +1304,8 @@ export {
   StepperTitle,
   StepperDescription,
   StepperContent,
+  StepperPrevTrigger,
+  StepperNextTrigger,
   //
   useStore as useStepper,
   //

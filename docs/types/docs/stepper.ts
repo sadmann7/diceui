@@ -160,21 +160,7 @@ export interface ItemProps extends EmptyProps<"li">, CompositionProps {
 
 export interface TriggerProps
   extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
-    CompositionProps {
-  /**
-   * The variant of the trigger button.
-   *
-   * @default "ghost"
-   */
-  variant?: ButtonProps["variant"];
-
-  /**
-   * The size of the trigger button.
-   *
-   * @default "sm"
-   */
-  size?: ButtonProps["size"];
-}
+    CompositionProps {}
 
 export interface IndicatorProps extends EmptyProps<"div">, CompositionProps {
   /**
@@ -216,3 +202,11 @@ export interface ContentProps extends EmptyProps<"div">, CompositionProps {
    */
   forceMount?: boolean;
 }
+
+export interface PrevTriggerProps
+  extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
+    CompositionProps {}
+
+export interface NextTriggerProps
+  extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
+    CompositionProps {}
