@@ -1101,8 +1101,7 @@ function useMediaComputation<T extends HTMLImageElement | HTMLVideoElement>(
     let renderedMediaSize: Size;
 
     if (isMediaScaledDown) {
-      const objectFit = context.objectFit;
-      switch (objectFit) {
+      switch (context.objectFit) {
         case "contain":
           renderedMediaSize =
             containerAspect > mediaAspect

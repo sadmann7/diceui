@@ -27,7 +27,7 @@ export function CropperDemo() {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
         if (!ctx) {
-          console.error("Canvas not supported");
+          toast.error("Canvas not supported");
           return;
         }
 
@@ -78,7 +78,9 @@ export function CropperDemo() {
                 0.95,
               );
             } catch (error) {
-              console.error("Error during crop:", error);
+              toast.error(
+                error instanceof Error ? error.message : "Error during crop",
+              );
               reject(error);
             }
           };
