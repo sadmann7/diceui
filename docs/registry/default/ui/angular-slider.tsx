@@ -541,7 +541,6 @@ function AngularSliderRoot(props: AngularSliderRootProps) {
         <RootPrimitive
           id={rootId}
           data-disabled={disabled ? "" : undefined}
-          data-orientation="circular"
           data-slot="slider"
           dir={dir}
           {...rootProps}
@@ -606,7 +605,6 @@ function AngularSliderTrack(props: AngularSliderTrackProps) {
   return (
     <TrackPrimitive
       data-disabled={disabled ? "" : undefined}
-      data-orientation="circular"
       data-slot="slider-track"
       {...trackProps}
       className={cn("absolute inset-0", className)}
@@ -696,7 +694,6 @@ function AngularSliderRange(props: AngularSliderRangeProps) {
 
   return (
     <RangePrimitive
-      data-orientation="circular"
       data-disabled={disabled ? "" : undefined}
       data-slot="slider-range"
       {...rangeProps}
@@ -795,7 +792,6 @@ function AngularSliderThumb(props: AngularSliderThumbProps) {
         aria-valuenow={value}
         aria-valuemax={max}
         aria-orientation="vertical"
-        data-orientation="circular"
         data-disabled={disabled ? "" : undefined}
         data-slot="slider-thumb"
         tabIndex={disabled ? undefined : 0}
@@ -914,16 +910,37 @@ function getClosestValueIndex(values: number[], nextValue: number) {
   return distances.indexOf(closestDistance);
 }
 
+// Helper component to automatically generate thumbs based on values
+interface AngularSliderWithThumbsProps extends AngularSliderRootProps {
+  children?: React.ReactNode;
+}
+
+function AngularSliderWithThumbs(props: AngularSliderWithThumbsProps) {
+  const { children, ...sliderProps } = props;
+  const values = props.value ?? props.defaultValue ?? [0];
+
+  return (
+    <AngularSliderRoot {...sliderProps}>
+      {children}
+      {values.map((_, index) => (
+        <AngularSliderThumb key={index} index={index} />
+      ))}
+    </AngularSliderRoot>
+  );
+}
+
 export {
   AngularSliderRoot as Root,
   AngularSliderTrack as Track,
   AngularSliderRange as Range,
   AngularSliderThumb as Thumb,
+  AngularSliderWithThumbs as WithThumbs,
   //
   AngularSliderRoot as AngularSlider,
   AngularSliderTrack,
   AngularSliderRange,
   AngularSliderThumb,
+  AngularSliderWithThumbs,
   //
   useStore as useAngularSlider,
   //
