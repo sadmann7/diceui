@@ -19,7 +19,7 @@ export default function CropperDemo() {
       zoom={zoom}
       onCropChange={setCrop}
       onZoomChange={setZoom}
-      className="min-h-72 max-w-lg"
+      className="min-h-72"
     >
       <CropperImage
         src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1920&h=1080&fit=crop&auto=format&fm=webp&q=80"

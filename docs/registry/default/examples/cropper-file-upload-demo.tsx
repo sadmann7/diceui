@@ -103,18 +103,18 @@ export default function CropperFileUploadDemo() {
   );
   const [showCropDialog, setShowCropDialog] = React.useState(false);
 
-  const imageUrl = React.useMemo(() => {
+  const selectedImageUrl = React.useMemo(() => {
     if (!selectedFile) return null;
     return URL.createObjectURL(selectedFile);
   }, [selectedFile]);
 
   React.useEffect(() => {
     return () => {
-      if (imageUrl) {
-        URL.revokeObjectURL(imageUrl);
+      if (selectedImageUrl) {
+        URL.revokeObjectURL(selectedImageUrl);
       }
     };
-  }, [imageUrl]);
+  }, [selectedImageUrl]);
 
   const onFilesChange = React.useCallback((newFiles: File[]) => {
     setFiles(newFiles);
@@ -122,14 +122,12 @@ export default function CropperFileUploadDemo() {
     setFilesWithCrops((prevFilesWithCrops) => {
       const updatedFilesWithCrops = new Map(prevFilesWithCrops);
 
-      // Add new files
       for (const file of newFiles) {
         if (!updatedFilesWithCrops.has(file.name)) {
           updatedFilesWithCrops.set(file.name, { original: file });
         }
       }
 
-      // Remove deleted files
       const fileNames = new Set(newFiles.map((f) => f.name));
       for (const [fileName] of updatedFilesWithCrops) {
         if (!fileNames.has(fileName)) {
@@ -181,11 +179,11 @@ export default function CropperFileUploadDemo() {
   }, []);
 
   const onCropApply = React.useCallback(async () => {
-    if (!selectedFile || !croppedArea || !imageUrl) return;
+    if (!selectedFile || !croppedArea || !selectedImageUrl) return;
 
     try {
       const croppedFile = await createCroppedImage(
-        imageUrl,
+        selectedImageUrl,
         croppedArea,
         selectedFile.name,
       );
@@ -209,12 +207,10 @@ export default function CropperFileUploadDemo() {
   }, [
     selectedFile,
     croppedArea,
-    imageUrl,
+    selectedImageUrl,
     filesWithCrops,
     onCropDialogOpenChange,
   ]);
-
-  console.log({ croppedArea, isRealTime: !!croppedArea });
 
   return (
     <FileUpload
@@ -294,21 +290,21 @@ export default function CropperFileUploadDemo() {
                         {selectedFile?.name}
                       </DialogDescription>
                     </DialogHeader>
-                    {selectedFile && imageUrl && (
+                    {selectedFile && selectedImageUrl && (
                       <div className="flex flex-col gap-4">
                         <Cropper
                           aspectRatio={1}
+                          shape="circular"
                           crop={crop}
-                          zoom={zoom}
                           onCropChange={setCrop}
+                          zoom={zoom}
                           onZoomChange={setZoom}
                           onCropAreaChange={onCropAreaChange}
                           onCropComplete={onCropComplete}
                           className="h-96"
-                          shape="circular"
                         >
                           <CropperImage
-                            src={imageUrl}
+                            src={selectedImageUrl}
                             alt={selectedFile.name}
                             crossOrigin="anonymous"
                           />
@@ -340,7 +336,11 @@ export default function CropperFileUploadDemo() {
                   </DialogContent>
                 </Dialog>
                 <FileUploadItemDelete asChild>
-                  <Button variant="ghost" size="icon" className="size-8">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="size-8 hover:bg-destructive/30 hover:text-destructive-foreground dark:hover:bg-destructive/30 dark:hover:text-destructive-foreground"
+                  >
                     <XIcon />
                   </Button>
                 </FileUploadItemDelete>
