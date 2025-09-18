@@ -28,9 +28,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
-import CropperControlledDemo from "@/registry/default/examples/cropper-controlled-demo";
-import CropperShapesDemo from "@/registry/default/examples/cropper-shapes-demo";
-import CropperVideoDemo from "@/registry/default/examples/cropper-video-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -44,9 +41,6 @@ import {
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <CropperControlledDemo />
-      <CropperShapesDemo />
-      <CropperVideoDemo />
       <ColorPickerDemo />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>

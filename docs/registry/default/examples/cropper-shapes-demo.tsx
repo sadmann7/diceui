@@ -20,12 +20,12 @@ import {
   type CropperShape,
 } from "@/registry/default/ui/cropper";
 
-const shapes = [
+const shapes: { label: string; value: CropperShape }[] = [
   { label: "Rectangular", value: "rectangular" },
   { label: "Circular", value: "circular" },
 ] as const;
 
-const objectFits = [
+const objectFits: { label: string; value: CropperObjectFit }[] = [
   { label: "Contain", value: "contain" },
   { label: "Cover", value: "cover" },
   { label: "Horizontal Cover", value: "horizontal-cover" },
