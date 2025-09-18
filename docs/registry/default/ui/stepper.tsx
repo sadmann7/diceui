@@ -52,6 +52,8 @@ function getDirectionAwareKey(key: string, dir?: Direction) {
       : key;
 }
 
+type TriggerElement = React.ComponentRef<typeof StepperTrigger>;
+
 function getFocusIntent(
   event: React.KeyboardEvent<TriggerElement>,
   dir?: Direction,
@@ -65,7 +67,7 @@ function getFocusIntent(
   return MAP_KEY_TO_FOCUS_INTENT[key];
 }
 
-function focusFirst(candidates: HTMLElement[], preventScroll = false) {
+function focusFirst(candidates: TriggerElement[], preventScroll = false) {
   const PREVIOUSLY_FOCUSED_ELEMENT = document.activeElement;
   for (const candidate of candidates) {
     if (candidate === PREVIOUSLY_FOCUSED_ELEMENT) return;
@@ -94,13 +96,9 @@ const useIsomorphicLayoutEffect =
   typeof window === "undefined" ? React.useEffect : React.useLayoutEffect;
 
 type Direction = "ltr" | "rtl";
-
 type Orientation = "horizontal" | "vertical";
-
 type NavigationDirection = "next" | "prev";
-
 type ActivationMode = "automatic" | "manual";
-
 type DataState = "inactive" | "active" | "completed";
 
 interface DivProps extends React.ComponentProps<"div"> {
@@ -292,7 +290,7 @@ function useStore<T>(selector: (state: StoreState) => T): T {
 
 interface ItemData {
   id: string;
-  element: HTMLElement;
+  element: TriggerElement;
   value: string;
   active: boolean;
   disabled: boolean;
@@ -714,8 +712,6 @@ function StepperItem(props: StepperItemProps) {
   );
 }
 
-type TriggerElement = React.ComponentRef<typeof StepperTrigger>;
-
 function StepperTrigger(props: ButtonProps) {
   const { asChild, className, ref, ...triggerProps } = props;
 
@@ -907,9 +903,7 @@ function StepperTrigger(props: ButtonProps) {
           candidateNodes.reverse();
         } else if (focusIntent === "prev" || focusIntent === "next") {
           if (focusIntent === "prev") candidateNodes.reverse();
-          const currentIndex = candidateNodes.indexOf(
-            event.currentTarget as HTMLElement,
-          );
+          const currentIndex = candidateNodes.indexOf(event.currentTarget);
           candidateNodes = loop
             ? wrapArray(candidateNodes, currentIndex + 1)
             : candidateNodes.slice(currentIndex + 1);
