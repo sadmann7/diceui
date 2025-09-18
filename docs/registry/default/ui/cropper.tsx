@@ -347,11 +347,11 @@ function createStore(
   stateRef: React.RefObject<StoreState>,
   aspectRatio: number,
   onCropChange?: (crop: Point) => void,
+  onCropSizeChange?: (cropSize: Size) => void,
+  onCropAreaChange?: (croppedArea: Area, croppedAreaPixels: Area) => void,
+  onCropComplete?: (croppedArea: Area, croppedAreaPixels: Area) => void,
   onZoomChange?: (zoom: number) => void,
   onRotationChange?: (rotation: number) => void,
-  onCropComplete?: (croppedArea: Area, croppedAreaPixels: Area) => void,
-  onCropAreaChange?: (croppedArea: Area, croppedAreaPixels: Area) => void,
-  onCropSizeChange?: (cropSize: Size) => void,
   onMediaLoaded?: (mediaSize: MediaSize) => void,
   onInteractionStart?: () => void,
   onInteractionEnd?: () => void,
@@ -551,11 +551,11 @@ interface CropperRootProps extends DivProps {
   preventScrollZoom?: boolean;
   withGrid?: boolean;
   onCropChange?: (crop: Point) => void;
+  onCropSizeChange?: (cropSize: Size) => void;
+  onCropAreaChange?: (croppedArea: Area, croppedAreaPixels: Area) => void;
+  onCropComplete?: (croppedArea: Area, croppedAreaPixels: Area) => void;
   onZoomChange?: (zoom: number) => void;
   onRotationChange?: (rotation: number) => void;
-  onCropComplete?: (croppedArea: Area, croppedAreaPixels: Area) => void;
-  onCropAreaChange?: (croppedArea: Area, croppedAreaPixels: Area) => void;
-  onCropSizeChange?: (cropSize: Size) => void;
   onMediaLoaded?: (mediaSize: MediaSize) => void;
   onInteractionStart?: () => void;
   onInteractionEnd?: () => void;
@@ -577,11 +577,11 @@ function CropperRoot(props: CropperRootProps) {
     preventScrollZoom = false,
     withGrid = false,
     onCropChange,
+    onCropSizeChange,
+    onCropAreaChange,
+    onCropComplete,
     onZoomChange,
     onRotationChange,
-    onCropComplete,
-    onCropAreaChange,
-    onCropSizeChange,
     onMediaLoaded,
     onInteractionStart,
     onInteractionEnd,
@@ -611,11 +611,11 @@ function CropperRoot(props: CropperRootProps) {
         stateRef,
         aspectRatio,
         onCropChange,
+        onCropSizeChange,
+        onCropAreaChange,
+        onCropComplete,
         onZoomChange,
         onRotationChange,
-        onCropComplete,
-        onCropAreaChange,
-        onCropSizeChange,
         onMediaLoaded,
         onInteractionStart,
         onInteractionEnd,
@@ -625,11 +625,11 @@ function CropperRoot(props: CropperRootProps) {
       stateRef,
       aspectRatio,
       onCropChange,
+      onCropSizeChange,
+      onCropAreaChange,
+      onCropComplete,
       onZoomChange,
       onRotationChange,
-      onCropComplete,
-      onCropAreaChange,
-      onCropSizeChange,
       onMediaLoaded,
       onInteractionStart,
       onInteractionEnd,
