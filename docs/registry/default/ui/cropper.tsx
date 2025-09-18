@@ -218,7 +218,7 @@ function onPositionClamp(
   return result;
 }
 
-function computeCroppedArea(
+function getCroppedArea(
   crop: Point,
   mediaSize: MediaSize,
   cropSize: Size,
@@ -357,27 +357,27 @@ function createStore(
   onInteractionEnd?: () => void,
 ): Store {
   let isBatching = false;
-  let rAFToken: number | null = null;
+  let raf: number | null = null;
 
-  function emitCropAreaChangeSoon() {
-    if (rAFToken != null) return;
-    rAFToken = requestAnimationFrame(() => {
-      rAFToken = null;
+  function notifyCropAreaChange() {
+    if (raf != null) return;
+    raf = requestAnimationFrame(() => {
+      raf = null;
       const s = stateRef.current;
       if (s?.mediaSize && s.cropSize && onCropAreaChange) {
-        const { croppedAreaPercentages, croppedAreaPixels } =
-          computeCroppedArea(
-            s.crop,
-            s.mediaSize,
-            s.cropSize,
-            aspectRatio,
-            s.zoom,
-            s.rotation,
-          );
+        const { croppedAreaPercentages, croppedAreaPixels } = getCroppedArea(
+          s.crop,
+          s.mediaSize,
+          s.cropSize,
+          aspectRatio,
+          s.zoom,
+          s.rotation,
+        );
         onCropAreaChange(croppedAreaPercentages, croppedAreaPixels);
       }
     });
   }
+
   const store: Store = {
     subscribe: (cb) => {
       if (listenersRef.current) {
@@ -439,7 +439,7 @@ function createStore(
             onCropComplete
           ) {
             const { croppedAreaPercentages, croppedAreaPixels } =
-              computeCroppedArea(
+              getCroppedArea(
                 currentState.crop,
                 currentState.mediaSize,
                 currentState.cropSize,
@@ -456,7 +456,7 @@ function createStore(
         (key === "crop" || key === "zoom" || key === "rotation") &&
         onCropAreaChange
       ) {
-        emitCropAreaChangeSoon();
+        notifyCropAreaChange();
       }
 
       if (!isBatching) {
@@ -547,8 +547,8 @@ interface CropperRootProps extends DivProps {
   keyboardStep?: number;
   shape?: Shape;
   objectFit?: ObjectFit;
-  preventScrollZoom?: boolean;
   allowOverflow?: boolean;
+  preventScrollZoom?: boolean;
   withGrid?: boolean;
   onCropChange?: (crop: Point) => void;
   onZoomChange?: (zoom: number) => void;
@@ -573,8 +573,8 @@ function CropperRoot(props: CropperRootProps) {
     keyboardStep = 1,
     shape = "rectangular",
     objectFit = "contain",
-    preventScrollZoom = false,
     allowOverflow = false,
+    preventScrollZoom = false,
     withGrid = false,
     onCropChange,
     onZoomChange,
@@ -1375,14 +1375,14 @@ function useMediaComputation<T extends HTMLImageElement | HTMLVideoElement>({
     const containerAspect = contentRect.width / contentRect.height;
     const { width: naturalWidth, height: naturalHeight } =
       getNaturalDimensions(media);
-    const isMediaScaledDown =
+    const isScaledDown =
       media.offsetWidth < naturalWidth || media.offsetHeight < naturalHeight;
     const mediaAspect = naturalWidth / naturalHeight;
 
     let renderedMediaSize: Size;
 
-    if (isMediaScaledDown) {
-      const objectFitHandlers = {
+    if (isScaledDown) {
+      const objectFitCallbacks = {
         contain: () =>
           containerAspect > mediaAspect
             ? {
@@ -1413,9 +1413,9 @@ function useMediaComputation<T extends HTMLImageElement | HTMLVideoElement>({
               },
       } as const;
 
-      const handler = objectFitHandlers[context.objectFit];
-      renderedMediaSize = handler
-        ? handler()
+      const callback = objectFitCallbacks[context.objectFit];
+      renderedMediaSize = callback
+        ? callback()
         : containerAspect > mediaAspect
           ? {
               width: contentRect.height * mediaAspect,
@@ -1834,13 +1834,8 @@ export {
   //
   useStore as useCropper,
   //
-  computeCroppedArea,
-  //
   type CropperRootProps as CropperProps,
-  type Point,
-  type Size,
-  type Area as CropArea,
-  type MediaSize,
-  type Shape,
-  type ObjectFit,
+  type Point as CropperPoint,
+  type Size as CropperSize,
+  type Area as CropperAreaData,
 };

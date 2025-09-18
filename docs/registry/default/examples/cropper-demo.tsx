@@ -6,11 +6,11 @@ import {
   CropperArea,
   CropperContent,
   CropperImage,
-  type Point,
+  type CropperPoint,
 } from "@/registry/default/ui/cropper";
 
 export function CropperDemo() {
-  const [crop, setCrop] = React.useState<Point>({ x: 0, y: 0 });
+  const [crop, setCrop] = React.useState<CropperPoint>({ x: 0, y: 0 });
   const [zoom, setZoom] = React.useState(1);
 
   return (
