@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -117,29 +116,30 @@ export default function CropperFileUploadDemo() {
     };
   }, [imageUrl]);
 
-  // Update filesWithCrops when files change
-  React.useEffect(() => {
+  const onFilesChange = React.useCallback((newFiles: File[]) => {
+    setFiles(newFiles);
+
     setFilesWithCrops((prevFilesWithCrops) => {
-      const newFilesWithCrops = new Map(prevFilesWithCrops);
+      const updatedFilesWithCrops = new Map(prevFilesWithCrops);
 
       // Add new files
-      for (const file of files) {
-        if (!newFilesWithCrops.has(file.name)) {
-          newFilesWithCrops.set(file.name, { original: file });
+      for (const file of newFiles) {
+        if (!updatedFilesWithCrops.has(file.name)) {
+          updatedFilesWithCrops.set(file.name, { original: file });
         }
       }
 
       // Remove deleted files
-      const fileNames = new Set(files.map((f) => f.name));
-      for (const [fileName] of newFilesWithCrops) {
+      const fileNames = new Set(newFiles.map((f) => f.name));
+      for (const [fileName] of updatedFilesWithCrops) {
         if (!fileNames.has(fileName)) {
-          newFilesWithCrops.delete(fileName);
+          updatedFilesWithCrops.delete(fileName);
         }
       }
 
-      return newFilesWithCrops;
+      return updatedFilesWithCrops;
     });
-  }, [files]);
+  }, []);
 
   const onFileSelect = React.useCallback(
     (file: File) => {
@@ -155,12 +155,17 @@ export default function CropperFileUploadDemo() {
     [filesWithCrops],
   );
 
+  const onCropAreaChange: NonNullable<CropperProps["onCropAreaChange"]> =
+    React.useCallback((_, croppedAreaPixels) => {
+      setCroppedArea(croppedAreaPixels);
+    }, []);
+
   const onCropComplete: NonNullable<CropperProps["onCropComplete"]> =
     React.useCallback((_, croppedAreaPixels) => {
       setCroppedArea(croppedAreaPixels);
     }, []);
 
-  const resetCrop = React.useCallback(() => {
+  const onCropReset = React.useCallback(() => {
     setCrop({ x: 0, y: 0 });
     setZoom(1);
     setCroppedArea(null);
@@ -175,7 +180,7 @@ export default function CropperFileUploadDemo() {
     }
   }, []);
 
-  const onApplyCrop = React.useCallback(async () => {
+  const onCropApply = React.useCallback(async () => {
     if (!selectedFile || !croppedArea || !imageUrl) return;
 
     try {
@@ -195,20 +200,26 @@ export default function CropperFileUploadDemo() {
         setFilesWithCrops(newFilesWithCrops);
       }
 
-      setShowCropDialog(false);
+      onCropDialogOpenChange(false);
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Failed to crop image",
       );
     }
-  }, [selectedFile, croppedArea, imageUrl, filesWithCrops]);
+  }, [
+    selectedFile,
+    croppedArea,
+    imageUrl,
+    filesWithCrops,
+    onCropDialogOpenChange,
+  ]);
 
-  console.log({ croppedArea });
+  console.log({ croppedArea, isRealTime: !!croppedArea });
 
   return (
     <FileUpload
       value={files}
-      onValueChange={setFiles}
+      onValueChange={onFilesChange}
       accept="image/*"
       maxFiles={5}
       maxSize={10 * 1024 * 1024}
@@ -291,6 +302,7 @@ export default function CropperFileUploadDemo() {
                           zoom={zoom}
                           onCropChange={setCrop}
                           onZoomChange={setZoom}
+                          onCropAreaChange={onCropAreaChange}
                           onCropComplete={onCropComplete}
                           className="h-96"
                           shape="circular"
@@ -318,14 +330,11 @@ export default function CropperFileUploadDemo() {
                       </div>
                     )}
                     <DialogFooter>
-                      <DialogClose asChild>
-                        <Button variant="outline">Cancel</Button>
-                      </DialogClose>
-                      <Button onClick={resetCrop} variant="outline">
+                      <Button onClick={onCropReset} variant="outline">
                         Reset
                       </Button>
-                      <Button onClick={onApplyCrop} disabled={!croppedArea}>
-                        Apply Crop
+                      <Button onClick={onCropApply} disabled={!croppedArea}>
+                        Crop
                       </Button>
                     </DialogFooter>
                   </DialogContent>

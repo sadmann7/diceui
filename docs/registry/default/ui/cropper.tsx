@@ -453,7 +453,11 @@ function createStore(
       }
 
       if (
-        (key === "crop" || key === "zoom" || key === "rotation") &&
+        (key === "crop" ||
+          key === "zoom" ||
+          key === "rotation" ||
+          key === "mediaSize" ||
+          key === "cropSize") &&
         onCropAreaChange
       ) {
         notifyCropAreaChange();
