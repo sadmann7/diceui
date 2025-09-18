@@ -1,5 +1,4 @@
-import type * as React from "react";
-import type { CompositionProps } from "@/types";
+import type { CompositionProps, EmptyProps } from "@/types";
 
 /**
  * Represents a point with x and y coordinates.
@@ -51,9 +50,7 @@ export type ObjectFit =
   | "horizontal-cover"
   | "vertical-cover";
 
-export interface RootProps
-  extends Omit<React.ComponentProps<"div">, "children">,
-    CompositionProps {
+export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The current crop position.
    *
@@ -198,9 +195,7 @@ export interface RootProps
   onWheelZoom?: (event: WheelEvent) => void;
 }
 
-export interface ImageProps
-  extends Omit<React.ComponentProps<"img">, "children">,
-    CompositionProps {
+export interface ImageProps extends EmptyProps<"img">, CompositionProps {
   /**
    * How the image should fit within the container.
    * Overrides the root objectFit prop if provided.
@@ -215,9 +210,7 @@ export interface ImageProps
   snapPixels?: boolean;
 }
 
-export interface VideoProps
-  extends Omit<React.ComponentProps<"video">, "children">,
-    CompositionProps {
+export interface VideoProps extends EmptyProps<"video">, CompositionProps {
   /**
    * How the video should fit within the container.
    * Overrides the root objectFit prop if provided.
@@ -232,9 +225,7 @@ export interface VideoProps
   snapPixels?: boolean;
 }
 
-export interface AreaProps
-  extends Omit<React.ComponentProps<"div">, "children">,
-    CompositionProps {
+export interface AreaProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The shape of the crop area.
    * Overrides the root shape prop if provided.

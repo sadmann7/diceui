@@ -14,7 +14,10 @@ import {
   Cropper,
   CropperArea,
   CropperImage,
+  type CropperObjectFit,
   type CropperPoint,
+  type CropperProps,
+  type CropperShape,
 } from "@/registry/default/ui/cropper";
 
 const shapes = [
@@ -30,29 +33,26 @@ const objectFits = [
 ] as const;
 
 export default function CropperShapesDemo() {
+  const id = React.useId();
   const [crop, setCrop] = React.useState<CropperPoint>({ x: 0, y: 0 });
   const [zoom, setZoom] = React.useState(1);
-  const [shape, setShape] = React.useState<"rectangular" | "circular">(
-    "rectangular",
-  );
-  const [objectFit, setObjectFit] = React.useState<
-    "contain" | "cover" | "horizontal-cover" | "vertical-cover"
-  >("contain");
+  const [shape, setShape] =
+    React.useState<NonNullable<CropperShape>>("rectangular");
+  const [objectFit, setObjectFit] =
+    React.useState<NonNullable<CropperObjectFit>>("contain");
   const [withGrid, setWithGrid] = React.useState(false);
   const [allowOverflow, setAllowOverflow] = React.useState(false);
 
   return (
-    <div className="space-y-4">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="flex flex-col gap-4">
+      <div className="grid grid-cols-2 gap-4">
         <div className="flex items-center gap-2">
-          <Label htmlFor="shape">Shape:</Label>
+          <Label htmlFor={`${id}-shape`}>Shape:</Label>
           <Select
             value={shape}
-            onValueChange={(value) =>
-              setShape(value as "rectangular" | "circular")
-            }
+            onValueChange={(value: CropperShape) => setShape(value)}
           >
-            <SelectTrigger id="shape" className="w-32">
+            <SelectTrigger id={`${id}-shape`} size="sm" className="w-32">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -64,22 +64,13 @@ export default function CropperShapesDemo() {
             </SelectContent>
           </Select>
         </div>
-
         <div className="flex items-center gap-2">
-          <Label htmlFor="object-fit">Object Fit:</Label>
+          <Label htmlFor={`${id}-object-fit`}>Object Fit:</Label>
           <Select
             value={objectFit}
-            onValueChange={(value) =>
-              setObjectFit(
-                value as
-                  | "contain"
-                  | "cover"
-                  | "horizontal-cover"
-                  | "vertical-cover",
-              )
-            }
+            onValueChange={(value: CropperObjectFit) => setObjectFit(value)}
           >
-            <SelectTrigger id="object-fit" className="w-36">
+            <SelectTrigger id={`${id}-object-fit`} size="sm" className="w-36">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -91,22 +82,23 @@ export default function CropperShapesDemo() {
             </SelectContent>
           </Select>
         </div>
-
-        <div className="flex items-center gap-2">
-          <Switch id="grid" checked={withGrid} onCheckedChange={setWithGrid} />
-          <Label htmlFor="grid">Show Grid</Label>
-        </div>
-
         <div className="flex items-center gap-2">
           <Switch
-            id="overflow"
+            id={`${id}-grid`}
+            checked={withGrid}
+            onCheckedChange={setWithGrid}
+          />
+          <Label htmlFor={`${id}-grid`}>Show Grid</Label>
+        </div>
+        <div className="flex items-center gap-2">
+          <Switch
+            id={`${id}-overflow`}
             checked={allowOverflow}
             onCheckedChange={setAllowOverflow}
           />
-          <Label htmlFor="overflow">Allow Overflow</Label>
+          <Label htmlFor={`${id}-overflow`}>Allow Overflow</Label>
         </div>
       </div>
-
       <Cropper
         aspectRatio={1}
         crop={crop}
@@ -117,7 +109,7 @@ export default function CropperShapesDemo() {
         allowOverflow={allowOverflow}
         onCropChange={setCrop}
         onZoomChange={setZoom}
-        className="min-h-80 max-w-lg"
+        className="min-h-72"
       >
         <CropperImage
           src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1920&h=1080&fit=crop&auto=format&fm=webp&q=80"

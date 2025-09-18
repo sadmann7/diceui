@@ -217,10 +217,10 @@ export default function CropperFileUploadDemo() {
       value={files}
       onValueChange={onFilesChange}
       accept="image/*"
-      maxFiles={5}
+      maxFiles={2}
       maxSize={10 * 1024 * 1024}
       multiple
-      className="w-full"
+      className="w-full max-w-lg"
     >
       <FileUploadDropzone className="min-h-32">
         <div className="flex flex-col items-center gap-2 text-center">
@@ -339,7 +339,7 @@ export default function CropperFileUploadDemo() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="size-8 hover:bg-destructive/30 hover:text-destructive-foreground dark:hover:bg-destructive/30 dark:hover:text-destructive-foreground"
+                    className="size-8 hover:bg-destructive/30 hover:text-destructive-foreground dark:hover:bg-destructive dark:hover:text-destructive-foreground"
                   >
                     <XIcon />
                   </Button>

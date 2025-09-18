@@ -513,7 +513,7 @@ function useStore<T>(selector: (state: StoreState) => T): T {
   return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
 
-type RootImplElement = React.ComponentRef<typeof CropperRootImpl>;
+type RootElement = React.ComponentRef<typeof CropperRootImpl>;
 
 interface CropperContextValue {
   id: string;
@@ -524,7 +524,7 @@ interface CropperContextValue {
   keyboardStep: number;
   shape: Shape;
   objectFit: ObjectFit;
-  contentRef: React.RefObject<RootImplElement | null>;
+  rootRef: React.RefObject<RootElement | null>;
   allowOverflow: boolean;
   preventScrollZoom: boolean;
   withGrid: boolean;
@@ -606,7 +606,7 @@ function CropperRoot(props: CropperRootProps) {
     isWheelZooming: false,
   }));
 
-  const contentRef = React.useRef<RootImplElement>(null);
+  const rootRef = React.useRef<RootElement>(null);
 
   const store = React.useMemo(
     () =>
@@ -678,7 +678,7 @@ function CropperRoot(props: CropperRootProps) {
         });
       });
 
-      if (shouldRecompute && contentRef.current) {
+      if (shouldRecompute && rootRef.current) {
         requestAnimationFrame(() => {
           const currentState = store.getState();
           if (currentState.cropSize && currentState.mediaSize) {
@@ -720,7 +720,7 @@ function CropperRoot(props: CropperRootProps) {
       preventScrollZoom,
       allowOverflow,
       withGrid,
-      contentRef,
+      rootRef,
     }),
     [
       rootId,
@@ -742,7 +742,7 @@ function CropperRoot(props: CropperRootProps) {
       <CropperContext.Provider value={contextValue}>
         <div
           data-slot="cropper-wrapper"
-          className={cn("relative h-full overflow-hidden", className)}
+          className={cn("relative size-full overflow-hidden", className)}
         >
           <CropperRootImpl id={rootId} {...rootProps} />
         </div>
@@ -766,7 +766,7 @@ function CropperRootImpl(props: CropperRootImplProps) {
   const mediaSize = useStore((state) => state.mediaSize);
   const cropSize = useStore((state) => state.cropSize);
 
-  const composedRef = useComposedRefs(ref, context.contentRef);
+  const composedRef = useComposedRefs(ref, context.rootRef);
   const dragStartPositionRef = React.useRef<Point>({ x: 0, y: 0 });
   const dragStartCropRef = React.useRef<Point>({ x: 0, y: 0 });
   const contentPositionRef = React.useRef<Point>({ x: 0, y: 0 });
@@ -821,24 +821,24 @@ function CropperRootImpl(props: CropperRootImplProps) {
   );
 
   const onContentPositionChange = React.useCallback(() => {
-    if (context.contentRef?.current) {
-      const bounds = context.contentRef.current.getBoundingClientRect();
+    if (context.rootRef?.current) {
+      const bounds = context.rootRef.current.getBoundingClientRect();
       contentPositionRef.current = { x: bounds.left, y: bounds.top };
     }
-  }, [context.contentRef]);
+  }, [context.rootRef]);
 
   const getPointOnContent = React.useCallback(
     ({ x, y }: Point, contentTopLeft: Point): Point => {
-      if (!context.contentRef?.current) {
+      if (!context.rootRef?.current) {
         return { x: 0, y: 0 };
       }
-      const contentRect = context.contentRef.current.getBoundingClientRect();
+      const contentRect = context.rootRef.current.getBoundingClientRect();
       return {
         x: contentRect.width / 2 - (x - contentTopLeft.x),
         y: contentRect.height / 2 - (y - contentTopLeft.y),
       };
     },
-    [context.contentRef],
+    [context.rootRef],
   );
 
   const getPointOnMedia = React.useCallback(
@@ -1139,7 +1139,7 @@ function CropperRootImpl(props: CropperRootImplProps) {
   );
 
   const onKeyUp = React.useCallback(
-    (event: React.KeyboardEvent<RootImplElement>) => {
+    (event: React.KeyboardEvent<RootElement>) => {
       contentProps.onKeyUp?.(event);
       if (event.defaultPrevented) return;
 
@@ -1159,7 +1159,7 @@ function CropperRootImpl(props: CropperRootImplProps) {
   );
 
   const onKeyDown = React.useCallback(
-    (event: React.KeyboardEvent<RootImplElement>) => {
+    (event: React.KeyboardEvent<RootElement>) => {
       if (!cropSize || !mediaSize) return;
 
       contentProps.onKeyDown?.(event);
@@ -1208,7 +1208,7 @@ function CropperRootImpl(props: CropperRootImplProps) {
   );
 
   const onMouseDown = React.useCallback(
-    (event: React.MouseEvent<RootImplElement>) => {
+    (event: React.MouseEvent<RootElement>) => {
       contentProps.onMouseDown?.(event);
       if (event.defaultPrevented) return;
 
@@ -1229,7 +1229,7 @@ function CropperRootImpl(props: CropperRootImplProps) {
   );
 
   const onTouchStart = React.useCallback(
-    (event: React.TouchEvent<RootImplElement>) => {
+    (event: React.TouchEvent<RootElement>) => {
       contentProps.onTouchStart?.(event);
       if (event.defaultPrevented) return;
 
@@ -1278,7 +1278,7 @@ function CropperRootImpl(props: CropperRootImplProps) {
   );
 
   React.useEffect(() => {
-    const content = context.contentRef?.current;
+    const content = context.rootRef?.current;
     if (!content) return;
 
     if (!context.preventScrollZoom) {
@@ -1300,7 +1300,7 @@ function CropperRootImpl(props: CropperRootImplProps) {
       onRefsCleanup();
     };
   }, [
-    context.contentRef,
+    context.rootRef,
     context.preventScrollZoom,
     onWheelZoom,
     onRefsCleanup,
@@ -1315,10 +1315,10 @@ function CropperRootImpl(props: CropperRootImplProps) {
     };
   }, [onRefsCleanup, onCachesCleanup]);
 
-  const RootImplPrimitive = asChild ? Slot : "div";
+  const RootPrimitive = asChild ? Slot : "div";
 
   return (
-    <RootImplPrimitive
+    <RootPrimitive
       data-slot="cropper"
       tabIndex={0}
       {...contentProps}
@@ -1368,10 +1368,8 @@ function useMediaComputation<T extends HTMLImageElement | HTMLVideoElement>({
 }: UseMediaComputationProps<T>) {
   const computeSizes = React.useCallback(() => {
     const media = mediaRef.current;
-    const content = context.contentRef?.current;
-    if (!media || !content) {
-      return;
-    }
+    const content = context.rootRef?.current;
+    if (!media || !content) return;
 
     const contentRect = content.getBoundingClientRect();
     const containerAspect = contentRect.width / contentRect.height;
@@ -1477,7 +1475,7 @@ function useMediaComputation<T extends HTMLImageElement | HTMLVideoElement>({
   }, [
     mediaRef,
     context.aspectRatio,
-    context.contentRef,
+    context.rootRef,
     context.objectFit,
     store,
     rotation,
@@ -1550,10 +1548,8 @@ function CropperImage(props: CropperImageProps) {
   }, [onMediaLoad]);
 
   React.useEffect(() => {
-    const content = context.contentRef?.current;
-    if (!content) {
-      return;
-    }
+    const content = context.rootRef?.current;
+    if (!content) return;
 
     if (typeof ResizeObserver !== "undefined") {
       let isFirstResize = true;
@@ -1595,7 +1591,7 @@ function CropperImage(props: CropperImageProps) {
         window.removeEventListener("resize", onWindowResize);
       };
     }
-  }, [context.contentRef, computeSizes]);
+  }, [context.rootRef, computeSizes]);
 
   const ImagePrimitive = asChild ? Slot : "img";
 
@@ -1679,10 +1675,8 @@ function CropperVideo(props: CropperVideoProps) {
   }, [computeSizes, onLoadedMetadata]);
 
   React.useEffect(() => {
-    const content = context.contentRef?.current;
-    if (!content) {
-      return;
-    }
+    const content = context.rootRef?.current;
+    if (!content) return;
 
     if (typeof ResizeObserver !== "undefined") {
       let isFirstResize = true;
@@ -1724,7 +1718,7 @@ function CropperVideo(props: CropperVideoProps) {
         window.removeEventListener("resize", onWindowResize);
       };
     }
-  }, [context.contentRef, computeSizes]);
+  }, [context.rootRef, computeSizes]);
 
   const VideoPrimitive = asChild ? Slot : "video";
 
@@ -1838,4 +1832,6 @@ export {
   type Point as CropperPoint,
   type Size as CropperSize,
   type Area as CropperAreaData,
+  type Shape as CropperShape,
+  type ObjectFit as CropperObjectFit,
 };
