@@ -1064,7 +1064,7 @@ function getFileIcon(file: File) {
 }
 
 interface FileUploadItemPreviewProps extends React.ComponentProps<"div"> {
-  render?: (file: File) => React.ReactNode;
+  render?: (file: File, fallback: () => React.ReactNode) => React.ReactNode;
   asChild?: boolean;
 }
 
@@ -1074,10 +1074,8 @@ function FileUploadItemPreview(props: FileUploadItemPreviewProps) {
   const itemContext = useFileUploadItemContext(ITEM_PREVIEW_NAME);
   const context = useFileUploadContext(ITEM_PREVIEW_NAME);
 
-  const onPreviewRender = React.useCallback(
+  const getDefaultRender = React.useCallback(
     (file: File) => {
-      if (render) return render(file);
-
       if (itemContext.fileState?.file.type.startsWith("image/")) {
         let url = context.urlCache.get(file);
         if (!url) {
@@ -1093,7 +1091,18 @@ function FileUploadItemPreview(props: FileUploadItemPreviewProps) {
 
       return getFileIcon(file);
     },
-    [render, itemContext.fileState?.file.type, context.urlCache],
+    [itemContext.fileState?.file.type, context.urlCache],
+  );
+
+  const onPreviewRender = React.useCallback(
+    (file: File) => {
+      if (render) {
+        return render(file, () => getDefaultRender(file));
+      }
+
+      return getDefaultRender(file);
+    },
+    [render, getDefaultRender],
   );
 
   if (!itemContext.fileState) return null;

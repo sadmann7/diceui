@@ -329,20 +329,38 @@ export interface ItemProps extends EmptyProps<"div">, CompositionProps {
 export interface ItemPreviewProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The render function for the preview.
-   * Override the default preview.
+   * Override the default preview with access to fallback behavior.
+   *
+   * The second parameter is a fallback function that renders the default preview
+   * (image preview for image files, appropriate icons for other file types).
    *
    * ```tsx
    * <FileUploadItemPreview
-   *   render={(file) => {
-   *     if (file.type.startsWith("image/")) {
-   *       return <img src={URL.createObjectURL(file)} alt={file.name} />
+   *   render={(file, fallback) => {
+   *     // Custom preview for specific file types
+   *     if (file.type.startsWith("image/") && shouldUseCustomPreview) {
+   *       return <CustomImagePreview file={file} />
    *     }
-   *     return <FileIcon type={file.type} />
+   *
+   *     // Use default behavior for everything else
+   *     return fallback()
+   *   }}
+   * />
+   * ```
+   *
+   * ```tsx
+   * // Example: Show cropped image or fallback to default
+   * <FileUploadItemPreview
+   *   render={(file, fallback) => {
+   *     if (croppedVersion && file.type.startsWith("image/")) {
+   *       return <img src={croppedVersion} alt={file.name} />
+   *     }
+   *     return fallback()
    *   }}
    * />
    * ```
    */
-  render: (file: File) => React.ReactNode;
+  render?: (file: File, fallback: () => React.ReactNode) => React.ReactNode;
 }
 
 export interface ItemMetadataProps extends EmptyProps<"div">, CompositionProps {

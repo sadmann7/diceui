@@ -1,0 +1,21 @@
+{
+  "name": "image-crop-controlled-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "button",
+    "slider",
+    "input",
+    "label"
+  ],
+  "files": [
+    {
+      "path": "examples/image-crop-controlled-demo.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Button } from \"@/components/ui/button\";\nimport { Input } from \"@/components/ui/input\";\nimport { Label } from \"@/components/ui/label\";\nimport * as ImageCrop from \"@/registry/default/ui/image-crop\";\n\nexport default function ImageCropControlledDemo() {\n  const [src, setSrc] = React.useState(\"/placeholder.svg?height=600&width=800\");\n  const [cropValue, setCropValue] = React.useState({\n    x: 20,\n    y: 20,\n    width: 60,\n    height: 60,\n  });\n  const [zoom, setZoom] = React.useState(1);\n  const [rotation, setRotation] = React.useState(0);\n  const [aspect, setAspect] = React.useState(1);\n\n  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {\n    const file = e.target.files?.[0];\n    if (file) {\n      const url = URL.createObjectURL(file);\n      setSrc(url);\n    }\n  };\n\n  const presetAspects = [\n    { label: \"Square\", value: 1 },\n    { label: \"16:9\", value: 16 / 9 },\n    { label: \"4:3\", value: 4 / 3 },\n    { label: \"3:2\", value: 3 / 2 },\n  ];\n\n  return (\n    <div className=\"mx-auto w-full max-w-4xl space-y-6\">\n      <div className=\"space-y-4\">\n        <div className=\"grid grid-cols-1 gap-4 md:grid-cols-2\">\n          <div className=\"space-y-2\">\n            <Label htmlFor=\"image-upload\">Upload Image</Label>\n            <Input\n              id=\"image-upload\"\n              type=\"file\"\n              accept=\"image/*\"\n              onChange={handleFileChange}\n            />\n          </div>\n\n          <div className=\"space-y-2\">\n            <Label>Aspect Ratio</Label>\n            <div className=\"flex gap-2\">\n              {presetAspects.map((preset) => (\n                <Button\n                  key={preset.label}\n                  variant={aspect === preset.value ? \"default\" : \"outline\"}\n                  size=\"sm\"\n                  onClick={() => setAspect(preset.value)}\n                >\n                  {preset.label}\n                </Button>\n              ))}\n            </div>\n          </div>\n        </div>\n\n        <div className=\"grid grid-cols-2 gap-4 text-sm md:grid-cols-4\">\n          <div>\n            <Label>X: {cropValue.x.toFixed(1)}%</Label>\n          </div>\n          <div>\n            <Label>Y: {cropValue.y.toFixed(1)}%</Label>\n          </div>\n          <div>\n            <Label>Width: {cropValue.width.toFixed(1)}%</Label>\n          </div>\n          <div>\n            <Label>Height: {cropValue.height.toFixed(1)}%</Label>\n          </div>\n          <div>\n            <Label>Zoom: {zoom.toFixed(2)}x</Label>\n          </div>\n          <div>\n            <Label>Rotation: {rotation}°</Label>\n          </div>\n        </div>\n      </div>\n\n      <ImageCrop.Root\n        src={src}\n        alt=\"Controlled crop demo\"\n        value={cropValue}\n        onValueChange={setCropValue}\n        zoom={zoom}\n        onZoomChange={setZoom}\n        rotation={rotation}\n        onRotationChange={setRotation}\n        aspect={aspect}\n        onCropComplete={(croppedArea, croppedAreaPixels) => {\n          console.log(\"Crop complete:\", { croppedArea, croppedAreaPixels });\n        }}\n        onMediaLoaded={(mediaSize) => {\n          console.log(\"Media loaded:\", mediaSize);\n        }}\n      >\n        <ImageCrop.CropArea />\n\n        <ImageCrop.Controls>\n          <ImageCrop.ZoomSlider />\n          <ImageCrop.RotateButton direction=\"left\" />\n          <ImageCrop.RotateButton direction=\"right\" />\n          <ImageCrop.ResetButton />\n          <ImageCrop.CropButton />\n        </ImageCrop.Controls>\n      </ImageCrop.Root>\n    </div>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

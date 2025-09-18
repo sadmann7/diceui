@@ -53,7 +53,7 @@ const REGEX_CACHE = {
 } as const;
 
 function getCachedFormatter(
-  locale: string,
+  locale: string | undefined,
   opts: Intl.NumberFormatOptions,
 ): Intl.NumberFormat {
   const {
@@ -92,10 +92,7 @@ function getCachedFormatter(
   return formatter;
 }
 
-function getCachedCurrencySymbols(opts: {
-  locale: string;
-  currency: string;
-}): CurrencySymbols {
+function getCachedCurrencySymbols(opts: TransformOptions): CurrencySymbols {
   const { locale, currency } = opts;
 
   const key = `${locale}|${currency}`;
@@ -135,7 +132,7 @@ function getCachedCurrencySymbols(opts: {
   return symbols;
 }
 
-function isCurrencyAtEnd(opts: { locale: string; currency: string }): boolean {
+function isCurrencyAtEnd(opts: TransformOptions): boolean {
   const { locale, currency } = opts;
 
   const key = `${locale}|${currency}`;
@@ -668,27 +665,13 @@ function fromUnmaskedIndex(opts: {
   return masked.length;
 }
 
-type InputElement = React.ComponentRef<"input">;
+function getCurrencyCaretPosition(opts: {
+  newValue: string;
+  mask: MaskPatternKey | MaskPattern | undefined;
+  transformOpts: TransformOptions;
+}): number {
+  const { newValue, mask, transformOpts } = opts;
 
-interface MaskInputProps extends React.ComponentProps<"input"> {
-  value?: string;
-  defaultValue?: string;
-  onValueChange?: (maskedValue: string, unmaskedValue: string) => void;
-  onValidate?: (isValid: boolean, unmaskedValue: string) => void;
-  validationMode?: "onChange" | "onBlur" | "onSubmit" | "onTouched" | "all";
-  mask?: MaskPatternKey | MaskPattern;
-  currency?: string;
-  locale?: string;
-  asChild?: boolean;
-  invalid?: boolean;
-  withoutMask?: boolean;
-}
-
-function getCurrencyCaretPosition(
-  newValue: string,
-  mask: MaskPatternKey | MaskPattern | undefined,
-  transformOpts: { currency: string; locale: string },
-): number {
   if (mask === "currency") {
     const currencyAtEnd = isCurrencyAtEnd(transformOpts);
     if (currencyAtEnd) {
@@ -706,11 +689,12 @@ function getCurrencyCaretPosition(
   }
 }
 
-function getPatternCaretPosition(
-  newValue: string,
-  maskPattern: MaskPattern,
-  currentUnmasked: string,
-): number {
+function getPatternCaretPosition(opts: {
+  newValue: string;
+  maskPattern: MaskPattern;
+  currentUnmasked: string;
+}): number {
+  const { newValue, maskPattern, currentUnmasked } = opts;
   let position = 0;
   let unmaskedCount = 0;
 
@@ -723,6 +707,22 @@ function getPatternCaretPosition(
     }
   }
   return position;
+}
+
+type InputElement = React.ComponentRef<"input">;
+
+interface MaskInputProps extends React.ComponentProps<"input"> {
+  value?: string;
+  defaultValue?: string;
+  onValueChange?: (maskedValue: string, unmaskedValue: string) => void;
+  onValidate?: (isValid: boolean, unmaskedValue: string) => void;
+  validationMode?: "onChange" | "onBlur" | "onSubmit" | "onTouched" | "all";
+  mask?: MaskPatternKey | MaskPattern;
+  currency?: string;
+  locale?: string;
+  asChild?: boolean;
+  invalid?: boolean;
+  withoutMask?: boolean;
 }
 
 function MaskInput(props: MaskInputProps) {
@@ -956,17 +956,17 @@ function MaskInput(props: MaskInputProps) {
 
           let newCursorPosition: number;
           if (CURRENCY_PERCENTAGE_SYMBOLS.test(maskPattern.pattern)) {
-            newCursorPosition = getCurrencyCaretPosition(
+            newCursorPosition = getCurrencyCaretPosition({
               newValue,
               mask,
               transformOpts,
-            );
+            });
           } else {
-            newCursorPosition = getPatternCaretPosition(
+            newCursorPosition = getPatternCaretPosition({
               newValue,
               maskPattern,
               currentUnmasked,
-            );
+            });
           }
 
           if (isCurrencyMask({ mask, pattern: maskPattern.pattern })) {
@@ -1069,9 +1069,9 @@ function MaskInput(props: MaskInputProps) {
   );
 
   const onCompositionEnd = React.useCallback(
-    (e: React.CompositionEvent<InputElement>) => {
-      onCompositionEndProp?.(e);
-      if (e.defaultPrevented) return;
+    (event: React.CompositionEvent<InputElement>) => {
+      onCompositionEndProp?.(event);
+      if (event.defaultPrevented) return;
 
       setComposing(false);
 
