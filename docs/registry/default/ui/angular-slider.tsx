@@ -4,6 +4,7 @@ import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
+import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidden-input";
 
 const ROOT_NAME = "AngularSlider";
 const THUMB_NAME = "AngularSliderThumb";
@@ -11,12 +12,54 @@ const THUMB_NAME = "AngularSliderThumb";
 const PAGE_KEYS = ["PageUp", "PageDown"];
 const ARROW_KEYS = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
 
-function getId(id: string, variant: "thumb" | "input", index: number) {
-  return `${id}-${variant}-${index}`;
-}
-
 function clamp(value: number, [min, max]: [number, number]) {
   return Math.min(max, Math.max(min, value));
+}
+
+function getNextSortedValues(
+  prevValues: number[] = [],
+  nextValue: number,
+  atIndex: number,
+) {
+  const nextValues = [...prevValues];
+  nextValues[atIndex] = nextValue;
+  return nextValues.sort((a, b) => a - b);
+}
+
+function getStepsBetweenValues(values: number[]) {
+  return values.slice(0, -1).map((value, index) => {
+    const nextValue = values[index + 1];
+    return nextValue !== undefined ? nextValue - value : 0;
+  });
+}
+
+function hasMinStepsBetweenValues(
+  values: number[],
+  minStepsBetweenValues: number,
+) {
+  if (minStepsBetweenValues > 0) {
+    const stepsBetweenValues = getStepsBetweenValues(values);
+    const actualMinStepsBetweenValues =
+      stepsBetweenValues.length > 0 ? Math.min(...stepsBetweenValues) : 0;
+    return actualMinStepsBetweenValues >= minStepsBetweenValues;
+  }
+  return true;
+}
+
+function getDecimalCount(value: number) {
+  return (String(value).split(".")[1] || "").length;
+}
+
+function roundValue(value: number, decimalCount: number) {
+  const rounder = 10 ** decimalCount;
+  return Math.round(value * rounder) / rounder;
+}
+
+function getClosestValueIndex(values: number[], nextValue: number) {
+  if (values.length === 1) return 0;
+  const distances = values.map((value) => Math.abs(value - nextValue));
+  const closestDistance = Math.min(...distances);
+  return distances.indexOf(closestDistance);
 }
 
 function useLazyRef<T>(fn: () => T) {
@@ -35,7 +78,8 @@ interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-interface ThumbElement extends HTMLDivElement {}
+type RootElement = React.ComponentRef<typeof AngularSliderRoot>;
+type ThumbElement = React.ComponentRef<typeof AngularSliderThumb>;
 
 interface ThumbData {
   id: string;
@@ -106,8 +150,8 @@ function createStore(
         disabled: false,
         inverted: false,
         radius: 80,
-        startAngle: -90, // Start at top
-        endAngle: 270, // Full circle
+        startAngle: -90,
+        endAngle: 270,
       },
     setState: (key, value) => {
       const state = stateRef.current;
@@ -170,21 +214,16 @@ function createStore(
       const centerX = rect.left + rect.width / 2;
       const centerY = rect.top + rect.height / 2;
 
-      // Calculate angle from center to pointer
       const deltaX = clientX - centerX;
       const deltaY = clientY - centerY;
       let angle = (Math.atan2(deltaY, deltaX) * 180) / Math.PI;
 
-      // Normalize angle to 0-360 range
       if (angle < 0) angle += 360;
 
-      // Adjust for start angle
       angle = (angle - startAngle + 360) % 360;
 
-      // Calculate the total angle range
       const totalAngle = (endAngle - startAngle + 360) % 360 || 360;
 
-      // Convert angle to percentage
       let percent = angle / totalAngle;
       if (inverted) percent = 1 - percent;
 
@@ -313,10 +352,7 @@ function AngularSliderRoot(props: AngularSliderRootProps) {
     asChild,
     className,
     children,
-    onKeyDown,
-    onPointerDown,
-    onPointerMove,
-    onPointerUp,
+    ref,
     ...rootProps
   } = props;
 
@@ -374,8 +410,10 @@ function AngularSliderRoot(props: AngularSliderRootProps) {
   const id = React.useId();
   const rootId = idProp ?? id;
 
-  const [sliderElement, setSliderElement] =
-    React.useState<HTMLDivElement | null>(null);
+  const [sliderElement, setSliderElement] = React.useState<RootElement | null>(
+    null,
+  );
+  const composedRef = useComposedRefs(ref, setSliderElement);
   const valuesBeforeSlideStartRef = React.useRef(value ?? defaultValue);
 
   const contextValue = React.useMemo<SliderContextValue>(
@@ -388,7 +426,7 @@ function AngularSliderRoot(props: AngularSliderRootProps) {
     [rootId, dir, name, form],
   );
 
-  const handleSlideStart = React.useCallback(
+  const onSliderStart = React.useCallback(
     (pointerValue: number) => {
       if (disabled) return;
 
@@ -400,7 +438,7 @@ function AngularSliderRoot(props: AngularSliderRootProps) {
     [store, disabled],
   );
 
-  const handleSlideMove = React.useCallback(
+  const onSliderMove = React.useCallback(
     (pointerValue: number) => {
       if (disabled) return;
 
@@ -410,7 +448,7 @@ function AngularSliderRoot(props: AngularSliderRootProps) {
     [store, disabled],
   );
 
-  const handleSlideEnd = React.useCallback(() => {
+  const onSliderEnd = React.useCallback(() => {
     if (disabled) return;
 
     const state = store.getState();
@@ -424,9 +462,9 @@ function AngularSliderRoot(props: AngularSliderRootProps) {
     }
   }, [store, disabled, onValueCommit]);
 
-  const onRootKeyDown = React.useCallback(
-    (event: React.KeyboardEvent<HTMLDivElement>) => {
-      onKeyDown?.(event);
+  const onKeyDown = React.useCallback(
+    (event: React.KeyboardEvent<RootElement>) => {
+      rootProps.onKeyDown?.(event);
       if (event.defaultPrevented || disabled) return;
 
       const state = store.getState();
@@ -461,12 +499,12 @@ function AngularSliderRoot(props: AngularSliderRootProps) {
         });
       }
     },
-    [onKeyDown, disabled, store, inverted],
+    [rootProps.onKeyDown, disabled, store, inverted],
   );
 
-  const onRootPointerDown = React.useCallback(
-    (event: React.PointerEvent<HTMLDivElement>) => {
-      onPointerDown?.(event);
+  const onPointerDown = React.useCallback(
+    (event: React.PointerEvent<RootElement>) => {
+      rootProps.onPointerDown?.(event);
       if (event.defaultPrevented || disabled) return;
 
       const target = event.target as HTMLElement;
@@ -493,16 +531,16 @@ function AngularSliderRoot(props: AngularSliderRootProps) {
             event.clientY,
             rect,
           );
-          handleSlideStart(pointerValue);
+          onSliderStart(pointerValue);
         }
       }
     },
-    [onPointerDown, disabled, store, sliderElement, handleSlideStart],
+    [rootProps.onPointerDown, disabled, store, sliderElement, onSliderStart],
   );
 
-  const onRootPointerMove = React.useCallback(
-    (event: React.PointerEvent<HTMLDivElement>) => {
-      onPointerMove?.(event);
+  const onPointerMove = React.useCallback(
+    (event: React.PointerEvent<RootElement>) => {
+      rootProps.onPointerMove?.(event);
       if (event.defaultPrevented || disabled) return;
 
       const target = event.target as HTMLElement;
@@ -513,24 +551,24 @@ function AngularSliderRoot(props: AngularSliderRootProps) {
           event.clientY,
           rect,
         );
-        handleSlideMove(pointerValue);
+        onSliderMove(pointerValue);
       }
     },
-    [onPointerMove, disabled, sliderElement, store, handleSlideMove],
+    [rootProps.onPointerMove, disabled, sliderElement, store, onSliderMove],
   );
 
-  const onRootPointerUp = React.useCallback(
-    (event: React.PointerEvent<HTMLDivElement>) => {
-      onPointerUp?.(event);
+  const onPointerUp = React.useCallback(
+    (event: React.PointerEvent<RootElement>) => {
+      rootProps.onPointerUp?.(event);
       if (event.defaultPrevented) return;
 
-      const target = event.target as HTMLElement;
+      const target = event.target as RootElement;
       if (target.hasPointerCapture(event.pointerId)) {
         target.releasePointerCapture(event.pointerId);
-        handleSlideEnd();
+        onSliderEnd();
       }
     },
-    [onPointerUp, handleSlideEnd],
+    [rootProps.onPointerUp, onSliderEnd],
   );
 
   const RootPrimitive = asChild ? Slot : "div";
@@ -544,7 +582,7 @@ function AngularSliderRoot(props: AngularSliderRootProps) {
           data-slot="slider"
           dir={dir}
           {...rootProps}
-          ref={(node: HTMLDivElement) => setSliderElement(node)}
+          ref={composedRef}
           className={cn(
             "relative touch-none select-none",
             disabled && "opacity-50",
@@ -554,10 +592,10 @@ function AngularSliderRoot(props: AngularSliderRootProps) {
             width: `${radius * 2 + 40}px`,
             height: `${radius * 2 + 40}px`,
           }}
-          onKeyDown={onRootKeyDown}
-          onPointerDown={onRootPointerDown}
-          onPointerMove={onRootPointerMove}
-          onPointerUp={onRootPointerUp}
+          onKeyDown={onKeyDown}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
         >
           {children}
         </RootPrimitive>
@@ -566,7 +604,7 @@ function AngularSliderRoot(props: AngularSliderRootProps) {
   );
 }
 
-interface AngularSliderTrackProps extends React.SVGProps<SVGSVGElement> {
+interface AngularSliderTrackProps extends React.ComponentProps<"svg"> {
   asChild?: boolean;
 }
 
@@ -578,13 +616,10 @@ function AngularSliderTrack(props: AngularSliderTrackProps) {
   const startAngle = useStore((state) => state.startAngle);
   const endAngle = useStore((state) => state.endAngle);
 
-  const TrackPrimitive = "svg";
-
-  const center = radius + 20; // Add padding
+  const center = radius + 20;
   const strokeWidth = 8;
   const trackRadius = radius;
 
-  // Calculate the path for the arc
   const totalAngle = (endAngle - startAngle + 360) % 360 || 360;
   const isFullCircle = totalAngle >= 359;
 
@@ -603,7 +638,7 @@ function AngularSliderTrack(props: AngularSliderTrackProps) {
   }
 
   return (
-    <TrackPrimitive
+    <svg
       data-disabled={disabled ? "" : undefined}
       data-slot="slider-track"
       {...trackProps}
@@ -632,7 +667,7 @@ function AngularSliderTrack(props: AngularSliderTrackProps) {
         />
       )}
       {children}
-    </TrackPrimitive>
+    </svg>
   );
 }
 
@@ -651,13 +686,10 @@ function AngularSliderRange(props: AngularSliderRangeProps) {
   const startAngle = useStore((state) => state.startAngle);
   const endAngle = useStore((state) => state.endAngle);
 
-  const RangePrimitive = "path";
-
   const center = radius + 20;
   const strokeWidth = 8;
   const trackRadius = radius;
 
-  // Calculate range angles
   const sortedValues = [...values].sort((a, b) => a - b);
   const rangeStart = sortedValues[0] ?? min;
   const rangeEnd =
@@ -687,13 +719,12 @@ function AngularSliderRange(props: AngularSliderRangeProps) {
     return <>{children}</>;
   }
 
-  // Don't render if no range
   if (rangeStart === rangeEnd && values.length <= 1) {
     return null;
   }
 
   return (
-    <RangePrimitive
+    <path
       data-disabled={disabled ? "" : undefined}
       data-slot="slider-range"
       {...rangeProps}
@@ -718,7 +749,6 @@ function AngularSliderThumb(props: AngularSliderThumbProps) {
     name: nameProp,
     className,
     asChild,
-    style,
     ref,
     ...thumbProps
   } = props;
@@ -728,41 +758,37 @@ function AngularSliderThumb(props: AngularSliderThumbProps) {
   const values = useStore((state) => state.values);
   const min = useStore((state) => state.min);
   const max = useStore((state) => state.max);
+  const step = useStore((state) => state.step);
   const disabled = useStore((state) => state.disabled);
   const radius = useStore((state) => state.radius);
 
+  const thumbId = React.useId();
   const [thumbElement, setThumbElement] = React.useState<ThumbElement | null>(
     null,
   );
   const composedRef = useComposedRefs(ref, setThumbElement);
 
-  // Auto-generate index if not provided
+  const isFormControl = thumbElement
+    ? context.form || !!thumbElement.closest("form")
+    : true;
+
   const index = indexProp ?? 0;
   const value = values[index];
 
-  const thumbId = getId(context.id, "thumb", index);
-
   React.useEffect(() => {
     if (thumbElement && value !== undefined) {
-      const thumbData: ThumbData = {
+      store.addThumb(index, {
         id: thumbId,
         element: thumbElement,
         index,
         value,
-      };
-      store.addThumb(index, thumbData);
+      });
 
       return () => {
         store.removeThumb(index);
       };
     }
   }, [thumbElement, thumbId, index, value, store]);
-
-  const onFocus = React.useCallback(() => {
-    store.setState("valueIndexToChange", index);
-  }, [store, index]);
-
-  const ThumbPrimitive = asChild ? Slot : "div";
 
   const thumbStyle = React.useMemo(() => {
     if (value === undefined) return {};
@@ -779,9 +805,19 @@ function AngularSliderThumb(props: AngularSliderThumbProps) {
     };
   }, [value, store, radius]);
 
-  if (value === undefined) {
-    return null; // Don't render thumbs without values
-  }
+  const onFocus = React.useCallback(
+    (event: React.FocusEvent<ThumbElement>) => {
+      props.onFocus?.(event);
+      if (event.defaultPrevented) return;
+
+      store.setState("valueIndexToChange", index);
+    },
+    [props.onFocus, store, index],
+  );
+
+  const ThumbPrimitive = asChild ? Slot : "div";
+
+  if (value === undefined) return null;
 
   return (
     <span style={thumbStyle}>
@@ -801,131 +837,28 @@ function AngularSliderThumb(props: AngularSliderThumbProps) {
           "block size-4 shrink-0 rounded-full border border-primary bg-background shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:outline-hidden focus-visible:ring-4 disabled:pointer-events-none disabled:opacity-50",
           className,
         )}
-        style={{
-          ...style,
-        }}
         onFocus={onFocus}
       />
-
-      {/* Hidden input for form submission */}
-      <AngularSliderBubbleInput
-        key={index}
-        name={
-          nameProp ??
-          (context.name
-            ? context.name + (values.length > 1 ? "[]" : "")
-            : undefined)
-        }
-        form={context.form}
-        value={value}
-      />
+      {isFormControl && value !== undefined && (
+        <VisuallyHiddenInput
+          key={index}
+          control={thumbElement}
+          name={
+            nameProp ??
+            (context.name
+              ? context.name + (values.length > 1 ? "[]" : "")
+              : undefined)
+          }
+          form={context.form}
+          value={value.toString()}
+          type="number"
+          min={min}
+          max={max}
+          step={step}
+          disabled={disabled}
+        />
+      )}
     </span>
-  );
-}
-
-interface AngularSliderBubbleInputProps extends React.ComponentProps<"input"> {
-  value: number;
-}
-
-function AngularSliderBubbleInput({
-  value,
-  ...props
-}: AngularSliderBubbleInputProps) {
-  const ref = React.useRef<HTMLInputElement>(null);
-  const prevValue = React.useRef(value);
-
-  // Bubble value change to parents (e.g form change event)
-  React.useEffect(() => {
-    const input = ref.current;
-    if (!input) return;
-
-    const inputProto = window.HTMLInputElement.prototype;
-    const descriptor = Object.getOwnPropertyDescriptor(
-      inputProto,
-      "value",
-    ) as PropertyDescriptor;
-    const setValue = descriptor.set;
-    if (prevValue.current !== value && setValue) {
-      const event = new Event("input", { bubbles: true });
-      setValue.call(input, value);
-      input.dispatchEvent(event);
-    }
-    prevValue.current = value;
-  }, [value]);
-
-  return (
-    <input
-      style={{ display: "none" }}
-      {...props}
-      ref={ref}
-      defaultValue={value}
-    />
-  );
-}
-
-// Utility functions
-function getNextSortedValues(
-  prevValues: number[] = [],
-  nextValue: number,
-  atIndex: number,
-) {
-  const nextValues = [...prevValues];
-  nextValues[atIndex] = nextValue;
-  return nextValues.sort((a, b) => a - b);
-}
-
-function getStepsBetweenValues(values: number[]) {
-  return values.slice(0, -1).map((value, index) => {
-    const nextValue = values[index + 1];
-    return nextValue !== undefined ? nextValue - value : 0;
-  });
-}
-
-function hasMinStepsBetweenValues(
-  values: number[],
-  minStepsBetweenValues: number,
-) {
-  if (minStepsBetweenValues > 0) {
-    const stepsBetweenValues = getStepsBetweenValues(values);
-    const actualMinStepsBetweenValues =
-      stepsBetweenValues.length > 0 ? Math.min(...stepsBetweenValues) : 0;
-    return actualMinStepsBetweenValues >= minStepsBetweenValues;
-  }
-  return true;
-}
-
-function getDecimalCount(value: number) {
-  return (String(value).split(".")[1] || "").length;
-}
-
-function roundValue(value: number, decimalCount: number) {
-  const rounder = 10 ** decimalCount;
-  return Math.round(value * rounder) / rounder;
-}
-
-function getClosestValueIndex(values: number[], nextValue: number) {
-  if (values.length === 1) return 0;
-  const distances = values.map((value) => Math.abs(value - nextValue));
-  const closestDistance = Math.min(...distances);
-  return distances.indexOf(closestDistance);
-}
-
-// Helper component to automatically generate thumbs based on values
-interface AngularSliderWithThumbsProps extends AngularSliderRootProps {
-  children?: React.ReactNode;
-}
-
-function AngularSliderWithThumbs(props: AngularSliderWithThumbsProps) {
-  const { children, ...sliderProps } = props;
-  const values = props.value ?? props.defaultValue ?? [0];
-
-  return (
-    <AngularSliderRoot {...sliderProps}>
-      {children}
-      {values.map((_, index) => (
-        <AngularSliderThumb key={index} index={index} />
-      ))}
-    </AngularSliderRoot>
   );
 }
 
@@ -934,13 +867,11 @@ export {
   AngularSliderTrack as Track,
   AngularSliderRange as Range,
   AngularSliderThumb as Thumb,
-  AngularSliderWithThumbs as WithThumbs,
   //
   AngularSliderRoot as AngularSlider,
   AngularSliderTrack,
   AngularSliderRange,
   AngularSliderThumb,
-  AngularSliderWithThumbs,
   //
   useStore as useAngularSlider,
   //
