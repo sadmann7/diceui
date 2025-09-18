@@ -4,8 +4,8 @@ import * as React from "react";
 import * as AngularSlider from "@/registry/default/ui/angular-slider";
 
 export default function AngularSliderDemo() {
-  const [singleValue, setSingleValue] = React.useState([50]);
-  const [rangeValue, setRangeValue] = React.useState([25, 75]);
+  const [singleValue, setSingleValue] = React.useState([180]);
+  const [rangeValue, setRangeValue] = React.useState([90, 270]);
 
   return (
     <div className="space-y-12 p-8">
@@ -15,7 +15,7 @@ export default function AngularSliderDemo() {
           <AngularSlider.Root
             value={singleValue}
             onValueChange={setSingleValue}
-            max={100}
+            max={360}
             min={0}
             step={1}
             radius={60}
@@ -26,7 +26,7 @@ export default function AngularSliderDemo() {
             <AngularSlider.Thumb />
           </AngularSlider.Root>
           <p className="text-muted-foreground text-sm">
-            Value: {singleValue[0]}
+            Value: {singleValue[0]}°
           </p>
         </div>
       </div>
@@ -37,7 +37,7 @@ export default function AngularSliderDemo() {
           <AngularSlider.Root
             value={rangeValue}
             onValueChange={setRangeValue}
-            max={100}
+            max={360}
             min={0}
             step={1}
             radius={80}
@@ -49,7 +49,7 @@ export default function AngularSliderDemo() {
             <AngularSlider.Thumb index={1} />
           </AngularSlider.Root>
           <p className="text-muted-foreground text-sm">
-            Range: {rangeValue[0]} - {rangeValue[1]}
+            Range: {rangeValue[0]}° - {rangeValue[1]}°
           </p>
         </div>
       </div>
@@ -58,8 +58,8 @@ export default function AngularSliderDemo() {
         <h3 className="font-semibold text-lg">Partial Arc Slider</h3>
         <div className="flex flex-col items-center space-y-4">
           <AngularSlider.Root
-            defaultValue={[30]}
-            max={100}
+            defaultValue={[135]}
+            max={270}
             min={0}
             step={1}
             radius={70}
@@ -79,8 +79,8 @@ export default function AngularSliderDemo() {
         <h3 className="font-semibold text-lg">Disabled Angular Slider</h3>
         <div className="flex flex-col items-center space-y-4">
           <AngularSlider.Root
-            defaultValue={[60]}
-            max={100}
+            defaultValue={[216]}
+            max={360}
             min={0}
             step={1}
             radius={50}

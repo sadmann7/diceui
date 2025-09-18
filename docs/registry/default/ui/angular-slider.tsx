@@ -47,7 +47,7 @@ function hasMinStepsBetweenValues(
 }
 
 function getDecimalCount(value: number) {
-  return (String(value).split(".")[1] || "").length;
+  return (String(value).split(".")[1] ?? "").length;
 }
 
 function roundValue(value: number, decimalCount: number) {
@@ -486,7 +486,6 @@ function AngularSliderRoot(props: AngularSliderRootProps) {
         const multiplier = isSkipKey ? 10 : 1;
 
         let direction = 0;
-        // For circular sliders, left/up decreases, right/down increases
         const isDecreaseKey = ["ArrowLeft", "ArrowUp", "PageUp"].includes(
           event.key,
         );
@@ -514,7 +513,6 @@ function AngularSliderRoot(props: AngularSliderRootProps) {
       if (!disabled) {
         valuesBeforeSlideStartRef.current = store.getState().values;
 
-        // Check if we clicked on a thumb
         const thumbs = Array.from(store.getState().thumbs.values());
         const clickedThumb = thumbs.find((thumb) =>
           thumb.element.contains(target),
@@ -524,7 +522,6 @@ function AngularSliderRoot(props: AngularSliderRootProps) {
           clickedThumb.element.focus();
           store.setState("valueIndexToChange", clickedThumb.index);
         } else if (sliderElement) {
-          // Click on track - start sliding
           const rect = sliderElement.getBoundingClientRect();
           const pointerValue = store.getValueFromPointer(
             event.clientX,
@@ -691,11 +688,12 @@ function AngularSliderRange(props: AngularSliderRangeProps) {
   const trackRadius = radius;
 
   const sortedValues = [...values].sort((a, b) => a - b);
-  const rangeStart = sortedValues[0] ?? min;
+
+  const rangeStart = values.length <= 1 ? min : (sortedValues[0] ?? min);
   const rangeEnd =
-    values.length > 1
-      ? (sortedValues[sortedValues.length - 1] ?? max)
-      : rangeStart;
+    values.length <= 1
+      ? (sortedValues[0] ?? min)
+      : (sortedValues[sortedValues.length - 1] ?? max);
 
   const rangeStartPercent = (rangeStart - min) / (max - min);
   const rangeEndPercent = (rangeEnd - min) / (max - min);
@@ -719,7 +717,7 @@ function AngularSliderRange(props: AngularSliderRangeProps) {
     return <>{children}</>;
   }
 
-  if (rangeStart === rangeEnd && values.length <= 1) {
+  if (rangeStart === rangeEnd) {
     return null;
   }
 
