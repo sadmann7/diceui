@@ -938,7 +938,7 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "cropper-form-demo",
+    name: "cropper-file-upload-demo",
     type: "registry:example",
     dependencies: [
       "@radix-ui/react-slot",
@@ -947,10 +947,10 @@ export const examples: Registry["items"] = [
       "react-hook-form",
       "zod",
     ],
-    registryDependencies: ["button", "form", "input", "label", "toast"],
+    registryDependencies: ["button", "dialog", "label", "slider"],
     files: [
       {
-        path: "examples/cropper-form-demo.tsx",
+        path: "examples/cropper-file-upload-demo.tsx",
         type: "registry:example",
       },
     ],

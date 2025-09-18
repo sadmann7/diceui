@@ -348,13 +348,13 @@
       ]
     },
     {
-      "name": "cropper-form-demo",
+      "name": "cropper-file-upload-demo",
       "type": "registry:component",
-      "title": "Cropper Form Demo",
-      "description": "Example showing how to integrate the cropper in a form with validation.",
+      "title": "Cropper File Upload Demo",
+      "description": "Example showing how to integrate the cropper in a file upload component.",
       "files": [
         {
-          "path": "registry/default/examples/cropper-form-demo.tsx",
+          "path": "registry/default/examples/cropper-file-upload-demo.tsx",
           "type": "registry:example"
         }
       ]

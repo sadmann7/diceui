@@ -31,7 +31,7 @@ export default function CropperVideoDemo() {
   const [isPlaying, setIsPlaying] = React.useState(true);
   const videoRef = React.useRef<HTMLVideoElement>(null);
 
-  const togglePlayback = () => {
+  const onPlayToggle = React.useCallback(() => {
     if (videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause();
@@ -40,7 +40,13 @@ export default function CropperVideoDemo() {
       }
       setIsPlaying(!isPlaying);
     }
-  };
+  }, [isPlaying]);
+
+  const onMetadataLoaded = React.useCallback(() => {
+    if (videoRef.current && isPlaying) {
+      videoRef.current.play();
+    }
+  }, [isPlaying]);
 
   return (
     <div className="space-y-4">
@@ -63,11 +69,10 @@ export default function CropperVideoDemo() {
             </SelectContent>
           </Select>
         </div>
-        <Button onClick={togglePlayback} variant="outline" size="sm">
+        <Button onClick={onPlayToggle} variant="outline" size="sm">
           {isPlaying ? "Pause" : "Play"}
         </Button>
       </div>
-
       <Cropper
         aspectRatio={aspectRatio}
         crop={crop}
@@ -82,15 +87,10 @@ export default function CropperVideoDemo() {
           ref={videoRef}
           src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
           crossOrigin="anonymous"
-          onLoadedMetadata={() => {
-            if (videoRef.current && isPlaying) {
-              videoRef.current.play();
-            }
-          }}
+          onLoadedMetadata={onMetadataLoaded}
         />
         <CropperArea />
       </Cropper>
-
       <div className="text-muted-foreground text-sm">
         <p>• Drag to pan the video</p>
         <p>• Scroll to zoom in/out</p>

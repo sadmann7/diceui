@@ -1457,17 +1457,17 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "cropper-form-demo": {
-      name: "cropper-form-demo",
+    "cropper-file-upload-demo": {
+      name: "cropper-file-upload-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["button","form","input","label","toast"],
+      registryDependencies: ["button","dialog","label","slider"],
       files: [{
-        path: "registry/default/examples/cropper-form-demo.tsx",
+        path: "registry/default/examples/cropper-file-upload-demo.tsx",
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/examples/cropper-form-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/cropper-file-upload-demo.tsx")),
       source: "",
       chunks: []
     },
