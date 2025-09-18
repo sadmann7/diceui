@@ -13,7 +13,6 @@ import {
 import {
   Cropper,
   CropperArea,
-  CropperContent,
   type CropperPoint,
   CropperVideo,
 } from "@/registry/default/ui/cropper";
@@ -79,19 +78,17 @@ export default function CropperVideoDemo() {
         objectFit="cover"
         withGrid
       >
-        <CropperContent>
-          <CropperVideo
-            ref={videoRef}
-            src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-            crossOrigin="anonymous"
-            onLoadedMetadata={() => {
-              if (videoRef.current && isPlaying) {
-                videoRef.current.play();
-              }
-            }}
-          />
-          <CropperArea />
-        </CropperContent>
+        <CropperVideo
+          ref={videoRef}
+          src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+          crossOrigin="anonymous"
+          onLoadedMetadata={() => {
+            if (videoRef.current && isPlaying) {
+              videoRef.current.play();
+            }
+          }}
+        />
+        <CropperArea />
       </Cropper>
 
       <div className="text-muted-foreground text-sm">

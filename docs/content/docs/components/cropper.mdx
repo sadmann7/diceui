@@ -48,16 +48,13 @@ Import the parts, and compose them together.
 import {
   Cropper,
   CropperArea,
-  CropperContent,
   CropperImage,
   CropperVideo,
 } from "@/components/ui/cropper";
 
 <Cropper>
-  <CropperContent>
-    <CropperImage src="/image.jpg" alt="Image to crop" />
-    <CropperArea />
-  </CropperContent>
+  <CropperImage src="/image.jpg" alt="Image to crop" />
+  <CropperArea />
 </Cropper>
 ```
 
@@ -96,15 +93,6 @@ The root container for the cropper component.
 <AutoTypeTable
   path="./types/docs/cropper.ts"
   name="RootProps"
-/>
-
-### Content
-
-The interactive content area where cropping happens.
-
-<AutoTypeTable
-  path="./types/docs/cropper.ts"
-  name="ContentProps"
 />
 
 ### Image

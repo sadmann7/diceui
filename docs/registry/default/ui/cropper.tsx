@@ -509,7 +509,7 @@ function useStore<T>(selector: (state: StoreState) => T): T {
   return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
 
-type ContentElement = React.ComponentRef<typeof CropperContent>;
+type RootImplElement = React.ComponentRef<typeof CropperRootImpl>;
 
 interface CropperContextValue {
   id: string;
@@ -520,7 +520,7 @@ interface CropperContextValue {
   keyboardStep: number;
   shape: Shape;
   objectFit: ObjectFit;
-  contentRef: React.RefObject<ContentElement | null>;
+  contentRef: React.RefObject<RootImplElement | null>;
   allowOverflow: boolean;
   preventScrollZoom: boolean;
   withGrid: boolean;
@@ -559,6 +559,7 @@ interface CropperRootProps extends DivProps {
   onMediaLoaded?: (mediaSize: MediaSize) => void;
   onInteractionStart?: () => void;
   onInteractionEnd?: () => void;
+  onWheelZoom?: (event: WheelEvent) => void;
 }
 
 function CropperRoot(props: CropperRootProps) {
@@ -586,7 +587,6 @@ function CropperRoot(props: CropperRootProps) {
     onInteractionStart,
     onInteractionEnd,
     id: idProp,
-    asChild,
     className,
     ...rootProps
   } = props;
@@ -602,7 +602,7 @@ function CropperRoot(props: CropperRootProps) {
     isWheelZooming: false,
   }));
 
-  const contentRef = React.useRef<ContentElement>(null);
+  const contentRef = React.useRef<RootImplElement>(null);
 
   const store = React.useMemo(
     () =>
@@ -733,27 +733,25 @@ function CropperRoot(props: CropperRootProps) {
     ],
   );
 
-  const RootPrimitive = asChild ? Slot : "div";
-
   return (
     <StoreContext.Provider value={store}>
       <CropperContext.Provider value={contextValue}>
-        <RootPrimitive
-          id={rootId}
-          data-slot="cropper"
-          {...rootProps}
+        <div
+          data-slot="cropper-wrapper"
           className={cn("relative h-full overflow-hidden", className)}
-        />
+        >
+          <CropperRootImpl id={rootId} {...rootProps} />
+        </div>
       </CropperContext.Provider>
     </StoreContext.Provider>
   );
 }
 
-interface CropperContentProps extends DivProps {
+interface CropperRootImplProps extends CropperRootProps {
   onWheelZoom?: (event: WheelEvent) => void;
 }
 
-function CropperContent(props: CropperContentProps) {
+function CropperRootImpl(props: CropperRootImplProps) {
   const { className, asChild, ref, ...contentProps } = props;
 
   const context = useCropperContext(CONTENT_NAME);
@@ -1137,7 +1135,7 @@ function CropperContent(props: CropperContentProps) {
   );
 
   const onKeyUp = React.useCallback(
-    (event: React.KeyboardEvent<ContentElement>) => {
+    (event: React.KeyboardEvent<RootImplElement>) => {
       contentProps.onKeyUp?.(event);
       if (event.defaultPrevented) return;
 
@@ -1157,7 +1155,7 @@ function CropperContent(props: CropperContentProps) {
   );
 
   const onKeyDown = React.useCallback(
-    (event: React.KeyboardEvent<ContentElement>) => {
+    (event: React.KeyboardEvent<RootImplElement>) => {
       if (!cropSize || !mediaSize) return;
 
       contentProps.onKeyDown?.(event);
@@ -1206,7 +1204,7 @@ function CropperContent(props: CropperContentProps) {
   );
 
   const onMouseDown = React.useCallback(
-    (event: React.MouseEvent<ContentElement>) => {
+    (event: React.MouseEvent<RootImplElement>) => {
       contentProps.onMouseDown?.(event);
       if (event.defaultPrevented) return;
 
@@ -1227,7 +1225,7 @@ function CropperContent(props: CropperContentProps) {
   );
 
   const onTouchStart = React.useCallback(
-    (event: React.TouchEvent<ContentElement>) => {
+    (event: React.TouchEvent<RootImplElement>) => {
       contentProps.onTouchStart?.(event);
       if (event.defaultPrevented) return;
 
@@ -1313,11 +1311,11 @@ function CropperContent(props: CropperContentProps) {
     };
   }, [onRefsCleanup, onCachesCleanup]);
 
-  const ContentPrimitive = asChild ? Slot : "div";
+  const RootImplPrimitive = asChild ? Slot : "div";
 
   return (
-    <ContentPrimitive
-      data-slot="cropper-content"
+    <RootImplPrimitive
+      data-slot="cropper"
       tabIndex={0}
       {...contentProps}
       ref={composedRef}
@@ -1821,13 +1819,11 @@ function CropperArea(props: CropperAreaProps) {
 
 export {
   CropperRoot as Root,
-  CropperContent as Content,
   CropperImage as Image,
   CropperVideo as Video,
   CropperArea as Area,
   //
   CropperRoot as Cropper,
-  CropperContent,
   CropperImage,
   CropperVideo,
   CropperArea,

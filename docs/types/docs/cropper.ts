@@ -193,23 +193,9 @@ export interface RootProps
   onInteractionEnd?: () => void;
 
   /**
-   * The children to render inside the cropper.
-   */
-  children?: React.ReactNode;
-}
-
-export interface ContentProps
-  extends Omit<React.ComponentProps<"div">, "children">,
-    CompositionProps {
-  /**
    * Event handler called when wheel zoom occurs.
    */
   onWheelZoom?: (event: WheelEvent) => void;
-
-  /**
-   * The children to render inside the content area.
-   */
-  children?: React.ReactNode;
 }
 
 export interface ImageProps

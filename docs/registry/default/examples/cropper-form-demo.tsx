@@ -21,7 +21,6 @@ import {
   Cropper,
   CropperArea,
   type CropperAreaData,
-  CropperContent,
   CropperImage,
   type CropperPoint,
 } from "@/registry/default/ui/cropper";
@@ -111,14 +110,12 @@ export default function CropperFormDemo() {
                 className="h-80"
                 shape="circular"
               >
-                <CropperContent>
-                  <CropperImage
-                    src={form.watch("image")}
-                    alt="Profile picture"
-                    crossOrigin="anonymous"
-                  />
-                  <CropperArea />
-                </CropperContent>
+                <CropperImage
+                  src={form.watch("image")}
+                  alt="Profile picture"
+                  crossOrigin="anonymous"
+                />
+                <CropperArea />
               </Cropper>
             </div>
             {croppedAreaPixels && (

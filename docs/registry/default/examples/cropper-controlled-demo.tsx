@@ -8,7 +8,6 @@ import {
   Cropper,
   CropperArea,
   type CropperAreaData,
-  CropperContent,
   CropperImage,
   type CropperPoint,
 } from "@/registry/default/ui/cropper";
@@ -77,14 +76,12 @@ export default function CropperControlledDemo() {
           onCropAreaChange={(area) => setCroppedArea(area)}
           className="min-h-72"
         >
-          <CropperContent>
-            <CropperImage
-              src="https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=1920&h=1080&fit=crop&auto=format&fm=webp&q=80"
-              alt="Landscape"
-              crossOrigin="anonymous"
-            />
-            <CropperArea />
-          </CropperContent>
+          <CropperImage
+            src="https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=1920&h=1080&fit=crop&auto=format&fm=webp&q=80"
+            alt="Landscape"
+            crossOrigin="anonymous"
+          />
+          <CropperArea />
         </Cropper>
       </div>
     </div>

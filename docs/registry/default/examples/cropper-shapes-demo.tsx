@@ -13,7 +13,6 @@ import { Switch } from "@/components/ui/switch";
 import {
   Cropper,
   CropperArea,
-  CropperContent,
   CropperImage,
   type CropperPoint,
 } from "@/registry/default/ui/cropper";
@@ -120,14 +119,12 @@ export default function CropperShapesDemo() {
         onZoomChange={setZoom}
         className="min-h-80 max-w-lg"
       >
-        <CropperContent>
-          <CropperImage
-            src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1920&h=1080&fit=crop&auto=format&fm=webp&q=80"
-            alt="Forest landscape"
-            crossOrigin="anonymous"
-          />
-          <CropperArea />
-        </CropperContent>
+        <CropperImage
+          src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1920&h=1080&fit=crop&auto=format&fm=webp&q=80"
+          alt="Forest landscape"
+          crossOrigin="anonymous"
+        />
+        <CropperArea />
       </Cropper>
     </div>
   );
