@@ -9,7 +9,7 @@ import {
   type CropperPoint,
 } from "@/registry/default/ui/cropper";
 
-export function CropperDemo() {
+export default function CropperDemo() {
   const [crop, setCrop] = React.useState<CropperPoint>({ x: 0, y: 0 });
   const [zoom, setZoom] = React.useState(1);
 

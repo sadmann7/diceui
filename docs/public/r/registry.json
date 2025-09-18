@@ -48,6 +48,22 @@
       ]
     },
     {
+      "name": "cropper",
+      "type": "registry:component",
+      "title": "Cropper",
+      "description": "A powerful image and video cropper with zoom, rotation, and customizable crop areas.",
+      "files": [
+        {
+          "path": "registry/default/ui/cropper.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/default/lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
       "name": "combobox",
       "type": "registry:component",
       "title": "Combobox",
@@ -303,6 +319,66 @@
       "files": [
         {
           "path": "registry/default/examples/color-picker-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "cropper-demo",
+      "type": "registry:component",
+      "title": "Cropper Demo",
+      "description": "Basic example showing how to use the cropper component.",
+      "files": [
+        {
+          "path": "registry/default/examples/cropper-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "cropper-controlled-demo",
+      "type": "registry:component",
+      "title": "Cropper Controlled Demo",
+      "description": "Example showing controlled cropper with external zoom and rotation controls.",
+      "files": [
+        {
+          "path": "registry/default/examples/cropper-controlled-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "cropper-form-demo",
+      "type": "registry:component",
+      "title": "Cropper Form Demo",
+      "description": "Example showing how to integrate the cropper in a form with validation.",
+      "files": [
+        {
+          "path": "registry/default/examples/cropper-form-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "cropper-shapes-demo",
+      "type": "registry:component",
+      "title": "Cropper Shapes Demo",
+      "description": "Example showing different cropper shapes and configuration options.",
+      "files": [
+        {
+          "path": "registry/default/examples/cropper-shapes-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "cropper-video-demo",
+      "type": "registry:component",
+      "title": "Cropper Video Demo",
+      "description": "Example showing how to use the cropper with video content.",
+      "files": [
+        {
+          "path": "registry/default/examples/cropper-video-demo.tsx",
           "type": "registry:example"
         }
       ]

@@ -1,0 +1,21 @@
+{
+  "name": "cropper-controlled-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@radix-ui/react-slot",
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "button",
+    "label",
+    "slider"
+  ],
+  "files": [
+    {
+      "path": "examples/cropper-controlled-demo.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Button } from \"@/components/ui/button\";\nimport { Label } from \"@/components/ui/label\";\nimport { Slider } from \"@/components/ui/slider\";\nimport {\n  Cropper,\n  CropperArea,\n  type CropperAreaData,\n  CropperContent,\n  CropperImage,\n  type CropperPoint,\n} from \"@/registry/default/ui/cropper\";\n\nexport default function CropperControlledDemo() {\n  const [crop, setCrop] = React.useState<CropperPoint>({ x: 0, y: 0 });\n  const [zoom, setZoom] = React.useState(1);\n  const [rotation, setRotation] = React.useState(0);\n  const [croppedArea, setCroppedArea] = React.useState<CropperAreaData | null>(\n    null,\n  );\n\n  const resetCrop = () => {\n    setCrop({ x: 0, y: 0 });\n    setZoom(1);\n    setRotation(0);\n  };\n\n  return (\n    <div className=\"space-y-4\">\n      <div className=\"grid gap-4 md:grid-cols-2\">\n        <div className=\"space-y-4\">\n          <div className=\"space-y-2\">\n            <Label>Zoom: {zoom.toFixed(2)}</Label>\n            <Slider\n              value={[zoom]}\n              onValueChange={(value) => setZoom(value[0] ?? 1)}\n              min={1}\n              max={3}\n              step={0.1}\n              className=\"w-full\"\n            />\n          </div>\n          <div className=\"space-y-2\">\n            <Label>Rotation: {rotation.toFixed(0)}°</Label>\n            <Slider\n              value={[rotation]}\n              onValueChange={(value) => setRotation(value[0] ?? 0)}\n              min={-180}\n              max={180}\n              step={1}\n              className=\"w-full\"\n            />\n          </div>\n          <Button onClick={resetCrop} variant=\"outline\" className=\"w-full\">\n            Reset\n          </Button>\n          {croppedArea && (\n            <div className=\"space-y-1 rounded-md border p-3 text-sm\">\n              <div className=\"font-medium\">Crop Area (%):</div>\n              <div>X: {croppedArea.x.toFixed(1)}%</div>\n              <div>Y: {croppedArea.y.toFixed(1)}%</div>\n              <div>Width: {croppedArea.width.toFixed(1)}%</div>\n              <div>Height: {croppedArea.height.toFixed(1)}%</div>\n            </div>\n          )}\n        </div>\n        <Cropper\n          aspectRatio={1}\n          crop={crop}\n          zoom={zoom}\n          rotation={rotation}\n          onCropChange={setCrop}\n          onZoomChange={setZoom}\n          onRotationChange={setRotation}\n          onCropAreaChange={(area) => setCroppedArea(area)}\n          className=\"min-h-72\"\n        >\n          <CropperContent>\n            <CropperImage\n              src=\"https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=1920&h=1080&fit=crop&auto=format&fm=webp&q=80\"\n              alt=\"Landscape\"\n              crossOrigin=\"anonymous\"\n            />\n            <CropperArea />\n          </CropperContent>\n        </Cropper>\n      </div>\n    </div>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

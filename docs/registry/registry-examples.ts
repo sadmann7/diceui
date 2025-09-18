@@ -915,6 +915,71 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "cropper-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    files: [
+      {
+        path: "examples/cropper-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "cropper-controlled-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    registryDependencies: ["button", "label", "slider"],
+    files: [
+      {
+        path: "examples/cropper-controlled-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "cropper-form-demo",
+    type: "registry:example",
+    dependencies: [
+      "@radix-ui/react-slot",
+      "class-variance-authority",
+      "@hookform/resolvers",
+      "react-hook-form",
+      "zod",
+    ],
+    registryDependencies: ["button", "form", "input", "label", "toast"],
+    files: [
+      {
+        path: "examples/cropper-form-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "cropper-shapes-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    registryDependencies: ["label", "select", "switch"],
+    files: [
+      {
+        path: "examples/cropper-shapes-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "cropper-video-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    registryDependencies: ["button", "label", "select"],
+    files: [
+      {
+        path: "examples/cropper-video-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "stepper-demo",
     type: "registry:example",
     files: [

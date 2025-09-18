@@ -1,0 +1,26 @@
+{
+  "name": "cropper-form-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@radix-ui/react-slot",
+    "class-variance-authority",
+    "@hookform/resolvers",
+    "react-hook-form",
+    "zod"
+  ],
+  "registryDependencies": [
+    "button",
+    "form",
+    "input",
+    "label",
+    "toast"
+  ],
+  "files": [
+    {
+      "path": "examples/cropper-form-demo.tsx",
+      "content": "\"use client\";\n\nimport { zodResolver } from \"@hookform/resolvers/zod\";\nimport * as React from \"react\";\nimport { useForm } from \"react-hook-form\";\nimport { toast } from \"sonner\";\nimport { z } from \"zod\";\nimport { Button } from \"@/components/ui/button\";\nimport {\n  Form,\n  FormControl,\n  FormDescription,\n  FormField,\n  FormItem,\n  FormLabel,\n  FormMessage,\n} from \"@/components/ui/form\";\nimport { Input } from \"@/components/ui/input\";\nimport { Label } from \"@/components/ui/label\";\nimport {\n  Cropper,\n  CropperArea,\n  type CropperAreaData,\n  CropperContent,\n  CropperImage,\n  type CropperPoint,\n} from \"@/registry/default/ui/cropper\";\n\nconst formSchema = z.object({\n  name: z.string().min(2, \"Name must be at least 2 characters\"),\n  image: z.string().url(\"Please select an image\"),\n  cropData: z.object({\n    x: z.number(),\n    y: z.number(),\n    width: z.number(),\n    height: z.number(),\n  }),\n});\n\ntype FormValues = z.infer<typeof formSchema>;\n\nexport default function CropperFormDemo() {\n  const [crop, setCrop] = React.useState<CropperPoint>({ x: 0, y: 0 });\n  const [zoom, setZoom] = React.useState(1);\n  const [croppedAreaPixels, setCroppedAreaPixels] =\n    React.useState<CropperAreaData | null>(null);\n\n  const form = useForm<FormValues>({\n    resolver: zodResolver(formSchema),\n    defaultValues: {\n      name: \"\",\n      image:\n        \"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=800&fit=crop&auto=format&fm=webp&q=80\",\n      cropData: { x: 0, y: 0, width: 0, height: 0 },\n    },\n  });\n\n  const onCropComplete = React.useCallback(\n    (_: CropperAreaData, croppedAreaPixels: CropperAreaData) => {\n      setCroppedAreaPixels(croppedAreaPixels);\n      form.setValue(\"cropData\", croppedAreaPixels);\n    },\n    [form],\n  );\n\n  function onSubmit(values: FormValues) {\n    toast.success(\"Profile Updated\", {\n      description: (\n        <div className=\"space-y-1\">\n          <div>Name: {values.name}</div>\n          <div>\n            Crop: {values.cropData.width}×{values.cropData.height} at (\n            {values.cropData.x}, {values.cropData.y})\n          </div>\n        </div>\n      ),\n    });\n  }\n\n  return (\n    <div className=\"mx-auto max-w-2xl space-y-6\">\n      <Form {...form}>\n        <form onSubmit={form.handleSubmit(onSubmit)} className=\"space-y-6\">\n          <FormField\n            control={form.control}\n            name=\"name\"\n            render={({ field }) => (\n              <FormItem>\n                <FormLabel>Name</FormLabel>\n                <FormControl>\n                  <Input placeholder=\"Enter your name\" {...field} />\n                </FormControl>\n                <FormDescription>\n                  This will be displayed on your profile.\n                </FormDescription>\n                <FormMessage />\n              </FormItem>\n            )}\n          />\n\n          <div className=\"space-y-2\">\n            <Label>Profile Picture</Label>\n            <div className=\"rounded-md border\">\n              <Cropper\n                aspectRatio={1}\n                crop={crop}\n                zoom={zoom}\n                onCropChange={setCrop}\n                onZoomChange={setZoom}\n                onCropComplete={onCropComplete}\n                className=\"h-80\"\n                shape=\"circular\"\n              >\n                <CropperContent>\n                  <CropperImage\n                    src={form.watch(\"image\")}\n                    alt=\"Profile picture\"\n                    crossOrigin=\"anonymous\"\n                  />\n                  <CropperArea />\n                </CropperContent>\n              </Cropper>\n            </div>\n            {croppedAreaPixels && (\n              <p className=\"text-muted-foreground text-sm\">\n                Crop area: {croppedAreaPixels.width}×{croppedAreaPixels.height}{\" \"}\n                pixels\n              </p>\n            )}\n          </div>\n\n          <Button type=\"submit\" className=\"w-full\">\n            Save Profile\n          </Button>\n        </form>\n      </Form>\n    </div>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}
