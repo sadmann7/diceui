@@ -6,8 +6,8 @@ import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidden-input";
 
-const ROOT_NAME = "AngularSlider";
-const THUMB_NAME = "AngularSliderThumb";
+const ROOT_NAME = "AngleSlider";
+const THUMB_NAME = "AngleSliderThumb";
 
 const PAGE_KEYS = ["PageUp", "PageDown"];
 const ARROW_KEYS = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
@@ -78,8 +78,8 @@ interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-type RootElement = React.ComponentRef<typeof AngularSliderRoot>;
-type ThumbElement = React.ComponentRef<typeof AngularSliderThumb>;
+type RootElement = React.ComponentRef<typeof AngleSliderRoot>;
+type ThumbElement = React.ComponentRef<typeof AngleSliderThumb>;
 
 interface ThumbData {
   id: string;
@@ -311,7 +311,7 @@ function useSliderContext(consumerName: string) {
   return context;
 }
 
-interface AngularSliderRootProps extends Omit<DivProps, "defaultValue"> {
+interface AngleSliderRootProps extends Omit<DivProps, "defaultValue"> {
   value?: number[];
   defaultValue?: number[];
   onValueChange?: (value: number[]) => void;
@@ -330,7 +330,7 @@ interface AngularSliderRootProps extends Omit<DivProps, "defaultValue"> {
   endAngle?: number;
 }
 
-function AngularSliderRoot(props: AngularSliderRootProps) {
+function AngleSliderRoot(props: AngleSliderRootProps) {
   const {
     value,
     defaultValue = [0],
@@ -601,11 +601,11 @@ function AngularSliderRoot(props: AngularSliderRootProps) {
   );
 }
 
-interface AngularSliderTrackProps extends React.ComponentProps<"svg"> {
+interface AngleSliderTrackProps extends React.ComponentProps<"svg"> {
   asChild?: boolean;
 }
 
-function AngularSliderTrack(props: AngularSliderTrackProps) {
+function AngleSliderTrack(props: AngleSliderTrackProps) {
   const { className, asChild, children, ...trackProps } = props;
 
   const disabled = useStore((state) => state.disabled);
@@ -668,11 +668,11 @@ function AngularSliderTrack(props: AngularSliderTrackProps) {
   );
 }
 
-interface AngularSliderRangeProps extends React.SVGProps<SVGPathElement> {
+interface AngleSliderRangeProps extends React.SVGProps<SVGPathElement> {
   asChild?: boolean;
 }
 
-function AngularSliderRange(props: AngularSliderRangeProps) {
+function AngleSliderRange(props: AngleSliderRangeProps) {
   const { className, asChild, children, ...rangeProps } = props;
 
   const values = useStore((state) => state.values);
@@ -736,12 +736,12 @@ function AngularSliderRange(props: AngularSliderRangeProps) {
   );
 }
 
-interface AngularSliderThumbProps extends DivProps {
+interface AngleSliderThumbProps extends DivProps {
   index?: number;
   name?: string;
 }
 
-function AngularSliderThumb(props: AngularSliderThumbProps) {
+function AngleSliderThumb(props: AngleSliderThumbProps) {
   const {
     index: indexProp,
     name: nameProp,
@@ -788,7 +788,7 @@ function AngularSliderThumb(props: AngularSliderThumbProps) {
     }
   }, [thumbElement, thumbId, index, value, store]);
 
-  const thumbStyle = React.useMemo(() => {
+  const thumbStyle = React.useMemo<React.CSSProperties>(() => {
     if (value === undefined) return {};
 
     const angle = store.getAngleFromValue(value);
@@ -796,7 +796,7 @@ function AngularSliderThumb(props: AngularSliderThumbProps) {
     const center = radius + 20;
 
     return {
-      position: "absolute" as const,
+      position: "absolute",
       left: `${center + position.x}px`,
       top: `${center + position.y}px`,
       transform: "translate(-50%, -50%)",
@@ -860,18 +860,86 @@ function AngularSliderThumb(props: AngularSliderThumbProps) {
   );
 }
 
+interface AngleSliderValueProps extends DivProps {
+  unit?: string;
+  formatValue?: (value: number | number[]) => string;
+}
+
+function AngleSliderValue(props: AngleSliderValueProps) {
+  const {
+    unit = "°",
+    formatValue,
+    className,
+    style,
+    asChild,
+    children,
+    ...valueProps
+  } = props;
+
+  const values = useStore((state) => state.values);
+  const radius = useStore((state) => state.radius);
+  const disabled = useStore((state) => state.disabled);
+
+  const center = radius + 20;
+
+  const displayValue = React.useMemo(() => {
+    if (formatValue) {
+      return formatValue(values.length === 1 ? (values[0] ?? 0) : values);
+    }
+
+    if (values.length === 1) {
+      return `${values[0] ?? 0}${unit}`;
+    }
+
+    const sortedValues = [...values].sort((a, b) => a - b);
+    return `${sortedValues[0]}${unit} - ${sortedValues[sortedValues.length - 1]}${unit}`;
+  }, [values, formatValue, unit]);
+
+  const valueStyle = React.useMemo<React.CSSProperties>(
+    () => ({
+      position: "absolute",
+      left: `${center}px`,
+      top: `${center}px`,
+      transform: "translate(-50%, -50%)",
+    }),
+    [center],
+  );
+
+  const ValuePrimitive = asChild ? Slot : "div";
+
+  return (
+    <ValuePrimitive
+      data-disabled={disabled ? "" : undefined}
+      data-slot="slider-value"
+      {...valueProps}
+      className={cn(
+        "pointer-events-none flex select-none items-center justify-center font-medium text-foreground text-sm",
+        className,
+      )}
+      style={{
+        ...valueStyle,
+        ...style,
+      }}
+    >
+      {children ?? displayValue}
+    </ValuePrimitive>
+  );
+}
+
 export {
-  AngularSliderRoot as Root,
-  AngularSliderTrack as Track,
-  AngularSliderRange as Range,
-  AngularSliderThumb as Thumb,
+  AngleSliderRoot as Root,
+  AngleSliderTrack as Track,
+  AngleSliderRange as Range,
+  AngleSliderThumb as Thumb,
+  AngleSliderValue as Value,
   //
-  AngularSliderRoot as AngularSlider,
-  AngularSliderTrack,
-  AngularSliderRange,
-  AngularSliderThumb,
+  AngleSliderRoot as AngleSlider,
+  AngleSliderTrack,
+  AngleSliderRange,
+  AngleSliderThumb,
+  AngleSliderValue,
   //
-  useStore as useAngularSlider,
+  useStore as useAngleSlider,
   //
-  type AngularSliderRootProps as AngularSliderProps,
+  type AngleSliderRootProps as AngleSliderProps,
 };

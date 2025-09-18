@@ -101,3 +101,46 @@ export interface ThumbProps extends EmptyProps<"div">, CompositionProps {
    */
   name?: string;
 }
+
+export interface ValueProps extends EmptyProps<"div">, CompositionProps {
+  /**
+   * The unit to display after the value(s).
+   * @default "°"
+   *
+   * ```ts
+   * // Display as percentages
+   * unit="%"
+   * ```
+   *
+   * ```ts
+   * // Display as percentage
+   * unit="%"
+   * ```
+   *
+   * ```ts
+   * // No unit
+   * unit=""
+   * ```
+   */
+  unit?: string;
+
+  /**
+   * Custom formatter for the displayed value.
+   * Receives the current value(s) and should return a formatted string.
+   * For single-value sliders, receives a number.
+   * For range sliders, receives an array of numbers.
+   *
+   * When provided, this overrides the default unit-based formatting.
+   *
+   * ```ts
+   * // Custom percentage formatting
+   * formatValue={(value) => `${value}%`}
+   * ```
+   *
+   * ```ts
+   * // Custom range formatting with units
+   * formatValue={(values) => Array.isArray(values) ? `${values[0]}px - ${values[1]}px` : `${values}px`}
+   * ```
+   */
+  formatValue?: (value: number | number[]) => string;
+}
