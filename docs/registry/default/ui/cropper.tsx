@@ -516,14 +516,14 @@ interface CropperContextValue {
   aspectRatio: number;
   minZoom: number;
   maxZoom: number;
+  zoomSpeed: number;
+  keyboardStep: number;
   shape: Shape;
   objectFit: ObjectFit;
-  zoomSpeed: number;
-  preventScrollZoom: boolean;
-  allowOverflow: boolean;
-  withGrid: boolean;
-  keyboardStep: number;
   contentRef: React.RefObject<ContentElement | null>;
+  allowOverflow: boolean;
+  preventScrollZoom: boolean;
+  withGrid: boolean;
 }
 
 const CropperContext = React.createContext<CropperContextValue | null>(null);
@@ -543,8 +543,8 @@ interface CropperRootProps extends DivProps {
   maxZoom?: number;
   zoomSpeed?: number;
   rotation?: number;
-  aspectRatio?: number;
   keyboardStep?: number;
+  aspectRatio?: number;
   shape?: Shape;
   objectFit?: ObjectFit;
   allowOverflow?: boolean;
@@ -569,8 +569,8 @@ function CropperRoot(props: CropperRootProps) {
     maxZoom = 3,
     zoomSpeed = 1,
     rotation = 0,
-    aspectRatio = 4 / 3,
     keyboardStep = 1,
+    aspectRatio = 4 / 3,
     shape = "rectangular",
     objectFit = "contain",
     allowOverflow = false,
@@ -706,30 +706,30 @@ function CropperRoot(props: CropperRootProps) {
   const contextValue = React.useMemo<CropperContextValue>(
     () => ({
       id: rootId,
-      aspectRatio,
       minZoom,
       maxZoom,
+      zoomSpeed,
+      keyboardStep,
+      aspectRatio,
       shape,
       objectFit,
-      withGrid,
-      zoomSpeed,
       preventScrollZoom,
       allowOverflow,
-      keyboardStep,
+      withGrid,
       contentRef,
     }),
     [
       rootId,
-      aspectRatio,
       minZoom,
       maxZoom,
+      zoomSpeed,
+      keyboardStep,
+      aspectRatio,
       shape,
       objectFit,
-      withGrid,
-      zoomSpeed,
       preventScrollZoom,
       allowOverflow,
-      keyboardStep,
+      withGrid,
     ],
   );
 
