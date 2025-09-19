@@ -1,0 +1,240 @@
+---
+title: Circular Progress
+description: A circular progress indicator that displays completion progress in a ring format with support for indeterminate states.
+preview: true
+links:
+  api: /docs/components/circular-progress#api-reference
+---
+
+<ComponentTabs name="circular-progress-demo" />
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/circular-progress"
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @radix-ui/react-slot
+     ```
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource name="circular-progress" />
+  </Step>
+</Steps>
+
+## Layout
+
+Import the parts and compose them together.
+
+```tsx
+import {
+  CircularProgress,
+  CircularProgressIndicator,
+  CircularProgressRange,
+  CircularProgressTrack,
+  CircularProgressValueText,
+} from "@/components/ui/circular-progress";
+
+<CircularProgress>
+  <CircularProgressIndicator>
+    <CircularProgressTrack />
+    <CircularProgressRange />
+  </CircularProgressIndicator>
+  <CircularProgressValueText />
+</CircularProgress>
+```
+
+## Examples
+
+### Interactive Demo
+
+A circular progress with interactive controls and simulated upload progress.
+
+<ComponentTabs name="circular-progress-interactive-demo" />
+
+### Themes
+
+Different color themes using Tailwind CSS stroke and text utilities to customize the track, range, and value text colors.
+
+<ComponentTabs name="circular-progress-themes-demo" />
+
+## Theming
+
+The circular progress component uses CSS `currentColor` for stroke colors, making it easy to theme using Tailwind's text or stroke utilities:
+
+### Track Theming
+```tsx
+<CircularProgressTrack className="text-green-200 dark:text-green-900" />
+```
+
+### Range Theming
+```tsx
+<CircularProgressRange className="text-green-500" />
+```
+
+### Value Text Theming
+```tsx
+<CircularProgressValueText className="text-green-700 dark:text-green-300" />
+```
+
+### Custom Stroke Styles
+You can also use Tailwind's stroke utilities directly:
+```tsx
+<CircularProgressTrack className="stroke-blue-200" />
+<CircularProgressRange className="stroke-blue-500" />
+```
+
+## API Reference
+
+### Root
+
+The main container component for the circular progress.
+
+<AutoTypeTable
+  path="./types/docs/circular-progress.ts"
+  name="RootProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-state]",
+      value: "The current state of the progress: 'indeterminate', 'loading', or 'complete'.",
+    },
+    {
+      title: "[data-value]",
+      value: "The current progress value (only present when not indeterminate).",
+    },
+    {
+      title: "[data-max]",
+      value: "The maximum progress value.",
+    },
+    {
+      title: "[data-min]",
+      value: "The minimum progress value.",
+    },
+  ]}
+/>
+
+### Indicator
+
+The SVG container that holds the circular progress tracks and ranges.
+
+<AutoTypeTable
+  path="./types/docs/circular-progress.ts"
+  name="IndicatorProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-state]",
+      value: "The current state of the progress: 'indeterminate', 'loading', or 'complete'.",
+    },
+    {
+      title: "[data-value]",
+      value: "The current progress value (only present when not indeterminate).",
+    },
+    {
+      title: "[data-max]",
+      value: "The maximum progress value.",
+    },
+    {
+      title: "[data-min]",
+      value: "The minimum progress value.",
+    },
+  ]}
+/>
+
+### Track
+
+The background circle that represents the full range of possible values.
+
+<AutoTypeTable
+  path="./types/docs/circular-progress.ts"
+  name="TrackProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-state]",
+      value: "The current state of the progress: 'indeterminate', 'loading', or 'complete'.",
+    },
+  ]}
+/>
+
+### Range
+
+The portion of the circle that represents the current progress value.
+
+<AutoTypeTable
+  path="./types/docs/circular-progress.ts"
+  name="RangeProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-state]",
+      value: "The current state of the progress: 'indeterminate', 'loading', or 'complete'.",
+    },
+    {
+      title: "[data-value]",
+      value: "The current progress value (only present when not indeterminate).",
+    },
+    {
+      title: "[data-max]",
+      value: "The maximum progress value.",
+    },
+    {
+      title: "[data-min]",
+      value: "The minimum progress value.",
+    },
+  ]}
+/>
+
+### ValueText
+
+The text element that displays the current progress value or custom content.
+
+<AutoTypeTable
+  path="./types/docs/circular-progress.ts"
+  name="ValueTextProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-state]",
+      value: "The current state of the progress: 'indeterminate', 'loading', or 'complete'.",
+    },
+  ]}
+/>
+
+## Accessibility
+
+### Screen Reader Support
+
+- Uses the `progressbar` role for proper screen reader identification
+- Provides `aria-valuemin`, `aria-valuemax`, `aria-valuenow`, and `aria-valuetext` attributes
+- Supports indeterminate state by omitting `aria-valuenow` when value is null
+
+## Notes
+
+- The component automatically handles indeterminate states when `value` is `null` or `undefined`
+- Progress values are automatically clamped to the valid range between `min` and `max`
+- Invalid `max` or `value` props will log console errors and use fallback values
+- The indeterminate animation uses CSS custom properties and can be customized via the `--animate-spin-around` variable
+- All stroke colors use `currentColor` by default, making them responsive to text color changes

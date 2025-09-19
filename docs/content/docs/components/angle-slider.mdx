@@ -79,7 +79,7 @@ Use multiple thumbs to create angle ranges with minimum step constraints.
 
 <ComponentTabs name="angle-slider-range-demo" />
 
-### Variant Themes
+### Themes
 
 Slider variants with different themes.
 
@@ -90,6 +90,31 @@ Slider variants with different themes.
 Integrate the angle slider with form validation and submission.
 
 <ComponentTabs name="angle-slider-form-demo" />
+
+## Theming
+
+You can customize the appearance by targeting specific components:
+
+### Track Theming
+Use `[&>[data-slot='angle-slider-track-rail']]` to style the background track:
+```tsx
+<AngleSliderTrack className="[&>[data-slot='angle-slider-track-rail']]:stroke-green-100" />
+```
+
+### Range Theming
+```tsx
+<AngleSliderRange className="stroke-green-500" />
+```
+
+### Thumb Theming
+```tsx
+<AngleSliderThumb className="border-green-500 bg-green-50 ring-green-500/50" />
+```
+
+### Value Theming
+```tsx
+<AngleSliderValue className="text-green-600 dark:text-green-400" />
+```
 
 ## API Reference
 

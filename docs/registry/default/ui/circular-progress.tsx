@@ -219,9 +219,8 @@ function CircularProgressRange(props: React.ComponentProps<"circle">) {
   let strokeDashoffset = circumference;
 
   if (context.state === "indeterminate") {
-    // For indeterminate, show 25% of the circle as an arc
     strokeDasharray = circumference;
-    strokeDashoffset = circumference * 0.75; // Show 25% (hide 75%)
+    strokeDashoffset = circumference * 0.75;
   } else if (context.value !== null) {
     const normalizedValue =
       ((context.value - context.min) / (context.max - context.min)) * 100;
@@ -283,18 +282,30 @@ function CircularProgressValueText(props: CircularProgressValueTextProps) {
   );
 }
 
+function CircularProgressCombined(props: CircularProgressRootProps) {
+  return (
+    <CircularProgressRoot {...props}>
+      <CircularProgressIndicator>
+        <CircularProgressTrack />
+        <CircularProgressRange />
+      </CircularProgressIndicator>
+      <CircularProgressValueText />
+    </CircularProgressRoot>
+  );
+}
+
 export {
   CircularProgressRoot as Root,
   CircularProgressIndicator as Indicator,
   CircularProgressTrack as Track,
   CircularProgressRange as Range,
   CircularProgressValueText as ValueText,
+  CircularProgressCombined as Combined,
   //
   CircularProgressRoot as CircularProgress,
   CircularProgressIndicator,
   CircularProgressTrack,
   CircularProgressRange,
   CircularProgressValueText,
-  //
-  type CircularProgressRootProps as CircularProgressProps,
+  CircularProgressCombined,
 };

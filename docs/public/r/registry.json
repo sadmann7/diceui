@@ -404,6 +404,42 @@
       ]
     },
     {
+      "name": "circular-progress-demo",
+      "type": "registry:component",
+      "title": "Circular Progress Demo",
+      "description": "Example showing how to use the circular progress component.",
+      "files": [
+        {
+          "path": "registry/default/examples/circular-progress-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "circular-progress-interactive-demo",
+      "type": "registry:component",
+      "title": "Circular Progress Interactive Demo",
+      "description": "Example showing interactive circular progress with controls and simulated upload progress.",
+      "files": [
+        {
+          "path": "registry/default/examples/circular-progress-interactive-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "circular-progress-themes-demo",
+      "type": "registry:component",
+      "title": "Circular Progress Themes Demo",
+      "description": "Example showing circular progress with different color themes.",
+      "files": [
+        {
+          "path": "registry/default/examples/circular-progress-themes-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
       "name": "color-picker-demo",
       "type": "registry:component",
       "title": "Color Picker Demo",
