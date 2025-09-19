@@ -72,6 +72,9 @@ function useLazyRef<T>(fn: () => T) {
   return ref as React.RefObject<T>;
 }
 
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
+
 type Direction = "ltr" | "rtl";
 
 interface DivProps extends React.ComponentProps<"div"> {
@@ -383,23 +386,45 @@ function AngleSliderRoot(props: AngleSliderRootProps) {
     [listenersRef, stateRef, onValueChange, onValueCommit],
   );
 
-  React.useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (value !== undefined) {
       store.setState("values", value);
     }
   }, [value, store]);
 
-  React.useEffect(() => {
-    store.setState("min", min);
-    store.setState("max", max);
-    store.setState("step", step);
-    store.setState("minStepsBetweenThumbs", minStepsBetweenThumbs);
-    store.setState("size", size);
-    store.setState("trackWidth", trackWidth);
-    store.setState("startAngle", startAngle);
-    store.setState("endAngle", endAngle);
-    store.setState("disabled", disabled);
-    store.setState("inverted", inverted);
+  useIsomorphicLayoutEffect(() => {
+    const currentState = store.getState();
+
+    if (currentState.min !== min) {
+      store.setState("min", min);
+    }
+    if (currentState.max !== max) {
+      store.setState("max", max);
+    }
+    if (currentState.step !== step) {
+      store.setState("step", step);
+    }
+    if (currentState.minStepsBetweenThumbs !== minStepsBetweenThumbs) {
+      store.setState("minStepsBetweenThumbs", minStepsBetweenThumbs);
+    }
+    if (currentState.size !== size) {
+      store.setState("size", size);
+    }
+    if (currentState.trackWidth !== trackWidth) {
+      store.setState("trackWidth", trackWidth);
+    }
+    if (currentState.startAngle !== startAngle) {
+      store.setState("startAngle", startAngle);
+    }
+    if (currentState.endAngle !== endAngle) {
+      store.setState("endAngle", endAngle);
+    }
+    if (currentState.disabled !== disabled) {
+      store.setState("disabled", disabled);
+    }
+    if (currentState.inverted !== inverted) {
+      store.setState("inverted", inverted);
+    }
   }, [
     store,
     min,

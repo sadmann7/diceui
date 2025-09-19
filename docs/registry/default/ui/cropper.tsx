@@ -324,6 +324,9 @@ function useLazyRef<T>(fn: () => T) {
   return ref as React.RefObject<T>;
 }
 
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
+
 interface StoreState {
   crop: Point;
   zoom: number;
@@ -638,7 +641,7 @@ function CropperRoot(props: CropperRootProps) {
     ],
   );
 
-  React.useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const updates: Partial<StoreState> = {};
     let hasUpdates = false;
     let shouldRecompute = false;

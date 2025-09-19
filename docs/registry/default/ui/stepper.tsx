@@ -384,7 +384,7 @@ function StepperRoot(props: StepperRootProps) {
     ],
   );
 
-  React.useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (value !== undefined) {
       store.setState("value", value);
     }

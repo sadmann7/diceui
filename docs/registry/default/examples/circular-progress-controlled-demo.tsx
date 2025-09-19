@@ -4,7 +4,6 @@ import * as React from "react";
 import {
   CircularProgress,
   CircularProgressIndicator,
-  CircularProgressLabel,
   CircularProgressRange,
   CircularProgressTrack,
   CircularProgressValueText,
@@ -39,14 +38,14 @@ export default function CircularProgressControlledDemo() {
   }, []);
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col items-center gap-6">
       <div className="flex items-center gap-6">
         <CircularProgress
           value={uploadProgress}
           onValueChange={setUploadProgress}
           className="h-20 w-20"
           size={80}
-          strokeWidth={6}
+          trackWidth={6}
           min={0}
           max={100}
         >
@@ -57,7 +56,7 @@ export default function CircularProgressControlledDemo() {
           <CircularProgressValueText className="font-semibold text-base" />
         </CircularProgress>
 
-        <div className="space-y-2">
+        <div className="flex flex-col gap-2">
           <div className="font-medium text-sm">Upload Progress</div>
           <div className="text-muted-foreground text-xs">
             Status:{" "}
