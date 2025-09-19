@@ -8,19 +8,64 @@ const CIRCULAR_PROGRESS_NAME = "CircularProgress";
 const INDICATOR_NAME = "CircularProgressIndicator";
 const TRACK_NAME = "CircularProgressTrack";
 const RANGE_NAME = "CircularProgressRange";
-const LABEL_NAME = "CircularProgressLabel";
 const VALUE_TEXT_NAME = "CircularProgressValueText";
 
 const DEFAULT_MAX = 100;
 
 type ProgressState = "indeterminate" | "complete" | "loading";
 
+function getProgressState(
+  value: number | undefined | null,
+  maxValue: number,
+): ProgressState {
+  return value == null
+    ? "indeterminate"
+    : value === maxValue
+      ? "complete"
+      : "loading";
+}
+
+function getIsNumber(value: unknown): value is number {
+  return typeof value === "number";
+}
+
+function getIsValidMaxNumber(max: unknown): max is number {
+  return getIsNumber(max) && !Number.isNaN(max) && max > 0;
+}
+
+function getIsValidValueNumber(
+  value: unknown,
+  max: number,
+  min: number,
+): value is number {
+  return (
+    getIsNumber(value) && !Number.isNaN(value) && value <= max && value >= min
+  );
+}
+
+function getInvalidValueError(propValue: string, componentName: string) {
+  return `Invalid prop \`value\` of value \`${propValue}\` supplied to \`${componentName}\`. The \`value\` prop must be:
+  - a positive number
+  - less than the value passed to \`max\` (or ${DEFAULT_MAX} if no \`max\` prop is set)
+  - greater than or equal to the value passed to \`min\`
+  - \`null\` or \`undefined\` if the progress is indeterminate.
+
+The value will be clamped to the valid range or set to null if invalid.`;
+}
+
+function getDefaultValueText(value: number, max: number) {
+  return `${Math.round((value / max) * 100)}%`;
+}
+
+function getInvalidMaxError(propValue: string, componentName: string) {
+  return `Invalid prop \`max\` of value \`${propValue}\` supplied to \`${componentName}\`. Only numbers greater than 0 are valid max values. Defaulting to \`${DEFAULT_MAX}\`.`;
+}
+
 interface CircularProgressContextValue {
   value: number | null;
-  onValueChange?(value: number | null): void;
+  valueText: string | undefined;
   max: number;
   min: number;
-  valueLabel: string | undefined;
   state: ProgressState;
   radius: number;
   trackWidth: number;
@@ -42,8 +87,7 @@ function useCircularProgressContext(consumerName: string) {
 
 interface CircularProgressRootProps extends React.ComponentProps<"div"> {
   value?: number | null | undefined;
-  onValueChange?(value: number | null): void;
-  getValueLabel?(value: number, max: number): string;
+  getValueText?(value: number, max: number): string;
   max?: number;
   min?: number;
   size?: number;
@@ -51,94 +95,45 @@ interface CircularProgressRootProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-function getProgressState(
-  value: number | undefined | null,
-  maxValue: number,
-): ProgressState {
-  return value == null
-    ? "indeterminate"
-    : value === maxValue
-      ? "complete"
-      : "loading";
-}
-
-function isNumber(value: unknown): value is number {
-  return typeof value === "number";
-}
-
-function isValidMaxNumber(max: unknown): max is number {
-  return isNumber(max) && !Number.isNaN(max) && max > 0;
-}
-
-function isValidValueNumber(
-  value: unknown,
-  max: number,
-  min: number,
-): value is number {
-  return (
-    isNumber(value) && !Number.isNaN(value) && value <= max && value >= min
-  );
-}
-
-function defaultGetValueLabel(value: number, max: number) {
-  return `${Math.round((value / max) * 100)}%`;
-}
-
-function getInvalidMaxError(propValue: string, componentName: string) {
-  return `Invalid prop \`max\` of value \`${propValue}\` supplied to \`${componentName}\`. Only numbers greater than 0 are valid max values. Defaulting to \`${DEFAULT_MAX}\`.`;
-}
-
-function getInvalidValueError(propValue: string, componentName: string) {
-  return `Invalid prop \`value\` of value \`${propValue}\` supplied to \`${componentName}\`. The \`value\` prop must be:
-  - a positive number
-  - less than the value passed to \`max\` (or ${DEFAULT_MAX} if no \`max\` prop is set)
-  - greater than or equal to the value passed to \`min\`
-  - \`null\` or \`undefined\` if the progress is indeterminate.
-
-The value will be clamped to the valid range or set to null if invalid.`;
-}
-
 function CircularProgressRoot(props: CircularProgressRootProps) {
   const {
     value: valueProp = null,
+    getValueText = getDefaultValueText,
     max: maxProp,
     min: minProp = 0,
     size = 48,
     trackWidth = 4,
-    onValueChange,
-    getValueLabel = defaultGetValueLabel,
     asChild,
     className,
     ...progressProps
   } = props;
 
-  if ((maxProp || maxProp === 0) && !isValidMaxNumber(maxProp)) {
+  if ((maxProp || maxProp === 0) && !getIsValidMaxNumber(maxProp)) {
     console.error(getInvalidMaxError(`${maxProp}`, CIRCULAR_PROGRESS_NAME));
   }
 
-  const max = isValidMaxNumber(maxProp) ? maxProp : DEFAULT_MAX;
-  const min = isNumber(minProp) ? minProp : 0;
+  const max = getIsValidMaxNumber(maxProp) ? maxProp : DEFAULT_MAX;
+  const min = getIsNumber(minProp) ? minProp : 0;
 
-  if (valueProp !== null && !isValidValueNumber(valueProp, max, min)) {
+  if (valueProp !== null && !getIsValidValueNumber(valueProp, max, min)) {
     console.error(getInvalidValueError(`${valueProp}`, CIRCULAR_PROGRESS_NAME));
   }
 
-  const value = isValidValueNumber(valueProp, max, min)
+  const value = getIsValidValueNumber(valueProp, max, min)
     ? valueProp
-    : isNumber(valueProp) && valueProp > max
+    : getIsNumber(valueProp) && valueProp > max
       ? max
-      : isNumber(valueProp) && valueProp < min
+      : getIsNumber(valueProp) && valueProp < min
         ? min
         : null;
-  const valueLabel = isNumber(value) ? getValueLabel(value, max) : undefined;
+  const valueText = getIsNumber(value) ? getValueText(value, max) : undefined;
   const state = getProgressState(value, max);
   const radius = (size - trackWidth) / 2;
 
   const contextValue = React.useMemo<CircularProgressContextValue>(
     () => ({
       value,
-      onValueChange,
-      valueLabel,
+      valueText,
       max,
       min,
       state,
@@ -146,17 +141,7 @@ function CircularProgressRoot(props: CircularProgressRootProps) {
       trackWidth,
       size,
     }),
-    [
-      value,
-      onValueChange,
-      valueLabel,
-      max,
-      min,
-      state,
-      radius,
-      trackWidth,
-      size,
-    ],
+    [value, valueText, max, min, state, radius, trackWidth, size],
   );
 
   const RootPrimitive = asChild ? Slot : "div";
@@ -167,8 +152,8 @@ function CircularProgressRoot(props: CircularProgressRootProps) {
         role="progressbar"
         aria-valuemax={max}
         aria-valuemin={min}
-        aria-valuenow={isNumber(value) ? value : undefined}
-        aria-valuetext={valueLabel}
+        aria-valuenow={getIsNumber(value) ? value : undefined}
+        aria-valuetext={valueText}
         data-state={state}
         data-value={value ?? undefined}
         data-max={max}
@@ -274,28 +259,6 @@ function CircularProgressRange(props: React.ComponentProps<"circle">) {
   );
 }
 
-interface CircularProgressLabelProps extends React.ComponentProps<"span"> {
-  asChild?: boolean;
-}
-
-function CircularProgressLabel(props: CircularProgressLabelProps) {
-  const { asChild, className, ...labelProps } = props;
-  const context = useCircularProgressContext(LABEL_NAME);
-
-  const LabelPrimitive = asChild ? Slot : "span";
-
-  return (
-    <LabelPrimitive
-      data-state={context.state}
-      {...labelProps}
-      className={cn(
-        "absolute inset-0 flex items-center justify-center font-medium text-sm",
-        className,
-      )}
-    />
-  );
-}
-
 interface CircularProgressValueTextProps extends React.ComponentProps<"span"> {
   asChild?: boolean;
 }
@@ -315,7 +278,7 @@ function CircularProgressValueText(props: CircularProgressValueTextProps) {
         className,
       )}
     >
-      {children ?? context.valueLabel}
+      {children ?? context.valueText}
     </ValueTextPrimitive>
   );
 }
@@ -325,14 +288,12 @@ export {
   CircularProgressIndicator as Indicator,
   CircularProgressTrack as Track,
   CircularProgressRange as Range,
-  CircularProgressLabel as Label,
   CircularProgressValueText as ValueText,
   //
   CircularProgressRoot as CircularProgress,
   CircularProgressIndicator,
   CircularProgressTrack,
   CircularProgressRange,
-  CircularProgressLabel,
   CircularProgressValueText,
   //
   type CircularProgressRootProps as CircularProgressProps,

@@ -16,7 +16,7 @@ export default function CircularProgressDemo() {
   return (
     <div className="flex flex-col items-center gap-6">
       <div className="flex items-center gap-6">
-        <CircularProgress value={value} onValueChange={setValue} size={60}>
+        <CircularProgress value={value} size={60}>
           <CircularProgressIndicator>
             <CircularProgressTrack />
             <CircularProgressRange />

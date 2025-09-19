@@ -42,12 +42,10 @@ export default function CircularProgressControlledDemo() {
       <div className="flex items-center gap-6">
         <CircularProgress
           value={uploadProgress}
-          onValueChange={setUploadProgress}
-          className="h-20 w-20"
-          size={80}
-          trackWidth={6}
           min={0}
           max={100}
+          size={80}
+          trackWidth={6}
         >
           <CircularProgressIndicator>
             <CircularProgressTrack />
