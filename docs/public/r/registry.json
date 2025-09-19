@@ -356,6 +356,18 @@
       ]
     },
     {
+      "name": "angle-slider-themes-demo",
+      "type": "registry:component",
+      "title": "Angle Slider Themes Demo",
+      "description": "Example showing angle slider with different themes.",
+      "files": [
+        {
+          "path": "registry/default/examples/angle-slider-themes-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
       "name": "angle-slider-form-demo",
       "type": "registry:component",
       "title": "Angle Slider Form Demo",

@@ -580,7 +580,7 @@ function AngleSliderRoot(props: AngleSliderRootProps) {
       <SliderContext.Provider value={contextValue}>
         <RootPrimitive
           data-disabled={disabled ? "" : undefined}
-          data-slot="slider"
+          data-slot="angle-slider"
           dir={dir}
           {...rootProps}
           ref={composedRef}
@@ -641,7 +641,7 @@ function AngleSliderTrack(props: AngleSliderTrackProps) {
   return (
     <svg
       data-disabled={disabled ? "" : undefined}
-      data-slot="slider-track"
+      data-slot="angle-slider-track"
       {...trackProps}
       className={cn("absolute inset-0", className)}
       width={center * 2}
@@ -649,22 +649,24 @@ function AngleSliderTrack(props: AngleSliderTrackProps) {
     >
       {isFullCircle ? (
         <circle
+          data-slot="angle-slider-track-rail"
           cx={center}
           cy={center}
           r={trackRadius}
           fill="none"
           stroke="currentColor"
           strokeWidth={trackWidth}
-          className="text-muted"
+          className="stroke-muted"
         />
       ) : (
         <path
+          data-slot="angle-slider-track-rail"
           d={`M ${startX} ${startY} A ${trackRadius} ${trackRadius} 0 ${largeArcFlag} 1 ${endX} ${endY}`}
           fill="none"
           stroke="currentColor"
           strokeWidth={trackWidth}
           strokeLinecap="round"
-          className="text-muted"
+          className="stroke-muted"
         />
       )}
       {children}
@@ -728,14 +730,14 @@ function AngleSliderRange(props: AngleSliderRangeProps) {
   return (
     <path
       data-disabled={disabled ? "" : undefined}
-      data-slot="slider-range"
+      data-slot="angle-slider-range"
       {...rangeProps}
       d={`M ${startX} ${startY} A ${trackRadius} ${trackRadius} 0 ${largeArcFlag} 1 ${endX} ${endY}`}
       fill="none"
       stroke="currentColor"
       strokeWidth={trackWidth}
       strokeLinecap="round"
-      className={cn("text-primary", className)}
+      className={cn("stroke-primary", className)}
     />
   );
 }
@@ -831,7 +833,7 @@ function AngleSliderThumb(props: AngleSliderThumbProps) {
         aria-valuemax={max}
         aria-orientation="vertical"
         data-disabled={disabled ? "" : undefined}
-        data-slot="slider-thumb"
+        data-slot="angle-slider-thumb"
         tabIndex={disabled ? undefined : 0}
         {...thumbProps}
         ref={composedRef}
@@ -914,7 +916,7 @@ function AngleSliderValue(props: AngleSliderValueProps) {
   return (
     <ValuePrimitive
       data-disabled={disabled ? "" : undefined}
-      data-slot="slider-value"
+      data-slot="angle-slider-value"
       {...valueProps}
       className={cn(
         "pointer-events-none flex select-none items-center justify-center font-medium text-foreground text-sm",

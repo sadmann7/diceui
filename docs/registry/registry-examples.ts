@@ -36,6 +36,17 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "angle-slider-themes-demo",
+    type: "registry:example",
+    registryDependencies: ["angle-slider"],
+    files: [
+      {
+        path: "examples/angle-slider-themes-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "angle-slider-form-demo",
     type: "registry:example",
     dependencies: ["@hookform/resolvers", "react-hook-form", "zod", "sonner"],

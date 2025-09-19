@@ -457,6 +457,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "angle-slider-themes-demo": {
+      name: "angle-slider-themes-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["angle-slider"],
+      files: [{
+        path: "registry/default/examples/angle-slider-themes-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/angle-slider-themes-demo.tsx")),
+      source: "",
+      chunks: []
+    },
     "angle-slider-form-demo": {
       name: "angle-slider-form-demo",
       description: "",
