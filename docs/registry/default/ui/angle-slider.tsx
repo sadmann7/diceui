@@ -158,8 +158,11 @@ function createStore(
       if (!state || Object.is(state[key], value)) return;
 
       if (key === "values" && Array.isArray(value)) {
+        const hasChanged = String(state.values) !== String(value);
         state.values = value;
-        onValueChange?.(value);
+        if (hasChanged) {
+          onValueChange?.(value);
+        }
       } else {
         state[key] = value;
       }
