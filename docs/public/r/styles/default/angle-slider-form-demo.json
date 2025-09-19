@@ -1,0 +1,23 @@
+{
+  "name": "angle-slider-form-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@hookform/resolvers",
+    "react-hook-form",
+    "zod",
+    "sonner"
+  ],
+  "registryDependencies": [
+    "angle-slider",
+    "button",
+    "form"
+  ],
+  "files": [
+    {
+      "path": "examples/angle-slider-form-demo.tsx",
+      "content": "\"use client\";\n\nimport { zodResolver } from \"@hookform/resolvers/zod\";\nimport * as React from \"react\";\nimport { useForm } from \"react-hook-form\";\nimport { toast } from \"sonner\";\nimport * as z from \"zod\";\nimport { Button } from \"@/components/ui/button\";\nimport {\n  Form,\n  FormControl,\n  FormDescription,\n  FormField,\n  FormItem,\n  FormLabel,\n  FormMessage,\n} from \"@/components/ui/form\";\nimport {\n  AngleSlider,\n  AngleSliderRange,\n  AngleSliderThumb,\n  AngleSliderTrack,\n  AngleSliderValue,\n} from \"@/registry/default/ui/angle-slider\";\n\nconst formSchema = z.object({\n  rotation: z.array(z.number()).length(1),\n  range: z.array(z.number()).length(2),\n});\n\ntype FormValues = z.infer<typeof formSchema>;\n\nexport default function AngleSliderFormDemo() {\n  const form = useForm<FormValues>({\n    resolver: zodResolver(formSchema),\n    defaultValues: {\n      rotation: [45],\n      range: [90, 270],\n    },\n  });\n\n  const onSubmit = React.useCallback((data: FormValues) => {\n    toast.success(\n      <pre className=\"w-full\">{JSON.stringify(data, null, 2)}</pre>,\n    );\n  }, []);\n\n  return (\n    <Form {...form}>\n      <form onSubmit={form.handleSubmit(onSubmit)} className=\"space-y-6\">\n        <FormField\n          control={form.control}\n          name=\"rotation\"\n          render={({ field }) => (\n            <FormItem>\n              <FormLabel>Rotation Angle</FormLabel>\n              <FormControl>\n                <AngleSlider\n                  value={field.value}\n                  onValueChange={field.onChange}\n                  max={360}\n                  min={0}\n                  step={1}\n                  radius={60}\n                  name={field.name}\n                >\n                  <AngleSliderTrack>\n                    <AngleSliderRange />\n                  </AngleSliderTrack>\n                  <AngleSliderThumb />\n                  <AngleSliderValue />\n                </AngleSlider>\n              </FormControl>\n              <FormDescription>\n                Set the rotation angle in degrees (0-360°)\n              </FormDescription>\n              <FormMessage />\n            </FormItem>\n          )}\n        />\n\n        <FormField\n          control={form.control}\n          name=\"range\"\n          render={({ field }) => (\n            <FormItem>\n              <FormLabel>Angle Range</FormLabel>\n              <FormControl>\n                <AngleSlider\n                  value={field.value}\n                  onValueChange={field.onChange}\n                  max={360}\n                  min={0}\n                  step={5}\n                  radius={70}\n                  minStepsBetweenThumbs={1}\n                  name={field.name}\n                >\n                  <AngleSliderTrack>\n                    <AngleSliderRange />\n                  </AngleSliderTrack>\n                  <AngleSliderThumb index={0} />\n                  <AngleSliderThumb index={1} />\n                  <AngleSliderValue />\n                </AngleSlider>\n              </FormControl>\n              <FormDescription>\n                Define a range of angles for the operation\n              </FormDescription>\n              <FormMessage />\n            </FormItem>\n          )}\n        />\n\n        <Button type=\"submit\">Submit</Button>\n      </form>\n    </Form>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

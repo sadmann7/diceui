@@ -1,0 +1,16 @@
+{
+  "name": "angle-slider-controlled-demo",
+  "type": "registry:example",
+  "registryDependencies": [
+    "angle-slider",
+    "button"
+  ],
+  "files": [
+    {
+      "path": "examples/angle-slider-controlled-demo.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Button } from \"@/components/ui/button\";\nimport {\n  AngleSlider,\n  AngleSliderRange,\n  AngleSliderThumb,\n  AngleSliderTrack,\n  AngleSliderValue,\n} from \"@/registry/default/ui/angle-slider\";\n\nexport default function AngleSliderControlledDemo() {\n  const [value, setValue] = React.useState([180]);\n\n  const onReset = React.useCallback(() => {\n    setValue([0]);\n  }, []);\n\n  const onRandomize = React.useCallback(() => {\n    setValue([Math.floor(Math.random() * 360)]);\n  }, []);\n\n  return (\n    <div className=\"flex flex-col gap-4\">\n      <div className=\"flex items-center gap-3\">\n        <Button variant=\"outline\" onClick={onReset}>\n          Reset\n        </Button>\n        <Button variant=\"outline\" onClick={onRandomize}>\n          Randomize\n        </Button>\n      </div>\n\n      <AngleSlider\n        value={value}\n        onValueChange={setValue}\n        max={360}\n        min={0}\n        step={1}\n        radius={80}\n      >\n        <AngleSliderTrack>\n          <AngleSliderRange />\n        </AngleSliderTrack>\n        <AngleSliderThumb />\n        <AngleSliderValue />\n      </AngleSlider>\n\n      <div className=\"flex flex-col gap-2 text-sm\">\n        <p>\n          <strong>Current Value:</strong> {value[0]}°\n        </p>\n        <p>\n          <strong>Radians:</strong> {((value[0] * Math.PI) / 180).toFixed(3)}\n        </p>\n      </div>\n    </div>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

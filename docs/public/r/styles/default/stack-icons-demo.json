@@ -4,6 +4,9 @@
   "dependencies": [
     "lucide-react"
   ],
+  "registryDependencies": [
+    "stack"
+  ],
   "files": [
     {
       "path": "examples/stack-icons-demo.tsx",

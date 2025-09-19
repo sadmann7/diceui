@@ -2,8 +2,10 @@
   "name": "data-table-demo",
   "type": "registry:example",
   "dependencies": [
-    "@diceui/data-table",
     "lucide-react"
+  ],
+  "registryDependencies": [
+    "data-table"
   ],
   "files": [
     {

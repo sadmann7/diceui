@@ -1,11 +1,9 @@
 {
   "name": "editable-autosize-demo",
   "type": "registry:example",
-  "dependencies": [
-    "@radix-ui/react-slot"
-  ],
   "registryDependencies": [
-    "button"
+    "button",
+    "editable"
   ],
   "files": [
     {

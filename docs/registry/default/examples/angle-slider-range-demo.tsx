@@ -1,0 +1,44 @@
+"use client";
+
+import * as React from "react";
+import {
+  AngleSlider,
+  AngleSliderRange,
+  AngleSliderThumb,
+  AngleSliderTrack,
+  AngleSliderValue,
+} from "@/registry/default/ui/angle-slider";
+
+export default function AngleSliderRangeDemo() {
+  const [value, setValue] = React.useState([90, 270]);
+
+  return (
+    <div className="flex flex-col gap-4">
+      <AngleSlider
+        value={value}
+        onValueChange={setValue}
+        max={360}
+        min={0}
+        step={5}
+        radius={80}
+        minStepsBetweenThumbs={2}
+      >
+        <AngleSliderTrack>
+          <AngleSliderRange />
+        </AngleSliderTrack>
+        <AngleSliderThumb index={0} />
+        <AngleSliderThumb index={1} />
+        <AngleSliderValue />
+      </AngleSlider>
+
+      <div className="flex flex-col gap-2 text-sm">
+        <p>
+          <strong>Range:</strong> {value[0]}° - {value[1]}°
+        </p>
+        <p>
+          <strong>Arc Length:</strong> {Math.abs(value[1] - value[0])}°
+        </p>
+      </div>
+    </div>
+  );
+}

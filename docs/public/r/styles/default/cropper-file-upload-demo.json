@@ -2,13 +2,13 @@
   "name": "cropper-file-upload-demo",
   "type": "registry:example",
   "dependencies": [
-    "@radix-ui/react-slot",
     "class-variance-authority",
     "@hookform/resolvers",
     "react-hook-form",
     "zod"
   ],
   "registryDependencies": [
+    "cropper",
     "button",
     "dialog",
     "label",

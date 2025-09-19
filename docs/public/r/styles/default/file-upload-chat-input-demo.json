@@ -2,7 +2,6 @@
   "name": "file-upload-chat-input-demo",
   "type": "registry:example",
   "dependencies": [
-    "@radix-ui/react-slot",
     "lucide-react",
     "sonner",
     "uploadthing",
@@ -10,9 +9,8 @@
   ],
   "registryDependencies": [
     "button",
-    "textarea",
-    "lucide-react",
-    "sonner"
+    "file-upload",
+    "textarea"
   ],
   "files": [
     {

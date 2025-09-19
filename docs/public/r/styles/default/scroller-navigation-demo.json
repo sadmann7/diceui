@@ -1,8 +1,8 @@
 {
   "name": "scroller-navigation-demo",
   "type": "registry:example",
-  "dependencies": [
-    "@radix-ui/react-slot"
+  "registryDependencies": [
+    "scroller"
   ],
   "files": [
     {

@@ -1,0 +1,193 @@
+---
+title: Angle Slider
+description: An interactive circular slider for selecting angles with support for single values and ranges.
+preview: true
+links:
+  api: /docs/components/angle-slider#api-reference
+---
+
+<ComponentTabs name="angle-slider-demo" />
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/angle-slider"
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @radix-ui/react-slot
+     ```
+  </Step>
+  <Step>
+    Copy the refs composition utilities into your `lib/compose-refs.ts` file.
+
+    <ComponentSource src="./lib/compose-refs.ts" />
+  </Step>
+  <Step>
+    Copy the visually hidden input component into your project.
+
+    <ComponentSource src="./components/visually-hidden-input.tsx" />
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource name="angle-slider" />
+  </Step>
+</Steps>
+
+## Layout
+
+Import the parts and compose them together.
+
+```tsx
+import {
+  AngleSlider,
+  AngleSliderRange,
+  AngleSliderThumb,
+  AngleSliderTrack,
+  AngleSliderValue,
+} from "@/components/ui/angle-slider";
+
+<AngleSlider>
+  <AngleSliderTrack>
+    <AngleSliderRange />
+  </AngleSliderTrack>
+  <AngleSliderThumb />
+  <AngleSliderValue />
+</AngleSlider>
+```
+
+## Examples
+
+### Controlled State
+
+A slider with controlled state management and custom actions.
+
+<ComponentTabs name="angle-slider-controlled-demo" />
+
+### Range Selection
+
+Use multiple thumbs to create angle ranges with minimum step constraints.
+
+<ComponentTabs name="angle-slider-range-demo" />
+
+### With Form
+
+Integrate the angle slider with form validation and submission.
+
+<ComponentTabs name="angle-slider-form-demo" />
+
+## API Reference
+
+### Root
+
+The main container component for the angle slider.
+
+<AutoTypeTable
+  path="./types/docs/angle-slider.ts"
+  name="RootProps"
+/>
+
+### Track
+
+The circular track that represents the full range of possible values.
+
+<AutoTypeTable
+  path="./types/docs/angle-slider.ts"
+  name="TrackProps"
+/>
+
+### Range
+
+The portion of the track that represents the selected range.
+
+<AutoTypeTable
+  path="./types/docs/angle-slider.ts"
+  name="RangeProps"
+/>
+
+### Thumb
+
+The draggable handle for selecting values.
+
+<AutoTypeTable
+  path="./types/docs/angle-slider.ts"
+  name="ThumbProps"
+/>
+
+### Value
+
+Displays the current value(s) with customizable formatting.
+
+<AutoTypeTable
+  path="./types/docs/angle-slider.ts"
+  name="ValueProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the slider is disabled.",
+    },
+    {
+      title: "[data-slot]",
+      value: "Identifies the component part: 'slider', 'slider-track', 'slider-range', 'slider-thumb', or 'slider-value'.",
+    },
+  ]}
+/>
+
+## Accessibility
+
+The angle slider component includes comprehensive accessibility features:
+
+### Keyboard Interactions
+
+<KeyboardShortcutsTable
+  data={[
+    {
+      keys: ["ArrowUp", "ArrowRight"],
+      description: "Increase the value by one step.",
+    },
+    {
+      keys: ["ArrowDown", "ArrowLeft"],
+      description: "Decrease the value by one step.",
+    },
+    {
+      keys: ["PageUp"],
+      description: "Increase the value by ten steps.",
+    },
+    {
+      keys: ["PageDown"],
+      description: "Decrease the value by ten steps.",
+    },
+    {
+      keys: ["Shift + Arrow Keys"],
+      description: "Increase/decrease the value by ten steps.",
+    },
+    {
+      keys: ["Home"],
+      description: "Set the value to the minimum.",
+    },
+    {
+      keys: ["End"],
+      description: "Set the value to the maximum.",
+    },
+  ]}
+/>
+
+### Features
+
+- **Touch Support**: Optimized for touch interactions on mobile devices
+- **Pointer Capture**: Smooth dragging experience with proper pointer handling
+- **RTL Support**: Full right-to-left language support
+- **High Contrast**: Respects user's high contrast preferences
+- **Reduced Motion**: Honors `prefers-reduced-motion` settings

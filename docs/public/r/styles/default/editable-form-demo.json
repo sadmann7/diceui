@@ -1,12 +1,9 @@
 {
   "name": "editable-form-demo",
   "type": "registry:example",
-  "dependencies": [
-    "@radix-ui/react-slot",
-    "@diceui/form"
-  ],
   "registryDependencies": [
     "button",
+    "editable",
     "form"
   ],
   "files": [

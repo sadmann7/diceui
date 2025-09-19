@@ -1,6 +1,9 @@
 {
   "name": "listbox-grid-demo",
   "type": "registry:example",
+  "registryDependencies": [
+    "listbox"
+  ],
   "files": [
     {
       "path": "examples/listbox-grid-demo.tsx",

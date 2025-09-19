@@ -2,9 +2,11 @@
   "name": "combobox-virtualized-demo",
   "type": "registry:example",
   "dependencies": [
-    "@diceui/combobox",
     "@tanstack/react-virtual",
     "lucide-react"
+  ],
+  "registryDependencies": [
+    "combobox"
   ],
   "files": [
     {

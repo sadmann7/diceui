@@ -1,6 +1,9 @@
 {
   "name": "stepper-vertical-demo",
   "type": "registry:example",
+  "registryDependencies": [
+    "stepper"
+  ],
   "files": [
     {
       "path": "examples/stepper-vertical-demo.tsx",

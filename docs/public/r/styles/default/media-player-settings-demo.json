@@ -2,7 +2,6 @@
   "name": "media-player-settings-demo",
   "type": "registry:example",
   "dependencies": [
-    "@radix-ui/react-slot",
     "lucide-react",
     "media-chrome"
   ],
@@ -10,6 +9,7 @@
     "badge",
     "button",
     "dropdown-menu",
+    "media-player",
     "select",
     "slider",
     "tooltip"

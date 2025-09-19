@@ -2,8 +2,10 @@
   "name": "input-group-vertical-demo",
   "type": "registry:example",
   "dependencies": [
-    "@radix-ui/react-slot",
     "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "input-group"
   ],
   "files": [
     {
