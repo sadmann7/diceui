@@ -17,6 +17,7 @@ type ProgressState = "indeterminate" | "complete" | "loading";
 
 interface CircularProgressContextValue {
   value: number | null;
+  onValueChange?(value: number | null): void;
   max: number;
   min: number;
   valueLabel: string | undefined;
@@ -24,7 +25,6 @@ interface CircularProgressContextValue {
   radius: number;
   trackWidth: number;
   size: number;
-  onValueChange?(value: number | null): void;
 }
 
 const CircularProgressContext =
