@@ -121,11 +121,6 @@ export interface ThumbProps extends EmptyProps<"div">, CompositionProps {
    * The index of the thumb.
    */
   index?: number;
-
-  /**
-   * The name of the thumb for form submission.
-   */
-  name?: string;
 }
 
 export interface ValueProps extends EmptyProps<"div">, CompositionProps {

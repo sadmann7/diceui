@@ -699,7 +699,7 @@ function AngleSliderTrack(props: AngleSliderTrackProps) {
   );
 }
 
-interface AngleSliderRangeProps extends React.SVGProps<SVGPathElement> {
+interface AngleSliderRangeProps extends React.ComponentProps<"path"> {
   asChild?: boolean;
 }
 
@@ -769,18 +769,10 @@ function AngleSliderRange(props: AngleSliderRangeProps) {
 
 interface AngleSliderThumbProps extends DivProps {
   index?: number;
-  name?: string;
 }
 
 function AngleSliderThumb(props: AngleSliderThumbProps) {
-  const {
-    index: indexProp,
-    name: nameProp,
-    className,
-    asChild,
-    ref,
-    ...thumbProps
-  } = props;
+  const { index: indexProp, className, asChild, ref, ...thumbProps } = props;
 
   const context = useSliderContext(THUMB_NAME);
   const store = useStoreContext(THUMB_NAME);
@@ -873,10 +865,9 @@ function AngleSliderThumb(props: AngleSliderThumbProps) {
           key={index}
           control={thumbElement}
           name={
-            nameProp ??
-            (context.name
+            context.name
               ? context.name + (values.length > 1 ? "[]" : "")
-              : undefined)
+              : undefined
           }
           form={context.form}
           value={value.toString()}
