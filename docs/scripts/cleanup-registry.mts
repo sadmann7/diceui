@@ -41,7 +41,7 @@ async function cleanupRegistry() {
       const itemName = path.basename(jsonFile, ".json");
 
       // Skip special files
-      if (itemName === "index") {
+      if (itemName === "index" || itemName === "style") {
         validFiles.push(jsonFile);
         continue;
       }
