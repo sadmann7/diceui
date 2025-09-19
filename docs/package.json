@@ -5,6 +5,7 @@
   "scripts": {
     "build": "next build",
     "build:registry": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/build-registry.mts",
+    "cleanup:registry": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/cleanup-registry.mts",
     "postinstall": "pnpm --filter \"@diceui/*\" build && fumadocs-mdx",
     "dev": "next dev --turbopack",
     "start": "next start",
