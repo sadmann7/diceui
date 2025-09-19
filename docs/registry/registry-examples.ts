@@ -15,6 +15,7 @@ export const examples: Registry["items"] = [
   {
     name: "angle-slider-controlled-demo",
     type: "registry:example",
+    dependencies: ["motion", "lucide-react"],
     registryDependencies: ["angle-slider", "button"],
     files: [
       {

@@ -45,6 +45,32 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   max?: number;
 
   /**
+   * The radius of the circular track in pixels.
+   * @default 80
+   */
+  radius?: number;
+
+  /**
+   * The width of the track and range lines in pixels.
+   * @default 8
+   */
+  trackWidth?: number;
+
+  /**
+   * The starting angle of the slider in degrees.
+   * 0° is at 3 o'clock, -90° is at 12 o'clock.
+   * @default -90
+   */
+  startAngle?: number;
+
+  /**
+   * The ending angle of the slider in degrees.
+   * 0° is at 3 o'clock, 270° is at 9 o'clock.
+   * @default 270
+   */
+  endAngle?: number;
+
+  /**
    * The step size for value increments.
    * @default 1
    */
@@ -69,6 +95,11 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   orientation?: Orientation;
 
   /**
+   * The form id to associate the slider with.
+   */
+  form?: string;
+
+  /**
    * When `true`, prevents the user from interacting with the slider.
    * @default false
    */
@@ -79,11 +110,6 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * @default false
    */
   inverted?: boolean;
-
-  /**
-   * The form id to associate the slider with.
-   */
-  form?: string;
 }
 
 export interface TrackProps extends EmptyProps<"div">, CompositionProps {}
@@ -105,7 +131,6 @@ export interface ThumbProps extends EmptyProps<"div">, CompositionProps {
 export interface ValueProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The unit to display after the value(s).
-   * @default "°"
    *
    * ```ts
    * // Display as percentages
@@ -113,14 +138,12 @@ export interface ValueProps extends EmptyProps<"div">, CompositionProps {
    * ```
    *
    * ```ts
-   * // Display as percentage
-   * unit="%"
-   * ```
-   *
-   * ```ts
    * // No unit
    * unit=""
    * ```
+   *
+   * @default "°"
+   *
    */
   unit?: string;
 

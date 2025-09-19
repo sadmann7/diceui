@@ -13,7 +13,7 @@ export default function AngleSliderRangeDemo() {
   const [value, setValue] = React.useState([90, 270]);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col items-center gap-4">
       <AngleSlider
         value={value}
         onValueChange={setValue}
@@ -30,13 +30,13 @@ export default function AngleSliderRangeDemo() {
         <AngleSliderThumb index={1} />
         <AngleSliderValue />
       </AngleSlider>
-
-      <div className="flex flex-col gap-2 text-sm">
+      <div className="flex flex-col gap-2 text-center text-sm">
         <p>
           <strong>Range:</strong> {value[0]}° - {value[1]}°
         </p>
         <p>
-          <strong>Arc Length:</strong> {Math.abs(value[1] - value[0])}°
+          <strong>Arc Length:</strong>{" "}
+          {Math.abs((value[1] ?? 0) - (value[0] ?? 0))}°
         </p>
       </div>
     </div>

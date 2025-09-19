@@ -516,7 +516,6 @@ function useStore<T>(selector: (state: StoreState) => T): T {
 type RootElement = React.ComponentRef<typeof CropperRootImpl>;
 
 interface CropperContextValue {
-  id: string;
   aspectRatio: number;
   minZoom: number;
   maxZoom: number;
@@ -590,7 +589,6 @@ function CropperRoot(props: CropperRootProps) {
     onMediaLoaded,
     onInteractionStart,
     onInteractionEnd,
-    id: idProp,
     className,
     ...rootProps
   } = props;
@@ -704,12 +702,8 @@ function CropperRoot(props: CropperRootProps) {
     }
   }, [crop, zoom, rotation, store, allowOverflow]);
 
-  const id = React.useId();
-  const rootId = idProp ?? id;
-
   const contextValue = React.useMemo<CropperContextValue>(
     () => ({
-      id: rootId,
       minZoom,
       maxZoom,
       zoomSpeed,
@@ -723,7 +717,6 @@ function CropperRoot(props: CropperRootProps) {
       rootRef,
     }),
     [
-      rootId,
       minZoom,
       maxZoom,
       zoomSpeed,
@@ -744,7 +737,7 @@ function CropperRoot(props: CropperRootProps) {
           data-slot="cropper-wrapper"
           className={cn("relative size-full overflow-hidden", className)}
         >
-          <CropperRootImpl id={rootId} {...rootProps} />
+          <CropperRootImpl {...rootProps} />
         </div>
       </CropperContext.Provider>
     </StoreContext.Provider>
@@ -1059,7 +1052,12 @@ function CropperRootImpl(props: CropperRootImplProps) {
     [zoom, rotation, onGestureChange, onGestureEnd],
   );
 
-  const cleanEvents = React.useCallback(() => {
+  const onSafariZoomPrevent = React.useCallback(
+    (event: Event) => event.preventDefault(),
+    [],
+  );
+
+  const onEventsCleanup = React.useCallback(() => {
     document.removeEventListener("mousemove", onMouseMove);
     document.removeEventListener("touchmove", onTouchMove);
     document.removeEventListener(
@@ -1075,10 +1073,10 @@ function CropperRootImpl(props: CropperRootImplProps) {
     onRefsCleanup();
     document.removeEventListener("mouseup", onDragStopped);
     document.removeEventListener("touchend", onDragStopped);
-    cleanEvents();
-  }, [store, cleanEvents, onRefsCleanup]);
+    onEventsCleanup();
+  }, [store, onEventsCleanup, onRefsCleanup]);
 
-  const normalizeWheel = React.useCallback((event: WheelEvent) => {
+  const getWheelDelta = React.useCallback((event: WheelEvent) => {
     let deltaX = event.deltaX;
     let deltaY = event.deltaY;
     let deltaZ = event.deltaZ;
@@ -1103,7 +1101,7 @@ function CropperRootImpl(props: CropperRootImplProps) {
 
       event.preventDefault();
       const point = getMousePoint(event);
-      const { deltaY } = normalizeWheel(event);
+      const { deltaY } = getWheelDelta(event);
       const newZoom = zoom - (deltaY * context.zoomSpeed) / 200;
       onZoomChange(newZoom, point, true);
 
@@ -1128,13 +1126,13 @@ function CropperRootImpl(props: CropperRootImplProps) {
       }, 250);
     },
     [
+      contentProps.onWheelZoom,
       getMousePoint,
       zoom,
       context.zoomSpeed,
       onZoomChange,
+      getWheelDelta,
       store,
-      contentProps.onWheelZoom,
-      normalizeWheel,
     ],
   );
 
@@ -1155,15 +1153,13 @@ function CropperRootImpl(props: CropperRootImplProps) {
         store.setState("isDragging", false);
       }
     },
-    [store, contentProps.onKeyUp],
+    [contentProps.onKeyUp, store],
   );
 
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent<RootElement>) => {
-      if (!cropSize || !mediaSize) return;
-
       contentProps.onKeyDown?.(event);
-      if (event.defaultPrevented) return;
+      if (event.defaultPrevented || !cropSize || !mediaSize) return;
 
       let step = context.keyboardStep;
       if (event.shiftKey) {
@@ -1195,6 +1191,7 @@ function CropperRootImpl(props: CropperRootImplProps) {
       store.setState("crop", newCrop);
     },
     [
+      contentProps.onKeyDown,
       cropSize,
       mediaSize,
       context.keyboardStep,
@@ -1203,7 +1200,6 @@ function CropperRootImpl(props: CropperRootImplProps) {
       zoom,
       rotation,
       store,
-      contentProps.onKeyDown,
     ],
   );
 
@@ -1219,12 +1215,12 @@ function CropperRootImpl(props: CropperRootImplProps) {
       onDragStart(getMousePoint(event));
     },
     [
+      contentProps.onMouseDown,
       getMousePoint,
       onDragStart,
       onDragStopped,
       onMouseMove,
       onContentPositionChange,
-      contentProps.onMouseDown,
     ],
   );
 
@@ -1263,18 +1259,13 @@ function CropperRootImpl(props: CropperRootImplProps) {
       }
     },
     [
+      contentProps.onTouchStart,
       onDragStopped,
       onTouchMove,
       onContentPositionChange,
       getTouchPoint,
       onDragStart,
-      contentProps.onTouchStart,
     ],
-  );
-
-  const preventZoomSafari = React.useCallback(
-    (event: Event) => event.preventDefault(),
-    [],
   );
 
   React.useEffect(() => {
@@ -1285,14 +1276,14 @@ function CropperRootImpl(props: CropperRootImplProps) {
       content.addEventListener("wheel", onWheelZoom, { passive: false });
     }
 
-    content.addEventListener("gesturestart", preventZoomSafari);
+    content.addEventListener("gesturestart", onSafariZoomPrevent);
     content.addEventListener("gesturestart", onGestureStart as EventListener);
 
     return () => {
       if (!context.preventScrollZoom) {
         content.removeEventListener("wheel", onWheelZoom);
       }
-      content.removeEventListener("gesturestart", preventZoomSafari);
+      content.removeEventListener("gesturestart", onSafariZoomPrevent);
       content.removeEventListener(
         "gesturestart",
         onGestureStart as EventListener,
@@ -1304,7 +1295,7 @@ function CropperRootImpl(props: CropperRootImplProps) {
     context.preventScrollZoom,
     onWheelZoom,
     onRefsCleanup,
-    preventZoomSafari,
+    onSafariZoomPrevent,
     onGestureStart,
   ]);
 

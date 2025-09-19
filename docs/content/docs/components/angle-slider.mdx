@@ -96,6 +96,15 @@ The main container component for the angle slider.
   name="RootProps"
 />
 
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the angle slider is disabled.",
+    },
+  ]}
+/>
+
 ### Track
 
 The circular track that represents the full range of possible values.
@@ -103,6 +112,15 @@ The circular track that represents the full range of possible values.
 <AutoTypeTable
   path="./types/docs/angle-slider.ts"
   name="TrackProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the angle slider is disabled.",
+    },
+  ]}
 />
 
 ### Range
@@ -114,6 +132,15 @@ The portion of the track that represents the selected range.
   name="RangeProps"
 />
 
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the angle slider is disabled.",
+    },
+  ]}
+/>
+
 ### Thumb
 
 The draggable handle for selecting values.
@@ -121,6 +148,15 @@ The draggable handle for selecting values.
 <AutoTypeTable
   path="./types/docs/angle-slider.ts"
   name="ThumbProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the angle slider is disabled.",
+    },
+  ]}
 />
 
 ### Value
@@ -136,11 +172,7 @@ Displays the current value(s) with customizable formatting.
   attributes={[
     {
       title: "[data-disabled]",
-      value: "Present when the slider is disabled.",
-    },
-    {
-      title: "[data-slot]",
-      value: "Identifies the component part: 'slider', 'slider-track', 'slider-range', 'slider-thumb', or 'slider-value'.",
+      value: "Present when the angle slider is disabled.",
     },
   ]}
 />

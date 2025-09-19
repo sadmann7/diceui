@@ -95,12 +95,13 @@ interface StoreState {
   min: number;
   max: number;
   step: number;
+  radius: number;
+  trackWidth: number;
+  startAngle: number;
+  endAngle: number;
   minStepsBetweenThumbs: number;
   disabled: boolean;
   inverted: boolean;
-  radius: number;
-  startAngle: number;
-  endAngle: number;
 }
 
 interface Store {
@@ -147,11 +148,12 @@ function createStore(
         max: 100,
         step: 1,
         minStepsBetweenThumbs: 0,
-        disabled: false,
-        inverted: false,
         radius: 80,
+        trackWidth: 8,
         startAngle: -90,
         endAngle: 270,
+        disabled: false,
+        inverted: false,
       },
     setState: (key, value) => {
       const state = stateRef.current;
@@ -298,7 +300,6 @@ function useStore<T>(selector: (state: StoreState) => T): T {
 }
 
 interface SliderContextValue {
-  id: string;
   dir: Direction;
   name?: string;
   form?: string;
@@ -319,18 +320,19 @@ interface AngleSliderRootProps extends Omit<DivProps, "defaultValue"> {
   defaultValue?: number[];
   onValueChange?: (value: number[]) => void;
   onValueCommit?: (value: number[]) => void;
-  name?: string;
   min?: number;
   max?: number;
   step?: number;
   minStepsBetweenThumbs?: number;
-  dir?: Direction;
-  disabled?: boolean;
-  inverted?: boolean;
-  form?: string;
   radius?: number;
+  trackWidth?: number;
   startAngle?: number;
   endAngle?: number;
+  dir?: Direction;
+  form?: string;
+  name?: string;
+  disabled?: boolean;
+  inverted?: boolean;
 }
 
 function AngleSliderRoot(props: AngleSliderRootProps) {
@@ -339,19 +341,19 @@ function AngleSliderRoot(props: AngleSliderRootProps) {
     defaultValue = [0],
     onValueChange,
     onValueCommit,
-    name,
     min = 0,
     max = 100,
     step = 1,
     minStepsBetweenThumbs = 0,
-    id: idProp,
-    dir: dirProp,
-    disabled = false,
-    inverted = false,
-    form,
     radius = 80,
+    trackWidth = 8,
     startAngle = -90,
     endAngle = 270,
+    dir: dirProp,
+    form,
+    name,
+    disabled = false,
+    inverted = false,
     asChild,
     className,
     children,
@@ -371,6 +373,7 @@ function AngleSliderRoot(props: AngleSliderRootProps) {
     disabled,
     inverted,
     radius,
+    trackWidth,
     startAngle,
     endAngle,
   }));
@@ -391,27 +394,27 @@ function AngleSliderRoot(props: AngleSliderRootProps) {
     store.setState("max", max);
     store.setState("step", step);
     store.setState("minStepsBetweenThumbs", minStepsBetweenThumbs);
-    store.setState("disabled", disabled);
-    store.setState("inverted", inverted);
     store.setState("radius", radius);
+    store.setState("trackWidth", trackWidth);
     store.setState("startAngle", startAngle);
     store.setState("endAngle", endAngle);
+    store.setState("disabled", disabled);
+    store.setState("inverted", inverted);
   }, [
+    store,
     min,
     max,
     step,
     minStepsBetweenThumbs,
-    disabled,
-    inverted,
     radius,
+    trackWidth,
     startAngle,
     endAngle,
-    store,
+    disabled,
+    inverted,
   ]);
 
   const dir = useDirection(dirProp);
-  const id = React.useId();
-  const rootId = idProp ?? id;
 
   const [sliderElement, setSliderElement] = React.useState<RootElement | null>(
     null,
@@ -421,12 +424,11 @@ function AngleSliderRoot(props: AngleSliderRootProps) {
 
   const contextValue = React.useMemo<SliderContextValue>(
     () => ({
-      id: rootId,
       dir,
       name,
       form,
     }),
-    [rootId, dir, name, form],
+    [dir, name, form],
   );
 
   const onSliderStart = React.useCallback(
@@ -577,7 +579,6 @@ function AngleSliderRoot(props: AngleSliderRootProps) {
     <StoreContext.Provider value={store}>
       <SliderContext.Provider value={contextValue}>
         <RootPrimitive
-          id={rootId}
           data-disabled={disabled ? "" : undefined}
           data-slot="slider"
           dir={dir}
@@ -613,11 +614,11 @@ function AngleSliderTrack(props: AngleSliderTrackProps) {
 
   const disabled = useStore((state) => state.disabled);
   const radius = useStore((state) => state.radius);
+  const trackWidth = useStore((state) => state.trackWidth);
   const startAngle = useStore((state) => state.startAngle);
   const endAngle = useStore((state) => state.endAngle);
 
   const center = radius + 20;
-  const strokeWidth = 8;
   const trackRadius = radius;
 
   const totalAngle = (endAngle - startAngle + 360) % 360 || 360;
@@ -653,7 +654,7 @@ function AngleSliderTrack(props: AngleSliderTrackProps) {
           r={trackRadius}
           fill="none"
           stroke="currentColor"
-          strokeWidth={strokeWidth}
+          strokeWidth={trackWidth}
           className="text-muted"
         />
       ) : (
@@ -661,7 +662,7 @@ function AngleSliderTrack(props: AngleSliderTrackProps) {
           d={`M ${startX} ${startY} A ${trackRadius} ${trackRadius} 0 ${largeArcFlag} 1 ${endX} ${endY}`}
           fill="none"
           stroke="currentColor"
-          strokeWidth={strokeWidth}
+          strokeWidth={trackWidth}
           strokeLinecap="round"
           className="text-muted"
         />
@@ -683,11 +684,11 @@ function AngleSliderRange(props: AngleSliderRangeProps) {
   const max = useStore((state) => state.max);
   const disabled = useStore((state) => state.disabled);
   const radius = useStore((state) => state.radius);
+  const trackWidth = useStore((state) => state.trackWidth);
   const startAngle = useStore((state) => state.startAngle);
   const endAngle = useStore((state) => state.endAngle);
 
   const center = radius + 20;
-  const strokeWidth = 8;
   const trackRadius = radius;
 
   const sortedValues = [...values].sort((a, b) => a - b);
@@ -732,7 +733,7 @@ function AngleSliderRange(props: AngleSliderRangeProps) {
       d={`M ${startX} ${startY} A ${trackRadius} ${trackRadius} 0 ${largeArcFlag} 1 ${endX} ${endY}`}
       fill="none"
       stroke="currentColor"
-      strokeWidth={strokeWidth}
+      strokeWidth={trackWidth}
       strokeLinecap="round"
       className={cn("text-primary", className)}
     />
