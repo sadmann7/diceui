@@ -1,6 +1,8 @@
 "use client";
 
+import { Loader2 } from "lucide-react";
 import * as React from "react";
+import { Button } from "@/components/ui/button";
 import {
   CircularProgress,
   CircularProgressIndicator,
@@ -13,7 +15,7 @@ export default function CircularProgressControlledDemo() {
   const [uploadProgress, setUploadProgress] = React.useState<number | null>(0);
   const [isUploading, setIsUploading] = React.useState(false);
 
-  const simulateUpload = React.useCallback(() => {
+  const onUploadStart = React.useCallback(() => {
     setIsUploading(true);
     setUploadProgress(0);
 
@@ -32,7 +34,7 @@ export default function CircularProgressControlledDemo() {
     return () => clearInterval(interval);
   }, []);
 
-  const resetUpload = React.useCallback(() => {
+  const onUploadReset = React.useCallback(() => {
     setUploadProgress(0);
     setIsUploading(false);
   }, []);
@@ -53,7 +55,6 @@ export default function CircularProgressControlledDemo() {
           </CircularProgressIndicator>
           <CircularProgressValueText className="font-semibold text-base" />
         </CircularProgress>
-
         <div className="flex flex-col gap-2">
           <div className="font-medium text-sm">Upload Progress</div>
           <div className="text-muted-foreground text-xs">
@@ -72,29 +73,21 @@ export default function CircularProgressControlledDemo() {
           </div>
         </div>
       </div>
-
       <div className="flex items-center gap-2">
-        <button
-          onClick={simulateUpload}
-          disabled={isUploading}
-          className="rounded bg-primary px-4 py-2 text-primary-foreground text-sm disabled:opacity-50"
-        >
-          {isUploading ? "Uploading..." : "Start Upload"}
-        </button>
-        <button
-          onClick={resetUpload}
-          disabled={isUploading}
-          className="rounded bg-secondary px-4 py-2 text-secondary-foreground text-sm disabled:opacity-50"
-        >
+        <Button size="sm" onClick={onUploadStart} disabled={isUploading}>
+          Start upload
+        </Button>
+        <Button size="sm" onClick={onUploadReset} disabled={isUploading}>
           Reset
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="secondary"
+          size="sm"
           onClick={() => setUploadProgress(null)}
           disabled={isUploading}
-          className="rounded bg-muted px-4 py-2 text-muted-foreground text-sm disabled:opacity-50"
         >
-          Set Indeterminate
-        </button>
+          Indeterminate
+        </Button>
       </div>
     </div>
   );

@@ -11,36 +11,22 @@ import {
 } from "@/registry/default/ui/circular-progress";
 
 export default function CircularProgressDemo() {
-  const [value, setValue] = React.useState<number | null>(33);
+  const [value, setValue] = React.useState(40);
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setValue((prev) => (prev + 2) % 100);
+    }, 150);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <div className="flex flex-col items-center gap-6">
-      <div className="flex items-center gap-6">
-        <CircularProgress value={value} size={60}>
-          <CircularProgressIndicator>
-            <CircularProgressTrack />
-            <CircularProgressRange />
-          </CircularProgressIndicator>
-          <CircularProgressValueText />
-        </CircularProgress>
-      </div>
-      <div className="flex items-center gap-2">
-        <Button
-          size="sm"
-          onClick={() => setValue(Math.max(0, (value ?? 0) - 10))}
-        >
-          -10
-        </Button>
-        <Button
-          size="sm"
-          onClick={() => setValue(Math.min(100, (value ?? 0) + 10))}
-        >
-          +10
-        </Button>
-        <Button variant="secondary" size="sm" onClick={() => setValue(null)}>
-          Indeterminate
-        </Button>
-      </div>
-    </div>
+    <CircularProgress value={value} size={60}>
+      <CircularProgressIndicator>
+        <CircularProgressTrack />
+        <CircularProgressRange />
+      </CircularProgressIndicator>
+      <CircularProgressValueText />
+    </CircularProgress>
   );
 }
