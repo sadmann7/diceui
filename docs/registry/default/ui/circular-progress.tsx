@@ -186,32 +186,15 @@ function CircularProgressRoot(props: CircularProgressRootProps) {
   );
 }
 
-interface CircularProgressIndicatorProps extends React.ComponentProps<"svg"> {
-  asChild?: boolean;
-}
-
-function CircularProgressIndicator(props: CircularProgressIndicatorProps) {
-  const { asChild, className, ...indicatorProps } = props;
+function CircularProgressIndicator(props: React.ComponentProps<"svg">) {
+  const { className, ...indicatorProps } = props;
   const context = useCircularProgressContext(INDICATOR_NAME);
-  const { size } = context;
-
-  if (asChild) {
-    return (
-      <Slot
-        data-state={context.state}
-        data-value={context.value ?? undefined}
-        data-max={context.max}
-        data-min={context.min}
-        className={cn("-rotate-90 transform", className)}
-      />
-    );
-  }
 
   return (
     <svg
-      width={size}
-      height={size}
-      viewBox={`0 0 ${size} ${size}`}
+      width={context.size}
+      height={context.size}
+      viewBox={`0 0 ${context.size} ${context.size}`}
       data-state={context.state}
       data-value={context.value ?? undefined}
       data-max={context.max}
