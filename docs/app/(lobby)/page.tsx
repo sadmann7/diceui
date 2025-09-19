@@ -24,7 +24,7 @@ export default function IndexPage() {
           style={{ animationDelay: "0.40s", animationFillMode: "forwards" }}
         >
           <Button asChild>
-            <Link href="/docs/components/checkbox-group">View Components</Link>
+            <Link href="/docs/components/angle-slider">View Components</Link>
           </Button>
           <Button variant="outline" asChild>
             <Link
