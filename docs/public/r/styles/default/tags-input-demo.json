@@ -5,6 +5,9 @@
     "@diceui/tags-input",
     "lucide-react"
   ],
+  "registryDependencies": [
+    "tags-input"
+  ],
   "files": [
     {
       "path": "examples/tags-input-demo.tsx",

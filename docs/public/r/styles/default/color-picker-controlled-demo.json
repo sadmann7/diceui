@@ -2,6 +2,7 @@
   "name": "color-picker-controlled-demo",
   "type": "registry:example",
   "registryDependencies": [
+    "color-picker",
     "button"
   ],
   "files": [

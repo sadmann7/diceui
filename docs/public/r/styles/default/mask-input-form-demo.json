@@ -2,14 +2,14 @@
   "name": "mask-input-form-demo",
   "type": "registry:example",
   "dependencies": [
-    "@radix-ui/react-slot",
     "@hookform/resolvers/zod",
     "react-hook-form",
     "zod"
   ],
   "registryDependencies": [
     "button",
-    "form"
+    "form",
+    "mask-input"
   ],
   "files": [
     {

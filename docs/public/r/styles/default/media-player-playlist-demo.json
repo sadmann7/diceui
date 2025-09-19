@@ -2,12 +2,12 @@
   "name": "media-player-playlist-demo",
   "type": "registry:example",
   "dependencies": [
-    "@radix-ui/react-slot",
     "lucide-react",
     "media-chrome"
   ],
   "registryDependencies": [
     "button",
+    "media-player",
     "scroll-area"
   ],
   "files": [

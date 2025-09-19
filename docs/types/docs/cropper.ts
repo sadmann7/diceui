@@ -1,24 +1,15 @@
 import type { CompositionProps, EmptyProps } from "@/types";
 
-/**
- * Represents a point with x and y coordinates.
- */
 export interface Point {
   x: number;
   y: number;
 }
 
-/**
- * Represents dimensions with width and height.
- */
 export interface Size {
   width: number;
   height: number;
 }
 
-/**
- * Represents a rectangular area with position and dimensions.
- */
 export interface Area {
   width: number;
   height: number;
@@ -26,9 +17,6 @@ export interface Area {
   y: number;
 }
 
-/**
- * Represents media dimensions including natural size.
- */
 export interface MediaSize {
   width: number;
   height: number;
@@ -36,14 +24,8 @@ export interface MediaSize {
   naturalHeight: number;
 }
 
-/**
- * The shape of the crop area.
- */
 export type Shape = "rectangular" | "circular";
 
-/**
- * The object fit behavior for the media.
- */
 export type ObjectFit =
   | "contain"
   | "cover"

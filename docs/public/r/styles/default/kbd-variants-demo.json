@@ -1,6 +1,9 @@
 {
   "name": "kbd-variants-demo",
   "type": "registry:example",
+  "registryDependencies": [
+    "kbd"
+  ],
   "files": [
     {
       "path": "examples/kbd-variants-demo.tsx",

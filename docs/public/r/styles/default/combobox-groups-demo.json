@@ -2,8 +2,10 @@
   "name": "combobox-groups-demo",
   "type": "registry:example",
   "dependencies": [
-    "@diceui/combobox",
     "lucide-react"
+  ],
+  "registryDependencies": [
+    "combobox"
   ],
   "files": [
     {

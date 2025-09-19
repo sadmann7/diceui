@@ -2,10 +2,10 @@
   "name": "cropper-shapes-demo",
   "type": "registry:example",
   "dependencies": [
-    "@radix-ui/react-slot",
     "class-variance-authority"
   ],
   "registryDependencies": [
+    "cropper",
     "label",
     "select",
     "switch"

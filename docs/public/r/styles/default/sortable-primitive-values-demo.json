@@ -6,8 +6,10 @@
     "@dnd-kit/modifiers",
     "@dnd-kit/sortable",
     "@dnd-kit/utilities",
-    "@radix-ui/react-slot",
     "lucide-react"
+  ],
+  "registryDependencies": [
+    "sortable"
   ],
   "files": [
     {

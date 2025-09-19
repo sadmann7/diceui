@@ -5,6 +5,9 @@
     "@diceui/checkbox-group",
     "lucide-react"
   ],
+  "registryDependencies": [
+    "checkbox-group"
+  ],
   "files": [
     {
       "path": "examples/checkbox-group-demo.tsx",

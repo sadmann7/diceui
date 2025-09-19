@@ -1,6 +1,9 @@
 {
   "name": "color-picker-inline-demo",
   "type": "registry:example",
+  "registryDependencies": [
+    "color-picker"
+  ],
   "files": [
     {
       "path": "examples/color-picker-inline-demo.tsx",

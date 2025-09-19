@@ -1,13 +1,11 @@
 {
   "name": "mask-input-validation-modes-demo",
   "type": "registry:example",
-  "dependencies": [
-    "@radix-ui/react-slot"
-  ],
   "registryDependencies": [
     "badge",
     "card",
-    "label"
+    "label",
+    "mask-input"
   ],
   "files": [
     {

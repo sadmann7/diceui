@@ -38,11 +38,7 @@ const formSchema = z.object({
   email: z.email("Please enter a valid email address"),
   bio: z.string().min(10, "Bio must be at least 10 characters"),
   company: z.string().min(2, "Company name must be at least 2 characters"),
-  website: z
-    .string()
-    .url("Please enter a valid URL")
-    .optional()
-    .or(z.literal("")),
+  website: z.url("Please enter a valid URL").optional().or(z.literal("")),
 });
 
 type FormSchema = z.infer<typeof formSchema>;

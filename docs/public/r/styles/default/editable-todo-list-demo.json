@@ -1,12 +1,10 @@
 {
   "name": "editable-todo-list-demo",
   "type": "registry:example",
-  "dependencies": [
-    "@radix-ui/react-slot"
-  ],
   "registryDependencies": [
+    "button",
     "checkbox",
-    "button"
+    "editable"
   ],
   "files": [
     {

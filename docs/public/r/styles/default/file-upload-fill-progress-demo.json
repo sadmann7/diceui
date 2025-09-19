@@ -2,13 +2,11 @@
   "name": "file-upload-fill-progress-demo",
   "type": "registry:example",
   "dependencies": [
-    "@radix-ui/react-slot",
     "lucide-react"
   ],
   "registryDependencies": [
     "button",
-    "lucide-react",
-    "sonner"
+    "file-upload"
   ],
   "files": [
     {

@@ -1,10 +1,8 @@
 {
   "name": "masonry-ssr-demo",
   "type": "registry:example",
-  "dependencies": [
-    "@radix-ui/react-slot"
-  ],
   "registryDependencies": [
+    "masonry",
     "skeleton"
   ],
   "files": [

@@ -2,9 +2,11 @@
   "name": "combobox-tags-demo",
   "type": "registry:example",
   "dependencies": [
-    "@diceui/combobox",
-    "@diceui/tags-input",
     "lucide-react"
+  ],
+  "registryDependencies": [
+    "combobox",
+    "tags-input"
   ],
   "files": [
     {

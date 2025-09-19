@@ -1,11 +1,9 @@
 {
   "name": "relative-time-card-timezones-demo",
   "type": "registry:example",
-  "dependencies": [
-    "@radix-ui/react-slot"
-  ],
   "registryDependencies": [
-    "hover-card"
+    "hover-card",
+    "relative-time-card"
   ],
   "files": [
     {

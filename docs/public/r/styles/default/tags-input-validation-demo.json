@@ -6,7 +6,8 @@
     "lucide-react"
   ],
   "registryDependencies": [
-    "button"
+    "button",
+    "tags-input"
   ],
   "files": [
     {

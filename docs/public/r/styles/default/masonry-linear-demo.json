@@ -1,10 +1,8 @@
 {
   "name": "masonry-linear-demo",
   "type": "registry:example",
-  "dependencies": [
-    "@radix-ui/react-slot"
-  ],
   "registryDependencies": [
+    "masonry",
     "skeleton"
   ],
   "files": [

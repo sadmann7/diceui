@@ -4,6 +4,26 @@
   "homepage": "https://diceui.com",
   "items": [
     {
+      "name": "angle-slider",
+      "type": "registry:component",
+      "title": "Angle Slider",
+      "description": "An interactive circular slider for selecting angles with support for single values and ranges.",
+      "files": [
+        {
+          "path": "registry/default/ui/angle-slider.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/default/components/visually-hidden-input.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/default/lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
       "name": "checkbox-group",
       "type": "registry:component",
       "title": "Checkbox Group",
@@ -296,6 +316,66 @@
         {
           "path": "registry/default/ui/tags-input.tsx",
           "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "angle-slider-demo",
+      "type": "registry:component",
+      "title": "Angle Slider Demo",
+      "description": "Example showing how to use the angle slider component.",
+      "files": [
+        {
+          "path": "registry/default/examples/angle-slider-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "angle-slider-controlled-demo",
+      "type": "registry:component",
+      "title": "Angle Slider Controlled Demo",
+      "description": "Example showing controlled angle slider with reset and randomize buttons.",
+      "files": [
+        {
+          "path": "registry/default/examples/angle-slider-controlled-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "angle-slider-range-demo",
+      "type": "registry:component",
+      "title": "Angle Slider Range Demo",
+      "description": "Example showing angle slider with range selection using multiple thumbs.",
+      "files": [
+        {
+          "path": "registry/default/examples/angle-slider-range-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "angle-slider-themes-demo",
+      "type": "registry:component",
+      "title": "Angle Slider Themes Demo",
+      "description": "Example showing angle slider with different themes.",
+      "files": [
+        {
+          "path": "registry/default/examples/angle-slider-themes-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "angle-slider-form-demo",
+      "type": "registry:component",
+      "title": "Angle Slider Form Demo",
+      "description": "Example showing angle slider integration with React Hook Form.",
+      "files": [
+        {
+          "path": "registry/default/examples/angle-slider-form-demo.tsx",
+          "type": "registry:example"
         }
       ]
     },

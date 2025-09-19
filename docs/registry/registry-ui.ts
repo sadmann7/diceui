@@ -2,6 +2,25 @@ import type { Registry } from "shadcn/schema";
 
 export const ui: Registry["items"] = [
   {
+    name: "angle-slider",
+    type: "registry:ui",
+    dependencies: ["@radix-ui/react-slot"],
+    files: [
+      {
+        path: "ui/angle-slider.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "components/visually-hidden-input.tsx",
+        type: "registry:component",
+      },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
+      },
+    ],
+  },
+  {
     name: "checkbox-group",
     type: "registry:ui",
     dependencies: ["@diceui/checkbox-group"],

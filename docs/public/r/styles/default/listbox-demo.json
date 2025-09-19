@@ -1,6 +1,9 @@
 {
   "name": "listbox-demo",
   "type": "registry:example",
+  "registryDependencies": [
+    "listbox"
+  ],
   "files": [
     {
       "path": "examples/listbox-demo.tsx",

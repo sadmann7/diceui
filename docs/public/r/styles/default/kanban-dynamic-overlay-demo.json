@@ -6,12 +6,12 @@
     "@dnd-kit/modifiers",
     "@dnd-kit/sortable",
     "@dnd-kit/utilities",
-    "@radix-ui/react-slot",
     "lucide-react"
   ],
   "registryDependencies": [
     "badge",
-    "button"
+    "button",
+    "kanban"
   ],
   "files": [
     {

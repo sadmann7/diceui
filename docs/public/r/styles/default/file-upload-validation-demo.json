@@ -2,12 +2,12 @@
   "name": "file-upload-validation-demo",
   "type": "registry:example",
   "dependencies": [
-    "@radix-ui/react-slot",
     "lucide-react",
     "sonner"
   ],
   "registryDependencies": [
-    "button"
+    "button",
+    "file-upload"
   ],
   "files": [
     {

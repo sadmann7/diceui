@@ -2,6 +2,7 @@
   "name": "stepper-controlled-demo",
   "type": "registry:example",
   "registryDependencies": [
+    "stepper",
     "button"
   ],
   "files": [

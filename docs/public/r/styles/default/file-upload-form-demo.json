@@ -2,16 +2,14 @@
   "name": "file-upload-form-demo",
   "type": "registry:example",
   "dependencies": [
-    "@radix-ui/react-slot",
     "lucide-react",
     "@hookform/resolvers/zod",
     "zod"
   ],
   "registryDependencies": [
     "button",
-    "form",
-    "lucide-react",
-    "sonner"
+    "file-upload",
+    "form"
   ],
   "files": [
     {

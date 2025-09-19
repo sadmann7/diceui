@@ -1,11 +1,9 @@
 {
   "name": "mask-input-patterns-demo",
   "type": "registry:example",
-  "dependencies": [
-    "@radix-ui/react-slot"
-  ],
   "registryDependencies": [
-    "label"
+    "label",
+    "mask-input"
   ],
   "files": [
     {

@@ -2,7 +2,8 @@
   "name": "stack-truncation-demo",
   "type": "registry:example",
   "registryDependencies": [
-    "avatar"
+    "avatar",
+    "stack"
   ],
   "files": [
     {

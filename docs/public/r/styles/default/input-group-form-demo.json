@@ -2,11 +2,11 @@
   "name": "input-group-form-demo",
   "type": "registry:example",
   "dependencies": [
-    "@radix-ui/react-slot",
     "class-variance-authority"
   ],
   "registryDependencies": [
-    "button"
+    "button",
+    "input-group"
   ],
   "files": [
     {
