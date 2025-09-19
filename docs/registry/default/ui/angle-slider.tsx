@@ -95,7 +95,7 @@ interface StoreState {
   min: number;
   max: number;
   step: number;
-  radius: number;
+  size: number;
   trackWidth: number;
   startAngle: number;
   endAngle: number;
@@ -148,7 +148,7 @@ function createStore(
         max: 100,
         step: 1,
         minStepsBetweenThumbs: 0,
-        radius: 80,
+        size: 80,
         trackWidth: 8,
         startAngle: -90,
         endAngle: 270,
@@ -251,12 +251,12 @@ function createStore(
       const state = stateRef.current;
       if (!state) return { x: 0, y: 0 };
 
-      const { radius } = state;
+      const { size } = state;
       const radians = (angle * Math.PI) / 180;
 
       return {
-        x: radius * Math.cos(radians),
-        y: radius * Math.sin(radians),
+        x: size * Math.cos(radians),
+        y: size * Math.sin(radians),
       };
     },
     notify: () => {
@@ -324,7 +324,7 @@ interface AngleSliderRootProps extends Omit<DivProps, "defaultValue"> {
   max?: number;
   step?: number;
   minStepsBetweenThumbs?: number;
-  radius?: number;
+  size?: number;
   trackWidth?: number;
   startAngle?: number;
   endAngle?: number;
@@ -345,7 +345,7 @@ function AngleSliderRoot(props: AngleSliderRootProps) {
     max = 100,
     step = 1,
     minStepsBetweenThumbs = 0,
-    radius = 80,
+    size = 80,
     trackWidth = 8,
     startAngle = -90,
     endAngle = 270,
@@ -372,7 +372,7 @@ function AngleSliderRoot(props: AngleSliderRootProps) {
     minStepsBetweenThumbs,
     disabled,
     inverted,
-    radius,
+    size,
     trackWidth,
     startAngle,
     endAngle,
@@ -394,7 +394,7 @@ function AngleSliderRoot(props: AngleSliderRootProps) {
     store.setState("max", max);
     store.setState("step", step);
     store.setState("minStepsBetweenThumbs", minStepsBetweenThumbs);
-    store.setState("radius", radius);
+    store.setState("size", size);
     store.setState("trackWidth", trackWidth);
     store.setState("startAngle", startAngle);
     store.setState("endAngle", endAngle);
@@ -406,7 +406,7 @@ function AngleSliderRoot(props: AngleSliderRootProps) {
     max,
     step,
     minStepsBetweenThumbs,
-    radius,
+    size,
     trackWidth,
     startAngle,
     endAngle,
@@ -590,8 +590,8 @@ function AngleSliderRoot(props: AngleSliderRootProps) {
             className,
           )}
           style={{
-            width: `${radius * 2 + 40}px`,
-            height: `${radius * 2 + 40}px`,
+            width: `${size * 2 + 40}px`,
+            height: `${size * 2 + 40}px`,
           }}
           onKeyDown={onKeyDown}
           onPointerDown={onPointerDown}
@@ -613,13 +613,13 @@ function AngleSliderTrack(props: AngleSliderTrackProps) {
   const { className, asChild, children, ...trackProps } = props;
 
   const disabled = useStore((state) => state.disabled);
-  const radius = useStore((state) => state.radius);
+  const size = useStore((state) => state.size);
   const trackWidth = useStore((state) => state.trackWidth);
   const startAngle = useStore((state) => state.startAngle);
   const endAngle = useStore((state) => state.endAngle);
 
-  const center = radius + 20;
-  const trackRadius = radius;
+  const center = size + 20;
+  const trackRadius = size;
 
   const totalAngle = (endAngle - startAngle + 360) % 360 || 360;
   const isFullCircle = totalAngle >= 359;
@@ -685,13 +685,13 @@ function AngleSliderRange(props: AngleSliderRangeProps) {
   const min = useStore((state) => state.min);
   const max = useStore((state) => state.max);
   const disabled = useStore((state) => state.disabled);
-  const radius = useStore((state) => state.radius);
+  const size = useStore((state) => state.size);
   const trackWidth = useStore((state) => state.trackWidth);
   const startAngle = useStore((state) => state.startAngle);
   const endAngle = useStore((state) => state.endAngle);
 
-  const center = radius + 20;
-  const trackRadius = radius;
+  const center = size + 20;
+  const trackRadius = size;
 
   const sortedValues = [...values].sort((a, b) => a - b);
 
@@ -764,7 +764,7 @@ function AngleSliderThumb(props: AngleSliderThumbProps) {
   const max = useStore((state) => state.max);
   const step = useStore((state) => state.step);
   const disabled = useStore((state) => state.disabled);
-  const radius = useStore((state) => state.radius);
+  const size = useStore((state) => state.size);
 
   const thumbId = React.useId();
   const [thumbElement, setThumbElement] = React.useState<ThumbElement | null>(
@@ -799,7 +799,7 @@ function AngleSliderThumb(props: AngleSliderThumbProps) {
 
     const angle = store.getAngleFromValue(value);
     const position = store.getPositionFromAngle(angle);
-    const center = radius + 20;
+    const center = size + 20;
 
     return {
       position: "absolute",
@@ -807,7 +807,7 @@ function AngleSliderThumb(props: AngleSliderThumbProps) {
       top: `${center + position.y}px`,
       transform: "translate(-50%, -50%)",
     };
-  }, [value, store, radius]);
+  }, [value, store, size]);
 
   const onFocus = React.useCallback(
     (event: React.FocusEvent<ThumbElement>) => {
@@ -883,10 +883,10 @@ function AngleSliderValue(props: AngleSliderValueProps) {
   } = props;
 
   const values = useStore((state) => state.values);
-  const radius = useStore((state) => state.radius);
+  const size = useStore((state) => state.size);
   const disabled = useStore((state) => state.disabled);
 
-  const center = radius + 20;
+  const center = size + 20;
 
   const displayValue = React.useMemo(() => {
     if (formatValue) {

@@ -69,7 +69,7 @@ export default function AngleSliderFormDemo() {
                     max={360}
                     min={0}
                     step={1}
-                    radius={60}
+                    size={60}
                     name={field.name}
                   >
                     <AngleSliderTrack>
@@ -99,7 +99,7 @@ export default function AngleSliderFormDemo() {
                     max={360}
                     min={0}
                     step={5}
-                    radius={60}
+                    size={60}
                     minStepsBetweenThumbs={1}
                     name={field.name}
                   >

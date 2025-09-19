@@ -45,10 +45,10 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   max?: number;
 
   /**
-   * The radius of the circular track in pixels.
+   * The size (radius) of the circular track in pixels.
    * @default 80
    */
-  radius?: number;
+  size?: number;
 
   /**
    * The width of the track and range lines in pixels.

@@ -11,7 +11,7 @@ export default function AngleSliderThemesDemo() {
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       <div className="flex flex-col items-center gap-1.5">
         <h3 className="font-medium text-muted-foreground text-sm">Default</h3>
-        <AngleSlider defaultValue={[60]} max={360} min={0} step={1} radius={60}>
+        <AngleSlider defaultValue={[60]} max={360} min={0} step={1} size={60}>
           <AngleSliderTrack>
             <AngleSliderRange />
           </AngleSliderTrack>
@@ -21,13 +21,7 @@ export default function AngleSliderThemesDemo() {
       </div>
       <div className="flex flex-col items-center gap-1.5">
         <h3 className="font-medium text-muted-foreground text-sm">Success</h3>
-        <AngleSlider
-          defaultValue={[120]}
-          max={360}
-          min={0}
-          step={1}
-          radius={60}
-        >
+        <AngleSlider defaultValue={[120]} max={360} min={0} step={1} size={60}>
           <AngleSliderTrack className="[&>[data-slot='angle-slider-track-rail']]:stroke-green-100 dark:[&>[data-slot='angle-slider-track-rail']]:stroke-green-900">
             <AngleSliderRange className="stroke-green-500" />
           </AngleSliderTrack>
@@ -37,13 +31,7 @@ export default function AngleSliderThemesDemo() {
       </div>
       <div className="flex flex-col items-center gap-1.5">
         <h3 className="font-medium text-muted-foreground text-sm">Danger</h3>
-        <AngleSlider
-          defaultValue={[180]}
-          max={360}
-          min={0}
-          step={1}
-          radius={60}
-        >
+        <AngleSlider defaultValue={[180]} max={360} min={0} step={1} size={60}>
           <AngleSliderTrack className="[&>[data-slot='angle-slider-track-rail']]:stroke-red-100 dark:[&>[data-slot='angle-slider-track-rail']]:stroke-red-900">
             <AngleSliderRange className="stroke-red-500" />
           </AngleSliderTrack>
@@ -53,13 +41,7 @@ export default function AngleSliderThemesDemo() {
       </div>
       <div className="flex flex-col items-center gap-1.5">
         <h3 className="font-medium text-muted-foreground text-sm">Warning</h3>
-        <AngleSlider
-          defaultValue={[240]}
-          max={360}
-          min={0}
-          step={1}
-          radius={60}
-        >
+        <AngleSlider defaultValue={[240]} max={360} min={0} step={1} size={60}>
           <AngleSliderTrack className="[&>[data-slot='angle-slider-track-rail']]:stroke-orange-100 dark:[&>[data-slot='angle-slider-track-rail']]:stroke-orange-900">
             <AngleSliderRange className="stroke-orange-500" />
           </AngleSliderTrack>
@@ -76,7 +58,7 @@ export default function AngleSliderThemesDemo() {
           max={360}
           min={0}
           step={1}
-          radius={60}
+          size={60}
         >
           <AngleSliderTrack className="[&>[data-slot='angle-slider-track-rail']]:stroke-purple-100 dark:[&>[data-slot='angle-slider-track-rail']]:stroke-purple-900">
             <AngleSliderRange className="stroke-purple-500" />
@@ -101,7 +83,7 @@ export default function AngleSliderThemesDemo() {
           max={360}
           min={0}
           step={1}
-          radius={60}
+          size={60}
           trackWidth={2}
         >
           <AngleSliderTrack className="[&>[data-slot='angle-slider-track-rail']]:stroke-gray-300 dark:[&>[data-slot='angle-slider-track-rail']]:stroke-gray-600">

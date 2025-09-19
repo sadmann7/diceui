@@ -59,6 +59,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "circular-progress": {
+      name: "circular-progress",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/ui/circular-progress.tsx",
+        type: "registry:ui",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/circular-progress.tsx")),
+      source: "",
+      chunks: []
+    },
     "color-picker": {
       name: "color-picker",
       description: "",

@@ -40,18 +40,15 @@ function useCircularProgressContext(consumerName: string) {
   return context;
 }
 
-interface DivProps extends React.ComponentProps<"div"> {
-  asChild?: boolean;
-}
-
-interface CircularProgressRootProps extends DivProps {
+interface CircularProgressRootProps extends React.ComponentProps<"div"> {
   value?: number | null | undefined;
+  onValueChange?(value: number | null): void;
+  getValueLabel?(value: number, max: number): string;
   max?: number;
   min?: number;
   size?: number;
   trackWidth?: number;
-  onValueChange?(value: number | null): void;
-  getValueLabel?(value: number, max: number): string;
+  asChild?: boolean;
 }
 
 function getProgressState(
@@ -140,25 +137,25 @@ function CircularProgressRoot(props: CircularProgressRootProps) {
   const contextValue = React.useMemo<CircularProgressContextValue>(
     () => ({
       value,
+      onValueChange,
+      valueLabel,
       max,
       min,
-      valueLabel,
       state,
       radius,
       trackWidth,
       size,
-      onValueChange,
     }),
     [
       value,
+      onValueChange,
+      valueLabel,
       max,
       min,
-      valueLabel,
       state,
       radius,
       trackWidth,
       size,
-      onValueChange,
     ],
   );
 
