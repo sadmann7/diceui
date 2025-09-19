@@ -1,10 +1,15 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { rimraf } from "rimraf";
 
 import { registry } from "../registry";
 
-const REGISTRY_PATH = path.join(process.cwd(), "public/r/styles/default");
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const REGISTRY_PATH = path.resolve(__dirname, "../public/r/styles/default");
+
+// Reserved registry item names that should never be removed
+const RESERVED_NAMES = new Set(["index", "style"]);
 
 /**
  * Cleanup orphaned JSON files from the registry that are no longer referenced
@@ -17,7 +22,7 @@ async function cleanupRegistry() {
     // Get all registry item names from the TypeScript registry
     const registryItemNames = new Set(
       registry.items
-        .filter((item) => item.name !== "index" && item.name !== "style")
+        .filter((item) => !RESERVED_NAMES.has(item.name))
         .map((item) => item.name),
     );
 
@@ -40,8 +45,8 @@ async function cleanupRegistry() {
     for (const jsonFile of jsonFiles) {
       const itemName = path.basename(jsonFile, ".json");
 
-      // Skip special files
-      if (itemName === "index" || itemName === "style") {
+      // Skip reserved files
+      if (RESERVED_NAMES.has(itemName)) {
         validFiles.push(jsonFile);
         continue;
       }
@@ -99,7 +104,10 @@ async function cleanupRegistry() {
 }
 
 // Run the cleanup if this script is executed directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (
+  process.argv[1] &&
+  fileURLToPath(import.meta.url) === path.resolve(process.argv[1])
+) {
   cleanupRegistry();
 }
 
