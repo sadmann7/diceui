@@ -32,6 +32,17 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "circular-progress",
+    type: "registry:ui",
+    dependencies: ["@radix-ui/react-slot"],
+    files: [
+      {
+        path: "ui/circular-progress.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "color-picker",
     type: "registry:ui",
     dependencies: [

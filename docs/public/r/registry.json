@@ -36,6 +36,18 @@
       ]
     },
     {
+      "name": "circular-progress",
+      "type": "registry:component",
+      "title": "Circular Progress",
+      "description": "A circular progress indicator with support for determinate and indeterminate states.",
+      "files": [
+        {
+          "path": "registry/default/ui/circular-progress.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "color-picker",
       "type": "registry:component",
       "title": "Color Picker",
