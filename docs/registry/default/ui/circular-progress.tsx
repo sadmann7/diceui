@@ -22,7 +22,7 @@ interface CircularProgressContextValue {
   valueLabel: string | undefined;
   state: ProgressState;
   radius: number;
-  strokeWidth: number;
+  trackWidth: number;
   size: number;
   onValueChange?(value: number | null): void;
 }
@@ -49,7 +49,7 @@ interface CircularProgressRootProps extends DivProps {
   max?: number;
   min?: number;
   size?: number;
-  strokeWidth?: number;
+  trackWidth?: number;
   onValueChange?(value: number | null): void;
   getValueLabel?(value: number, max: number): string;
 }
@@ -107,7 +107,7 @@ function CircularProgressRoot(props: CircularProgressRootProps) {
     max: maxProp,
     min: minProp = 0,
     size = 48,
-    strokeWidth = 4,
+    trackWidth = 4,
     onValueChange,
     getValueLabel = defaultGetValueLabel,
     asChild,
@@ -135,7 +135,7 @@ function CircularProgressRoot(props: CircularProgressRootProps) {
         : null;
   const valueLabel = isNumber(value) ? getValueLabel(value, max) : undefined;
   const state = getProgressState(value, max);
-  const radius = (size - strokeWidth) / 2;
+  const radius = (size - trackWidth) / 2;
 
   const contextValue = React.useMemo<CircularProgressContextValue>(
     () => ({
@@ -145,7 +145,7 @@ function CircularProgressRoot(props: CircularProgressRootProps) {
       valueLabel,
       state,
       radius,
-      strokeWidth,
+      trackWidth,
       size,
       onValueChange,
     }),
@@ -156,7 +156,7 @@ function CircularProgressRoot(props: CircularProgressRootProps) {
       valueLabel,
       state,
       radius,
-      strokeWidth,
+      trackWidth,
       size,
       onValueChange,
     ],
@@ -222,23 +222,20 @@ function CircularProgressIndicator(props: CircularProgressIndicatorProps) {
   );
 }
 
-interface CircularProgressTrackProps extends React.ComponentProps<"circle"> {}
-
-function CircularProgressTrack(props: CircularProgressTrackProps) {
+function CircularProgressTrack(props: React.ComponentProps<"circle">) {
   const { className, ...trackProps } = props;
   const context = useCircularProgressContext(TRACK_NAME);
-  const { size, strokeWidth, radius } = context;
 
-  const center = size / 2;
+  const center = context.size / 2;
 
   return (
     <circle
       cx={center}
       cy={center}
-      r={radius}
+      r={context.radius}
       fill="none"
       stroke="currentColor"
-      strokeWidth={strokeWidth}
+      strokeWidth={context.trackWidth}
       data-state={context.state}
       {...trackProps}
       className={cn("text-muted-foreground/20", className)}
@@ -246,24 +243,23 @@ function CircularProgressTrack(props: CircularProgressTrackProps) {
   );
 }
 
-interface CircularProgressRangeProps extends React.ComponentProps<"circle"> {}
-
-function CircularProgressRange(props: CircularProgressRangeProps) {
+function CircularProgressRange(props: React.ComponentProps<"circle">) {
   const { className, ...rangeProps } = props;
   const context = useCircularProgressContext(RANGE_NAME);
-  const { size, strokeWidth, radius, value, max, min, state } = context;
 
-  const center = size / 2;
-  const circumference = 2 * Math.PI * radius;
+  const center = context.size / 2;
+  const circumference = 2 * Math.PI * context.radius;
 
   let strokeDasharray = circumference;
   let strokeDashoffset = circumference;
 
-  if (state === "indeterminate") {
-    strokeDasharray = circumference * 0.25;
-    strokeDashoffset = 0;
-  } else if (value !== null) {
-    const normalizedValue = ((value - min) / (max - min)) * 100;
+  if (context.state === "indeterminate") {
+    // For indeterminate, show 25% of the circle as an arc
+    strokeDasharray = circumference;
+    strokeDashoffset = circumference * 0.75; // Show 25% (hide 75%)
+  } else if (context.value !== null) {
+    const normalizedValue =
+      ((context.value - context.min) / (context.max - context.min)) * 100;
     const progress = (normalizedValue / 100) * circumference;
     strokeDashoffset = circumference - progress;
   }
@@ -272,26 +268,27 @@ function CircularProgressRange(props: CircularProgressRangeProps) {
     <circle
       cx={center}
       cy={center}
-      r={radius}
+      r={context.radius}
       fill="none"
       stroke="currentColor"
-      strokeWidth={strokeWidth}
+      strokeWidth={context.trackWidth}
       strokeLinecap="round"
       strokeDasharray={strokeDasharray}
       strokeDashoffset={strokeDashoffset}
-      data-state={state}
-      data-value={value ?? undefined}
-      data-max={max}
-      data-min={min}
+      data-state={context.state}
+      data-value={context.value ?? undefined}
+      data-max={context.max}
+      data-min={context.min}
       {...rangeProps}
       className={cn(
         "text-primary transition-all duration-300 ease-in-out",
-        state === "indeterminate" && "animate-spin",
+        context.state === "indeterminate" &&
+          "[animation:var(--animate-spin-around)]",
         className,
       )}
       style={{
         ...rangeProps.style,
-        animationDuration: state === "indeterminate" ? "2s" : undefined,
+        transformOrigin: "center",
       }}
     />
   );
@@ -359,9 +356,4 @@ export {
   CircularProgressValueText,
   //
   type CircularProgressRootProps as CircularProgressProps,
-  type CircularProgressIndicatorProps,
-  type CircularProgressTrackProps,
-  type CircularProgressRangeProps,
-  type CircularProgressLabelProps,
-  type CircularProgressValueTextProps,
 };

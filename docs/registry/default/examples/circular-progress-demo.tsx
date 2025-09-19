@@ -1,10 +1,10 @@
 "use client";
 
 import * as React from "react";
+import { Button } from "@/components/ui/button";
 import {
   CircularProgress,
   CircularProgressIndicator,
-  CircularProgressLabel,
   CircularProgressRange,
   CircularProgressTrack,
   CircularProgressValueText,
@@ -14,58 +14,32 @@ export default function CircularProgressDemo() {
   const [value, setValue] = React.useState<number | null>(33);
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col items-center gap-6">
       <div className="flex items-center gap-6">
-        <CircularProgress
-          value={value}
-          onValueChange={setValue}
-          className="h-16 w-16"
-        >
+        <CircularProgress value={value} onValueChange={setValue} size={60}>
           <CircularProgressIndicator>
             <CircularProgressTrack />
             <CircularProgressRange />
           </CircularProgressIndicator>
           <CircularProgressValueText />
         </CircularProgress>
-
-        <CircularProgress value={66} className="h-16 w-16">
-          <CircularProgressIndicator>
-            <CircularProgressTrack />
-            <CircularProgressRange />
-          </CircularProgressIndicator>
-          <CircularProgressLabel>Loading...</CircularProgressLabel>
-        </CircularProgress>
-
-        <CircularProgress value={null} className="h-16 w-16">
-          <CircularProgressIndicator>
-            <CircularProgressTrack />
-            <CircularProgressRange />
-          </CircularProgressIndicator>
-        </CircularProgress>
       </div>
-
       <div className="flex items-center gap-2">
-        <button
+        <Button
+          size="sm"
           onClick={() => setValue(Math.max(0, (value ?? 0) - 10))}
-          className="rounded bg-primary px-3 py-1 text-primary-foreground text-sm"
         >
           -10
-        </button>
-        <button
+        </Button>
+        <Button
+          size="sm"
           onClick={() => setValue(Math.min(100, (value ?? 0) + 10))}
-          className="rounded bg-primary px-3 py-1 text-primary-foreground text-sm"
         >
           +10
-        </button>
-        <button
-          onClick={() => setValue(null)}
-          className="rounded bg-secondary px-3 py-1 text-secondary-foreground text-sm"
-        >
+        </Button>
+        <Button variant="secondary" size="sm" onClick={() => setValue(null)}>
           Indeterminate
-        </button>
-        <span className="text-muted-foreground text-sm">
-          Value: {value ?? "indeterminate"}
-        </span>
+        </Button>
       </div>
     </div>
   );
