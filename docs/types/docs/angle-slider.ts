@@ -51,10 +51,10 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   size?: number;
 
   /**
-   * The width of the track and range lines in pixels.
+   * The thickness of the track and range lines in pixels.
    * @default 8
    */
-  trackWidth?: number;
+  thickness?: number;
 
   /**
    * The starting angle of the slider in degrees.

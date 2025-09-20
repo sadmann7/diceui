@@ -99,7 +99,7 @@ interface StoreState {
   max: number;
   step: number;
   size: number;
-  trackWidth: number;
+  thickness: number;
   startAngle: number;
   endAngle: number;
   minStepsBetweenThumbs: number;
@@ -328,7 +328,7 @@ interface AngleSliderRootProps extends Omit<DivProps, "defaultValue"> {
   step?: number;
   minStepsBetweenThumbs?: number;
   size?: number;
-  trackWidth?: number;
+  thickness?: number;
   startAngle?: number;
   endAngle?: number;
   dir?: Direction;
@@ -349,7 +349,7 @@ function AngleSliderRoot(props: AngleSliderRootProps) {
     step = 1,
     minStepsBetweenThumbs = 0,
     size = 80,
-    trackWidth = 8,
+    thickness = 8,
     startAngle = -90,
     endAngle = 270,
     dir: dirProp,
@@ -376,7 +376,7 @@ function AngleSliderRoot(props: AngleSliderRootProps) {
     disabled,
     inverted,
     size,
-    trackWidth,
+    thickness,
     startAngle,
     endAngle,
   }));
@@ -410,8 +410,8 @@ function AngleSliderRoot(props: AngleSliderRootProps) {
     if (currentState.size !== size) {
       store.setState("size", size);
     }
-    if (currentState.trackWidth !== trackWidth) {
-      store.setState("trackWidth", trackWidth);
+    if (currentState.thickness !== thickness) {
+      store.setState("thickness", thickness);
     }
     if (currentState.startAngle !== startAngle) {
       store.setState("startAngle", startAngle);
@@ -432,7 +432,7 @@ function AngleSliderRoot(props: AngleSliderRootProps) {
     step,
     minStepsBetweenThumbs,
     size,
-    trackWidth,
+    thickness,
     startAngle,
     endAngle,
     disabled,
@@ -639,7 +639,7 @@ function AngleSliderTrack(props: AngleSliderTrackProps) {
 
   const disabled = useStore((state) => state.disabled);
   const size = useStore((state) => state.size);
-  const trackWidth = useStore((state) => state.trackWidth);
+  const thickness = useStore((state) => state.thickness);
   const startAngle = useStore((state) => state.startAngle);
   const endAngle = useStore((state) => state.endAngle);
 
@@ -680,7 +680,7 @@ function AngleSliderTrack(props: AngleSliderTrackProps) {
           r={trackRadius}
           fill="none"
           stroke="currentColor"
-          strokeWidth={trackWidth}
+          strokeWidth={thickness}
           className="stroke-muted"
         />
       ) : (
@@ -689,7 +689,7 @@ function AngleSliderTrack(props: AngleSliderTrackProps) {
           d={`M ${startX} ${startY} A ${trackRadius} ${trackRadius} 0 ${largeArcFlag} 1 ${endX} ${endY}`}
           fill="none"
           stroke="currentColor"
-          strokeWidth={trackWidth}
+          strokeWidth={thickness}
           strokeLinecap="round"
           className="stroke-muted"
         />
@@ -711,7 +711,7 @@ function AngleSliderRange(props: AngleSliderRangeProps) {
   const max = useStore((state) => state.max);
   const disabled = useStore((state) => state.disabled);
   const size = useStore((state) => state.size);
-  const trackWidth = useStore((state) => state.trackWidth);
+  const thickness = useStore((state) => state.thickness);
   const startAngle = useStore((state) => state.startAngle);
   const endAngle = useStore((state) => state.endAngle);
 
@@ -760,7 +760,7 @@ function AngleSliderRange(props: AngleSliderRangeProps) {
       d={`M ${startX} ${startY} A ${trackRadius} ${trackRadius} 0 ${largeArcFlag} 1 ${endX} ${endY}`}
       fill="none"
       stroke="currentColor"
-      strokeWidth={trackWidth}
+      strokeWidth={thickness}
       strokeLinecap="round"
       className={cn("stroke-primary", className)}
     />

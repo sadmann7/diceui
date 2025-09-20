@@ -12,12 +12,12 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * Useful for providing custom formatting or localization.
    *
    * ```ts
-   * getValueText={(value, max) => `${value} of ${max} completed`}
+   * getValueText={(value, min, max) => `${value} of ${max} completed`}
    * ```
    *
-   * @default (value, max) => Math.round((value / max) * 100) + "%"
+   * @default (value, min, max) => Math.round(((value - min) / (max - min)) * 100) + "%"
    */
-  getValueText?(value: number, max: number): string;
+  getValueText?(value: number, min: number, max: number): string;
 
   /**
    * The maximum allowed value for the progress.
@@ -43,12 +43,12 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   size?: number;
 
   /**
-   * The width of the progress track and range in pixels.
+   * The thickness of the progress track and range in pixels.
    * A larger value creates a thicker progress ring.
    *
    * @default 4
    */
-  trackWidth?: number;
+  thickness?: number;
 }
 
 export interface IndicatorProps extends EmptyProps<"svg"> {}

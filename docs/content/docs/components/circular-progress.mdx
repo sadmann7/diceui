@@ -55,6 +55,16 @@ import {
 </CircularProgress>
 ```
 
+Or use the `Combined` component to get all the parts in one.
+
+```tsx
+import {
+  CircularProgressCombined,
+} from "@/components/ui/circular-progress";
+
+<CircularProgressCombined />
+```
+
 ## Examples
 
 ### Interactive Demo
@@ -221,6 +231,16 @@ The text element that displays the current progress value or custom content.
       value: "The current state of the progress: 'indeterminate', 'loading', or 'complete'.",
     },
   ]}
+/>
+
+
+### Combined
+
+The combined component that includes all the parts.
+
+<AutoTypeTable
+  path="./types/docs/circular-progress.ts"
+  name="RootProps"
 />
 
 ## Accessibility

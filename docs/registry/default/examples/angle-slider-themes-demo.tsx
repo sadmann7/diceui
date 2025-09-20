@@ -84,7 +84,7 @@ export default function AngleSliderThemesDemo() {
           min={0}
           step={1}
           size={60}
-          trackWidth={2}
+          thickness={2}
         >
           <AngleSliderTrack className="[&>[data-slot='angle-slider-track-rail']]:stroke-gray-300 dark:[&>[data-slot='angle-slider-track-rail']]:stroke-gray-600">
             <AngleSliderRange className="stroke-gray-900 dark:stroke-gray-100" />

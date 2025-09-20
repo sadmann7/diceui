@@ -30,7 +30,7 @@ function getIsNumber(value: unknown): value is number {
 }
 
 function getIsValidMaxNumber(max: unknown): max is number {
-  return getIsNumber(max) && !Number.isNaN(max) && max > 0;
+  return getIsNumber(max) && Number.isFinite(max) && max > 0;
 }
 
 function getIsValidValueNumber(
@@ -39,7 +39,7 @@ function getIsValidValueNumber(
   min: number,
 ): value is number {
   return (
-    getIsNumber(value) && !Number.isNaN(value) && value <= max && value >= min
+    getIsNumber(value) && Number.isFinite(value) && value <= max && value >= min
   );
 }
 
@@ -53,8 +53,9 @@ function getInvalidValueError(propValue: string, componentName: string) {
 The value will be clamped to the valid range or set to null if invalid.`;
 }
 
-function getDefaultValueText(value: number, max: number) {
-  return `${Math.round((value / max) * 100)}%`;
+function getDefaultValueText(value: number, min: number, max: number) {
+  const pct = max === min ? 100 : ((value - min) / (max - min)) * 100;
+  return `${Math.round(pct)}%`;
 }
 
 function getInvalidMaxError(propValue: string, componentName: string) {
@@ -68,8 +69,10 @@ interface CircularProgressContextValue {
   min: number;
   state: ProgressState;
   radius: number;
-  trackWidth: number;
+  thickness: number;
   size: number;
+  center: number;
+  circumference: number;
 }
 
 const CircularProgressContext =
@@ -87,11 +90,11 @@ function useCircularProgressContext(consumerName: string) {
 
 interface CircularProgressRootProps extends React.ComponentProps<"div"> {
   value?: number | null | undefined;
-  getValueText?(value: number, max: number): string;
+  getValueText?(value: number, min: number, max: number): string;
   max?: number;
   min?: number;
   size?: number;
-  trackWidth?: number;
+  thickness?: number;
   asChild?: boolean;
 }
 
@@ -102,21 +105,27 @@ function CircularProgressRoot(props: CircularProgressRootProps) {
     max: maxProp,
     min: minProp = 0,
     size = 48,
-    trackWidth = 4,
+    thickness = 4,
     asChild,
     className,
     ...progressProps
   } = props;
 
   if ((maxProp || maxProp === 0) && !getIsValidMaxNumber(maxProp)) {
-    console.error(getInvalidMaxError(`${maxProp}`, CIRCULAR_PROGRESS_NAME));
+    if (process.env.NODE_ENV !== "production") {
+      console.error(getInvalidMaxError(`${maxProp}`, CIRCULAR_PROGRESS_NAME));
+    }
   }
 
   const max = getIsValidMaxNumber(maxProp) ? maxProp : DEFAULT_MAX;
   const min = getIsNumber(minProp) ? minProp : 0;
 
   if (valueProp !== null && !getIsValidValueNumber(valueProp, max, min)) {
-    console.error(getInvalidValueError(`${valueProp}`, CIRCULAR_PROGRESS_NAME));
+    if (process.env.NODE_ENV !== "production") {
+      console.error(
+        getInvalidValueError(`${valueProp}`, CIRCULAR_PROGRESS_NAME),
+      );
+    }
   }
 
   const value = getIsValidValueNumber(valueProp, max, min)
@@ -126,9 +135,14 @@ function CircularProgressRoot(props: CircularProgressRootProps) {
       : getIsNumber(valueProp) && valueProp < min
         ? min
         : null;
-  const valueText = getIsNumber(value) ? getValueText(value, max) : undefined;
+  const valueText = getIsNumber(value)
+    ? getValueText(value, min, max)
+    : undefined;
   const state = getProgressState(value, max);
-  const radius = (size - trackWidth) / 2;
+  const radius = Math.max(0, (size - thickness) / 2);
+
+  const center = size / 2;
+  const circumference = 2 * Math.PI * radius;
 
   const contextValue = React.useMemo<CircularProgressContextValue>(
     () => ({
@@ -138,10 +152,23 @@ function CircularProgressRoot(props: CircularProgressRootProps) {
       min,
       state,
       radius,
-      trackWidth,
+      thickness,
       size,
+      center,
+      circumference,
     }),
-    [value, valueText, max, min, state, radius, trackWidth, size],
+    [
+      value,
+      valueText,
+      max,
+      min,
+      state,
+      radius,
+      thickness,
+      size,
+      center,
+      circumference,
+    ],
   );
 
   const RootPrimitive = asChild ? Slot : "div";
@@ -191,16 +218,15 @@ function CircularProgressTrack(props: React.ComponentProps<"circle">) {
   const { className, ...trackProps } = props;
   const context = useCircularProgressContext(TRACK_NAME);
 
-  const center = context.size / 2;
-
   return (
     <circle
-      cx={center}
-      cy={center}
+      cx={context.center}
+      cy={context.center}
       r={context.radius}
       fill="none"
       stroke="currentColor"
-      strokeWidth={context.trackWidth}
+      strokeWidth={context.thickness}
+      vectorEffect="non-scaling-stroke"
       data-state={context.state}
       {...trackProps}
       className={cn("text-muted-foreground/20", className)}
@@ -212,33 +238,33 @@ function CircularProgressRange(props: React.ComponentProps<"circle">) {
   const { className, ...rangeProps } = props;
   const context = useCircularProgressContext(RANGE_NAME);
 
-  const center = context.size / 2;
-  const circumference = 2 * Math.PI * context.radius;
-
-  let strokeDasharray = circumference;
-  let strokeDashoffset = circumference;
+  let strokeDasharray = context.circumference;
+  let strokeDashoffset = context.circumference;
 
   if (context.state === "indeterminate") {
-    strokeDasharray = circumference;
-    strokeDashoffset = circumference * 0.75;
+    strokeDasharray = context.circumference;
+    strokeDashoffset = context.circumference * 0.75;
   } else if (context.value !== null) {
     const normalizedValue =
-      ((context.value - context.min) / (context.max - context.min)) * 100;
-    const progress = (normalizedValue / 100) * circumference;
-    strokeDashoffset = circumference - progress;
+      context.max === context.min
+        ? 100
+        : ((context.value - context.min) / (context.max - context.min)) * 100;
+    const progress = (normalizedValue / 100) * context.circumference;
+    strokeDashoffset = context.circumference - progress;
   }
 
   return (
     <circle
-      cx={center}
-      cy={center}
+      cx={context.center}
+      cy={context.center}
       r={context.radius}
       fill="none"
       stroke="currentColor"
-      strokeWidth={context.trackWidth}
+      strokeWidth={context.thickness}
       strokeLinecap="round"
       strokeDasharray={strokeDasharray}
       strokeDashoffset={strokeDashoffset}
+      vectorEffect="non-scaling-stroke"
       data-state={context.state}
       data-value={context.value ?? undefined}
       data-max={context.max}

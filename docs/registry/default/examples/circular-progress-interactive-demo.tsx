@@ -63,7 +63,7 @@ export default function CircularProgressControlledDemo() {
           min={0}
           max={100}
           size={80}
-          trackWidth={6}
+          thickness={6}
         >
           <CircularProgressIndicator>
             <CircularProgressTrack />

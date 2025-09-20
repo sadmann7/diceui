@@ -81,7 +81,7 @@ export default function CircularProgressThemesDemo() {
     <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-4">
       {themes.map((theme) => (
         <div key={theme.name} className="flex flex-col items-center gap-3">
-          <CircularProgress value={value} size={80} trackWidth={6}>
+          <CircularProgress value={value} size={80} thickness={6}>
             <CircularProgressIndicator>
               <CircularProgressTrack className={theme.trackClass} />
               <CircularProgressRange className={theme.rangeClass} />
