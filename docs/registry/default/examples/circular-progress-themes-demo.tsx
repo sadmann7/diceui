@@ -63,15 +63,26 @@ const themes = [
 
 export default function CircularProgressThemesDemo() {
   return (
-    <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-4">
-      {themes.map((theme, index) => (
-        <AnimatedCircularProgress
-          key={theme.name}
-          theme={theme}
-          index={index}
-        />
-      ))}
-    </div>
+    <>
+      <div className="hidden grid-cols-4 gap-4 sm:grid">
+        {themes.map((theme, index) => (
+          <AnimatedCircularProgress
+            key={theme.name}
+            theme={theme}
+            index={index}
+          />
+        ))}
+      </div>
+      <div className="grid grid-cols-2 gap-4 sm:hidden">
+        {themes.slice(0, 4).map((theme, index) => (
+          <AnimatedCircularProgress
+            key={theme.name}
+            theme={theme}
+            index={index}
+          />
+        ))}
+      </div>
+    </>
   );
 }
 

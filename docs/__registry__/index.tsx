@@ -429,6 +429,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "use-mobile": {
+      name: "use-mobile",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/hooks/use-mobile.ts",
+        type: "registry:hook",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/hooks/use-mobile.ts")),
+      source: "",
+      chunks: []
+    },
     "angle-slider-demo": {
       name: "angle-slider-demo",
       description: "",
