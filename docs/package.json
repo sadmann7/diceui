@@ -3,11 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build",
+    "build": "pnpm fumadocs-mdx && next build",
     "build:registry": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/build-registry.mts",
     "cleanup:registry": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/cleanup-registry.mts",
-    "postinstall": "pnpm fumadocs-mdx",
-    "dev": "next dev --turbopack",
+    "dev": "pnpm fumadocs-mdx && next dev --turbopack",
     "start": "next start",
     "lint": "biome check .",
     "lint:fix": "biome check . --write",
