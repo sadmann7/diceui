@@ -423,7 +423,7 @@ function StepperRoot(props: StepperRootProps) {
           {...rootProps}
           className={cn(
             "flex gap-6",
-            orientation === "horizontal" ? "flex-col" : "flex-row",
+            orientation === "horizontal" ? "w-full flex-col" : "flex-row",
             className,
           )}
         />

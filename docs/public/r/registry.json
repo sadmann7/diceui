@@ -464,18 +464,6 @@
       ]
     },
     {
-      "name": "cropper-controlled-demo",
-      "type": "registry:component",
-      "title": "Cropper Controlled Demo",
-      "description": "Example showing controlled cropper with external zoom and rotation controls.",
-      "files": [
-        {
-          "path": "registry/default/examples/cropper-controlled-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
       "name": "cropper-file-upload-demo",
       "type": "registry:component",
       "title": "Cropper File Upload Demo",

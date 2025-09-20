@@ -1090,17 +1090,6 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "stepper-controlled-demo",
-    type: "registry:example",
-    registryDependencies: ["stepper", "button"],
-    files: [
-      {
-        path: "examples/stepper-controlled-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
     name: "stepper-form-demo",
     type: "registry:example",
     dependencies: ["@hookform/resolvers/zod", "react-hook-form", "zod"],

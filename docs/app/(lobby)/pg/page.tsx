@@ -1,5 +1,6 @@
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
+import { Demo } from "@/components/demo";
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,8 +28,9 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import CircularProgressThemesDemo from "@/registry/default/examples/circular-progress-themes-demo";
-import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
+import StepperDemo from "@/registry/default/examples/stepper-demo";
+import StepperFormDemo from "@/registry/default/examples/stepper-form-demo";
+import StepperVerticalDemo from "@/registry/default/examples/stepper-vertical-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -42,8 +44,11 @@ import {
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <CircularProgressThemesDemo />
-      <ColorPickerDemo />
+      <Demo
+        first={<StepperDemo />}
+        second={<StepperVerticalDemo />}
+        third={<StepperFormDemo />}
+      />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
