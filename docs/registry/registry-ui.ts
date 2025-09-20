@@ -32,6 +32,32 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "circular-progress",
+    type: "registry:ui",
+    dependencies: ["@radix-ui/react-slot"],
+    cssVars: {
+      theme: {
+        "--animate-spin-around": "spin-around 0.8s linear infinite",
+      },
+    },
+    css: {
+      "@keyframes spin-around": {
+        "0%": {
+          transform: "rotate(-90deg)",
+        },
+        "100%": {
+          transform: "rotate(270deg)",
+        },
+      },
+    },
+    files: [
+      {
+        path: "ui/circular-progress.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "color-picker",
     type: "registry:ui",
     dependencies: [

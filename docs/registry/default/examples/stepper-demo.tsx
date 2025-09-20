@@ -33,7 +33,7 @@ const steps = [
 
 export default function StepperDemo() {
   return (
-    <Stepper defaultValue="profile" className="w-full max-w-md">
+    <Stepper defaultValue="account" className="w-full max-w-md">
       <StepperList>
         {steps.map((step) => (
           <StepperItem key={step.value} value={step.value}>

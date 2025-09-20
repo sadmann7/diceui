@@ -84,7 +84,7 @@ export default function AngleSliderControlledDemo() {
         max={360}
         min={0}
         step={1}
-        radius={80}
+        size={80}
       >
         <AngleSliderTrack>
           <AngleSliderRange />

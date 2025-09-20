@@ -119,6 +119,40 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "circular-progress-demo",
+    type: "registry:example",
+    registryDependencies: ["circular-progress"],
+    files: [
+      {
+        path: "examples/circular-progress-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "circular-progress-interactive-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "circular-progress"],
+    files: [
+      {
+        path: "examples/circular-progress-interactive-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "circular-progress-themes-demo",
+    type: "registry:example",
+    dependencies: ["motion"],
+    registryDependencies: ["circular-progress"],
+    files: [
+      {
+        path: "examples/circular-progress-themes-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "color-picker-demo",
     type: "registry:example",
     registryDependencies: ["color-picker"],

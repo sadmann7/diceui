@@ -72,6 +72,9 @@ function useLazyRef<T>(fn: () => T) {
   return ref as React.RefObject<T>;
 }
 
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
+
 type Direction = "ltr" | "rtl";
 
 interface DivProps extends React.ComponentProps<"div"> {
@@ -95,8 +98,8 @@ interface StoreState {
   min: number;
   max: number;
   step: number;
-  radius: number;
-  trackWidth: number;
+  size: number;
+  thickness: number;
   startAngle: number;
   endAngle: number;
   minStepsBetweenThumbs: number;
@@ -148,8 +151,8 @@ function createStore(
         max: 100,
         step: 1,
         minStepsBetweenThumbs: 0,
-        radius: 80,
-        trackWidth: 8,
+        size: 80,
+        thickness: 8,
         startAngle: -90,
         endAngle: 270,
         disabled: false,
@@ -251,12 +254,12 @@ function createStore(
       const state = stateRef.current;
       if (!state) return { x: 0, y: 0 };
 
-      const { radius } = state;
+      const { size } = state;
       const radians = (angle * Math.PI) / 180;
 
       return {
-        x: radius * Math.cos(radians),
-        y: radius * Math.sin(radians),
+        x: size * Math.cos(radians),
+        y: size * Math.sin(radians),
       };
     },
     notify: () => {
@@ -324,8 +327,8 @@ interface AngleSliderRootProps extends Omit<DivProps, "defaultValue"> {
   max?: number;
   step?: number;
   minStepsBetweenThumbs?: number;
-  radius?: number;
-  trackWidth?: number;
+  size?: number;
+  thickness?: number;
   startAngle?: number;
   endAngle?: number;
   dir?: Direction;
@@ -345,8 +348,8 @@ function AngleSliderRoot(props: AngleSliderRootProps) {
     max = 100,
     step = 1,
     minStepsBetweenThumbs = 0,
-    radius = 80,
-    trackWidth = 8,
+    size = 80,
+    thickness = 8,
     startAngle = -90,
     endAngle = 270,
     dir: dirProp,
@@ -372,8 +375,8 @@ function AngleSliderRoot(props: AngleSliderRootProps) {
     minStepsBetweenThumbs,
     disabled,
     inverted,
-    radius,
-    trackWidth,
+    size,
+    thickness,
     startAngle,
     endAngle,
   }));
@@ -383,31 +386,53 @@ function AngleSliderRoot(props: AngleSliderRootProps) {
     [listenersRef, stateRef, onValueChange, onValueCommit],
   );
 
-  React.useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (value !== undefined) {
       store.setState("values", value);
     }
   }, [value, store]);
 
-  React.useEffect(() => {
-    store.setState("min", min);
-    store.setState("max", max);
-    store.setState("step", step);
-    store.setState("minStepsBetweenThumbs", minStepsBetweenThumbs);
-    store.setState("radius", radius);
-    store.setState("trackWidth", trackWidth);
-    store.setState("startAngle", startAngle);
-    store.setState("endAngle", endAngle);
-    store.setState("disabled", disabled);
-    store.setState("inverted", inverted);
+  useIsomorphicLayoutEffect(() => {
+    const currentState = store.getState();
+
+    if (currentState.min !== min) {
+      store.setState("min", min);
+    }
+    if (currentState.max !== max) {
+      store.setState("max", max);
+    }
+    if (currentState.step !== step) {
+      store.setState("step", step);
+    }
+    if (currentState.minStepsBetweenThumbs !== minStepsBetweenThumbs) {
+      store.setState("minStepsBetweenThumbs", minStepsBetweenThumbs);
+    }
+    if (currentState.size !== size) {
+      store.setState("size", size);
+    }
+    if (currentState.thickness !== thickness) {
+      store.setState("thickness", thickness);
+    }
+    if (currentState.startAngle !== startAngle) {
+      store.setState("startAngle", startAngle);
+    }
+    if (currentState.endAngle !== endAngle) {
+      store.setState("endAngle", endAngle);
+    }
+    if (currentState.disabled !== disabled) {
+      store.setState("disabled", disabled);
+    }
+    if (currentState.inverted !== inverted) {
+      store.setState("inverted", inverted);
+    }
   }, [
     store,
     min,
     max,
     step,
     minStepsBetweenThumbs,
-    radius,
-    trackWidth,
+    size,
+    thickness,
     startAngle,
     endAngle,
     disabled,
@@ -590,8 +615,8 @@ function AngleSliderRoot(props: AngleSliderRootProps) {
             className,
           )}
           style={{
-            width: `${radius * 2 + 40}px`,
-            height: `${radius * 2 + 40}px`,
+            width: `${size * 2 + 40}px`,
+            height: `${size * 2 + 40}px`,
           }}
           onKeyDown={onKeyDown}
           onPointerDown={onPointerDown}
@@ -605,21 +630,17 @@ function AngleSliderRoot(props: AngleSliderRootProps) {
   );
 }
 
-interface AngleSliderTrackProps extends React.ComponentProps<"svg"> {
-  asChild?: boolean;
-}
-
-function AngleSliderTrack(props: AngleSliderTrackProps) {
-  const { className, asChild, children, ...trackProps } = props;
+function AngleSliderTrack(props: React.ComponentProps<"svg">) {
+  const { className, children, ...trackProps } = props;
 
   const disabled = useStore((state) => state.disabled);
-  const radius = useStore((state) => state.radius);
-  const trackWidth = useStore((state) => state.trackWidth);
+  const size = useStore((state) => state.size);
+  const thickness = useStore((state) => state.thickness);
   const startAngle = useStore((state) => state.startAngle);
   const endAngle = useStore((state) => state.endAngle);
 
-  const center = radius + 20;
-  const trackRadius = radius;
+  const center = size + 20;
+  const trackRadius = size;
 
   const totalAngle = (endAngle - startAngle + 360) % 360 || 360;
   const isFullCircle = totalAngle >= 359;
@@ -634,18 +655,16 @@ function AngleSliderTrack(props: AngleSliderTrackProps) {
 
   const largeArcFlag = totalAngle > 180 ? 1 : 0;
 
-  if (asChild) {
-    return <>{children}</>;
-  }
-
   return (
     <svg
+      aria-hidden="true"
+      focusable="false"
       data-disabled={disabled ? "" : undefined}
       data-slot="angle-slider-track"
-      {...trackProps}
-      className={cn("absolute inset-0", className)}
       width={center * 2}
       height={center * 2}
+      {...trackProps}
+      className={cn("absolute inset-0", className)}
     >
       {isFullCircle ? (
         <circle
@@ -655,7 +674,9 @@ function AngleSliderTrack(props: AngleSliderTrackProps) {
           r={trackRadius}
           fill="none"
           stroke="currentColor"
-          strokeWidth={trackWidth}
+          strokeWidth={thickness}
+          strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
           className="stroke-muted"
         />
       ) : (
@@ -664,8 +685,9 @@ function AngleSliderTrack(props: AngleSliderTrackProps) {
           d={`M ${startX} ${startY} A ${trackRadius} ${trackRadius} 0 ${largeArcFlag} 1 ${endX} ${endY}`}
           fill="none"
           stroke="currentColor"
-          strokeWidth={trackWidth}
+          strokeWidth={thickness}
           strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
           className="stroke-muted"
         />
       )}
@@ -674,24 +696,20 @@ function AngleSliderTrack(props: AngleSliderTrackProps) {
   );
 }
 
-interface AngleSliderRangeProps extends React.SVGProps<SVGPathElement> {
-  asChild?: boolean;
-}
-
-function AngleSliderRange(props: AngleSliderRangeProps) {
-  const { className, asChild, children, ...rangeProps } = props;
+function AngleSliderRange(props: React.ComponentProps<"path">) {
+  const { className, ...rangeProps } = props;
 
   const values = useStore((state) => state.values);
   const min = useStore((state) => state.min);
   const max = useStore((state) => state.max);
   const disabled = useStore((state) => state.disabled);
-  const radius = useStore((state) => state.radius);
-  const trackWidth = useStore((state) => state.trackWidth);
+  const size = useStore((state) => state.size);
+  const thickness = useStore((state) => state.thickness);
   const startAngle = useStore((state) => state.startAngle);
   const endAngle = useStore((state) => state.endAngle);
 
-  const center = radius + 20;
-  const trackRadius = radius;
+  const center = size + 20;
+  const trackRadius = size;
 
   const sortedValues = [...values].sort((a, b) => a - b);
 
@@ -719,24 +737,19 @@ function AngleSliderRange(props: AngleSliderRangeProps) {
   const rangeAngle = (rangeEndAngle - rangeStartAngle + 360) % 360;
   const largeArcFlag = rangeAngle > 180 ? 1 : 0;
 
-  if (asChild) {
-    return <>{children}</>;
-  }
-
-  if (rangeStart === rangeEnd) {
-    return null;
-  }
+  if (rangeStart === rangeEnd) return null;
 
   return (
     <path
       data-disabled={disabled ? "" : undefined}
       data-slot="angle-slider-range"
-      {...rangeProps}
       d={`M ${startX} ${startY} A ${trackRadius} ${trackRadius} 0 ${largeArcFlag} 1 ${endX} ${endY}`}
       fill="none"
       stroke="currentColor"
-      strokeWidth={trackWidth}
+      strokeWidth={thickness}
       strokeLinecap="round"
+      vectorEffect="non-scaling-stroke"
+      {...rangeProps}
       className={cn("stroke-primary", className)}
     />
   );
@@ -744,18 +757,10 @@ function AngleSliderRange(props: AngleSliderRangeProps) {
 
 interface AngleSliderThumbProps extends DivProps {
   index?: number;
-  name?: string;
 }
 
 function AngleSliderThumb(props: AngleSliderThumbProps) {
-  const {
-    index: indexProp,
-    name: nameProp,
-    className,
-    asChild,
-    ref,
-    ...thumbProps
-  } = props;
+  const { index: indexProp, className, asChild, ref, ...thumbProps } = props;
 
   const context = useSliderContext(THUMB_NAME);
   const store = useStoreContext(THUMB_NAME);
@@ -764,7 +769,7 @@ function AngleSliderThumb(props: AngleSliderThumbProps) {
   const max = useStore((state) => state.max);
   const step = useStore((state) => state.step);
   const disabled = useStore((state) => state.disabled);
-  const radius = useStore((state) => state.radius);
+  const size = useStore((state) => state.size);
 
   const thumbId = React.useId();
   const [thumbElement, setThumbElement] = React.useState<ThumbElement | null>(
@@ -799,7 +804,7 @@ function AngleSliderThumb(props: AngleSliderThumbProps) {
 
     const angle = store.getAngleFromValue(value);
     const position = store.getPositionFromAngle(angle);
-    const center = radius + 20;
+    const center = size + 20;
 
     return {
       position: "absolute",
@@ -807,7 +812,7 @@ function AngleSliderThumb(props: AngleSliderThumbProps) {
       top: `${center + position.y}px`,
       transform: "translate(-50%, -50%)",
     };
-  }, [value, store, radius]);
+  }, [value, store, size]);
 
   const onFocus = React.useCallback(
     (event: React.FocusEvent<ThumbElement>) => {
@@ -848,10 +853,9 @@ function AngleSliderThumb(props: AngleSliderThumbProps) {
           key={index}
           control={thumbElement}
           name={
-            nameProp ??
-            (context.name
+            context.name
               ? context.name + (values.length > 1 ? "[]" : "")
-              : undefined)
+              : undefined
           }
           form={context.form}
           value={value.toString()}
@@ -883,10 +887,10 @@ function AngleSliderValue(props: AngleSliderValueProps) {
   } = props;
 
   const values = useStore((state) => state.values);
-  const radius = useStore((state) => state.radius);
+  const size = useStore((state) => state.size);
   const disabled = useStore((state) => state.disabled);
 
-  const center = radius + 20;
+  const center = size + 20;
 
   const displayValue = React.useMemo(() => {
     if (formatValue) {

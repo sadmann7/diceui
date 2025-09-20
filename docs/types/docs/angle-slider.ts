@@ -45,16 +45,16 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   max?: number;
 
   /**
-   * The radius of the circular track in pixels.
+   * The size (radius) of the circular track in pixels.
    * @default 80
    */
-  radius?: number;
+  size?: number;
 
   /**
-   * The width of the track and range lines in pixels.
+   * The thickness of the track and range lines in pixels.
    * @default 8
    */
-  trackWidth?: number;
+  thickness?: number;
 
   /**
    * The starting angle of the slider in degrees.
@@ -112,20 +112,15 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   inverted?: boolean;
 }
 
-export interface TrackProps extends EmptyProps<"div">, CompositionProps {}
+export interface TrackProps extends EmptyProps<"div"> {}
 
-export interface RangeProps extends EmptyProps<"div">, CompositionProps {}
+export interface RangeProps extends EmptyProps<"div"> {}
 
 export interface ThumbProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The index of the thumb.
    */
   index?: number;
-
-  /**
-   * The name of the thumb for form submission.
-   */
-  name?: string;
 }
 
 export interface ValueProps extends EmptyProps<"div">, CompositionProps {

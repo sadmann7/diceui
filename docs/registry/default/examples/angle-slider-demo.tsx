@@ -8,7 +8,7 @@ import {
 
 export default function AngleSliderDemo() {
   return (
-    <AngleSlider defaultValue={[180]} max={360} min={0} step={1} radius={80}>
+    <AngleSlider defaultValue={[180]} max={360} min={0} step={1} size={80}>
       <AngleSliderTrack>
         <AngleSliderRange />
       </AngleSliderTrack>

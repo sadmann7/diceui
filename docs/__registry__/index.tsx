@@ -59,6 +59,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "circular-progress": {
+      name: "circular-progress",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/ui/circular-progress.tsx",
+        type: "registry:ui",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/circular-progress.tsx")),
+      source: "",
+      chunks: []
+    },
     "color-picker": {
       name: "color-picker",
       description: "",
@@ -552,6 +566,48 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/checkbox-group-validation-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "circular-progress-demo": {
+      name: "circular-progress-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["circular-progress"],
+      files: [{
+        path: "registry/default/examples/circular-progress-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/circular-progress-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "circular-progress-interactive-demo": {
+      name: "circular-progress-interactive-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","circular-progress"],
+      files: [{
+        path: "registry/default/examples/circular-progress-interactive-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/circular-progress-interactive-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "circular-progress-themes-demo": {
+      name: "circular-progress-themes-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["circular-progress"],
+      files: [{
+        path: "registry/default/examples/circular-progress-themes-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/circular-progress-themes-demo.tsx")),
       source: "",
       chunks: []
     },

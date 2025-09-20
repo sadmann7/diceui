@@ -29,12 +29,12 @@ npx shadcn@latest add "https://diceui.com/r/angle-slider"
   <Step>
     Copy the refs composition utilities into your `lib/compose-refs.ts` file.
 
-    <ComponentSource src="./lib/compose-refs.ts" />
+    <ComponentSource name="compose-refs" />
   </Step>
   <Step>
-    Copy the visually hidden input component into your project.
+    Copy the visually hidden input component into your `components/visually-hidden-input.tsx` file.
 
-    <ComponentSource src="./components/visually-hidden-input.tsx" />
+    <ComponentSource name="visually-hidden-input" />
   </Step>
   <Step>
     Copy and paste the following code into your project.
@@ -79,7 +79,7 @@ Use multiple thumbs to create angle ranges with minimum step constraints.
 
 <ComponentTabs name="angle-slider-range-demo" />
 
-### Variant Themes
+### Themes
 
 Slider variants with different themes.
 
@@ -90,6 +90,31 @@ Slider variants with different themes.
 Integrate the angle slider with form validation and submission.
 
 <ComponentTabs name="angle-slider-form-demo" />
+
+## Theming
+
+You can customize the appearance by targeting specific components:
+
+### Track Theming
+Use `[&>[data-slot='angle-slider-track-rail']]` to style the background track:
+```tsx
+<AngleSliderTrack className="[&>[data-slot='angle-slider-track-rail']]:stroke-green-100" />
+```
+
+### Range Theming
+```tsx
+<AngleSliderRange className="stroke-green-500" />
+```
+
+### Thumb Theming
+```tsx
+<AngleSliderThumb className="border-green-500 bg-green-50 ring-green-500/50" />
+```
+
+### Value Theming
+```tsx
+<AngleSliderValue className="text-green-600 dark:text-green-400" />
+```
 
 ## API Reference
 
@@ -228,8 +253,9 @@ The angle slider component includes comprehensive accessibility features:
 
 ### Features
 
-- **Touch Support**: Optimized for touch interactions on mobile devices
-- **Pointer Capture**: Smooth dragging experience with proper pointer handling
-- **RTL Support**: Full right-to-left language support
-- **High Contrast**: Respects user's high contrast preferences
-- **Reduced Motion**: Honors `prefers-reduced-motion` settings
+- Optimized for touch interactions on mobile devices
+- Smooth dragging experience with proper pointer handling
+- Full right-to-left language support
+- Comprehensive keyboard navigation and screen reader support
+- Angle ranges with minimum step constraints with multiple thumbs
+- Controlled and uncontrolled state management

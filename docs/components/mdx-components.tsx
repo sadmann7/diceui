@@ -1,6 +1,6 @@
 import type { Page } from "fumadocs-core/source";
 import { createGenerator } from "fumadocs-typescript";
-import { AutoTypeTable } from "fumadocs-typescript/ui";
+import { AutoTypeTable, type AutoTypeTableProps } from "fumadocs-typescript/ui";
 import { CodeBlock, Pre } from "fumadocs-ui/components/codeblock";
 import { Heading } from "fumadocs-ui/components/heading";
 import { Step, Steps } from "fumadocs-ui/components/steps";
@@ -60,7 +60,7 @@ export function useMdxComponents(
     ComponentSource,
     Steps,
     Step,
-    AutoTypeTable: (props) => (
+    AutoTypeTable: (props: AutoTypeTableProps) => (
       <div className="auto-type-table">
         <AutoTypeTable {...props} generator={generator} />
       </div>

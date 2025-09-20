@@ -20,7 +20,7 @@ export default function AngleSliderRangeDemo() {
         max={360}
         min={0}
         step={5}
-        radius={80}
+        size={80}
         minStepsBetweenThumbs={2}
       >
         <AngleSliderTrack>

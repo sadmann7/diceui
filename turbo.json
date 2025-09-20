@@ -2,12 +2,13 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "dev": {
+      "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
     },
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", ".nuxt"]
+      "outputs": ["dist/**", ".next/**", ".nuxt/**", ".source/**"]
     },
     "lint": {
       "cache": false,
@@ -20,6 +21,14 @@
     "typecheck": {
       "dependsOn": ["^build"],
       "outputs": []
+    },
+    "docs#typecheck": {
+      "dependsOn": ["^build", "docs#generate:content"],
+      "outputs": []
+    },
+    "generate:content": {
+      "dependsOn": ["^build"],
+      "outputs": [".source/**"]
     },
     "check": {
       "dependsOn": ["^lint", "^typecheck"],
