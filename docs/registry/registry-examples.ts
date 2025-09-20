@@ -143,6 +143,7 @@ export const examples: Registry["items"] = [
   {
     name: "circular-progress-themes-demo",
     type: "registry:example",
+    dependencies: ["motion"],
     registryDependencies: ["circular-progress"],
     files: [
       {

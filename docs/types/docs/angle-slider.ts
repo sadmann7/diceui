@@ -112,9 +112,9 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   inverted?: boolean;
 }
 
-export interface TrackProps extends EmptyProps<"div">, CompositionProps {}
+export interface TrackProps extends EmptyProps<"div"> {}
 
-export interface RangeProps extends EmptyProps<"div">, CompositionProps {}
+export interface RangeProps extends EmptyProps<"div"> {}
 
 export interface ThumbProps extends EmptyProps<"div">, CompositionProps {
   /**

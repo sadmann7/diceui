@@ -630,12 +630,8 @@ function AngleSliderRoot(props: AngleSliderRootProps) {
   );
 }
 
-interface AngleSliderTrackProps extends React.ComponentProps<"svg"> {
-  asChild?: boolean;
-}
-
-function AngleSliderTrack(props: AngleSliderTrackProps) {
-  const { className, asChild, children, ...trackProps } = props;
+function AngleSliderTrack(props: React.ComponentProps<"svg">) {
+  const { className, children, ...trackProps } = props;
 
   const disabled = useStore((state) => state.disabled);
   const size = useStore((state) => state.size);
@@ -659,18 +655,16 @@ function AngleSliderTrack(props: AngleSliderTrackProps) {
 
   const largeArcFlag = totalAngle > 180 ? 1 : 0;
 
-  if (asChild) {
-    return <>{children}</>;
-  }
-
   return (
     <svg
+      aria-hidden="true"
+      focusable="false"
       data-disabled={disabled ? "" : undefined}
       data-slot="angle-slider-track"
-      {...trackProps}
-      className={cn("absolute inset-0", className)}
       width={center * 2}
       height={center * 2}
+      {...trackProps}
+      className={cn("absolute inset-0", className)}
     >
       {isFullCircle ? (
         <circle
@@ -699,12 +693,8 @@ function AngleSliderTrack(props: AngleSliderTrackProps) {
   );
 }
 
-interface AngleSliderRangeProps extends React.ComponentProps<"path"> {
-  asChild?: boolean;
-}
-
-function AngleSliderRange(props: AngleSliderRangeProps) {
-  const { className, asChild, children, ...rangeProps } = props;
+function AngleSliderRange(props: React.ComponentProps<"path">) {
+  const { className, ...rangeProps } = props;
 
   const values = useStore((state) => state.values);
   const min = useStore((state) => state.min);
@@ -744,24 +734,18 @@ function AngleSliderRange(props: AngleSliderRangeProps) {
   const rangeAngle = (rangeEndAngle - rangeStartAngle + 360) % 360;
   const largeArcFlag = rangeAngle > 180 ? 1 : 0;
 
-  if (asChild) {
-    return <>{children}</>;
-  }
-
-  if (rangeStart === rangeEnd) {
-    return null;
-  }
+  if (rangeStart === rangeEnd) return null;
 
   return (
     <path
       data-disabled={disabled ? "" : undefined}
       data-slot="angle-slider-range"
-      {...rangeProps}
       d={`M ${startX} ${startY} A ${trackRadius} ${trackRadius} 0 ${largeArcFlag} 1 ${endX} ${endY}`}
       fill="none"
       stroke="currentColor"
       strokeWidth={thickness}
       strokeLinecap="round"
+      {...rangeProps}
       className={cn("stroke-primary", className)}
     />
   );

@@ -58,9 +58,7 @@ import {
 Or use the `Combined` component to get all the parts in one.
 
 ```tsx
-import {
-  CircularProgressCombined,
-} from "@/components/ui/circular-progress";
+import { CircularProgressCombined } from "@/registry/default/ui/circular-progress";
 
 <CircularProgressCombined />
 ```
@@ -134,6 +132,10 @@ The main container component for the circular progress.
       title: "[data-min]",
       value: "The minimum progress value.",
     },
+    {
+      title: "[data-percentage]",
+      value: "The normalized progress value as a decimal between 0 and 1 (only present when not indeterminate).",
+    },
   ]}
 />
 
@@ -163,6 +165,10 @@ The SVG container that holds the circular progress tracks and ranges.
     {
       title: "[data-min]",
       value: "The minimum progress value.",
+    },
+    {
+      title: "[data-percentage]",
+      value: "The normalized progress value as a decimal between 0 and 1 (only present when not indeterminate).",
     },
   ]}
 />

@@ -1,5 +1,6 @@
 "use client";
 
+import { motion, useInView, useMotionValue, useSpring } from "motion/react";
 import * as React from "react";
 import {
   CircularProgress,
@@ -61,43 +62,86 @@ const themes = [
 ];
 
 export default function CircularProgressThemesDemo() {
-  const [value, setValue] = React.useState(40);
-
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setValue((prev) => {
-        const next = prev + 1;
-        if (next >= 100) {
-          clearInterval(interval);
-          return 100;
-        }
-        return next;
-      });
-    }, 100);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-4">
-      {themes.map((theme) => (
-        <div key={theme.name} className="flex flex-col items-center gap-3">
-          <CircularProgress value={value} size={80} thickness={6}>
-            <CircularProgressIndicator>
-              <CircularProgressTrack className={theme.trackClass} />
-              <CircularProgressRange className={theme.rangeClass} />
-            </CircularProgressIndicator>
-            <CircularProgressValueText
-              className={`font-semibold text-sm ${theme.textClass}`}
-            />
-          </CircularProgress>
-          <div className="text-center">
-            <div className="font-medium text-sm">{theme.name}</div>
-            <div className="text-muted-foreground text-xs">
-              {value}% complete
-            </div>
-          </div>
-        </div>
+      {themes.map((theme, index) => (
+        <AnimatedCircularProgress
+          key={theme.name}
+          theme={theme}
+          index={index}
+        />
       ))}
     </div>
+  );
+}
+
+interface AnimatedCircularProgressProps {
+  theme: (typeof themes)[0];
+  index: number;
+}
+
+function AnimatedCircularProgress({
+  theme,
+  index,
+}: AnimatedCircularProgressProps) {
+  const ref = React.useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  const motionValue = useMotionValue(0);
+  const springValue = useSpring(motionValue, {
+    stiffness: 60,
+    damping: 15,
+    mass: 1,
+  });
+
+  const [displayValue, setDisplayValue] = React.useState(0);
+
+  React.useEffect(() => {
+    if (isInView) {
+      const delay = index * 150;
+      const timer = setTimeout(() => {
+        motionValue.set(75);
+      }, delay);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isInView, motionValue, index]);
+
+  React.useEffect(() => {
+    const unsubscribe = springValue.on("change", (latest) => {
+      setDisplayValue(Math.round(latest));
+    });
+
+    return unsubscribe;
+  }, [springValue]);
+
+  return (
+    <motion.div
+      ref={ref}
+      className="flex flex-col items-center gap-3"
+      initial={{ opacity: 0, y: 20 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+      transition={{
+        duration: 0.6,
+        delay: index * 0.1,
+        ease: [0.21, 1.11, 0.81, 0.99],
+      }}
+    >
+      <CircularProgress value={displayValue} size={80} thickness={6}>
+        <CircularProgressIndicator>
+          <CircularProgressTrack className={theme.trackClass} />
+          <CircularProgressRange className={theme.rangeClass} />
+        </CircularProgressIndicator>
+        <CircularProgressValueText
+          className={`font-semibold text-sm ${theme.textClass}`}
+        />
+      </CircularProgress>
+      <div className="text-center">
+        <div className="font-medium text-sm">{theme.name}</div>
+        <div className="text-muted-foreground text-xs">
+          {displayValue}% complete
+        </div>
+      </div>
+    </motion.div>
   );
 }
