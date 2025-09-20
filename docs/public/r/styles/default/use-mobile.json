@@ -1,0 +1,12 @@
+{
+  "name": "use-mobile",
+  "type": "registry:hook",
+  "files": [
+    {
+      "path": "hooks/use-mobile.ts",
+      "content": "import * as React from \"react\";\n\nconst MOBILE_BREAKPOINT = 768;\n\nexport function useIsMobile({\n  breakpoint = MOBILE_BREAKPOINT,\n}: {\n  breakpoint?: number;\n}) {\n  const [isMobile, setIsMobile] = React.useState<boolean | undefined>(\n    undefined,\n  );\n\n  React.useEffect(() => {\n    const mql = window.matchMedia(`(max-width: ${breakpoint - 1}px)`);\n    const onChange = () => {\n      setIsMobile(window.innerWidth < breakpoint);\n    };\n    mql.addEventListener(\"change\", onChange);\n    setIsMobile(window.innerWidth < breakpoint);\n    return () => mql.removeEventListener(\"change\", onChange);\n  }, [breakpoint]);\n\n  return !!isMobile;\n}\n",
+      "type": "registry:hook",
+      "target": ""
+    }
+  ]
+}

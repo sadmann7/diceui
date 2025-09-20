@@ -348,7 +348,7 @@ function AngleSliderRoot(props: AngleSliderRootProps) {
     max = 100,
     step = 1,
     minStepsBetweenThumbs = 0,
-    size = 80,
+    size = 60,
     thickness = 8,
     startAngle = -90,
     endAngle = 270,

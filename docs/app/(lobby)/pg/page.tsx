@@ -27,10 +27,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import AngleSliderDemo from "@/registry/default/examples/angle-slider-demo";
-import CircularProgressDemo from "@/registry/default/examples/circular-progress-demo";
-import CircularProgressInteractiveDemo from "@/registry/default/examples/circular-progress-interactive-demo";
-import StepperVerticalDemo from "@/registry/default/examples/stepper-vertical-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -44,10 +40,6 @@ import {
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <StepperVerticalDemo />
-      <AngleSliderDemo />
-      <CircularProgressDemo />
-      <CircularProgressInteractiveDemo />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />

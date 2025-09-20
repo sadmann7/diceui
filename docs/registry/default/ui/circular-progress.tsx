@@ -210,7 +210,7 @@ function CircularProgressRoot(props: CircularProgressRootProps) {
         data-percentage={percentage}
         {...progressProps}
         className={cn(
-          "relative inline-flex items-center justify-center",
+          "relative inline-flex w-fit items-center justify-center",
           className,
         )}
       >

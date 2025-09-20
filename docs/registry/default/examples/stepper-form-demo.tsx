@@ -111,7 +111,7 @@ export default function StepperFormDemo() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form className="w-full" onSubmit={form.handleSubmit(onSubmit)}>
         <Stepper
           value={currentStep}
           onValueChange={onValueChange}

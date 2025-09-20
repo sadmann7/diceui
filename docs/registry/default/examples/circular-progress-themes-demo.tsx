@@ -2,6 +2,7 @@
 
 import { motion, useInView, useMotionValue, useSpring } from "motion/react";
 import * as React from "react";
+import { cn } from "@/lib/utils";
 import {
   CircularProgress,
   CircularProgressIndicator,
@@ -63,15 +64,26 @@ const themes = [
 
 export default function CircularProgressThemesDemo() {
   return (
-    <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-4">
-      {themes.map((theme, index) => (
-        <AnimatedCircularProgress
-          key={theme.name}
-          theme={theme}
-          index={index}
-        />
-      ))}
-    </div>
+    <>
+      <div className="hidden grid-cols-4 gap-4 sm:grid">
+        {themes.map((theme, index) => (
+          <AnimatedCircularProgress
+            key={theme.name}
+            theme={theme}
+            index={index}
+          />
+        ))}
+      </div>
+      <div className="grid grid-cols-2 gap-4 sm:hidden">
+        {themes.slice(0, 4).map((theme, index) => (
+          <AnimatedCircularProgress
+            key={theme.name}
+            theme={theme}
+            index={index}
+          />
+        ))}
+      </div>
+    </>
   );
 }
 
@@ -133,14 +145,14 @@ function AnimatedCircularProgress({
           <CircularProgressRange className={theme.rangeClass} />
         </CircularProgressIndicator>
         <CircularProgressValueText
-          className={`font-semibold text-sm ${theme.textClass}`}
+          className={cn("font-semibold text-sm", theme.textClass)}
         />
       </CircularProgress>
-      <div className="text-center">
-        <div className="font-medium text-sm">{theme.name}</div>
-        <div className="text-muted-foreground text-xs">
+      <div className="flex flex-col items-center gap-1 text-center">
+        <h4 className="font-medium text-sm">{theme.name}</h4>
+        <p className="text-muted-foreground text-xs">
           {displayValue}% complete
-        </div>
+        </p>
       </div>
     </motion.div>
   );

@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import {
   AngleSlider,
   AngleSliderRange,
@@ -6,92 +7,127 @@ import {
   AngleSliderValue,
 } from "@/registry/default/ui/angle-slider";
 
+const themes = [
+  {
+    name: "Default",
+    value: 60,
+    trackClass:
+      "[&>[data-slot='angle-slider-track-rail']]:stroke-muted-foreground/20",
+    rangeClass: "stroke-primary",
+    thumbClass: "border-primary bg-background ring-primary/50",
+    textClass: "text-foreground",
+  },
+  {
+    name: "Success",
+    value: 120,
+    trackClass:
+      "[&>[data-slot='angle-slider-track-rail']]:stroke-green-200 dark:[&>[data-slot='angle-slider-track-rail']]:stroke-green-900",
+    rangeClass: "stroke-green-500",
+    thumbClass:
+      "border-green-500 bg-green-50 ring-green-500/50 dark:bg-green-950",
+    textClass: "text-green-700 dark:text-green-300",
+  },
+  {
+    name: "Warning",
+    value: 180,
+    trackClass:
+      "[&>[data-slot='angle-slider-track-rail']]:stroke-yellow-200 dark:[&>[data-slot='angle-slider-track-rail']]:stroke-yellow-900",
+    rangeClass: "stroke-yellow-500",
+    thumbClass:
+      "border-yellow-500 bg-yellow-50 ring-yellow-500/50 dark:bg-yellow-950",
+    textClass: "text-yellow-700 dark:text-yellow-300",
+  },
+  {
+    name: "Destructive",
+    value: 240,
+    trackClass:
+      "[&>[data-slot='angle-slider-track-rail']]:stroke-red-200 dark:[&>[data-slot='angle-slider-track-rail']]:stroke-red-900",
+    rangeClass: "stroke-red-500",
+    thumbClass: "border-red-500 bg-red-50 ring-red-500/50 dark:bg-red-950",
+    textClass: "text-red-700 dark:text-red-300",
+  },
+  {
+    name: "Purple",
+    value: 300,
+    trackClass:
+      "[&>[data-slot='angle-slider-track-rail']]:stroke-purple-200 dark:[&>[data-slot='angle-slider-track-rail']]:stroke-purple-900",
+    rangeClass: "stroke-purple-500",
+    thumbClass:
+      "border-purple-500 bg-purple-50 ring-purple-500/50 dark:bg-purple-950",
+    textClass: "text-purple-700 dark:text-purple-300",
+  },
+  {
+    name: "Orange",
+    value: 45,
+    trackClass:
+      "[&>[data-slot='angle-slider-track-rail']]:stroke-orange-200 dark:[&>[data-slot='angle-slider-track-rail']]:stroke-orange-900",
+    rangeClass: "stroke-orange-500",
+    thumbClass:
+      "border-orange-500 bg-orange-50 ring-orange-500/50 dark:bg-orange-950",
+    textClass: "text-orange-700 dark:text-orange-300",
+  },
+  {
+    name: "Blue",
+    value: 90,
+    trackClass:
+      "[&>[data-slot='angle-slider-track-rail']]:stroke-blue-200 dark:[&>[data-slot='angle-slider-track-rail']]:stroke-blue-900",
+    rangeClass: "stroke-blue-500",
+    thumbClass: "border-blue-500 bg-blue-50 ring-blue-500/50 dark:bg-blue-950",
+    textClass: "text-blue-700 dark:text-blue-300",
+  },
+  {
+    name: "Pink",
+    value: 270,
+    trackClass:
+      "[&>[data-slot='angle-slider-track-rail']]:stroke-pink-200 dark:[&>[data-slot='angle-slider-track-rail']]:stroke-pink-900",
+    rangeClass: "stroke-pink-500",
+    thumbClass: "border-pink-500 bg-pink-50 ring-pink-500/50 dark:bg-pink-950",
+    textClass: "text-pink-700 dark:text-pink-300",
+  },
+];
+
 export default function AngleSliderThemesDemo() {
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-      <div className="flex flex-col items-center gap-1.5">
-        <h3 className="font-medium text-muted-foreground text-sm">Default</h3>
-        <AngleSlider defaultValue={[60]} max={360} min={0} step={1} size={60}>
-          <AngleSliderTrack>
-            <AngleSliderRange />
-          </AngleSliderTrack>
-          <AngleSliderThumb />
-          <AngleSliderValue />
-        </AngleSlider>
+    <>
+      <div className="hidden grid-cols-4 gap-4 sm:grid">
+        {themes.map((theme) => (
+          <AngleSliderCard key={theme.name} theme={theme} />
+        ))}
       </div>
-      <div className="flex flex-col items-center gap-1.5">
-        <h3 className="font-medium text-muted-foreground text-sm">Success</h3>
-        <AngleSlider defaultValue={[120]} max={360} min={0} step={1} size={60}>
-          <AngleSliderTrack className="[&>[data-slot='angle-slider-track-rail']]:stroke-green-100 dark:[&>[data-slot='angle-slider-track-rail']]:stroke-green-900">
-            <AngleSliderRange className="stroke-green-500" />
-          </AngleSliderTrack>
-          <AngleSliderThumb className="border-green-500 bg-green-50 ring-green-500/50 dark:bg-green-950" />
-          <AngleSliderValue className="text-green-600 dark:text-green-400" />
-        </AngleSlider>
+      <div className="grid grid-cols-2 gap-4 sm:hidden">
+        {themes.slice(0, 4).map((theme) => (
+          <AngleSliderCard key={theme.name} theme={theme} />
+        ))}
       </div>
-      <div className="flex flex-col items-center gap-1.5">
-        <h3 className="font-medium text-muted-foreground text-sm">Danger</h3>
-        <AngleSlider defaultValue={[180]} max={360} min={0} step={1} size={60}>
-          <AngleSliderTrack className="[&>[data-slot='angle-slider-track-rail']]:stroke-red-100 dark:[&>[data-slot='angle-slider-track-rail']]:stroke-red-900">
-            <AngleSliderRange className="stroke-red-500" />
-          </AngleSliderTrack>
-          <AngleSliderThumb className="border-red-500 bg-red-50 ring-red-500/50 dark:bg-red-950" />
-          <AngleSliderValue className="text-red-600 dark:text-red-400" />
-        </AngleSlider>
-      </div>
-      <div className="flex flex-col items-center gap-1.5">
-        <h3 className="font-medium text-muted-foreground text-sm">Warning</h3>
-        <AngleSlider defaultValue={[240]} max={360} min={0} step={1} size={60}>
-          <AngleSliderTrack className="[&>[data-slot='angle-slider-track-rail']]:stroke-orange-100 dark:[&>[data-slot='angle-slider-track-rail']]:stroke-orange-900">
-            <AngleSliderRange className="stroke-orange-500" />
-          </AngleSliderTrack>
-          <AngleSliderThumb className="border-orange-500 bg-orange-50 ring-orange-500/50 dark:bg-orange-950" />
-          <AngleSliderValue className="text-orange-600 dark:text-orange-400" />
-        </AngleSlider>
-      </div>
-      <div className="flex flex-col items-center gap-1.5">
-        <h3 className="font-medium text-muted-foreground text-sm">
-          Dual Range
-        </h3>
-        <AngleSlider
-          defaultValue={[40, 240]}
-          max={360}
-          min={0}
-          step={1}
-          size={60}
-        >
-          <AngleSliderTrack className="[&>[data-slot='angle-slider-track-rail']]:stroke-purple-100 dark:[&>[data-slot='angle-slider-track-rail']]:stroke-purple-900">
-            <AngleSliderRange className="stroke-purple-500" />
-          </AngleSliderTrack>
-          <AngleSliderThumb
-            index={0}
-            className="border-purple-500 bg-purple-50 ring-purple-500/50 dark:bg-purple-950"
-          />
-          <AngleSliderThumb
-            index={1}
-            className="border-purple-500 bg-purple-50 ring-purple-500/50 dark:bg-purple-950"
-          />
-          <AngleSliderValue className="text-purple-600 dark:text-purple-400" />
-        </AngleSlider>
-      </div>
-      <div className="flex flex-col items-center gap-1.5">
-        <h3 className="font-medium text-muted-foreground text-sm">
-          Minimalist
-        </h3>
-        <AngleSlider
-          defaultValue={[90]}
-          max={360}
-          min={0}
-          step={1}
-          size={60}
-          thickness={2}
-        >
-          <AngleSliderTrack className="[&>[data-slot='angle-slider-track-rail']]:stroke-gray-300 dark:[&>[data-slot='angle-slider-track-rail']]:stroke-gray-600">
-            <AngleSliderRange className="stroke-gray-900 dark:stroke-gray-100" />
-          </AngleSliderTrack>
-          <AngleSliderThumb className="size-3 border border-gray-900 bg-white ring-gray-900/20 dark:border-gray-100 dark:bg-gray-900 dark:ring-gray-100/20" />
-          <AngleSliderValue className="text-gray-600 text-xs dark:text-gray-400" />
-        </AngleSlider>
+    </>
+  );
+}
+
+interface AngleSliderCardProps {
+  theme: (typeof themes)[0];
+}
+
+function AngleSliderCard({ theme }: AngleSliderCardProps) {
+  return (
+    <div className="flex flex-col items-center gap-1">
+      <AngleSlider
+        defaultValue={[theme.value]}
+        max={360}
+        min={0}
+        step={1}
+        size={60}
+      >
+        <AngleSliderTrack className={theme.trackClass}>
+          <AngleSliderRange className={theme.rangeClass} />
+        </AngleSliderTrack>
+        <AngleSliderThumb className={theme.thumbClass} />
+        <AngleSliderValue
+          className={cn("font-semibold text-sm", theme.textClass)}
+        />
+      </AngleSlider>
+      <div className="flex flex-col items-center gap-1 text-center">
+        <h4 className="font-medium text-sm">{theme.name}</h4>
+        <p className="text-muted-foreground text-xs">{theme.value}°</p>
       </div>
     </div>
   );

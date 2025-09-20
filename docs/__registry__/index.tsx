@@ -429,6 +429,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "use-mobile": {
+      name: "use-mobile",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/hooks/use-mobile.ts",
+        type: "registry:hook",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/hooks/use-mobile.ts")),
+      source: "",
+      chunks: []
+    },
     "angle-slider-demo": {
       name: "angle-slider-demo",
       description: "",
@@ -1658,20 +1672,6 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/stepper-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "stepper-controlled-demo": {
-      name: "stepper-controlled-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["stepper","button"],
-      files: [{
-        path: "registry/default/examples/stepper-controlled-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/stepper-controlled-demo.tsx")),
       source: "",
       chunks: []
     },
