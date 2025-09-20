@@ -675,6 +675,8 @@ function AngleSliderTrack(props: React.ComponentProps<"svg">) {
           fill="none"
           stroke="currentColor"
           strokeWidth={thickness}
+          strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
           className="stroke-muted"
         />
       ) : (
@@ -685,6 +687,7 @@ function AngleSliderTrack(props: React.ComponentProps<"svg">) {
           stroke="currentColor"
           strokeWidth={thickness}
           strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
           className="stroke-muted"
         />
       )}
@@ -745,6 +748,7 @@ function AngleSliderRange(props: React.ComponentProps<"path">) {
       stroke="currentColor"
       strokeWidth={thickness}
       strokeLinecap="round"
+      vectorEffect="non-scaling-stroke"
       {...rangeProps}
       className={cn("stroke-primary", className)}
     />
