@@ -152,7 +152,7 @@ function createStore(
         step: 1,
         minStepsBetweenThumbs: 0,
         size: 80,
-        trackWidth: 8,
+        thickness: 8,
         startAngle: -90,
         endAngle: 270,
         disabled: false,

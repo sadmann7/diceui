@@ -91,8 +91,8 @@ function useCircularProgressContext(consumerName: string) {
 interface CircularProgressRootProps extends React.ComponentProps<"div"> {
   value?: number | null | undefined;
   getValueText?(value: number, min: number, max: number): string;
-  max?: number;
   min?: number;
+  max?: number;
   size?: number;
   thickness?: number;
   asChild?: boolean;
@@ -102,8 +102,8 @@ function CircularProgressRoot(props: CircularProgressRootProps) {
   const {
     value: valueProp = null,
     getValueText = getDefaultValueText,
-    max: maxProp,
     min: minProp = 0,
+    max: maxProp,
     size = 48,
     thickness = 4,
     asChild,
@@ -216,6 +216,7 @@ function CircularProgressIndicator(props: React.ComponentProps<"svg">) {
 
 function CircularProgressTrack(props: React.ComponentProps<"circle">) {
   const { className, ...trackProps } = props;
+
   const context = useCircularProgressContext(TRACK_NAME);
 
   return (
@@ -236,6 +237,7 @@ function CircularProgressTrack(props: React.ComponentProps<"circle">) {
 
 function CircularProgressRange(props: React.ComponentProps<"circle">) {
   const { className, ...rangeProps } = props;
+
   const context = useCircularProgressContext(RANGE_NAME);
 
   let strokeDasharray = context.circumference;
@@ -290,6 +292,7 @@ interface CircularProgressValueTextProps extends React.ComponentProps<"span"> {
 
 function CircularProgressValueText(props: CircularProgressValueTextProps) {
   const { asChild, className, children, ...valueTextProps } = props;
+
   const context = useCircularProgressContext(VALUE_TEXT_NAME);
 
   const ValueTextPrimitive = asChild ? Slot : "span";
