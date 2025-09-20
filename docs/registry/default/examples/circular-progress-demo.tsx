@@ -11,11 +11,17 @@ import {
 } from "@/registry/default/ui/circular-progress";
 
 export default function CircularProgressDemo() {
-  const [value, setValue] = React.useState(40);
+  const [value, setValue] = React.useState(0);
 
   React.useEffect(() => {
     const interval = setInterval(() => {
-      setValue((prev) => (prev + 2) % 100);
+      setValue((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          return 100;
+        }
+        return prev + 2;
+      });
     }, 150);
     return () => clearInterval(interval);
   }, []);

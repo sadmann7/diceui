@@ -2,9 +2,7 @@
   {
     "name": "angle-slider",
     "type": "registry:ui",
-    "dependencies": [
-      "@radix-ui/react-slot"
-    ],
+    "dependencies": ["@radix-ui/react-slot"],
     "files": [
       {
         "path": "ui/angle-slider.tsx",
@@ -23,9 +21,7 @@
   {
     "name": "checkbox-group",
     "type": "registry:ui",
-    "dependencies": [
-      "@diceui/checkbox-group"
-    ],
+    "dependencies": ["@diceui/checkbox-group"],
     "files": [
       {
         "path": "ui/checkbox-group.tsx",
@@ -36,9 +32,7 @@
   {
     "name": "circular-progress",
     "type": "registry:ui",
-    "dependencies": [
-      "@radix-ui/react-slot"
-    ],
+    "dependencies": ["@radix-ui/react-slot"],
     "files": [
       {
         "path": "ui/circular-progress.tsx",
@@ -70,12 +64,7 @@
       "class-variance-authority",
       "lucide-react"
     ],
-    "registryDependencies": [
-      "button",
-      "input",
-      "popover",
-      "select"
-    ],
+    "registryDependencies": ["button", "input", "popover", "select"],
     "files": [
       {
         "path": "ui/color-picker.tsx",
@@ -94,10 +83,7 @@
   {
     "name": "color-swatch",
     "type": "registry:ui",
-    "dependencies": [
-      "@radix-ui/react-slot",
-      "class-variance-authority"
-    ],
+    "dependencies": ["@radix-ui/react-slot", "class-variance-authority"],
     "files": [
       {
         "path": "ui/color-swatch.tsx",
@@ -108,10 +94,7 @@
   {
     "name": "cropper",
     "type": "registry:ui",
-    "dependencies": [
-      "@radix-ui/react-slot",
-      "class-variance-authority"
-    ],
+    "dependencies": ["@radix-ui/react-slot", "class-variance-authority"],
     "files": [
       {
         "path": "ui/cropper.tsx",
@@ -144,9 +127,7 @@
   {
     "name": "editable",
     "type": "registry:ui",
-    "dependencies": [
-      "@radix-ui/react-slot"
-    ],
+    "dependencies": ["@radix-ui/react-slot"],
     "files": [
       {
         "path": "ui/editable.tsx",
@@ -165,10 +146,7 @@
   {
     "name": "file-upload",
     "type": "registry:ui",
-    "dependencies": [
-      "@radix-ui/react-slot",
-      "lucide-react"
-    ],
+    "dependencies": ["@radix-ui/react-slot", "lucide-react"],
     "files": [
       {
         "path": "ui/file-upload.tsx",
@@ -179,13 +157,8 @@
   {
     "name": "input-group",
     "type": "registry:ui",
-    "dependencies": [
-      "@radix-ui/react-slot",
-      "class-variance-authority"
-    ],
-    "registryDependencies": [
-      "input"
-    ],
+    "dependencies": ["@radix-ui/react-slot", "class-variance-authority"],
+    "registryDependencies": ["input"],
     "files": [
       {
         "path": "ui/input-group.tsx",
@@ -227,10 +200,7 @@
   {
     "name": "listbox",
     "type": "registry:ui",
-    "dependencies": [
-      "@diceui/listbox",
-      "lucide-react"
-    ],
+    "dependencies": ["@diceui/listbox", "lucide-react"],
     "files": [
       {
         "path": "ui/listbox.tsx",
@@ -241,9 +211,7 @@
   {
     "name": "mask-input",
     "type": "registry:ui",
-    "dependencies": [
-      "@radix-ui/react-slot"
-    ],
+    "dependencies": ["@radix-ui/react-slot"],
     "files": [
       {
         "path": "ui/mask-input.tsx",
@@ -258,10 +226,7 @@
   {
     "name": "masonry",
     "type": "registry:ui",
-    "dependencies": [
-      "@diceui/masonry",
-      "@radix-ui/react-slot"
-    ],
+    "dependencies": ["@diceui/masonry", "@radix-ui/react-slot"],
     "files": [
       {
         "path": "ui/masonry.tsx",
@@ -276,11 +241,7 @@
   {
     "name": "media-player",
     "type": "registry:ui",
-    "dependencies": [
-      "@radix-ui/react-slot",
-      "lucide-react",
-      "media-chrome"
-    ],
+    "dependencies": ["@radix-ui/react-slot", "lucide-react", "media-chrome"],
     "registryDependencies": [
       "badge",
       "button",
@@ -303,10 +264,7 @@
   {
     "name": "mention",
     "type": "registry:ui",
-    "dependencies": [
-      "@diceui/mention",
-      "lucide-react"
-    ],
+    "dependencies": ["@diceui/mention", "lucide-react"],
     "files": [
       {
         "path": "ui/mention.tsx",
@@ -317,12 +275,8 @@
   {
     "name": "relative-time-card",
     "type": "registry:ui",
-    "dependencies": [
-      "@radix-ui/react-slot"
-    ],
-    "registryDependencies": [
-      "hover-card"
-    ],
+    "dependencies": ["@radix-ui/react-slot"],
+    "registryDependencies": ["hover-card"],
     "files": [
       {
         "path": "ui/relative-time-card.tsx",
@@ -333,9 +287,7 @@
   {
     "name": "scroller",
     "type": "registry:ui",
-    "dependencies": [
-      "@radix-ui/react-slot"
-    ],
+    "dependencies": ["@radix-ui/react-slot"],
     "files": [
       {
         "path": "ui/scroller.tsx",
@@ -376,9 +328,7 @@
       "class-variance-authority",
       "lucide-react"
     ],
-    "registryDependencies": [
-      "button"
-    ],
+    "registryDependencies": ["button"],
     "files": [
       {
         "path": "ui/stepper.tsx",
@@ -393,10 +343,7 @@
   {
     "name": "stack",
     "type": "registry:ui",
-    "dependencies": [
-      "@radix-ui/react-slot",
-      "class-variance-authority"
-    ],
+    "dependencies": ["@radix-ui/react-slot", "class-variance-authority"],
     "files": [
       {
         "path": "ui/stack.tsx",
@@ -407,10 +354,7 @@
   {
     "name": "tags-input",
     "type": "registry:ui",
-    "dependencies": [
-      "@diceui/tags-input",
-      "lucide-react"
-    ],
+    "dependencies": ["@diceui/tags-input", "lucide-react"],
     "files": [
       {
         "path": "ui/tags-input.tsx",

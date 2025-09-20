@@ -61,13 +61,17 @@ const themes = [
 ];
 
 export default function CircularProgressThemesDemo() {
-  const [value, setValue] = React.useState(65);
+  const [value, setValue] = React.useState(40);
 
   React.useEffect(() => {
     const interval = setInterval(() => {
       setValue((prev) => {
         const next = prev + 1;
-        return next > 100 ? 0 : next;
+        if (next >= 100) {
+          clearInterval(interval);
+          return 100;
+        }
+        return next;
       });
     }, 100);
     return () => clearInterval(interval);
