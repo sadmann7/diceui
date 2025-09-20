@@ -27,6 +27,7 @@
       "outputs": []
     },
     "generate:content": {
+      "dependsOn": ["^build"],
       "outputs": [".source/**"]
     },
     "check": {
