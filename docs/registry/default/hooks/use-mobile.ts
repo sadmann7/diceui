@@ -8,7 +8,7 @@ export function useIsMobile({
   breakpoint?: number;
 }) {
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(
-    undefined
+    undefined,
   );
 
   React.useEffect(() => {

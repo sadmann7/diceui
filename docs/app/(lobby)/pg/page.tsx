@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
+import AngleSliderDemo from "@/registry/default/examples/angle-slider-demo";
 import AngleSliderThemesDemo from "@/registry/default/examples/angle-slider-themes-demo";
 import CircularProgressThemesDemo from "@/registry/default/examples/circular-progress-themes-demo";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
@@ -44,6 +45,7 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <CircularProgressThemesDemo />
+      <AngleSliderDemo />
       <AngleSliderThemesDemo />
       <ColorPickerDemo />
       <Combobox className="w-[15rem]">
