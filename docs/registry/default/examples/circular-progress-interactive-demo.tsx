@@ -1,6 +1,5 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,30 +13,47 @@ import {
 export default function CircularProgressControlledDemo() {
   const [uploadProgress, setUploadProgress] = React.useState<number | null>(0);
   const [isUploading, setIsUploading] = React.useState(false);
+  const intervalRef = React.useRef<NodeJS.Timeout | null>(null);
 
   const onUploadStart = React.useCallback(() => {
     setIsUploading(true);
     setUploadProgress(0);
-
-    const interval = setInterval(() => {
-      setUploadProgress((prev) => {
-        if (prev === null) return 0;
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsUploading(false);
-          return 100;
-        }
-        return Math.min(100, prev + Math.random() * 15);
-      });
-    }, 200);
-
-    return () => clearInterval(interval);
   }, []);
 
   const onUploadReset = React.useCallback(() => {
     setUploadProgress(0);
     setIsUploading(false);
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
   }, []);
+
+  React.useEffect(() => {
+    if (isUploading) {
+      intervalRef.current = setInterval(() => {
+        setUploadProgress((prev) => {
+          if (prev === null) return 0;
+          if (prev >= 100) {
+            if (intervalRef.current) {
+              clearInterval(intervalRef.current);
+              intervalRef.current = null;
+            }
+            setIsUploading(false);
+            return 100;
+          }
+          return Math.min(100, prev + Math.random() * 15);
+        });
+      }, 200);
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [isUploading]);
 
   return (
     <div className="flex flex-col items-center gap-6">

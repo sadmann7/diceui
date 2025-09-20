@@ -132,7 +132,6 @@ export const examples: Registry["items"] = [
   {
     name: "circular-progress-interactive-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
     registryDependencies: ["button", "circular-progress"],
     files: [
       {

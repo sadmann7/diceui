@@ -28,7 +28,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import CircularProgressDemo from "@/registry/default/examples/circular-progress-demo";
-import CircularProgressThemesDemo from "@/registry/default/examples/circular-progress-themes-demo";
+import CircularProgressInteractiveDemo from "@/registry/default/examples/circular-progress-interactive-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -43,7 +43,7 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <CircularProgressDemo />
-      <CircularProgressThemesDemo />
+      <CircularProgressInteractiveDemo />
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />

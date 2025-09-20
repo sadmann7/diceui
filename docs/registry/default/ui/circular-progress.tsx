@@ -45,8 +45,8 @@ function getIsValidValueNumber(
 
 function getInvalidValueError(propValue: string, componentName: string) {
   return `Invalid prop \`value\` of value \`${propValue}\` supplied to \`${componentName}\`. The \`value\` prop must be:
-  - a positive number
-  - less than the value passed to \`max\` (or ${DEFAULT_MAX} if no \`max\` prop is set)
+  - a number between \`min\` and \`max\` (inclusive)
+  - less than or equal to the value passed to \`max\` (or ${DEFAULT_MAX} if no \`max\` prop is set)
   - greater than or equal to the value passed to \`min\`
   - \`null\` or \`undefined\` if the progress is indeterminate.
 
