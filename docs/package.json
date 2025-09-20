@@ -6,6 +6,7 @@
     "build": "pnpm fumadocs-mdx && next build",
     "build:registry": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/build-registry.mts",
     "cleanup:registry": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/cleanup-registry.mts",
+    "postinstall": "pnpm fumadocs-mdx",
     "dev": "pnpm fumadocs-mdx && next dev --turbopack",
     "start": "next start",
     "lint": "biome check .",
