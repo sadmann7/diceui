@@ -1,6 +1,7 @@
 import { getHighlighter } from "@shikijs/compat";
-import { rehypeCode, remarkGfm } from "fumadocs-core/mdx-plugins";
-import { fileGenerator, remarkDocGen, remarkInstall } from "fumadocs-docgen";
+import { rehypeCode, remarkGfm, remarkNpm } from "fumadocs-core/mdx-plugins";
+import { fileGenerator, remarkDocGen } from "fumadocs-docgen";
+
 import {
   defineConfig,
   defineDocs,
@@ -55,7 +56,7 @@ export default defineConfig({
       codeImport,
       remarkGfm,
       remarkMath,
-      [remarkInstall, { persist: { id: "package-manager" } }],
+      [remarkNpm, { persist: { id: "package-manager" } }],
       [remarkDocGen, { generators: [fileGenerator()] }],
     ],
   },

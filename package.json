@@ -14,7 +14,7 @@
     "cleanup:registry": "pnpm --filter=docs cleanup:registry --loglevel silent",
     "build:packages": "pnpm --filter \"@diceui/*\" build",
     "dev": "turbo run dev",
-    "docs:dev": "pnpm --filter=docs dev",
+    "docs:dev": "turbo run dev --filter=docs",
     "lint": "biome check .",
     "lint:fix": "biome check . --write",
     "typecheck": "turbo typecheck",

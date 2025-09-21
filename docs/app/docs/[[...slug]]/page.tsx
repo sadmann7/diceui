@@ -6,8 +6,10 @@ import {
 } from "fumadocs-ui/page";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { CopyMarkdownButton, ViewOptions } from "@/components/doc-actions";
 import { DynamicLink } from "@/components/dynamic-link";
 import { Mdx } from "@/components/mdx-components";
+import { Separator } from "@/components/ui/separator";
 import { source } from "@/lib/source";
 
 interface DocPageParams {
@@ -56,6 +58,14 @@ export default async function DocPage(props: DocPageParams) {
           {page.data.links?.api ? (
             <DynamicLink href={page.data.links.api}>API</DynamicLink>
           ) : null}
+          {(page.data.links?.doc || page.data.links?.api) && (
+            <Separator orientation="vertical" />
+          )}
+          <CopyMarkdownButton markdownUrl={`${page.url}.mdx`} />
+          <ViewOptions
+            markdownUrl={`${page.url}.mdx`}
+            githubUrl={`https://github.com/sadmann7/diceui/blob/main/docs/content/docs/${page.file.path}`}
+          />
         </div>
       </div>
       <DocsBody>

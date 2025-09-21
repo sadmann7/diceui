@@ -52,6 +52,11 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      {
+        source: "/docs/:path*.mdx",
+        destination: "/llms.mdx/:path*",
+        permanent: true,
+      },
     ];
   },
   // Already doing linting and typechecking as separate tasks in CI
