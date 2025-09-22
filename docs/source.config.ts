@@ -1,7 +1,5 @@
-import { getHighlighter } from "@shikijs/compat";
 import { rehypeCode, remarkGfm, remarkNpm } from "fumadocs-core/mdx-plugins";
 import { fileGenerator, remarkDocGen } from "fumadocs-docgen";
-
 import {
   defineConfig,
   defineDocs,
@@ -11,6 +9,7 @@ import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import { codeImport } from "remark-code-import";
 import remarkMath from "remark-math";
+import { createHighlighter } from "shiki";
 import { z } from "zod";
 import { rehypeComponent } from "@/lib/rehype-component";
 
@@ -29,10 +28,8 @@ export default defineConfig({
             light: "github-light",
           },
           getHighlighter: async () => {
-            // Use lazy loading and memory-optimized highlighter
-            const highlighter = await getHighlighter({
+            const highlighter = await createHighlighter({
               themes: ["github-dark", "github-light"],
-              // Only load essential languages to reduce memory usage
               langs: [
                 "typescript",
                 "tsx",
@@ -41,8 +38,6 @@ export default defineConfig({
                 "json",
                 "bash",
                 "css",
-                "html",
-                "markdown",
               ],
             });
             return highlighter;
