@@ -1,11 +1,5 @@
 "use client";
 
-import { cva } from "class-variance-authority";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "fumadocs-ui/components/ui/popover";
 import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
 import {
   Check,
@@ -16,7 +10,11 @@ import {
 } from "lucide-react";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const markdownCache = new Map<string, string>();
 
@@ -26,23 +24,32 @@ interface CopyMarkdownButtonProps {
 
 function CopyMarkdownButton({ markdownUrl }: CopyMarkdownButtonProps) {
   const [isLoading, setLoading] = React.useState(false);
-  const [checked, onClick] = useCopyButton(async () => {
-    const cached = markdownCache.get(markdownUrl);
-    if (cached) return navigator.clipboard.writeText(cached);
 
-    setLoading(true);
+  const onContentPrefetch = React.useCallback(async () => {
+    if (markdownCache.has(markdownUrl)) return;
 
     try {
-      await navigator.clipboard.write([
-        new ClipboardItem({
-          "text/plain": fetch(markdownUrl).then(async (res) => {
-            const content = await res.text();
-            markdownCache.set(markdownUrl, content);
+      const response = await fetch(markdownUrl);
+      const content = await response.text();
+      markdownCache.set(markdownUrl, content);
+    } catch {
+      // Silently fail prefetch, will retry on actual copy
+    }
+  }, [markdownUrl]);
 
-            return content;
-          }),
-        }),
-      ]);
+  const [checked, onClick] = useCopyButton(async () => {
+    const cached = markdownCache.get(markdownUrl);
+    if (cached) {
+      return navigator.clipboard.writeText(cached);
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch(markdownUrl);
+      const content = await response.text();
+      markdownCache.set(markdownUrl, content);
+
+      return navigator.clipboard.writeText(content);
     } finally {
       setLoading(false);
     }
@@ -52,7 +59,11 @@ function CopyMarkdownButton({ markdownUrl }: CopyMarkdownButtonProps) {
     <Button
       variant="secondary"
       size="sm"
+      className="h-7 text-xs [&_svg:not([class*='size-'])]:size-3"
       onClick={onClick}
+      onFocus={onContentPrefetch}
+      onMouseEnter={onContentPrefetch}
+      onTouchStart={onContentPrefetch}
       disabled={isLoading}
     >
       {checked ? <Check /> : <Copy />}
@@ -197,19 +208,23 @@ function ViewOptions({ markdownUrl, githubUrl }: ViewOptionsProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="secondary" size="sm">
-          Open
+        <Button
+          variant="secondary"
+          size="sm"
+          className="h-7 text-xs [&_svg:not([class*='size-'])]:size-3"
+        >
+          Open with AI
           <ChevronDown />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="flex flex-col overflow-auto">
+      <PopoverContent align="start" className="flex w-52 flex-col p-1">
         {items.map((item) => (
           <a
             key={item.href}
             href={item.href}
             rel="noreferrer noopener"
             target="_blank"
-            className="inline-flex items-center gap-2 rounded-lg p-2 text-sm hover:bg-accent hover:text-accent-foreground [&_svg]:size-4"
+            className="inline-flex items-center gap-2 px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground [&_svg]:size-4"
           >
             {item.icon}
             {item.title}

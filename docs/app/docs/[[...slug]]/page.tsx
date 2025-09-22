@@ -44,6 +44,9 @@ export default async function DocPage(props: DocPageParams) {
 
   if (!page) notFound();
 
+  const docLink = page.data.links?.doc;
+  const apiLink = page.data.links?.api;
+
   return (
     <DocsPage toc={page.data.toc} full={page.data.full}>
       <div className="flex flex-col gap-2">
@@ -52,14 +55,13 @@ export default async function DocPage(props: DocPageParams) {
           {page.data.description}
         </DocsDescription>
         <div className="flex items-center gap-2">
-          {page.data.links?.doc ? (
-            <DynamicLink href={page.data.links.doc}>Docs</DynamicLink>
-          ) : null}
-          {page.data.links?.api ? (
-            <DynamicLink href={page.data.links.api}>API</DynamicLink>
-          ) : null}
-          {(page.data.links?.doc || page.data.links?.api) && (
-            <Separator orientation="vertical" />
+          {docLink ? <DynamicLink href={docLink}>Docs</DynamicLink> : null}
+          {apiLink ? <DynamicLink href={apiLink}>API</DynamicLink> : null}
+          {(docLink || apiLink) && (
+            <Separator
+              orientation="vertical"
+              className="data-[orientation=vertical]:h-6"
+            />
           )}
           <CopyMarkdownButton markdownUrl={`${page.url}.mdx`} />
           <ViewOptions

@@ -8,10 +8,10 @@ interface DynamicLinkProps
     React.ComponentProps<typeof Link> {}
 
 export function DynamicLink({
+  variant = "secondary",
+  size = "sm",
   href,
   children,
-  variant = "outline",
-  size = "sm",
   className,
   ...props
 }: DynamicLinkProps) {
@@ -21,7 +21,10 @@ export function DynamicLink({
     <Button
       variant={variant}
       size={size}
-      className={cn("h-7 rounded-md [&_svg]:size-3", className)}
+      className={cn(
+        "h-7 text-xs [&_svg:not([class*='size-'])]:size-3",
+        className,
+      )}
       asChild
     >
       <Link href={href} target={isExternal ? "_blank" : "_self"} {...props}>
