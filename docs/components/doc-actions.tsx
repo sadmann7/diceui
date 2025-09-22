@@ -1,5 +1,6 @@
 "use client";
 
+import { cva } from "class-variance-authority";
 import {
   Popover,
   PopoverContent,
@@ -15,6 +16,7 @@ import {
 } from "lucide-react";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const markdownCache = new Map<string, string>();
 
@@ -50,8 +52,8 @@ function CopyMarkdownButton({ markdownUrl }: CopyMarkdownButtonProps) {
     <Button
       variant="secondary"
       size="sm"
-      disabled={isLoading}
       onClick={onClick}
+      disabled={isLoading}
     >
       {checked ? <Check /> : <Copy />}
       Copy Markdown
@@ -200,18 +202,18 @@ function ViewOptions({ markdownUrl, githubUrl }: ViewOptionsProps) {
           <ChevronDown />
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="flex flex-col overflow-auto">
+      <PopoverContent className="flex flex-col overflow-auto">
         {items.map((item) => (
           <a
             key={item.href}
             href={item.href}
             rel="noreferrer noopener"
             target="_blank"
-            className="inline-flex items-center gap-2 rounded-lg p-2 text-sm hover:bg-accent hover:text-accent-foreground [&_svg]:size-3.5"
+            className="inline-flex items-center gap-2 rounded-lg p-2 text-sm hover:bg-accent hover:text-accent-foreground [&_svg]:size-4"
           >
             {item.icon}
             {item.title}
-            <ExternalLinkIcon className="ms-auto text-muted-foreground" />
+            <ExternalLinkIcon className="ms-auto size-3.5 text-muted-foreground" />
           </a>
         ))}
       </PopoverContent>

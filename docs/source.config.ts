@@ -74,5 +74,8 @@ export const { docs, meta } = defineDocs({
         })
         .optional(),
     }),
+    postprocess: {
+      includeProcessedMarkdown: true,
+    },
   },
 });
