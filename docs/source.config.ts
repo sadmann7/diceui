@@ -28,10 +28,25 @@ export default defineConfig({
             dark: "github-dark",
             light: "github-light",
           },
-          getHighlighter: () =>
-            getHighlighter({
+          getHighlighter: async () => {
+            // Use lazy loading and memory-optimized highlighter
+            const highlighter = await getHighlighter({
               themes: ["github-dark", "github-light"],
-            }),
+              // Only load essential languages to reduce memory usage
+              langs: [
+                "typescript",
+                "tsx",
+                "javascript",
+                "jsx",
+                "json",
+                "bash",
+                "css",
+                "html",
+                "markdown",
+              ],
+            });
+            return highlighter;
+          },
           onVisitLine(node: { children: { length: number } }) {
             // Prevent lines from collapsing in `display: grid` mode, and allow empty
             // lines to be copy/pasted
