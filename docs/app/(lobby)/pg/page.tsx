@@ -1,5 +1,6 @@
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
+import { Demo } from "@/components/demo";
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,6 +28,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
+import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -40,6 +42,9 @@ import {
 export default function PlaygroundPage() {
   return (
     <Shell>
+      <Demo>
+        <ColorPickerDemo />
+      </Demo>
       <Combobox className="w-[15rem]">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />

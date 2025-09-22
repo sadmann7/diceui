@@ -5,6 +5,9 @@ const withMDX = createMDX();
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  experimental: {
+    webpackMemoryOptimizations: true,
+  },
   images: {
     remotePatterns: [
       {
@@ -51,6 +54,11 @@ const nextConfig: NextConfig = {
             value: undefined,
           },
         ],
+      },
+      {
+        source: "/docs/:path*.mdx",
+        destination: "/llms.mdx/:path*",
+        permanent: true,
       },
     ];
   },

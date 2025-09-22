@@ -1,6 +1,5 @@
-import { getHighlighter } from "@shikijs/compat";
-import { rehypeCode, remarkGfm } from "fumadocs-core/mdx-plugins";
-import { fileGenerator, remarkDocGen, remarkInstall } from "fumadocs-docgen";
+import { rehypeCode, remarkGfm, remarkNpm } from "fumadocs-core/mdx-plugins";
+import { fileGenerator, remarkDocGen } from "fumadocs-docgen";
 import {
   defineConfig,
   defineDocs,
@@ -10,6 +9,7 @@ import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import { codeImport } from "remark-code-import";
 import remarkMath from "remark-math";
+import { createHighlighter } from "shiki";
 import { z } from "zod";
 import { rehypeComponent } from "@/lib/rehype-component";
 
@@ -27,10 +27,21 @@ export default defineConfig({
             dark: "github-dark",
             light: "github-light",
           },
-          getHighlighter: () =>
-            getHighlighter({
+          getHighlighter: async () => {
+            const highlighter = await createHighlighter({
               themes: ["github-dark", "github-light"],
-            }),
+              langs: [
+                "typescript",
+                "tsx",
+                "javascript",
+                "jsx",
+                "json",
+                "bash",
+                "css",
+              ],
+            });
+            return highlighter;
+          },
           onVisitLine(node: { children: { length: number } }) {
             // Prevent lines from collapsing in `display: grid` mode, and allow empty
             // lines to be copy/pasted
@@ -55,7 +66,7 @@ export default defineConfig({
       codeImport,
       remarkGfm,
       remarkMath,
-      [remarkInstall, { persist: { id: "package-manager" } }],
+      [remarkNpm, { persist: { id: "package-manager" } }],
       [remarkDocGen, { generators: [fileGenerator()] }],
     ],
   },
@@ -73,5 +84,8 @@ export const { docs, meta } = defineDocs({
         })
         .optional(),
     }),
+    postprocess: {
+      includeProcessedMarkdown: true,
+    },
   },
 });

@@ -1,33 +1,24 @@
 import type * as React from "react";
 import { cn } from "@/lib/utils";
 
-interface DemoProps extends React.ComponentProps<"div"> {
-  first: React.ReactNode;
-  second?: React.ReactNode;
-  third?: React.ReactNode;
-  fourth?: React.ReactNode;
-}
+interface DemoProps extends React.ComponentProps<"div"> {}
 
-export function Demo({
-  first,
-  second,
-  third,
-  fourth,
-  className,
-  ...props
-}: DemoProps) {
+export function Demo({ children, className, ...props }: DemoProps) {
   return (
     <div
       className={cn(
-        "mx-auto flex max-w-3xl flex-col items-center justify-center gap-4",
+        "mx-auto flex w-full max-w-3xl flex-col items-center justify-center gap-4",
         className,
       )}
       {...props}
     >
-      <DemoCard>{first}</DemoCard>
-      {second && <DemoCard>{second}</DemoCard>}
-      {third && <DemoCard>{third}</DemoCard>}
-      {fourth && <DemoCard>{fourth}</DemoCard>}
+      {Array.isArray(children) ? (
+        children.map((child, index) => (
+          <DemoCard key={child.key ?? index}>{child}</DemoCard>
+        ))
+      ) : (
+        <DemoCard>{children}</DemoCard>
+      )}
     </div>
   );
 }

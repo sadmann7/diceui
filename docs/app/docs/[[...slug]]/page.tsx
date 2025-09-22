@@ -6,8 +6,10 @@ import {
 } from "fumadocs-ui/page";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { CopyMarkdownButton, ViewOptions } from "@/components/doc-actions";
 import { DynamicLink } from "@/components/dynamic-link";
 import { Mdx } from "@/components/mdx-components";
+import { Separator } from "@/components/ui/separator";
 import { source } from "@/lib/source";
 
 interface DocPageParams {
@@ -42,6 +44,9 @@ export default async function DocPage(props: DocPageParams) {
 
   if (!page) notFound();
 
+  const docLink = page.data.links?.doc;
+  const apiLink = page.data.links?.api;
+
   return (
     <DocsPage toc={page.data.toc} full={page.data.full}>
       <div className="flex flex-col gap-2">
@@ -50,12 +55,19 @@ export default async function DocPage(props: DocPageParams) {
           {page.data.description}
         </DocsDescription>
         <div className="flex items-center gap-2">
-          {page.data.links?.doc ? (
-            <DynamicLink href={page.data.links.doc}>Docs</DynamicLink>
-          ) : null}
-          {page.data.links?.api ? (
-            <DynamicLink href={page.data.links.api}>API</DynamicLink>
-          ) : null}
+          {docLink ? <DynamicLink href={docLink}>Docs</DynamicLink> : null}
+          {apiLink ? <DynamicLink href={apiLink}>API</DynamicLink> : null}
+          {(docLink || apiLink) && (
+            <Separator
+              orientation="vertical"
+              className="data-[orientation=vertical]:h-6"
+            />
+          )}
+          <CopyMarkdownButton markdownUrl={`${page.url}.mdx`} />
+          <ViewOptions
+            markdownUrl={`${page.url}.mdx`}
+            githubUrl={`https://github.com/sadmann7/diceui/blob/main/docs/content/docs/${page.file.path}`}
+          />
         </div>
       </div>
       <DocsBody>
