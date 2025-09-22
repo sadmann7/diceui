@@ -7,13 +7,15 @@ export function Demo({ children, className, ...props }: DemoProps) {
   return (
     <div
       className={cn(
-        "mx-auto flex max-w-3xl flex-col items-center justify-center gap-4",
+        "mx-auto flex w-full max-w-3xl flex-col items-center justify-center gap-4",
         className,
       )}
       {...props}
     >
       {Array.isArray(children) ? (
-        children.map((child, index) => <DemoCard key={index}>{child}</DemoCard>)
+        children.map((child, index) => (
+          <DemoCard key={child.key ?? index}>{child}</DemoCard>
+        ))
       ) : (
         <DemoCard>{children}</DemoCard>
       )}
