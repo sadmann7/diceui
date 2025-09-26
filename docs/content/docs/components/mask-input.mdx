@@ -48,6 +48,7 @@ import { MaskInput } from "@/components/ui/mask-input";
 <MaskInput 
   mask="phone" 
   placeholder="Enter phone number"
+  maskPlaceholder="(___) ___-____"
   onValueChange={(masked, unmasked) => {
     console.log('Masked:', masked);     // "(555) 123-4567"
     console.log('Unmasked:', unmasked); // "5551234567"
@@ -61,6 +62,7 @@ import { MaskInput } from "@/components/ui/mask-input";
 - **Paste support** - Intelligently handles pasted content with proper formatting
 - **Built-in patterns** - Common formats like phone, SSN, date, credit card, etc.
 - **Custom patterns** - Create your own mask patterns with validation
+- **Optional mask placeholders** - Control when mask format hints are shown with `maskPlaceholder`
 - **TypeScript support** - Full type safety with IntelliSense
 - **Accessibility** - ARIA attributes and keyboard navigation
 - **Form integration** - Works seamlessly with form libraries
@@ -68,13 +70,71 @@ import { MaskInput } from "@/components/ui/mask-input";
 
 ## Examples
 
-### Built-in Patterns
+### With custom patterns
 
-Use predefined mask patterns for common input formats.
+Create custom mask patterns for specific formatting needs.
 
-<ComponentTabs name="mask-input-patterns-demo" />
+<ComponentTabs name="mask-input-custom-pattern-demo" />
 
-### Currency Formatting
+### With validation modes
+
+Control when validation occurs with different validation modes, similar to react-hook-form.
+
+<ComponentTabs name="mask-input-validation-modes-demo" />
+
+### Card information
+
+Card information with credit card number, expiry date, and CVC fields.
+
+<ComponentTabs name="mask-input-card-information-demo" />
+
+### With form
+
+Integrate masked inputs with form validation using react-hook-form.
+
+<ComponentTabs name="mask-input-form-demo" />
+
+## Built-in Mask Patterns
+
+The component includes several predefined mask patterns:
+
+| Pattern | Format | Example | Description |
+|---------|--------|---------|-------------|
+| `phone` | `(###) ###-####` | (555) 123-4567 | US phone number |
+| `ssn` | `###-##-####` | 123-45-6789 | Social Security Number |
+| `date` | `##/##/####` | 12/25/2023 | Date (MM/DD/YYYY) |
+| `time` | `##:##` | 14:30 | Time (HH:MM) |
+| `creditCard` | `#### #### #### ####` | 1234 5678 9012 3456 | Credit card number |
+| `creditCardExpiry` | `##/##` | 12/25 | Credit card expiry date (MM/YY) |
+| `zipCode` | `#####` | 12345 | US ZIP code |
+| `zipCodeExtended` | `#####-####` | 12345-6789 | US ZIP+4 code |
+| `currency` | Dynamic | $1,234.56 | Currency formatting using Intl.NumberFormat |
+| `percentage` | `##.##%` | 12.34% | Percentage with decimals |
+| `licensePlate` | `###-###` | ABC-123 | License plate format |
+| `ipv4` | `###.###.###.###` | 192.168.1.1 | IPv4 address |
+| `macAddress` | `##:##:##:##:##:##` | 00:1B:44:11:3A:B7 | MAC address |
+| `isbn` | `###-#-###-#####-#` | 978-0-123-45678-9 | ISBN-13 book identifier |
+| `ein` | `##-#######` | 12-3456789 | Employer Identification Number |
+
+## Custom Mask Patterns
+
+Create custom patterns using the `MaskPattern` interface:
+
+```tsx
+const customPattern: MaskPattern = {
+  pattern: "###-###-####",
+  transform: (value, opts) => value.replace(/[^A-Z0-9]/gi, "").toUpperCase(),
+  validate: (value, opts) => value.length === 10,
+};
+
+<MaskInput 
+  mask={customPattern} 
+  placeholder="Enter license plate"
+  maskPlaceholder="ABC-1234"
+/>
+```
+
+## Currency Formatting
 
 The currency mask uses the `Intl.NumberFormat` API for localization and currency formatting.
 
@@ -104,58 +164,23 @@ The currency mask uses the `Intl.NumberFormat` API for localization and currency
 />
 ```
 
-### With custom patterns
+## Mask Placeholders
 
-Create custom mask patterns for specific formatting needs.
-
-<ComponentTabs name="mask-input-custom-demo" />
-
-### With validation modes
-
-Control when validation occurs with different validation modes, similar to react-hook-form.
-
-<ComponentTabs name="mask-input-validation-modes-demo" />
-
-### With form
-
-Integrate masked inputs with form validation using react-hook-form.
-
-<ComponentTabs name="mask-input-form-demo" />
-
-## Built-in Mask Patterns
-
-The component includes several predefined mask patterns:
-
-| Pattern | Format | Example | Description |
-|---------|--------|---------|-------------|
-| `phone` | `(###) ###-####` | (555) 123-4567 | US phone number |
-| `ssn` | `###-##-####` | 123-45-6789 | Social Security Number |
-| `date` | `##/##/####` | 12/25/2023 | Date (MM/DD/YYYY) |
-| `time` | `##:##` | 14:30 | Time (HH:MM) |
-| `creditCard` | `#### #### #### ####` | 1234 5678 9012 3456 | Credit card number |
-| `zipCode` | `#####` | 12345 | US ZIP code |
-| `zipCodeExtended` | `#####-####` | 12345-6789 | US ZIP+4 code |
-| `currency` | Dynamic | $1,234.56 | Currency formatting using Intl.NumberFormat |
-| `percentage` | `##.##%` | 12.34% | Percentage with decimals |
-| `licensePlate` | `###-###` | ABC-123 | License plate format |
-| `ipv4` | `###.###.###.###` | 192.168.1.1 | IPv4 address |
-| `macAddress` | `##:##:##:##:##:##` | 00:1B:44:11:3A:B7 | MAC address |
-| `isbn` | `###-#-###-#####-#` | 978-0-123-45678-9 | ISBN-13 book identifier |
-| `ein` | `##-#######` | 12-3456789 | Employer Identification Number |
-
-## Custom Mask Patterns
-
-Create custom patterns using the `MaskPattern` interface:
+Use the `maskPlaceholder` prop to control when mask format hints are shown. The mask placeholder only appears when the input is focused and the prop is provided.
 
 ```tsx
-const customPattern: MaskPattern = {
-  pattern: "###-###-####",
-  placeholder: "ABC-123-4567",
-  transform: (value, opts) => value.replace(/[^A-Z0-9]/gi, "").toUpperCase(),
-  validate: (value, opts) => value.length === 10,
-};
+// Shows mask placeholder when focused
+<MaskInput 
+  mask="phone" 
+  placeholder="Enter phone number"
+  maskPlaceholder="(___) ___-____"
+/>
 
-<MaskInput mask={customPattern} />
+// No mask placeholder - just regular placeholder behavior
+<MaskInput 
+  mask="phone" 
+  placeholder="Enter phone number"
+/>
 ```
 
 ## API Reference
@@ -189,6 +214,7 @@ Predefined mask pattern keys for common input formats.
 | `date` | Date (MM/DD/YYYY) |
 | `time` | Time (HH:MM) |
 | `creditCard` | Credit card number |
+| `creditCardExpiry` | Credit card expiry date (MM/YY) |
 | `zipCode` | US ZIP code |
 | `zipCodeExtended` | US ZIP+4 code |
 | `currency` | Currency formatting using Intl.NumberFormat |

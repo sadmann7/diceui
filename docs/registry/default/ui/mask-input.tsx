@@ -11,10 +11,8 @@ const DEFAULT_CURRENCY = "USD";
 const DEFAULT_LOCALE = "en-US";
 
 const NUMERIC_MASK_PATTERNS =
-  /^(phone|zipCode|zipCodeExtended|ssn|ein|time|date|creditCard)$/;
+  /^(phone|zipCode|zipCodeExtended|ssn|ein|time|date|creditCard|creditCardExpiry)$/;
 const CURRENCY_PERCENTAGE_SYMBOLS = /[€$%]/;
-const CURRENCY_FALLBACK = "$0.00";
-const ZERO_PERCENTAGE = "0.00%";
 
 interface CurrencySymbols {
   currency: string;
@@ -45,7 +43,8 @@ const REGEX_CACHE = {
   isbn: /^\d{13}$/,
   ein: /^\d{9}$/,
   time: /^\d{4}$/,
-  creditCard: /^\d{15,19}$/,
+  creditCard: /^\d{13,19}$/,
+  creditCardExpiry: /^\d{4}$/,
   licensePlate: /^[A-Z0-9]{6}$/,
   macAddress: /^[A-F0-9]{12}$/,
   currencyValidation: /^\d+(\.\d{1,2})?$/,
@@ -85,6 +84,7 @@ function getCachedFormatter(
       );
     }
   }
+
   const formatter = formattersCache.get(key);
   if (!formatter) {
     throw new Error(`Failed to create formatter for ${key}`);
@@ -181,7 +181,6 @@ interface ValidateOptions {
 
 interface MaskPattern {
   pattern: string;
-  placeholder?: string;
   transform?: (value: string, opts?: TransformOptions) => string;
   validate?: (value: string, opts?: ValidateOptions) => boolean;
 }
@@ -192,6 +191,7 @@ type MaskPatternKey =
   | "date"
   | "time"
   | "creditCard"
+  | "creditCardExpiry"
   | "zipCode"
   | "zipCodeExtended"
   | "currency"
@@ -205,21 +205,18 @@ type MaskPatternKey =
 const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
   phone: {
     pattern: "(###) ###-####",
-    placeholder: "(___) ___-____",
     transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
     validate: (value) =>
       REGEX_CACHE.phone.test(value.replace(REGEX_CACHE.nonDigits, "")),
   },
   ssn: {
     pattern: "###-##-####",
-    placeholder: "___-__-____",
     transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
     validate: (value) =>
       REGEX_CACHE.ssn.test(value.replace(REGEX_CACHE.nonDigits, "")),
   },
   date: {
     pattern: "##/##/####",
-    placeholder: "mm/dd/yyyy",
     transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
     validate: (value) => {
       const cleaned = value.replace(REGEX_CACHE.nonDigits, "");
@@ -251,7 +248,6 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
   },
   time: {
     pattern: "##:##",
-    placeholder: "hh:mm",
     transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
     validate: (value) => {
       const cleaned = value.replace(REGEX_CACHE.nonDigits, "");
@@ -263,23 +259,70 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
   },
   creditCard: {
     pattern: "#### #### #### ####",
-    placeholder: "____ ____ ____ ____",
     transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
     validate: (value) => {
       const cleaned = value.replace(REGEX_CACHE.nonDigits, "");
-      return REGEX_CACHE.creditCard.test(cleaned);
+      if (!REGEX_CACHE.creditCard.test(cleaned)) return false;
+
+      let sum = 0;
+      let isEven = false;
+      for (let i = cleaned.length - 1; i >= 0; i--) {
+        const digitChar = cleaned[i];
+        if (!digitChar) continue;
+        let digit = parseInt(digitChar, 10);
+        if (isEven) {
+          digit *= 2;
+          if (digit > 9) {
+            digit -= 9;
+          }
+        }
+        sum += digit;
+        isEven = !isEven;
+      }
+      return sum % 10 === 0;
+    },
+  },
+  creditCardExpiry: {
+    pattern: "##/##",
+    transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
+    validate: (value) => {
+      const cleaned = value.replace(REGEX_CACHE.nonDigits, "");
+      if (!REGEX_CACHE.creditCardExpiry.test(cleaned)) return false;
+
+      const month = parseInt(cleaned.substring(0, 2), 10);
+      const year = parseInt(cleaned.substring(2, 4), 10);
+
+      if (month < 1 || month > 12) return false;
+
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth() + 1;
+
+      const fullYear = year <= 75 ? 2000 + year : 1900 + year;
+
+      if (
+        fullYear < currentYear ||
+        (fullYear === currentYear && month < currentMonth)
+      ) {
+        return false;
+      }
+
+      const maxYear = currentYear + 50;
+      if (fullYear > maxYear) {
+        return false;
+      }
+
+      return true;
     },
   },
   zipCode: {
     pattern: "#####",
-    placeholder: "_____",
     transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
     validate: (value) =>
       REGEX_CACHE.zipCode.test(value.replace(REGEX_CACHE.nonDigits, "")),
   },
   zipCodeExtended: {
     pattern: "#####-####",
-    placeholder: "_____-____",
     transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
     validate: (value) =>
       REGEX_CACHE.zipCodeExtended.test(
@@ -288,7 +331,6 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
   },
   currency: {
     pattern: "$###,###.##",
-    placeholder: "$0.00",
     transform: (
       value,
       { currency = DEFAULT_CURRENCY, locale = DEFAULT_LOCALE } = {},
@@ -339,7 +381,7 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
           const match = cleaned.match(/^(\d+)\.(\d{3})(\d{1,2})$/);
           if (match) {
             const [, beforeDot, thousandsPart, decimalPart] = match;
-            const integerPart = (beforeDot || "") + (thousandsPart || "");
+            const integerPart = (beforeDot ?? "") + (thousandsPart ?? "");
             const result = `${integerPart}.${decimalPart}`;
             return result;
           }
@@ -396,7 +438,6 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
   },
   percentage: {
     pattern: "##.##%",
-    placeholder: "0.00%",
     transform: (value) => {
       const cleaned = value.replace(REGEX_CACHE.percentageChars, "");
       const parts = cleaned.split(".");
@@ -417,14 +458,12 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
   },
   licensePlate: {
     pattern: "###-###",
-    placeholder: "ABC-123",
     transform: (value) =>
       value.replace(REGEX_CACHE.nonAlphaNumeric, "").toUpperCase(),
     validate: (value) => REGEX_CACHE.licensePlate.test(value),
   },
   ipv4: {
     pattern: "###.###.###.###",
-    placeholder: "192.168.1.1",
     transform: (value) => value.replace(REGEX_CACHE.nonNumericDot, ""),
     validate: (value) => {
       if (value.includes(".")) {
@@ -457,21 +496,18 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
   },
   macAddress: {
     pattern: "##:##:##:##:##:##",
-    placeholder: "00:1B:44:11:3A:B7",
     transform: (value) =>
       value.replace(REGEX_CACHE.nonAlphaNumeric, "").toUpperCase(),
     validate: (value) => REGEX_CACHE.macAddress.test(value),
   },
   isbn: {
     pattern: "###-#-###-#####-#",
-    placeholder: "978-0-123-45678-9",
     transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
     validate: (value) =>
       REGEX_CACHE.isbn.test(value.replace(REGEX_CACHE.nonDigits, "")),
   },
   ein: {
     pattern: "##-#######",
-    placeholder: "12-3456789",
     transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
     validate: (value) =>
       REGEX_CACHE.ein.test(value.replace(REGEX_CACHE.nonDigits, "")),
@@ -718,6 +754,7 @@ interface MaskInputProps extends React.ComponentProps<"input"> {
   onValidate?: (isValid: boolean, unmaskedValue: string) => void;
   validationMode?: "onChange" | "onBlur" | "onSubmit" | "onTouched" | "all";
   mask?: MaskPatternKey | MaskPattern;
+  maskPlaceholder?: string;
   currency?: string;
   locale?: string;
   asChild?: boolean;
@@ -739,6 +776,7 @@ function MaskInput(props: MaskInputProps) {
     onCompositionEnd: onCompositionEndProp,
     validationMode = "onChange",
     mask,
+    maskPlaceholder,
     currency = DEFAULT_CURRENCY,
     locale = DEFAULT_LOCALE,
     placeholder,
@@ -785,53 +823,16 @@ function MaskInput(props: MaskInputProps) {
   const placeholderValue = React.useMemo(() => {
     if (withoutMask) return placeholder;
 
-    if (placeholder) {
-      if (focused && maskPattern) {
-        if (isCurrencyMask({ mask, pattern: maskPattern.pattern })) {
-          try {
-            const formatter = getCachedFormatter(locale, {
-              currency,
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            });
-            return formatter.format(0);
-          } catch {
-            return `${getCachedFormatter(DEFAULT_LOCALE, {
-              currency: DEFAULT_CURRENCY,
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            }).format(0)}`;
-          }
-        }
-        if (mask === "percentage" || maskPattern.pattern.includes("%")) {
-          return ZERO_PERCENTAGE;
-        }
-        return maskPattern?.placeholder ?? placeholder;
-      }
-      return placeholder;
+    if (placeholder && maskPlaceholder) {
+      return focused ? maskPlaceholder : placeholder;
     }
 
-    if (focused && maskPattern) {
-      if (isCurrencyMask({ mask, pattern: maskPattern.pattern })) {
-        try {
-          const formatter = getCachedFormatter(locale, {
-            currency,
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          });
-          return formatter.format(0);
-        } catch {
-          return CURRENCY_FALLBACK;
-        }
-      }
-      if (mask === "percentage" || maskPattern.pattern.includes("%")) {
-        return ZERO_PERCENTAGE;
-      }
-      return maskPattern?.placeholder;
+    if (maskPlaceholder) {
+      return focused ? maskPlaceholder : undefined;
     }
 
-    return undefined;
-  }, [placeholder, withoutMask, maskPattern, focused, mask, currency, locale]);
+    return placeholder;
+  }, [placeholder, maskPlaceholder, focused, withoutMask]);
 
   const displayValue = React.useMemo(() => {
     if (withoutMask || !maskPattern || !value) return value ?? "";

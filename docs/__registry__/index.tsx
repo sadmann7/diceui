@@ -1045,31 +1045,17 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "mask-input-patterns-demo": {
-      name: "mask-input-patterns-demo",
+    "mask-input-custom-pattern-demo": {
+      name: "mask-input-custom-pattern-demo",
       description: "",
       type: "registry:example",
       registryDependencies: ["label","mask-input"],
       files: [{
-        path: "registry/default/examples/mask-input-patterns-demo.tsx",
+        path: "registry/default/examples/mask-input-custom-pattern-demo.tsx",
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/examples/mask-input-patterns-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "mask-input-custom-demo": {
-      name: "mask-input-custom-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["label","mask-input"],
-      files: [{
-        path: "registry/default/examples/mask-input-custom-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/mask-input-custom-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/mask-input-custom-pattern-demo.tsx")),
       source: "",
       chunks: []
     },
@@ -1084,6 +1070,20 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/mask-input-validation-modes-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "mask-input-card-information-demo": {
+      name: "mask-input-card-information-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["card","label","mask-input"],
+      files: [{
+        path: "registry/default/examples/mask-input-card-information-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/mask-input-card-information-demo.tsx")),
       source: "",
       chunks: []
     },

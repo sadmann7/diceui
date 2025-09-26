@@ -210,6 +210,26 @@ describe("MaskInput", () => {
       );
     });
 
+    test("creditCardExpiry mask pattern", async () => {
+      const user = userEvent.setup();
+      const onValueChange = vi.fn();
+
+      render(
+        <MaskInput
+          mask="creditCardExpiry"
+          onValueChange={onValueChange}
+          data-testid="credit-card-expiry-input"
+        />,
+      );
+
+      const input = screen.getByTestId("credit-card-expiry-input");
+
+      await user.type(input, "1225");
+
+      expect(input).toHaveValue("12/25");
+      expect(onValueChange).toHaveBeenLastCalledWith("12/25", "1225");
+    });
+
     test("zipCode mask pattern", async () => {
       const user = userEvent.setup();
       const onValueChange = vi.fn();
@@ -404,7 +424,6 @@ describe("MaskInput", () => {
       const onValueChange = vi.fn();
       const customMask: MaskPattern = {
         pattern: "##-##-##",
-        placeholder: "AB-CD-EF",
         transform: (value) => value.replace(/[^A-Z0-9]/gi, "").toUpperCase(),
         validate: (value) => /^[A-Z0-9]{6}$/.test(value),
       };
@@ -609,15 +628,176 @@ describe("MaskInput", () => {
 
       const input = screen.getByTestId("phone-input");
 
-      // Focus should show mask placeholder
+      // Focus without maskPlaceholder should keep original placeholder
       await user.click(input);
       expect(onFocus).toHaveBeenCalled();
+      expect(input).toHaveAttribute("placeholder", "Enter phone");
+
+      // Blur should keep original placeholder
+      await user.tab();
+      expect(onBlur).toHaveBeenCalled();
+      expect(input).toHaveAttribute("placeholder", "Enter phone");
+    });
+  });
+
+  describe("MaskPlaceholder Prop", () => {
+    test("shows maskPlaceholder when focused and prop is provided", async () => {
+      const user = userEvent.setup();
+
+      render(
+        <MaskInput
+          mask="phone"
+          placeholder="Enter phone"
+          maskPlaceholder="(___) ___-____"
+          data-testid="phone-input"
+        />,
+      );
+
+      const input = screen.getByTestId("phone-input");
+
+      // Initially should show regular placeholder
+      expect(input).toHaveAttribute("placeholder", "Enter phone");
+
+      // Focus should show mask placeholder
+      await user.click(input);
       expect(input).toHaveAttribute("placeholder", "(___) ___-____");
 
       // Blur should revert to original placeholder
       await user.tab();
-      expect(onBlur).toHaveBeenCalled();
       expect(input).toHaveAttribute("placeholder", "Enter phone");
+    });
+
+    test("does not show mask placeholder when maskPlaceholder prop is not provided", async () => {
+      const user = userEvent.setup();
+
+      render(
+        <MaskInput
+          mask="phone"
+          placeholder="Enter phone"
+          data-testid="phone-input"
+        />,
+      );
+
+      const input = screen.getByTestId("phone-input");
+
+      // Initially should show regular placeholder
+      expect(input).toHaveAttribute("placeholder", "Enter phone");
+
+      // Focus should keep regular placeholder
+      await user.click(input);
+      expect(input).toHaveAttribute("placeholder", "Enter phone");
+
+      // Blur should keep regular placeholder
+      await user.tab();
+      expect(input).toHaveAttribute("placeholder", "Enter phone");
+    });
+
+    test("shows currency placeholder when focused with currency mask and maskPlaceholder", async () => {
+      const user = userEvent.setup();
+
+      render(
+        <MaskInput
+          mask="currency"
+          placeholder="Enter amount"
+          maskPlaceholder="$0.00"
+          data-testid="currency-input"
+        />,
+      );
+
+      const input = screen.getByTestId("currency-input");
+
+      // Initially should show regular placeholder
+      expect(input).toHaveAttribute("placeholder", "Enter amount");
+
+      // Focus should show formatted currency placeholder
+      await user.click(input);
+      expect(input).toHaveAttribute("placeholder", "$0.00");
+
+      // Blur should revert to original placeholder
+      await user.tab();
+      expect(input).toHaveAttribute("placeholder", "Enter amount");
+    });
+
+    test("shows percentage placeholder when focused with percentage mask and maskPlaceholder", async () => {
+      const user = userEvent.setup();
+
+      render(
+        <MaskInput
+          mask="percentage"
+          placeholder="Enter percentage"
+          maskPlaceholder="0.00%"
+          data-testid="percentage-input"
+        />,
+      );
+
+      const input = screen.getByTestId("percentage-input");
+
+      // Initially should show regular placeholder
+      expect(input).toHaveAttribute("placeholder", "Enter percentage");
+
+      // Focus should show percentage placeholder
+      await user.click(input);
+      expect(input).toHaveAttribute("placeholder", "0.00%");
+
+      // Blur should revert to original placeholder
+      await user.tab();
+      expect(input).toHaveAttribute("placeholder", "Enter percentage");
+    });
+
+    test("shows custom maskPlaceholder with custom mask pattern", async () => {
+      const user = userEvent.setup();
+      const customMask: MaskPattern = {
+        pattern: "###-###",
+        transform: (value) => value.replace(/[^A-Z0-9]/gi, "").toUpperCase(),
+        validate: (value) => /^[A-Z0-9]{6}$/.test(value),
+      };
+
+      render(
+        <MaskInput
+          mask={customMask}
+          placeholder="Enter code"
+          maskPlaceholder="ABC-123"
+          data-testid="custom-input"
+        />,
+      );
+
+      const input = screen.getByTestId("custom-input");
+
+      // Initially should show regular placeholder
+      expect(input).toHaveAttribute("placeholder", "Enter code");
+
+      // Focus should show custom mask placeholder
+      await user.click(input);
+      expect(input).toHaveAttribute("placeholder", "ABC-123");
+
+      // Blur should revert to original placeholder
+      await user.tab();
+      expect(input).toHaveAttribute("placeholder", "Enter code");
+    });
+
+    test("handles maskPlaceholder without regular placeholder", async () => {
+      const user = userEvent.setup();
+
+      render(
+        <MaskInput
+          mask="phone"
+          maskPlaceholder="(___) ___-____"
+          data-testid="phone-input"
+        />,
+      );
+
+      const input = screen.getByTestId("phone-input");
+
+      // Initially should have no placeholder
+      expect(input).not.toHaveAttribute("placeholder");
+
+      // Focus should show mask placeholder
+      await user.click(input);
+      expect(input).toHaveAttribute("placeholder", "(___) ___-____");
+
+      // Blur should remove placeholder
+      await user.tab();
+      expect(input).not.toHaveAttribute("placeholder");
     });
   });
 
@@ -915,6 +1095,83 @@ describe("MaskInput", () => {
       expect(validate?.("1430")).toBe(true); // Valid time
       expect(validate?.("2430")).toBe(false); // Invalid hour
       expect(validate?.("1460")).toBe(false); // Invalid minute
+    });
+
+    test("creditCard pattern validation", () => {
+      const { validate } = MASK_PATTERNS.creditCard;
+
+      // Valid credit card numbers (pass Luhn algorithm via validateCardNumber)
+      expect(validate?.("4242424242424242")).toBe(true); // Stripe test card
+      expect(validate?.("4000000000000002")).toBe(true); // Another valid card
+      expect(validate?.("5555555555554444")).toBe(true); // Mastercard test card
+      expect(validate?.("378282246310005")).toBe(true); // American Express (15 digits)
+      expect(validate?.("6011111111111117")).toBe(true); // Discover test card
+
+      // Invalid credit card numbers (fail Luhn algorithm)
+      expect(validate?.("1231231231231231")).toBe(false); // User's example - invalid
+      expect(validate?.("4242424242424243")).toBe(false); // One digit changed
+      expect(validate?.("1234567890123456")).toBe(false); // Sequential numbers
+      expect(validate?.("1111111111111111")).toBe(false); // All ones
+
+      // Note: "0000000000000000" technically passes Luhn (sum=0, 0%10=0) but is not a real card
+      expect(validate?.("0000000000000000")).toBe(true); // All zeros - passes Luhn but not realistic
+
+      // Invalid length
+      expect(validate?.("123456789012")).toBe(false); // Too short (12 digits)
+      expect(validate?.("12345678901234567890")).toBe(false); // Too long (20 digits)
+      expect(validate?.("123")).toBe(false); // Way too short
+      expect(validate?.("")).toBe(false); // Empty
+
+      // Invalid characters (should be filtered by transform first)
+      expect(validate?.("abcd")).toBe(false);
+    });
+
+    test("creditCardExpiry pattern validation", () => {
+      const { validate } = MASK_PATTERNS.creditCardExpiry;
+
+      // Mock current date to December 2025 for consistent testing
+      const mockDate = new Date(2025, 11, 15); // December 15, 2025
+      const originalDate = Date;
+      const MockDate = vi.fn(() => mockDate) as unknown as DateConstructor;
+      MockDate.now = originalDate.now;
+      MockDate.parse = originalDate.parse;
+      MockDate.UTC = originalDate.UTC;
+      global.Date = MockDate;
+
+      // Valid future dates
+      expect(validate?.("1226")).toBe(true); // December 2026
+      expect(validate?.("0126")).toBe(true); // January 2026
+      expect(validate?.("1225")).toBe(true); // December 2025 (current month)
+      expect(validate?.("1239")).toBe(true); // December 2039 (within 50 years)
+
+      // Invalid past dates
+      expect(validate?.("1125")).toBe(false); // November 2025 (past month)
+      expect(validate?.("1224")).toBe(false); // December 2024 (past year)
+
+      // Invalid months
+      expect(validate?.("0025")).toBe(false); // Month 00
+      expect(validate?.("1325")).toBe(false); // Month 13
+
+      // Invalid format (wrong length)
+      expect(validate?.("125")).toBe(false); // Too short
+      expect(validate?.("12255")).toBe(false); // Too long
+      expect(validate?.("")).toBe(false); // Empty
+
+      // Invalid characters (should be filtered by transform)
+      expect(validate?.("ab25")).toBe(false);
+
+      // Edge cases for year validation
+      expect(validate?.("1240")).toBe(true); // Year 40 (2040) is valid (within 50 years from 2025)
+      expect(validate?.("1250")).toBe(true); // Year 50 (2050) is valid (within 50 years from 2025)
+      expect(validate?.("1299")).toBe(false); // Year 99 (1999) is in the past
+      expect(validate?.("1200")).toBe(false); // Year 00 (2000) is in the past
+      expect(validate?.("1230")).toBe(true); // Year 30 (2030) is valid
+      expect(validate?.("1249")).toBe(true); // Year 49 (2049) is valid (within 50 years from 2025)
+      expect(validate?.("1275")).toBe(true); // Year 75 (2075) is valid (exactly 50 years from 2025)
+      expect(validate?.("1276")).toBe(false); // Year 76 (1976) is in the past
+
+      // Restore original Date
+      global.Date = originalDate;
     });
 
     test("ipv4 pattern validation", () => {

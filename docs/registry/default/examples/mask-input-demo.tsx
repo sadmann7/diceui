@@ -13,15 +13,6 @@ interface Input {
   percentage: string;
 }
 
-interface Validation {
-  phone: boolean;
-  date: boolean;
-  dollar: boolean;
-  euro: boolean;
-  creditCard: boolean;
-  percentage: boolean;
-}
-
 export default function MaskInputDemo() {
   const id = React.useId();
   const [input, setInput] = React.useState<Input>({
@@ -31,14 +22,6 @@ export default function MaskInputDemo() {
     euro: "",
     creditCard: "",
     percentage: "",
-  });
-  const [validation, setValidation] = React.useState<Validation>({
-    phone: true,
-    date: true,
-    dollar: true,
-    euro: true,
-    creditCard: true,
-    percentage: true,
   });
 
   const onValueChange = React.useCallback(
@@ -51,61 +34,45 @@ export default function MaskInputDemo() {
     [],
   );
 
-  const onValidate = React.useCallback(
-    (field: keyof Validation) => (isValid: boolean) => {
-      setValidation((prev) => ({
-        ...prev,
-        [field]: isValid,
-      }));
-    },
-    [],
-  );
-
   return (
     <div className="grid w-full gap-6 md:grid-cols-2 lg:grid-cols-3">
       <div className="flex flex-col gap-2">
-        <Label htmlFor={`${id}-phone`}>Phone Number</Label>
+        <Label htmlFor={`${id}-phone`}>Phone number</Label>
         <MaskInput
           id={`${id}-phone`}
           mask="phone"
           placeholder="Enter your phone number"
           value={input.phone}
           onValueChange={onValueChange("phone")}
-          onValidate={onValidate("phone")}
-          invalid={!validation.phone}
         />
         <p className="text-muted-foreground text-sm">
           Enter your phone number with area code
         </p>
       </div>
       <div className="flex flex-col gap-2">
-        <Label htmlFor={`${id}-date`}>Birth Date</Label>
+        <Label htmlFor={`${id}-date`}>Birth date</Label>
         <MaskInput
           id={`${id}-date`}
           mask="date"
-          placeholder="mm/dd/yyyy"
+          placeholder="Enter your birth date"
           value={input.date}
           onValueChange={onValueChange("date")}
-          onValidate={onValidate("date")}
-          invalid={!validation.date}
         />
         <p className="text-muted-foreground text-sm">Enter your birth date</p>
       </div>
       <div className="flex flex-col gap-2">
-        <Label htmlFor={`${id}-dollar`}>Dollar</Label>
+        <Label htmlFor={`${id}-dollar`}>Currency</Label>
         <MaskInput
           id={`${id}-dollar`}
           mask="currency"
           placeholder="$0.00"
           value={input.dollar}
           onValueChange={onValueChange("dollar")}
-          onValidate={onValidate("dollar")}
-          invalid={!validation.dollar}
         />
         <p className="text-muted-foreground text-sm">Enter your currency</p>
       </div>
       <div className="flex flex-col gap-2">
-        <Label htmlFor={`${id}-euro`}>Euro (German)</Label>
+        <Label htmlFor={`${id}-euro`}>Currency (German)</Label>
         <MaskInput
           id={`${id}-euro`}
           mask="currency"
@@ -114,28 +81,24 @@ export default function MaskInputDemo() {
           placeholder="0,00 €"
           value={input.euro}
           onValueChange={onValueChange("euro")}
-          onValidate={onValidate("euro")}
-          invalid={!validation.euro}
         />
         <p className="text-muted-foreground text-sm">Enter your currency</p>
       </div>
       <div className="flex flex-col gap-2">
-        <Label htmlFor={`${id}-creditCard`}>Credit Card</Label>
+        <Label htmlFor={`${id}-creditCard`}>Credit card</Label>
         <MaskInput
           id={`${id}-creditCard`}
           mask="creditCard"
-          placeholder="4242 4242 4242 4242"
+          placeholder="Enter your credit card number"
           value={input.creditCard}
           onValueChange={onValueChange("creditCard")}
-          onValidate={onValidate("creditCard")}
-          invalid={!validation.creditCard}
         />
         <p className="text-muted-foreground text-sm">
           Enter your credit card number
         </p>
       </div>
       <div className="flex flex-col gap-2">
-        <Label htmlFor={`${id}-percentage`}>Percentage (0-100%)</Label>
+        <Label htmlFor={`${id}-percentage`}>Percentage</Label>
         <MaskInput
           id={`${id}-percentage`}
           mask="percentage"
@@ -144,12 +107,8 @@ export default function MaskInputDemo() {
           max={100}
           value={input.percentage}
           onValueChange={onValueChange("percentage")}
-          onValidate={onValidate("percentage")}
-          invalid={!validation.percentage}
         />
-        <p className="text-muted-foreground text-sm">
-          Enter a percentage between 0% and 100%
-        </p>
+        <p className="text-muted-foreground text-sm">Enter a percentage</p>
       </div>
     </div>
   );
