@@ -148,7 +148,7 @@ function ValidationModeCard({
   );
 
   return (
-    <div className="flex flex-col gap-3 rounded-md bg-card p-4">
+    <div className="flex flex-col gap-3 rounded-md border bg-card p-4 text-card-foreground shadow-sm">
       <div className="flex flex-col gap-1">
         <h4 className="font-medium text-xs">{mode.label}</h4>
         <p className="text-muted-foreground text-xs leading-tight">
