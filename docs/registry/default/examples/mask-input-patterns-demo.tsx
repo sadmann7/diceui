@@ -31,7 +31,8 @@ export default function MaskInputPatternsDemo() {
           mask="phone"
           value={values.phone}
           onValueChange={handleValueChange("phone")}
-          placeholder="(555) 123-4567"
+          placeholder="Enter phone number"
+          maskPlaceholder="(___) ___-____"
         />
       </div>
 
@@ -42,7 +43,8 @@ export default function MaskInputPatternsDemo() {
           mask="ssn"
           value={values.ssn}
           onValueChange={handleValueChange("ssn")}
-          placeholder="123-45-6789"
+          placeholder="Enter SSN"
+          maskPlaceholder="___-__-____"
         />
       </div>
 
@@ -53,7 +55,8 @@ export default function MaskInputPatternsDemo() {
           mask="date"
           value={values.date}
           onValueChange={handleValueChange("date")}
-          placeholder="mm/dd/yyyy"
+          placeholder="Enter date"
+          maskPlaceholder="mm/dd/yyyy"
         />
       </div>
 
@@ -64,7 +67,8 @@ export default function MaskInputPatternsDemo() {
           mask="time"
           value={values.time}
           onValueChange={handleValueChange("time")}
-          placeholder="hh:mm"
+          placeholder="Enter time"
+          maskPlaceholder="hh:mm"
         />
       </div>
 
@@ -75,7 +79,8 @@ export default function MaskInputPatternsDemo() {
           mask="creditCard"
           value={values.creditCard}
           onValueChange={handleValueChange("creditCard")}
-          placeholder="1234 5678 9012 3456"
+          placeholder="Enter credit card"
+          maskPlaceholder="____ ____ ____ ____"
         />
       </div>
 
@@ -86,7 +91,8 @@ export default function MaskInputPatternsDemo() {
           mask="zipCode"
           value={values.zipCode}
           onValueChange={handleValueChange("zipCode")}
-          placeholder="12345"
+          placeholder="Enter ZIP code"
+          maskPlaceholder="_____"
         />
       </div>
     </div>

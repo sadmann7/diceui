@@ -51,16 +51,6 @@ export interface MaskPattern {
   pattern: string;
 
   /**
-   * The placeholder text to show when focused
-   * This will be shown when the input is focused and the mask is not applied
-   *
-   * ```ts
-   * placeholder: "(___) ___-____"
-   * ```
-   */
-  placeholder?: string;
-
-  /**
    * Transform function to clean/format input before applying mask
    *
    * ```ts
@@ -173,7 +163,6 @@ export interface MaskInputProps extends EmptyProps<"input">, CompositionProps {
    * // Custom mask pattern
    * mask={{
    *   pattern: "###-###-####",
-   *   placeholder: "123-456-7890",
    *   transform: (value) => value.replace(/[^0-9]/g, ""),
    *   validate: (value) => value.length === 10,
    * }}
@@ -204,6 +193,20 @@ export interface MaskInputProps extends EmptyProps<"input">, CompositionProps {
    * ```
    */
   locale?: string;
+
+  /**
+   * Custom placeholder to show when focused and mask is active.
+   * Only shows when this prop is provided and the input is focused.
+   *
+   * ```ts
+   * // Show mask placeholder when focused
+   * maskPlaceholder="(___) ___-____"
+   *
+   * // No mask placeholder - uses regular placeholder behavior
+   * // maskPlaceholder={undefined}
+   * ```
+   */
+  maskPlaceholder?: string;
 
   /** Whether to render as child component using Radix Slot */
   asChild?: boolean;

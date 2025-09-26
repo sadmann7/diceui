@@ -61,7 +61,7 @@ export default function MaskInputFormDemo() {
                   onValueChange={(_maskedValue, unmaskedValue) => {
                     field.onChange(unmaskedValue);
                   }}
-                  placeholder="(555) 123-4567"
+                  placeholder="Enter phone number"
                   invalid={!!form.formState.errors.phone}
                 />
               </FormControl>
@@ -84,7 +84,7 @@ export default function MaskInputFormDemo() {
                   onValueChange={(_maskedValue, unmaskedValue) => {
                     field.onChange(unmaskedValue);
                   }}
-                  placeholder="123-45-6789"
+                  placeholder="Enter SSN"
                   invalid={!!form.formState.errors.ssn}
                 />
               </FormControl>
@@ -109,7 +109,7 @@ export default function MaskInputFormDemo() {
                   onValueChange={(_maskedValue, unmaskedValue) => {
                     field.onChange(unmaskedValue);
                   }}
-                  placeholder="mm/dd/yyyy"
+                  placeholder="Enter birth date"
                   invalid={!!form.formState.errors.birthDate}
                 />
               </FormControl>
@@ -132,7 +132,7 @@ export default function MaskInputFormDemo() {
                   onValueChange={(_maskedValue, unmaskedValue) => {
                     field.onChange(unmaskedValue);
                   }}
-                  placeholder="(555) 987-6543"
+                  placeholder="Enter emergency contact"
                   invalid={!!form.formState.errors.emergencyContact}
                 />
               </FormControl>

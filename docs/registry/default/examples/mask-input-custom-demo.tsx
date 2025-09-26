@@ -8,7 +8,6 @@ import { MaskInput, type MaskPattern } from "@/registry/default/ui/mask-input";
 // Custom license plate pattern (e.g., ABC-1234)
 const licensePattern: MaskPattern = {
   pattern: "###-####",
-  placeholder: "ABC-1234",
   transform: (value) => value.replace(/[^A-Z0-9]/gi, "").toUpperCase(),
   validate: (value) => {
     const cleaned = value.replace(/[^A-Z0-9]/gi, "").toUpperCase();
@@ -19,7 +18,6 @@ const licensePattern: MaskPattern = {
 // Custom product code pattern (e.g., PRD-ABC-123)
 const productCodePattern: MaskPattern = {
   pattern: "###-###-###",
-  placeholder: "PRD-ABC-123",
   transform: (value) => {
     const cleaned = value.replace(/[^A-Z0-9]/gi, "").toUpperCase();
 
@@ -63,7 +61,8 @@ export default function MaskInputCustomDemo() {
           mask={licensePattern}
           value={licenseValue}
           onValueChange={setLicenseValue}
-          placeholder="ABC-1234"
+          placeholder="Enter license plate"
+          maskPlaceholder="ABC-1234"
           invalid={!isLicenseValid}
           onValidate={setIsLicenseValid}
         />
@@ -78,7 +77,8 @@ export default function MaskInputCustomDemo() {
           mask={productCodePattern}
           value={productCodeValue}
           onValueChange={setProductCodeValue}
-          placeholder="PRD-ABC-123"
+          placeholder="Enter product code"
+          maskPlaceholder="PRD-ABC-123"
           invalid={!isProductCodeValid}
           onValidate={setIsProductCodeValid}
         />

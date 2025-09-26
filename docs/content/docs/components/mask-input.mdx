@@ -48,6 +48,7 @@ import { MaskInput } from "@/components/ui/mask-input";
 <MaskInput 
   mask="phone" 
   placeholder="Enter phone number"
+  maskPlaceholder="(___) ___-____"
   onValueChange={(masked, unmasked) => {
     console.log('Masked:', masked);     // "(555) 123-4567"
     console.log('Unmasked:', unmasked); // "5551234567"
@@ -61,6 +62,7 @@ import { MaskInput } from "@/components/ui/mask-input";
 - **Paste support** - Intelligently handles pasted content with proper formatting
 - **Built-in patterns** - Common formats like phone, SSN, date, credit card, etc.
 - **Custom patterns** - Create your own mask patterns with validation
+- **Optional mask placeholders** - Control when mask format hints are shown with `maskPlaceholder`
 - **TypeScript support** - Full type safety with IntelliSense
 - **Accessibility** - ARIA attributes and keyboard navigation
 - **Form integration** - Works seamlessly with form libraries
@@ -122,6 +124,36 @@ Integrate masked inputs with form validation using react-hook-form.
 
 <ComponentTabs name="mask-input-form-demo" />
 
+### Controlling mask placeholders
+
+Use the `maskPlaceholder` prop to control when mask format hints are shown. The mask placeholder only appears when the input is focused and the prop is provided.
+
+```tsx
+// Shows mask placeholder when focused
+<MaskInput 
+  mask="phone" 
+  placeholder="Enter phone number"
+  maskPlaceholder="(___) ___-____"
+/>
+
+// No mask placeholder - just regular placeholder behavior
+<MaskInput 
+  mask="phone" 
+  placeholder="Enter phone number"
+/>
+
+// Custom mask with placeholder
+<MaskInput 
+  mask={{
+    pattern: "###-###-####",
+    transform: (value) => value.replace(/[^A-Z0-9]/gi, "").toUpperCase(),
+    validate: (value) => value.length === 10,
+  }}
+  placeholder="Enter license plate"
+  maskPlaceholder="ABC-1234"
+/>
+```
+
 ## Built-in Mask Patterns
 
 The component includes several predefined mask patterns:
@@ -150,12 +182,15 @@ Create custom patterns using the `MaskPattern` interface:
 ```tsx
 const customPattern: MaskPattern = {
   pattern: "###-###-####",
-  placeholder: "ABC-123-4567",
   transform: (value, opts) => value.replace(/[^A-Z0-9]/gi, "").toUpperCase(),
   validate: (value, opts) => value.length === 10,
 };
 
-<MaskInput mask={customPattern} />
+<MaskInput 
+  mask={customPattern} 
+  placeholder="Enter license plate"
+  maskPlaceholder="ABC-1234"
+/>
 ```
 
 ## API Reference

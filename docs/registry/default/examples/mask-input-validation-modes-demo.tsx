@@ -137,10 +137,10 @@ function ValidationModeCard({
         id={`phone-${mode.value}`}
         mask="phone"
         validationMode={mode.value}
+        placeholder="Enter phone number"
         value={value}
         onValueChange={onValueChange}
         onValidate={onValidate}
-        placeholder="(555) 123-4567"
         invalid={!validationState.isValid}
         className="h-8 text-sm"
       />

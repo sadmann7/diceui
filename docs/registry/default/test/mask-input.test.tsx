@@ -404,7 +404,6 @@ describe("MaskInput", () => {
       const onValueChange = vi.fn();
       const customMask: MaskPattern = {
         pattern: "##-##-##",
-        placeholder: "AB-CD-EF",
         transform: (value) => value.replace(/[^A-Z0-9]/gi, "").toUpperCase(),
         validate: (value) => /^[A-Z0-9]{6}$/.test(value),
       };
@@ -609,15 +608,176 @@ describe("MaskInput", () => {
 
       const input = screen.getByTestId("phone-input");
 
-      // Focus should show mask placeholder
+      // Focus without maskPlaceholder should keep original placeholder
       await user.click(input);
       expect(onFocus).toHaveBeenCalled();
+      expect(input).toHaveAttribute("placeholder", "Enter phone");
+
+      // Blur should keep original placeholder
+      await user.tab();
+      expect(onBlur).toHaveBeenCalled();
+      expect(input).toHaveAttribute("placeholder", "Enter phone");
+    });
+  });
+
+  describe("MaskPlaceholder Prop", () => {
+    test("shows maskPlaceholder when focused and prop is provided", async () => {
+      const user = userEvent.setup();
+
+      render(
+        <MaskInput
+          mask="phone"
+          placeholder="Enter phone"
+          maskPlaceholder="(___) ___-____"
+          data-testid="phone-input"
+        />,
+      );
+
+      const input = screen.getByTestId("phone-input");
+
+      // Initially should show regular placeholder
+      expect(input).toHaveAttribute("placeholder", "Enter phone");
+
+      // Focus should show mask placeholder
+      await user.click(input);
       expect(input).toHaveAttribute("placeholder", "(___) ___-____");
 
       // Blur should revert to original placeholder
       await user.tab();
-      expect(onBlur).toHaveBeenCalled();
       expect(input).toHaveAttribute("placeholder", "Enter phone");
+    });
+
+    test("does not show mask placeholder when maskPlaceholder prop is not provided", async () => {
+      const user = userEvent.setup();
+
+      render(
+        <MaskInput
+          mask="phone"
+          placeholder="Enter phone"
+          data-testid="phone-input"
+        />,
+      );
+
+      const input = screen.getByTestId("phone-input");
+
+      // Initially should show regular placeholder
+      expect(input).toHaveAttribute("placeholder", "Enter phone");
+
+      // Focus should keep regular placeholder
+      await user.click(input);
+      expect(input).toHaveAttribute("placeholder", "Enter phone");
+
+      // Blur should keep regular placeholder
+      await user.tab();
+      expect(input).toHaveAttribute("placeholder", "Enter phone");
+    });
+
+    test("shows currency placeholder when focused with currency mask and maskPlaceholder", async () => {
+      const user = userEvent.setup();
+
+      render(
+        <MaskInput
+          mask="currency"
+          placeholder="Enter amount"
+          maskPlaceholder="$0.00"
+          data-testid="currency-input"
+        />,
+      );
+
+      const input = screen.getByTestId("currency-input");
+
+      // Initially should show regular placeholder
+      expect(input).toHaveAttribute("placeholder", "Enter amount");
+
+      // Focus should show formatted currency placeholder
+      await user.click(input);
+      expect(input).toHaveAttribute("placeholder", "$0.00");
+
+      // Blur should revert to original placeholder
+      await user.tab();
+      expect(input).toHaveAttribute("placeholder", "Enter amount");
+    });
+
+    test("shows percentage placeholder when focused with percentage mask and maskPlaceholder", async () => {
+      const user = userEvent.setup();
+
+      render(
+        <MaskInput
+          mask="percentage"
+          placeholder="Enter percentage"
+          maskPlaceholder="0.00%"
+          data-testid="percentage-input"
+        />,
+      );
+
+      const input = screen.getByTestId("percentage-input");
+
+      // Initially should show regular placeholder
+      expect(input).toHaveAttribute("placeholder", "Enter percentage");
+
+      // Focus should show percentage placeholder
+      await user.click(input);
+      expect(input).toHaveAttribute("placeholder", "0.00%");
+
+      // Blur should revert to original placeholder
+      await user.tab();
+      expect(input).toHaveAttribute("placeholder", "Enter percentage");
+    });
+
+    test("shows custom maskPlaceholder with custom mask pattern", async () => {
+      const user = userEvent.setup();
+      const customMask: MaskPattern = {
+        pattern: "###-###",
+        transform: (value) => value.replace(/[^A-Z0-9]/gi, "").toUpperCase(),
+        validate: (value) => /^[A-Z0-9]{6}$/.test(value),
+      };
+
+      render(
+        <MaskInput
+          mask={customMask}
+          placeholder="Enter code"
+          maskPlaceholder="ABC-123"
+          data-testid="custom-input"
+        />,
+      );
+
+      const input = screen.getByTestId("custom-input");
+
+      // Initially should show regular placeholder
+      expect(input).toHaveAttribute("placeholder", "Enter code");
+
+      // Focus should show custom mask placeholder
+      await user.click(input);
+      expect(input).toHaveAttribute("placeholder", "ABC-123");
+
+      // Blur should revert to original placeholder
+      await user.tab();
+      expect(input).toHaveAttribute("placeholder", "Enter code");
+    });
+
+    test("handles maskPlaceholder without regular placeholder", async () => {
+      const user = userEvent.setup();
+
+      render(
+        <MaskInput
+          mask="phone"
+          maskPlaceholder="(___) ___-____"
+          data-testid="phone-input"
+        />,
+      );
+
+      const input = screen.getByTestId("phone-input");
+
+      // Initially should have no placeholder
+      expect(input).not.toHaveAttribute("placeholder");
+
+      // Focus should show mask placeholder
+      await user.click(input);
+      expect(input).toHaveAttribute("placeholder", "(___) ___-____");
+
+      // Blur should remove placeholder
+      await user.tab();
+      expect(input).not.toHaveAttribute("placeholder");
     });
   });
 

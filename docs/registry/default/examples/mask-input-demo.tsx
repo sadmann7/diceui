@@ -83,7 +83,7 @@ export default function MaskInputDemo() {
         <MaskInput
           id={`${id}-date`}
           mask="date"
-          placeholder="mm/dd/yyyy"
+          placeholder="Enter your birth date"
           value={input.date}
           onValueChange={onValueChange("date")}
           onValidate={onValidate("date")}
@@ -124,7 +124,7 @@ export default function MaskInputDemo() {
         <MaskInput
           id={`${id}-creditCard`}
           mask="creditCard"
-          placeholder="4242 4242 4242 4242"
+          placeholder="Enter your credit card number"
           value={input.creditCard}
           onValueChange={onValueChange("creditCard")}
           onValidate={onValidate("creditCard")}
