@@ -1045,20 +1045,6 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "mask-input-patterns-demo": {
-      name: "mask-input-patterns-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["label","mask-input"],
-      files: [{
-        path: "registry/default/examples/mask-input-patterns-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/mask-input-patterns-demo.tsx")),
-      source: "",
-      chunks: []
-    },
     "mask-input-custom-pattern-demo": {
       name: "mask-input-custom-pattern-demo",
       description: "",

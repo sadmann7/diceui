@@ -509,17 +509,6 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "mask-input-patterns-demo",
-    type: "registry:example",
-    registryDependencies: ["label", "mask-input"],
-    files: [
-      {
-        path: "examples/mask-input-patterns-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
     name: "mask-input-custom-pattern-demo",
     type: "registry:example",
     registryDependencies: ["label", "mask-input"],
