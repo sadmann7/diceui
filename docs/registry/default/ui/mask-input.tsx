@@ -13,8 +13,6 @@ const DEFAULT_LOCALE = "en-US";
 const NUMERIC_MASK_PATTERNS =
   /^(phone|zipCode|zipCodeExtended|ssn|ein|time|date|creditCard)$/;
 const CURRENCY_PERCENTAGE_SYMBOLS = /[€$%]/;
-const CURRENCY_FALLBACK = "$0.00";
-const ZERO_PERCENTAGE = "0.00%";
 
 interface CurrencySymbols {
   currency: string;
@@ -772,62 +770,16 @@ function MaskInput(props: MaskInputProps) {
   const placeholderValue = React.useMemo(() => {
     if (withoutMask) return placeholder;
 
-    if (placeholder) {
-      if (focused && maskPlaceholder && maskPattern) {
-        if (isCurrencyMask({ mask, pattern: maskPattern.pattern })) {
-          try {
-            const formatter = getCachedFormatter(locale, {
-              currency,
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            });
-            return formatter.format(0);
-          } catch {
-            return `${getCachedFormatter(DEFAULT_LOCALE, {
-              currency: DEFAULT_CURRENCY,
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            }).format(0)}`;
-          }
-        }
-        if (mask === "percentage" || maskPattern.pattern.includes("%")) {
-          return ZERO_PERCENTAGE;
-        }
-        return maskPlaceholder;
-      }
-      return placeholder;
+    if (placeholder && maskPlaceholder) {
+      return focused ? maskPlaceholder : placeholder;
     }
 
-    if (focused && maskPlaceholder && maskPattern) {
-      if (isCurrencyMask({ mask, pattern: maskPattern.pattern })) {
-        try {
-          const formatter = getCachedFormatter(locale, {
-            currency,
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          });
-          return formatter.format(0);
-        } catch {
-          return CURRENCY_FALLBACK;
-        }
-      }
-      if (mask === "percentage" || maskPattern.pattern.includes("%")) {
-        return ZERO_PERCENTAGE;
-      }
+    if (maskPlaceholder) {
       return maskPlaceholder;
     }
 
     return placeholder;
-  }, [
-    placeholder,
-    withoutMask,
-    maskPattern,
-    focused,
-    mask,
-    currency,
-    locale,
-    maskPlaceholder,
-  ]);
+  }, [placeholder, maskPlaceholder, focused, withoutMask]);
 
   const displayValue = React.useMemo(() => {
     if (withoutMask || !maskPattern || !value) return value ?? "";
