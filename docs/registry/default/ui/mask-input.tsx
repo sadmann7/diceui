@@ -11,7 +11,7 @@ const DEFAULT_CURRENCY = "USD";
 const DEFAULT_LOCALE = "en-US";
 
 const NUMERIC_MASK_PATTERNS =
-  /^(phone|zipCode|zipCodeExtended|ssn|ein|time|date|creditCard)$/;
+  /^(phone|zipCode|zipCodeExtended|ssn|ein|time|date|creditCard|creditCardExpiry)$/;
 const CURRENCY_PERCENTAGE_SYMBOLS = /[€$%]/;
 
 interface CurrencySymbols {
@@ -44,6 +44,7 @@ const REGEX_CACHE = {
   ein: /^\d{9}$/,
   time: /^\d{4}$/,
   creditCard: /^\d{15,19}$/,
+  creditCardExpiry: /^\d{4}$/,
   licensePlate: /^[A-Z0-9]{6}$/,
   macAddress: /^[A-F0-9]{12}$/,
   currencyValidation: /^\d+(\.\d{1,2})?$/,
@@ -83,6 +84,7 @@ function getCachedFormatter(
       );
     }
   }
+
   const formatter = formattersCache.get(key);
   if (!formatter) {
     throw new Error(`Failed to create formatter for ${key}`);
@@ -189,6 +191,7 @@ type MaskPatternKey =
   | "date"
   | "time"
   | "creditCard"
+  | "creditCardExpiry"
   | "zipCode"
   | "zipCodeExtended"
   | "currency"
@@ -262,6 +265,37 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
       return REGEX_CACHE.creditCard.test(cleaned);
     },
   },
+  creditCardExpiry: {
+    pattern: "##/##",
+    transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
+    validate: (value) => {
+      const cleaned = value.replace(REGEX_CACHE.nonDigits, "");
+      if (!REGEX_CACHE.creditCardExpiry.test(cleaned)) return false;
+
+      const month = parseInt(cleaned.substring(0, 2), 10);
+      const year = parseInt(cleaned.substring(2, 4), 10);
+
+      if (month < 1 || month > 12) return false;
+
+      const now = new Date();
+      const currentYear = now.getFullYear() % 100;
+      const currentMonth = now.getMonth() + 1;
+
+      if (
+        year < currentYear ||
+        (year === currentYear && month < currentMonth)
+      ) {
+        return false;
+      }
+
+      const maxYear = (currentYear + 15) % 100;
+      if (year > maxYear && year < 50) {
+        return false;
+      }
+
+      return true;
+    },
+  },
   zipCode: {
     pattern: "#####",
     transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
@@ -328,7 +362,7 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
           const match = cleaned.match(/^(\d+)\.(\d{3})(\d{1,2})$/);
           if (match) {
             const [, beforeDot, thousandsPart, decimalPart] = match;
-            const integerPart = (beforeDot || "") + (thousandsPart || "");
+            const integerPart = (beforeDot ?? "") + (thousandsPart ?? "");
             const result = `${integerPart}.${decimalPart}`;
             return result;
           }

@@ -70,42 +70,6 @@ import { MaskInput } from "@/components/ui/mask-input";
 
 ## Examples
 
-### Built-in Patterns
-
-Use predefined mask patterns for common input formats.
-
-<ComponentTabs name="mask-input-patterns-demo" />
-
-### Currency Formatting
-
-The currency mask uses the `Intl.NumberFormat` API for localization and currency formatting.
-
-```tsx
-// Default USD formatting
-<MaskInput mask="currency" />
-
-// Euro formatting with German locale
-<MaskInput 
-  mask="currency" 
-  currency="EUR" 
-  locale="de-DE" 
-/>
-
-// Japanese Yen formatting
-<MaskInput 
-  mask="currency" 
-  currency="JPY" 
-  locale="ja-JP" 
-/>
-
-// British Pound formatting
-<MaskInput 
-  mask="currency" 
-  currency="GBP" 
-  locale="en-GB" 
-/>
-```
-
 ### With custom patterns
 
 Create custom mask patterns for specific formatting needs.
@@ -123,36 +87,6 @@ Control when validation occurs with different validation modes, similar to react
 Integrate masked inputs with form validation using react-hook-form.
 
 <ComponentTabs name="mask-input-form-demo" />
-
-### Controlling mask placeholders
-
-Use the `maskPlaceholder` prop to control when mask format hints are shown. The mask placeholder only appears when the input is focused and the prop is provided.
-
-```tsx
-// Shows mask placeholder when focused
-<MaskInput 
-  mask="phone" 
-  placeholder="Enter phone number"
-  maskPlaceholder="(___) ___-____"
-/>
-
-// No mask placeholder - just regular placeholder behavior
-<MaskInput 
-  mask="phone" 
-  placeholder="Enter phone number"
-/>
-
-// Custom mask with placeholder
-<MaskInput 
-  mask={{
-    pattern: "###-###-####",
-    transform: (value) => value.replace(/[^A-Z0-9]/gi, "").toUpperCase(),
-    validate: (value) => value.length === 10,
-  }}
-  placeholder="Enter license plate"
-  maskPlaceholder="ABC-1234"
-/>
-```
 
 ## Built-in Mask Patterns
 
@@ -190,6 +124,55 @@ const customPattern: MaskPattern = {
   mask={customPattern} 
   placeholder="Enter license plate"
   maskPlaceholder="ABC-1234"
+/>
+```
+
+## Currency Formatting
+
+The currency mask uses the `Intl.NumberFormat` API for localization and currency formatting.
+
+```tsx
+// Default USD formatting
+<MaskInput mask="currency" />
+
+// Euro formatting with German locale
+<MaskInput 
+  mask="currency" 
+  currency="EUR" 
+  locale="de-DE" 
+/>
+
+// Japanese Yen formatting
+<MaskInput 
+  mask="currency" 
+  currency="JPY" 
+  locale="ja-JP" 
+/>
+
+// British Pound formatting
+<MaskInput 
+  mask="currency" 
+  currency="GBP" 
+  locale="en-GB" 
+/>
+```
+
+## Mask Placeholders
+
+Use the `maskPlaceholder` prop to control when mask format hints are shown. The mask placeholder only appears when the input is focused and the prop is provided.
+
+```tsx
+// Shows mask placeholder when focused
+<MaskInput 
+  mask="phone" 
+  placeholder="Enter phone number"
+  maskPlaceholder="(___) ___-____"
+/>
+
+// No mask placeholder - just regular placeholder behavior
+<MaskInput 
+  mask="phone" 
+  placeholder="Enter phone number"
 />
 ```
 
