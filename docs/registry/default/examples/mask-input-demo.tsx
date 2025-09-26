@@ -10,6 +10,7 @@ interface Input {
   dollar: string;
   euro: string;
   creditCard: string;
+  creditCardExpiry: string;
   percentage: string;
 }
 
@@ -21,6 +22,7 @@ export default function MaskInputDemo() {
     dollar: "",
     euro: "",
     creditCard: "",
+    creditCardExpiry: "",
     percentage: "",
   });
 
@@ -95,6 +97,19 @@ export default function MaskInputDemo() {
         />
         <p className="text-muted-foreground text-sm">
           Enter your credit card number
+        </p>
+      </div>
+      <div className="flex flex-col gap-2">
+        <Label htmlFor={`${id}-creditCardExpiry`}>Credit Card Expiry</Label>
+        <MaskInput
+          id={`${id}-creditCardExpiry`}
+          mask="creditCardExpiry"
+          placeholder="Enter your credit card expiry date"
+          value={input.creditCardExpiry}
+          onValueChange={onValueChange("creditCardExpiry")}
+        />
+        <p className="text-muted-foreground text-sm">
+          Enter your credit card expiry date
         </p>
       </div>
       <div className="flex flex-col gap-2">

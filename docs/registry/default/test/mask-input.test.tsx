@@ -210,6 +210,26 @@ describe("MaskInput", () => {
       );
     });
 
+    test("creditCardExpiry mask pattern", async () => {
+      const user = userEvent.setup();
+      const onValueChange = vi.fn();
+
+      render(
+        <MaskInput
+          mask="creditCardExpiry"
+          onValueChange={onValueChange}
+          data-testid="credit-card-expiry-input"
+        />,
+      );
+
+      const input = screen.getByTestId("credit-card-expiry-input");
+
+      await user.type(input, "1225");
+
+      expect(input).toHaveValue("12/25");
+      expect(onValueChange).toHaveBeenLastCalledWith("12/25", "1225");
+    });
+
     test("zipCode mask pattern", async () => {
       const user = userEvent.setup();
       const onValueChange = vi.fn();
@@ -1075,6 +1095,54 @@ describe("MaskInput", () => {
       expect(validate?.("1430")).toBe(true); // Valid time
       expect(validate?.("2430")).toBe(false); // Invalid hour
       expect(validate?.("1460")).toBe(false); // Invalid minute
+    });
+
+    test("creditCardExpiry pattern validation", () => {
+      const { validate } = MASK_PATTERNS.creditCardExpiry;
+
+      // Mock current date to December 2025 for consistent testing
+      const mockDate = new Date(2025, 11, 15); // December 15, 2025
+      const originalDate = Date;
+      const MockDate = vi.fn(() => mockDate) as unknown as DateConstructor;
+      MockDate.now = originalDate.now;
+      MockDate.parse = originalDate.parse;
+      MockDate.UTC = originalDate.UTC;
+      global.Date = MockDate;
+
+      // Valid future dates
+      expect(validate?.("1226")).toBe(true); // December 2026
+      expect(validate?.("0126")).toBe(true); // January 2026
+      expect(validate?.("1225")).toBe(true); // December 2025 (current month)
+      expect(validate?.("1239")).toBe(true); // December 2039 (within 50 years)
+
+      // Invalid past dates
+      expect(validate?.("1125")).toBe(false); // November 2025 (past month)
+      expect(validate?.("1224")).toBe(false); // December 2024 (past year)
+
+      // Invalid months
+      expect(validate?.("0025")).toBe(false); // Month 00
+      expect(validate?.("1325")).toBe(false); // Month 13
+
+      // Invalid format (wrong length)
+      expect(validate?.("125")).toBe(false); // Too short
+      expect(validate?.("12255")).toBe(false); // Too long
+      expect(validate?.("")).toBe(false); // Empty
+
+      // Invalid characters (should be filtered by transform)
+      expect(validate?.("ab25")).toBe(false);
+
+      // Edge cases for year validation
+      expect(validate?.("1240")).toBe(true); // Year 40 (2040) is valid (within 50 years from 2025)
+      expect(validate?.("1250")).toBe(true); // Year 50 (2050) is valid (within 50 years from 2025)
+      expect(validate?.("1299")).toBe(false); // Year 99 (1999) is in the past
+      expect(validate?.("1200")).toBe(false); // Year 00 (2000) is in the past
+      expect(validate?.("1230")).toBe(true); // Year 30 (2030) is valid
+      expect(validate?.("1249")).toBe(true); // Year 49 (2049) is valid (within 50 years from 2025)
+      expect(validate?.("1275")).toBe(true); // Year 75 (2075) is valid (exactly 50 years from 2025)
+      expect(validate?.("1276")).toBe(false); // Year 76 (1976) is in the past
+
+      // Restore original Date
+      global.Date = originalDate;
     });
 
     test("ipv4 pattern validation", () => {

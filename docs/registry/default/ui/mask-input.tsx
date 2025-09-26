@@ -278,18 +278,20 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
       if (month < 1 || month > 12) return false;
 
       const now = new Date();
-      const currentYear = now.getFullYear() % 100;
+      const currentYear = now.getFullYear();
       const currentMonth = now.getMonth() + 1;
 
+      const fullYear = year <= 75 ? 2000 + year : 1900 + year;
+
       if (
-        year < currentYear ||
-        (year === currentYear && month < currentMonth)
+        fullYear < currentYear ||
+        (fullYear === currentYear && month < currentMonth)
       ) {
         return false;
       }
 
-      const maxYear = (currentYear + 15) % 100;
-      if (year > maxYear && year < 50) {
+      const maxYear = currentYear + 50;
+      if (fullYear > maxYear) {
         return false;
       }
 
@@ -809,7 +811,7 @@ function MaskInput(props: MaskInputProps) {
     }
 
     if (maskPlaceholder) {
-      return maskPlaceholder;
+      return focused ? maskPlaceholder : undefined;
     }
 
     return placeholder;

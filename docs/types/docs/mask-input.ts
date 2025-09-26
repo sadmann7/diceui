@@ -76,6 +76,7 @@ export type MaskPatternKey =
   | "date"
   | "time"
   | "creditCard"
+  | "creditCardExpiry"
   | "zipCode"
   | "zipCodeExtended"
   | "currency"
