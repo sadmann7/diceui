@@ -10,7 +10,6 @@ interface Input {
   dollar: string;
   euro: string;
   creditCard: string;
-  creditCardExpiry: string;
   percentage: string;
 }
 
@@ -22,7 +21,6 @@ export default function MaskInputDemo() {
     dollar: "",
     euro: "",
     creditCard: "",
-    creditCardExpiry: "",
     percentage: "",
   });
 
@@ -39,7 +37,7 @@ export default function MaskInputDemo() {
   return (
     <div className="grid w-full gap-6 md:grid-cols-2 lg:grid-cols-3">
       <div className="flex flex-col gap-2">
-        <Label htmlFor={`${id}-phone`}>Phone Number</Label>
+        <Label htmlFor={`${id}-phone`}>Phone number</Label>
         <MaskInput
           id={`${id}-phone`}
           mask="phone"
@@ -52,7 +50,7 @@ export default function MaskInputDemo() {
         </p>
       </div>
       <div className="flex flex-col gap-2">
-        <Label htmlFor={`${id}-date`}>Birth Date</Label>
+        <Label htmlFor={`${id}-date`}>Birth date</Label>
         <MaskInput
           id={`${id}-date`}
           mask="date"
@@ -63,7 +61,7 @@ export default function MaskInputDemo() {
         <p className="text-muted-foreground text-sm">Enter your birth date</p>
       </div>
       <div className="flex flex-col gap-2">
-        <Label htmlFor={`${id}-dollar`}>Dollar</Label>
+        <Label htmlFor={`${id}-dollar`}>Currency</Label>
         <MaskInput
           id={`${id}-dollar`}
           mask="currency"
@@ -74,7 +72,7 @@ export default function MaskInputDemo() {
         <p className="text-muted-foreground text-sm">Enter your currency</p>
       </div>
       <div className="flex flex-col gap-2">
-        <Label htmlFor={`${id}-euro`}>Euro (German)</Label>
+        <Label htmlFor={`${id}-euro`}>Currency (German)</Label>
         <MaskInput
           id={`${id}-euro`}
           mask="currency"
@@ -87,7 +85,7 @@ export default function MaskInputDemo() {
         <p className="text-muted-foreground text-sm">Enter your currency</p>
       </div>
       <div className="flex flex-col gap-2">
-        <Label htmlFor={`${id}-creditCard`}>Credit Card</Label>
+        <Label htmlFor={`${id}-creditCard`}>Credit card</Label>
         <MaskInput
           id={`${id}-creditCard`}
           mask="creditCard"
@@ -100,20 +98,7 @@ export default function MaskInputDemo() {
         </p>
       </div>
       <div className="flex flex-col gap-2">
-        <Label htmlFor={`${id}-creditCardExpiry`}>Credit Card Expiry</Label>
-        <MaskInput
-          id={`${id}-creditCardExpiry`}
-          mask="creditCardExpiry"
-          placeholder="Enter your credit card expiry date"
-          value={input.creditCardExpiry}
-          onValueChange={onValueChange("creditCardExpiry")}
-        />
-        <p className="text-muted-foreground text-sm">
-          Enter your credit card expiry date
-        </p>
-      </div>
-      <div className="flex flex-col gap-2">
-        <Label htmlFor={`${id}-percentage`}>Percentage (0-100%)</Label>
+        <Label htmlFor={`${id}-percentage`}>Percentage</Label>
         <MaskInput
           id={`${id}-percentage`}
           mask="percentage"
@@ -123,9 +108,7 @@ export default function MaskInputDemo() {
           value={input.percentage}
           onValueChange={onValueChange("percentage")}
         />
-        <p className="text-muted-foreground text-sm">
-          Enter a percentage between 0% and 100%
-        </p>
+        <p className="text-muted-foreground text-sm">Enter a percentage</p>
       </div>
     </div>
   );

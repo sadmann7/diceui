@@ -46,7 +46,7 @@ const productCodePattern: MaskPattern = {
   },
 };
 
-export default function MaskInputCustomDemo() {
+export default function MaskInputCustomPatternDemo() {
   const [licenseValue, setLicenseValue] = React.useState("");
   const [productCodeValue, setProductCodeValue] = React.useState("");
   const [isLicenseValid, setIsLicenseValid] = React.useState(true);

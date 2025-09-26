@@ -29,9 +29,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
-import MaskInputCardDemo from "@/registry/default/examples/mask-input-card-information-demo";
 import MaskInputDemo from "@/registry/default/examples/mask-input-demo";
-import MaskInputValidationModesDemo from "@/registry/default/examples/mask-input-validation-modes-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -46,9 +44,7 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <Demo>
-        <MaskInputCardDemo />
         <MaskInputDemo />
-        <MaskInputValidationModesDemo />
         <ColorPickerDemo />
       </Demo>
       <Combobox className="w-[15rem]">

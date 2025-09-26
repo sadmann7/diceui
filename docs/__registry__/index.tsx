@@ -1059,17 +1059,17 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "mask-input-custom-demo": {
-      name: "mask-input-custom-demo",
+    "mask-input-custom-pattern-demo": {
+      name: "mask-input-custom-pattern-demo",
       description: "",
       type: "registry:example",
       registryDependencies: ["label","mask-input"],
       files: [{
-        path: "registry/default/examples/mask-input-custom-demo.tsx",
+        path: "registry/default/examples/mask-input-custom-pattern-demo.tsx",
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/examples/mask-input-custom-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/mask-input-custom-pattern-demo.tsx")),
       source: "",
       chunks: []
     },
@@ -1087,20 +1087,6 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "mask-input-form-demo": {
-      name: "mask-input-form-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["button","form","mask-input"],
-      files: [{
-        path: "registry/default/examples/mask-input-form-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/mask-input-form-demo.tsx")),
-      source: "",
-      chunks: []
-    },
     "mask-input-card-information-demo": {
       name: "mask-input-card-information-demo",
       description: "",
@@ -1112,6 +1098,20 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/mask-input-card-information-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "mask-input-form-demo": {
+      name: "mask-input-form-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","form","mask-input"],
+      files: [{
+        path: "registry/default/examples/mask-input-form-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/mask-input-form-demo.tsx")),
       source: "",
       chunks: []
     },

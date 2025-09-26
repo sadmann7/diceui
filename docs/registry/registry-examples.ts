@@ -520,12 +520,12 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "mask-input-custom-demo",
+    name: "mask-input-custom-pattern-demo",
     type: "registry:example",
     registryDependencies: ["label", "mask-input"],
     files: [
       {
-        path: "examples/mask-input-custom-demo.tsx",
+        path: "examples/mask-input-custom-pattern-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -542,6 +542,17 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "mask-input-card-information-demo",
+    type: "registry:example",
+    registryDependencies: ["card", "label", "mask-input"],
+    files: [
+      {
+        path: "examples/mask-input-card-information-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "mask-input-form-demo",
     type: "registry:example",
     dependencies: ["@hookform/resolvers/zod", "react-hook-form", "zod"],
@@ -553,18 +564,6 @@ export const examples: Registry["items"] = [
       },
     ],
   },
-  {
-    name: "mask-input-card-information-demo",
-    type: "registry:example",
-    registryDependencies: ["card", "label", "mask-input"],
-    files: [
-      {
-        path: "examples/mask-input-card-information-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-
   {
     name: "kanban-demo",
     type: "registry:example",
