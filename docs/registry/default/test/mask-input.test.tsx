@@ -1097,6 +1097,35 @@ describe("MaskInput", () => {
       expect(validate?.("1460")).toBe(false); // Invalid minute
     });
 
+    test("creditCard pattern validation", () => {
+      const { validate } = MASK_PATTERNS.creditCard;
+
+      // Valid credit card numbers (pass Luhn algorithm via validateCardNumber)
+      expect(validate?.("4242424242424242")).toBe(true); // Stripe test card
+      expect(validate?.("4000000000000002")).toBe(true); // Another valid card
+      expect(validate?.("5555555555554444")).toBe(true); // Mastercard test card
+      expect(validate?.("378282246310005")).toBe(true); // American Express (15 digits)
+      expect(validate?.("6011111111111117")).toBe(true); // Discover test card
+
+      // Invalid credit card numbers (fail Luhn algorithm)
+      expect(validate?.("1231231231231231")).toBe(false); // User's example - invalid
+      expect(validate?.("4242424242424243")).toBe(false); // One digit changed
+      expect(validate?.("1234567890123456")).toBe(false); // Sequential numbers
+      expect(validate?.("1111111111111111")).toBe(false); // All ones
+
+      // Note: "0000000000000000" technically passes Luhn (sum=0, 0%10=0) but is not a real card
+      expect(validate?.("0000000000000000")).toBe(true); // All zeros - passes Luhn but not realistic
+
+      // Invalid length
+      expect(validate?.("123456789012")).toBe(false); // Too short (12 digits)
+      expect(validate?.("12345678901234567890")).toBe(false); // Too long (20 digits)
+      expect(validate?.("123")).toBe(false); // Way too short
+      expect(validate?.("")).toBe(false); // Empty
+
+      // Invalid characters (should be filtered by transform first)
+      expect(validate?.("abcd")).toBe(false);
+    });
+
     test("creditCardExpiry pattern validation", () => {
       const { validate } = MASK_PATTERNS.creditCardExpiry;
 

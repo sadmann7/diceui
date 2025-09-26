@@ -553,6 +553,17 @@ export const examples: Registry["items"] = [
       },
     ],
   },
+  {
+    name: "mask-input-card-information-demo",
+    type: "registry:example",
+    registryDependencies: ["card", "label", "mask-input"],
+    files: [
+      {
+        path: "examples/mask-input-card-information-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
 
   {
     name: "kanban-demo",

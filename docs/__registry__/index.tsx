@@ -1101,6 +1101,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "mask-input-card-information-demo": {
+      name: "mask-input-card-information-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["card","label","mask-input"],
+      files: [{
+        path: "registry/default/examples/mask-input-card-information-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/mask-input-card-information-demo.tsx")),
+      source: "",
+      chunks: []
+    },
     "kanban-demo": {
       name: "kanban-demo",
       description: "",

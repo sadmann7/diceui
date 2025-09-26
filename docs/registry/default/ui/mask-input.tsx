@@ -43,7 +43,7 @@ const REGEX_CACHE = {
   isbn: /^\d{13}$/,
   ein: /^\d{9}$/,
   time: /^\d{4}$/,
-  creditCard: /^\d{15,19}$/,
+  creditCard: /^\d{13,19}$/,
   creditCardExpiry: /^\d{4}$/,
   licensePlate: /^[A-Z0-9]{6}$/,
   macAddress: /^[A-F0-9]{12}$/,
@@ -262,7 +262,24 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
     transform: (value) => value.replace(REGEX_CACHE.nonDigits, ""),
     validate: (value) => {
       const cleaned = value.replace(REGEX_CACHE.nonDigits, "");
-      return REGEX_CACHE.creditCard.test(cleaned);
+      if (!REGEX_CACHE.creditCard.test(cleaned)) return false;
+
+      let sum = 0;
+      let isEven = false;
+      for (let i = cleaned.length - 1; i >= 0; i--) {
+        const digitChar = cleaned[i];
+        if (!digitChar) continue;
+        let digit = parseInt(digitChar, 10);
+        if (isEven) {
+          digit *= 2;
+          if (digit > 9) {
+            digit -= 9;
+          }
+        }
+        sum += digit;
+        isEven = !isEven;
+      }
+      return sum % 10 === 0;
     },
   },
   creditCardExpiry: {

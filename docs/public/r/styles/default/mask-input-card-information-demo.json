@@ -1,0 +1,17 @@
+{
+  "name": "mask-input-card-information-demo",
+  "type": "registry:example",
+  "registryDependencies": [
+    "card",
+    "label",
+    "mask-input"
+  ],
+  "files": [
+    {
+      "path": "examples/mask-input-card-information-demo.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport {\n  Card,\n  CardContent,\n  CardDescription,\n  CardHeader,\n  CardTitle,\n} from \"@/components/ui/card\";\nimport { Label } from \"@/components/ui/label\";\nimport { MaskInput } from \"@/registry/default/ui/mask-input\";\n\nexport default function MaskInputCardInformationDemo() {\n  const id = React.useId();\n  const [cardNumber, setCardNumber] = React.useState(\"\");\n  const [expiryDate, setExpiryDate] = React.useState(\"\");\n  const [cvc, setCvc] = React.useState(\"\");\n  const [cardNumberValid, setCardNumberValid] = React.useState(true);\n  const [expiryValid, setExpiryValid] = React.useState(true);\n  const [cvcValid, setCvcValid] = React.useState(true);\n\n  return (\n    <Card>\n      <CardHeader>\n        <CardTitle>Card information</CardTitle>\n        <CardDescription>Enter your card information</CardDescription>\n      </CardHeader>\n      <CardContent className=\"flex flex-col gap-4\">\n        <div className=\"flex flex-col gap-2\">\n          <Label htmlFor={`${id}-card-number  `}>Card number</Label>\n          <MaskInput\n            id={`${id}-card-number`}\n            mask=\"creditCard\"\n            placeholder=\"1234 1234 1234 1234\"\n            validationMode=\"onBlur\"\n            value={cardNumber}\n            onValueChange={setCardNumber}\n            onValidate={setCardNumberValid}\n            invalid={!cardNumberValid}\n          />\n        </div>\n        <div className=\"grid grid-cols-2 gap-4\">\n          <div className=\"flex flex-col gap-2\">\n            <Label htmlFor={`${id}-expiry`}>Expiry date</Label>\n            <MaskInput\n              id={`${id}-expiry`}\n              mask=\"creditCardExpiry\"\n              placeholder=\"MM/YY\"\n              validationMode=\"onBlur\"\n              value={expiryDate}\n              onValueChange={setExpiryDate}\n              onValidate={setExpiryValid}\n              invalid={!expiryValid}\n            />\n            {!expiryValid && expiryDate && (\n              <p className=\"text-destructive text-sm\">\n                Your card's expiration date is invalid.\n              </p>\n            )}\n          </div>\n          <div className=\"flex flex-col gap-2\">\n            <Label htmlFor={`${id}-cvc`}>CVC</Label>\n            <MaskInput\n              id={`${id}-cvc`}\n              mask={{\n                pattern: \"###\",\n                transform: (value) => value.replace(/[^0-9]/g, \"\"),\n                validate: (value) => value.length === 3,\n              }}\n              placeholder=\"123\"\n              validationMode=\"onBlur\"\n              value={cvc}\n              onValueChange={setCvc}\n              onValidate={setCvcValid}\n              invalid={!cvcValid}\n            />\n          </div>\n        </div>\n      </CardContent>\n    </Card>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}
