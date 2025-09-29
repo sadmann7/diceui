@@ -12,6 +12,156 @@ type Orientation = "horizontal" | "vertical";
 type RootElement = React.ComponentRef<typeof MarqueeRoot>;
 type ContentElement = React.ComponentRef<typeof MarqueeContent>;
 
+interface ElementDimensions {
+  rootSize: number;
+  contentSize: number;
+}
+
+function createResizeObserverStore() {
+  const listeners = new Set<() => void>();
+  let observer: ResizeObserver | null = null;
+  const elements = new Map<Element, ElementDimensions>();
+  const snapshotCache = new WeakMap<
+    Element,
+    WeakMap<Element, ElementDimensions>
+  >();
+  const isSupported = typeof ResizeObserver !== "undefined";
+
+  function notify() {
+    for (const callback of listeners) {
+      callback();
+    }
+  }
+
+  function cleanup() {
+    if (observer) {
+      observer.disconnect();
+      observer = null;
+    }
+    elements.clear();
+  }
+
+  function subscribe(callback: () => void) {
+    listeners.add(callback);
+    return () => {
+      listeners.delete(callback);
+      if (listeners.size === 0) {
+        cleanup();
+      }
+    };
+  }
+
+  function getSnapshot(
+    rootElement: RootElement | null,
+    contentElement: ContentElement | null,
+  ): ElementDimensions | null {
+    if (!rootElement || !contentElement) return null;
+
+    const containerData = elements.get(rootElement);
+    const contentData = elements.get(contentElement);
+
+    if (containerData && contentData) {
+      const currentSnapshot = {
+        rootSize: containerData.rootSize,
+        contentSize: contentData.contentSize,
+      };
+
+      // Get or create nested WeakMap for this root element
+      let rootSnapshots = snapshotCache.get(rootElement);
+      if (!rootSnapshots) {
+        rootSnapshots = new WeakMap();
+        snapshotCache.set(rootElement, rootSnapshots);
+      }
+
+      const cachedSnapshot = rootSnapshots.get(contentElement);
+
+      if (
+        !cachedSnapshot ||
+        cachedSnapshot.rootSize !== currentSnapshot.rootSize ||
+        cachedSnapshot.contentSize !== currentSnapshot.contentSize
+      ) {
+        rootSnapshots.set(contentElement, currentSnapshot);
+        return currentSnapshot;
+      }
+
+      return cachedSnapshot;
+    }
+
+    return null;
+  }
+
+  function observe(
+    rootElement: RootElement | null,
+    contentElement: Element | null,
+    orientation: Orientation,
+  ) {
+    if (!isSupported || !rootElement || !contentElement) return;
+
+    if (!observer) {
+      observer = new ResizeObserver((entries) => {
+        let hasChanges = false;
+
+        for (const entry of entries) {
+          const element = entry.target;
+          const isVertical = orientation === "vertical";
+          const size = isVertical
+            ? entry.contentRect.height
+            : entry.contentRect.width;
+
+          const currentData = elements.get(element);
+
+          if (
+            !currentData ||
+            (element === rootElement && currentData.rootSize !== size) ||
+            (element === contentElement && currentData.contentSize !== size)
+          ) {
+            if (element === rootElement) {
+              elements.set(element, {
+                rootSize: size,
+                contentSize: currentData?.contentSize ?? 0,
+              });
+            } else {
+              elements.set(element, {
+                rootSize: currentData?.rootSize ?? 0,
+                contentSize: size,
+              });
+            }
+            hasChanges = true;
+          }
+        }
+
+        if (hasChanges) {
+          notify();
+        }
+      });
+    }
+
+    observer.observe(rootElement);
+    observer.observe(contentElement);
+
+    const isVertical = orientation === "vertical";
+    const rootSize = isVertical
+      ? rootElement.getBoundingClientRect().height
+      : rootElement.getBoundingClientRect().width;
+    const contentSize = isVertical
+      ? contentElement.getBoundingClientRect().height
+      : contentElement.getBoundingClientRect().width;
+
+    elements.set(rootElement, { rootSize, contentSize: 0 });
+    elements.set(contentElement, { rootSize: 0, contentSize });
+
+    notify();
+  }
+
+  return {
+    subscribe,
+    getSnapshot,
+    observe,
+  };
+}
+
+const resizeObserverStore = createResizeObserverStore();
+
 interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
@@ -27,10 +177,10 @@ interface MarqueeContextValue {
 
 const MarqueeContext = React.createContext<MarqueeContextValue | null>(null);
 
-function useMarqueeContext() {
+function useMarqueeContext(consumerName: string) {
   const context = React.useContext(MarqueeContext);
   if (!context) {
-    throw new Error("Marquee components must be used within a Marquee");
+    throw new Error(`\`${consumerName}\` must be used within \`Marquee\``);
   }
   return context;
 }
@@ -65,46 +215,37 @@ function MarqueeRoot(props: MarqueeRootProps) {
   const rootRef = React.useRef<RootElement>(null);
   const contentRef = React.useRef<ContentElement>(null);
   const composedRef = useComposedRefs(ref, rootRef);
-  const [duration, setDuration] = React.useState(40);
+
+  const dimensions = React.useSyncExternalStore(
+    React.useCallback(
+      (callback) => resizeObserverStore.subscribe(callback),
+      [],
+    ),
+    React.useCallback(
+      () =>
+        resizeObserverStore.getSnapshot(rootRef.current, contentRef.current),
+      [],
+    ),
+    () => null,
+  );
+
+  const duration = React.useMemo(() => {
+    if (!dimensions) return 40;
+
+    const { rootSize, contentSize } = dimensions;
+    const distance = contentSize + rootSize;
+    return distance / speed;
+  }, [dimensions, speed]);
 
   React.useEffect(() => {
-    function updateDuration() {
-      if (!rootRef.current || !contentRef.current) return;
-
-      const container = rootRef.current;
-      const firstContent = contentRef.current;
-
-      const containerSize =
-        orientation === "vertical"
-          ? container.offsetHeight
-          : container.offsetWidth;
-      const contentSize =
-        orientation === "vertical"
-          ? firstContent.offsetHeight
-          : firstContent.offsetWidth;
-
-      const distance = contentSize + containerSize;
-      const calculatedDuration = distance / speed;
-
-      setDuration(calculatedDuration);
+    if (rootRef.current && contentRef.current) {
+      resizeObserverStore.observe(
+        rootRef.current,
+        contentRef.current,
+        orientation,
+      );
     }
-
-    updateDuration();
-
-    if (typeof ResizeObserver !== "undefined") {
-      const resizeObserver = new ResizeObserver(updateDuration);
-      if (rootRef.current) {
-        resizeObserver.observe(rootRef.current);
-      }
-      if (contentRef.current) {
-        resizeObserver.observe(contentRef.current);
-      }
-
-      return () => resizeObserver.disconnect();
-    }
-
-    return undefined;
-  }, [speed, orientation]);
+  }, [orientation]);
 
   const marqueeStyle = React.useMemo<React.CSSProperties>(
     () => ({
@@ -179,8 +320,9 @@ const marqueeContentVariants = cva(
 
 function MarqueeContent(props: DivProps) {
   const { className, asChild, ref, ...contentProps } = props;
+
   const { direction, pauseOnHover, reverse, loopCount, contentRef } =
-    useMarqueeContext();
+    useMarqueeContext("MarqueeContent");
 
   const composedRef = useComposedRefs(ref, contentRef);
   const ContentPrimitive = asChild ? Slot : "div";
