@@ -30,7 +30,14 @@ function createResizeObserverStore() {
   const isSupported = typeof ResizeObserver !== "undefined";
   let notificationScheduled = false;
 
-  const snapshotCache = new Map<string, ElementDimensions>();
+  // Cache for getSnapshot results to avoid returning new objects unnecessarily
+  const snapshotCache = new WeakMap<
+    Element,
+    WeakMap<
+      Element,
+      { horizontal: ElementDimensions; vertical: ElementDimensions }
+    >
+  >();
 
   function notify() {
     if (notificationScheduled) return;
@@ -50,7 +57,7 @@ function createResizeObserverStore() {
     }
     elements.clear();
     refCounts.clear();
-    snapshotCache.clear();
+    // Note: WeakMaps clean themselves up when elements are garbage collected
   }
 
   function subscribe(callback: () => void) {
@@ -80,19 +87,32 @@ function createResizeObserverStore() {
     const contentSize =
       orientation === "vertical" ? contentDims.height : contentDims.width;
 
-    const cacheKey = `${rootElement.toString()}-${contentElement.toString()}-${orientation}`;
+    // Get or create cache for this root element
+    let rootCache = snapshotCache.get(rootElement);
+    if (!rootCache) {
+      rootCache = new WeakMap();
+      snapshotCache.set(rootElement, rootCache);
+    }
 
-    const cached = snapshotCache.get(cacheKey);
-    if (
-      cached &&
-      cached.rootSize === rootSize &&
-      cached.contentSize === contentSize
-    ) {
+    // Get or create cache for this content element
+    let contentCache = rootCache.get(contentElement);
+    if (!contentCache) {
+      contentCache = {
+        horizontal: { rootSize: -1, contentSize: -1 },
+        vertical: { rootSize: -1, contentSize: -1 },
+      };
+      rootCache.set(contentElement, contentCache);
+    }
+
+    // Check if cached value is still valid
+    const cached = contentCache[orientation];
+    if (cached.rootSize === rootSize && cached.contentSize === contentSize) {
       return cached;
     }
 
+    // Update cache with new values
     const snapshot = { rootSize, contentSize };
-    snapshotCache.set(cacheKey, snapshot);
+    contentCache[orientation] = snapshot;
     return snapshot;
   }
 
@@ -155,19 +175,6 @@ function createResizeObserverStore() {
 
     const rootCount = (refCounts.get(rootElement) ?? 1) - 1;
     const contentCount = (refCounts.get(contentElement) ?? 1) - 1;
-
-    const cacheKeysToDelete: string[] = [];
-    for (const key of snapshotCache.keys()) {
-      if (
-        key.includes(rootElement.toString()) ||
-        key.includes(contentElement.toString())
-      ) {
-        cacheKeysToDelete.push(key);
-      }
-    }
-    for (const key of cacheKeysToDelete) {
-      snapshotCache.delete(key);
-    }
 
     if (rootCount <= 0) {
       observer.unobserve(rootElement);
