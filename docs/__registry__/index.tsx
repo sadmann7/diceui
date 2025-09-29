@@ -1063,20 +1063,6 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "marquee-vertical-demo": {
-      name: "marquee-vertical-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["marquee"],
-      files: [{
-        path: "registry/default/examples/marquee-vertical-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/marquee-vertical-demo.tsx")),
-      source: "",
-      chunks: []
-    },
     "marquee-logo-demo": {
       name: "marquee-logo-demo",
       description: "",
@@ -1088,20 +1074,6 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/marquee-logo-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "marquee-3d-demo": {
-      name: "marquee-3d-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["marquee"],
-      files: [{
-        path: "registry/default/examples/marquee-3d-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/marquee-3d-demo.tsx")),
       source: "",
       chunks: []
     },

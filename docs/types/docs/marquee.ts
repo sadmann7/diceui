@@ -8,13 +8,6 @@ export interface MarqueeProps extends EmptyProps<"div">, CompositionProps {
   direction?: "left" | "right" | "up" | "down";
 
   /**
-   * The orientation of the marquee.
-   * Automatically set based on direction if not provided.
-   * @default "horizontal"
-   */
-  orientation?: "horizontal" | "vertical";
-
-  /**
    * Whether to pause the animation on hover.
    * @default false
    */

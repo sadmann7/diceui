@@ -222,7 +222,6 @@ function useMarqueeContext(consumerName: string) {
 
 interface MarqueeRootProps extends DivProps {
   direction?: Direction;
-  orientation?: Orientation;
   pauseOnHover?: boolean;
   reverse?: boolean;
   speed?: number;
@@ -233,9 +232,6 @@ interface MarqueeRootProps extends DivProps {
 function MarqueeRoot(props: MarqueeRootProps) {
   const {
     direction = "left",
-    orientation = direction === "up" || direction === "down"
-      ? "vertical"
-      : "horizontal",
     speed = 50,
     loopCount = 2,
     pauseOnHover = false,
@@ -248,6 +244,9 @@ function MarqueeRoot(props: MarqueeRootProps) {
     ref,
     ...marqueeProps
   } = props;
+
+  const orientation: Orientation =
+    direction === "up" || direction === "down" ? "vertical" : "horizontal";
 
   const rootRef = React.useRef<RootElement>(null);
   const contentRef = React.useRef<ContentElement>(null);
@@ -303,7 +302,7 @@ function MarqueeRoot(props: MarqueeRootProps) {
       direction,
       pauseOnHover,
       reverse,
-      orientation: orientation ?? "horizontal",
+      orientation,
       loopCount,
       contentRef,
     }),

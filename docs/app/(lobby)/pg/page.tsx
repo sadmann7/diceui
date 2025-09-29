@@ -31,7 +31,6 @@ import { tricks } from "@/lib/data";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
 import MarqueeDemo from "@/registry/default/examples/marquee-demo";
 import MarqueeLogoDemo from "@/registry/default/examples/marquee-logo-demo";
-import MarqueeVerticalDemo from "@/registry/default/examples/marquee-vertical-demo";
 import MaskInputDemo from "@/registry/default/examples/mask-input-demo";
 import {
   Combobox,
@@ -49,7 +48,6 @@ export default function PlaygroundPage() {
       <Demo>
         <MarqueeDemo />
         <MarqueeLogoDemo />
-        <MarqueeVerticalDemo />
         <MaskInputDemo />
         <ColorPickerDemo />
       </Demo>
