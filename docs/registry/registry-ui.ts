@@ -211,6 +211,66 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "marquee",
+    type: "registry:ui",
+    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    cssVars: {
+      theme: {
+        "--animate-marquee-left":
+          "marquee-left var(--duration) linear infinite",
+        "--animate-marquee-right":
+          "marquee-right var(--duration) linear infinite",
+        "--animate-marquee-up": "marquee-up var(--duration) linear infinite",
+        "--animate-marquee-down":
+          "marquee-down var(--duration) linear infinite",
+      },
+    },
+    css: {
+      "@keyframes marquee-left": {
+        "0%": {
+          transform: "translateX(0%)",
+        },
+        "100%": {
+          transform: "translateX(-100%)",
+        },
+      },
+      "@keyframes marquee-right": {
+        "0%": {
+          transform: "translateX(-100%)",
+        },
+        "100%": {
+          transform: "translateX(0%)",
+        },
+      },
+      "@keyframes marquee-up": {
+        "0%": {
+          transform: "translateY(0%)",
+        },
+        "100%": {
+          transform: "translateY(-100%)",
+        },
+      },
+      "@keyframes marquee-down": {
+        "0%": {
+          transform: "translateY(-100%)",
+        },
+        "100%": {
+          transform: "translateY(0%)",
+        },
+      },
+    },
+    files: [
+      {
+        path: "ui/marquee.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
+      },
+    ],
+  },
+  {
     name: "mask-input",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot"],
