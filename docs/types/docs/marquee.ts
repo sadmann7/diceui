@@ -37,6 +37,21 @@ export interface MarqueeProps extends EmptyProps<"div">, CompositionProps {
    * @default 2
    */
   loopCount?: number;
+
+  /**
+   * The gap between marquee items in css length value (px, rem, em, etc.).
+   *
+   * ```tsx
+   * // Pixel values
+   * <Marquee gap="20px" />
+   *
+   * // Rem values
+   * <Marquee gap="1.5rem" />
+   * ```
+   *
+   * @default "1rem"
+   */
+  gap?: string;
 }
 
 export interface MarqueeContentProps
