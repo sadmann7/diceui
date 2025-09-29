@@ -5,52 +5,48 @@ import {
   MarqueeItem,
 } from "@/registry/default/ui/marquee";
 
-const reviews = [
+const tricks = [
   {
-    name: "Jack",
-    username: "@jack",
-    body: "This is amazing!",
-    img: "https://avatar.vercel.sh/jack",
+    title: "Kickflip",
+    description:
+      "A kickflip is a trick where you kick the board forward while jumping, and then land on the board with the other foot.",
   },
   {
-    name: "Jill",
-    username: "@jill",
-    body: "Love the design.",
-    img: "https://avatar.vercel.sh/jill",
+    title: "Heelflip",
+    description:
+      "A heelflip is a trick where you flip the board backwards while jumping, and then land on the board with the other foot.",
   },
   {
-    name: "John",
-    username: "@john",
-    body: "So smooth and clean.",
-    img: "https://avatar.vercel.sh/john",
+    title: "Tre Flip",
+    description:
+      "A tre flip is a trick where you flip the board sideways while jumping, and then land on the board with the other foot.",
+  },
+  {
+    title: "FS 540",
+    description:
+      "A fs 540 is a trick where you flip the board 540 degrees while jumping, and then land on the board with the other foot.",
+  },
+  {
+    title: "360 Varial McTwist",
+    description:
+      "A 360 varial mc twist is a trick where you flip the board 360 degrees while jumping, and then land on the board with the other foot.",
   },
 ];
 
-function ReviewCard({ img, name, username, body }: (typeof reviews)[number]) {
-  return (
-    <figure className="relative w-64 cursor-pointer overflow-hidden rounded-xl border border-gray-950/[.1] bg-gray-950/[.01] p-4 hover:bg-gray-950/[.05] dark:border-gray-50/[.1] dark:bg-gray-50/[.10] dark:hover:bg-gray-50/[.15]">
-      <div className="flex flex-row items-center gap-2">
-        {/** biome-ignore lint/performance/noImgElement: dynamic image */}
-        <img className="rounded-full" width="32" height="32" alt="" src={img} />
-        <div className="flex flex-col">
-          <figcaption className="font-medium text-sm dark:text-white">
-            {name}
-          </figcaption>
-          <p className="font-medium text-xs dark:text-white/40">{username}</p>
-        </div>
-      </div>
-      <blockquote className="mt-2 text-sm">{body}</blockquote>
-    </figure>
-  );
-}
-
 export default function MarqueeDemo() {
   return (
-    <Marquee pauseOnHover className="[--duration:20s]">
+    <Marquee pauseOnHover>
       <MarqueeContent>
-        {reviews.map((review) => (
-          <MarqueeItem key={review.username}>
-            <ReviewCard {...review} />
+        {tricks.map((trick) => (
+          <MarqueeItem key={trick.title} asChild>
+            <div className="flex w-[260px] flex-col gap-1 rounded-md border bg-card p-4 text-card-foreground shadow-sm">
+              <div className="font-medium text-sm leading-tight sm:text-base">
+                {trick.title}
+              </div>
+              <span className="line-clamp-2 text-muted-foreground text-sm">
+                {trick.description}
+              </span>
+            </div>
           </MarqueeItem>
         ))}
       </MarqueeContent>

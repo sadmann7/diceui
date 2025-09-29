@@ -30,7 +30,6 @@ function createResizeObserverStore() {
   const isSupported = typeof ResizeObserver !== "undefined";
   let notificationScheduled = false;
 
-  // Cache for getSnapshot results to avoid returning new objects unnecessarily
   const snapshotCache = new WeakMap<
     Element,
     WeakMap<
@@ -57,7 +56,6 @@ function createResizeObserverStore() {
     }
     elements.clear();
     refCounts.clear();
-    // Note: WeakMaps clean themselves up when elements are garbage collected
   }
 
   function subscribe(callback: () => void) {
@@ -87,14 +85,12 @@ function createResizeObserverStore() {
     const contentSize =
       orientation === "vertical" ? contentDims.height : contentDims.width;
 
-    // Get or create cache for this root element
     let rootCache = snapshotCache.get(rootElement);
     if (!rootCache) {
       rootCache = new WeakMap();
       snapshotCache.set(rootElement, rootCache);
     }
 
-    // Get or create cache for this content element
     let contentCache = rootCache.get(contentElement);
     if (!contentCache) {
       contentCache = {
@@ -104,13 +100,11 @@ function createResizeObserverStore() {
       rootCache.set(contentElement, contentCache);
     }
 
-    // Check if cached value is still valid
     const cached = contentCache[orientation];
     if (cached.rootSize === rootSize && cached.contentSize === contentSize) {
       return cached;
     }
 
-    // Update cache with new values
     const snapshot = { rootSize, contentSize };
     contentCache[orientation] = snapshot;
     return snapshot;
