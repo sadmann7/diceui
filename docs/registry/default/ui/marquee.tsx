@@ -145,8 +145,6 @@ function createResizeObserverStore() {
       width: contentRect.width,
       height: contentRect.height,
     });
-
-    notify();
   }
 
   function unobserve(
