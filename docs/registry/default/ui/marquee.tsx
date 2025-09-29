@@ -6,7 +6,11 @@ import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 
-type Direction = "left" | "right" | "up" | "down";
+const ROOT_NAME = "Marquee";
+const CONTENT_NAME = "MarqueeContent";
+const FADE_NAME = "MarqueeFade";
+
+type Side = "left" | "right" | "top" | "bottom";
 type Orientation = "horizontal" | "vertical";
 
 type RootElement = React.ComponentRef<typeof MarqueeRoot>;
@@ -202,7 +206,7 @@ interface DivProps extends React.ComponentProps<"div"> {
 }
 
 interface MarqueeContextValue {
-  direction: Direction;
+  side: Side;
   pauseOnHover: boolean;
   reverse: boolean;
   orientation: Orientation;
@@ -215,13 +219,13 @@ const MarqueeContext = React.createContext<MarqueeContextValue | null>(null);
 function useMarqueeContext(consumerName: string) {
   const context = React.useContext(MarqueeContext);
   if (!context) {
-    throw new Error(`\`${consumerName}\` must be used within \`Marquee\``);
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
   }
   return context;
 }
 
 interface MarqueeRootProps extends DivProps {
-  direction?: Direction;
+  side?: Side;
   pauseOnHover?: boolean;
   reverse?: boolean;
   speed?: number;
@@ -231,7 +235,7 @@ interface MarqueeRootProps extends DivProps {
 
 function MarqueeRoot(props: MarqueeRootProps) {
   const {
-    direction = "left",
+    side = "left",
     speed = 50,
     loopCount = 2,
     pauseOnHover = false,
@@ -246,7 +250,7 @@ function MarqueeRoot(props: MarqueeRootProps) {
   } = props;
 
   const orientation: Orientation =
-    direction === "up" || direction === "down" ? "vertical" : "horizontal";
+    side === "top" || side === "bottom" ? "vertical" : "horizontal";
 
   const rootRef = React.useRef<RootElement>(null);
   const contentRef = React.useRef<ContentElement>(null);
@@ -278,6 +282,8 @@ function MarqueeRoot(props: MarqueeRootProps) {
     return distance / safeSpeed;
   }, [dimensions, speed]);
 
+  console.log({ duration, speed });
+
   React.useEffect(() => {
     if (rootRef.current && contentRef.current) {
       resizeObserverStore.observe(rootRef.current, contentRef.current);
@@ -299,14 +305,14 @@ function MarqueeRoot(props: MarqueeRootProps) {
 
   const contextValue = React.useMemo<MarqueeContextValue>(
     () => ({
-      direction,
+      side,
       pauseOnHover,
       reverse,
       orientation,
       loopCount,
       contentRef,
     }),
-    [direction, pauseOnHover, reverse, orientation, loopCount],
+    [side, pauseOnHover, reverse, orientation, loopCount],
   );
 
   const MarqueePrimitive = asChild ? Slot : "div";
@@ -338,11 +344,11 @@ const marqueeContentVariants = cva(
   "flex shrink-0 animate-marquee justify-around [gap:var(--gap)]",
   {
     variants: {
-      direction: {
+      side: {
         left: "animate-marquee-left [margin-right:var(--gap)]",
         right: "animate-marquee-right [margin-left:var(--gap)]",
-        up: "animate-marquee-up flex-col [margin-bottom:var(--gap)]",
-        down: "animate-marquee-down flex-col [margin-top:var(--gap)]",
+        top: "animate-marquee-up flex-col [margin-bottom:var(--gap)]",
+        bottom: "animate-marquee-down flex-col [margin-top:var(--gap)]",
       },
       pauseOnHover: {
         true: "group-hover:[animation-play-state:paused]",
@@ -354,7 +360,7 @@ const marqueeContentVariants = cva(
       },
     },
     defaultVariants: {
-      direction: "left",
+      side: "left",
       pauseOnHover: false,
       reverse: false,
     },
@@ -364,8 +370,8 @@ const marqueeContentVariants = cva(
 function MarqueeContent(props: DivProps) {
   const { className, asChild, ref, ...contentProps } = props;
 
-  const { direction, pauseOnHover, reverse, loopCount, contentRef } =
-    useMarqueeContext("MarqueeContent");
+  const { side, pauseOnHover, reverse, loopCount, contentRef } =
+    useMarqueeContext(CONTENT_NAME);
 
   const composedRef = useComposedRefs(ref, contentRef);
   const ContentPrimitive = asChild ? Slot : "div";
@@ -380,7 +386,7 @@ function MarqueeContent(props: DivProps) {
           ref={index === 0 ? composedRef : undefined}
           className={cn(
             marqueeContentVariants({
-              direction,
+              side,
               pauseOnHover,
               reverse,
               className,
@@ -424,7 +430,10 @@ interface MarqueeFadeProps
     DivProps {}
 
 function MarqueeFade(props: MarqueeFadeProps) {
-  const { side, className, asChild, ...fadeProps } = props;
+  const { side: sideProp, className, asChild, ...fadeProps } = props;
+
+  const context = useMarqueeContext(FADE_NAME);
+  const side = sideProp ?? context.side;
 
   const FadePrimitive = asChild ? Slot : "div";
 

@@ -5,7 +5,7 @@ export interface MarqueeProps extends EmptyProps<"div">, CompositionProps {
    * The direction of the marquee animation.
    * @default "left"
    */
-  direction?: "left" | "right" | "up" | "down";
+  side?: "left" | "right" | "top" | "bottom";
 
   /**
    * Whether to pause the animation on hover.

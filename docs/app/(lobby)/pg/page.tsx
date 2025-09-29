@@ -30,7 +30,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
 import MarqueeDemo from "@/registry/default/examples/marquee-demo";
-import MarqueeLogoDemo from "@/registry/default/examples/marquee-logo-demo";
 import MaskInputDemo from "@/registry/default/examples/mask-input-demo";
 import {
   Combobox,
@@ -47,7 +46,6 @@ export default function PlaygroundPage() {
     <Shell>
       <Demo>
         <MarqueeDemo />
-        <MarqueeLogoDemo />
         <MaskInputDemo />
         <ColorPickerDemo />
       </Demo>
