@@ -86,22 +86,15 @@ npx shadcn@latest add "https://diceui.com/r/marquee"
 Import the parts and compose them together.
 
 ```tsx
-import { 
-  Marquee, 
-  MarqueeContent, 
-  MarqueeItem, 
-  MarqueeFade 
-} from "@/components/ui/marquee"
+import * as Marquee from "@/components/ui/marquee"
 
-<Marquee loopCount={3}>
-  <MarqueeContent>
-    <MarqueeItem>Item 1</MarqueeItem>
-    <MarqueeItem>Item 2</MarqueeItem>
-    <MarqueeItem>Item 3</MarqueeItem>
-  </MarqueeContent>
-  <MarqueeFade side="left" />
-  <MarqueeFade side="right" />
-</Marquee>
+<Marquee.Root>
+  <Marquee.Content>
+    <Marquee.Item />
+  </Marquee.Content>
+  <Marquee.Fade side="left" />
+  <Marquee.Fade side="right" />
+</Marquee.Root>
 ```
 
 ## Examples
