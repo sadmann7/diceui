@@ -274,15 +274,17 @@ function MarqueeRoot(props: MarqueeRootProps) {
   );
 
   const duration = React.useMemo(() => {
-    if (!dimensions) return 40;
+    if (!dimensions) {
+      const safeSpeed = Math.max(0.001, speed);
+      const defaultDistance = 2000;
+      return defaultDistance / safeSpeed;
+    }
 
     const { rootSize, contentSize } = dimensions;
     const distance = contentSize + rootSize;
     const safeSpeed = Math.max(0.001, speed);
     return distance / safeSpeed;
   }, [dimensions, speed]);
-
-  console.log({ duration, speed });
 
   React.useEffect(() => {
     if (rootRef.current && contentRef.current) {
