@@ -1,0 +1,15 @@
+{
+  "name": "marquee-logo-demo",
+  "type": "registry:example",
+  "registryDependencies": [
+    "marquee"
+  ],
+  "files": [
+    {
+      "path": "examples/marquee-logo-demo.tsx",
+      "content": "import {\n  Marquee,\n  MarqueeContent,\n  MarqueeFade,\n  MarqueeItem,\n} from \"@/registry/default/ui/marquee\";\n\nconst companies = [\n  \"Google\",\n  \"Microsoft\",\n  \"Amazon\",\n  \"Netflix\",\n  \"YouTube\",\n  \"Instagram\",\n  \"Uber\",\n  \"Spotify\",\n];\n\nexport default function MarqueeLogoDemo() {\n  return (\n    <div className=\"relative flex w-full flex-col items-center justify-center overflow-hidden rounded-lg border bg-background py-20 md:shadow-xl\">\n      <div className=\"mb-8 flex flex-col items-center gap-4\">\n        <h3 className=\"font-semibold text-xl\">Trusted by industry leaders</h3>\n        <p className=\"max-w-md text-center text-muted-foreground\">\n          Join thousands of companies that rely on our platform for their\n          business needs.\n        </p>\n      </div>\n\n      <Marquee pauseOnHover className=\"[--duration:20s]\">\n        <MarqueeContent>\n          {companies.map((company) => (\n            <MarqueeItem key={company}>\n              <div className=\"flex h-16 w-40 items-center justify-center rounded-xl border bg-white px-8 shadow-md dark:bg-gray-800\">\n                <span className=\"font-semibold text-gray-800 text-lg dark:text-gray-200\">\n                  {company}\n                </span>\n              </div>\n            </MarqueeItem>\n          ))}\n        </MarqueeContent>\n        <MarqueeFade side=\"left\" />\n        <MarqueeFade side=\"right\" />\n      </Marquee>\n    </div>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

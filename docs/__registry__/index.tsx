@@ -237,6 +237,24 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "marquee": {
+      name: "marquee",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/ui/marquee.tsx",
+        type: "registry:ui",
+        target: ""
+      },{
+        path: "registry/default/lib/compose-refs.ts",
+        type: "registry:lib",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/marquee.tsx")),
+      source: "",
+      chunks: []
+    },
     "mask-input": {
       name: "mask-input",
       description: "",
@@ -1028,6 +1046,62 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/input-group-vertical-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "marquee-demo": {
+      name: "marquee-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["marquee"],
+      files: [{
+        path: "registry/default/examples/marquee-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/marquee-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "marquee-vertical-demo": {
+      name: "marquee-vertical-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["marquee"],
+      files: [{
+        path: "registry/default/examples/marquee-vertical-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/marquee-vertical-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "marquee-logo-demo": {
+      name: "marquee-logo-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["marquee"],
+      files: [{
+        path: "registry/default/examples/marquee-logo-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/marquee-logo-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "marquee-3d-demo": {
+      name: "marquee-3d-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["marquee"],
+      files: [{
+        path: "registry/default/examples/marquee-3d-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/marquee-3d-demo.tsx")),
       source: "",
       chunks: []
     },
