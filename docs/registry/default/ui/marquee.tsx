@@ -30,6 +30,8 @@ function createResizeObserverStore() {
   const isSupported = typeof ResizeObserver !== "undefined";
   let notificationScheduled = false;
 
+  const snapshotCache = new Map<string, ElementDimensions>();
+
   function notify() {
     if (notificationScheduled) return;
     notificationScheduled = true;
@@ -48,6 +50,7 @@ function createResizeObserverStore() {
     }
     elements.clear();
     refCounts.clear();
+    snapshotCache.clear();
   }
 
   function subscribe(callback: () => void) {
@@ -77,7 +80,20 @@ function createResizeObserverStore() {
     const contentSize =
       orientation === "vertical" ? contentDims.height : contentDims.width;
 
-    return { rootSize, contentSize };
+    const cacheKey = `${rootElement.toString()}-${contentElement.toString()}-${orientation}`;
+
+    const cached = snapshotCache.get(cacheKey);
+    if (
+      cached &&
+      cached.rootSize === rootSize &&
+      cached.contentSize === contentSize
+    ) {
+      return cached;
+    }
+
+    const snapshot = { rootSize, contentSize };
+    snapshotCache.set(cacheKey, snapshot);
+    return snapshot;
   }
 
   function observe(
@@ -88,7 +104,7 @@ function createResizeObserverStore() {
 
     if (!observer) {
       observer = new ResizeObserver((entries) => {
-        let hasChanges = false;
+        let hasChanged = false;
 
         for (const entry of entries) {
           const element = entry.target;
@@ -102,11 +118,11 @@ function createResizeObserverStore() {
             currentData.height !== height
           ) {
             elements.set(element, { width, height });
-            hasChanges = true;
+            hasChanged = true;
           }
         }
 
-        if (hasChanges) {
+        if (hasChanged) {
           notify();
         }
       });
@@ -141,6 +157,19 @@ function createResizeObserverStore() {
 
     const rootCount = (refCounts.get(rootElement) ?? 1) - 1;
     const contentCount = (refCounts.get(contentElement) ?? 1) - 1;
+
+    const cacheKeysToDelete: string[] = [];
+    for (const key of snapshotCache.keys()) {
+      if (
+        key.includes(rootElement.toString()) ||
+        key.includes(contentElement.toString())
+      ) {
+        cacheKeysToDelete.push(key);
+      }
+    }
+    for (const key of cacheKeysToDelete) {
+      snapshotCache.delete(key);
+    }
 
     if (rootCount <= 0) {
       observer.unobserve(rootElement);
