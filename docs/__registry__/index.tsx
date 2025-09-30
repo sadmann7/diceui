@@ -1077,6 +1077,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "marquee-vertical-demo": {
+      name: "marquee-vertical-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["marquee"],
+      files: [{
+        path: "registry/default/examples/marquee-vertical-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/marquee-vertical-demo.tsx")),
+      source: "",
+      chunks: []
+    },
     "mask-input-demo": {
       name: "mask-input-demo",
       description: "",

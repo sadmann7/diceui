@@ -220,6 +220,22 @@
       ]
     },
     {
+      "name": "marquee",
+      "type": "registry:component",
+      "title": "Marquee",
+      "description": "An animated scrolling component that continuously moves content horizontally or vertically.",
+      "files": [
+        {
+          "path": "registry/default/ui/marquee.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/default/lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
       "name": "media-player",
       "type": "registry:component",
       "title": "Media Player",
@@ -651,6 +667,42 @@
       "files": [
         {
           "path": "registry/default/examples/mask-input-form-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "marquee-demo",
+      "type": "registry:component",
+      "title": "Marquee Demo",
+      "description": "Example showing how to use the marquee component.",
+      "files": [
+        {
+          "path": "registry/default/examples/marquee-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "marquee-logo-demo",
+      "type": "registry:component",
+      "title": "Marquee Logo Demo",
+      "description": "Example showing marquee with logo showcase.",
+      "files": [
+        {
+          "path": "registry/default/examples/marquee-logo-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "marquee-vertical-demo",
+      "type": "registry:component",
+      "title": "Marquee Vertical Demo",
+      "description": "Example showing vertical marquee with testimonials.",
+      "files": [
+        {
+          "path": "registry/default/examples/marquee-vertical-demo.tsx",
           "type": "registry:example"
         }
       ]

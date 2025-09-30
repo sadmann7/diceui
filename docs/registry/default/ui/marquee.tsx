@@ -336,8 +336,8 @@ function MarqueeRoot(props: MarqueeRootProps) {
     <MarqueeContext.Provider value={contextValue}>
       <MarqueePrimitive
         aria-live="off"
-        data-slot="marquee"
         data-orientation={orientation}
+        data-slot="marquee"
         {...marqueeProps}
         ref={composedRef}
         style={marqueeStyle}
@@ -420,6 +420,7 @@ function MarqueeContent(props: DivProps) {
   return (
     <>
       <ContentPrimitive
+        data-orientation={context.orientation}
         data-slot="marquee-content"
         {...contentProps}
         style={style}

@@ -105,6 +105,12 @@ Use the marquee to showcase logos or brands in a continuous scroll.
 
 <ComponentTabs name="marquee-logo-demo" />
 
+### Vertical Marquee
+
+Use `side` to control the direction of the marquee.
+
+<ComponentTabs name="marquee-vertical-demo" />
+
 ## API Reference
 
 ### Marquee
@@ -150,10 +156,3 @@ The marquee component automatically handles:
 - **Reduced Motion**: Respects user's `prefers-reduced-motion` setting
 - **Pause on Hover**: Can be configured to pause animation when hovered
 - **Keyboard Navigation**: Content within the marquee remains keyboard accessible
-
-## Notes
-
-- The component automatically calculates animation duration based on content size and speed
-- Use the `repeat` prop to control how many copies of the content are rendered for seamless scrolling
-- The `fade` prop adds gradient masks to the edges for a polished appearance
-- Custom CSS variables can be used to fine-tune the animation timing
