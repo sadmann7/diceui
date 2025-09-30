@@ -35,11 +35,11 @@ npx shadcn@latest add "https://diceui.com/r/marquee"
     Add the following CSS animations to your `globals.css` file:
 
     ```css
-    @theme {
-      --animate-marquee-left: marquee-left var(--duration) linear infinite;
-      --animate-marquee-right: marquee-right var(--duration) linear infinite;
-      --animate-marquee-up: marquee-up var(--duration) linear infinite;
-      --animate-marquee-down: marquee-down var(--duration) linear infinite;
+    :root {
+      --animate-marquee-left: marquee-left var(--duration) linear var(--loop-count);
+      --animate-marquee-right: marquee-right var(--duration) linear var(--loop-count);
+      --animate-marquee-up: marquee-up var(--duration) linear var(--loop-count);
+      --animate-marquee-down: marquee-down var(--duration) linear var(--loop-count);
 
       @keyframes marquee-left {
         0% {
