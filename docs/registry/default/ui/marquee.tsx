@@ -210,7 +210,6 @@ interface MarqueeContextValue {
   loopCount: number;
   contentRef: React.RefObject<ContentElement | null>;
   rootRef: React.RefObject<RootElement | null>;
-  dimensions: ElementDimensions | null;
   autoFill: boolean;
   pauseOnHover: boolean;
   reverse: boolean;
@@ -231,26 +230,26 @@ function useMarqueeContext(consumerName: string) {
 interface MarqueeRootProps extends DivProps {
   side?: Side;
   speed?: number;
+  delay?: number;
   loopCount?: number;
   gap?: string | number;
   autoFill?: boolean;
   pauseOnHover?: boolean;
   reverse?: boolean;
-  delay?: number;
 }
 
 function MarqueeRoot(props: MarqueeRootProps) {
   const {
     side = "left",
     speed = 50,
+    delay = 0,
     loopCount = 0,
     gap = "1rem",
     autoFill = false,
     pauseOnHover = false,
     reverse = false,
-    delay = 0,
     className,
-    style,
+    style: styleProp,
     children,
     asChild,
     ref,
@@ -308,18 +307,7 @@ function MarqueeRoot(props: MarqueeRootProps) {
     setMounted(true);
   }, []);
 
-  // Remove ResizeObserver from root - it will be handled in MarqueeContent
-  // React.useEffect(() => {
-  //   if (rootRef.current && contentRef.current && mounted) {
-  //     resizeObserverStore.observe(rootRef.current, contentRef.current);
-
-  //     return () => {
-  //       resizeObserverStore.unobserve(rootRef.current, contentRef.current);
-  //     };
-  //   }
-  // }, [mounted]);
-
-  const marqueeStyle = React.useMemo<React.CSSProperties>(
+  const style = React.useMemo<React.CSSProperties>(
     () => ({
       "--duration": `${duration}s`,
       "--gap": gap,
@@ -329,41 +317,32 @@ function MarqueeRoot(props: MarqueeRootProps) {
           ? "infinite"
           : loopCount.toString(),
       "--pause-on-hover": pauseOnHover ? "paused" : "running",
-      "--transform":
-        side === "top"
-          ? "rotate(-90deg)"
-          : side === "bottom"
-            ? "rotate(90deg)"
-            : "none",
-      "--width": side === "top" || side === "bottom" ? "100vh" : "100%",
-      ...style,
+      ...styleProp,
     }),
-    [duration, gap, delay, loopCount, pauseOnHover, side, style],
+    [duration, gap, delay, loopCount, pauseOnHover, styleProp],
   );
 
   const contextValue = React.useMemo<MarqueeContextValue>(
     () => ({
       side,
       orientation,
+      speed,
       loopCount,
       contentRef,
       rootRef,
-      dimensions,
       autoFill,
       pauseOnHover,
       reverse,
-      speed,
       mounted,
     }),
     [
       side,
-      pauseOnHover,
-      reverse,
       orientation,
+      speed,
       loopCount,
       autoFill,
-      dimensions,
-      speed,
+      pauseOnHover,
+      reverse,
       mounted,
     ],
   );
@@ -380,14 +359,12 @@ function MarqueeRoot(props: MarqueeRootProps) {
         data-slot="marquee"
         {...marqueeProps}
         ref={composedRef}
-        style={marqueeStyle}
+        style={style}
         className={cn(
           "relative flex overflow-hidden [--delay:0s] [--duration:40s] [--gap:1rem] [--loop-count:infinite] [--pause-on-hover:running] [--transform:none] [--width:100%] motion-reduce:animate-none",
           orientation === "vertical" && "h-full flex-col",
           orientation === "horizontal" && "w-full",
           pauseOnHover && "group",
-          side === "top" || side === "bottom" ? "w-full" : "",
-          "transform-[var(--transform)] w-[var(--width)]",
           className,
         )}
         onMouseEnter={pauseOnHover ? undefined : undefined}
@@ -398,39 +375,48 @@ function MarqueeRoot(props: MarqueeRootProps) {
   );
 }
 
-const marqueeContentVariants = cva("flex min-w-full shrink-0", {
-  variants: {
-    side: {
-      left: "animate-marquee-left",
-      right: "animate-marquee-right",
-      top: "min-h-full min-w-auto animate-marquee-up flex-col",
-      bottom: "min-h-full min-w-auto animate-marquee-down flex-col",
+const marqueeContentVariants = cva(
+  "flex min-w-full shrink-0 [gap:var(--gap)]",
+  {
+    variants: {
+      side: {
+        left: "animate-marquee-left",
+        right: "animate-marquee-right",
+        top: "min-h-full min-w-auto animate-marquee-up flex-col",
+        bottom: "min-h-full min-w-auto animate-marquee-down flex-col",
+      },
+      pauseOnHover: {
+        true: "group-hover:[animation-play-state:paused]",
+        false: "",
+      },
+      reverse: {
+        true: "[animation-direction:reverse]",
+        false: "",
+      },
     },
-    pauseOnHover: {
-      true: "group-hover:[animation-play-state:paused]",
-      false: "",
-    },
-    reverse: {
-      true: "[animation-direction:reverse]",
-      false: "",
+    defaultVariants: {
+      side: "left",
+      pauseOnHover: false,
+      reverse: false,
     },
   },
-  defaultVariants: {
-    side: "left",
-    pauseOnHover: false,
-    reverse: false,
-  },
-});
+);
 
 function MarqueeContent(props: DivProps) {
-  const { className, asChild, ref, children, style, ...contentProps } = props;
+  const {
+    className,
+    asChild,
+    ref,
+    children,
+    style: styleProp,
+    ...contentProps
+  } = props;
 
   const context = useMarqueeContext(CONTENT_NAME);
   const composedRef = useComposedRefs(ref, context.contentRef);
   const ContentPrimitive = asChild ? Slot : "div";
   const isVertical = context.orientation === "vertical";
 
-  // Set up our own dimensions tracking since we're managing the ResizeObserver here
   const onSubscribe = React.useCallback(
     (callback: () => void) => resizeObserverStore.subscribe(callback),
     [],
@@ -446,13 +432,12 @@ function MarqueeContent(props: DivProps) {
     [context.orientation, context.rootRef, context.contentRef],
   );
 
-  const localDimensions = React.useSyncExternalStore(
+  const dimensions = React.useSyncExternalStore(
     onSubscribe,
     getSnapshot,
     getSnapshot,
   );
 
-  // Set up ResizeObserver when both refs are available
   React.useEffect(() => {
     if (
       context.rootRef.current &&
@@ -474,56 +459,42 @@ function MarqueeContent(props: DivProps) {
   }, [context.mounted, context.rootRef, context.contentRef]);
 
   const multiplier = React.useMemo(() => {
-    if (!context.autoFill || !localDimensions || !context.mounted) return 1;
+    if (!context.autoFill || !dimensions || !context.mounted) return 1;
 
-    const { rootSize, contentSize } = localDimensions;
+    const { rootSize, contentSize } = dimensions;
     if (contentSize === 0) return 1;
 
     return contentSize < rootSize ? Math.ceil(rootSize / contentSize) : 1;
-  }, [context.autoFill, localDimensions, context.mounted]);
+  }, [context.autoFill, dimensions, context.mounted]);
 
-  const childTransform = React.useMemo(
-    () =>
-      context.side === "top"
-        ? "rotate(90deg)"
-        : context.side === "bottom"
-          ? "rotate(-90deg)"
-          : "none",
-    [context.side],
-  );
-
-  const renderChildren = React.useCallback(() => {
-    return React.Children.map(children, (child) => (
-      <div style={{ transform: childTransform }} className="shrink-0">
-        {child}
-      </div>
-    ));
-  }, [children, childTransform]);
-
-  const renderMultipliedChildren = React.useCallback(
+  const onMultipliedChildrenRender = React.useCallback(
     (count: number) => {
       return Array.from({ length: Math.max(0, count) }).map((_, i) => (
-        <React.Fragment key={i}>{renderChildren()}</React.Fragment>
+        <React.Fragment key={i}>{children}</React.Fragment>
       ));
     },
-    [renderChildren],
+    [children],
+  );
+
+  const style = React.useMemo(
+    () => ({
+      ...styleProp,
+      animationDuration: "var(--duration)",
+      animationDelay: "var(--delay)",
+      animationIterationCount: "var(--loop-count)",
+      animationPlayState: "running",
+      animationDirection: context.reverse ? "reverse" : "normal",
+    }),
+    [styleProp, context.reverse],
   );
 
   return (
     <>
-      {/* First marquee track */}
       <ContentPrimitive
         data-orientation={context.orientation}
         data-slot="marquee-content"
         {...contentProps}
-        style={{
-          ...style,
-          animationDuration: "var(--duration)",
-          animationDelay: "var(--delay)",
-          animationIterationCount: "var(--loop-count)",
-          animationPlayState: "running",
-          animationDirection: context.reverse ? "reverse" : "normal",
-        }}
+        style={style}
         className={cn(
           marqueeContentVariants({
             side: context.side,
@@ -531,35 +502,25 @@ function MarqueeContent(props: DivProps) {
             reverse: context.reverse,
             className,
           }),
-          "z-[1] [gap:var(--gap)]",
           isVertical && "flex-col",
         )}
       >
         <div
+          ref={composedRef}
           className={cn(
             "flex shrink-0 [gap:var(--gap)]",
             isVertical && "flex-col",
           )}
-          ref={composedRef}
         >
-          {renderChildren()}
+          {children}
         </div>
-        {renderMultipliedChildren(multiplier - 1)}
+        {onMultipliedChildrenRender(multiplier - 1)}
       </ContentPrimitive>
-
-      {/* Second marquee track for seamless loop */}
       <ContentPrimitive
         role="presentation"
         aria-hidden="true"
         {...contentProps}
-        style={{
-          ...style,
-          animationDuration: "var(--duration)",
-          animationDelay: "var(--delay)",
-          animationIterationCount: "var(--loop-count)",
-          animationPlayState: "running",
-          animationDirection: context.reverse ? "reverse" : "normal",
-        }}
+        style={style}
         className={cn(
           marqueeContentVariants({
             side: context.side,
@@ -567,11 +528,10 @@ function MarqueeContent(props: DivProps) {
             reverse: context.reverse,
             className,
           }),
-          "z-[1] [gap:var(--gap)]",
           isVertical && "flex-col",
         )}
       >
-        {renderMultipliedChildren(multiplier)}
+        {onMultipliedChildrenRender(multiplier)}
       </ContentPrimitive>
     </>
   );

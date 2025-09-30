@@ -31,6 +31,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
 import MarqueeDemo from "@/registry/default/examples/marquee-demo";
+import MarqueeVerticalDemo from "@/registry/default/examples/marquee-vertical-demo";
 import MaskInputDemo from "@/registry/default/examples/mask-input-demo";
 import {
   Combobox,
@@ -47,6 +48,7 @@ export default function PlaygroundPage() {
     <Shell>
       <Demo>
         <MarqueeDemo />
+        <MarqueeVerticalDemo />
         <FastMarquee loop={1}>
           {tricks.slice(0, 1).map((trick) => (
             <div
