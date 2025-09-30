@@ -209,6 +209,7 @@ interface MarqueeContextValue {
   orientation: Orientation;
   loopCount: number;
   contentRef: React.RefObject<ContentElement | null>;
+  rootRef: React.RefObject<RootElement | null>;
   dimensions: ElementDimensions | null;
   autoFill: boolean;
   pauseOnHover: boolean;
@@ -307,15 +308,16 @@ function MarqueeRoot(props: MarqueeRootProps) {
     setMounted(true);
   }, []);
 
-  React.useEffect(() => {
-    if (rootRef.current && contentRef.current) {
-      resizeObserverStore.observe(rootRef.current, contentRef.current);
+  // Remove ResizeObserver from root - it will be handled in MarqueeContent
+  // React.useEffect(() => {
+  //   if (rootRef.current && contentRef.current && mounted) {
+  //     resizeObserverStore.observe(rootRef.current, contentRef.current);
 
-      return () => {
-        resizeObserverStore.unobserve(rootRef.current, contentRef.current);
-      };
-    }
-  }, []);
+  //     return () => {
+  //       resizeObserverStore.unobserve(rootRef.current, contentRef.current);
+  //     };
+  //   }
+  // }, [mounted]);
 
   const marqueeStyle = React.useMemo<React.CSSProperties>(
     () => ({
@@ -345,6 +347,7 @@ function MarqueeRoot(props: MarqueeRootProps) {
       orientation,
       loopCount,
       contentRef,
+      rootRef,
       dimensions,
       autoFill,
       pauseOnHover,
@@ -427,14 +430,57 @@ function MarqueeContent(props: DivProps) {
   const ContentPrimitive = asChild ? Slot : "div";
   const isVertical = context.orientation === "vertical";
 
-  const multiplier = React.useMemo(() => {
-    if (!context.autoFill || !context.dimensions || !context.mounted) return 1;
+  // Set up our own dimensions tracking since we're managing the ResizeObserver here
+  const onSubscribe = React.useCallback(
+    (callback: () => void) => resizeObserverStore.subscribe(callback),
+    [],
+  );
 
-    const { rootSize, contentSize } = context.dimensions;
+  const getSnapshot = React.useCallback(
+    () =>
+      resizeObserverStore.getSnapshot(
+        context.rootRef.current,
+        context.contentRef.current,
+        context.orientation,
+      ),
+    [context.orientation, context.rootRef, context.contentRef],
+  );
+
+  const localDimensions = React.useSyncExternalStore(
+    onSubscribe,
+    getSnapshot,
+    getSnapshot,
+  );
+
+  // Set up ResizeObserver when both refs are available
+  React.useEffect(() => {
+    if (
+      context.rootRef.current &&
+      context.contentRef.current &&
+      context.mounted
+    ) {
+      resizeObserverStore.observe(
+        context.rootRef.current,
+        context.contentRef.current,
+      );
+
+      return () => {
+        resizeObserverStore.unobserve(
+          context.rootRef.current,
+          context.contentRef.current,
+        );
+      };
+    }
+  }, [context.mounted, context.rootRef, context.contentRef]);
+
+  const multiplier = React.useMemo(() => {
+    if (!context.autoFill || !localDimensions || !context.mounted) return 1;
+
+    const { rootSize, contentSize } = localDimensions;
     if (contentSize === 0) return 1;
 
     return contentSize < rootSize ? Math.ceil(rootSize / contentSize) : 1;
-  }, [context.autoFill, context.dimensions, context.mounted]);
+  }, [context.autoFill, localDimensions, context.mounted]);
 
   const childTransform = React.useMemo(
     () =>
@@ -456,7 +502,7 @@ function MarqueeContent(props: DivProps) {
 
   const renderMultipliedChildren = React.useCallback(
     (count: number) => {
-      return Array.from({ length: count }).map((_, i) => (
+      return Array.from({ length: Math.max(0, count) }).map((_, i) => (
         <React.Fragment key={i}>{renderChildren()}</React.Fragment>
       ));
     },
