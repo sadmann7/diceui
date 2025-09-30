@@ -8,7 +8,6 @@ import { cn } from "@/lib/utils";
 
 const ROOT_NAME = "Marquee";
 const CONTENT_NAME = "MarqueeContent";
-const FADE_NAME = "MarqueeFade";
 
 type Side = "left" | "right" | "top" | "bottom";
 type Orientation = "horizontal" | "vertical";
@@ -469,7 +468,7 @@ function MarqueeItem(props: DivProps) {
   );
 }
 
-const marqueeFadeVariants = cva("pointer-events-none absolute z-10", {
+const marqueeEdgeVariants = cva("pointer-events-none absolute z-10", {
   variants: {
     side: {
       left: "top-0 left-0 h-full w-1/3 bg-gradient-to-r from-background to-transparent",
@@ -482,23 +481,20 @@ const marqueeFadeVariants = cva("pointer-events-none absolute z-10", {
   },
 });
 
-interface MarqueeFadeProps
-  extends VariantProps<typeof marqueeFadeVariants>,
+interface MarqueeEdgeProps
+  extends VariantProps<typeof marqueeEdgeVariants>,
     DivProps {}
 
-function MarqueeFade(props: MarqueeFadeProps) {
-  const { side: sideProp, className, asChild, ...fadeProps } = props;
+function MarqueeEdge(props: MarqueeEdgeProps) {
+  const { side, className, asChild, ...edgeProps } = props;
 
-  const context = useMarqueeContext(FADE_NAME);
-  const side = sideProp ?? context.side;
-
-  const FadePrimitive = asChild ? Slot : "div";
+  const EdgePrimitive = asChild ? Slot : "div";
 
   return (
-    <FadePrimitive
-      data-slot="marquee-fade"
-      {...fadeProps}
-      className={cn(marqueeFadeVariants({ side, className }))}
+    <EdgePrimitive
+      data-slot="marquee-edge"
+      {...edgeProps}
+      className={cn(marqueeEdgeVariants({ side, className }))}
     />
   );
 }
@@ -507,10 +503,10 @@ export {
   MarqueeRoot as Marquee,
   MarqueeContent as Content,
   MarqueeItem as Item,
-  MarqueeFade as Fade,
+  MarqueeEdge as Edge,
   //
   MarqueeRoot as Root,
   MarqueeContent,
   MarqueeItem,
-  MarqueeFade,
+  MarqueeEdge,
 };

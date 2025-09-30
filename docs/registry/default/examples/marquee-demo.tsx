@@ -1,7 +1,7 @@
 import {
   Marquee,
   MarqueeContent,
-  MarqueeFade,
+  MarqueeEdge,
   MarqueeItem,
 } from "@/registry/default/ui/marquee";
 
@@ -50,8 +50,8 @@ export default function MarqueeDemo() {
           </MarqueeItem>
         ))}
       </MarqueeContent>
-      <MarqueeFade side="left" />
-      <MarqueeFade side="right" />
+      <MarqueeEdge side="left" />
+      <MarqueeEdge side="right" />
     </Marquee>
   );
 }

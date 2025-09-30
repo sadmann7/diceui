@@ -65,13 +65,13 @@ export interface MarqueeContentProps
 
 export interface MarqueeItemProps extends EmptyProps<"div">, CompositionProps {}
 
-export interface MarqueeFadeProps extends EmptyProps<"div">, CompositionProps {
+export interface MarqueeEdgeProps extends EmptyProps<"div">, CompositionProps {
   /**
-   * Which side to apply the fade effect.
+   * Which side to apply the edge gradient effect.
    * @example
    * ```tsx
-   * <MarqueeFade side="left" />
-   * <MarqueeFade side="right" />
+   * <MarqueeEdge side="left" />
+   * <MarqueeEdge side="right" />
    * ```
    */
   side: Side;
