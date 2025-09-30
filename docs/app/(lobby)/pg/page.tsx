@@ -47,7 +47,7 @@ export default function PlaygroundPage() {
     <Shell>
       <Demo>
         <MarqueeDemo />
-        <FastMarquee>
+        <FastMarquee loop={1}>
           {tricks.slice(0, 1).map((trick) => (
             <div
               key={trick.value}
