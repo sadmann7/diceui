@@ -1,23 +1,13 @@
 import type { CompositionProps, EmptyProps } from "@/types";
 
+type Side = "left" | "right" | "top" | "bottom";
+
 export interface MarqueeProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The direction of the marquee animation.
    * @default "left"
    */
-  side?: "left" | "right" | "top" | "bottom";
-
-  /**
-   * Whether to pause the animation on hover.
-   * @default false
-   */
-  pauseOnHover?: boolean;
-
-  /**
-   * Whether to reverse the animation direction.
-   * @default false
-   */
-  reverse?: boolean;
+  side?: Side;
 
   /**
    * The speed of the animation in pixels per second.
@@ -26,8 +16,11 @@ export interface MarqueeProps extends EmptyProps<"div">, CompositionProps {
   speed?: number;
 
   /**
-   * The number of content loops for seamless scrolling.
-   * @default 2
+   * Number of animation iterations.
+   * - `0` (default): Infinite loop
+   * - `Infinity`: Infinite loop
+   * - `> 0`: Loop the specified number of times then stop
+   * @default 0
    */
   loopCount?: number;
 
@@ -45,17 +38,32 @@ export interface MarqueeProps extends EmptyProps<"div">, CompositionProps {
    * @default "1rem"
    */
   gap?: string;
+
+  /**
+   * Automatically duplicate content to fill the container width/height.
+   * When enabled, content will be repeated until it fills the visible area.
+   * @default false
+   */
+  autoFill?: boolean;
+
+  /**
+   * Whether to pause the animation on hover.
+   * @default false
+   */
+  pauseOnHover?: boolean;
+
+  /**
+   * Whether to reverse the animation direction.
+   * @default false
+   */
+  reverse?: boolean;
 }
 
 export interface MarqueeContentProps
   extends EmptyProps<"div">,
-    CompositionProps {
-  // No additional props - inherits from base props
-}
+    CompositionProps {}
 
-export interface MarqueeItemProps extends EmptyProps<"div">, CompositionProps {
-  // No additional props - inherits from base props
-}
+export interface MarqueeItemProps extends EmptyProps<"div">, CompositionProps {}
 
 export interface MarqueeFadeProps extends EmptyProps<"div">, CompositionProps {
   /**
@@ -66,5 +74,5 @@ export interface MarqueeFadeProps extends EmptyProps<"div">, CompositionProps {
    * <MarqueeFade side="right" />
    * ```
    */
-  side: "left" | "right" | "top" | "bottom";
+  side: Side;
 }

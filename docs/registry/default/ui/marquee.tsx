@@ -504,13 +504,13 @@ function MarqueeFade(props: MarqueeFadeProps) {
 }
 
 export {
-  MarqueeContent as Content,
-  MarqueeFade as Fade,
-  MarqueeItem as Item,
-  //
   MarqueeRoot as Marquee,
-  MarqueeContent,
-  MarqueeFade,
-  MarqueeItem,
+  MarqueeContent as Content,
+  MarqueeItem as Item,
+  MarqueeFade as Fade,
+  //
   MarqueeRoot as Root,
+  MarqueeContent,
+  MarqueeItem,
+  MarqueeFade,
 };
