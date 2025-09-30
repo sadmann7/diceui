@@ -35,7 +35,7 @@ const tricks = [
 
 export default function MarqueeDemo() {
   return (
-    <Marquee speed={200} loopCount={1}>
+    <Marquee speed={200}>
       <MarqueeContent>
         {tricks.map((trick) => (
           <MarqueeItem key={trick.title} asChild>

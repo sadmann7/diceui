@@ -50,10 +50,11 @@
   --animate-fade-up: fade-up 0.5s ease-out;
   --animate-fade-down: fade-down 0.5s ease-out;
   --animate-spin-around: spin-around 0.8s linear infinite;
-  --animate-marquee-left: marquee-left var(--duration) linear;
-  --animate-marquee-right: marquee-right var(--duration) linear;
-  --animate-marquee-up: marquee-up var(--duration) linear;
-  --animate-marquee-down: marquee-down var(--duration) linear;
+  --animate-marquee-left: marquee-left var(--duration) linear var(--loop-count);
+  --animate-marquee-right: marquee-right var(--duration) linear
+    var(--loop-count);
+  --animate-marquee-up: marquee-up var(--duration) linear var(--loop-count);
+  --animate-marquee-down: marquee-down var(--duration) linear var(--loop-count);
 
   @keyframes fade-up {
     0% {
@@ -97,13 +98,13 @@
       transform: translateX(0%);
     }
     100% {
-      transform: translateX(-50%);
+      transform: translateX(-100%);
     }
   }
 
   @keyframes marquee-right {
     0% {
-      transform: translateX(-50%);
+      transform: translateX(-100%);
     }
     100% {
       transform: translateX(0%);
@@ -115,13 +116,13 @@
       transform: translateY(0%);
     }
     100% {
-      transform: translateY(-50%);
+      transform: translateY(-100%);
     }
   }
 
   @keyframes marquee-down {
     0% {
-      transform: translateY(-50%);
+      transform: translateY(-100%);
     }
     100% {
       transform: translateY(0%);

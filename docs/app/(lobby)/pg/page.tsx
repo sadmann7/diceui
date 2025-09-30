@@ -45,23 +45,23 @@ import {
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <MarqueeDemo />
-      <FastMarquee speed={200} loop={1}>
-        {tricks.map((trick) => (
-          <div
-            key={trick.value}
-            className="mx-2 flex w-[260px] flex-col gap-1 rounded-md border bg-card p-4 text-card-foreground shadow-sm"
-          >
-            <div className="font-medium text-sm leading-tight sm:text-base">
-              {trick.label}
-            </div>
-            <span className="line-clamp-2 text-muted-foreground text-sm">
-              {trick.value}
-            </span>
-          </div>
-        ))}
-      </FastMarquee>
       <Demo>
+        <MarqueeDemo />
+        <FastMarquee speed={200} loop={1}>
+          {tricks.map((trick) => (
+            <div
+              key={trick.value}
+              className="mx-2 flex w-[260px] flex-col gap-1 rounded-md border bg-card p-4 text-card-foreground shadow-sm"
+            >
+              <div className="font-medium text-sm leading-tight sm:text-base">
+                {trick.label}
+              </div>
+              <span className="line-clamp-2 text-muted-foreground text-sm">
+                {trick.value}
+              </span>
+            </div>
+          ))}
+        </FastMarquee>
         <MaskInputDemo />
         <ColorPickerDemo />
       </Demo>
