@@ -207,12 +207,13 @@ interface DivProps extends React.ComponentProps<"div"> {
 
 interface MarqueeContextValue {
   side: Side;
-  pauseOnHover: boolean;
-  reverse: boolean;
   orientation: Orientation;
   loopCount: number;
-  autoFill: boolean;
   contentRef: React.RefObject<ContentElement | null>;
+  dimensions: ElementDimensions | null;
+  autoFill: boolean;
+  pauseOnHover: boolean;
+  reverse: boolean;
 }
 
 const MarqueeContext = React.createContext<MarqueeContextValue | null>(null);
@@ -259,21 +260,25 @@ function MarqueeRoot(props: MarqueeRootProps) {
   const contentRef = React.useRef<ContentElement>(null);
   const composedRef = useComposedRefs(ref, rootRef);
 
+  const onSubscribe = React.useCallback(
+    (callback: () => void) => resizeObserverStore.subscribe(callback),
+    [],
+  );
+
+  const getSnapshot = React.useCallback(
+    () =>
+      resizeObserverStore.getSnapshot(
+        rootRef.current,
+        contentRef.current,
+        orientation,
+      ),
+    [orientation],
+  );
+
   const dimensions = React.useSyncExternalStore(
-    React.useCallback(
-      (callback) => resizeObserverStore.subscribe(callback),
-      [],
-    ),
-    React.useCallback(
-      () =>
-        resizeObserverStore.getSnapshot(
-          rootRef.current,
-          contentRef.current,
-          orientation,
-        ),
-      [orientation],
-    ),
-    () => null,
+    onSubscribe,
+    getSnapshot,
+    getSnapshot,
   );
 
   const duration = React.useMemo(() => {
@@ -303,7 +308,10 @@ function MarqueeRoot(props: MarqueeRootProps) {
     () => ({
       "--duration": `${duration}s`,
       "--gap": gap,
-      "--loop-count": loopCount === 0 ? "infinite" : loopCount.toString(),
+      "--loop-count":
+        loopCount === 0 || loopCount === Infinity
+          ? "infinite"
+          : loopCount.toString(),
       ...style,
     }),
     [duration, gap, loopCount, style],
@@ -312,14 +320,15 @@ function MarqueeRoot(props: MarqueeRootProps) {
   const contextValue = React.useMemo<MarqueeContextValue>(
     () => ({
       side,
-      pauseOnHover,
-      reverse,
       orientation,
       loopCount,
-      autoFill,
       contentRef,
+      dimensions,
+      autoFill,
+      pauseOnHover,
+      reverse,
     }),
-    [side, pauseOnHover, reverse, orientation, loopCount, autoFill],
+    [side, pauseOnHover, reverse, orientation, loopCount, autoFill, dimensions],
   );
 
   const MarqueePrimitive = asChild ? Slot : "div";
@@ -327,14 +336,14 @@ function MarqueeRoot(props: MarqueeRootProps) {
   return (
     <MarqueeContext.Provider value={contextValue}>
       <MarqueePrimitive
+        aria-live="off"
         data-slot="marquee"
+        data-orientation={orientation}
         {...marqueeProps}
         ref={composedRef}
         style={marqueeStyle}
-        aria-live="off"
         className={cn(
-          "relative flex overflow-hidden [--duration:40s] [--gap:1rem] [--loop-count:infinite]",
-          "motion-reduce:animate-none",
+          "relative flex overflow-hidden [--duration:40s] [--gap:1rem] [--loop-count:infinite] motion-reduce:animate-none",
           orientation === "vertical" && "h-full flex-col",
           orientation === "horizontal" && "w-full",
           pauseOnHover && "group",
@@ -380,34 +389,17 @@ function MarqueeContent(props: DivProps) {
   const ContentPrimitive = asChild ? Slot : "div";
   const isVertical = context.orientation === "vertical";
 
-  const dimensions = React.useSyncExternalStore(
-    React.useCallback(
-      (callback) => resizeObserverStore.subscribe(callback),
-      [],
-    ),
-    React.useCallback(() => {
-      const contentElement = context.contentRef.current;
-      const rootElement = contentElement?.parentElement as RootElement;
-      return resizeObserverStore.getSnapshot(
-        rootElement,
-        contentElement,
-        context.orientation,
-      );
-    }, [context.orientation, context.contentRef]),
-    () => null,
-  );
-
   const multiplier = React.useMemo(() => {
-    if (!context.autoFill || !dimensions) return 1;
+    if (!context.autoFill || !context.dimensions) return 1;
 
-    const { rootSize, contentSize } = dimensions;
+    const { rootSize, contentSize } = context.dimensions;
     if (contentSize === 0) return 1;
 
     return Math.ceil(rootSize / contentSize);
-  }, [context.autoFill, dimensions]);
+  }, [context.autoFill, context.dimensions]);
 
   const onContentRender = React.useCallback(
-    (withRef: boolean = false) => (
+    (withRef: boolean = true) => (
       <div
         className={cn(
           "flex shrink-0 [gap:var(--gap)]",
@@ -441,10 +433,11 @@ function MarqueeContent(props: DivProps) {
           }),
         )}
       >
-        {onContentRender(true)}
+        {onContentRender()}
       </ContentPrimitive>
       <ContentPrimitive
-        data-slot="marquee-content"
+        role="presentation"
+        aria-hidden="true"
         {...contentProps}
         style={style}
         className={cn(
@@ -455,9 +448,8 @@ function MarqueeContent(props: DivProps) {
             className,
           }),
         )}
-        aria-hidden="true"
       >
-        {onContentRender()}
+        {onContentRender(false)}
       </ContentPrimitive>
     </>
   );
