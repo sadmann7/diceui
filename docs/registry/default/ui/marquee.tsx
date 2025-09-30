@@ -200,6 +200,31 @@ function createResizeObserverStore() {
 
 const resizeObserverStore = createResizeObserverStore();
 
+function useResizeObserverStore<T>(
+  selector: (dimensions: ElementDimensions | null) => T,
+): T {
+  const context = useMarqueeContext(ROOT_NAME);
+
+  const onSubscribe = React.useCallback(
+    (callback: () => void) => resizeObserverStore.subscribe(callback),
+    [],
+  );
+
+  const getSnapshot = React.useCallback(
+    () =>
+      selector(
+        resizeObserverStore.getSnapshot(
+          context.rootRef.current,
+          context.contentRef.current,
+          context.orientation,
+        ),
+      ),
+    [selector, context],
+  );
+
+  return React.useSyncExternalStore(onSubscribe, getSnapshot, getSnapshot);
+}
+
 interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
@@ -248,12 +273,7 @@ function MarqueeRoot(props: MarqueeRootProps) {
     autoFill = false,
     pauseOnHover = false,
     reverse = false,
-    className,
-    style: styleProp,
-    children,
-    asChild,
-    ref,
-    ...marqueeProps
+    ...rootProps
   } = props;
 
   const orientation: Orientation =
@@ -261,66 +281,11 @@ function MarqueeRoot(props: MarqueeRootProps) {
 
   const rootRef = React.useRef<RootElement>(null);
   const contentRef = React.useRef<ContentElement>(null);
-  const composedRef = useComposedRefs(ref, rootRef);
   const [mounted, setMounted] = React.useState(false);
-
-  const onSubscribe = React.useCallback(
-    (callback: () => void) => resizeObserverStore.subscribe(callback),
-    [],
-  );
-
-  const getSnapshot = React.useCallback(
-    () =>
-      resizeObserverStore.getSnapshot(
-        rootRef.current,
-        contentRef.current,
-        orientation,
-      ),
-    [orientation],
-  );
-
-  const dimensions = React.useSyncExternalStore(
-    onSubscribe,
-    getSnapshot,
-    getSnapshot,
-  );
-
-  const duration = React.useMemo(() => {
-    if (!dimensions || !mounted) {
-      const safeSpeed = Math.max(0.001, speed);
-      const defaultDistance = 2000;
-      return defaultDistance / safeSpeed;
-    }
-
-    const { rootSize, contentSize } = dimensions;
-
-    if (autoFill) {
-      const multiplier =
-        contentSize < rootSize ? Math.ceil(rootSize / contentSize) : 1;
-      return (contentSize * multiplier) / speed;
-    } else {
-      return contentSize < rootSize ? rootSize / speed : contentSize / speed;
-    }
-  }, [dimensions, speed, autoFill, mounted]);
 
   React.useLayoutEffect(() => {
     setMounted(true);
   }, []);
-
-  const style = React.useMemo<React.CSSProperties>(
-    () => ({
-      "--duration": `${duration}s`,
-      "--gap": gap,
-      "--delay": `${delay}s`,
-      "--loop-count":
-        loopCount === 0 || loopCount === Infinity
-          ? "infinite"
-          : loopCount.toString(),
-      "--pause-on-hover": pauseOnHover ? "paused" : "running",
-      ...styleProp,
-    }),
-    [duration, gap, delay, loopCount, pauseOnHover, styleProp],
-  );
 
   const contextValue = React.useMemo<MarqueeContextValue>(
     () => ({
@@ -347,31 +312,102 @@ function MarqueeRoot(props: MarqueeRootProps) {
     ],
   );
 
-  const MarqueePrimitive = asChild ? Slot : "div";
-
   if (!mounted) return null;
 
   return (
     <MarqueeContext.Provider value={contextValue}>
-      <MarqueePrimitive
-        aria-live="off"
-        data-orientation={orientation}
-        data-slot="marquee"
-        {...marqueeProps}
-        ref={composedRef}
-        style={style}
-        className={cn(
-          "relative flex overflow-hidden [--delay:0s] [--duration:40s] [--gap:1rem] [--loop-count:infinite] [--pause-on-hover:running] [--transform:none] [--width:100%] motion-reduce:animate-none",
-          orientation === "vertical" && "h-full flex-col",
-          orientation === "horizontal" && "w-full",
-          pauseOnHover && "group",
-          className,
-        )}
-        onMouseEnter={pauseOnHover ? undefined : undefined}
-      >
-        {children}
-      </MarqueePrimitive>
+      <MarqueeRootImpl
+        speed={speed}
+        delay={delay}
+        loopCount={loopCount}
+        gap={gap}
+        autoFill={autoFill}
+        pauseOnHover={pauseOnHover}
+        {...rootProps}
+      />
     </MarqueeContext.Provider>
+  );
+}
+
+interface MarqueeRootImplProps extends DivProps {
+  speed: number;
+  delay: number;
+  loopCount: number;
+  gap: string | number;
+  autoFill: boolean;
+  pauseOnHover: boolean;
+}
+
+function MarqueeRootImpl(props: MarqueeRootImplProps) {
+  const {
+    speed,
+    delay,
+    loopCount,
+    gap,
+    autoFill,
+    pauseOnHover,
+    className,
+    style: styleProp,
+    asChild,
+    ref,
+    ...marqueeProps
+  } = props;
+
+  const context = useMarqueeContext(ROOT_NAME);
+  const composedRef = useComposedRefs(ref, context.rootRef);
+  const MarqueePrimitive = asChild ? Slot : "div";
+
+  const dimensions = useResizeObserverStore((dimensions) => dimensions);
+
+  const duration = React.useMemo(() => {
+    if (!dimensions || !context.mounted) {
+      const safeSpeed = Math.max(0.001, speed);
+      const defaultDistance = 2000;
+      return defaultDistance / safeSpeed;
+    }
+
+    const { rootSize, contentSize } = dimensions;
+
+    if (autoFill) {
+      const multiplier =
+        contentSize < rootSize ? Math.ceil(rootSize / contentSize) : 1;
+      return (contentSize * multiplier) / speed;
+    } else {
+      return contentSize < rootSize ? rootSize / speed : contentSize / speed;
+    }
+  }, [dimensions, speed, autoFill, context.mounted]);
+
+  const style = React.useMemo<React.CSSProperties>(
+    () => ({
+      "--duration": `${duration}s`,
+      "--gap": gap,
+      "--delay": `${delay}s`,
+      "--loop-count":
+        loopCount === 0 || loopCount === Infinity
+          ? "infinite"
+          : loopCount.toString(),
+      "--pause-on-hover": pauseOnHover ? "paused" : "running",
+      ...styleProp,
+    }),
+    [duration, gap, delay, loopCount, pauseOnHover, styleProp],
+  );
+
+  return (
+    <MarqueePrimitive
+      aria-live="off"
+      data-orientation={context.orientation}
+      data-slot="marquee"
+      {...marqueeProps}
+      ref={composedRef}
+      style={style}
+      className={cn(
+        "relative flex overflow-hidden [--delay:0s] [--duration:40s] [--gap:1rem] [--loop-count:infinite] [--pause-on-hover:running] [--transform:none] [--width:100%] motion-reduce:animate-none",
+        context.orientation === "vertical" && "h-full flex-col",
+        context.orientation === "horizontal" && "w-full",
+        pauseOnHover && "group",
+        className,
+      )}
+    />
   );
 }
 
@@ -417,26 +453,7 @@ function MarqueeContent(props: DivProps) {
   const ContentPrimitive = asChild ? Slot : "div";
   const isVertical = context.orientation === "vertical";
 
-  const onSubscribe = React.useCallback(
-    (callback: () => void) => resizeObserverStore.subscribe(callback),
-    [],
-  );
-
-  const getSnapshot = React.useCallback(
-    () =>
-      resizeObserverStore.getSnapshot(
-        context.rootRef.current,
-        context.contentRef.current,
-        context.orientation,
-      ),
-    [context.orientation, context.rootRef, context.contentRef],
-  );
-
-  const dimensions = React.useSyncExternalStore(
-    onSubscribe,
-    getSnapshot,
-    getSnapshot,
-  );
+  const dimensions = useResizeObserverStore((dimensions) => dimensions);
 
   React.useEffect(() => {
     if (
