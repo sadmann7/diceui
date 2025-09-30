@@ -412,6 +412,9 @@ function MarqueeContent(props: DivProps) {
         className={cn(
           "flex shrink-0 [gap:var(--gap)]",
           isVertical && "flex-col",
+          isVertical
+            ? "[margin-bottom:var(--gap)]"
+            : "[margin-right:var(--gap)]",
         )}
         ref={withRef ? composedRef : undefined}
       >
@@ -436,9 +439,6 @@ function MarqueeContent(props: DivProps) {
             reverse: context.reverse,
             className,
           }),
-          isVertical
-            ? "[margin-bottom:var(--gap)]"
-            : "[margin-right:var(--gap)]",
         )}
       >
         {onContentRender(true)}
