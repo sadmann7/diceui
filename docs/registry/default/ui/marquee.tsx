@@ -229,7 +229,7 @@ interface MarqueeRootProps extends DivProps {
   side?: Side;
   speed?: number;
   loopCount?: number;
-  gap?: string;
+  gap?: string | number;
   autoFill?: boolean;
   pauseOnHover?: boolean;
   reverse?: boolean;
@@ -246,6 +246,7 @@ function MarqueeRoot(props: MarqueeRootProps) {
     reverse = false,
     className,
     style,
+    children,
     asChild,
     ref,
     ...marqueeProps
@@ -340,15 +341,17 @@ function MarqueeRoot(props: MarqueeRootProps) {
           data-slot="marquee"
           {...marqueeProps}
           ref={composedRef}
+          style={marqueeStyle}
           className={cn(
-            "relative flex overflow-hidden motion-reduce:animate-none",
+            "relative flex overflow-hidden [--duration:40s] [--gap:1rem] [--loop-count:infinite] motion-reduce:animate-none",
             orientation === "vertical" && "h-full flex-col",
             orientation === "horizontal" && "w-full",
             pauseOnHover && "group",
             className,
           )}
-          style={marqueeStyle}
-        />
+        >
+          {children}
+        </MarqueePrimitive>
       </div>
     </MarqueeContext.Provider>
   );
