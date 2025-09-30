@@ -246,7 +246,6 @@ function MarqueeRoot(props: MarqueeRootProps) {
     reverse = false,
     className,
     style,
-    children,
     asChild,
     ref,
     ...marqueeProps
@@ -334,23 +333,23 @@ function MarqueeRoot(props: MarqueeRootProps) {
 
   return (
     <MarqueeContext.Provider value={contextValue}>
-      <MarqueePrimitive
-        aria-live="off"
-        data-orientation={orientation}
-        data-slot="marquee"
-        {...marqueeProps}
-        ref={composedRef}
-        style={marqueeStyle}
-        className={cn(
-          "relative flex overflow-hidden [--duration:40s] [--gap:1rem] [--loop-count:infinite] motion-reduce:animate-none",
-          orientation === "vertical" && "h-full flex-col",
-          orientation === "horizontal" && "w-full",
-          pauseOnHover && "group",
-          className,
-        )}
-      >
-        {children}
-      </MarqueePrimitive>
+      <div data-slot="marquee-wrapper" className="grid">
+        <MarqueePrimitive
+          aria-live="off"
+          data-orientation={orientation}
+          data-slot="marquee"
+          {...marqueeProps}
+          ref={composedRef}
+          className={cn(
+            "relative flex overflow-hidden motion-reduce:animate-none",
+            orientation === "vertical" && "h-full flex-col",
+            orientation === "horizontal" && "w-full",
+            pauseOnHover && "group",
+            className,
+          )}
+          style={marqueeStyle}
+        />
+      </div>
     </MarqueeContext.Provider>
   );
 }
