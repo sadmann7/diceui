@@ -1,5 +1,6 @@
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
+import FastMarquee from "react-fast-marquee";
 import { Demo } from "@/components/demo";
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
@@ -30,7 +31,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
 import MarqueeDemo from "@/registry/default/examples/marquee-demo";
-import MarqueeLogoDemo from "@/registry/default/examples/marquee-logo-demo";
 import MaskInputDemo from "@/registry/default/examples/mask-input-demo";
 import {
   Combobox,
@@ -45,9 +45,23 @@ import {
 export default function PlaygroundPage() {
   return (
     <Shell>
+      <MarqueeDemo />
+      <FastMarquee speed={200} loop={1}>
+        {tricks.map((trick) => (
+          <div
+            key={trick.value}
+            className="mx-2 flex w-[260px] flex-col gap-1 rounded-md border bg-card p-4 text-card-foreground shadow-sm"
+          >
+            <div className="font-medium text-sm leading-tight sm:text-base">
+              {trick.label}
+            </div>
+            <span className="line-clamp-2 text-muted-foreground text-sm">
+              {trick.value}
+            </span>
+          </div>
+        ))}
+      </FastMarquee>
       <Demo>
-        <MarqueeDemo />
-        <MarqueeLogoDemo />
         <MaskInputDemo />
         <ColorPickerDemo />
       </Demo>

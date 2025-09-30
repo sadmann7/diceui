@@ -237,7 +237,7 @@ function MarqueeRoot(props: MarqueeRootProps) {
   const {
     side = "left",
     speed = 50,
-    loopCount = 2,
+    loopCount = 0,
     pauseOnHover = false,
     reverse = false,
     gap = "1rem",
@@ -342,61 +342,78 @@ function MarqueeRoot(props: MarqueeRootProps) {
   );
 }
 
-const marqueeContentVariants = cva(
-  "flex shrink-0 animate-marquee justify-around [gap:var(--gap)]",
-  {
-    variants: {
-      side: {
-        left: "animate-marquee-left [margin-right:var(--gap)]",
-        right: "animate-marquee-right [margin-left:var(--gap)]",
-        top: "animate-marquee-up flex-col [margin-bottom:var(--gap)]",
-        bottom: "animate-marquee-down flex-col [margin-top:var(--gap)]",
-      },
-      pauseOnHover: {
-        true: "group-hover:[animation-play-state:paused]",
-        false: "",
-      },
-      reverse: {
-        true: "[animation-direction:reverse]",
-        false: "",
-      },
+const marqueeContentVariants = cva("flex shrink-0", {
+  variants: {
+    side: {
+      left: "animate-marquee-left",
+      right: "animate-marquee-right",
+      top: "animate-marquee-up flex-col",
+      bottom: "animate-marquee-down flex-col",
     },
-    defaultVariants: {
-      side: "left",
-      pauseOnHover: false,
-      reverse: false,
+    pauseOnHover: {
+      true: "group-hover:[animation-play-state:paused]",
+      false: "",
+    },
+    reverse: {
+      true: "[animation-direction:reverse]",
+      false: "",
     },
   },
-);
+  defaultVariants: {
+    side: "left",
+    pauseOnHover: false,
+    reverse: false,
+  },
+});
 
 function MarqueeContent(props: DivProps) {
-  const { className, asChild, ref, ...contentProps } = props;
+  const { className, asChild, ref, children, style, ...contentProps } = props;
 
-  const { side, pauseOnHover, reverse, loopCount, contentRef } =
+  const { side, pauseOnHover, reverse, loopCount, contentRef, orientation } =
     useMarqueeContext(CONTENT_NAME);
 
   const composedRef = useComposedRefs(ref, contentRef);
   const ContentPrimitive = asChild ? Slot : "div";
+  const isVertical = orientation === "vertical";
 
   return (
-    <>
-      {Array.from({ length: loopCount }).map((_, index) => (
-        <ContentPrimitive
-          key={index}
-          data-slot="marquee-content"
-          {...contentProps}
-          ref={index === 0 ? composedRef : undefined}
-          className={cn(
-            marqueeContentVariants({
-              side,
-              pauseOnHover,
-              reverse,
-              className,
-            }),
-          )}
-        />
-      ))}
-    </>
+    <ContentPrimitive
+      data-slot="marquee-content"
+      {...contentProps}
+      ref={composedRef}
+      style={{
+        animationIterationCount: loopCount === 0 ? "infinite" : loopCount,
+        ...style,
+      }}
+      className={cn(
+        marqueeContentVariants({
+          side,
+          pauseOnHover,
+          reverse,
+          className,
+        }),
+      )}
+    >
+      <div
+        className={cn(
+          "flex shrink-0 [gap:var(--gap)]",
+          isVertical
+            ? "flex-col [margin-bottom:var(--gap)]"
+            : "[margin-right:var(--gap)]",
+        )}
+      >
+        {children}
+      </div>
+      <div
+        className={cn(
+          "flex shrink-0 [gap:var(--gap)]",
+          isVertical && "flex-col",
+        )}
+        aria-hidden="true"
+      >
+        {children}
+      </div>
+    </ContentPrimitive>
   );
 }
 

@@ -216,13 +216,10 @@ export const ui: Registry["items"] = [
     dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
     cssVars: {
       theme: {
-        "--animate-marquee-left":
-          "marquee-left var(--duration) linear infinite",
-        "--animate-marquee-right":
-          "marquee-right var(--duration) linear infinite",
-        "--animate-marquee-up": "marquee-up var(--duration) linear infinite",
-        "--animate-marquee-down":
-          "marquee-down var(--duration) linear infinite",
+        "--animate-marquee-left": "marquee-left var(--duration) linear",
+        "--animate-marquee-right": "marquee-right var(--duration) linear",
+        "--animate-marquee-up": "marquee-up var(--duration) linear",
+        "--animate-marquee-down": "marquee-down var(--duration) linear",
       },
     },
     css: {
@@ -231,12 +228,12 @@ export const ui: Registry["items"] = [
           transform: "translateX(0%)",
         },
         "100%": {
-          transform: "translateX(-100%)",
+          transform: "translateX(-50%)",
         },
       },
       "@keyframes marquee-right": {
         "0%": {
-          transform: "translateX(-100%)",
+          transform: "translateX(-50%)",
         },
         "100%": {
           transform: "translateX(0%)",
@@ -247,12 +244,12 @@ export const ui: Registry["items"] = [
           transform: "translateY(0%)",
         },
         "100%": {
-          transform: "translateY(-100%)",
+          transform: "translateY(-50%)",
         },
       },
       "@keyframes marquee-down": {
         "0%": {
-          transform: "translateY(-100%)",
+          transform: "translateY(-50%)",
         },
         "100%": {
           transform: "translateY(0%)",
