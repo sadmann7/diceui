@@ -353,7 +353,6 @@ function MarqueeRoot(props: MarqueeRootProps) {
   return (
     <MarqueeContext.Provider value={contextValue}>
       <MarqueePrimitive
-        aria-live="off"
         data-orientation={orientation}
         data-slot="marquee"
         dir={dir}
