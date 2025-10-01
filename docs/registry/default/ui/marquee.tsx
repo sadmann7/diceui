@@ -576,13 +576,53 @@ function MarqueeItem(props: DivProps) {
 const marqueeEdgeVariants = cva("pointer-events-none absolute z-10", {
   variants: {
     side: {
-      left: "top-0 left-0 h-full w-1/3 bg-gradient-to-r from-background to-transparent",
+      left: "top-0 left-0 h-full bg-gradient-to-r from-background to-transparent",
       right:
-        "top-0 right-0 h-full w-1/3 bg-gradient-to-l from-background to-transparent",
-      top: "top-0 left-0 h-1/3 w-full bg-gradient-to-b from-background to-transparent",
+        "top-0 right-0 h-full bg-gradient-to-l from-background to-transparent",
+      top: "top-0 left-0 w-full bg-gradient-to-b from-background to-transparent",
       bottom:
-        "bottom-0 left-0 h-1/3 w-full bg-gradient-to-t from-background to-transparent",
+        "bottom-0 left-0 w-full bg-gradient-to-t from-background to-transparent",
     },
+    size: {
+      default: "",
+      sm: "",
+      lg: "",
+    },
+  },
+  compoundVariants: [
+    {
+      side: ["left", "right"],
+      size: "default",
+      className: "w-1/4",
+    },
+    {
+      side: ["left", "right"],
+      size: "sm",
+      className: "w-1/6",
+    },
+    {
+      side: ["left", "right"],
+      size: "lg",
+      className: "w-1/3",
+    },
+    {
+      side: ["top", "bottom"],
+      size: "default",
+      className: "h-1/4",
+    },
+    {
+      side: ["top", "bottom"],
+      size: "sm",
+      className: "h-1/6",
+    },
+    {
+      side: ["top", "bottom"],
+      size: "lg",
+      className: "h-1/3",
+    },
+  ],
+  defaultVariants: {
+    size: "default",
   },
 });
 
@@ -591,26 +631,27 @@ interface MarqueeEdgeProps
     DivProps {}
 
 function MarqueeEdge(props: MarqueeEdgeProps) {
-  const { side, className, asChild, ...edgeProps } = props;
+  const { side, size, className, asChild, ...edgeProps } = props;
 
   const EdgePrimitive = asChild ? Slot : "div";
 
   return (
     <EdgePrimitive
+      data-size={size}
       data-slot="marquee-edge"
       {...edgeProps}
-      className={cn(marqueeEdgeVariants({ side, className }))}
+      className={cn(marqueeEdgeVariants({ side, size, className }))}
     />
   );
 }
 
 export {
-  MarqueeRoot as Marquee,
+  MarqueeRoot as Root,
   MarqueeContent as Content,
   MarqueeItem as Item,
   MarqueeEdge as Edge,
   //
-  MarqueeRoot as Root,
+  MarqueeRoot as Marquee,
   MarqueeContent,
   MarqueeItem,
   MarqueeEdge,

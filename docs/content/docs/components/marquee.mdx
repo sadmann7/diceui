@@ -128,6 +128,15 @@ The main marquee component that creates continuous scrolling animations.
   name="MarqueeProps"
 />
 
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-orientation]",
+      value: ["horizontal", "vertical"],
+    },
+  ]}
+/>
+
 ### MarqueeContent
 
 Contains the scrolling content and handles repetition for seamless animation.
@@ -135,6 +144,15 @@ Contains the scrolling content and handles repetition for seamless animation.
 <AutoTypeTable
   path="./types/docs/marquee.ts"
   name="MarqueeContentProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-orientation]",
+      value: ["horizontal", "vertical"],
+    },
+  ]}
 />
 
 ### MarqueeItem
@@ -153,6 +171,15 @@ Edge overlay components for smooth gradient transitions.
 <AutoTypeTable
   path="./types/docs/marquee.ts"
   name="MarqueeEdgeProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-size]",
+      value: ["default", "sm", "lg"],
+    },
+  ]}
 />
 
 ## Accessibility

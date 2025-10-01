@@ -76,11 +76,26 @@ export interface MarqueeItemProps extends EmptyProps<"div">, CompositionProps {}
 export interface MarqueeEdgeProps extends EmptyProps<"div">, CompositionProps {
   /**
    * Which side to apply the edge gradient effect.
-   * @example
+   *
    * ```tsx
    * <MarqueeEdge side="left" />
    * <MarqueeEdge side="right" />
    * ```
    */
   side: Side;
+
+  /**
+   * The size of the edge gradient effect.
+   * - `sm`: 1/6 of container width/height
+   * - `default`: 1/4 of container width/height
+   * - `lg`: 1/3 of container width/height
+   *
+   * ```tsx
+   * <MarqueeEdge side="left" size="sm" />
+   * <MarqueeEdge side="right" size="lg" />
+   * ```
+   *
+   * @default "default"
+   */
+  size?: "default" | "sm" | "lg";
 }

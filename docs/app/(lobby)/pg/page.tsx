@@ -1,6 +1,5 @@
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
-import FastMarquee from "react-fast-marquee";
 import { Demo } from "@/components/demo";
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
@@ -47,27 +46,10 @@ import {
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <div className="flex flex-col gap-10">
+      <Demo dir="rtl">
         <MarqueeDemo />
         <MarqueeVerticalDemo />
         <MarqueeRtlDemo />
-      </div>
-      <Demo dir="rtl">
-        <FastMarquee speed={100} autoFill>
-          {tricks.slice(0, 1).map((trick) => (
-            <div
-              key={trick.value}
-              className="mx-2 flex w-[260px] flex-col gap-1 rounded-md border bg-card p-4 text-card-foreground shadow-sm"
-            >
-              <div className="font-medium text-sm leading-tight sm:text-base">
-                {trick.label}
-              </div>
-              <span className="line-clamp-2 text-muted-foreground text-sm">
-                {trick.value}
-              </span>
-            </div>
-          ))}
-        </FastMarquee>
         <MaskInputDemo />
         <ColorPickerDemo />
       </Demo>
