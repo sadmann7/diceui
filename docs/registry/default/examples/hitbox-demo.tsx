@@ -10,21 +10,19 @@ export default function HitboxDemo() {
         <div className="flex items-center gap-6">
           <div className="flex flex-col items-center gap-2.5">
             <Hitbox debug>
-              <Button variant="outline" size="sm">
-                Kickflip
-              </Button>
-            </Hitbox>
-            <p className="text-muted-foreground text-xs">sm</p>
-          </div>
-          <div className="flex flex-col items-center gap-2.5">
-            <Hitbox size="default" debug>
-              <Button variant="outline">Heelflip</Button>
+              <Button>Kickflip</Button>
             </Hitbox>
             <p className="text-muted-foreground text-xs">default</p>
           </div>
           <div className="flex flex-col items-center gap-2.5">
+            <Hitbox size="sm" debug>
+              <Button>Heelflip</Button>
+            </Hitbox>
+            <p className="text-muted-foreground text-xs">sm</p>
+          </div>
+          <div className="flex flex-col items-center gap-2.5">
             <Hitbox size="lg" debug>
-              <Button variant="outline">Tre Flip</Button>
+              <Button>Tre Flip</Button>
             </Hitbox>
             <p className="text-muted-foreground text-xs">lg</p>
           </div>
@@ -35,10 +33,8 @@ export default function HitboxDemo() {
         <h3 className="font-semibold text-lg">Positions</h3>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           <div className="flex flex-col items-center gap-2.5">
-            <Hitbox position="default" debug>
-              <Button variant="outline" size="sm">
-                Default
-              </Button>
+            <Hitbox debug>
+              <Button size="sm">Default</Button>
             </Hitbox>
             <p className="text-muted-foreground text-xs">default</p>
           </div>
