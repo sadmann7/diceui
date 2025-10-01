@@ -237,10 +237,10 @@ export const ui: Registry["items"] = [
       },
       "@keyframes marquee-right": {
         "0%": {
-          transform: "translateX(0%)",
+          transform: "translateX(calc(-100% - var(--gap)))",
         },
         "100%": {
-          transform: "translateX(calc(100% + var(--gap)))",
+          transform: "translateX(0%)",
         },
       },
       "@keyframes marquee-up": {
@@ -253,10 +253,10 @@ export const ui: Registry["items"] = [
       },
       "@keyframes marquee-down": {
         "0%": {
-          transform: "translateY(0%)",
+          transform: "translateY(calc(-100% - var(--gap)))",
         },
         "100%": {
-          transform: "translateY(calc(100% + var(--gap)))",
+          transform: "translateY(0%)",
         },
       },
     },
