@@ -6,12 +6,12 @@ type Direction = "ltr" | "rtl";
 
 const DirectionContext = React.createContext<Direction | undefined>(undefined);
 
-function useDirection(dirProp?: Direction): Direction {
+function useDirection(dir?: Direction): Direction {
   const contextDir = React.useContext(DirectionContext);
   if (!contextDir) {
     throw new Error("useDirection must be used within a DirectionProvider");
   }
-  return dirProp ?? contextDir ?? "ltr";
+  return dir ?? contextDir ?? "ltr";
 }
 
 interface DirectionProviderProps {

@@ -11,6 +11,7 @@ const CONTENT_NAME = "MarqueeContent";
 
 type Side = "left" | "right" | "top" | "bottom";
 type Orientation = "horizontal" | "vertical";
+type Direction = "ltr" | "rtl";
 
 type RootElement = React.ComponentRef<typeof MarqueeRoot>;
 type ContentElement = React.ComponentRef<typeof MarqueeContent>;
@@ -223,6 +224,13 @@ function useResizeObserverStore(
   return React.useSyncExternalStore(onSubscribe, getSnapshot, getSnapshot);
 }
 
+const DirectionContext = React.createContext<Direction | undefined>(undefined);
+
+function useDirection(dir?: Direction): Direction {
+  const contextDir = React.useContext(DirectionContext);
+  return dir ?? contextDir ?? "ltr";
+}
+
 interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
@@ -230,6 +238,7 @@ interface DivProps extends React.ComponentProps<"div"> {
 interface MarqueeContextValue {
   side: Side;
   orientation: Orientation;
+  dir: Direction;
   loopCount: number;
   contentRef: React.RefObject<ContentElement | null>;
   rootRef: React.RefObject<RootElement | null>;
@@ -258,11 +267,13 @@ interface MarqueeRootProps extends DivProps {
   autoFill?: boolean;
   pauseOnHover?: boolean;
   reverse?: boolean;
+  dir?: Direction;
 }
 
 function MarqueeRoot(props: MarqueeRootProps) {
   const {
     side = "left",
+    dir: dirProp,
     speed = 50,
     delay = 0,
     loopCount = 0,
@@ -272,7 +283,6 @@ function MarqueeRoot(props: MarqueeRootProps) {
     reverse = false,
     className,
     style: styleProp,
-    children,
     asChild,
     ref,
     ...marqueeProps
@@ -280,6 +290,8 @@ function MarqueeRoot(props: MarqueeRootProps) {
 
   const orientation: Orientation =
     side === "top" || side === "bottom" ? "vertical" : "horizontal";
+
+  const dir = useDirection(dirProp);
 
   const rootRef = React.useRef<RootElement>(null);
   const contentRef = React.useRef<ContentElement>(null);
@@ -323,6 +335,7 @@ function MarqueeRoot(props: MarqueeRootProps) {
     () => ({
       side,
       orientation,
+      dir,
       speed,
       loopCount,
       contentRef,
@@ -331,7 +344,7 @@ function MarqueeRoot(props: MarqueeRootProps) {
       pauseOnHover,
       reverse,
     }),
-    [side, orientation, speed, loopCount, autoFill, pauseOnHover, reverse],
+    [side, orientation, dir, speed, loopCount, autoFill, pauseOnHover, reverse],
   );
 
   const MarqueePrimitive = asChild ? Slot : "div";
@@ -342,9 +355,9 @@ function MarqueeRoot(props: MarqueeRootProps) {
         aria-live="off"
         data-orientation={orientation}
         data-slot="marquee"
+        dir={dir}
         {...marqueeProps}
         ref={composedRef}
-        style={style}
         className={cn(
           "relative flex overflow-hidden motion-reduce:animate-none",
           orientation === "vertical" && "h-full flex-col",
@@ -352,9 +365,8 @@ function MarqueeRoot(props: MarqueeRootProps) {
           pauseOnHover && "group",
           className,
         )}
-      >
-        {children}
-      </MarqueePrimitive>
+        style={style}
+      />
     </MarqueeContext.Provider>
   );
 }
@@ -369,6 +381,10 @@ const marqueeContentVariants = cva(
         top: "min-h-full min-w-auto animate-marquee-up flex-col",
         bottom: "min-h-full min-w-auto animate-marquee-down flex-col",
       },
+      dir: {
+        ltr: "",
+        rtl: "",
+      },
       pauseOnHover: {
         true: "group-hover:[animation-play-state:paused]",
         false: "",
@@ -378,8 +394,21 @@ const marqueeContentVariants = cva(
         false: "",
       },
     },
+    compoundVariants: [
+      {
+        side: "left",
+        dir: "rtl",
+        className: "animate-marquee-left-rtl",
+      },
+      {
+        side: "right",
+        dir: "rtl",
+        className: "animate-marquee-right-rtl",
+      },
+    ],
     defaultVariants: {
       side: "left",
+      dir: "ltr",
       pauseOnHover: false,
       reverse: false,
     },
@@ -398,8 +427,9 @@ function MarqueeContent(props: DivProps) {
 
   const context = useMarqueeContext(CONTENT_NAME);
   const composedRef = useComposedRefs(ref, context.contentRef);
-  const ContentPrimitive = asChild ? Slot : "div";
+
   const isVertical = context.orientation === "vertical";
+  const isRtl = context.dir === "rtl";
 
   const dimensions = useResizeObserverStore(
     context.rootRef,
@@ -452,6 +482,8 @@ function MarqueeContent(props: DivProps) {
     [styleProp, context.reverse],
   );
 
+  const ContentPrimitive = asChild ? Slot : "div";
+
   return (
     <>
       <ContentPrimitive
@@ -462,12 +494,17 @@ function MarqueeContent(props: DivProps) {
         className={cn(
           marqueeContentVariants({
             side: context.side,
+            dir: context.dir,
             pauseOnHover: context.pauseOnHover,
             reverse: context.reverse,
             className,
           }),
           isVertical && "flex-col",
-          isVertical ? "mb-[var(--gap)]" : "mr-[var(--gap)]",
+          isVertical
+            ? "mb-[var(--gap)]"
+            : isRtl
+              ? "ml-[var(--gap)]"
+              : "mr-[var(--gap)]",
         )}
       >
         <div
@@ -489,6 +526,7 @@ function MarqueeContent(props: DivProps) {
         className={cn(
           marqueeContentVariants({
             side: context.side,
+            dir: context.dir,
             pauseOnHover: context.pauseOnHover,
             reverse: context.reverse,
             className,

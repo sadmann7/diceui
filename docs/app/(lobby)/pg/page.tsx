@@ -46,10 +46,10 @@ import {
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <Demo>
+      <Demo dir="rtl">
         <MarqueeDemo />
         <MarqueeVerticalDemo />
-        <FastMarquee loop={1}>
+        <FastMarquee speed={100} autoFill>
           {tricks.slice(0, 1).map((trick) => (
             <div
               key={trick.value}
