@@ -560,6 +560,62 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "hitbox-sizes-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "hitbox"],
+    files: [
+      {
+        path: "examples/hitbox-sizes-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "hitbox-positions-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "hitbox"],
+    files: [
+      {
+        path: "examples/hitbox-positions-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "hitbox-radius-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["button", "hitbox"],
+    files: [
+      {
+        path: "examples/hitbox-radius-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "hitbox-custom-size-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "hitbox"],
+    files: [
+      {
+        path: "examples/hitbox-custom-size-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "hitbox-debug-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "hitbox"],
+    files: [
+      {
+        path: "examples/hitbox-debug-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "input-group-demo",
     type: "registry:example",
     dependencies: ["class-variance-authority"],

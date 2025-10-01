@@ -1,8 +1,13 @@
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-import * as React from "react";
+import type * as React from "react";
 
 import { cn } from "@/lib/utils";
+
+type Size = "default" | "sm" | "lg";
+type DynamicSize = Size | (string & {});
+
+const sizes: DynamicSize[] = ["default", "sm", "lg"];
 
 const hitboxVariants = cva(
   [
@@ -15,9 +20,10 @@ const hitboxVariants = cva(
         default: "[--size:var(--size-default)]",
         sm: "[--size:var(--size-sm)]",
         lg: "[--size:var(--size-lg)]",
+        dynamic: "[--size:var(--size)]",
       },
       position: {
-        default: "after:[inset:calc(-1*var(--size))]",
+        all: "after:[inset:calc(-1*var(--size))]",
         top: "after:[height:var(--size)] after:[left:0] after:[right:0] after:[top:calc(-1*var(--size))]",
         bottom:
           "after:[bottom:calc(-1*var(--size))] after:[height:var(--size)] after:[left:0] after:[right:0]",
@@ -29,10 +35,12 @@ const hitboxVariants = cva(
         horizontal:
           "after:[bottom:0] after:[left:calc(-1*var(--size))] after:[right:calc(-1*var(--size))] after:[top:0]",
       },
-      shape: {
-        default: "",
-        circular: "after:rounded-full",
-        rounded: "after:rounded-md",
+      radius: {
+        none: "",
+        sm: "after:rounded-sm",
+        md: "after:rounded-md",
+        lg: "after:rounded-lg",
+        full: "after:rounded-full",
       },
       debug: {
         true: "after:border after:border-red-500 after:border-dashed after:bg-red-500/20",
@@ -41,8 +49,8 @@ const hitboxVariants = cva(
     },
     defaultVariants: {
       size: "default",
-      position: "default",
-      shape: "default",
+      position: "all",
+      radius: "none",
       debug: false,
     },
   },
@@ -50,46 +58,39 @@ const hitboxVariants = cva(
 
 interface HitboxProps
   extends React.ComponentProps<typeof Slot>,
-    VariantProps<typeof hitboxVariants> {
-  inset?: string;
+    Omit<VariantProps<typeof hitboxVariants>, "size"> {
+  size?: DynamicSize;
 }
 
 function Hitbox(props: HitboxProps) {
   const {
     className,
+    style,
     size,
     position,
-    shape,
+    radius,
     debug = false,
-    inset,
-    style: styleProp,
     ...hitboxProps
   } = props;
 
-  const style = React.useMemo(() => {
-    if (!inset) return styleProp;
-
-    return {
-      ...styleProp,
-      "--inset": inset,
-    } as React.CSSProperties;
-  }, [inset, styleProp]);
+  const isDynamicSize = size && !sizes.includes(size);
 
   return (
     <Slot
-      data-slot="hitbox"
-      style={style}
       {...hitboxProps}
       className={cn(
         hitboxVariants({
-          size: inset ? undefined : size,
+          size: isDynamicSize ? "dynamic" : (size as Size),
           position,
-          shape,
+          radius,
           debug,
         }),
-        inset && "after:[inset:var(--inset)]",
         className,
       )}
+      style={{
+        ...style,
+        ...(isDynamicSize && { "--size": size }),
+      }}
     />
   );
 }

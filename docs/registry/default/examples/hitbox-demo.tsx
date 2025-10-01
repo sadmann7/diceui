@@ -10,21 +10,27 @@ export default function HitboxDemo() {
         <div className="flex items-center gap-6">
           <div className="flex flex-col items-center gap-2.5">
             <Hitbox debug>
-              <Button>Kickflip</Button>
+              <Button>Default</Button>
             </Hitbox>
             <p className="text-muted-foreground text-xs">default</p>
           </div>
           <div className="flex flex-col items-center gap-2.5">
             <Hitbox size="sm" debug>
-              <Button>Heelflip</Button>
+              <Button>Small</Button>
             </Hitbox>
             <p className="text-muted-foreground text-xs">sm</p>
           </div>
           <div className="flex flex-col items-center gap-2.5">
             <Hitbox size="lg" debug>
-              <Button>Tre Flip</Button>
+              <Button>Large</Button>
             </Hitbox>
             <p className="text-muted-foreground text-xs">lg</p>
+          </div>
+          <div className="flex flex-col items-center gap-2.5">
+            <Hitbox size="5px" debug>
+              <Button>Custom</Button>
+            </Hitbox>
+            <p className="text-muted-foreground text-xs">5px</p>
           </div>
         </div>
       </div>
@@ -34,9 +40,9 @@ export default function HitboxDemo() {
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           <div className="flex flex-col items-center gap-2.5">
             <Hitbox debug>
-              <Button size="sm">Default</Button>
+              <Button size="sm">All</Button>
             </Hitbox>
-            <p className="text-muted-foreground text-xs">default</p>
+            <p className="text-muted-foreground text-xs">all</p>
           </div>
           <div className="flex flex-col items-center gap-2.5">
             <Hitbox position="top" debug>
@@ -78,27 +84,39 @@ export default function HitboxDemo() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <h3 className="font-semibold text-lg">Shapes</h3>
+        <h3 className="font-semibold text-lg">Radius</h3>
         <div className="flex items-center gap-6">
           <div className="flex flex-col items-center gap-2.5">
-            <Hitbox shape="default" debug>
-              <Button>Default</Button>
+            <Hitbox radius="none" debug>
+              <Button>None</Button>
             </Hitbox>
-            <p className="text-muted-foreground text-xs">default</p>
+            <p className="text-muted-foreground text-xs">none</p>
           </div>
           <div className="flex flex-col items-center gap-2.5">
-            <Hitbox shape="rounded" debug>
-              <Button>Rounded</Button>
+            <Hitbox radius="sm" debug>
+              <Button>Small</Button>
             </Hitbox>
-            <p className="text-muted-foreground text-xs">rounded</p>
+            <p className="text-muted-foreground text-xs">sm</p>
           </div>
           <div className="flex flex-col items-center gap-2.5">
-            <Hitbox shape="circular" debug>
+            <Hitbox radius="md" debug>
+              <Button>Medium</Button>
+            </Hitbox>
+            <p className="text-muted-foreground text-xs">md</p>
+          </div>
+          <div className="flex flex-col items-center gap-2.5">
+            <Hitbox radius="lg" debug>
+              <Button>Large</Button>
+            </Hitbox>
+            <p className="text-muted-foreground text-xs">lg</p>
+          </div>
+          <div className="flex flex-col items-center gap-2.5">
+            <Hitbox radius="full" debug>
               <Button size="icon" className="size-8 rounded-full">
                 <ShapesIcon />
               </Button>
             </Hitbox>
-            <p className="text-muted-foreground text-xs">circular</p>
+            <p className="text-muted-foreground text-xs">full</p>
           </div>
         </div>
       </div>

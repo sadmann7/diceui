@@ -1133,6 +1133,76 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "hitbox-sizes-demo": {
+      name: "hitbox-sizes-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","hitbox"],
+      files: [{
+        path: "registry/default/examples/hitbox-sizes-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/hitbox-sizes-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "hitbox-positions-demo": {
+      name: "hitbox-positions-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","hitbox"],
+      files: [{
+        path: "registry/default/examples/hitbox-positions-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/hitbox-positions-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "hitbox-radius-demo": {
+      name: "hitbox-radius-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","hitbox"],
+      files: [{
+        path: "registry/default/examples/hitbox-radius-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/hitbox-radius-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "hitbox-custom-size-demo": {
+      name: "hitbox-custom-size-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","hitbox"],
+      files: [{
+        path: "registry/default/examples/hitbox-custom-size-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/hitbox-custom-size-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "hitbox-debug-demo": {
+      name: "hitbox-debug-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","hitbox"],
+      files: [{
+        path: "registry/default/examples/hitbox-debug-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/hitbox-debug-demo.tsx")),
+      source: "",
+      chunks: []
+    },
     "input-group-demo": {
       name: "input-group-demo",
       description: "",
