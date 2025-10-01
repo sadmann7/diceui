@@ -239,13 +239,15 @@ interface MarqueeContextValue {
   side: Side;
   orientation: Orientation;
   dir: Direction;
+  speed: number;
   loopCount: number;
   contentRef: React.RefObject<ContentElement | null>;
   rootRef: React.RefObject<RootElement | null>;
   autoFill: boolean;
   pauseOnHover: boolean;
+  pauseOnKeyboard: boolean;
   reverse: boolean;
-  speed: number;
+  paused: boolean;
 }
 
 const MarqueeContext = React.createContext<MarqueeContextValue | null>(null);
@@ -260,14 +262,15 @@ function useMarqueeContext(consumerName: string) {
 
 interface MarqueeRootProps extends DivProps {
   side?: Side;
+  dir?: Direction;
   speed?: number;
   delay?: number;
   loopCount?: number;
   gap?: string | number;
   autoFill?: boolean;
   pauseOnHover?: boolean;
+  pauseOnKeyboard?: boolean;
   reverse?: boolean;
-  dir?: Direction;
 }
 
 function MarqueeRoot(props: MarqueeRootProps) {
@@ -278,12 +281,13 @@ function MarqueeRoot(props: MarqueeRootProps) {
     delay = 0,
     loopCount = 0,
     gap = "1rem",
+    asChild,
     autoFill = false,
     pauseOnHover = false,
+    pauseOnKeyboard = false,
     reverse = false,
     className,
     style: styleProp,
-    asChild,
     ref,
     ...marqueeProps
   } = props;
@@ -296,6 +300,18 @@ function MarqueeRoot(props: MarqueeRootProps) {
   const rootRef = React.useRef<RootElement>(null);
   const contentRef = React.useRef<ContentElement>(null);
   const composedRef = useComposedRefs(ref, rootRef);
+
+  const [paused, setPaused] = React.useState(false);
+
+  const onKeyDown = React.useCallback(
+    (event: React.KeyboardEvent) => {
+      if (pauseOnKeyboard && event.key === " ") {
+        event.preventDefault();
+        setPaused((prev) => !prev);
+      }
+    },
+    [pauseOnKeyboard],
+  );
 
   const dimensions = useResizeObserverStore(rootRef, contentRef, orientation);
 
@@ -342,10 +358,23 @@ function MarqueeRoot(props: MarqueeRootProps) {
       contentRef,
       rootRef,
       autoFill,
+      paused,
       pauseOnHover,
+      pauseOnKeyboard,
       reverse,
     }),
-    [side, orientation, dir, speed, loopCount, autoFill, pauseOnHover, reverse],
+    [
+      side,
+      orientation,
+      dir,
+      speed,
+      loopCount,
+      autoFill,
+      paused,
+      pauseOnHover,
+      pauseOnKeyboard,
+      reverse,
+    ],
   );
 
   const MarqueePrimitive = asChild ? Slot : "div";
@@ -353,19 +382,26 @@ function MarqueeRoot(props: MarqueeRootProps) {
   return (
     <MarqueeContext.Provider value={contextValue}>
       <MarqueePrimitive
+        role="marquee"
+        aria-live="off"
         data-orientation={orientation}
         data-slot="marquee"
         dir={dir}
+        tabIndex={pauseOnKeyboard ? 0 : undefined}
         {...marqueeProps}
         ref={composedRef}
         className={cn(
           "relative flex overflow-hidden motion-reduce:animate-none",
           orientation === "vertical" && "h-full flex-col",
           orientation === "horizontal" && "w-full",
+          paused && "[&_*]:[animation-play-state:paused]",
           pauseOnHover && "group",
+          pauseOnKeyboard &&
+            "rounded-md focus-visible:border-ring focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
           className,
         )}
         style={style}
+        onKeyDown={pauseOnKeyboard ? onKeyDown : undefined}
       />
     </MarqueeContext.Provider>
   );
@@ -461,8 +497,9 @@ function MarqueeContent(props: DivProps) {
       animationDelay: "var(--delay)",
       animationIterationCount: "var(--loop-count)",
       animationDirection: context.reverse ? "reverse" : "normal",
+      animationPlayState: context.paused ? "paused" : "running",
     }),
-    [styleProp, context.reverse],
+    [styleProp, context.reverse, context.paused],
   );
 
   const ContentPrimitive = asChild ? Slot : "div";
@@ -473,7 +510,6 @@ function MarqueeContent(props: DivProps) {
         data-orientation={context.orientation}
         data-slot="marquee-content"
         {...contentProps}
-        style={style}
         className={cn(
           marqueeContentVariants({
             side: context.side,
@@ -481,13 +517,13 @@ function MarqueeContent(props: DivProps) {
             reverse: context.reverse,
             className,
           }),
-          isVertical && "flex-col",
           isVertical
-            ? "mb-[var(--gap)]"
+            ? "mb-[var(--gap)] flex-col"
             : isRtl
               ? "ml-[var(--gap)]"
               : "mr-[var(--gap)]",
         )}
+        style={style}
       >
         <div
           ref={composedRef}
@@ -504,7 +540,6 @@ function MarqueeContent(props: DivProps) {
         role="presentation"
         aria-hidden="true"
         {...contentProps}
-        style={style}
         className={cn(
           marqueeContentVariants({
             side: context.side,
@@ -514,6 +549,7 @@ function MarqueeContent(props: DivProps) {
           }),
           isVertical && "flex-col",
         )}
+        style={style}
       >
         {onMultipliedChildrenRender(multiplier)}
       </ContentPrimitive>

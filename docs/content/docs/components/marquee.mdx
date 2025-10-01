@@ -157,8 +157,23 @@ Edge overlay components for smooth gradient transitions.
 
 ## Accessibility
 
-The marquee component automatically handles:
+### Keyboard Interactions
 
+<KeyboardShortcutsTable
+  shortcuts={[
+    {
+      keys: ["Space"],
+      description: "Pauses or resumes the marquee animation when pauseOnKeyboard is enabled.",
+    },
+  ]}
+/>
+
+## Features
+
+- **RTL Support**: Automatically adapts to RTL (right-to-left) layouts
+- **Screen Reader Support**: Content remains accessible to assistive technologies
 - **Reduced Motion**: Respects user's `prefers-reduced-motion` setting
-- **Pause on Hover**: Can be configured to pause animation when hovered
-- **Keyboard Navigation**: Content within the marquee remains keyboard accessible
+- **Pause Controls**: 
+  - **Hover**: Can be configured to pause animation when hovered
+  - **Keyboard**: Press Space key to pause/resume (when `pauseOnKeyboard` is enabled)
+- **Focus Management**: Proper focus indicators and keyboard navigation when `pauseOnKeyboard` is enabled

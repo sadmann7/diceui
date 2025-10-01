@@ -55,6 +55,12 @@ export interface MarqueeProps extends EmptyProps<"div">, CompositionProps {
   pauseOnHover?: boolean;
 
   /**
+   * Whether the marquee can be paused with keyboard controls (Space key).
+   * @default true
+   */
+  pauseOnKeyboard?: boolean;
+
+  /**
    * Whether to reverse the animation direction.
    * @default false
    */

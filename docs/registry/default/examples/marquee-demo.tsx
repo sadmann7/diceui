@@ -37,7 +37,11 @@ const tricks = [
 
 export default function MarqueeDemo() {
   return (
-    <Marquee dir="rtl" pauseOnHover>
+    <Marquee
+      aria-label="Skateboard tricks showcase"
+      pauseOnHover
+      pauseOnKeyboard
+    >
       <MarqueeContent>
         {tricks.map((trick) => (
           <MarqueeItem key={trick.title} asChild>
