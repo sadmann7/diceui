@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Hitbox } from "@/registry/default/ui/hitbox";
+import { Hitbox } from "@/registry/default/components/hitbox";
 
 export default function HitboxDebugDemo() {
   return (

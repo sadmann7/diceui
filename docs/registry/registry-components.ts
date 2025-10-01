@@ -22,6 +22,17 @@ export const components: Registry["items"] = [
     ],
   },
   {
+    name: "hitbox",
+    type: "registry:component",
+    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    files: [
+      {
+        path: "components/hitbox.tsx",
+        type: "registry:component",
+      },
+    ],
+  },
+  {
     name: "portal",
     type: "registry:component",
     files: [

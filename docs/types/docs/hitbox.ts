@@ -17,7 +17,7 @@ export interface HitboxProps
   /**
    * The position of the hitbox relative to the child element.
    *
-   * - `default`: Extends in all directions
+   * - `all`: Extends in all directions
    * - `top`: Extends only above the element
    * - `bottom`: Extends only below the element
    * - `left`: Extends only to the left of the element
@@ -25,10 +25,10 @@ export interface HitboxProps
    * - `vertical`: Extends above and below the element
    * - `horizontal`: Extends left and right of the element
    *
-   * @default "default"
+   * @default "all"
    */
   position?:
-    | "default"
+    | "all"
     | "top"
     | "bottom"
     | "left"

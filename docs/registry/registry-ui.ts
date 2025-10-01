@@ -157,17 +157,6 @@ export const ui: Registry["items"] = [
     ],
   },
   {
-    name: "hitbox",
-    type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
-    files: [
-      {
-        path: "ui/hitbox.tsx",
-        type: "registry:ui",
-      },
-    ],
-  },
-  {
     name: "input-group",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "class-variance-authority"],

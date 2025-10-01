@@ -177,20 +177,6 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "hitbox": {
-      name: "hitbox",
-      description: "",
-      type: "registry:ui",
-      registryDependencies: undefined,
-      files: [{
-        path: "registry/default/ui/hitbox.tsx",
-        type: "registry:ui",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/ui/hitbox.tsx")),
-      source: "",
-      chunks: []
-    },
     "input-group": {
       name: "input-group",
       description: "",
@@ -1123,7 +1109,7 @@ export const Index: Record<string, any> = {
       name: "hitbox-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["checkbox","hitbox"],
+      registryDependencies: ["hitbox"],
       files: [{
         path: "registry/default/examples/hitbox-demo.tsx",
         type: "registry:example",
@@ -2026,6 +2012,20 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/components/direction-provider.tsx")),
+      source: "",
+      chunks: []
+    },
+    "hitbox": {
+      name: "hitbox",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/components/hitbox.tsx",
+        type: "registry:component",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/components/hitbox.tsx")),
       source: "",
       chunks: []
     },

@@ -551,7 +551,7 @@ export const examples: Registry["items"] = [
     name: "hitbox-demo",
     type: "registry:example",
     dependencies: ["lucide-react"],
-    registryDependencies: ["checkbox", "hitbox"],
+    registryDependencies: ["hitbox"],
     files: [
       {
         path: "examples/hitbox-demo.tsx",
