@@ -381,28 +381,30 @@ function MarqueeRoot(props: MarqueeRootProps) {
 
   return (
     <MarqueeContext.Provider value={contextValue}>
-      <MarqueePrimitive
-        role="marquee"
-        aria-live="off"
-        data-orientation={orientation}
-        data-slot="marquee"
-        dir={dir}
-        tabIndex={pauseOnKeyboard ? 0 : undefined}
-        {...marqueeProps}
-        ref={composedRef}
-        className={cn(
-          "relative flex overflow-hidden motion-reduce:animate-none",
-          orientation === "vertical" && "h-full flex-col",
-          orientation === "horizontal" && "w-full",
-          paused && "[&_*]:[animation-play-state:paused]",
-          pauseOnHover && "group",
-          pauseOnKeyboard &&
-            "rounded-md focus-visible:border-ring focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
-          className,
-        )}
-        style={style}
-        onKeyDown={pauseOnKeyboard ? onKeyDown : undefined}
-      />
+      <div data-slot="marquee-wrapper" className="grid">
+        <MarqueePrimitive
+          role="marquee"
+          aria-live="off"
+          data-orientation={orientation}
+          data-slot="marquee"
+          dir={dir}
+          tabIndex={pauseOnKeyboard ? 0 : undefined}
+          {...marqueeProps}
+          ref={composedRef}
+          className={cn(
+            "relative flex overflow-hidden motion-reduce:animate-none",
+            orientation === "vertical" && "h-full flex-col",
+            orientation === "horizontal" && "w-full",
+            paused && "[&_*]:[animation-play-state:paused]",
+            pauseOnHover && "group",
+            pauseOnKeyboard &&
+              "rounded-md focus-visible:border-ring focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
+            className,
+          )}
+          style={style}
+          onKeyDown={pauseOnKeyboard ? onKeyDown : undefined}
+        />
+      </div>
     </MarqueeContext.Provider>
   );
 }

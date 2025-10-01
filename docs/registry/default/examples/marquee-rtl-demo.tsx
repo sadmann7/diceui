@@ -37,7 +37,7 @@ const features = [
 
 export default function MarqueeRtlDemo() {
   return (
-    <Marquee dir="rtl" pauseOnHover autoFill>
+    <Marquee dir="rtl">
       <MarqueeContent>
         {features.map((feature) => (
           <MarqueeItem key={feature.title} asChild>

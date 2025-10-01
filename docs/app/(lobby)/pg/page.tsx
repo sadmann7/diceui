@@ -47,10 +47,12 @@ import {
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <Demo dir="rtl">
+      <div className="flex flex-col gap-10">
         <MarqueeDemo />
         <MarqueeVerticalDemo />
         <MarqueeRtlDemo />
+      </div>
+      <Demo dir="rtl">
         <FastMarquee speed={100} autoFill>
           {tricks.slice(0, 1).map((trick) => (
             <div
