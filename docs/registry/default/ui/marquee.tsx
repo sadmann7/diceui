@@ -419,6 +419,10 @@ const marqueeContentVariants = cva(
         top: "min-h-full min-w-auto animate-marquee-up flex-col",
         bottom: "min-h-full min-w-auto animate-marquee-down flex-col",
       },
+      dir: {
+        ltr: "",
+        rtl: "",
+      },
       pauseOnHover: {
         true: "group-hover:[animation-play-state:paused]",
         false: "",
@@ -428,8 +432,21 @@ const marqueeContentVariants = cva(
         false: "",
       },
     },
+    compoundVariants: [
+      {
+        side: "left",
+        dir: "rtl",
+        className: "animate-marquee-left-rtl",
+      },
+      {
+        side: "right",
+        dir: "rtl",
+        className: "animate-marquee-right-rtl",
+      },
+    ],
     defaultVariants: {
       side: "left",
+      dir: "ltr",
       pauseOnHover: false,
       reverse: false,
     },
@@ -499,9 +516,8 @@ function MarqueeContent(props: DivProps) {
       animationDelay: "var(--delay)",
       animationIterationCount: "var(--loop-count)",
       animationDirection: context.reverse ? "reverse" : "normal",
-      animationPlayState: context.paused ? "paused" : "running",
     }),
-    [styleProp, context.reverse, context.paused],
+    [styleProp, context.reverse],
   );
 
   const ContentPrimitive = asChild ? Slot : "div";
@@ -512,20 +528,22 @@ function MarqueeContent(props: DivProps) {
         data-orientation={context.orientation}
         data-slot="marquee-content"
         {...contentProps}
+        style={style}
         className={cn(
           marqueeContentVariants({
             side: context.side,
+            dir: context.dir,
             pauseOnHover: context.pauseOnHover,
             reverse: context.reverse,
             className,
           }),
+          isVertical && "flex-col",
           isVertical
-            ? "mb-[var(--gap)] flex-col"
+            ? "mb-[var(--gap)]"
             : isRtl
               ? "ml-[var(--gap)]"
               : "mr-[var(--gap)]",
         )}
-        style={style}
       >
         <div
           ref={composedRef}
@@ -542,16 +560,17 @@ function MarqueeContent(props: DivProps) {
         role="presentation"
         aria-hidden="true"
         {...contentProps}
+        style={style}
         className={cn(
           marqueeContentVariants({
             side: context.side,
+            dir: context.dir,
             pauseOnHover: context.pauseOnHover,
             reverse: context.reverse,
             className,
           }),
           isVertical && "flex-col",
         )}
-        style={style}
       >
         {onMultipliedChildrenRender(multiplier)}
       </ContentPrimitive>

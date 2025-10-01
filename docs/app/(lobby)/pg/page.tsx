@@ -46,7 +46,7 @@ import {
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <Demo dir="rtl">
+      <Demo>
         <MarqueeDemo />
         <MarqueeVerticalDemo />
         <MarqueeRtlDemo />

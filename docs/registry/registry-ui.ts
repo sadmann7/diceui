@@ -220,6 +220,10 @@ export const ui: Registry["items"] = [
           "marquee-left var(--duration) linear var(--loop-count)",
         "--animate-marquee-right":
           "marquee-right var(--duration) linear var(--loop-count)",
+        "--animate-marquee-left-rtl":
+          "marquee-left-rtl var(--duration) linear var(--loop-count)",
+        "--animate-marquee-right-rtl":
+          "marquee-right-rtl var(--duration) linear var(--loop-count)",
         "--animate-marquee-up":
           "marquee-up var(--duration) linear var(--loop-count)",
         "--animate-marquee-down":
@@ -232,12 +236,12 @@ export const ui: Registry["items"] = [
           transform: "translateX(0%)",
         },
         "100%": {
-          transform: "translateX(calc(var(--flip) * (-100% - var(--gap))))",
+          transform: "translateX(calc(-100% - var(--gap)))",
         },
       },
       "@keyframes marquee-right": {
         "0%": {
-          transform: "translateX(calc(var(--flip) * (100% + var(--gap))))",
+          transform: "translateX(calc(-100% - var(--gap)))",
         },
         "100%": {
           transform: "translateX(0%)",
@@ -257,6 +261,22 @@ export const ui: Registry["items"] = [
         },
         "100%": {
           transform: "translateY(0%)",
+        },
+      },
+      "@keyframes marquee-left-rtl": {
+        "0%": {
+          transform: "translateX(0%)",
+        },
+        "100%": {
+          transform: "translateX(calc(100% + var(--gap)))",
+        },
+      },
+      "@keyframes marquee-right-rtl": {
+        "0%": {
+          transform: "translateX(calc(100% + var(--gap)))",
+        },
+        "100%": {
+          transform: "translateX(0%)",
         },
       },
     },

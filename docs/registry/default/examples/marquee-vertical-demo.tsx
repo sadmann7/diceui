@@ -60,7 +60,7 @@ const testimonials = [
 
 export default function MarqueeVerticalDemo() {
   return (
-    <Marquee side="top" className="h-[320px]">
+    <Marquee side="bottom" className="h-[320px]">
       <MarqueeContent>
         {testimonials.map((testimonial) => (
           <MarqueeItem key={testimonial.name} asChild>
