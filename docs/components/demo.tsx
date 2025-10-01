@@ -6,27 +6,35 @@ interface DemoProps extends React.ComponentProps<"div"> {}
 export function Demo({ children, className, ...props }: DemoProps) {
   return (
     <div
+      data-slot="demo"
       className={cn(
-        "mx-auto flex w-full max-w-3xl flex-col items-center justify-center gap-4",
+        "mx-auto grid w-full max-w-3xl place-items-center gap-4",
         className,
       )}
       {...props}
     >
       {Array.isArray(children) ? (
         children.map((child, index) => (
-          <DemoCard key={child.key ?? index}>{child}</DemoCard>
+          <DemoItem key={child.key ?? index}>{child}</DemoItem>
         ))
       ) : (
-        <DemoCard>{children}</DemoCard>
+        <DemoItem>{children}</DemoItem>
       )}
     </div>
   );
 }
 
-function DemoCard({ children }: { children: React.ReactNode }) {
+interface DemoItemProps extends React.ComponentProps<"div"> {}
+
+function DemoItem({ className, ...props }: DemoItemProps) {
   return (
-    <div className="flex h-[calc(100svh-10rem)] w-full items-center justify-center">
-      {children}
-    </div>
+    <div
+      data-slot="demo-item"
+      className={cn(
+        "grid h-[calc(100svh-10rem)] w-full place-items-center",
+        className,
+      )}
+      {...props}
+    />
   );
 }

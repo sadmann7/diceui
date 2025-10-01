@@ -31,6 +31,24 @@ npx shadcn@latest add "https://diceui.com/r/circular-progress"
 
     <ComponentSource name="circular-progress" />
   </Step>
+  <Step>
+    Add the following CSS animations to your `globals.css` file:
+
+    ```css
+    @theme {
+      --animate-spin-around: spin-around 0.8s linear infinite;
+
+      @keyframes spin-around {
+        0% {
+          transform: rotate(-90deg);
+        }
+        100% {
+          transform: rotate(270deg);
+        }
+      }
+    }
+    ```
+  </Step>
 </Steps>
 
 ## Layout
@@ -38,21 +56,15 @@ npx shadcn@latest add "https://diceui.com/r/circular-progress"
 Import the parts and compose them together.
 
 ```tsx
-import {
-  CircularProgress,
-  CircularProgressIndicator,
-  CircularProgressRange,
-  CircularProgressTrack,
-  CircularProgressValueText,
-} from "@/components/ui/circular-progress";
+import * as CircularProgress from "@/components/ui/circular-progress";
 
-<CircularProgress>
-  <CircularProgressIndicator>
-    <CircularProgressTrack />
-    <CircularProgressRange />
-  </CircularProgressIndicator>
-  <CircularProgressValueText />
-</CircularProgress>
+<CircularProgress.Root>
+  <CircularProgress.Indicator>
+    <CircularProgress.Track />
+    <CircularProgress.Range />
+  </CircularProgress.Indicator>
+  <CircularProgress.ValueText />
+</CircularProgress.Root>
 ```
 
 Or use the `Combined` component to get all the parts in one.
@@ -118,7 +130,7 @@ The main container component for the circular progress.
   attributes={[
     {
       title: "[data-state]",
-      value: "The current state of the progress: 'indeterminate', 'loading', or 'complete'.",
+      value: ["indeterminate", "loading", "complete"],
     },
     {
       title: "[data-value]",
@@ -152,7 +164,7 @@ The SVG container that holds the circular progress tracks and ranges.
   attributes={[
     {
       title: "[data-state]",
-      value: "The current state of the progress: 'indeterminate', 'loading', or 'complete'.",
+      value: ["indeterminate", "loading", "complete"],
     },
     {
       title: "[data-value]",
@@ -186,7 +198,7 @@ The background circle that represents the full range of possible values.
   attributes={[
     {
       title: "[data-state]",
-      value: "The current state of the progress: 'indeterminate', 'loading', or 'complete'.",
+      value: ["indeterminate", "loading", "complete"],
     },
   ]}
 />
@@ -204,7 +216,7 @@ The portion of the circle that represents the current progress value.
   attributes={[
     {
       title: "[data-state]",
-      value: "The current state of the progress: 'indeterminate', 'loading', or 'complete'.",
+      value: ["indeterminate", "loading", "complete"],
     },
     {
       title: "[data-value]",
@@ -234,7 +246,7 @@ The text element that displays the current progress value or custom content.
   attributes={[
     {
       title: "[data-state]",
-      value: "The current state of the progress: 'indeterminate', 'loading', or 'complete'.",
+      value: ["indeterminate", "loading", "complete"],
     },
   ]}
 />

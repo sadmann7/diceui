@@ -498,6 +498,50 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "marquee-demo",
+    type: "registry:example",
+    registryDependencies: ["marquee"],
+    files: [
+      {
+        path: "examples/marquee-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "marquee-logo-demo",
+    type: "registry:example",
+    registryDependencies: ["marquee"],
+    files: [
+      {
+        path: "examples/marquee-logo-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "marquee-vertical-demo",
+    type: "registry:example",
+    registryDependencies: ["marquee"],
+    files: [
+      {
+        path: "examples/marquee-vertical-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "marquee-rtl-demo",
+    type: "registry:example",
+    registryDependencies: ["marquee"],
+    files: [
+      {
+        path: "examples/marquee-rtl-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "mask-input-demo",
     type: "registry:example",
     registryDependencies: ["mask-input"],
