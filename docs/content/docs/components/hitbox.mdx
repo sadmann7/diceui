@@ -1,0 +1,118 @@
+---
+title: Hitbox
+description: A utility component that extends the clickable area of child elements for improved accessibility and user experience.
+preview: true
+links:
+  api: /docs/components/hitbox#api-reference
+---
+
+<ComponentTabs name="hitbox-demo" />
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/hitbox"
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @radix-ui/react-slot class-variance-authority
+     ```
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource name="hitbox" />
+  </Step>
+</Steps>
+
+## Layout
+
+Import the component and wrap it around any element to extend its clickable area.
+
+```tsx
+import { Hitbox } from "@/components/hitbox";
+
+<Hitbox>
+  <Button>Click me</Button>
+</Hitbox>
+```
+
+## Examples
+
+### Sizes
+
+Control the size of the extended hitbox area.
+
+<ComponentTabs name="hitbox-sizes-demo" />
+
+### Positions
+
+Control which sides of the element the hitbox extends to.
+
+<ComponentTabs name="hitbox-positions-demo" />
+
+### Radius
+
+Control the border radius of the hitbox area.
+
+<ComponentTabs name="hitbox-radius-demo" />
+
+### Custom Size
+
+Use custom CSS values for precise control over the hitbox size.
+
+<ComponentTabs name="hitbox-custom-size-demo" />
+
+### Debug Mode
+
+Enable debug mode to visualize the hitbox area during development.
+
+<ComponentTabs name="hitbox-debug-demo" />
+
+## API Reference
+
+### Hitbox
+
+The main hitbox component that extends the clickable area of its child element.
+
+<AutoTypeTable
+  path="./types/docs/hitbox.ts"
+  name="HitboxProps"
+/>
+
+## Accessibility
+
+The Hitbox component improves accessibility by:
+
+- **Larger touch targets**: Extends clickable areas to meet minimum touch target size requirements (44px × 44px recommended by WCAG)
+- **Better mobile experience**: Reduces precision required for touch interactions
+- **Maintains semantics**: Uses Radix UI's Slot component to preserve the underlying element's accessibility properties
+- **Visual feedback**: Debug mode helps developers ensure adequate touch target sizes
+
+### Touch Target Guidelines
+
+- **Minimum size**: 44px × 44px (iOS) or 48dp × 48dp (Android)
+- **Recommended size**: 48px × 48px or larger
+- **Spacing**: At least 8px between adjacent touch targets
+
+### Best Practices
+
+- Use larger hitboxes for small interactive elements like icons or close buttons
+- Consider different positions (top, bottom, left, right) based on surrounding content
+- Test with debug mode enabled to ensure adequate coverage
+- Be mindful of overlapping hitboxes that might interfere with each other
+
+## Notes
+
+- The hitbox is implemented using CSS pseudo-elements (::after)
+- Custom sizes accept any valid CSS length value (px, rem, em, %, etc.)
+- The component uses Radix UI's Slot component to avoid wrapper elements
+- Debug mode should only be used during development and testing

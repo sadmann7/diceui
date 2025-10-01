@@ -198,6 +198,39 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "color-swatch-demo",
+    type: "registry:example",
+    registryDependencies: ["color-swatch"],
+    files: [
+      {
+        path: "examples/color-swatch-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "color-swatch-sizes-demo",
+    type: "registry:example",
+    registryDependencies: ["color-swatch"],
+    files: [
+      {
+        path: "examples/color-swatch-sizes-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "color-swatch-transparency-demo",
+    type: "registry:example",
+    registryDependencies: ["color-swatch"],
+    files: [
+      {
+        path: "examples/color-swatch-transparency-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "combobox-demo",
     type: "registry:example",
     dependencies: ["lucide-react"],
@@ -277,6 +310,71 @@ export const examples: Registry["items"] = [
     files: [
       {
         path: "examples/combobox-virtualized-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "cropper-demo",
+    type: "registry:example",
+    dependencies: ["class-variance-authority"],
+    registryDependencies: ["cropper"],
+    files: [
+      {
+        path: "examples/cropper-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "cropper-controlled-demo",
+    type: "registry:example",
+    dependencies: ["class-variance-authority"],
+    registryDependencies: ["cropper", "button", "label", "slider"],
+    files: [
+      {
+        path: "examples/cropper-controlled-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "cropper-file-upload-demo",
+    type: "registry:example",
+    dependencies: [
+      "class-variance-authority",
+      "@hookform/resolvers",
+      "react-hook-form",
+      "zod",
+    ],
+    registryDependencies: ["cropper", "button", "dialog", "label", "slider"],
+    files: [
+      {
+        path: "examples/cropper-file-upload-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "cropper-shapes-demo",
+    type: "registry:example",
+    dependencies: ["class-variance-authority"],
+    registryDependencies: ["cropper", "label", "select", "switch"],
+    files: [
+      {
+        path: "examples/cropper-shapes-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "cropper-video-demo",
+    type: "registry:example",
+    dependencies: ["class-variance-authority"],
+    registryDependencies: ["cropper", "button", "label", "select"],
+    files: [
+      {
+        path: "examples/cropper-video-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -445,6 +543,74 @@ export const examples: Registry["items"] = [
     files: [
       {
         path: "examples/file-upload-validation-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "hitbox-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["hitbox"],
+    files: [
+      {
+        path: "examples/hitbox-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "hitbox-sizes-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "hitbox"],
+    files: [
+      {
+        path: "examples/hitbox-sizes-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "hitbox-positions-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "hitbox"],
+    files: [
+      {
+        path: "examples/hitbox-positions-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "hitbox-radius-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["button", "hitbox"],
+    files: [
+      {
+        path: "examples/hitbox-radius-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "hitbox-custom-size-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "hitbox"],
+    files: [
+      {
+        path: "examples/hitbox-custom-size-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "hitbox-debug-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "hitbox"],
+    files: [
+      {
+        path: "examples/hitbox-debug-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -1019,104 +1185,6 @@ export const examples: Registry["items"] = [
     files: [
       {
         path: "examples/sortable-primitive-values-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "color-swatch-demo",
-    type: "registry:example",
-    registryDependencies: ["color-swatch"],
-    files: [
-      {
-        path: "examples/color-swatch-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "color-swatch-sizes-demo",
-    type: "registry:example",
-    registryDependencies: ["color-swatch"],
-    files: [
-      {
-        path: "examples/color-swatch-sizes-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "color-swatch-transparency-demo",
-    type: "registry:example",
-    registryDependencies: ["color-swatch"],
-    files: [
-      {
-        path: "examples/color-swatch-transparency-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "cropper-demo",
-    type: "registry:example",
-    dependencies: ["class-variance-authority"],
-    registryDependencies: ["cropper"],
-    files: [
-      {
-        path: "examples/cropper-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "cropper-controlled-demo",
-    type: "registry:example",
-    dependencies: ["class-variance-authority"],
-    registryDependencies: ["cropper", "button", "label", "slider"],
-    files: [
-      {
-        path: "examples/cropper-controlled-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "cropper-file-upload-demo",
-    type: "registry:example",
-    dependencies: [
-      "class-variance-authority",
-      "@hookform/resolvers",
-      "react-hook-form",
-      "zod",
-    ],
-    registryDependencies: ["cropper", "button", "dialog", "label", "slider"],
-    files: [
-      {
-        path: "examples/cropper-file-upload-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "cropper-shapes-demo",
-    type: "registry:example",
-    dependencies: ["class-variance-authority"],
-    registryDependencies: ["cropper", "label", "select", "switch"],
-    files: [
-      {
-        path: "examples/cropper-shapes-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "cropper-video-demo",
-    type: "registry:example",
-    dependencies: ["class-variance-authority"],
-    registryDependencies: ["cropper", "button", "label", "select"],
-    files: [
-      {
-        path: "examples/cropper-video-demo.tsx",
         type: "registry:example",
       },
     ],

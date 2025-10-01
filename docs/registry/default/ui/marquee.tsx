@@ -155,14 +155,23 @@ function createResizeObserverStore() {
     const rootRect = rootElement.getBoundingClientRect();
     const contentRect = contentElement.getBoundingClientRect();
 
-    elements.set(rootElement, {
-      width: rootRect.width,
-      height: rootRect.height,
-    });
-    elements.set(contentElement, {
+    const rootData = { width: rootRect.width, height: rootRect.height };
+    const contentData = {
       width: contentRect.width,
       height: contentRect.height,
-    });
+    };
+
+    elements.set(rootElement, rootData);
+    elements.set(contentElement, contentData);
+
+    if (
+      rootData.width > 0 &&
+      rootData.height > 0 &&
+      contentData.width > 0 &&
+      contentData.height > 0
+    ) {
+      notify();
+    }
   }
 
   function unobserve(
@@ -316,9 +325,10 @@ function MarqueeRoot(props: MarqueeRootProps) {
   const dimensions = useResizeObserverStore(rootRef, contentRef, orientation);
 
   const duration = React.useMemo(() => {
+    const safeSpeed = Math.max(0.001, speed);
+
     if (!dimensions) {
-      const safeSpeed = Math.max(0.001, speed);
-      const defaultDistance = 2000;
+      const defaultDistance = autoFill ? 1000 : 2000;
       return defaultDistance / safeSpeed;
     }
 
@@ -327,9 +337,11 @@ function MarqueeRoot(props: MarqueeRootProps) {
     if (autoFill) {
       const multiplier =
         contentSize < rootSize ? Math.ceil(rootSize / contentSize) : 1;
-      return (contentSize * multiplier) / speed;
+      return (contentSize * multiplier) / safeSpeed;
     } else {
-      return contentSize < rootSize ? rootSize / speed : contentSize / speed;
+      return contentSize < rootSize
+        ? rootSize / safeSpeed
+        : contentSize / safeSpeed;
     }
   }, [dimensions, speed, autoFill]);
 

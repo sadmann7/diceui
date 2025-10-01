@@ -699,6 +699,48 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "color-swatch-demo": {
+      name: "color-swatch-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["color-swatch"],
+      files: [{
+        path: "registry/default/examples/color-swatch-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/color-swatch-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "color-swatch-sizes-demo": {
+      name: "color-swatch-sizes-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["color-swatch"],
+      files: [{
+        path: "registry/default/examples/color-swatch-sizes-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/color-swatch-sizes-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "color-swatch-transparency-demo": {
+      name: "color-swatch-transparency-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["color-swatch"],
+      files: [{
+        path: "registry/default/examples/color-swatch-transparency-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/color-swatch-transparency-demo.tsx")),
+      source: "",
+      chunks: []
+    },
     "combobox-demo": {
       name: "combobox-demo",
       description: "",
@@ -794,6 +836,76 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/combobox-virtualized-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "cropper-demo": {
+      name: "cropper-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["cropper"],
+      files: [{
+        path: "registry/default/examples/cropper-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/cropper-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "cropper-controlled-demo": {
+      name: "cropper-controlled-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["cropper","button","label","slider"],
+      files: [{
+        path: "registry/default/examples/cropper-controlled-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/cropper-controlled-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "cropper-file-upload-demo": {
+      name: "cropper-file-upload-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["cropper","button","dialog","label","slider"],
+      files: [{
+        path: "registry/default/examples/cropper-file-upload-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/cropper-file-upload-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "cropper-shapes-demo": {
+      name: "cropper-shapes-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["cropper","label","select","switch"],
+      files: [{
+        path: "registry/default/examples/cropper-shapes-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/cropper-shapes-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "cropper-video-demo": {
+      name: "cropper-video-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["cropper","button","label","select"],
+      files: [{
+        path: "registry/default/examples/cropper-video-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/cropper-video-demo.tsx")),
       source: "",
       chunks: []
     },
@@ -990,6 +1102,90 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/file-upload-validation-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "hitbox-demo": {
+      name: "hitbox-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["hitbox"],
+      files: [{
+        path: "registry/default/examples/hitbox-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/hitbox-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "hitbox-sizes-demo": {
+      name: "hitbox-sizes-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","hitbox"],
+      files: [{
+        path: "registry/default/examples/hitbox-sizes-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/hitbox-sizes-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "hitbox-positions-demo": {
+      name: "hitbox-positions-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","hitbox"],
+      files: [{
+        path: "registry/default/examples/hitbox-positions-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/hitbox-positions-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "hitbox-radius-demo": {
+      name: "hitbox-radius-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","hitbox"],
+      files: [{
+        path: "registry/default/examples/hitbox-radius-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/hitbox-radius-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "hitbox-custom-size-demo": {
+      name: "hitbox-custom-size-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","hitbox"],
+      files: [{
+        path: "registry/default/examples/hitbox-custom-size-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/hitbox-custom-size-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "hitbox-debug-demo": {
+      name: "hitbox-debug-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","hitbox"],
+      files: [{
+        path: "registry/default/examples/hitbox-debug-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/hitbox-debug-demo.tsx")),
       source: "",
       chunks: []
     },
@@ -1623,118 +1819,6 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "color-swatch-demo": {
-      name: "color-swatch-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["color-swatch"],
-      files: [{
-        path: "registry/default/examples/color-swatch-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/color-swatch-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "color-swatch-sizes-demo": {
-      name: "color-swatch-sizes-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["color-swatch"],
-      files: [{
-        path: "registry/default/examples/color-swatch-sizes-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/color-swatch-sizes-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "color-swatch-transparency-demo": {
-      name: "color-swatch-transparency-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["color-swatch"],
-      files: [{
-        path: "registry/default/examples/color-swatch-transparency-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/color-swatch-transparency-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "cropper-demo": {
-      name: "cropper-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["cropper"],
-      files: [{
-        path: "registry/default/examples/cropper-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/cropper-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "cropper-controlled-demo": {
-      name: "cropper-controlled-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["cropper","button","label","slider"],
-      files: [{
-        path: "registry/default/examples/cropper-controlled-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/cropper-controlled-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "cropper-file-upload-demo": {
-      name: "cropper-file-upload-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["cropper","button","dialog","label","slider"],
-      files: [{
-        path: "registry/default/examples/cropper-file-upload-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/cropper-file-upload-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "cropper-shapes-demo": {
-      name: "cropper-shapes-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["cropper","label","select","switch"],
-      files: [{
-        path: "registry/default/examples/cropper-shapes-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/cropper-shapes-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "cropper-video-demo": {
-      name: "cropper-video-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["cropper","button","label","select"],
-      files: [{
-        path: "registry/default/examples/cropper-video-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/cropper-video-demo.tsx")),
-      source: "",
-      chunks: []
-    },
     "stepper-demo": {
       name: "stepper-demo",
       description: "",
@@ -1928,6 +2012,20 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/components/direction-provider.tsx")),
+      source: "",
+      chunks: []
+    },
+    "hitbox": {
+      name: "hitbox",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/components/hitbox.tsx",
+        type: "registry:component",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/components/hitbox.tsx")),
       source: "",
       chunks: []
     },

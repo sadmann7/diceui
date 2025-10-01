@@ -1,0 +1,16 @@
+{
+  "name": "hitbox-debug-demo",
+  "type": "registry:example",
+  "registryDependencies": [
+    "button",
+    "hitbox"
+  ],
+  "files": [
+    {
+      "path": "examples/hitbox-debug-demo.tsx",
+      "content": "import { Button } from \"@/components/ui/button\";\nimport { Hitbox } from \"@/registry/default/components/hitbox\";\n\nexport default function HitboxDebugDemo() {\n  return (\n    <div className=\"flex items-center gap-8\">\n      <div className=\"flex flex-col items-center gap-2.5\">\n        <Hitbox debug={false}>\n          <Button>Debug Off</Button>\n        </Hitbox>\n        <p className=\"text-muted-foreground text-xs\">debug=false</p>\n      </div>\n      <div className=\"flex flex-col items-center gap-2.5\">\n        <Hitbox debug>\n          <Button>Debug On</Button>\n        </Hitbox>\n        <p className=\"text-muted-foreground text-xs\">debug=true</p>\n      </div>\n    </div>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

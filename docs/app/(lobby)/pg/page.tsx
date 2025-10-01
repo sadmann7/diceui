@@ -29,10 +29,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
-import MarqueeDemo from "@/registry/default/examples/marquee-demo";
-import MarqueeRtlDemo from "@/registry/default/examples/marquee-rtl-demo";
-import MarqueeVerticalDemo from "@/registry/default/examples/marquee-vertical-demo";
-import MaskInputDemo from "@/registry/default/examples/mask-input-demo";
+import HitboxDemo from "@/registry/default/examples/hitbox-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -47,10 +44,7 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <Demo>
-        <MarqueeDemo />
-        <MarqueeVerticalDemo />
-        <MarqueeRtlDemo />
-        <MaskInputDemo />
+        <HitboxDemo />
         <ColorPickerDemo />
       </Demo>
       <Combobox className="w-[15rem]">

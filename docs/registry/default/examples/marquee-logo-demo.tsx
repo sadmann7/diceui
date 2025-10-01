@@ -132,7 +132,7 @@ const companies = [
 
 export default function MarqueeLogoDemo() {
   return (
-    <Marquee pauseOnHover className="[--duration:20s]">
+    <Marquee autoFill>
       <MarqueeContent>
         {companies.map((company) => (
           <MarqueeItem key={company.name}>
