@@ -136,7 +136,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
       onProgress: (file: File, progress: number) => void;
       onSuccess: (file: File) => void;
       onError: (file: File, error: Error) => void;
-    }
+    },
   ) => Promise<void> | void;
 
   /**
