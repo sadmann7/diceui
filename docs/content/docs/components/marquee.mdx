@@ -46,13 +46,13 @@ npx shadcn@latest add "https://diceui.com/r/marquee"
         transform: translateX(0%);
       }
       100% {
-        transform: translateX(calc(-100% - var(--gap)));
+        transform: translateX(calc(var(--flip) * (-100% - var(--gap))));
       }
     }
 
     @keyframes marquee-right {
       0% {
-        transform: translateX(calc(-100% - var(--gap)));
+        transform: translateX(calc(var(--flip) * (100% + var(--gap))));
       }
       100% {
         transform: translateX(0%);
@@ -105,11 +105,17 @@ Use the marquee to showcase logos or brands in a continuous scroll.
 
 <ComponentTabs name="marquee-logo-demo" />
 
-### Vertical Marquee
+### Vertical Layout
 
 Use `side` to control the direction of the marquee.
 
 <ComponentTabs name="marquee-vertical-demo" />
+
+### With RTL
+
+The marquee component automatically adapts to RTL (right-to-left) layouts.
+
+<ComponentTabs name="marquee-rtl-demo" />
 
 ## API Reference
 

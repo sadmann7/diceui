@@ -708,6 +708,18 @@
       ]
     },
     {
+      "name": "marquee-rtl-demo",
+      "type": "registry:component",
+      "title": "Marquee RTL Demo",
+      "description": "Example showing marquee with RTL (right-to-left) support.",
+      "files": [
+        {
+          "path": "registry/default/examples/marquee-rtl-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
       "name": "media-player-demo",
       "type": "registry:component",
       "title": "Media Player Demo",

@@ -232,12 +232,12 @@ export const ui: Registry["items"] = [
           transform: "translateX(0%)",
         },
         "100%": {
-          transform: "translateX(calc(-100% - var(--gap)))",
+          transform: "translateX(calc(var(--flip) * (-100% - var(--gap))))",
         },
       },
       "@keyframes marquee-right": {
         "0%": {
-          transform: "translateX(calc(-100% - var(--gap)))",
+          transform: "translateX(calc(var(--flip) * (100% + var(--gap))))",
         },
         "100%": {
           transform: "translateX(0%)",

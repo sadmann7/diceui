@@ -322,13 +322,14 @@ function MarqueeRoot(props: MarqueeRootProps) {
       "--duration": `${duration}s`,
       "--gap": gap,
       "--delay": `${delay}s`,
+      "--flip": dir === "rtl" ? "-1" : "1",
       "--loop-count":
         loopCount === 0 || loopCount === Infinity
           ? "infinite"
           : loopCount.toString(),
       ...styleProp,
     }),
-    [duration, gap, delay, loopCount, styleProp],
+    [duration, gap, delay, dir, loopCount, styleProp],
   );
 
   const contextValue = React.useMemo<MarqueeContextValue>(
@@ -381,10 +382,6 @@ const marqueeContentVariants = cva(
         top: "min-h-full min-w-auto animate-marquee-up flex-col",
         bottom: "min-h-full min-w-auto animate-marquee-down flex-col",
       },
-      dir: {
-        ltr: "",
-        rtl: "",
-      },
       pauseOnHover: {
         true: "group-hover:[animation-play-state:paused]",
         false: "",
@@ -394,21 +391,8 @@ const marqueeContentVariants = cva(
         false: "",
       },
     },
-    compoundVariants: [
-      {
-        side: "left",
-        dir: "rtl",
-        className: "animate-marquee-left-rtl",
-      },
-      {
-        side: "right",
-        dir: "rtl",
-        className: "animate-marquee-right-rtl",
-      },
-    ],
     defaultVariants: {
       side: "left",
-      dir: "ltr",
       pauseOnHover: false,
       reverse: false,
     },
@@ -494,7 +478,6 @@ function MarqueeContent(props: DivProps) {
         className={cn(
           marqueeContentVariants({
             side: context.side,
-            dir: context.dir,
             pauseOnHover: context.pauseOnHover,
             reverse: context.reverse,
             className,
@@ -526,7 +509,6 @@ function MarqueeContent(props: DivProps) {
         className={cn(
           marqueeContentVariants({
             side: context.side,
-            dir: context.dir,
             pauseOnHover: context.pauseOnHover,
             reverse: context.reverse,
             className,

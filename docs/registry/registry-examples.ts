@@ -531,6 +531,17 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "marquee-rtl-demo",
+    type: "registry:example",
+    registryDependencies: ["marquee"],
+    files: [
+      {
+        path: "examples/marquee-rtl-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "mask-input-demo",
     type: "registry:example",
     registryDependencies: ["mask-input"],

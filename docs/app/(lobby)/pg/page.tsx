@@ -31,6 +31,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
 import MarqueeDemo from "@/registry/default/examples/marquee-demo";
+import MarqueeRtlDemo from "@/registry/default/examples/marquee-rtl-demo";
 import MarqueeVerticalDemo from "@/registry/default/examples/marquee-vertical-demo";
 import MaskInputDemo from "@/registry/default/examples/mask-input-demo";
 import {
@@ -49,6 +50,7 @@ export default function PlaygroundPage() {
       <Demo dir="rtl">
         <MarqueeDemo />
         <MarqueeVerticalDemo />
+        <MarqueeRtlDemo />
         <FastMarquee speed={100} autoFill>
           {tricks.slice(0, 1).map((trick) => (
             <div
