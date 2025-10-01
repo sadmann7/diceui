@@ -9,7 +9,7 @@ export default function HitboxDemo() {
         <h3 className="font-semibold text-lg">Sizes</h3>
         <div className="flex items-center gap-6">
           <div className="flex flex-col items-center gap-2.5">
-            <Hitbox size="sm" debug>
+            <Hitbox debug>
               <Button variant="outline" size="sm">
                 Kickflip
               </Button>

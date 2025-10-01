@@ -4,134 +4,49 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-const hitboxVariants = cva("relative after:absolute after:content-['']", {
-  variants: {
-    size: {
-      default: "",
-      sm: "",
-      lg: "",
-    },
-    position: {
-      default: "",
-      top: "",
-      bottom: "",
-      left: "",
-      right: "",
-      vertical: "",
-      horizontal: "",
-    },
-    shape: {
-      default: "",
-      circular: "after:rounded-full",
-      rounded: "after:rounded-md",
-    },
-    debug: {
-      true: "after:border after:border-red-500 after:border-dashed after:bg-red-500/20",
-      false: "",
-    },
-  },
-  compoundVariants: [
-    { size: "default", position: "default", className: "after:-inset-2" },
-    {
-      size: "default",
-      position: "top",
-      className: "after:-top-2 after:right-0 after:left-0 after:h-2",
-    },
-    {
-      size: "default",
-      position: "bottom",
-      className: "after:-bottom-2 after:right-0 after:left-0 after:h-2",
-    },
-    {
-      size: "default",
-      position: "left",
-      className: "after:-left-2 after:top-0 after:bottom-0 after:w-2",
-    },
-    {
-      size: "default",
-      position: "right",
-      className: "after:-right-2 after:top-0 after:bottom-0 after:w-2",
-    },
-    {
-      size: "default",
-      position: "vertical",
-      className: "after:-top-2 after:-bottom-2 after:right-0 after:left-0",
-    },
-    {
-      size: "default",
-      position: "horizontal",
-      className: "after:-left-2 after:-right-2 after:top-0 after:bottom-0",
-    },
-    { size: "sm", position: "default", className: "after:-inset-1" },
-    {
-      size: "sm",
-      position: "top",
-      className: "after:-top-1 after:right-0 after:left-0 after:h-1",
-    },
-    {
-      size: "sm",
-      position: "bottom",
-      className: "after:-bottom-1 after:right-0 after:left-0 after:h-1",
-    },
-    {
-      size: "sm",
-      position: "left",
-      className: "after:-left-1 after:top-0 after:bottom-0 after:w-1",
-    },
-    {
-      size: "sm",
-      position: "right",
-      className: "after:-right-1 after:top-0 after:bottom-0 after:w-1",
-    },
-    {
-      size: "sm",
-      position: "vertical",
-      className: "after:-top-1 after:-bottom-1 after:right-0 after:left-0",
-    },
-    {
-      size: "sm",
-      position: "horizontal",
-      className: "after:-left-1 after:-right-1 after:top-0 after:bottom-0",
-    },
-    { size: "lg", position: "default", className: "after:-inset-3" },
-    {
-      size: "lg",
-      position: "top",
-      className: "after:-top-3 after:right-0 after:left-0 after:h-3",
-    },
-    {
-      size: "lg",
-      position: "bottom",
-      className: "after:-bottom-3 after:right-0 after:left-0 after:h-3",
-    },
-    {
-      size: "lg",
-      position: "left",
-      className: "after:-left-3 after:top-0 after:bottom-0 after:w-3",
-    },
-    {
-      size: "lg",
-      position: "right",
-      className: "after:-right-3 after:top-0 after:bottom-0 after:w-3",
-    },
-    {
-      size: "lg",
-      position: "vertical",
-      className: "after:-top-3 after:-bottom-3 after:right-0 after:left-0",
-    },
-    {
-      size: "lg",
-      position: "horizontal",
-      className: "after:-left-3 after:-right-3 after:top-0 after:bottom-0",
-    },
+const hitboxVariants = cva(
+  [
+    "relative after:absolute after:content-['']",
+    "[--size-default:0.5rem] [--size-lg:0.75rem] [--size-sm:0.25rem]",
   ],
-  defaultVariants: {
-    size: "default",
-    position: "default",
-    shape: "default",
-    debug: false,
+  {
+    variants: {
+      size: {
+        default: "[--size:var(--size-default)]",
+        sm: "[--size:var(--size-sm)]",
+        lg: "[--size:var(--size-lg)]",
+      },
+      position: {
+        default: "after:[inset:calc(-1*var(--size))]",
+        top: "after:[height:var(--size)] after:[left:0] after:[right:0] after:[top:calc(-1*var(--size))]",
+        bottom:
+          "after:[bottom:calc(-1*var(--size))] after:[height:var(--size)] after:[left:0] after:[right:0]",
+        left: "after:[bottom:0] after:[left:calc(-1*var(--size))] after:[top:0] after:[width:var(--size)]",
+        right:
+          "after:[bottom:0] after:[right:calc(-1*var(--size))] after:[top:0] after:[width:var(--size)]",
+        vertical:
+          "after:[bottom:calc(-1*var(--size))] after:[left:0] after:[right:0] after:[top:calc(-1*var(--size))]",
+        horizontal:
+          "after:[bottom:0] after:[left:calc(-1*var(--size))] after:[right:calc(-1*var(--size))] after:[top:0]",
+      },
+      shape: {
+        default: "",
+        circular: "after:rounded-full",
+        rounded: "after:rounded-md",
+      },
+      debug: {
+        true: "after:border after:border-red-500 after:border-dashed after:bg-red-500/20",
+        false: "",
+      },
+    },
+    defaultVariants: {
+      size: "default",
+      position: "default",
+      shape: "default",
+      debug: false,
+    },
   },
-});
+);
 
 interface HitboxProps
   extends React.ComponentProps<typeof Slot>,
@@ -156,7 +71,7 @@ function Hitbox(props: HitboxProps) {
 
     return {
       ...styleProp,
-      "--hitbox-inset": inset,
+      "--inset": inset,
     } as React.CSSProperties;
   }, [inset, styleProp]);
 
@@ -172,7 +87,7 @@ function Hitbox(props: HitboxProps) {
           shape,
           debug,
         }),
-        inset && "after:[inset:var(--hitbox-inset)]",
+        inset && "after:[inset:var(--inset)]",
         className,
       )}
     />
