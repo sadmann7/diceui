@@ -5,7 +5,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * The array of files currently being managed.
    * Use this prop to control the component.
    *
-   * ```ts
+   * ```tsx
    * // Controlled usage
    * const [files, setFiles] = useState<File[]>([])
    *
@@ -21,7 +21,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * The default array of files.
    * Use this prop for uncontrolled usage.
    *
-   * ```ts
+   * ```tsx
    * // Uncontrolled usage
    * <FileUpload defaultValue={[]} />
    * ```
@@ -136,7 +136,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
       onProgress: (file: File, progress: number) => void;
       onSuccess: (file: File) => void;
       onError: (file: File, error: Error) => void;
-    },
+    }
   ) => Promise<void> | void;
 
   /**

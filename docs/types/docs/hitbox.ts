@@ -3,12 +3,22 @@ import type * as React from "react";
 import type { CompositionProps } from "@/types";
 
 export interface HitboxProps
-  extends Omit<React.ComponentProps<typeof Slot>, "size">,
+  extends Omit<React.ComponentProps<typeof Slot>, keyof typeof Slot>,
     CompositionProps {
   /**
    * The size of the hitbox area.
    *
    * Can be one of the predefined sizes or a custom CSS value.
+   *
+   * ```ts
+   * // Predefined sizes
+   * size="default"
+   * size="sm"
+   * size="lg"
+   *
+   * // Custom CSS value
+   * size="5px"
+   * ```
    *
    * @default "default"
    */
@@ -51,8 +61,6 @@ export interface HitboxProps
 
   /**
    * When `true`, shows a visual debug outline of the hitbox area.
-   *
-   * Useful for development and testing to see the actual clickable area.
    *
    * @default false
    */
