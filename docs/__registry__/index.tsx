@@ -177,6 +177,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "hitbox": {
+      name: "hitbox",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/ui/hitbox.tsx",
+        type: "registry:ui",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/hitbox.tsx")),
+      source: "",
+      chunks: []
+    },
     "input-group": {
       name: "input-group",
       description: "",

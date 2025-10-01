@@ -1,0 +1,16 @@
+{
+  "name": "hitbox",
+  "type": "registry:ui",
+  "dependencies": [
+    "@radix-ui/react-slot",
+    "class-variance-authority"
+  ],
+  "files": [
+    {
+      "path": "ui/hitbox.tsx",
+      "content": "\"use client\";\n\nimport { Slot } from \"@radix-ui/react-slot\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\nimport * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\nconst hitboxVariants = cva(\"relative inline-flex items-center justify-center\", {\n  variants: {\n    variant: {\n      padding: \"p-[var(--hitbox-area,0.5rem)]\",\n      overlay:\n        \"before:-inset-[var(--hitbox-area,0.5rem)] before:absolute before:inset-0 before:z-10 before:cursor-pointer before:content-['']\",\n      expand: \"-m-[var(--hitbox-area,0.5rem)]\",\n    },\n    size: {\n      sm: \"[--hitbox-area:0.25rem]\",\n      default: \"[--hitbox-area:0.5rem]\",\n      lg: \"[--hitbox-area:0.75rem]\",\n      xl: \"[--hitbox-area:1rem]\",\n    },\n    debug: {\n      true: \"\",\n      false: \"\",\n    },\n  },\n  compoundVariants: [\n    {\n      variant: \"padding\",\n      debug: true,\n      className: \"border border-red-500 border-dashed bg-red-500/20\",\n    },\n    {\n      variant: \"overlay\",\n      debug: true,\n      className:\n        \"before:border before:border-red-500 before:border-dashed before:bg-red-500/20\",\n    },\n    {\n      variant: \"expand\",\n      debug: true,\n      className: \"border border-red-500 border-dashed bg-red-500/20\",\n    },\n  ],\n  defaultVariants: {\n    variant: \"padding\",\n    size: \"default\",\n    debug: false,\n  },\n});\n\ninterface HitboxProps\n  extends React.ComponentProps<\"div\">,\n    VariantProps<typeof hitboxVariants> {\n  asChild?: boolean;\n  area?: string;\n}\n\nfunction Hitbox(props: HitboxProps) {\n  const {\n    className,\n    variant = \"padding\",\n    size,\n    debug = false,\n    asChild = false,\n    area,\n    style,\n    onClick: onClickProp,\n    ...hitboxProps\n  } = props;\n  const Comp = asChild ? Slot : \"div\";\n  const ref = React.useRef<HTMLDivElement>(null);\n\n  const onClick = React.useCallback(\n    (event: React.MouseEvent<HTMLDivElement>) => {\n      if (asChild) {\n        onClickProp?.(event);\n        return;\n      }\n\n      if (ref.current && !event.defaultPrevented) {\n        const interactiveChild = ref.current.querySelector(\n          'button, input, select, textarea, a[href], [tabindex]:not([tabindex=\"-1\"]), [role=\"button\"], [role=\"checkbox\"], [role=\"radio\"]',\n        ) as HTMLElement;\n\n        if (interactiveChild && interactiveChild !== event.target) {\n          event.preventDefault();\n          event.stopPropagation();\n\n          interactiveChild.click();\n        }\n      }\n\n      onClickProp?.(event);\n    },\n    [asChild, onClickProp],\n  );\n\n  return (\n    <Comp\n      data-slot=\"hitbox\"\n      {...hitboxProps}\n      ref={ref}\n      className={cn(\n        hitboxVariants({\n          variant,\n          size,\n          debug,\n        }),\n        className,\n      )}\n      style={{\n        ...style,\n        ...(area ? { \"--hitbox-area\": area } : {}),\n      }}\n      onClick={onClick}\n    />\n  );\n}\n\nexport { Hitbox, hitboxVariants, type HitboxProps };\n",
+      "type": "registry:ui",
+      "target": ""
+    }
+  ]
+}
