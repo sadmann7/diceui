@@ -13,31 +13,31 @@ const tricks = [
     description:
       "A kickflip is a trick where you kick the board forward while jumping, and then land on the board with the other foot.",
   },
-  // {
-  //   title: "Heelflip",
-  //   description:
-  //     "A heelflip is a trick where you flip the board backwards while jumping, and then land on the board with the other foot.",
-  // },
-  // {
-  //   title: "Tre Flip",
-  //   description:
-  //     "A tre flip is a trick where you flip the board sideways while jumping, and then land on the board with the other foot.",
-  // },
-  // {
-  //   title: "FS 540",
-  //   description:
-  //     "A fs 540 is a trick where you flip the board 540 degrees while jumping, and then land on the board with the other foot.",
-  // },
-  // {
-  //   title: "360 Varial McTwist",
-  //   description:
-  //     "A 360 varial mc twist is a trick where you flip the board 360 degrees while jumping, and then land on the board with the other foot.",
-  // },
+  {
+    title: "Heelflip",
+    description:
+      "A heelflip is a trick where you flip the board backwards while jumping, and then land on the board with the other foot.",
+  },
+  {
+    title: "Tre Flip",
+    description:
+      "A tre flip is a trick where you flip the board sideways while jumping, and then land on the board with the other foot.",
+  },
+  {
+    title: "FS 540",
+    description:
+      "A fs 540 is a trick where you flip the board 540 degrees while jumping, and then land on the board with the other foot.",
+  },
+  {
+    title: "360 Varial McTwist",
+    description:
+      "A 360 varial mc twist is a trick where you flip the board 360 degrees while jumping, and then land on the board with the other foot.",
+  },
 ];
 
 export default function MarqueeDemo() {
   return (
-    <Marquee speed={240} autoFill pauseOnHover>
+    <Marquee speed={240} pauseOnHover>
       <MarqueeContent>
         {tricks.map((trick) => (
           <MarqueeItem key={trick.title} asChild>

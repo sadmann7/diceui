@@ -500,6 +500,7 @@ function MarqueeContent(props: DivProps) {
             className,
           }),
           isVertical && "flex-col",
+          isVertical ? "mb-[var(--gap)]" : "mr-[var(--gap)]",
         )}
       >
         <div
