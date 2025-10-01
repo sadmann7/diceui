@@ -1,0 +1,19 @@
+{
+  "name": "hitbox-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "checkbox",
+    "hitbox"
+  ],
+  "files": [
+    {
+      "path": "examples/hitbox-demo.tsx",
+      "content": "\"use client\";\n\nimport { Checkbox } from \"@/components/ui/checkbox\";\nimport { Hitbox } from \"@/registry/default/ui/hitbox\";\n\nexport default function HitboxDemo() {\n  return (\n    <div className=\"flex flex-col gap-2\">\n      <Hitbox>\n        <Checkbox className=\"hover:border-primary/40\" />\n      </Hitbox>\n    </div>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

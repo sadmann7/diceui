@@ -1,12 +1,8 @@
-"use client";
-
 import * as Mention from "@diceui/mention";
 import { ChevronDown } from "lucide-react";
-import { toast } from "sonner";
 import { Demo } from "@/components/demo";
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Command,
   CommandEmpty,
@@ -33,7 +29,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
-import MarqueeLogoDemo from "@/registry/default/examples/marquee-logo-demo";
+import HitboxDemo from "@/registry/default/examples/hitbox-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -43,16 +39,12 @@ import {
   ComboboxItem,
   ComboboxTrigger,
 } from "@/registry/default/ui/combobox";
-import { Hitbox } from "@/registry/default/ui/hitbox";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
       <Demo>
-        <MarqueeLogoDemo />
-        <Hitbox debug area="0.3rem">
-          <Checkbox onClick={() => toast.success("clicked")} />
-        </Hitbox>
+        <HitboxDemo />
         <ColorPickerDemo />
       </Demo>
       <Combobox className="w-[15rem]">
