@@ -372,7 +372,7 @@ function RatingRootImpl(props: RatingRootImplProps) {
 
   const getItems = React.useCallback(() => {
     return Array.from(itemsRef.current.values())
-      .filter((item) => item.ref.current) // Filter out unmounted elements
+      .filter((item) => item.ref.current)
       .sort((a, b) => {
         const elementA = a.ref.current;
         const elementB = b.ref.current;
