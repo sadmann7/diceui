@@ -137,6 +137,62 @@ export default function RatingDemo() {
           ))}
         </Rating>
       </div>
+
+      <div className="flex flex-col gap-4">
+        <h3 className="font-medium text-sm">Custom Colors</h3>
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-1">
+            <span className="text-muted-foreground text-xs">
+              Yellow (text-yellow-500)
+            </span>
+            <Rating defaultValue={3} className="text-yellow-500">
+              {Array.from({ length: 5 }, (_, i) => (
+                <RatingItem key={i} />
+              ))}
+            </Rating>
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-muted-foreground text-xs">
+              Red (text-red-500)
+            </span>
+            <Rating defaultValue={4} className="text-red-500">
+              {Array.from({ length: 5 }, (_, i) => (
+                <RatingItem key={i} />
+              ))}
+            </Rating>
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-muted-foreground text-xs">
+              Green (text-green-500)
+            </span>
+            <Rating defaultValue={2} className="text-green-500">
+              {Array.from({ length: 5 }, (_, i) => (
+                <RatingItem key={i} />
+              ))}
+            </Rating>
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-muted-foreground text-xs">
+              Blue (text-blue-500)
+            </span>
+            <Rating defaultValue={5} className="text-blue-500">
+              {Array.from({ length: 5 }, (_, i) => (
+                <RatingItem key={i} />
+              ))}
+            </Rating>
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-muted-foreground text-xs">
+              Purple (text-purple-500)
+            </span>
+            <Rating defaultValue={3} className="text-purple-500">
+              {Array.from({ length: 5 }, (_, i) => (
+                <RatingItem key={i} />
+              ))}
+            </Rating>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

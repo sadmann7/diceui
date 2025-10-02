@@ -508,7 +508,9 @@ function RatingRootImpl(props: RatingRootImplProps) {
           {...rootProps}
           ref={composedRef}
           className={cn(
-            "flex gap-1 outline-none",
+            "flex gap-1 text-primary outline-none",
+            // Default empty state styling that can be overridden
+            "[&_[data-state=empty]]:text-current/30",
             orientation === "horizontal"
               ? "flex-row items-center"
               : "flex-col items-start",
@@ -576,6 +578,7 @@ function RatingItem(props: RatingItemProps) {
   const isFilled = displayValue >= itemValue;
   const isHalfFilled =
     allowHalf && displayValue >= itemValue - 0.5 && displayValue < itemValue;
+  const isHovered = hoveredValue !== null && hoveredValue < itemValue;
 
   const isMouseClickRef = React.useRef(false);
 
@@ -769,13 +772,15 @@ function RatingItem(props: RatingItemProps) {
       data-disabled={isDisabled ? "" : undefined}
       data-readonly={isReadOnly ? "" : undefined}
       data-state={isFilled ? "full" : isHalfFilled ? "partial" : "empty"}
+      data-hovered={isHovered ? "" : undefined}
       data-slot="rating-item"
       disabled={isDisabled}
       tabIndex={isTabStop ? 0 : -1}
       {...itemProps}
       ref={composedRef}
       className={cn(
-        "inline-flex items-center justify-center rounded-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=full]:text-primary data-[state=partial]:text-primary [&_svg:not([class*='size-'])]:size-full [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:fill-current",
+        "inline-flex items-center justify-center rounded-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+        "[&_svg:not([class*='size-'])]:size-full [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:transition-colors [&_svg]:duration-200 data-[state=empty]:[&_svg]:fill-transparent data-[state=full]:[&_svg]:fill-current data-[state=partial]:[&_svg]:fill-current",
         context.size === "sm"
           ? "size-4"
           : context.size === "lg"
