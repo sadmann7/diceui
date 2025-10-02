@@ -1041,6 +1041,56 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "rating-demo",
+    type: "registry:example",
+    registryDependencies: ["rating"],
+    files: [
+      {
+        path: "examples/rating-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "rating-controlled-demo",
+    type: "registry:example",
+    registryDependencies: ["rating", "button"],
+    files: [
+      {
+        path: "examples/rating-controlled-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "rating-form-demo",
+    type: "registry:example",
+    dependencies: [
+      "@hookform/resolvers/zod",
+      "react-hook-form",
+      "zod",
+      "sonner",
+    ],
+    registryDependencies: ["rating", "button", "form"],
+    files: [
+      {
+        path: "examples/rating-form-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "rating-sizes-demo",
+    type: "registry:example",
+    registryDependencies: ["rating"],
+    files: [
+      {
+        path: "examples/rating-sizes-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "relative-time-card-demo",
     type: "registry:example",
     registryDependencies: ["button", "hover-card"],

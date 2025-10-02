@@ -264,6 +264,26 @@
       ]
     },
     {
+      "name": "rating",
+      "type": "registry:component",
+      "title": "Rating",
+      "description": "An accessible rating component that allows users to provide star ratings with support for half values, keyboard navigation, and form integration.",
+      "files": [
+        {
+          "path": "registry/default/ui/rating.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/default/components/visually-hidden-input.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/default/lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
       "name": "relative-time-card",
       "type": "registry:component",
       "title": "Relative Time Card",

@@ -1687,6 +1687,62 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "rating-demo": {
+      name: "rating-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["rating"],
+      files: [{
+        path: "registry/default/examples/rating-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/rating-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "rating-controlled-demo": {
+      name: "rating-controlled-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["rating","button"],
+      files: [{
+        path: "registry/default/examples/rating-controlled-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/rating-controlled-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "rating-form-demo": {
+      name: "rating-form-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["rating","button","form"],
+      files: [{
+        path: "registry/default/examples/rating-form-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/rating-form-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "rating-sizes-demo": {
+      name: "rating-sizes-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["rating"],
+      files: [{
+        path: "registry/default/examples/rating-sizes-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/rating-sizes-demo.tsx")),
+      source: "",
+      chunks: []
+    },
     "relative-time-card-demo": {
       name: "relative-time-card-demo",
       description: "",
