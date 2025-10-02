@@ -433,6 +433,10 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
       {
+        path: "components/visually-hidden-input.tsx",
+        type: "registry:component",
+      },
+      {
         path: "lib/compose-refs.ts",
         type: "registry:lib",
       },

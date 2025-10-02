@@ -5,6 +5,7 @@ import { Star } from "lucide-react";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
+import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidden-input";
 
 const ROOT_NAME = "Rating";
 const ITEM_NAME = "RatingItem";
@@ -229,6 +230,8 @@ interface RatingRootProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
   disabled?: boolean;
   readOnly?: boolean;
+  required?: boolean;
+  name?: string;
   size?: "sm" | "md" | "lg";
 }
 
@@ -241,6 +244,8 @@ function RatingRoot(props: RatingRootProps) {
     max = 5,
     allowHalf = false,
     allowClear = false,
+    name,
+    required,
     ...rootProps
   } = props;
 
@@ -284,7 +289,12 @@ function RatingRoot(props: RatingRootProps) {
 
   return (
     <StoreContext.Provider value={store}>
-      <RatingRootImpl {...rootProps} value={value} />
+      <RatingRootImpl
+        {...rootProps}
+        value={value}
+        name={name}
+        required={required}
+      />
     </StoreContext.Provider>
   );
 }
@@ -310,6 +320,8 @@ function RatingRootImpl(props: RatingRootImplProps) {
     asChild,
     disabled = false,
     readOnly = false,
+    required = false,
+    name,
     size = "md",
     className,
     children,
@@ -330,14 +342,20 @@ function RatingRootImpl(props: RatingRootImplProps) {
   const rootId = idProp ?? id;
   const currentValue = useStore((state) => state.value);
 
+  // Form control state
+  const [formTrigger, setFormTrigger] = React.useState<HTMLDivElement | null>(
+    null,
+  );
+  const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
+
+  const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
+
   // Focus management state
   const [tabStopId, setTabStopId] = React.useState<string | null>(null);
   const [isTabbingBackOut, setIsTabbingBackOut] = React.useState(false);
   const [focusableItemCount, setFocusableItemCount] = React.useState(0);
   const isClickFocusRef = React.useRef(false);
   const itemsRef = React.useRef<Map<string, ItemData>>(new Map());
-  const rootRef = React.useRef<HTMLElement>(null);
-  const composedRef = useComposedRefs(ref, rootRef);
 
   const onItemFocus = React.useCallback((tabStopId: string) => {
     setTabStopId(tabStopId);
@@ -491,6 +509,17 @@ function RatingRootImpl(props: RatingRootImplProps) {
         >
           {children}
         </RootPrimitive>
+        {isFormControl && (
+          <VisuallyHiddenInput
+            type="hidden"
+            control={formTrigger}
+            name={name}
+            value={currentValue}
+            disabled={disabled}
+            readOnly={readOnly}
+            required={required}
+          />
+        )}
       </FocusContext.Provider>
     </RatingContext.Provider>
   );
