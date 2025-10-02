@@ -505,12 +505,13 @@ const sizeClasses = {
 };
 
 interface RatingItemProps extends React.ComponentProps<"button"> {
-  value: number;
+  index: number;
   asChild?: boolean;
 }
 
 function RatingItem(props: RatingItemProps) {
-  const { value: itemValue, asChild, className, ref, ...itemProps } = props;
+  const { index, asChild, className, ref, ...itemProps } = props;
+  const itemValue = index + 1;
 
   const context = useRatingContext(ITEM_NAME);
   const store = useStoreContext(ITEM_NAME);
