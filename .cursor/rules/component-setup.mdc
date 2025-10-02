@@ -8,16 +8,18 @@ alwaysApply: false
 
 You are an expert in TypeScript, React, and DiceUI component architecture. When a user asks you to create a new component using the pattern "@setup-component [component-name]", follow this comprehensive pipeline:
 
-## Pipeline Steps
+## Steps
 
 ### 1. Create Component Types (@docs/types/docs/[component-name].ts)
 
 - Create TypeScript interfaces for all component parts
-- Follow the pattern from existing files like `color-picker.ts`, and `editable.ts`.
+- Follow the pattern from existing files like `editable.ts` and `stepper.ts`.
 - Include proper JSDoc comments with examples
 - Import necessary types from UI libraries and internal types
 - Define interfaces for Root, Content, Trigger, and any specific component parts
 - Include composition props and controlled/uncontrolled patterns
+
+Finalize the API design first. Once it’s been iterated on and completed, proceed to the other steps. This will minimize refactoring.
 
 ### 2. Create Examples (@docs/registry/default/examples/)
 

@@ -76,6 +76,9 @@ function useLazyRef<T>(fn: () => T) {
   return ref as React.RefObject<T>;
 }
 
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
+
 type Direction = "ltr" | "rtl";
 type Orientation = "horizontal" | "vertical";
 type ActivationMode = "automatic" | "manual";
@@ -308,11 +311,11 @@ function RatingRootImpl(props: RatingRootImplProps) {
 
   const store = useStoreContext("RatingRootImpl");
 
-  React.useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (value !== undefined) {
       store.setState("value", value);
     }
-  }, [value, store]);
+  }, [value]);
 
   const dir = useDirection(dirProp);
   const id = React.useId();
@@ -536,13 +539,17 @@ function RatingRootImpl(props: RatingRootImplProps) {
   );
 }
 
-interface RatingItemProps extends React.ComponentProps<"button"> {
+interface RatingItemProps
+  extends Omit<React.ComponentProps<"button">, "children"> {
   index?: number;
   asChild?: boolean;
+  children?:
+    | React.ReactNode
+    | ((dataState: "full" | "partial" | "empty") => React.ReactNode);
 }
 
 function RatingItem(props: RatingItemProps) {
-  const { index, asChild, className, ref, ...itemProps } = props;
+  const { index, asChild, className, ref, children, ...itemProps } = props;
 
   const itemRef = React.useRef<ItemElement>(null);
   const composedRef = useComposedRefs(ref, itemRef);
@@ -582,7 +589,7 @@ function RatingItem(props: RatingItemProps) {
 
   const isMouseClickRef = React.useRef(false);
 
-  React.useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     focusContext.onItemRegister({
       id: itemId,
       ref: itemRef,
@@ -759,6 +766,8 @@ function RatingItem(props: RatingItemProps) {
     [focusContext, itemId, isDisabled, itemProps.onMouseDown],
   );
 
+  const dataState = isFilled ? "full" : isHalfFilled ? "partial" : "empty";
+
   const ItemPrimitive = asChild ? Slot : "button";
 
   return (
@@ -795,7 +804,9 @@ function RatingItem(props: RatingItemProps) {
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      <Star />
+      {typeof children === "function"
+        ? children(dataState)
+        : (children ?? <Star />)}
     </ItemPrimitive>
   );
 }

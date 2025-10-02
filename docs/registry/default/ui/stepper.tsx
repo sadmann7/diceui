@@ -393,7 +393,7 @@ function StepperRoot(props: StepperRootProps) {
     if (value !== undefined) {
       store.setState("value", value);
     }
-  }, [value, store]);
+  }, [value]);
 
   const dir = useDirection(dirProp);
 
@@ -682,11 +682,11 @@ function StepperItem(props: StepperItemProps) {
     return () => {
       store.removeStep(itemValue);
     };
-  }, [store, itemValue, completed, disabled]);
+  }, [itemValue, completed, disabled]);
 
   useIsomorphicLayoutEffect(() => {
     store.setStep(itemValue, completed, disabled);
-  }, [store, itemValue, completed, disabled]);
+  }, [itemValue, completed, disabled]);
 
   const stepState = useStore((state) => state.steps.get(itemValue));
   const steps = useStore((state) => state.steps);
@@ -777,7 +777,7 @@ function StepperTrigger(props: ButtonProps) {
     };
   }, []);
 
-  React.useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     focusContext.onItemRegister({
       id: triggerId,
       ref: triggerRef,
