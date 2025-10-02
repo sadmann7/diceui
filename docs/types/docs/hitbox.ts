@@ -3,10 +3,13 @@ import type * as React from "react";
 import type { CompositionProps } from "@/types";
 
 export interface HitboxProps
-  extends Omit<React.ComponentProps<typeof Slot>, keyof typeof Slot>,
+  extends Omit<
+      React.ComponentProps<typeof Slot>,
+      keyof React.ComponentProps<"div">
+    >,
     CompositionProps {
   /**
-   * The size of the hitbox area.
+   * The size of the hitbox area
    *
    * Can be one of the predefined sizes or a custom CSS value.
    *

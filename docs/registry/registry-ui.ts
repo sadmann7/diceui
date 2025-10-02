@@ -424,6 +424,18 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "qr-code",
+    type: "registry:ui",
+    dependencies: ["@radix-ui/react-slot", "qrcode"],
+    devDependencies: ["@types/qrcode"],
+    files: [
+      {
+        path: "ui/qr-code.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "rating",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "lucide-react"],
