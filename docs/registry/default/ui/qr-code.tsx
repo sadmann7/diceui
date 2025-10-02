@@ -54,7 +54,15 @@ interface StoreState {
   error: Error | null;
 }
 
-interface QRCodeConfig {
+interface Store {
+  subscribe: (callback: () => void) => () => void;
+  getState: () => StoreState;
+  setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
+  batchUpdate: (updates: Partial<StoreState>) => void;
+  notify: () => void;
+}
+
+interface QRCodeContextValue {
   value: string;
   size: number;
   bgColor: string;
@@ -68,32 +76,15 @@ interface QRCodeConfig {
     width: number;
     excavate?: boolean;
   };
-}
-
-interface Store<T> {
-  subscribe: (callback: () => void) => () => void;
-  getState: () => T;
-  setState: <K extends keyof T>(key: K, value: T[K]) => void;
-  batchUpdate: (updates: Partial<T>) => void;
-  notify: () => void;
-}
-
-type StoreContextValue = Store<StoreState>;
-
-interface QRCodeContextValue {
-  config: QRCodeConfig;
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
   generateQRCode: () => Promise<void>;
 }
 
-function createStore<T>(
+function createStore(
   listenersRef: React.RefObject<Set<() => void>>,
-  stateRef: React.RefObject<T>,
-  onValueChange?: Partial<{
-    [K in keyof T]: (value: T[K], store: Store<T>) => void;
-  }>,
-): Store<T> {
-  const store: Store<T> = {
+  stateRef: React.RefObject<StoreState>,
+): Store {
+  const store: Store = {
     subscribe: (cb) => {
       listenersRef.current.add(cb);
       return () => listenersRef.current.delete(cb);
@@ -102,19 +93,38 @@ function createStore<T>(
     setState: (key, value) => {
       if (Object.is(stateRef.current[key], value)) return;
       stateRef.current[key] = value;
-      onValueChange?.[key]?.(value, store);
       store.notify();
     },
     batchUpdate: (updates) => {
       let hasChanges = false;
 
-      for (const [key, value] of Object.entries(updates)) {
-        const typedKey = key as keyof T;
-        if (!Object.is(stateRef.current[typedKey], value)) {
-          stateRef.current[typedKey] = value as T[keyof T];
-          onValueChange?.[typedKey]?.(value as T[keyof T], store);
-          hasChanges = true;
-        }
+      if (
+        updates.dataUrl !== undefined &&
+        !Object.is(stateRef.current.dataUrl, updates.dataUrl)
+      ) {
+        stateRef.current.dataUrl = updates.dataUrl;
+        hasChanges = true;
+      }
+      if (
+        updates.svgString !== undefined &&
+        !Object.is(stateRef.current.svgString, updates.svgString)
+      ) {
+        stateRef.current.svgString = updates.svgString;
+        hasChanges = true;
+      }
+      if (
+        updates.isGenerating !== undefined &&
+        !Object.is(stateRef.current.isGenerating, updates.isGenerating)
+      ) {
+        stateRef.current.isGenerating = updates.isGenerating;
+        hasChanges = true;
+      }
+      if (
+        updates.error !== undefined &&
+        !Object.is(stateRef.current.error, updates.error)
+      ) {
+        stateRef.current.error = updates.error;
+        hasChanges = true;
       }
 
       if (hasChanges) {
@@ -131,7 +141,7 @@ function createStore<T>(
   return store;
 }
 
-const StoreContext = React.createContext<StoreContextValue | null>(null);
+const StoreContext = React.createContext<Store | null>(null);
 
 function useStoreContext(consumerName: string) {
   const store = React.useContext(StoreContext);
@@ -194,6 +204,7 @@ function QRCodeRoot(props: QRCodeRootProps) {
     onError,
     onGenerated,
     asChild,
+    children,
     ...rootProps
   } = props;
 
@@ -207,29 +218,6 @@ function QRCodeRoot(props: QRCodeRootProps) {
     error: null,
   }));
 
-  const config: QRCodeConfig = React.useMemo(
-    () => ({
-      value,
-      size,
-      bgColor,
-      fgColor,
-      level,
-      includeMargin,
-      marginSize,
-      imageSettings,
-    }),
-    [
-      value,
-      size,
-      bgColor,
-      fgColor,
-      level,
-      includeMargin,
-      marginSize,
-      imageSettings,
-    ],
-  );
-
   const store = React.useMemo(
     () => createStore(listenersRef, stateRef),
     [listenersRef, stateRef],
@@ -237,7 +225,7 @@ function QRCodeRoot(props: QRCodeRootProps) {
 
   const generateQRCode = React.useCallback(async () => {
     const state = stateRef.current;
-    if (state.isGenerating || !config.value) return;
+    if (state.isGenerating || !value) return;
 
     store.batchUpdate({
       isGenerating: true,
@@ -248,20 +236,20 @@ function QRCodeRoot(props: QRCodeRootProps) {
       const QRCode = (await import("qrcode")).default;
 
       const canvasOptions: QRCodeCanvasOptions = {
-        errorCorrectionLevel: config.level,
+        errorCorrectionLevel: level,
         type: "image/png",
         quality: 0.92,
-        margin: config.includeMargin ? config.marginSize : 0,
+        margin: includeMargin ? marginSize : 0,
         color: {
-          dark: config.fgColor,
-          light: config.bgColor,
+          dark: fgColor,
+          light: bgColor,
         },
-        width: config.size,
+        width: size,
       };
 
       let dataUrl: string | null = null;
       if (canvasRef.current) {
-        await QRCode.toCanvas(canvasRef.current, config.value, canvasOptions);
+        await QRCode.toCanvas(canvasRef.current, value, canvasOptions);
         const canvas = canvasRef.current;
         dataUrl = canvas.toDataURL("image/png");
       }
@@ -273,7 +261,7 @@ function QRCodeRoot(props: QRCodeRootProps) {
         width: canvasOptions.width,
         type: "svg",
       };
-      const svgString = await QRCode.toString(config.value, svgOptions);
+      const svgString = await QRCode.toString(value, svgOptions);
 
       store.batchUpdate({
         dataUrl,
@@ -290,29 +278,60 @@ function QRCodeRoot(props: QRCodeRootProps) {
       });
       onError?.(err);
     }
-  }, [config, onError, onGenerated, store, stateRef.current]);
+  }, [
+    value,
+    size,
+    bgColor,
+    fgColor,
+    level,
+    includeMargin,
+    marginSize,
+    onError,
+    onGenerated,
+    store,
+    stateRef.current,
+  ]);
 
-  const contextValue = React.useMemo<QRCodeContextValue>(
+  const qrCodeContextValue = React.useMemo<QRCodeContextValue>(
     () => ({
-      config,
+      value,
+      size,
+      bgColor,
+      fgColor,
+      level,
+      includeMargin,
+      marginSize,
+      imageSettings,
       canvasRef,
       generateQRCode,
     }),
-    [config, generateQRCode],
+    [
+      value,
+      size,
+      bgColor,
+      fgColor,
+      level,
+      includeMargin,
+      marginSize,
+      imageSettings,
+      generateQRCode,
+    ],
   );
 
   React.useEffect(() => {
-    if (config.value) {
+    if (value) {
       generateQRCode();
     }
-  }, [config, generateQRCode]);
+  }, [value, generateQRCode]);
 
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
     <StoreContext.Provider value={store}>
-      <QRCodeContext.Provider value={contextValue}>
-        <RootPrimitive data-slot="qr-code" {...rootProps} />
+      <QRCodeContext.Provider value={qrCodeContextValue}>
+        <RootPrimitive data-slot="qr-code" {...rootProps}>
+          {children}
+        </RootPrimitive>
       </QRCodeContext.Provider>
     </StoreContext.Provider>
   );
@@ -337,8 +356,8 @@ function QRCodeImage(props: QRCodeImageProps) {
     <ImagePrimitive
       src={dataUrl}
       alt={alt}
-      width={context.config.size}
-      height={context.config.size}
+      width={context.size}
+      height={context.size}
       data-slot="qr-code-image"
       ref={ref}
       {...imageProps}
@@ -362,8 +381,8 @@ function QRCodeCanvas(props: QRCodeCanvasProps) {
   return (
     <CanvasPrimitive
       ref={composedRef}
-      width={context.config.size}
-      height={context.config.size}
+      width={context.size}
+      height={context.size}
       data-slot="qr-code-canvas"
       {...canvasProps}
     />
@@ -387,7 +406,7 @@ function QRCodeSvg(props: QRCodeSvgProps) {
   return (
     <SvgPrimitive
       data-slot="qr-code-svg"
-      style={{ width: context.config.size, height: context.config.size }}
+      style={{ width: context.size, height: context.size }}
       dangerouslySetInnerHTML={{ __html: svgString }}
       ref={ref}
       {...svgProps}
