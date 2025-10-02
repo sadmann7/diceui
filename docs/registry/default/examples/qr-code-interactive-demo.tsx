@@ -121,7 +121,7 @@ export default function QRCodeInteractiveDemo() {
               backgroundColor={backgroundColor}
               level={level}
             >
-              <QRCodeDownload format="png" filename="custom-qr">
+              <QRCodeDownload format="png" filename="custom-qr" asChild>
                 <Button variant="outline" size="sm">
                   Download PNG
                 </Button>
@@ -134,7 +134,7 @@ export default function QRCodeInteractiveDemo() {
               backgroundColor={backgroundColor}
               level={level}
             >
-              <QRCodeDownload format="svg" filename="custom-qr">
+              <QRCodeDownload format="svg" filename="custom-qr" asChild>
                 <Button variant="outline" size="sm">
                   Download SVG
                 </Button>
