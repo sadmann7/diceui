@@ -88,6 +88,7 @@ type Orientation = "horizontal" | "vertical";
 type ActivationMode = "automatic" | "manual";
 type Size = "default" | "sm" | "lg";
 type Step = 0.5 | 1;
+type DataState = "full" | "partial" | "empty";
 
 const DirectionContext = React.createContext<Direction | undefined>(undefined);
 
@@ -555,13 +556,12 @@ interface RatingItemProps
   extends Omit<React.ComponentProps<"button">, "children"> {
   index?: number;
   asChild?: boolean;
-  children?:
-    | React.ReactNode
-    | ((dataState: "full" | "partial" | "empty") => React.ReactNode);
+  children?: React.ReactNode | ((dataState: DataState) => React.ReactNode);
 }
 
 function RatingItem(props: RatingItemProps) {
-  const { index, asChild, className, ref, children, ...itemProps } = props;
+  const { index, asChild, disabled, className, ref, children, ...itemProps } =
+    props;
 
   const itemRef = React.useRef<ItemElement>(null);
   const composedRef = useComposedRefs(ref, itemRef);
@@ -588,7 +588,7 @@ function RatingItem(props: RatingItemProps) {
   const activationMode = context.activationMode;
 
   const itemId = getItemId(context.id, itemValue);
-  const isDisabled = context.disabled || itemProps.disabled;
+  const isDisabled = context.disabled || disabled;
   const isReadOnly = context.readOnly;
   const isTabStop = focusContext.tabStopId === itemId;
 
@@ -857,7 +857,11 @@ function RatingItem(props: RatingItemProps) {
     [focusContext, itemId, isDisabled, itemProps.onMouseDown],
   );
 
-  const dataState = isFilled ? "full" : isPartiallyFilled ? "partial" : "empty";
+  const dataState: DataState = isFilled
+    ? "full"
+    : isPartiallyFilled
+      ? "partial"
+      : "empty";
 
   const ItemPrimitive = asChild ? Slot : "button";
 

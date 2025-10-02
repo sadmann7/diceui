@@ -725,7 +725,7 @@ function StepperItem(props: StepperItemProps) {
 }
 
 function StepperTrigger(props: ButtonProps) {
-  const { asChild, className, ref, ...triggerProps } = props;
+  const { asChild, disabled, className, ref, ...triggerProps } = props;
 
   const context = useStepperContext(TRIGGER_NAME);
   const itemContext = useStepperItemContext(TRIGGER_NAME);
@@ -749,8 +749,7 @@ function StepperTrigger(props: ButtonProps) {
   const titleId = getId(context.id, "title", itemValue);
   const descriptionId = getId(context.id, "description", itemValue);
 
-  const isDisabled =
-    context.disabled || stepState?.disabled || triggerProps.disabled;
+  const isDisabled = context.disabled || stepState?.disabled || disabled;
   const isActive = value === itemValue;
   const isTabStop = focusContext.tabStopId === triggerId;
   const dataState = getDataState(value, itemValue, stepState, steps);
