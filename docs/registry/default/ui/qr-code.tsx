@@ -249,12 +249,15 @@ function QRCodeRoot(props: QRCodeRootProps) {
 
       onGenerated?.();
     } catch (error) {
-      const err = error as Error;
+      const parsedError =
+        error instanceof Error
+          ? error
+          : new Error("Failed to generate QR code");
       store.setStates({
-        error: err,
+        error: parsedError,
         isGenerating: false,
       });
-      onError?.(err);
+      onError?.(parsedError);
     }
   }, [value, onError, onGenerated, canvasOpts, store, stateRef.current]);
 

@@ -17,13 +17,13 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * The background color of the QR code.
    * @default "#ffffff"
    */
-  bgColor?: string;
+  backgroundColor?: string;
 
   /**
    * The foreground color of the QR code.
    * @default "#000000"
    */
-  fgColor?: string;
+  foregroundColor?: string;
 
   /**
    * The error correction level.
@@ -77,7 +77,7 @@ export interface ImageProps extends EmptyProps<"img">, CompositionProps {
 
 export interface CanvasProps extends EmptyProps<"canvas">, CompositionProps {}
 
-export interface SvgProps extends EmptyProps<"svg">, CompositionProps {}
+export interface SvgProps extends EmptyProps<"div">, CompositionProps {}
 
 export interface DownloadProps extends EmptyProps<"button">, CompositionProps {
   /**
