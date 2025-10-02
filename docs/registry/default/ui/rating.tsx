@@ -186,6 +186,7 @@ interface RatingContextValue {
   id: string;
   dir: Direction;
   orientation: Orientation;
+  activationMode: ActivationMode;
   disabled: boolean;
   readOnly: boolean;
   size: "sm" | "md" | "lg";
@@ -230,6 +231,7 @@ interface RatingRootProps extends DivProps {
   max?: number;
   allowHalf?: boolean;
   allowClear?: boolean;
+  activationMode?: ActivationMode;
   dir?: Direction;
   orientation?: Orientation;
   disabled?: boolean;
@@ -311,6 +313,7 @@ function RatingRootImpl(props: RatingRootImplProps) {
     id: idProp,
     dir: dirProp,
     orientation = "horizontal",
+    activationMode = "automatic",
     asChild,
     disabled = false,
     readOnly = false,
@@ -434,11 +437,12 @@ function RatingRootImpl(props: RatingRootImplProps) {
       id: rootId,
       dir,
       orientation,
+      activationMode,
       disabled,
       readOnly,
       size,
     }),
-    [rootId, dir, orientation, disabled, readOnly, size],
+    [rootId, dir, orientation, activationMode, disabled, readOnly, size],
   );
 
   const focusContextValue = React.useMemo<FocusContextValue>(
@@ -514,6 +518,7 @@ function RatingItem(props: RatingItemProps) {
   const max = useStore((state) => state.max);
   const allowHalf = useStore((state) => state.allowHalf);
   const allowClear = useStore((state) => state.allowClear);
+  const activationMode = context.activationMode;
 
   const itemId = getId(context.id, "item", itemValue);
   const isDisabled = context.disabled || itemProps.disabled;
@@ -605,9 +610,33 @@ function RatingItem(props: RatingItemProps) {
       if (event.defaultPrevented) return;
 
       focusContext.onItemFocus(itemId);
+
+      const isKeyboardFocus = !isMouseClickRef.current;
+
+      if (
+        !isDisabled &&
+        !isReadOnly &&
+        activationMode !== "manual" &&
+        isKeyboardFocus
+      ) {
+        const newValue = allowClear && value === itemValue ? 0 : itemValue;
+        store.setState("value", newValue);
+      }
+
       isMouseClickRef.current = false;
     },
-    [focusContext, itemId, itemProps.onFocus],
+    [
+      focusContext,
+      itemId,
+      activationMode,
+      isDisabled,
+      isReadOnly,
+      allowClear,
+      value,
+      itemValue,
+      store,
+      itemProps.onFocus,
+    ],
   );
 
   const onKeyDown = React.useCallback(
@@ -615,7 +644,10 @@ function RatingItem(props: RatingItemProps) {
       itemProps.onKeyDown?.(event);
       if (event.defaultPrevented) return;
 
-      if (event.key === "Enter" || event.key === " ") {
+      if (
+        (event.key === "Enter" || event.key === " ") &&
+        activationMode === "manual"
+      ) {
         event.preventDefault();
         if (!isDisabled && !isReadOnly && itemElement) {
           itemElement.click();
@@ -659,6 +691,7 @@ function RatingItem(props: RatingItemProps) {
       focusContext,
       context.dir,
       context.orientation,
+      activationMode,
       isDisabled,
       isReadOnly,
       itemElement,

@@ -100,6 +100,33 @@ export default function RatingDemo() {
           ))}
         </Rating>
       </div>
+
+      {/* Activation Modes */}
+      <div className="space-y-4">
+        <h3 className="font-medium text-sm">Activation Modes</h3>
+        <div className="space-y-2">
+          <div className="space-y-1">
+            <span className="text-muted-foreground text-xs">
+              Automatic (default) - activates on focus
+            </span>
+            <Rating defaultValue={2} activationMode="automatic">
+              {Array.from({ length: 5 }, (_, i) => (
+                <RatingItem key={i + 1} value={i + 1} />
+              ))}
+            </Rating>
+          </div>
+          <div className="space-y-1">
+            <span className="text-muted-foreground text-xs">
+              Manual - requires Enter/Space to activate
+            </span>
+            <Rating defaultValue={2} activationMode="manual">
+              {Array.from({ length: 5 }, (_, i) => (
+                <RatingItem key={i + 1} value={i + 1} />
+              ))}
+            </Rating>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
