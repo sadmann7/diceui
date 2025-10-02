@@ -244,57 +244,26 @@ function RatingRoot(props: RatingRootProps) {
     max = 5,
     allowHalf = false,
     allowClear = false,
-    name,
-    required,
     ...rootProps
   } = props;
 
-  const initialState = React.useMemo(
-    () => ({
-      value: value ?? defaultValue,
-      hoveredValue: null,
-      max,
-      allowHalf,
-      allowClear,
-    }),
-    [value, defaultValue, max, allowHalf, allowClear],
-  );
-
-  const stateRef = useLazyRef(() => initialState);
+  const stateRef = useLazyRef(() => ({
+    value: value ?? defaultValue,
+    hoveredValue: null,
+    max,
+    allowHalf,
+    allowClear,
+  }));
   const listenersRef = useLazyRef(() => new Set<() => void>());
 
-  const storeCallbacks = React.useMemo(
-    () => ({
-      onValueChange,
-      onHover,
-    }),
-    [onValueChange, onHover],
-  );
-
   const store = React.useMemo(
-    () =>
-      createStore(
-        listenersRef,
-        stateRef,
-        storeCallbacks.onValueChange,
-        storeCallbacks.onHover,
-      ),
-    [
-      listenersRef,
-      stateRef,
-      storeCallbacks.onValueChange,
-      storeCallbacks.onHover,
-    ],
+    () => createStore(listenersRef, stateRef, onValueChange, onHover),
+    [listenersRef, stateRef, onValueChange, onHover],
   );
 
   return (
     <StoreContext.Provider value={store}>
-      <RatingRootImpl
-        {...rootProps}
-        value={value}
-        name={name}
-        required={required}
-      />
+      <RatingRootImpl {...rootProps} value={value} />
     </StoreContext.Provider>
   );
 }
@@ -324,7 +293,6 @@ function RatingRootImpl(props: RatingRootImplProps) {
     name,
     size = "md",
     className,
-    children,
     ref,
     ...rootProps
   } = props;
@@ -383,7 +351,14 @@ function RatingRootImpl(props: RatingRootImplProps) {
 
   const getItems = React.useCallback(() => {
     return Array.from(itemsRef.current.values()).sort((a, b) => {
-      return a.value - b.value;
+      const position = a.element.compareDocumentPosition(b.element);
+      if (position & Node.DOCUMENT_POSITION_FOLLOWING) {
+        return -1;
+      }
+      if (position & Node.DOCUMENT_POSITION_PRECEDING) {
+        return 1;
+      }
+      return 0;
     });
   }, []);
 
@@ -506,9 +481,7 @@ function RatingRootImpl(props: RatingRootImplProps) {
           onBlur={onBlur}
           onFocus={onFocus}
           onMouseDown={onMouseDown}
-        >
-          {children}
-        </RootPrimitive>
+        />
         {isFormControl && (
           <VisuallyHiddenInput
             type="hidden"
