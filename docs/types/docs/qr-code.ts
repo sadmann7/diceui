@@ -38,17 +38,13 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   level?: "L" | "M" | "Q" | "H";
 
   /**
-   * Whether to include a quiet zone (border) around the QR code.
-   * @default true
-   */
-  includeMargin?: boolean;
-
-  /**
    * The width of the quiet zone in modules.
-   * Only applies when includeMargin is true.
-   * @default 4
+   *
+   * When set to `0`, the quiet zone will be removed.
+   *
+   * @default 1
    */
-  marginSize?: number;
+  margin?: number;
 
   /**
    * The image format to render.

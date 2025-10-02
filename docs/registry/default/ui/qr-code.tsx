@@ -65,8 +65,8 @@ interface Store {
 interface QRCodeContextValue {
   value: string;
   size: number;
-  bgColor: string;
-  fgColor: string;
+  backgroundColor: string;
+  foregroundColor: string;
   level: QRCodeLevel;
   margin: number;
   imageSettings?: {
@@ -152,8 +152,8 @@ function useStore<T>(selector: (state: StoreState) => T): T {
 interface QRCodeRootProps extends Omit<React.ComponentProps<"div">, "onError"> {
   value: string;
   size?: number;
-  bgColor?: string;
-  fgColor?: string;
+  backgroundColor?: string;
+  foregroundColor?: string;
   level?: QRCodeLevel;
   margin?: number;
   imageSettings?: {
@@ -171,8 +171,8 @@ function QRCodeRoot(props: QRCodeRootProps) {
   const {
     value,
     size = 200,
-    bgColor = "#ffffff",
-    fgColor = "#000000",
+    backgroundColor = "#ffffff",
+    foregroundColor = "#000000",
     level = "M",
     margin = 1,
     imageSettings,
@@ -204,12 +204,12 @@ function QRCodeRoot(props: QRCodeRootProps) {
       quality: 0.92,
       margin,
       color: {
-        dark: fgColor,
-        light: bgColor,
+        dark: foregroundColor,
+        light: backgroundColor,
       },
       width: size,
     }),
-    [level, margin, fgColor, bgColor, size],
+    [level, margin, foregroundColor, backgroundColor, size],
   );
 
   const onQRCodeGenerate = React.useCallback(async () => {
@@ -262,14 +262,22 @@ function QRCodeRoot(props: QRCodeRootProps) {
     () => ({
       value,
       size,
-      bgColor,
-      fgColor,
+      backgroundColor,
+      foregroundColor,
       level,
       margin,
       imageSettings,
       canvasRef,
     }),
-    [value, size, bgColor, fgColor, level, margin, imageSettings],
+    [
+      value,
+      size,
+      backgroundColor,
+      foregroundColor,
+      level,
+      margin,
+      imageSettings,
+    ],
   );
 
   React.useEffect(() => {

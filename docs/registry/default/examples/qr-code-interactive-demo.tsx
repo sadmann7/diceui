@@ -15,34 +15,34 @@ import {
   QRCode,
   QRCodeCanvas,
   QRCodeDownload,
+  type QRCodeProps,
 } from "@/registry/default/ui/qr-code";
 
 export default function QRCodeInteractiveDemo() {
   const [value, setValue] = React.useState("https://diceui.com");
   const [size, setSize] = React.useState(200);
-  const [fgColor, setFgColor] = React.useState("#000000");
-  const [bgColor, setBgColor] = React.useState("#ffffff");
+  const [foregroundColor, setForegroundColor] = React.useState("#000000");
+  const [backgroundColor, setBackgroundColor] = React.useState("#ffffff");
   const [level, setLevel] = React.useState<"L" | "M" | "Q" | "H">("M");
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="flex flex-col gap-6 p-6">
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-        {/* Controls */}
-        <div className="space-y-4">
+        <div className="flex flex-col gap-4">
           <h3 className="font-semibold text-lg">Customize QR Code</h3>
 
-          <div className="space-y-2">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="qr-value">Content</Label>
             <Input
               id="qr-value"
               value={value}
-              onChange={(e) => setValue(e.target.value)}
+              onChange={(event) => setValue(event.target.value)}
               placeholder="Enter text or URL"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
+            <div className="flex flex-col gap-2">
               <Label htmlFor="qr-size">Size</Label>
               <Input
                 id="qr-size"
@@ -50,15 +50,15 @@ export default function QRCodeInteractiveDemo() {
                 min="100"
                 max="400"
                 value={size}
-                onChange={(e) => setSize(Number(e.target.value))}
+                onChange={(event) => setSize(Number(event.target.value))}
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="flex flex-col gap-2">
               <Label htmlFor="qr-level">Error Correction</Label>
               <Select
                 value={level}
-                onValueChange={(value: "L" | "M" | "Q" | "H") =>
+                onValueChange={(value: NonNullable<QRCodeProps["level"]>) =>
                   setLevel(value)
                 }
               >
@@ -76,49 +76,49 @@ export default function QRCodeInteractiveDemo() {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
+            <div className="flex flex-col gap-2">
               <Label htmlFor="fg-color">Foreground Color</Label>
-              <div className="flex space-x-2">
+              <div className="flex items-center gap-2">
                 <Input
                   id="fg-color"
                   type="color"
-                  value={fgColor}
-                  onChange={(e) => setFgColor(e.target.value)}
+                  value={foregroundColor}
+                  onChange={(event) => setForegroundColor(event.target.value)}
                   className="h-10 w-16"
                 />
                 <Input
-                  value={fgColor}
-                  onChange={(e) => setFgColor(e.target.value)}
+                  value={foregroundColor}
+                  onChange={(event) => setForegroundColor(event.target.value)}
                   className="flex-1"
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="flex flex-col gap-2">
               <Label htmlFor="bg-color">Background Color</Label>
-              <div className="flex space-x-2">
+              <div className="flex items-center gap-2">
                 <Input
                   id="bg-color"
                   type="color"
-                  value={bgColor}
-                  onChange={(e) => setBgColor(e.target.value)}
+                  value={backgroundColor}
+                  onChange={(event) => setBackgroundColor(event.target.value)}
                   className="h-10 w-16"
                 />
                 <Input
-                  value={bgColor}
-                  onChange={(e) => setBgColor(e.target.value)}
+                  value={backgroundColor}
+                  onChange={(event) => setBackgroundColor(event.target.value)}
                   className="flex-1"
                 />
               </div>
             </div>
           </div>
 
-          <div className="flex space-x-2">
+          <div className="flex items-center gap-2">
             <QRCode
               value={value}
               size={size}
-              fgColor={fgColor}
-              bgColor={bgColor}
+              foregroundColor={foregroundColor}
+              backgroundColor={backgroundColor}
               level={level}
             >
               <QRCodeDownload format="png" filename="custom-qr">
@@ -130,8 +130,8 @@ export default function QRCodeInteractiveDemo() {
             <QRCode
               value={value}
               size={size}
-              fgColor={fgColor}
-              bgColor={bgColor}
+              foregroundColor={foregroundColor}
+              backgroundColor={backgroundColor}
               level={level}
             >
               <QRCodeDownload format="svg" filename="custom-qr">
@@ -143,15 +143,14 @@ export default function QRCodeInteractiveDemo() {
           </div>
         </div>
 
-        {/* Preview */}
-        <div className="flex flex-col items-center space-y-4">
+        <div className="flex flex-col items-center gap-4">
           <h3 className="font-semibold text-lg">Preview</h3>
           <div className="rounded-lg border bg-muted/20 p-4">
             <QRCode
               value={value}
               size={size}
-              fgColor={fgColor}
-              bgColor={bgColor}
+              foregroundColor={foregroundColor}
+              backgroundColor={backgroundColor}
               level={level}
             >
               <QRCodeCanvas />

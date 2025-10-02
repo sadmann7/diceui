@@ -21,8 +21,8 @@ import {
 } from "@/registry/default/ui/cropper";
 
 const shapes: { label: string; value: CropperShape }[] = [
-  { label: "Rectangular", value: "rectangular" },
-  { label: "Circular", value: "circular" },
+  { label: "Rectangle", value: "rectangle" },
+  { label: "Circle", value: "circle" },
 ] as const;
 
 const objectFits: { label: string; value: CropperObjectFit }[] = [
@@ -37,7 +37,7 @@ export default function CropperShapesDemo() {
   const [crop, setCrop] = React.useState<CropperPoint>({ x: 0, y: 0 });
   const [zoom, setZoom] = React.useState(1);
   const [shape, setShape] =
-    React.useState<NonNullable<CropperShape>>("rectangular");
+    React.useState<NonNullable<CropperShape>>("rectangle");
   const [objectFit, setObjectFit] =
     React.useState<NonNullable<CropperObjectFit>>("contain");
   const [withGrid, setWithGrid] = React.useState(false);

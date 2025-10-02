@@ -294,7 +294,7 @@ export default function CropperFileUploadDemo() {
                       <div className="flex flex-col gap-4">
                         <Cropper
                           aspectRatio={1}
-                          shape="circular"
+                          shape="circle"
                           crop={crop}
                           onCropChange={setCrop}
                           zoom={zoom}
