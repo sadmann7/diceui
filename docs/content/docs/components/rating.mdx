@@ -86,6 +86,23 @@ The main container component for the rating.
   name="RootProps"
 />
 
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when disabled",
+    },
+    {
+      title: "[data-readonly]",
+      value: "Present when readonly",
+    },
+    {
+      title: "[data-orientation]",
+      value: ["horizontal", "vertical"],
+    },
+  ]}
+/>
+
 ### Item
 
 Individual rating item (star) component.
@@ -93,6 +110,27 @@ Individual rating item (star) component.
 <AutoTypeTable
   path="./types/docs/rating.ts"
   name="ItemProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-disabled]",
+      value: "Present when disabled",
+    },
+    {
+      title: "[data-readonly]",
+      value: "Present when readonly",
+    },
+    {
+      title: "[data-state]",
+      value: ["empty", "partial", "full"],
+    },
+    {
+      title: "[data-hovered]",
+      value: "Present when hovered",
+    },
+  ]}
 />
 
 ## Accessibility
