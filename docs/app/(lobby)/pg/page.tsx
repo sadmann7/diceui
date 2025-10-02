@@ -34,7 +34,6 @@ import QRCodeDemo from "@/registry/default/examples/qr-code-demo";
 import QRCodeFormatsDemo from "@/registry/default/examples/qr-code-formats-demo";
 import QRCodeInteractiveDemo from "@/registry/default/examples/qr-code-interactive-demo";
 import RatingDemo from "@/registry/default/examples/rating-demo";
-import RatingThemesDemo from "@/registry/default/examples/rating-themes-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -54,7 +53,6 @@ export default function PlaygroundPage() {
         <QRCodeCustomizationDemo />
         <QRCodeInteractiveDemo />
         <RatingDemo />
-        <RatingThemesDemo />
         <ColorPickerDemo />
       </Demo>
       <Combobox className="w-[15rem]">

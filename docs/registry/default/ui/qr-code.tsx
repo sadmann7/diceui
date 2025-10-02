@@ -26,17 +26,6 @@ interface QRCodeCanvasOpts {
   };
 }
 
-interface QRCodeStringOptions {
-  errorCorrectionLevel?: QRCodeLevel;
-  type?: "svg" | "terminal" | "utf8";
-  margin?: number;
-  color?: {
-    dark: string;
-    light: string;
-  };
-  width?: number;
-}
-
 function useLazyRef<T>(fn: () => T) {
   const ref = React.useRef<T | null>(null);
 
@@ -238,20 +227,23 @@ function QRCodeRoot(props: QRCodeRootProps) {
 
         let dataUrl: string | null = null;
 
-        if (canvasRef.current) {
-          await QRCode.toCanvas(canvasRef.current, value, canvasOpts);
-          const canvas = canvasRef.current;
-          dataUrl = canvas.toDataURL("image/png");
+        try {
+          dataUrl = await QRCode.toDataURL(value, canvasOpts);
+        } catch {
+          dataUrl = null;
         }
 
-        const svgOptions: QRCodeStringOptions = {
+        if (canvasRef.current) {
+          await QRCode.toCanvas(canvasRef.current, value, canvasOpts);
+        }
+
+        const svgString = await QRCode.toString(value, {
           errorCorrectionLevel: canvasOpts.errorCorrectionLevel,
           margin: canvasOpts.margin,
           color: canvasOpts.color,
           width: canvasOpts.width,
           type: "svg",
-        };
-        const svgString = await QRCode.toString(value, svgOptions);
+        });
 
         store.setStates({
           dataUrl,
@@ -291,7 +283,12 @@ function QRCodeRoot(props: QRCodeRootProps) {
 
   React.useLayoutEffect(() => {
     if (generationKey) {
-      onQRCodeGenerate(generationKey);
+      // Small delay to ensure canvas is mounted
+      const timeoutId = setTimeout(() => {
+        onQRCodeGenerate(generationKey);
+      }, 10);
+
+      return () => clearTimeout(timeoutId);
     }
   }, [generationKey, onQRCodeGenerate]);
 
