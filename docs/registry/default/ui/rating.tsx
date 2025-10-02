@@ -775,7 +775,7 @@ function RatingItem(props: RatingItemProps) {
       {...itemProps}
       ref={composedRef}
       className={cn(
-        "inline-flex items-center justify-center rounded-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=full]:text-primary data-[state=partial]:text-primary",
+        "inline-flex items-center justify-center rounded-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=full]:text-primary data-[state=partial]:text-primary [&_svg:not([class*='size-'])]:size-full [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:fill-current",
         context.size === "sm"
           ? "size-4"
           : context.size === "lg"
@@ -790,7 +790,7 @@ function RatingItem(props: RatingItemProps) {
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      <Star className="fill-current" />
+      <Star />
     </ItemPrimitive>
   );
 }
