@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
+import RatingDemo from "@/registry/default/example/rating-demo";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
 import HitboxDemo from "@/registry/default/examples/hitbox-demo";
 import {
@@ -44,6 +45,7 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <Demo>
+        <RatingDemo />
         <HitboxDemo />
         <ColorPickerDemo />
       </Demo>

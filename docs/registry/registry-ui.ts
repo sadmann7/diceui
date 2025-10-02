@@ -424,6 +424,21 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "rating",
+    type: "registry:ui",
+    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    files: [
+      {
+        path: "ui/rating.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
+      },
+    ],
+  },
+  {
     name: "stack",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "class-variance-authority"],

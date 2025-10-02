@@ -391,6 +391,24 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "rating": {
+      name: "rating",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/ui/rating.tsx",
+        type: "registry:ui",
+        target: ""
+      },{
+        path: "registry/default/lib/compose-refs.ts",
+        type: "registry:lib",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/rating.tsx")),
+      source: "",
+      chunks: []
+    },
     "stack": {
       name: "stack",
       description: "",
