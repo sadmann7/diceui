@@ -194,7 +194,6 @@ function QRCodeRoot(props: QRCodeRootProps) {
     onError,
     onGenerated,
     asChild,
-    children,
     ...rootProps
   } = props;
 
@@ -293,7 +292,7 @@ function QRCodeRoot(props: QRCodeRootProps) {
     }
   }, [config, onError, onGenerated, store, stateRef.current]);
 
-  const qrCodeContextValue = React.useMemo<QRCodeContextValue>(
+  const contextValue = React.useMemo<QRCodeContextValue>(
     () => ({
       config,
       canvasRef,
@@ -312,10 +311,8 @@ function QRCodeRoot(props: QRCodeRootProps) {
 
   return (
     <StoreContext.Provider value={store}>
-      <QRCodeContext.Provider value={qrCodeContextValue}>
-        <RootPrimitive data-slot="qr-code" {...rootProps}>
-          {children}
-        </RootPrimitive>
+      <QRCodeContext.Provider value={contextValue}>
+        <RootPrimitive data-slot="qr-code" {...rootProps} />
       </QRCodeContext.Provider>
     </StoreContext.Provider>
   );
