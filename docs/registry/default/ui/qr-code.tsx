@@ -11,7 +11,7 @@ const SVG_NAME = "QRCodeSvg";
 
 type QRCodeLevel = "L" | "M" | "Q" | "H";
 
-interface QRCodeCanvasOptions {
+interface QRCodeCanvasOpts {
   errorCorrectionLevel: QRCodeLevel;
   type?: "image/png" | "image/jpeg" | "image/webp";
   quality?: number;
@@ -68,8 +68,7 @@ interface QRCodeContextValue {
   bgColor: string;
   fgColor: string;
   level: QRCodeLevel;
-  includeMargin: boolean;
-  marginSize: number;
+  margin: number;
   imageSettings?: {
     src: string;
     height: number;
@@ -77,7 +76,6 @@ interface QRCodeContextValue {
     excavate?: boolean;
   };
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
-  generateQRCode: () => Promise<void>;
 }
 
 function createStore(
@@ -157,8 +155,7 @@ interface QRCodeRootProps extends Omit<React.ComponentProps<"div">, "onError"> {
   bgColor?: string;
   fgColor?: string;
   level?: QRCodeLevel;
-  includeMargin?: boolean;
-  marginSize?: number;
+  margin?: number;
   imageSettings?: {
     src: string;
     height: number;
@@ -177,8 +174,7 @@ function QRCodeRoot(props: QRCodeRootProps) {
     bgColor = "#ffffff",
     fgColor = "#000000",
     level = "M",
-    includeMargin = true,
-    marginSize = 4,
+    margin = 1,
     imageSettings,
     onError,
     onGenerated,
@@ -201,7 +197,22 @@ function QRCodeRoot(props: QRCodeRootProps) {
     [listenersRef, stateRef],
   );
 
-  const generateQRCode = React.useCallback(async () => {
+  const canvasOpts = React.useMemo<QRCodeCanvasOpts>(
+    () => ({
+      errorCorrectionLevel: level,
+      type: "image/png",
+      quality: 0.92,
+      margin,
+      color: {
+        dark: fgColor,
+        light: bgColor,
+      },
+      width: size,
+    }),
+    [level, margin, fgColor, bgColor, size],
+  );
+
+  const onQRCodeGenerate = React.useCallback(async () => {
     const state = stateRef.current;
     if (state.isGenerating || !value) return;
 
@@ -213,30 +224,19 @@ function QRCodeRoot(props: QRCodeRootProps) {
     try {
       const QRCode = (await import("qrcode")).default;
 
-      const canvasOptions: QRCodeCanvasOptions = {
-        errorCorrectionLevel: level,
-        type: "image/png",
-        quality: 0.92,
-        margin: includeMargin ? marginSize : 0,
-        color: {
-          dark: fgColor,
-          light: bgColor,
-        },
-        width: size,
-      };
-
       let dataUrl: string | null = null;
+
       if (canvasRef.current) {
-        await QRCode.toCanvas(canvasRef.current, value, canvasOptions);
+        await QRCode.toCanvas(canvasRef.current, value, canvasOpts);
         const canvas = canvasRef.current;
         dataUrl = canvas.toDataURL("image/png");
       }
 
       const svgOptions: QRCodeStringOptions = {
-        errorCorrectionLevel: canvasOptions.errorCorrectionLevel,
-        margin: canvasOptions.margin,
-        color: canvasOptions.color,
-        width: canvasOptions.width,
+        errorCorrectionLevel: canvasOpts.errorCorrectionLevel,
+        margin: canvasOpts.margin,
+        color: canvasOpts.color,
+        width: canvasOpts.width,
         type: "svg",
       };
       const svgString = await QRCode.toString(value, svgOptions);
@@ -256,19 +256,7 @@ function QRCodeRoot(props: QRCodeRootProps) {
       });
       onError?.(err);
     }
-  }, [
-    value,
-    size,
-    bgColor,
-    fgColor,
-    level,
-    includeMargin,
-    marginSize,
-    onError,
-    onGenerated,
-    store,
-    stateRef.current,
-  ]);
+  }, [value, onError, onGenerated, canvasOpts, store, stateRef.current]);
 
   const qrCodeContextValue = React.useMemo<QRCodeContextValue>(
     () => ({
@@ -277,30 +265,18 @@ function QRCodeRoot(props: QRCodeRootProps) {
       bgColor,
       fgColor,
       level,
-      includeMargin,
-      marginSize,
+      margin,
       imageSettings,
       canvasRef,
-      generateQRCode,
     }),
-    [
-      value,
-      size,
-      bgColor,
-      fgColor,
-      level,
-      includeMargin,
-      marginSize,
-      imageSettings,
-      generateQRCode,
-    ],
+    [value, size, bgColor, fgColor, level, margin, imageSettings],
   );
 
   React.useEffect(() => {
     if (value) {
-      generateQRCode();
+      onQRCodeGenerate();
     }
-  }, [value, generateQRCode]);
+  }, [value, onQRCodeGenerate]);
 
   const RootPrimitive = asChild ? Slot : "div";
 
@@ -314,12 +290,11 @@ function QRCodeRoot(props: QRCodeRootProps) {
 }
 
 interface QRCodeImageProps extends React.ComponentProps<"img"> {
-  alt?: string;
   asChild?: boolean;
 }
 
 function QRCodeImage(props: QRCodeImageProps) {
-  const { alt = "QR Code", asChild, ref, ...imageProps } = props;
+  const { alt = "QR Code", asChild, ...imageProps } = props;
 
   const context = useQRCodeContext(IMAGE_NAME);
   const dataUrl = useStore((state) => state.dataUrl);
@@ -330,13 +305,12 @@ function QRCodeImage(props: QRCodeImageProps) {
 
   return (
     <ImagePrimitive
+      data-slot="qr-code-image"
+      {...imageProps}
       src={dataUrl}
       alt={alt}
       width={context.size}
       height={context.size}
-      data-slot="qr-code-image"
-      ref={ref}
-      {...imageProps}
     />
   );
 }
@@ -356,11 +330,11 @@ function QRCodeCanvas(props: QRCodeCanvasProps) {
 
   return (
     <CanvasPrimitive
+      data-slot="qr-code-canvas"
+      {...canvasProps}
       ref={composedRef}
       width={context.size}
       height={context.size}
-      data-slot="qr-code-canvas"
-      {...canvasProps}
     />
   );
 }
@@ -370,7 +344,7 @@ interface QRCodeSvgProps extends React.ComponentProps<"div"> {
 }
 
 function QRCodeSvg(props: QRCodeSvgProps) {
-  const { asChild, ref, ...svgProps } = props;
+  const { asChild, ...svgProps } = props;
 
   const context = useQRCodeContext(SVG_NAME);
   const svgString = useStore((state) => state.svgString);
@@ -382,10 +356,9 @@ function QRCodeSvg(props: QRCodeSvgProps) {
   return (
     <SvgPrimitive
       data-slot="qr-code-svg"
+      {...svgProps}
       style={{ width: context.size, height: context.size }}
       dangerouslySetInnerHTML={{ __html: svgString }}
-      ref={ref}
-      {...svgProps}
     />
   );
 }
@@ -401,9 +374,7 @@ function QRCodeDownload(props: QRCodeDownloadProps) {
     filename = "qrcode",
     format = "png",
     asChild,
-
     children,
-    ref,
     ...buttonProps
   } = props;
 
@@ -445,7 +416,6 @@ function QRCodeDownload(props: QRCodeDownloadProps) {
     <ButtonPrimitive
       type="button"
       data-slot="qr-code-download"
-      ref={ref}
       {...buttonProps}
       onClick={onClick}
     >
