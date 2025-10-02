@@ -31,7 +31,7 @@ function DemoItem({ className, ...props }: DemoItemProps) {
     <div
       data-slot="demo-item"
       className={cn(
-        "grid h-[calc(100svh-10rem)] w-full place-items-center",
+        "grid min-h-[calc(100svh-10rem)] w-full place-items-center",
         className,
       )}
       {...props}

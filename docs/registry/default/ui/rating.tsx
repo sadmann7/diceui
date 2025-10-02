@@ -74,14 +74,6 @@ type Direction = "ltr" | "rtl";
 type Orientation = "horizontal" | "vertical";
 type ActivationMode = "automatic" | "manual";
 
-interface DivProps extends React.ComponentProps<"div"> {
-  asChild?: boolean;
-}
-
-interface ButtonProps extends React.ComponentProps<"button"> {
-  asChild?: boolean;
-}
-
 const DirectionContext = React.createContext<Direction | undefined>(undefined);
 
 function useDirection(dirProp?: Direction): Direction {
@@ -223,7 +215,7 @@ function useFocusContext(consumerName: string) {
   return context;
 }
 
-interface RatingRootProps extends DivProps {
+interface RatingRootProps extends React.ComponentProps<"div"> {
   value?: number;
   defaultValue?: number;
   onValueChange?: (value: number) => void;
@@ -234,6 +226,7 @@ interface RatingRootProps extends DivProps {
   activationMode?: ActivationMode;
   dir?: Direction;
   orientation?: Orientation;
+  asChild?: boolean;
   disabled?: boolean;
   readOnly?: boolean;
   size?: "sm" | "md" | "lg";
@@ -503,8 +496,15 @@ function RatingRootImpl(props: RatingRootImplProps) {
   );
 }
 
-interface RatingItemProps extends ButtonProps {
+const sizeClasses = {
+  sm: "size-4",
+  md: "size-5",
+  lg: "size-6",
+};
+
+interface RatingItemProps extends React.ComponentProps<"button"> {
   value: number;
+  asChild?: boolean;
 }
 
 function RatingItem(props: RatingItemProps) {
@@ -525,7 +525,6 @@ function RatingItem(props: RatingItemProps) {
   const isReadOnly = context.readOnly;
   const isTabStop = focusContext.tabStopId === itemId;
 
-  // Determine if this star should be filled
   const displayValue = hoveredValue ?? value;
   const isFilled = displayValue >= itemValue;
   const isHalfFilled =
@@ -715,12 +714,6 @@ function RatingItem(props: RatingItemProps) {
     [focusContext, itemId, isDisabled, itemProps.onMouseDown],
   );
 
-  const sizeClasses = {
-    sm: "size-4",
-    md: "size-5",
-    lg: "size-6",
-  };
-
   const ItemPrimitive = asChild ? Slot : "button";
 
   return (
@@ -733,24 +726,23 @@ function RatingItem(props: RatingItemProps) {
       aria-setsize={max}
       data-disabled={isDisabled ? "" : undefined}
       data-readonly={isReadOnly ? "" : undefined}
-      data-filled={isFilled ? "" : undefined}
-      data-half-filled={isHalfFilled ? "" : undefined}
+      data-state={isFilled ? "full" : isHalfFilled ? "partial" : "empty"}
       data-slot="rating-item"
       disabled={isDisabled}
       tabIndex={isTabStop ? 0 : -1}
       {...itemProps}
       ref={composedRef}
       className={cn(
-        "inline-flex items-center justify-center rounded-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[filled]:text-primary data-[half-filled]:text-primary",
+        "inline-flex items-center justify-center rounded-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=full]:text-primary data-[state=partial]:text-primary",
         sizeClasses[context.size],
         className,
       )}
       onClick={onClick}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
       onFocus={onFocus}
       onKeyDown={onKeyDown}
       onMouseDown={onMouseDown}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       <Star className={cn("fill-current", sizeClasses[context.size])} />
     </ItemPrimitive>

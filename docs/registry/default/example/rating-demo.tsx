@@ -4,9 +4,8 @@ import { Rating, RatingItem } from "@/registry/default/ui/rating";
 
 export default function RatingDemo() {
   return (
-    <div className="space-y-6">
-      {/* Basic Rating */}
-      <div className="space-y-2">
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
         <h3 className="font-medium text-sm">Basic Rating</h3>
         <Rating defaultValue={3}>
           {Array.from({ length: 5 }, (_, i) => (
@@ -15,8 +14,7 @@ export default function RatingDemo() {
         </Rating>
       </div>
 
-      {/* Controlled Rating */}
-      <div className="space-y-2">
+      <div className="flex flex-col gap-2">
         <h3 className="font-medium text-sm">Controlled Rating</h3>
         <Rating
           value={4}
@@ -28,10 +26,9 @@ export default function RatingDemo() {
         </Rating>
       </div>
 
-      {/* Different Sizes */}
-      <div className="space-y-4">
+      <div className="flex flex-col gap-4">
         <h3 className="font-medium text-sm">Sizes</h3>
-        <div className="space-y-2">
+        <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
             <span className="w-8 text-muted-foreground text-xs">SM</span>
             <Rating defaultValue={3} size="sm">
@@ -60,7 +57,7 @@ export default function RatingDemo() {
       </div>
 
       {/* Read-only Rating */}
-      <div className="space-y-2">
+      <div className="flex flex-col gap-2">
         <h3 className="font-medium text-sm">Read-only</h3>
         <Rating defaultValue={4} readOnly>
           {Array.from({ length: 5 }, (_, i) => (
@@ -70,7 +67,7 @@ export default function RatingDemo() {
       </div>
 
       {/* Disabled Rating */}
-      <div className="space-y-2">
+      <div className="flex flex-col gap-2">
         <h3 className="font-medium text-sm">Disabled</h3>
         <Rating defaultValue={2} disabled>
           {Array.from({ length: 5 }, (_, i) => (
@@ -80,7 +77,7 @@ export default function RatingDemo() {
       </div>
 
       {/* Allow Clear */}
-      <div className="space-y-2">
+      <div className="flex flex-col gap-2">
         <h3 className="font-medium text-sm">
           Allow Clear (click same rating to clear)
         </h3>
@@ -92,7 +89,7 @@ export default function RatingDemo() {
       </div>
 
       {/* Custom Max */}
-      <div className="space-y-2">
+      <div className="flex flex-col gap-2">
         <h3 className="font-medium text-sm">Custom Max (10 stars)</h3>
         <Rating defaultValue={7} max={10}>
           {Array.from({ length: 10 }, (_, i) => (
@@ -102,10 +99,10 @@ export default function RatingDemo() {
       </div>
 
       {/* Activation Modes */}
-      <div className="space-y-4">
+      <div className="flex flex-col gap-4">
         <h3 className="font-medium text-sm">Activation Modes</h3>
-        <div className="space-y-2">
-          <div className="space-y-1">
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1">
             <span className="text-muted-foreground text-xs">
               Automatic (default) - activates on focus
             </span>
@@ -115,7 +112,7 @@ export default function RatingDemo() {
               ))}
             </Rating>
           </div>
-          <div className="space-y-1">
+          <div className="flex flex-col gap-1">
             <span className="text-muted-foreground text-xs">
               Manual - requires Enter/Space to activate
             </span>
