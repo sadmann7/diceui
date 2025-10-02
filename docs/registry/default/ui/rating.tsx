@@ -12,8 +12,8 @@ const ITEM_NAME = "RatingItem";
 const ENTRY_FOCUS = "ratingFocusGroup.onEntryFocus";
 const EVENT_OPTIONS = { bubbles: false, cancelable: true };
 
-function getId(id: string, variant: "item", value: number) {
-  return `${id}-${variant}-${value}`;
+function getItemId(id: string, value: number) {
+  return `${id}-item-${value}`;
 }
 
 type FocusIntent = "first" | "last" | "prev" | "next";
@@ -520,7 +520,7 @@ function RatingItem(props: RatingItemProps) {
   const allowClear = useStore((state) => state.allowClear);
   const activationMode = context.activationMode;
 
-  const itemId = getId(context.id, "item", itemValue);
+  const itemId = getItemId(context.id, itemValue);
   const isDisabled = context.disabled || itemProps.disabled;
   const isReadOnly = context.readOnly;
   const isTabStop = focusContext.tabStopId === itemId;
