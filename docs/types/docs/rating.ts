@@ -76,11 +76,15 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   size?: "sm" | "default" | "lg";
 
   /**
-   * The step increment for rating values. Use 0.5 for half-star ratings.
+   * The step increment for rating values.
+   *
+   * Use `1` for full star ratings and `0.5` for half star ratings.
    *
    * ```ts
-   * step={0.5} // Allows half-star ratings
-   * step={0.25} // Allows quarter-star ratings
+   * // Full star ratings
+   * step={1}
+   * // Half star ratings
+   * step={0.5}
    * ```
    *
    * @default 1
@@ -126,7 +130,9 @@ export interface ItemProps extends EmptyProps<"button">, CompositionProps {
    * The index of this rating item.
    * If not provided, it will be auto-calculated based on position.
    *
-   * @example 0
+   * ```ts
+   * index={0}
+   * ```
    */
   index?: number;
 
@@ -134,7 +140,7 @@ export interface ItemProps extends EmptyProps<"button">, CompositionProps {
    * The content to render inside the rating item.
    * Can be a React node or a function that receives the data state.
    *
-   * ```ts
+   * ```tsx
    * children={<Star />}
    * // or
    * children={(state) => (

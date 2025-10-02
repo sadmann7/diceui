@@ -13,14 +13,18 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The current active step value.
    *
-   * @example "step-2"
+   * ```ts
+   * value="step-2"
+   * ```
    */
   value?: string;
 
   /**
    * The default active step value.
    *
-   * @example "step-1"
+   * ```ts
+   * defaultValue="step-1"
+   * ```
    */
   defaultValue?: string;
 
@@ -139,7 +143,9 @@ export interface ItemProps extends EmptyProps<"li">, CompositionProps {
   /**
    * The unique value for this step item.
    *
-   * @example "step-1"
+   * ```ts
+   * value="step-1"
+   * ```
    */
   value: string;
 
@@ -168,7 +174,7 @@ export interface IndicatorProps extends EmptyProps<"div">, CompositionProps {
    *
    * Can be a React node or a function that receives the current data state.
    *
-   * ```ts
+   * ```tsx
    * children={1}
    * children={(dataState) => dataState === "completed" ? <CheckIcon /> : <span>1</span>}
    * ```
@@ -190,7 +196,9 @@ export interface ContentProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The unique value for this step content.
    *
-   * @example "step-1"
+   * ```ts
+   * value="step-1"
+   * ```
    */
   value: string;
 
