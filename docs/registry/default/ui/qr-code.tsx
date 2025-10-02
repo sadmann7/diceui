@@ -112,16 +112,6 @@ function useStoreContext(consumerName: string) {
   return store;
 }
 
-const QRCodeContext = React.createContext<QRCodeContextValue | null>(null);
-
-function useQRCodeContext(consumerName: string) {
-  const context = React.useContext(QRCodeContext);
-  if (!context) {
-    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
-  }
-  return context;
-}
-
 function useStore<T>(selector: (state: StoreState) => T): T {
   const store = useStoreContext("useStore");
 
@@ -133,11 +123,21 @@ function useStore<T>(selector: (state: StoreState) => T): T {
   return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
 
+const QRCodeContext = React.createContext<QRCodeContextValue | null>(null);
+
+function useQRCodeContext(consumerName: string) {
+  const context = React.useContext(QRCodeContext);
+  if (!context) {
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
+  }
+  return context;
+}
+
 interface QRCodeRootProps extends Omit<React.ComponentProps<"div">, "onError"> {
   value: string;
   size?: number;
-  margin?: number;
   level?: QRCodeLevel;
+  margin?: number;
   quality?: number;
   backgroundColor?: string;
   foregroundColor?: string;
@@ -197,12 +197,12 @@ function QRCodeRoot(props: QRCodeRootProps) {
 
     return JSON.stringify({
       value,
+      size,
       level,
       margin,
+      quality,
       foregroundColor,
       backgroundColor,
-      size,
-      quality,
     });
   }, [value, level, margin, foregroundColor, backgroundColor, size, quality]);
 
@@ -283,12 +283,11 @@ function QRCodeRoot(props: QRCodeRootProps) {
 
   React.useLayoutEffect(() => {
     if (generationKey) {
-      // Small delay to ensure canvas is mounted
-      const timeoutId = setTimeout(() => {
+      const rafId = requestAnimationFrame(() => {
         onQRCodeGenerate(generationKey);
-      }, 10);
+      });
 
-      return () => clearTimeout(timeoutId);
+      return () => cancelAnimationFrame(rafId);
     }
   }, [generationKey, onQRCodeGenerate]);
 
