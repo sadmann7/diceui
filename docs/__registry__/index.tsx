@@ -1701,6 +1701,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "rating-themes-demo": {
+      name: "rating-themes-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["rating"],
+      files: [{
+        path: "registry/default/examples/rating-themes-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/rating-themes-demo.tsx")),
+      source: "",
+      chunks: []
+    },
     "rating-controlled-demo": {
       name: "rating-controlled-demo",
       description: "",
@@ -1726,20 +1740,6 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/rating-form-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "rating-sizes-demo": {
-      name: "rating-sizes-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["rating"],
-      files: [{
-        path: "registry/default/examples/rating-sizes-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/rating-sizes-demo.tsx")),
       source: "",
       chunks: []
     },

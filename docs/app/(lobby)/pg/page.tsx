@@ -28,8 +28,9 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
-import RatingDemo from "@/registry/default/example/rating-demo";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
+import RatingDemo from "@/registry/default/examples/rating-demo";
+import RatingThemesDemo from "@/registry/default/examples/rating-themes-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -45,6 +46,7 @@ export default function PlaygroundPage() {
     <Shell>
       <Demo>
         <RatingDemo />
+        <RatingThemesDemo />
         <ColorPickerDemo />
       </Demo>
       <Combobox className="w-[15rem]">

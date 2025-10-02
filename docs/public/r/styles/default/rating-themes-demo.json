@@ -1,0 +1,18 @@
+{
+  "name": "rating-themes-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "rating"
+  ],
+  "files": [
+    {
+      "path": "examples/rating-themes-demo.tsx",
+      "content": "\"use client\";\n\nimport { Heart, Star, Zap } from \"lucide-react\";\nimport { cn } from \"@/lib/utils\";\nimport { Rating, RatingItem } from \"@/registry/default/ui/rating\";\n\nconst themes = [\n  {\n    name: \"Default\",\n    value: 4,\n    icon: Star,\n    className: \"text-primary\",\n    description: \"Classic star rating\",\n  },\n  {\n    name: \"Gold\",\n    value: 5,\n    icon: Star,\n    className: \"text-yellow-500\",\n    description: \"Premium gold stars\",\n  },\n  {\n    name: \"Blue\",\n    value: 3,\n    icon: Star,\n    className: \"text-blue-500\",\n    description: \"Cool blue theme\",\n  },\n  {\n    name: \"Purple\",\n    value: 4,\n    icon: Star,\n    className: \"text-purple-500\",\n    description: \"Elegant purple\",\n  },\n  {\n    name: \"Hearts\",\n    value: 5,\n    icon: Heart,\n    className: \"text-pink-500\",\n    description: \"Love & favorites\",\n  },\n  {\n    name: \"Energy\",\n    value: 4,\n    icon: Zap,\n    className: \"text-orange-500\",\n    description: \"Performance rating\",\n  },\n  {\n    name: \"Subtle\",\n    value: 3,\n    icon: Star,\n    className: \"text-gray-400\",\n    description: \"Minimal gray theme\",\n  },\n  {\n    name: \"Emerald\",\n    value: 4,\n    icon: Star,\n    className: \"text-emerald-500\",\n    description: \"Fresh green accent\",\n  },\n];\n\nexport default function RatingThemesDemo() {\n  return (\n    <>\n      <div className=\"hidden grid-cols-4 gap-4 sm:grid\">\n        {themes.map((theme) => (\n          <RatingCard key={theme.name} theme={theme} />\n        ))}\n      </div>\n      <div className=\"grid grid-cols-2 gap-4 sm:hidden\">\n        {themes.slice(0, 4).map((theme) => (\n          <RatingCard key={theme.name} theme={theme} />\n        ))}\n      </div>\n    </>\n  );\n}\n\ninterface RatingCardProps {\n  theme: (typeof themes)[0];\n}\n\nfunction RatingCard({ theme }: RatingCardProps) {\n  const Icon = theme.icon;\n\n  return (\n    <div className=\"flex flex-col items-center gap-3 rounded-lg border p-4\">\n      <Rating\n        defaultValue={theme.value}\n        className={cn(\"gap-1\", theme.className)}\n      >\n        {Array.from({ length: 5 }, (_, i) => (\n          <RatingItem key={i} className=\"transition-colors duration-200\">\n            <Icon className=\"size-full\" />\n          </RatingItem>\n        ))}\n      </Rating>\n      <div className=\"flex flex-col items-center gap-1 text-center\">\n        <h4 className=\"font-medium text-sm\">{theme.name}</h4>\n        <p className=\"text-muted-foreground text-xs\">{theme.description}</p>\n        <div className=\"flex items-center gap-1 text-xs\">\n          <span className=\"text-muted-foreground\">Interactive rating</span>\n        </div>\n      </div>\n    </div>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

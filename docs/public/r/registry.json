@@ -764,6 +764,54 @@
       ]
     },
     {
+      "name": "rating-demo",
+      "type": "registry:component",
+      "title": "Rating Demo",
+      "description": "Example showing how to use the rating component.",
+      "files": [
+        {
+          "path": "registry/default/examples/rating-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "rating-themes-demo",
+      "type": "registry:component",
+      "title": "Rating Themes Demo",
+      "description": "Example showing rating component with different color themes and custom icons.",
+      "files": [
+        {
+          "path": "registry/default/examples/rating-themes-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "rating-controlled-demo",
+      "type": "registry:component",
+      "title": "Rating Controlled Demo",
+      "description": "Example showing controlled rating with state management.",
+      "files": [
+        {
+          "path": "registry/default/examples/rating-controlled-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "rating-form-demo",
+      "type": "registry:component",
+      "title": "Rating Form Demo",
+      "description": "Example showing rating component integration with React Hook Form.",
+      "files": [
+        {
+          "path": "registry/default/examples/rating-form-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
       "name": "relative-time-card-demo",
       "type": "registry:component",
       "title": "Relative Time Card Demo",

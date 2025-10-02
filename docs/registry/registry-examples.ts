@@ -1052,6 +1052,18 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "rating-themes-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["rating"],
+    files: [
+      {
+        path: "examples/rating-themes-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "rating-controlled-demo",
     type: "registry:example",
     registryDependencies: ["rating", "button"],
@@ -1075,17 +1087,6 @@ export const examples: Registry["items"] = [
     files: [
       {
         path: "examples/rating-form-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "rating-sizes-demo",
-    type: "registry:example",
-    registryDependencies: ["rating"],
-    files: [
-      {
-        path: "examples/rating-sizes-demo.tsx",
         type: "registry:example",
       },
     ],
