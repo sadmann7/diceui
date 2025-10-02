@@ -67,9 +67,14 @@ function getFocusIntent(
   return MAP_KEY_TO_FOCUS_INTENT[key];
 }
 
-function focusFirst(candidates: TriggerElement[], preventScroll = false) {
+function focusFirst(
+  candidates: React.RefObject<TriggerElement | null>[],
+  preventScroll = false,
+) {
   const PREVIOUSLY_FOCUSED_ELEMENT = document.activeElement;
-  for (const candidate of candidates) {
+  for (const candidateRef of candidates) {
+    const candidate = candidateRef.current;
+    if (!candidate) continue;
     if (candidate === PREVIOUSLY_FOCUSED_ELEMENT) return;
     candidate.focus({ preventScroll });
     if (document.activeElement !== PREVIOUSLY_FOCUSED_ELEMENT) return;
@@ -290,7 +295,7 @@ function useStore<T>(selector: (state: StoreState) => T): T {
 
 interface ItemData {
   id: string;
-  element: TriggerElement;
+  ref: React.RefObject<TriggerElement | null>;
   value: string;
   active: boolean;
   disabled: boolean;
@@ -388,7 +393,7 @@ function StepperRoot(props: StepperRootProps) {
     if (value !== undefined) {
       store.setState("value", value);
     }
-  }, [value, store]);
+  }, [value]);
 
   const dir = useDirection(dirProp);
 
@@ -448,7 +453,9 @@ const FocusContext = React.createContext<FocusContextValue | null>(null);
 function useFocusContext(consumerName: string) {
   const context = React.useContext(FocusContext);
   if (!context) {
-    throw new Error(`\`${consumerName}\` must be used within a focus provider`);
+    throw new Error(
+      `\`${consumerName}\` must be used within \`FocusProvider\``,
+    );
   }
   return context;
 }
@@ -499,16 +506,21 @@ function StepperList(props: StepperListProps) {
   }, []);
 
   const getItems = React.useCallback(() => {
-    return Array.from(itemsRef.current.values()).sort((a, b) => {
-      const position = a.element.compareDocumentPosition(b.element);
-      if (position & Node.DOCUMENT_POSITION_FOLLOWING) {
-        return -1;
-      }
-      if (position & Node.DOCUMENT_POSITION_PRECEDING) {
-        return 1;
-      }
-      return 0;
-    });
+    return Array.from(itemsRef.current.values())
+      .filter((item) => item.ref.current)
+      .sort((a, b) => {
+        const elementA = a.ref.current;
+        const elementB = b.ref.current;
+        if (!elementA || !elementB) return 0;
+        const position = elementA.compareDocumentPosition(elementB);
+        if (position & Node.DOCUMENT_POSITION_FOLLOWING) {
+          return -1;
+        }
+        if (position & Node.DOCUMENT_POSITION_PRECEDING) {
+          return 1;
+        }
+        return 0;
+      });
   }, []);
 
   const onBlur = React.useCallback(
@@ -551,8 +563,8 @@ function StepperList(props: StepperListProps) {
             currentItem,
             ...items,
           ].filter(Boolean) as ItemData[];
-          const candidateNodes = candidateItems.map((item) => item.element);
-          focusFirst(candidateNodes, false);
+          const candidateRefs = candidateItems.map((item) => item.ref);
+          focusFirst(candidateRefs, false);
         }
       }
       isClickFocusRef.current = false;
@@ -670,11 +682,11 @@ function StepperItem(props: StepperItemProps) {
     return () => {
       store.removeStep(itemValue);
     };
-  }, [store, itemValue, completed, disabled]);
+  }, [itemValue, completed, disabled]);
 
   useIsomorphicLayoutEffect(() => {
     store.setStep(itemValue, completed, disabled);
-  }, [store, itemValue, completed, disabled]);
+  }, [itemValue, completed, disabled]);
 
   const stepState = useStore((state) => state.steps.get(itemValue));
   const steps = useStore((state) => state.steps);
@@ -743,9 +755,8 @@ function StepperTrigger(props: ButtonProps) {
   const isTabStop = focusContext.tabStopId === triggerId;
   const dataState = getDataState(value, itemValue, stepState, steps);
 
-  const [triggerElement, setTriggerElement] =
-    React.useState<TriggerElement | null>(null);
-  const composedRef = useComposedRefs(ref, setTriggerElement);
+  const triggerRef = React.useRef<TriggerElement>(null);
+  const composedRef = useComposedRefs(ref, triggerRef);
   const isArrowKeyPressedRef = React.useRef(false);
   const isMouseClickRef = React.useRef(false);
 
@@ -766,35 +777,26 @@ function StepperTrigger(props: ButtonProps) {
     };
   }, []);
 
-  React.useEffect(() => {
-    if (triggerElement) {
-      focusContext.onItemRegister({
-        id: triggerId,
-        element: triggerElement,
-        value: itemValue,
-        active: isTabStop,
-        disabled: !!isDisabled,
-      });
+  useIsomorphicLayoutEffect(() => {
+    focusContext.onItemRegister({
+      id: triggerId,
+      ref: triggerRef,
+      value: itemValue,
+      active: isTabStop,
+      disabled: !!isDisabled,
+    });
 
-      if (!isDisabled) {
-        focusContext.onFocusableItemAdd();
-      }
-
-      return () => {
-        focusContext.onItemUnregister(triggerId);
-        if (!isDisabled) {
-          focusContext.onFocusableItemRemove();
-        }
-      };
+    if (!isDisabled) {
+      focusContext.onFocusableItemAdd();
     }
-  }, [
-    triggerElement,
-    focusContext,
-    triggerId,
-    itemValue,
-    isTabStop,
-    isDisabled,
-  ]);
+
+    return () => {
+      focusContext.onItemUnregister(triggerId);
+      if (!isDisabled) {
+        focusContext.onFocusableItemRemove();
+      }
+    };
+  }, [focusContext, triggerId, itemValue, isTabStop, isDisabled]);
 
   const onClick = React.useCallback(
     async (event: React.MouseEvent<TriggerElement>) => {
@@ -876,8 +878,8 @@ function StepperTrigger(props: ButtonProps) {
         !context.nonInteractive
       ) {
         event.preventDefault();
-        if (!isDisabled && triggerElement) {
-          triggerElement.click();
+        if (!isDisabled && triggerRef.current) {
+          triggerRef.current.click();
         }
         return;
       }
@@ -897,21 +899,26 @@ function StepperTrigger(props: ButtonProps) {
         event.preventDefault();
 
         const items = focusContext.getItems().filter((item) => !item.disabled);
-        let candidateNodes = items.map((item) => item.element);
+        let candidateRefs = items.map((item) => item.ref);
 
         if (focusIntent === "last") {
-          candidateNodes.reverse();
+          candidateRefs.reverse();
         } else if (focusIntent === "prev" || focusIntent === "next") {
-          if (focusIntent === "prev") candidateNodes.reverse();
-          const currentIndex = candidateNodes.indexOf(event.currentTarget);
-          candidateNodes = loop
-            ? wrapArray(candidateNodes, currentIndex + 1)
-            : candidateNodes.slice(currentIndex + 1);
+          if (focusIntent === "prev") candidateRefs.reverse();
+          const currentIndex = candidateRefs.findIndex(
+            (ref) => ref.current === event.currentTarget,
+          );
+          candidateRefs = loop
+            ? wrapArray(candidateRefs, currentIndex + 1)
+            : candidateRefs.slice(currentIndex + 1);
         }
 
-        if (store.hasValidation() && candidateNodes.length > 0) {
-          const nextElement = candidateNodes[0];
-          const nextItem = items.find((item) => item.element === nextElement);
+        if (store.hasValidation() && candidateRefs.length > 0) {
+          const nextRef = candidateRefs[0];
+          const nextElement = nextRef?.current;
+          const nextItem = items.find(
+            (item) => item.ref.current === nextElement,
+          );
 
           if (nextItem && nextItem.value !== itemValue) {
             const currentStepIndex = Array.from(steps.keys()).indexOf(
@@ -938,7 +945,7 @@ function StepperTrigger(props: ButtonProps) {
           }
         }
 
-        queueMicrotask(() => focusFirst(candidateNodes));
+        queueMicrotask(() => focusFirst(candidateRefs));
       }
     },
     [
@@ -949,7 +956,6 @@ function StepperTrigger(props: ButtonProps) {
       orientation,
       loop,
       isDisabled,
-      triggerElement,
       triggerProps.onKeyDown,
       store,
       itemValue,

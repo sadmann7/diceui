@@ -105,14 +105,7 @@ The Hitbox component improves accessibility by:
 
 ### Best Practices
 
-- Use larger hitboxes for small interactive elements like icons or close buttons
+- Use larger hitboxes for small interactive elements like checkboxes, icons, or close buttons
 - Consider different positions (top, bottom, left, right) based on surrounding content
 - Test with debug mode enabled to ensure adequate coverage
 - Be mindful of overlapping hitboxes that might interfere with each other
-
-## Notes
-
-- The hitbox is implemented using CSS pseudo-elements (::after)
-- Custom sizes accept any valid CSS length value (px, rem, em, %, etc.)
-- The component uses Radix UI's Slot component to avoid wrapper elements
-- Debug mode should only be used during development and testing

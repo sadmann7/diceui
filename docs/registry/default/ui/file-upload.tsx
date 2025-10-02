@@ -240,7 +240,7 @@ function useStoreContext(consumerName: string) {
 }
 
 function useStore<T>(selector: (state: StoreState) => T): T {
-  const store = useStoreContext(ROOT_NAME);
+  const store = useStoreContext("useStore");
 
   const lastValueRef = useLazyRef<{ value: T; state: StoreState } | null>(
     () => null,
