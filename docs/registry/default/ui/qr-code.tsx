@@ -58,7 +58,7 @@ interface Store {
   subscribe: (callback: () => void) => () => void;
   getState: () => StoreState;
   setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
-  batchUpdate: (updates: Partial<StoreState>) => void;
+  setStates: (updates: Partial<StoreState>) => void;
   notify: () => void;
 }
 
@@ -95,39 +95,18 @@ function createStore(
       stateRef.current[key] = value;
       store.notify();
     },
-    batchUpdate: (updates) => {
-      let hasChanges = false;
+    setStates: (updates) => {
+      let hasChanged = false;
 
-      if (
-        updates.dataUrl !== undefined &&
-        !Object.is(stateRef.current.dataUrl, updates.dataUrl)
-      ) {
-        stateRef.current.dataUrl = updates.dataUrl;
-        hasChanges = true;
-      }
-      if (
-        updates.svgString !== undefined &&
-        !Object.is(stateRef.current.svgString, updates.svgString)
-      ) {
-        stateRef.current.svgString = updates.svgString;
-        hasChanges = true;
-      }
-      if (
-        updates.isGenerating !== undefined &&
-        !Object.is(stateRef.current.isGenerating, updates.isGenerating)
-      ) {
-        stateRef.current.isGenerating = updates.isGenerating;
-        hasChanges = true;
-      }
-      if (
-        updates.error !== undefined &&
-        !Object.is(stateRef.current.error, updates.error)
-      ) {
-        stateRef.current.error = updates.error;
-        hasChanges = true;
+      for (const key of Object.keys(updates) as Array<keyof StoreState>) {
+        const value = updates[key];
+        if (value !== undefined && !Object.is(stateRef.current[key], value)) {
+          Object.assign(stateRef.current, { [key]: value });
+          hasChanged = true;
+        }
       }
 
-      if (hasChanges) {
+      if (hasChanged) {
         store.notify();
       }
     },
@@ -204,7 +183,6 @@ function QRCodeRoot(props: QRCodeRootProps) {
     onError,
     onGenerated,
     asChild,
-    children,
     ...rootProps
   } = props;
 
@@ -227,7 +205,7 @@ function QRCodeRoot(props: QRCodeRootProps) {
     const state = stateRef.current;
     if (state.isGenerating || !value) return;
 
-    store.batchUpdate({
+    store.setStates({
       isGenerating: true,
       error: null,
     });
@@ -263,7 +241,7 @@ function QRCodeRoot(props: QRCodeRootProps) {
       };
       const svgString = await QRCode.toString(value, svgOptions);
 
-      store.batchUpdate({
+      store.setStates({
         dataUrl,
         svgString,
         isGenerating: false,
@@ -272,7 +250,7 @@ function QRCodeRoot(props: QRCodeRootProps) {
       onGenerated?.();
     } catch (error) {
       const err = error as Error;
-      store.batchUpdate({
+      store.setStates({
         error: err,
         isGenerating: false,
       });
@@ -329,9 +307,7 @@ function QRCodeRoot(props: QRCodeRootProps) {
   return (
     <StoreContext.Provider value={store}>
       <QRCodeContext.Provider value={qrCodeContextValue}>
-        <RootPrimitive data-slot="qr-code" {...rootProps}>
-          {children}
-        </RootPrimitive>
+        <RootPrimitive data-slot="qr-code" {...rootProps} />
       </QRCodeContext.Provider>
     </StoreContext.Provider>
   );
