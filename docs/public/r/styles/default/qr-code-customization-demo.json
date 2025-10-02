@@ -1,0 +1,15 @@
+{
+  "name": "qr-code-customization-demo",
+  "type": "registry:example",
+  "registryDependencies": [
+    "qr-code"
+  ],
+  "files": [
+    {
+      "path": "examples/qr-code-customization-demo.tsx",
+      "content": "import { QRCode, QRCodeCanvas } from \"@/registry/default/ui/qr-code\";\n\nexport default function QRCodeCustomizationDemo() {\n  return (\n    <div className=\"grid grid-cols-1 gap-6 p-6 md:grid-cols-3\">\n      {/* Default QR Code */}\n      <div className=\"flex flex-col items-center space-y-2\">\n        <QRCode value=\"https://diceui.com\" size={150}>\n          <QRCodeCanvas />\n        </QRCode>\n        <p className=\"text-muted-foreground text-sm\">Default</p>\n      </div>\n\n      {/* Custom Colors */}\n      <div className=\"flex flex-col items-center space-y-2\">\n        <QRCode\n          value=\"https://diceui.com\"\n          size={150}\n          fgColor=\"#3b82f6\"\n          bgColor=\"#f1f5f9\"\n        >\n          <QRCodeCanvas />\n        </QRCode>\n        <p className=\"text-muted-foreground text-sm\">Custom Colors</p>\n      </div>\n\n      {/* High Error Correction */}\n      <div className=\"flex flex-col items-center space-y-2\">\n        <QRCode\n          value=\"https://diceui.com\"\n          size={150}\n          level=\"H\"\n          fgColor=\"#dc2626\"\n        >\n          <QRCodeCanvas />\n        </QRCode>\n        <p className=\"text-muted-foreground text-sm\">High Error Correction</p>\n      </div>\n    </div>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

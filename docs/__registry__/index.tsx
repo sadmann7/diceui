@@ -391,6 +391,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "qr-code": {
+      name: "qr-code",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/ui/qr-code.tsx",
+        type: "registry:ui",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/qr-code.tsx")),
+      source: "",
+      chunks: []
+    },
     "rating": {
       name: "rating",
       description: "",
@@ -1684,6 +1698,62 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/mention-custom-trigger-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "qr-code-demo": {
+      name: "qr-code-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["qr-code"],
+      files: [{
+        path: "registry/default/examples/qr-code-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/qr-code-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "qr-code-customization-demo": {
+      name: "qr-code-customization-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["qr-code"],
+      files: [{
+        path: "registry/default/examples/qr-code-customization-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/qr-code-customization-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "qr-code-formats-demo": {
+      name: "qr-code-formats-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["qr-code"],
+      files: [{
+        path: "registry/default/examples/qr-code-formats-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/qr-code-formats-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "qr-code-interactive-demo": {
+      name: "qr-code-interactive-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["qr-code","button","input","label","select"],
+      files: [{
+        path: "registry/default/examples/qr-code-interactive-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/qr-code-interactive-demo.tsx")),
       source: "",
       chunks: []
     },
