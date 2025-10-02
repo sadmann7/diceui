@@ -30,7 +30,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import RatingDemo from "@/registry/default/example/rating-demo";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
-import HitboxDemo from "@/registry/default/examples/hitbox-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -46,7 +45,6 @@ export default function PlaygroundPage() {
     <Shell>
       <Demo>
         <RatingDemo />
-        <HitboxDemo />
         <ColorPickerDemo />
       </Demo>
       <Combobox className="w-[15rem]">

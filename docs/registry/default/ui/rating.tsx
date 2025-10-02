@@ -98,9 +98,6 @@ function useDirection(dirProp?: Direction): Direction {
 interface StoreState {
   value: number;
   hoveredValue: number | null;
-  max: number;
-  allowHalf: boolean;
-  allowClear: boolean;
 }
 
 interface Store {
@@ -128,9 +125,6 @@ function createStore(
       stateRef.current ?? {
         value: 0,
         hoveredValue: null,
-        max: 5,
-        allowHalf: false,
-        allowClear: false,
       },
     setState: (key, value) => {
       const state = stateRef.current;
@@ -194,6 +188,9 @@ interface RatingContextValue {
   orientation: Orientation;
   activationMode: ActivationMode;
   size: Size;
+  max: number;
+  allowHalf: boolean;
+  allowClear: boolean;
   disabled: boolean;
   readOnly: boolean;
   getAutoIndex: (instanceId: string) => number;
@@ -257,18 +254,12 @@ function RatingRoot(props: RatingRootProps) {
     defaultValue = 0,
     onValueChange,
     onHover,
-    max = 5,
-    allowHalf = false,
-    allowClear = false,
     ...rootProps
   } = props;
 
   const stateRef = useLazyRef(() => ({
     value: value ?? defaultValue,
     hoveredValue: null,
-    max,
-    allowHalf,
-    allowClear,
   }));
   const listenersRef = useLazyRef(() => new Set<() => void>());
 
@@ -285,15 +276,7 @@ function RatingRoot(props: RatingRootProps) {
 }
 
 interface RatingRootImplProps
-  extends Omit<
-    RatingRootProps,
-    | "defaultValue"
-    | "onValueChange"
-    | "onHover"
-    | "max"
-    | "allowHalf"
-    | "allowClear"
-  > {}
+  extends Omit<RatingRootProps, "defaultValue" | "onValueChange" | "onHover"> {}
 
 function RatingRootImpl(props: RatingRootImplProps) {
   const {
@@ -303,6 +286,9 @@ function RatingRootImpl(props: RatingRootImplProps) {
     orientation = "horizontal",
     activationMode = "automatic",
     size = "default",
+    max = 5,
+    allowHalf = false,
+    allowClear = false,
     asChild,
     disabled = false,
     readOnly = false,
@@ -461,6 +447,9 @@ function RatingRootImpl(props: RatingRootImplProps) {
       readOnly,
       size,
       getAutoIndex,
+      max,
+      allowHalf,
+      allowClear,
     }),
     [
       rootId,
@@ -471,6 +460,9 @@ function RatingRootImpl(props: RatingRootImplProps) {
       readOnly,
       size,
       getAutoIndex,
+      max,
+      allowHalf,
+      allowClear,
     ],
   );
 
@@ -590,9 +582,8 @@ function RatingItem(props: RatingItemProps) {
   const focusContext = useFocusContext(ITEM_NAME);
   const value = useStore((state) => state.value);
   const hoveredValue = useStore((state) => state.hoveredValue);
-  const max = useStore((state) => state.max);
-  const allowHalf = useStore((state) => state.allowHalf);
-  const allowClear = useStore((state) => state.allowClear);
+  const allowClear = context.allowClear;
+  const allowHalf = context.allowHalf;
   const activationMode = context.activationMode;
 
   const itemId = getItemId(context.id, itemValue);
@@ -876,7 +867,7 @@ function RatingItem(props: RatingItemProps) {
       type="button"
       aria-checked={isFilled}
       aria-posinset={itemValue}
-      aria-setsize={max}
+      aria-setsize={context.max}
       data-disabled={isDisabled ? "" : undefined}
       data-readonly={isReadOnly ? "" : undefined}
       data-state={isFilled ? "full" : isHalfFilled ? "partial" : "empty"}
