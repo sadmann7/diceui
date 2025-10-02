@@ -183,6 +183,7 @@ interface RatingContextValue {
   disabled: boolean;
   readOnly: boolean;
   size: "sm" | "md" | "lg";
+  getAutoIndex: (instanceId: string) => number;
 }
 
 const RatingContext = React.createContext<RatingContextValue | null>(null);
@@ -310,7 +311,6 @@ function RatingRootImpl(props: RatingRootImplProps) {
   const rootId = idProp ?? id;
   const currentValue = useStore((state) => state.value);
 
-  // Form control state
   const [formTrigger, setFormTrigger] = React.useState<HTMLDivElement | null>(
     null,
   );
@@ -318,12 +318,25 @@ function RatingRootImpl(props: RatingRootImplProps) {
 
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
-  // Focus management state
   const [tabStopId, setTabStopId] = React.useState<string | null>(null);
   const [isTabbingBackOut, setIsTabbingBackOut] = React.useState(false);
   const [focusableItemCount, setFocusableItemCount] = React.useState(0);
   const isClickFocusRef = React.useRef(false);
   const itemsRef = React.useRef<Map<string, ItemData>>(new Map());
+
+  const autoIndexMapRef = React.useRef(new Map<string, number>());
+  const nextAutoIndexRef = React.useRef(0);
+
+  const getAutoIndex = React.useCallback((instanceId: string) => {
+    const existingIndex = autoIndexMapRef.current.get(instanceId);
+    if (existingIndex !== undefined) {
+      return existingIndex;
+    }
+
+    const newIndex = nextAutoIndexRef.current++;
+    autoIndexMapRef.current.set(instanceId, newIndex);
+    return newIndex;
+  }, []);
 
   const onItemFocus = React.useCallback((tabStopId: string) => {
     setTabStopId(tabStopId);
@@ -427,8 +440,18 @@ function RatingRootImpl(props: RatingRootImplProps) {
       disabled,
       readOnly,
       size,
+      getAutoIndex,
     }),
-    [rootId, dir, orientation, activationMode, disabled, readOnly, size],
+    [
+      rootId,
+      dir,
+      orientation,
+      activationMode,
+      disabled,
+      readOnly,
+      size,
+      getAutoIndex,
+    ],
   );
 
   const focusContextValue = React.useMemo<FocusContextValue>(
@@ -505,15 +528,31 @@ const sizeClasses = {
 };
 
 interface RatingItemProps extends React.ComponentProps<"button"> {
-  index: number;
+  index?: number;
   asChild?: boolean;
 }
 
 function RatingItem(props: RatingItemProps) {
   const { index, asChild, className, ref, ...itemProps } = props;
-  const itemValue = index + 1;
+
+  const [itemElement, setItemElement] = React.useState<ItemElement | null>(
+    null,
+  );
+  const composedRef = useComposedRefs(ref, setItemElement);
 
   const context = useRatingContext(ITEM_NAME);
+
+  const instanceId = React.useId();
+
+  const actualIndex = React.useMemo(() => {
+    if (index !== undefined) {
+      return index;
+    }
+
+    return context.getAutoIndex(instanceId);
+  }, [index, context, instanceId]);
+
+  const itemValue = actualIndex + 1;
   const store = useStoreContext(ITEM_NAME);
   const focusContext = useFocusContext(ITEM_NAME);
   const value = useStore((state) => state.value);
@@ -533,10 +572,6 @@ function RatingItem(props: RatingItemProps) {
   const isHalfFilled =
     allowHalf && displayValue >= itemValue - 0.5 && displayValue < itemValue;
 
-  const [itemElement, setItemElement] = React.useState<ItemElement | null>(
-    null,
-  );
-  const composedRef = useComposedRefs(ref, setItemElement);
   const isMouseClickRef = React.useRef(false);
 
   React.useEffect(() => {
@@ -760,6 +795,4 @@ export {
   RatingItem,
   //
   useStore as useRating,
-  //
-  type RatingRootProps as RatingProps,
 };
