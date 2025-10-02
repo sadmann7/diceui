@@ -452,7 +452,6 @@ export {
   QRCodeDownload,
   //
   useStore as useQRCode,
-  useQRCodeContext,
   //
   type QRCodeRootProps as QRCodeProps,
 };
