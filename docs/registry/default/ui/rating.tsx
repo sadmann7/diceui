@@ -17,6 +17,10 @@ function getItemId(id: string, value: number) {
   return `${id}-item-${value}`;
 }
 
+function getHalfFillGradientId(id: string) {
+  return `half-fill-gradient-${id}`;
+}
+
 type FocusIntent = "first" | "last" | "prev" | "next";
 
 const MAP_KEY_TO_FOCUS_INTENT: Record<string, FocusIntent> = {
@@ -512,8 +516,6 @@ function RatingRootImpl(props: RatingRootImplProps) {
           ref={composedRef}
           className={cn(
             "flex gap-1 text-primary outline-none",
-            // Default empty state styling that can be overridden
-            "[&_[data-state=empty]]:text-current/30",
             orientation === "horizontal"
               ? "flex-row items-center"
               : "flex-col items-start",
@@ -523,12 +525,20 @@ function RatingRootImpl(props: RatingRootImplProps) {
           onFocus={onFocus}
           onMouseDown={onMouseDown}
         />
-        {/* SVG gradient definition for half stars */}
         <svg width="0" height="0" style={{ position: "absolute" }}>
           <defs>
-            <linearGradient id={`half-star-gradient-${rootId}`}>
-              <stop offset="50%" stopColor="currentColor" />
-              <stop offset="50%" stopColor="transparent" />
+            <linearGradient id={getHalfFillGradientId(rootId)}>
+              {dir === "rtl" ? (
+                <>
+                  <stop offset="50%" stopColor="transparent" />
+                  <stop offset="50%" stopColor="currentColor" />
+                </>
+              ) : (
+                <>
+                  <stop offset="50%" stopColor="currentColor" />
+                  <stop offset="50%" stopColor="transparent" />
+                </>
+              )}
             </linearGradient>
           </defs>
         </svg>
@@ -626,18 +636,22 @@ function RatingItem(props: RatingItemProps) {
       if (!isDisabled && !isReadOnly) {
         let newValue = itemValue;
 
-        // Handle half star clicks when allowHalf is enabled
         if (allowHalf) {
           const rect = event.currentTarget.getBoundingClientRect();
           const clickX = event.clientX - rect.left;
           const isLeftHalf = clickX < rect.width / 2;
 
-          if (isLeftHalf) {
-            newValue = itemValue - 0.5;
+          if (context.dir === "rtl") {
+            if (!isLeftHalf) {
+              newValue = itemValue - 0.5;
+            }
+          } else {
+            if (isLeftHalf) {
+              newValue = itemValue - 0.5;
+            }
           }
         }
 
-        // Handle clear functionality
         if (allowClear && value === newValue) {
           newValue = 0;
         }
@@ -653,6 +667,7 @@ function RatingItem(props: RatingItemProps) {
       value,
       itemValue,
       store,
+      context.dir,
       itemProps.onClick,
     ],
   );
@@ -665,14 +680,19 @@ function RatingItem(props: RatingItemProps) {
       if (!isDisabled && !isReadOnly) {
         let hoverValue = itemValue;
 
-        // Handle half star hover when allowHalf is enabled
         if (allowHalf) {
           const rect = event.currentTarget.getBoundingClientRect();
           const mouseX = event.clientX - rect.left;
           const isLeftHalf = mouseX < rect.width / 2;
 
-          if (isLeftHalf) {
-            hoverValue = itemValue - 0.5;
+          if (context.dir === "rtl") {
+            if (!isLeftHalf) {
+              hoverValue = itemValue - 0.5;
+            }
+          } else {
+            if (isLeftHalf) {
+              hoverValue = itemValue - 0.5;
+            }
           }
         }
 
@@ -685,6 +705,7 @@ function RatingItem(props: RatingItemProps) {
       allowHalf,
       itemValue,
       store,
+      context.dir,
       itemProps.onMouseEnter,
     ],
   );
@@ -699,7 +720,13 @@ function RatingItem(props: RatingItemProps) {
         const mouseX = event.clientX - rect.left;
         const isLeftHalf = mouseX < rect.width / 2;
 
-        const hoverValue = isLeftHalf ? itemValue - 0.5 : itemValue;
+        let hoverValue = itemValue;
+        if (context.dir === "rtl") {
+          hoverValue = !isLeftHalf ? itemValue - 0.5 : itemValue;
+        } else {
+          hoverValue = isLeftHalf ? itemValue - 0.5 : itemValue;
+        }
+
         store.setState("hoveredValue", hoverValue);
       }
     },
@@ -709,6 +736,7 @@ function RatingItem(props: RatingItemProps) {
       allowHalf,
       itemValue,
       store,
+      context.dir,
       itemProps.onMouseMove,
     ],
   );
@@ -861,12 +889,12 @@ function RatingItem(props: RatingItemProps) {
       style={{
         ...itemProps.style,
         ...(isHalfFilled && {
-          "--half-star-fill": `url(#half-star-gradient-${context.id})`,
+          "--half-fill": `url(#${getHalfFillGradientId(context.id)})`,
         }),
       }}
       className={cn(
         "inline-flex items-center justify-center rounded-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
-        "[&_svg:not([class*='size-'])]:size-full [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:transition-colors [&_svg]:duration-200 data-[state=empty]:[&_svg]:fill-transparent data-[state=full]:[&_svg]:fill-current data-[state=partial]:[&_svg]:fill-[var(--half-star-fill)]",
+        "[&_svg:not([class*='size-'])]:size-full [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:transition-colors [&_svg]:duration-200 data-[state=empty]:[&_svg]:fill-transparent data-[state=full]:[&_svg]:fill-current data-[state=partial]:[&_svg]:fill-[var(--half-fill)]",
         context.size === "sm"
           ? "size-4"
           : context.size === "lg"
