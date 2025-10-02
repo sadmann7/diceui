@@ -149,14 +149,9 @@ interface QRCodeRootProps extends Omit<React.ComponentProps<"div">, "onError"> {
   size?: number;
   margin?: number;
   level?: QRCodeLevel;
+  quality?: number;
   backgroundColor?: string;
   foregroundColor?: string;
-  imageOpts?: {
-    src: string;
-    height: number;
-    width: number;
-    excavate?: boolean;
-  };
   onError?: (error: Error) => void;
   onGenerated?: () => void;
   asChild?: boolean;
@@ -166,11 +161,11 @@ function QRCodeRoot(props: QRCodeRootProps) {
   const {
     value,
     size = 200,
-    backgroundColor = "#ffffff",
-    foregroundColor = "#000000",
     level = "M",
     margin = 1,
-    imageOpts,
+    quality = 0.92,
+    backgroundColor = "#ffffff",
+    foregroundColor = "#000000",
     onError,
     onGenerated,
     asChild,
@@ -197,7 +192,7 @@ function QRCodeRoot(props: QRCodeRootProps) {
     () => ({
       errorCorrectionLevel: level,
       type: "image/png",
-      quality: 0.92,
+      quality,
       margin,
       color: {
         dark: foregroundColor,
@@ -205,7 +200,7 @@ function QRCodeRoot(props: QRCodeRootProps) {
       },
       width: size,
     }),
-    [level, margin, foregroundColor, backgroundColor, size],
+    [level, margin, foregroundColor, backgroundColor, size, quality],
   );
 
   const generationKey = React.useMemo(() => {
@@ -218,9 +213,9 @@ function QRCodeRoot(props: QRCodeRootProps) {
       foregroundColor,
       backgroundColor,
       size,
-      imageOpts,
+      quality,
     });
-  }, [value, level, margin, foregroundColor, backgroundColor, size, imageOpts]);
+  }, [value, level, margin, foregroundColor, backgroundColor, size, quality]);
 
   const onQRCodeGenerate = React.useCallback(
     async (targetGenerationKey: string) => {

@@ -47,15 +47,13 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   margin?: number;
 
   /**
-   * The image format to render.
-   * @default "image/png"
+   * The quality of the generated image (0-1).
+   *
+   * Only applies to formats that support quality settings like JPEG and WebP.
+   *
+   * @default 0.92
    */
-  imageSettings?: {
-    src: string;
-    height: number;
-    width: number;
-    excavate?: boolean;
-  };
+  quality?: number;
 
   /**
    * Callback fired when the QR code fails to generate.
