@@ -132,4 +132,4 @@ You should:
 - Maintain import path consistency
 - Use proper TypeScript module organization
 
-When implementing, create all files in the correct locations and ensure they follow the established patterns from existing components like color-picker, checkbox-group, etc.
+When implementing, create all files in the correct locations and ensure they follow the established patterns from existing components like editable, color-picker, etc.
