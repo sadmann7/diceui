@@ -1,10 +1,17 @@
-import type { CompositionProps, EmptyProps } from "@/types";
+import type {
+  CompositionProps,
+  Direction,
+  EmptyProps,
+  Orientation,
+} from "@/types";
 
 export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The current rating value.
    *
-   * @example 3.5
+   * ```ts
+   * value={4}
+   * ```
    */
   value?: number;
 
@@ -12,14 +19,12 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * The default rating value for uncontrolled usage.
    *
    * @default 0
-   * @example 3
    */
   defaultValue?: number;
 
   /**
    * Event handler called when the rating value changes.
    *
-   * @example
    * ```ts
    * onValueChange={(value) => {
    *   console.log("Rating:", value)
@@ -31,45 +36,13 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The maximum rating value.
    *
+   * ```ts
+   * max={10}
+   * ```
+   *
    * @default 5
-   * @example 10
    */
   max?: number;
-
-  /**
-   * The size of the rating component.
-   *
-   * @default "default"
-   */
-  size?: "sm" | "default" | "lg";
-
-  /**
-   * Whether the rating allows half values.
-   *
-   * @default false
-   */
-  allowHalf?: boolean;
-
-  /**
-   * Whether clicking the same rating value clears the selection.
-   *
-   * @default false
-   */
-  allowClear?: boolean;
-
-  /**
-   * Whether the rating is read-only.
-   *
-   * @default false
-   */
-  readOnly?: boolean;
-
-  /**
-   * Whether the rating is disabled.
-   *
-   * @default false
-   */
-  disabled?: boolean;
 
   /**
    * Controls how ratings are activated during keyboard navigation.
@@ -82,9 +55,58 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   activationMode?: "automatic" | "manual";
 
   /**
-   * The name attribute for form submission.
+   * The text direction of the rating component.
+   *
+   * @default "ltr"
    */
-  name?: string;
+  dir?: Direction;
+
+  /**
+   * The orientation of the rating component.
+   *
+   * @default "horizontal"
+   */
+  orientation?: Orientation;
+
+  /**
+   * The size of the rating component.
+   *
+   * @default "default"
+   */
+  size?: "sm" | "default" | "lg";
+
+  /**
+   * The step increment for rating values. Use 0.5 for half-star ratings.
+   *
+   * ```ts
+   * step={0.5} // Allows half-star ratings
+   * step={0.25} // Allows quarter-star ratings
+   * ```
+   *
+   * @default 1
+   */
+  step?: 0.5 | 1;
+
+  /**
+   * Whether clicking the same rating value clears the selection.
+   *
+   * @default false
+   */
+  clearable?: boolean;
+
+  /**
+   * Whether the rating is disabled.
+   *
+   * @default false
+   */
+  disabled?: boolean;
+
+  /**
+   * Whether the rating is read-only.
+   *
+   * @default false
+   */
+  readOnly?: boolean;
 
   /**
    * Whether the rating is required for form validation.
@@ -94,11 +116,9 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   required?: boolean;
 
   /**
-   * Whether the rating is in an invalid state.
-   *
-   * @default false
+   * The name attribute for form submission.
    */
-  invalid?: boolean;
+  name?: string;
 }
 
 export interface ItemProps extends EmptyProps<"button">, CompositionProps {
@@ -109,4 +129,20 @@ export interface ItemProps extends EmptyProps<"button">, CompositionProps {
    * @example 0
    */
   index?: number;
+
+  /**
+   * The content to render inside the rating item.
+   * Can be a React node or a function that receives the data state.
+   *
+   * ```ts
+   * children={<Star />}
+   * // or
+   * children={(state) => (
+   *   <Star className={state === "full" ? "text-yellow-500" : "text-gray-300"} />
+   * )}
+   * ```
+   */
+  children?:
+    | React.ReactNode
+    | ((dataState: "full" | "partial" | "empty") => React.ReactNode);
 }

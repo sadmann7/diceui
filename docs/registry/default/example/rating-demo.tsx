@@ -1,3 +1,5 @@
+"use client";
+
 import { Rating, RatingItem } from "@/registry/default/ui/rating";
 
 export default function RatingDemo() {
@@ -13,7 +15,7 @@ export default function RatingDemo() {
       </div>
       <div className="flex flex-col gap-2">
         <h4 className="font-medium text-sm">Half Stars (LTR)</h4>
-        <Rating defaultValue={2.5} allowHalf>
+        <Rating defaultValue={2.5} step={0.5}>
           {Array.from({ length: 5 }, (_, i) => (
             <RatingItem key={i} />
           ))}
@@ -21,7 +23,7 @@ export default function RatingDemo() {
       </div>
       <div className="flex flex-col gap-2">
         <h4 className="font-medium text-sm">Half Stars (RTL)</h4>
-        <Rating dir="rtl" defaultValue={2.5} allowHalf>
+        <Rating dir="rtl" defaultValue={2.5} step={0.5}>
           {Array.from({ length: 5 }, (_, i) => (
             <RatingItem key={i} />
           ))}

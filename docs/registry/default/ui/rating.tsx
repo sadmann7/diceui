@@ -17,8 +17,8 @@ function getItemId(id: string, value: number) {
   return `${id}-item-${value}`;
 }
 
-function getHalfFillGradientId(id: string) {
-  return `half-fill-gradient-${id}`;
+function getPartialFillGradientId(id: string, step: Step) {
+  return `partial-fill-gradient-${id}-${step}`;
 }
 
 type FocusIntent = "first" | "last" | "prev" | "next";
@@ -87,6 +87,7 @@ type Direction = "ltr" | "rtl";
 type Orientation = "horizontal" | "vertical";
 type ActivationMode = "automatic" | "manual";
 type Size = "default" | "sm" | "lg";
+type Step = 0.5 | 1;
 
 const DirectionContext = React.createContext<Direction | undefined>(undefined);
 
@@ -189,8 +190,8 @@ interface RatingContextValue {
   activationMode: ActivationMode;
   size: Size;
   max: number;
-  allowHalf: boolean;
-  allowClear: boolean;
+  step: Step;
+  clearable: boolean;
   disabled: boolean;
   readOnly: boolean;
   getAutoIndex: (instanceId: string) => number;
@@ -240,8 +241,8 @@ interface RatingRootProps extends React.ComponentProps<"div"> {
   orientation?: Orientation;
   size?: Size;
   asChild?: boolean;
-  allowHalf?: boolean;
-  allowClear?: boolean;
+  step?: Step;
+  clearable?: boolean;
   disabled?: boolean;
   readOnly?: boolean;
   required?: boolean;
@@ -287,8 +288,8 @@ function RatingRootImpl(props: RatingRootImplProps) {
     activationMode = "automatic",
     size = "default",
     max = 5,
-    allowHalf = false,
-    allowClear = false,
+    step = 1,
+    clearable = false,
     asChild,
     disabled = false,
     readOnly = false,
@@ -448,8 +449,8 @@ function RatingRootImpl(props: RatingRootImplProps) {
       size,
       getAutoIndex,
       max,
-      allowHalf,
-      allowClear,
+      step,
+      clearable,
     }),
     [
       rootId,
@@ -461,8 +462,8 @@ function RatingRootImpl(props: RatingRootImplProps) {
       size,
       getAutoIndex,
       max,
-      allowHalf,
-      allowClear,
+      step,
+      clearable,
     ],
   );
 
@@ -519,7 +520,7 @@ function RatingRootImpl(props: RatingRootImplProps) {
         />
         <svg width="0" height="0" style={{ position: "absolute" }}>
           <defs>
-            <linearGradient id={getHalfFillGradientId(rootId)}>
+            <linearGradient id={getPartialFillGradientId(rootId, step)}>
               {dir === "rtl" ? (
                 <>
                   <stop offset="50%" stopColor="transparent" />
@@ -582,8 +583,8 @@ function RatingItem(props: RatingItemProps) {
   const focusContext = useFocusContext(ITEM_NAME);
   const value = useStore((state) => state.value);
   const hoveredValue = useStore((state) => state.hoveredValue);
-  const allowClear = context.allowClear;
-  const allowHalf = context.allowHalf;
+  const clearable = context.clearable;
+  const step = context.step;
   const activationMode = context.activationMode;
 
   const itemId = getItemId(context.id, itemValue);
@@ -593,8 +594,8 @@ function RatingItem(props: RatingItemProps) {
 
   const displayValue = hoveredValue ?? value;
   const isFilled = displayValue >= itemValue;
-  const isHalfFilled =
-    allowHalf && displayValue >= itemValue - 0.5 && displayValue < itemValue;
+  const isPartiallyFilled =
+    step < 1 && displayValue >= itemValue - step && displayValue < itemValue;
   const isHovered = hoveredValue !== null && hoveredValue < itemValue;
 
   const isMouseClickRef = React.useRef(false);
@@ -627,23 +628,23 @@ function RatingItem(props: RatingItemProps) {
       if (!isDisabled && !isReadOnly) {
         let newValue = itemValue;
 
-        if (allowHalf) {
+        if (step < 1) {
           const rect = event.currentTarget.getBoundingClientRect();
           const clickX = event.clientX - rect.left;
           const isLeftHalf = clickX < rect.width / 2;
 
           if (context.dir === "rtl") {
             if (!isLeftHalf) {
-              newValue = itemValue - 0.5;
+              newValue = itemValue - step;
             }
           } else {
             if (isLeftHalf) {
-              newValue = itemValue - 0.5;
+              newValue = itemValue - step;
             }
           }
         }
 
-        if (allowClear && value === newValue) {
+        if (clearable && value === newValue) {
           newValue = 0;
         }
 
@@ -653,8 +654,8 @@ function RatingItem(props: RatingItemProps) {
     [
       isDisabled,
       isReadOnly,
-      allowClear,
-      allowHalf,
+      clearable,
+      step,
       value,
       itemValue,
       store,
@@ -671,18 +672,18 @@ function RatingItem(props: RatingItemProps) {
       if (!isDisabled && !isReadOnly) {
         let hoverValue = itemValue;
 
-        if (allowHalf) {
+        if (step < 1) {
           const rect = event.currentTarget.getBoundingClientRect();
           const mouseX = event.clientX - rect.left;
           const isLeftHalf = mouseX < rect.width / 2;
 
           if (context.dir === "rtl") {
             if (!isLeftHalf) {
-              hoverValue = itemValue - 0.5;
+              hoverValue = itemValue - step;
             }
           } else {
             if (isLeftHalf) {
-              hoverValue = itemValue - 0.5;
+              hoverValue = itemValue - step;
             }
           }
         }
@@ -693,7 +694,7 @@ function RatingItem(props: RatingItemProps) {
     [
       isDisabled,
       isReadOnly,
-      allowHalf,
+      step,
       itemValue,
       store,
       context.dir,
@@ -706,16 +707,16 @@ function RatingItem(props: RatingItemProps) {
       itemProps.onMouseMove?.(event);
       if (event.defaultPrevented) return;
 
-      if (!isDisabled && !isReadOnly && allowHalf) {
+      if (!isDisabled && !isReadOnly && step < 1) {
         const rect = event.currentTarget.getBoundingClientRect();
         const mouseX = event.clientX - rect.left;
         const isLeftHalf = mouseX < rect.width / 2;
 
         let hoverValue = itemValue;
         if (context.dir === "rtl") {
-          hoverValue = !isLeftHalf ? itemValue - 0.5 : itemValue;
+          hoverValue = !isLeftHalf ? itemValue - step : itemValue;
         } else {
-          hoverValue = isLeftHalf ? itemValue - 0.5 : itemValue;
+          hoverValue = isLeftHalf ? itemValue - step : itemValue;
         }
 
         store.setState("hoveredValue", hoverValue);
@@ -724,7 +725,7 @@ function RatingItem(props: RatingItemProps) {
     [
       isDisabled,
       isReadOnly,
-      allowHalf,
+      step,
       itemValue,
       store,
       context.dir,
@@ -759,7 +760,7 @@ function RatingItem(props: RatingItemProps) {
         activationMode !== "manual" &&
         isKeyboardFocus
       ) {
-        const newValue = allowClear && value === itemValue ? 0 : itemValue;
+        const newValue = clearable && value === itemValue ? 0 : itemValue;
         store.setState("value", newValue);
       }
 
@@ -771,7 +772,7 @@ function RatingItem(props: RatingItemProps) {
       activationMode,
       isDisabled,
       isReadOnly,
-      allowClear,
+      clearable,
       value,
       itemValue,
       store,
@@ -856,7 +857,7 @@ function RatingItem(props: RatingItemProps) {
     [focusContext, itemId, isDisabled, itemProps.onMouseDown],
   );
 
-  const dataState = isFilled ? "full" : isHalfFilled ? "partial" : "empty";
+  const dataState = isFilled ? "full" : isPartiallyFilled ? "partial" : "empty";
 
   const ItemPrimitive = asChild ? Slot : "button";
 
@@ -870,7 +871,7 @@ function RatingItem(props: RatingItemProps) {
       aria-setsize={context.max}
       data-disabled={isDisabled ? "" : undefined}
       data-readonly={isReadOnly ? "" : undefined}
-      data-state={isFilled ? "full" : isHalfFilled ? "partial" : "empty"}
+      data-state={isFilled ? "full" : isPartiallyFilled ? "partial" : "empty"}
       data-hovered={isHovered ? "" : undefined}
       data-slot="rating-item"
       disabled={isDisabled}
@@ -879,13 +880,13 @@ function RatingItem(props: RatingItemProps) {
       ref={composedRef}
       style={{
         ...itemProps.style,
-        ...(isHalfFilled && {
-          "--half-fill": `url(#${getHalfFillGradientId(context.id)})`,
+        ...(isPartiallyFilled && {
+          "--partial-fill": `url(#${getPartialFillGradientId(context.id, step)})`,
         }),
       }}
       className={cn(
         "inline-flex items-center justify-center rounded-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
-        "[&_svg:not([class*='size-'])]:size-full [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:transition-colors [&_svg]:duration-200 data-[state=empty]:[&_svg]:fill-transparent data-[state=full]:[&_svg]:fill-current data-[state=partial]:[&_svg]:fill-[var(--half-fill)]",
+        "[&_svg:not([class*='size-'])]:size-full [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:transition-colors [&_svg]:duration-200 data-[state=empty]:[&_svg]:fill-transparent data-[state=full]:[&_svg]:fill-current data-[state=partial]:[&_svg]:fill-[var(--partial-fill)]",
         context.size === "sm"
           ? "size-4"
           : context.size === "lg"

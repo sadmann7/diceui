@@ -50,7 +50,7 @@ export default function RatingFormDemo() {
                   value={field.value}
                   onValueChange={field.onChange}
                   name={field.name}
-                  allowHalf
+                  step={0.5}
                 >
                   {Array.from({ length: 5 }, (_, i) => (
                     <RatingItem key={i} />

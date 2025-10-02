@@ -48,15 +48,11 @@ npx shadcn@latest add "https://diceui.com/r/rating"
 Import the parts, and compose them together.
 
 ```tsx
-import { Rating, RatingItem } from "@/components/ui/rating";
+import * as Rating from "@/components/ui/rating";
 
-<Rating>
-  <RatingItem />
-  <RatingItem />
-  <RatingItem />
-  <RatingItem />
-  <RatingItem />
-</Rating>
+<Rating.Root>
+  <Rating.Item />
+</Rating.Root>
 ```
 
 ## Examples
@@ -123,29 +119,7 @@ Individual rating item (star) component.
     },
     {
       keys: ["Escape"],
-      description: "Clear the rating (when allowClear is true).",
+      description: "Clear the rating (when clearable is true).",
     },
   ]}
 />
-
-### ARIA Attributes
-
-- Uses `role="radiogroup"` for the rating container
-- Each rating item has `role="radio"` 
-- Proper `aria-label` and `aria-describedby` attributes for screen readers
-- `aria-setsize` and `aria-posinset` for position information
-- `aria-checked` state for selected items
-
-## Data Attributes
-
-### Root
-
-- `data-disabled` - Present when the rating is disabled
-- `data-readonly` - Present when the rating is read-only
-- `data-invalid` - Present when the rating is in an invalid state
-
-### Item
-
-- `data-state` - The current state: "active", "inactive", or "half"
-- `data-disabled` - Present when the item is disabled
-- `data-readonly` - Present when the item is read-only
