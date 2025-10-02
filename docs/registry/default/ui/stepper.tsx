@@ -448,7 +448,9 @@ const FocusContext = React.createContext<FocusContextValue | null>(null);
 function useFocusContext(consumerName: string) {
   const context = React.useContext(FocusContext);
   if (!context) {
-    throw new Error(`\`${consumerName}\` must be used within a focus provider`);
+    throw new Error(
+      `\`${consumerName}\` must be used within \`FocusProvider\``,
+    );
   }
   return context;
 }

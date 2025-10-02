@@ -52,9 +52,14 @@ function getFocusIntent(
   return MAP_KEY_TO_FOCUS_INTENT[key];
 }
 
-function focusFirst(candidates: ItemElement[], preventScroll = false) {
+function focusFirst(
+  candidates: React.RefObject<ItemElement | null>[],
+  preventScroll = false,
+) {
   const PREVIOUSLY_FOCUSED_ELEMENT = document.activeElement;
-  for (const candidate of candidates) {
+  for (const candidateRef of candidates) {
+    const candidate = candidateRef.current;
+    if (!candidate) continue;
     if (candidate === PREVIOUSLY_FOCUSED_ELEMENT) return;
     candidate.focus({ preventScroll });
     if (document.activeElement !== PREVIOUSLY_FOCUSED_ELEMENT) return;
@@ -74,6 +79,7 @@ function useLazyRef<T>(fn: () => T) {
 type Direction = "ltr" | "rtl";
 type Orientation = "horizontal" | "vertical";
 type ActivationMode = "automatic" | "manual";
+type Size = "default" | "sm" | "lg";
 
 const DirectionContext = React.createContext<Direction | undefined>(undefined);
 
@@ -170,7 +176,7 @@ function useStore<T>(selector: (state: StoreState) => T): T {
 
 interface ItemData {
   id: string;
-  element: ItemElement;
+  ref: React.RefObject<ItemElement | null>;
   value: number;
   disabled: boolean;
 }
@@ -180,9 +186,9 @@ interface RatingContextValue {
   dir: Direction;
   orientation: Orientation;
   activationMode: ActivationMode;
+  size: Size;
   disabled: boolean;
   readOnly: boolean;
-  size: "sm" | "md" | "lg";
   getAutoIndex: (instanceId: string) => number;
 }
 
@@ -212,7 +218,9 @@ const FocusContext = React.createContext<FocusContextValue | null>(null);
 function useFocusContext(consumerName: string) {
   const context = React.useContext(FocusContext);
   if (!context) {
-    throw new Error(`\`${consumerName}\` must be used within a focus provider`);
+    throw new Error(
+      `\`${consumerName}\` must be used within \`FocusProvider\``,
+    );
   }
   return context;
 }
@@ -223,17 +231,17 @@ interface RatingRootProps extends React.ComponentProps<"div"> {
   onValueChange?: (value: number) => void;
   onHover?: (value: number | null) => void;
   max?: number;
-  allowHalf?: boolean;
-  allowClear?: boolean;
   activationMode?: ActivationMode;
   dir?: Direction;
   orientation?: Orientation;
+  size?: Size;
   asChild?: boolean;
+  allowHalf?: boolean;
+  allowClear?: boolean;
   disabled?: boolean;
   readOnly?: boolean;
   required?: boolean;
   name?: string;
-  size?: "sm" | "md" | "lg";
 }
 
 function RatingRoot(props: RatingRootProps) {
@@ -287,12 +295,12 @@ function RatingRootImpl(props: RatingRootImplProps) {
     dir: dirProp,
     orientation = "horizontal",
     activationMode = "automatic",
+    size = "default",
     asChild,
     disabled = false,
     readOnly = false,
     required = false,
     name,
-    size = "md",
     className,
     ref,
     ...rootProps
@@ -363,16 +371,21 @@ function RatingRootImpl(props: RatingRootImplProps) {
   }, []);
 
   const getItems = React.useCallback(() => {
-    return Array.from(itemsRef.current.values()).sort((a, b) => {
-      const position = a.element.compareDocumentPosition(b.element);
-      if (position & Node.DOCUMENT_POSITION_FOLLOWING) {
-        return -1;
-      }
-      if (position & Node.DOCUMENT_POSITION_PRECEDING) {
-        return 1;
-      }
-      return 0;
-    });
+    return Array.from(itemsRef.current.values())
+      .filter((item) => item.ref.current) // Filter out unmounted elements
+      .sort((a, b) => {
+        const elementA = a.ref.current;
+        const elementB = b.ref.current;
+        if (!elementA || !elementB) return 0;
+        const position = elementA.compareDocumentPosition(elementB);
+        if (position & Node.DOCUMENT_POSITION_FOLLOWING) {
+          return -1;
+        }
+        if (position & Node.DOCUMENT_POSITION_PRECEDING) {
+          return 1;
+        }
+        return 0;
+      });
   }, []);
 
   const onBlur = React.useCallback(
@@ -411,8 +424,8 @@ function RatingRootImpl(props: RatingRootImplProps) {
           const candidateItems = [selectedItem, currentItem, ...items].filter(
             Boolean,
           ) as ItemData[];
-          const candidateNodes = candidateItems.map((item) => item.element);
-          focusFirst(candidateNodes, false);
+          const candidateRefs = candidateItems.map((item) => item.ref);
+          focusFirst(candidateRefs, false);
         }
       }
       isClickFocusRef.current = false;
@@ -521,12 +534,6 @@ function RatingRootImpl(props: RatingRootImplProps) {
   );
 }
 
-const sizeClasses = {
-  sm: "size-4",
-  md: "size-5",
-  lg: "size-6",
-};
-
 interface RatingItemProps extends React.ComponentProps<"button"> {
   index?: number;
   asChild?: boolean;
@@ -535,10 +542,8 @@ interface RatingItemProps extends React.ComponentProps<"button"> {
 function RatingItem(props: RatingItemProps) {
   const { index, asChild, className, ref, ...itemProps } = props;
 
-  const [itemElement, setItemElement] = React.useState<ItemElement | null>(
-    null,
-  );
-  const composedRef = useComposedRefs(ref, setItemElement);
+  const itemRef = React.useRef<ItemElement>(null);
+  const composedRef = useComposedRefs(ref, itemRef);
 
   const context = useRatingContext(ITEM_NAME);
 
@@ -575,26 +580,24 @@ function RatingItem(props: RatingItemProps) {
   const isMouseClickRef = React.useRef(false);
 
   React.useEffect(() => {
-    if (itemElement) {
-      focusContext.onItemRegister({
-        id: itemId,
-        element: itemElement,
-        value: itemValue,
-        disabled: !!isDisabled,
-      });
+    focusContext.onItemRegister({
+      id: itemId,
+      ref: itemRef,
+      value: itemValue,
+      disabled: !!isDisabled,
+    });
 
-      if (!isDisabled) {
-        focusContext.onFocusableItemAdd();
-      }
-
-      return () => {
-        focusContext.onItemUnregister(itemId);
-        if (!isDisabled) {
-          focusContext.onFocusableItemRemove();
-        }
-      };
+    if (!isDisabled) {
+      focusContext.onFocusableItemAdd();
     }
-  }, [itemElement, focusContext, itemId, itemValue, isDisabled]);
+
+    return () => {
+      focusContext.onItemUnregister(itemId);
+      if (!isDisabled) {
+        focusContext.onFocusableItemRemove();
+      }
+    };
+  }, [focusContext, itemId, itemValue, isDisabled]);
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<ItemElement>) => {
@@ -686,8 +689,8 @@ function RatingItem(props: RatingItemProps) {
         activationMode === "manual"
       ) {
         event.preventDefault();
-        if (!isDisabled && !isReadOnly && itemElement) {
-          itemElement.click();
+        if (!isDisabled && !isReadOnly && itemRef.current) {
+          itemRef.current.click();
         }
         return;
       }
@@ -711,17 +714,19 @@ function RatingItem(props: RatingItemProps) {
         event.preventDefault();
 
         const items = focusContext.getItems().filter((item) => !item.disabled);
-        let candidateNodes = items.map((item) => item.element);
+        let candidateRefs = items.map((item) => item.ref);
 
         if (focusIntent === "last") {
-          candidateNodes.reverse();
+          candidateRefs.reverse();
         } else if (focusIntent === "prev" || focusIntent === "next") {
-          if (focusIntent === "prev") candidateNodes.reverse();
-          const currentIndex = candidateNodes.indexOf(event.currentTarget);
-          candidateNodes = candidateNodes.slice(currentIndex + 1);
+          if (focusIntent === "prev") candidateRefs.reverse();
+          const currentIndex = candidateRefs.findIndex(
+            (ref) => ref.current === event.currentTarget,
+          );
+          candidateRefs = candidateRefs.slice(currentIndex + 1);
         }
 
-        queueMicrotask(() => focusFirst(candidateNodes));
+        queueMicrotask(() => focusFirst(candidateRefs));
       }
     },
     [
@@ -731,7 +736,6 @@ function RatingItem(props: RatingItemProps) {
       activationMode,
       isDisabled,
       isReadOnly,
-      itemElement,
       itemProps.onKeyDown,
     ],
   );
@@ -772,7 +776,11 @@ function RatingItem(props: RatingItemProps) {
       ref={composedRef}
       className={cn(
         "inline-flex items-center justify-center rounded-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=full]:text-primary data-[state=partial]:text-primary",
-        sizeClasses[context.size],
+        context.size === "sm"
+          ? "size-4"
+          : context.size === "lg"
+            ? "size-6"
+            : "size-5",
         className,
       )}
       onClick={onClick}
@@ -782,7 +790,7 @@ function RatingItem(props: RatingItemProps) {
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      <Star className={cn("fill-current", sizeClasses[context.size])} />
+      <Star className="fill-current" />
     </ItemPrimitive>
   );
 }

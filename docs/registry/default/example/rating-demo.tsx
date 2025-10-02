@@ -47,8 +47,8 @@ export default function RatingDemo() {
             </Rating>
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-8 text-muted-foreground text-xs">MD</span>
-            <Rating defaultValue={3} size="md">
+            <span className="w-8 text-muted-foreground text-xs">Default</span>
+            <Rating defaultValue={3}>
               {Array.from({ length: 5 }, (_, i) => (
                 <RatingItem key={i} />
               ))}
@@ -65,7 +65,6 @@ export default function RatingDemo() {
         </div>
       </div>
 
-      {/* Read-only Rating */}
       <div className="flex flex-col gap-2">
         <h3 className="font-medium text-sm">Read-only</h3>
         <Rating defaultValue={4} readOnly>
@@ -75,7 +74,6 @@ export default function RatingDemo() {
         </Rating>
       </div>
 
-      {/* Disabled Rating */}
       <div className="flex flex-col gap-2">
         <h3 className="font-medium text-sm">Disabled</h3>
         <Rating defaultValue={2} disabled>
@@ -85,7 +83,6 @@ export default function RatingDemo() {
         </Rating>
       </div>
 
-      {/* Allow Clear */}
       <div className="flex flex-col gap-2">
         <h3 className="font-medium text-sm">
           Allow Clear (click same rating to clear)
@@ -97,7 +94,6 @@ export default function RatingDemo() {
         </Rating>
       </div>
 
-      {/* Custom Max */}
       <div className="flex flex-col gap-2">
         <h3 className="font-medium text-sm">Custom Max (10 stars)</h3>
         <Rating defaultValue={7} max={10}>
@@ -107,7 +103,6 @@ export default function RatingDemo() {
         </Rating>
       </div>
 
-      {/* Activation Modes */}
       <div className="flex flex-col gap-4">
         <h3 className="font-medium text-sm">Activation Modes</h3>
         <div className="flex flex-col gap-2">
@@ -132,6 +127,15 @@ export default function RatingDemo() {
             </Rating>
           </div>
         </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <h3 className="font-medium text-sm">Allow Half</h3>
+        <Rating defaultValue={2.5} allowHalf>
+          {Array.from({ length: 5 }, (_, i) => (
+            <RatingItem key={i} />
+          ))}
+        </Rating>
       </div>
     </div>
   );
