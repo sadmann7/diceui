@@ -52,6 +52,7 @@ interface StoreState {
   svgString: string | null;
   isGenerating: boolean;
   error: Error | null;
+  generationKey: string;
 }
 
 interface Store {
@@ -65,16 +66,10 @@ interface Store {
 interface QRCodeContextValue {
   value: string;
   size: number;
+  margin: number;
+  level: QRCodeLevel;
   backgroundColor: string;
   foregroundColor: string;
-  level: QRCodeLevel;
-  margin: number;
-  imageSettings?: {
-    src: string;
-    height: number;
-    width: number;
-    excavate?: boolean;
-  };
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
 }
 
@@ -152,11 +147,11 @@ function useStore<T>(selector: (state: StoreState) => T): T {
 interface QRCodeRootProps extends Omit<React.ComponentProps<"div">, "onError"> {
   value: string;
   size?: number;
+  margin?: number;
+  level?: QRCodeLevel;
   backgroundColor?: string;
   foregroundColor?: string;
-  level?: QRCodeLevel;
-  margin?: number;
-  imageSettings?: {
+  imageOpts?: {
     src: string;
     height: number;
     width: number;
@@ -175,7 +170,7 @@ function QRCodeRoot(props: QRCodeRootProps) {
     foregroundColor = "#000000",
     level = "M",
     margin = 1,
-    imageSettings,
+    imageOpts,
     onError,
     onGenerated,
     asChild,
@@ -190,6 +185,7 @@ function QRCodeRoot(props: QRCodeRootProps) {
     svgString: null,
     isGenerating: false,
     error: null,
+    generationKey: "",
   }));
 
   const store = React.useMemo(
@@ -212,88 +208,103 @@ function QRCodeRoot(props: QRCodeRootProps) {
     [level, margin, foregroundColor, backgroundColor, size],
   );
 
-  const onQRCodeGenerate = React.useCallback(async () => {
-    const state = stateRef.current;
-    if (state.isGenerating || !value) return;
+  const generationKey = React.useMemo(() => {
+    if (!value) return "";
 
-    store.setStates({
-      isGenerating: true,
-      error: null,
+    return JSON.stringify({
+      value,
+      level,
+      margin,
+      foregroundColor,
+      backgroundColor,
+      size,
+      imageOpts,
     });
+  }, [value, level, margin, foregroundColor, backgroundColor, size, imageOpts]);
 
-    try {
-      const QRCode = (await import("qrcode")).default;
+  const onQRCodeGenerate = React.useCallback(
+    async (targetGenerationKey: string) => {
+      if (!value || !targetGenerationKey) return;
 
-      let dataUrl: string | null = null;
+      const currentState = store.getState();
+      if (
+        currentState.isGenerating ||
+        currentState.generationKey === targetGenerationKey
+      )
+        return;
 
-      if (canvasRef.current) {
-        await QRCode.toCanvas(canvasRef.current, value, canvasOpts);
-        const canvas = canvasRef.current;
-        dataUrl = canvas.toDataURL("image/png");
+      store.setStates({
+        isGenerating: true,
+        error: null,
+      });
+
+      try {
+        const QRCode = (await import("qrcode")).default;
+
+        let dataUrl: string | null = null;
+
+        if (canvasRef.current) {
+          await QRCode.toCanvas(canvasRef.current, value, canvasOpts);
+          const canvas = canvasRef.current;
+          dataUrl = canvas.toDataURL("image/png");
+        }
+
+        const svgOptions: QRCodeStringOptions = {
+          errorCorrectionLevel: canvasOpts.errorCorrectionLevel,
+          margin: canvasOpts.margin,
+          color: canvasOpts.color,
+          width: canvasOpts.width,
+          type: "svg",
+        };
+        const svgString = await QRCode.toString(value, svgOptions);
+
+        store.setStates({
+          dataUrl,
+          svgString,
+          isGenerating: false,
+          generationKey: targetGenerationKey,
+        });
+
+        onGenerated?.();
+      } catch (error) {
+        const parsedError =
+          error instanceof Error
+            ? error
+            : new Error("Failed to generate QR code");
+        store.setStates({
+          error: parsedError,
+          isGenerating: false,
+        });
+        onError?.(parsedError);
       }
+    },
+    [value, canvasOpts, store, onError, onGenerated],
+  );
 
-      const svgOptions: QRCodeStringOptions = {
-        errorCorrectionLevel: canvasOpts.errorCorrectionLevel,
-        margin: canvasOpts.margin,
-        color: canvasOpts.color,
-        width: canvasOpts.width,
-        type: "svg",
-      };
-      const svgString = await QRCode.toString(value, svgOptions);
-
-      store.setStates({
-        dataUrl,
-        svgString,
-        isGenerating: false,
-      });
-
-      onGenerated?.();
-    } catch (error) {
-      const parsedError =
-        error instanceof Error
-          ? error
-          : new Error("Failed to generate QR code");
-      store.setStates({
-        error: parsedError,
-        isGenerating: false,
-      });
-      onError?.(parsedError);
-    }
-  }, [value, onError, onGenerated, canvasOpts, store, stateRef.current]);
-
-  const qrCodeContextValue = React.useMemo<QRCodeContextValue>(
+  const contextValue = React.useMemo<QRCodeContextValue>(
     () => ({
       value,
       size,
-      backgroundColor,
-      foregroundColor,
       level,
       margin,
-      imageSettings,
+      backgroundColor,
+      foregroundColor,
       canvasRef,
     }),
-    [
-      value,
-      size,
-      backgroundColor,
-      foregroundColor,
-      level,
-      margin,
-      imageSettings,
-    ],
+    [value, size, backgroundColor, foregroundColor, level, margin],
   );
 
-  React.useEffect(() => {
-    if (value) {
-      onQRCodeGenerate();
+  React.useLayoutEffect(() => {
+    if (generationKey) {
+      onQRCodeGenerate(generationKey);
     }
-  }, [value, onQRCodeGenerate]);
+  }, [generationKey, onQRCodeGenerate]);
 
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
     <StoreContext.Provider value={store}>
-      <QRCodeContext.Provider value={qrCodeContextValue}>
+      <QRCodeContext.Provider value={contextValue}>
         <RootPrimitive data-slot="qr-code" {...rootProps} />
       </QRCodeContext.Provider>
     </StoreContext.Provider>
@@ -449,6 +460,7 @@ export {
   QRCodeDownload,
   //
   useStore as useQRCode,
+  useQRCodeContext,
   //
   type QRCodeRootProps as QRCodeProps,
 };
