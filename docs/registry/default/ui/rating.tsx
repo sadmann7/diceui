@@ -523,6 +523,15 @@ function RatingRootImpl(props: RatingRootImplProps) {
           onFocus={onFocus}
           onMouseDown={onMouseDown}
         />
+        {/* SVG gradient definition for half stars */}
+        <svg width="0" height="0" style={{ position: "absolute" }}>
+          <defs>
+            <linearGradient id={`half-star-gradient-${rootId}`}>
+              <stop offset="50%" stopColor="currentColor" />
+              <stop offset="50%" stopColor="transparent" />
+            </linearGradient>
+          </defs>
+        </svg>
         {isFormControl && (
           <VisuallyHiddenInput
             type="hidden"
@@ -615,7 +624,24 @@ function RatingItem(props: RatingItemProps) {
       if (event.defaultPrevented) return;
 
       if (!isDisabled && !isReadOnly) {
-        const newValue = allowClear && value === itemValue ? 0 : itemValue;
+        let newValue = itemValue;
+
+        // Handle half star clicks when allowHalf is enabled
+        if (allowHalf) {
+          const rect = event.currentTarget.getBoundingClientRect();
+          const clickX = event.clientX - rect.left;
+          const isLeftHalf = clickX < rect.width / 2;
+
+          if (isLeftHalf) {
+            newValue = itemValue - 0.5;
+          }
+        }
+
+        // Handle clear functionality
+        if (allowClear && value === newValue) {
+          newValue = 0;
+        }
+
         store.setState("value", newValue);
       }
     },
@@ -623,6 +649,7 @@ function RatingItem(props: RatingItemProps) {
       isDisabled,
       isReadOnly,
       allowClear,
+      allowHalf,
       value,
       itemValue,
       store,
@@ -636,10 +663,54 @@ function RatingItem(props: RatingItemProps) {
       if (event.defaultPrevented) return;
 
       if (!isDisabled && !isReadOnly) {
-        store.setState("hoveredValue", itemValue);
+        let hoverValue = itemValue;
+
+        // Handle half star hover when allowHalf is enabled
+        if (allowHalf) {
+          const rect = event.currentTarget.getBoundingClientRect();
+          const mouseX = event.clientX - rect.left;
+          const isLeftHalf = mouseX < rect.width / 2;
+
+          if (isLeftHalf) {
+            hoverValue = itemValue - 0.5;
+          }
+        }
+
+        store.setState("hoveredValue", hoverValue);
       }
     },
-    [isDisabled, isReadOnly, itemValue, store, itemProps.onMouseEnter],
+    [
+      isDisabled,
+      isReadOnly,
+      allowHalf,
+      itemValue,
+      store,
+      itemProps.onMouseEnter,
+    ],
+  );
+
+  const onMouseMove = React.useCallback(
+    (event: React.MouseEvent<ItemElement>) => {
+      itemProps.onMouseMove?.(event);
+      if (event.defaultPrevented) return;
+
+      if (!isDisabled && !isReadOnly && allowHalf) {
+        const rect = event.currentTarget.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const isLeftHalf = mouseX < rect.width / 2;
+
+        const hoverValue = isLeftHalf ? itemValue - 0.5 : itemValue;
+        store.setState("hoveredValue", hoverValue);
+      }
+    },
+    [
+      isDisabled,
+      isReadOnly,
+      allowHalf,
+      itemValue,
+      store,
+      itemProps.onMouseMove,
+    ],
   );
 
   const onMouseLeave = React.useCallback(
@@ -787,9 +858,15 @@ function RatingItem(props: RatingItemProps) {
       tabIndex={isTabStop ? 0 : -1}
       {...itemProps}
       ref={composedRef}
+      style={{
+        ...itemProps.style,
+        ...(isHalfFilled && {
+          "--half-star-fill": `url(#half-star-gradient-${context.id})`,
+        }),
+      }}
       className={cn(
         "inline-flex items-center justify-center rounded-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
-        "[&_svg:not([class*='size-'])]:size-full [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:transition-colors [&_svg]:duration-200 data-[state=empty]:[&_svg]:fill-transparent data-[state=full]:[&_svg]:fill-current data-[state=partial]:[&_svg]:fill-current",
+        "[&_svg:not([class*='size-'])]:size-full [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:transition-colors [&_svg]:duration-200 data-[state=empty]:[&_svg]:fill-transparent data-[state=full]:[&_svg]:fill-current data-[state=partial]:[&_svg]:fill-[var(--half-star-fill)]",
         context.size === "sm"
           ? "size-4"
           : context.size === "lg"
@@ -802,6 +879,7 @@ function RatingItem(props: RatingItemProps) {
       onKeyDown={onKeyDown}
       onMouseDown={onMouseDown}
       onMouseEnter={onMouseEnter}
+      onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
     >
       {typeof children === "function"
