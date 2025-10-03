@@ -3,6 +3,7 @@
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
+import { cn } from "@/lib/utils";
 
 const ROOT_NAME = "QRCode";
 const IMAGE_NAME = "QRCodeImage";
@@ -157,6 +158,7 @@ function QRCodeRoot(props: QRCodeRootProps) {
     foregroundColor = "#000000",
     onError,
     onGenerated,
+    className,
     asChild,
     ...rootProps
   } = props;
@@ -296,7 +298,11 @@ function QRCodeRoot(props: QRCodeRootProps) {
   return (
     <StoreContext.Provider value={store}>
       <QRCodeContext.Provider value={contextValue}>
-        <RootPrimitive data-slot="qr-code" {...rootProps} />
+        <RootPrimitive
+          data-slot="qr-code"
+          {...rootProps}
+          className={cn(className, "flex flex-col items-center gap-2")}
+        />
       </QRCodeContext.Provider>
     </StoreContext.Provider>
   );
