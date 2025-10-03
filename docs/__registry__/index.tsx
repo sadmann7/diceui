@@ -1733,27 +1733,13 @@ export const Index: Record<string, any> = {
       name: "qr-code-formats-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["qr-code"],
+      registryDependencies: ["button","qr-code"],
       files: [{
         path: "registry/default/examples/qr-code-formats-demo.tsx",
         type: "registry:example",
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/qr-code-formats-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "qr-code-interactive-demo": {
-      name: "qr-code-interactive-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["qr-code","button","input","label","select"],
-      files: [{
-        path: "registry/default/examples/qr-code-interactive-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/qr-code-interactive-demo.tsx")),
       source: "",
       chunks: []
     },

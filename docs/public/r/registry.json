@@ -356,6 +356,22 @@
       ]
     },
     {
+      "name": "qr-code",
+      "type": "registry:component",
+      "title": "QR Code",
+      "description": "A QR code component with support for different formats (canvas, SVG, image) and download functionality.",
+      "files": [
+        {
+          "path": "registry/default/ui/qr-code.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/default/lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
       "name": "tags-input",
       "type": "registry:component",
       "title": "Tags Input",
@@ -903,6 +919,42 @@
       "files": [
         {
           "path": "registry/default/examples/stack-truncation-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "qr-code-demo",
+      "type": "registry:component",
+      "title": "QR Code Demo",
+      "description": "Example showing how to use the QR code component.",
+      "files": [
+        {
+          "path": "registry/default/examples/qr-code-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "qr-code-customization-demo",
+      "type": "registry:component",
+      "title": "QR Code Customization Demo",
+      "description": "Example showing QR code with custom colors and error correction levels.",
+      "files": [
+        {
+          "path": "registry/default/examples/qr-code-customization-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "qr-code-formats-demo",
+      "type": "registry:component",
+      "title": "QR Code Formats Demo",
+      "description": "Example showing QR code rendered in different formats (canvas, SVG, image) with download functionality.",
+      "files": [
+        {
+          "path": "registry/default/examples/qr-code-formats-demo.tsx",
           "type": "registry:example"
         }
       ]

@@ -1065,21 +1065,10 @@ export const examples: Registry["items"] = [
   {
     name: "qr-code-formats-demo",
     type: "registry:example",
-    registryDependencies: ["qr-code"],
+    registryDependencies: ["button", "qr-code"],
     files: [
       {
         path: "examples/qr-code-formats-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "qr-code-interactive-demo",
-    type: "registry:example",
-    registryDependencies: ["qr-code", "button", "input", "label", "select"],
-    files: [
-      {
-        path: "examples/qr-code-interactive-demo.tsx",
         type: "registry:example",
       },
     ],
