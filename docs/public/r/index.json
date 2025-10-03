@@ -522,6 +522,24 @@
     ]
   },
   {
+    "name": "tour",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-slot",
+      "lucide-react"
+    ],
+    "files": [
+      {
+        "path": "ui/tour.tsx",
+        "type": "registry:ui"
+      },
+      {
+        "path": "lib/compose-refs.ts",
+        "type": "registry:lib"
+      }
+    ]
+  },
+  {
     "name": "tags-input",
     "type": "registry:ui",
     "dependencies": [

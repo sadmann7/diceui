@@ -372,6 +372,22 @@
       ]
     },
     {
+      "name": "tour",
+      "type": "registry:component",
+      "title": "Tour",
+      "description": "A guided tour component that highlights elements and provides step-by-step instructions to help users learn about your application.",
+      "files": [
+        {
+          "path": "registry/default/ui/tour.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/default/lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
       "name": "tags-input",
       "type": "registry:component",
       "title": "Tags Input",
@@ -955,6 +971,42 @@
       "files": [
         {
           "path": "registry/default/examples/qr-code-formats-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "tour-demo",
+      "type": "registry:component",
+      "title": "Tour Demo",
+      "description": "Example showing how to use the tour component.",
+      "files": [
+        {
+          "path": "registry/default/examples/tour-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "tour-controlled-demo",
+      "type": "registry:component",
+      "title": "Tour Controlled Demo",
+      "description": "Example showing controlled tour usage with external state management.",
+      "files": [
+        {
+          "path": "registry/default/examples/tour-controlled-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "tour-customization-demo",
+      "type": "registry:component",
+      "title": "Tour Customization Demo",
+      "description": "Example showing tour customization options including styling and placement.",
+      "files": [
+        {
+          "path": "registry/default/examples/tour-customization-demo.tsx",
           "type": "registry:example"
         }
       ]

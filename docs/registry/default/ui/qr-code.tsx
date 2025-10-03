@@ -315,33 +315,6 @@ function QRCodeRoot(props: QRCodeRootProps) {
   );
 }
 
-interface QRCodeImageProps extends React.ComponentProps<"img"> {
-  asChild?: boolean;
-}
-
-function QRCodeImage(props: QRCodeImageProps) {
-  const { alt = "QR Code", asChild, className, ...imageProps } = props;
-
-  const context = useQRCodeContext(IMAGE_NAME);
-  const dataUrl = useStore((state) => state.dataUrl);
-
-  if (!dataUrl) return null;
-
-  const ImagePrimitive = asChild ? Slot : "img";
-
-  return (
-    <ImagePrimitive
-      data-slot="qr-code-image"
-      {...imageProps}
-      src={dataUrl}
-      alt={alt}
-      width={context.size}
-      height={context.size}
-      className={cn("max-h-(--qr-code-size) max-w-(--qr-code-size)", className)}
-    />
-  );
-}
-
 interface QRCodeCanvasProps extends React.ComponentProps<"canvas"> {
   asChild?: boolean;
 }
@@ -388,6 +361,33 @@ function QRCodeSvg(props: QRCodeSvgProps) {
       className={cn("max-h-(--qr-code-size) max-w-(--qr-code-size)", className)}
       style={{ width: context.size, height: context.size, ...svgProps.style }}
       dangerouslySetInnerHTML={{ __html: svgString }}
+    />
+  );
+}
+
+interface QRCodeImageProps extends React.ComponentProps<"img"> {
+  asChild?: boolean;
+}
+
+function QRCodeImage(props: QRCodeImageProps) {
+  const { alt = "QR Code", asChild, className, ...imageProps } = props;
+
+  const context = useQRCodeContext(IMAGE_NAME);
+  const dataUrl = useStore((state) => state.dataUrl);
+
+  if (!dataUrl) return null;
+
+  const ImagePrimitive = asChild ? Slot : "img";
+
+  return (
+    <ImagePrimitive
+      data-slot="qr-code-image"
+      {...imageProps}
+      src={dataUrl}
+      alt={alt}
+      width={context.size}
+      height={context.size}
+      className={cn("max-h-(--qr-code-size) max-w-(--qr-code-size)", className)}
     />
   );
 }
@@ -457,15 +457,15 @@ function QRCodeDownload(props: QRCodeDownloadProps) {
 
 export {
   QRCodeRoot as Root,
-  QRCodeImage as Image,
   QRCodeCanvas as Canvas,
   QRCodeSvg as Svg,
+  QRCodeImage as Image,
   QRCodeDownload as Download,
   //
   QRCodeRoot as QRCode,
-  QRCodeImage,
   QRCodeCanvas,
   QRCodeSvg,
+  QRCodeImage,
   QRCodeDownload,
   //
   useStore as useQRCode,

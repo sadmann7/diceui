@@ -30,6 +30,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
 import QRCodeDemo from "@/registry/default/examples/qr-code-demo";
+import TourDemo from "@/registry/default/examples/tour-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -44,6 +45,7 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <Demo>
+        <TourDemo />
         <QRCodeDemo />
         <ColorPickerDemo />
       </Demo>

@@ -34,6 +34,11 @@ npx shadcn@latest add "https://diceui.com/r/qr-code"
      ```
   </Step>
   <Step>
+    Copy the refs composition utilities into your `lib/compose-refs.ts` file.
+
+    <ComponentSource name="compose-refs" />
+  </Step>
+  <Step>
     Copy and paste the following code into your project.
 
     <ComponentSource name="qr-code" />
@@ -45,11 +50,14 @@ npx shadcn@latest add "https://diceui.com/r/qr-code"
 Import the parts, and compose them together.
 
 ```tsx
-import { QRCode } from "@/components/ui/qr-code";
+import * as QRCode from "@/components/ui/qr-code";
 
-<QRCode value="https://example.com">
+<QRCode.Root >
   <QRCode.Canvas />
-</QRCode>
+  <QRCode.Svg />
+  <QRCode.Image />
+  <QRCode.Download />
+</QRCode.Root >
 ```
 
 ## Examples
