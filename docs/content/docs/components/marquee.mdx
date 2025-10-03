@@ -36,25 +36,25 @@ npx shadcn@latest add "https://diceui.com/r/marquee"
 
     ```css
     :root {
-      --animate-marquee-left: marquee-left var(--duration) linear var(--loop-count);
-      --animate-marquee-right: marquee-right var(--duration) linear var(--loop-count);
-      --animate-marquee-left-rtl: marquee-left-rtl var(--duration) linear var(--loop-count);
-      --animate-marquee-right-rtl: marquee-right-rtl var(--duration) linear var(--loop-count);
-      --animate-marquee-up: marquee-up var(--duration) linear var(--loop-count);
-      --animate-marquee-down: marquee-down var(--duration) linear var(--loop-count);
+      --animate-marquee-left: marquee-left var(--marquee-duration) linear var(--marquee-loop-count);
+      --animate-marquee-right: marquee-right var(--marquee-duration) linear var(--marquee-loop-count);
+      --animate-marquee-left-rtl: marquee-left-rtl var(--marquee-duration) linear var(--marquee-loop-count);
+      --animate-marquee-right-rtl: marquee-right-rtl var(--marquee-duration) linear var(--marquee-loop-count);
+      --animate-marquee-up: marquee-up var(--marquee-duration) linear var(--marquee-loop-count);
+      --animate-marquee-down: marquee-down var(--marquee-duration) linear var(--marquee-loop-count);
 
     @keyframes marquee-left {
       0% {
         transform: translateX(0%);
       }
       100% {
-        transform: translateX(calc(-100% - var(--gap)));
+        transform: translateX(calc(-100% - var(--marquee-gap)));
       }
     }
 
     @keyframes marquee-right {
       0% {
-        transform: translateX(calc(-100% - var(--gap)));
+        transform: translateX(calc(-100% - var(--marquee-gap)));
       }
       100% {
         transform: translateX(0%);
@@ -66,13 +66,13 @@ npx shadcn@latest add "https://diceui.com/r/marquee"
         transform: translateY(0%);
       }
       100% {
-        transform: translateY(calc(-100% - var(--gap)));
+        transform: translateY(calc(-100% - var(--marquee-gap)));
       }
     }
 
     @keyframes marquee-down {
       0% {
-        transform: translateY(calc(-100% - var(--gap)));
+        transform: translateY(calc(-100% - var(--marquee-gap)));
       }
       100% {
         transform: translateY(0%);
@@ -84,13 +84,13 @@ npx shadcn@latest add "https://diceui.com/r/marquee"
         transform: translateX(0%);
       }
       100% {
-        transform: translateX(calc(100% + var(--gap)));
+        transform: translateX(calc(100% + var(--marquee-gap)));
       }
     }
 
     @keyframes marquee-right-rtl {
       0% {
-        transform: translateX(calc(100% + var(--gap)));
+        transform: translateX(calc(100% + var(--marquee-gap)));
       }
       100% {
         transform: translateX(0%);
@@ -153,6 +153,31 @@ The main marquee component that creates continuous scrolling animations.
     {
       title: "[data-orientation]",
       value: ["horizontal", "vertical"],
+    },
+  ]}
+/>
+
+<CSSVariablesTable
+  variables={[
+    {
+      title: "--marquee-duration",
+      description: "The duration of the marquee animation in seconds. Calculated based on content size and speed.",
+      defaultValue: "Calculated dynamically (e.g., 20s)",
+    },
+    {
+      title: "--marquee-gap",
+      description: "The gap between marquee items and repetitions.",
+      defaultValue: "1rem",
+    },
+    {
+      title: "--marquee-delay",
+      description: "The delay before the marquee animation starts in seconds.",
+      defaultValue: "0s",
+    },
+    {
+      title: "--marquee-loop-count",
+      description: "The number of times the animation should repeat. Can be a number or 'infinite'.",
+      defaultValue: "infinite",
     },
   ]}
 />

@@ -1041,6 +1041,39 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "qr-code-demo",
+    type: "registry:example",
+    registryDependencies: ["qr-code"],
+    files: [
+      {
+        path: "examples/qr-code-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "qr-code-customization-demo",
+    type: "registry:example",
+    registryDependencies: ["qr-code"],
+    files: [
+      {
+        path: "examples/qr-code-customization-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "qr-code-formats-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "qr-code"],
+    files: [
+      {
+        path: "examples/qr-code-formats-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "rating-demo",
     type: "registry:example",
     registryDependencies: ["rating"],

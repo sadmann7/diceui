@@ -217,17 +217,17 @@ export const ui: Registry["items"] = [
     cssVars: {
       theme: {
         "--animate-marquee-left":
-          "marquee-left var(--duration) linear var(--loop-count)",
+          "marquee-left var(--marquee-duration) linear var(--marquee-loop-count)",
         "--animate-marquee-right":
-          "marquee-right var(--duration) linear var(--loop-count)",
+          "marquee-right var(--marquee-duration) linear var(--marquee-loop-count)",
         "--animate-marquee-left-rtl":
-          "marquee-left-rtl var(--duration) linear var(--loop-count)",
+          "marquee-left-rtl var(--marquee-duration) linear var(--marquee-loop-count)",
         "--animate-marquee-right-rtl":
-          "marquee-right-rtl var(--duration) linear var(--loop-count)",
+          "marquee-right-rtl var(--marquee-duration) linear var(--marquee-loop-count)",
         "--animate-marquee-up":
-          "marquee-up var(--duration) linear var(--loop-count)",
+          "marquee-up var(--marquee-duration) linear var(--marquee-loop-count)",
         "--animate-marquee-down":
-          "marquee-down var(--duration) linear var(--loop-count)",
+          "marquee-down var(--marquee-duration) linear var(--marquee-loop-count)",
       },
     },
     css: {
@@ -236,12 +236,12 @@ export const ui: Registry["items"] = [
           transform: "translateX(0%)",
         },
         "100%": {
-          transform: "translateX(calc(-100% - var(--gap)))",
+          transform: "translateX(calc(-100% - var(--marquee-gap)))",
         },
       },
       "@keyframes marquee-right": {
         "0%": {
-          transform: "translateX(calc(-100% - var(--gap)))",
+          transform: "translateX(calc(-100% - var(--marquee-gap)))",
         },
         "100%": {
           transform: "translateX(0%)",
@@ -252,12 +252,12 @@ export const ui: Registry["items"] = [
           transform: "translateY(0%)",
         },
         "100%": {
-          transform: "translateY(calc(-100% - var(--gap)))",
+          transform: "translateY(calc(-100% - var(--marquee-gap)))",
         },
       },
       "@keyframes marquee-down": {
         "0%": {
-          transform: "translateY(calc(-100% - var(--gap)))",
+          transform: "translateY(calc(-100% - var(--marquee-gap)))",
         },
         "100%": {
           transform: "translateY(0%)",
@@ -268,12 +268,12 @@ export const ui: Registry["items"] = [
           transform: "translateX(0%)",
         },
         "100%": {
-          transform: "translateX(calc(100% + var(--gap)))",
+          transform: "translateX(calc(100% + var(--marquee-gap)))",
         },
       },
       "@keyframes marquee-right-rtl": {
         "0%": {
-          transform: "translateX(calc(100% + var(--gap)))",
+          transform: "translateX(calc(100% + var(--marquee-gap)))",
         },
         "100%": {
           transform: "translateX(0%)",
@@ -420,6 +420,18 @@ export const ui: Registry["items"] = [
       {
         path: "lib/compose-refs.ts",
         type: "registry:lib",
+      },
+    ],
+  },
+  {
+    name: "qr-code",
+    type: "registry:ui",
+    dependencies: ["@radix-ui/react-slot", "qrcode"],
+    devDependencies: ["@types/qrcode"],
+    files: [
+      {
+        path: "ui/qr-code.tsx",
+        type: "registry:ui",
       },
     ],
   },

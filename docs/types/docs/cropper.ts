@@ -24,7 +24,7 @@ export interface MediaSize {
   naturalHeight: number;
 }
 
-export type Shape = "rectangular" | "circular";
+export type Shape = "rectangle" | "circle";
 
 export type ObjectFit =
   | "contain"

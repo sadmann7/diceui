@@ -43,7 +43,7 @@ interface MediaSize {
   naturalHeight: number;
 }
 
-type Shape = "rectangular" | "circular";
+type Shape = "rectangle" | "circle";
 type ObjectFit = "contain" | "cover" | "horizontal-cover" | "vertical-cover";
 
 interface DivProps extends React.ComponentProps<"div"> {
@@ -578,7 +578,7 @@ function CropperRoot(props: CropperRootProps) {
     rotation = 0,
     keyboardStep = 1,
     aspectRatio = 4 / 3,
-    shape = "rectangular",
+    shape = "rectangle",
     objectFit = "contain",
     allowOverflow = false,
     preventScrollZoom = false,
@@ -1748,8 +1748,8 @@ const cropperAreaVariants = cva(
   {
     variants: {
       shape: {
-        rectangular: "",
-        circular: "rounded-full",
+        rectangle: "",
+        circle: "rounded-full",
       },
       withGrid: {
         true: "before:absolute before:top-0 before:right-1/3 before:bottom-0 before:left-1/3 before:box-border before:border before:border-white/50 before:border-t-0 before:border-b-0 before:content-[''] after:absolute after:top-1/3 after:right-0 after:bottom-1/3 after:left-0 after:box-border after:border after:border-white/50 after:border-r-0 after:border-l-0 after:content-['']",
@@ -1757,7 +1757,7 @@ const cropperAreaVariants = cva(
       },
     },
     defaultVariants: {
-      shape: "rectangular",
+      shape: "rectangle",
       withGrid: false,
     },
   },

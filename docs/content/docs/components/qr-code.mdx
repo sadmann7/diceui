@@ -1,0 +1,161 @@
+---
+title: QR Code
+description: A flexible QR code component for generating and displaying QR codes with customization options.
+preview: true
+links:
+  api: /docs/components/qr-code#api-reference
+---
+
+<ComponentTabs name="qr-code-demo" className="items-center justify-center" />
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/qr-code"
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @radix-ui/react-slot qrcode
+     ```
+  </Step>
+  <Step>
+     Install the type definitions:
+
+     ```package-install
+     @types/qrcode
+     ```
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource name="qr-code" />
+  </Step>
+</Steps>
+
+## Layout
+
+Import the parts, and compose them together.
+
+```tsx
+import { QRCode } from "@/components/ui/qr-code";
+
+<QRCode value="https://example.com">
+  <QRCode.Canvas />
+</QRCode>
+```
+
+## Examples
+
+### Different Formats
+
+Render QR codes as Canvas, SVG, or Image elements.
+
+<ComponentTabs name="qr-code-formats-demo" />
+
+### Customization
+
+Customize colors, size, and error correction levels.
+
+<ComponentTabs name="qr-code-customization-demo" />
+
+## API Reference
+
+### Root
+
+The main container component that provides context for QR code generation.
+
+<AutoTypeTable
+  path="./types/docs/qr-code.ts"
+  name="RootProps"
+/>
+
+<CSSVariablesTable
+  variables={[
+    {
+      title: "--qr-code-size",
+      description: "The size of the QR code in pixels. Used to constrain child elements to the QR code dimensions.",
+      defaultValue: "Based on size prop (e.g., 200px)",
+    },
+  ]}
+/>
+
+### Image
+
+Renders the QR code as an HTML image element.
+
+<AutoTypeTable
+  path="./types/docs/qr-code.ts"
+  name="ImageProps"
+/>
+
+### Canvas
+
+Renders the QR code using HTML5 Canvas.
+
+<AutoTypeTable
+  path="./types/docs/qr-code.ts"
+  name="CanvasProps"
+/>
+
+### Svg
+
+Renders the QR code as an SVG element.
+
+<AutoTypeTable
+  path="./types/docs/qr-code.ts"
+  name="SvgProps"
+/>
+
+### Download
+
+A button component for downloading the QR code.
+
+<AutoTypeTable
+  path="./types/docs/qr-code.ts"
+  name="DownloadProps"
+/>
+
+## Accessibility
+
+### Keyboard Interactions
+
+<KeyboardShortcutsTable
+  shortcuts={[
+    {
+      keys: ["Enter"],
+      description: "Activates the download button when focused.",
+    },
+    {
+      keys: ["Space"],
+      description: "Activates the download button when focused.",
+    },
+  ]}
+/>
+
+## Error Correction Levels
+
+QR codes support different error correction levels that determine how much of the code can be damaged while still being readable:
+
+- **L (Low)**: ~7% of data can be restored
+- **M (Medium)**: ~15% of data can be restored (default)
+- **Q (Quartile)**: ~25% of data can be restored
+- **H (High)**: ~30% of data can be restored
+
+Higher error correction levels result in denser QR codes but provide better resilience to damage or distortion.
+
+## Usage Notes
+
+- The component uses dynamic imports to avoid SSR issues with the QR code library
+- Canvas rendering provides the best performance for static QR codes
+- SVG rendering is ideal for scalable, print-ready QR codes
+- The download functionality works in all modern browsers
+- QR codes are generated client-side for privacy and performance
+- Child elements are automatically constrained by the `--qr-code-size` CSS variable to prevent layout issues

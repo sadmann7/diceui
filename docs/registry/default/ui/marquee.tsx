@@ -347,17 +347,16 @@ function MarqueeRoot(props: MarqueeRootProps) {
 
   const style = React.useMemo<React.CSSProperties>(
     () => ({
-      "--duration": `${duration}s`,
-      "--gap": gap,
-      "--delay": `${delay}s`,
-      "--flip": dir === "rtl" ? "-1" : "1",
-      "--loop-count":
+      "--marquee-duration": `${duration}s`,
+      "--marquee-gap": gap,
+      "--marquee-delay": `${delay}s`,
+      "--marquee-loop-count":
         loopCount === 0 || loopCount === Infinity
           ? "infinite"
           : loopCount.toString(),
       ...styleProp,
     }),
-    [duration, gap, delay, dir, loopCount, styleProp],
+    [duration, gap, delay, loopCount, styleProp],
   );
 
   const contextValue = React.useMemo<MarqueeContextValue>(
@@ -422,7 +421,7 @@ function MarqueeRoot(props: MarqueeRootProps) {
 }
 
 const marqueeContentVariants = cva(
-  "flex min-w-full shrink-0 [gap:var(--gap)]",
+  "flex min-w-full shrink-0 gap-(--marquee-gap)",
   {
     variants: {
       side: {
@@ -524,9 +523,9 @@ function MarqueeContent(props: DivProps) {
   const style = React.useMemo(
     () => ({
       ...styleProp,
-      animationDuration: "var(--duration)",
-      animationDelay: "var(--delay)",
-      animationIterationCount: "var(--loop-count)",
+      animationDuration: "var(--marquee-duration)",
+      animationDelay: "var(--marquee-delay)",
+      animationIterationCount: "var(--marquee-loop-count)",
       animationDirection: context.reverse ? "reverse" : "normal",
     }),
     [styleProp, context.reverse],
@@ -551,16 +550,16 @@ function MarqueeContent(props: DivProps) {
           }),
           isVertical && "flex-col",
           isVertical
-            ? "mb-[var(--gap)]"
+            ? "mb-(--marquee-gap)"
             : isRtl
-              ? "ml-[var(--gap)]"
-              : "mr-[var(--gap)]",
+              ? "ml-(--marquee-gap)"
+              : "mr-(--marquee-gap)",
         )}
       >
         <div
           ref={composedRef}
           className={cn(
-            "flex shrink-0 [gap:var(--gap)]",
+            "flex shrink-0 gap-(--marquee-gap)",
             isVertical && "flex-col",
           )}
         >
