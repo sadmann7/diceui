@@ -83,6 +83,16 @@ The main container component that provides context for QR code generation.
   name="RootProps"
 />
 
+<CSSVariablesTable
+  variables={[
+    {
+      title: "--qr-code-size",
+      description: "The size of the QR code in pixels. Used to constrain child elements to the QR code dimensions.",
+      defaultValue: "Based on size prop (e.g., 200px)",
+    },
+  ]}
+/>
+
 ### Image
 
 Renders the QR code as an HTML image element.
@@ -154,3 +164,4 @@ Higher error correction levels result in denser QR codes but provide better resi
 - SVG rendering is ideal for scalable, print-ready QR codes
 - The download functionality works in all modern browsers
 - QR codes are generated client-side for privacy and performance
+- Child elements are automatically constrained by the `--qr-code-size` CSS variable to prevent layout issues

@@ -50,15 +50,18 @@
   --animate-fade-up: fade-up 0.5s ease-out;
   --animate-fade-down: fade-down 0.5s ease-out;
   --animate-spin-around: spin-around 0.8s linear infinite;
-  --animate-marquee-left: marquee-left var(--duration) linear var(--loop-count);
-  --animate-marquee-right: marquee-right var(--duration) linear
-    var(--loop-count);
-  --animate-marquee-left-rtl: marquee-left-rtl var(--duration) linear
-    var(--loop-count);
-  --animate-marquee-right-rtl: marquee-right-rtl var(--duration) linear
-    var(--loop-count);
-  --animate-marquee-up: marquee-up var(--duration) linear var(--loop-count);
-  --animate-marquee-down: marquee-down var(--duration) linear var(--loop-count);
+  --animate-marquee-left: marquee-left var(--marquee-duration) linear
+    var(--marquee-loop-count);
+  --animate-marquee-right: marquee-right var(--marquee-duration) linear
+    var(--marquee-loop-count);
+  --animate-marquee-left-rtl: marquee-left-rtl var(--marquee-duration) linear
+    var(--marquee-loop-count);
+  --animate-marquee-right-rtl: marquee-right-rtl var(--marquee-duration) linear
+    var(--marquee-loop-count);
+  --animate-marquee-up: marquee-up var(--marquee-duration) linear
+    var(--marquee-loop-count);
+  --animate-marquee-down: marquee-down var(--marquee-duration) linear
+    var(--marquee-loop-count);
 
   @keyframes fade-up {
     0% {
@@ -102,13 +105,13 @@
       transform: translateX(0%);
     }
     100% {
-      transform: translateX(calc(-100% - var(--gap)));
+      transform: translateX(calc(-100% - var(--marquee-gap)));
     }
   }
 
   @keyframes marquee-right {
     0% {
-      transform: translateX(calc(-100% - var(--gap)));
+      transform: translateX(calc(-100% - var(--marquee-gap)));
     }
     100% {
       transform: translateX(0%);
@@ -120,13 +123,13 @@
       transform: translateY(0%);
     }
     100% {
-      transform: translateY(calc(-100% - var(--gap)));
+      transform: translateY(calc(-100% - var(--marquee-gap)));
     }
   }
 
   @keyframes marquee-down {
     0% {
-      transform: translateY(calc(-100% - var(--gap)));
+      transform: translateY(calc(-100% - var(--marquee-gap)));
     }
     100% {
       transform: translateY(0%);
@@ -138,13 +141,13 @@
       transform: translateX(0%);
     }
     100% {
-      transform: translateX(calc(100% + var(--gap)));
+      transform: translateX(calc(100% + var(--marquee-gap)));
     }
   }
 
   @keyframes marquee-right-rtl {
     0% {
-      transform: translateX(calc(100% + var(--gap)));
+      transform: translateX(calc(100% + var(--marquee-gap)));
     }
     100% {
       transform: translateX(0%);

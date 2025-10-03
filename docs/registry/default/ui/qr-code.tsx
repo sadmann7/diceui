@@ -159,6 +159,7 @@ function QRCodeRoot(props: QRCodeRootProps) {
     onError,
     onGenerated,
     className,
+    style,
     asChild,
     ...rootProps
   } = props;
@@ -302,6 +303,12 @@ function QRCodeRoot(props: QRCodeRootProps) {
           data-slot="qr-code"
           {...rootProps}
           className={cn(className, "flex flex-col items-center gap-2")}
+          style={
+            {
+              "--qr-code-size": `${size}px`,
+              ...style,
+            } as React.CSSProperties
+          }
         />
       </QRCodeContext.Provider>
     </StoreContext.Provider>
@@ -313,7 +320,7 @@ interface QRCodeImageProps extends React.ComponentProps<"img"> {
 }
 
 function QRCodeImage(props: QRCodeImageProps) {
-  const { alt = "QR Code", asChild, ...imageProps } = props;
+  const { alt = "QR Code", asChild, className, ...imageProps } = props;
 
   const context = useQRCodeContext(IMAGE_NAME);
   const dataUrl = useStore((state) => state.dataUrl);
@@ -330,6 +337,7 @@ function QRCodeImage(props: QRCodeImageProps) {
       alt={alt}
       width={context.size}
       height={context.size}
+      className={cn("max-h-(--qr-code-size) max-w-(--qr-code-size)", className)}
     />
   );
 }
@@ -339,7 +347,7 @@ interface QRCodeCanvasProps extends React.ComponentProps<"canvas"> {
 }
 
 function QRCodeCanvas(props: QRCodeCanvasProps) {
-  const { asChild, ref, ...canvasProps } = props;
+  const { asChild, className, ref, ...canvasProps } = props;
 
   const context = useQRCodeContext(CANVAS_NAME);
 
@@ -354,6 +362,7 @@ function QRCodeCanvas(props: QRCodeCanvasProps) {
       ref={composedRef}
       width={context.size}
       height={context.size}
+      className={cn("max-h-(--qr-code-size) max-w-(--qr-code-size)", className)}
     />
   );
 }
@@ -363,7 +372,7 @@ interface QRCodeSvgProps extends React.ComponentProps<"div"> {
 }
 
 function QRCodeSvg(props: QRCodeSvgProps) {
-  const { asChild, ...svgProps } = props;
+  const { asChild, className, ...svgProps } = props;
 
   const context = useQRCodeContext(SVG_NAME);
   const svgString = useStore((state) => state.svgString);
@@ -376,7 +385,8 @@ function QRCodeSvg(props: QRCodeSvgProps) {
     <SvgPrimitive
       data-slot="qr-code-svg"
       {...svgProps}
-      style={{ width: context.size, height: context.size }}
+      className={cn("max-h-(--qr-code-size) max-w-(--qr-code-size)", className)}
+      style={{ width: context.size, height: context.size, ...svgProps.style }}
       dangerouslySetInnerHTML={{ __html: svgString }}
     />
   );
@@ -393,6 +403,7 @@ function QRCodeDownload(props: QRCodeDownloadProps) {
     filename = "qrcode",
     format = "png",
     asChild,
+    className,
     children,
     ...buttonProps
   } = props;
@@ -436,6 +447,7 @@ function QRCodeDownload(props: QRCodeDownloadProps) {
       type="button"
       data-slot="qr-code-download"
       {...buttonProps}
+      className={cn("max-w-(--qr-code-size)", className)}
       onClick={onClick}
     >
       {children ?? `Download ${format.toUpperCase()}`}
