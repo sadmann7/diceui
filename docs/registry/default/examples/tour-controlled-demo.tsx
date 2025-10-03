@@ -2,7 +2,21 @@
 
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import * as Tour from "@/registry/default/ui/tour";
+import {
+  Tour,
+  TourBackdrop,
+  TourClose,
+  TourContent,
+  TourDescription,
+  TourFooter,
+  TourHeader,
+  TourNext,
+  TourPrev,
+  TourSkip,
+  TourStep,
+  TourStepCounter,
+  TourTitle,
+} from "@/registry/default/ui/tour";
 
 export default function TourControlledDemo() {
   const [open, setOpen] = React.useState(false);
@@ -87,7 +101,7 @@ export default function TourControlledDemo() {
         </div>
       </div>
 
-      <Tour.Root
+      <Tour
         open={open}
         onOpenChange={setOpen}
         currentStep={currentStep}
@@ -96,74 +110,74 @@ export default function TourControlledDemo() {
         onSkip={handleSkip}
         closeOnBackdropClick={true}
       >
-        <Tour.Backdrop />
+        <TourBackdrop />
 
-        <Tour.Step target="#controlled-title" placement="bottom">
-          <Tour.Content>
-            <Tour.Header>
-              <Tour.Title>Controlled Tour</Tour.Title>
-              <Tour.Description>
+        <TourStep target="#controlled-title" placement="bottom">
+          <TourContent>
+            <TourHeader>
+              <TourTitle>Controlled Tour</TourTitle>
+              <TourDescription>
                 This tour's state is controlled externally. Notice how the step
                 counter updates.
-              </Tour.Description>
-            </Tour.Header>
-            <Tour.Footer>
+              </TourDescription>
+            </TourHeader>
+            <TourFooter>
               <div className="flex w-full items-center justify-between">
-                <Tour.StepCounter />
+                <TourStepCounter />
                 <div className="flex gap-2">
-                  <Tour.SkipButton />
-                  <Tour.NextButton />
+                  <TourSkip />
+                  <TourNext />
                 </div>
               </div>
-            </Tour.Footer>
-            <Tour.CloseButton />
-          </Tour.Content>
-        </Tour.Step>
+            </TourFooter>
+            <TourClose />
+          </TourContent>
+        </TourStep>
 
-        <Tour.Step target="#controlled-step-1" placement="top">
-          <Tour.Content>
-            <Tour.Header>
-              <Tour.Title>External Controls</Tour.Title>
-              <Tour.Description>
+        <TourStep target="#controlled-step-1" placement="top">
+          <TourContent>
+            <TourHeader>
+              <TourTitle>External Controls</TourTitle>
+              <TourDescription>
                 You can control this tour using the external buttons above, or
                 use the built-in navigation.
-              </Tour.Description>
-            </Tour.Header>
-            <Tour.Footer>
+              </TourDescription>
+            </TourHeader>
+            <TourFooter>
               <div className="flex w-full items-center justify-between">
-                <Tour.StepCounter />
+                <TourStepCounter />
                 <div className="flex gap-2">
-                  <Tour.PrevButton />
-                  <Tour.NextButton />
+                  <TourPrev />
+                  <TourNext />
                 </div>
               </div>
-            </Tour.Footer>
-            <Tour.CloseButton />
-          </Tour.Content>
-        </Tour.Step>
+            </TourFooter>
+            <TourClose />
+          </TourContent>
+        </TourStep>
 
-        <Tour.Step target="#controlled-step-2" placement="top">
-          <Tour.Content>
-            <Tour.Header>
-              <Tour.Title>Final Step</Tour.Title>
-              <Tour.Description>
+        <TourStep target="#controlled-step-2" placement="top">
+          <TourContent>
+            <TourHeader>
+              <TourTitle>Final Step</TourTitle>
+              <TourDescription>
                 This is the last step. The tour state is fully controlled by the
                 parent component.
-              </Tour.Description>
-            </Tour.Header>
-            <Tour.Footer>
+              </TourDescription>
+            </TourHeader>
+            <TourFooter>
               <div className="flex w-full items-center justify-between">
-                <Tour.StepCounter />
+                <TourStepCounter />
                 <div className="flex gap-2">
-                  <Tour.PrevButton />
-                  <Tour.NextButton />
+                  <TourPrev />
+                  <TourNext />
                 </div>
               </div>
-            </Tour.Footer>
-            <Tour.CloseButton />
-          </Tour.Content>
-        </Tour.Step>
-      </Tour.Root>
+            </TourFooter>
+            <TourClose />
+          </TourContent>
+        </TourStep>
+      </Tour>
     </div>
   );
 }

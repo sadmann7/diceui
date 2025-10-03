@@ -3,22 +3,15 @@
 import { Slot } from "@radix-ui/react-slot";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import * as React from "react";
-import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 
 const ROOT_NAME = "Tour";
 const STEP_NAME = "TourStep";
 const CONTENT_NAME = "TourContent";
-const HEADER_NAME = "TourHeader";
-const TITLE_NAME = "TourTitle";
-const DESCRIPTION_NAME = "TourDescription";
-const FOOTER_NAME = "TourFooter";
-const CLOSE_BUTTON_NAME = "TourCloseButton";
-const STEP_COUNTER_NAME = "TourStepCounter";
-const NAVIGATION_NAME = "TourNavigation";
-const PREV_BUTTON_NAME = "TourPrevButton";
-const NEXT_BUTTON_NAME = "TourNextButton";
-const SKIP_BUTTON_NAME = "TourSkipButton";
+const CLOSE_NAME = "TourClose";
+const PREV_NAME = "TourPrev";
+const NEXT_NAME = "TourNext";
+const SKIP_NAME = "TourSkip";
 const BACKDROP_NAME = "TourBackdrop";
 
 type Direction = "ltr" | "rtl";
@@ -73,6 +66,8 @@ interface StoreState {
     left: number;
     right: number;
   };
+  position: { top: number; left: number };
+  maskPath: string;
 }
 
 interface Store {
@@ -114,40 +109,15 @@ function createStore(
   return store;
 }
 
-function useStoreSelector<T>(
-  store: Store,
-  selector: (state: StoreState) => T,
-): T {
-  const selectorRef = React.useRef(selector);
-  const snapshotRef = React.useRef<T | undefined>(undefined);
-  const hasSnapshotRef = React.useRef(false);
+function useStore<T>(selector: (state: StoreState) => T): T {
+  const store = useTourContext("useStore");
 
-  let snapshot: T;
-  if (hasSnapshotRef.current && Object.is(selector, selectorRef.current)) {
-    snapshot = snapshotRef.current as T;
-  } else {
-    snapshot = selector(store.getState());
-    selectorRef.current = selector;
-    snapshotRef.current = snapshot;
-    hasSnapshotRef.current = true;
-  }
-
-  const getSnapshot = React.useCallback(() => {
-    if (Object.is(selector, selectorRef.current)) {
-      return snapshotRef.current as T;
-    }
-    const newSnapshot = selector(store.getState());
-    selectorRef.current = selector;
-    snapshotRef.current = newSnapshot;
-    return newSnapshot;
-  }, [selector, store]);
-
-  const subscribe = React.useCallback(
-    (callback: () => void) => store.subscribe(callback),
-    [store],
+  const getSnapshot = React.useCallback(
+    () => selector(store.getState()),
+    [store, selector],
   );
 
-  return React.useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
 
 function useLazyRef<T>(fn: () => T) {
@@ -159,6 +129,9 @@ function useLazyRef<T>(fn: () => T) {
 
   return ref as React.RefObject<T>;
 }
+
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
 function getTargetElement(
   target: string | React.RefObject<HTMLElement> | HTMLElement,
@@ -210,6 +183,118 @@ function scrollToElement(
       top: Math.max(0, scrollTop),
       behavior,
     });
+  }
+}
+
+function updatePositionAndMask(store: Store, stepData?: StepData) {
+  if (!stepData) return;
+
+  const targetElement = getTargetElement(stepData.target);
+  if (!targetElement) return;
+
+  const state = store.getState();
+
+  // Update position
+  const rect = getElementRect(targetElement);
+  const placement = stepData.placement || "bottom";
+  const offset = stepData.offset || 8;
+
+  let top = 0;
+  let left = 0;
+
+  switch (placement) {
+    case "top":
+      top = rect.top - offset;
+      left = rect.left + rect.width / 2;
+      break;
+    case "top-start":
+      top = rect.top - offset;
+      left = rect.left;
+      break;
+    case "top-end":
+      top = rect.top - offset;
+      left = rect.right;
+      break;
+    case "bottom":
+      top = rect.bottom + offset;
+      left = rect.left + rect.width / 2;
+      break;
+    case "bottom-start":
+      top = rect.bottom + offset;
+      left = rect.left;
+      break;
+    case "bottom-end":
+      top = rect.bottom + offset;
+      left = rect.right;
+      break;
+    case "left":
+      top = rect.top + rect.height / 2;
+      left = rect.left - offset;
+      break;
+    case "left-start":
+      top = rect.top;
+      left = rect.left - offset;
+      break;
+    case "left-end":
+      top = rect.bottom;
+      left = rect.left - offset;
+      break;
+    case "right":
+      top = rect.top + rect.height / 2;
+      left = rect.right + offset;
+      break;
+    case "right-start":
+      top = rect.top;
+      left = rect.right + offset;
+      break;
+    case "right-end":
+      top = rect.bottom;
+      left = rect.right + offset;
+      break;
+  }
+
+  store.setState("position", { top, left });
+
+  // Update mask path
+  if (state.showBackdrop) {
+    const clientRect = targetElement.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const padding = state.padding;
+
+    const x = Math.max(0, clientRect.left - padding);
+    const y = Math.max(0, clientRect.top - padding);
+    const width = Math.min(viewportWidth - x, clientRect.width + padding * 2);
+    const height = Math.min(
+      viewportHeight - y,
+      clientRect.height + padding * 2,
+    );
+
+    const path = `polygon(0% 0%, 0% 100%, ${x}px 100%, ${x}px ${y}px, ${x + width}px ${y}px, ${x + width}px ${y + height}px, ${x}px ${y + height}px, ${x}px 100%, 100% 100%, 100% 0%)`;
+    store.setState("maskPath", path);
+  }
+}
+
+function getTransform(placement?: Placement) {
+  switch (placement) {
+    case "top":
+    case "top-start":
+    case "top-end":
+      return "translate(-50%, -100%)";
+    case "bottom":
+    case "bottom-start":
+    case "bottom-end":
+      return "translate(-50%, 0)";
+    case "left":
+    case "left-start":
+    case "left-end":
+      return "translate(-100%, -50%)";
+    case "right":
+    case "right-start":
+    case "right-end":
+      return "translate(0, -50%)";
+    default:
+      return "translate(-50%, 0)";
   }
 }
 
@@ -273,22 +358,14 @@ function TourRoot(props: TourRootProps) {
     scrollBehavior = "smooth",
     scrollOffset = {},
     asChild,
-    children,
-    ref,
     ...rootProps
   } = props;
-  const [openState, setOpenState] = React.useState(defaultOpen);
-  const [currentStepState, setCurrentStepState] =
-    React.useState(defaultCurrentStep);
-
-  const open = openProp ?? openState;
-  const currentStep = currentStepProp ?? currentStepState;
 
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef(
     (): StoreState => ({
-      open,
-      currentStep,
+      open: openProp ?? defaultOpen,
+      currentStep: currentStepProp ?? defaultCurrentStep,
       steps: [],
       dir,
       showBackdrop,
@@ -305,33 +382,48 @@ function TourRoot(props: TourRootProps) {
         right: 0,
         ...scrollOffset,
       },
+      position: { top: 0, left: 0 },
+      maskPath: "",
     }),
   );
 
   const store = useLazyRef(() =>
     createStore(listenersRef, stateRef, {
       open: (value) => {
-        if (openProp === undefined) {
-          setOpenState(value);
-        }
         onOpenChange?.(value);
 
+        // If opening the tour, initialize position for current step
+        if (value) {
+          const state = stateRef.current;
+          if (state && state.steps.length > 0) {
+            const currentStepData = state.steps[state.currentStep];
+            if (currentStepData) {
+              // Use setTimeout to ensure DOM is ready
+              setTimeout(() => {
+                updatePositionAndMask(store.current, currentStepData);
+              }, 0);
+            }
+          }
+        }
+
         // If closing the tour, check if it was skipped
-        if (!value && currentStep < (stateRef.current?.steps.length || 0) - 1) {
+        const state = stateRef.current;
+        if (
+          !value &&
+          state &&
+          state.currentStep < (state.steps.length || 0) - 1
+        ) {
           onSkip?.();
         }
       },
       currentStep: (value, store) => {
         const state = store.getState();
-        const prevStep = state.steps[currentStep];
+        const prevStep = state.steps[state.currentStep];
         const nextStep = state.steps[value];
 
         prevStep?.onStepLeave?.();
         nextStep?.onStepEnter?.();
 
-        if (currentStepProp === undefined) {
-          setCurrentStepState(value);
-        }
         onCurrentStepChange?.(value);
 
         // Handle completion
@@ -340,6 +432,9 @@ function TourRoot(props: TourRootProps) {
           store.setState("open", false);
           return;
         }
+
+        // Update position and mask when step changes
+        updatePositionAndMask(store, nextStep);
 
         // Scroll to target element
         if (state.scrollToElement && nextStep) {
@@ -358,12 +453,16 @@ function TourRoot(props: TourRootProps) {
 
   // Update store state when props change
   React.useEffect(() => {
-    store.current.setState("open", open);
-  }, [open, store]);
+    if (openProp !== undefined) {
+      store.current.setState("open", openProp);
+    }
+  }, [openProp, store]);
 
   React.useEffect(() => {
-    store.current.setState("currentStep", currentStep);
-  }, [currentStep, store]);
+    if (currentStepProp !== undefined) {
+      store.current.setState("currentStep", currentStepProp);
+    }
+  }, [currentStepProp, store]);
 
   React.useEffect(() => {
     store.current.setState("dir", dir);
@@ -409,30 +508,26 @@ function TourRoot(props: TourRootProps) {
 
   // Handle escape key
   React.useEffect(() => {
-    if (!open || !closeOnEscape) return;
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
+    function onKeyDown(event: KeyboardEvent) {
+      const state = store.current.getState();
+      if (state.open && state.closeOnEscape && event.key === "Escape") {
         event.preventDefault();
         store.current.setState("open", false);
       }
-    };
+    }
 
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [open, closeOnEscape, store]);
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [store]);
 
-  const Comp = asChild ? Slot : "div";
+  const RootPrimitive = asChild ? Slot : "div";
 
   return (
     <TourContext.Provider value={store.current}>
-      <Comp ref={ref} {...rootProps}>
-        {children}
-      </Comp>
+      <RootPrimitive data-slot="tour" {...rootProps} />
     </TourContext.Provider>
   );
 }
-TourRoot.displayName = ROOT_NAME;
 
 interface TourStepProps extends DivProps {
   target: string | React.RefObject<HTMLElement> | HTMLElement;
@@ -454,15 +549,13 @@ function TourStep(props: TourStepProps) {
     onStepEnter,
     onStepLeave,
     asChild,
-    children,
-    ref,
     ...stepProps
   } = props;
   const store = useTourContext(STEP_NAME);
   const stepIndex = React.useRef<number>(-1);
 
   // Register step with store
-  React.useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const stepData: StepData = {
       target,
       placement,
@@ -477,6 +570,13 @@ function TourStep(props: TourStepProps) {
     const newSteps = [...state.steps, stepData];
     stepIndex.current = newSteps.length - 1;
     store.setState("steps", newSteps);
+
+    // If this is the first step and tour is open, initialize position
+    if (stepIndex.current === 0 && state.open) {
+      setTimeout(() => {
+        updatePositionAndMask(store, stepData);
+      }, 0);
+    }
 
     return () => {
       const currentState = store.getState();
@@ -506,99 +606,33 @@ function TourStep(props: TourStepProps) {
     onStepLeave,
   };
 
-  const Comp = asChild ? Slot : "div";
+  const StepPrimitive = asChild ? Slot : "div";
 
   return (
     <StepContext.Provider value={{ stepIndex: stepIndex.current, stepData }}>
-      <Comp ref={ref} {...stepProps}>
-        {children}
-      </Comp>
+      <StepPrimitive data-slot="tour-step" {...stepProps} />
     </StepContext.Provider>
   );
 }
-TourStep.displayName = STEP_NAME;
 
-interface TourContentProps extends DivProps {}
-
-function TourContent(props: TourContentProps) {
-  const { asChild, className, children, ref, ...contentProps } = props;
+function TourContent(props: DivProps) {
+  const { asChild, className, ...contentProps } = props;
   const store = useTourContext(CONTENT_NAME);
-  const { open, currentStep, steps } = useStoreSelector(store, (state) => ({
-    open: state.open,
-    currentStep: state.currentStep,
-    steps: state.steps,
-  }));
+  const open = useStore((state) => state.open);
+  const currentStep = useStore((state) => state.currentStep);
+  const steps = useStore((state) => state.steps);
+  const position = useStore((state) => state.position);
 
   const currentStepData = steps[currentStep];
   const targetElement = currentStepData
     ? getTargetElement(currentStepData.target)
     : null;
 
-  const [position, setPosition] = React.useState({ top: 0, left: 0 });
-
   React.useEffect(() => {
     if (!open || !currentStepData || !targetElement) return;
 
     const updatePosition = () => {
-      const rect = getElementRect(targetElement);
-      const placement = currentStepData.placement || "bottom";
-      const offset = currentStepData.offset || 8;
-
-      let top = 0;
-      let left = 0;
-
-      switch (placement) {
-        case "top":
-          top = rect.top - offset;
-          left = rect.left + rect.width / 2;
-          break;
-        case "top-start":
-          top = rect.top - offset;
-          left = rect.left;
-          break;
-        case "top-end":
-          top = rect.top - offset;
-          left = rect.right;
-          break;
-        case "bottom":
-          top = rect.bottom + offset;
-          left = rect.left + rect.width / 2;
-          break;
-        case "bottom-start":
-          top = rect.bottom + offset;
-          left = rect.left;
-          break;
-        case "bottom-end":
-          top = rect.bottom + offset;
-          left = rect.right;
-          break;
-        case "left":
-          top = rect.top + rect.height / 2;
-          left = rect.left - offset;
-          break;
-        case "left-start":
-          top = rect.top;
-          left = rect.left - offset;
-          break;
-        case "left-end":
-          top = rect.bottom;
-          left = rect.left - offset;
-          break;
-        case "right":
-          top = rect.top + rect.height / 2;
-          left = rect.right + offset;
-          break;
-        case "right-start":
-          top = rect.top;
-          left = rect.right + offset;
-          break;
-        case "right-end":
-          top = rect.bottom;
-          left = rect.right + offset;
-          break;
-      }
-
-      setPosition({ top, left });
+      updatePositionAndMask(store, currentStepData);
     };
 
     updatePosition();
@@ -609,7 +643,22 @@ function TourContent(props: TourContentProps) {
       window.removeEventListener("resize", updatePosition);
       window.removeEventListener("scroll", updatePosition);
     };
-  }, [open, currentStepData, targetElement]);
+  }, [open, currentStepData, targetElement, store]);
+
+  // Additional effect to ensure position is set when tour becomes visible
+  React.useEffect(() => {
+    if (
+      open &&
+      currentStepData &&
+      targetElement &&
+      position.top === 0 &&
+      position.left === 0
+    ) {
+      setTimeout(() => {
+        updatePositionAndMask(store, currentStepData);
+      }, 10);
+    }
+  }, [open, currentStepData, targetElement, position, store]);
 
   if (
     !open ||
@@ -619,11 +668,12 @@ function TourContent(props: TourContentProps) {
     return null;
   }
 
-  const Comp = asChild ? Slot : "div";
+  const ContentPrimitive = asChild ? Slot : "div";
 
   return (
-    <Comp
-      ref={ref}
+    <ContentPrimitive
+      data-slot="tour-content"
+      {...contentProps}
       className={cn(
         "fixed z-50 w-80 rounded-lg border bg-popover p-4 text-popover-foreground shadow-md",
         className,
@@ -631,216 +681,154 @@ function TourContent(props: TourContentProps) {
       style={{
         top: position.top,
         left: position.left,
-        transform: "translate(-50%, -100%)",
+        transform: getTransform(currentStepData?.placement),
       }}
-      {...contentProps}
-    >
-      {children}
-    </Comp>
+    />
   );
 }
-TourContent.displayName = CONTENT_NAME;
 
 interface TourBackdropProps extends DivProps {}
 
 function TourBackdrop(props: TourBackdropProps) {
-  const { asChild, className, children, ref, ...backdropProps } = props;
+  const { asChild, className, style, ...backdropProps } = props;
   const store = useTourContext(BACKDROP_NAME);
-  const {
-    open,
-    showBackdrop,
-    closeOnBackdropClick,
-    currentStep,
-    steps,
-    padding,
-  } = useStoreSelector(store, (state) => ({
-    open: state.open,
-    showBackdrop: state.showBackdrop,
-    closeOnBackdropClick: state.closeOnBackdropClick,
-    currentStep: state.currentStep,
-    steps: state.steps,
-    padding: state.padding,
-  }));
+  const open = useStore((state) => state.open);
+  const showBackdrop = useStore((state) => state.showBackdrop);
+  const closeOnBackdropClick = useStore((state) => state.closeOnBackdropClick);
+  const maskPath = useStore((state) => state.maskPath);
 
-  const currentStepData = steps[currentStep];
-  const targetElement = currentStepData
-    ? getTargetElement(currentStepData.target)
-    : null;
+  const onClick = React.useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      backdropProps.onClick?.(event);
+      if (event.defaultPrevented || !closeOnBackdropClick) return;
 
-  const [maskPath, setMaskPath] = React.useState("");
-
-  React.useEffect(() => {
-    if (!open || !showBackdrop || !targetElement) {
-      setMaskPath("");
-      return;
-    }
-
-    const updateMask = () => {
-      const rect = targetElement.getBoundingClientRect();
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-
-      const x = Math.max(0, rect.left - padding);
-      const y = Math.max(0, rect.top - padding);
-      const width = Math.min(viewportWidth - x, rect.width + padding * 2);
-      const height = Math.min(viewportHeight - y, rect.height + padding * 2);
-
-      const path = `polygon(0% 0%, 0% 100%, ${x}px 100%, ${x}px ${y}px, ${x + width}px ${y}px, ${x + width}px ${y + height}px, ${x}px ${y + height}px, ${x}px 100%, 100% 100%, 100% 0%)`;
-      setMaskPath(path);
-    };
-
-    updateMask();
-    window.addEventListener("resize", updateMask);
-    window.addEventListener("scroll", updateMask);
-
-    return () => {
-      window.removeEventListener("resize", updateMask);
-      window.removeEventListener("scroll", updateMask);
-    };
-  }, [open, showBackdrop, targetElement, padding]);
-
-  const handleBackdropClick = () => {
-    if (closeOnBackdropClick) {
       store.setState("open", false);
-    }
-  };
+    },
+    [closeOnBackdropClick, store, backdropProps.onClick],
+  );
 
-  if (!open || !showBackdrop) {
-    return null;
-  }
+  if (!open || !showBackdrop) return null;
 
-  const Comp = asChild ? Slot : "div";
+  const BackdropPrimitive = asChild ? Slot : "div";
 
   return (
-    <Comp
-      ref={ref}
+    <BackdropPrimitive
+      data-slot="tour-backdrop"
+      {...backdropProps}
       className={cn("fixed inset-0 z-40 bg-black/50", className)}
       style={{
+        ...style,
         clipPath: maskPath,
       }}
-      onClick={handleBackdropClick}
-      {...backdropProps}
-    >
-      {children}
-    </Comp>
+      onClick={onClick}
+    />
   );
 }
-TourBackdrop.displayName = BACKDROP_NAME;
 
-interface TourHeaderProps extends DivProps {}
+function TourHeader(props: DivProps) {
+  const { asChild, className, ...headerProps } = props;
 
-function TourHeader(props: TourHeaderProps) {
-  const { asChild, className, children, ref, ...headerProps } = props;
-  const Comp = asChild ? Slot : "div";
+  const HeaderPrimitive = asChild ? Slot : "div";
 
   return (
-    <Comp
-      ref={ref}
+    <HeaderPrimitive
+      data-slot="tour-header"
+      {...headerProps}
       className={cn(
-        "flex flex-col space-y-1.5 text-center sm:text-left",
+        "flex flex-col gap-1.5 text-center sm:text-left",
         className,
       )}
-      {...headerProps}
-    >
-      {children}
-    </Comp>
+    />
   );
 }
-TourHeader.displayName = HEADER_NAME;
 
 interface TourTitleProps extends React.ComponentProps<"h2"> {
   asChild?: boolean;
 }
 
 function TourTitle(props: TourTitleProps) {
-  const { asChild, className, children, ref, ...titleProps } = props;
-  const Comp = asChild ? Slot : "h2";
+  const { asChild, className, ...titleProps } = props;
+
+  const TitlePrimitive = asChild ? Slot : "h2";
 
   return (
-    <Comp
-      ref={ref}
+    <TitlePrimitive
+      data-slot="tour-title"
+      {...titleProps}
       className={cn(
         "font-semibold text-lg leading-none tracking-tight",
         className,
       )}
-      {...titleProps}
-    >
-      {children}
-    </Comp>
+    />
   );
 }
-TourTitle.displayName = TITLE_NAME;
 
 interface TourDescriptionProps extends React.ComponentProps<"p"> {
   asChild?: boolean;
 }
 
 function TourDescription(props: TourDescriptionProps) {
-  const { asChild, className, children, ref, ...descriptionProps } = props;
-  const Comp = asChild ? Slot : "p";
+  const { asChild, className, ...descriptionProps } = props;
+  const DescriptionPrimitive = asChild ? Slot : "p";
 
   return (
-    <Comp
-      ref={ref}
-      className={cn("text-muted-foreground text-sm", className)}
+    <DescriptionPrimitive
+      data-slot="tour-description"
       {...descriptionProps}
-    >
-      {children}
-    </Comp>
+      className={cn("text-muted-foreground text-sm", className)}
+    />
   );
 }
-TourDescription.displayName = DESCRIPTION_NAME;
 
-interface TourFooterProps extends DivProps {}
+function TourFooter(props: DivProps) {
+  const { asChild, className, ...footerProps } = props;
 
-function TourFooter(props: TourFooterProps) {
-  const { asChild, className, children, ref, ...footerProps } = props;
-  const Comp = asChild ? Slot : "div";
+  const FooterPrimitive = asChild ? Slot : "div";
 
   return (
-    <Comp
-      ref={ref}
+    <FooterPrimitive
+      data-slot="tour-footer"
+      {...footerProps}
       className={cn(
-        "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
+        "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
         className,
       )}
-      {...footerProps}
-    >
-      {children}
-    </Comp>
+    />
   );
 }
-TourFooter.displayName = FOOTER_NAME;
 
-interface TourCloseButtonProps extends ButtonProps {}
+function TourClose(props: ButtonProps) {
+  const { asChild, className, ...closeButtonProps } = props;
 
-function TourCloseButton(props: TourCloseButtonProps) {
-  const { asChild, className, children, ref, ...closeButtonProps } = props;
-  const store = useTourContext(CLOSE_BUTTON_NAME);
+  const store = useTourContext(CLOSE_NAME);
 
-  const handleClick = () => {
-    store.setState("open", false);
-  };
+  const onClick = React.useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      closeButtonProps.onClick?.(event);
+      if (event.defaultPrevented) return;
 
-  const Comp = asChild ? Slot : "button";
+      store.setState("open", false);
+    },
+    [store, closeButtonProps.onClick],
+  );
+
+  const ClosePrimitive = asChild ? Slot : "button";
 
   return (
-    <Comp
-      ref={ref}
+    <ClosePrimitive
       type="button"
+      aria-label="Close tour"
       className={cn(
         "absolute top-4 right-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none",
         className,
       )}
-      aria-label="Close tour"
-      onClick={handleClick}
+      onClick={onClick}
       {...closeButtonProps}
     >
-      {children || <X className="h-4 w-4" />}
-    </Comp>
+      <X className="size-4" />
+    </ClosePrimitive>
   );
 }
-TourCloseButton.displayName = CLOSE_BUTTON_NAME;
 
 interface TourStepCounterProps extends DivProps {
   format?: (current: number, total: number) => string;
@@ -852,193 +840,175 @@ function TourStepCounter(props: TourStepCounterProps) {
     asChild,
     className,
     children,
-    ref,
     ...stepCounterProps
   } = props;
-  const store = useTourContext(STEP_COUNTER_NAME);
-  const { currentStep, steps } = useStoreSelector(store, (state) => ({
-    currentStep: state.currentStep,
-    steps: state.steps,
-  }));
 
-  const Comp = asChild ? Slot : "div";
+  const currentStep = useStore((state) => state.currentStep);
+  const steps = useStore((state) => state.steps);
+
+  const StepCounterPrimitive = asChild ? Slot : "div";
 
   return (
-    <Comp
-      ref={ref}
-      className={cn("text-muted-foreground text-sm", className)}
+    <StepCounterPrimitive
+      data-slot="tour-step-counter"
       {...stepCounterProps}
+      className={cn("text-muted-foreground text-sm", className)}
     >
-      {children || format(currentStep + 1, steps.length)}
-    </Comp>
+      {children ?? format(currentStep + 1, steps.length)}
+    </StepCounterPrimitive>
   );
 }
-TourStepCounter.displayName = STEP_COUNTER_NAME;
 
-interface TourNavigationProps extends DivProps {}
-
-function TourNavigation(props: TourNavigationProps) {
-  const { asChild, className, children, ref, ...navigationProps } = props;
-  const Comp = asChild ? Slot : "div";
+function TourNavigation(props: DivProps) {
+  const { asChild, className, ...navigationProps } = props;
+  const NavigationPrimitive = asChild ? Slot : "div";
 
   return (
-    <Comp
-      ref={ref}
+    <NavigationPrimitive
+      data-slot="tour-navigation"
       className={cn("flex items-center justify-between", className)}
       {...navigationProps}
-    >
-      {children}
-    </Comp>
+    />
   );
 }
-TourNavigation.displayName = NAVIGATION_NAME;
 
-interface TourPrevButtonProps extends ButtonProps {}
+function TourPrev(props: ButtonProps) {
+  const { asChild, className, children, ...prevButtonProps } = props;
+  const store = useTourContext(PREV_NAME);
+  const currentStep = useStore((state) => state.currentStep);
 
-function TourPrevButton(props: TourPrevButtonProps) {
-  const { asChild, className, children, ref, ...prevButtonProps } = props;
-  const store = useTourContext(PREV_BUTTON_NAME);
-  const { currentStep } = useStoreSelector(store, (state) => ({
-    currentStep: state.currentStep,
-  }));
+  const onClick = React.useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      prevButtonProps.onClick?.(event);
+      if (event.defaultPrevented) return;
 
-  const handleClick = () => {
-    if (currentStep > 0) {
-      store.setState("currentStep", currentStep - 1);
-    }
-  };
+      if (currentStep > 0) {
+        store.setState("currentStep", currentStep - 1);
+      }
+    },
+    [currentStep, store, prevButtonProps.onClick],
+  );
 
   const isDisabled = currentStep === 0;
 
-  const Comp = asChild ? Slot : "button";
+  const PrevPrimitive = asChild ? Slot : "button";
 
   return (
-    <Comp
-      ref={ref}
+    <PrevPrimitive
       type="button"
+      aria-label="Previous step"
+      data-slot="tour-prev"
+      {...prevButtonProps}
       className={cn(
-        "inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-3 font-medium text-sm ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+        "inline-flex h-9 items-center justify-center gap-2 rounded-md border border-input bg-background px-3 font-medium text-sm ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
         className,
       )}
-      aria-label="Previous step"
+      onClick={onClick}
       disabled={isDisabled}
-      onClick={handleClick}
-      {...prevButtonProps}
     >
-      {children || (
+      {children ?? (
         <>
-          <ChevronLeft className="mr-2 h-4 w-4" />
+          <ChevronLeft className="size-4" />
           Previous
         </>
       )}
-    </Comp>
+    </PrevPrimitive>
   );
 }
-TourPrevButton.displayName = PREV_BUTTON_NAME;
 
-interface TourNextButtonProps extends ButtonProps {}
+function TourNext(props: ButtonProps) {
+  const { asChild, className, children, ...nextButtonProps } = props;
+  const store = useTourContext(NEXT_NAME);
+  const currentStep = useStore((state) => state.currentStep);
+  const steps = useStore((state) => state.steps);
 
-function TourNextButton(props: TourNextButtonProps) {
-  const { asChild, className, children, ref, ...nextButtonProps } = props;
-  const store = useTourContext(NEXT_BUTTON_NAME);
-  const { currentStep, steps } = useStoreSelector(store, (state) => ({
-    currentStep: state.currentStep,
-    steps: state.steps,
-  }));
+  const onClick = React.useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      nextButtonProps.onClick?.(event);
+      if (event.defaultPrevented) return;
 
-  const handleClick = () => {
-    store.setState("currentStep", currentStep + 1);
-  };
+      store.setState("currentStep", currentStep + 1);
+    },
+    [currentStep, store, nextButtonProps.onClick],
+  );
 
   const isLastStep = currentStep === steps.length - 1;
 
-  const Comp = asChild ? Slot : "button";
+  const NextPrimitive = asChild ? Slot : "button";
 
   return (
-    <Comp
-      ref={ref}
+    <NextPrimitive
       type="button"
+      aria-label="Next step"
+      data-slot="tour-next"
+      {...nextButtonProps}
       className={cn(
-        "inline-flex h-9 items-center justify-center rounded-md bg-primary px-3 font-medium text-primary-foreground text-sm ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+        "inline-flex h-9 items-center justify-center gap-2 rounded-md bg-primary px-3 font-medium text-primary-foreground text-sm ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
         className,
       )}
-      aria-label="Next step"
-      onClick={handleClick}
-      {...nextButtonProps}
+      onClick={onClick}
     >
-      {children || (
+      {children ?? (
         <>
           {isLastStep ? "Finish" : "Next"}
-          {!isLastStep && <ChevronRight className="ml-2 h-4 w-4" />}
+          {!isLastStep && <ChevronRight className="size-4" />}
         </>
       )}
-    </Comp>
+    </NextPrimitive>
   );
 }
-TourNextButton.displayName = NEXT_BUTTON_NAME;
 
-interface TourSkipButtonProps extends ButtonProps {}
+function TourSkip(props: ButtonProps) {
+  const { asChild, className, children, ...skipButtonProps } = props;
 
-function TourSkipButton(props: TourSkipButtonProps) {
-  const { asChild, className, children, ref, ...skipButtonProps } = props;
-  const store = useTourContext(SKIP_BUTTON_NAME);
+  const store = useTourContext(SKIP_NAME);
 
-  const handleClick = () => {
-    store.setState("open", false);
-  };
+  const onClick = React.useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      skipButtonProps.onClick?.(event);
+      if (event.defaultPrevented) return;
 
-  const Comp = asChild ? Slot : "button";
+      store.setState("open", false);
+    },
+    [store, skipButtonProps.onClick],
+  );
+
+  const SkipPrimitive = asChild ? Slot : "button";
 
   return (
-    <Comp
-      ref={ref}
+    <SkipPrimitive
       type="button"
+      aria-label="Skip tour"
+      data-slot="tour-skip"
       className={cn(
-        "inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-3 font-medium text-sm ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+        "inline-flex h-9 items-center justify-center gap-2 rounded-md border border-input bg-background px-3 font-medium text-sm ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
         className,
       )}
-      aria-label="Skip tour"
-      onClick={handleClick}
+      onClick={onClick}
       {...skipButtonProps}
     >
-      {children || "Skip"}
-    </Comp>
+      {children ?? "Skip"}
+    </SkipPrimitive>
   );
 }
-TourSkipButton.displayName = SKIP_BUTTON_NAME;
-
-const Root = TourRoot;
-const Step = TourStep;
-const Content = TourContent;
-const Backdrop = TourBackdrop;
-const Header = TourHeader;
-const Title = TourTitle;
-const Description = TourDescription;
-const Footer = TourFooter;
-const CloseButton = TourCloseButton;
-const StepCounter = TourStepCounter;
-const Navigation = TourNavigation;
-const PrevButton = TourPrevButton;
-const NextButton = TourNextButton;
-const SkipButton = TourSkipButton;
 
 export {
-  Root,
-  Step,
-  Content,
-  Backdrop,
-  Header,
-  Title,
-  Description,
-  Footer,
-  CloseButton,
-  StepCounter,
-  Navigation,
-  PrevButton,
-  NextButton,
-  SkipButton,
+  TourRoot as Root,
+  TourStep as Step,
+  TourContent as Content,
+  TourBackdrop as Backdrop,
+  TourHeader as Header,
+  TourTitle as Title,
+  TourDescription as Description,
+  TourFooter as Footer,
+  TourClose as Close,
+  TourStepCounter as StepCounter,
+  TourNavigation as Navigation,
+  TourPrev as Prev,
+  TourNext as Next,
+  TourSkip as Skip,
   //
-  TourRoot,
+  TourRoot as Tour,
   TourStep,
   TourContent,
   TourBackdrop,
@@ -1046,10 +1016,12 @@ export {
   TourTitle,
   TourDescription,
   TourFooter,
-  TourCloseButton,
+  TourClose,
   TourStepCounter,
   TourNavigation,
-  TourPrevButton,
-  TourNextButton,
-  TourSkipButton,
+  TourPrev,
+  TourNext,
+  TourSkip,
+  //
+  type TourRootProps as TourProps,
 };

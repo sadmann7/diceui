@@ -3,7 +3,22 @@
 import * as React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import * as Tour from "@/registry/default/ui/tour";
+import {
+  Tour,
+  TourBackdrop,
+  TourClose,
+  TourContent,
+  TourDescription,
+  TourFooter,
+  TourHeader,
+  TourNavigation,
+  TourNext,
+  TourPrev,
+  TourSkip,
+  TourStep,
+  TourStepCounter,
+  TourTitle,
+} from "@/registry/default/ui/tour";
 
 export default function TourCustomizationDemo() {
   const [open, setOpen] = React.useState(false);
@@ -47,7 +62,7 @@ export default function TourCustomizationDemo() {
         </div>
       </div>
 
-      <Tour.Root
+      <Tour
         open={open}
         onOpenChange={setOpen}
         padding={8}
@@ -60,136 +75,134 @@ export default function TourCustomizationDemo() {
           console.log("Custom tour completed!");
         }}
       >
-        <Tour.Backdrop className="bg-black/70" />
+        <TourBackdrop className="bg-black/70" />
 
-        <Tour.Step target="#custom-title" placement="bottom" offset={12}>
-          <Tour.Content className="w-96 border-2 border-primary/20 shadow-xl">
-            <Tour.Header className="border-b pb-3">
-              <Tour.Title className="text-primary">
-                🎯 Custom Styling
-              </Tour.Title>
-              <Tour.Description className="text-base">
+        <TourStep target="#custom-title" placement="bottom" offset={12}>
+          <TourContent className="w-96 border-2 border-primary/20 shadow-xl">
+            <TourHeader className="border-b pb-3">
+              <TourTitle className="text-primary">🎯 Custom Styling</TourTitle>
+              <TourDescription className="text-base">
                 This tour uses custom padding, border radius, and enhanced
                 backdrop styling.
-              </Tour.Description>
-            </Tour.Header>
-            <Tour.Footer className="pt-3">
+              </TourDescription>
+            </TourHeader>
+            <TourFooter className="pt-3">
               <div className="flex w-full items-center justify-between">
-                <Tour.StepCounter
+                <TourStepCounter
                   format={(current, total) => `Step ${current} of ${total}`}
                   className="font-medium text-primary"
                 />
                 <div className="flex gap-2">
-                  <Tour.SkipButton asChild>
+                  <TourSkip asChild>
                     <Button variant="ghost" size="sm">
                       Skip All
                     </Button>
-                  </Tour.SkipButton>
-                  <Tour.NextButton asChild>
+                  </TourSkip>
+                  <TourNext asChild>
                     <Button size="sm">Let's Go! →</Button>
-                  </Tour.NextButton>
+                  </TourNext>
                 </div>
               </div>
-            </Tour.Footer>
-            <Tour.CloseButton className="text-muted-foreground hover:text-foreground" />
-          </Tour.Content>
-        </Tour.Step>
+            </TourFooter>
+            <TourClose className="text-muted-foreground hover:text-foreground" />
+          </TourContent>
+        </TourStep>
 
-        <Tour.Step target="#custom-left" placement="right" offset={16}>
-          <Tour.Content className="w-80 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/50 dark:to-indigo-950/50">
-            <Tour.Header>
-              <Tour.Title className="text-blue-700 dark:text-blue-300">
+        <TourStep target="#custom-left" placement="right" offset={16}>
+          <TourContent className="w-80 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/50 dark:to-indigo-950/50">
+            <TourHeader>
+              <TourTitle className="text-blue-700 dark:text-blue-300">
                 Right Placement
-              </Tour.Title>
-              <Tour.Description>
+              </TourTitle>
+              <TourDescription>
                 This step appears to the right of the target element with
                 increased offset.
-              </Tour.Description>
-            </Tour.Header>
-            <Tour.Footer>
-              <Tour.Navigation>
+              </TourDescription>
+            </TourHeader>
+            <TourFooter>
+              <TourNavigation>
                 <div className="flex items-center gap-2">
-                  <Tour.StepCounter className="text-blue-600 dark:text-blue-400" />
+                  <TourStepCounter className="text-blue-600 dark:text-blue-400" />
                 </div>
                 <div className="flex gap-2">
-                  <Tour.PrevButton asChild>
+                  <TourPrev asChild>
                     <Button variant="outline" size="sm">
                       ← Back
                     </Button>
-                  </Tour.PrevButton>
-                  <Tour.NextButton asChild>
+                  </TourPrev>
+                  <TourNext asChild>
                     <Button size="sm">Continue →</Button>
-                  </Tour.NextButton>
+                  </TourNext>
                 </div>
-              </Tour.Navigation>
-            </Tour.Footer>
-            <Tour.CloseButton />
-          </Tour.Content>
-        </Tour.Step>
+              </TourNavigation>
+            </TourFooter>
+            <TourClose />
+          </TourContent>
+        </TourStep>
 
-        <Tour.Step target="#custom-center" placement="bottom-start" offset={20}>
-          <Tour.Content className="w-72 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/50 dark:to-emerald-950/50">
-            <Tour.Header>
-              <Tour.Title className="text-green-700 dark:text-green-300">
+        <TourStep target="#custom-center" placement="bottom-start" offset={20}>
+          <TourContent className="w-72 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/50 dark:to-emerald-950/50">
+            <TourHeader>
+              <TourTitle className="text-green-700 dark:text-green-300">
                 Bottom Start
-              </Tour.Title>
-              <Tour.Description>
+              </TourTitle>
+              <TourDescription>
                 This step uses bottom-start placement and custom background
                 gradient.
-              </Tour.Description>
-            </Tour.Header>
-            <Tour.Footer>
-              <Tour.Navigation>
-                <Tour.StepCounter
+              </TourDescription>
+            </TourHeader>
+            <TourFooter>
+              <TourNavigation>
+                <TourStepCounter
                   className="text-green-600 dark:text-green-400"
                   format={(current, total) => `${current}/${total}`}
                 />
                 <div className="flex gap-2">
-                  <Tour.PrevButton asChild>
+                  <TourPrev asChild>
                     <Button variant="outline" size="sm">
                       ← Back
                     </Button>
-                  </Tour.PrevButton>
-                  <Tour.NextButton asChild>
+                  </TourPrev>
+                  <TourNext asChild>
                     <Button size="sm">Continue →</Button>
-                  </Tour.NextButton>
+                  </TourNext>
                 </div>
-              </Tour.Navigation>
-            </Tour.Footer>
-            <Tour.CloseButton />
-          </Tour.Content>
-        </Tour.Step>
+              </TourNavigation>
+            </TourFooter>
+            <TourClose />
+          </TourContent>
+        </TourStep>
 
-        <Tour.Step target="#custom-right" placement="left" offset={16}>
-          <Tour.Content className="w-80 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/50 dark:to-pink-950/50">
-            <Tour.Header>
-              <Tour.Title className="text-purple-700 dark:text-purple-300">
+        <TourStep target="#custom-right" placement="left" offset={16}>
+          <TourContent className="w-80 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/50 dark:to-pink-950/50">
+            <TourHeader>
+              <TourTitle className="text-purple-700 dark:text-purple-300">
                 🎉 Tour Complete!
-              </Tour.Title>
-              <Tour.Description>
+              </TourTitle>
+              <TourDescription>
                 You've seen various customization options including placement,
                 styling, and behavior.
-              </Tour.Description>
-            </Tour.Header>
-            <Tour.Footer>
-              <Tour.Navigation>
-                <Tour.StepCounter className="text-purple-600 dark:text-purple-400" />
+              </TourDescription>
+            </TourHeader>
+            <TourFooter>
+              <TourNavigation>
+                <TourStepCounter className="text-purple-600 dark:text-purple-400" />
                 <div className="flex gap-2">
-                  <Tour.PrevButton asChild>
+                  <TourPrev asChild>
                     <Button variant="outline" size="sm">
                       ← Back
                     </Button>
-                  </Tour.PrevButton>
-                  <Tour.NextButton asChild>
+                  </TourPrev>
+                  <TourNext asChild>
                     <Button size="sm">Finish! ✨</Button>
-                  </Tour.NextButton>
+                  </TourNext>
                 </div>
-              </Tour.Navigation>
-            </Tour.Footer>
-            <Tour.CloseButton />
-          </Tour.Content>
-        </Tour.Step>
-      </Tour.Root>
+              </TourNavigation>
+            </TourFooter>
+            <TourClose />
+          </TourContent>
+        </TourStep>
+      </Tour>
     </div>
   );
 }
