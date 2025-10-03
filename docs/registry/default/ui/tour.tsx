@@ -308,10 +308,20 @@ function useTourContext(consumerName: string) {
   return context;
 }
 
-const StepContext = React.createContext<{
+interface TourStepContextValue {
   stepIndex: number;
   stepData: StepData;
-} | null>(null);
+}
+
+const TourStepContext = React.createContext<TourStepContextValue | null>(null);
+
+function useTourStepContext(consumerName: string) {
+  const context = React.useContext(TourStepContext);
+  if (!context) {
+    throw new Error(`\`${consumerName}\` must be used within \`${STEP_NAME}\``);
+  }
+  return context;
+}
 
 interface TourRootProps extends DivProps {
   open?: boolean;
@@ -616,15 +626,19 @@ function TourStep(props: TourStepProps) {
   const StepPrimitive = asChild ? Slot : "div";
 
   return (
-    <StepContext.Provider value={{ stepIndex: stepIndex.current, stepData }}>
+    <TourStepContext.Provider
+      value={{ stepIndex: stepIndex.current, stepData }}
+    >
       <StepPrimitive data-slot="tour-step" {...stepProps} />
-    </StepContext.Provider>
+    </TourStepContext.Provider>
   );
 }
 
 function TourContent(props: DivProps) {
   const { asChild, className, ...contentProps } = props;
+
   const store = useTourContext(CONTENT_NAME);
+  const stepContext = useTourStepContext(CONTENT_NAME);
   const open = useStore((state) => state.open);
   const currentStep = useStore((state) => state.currentStep);
   const steps = useStore((state) => state.steps);
@@ -635,8 +649,11 @@ function TourContent(props: DivProps) {
     ? getTargetElement(currentStepData.target)
     : null;
 
+  // Check if this content belongs to the current step
+  const isCurrentStep = stepContext.stepIndex === currentStep;
+
   React.useEffect(() => {
-    if (!open || !currentStepData || !targetElement) return;
+    if (!open || !currentStepData || !targetElement || !isCurrentStep) return;
 
     const updatePosition = () => {
       updatePositionAndMask(store, currentStepData);
@@ -650,7 +667,7 @@ function TourContent(props: DivProps) {
       window.removeEventListener("resize", updatePosition);
       window.removeEventListener("scroll", updatePosition);
     };
-  }, [open, currentStepData, targetElement, store]);
+  }, [open, currentStepData, targetElement, store, isCurrentStep]);
 
   // Additional effect to ensure position is set when tour becomes visible
   React.useEffect(() => {
@@ -659,18 +676,20 @@ function TourContent(props: DivProps) {
       currentStepData &&
       targetElement &&
       position.top === 0 &&
-      position.left === 0
+      position.left === 0 &&
+      isCurrentStep
     ) {
       setTimeout(() => {
         updatePositionAndMask(store, currentStepData);
       }, 10);
     }
-  }, [open, currentStepData, targetElement, position, store]);
+  }, [open, currentStepData, targetElement, position, store, isCurrentStep]);
 
   if (
     !open ||
     !currentStepData ||
-    (!targetElement && !currentStepData.showOnTargetNotFound)
+    (!targetElement && !currentStepData.showOnTargetNotFound) ||
+    !isCurrentStep
   ) {
     return null;
   }
@@ -698,6 +717,7 @@ interface TourBackdropProps extends DivProps {}
 
 function TourBackdrop(props: TourBackdropProps) {
   const { asChild, className, style, ...backdropProps } = props;
+
   const store = useTourContext(BACKDROP_NAME);
   const open = useStore((state) => state.open);
   const showBackdrop = useStore((state) => state.showBackdrop);
@@ -776,6 +796,7 @@ interface TourDescriptionProps extends React.ComponentProps<"p"> {
 
 function TourDescription(props: TourDescriptionProps) {
   const { asChild, className, ...descriptionProps } = props;
+
   const DescriptionPrimitive = asChild ? Slot : "p";
 
   return (
@@ -873,14 +894,15 @@ function TourNavigation(props: DivProps) {
   return (
     <NavigationPrimitive
       data-slot="tour-navigation"
-      className={cn("flex items-center justify-between", className)}
       {...navigationProps}
+      className={cn("flex items-center justify-between", className)}
     />
   );
 }
 
 function TourPrev(props: ButtonProps) {
   const { asChild, className, children, ...prevButtonProps } = props;
+
   const store = useTourContext(PREV_NAME);
   const currentStep = useStore((state) => state.currentStep);
 
