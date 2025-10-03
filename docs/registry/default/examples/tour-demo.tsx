@@ -56,16 +56,7 @@ export default function TourDemo() {
         </div>
       </div>
 
-      <Tour
-        open={open}
-        onOpenChange={setOpen}
-        onComplete={() => {
-          console.log("Tour completed!");
-        }}
-        onSkip={() => {
-          console.log("Tour skipped!");
-        }}
-      >
+      <Tour open={open} onOpenChange={setOpen}>
         <TourBackdrop />
 
         <TourStep target="#welcome-title" placement="bottom">

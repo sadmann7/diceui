@@ -396,7 +396,14 @@ function TourRoot(props: TourRootProps) {
         if (value) {
           const state = stateRef.current;
           if (state && state.steps.length > 0) {
-            const currentStepData = state.steps[state.currentStep];
+            // Reset currentStep to 0 if it's beyond the steps array (after completion)
+            if (state.currentStep >= state.steps.length) {
+              store.current.setState("currentStep", 0);
+            }
+
+            const currentStepIndex =
+              state.currentStep >= state.steps.length ? 0 : state.currentStep;
+            const currentStepData = state.steps[currentStepIndex];
             if (currentStepData) {
               // Use setTimeout to ensure DOM is ready
               setTimeout(() => {
