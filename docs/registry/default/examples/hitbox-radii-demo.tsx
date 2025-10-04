@@ -1,32 +1,38 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Hitbox } from "@/registry/default/components/hitbox";
 
-export default function HitboxSizesDemo() {
+export default function HitboxRadiiDemo() {
   return (
     <div className="flex items-center gap-8">
       <div className="flex flex-col items-center gap-4">
-        <Hitbox debug>
+        <Hitbox radius="none" debug>
           <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-sm">default</p>
+        <p className="text-muted-foreground text-sm">none</p>
       </div>
       <div className="flex flex-col items-center gap-4">
-        <Hitbox size="sm" debug>
+        <Hitbox radius="sm" debug>
           <Checkbox />
         </Hitbox>
         <p className="text-muted-foreground text-sm">sm</p>
       </div>
       <div className="flex flex-col items-center gap-4">
-        <Hitbox size="lg" debug>
+        <Hitbox radius="md" debug>
+          <Checkbox />
+        </Hitbox>
+        <p className="text-muted-foreground text-sm">md</p>
+      </div>
+      <div className="flex flex-col items-center gap-4">
+        <Hitbox radius="lg" debug>
           <Checkbox />
         </Hitbox>
         <p className="text-muted-foreground text-sm">lg</p>
       </div>
       <div className="flex flex-col items-center gap-4">
-        <Hitbox size="10px" debug>
+        <Hitbox radius="full" debug>
           <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-sm">10px</p>
+        <p className="text-muted-foreground text-sm">full</p>
       </div>
     </div>
   );

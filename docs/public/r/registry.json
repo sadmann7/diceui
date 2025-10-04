@@ -384,6 +384,116 @@
       ]
     },
     {
+      "name": "client-only",
+      "type": "registry:component",
+      "title": "Client Only",
+      "description": "A utility component that only renders its children on the client side.",
+      "files": [
+        {
+          "path": "registry/default/components/client-only.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "direction-provider",
+      "type": "registry:component",
+      "title": "Direction Provider",
+      "description": "A provider component for managing text direction (LTR/RTL) context.",
+      "files": [
+        {
+          "path": "registry/default/components/direction-provider.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "hitbox",
+      "type": "registry:component",
+      "title": "Hitbox",
+      "description": "A utility component that extends the clickable area of interactive elements for better accessibility and user experience.",
+      "dependencies": ["@radix-ui/react-slot", "class-variance-authority"],
+      "files": [
+        {
+          "path": "registry/default/components/hitbox.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "portal",
+      "type": "registry:component",
+      "title": "Portal",
+      "description": "A utility component for rendering content in a different part of the DOM tree.",
+      "files": [
+        {
+          "path": "registry/default/components/portal.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "presence",
+      "type": "registry:component",
+      "title": "Presence",
+      "description": "A utility component for managing enter/exit animations and presence states.",
+      "files": [
+        {
+          "path": "registry/default/components/presence.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "visually-hidden",
+      "type": "registry:component",
+      "title": "Visually Hidden",
+      "description": "A utility component that hides content visually while keeping it accessible to screen readers.",
+      "dependencies": ["@radix-ui/react-slot"],
+      "files": [
+        {
+          "path": "registry/default/components/visually-hidden.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "visually-hidden-input",
+      "type": "registry:component",
+      "title": "Visually Hidden Input",
+      "description": "A utility component for creating accessible hidden input elements.",
+      "files": [
+        {
+          "path": "registry/default/components/visually-hidden-input.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "utils",
+      "type": "registry:lib",
+      "title": "Utils",
+      "description": "Utility functions for class name composition and other common tasks.",
+      "files": [
+        {
+          "path": "registry/default/lib/utils.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "compose-refs",
+      "type": "registry:lib",
+      "title": "Compose Refs",
+      "description": "Utility for composing multiple React refs into a single ref.",
+      "files": [
+        {
+          "path": "registry/default/lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
       "name": "angle-slider-demo",
       "type": "registry:component",
       "title": "Angle Slider Demo",
@@ -972,26 +1082,62 @@
       ]
     },
     {
-      "name": "utils",
-      "type": "registry:lib",
-      "title": "Utils",
-      "description": "Utility functions for class name composition and other common tasks.",
+      "name": "hitbox-demo",
+      "type": "registry:component",
+      "title": "Hitbox Demo",
+      "description": "Example showing how to use the hitbox component.",
       "files": [
         {
-          "path": "registry/default/lib/utils.ts",
-          "type": "registry:lib"
+          "path": "registry/default/examples/hitbox-demo.tsx",
+          "type": "registry:example"
         }
       ]
     },
     {
-      "name": "compose-refs",
-      "type": "registry:lib",
-      "title": "Compose Refs",
-      "description": "Utility for composing multiple React refs into a single ref.",
+      "name": "hitbox-sizes-demo",
+      "type": "registry:component",
+      "title": "Hitbox Sizes Demo",
+      "description": "Example showing different sizes for the hitbox component.",
       "files": [
         {
-          "path": "registry/default/lib/compose-refs.ts",
-          "type": "registry:lib"
+          "path": "registry/default/examples/hitbox-sizes-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "hitbox-positions-demo",
+      "type": "registry:component",
+      "title": "Hitbox Positions Demo",
+      "description": "Example showing different positions for the hitbox component.",
+      "files": [
+        {
+          "path": "registry/default/examples/hitbox-positions-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "hitbox-radii-demo",
+      "type": "registry:component",
+      "title": "Hitbox Radii Demo",
+      "description": "Example showing different border radius options for the hitbox component.",
+      "files": [
+        {
+          "path": "registry/default/examples/hitbox-radii-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "hitbox-debug-demo",
+      "type": "registry:component",
+      "title": "Hitbox Debug Demo",
+      "description": "Example showing the debug mode for visualizing hitbox areas.",
+      "files": [
+        {
+          "path": "registry/default/examples/hitbox-debug-demo.tsx",
+          "type": "registry:example"
         }
       ]
     }

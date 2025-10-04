@@ -1,50 +1,50 @@
-import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Hitbox } from "@/registry/default/components/hitbox";
 
 export default function HitboxPositionsDemo() {
   return (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-      <div className="flex flex-col items-center gap-2.5">
+    <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+      <div className="flex flex-col items-center gap-4">
         <Hitbox debug>
-          <Button size="sm">All</Button>
+          <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-xs">all</p>
+        <p className="text-muted-foreground text-sm">all</p>
       </div>
-      <div className="flex flex-col items-center gap-2.5">
+      <div className="flex flex-col items-center gap-4">
         <Hitbox position="top" debug>
-          <Button size="sm">Top</Button>
+          <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-xs">top</p>
+        <p className="text-muted-foreground text-sm">top</p>
       </div>
-      <div className="flex flex-col items-center gap-2.5">
+      <div className="flex flex-col items-center gap-4">
         <Hitbox position="bottom" debug>
-          <Button size="sm">Bottom</Button>
+          <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-xs">bottom</p>
+        <p className="text-muted-foreground text-sm">bottom</p>
       </div>
-      <div className="flex flex-col items-center gap-2.5">
+      <div className="flex flex-col items-center gap-4">
         <Hitbox position="left" debug>
-          <Button size="sm">Left</Button>
+          <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-xs">left</p>
+        <p className="text-muted-foreground text-sm">left</p>
       </div>
-      <div className="flex flex-col items-center gap-2.5">
+      <div className="flex flex-col items-center gap-4">
         <Hitbox position="right" debug>
-          <Button size="sm">Right</Button>
+          <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-xs">right</p>
+        <p className="text-muted-foreground text-sm">right</p>
       </div>
-      <div className="flex flex-col items-center gap-2.5">
+      <div className="flex flex-col items-center gap-4">
         <Hitbox position="vertical" debug>
-          <Button size="sm">Vertical</Button>
+          <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-xs">vertical</p>
+        <p className="text-muted-foreground text-sm">vertical</p>
       </div>
-      <div className="flex flex-col items-center gap-2.5">
+      <div className="flex flex-col items-center gap-4">
         <Hitbox position="horizontal" debug>
-          <Button size="sm">Horizontal</Button>
+          <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-xs">horizontal</p>
+        <p className="text-muted-foreground text-sm">horizontal</p>
       </div>
     </div>
   );
