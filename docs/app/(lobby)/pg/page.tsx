@@ -29,11 +29,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
-import QRCodeCustomizationDemo from "@/registry/default/examples/qr-code-customization-demo";
-import QRCodeDemo from "@/registry/default/examples/qr-code-demo";
-import QRCodeFormatsDemo from "@/registry/default/examples/qr-code-formats-demo";
-import RatingDemo from "@/registry/default/examples/rating-demo";
-import RatingThemesDemo from "@/registry/default/examples/rating-themes-demo";
+import HitboxDemo from "@/registry/default/examples/hitbox-demo";
+import HitboxSizesDemo from "@/registry/default/examples/hitbox-sizes-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -48,11 +45,8 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <Demo>
-        <RatingThemesDemo />
-        <RatingDemo />
-        <QRCodeDemo />
-        <QRCodeFormatsDemo />
-        <QRCodeCustomizationDemo />
+        <HitboxDemo />
+        <HitboxSizesDemo />
         <ColorPickerDemo />
       </Demo>
       <Combobox className="w-[15rem]">
