@@ -3,7 +3,7 @@ import { Hitbox } from "@/registry/default/components/hitbox";
 
 export default function HitboxSizesDemo() {
   return (
-    <div className="flex items-center gap-6">
+    <div className="flex items-center gap-8">
       <div className="flex flex-col items-center gap-2.5">
         <Hitbox debug>
           <Button>Default</Button>
