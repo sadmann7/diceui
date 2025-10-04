@@ -29,7 +29,11 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
+import HitboxDebugDemo from "@/registry/default/examples/hitbox-debug-demo";
 import HitboxDemo from "@/registry/default/examples/hitbox-demo";
+import HitboxPositionsDemo from "@/registry/default/examples/hitbox-positions-demo";
+import HitboxRadiiDemo from "@/registry/default/examples/hitbox-radii-demo";
+import HitboxSizesDemo from "@/registry/default/examples/hitbox-sizes-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -45,6 +49,10 @@ export default function PlaygroundPage() {
     <Shell>
       <Demo>
         <HitboxDemo />
+        <HitboxSizesDemo />
+        <HitboxPositionsDemo />
+        <HitboxRadiiDemo />
+        <HitboxDebugDemo />
         <ColorPickerDemo />
       </Demo>
       <Combobox className="w-[15rem]">

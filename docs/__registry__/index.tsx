@@ -1145,7 +1145,7 @@ export const Index: Record<string, any> = {
       name: "hitbox-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["hitbox"],
+      registryDependencies: ["checkbox","hitbox"],
       files: [{
         path: "registry/default/examples/hitbox-demo.tsx",
         type: "registry:example",
@@ -1159,7 +1159,7 @@ export const Index: Record<string, any> = {
       name: "hitbox-sizes-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["button","hitbox"],
+      registryDependencies: ["checkbox","hitbox"],
       files: [{
         path: "registry/default/examples/hitbox-sizes-demo.tsx",
         type: "registry:example",
@@ -1173,7 +1173,7 @@ export const Index: Record<string, any> = {
       name: "hitbox-positions-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["button","hitbox"],
+      registryDependencies: ["checkbox","hitbox"],
       files: [{
         path: "registry/default/examples/hitbox-positions-demo.tsx",
         type: "registry:example",
@@ -1183,31 +1183,17 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "hitbox-radius-demo": {
-      name: "hitbox-radius-demo",
+    "hitbox-radii-demo": {
+      name: "hitbox-radii-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["button","hitbox"],
+      registryDependencies: ["checkbox","hitbox"],
       files: [{
-        path: "registry/default/examples/hitbox-radius-demo.tsx",
+        path: "registry/default/examples/hitbox-radii-demo.tsx",
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/examples/hitbox-radius-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "hitbox-custom-size-demo": {
-      name: "hitbox-custom-size-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["button","hitbox"],
-      files: [{
-        path: "registry/default/examples/hitbox-custom-size-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/hitbox-custom-size-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/hitbox-radii-demo.tsx")),
       source: "",
       chunks: []
     },
