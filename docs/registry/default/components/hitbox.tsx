@@ -10,10 +10,7 @@ type DynamicSize = Size | (string & {});
 const sizes: DynamicSize[] = ["default", "sm", "lg"];
 
 const hitboxVariants = cva(
-  [
-    "relative after:absolute after:content-['']",
-    "[--size-default:0.5rem] [--size-lg:0.75rem] [--size-sm:0.25rem]",
-  ],
+  "relative [--size-default:12px] [--size-lg:16px] [--size-sm:8px] after:absolute after:content-['']",
   {
     variants: {
       size: {

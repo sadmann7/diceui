@@ -1,20 +1,20 @@
-import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Hitbox } from "@/registry/default/components/hitbox";
 
 export default function HitboxDebugDemo() {
   return (
     <div className="flex items-center gap-8">
-      <div className="flex flex-col items-center gap-2.5">
+      <div className="flex flex-col items-center gap-4">
         <Hitbox debug={false}>
-          <Button>Debug Off</Button>
+          <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-xs">debug=false</p>
+        <p className="text-muted-foreground text-sm">debug=false</p>
       </div>
-      <div className="flex flex-col items-center gap-2.5">
+      <div className="flex flex-col items-center gap-4">
         <Hitbox debug>
-          <Button>Debug On</Button>
+          <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-xs">debug=true</p>
+        <p className="text-muted-foreground text-sm">debug=true</p>
       </div>
     </div>
   );

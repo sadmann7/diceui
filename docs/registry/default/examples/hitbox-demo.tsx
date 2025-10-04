@@ -1,5 +1,4 @@
-import { ShapesIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Hitbox } from "@/registry/default/components/hitbox";
 
 export default function HitboxDemo() {
@@ -7,23 +6,21 @@ export default function HitboxDemo() {
     <div className="flex items-center gap-8">
       <div className="flex flex-col items-center gap-4">
         <Hitbox debug>
-          <Button size="sm">Default</Button>
+          <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-xs">Default Size</p>
+        <p className="text-muted-foreground text-sm">Default Size</p>
       </div>
       <div className="flex flex-col items-center gap-4">
         <Hitbox radius="full" debug>
-          <Button size="sm" className="size-8 rounded-full">
-            <ShapesIcon />
-          </Button>
+          <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-xs">Full Radius</p>
+        <p className="text-muted-foreground text-sm">Full Radius</p>
       </div>
       <div className="flex flex-col items-center gap-4">
         <Hitbox position="bottom" debug>
-          <Button size="sm">Bottom</Button>
+          <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-xs">Bottom Position</p>
+        <p className="text-muted-foreground text-sm">Bottom Position</p>
       </div>
     </div>
   );

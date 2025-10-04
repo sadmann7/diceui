@@ -551,7 +551,7 @@ export const examples: Registry["items"] = [
     name: "hitbox-demo",
     type: "registry:example",
     dependencies: ["lucide-react"],
-    registryDependencies: ["hitbox"],
+    registryDependencies: ["checkbox", "hitbox"],
     files: [
       {
         path: "examples/hitbox-demo.tsx",
@@ -562,7 +562,7 @@ export const examples: Registry["items"] = [
   {
     name: "hitbox-sizes-demo",
     type: "registry:example",
-    registryDependencies: ["button", "hitbox"],
+    registryDependencies: ["checkbox", "hitbox"],
     files: [
       {
         path: "examples/hitbox-sizes-demo.tsx",
@@ -573,7 +573,7 @@ export const examples: Registry["items"] = [
   {
     name: "hitbox-positions-demo",
     type: "registry:example",
-    registryDependencies: ["button", "hitbox"],
+    registryDependencies: ["checkbox", "hitbox"],
     files: [
       {
         path: "examples/hitbox-positions-demo.tsx",
@@ -582,24 +582,13 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "hitbox-radius-demo",
+    name: "hitbox-radii-demo",
     type: "registry:example",
     dependencies: ["lucide-react"],
-    registryDependencies: ["button", "hitbox"],
+    registryDependencies: ["checkbox", "hitbox"],
     files: [
       {
-        path: "examples/hitbox-radius-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "hitbox-custom-size-demo",
-    type: "registry:example",
-    registryDependencies: ["button", "hitbox"],
-    files: [
-      {
-        path: "examples/hitbox-custom-size-demo.tsx",
+        path: "examples/hitbox-radii-demo.tsx",
         type: "registry:example",
       },
     ],
