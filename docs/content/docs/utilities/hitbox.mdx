@@ -88,6 +88,24 @@ The main hitbox component that extends the clickable area of its child element.
   name="HitboxProps"
 />
 
+## Sizes
+
+The hitbox provides three predefined sizes:
+
+- **`sm`**: 8px extension - Minimal extension for elements that need slight touch area improvement
+- **`default`**: 12px extension - Standard extension that helps most elements meet accessibility requirements  
+- **`lg`**: 16px extension - Generous extension for dense interfaces or critical interactive elements
+
+### Custom Sizes
+
+You can also use custom CSS values for precise control:
+
+```tsx
+<Hitbox size="18px">
+  <Checkbox />
+</Hitbox>
+```
+
 ## Accessibility
 
 The Hitbox component improves accessibility by:
@@ -102,6 +120,13 @@ The Hitbox component improves accessibility by:
 - **Minimum size**: 44px × 44px (iOS) or 48dp × 48dp (Android)
 - **Recommended size**: 48px × 48px or larger
 - **Spacing**: At least 8px between adjacent touch targets
+
+### Size Recommendations
+
+- **Small buttons (32px)**: Use `default` size (12px) to reach 56px total target
+- **Default buttons (36px)**: Use `default` size (12px) to reach 60px total target
+- **Large buttons (40px)**: Use `sm` size (8px) to reach 56px total target
+- **Icon buttons**: Use `lg` size (16px) for maximum accessibility
 
 ### Best Practices
 
