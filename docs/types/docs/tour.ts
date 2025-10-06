@@ -36,28 +36,28 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * The current active step index.
    *
    * ```ts
-   * currentStep={2}
+   * value={2}
    * ```
    */
-  currentStep?: number;
+  value?: number;
 
   /**
    * The default current step for uncontrolled usage.
    *
    * @default 0
    */
-  defaultCurrentStep?: number;
+  defaultValue?: number;
 
   /**
    * Event handler called when the current step changes.
    *
    * ```ts
-   * onCurrentStepChange={(step) => {
+   * onValueChange={(step) => {
    *   console.log("Current step:", step)
    * }}
    * ```
    */
-  onCurrentStepChange?: (step: number) => void;
+  onValueChange?: (step: number) => void;
 
   /**
    * Event handler called when the tour is completed.

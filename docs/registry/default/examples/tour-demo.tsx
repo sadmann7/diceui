@@ -117,6 +117,7 @@ export default function TourDemo() {
             <div className="flex w-full items-center justify-between">
               <TourStepCounter />
               <div className="flex gap-2">
+                <TourSkip />
                 <TourNext />
               </div>
             </div>

@@ -19,27 +19,27 @@ import {
 
 export default function TourControlledDemo() {
   const [open, setOpen] = React.useState(false);
-  const [currentStep, setCurrentStep] = React.useState(0);
+  const [value, setValue] = React.useState(0);
 
   const onStepChange = React.useCallback((step: number) => {
-    setCurrentStep(step);
+    setValue(step);
     console.log(`Step changed to: ${step + 1}`);
   }, []);
 
   const onComplete = React.useCallback(() => {
     console.log("Tour completed!");
     setOpen(false);
-    setCurrentStep(0);
+    setValue(0);
   }, []);
 
   const onSkip = React.useCallback(() => {
     console.log("Tour skipped!");
     setOpen(false);
-    setCurrentStep(0);
+    setValue(0);
   }, []);
 
   const onTourStart = React.useCallback(() => {
-    setCurrentStep(0);
+    setValue(0);
     setOpen(true);
   }, []);
 
@@ -59,22 +59,22 @@ export default function TourControlledDemo() {
           </Button>
           <Button
             variant="outline"
-            onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
-            disabled={!open || currentStep === 0}
+            onClick={() => setValue(Math.max(0, value - 1))}
+            disabled={!open || value === 0}
           >
             External Prev
           </Button>
           <Button
             variant="outline"
-            onClick={() => setCurrentStep(Math.min(2, currentStep + 1))}
-            disabled={!open || currentStep === 2}
+            onClick={() => setValue(Math.min(2, value + 1))}
+            disabled={!open || value === 2}
           >
             External Next
           </Button>
         </div>
         {open && (
           <p className="text-muted-foreground text-sm">
-            Current step: {currentStep + 1} / 3
+            Current step: {value + 1} / 3
           </p>
         )}
       </div>
@@ -103,8 +103,8 @@ export default function TourControlledDemo() {
       <Tour
         open={open}
         onOpenChange={setOpen}
-        currentStep={currentStep}
-        onCurrentStepChange={onStepChange}
+        value={value}
+        onValueChange={onStepChange}
         onComplete={onComplete}
         onSkip={onSkip}
         closeOnBackdropClick={true}

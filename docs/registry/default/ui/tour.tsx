@@ -47,7 +47,7 @@ interface StepData {
 
 interface StoreState {
   open: boolean;
-  currentStep: number;
+  value: number;
   steps: StepData[];
   dir: Direction;
   showBackdrop: boolean;
@@ -94,7 +94,7 @@ function createStore(
     getState: () =>
       stateRef.current ?? {
         open: false,
-        currentStep: 0,
+        value: 0,
         steps: [],
         dir: "ltr",
         showBackdrop: true,
@@ -352,9 +352,9 @@ interface TourRootProps extends DivProps {
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
-  currentStep?: number;
-  defaultCurrentStep?: number;
-  onCurrentStepChange?: (step: number) => void;
+  value?: number;
+  defaultValue?: number;
+  onValueChange?: (step: number) => void;
   onComplete?: () => void;
   onSkip?: () => void;
   dir?: Direction;
@@ -379,9 +379,9 @@ function TourRoot(props: TourRootProps) {
     open: openProp,
     defaultOpen = false,
     onOpenChange,
-    currentStep: currentStepProp,
-    defaultCurrentStep = 0,
-    onCurrentStepChange,
+    value: valueProp,
+    defaultValue = 0,
+    onValueChange,
     onComplete,
     onSkip,
     dir = "ltr",
@@ -401,7 +401,7 @@ function TourRoot(props: TourRootProps) {
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<StoreState>(() => ({
     open: openProp ?? defaultOpen,
-    currentStep: currentStepProp ?? defaultCurrentStep,
+    value: valueProp ?? defaultValue,
     steps: [],
     dir,
     showBackdrop,
@@ -431,12 +431,12 @@ function TourRoot(props: TourRootProps) {
           if (value) {
             const state = stateRef.current;
             if (state && state.steps.length > 0) {
-              if (state.currentStep >= state.steps.length) {
-                store.setState("currentStep", 0);
+              if (state.value >= state.steps.length) {
+                store.setState("value", 0);
               }
 
               const currentStepIndex =
-                state.currentStep >= state.steps.length ? 0 : state.currentStep;
+                state.value >= state.steps.length ? 0 : state.value;
               const currentStepData = state.steps[currentStepIndex];
               if (currentStepData) {
                 queueMicrotask(() => {
@@ -446,20 +446,20 @@ function TourRoot(props: TourRootProps) {
             }
           } else {
             const state = stateRef.current;
-            if (state && state.currentStep < (state.steps.length || 0) - 1) {
+            if (state && state.value < (state.steps.length || 0) - 1) {
               onSkip?.();
             }
           }
         },
-        currentStep: (value, store) => {
+        value: (value, store) => {
           const state = store.getState();
-          const prevStep = state.steps[state.currentStep];
+          const prevStep = state.steps[state.value];
           const nextStep = state.steps[value];
 
           prevStep?.onStepLeave?.();
           nextStep?.onStepEnter?.();
 
-          onCurrentStepChange?.(value);
+          onValueChange?.(value);
 
           if (value >= state.steps.length) {
             onComplete?.();
@@ -483,14 +483,7 @@ function TourRoot(props: TourRootProps) {
           }
         },
       }),
-    [
-      listenersRef,
-      stateRef,
-      onOpenChange,
-      onCurrentStepChange,
-      onComplete,
-      onSkip,
-    ],
+    [listenersRef, stateRef, onOpenChange, onValueChange, onComplete, onSkip],
   );
 
   useIsomorphicLayoutEffect(() => {
@@ -500,10 +493,10 @@ function TourRoot(props: TourRootProps) {
   }, [openProp, store]);
 
   useIsomorphicLayoutEffect(() => {
-    if (currentStepProp !== undefined) {
-      store.setState("currentStep", currentStepProp);
+    if (valueProp !== undefined) {
+      store.setState("value", valueProp);
     }
-  }, [currentStepProp, store]);
+  }, [valueProp, store]);
 
   useIsomorphicLayoutEffect(() => {
     store.setState("dir", dir);
@@ -630,17 +623,17 @@ function TourStep(props: TourStepProps) {
   }, [store, target, placement, offset, required, onStepEnter, onStepLeave]);
 
   const open = useStore((state) => state.open);
-  const currentStep = useStore((state) => state.currentStep);
+  const value = useStore((state) => state.value);
   const steps = useStore((state) => state.steps);
   const position = useStore((state) => state.position);
   const stepFooter = useTourContext(STEP_NAME);
 
-  const currentStepData = steps[currentStep];
+  const currentStepData = steps[value];
   const targetElement = currentStepData
     ? getTargetElement(currentStepData.target)
     : null;
 
-  const isCurrentStep = stepIndexRef.current === currentStep;
+  const isCurrentStep = stepIndexRef.current === value;
 
   React.useEffect(() => {
     if (!open || !currentStepData || !targetElement || !isCurrentStep) return;
@@ -848,7 +841,7 @@ function TourStepCounter(props: TourStepCounterProps) {
     ...stepCounterProps
   } = props;
 
-  const currentStep = useStore((state) => state.currentStep);
+  const value = useStore((state) => state.value);
   const steps = useStore((state) => state.steps);
 
   const StepCounterPrimitive = asChild ? Slot : "div";
@@ -859,7 +852,7 @@ function TourStepCounter(props: TourStepCounterProps) {
       {...stepCounterProps}
       className={cn("text-muted-foreground text-sm", className)}
     >
-      {children ?? format(currentStep + 1, steps.length)}
+      {children ?? format(value + 1, steps.length)}
     </StepCounterPrimitive>
   );
 }
@@ -881,21 +874,21 @@ function TourPrev(props: ButtonProps) {
   const { asChild, className, children, ...prevButtonProps } = props;
 
   const store = useStoreContext(PREV_NAME);
-  const currentStep = useStore((state) => state.currentStep);
+  const value = useStore((state) => state.value);
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       prevButtonProps.onClick?.(event);
       if (event.defaultPrevented) return;
 
-      if (currentStep > 0) {
-        store.setState("currentStep", currentStep - 1);
+      if (value > 0) {
+        store.setState("value", value - 1);
       }
     },
-    [currentStep, store, prevButtonProps.onClick],
+    [value, store, prevButtonProps.onClick],
   );
 
-  const isDisabled = currentStep === 0;
+  const isDisabled = value === 0;
 
   const PrevPrimitive = asChild ? Slot : "button";
 
@@ -925,7 +918,7 @@ function TourPrev(props: ButtonProps) {
 function TourNext(props: ButtonProps) {
   const { asChild, className, children, ...nextButtonProps } = props;
   const store = useStoreContext(NEXT_NAME);
-  const currentStep = useStore((state) => state.currentStep);
+  const value = useStore((state) => state.value);
   const steps = useStore((state) => state.steps);
 
   const onClick = React.useCallback(
@@ -933,12 +926,12 @@ function TourNext(props: ButtonProps) {
       nextButtonProps.onClick?.(event);
       if (event.defaultPrevented) return;
 
-      store.setState("currentStep", currentStep + 1);
+      store.setState("value", value + 1);
     },
-    [currentStep, store, nextButtonProps.onClick],
+    [value, store, nextButtonProps.onClick],
   );
 
-  const isLastStep = currentStep === steps.length - 1;
+  const isLastStep = value === steps.length - 1;
 
   const NextPrimitive = asChild ? Slot : "button";
 
