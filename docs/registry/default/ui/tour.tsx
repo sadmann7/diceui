@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 
 const ROOT_NAME = "Tour";
 const STEP_NAME = "TourStep";
-const CONTENT_NAME = "TourContent";
 const CLOSE_NAME = "TourClose";
 const PREV_NAME = "TourPrev";
 const NEXT_NAME = "TourNext";
@@ -315,14 +314,6 @@ interface TourStepContextValue {
 
 const TourStepContext = React.createContext<TourStepContextValue | null>(null);
 
-function useTourStepContext(consumerName: string) {
-  const context = React.useContext(TourStepContext);
-  if (!context) {
-    throw new Error(`\`${consumerName}\` must be used within \`${STEP_NAME}\``);
-  }
-  return context;
-}
-
 interface TourRootProps extends DivProps {
   open?: boolean;
   defaultOpen?: boolean;
@@ -566,6 +557,7 @@ function TourStep(props: TourStepProps) {
     onStepEnter,
     onStepLeave,
     asChild,
+    className,
     ...stepProps
   } = props;
   const store = useTourContext(STEP_NAME);
@@ -623,22 +615,7 @@ function TourStep(props: TourStepProps) {
     onStepLeave,
   };
 
-  const StepPrimitive = asChild ? Slot : "div";
-
-  return (
-    <TourStepContext.Provider
-      value={{ stepIndex: stepIndex.current, stepData }}
-    >
-      <StepPrimitive data-slot="tour-step" {...stepProps} />
-    </TourStepContext.Provider>
-  );
-}
-
-function TourContent(props: DivProps) {
-  const { asChild, className, ...contentProps } = props;
-
-  const store = useTourContext(CONTENT_NAME);
-  const stepContext = useTourStepContext(CONTENT_NAME);
+  // Content functionality (previously in TourContent)
   const open = useStore((state) => state.open);
   const currentStep = useStore((state) => state.currentStep);
   const steps = useStore((state) => state.steps);
@@ -650,7 +627,7 @@ function TourContent(props: DivProps) {
     : null;
 
   // Check if this content belongs to the current step
-  const isCurrentStep = stepContext.stepIndex === currentStep;
+  const isCurrentStep = stepIndex.current === currentStep;
 
   React.useEffect(() => {
     if (!open || !currentStepData || !targetElement || !isCurrentStep) return;
@@ -694,22 +671,26 @@ function TourContent(props: DivProps) {
     return null;
   }
 
-  const ContentPrimitive = asChild ? Slot : "div";
+  const StepPrimitive = asChild ? Slot : "div";
 
   return (
-    <ContentPrimitive
-      data-slot="tour-content"
-      {...contentProps}
-      className={cn(
-        "fixed z-50 w-80 rounded-lg border bg-popover p-4 text-popover-foreground shadow-md",
-        className,
-      )}
-      style={{
-        top: position.top,
-        left: position.left,
-        transform: getTransform(currentStepData?.placement),
-      }}
-    />
+    <TourStepContext.Provider
+      value={{ stepIndex: stepIndex.current, stepData }}
+    >
+      <StepPrimitive
+        data-slot="tour-step"
+        {...stepProps}
+        className={cn(
+          "fixed z-50 w-80 rounded-lg border bg-popover p-4 text-popover-foreground shadow-md",
+          className,
+        )}
+        style={{
+          top: position.top,
+          left: position.left,
+          transform: getTransform(currentStepData?.placement),
+        }}
+      />
+    </TourStepContext.Provider>
   );
 }
 
@@ -1024,7 +1005,6 @@ function TourSkip(props: ButtonProps) {
 export {
   TourRoot as Root,
   TourStep as Step,
-  TourContent as Content,
   TourBackdrop as Backdrop,
   TourHeader as Header,
   TourTitle as Title,
@@ -1039,7 +1019,6 @@ export {
   //
   TourRoot as Tour,
   TourStep,
-  TourContent,
   TourBackdrop,
   TourHeader,
   TourTitle,

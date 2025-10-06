@@ -6,7 +6,6 @@ import {
   Tour,
   TourBackdrop,
   TourClose,
-  TourContent,
   TourDescription,
   TourFooter,
   TourHeader,
@@ -60,91 +59,83 @@ export default function TourDemo() {
         <TourBackdrop />
 
         <TourStep target="#welcome-title" placement="bottom">
-          <TourContent>
-            <TourHeader>
-              <TourTitle>Welcome!</TourTitle>
-              <TourDescription>
-                This is the main title of our application. Let's explore the
-                features together.
-              </TourDescription>
-            </TourHeader>
-            <TourFooter>
-              <div className="flex w-full items-center justify-between">
-                <TourStepCounter />
-                <div className="flex gap-2">
-                  <TourSkip />
-                  <TourNext />
-                </div>
+          <TourHeader>
+            <TourTitle>Welcome!</TourTitle>
+            <TourDescription>
+              This is the main title of our application. Let's explore the
+              features together.
+            </TourDescription>
+          </TourHeader>
+          <TourFooter>
+            <div className="flex w-full items-center justify-between">
+              <TourStepCounter />
+              <div className="flex gap-2">
+                <TourSkip />
+                <TourNext />
               </div>
-            </TourFooter>
-            <TourClose />
-          </TourContent>
+            </div>
+          </TourFooter>
+          <TourClose />
         </TourStep>
 
         <TourStep target="#feature-1" placement="top">
-          <TourContent>
-            <TourHeader>
-              <TourTitle>Feature 1</TourTitle>
-              <TourDescription>
-                This is our first feature. It provides amazing functionality
-                that will help you get started.
-              </TourDescription>
-            </TourHeader>
-            <TourFooter>
-              <div className="flex w-full items-center justify-between">
-                <TourStepCounter />
-                <div className="flex gap-2">
-                  <TourPrev />
-                  <TourNext />
-                </div>
+          <TourHeader>
+            <TourTitle>Feature 1</TourTitle>
+            <TourDescription>
+              This is our first feature. It provides amazing functionality that
+              will help you get started.
+            </TourDescription>
+          </TourHeader>
+          <TourFooter>
+            <div className="flex w-full items-center justify-between">
+              <TourStepCounter />
+              <div className="flex gap-2">
+                <TourPrev />
+                <TourNext />
               </div>
-            </TourFooter>
-            <TourClose />
-          </TourContent>
+            </div>
+          </TourFooter>
+          <TourClose />
         </TourStep>
 
         <TourStep target="#feature-2" placement="top">
-          <TourContent>
-            <TourHeader>
-              <TourTitle>Feature 2</TourTitle>
-              <TourDescription>
-                Our second feature builds upon the first and adds even more
-                value to your experience.
-              </TourDescription>
-            </TourHeader>
-            <TourFooter>
-              <div className="flex w-full items-center justify-between">
-                <TourStepCounter />
-                <div className="flex gap-2">
-                  <TourPrev />
-                  <TourNext />
-                </div>
+          <TourHeader>
+            <TourTitle>Feature 2</TourTitle>
+            <TourDescription>
+              Our second feature builds upon the first and adds even more value
+              to your experience.
+            </TourDescription>
+          </TourHeader>
+          <TourFooter>
+            <div className="flex w-full items-center justify-between">
+              <TourStepCounter />
+              <div className="flex gap-2">
+                <TourPrev />
+                <TourNext />
               </div>
-            </TourFooter>
-            <TourClose />
-          </TourContent>
+            </div>
+          </TourFooter>
+          <TourClose />
         </TourStep>
 
         <TourStep target="#feature-3" placement="top">
-          <TourContent>
-            <TourHeader>
-              <TourTitle>Feature 3</TourTitle>
-              <TourDescription>
-                The final feature in our tour showcases the full potential of
-                our platform.
-              </TourDescription>
-            </TourHeader>
-            <TourFooter>
-              <div className="flex w-full items-center justify-between">
-                <TourStepCounter />
-                <div className="flex gap-2">
-                  <TourPrev />
-                  <TourNext />
-                </div>
+          <TourHeader>
+            <TourTitle>Feature 3</TourTitle>
+            <TourDescription>
+              The final feature in our tour showcases the full potential of our
+              platform.
+            </TourDescription>
+          </TourHeader>
+          <TourFooter>
+            <div className="flex w-full items-center justify-between">
+              <TourStepCounter />
+              <div className="flex gap-2">
+                <TourPrev />
+                <TourNext />
               </div>
-            </TourFooter>
-            <TourClose />
-          </TourContent>
+            </div>
+          </TourFooter>
+          <TourClose />
         </TourStep>
       </Tour>
     </div>
