@@ -58,7 +58,7 @@ export default function TourDemo() {
       <Tour
         open={open}
         onOpenChange={setOpen}
-        defaultFooter={
+        stepFooter={
           <TourFooter>
             <div className="flex w-full items-center justify-between">
               <TourStepCounter />
@@ -105,20 +105,18 @@ export default function TourDemo() {
           <TourClose />
         </TourStep>
 
-        <TourStep target="#feature-3" placement="top">
+        <TourStep target="#feature-3" placement="top" required>
           <TourHeader>
             <TourTitle>Feature 3</TourTitle>
             <TourDescription>
               The final feature in our tour showcases the full potential of our
-              platform. This step has a custom footer that overrides the
-              default.
+              platform. This step is required and cannot be skipped.
             </TourDescription>
           </TourHeader>
           <TourFooter>
             <div className="flex w-full items-center justify-between">
               <TourStepCounter />
               <div className="flex gap-2">
-                <TourSkip />
                 <TourNext />
               </div>
             </div>

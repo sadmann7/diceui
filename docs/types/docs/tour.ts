@@ -148,6 +148,27 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
     left?: number;
     right?: number;
   };
+
+  /**
+   * Default footer element to be used for all steps that don't have their own footer.
+   *
+   * Steps can override the default footer by including their own TourFooter component.
+   *
+   * ```ts
+   * stepFooter={
+   *   <TourFooter>
+   *     <div className="flex w-full items-center justify-between">
+   *       <TourStepCounter />
+   *       <div className="flex gap-2">
+   *         <TourPrev />
+   *         <TourNext />
+   *       </div>
+   *     </div>
+   *   </TourFooter>
+   * }
+   * ```
+   */
+  stepFooter?: React.ReactElement;
 }
 
 export interface StepProps extends EmptyProps<"div">, CompositionProps {
@@ -189,11 +210,11 @@ export interface StepProps extends EmptyProps<"div">, CompositionProps {
   offset?: number;
 
   /**
-   * Whether this step can be skipped.
+   * Whether this step is required and cannot be skipped.
    *
-   * @default true
+   * @default false
    */
-  skippable?: boolean;
+  required?: boolean;
 
   /**
    * Whether to show the step when the target element is not found.
