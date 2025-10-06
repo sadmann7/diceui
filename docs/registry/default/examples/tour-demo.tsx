@@ -54,7 +54,6 @@ export default function TourDemo() {
           </p>
         </div>
       </div>
-
       <Tour
         open={open}
         onOpenChange={setOpen}
@@ -71,7 +70,6 @@ export default function TourDemo() {
         }
       >
         <TourOverlay />
-
         <TourStep target="#welcome-title" placement="bottom">
           <TourHeader>
             <TourTitle>Welcome!</TourTitle>
@@ -82,7 +80,6 @@ export default function TourDemo() {
           </TourHeader>
           <TourClose />
         </TourStep>
-
         <TourStep target="#feature-1" placement="top">
           <TourHeader>
             <TourTitle>Feature 1</TourTitle>
@@ -93,7 +90,6 @@ export default function TourDemo() {
           </TourHeader>
           <TourClose />
         </TourStep>
-
         <TourStep target="#feature-2" placement="top">
           <TourHeader>
             <TourTitle>Feature 2</TourTitle>
@@ -104,7 +100,6 @@ export default function TourDemo() {
           </TourHeader>
           <TourClose />
         </TourStep>
-
         <TourStep target="#feature-3" placement="top" required>
           <TourHeader>
             <TourTitle>Feature 3</TourTitle>

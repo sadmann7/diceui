@@ -42,24 +42,20 @@ Import the parts, and compose them together.
 import * as Tour from "@/components/ui/tour";
 
 <Tour.Root>
-  <Tour.Backdrop />
-  <Tour.Step target="#element-id">
-    <Tour.Content>
-      <Tour.Header>
-        <Tour.Title />
-        <Tour.Description />
-      </Tour.Header>
-      <Tour.Footer>
-        <Tour.StepCounter />
-        <Tour.Navigation>
-          <Tour.PrevButton />
-          <Tour.NextButton />
-        </Tour.Navigation>
-        <Tour.SkipButton />
-      </Tour.Footer>
-      <Tour.CloseButton />
-    </Tour.Content>
-  </Tour.Step>
+  <Tour.Overlay />
+  <Tour.Content>
+    <Tour.Close />
+    <Tour.Header>
+      <Tour.Title />
+      <Tour.Description />
+    </Tour.Header>
+    <Tour.Footer>
+      <Tour.StepCounter />
+        <Tour.Prev />
+        <Tour.Next />
+      <Tour.Skip />
+    </Tour.Footer>
+  </Tour.Content>
 </Tour.Root>
 ```
 
@@ -82,6 +78,25 @@ The main container component for the tour that manages state and provides contex
   name="RootProps"
 />
 
+
+### Overlay
+
+The overlay backdrop that dims the page and highlights the target element.
+
+<AutoTypeTable
+  path="./types/docs/tour.ts"
+  name="OverlayProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-state]",
+      value: ["open", "closed"],
+    },
+  ]}
+/>
+
 ### Step
 
 A single step in the tour that targets a specific element on the page.
@@ -94,29 +109,19 @@ A single step in the tour that targets a specific element on the page.
 <DataAttributesTable
   attributes={[
     {
-      attribute: "[data-state]",
-      values: ["active", "inactive"],
-      description: "Present when the step is active or inactive.",
+      title: "[data-state]",
+      value: ["active", "inactive"],
     },
   ]}
 />
 
-### Content
+### Close
 
-The popover content that displays tour information for the current step.
-
-<AutoTypeTable
-  path="./types/docs/tour.ts"
-  name="ContentProps"
-/>
-
-### Backdrop
-
-The overlay backdrop that dims the page and highlights the target element.
+Button to close the entire tour.
 
 <AutoTypeTable
   path="./types/docs/tour.ts"
-  name="BackdropProps"
+  name="CloseProps"
 />
 
 ### Header
@@ -155,15 +160,6 @@ Container for tour navigation controls and step counter.
   name="FooterProps"
 />
 
-### CloseButton
-
-Button to close the entire tour.
-
-<AutoTypeTable
-  path="./types/docs/tour.ts"
-  name="CloseButtonProps"
-/>
-
 ### StepCounter
 
 Displays the current step number and total steps.
@@ -173,40 +169,31 @@ Displays the current step number and total steps.
   name="StepCounterProps"
 />
 
-### Navigation
-
-Container for navigation buttons (previous/next).
-
-<AutoTypeTable
-  path="./types/docs/tour.ts"
-  name="NavigationProps"
-/>
-
-### PrevButton
+### Prev
 
 Button to navigate to the previous step.
 
 <AutoTypeTable
   path="./types/docs/tour.ts"
-  name="PrevButtonProps"
+  name="PrevProps"
 />
 
-### NextButton
+### Next
 
 Button to navigate to the next step or complete the tour.
 
 <AutoTypeTable
   path="./types/docs/tour.ts"
-  name="NextButtonProps"
+  name="NextProps"
 />
 
-### SkipButton
+### Skip
 
 Button to skip the entire tour.
 
 <AutoTypeTable
   path="./types/docs/tour.ts"
-  name="SkipButtonProps"
+  name="SkipProps"
 />
 
 ## Accessibility
@@ -217,7 +204,7 @@ Button to skip the entire tour.
   shortcuts={[
     {
       keys: ["Escape"],
-      description: "Closes the tour when closeOnEscape is true.",
+      description: "Triggers the onEscapeKeyDown callback. Default behavior closes the tour unless prevented.",
     },
     {
       keys: ["Tab"],
@@ -233,27 +220,3 @@ Button to skip the entire tour.
     },
   ]}
 />
-
-### ARIA Attributes
-
-The tour component implements proper ARIA attributes for accessibility:
-
-- `aria-label` attributes on navigation buttons for screen readers
-- `role="dialog"` on the tour content for proper dialog semantics
-- Focus management to ensure keyboard navigation works correctly
-- Proper heading hierarchy with the title element
-
-### Focus Management
-
-- When a tour step becomes active, focus is managed appropriately
-- The tour content receives focus when opened
-- Focus is trapped within the tour content during navigation
-- Focus returns to the trigger element when the tour is closed
-
-## Notes
-
-- The tour automatically scrolls to target elements when `scrollToElement` is enabled
-- Target elements can be specified using CSS selectors, element references, or direct element objects
-- The backdrop creates a visual highlight around the target element using CSS clip-path
-- Tour steps are registered dynamically and can be added or removed at runtime
-- The component supports both controlled and uncontrolled usage patterns

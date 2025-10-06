@@ -78,7 +78,6 @@ export default function TourControlledDemo() {
           </p>
         )}
       </div>
-
       <div className="grid grid-cols-2 gap-6">
         <div
           id="controlled-step-1"
@@ -99,7 +98,6 @@ export default function TourControlledDemo() {
           </p>
         </div>
       </div>
-
       <Tour
         open={open}
         onOpenChange={setOpen}
@@ -109,7 +107,6 @@ export default function TourControlledDemo() {
         onSkip={onSkip}
       >
         <TourOverlay />
-
         <TourStep target="#controlled-title" placement="bottom">
           <TourHeader>
             <TourTitle>Controlled Tour</TourTitle>
@@ -129,7 +126,6 @@ export default function TourControlledDemo() {
           </TourFooter>
           <TourClose />
         </TourStep>
-
         <TourStep target="#controlled-step-1" placement="top">
           <TourHeader>
             <TourTitle>External Controls</TourTitle>
@@ -149,7 +145,6 @@ export default function TourControlledDemo() {
           </TourFooter>
           <TourClose />
         </TourStep>
-
         <TourStep target="#controlled-step-2" placement="top">
           <TourHeader>
             <TourTitle>Final Step</TourTitle>

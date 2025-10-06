@@ -1,8 +1,5 @@
 import type * as React from "react";
-import type { Button } from "@/components/ui/button";
 import type { CompositionProps, Direction, EmptyProps } from "@/types";
-
-type ButtonProps = React.ComponentProps<typeof Button>;
 
 export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
@@ -89,25 +86,17 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   dir?: Direction;
 
   /**
-   * Whether to show the backdrop overlay.
+   * Event handler called when the Escape key is pressed.
+   * You can prevent the default behavior by calling event.preventDefault().
    *
-   * @default true
+   * ```ts
+   * onEscapeKeyDown={(event) => {
+   *   console.log("Escape pressed!")
+   *   // To prevent closing: event.preventDefault();
+   * }}
+   * ```
    */
-  showBackdrop?: boolean;
-
-  /**
-   * Whether to close the tour when clicking the backdrop.
-   *
-   * @default false
-   */
-  closeOnBackdropClick?: boolean;
-
-  /**
-   * Whether to close the tour when pressing the Escape key.
-   *
-   * @default true
-   */
-  closeOnEscape?: boolean;
+  onEscapeKeyDown?: (event: KeyboardEvent) => void;
 
   /**
    * The padding around the highlighted element.
@@ -126,7 +115,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
    * Whether to scroll to the highlighted element.
    *
-   * @default true
+   * @default false
    */
   scrollToElement?: boolean;
 
@@ -140,7 +129,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The offset from the viewport edges when scrolling to elements.
    *
-   * @default { top: 100, bottom: 100 }
+   * @default { top: 100, bottom: 100, left: 0, right: 0 }
    */
   scrollOffset?: {
     top?: number;
@@ -169,6 +158,15 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * ```
    */
   stepFooter?: React.ReactElement;
+}
+
+export interface OverlayProps extends EmptyProps<"div">, CompositionProps {
+  /**
+   * Whether to force mount the overlay even when closed.
+   *
+   * @default false
+   */
+  forceMount?: boolean;
 }
 
 export interface StepProps extends EmptyProps<"div">, CompositionProps {
@@ -221,7 +219,7 @@ export interface StepProps extends EmptyProps<"div">, CompositionProps {
    *
    * @default false
    */
-  showOnTargetNotFound?: boolean;
+  forceMount?: boolean;
 
   /**
    * Event handler called when this step becomes active.
@@ -246,35 +244,7 @@ export interface StepProps extends EmptyProps<"div">, CompositionProps {
   onStepLeave?: () => void;
 }
 
-export interface ContentProps extends EmptyProps<"div">, CompositionProps {
-  /**
-   * Whether to show the close button.
-   *
-   * @default true
-   */
-  showCloseButton?: boolean;
-
-  /**
-   * Whether to show the step counter.
-   *
-   * @default true
-   */
-  showStepCounter?: boolean;
-
-  /**
-   * Whether to show navigation buttons.
-   *
-   * @default true
-   */
-  showNavigation?: boolean;
-
-  /**
-   * Whether to show the skip button.
-   *
-   * @default true
-   */
-  showSkipButton?: boolean;
-}
+export interface CloseProps extends EmptyProps<"button">, CompositionProps {}
 
 export interface HeaderProps extends EmptyProps<"div">, CompositionProps {}
 
@@ -283,15 +253,6 @@ export interface TitleProps extends EmptyProps<"h2">, CompositionProps {}
 export interface DescriptionProps extends EmptyProps<"p">, CompositionProps {}
 
 export interface FooterProps extends EmptyProps<"div">, CompositionProps {}
-
-export interface CloseButtonProps extends ButtonProps, CompositionProps {
-  /**
-   * The accessible label for the close button.
-   *
-   * @default "Close tour"
-   */
-  "aria-label"?: string;
-}
 
 export interface StepCounterProps extends EmptyProps<"div">, CompositionProps {
   /**
@@ -306,33 +267,8 @@ export interface StepCounterProps extends EmptyProps<"div">, CompositionProps {
   format?: (current: number, total: number) => string;
 }
 
-export interface NavigationProps extends EmptyProps<"div">, CompositionProps {}
+export interface PrevProps extends EmptyProps<"button">, CompositionProps {}
 
-export interface PrevProps extends ButtonProps, CompositionProps {
-  /**
-   * The accessible label for the previous button.
-   *
-   * @default "Previous step"
-   */
-  "aria-label"?: string;
-}
+export interface NextProps extends EmptyProps<"button">, CompositionProps {}
 
-export interface NextProps extends ButtonProps, CompositionProps {
-  /**
-   * The accessible label for the next button.
-   *
-   * @default "Next step"
-   */
-  "aria-label"?: string;
-}
-
-export interface SkipProps extends ButtonProps, CompositionProps {
-  /**
-   * The accessible label for the skip button.
-   *
-   * @default "Skip tour"
-   */
-  "aria-label"?: string;
-}
-
-export interface OverlayProps extends EmptyProps<"div">, CompositionProps {}
+export interface SkipProps extends EmptyProps<"button">, CompositionProps {}

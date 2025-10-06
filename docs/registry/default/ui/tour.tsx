@@ -28,6 +28,13 @@ type Placement =
   | "right-start"
   | "right-end";
 
+interface ScrollOffset {
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+}
+
 interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
@@ -61,7 +68,7 @@ interface Store {
     value: State[K],
     opts?: unknown,
   ) => void;
-  emit: () => void;
+  notify: () => void;
   addStep: (stepData: StepData) => number;
   removeStep: (index: number) => void;
 }
@@ -74,16 +81,6 @@ function useLazyRef<T>(fn: () => T) {
   }
 
   return ref as React.RefObject<T>;
-}
-
-function useAsRef<T>(data: T) {
-  const ref = React.useRef<T>(data);
-
-  useIsomorphicLayoutEffect(() => {
-    ref.current = data;
-  });
-
-  return ref;
 }
 
 const useIsomorphicLayoutEffect =
@@ -129,15 +126,15 @@ function getElementRect(element: HTMLElement) {
 
 function scrollToElement(
   element: HTMLElement,
-  propsRef: React.RefObject<TourRootProps>,
+  scrollBehavior: ScrollBehavior = "smooth",
+  scrollOffset?: ScrollOffset,
 ) {
-  const behavior = propsRef.current?.scrollBehavior ?? "smooth";
   const offset = {
     top: 100,
     bottom: 100,
     left: 0,
     right: 0,
-    ...propsRef.current?.scrollOffset,
+    ...scrollOffset,
   };
   const rect = element.getBoundingClientRect();
   const viewportHeight = window.innerHeight;
@@ -155,7 +152,7 @@ function scrollToElement(
 
     window.scrollTo({
       top: Math.max(0, scrollTop),
-      behavior,
+      behavior: scrollBehavior,
     });
   }
 }
@@ -163,7 +160,7 @@ function scrollToElement(
 function updatePositionAndMask(
   store: Store,
   stepData: StepData,
-  propsRef: React.RefObject<TourRootProps>,
+  padding: number = 4,
 ) {
   const targetElement = getTargetElement(stepData.target);
   if (!targetElement) return;
@@ -228,23 +225,17 @@ function updatePositionAndMask(
 
   store.setState("position", { top, left });
 
-  if (propsRef.current?.showBackdrop) {
-    const clientRect = targetElement.getBoundingClientRect();
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    const padding = propsRef.current?.padding ?? 4;
+  const clientRect = targetElement.getBoundingClientRect();
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
 
-    const x = Math.max(0, clientRect.left - padding);
-    const y = Math.max(0, clientRect.top - padding);
-    const width = Math.min(viewportWidth - x, clientRect.width + padding * 2);
-    const height = Math.min(
-      viewportHeight - y,
-      clientRect.height + padding * 2,
-    );
+  const x = Math.max(0, clientRect.left - padding);
+  const y = Math.max(0, clientRect.top - padding);
+  const width = Math.min(viewportWidth - x, clientRect.width + padding * 2);
+  const height = Math.min(viewportHeight - y, clientRect.height + padding * 2);
 
-    const path = `polygon(0% 0%, 0% 100%, ${x}px 100%, ${x}px ${y}px, ${x + width}px ${y}px, ${x + width}px ${y + height}px, ${x}px ${y + height}px, ${x}px 100%, 100% 100%, 100% 0%)`;
-    store.setState("maskPath", path);
-  }
+  const path = `polygon(0% 0%, 0% 100%, ${x}px 100%, ${x}px ${y}px, ${x + width}px ${y}px, ${x + width}px ${y + height}px, ${x}px ${y + height}px, ${x}px 100%, 100% 100%, 100% 0%)`;
+  store.setState("maskPath", path);
 }
 
 function getTransform(placement: Placement = "bottom") {
@@ -290,18 +281,6 @@ function useTourContext(consumerName: string) {
   return context;
 }
 
-const PropsContext = React.createContext<React.RefObject<TourRootProps> | null>(
-  null,
-);
-
-function usePropsContext(consumerName: string) {
-  const context = React.useContext(PropsContext);
-  if (!context) {
-    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
-  }
-  return context;
-}
-
 interface TourRootProps extends DivProps {
   open?: boolean;
   defaultOpen?: boolean;
@@ -311,20 +290,13 @@ interface TourRootProps extends DivProps {
   onValueChange?: (step: number) => void;
   onComplete?: () => void;
   onSkip?: () => void;
+  onEscapeKeyDown?: (event: KeyboardEvent) => void;
   dir?: Direction;
-  showBackdrop?: boolean;
-  closeOnBackdropClick?: boolean;
-  closeOnEscape?: boolean;
   padding?: number;
   borderRadius?: number;
   scrollToElement?: boolean;
   scrollBehavior?: ScrollBehavior;
-  scrollOffset?: {
-    top?: number;
-    bottom?: number;
-    left?: number;
-    right?: number;
-  };
+  scrollOffset?: ScrollOffset;
   stepFooter?: React.ReactElement;
 }
 
@@ -338,7 +310,12 @@ function TourRoot(props: TourRootProps) {
     onValueChange,
     onComplete,
     onSkip,
+    onEscapeKeyDown,
     stepFooter,
+    padding = 4,
+    scrollToElement: scrollToElementProp = false,
+    scrollBehavior = "smooth",
+    scrollOffset,
     asChild,
     ...rootProps
   } = props;
@@ -352,7 +329,6 @@ function TourRoot(props: TourRootProps) {
   }));
 
   const listeners = useLazyRef<Set<() => void>>(() => new Set());
-  const propsRef = useAsRef(props);
 
   const store: Store = React.useMemo(() => {
     return {
@@ -383,7 +359,7 @@ function TourRoot(props: TourRootProps) {
               const currentStepData = state.current.steps[currentStepIndex];
               if (currentStepData) {
                 queueMicrotask(() => {
-                  updatePositionAndMask(store, currentStepData, propsRef);
+                  updatePositionAndMask(store, currentStepData, padding);
                 });
               }
             }
@@ -399,9 +375,8 @@ function TourRoot(props: TourRootProps) {
           prevStep?.onStepLeave?.();
           nextStep?.onStepEnter?.();
 
-          if (propsRef.current?.value !== undefined) {
-            // If controlled, just call the callback instead of updating state internally
-            propsRef.current.onValueChange?.(value as number);
+          if (valueProp !== undefined) {
+            onValueChange?.(value as number);
             return;
           }
 
@@ -414,21 +389,20 @@ function TourRoot(props: TourRootProps) {
           }
 
           if (nextStep) {
-            updatePositionAndMask(store, nextStep, propsRef);
+            updatePositionAndMask(store, nextStep, padding);
 
-            if (propsRef.current?.scrollToElement) {
+            if (scrollToElementProp) {
               const targetElement = getTargetElement(nextStep.target);
               if (targetElement) {
-                scrollToElement(targetElement, propsRef);
+                scrollToElement(targetElement, scrollBehavior, scrollOffset);
               }
             }
           }
         }
 
-        // Notify subscribers that state has changed
-        store.emit();
+        store.notify();
       },
-      emit: () => {
+      notify: () => {
         listeners.current.forEach((l) => {
           l();
         });
@@ -436,12 +410,12 @@ function TourRoot(props: TourRootProps) {
       addStep: (stepData) => {
         const newSteps = [...state.current.steps, stepData];
         state.current.steps = newSteps;
-        store.emit();
+        store.notify();
         return newSteps.length - 1;
       },
       removeStep: (index) => {
         state.current.steps = state.current.steps.filter((_, i) => i !== index);
-        store.emit();
+        store.notify();
       },
     };
   }, [
@@ -449,7 +423,11 @@ function TourRoot(props: TourRootProps) {
     onValueChange,
     onComplete,
     onSkip,
-    propsRef,
+    padding,
+    scrollToElementProp,
+    scrollBehavior,
+    scrollOffset,
+    valueProp,
     state,
     listeners,
   ]);
@@ -468,29 +446,26 @@ function TourRoot(props: TourRootProps) {
 
   React.useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
-      if (
-        state.current.open &&
-        propsRef.current?.closeOnEscape &&
-        event.key === "Escape"
-      ) {
-        event.preventDefault();
+      if (state.current.open && event.key === "Escape") {
+        if (onEscapeKeyDown) {
+          onEscapeKeyDown(event);
+          if (event.defaultPrevented) return;
+        }
         store.setState("open", false);
       }
     }
 
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [store, propsRef, state]);
+  }, [store, onEscapeKeyDown, state]);
 
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
     <StoreContext.Provider value={store}>
-      <PropsContext.Provider value={propsRef}>
-        <TourContext.Provider value={stepFooter}>
-          <RootPrimitive data-slot="tour" {...rootProps} />
-        </TourContext.Provider>
-      </PropsContext.Provider>
+      <TourContext.Provider value={stepFooter}>
+        <RootPrimitive data-slot="tour" {...rootProps} />
+      </TourContext.Provider>
     </StoreContext.Provider>
   );
 }
@@ -521,31 +496,36 @@ function TourStep(props: TourStepProps) {
   } = props;
 
   const store = useStoreContext(STEP_NAME);
-  const propsRef = usePropsContext(STEP_NAME);
   const stepIndexRef = React.useRef<number>(-1);
+
+  const open = useStore((state) => state.open);
+  const value = useStore((state) => state.value);
+  const steps = useStore((state) => state.steps);
+  const position = useStore((state) => state.position);
+  const stepFooter = useTourContext(STEP_NAME);
 
   const hasStepFooter = React.Children.toArray(children).some((child) => {
     if (!React.isValidElement(child)) return false;
     return child.type === TourFooter;
   });
 
-  const stepData: StepData = {
-    target,
-    placement,
-    offset,
-    onStepEnter,
-    onStepLeave,
-    required,
-  };
-
   useIsomorphicLayoutEffect(() => {
+    const stepData: StepData = {
+      target,
+      placement,
+      offset,
+      onStepEnter,
+      onStepLeave,
+      required,
+    };
+
     const index = store.addStep(stepData);
     stepIndexRef.current = index;
 
     const state = store.snapshot();
     if (index === 0 && state.open) {
       queueMicrotask(() => {
-        updatePositionAndMask(store, stepData, propsRef);
+        updatePositionAndMask(store, stepData, 4);
       });
     }
 
@@ -554,25 +534,17 @@ function TourStep(props: TourStepProps) {
     };
   }, [store, target, placement, offset, required, onStepEnter, onStepLeave]);
 
-  const open = useStore((state) => state.open);
-  const value = useStore((state) => state.value);
-  const steps = useStore((state) => state.steps);
-  const position = useStore((state) => state.position);
-  const stepFooter = useTourContext(STEP_NAME);
-
-  const currentStepData = steps[value];
-  const targetElement = currentStepData
-    ? getTargetElement(currentStepData.target)
-    : null;
+  const stepData = steps[value];
+  const targetElement = stepData ? getTargetElement(stepData.target) : null;
 
   const isCurrentStep = stepIndexRef.current === value;
 
   React.useEffect(() => {
-    if (!open || !currentStepData || !targetElement || !isCurrentStep) return;
+    if (!open || !stepData || !targetElement || !isCurrentStep) return;
 
     function updatePosition() {
-      if (currentStepData) {
-        updatePositionAndMask(store, currentStepData, propsRef);
+      if (stepData) {
+        updatePositionAndMask(store, stepData, 4);
       }
     }
 
@@ -584,14 +556,9 @@ function TourStep(props: TourStepProps) {
       window.removeEventListener("resize", updatePosition);
       window.removeEventListener("scroll", updatePosition);
     };
-  }, [open, currentStepData, targetElement, store, isCurrentStep, propsRef]);
+  }, [open, stepData, targetElement, store, isCurrentStep]);
 
-  if (
-    !open ||
-    !currentStepData ||
-    (!targetElement && !forceMount) ||
-    !isCurrentStep
-  ) {
+  if (!open || !stepData || (!targetElement && !forceMount) || !isCurrentStep) {
     return null;
   }
 
@@ -608,7 +575,7 @@ function TourStep(props: TourStepProps) {
       style={{
         top: position.top,
         left: position.left,
-        transform: getTransform(currentStepData.placement),
+        transform: getTransform(stepData.placement),
       }}
     >
       {children}
@@ -617,34 +584,46 @@ function TourStep(props: TourStepProps) {
   );
 }
 
-function TourOverlay(props: DivProps) {
-  const { asChild, className, style, ...backdropProps } = props;
+interface TourOverlayProps extends DivProps {
+  forceMount?: boolean;
+}
+
+function TourOverlay(props: TourOverlayProps) {
+  const {
+    asChild,
+    className,
+    style,
+    forceMount = false,
+    ...backdropProps
+  } = props;
 
   const store = useStoreContext(OVERLAY_NAME);
-  const propsRef = usePropsContext(OVERLAY_NAME);
   const open = useStore((state) => state.open);
   const maskPath = useStore((state) => state.maskPath);
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       backdropProps.onClick?.(event);
-      if (event.defaultPrevented || !propsRef.current?.closeOnBackdropClick)
-        return;
+      if (event.defaultPrevented) return;
 
       store.setState("open", false);
     },
-    [store, backdropProps.onClick, propsRef],
+    [store, backdropProps.onClick],
   );
 
-  if (!open || !propsRef.current?.showBackdrop) return null;
+  if (!open && !forceMount) return null;
 
   const OverlayPrimitive = asChild ? Slot : "div";
 
   return (
     <OverlayPrimitive
+      data-state={open ? "open" : "closed"}
       data-slot="tour-overlay"
       {...backdropProps}
-      className={cn("fixed inset-0 z-40 bg-black/50", className)}
+      className={cn(
+        "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=open]:animate-in",
+        className,
+      )}
       style={{
         ...style,
         clipPath: maskPath,
@@ -789,19 +768,6 @@ function TourStepCounter(props: TourStepCounterProps) {
   );
 }
 
-function TourNavigation(props: DivProps) {
-  const { asChild, className, ...navigationProps } = props;
-  const NavigationPrimitive = asChild ? Slot : "div";
-
-  return (
-    <NavigationPrimitive
-      data-slot="tour-navigation"
-      {...navigationProps}
-      className={cn("flex items-center justify-between", className)}
-    />
-  );
-}
-
 function TourPrev(props: ButtonProps) {
   const { asChild, className, children, ...prevButtonProps } = props;
 
@@ -933,7 +899,6 @@ export {
   TourFooter as Footer,
   TourClose as Close,
   TourStepCounter as StepCounter,
-  TourNavigation as Navigation,
   TourPrev as Prev,
   TourNext as Next,
   TourSkip as Skip,
@@ -947,7 +912,6 @@ export {
   TourFooter,
   TourClose,
   TourStepCounter,
-  TourNavigation,
   TourPrev,
   TourNext,
   TourSkip,
