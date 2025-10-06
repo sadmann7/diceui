@@ -45,103 +45,25 @@ interface StepData {
   required?: boolean;
 }
 
-interface StoreState {
+interface State {
   open: boolean;
   value: number;
   steps: StepData[];
-  dir: Direction;
-  showBackdrop: boolean;
-  closeOnBackdropClick: boolean;
-  closeOnEscape: boolean;
-  padding: number;
-  borderRadius: number;
-  scrollToElement: boolean;
-  scrollBehavior: ScrollBehavior;
-  scrollOffset: {
-    top: number;
-    bottom: number;
-    left: number;
-    right: number;
-  };
   position: { top: number; left: number };
   maskPath: string;
 }
 
 interface Store {
   subscribe: (callback: () => void) => () => void;
-  getState: () => StoreState;
-  setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
-  notify: () => void;
+  snapshot: () => State;
+  setState: <K extends keyof State>(
+    key: K,
+    value: State[K],
+    opts?: unknown,
+  ) => void;
+  emit: () => void;
   addStep: (stepData: StepData) => number;
   removeStep: (index: number) => void;
-}
-
-function createStore(
-  listenersRef: React.RefObject<Set<() => void>>,
-  stateRef: React.RefObject<StoreState>,
-  onValueChange?: Partial<{
-    [K in keyof StoreState]: (value: StoreState[K], store: Store) => void;
-  }>,
-): Store {
-  const store: Store = {
-    subscribe: (cb) => {
-      if (listenersRef.current) {
-        listenersRef.current.add(cb);
-        return () => listenersRef.current?.delete(cb);
-      }
-      return () => {};
-    },
-    getState: () =>
-      stateRef.current ?? {
-        open: false,
-        value: 0,
-        steps: [],
-        dir: "ltr",
-        showBackdrop: true,
-        closeOnBackdropClick: false,
-        closeOnEscape: true,
-        padding: 4,
-        borderRadius: 8,
-        scrollToElement: true,
-        scrollBehavior: "smooth",
-        scrollOffset: { top: 100, bottom: 100, left: 0, right: 0 },
-        position: { top: 0, left: 0 },
-        maskPath: "",
-      },
-    setState: (key, value) => {
-      const state = stateRef.current;
-      if (!state || Object.is(state[key], value)) return;
-      state[key] = value;
-      onValueChange?.[key]?.(value, store);
-      store.notify();
-    },
-    addStep: (stepData) => {
-      const state = stateRef.current;
-      if (state) {
-        const newSteps = [...state.steps, stepData];
-        state.steps = newSteps;
-        store.notify();
-        return newSteps.length - 1;
-      }
-      return -1;
-    },
-    removeStep: (index) => {
-      const state = stateRef.current;
-      if (state) {
-        state.steps = state.steps.filter((_, i) => i !== index);
-        store.notify();
-      }
-    },
-    notify: () => {
-      if (listenersRef.current) {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      }
-    },
-  };
-
-  return store;
 }
 
 function useLazyRef<T>(fn: () => T) {
@@ -154,14 +76,24 @@ function useLazyRef<T>(fn: () => T) {
   return ref as React.RefObject<T>;
 }
 
+function useAsRef<T>(data: T) {
+  const ref = React.useRef<T>(data);
+
+  useIsomorphicLayoutEffect(() => {
+    ref.current = data;
+  });
+
+  return ref;
+}
+
 const useIsomorphicLayoutEffect =
   typeof window === "undefined" ? React.useEffect : React.useLayoutEffect;
 
-function useStore<T>(selector: (state: StoreState) => T): T {
+function useStore<T>(selector: (state: State) => T): T {
   const store = useStoreContext("useStore");
 
   const getSnapshot = React.useCallback(
-    () => selector(store.getState()),
+    () => selector(store.snapshot()),
     [store, selector],
   );
 
@@ -197,9 +129,16 @@ function getElementRect(element: HTMLElement) {
 
 function scrollToElement(
   element: HTMLElement,
-  behavior: ScrollBehavior = "smooth",
-  offset = { top: 100, bottom: 100, left: 0, right: 0 },
+  propsRef: React.RefObject<TourRootProps>,
 ) {
+  const behavior = propsRef.current?.scrollBehavior ?? "smooth";
+  const offset = {
+    top: 100,
+    bottom: 100,
+    left: 0,
+    right: 0,
+    ...propsRef.current?.scrollOffset,
+  };
   const rect = element.getBoundingClientRect();
   const viewportHeight = window.innerHeight;
   const viewportWidth = window.innerWidth;
@@ -221,11 +160,14 @@ function scrollToElement(
   }
 }
 
-function updatePositionAndMask(store: Store, stepData: StepData) {
+function updatePositionAndMask(
+  store: Store,
+  stepData: StepData,
+  propsRef: React.RefObject<TourRootProps>,
+) {
   const targetElement = getTargetElement(stepData.target);
   if (!targetElement) return;
 
-  const state = store.getState();
   const rect = getElementRect(targetElement);
   const placement = stepData.placement ?? "bottom";
   const offset = stepData.offset ?? 8;
@@ -286,11 +228,11 @@ function updatePositionAndMask(store: Store, stepData: StepData) {
 
   store.setState("position", { top, left });
 
-  if (state.showBackdrop) {
+  if (propsRef.current?.showBackdrop) {
     const clientRect = targetElement.getBoundingClientRect();
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
-    const padding = state.padding;
+    const padding = propsRef.current?.padding ?? 4;
 
     const x = Math.max(0, clientRect.left - padding);
     const y = Math.max(0, clientRect.top - padding);
@@ -348,6 +290,18 @@ function useTourContext(consumerName: string) {
   return context;
 }
 
+const PropsContext = React.createContext<React.RefObject<TourRootProps> | null>(
+  null,
+);
+
+function usePropsContext(consumerName: string) {
+  const context = React.useContext(PropsContext);
+  if (!context) {
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
+  }
+  return context;
+}
+
 interface TourRootProps extends DivProps {
   open?: boolean;
   defaultOpen?: boolean;
@@ -384,107 +338,121 @@ function TourRoot(props: TourRootProps) {
     onValueChange,
     onComplete,
     onSkip,
-    dir = "ltr",
-    showBackdrop = true,
-    closeOnBackdropClick = false,
-    closeOnEscape = true,
-    padding = 4,
-    borderRadius = 8,
-    scrollToElement: scrollToElementProp = true,
-    scrollBehavior = "smooth",
-    scrollOffset = {},
     stepFooter,
     asChild,
     ...rootProps
   } = props;
 
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => ({
+  const state = useLazyRef<State>(() => ({
     open: openProp ?? defaultOpen,
     value: valueProp ?? defaultValue,
     steps: [],
-    dir,
-    showBackdrop,
-    closeOnBackdropClick,
-    closeOnEscape,
-    padding,
-    borderRadius,
-    scrollToElement: scrollToElementProp,
-    scrollBehavior,
-    scrollOffset: {
-      top: 100,
-      bottom: 100,
-      left: 0,
-      right: 0,
-      ...scrollOffset,
-    },
     position: { top: 0, left: 0 },
     maskPath: "",
   }));
 
-  const store = React.useMemo(
-    () =>
-      createStore(listenersRef, stateRef, {
-        open: (value) => {
-          onOpenChange?.(value);
+  const listeners = useLazyRef<Set<() => void>>(() => new Set());
+  const propsRef = useAsRef(props);
+
+  const store: Store = React.useMemo(() => {
+    return {
+      subscribe: (cb) => {
+        listeners.current.add(cb);
+        return () => listeners.current.delete(cb);
+      },
+      snapshot: () => {
+        return state.current;
+      },
+      setState: (key, value, _opts) => {
+        if (Object.is(state.current[key], value)) return;
+        state.current[key] = value;
+
+        if (key === "open") {
+          onOpenChange?.(value as boolean);
 
           if (value) {
-            const state = stateRef.current;
-            if (state && state.steps.length > 0) {
-              if (state.value >= state.steps.length) {
+            if (state.current.steps.length > 0) {
+              if (state.current.value >= state.current.steps.length) {
                 store.setState("value", 0);
               }
 
               const currentStepIndex =
-                state.value >= state.steps.length ? 0 : state.value;
-              const currentStepData = state.steps[currentStepIndex];
+                state.current.value >= state.current.steps.length
+                  ? 0
+                  : state.current.value;
+              const currentStepData = state.current.steps[currentStepIndex];
               if (currentStepData) {
                 queueMicrotask(() => {
-                  updatePositionAndMask(store, currentStepData);
+                  updatePositionAndMask(store, currentStepData, propsRef);
                 });
               }
             }
           } else {
-            const state = stateRef.current;
-            if (state && state.value < (state.steps.length || 0) - 1) {
+            if (state.current.value < (state.current.steps.length || 0) - 1) {
               onSkip?.();
             }
           }
-        },
-        value: (value, store) => {
-          const state = store.getState();
-          const prevStep = state.steps[state.value];
-          const nextStep = state.steps[value];
+        } else if (key === "value") {
+          const prevStep = state.current.steps[state.current.value];
+          const nextStep = state.current.steps[value as number];
 
           prevStep?.onStepLeave?.();
           nextStep?.onStepEnter?.();
 
-          onValueChange?.(value);
+          if (propsRef.current?.value !== undefined) {
+            // If controlled, just call the callback instead of updating state internally
+            propsRef.current.onValueChange?.(value as number);
+            return;
+          }
 
-          if (value >= state.steps.length) {
+          onValueChange?.(value as number);
+
+          if ((value as number) >= state.current.steps.length) {
             onComplete?.();
             store.setState("open", false);
             return;
           }
 
           if (nextStep) {
-            updatePositionAndMask(store, nextStep);
+            updatePositionAndMask(store, nextStep, propsRef);
 
-            if (state.scrollToElement) {
+            if (propsRef.current?.scrollToElement) {
               const targetElement = getTargetElement(nextStep.target);
               if (targetElement) {
-                scrollToElement(
-                  targetElement,
-                  state.scrollBehavior,
-                  state.scrollOffset,
-                );
+                scrollToElement(targetElement, propsRef);
               }
             }
           }
-        },
-      }),
-    [listenersRef, stateRef, onOpenChange, onValueChange, onComplete, onSkip],
-  );
+        }
+
+        // Notify subscribers that state has changed
+        store.emit();
+      },
+      emit: () => {
+        listeners.current.forEach((l) => {
+          l();
+        });
+      },
+      addStep: (stepData) => {
+        const newSteps = [...state.current.steps, stepData];
+        state.current.steps = newSteps;
+        store.emit();
+        return newSteps.length - 1;
+      },
+      removeStep: (index) => {
+        state.current.steps = state.current.steps.filter((_, i) => i !== index);
+        store.emit();
+      },
+    };
+  }, [
+    onOpenChange,
+    onValueChange,
+    onComplete,
+    onSkip,
+    propsRef,
+    state,
+    listeners,
+  ]);
 
   useIsomorphicLayoutEffect(() => {
     if (openProp !== undefined) {
@@ -498,52 +466,13 @@ function TourRoot(props: TourRootProps) {
     }
   }, [valueProp, store]);
 
-  useIsomorphicLayoutEffect(() => {
-    store.setState("dir", dir);
-  }, [dir, store]);
-
-  useIsomorphicLayoutEffect(() => {
-    store.setState("showBackdrop", showBackdrop);
-  }, [showBackdrop, store]);
-
-  useIsomorphicLayoutEffect(() => {
-    store.setState("closeOnBackdropClick", closeOnBackdropClick);
-  }, [closeOnBackdropClick, store]);
-
-  useIsomorphicLayoutEffect(() => {
-    store.setState("closeOnEscape", closeOnEscape);
-  }, [closeOnEscape, store]);
-
-  useIsomorphicLayoutEffect(() => {
-    store.setState("padding", padding);
-  }, [padding, store]);
-
-  useIsomorphicLayoutEffect(() => {
-    store.setState("borderRadius", borderRadius);
-  }, [borderRadius, store]);
-
-  useIsomorphicLayoutEffect(() => {
-    store.setState("scrollToElement", scrollToElementProp);
-  }, [scrollToElementProp, store]);
-
-  useIsomorphicLayoutEffect(() => {
-    store.setState("scrollBehavior", scrollBehavior);
-  }, [scrollBehavior, store]);
-
-  useIsomorphicLayoutEffect(() => {
-    store.setState("scrollOffset", {
-      top: 100,
-      bottom: 100,
-      left: 0,
-      right: 0,
-      ...scrollOffset,
-    });
-  }, [scrollOffset, store]);
-
   React.useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
-      const state = store.getState();
-      if (state.open && state.closeOnEscape && event.key === "Escape") {
+      if (
+        state.current.open &&
+        propsRef.current?.closeOnEscape &&
+        event.key === "Escape"
+      ) {
         event.preventDefault();
         store.setState("open", false);
       }
@@ -551,15 +480,17 @@ function TourRoot(props: TourRootProps) {
 
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [store]);
+  }, [store, propsRef, state]);
 
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
     <StoreContext.Provider value={store}>
-      <TourContext.Provider value={stepFooter}>
-        <RootPrimitive data-slot="tour" {...rootProps} />
-      </TourContext.Provider>
+      <PropsContext.Provider value={propsRef}>
+        <TourContext.Provider value={stepFooter}>
+          <RootPrimitive data-slot="tour" {...rootProps} />
+        </TourContext.Provider>
+      </PropsContext.Provider>
     </StoreContext.Provider>
   );
 }
@@ -590,6 +521,7 @@ function TourStep(props: TourStepProps) {
   } = props;
 
   const store = useStoreContext(STEP_NAME);
+  const propsRef = usePropsContext(STEP_NAME);
   const stepIndexRef = React.useRef<number>(-1);
 
   const hasStepFooter = React.Children.toArray(children).some((child) => {
@@ -610,10 +542,10 @@ function TourStep(props: TourStepProps) {
     const index = store.addStep(stepData);
     stepIndexRef.current = index;
 
-    const state = store.getState();
+    const state = store.snapshot();
     if (index === 0 && state.open) {
       queueMicrotask(() => {
-        updatePositionAndMask(store, stepData);
+        updatePositionAndMask(store, stepData, propsRef);
       });
     }
 
@@ -640,7 +572,7 @@ function TourStep(props: TourStepProps) {
 
     function updatePosition() {
       if (currentStepData) {
-        updatePositionAndMask(store, currentStepData);
+        updatePositionAndMask(store, currentStepData, propsRef);
       }
     }
 
@@ -652,7 +584,7 @@ function TourStep(props: TourStepProps) {
       window.removeEventListener("resize", updatePosition);
       window.removeEventListener("scroll", updatePosition);
     };
-  }, [open, currentStepData, targetElement, store, isCurrentStep]);
+  }, [open, currentStepData, targetElement, store, isCurrentStep, propsRef]);
 
   if (
     !open ||
@@ -689,22 +621,22 @@ function TourOverlay(props: DivProps) {
   const { asChild, className, style, ...backdropProps } = props;
 
   const store = useStoreContext(OVERLAY_NAME);
+  const propsRef = usePropsContext(OVERLAY_NAME);
   const open = useStore((state) => state.open);
-  const showBackdrop = useStore((state) => state.showBackdrop);
-  const closeOnBackdropClick = useStore((state) => state.closeOnBackdropClick);
   const maskPath = useStore((state) => state.maskPath);
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       backdropProps.onClick?.(event);
-      if (event.defaultPrevented || !closeOnBackdropClick) return;
+      if (event.defaultPrevented || !propsRef.current?.closeOnBackdropClick)
+        return;
 
       store.setState("open", false);
     },
-    [closeOnBackdropClick, store, backdropProps.onClick],
+    [store, backdropProps.onClick, propsRef],
   );
 
-  if (!open || !showBackdrop) return null;
+  if (!open || !propsRef.current?.showBackdrop) return null;
 
   const OverlayPrimitive = asChild ? Slot : "div";
 

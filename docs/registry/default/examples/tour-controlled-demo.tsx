@@ -107,7 +107,6 @@ export default function TourControlledDemo() {
         onValueChange={onStepChange}
         onComplete={onComplete}
         onSkip={onSkip}
-        closeOnBackdropClick={true}
       >
         <TourOverlay />
 
