@@ -24,8 +24,8 @@ import {
   StepperIndicator,
   StepperItem,
   StepperList,
-  StepperNextTrigger,
-  StepperPrevTrigger,
+  StepperNext,
+  StepperPrev,
   type StepperProps,
   StepperSeparator,
   StepperTitle,
@@ -65,7 +65,7 @@ const steps = [
 ];
 
 export default function StepperFormDemo() {
-  const [currentStep, setCurrentStep] = React.useState("personal");
+  const [step, setStep] = React.useState("personal");
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
@@ -79,16 +79,16 @@ export default function StepperFormDemo() {
     },
   });
 
-  const currentIndex = steps.findIndex((step) => step.value === currentStep);
+  const stepIndex = steps.findIndex((s) => s.value === step);
 
   const onValidate: NonNullable<StepperProps["onValidate"]> = React.useCallback(
     async (_value, direction) => {
       if (direction === "prev") return true;
 
-      const currentStepData = steps.find((s) => s.value === currentStep);
-      if (!currentStepData) return true;
+      const stepData = steps.find((s) => s.value === step);
+      if (!stepData) return true;
 
-      const isValid = await form.trigger(currentStepData.fields);
+      const isValid = await form.trigger(stepData.fields);
 
       if (!isValid) {
         toast.info("Please complete all required fields to continue");
@@ -96,12 +96,8 @@ export default function StepperFormDemo() {
 
       return isValid;
     },
-    [form, currentStep],
+    [form, step],
   );
-
-  const onValueChange = React.useCallback((value: string) => {
-    setCurrentStep(value);
-  }, []);
 
   const onSubmit = React.useCallback((input: FormSchema) => {
     toast.success(
@@ -112,11 +108,7 @@ export default function StepperFormDemo() {
   return (
     <Form {...form}>
       <form className="w-full" onSubmit={form.handleSubmit(onSubmit)}>
-        <Stepper
-          value={currentStep}
-          onValueChange={onValueChange}
-          onValidate={onValidate}
-        >
+        <Stepper value={step} onValueChange={setStep} onValidate={onValidate}>
           <StepperList>
             {steps.map((step) => (
               <StepperItem key={step.value} value={step.value}>
@@ -232,18 +224,18 @@ export default function StepperFormDemo() {
             </div>
           </StepperContent>
           <div className="mt-4 flex justify-between">
-            <StepperPrevTrigger asChild>
+            <StepperPrev asChild>
               <Button variant="outline">Previous</Button>
-            </StepperPrevTrigger>
+            </StepperPrev>
             <div className="text-muted-foreground text-sm">
-              Step {currentIndex + 1} of {steps.length}
+              Step {stepIndex + 1} of {steps.length}
             </div>
-            {currentIndex === steps.length - 1 ? (
+            {stepIndex === steps.length - 1 ? (
               <Button type="submit">Complete</Button>
             ) : (
-              <StepperNextTrigger asChild>
+              <StepperNext asChild>
                 <Button>Next</Button>
-              </StepperNextTrigger>
+              </StepperNext>
             )}
           </div>
         </Stepper>

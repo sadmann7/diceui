@@ -2097,20 +2097,6 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "tour-customization-demo": {
-      name: "tour-customization-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["button","badge","tour"],
-      files: [{
-        path: "registry/default/examples/tour-customization-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/tour-customization-demo.tsx")),
-      source: "",
-      chunks: []
-    },
     "tags-input-demo": {
       name: "tags-input-demo",
       description: "",

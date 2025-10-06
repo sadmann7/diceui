@@ -4,13 +4,12 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import {
   Tour,
-  TourBackdrop,
   TourClose,
-  TourContent,
   TourDescription,
   TourFooter,
   TourHeader,
   TourNext,
+  TourOverlay,
   TourPrev,
   TourSkip,
   TourStep,
@@ -22,27 +21,27 @@ export default function TourControlledDemo() {
   const [open, setOpen] = React.useState(false);
   const [currentStep, setCurrentStep] = React.useState(0);
 
-  const handleStepChange = (step: number) => {
+  const onStepChange = React.useCallback((step: number) => {
     setCurrentStep(step);
     console.log(`Step changed to: ${step + 1}`);
-  };
+  }, []);
 
-  const handleComplete = () => {
+  const onComplete = React.useCallback(() => {
     console.log("Tour completed!");
     setOpen(false);
     setCurrentStep(0);
-  };
+  }, []);
 
-  const handleSkip = () => {
+  const onSkip = React.useCallback(() => {
     console.log("Tour skipped!");
     setOpen(false);
     setCurrentStep(0);
-  };
+  }, []);
 
-  const startTour = () => {
+  const onTourStart = React.useCallback(() => {
     setCurrentStep(0);
     setOpen(true);
-  };
+  }, []);
 
   return (
     <div className="flex min-h-[400px] flex-col items-center justify-center gap-8 p-8">
@@ -55,7 +54,7 @@ export default function TourControlledDemo() {
           tracking.
         </p>
         <div className="flex gap-2">
-          <Button id="controlled-start-btn" onClick={startTour}>
+          <Button id="controlled-start-btn" onClick={onTourStart}>
             Start Controlled Tour
           </Button>
           <Button
@@ -105,77 +104,71 @@ export default function TourControlledDemo() {
         open={open}
         onOpenChange={setOpen}
         currentStep={currentStep}
-        onCurrentStepChange={handleStepChange}
-        onComplete={handleComplete}
-        onSkip={handleSkip}
+        onCurrentStepChange={onStepChange}
+        onComplete={onComplete}
+        onSkip={onSkip}
         closeOnBackdropClick={true}
       >
-        <TourBackdrop />
+        <TourOverlay />
 
         <TourStep target="#controlled-title" placement="bottom">
-          <TourContent>
-            <TourHeader>
-              <TourTitle>Controlled Tour</TourTitle>
-              <TourDescription>
-                This tour's state is controlled externally. Notice how the step
-                counter updates.
-              </TourDescription>
-            </TourHeader>
-            <TourFooter>
-              <div className="flex w-full items-center justify-between">
-                <TourStepCounter />
-                <div className="flex gap-2">
-                  <TourSkip />
-                  <TourNext />
-                </div>
+          <TourHeader>
+            <TourTitle>Controlled Tour</TourTitle>
+            <TourDescription>
+              This tour's state is controlled externally. Notice how the step
+              counter updates.
+            </TourDescription>
+          </TourHeader>
+          <TourFooter>
+            <div className="flex w-full items-center justify-between">
+              <TourStepCounter />
+              <div className="flex gap-2">
+                <TourSkip />
+                <TourNext />
               </div>
-            </TourFooter>
-            <TourClose />
-          </TourContent>
+            </div>
+          </TourFooter>
+          <TourClose />
         </TourStep>
 
         <TourStep target="#controlled-step-1" placement="top">
-          <TourContent>
-            <TourHeader>
-              <TourTitle>External Controls</TourTitle>
-              <TourDescription>
-                You can control this tour using the external buttons above, or
-                use the built-in navigation.
-              </TourDescription>
-            </TourHeader>
-            <TourFooter>
-              <div className="flex w-full items-center justify-between">
-                <TourStepCounter />
-                <div className="flex gap-2">
-                  <TourPrev />
-                  <TourNext />
-                </div>
+          <TourHeader>
+            <TourTitle>External Controls</TourTitle>
+            <TourDescription>
+              You can control this tour using the external buttons above, or use
+              the built-in navigation.
+            </TourDescription>
+          </TourHeader>
+          <TourFooter>
+            <div className="flex w-full items-center justify-between">
+              <TourStepCounter />
+              <div className="flex gap-2">
+                <TourPrev />
+                <TourNext />
               </div>
-            </TourFooter>
-            <TourClose />
-          </TourContent>
+            </div>
+          </TourFooter>
+          <TourClose />
         </TourStep>
 
         <TourStep target="#controlled-step-2" placement="top">
-          <TourContent>
-            <TourHeader>
-              <TourTitle>Final Step</TourTitle>
-              <TourDescription>
-                This is the last step. The tour state is fully controlled by the
-                parent component.
-              </TourDescription>
-            </TourHeader>
-            <TourFooter>
-              <div className="flex w-full items-center justify-between">
-                <TourStepCounter />
-                <div className="flex gap-2">
-                  <TourPrev />
-                  <TourNext />
-                </div>
+          <TourHeader>
+            <TourTitle>Final Step</TourTitle>
+            <TourDescription>
+              This is the last step. The tour state is fully controlled by the
+              parent component.
+            </TourDescription>
+          </TourHeader>
+          <TourFooter>
+            <div className="flex w-full items-center justify-between">
+              <TourStepCounter />
+              <div className="flex gap-2">
+                <TourPrev />
+                <TourNext />
               </div>
-            </TourFooter>
-            <TourClose />
-          </TourContent>
+            </div>
+          </TourFooter>
+          <TourClose />
         </TourStep>
       </Tour>
     </div>

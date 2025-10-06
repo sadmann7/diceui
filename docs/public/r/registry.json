@@ -1110,18 +1110,6 @@
       ]
     },
     {
-      "name": "tour-customization-demo",
-      "type": "registry:component",
-      "title": "Tour Customization Demo",
-      "description": "Example showing tour customization options including styling and placement.",
-      "files": [
-        {
-          "path": "registry/default/examples/tour-customization-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
       "name": "tags-input-demo",
       "type": "registry:component",
       "title": "Tags Input Demo",

@@ -4,12 +4,12 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import {
   Tour,
-  TourBackdrop,
   TourClose,
   TourDescription,
   TourFooter,
   TourHeader,
   TourNext,
+  TourOverlay,
   TourPrev,
   TourSkip,
   TourStep,
@@ -70,7 +70,7 @@ export default function TourDemo() {
           </TourFooter>
         }
       >
-        <TourBackdrop />
+        <TourOverlay />
 
         <TourStep target="#welcome-title" placement="bottom">
           <TourHeader>

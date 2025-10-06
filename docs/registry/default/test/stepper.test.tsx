@@ -14,33 +14,21 @@ import {
   StepperIndicator,
   StepperItem,
   StepperList,
-  StepperNextTrigger,
-  StepperPrevTrigger,
+  StepperNext,
+  StepperPrev,
+  type StepperProps,
   StepperSeparator,
   StepperTitle,
   StepperTrigger,
 } from "@/registry/default/ui/stepper";
 
 describe("Stepper", () => {
-  interface BasicStepperProps {
-    onValueChange?: (value: string) => void;
-    onValidate?: (
-      value: string,
-      direction: "next" | "prev",
-    ) => boolean | Promise<boolean>;
-    defaultValue?: string;
-    activationMode?: "automatic" | "manual";
-    orientation?: "horizontal" | "vertical";
-    loop?: boolean;
-    nonInteractive?: boolean;
-  }
-
-  const BasicStepper = ({
+  const StepperDemo = ({
     onValueChange,
     onValidate,
     defaultValue = "step1",
     ...props
-  }: BasicStepperProps) => (
+  }: StepperProps) => (
     <Stepper
       defaultValue={defaultValue}
       onValueChange={onValueChange}
@@ -82,14 +70,14 @@ describe("Stepper", () => {
       <StepperContent value="step2">Content for Step 2</StepperContent>
       <StepperContent value="step3">Content for Step 3</StepperContent>
       <div>
-        <StepperPrevTrigger>Previous</StepperPrevTrigger>
-        <StepperNextTrigger>Next</StepperNextTrigger>
+        <StepperPrev>Previous</StepperPrev>
+        <StepperNext>Next</StepperNext>
       </div>
     </Stepper>
   );
 
   it("renders stepper with correct initial state", () => {
-    render(<BasicStepper />);
+    render(<StepperDemo />);
 
     expect(screen.getByText("Step 1")).toBeInTheDocument();
     expect(screen.getByText("Step 2")).toBeInTheDocument();
@@ -103,7 +91,7 @@ describe("Stepper", () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
 
-    render(<BasicStepper onValueChange={onValueChange} />);
+    render(<StepperDemo onValueChange={onValueChange} />);
 
     const step2Trigger = screen.getByRole("tab", { name: /step 2/i });
     await user.click(step2Trigger);
@@ -118,7 +106,7 @@ describe("Stepper", () => {
     const onValueChange = vi.fn();
 
     // Create a stepper without validation first
-    render(<BasicStepper onValueChange={onValueChange} />);
+    render(<StepperDemo onValueChange={onValueChange} />);
 
     const nextButton = screen.getByText("Next");
     const prevButton = screen.getByText("Previous");
@@ -151,14 +139,14 @@ describe("Stepper", () => {
   });
 
   it("disables previous button on first step", () => {
-    render(<BasicStepper defaultValue="step1" />);
+    render(<StepperDemo defaultValue="step1" />);
 
     const prevButton = screen.getByText("Previous");
     expect(prevButton).toBeDisabled();
   });
 
   it("disables next button on last step", () => {
-    render(<BasicStepper defaultValue="step3" />);
+    render(<StepperDemo defaultValue="step3" />);
 
     const nextButton = screen.getByText("Next");
     expect(nextButton).toBeDisabled();
@@ -168,7 +156,7 @@ describe("Stepper", () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
 
-    render(<BasicStepper onValueChange={onValueChange} />);
+    render(<StepperDemo onValueChange={onValueChange} />);
 
     const step1Trigger = screen.getByRole("tab", { name: /step 1/i });
     step1Trigger.focus();
@@ -186,7 +174,7 @@ describe("Stepper", () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
 
-    render(<BasicStepper onValueChange={onValueChange} defaultValue="step2" />);
+    render(<StepperDemo onValueChange={onValueChange} defaultValue="step2" />);
 
     const step2Trigger = screen.getByRole("tab", { name: /step 2/i });
     step2Trigger.focus();
@@ -206,7 +194,7 @@ describe("Stepper", () => {
     const onValueChange = vi.fn();
 
     render(
-      <BasicStepper onValueChange={onValueChange} onValidate={onValidate} />,
+      <StepperDemo onValueChange={onValueChange} onValidate={onValidate} />,
     );
 
     // Click on step 2 trigger directly (this should trigger validation)
@@ -227,7 +215,7 @@ describe("Stepper", () => {
     const onValueChange = vi.fn();
 
     render(
-      <BasicStepper onValueChange={onValueChange} onValidate={onValidate} />,
+      <StepperDemo onValueChange={onValueChange} onValidate={onValidate} />,
     );
 
     // Click on step 2 trigger directly (this should trigger validation)
@@ -250,7 +238,7 @@ describe("Stepper", () => {
     const onValueChange = vi.fn();
 
     render(
-      <BasicStepper activationMode="manual" onValueChange={onValueChange} />,
+      <StepperDemo activationMode="manual" onValueChange={onValueChange} />,
     );
 
     const step2Trigger = screen.getByRole("tab", { name: /step 2/i });
@@ -303,7 +291,7 @@ describe("Stepper", () => {
   });
 
   it("supports vertical orientation", () => {
-    render(<BasicStepper orientation="vertical" />);
+    render(<StepperDemo orientation="vertical" />);
 
     const stepperList = screen.getByRole("tablist");
     expect(stepperList).toHaveAttribute("aria-orientation", "vertical");
@@ -315,7 +303,7 @@ describe("Stepper", () => {
     const onValueChange = vi.fn();
 
     render(
-      <BasicStepper loop onValueChange={onValueChange} defaultValue="step3" />,
+      <StepperDemo loop onValueChange={onValueChange} defaultValue="step3" />,
     );
 
     const step3Trigger = screen.getByRole("tab", { name: /step 3/i });
@@ -327,7 +315,7 @@ describe("Stepper", () => {
   });
 
   it("renders step indicators with correct states", () => {
-    render(<BasicStepper defaultValue="step2" />);
+    render(<StepperDemo defaultValue="step2" />);
 
     const triggers = screen.getAllByRole("tab");
 
@@ -372,7 +360,7 @@ describe("Stepper", () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
 
-    render(<BasicStepper nonInteractive onValueChange={onValueChange} />);
+    render(<StepperDemo nonInteractive onValueChange={onValueChange} />);
 
     const step2Trigger = screen.getByRole("tab", { name: /step 2/i });
     await user.click(step2Trigger);
@@ -382,7 +370,7 @@ describe("Stepper", () => {
   });
 
   it("has proper ARIA attributes", () => {
-    render(<BasicStepper />);
+    render(<StepperDemo />);
 
     const stepperList = screen.getByRole("tablist");
     expect(stepperList).toHaveAttribute("aria-orientation", "horizontal");
@@ -398,7 +386,7 @@ describe("Stepper", () => {
   });
 
   it("supports custom step positions", () => {
-    render(<BasicStepper />);
+    render(<StepperDemo />);
 
     const triggers = screen.getAllByRole("tab");
 

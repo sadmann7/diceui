@@ -211,10 +211,6 @@ export interface ContentProps extends EmptyProps<"div">, CompositionProps {
   forceMount?: boolean;
 }
 
-export interface PrevTriggerProps
-  extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
-    CompositionProps {}
+export interface PrevProps extends EmptyProps<"button">, CompositionProps {}
 
-export interface NextTriggerProps
-  extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
-    CompositionProps {}
+export interface NextProps extends EmptyProps<"button">, CompositionProps {}

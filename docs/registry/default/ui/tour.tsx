@@ -11,7 +11,7 @@ const CLOSE_NAME = "TourClose";
 const PREV_NAME = "TourPrev";
 const NEXT_NAME = "TourNext";
 const SKIP_NAME = "TourSkip";
-const BACKDROP_NAME = "TourBackdrop";
+const OVERLAY_NAME = "TourOverlay";
 
 type Direction = "ltr" | "rtl";
 type Placement =
@@ -692,12 +692,10 @@ function TourStep(props: TourStepProps) {
   );
 }
 
-interface TourBackdropProps extends DivProps {}
-
-function TourBackdrop(props: TourBackdropProps) {
+function TourOverlay(props: DivProps) {
   const { asChild, className, style, ...backdropProps } = props;
 
-  const store = useStoreContext(BACKDROP_NAME);
+  const store = useStoreContext(OVERLAY_NAME);
   const open = useStore((state) => state.open);
   const showBackdrop = useStore((state) => state.showBackdrop);
   const closeOnBackdropClick = useStore((state) => state.closeOnBackdropClick);
@@ -715,11 +713,11 @@ function TourBackdrop(props: TourBackdropProps) {
 
   if (!open || !showBackdrop) return null;
 
-  const BackdropPrimitive = asChild ? Slot : "div";
+  const OverlayPrimitive = asChild ? Slot : "div";
 
   return (
-    <BackdropPrimitive
-      data-slot="tour-backdrop"
+    <OverlayPrimitive
+      data-slot="tour-overlay"
       {...backdropProps}
       className={cn("fixed inset-0 z-40 bg-black/50", className)}
       style={{
@@ -1003,7 +1001,7 @@ function TourSkip(props: ButtonProps) {
 export {
   TourRoot as Root,
   TourStep as Step,
-  TourBackdrop as Backdrop,
+  TourOverlay as Overlay,
   TourHeader as Header,
   TourTitle as Title,
   TourDescription as Description,
@@ -1017,7 +1015,7 @@ export {
   //
   TourRoot as Tour,
   TourStep,
-  TourBackdrop,
+  TourOverlay,
   TourHeader,
   TourTitle,
   TourDescription,

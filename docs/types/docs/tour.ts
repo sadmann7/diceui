@@ -154,7 +154,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    *
    * Steps can override the default footer by including their own TourFooter component.
    *
-   * ```ts
+   * ```tsx
    * stepFooter={
    *   <TourFooter>
    *     <div className="flex w-full items-center justify-between">
@@ -308,7 +308,7 @@ export interface StepCounterProps extends EmptyProps<"div">, CompositionProps {
 
 export interface NavigationProps extends EmptyProps<"div">, CompositionProps {}
 
-export interface PrevButtonProps extends ButtonProps, CompositionProps {
+export interface PrevProps extends ButtonProps, CompositionProps {
   /**
    * The accessible label for the previous button.
    *
@@ -317,7 +317,7 @@ export interface PrevButtonProps extends ButtonProps, CompositionProps {
   "aria-label"?: string;
 }
 
-export interface NextButtonProps extends ButtonProps, CompositionProps {
+export interface NextProps extends ButtonProps, CompositionProps {
   /**
    * The accessible label for the next button.
    *
@@ -326,7 +326,7 @@ export interface NextButtonProps extends ButtonProps, CompositionProps {
   "aria-label"?: string;
 }
 
-export interface SkipButtonProps extends ButtonProps, CompositionProps {
+export interface SkipProps extends ButtonProps, CompositionProps {
   /**
    * The accessible label for the skip button.
    *
@@ -335,6 +335,4 @@ export interface SkipButtonProps extends ButtonProps, CompositionProps {
   "aria-label"?: string;
 }
 
-export interface BackdropProps extends EmptyProps<"div">, CompositionProps {}
-
-export interface HighlightProps extends EmptyProps<"div">, CompositionProps {}
+export interface OverlayProps extends EmptyProps<"div">, CompositionProps {}
