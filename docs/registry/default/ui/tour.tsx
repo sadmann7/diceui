@@ -109,7 +109,7 @@ function createStore(
 }
 
 function useStore<T>(selector: (state: StoreState) => T): T {
-  const store = useTourContext("useStore");
+  const store = useStoreContext("useStore");
 
   const getSnapshot = React.useCallback(
     () => selector(store.getState()),
@@ -297,7 +297,15 @@ function getTransform(placement?: Placement) {
   }
 }
 
-const TourContext = React.createContext<Store | null>(null);
+const StoreContext = React.createContext<Store | null>(null);
+
+function useStoreContext(consumerName: string) {
+  const context = React.useContext(StoreContext);
+  if (!context) {
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
+  }
+  return context;
+}
 
 function useTourContext(consumerName: string) {
   const context = React.useContext(TourContext);
@@ -313,6 +321,10 @@ interface TourStepContextValue {
 }
 
 const TourStepContext = React.createContext<TourStepContextValue | null>(null);
+
+const TourContext = React.createContext<React.ReactElement | undefined>(
+  undefined,
+);
 
 interface TourRootProps extends DivProps {
   open?: boolean;
@@ -337,6 +349,7 @@ interface TourRootProps extends DivProps {
     left?: number;
     right?: number;
   };
+  defaultFooter?: React.ReactElement;
 }
 
 function TourRoot(props: TourRootProps) {
@@ -358,6 +371,7 @@ function TourRoot(props: TourRootProps) {
     scrollToElement: scrollToElementProp = true,
     scrollBehavior = "smooth",
     scrollOffset = {},
+    defaultFooter,
     asChild,
     ...rootProps
   } = props;
@@ -388,124 +402,133 @@ function TourRoot(props: TourRootProps) {
     }),
   );
 
-  const store = useLazyRef(() =>
-    createStore(listenersRef, stateRef, {
-      open: (value) => {
-        onOpenChange?.(value);
+  const store = React.useMemo(
+    () =>
+      createStore(listenersRef, stateRef, {
+        open: (value) => {
+          onOpenChange?.(value);
 
-        // If opening the tour, initialize position for current step
-        if (value) {
+          // If opening the tour, initialize position for current step
+          if (value) {
+            const state = stateRef.current;
+            if (state && state.steps.length > 0) {
+              // Reset currentStep to 0 if it's beyond the steps array (after completion)
+              if (state.currentStep >= state.steps.length) {
+                store.setState("currentStep", 0);
+              }
+
+              const currentStepIndex =
+                state.currentStep >= state.steps.length ? 0 : state.currentStep;
+              const currentStepData = state.steps[currentStepIndex];
+              if (currentStepData) {
+                // Use setTimeout to ensure DOM is ready
+                setTimeout(() => {
+                  updatePositionAndMask(store, currentStepData);
+                }, 0);
+              }
+            }
+          }
+
+          // If closing the tour, check if it was skipped
           const state = stateRef.current;
-          if (state && state.steps.length > 0) {
-            // Reset currentStep to 0 if it's beyond the steps array (after completion)
-            if (state.currentStep >= state.steps.length) {
-              store.current.setState("currentStep", 0);
-            }
+          if (
+            !value &&
+            state &&
+            state.currentStep < (state.steps.length || 0) - 1
+          ) {
+            onSkip?.();
+          }
+        },
+        currentStep: (value, store) => {
+          const state = store.getState();
+          const prevStep = state.steps[state.currentStep];
+          const nextStep = state.steps[value];
 
-            const currentStepIndex =
-              state.currentStep >= state.steps.length ? 0 : state.currentStep;
-            const currentStepData = state.steps[currentStepIndex];
-            if (currentStepData) {
-              // Use setTimeout to ensure DOM is ready
-              setTimeout(() => {
-                updatePositionAndMask(store.current, currentStepData);
-              }, 0);
+          prevStep?.onStepLeave?.();
+          nextStep?.onStepEnter?.();
+
+          onCurrentStepChange?.(value);
+
+          // Handle completion
+          if (value >= state.steps.length) {
+            onComplete?.();
+            store.setState("open", false);
+            return;
+          }
+
+          // Update position and mask when step changes
+          updatePositionAndMask(store, nextStep);
+
+          // Scroll to target element
+          if (state.scrollToElement && nextStep) {
+            const targetElement = getTargetElement(nextStep.target);
+            if (targetElement) {
+              scrollToElement(
+                targetElement,
+                state.scrollBehavior,
+                state.scrollOffset,
+              );
             }
           }
-        }
-
-        // If closing the tour, check if it was skipped
-        const state = stateRef.current;
-        if (
-          !value &&
-          state &&
-          state.currentStep < (state.steps.length || 0) - 1
-        ) {
-          onSkip?.();
-        }
-      },
-      currentStep: (value, store) => {
-        const state = store.getState();
-        const prevStep = state.steps[state.currentStep];
-        const nextStep = state.steps[value];
-
-        prevStep?.onStepLeave?.();
-        nextStep?.onStepEnter?.();
-
-        onCurrentStepChange?.(value);
-
-        // Handle completion
-        if (value >= state.steps.length) {
-          onComplete?.();
-          store.setState("open", false);
-          return;
-        }
-
-        // Update position and mask when step changes
-        updatePositionAndMask(store, nextStep);
-
-        // Scroll to target element
-        if (state.scrollToElement && nextStep) {
-          const targetElement = getTargetElement(nextStep.target);
-          if (targetElement) {
-            scrollToElement(
-              targetElement,
-              state.scrollBehavior,
-              state.scrollOffset,
-            );
-          }
-        }
-      },
-    }),
+        },
+      }),
+    [
+      listenersRef,
+      stateRef,
+      onOpenChange,
+      onCurrentStepChange,
+      onComplete,
+      onSkip,
+    ],
   );
 
   // Update store state when props change
   React.useEffect(() => {
     if (openProp !== undefined) {
-      store.current.setState("open", openProp);
+      store.setState("open", openProp);
     }
   }, [openProp, store]);
 
   React.useEffect(() => {
     if (currentStepProp !== undefined) {
-      store.current.setState("currentStep", currentStepProp);
+      store.setState("currentStep", currentStepProp);
     }
   }, [currentStepProp, store]);
 
   React.useEffect(() => {
-    store.current.setState("dir", dir);
+    store.setState("dir", dir);
   }, [dir, store]);
 
   React.useEffect(() => {
-    store.current.setState("showBackdrop", showBackdrop);
+    store.setState("showBackdrop", showBackdrop);
   }, [showBackdrop, store]);
 
   React.useEffect(() => {
-    store.current.setState("closeOnBackdropClick", closeOnBackdropClick);
+    store.setState("closeOnBackdropClick", closeOnBackdropClick);
   }, [closeOnBackdropClick, store]);
 
   React.useEffect(() => {
-    store.current.setState("closeOnEscape", closeOnEscape);
+    store.setState("closeOnEscape", closeOnEscape);
   }, [closeOnEscape, store]);
 
   React.useEffect(() => {
-    store.current.setState("padding", padding);
+    store.setState("padding", padding);
   }, [padding, store]);
 
   React.useEffect(() => {
-    store.current.setState("borderRadius", borderRadius);
+    store.setState("borderRadius", borderRadius);
   }, [borderRadius, store]);
 
   React.useEffect(() => {
-    store.current.setState("scrollToElement", scrollToElementProp);
+    store.setState("scrollToElement", scrollToElementProp);
   }, [scrollToElementProp, store]);
 
   React.useEffect(() => {
-    store.current.setState("scrollBehavior", scrollBehavior);
+    store.setState("scrollBehavior", scrollBehavior);
   }, [scrollBehavior, store]);
 
   React.useEffect(() => {
-    store.current.setState("scrollOffset", {
+    store.setState("scrollOffset", {
       top: 100,
       bottom: 100,
       left: 0,
@@ -517,10 +540,10 @@ function TourRoot(props: TourRootProps) {
   // Handle escape key
   React.useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
-      const state = store.current.getState();
+      const state = store.getState();
       if (state.open && state.closeOnEscape && event.key === "Escape") {
         event.preventDefault();
-        store.current.setState("open", false);
+        store.setState("open", false);
       }
     }
 
@@ -531,9 +554,11 @@ function TourRoot(props: TourRootProps) {
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
-    <TourContext.Provider value={store.current}>
-      <RootPrimitive data-slot="tour" {...rootProps} />
-    </TourContext.Provider>
+    <StoreContext.Provider value={store}>
+      <TourContext.Provider value={defaultFooter}>
+        <RootPrimitive data-slot="tour" {...rootProps} />
+      </TourContext.Provider>
+    </StoreContext.Provider>
   );
 }
 
@@ -556,12 +581,19 @@ function TourStep(props: TourStepProps) {
     showOnTargetNotFound = false,
     onStepEnter,
     onStepLeave,
-    asChild,
     className,
+    children,
+    asChild,
     ...stepProps
   } = props;
-  const store = useTourContext(STEP_NAME);
+  const store = useStoreContext(STEP_NAME);
   const stepIndex = React.useRef<number>(-1);
+
+  const hasStepFooter = React.Children.toArray(children).some((child) => {
+    if (!React.isValidElement(child)) return false;
+
+    return child.type === TourFooter;
+  });
 
   // Register step with store
   useIsomorphicLayoutEffect(() => {
@@ -620,6 +652,7 @@ function TourStep(props: TourStepProps) {
   const currentStep = useStore((state) => state.currentStep);
   const steps = useStore((state) => state.steps);
   const position = useStore((state) => state.position);
+  const defaultFooter = useTourContext(STEP_NAME);
 
   const currentStepData = steps[currentStep];
   const targetElement = currentStepData
@@ -632,9 +665,9 @@ function TourStep(props: TourStepProps) {
   React.useEffect(() => {
     if (!open || !currentStepData || !targetElement || !isCurrentStep) return;
 
-    const updatePosition = () => {
+    function updatePosition() {
       updatePositionAndMask(store, currentStepData);
-    };
+    }
 
     updatePosition();
     window.addEventListener("resize", updatePosition);
@@ -689,7 +722,10 @@ function TourStep(props: TourStepProps) {
           left: position.left,
           transform: getTransform(currentStepData?.placement),
         }}
-      />
+      >
+        {children}
+        {!hasStepFooter && defaultFooter && defaultFooter}
+      </StepPrimitive>
     </TourStepContext.Provider>
   );
 }
@@ -699,7 +735,7 @@ interface TourBackdropProps extends DivProps {}
 function TourBackdrop(props: TourBackdropProps) {
   const { asChild, className, style, ...backdropProps } = props;
 
-  const store = useTourContext(BACKDROP_NAME);
+  const store = useStoreContext(BACKDROP_NAME);
   const open = useStore((state) => state.open);
   const showBackdrop = useStore((state) => state.showBackdrop);
   const closeOnBackdropClick = useStore((state) => state.closeOnBackdropClick);
@@ -809,7 +845,7 @@ function TourFooter(props: DivProps) {
 function TourClose(props: ButtonProps) {
   const { asChild, className, ...closeButtonProps } = props;
 
-  const store = useTourContext(CLOSE_NAME);
+  const store = useStoreContext(CLOSE_NAME);
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -884,7 +920,7 @@ function TourNavigation(props: DivProps) {
 function TourPrev(props: ButtonProps) {
   const { asChild, className, children, ...prevButtonProps } = props;
 
-  const store = useTourContext(PREV_NAME);
+  const store = useStoreContext(PREV_NAME);
   const currentStep = useStore((state) => state.currentStep);
 
   const onClick = React.useCallback(
@@ -928,7 +964,7 @@ function TourPrev(props: ButtonProps) {
 
 function TourNext(props: ButtonProps) {
   const { asChild, className, children, ...nextButtonProps } = props;
-  const store = useTourContext(NEXT_NAME);
+  const store = useStoreContext(NEXT_NAME);
   const currentStep = useStore((state) => state.currentStep);
   const steps = useStore((state) => state.steps);
 
@@ -971,7 +1007,7 @@ function TourNext(props: ButtonProps) {
 function TourSkip(props: ButtonProps) {
   const { asChild, className, children, ...skipButtonProps } = props;
 
-  const store = useTourContext(SKIP_NAME);
+  const store = useStoreContext(SKIP_NAME);
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {

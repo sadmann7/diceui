@@ -55,7 +55,21 @@ export default function TourDemo() {
         </div>
       </div>
 
-      <Tour open={open} onOpenChange={setOpen}>
+      <Tour
+        open={open}
+        onOpenChange={setOpen}
+        defaultFooter={
+          <TourFooter>
+            <div className="flex w-full items-center justify-between">
+              <TourStepCounter />
+              <div className="flex gap-2">
+                <TourPrev />
+                <TourNext />
+              </div>
+            </div>
+          </TourFooter>
+        }
+      >
         <TourBackdrop />
 
         <TourStep target="#welcome-title" placement="bottom">
@@ -66,15 +80,6 @@ export default function TourDemo() {
               features together.
             </TourDescription>
           </TourHeader>
-          <TourFooter>
-            <div className="flex w-full items-center justify-between">
-              <TourStepCounter />
-              <div className="flex gap-2">
-                <TourSkip />
-                <TourNext />
-              </div>
-            </div>
-          </TourFooter>
           <TourClose />
         </TourStep>
 
@@ -86,15 +91,6 @@ export default function TourDemo() {
               will help you get started.
             </TourDescription>
           </TourHeader>
-          <TourFooter>
-            <div className="flex w-full items-center justify-between">
-              <TourStepCounter />
-              <div className="flex gap-2">
-                <TourPrev />
-                <TourNext />
-              </div>
-            </div>
-          </TourFooter>
           <TourClose />
         </TourStep>
 
@@ -106,15 +102,6 @@ export default function TourDemo() {
               to your experience.
             </TourDescription>
           </TourHeader>
-          <TourFooter>
-            <div className="flex w-full items-center justify-between">
-              <TourStepCounter />
-              <div className="flex gap-2">
-                <TourPrev />
-                <TourNext />
-              </div>
-            </div>
-          </TourFooter>
           <TourClose />
         </TourStep>
 
@@ -123,14 +110,15 @@ export default function TourDemo() {
             <TourTitle>Feature 3</TourTitle>
             <TourDescription>
               The final feature in our tour showcases the full potential of our
-              platform.
+              platform. This step has a custom footer that overrides the
+              default.
             </TourDescription>
           </TourHeader>
           <TourFooter>
             <div className="flex w-full items-center justify-between">
               <TourStepCounter />
               <div className="flex gap-2">
-                <TourPrev />
+                <TourSkip />
                 <TourNext />
               </div>
             </div>
