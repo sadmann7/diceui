@@ -42,6 +42,13 @@ const OPPOSITE_SIDE: Record<Side, Side> = {
   left: "right",
 };
 
+const DirectionContext = React.createContext<Direction | undefined>(undefined);
+
+function useDirection(dirProp?: Direction): Direction {
+  const contextDir = React.useContext(DirectionContext);
+  return dirProp ?? contextDir ?? "ltr";
+}
+
 interface ScrollOffset {
   top?: number;
   bottom?: number;
@@ -208,9 +215,12 @@ function useStoreContext(consumerName: string) {
   return context;
 }
 
-const TourContext = React.createContext<React.ReactElement | undefined>(
-  undefined,
-);
+interface TourContextValue {
+  dir: Direction;
+  stepFooter?: React.ReactElement;
+}
+
+const TourContext = React.createContext<TourContextValue | null>(null);
 
 function useTourContext(consumerName: string) {
   const context = React.useContext(TourContext);
@@ -242,14 +252,6 @@ function useStepContext(consumerName: string) {
 
 const DefaultFooterContext = React.createContext(false);
 
-function useDefaultFooter(consumerName: string) {
-  const context = React.useContext(DefaultFooterContext);
-  if (!context) {
-    throw new Error(`\`${consumerName}\` must be used within \`${STEP_NAME}\``);
-  }
-  return context;
-}
-
 interface TourRootProps extends DivProps {
   open?: boolean;
   defaultOpen?: boolean;
@@ -278,6 +280,7 @@ function TourRoot(props: TourRootProps) {
     onComplete,
     onSkip,
     onEscapeKeyDown,
+    dir: dirProp,
     stepFooter,
     scrollToElement: scrollToElementProp = false,
     scrollBehavior = "smooth",
@@ -285,6 +288,8 @@ function TourRoot(props: TourRootProps) {
     asChild,
     ...rootProps
   } = props;
+
+  const dir = useDirection(dirProp);
 
   const state = useLazyRef<State>(() => ({
     open: openProp ?? defaultOpen,
@@ -443,12 +448,20 @@ function TourRoot(props: TourRootProps) {
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [state.current.open]);
 
+  const contextValue = React.useMemo<TourContextValue>(
+    () => ({
+      dir,
+      stepFooter,
+    }),
+    [dir, stepFooter],
+  );
+
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
     <StoreContext.Provider value={store}>
-      <TourContext.Provider value={stepFooter}>
-        <RootPrimitive data-slot="tour" {...rootProps} />
+      <TourContext.Provider value={contextValue}>
+        <RootPrimitive data-slot="tour" dir={dir} {...rootProps} />
       </TourContext.Provider>
     </StoreContext.Provider>
   );
@@ -507,7 +520,7 @@ function TourStep(props: TourStepProps) {
   const open = useStore((state) => state.open);
   const value = useStore((state) => state.value);
   const steps = useStore((state) => state.steps);
-  const stepFooter = useTourContext(STEP_NAME);
+  const context = useTourContext(STEP_NAME);
 
   useIsomorphicLayoutEffect(() => {
     const stepData: StepData = {
@@ -677,6 +690,7 @@ function TourStep(props: TourStepProps) {
         data-slot="tour-step"
         data-side={placedSide}
         data-align={placedAlign}
+        dir={context.dir}
         {...stepProps}
         className={cn(
           "fixed z-50 flex w-80 flex-col gap-4 rounded-lg border bg-popover p-4 text-popover-foreground shadow-md",
@@ -692,7 +706,7 @@ function TourStep(props: TourStepProps) {
         {children}
         {!footer && (
           <DefaultFooterContext.Provider value={true}>
-            {stepFooter}
+            {context.stepFooter}
           </DefaultFooterContext.Provider>
         )}
       </StepPrimitive>
@@ -752,11 +766,13 @@ function TourOverlay(props: TourOverlayProps) {
 function TourHeader(props: DivProps) {
   const { asChild, className, ...headerProps } = props;
 
+  const context = useTourContext("TourHeader");
   const HeaderPrimitive = asChild ? Slot : "div";
 
   return (
     <HeaderPrimitive
       data-slot="tour-header"
+      dir={context.dir}
       {...headerProps}
       className={cn(
         "flex flex-col gap-1.5 text-center sm:text-left",
@@ -773,11 +789,13 @@ interface TourTitleProps extends React.ComponentProps<"h2"> {
 function TourTitle(props: TourTitleProps) {
   const { asChild, className, ...titleProps } = props;
 
+  const context = useTourContext("TourTitle");
   const TitlePrimitive = asChild ? Slot : "h2";
 
   return (
     <TitlePrimitive
       data-slot="tour-title"
+      dir={context.dir}
       {...titleProps}
       className={cn(
         "font-semibold text-lg leading-none tracking-tight",
@@ -794,11 +812,13 @@ interface TourDescriptionProps extends React.ComponentProps<"p"> {
 function TourDescription(props: TourDescriptionProps) {
   const { asChild, className, ...descriptionProps } = props;
 
+  const context = useTourContext("TourDescription");
   const DescriptionPrimitive = asChild ? Slot : "p";
 
   return (
     <DescriptionPrimitive
       data-slot="tour-description"
+      dir={context.dir}
       {...descriptionProps}
       className={cn("text-muted-foreground text-sm", className)}
     />
@@ -809,7 +829,8 @@ function TourFooter(props: DivProps) {
   const { asChild, className, ref, ...footerProps } = props;
 
   const stepContext = useStepContext(FOOTER_NAME);
-  const hasDefaultFooter = useDefaultFooter(FOOTER_NAME);
+  const hasDefaultFooter = React.useContext(DefaultFooterContext);
+  const context = useTourContext(FOOTER_NAME);
 
   const composedRef = useComposedRefs(
     ref,
@@ -821,6 +842,7 @@ function TourFooter(props: DivProps) {
   return (
     <FooterPrimitive
       data-slot="tour-footer"
+      dir={context.dir}
       {...footerProps}
       ref={composedRef}
       className={cn(
