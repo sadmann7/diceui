@@ -707,8 +707,40 @@ function getCurrencyCaretPosition(opts: {
   newValue: string;
   mask: MaskPatternKey | MaskPattern | undefined;
   transformOpts: TransformOptions;
+  oldCursorPosition?: number;
+  oldValue?: string;
+  previousUnmasked?: string;
 }): number {
-  const { newValue, mask, transformOpts } = opts;
+  const {
+    newValue,
+    mask,
+    transformOpts,
+    oldCursorPosition,
+    oldValue,
+    previousUnmasked,
+  } = opts;
+
+  if (
+    oldCursorPosition !== undefined &&
+    oldValue &&
+    previousUnmasked !== undefined
+  ) {
+    if (oldCursorPosition < oldValue.length) {
+      const digitsBeforeCursor = oldValue
+        .substring(0, oldCursorPosition)
+        .replace(/\D/g, "").length;
+
+      let digitCount = 0;
+      for (let i = 0; i < newValue.length; i++) {
+        if (/\d/.test(newValue[i] ?? "")) {
+          digitCount++;
+          if (digitCount === digitsBeforeCursor) {
+            return i + 1;
+          }
+        }
+      }
+    }
+  }
 
   if (mask === "currency") {
     const currencyAtEnd = isCurrencyAtEnd(transformOpts);
@@ -1017,19 +1049,23 @@ function MaskInput(props: MaskInputProps) {
           });
 
           let newCursorPosition: number;
+
+          const previousUnmasked = getUnmaskedValue({
+            value,
+            transform: maskPattern.transform,
+            ...transformOpts,
+          });
+
           if (CURRENCY_PERCENTAGE_SYMBOLS.test(maskPattern.pattern)) {
             newCursorPosition = getCurrencyCaretPosition({
               newValue,
               mask,
               transformOpts,
+              oldCursorPosition,
+              oldValue: inputValue,
+              previousUnmasked,
             });
           } else {
-            const previousUnmasked = getUnmaskedValue({
-              value,
-              transform: maskPattern.transform,
-              ...transformOpts,
-            });
-
             newCursorPosition = getPatternCaretPosition({
               newValue,
               maskPattern,

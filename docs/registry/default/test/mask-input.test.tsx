@@ -1421,5 +1421,67 @@ describe("MaskInput", () => {
       // Cursor should be at position 3
       expect(input.selectionStart).toBe(3);
     });
+
+    test("maintains cursor position when editing EUR currency in the middle", async () => {
+      const user = userEvent.setup();
+      render(
+        <MaskInput
+          mask="currency"
+          currency="EUR"
+          locale="de-DE"
+          data-testid="mask-input"
+        />,
+      );
+      const input = screen.getByTestId("mask-input") as HTMLInputElement;
+
+      // Type EUR amount (German format uses comma as decimal separator)
+      await user.type(input, "123456");
+      // Should format as "1.234,56 €" in German locale
+      expect(input.value).toContain("1");
+      expect(input.value).toContain("234");
+      expect(input.value).toContain("56");
+
+      // Get current cursor position (at end)
+      const endPosition = input.selectionStart ?? 0;
+
+      // Move cursor to middle (after first digit group)
+      const middlePosition = input.value.indexOf("234");
+      input.setSelectionRange(middlePosition, middlePosition);
+
+      // Delete a character
+      await user.keyboard("{Backspace}");
+
+      // Cursor should stay near the middle, not jump to end
+      const newPosition = input.selectionStart ?? 0;
+      expect(newPosition).toBeLessThan(endPosition - 2);
+      expect(newPosition).toBeGreaterThan(0);
+    });
+
+    test("maintains cursor position when editing USD currency in the middle", async () => {
+      const user = userEvent.setup();
+      render(
+        <MaskInput
+          mask="currency"
+          currency="USD"
+          locale="en-US"
+          data-testid="mask-input"
+        />,
+      );
+      const input = screen.getByTestId("mask-input") as HTMLInputElement;
+
+      // Type USD amount
+      await user.type(input, "123456");
+      expect(input.value).toBe("$123,456");
+
+      // Move cursor after the dollar sign (position 1)
+      input.setSelectionRange(1, 1);
+
+      // Type a digit
+      await user.keyboard("9");
+      expect(input.value).toBe("$9,123,456");
+
+      // Cursor should be at position 2 (after the 9)
+      expect(input.selectionStart).toBe(2);
+    });
   });
 });
