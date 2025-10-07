@@ -679,6 +679,7 @@ function toUnmaskedIndex(opts: {
       idx++;
     }
   }
+
   return idx;
 }
 
@@ -698,6 +699,7 @@ function fromUnmaskedIndex(opts: {
       }
     }
   }
+
   return masked.length;
 }
 
@@ -705,8 +707,40 @@ function getCurrencyCaretPosition(opts: {
   newValue: string;
   mask: MaskPatternKey | MaskPattern | undefined;
   transformOpts: TransformOptions;
+  oldCursorPosition?: number;
+  oldValue?: string;
+  previousUnmasked?: string;
 }): number {
-  const { newValue, mask, transformOpts } = opts;
+  const {
+    newValue,
+    mask,
+    transformOpts,
+    oldCursorPosition,
+    oldValue,
+    previousUnmasked,
+  } = opts;
+
+  if (
+    oldCursorPosition !== undefined &&
+    oldValue &&
+    previousUnmasked !== undefined
+  ) {
+    if (oldCursorPosition < oldValue.length) {
+      const digitsBeforeCursor = oldValue
+        .substring(0, oldCursorPosition)
+        .replace(/\D/g, "").length;
+
+      let digitCount = 0;
+      for (let i = 0; i < newValue.length; i++) {
+        if (/\d/.test(newValue[i] ?? "")) {
+          digitCount++;
+          if (digitCount === digitsBeforeCursor) {
+            return i + 1;
+          }
+        }
+      }
+    }
+  }
 
   if (mask === "currency") {
     const currencyAtEnd = isCurrencyAtEnd(transformOpts);
@@ -729,10 +763,54 @@ function getPatternCaretPosition(opts: {
   newValue: string;
   maskPattern: MaskPattern;
   currentUnmasked: string;
+  oldCursorPosition?: number;
+  oldValue?: string;
+  previousUnmasked?: string;
 }): number {
-  const { newValue, maskPattern, currentUnmasked } = opts;
+  const {
+    newValue,
+    maskPattern,
+    currentUnmasked,
+    oldCursorPosition,
+    oldValue,
+    previousUnmasked,
+  } = opts;
   let position = 0;
   let unmaskedCount = 0;
+
+  if (
+    oldCursorPosition !== undefined &&
+    oldValue &&
+    previousUnmasked !== undefined
+  ) {
+    const oldUnmaskedIndex = toUnmaskedIndex({
+      masked: oldValue,
+      pattern: maskPattern.pattern,
+      caret: oldCursorPosition,
+    });
+
+    if (oldCursorPosition < oldValue.length) {
+      const targetUnmaskedIndex = Math.min(
+        oldUnmaskedIndex,
+        currentUnmasked.length,
+      );
+
+      for (
+        let i = 0;
+        i < maskPattern.pattern.length && i < newValue.length;
+        i++
+      ) {
+        if (maskPattern.pattern[i] === "#") {
+          unmaskedCount++;
+          if (unmaskedCount <= targetUnmaskedIndex) {
+            position = i + 1;
+          }
+        }
+      }
+
+      return position;
+    }
+  }
 
   for (let i = 0; i < maskPattern.pattern.length && i < newValue.length; i++) {
     if (maskPattern.pattern[i] === "#") {
@@ -742,6 +820,7 @@ function getPatternCaretPosition(opts: {
       }
     }
   }
+
   return position;
 }
 
@@ -947,6 +1026,9 @@ function MaskInput(props: MaskInputProps) {
         if (inputRef.current && newValue !== inputValue) {
           const inputElement = inputRef.current;
           if (!(inputElement instanceof HTMLInputElement)) return;
+
+          const oldCursorPosition = inputElement.selectionStart ?? 0;
+
           inputElement.value = newValue;
 
           const currentUnmasked = getUnmaskedValue({
@@ -956,17 +1038,30 @@ function MaskInput(props: MaskInputProps) {
           });
 
           let newCursorPosition: number;
+
+          const previousUnmasked = getUnmaskedValue({
+            value,
+            transform: maskPattern.transform,
+            ...transformOpts,
+          });
+
           if (CURRENCY_PERCENTAGE_SYMBOLS.test(maskPattern.pattern)) {
             newCursorPosition = getCurrencyCaretPosition({
               newValue,
               mask,
               transformOpts,
+              oldCursorPosition,
+              oldValue: inputValue,
+              previousUnmasked,
             });
           } else {
             newCursorPosition = getPatternCaretPosition({
               newValue,
               maskPattern,
               currentUnmasked,
+              oldCursorPosition,
+              oldValue: inputValue,
+              previousUnmasked,
             });
           }
 
@@ -1013,6 +1108,7 @@ function MaskInput(props: MaskInputProps) {
       withoutMask,
       transformOpts,
       mask,
+      value,
     ],
   );
 
@@ -1249,9 +1345,7 @@ function MaskInput(props: MaskInputProps) {
         if (cursorPosition > 0) {
           const charBeforeCursor = currentValue[cursorPosition - 1];
 
-          const isLiteral = maskPattern.pattern[cursorPosition - 1] !== "#";
-
-          if (charBeforeCursor && isLiteral) {
+          if (charBeforeCursor) {
             event.preventDefault();
 
             const unmaskedIndex = toUnmaskedIndex({
@@ -1259,6 +1353,7 @@ function MaskInput(props: MaskInputProps) {
               pattern: maskPattern.pattern,
               caret: cursorPosition,
             });
+
             if (unmaskedIndex > 0) {
               const currentUnmasked = getUnmaskedValue({
                 value: currentValue,
@@ -1281,6 +1376,7 @@ function MaskInput(props: MaskInputProps) {
                 pattern: maskPattern.pattern,
                 unmaskedIndex: unmaskedIndex - 1,
               });
+
               target.setSelectionRange(nextCaret, nextCaret);
 
               onValueChangeProp?.(nextMasked, nextUnmasked);
@@ -1314,9 +1410,7 @@ function MaskInput(props: MaskInputProps) {
         if (cursorPosition < currentValue.length) {
           const charAtCursor = currentValue[cursorPosition];
 
-          const isLiteral = maskPattern.pattern[cursorPosition] !== "#";
-
-          if (charAtCursor && isLiteral) {
+          if (charAtCursor) {
             event.preventDefault();
 
             const unmaskedIndex = toUnmaskedIndex({
@@ -1324,6 +1418,7 @@ function MaskInput(props: MaskInputProps) {
               pattern: maskPattern.pattern,
               caret: cursorPosition,
             });
+
             const currentUnmasked = getUnmaskedValue({
               value: currentValue,
               transform: maskPattern.transform,
@@ -1347,6 +1442,7 @@ function MaskInput(props: MaskInputProps) {
                 pattern: maskPattern.pattern,
                 unmaskedIndex: unmaskedIndex,
               });
+
               target.setSelectionRange(nextCaret, nextCaret);
 
               onValueChangeProp?.(nextMasked, nextUnmasked);
