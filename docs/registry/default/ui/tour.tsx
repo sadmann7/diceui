@@ -15,15 +15,17 @@ import {
 import { Slot } from "@radix-ui/react-slot";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import * as React from "react";
+import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 
 const ROOT_NAME = "Tour";
+const OVERLAY_NAME = "TourOverlay";
 const STEP_NAME = "TourStep";
 const CLOSE_NAME = "TourClose";
 const PREV_NAME = "TourPrev";
 const NEXT_NAME = "TourNext";
 const SKIP_NAME = "TourSkip";
-const OVERLAY_NAME = "TourOverlay";
+const FOOTER_NAME = "TourFooter";
 const ARROW_NAME = "TourArrow";
 
 const SIDE_OPTIONS = ["top", "right", "bottom", "left"] as const;
@@ -225,12 +227,23 @@ interface StepContextValue {
   placedAlign: Align;
   shouldHideArrow: boolean;
   onArrowChange: (arrow: HTMLElement | null) => void;
+  onFooterChange: (footer: HTMLElement | null) => void;
 }
 
 const StepContext = React.createContext<StepContextValue | null>(null);
 
 function useStepContext(consumerName: string) {
   const context = React.useContext(StepContext);
+  if (!context) {
+    throw new Error(`\`${consumerName}\` must be used within \`${STEP_NAME}\``);
+  }
+  return context;
+}
+
+const DefaultFooterContext = React.createContext(false);
+
+function useDefaultFooter(consumerName: string) {
+  const context = React.useContext(DefaultFooterContext);
   if (!context) {
     throw new Error(`\`${consumerName}\` must be used within \`${STEP_NAME}\``);
   }
@@ -485,6 +498,7 @@ function TourStep(props: TourStepProps) {
   } = props;
 
   const [arrow, setArrow] = React.useState<HTMLElement | null>(null);
+  const [footer, setFooter] = React.useState<HTMLElement | null>(null);
 
   const store = useStoreContext(STEP_NAME);
   const stepIdRef = React.useRef<string>("");
@@ -494,11 +508,6 @@ function TourStep(props: TourStepProps) {
   const value = useStore((state) => state.value);
   const steps = useStore((state) => state.steps);
   const stepFooter = useTourContext(STEP_NAME);
-
-  const hasStepFooter = React.Children.toArray(children).some((child) => {
-    if (!React.isValidElement(child)) return false;
-    return child.type === TourFooter;
-  });
 
   useIsomorphicLayoutEffect(() => {
     const stepData: StepData = {
@@ -633,6 +642,7 @@ function TourStep(props: TourStepProps) {
       placedAlign,
       shouldHideArrow: cannotCenterArrow,
       onArrowChange: setArrow,
+      onFooterChange: setFooter,
     }),
     [arrowX, arrowY, placedSide, placedAlign, cannotCenterArrow],
   );
@@ -680,7 +690,11 @@ function TourStep(props: TourStepProps) {
         }}
       >
         {children}
-        {!hasStepFooter && stepFooter && stepFooter}
+        {!footer && (
+          <DefaultFooterContext.Provider value={true}>
+            {stepFooter}
+          </DefaultFooterContext.Provider>
+        )}
       </StepPrimitive>
     </StepContext.Provider>
   );
@@ -792,7 +806,15 @@ function TourDescription(props: TourDescriptionProps) {
 }
 
 function TourFooter(props: DivProps) {
-  const { asChild, className, ...footerProps } = props;
+  const { asChild, className, ref, ...footerProps } = props;
+
+  const stepContext = useStepContext(FOOTER_NAME);
+  const hasDefaultFooter = useDefaultFooter(FOOTER_NAME);
+
+  const composedRef = useComposedRefs(
+    ref,
+    hasDefaultFooter ? undefined : stepContext.onFooterChange,
+  );
 
   const FooterPrimitive = asChild ? Slot : "div";
 
@@ -800,6 +822,7 @@ function TourFooter(props: DivProps) {
     <FooterPrimitive
       data-slot="tour-footer"
       {...footerProps}
+      ref={composedRef}
       className={cn(
         "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
         className,
