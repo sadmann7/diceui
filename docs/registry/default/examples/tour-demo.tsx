@@ -4,6 +4,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import {
   Tour,
+  TourArrow,
   TourClose,
   TourDescription,
   TourFooter,
@@ -81,6 +82,7 @@ export default function TourDemo() {
           <TourClose />
         </TourStep>
         <TourStep target="#feature-1" side="top" align="center">
+          <TourArrow />
           <TourHeader>
             <TourTitle>Feature 1</TourTitle>
             <TourDescription>
@@ -91,6 +93,7 @@ export default function TourDemo() {
           <TourClose />
         </TourStep>
         <TourStep target="#feature-2" side="top" align="center">
+          <TourArrow />
           <TourHeader>
             <TourTitle>Feature 2</TourTitle>
             <TourDescription>
@@ -101,6 +104,7 @@ export default function TourDemo() {
           <TourClose />
         </TourStep>
         <TourStep target="#feature-3" side="top" align="center" required>
+          <TourArrow />
           <TourHeader>
             <TourTitle>Feature 3</TourTitle>
             <TourDescription>

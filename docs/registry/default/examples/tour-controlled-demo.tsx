@@ -4,6 +4,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import {
   Tour,
+  TourArrow,
   TourClose,
   TourDescription,
   TourFooter,
@@ -108,6 +109,7 @@ export default function TourControlledDemo() {
       >
         <TourOverlay />
         <TourStep target="#controlled-title" side="bottom" align="center">
+          <TourArrow />
           <TourHeader>
             <TourTitle>Controlled Tour</TourTitle>
             <TourDescription>
@@ -127,6 +129,7 @@ export default function TourControlledDemo() {
           <TourClose />
         </TourStep>
         <TourStep target="#controlled-step-1" side="top" align="center">
+          <TourArrow />
           <TourHeader>
             <TourTitle>External Controls</TourTitle>
             <TourDescription>
@@ -146,6 +149,7 @@ export default function TourControlledDemo() {
           <TourClose />
         </TourStep>
         <TourStep target="#controlled-step-2" side="top" align="center">
+          <TourArrow />
           <TourHeader>
             <TourTitle>Final Step</TourTitle>
             <TourDescription>

@@ -3,6 +3,7 @@
 import {
   autoUpdate,
   flip,
+  arrow as floatingUIarrow,
   hide,
   limitShift,
   type Middleware,
@@ -23,6 +24,7 @@ const PREV_NAME = "TourPrev";
 const NEXT_NAME = "TourNext";
 const SKIP_NAME = "TourSkip";
 const OVERLAY_NAME = "TourOverlay";
+const ARROW_NAME = "TourArrow";
 
 const SIDE_OPTIONS = ["top", "right", "bottom", "left"] as const;
 const ALIGN_OPTIONS = ["start", "center", "end"] as const;
@@ -30,6 +32,13 @@ const ALIGN_OPTIONS = ["start", "center", "end"] as const;
 type Side = (typeof SIDE_OPTIONS)[number];
 type Align = (typeof ALIGN_OPTIONS)[number];
 type Direction = "ltr" | "rtl";
+
+const OPPOSITE_SIDE: Record<Side, Side> = {
+  top: "bottom",
+  right: "left",
+  bottom: "top",
+  left: "right",
+};
 
 interface ScrollOffset {
   top?: number;
@@ -209,6 +218,25 @@ function useTourContext(consumerName: string) {
   return context;
 }
 
+type StepContextValue = {
+  arrowX?: number;
+  arrowY?: number;
+  placedSide: Side;
+  placedAlign: Align;
+  shouldHideArrow: boolean;
+  onArrowChange: (arrow: HTMLElement | null) => void;
+};
+
+const StepContext = React.createContext<StepContextValue | null>(null);
+
+function useStepContext(consumerName: string) {
+  const context = React.useContext(StepContext);
+  if (!context) {
+    throw new Error(`\`${consumerName}\` must be used within \`${STEP_NAME}\``);
+  }
+  return context;
+}
+
 interface TourRootProps extends DivProps {
   open?: boolean;
   defaultOpen?: boolean;
@@ -275,8 +303,6 @@ function TourRoot(props: TourRootProps) {
               if (state.current.value >= state.current.steps.length) {
                 store.setState("value", 0);
               }
-
-              // Position and mask updates are handled by the TourStep component
             }
           } else {
             if (state.current.value < (state.current.steps.length || 0) - 1) {
@@ -394,6 +420,7 @@ interface TourStepProps extends DivProps {
   avoidCollisions?: boolean;
   onStepEnter?: () => void;
   onStepLeave?: () => void;
+  onArrowChange?: (arrow: HTMLElement | null) => void;
   required?: boolean;
   forceMount?: boolean;
 }
@@ -428,6 +455,8 @@ function TourStep(props: TourStepProps) {
   React.useEffect(() => {
     boundaryRef.current = collisionBoundary ?? EMPTY_BOUNDARY;
   }, [collisionBoundary]);
+
+  const [arrow, setArrow] = React.useState<HTMLElement | null>(null);
 
   const store = useStoreContext(STEP_NAME);
   const stepIndexRef = React.useRef<number>(-1);
@@ -487,7 +516,6 @@ function TourStep(props: TourStepProps) {
   const targetElement = stepData ? getTargetElement(stepData.target) : null;
   const isCurrentStep = stepIndexRef.current === value;
 
-  // Build middleware array
   const middleware = React.useMemo(() => {
     if (!stepData) return [];
 
@@ -514,7 +542,6 @@ function TourStep(props: TourStepProps) {
     const detectOverflowOptions = {
       padding,
       boundary: boundary.filter((b): b is Element => b !== null),
-      // with `strategy: 'fixed'`, this is the only way to get it to respect boundaries
       altBoundary: hasExplicitBoundaries,
     };
 
@@ -531,15 +558,16 @@ function TourStep(props: TourStepProps) {
           ...detectOverflowOptions,
         }),
       stepData.avoidCollisions && flip({ ...detectOverflowOptions }),
+      arrow &&
+        floatingUIarrow({ element: arrow, padding: stepData.arrowPadding }),
       stepData.hideWhenDetached &&
         hide({
           strategy: "referenceHidden",
           ...detectOverflowOptions,
         }),
     ].filter(Boolean) as Middleware[];
-  }, [stepData, sideOffset, alignOffset]);
+  }, [stepData, sideOffset, alignOffset, arrow]);
 
-  // Use Floating UI for positioning
   const placement = getPlacement(
     stepData?.side ?? side,
     stepData?.align ?? align,
@@ -563,7 +591,22 @@ function TourStep(props: TourStepProps) {
   const [placedSide, placedAlign] =
     getSideAndAlignFromPlacement(finalPlacement);
 
-  // Update mask when position changes
+  const arrowX = middlewareData.arrow?.x;
+  const arrowY = middlewareData.arrow?.y;
+  const cannotCenterArrow = middlewareData.arrow?.centerOffset !== 0;
+
+  const stepContextValue = React.useMemo<StepContextValue>(
+    () => ({
+      arrowX,
+      arrowY,
+      placedSide,
+      placedAlign,
+      shouldHideArrow: cannotCenterArrow,
+      onArrowChange: setArrow,
+    }),
+    [arrowX, arrowY, placedSide, placedAlign, cannotCenterArrow],
+  );
+
   React.useEffect(() => {
     if (open && targetElement && isCurrentStep) {
       updateMask(store, targetElement, 4);
@@ -579,25 +622,27 @@ function TourStep(props: TourStepProps) {
   const StepPrimitive = asChild ? Slot : "div";
 
   return (
-    <StepPrimitive
-      ref={refs.setFloating}
-      data-slot="tour-step"
-      data-side={placedSide}
-      data-align={placedAlign}
-      {...stepProps}
-      className={cn(
-        "fixed z-50 w-80 rounded-lg border bg-popover p-4 text-popover-foreground shadow-md",
-        className,
-      )}
-      style={{
-        ...floatingStyles,
-        visibility: isHidden ? "hidden" : undefined,
-        pointerEvents: isHidden ? "none" : undefined,
-      }}
-    >
-      {children}
-      {!hasStepFooter && stepFooter && stepFooter}
-    </StepPrimitive>
+    <StepContext.Provider value={stepContextValue}>
+      <StepPrimitive
+        ref={refs.setFloating}
+        data-slot="tour-step"
+        data-side={placedSide}
+        data-align={placedAlign}
+        {...stepProps}
+        className={cn(
+          "fixed z-50 w-80 rounded-lg border bg-popover p-4 text-popover-foreground shadow-md",
+          className,
+        )}
+        style={{
+          ...floatingStyles,
+          visibility: isHidden ? "hidden" : undefined,
+          pointerEvents: isHidden ? "none" : undefined,
+        }}
+      >
+        {children}
+        {!hasStepFooter && stepFooter && stepFooter}
+      </StepPrimitive>
+    </StepContext.Provider>
   );
 }
 
@@ -906,6 +951,64 @@ function TourSkip(props: ButtonProps) {
   );
 }
 
+interface TourArrowProps extends React.ComponentPropsWithoutRef<"svg"> {
+  width?: number;
+  height?: number;
+  asChild?: boolean;
+}
+
+function TourArrow(props: TourArrowProps) {
+  const {
+    width = 10,
+    height = 5,
+    className,
+    children,
+    asChild,
+    ...arrowProps
+  } = props;
+
+  const stepContext = useStepContext(ARROW_NAME);
+  const baseSide = OPPOSITE_SIDE[stepContext.placedSide];
+
+  return (
+    <span
+      ref={stepContext.onArrowChange}
+      data-slot="tour-arrow"
+      style={{
+        position: "absolute",
+        left:
+          stepContext.arrowX != null ? `${stepContext.arrowX}px` : undefined,
+        top: stepContext.arrowY != null ? `${stepContext.arrowY}px` : undefined,
+        [baseSide]: 0,
+        transformOrigin: {
+          top: "",
+          right: "0 0",
+          bottom: "center 0",
+          left: "100% 0",
+        }[stepContext.placedSide],
+        transform: {
+          top: "translateY(100%)",
+          right: "translateY(50%) rotate(90deg) translateX(-50%)",
+          bottom: "rotate(180deg)",
+          left: "translateY(50%) rotate(-90deg) translateX(50%)",
+        }[stepContext.placedSide],
+        visibility: stepContext.shouldHideArrow ? "hidden" : undefined,
+      }}
+    >
+      <svg
+        viewBox="0 0 30 10"
+        preserveAspectRatio="none"
+        width={width}
+        height={height}
+        {...arrowProps}
+        className={cn("block fill-popover stroke-border", className)}
+      >
+        {asChild ? children : <polygon points="0,0 30,0 15,10" />}
+      </svg>
+    </span>
+  );
+}
+
 export {
   TourRoot as Root,
   TourStep as Step,
@@ -919,6 +1022,7 @@ export {
   TourPrev as Prev,
   TourNext as Next,
   TourSkip as Skip,
+  TourArrow as Arrow,
   //
   TourRoot as Tour,
   TourStep,
@@ -932,6 +1036,7 @@ export {
   TourPrev,
   TourNext,
   TourSkip,
+  TourArrow,
   //
   type TourRootProps as TourProps,
 };

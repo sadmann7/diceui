@@ -43,7 +43,8 @@ import * as Tour from "@/components/ui/tour";
 
 <Tour.Root>
   <Tour.Overlay />
-  <Tour.Content>
+  <Tour.Step target="#element">
+    <Tour.Arrow />
     <Tour.Close />
     <Tour.Header>
       <Tour.Title />
@@ -51,11 +52,11 @@ import * as Tour from "@/components/ui/tour";
     </Tour.Header>
     <Tour.Footer>
       <Tour.StepCounter />
-        <Tour.Prev />
-        <Tour.Next />
+      <Tour.Prev />
+      <Tour.Next />
       <Tour.Skip />
     </Tour.Footer>
-  </Tour.Content>
+  </Tour.Step>
 </Tour.Root>
 ```
 
@@ -199,6 +200,21 @@ Button to skip the entire tour.
   path="./types/docs/tour.ts"
   name="SkipProps"
 />
+
+### Arrow
+
+An optional arrow element that points to the target element.
+
+```tsx
+<Tour.Step target="#element">
+  <Tour.Arrow />
+  {/* With custom size */}
+  <Tour.Arrow width={15} height={8} />
+  {/* ... */}
+</Tour.Step>
+```
+
+The arrow automatically positions itself based on the step's placement. It uses an SVG polygon for perfect alignment and can be customized with `width`, `height`, and `className` props.
 
 ## Accessibility
 
