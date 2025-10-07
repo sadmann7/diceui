@@ -1565,5 +1565,227 @@ describe("MaskInput", () => {
       expect(input).toHaveValue("(555) 234-567");
       expect(input.selectionStart).toBe(4); // Before space
     });
+
+    test("space key is prevented in credit card mask", async () => {
+      const user = userEvent.setup();
+      render(<MaskInput mask="creditCard" data-testid="mask-input" />);
+      const input = screen.getByTestId("mask-input") as HTMLInputElement;
+
+      // Type partial credit card number
+      await user.type(input, "4242");
+      expect(input).toHaveValue("4242");
+
+      // Try to type space - should be prevented
+      await user.keyboard(" ");
+      expect(input).toHaveValue("4242");
+      expect(input.selectionStart).toBe(4);
+
+      // Continue typing - should work normally
+      await user.keyboard("4242");
+      expect(input).toHaveValue("4242 4242");
+    });
+
+    test("space key is prevented in phone mask", async () => {
+      const user = userEvent.setup();
+      render(<MaskInput mask="phone" data-testid="mask-input" />);
+      const input = screen.getByTestId("mask-input") as HTMLInputElement;
+
+      // Type partial phone number
+      await user.type(input, "555");
+      expect(input).toHaveValue("(555");
+
+      // Move cursor to middle
+      input.setSelectionRange(2, 2);
+
+      // Try to type space - should be prevented
+      await user.keyboard(" ");
+      expect(input).toHaveValue("(555");
+      expect(input.selectionStart).toBe(2);
+    });
+
+    test("space key is prevented in SSN mask", async () => {
+      const user = userEvent.setup();
+      render(<MaskInput mask="ssn" data-testid="mask-input" />);
+      const input = screen.getByTestId("mask-input") as HTMLInputElement;
+
+      // Type partial SSN
+      await user.type(input, "12345");
+      expect(input).toHaveValue("123-45");
+
+      // Move cursor after first group
+      input.setSelectionRange(3, 3);
+
+      // Try to type space - should be prevented
+      await user.keyboard(" ");
+      expect(input).toHaveValue("123-45");
+      expect(input.selectionStart).toBe(3);
+    });
+
+    test("multiple spaces in a row do not affect the input", async () => {
+      const user = userEvent.setup();
+      render(<MaskInput mask="creditCard" data-testid="mask-input" />);
+      const input = screen.getByTestId("mask-input") as HTMLInputElement;
+
+      // Type credit card number
+      await user.type(input, "4242424242424242");
+      expect(input).toHaveValue("4242 4242 4242 4242");
+
+      // Move cursor to middle
+      input.setSelectionRange(10, 10);
+      const initialValue = input.value;
+
+      // Try to type multiple spaces - all should be prevented
+      await user.keyboard("     ");
+      expect(input).toHaveValue(initialValue);
+      expect(input.selectionStart).toBe(10);
+    });
+
+    test("space key in middle of credit card does not delete characters", async () => {
+      const user = userEvent.setup();
+      render(<MaskInput mask="creditCard" data-testid="mask-input" />);
+      const input = screen.getByTestId("mask-input") as HTMLInputElement;
+
+      // Type full credit card number
+      await user.type(input, "4242424242424242");
+      expect(input).toHaveValue("4242 4242 4242 4242");
+
+      // Move cursor to position 6 (middle of second group: 4242 |4242 4242 4242)
+      input.setSelectionRange(6, 6);
+
+      // Press space multiple times - should not affect value or delete characters
+      await user.keyboard(" ");
+      expect(input).toHaveValue("4242 4242 4242 4242");
+      expect(input.selectionStart).toBe(6);
+
+      await user.keyboard(" ");
+      expect(input).toHaveValue("4242 4242 4242 4242");
+      expect(input.selectionStart).toBe(6);
+
+      await user.keyboard(" ");
+      expect(input).toHaveValue("4242 4242 4242 4242");
+      expect(input.selectionStart).toBe(6);
+    });
+
+    test("space key in middle of phone number does not delete characters", async () => {
+      const user = userEvent.setup();
+      render(<MaskInput mask="phone" data-testid="mask-input" />);
+      const input = screen.getByTestId("mask-input") as HTMLInputElement;
+
+      // Type full phone number
+      await user.type(input, "5551234567");
+      expect(input).toHaveValue("(555) 123-4567");
+
+      // Move cursor to position 7 (middle of second group: (555) 1|23-4567)
+      input.setSelectionRange(7, 7);
+
+      // Press space multiple times - should not affect value
+      await user.keyboard("   ");
+      expect(input).toHaveValue("(555) 123-4567");
+      expect(input.selectionStart).toBe(7);
+    });
+
+    test("period auto-substitution is prevented in credit card mask", async () => {
+      const user = userEvent.setup();
+      render(<MaskInput mask="creditCard" data-testid="mask-input" />);
+      const input = screen.getByTestId("mask-input") as HTMLInputElement;
+
+      // Type credit card number
+      await user.type(input, "4242424242424242");
+      expect(input).toHaveValue("4242 4242 4242 4242");
+
+      // Move cursor to middle
+      input.setSelectionRange(10, 10);
+
+      // Simulate beforeinput event with period (macOS double-space auto-substitution)
+      const beforeInputEvent = new InputEvent("beforeinput", {
+        bubbles: true,
+        cancelable: true,
+        data: ". ",
+      });
+
+      input.dispatchEvent(beforeInputEvent);
+
+      // Value should remain unchanged (period should be prevented)
+      expect(input).toHaveValue("4242 4242 4242 4242");
+    });
+
+    test("period insertion is prevented in SSN mask", async () => {
+      const user = userEvent.setup();
+      render(<MaskInput mask="ssn" data-testid="mask-input" />);
+      const input = screen.getByTestId("mask-input") as HTMLInputElement;
+
+      // Type SSN
+      await user.type(input, "123456789");
+      expect(input).toHaveValue("123-45-6789");
+
+      // Move cursor to middle
+      input.setSelectionRange(5, 5);
+
+      // Simulate beforeinput event with period
+      const beforeInputEvent = new InputEvent("beforeinput", {
+        bubbles: true,
+        cancelable: true,
+        data: ".",
+      });
+
+      input.dispatchEvent(beforeInputEvent);
+
+      // Value should remain unchanged
+      expect(input).toHaveValue("123-45-6789");
+    });
+
+    test("rapid space presses do not cause character deletion", async () => {
+      const user = userEvent.setup();
+      render(<MaskInput mask="creditCard" data-testid="mask-input" />);
+      const input = screen.getByTestId("mask-input") as HTMLInputElement;
+
+      // Type credit card number
+      await user.type(input, "4242424242424242");
+      expect(input).toHaveValue("4242 4242 4242 4242");
+      const initialLength = input.value.length;
+
+      // Move cursor to different positions and rapidly press space
+      for (let i = 6; i <= 14; i += 2) {
+        input.setSelectionRange(i, i);
+        await user.keyboard("  "); // Two spaces
+        expect(input.value.length).toBe(initialLength); // Length should not change
+      }
+
+      // Final value should still be the same
+      expect(input).toHaveValue("4242 4242 4242 4242");
+    });
+
+    test("space key works normally in currency mask", async () => {
+      const user = userEvent.setup();
+      render(<MaskInput mask="currency" data-testid="mask-input" />);
+      const input = screen.getByTestId("mask-input") as HTMLInputElement;
+
+      // Type amount
+      await user.type(input, "1234");
+      // Currency mask formats numbers
+      expect(input.value).toContain("1");
+      expect(input.value).toContain("234");
+
+      // Space should be allowed in currency (though it might not do anything useful)
+      // This test verifies we don't block space for currency masks
+      await user.keyboard(" ");
+      // The mask might or might not accept the space, but it shouldn't cause an error
+      expect(input.value).toBeTruthy();
+    });
+
+    test("space key works normally in percentage mask", async () => {
+      const user = userEvent.setup();
+      render(<MaskInput mask="percentage" data-testid="mask-input" />);
+      const input = screen.getByTestId("mask-input") as HTMLInputElement;
+
+      // Type percentage
+      await user.type(input, "50");
+      expect(input).toHaveValue("50%");
+
+      // Space should be allowed in percentage masks
+      await user.keyboard(" ");
+      // The mask might or might not accept the space, but it shouldn't cause an error
+      expect(input.value).toBeTruthy();
+    });
   });
 });

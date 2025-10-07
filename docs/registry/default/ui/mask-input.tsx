@@ -1312,6 +1312,23 @@ function MaskInput(props: MaskInputProps) {
     ],
   );
 
+  const onBeforeInput = React.useCallback(
+    (event: React.FormEvent<InputElement>) => {
+      const nativeEvent = event.nativeEvent as unknown as InputEvent;
+
+      if (withoutMask || !maskPattern) return;
+
+      if (nativeEvent.data === "." || nativeEvent.data === ". ") {
+        const target = event.target;
+        if (!(target instanceof HTMLInputElement)) return;
+
+        event.preventDefault();
+        return;
+      }
+    },
+    [withoutMask, maskPattern],
+  );
+
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent<InputElement>) => {
       onKeyDownProp?.(event);
@@ -1320,6 +1337,20 @@ function MaskInput(props: MaskInputProps) {
       if (withoutMask || !maskPattern) return;
 
       if (mask === "ipv4") return;
+
+      if (event.key === " ") {
+        const isCurrencyOrPercentage =
+          mask === "currency" ||
+          mask === "percentage" ||
+          maskPattern.pattern.includes("$") ||
+          maskPattern.pattern.includes("€") ||
+          maskPattern.pattern.includes("%");
+
+        if (!isCurrencyOrPercentage) {
+          event.preventDefault();
+          return;
+        }
+      }
 
       if (event.key === "Backspace") {
         const target = event.target as InputElement;
@@ -1509,6 +1540,7 @@ function MaskInput(props: MaskInputProps) {
       onKeyDown={onKeyDown}
       onPaste={onPaste}
       onChange={onValueChange}
+      onBeforeInput={onBeforeInput}
       onCompositionStart={onCompositionStart}
       onCompositionEnd={onCompositionEnd}
     />
