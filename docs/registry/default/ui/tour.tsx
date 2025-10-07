@@ -26,7 +26,6 @@ const SKIP_NAME = "TourSkip";
 const OVERLAY_NAME = "TourOverlay";
 const ARROW_NAME = "TourArrow";
 
-const EMPTY_BOUNDARY: Boundary[] = [];
 const SIDE_OPTIONS = ["top", "right", "bottom", "left"] as const;
 const ALIGN_OPTIONS = ["start", "center", "end"] as const;
 
@@ -219,14 +218,14 @@ function useTourContext(consumerName: string) {
   return context;
 }
 
-type StepContextValue = {
+interface StepContextValue {
   arrowX?: number;
   arrowY?: number;
   placedSide: Side;
   placedAlign: Align;
   shouldHideArrow: boolean;
   onArrowChange: (arrow: HTMLElement | null) => void;
-};
+}
 
 const StepContext = React.createContext<StepContextValue | null>(null);
 
@@ -468,7 +467,7 @@ function TourStep(props: TourStepProps) {
     sideOffset = 8,
     align = "center",
     alignOffset = 0,
-    collisionBoundary = EMPTY_BOUNDARY,
+    collisionBoundary = [],
     collisionPadding = 0,
     arrowPadding = 0,
     sticky = "partial",
@@ -478,8 +477,9 @@ function TourStep(props: TourStepProps) {
     forceMount = false,
     onStepEnter,
     onStepLeave,
-    className,
     children,
+    className,
+    style,
     asChild,
     ...stepProps
   } = props;
@@ -669,10 +669,11 @@ function TourStep(props: TourStepProps) {
         data-align={placedAlign}
         {...stepProps}
         className={cn(
-          "fixed z-50 w-80 rounded-lg border bg-popover p-4 text-popover-foreground shadow-md",
+          "fixed z-50 flex w-80 flex-col gap-4 rounded-lg border bg-popover p-4 text-popover-foreground shadow-md",
           className,
         )}
         style={{
+          ...style,
           ...floatingStyles,
           visibility: isHidden ? "hidden" : undefined,
           pointerEvents: isHidden ? "none" : undefined,
