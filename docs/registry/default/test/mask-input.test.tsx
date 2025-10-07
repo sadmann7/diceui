@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import * as React from "react";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 import {
@@ -1197,6 +1198,228 @@ describe("MaskInput", () => {
       expect(validate?.("100")).toBe(true);
       expect(validate?.("101")).toBe(false); // Over 100%
       expect(validate?.("-5")).toBe(false); // Negative
+    });
+  });
+
+  describe("Cursor Positioning", () => {
+    test("maintains cursor position when inserting character in the middle of credit card", async () => {
+      const user = userEvent.setup();
+      render(<MaskInput mask="creditCard" data-testid="mask-input" />);
+      const input = screen.getByTestId("mask-input") as HTMLInputElement;
+
+      // Type full credit card number
+      await user.type(input, "4242424242424242");
+      expect(input).toHaveValue("4242 4242 4242 4242");
+
+      // Move cursor to position 13 (middle of third group)
+      input.setSelectionRange(13, 13);
+      expect(input.selectionStart).toBe(13);
+
+      // Delete character at position 13
+      await user.keyboard("{Backspace}");
+      expect(input).toHaveValue("4242 4242 4224 242");
+      expect(input.selectionStart).toBe(12);
+
+      // Type a character at position 12
+      await user.keyboard("4");
+      expect(input).toHaveValue("4242 4242 4242 4242");
+      // Cursor should be at position 13 (right after the inserted character)
+      expect(input.selectionStart).toBe(13);
+    });
+
+    test("maintains cursor position when inserting character at the beginning", async () => {
+      const user = userEvent.setup();
+      render(<MaskInput mask="creditCard" data-testid="mask-input" />);
+      const input = screen.getByTestId("mask-input") as HTMLInputElement;
+
+      // Type partial number
+      await user.type(input, "424242");
+      expect(input).toHaveValue("4242 42");
+
+      // Move cursor to beginning
+      input.setSelectionRange(0, 0);
+
+      // Type at beginning
+      await user.keyboard("1");
+      expect(input).toHaveValue("1424 242");
+      // Cursor should be at position 1
+      expect(input.selectionStart).toBe(1);
+    });
+
+    test("maintains cursor position when inserting character before space separator", async () => {
+      const user = userEvent.setup();
+      render(<MaskInput mask="creditCard" data-testid="mask-input" />);
+      const input = screen.getByTestId("mask-input") as HTMLInputElement;
+
+      // Type to create first group
+      await user.type(input, "4242");
+      expect(input).toHaveValue("4242");
+
+      // Move cursor to position 4 (end of first group, before space)
+      input.setSelectionRange(4, 4);
+
+      // Type another digit - should insert and handle the space correctly
+      await user.keyboard("5");
+      expect(input).toHaveValue("4242 5");
+      // Cursor should be at position 6 (after space and new digit)
+      expect(input.selectionStart).toBe(6);
+    });
+
+    test("maintains cursor position when deleting character in phone mask", async () => {
+      const user = userEvent.setup();
+      render(<MaskInput mask="phone" data-testid="mask-input" />);
+      const input = screen.getByTestId("mask-input") as HTMLInputElement;
+
+      // Type full phone number
+      await user.type(input, "5551234567");
+      expect(input).toHaveValue("(555) 123-4567");
+
+      // Move cursor to position 10 (after "123-")
+      input.setSelectionRange(10, 10);
+
+      // Delete character
+      await user.keyboard("{Backspace}");
+      expect(input).toHaveValue("(555) 124-567");
+      expect(input.selectionStart).toBe(8);
+
+      // Type character back
+      await user.keyboard("3");
+      expect(input).toHaveValue("(555) 123-4567");
+      // Cursor should be at position 9
+      expect(input.selectionStart).toBe(9);
+    });
+
+    test("maintains cursor position when editing date mask", async () => {
+      const user = userEvent.setup();
+      render(<MaskInput mask="date" data-testid="mask-input" />);
+      const input = screen.getByTestId("mask-input") as HTMLInputElement;
+
+      // Type full date
+      await user.type(input, "12252025");
+      expect(input).toHaveValue("12/25/2025");
+
+      // Move cursor to position 3 (after month, before day)
+      input.setSelectionRange(3, 3);
+
+      // Delete the day's first digit
+      await user.keyboard("{Delete}");
+      expect(input).toHaveValue("12/52/025");
+
+      // Move back to position 3
+      input.setSelectionRange(3, 3);
+
+      // Type the correct digit
+      await user.keyboard("2");
+      expect(input).toHaveValue("12/25/2025");
+      // Cursor should be at position 4
+      expect(input.selectionStart).toBe(4);
+    });
+
+    test("cursor stays at end when typing at the end", async () => {
+      const user = userEvent.setup();
+      render(<MaskInput mask="creditCard" data-testid="mask-input" />);
+      const input = screen.getByTestId("mask-input") as HTMLInputElement;
+
+      // Type incrementally at the end
+      await user.type(input, "4242");
+      expect(input).toHaveValue("4242");
+      expect(input.selectionStart).toBe(4);
+
+      // After 4 digits, space is added
+      await user.keyboard("4");
+      expect(input).toHaveValue("4242 4");
+      expect(input.selectionStart).toBe(6); // After space
+    });
+
+    test("maintains cursor position when inserting in the middle of SSN", async () => {
+      const user = userEvent.setup();
+      render(<MaskInput mask="ssn" data-testid="mask-input" />);
+      const input = screen.getByTestId("mask-input") as HTMLInputElement;
+
+      // Type full SSN
+      await user.type(input, "123456789");
+      expect(input).toHaveValue("123-45-6789");
+
+      // Move cursor to position 7 (middle of last group)
+      input.setSelectionRange(7, 7);
+
+      // Delete and retype
+      await user.keyboard("{Backspace}");
+      expect(input).toHaveValue("123-46-789");
+      expect(input.selectionStart).toBe(5);
+
+      await user.keyboard("5");
+      expect(input).toHaveValue("123-45-6789");
+      expect(input.selectionStart).toBe(6);
+    });
+
+    test("handles rapid typing in the middle without cursor jumping", async () => {
+      const user = userEvent.setup();
+      render(<MaskInput mask="creditCard" data-testid="mask-input" />);
+      const input = screen.getByTestId("mask-input") as HTMLInputElement;
+
+      // Type first 8 digits
+      await user.type(input, "42424242");
+      expect(input).toHaveValue("4242 4242");
+
+      // Move cursor to position 5 (start of second group)
+      input.setSelectionRange(5, 5);
+
+      // Type multiple characters rapidly
+      await user.keyboard("111");
+      expect(input).toHaveValue("4242 1114 242");
+      // Cursor should be after the inserted characters
+      expect(input.selectionStart).toBe(8);
+    });
+
+    test("maintains cursor when backspace removes character before literal", async () => {
+      const user = userEvent.setup();
+      render(<MaskInput mask="phone" data-testid="mask-input" />);
+      const input = screen.getByTestId("mask-input") as HTMLInputElement;
+
+      // Type enough to create "(555) 1"
+      await user.type(input, "5551");
+      expect(input).toHaveValue("(555) 1");
+
+      // Move cursor to position 6 (right after space, before "1")
+      input.setSelectionRange(6, 6);
+
+      // Backspace should remove the last "5"
+      await user.keyboard("{Backspace}");
+      expect(input).toHaveValue("(551");
+      // Cursor should be at position 3
+      expect(input.selectionStart).toBe(3);
+    });
+
+    test("cursor positioning works with controlled component", async () => {
+      const user = userEvent.setup();
+      const TestComponent = () => {
+        const [value, setValue] = React.useState("");
+        return (
+          <MaskInput
+            mask="creditCard"
+            value={value}
+            onValueChange={(masked) => setValue(masked)}
+            data-testid="mask-input"
+          />
+        );
+      };
+
+      render(<TestComponent />);
+      const input = screen.getByTestId("mask-input") as HTMLInputElement;
+
+      // Type some digits
+      await user.type(input, "4242");
+      expect(input).toHaveValue("4242");
+
+      // Move cursor to position 2
+      input.setSelectionRange(2, 2);
+
+      // Type a digit in the middle
+      await user.keyboard("1");
+      expect(input).toHaveValue("4214 2");
+      // Cursor should be at position 3
+      expect(input.selectionStart).toBe(3);
     });
   });
 });
