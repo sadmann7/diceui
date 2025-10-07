@@ -1,5 +1,16 @@
 "use client";
 
+import {
+  autoUpdate,
+  flip,
+  hide,
+  limitShift,
+  type Middleware,
+  offset,
+  type Placement,
+  shift,
+  useFloating,
+} from "@floating-ui/react-dom";
 import { Slot } from "@radix-ui/react-slot";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import * as React from "react";
@@ -58,13 +69,12 @@ interface State {
   open: boolean;
   value: number;
   steps: StepData[];
-  position: { top: number; left: number };
   maskPath: string;
 }
 
 interface Store {
   subscribe: (callback: () => void) => () => void;
-  snapshot: () => State;
+  getState: () => State;
   setState: <K extends keyof State>(
     key: K,
     value: State[K],
@@ -92,7 +102,7 @@ function useStore<T>(selector: (state: State) => T): T {
   const store = useStoreContext("useStore");
 
   const getSnapshot = React.useCallback(
-    () => selector(store.snapshot()),
+    () => selector(store.getState()),
     [store, selector],
   );
 
@@ -112,18 +122,6 @@ function getTargetElement(
     return target;
   }
   return null;
-}
-
-function getElementRect(element: HTMLElement) {
-  const rect = element.getBoundingClientRect();
-  return {
-    top: rect.top + window.scrollY,
-    left: rect.left + window.scrollX,
-    width: rect.width,
-    height: rect.height,
-    bottom: rect.bottom + window.scrollY,
-    right: rect.right + window.scrollX,
-  };
 }
 
 function scrollToElement(
@@ -159,69 +157,23 @@ function scrollToElement(
   }
 }
 
-function updatePositionAndMask(
+function getSideAndAlignFromPlacement(placement: Placement): [Side, Align] {
+  const [side, align = "center"] = placement.split("-") as [Side, Align?];
+  return [side, align];
+}
+
+function getPlacement(side: Side, align: Align): Placement {
+  if (align === "center") {
+    return side as Placement;
+  }
+  return `${side}-${align}` as Placement;
+}
+
+function updateMask(
   store: Store,
-  stepData: StepData,
+  targetElement: HTMLElement,
   padding: number = 4,
 ) {
-  const targetElement = getTargetElement(stepData.target);
-  if (!targetElement) return;
-
-  const rect = getElementRect(targetElement);
-  const side = stepData.side ?? "bottom";
-  const align = stepData.align ?? "center";
-  const sideOffset = stepData.sideOffset ?? 8;
-  const alignOffset = stepData.alignOffset ?? 0;
-
-  let top = 0;
-  let left = 0;
-
-  // Calculate position based on side
-  switch (side) {
-    case "top":
-      top = rect.top - sideOffset;
-      break;
-    case "bottom":
-      top = rect.bottom + sideOffset;
-      break;
-    case "left":
-      left = rect.left - sideOffset;
-      break;
-    case "right":
-      left = rect.right + sideOffset;
-      break;
-  }
-
-  // Calculate alignment
-  if (side === "top" || side === "bottom") {
-    switch (align) {
-      case "start":
-        left = rect.left + alignOffset;
-        break;
-      case "center":
-        left = rect.left + rect.width / 2 + alignOffset;
-        break;
-      case "end":
-        left = rect.right + alignOffset;
-        break;
-    }
-  } else {
-    // left or right side
-    switch (align) {
-      case "start":
-        top = rect.top + alignOffset;
-        break;
-      case "center":
-        top = rect.top + rect.height / 2 + alignOffset;
-        break;
-      case "end":
-        top = rect.bottom + alignOffset;
-        break;
-    }
-  }
-
-  store.setState("position", { top, left });
-
   const clientRect = targetElement.getBoundingClientRect();
   const viewportWidth = window.innerWidth;
   const viewportHeight = window.innerHeight;
@@ -233,57 +185,6 @@ function updatePositionAndMask(
 
   const path = `polygon(0% 0%, 0% 100%, ${x}px 100%, ${x}px ${y}px, ${x + width}px ${y}px, ${x + width}px ${y + height}px, ${x}px ${y + height}px, ${x}px 100%, 100% 100%, 100% 0%)`;
   store.setState("maskPath", path);
-}
-
-function getTransform(side: Side = "bottom", align: Align = "center") {
-  let transformX = "0";
-  let transformY = "0";
-
-  // Calculate transform based on side
-  switch (side) {
-    case "top":
-      transformY = "-100%";
-      break;
-    case "bottom":
-      transformY = "0";
-      break;
-    case "left":
-      transformX = "-100%";
-      break;
-    case "right":
-      transformX = "0";
-      break;
-  }
-
-  // Calculate alignment transform
-  if (side === "top" || side === "bottom") {
-    switch (align) {
-      case "start":
-        transformX = "0";
-        break;
-      case "center":
-        transformX = "-50%";
-        break;
-      case "end":
-        transformX = "-100%";
-        break;
-    }
-  } else {
-    // left or right side
-    switch (align) {
-      case "start":
-        transformY = "0";
-        break;
-      case "center":
-        transformY = "-50%";
-        break;
-      case "end":
-        transformY = "-100%";
-        break;
-    }
-  }
-
-  return `translate(${transformX}, ${transformY})`;
 }
 
 const StoreContext = React.createContext<Store | null>(null);
@@ -319,8 +220,6 @@ interface TourRootProps extends DivProps {
   onSkip?: () => void;
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
   dir?: Direction;
-  padding?: number;
-  borderRadius?: number;
   scrollToElement?: boolean;
   scrollBehavior?: ScrollBehavior;
   scrollOffset?: ScrollOffset;
@@ -339,7 +238,6 @@ function TourRoot(props: TourRootProps) {
     onSkip,
     onEscapeKeyDown,
     stepFooter,
-    padding = 4,
     scrollToElement: scrollToElementProp = false,
     scrollBehavior = "smooth",
     scrollOffset,
@@ -351,7 +249,6 @@ function TourRoot(props: TourRootProps) {
     open: openProp ?? defaultOpen,
     value: valueProp ?? defaultValue,
     steps: [],
-    position: { top: 0, left: 0 },
     maskPath: "",
   }));
 
@@ -363,7 +260,7 @@ function TourRoot(props: TourRootProps) {
         listeners.current.add(cb);
         return () => listeners.current.delete(cb);
       },
-      snapshot: () => {
+      getState: () => {
         return state.current;
       },
       setState: (key, value, _opts) => {
@@ -379,16 +276,7 @@ function TourRoot(props: TourRootProps) {
                 store.setState("value", 0);
               }
 
-              const currentStepIndex =
-                state.current.value >= state.current.steps.length
-                  ? 0
-                  : state.current.value;
-              const currentStepData = state.current.steps[currentStepIndex];
-              if (currentStepData) {
-                queueMicrotask(() => {
-                  updatePositionAndMask(store, currentStepData, padding);
-                });
-              }
+              // Position and mask updates are handled by the TourStep component
             }
           } else {
             if (state.current.value < (state.current.steps.length || 0) - 1) {
@@ -415,14 +303,10 @@ function TourRoot(props: TourRootProps) {
             return;
           }
 
-          if (nextStep) {
-            updatePositionAndMask(store, nextStep, padding);
-
-            if (scrollToElementProp) {
-              const targetElement = getTargetElement(nextStep.target);
-              if (targetElement) {
-                scrollToElement(targetElement, scrollBehavior, scrollOffset);
-              }
+          if (nextStep && scrollToElementProp) {
+            const targetElement = getTargetElement(nextStep.target);
+            if (targetElement) {
+              scrollToElement(targetElement, scrollBehavior, scrollOffset);
             }
           }
         }
@@ -450,7 +334,6 @@ function TourRoot(props: TourRootProps) {
     onValueChange,
     onComplete,
     onSkip,
-    padding,
     scrollToElementProp,
     scrollBehavior,
     scrollOffset,
@@ -515,6 +398,8 @@ interface TourStepProps extends DivProps {
   forceMount?: boolean;
 }
 
+const EMPTY_BOUNDARY: Boundary[] = [];
+
 function TourStep(props: TourStepProps) {
   const {
     target,
@@ -522,12 +407,12 @@ function TourStep(props: TourStepProps) {
     sideOffset = 8,
     align = "center",
     alignOffset = 0,
-    collisionBoundary = [],
+    collisionBoundary,
     collisionPadding = 0,
     arrowPadding = 0,
     sticky = "partial",
     hideWhenDetached = false,
-    avoidCollisions = false,
+    avoidCollisions = true,
     required = false,
     forceMount = false,
     onStepEnter,
@@ -538,13 +423,18 @@ function TourStep(props: TourStepProps) {
     ...stepProps
   } = props;
 
+  const boundaryRef = React.useRef(collisionBoundary ?? EMPTY_BOUNDARY);
+
+  React.useEffect(() => {
+    boundaryRef.current = collisionBoundary ?? EMPTY_BOUNDARY;
+  }, [collisionBoundary]);
+
   const store = useStoreContext(STEP_NAME);
   const stepIndexRef = React.useRef<number>(-1);
 
   const open = useStore((state) => state.open);
   const value = useStore((state) => state.value);
   const steps = useStore((state) => state.steps);
-  const position = useStore((state) => state.position);
   const stepFooter = useTourContext(STEP_NAME);
 
   const hasStepFooter = React.Children.toArray(children).some((child) => {
@@ -559,7 +449,7 @@ function TourStep(props: TourStepProps) {
       sideOffset,
       align,
       alignOffset,
-      collisionBoundary,
+      collisionBoundary: boundaryRef.current,
       collisionPadding,
       arrowPadding,
       sticky,
@@ -573,13 +463,6 @@ function TourStep(props: TourStepProps) {
     const index = store.addStep(stepData);
     stepIndexRef.current = index;
 
-    const state = store.snapshot();
-    if (index === 0 && state.open) {
-      queueMicrotask(() => {
-        updatePositionAndMask(store, stepData, 4);
-      });
-    }
-
     return () => {
       store.removeStep(stepIndexRef.current);
     };
@@ -590,7 +473,6 @@ function TourStep(props: TourStepProps) {
     sideOffset,
     align,
     alignOffset,
-    collisionBoundary,
     collisionPadding,
     arrowPadding,
     sticky,
@@ -603,51 +485,114 @@ function TourStep(props: TourStepProps) {
 
   const stepData = steps[value];
   const targetElement = stepData ? getTargetElement(stepData.target) : null;
-
   const isCurrentStep = stepIndexRef.current === value;
 
-  React.useEffect(() => {
-    if (!open || !stepData || !targetElement || !isCurrentStep) return;
+  // Build middleware array
+  const middleware = React.useMemo(() => {
+    if (!stepData) return [];
 
-    function updatePosition() {
-      if (stepData) {
-        updatePositionAndMask(store, stepData, 4);
-      }
-    }
+    const mainAxisOffset = stepData.sideOffset ?? sideOffset;
+    const crossAxisOffset = stepData.alignOffset ?? alignOffset;
 
-    updatePosition();
-    window.addEventListener("resize", updatePosition);
-    window.addEventListener("scroll", updatePosition);
+    const padding =
+      typeof stepData.collisionPadding === "number"
+        ? stepData.collisionPadding
+        : {
+            top: stepData.collisionPadding?.top ?? 0,
+            right: stepData.collisionPadding?.right ?? 0,
+            bottom: stepData.collisionPadding?.bottom ?? 0,
+            left: stepData.collisionPadding?.left ?? 0,
+          };
 
-    return () => {
-      window.removeEventListener("resize", updatePosition);
-      window.removeEventListener("scroll", updatePosition);
+    const boundary = Array.isArray(stepData.collisionBoundary)
+      ? stepData.collisionBoundary
+      : stepData.collisionBoundary
+        ? [stepData.collisionBoundary]
+        : [];
+    const hasExplicitBoundaries = boundary.length > 0;
+
+    const detectOverflowOptions = {
+      padding,
+      boundary: boundary.filter((b): b is Element => b !== null),
+      // with `strategy: 'fixed'`, this is the only way to get it to respect boundaries
+      altBoundary: hasExplicitBoundaries,
     };
-  }, [open, stepData, targetElement, store, isCurrentStep]);
+
+    return [
+      offset({
+        mainAxis: mainAxisOffset,
+        alignmentAxis: crossAxisOffset,
+      }),
+      stepData.avoidCollisions &&
+        shift({
+          mainAxis: true,
+          crossAxis: false,
+          limiter: stepData.sticky === "partial" ? limitShift() : undefined,
+          ...detectOverflowOptions,
+        }),
+      stepData.avoidCollisions && flip({ ...detectOverflowOptions }),
+      stepData.hideWhenDetached &&
+        hide({
+          strategy: "referenceHidden",
+          ...detectOverflowOptions,
+        }),
+    ].filter(Boolean) as Middleware[];
+  }, [stepData, sideOffset, alignOffset]);
+
+  // Use Floating UI for positioning
+  const placement = getPlacement(
+    stepData?.side ?? side,
+    stepData?.align ?? align,
+  );
+
+  const {
+    refs,
+    floatingStyles,
+    placement: finalPlacement,
+    middlewareData,
+  } = useFloating({
+    placement,
+    middleware,
+    strategy: "fixed",
+    whileElementsMounted: autoUpdate,
+    elements: {
+      reference: targetElement,
+    },
+  });
+
+  const [placedSide, placedAlign] =
+    getSideAndAlignFromPlacement(finalPlacement);
+
+  // Update mask when position changes
+  React.useEffect(() => {
+    if (open && targetElement && isCurrentStep) {
+      updateMask(store, targetElement, 4);
+    }
+  }, [open, targetElement, isCurrentStep, store]);
 
   if (!open || !stepData || (!targetElement && !forceMount) || !isCurrentStep) {
     return null;
   }
 
+  const isHidden = hideWhenDetached && middlewareData.hide?.referenceHidden;
+
   const StepPrimitive = asChild ? Slot : "div";
 
   return (
     <StepPrimitive
+      ref={refs.setFloating}
       data-slot="tour-step"
-      data-side={stepData.side}
-      data-align={stepData.align}
+      data-side={placedSide}
+      data-align={placedAlign}
       {...stepProps}
       className={cn(
         "fixed z-50 w-80 rounded-lg border bg-popover p-4 text-popover-foreground shadow-md",
         className,
       )}
       style={{
-        top: position.top,
-        left: position.left,
-        transform: getTransform(
-          stepData.side ?? "bottom",
-          stepData.align ?? "center",
-        ),
+        ...floatingStyles,
+        visibility: isHidden ? "hidden" : undefined,
+        pointerEvents: isHidden ? "none" : undefined,
       }}
     >
       {children}
@@ -988,10 +933,5 @@ export {
   TourNext,
   TourSkip,
   //
-  SIDE_OPTIONS,
-  ALIGN_OPTIONS,
-  //
   type TourRootProps as TourProps,
-  type Side,
-  type Align,
 };

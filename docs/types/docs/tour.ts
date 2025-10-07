@@ -99,20 +99,6 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
 
   /**
-   * The padding around the highlighted element.
-   *
-   * @default 4
-   */
-  padding?: number;
-
-  /**
-   * The border radius of the highlight mask.
-   *
-   * @default 8
-   */
-  borderRadius?: number;
-
-  /**
    * Whether to scroll to the highlighted element.
    *
    * @default false
@@ -258,7 +244,7 @@ export interface StepProps extends EmptyProps<"div">, CompositionProps {
   /**
    * Whether to enable collision detection to keep the popover in view.
    *
-   * @default false
+   * @default true
    */
   avoidCollisions?: boolean;
 
