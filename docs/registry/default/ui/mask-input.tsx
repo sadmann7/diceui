@@ -789,22 +789,11 @@ function getPatternCaretPosition(opts: {
       caret: oldCursorPosition,
     });
 
-    const previousUnmaskedLength = previousUnmasked.length;
-
     if (oldCursorPosition < oldValue.length) {
-      let targetUnmaskedIndex: number;
-
-      if (currentUnmasked.length > previousUnmaskedLength) {
-        targetUnmaskedIndex = Math.min(
-          oldUnmaskedIndex,
-          currentUnmasked.length,
-        );
-      } else {
-        targetUnmaskedIndex = Math.min(
-          oldUnmaskedIndex,
-          currentUnmasked.length,
-        );
-      }
+      const targetUnmaskedIndex = Math.min(
+        oldUnmaskedIndex,
+        currentUnmasked.length,
+      );
 
       for (
         let i = 0;
@@ -1355,12 +1344,8 @@ function MaskInput(props: MaskInputProps) {
 
         if (cursorPosition > 0) {
           const charBeforeCursor = currentValue[cursorPosition - 1];
-          const isLiteral = maskPattern.pattern[cursorPosition - 1] !== "#";
 
-          if (
-            charBeforeCursor &&
-            (isLiteral || maskPattern.pattern[cursorPosition - 1] === "#")
-          ) {
+          if (charBeforeCursor) {
             event.preventDefault();
 
             const unmaskedIndex = toUnmaskedIndex({
@@ -1424,12 +1409,8 @@ function MaskInput(props: MaskInputProps) {
 
         if (cursorPosition < currentValue.length) {
           const charAtCursor = currentValue[cursorPosition];
-          const isLiteral = maskPattern.pattern[cursorPosition] !== "#";
 
-          if (
-            charAtCursor &&
-            (isLiteral || maskPattern.pattern[cursorPosition] === "#")
-          ) {
+          if (charAtCursor) {
             event.preventDefault();
 
             const unmaskedIndex = toUnmaskedIndex({
