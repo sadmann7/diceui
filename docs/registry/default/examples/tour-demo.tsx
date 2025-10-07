@@ -70,7 +70,7 @@ export default function TourDemo() {
         }
       >
         <TourOverlay />
-        <TourStep target="#welcome-title" placement="bottom">
+        <TourStep target="#welcome-title" side="bottom" align="center">
           <TourHeader>
             <TourTitle>Welcome!</TourTitle>
             <TourDescription>
@@ -80,7 +80,7 @@ export default function TourDemo() {
           </TourHeader>
           <TourClose />
         </TourStep>
-        <TourStep target="#feature-1" placement="top">
+        <TourStep target="#feature-1" side="top" align="center">
           <TourHeader>
             <TourTitle>Feature 1</TourTitle>
             <TourDescription>
@@ -90,7 +90,7 @@ export default function TourDemo() {
           </TourHeader>
           <TourClose />
         </TourStep>
-        <TourStep target="#feature-2" placement="top">
+        <TourStep target="#feature-2" side="top" align="center">
           <TourHeader>
             <TourTitle>Feature 2</TourTitle>
             <TourDescription>
@@ -100,7 +100,7 @@ export default function TourDemo() {
           </TourHeader>
           <TourClose />
         </TourStep>
-        <TourStep target="#feature-3" placement="top" required>
+        <TourStep target="#feature-3" side="top" align="center" required>
           <TourHeader>
             <TourTitle>Feature 3</TourTitle>
             <TourDescription>

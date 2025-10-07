@@ -182,30 +182,85 @@ export interface StepProps extends EmptyProps<"div">, CompositionProps {
   target: string | React.RefObject<HTMLElement> | HTMLElement;
 
   /**
-   * The placement of the popover relative to the target element.
+   * The side of the target element on which to position the popover.
    *
    * @default "bottom"
    */
-  placement?:
-    | "top"
-    | "top-start"
-    | "top-end"
-    | "bottom"
-    | "bottom-start"
-    | "bottom-end"
-    | "left"
-    | "left-start"
-    | "left-end"
-    | "right"
-    | "right-start"
-    | "right-end";
+  side?: "top" | "right" | "bottom" | "left";
 
   /**
-   * The offset distance from the target element.
+   * The distance in pixels from the target element.
    *
    * @default 8
    */
-  offset?: number;
+  sideOffset?: number;
+
+  /**
+   * The alignment of the popover relative to the target element.
+   *
+   * @default "center"
+   */
+  align?: "start" | "center" | "end";
+
+  /**
+   * The offset in pixels along the alignment axis.
+   *
+   * @default 0
+   */
+  alignOffset?: number;
+
+  /**
+   * The boundary elements used to prevent collisions. Can be a single element or an array of elements.
+   *
+   * ```ts
+   * collisionBoundary={document.querySelector('.scroll-container')}
+   * // or
+   * collisionBoundary={[element1, element2]}
+   * ```
+   *
+   * @default []
+   */
+  collisionBoundary?: Element | null | (Element | null)[];
+
+  /**
+   * The padding between the popover and the edge of the viewport to prevent collisions.
+   * Can be a single number for all sides or an object with individual side values.
+   *
+   * @default 0
+   */
+  collisionPadding?:
+    | number
+    | Partial<Record<"top" | "right" | "bottom" | "left", number>>;
+
+  /**
+   * The minimum padding between the arrow and the edges of the popover.
+   *
+   * @default 0
+   */
+  arrowPadding?: number;
+
+  /**
+   * The sticky behavior of the popover when it reaches the boundary.
+   * - "partial": The popover will partially stick to the boundary
+   * - "always": The popover will always stick to the boundary
+   *
+   * @default "partial"
+   */
+  sticky?: "partial" | "always";
+
+  /**
+   * Whether to hide the popover when the target element is fully occluded.
+   *
+   * @default false
+   */
+  hideWhenDetached?: boolean;
+
+  /**
+   * Whether to enable collision detection to keep the popover in view.
+   *
+   * @default false
+   */
+  avoidCollisions?: boolean;
 
   /**
    * Whether this step is required and cannot be skipped.

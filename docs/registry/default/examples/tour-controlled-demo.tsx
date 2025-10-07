@@ -107,7 +107,7 @@ export default function TourControlledDemo() {
         onSkip={onSkip}
       >
         <TourOverlay />
-        <TourStep target="#controlled-title" placement="bottom">
+        <TourStep target="#controlled-title" side="bottom" align="center">
           <TourHeader>
             <TourTitle>Controlled Tour</TourTitle>
             <TourDescription>
@@ -126,7 +126,7 @@ export default function TourControlledDemo() {
           </TourFooter>
           <TourClose />
         </TourStep>
-        <TourStep target="#controlled-step-1" placement="top">
+        <TourStep target="#controlled-step-1" side="top" align="center">
           <TourHeader>
             <TourTitle>External Controls</TourTitle>
             <TourDescription>
@@ -145,7 +145,7 @@ export default function TourControlledDemo() {
           </TourFooter>
           <TourClose />
         </TourStep>
-        <TourStep target="#controlled-step-2" placement="top">
+        <TourStep target="#controlled-step-2" side="top" align="center">
           <TourHeader>
             <TourTitle>Final Step</TourTitle>
             <TourDescription>

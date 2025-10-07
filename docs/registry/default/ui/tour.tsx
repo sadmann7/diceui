@@ -13,20 +13,12 @@ const NEXT_NAME = "TourNext";
 const SKIP_NAME = "TourSkip";
 const OVERLAY_NAME = "TourOverlay";
 
+const SIDE_OPTIONS = ["top", "right", "bottom", "left"] as const;
+const ALIGN_OPTIONS = ["start", "center", "end"] as const;
+
+type Side = (typeof SIDE_OPTIONS)[number];
+type Align = (typeof ALIGN_OPTIONS)[number];
 type Direction = "ltr" | "rtl";
-type Placement =
-  | "top"
-  | "top-start"
-  | "top-end"
-  | "bottom"
-  | "bottom-start"
-  | "bottom-end"
-  | "left"
-  | "left-start"
-  | "left-end"
-  | "right"
-  | "right-start"
-  | "right-end";
 
 interface ScrollOffset {
   top?: number;
@@ -43,10 +35,20 @@ interface ButtonProps extends React.ComponentProps<"button"> {
   asChild?: boolean;
 }
 
+type Boundary = Element | null;
+
 interface StepData {
   target: string | React.RefObject<HTMLElement> | HTMLElement;
-  placement?: Placement;
-  offset?: number;
+  side?: Side;
+  sideOffset?: number;
+  align?: Align;
+  alignOffset?: number;
+  collisionBoundary?: Boundary | Boundary[];
+  collisionPadding?: number | Partial<Record<Side, number>>;
+  arrowPadding?: number;
+  sticky?: "partial" | "always";
+  hideWhenDetached?: boolean;
+  avoidCollisions?: boolean;
   onStepEnter?: () => void;
   onStepLeave?: () => void;
   required?: boolean;
@@ -166,61 +168,56 @@ function updatePositionAndMask(
   if (!targetElement) return;
 
   const rect = getElementRect(targetElement);
-  const placement = stepData.placement ?? "bottom";
-  const offset = stepData.offset ?? 8;
+  const side = stepData.side ?? "bottom";
+  const align = stepData.align ?? "center";
+  const sideOffset = stepData.sideOffset ?? 8;
+  const alignOffset = stepData.alignOffset ?? 0;
 
   let top = 0;
   let left = 0;
 
-  switch (placement) {
+  // Calculate position based on side
+  switch (side) {
     case "top":
-      top = rect.top - offset;
-      left = rect.left + rect.width / 2;
-      break;
-    case "top-start":
-      top = rect.top - offset;
-      left = rect.left;
-      break;
-    case "top-end":
-      top = rect.top - offset;
-      left = rect.right;
+      top = rect.top - sideOffset;
       break;
     case "bottom":
-      top = rect.bottom + offset;
-      left = rect.left + rect.width / 2;
-      break;
-    case "bottom-start":
-      top = rect.bottom + offset;
-      left = rect.left;
-      break;
-    case "bottom-end":
-      top = rect.bottom + offset;
-      left = rect.right;
+      top = rect.bottom + sideOffset;
       break;
     case "left":
-      top = rect.top + rect.height / 2;
-      left = rect.left - offset;
-      break;
-    case "left-start":
-      top = rect.top;
-      left = rect.left - offset;
-      break;
-    case "left-end":
-      top = rect.bottom;
-      left = rect.left - offset;
+      left = rect.left - sideOffset;
       break;
     case "right":
-      top = rect.top + rect.height / 2;
-      left = rect.right + offset;
+      left = rect.right + sideOffset;
       break;
-    case "right-start":
-      top = rect.top;
-      left = rect.right + offset;
-      break;
-    case "right-end":
-      top = rect.bottom;
-      left = rect.right + offset;
-      break;
+  }
+
+  // Calculate alignment
+  if (side === "top" || side === "bottom") {
+    switch (align) {
+      case "start":
+        left = rect.left + alignOffset;
+        break;
+      case "center":
+        left = rect.left + rect.width / 2 + alignOffset;
+        break;
+      case "end":
+        left = rect.right + alignOffset;
+        break;
+    }
+  } else {
+    // left or right side
+    switch (align) {
+      case "start":
+        top = rect.top + alignOffset;
+        break;
+      case "center":
+        top = rect.top + rect.height / 2 + alignOffset;
+        break;
+      case "end":
+        top = rect.bottom + alignOffset;
+        break;
+    }
   }
 
   store.setState("position", { top, left });
@@ -238,25 +235,55 @@ function updatePositionAndMask(
   store.setState("maskPath", path);
 }
 
-function getTransform(placement: Placement = "bottom") {
-  switch (placement) {
+function getTransform(side: Side = "bottom", align: Align = "center") {
+  let transformX = "0";
+  let transformY = "0";
+
+  // Calculate transform based on side
+  switch (side) {
     case "top":
-    case "top-start":
-    case "top-end":
-      return "translate(-50%, -100%)";
+      transformY = "-100%";
+      break;
     case "bottom":
-    case "bottom-start":
-    case "bottom-end":
-      return "translate(-50%, 0)";
+      transformY = "0";
+      break;
     case "left":
-    case "left-start":
-    case "left-end":
-      return "translate(-100%, -50%)";
+      transformX = "-100%";
+      break;
     case "right":
-    case "right-start":
-    case "right-end":
-      return "translate(0, -50%)";
+      transformX = "0";
+      break;
   }
+
+  // Calculate alignment transform
+  if (side === "top" || side === "bottom") {
+    switch (align) {
+      case "start":
+        transformX = "0";
+        break;
+      case "center":
+        transformX = "-50%";
+        break;
+      case "end":
+        transformX = "-100%";
+        break;
+    }
+  } else {
+    // left or right side
+    switch (align) {
+      case "start":
+        transformY = "0";
+        break;
+      case "center":
+        transformY = "-50%";
+        break;
+      case "end":
+        transformY = "-100%";
+        break;
+    }
+  }
+
+  return `translate(${transformX}, ${transformY})`;
 }
 
 const StoreContext = React.createContext<Store | null>(null);
@@ -472,8 +499,16 @@ function TourRoot(props: TourRootProps) {
 
 interface TourStepProps extends DivProps {
   target: string | React.RefObject<HTMLElement> | HTMLElement;
-  placement?: Placement;
-  offset?: number;
+  side?: Side;
+  sideOffset?: number;
+  align?: Align;
+  alignOffset?: number;
+  collisionBoundary?: Boundary | Boundary[];
+  collisionPadding?: number | Partial<Record<Side, number>>;
+  arrowPadding?: number;
+  sticky?: "partial" | "always";
+  hideWhenDetached?: boolean;
+  avoidCollisions?: boolean;
   onStepEnter?: () => void;
   onStepLeave?: () => void;
   required?: boolean;
@@ -483,8 +518,16 @@ interface TourStepProps extends DivProps {
 function TourStep(props: TourStepProps) {
   const {
     target,
-    placement = "bottom",
-    offset = 8,
+    side = "bottom",
+    sideOffset = 8,
+    align = "center",
+    alignOffset = 0,
+    collisionBoundary = [],
+    collisionPadding = 0,
+    arrowPadding = 0,
+    sticky = "partial",
+    hideWhenDetached = false,
+    avoidCollisions = false,
     required = false,
     forceMount = false,
     onStepEnter,
@@ -512,8 +555,16 @@ function TourStep(props: TourStepProps) {
   useIsomorphicLayoutEffect(() => {
     const stepData: StepData = {
       target,
-      placement,
-      offset,
+      side,
+      sideOffset,
+      align,
+      alignOffset,
+      collisionBoundary,
+      collisionPadding,
+      arrowPadding,
+      sticky,
+      hideWhenDetached,
+      avoidCollisions,
       onStepEnter,
       onStepLeave,
       required,
@@ -532,7 +583,23 @@ function TourStep(props: TourStepProps) {
     return () => {
       store.removeStep(stepIndexRef.current);
     };
-  }, [store, target, placement, offset, required, onStepEnter, onStepLeave]);
+  }, [
+    store,
+    target,
+    side,
+    sideOffset,
+    align,
+    alignOffset,
+    collisionBoundary,
+    collisionPadding,
+    arrowPadding,
+    sticky,
+    hideWhenDetached,
+    avoidCollisions,
+    required,
+    onStepEnter,
+    onStepLeave,
+  ]);
 
   const stepData = steps[value];
   const targetElement = stepData ? getTargetElement(stepData.target) : null;
@@ -567,6 +634,8 @@ function TourStep(props: TourStepProps) {
   return (
     <StepPrimitive
       data-slot="tour-step"
+      data-side={stepData.side}
+      data-align={stepData.align}
       {...stepProps}
       className={cn(
         "fixed z-50 w-80 rounded-lg border bg-popover p-4 text-popover-foreground shadow-md",
@@ -575,7 +644,10 @@ function TourStep(props: TourStepProps) {
       style={{
         top: position.top,
         left: position.left,
-        transform: getTransform(stepData.placement),
+        transform: getTransform(
+          stepData.side ?? "bottom",
+          stepData.align ?? "center",
+        ),
       }}
     >
       {children}
@@ -916,5 +988,10 @@ export {
   TourNext,
   TourSkip,
   //
+  SIDE_OPTIONS,
+  ALIGN_OPTIONS,
+  //
   type TourRootProps as TourProps,
+  type Side,
+  type Align,
 };
