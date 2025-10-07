@@ -1274,8 +1274,8 @@ describe("MaskInput", () => {
       await user.type(input, "5551234567");
       expect(input).toHaveValue("(555) 123-4567");
 
-      // Move cursor to position 10 (after "123-")
-      input.setSelectionRange(10, 10);
+      // Move cursor to position 9 (after "3" in "123")
+      input.setSelectionRange(9, 9);
 
       // Delete character
       await user.keyboard("{Backspace}");
@@ -1340,8 +1340,8 @@ describe("MaskInput", () => {
       await user.type(input, "123456789");
       expect(input).toHaveValue("123-45-6789");
 
-      // Move cursor to position 7 (middle of last group)
-      input.setSelectionRange(7, 7);
+      // Move cursor to position 6 (after "5" in middle group)
+      input.setSelectionRange(6, 6);
 
       // Delete and retype
       await user.keyboard("{Backspace}");
@@ -1372,7 +1372,7 @@ describe("MaskInput", () => {
       expect(input.selectionStart).toBe(8);
     });
 
-    test("maintains cursor when backspace removes character before literal", async () => {
+    test("maintains cursor when backspace navigates separators", async () => {
       const user = userEvent.setup();
       render(<MaskInput mask="phone" data-testid="mask-input" />);
       const input = screen.getByTestId("mask-input") as HTMLInputElement;
@@ -1384,11 +1384,11 @@ describe("MaskInput", () => {
       // Move cursor to position 6 (right after space, before "1")
       input.setSelectionRange(6, 6);
 
-      // Backspace should remove the last "5"
+      // Backspace should move cursor back over space (Stripe UX)
       await user.keyboard("{Backspace}");
-      expect(input).toHaveValue("(551");
-      // Cursor should be at position 3
-      expect(input.selectionStart).toBe(3);
+      expect(input).toHaveValue("(555) 1");
+      // Cursor should be at position 5 (before space)
+      expect(input.selectionStart).toBe(5);
     });
 
     test("cursor positioning works with controlled component", async () => {
@@ -1482,6 +1482,88 @@ describe("MaskInput", () => {
 
       // Cursor should be at position 2 (after the 9)
       expect(input.selectionStart).toBe(2);
+    });
+
+    test("backspace on separator just moves cursor (Stripe-style UX)", async () => {
+      const user = userEvent.setup();
+      render(<MaskInput mask="creditCard" data-testid="mask-input" />);
+      const input = screen.getByTestId("mask-input") as HTMLInputElement;
+
+      // Type credit card number
+      await user.type(input, "4242424242424242");
+      expect(input).toHaveValue("4242 4242 4242 4242");
+
+      // Move cursor right after first group (position 5, right after space)
+      input.setSelectionRange(5, 5);
+      expect(input.selectionStart).toBe(5);
+
+      // Backspace should just move cursor back over the space, not delete
+      await user.keyboard("{Backspace}");
+      expect(input).toHaveValue("4242 4242 4242 4242");
+      expect(input.selectionStart).toBe(4); // Cursor moved to before space
+    });
+
+    test("delete on separator just moves cursor forward", async () => {
+      const user = userEvent.setup();
+      render(<MaskInput mask="creditCard" data-testid="mask-input" />);
+      const input = screen.getByTestId("mask-input") as HTMLInputElement;
+
+      // Type credit card number
+      await user.type(input, "4242424242424242");
+      expect(input).toHaveValue("4242 4242 4242 4242");
+
+      // Move cursor right before first space (position 4)
+      input.setSelectionRange(4, 4);
+      expect(input.selectionStart).toBe(4);
+
+      // Delete should just move cursor forward over the space, not delete
+      await user.keyboard("{Delete}");
+      expect(input).toHaveValue("4242 4242 4242 4242");
+      expect(input.selectionStart).toBe(5); // Cursor moved to after space
+    });
+
+    test("backspace on digit deletes the digit", async () => {
+      const user = userEvent.setup();
+      render(<MaskInput mask="creditCard" data-testid="mask-input" />);
+      const input = screen.getByTestId("mask-input") as HTMLInputElement;
+
+      // Type credit card number
+      await user.type(input, "4242424242424242");
+      expect(input).toHaveValue("4242 4242 4242 4242");
+
+      // Move cursor after second digit in second group (position 7)
+      input.setSelectionRange(7, 7);
+
+      // Backspace should delete the digit
+      await user.keyboard("{Backspace}");
+      expect(input).toHaveValue("4242 4424 2424 242");
+      expect(input.selectionStart).toBe(6); // Before the second 4 in second group
+    });
+
+    test("works correctly with phone mask separators", async () => {
+      const user = userEvent.setup();
+      render(<MaskInput mask="phone" data-testid="mask-input" />);
+      const input = screen.getByTestId("mask-input") as HTMLInputElement;
+
+      // Type phone number
+      await user.type(input, "5551234567");
+      expect(input).toHaveValue("(555) 123-4567");
+
+      // Move cursor right after "1" in the middle section (position 7)
+      input.setSelectionRange(7, 7);
+
+      // Backspace should delete the "1"
+      await user.keyboard("{Backspace}");
+      expect(input).toHaveValue("(555) 234-567");
+      expect(input.selectionStart).toBe(4); // Cursor moved back (before space after paren)
+
+      // Move cursor to after closing paren (position 5, after space)
+      input.setSelectionRange(5, 5);
+
+      // Backspace should move cursor back over space
+      await user.keyboard("{Backspace}");
+      expect(input).toHaveValue("(555) 234-567");
+      expect(input.selectionStart).toBe(4); // Before space
     });
   });
 });

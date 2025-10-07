@@ -1344,6 +1344,14 @@ function MaskInput(props: MaskInputProps) {
 
         if (cursorPosition > 0) {
           const charBeforeCursor = currentValue[cursorPosition - 1];
+          const isLiteralBeforeCursor =
+            maskPattern.pattern[cursorPosition - 1] !== "#";
+
+          if (charBeforeCursor && isLiteralBeforeCursor) {
+            event.preventDefault();
+            target.setSelectionRange(cursorPosition - 1, cursorPosition - 1);
+            return;
+          }
 
           if (charBeforeCursor) {
             event.preventDefault();
@@ -1409,6 +1417,13 @@ function MaskInput(props: MaskInputProps) {
 
         if (cursorPosition < currentValue.length) {
           const charAtCursor = currentValue[cursorPosition];
+          const isLiteralAtCursor = maskPattern.pattern[cursorPosition] !== "#";
+
+          if (charAtCursor && isLiteralAtCursor) {
+            event.preventDefault();
+            target.setSelectionRange(cursorPosition + 1, cursorPosition + 1);
+            return;
+          }
 
           if (charAtCursor) {
             event.preventDefault();
