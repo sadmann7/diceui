@@ -640,6 +640,15 @@ function TourStep(props: TourStepProps) {
   React.useEffect(() => {
     if (open && targetElement && isCurrentStep) {
       updateMask(store, targetElement, 4);
+
+      function onResize() {
+        if (targetElement) {
+          updateMask(store, targetElement, 4);
+        }
+      }
+
+      window.addEventListener("resize", onResize);
+      return () => window.removeEventListener("resize", onResize);
     }
   }, [open, targetElement, isCurrentStep, store]);
 
