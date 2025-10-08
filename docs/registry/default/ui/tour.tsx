@@ -221,8 +221,9 @@ function useStoreContext(consumerName: string) {
 
 interface TourContextValue {
   dir: Direction;
-  stepFooter?: React.ReactElement;
+  dismissible: boolean;
   modal: boolean;
+  stepFooter?: React.ReactElement;
 }
 
 const TourContext = React.createContext<TourContextValue | null>(null);
@@ -306,8 +307,9 @@ interface TourRootProps extends DivProps {
   scrollToElement?: boolean;
   scrollBehavior?: ScrollBehavior;
   scrollOffset?: ScrollOffset;
-  stepFooter?: React.ReactElement;
+  dismissible?: boolean;
   modal?: boolean;
+  stepFooter?: React.ReactElement;
 }
 
 function TourRoot(props: TourRootProps) {
@@ -320,20 +322,8 @@ function TourRoot(props: TourRootProps) {
     onValueChange,
     onComplete,
     onSkip,
-    onEscapeKeyDown,
-    dir: dirProp,
-    stepFooter,
-    scrollToElement: scrollToElementProp = false,
-    scrollBehavior = "smooth",
-    scrollOffset,
-    modal = true,
-    asChild,
-    ...rootProps
+    ...rootImplProps
   } = props;
-
-  const dir = useDirection(dirProp);
-
-  const [portal, setPortal] = React.useState<HTMLElement | null>(null);
 
   const state = useLazyRef<State>(() => ({
     open: openProp ?? defaultOpen,
@@ -350,9 +340,9 @@ function TourRoot(props: TourRootProps) {
     onValueChange,
     onComplete,
     onSkip,
-    scrollToElementProp,
-    scrollBehavior,
-    scrollOffset,
+    scrollToElementProp: props.scrollToElement ?? false,
+    scrollBehavior: props.scrollBehavior ?? "smooth",
+    scrollOffset: props.scrollOffset,
     valueProp,
   });
 
@@ -361,9 +351,9 @@ function TourRoot(props: TourRootProps) {
     onValueChange,
     onComplete,
     onSkip,
-    scrollToElementProp,
-    scrollBehavior,
-    scrollOffset,
+    scrollToElementProp: props.scrollToElement ?? false,
+    scrollBehavior: props.scrollBehavior ?? "smooth",
+    scrollOffset: props.scrollOffset,
     valueProp,
   };
 
@@ -473,13 +463,48 @@ function TourRoot(props: TourRootProps) {
     }
   }, [valueProp, store]);
 
+  return (
+    <StoreContext.Provider value={store}>
+      <TourRootImpl {...rootImplProps} />
+    </StoreContext.Provider>
+  );
+}
+
+interface TourRootImplProps
+  extends Omit<
+    TourRootProps,
+    | "open"
+    | "defaultOpen"
+    | "onOpenChange"
+    | "value"
+    | "defaultValue"
+    | "onValueChange"
+    | "onComplete"
+    | "onSkip"
+  > {}
+
+function TourRootImpl(props: TourRootImplProps) {
+  const {
+    onEscapeKeyDown,
+    dir: dirProp,
+    stepFooter,
+    dismissible = true,
+    modal = true,
+    asChild,
+    ...rootProps
+  } = props;
+
+  const store = useStoreContext("TourRootImpl");
+  const dir = useDirection(dirProp);
+
+  const [portal, setPortal] = React.useState<HTMLElement | null>(null);
+
   const onEscapeKeyDownRef = React.useRef(onEscapeKeyDown);
   onEscapeKeyDownRef.current = onEscapeKeyDown;
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: onEscapeKeyDownRef is stable, accessed in closures
   React.useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
-      if (state.current.open && event.key === "Escape") {
+      if (store.getState().open && event.key === "Escape") {
         if (onEscapeKeyDownRef.current) {
           onEscapeKeyDownRef.current(event);
           if (event.defaultPrevented) return;
@@ -490,15 +515,16 @@ function TourRoot(props: TourRootProps) {
 
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [state.current.open]);
+  }, [store]);
 
   const contextValue = React.useMemo<TourContextValue>(
     () => ({
       dir,
-      stepFooter,
+      dismissible,
       modal,
+      stepFooter,
     }),
-    [dir, stepFooter, modal],
+    [dir, dismissible, modal, stepFooter],
   );
 
   const portalContextValue = React.useMemo(
@@ -509,18 +535,17 @@ function TourRoot(props: TourRootProps) {
     [portal],
   );
 
-  useScrollLock(state.current.open && modal);
+  const open = useStore((state) => state.open);
+  useScrollLock(open && modal);
 
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
-    <StoreContext.Provider value={store}>
-      <TourContext.Provider value={contextValue}>
-        <PortalContext.Provider value={portalContextValue}>
-          <RootPrimitive data-slot="tour" dir={dir} {...rootProps} />
-        </PortalContext.Provider>
-      </TourContext.Provider>
-    </StoreContext.Provider>
+    <TourContext.Provider value={contextValue}>
+      <PortalContext.Provider value={portalContextValue}>
+        <RootPrimitive data-slot="tour" dir={dir} {...rootProps} />
+      </PortalContext.Provider>
+    </TourContext.Provider>
   );
 }
 
@@ -790,6 +815,7 @@ function TourOverlay(props: TourOverlayProps) {
     ...backdropProps
   } = props;
 
+  const context = useTourContext(OVERLAY_NAME);
   const store = useStoreContext(OVERLAY_NAME);
   const open = useStore((state) => state.open);
   const maskPath = useStore((state) => state.maskPath);
@@ -797,11 +823,11 @@ function TourOverlay(props: TourOverlayProps) {
   const onClick = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       backdropProps.onClick?.(event);
-      if (event.defaultPrevented) return;
+      if (event.defaultPrevented || !context.dismissible) return;
 
       store.setState("open", false);
     },
-    [store, backdropProps.onClick],
+    [store, backdropProps.onClick, context.dismissible],
   );
 
   if (!open && !forceMount) return null;
@@ -814,7 +840,7 @@ function TourOverlay(props: TourOverlayProps) {
       data-slot="tour-overlay"
       {...backdropProps}
       className={cn(
-        "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=open]:animate-in",
+        "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/80 data-[state=closed]:animate-out data-[state=open]:animate-in",
         className,
       )}
       style={{

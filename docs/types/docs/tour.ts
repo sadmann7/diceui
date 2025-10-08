@@ -128,6 +128,20 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   };
 
   /**
+   * Whether the tour can be dismissed by clicking outside.
+   *
+   * @default true
+   */
+  dismissible?: boolean;
+
+  /**
+   * Whether the tour is modal.
+   *
+   * @default true
+   */
+  modal?: boolean;
+
+  /**
    * Default footer element to be used for all steps that don't have their own footer.
    *
    * Steps can override the default footer by including their own TourFooter component.
