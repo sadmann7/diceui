@@ -24,35 +24,32 @@ export default function TourDemo() {
   return (
     <div className="flex min-h-[400px] flex-col items-center justify-center gap-8 p-8">
       <div className="flex flex-col items-center gap-4">
-        <h1 id="welcome-title" className="font-bold text-2xl">
-          Welcome to Our App
-        </h1>
-        <p className="text-center text-muted-foreground">
-          Click the button below to start the tour and learn about our features.
-        </p>
+        <div className="flex flex-col items-center gap-1">
+          <h1 id="welcome-title" className="font-bold text-2xl">
+            Learn to Skate
+          </h1>
+          <p className="text-center text-muted-foreground">
+            Start the tour to learn essential tricks.
+          </p>
+        </div>
         <Button id="start-tour-btn" onClick={() => setOpen(true)}>
           Start Tour
         </Button>
       </div>
-
       <div className="grid grid-cols-3 gap-4">
         <div id="feature-1" className="rounded-lg border p-4 text-center">
-          <h3 className="font-semibold">Feature 1</h3>
+          <h3 className="font-semibold">Ollie</h3>
           <p className="text-muted-foreground text-sm">
-            This is our first amazing feature
+            Foundation of all tricks
           </p>
         </div>
         <div id="feature-2" className="rounded-lg border p-4 text-center">
-          <h3 className="font-semibold">Feature 2</h3>
-          <p className="text-muted-foreground text-sm">
-            This is our second great feature
-          </p>
+          <h3 className="font-semibold">Kickflip</h3>
+          <p className="text-muted-foreground text-sm">Your first flip trick</p>
         </div>
         <div id="feature-3" className="rounded-lg border p-4 text-center">
-          <h3 className="font-semibold">Feature 3</h3>
-          <p className="text-muted-foreground text-sm">
-            This is our third incredible feature
-          </p>
+          <h3 className="font-semibold">900</h3>
+          <p className="text-muted-foreground text-sm">Two and a half spins</p>
         </div>
       </div>
       <Tour
@@ -74,10 +71,9 @@ export default function TourDemo() {
           <TourOverlay />
           <TourStep target="#welcome-title" side="bottom" align="center">
             <TourHeader>
-              <TourTitle>Welcome!</TourTitle>
+              <TourTitle>Welcome</TourTitle>
               <TourDescription>
-                This is the main title of our application. Let's explore the
-                features together.
+                Learn the essential tricks every skater needs to know.
               </TourDescription>
             </TourHeader>
             <TourClose />
@@ -85,10 +81,10 @@ export default function TourDemo() {
           <TourStep target="#feature-1" side="top" align="center">
             <TourArrow />
             <TourHeader>
-              <TourTitle>Feature 1</TourTitle>
+              <TourTitle>Ollie</TourTitle>
               <TourDescription>
-                This is our first feature. It provides amazing functionality
-                that will help you get started.
+                Pop the tail, slide your front foot up, and level out in the
+                air.
               </TourDescription>
             </TourHeader>
             <TourClose />
@@ -96,10 +92,10 @@ export default function TourDemo() {
           <TourStep target="#feature-2" side="top" align="center">
             <TourArrow />
             <TourHeader>
-              <TourTitle>Feature 2</TourTitle>
+              <TourTitle>Kickflip</TourTitle>
               <TourDescription>
-                Our second feature builds upon the first and adds even more
-                value to your experience.
+                Flick your front foot off the edge to spin the board 360
+                degrees.
               </TourDescription>
             </TourHeader>
             <TourClose />
@@ -107,10 +103,9 @@ export default function TourDemo() {
           <TourStep target="#feature-3" side="top" align="center" required>
             <TourArrow />
             <TourHeader>
-              <TourTitle>Feature 3</TourTitle>
+              <TourTitle>900</TourTitle>
               <TourDescription>
-                The final feature in our tour showcases the full potential of
-                our platform. This step is required and cannot be skipped.
+                Two and a half aerial spins. This step is required.
               </TourDescription>
             </TourHeader>
             <TourClose />

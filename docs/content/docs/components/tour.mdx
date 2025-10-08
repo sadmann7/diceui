@@ -42,21 +42,23 @@ Import the parts, and compose them together.
 import * as Tour from "@/components/ui/tour";
 
 <Tour.Root>
-  <Tour.Overlay />
-  <Tour.Step target="#element">
-    <Tour.Arrow />
-    <Tour.Close />
-    <Tour.Header>
-      <Tour.Title />
-      <Tour.Description />
-    </Tour.Header>
-    <Tour.Footer>
-      <Tour.StepCounter />
-      <Tour.Prev />
-      <Tour.Next />
-      <Tour.Skip />
-    </Tour.Footer>
-  </Tour.Step>
+  <Tour.Portal>
+    <Tour.Overlay />
+    <Tour.Step target="#element">
+      <Tour.Arrow />
+      <Tour.Close />
+      <Tour.Header>
+        <Tour.Title />
+        <Tour.Description />
+      </Tour.Header>
+      <Tour.Footer>
+        <Tour.StepCounter />
+        <Tour.Prev />
+        <Tour.Next />
+        <Tour.Skip />
+      </Tour.Footer>
+    </Tour.Step>
+  </Tour.Portal>
 </Tour.Root>
 ```
 
