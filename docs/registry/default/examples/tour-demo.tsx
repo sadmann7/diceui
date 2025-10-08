@@ -11,6 +11,7 @@ import {
   TourHeader,
   TourNext,
   TourOverlay,
+  TourPortal,
   TourPrev,
   TourSkip,
   TourStep,
@@ -70,59 +71,61 @@ export default function TourDemo() {
           </TourFooter>
         }
       >
-        <TourOverlay />
-        <TourStep target="#welcome-title" side="bottom" align="center">
-          <TourHeader>
-            <TourTitle>Welcome!</TourTitle>
-            <TourDescription>
-              This is the main title of our application. Let's explore the
-              features together.
-            </TourDescription>
-          </TourHeader>
-          <TourClose />
-        </TourStep>
-        <TourStep target="#feature-1" side="top" align="center">
-          <TourArrow />
-          <TourHeader>
-            <TourTitle>Feature 1</TourTitle>
-            <TourDescription>
-              This is our first feature. It provides amazing functionality that
-              will help you get started.
-            </TourDescription>
-          </TourHeader>
-          <TourClose />
-        </TourStep>
-        <TourStep target="#feature-2" side="top" align="center">
-          <TourArrow />
-          <TourHeader>
-            <TourTitle>Feature 2</TourTitle>
-            <TourDescription>
-              Our second feature builds upon the first and adds even more value
-              to your experience.
-            </TourDescription>
-          </TourHeader>
-          <TourClose />
-        </TourStep>
-        <TourStep target="#feature-3" side="top" align="center" required>
-          <TourArrow />
-          <TourHeader>
-            <TourTitle>Feature 3</TourTitle>
-            <TourDescription>
-              The final feature in our tour showcases the full potential of our
-              platform. This step is required and cannot be skipped.
-            </TourDescription>
-          </TourHeader>
-          <TourFooter>
-            <div className="flex w-full items-center justify-between">
-              <TourStepCounter />
-              <div className="flex gap-2">
-                <TourSkip />
-                <TourNext />
+        <TourPortal>
+          <TourOverlay />
+          <TourStep target="#welcome-title" side="bottom" align="center">
+            <TourHeader>
+              <TourTitle>Welcome!</TourTitle>
+              <TourDescription>
+                This is the main title of our application. Let's explore the
+                features together.
+              </TourDescription>
+            </TourHeader>
+            <TourClose />
+          </TourStep>
+          <TourStep target="#feature-1" side="top" align="center">
+            <TourArrow />
+            <TourHeader>
+              <TourTitle>Feature 1</TourTitle>
+              <TourDescription>
+                This is our first feature. It provides amazing functionality
+                that will help you get started.
+              </TourDescription>
+            </TourHeader>
+            <TourClose />
+          </TourStep>
+          <TourStep target="#feature-2" side="top" align="center">
+            <TourArrow />
+            <TourHeader>
+              <TourTitle>Feature 2</TourTitle>
+              <TourDescription>
+                Our second feature builds upon the first and adds even more
+                value to your experience.
+              </TourDescription>
+            </TourHeader>
+            <TourClose />
+          </TourStep>
+          <TourStep target="#feature-3" side="top" align="center" required>
+            <TourArrow />
+            <TourHeader>
+              <TourTitle>Feature 3</TourTitle>
+              <TourDescription>
+                The final feature in our tour showcases the full potential of
+                our platform. This step is required and cannot be skipped.
+              </TourDescription>
+            </TourHeader>
+            <TourFooter>
+              <div className="flex w-full items-center justify-between">
+                <TourStepCounter />
+                <div className="flex gap-2">
+                  <TourSkip />
+                  <TourNext />
+                </div>
               </div>
-            </div>
-          </TourFooter>
-          <TourClose />
-        </TourStep>
+            </TourFooter>
+            <TourClose />
+          </TourStep>
+        </TourPortal>
       </Tour>
     </div>
   );

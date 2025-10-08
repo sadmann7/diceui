@@ -15,16 +15,21 @@ import {
 import { Slot } from "@radix-ui/react-slot";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import * as React from "react";
+import * as ReactDOM from "react-dom";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 
 const ROOT_NAME = "Tour";
+const PORTAL_NAME = "TourPortal";
 const OVERLAY_NAME = "TourOverlay";
 const STEP_NAME = "TourStep";
 const CLOSE_NAME = "TourClose";
 const PREV_NAME = "TourPrev";
 const NEXT_NAME = "TourNext";
 const SKIP_NAME = "TourSkip";
+const HEADER_NAME = "TourHeader";
+const TITLE_NAME = "TourTitle";
+const DESCRIPTION_NAME = "TourDescription";
 const FOOTER_NAME = "TourFooter";
 const ARROW_NAME = "TourArrow";
 
@@ -218,6 +223,7 @@ function useStoreContext(consumerName: string) {
 interface TourContextValue {
   dir: Direction;
   stepFooter?: React.ReactElement;
+  modal: boolean;
 }
 
 const TourContext = React.createContext<TourContextValue | null>(null);
@@ -252,6 +258,41 @@ function useStepContext(consumerName: string) {
 
 const DefaultFooterContext = React.createContext(false);
 
+interface PortalContextValue {
+  portal: HTMLElement | null;
+  onPortalChange: (node: HTMLElement | null) => void;
+}
+
+const PortalContext = React.createContext<PortalContextValue | null>(null);
+
+function usePortalContext(consumerName: string) {
+  const context = React.useContext(PortalContext);
+  if (!context) {
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
+  }
+  return context;
+}
+
+function useScrollLock(enabled: boolean) {
+  React.useEffect(() => {
+    if (!enabled) return;
+
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+    const scrollbarWidth =
+      window.innerWidth - document.documentElement.clientWidth;
+
+    document.body.style.overflow = "hidden";
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+
+    return () => {
+      document.body.style.overflow = originalStyle;
+      document.body.style.paddingRight = "";
+    };
+  }, [enabled]);
+}
+
 interface TourRootProps extends DivProps {
   open?: boolean;
   defaultOpen?: boolean;
@@ -267,6 +308,7 @@ interface TourRootProps extends DivProps {
   scrollBehavior?: ScrollBehavior;
   scrollOffset?: ScrollOffset;
   stepFooter?: React.ReactElement;
+  modal?: boolean;
 }
 
 function TourRoot(props: TourRootProps) {
@@ -285,11 +327,14 @@ function TourRoot(props: TourRootProps) {
     scrollToElement: scrollToElementProp = false,
     scrollBehavior = "smooth",
     scrollOffset,
+    modal = true,
     asChild,
     ...rootProps
   } = props;
 
   const dir = useDirection(dirProp);
+
+  const [portal, setPortal] = React.useState<HTMLElement | null>(null);
 
   const state = useLazyRef<State>(() => ({
     open: openProp ?? defaultOpen,
@@ -452,16 +497,29 @@ function TourRoot(props: TourRootProps) {
     () => ({
       dir,
       stepFooter,
+      modal,
     }),
-    [dir, stepFooter],
+    [dir, stepFooter, modal],
   );
+
+  const portalContextValue = React.useMemo(
+    () => ({
+      portal,
+      onPortalChange: setPortal,
+    }),
+    [portal],
+  );
+
+  useScrollLock(state.current.open && modal);
 
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
     <StoreContext.Provider value={store}>
       <TourContext.Provider value={contextValue}>
-        <RootPrimitive data-slot="tour" dir={dir} {...rootProps} />
+        <PortalContext.Provider value={portalContextValue}>
+          <RootPrimitive data-slot="tour" dir={dir} {...rootProps} />
+        </PortalContext.Provider>
       </TourContext.Provider>
     </StoreContext.Provider>
   );
@@ -512,6 +570,7 @@ function TourStep(props: TourStepProps) {
 
   const [arrow, setArrow] = React.useState<HTMLElement | null>(null);
   const [footer, setFooter] = React.useState<HTMLElement | null>(null);
+  const stepRef = React.useRef<HTMLDivElement | null>(null);
 
   const store = useStoreContext(STEP_NAME);
   const stepIdRef = React.useRef<string>("");
@@ -640,6 +699,8 @@ function TourStep(props: TourStepProps) {
     },
   });
 
+  const composedRef = useComposedRefs(refs.setFloating, stepRef);
+
   const [placedSide, placedAlign] =
     getSideAndAlignFromPlacement(finalPlacement);
 
@@ -675,6 +736,8 @@ function TourStep(props: TourStepProps) {
     }
   }, [open, targetElement, isCurrentStep, store]);
 
+  useFocusTrap(stepRef, open && isCurrentStep);
+
   if (!open || !stepData || (!targetElement && !forceMount) || !isCurrentStep) {
     return null;
   }
@@ -686,14 +749,15 @@ function TourStep(props: TourStepProps) {
   return (
     <StepContext.Provider value={stepContextValue}>
       <StepPrimitive
-        ref={refs.setFloating}
+        ref={composedRef}
         data-slot="tour-step"
         data-side={placedSide}
         data-align={placedAlign}
         dir={context.dir}
+        tabIndex={-1}
         {...stepProps}
         className={cn(
-          "fixed z-50 flex w-80 flex-col gap-4 rounded-lg border bg-popover p-4 text-popover-foreground shadow-md",
+          "fixed z-50 flex w-80 flex-col gap-4 rounded-lg border bg-popover p-4 text-popover-foreground shadow-md outline-none",
           className,
         )}
         style={{
@@ -763,10 +827,111 @@ function TourOverlay(props: TourOverlayProps) {
   );
 }
 
+interface TourPortalProps {
+  children?: React.ReactNode;
+  container?: HTMLElement | null;
+}
+
+function TourPortal(props: TourPortalProps) {
+  const { children, container } = props;
+
+  const portalContext = usePortalContext(PORTAL_NAME);
+
+  const [mounted, setMounted] = React.useState(false);
+
+  useIsomorphicLayoutEffect(() => {
+    setMounted(true);
+
+    const node = container ?? document.body;
+
+    portalContext?.onPortalChange(node);
+    return () => {
+      portalContext?.onPortalChange(null);
+    };
+  }, [container, portalContext]);
+
+  if (!mounted) return null;
+
+  const portalContainer = container ?? portalContext?.portal ?? document.body;
+
+  return ReactDOM.createPortal(children, portalContainer);
+}
+
+function useFocusTrap(
+  containerRef: React.RefObject<HTMLElement | null>,
+  enabled: boolean,
+) {
+  React.useEffect(() => {
+    if (!enabled || !containerRef.current) return;
+
+    const container = containerRef.current;
+    const previousActiveElement = document.activeElement as HTMLElement;
+
+    function getFocusableElements() {
+      const selector =
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+      return Array.from(
+        container.querySelectorAll<HTMLElement>(selector),
+      ).filter((el) => {
+        return (
+          el.offsetParent !== null &&
+          !el.hasAttribute("disabled") &&
+          el.getAttribute("aria-hidden") !== "true"
+        );
+      });
+    }
+
+    function onTabKeyDown(e: KeyboardEvent) {
+      if (e.key !== "Tab") return;
+
+      const focusableElements = getFocusableElements();
+      if (focusableElements.length === 0) {
+        e.preventDefault();
+        return;
+      }
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (e.shiftKey) {
+        if (document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement?.focus();
+        }
+      } else {
+        if (document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement?.focus();
+        }
+      }
+    }
+
+    const focusableElements = getFocusableElements();
+    if (focusableElements.length > 0) {
+      focusableElements[0]?.focus();
+    } else {
+      container.focus();
+    }
+
+    container.addEventListener("keydown", onTabKeyDown);
+
+    return () => {
+      container.removeEventListener("keydown", onTabKeyDown);
+      if (
+        previousActiveElement &&
+        document.body.contains(previousActiveElement)
+      ) {
+        previousActiveElement.focus();
+      }
+    };
+  }, [containerRef, enabled]);
+}
+
 function TourHeader(props: DivProps) {
   const { asChild, className, ...headerProps } = props;
 
-  const context = useTourContext("TourHeader");
+  const context = useTourContext(HEADER_NAME);
+
   const HeaderPrimitive = asChild ? Slot : "div";
 
   return (
@@ -789,7 +954,8 @@ interface TourTitleProps extends React.ComponentProps<"h2"> {
 function TourTitle(props: TourTitleProps) {
   const { asChild, className, ...titleProps } = props;
 
-  const context = useTourContext("TourTitle");
+  const context = useTourContext(TITLE_NAME);
+
   const TitlePrimitive = asChild ? Slot : "h2";
 
   return (
@@ -812,7 +978,8 @@ interface TourDescriptionProps extends React.ComponentProps<"p"> {
 function TourDescription(props: TourDescriptionProps) {
   const { asChild, className, ...descriptionProps } = props;
 
-  const context = useTourContext("TourDescription");
+  const context = useTourContext(DESCRIPTION_NAME);
+
   const DescriptionPrimitive = asChild ? Slot : "p";
 
   return (
@@ -1096,8 +1263,9 @@ function TourArrow(props: TourArrowProps) {
 
 export {
   TourRoot as Root,
-  TourStep as Step,
+  TourPortal as Portal,
   TourOverlay as Overlay,
+  TourStep as Step,
   TourHeader as Header,
   TourTitle as Title,
   TourDescription as Description,
@@ -1110,8 +1278,9 @@ export {
   TourArrow as Arrow,
   //
   TourRoot as Tour,
-  TourStep,
+  TourPortal,
   TourOverlay,
+  TourStep,
   TourHeader,
   TourTitle,
   TourDescription,
