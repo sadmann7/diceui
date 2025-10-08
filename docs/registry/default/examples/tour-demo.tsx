@@ -13,7 +13,6 @@ import {
   TourOverlay,
   TourPortal,
   TourPrev,
-  TourSkip,
   TourStep,
   TourStepCounter,
   TourTitle,
@@ -114,15 +113,6 @@ export default function TourDemo() {
                 our platform. This step is required and cannot be skipped.
               </TourDescription>
             </TourHeader>
-            <TourFooter>
-              <div className="flex w-full items-center justify-between">
-                <TourStepCounter />
-                <div className="flex gap-2">
-                  <TourSkip />
-                  <TourNext />
-                </div>
-              </div>
-            </TourFooter>
             <TourClose />
           </TourStep>
         </TourPortal>
