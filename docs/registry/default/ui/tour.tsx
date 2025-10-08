@@ -16,6 +16,7 @@ import { Slot } from "@radix-ui/react-slot";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import { Button } from "@/components/ui/button";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 
@@ -65,9 +66,7 @@ interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-interface ButtonProps extends React.ComponentProps<"button"> {
-  asChild?: boolean;
-}
+interface ButtonProps extends React.ComponentProps<typeof Button> {}
 
 type Boundary = Element | null;
 
@@ -1083,7 +1082,7 @@ function TourStepCounter(props: TourStepCounterProps) {
 }
 
 function TourPrev(props: ButtonProps) {
-  const { asChild, className, children, ...prevButtonProps } = props;
+  const { children, ...prevButtonProps } = props;
 
   const store = useStoreContext(PREV_NAME);
   const value = useStore((state) => state.value);
@@ -1102,33 +1101,28 @@ function TourPrev(props: ButtonProps) {
 
   const isDisabled = value === 0;
 
-  const PrevPrimitive = asChild ? Slot : "button";
-
   return (
-    <PrevPrimitive
+    <Button
       type="button"
       aria-label="Previous step"
       data-slot="tour-prev"
+      variant="outline"
       {...prevButtonProps}
-      className={cn(
-        "inline-flex h-9 items-center justify-center gap-2 rounded-md border border-input bg-background px-3 font-medium text-sm ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
-        className,
-      )}
       onClick={onClick}
       disabled={isDisabled}
     >
       {children ?? (
         <>
-          <ChevronLeft className="size-4" />
+          <ChevronLeft />
           Previous
         </>
       )}
-    </PrevPrimitive>
+    </Button>
   );
 }
 
 function TourNext(props: ButtonProps) {
-  const { asChild, className, children, ...nextButtonProps } = props;
+  const { children, ...nextButtonProps } = props;
   const store = useStoreContext(NEXT_NAME);
   const value = useStore((state) => state.value);
   const steps = useStore((state) => state.steps);
@@ -1145,32 +1139,26 @@ function TourNext(props: ButtonProps) {
 
   const isLastStep = value === steps.length - 1;
 
-  const NextPrimitive = asChild ? Slot : "button";
-
   return (
-    <NextPrimitive
+    <Button
       type="button"
       aria-label="Next step"
       data-slot="tour-next"
       {...nextButtonProps}
-      className={cn(
-        "inline-flex h-9 items-center justify-center gap-2 rounded-md bg-primary px-3 font-medium text-primary-foreground text-sm ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
-        className,
-      )}
       onClick={onClick}
     >
       {children ?? (
         <>
           {isLastStep ? "Finish" : "Next"}
-          {!isLastStep && <ChevronRight className="size-4" />}
+          {!isLastStep && <ChevronRight />}
         </>
       )}
-    </NextPrimitive>
+    </Button>
   );
 }
 
 function TourSkip(props: ButtonProps) {
-  const { asChild, className, children, ...skipButtonProps } = props;
+  const { children, ...skipButtonProps } = props;
 
   const store = useStoreContext(SKIP_NAME);
 
@@ -1184,26 +1172,21 @@ function TourSkip(props: ButtonProps) {
     [store, skipButtonProps.onClick],
   );
 
-  const SkipPrimitive = asChild ? Slot : "button";
-
   return (
-    <SkipPrimitive
+    <Button
       type="button"
       aria-label="Skip tour"
       data-slot="tour-skip"
-      className={cn(
-        "inline-flex h-9 items-center justify-center gap-2 rounded-md border border-input bg-background px-3 font-medium text-sm ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
-        className,
-      )}
-      onClick={onClick}
+      variant="outline"
       {...skipButtonProps}
+      onClick={onClick}
     >
       {children ?? "Skip"}
-    </SkipPrimitive>
+    </Button>
   );
 }
 
-interface TourArrowProps extends React.ComponentPropsWithoutRef<"svg"> {
+interface TourArrowProps extends React.ComponentProps<"svg"> {
   width?: number;
   height?: number;
   asChild?: boolean;

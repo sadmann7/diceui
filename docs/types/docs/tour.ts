@@ -1,5 +1,8 @@
 import type * as React from "react";
+import type { Button } from "@/components/ui/button";
 import type { CompositionProps, Direction, EmptyProps } from "@/types";
+
+interface ButtonProps extends React.ComponentProps<typeof Button> {}
 
 export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
@@ -308,8 +311,14 @@ export interface StepCounterProps extends EmptyProps<"div">, CompositionProps {
   format?: (current: number, total: number) => string;
 }
 
-export interface PrevProps extends EmptyProps<"button">, CompositionProps {}
+export interface PrevProps
+  extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
+    CompositionProps {}
 
-export interface NextProps extends EmptyProps<"button">, CompositionProps {}
+export interface NextProps
+  extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
+    CompositionProps {}
 
-export interface SkipProps extends EmptyProps<"button">, CompositionProps {}
+export interface SkipProps
+  extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
+    CompositionProps {}
