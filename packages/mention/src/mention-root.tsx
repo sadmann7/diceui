@@ -329,12 +329,12 @@ const MentionRoot = React.forwardRef<RootElement, MentionRootProps>(
             .filter((mention) => {
               const isRemoved = mentionsToRemove.some((mention) => mention.value === mention.value);
               if (isRemoved) {
-                newTextLengthDelta += mention.end - mention.start + 1; // +1 if you add a space
+                newTextLengthDelta += mention.end - mention.start + 1;
               }
               return !isRemoved;
             })
             .map((mention) => {
-              // Shift mentions that come after mentionsToRemove ones
+              // Shift mentions
               const shift = mentionsToRemove
                 .filter((r) => r.start < mention.start)
                 .reduce((acc, r) => acc + (r.end - r.start + 1), 0);
