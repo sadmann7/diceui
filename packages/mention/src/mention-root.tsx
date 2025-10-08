@@ -322,35 +322,39 @@ const MentionRoot = React.forwardRef<RootElement, MentionRootProps>(
     );
 
     const onMentionsRemove = React.useCallback(
-      (mentionsToRemove: Mention[]) => {
-        setMentions((prev) => {
-          let newTextLengthDelta = 0;
-          const newMentions = prev
-            .filter((mention) => {
-              const isRemoved = mentionsToRemove.some((mention) => mention.value === mention.value);
-              if (isRemoved) {
-                newTextLengthDelta += mention.end - mention.start + 1;
-              }
-              return !isRemoved;
-            })
-            .map((mention) => {
-              // Shift mentions
-              const shift = mentionsToRemove
-                .filter((r) => r.start < mention.start)
-                .reduce((acc, r) => acc + (r.end - r.start + 1), 0);
+  (mentionsToRemove: Mention[]) => {
+    setMentions((prev) => {
+      // must match their actual order in the text
+      const removed = [...mentionsToRemove].sort((a, b) => a.start - b.start);
 
-              return {
-                ...mention,
-                start: mention.start - shift,
-                end: mention.end - shift,
-              };
-            });
+      let newTextLengthDelta = 0;
+      const newMentions = prev
+        .filter((mention) => {
+          const isRemoved = removed.some((m) => m.value === mention.value);
+          if (isRemoved) {
+            newTextLengthDelta += mention.end - mention.start + 1;
+          }
+          return !isRemoved;
+        })
+        .map((mention) => {
+          // Shift mentions
+          const shift = removed
+            .filter((r) => r.start < mention.start)
+            .reduce((acc, r) => acc + (r.end - r.start + 1), 0);
 
-          return newMentions;
+          return {
+            ...mention,
+            start: mention.start - shift,
+            end: mention.end - shift,
+          };
         });
-      },
-      [],
-    );
+
+      return newMentions;
+    });
+  },
+  [],
+);
+
 
     return (
       <MentionProvider
