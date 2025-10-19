@@ -141,6 +141,27 @@ describe("useFilterStore", () => {
     expect(result.current.filterStore.groups?.has("expert")).toBe(false);
   });
 
+  it("handles group filtering when ref ids differ from item values", () => {
+    // Build itemMap with refs whose current.id != value
+    itemMap.clear();
+    const refA = { current: { id: "dom-1" } } as React.RefObject<HTMLElement>;
+    const refB = { current: { id: "dom-2" } } as React.RefObject<HTMLElement>;
+    itemMap.set(refA, { value: "Kickflip", ref: refA });
+    itemMap.set(refB, { value: "Heelflip", ref: refB });
+
+    // Group contains those refs
+    groupMap.clear();
+    groupMap.set("advanced", new Set([refA, refB]));
+
+    const { result } = renderHook(() => useFilterStore({ itemMap, groupMap }));
+
+    result.current.filterStore.search = "Kickflip";
+    result.current.onItemsFilter();
+
+    expect(result.current.filterStore.itemCount).toBe(1);
+    expect(result.current.filterStore.items.has("Kickflip")).toBe(true);
+  });
+
   it("respects manual filtering flag", () => {
     const { result } = renderHook(() =>
       useFilterStore({ itemMap, manualFiltering: true }),
