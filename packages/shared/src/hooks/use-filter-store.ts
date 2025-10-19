@@ -123,9 +123,11 @@ function useFilterStore<
       const matchingItems = new Set(filterStore.items.keys());
 
       for (const [groupId, group] of groupMap) {
-        const hasMatchingItem = Array.from(group).some((ref) =>
-          matchingItems.has(ref.current?.id ?? ""),
-        );
+        const hasMatchingItem = Array.from(group).some((ref) => {
+          const item = itemMap.get(ref as React.RefObject<TElement | null>);
+          const value = item?.value ?? "";
+          return matchingItems.has(value);
+        });
 
         if (hasMatchingItem) {
           filterStore.groups.set(groupId, new Set());
