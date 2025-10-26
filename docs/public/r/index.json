@@ -92,6 +92,108 @@
     ]
   },
   {
+    "name": "data-grid",
+    "type": "registry:ui",
+    "dependencies": [
+      "@tanstack/react-table",
+      "@tanstack/react-virtual",
+      "lucide-react",
+      "sonner"
+    ],
+    "registryDependencies": [
+      "badge",
+      "button",
+      "calendar",
+      "checkbox",
+      "command",
+      "dialog",
+      "dropdown-menu",
+      "input",
+      "kbd",
+      "popover",
+      "select",
+      "separator",
+      "sortable",
+      "textarea",
+      "tooltip"
+    ],
+    "files": [
+      {
+        "path": "ui/data-grid.tsx",
+        "type": "registry:ui"
+      },
+      {
+        "path": "components/data-grid/data-grid-cell.tsx",
+        "type": "registry:component"
+      },
+      {
+        "path": "components/data-grid/data-grid-cell-wrapper.tsx",
+        "type": "registry:component"
+      },
+      {
+        "path": "components/data-grid/data-grid-cell-variants.tsx",
+        "type": "registry:component"
+      },
+      {
+        "path": "components/data-grid/data-grid-column-header.tsx",
+        "type": "registry:component"
+      },
+      {
+        "path": "components/data-grid/data-grid-context-menu.tsx",
+        "type": "registry:component"
+      },
+      {
+        "path": "components/data-grid/data-grid-keyboard-shortcuts.tsx",
+        "type": "registry:component"
+      },
+      {
+        "path": "components/data-grid/data-grid-row.tsx",
+        "type": "registry:component"
+      },
+      {
+        "path": "components/data-grid/data-grid-row-height-menu.tsx",
+        "type": "registry:component"
+      },
+      {
+        "path": "components/data-grid/data-grid-search.tsx",
+        "type": "registry:component"
+      },
+      {
+        "path": "components/data-grid/data-grid-sort-menu.tsx",
+        "type": "registry:component"
+      },
+      {
+        "path": "components/data-grid/data-grid-view-menu.tsx",
+        "type": "registry:component"
+      },
+      {
+        "path": "hooks/use-callback-ref.ts",
+        "type": "registry:hook"
+      },
+      {
+        "path": "hooks/use-data-grid.tsx",
+        "type": "registry:hook"
+      },
+      {
+        "path": "hooks/use-debounced-callback.ts",
+        "type": "registry:hook"
+      },
+      {
+        "path": "lib/compose-refs.ts",
+        "type": "registry:lib"
+      },
+      {
+        "path": "lib/data-grid.ts",
+        "type": "registry:lib"
+      },
+      {
+        "path": "types/data-grid.ts",
+        "type": "registry:file",
+        "target": "types/data-grid.ts"
+      }
+    ]
+  },
+  {
     "name": "color-swatch",
     "type": "registry:ui",
     "dependencies": [

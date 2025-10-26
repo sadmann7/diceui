@@ -380,6 +380,18 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "data-grid-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react", "sonner"],
+    registryDependencies: ["data-grid"],
+    files: [
+      {
+        path: "examples/data-grid-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "data-table-demo",
     type: "registry:example",
     dependencies: ["lucide-react"],
