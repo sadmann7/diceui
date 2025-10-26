@@ -7,7 +7,7 @@ links:
   api: /docs/components/data-grid#api-reference
 ---
 
-{/* ComponentTabs will be available once the data-grid component is installed */}
+<ComponentTabs name="data-grid-demo" align="start" className="p-4" />
 
 ## Installation
 
@@ -16,14 +16,7 @@ links:
     Install the components and dependencies:
 
     ```package-install
-    npx shadcn@latest add "https://diceui.com/r/data-grid"
-    ```
-  </Step>
-  <Step>
-    Install additional dependencies for virtualization and notifications:
-
-    ```bash
-    npm install @tanstack/react-virtual sonner
+    npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-grid"
     ```
   </Step>
 </Steps>
@@ -45,6 +38,8 @@ The Data Grid component provides a comprehensive spreadsheet-like experience wit
 ## Basic Usage
 
 ```tsx
+import type { ColumnDef } from "@tanstack/react-table";
+import * as React from "react";
 import { DataGrid } from "@/components/data-grid/data-grid";
 import { useDataGrid } from "@/hooks/use-data-grid";
 
@@ -68,68 +63,66 @@ const data: Person[] = [
 ];
 
 export default function DataGridDemo() {
-  const columns = React.useMemo(() => [
+  const [gridData, setGridData] = React.useState<Person[]>(data);
+
+  const columns = React.useMemo<ColumnDef<Person>[]>(() => [
     {
       id: "name",
       accessorKey: "name",
       header: "Name",
-      cell: "text",
       meta: {
-        editable: true,
-        required: true,
+        label: "Name",
+        cell: {
+          variant: "short-text",
+        },
       },
     },
     {
       id: "email",
       accessorKey: "email",
       header: "Email",
-      cell: "text",
       meta: {
-        editable: true,
-        type: "email",
+        label: "Email",
+        cell: {
+          variant: "short-text",
+        },
       },
     },
     {
       id: "age",
       accessorKey: "age",
       header: "Age",
-      cell: "number",
       meta: {
-        editable: true,
-        min: 0,
-        max: 120,
+        label: "Age",
+        cell: {
+          variant: "number",
+          min: 0,
+          max: 120,
+        },
       },
     },
     {
       id: "status",
       accessorKey: "status",
       header: "Status",
-      cell: "select",
       meta: {
-        editable: true,
-        options: [
-          { label: "Active", value: "active" },
-          { label: "Inactive", value: "inactive" },
-        ],
+        label: "Status",
+        cell: {
+          variant: "select",
+          options: [
+            { label: "Active", value: "active" },
+            { label: "Inactive", value: "inactive" },
+          ],
+        },
       },
     },
   ], []);
 
   const { table, ...gridProps } = useDataGrid({
-    data,
+    data: gridData,
     columns,
-    onCellEdit: (rowId, columnId, value) => {
-      // Handle cell edits
-      console.log("Cell edited:", { rowId, columnId, value });
-    },
-    onRowAdd: () => {
-      // Handle adding new rows
-      console.log("Add new row");
-    },
-    onRowDelete: (rowIds) => {
-      // Handle row deletion
-      console.log("Delete rows:", rowIds);
-    },
+    onDataChange: setGridData,
+    getRowId: (row) => row.id,
   });
 
   return (
@@ -140,21 +133,81 @@ export default function DataGridDemo() {
 }
 ```
 
+## Sort Menu
+
+The [`DataGridSortMenu`](#datagridsortmenu) provides sorting capabilities with drag-and-drop reordering.
+
+### Features
+- Multiple column sorting
+- Drag and drop reordering
+- Ascending and descending directions
+
+### Installation
+
+```package-install
+npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-grid-sort-menu"
+```
+
+## Row Height Menu
+
+The [`DataGridRowHeightMenu`](#datagridrowheightmenu) allows users to adjust row heights for better data visibility.
+
+### Features
+- Multiple row height options (short, medium, tall, extra-tall)
+- Persistent height settings
+- Smooth transitions
+
+### Installation
+
+```package-install
+npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-grid-row-height-menu"
+```
+
+## View Menu
+
+The [`DataGridViewMenu`](#datagridviewmenu) provides column visibility controls.
+
+### Features
+- Toggle column visibility
+- Show/hide all columns
+- Column search and filtering
+
+### Installation
+
+```package-install
+npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-grid-view-menu"
+```
+
 ## Cell Types
 
 The Data Grid supports various cell types for different data formats:
 
-### Text Cell
+### Short Text Cell
 ```tsx
 {
   id: "name",
   accessorKey: "name",
   header: "Name",
-  cell: "text",
   meta: {
-    editable: true,
-    placeholder: "Enter name...",
-    maxLength: 100,
+    label: "Name",
+    cell: {
+      variant: "short-text",
+    },
+  },
+}
+```
+
+### Long Text Cell
+```tsx
+{
+  id: "notes",
+  accessorKey: "notes",
+  header: "Notes",
+  meta: {
+    label: "Notes",
+    cell: {
+      variant: "long-text",
+    },
   },
 }
 ```
@@ -165,12 +218,13 @@ The Data Grid supports various cell types for different data formats:
   id: "price",
   accessorKey: "price",
   header: "Price",
-  cell: "number",
   meta: {
-    editable: true,
-    min: 0,
-    step: 0.01,
-    format: "currency",
+    label: "Price",
+    cell: {
+      variant: "number",
+      min: 0,
+      step: 0.01,
+    },
   },
 }
 ```
@@ -181,14 +235,36 @@ The Data Grid supports various cell types for different data formats:
   id: "category",
   accessorKey: "category",
   header: "Category",
-  cell: "select",
   meta: {
-    editable: true,
-    options: [
-      { label: "Electronics", value: "electronics" },
-      { label: "Clothing", value: "clothing" },
-      { label: "Books", value: "books" },
-    ],
+    label: "Category",
+    cell: {
+      variant: "select",
+      options: [
+        { label: "Electronics", value: "electronics" },
+        { label: "Clothing", value: "clothing" },
+        { label: "Books", value: "books" },
+      ],
+    },
+  },
+}
+```
+
+### Multi-Select Cell
+```tsx
+{
+  id: "skills",
+  accessorKey: "skills",
+  header: "Skills",
+  meta: {
+    label: "Skills",
+    cell: {
+      variant: "multi-select",
+      options: [
+        { label: "JavaScript", value: "javascript" },
+        { label: "TypeScript", value: "typescript" },
+        { label: "React", value: "react" },
+      ],
+    },
   },
 }
 ```
@@ -196,28 +272,107 @@ The Data Grid supports various cell types for different data formats:
 ### Date Cell
 ```tsx
 {
-  id: "createdAt",
-  accessorKey: "createdAt",
-  header: "Created At",
-  cell: "date",
+  id: "startDate",
+  accessorKey: "startDate",
+  header: "Start Date",
   meta: {
-    editable: true,
-    format: "MM/dd/yyyy",
+    label: "Start Date",
+    cell: {
+      variant: "date",
+    },
   },
 }
 ```
 
-### Boolean Cell
+### Checkbox Cell
 ```tsx
 {
-  id: "active",
-  accessorKey: "active",
+  id: "isActive",
+  accessorKey: "isActive",
   header: "Active",
-  cell: "boolean",
   meta: {
-    editable: true,
+    label: "Active",
+    cell: {
+      variant: "checkbox",
+    },
   },
 }
+```
+
+## Additional Components
+
+The Data Grid comes with additional components for enhanced functionality:
+
+### Row Selection
+```tsx
+import { Checkbox } from "@/components/ui/checkbox";
+
+// Add to your columns array
+{
+  id: "select",
+  header: ({ table }) => (
+    <Checkbox
+      checked={
+        table.getIsAllPageRowsSelected() ||
+        (table.getIsSomePageRowsSelected() && "indeterminate")
+      }
+      onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+    />
+  ),
+  cell: ({ row }) => (
+    <Checkbox
+      checked={row.getIsSelected()}
+      onCheckedChange={(value) => row.toggleSelected(!!value)}
+    />
+  ),
+  size: 40,
+  enableSorting: false,
+  enableHiding: false,
+}
+```
+
+### Toolbar Components
+```tsx
+import { DataGridSortMenu } from "@/components/data-grid/data-grid-sort-menu";
+import { DataGridRowHeightMenu } from "@/components/data-grid/data-grid-row-height-menu";
+import { DataGridViewMenu } from "@/components/data-grid/data-grid-view-menu";
+
+<div className="flex items-center gap-2">
+  <DataGridSortMenu table={table} />
+  <DataGridRowHeightMenu table={table} />
+  <DataGridViewMenu table={table} />
+</div>
+```
+
+### Search Functionality
+```tsx
+const { table, ...gridProps } = useDataGrid({
+  data,
+  columns,
+  enableSearch: true, // Enables Ctrl+F search
+});
+```
+
+### Row Management
+```tsx
+const onRowAdd = React.useCallback(() => {
+  const newRow = {
+    id: `${Date.now()}`,
+    // ... other default values
+  };
+  setData(prev => [...prev, newRow]);
+  
+  return {
+    rowIndex: data.length,
+    columnId: "name", // Focus this column after adding
+  };
+}, [data.length]);
+
+<DataGrid 
+  table={table} 
+  {...gridProps} 
+  onRowAdd={onRowAdd}
+/>
 ```
 
 ## Keyboard Shortcuts
@@ -227,7 +382,7 @@ The Data Grid supports Excel-like keyboard navigation:
 <KeyboardShortcutsTable
   shortcuts={[
     {
-      keys: ["Arrow Keys"],
+      keys: ["↑", "↓", "←", "→"],
       description: "Navigate between cells",
     },
     {
@@ -243,15 +398,15 @@ The Data Grid supports Excel-like keyboard navigation:
       description: "Move to next cell (right)",
     },
     {
-      keys: ["Shift + Tab"],
+      keys: ["Shift", "Tab"],
       description: "Move to previous cell (left)",
     },
     {
-      keys: ["Ctrl + C"],
+      keys: ["Ctrl", "C"],
       description: "Copy selected cells",
     },
     {
-      keys: ["Ctrl + V"],
+      keys: ["Ctrl", "V"],
       description: "Paste clipboard content",
     },
     {
@@ -263,16 +418,20 @@ The Data Grid supports Excel-like keyboard navigation:
       description: "Enter edit mode for current cell",
     },
     {
-      keys: ["Ctrl + A"],
+      keys: ["Ctrl", "A"],
       description: "Select all cells",
     },
     {
-      keys: ["Ctrl + Z"],
+      keys: ["Ctrl", "Z"],
       description: "Undo last action",
     },
     {
-      keys: ["Ctrl + Y"],
+      keys: ["Ctrl", "Y"],
       description: "Redo last action",
+    },
+    {
+      keys: ["Ctrl", "F"],
+      description: "Open search dialog",
     },
   ]}
 />
@@ -294,57 +453,64 @@ Right-click on cells or rows to access context menu options:
 
 A hook for initializing the data grid with state management and editing capabilities.
 
-```tsx
-interface UseDataGridProps<T> {
-  data: T[];
-  columns: ColumnDef<T>[];
-  onCellEdit?: (rowId: string, columnId: string, value: any) => void;
-  onRowAdd?: () => void;
-  onRowDelete?: (rowIds: string[]) => void;
-  onRowReorder?: (fromIndex: number, toIndex: number) => void;
-  enableVirtualization?: boolean;
-  enableKeyboardNavigation?: boolean;
-  enableContextMenu?: boolean;
-  rowHeight?: number;
-  overscan?: number;
-}
-```
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="UseDataGridProps"
+/>
 
 ### DataGrid
 
 The main data grid component with virtualization and editing capabilities.
 
-```tsx
-interface DataGridProps<T> {
-  table: Table<T>;
-  height?: number;
-  width?: number;
-  className?: string;
-  onCellClick?: (cell: Cell<T, unknown>) => void;
-  onCellDoubleClick?: (cell: Cell<T, unknown>) => void;
-  onSelectionChange?: (selection: GridSelection) => void;
-}
-```
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridProps"
+/>
 
-### Column Definition
+### DataGridColumnHeader
 
-Extended column definition with grid-specific metadata.
+Custom header component for columns with sorting and context menu.
 
-```tsx
-interface GridColumnMeta {
-  editable?: boolean;
-  required?: boolean;
-  placeholder?: string;
-  validation?: (value: any) => string | null;
-  format?: string;
-  options?: Array<{ label: string; value: any }>;
-  min?: number;
-  max?: number;
-  step?: number;
-  maxLength?: number;
-  type?: "text" | "email" | "url" | "tel";
-}
-```
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridColumnHeaderProps"
+/>
+
+### DataGridCell
+
+Individual cell component with editing capabilities.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridCellProps"
+/>
+
+### DataGridRow
+
+Row component that renders virtualized rows.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridRowProps"
+/>
+
+### DataGridSearch
+
+Search component with keyboard shortcuts and navigation.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridSearchProps"
+/>
+
+### DataGridContextMenu
+
+Context menu component for row and cell actions.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridContextMenuProps"
+/>
 
 ## Performance Considerations
 
@@ -366,19 +532,23 @@ The Data Grid follows WAI-ARIA guidelines for grid widgets:
 ## Examples
 
 ### Basic Editable Grid
-A simple grid with text and number editing.
 
-### Advanced Grid with Validation
-Grid with custom validation rules and error handling.
+A simple grid with text and select cell editing capabilities.
 
-### Server-Side Integration
-Grid connected to a backend API with real-time updates.
+<ComponentTabs name="data-grid-basic-demo" align="start" className="p-4" />
+
+### Advanced Grid with Multiple Cell Types
+
+A comprehensive grid showcasing various cell types including text, number, select, checkbox, and date cells.
+
+<ComponentTabs name="data-grid-advanced-demo" align="start" className="p-4" />
 
 ### Custom Cell Renderers
-Grid with custom cell components for complex data types.
+
+For more complex use cases, you can create custom cell renderers by extending the cell variants or creating completely custom components.
 
 ## Credits
 
 - Built on top of [TanStack Table](https://tanstack.com/table) for table state management
 - Uses [TanStack Virtual](https://tanstack.com/virtual) for virtualization
-- Inspired by modern spreadsheet applications like Google Sheets and Excel
+- Inspired by modern spreadsheet applications like Airtable and Notion
