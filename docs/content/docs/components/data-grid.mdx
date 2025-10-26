@@ -1,0 +1,384 @@
+---
+title: Data Grid
+description: A high-performance editable data grid component with virtualization, keyboard navigation, and cell editing capabilities.
+preview: true
+links:
+  doc: https://tanstack.com/table/latest/docs/introduction
+  api: /docs/components/data-grid#api-reference
+---
+
+{/* ComponentTabs will be available once the data-grid component is installed */}
+
+## Installation
+
+<Steps>
+  <Step>
+    Install the components and dependencies:
+
+    ```package-install
+    npx shadcn@latest add "https://diceui.com/r/data-grid"
+    ```
+  </Step>
+  <Step>
+    Install additional dependencies for virtualization and notifications:
+
+    ```bash
+    npm install @tanstack/react-virtual sonner
+    ```
+  </Step>
+</Steps>
+
+## Features
+
+The Data Grid component provides a comprehensive spreadsheet-like experience with:
+
+- **High Performance**: Virtualized rows and columns for handling large datasets
+- **Cell Editing**: In-place editing with various cell types (text, number, select, date, etc.)
+- **Keyboard Navigation**: Full keyboard support with Excel-like shortcuts
+- **Context Menu**: Right-click actions for rows and cells
+- **Sorting & Filtering**: Built-in sorting and search capabilities
+- **Row Management**: Add, delete, and reorder rows
+- **Column Resizing**: Adjustable column widths
+- **Selection**: Single and multi-cell selection
+- **Copy/Paste**: Clipboard operations support
+
+## Basic Usage
+
+```tsx
+import { DataGrid } from "@/components/data-grid/data-grid";
+import { useDataGrid } from "@/hooks/use-data-grid";
+
+interface Person {
+  id: string;
+  name: string;
+  email: string;
+  age: number;
+  status: "active" | "inactive";
+}
+
+const data: Person[] = [
+  {
+    id: "1",
+    name: "John Doe",
+    email: "john@example.com",
+    age: 30,
+    status: "active",
+  },
+  // ... more data
+];
+
+export default function DataGridDemo() {
+  const columns = React.useMemo(() => [
+    {
+      id: "name",
+      accessorKey: "name",
+      header: "Name",
+      cell: "text",
+      meta: {
+        editable: true,
+        required: true,
+      },
+    },
+    {
+      id: "email",
+      accessorKey: "email",
+      header: "Email",
+      cell: "text",
+      meta: {
+        editable: true,
+        type: "email",
+      },
+    },
+    {
+      id: "age",
+      accessorKey: "age",
+      header: "Age",
+      cell: "number",
+      meta: {
+        editable: true,
+        min: 0,
+        max: 120,
+      },
+    },
+    {
+      id: "status",
+      accessorKey: "status",
+      header: "Status",
+      cell: "select",
+      meta: {
+        editable: true,
+        options: [
+          { label: "Active", value: "active" },
+          { label: "Inactive", value: "inactive" },
+        ],
+      },
+    },
+  ], []);
+
+  const { table, ...gridProps } = useDataGrid({
+    data,
+    columns,
+    onCellEdit: (rowId, columnId, value) => {
+      // Handle cell edits
+      console.log("Cell edited:", { rowId, columnId, value });
+    },
+    onRowAdd: () => {
+      // Handle adding new rows
+      console.log("Add new row");
+    },
+    onRowDelete: (rowIds) => {
+      // Handle row deletion
+      console.log("Delete rows:", rowIds);
+    },
+  });
+
+  return (
+    <div className="h-[600px] w-full">
+      <DataGrid table={table} {...gridProps} />
+    </div>
+  );
+}
+```
+
+## Cell Types
+
+The Data Grid supports various cell types for different data formats:
+
+### Text Cell
+```tsx
+{
+  id: "name",
+  accessorKey: "name",
+  header: "Name",
+  cell: "text",
+  meta: {
+    editable: true,
+    placeholder: "Enter name...",
+    maxLength: 100,
+  },
+}
+```
+
+### Number Cell
+```tsx
+{
+  id: "price",
+  accessorKey: "price",
+  header: "Price",
+  cell: "number",
+  meta: {
+    editable: true,
+    min: 0,
+    step: 0.01,
+    format: "currency",
+  },
+}
+```
+
+### Select Cell
+```tsx
+{
+  id: "category",
+  accessorKey: "category",
+  header: "Category",
+  cell: "select",
+  meta: {
+    editable: true,
+    options: [
+      { label: "Electronics", value: "electronics" },
+      { label: "Clothing", value: "clothing" },
+      { label: "Books", value: "books" },
+    ],
+  },
+}
+```
+
+### Date Cell
+```tsx
+{
+  id: "createdAt",
+  accessorKey: "createdAt",
+  header: "Created At",
+  cell: "date",
+  meta: {
+    editable: true,
+    format: "MM/dd/yyyy",
+  },
+}
+```
+
+### Boolean Cell
+```tsx
+{
+  id: "active",
+  accessorKey: "active",
+  header: "Active",
+  cell: "boolean",
+  meta: {
+    editable: true,
+  },
+}
+```
+
+## Keyboard Shortcuts
+
+The Data Grid supports Excel-like keyboard navigation:
+
+<KeyboardShortcutsTable
+  shortcuts={[
+    {
+      keys: ["Arrow Keys"],
+      description: "Navigate between cells",
+    },
+    {
+      keys: ["Enter"],
+      description: "Enter edit mode or confirm edit",
+    },
+    {
+      keys: ["Escape"],
+      description: "Cancel edit or exit edit mode",
+    },
+    {
+      keys: ["Tab"],
+      description: "Move to next cell (right)",
+    },
+    {
+      keys: ["Shift + Tab"],
+      description: "Move to previous cell (left)",
+    },
+    {
+      keys: ["Ctrl + C"],
+      description: "Copy selected cells",
+    },
+    {
+      keys: ["Ctrl + V"],
+      description: "Paste clipboard content",
+    },
+    {
+      keys: ["Delete"],
+      description: "Clear cell content or delete selected rows",
+    },
+    {
+      keys: ["F2"],
+      description: "Enter edit mode for current cell",
+    },
+    {
+      keys: ["Ctrl + A"],
+      description: "Select all cells",
+    },
+    {
+      keys: ["Ctrl + Z"],
+      description: "Undo last action",
+    },
+    {
+      keys: ["Ctrl + Y"],
+      description: "Redo last action",
+    },
+  ]}
+/>
+
+## Context Menu Actions
+
+Right-click on cells or rows to access context menu options:
+
+- **Insert Row Above/Below**: Add new rows
+- **Delete Row(s)**: Remove selected rows
+- **Copy/Cut/Paste**: Clipboard operations
+- **Sort Ascending/Descending**: Sort by column
+- **Filter**: Apply column filters
+- **Hide Column**: Toggle column visibility
+
+## API Reference
+
+### useDataGrid
+
+A hook for initializing the data grid with state management and editing capabilities.
+
+```tsx
+interface UseDataGridProps<T> {
+  data: T[];
+  columns: ColumnDef<T>[];
+  onCellEdit?: (rowId: string, columnId: string, value: any) => void;
+  onRowAdd?: () => void;
+  onRowDelete?: (rowIds: string[]) => void;
+  onRowReorder?: (fromIndex: number, toIndex: number) => void;
+  enableVirtualization?: boolean;
+  enableKeyboardNavigation?: boolean;
+  enableContextMenu?: boolean;
+  rowHeight?: number;
+  overscan?: number;
+}
+```
+
+### DataGrid
+
+The main data grid component with virtualization and editing capabilities.
+
+```tsx
+interface DataGridProps<T> {
+  table: Table<T>;
+  height?: number;
+  width?: number;
+  className?: string;
+  onCellClick?: (cell: Cell<T, unknown>) => void;
+  onCellDoubleClick?: (cell: Cell<T, unknown>) => void;
+  onSelectionChange?: (selection: GridSelection) => void;
+}
+```
+
+### Column Definition
+
+Extended column definition with grid-specific metadata.
+
+```tsx
+interface GridColumnMeta {
+  editable?: boolean;
+  required?: boolean;
+  placeholder?: string;
+  validation?: (value: any) => string | null;
+  format?: string;
+  options?: Array<{ label: string; value: any }>;
+  min?: number;
+  max?: number;
+  step?: number;
+  maxLength?: number;
+  type?: "text" | "email" | "url" | "tel";
+}
+```
+
+## Performance Considerations
+
+- **Virtualization**: Only visible rows and columns are rendered
+- **Debounced Updates**: Cell edits are debounced to prevent excessive re-renders
+- **Memoization**: Column definitions and data should be memoized
+- **Lazy Loading**: Consider implementing server-side pagination for large datasets
+
+## Accessibility
+
+The Data Grid follows WAI-ARIA guidelines for grid widgets:
+
+- Full keyboard navigation support
+- Screen reader announcements for cell changes
+- Focus management during editing
+- Proper ARIA labels and roles
+- High contrast mode support
+
+## Examples
+
+### Basic Editable Grid
+A simple grid with text and number editing.
+
+### Advanced Grid with Validation
+Grid with custom validation rules and error handling.
+
+### Server-Side Integration
+Grid connected to a backend API with real-time updates.
+
+### Custom Cell Renderers
+Grid with custom cell components for complex data types.
+
+## Credits
+
+- Built on top of [TanStack Table](https://tanstack.com/table) for table state management
+- Uses [TanStack Virtual](https://tanstack.com/virtual) for virtualization
+- Inspired by modern spreadsheet applications like Google Sheets and Excel
