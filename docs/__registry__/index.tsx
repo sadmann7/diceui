@@ -945,6 +945,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "data-grid-demo": {
+      name: "data-grid-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["data-grid"],
+      files: [{
+        path: "registry/default/examples/data-grid-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/data-grid-demo.tsx")),
+      source: "",
+      chunks: []
+    },
     "data-table-demo": {
       name: "data-table-demo",
       description: "",
