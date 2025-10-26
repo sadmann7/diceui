@@ -388,6 +388,7 @@ export const examples: Registry["items"] = [
       "lucide-react",
       "sonner",
     ],
+    devDependencies: ["@faker-js/faker"],
     registryDependencies: ["data-grid"],
     files: [
       {

@@ -80,6 +80,7 @@
     "zod": "^4.1.5"
   },
   "devDependencies": {
+    "@faker-js/faker": "^10.1.0",
     "@tailwindcss/postcss": "^4.1.12",
     "@types/mdx": "^2.0.13",
     "@types/qrcode": "^1.5.5",
