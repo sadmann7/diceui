@@ -44,8 +44,8 @@ import {
 export default function PlaygroundPage() {
   return (
     <Shell>
-      <DataGridDemo />
       <Demo>
+        <DataGridDemo />
         <MaskInputDemo />
         <ColorPickerDemo />
       </Demo>
