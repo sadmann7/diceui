@@ -1,5 +1,14 @@
 # @diceui/combobox
 
+## 1.2.2
+
+### Patch Changes
+
+- a3914b7: # Update combobox and mention components
+
+  - Fix combobox filtering and selection behavior (#148)
+  - Improve mention removal logic with proper position shifting (#147)
+
 ## 1.2.1
 
 ### Patch Changes
