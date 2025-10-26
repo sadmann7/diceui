@@ -326,8 +326,8 @@ export default function DataGridDemo() {
   }, [data.length]);
 
   const { table, ...gridProps } = useDataGrid({
-    data,
     columns,
+    data,
     onDataChange: setData,
   });
 
