@@ -1,5 +1,14 @@
 # @diceui/combobox
 
+## 1.2.1
+
+### Patch Changes
+
+- Fix unused variable and improve code quality
+
+  - Remove unused `newTextLengthDelta` variable in mention component
+  - Clean up code in mention root component
+
 ## 1.2.0
 
 ### Minor Changes

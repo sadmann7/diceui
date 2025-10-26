@@ -325,15 +325,13 @@ const MentionRoot = React.forwardRef<RootElement, MentionRootProps>(
       (mentionsToRemove: Mention[]) => {
         setMentions((prev) => {
           // must match their actual order in the text
-          const removed = [...mentionsToRemove].sort((a, b) => a.start - b.start);
+          const removed = [...mentionsToRemove].sort(
+            (a, b) => a.start - b.start,
+          );
 
-          let newTextLengthDelta = 0;
           const newMentions = prev
             .filter((mention) => {
               const isRemoved = removed.some((m) => m.value === mention.value);
-              if (isRemoved) {
-                newTextLengthDelta += mention.end - mention.start + 1;
-              }
               return !isRemoved;
             })
             .map((mention) => {
@@ -354,7 +352,6 @@ const MentionRoot = React.forwardRef<RootElement, MentionRootProps>(
       },
       [],
     );
-
 
     return (
       <MentionProvider
