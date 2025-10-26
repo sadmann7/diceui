@@ -1,5 +1,14 @@
 # @diceui/mention
 
+## 0.7.3
+
+### Patch Changes
+
+- a3914b7: # Update combobox and mention components
+
+  - Fix combobox filtering and selection behavior (#148)
+  - Improve mention removal logic with proper position shifting (#147)
+
 ## 0.7.2
 
 ### Patch Changes
