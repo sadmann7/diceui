@@ -95,88 +95,6 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "data-grid": {
-      name: "data-grid",
-      description: "",
-      type: "registry:ui",
-      registryDependencies: ["badge","button","calendar","checkbox","command","dialog","dropdown-menu","input","kbd","popover","select","separator","sortable","textarea","tooltip"],
-      files: [{
-        path: "registry/default/ui/data-grid.tsx",
-        type: "registry:ui",
-        target: ""
-      },{
-        path: "registry/default/components/data-grid/data-grid-cell.tsx",
-        type: "registry:component",
-        target: ""
-      },{
-        path: "registry/default/components/data-grid/data-grid-cell-wrapper.tsx",
-        type: "registry:component",
-        target: ""
-      },{
-        path: "registry/default/components/data-grid/data-grid-cell-variants.tsx",
-        type: "registry:component",
-        target: ""
-      },{
-        path: "registry/default/components/data-grid/data-grid-column-header.tsx",
-        type: "registry:component",
-        target: ""
-      },{
-        path: "registry/default/components/data-grid/data-grid-context-menu.tsx",
-        type: "registry:component",
-        target: ""
-      },{
-        path: "registry/default/components/data-grid/data-grid-keyboard-shortcuts.tsx",
-        type: "registry:component",
-        target: ""
-      },{
-        path: "registry/default/components/data-grid/data-grid-row.tsx",
-        type: "registry:component",
-        target: ""
-      },{
-        path: "registry/default/components/data-grid/data-grid-row-height-menu.tsx",
-        type: "registry:component",
-        target: ""
-      },{
-        path: "registry/default/components/data-grid/data-grid-search.tsx",
-        type: "registry:component",
-        target: ""
-      },{
-        path: "registry/default/components/data-grid/data-grid-sort-menu.tsx",
-        type: "registry:component",
-        target: ""
-      },{
-        path: "registry/default/components/data-grid/data-grid-view-menu.tsx",
-        type: "registry:component",
-        target: ""
-      },{
-        path: "registry/default/hooks/use-callback-ref.ts",
-        type: "registry:hook",
-        target: ""
-      },{
-        path: "registry/default/hooks/use-data-grid.tsx",
-        type: "registry:hook",
-        target: ""
-      },{
-        path: "registry/default/hooks/use-debounced-callback.ts",
-        type: "registry:hook",
-        target: ""
-      },{
-        path: "registry/default/lib/compose-refs.ts",
-        type: "registry:lib",
-        target: ""
-      },{
-        path: "registry/default/lib/data-grid.ts",
-        type: "registry:lib",
-        target: ""
-      },{
-        path: "registry/default/types/data-grid.ts",
-        type: "registry:file",
-        target: "types/data-grid.ts"
-      }],
-      component: React.lazy(() => import("@/registry/default/ui/data-grid.tsx")),
-      source: "",
-      chunks: []
-    },
     "color-swatch": {
       name: "color-swatch",
       description: "",
@@ -1024,20 +942,6 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/cropper-video-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "data-grid-demo": {
-      name: "data-grid-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["data-grid"],
-      files: [{
-        path: "registry/default/examples/data-grid-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/data-grid-demo.tsx")),
       source: "",
       chunks: []
     },
