@@ -1,229 +1,337 @@
 "use client";
 
+import { faker } from "@faker-js/faker";
+import type { ColumnDef } from "@tanstack/react-table";
 import * as React from "react";
 import { DataGrid } from "@/components/data-grid/data-grid";
 import { useDataGrid } from "@/hooks/use-data-grid";
 
-interface Person {
+interface SkateTrick {
   id: string;
-  name: string;
-  email: string;
-  age: number;
-  status: "active" | "inactive";
-  salary: number;
-  department: string;
-  startDate: string;
-  isManager: boolean;
+  trickName?: string;
+  skaterName?: string;
+  difficulty?: "beginner" | "intermediate" | "advanced" | "expert";
+  variant?: "flip" | "grind" | "grab" | "transition" | "manual" | "slide";
+  landed?: boolean;
+  attempts?: number;
+  bestScore?: number;
+  location?: string;
+  dateAttempted?: string;
 }
 
-const initialData: Person[] = [
-  {
-    id: "1",
-    name: "John Doe",
-    email: "john@example.com",
-    age: 30,
-    status: "active",
-    salary: 75000,
-    department: "Engineering",
-    startDate: "2022-01-15",
-    isManager: false,
-  },
-  {
-    id: "2",
-    name: "Jane Smith",
-    email: "jane@example.com",
-    age: 28,
-    status: "active",
-    salary: 82000,
-    department: "Design",
-    startDate: "2021-06-10",
-    isManager: true,
-  },
-  {
-    id: "3",
-    name: "Bob Johnson",
-    email: "bob@example.com",
-    age: 35,
-    status: "inactive",
-    salary: 68000,
-    department: "Marketing",
-    startDate: "2020-03-22",
-    isManager: false,
-  },
-  {
-    id: "4",
-    name: "Alice Brown",
-    email: "alice@example.com",
-    age: 32,
-    status: "active",
-    salary: 90000,
-    department: "Engineering",
-    startDate: "2019-11-08",
-    isManager: true,
-  },
-  {
-    id: "5",
-    name: "Charlie Wilson",
-    email: "charlie@example.com",
-    age: 26,
-    status: "active",
-    salary: 65000,
-    department: "Sales",
-    startDate: "2023-02-14",
-    isManager: false,
-  },
-];
+const skateSpots = [
+  "Venice Beach Skate Park",
+  "Burnside Skate Park",
+  "Love Park (Philadelphia)",
+  "MACBA (Barcelona)",
+  "Southbank (London)",
+  "FDR Skate Park",
+  "Brooklyn Banks",
+  "El Toro High School",
+  "Hubba Hideout",
+  "Wallenberg High School",
+  "EMB (Embarcadero)",
+  "Pier 7 (San Francisco)",
+] as const;
+
+const skateTricks = {
+  flip: [
+    "Kickflip",
+    "Heelflip",
+    "Tre Flip",
+    "Hardflip",
+    "Inward Heelflip",
+    "Frontside Flip",
+    "Backside Flip",
+    "Varial Flip",
+    "Varial Heelflip",
+    "Double Flip",
+    "Laser Flip",
+    "Anti-Casper Flip",
+    "Casper Flip",
+    "Impossible",
+    "360 Flip",
+    "Big Spin",
+    "Bigspin Flip",
+  ],
+  grind: [
+    "50-50 Grind",
+    "5-0 Grind",
+    "Nosegrind",
+    "Crooked Grind",
+    "Feeble Grind",
+    "Smith Grind",
+    "Lipslide",
+    "Boardslide",
+    "Tailslide",
+    "Noseslide",
+    "Bluntslide",
+    "Nollie Backside Lipslide",
+    "Switch Frontside Boardslide",
+  ],
+  grab: [
+    "Indy Grab",
+    "Melon Grab",
+    "Stalefish",
+    "Tail Grab",
+    "Nose Grab",
+    "Method",
+    "Mute Grab",
+    "Crail Grab",
+    "Seatbelt Grab",
+    "Roast Beef",
+    "Chicken Wing",
+    "Tweaked Indy",
+    "Japan Air",
+  ],
+  transition: [
+    "Frontside Air",
+    "Backside Air",
+    "McTwist",
+    "540",
+    "720",
+    "900",
+    "Frontside 180",
+    "Backside 180",
+    "Frontside 360",
+    "Backside 360",
+    "Alley-Oop",
+    "Fakie",
+    "Revert",
+    "Carve",
+    "Pump",
+    "Drop In",
+  ],
+  manual: [
+    "Manual",
+    "Nose Manual",
+    "Casper",
+    "Rail Stand",
+    "Pogo",
+    "Handstand",
+    "One Foot Manual",
+    "Spacewalk",
+    "Truckstand",
+    "Primo",
+  ],
+  slide: [
+    "Powerslide",
+    "Bert Slide",
+    "Coleman Slide",
+    "Pendulum Slide",
+    "Stand-up Slide",
+    "Toeside Slide",
+    "Heelside Slide",
+  ],
+} as const;
+
+function generateTrickData(): SkateTrick[] {
+  return Array.from({ length: 30 }, () => {
+    const variant = faker.helpers.arrayElement(
+      Object.keys(skateTricks) as Array<keyof typeof skateTricks>,
+    );
+    const trickName = faker.helpers.arrayElement(skateTricks[variant]);
+    const skaterName = faker.person.fullName();
+    const attempts = faker.number.int({ min: 1, max: 50 });
+    const landed = faker.datatype.boolean(0.6);
+
+    const getDifficulty = (trick: string): SkateTrick["difficulty"] => {
+      const expertTricks = [
+        "Tre Flip",
+        "900",
+        "McTwist",
+        "Laser Flip",
+        "Impossible",
+      ];
+      const advancedTricks = [
+        "Hardflip",
+        "720",
+        "540",
+        "Crooked Grind",
+        "Switch Frontside Boardslide",
+      ];
+      const intermediateTricks = [
+        "Kickflip",
+        "Heelflip",
+        "Frontside 180",
+        "50-50 Grind",
+        "Boardslide",
+      ];
+
+      if (expertTricks.some((t) => trick.includes(t))) return "expert";
+      if (advancedTricks.some((t) => trick.includes(t))) return "advanced";
+      if (intermediateTricks.some((t) => trick.includes(t)))
+        return "intermediate";
+      return "beginner";
+    };
+
+    const difficulty = getDifficulty(trickName);
+
+    return {
+      id: faker.string.nanoid(),
+      trickName,
+      skaterName,
+      difficulty,
+      variant,
+      landed,
+      attempts,
+      bestScore: landed
+        ? faker.number.int({ min: 6, max: 10 })
+        : faker.number.int({ min: 1, max: 5 }),
+      location: faker.helpers.arrayElement(skateSpots),
+      dateAttempted:
+        faker.date
+          .between({
+            from: new Date(2023, 0, 1),
+            to: new Date(),
+          })
+          .toISOString()
+          .split("T")[0] ?? "",
+    };
+  });
+}
+
+const initialData: SkateTrick[] = generateTrickData();
 
 export default function DataGridDemo() {
-  const [data, setData] = React.useState<Person[]>(initialData);
+  const [data, setData] = React.useState<SkateTrick[]>(initialData);
 
-  const columns = React.useMemo(
+  const columns = React.useMemo<ColumnDef<SkateTrick>[]>(
     () => [
       {
-        id: "name",
-        accessorKey: "name",
-        header: "Name",
+        id: "trickName",
+        accessorKey: "trickName",
+        header: "Trick name",
         meta: {
-          label: "Name",
           cell: {
-            variant: "short-text" as const,
+            variant: "short-text",
           },
         },
-        size: 150,
+        minSize: 180,
       },
       {
-        id: "email",
-        accessorKey: "email",
-        header: "Email",
+        id: "skaterName",
+        accessorKey: "skaterName",
+        header: "Skater",
         meta: {
-          label: "Email",
           cell: {
-            variant: "short-text" as const,
+            variant: "short-text",
           },
         },
-        size: 200,
+        minSize: 150,
       },
       {
-        id: "age",
-        accessorKey: "age",
-        header: "Age",
+        id: "difficulty",
+        accessorKey: "difficulty",
+        header: "Difficulty",
         meta: {
-          label: "Age",
           cell: {
-            variant: "number" as const,
-            min: 18,
+            variant: "select",
+            options: [
+              { label: "Beginner", value: "beginner" },
+              { label: "Intermediate", value: "intermediate" },
+              { label: "Advanced", value: "advanced" },
+              { label: "Expert", value: "expert" },
+            ],
+          },
+        },
+        minSize: 120,
+      },
+      {
+        id: "variant",
+        accessorKey: "variant",
+        header: "Category",
+        meta: {
+          cell: {
+            variant: "select",
+            options: [
+              { label: "Flip", value: "flip" },
+              { label: "Grind", value: "grind" },
+              { label: "Grab", value: "grab" },
+              { label: "Transition", value: "transition" },
+              { label: "Manual", value: "manual" },
+              { label: "Slide", value: "slide" },
+            ],
+          },
+        },
+        minSize: 120,
+      },
+      {
+        id: "landed",
+        accessorKey: "landed",
+        header: "Landed",
+        meta: {
+          cell: {
+            variant: "checkbox",
+          },
+        },
+        minSize: 100,
+      },
+      {
+        id: "attempts",
+        accessorKey: "attempts",
+        header: "Attempts",
+        meta: {
+          cell: {
+            variant: "number",
+            min: 1,
             max: 100,
           },
         },
-        size: 80,
+        minSize: 100,
       },
       {
-        id: "status",
-        accessorKey: "status",
-        header: "Status",
+        id: "bestScore",
+        accessorKey: "bestScore",
+        header: "Score",
         meta: {
-          label: "Status",
           cell: {
-            variant: "select" as const,
-            options: [
-              { label: "Active", value: "active" },
-              { label: "Inactive", value: "inactive" },
-            ],
+            variant: "number",
+            min: 1,
+            max: 10,
           },
         },
-        size: 120,
+        minSize: 110,
       },
       {
-        id: "salary",
-        accessorKey: "salary",
-        header: "Salary",
+        id: "location",
+        accessorKey: "location",
+        header: "Location",
         meta: {
-          label: "Salary",
           cell: {
-            variant: "number" as const,
-            min: 0,
-            step: 1000,
+            variant: "select",
+            options: skateSpots.map((spot) => ({ label: spot, value: spot })),
           },
         },
-        size: 120,
+        minSize: 180,
       },
       {
-        id: "department",
-        accessorKey: "department",
-        header: "Department",
+        id: "dateAttempted",
+        accessorKey: "dateAttempted",
+        header: "Attempted at",
         meta: {
-          label: "Department",
           cell: {
-            variant: "select" as const,
-            options: [
-              { label: "Engineering", value: "Engineering" },
-              { label: "Design", value: "Design" },
-              { label: "Marketing", value: "Marketing" },
-              { label: "Sales", value: "Sales" },
-              { label: "HR", value: "HR" },
-            ],
+            variant: "date",
           },
         },
-        size: 140,
-      },
-      {
-        id: "startDate",
-        accessorKey: "startDate",
-        header: "Start Date",
-        meta: {
-          label: "Start Date",
-          cell: {
-            variant: "date" as const,
-          },
-        },
-        size: 130,
-      },
-      {
-        id: "isManager",
-        accessorKey: "isManager",
-        header: "Manager",
-        meta: {
-          label: "Is Manager",
-          cell: {
-            variant: "checkbox" as const,
-          },
-        },
-        size: 100,
+        minSize: 130,
       },
     ],
     [],
   );
 
-  const onDataChange = React.useCallback((newData: Person[]) => {
-    setData(newData);
-  }, []);
-
   const onRowAdd = React.useCallback(() => {
-    const newRow: Person = {
-      id: `${Date.now()}`,
-      name: "",
-      email: "",
-      age: 25,
-      status: "active",
-      salary: 50000,
-      department: "Engineering",
-      startDate: new Date().toISOString().split("T")[0] ?? "",
-      isManager: false,
-    };
-    setData((prev) => [...prev, newRow]);
-    return { rowIndex: data.length, columnId: "name" };
+    setData((prev) => [...prev, { id: faker.string.nanoid() }]);
+    return { rowIndex: data.length, columnId: "trickName" };
   }, [data.length]);
 
   const { table, ...gridProps } = useDataGrid({
     data,
     columns,
-    onDataChange,
-    initialState: {
-      sorting: [{ id: "name", desc: false }],
-    },
+    onDataChange: setData,
   });
 
   return (
-    <DataGrid {...gridProps} table={table} height={540} onRowAdd={onRowAdd} />
+    <DataGrid {...gridProps} table={table} height={340} onRowAdd={onRowAdd} />
   );
 }
