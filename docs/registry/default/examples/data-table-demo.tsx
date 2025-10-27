@@ -11,9 +11,9 @@ import {
 } from "lucide-react";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
 import * as React from "react";
-import { DataTable } from "@/components/data-table";
-import { DataTableColumnHeader } from "@/components/data-table-column-header";
-import { DataTableToolbar } from "@/components/data-table-toolbar";
+import { DataTable } from "@/components/data-table/data-table";
+import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
+import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -110,7 +110,7 @@ export default function DataTableDemo() {
         id: "title",
         accessorKey: "title",
         header: ({ column }: { column: Column<Project, unknown> }) => (
-          <DataTableColumnHeader column={column} title="Title" />
+          <DataTableColumnHeader column={column} label="Title" />
         ),
         cell: ({ cell }) => <div>{cell.getValue<Project["title"]>()}</div>,
         meta: {
@@ -125,7 +125,7 @@ export default function DataTableDemo() {
         id: "status",
         accessorKey: "status",
         header: ({ column }: { column: Column<Project, unknown> }) => (
-          <DataTableColumnHeader column={column} title="Status" />
+          <DataTableColumnHeader column={column} label="Status" />
         ),
         cell: ({ cell }) => {
           const status = cell.getValue<Project["status"]>();
@@ -152,7 +152,7 @@ export default function DataTableDemo() {
         id: "budget",
         accessorKey: "budget",
         header: ({ column }: { column: Column<Project, unknown> }) => (
-          <DataTableColumnHeader column={column} title="Budget" />
+          <DataTableColumnHeader column={column} label="Budget" />
         ),
         cell: ({ cell }) => {
           const budget = cell.getValue<Project["budget"]>();

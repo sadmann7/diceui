@@ -4,6 +4,7 @@ import { faker } from "@faker-js/faker";
 import type { ColumnDef } from "@tanstack/react-table";
 import * as React from "react";
 import { DataGrid } from "@/components/data-grid/data-grid";
+import { DataGridKeyboardShortcuts } from "@/components/data-grid/data-grid-keyboard-shortcuts";
 import { useDataGrid } from "@/hooks/use-data-grid";
 
 interface SkateTrick {
@@ -322,16 +323,25 @@ export default function DataGridDemo() {
 
   const onRowAdd = React.useCallback(() => {
     setData((prev) => [...prev, { id: faker.string.nanoid() }]);
-    return { rowIndex: data.length, columnId: "trickName" };
+
+    return {
+      rowIndex: data.length,
+      columnId: "trickName",
+    };
   }, [data.length]);
 
-  const { table, ...gridProps } = useDataGrid({
+  const { table, ...dataGridProps } = useDataGrid({
     columns,
     data,
     onDataChange: setData,
+    onRowAdd,
+    enableSearch: true,
   });
 
   return (
-    <DataGrid {...gridProps} table={table} height={340} onRowAdd={onRowAdd} />
+    <>
+      <DataGridKeyboardShortcuts enableSearch={!!dataGridProps.searchState} />
+      <DataGrid {...dataGridProps} table={table} height={340} />
+    </>
   );
 }
