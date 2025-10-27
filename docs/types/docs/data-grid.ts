@@ -15,7 +15,10 @@ import type {
 } from "@/types/data-grid";
 
 export interface UseDataGridProps<TData>
-  extends Omit<TableOptions<TData>, "pageCount" | "getCoreRowModel"> {
+  extends Pick<
+    TableOptions<TData>,
+    "data" | "columns" | "getRowId" | "defaultColumn" | "initialState" | "state"
+  > {
   /**
    * Callback function called when data changes due to cell edits.
    * Receives the updated data array after changes are applied.

@@ -5,9 +5,6 @@ const withMDX = createMDX();
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  experimental: {
-    webpackMemoryOptimizations: true,
-  },
   images: {
     remotePatterns: [
       {
@@ -62,8 +59,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  // Already doing linting and typechecking as separate tasks in CI
-  eslint: { ignoreDuringBuilds: true },
+  // Already doing typechecking as separate task in CI
   typescript: { ignoreBuildErrors: true },
 };
 

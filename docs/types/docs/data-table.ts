@@ -16,21 +16,16 @@ import type {
 } from "@/types/data-table";
 
 export interface UseDataTableProps<TData>
-  extends Omit<
+  extends Required<Pick<TableOptions<TData>, "pageCount">>,
+    Pick<
       TableOptions<TData>,
+      | "data"
+      | "columns"
+      | "getRowId"
+      | "defaultColumn"
+      | "initialState"
       | "state"
-      | "pageCount"
-      | "getCoreRowModel"
-      | "manualFiltering"
-      | "manualPagination"
-      | "manualSorting"
-    >,
-    Required<Pick<TableOptions<TData>, "pageCount">> {
-  /** Initial state for the table. */
-  initialState?: Omit<Partial<TableState>, "sorting"> & {
-    sorting?: ExtendedColumnSort<TData>[];
-  };
-
+    > {
   /**
    * Custom query keys for URL state management.
    *
