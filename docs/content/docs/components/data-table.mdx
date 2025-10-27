@@ -13,7 +13,7 @@ links:
 
 <Steps>
   <Step>
-    Install the components and dependencies:
+    Install the main component and dependencies:
 
     ```package-install
     npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table"
@@ -30,7 +30,34 @@ links:
     </NuqsAdapter>
     ```
   </Step>
-  
+  <Step>
+    Install the [`DataTableSortList`](#datatablesortlist) (optional):
+
+    ```package-install
+    npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table-sort-list"
+    ```
+  </Step>
+  <Step>
+    Install the [`DataTableFilterList`](#datatablefilterlist) (optional):
+
+    ```package-install
+    npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table-filter-list"
+    ```
+  </Step>
+  <Step>
+    Install the [`DataTableFilterMenu`](#datatablefiltermenu) (optional):
+
+    ```package-install
+    npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table-filter-menu"
+    ```
+  </Step>
+  <Step>
+    Install the [`DataTableActionBar`](#datatableactionbar) (optional):
+
+    ```package-install
+    npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table-action-bar"
+    ```
+  </Step>
 </Steps>
 
 ## Layout
@@ -65,66 +92,6 @@ const { table } = useDataTable({
     <DataTableSortList table={table} />
   </DataTableAdvancedToolbar>
 </DataTable>
-```
-
-## Sort List
-
-The [`DataTableSortList`](#datatablesortlist) provides a comprehensive way to sort data by multiple columns simultaneously.
-
-### Features
-- Supports multiple column sorting
-- Drag and drop reordering
-- Ascending and descending directions
-
-### Installation
-
-```package-install
-npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table-sort-list"
-```
-
-## Filter List
-
-The [`DataTableFilterList`](#datatablefilterlist) provides a comprehensive way to filter data with multiple conditions.
-
-### Features
-- Multiple filter conditions with AND/OR logic
-- Drag and drop reordering
-- Dynamic operators per field type
-
-### Installation
-
-```package-install
-npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table-filter-list"
-```
-
-## Filter Menu  
-
-The [`DataTableFilterMenu`](#datatablefiltermenu) provides a command palette-style interface for quickly adding and managing filters.
-
-### Features
-- Command palette-style interface
-- Context-aware input fields
-- Compact token display
-
-### Installation
-
-```package-install
-npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table-filter-menu"
-```
-
-## Action Bar
-
-The [`DataTableActionBar`](#datatableactionbar) provides a toolbar for the data table when rows are selected.
-
-### Features
-- Floating action bar
-- Customizable actions
-- Row selection tracking
-
-### Installation
-
-```package-install
-npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table-action-bar"
 ```
 
 ## Walkthrough
