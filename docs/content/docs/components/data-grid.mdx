@@ -178,6 +178,48 @@ The [`DataGridViewMenu`](#datagridviewmenu) provides column visibility controls.
 npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-grid-view-menu"
 ```
 
+## Keyboard Shortcuts
+
+The [`DataGridKeyboardShortcuts`](#datagridkeyboardshortcuts) is a dialog component that provides a searchable reference of all available keyboard shortcuts. Unlike the toolbar components above, this component is rendered separately in your component tree and opens via keyboard shortcut.
+
+### Features
+- Comprehensive keyboard shortcut reference
+- Searchable shortcut list
+- Contextual shortcuts based on enabled features
+- Keyboard accessible with `Ctrl+/` or `⌘+/`
+
+### Installation
+
+```package-install
+npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-grid-keyboard-shortcuts"
+```
+
+## Cell Architecture
+
+The Data Grid uses a three-layer cell composition pattern:
+
+1. **DataGridCell**: Routes to the appropriate cell variant based on the column's `meta.cell.variant` property
+2. **Cell Variants**: Implement specific editing UIs for different data types (text, number, select, etc.)
+3. **DataGridCellWrapper**: Provides common functionality for all cells (focus, selection, keyboard interactions)
+
+```tsx
+// Cell composition flow
+<DataGridCell cell={cell} table={table} />
+  ↓
+<ShortTextCell {...props} />  // Based on variant
+  ↓
+<DataGridCellWrapper {...props}>
+  {/* Cell-specific content */}
+</DataGridCellWrapper>
+```
+
+Each cell variant receives the same props and wraps its content in `DataGridCellWrapper`, which handles:
+- Focus management and visual focus ring
+- Selection state and highlighting
+- Search match highlighting
+- Click, double-click, and keyboard event handling
+- Edit mode triggering (Enter, F2, Space, or typing)
+
 ## Cell Types
 
 The Data Grid supports various cell types for different data formats:
@@ -299,61 +341,81 @@ The Data Grid supports various cell types for different data formats:
 }
 ```
 
-## Additional Components
+## Usage Examples
 
-The Data Grid comes with additional components for enhanced functionality:
+### Full Example with Toolbar Components
 
-### Row Selection
 ```tsx
-import { Checkbox } from "@/components/ui/checkbox";
-
-// Add to your columns array
-{
-  id: "select",
-  header: ({ table }) => (
-    <Checkbox
-      checked={
-        table.getIsAllPageRowsSelected() ||
-        (table.getIsSomePageRowsSelected() && "indeterminate")
-      }
-      onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-    />
-  ),
-  cell: ({ row }) => (
-    <Checkbox
-      checked={row.getIsSelected()}
-      onCheckedChange={(value) => row.toggleSelected(!!value)}
-    />
-  ),
-  size: 40,
-  enableSorting: false,
-  enableHiding: false,
-}
-```
-
-### Toolbar Components
-```tsx
+import { DataGrid } from "@/components/data-grid/data-grid";
+import { DataGridKeyboardShortcuts } from "@/components/data-grid/data-grid-keyboard-shortcuts";
 import { DataGridSortMenu } from "@/components/data-grid/data-grid-sort-menu";
 import { DataGridRowHeightMenu } from "@/components/data-grid/data-grid-row-height-menu";
 import { DataGridViewMenu } from "@/components/data-grid/data-grid-view-menu";
+import { useDataGrid } from "@/hooks/use-data-grid";
 
-<div className="flex items-center gap-2">
-  <DataGridSortMenu table={table} />
-  <DataGridRowHeightMenu table={table} />
-  <DataGridViewMenu table={table} />
-</div>
+export default function MyDataGrid() {
+  const { table, ...dataGridProps } = useDataGrid({
+    data,
+    columns,
+    enableSearch: true,
+  });
+
+  return (
+    <div className="flex flex-col gap-4">
+      {/* Toolbar with menu components */}
+      <div className="flex items-center gap-2 self-end">
+        <DataGridSortMenu table={table} />
+        <DataGridRowHeightMenu table={table} />
+        <DataGridViewMenu table={table} />
+      </div>
+      
+      {/* Keyboard shortcuts dialog (opens with Ctrl+/) */}
+      <DataGridKeyboardShortcuts enableSearch={!!dataGridProps.searchState} />
+      
+      {/* Data grid */}
+      <DataGrid table={table} {...dataGridProps} />
+    </div>
+  );
+}
 ```
 
-### Search Functionality
+### Row Selection
+
+Add a selection column to enable row selection:
+
 ```tsx
-const { table, ...gridProps } = useDataGrid({
-  data,
-  columns,
-  enableSearch: true, // Enables Ctrl+F search
-});
+import { Checkbox } from "@/components/ui/checkbox";
+
+const columns = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+      />
+    ),
+    size: 40,
+    enableSorting: false,
+    enableHiding: false,
+  },
+  // ... other columns
+];
 ```
 
 ### Row Management
+
+Handle adding and deleting rows:
+
 ```tsx
 const onRowAdd = React.useCallback(() => {
   const newRow = {
@@ -368,14 +430,19 @@ const onRowAdd = React.useCallback(() => {
   };
 }, [data.length]);
 
-<DataGrid 
-  table={table} 
-  {...gridProps} 
-  onRowAdd={onRowAdd}
-/>
+const onRowsDelete = React.useCallback((rows) => {
+  setData(prev => prev.filter(row => !rows.includes(row)));
+}, []);
+
+const { table, ...dataGridProps } = useDataGrid({
+  data,
+  columns,
+  onRowAdd,
+  onRowsDelete,
+});
 ```
 
-## Keyboard Shortcuts
+## Keyboard Navigation
 
 The Data Grid supports Excel-like keyboard navigation:
 
@@ -414,24 +481,16 @@ The Data Grid supports Excel-like keyboard navigation:
       description: "Clear cell content or delete selected rows",
     },
     {
-      keys: ["F2"],
-      description: "Enter edit mode for current cell",
-    },
-    {
       keys: ["Ctrl", "A"],
       description: "Select all cells",
     },
     {
-      keys: ["Ctrl", "Z"],
-      description: "Undo last action",
-    },
-    {
-      keys: ["Ctrl", "Y"],
-      description: "Redo last action",
-    },
-    {
       keys: ["Ctrl", "F"],
       description: "Open search dialog",
+    },
+    {
+      keys: ["Ctrl", "/"],
+      description: "Show keyboard shortcuts",
     },
   ]}
 />
@@ -478,12 +537,74 @@ Custom header component for columns with sorting and context menu.
 
 ### DataGridCell
 
-Individual cell component with editing capabilities.
+Cell router component that determines which cell variant to render based on column metadata.
 
 <AutoTypeTable
   path="./types/docs/data-grid.ts"
   name="DataGridCellProps"
 />
+
+### DataGridCellWrapper
+
+Wrapper component that handles cell interactions, focus, selection, and editing state.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridCellWrapperProps"
+/>
+
+### DataGridCellVariants
+
+Individual cell variant components for different data types. Each variant wraps its content in `DataGridCellWrapper`.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridCellVariantProps"
+/>
+
+Available cell variants:
+- **ShortTextCell**: Single-line text input with contentEditable
+- **LongTextCell**: Multi-line textarea in a popover
+- **NumberCell**: Numeric input with min/max/step support
+- **SelectCell**: Dropdown select with predefined options
+- **MultiSelectCell**: Multi-select with badges and command palette
+- **CheckboxCell**: Boolean checkbox input
+- **DateCell**: Date picker with calendar popover
+
+#### Creating Custom Cell Variants
+
+You can create custom cell variants by implementing the `DataGridCellVariantProps` interface and wrapping your content in `DataGridCellWrapper`:
+
+```tsx
+import { DataGridCellWrapper } from "@/components/data-grid/data-grid-cell-wrapper";
+import type { DataGridCellVariantProps } from "@/types/docs/data-grid";
+
+export function CustomCell<TData>({
+  cell,
+  table,
+  rowIndex,
+  columnId,
+  isFocused,
+  isEditing,
+  isSelected,
+}: DataGridCellVariantProps<TData>) {
+  const value = cell.getValue() as YourType;
+  
+  return (
+    <DataGridCellWrapper
+      cell={cell}
+      table={table}
+      rowIndex={rowIndex}
+      columnId={columnId}
+      isEditing={isEditing}
+      isFocused={isFocused}
+      isSelected={isSelected}
+    >
+      {/* Your custom cell content */}
+    </DataGridCellWrapper>
+  );
+}
+```
 
 ### DataGridRow
 
@@ -564,10 +685,6 @@ The Data Grid follows WAI-ARIA guidelines for grid widgets:
 - Focus management during editing
 - Proper ARIA labels and roles
 - High contrast mode support
-
-### Custom Cell Renderers
-
-For more complex use cases, you can create custom cell renderers by extending the cell variants or creating completely custom components.
 
 ## Credits
 
