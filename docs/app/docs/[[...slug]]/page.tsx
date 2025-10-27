@@ -66,7 +66,7 @@ export default async function DocPage(props: DocPageParams) {
           <CopyMarkdownButton markdownUrl={`${page.url}.mdx`} />
           <ViewOptions
             markdownUrl={`${page.url}.mdx`}
-            githubUrl={`https://github.com/sadmann7/diceui/blob/main/docs/content/docs/${page.file.path}`}
+            githubUrl={`https://github.com/sadmann7/diceui/blob/main/docs/content/docs/${page.path}`}
           />
         </div>
       </div>

@@ -1,4 +1,3 @@
-import "@testing-library/jest-dom";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import * as React from "react";
@@ -1130,14 +1129,9 @@ describe("MaskInput", () => {
     test("creditCardExpiry pattern validation", () => {
       const { validate } = MASK_PATTERNS.creditCardExpiry;
 
-      // Mock current date to December 2025 for consistent testing
-      const mockDate = new Date(2025, 11, 15); // December 15, 2025
-      const originalDate = Date;
-      const MockDate = vi.fn(() => mockDate) as unknown as DateConstructor;
-      MockDate.now = originalDate.now;
-      MockDate.parse = originalDate.parse;
-      MockDate.UTC = originalDate.UTC;
-      global.Date = MockDate;
+      // Mock current date to December 2025 for consistent testing using Vitest fake timers
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date(2025, 11, 15)); // December 15, 2025
 
       // Valid future dates
       expect(validate?.("1226")).toBe(true); // December 2026
@@ -1171,8 +1165,8 @@ describe("MaskInput", () => {
       expect(validate?.("1275")).toBe(true); // Year 75 (2075) is valid (exactly 50 years from 2025)
       expect(validate?.("1276")).toBe(false); // Year 76 (1976) is in the past
 
-      // Restore original Date
-      global.Date = originalDate;
+      // Restore real timers
+      vi.useRealTimers();
     });
 
     test("ipv4 pattern validation", () => {
