@@ -7,6 +7,7 @@ import type {
 } from "@tanstack/react-table";
 import type { Virtualizer } from "@tanstack/react-virtual";
 import type * as React from "react";
+import type { EmptyProps } from "@/types";
 import type {
   CellPosition,
   RowHeightValue,
@@ -51,7 +52,7 @@ export interface UseDataGridProps<TData>
   enableSearch?: boolean;
 }
 
-export interface DataGridProps<TData> extends React.ComponentProps<"div"> {
+export interface DataGridProps<TData> extends EmptyProps<"div"> {
   /**
    * The table instance from useDataGrid hook.
    */
@@ -248,4 +249,33 @@ export interface DataGridContextMenuProps<TData> {
    * The table instance.
    */
   table: Table<TData>;
+}
+
+export interface DataGridSortMenuProps<TData> {
+  /**
+   * The table instance.
+   */
+  table: Table<TData>;
+}
+
+export interface DataGridRowHeightMenuProps<TData> {
+  /**
+   * The table instance.
+   */
+  table: Table<TData>;
+}
+
+export interface DataGridViewMenuProps<TData> {
+  /**
+   * The table instance.
+   */
+  table: Table<TData>;
+}
+
+export interface DataGridKeyboardShortcutsProps {
+  /**
+   * Whether to show the shortcuts related to search.
+   * @default false
+   */
+  enableSearch?: boolean;
 }

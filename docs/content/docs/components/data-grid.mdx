@@ -512,6 +512,42 @@ Context menu component for row and cell actions.
   name="DataGridContextMenuProps"
 />
 
+### DataGridSortMenu
+
+Sort menu component for column sorting.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridSortMenuProps"
+/>
+
+### DataGridRowHeightMenu
+
+Row height menu component for row height adjustment.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridRowHeightMenuProps"
+/>
+
+### DataGridViewMenu
+
+View menu component for column visibility control.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridViewMenuProps"
+/>  
+
+### DataGridKeyboardShortcuts
+
+Keyboard shortcuts component for the data grid.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridKeyboardShortcutsProps"
+/>
+
 ## Performance Considerations
 
 - **Virtualization**: Only visible rows and columns are rendered
@@ -529,26 +565,12 @@ The Data Grid follows WAI-ARIA guidelines for grid widgets:
 - Proper ARIA labels and roles
 - High contrast mode support
 
-## Examples
-
-### Basic Editable Grid
-
-A simple grid with text and select cell editing capabilities.
-
-<ComponentTabs name="data-grid-basic-demo" align="start" className="p-4" />
-
-### Advanced Grid with Multiple Cell Types
-
-A comprehensive grid showcasing various cell types including text, number, select, checkbox, and date cells.
-
-<ComponentTabs name="data-grid-advanced-demo" align="start" className="p-4" />
-
 ### Custom Cell Renderers
 
 For more complex use cases, you can create custom cell renderers by extending the cell variants or creating completely custom components.
 
 ## Credits
 
-- Built on top of [TanStack Table](https://tanstack.com/table) for table state management
-- Uses [TanStack Virtual](https://tanstack.com/virtual) for virtualization
-- Inspired by modern spreadsheet applications like Airtable and Notion
+- [TanStack Table](https://tanstack.com/table) - For the table state management.
+- [shadcn/ui](https://ui.shadcn.com) - For the ui components.
+- [Airtable](https://www.airtable.com) and [Glide Data Grid](https://grid.glideapps.com/) - For the inspiration.

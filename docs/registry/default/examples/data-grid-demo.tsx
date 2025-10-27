@@ -322,16 +322,19 @@ export default function DataGridDemo() {
 
   const onRowAdd = React.useCallback(() => {
     setData((prev) => [...prev, { id: faker.string.nanoid() }]);
-    return { rowIndex: data.length, columnId: "trickName" };
+
+    return {
+      rowIndex: data.length,
+      columnId: "trickName",
+    };
   }, [data.length]);
 
   const { table, ...gridProps } = useDataGrid({
     columns,
     data,
     onDataChange: setData,
+    onRowAdd,
   });
 
-  return (
-    <DataGrid {...gridProps} table={table} height={340} onRowAdd={onRowAdd} />
-  );
+  return <DataGrid {...gridProps} table={table} height={340} />;
 }
