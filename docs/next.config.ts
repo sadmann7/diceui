@@ -5,8 +5,16 @@ const withMDX = createMDX();
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // Use SWC minifier for faster builds with less memory
+  swcMinify: true,
+  // Disable source maps in production to save memory during build
+  productionBrowserSourceMaps: false,
   experimental: {
     webpackMemoryOptimizations: true,
+    // Reduce parallelism to save memory
+    webpackBuildWorker: true,
+    // Optimize CSS handling
+    optimizeCss: true,
   },
   images: {
     remotePatterns: [
@@ -17,6 +25,46 @@ const nextConfig: NextConfig = {
         hostname: "9jxzamsunn.ufs.sh",
       },
     ],
+  },
+  // Optimize webpack configuration for memory
+  webpack: (config) => {
+    // Reduce memory usage by limiting parallelism
+    config.parallelism = 1;
+
+    // Optimize chunk splitting to reduce memory pressure
+    config.optimization = {
+      ...config.optimization,
+      splitChunks: {
+        ...config.optimization.splitChunks,
+        maxInitialRequests: 5,
+        maxAsyncRequests: 5,
+        cacheGroups: {
+          ...config.optimization.splitChunks?.cacheGroups,
+          // Group all node_modules into fewer chunks
+          defaultVendors: {
+            test: /[\\/]node_modules[\\/]/,
+            priority: -10,
+            reuseExistingChunk: true,
+            name: "vendors",
+          },
+          // Group registry components separately
+          registry: {
+            test: /[\\/]__registry__[\\/]/,
+            priority: 0,
+            reuseExistingChunk: true,
+            name: "registry",
+          },
+        },
+      },
+    };
+
+    // Reduce cache type to save memory
+    config.cache = {
+      type: "memory",
+      maxGenerations: 1,
+    };
+
+    return config;
   },
   async redirects() {
     return [

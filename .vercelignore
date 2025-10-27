@@ -1,0 +1,45 @@
+# Exclude test files
+**/test
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+
+# Exclude scripts
+docs/scripts
+
+# Exclude development files
+vitest.config.ts
+vitest.setup.ts
+biome.json
+
+# Exclude package sources (they're already built in node_modules)
+packages/*/src
+packages/*/test
+packages/*/node_modules
+
+# Exclude registry source files (will be regenerated)
+docs/registry
+
+# Exclude build artifacts
+**/.turbo
+**/.next/cache
+**/dist
+**/.tsbuildinfo
+*.tsbuildinfo
+
+# Exclude docs that aren't needed for build
+README.md
+CONTRIBUTING.md
+LICENSE
+**/*.md
+!docs/content/**/*.md
+!docs/content/**/*.mdx
+
+# Exclude media files from source (keep in public)
+docs/assets
+
+# Exclude unnecessary config files
+.vscode
+.idea
+

@@ -27,6 +27,7 @@ export default defineConfig({
             dark: "github-dark",
             light: "github-light",
           },
+          // Optimize highlighter loading to reduce memory usage
           getHighlighter: async () => {
             const highlighter = await createHighlighter({
               themes: ["github-dark", "github-light"],
@@ -39,9 +40,16 @@ export default defineConfig({
                 "bash",
                 "css",
               ],
+              // Load languages on demand to reduce initial memory
+              langAlias: {
+                ts: "typescript",
+                js: "javascript",
+              },
             });
             return highlighter;
           },
+          // Keep default code block processing fast
+          keepBackground: false,
           onVisitLine(node: { children: { length: number } }) {
             // Prevent lines from collapsing in `display: grid` mode, and allow empty
             // lines to be copy/pasted
