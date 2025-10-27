@@ -13,7 +13,7 @@ links:
 
 <Steps>
   <Step>
-    Install the components and dependencies:
+    Install the main component and dependencies:
 
     ```package-install
     npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table"
@@ -30,7 +30,34 @@ links:
     </NuqsAdapter>
     ```
   </Step>
-  
+  <Step>
+    Install the [`DataTableSortList`](#datatablesortlist) (optional):
+
+    ```package-install
+    npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table-sort-list"
+    ```
+  </Step>
+  <Step>
+    Install the [`DataTableFilterList`](#datatablefilterlist) (optional):
+
+    ```package-install
+    npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table-filter-list"
+    ```
+  </Step>
+  <Step>
+    Install the [`DataTableFilterMenu`](#datatablefiltermenu) (optional):
+
+    ```package-install
+    npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table-filter-menu"
+    ```
+  </Step>
+  <Step>
+    Install the [`DataTableActionBar`](#datatableactionbar) (optional):
+
+    ```package-install
+    npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table-action-bar"
+    ```
+  </Step>
 </Steps>
 
 ## Layout
@@ -38,11 +65,11 @@ links:
 Import the components and compose them together:
 
 ```tsx
-import { DataTable } from "@/components/data-table";
-import { DataTableToolbar } from "@/components/data-table-toolbar";
-import { DataTableAdvancedToolbar } from "@/components/data-table-advanced-toolbar";
-import { DataTableFilterList } from "@/components/data-table-filter-list";
-import { DataTableSortList } from "@/components/data-table-sort-list";
+import { DataTable } from "@/components/data-table/data-table";
+import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
+import { DataTableAdvancedToolbar } from "@/components/data-table/data-table-advanced-toolbar";
+import { DataTableFilterList } from "@/components/data-table/data-table-filter-list";
+import { DataTableSortList } from "@/components/data-table/data-table-sort-list";
 import { useDataTable } from "@/hooks/use-data-table";
 
 const { table } = useDataTable({
@@ -67,66 +94,6 @@ const { table } = useDataTable({
 </DataTable>
 ```
 
-## Sort List
-
-The [`DataTableSortList`](#datatablesortlist) provides a comprehensive way to sort data by multiple columns simultaneously.
-
-### Features
-- Supports multiple column sorting
-- Drag and drop reordering
-- Ascending and descending directions
-
-### Installation
-
-```package-install
-npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table-sort-list"
-```
-
-## Filter List
-
-The [`DataTableFilterList`](#datatablefilterlist) provides a comprehensive way to filter data with multiple conditions.
-
-### Features
-- Multiple filter conditions with AND/OR logic
-- Drag and drop reordering
-- Dynamic operators per field type
-
-### Installation
-
-```package-install
-npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table-filter-list"
-```
-
-## Filter Menu  
-
-The [`DataTableFilterMenu`](#datatablefiltermenu) provides a command palette-style interface for quickly adding and managing filters.
-
-### Features
-- Command palette-style interface
-- Context-aware input fields
-- Compact token display
-
-### Installation
-
-```package-install
-npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table-filter-menu"
-```
-
-## Action Bar
-
-The [`DataTableActionBar`](#datatableactionbar) provides a toolbar for the data table when rows are selected.
-
-### Features
-- Floating action bar
-- Customizable actions
-- Row selection tracking
-
-### Installation
-
-```package-install
-npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table-action-bar"
-```
-
 ## Walkthrough
 
 <Steps>
@@ -135,7 +102,7 @@ npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table-action-bar"
 
     ```tsx
     import { Text, CalendarIcon, DollarSign } from "lucide-react";
-    import { DataTableColumnHeader } from "@/components/data-table-column-header";
+    import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 
     const columns = React.useMemo(() => [
       {
@@ -192,9 +159,9 @@ npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table-action-bar"
     Pass the table instance to the `DataTable`, and `DataTableToolbar` components:
 
     ```tsx
-    import { DataTable } from "@/components/data-table";
-    import { DataTableToolbar } from "@/components/data-table-toolbar";
-    import { DataTableSortList } from "@/components/data-table-sort-list";
+    import { DataTable } from "@/components/data-table/data-table";
+    import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
+    import { DataTableSortList } from "@/components/data-table/data-table-sort-list";
 
     function DataTableDemo() {
       return (
@@ -212,9 +179,9 @@ npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table-action-bar"
     For advanced filtering, use the `DataTableAdvancedToolbar` component:
 
     ```tsx
-    import { DataTableAdvancedToolbar } from "@/components/data-table-advanced-toolbar";
-    import { DataTableFilterList } from "@/components/data-table-filter-list";
-    import { DataTableFilterMenu } from "@/components/data-table-filter-menu";
+    import { DataTableAdvancedToolbar } from "@/components/data-table/data-table-advanced-toolbar";
+    import { DataTableFilterList } from "@/components/data-table/data-table-filter-list";
+    import { DataTableFilterMenu } from "@/components/data-table/data-table-filter-menu";
 
     function DataTableDemo() {
       return (
@@ -233,10 +200,10 @@ npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table-action-bar"
     Alternatively, swap out `DataTableFilterList` with `DataTableFilterMenu` for a command palette-style interface:
 
     ```tsx
-    import { DataTableAdvancedToolbar } from "@/components/data-table-advanced-toolbar";
-    import { DataTableFilterList } from "@/components/data-table-filter-list"; // [!code --]
-    import { DataTableFilterMenu } from "@/components/data-table-filter-menu"; // [!code ++]
-    import { DataTableSortList } from "@/components/data-table-sort-list";
+    import { DataTableAdvancedToolbar } from "@/components/data-table/data-table-advanced-toolbar";
+    import { DataTableFilterList } from "@/components/data-table/data-table-filter-list"; // [!code --]
+    import { DataTableFilterMenu } from "@/components/data-table/data-table-filter-menu"; // [!code ++]
+    import { DataTableSortList } from "@/components/data-table/data-table-sort-list";
 
     function DataTableDemo() {
       return (
@@ -258,8 +225,8 @@ npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table-action-bar"
     Render an action bar on row selection:
 
     ```tsx
-    import { DataTableActionBar } from "@/components/data-table-action-bar";
-    import { CustomTableActions } from "@/components/custom-table-actions";
+    import { DataTableActionBar } from "@/components/data-table/data-table-action-bar";
+    import { CustomTableActions } from "@/components/data-table/custom-table-actions";
 
     function DataTableDemo() {
       return (
@@ -559,20 +526,12 @@ Pagination controls for the data table.
 <KeyboardShortcutsTable
   shortcuts={[
     {
-      keys: ["F"],
-      description: "Opens the filter menu.",
+      keys: ["Ctrl + Shift + F", "Cmd + Shift + F"],
+      description: "Toggles the filter menu.",
     },
     {
-      keys: ["Shift + F"],
-      description: "Removes the last applied filter.",
-    },
-    {
-      keys: ["S"],
-      description: "Opens the sort menu.",
-    },
-    {
-      keys: ["Shift + S"],
-      description: "Removes the last applied sort.",
+      keys: ["Ctrl + Shift + S", "Cmd + Shift + S"],
+      description: "Toggles the sort menu.",
     },
     {
       keys: ["Backspace", "Delete"],

@@ -1,5 +1,23 @@
 # @diceui/mention
 
+## 0.7.3
+
+### Patch Changes
+
+- a3914b7: # Update combobox and mention components
+
+  - Fix combobox filtering and selection behavior (#148)
+  - Improve mention removal logic with proper position shifting (#147)
+
+## 0.7.2
+
+### Patch Changes
+
+- Fix unused variable and improve code quality
+
+  - Remove unused `newTextLengthDelta` variable in mention component
+  - Clean up code in mention root component
+
 ## 0.7.1
 
 ### Patch Changes

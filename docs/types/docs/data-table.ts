@@ -1,25 +1,59 @@
-import type { Column, Table, TableOptions } from "@tanstack/react-table";
+import type {
+  Column,
+  Table,
+  TableOptions,
+  TableState,
+} from "@tanstack/react-table";
 import type { motion } from "motion/react";
 import type * as React from "react";
 import type { DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import type { EmptyProps } from "@/types";
-import type { ExtendedColumnFilter, Option } from "@/types/data-table";
+import type {
+  ExtendedColumnFilter,
+  ExtendedColumnSort,
+  Option,
+  QueryKeys,
+} from "@/types/data-table";
 
 export interface UseDataTableProps<TData>
   extends Required<Pick<TableOptions<TData>, "pageCount">>,
     Pick<
       TableOptions<TData>,
-      "data" | "columns" | "getRowId" | "defaultColumn" | "initialState"
+      | "data"
+      | "columns"
+      | "getRowId"
+      | "defaultColumn"
+      | "initialState"
+      | "state"
     > {
+  /**
+   * Custom query keys for URL state management.
+   *
+   * Can be used to render multiple tables in the same page.
+   *
+   * ```ts
+   * queryKeys: {
+   *   page: "pageOne",
+   *   perPage: "perPageOne",
+   *   sort: "sortOne",
+   *   filters: "filtersOne",
+   *   joinOperator: "joinOperatorOne",
+   * }
+   * ```
+   */
+  queryKeys?: Partial<QueryKeys>;
+
   /**
    * Determines how query updates affect history.
    * `push` creates a new history entry; `replace` (default) updates the current entry.
+   *
    * @default "replace"
    */
   history?: "push" | "replace";
 
   /**
    * Debounce time (ms) for filter updates to enhance performance during rapid input.
+   *
    * @default 300
    */
   debounceMs?: number;
@@ -27,6 +61,7 @@ export interface UseDataTableProps<TData>
   /**
    * Maximum time (ms) to wait between URL query string updates.
    * Helps with browser rate-limiting. Minimum effective value is 50ms.
+   *
    * @default 50
    */
   throttleMs?: number;
@@ -34,6 +69,7 @@ export interface UseDataTableProps<TData>
   /**
    * Clear URL query key-value pair when state is set to default.
    * Keep URL meaning consistent when defaults change.
+   *
    * @default false
    */
   clearOnDefault?: boolean;
@@ -41,13 +77,14 @@ export interface UseDataTableProps<TData>
   /**
    * Enable notion like column filters.
    * Advanced filters and column filters cannot be used at the same time.
+   *
    * @default false
-   * @type boolean
    */
   enableAdvancedFilter?: boolean;
 
   /**
    * Whether the page should scroll to the top when the URL changes.
+   *
    * @default false
    */
   scroll?: boolean;
@@ -55,6 +92,7 @@ export interface UseDataTableProps<TData>
   /**
    * Whether to keep query states client-side, avoiding server calls.
    * Setting to `false` triggers a network request with the updated querystring.
+   *
    * @default true
    */
   shallow?: boolean;
@@ -168,6 +206,7 @@ export interface DataTableFilterListProps<TData> {
 
   /**
    * Debounce time (ms) for filter updates to enhance performance during rapid input.
+   *
    * @default 300
    */
   debounceMs?: number;
@@ -175,6 +214,7 @@ export interface DataTableFilterListProps<TData> {
   /**
    * Maximum time (ms) to wait between URL query string updates.
    * Helps with browser rate-limiting. Minimum effective value is 50ms.
+   *
    * @default 50
    */
   throttleMs?: number;
@@ -182,6 +222,7 @@ export interface DataTableFilterListProps<TData> {
   /**
    * Whether to keep query states client-side, avoiding server calls.
    * Setting to `false` triggers a network request with the updated querystring.
+   *
    * @default true
    */
   shallow?: boolean;
@@ -190,8 +231,10 @@ export interface DataTableFilterListProps<TData> {
 export interface DataTableFilterMenuProps<TData>
   extends DataTableFilterListProps<TData> {}
 
-export interface DataTableSortListProps<TData>
-  extends DataTableFilterListProps<TData> {}
+export interface DataTableSortListProps<TData> {
+  /** The table instance. */
+  table: Table<TData>;
+}
 
 export interface DataTablePaginationProps<TData> extends EmptyProps<"div"> {
   /** The table instance. */
@@ -199,6 +242,7 @@ export interface DataTablePaginationProps<TData> extends EmptyProps<"div"> {
 
   /**
    * The options of the pagination.
+   *
    * @default [10, 20, 30, 40, 50]
    */
   pageSizeOptions?: number[];
@@ -215,12 +259,14 @@ export interface DataTableSkeletonProps extends EmptyProps<"div"> {
 
   /**
    * The number of rows in the table.
+   *
    * @default 10
    */
   rowCount?: number;
 
   /**
    * The number of filters in the table.
+   *
    * @default 0
    */
   filterCount?: number;
@@ -228,24 +274,28 @@ export interface DataTableSkeletonProps extends EmptyProps<"div"> {
   /**
    * Array of CSS width values for each table column.
    * The maximum length of the array must match columnCount, extra values will be ignored.
+   *
    * @default ["auto"]
    */
   cellWidths?: string[];
 
   /**
    * Whether to show the view options.
+   *
    * @default true
    */
   withViewOptions?: boolean;
 
   /**
    * Whether to show the pagination bar.
+   *
    * @default true
    */
   withPagination?: boolean;
 
   /**
    * Whether to prevent the table cells from shrinking.
+   *
    * @default false
    */
   shrinkZero?: boolean;

@@ -338,4 +338,47 @@ describe("Mention", () => {
     expect(input).toHaveAttribute("aria-expanded", "false");
     expect(label).toHaveAttribute("for", input.id);
   });
+
+  test("removes a mention in the middle of text and updates positions correctly", async () => {
+    const onValueChange = vi.fn();
+    const onInputValueChange = vi.fn();
+
+    renderMention({ onValueChange, onInputValueChange });
+
+    const input = screen.getByPlaceholderText(placeholder);
+
+    if (!(input instanceof HTMLInputElement)) {
+      throw new Error("Input element not found");
+    }
+
+    // Add first mention: @kickflip
+    await userEvent.type(input, "@kickflip");
+    const kickflipOption = screen.getByRole("option", { name: "Kickflip" });
+    await waitFor(() => {
+      fireEvent.click(kickflipOption);
+    });
+
+    // Add some text and another mention
+    await userEvent.type(input, "and @heelflip");
+    const heelflipOption = screen.getByRole("option", { name: "Heelflip" });
+    await waitFor(() => {
+      fireEvent.click(heelflipOption);
+    });
+
+    // At this point input value = "@kickflip and @heelflip "
+    expect(input.value).toBe("@kickflip and @heelflip ");
+
+    // Simulate deleting the first mention (@kickflip)
+    // Put cursor right after @kickflip and hit backspace enough times to trigger removal
+    input.setSelectionRange(9, 9);
+    fireEvent.keyDown(input, { key: "Backspace", metaKey: true });
+
+    await waitFor(() => {
+      expect(onValueChange).toHaveBeenLastCalledWith(["heelflip"]);
+      expect(onInputValueChange).toHaveBeenLastCalledWith("and @heelflip ");
+    });
+
+    // Ensure the input now shows only the second mention
+    expect(input.value).toBe("and @heelflip ");
+  });
 });

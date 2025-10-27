@@ -29,6 +29,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
+import DataGridDemo from "@/registry/default/examples/data-grid-demo";
 import TourDemo from "@/registry/default/examples/tour-demo";
 import {
   Combobox,
@@ -45,9 +46,10 @@ export default function PlaygroundPage() {
     <Shell>
       <Demo>
         <TourDemo />
+        <DataGridDemo />
         <ColorPickerDemo />
       </Demo>
-      <Combobox className="w-[15rem]">
+      <Combobox className="w-60">
         <ComboboxAnchor>
           <ComboboxInput placeholder="Search tricks..." />
           <ComboboxTrigger>
@@ -63,7 +65,7 @@ export default function PlaygroundPage() {
           ))}
         </ComboboxContent>
       </Combobox>
-      <Command defaultValue="heelflip" className="max-w-[15rem] border">
+      <Command defaultValue="heelflip" className="max-w-60 border">
         <CommandInput placeholder="Search tricks..." />
         <CommandEmpty>No tricks found.</CommandEmpty>
         <CommandList>
@@ -76,11 +78,8 @@ export default function PlaygroundPage() {
           </CommandGroup>
         </CommandList>
       </Command>
-      <Textarea
-        placeholder="Type here..."
-        className="min-h-[80px] max-w-[40rem]"
-      />
-      <Mention.Root className="flex max-w-[40rem] flex-col gap-2 **:data-tag:rounded **:data-tag:bg-blue-200 **:data-tag:py-px **:data-tag:text-blue-950 dark:**:data-tag:bg-blue-800 dark:**:data-tag:text-blue-50">
+      <Textarea placeholder="Type here..." className="min-h-[80px] max-w-160" />
+      <Mention.Root className="flex max-w-160 flex-col gap-2 **:data-tag:rounded **:data-tag:bg-blue-200 **:data-tag:py-px **:data-tag:text-blue-950 dark:**:data-tag:bg-blue-800 dark:**:data-tag:text-blue-50">
         <Mention.Label>Tricks</Mention.Label>
         <Mention.Input
           placeholder="Enter @ to mention a trick..."
@@ -119,7 +118,7 @@ export default function PlaygroundPage() {
         </DropdownMenuContent>
       </DropdownMenu>
       <Select value="heelflip">
-        <SelectTrigger className="w-[11.25rem]">
+        <SelectTrigger className="w-45">
           <SelectValue placeholder="Select a trick" />
         </SelectTrigger>
         <SelectContent>

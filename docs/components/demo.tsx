@@ -8,7 +8,7 @@ export function Demo({ children, className, ...props }: DemoProps) {
     <div
       data-slot="demo"
       className={cn(
-        "mx-auto grid w-full max-w-3xl place-items-center gap-4",
+        "mx-auto grid w-full max-w-3xl grid-cols-1 place-items-center gap-4",
         className,
       )}
       {...props}
@@ -31,7 +31,7 @@ function DemoItem({ className, ...props }: DemoItemProps) {
     <div
       data-slot="demo-item"
       className={cn(
-        "grid min-h-[calc(100svh-10rem)] w-full place-items-center",
+        "grid min-h-[calc(100svh-10rem)] w-full grid-cols-1 place-items-center",
         className,
       )}
       {...props}
