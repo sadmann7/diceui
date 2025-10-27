@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import type * as React from "react";
 import { describe, expect, it, vi } from "vitest";
-import { VisuallyHiddenInput } from "../src/components/visually-hidden-input.js";
+import { VisuallyHiddenInput } from "../src/components/visually-hidden-input";
 
 // Mock ResizeObserver using Vitest 4's class mocking
 global.ResizeObserver = vi.fn(
