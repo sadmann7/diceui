@@ -209,20 +209,6 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "kbd": {
-      name: "kbd",
-      description: "",
-      type: "registry:ui",
-      registryDependencies: undefined,
-      files: [{
-        path: "registry/default/ui/kbd.tsx",
-        type: "registry:ui",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/ui/kbd.tsx")),
-      source: "",
-      chunks: []
-    },
     "listbox": {
       name: "listbox",
       description: "",
@@ -1432,48 +1418,6 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/kanban-dynamic-overlay-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "kbd-demo": {
-      name: "kbd-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["kbd"],
-      files: [{
-        path: "registry/default/examples/kbd-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/kbd-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "kbd-multiple-demo": {
-      name: "kbd-multiple-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["kbd"],
-      files: [{
-        path: "registry/default/examples/kbd-multiple-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/kbd-multiple-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "kbd-variants-demo": {
-      name: "kbd-variants-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["kbd"],
-      files: [{
-        path: "registry/default/examples/kbd-variants-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/kbd-variants-demo.tsx")),
       source: "",
       chunks: []
     },

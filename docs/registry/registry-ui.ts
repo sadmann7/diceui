@@ -190,16 +190,6 @@ export const ui: Registry["items"] = [
     ],
   },
   {
-    name: "kbd",
-    type: "registry:ui",
-    files: [
-      {
-        path: "ui/kbd.tsx",
-        type: "registry:ui",
-      },
-    ],
-  },
-  {
     name: "listbox",
     type: "registry:ui",
     dependencies: ["@diceui/listbox", "lucide-react"],
