@@ -32,7 +32,9 @@ export function KeyboardShortcutsTable({
             <TableRow key={`${shortcut.keys.join(" + ")}-${index}`}>
               <TableCell className="flex items-center gap-2">
                 {shortcut.keys.map((key) => (
-                  <Kbd key={key}>{key}</Kbd>
+                  <Kbd key={key} className="not-prose">
+                    {key}
+                  </Kbd>
                 ))}
               </TableCell>
               <TableCell>

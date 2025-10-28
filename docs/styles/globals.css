@@ -237,7 +237,7 @@
   }
 
   a:has(code) {
-    @apply !no-underline;
+    @apply no-underline!;
   }
 
   /**
@@ -335,15 +335,11 @@
 }
 
 @layer components {
-  [role="tabpanel"] figure.shiki {
-    @apply rounded-none!;
-  }
-
   [data-rehype-pretty-code-figure] figure {
     @apply border-none bg-secondary/50!;
   }
 
   [data-line] span {
-    @apply text-[var(--shiki-light)] dark:text-[var(--shiki-dark)];
+    @apply text-(--shiki-light) dark:text-(--shiki-dark);
   }
 }

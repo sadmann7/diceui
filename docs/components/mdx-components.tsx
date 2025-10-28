@@ -10,6 +10,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import type * as React from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Kbd } from "@/components/ui/kbd";
 import { Table, TableCell, TableHead, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
@@ -27,9 +28,6 @@ const CSSVariablesTable = dynamic(() =>
   import("@/components/css-variables-table").then((mod) => ({
     default: mod.CSSVariablesTable,
   })),
-);
-const Kbd = dynamic(() =>
-  import("@/components/ui/kbd").then((mod) => ({ default: mod.Kbd })),
 );
 const AutoTypeTable = dynamic(() =>
   import("@/components/auto-type-table").then((mod) => ({
@@ -102,7 +100,9 @@ export function useMdxComponents(
     ),
     AlertTitle,
     AlertDescription,
-    Kbd,
+    Kbd: ({ className, ...props }: React.ComponentProps<typeof Kbd>) => (
+      <Kbd className={cn("not-prose", className)} {...props} />
+    ),
     ComponentTabs,
     ComponentSource,
     Steps,
