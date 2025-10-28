@@ -168,18 +168,6 @@
       ]
     },
     {
-      "name": "kbd",
-      "type": "registry:component",
-      "title": "Keyboard Key",
-      "description": "A component for displaying keyboard shortcuts and key combinations.",
-      "files": [
-        {
-          "path": "registry/default/ui/kbd.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
       "name": "listbox",
       "type": "registry:component",
       "title": "Listbox",
@@ -717,18 +705,6 @@
       "files": [
         {
           "path": "registry/default/examples/kanban-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "kbd-demo",
-      "type": "registry:component",
-      "title": "Keyboard Key Demo",
-      "description": "Example showing how to use the kbd component.",
-      "files": [
-        {
-          "path": "registry/default/examples/kbd-demo.tsx",
           "type": "registry:example"
         }
       ]

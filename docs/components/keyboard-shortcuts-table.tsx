@@ -1,4 +1,4 @@
-import { Kbd } from "@/components/kbd";
+import { Kbd } from "@/components/ui/kbd";
 import {
   Table,
   TableBody,
@@ -32,9 +32,7 @@ export function KeyboardShortcutsTable({
             <TableRow key={`${shortcut.keys.join(" + ")}-${index}`}>
               <TableCell className="flex items-center gap-2">
                 {shortcut.keys.map((key) => (
-                  <Kbd key={key} variant="outline">
-                    {key}
-                  </Kbd>
+                  <Kbd key={key}>{key}</Kbd>
                 ))}
               </TableCell>
               <TableCell>

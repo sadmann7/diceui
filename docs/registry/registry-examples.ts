@@ -808,39 +808,6 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "kbd-demo",
-    type: "registry:example",
-    registryDependencies: ["kbd"],
-    files: [
-      {
-        path: "examples/kbd-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "kbd-multiple-demo",
-    type: "registry:example",
-    registryDependencies: ["kbd"],
-    files: [
-      {
-        path: "examples/kbd-multiple-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "kbd-variants-demo",
-    type: "registry:example",
-    registryDependencies: ["kbd"],
-    files: [
-      {
-        path: "examples/kbd-variants-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
     name: "listbox-demo",
     type: "registry:example",
     registryDependencies: ["listbox"],

@@ -1,4 +1,5 @@
 import type { Page } from "fumadocs-core/source";
+import type { DocOut } from "fumadocs-mdx/runtime/next";
 import { CodeBlock, Pre } from "fumadocs-ui/components/codeblock";
 import { Heading } from "fumadocs-ui/components/heading";
 import { Step, Steps } from "fumadocs-ui/components/steps";
@@ -6,7 +7,9 @@ import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import defaultComponents from "fumadocs-ui/mdx";
 import type { MDXComponents } from "mdx/types";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import type * as React from "react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Table, TableCell, TableHead, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +29,7 @@ const CSSVariablesTable = dynamic(() =>
   })),
 );
 const Kbd = dynamic(() =>
-  import("@/components/kbd").then((mod) => ({ default: mod.Kbd })),
+  import("@/components/ui/kbd").then((mod) => ({ default: mod.Kbd })),
 );
 const AutoTypeTable = dynamic(() =>
   import("@/components/auto-type-table").then((mod) => ({
@@ -85,7 +88,21 @@ export function useMdxComponents(
         <Pre>{children}</Pre>
       </CodeBlock>
     ),
-    kbd: (props) => <Kbd variant="outline" {...props} />,
+    Link: ({ className, ...props }: React.ComponentProps<typeof Link>) => (
+      <Link
+        className={cn("underline underline-offset-4", className)}
+        {...props}
+      />
+    ),
+    Alert: ({ className, ...props }: React.ComponentProps<typeof Alert>) => (
+      <Alert
+        className={cn("not-prose my-2 bg-background", className)}
+        {...props}
+      />
+    ),
+    AlertTitle,
+    AlertDescription,
+    Kbd,
     ComponentTabs,
     ComponentSource,
     Steps,
@@ -99,9 +116,7 @@ export function useMdxComponents(
 }
 
 interface MdxProps {
-  page: Page & {
-    data: { body: React.ComponentType<{ components: MDXComponents }> };
-  };
+  page: Page<DocOut>;
   components?: Partial<MDXComponents>;
 }
 

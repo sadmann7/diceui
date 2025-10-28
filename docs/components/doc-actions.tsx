@@ -213,7 +213,7 @@ function ViewOptions({ markdownUrl, githubUrl }: ViewOptionsProps) {
           size="sm"
           className="h-7 text-xs [&_svg:not([class*='size-'])]:size-3"
         >
-          Open with AI
+          Open
           <ChevronDown />
         </Button>
       </PopoverTrigger>
