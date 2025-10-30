@@ -8,7 +8,7 @@ export default function IndexPage() {
     <section className="container flex flex-col items-center justify-center gap-6 pt-6 pb-8 md:py-10">
       <div className="flex max-w-5xl flex-col items-center gap-4">
         <h1
-          className="animate-fade-up text-balance bg-linear-to-br from-foreground/80 to-muted-foreground bg-clip-text text-center font-bold text-4xl/tight text-transparent leading-tight tracking-tighter opacity-0 drop-shadow-xs md:text-5xl/tight"
+          className="animate-fade-up text-balance bg-linear-to-br from-foreground/80 to-muted-foreground bg-clip-text text-center font-bold text-4xl/tight text-transparent leading-tight tracking-tighter opacity-0 drop-shadow-xs md:text-5xl/tight lg:text-6xl/tight"
           style={{ animationDelay: "0.20s", animationFillMode: "forwards" }}
         >
           Accessible components for shadcn/ui
