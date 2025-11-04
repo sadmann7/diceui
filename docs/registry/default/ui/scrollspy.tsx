@@ -207,19 +207,6 @@ function ScrollSpyRootImpl(
     }
   }, []);
 
-  const adjustedRootMargin = React.useMemo(() => {
-    if (offset === 0) return rootMargin;
-
-    const margins = rootMargin.split(" ");
-    if (margins.length === 4 && margins[0]) {
-      const topMargin = margins[0];
-      const topValue = parseInt(topMargin, 10) || 0;
-      const adjustedTop = `${topValue - offset}px`;
-      return `${adjustedTop} ${margins[1]} ${margins[2]} ${margins[3]}`;
-    }
-    return `-${offset}px 0px -80% 0px`;
-  }, [rootMargin, offset]);
-
   useIsomorphicLayoutEffect(() => {
     const visibleSections = new Set<string>();
 
@@ -249,7 +236,7 @@ function ScrollSpyRootImpl(
       },
       {
         root: scrollContainer,
-        rootMargin: adjustedRootMargin,
+        rootMargin,
         threshold,
       },
     );
@@ -265,14 +252,13 @@ function ScrollSpyRootImpl(
       observer.disconnect();
       observerRef.current = null;
     };
-  }, [adjustedRootMargin, threshold, scrollContainer, store]);
+  }, [rootMargin, threshold, scrollContainer, store]);
 
-  // Sync controlled value
-  React.useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (valueProp !== undefined) {
       store.setState("activeValue", valueProp);
     }
-  }, [valueProp, store]);
+  }, [valueProp]);
 
   const contextValue = React.useMemo<ScrollSpyContextValue>(
     () => ({
