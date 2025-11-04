@@ -1177,23 +1177,34 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "scrollspy-demo",
+    name: "scroll-spy-demo",
     type: "registry:example",
-    registryDependencies: ["scrollspy"],
+    registryDependencies: ["scroll-spy"],
     files: [
       {
-        path: "examples/scrollspy-demo.tsx",
+        path: "examples/scroll-spy-demo.tsx",
         type: "registry:example",
       },
     ],
   },
   {
-    name: "scrollspy-nested-demo",
+    name: "scroll-spy-scroll-container-demo",
     type: "registry:example",
-    registryDependencies: ["scrollspy"],
+    registryDependencies: ["scroll-spy"],
     files: [
       {
-        path: "examples/scrollspy-nested-demo.tsx",
+        path: "examples/scroll-spy-scroll-container-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "scroll-spy-nested-demo",
+    type: "registry:example",
+    registryDependencies: ["scroll-spy"],
+    files: [
+      {
+        path: "examples/scroll-spy-nested-demo.tsx",
         type: "registry:example",
       },
     ],

@@ -7,7 +7,7 @@ import {
   ScrollSpyContentGroup,
   ScrollSpyItem,
   ScrollSpyItemGroup,
-} from "@/registry/default/ui/scrollspy";
+} from "@/registry/default/ui/scroll-spy";
 
 export default function ScrollSpyScrollContainerDemo() {
   const [scrollContainer, setScrollContainer] =
@@ -17,7 +17,7 @@ export default function ScrollSpyScrollContainerDemo() {
     <ScrollSpy
       offset={20}
       scrollContainer={scrollContainer}
-      className="h-[600px] border"
+      className="h-[400px] w-full border"
     >
       <ScrollSpyItemGroup className="w-48 border-r p-4">
         <ScrollSpyItem value="overview">Overview</ScrollSpyItem>
@@ -33,42 +33,42 @@ export default function ScrollSpyScrollContainerDemo() {
       >
         <ScrollSpyContent value="overview">
           <h2 className="font-bold text-2xl">Overview</h2>
-          <p className="mt-2 text-zinc-600 dark:text-zinc-400">
+          <p className="mt-2 text-muted-foreground">
             ScrollSpy with a scrollable container instead of window scroll.
           </p>
-          <div className="mt-4 h-96 rounded-lg bg-zinc-100 dark:bg-zinc-800" />
+          <div className="mt-4 h-96 rounded-lg bg-accent" />
         </ScrollSpyContent>
 
         <ScrollSpyContent value="features">
           <h2 className="font-bold text-2xl">Features</h2>
-          <p className="mt-2 text-zinc-600 dark:text-zinc-400">
+          <p className="mt-2 text-muted-foreground">
             All the features available in this component.
           </p>
-          <div className="mt-4 h-96 rounded-lg bg-zinc-100 dark:bg-zinc-800" />
+          <div className="mt-4 h-96 rounded-lg bg-accent" />
         </ScrollSpyContent>
 
         <ScrollSpyContent value="installation">
           <h2 className="font-bold text-2xl">Installation</h2>
-          <p className="mt-2 text-zinc-600 dark:text-zinc-400">
+          <p className="mt-2 text-muted-foreground">
             How to install and set up the component.
           </p>
-          <div className="mt-4 h-96 rounded-lg bg-zinc-100 dark:bg-zinc-800" />
+          <div className="mt-4 h-96 rounded-lg bg-accent" />
         </ScrollSpyContent>
 
         <ScrollSpyContent value="examples">
           <h2 className="font-bold text-2xl">Examples</h2>
-          <p className="mt-2 text-zinc-600 dark:text-zinc-400">
+          <p className="mt-2 text-muted-foreground">
             Various examples showing different use cases.
           </p>
-          <div className="mt-4 h-96 rounded-lg bg-zinc-100 dark:bg-zinc-800" />
+          <div className="mt-4 h-96 rounded-lg bg-accent" />
         </ScrollSpyContent>
 
         <ScrollSpyContent value="api">
           <h2 className="font-bold text-2xl">API Reference</h2>
-          <p className="mt-2 text-zinc-600 dark:text-zinc-400">
+          <p className="mt-2 text-muted-foreground">
             Complete API documentation for all components.
           </p>
-          <div className="mt-4 h-96 rounded-lg bg-zinc-100 dark:bg-zinc-800" />
+          <div className="mt-4 h-96 rounded-lg bg-accent" />
         </ScrollSpyContent>
       </ScrollSpyContentGroup>
     </ScrollSpy>

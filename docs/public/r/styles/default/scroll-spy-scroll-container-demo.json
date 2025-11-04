@@ -1,0 +1,15 @@
+{
+  "name": "scroll-spy-scroll-container-demo",
+  "type": "registry:example",
+  "registryDependencies": [
+    "scroll-spy"
+  ],
+  "files": [
+    {
+      "path": "examples/scroll-spy-scroll-container-demo.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport {\n  ScrollSpy,\n  ScrollSpyContent,\n  ScrollSpyContentGroup,\n  ScrollSpyItem,\n  ScrollSpyItemGroup,\n} from \"@/registry/default/ui/scroll-spy\";\n\nexport default function ScrollSpyScrollContainerDemo() {\n  const [scrollContainer, setScrollContainer] =\n    React.useState<HTMLDivElement | null>(null);\n\n  return (\n    <ScrollSpy\n      offset={20}\n      scrollContainer={scrollContainer}\n      className=\"h-[400px] w-full border\"\n    >\n      <ScrollSpyItemGroup className=\"w-48 border-r p-4\">\n        <ScrollSpyItem value=\"overview\">Overview</ScrollSpyItem>\n        <ScrollSpyItem value=\"features\">Features</ScrollSpyItem>\n        <ScrollSpyItem value=\"installation\">Installation</ScrollSpyItem>\n        <ScrollSpyItem value=\"examples\">Examples</ScrollSpyItem>\n        <ScrollSpyItem value=\"api\">API</ScrollSpyItem>\n      </ScrollSpyItemGroup>\n\n      <ScrollSpyContentGroup\n        ref={setScrollContainer}\n        className=\"flex-1 overflow-y-auto p-6\"\n      >\n        <ScrollSpyContent value=\"overview\">\n          <h2 className=\"font-bold text-2xl\">Overview</h2>\n          <p className=\"mt-2 text-muted-foreground\">\n            ScrollSpy with a scrollable container instead of window scroll.\n          </p>\n          <div className=\"mt-4 h-96 rounded-lg bg-accent\" />\n        </ScrollSpyContent>\n\n        <ScrollSpyContent value=\"features\">\n          <h2 className=\"font-bold text-2xl\">Features</h2>\n          <p className=\"mt-2 text-muted-foreground\">\n            All the features available in this component.\n          </p>\n          <div className=\"mt-4 h-96 rounded-lg bg-accent\" />\n        </ScrollSpyContent>\n\n        <ScrollSpyContent value=\"installation\">\n          <h2 className=\"font-bold text-2xl\">Installation</h2>\n          <p className=\"mt-2 text-muted-foreground\">\n            How to install and set up the component.\n          </p>\n          <div className=\"mt-4 h-96 rounded-lg bg-accent\" />\n        </ScrollSpyContent>\n\n        <ScrollSpyContent value=\"examples\">\n          <h2 className=\"font-bold text-2xl\">Examples</h2>\n          <p className=\"mt-2 text-muted-foreground\">\n            Various examples showing different use cases.\n          </p>\n          <div className=\"mt-4 h-96 rounded-lg bg-accent\" />\n        </ScrollSpyContent>\n\n        <ScrollSpyContent value=\"api\">\n          <h2 className=\"font-bold text-2xl\">API Reference</h2>\n          <p className=\"mt-2 text-muted-foreground\">\n            Complete API documentation for all components.\n          </p>\n          <div className=\"mt-4 h-96 rounded-lg bg-accent\" />\n        </ScrollSpyContent>\n      </ScrollSpyContentGroup>\n    </ScrollSpy>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

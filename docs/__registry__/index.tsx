@@ -341,13 +341,13 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "scrollspy": {
-      name: "scrollspy",
+    "scroll-spy": {
+      name: "scroll-spy",
       description: "",
       type: "registry:ui",
       registryDependencies: undefined,
       files: [{
-        path: "registry/default/ui/scrollspy.tsx",
+        path: "registry/default/ui/scroll-spy.tsx",
         type: "registry:ui",
         target: ""
       },{
@@ -355,7 +355,7 @@ export const Index: Record<string, any> = {
         type: "registry:lib",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/ui/scrollspy.tsx")),
+      component: React.lazy(() => import("@/registry/default/ui/scroll-spy.tsx")),
       source: "",
       chunks: []
     },
@@ -1859,31 +1859,45 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "scrollspy-demo": {
-      name: "scrollspy-demo",
+    "scroll-spy-demo": {
+      name: "scroll-spy-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["scrollspy"],
+      registryDependencies: ["scroll-spy"],
       files: [{
-        path: "registry/default/examples/scrollspy-demo.tsx",
+        path: "registry/default/examples/scroll-spy-demo.tsx",
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/examples/scrollspy-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/scroll-spy-demo.tsx")),
       source: "",
       chunks: []
     },
-    "scrollspy-nested-demo": {
-      name: "scrollspy-nested-demo",
+    "scroll-spy-scroll-container-demo": {
+      name: "scroll-spy-scroll-container-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["scrollspy"],
+      registryDependencies: ["scroll-spy"],
       files: [{
-        path: "registry/default/examples/scrollspy-nested-demo.tsx",
+        path: "registry/default/examples/scroll-spy-scroll-container-demo.tsx",
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/examples/scrollspy-nested-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/scroll-spy-scroll-container-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "scroll-spy-nested-demo": {
+      name: "scroll-spy-nested-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["scroll-spy"],
+      files: [{
+        path: "registry/default/examples/scroll-spy-nested-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/scroll-spy-nested-demo.tsx")),
       source: "",
       chunks: []
     },

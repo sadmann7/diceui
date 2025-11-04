@@ -316,7 +316,7 @@ function ScrollSpyRootImpl(
       <ScrollSpyContext.Provider value={contextValue}>
         <RootPrimitive
           data-orientation={orientation}
-          data-slot="scrollspy"
+          data-slot="scroll-spy"
           dir={dir}
           {...rootProps}
           className={cn(
@@ -344,7 +344,7 @@ function ScrollSpyItemGroup(props: ScrollSpyItemGroupProps) {
   return (
     <ListPrimitive
       data-orientation={orientation}
-      data-slot="scrollspy-list"
+      data-slot="scroll-spy-list"
       dir={dir}
       className={cn(
         "flex gap-2",
@@ -412,7 +412,7 @@ function ScrollSpyItem(props: ScrollSpyItemProps) {
   return (
     <ItemPrimitive
       data-orientation={orientation}
-      data-slot="scrollspy-item"
+      data-slot="scroll-spy-item"
       data-state={isActive ? "active" : "inactive"}
       className={cn(
         "rounded px-3 py-1.5 text-muted-foreground text-sm transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-accent data-[state=active]:font-medium data-[state=active]:text-foreground",
@@ -439,7 +439,7 @@ function ScrollSpyContentGroup(props: ScrollSpyContentGroupProps) {
   return (
     <GroupPrimitive
       data-orientation={orientation}
-      data-slot="scrollspy-content-group"
+      data-slot="scroll-spy-content-group"
       dir={dir}
       {...groupProps}
       className={cn("flex flex-1 flex-col gap-8", className)}
@@ -476,7 +476,7 @@ function ScrollSpyContent(props: ScrollSpyContentProps) {
   return (
     <ContentPrimitive
       data-orientation={orientation}
-      data-slot="scrollspy-content"
+      data-slot="scroll-spy-content"
       {...contentProps}
       id={value}
       ref={composedRef}

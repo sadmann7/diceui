@@ -373,12 +373,12 @@ export const ui: Registry["items"] = [
     ],
   },
   {
-    name: "scrollspy",
+    name: "scroll-spy",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot"],
     files: [
       {
-        path: "ui/scrollspy.tsx",
+        path: "ui/scroll-spy.tsx",
         type: "registry:ui",
       },
       {

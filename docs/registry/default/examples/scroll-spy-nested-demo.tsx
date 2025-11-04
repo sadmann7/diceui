@@ -4,7 +4,7 @@ import {
   ScrollSpyContentGroup,
   ScrollSpyItem,
   ScrollSpyItemGroup,
-} from "@/registry/default/ui/scrollspy";
+} from "@/registry/default/ui/scroll-spy";
 
 export default function ScrollSpyNestedDemo() {
   return (

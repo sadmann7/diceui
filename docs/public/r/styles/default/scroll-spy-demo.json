@@ -1,0 +1,15 @@
+{
+  "name": "scroll-spy-demo",
+  "type": "registry:example",
+  "registryDependencies": [
+    "scroll-spy"
+  ],
+  "files": [
+    {
+      "path": "examples/scroll-spy-demo.tsx",
+      "content": "import {\n  ScrollSpy,\n  ScrollSpyContent,\n  ScrollSpyContentGroup,\n  ScrollSpyItem,\n  ScrollSpyItemGroup,\n} from \"@/registry/default/ui/scroll-spy\";\n\nexport default function ScrollSpyDemo() {\n  return (\n    <ScrollSpy offset={80}>\n      <ScrollSpyItemGroup className=\"sticky top-20 h-fit\">\n        <ScrollSpyItem value=\"introduction\">Introduction</ScrollSpyItem>\n        <ScrollSpyItem value=\"getting-started\">Getting Started</ScrollSpyItem>\n        <ScrollSpyItem value=\"usage\">Usage</ScrollSpyItem>\n        <ScrollSpyItem value=\"api-reference\">API Reference</ScrollSpyItem>\n      </ScrollSpyItemGroup>\n      <ScrollSpyContentGroup>\n        <ScrollSpyContent value=\"introduction\">\n          <h2 className=\"font-bold text-2xl\">Introduction</h2>\n          <p className=\"mt-2 text-muted-foreground\">\n            ScrollSpy automatically updates navigation links based on scroll\n            position.\n          </p>\n          <div className=\"mt-4 h-64 rounded-lg bg-accent\" />\n        </ScrollSpyContent>\n        <ScrollSpyContent value=\"getting-started\">\n          <h2 className=\"font-bold text-2xl\">Getting Started</h2>\n          <p className=\"mt-2 text-muted-foreground\">\n            Install the component using the CLI or copy the source code.\n          </p>\n          <div className=\"mt-4 h-64 rounded-lg bg-accent\" />\n        </ScrollSpyContent>\n        <ScrollSpyContent value=\"usage\">\n          <h2 className=\"font-bold text-2xl\">Usage</h2>\n          <p className=\"mt-2 text-muted-foreground\">\n            Use the Provider, Root, Item, and Content components to create your\n            scroll spy navigation.\n          </p>\n          <div className=\"mt-4 h-64 rounded-lg bg-accent\" />\n        </ScrollSpyContent>\n        <ScrollSpyContent value=\"api-reference\">\n          <h2 className=\"font-bold text-2xl\">API Reference</h2>\n          <p className=\"mt-2 text-muted-foreground\">\n            Complete API documentation for all ScrollSpy components.\n          </p>\n          <div className=\"mt-4 h-64 rounded-lg bg-accent\" />\n        </ScrollSpyContent>\n      </ScrollSpyContentGroup>\n    </ScrollSpy>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

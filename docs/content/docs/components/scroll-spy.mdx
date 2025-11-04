@@ -3,17 +3,17 @@ title: ScrollSpy
 description: Automatically updates navigation links based on scroll position with support for nested sections and customizable behavior.
 preview: true
 links:
-  api: /docs/components/scrollspy#api-reference
+  api: /docs/components/scroll-spy#api-reference
 ---
 
-<ComponentTabs name="scrollspy-demo" />
+<ComponentTabs name="scroll-spy-demo" />
 
 ## Installation
 
 ### CLI
 
 ```package-install
-npx shadcn@latest add "https://diceui.com/r/scrollspy"
+npx shadcn@latest add "https://diceui.com/r/scroll-spy"
 ```
 
 ### Manual
@@ -34,7 +34,7 @@ npx shadcn@latest add "https://diceui.com/r/scrollspy"
   <Step>
     Copy and paste the following code into your project.
 
-    <ComponentSource name="scrollspy" />
+    <ComponentSource name="scroll-spy" />
   </Step>
 </Steps>
 
@@ -43,7 +43,7 @@ npx shadcn@latest add "https://diceui.com/r/scrollspy"
 Import the parts, and compose them together.
 
 ```tsx
-import * as ScrollSpy from "@/components/ui/scrollspy"
+import * as ScrollSpy from "@/components/ui/scroll-spy"
 
 return (
   <ScrollSpy.Root>
@@ -59,11 +59,17 @@ return (
 
 ## Examples
 
+### Scroll Container
+
+Use the `scrollContainer` prop to specify a scrollable container.
+
+<ComponentTabs name="scroll-spy-scroll-container-demo" />
+
 ### Nested Sections
 
 Create nested navigation structures for complex documents.
 
-<ComponentTabs name="scrollspy-nested-demo" />
+<ComponentTabs name="scroll-spy-nested-demo" />
 
 ## API Reference
 
@@ -72,7 +78,7 @@ Create nested navigation structures for complex documents.
 The root component that manages scroll tracking and contains all ScrollSpy parts.
 
 <AutoTypeTable
-  path="./types/docs/scrollspy.ts"
+  path="./types/docs/scroll-spy.ts"
   name="RootProps"
 />
 
@@ -90,7 +96,7 @@ The root component that manages scroll tracking and contains all ScrollSpy parts
 The navigation item group container component.
 
 <AutoTypeTable
-  path="./types/docs/scrollspy.ts"
+  path="./types/docs/scroll-spy.ts"
   name="ItemGroupProps"
 />
 
@@ -108,7 +114,7 @@ The navigation item group container component.
 Navigation item that links to a content section.
 
 <AutoTypeTable
-  path="./types/docs/scrollspy.ts"
+  path="./types/docs/scroll-spy.ts"
   name="ItemProps"
 />
 
@@ -130,7 +136,7 @@ Navigation item that links to a content section.
 The content group container component.
 
 <AutoTypeTable
-  path="./types/docs/scrollspy.ts"
+  path="./types/docs/scroll-spy.ts"
   name="ContentGroupProps"
 />
 
@@ -145,10 +151,10 @@ The content group container component.
 
 ### Content
 
-Content section that gets tracked by the scrollspy.
+Content section that gets tracked by the scroll spy.
 
 <AutoTypeTable
-  path="./types/docs/scrollspy.ts"
+  path="./types/docs/scroll-spy.ts"
   name="ContentProps"
 />
 
