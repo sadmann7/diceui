@@ -46,7 +46,7 @@ export default function ScrollSpyNestedDemo() {
       </ScrollSpyList>
 
       <div className="flex-1 space-y-8">
-        <ScrollSpyContent id="overview">
+        <ScrollSpyContent value="overview">
           <h2 className="font-bold text-2xl">Overview</h2>
           <p className="mt-2 text-zinc-600 dark:text-zinc-400">
             A comprehensive overview of the ScrollSpy component.
@@ -54,7 +54,7 @@ export default function ScrollSpyNestedDemo() {
           <div className="mt-4 h-32 rounded-lg bg-zinc-100 dark:bg-zinc-800" />
         </ScrollSpyContent>
 
-        <ScrollSpyContent id="overview-features">
+        <ScrollSpyContent value="overview-features">
           <h3 className="font-semibold text-xl">Features</h3>
           <p className="mt-2 text-zinc-600 dark:text-zinc-400">
             Key features include automatic tracking, smooth scrolling, and
@@ -63,7 +63,7 @@ export default function ScrollSpyNestedDemo() {
           <div className="mt-4 h-48 rounded-lg bg-zinc-100 dark:bg-zinc-800" />
         </ScrollSpyContent>
 
-        <ScrollSpyContent id="overview-benefits">
+        <ScrollSpyContent value="overview-benefits">
           <h3 className="font-semibold text-xl">Benefits</h3>
           <p className="mt-2 text-zinc-600 dark:text-zinc-400">
             Improves user experience and navigation in long-form content.
@@ -71,7 +71,7 @@ export default function ScrollSpyNestedDemo() {
           <div className="mt-4 h-48 rounded-lg bg-zinc-100 dark:bg-zinc-800" />
         </ScrollSpyContent>
 
-        <ScrollSpyContent id="installation">
+        <ScrollSpyContent value="installation">
           <h2 className="font-bold text-2xl">Installation</h2>
           <p className="mt-2 text-zinc-600 dark:text-zinc-400">
             Install via npm, pnpm, or copy the source code directly.
@@ -79,7 +79,7 @@ export default function ScrollSpyNestedDemo() {
           <div className="mt-4 h-64 rounded-lg bg-zinc-100 dark:bg-zinc-800" />
         </ScrollSpyContent>
 
-        <ScrollSpyContent id="examples">
+        <ScrollSpyContent value="examples">
           <h2 className="font-bold text-2xl">Examples</h2>
           <p className="mt-2 text-zinc-600 dark:text-zinc-400">
             Explore various examples of the ScrollSpy component in action.

@@ -305,11 +305,12 @@ function ScrollSpyItem(props: ScrollSpyItemProps) {
 }
 
 interface ScrollSpyContentProps extends React.ComponentProps<"div"> {
+  value: string;
   asChild?: boolean;
 }
 
 function ScrollSpyContent(props: ScrollSpyContentProps) {
-  const { asChild, ref, id, ...contentProps } = props;
+  const { asChild, ref, value, ...contentProps } = props;
 
   const { onContentRegister, onContentUnregister } =
     useScrollSpyContext(CONTENT_NAME);
@@ -318,14 +319,14 @@ function ScrollSpyContent(props: ScrollSpyContentProps) {
 
   useIsomorphicLayoutEffect(() => {
     const element = contentRef.current;
-    if (!element || !id) return;
+    if (!element || !value) return;
 
-    onContentRegister(id, element);
+    onContentRegister(value, element);
 
     return () => {
-      onContentUnregister(id);
+      onContentUnregister(value);
     };
-  }, [id, onContentRegister, onContentUnregister]);
+  }, [value, onContentRegister, onContentUnregister]);
 
   const ContentPrimitive = asChild ? Slot : "div";
 
@@ -333,7 +334,7 @@ function ScrollSpyContent(props: ScrollSpyContentProps) {
     <ContentPrimitive
       data-slot="scrollspy-content"
       {...contentProps}
-      id={id}
+      id={value}
       ref={composedRef}
     />
   );

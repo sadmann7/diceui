@@ -55,7 +55,7 @@ export default function ScrollSpyCustomDemo() {
       </ScrollSpyList>
 
       <div className="flex-1 space-y-12">
-        <ScrollSpyContent id="step-one">
+        <ScrollSpyContent value="step-one">
           <div className="flex items-center gap-3">
             <div className="flex size-10 items-center justify-center rounded-full bg-blue-100 font-semibold text-blue-700 text-lg dark:bg-blue-900 dark:text-blue-300">
               1
@@ -68,7 +68,7 @@ export default function ScrollSpyCustomDemo() {
           <div className="mt-6 h-64 rounded-lg bg-linear-to-br from-blue-50 to-indigo-100 dark:from-blue-950 dark:to-indigo-900" />
         </ScrollSpyContent>
 
-        <ScrollSpyContent id="step-two">
+        <ScrollSpyContent value="step-two">
           <div className="flex items-center gap-3">
             <div className="flex size-10 items-center justify-center rounded-full bg-purple-100 font-semibold text-lg text-purple-700 dark:bg-purple-900 dark:text-purple-300">
               2
@@ -81,7 +81,7 @@ export default function ScrollSpyCustomDemo() {
           <div className="mt-6 h-64 rounded-lg bg-linear-to-br from-purple-50 to-pink-100 dark:from-purple-950 dark:to-pink-900" />
         </ScrollSpyContent>
 
-        <ScrollSpyContent id="step-three">
+        <ScrollSpyContent value="step-three">
           <div className="flex items-center gap-3">
             <div className="flex size-10 items-center justify-center rounded-full bg-green-100 font-semibold text-green-700 text-lg dark:bg-green-900 dark:text-green-300">
               3
@@ -94,7 +94,7 @@ export default function ScrollSpyCustomDemo() {
           <div className="mt-6 h-64 rounded-lg bg-linear-to-br from-green-50 to-emerald-100 dark:from-green-950 dark:to-emerald-900" />
         </ScrollSpyContent>
 
-        <ScrollSpyContent id="step-four">
+        <ScrollSpyContent value="step-four">
           <div className="flex items-center gap-3">
             <div className="flex size-10 items-center justify-center rounded-full bg-orange-100 font-semibold text-lg text-orange-700 dark:bg-orange-900 dark:text-orange-300">
               4
