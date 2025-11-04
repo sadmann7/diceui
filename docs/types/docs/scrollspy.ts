@@ -66,6 +66,22 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * @default "horizontal"
    */
   orientation?: Orientation;
+
+  /**
+   * An optional scroll container where the scroll observation should happen.
+   * If not provided, uses the window scroll.
+   * @example
+   * ```tsx
+   * const [scrollContainer, setScrollContainer] = useState<HTMLDivElement | null>(null);
+   *
+   * <ScrollSpy scrollContainer={scrollContainer}>
+   *   <ScrollSpyContentGroup ref={setScrollContainer} className="h-screen overflow-y-auto">
+   *     // content
+   *   </ScrollSpyContentGroup>
+   * </ScrollSpy>
+   * ```
+   */
+  scrollContainer?: HTMLElement | null;
 }
 
 export interface ItemGroupProps extends EmptyProps<"nav">, CompositionProps {}

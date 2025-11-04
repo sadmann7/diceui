@@ -2,7 +2,6 @@
 
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
-import { useCallbackRef } from "@/hooks/use-callback-ref";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 
@@ -114,6 +113,7 @@ interface ScrollSpyContextValue {
   scrollBehavior: ScrollBehavior;
   dir: Direction;
   orientation: Orientation;
+  scrollContainer: HTMLElement | null;
   onContentRegister: (id: string, element: Element) => void;
   onContentUnregister: (id: string) => void;
 }
@@ -141,6 +141,11 @@ interface ScrollSpyRootProps extends React.ComponentProps<"div"> {
   orientation?: Orientation;
   dir?: Direction;
   asChild?: boolean;
+  /**
+   * An optional scroll container where the scroll observation should happen.
+   * If not provided, uses the window scroll.
+   */
+  scrollContainer?: HTMLElement | null;
 }
 
 function ScrollSpyRoot(props: ScrollSpyRootProps) {
@@ -174,6 +179,7 @@ function ScrollSpyRootImpl(
     scrollBehavior = "smooth",
     orientation = "horizontal",
     dir: dirProp,
+    scrollContainer = null,
     asChild,
     className,
     ...rootProps
@@ -207,7 +213,7 @@ function ScrollSpyRootImpl(
     const margins = rootMargin.split(" ");
     if (margins.length === 4 && margins[0]) {
       const topMargin = margins[0];
-      const topValue = parseInt(topMargin, 10) ?? 0;
+      const topValue = parseInt(topMargin, 10) || 0;
       const adjustedTop = `${topValue - offset}px`;
       return `${adjustedTop} ${margins[1]} ${margins[2]} ${margins[3]}`;
     }
@@ -242,6 +248,7 @@ function ScrollSpyRootImpl(
         }
       },
       {
+        root: scrollContainer,
         rootMargin: adjustedRootMargin,
         threshold,
       },
@@ -258,7 +265,7 @@ function ScrollSpyRootImpl(
       observer.disconnect();
       observerRef.current = null;
     };
-  }, [adjustedRootMargin, threshold]);
+  }, [adjustedRootMargin, threshold, scrollContainer, store]);
 
   // Sync controlled value
   React.useEffect(() => {
@@ -273,6 +280,7 @@ function ScrollSpyRootImpl(
       scrollBehavior,
       dir,
       orientation,
+      scrollContainer,
       onContentRegister,
       onContentUnregister,
     }),
@@ -281,6 +289,7 @@ function ScrollSpyRootImpl(
       scrollBehavior,
       dir,
       orientation,
+      scrollContainer,
       onContentRegister,
       onContentUnregister,
     ],
@@ -341,7 +350,7 @@ interface ScrollSpyItemProps extends React.ComponentProps<"a"> {
 function ScrollSpyItem(props: ScrollSpyItemProps) {
   const { value, asChild, onClick, className, ...itemProps } = props;
 
-  const { orientation, offset, scrollBehavior } =
+  const { orientation, offset, scrollBehavior, scrollContainer } =
     useScrollSpyContext(ITEM_NAME);
   const activeValue = useStore((state) => state.activeValue);
   const isActive = activeValue === value;
@@ -354,15 +363,30 @@ function ScrollSpyItem(props: ScrollSpyItemProps) {
       const element = document.getElementById(value);
       if (!element) return;
 
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.scrollY - offset;
+      if (scrollContainer) {
+        // Scroll within container
+        const containerRect = scrollContainer.getBoundingClientRect();
+        const elementRect = element.getBoundingClientRect();
+        const scrollTop = scrollContainer.scrollTop;
+        const offsetPosition =
+          elementRect.top - containerRect.top + scrollTop - offset;
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: scrollBehavior,
-      });
+        scrollContainer.scrollTo({
+          top: offsetPosition,
+          behavior: scrollBehavior,
+        });
+      } else {
+        // Scroll window
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.scrollY - offset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: scrollBehavior,
+        });
+      }
     },
-    [offset, scrollBehavior, value, onClick],
+    [offset, scrollBehavior, value, onClick, scrollContainer],
   );
 
   const ItemPrimitive = asChild ? Slot : "a";
