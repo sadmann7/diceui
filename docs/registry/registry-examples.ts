@@ -1199,18 +1199,6 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "scrollspy-custom-demo",
-    type: "registry:example",
-    dependencies: ["lucide-react"],
-    registryDependencies: ["scrollspy"],
-    files: [
-      {
-        path: "examples/scrollspy-custom-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
     name: "sortable-demo",
     type: "registry:example",
     dependencies: [
