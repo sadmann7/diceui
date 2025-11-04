@@ -47,6 +47,8 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   scrollBehavior?: ScrollBehavior;
 }
 
+export interface ListProps extends EmptyProps<"nav">, CompositionProps {}
+
 export interface ItemProps extends EmptyProps<"a">, CompositionProps {
   /**
    * The ID of the section this item links to.

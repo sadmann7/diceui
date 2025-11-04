@@ -4,9 +4,10 @@ import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import { useCallbackRef } from "@/hooks/use-callback-ref";
 import { useComposedRefs } from "@/lib/compose-refs";
-import { cn } from "@/lib/utils";
 
 const ROOT_NAME = "ScrollSpy";
+const ITEM_NAME = "ScrollSpyItem";
+const CONTENT_NAME = "ScrollSpyContent";
 
 function useLazyRef<T>(fn: () => T) {
   const ref = React.useRef<T | null>(null);
@@ -17,6 +18,9 @@ function useLazyRef<T>(fn: () => T) {
 
   return ref as React.RefObject<T>;
 }
+
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
 interface StoreState {
   activeValue: string | undefined;
@@ -92,12 +96,12 @@ function useStore<T>(selector: (state: StoreState) => T): T {
   return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
 
-type ScrollSpyContextValue = {
+interface ScrollSpyContextValue {
   offset: number;
   scrollBehavior: ScrollBehavior;
-  registerSection: (id: string, element: Element) => void;
-  unregisterSection: (id: string) => void;
-};
+  onContentRegister: (id: string, element: Element) => void;
+  onContentUnregister: (id: string) => void;
+}
 
 const ScrollSpyContext = React.createContext<ScrollSpyContextValue | null>(
   null,
@@ -111,7 +115,7 @@ function useScrollSpyContext(consumerName: string) {
   return context;
 }
 
-interface ScrollSpyRootProps extends React.ComponentProps<"div"> {
+interface ScrollSpyProps extends React.ComponentProps<"div"> {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
@@ -122,7 +126,7 @@ interface ScrollSpyRootProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-function ScrollSpyRoot(props: ScrollSpyRootProps) {
+function ScrollSpy(props: ScrollSpyProps) {
   const { value, defaultValue, onValueChange, ...rootProps } = props;
 
   const listenersRef = useLazyRef(() => new Set<() => void>());
@@ -137,13 +141,13 @@ function ScrollSpyRoot(props: ScrollSpyRootProps) {
 
   return (
     <StoreContext.Provider value={store}>
-      <ScrollSpyRootImpl value={value} {...rootProps} />
+      <ScrollSpyImpl value={value} {...rootProps} />
     </StoreContext.Provider>
   );
 }
 
-function ScrollSpyRootImpl(
-  props: Omit<ScrollSpyRootProps, "defaultValue" | "onValueChange">,
+function ScrollSpyImpl(
+  props: Omit<ScrollSpyProps, "defaultValue" | "onValueChange">,
 ) {
   const {
     value: valueProp,
@@ -152,30 +156,27 @@ function ScrollSpyRootImpl(
     offset = 0,
     scrollBehavior = "smooth",
     asChild,
-    className,
-    ref,
-    children,
     ...rootProps
   } = props;
 
   const store = useStoreContext(ROOT_NAME);
-  const sectionsMapRef = React.useRef(new Map<string, Element>());
+  const contentMapRef = React.useRef(new Map<string, Element>());
   const observerRef = React.useRef<IntersectionObserver | null>(null);
 
-  const registerSection = useCallbackRef((id: string, element: Element) => {
-    sectionsMapRef.current.set(id, element);
+  const onContentRegister = useCallbackRef((id: string, element: Element) => {
+    contentMapRef.current.set(id, element);
     observerRef.current?.observe(element);
   });
 
-  const unregisterSection = useCallbackRef((id: string) => {
-    const element = sectionsMapRef.current.get(id);
+  const onContentUnregister = useCallbackRef((id: string) => {
+    const element = contentMapRef.current.get(id);
     if (element) {
       observerRef.current?.unobserve(element);
-      sectionsMapRef.current.delete(id);
+      contentMapRef.current.delete(id);
     }
   });
 
-  React.useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const visibleSections = new Set<string>();
 
     const observer = new IntersectionObserver(
@@ -193,8 +194,8 @@ function ScrollSpyRootImpl(
 
         // Find the topmost visible section
         if (visibleSections.size > 0) {
-          const sections = Array.from(sectionsMapRef.current.entries());
-          for (const [id, element] of sections) {
+          const sections = Array.from(contentMapRef.current.entries());
+          for (const [id, _] of sections) {
             if (visibleSections.has(id)) {
               store.setState("activeValue", id);
               break;
@@ -211,7 +212,7 @@ function ScrollSpyRootImpl(
     observerRef.current = observer;
 
     // Observe existing sections
-    sectionsMapRef.current.forEach((element) => {
+    contentMapRef.current.forEach((element) => {
       observer.observe(element);
     });
 
@@ -219,7 +220,7 @@ function ScrollSpyRootImpl(
       observer.disconnect();
       observerRef.current = null;
     };
-  }, [rootMargin, threshold, store]);
+  }, [rootMargin, threshold]);
 
   // Sync controlled value
   React.useEffect(() => {
@@ -232,26 +233,31 @@ function ScrollSpyRootImpl(
     () => ({
       offset,
       scrollBehavior,
-      registerSection,
-      unregisterSection,
+      onContentRegister,
+      onContentUnregister,
     }),
-    [offset, scrollBehavior, registerSection, unregisterSection],
+    [offset, scrollBehavior, onContentRegister, onContentUnregister],
   );
 
-  const Component = asChild ? Slot : "div";
+  const RootPrimitive = asChild ? Slot : "div";
 
   return (
     <ScrollSpyContext.Provider value={contextValue}>
-      <Component
-        data-slot="scrollspy"
-        ref={ref}
-        className={cn("scrollspy", className)}
-        {...rootProps}
-      >
-        {children}
-      </Component>
+      <RootPrimitive data-slot="scrollspy" {...rootProps} />
     </ScrollSpyContext.Provider>
   );
+}
+
+interface ScrollSpyListProps extends React.ComponentProps<"nav"> {
+  asChild?: boolean;
+}
+
+function ScrollSpyList(props: ScrollSpyListProps) {
+  const { asChild, ...listProps } = props;
+
+  const ListPrimitive = asChild ? Slot : "nav";
+
+  return <ListPrimitive data-slot="scrollspy-list" {...listProps} />;
 }
 
 interface ScrollSpyItemProps extends React.ComponentProps<"a"> {
@@ -261,17 +267,9 @@ interface ScrollSpyItemProps extends React.ComponentProps<"a"> {
 }
 
 function ScrollSpyItem(props: ScrollSpyItemProps) {
-  const {
-    value,
-    active: activeProp,
-    asChild,
-    className,
-    onClick,
-    ref,
-    ...itemProps
-  } = props;
+  const { value, active: activeProp, asChild, onClick, ...itemProps } = props;
 
-  const { offset, scrollBehavior } = useScrollSpyContext("ScrollSpy.Item");
+  const { offset, scrollBehavior } = useScrollSpyContext(ITEM_NAME);
   const activeValue = useStore((state) => state.activeValue);
   const isActive = activeProp ?? activeValue === value;
 
@@ -293,21 +291,15 @@ function ScrollSpyItem(props: ScrollSpyItemProps) {
     },
   );
 
-  const Component = asChild ? Slot : "a";
+  const ItemPrimitive = asChild ? Slot : "a";
 
   return (
-    <Component
+    <ItemPrimitive
       data-slot="scrollspy-item"
       data-active={isActive ? "" : undefined}
-      ref={ref}
+      {...itemProps}
       href={`#${value}`}
       onClick={onItemClick}
-      className={cn(
-        "scrollspy-item",
-        isActive && "scrollspy-item-active",
-        className,
-      )}
-      {...itemProps}
     />
   );
 }
@@ -317,39 +309,44 @@ interface ScrollSpyContentProps extends React.ComponentProps<"div"> {
 }
 
 function ScrollSpyContent(props: ScrollSpyContentProps) {
-  const { asChild, className, ref, id, ...contentProps } = props;
+  const { asChild, ref, id, ...contentProps } = props;
 
-  const { registerSection, unregisterSection } =
-    useScrollSpyContext("ScrollSpy.Content");
+  const { onContentRegister, onContentUnregister } =
+    useScrollSpyContext(CONTENT_NAME);
   const contentRef = React.useRef<HTMLDivElement>(null);
   const composedRef = useComposedRefs(ref, contentRef);
 
-  React.useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const element = contentRef.current;
     if (!element || !id) return;
 
-    registerSection(id, element);
+    onContentRegister(id, element);
 
     return () => {
-      unregisterSection(id);
+      onContentUnregister(id);
     };
-  }, [id, registerSection, unregisterSection]);
+  }, [id, onContentRegister, onContentUnregister]);
 
-  const Component = asChild ? Slot : "div";
+  const ContentPrimitive = asChild ? Slot : "div";
 
   return (
-    <Component
+    <ContentPrimitive
       data-slot="scrollspy-content"
-      ref={composedRef}
-      id={id}
-      className={cn("scrollspy-content", className)}
       {...contentProps}
+      id={id}
+      ref={composedRef}
     />
   );
 }
 
 export {
-  ScrollSpyRoot as Root,
+  ScrollSpy as Root,
+  ScrollSpyList as List,
   ScrollSpyItem as Item,
   ScrollSpyContent as Content,
+  //
+  ScrollSpy,
+  ScrollSpyList,
+  ScrollSpyItem,
+  ScrollSpyContent,
 };

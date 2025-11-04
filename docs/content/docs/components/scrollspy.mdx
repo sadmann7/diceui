@@ -46,10 +46,10 @@ Import the parts, and compose them together.
 import * as ScrollSpy from "@/components/ui/scrollspy"
 
 <ScrollSpy.Root>
-  <nav>
+  <ScrollSpy.List>
     <ScrollSpy.Item value="section-1">Section 1</ScrollSpy.Item>
     <ScrollSpy.Item value="section-2">Section 2</ScrollSpy.Item>
-  </nav>
+  </ScrollSpy.List>
 
   <ScrollSpy.Content id="section-1">
     {/* Section 1 content */}
@@ -84,6 +84,15 @@ The root component that manages scroll tracking and contains all ScrollSpy parts
 <AutoTypeTable
   path="./types/docs/scrollspy.ts"
   name="RootProps"
+/>
+
+### List
+
+The navigation list container component.
+
+<AutoTypeTable
+  path="./types/docs/scrollspy.ts"
+  name="ListProps"
 />
 
 ### Item
