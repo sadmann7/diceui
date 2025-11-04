@@ -14,7 +14,11 @@ export default function ScrollSpyScrollContainerDemo() {
     React.useState<HTMLDivElement | null>(null);
 
   return (
-    <ScrollSpy scrollContainer={scrollContainer} className="h-[600px] border">
+    <ScrollSpy
+      offset={20}
+      scrollContainer={scrollContainer}
+      className="h-[600px] border"
+    >
       <ScrollSpyItemGroup className="w-48 border-r p-4">
         <ScrollSpyItem value="overview">Overview</ScrollSpyItem>
         <ScrollSpyItem value="features">Features</ScrollSpyItem>

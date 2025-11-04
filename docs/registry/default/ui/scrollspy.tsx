@@ -138,14 +138,10 @@ interface ScrollSpyRootProps extends React.ComponentProps<"div"> {
   threshold?: number | number[];
   offset?: number;
   scrollBehavior?: ScrollBehavior;
+  scrollContainer?: HTMLElement | null;
   orientation?: Orientation;
   dir?: Direction;
   asChild?: boolean;
-  /**
-   * An optional scroll container where the scroll observation should happen.
-   * If not provided, uses the window scroll.
-   */
-  scrollContainer?: HTMLElement | null;
 }
 
 function ScrollSpyRoot(props: ScrollSpyRootProps) {
@@ -173,13 +169,13 @@ function ScrollSpyRootImpl(
 ) {
   const {
     value: valueProp,
-    rootMargin = "0px 0px -80% 0px",
-    threshold = 0.1,
+    rootMargin: _rootMargin = "0px 0px -80% 0px",
+    threshold: _threshold = 0.1,
     offset = 0,
     scrollBehavior = "smooth",
+    scrollContainer = null,
     orientation = "horizontal",
     dir: dirProp,
-    scrollContainer = null,
     asChild,
     className,
     ...rootProps
@@ -189,70 +185,102 @@ function ScrollSpyRootImpl(
 
   const store = useStoreContext(ROOT_NAME);
   const contentMapRef = React.useRef(new Map<string, Element>());
-  const observerRef = React.useRef<IntersectionObserver | null>(null);
 
   const onContentRegister = React.useCallback(
     (id: string, element: Element) => {
       contentMapRef.current.set(id, element);
-      observerRef.current?.observe(element);
     },
     [],
   );
 
   const onContentUnregister = React.useCallback((id: string) => {
-    const element = contentMapRef.current.get(id);
-    if (element) {
-      observerRef.current?.unobserve(element);
-      contentMapRef.current.delete(id);
-    }
+    contentMapRef.current.delete(id);
   }, []);
 
+  const checkAndUpdateActiveSection = React.useCallback(() => {
+    const sections = Array.from(contentMapRef.current.entries());
+    if (sections.length === 0) return;
+
+    const containerRect = scrollContainer
+      ? scrollContainer.getBoundingClientRect()
+      : { top: 0, height: window.innerHeight };
+
+    const viewportHeight = scrollContainer
+      ? containerRect.height
+      : window.innerHeight;
+
+    // Find the first visible section from the top
+    for (const [id, element] of sections) {
+      const rect = element.getBoundingClientRect();
+      const elementTop = scrollContainer
+        ? rect.top - containerRect.top
+        : rect.top;
+
+      // Check if element is in viewport considering offset
+      // Element is considered "active" when its top is within the offset range
+      if (elementTop >= -offset && elementTop <= viewportHeight * 0.3) {
+        store.setState("activeValue", id);
+        return;
+      }
+    }
+
+    // If no section meets the criteria, find the one closest to the offset
+    let closestSection: { id: string; distance: number } | null = null;
+
+    for (const [id, element] of sections) {
+      const rect = element.getBoundingClientRect();
+      const elementTop = scrollContainer
+        ? rect.top - containerRect.top
+        : rect.top;
+
+      const distance = Math.abs(elementTop - offset);
+
+      if (!closestSection || distance < closestSection.distance) {
+        closestSection = { id, distance };
+      }
+    }
+
+    if (closestSection) {
+      store.setState("activeValue", closestSection.id);
+    }
+  }, [scrollContainer, offset, store]);
+
   useIsomorphicLayoutEffect(() => {
-    const visibleSections = new Set<string>();
+    // Initial check
+    checkAndUpdateActiveSection();
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const sectionId = entry.target.getAttribute("id");
-          if (!sectionId) return;
+    // Throttle scroll events for performance
+    let rafId: number | null = null;
+    let lastTime = 0;
+    const throttleMs = 100;
 
-          if (entry.isIntersecting) {
-            visibleSections.add(sectionId);
-          } else {
-            visibleSections.delete(sectionId);
-          }
-        });
+    function onScroll() {
+      const now = Date.now();
 
-        // Find the topmost visible section
-        if (visibleSections.size > 0) {
-          const sections = Array.from(contentMapRef.current.entries());
-          for (const [id, _] of sections) {
-            if (visibleSections.has(id)) {
-              store.setState("activeValue", id);
-              break;
-            }
-          }
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+      }
+
+      rafId = requestAnimationFrame(() => {
+        if (now - lastTime >= throttleMs) {
+          checkAndUpdateActiveSection();
+          lastTime = now;
+        } else {
+          onScroll();
         }
-      },
-      {
-        root: scrollContainer,
-        rootMargin,
-        threshold,
-      },
-    );
+      });
+    }
 
-    observerRef.current = observer;
-
-    // Observe existing sections
-    contentMapRef.current.forEach((element) => {
-      observer.observe(element);
-    });
+    const target = scrollContainer ?? window;
+    target.addEventListener("scroll", onScroll, { passive: true });
 
     return () => {
-      observer.disconnect();
-      observerRef.current = null;
+      target.removeEventListener("scroll", onScroll);
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+      }
     };
-  }, [rootMargin, threshold, scrollContainer, store]);
+  }, [scrollContainer, checkAndUpdateActiveSection]);
 
   useIsomorphicLayoutEffect(() => {
     if (valueProp !== undefined) {
@@ -338,6 +366,7 @@ function ScrollSpyItem(props: ScrollSpyItemProps) {
 
   const { orientation, offset, scrollBehavior, scrollContainer } =
     useScrollSpyContext(ITEM_NAME);
+  const store = useStoreContext(ITEM_NAME);
   const activeValue = useStore((state) => state.activeValue);
   const isActive = activeValue === value;
 
@@ -348,6 +377,9 @@ function ScrollSpyItem(props: ScrollSpyItemProps) {
 
       const element = document.getElementById(value);
       if (!element) return;
+
+      // Immediately update active state
+      store.setState("activeValue", value);
 
       if (scrollContainer) {
         // Scroll within container
@@ -372,7 +404,7 @@ function ScrollSpyItem(props: ScrollSpyItemProps) {
         });
       }
     },
-    [offset, scrollBehavior, value, onClick, scrollContainer],
+    [offset, scrollBehavior, value, onClick, scrollContainer, store],
   );
 
   const ItemPrimitive = asChild ? Slot : "a";
