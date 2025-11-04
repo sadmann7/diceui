@@ -1177,6 +1177,40 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "scrollspy-demo",
+    type: "registry:example",
+    registryDependencies: ["scrollspy"],
+    files: [
+      {
+        path: "examples/scrollspy-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "scrollspy-nested-demo",
+    type: "registry:example",
+    registryDependencies: ["scrollspy"],
+    files: [
+      {
+        path: "examples/scrollspy-nested-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "scrollspy-custom-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["scrollspy"],
+    files: [
+      {
+        path: "examples/scrollspy-custom-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "sortable-demo",
     type: "registry:example",
     dependencies: [

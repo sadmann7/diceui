@@ -373,6 +373,21 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "scrollspy",
+    type: "registry:ui",
+    dependencies: ["@radix-ui/react-slot"],
+    files: [
+      {
+        path: "ui/scrollspy.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
+      },
+    ],
+  },
+  {
     name: "sortable",
     type: "registry:ui",
     dependencies: [

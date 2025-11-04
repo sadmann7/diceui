@@ -1,0 +1,142 @@
+---
+title: ScrollSpy
+description: Automatically updates navigation links based on scroll position with support for nested sections and customizable behavior.
+preview: true
+links:
+  api: /docs/components/scrollspy#api-reference
+---
+
+<ComponentTabs name="scrollspy-demo" />
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/scrollspy"
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @radix-ui/react-slot
+     ```
+  </Step>
+  <Step>
+    Copy the refs composition utilities into your `lib/compose-refs.ts` file.
+
+    <ComponentSource name="compose-refs" />
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource name="scrollspy" />
+  </Step>
+</Steps>
+
+## Layout
+
+Import the parts, and compose them together.
+
+```tsx
+import * as ScrollSpy from "@/components/ui/scrollspy"
+
+<ScrollSpy.Root>
+  <nav>
+    <ScrollSpy.Item value="section-1">Section 1</ScrollSpy.Item>
+    <ScrollSpy.Item value="section-2">Section 2</ScrollSpy.Item>
+  </nav>
+
+  <ScrollSpy.Content id="section-1">
+    {/* Section 1 content */}
+  </ScrollSpy.Content>
+
+  <ScrollSpy.Content id="section-2">
+    {/* Section 2 content */}
+  </ScrollSpy.Content>
+</ScrollSpy.Root>
+```
+
+## Examples
+
+### Nested Sections
+
+Create nested navigation structures for complex documents.
+
+<ComponentTabs name="scrollspy-nested-demo" />
+
+### Custom Styling
+
+Customize the appearance and behavior with different offsets and root margins.
+
+<ComponentTabs name="scrollspy-custom-demo" />
+
+## API Reference
+
+### Root
+
+The root component that manages scroll tracking and contains all ScrollSpy parts.
+
+<AutoTypeTable
+  path="./types/docs/scrollspy.ts"
+  name="RootProps"
+/>
+
+### Item
+
+Navigation item that links to a content section.
+
+<AutoTypeTable
+  path="./types/docs/scrollspy.ts"
+  name="ItemProps"
+/>
+
+### Content
+
+Content section that gets tracked by the scrollspy.
+
+<AutoTypeTable
+  path="./types/docs/scrollspy.ts"
+  name="ContentProps"
+/>
+
+## Accessibility
+
+### Keyboard Shortcuts
+
+The ScrollSpy component follows standard link navigation patterns:
+
+<KeyboardShortcutsTable
+  data={[
+    {
+      key: "Tab",
+      description: "Move focus between navigation items.",
+    },
+    {
+      key: "Enter",
+      description: "Activate the focused navigation item and scroll to the associated section.",
+    },
+    {
+      key: "Space",
+      description: "Activate the focused navigation item and scroll to the associated section.",
+    },
+  ]}
+/>
+
+## Data Attributes
+
+### Item
+
+<DataAttributesTable
+  data={[
+    {
+      attribute: "[data-active]",
+      values: "Present when the item is active",
+    },
+  ]}
+/>
+

@@ -29,7 +29,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
-import DataGridDemo from "@/registry/default/examples/data-grid-demo";
+import ScrollSpyDemo from "@/registry/default/examples/scrollspy-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -44,7 +44,7 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <Demo>
-        <DataGridDemo />
+        <ScrollSpyDemo />
         <ColorPickerDemo />
       </Demo>
       <Combobox className="w-60">
