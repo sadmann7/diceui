@@ -1,14 +1,15 @@
 import {
   ScrollSpy,
   ScrollSpyContent,
+  ScrollSpyContentGroup,
   ScrollSpyItem,
-  ScrollSpyList,
+  ScrollSpyItemGroup,
 } from "@/registry/default/ui/scrollspy";
 
 export default function ScrollSpyNestedDemo() {
   return (
-    <ScrollSpy className="flex gap-8">
-      <ScrollSpyList className="sticky top-20 h-fit w-56">
+    <ScrollSpy>
+      <ScrollSpyItemGroup asChild className="sticky top-20 h-fit w-56">
         <div className="flex flex-col gap-1">
           <ScrollSpyItem value="overview">Overview</ScrollSpyItem>
           <div className="ml-4 flex flex-col gap-1">
@@ -18,9 +19,8 @@ export default function ScrollSpyNestedDemo() {
           <ScrollSpyItem value="installation">Installation</ScrollSpyItem>
           <ScrollSpyItem value="examples">Examples</ScrollSpyItem>
         </div>
-      </ScrollSpyList>
-
-      <div className="flex-1 space-y-8">
+      </ScrollSpyItemGroup>
+      <ScrollSpyContentGroup>
         <ScrollSpyContent value="overview">
           <h2 className="font-bold text-2xl">Overview</h2>
           <p className="mt-2 text-zinc-600 dark:text-zinc-400">
@@ -28,7 +28,6 @@ export default function ScrollSpyNestedDemo() {
           </p>
           <div className="mt-4 h-32 rounded-lg bg-zinc-100 dark:bg-zinc-800" />
         </ScrollSpyContent>
-
         <ScrollSpyContent value="overview-features">
           <h3 className="font-semibold text-xl">Features</h3>
           <p className="mt-2 text-zinc-600 dark:text-zinc-400">
@@ -37,7 +36,6 @@ export default function ScrollSpyNestedDemo() {
           </p>
           <div className="mt-4 h-48 rounded-lg bg-zinc-100 dark:bg-zinc-800" />
         </ScrollSpyContent>
-
         <ScrollSpyContent value="overview-benefits">
           <h3 className="font-semibold text-xl">Benefits</h3>
           <p className="mt-2 text-zinc-600 dark:text-zinc-400">
@@ -45,7 +43,6 @@ export default function ScrollSpyNestedDemo() {
           </p>
           <div className="mt-4 h-48 rounded-lg bg-zinc-100 dark:bg-zinc-800" />
         </ScrollSpyContent>
-
         <ScrollSpyContent value="installation">
           <h2 className="font-bold text-2xl">Installation</h2>
           <p className="mt-2 text-zinc-600 dark:text-zinc-400">
@@ -53,7 +50,6 @@ export default function ScrollSpyNestedDemo() {
           </p>
           <div className="mt-4 h-64 rounded-lg bg-zinc-100 dark:bg-zinc-800" />
         </ScrollSpyContent>
-
         <ScrollSpyContent value="examples">
           <h2 className="font-bold text-2xl">Examples</h2>
           <p className="mt-2 text-zinc-600 dark:text-zinc-400">
@@ -61,7 +57,7 @@ export default function ScrollSpyNestedDemo() {
           </p>
           <div className="mt-4 h-64 rounded-lg bg-zinc-100 dark:bg-zinc-800" />
         </ScrollSpyContent>
-      </div>
+      </ScrollSpyContentGroup>
     </ScrollSpy>
   );
 }

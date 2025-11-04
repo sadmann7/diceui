@@ -1,4 +1,9 @@
-import type { CompositionProps, EmptyProps } from "@/types";
+import type {
+  CompositionProps,
+  Direction,
+  EmptyProps,
+  Orientation,
+} from "@/types";
 
 export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
@@ -49,9 +54,21 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * @default "smooth"
    */
   scrollBehavior?: ScrollBehavior;
+
+  /**
+   * The direction of the scrollspy.
+   * @default "ltr"
+   */
+  dir?: Direction;
+
+  /**
+   * The orientation of the scrollspy.
+   * @default "horizontal"
+   */
+  orientation?: Orientation;
 }
 
-export interface ListProps extends EmptyProps<"nav">, CompositionProps {}
+export interface ItemGroupProps extends EmptyProps<"nav">, CompositionProps {}
 
 export interface ItemProps extends EmptyProps<"a">, CompositionProps {
   /**
@@ -63,6 +80,10 @@ export interface ItemProps extends EmptyProps<"a">, CompositionProps {
    */
   value: string;
 }
+
+export interface ContentGroupProps
+  extends EmptyProps<"div">,
+    CompositionProps {}
 
 export interface ContentProps extends EmptyProps<"div">, CompositionProps {
   /**

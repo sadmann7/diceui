@@ -47,10 +47,12 @@ import * as ScrollSpy from "@/components/ui/scrollspy"
 
 return (
   <ScrollSpy.Root>
-    <ScrollSpy.List>
+    <ScrollSpy.ItemGroup>
       <ScrollSpy.Item />
-    </ScrollSpy.List>
-    <ScrollSpy.Content />
+    </ScrollSpy.ItemGroup>
+    <ScrollSpy.ContentGroup>
+      <ScrollSpy.Content />
+    </ScrollSpy.ContentGroup>
   </ScrollSpy.Root>
 )
 ```
@@ -74,13 +76,31 @@ The root component that manages scroll tracking and contains all ScrollSpy parts
   name="RootProps"
 />
 
-### List
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-orientation]",
+      value: ["horizontal", "vertical"],
+    },
+  ]}
+/>
 
-The navigation list container component.
+### ItemGroup
+
+The navigation item group container component.
 
 <AutoTypeTable
   path="./types/docs/scrollspy.ts"
-  name="ListProps"
+  name="ItemGroupProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-orientation]",
+      value: ["horizontal", "vertical"],
+    },
+  ]}
 />
 
 ### Item
@@ -95,8 +115,30 @@ Navigation item that links to a content section.
 <DataAttributesTable
   data={[
     {
+      title: "[data-orientation]",
+      value: ["horizontal", "vertical"],
+    },
+    {
       attribute: "[data-state]",
       values: '"active" | "inactive"',
+    },
+  ]}
+/>
+
+### ContentGroup
+
+The content group container component.
+
+<AutoTypeTable
+  path="./types/docs/scrollspy.ts"
+  name="ContentGroupProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-orientation]",
+      value: ["horizontal", "vertical"],
     },
   ]}
 />
@@ -108,6 +150,15 @@ Content section that gets tracked by the scrollspy.
 <AutoTypeTable
   path="./types/docs/scrollspy.ts"
   name="ContentProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-orientation]",
+      value: ["horizontal", "vertical"],
+    },
+  ]}
 />
 
 ## Accessibility

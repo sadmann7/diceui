@@ -1,22 +1,21 @@
 import {
   ScrollSpy,
   ScrollSpyContent,
+  ScrollSpyContentGroup,
   ScrollSpyItem,
-  ScrollSpyList,
+  ScrollSpyItemGroup,
 } from "@/registry/default/ui/scrollspy";
 
 export default function ScrollSpyDemo() {
   return (
-    <ScrollSpy className="flex gap-8">
-      <ScrollSpyList className="sticky top-20 h-fit w-48">
-        <div className="flex flex-col gap-2">
-          <ScrollSpyItem value="introduction">Introduction</ScrollSpyItem>
-          <ScrollSpyItem value="getting-started">Getting Started</ScrollSpyItem>
-          <ScrollSpyItem value="usage">Usage</ScrollSpyItem>
-          <ScrollSpyItem value="api-reference">API Reference</ScrollSpyItem>
-        </div>
-      </ScrollSpyList>
-      <div className="flex-1 space-y-8">
+    <ScrollSpy>
+      <ScrollSpyItemGroup className="sticky top-20 h-fit">
+        <ScrollSpyItem value="introduction">Introduction</ScrollSpyItem>
+        <ScrollSpyItem value="getting-started">Getting Started</ScrollSpyItem>
+        <ScrollSpyItem value="usage">Usage</ScrollSpyItem>
+        <ScrollSpyItem value="api-reference">API Reference</ScrollSpyItem>
+      </ScrollSpyItemGroup>
+      <ScrollSpyContentGroup>
         <ScrollSpyContent value="introduction">
           <h2 className="font-bold text-2xl">Introduction</h2>
           <p className="mt-2 text-zinc-600 dark:text-zinc-400">
@@ -47,7 +46,7 @@ export default function ScrollSpyDemo() {
           </p>
           <div className="mt-4 h-64 rounded-lg bg-zinc-100 dark:bg-zinc-800" />
         </ScrollSpyContent>
-      </div>
+      </ScrollSpyContentGroup>
     </ScrollSpy>
   );
 }
