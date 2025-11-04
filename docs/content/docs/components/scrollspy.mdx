@@ -45,20 +45,14 @@ Import the parts, and compose them together.
 ```tsx
 import * as ScrollSpy from "@/components/ui/scrollspy"
 
-<ScrollSpy.Root>
-  <ScrollSpy.List>
-    <ScrollSpy.Item value="section-1">Section 1</ScrollSpy.Item>
-    <ScrollSpy.Item value="section-2">Section 2</ScrollSpy.Item>
-  </ScrollSpy.List>
-
-  <ScrollSpy.Content id="section-1">
-    {/* Section 1 content */}
-  </ScrollSpy.Content>
-
-  <ScrollSpy.Content id="section-2">
-    {/* Section 2 content */}
-  </ScrollSpy.Content>
-</ScrollSpy.Root>
+return (
+  <ScrollSpy.Root>
+    <ScrollSpy.List>
+      <ScrollSpy.Item />
+    </ScrollSpy.List>
+    <ScrollSpy.Content />
+  </ScrollSpy.Root>
+)
 ```
 
 ## Examples
@@ -98,6 +92,15 @@ Navigation item that links to a content section.
   name="ItemProps"
 />
 
+<DataAttributesTable
+  data={[
+    {
+      attribute: "[data-state]",
+      values: '"active" | "inactive"',
+    },
+  ]}
+/>
+
 ### Content
 
 Content section that gets tracked by the scrollspy.
@@ -129,17 +132,3 @@ The ScrollSpy component follows standard link navigation patterns:
     },
   ]}
 />
-
-## Data Attributes
-
-### Item
-
-<DataAttributesTable
-  data={[
-    {
-      attribute: "[data-active]",
-      values: "Present when the item is active",
-    },
-  ]}
-/>
-

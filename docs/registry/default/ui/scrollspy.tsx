@@ -4,6 +4,7 @@ import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import { useCallbackRef } from "@/hooks/use-callback-ref";
 import { useComposedRefs } from "@/lib/compose-refs";
+import { cn } from "@/lib/utils";
 
 const ROOT_NAME = "ScrollSpy";
 const ITEM_NAME = "ScrollSpyItem";
@@ -115,7 +116,7 @@ function useScrollSpyContext(consumerName: string) {
   return context;
 }
 
-interface ScrollSpyProps extends React.ComponentProps<"div"> {
+interface ScrollSpyRootProps extends React.ComponentProps<"div"> {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
@@ -126,7 +127,7 @@ interface ScrollSpyProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-function ScrollSpy(props: ScrollSpyProps) {
+function ScrollSpyRoot(props: ScrollSpyRootProps) {
   const { value, defaultValue, onValueChange, ...rootProps } = props;
 
   const listenersRef = useLazyRef(() => new Set<() => void>());
@@ -141,13 +142,13 @@ function ScrollSpy(props: ScrollSpyProps) {
 
   return (
     <StoreContext.Provider value={store}>
-      <ScrollSpyImpl value={value} {...rootProps} />
+      <ScrollSpyRootImpl value={value} {...rootProps} />
     </StoreContext.Provider>
   );
 }
 
-function ScrollSpyImpl(
-  props: Omit<ScrollSpyProps, "defaultValue" | "onValueChange">,
+function ScrollSpyRootImpl(
+  props: Omit<ScrollSpyRootProps, "defaultValue" | "onValueChange">,
 ) {
   const {
     value: valueProp,
@@ -262,16 +263,15 @@ function ScrollSpyList(props: ScrollSpyListProps) {
 
 interface ScrollSpyItemProps extends React.ComponentProps<"a"> {
   value: string;
-  active?: boolean;
   asChild?: boolean;
 }
 
 function ScrollSpyItem(props: ScrollSpyItemProps) {
-  const { value, active: activeProp, asChild, onClick, ...itemProps } = props;
+  const { value, asChild, onClick, className, ...itemProps } = props;
 
   const { offset, scrollBehavior } = useScrollSpyContext(ITEM_NAME);
   const activeValue = useStore((state) => state.activeValue);
-  const isActive = activeProp ?? activeValue === value;
+  const isActive = activeValue === value;
 
   const onItemClick = useCallbackRef(
     (event: React.MouseEvent<HTMLAnchorElement>) => {
@@ -296,7 +296,11 @@ function ScrollSpyItem(props: ScrollSpyItemProps) {
   return (
     <ItemPrimitive
       data-slot="scrollspy-item"
-      data-active={isActive ? "" : undefined}
+      data-state={isActive ? "active" : "inactive"}
+      className={cn(
+        "rounded px-3 py-1.5 text-muted-foreground text-sm transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-accent data-[state=active]:font-medium data-[state=active]:text-foreground",
+        className,
+      )}
       {...itemProps}
       href={`#${value}`}
       onClick={onItemClick}
@@ -341,12 +345,12 @@ function ScrollSpyContent(props: ScrollSpyContentProps) {
 }
 
 export {
-  ScrollSpy as Root,
+  ScrollSpyRoot as Root,
   ScrollSpyList as List,
   ScrollSpyItem as Item,
   ScrollSpyContent as Content,
   //
-  ScrollSpy,
+  ScrollSpyRoot as ScrollSpy,
   ScrollSpyList,
   ScrollSpyItem,
   ScrollSpyContent,

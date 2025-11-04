@@ -10,38 +10,13 @@ export default function ScrollSpyNestedDemo() {
     <ScrollSpy className="flex gap-8">
       <ScrollSpyList className="sticky top-20 h-fit w-56">
         <div className="flex flex-col gap-1">
-          <ScrollSpyItem
-            value="overview"
-            className="rounded px-3 py-1.5 text-sm text-zinc-600 transition-colors hover:bg-zinc-100 data-active:bg-zinc-100 data-active:font-medium data-active:text-zinc-900 dark:text-zinc-400 dark:data-active:bg-zinc-800 dark:data-active:text-zinc-50 dark:hover:bg-zinc-800"
-          >
-            Overview
-          </ScrollSpyItem>
+          <ScrollSpyItem value="overview">Overview</ScrollSpyItem>
           <div className="ml-4 flex flex-col gap-1">
-            <ScrollSpyItem
-              value="overview-features"
-              className="rounded px-3 py-1.5 text-sm text-zinc-600 transition-colors hover:bg-zinc-100 data-active:bg-zinc-100 data-active:font-medium data-active:text-zinc-900 dark:text-zinc-400 dark:data-active:bg-zinc-800 dark:data-active:text-zinc-50 dark:hover:bg-zinc-800"
-            >
-              Features
-            </ScrollSpyItem>
-            <ScrollSpyItem
-              value="overview-benefits"
-              className="rounded px-3 py-1.5 text-sm text-zinc-600 transition-colors hover:bg-zinc-100 data-active:bg-zinc-100 data-active:font-medium data-active:text-zinc-900 dark:text-zinc-400 dark:data-active:bg-zinc-800 dark:data-active:text-zinc-50 dark:hover:bg-zinc-800"
-            >
-              Benefits
-            </ScrollSpyItem>
+            <ScrollSpyItem value="overview-features">Features</ScrollSpyItem>
+            <ScrollSpyItem value="overview-benefits">Benefits</ScrollSpyItem>
           </div>
-          <ScrollSpyItem
-            value="installation"
-            className="rounded px-3 py-1.5 text-sm text-zinc-600 transition-colors hover:bg-zinc-100 data-active:bg-zinc-100 data-active:font-medium data-active:text-zinc-900 dark:text-zinc-400 dark:data-active:bg-zinc-800 dark:data-active:text-zinc-50 dark:hover:bg-zinc-800"
-          >
-            Installation
-          </ScrollSpyItem>
-          <ScrollSpyItem
-            value="examples"
-            className="rounded px-3 py-1.5 text-sm text-zinc-600 transition-colors hover:bg-zinc-100 data-active:bg-zinc-100 data-active:font-medium data-active:text-zinc-900 dark:text-zinc-400 dark:data-active:bg-zinc-800 dark:data-active:text-zinc-50 dark:hover:bg-zinc-800"
-          >
-            Examples
-          </ScrollSpyItem>
+          <ScrollSpyItem value="installation">Installation</ScrollSpyItem>
+          <ScrollSpyItem value="examples">Examples</ScrollSpyItem>
         </div>
       </ScrollSpyList>
 

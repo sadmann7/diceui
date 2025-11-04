@@ -4,6 +4,10 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The currently active section ID.
    * Use for controlled behavior.
+   *
+   * ```ts
+   * value="introduction"
+   * ```
    */
   value?: string;
 
@@ -51,15 +55,22 @@ export interface ListProps extends EmptyProps<"nav">, CompositionProps {}
 
 export interface ItemProps extends EmptyProps<"a">, CompositionProps {
   /**
-   * The ID of the section this item links to.
+   * The unique value that links the item with the content.
+   *
+   * ```ts
+   * value="introduction"
+   * ```
    */
   value: string;
-
-  /**
-   * Whether this item is currently active.
-   * @default false
-   */
-  active?: boolean;
 }
 
-export interface ContentProps extends EmptyProps<"div">, CompositionProps {}
+export interface ContentProps extends EmptyProps<"div">, CompositionProps {
+  /**
+   * The unique value that links the content with the item.
+   *
+   * ```ts
+   * value="introduction"
+   * ```
+   */
+  value: string;
+}
