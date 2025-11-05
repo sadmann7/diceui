@@ -31,7 +31,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
    * Root margin for the intersection observer.
    * Useful for adjusting when sections become "active".
-   * @default "0px 0px -80% 0px"
+   * @default undefined
    * @example "-100px 0px 0px 0px"
    */
   rootMargin?: string;

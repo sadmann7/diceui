@@ -14,6 +14,9 @@ const CONTENT_NAME = "ScrollSpyContent";
 type Direction = "ltr" | "rtl";
 type Orientation = "horizontal" | "vertical";
 
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
+
 function useLazyRef<T>(fn: () => T) {
   const ref = React.useRef<T | null>(null);
 
@@ -24,9 +27,6 @@ function useLazyRef<T>(fn: () => T) {
   return ref as React.RefObject<T>;
 }
 
-const useIsomorphicLayoutEffect =
-  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
-
 interface StoreState {
   activeValue: string | undefined;
 }
@@ -36,49 +36,6 @@ interface Store {
   getState: () => StoreState;
   setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
   notify: () => void;
-}
-
-function createStore(
-  listenersRef: React.RefObject<Set<() => void>>,
-  stateRef: React.RefObject<StoreState>,
-  onValueChange?: (value: string) => void,
-): Store {
-  const store: Store = {
-    subscribe: (cb) => {
-      if (listenersRef.current) {
-        listenersRef.current.add(cb);
-        return () => listenersRef.current?.delete(cb);
-      }
-      return () => {};
-    },
-    getState: () =>
-      stateRef.current ?? {
-        activeValue: undefined,
-      },
-    setState: (key, value) => {
-      const state = stateRef.current;
-      if (!state || Object.is(state[key], value)) return;
-
-      if (
-        key === "activeValue" &&
-        (typeof value === "string" || value === undefined)
-      ) {
-        state.activeValue = value;
-        if (value) onValueChange?.(value);
-      }
-
-      store.notify();
-    },
-    notify: () => {
-      if (listenersRef.current) {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      }
-    },
-  };
-
-  return store;
 }
 
 const StoreContext = React.createContext<Store | null>(null);
@@ -93,6 +50,7 @@ function useStoreContext(consumerName: string) {
 
 function useStore<T>(selector: (state: StoreState) => T): T {
   const store = useStoreContext("useStore");
+
   const getSnapshot = React.useCallback(
     () => selector(store.getState()),
     [store, selector],
@@ -147,15 +105,38 @@ interface ScrollSpyRootProps extends React.ComponentProps<"div"> {
 function ScrollSpyRoot(props: ScrollSpyRootProps) {
   const { value, defaultValue, onValueChange, ...rootProps } = props;
 
-  const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<StoreState>(() => ({
     activeValue: value ?? defaultValue,
   }));
+  const listenersRef = useLazyRef(() => new Set<() => void>());
 
-  const store = React.useMemo(
-    () => createStore(listenersRef, stateRef, onValueChange),
-    [listenersRef, stateRef, onValueChange],
-  );
+  const store: Store = React.useMemo(() => {
+    return {
+      subscribe: (cb) => {
+        listenersRef.current.add(cb);
+        return () => listenersRef.current.delete(cb);
+      },
+      getState: () => {
+        return stateRef.current;
+      },
+      setState: (key, value) => {
+        if (Object.is(stateRef.current[key], value)) return;
+
+        stateRef.current[key] = value;
+
+        if (key === "activeValue" && value) {
+          onValueChange?.(value);
+        }
+
+        store.notify();
+      },
+      notify: () => {
+        for (const cb of listenersRef.current) {
+          cb();
+        }
+      },
+    };
+  }, [listenersRef, stateRef, onValueChange]);
 
   return (
     <StoreContext.Provider value={store}>
@@ -169,13 +150,13 @@ function ScrollSpyRootImpl(
 ) {
   const {
     value: valueProp,
-    rootMargin: _rootMargin = "0px 0px -80% 0px",
-    threshold: _threshold = 0.1,
+    rootMargin,
+    threshold = 0.1,
     offset = 0,
     scrollBehavior = "smooth",
     scrollContainer = null,
-    orientation = "horizontal",
     dir: dirProp,
+    orientation = "horizontal",
     asChild,
     className,
     ...rootProps
@@ -197,90 +178,44 @@ function ScrollSpyRootImpl(
     contentMapRef.current.delete(id);
   }, []);
 
-  const checkAndUpdateActiveSection = React.useCallback(() => {
-    const sections = Array.from(contentMapRef.current.entries());
-    if (sections.length === 0) return;
-
-    const containerRect = scrollContainer
-      ? scrollContainer.getBoundingClientRect()
-      : { top: 0, height: window.innerHeight };
-
-    const viewportHeight = scrollContainer
-      ? containerRect.height
-      : window.innerHeight;
-
-    // Find the first visible section from the top
-    for (const [id, element] of sections) {
-      const rect = element.getBoundingClientRect();
-      const elementTop = scrollContainer
-        ? rect.top - containerRect.top
-        : rect.top;
-
-      // Check if element is in viewport considering offset
-      // Element is considered "active" when its top is within the offset range
-      if (elementTop >= -offset && elementTop <= viewportHeight * 0.3) {
-        store.setState("activeValue", id);
-        return;
-      }
-    }
-
-    // If no section meets the criteria, find the one closest to the offset
-    let closestSection: { id: string; distance: number } | null = null;
-
-    for (const [id, element] of sections) {
-      const rect = element.getBoundingClientRect();
-      const elementTop = scrollContainer
-        ? rect.top - containerRect.top
-        : rect.top;
-
-      const distance = Math.abs(elementTop - offset);
-
-      if (!closestSection || distance < closestSection.distance) {
-        closestSection = { id, distance };
-      }
-    }
-
-    if (closestSection) {
-      store.setState("activeValue", closestSection.id);
-    }
-  }, [scrollContainer, offset, store]);
-
   useIsomorphicLayoutEffect(() => {
-    // Initial check
-    checkAndUpdateActiveSection();
+    const contentMap = contentMapRef.current;
+    if (contentMap.size === 0) return;
 
-    // Throttle scroll events for performance
-    let rafId: number | null = null;
-    let lastTime = 0;
-    const throttleMs = 100;
+    const observerRootMargin = rootMargin ?? `${-offset}px 0px -70% 0px`;
 
-    function onScroll() {
-      const now = Date.now();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const intersecting = entries.filter((entry) => entry.isIntersecting);
 
-      if (rafId) {
-        cancelAnimationFrame(rafId);
-      }
+        if (intersecting.length === 0) return;
 
-      rafId = requestAnimationFrame(() => {
-        if (now - lastTime >= throttleMs) {
-          checkAndUpdateActiveSection();
-          lastTime = now;
-        } else {
-          onScroll();
+        const topmost = intersecting.reduce((prev, curr) => {
+          return curr.boundingClientRect.top < prev.boundingClientRect.top
+            ? curr
+            : prev;
+        });
+
+        const id = topmost.target.id;
+        if (id && contentMap.has(id)) {
+          store.setState("activeValue", id);
         }
-      });
-    }
+      },
+      {
+        root: scrollContainer,
+        rootMargin: observerRootMargin,
+        threshold,
+      },
+    );
 
-    const target = scrollContainer ?? window;
-    target.addEventListener("scroll", onScroll, { passive: true });
+    contentMap.forEach((element) => {
+      observer.observe(element);
+    });
 
     return () => {
-      target.removeEventListener("scroll", onScroll);
-      if (rafId) {
-        cancelAnimationFrame(rafId);
-      }
+      observer.disconnect();
     };
-  }, [scrollContainer, checkAndUpdateActiveSection]);
+  }, [offset, rootMargin, threshold, scrollContainer]);
 
   useIsomorphicLayoutEffect(() => {
     if (valueProp !== undefined) {
@@ -290,19 +225,19 @@ function ScrollSpyRootImpl(
 
   const contextValue = React.useMemo<ScrollSpyContextValue>(
     () => ({
-      offset,
-      scrollBehavior,
       dir,
       orientation,
+      offset,
+      scrollBehavior,
       scrollContainer,
       onContentRegister,
       onContentUnregister,
     }),
     [
-      offset,
-      scrollBehavior,
       dir,
       orientation,
+      offset,
+      scrollBehavior,
       scrollContainer,
       onContentRegister,
       onContentUnregister,
@@ -346,12 +281,12 @@ function ScrollSpyItemGroup(props: ScrollSpyItemGroupProps) {
       data-orientation={orientation}
       data-slot="scroll-spy-list"
       dir={dir}
+      {...listProps}
       className={cn(
         "flex gap-2",
         orientation === "horizontal" ? "flex-col" : "flex-row",
         className,
       )}
-      {...listProps}
     />
   );
 }
@@ -378,11 +313,9 @@ function ScrollSpyItem(props: ScrollSpyItemProps) {
       const element = document.getElementById(value);
       if (!element) return;
 
-      // Immediately update active state
       store.setState("activeValue", value);
 
       if (scrollContainer) {
-        // Scroll within container
         const containerRect = scrollContainer.getBoundingClientRect();
         const elementRect = element.getBoundingClientRect();
         const scrollTop = scrollContainer.scrollTop;
@@ -394,7 +327,6 @@ function ScrollSpyItem(props: ScrollSpyItemProps) {
           behavior: scrollBehavior,
         });
       } else {
-        // Scroll window
         const elementPosition = element.getBoundingClientRect().top;
         const offsetPosition = elementPosition + window.scrollY - offset;
 
@@ -414,11 +346,11 @@ function ScrollSpyItem(props: ScrollSpyItemProps) {
       data-orientation={orientation}
       data-slot="scroll-spy-item"
       data-state={isActive ? "active" : "inactive"}
+      {...itemProps}
       className={cn(
         "rounded px-3 py-1.5 text-muted-foreground text-sm transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-accent data-[state=active]:font-medium data-[state=active]:text-foreground",
         className,
       )}
-      {...itemProps}
       href={`#${value}`}
       onClick={onItemClick}
     />
