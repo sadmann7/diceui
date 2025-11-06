@@ -1873,6 +1873,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "scroll-spy-vertical-demo": {
+      name: "scroll-spy-vertical-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["scroll-spy"],
+      files: [{
+        path: "registry/default/examples/scroll-spy-vertical-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/scroll-spy-vertical-demo.tsx")),
+      source: "",
+      chunks: []
+    },
     "sortable-demo": {
       name: "sortable-demo",
       description: "",

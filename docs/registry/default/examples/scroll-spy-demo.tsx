@@ -17,9 +17,9 @@ export default function ScrollSpyDemo() {
     <ScrollSpy
       offset={75}
       scrollContainer={scrollContainer}
-      className="h-[400px] w-full gap-4 border"
+      className="h-[400px] w-full border"
     >
-      <ScrollSpyItemGroup className="border-r p-4">
+      <ScrollSpyItemGroup className="w-40 border-r p-4">
         <ScrollSpyItem value="introduction">Introduction</ScrollSpyItem>
         <ScrollSpyItem value="getting-started">Getting Started</ScrollSpyItem>
         <ScrollSpyItem value="usage">Usage</ScrollSpyItem>

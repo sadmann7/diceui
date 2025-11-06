@@ -255,7 +255,7 @@ function ScrollSpyRootImpl(
           dir={dir}
           {...rootProps}
           className={cn(
-            "flex gap-8",
+            "flex",
             orientation === "horizontal" ? "flex-row" : "flex-col",
             className,
           )}
@@ -274,10 +274,12 @@ function ScrollSpyItemGroup(props: ScrollSpyItemGroupProps) {
 
   const { dir, orientation } = useScrollSpyContext(LIST_NAME);
 
-  const ListPrimitive = asChild ? Slot : "nav";
+  const ItemGroupPrimitive = asChild ? Slot : "nav";
+
+  console.log({ orientation });
 
   return (
-    <ListPrimitive
+    <ItemGroupPrimitive
       data-orientation={orientation}
       data-slot="scroll-spy-list"
       dir={dir}

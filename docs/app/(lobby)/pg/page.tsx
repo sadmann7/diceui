@@ -30,6 +30,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { tricks } from "@/lib/data";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
 import ScrollSpyDemo from "@/registry/default/examples/scroll-spy-demo";
+import ScrollSpyHorizontalDemo from "@/registry/default/examples/scroll-spy-vertical-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -45,6 +46,7 @@ export default function PlaygroundPage() {
     <Shell>
       <Demo>
         <ScrollSpyDemo />
+        <ScrollSpyHorizontalDemo />
         <ColorPickerDemo />
       </Demo>
       <Combobox className="w-60">
