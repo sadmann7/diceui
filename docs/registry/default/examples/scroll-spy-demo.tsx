@@ -1,3 +1,6 @@
+"use client";
+
+import * as React from "react";
 import {
   ScrollSpy,
   ScrollSpyContent,
@@ -7,15 +10,25 @@ import {
 } from "@/registry/default/ui/scroll-spy";
 
 export default function ScrollSpyDemo() {
+  const [scrollContainer, setScrollContainer] =
+    React.useState<HTMLDivElement | null>(null);
+
   return (
-    <ScrollSpy offset={75}>
-      <ScrollSpyItemGroup className="sticky top-20 h-fit">
+    <ScrollSpy
+      offset={75}
+      scrollContainer={scrollContainer}
+      className="h-[400px] w-full gap-4 border"
+    >
+      <ScrollSpyItemGroup className="border-r p-4">
         <ScrollSpyItem value="introduction">Introduction</ScrollSpyItem>
         <ScrollSpyItem value="getting-started">Getting Started</ScrollSpyItem>
         <ScrollSpyItem value="usage">Usage</ScrollSpyItem>
         <ScrollSpyItem value="api-reference">API Reference</ScrollSpyItem>
       </ScrollSpyItemGroup>
-      <ScrollSpyContentGroup>
+      <ScrollSpyContentGroup
+        ref={setScrollContainer}
+        className="overflow-y-auto p-4"
+      >
         <ScrollSpyContent value="introduction">
           <h2 className="font-bold text-2xl">Introduction</h2>
           <p className="mt-2 text-muted-foreground">
