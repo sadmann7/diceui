@@ -1199,17 +1199,6 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "scroll-spy-nested-demo",
-    type: "registry:example",
-    registryDependencies: ["scroll-spy"],
-    files: [
-      {
-        path: "examples/scroll-spy-nested-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
     name: "sortable-demo",
     type: "registry:example",
     dependencies: [
