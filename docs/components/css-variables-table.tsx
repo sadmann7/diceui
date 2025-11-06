@@ -1,13 +1,13 @@
 import { PropsTable } from "@/components/props-table";
 
 interface CSSVariablesTableProps {
-  variables: {
+  data: {
     title: string;
     description: string;
     defaultValue?: string;
   }[];
 }
 
-export function CSSVariablesTable({ variables }: CSSVariablesTableProps) {
-  return <PropsTable variant="css-variable" data={variables} />;
+export function CSSVariablesTable({ data }: CSSVariablesTableProps) {
+  return <PropsTable variant="css-variable" data={data} />;
 }

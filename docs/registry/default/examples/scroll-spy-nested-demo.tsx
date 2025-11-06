@@ -8,7 +8,7 @@ import {
 
 export default function ScrollSpyNestedDemo() {
   return (
-    <ScrollSpy>
+    <ScrollSpy offset={75}>
       <ScrollSpyItemGroup asChild className="sticky top-20 h-fit w-56">
         <div className="flex flex-col gap-1">
           <ScrollSpyItem value="overview">Overview</ScrollSpyItem>

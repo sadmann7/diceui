@@ -8,7 +8,7 @@ import {
 
 export default function ScrollSpyDemo() {
   return (
-    <ScrollSpy offset={80}>
+    <ScrollSpy offset={75}>
       <ScrollSpyItemGroup className="sticky top-20 h-fit">
         <ScrollSpyItem value="introduction">Introduction</ScrollSpyItem>
         <ScrollSpyItem value="getting-started">Getting Started</ScrollSpyItem>

@@ -28,7 +28,7 @@ function useLazyRef<T>(fn: () => T) {
 }
 
 interface StoreState {
-  activeValue: string | undefined;
+  value: string;
 }
 
 interface Store {
@@ -97,8 +97,8 @@ interface ScrollSpyRootProps extends React.ComponentProps<"div"> {
   offset?: number;
   scrollBehavior?: ScrollBehavior;
   scrollContainer?: HTMLElement | null;
-  orientation?: Orientation;
   dir?: Direction;
+  orientation?: Orientation;
   asChild?: boolean;
 }
 
@@ -106,7 +106,7 @@ function ScrollSpyRoot(props: ScrollSpyRootProps) {
   const { value, defaultValue, onValueChange, ...rootProps } = props;
 
   const stateRef = useLazyRef<StoreState>(() => ({
-    activeValue: value ?? defaultValue,
+    value: value ?? defaultValue ?? "",
   }));
   const listenersRef = useLazyRef(() => new Set<() => void>());
 
@@ -124,7 +124,7 @@ function ScrollSpyRoot(props: ScrollSpyRootProps) {
 
         stateRef.current[key] = value;
 
-        if (key === "activeValue" && value) {
+        if (key === "value" && value) {
           onValueChange?.(value);
         }
 
@@ -198,7 +198,7 @@ function ScrollSpyRootImpl(
 
         const id = topmost.target.id;
         if (id && contentMap.has(id)) {
-          store.setState("activeValue", id);
+          store.setState("value", id);
         }
       },
       {
@@ -219,7 +219,7 @@ function ScrollSpyRootImpl(
 
   useIsomorphicLayoutEffect(() => {
     if (valueProp !== undefined) {
-      store.setState("activeValue", valueProp);
+      store.setState("value", valueProp);
     }
   }, [valueProp]);
 
@@ -297,23 +297,23 @@ interface ScrollSpyItemProps extends React.ComponentProps<"a"> {
 }
 
 function ScrollSpyItem(props: ScrollSpyItemProps) {
-  const { value, asChild, onClick, className, ...itemProps } = props;
+  const { value: valueProp, asChild, onClick, className, ...itemProps } = props;
 
   const { orientation, offset, scrollBehavior, scrollContainer } =
     useScrollSpyContext(ITEM_NAME);
   const store = useStoreContext(ITEM_NAME);
-  const activeValue = useStore((state) => state.activeValue);
-  const isActive = activeValue === value;
+  const value = useStore((state) => state.value);
+  const isActive = value === valueProp;
 
   const onItemClick = React.useCallback(
     (event: React.MouseEvent<HTMLAnchorElement>) => {
       event.preventDefault();
       onClick?.(event);
 
-      const element = document.getElementById(value);
+      const element = document.getElementById(valueProp);
       if (!element) return;
 
-      store.setState("activeValue", value);
+      store.setState("value", valueProp);
 
       if (scrollContainer) {
         const containerRect = scrollContainer.getBoundingClientRect();
@@ -336,7 +336,7 @@ function ScrollSpyItem(props: ScrollSpyItemProps) {
         });
       }
     },
-    [offset, scrollBehavior, value, onClick, scrollContainer, store],
+    [offset, scrollBehavior, valueProp, onClick, scrollContainer, store],
   );
 
   const ItemPrimitive = asChild ? Slot : "a";

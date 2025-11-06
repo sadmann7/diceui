@@ -154,7 +154,7 @@ interface StepState {
 
 interface StoreState {
   steps: Map<string, StepState>;
-  value?: string;
+  value: string;
 }
 
 interface Store {
@@ -364,7 +364,7 @@ function StepperRoot(props: StepperRootProps) {
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<StoreState>(() => ({
     steps: new Map(),
-    value: value ?? defaultValue,
+    value: value ?? defaultValue ?? "",
   }));
 
   const store = React.useMemo(
@@ -1001,7 +1001,7 @@ function StepperTrigger(props: ButtonProps) {
       ref={composedRef}
       className={cn(
         "inline-flex items-center justify-center gap-3 rounded-md text-left outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
-        "not-has-[[data-slot=description]]:rounded-full not-has-[[data-slot=title]]:rounded-full",
+        "not-has-data-[slot=description]:rounded-full not-has-data-[slot=title]:rounded-full",
         className,
       )}
       onClick={onClick}
