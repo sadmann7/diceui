@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { Button } from "@/components/ui/button";
 import {
   ScrollSpy,
   ScrollSpyLink,
@@ -9,14 +10,17 @@ import {
   ScrollSpyViewport,
 } from "@/registry/default/ui/scroll-spy";
 
-export default function ScrollSpyDemo() {
+export default function ScrollSpyControlledDemo() {
   const [scrollContainer, setScrollContainer] =
     React.useState<HTMLDivElement | null>(null);
+  const [value, setValue] = React.useState("getting-started");
 
   return (
     <ScrollSpy
       offset={16}
       scrollContainer={scrollContainer}
+      value={value}
+      onValueChange={setValue}
       className="h-[400px] w-full border"
     >
       <ScrollSpyNav className="w-40 border-r p-4">
