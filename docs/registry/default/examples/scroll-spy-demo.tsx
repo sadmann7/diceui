@@ -12,12 +12,14 @@ import {
 export default function ScrollSpyDemo() {
   const [scrollContainer, setScrollContainer] =
     React.useState<HTMLDivElement | null>(null);
+  const [value, setValue] = React.useState("getting-started");
 
   return (
     <ScrollSpy
       offset={16}
       scrollContainer={scrollContainer}
-      defaultValue="getting-starteds"
+      value={value}
+      onValueChange={setValue}
       className="h-[400px] w-full border"
     >
       <ScrollSpyNav className="w-40 border-r p-4">

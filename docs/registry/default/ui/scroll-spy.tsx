@@ -166,6 +166,11 @@ function ScrollSpyImpl(
   const store = useStoreContext(ROOT_NAME);
 
   const sectionMapRef = React.useRef(new Map<string, Element>());
+  const isScrollingToInitialRef = React.useRef(false);
+  const hasScrolledToInitialRef = React.useRef(false);
+  const isObserverUpdateRef = React.useRef(false);
+  const rafIdRef = React.useRef<number | null>(null);
+  const timeoutIdRef = React.useRef<NodeJS.Timeout | null>(null);
 
   const onSectionRegister = React.useCallback(
     (id: string, element: Element) => {
@@ -178,6 +183,14 @@ function ScrollSpyImpl(
     sectionMapRef.current.delete(id);
   }, []);
 
+  const prevValueProp = React.useRef(valueProp);
+  useIsomorphicLayoutEffect(() => {
+    if (valueProp !== undefined) {
+      store.setState("value", valueProp);
+    }
+    prevValueProp.current = valueProp;
+  }, [valueProp, store]);
+
   useIsomorphicLayoutEffect(() => {
     const sectionMap = sectionMapRef.current;
     if (sectionMap.size === 0) return;
@@ -186,6 +199,9 @@ function ScrollSpyImpl(
 
     const observer = new IntersectionObserver(
       (entries) => {
+        // Ignore intersection changes while scrolling to initial position
+        if (isScrollingToInitialRef.current) return;
+
         const intersecting = entries.filter((entry) => entry.isIntersecting);
 
         if (intersecting.length === 0) return;
@@ -198,7 +214,9 @@ function ScrollSpyImpl(
 
         const id = topmost.target.id;
         if (id && sectionMap.has(id)) {
+          isObserverUpdateRef.current = true;
           store.setState("value", id);
+          isObserverUpdateRef.current = false;
         }
       },
       {
@@ -218,10 +236,67 @@ function ScrollSpyImpl(
   }, [offset, rootMargin, threshold, scrollContainer]);
 
   useIsomorphicLayoutEffect(() => {
-    if (valueProp !== undefined) {
-      store.setState("value", valueProp);
+    if (!scrollContainer) return; // Wait for scrollContainer to be available
+
+    const currentValue = store.getState().value;
+    if (!currentValue) return;
+
+    const element = document.getElementById(currentValue);
+    if (!element) return;
+
+    // Check if this is initial mount or external value change
+    const isInitialMount = !hasScrolledToInitialRef.current;
+    const isExternalChange =
+      valueProp !== undefined &&
+      valueProp !== prevValueProp.current &&
+      !isObserverUpdateRef.current;
+
+    if (!isInitialMount && !isExternalChange) return;
+
+    hasScrolledToInitialRef.current = true;
+    isScrollingToInitialRef.current = true;
+
+    // Cancel any pending scroll animations
+    if (rafIdRef.current !== null) {
+      cancelAnimationFrame(rafIdRef.current);
     }
-  }, [valueProp]);
+    if (timeoutIdRef.current !== null) {
+      clearTimeout(timeoutIdRef.current);
+    }
+
+    // Use requestAnimationFrame to ensure the DOM is ready
+    rafIdRef.current = requestAnimationFrame(() => {
+      const containerRect = scrollContainer.getBoundingClientRect();
+      const elementRect = element.getBoundingClientRect();
+      const scrollTop = scrollContainer.scrollTop;
+      const offsetPosition =
+        elementRect.top - containerRect.top + scrollTop - offset;
+
+      scrollContainer.scrollTo({
+        top: offsetPosition,
+        behavior: isInitialMount ? "instant" : scrollBehavior,
+      });
+
+      // Wait for IntersectionObserver to recalculate after scroll
+      timeoutIdRef.current = setTimeout(() => {
+        isScrollingToInitialRef.current = false;
+        rafIdRef.current = null;
+        timeoutIdRef.current = null;
+      }, 100);
+    });
+
+    // Cleanup on unmount or when dependencies change
+    return () => {
+      if (rafIdRef.current !== null) {
+        cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = null;
+      }
+      if (timeoutIdRef.current !== null) {
+        clearTimeout(timeoutIdRef.current);
+        timeoutIdRef.current = null;
+      }
+    };
+  }, [offset, scrollBehavior, scrollContainer, store, valueProp]);
 
   const contextValue = React.useMemo<ScrollSpyContextValue>(
     () => ({
