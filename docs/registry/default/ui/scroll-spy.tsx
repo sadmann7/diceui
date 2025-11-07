@@ -88,7 +88,7 @@ function useScrollSpyContext(consumerName: string) {
   return context;
 }
 
-interface ScrollSpyRootProps extends React.ComponentProps<"div"> {
+interface ScrollSpyProps extends React.ComponentProps<"div"> {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
@@ -102,7 +102,7 @@ interface ScrollSpyRootProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-function ScrollSpyRoot(props: ScrollSpyRootProps) {
+function ScrollSpy(props: ScrollSpyProps) {
   const { value, defaultValue, onValueChange, ...rootProps } = props;
 
   const stateRef = useLazyRef<StoreState>(() => ({
@@ -140,13 +140,13 @@ function ScrollSpyRoot(props: ScrollSpyRootProps) {
 
   return (
     <StoreContext.Provider value={store}>
-      <ScrollSpyRootImpl value={value} {...rootProps} />
+      <ScrollSpyImpl value={value} {...rootProps} />
     </StoreContext.Provider>
   );
 }
 
-function ScrollSpyRootImpl(
-  props: Omit<ScrollSpyRootProps, "defaultValue" | "onValueChange">,
+function ScrollSpyImpl(
+  props: Omit<ScrollSpyProps, "defaultValue" | "onValueChange">,
 ) {
   const {
     value: valueProp,
@@ -275,8 +275,6 @@ function ScrollSpyItemGroup(props: ScrollSpyItemGroupProps) {
   const { dir, orientation } = useScrollSpyContext(LIST_NAME);
 
   const ItemGroupPrimitive = asChild ? Slot : "nav";
-
-  console.log({ orientation });
 
   return (
     <ItemGroupPrimitive
@@ -419,13 +417,7 @@ function ScrollSpyContent(props: ScrollSpyContentProps) {
 }
 
 export {
-  ScrollSpyRoot as Root,
-  ScrollSpyItemGroup as ItemGroup,
-  ScrollSpyItem as Item,
-  ScrollSpyContentGroup as ContentGroup,
-  ScrollSpyContent as Content,
-  //
-  ScrollSpyRoot as ScrollSpy,
+  ScrollSpy,
   ScrollSpyItemGroup,
   ScrollSpyItem,
   ScrollSpyContentGroup,

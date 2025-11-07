@@ -6,8 +6,8 @@ import * as React from "react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
-const ROOT_NAME = "InputGroup";
-const ITEM_NAME = "InputGroupItem";
+const ROOT_NAME = "SegmentedInput";
+const ITEM_NAME = "SegmentedInputItem";
 
 type Direction = "ltr" | "rtl";
 
@@ -18,7 +18,7 @@ function useDirection(dirProp?: Direction): Direction {
   return dirProp ?? contextDir ?? "ltr";
 }
 
-interface InputGroupContextValue {
+interface SegmentedInputContextValue {
   dir?: Direction;
   orientation?: "horizontal" | "vertical";
   size?: "sm" | "default" | "lg";
@@ -27,20 +27,83 @@ interface InputGroupContextValue {
   required?: boolean;
 }
 
-const InputGroupContext = React.createContext<InputGroupContextValue | null>(
-  null,
-);
-InputGroupContext.displayName = ROOT_NAME;
+const SegmentedInputContext =
+  React.createContext<SegmentedInputContextValue | null>(null);
+SegmentedInputContext.displayName = ROOT_NAME;
 
-function useInputGroupContext(consumerName: string) {
-  const context = React.useContext(InputGroupContext);
+function useSegmentedInputContext(consumerName: string) {
+  const context = React.useContext(SegmentedInputContext);
   if (!context) {
     throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
   }
   return context;
 }
 
-const inputGroupItemVariants = cva("", {
+interface SegmentedInputProps extends React.ComponentProps<"div"> {
+  id?: string;
+  dir?: Direction;
+  orientation?: "horizontal" | "vertical";
+  size?: "sm" | "default" | "lg";
+  asChild?: boolean;
+  disabled?: boolean;
+  invalid?: boolean;
+  required?: boolean;
+}
+
+function SegmentedInput(props: SegmentedInputProps) {
+  const {
+    dir: dirProp,
+    orientation = "horizontal",
+    size = "default",
+    className,
+    asChild,
+    disabled,
+    invalid,
+    required,
+    ...rootProps
+  } = props;
+
+  const id = React.useId();
+  const dir = useDirection(dirProp);
+
+  const contextValue = React.useMemo<SegmentedInputContextValue>(
+    () => ({
+      dir,
+      orientation,
+      size,
+      disabled,
+      invalid,
+      required,
+    }),
+    [dir, orientation, size, disabled, invalid, required],
+  );
+
+  const RootPrimitive = asChild ? Slot : "div";
+
+  return (
+    <SegmentedInputContext.Provider value={contextValue}>
+      <RootPrimitive
+        role="group"
+        aria-orientation={orientation}
+        data-slot="segmented-input"
+        data-orientation={orientation}
+        data-disabled={disabled ? "" : undefined}
+        data-invalid={invalid ? "" : undefined}
+        data-required={required ? "" : undefined}
+        {...rootProps}
+        id={id}
+        dir={dir}
+        className={cn(
+          "flex",
+          orientation === "horizontal" ? "flex-row" : "flex-col",
+          className,
+        )}
+      />
+    </SegmentedInputContext.Provider>
+  );
+}
+
+const segmentedInputItemVariants = cva("", {
   variants: {
     position: {
       first: "rounded-e-none",
@@ -57,17 +120,17 @@ const inputGroupItemVariants = cva("", {
     {
       position: "first",
       orientation: "vertical",
-      class: "ms-0 rounded-e-md rounded-b-none border-l-1",
+      class: "ms-0 rounded-e-md rounded-b-none border-l",
     },
     {
       position: "middle",
       orientation: "vertical",
-      class: "-mt-px ms-0 rounded-none border-t-0 border-l-1",
+      class: "-mt-px ms-0 rounded-none border-t-0 border-l",
     },
     {
       position: "last",
       orientation: "vertical",
-      class: "-mt-px ms-0 rounded-s-md rounded-t-none border-t-0 border-l-1",
+      class: "-mt-px ms-0 rounded-s-md rounded-t-none border-t-0 border-l",
     },
   ],
   defaultVariants: {
@@ -76,81 +139,16 @@ const inputGroupItemVariants = cva("", {
   },
 });
 
-interface InputGroupRootProps extends React.ComponentProps<"div"> {
-  id?: string;
-  dir?: Direction;
-  orientation?: "horizontal" | "vertical";
-  size?: "sm" | "default" | "lg";
-  asChild?: boolean;
-  disabled?: boolean;
-  invalid?: boolean;
-  required?: boolean;
-}
-
-function InputGroupRoot(props: InputGroupRootProps) {
-  const {
-    dir: dirProp,
-    orientation = "horizontal",
-    size = "default",
-    className,
-    asChild,
-    disabled,
-    invalid,
-    required,
-    ...rootProps
-  } = props;
-
-  const id = React.useId();
-  const dir = useDirection(dirProp);
-
-  const contextValue = React.useMemo<InputGroupContextValue>(
-    () => ({
-      dir,
-      orientation,
-      size,
-      disabled,
-      invalid,
-      required,
-    }),
-    [dir, orientation, size, disabled, invalid, required],
-  );
-
-  const RootPrimitive = asChild ? Slot : "div";
-
-  return (
-    <InputGroupContext.Provider value={contextValue}>
-      <RootPrimitive
-        role="group"
-        aria-orientation={orientation}
-        data-slot="input-group"
-        data-orientation={orientation}
-        data-disabled={disabled ? "" : undefined}
-        data-invalid={invalid ? "" : undefined}
-        data-required={required ? "" : undefined}
-        {...rootProps}
-        id={id}
-        dir={dir}
-        className={cn(
-          "flex",
-          orientation === "horizontal" ? "flex-row" : "flex-col",
-          className,
-        )}
-      />
-    </InputGroupContext.Provider>
-  );
-}
-InputGroupRoot.displayName = ROOT_NAME;
-
-interface InputGroupItemProps
+interface SegmentedInputItemProps
   extends React.ComponentProps<"input">,
-    VariantProps<typeof inputGroupItemVariants> {
+    VariantProps<typeof segmentedInputItemVariants> {
   asChild?: boolean;
 }
 
-function InputGroupItem(props: InputGroupItemProps) {
+function SegmentedInputItem(props: SegmentedInputItemProps) {
   const { asChild, className, position, disabled, required, ...inputProps } =
     props;
-  const context = useInputGroupContext(ITEM_NAME);
+  const context = useSegmentedInputContext(ITEM_NAME);
 
   const isDisabled = disabled ?? context.disabled;
   const isRequired = required ?? context.required;
@@ -159,7 +157,7 @@ function InputGroupItem(props: InputGroupItemProps) {
 
   return (
     <InputPrimitive
-      data-slot="input-group-item"
+      data-slot="segmented-input-item"
       data-position={position}
       data-orientation={context.orientation}
       data-disabled={isDisabled ? "" : undefined}
@@ -171,7 +169,7 @@ function InputGroupItem(props: InputGroupItemProps) {
       required={isRequired}
       {...inputProps}
       className={cn(
-        inputGroupItemVariants({
+        segmentedInputItemVariants({
           position,
           orientation: context.orientation,
         }),
@@ -180,12 +178,5 @@ function InputGroupItem(props: InputGroupItemProps) {
     />
   );
 }
-InputGroupItem.displayName = ITEM_NAME;
 
-export {
-  InputGroupRoot as InputGroup,
-  InputGroupItem,
-  //
-  InputGroupRoot as Root,
-  InputGroupItem as Item,
-};
+export { SegmentedInput, SegmentedInputItem };

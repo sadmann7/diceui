@@ -157,13 +157,13 @@ export const ui: Registry["items"] = [
     ],
   },
   {
-    name: "input-group",
+    name: "segmented-input",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
     registryDependencies: ["input"],
     files: [
       {
-        path: "ui/input-group.tsx",
+        path: "ui/segmented-input.tsx",
         type: "registry:ui",
       },
     ],

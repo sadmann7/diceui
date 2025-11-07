@@ -177,7 +177,7 @@
     ]
   },
   {
-    "name": "input-group",
+    "name": "segmented-input",
     "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot",
@@ -188,7 +188,7 @@
     ],
     "files": [
       {
-        "path": "ui/input-group.tsx",
+        "path": "ui/segmented-input.tsx",
         "type": "registry:ui"
       }
     ]

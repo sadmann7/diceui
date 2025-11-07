@@ -1,9 +1,12 @@
 "use client";
 
 import * as React from "react";
-import * as InputGroup from "@/registry/default/ui/input-group";
+import {
+  SegmentedInput,
+  SegmentedInputItem,
+} from "@/registry/default/ui/segmented-input";
 
-export default function InputGroupRgbDemo() {
+export default function SegmentedInputRgbDemo() {
   const [rgb, setRgb] = React.useState({
     r: 255,
     g: 128,
@@ -27,8 +30,8 @@ export default function InputGroupRgbDemo() {
   return (
     <div className="flex flex-col gap-2">
       <label className="font-medium text-sm leading-none">RGB Color</label>
-      <InputGroup.Root className="w-fit" aria-label="RGB color input">
-        <InputGroup.Item
+      <SegmentedInput className="w-fit" aria-label="RGB color input">
+        <SegmentedInputItem
           position="first"
           placeholder="255"
           value={rgb.r}
@@ -40,7 +43,7 @@ export default function InputGroupRgbDemo() {
           max="255"
           aria-label="Red channel (0-255)"
         />
-        <InputGroup.Item
+        <SegmentedInputItem
           position="middle"
           placeholder="128"
           value={rgb.g}
@@ -52,7 +55,7 @@ export default function InputGroupRgbDemo() {
           max="255"
           aria-label="Green channel (0-255)"
         />
-        <InputGroup.Item
+        <SegmentedInputItem
           position="last"
           placeholder="0"
           value={rgb.b}
@@ -64,7 +67,7 @@ export default function InputGroupRgbDemo() {
           max="255"
           aria-label="Blue channel (0-255)"
         />
-      </InputGroup.Root>
+      </SegmentedInput>
     </div>
   );
 }

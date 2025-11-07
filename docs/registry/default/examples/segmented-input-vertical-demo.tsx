@@ -1,9 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { InputGroup, InputGroupItem } from "@/registry/default/ui/input-group";
+import {
+  SegmentedInput,
+  SegmentedInputItem,
+} from "@/registry/default/ui/segmented-input";
 
-export default function InputGroupVerticalDemo() {
+export default function SegmentedInputVerticalDemo() {
   const [address, setAddress] = React.useState({
     street: "",
     city: "",
@@ -27,33 +30,33 @@ export default function InputGroupVerticalDemo() {
         <label className="font-medium text-sm leading-none">
           Mailing Address
         </label>
-        <InputGroup
+        <SegmentedInput
           aria-label="Mailing address input"
           className="w-full max-w-sm"
           orientation="vertical"
         >
-          <InputGroupItem
+          <SegmentedInputItem
             aria-label="Street address"
             position="first"
             placeholder="Street Address"
             value={address.street}
             onChange={onFieldChange("street")}
           />
-          <InputGroupItem
+          <SegmentedInputItem
             aria-label="City"
             position="middle"
             placeholder="City"
             value={address.city}
             onChange={onFieldChange("city")}
           />
-          <InputGroupItem
+          <SegmentedInputItem
             aria-label="ZIP code"
             position="last"
             placeholder="ZIP Code"
             value={address.zipCode}
             onChange={onFieldChange("zipCode")}
           />
-        </InputGroup>
+        </SegmentedInput>
       </div>
       <p className="text-muted-foreground text-sm">
         Use arrow keys (up/down) to navigate between fields in vertical

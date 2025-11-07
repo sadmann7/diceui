@@ -140,13 +140,13 @@
       ]
     },
     {
-      "name": "input-group",
+      "name": "segmented-input",
       "type": "registry:component",
-      "title": "Input Group",
-      "description": "A group of input components with support for labels and validation.",
+      "title": "Segmented Input",
+      "description": "A group of connected input fields that appear as a single segmented visual unit.",
       "files": [
         {
-          "path": "registry/default/ui/input-group.tsx",
+          "path": "registry/default/ui/segmented-input.tsx",
           "type": "registry:ui"
         }
       ]
@@ -686,13 +686,13 @@
       ]
     },
     {
-      "name": "input-group-demo",
+      "name": "segmented-input-demo",
       "type": "registry:component",
-      "title": "Input Group Demo",
-      "description": "Example showing how to use the input group component.",
+      "title": "Segmented Input Demo",
+      "description": "Example showing how to use the segmented input component.",
       "files": [
         {
-          "path": "registry/default/examples/input-group-demo.tsx",
+          "path": "registry/default/examples/segmented-input-demo.tsx",
           "type": "registry:example"
         }
       ]
