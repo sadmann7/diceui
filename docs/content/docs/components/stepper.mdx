@@ -41,21 +41,23 @@ Import the parts, and compose them together.
 ```tsx
 import * as Stepper from "@/components/ui/stepper";
 
-<Stepper.Root>
-  <Stepper.List>
-    <Stepper.Item >
-      <Stepper.Trigger>
-        <Stepper.Indicator />
-        <Stepper.Title />
-        <Stepper.Description />
-      </Stepper.Trigger>
-      <Stepper.Separator />
-    </Stepper.Item>
-  </Stepper.List>
-  <Stepper.Content />
-  <Stepper.PrevTrigger />
-  <Stepper.NextTrigger />
-</Stepper.Root>
+return (
+  <Stepper.Root>
+    <Stepper.List>
+      <Stepper.Item >
+        <Stepper.Trigger>
+          <Stepper.Indicator />
+          <Stepper.Title />
+          <Stepper.Description />
+        </Stepper.Trigger>
+        <Stepper.Separator />
+      </Stepper.Item>
+    </Stepper.List>
+    <Stepper.Content />
+    <Stepper.PrevTrigger />
+    <Stepper.NextTrigger />
+  </Stepper.Root>
+)
 ```
 
 ## Examples

@@ -46,15 +46,17 @@ Import the parts, and compose them together.
 ```tsx
 import * as CheckboxGroup from "@diceui/checkbox-group";
 
-<CheckboxGroup.Root>
-  <CheckboxGroup.Label />
-  <CheckboxGroup.List>
-    <CheckboxGroup.Item>
-      <CheckboxGroup.Indicator />
-    </CheckboxGroup.Item>
-  </CheckboxGroup.List>
-  <CheckboxGroup.Description>
-</CheckboxGroup.Root>
+return (
+  <CheckboxGroup.Root>
+    <CheckboxGroup.Label />
+    <CheckboxGroup.List>
+      <CheckboxGroup.Item>
+        <CheckboxGroup.Indicator />
+      </CheckboxGroup.Item>
+    </CheckboxGroup.List>
+    <CheckboxGroup.Description>
+  </CheckboxGroup.Root>
+)
 ```
 
 ## Animated Checkbox

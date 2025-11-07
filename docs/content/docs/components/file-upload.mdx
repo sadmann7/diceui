@@ -40,19 +40,21 @@ Import the parts, and compose them together.
 ```tsx
 import * as FileUpload from "@/components/ui/file-upload";
 
-<FileUpload.Root>
-  <FileUpload.Dropzone />
-  <FileUpload.Trigger />
-  <FileUpload.List>
-    <FileUpload.Item>
-      <FileUpload.ItemPreview />
-      <FileUpload.ItemMetadata />
-      <FileUpload.ItemProgress />
-      <FileUpload.ItemDelete />
-    </FileUpload.Item>
-  </FileUpload.List>
-  <FileUpload.Clear />
-</FileUpload.Root>
+return (
+  <FileUpload.Root>
+    <FileUpload.Dropzone />
+    <FileUpload.Trigger />
+    <FileUpload.List>
+      <FileUpload.Item>
+        <FileUpload.ItemPreview />
+        <FileUpload.ItemMetadata />
+        <FileUpload.ItemProgress />
+        <FileUpload.ItemDelete />
+      </FileUpload.Item>
+    </FileUpload.List>
+    <FileUpload.Clear />
+  </FileUpload.Root>
+)
 ```
 
 ## Examples

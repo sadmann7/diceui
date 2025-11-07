@@ -50,19 +50,21 @@ Import the parts, and compose them together.
 ```tsx
 import * as Editable from "@/components/ui/editable";
 
-<Editable.Root>
-  <Editable.Label />
-  <Editable.Area>
-    <Editable.Preview />
-    <Editable.Input />
+return (
+  <Editable.Root>
+    <Editable.Label />
+    <Editable.Area>
+      <Editable.Preview />
+      <Editable.Input />
+      <Editable.Trigger />
+    </Editable.Area>
     <Editable.Trigger />
-  </Editable.Area>
-  <Editable.Trigger />
-  <Editable.Toolbar>
-    <Editable.Submit />
-    <Editable.Cancel />
-  </Editable.Toolbar>
-</Editable.Root>
+    <Editable.Toolbar>
+      <Editable.Submit />
+      <Editable.Cancel />
+    </Editable.Toolbar>
+  </Editable.Root>
+)
 ```
 
 ## Examples

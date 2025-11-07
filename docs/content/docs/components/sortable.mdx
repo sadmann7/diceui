@@ -48,15 +48,17 @@ Import the parts, and compose them together.
 ```tsx
 import * as Sortable from "@/components/ui/sortable";
 
-<Sortable.Root>
-  <Sortable.Content>
-    <Sortable.Item >
-      <Sortable.ItemHandle />
-    </Sortable.Item>
-    <Sortable.Item />
-  </Sortable.Content>
-  <Sortable.Overlay />
-</Sortable.Root>
+return (
+  <Sortable.Root>
+    <Sortable.Content>
+      <Sortable.Item >
+        <Sortable.ItemHandle />
+      </Sortable.Item>
+      <Sortable.Item />
+    </Sortable.Content>
+    <Sortable.Overlay />
+  </Sortable.Root>
+)
 ```
 
 ## Examples

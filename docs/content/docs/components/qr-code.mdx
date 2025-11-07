@@ -47,9 +47,11 @@ Import the parts, and compose them together.
 ```tsx
 import { QRCode } from "@/components/ui/qr-code";
 
-<QRCode value="https://example.com">
-  <QRCode.Canvas />
-</QRCode>
+return (
+  <QRCode>
+    <QRCode.Canvas />
+  </QRCode>
+)
 ```
 
 ## Examples
