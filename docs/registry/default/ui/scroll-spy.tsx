@@ -348,7 +348,7 @@ function ScrollSpyLink(props: ScrollSpyLinkProps) {
       data-state={isActive ? "active" : "inactive"}
       {...linkProps}
       className={cn(
-        "rounded px-3 py-1.5 text-muted-foreground text-sm transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-accent data-[state=active]:font-medium data-[state=active]:text-foreground",
+        "rounded px-3 py-1.5 font-medium text-muted-foreground text-sm transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-accent data-[state=active]:text-foreground",
         className,
       )}
       href={`#${value}`}
