@@ -247,21 +247,19 @@ function ScrollSpyImpl(
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
-    <DirectionContext.Provider value={dir}>
-      <ScrollSpyContext.Provider value={contextValue}>
-        <RootPrimitive
-          data-orientation={orientation}
-          data-slot="scroll-spy"
-          dir={dir}
-          {...rootProps}
-          className={cn(
-            "flex",
-            orientation === "horizontal" ? "flex-row" : "flex-col",
-            className,
-          )}
-        />
-      </ScrollSpyContext.Provider>
-    </DirectionContext.Provider>
+    <ScrollSpyContext.Provider value={contextValue}>
+      <RootPrimitive
+        data-orientation={orientation}
+        data-slot="scroll-spy"
+        dir={dir}
+        {...rootProps}
+        className={cn(
+          "flex",
+          orientation === "horizontal" ? "flex-row" : "flex-col",
+          className,
+        )}
+      />
+    </ScrollSpyContext.Provider>
   );
 }
 
