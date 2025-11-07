@@ -10,6 +10,8 @@ const ROOT_NAME = "SegmentedInput";
 const ITEM_NAME = "SegmentedInputItem";
 
 type Direction = "ltr" | "rtl";
+type Orientation = "horizontal" | "vertical";
+type Size = "default" | "sm" | "lg";
 
 const DirectionContext = React.createContext<Direction | undefined>(undefined);
 
@@ -20,8 +22,8 @@ function useDirection(dirProp?: Direction): Direction {
 
 interface SegmentedInputContextValue {
   dir?: Direction;
-  orientation?: "horizontal" | "vertical";
-  size?: "sm" | "default" | "lg";
+  orientation?: Orientation;
+  size?: Size;
   disabled?: boolean;
   invalid?: boolean;
   required?: boolean;
@@ -42,8 +44,8 @@ function useSegmentedInputContext(consumerName: string) {
 interface SegmentedInputProps extends React.ComponentProps<"div"> {
   id?: string;
   dir?: Direction;
-  orientation?: "horizontal" | "vertical";
-  size?: "sm" | "default" | "lg";
+  orientation?: Orientation;
+  size?: Size;
   asChild?: boolean;
   disabled?: boolean;
   invalid?: boolean;
@@ -115,6 +117,11 @@ const segmentedInputItemVariants = cva("", {
       horizontal: "",
       vertical: "",
     },
+    size: {
+      sm: "h-8 px-2 text-xs",
+      default: "h-9 px-3",
+      lg: "h-11 px-4",
+    },
   },
   compoundVariants: [
     {
@@ -136,12 +143,13 @@ const segmentedInputItemVariants = cva("", {
   defaultVariants: {
     position: "isolated",
     orientation: "horizontal",
+    size: "default",
   },
 });
 
 interface SegmentedInputItemProps
   extends React.ComponentProps<"input">,
-    VariantProps<typeof segmentedInputItemVariants> {
+    Omit<VariantProps<typeof segmentedInputItemVariants>, "size"> {
   asChild?: boolean;
 }
 
@@ -157,14 +165,14 @@ function SegmentedInputItem(props: SegmentedInputItemProps) {
 
   return (
     <InputPrimitive
-      data-slot="segmented-input-item"
-      data-position={position}
-      data-orientation={context.orientation}
-      data-disabled={isDisabled ? "" : undefined}
-      data-invalid={context.invalid ? "" : undefined}
-      data-required={isRequired ? "" : undefined}
       aria-invalid={context.invalid}
       aria-required={isRequired}
+      data-disabled={isDisabled ? "" : undefined}
+      data-invalid={context.invalid ? "" : undefined}
+      data-orientation={context.orientation}
+      data-position={position}
+      data-required={isRequired ? "" : undefined}
+      data-slot="segmented-input-item"
       disabled={isDisabled}
       required={isRequired}
       {...inputProps}
@@ -172,6 +180,7 @@ function SegmentedInputItem(props: SegmentedInputItemProps) {
         segmentedInputItemVariants({
           position,
           orientation: context.orientation,
+          size: context.size,
         }),
         className,
       )}
