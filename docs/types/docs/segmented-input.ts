@@ -1,12 +1,18 @@
-import type { CompositionProps, Direction, EmptyProps } from "@/types";
+import type {
+  CompositionProps,
+  Direction,
+  EmptyProps,
+  Orientation,
+} from "@/types";
 
 export interface SegmentedInputRootProps
   extends EmptyProps<"div">,
     CompositionProps {
   /**
-   * The unique identifier for the segmented input.
+   * The size of all inputs in the segment.
+   * @default "default"
    */
-  id?: string;
+  size?: "default" | "sm" | "lg";
 
   /**
    * The reading direction of the segmented input.
@@ -18,13 +24,7 @@ export interface SegmentedInputRootProps
    * The orientation of the segmented input.
    * @default "horizontal"
    */
-  orientation?: "horizontal" | "vertical";
-
-  /**
-   * The size of all inputs in the segment.
-   * @default "default"
-   */
-  size?: "sm" | "default" | "lg";
+  orientation?: Orientation;
 
   /**
    * Whether all inputs in the segment are disabled.
@@ -51,7 +51,14 @@ export interface SegmentedInputItemProps
   /**
    * The position of the input within the segment.
    * Controls the visual styling and borders.
-   * @default "isolated"
+   *
+   * If not provided, it will be automatically detected based on the input's position:
+   * - "isolated": Single standalone input in the segment
+   * - "first": First input in the segment
+   * - "middle": Middle input in the segment
+   * - "last": Last input in the segment
+   *
+   * @default Auto-detected based on position in children array
    */
   position?: "first" | "middle" | "last" | "isolated";
 

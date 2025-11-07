@@ -74,7 +74,7 @@ Display segmented inputs in a vertical orientation.
 
 ### SegmentedInput
 
-The main segmented input container component.
+The main segmented input container.
 
 <AutoTypeTable
   path="./types/docs/segmented-input.ts"
@@ -89,23 +89,6 @@ Individual input items within the segmented input.
   path="./types/docs/segmented-input.ts"
   name="SegmentedInputItemProps"
 />
-
-The component supports all standard HTML input attributes and properties from the base Input component, plus the following:
-
-- **position**: Controls the visual positioning and borders of the input within a group
-  - `first`: Removes right border radius, maintains left border
-  - `middle`: Removes all border radius, removes left border to prevent doubling
-  - `last`: Removes left border radius, removes left border to prevent doubling  
-  - `isolated`: Normal input styling (default)
-
-### Styling
-
-The component automatically handles:
-- Border radius removal for seamless connection
-- Border overlap prevention with negative margins
-- Focus ring z-index management
-- Webkit number input spinner removal
-- Firefox number input appearance normalization
 
 ## Accessibility
 
@@ -125,4 +108,3 @@ The SegmentedInput component follows standard web accessibility practices. Users
     },
   ]}
 />
-

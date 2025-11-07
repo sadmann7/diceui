@@ -32,7 +32,6 @@ export default function SegmentedInputRgbDemo() {
       <label className="font-medium text-sm leading-none">RGB Color</label>
       <SegmentedInput className="w-fit" aria-label="RGB color input">
         <SegmentedInputItem
-          position="first"
           placeholder="255"
           value={rgb.r}
           onChange={onChannelChange("r")}
@@ -44,7 +43,6 @@ export default function SegmentedInputRgbDemo() {
           aria-label="Red channel (0-255)"
         />
         <SegmentedInputItem
-          position="middle"
           placeholder="128"
           value={rgb.g}
           onChange={onChannelChange("g")}
@@ -56,7 +54,6 @@ export default function SegmentedInputRgbDemo() {
           aria-label="Green channel (0-255)"
         />
         <SegmentedInputItem
-          position="last"
           placeholder="0"
           value={rgb.b}
           onChange={onChannelChange("b")}

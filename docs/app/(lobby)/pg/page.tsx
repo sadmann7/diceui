@@ -31,7 +31,6 @@ import { tricks } from "@/lib/data";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
 import ScrollSpyDemo from "@/registry/default/examples/scroll-spy-demo";
 import ScrollSpyHorizontalDemo from "@/registry/default/examples/scroll-spy-vertical-demo";
-import SegmentedInputDemo from "@/registry/default/examples/segmented-input-demo";
 import {
   Combobox,
   ComboboxAnchor,
@@ -46,7 +45,6 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <Demo>
-        <SegmentedInputDemo />
         <ScrollSpyDemo />
         <ScrollSpyHorizontalDemo />
         <ColorPickerDemo />

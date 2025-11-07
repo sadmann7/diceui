@@ -31,22 +31,22 @@ export default function SegmentedInputDemo() {
       </label>
       <SegmentedInput className="w-full max-w-sm">
         <SegmentedInputItem
-          position="first"
           placeholder="First"
           value={values.first}
           onChange={onValueChange("first")}
+          aria-label="First name"
         />
         <SegmentedInputItem
-          position="middle"
           placeholder="Second"
           value={values.second}
           onChange={onValueChange("second")}
+          aria-label="Middle name"
         />
         <SegmentedInputItem
-          position="last"
           placeholder="Third"
           value={values.third}
           onChange={onValueChange("third")}
+          aria-label="Last name"
         />
       </SegmentedInput>
     </div>

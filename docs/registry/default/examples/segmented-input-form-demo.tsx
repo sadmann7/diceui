@@ -34,7 +34,6 @@ export default function SegmentedInputFormDemo() {
           aria-label="Phone number input"
         >
           <SegmentedInputItem
-            position="first"
             placeholder="+1"
             value={phoneNumber.countryCode}
             onChange={(event) =>
@@ -47,7 +46,6 @@ export default function SegmentedInputFormDemo() {
             aria-label="Country code"
           />
           <SegmentedInputItem
-            position="middle"
             placeholder="555"
             value={phoneNumber.areaCode}
             onChange={(event) =>
@@ -63,7 +61,6 @@ export default function SegmentedInputFormDemo() {
             aria-label="Area code"
           />
           <SegmentedInputItem
-            position="last"
             placeholder="1234567"
             value={phoneNumber.number}
             onChange={(event) =>

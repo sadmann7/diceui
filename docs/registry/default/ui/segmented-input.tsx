@@ -12,6 +12,7 @@ const ITEM_NAME = "SegmentedInputItem";
 type Direction = "ltr" | "rtl";
 type Orientation = "horizontal" | "vertical";
 type Size = "default" | "sm" | "lg";
+type Position = "isolated" | "first" | "middle" | "last";
 
 const DirectionContext = React.createContext<Direction | undefined>(undefined);
 
@@ -31,7 +32,6 @@ interface SegmentedInputContextValue {
 
 const SegmentedInputContext =
   React.createContext<SegmentedInputContextValue | null>(null);
-SegmentedInputContext.displayName = ROOT_NAME;
 
 function useSegmentedInputContext(consumerName: string) {
   const context = React.useContext(SegmentedInputContext);
@@ -42,7 +42,6 @@ function useSegmentedInputContext(consumerName: string) {
 }
 
 interface SegmentedInputProps extends React.ComponentProps<"div"> {
-  id?: string;
   dir?: Direction;
   orientation?: Orientation;
   size?: Size;
@@ -54,9 +53,10 @@ interface SegmentedInputProps extends React.ComponentProps<"div"> {
 
 function SegmentedInput(props: SegmentedInputProps) {
   const {
+    size = "default",
     dir: dirProp,
     orientation = "horizontal",
-    size = "default",
+    children,
     className,
     asChild,
     disabled,
@@ -65,7 +65,6 @@ function SegmentedInput(props: SegmentedInputProps) {
     ...rootProps
   } = props;
 
-  const id = React.useId();
   const dir = useDirection(dirProp);
 
   const contextValue = React.useMemo<SegmentedInputContextValue>(
@@ -80,6 +79,30 @@ function SegmentedInput(props: SegmentedInputProps) {
     [dir, orientation, size, disabled, invalid, required],
   );
 
+  const childrenArray = React.Children.toArray(children);
+  const childrenCount = childrenArray.length;
+
+  const segmentedInputItems = React.Children.map(children, (child, index) => {
+    if (React.isValidElement<SegmentedInputItemProps>(child)) {
+      if (!child.props.position) {
+        let position: Position;
+
+        if (childrenCount === 1) {
+          position = "isolated";
+        } else if (index === 0) {
+          position = "first";
+        } else if (index === childrenCount - 1) {
+          position = "last";
+        } else {
+          position = "middle";
+        }
+
+        return React.cloneElement(child, { position });
+      }
+    }
+    return child;
+  });
+
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
@@ -92,15 +115,16 @@ function SegmentedInput(props: SegmentedInputProps) {
         data-disabled={disabled ? "" : undefined}
         data-invalid={invalid ? "" : undefined}
         data-required={required ? "" : undefined}
-        {...rootProps}
-        id={id}
         dir={dir}
+        {...rootProps}
         className={cn(
           "flex",
           orientation === "horizontal" ? "flex-row" : "flex-col",
           className,
         )}
-      />
+      >
+        {segmentedInputItems}
+      </RootPrimitive>
     </SegmentedInputContext.Provider>
   );
 }
@@ -108,10 +132,10 @@ function SegmentedInput(props: SegmentedInputProps) {
 const segmentedInputItemVariants = cva("", {
   variants: {
     position: {
+      isolated: "",
       first: "rounded-e-none",
       middle: "-ms-px rounded-none border-l-0",
       last: "-ms-px rounded-s-none border-l-0",
-      isolated: "",
     },
     orientation: {
       horizontal: "",
@@ -161,10 +185,10 @@ function SegmentedInputItem(props: SegmentedInputItemProps) {
   const isDisabled = disabled ?? context.disabled;
   const isRequired = required ?? context.required;
 
-  const InputPrimitive = asChild ? Slot : Input;
+  const ItemPrimitive = asChild ? Slot : Input;
 
   return (
-    <InputPrimitive
+    <ItemPrimitive
       aria-invalid={context.invalid}
       aria-required={isRequired}
       data-disabled={isDisabled ? "" : undefined}
@@ -181,8 +205,8 @@ function SegmentedInputItem(props: SegmentedInputItemProps) {
           position,
           orientation: context.orientation,
           size: context.size,
+          className,
         }),
-        className,
       )}
     />
   );

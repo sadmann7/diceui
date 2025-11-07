@@ -37,21 +37,18 @@ export default function SegmentedInputVerticalDemo() {
         >
           <SegmentedInputItem
             aria-label="Street address"
-            position="first"
             placeholder="Street Address"
             value={address.street}
             onChange={onFieldChange("street")}
           />
           <SegmentedInputItem
             aria-label="City"
-            position="middle"
             placeholder="City"
             value={address.city}
             onChange={onFieldChange("city")}
           />
           <SegmentedInputItem
             aria-label="ZIP code"
-            position="last"
             placeholder="ZIP Code"
             value={address.zipCode}
             onChange={onFieldChange("zipCode")}
