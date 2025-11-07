@@ -109,12 +109,6 @@ function ScrollSpy(props: ScrollSpyProps) {
     value: value ?? defaultValue ?? "",
   }));
   const listenersRef = useLazyRef(() => new Set<() => void>());
-  const onValueChangeRef = React.useRef(onValueChange);
-
-  // Keep callback ref in sync
-  useIsomorphicLayoutEffect(() => {
-    onValueChangeRef.current = onValueChange;
-  });
 
   const store: Store = React.useMemo(() => {
     return {
@@ -131,7 +125,7 @@ function ScrollSpy(props: ScrollSpyProps) {
         stateRef.current[key] = value;
 
         if (key === "value" && value) {
-          onValueChangeRef.current?.(value);
+          onValueChange?.(value);
         }
 
         store.notify();
@@ -142,7 +136,7 @@ function ScrollSpy(props: ScrollSpyProps) {
         }
       },
     };
-  }, [listenersRef, stateRef]);
+  }, [listenersRef, stateRef, onValueChange]);
 
   return (
     <StoreContext.Provider value={store}>
@@ -185,64 +179,27 @@ function ScrollSpyImpl(
   }, []);
 
   useIsomorphicLayoutEffect(() => {
-    if (valueProp !== undefined) {
-      store.setState("value", valueProp);
-    }
-  }, [valueProp, store]);
-
-  useIsomorphicLayoutEffect(() => {
     const sectionMap = sectionMapRef.current;
     if (sectionMap.size === 0) return;
 
     const observerRootMargin = rootMargin ?? `${-offset}px 0px -70% 0px`;
-    let isFirstCallback = true;
-    let rafId: number | null = null;
-    const intersectionMap = new Map<string, IntersectionObserverEntry>();
 
     const observer = new IntersectionObserver(
       (entries) => {
-        // Skip the first intersection callback to prevent overriding initial value
-        if (isFirstCallback) {
-          isFirstCallback = false;
-          return;
-        }
+        const intersecting = entries.filter((entry) => entry.isIntersecting);
 
-        // Update intersection state for all entries
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            intersectionMap.set(entry.target.id, entry);
-          } else {
-            intersectionMap.delete(entry.target.id);
-          }
-        }
+        if (intersecting.length === 0) return;
 
-        // Cancel any pending updates
-        if (rafId !== null) {
-          cancelAnimationFrame(rafId);
-        }
-
-        // Batch updates using requestAnimationFrame for smoother transitions
-        rafId = requestAnimationFrame(() => {
-          const intersectingEntries = Array.from(intersectionMap.values());
-
-          if (intersectingEntries.length === 0) {
-            rafId = null;
-            return;
-          }
-
-          // Find the topmost intersecting section
-          const topmost = intersectingEntries.reduce((prev, curr) => {
-            return curr.boundingClientRect.top < prev.boundingClientRect.top
-              ? curr
-              : prev;
-          });
-
-          const id = topmost.target.id;
-          if (id && sectionMap.has(id)) {
-            store.setState("value", id);
-          }
-          rafId = null;
+        const topmost = intersecting.reduce((prev, curr) => {
+          return curr.boundingClientRect.top < prev.boundingClientRect.top
+            ? curr
+            : prev;
         });
+
+        const id = topmost.target.id;
+        if (id && sectionMap.has(id)) {
+          store.setState("value", id);
+        }
       },
       {
         root: scrollContainer,
@@ -251,17 +208,20 @@ function ScrollSpyImpl(
       },
     );
 
-    for (const element of sectionMap.values()) {
+    sectionMap.forEach((element) => {
       observer.observe(element);
-    }
+    });
 
     return () => {
-      if (rafId !== null) {
-        cancelAnimationFrame(rafId);
-      }
       observer.disconnect();
     };
-  }, [offset, rootMargin, threshold, scrollContainer, store]);
+  }, [offset, rootMargin, threshold, scrollContainer]);
+
+  useIsomorphicLayoutEffect(() => {
+    if (valueProp !== undefined) {
+      store.setState("value", valueProp);
+    }
+  }, [valueProp]);
 
   const contextValue = React.useMemo<ScrollSpyContextValue>(
     () => ({
@@ -309,7 +269,7 @@ interface ScrollSpyNavProps extends React.ComponentProps<"nav"> {
   asChild?: boolean;
 }
 
-const ScrollSpyNav = React.memo(function ScrollSpyNav(props: ScrollSpyNavProps) {
+function ScrollSpyNav(props: ScrollSpyNavProps) {
   const { asChild, className, ...navProps } = props;
 
   const { dir, orientation } = useScrollSpyContext(NAV_NAME);
@@ -329,24 +289,21 @@ const ScrollSpyNav = React.memo(function ScrollSpyNav(props: ScrollSpyNavProps) 
       )}
     />
   );
-});
+}
 
 interface ScrollSpyLinkProps extends React.ComponentProps<"a"> {
   value: string;
   asChild?: boolean;
 }
 
-const ScrollSpyLink = React.memo(function ScrollSpyLink(props: ScrollSpyLinkProps) {
+function ScrollSpyLink(props: ScrollSpyLinkProps) {
   const { value: valueProp, asChild, onClick, className, ...linkProps } = props;
 
   const { orientation, offset, scrollBehavior, scrollContainer } =
     useScrollSpyContext(LINK_NAME);
   const store = useStoreContext(LINK_NAME);
-  
-  // Optimized selector - only re-render when this specific link's active state changes
-  const isActive = useStore(
-    React.useCallback((state) => state.value === valueProp, [valueProp])
-  );
+  const value = useStore((state) => state.value);
+  const isActive = value === valueProp;
 
   const onLinkClick = React.useCallback(
     (event: React.MouseEvent<HTMLAnchorElement>) => {
@@ -394,79 +351,70 @@ const ScrollSpyLink = React.memo(function ScrollSpyLink(props: ScrollSpyLinkProp
         "rounded px-3 py-1.5 text-muted-foreground text-sm transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-accent data-[state=active]:font-medium data-[state=active]:text-foreground",
         className,
       )}
-      href={`#${valueProp}`}
+      href={`#${value}`}
       onClick={onLinkClick}
     />
   );
-});
+}
 
 interface ScrollSpyViewportProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-const ScrollSpyViewport = React.memo(
-  React.forwardRef<HTMLDivElement, ScrollSpyViewportProps>(
-    function ScrollSpyViewport(props, ref) {
-      const { asChild, className, ...viewportProps } = props;
+function ScrollSpyViewport(props: ScrollSpyViewportProps) {
+  const { asChild, className, ...viewportProps } = props;
 
-      const { dir, orientation } = useScrollSpyContext(VIEWPORT_NAME);
+  const { dir, orientation } = useScrollSpyContext(VIEWPORT_NAME);
 
-      const ViewportPrimitive = asChild ? Slot : "div";
+  const ViewportPrimitive = asChild ? Slot : "div";
 
-      return (
-        <ViewportPrimitive
-          data-orientation={orientation}
-          data-slot="scroll-spy-viewport"
-          dir={dir}
-          ref={ref}
-          {...viewportProps}
-          className={cn("flex flex-1 flex-col gap-8", className)}
-        />
-      );
-    }
-  )
-);
+  return (
+    <ViewportPrimitive
+      data-orientation={orientation}
+      data-slot="scroll-spy-viewport"
+      dir={dir}
+      {...viewportProps}
+      className={cn("flex flex-1 flex-col gap-8", className)}
+    />
+  );
+}
 
 interface ScrollSpySectionProps extends React.ComponentProps<"div"> {
   value: string;
   asChild?: boolean;
 }
 
-const ScrollSpySection = React.memo(
-  React.forwardRef<HTMLDivElement, ScrollSpySectionProps>(
-    function ScrollSpySection(props, forwardedRef) {
-      const { asChild, value, ...sectionProps } = props;
+function ScrollSpySection(props: ScrollSpySectionProps) {
+  const { asChild, ref, value, ...sectionProps } = props;
 
-      const { orientation, onSectionRegister, onSectionUnregister } =
-        useScrollSpyContext(SECTION_NAME);
-      const sectionRef = React.useRef<HTMLDivElement>(null);
-      const composedRef = useComposedRefs(forwardedRef, sectionRef);
+  const { orientation, onSectionRegister, onSectionUnregister } =
+    useScrollSpyContext(SECTION_NAME);
+  const sectionRef = React.useRef<HTMLDivElement>(null);
+  const composedRef = useComposedRefs(ref, sectionRef);
 
-      useIsomorphicLayoutEffect(() => {
-        const element = sectionRef.current;
-        if (!element || !value) return;
+  useIsomorphicLayoutEffect(() => {
+    const element = sectionRef.current;
+    if (!element || !value) return;
 
-        onSectionRegister(value, element);
+    onSectionRegister(value, element);
 
-        return () => {
-          onSectionUnregister(value);
-        };
-      }, [value, onSectionRegister, onSectionUnregister]);
+    return () => {
+      onSectionUnregister(value);
+    };
+  }, [value, onSectionRegister, onSectionUnregister]);
 
-      const SectionPrimitive = asChild ? Slot : "div";
+  const SectionPrimitive = asChild ? Slot : "div";
 
-      return (
-        <SectionPrimitive
-          data-orientation={orientation}
-          data-slot="scroll-spy-section"
-          {...sectionProps}
-          id={value}
-          ref={composedRef}
-        />
-      );
-    }
-  )
-);
+  return (
+    <SectionPrimitive
+      data-orientation={orientation}
+      data-slot="scroll-spy-section"
+      {...sectionProps}
+      id={value}
+      ref={composedRef}
+    />
+  );
+}
 
 export {
   ScrollSpy,
