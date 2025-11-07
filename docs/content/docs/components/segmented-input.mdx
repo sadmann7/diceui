@@ -36,16 +36,16 @@ npx shadcn@latest add "https://diceui.com/r/segmented-input"
 
 ## Layout
 
-Import the component and use it with different position props.
+Import the parts, and compose them together.
 
 ```tsx
 import { SegmentedInput, SegmentedInputItem } from "@/components/ui/segmented-input";
 
 return (
   <SegmentedInput>
-    <SegmentedInputItem position="first" placeholder="First" />
-    <SegmentedInputItem position="middle" placeholder="Middle" />
-    <SegmentedInputItem position="last" placeholder="Last" />
+    <SegmentedInputItem />
+    <SegmentedInputItem />
+    <SegmentedInputItem />
   </SegmentedInput>
 )
 ```

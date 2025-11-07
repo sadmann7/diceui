@@ -75,20 +75,20 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * const [scrollContainer, setScrollContainer] = useState<HTMLDivElement | null>(null);
    *
    * <ScrollSpy scrollContainer={scrollContainer}>
-   *   <ScrollSpyContentGroup ref={setScrollContainer} className="h-screen overflow-y-auto">
+   *   <ScrollSpyViewport ref={setScrollContainer} className="h-screen overflow-y-auto">
    *     // content
-   *   </ScrollSpyContentGroup>
+   *   </ScrollSpyViewport>
    * </ScrollSpy>
    * ```
    */
   scrollContainer?: HTMLElement | null;
 }
 
-export interface ItemGroupProps extends EmptyProps<"nav">, CompositionProps {}
+export interface NavProps extends EmptyProps<"nav">, CompositionProps {}
 
-export interface ItemProps extends EmptyProps<"a">, CompositionProps {
+export interface LinkProps extends EmptyProps<"a">, CompositionProps {
   /**
-   * The unique value that links the item with the content.
+   * The unique value that links the link with the section.
    *
    * ```ts
    * value="introduction"
@@ -97,13 +97,11 @@ export interface ItemProps extends EmptyProps<"a">, CompositionProps {
   value: string;
 }
 
-export interface ContentGroupProps
-  extends EmptyProps<"div">,
-    CompositionProps {}
+export interface ViewportProps extends EmptyProps<"div">, CompositionProps {}
 
-export interface ContentProps extends EmptyProps<"div">, CompositionProps {
+export interface SectionProps extends EmptyProps<"div">, CompositionProps {
   /**
-   * The unique value that links the content with the item.
+   * The unique value that links the section with the link.
    *
    * ```ts
    * value="introduction"

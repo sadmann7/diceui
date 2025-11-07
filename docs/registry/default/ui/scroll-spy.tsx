@@ -6,10 +6,10 @@ import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 
 const ROOT_NAME = "ScrollSpy";
-const LIST_NAME = "ScrollSpyList";
-const ITEM_NAME = "ScrollSpyItem";
-const CONTENT_GROUP_NAME = "ScrollSpyContentGroup";
-const CONTENT_NAME = "ScrollSpyContent";
+const NAV_NAME = "ScrollSpyNav";
+const LINK_NAME = "ScrollSpyLink";
+const VIEWPORT_NAME = "ScrollSpyViewport";
+const SECTION_NAME = "ScrollSpySection";
 
 type Direction = "ltr" | "rtl";
 type Orientation = "horizontal" | "vertical";
@@ -72,8 +72,8 @@ interface ScrollSpyContextValue {
   dir: Direction;
   orientation: Orientation;
   scrollContainer: HTMLElement | null;
-  onContentRegister: (id: string, element: Element) => void;
-  onContentUnregister: (id: string) => void;
+  onSectionRegister: (id: string, element: Element) => void;
+  onSectionUnregister: (id: string) => void;
 }
 
 const ScrollSpyContext = React.createContext<ScrollSpyContextValue | null>(
@@ -163,24 +163,24 @@ function ScrollSpyImpl(
   } = props;
 
   const dir = useDirection(dirProp);
-
   const store = useStoreContext(ROOT_NAME);
-  const contentMapRef = React.useRef(new Map<string, Element>());
 
-  const onContentRegister = React.useCallback(
+  const sectionMapRef = React.useRef(new Map<string, Element>());
+
+  const onSectionRegister = React.useCallback(
     (id: string, element: Element) => {
-      contentMapRef.current.set(id, element);
+      sectionMapRef.current.set(id, element);
     },
     [],
   );
 
-  const onContentUnregister = React.useCallback((id: string) => {
-    contentMapRef.current.delete(id);
+  const onSectionUnregister = React.useCallback((id: string) => {
+    sectionMapRef.current.delete(id);
   }, []);
 
   useIsomorphicLayoutEffect(() => {
-    const contentMap = contentMapRef.current;
-    if (contentMap.size === 0) return;
+    const sectionMap = sectionMapRef.current;
+    if (sectionMap.size === 0) return;
 
     const observerRootMargin = rootMargin ?? `${-offset}px 0px -70% 0px`;
 
@@ -197,7 +197,7 @@ function ScrollSpyImpl(
         });
 
         const id = topmost.target.id;
-        if (id && contentMap.has(id)) {
+        if (id && sectionMap.has(id)) {
           store.setState("value", id);
         }
       },
@@ -208,7 +208,7 @@ function ScrollSpyImpl(
       },
     );
 
-    contentMap.forEach((element) => {
+    sectionMap.forEach((element) => {
       observer.observe(element);
     });
 
@@ -230,8 +230,8 @@ function ScrollSpyImpl(
       offset,
       scrollBehavior,
       scrollContainer,
-      onContentRegister,
-      onContentUnregister,
+      onSectionRegister,
+      onSectionUnregister,
     }),
     [
       dir,
@@ -239,8 +239,8 @@ function ScrollSpyImpl(
       offset,
       scrollBehavior,
       scrollContainer,
-      onContentRegister,
-      onContentUnregister,
+      onSectionRegister,
+      onSectionUnregister,
     ],
   );
 
@@ -265,23 +265,23 @@ function ScrollSpyImpl(
   );
 }
 
-interface ScrollSpyItemGroupProps extends React.ComponentProps<"nav"> {
+interface ScrollSpyNavProps extends React.ComponentProps<"nav"> {
   asChild?: boolean;
 }
 
-function ScrollSpyItemGroup(props: ScrollSpyItemGroupProps) {
-  const { asChild, className, ...listProps } = props;
+function ScrollSpyNav(props: ScrollSpyNavProps) {
+  const { asChild, className, ...navProps } = props;
 
-  const { dir, orientation } = useScrollSpyContext(LIST_NAME);
+  const { dir, orientation } = useScrollSpyContext(NAV_NAME);
 
-  const ItemGroupPrimitive = asChild ? Slot : "nav";
+  const NavPrimitive = asChild ? Slot : "nav";
 
   return (
-    <ItemGroupPrimitive
+    <NavPrimitive
       data-orientation={orientation}
-      data-slot="scroll-spy-list"
+      data-slot="scroll-spy-nav"
       dir={dir}
-      {...listProps}
+      {...navProps}
       className={cn(
         "flex gap-2",
         orientation === "horizontal" ? "flex-col" : "flex-row",
@@ -291,21 +291,21 @@ function ScrollSpyItemGroup(props: ScrollSpyItemGroupProps) {
   );
 }
 
-interface ScrollSpyItemProps extends React.ComponentProps<"a"> {
+interface ScrollSpyLinkProps extends React.ComponentProps<"a"> {
   value: string;
   asChild?: boolean;
 }
 
-function ScrollSpyItem(props: ScrollSpyItemProps) {
-  const { value: valueProp, asChild, onClick, className, ...itemProps } = props;
+function ScrollSpyLink(props: ScrollSpyLinkProps) {
+  const { value: valueProp, asChild, onClick, className, ...linkProps } = props;
 
   const { orientation, offset, scrollBehavior, scrollContainer } =
-    useScrollSpyContext(ITEM_NAME);
-  const store = useStoreContext(ITEM_NAME);
+    useScrollSpyContext(LINK_NAME);
+  const store = useStoreContext(LINK_NAME);
   const value = useStore((state) => state.value);
   const isActive = value === valueProp;
 
-  const onItemClick = React.useCallback(
+  const onLinkClick = React.useCallback(
     (event: React.MouseEvent<HTMLAnchorElement>) => {
       event.preventDefault();
       onClick?.(event);
@@ -339,77 +339,77 @@ function ScrollSpyItem(props: ScrollSpyItemProps) {
     [offset, scrollBehavior, valueProp, onClick, scrollContainer, store],
   );
 
-  const ItemPrimitive = asChild ? Slot : "a";
+  const LinkPrimitive = asChild ? Slot : "a";
 
   return (
-    <ItemPrimitive
+    <LinkPrimitive
       data-orientation={orientation}
-      data-slot="scroll-spy-item"
+      data-slot="scroll-spy-link"
       data-state={isActive ? "active" : "inactive"}
-      {...itemProps}
+      {...linkProps}
       className={cn(
         "rounded px-3 py-1.5 text-muted-foreground text-sm transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-accent data-[state=active]:font-medium data-[state=active]:text-foreground",
         className,
       )}
       href={`#${value}`}
-      onClick={onItemClick}
+      onClick={onLinkClick}
     />
   );
 }
 
-interface ScrollSpyContentGroupProps extends React.ComponentProps<"div"> {
+interface ScrollSpyViewportProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-function ScrollSpyContentGroup(props: ScrollSpyContentGroupProps) {
-  const { asChild, className, ...groupProps } = props;
+function ScrollSpyViewport(props: ScrollSpyViewportProps) {
+  const { asChild, className, ...viewportProps } = props;
 
-  const { dir, orientation } = useScrollSpyContext(CONTENT_GROUP_NAME);
+  const { dir, orientation } = useScrollSpyContext(VIEWPORT_NAME);
 
-  const GroupPrimitive = asChild ? Slot : "div";
+  const ViewportPrimitive = asChild ? Slot : "div";
 
   return (
-    <GroupPrimitive
+    <ViewportPrimitive
       data-orientation={orientation}
-      data-slot="scroll-spy-content-group"
+      data-slot="scroll-spy-viewport"
       dir={dir}
-      {...groupProps}
+      {...viewportProps}
       className={cn("flex flex-1 flex-col gap-8", className)}
     />
   );
 }
 
-interface ScrollSpyContentProps extends React.ComponentProps<"div"> {
+interface ScrollSpySectionProps extends React.ComponentProps<"div"> {
   value: string;
   asChild?: boolean;
 }
 
-function ScrollSpyContent(props: ScrollSpyContentProps) {
-  const { asChild, ref, value, ...contentProps } = props;
+function ScrollSpySection(props: ScrollSpySectionProps) {
+  const { asChild, ref, value, ...sectionProps } = props;
 
-  const { orientation, onContentRegister, onContentUnregister } =
-    useScrollSpyContext(CONTENT_NAME);
-  const contentRef = React.useRef<HTMLDivElement>(null);
-  const composedRef = useComposedRefs(ref, contentRef);
+  const { orientation, onSectionRegister, onSectionUnregister } =
+    useScrollSpyContext(SECTION_NAME);
+  const sectionRef = React.useRef<HTMLDivElement>(null);
+  const composedRef = useComposedRefs(ref, sectionRef);
 
   useIsomorphicLayoutEffect(() => {
-    const element = contentRef.current;
+    const element = sectionRef.current;
     if (!element || !value) return;
 
-    onContentRegister(value, element);
+    onSectionRegister(value, element);
 
     return () => {
-      onContentUnregister(value);
+      onSectionUnregister(value);
     };
-  }, [value, onContentRegister, onContentUnregister]);
+  }, [value, onSectionRegister, onSectionUnregister]);
 
-  const ContentPrimitive = asChild ? Slot : "div";
+  const SectionPrimitive = asChild ? Slot : "div";
 
   return (
-    <ContentPrimitive
+    <SectionPrimitive
       data-orientation={orientation}
-      data-slot="scroll-spy-content"
-      {...contentProps}
+      data-slot="scroll-spy-section"
+      {...sectionProps}
       id={value}
       ref={composedRef}
     />
@@ -418,8 +418,8 @@ function ScrollSpyContent(props: ScrollSpyContentProps) {
 
 export {
   ScrollSpy,
-  ScrollSpyItemGroup,
-  ScrollSpyItem,
-  ScrollSpyContentGroup,
-  ScrollSpyContent,
+  ScrollSpyNav,
+  ScrollSpyLink,
+  ScrollSpyViewport,
+  ScrollSpySection,
 };
