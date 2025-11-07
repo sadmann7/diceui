@@ -21,6 +21,7 @@ export default function ScrollSpyControlledDemo() {
       scrollContainer={scrollContainer}
       value={value}
       onValueChange={setValue}
+      defaultValue="getting-started"
       className="h-[400px] w-full border"
     >
       <ScrollSpyNav className="w-40 border-r p-4">

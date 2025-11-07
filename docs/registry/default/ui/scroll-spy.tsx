@@ -169,6 +169,7 @@ function ScrollSpyImpl(
   const sectionMapRef = React.useRef(new Map<string, Element>());
   const isScrollingRef = React.useRef(false);
   const rafIdRef = React.useRef<number | null>(null);
+  const isMountedRef = React.useRef(false);
 
   const onSectionRegister = React.useCallback(
     (id: string, element: Element) => {
@@ -238,6 +239,13 @@ function ScrollSpyImpl(
   useIsomorphicLayoutEffect(() => {
     if (valueProp === undefined) return;
 
+    // Update store value on mount without scrolling
+    if (!isMountedRef.current) {
+      isMountedRef.current = true;
+      store.setState("value", valueProp);
+      return;
+    }
+
     const element = scrollContainer
       ? scrollContainer.querySelector(`#${valueProp}`)
       : document.getElementById(valueProp);
@@ -278,7 +286,7 @@ function ScrollSpyImpl(
     }, 500);
 
     return () => clearTimeout(timeoutId);
-  }, [valueProp, scrollContainer, offset, scrollBehavior]);
+  }, [valueProp, scrollContainer, offset, scrollBehavior, store]);
 
   const contextValue = React.useMemo<ScrollSpyContextValue>(
     () => ({

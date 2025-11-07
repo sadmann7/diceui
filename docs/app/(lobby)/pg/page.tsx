@@ -8,8 +8,8 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <Demo>
+        <ScrollSpyDemo />
         <ScrollSpyControlledDemo />
-        {/* <ScrollSpyDemo /> */}
         <ColorPickerDemo />
       </Demo>
     </Shell>
