@@ -32,6 +32,7 @@ const MentionHighlighter = React.memo(
       const highlighterRef = React.useRef<HighlighterElement>(null);
       const composedRef = useComposedRefs(forwardedRef, highlighterRef);
       const [inputStyle, setInputStyle] = React.useState<CSSStyleDeclaration>();
+      const [isInputElement, setIsInputElement] = React.useState<boolean>(false);
       const onInputStyleChangeCallback = useCallbackRef(setInputStyle);
 
       const onInputStyleChange = React.useCallback(() => {
@@ -39,6 +40,8 @@ const MentionHighlighter = React.memo(
         if (!inputElement) return;
 
         const computedStyle = window.getComputedStyle(inputElement);
+        const isInput = inputElement.tagName === "INPUT";
+        setIsInputElement(isInput);
         onInputStyleChangeCallback(computedStyle);
       }, [context.inputRef, onInputStyleChangeCallback]);
 
@@ -103,7 +106,7 @@ const MentionHighlighter = React.memo(
       const highlighterStyle = React.useMemo<React.CSSProperties>(() => {
         if (!inputStyle) return defaultHighlighterStyle;
 
-        return {
+        const baseStyle = {
           ...defaultHighlighterStyle,
           fontStyle: inputStyle.fontStyle,
           fontVariant: inputStyle.fontVariant,
@@ -127,7 +130,19 @@ const MentionHighlighter = React.memo(
           direction: context.dir,
           ...style,
         };
-      }, [inputStyle, style, context.dir]);
+
+        if (isInputElement) {
+          return {
+            ...baseStyle,
+            whiteSpace: "nowrap",
+            overflowX: "auto",
+            overflowY: "hidden",
+            wordWrap: "normal",
+          };
+        }
+
+        return baseStyle;
+      }, [inputStyle, style, context.dir, isInputElement]);
 
       const onSegmentsRender = React.useCallback(() => {
         const inputElement = context.inputRef.current;

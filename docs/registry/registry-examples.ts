@@ -1016,6 +1016,17 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "mention-input-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/mention", "lucide-react"],
+    files: [
+      {
+        path: "examples/mention-input-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "qr-code-demo",
     type: "registry:example",
     registryDependencies: ["qr-code"],

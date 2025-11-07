@@ -1645,6 +1645,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "mention-input-demo": {
+      name: "mention-input-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/examples/mention-input-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/mention-input-demo.tsx")),
+      source: "",
+      chunks: []
+    },
     "qr-code-demo": {
       name: "qr-code-demo",
       description: "",
