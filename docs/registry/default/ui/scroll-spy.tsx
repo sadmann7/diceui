@@ -179,27 +179,64 @@ function ScrollSpyImpl(
   }, []);
 
   useIsomorphicLayoutEffect(() => {
+    if (valueProp !== undefined) {
+      store.setState("value", valueProp);
+    }
+  }, [valueProp]);
+
+  useIsomorphicLayoutEffect(() => {
     const sectionMap = sectionMapRef.current;
     if (sectionMap.size === 0) return;
 
     const observerRootMargin = rootMargin ?? `${-offset}px 0px -70% 0px`;
+    let isFirstCallback = true;
+    let rafId: number | null = null;
+    const intersectionMap = new Map<string, IntersectionObserverEntry>();
 
     const observer = new IntersectionObserver(
       (entries) => {
-        const intersecting = entries.filter((entry) => entry.isIntersecting);
+        // Skip the first intersection callback to prevent overriding initial value
+        if (isFirstCallback) {
+          isFirstCallback = false;
+          return;
+        }
 
-        if (intersecting.length === 0) return;
-
-        const topmost = intersecting.reduce((prev, curr) => {
-          return curr.boundingClientRect.top < prev.boundingClientRect.top
-            ? curr
-            : prev;
+        // Update intersection state for all entries
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            intersectionMap.set(entry.target.id, entry);
+          } else {
+            intersectionMap.delete(entry.target.id);
+          }
         });
 
-        const id = topmost.target.id;
-        if (id && sectionMap.has(id)) {
-          store.setState("value", id);
+        // Cancel any pending updates
+        if (rafId !== null) {
+          cancelAnimationFrame(rafId);
         }
+
+        // Batch updates using requestAnimationFrame for smoother transitions
+        rafId = requestAnimationFrame(() => {
+          const intersectingEntries = Array.from(intersectionMap.values());
+
+          if (intersectingEntries.length === 0) {
+            rafId = null;
+            return;
+          }
+
+          // Find the topmost intersecting section
+          const topmost = intersectingEntries.reduce((prev, curr) => {
+            return curr.boundingClientRect.top < prev.boundingClientRect.top
+              ? curr
+              : prev;
+          });
+
+          const id = topmost.target.id;
+          if (id && sectionMap.has(id)) {
+            store.setState("value", id);
+          }
+          rafId = null;
+        });
       },
       {
         root: scrollContainer,
@@ -213,15 +250,12 @@ function ScrollSpyImpl(
     });
 
     return () => {
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+      }
       observer.disconnect();
     };
-  }, [offset, rootMargin, threshold, scrollContainer]);
-
-  useIsomorphicLayoutEffect(() => {
-    if (valueProp !== undefined) {
-      store.setState("value", valueProp);
-    }
-  }, [valueProp]);
+  }, [offset, rootMargin, threshold, scrollContainer, store]);
 
   const contextValue = React.useMemo<ScrollSpyContextValue>(
     () => ({

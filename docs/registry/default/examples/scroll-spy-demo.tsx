@@ -15,8 +15,9 @@ export default function ScrollSpyDemo() {
 
   return (
     <ScrollSpy
-      offset={75}
+      offset={16}
       scrollContainer={scrollContainer}
+      defaultValue="getting-started"
       className="h-[400px] w-full border"
     >
       <ScrollSpyNav className="w-40 border-r p-4">
