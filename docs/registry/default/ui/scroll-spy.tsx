@@ -308,7 +308,10 @@ function ScrollSpyLink(props: ScrollSpyLinkProps) {
       event.preventDefault();
       onClick?.(event);
 
-      const element = document.getElementById(valueProp);
+      const element = scrollContainer
+        ? scrollContainer.querySelector(`#${valueProp}`)
+        : document.getElementById(valueProp);
+
       if (!element) return;
 
       store.setState("value", valueProp);
