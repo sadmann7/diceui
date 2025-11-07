@@ -72,6 +72,7 @@ interface ScrollSpyContextValue {
   dir: Direction;
   orientation: Orientation;
   scrollContainer: HTMLElement | null;
+  isScrollingRef: React.RefObject<boolean>;
   onSectionRegister: (id: string, element: Element) => void;
   onSectionUnregister: (id: string) => void;
 }
@@ -166,6 +167,8 @@ function ScrollSpyImpl(
   const store = useStoreContext(ROOT_NAME);
 
   const sectionMapRef = React.useRef(new Map<string, Element>());
+  const isScrollingRef = React.useRef(false);
+  const rafIdRef = React.useRef<number | null>(null);
 
   const onSectionRegister = React.useCallback(
     (id: string, element: Element) => {
@@ -186,20 +189,31 @@ function ScrollSpyImpl(
 
     const observer = new IntersectionObserver(
       (entries) => {
-        const intersecting = entries.filter((entry) => entry.isIntersecting);
+        // Ignore observer updates while programmatically scrolling
+        if (isScrollingRef.current) return;
 
-        if (intersecting.length === 0) return;
-
-        const topmost = intersecting.reduce((prev, curr) => {
-          return curr.boundingClientRect.top < prev.boundingClientRect.top
-            ? curr
-            : prev;
-        });
-
-        const id = topmost.target.id;
-        if (id && sectionMap.has(id)) {
-          store.setState("value", id);
+        // Cancel any pending RAF
+        if (rafIdRef.current !== null) {
+          cancelAnimationFrame(rafIdRef.current);
         }
+
+        // Throttle updates with RAF to prevent jitter
+        rafIdRef.current = requestAnimationFrame(() => {
+          const intersecting = entries.filter((entry) => entry.isIntersecting);
+
+          if (intersecting.length === 0) return;
+
+          const topmost = intersecting.reduce((prev, curr) => {
+            return curr.boundingClientRect.top < prev.boundingClientRect.top
+              ? curr
+              : prev;
+          });
+
+          const id = topmost.target.id;
+          if (id && sectionMap.has(id)) {
+            store.setState("value", id);
+          }
+        });
       },
       {
         root: scrollContainer,
@@ -214,14 +228,57 @@ function ScrollSpyImpl(
 
     return () => {
       observer.disconnect();
+      if (rafIdRef.current !== null) {
+        cancelAnimationFrame(rafIdRef.current);
+      }
     };
   }, [offset, rootMargin, threshold, scrollContainer]);
 
+  // Scroll to section when value changes externally (controlled mode)
   useIsomorphicLayoutEffect(() => {
-    if (valueProp !== undefined) {
+    if (valueProp === undefined) return;
+
+    const element = scrollContainer
+      ? scrollContainer.querySelector(`#${valueProp}`)
+      : document.getElementById(valueProp);
+
+    if (!element) {
       store.setState("value", valueProp);
+      return;
     }
-  }, [valueProp]);
+
+    // Set flag to prevent observer from firing during programmatic scroll
+    isScrollingRef.current = true;
+    store.setState("value", valueProp);
+
+    if (scrollContainer) {
+      const containerRect = scrollContainer.getBoundingClientRect();
+      const elementRect = element.getBoundingClientRect();
+      const scrollTop = scrollContainer.scrollTop;
+      const offsetPosition =
+        elementRect.top - containerRect.top + scrollTop - offset;
+
+      scrollContainer.scrollTo({
+        top: offsetPosition,
+        behavior: scrollBehavior,
+      });
+    } else {
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.scrollY - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: scrollBehavior,
+      });
+    }
+
+    // Reset flag after scroll animation completes
+    const timeoutId = setTimeout(() => {
+      isScrollingRef.current = false;
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [valueProp, scrollContainer, offset, scrollBehavior]);
 
   const contextValue = React.useMemo<ScrollSpyContextValue>(
     () => ({
@@ -230,6 +287,7 @@ function ScrollSpyImpl(
       offset,
       scrollBehavior,
       scrollContainer,
+      isScrollingRef,
       onSectionRegister,
       onSectionUnregister,
     }),
@@ -297,8 +355,13 @@ interface ScrollSpyLinkProps extends React.ComponentProps<"a"> {
 function ScrollSpyLink(props: ScrollSpyLinkProps) {
   const { value: valueProp, asChild, onClick, className, ...linkProps } = props;
 
-  const { orientation, offset, scrollBehavior, scrollContainer } =
-    useScrollSpyContext(LINK_NAME);
+  const {
+    orientation,
+    offset,
+    scrollBehavior,
+    scrollContainer,
+    isScrollingRef,
+  } = useScrollSpyContext(LINK_NAME);
   const store = useStoreContext(LINK_NAME);
   const value = useStore((state) => state.value);
   const isActive = value === valueProp;
@@ -314,6 +377,8 @@ function ScrollSpyLink(props: ScrollSpyLinkProps) {
 
       if (!element) return;
 
+      // Set flag to prevent observer from firing during programmatic scroll
+      isScrollingRef.current = true;
       store.setState("value", valueProp);
 
       if (scrollContainer) {
@@ -336,8 +401,21 @@ function ScrollSpyLink(props: ScrollSpyLinkProps) {
           behavior: scrollBehavior,
         });
       }
+
+      // Reset flag after scroll animation completes
+      setTimeout(() => {
+        isScrollingRef.current = false;
+      }, 500);
     },
-    [offset, scrollBehavior, valueProp, onClick, scrollContainer, store],
+    [
+      offset,
+      scrollBehavior,
+      valueProp,
+      onClick,
+      scrollContainer,
+      store,
+      isScrollingRef,
+    ],
   );
 
   const LinkPrimitive = asChild ? Slot : "a";
