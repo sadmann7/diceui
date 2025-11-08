@@ -22,6 +22,9 @@ const ENTRY_FOCUS = "stepperFocusGroup.onEntryFocus";
 const EVENT_OPTIONS = { bubbles: false, cancelable: true };
 const ARROW_KEYS = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
 
+type ListElement = React.ComponentRef<typeof StepperList>;
+type TriggerElement = React.ComponentRef<typeof StepperTrigger>;
+
 function getId(
   id: string,
   variant: "trigger" | "content" | "title" | "description",
@@ -51,8 +54,6 @@ function getDirectionAwareKey(key: string, dir?: Direction) {
       ? "ArrowLeft"
       : key;
 }
-
-type TriggerElement = React.ComponentRef<typeof StepperTrigger>;
 
 function getFocusIntent(
   event: React.KeyboardEvent<TriggerElement>,
@@ -426,8 +427,6 @@ function useFocusContext(consumerName: string) {
   return context;
 }
 
-type ListElement = React.ComponentRef<typeof StepperList>;
-
 interface StepperListProps extends DivProps {
   asChild?: boolean;
 }
@@ -444,7 +443,7 @@ function StepperList(props: StepperListProps) {
   const [focusableItemCount, setFocusableItemCount] = React.useState(0);
   const isClickFocusRef = React.useRef(false);
   const itemsRef = React.useRef<Map<string, ItemData>>(new Map());
-  const listRef = React.useRef<HTMLElement>(null);
+  const listRef = React.useRef<ListElement>(null);
   const composedRef = useComposedRefs(ref, listRef);
 
   const onItemFocus = React.useCallback((tabStopId: string) => {

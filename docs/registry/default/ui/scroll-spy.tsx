@@ -76,6 +76,9 @@ function useDirection(dir?: Direction): Direction {
   return dir ?? contextDir ?? "ltr";
 }
 
+type LinkElement = React.ComponentRef<typeof ScrollSpyLink>;
+type SectionElement = React.ComponentRef<typeof ScrollSpySection>;
+
 interface ScrollSpyContextValue {
   offset: number;
   scrollBehavior: ScrollBehavior;
@@ -83,7 +86,7 @@ interface ScrollSpyContextValue {
   orientation: Orientation;
   scrollContainer: HTMLElement | null;
   isScrollingRef: React.RefObject<boolean>;
-  onSectionRegister: (id: string, element: Element) => void;
+  onSectionRegister: (id: string, element: SectionElement) => void;
   onSectionUnregister: (id: string) => void;
   onScrollToSection: (sectionId: string) => void;
 }
@@ -184,7 +187,7 @@ function ScrollSpyImpl(props: Omit<ScrollSpyProps, "onValueChange">) {
   const scrollTimeoutRef = React.useRef<number | null>(null);
 
   const onSectionRegister = React.useCallback(
-    (id: string, element: Element) => {
+    (id: string, element: SectionElement) => {
       sectionMapRef.current.set(id, element);
     },
     [],
@@ -389,7 +392,7 @@ function ScrollSpyLink(props: ScrollSpyLinkProps) {
   const isActive = value === linkValue;
 
   const onLinkClick = React.useCallback(
-    (event: React.MouseEvent<HTMLAnchorElement>) => {
+    (event: React.MouseEvent<LinkElement>) => {
       event.preventDefault();
       onClick?.(event);
       onScrollToSection(linkValue);
@@ -405,7 +408,7 @@ function ScrollSpyLink(props: ScrollSpyLinkProps) {
       data-slot="scroll-spy-link"
       data-state={isActive ? "active" : "inactive"}
       {...linkProps}
-      href={`#${linkValue}`}
+      href={asChild ? undefined : `#${linkValue}`}
       className={cn(
         "rounded px-3 py-1.5 font-medium text-muted-foreground text-sm transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-accent data-[state=active]:text-foreground",
         className,
@@ -447,7 +450,7 @@ function ScrollSpySection(props: ScrollSpySectionProps) {
 
   const { orientation, onSectionRegister, onSectionUnregister } =
     useScrollSpyContext(SECTION_NAME);
-  const sectionRef = React.useRef<HTMLDivElement>(null);
+  const sectionRef = React.useRef<SectionElement>(null);
   const composedRef = useComposedRefs(ref, sectionRef);
 
   useIsomorphicLayoutEffect(() => {
