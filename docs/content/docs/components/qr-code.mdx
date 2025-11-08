@@ -52,12 +52,14 @@ Import the parts, and compose them together.
 ```tsx
 import * as QRCode from "@/components/ui/qr-code";
 
-<QRCode.Root >
-  <QRCode.Canvas />
-  <QRCode.Svg />
-  <QRCode.Image />
-  <QRCode.Download />
-</QRCode.Root >
+return (
+  <QRCode.Root>
+    <QRCode.Canvas />
+    <QRCode.Svg />
+    <QRCode.Image />
+    <QRCode.Download />
+  </QRCode.Root>
+)
 ```
 
 ## Examples
@@ -86,7 +88,7 @@ The main container component that provides context for QR code generation.
 />
 
 <CSSVariablesTable
-  variables={[
+  data={[
     {
       title: "--qr-code-size",
       description: "The size of the QR code in pixels. Used to constrain child elements to the QR code dimensions.",
@@ -136,7 +138,7 @@ A button component for downloading the QR code.
 ### Keyboard Interactions
 
 <KeyboardShortcutsTable
-  shortcuts={[
+  data={[
     {
       keys: ["Enter"],
       description: "Activates the download button when focused.",

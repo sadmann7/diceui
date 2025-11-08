@@ -2,9 +2,12 @@
 
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { InputGroup, InputGroupItem } from "@/registry/default/ui/input-group";
+import {
+  SegmentedInput,
+  SegmentedInputItem,
+} from "@/registry/default/ui/segmented-input";
 
-export default function InputGroupFormDemo() {
+export default function SegmentedInputFormDemo() {
   const [phoneNumber, setPhoneNumber] = React.useState({
     countryCode: "+1",
     areaCode: "",
@@ -26,9 +29,11 @@ export default function InputGroupFormDemo() {
     <form onSubmit={onSubmit} className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
         <label className="font-medium text-sm leading-none">Phone Number</label>
-        <InputGroup className="w-full max-w-sm" aria-label="Phone number input">
-          <InputGroupItem
-            position="first"
+        <SegmentedInput
+          className="w-full max-w-sm"
+          aria-label="Phone number input"
+        >
+          <SegmentedInputItem
             placeholder="+1"
             value={phoneNumber.countryCode}
             onChange={(event) =>
@@ -40,8 +45,7 @@ export default function InputGroupFormDemo() {
             className="w-16"
             aria-label="Country code"
           />
-          <InputGroupItem
-            position="middle"
+          <SegmentedInputItem
             placeholder="555"
             value={phoneNumber.areaCode}
             onChange={(event) =>
@@ -56,8 +60,7 @@ export default function InputGroupFormDemo() {
             pattern="[0-9]*"
             aria-label="Area code"
           />
-          <InputGroupItem
-            position="last"
+          <SegmentedInputItem
             placeholder="1234567"
             value={phoneNumber.number}
             onChange={(event) =>
@@ -72,7 +75,7 @@ export default function InputGroupFormDemo() {
             pattern="[0-9]*"
             aria-label="Phone number"
           />
-        </InputGroup>
+        </SegmentedInput>
       </div>
       <Button type="submit" size="sm">
         Submit

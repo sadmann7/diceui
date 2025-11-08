@@ -140,13 +140,13 @@
       ]
     },
     {
-      "name": "input-group",
+      "name": "segmented-input",
       "type": "registry:component",
-      "title": "Input Group",
-      "description": "A group of input components with support for labels and validation.",
+      "title": "Segmented Input",
+      "description": "A group of connected input fields that appear as a single segmented visual unit.",
       "files": [
         {
-          "path": "registry/default/ui/input-group.tsx",
+          "path": "registry/default/ui/segmented-input.tsx",
           "type": "registry:ui"
         }
       ]
@@ -291,6 +291,22 @@
       "files": [
         {
           "path": "registry/default/ui/scroller.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/default/lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "scroll-spy",
+      "type": "registry:component",
+      "title": "Scroll Spy",
+      "description": "A scroll spy component that highlights navigation links based on scroll position with smooth scrolling.",
+      "files": [
+        {
+          "path": "registry/default/ui/scroll-spy.tsx",
           "type": "registry:ui"
         },
         {
@@ -702,13 +718,13 @@
       ]
     },
     {
-      "name": "input-group-demo",
+      "name": "segmented-input-demo",
       "type": "registry:component",
-      "title": "Input Group Demo",
-      "description": "Example showing how to use the input group component.",
+      "title": "Segmented Input Demo",
+      "description": "Example showing how to use the segmented input component.",
       "files": [
         {
-          "path": "registry/default/examples/input-group-demo.tsx",
+          "path": "registry/default/examples/segmented-input-demo.tsx",
           "type": "registry:example"
         }
       ]
@@ -949,6 +965,42 @@
       "files": [
         {
           "path": "registry/default/examples/scroller-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "scroll-spy-demo",
+      "type": "registry:component",
+      "title": "Scroll Spy Demo",
+      "description": "Example showing how to use the scroll spy component.",
+      "files": [
+        {
+          "path": "registry/default/examples/scroll-spy-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "scroll-spy-controlled-demo",
+      "type": "registry:component",
+      "title": "Scroll Spy Controlled Demo",
+      "description": "Example showing controlled scroll spy with navigation buttons.",
+      "files": [
+        {
+          "path": "registry/default/examples/scroll-spy-controlled-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "scroll-spy-vertical-demo",
+      "type": "registry:component",
+      "title": "Scroll Spy Vertical Demo",
+      "description": "Example showing scroll spy with vertical orientation.",
+      "files": [
+        {
+          "path": "registry/default/examples/scroll-spy-vertical-demo.tsx",
           "type": "registry:example"
         }
       ]

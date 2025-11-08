@@ -8,7 +8,6 @@ links:
 
 <ComponentTabs name="listbox-demo" />
 
-
 ## Installation
 
 ```package-install
@@ -47,14 +46,16 @@ Import the parts, and compose them together.
 ```tsx
 import * as Listbox from "@diceui/listbox"
 
-<Listbox.Root>
-  <Listbox.Group>
-    <Listbox.GroupLabel/>
-    <Listbox.Item >
-      <Listbox.ItemIndicator />
-    </Listbox.Item>
-  </Listbox.Group>
-</Listbox.Root>
+return (
+  <Listbox.Root>
+    <Listbox.Group>
+      <Listbox.GroupLabel/>
+      <Listbox.Item >
+        <Listbox.ItemIndicator />
+      </Listbox.Item>
+    </Listbox.Group>
+  </Listbox.Root>
+)
 ```
 
 ## Examples
@@ -134,7 +135,7 @@ A visual indicator that shows when the item is selected.
 ### Keyboard Interactions
 
 <KeyboardShortcutsTable
-  shortcuts={[
+  data={[
     {
       keys: ["Tab"],
       description: "Focuses the last active item in the list.",

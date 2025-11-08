@@ -141,7 +141,7 @@ export interface ListProps extends EmptyProps<"ol">, CompositionProps {}
 
 export interface ItemProps extends EmptyProps<"li">, CompositionProps {
   /**
-   * The unique value for this step item.
+   * The unique value that links the item with the content.
    *
    * ```ts
    * value="step-1"
@@ -194,7 +194,7 @@ export interface DescriptionProps
 
 export interface ContentProps extends EmptyProps<"div">, CompositionProps {
   /**
-   * The unique value for this step content.
+   * The unique value that links the content with the item.
    *
    * ```ts
    * value="step-1"

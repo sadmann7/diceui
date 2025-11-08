@@ -157,13 +157,13 @@ export const ui: Registry["items"] = [
     ],
   },
   {
-    name: "input-group",
+    name: "segmented-input",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
     registryDependencies: ["input"],
     files: [
       {
-        path: "ui/input-group.tsx",
+        path: "ui/segmented-input.tsx",
         type: "registry:ui",
       },
     ],
@@ -364,6 +364,21 @@ export const ui: Registry["items"] = [
     files: [
       {
         path: "ui/scroller.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
+      },
+    ],
+  },
+  {
+    name: "scroll-spy",
+    type: "registry:ui",
+    dependencies: ["@radix-ui/react-slot"],
+    files: [
+      {
+        path: "ui/scroll-spy.tsx",
         type: "registry:ui",
       },
       {

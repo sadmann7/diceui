@@ -1,9 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { InputGroup, InputGroupItem } from "@/registry/default/ui/input-group";
+import {
+  SegmentedInput,
+  SegmentedInputItem,
+} from "@/registry/default/ui/segmented-input";
 
-export default function InputGroupDemo() {
+export default function SegmentedInputDemo() {
   const [values, setValues] = React.useState({
     first: "",
     second: "",
@@ -26,29 +29,26 @@ export default function InputGroupDemo() {
       <label className="font-medium text-sm leading-none">
         Enter your details
       </label>
-      <InputGroup className="w-full max-w-sm">
-        <InputGroupItem
-          position="first"
+      <SegmentedInput className="w-full max-w-sm">
+        <SegmentedInputItem
           placeholder="First"
           value={values.first}
           onChange={onValueChange("first")}
           aria-label="First name"
         />
-        <InputGroupItem
-          position="middle"
+        <SegmentedInputItem
           placeholder="Second"
           value={values.second}
           onChange={onValueChange("second")}
           aria-label="Middle name"
         />
-        <InputGroupItem
-          position="last"
+        <SegmentedInputItem
           placeholder="Third"
           value={values.third}
           onChange={onValueChange("third")}
           aria-label="Last name"
         />
-      </InputGroup>
+      </SegmentedInput>
     </div>
   );
 }

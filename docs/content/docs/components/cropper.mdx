@@ -52,10 +52,12 @@ import {
   CropperVideo,
 } from "@/components/ui/cropper";
 
-<Cropper>
-  <CropperImage src="/image.jpg" alt="Image to crop" />
-  <CropperArea />
-</Cropper>
+return (
+  <Cropper>
+    <CropperImage src="/image.jpg" alt="Image to crop" />
+    <CropperArea />
+  </Cropper>
+)
 ```
 
 ## Examples
@@ -127,7 +129,7 @@ The crop area overlay that shows the selected region.
 ### Keyboard Interactions
 
 <KeyboardShortcutsTable
-  shortcuts={[
+  data={[
     {
       keys: ["Tab"],
       description: "Moves focus to the cropper content.",
