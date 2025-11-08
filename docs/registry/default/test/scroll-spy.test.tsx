@@ -144,7 +144,8 @@ describe("ScrollSpy", () => {
     await user.click(secondLink);
 
     await waitFor(() => {
-      expect(links[1]).toHaveAttribute("data-state", "active");
+      const updatedLinks = screen.getAllByRole("link");
+      expect(updatedLinks[1]).toHaveAttribute("data-state", "active");
     });
   });
 
