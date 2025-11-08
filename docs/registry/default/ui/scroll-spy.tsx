@@ -149,7 +149,7 @@ function ScrollSpy(props: ScrollSpyProps) {
 
 function ScrollSpyImpl(props: Omit<ScrollSpyProps, "onValueChange">) {
   const {
-    value: valueProp,
+    value,
     defaultValue,
     rootMargin,
     threshold = 0.1,
@@ -237,7 +237,7 @@ function ScrollSpyImpl(props: Omit<ScrollSpyProps, "onValueChange">) {
 
   // Scroll to section when value changes externally (controlled mode)
   useIsomorphicLayoutEffect(() => {
-    const currentValue = valueProp ?? defaultValue;
+    const currentValue = value ?? defaultValue;
     if (currentValue === undefined) return;
 
     // Update store value on mount without scrolling
@@ -248,7 +248,7 @@ function ScrollSpyImpl(props: Omit<ScrollSpyProps, "onValueChange">) {
     }
 
     onScrollToSection(currentValue);
-  }, [valueProp, onScrollToSection]);
+  }, [value, onScrollToSection]);
 
   useIsomorphicLayoutEffect(() => {
     const sectionMap = sectionMapRef.current;
@@ -381,19 +381,19 @@ interface ScrollSpyLinkProps extends React.ComponentProps<"a"> {
 }
 
 function ScrollSpyLink(props: ScrollSpyLinkProps) {
-  const { value: valueProp, asChild, onClick, className, ...linkProps } = props;
+  const { value: linkValue, asChild, onClick, className, ...linkProps } = props;
 
   const { orientation, onScrollToSection } = useScrollSpyContext(LINK_NAME);
   const value = useStore((state) => state.value);
-  const isActive = value === valueProp;
+  const isActive = value === linkValue;
 
   const onLinkClick = React.useCallback(
     (event: React.MouseEvent<HTMLAnchorElement>) => {
       event.preventDefault();
       onClick?.(event);
-      onScrollToSection(valueProp);
+      onScrollToSection(linkValue);
     },
-    [valueProp, onClick, onScrollToSection],
+    [linkValue, onClick, onScrollToSection],
   );
 
   const LinkPrimitive = asChild ? Slot : "a";
@@ -404,11 +404,11 @@ function ScrollSpyLink(props: ScrollSpyLinkProps) {
       data-slot="scroll-spy-link"
       data-state={isActive ? "active" : "inactive"}
       {...linkProps}
+      href={`#${linkValue}`}
       className={cn(
         "rounded px-3 py-1.5 font-medium text-muted-foreground text-sm transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-accent data-[state=active]:text-foreground",
         className,
       )}
-      href={`#${value}`}
       onClick={onLinkClick}
     />
   );
