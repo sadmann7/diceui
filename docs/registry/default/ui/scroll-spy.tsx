@@ -75,6 +75,7 @@ interface ScrollSpyContextValue {
   isScrollingRef: React.RefObject<boolean>;
   onSectionRegister: (id: string, element: Element) => void;
   onSectionUnregister: (id: string) => void;
+  onScrollToSection: (sectionId: string) => void;
 }
 
 const ScrollSpyContext = React.createContext<ScrollSpyContextValue | null>(
@@ -141,16 +142,15 @@ function ScrollSpy(props: ScrollSpyProps) {
 
   return (
     <StoreContext.Provider value={store}>
-      <ScrollSpyImpl value={value} {...rootProps} />
+      <ScrollSpyImpl value={value} defaultValue={defaultValue} {...rootProps} />
     </StoreContext.Provider>
   );
 }
 
-function ScrollSpyImpl(
-  props: Omit<ScrollSpyProps, "defaultValue" | "onValueChange">,
-) {
+function ScrollSpyImpl(props: Omit<ScrollSpyProps, "onValueChange">) {
   const {
     value: valueProp,
+    defaultValue,
     rootMargin,
     threshold = 0.1,
     offset = 0,
@@ -170,6 +170,7 @@ function ScrollSpyImpl(
   const isScrollingRef = React.useRef(false);
   const rafIdRef = React.useRef<number | null>(null);
   const isMountedRef = React.useRef(false);
+  const scrollTimeoutRef = React.useRef<number | null>(null);
 
   const onSectionRegister = React.useCallback(
     (id: string, element: Element) => {
@@ -181,6 +182,73 @@ function ScrollSpyImpl(
   const onSectionUnregister = React.useCallback((id: string) => {
     sectionMapRef.current.delete(id);
   }, []);
+
+  const onScrollToSection = React.useCallback(
+    (sectionId: string) => {
+      const section = scrollContainer
+        ? scrollContainer.querySelector(`#${sectionId}`)
+        : document.getElementById(sectionId);
+
+      if (!section) {
+        store.setState("value", sectionId);
+        return;
+      }
+
+      // Set flag to prevent observer from firing during programmatic scroll
+      isScrollingRef.current = true;
+      store.setState("value", sectionId);
+
+      if (scrollContainer) {
+        const containerRect = scrollContainer.getBoundingClientRect();
+        const sectionRect = section.getBoundingClientRect();
+        const scrollTop = scrollContainer.scrollTop;
+        const offsetPosition =
+          sectionRect.top - containerRect.top + scrollTop - offset;
+
+        scrollContainer.scrollTo({
+          top: offsetPosition,
+          behavior: scrollBehavior,
+        });
+      } else {
+        const sectionPosition = section.getBoundingClientRect().top;
+        const offsetPosition = sectionPosition + window.scrollY - offset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: scrollBehavior,
+        });
+      }
+
+      // Clear any existing timeout
+      if (scrollTimeoutRef.current !== null) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+
+      // Reset scrolling flag after a delay to allow scroll animation to complete
+      // This is necessary because there's no reliable cross-browser way to detect
+      // when scrollTo() with smooth behavior completes. The 500ms delay accounts
+      // for most scroll animations while preventing observer interference.
+      scrollTimeoutRef.current = window.setTimeout(() => {
+        isScrollingRef.current = false;
+      }, 500);
+    },
+    [scrollContainer, offset, scrollBehavior, store],
+  );
+
+  // Scroll to section when value changes externally (controlled mode)
+  useIsomorphicLayoutEffect(() => {
+    const currentValue = valueProp ?? defaultValue;
+    if (currentValue === undefined) return;
+
+    // Update store value on mount without scrolling
+    if (!isMountedRef.current) {
+      isMountedRef.current = true;
+      store.setState("value", currentValue);
+      return;
+    }
+
+    onScrollToSection(currentValue);
+  }, [valueProp, onScrollToSection]);
 
   useIsomorphicLayoutEffect(() => {
     const sectionMap = sectionMapRef.current;
@@ -223,70 +291,20 @@ function ScrollSpyImpl(
       },
     );
 
-    sectionMap.forEach((element) => {
+    for (const element of sectionMap.values()) {
       observer.observe(element);
-    });
+    }
 
     return () => {
       observer.disconnect();
       if (rafIdRef.current !== null) {
         cancelAnimationFrame(rafIdRef.current);
       }
+      if (scrollTimeoutRef.current !== null) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
     };
   }, [offset, rootMargin, threshold, scrollContainer]);
-
-  // Scroll to section when value changes externally (controlled mode)
-  useIsomorphicLayoutEffect(() => {
-    if (valueProp === undefined) return;
-
-    // Update store value on mount without scrolling
-    if (!isMountedRef.current) {
-      isMountedRef.current = true;
-      store.setState("value", valueProp);
-      return;
-    }
-
-    const element = scrollContainer
-      ? scrollContainer.querySelector(`#${valueProp}`)
-      : document.getElementById(valueProp);
-
-    if (!element) {
-      store.setState("value", valueProp);
-      return;
-    }
-
-    // Set flag to prevent observer from firing during programmatic scroll
-    isScrollingRef.current = true;
-    store.setState("value", valueProp);
-
-    if (scrollContainer) {
-      const containerRect = scrollContainer.getBoundingClientRect();
-      const elementRect = element.getBoundingClientRect();
-      const scrollTop = scrollContainer.scrollTop;
-      const offsetPosition =
-        elementRect.top - containerRect.top + scrollTop - offset;
-
-      scrollContainer.scrollTo({
-        top: offsetPosition,
-        behavior: scrollBehavior,
-      });
-    } else {
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.scrollY - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: scrollBehavior,
-      });
-    }
-
-    // Reset flag after scroll animation completes
-    const timeoutId = setTimeout(() => {
-      isScrollingRef.current = false;
-    }, 500);
-
-    return () => clearTimeout(timeoutId);
-  }, [valueProp, scrollContainer, offset, scrollBehavior, store]);
 
   const contextValue = React.useMemo<ScrollSpyContextValue>(
     () => ({
@@ -298,6 +316,7 @@ function ScrollSpyImpl(
       isScrollingRef,
       onSectionRegister,
       onSectionUnregister,
+      onScrollToSection,
     }),
     [
       dir,
@@ -307,6 +326,7 @@ function ScrollSpyImpl(
       scrollContainer,
       onSectionRegister,
       onSectionUnregister,
+      onScrollToSection,
     ],
   );
 
@@ -363,14 +383,7 @@ interface ScrollSpyLinkProps extends React.ComponentProps<"a"> {
 function ScrollSpyLink(props: ScrollSpyLinkProps) {
   const { value: valueProp, asChild, onClick, className, ...linkProps } = props;
 
-  const {
-    orientation,
-    offset,
-    scrollBehavior,
-    scrollContainer,
-    isScrollingRef,
-  } = useScrollSpyContext(LINK_NAME);
-  const store = useStoreContext(LINK_NAME);
+  const { orientation, onScrollToSection } = useScrollSpyContext(LINK_NAME);
   const value = useStore((state) => state.value);
   const isActive = value === valueProp;
 
@@ -378,52 +391,9 @@ function ScrollSpyLink(props: ScrollSpyLinkProps) {
     (event: React.MouseEvent<HTMLAnchorElement>) => {
       event.preventDefault();
       onClick?.(event);
-
-      const element = scrollContainer
-        ? scrollContainer.querySelector(`#${valueProp}`)
-        : document.getElementById(valueProp);
-
-      if (!element) return;
-
-      // Set flag to prevent observer from firing during programmatic scroll
-      isScrollingRef.current = true;
-      store.setState("value", valueProp);
-
-      if (scrollContainer) {
-        const containerRect = scrollContainer.getBoundingClientRect();
-        const elementRect = element.getBoundingClientRect();
-        const scrollTop = scrollContainer.scrollTop;
-        const offsetPosition =
-          elementRect.top - containerRect.top + scrollTop - offset;
-
-        scrollContainer.scrollTo({
-          top: offsetPosition,
-          behavior: scrollBehavior,
-        });
-      } else {
-        const elementPosition = element.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.scrollY - offset;
-
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: scrollBehavior,
-        });
-      }
-
-      // Reset flag after scroll animation completes
-      setTimeout(() => {
-        isScrollingRef.current = false;
-      }, 500);
+      onScrollToSection(valueProp);
     },
-    [
-      offset,
-      scrollBehavior,
-      valueProp,
-      onClick,
-      scrollContainer,
-      store,
-      isScrollingRef,
-    ],
+    [valueProp, onClick, onScrollToSection],
   );
 
   const LinkPrimitive = asChild ? Slot : "a";

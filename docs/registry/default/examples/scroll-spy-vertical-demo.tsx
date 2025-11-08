@@ -15,7 +15,7 @@ export default function ScrollSpyVerticalDemo() {
 
   return (
     <ScrollSpy
-      offset={15}
+      offset={10}
       orientation="vertical"
       scrollContainer={scrollContainer}
       className="h-[400px] w-full border"
