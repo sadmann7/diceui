@@ -87,6 +87,19 @@ function wrapArray<T>(array: T[], startIndex: number) {
   );
 }
 
+const useIsomorphicLayoutEffect =
+  typeof window === "undefined" ? React.useEffect : React.useLayoutEffect;
+
+function useAsRef<T>(props: T) {
+  const ref = React.useRef<T>(props);
+
+  useIsomorphicLayoutEffect(() => {
+    ref.current = props;
+  });
+
+  return ref;
+}
+
 function useLazyRef<T>(fn: () => T) {
   const ref = React.useRef<T | null>(null);
 
@@ -96,9 +109,6 @@ function useLazyRef<T>(fn: () => T) {
 
   return ref as React.RefObject<T>;
 }
-
-const useIsomorphicLayoutEffect =
-  typeof window === "undefined" ? React.useEffect : React.useLayoutEffect;
 
 type Direction = "ltr" | "rtl";
 type Orientation = "horizontal" | "vertical";
@@ -170,106 +180,6 @@ interface Store {
   addStep: (value: string, completed: boolean, disabled: boolean) => void;
   removeStep: (value: string) => void;
   setStep: (value: string, completed: boolean, disabled: boolean) => void;
-}
-
-function createStore(
-  listenersRef: React.RefObject<Set<() => void>>,
-  stateRef: React.RefObject<StoreState>,
-  onValueChange?: (value: string) => void,
-  onValueComplete?: (value: string, completed: boolean) => void,
-  onValueAdd?: (value: string) => void,
-  onValueRemove?: (value: string) => void,
-  onValidate?: (
-    value: string,
-    direction: NavigationDirection,
-  ) => boolean | Promise<boolean>,
-): Store {
-  const store: Store = {
-    subscribe: (cb) => {
-      if (listenersRef.current) {
-        listenersRef.current.add(cb);
-        return () => listenersRef.current?.delete(cb);
-      }
-      return () => {};
-    },
-    getState: () =>
-      stateRef.current ?? {
-        steps: new Map(),
-        value: undefined,
-      },
-    setState: (key, value) => {
-      const state = stateRef.current;
-      if (!state || Object.is(state[key], value)) return;
-
-      if (key === "value" && typeof value === "string") {
-        state.value = value;
-        onValueChange?.(value);
-      } else {
-        state[key] = value;
-      }
-
-      store.notify();
-    },
-    setStateWithValidation: async (value, direction) => {
-      if (!onValidate) {
-        store.setState("value", value);
-        return true;
-      }
-
-      try {
-        const isValid = await onValidate(value, direction);
-        if (isValid) {
-          store.setState("value", value);
-        }
-        return isValid;
-      } catch {
-        return false;
-      }
-    },
-    hasValidation: () => !!onValidate,
-    addStep: (value, completed, disabled) => {
-      const state = stateRef.current;
-      if (state) {
-        const newStep: StepState = { value, completed, disabled };
-        state.steps.set(value, newStep);
-        onValueAdd?.(value);
-        store.notify();
-      }
-    },
-    removeStep: (value) => {
-      const state = stateRef.current;
-      if (state) {
-        state.steps.delete(value);
-        onValueRemove?.(value);
-        store.notify();
-      }
-    },
-    setStep: (value, completed, disabled) => {
-      const state = stateRef.current;
-      if (state) {
-        const step = state.steps.get(value);
-        if (step) {
-          const updatedStep: StepState = { ...step, completed, disabled };
-          state.steps.set(value, updatedStep);
-
-          if (completed !== step.completed) {
-            onValueComplete?.(value, completed);
-          }
-
-          store.notify();
-        }
-      }
-    },
-    notify: () => {
-      if (listenersRef.current) {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      }
-    },
-  };
-
-  return store;
 }
 
 const StoreContext = React.createContext<Store | null>(null);
@@ -366,34 +276,90 @@ function StepperRoot(props: StepperRootProps) {
     steps: new Map(),
     value: value ?? defaultValue ?? "",
   }));
+  const callbacksRef = useAsRef({
+    onValueChange,
+    onValueComplete,
+    onValueAdd,
+    onValueRemove,
+    onValidate,
+  });
 
-  const store = React.useMemo(
-    () =>
-      createStore(
-        listenersRef,
-        stateRef,
-        onValueChange,
-        onValueComplete,
-        onValueAdd,
-        onValueRemove,
-        onValidate,
-      ),
-    [
-      listenersRef,
-      stateRef,
-      onValueChange,
-      onValueComplete,
-      onValueAdd,
-      onValueRemove,
-      onValidate,
-    ],
-  );
+  const store: Store = React.useMemo(() => {
+    return {
+      subscribe: (cb) => {
+        listenersRef.current.add(cb);
+        return () => listenersRef.current.delete(cb);
+      },
+      getState: () => stateRef.current,
+      setState: (key, value) => {
+        if (Object.is(stateRef.current[key], value)) return;
+
+        if (key === "value" && typeof value === "string") {
+          stateRef.current.value = value;
+          callbacksRef.current.onValueChange?.(value);
+        } else {
+          stateRef.current[key] = value;
+        }
+
+        store.notify();
+      },
+      setStateWithValidation: async (value, direction) => {
+        if (!callbacksRef.current.onValidate) {
+          store.setState("value", value);
+          return true;
+        }
+
+        try {
+          const isValid = await callbacksRef.current.onValidate(
+            value,
+            direction,
+          );
+          if (isValid) {
+            store.setState("value", value);
+          }
+          return isValid;
+        } catch {
+          return false;
+        }
+      },
+      hasValidation: () => !!callbacksRef.current.onValidate,
+      addStep: (value, completed, disabled) => {
+        const newStep: StepState = { value, completed, disabled };
+        stateRef.current.steps.set(value, newStep);
+        callbacksRef.current.onValueAdd?.(value);
+        store.notify();
+      },
+      removeStep: (value) => {
+        stateRef.current.steps.delete(value);
+        callbacksRef.current.onValueRemove?.(value);
+        store.notify();
+      },
+      setStep: (value, completed, disabled) => {
+        const step = stateRef.current.steps.get(value);
+        if (step) {
+          const updatedStep: StepState = { ...step, completed, disabled };
+          stateRef.current.steps.set(value, updatedStep);
+
+          if (completed !== step.completed) {
+            callbacksRef.current.onValueComplete?.(value, completed);
+          }
+
+          store.notify();
+        }
+      },
+      notify: () => {
+        for (const cb of listenersRef.current) {
+          cb();
+        }
+      },
+    };
+  }, [listenersRef, stateRef, callbacksRef]);
 
   useIsomorphicLayoutEffect(() => {
     if (value !== undefined) {
       store.setState("value", value);
     }
-  }, [value]);
+  }, [value, store]);
 
   const dir = useDirection(dirProp);
 
@@ -1286,7 +1252,7 @@ export {
   StepperList as List,
   StepperItem as Item,
   StepperTrigger as Trigger,
-  StepperIndicator as ItemIndicator,
+  StepperIndicator as Indicator,
   StepperSeparator as Separator,
   StepperTitle as Title,
   StepperDescription as Description,

@@ -10,8 +10,8 @@ export default function PlaygroundPage() {
     <Shell>
       <Demo>
         <ScrollSpyDemo />
-        {/* <ScrollSpyControlledDemo />
-        <ScrollSpyVerticalDemo /> */}
+        <ScrollSpyControlledDemo />
+        <ScrollSpyVerticalDemo />
         <ColorPickerDemo />
       </Demo>
     </Shell>

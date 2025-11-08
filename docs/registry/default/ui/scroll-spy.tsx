@@ -230,15 +230,10 @@ function ScrollSpyImpl(props: Omit<ScrollSpyProps, "onValueChange">) {
         });
       }
 
-      // Clear any existing timeout
       if (scrollTimeoutRef.current !== null) {
         clearTimeout(scrollTimeoutRef.current);
       }
 
-      // Reset scrolling flag after a delay to allow scroll animation to complete
-      // This is necessary because there's no reliable cross-browser way to detect
-      // when scrollTo() with smooth behavior completes. The 500ms delay accounts
-      // for most scroll animations while preventing observer interference.
       scrollTimeoutRef.current = window.setTimeout(() => {
         isScrollingRef.current = false;
       }, 500);
@@ -246,12 +241,10 @@ function ScrollSpyImpl(props: Omit<ScrollSpyProps, "onValueChange">) {
     [scrollContainer, offset, scrollBehavior, store],
   );
 
-  // Scroll to section when value changes externally (controlled mode)
   useIsomorphicLayoutEffect(() => {
     const currentValue = value ?? defaultValue;
     if (currentValue === undefined) return;
 
-    // Update store value on mount without scrolling
     if (!isMountedRef.current) {
       isMountedRef.current = true;
       store.setState("value", currentValue);
@@ -269,15 +262,12 @@ function ScrollSpyImpl(props: Omit<ScrollSpyProps, "onValueChange">) {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        // Ignore observer updates while programmatically scrolling
         if (isScrollingRef.current) return;
 
-        // Cancel any pending RAF
         if (rafIdRef.current !== null) {
           cancelAnimationFrame(rafIdRef.current);
         }
 
-        // Throttle updates with RAF to prevent jitter
         rafIdRef.current = requestAnimationFrame(() => {
           const intersecting = entries.filter((entry) => entry.isIntersecting);
 
