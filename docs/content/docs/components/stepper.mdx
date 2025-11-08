@@ -41,21 +41,23 @@ Import the parts, and compose them together.
 ```tsx
 import * as Stepper from "@/components/ui/stepper";
 
-<Stepper.Root>
-  <Stepper.List>
-    <Stepper.Item >
-      <Stepper.Trigger>
-        <Stepper.Indicator />
-        <Stepper.Title />
-        <Stepper.Description />
-      </Stepper.Trigger>
-      <Stepper.Separator />
-    </Stepper.Item>
-  </Stepper.List>
-  <Stepper.Content />
-  <Stepper.PrevTrigger />
-  <Stepper.NextTrigger />
-</Stepper.Root>
+return (
+  <Stepper.Root>
+    <Stepper.List>
+      <Stepper.Item >
+        <Stepper.Trigger>
+          <Stepper.Indicator />
+          <Stepper.Title />
+          <Stepper.Description />
+        </Stepper.Trigger>
+        <Stepper.Separator />
+      </Stepper.Item>
+    </Stepper.List>
+    <Stepper.Content />
+    <Stepper.PrevTrigger />
+    <Stepper.NextTrigger />
+  </Stepper.Root>
+)
 ```
 
 ## Examples
@@ -89,6 +91,15 @@ The main container component for the stepper.
   name="RootProps"
 />
 
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-orientation]",
+      value: ["horizontal", "vertical"],
+    },
+  ]}
+/>
+
 ### List
 
 The container for stepper items, typically an ordered list.
@@ -96,6 +107,15 @@ The container for stepper items, typically an ordered list.
 <AutoTypeTable
   path="./types/docs/stepper.ts"
   name="ListProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-orientation]",
+      value: ["horizontal", "vertical"],
+    },
+  ]}
 />
 
 ### Item
@@ -109,6 +129,10 @@ A single step item in the stepper.
 
 <DataAttributesTable
   attributes={[
+    {
+      title: "[data-orientation]",
+      value: ["horizontal", "vertical"],
+    },
     {
       title: "[data-state]",
       value: ["inactive", "active", "completed"],
@@ -127,6 +151,10 @@ The clickable trigger for each step, typically wrapping the indicator.
 
 <DataAttributesTable
   attributes={[
+    {
+      title: "[data-orientation]",
+      value: ["horizontal", "vertical"],
+    },
     {
       title: "[data-state]",
       value: ["inactive", "active", "completed"],
@@ -163,6 +191,10 @@ The line connecting steps, showing progress between them.
 
 <DataAttributesTable
   attributes={[
+    {
+      title: "[data-orientation]",
+      value: ["horizontal", "vertical"],
+    },
     {
       title: "[data-state]",
       value: ["inactive", "active", "completed"],
@@ -220,7 +252,7 @@ A navigation button that moves to the next step. Automatically disabled on the l
 ### Keyboard Interactions
 
 <KeyboardShortcutsTable
-  shortcuts={[
+  data={[
     {
       keys: ["Tab"],
       description: "Moves focus to the next focusable element.",

@@ -58,13 +58,15 @@ Import the parts and compose them together.
 ```tsx
 import * as CircularProgress from "@/components/ui/circular-progress";
 
-<CircularProgress.Root>
-  <CircularProgress.Indicator>
-    <CircularProgress.Track />
-    <CircularProgress.Range />
-  </CircularProgress.Indicator>
-  <CircularProgress.ValueText />
-</CircularProgress.Root>
+return (
+  <CircularProgress.Root>
+    <CircularProgress.Indicator>
+      <CircularProgress.Track />
+      <CircularProgress.Range />
+    </CircularProgress.Indicator>
+    <CircularProgress.ValueText />
+  </CircularProgress.Root>
+)
 ```
 
 Or use the `Combined` component to get all the parts in one.

@@ -624,49 +624,49 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "input-group-demo",
+    name: "segmented-input-demo",
     type: "registry:example",
     dependencies: ["class-variance-authority"],
-    registryDependencies: ["input-group"],
+    registryDependencies: ["segmented-input"],
     files: [
       {
-        path: "examples/input-group-demo.tsx",
+        path: "examples/segmented-input-demo.tsx",
         type: "registry:example",
       },
     ],
   },
   {
-    name: "input-group-form-demo",
+    name: "segmented-input-form-demo",
     type: "registry:example",
     dependencies: ["class-variance-authority"],
-    registryDependencies: ["button", "input-group"],
+    registryDependencies: ["button", "segmented-input"],
     files: [
       {
-        path: "examples/input-group-form-demo.tsx",
+        path: "examples/segmented-input-form-demo.tsx",
         type: "registry:example",
       },
     ],
   },
   {
-    name: "input-group-rgb-demo",
+    name: "segmented-input-rgb-demo",
     type: "registry:example",
     dependencies: ["class-variance-authority"],
-    registryDependencies: ["input-group"],
+    registryDependencies: ["segmented-input"],
     files: [
       {
-        path: "examples/input-group-rgb-demo.tsx",
+        path: "examples/segmented-input-rgb-demo.tsx",
         type: "registry:example",
       },
     ],
   },
   {
-    name: "input-group-vertical-demo",
+    name: "segmented-input-vertical-demo",
     type: "registry:example",
     dependencies: ["class-variance-authority"],
-    registryDependencies: ["input-group"],
+    registryDependencies: ["segmented-input"],
     files: [
       {
-        path: "examples/input-group-vertical-demo.tsx",
+        path: "examples/segmented-input-vertical-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -1172,6 +1172,39 @@ export const examples: Registry["items"] = [
     files: [
       {
         path: "examples/scroller-navigation-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "scroll-spy-demo",
+    type: "registry:example",
+    registryDependencies: ["scroll-spy"],
+    files: [
+      {
+        path: "examples/scroll-spy-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "scroll-spy-controlled-demo",
+    type: "registry:example",
+    registryDependencies: ["scroll-spy", "button"],
+    files: [
+      {
+        path: "examples/scroll-spy-controlled-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "scroll-spy-vertical-demo",
+    type: "registry:example",
+    registryDependencies: ["scroll-spy"],
+    files: [
+      {
+        path: "examples/scroll-spy-vertical-demo.tsx",
         type: "registry:example",
       },
     ],

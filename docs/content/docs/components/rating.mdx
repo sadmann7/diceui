@@ -50,9 +50,11 @@ Import the parts, and compose them together.
 ```tsx
 import * as Rating from "@/components/ui/rating";
 
-<Rating.Root>
-  <Rating.Item />
-</Rating.Root>
+return (
+  <Rating.Root>
+    <Rating.Item />
+  </Rating.Root>
+)
 ```
 
 ## Examples
@@ -63,7 +65,7 @@ Customize the rating component with different colors and icons.
 
 <ComponentTabs name="rating-themes-demo" />
 
-### Controlled
+### Controlled State
 
 Control the rating value with state.
 
@@ -138,7 +140,7 @@ Individual rating item (star) component.
 ### Keyboard Interactions
 
 <KeyboardShortcutsTable
-  shortcuts={[
+  data={[
     {
       keys: ["ArrowLeft", "ArrowRight"],
       description: "Navigate between rating items.",

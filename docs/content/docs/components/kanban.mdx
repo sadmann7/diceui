@@ -47,17 +47,19 @@ Import the parts, and compose them together.
 ```tsx
 import * as Kanban from "@/components/ui/kanban";
 
-<Kanban.Root>
-  <Kanban.Board>
-    <Kanban.Column>
-      <Kanban.ColumnHandle />
-      <Kanban.Item>
-        <Kanban.ItemHandle />
-      </Kanban.Item>
-    </Kanban.Column>
-  </Kanban.Board>
-  <Kanban.Overlay />
-</Kanban.Root>
+return (
+  <Kanban.Root>
+    <Kanban.Board>
+      <Kanban.Column>
+        <Kanban.ColumnHandle />
+        <Kanban.Item>
+          <Kanban.ItemHandle />
+        </Kanban.Item>
+      </Kanban.Column>
+    </Kanban.Board>
+    <Kanban.Overlay />
+  </Kanban.Root>
+)
 ```
 
 ## Examples
@@ -190,7 +192,7 @@ The overlay component that appears when an item or column is being dragged.
 ### Keyboard Interactions
 
 <KeyboardShortcutsTable
-  shortcuts={[
+  data={[
     {
       keys: ["Enter", "Space"],
       description: "Picks up the kanban item or column for reordering when released, and drops it in its new position when pressed again.",

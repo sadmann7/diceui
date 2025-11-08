@@ -46,34 +46,36 @@ Import the parts, and compose them together.
 ```tsx
 import * as Combobox from "@diceui/combobox";
 
-<Combobox.Root>
-  <Combobox.Label />
-  <Combobox.Anchor>
-    <Combobox.BadgeList>
-      <Combobox.BadgeItem>
-        <Combobox.BadgeItemDelete />
-      </Combobox.BadgeItem>
-    </Combobox.BadgeList>
-    <Combobox.Input />
-    <Combobox.Trigger />
-    <Combobox.Cancel />
-  </Combobox.Anchor>
-  <Combobox.Portal>
-    <Combobox.Content>
-      <Combobox.Arrow />
-      <Combobox.Loading />
-      <Combobox.Empty />
-      <Combobox.Group>
-        <Combobox.GroupLabel />
-        <Combobox.Item>
-          <Combobox.ItemText />
-          <Combobox.ItemIndicator />
-        </Combobox.Item>
-      </Combobox.Group>
-      <Combobox.Separator />
-    </Combobox.Content>
-  </Combobox.Portal>
-</Combobox.Root>
+return (
+  <Combobox.Root>
+    <Combobox.Label />
+    <Combobox.Anchor>
+      <Combobox.BadgeList>
+        <Combobox.BadgeItem>
+          <Combobox.BadgeItemDelete />
+        </Combobox.BadgeItem>
+      </Combobox.BadgeList>
+      <Combobox.Input />
+      <Combobox.Trigger />
+      <Combobox.Cancel />
+    </Combobox.Anchor>
+    <Combobox.Portal>
+      <Combobox.Content>
+        <Combobox.Arrow />
+        <Combobox.Loading />
+        <Combobox.Empty />
+        <Combobox.Group>
+          <Combobox.GroupLabel />
+          <Combobox.Item>
+            <Combobox.ItemText />
+            <Combobox.ItemIndicator />
+          </Combobox.Item>
+        </Combobox.Group>
+        <Combobox.Separator />
+      </Combobox.Content>
+    </Combobox.Portal>
+  </Combobox.Root>
+)
 ```
 
 ## Examples
@@ -319,7 +321,7 @@ The popover container for combobox items. Positions the combobox popover relativ
 />
 
 <CSSVariablesTable
-  variables={[
+  data={[
     {
       title: "--dice-transform-origin",
       description: "Transform origin for anchor positioning.",
@@ -446,7 +448,7 @@ A visual divider for separating options or groups.
 ### Keyboard Interactions
 
 <KeyboardShortcutsTable
-  shortcuts={[
+  data={[
     {
       keys: ["Enter"],
       description: "When open, selects the highlighted option. When a badge is highlighted in multiple mode, removes the badge."

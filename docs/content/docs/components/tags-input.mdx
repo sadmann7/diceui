@@ -18,10 +18,8 @@ links:
 
 ### CLI
 
-
 ```package-install
 npx shadcn@latest add "https://diceui.com/r/tags-input"
-
 ```
 
 ### Manual
@@ -48,15 +46,17 @@ Import the parts, and compose them together.
 ```tsx
 import * as TagsInput from "@diceui/tags-input";
 
-<TagsInput.Root>
-  <TagsInput.Label/>
-  <TagsInput.Item >
-    <TagsInput.ItemText />
-    <TagsInput.ItemDelete />
-  </TagsInput.Item>
-  <TagsInput.Input />
-  <TagsInput.Clear />
-</TagsInput.Root>
+return (
+  <TagsInput.Root>
+    <TagsInput.Label/>
+    <TagsInput.Item >
+      <TagsInput.ItemText />
+      <TagsInput.ItemDelete />
+    </TagsInput.Item>
+    <TagsInput.Input />
+    <TagsInput.Clear />
+  </TagsInput.Root>
+)
 ```
 
 ## Examples
@@ -236,7 +236,7 @@ Button to clear all tags.
 ### Keyboard Interactions
 
 <KeyboardShortcutsTable
-  shortcuts={[
+  data={[
     {
       keys: ["Delete"],
       description: "When a tag is highlighted, removes it and sets focus to the next tag."

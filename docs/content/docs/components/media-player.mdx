@@ -93,29 +93,31 @@ Import the parts, and compose them together.
 ```tsx
 import * as MediaPlayer from "@/components/ui/media-player";
 
-<MediaPlayer.Root>
-  <MediaPlayer.Video>
-    <source src="..." type="video/mp4" />
-  </MediaPlayer.Video>
-  <MediaPlayer.Loading />
-  <MediaPlayer.Error />
-  <MediaPlayer.VolumeIndicator />
-  <MediaPlayer.Controls>
-    <MediaPlayer.ControlsOverlay />
-    <MediaPlayer.Play />
-    <MediaPlayer.SeekBackward />
-    <MediaPlayer.SeekForward />
-    <MediaPlayer.Volume />
-    <MediaPlayer.Seek />
-    <MediaPlayer.Time />
-    <MediaPlayer.PlaybackSpeed />
-    <MediaPlayer.Loop />
-    <MediaPlayer.Captions />
-    <MediaPlayer.PiP />
-    <MediaPlayer.Fullscreen />
-    <MediaPlayer.Download />
-  </MediaPlayer.Controls>
-</MediaPlayer.Root>
+return (
+  <MediaPlayer.Root>
+    <MediaPlayer.Video>
+      <source src="..." type="video/mp4" />
+    </MediaPlayer.Video>
+    <MediaPlayer.Loading />
+    <MediaPlayer.Error />
+    <MediaPlayer.VolumeIndicator />
+    <MediaPlayer.Controls>
+      <MediaPlayer.ControlsOverlay />
+      <MediaPlayer.Play />
+      <MediaPlayer.SeekBackward />
+      <MediaPlayer.SeekForward />
+      <MediaPlayer.Volume />
+      <MediaPlayer.Seek />
+      <MediaPlayer.Time />
+      <MediaPlayer.PlaybackSpeed />
+      <MediaPlayer.Loop />
+      <MediaPlayer.Captions />
+      <MediaPlayer.PiP />
+      <MediaPlayer.Fullscreen />
+      <MediaPlayer.Download />
+    </MediaPlayer.Controls>
+  </MediaPlayer.Root>
+)
 ```
 
 ## Examples
@@ -619,7 +621,7 @@ A dropdown menu with playback speed selector, caption selector, and resolution s
 ### Keyboard Interactions
 
 <KeyboardShortcutsTable
-  shortcuts={[
+  data={[
     {
       keys: ["Space", "K"],
       description: "Toggles play/pause.",

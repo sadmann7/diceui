@@ -56,18 +56,20 @@ import {
   AngleSliderValue,
 } from "@/components/ui/angle-slider";
 
-<AngleSlider>
-  <AngleSliderTrack>
-    <AngleSliderRange />
-  </AngleSliderTrack>
-  <AngleSliderThumb />
-  <AngleSliderValue />
-</AngleSlider>
+return (
+  <AngleSlider>
+    <AngleSliderTrack>
+      <AngleSliderRange />
+    </AngleSliderTrack>
+    <AngleSliderThumb />
+    <AngleSliderValue />
+  </AngleSlider>
+)
 ```
 
 ## Examples
 
-### Controlled State
+### **Controlled** State
 
 A slider with controlled state management and custom actions.
 
@@ -219,7 +221,7 @@ The angle slider component includes comprehensive accessibility features:
 ### Keyboard Interactions
 
 <KeyboardShortcutsTable
-  shortcuts={[
+  data={[
     {
       keys: ["ArrowUp", "ArrowRight"],
       description: "Increase the value by one step.",

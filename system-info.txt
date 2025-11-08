@@ -1,0 +1,19 @@
+Hardware:
+
+    Hardware Overview:
+
+      Model Name: MacBook Pro
+      Model Identifier: Mac16,6
+      Model Number: MX2K3LL/A
+      Chip: Apple M4 Max
+      Total Number of Cores: 14 (10 performance and 4 efficiency)
+      Memory: 36 GB
+      System Firmware Version: 13822.1.2
+      OS Loader Version: 11881.140.96
+      Serial Number (system): LJDF6YDTQF
+      Hardware UUID: 9BA02B86-FF52-5F1A-85E3-4C8A4CDBC1B6
+      Provisioning UDID: 00006041-000208E10A80801C
+      Activation Lock Status: Disabled
+
+
+=== Purchase Info ===
