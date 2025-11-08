@@ -22,6 +22,19 @@ const ENTRY_FOCUS = "stepperFocusGroup.onEntryFocus";
 const EVENT_OPTIONS = { bubbles: false, cancelable: true };
 const ARROW_KEYS = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
 
+type Direction = "ltr" | "rtl";
+type Orientation = "horizontal" | "vertical";
+type NavigationDirection = "next" | "prev";
+type ActivationMode = "automatic" | "manual";
+type DataState = "inactive" | "active" | "completed";
+
+interface DivProps extends React.ComponentProps<"div"> {
+  asChild?: boolean;
+}
+interface ButtonProps extends React.ComponentProps<"button"> {
+  asChild?: boolean;
+}
+
 type ListElement = React.ComponentRef<typeof StepperList>;
 type TriggerElement = React.ComponentRef<typeof StepperTrigger>;
 
@@ -109,20 +122,6 @@ function useLazyRef<T>(fn: () => T) {
   }
 
   return ref as React.RefObject<T>;
-}
-
-type Direction = "ltr" | "rtl";
-type Orientation = "horizontal" | "vertical";
-type NavigationDirection = "next" | "prev";
-type ActivationMode = "automatic" | "manual";
-type DataState = "inactive" | "active" | "completed";
-
-interface DivProps extends React.ComponentProps<"div"> {
-  asChild?: boolean;
-}
-
-interface ButtonProps extends React.ComponentProps<"button"> {
-  asChild?: boolean;
 }
 
 function getDataState(
@@ -277,7 +276,7 @@ function StepperRoot(props: StepperRootProps) {
     steps: new Map(),
     value: value ?? defaultValue ?? "",
   }));
-  const callbacksRef = useAsRef({
+  const propsRef = useAsRef({
     onValueChange,
     onValueComplete,
     onValueAdd,
@@ -297,7 +296,7 @@ function StepperRoot(props: StepperRootProps) {
 
         if (key === "value" && typeof value === "string") {
           stateRef.current.value = value;
-          callbacksRef.current.onValueChange?.(value);
+          propsRef.current.onValueChange?.(value);
         } else {
           stateRef.current[key] = value;
         }
@@ -305,16 +304,13 @@ function StepperRoot(props: StepperRootProps) {
         store.notify();
       },
       setStateWithValidation: async (value, direction) => {
-        if (!callbacksRef.current.onValidate) {
+        if (!propsRef.current.onValidate) {
           store.setState("value", value);
           return true;
         }
 
         try {
-          const isValid = await callbacksRef.current.onValidate(
-            value,
-            direction,
-          );
+          const isValid = await propsRef.current.onValidate(value, direction);
           if (isValid) {
             store.setState("value", value);
           }
@@ -323,16 +319,16 @@ function StepperRoot(props: StepperRootProps) {
           return false;
         }
       },
-      hasValidation: () => !!callbacksRef.current.onValidate,
+      hasValidation: () => !!propsRef.current.onValidate,
       addStep: (value, completed, disabled) => {
         const newStep: StepState = { value, completed, disabled };
         stateRef.current.steps.set(value, newStep);
-        callbacksRef.current.onValueAdd?.(value);
+        propsRef.current.onValueAdd?.(value);
         store.notify();
       },
       removeStep: (value) => {
         stateRef.current.steps.delete(value);
-        callbacksRef.current.onValueRemove?.(value);
+        propsRef.current.onValueRemove?.(value);
         store.notify();
       },
       setStep: (value, completed, disabled) => {
@@ -342,7 +338,7 @@ function StepperRoot(props: StepperRootProps) {
           stateRef.current.steps.set(value, updatedStep);
 
           if (completed !== step.completed) {
-            callbacksRef.current.onValueComplete?.(value, completed);
+            propsRef.current.onValueComplete?.(value, completed);
           }
 
           store.notify();
@@ -354,7 +350,7 @@ function StepperRoot(props: StepperRootProps) {
         }
       },
     };
-  }, [listenersRef, stateRef, callbacksRef]);
+  }, [listenersRef, stateRef, propsRef]);
 
   useIsomorphicLayoutEffect(() => {
     if (value !== undefined) {

@@ -41,12 +41,40 @@ type Side = (typeof SIDE_OPTIONS)[number];
 type Align = (typeof ALIGN_OPTIONS)[number];
 type Direction = "ltr" | "rtl";
 
+interface DivProps extends React.ComponentProps<"div"> {
+  asChild?: boolean;
+}
+interface ButtonProps extends React.ComponentProps<typeof Button> {}
+
 const OPPOSITE_SIDE: Record<Side, Side> = {
   top: "bottom",
   right: "left",
   bottom: "top",
   left: "right",
 };
+
+const useIsomorphicLayoutEffect =
+  typeof window === "undefined" ? React.useEffect : React.useLayoutEffect;
+
+function useAsRef<T>(props: T) {
+  const ref = React.useRef<T>(props);
+
+  useIsomorphicLayoutEffect(() => {
+    ref.current = props;
+  });
+
+  return ref;
+}
+
+function useLazyRef<T>(fn: () => T) {
+  const ref = React.useRef<T | null>(null);
+
+  if (ref.current === null) {
+    ref.current = fn();
+  }
+
+  return ref as React.RefObject<T>;
+}
 
 const DirectionContext = React.createContext<Direction | undefined>(undefined);
 
@@ -61,12 +89,6 @@ interface ScrollOffset {
   left?: number;
   right?: number;
 }
-
-interface DivProps extends React.ComponentProps<"div"> {
-  asChild?: boolean;
-}
-
-interface ButtonProps extends React.ComponentProps<typeof Button> {}
 
 type Boundary = Element | null;
 
@@ -87,7 +109,7 @@ interface StepData {
   required?: boolean;
 }
 
-interface State {
+interface StoreState {
   open: boolean;
   value: number;
   steps: StepData[];
@@ -96,10 +118,10 @@ interface State {
 
 interface Store {
   subscribe: (callback: () => void) => () => void;
-  getState: () => State;
-  setState: <K extends keyof State>(
+  getState: () => StoreState;
+  setState: <K extends keyof StoreState>(
     key: K,
-    value: State[K],
+    value: StoreState[K],
     opts?: unknown,
   ) => void;
   notify: () => void;
@@ -107,20 +129,7 @@ interface Store {
   removeStep: (id: string) => void;
 }
 
-function useLazyRef<T>(fn: () => T) {
-  const ref = React.useRef<T | null>(null);
-
-  if (ref.current === null) {
-    ref.current = fn();
-  }
-
-  return ref as React.RefObject<T>;
-}
-
-const useIsomorphicLayoutEffect =
-  typeof window === "undefined" ? React.useEffect : React.useLayoutEffect;
-
-function useStore<T>(selector: (state: State) => T): T {
+function useStore<T>(selector: (state: StoreState) => T): T {
   const store = useStoreContext("useStore");
 
   const getSnapshot = React.useCallback(
@@ -146,7 +155,7 @@ function getTargetElement(
   return null;
 }
 
-function scrollToElement(
+function onScrollToElement(
   element: HTMLElement,
   scrollBehavior: ScrollBehavior = "smooth",
   scrollOffset?: ScrollOffset,
@@ -322,40 +331,31 @@ function TourRoot(props: TourRootProps) {
     onValueChange,
     onComplete,
     onSkip,
-    ...rootImplProps
+    scrollToElement = false,
+    scrollBehavior = "smooth",
+    scrollOffset,
+    ...rootProps
   } = props;
 
-  const state = useLazyRef<State>(() => ({
+  const stateRef = useLazyRef<StoreState>(() => ({
     open: openProp ?? defaultOpen,
     value: valueProp ?? defaultValue,
     steps: [],
     maskPath: "",
   }));
-
   const listenersRef = useLazyRef<Set<() => void>>(() => new Set());
   const stepIdsMapRef = useLazyRef<Map<string, number>>(() => new Map());
   const stepIdCounterRef = useLazyRef(() => ({ current: 0 }));
-  const callbacksRef = React.useRef({
+  const propsRef = useAsRef({
+    valueProp,
     onOpenChange,
     onValueChange,
     onComplete,
     onSkip,
-    scrollToElementProp: props.scrollToElement ?? false,
-    scrollBehavior: props.scrollBehavior ?? "smooth",
-    scrollOffset: props.scrollOffset,
-    valueProp,
+    scrollToElement,
+    scrollBehavior,
+    scrollOffset,
   });
-
-  callbacksRef.current = {
-    onOpenChange,
-    onValueChange,
-    onComplete,
-    onSkip,
-    scrollToElementProp: props.scrollToElement ?? false,
-    scrollBehavior: props.scrollBehavior ?? "smooth",
-    scrollOffset: props.scrollOffset,
-    valueProp,
-  };
 
   const store: Store = React.useMemo(
     () => ({
@@ -364,53 +364,56 @@ function TourRoot(props: TourRootProps) {
         return () => listenersRef.current.delete(cb);
       },
       getState: () => {
-        return state.current;
+        return stateRef.current;
       },
       setState: (key, value) => {
-        if (Object.is(state.current[key], value)) return;
-        state.current[key] = value;
+        if (Object.is(stateRef.current[key], value)) return;
+        stateRef.current[key] = value;
 
         if (key === "open" && typeof value === "boolean") {
-          callbacksRef.current.onOpenChange?.(value);
+          propsRef.current.onOpenChange?.(value);
 
           if (value) {
-            if (state.current.steps.length > 0) {
-              if (state.current.value >= state.current.steps.length) {
+            if (stateRef.current.steps.length > 0) {
+              if (stateRef.current.value >= stateRef.current.steps.length) {
                 store.setState("value", 0);
               }
             }
           } else {
-            if (state.current.value < (state.current.steps.length || 0) - 1) {
-              callbacksRef.current.onSkip?.();
+            if (
+              stateRef.current.value <
+              (stateRef.current.steps.length || 0) - 1
+            ) {
+              propsRef.current.onSkip?.();
             }
           }
         } else if (key === "value" && typeof value === "number") {
-          const prevStep = state.current.steps[state.current.value];
-          const nextStep = state.current.steps[value];
+          const prevStep = stateRef.current.steps[stateRef.current.value];
+          const nextStep = stateRef.current.steps[value];
 
           prevStep?.onStepLeave?.();
           nextStep?.onStepEnter?.();
 
-          if (callbacksRef.current.valueProp !== undefined) {
-            callbacksRef.current.onValueChange?.(value);
+          if (propsRef.current.valueProp !== undefined) {
+            propsRef.current.onValueChange?.(value);
             return;
           }
 
-          callbacksRef.current.onValueChange?.(value);
+          propsRef.current.onValueChange?.(value);
 
-          if (value >= state.current.steps.length) {
-            callbacksRef.current.onComplete?.();
+          if (value >= stateRef.current.steps.length) {
+            propsRef.current.onComplete?.();
             store.setState("open", false);
             return;
           }
 
-          if (nextStep && callbacksRef.current.scrollToElementProp) {
+          if (nextStep && propsRef.current.scrollToElement) {
             const targetElement = getTargetElement(nextStep.target);
             if (targetElement) {
-              scrollToElement(
+              onScrollToElement(
                 targetElement,
-                callbacksRef.current.scrollBehavior,
-                callbacksRef.current.scrollOffset,
+                propsRef.current.scrollBehavior,
+                propsRef.current.scrollOffset,
               );
             }
           }
@@ -425,9 +428,9 @@ function TourRoot(props: TourRootProps) {
       },
       addStep: (stepData) => {
         const id = `step-${stepIdCounterRef.current.current++}`;
-        const index = state.current.steps.length;
+        const index = stateRef.current.steps.length;
         stepIdsMapRef.current.set(id, index);
-        state.current.steps = [...state.current.steps, stepData];
+        stateRef.current.steps = [...stateRef.current.steps, stepData];
         store.notify();
         return { id, index };
       },
@@ -435,7 +438,9 @@ function TourRoot(props: TourRootProps) {
         const index = stepIdsMapRef.current.get(id);
         if (index === undefined) return;
 
-        state.current.steps = state.current.steps.filter((_, i) => i !== index);
+        stateRef.current.steps = stateRef.current.steps.filter(
+          (_, i) => i !== index,
+        );
 
         stepIdsMapRef.current.delete(id);
 
@@ -448,7 +453,7 @@ function TourRoot(props: TourRootProps) {
         store.notify();
       },
     }),
-    [state, listenersRef, stepIdsMapRef, stepIdCounterRef],
+    [stateRef, listenersRef, stepIdsMapRef, stepIdCounterRef, propsRef],
   );
 
   useIsomorphicLayoutEffect(() => {
@@ -465,7 +470,7 @@ function TourRoot(props: TourRootProps) {
 
   return (
     <StoreContext.Provider value={store}>
-      <TourRootImpl {...rootImplProps} />
+      <TourRootImpl {...rootProps} />
     </StoreContext.Provider>
   );
 }
@@ -491,7 +496,7 @@ function TourRootImpl(props: TourRootImplProps) {
     dismissible = true,
     modal = true,
     asChild,
-    ...rootProps
+    ...rootImplProps
   } = props;
 
   const store = useStoreContext("TourRootImpl");
@@ -543,7 +548,7 @@ function TourRootImpl(props: TourRootImplProps) {
   return (
     <TourContext.Provider value={contextValue}>
       <PortalContext.Provider value={portalContextValue}>
-        <RootPrimitive data-slot="tour" dir={dir} {...rootProps} />
+        <RootPrimitive data-slot="tour" dir={dir} {...rootImplProps} />
       </PortalContext.Provider>
     </TourContext.Provider>
   );
