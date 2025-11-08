@@ -17,6 +17,16 @@ type Orientation = "horizontal" | "vertical";
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
+function useAsRef<T>(props: T) {
+  const ref = React.useRef<T>(props);
+
+  useIsomorphicLayoutEffect(() => {
+    ref.current = props;
+  });
+
+  return ref;
+}
+
 function useLazyRef<T>(fn: () => T) {
   const ref = React.useRef<T | null>(null);
 
@@ -111,6 +121,7 @@ function ScrollSpy(props: ScrollSpyProps) {
     value: value ?? defaultValue ?? "",
   }));
   const listenersRef = useLazyRef(() => new Set<() => void>());
+  const onValueChangeRef = useAsRef(onValueChange);
 
   const store: Store = React.useMemo(() => {
     return {
@@ -127,7 +138,7 @@ function ScrollSpy(props: ScrollSpyProps) {
         stateRef.current[key] = value;
 
         if (key === "value" && value) {
-          onValueChange?.(value);
+          onValueChangeRef.current?.(value);
         }
 
         store.notify();
@@ -138,7 +149,7 @@ function ScrollSpy(props: ScrollSpyProps) {
         }
       },
     };
-  }, [listenersRef, stateRef, onValueChange]);
+  }, [listenersRef, stateRef, onValueChangeRef]);
 
   return (
     <StoreContext.Provider value={store}>
@@ -475,8 +486,8 @@ function ScrollSpySection(props: ScrollSpySectionProps) {
 
 export {
   ScrollSpy,
-  ScrollSpyNav,
   ScrollSpyLink,
-  ScrollSpyViewport,
+  ScrollSpyNav,
   ScrollSpySection,
+  ScrollSpyViewport,
 };
