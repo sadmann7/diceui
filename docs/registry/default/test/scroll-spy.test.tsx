@@ -11,30 +11,20 @@ import {
 
 // Mock IntersectionObserver
 class MockIntersectionObserver {
-  constructor(private callback: IntersectionObserverCallback) {}
+  private observedElements = new Set<Element>();
 
   observe = vi.fn((target: Element) => {
-    // Simulate immediate intersection for testing
-    setTimeout(() => {
-      this.callback(
-        [
-          {
-            target,
-            isIntersecting: true,
-            boundingClientRect: target.getBoundingClientRect(),
-            intersectionRatio: 1,
-            intersectionRect: target.getBoundingClientRect(),
-            rootBounds: null,
-            time: Date.now(),
-          } as IntersectionObserverEntry,
-        ],
-        this as unknown as IntersectionObserver,
-      );
-    }, 0);
+    this.observedElements.add(target);
   });
 
-  disconnect = vi.fn();
-  unobserve = vi.fn();
+  disconnect = vi.fn(() => {
+    this.observedElements.clear();
+  });
+
+  unobserve = vi.fn((target: Element) => {
+    this.observedElements.delete(target);
+  });
+
   takeRecords = vi.fn(() => []);
   root = null;
   rootMargin = "";

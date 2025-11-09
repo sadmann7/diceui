@@ -8,19 +8,16 @@ import {
 } from "@/components/ui/table";
 
 interface DataAttributesTableProps {
-  attributes?: {
+  data?: {
     title: string;
     value: string | string[];
   }[];
   slot?: string;
 }
 
-export function DataAttributesTable({
-  attributes,
-  slot,
-}: DataAttributesTableProps) {
+export function DataAttributesTable({ data, slot }: DataAttributesTableProps) {
   const allAttributes = [
-    ...(attributes ?? []),
+    ...(data ?? []),
     ...(slot ? [{ title: "[data-slot]", value: `"${slot}"` }] : []),
   ];
 

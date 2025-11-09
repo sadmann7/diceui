@@ -103,7 +103,7 @@ function useScrollSpyContext(consumerName: string) {
   return context;
 }
 
-interface ScrollSpyProps extends React.ComponentProps<"div"> {
+interface ScrollSpyRootProps extends React.ComponentProps<"div"> {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
@@ -117,7 +117,7 @@ interface ScrollSpyProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-function ScrollSpy(props: ScrollSpyProps) {
+function ScrollSpyRoot(props: ScrollSpyRootProps) {
   const { value, defaultValue, onValueChange, ...rootProps } = props;
 
   const stateRef = useLazyRef<StoreState>(() => ({
@@ -156,12 +156,16 @@ function ScrollSpy(props: ScrollSpyProps) {
 
   return (
     <StoreContext.Provider value={store}>
-      <ScrollSpyImpl value={value} defaultValue={defaultValue} {...rootProps} />
+      <ScrollSpyRootImpl
+        value={value}
+        defaultValue={defaultValue}
+        {...rootProps}
+      />
     </StoreContext.Provider>
   );
 }
 
-function ScrollSpyImpl(props: Omit<ScrollSpyProps, "onValueChange">) {
+function ScrollSpyRootImpl(props: Omit<ScrollSpyRootProps, "onValueChange">) {
   const {
     value,
     defaultValue,
@@ -478,7 +482,13 @@ function ScrollSpySection(props: ScrollSpySectionProps) {
 }
 
 export {
-  ScrollSpy,
+  ScrollSpyRoot as Root,
+  ScrollSpyLink as Link,
+  ScrollSpyNav as Nav,
+  ScrollSpySection as Section,
+  ScrollSpyViewport as Viewport,
+  //
+  ScrollSpyRoot as ScrollSpy,
   ScrollSpyLink,
   ScrollSpyNav,
   ScrollSpySection,
