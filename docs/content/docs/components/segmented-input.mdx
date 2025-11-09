@@ -38,12 +38,12 @@ npx shadcn@latest add "https://diceui.com/r/segmented-input"
 Import the parts, and compose them together.
 
 ```tsx
-import { SegmentedInput, SegmentedInputItem } from "@/components/ui/segmented-input";
+import * as SegmentedInput from "@/components/ui/segmented-input";
 
 return (
-  <SegmentedInput>
-    <SegmentedInputItem />
-  </SegmentedInput>
+  <SegmentedInput.Root>
+    <SegmentedInput.Item />
+  </SegmentedInput.Root>
 )
 ```
 
@@ -69,22 +69,22 @@ Display segmented inputs in a vertical orientation.
 
 ## API Reference
 
-### SegmentedInput
+### Root
 
 The main segmented input container.
 
 <AutoTypeTable
   path="./types/docs/segmented-input.ts"
-  name="SegmentedInputRootProps"
+  name="RootProps"
 />
 
-### SegmentedInputItem
+### Item
 
 Individual input items within the segmented input.
 
 <AutoTypeTable
   path="./types/docs/segmented-input.ts"
-  name="SegmentedInputItemProps"
+  name="ItemProps"
 />
 
 ## Accessibility
