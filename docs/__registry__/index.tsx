@@ -377,6 +377,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "stack": {
+      name: "stack",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/ui/stack.tsx",
+        type: "registry:ui",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/stack.tsx")),
+      source: "",
+      chunks: []
+    },
     "stepper": {
       name: "stepper",
       description: "",
@@ -1954,6 +1968,62 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/sortable-primitive-values-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "stack-demo": {
+      name: "stack-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["stack"],
+      files: [{
+        path: "registry/default/examples/stack-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/stack-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "stack-custom-demo": {
+      name: "stack-custom-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["stack"],
+      files: [{
+        path: "registry/default/examples/stack-custom-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/stack-custom-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "stack-cards-demo": {
+      name: "stack-cards-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["stack"],
+      files: [{
+        path: "registry/default/examples/stack-cards-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/stack-cards-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "stack-no-expand-demo": {
+      name: "stack-no-expand-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["stack"],
+      files: [{
+        path: "registry/default/examples/stack-no-expand-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/stack-no-expand-demo.tsx")),
       source: "",
       chunks: []
     },

@@ -1,0 +1,15 @@
+{
+  "name": "stack-no-expand-demo",
+  "type": "registry:example",
+  "registryDependencies": [
+    "stack"
+  ],
+  "files": [
+    {
+      "path": "examples/stack-no-expand-demo.tsx",
+      "content": "import * as Stack from \"@/registry/default/ui/stack\";\r\n\r\nexport default function StackNoExpandDemo() {\r\n  return (\r\n    <div className=\"flex min-h-[400px] items-center justify-center\">\r\n      <Stack.Root className=\"w-[360px]\" expandOnHover={false}>\r\n        <Stack.Item>\r\n          <div className=\"space-y-2\">\r\n            <h3 className=\"font-semibold\">Static Stack</h3>\r\n            <p className=\"text-muted-foreground text-sm\">\r\n              This stack doesn't expand on hover\r\n            </p>\r\n          </div>\r\n        </Stack.Item>\r\n        <Stack.Item>\r\n          <div className=\"space-y-2\">\r\n            <h3 className=\"font-semibold\">Item 2</h3>\r\n            <p className=\"text-muted-foreground text-sm\">\r\n              The stacking effect remains constant\r\n            </p>\r\n          </div>\r\n        </Stack.Item>\r\n        <Stack.Item>\r\n          <div className=\"space-y-2\">\r\n            <h3 className=\"font-semibold\">Item 3</h3>\r\n            <p className=\"text-muted-foreground text-sm\">\r\n              Perfect for permanent visual hierarchy\r\n            </p>\r\n          </div>\r\n        </Stack.Item>\r\n      </Stack.Root>\r\n    </div>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

@@ -1282,6 +1282,50 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "stack-demo",
+    type: "registry:example",
+    registryDependencies: ["stack"],
+    files: [
+      {
+        path: "examples/stack-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "stack-custom-demo",
+    type: "registry:example",
+    registryDependencies: ["stack"],
+    files: [
+      {
+        path: "examples/stack-custom-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "stack-cards-demo",
+    type: "registry:example",
+    registryDependencies: ["stack"],
+    files: [
+      {
+        path: "examples/stack-cards-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "stack-no-expand-demo",
+    type: "registry:example",
+    registryDependencies: ["stack"],
+    files: [
+      {
+        path: "examples/stack-no-expand-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "stepper-demo",
     type: "registry:example",
     registryDependencies: ["stepper"],
