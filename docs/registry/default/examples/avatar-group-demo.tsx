@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Stack } from "@/registry/default/ui/stack";
+import { AvatarGroup } from "@/registry/default/ui/avatar-group";
 
 const avatars = [
   {
@@ -32,42 +32,34 @@ const avatars = [
     src: "https://github.com/timneutkens.png",
     fallback: "TN",
   },
-  {
-    name: "Delba de Oliveira",
-    src: "https://github.com/delbaoliveira.png",
-    fallback: "DO",
-  },
-  {
-    name: "Shu Ding",
-    src: "https://github.com/shuding.png",
-    fallback: "SD",
-  },
 ];
 
-export default function StackTruncationDemo() {
+export default function AvatarGroupDemo() {
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Max 3 items</h3>
-        <Stack max={3}>
-          {avatars.map((avatar, index) => (
+        <h3 className="font-medium text-sm">Avatar Group</h3>
+        <AvatarGroup>
+          {avatars.slice(0, 4).map((avatar, index) => (
             <Avatar key={index}>
               <AvatarImage src={avatar.src} />
               <AvatarFallback>{avatar.fallback}</AvatarFallback>
             </Avatar>
           ))}
-        </Stack>
+        </AvatarGroup>
       </div>
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Max 5 items</h3>
-        <Stack max={5}>
+        <h3 className="font-medium text-sm">
+          Avatar Group with overflow (max 4)
+        </h3>
+        <AvatarGroup max={4}>
           {avatars.map((avatar, index) => (
             <Avatar key={index}>
               <AvatarImage src={avatar.src} />
               <AvatarFallback>{avatar.fallback}</AvatarFallback>
             </Avatar>
           ))}
-        </Stack>
+        </AvatarGroup>
       </div>
     </div>
   );

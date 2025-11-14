@@ -6,21 +6,21 @@ import type {
   Orientation,
 } from "@/types";
 
-export interface StackProps extends EmptyProps<"div">, CompositionProps {
+export interface AvatarGroupProps extends EmptyProps<"div">, CompositionProps {
   /**
-   * The orientation of the stack.
+   * The orientation of the avatar group.
    * @default "horizontal"
    */
   orientation?: Orientation;
 
   /**
-   * The reading direction of the stack.
+   * The reading direction of the avatar group.
    * @default "ltr"
    */
   dir?: Direction;
 
   /**
-   * The size of each stack item in pixels.
+   * The size of each avatar item in pixels.
    * @default 40
    */
   size?: number;
