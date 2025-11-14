@@ -10,17 +10,17 @@ interface ItemHeight {
 }
 
 interface StackContextValue {
+  childrenCount: number;
   itemCount: number;
   expandedItemCount: number;
   gap: number;
   scale: number;
   offset: number;
+  heights: ItemHeight[];
+  setHeights: React.Dispatch<React.SetStateAction<ItemHeight[]>>;
   expandOnHover: boolean;
   isExpanded: boolean;
   isInteracting: boolean;
-  totalItems: number;
-  heights: ItemHeight[];
-  setHeights: React.Dispatch<React.SetStateAction<ItemHeight[]>>;
 }
 
 const StackContext = React.createContext<StackContextValue | null>(null);
@@ -50,13 +50,16 @@ function StackRoot(props: StackRootProps) {
     gap = 8,
     scale = 0.05,
     offset = 10,
-    expandOnHover = false,
-    asChild,
     className,
     children,
     style,
-    onMouseEnter,
-    onMouseLeave,
+    onMouseEnter: onMouseEnterProp,
+    onMouseLeave: onMouseLeaveProp,
+    onMouseMove: onMouseMoveProp,
+    onPointerDown: onPointerDownProp,
+    onPointerUp: onPointerUpProp,
+    expandOnHover = false,
+    asChild,
     ...rootProps
   } = props;
 
@@ -67,15 +70,71 @@ function StackRoot(props: StackRootProps) {
   const childrenArray = React.Children.toArray(children).filter(
     React.isValidElement,
   );
-  const totalItems = childrenArray.length;
+  const childrenCount = childrenArray.length;
 
   const RootPrimitive = asChild ? Slot : "div";
 
-  // If expandedItemCount is not set, show all items when expanded
-  const effectiveExpandedItemCount = expandedItemCount ?? totalItems;
+  const effectiveExpandedItemCount = expandedItemCount ?? childrenCount;
+
+  const onMouseEnter = React.useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      onMouseEnterProp?.(event);
+      if (event.defaultPrevented) return;
+
+      if (expandOnHover) {
+        setIsExpanded(true);
+      }
+    },
+    [expandOnHover, onMouseEnterProp],
+  );
+
+  const onMouseMove = React.useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      onMouseMoveProp?.(event);
+      if (event.defaultPrevented) return;
+
+      if (expandOnHover) {
+        setIsExpanded(true);
+      }
+    },
+    [expandOnHover, onMouseMoveProp],
+  );
+
+  const onMouseLeave = React.useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      onMouseLeaveProp?.(event);
+      if (event.defaultPrevented) return;
+
+      if (expandOnHover && !isInteracting) {
+        setIsExpanded(false);
+      }
+    },
+    [expandOnHover, isInteracting, onMouseLeaveProp],
+  );
+
+  const onPointerDown = React.useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      onPointerDownProp?.(event);
+      if (event.defaultPrevented) return;
+
+      setIsInteracting(true);
+    },
+    [onPointerDownProp],
+  );
+
+  const onPointerUp = React.useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      onPointerUpProp?.(event);
+      if (event.defaultPrevented) return;
+
+      setIsInteracting(false);
+    },
+    [onPointerUpProp],
+  );
 
   const contextValue = React.useMemo<StackContextValue>(
     () => ({
+      childrenCount,
       itemCount,
       expandedItemCount: effectiveExpandedItemCount,
       gap,
@@ -84,11 +143,11 @@ function StackRoot(props: StackRootProps) {
       expandOnHover,
       isExpanded,
       isInteracting,
-      totalItems,
       heights,
       setHeights,
     }),
     [
+      childrenCount,
       itemCount,
       effectiveExpandedItemCount,
       gap,
@@ -97,59 +156,20 @@ function StackRoot(props: StackRootProps) {
       expandOnHover,
       isExpanded,
       isInteracting,
-      totalItems,
       heights,
     ],
   );
-
-  const onMouseEnterHandler = React.useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
-      onMouseEnter?.(event);
-      if (event.defaultPrevented) return;
-
-      if (expandOnHover) {
-        setIsExpanded(true);
-      }
-    },
-    [expandOnHover, onMouseEnter],
-  );
-
-  const onMouseMoveHandler = React.useCallback(() => {
-    if (expandOnHover) {
-      setIsExpanded(true);
-    }
-  }, [expandOnHover]);
-
-  const onMouseLeaveHandler = React.useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
-      onMouseLeave?.(event);
-      if (event.defaultPrevented) return;
-
-      if (expandOnHover && !isInteracting) {
-        setIsExpanded(false);
-      }
-    },
-    [expandOnHover, isInteracting, onMouseLeave],
-  );
-
-  const onPointerDownHandler = React.useCallback(() => {
-    setIsInteracting(true);
-  }, []);
-
-  const onPointerUpHandler = React.useCallback(() => {
-    setIsInteracting(false);
-  }, []);
 
   return (
     <StackContext.Provider value={contextValue}>
       <RootPrimitive
         data-slot="stack"
         data-expanded={isExpanded}
-        onMouseEnter={onMouseEnterHandler}
-        onMouseMove={onMouseMoveHandler}
-        onMouseLeave={onMouseLeaveHandler}
-        onPointerDown={onPointerDownHandler}
-        onPointerUp={onPointerUpHandler}
+        onMouseEnter={onMouseEnter}
+        onMouseMove={onMouseMove}
+        onMouseLeave={onMouseLeave}
+        onPointerDown={onPointerDown}
+        onPointerUp={onPointerUp}
         {...rootProps}
         className={cn("relative w-full", className)}
         style={
@@ -179,13 +199,13 @@ function StackItemWrapper(props: StackItemWrapperProps) {
   const { children, index, style, ...itemProps } = props;
 
   const {
+    childrenCount,
     itemCount,
     expandedItemCount,
     gap,
     scale,
     offset,
     isExpanded,
-    totalItems,
     heights,
     setHeights,
   } = useStackContext();
@@ -223,7 +243,7 @@ function StackItemWrapper(props: StackItemWrapperProps) {
   const translateY = isExpanded
     ? itemsBefore * gap + itemsHeightBefore
     : itemsBefore * offset;
-  const zIndex = totalItems - index;
+  const zIndex = childrenCount - index;
 
   const opacity = !isVisible ? 0 : isExpanded ? 1 : 1 - itemsBefore * 0.15;
 
