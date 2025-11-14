@@ -16,6 +16,7 @@ interface StackContextValue {
   expandOnHover: boolean;
   offset: number;
   isExpanded: boolean;
+  isInteracting: boolean;
   totalItems: number;
   heights: ItemHeight[];
   setHeights: React.Dispatch<React.SetStateAction<ItemHeight[]>>;
@@ -57,6 +58,7 @@ function StackRoot(props: StackRootProps) {
   } = props;
 
   const [isExpanded, setIsExpanded] = React.useState(false);
+  const [isInteracting, setIsInteracting] = React.useState(false);
   const [heights, setHeights] = React.useState<ItemHeight[]>([]);
 
   const childrenArray = React.Children.toArray(children).filter(
@@ -74,6 +76,7 @@ function StackRoot(props: StackRootProps) {
       expandOnHover,
       offset,
       isExpanded,
+      isInteracting,
       totalItems,
       heights,
       setHeights,
@@ -85,6 +88,7 @@ function StackRoot(props: StackRootProps) {
       expandOnHover,
       offset,
       isExpanded,
+      isInteracting,
       totalItems,
       heights,
     ],
@@ -102,17 +106,31 @@ function StackRoot(props: StackRootProps) {
     [expandOnHover, onMouseEnter],
   );
 
+  const onMouseMoveHandler = React.useCallback(() => {
+    if (expandOnHover) {
+      setIsExpanded(true);
+    }
+  }, [expandOnHover]);
+
   const onMouseLeaveHandler = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       onMouseLeave?.(event);
       if (event.defaultPrevented) return;
 
-      if (expandOnHover) {
+      if (expandOnHover && !isInteracting) {
         setIsExpanded(false);
       }
     },
-    [expandOnHover, onMouseLeave],
+    [expandOnHover, isInteracting, onMouseLeave],
   );
+
+  const onPointerDownHandler = React.useCallback(() => {
+    setIsInteracting(true);
+  }, []);
+
+  const onPointerUpHandler = React.useCallback(() => {
+    setIsInteracting(false);
+  }, []);
 
   return (
     <StackContext.Provider value={contextValue}>
@@ -120,7 +138,10 @@ function StackRoot(props: StackRootProps) {
         data-slot="stack"
         data-expanded={isExpanded}
         onMouseEnter={onMouseEnterHandler}
+        onMouseMove={onMouseMoveHandler}
         onMouseLeave={onMouseLeaveHandler}
+        onPointerDown={onPointerDownHandler}
+        onPointerUp={onPointerUpHandler}
         {...rootProps}
         className={cn("relative", className)}
         style={
@@ -204,9 +225,13 @@ function StackItemWrapper(props: StackItemWrapperProps) {
       data-index={index}
       data-front={isFront}
       data-visible={isVisible}
+      data-expanded={isExpanded}
       className={cn(
         "absolute top-0 left-0 w-full transition-all duration-300 ease-out",
         !isVisible && "pointer-events-none",
+        // Add hover area for expanded state to prevent jitter
+        "after:absolute after:bottom-full after:left-0 after:w-full after:content-['']",
+        isExpanded && "after:h-[calc(var(--stack-gap)+1px)]",
       )}
       style={{
         transform: `translateY(${translateY}px) scale(${scale})`,
