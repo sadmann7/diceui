@@ -5,10 +5,10 @@ export default function StackCustomDemo() {
     <div className="flex min-h-[400px] items-center justify-center">
       <Stack
         className="w-[360px]"
-        visibleItems={4}
+        itemCount={4}
         gap={12}
         offset={15}
-        scaleFactor={0.03}
+        scale={0.03}
       >
         <StackItem className="flex flex-col gap-2 bg-blue-50 dark:bg-blue-950">
           <h3 className="font-semibold text-blue-900 dark:text-blue-100">

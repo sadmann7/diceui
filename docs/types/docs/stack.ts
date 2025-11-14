@@ -6,34 +6,42 @@ import type { CompositionProps, EmptyProps } from "@/types";
  */
 export interface StackRootProps extends EmptyProps<"div">, CompositionProps {
   /**
-   * Maximum number of visible stacked items before collapsing.
+   * Number of items visible in the collapsed state.
    * @default 3
    */
-  visibleItems?: number;
+  itemCount?: number;
 
   /**
-   * Gap between stacked items in pixels.
+   * Number of items visible in the expanded state.
+   * When undefined, all items will be shown when expanded.
+   * @default undefined (all items)
+   */
+  expandedItemCount?: number;
+
+  /**
+   * Gap between items when expanded (in pixels).
    * @default 8
    */
   gap?: number;
 
   /**
-   * Scale reduction factor for each stacked item.
-   * @default 0.05
+   * Scale factor for each subsequent item in collapsed state.
+   * Each item is scaled down by this factor.
+   * @default 0.05 (5% smaller per item)
    */
-  scaleFactor?: number;
+  scale?: number;
 
   /**
-   * Enable hover expansion effect.
-   * @default true
-   */
-  expandOnHover?: boolean;
-
-  /**
-   * Offset for each stacked item in pixels.
+   * Vertical offset between items in collapsed state (in pixels).
    * @default 10
    */
   offset?: number;
+
+  /**
+   * Whether to expand the stack on hover.
+   * @default false
+   */
+  expandOnHover?: boolean;
 }
 
 /**

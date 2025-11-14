@@ -10,11 +10,12 @@ interface ItemHeight {
 }
 
 interface StackContextValue {
-  visibleItems: number;
+  itemCount: number;
+  expandedItemCount: number;
   gap: number;
-  scaleFactor: number;
-  expandOnHover: boolean;
+  scale: number;
   offset: number;
+  expandOnHover: boolean;
   isExpanded: boolean;
   isInteracting: boolean;
   totalItems: number;
@@ -33,21 +34,23 @@ function useStackContext() {
 }
 
 interface StackRootProps extends React.ComponentProps<"div"> {
-  visibleItems?: number;
+  itemCount?: number;
+  expandedItemCount?: number;
   gap?: number;
-  scaleFactor?: number;
-  expandOnHover?: boolean;
+  scale?: number;
   offset?: number;
+  expandOnHover?: boolean;
   asChild?: boolean;
 }
 
 function StackRoot(props: StackRootProps) {
   const {
-    visibleItems = 3,
+    itemCount = 3,
+    expandedItemCount,
     gap = 8,
-    scaleFactor = 0.05,
-    expandOnHover = true,
+    scale = 0.05,
     offset = 10,
+    expandOnHover = false,
     asChild,
     className,
     children,
@@ -68,13 +71,17 @@ function StackRoot(props: StackRootProps) {
 
   const RootPrimitive = asChild ? Slot : "div";
 
+  // If expandedItemCount is not set, show all items when expanded
+  const effectiveExpandedItemCount = expandedItemCount ?? totalItems;
+
   const contextValue = React.useMemo<StackContextValue>(
     () => ({
-      visibleItems,
+      itemCount,
+      expandedItemCount: effectiveExpandedItemCount,
       gap,
-      scaleFactor,
-      expandOnHover,
+      scale,
       offset,
+      expandOnHover,
       isExpanded,
       isInteracting,
       totalItems,
@@ -82,11 +89,12 @@ function StackRoot(props: StackRootProps) {
       setHeights,
     }),
     [
-      visibleItems,
+      itemCount,
+      effectiveExpandedItemCount,
       gap,
-      scaleFactor,
-      expandOnHover,
+      scale,
       offset,
+      expandOnHover,
       isExpanded,
       isInteracting,
       totalItems,
@@ -143,12 +151,12 @@ function StackRoot(props: StackRootProps) {
         onPointerDown={onPointerDownHandler}
         onPointerUp={onPointerUpHandler}
         {...rootProps}
-        className={cn("relative", className)}
+        className={cn("relative w-full", className)}
         style={
           {
             "--stack-gap": `${gap}px`,
             "--stack-offset": `${offset}px`,
-            "--stack-scale-factor": scaleFactor,
+            "--stack-scale": scale,
             ...style,
           } as React.CSSProperties
         }
@@ -171,9 +179,10 @@ function StackItemWrapper(props: StackItemWrapperProps) {
   const { children, index, style, ...itemProps } = props;
 
   const {
-    visibleItems,
+    itemCount,
+    expandedItemCount,
     gap,
-    scaleFactor,
+    scale,
     offset,
     isExpanded,
     totalItems,
@@ -184,7 +193,7 @@ function StackItemWrapper(props: StackItemWrapperProps) {
   const itemRef = React.useRef<HTMLDivElement>(null);
 
   const isFront = index === 0;
-  const isVisible = index < visibleItems;
+  const isVisible = isExpanded ? index < expandedItemCount : index < itemCount;
   const itemsBefore = index;
 
   React.useEffect(() => {
@@ -210,13 +219,13 @@ function StackItemWrapper(props: StackItemWrapperProps) {
     }, 0);
   }, [heights, index]);
 
-  const scale = isExpanded ? 1 : 1 - itemsBefore * scaleFactor;
+  const itemScale = isExpanded ? 1 : 1 - itemsBefore * scale;
   const translateY = isExpanded
     ? itemsBefore * gap + itemsHeightBefore
     : itemsBefore * offset;
   const zIndex = totalItems - index;
 
-  const opacity = isExpanded ? 1 : isVisible ? 1 - itemsBefore * 0.15 : 0;
+  const opacity = !isVisible ? 0 : isExpanded ? 1 : 1 - itemsBefore * 0.15;
 
   return (
     <div
@@ -228,13 +237,12 @@ function StackItemWrapper(props: StackItemWrapperProps) {
       data-expanded={isExpanded}
       className={cn(
         "absolute top-0 left-0 w-full transition-all duration-300 ease-out",
-        !isVisible && "pointer-events-none",
-        // Add hover area for expanded state to prevent jitter
         "after:absolute after:bottom-full after:left-0 after:w-full after:content-['']",
+        !isVisible && "pointer-events-none",
         isExpanded && "after:h-[calc(var(--stack-gap)+1px)]",
       )}
       style={{
-        transform: `translateY(${translateY}px) scale(${scale})`,
+        transform: `translateY(${translateY}px) scale(${itemScale})`,
         transformOrigin: "top center",
         zIndex,
         opacity,
