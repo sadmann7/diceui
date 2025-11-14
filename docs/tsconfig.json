@@ -35,10 +35,9 @@
     "**/*.tsx",
     "**/*.ts",
     "**/*.mdx",
-    ".next/types/**/*.ts",
     "*.js",
+    ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    ".next\\dev/types/**/*.ts",
     ".next\\dev/types/**/*.ts"
   ],
   "exclude": ["node_modules", "scripts/build-registry.mts", "__registry__"]
