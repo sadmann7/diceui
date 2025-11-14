@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Stack } from "@/registry/default/ui/stack";
+import { AvatarGroup } from "@/registry/default/ui/avatar-group";
 
 const avatars = [
   {
@@ -24,55 +24,55 @@ const avatars = [
   },
 ];
 
-export default function StackRtlDemo() {
+export default function AvatarGroupRtlDemo() {
   return (
     <div className="grid gap-6 md:grid-cols-2">
       <div className="flex flex-col gap-3">
         <h3 className="font-medium text-sm">RTL</h3>
-        <Stack dir="rtl">
+        <AvatarGroup dir="rtl">
           {avatars.map((avatar, index) => (
             <Avatar key={index}>
               <AvatarImage src={avatar.src} />
               <AvatarFallback>{avatar.fallback}</AvatarFallback>
             </Avatar>
           ))}
-        </Stack>
+        </AvatarGroup>
       </div>
       <div className="flex flex-col gap-3">
         <h3 className="font-medium text-sm">Reverse RTL</h3>
-        <Stack dir="rtl" reverse>
+        <AvatarGroup dir="rtl" reverse>
           {avatars.map((avatar, index) => (
             <Avatar key={index}>
               <AvatarImage src={avatar.src} />
               <AvatarFallback>{avatar.fallback}</AvatarFallback>
             </Avatar>
           ))}
-        </Stack>
+        </AvatarGroup>
       </div>
       <div className="flex flex-col gap-3">
         <h3 className="font-medium text-sm">Vertical RTL</h3>
         <div className="flex justify-center">
-          <Stack orientation="vertical" dir="rtl">
+          <AvatarGroup orientation="vertical" dir="rtl">
             {avatars.map((avatar, index) => (
               <Avatar key={index}>
                 <AvatarImage src={avatar.src} />
                 <AvatarFallback>{avatar.fallback}</AvatarFallback>
               </Avatar>
             ))}
-          </Stack>
+          </AvatarGroup>
         </div>
       </div>
       <div className="flex flex-col gap-3">
         <h3 className="font-medium text-sm">Vertical reverse RTL</h3>
         <div className="flex justify-center">
-          <Stack orientation="vertical" dir="rtl" reverse>
+          <AvatarGroup orientation="vertical" dir="rtl" reverse>
             {avatars.map((avatar, index) => (
               <Avatar key={index}>
                 <AvatarImage src={avatar.src} />
                 <AvatarFallback>{avatar.fallback}</AvatarFallback>
               </Avatar>
             ))}
-          </Stack>
+          </AvatarGroup>
         </div>
       </div>
     </div>

@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-const stackVariants = cva("flex items-center", {
+const avatarGroupVariants = cva("flex items-center", {
   variants: {
     orientation: {
       horizontal: "flex-row",
@@ -42,16 +42,16 @@ const stackVariants = cva("flex items-center", {
   },
 });
 
-interface StackProps
+interface AvatarGroupProps
   extends Omit<React.ComponentProps<"div">, "dir">,
-    VariantProps<typeof stackVariants> {
+    VariantProps<typeof avatarGroupVariants> {
   size?: number;
   max?: number;
   asChild?: boolean;
   reverse?: boolean;
 }
 
-function Stack(props: StackProps) {
+function AvatarGroup(props: AvatarGroupProps) {
   const {
     orientation = "horizontal",
     dir = "ltr",
@@ -80,12 +80,12 @@ function Stack(props: StackProps) {
   return (
     <RootPrimitive
       data-orientation={orientation}
-      data-slot="stack"
+      data-slot="avatar-group"
       {...rootProps}
-      className={cn(stackVariants({ orientation, dir }), className)}
+      className={cn(avatarGroupVariants({ orientation, dir }), className)}
     >
       {visibleItems.map((child, index) => (
-        <StackItem
+        <AvatarGroupItem
           key={index}
           child={child}
           index={index}
@@ -97,7 +97,7 @@ function Stack(props: StackProps) {
         />
       ))}
       {shouldTruncate && (
-        <StackItem
+        <AvatarGroupItem
           key="overflow"
           child={
             <div className="flex size-full items-center justify-center rounded-full bg-muted font-medium text-muted-foreground text-xs">
@@ -116,9 +116,9 @@ function Stack(props: StackProps) {
   );
 }
 
-interface StackItemProps
+interface AvatarGroupItemProps
   extends Omit<React.ComponentProps<typeof Slot>, "dir">,
-    VariantProps<typeof stackVariants> {
+    VariantProps<typeof avatarGroupVariants> {
   child: React.ReactElement;
   index: number;
   itemCount: number;
@@ -126,7 +126,7 @@ interface StackItemProps
   reverse: boolean;
 }
 
-function StackItem(props: StackItemProps) {
+function AvatarGroupItem(props: AvatarGroupItemProps) {
   const {
     child,
     index,
@@ -195,7 +195,7 @@ function StackItem(props: StackItemProps) {
 
   return (
     <Slot
-      data-slot="stack-item"
+      data-slot="avatar-group-item"
       className={cn(
         "size-full shrink-0 overflow-hidden rounded-full [&_img]:size-full",
         className,
@@ -211,4 +211,4 @@ function StackItem(props: StackItemProps) {
   );
 }
 
-export { Stack };
+export { AvatarGroup };

@@ -515,7 +515,7 @@
     ]
   },
   {
-    "name": "stack",
+    "name": "avatar-group",
     "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot",
@@ -523,7 +523,7 @@
     ],
     "files": [
       {
-        "path": "ui/stack.tsx",
+        "path": "ui/avatar-group.tsx",
         "type": "registry:ui"
       }
     ]
