@@ -1999,20 +1999,6 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "stack-cards-demo": {
-      name: "stack-cards-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["stack"],
-      files: [{
-        path: "registry/default/examples/stack-cards-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/stack-cards-demo.tsx")),
-      source: "",
-      chunks: []
-    },
     "stack-no-expand-demo": {
       name: "stack-no-expand-demo",
       description: "",

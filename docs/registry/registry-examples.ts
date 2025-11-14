@@ -1304,17 +1304,6 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "stack-cards-demo",
-    type: "registry:example",
-    registryDependencies: ["stack"],
-    files: [
-      {
-        path: "examples/stack-cards-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
     name: "stack-no-expand-demo",
     type: "registry:example",
     registryDependencies: ["stack"],
