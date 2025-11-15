@@ -44,19 +44,14 @@ npx shadcn@latest add "https://diceui.com/r/compare-slider"
 Import the parts, and compose them together.
 
 ```tsx
-import {
-  CompareSlider,
-  CompareSliderBefore,
-  CompareSliderAfter,
-  CompareSliderHandle,
-} from "@/components/ui/compare-slider";
+import * as CompareSlider from "@/components/ui/compare-slider";
 
 return (
-  <CompareSlider>
-    <CompareSliderBefore />
-    <CompareSliderAfter />
-    <CompareSliderHandle />
-  </CompareSlider>
+  <CompareSlider.Root>
+    <CompareSlider.Before />
+    <CompareSlider.After />
+    <CompareSlider.Handle />
+  </CompareSlider.Root>
 )
 ```
 
@@ -171,7 +166,11 @@ Custom labels that can be positioned on either side of the comparison.
   data={[
     {
       keys: ["Tab"],
-      description: "Moves focus to the slider handle.",
+      description: "Moves focus to the slider.",
+    },
+    {
+      keys: ["Shift + Tab"],
+      description: "Moves focus away from the slider to the previous focusable element.",
     },
     {
       keys: ["ArrowLeft", "ArrowUp"],
@@ -180,6 +179,22 @@ Custom labels that can be positioned on either side of the comparison.
     {
       keys: ["ArrowRight", "ArrowDown"],
       description: "Moves the slider position right (or down in vertical mode) by the step amount.",
+    },
+    {
+      keys: ["PageUp"],
+      description: "Moves the slider position left (or up in vertical mode) by ten steps.",
+    },
+    {
+      keys: ["PageDown"],
+      description: "Moves the slider position right (or down in vertical mode) by ten steps.",
+    },
+    {
+      keys: ["Shift + ArrowLeft", "Shift + ArrowUp"],
+      description: "Moves the slider position left (or up in vertical mode) by ten steps.",
+    },
+    {
+      keys: ["Shift + ArrowRight", "Shift + ArrowDown"],
+      description: "Moves the slider position right (or down in vertical mode) by ten steps.",
     },
     {
       keys: ["Home"],
