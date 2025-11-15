@@ -126,7 +126,7 @@ function ScrollSpyRoot(props: ScrollSpyRootProps) {
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const onValueChangeRef = useAsRef(onValueChange);
 
-  const store: Store = React.useMemo(() => {
+  const store = React.useMemo<Store>(() => {
     return {
       subscribe: (cb) => {
         listenersRef.current.add(cb);

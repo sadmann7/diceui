@@ -79,6 +79,8 @@ export interface SvgProps extends EmptyProps<"div">, CompositionProps {}
 
 export interface OverlayProps extends EmptyProps<"div">, CompositionProps {}
 
+export interface SkeletonProps extends EmptyProps<"div">, CompositionProps {}
+
 export interface DownloadProps extends EmptyProps<"button">, CompositionProps {
   /**
    * The filename for the downloaded QR code.

@@ -4,6 +4,7 @@ import {
   QRCodeCanvas,
   QRCodeImage,
   QRCodeOverlay,
+  QRCodeSkeleton,
   QRCodeSvg,
 } from "@/registry/default/ui/qr-code";
 
@@ -17,6 +18,7 @@ export default function QRCodeOverlayDemo() {
           level="H"
           className="gap-4"
         >
+          <QRCodeSkeleton />
           <QRCodeCanvas />
           <QRCodeOverlay className="rounded-full border-2 border-white p-2">
             <Dice4 className="size-6" />
@@ -34,6 +36,7 @@ export default function QRCodeOverlayDemo() {
           level="H"
           className="gap-4"
         >
+          <QRCodeSkeleton />
           <QRCodeSvg />
           <QRCodeOverlay className="rounded-full border-2 border-white bg-linear-to-br from-accent to-muted p-2">
             <Dice4 className="size-6" />
@@ -51,6 +54,7 @@ export default function QRCodeOverlayDemo() {
           level="H"
           className="gap-4"
         >
+          <QRCodeSkeleton />
           <QRCodeImage />
           <QRCodeOverlay className="rounded-full border-2 border-white p-1.5">
             <Dice4 className="size-6" />

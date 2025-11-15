@@ -6,9 +6,10 @@ import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 
 const ROOT_NAME = "QRCode";
-const IMAGE_NAME = "QRCodeImage";
 const CANVAS_NAME = "QRCodeCanvas";
 const SVG_NAME = "QRCodeSvg";
+const IMAGE_NAME = "QRCodeImage";
+const SKELETON_NAME = "QRCodeSkeleton";
 
 type QRCodeLevel = "L" | "M" | "Q" | "H";
 
@@ -63,58 +64,13 @@ interface QRCodeContextValue {
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
 }
 
-function createStore(
-  listenersRef: React.RefObject<Set<() => void>>,
-  stateRef: React.RefObject<StoreState>,
-): Store {
-  const store: Store = {
-    subscribe: (cb) => {
-      listenersRef.current.add(cb);
-      return () => listenersRef.current.delete(cb);
-    },
-    getState: () => stateRef.current,
-    setState: (key, value) => {
-      if (Object.is(stateRef.current[key], value)) return;
-      stateRef.current[key] = value;
-      store.notify();
-    },
-    setStates: (updates) => {
-      let hasChanged = false;
-
-      for (const key of Object.keys(updates) as Array<keyof StoreState>) {
-        const value = updates[key];
-        if (value !== undefined && !Object.is(stateRef.current[key], value)) {
-          Object.assign(stateRef.current, { [key]: value });
-          hasChanged = true;
-        }
-      }
-
-      if (hasChanged) {
-        store.notify();
-      }
-    },
-    notify: () => {
-      for (const cb of listenersRef.current) {
-        cb();
-      }
-    },
-  };
-
-  return store;
-}
-
 const StoreContext = React.createContext<Store | null>(null);
 
-function useStoreContext(consumerName: string) {
+function useStore<T>(selector: (state: StoreState) => T): T {
   const store = React.useContext(StoreContext);
   if (!store) {
-    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
+    throw new Error(`\`useQRCode\` must be used within \`${ROOT_NAME}\``);
   }
-  return store;
-}
-
-function useStore<T>(selector: (state: StoreState) => T): T {
-  const store = useStoreContext("useStore");
 
   const getSnapshot = React.useCallback(
     () => selector(store.getState()),
@@ -164,9 +120,9 @@ function QRCodeRoot(props: QRCodeRootProps) {
     ...rootProps
   } = props;
 
-  const listenersRef = useLazyRef(() => new Set<() => void>());
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
 
+  const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<StoreState>(() => ({
     dataUrl: null,
     svgString: null,
@@ -175,10 +131,40 @@ function QRCodeRoot(props: QRCodeRootProps) {
     generationKey: "",
   }));
 
-  const store = React.useMemo(
-    () => createStore(listenersRef, stateRef),
-    [listenersRef, stateRef],
-  );
+  const store = React.useMemo<Store>(() => {
+    return {
+      subscribe: (cb) => {
+        listenersRef.current.add(cb);
+        return () => listenersRef.current.delete(cb);
+      },
+      getState: () => stateRef.current,
+      setState: (key, value) => {
+        if (Object.is(stateRef.current[key], value)) return;
+        stateRef.current[key] = value;
+        store.notify();
+      },
+      setStates: (updates) => {
+        let hasChanged = false;
+
+        for (const key of Object.keys(updates) as Array<keyof StoreState>) {
+          const value = updates[key];
+          if (value !== undefined && !Object.is(stateRef.current[key], value)) {
+            Object.assign(stateRef.current, { [key]: value });
+            hasChanged = true;
+          }
+        }
+
+        if (hasChanged) {
+          store.notify();
+        }
+      },
+      notify: () => {
+        for (const cb of listenersRef.current) {
+          cb();
+        }
+      },
+    };
+  }, [listenersRef, stateRef]);
 
   const canvasOpts = React.useMemo<QRCodeCanvasOpts>(
     () => ({
@@ -315,36 +301,6 @@ function QRCodeRoot(props: QRCodeRootProps) {
   );
 }
 
-interface QRCodeImageProps extends React.ComponentProps<"img"> {
-  asChild?: boolean;
-}
-
-function QRCodeImage(props: QRCodeImageProps) {
-  const { alt = "QR Code", asChild, className, ...imageProps } = props;
-
-  const context = useQRCodeContext(IMAGE_NAME);
-  const dataUrl = useStore((state) => state.dataUrl);
-
-  if (!dataUrl) return null;
-
-  const ImagePrimitive = asChild ? Slot : "img";
-
-  return (
-    <ImagePrimitive
-      data-slot="qr-code-image"
-      {...imageProps}
-      src={dataUrl}
-      alt={alt}
-      width={context.size}
-      height={context.size}
-      className={cn(
-        "relative max-h-(--qr-code-size) max-w-(--qr-code-size)",
-        className,
-      )}
-    />
-  );
-}
-
 interface QRCodeCanvasProps extends React.ComponentProps<"canvas"> {
   asChild?: boolean;
 }
@@ -353,6 +309,7 @@ function QRCodeCanvas(props: QRCodeCanvasProps) {
   const { asChild, className, ref, ...canvasProps } = props;
 
   const context = useQRCodeContext(CANVAS_NAME);
+  const generationKey = useStore((state) => state.generationKey);
 
   const composedRef = useComposedRefs(ref, context.canvasRef);
 
@@ -367,6 +324,7 @@ function QRCodeCanvas(props: QRCodeCanvasProps) {
       height={context.size}
       className={cn(
         "relative max-h-(--qr-code-size) max-w-(--qr-code-size)",
+        !generationKey && "invisible",
         className,
       )}
     />
@@ -378,7 +336,7 @@ interface QRCodeSvgProps extends React.ComponentProps<"div"> {
 }
 
 function QRCodeSvg(props: QRCodeSvgProps) {
-  const { asChild, className, ...svgProps } = props;
+  const { asChild, className, style, ...svgProps } = props;
 
   const context = useQRCodeContext(SVG_NAME);
   const svgString = useStore((state) => state.svgString);
@@ -395,8 +353,38 @@ function QRCodeSvg(props: QRCodeSvgProps) {
         "relative max-h-(--qr-code-size) max-w-(--qr-code-size)",
         className,
       )}
-      style={{ width: context.size, height: context.size, ...svgProps.style }}
+      style={{ width: context.size, height: context.size, ...style }}
       dangerouslySetInnerHTML={{ __html: svgString }}
+    />
+  );
+}
+
+interface QRCodeImageProps extends React.ComponentProps<"img"> {
+  asChild?: boolean;
+}
+
+function QRCodeImage(props: QRCodeImageProps) {
+  const { alt = "QR Code", asChild, className, ...imageProps } = props;
+
+  const context = useQRCodeContext(IMAGE_NAME);
+  const dataUrl = useStore((state) => state.dataUrl);
+
+  const ImagePrimitive = asChild ? Slot : "img";
+
+  if (!dataUrl) return null;
+
+  return (
+    <ImagePrimitive
+      data-slot="qr-code-image"
+      {...imageProps}
+      src={dataUrl}
+      alt={alt}
+      width={context.size}
+      height={context.size}
+      className={cn(
+        "relative max-h-(--qr-code-size) max-w-(--qr-code-size)",
+        className,
+      )}
     />
   );
 }
@@ -485,23 +473,59 @@ function QRCodeOverlay(props: QRCodeOverlayProps) {
   );
 }
 
+interface QRCodeSkeletonProps extends React.ComponentProps<"div"> {
+  asChild?: boolean;
+}
+
+function QRCodeSkeleton(props: QRCodeSkeletonProps) {
+  const { asChild, className, style, ...skeletonProps } = props;
+
+  const context = useQRCodeContext(SKELETON_NAME);
+  const dataUrl = useStore((state) => state.dataUrl);
+  const svgString = useStore((state) => state.svgString);
+  const generationKey = useStore((state) => state.generationKey);
+
+  const isLoaded = dataUrl || svgString || generationKey;
+
+  if (isLoaded) return null;
+
+  const SkeletonPrimitive = asChild ? Slot : "div";
+
+  return (
+    <SkeletonPrimitive
+      data-slot="qr-code-skeleton"
+      {...skeletonProps}
+      className={cn(
+        "absolute max-h-(--qr-code-size) max-w-(--qr-code-size) animate-pulse rounded-sm bg-muted",
+        className,
+      )}
+      style={{
+        width: context.size,
+        height: context.size,
+        ...style,
+      }}
+    />
+  );
+}
+
 export {
   QRCodeRoot as Root,
-  QRCodeImage as Image,
   QRCodeCanvas as Canvas,
   QRCodeSvg as Svg,
+  QRCodeImage as Image,
   QRCodeOverlay as Overlay,
+  QRCodeSkeleton as Skeleton,
   QRCodeDownload as Download,
   //
   QRCodeRoot as QRCode,
-  QRCodeImage,
   QRCodeCanvas,
   QRCodeSvg,
+  QRCodeImage,
   QRCodeOverlay,
+  QRCodeSkeleton,
   QRCodeDownload,
   //
   useStore as useQRCode,
   //
   type QRCodeRootProps as QRCodeProps,
-  type QRCodeOverlayProps,
 };

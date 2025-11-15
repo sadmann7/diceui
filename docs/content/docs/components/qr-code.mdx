@@ -50,9 +50,13 @@ import { QRCode } from "@/components/ui/qr-code";
 return (
   <QRCode>
     <QRCode.Canvas />
+    <QRCode.Overlay />
+    <QRCode.Skeleton />
+    <QRCode.Download />
   </QRCode>
 )
 ```
+Swap `Canvas` with `Svg` or `Image` to render the qr code in svg and image formats respectively.
 
 ## Examples
 
@@ -129,6 +133,15 @@ Overlays content (like logos or icons) in the center of the QR code.
 <AutoTypeTable
   path="./types/docs/qr-code.ts"
   name="OverlayProps"
+/>
+
+### Skeleton
+
+Displays a loading placeholder while the QR code is being generated. Automatically hides once the QR code is ready.
+
+<AutoTypeTable
+  path="./types/docs/qr-code.ts"
+  name="SkeletonProps"
 />
 
 ### Download
