@@ -496,7 +496,7 @@ function QRCodeSkeleton(props: QRCodeSkeletonProps) {
       data-slot="qr-code-skeleton"
       {...skeletonProps}
       className={cn(
-        "absolute max-h-(--qr-code-size) max-w-(--qr-code-size) animate-pulse rounded-sm bg-muted",
+        "absolute max-h-(--qr-code-size) max-w-(--qr-code-size) animate-pulse bg-accent",
         className,
       )}
       style={{
