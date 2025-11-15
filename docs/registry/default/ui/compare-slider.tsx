@@ -151,11 +151,7 @@ function CompareSliderRoot(props: CompareSliderRootProps) {
 
   useIsomorphicLayoutEffect(() => {
     if (valueProp !== undefined) {
-      const clampedValue = clamp(valueProp, 0, 100);
-      if (!Object.is(stateRef.current.value, clampedValue)) {
-        stateRef.current.value = clampedValue;
-        store.notify();
-      }
+      store.updateValue(valueProp);
     }
   }, [valueProp, store]);
 
@@ -310,10 +306,12 @@ function CompareSliderRootImpl(
     <CompareSliderContext.Provider value={contextValue}>
       <RootPrimitive
         role="slider"
+        aria-orientation={orientation}
         aria-valuemax={100}
         aria-valuemin={0}
         aria-valuenow={value}
         data-slot="compare-slider"
+        data-orientation={orientation}
         {...rootProps}
         ref={composedRef}
         tabIndex={0}
@@ -358,6 +356,7 @@ function CompareSliderBefore(props: CompareSliderBeforeProps) {
       role="img"
       aria-hidden="true"
       data-slot="compare-slider-before"
+      data-orientation={orientation}
       {...beforeProps}
       ref={ref}
       className={cn("absolute inset-0 h-full w-full object-cover", className)}
@@ -396,6 +395,7 @@ function CompareSliderAfter(props: CompareSliderAfterProps) {
       role="img"
       aria-hidden="true"
       data-slot="compare-slider-after"
+      data-orientation={orientation}
       {...afterProps}
       ref={ref}
       className={cn("absolute inset-0 h-full w-full object-cover", className)}
@@ -429,6 +429,7 @@ function CompareSliderHandle(props: CompareSliderHandleProps) {
       role="presentation"
       aria-hidden="true"
       data-slot="compare-slider-handle"
+      data-orientation={orientation}
       {...handleProps}
       ref={ref}
       className={cn(

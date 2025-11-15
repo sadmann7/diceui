@@ -53,12 +53,8 @@ import {
 
 return (
   <CompareSlider>
-    <CompareSliderBefore>
-      {/* Before content */}
-    </CompareSliderBefore>
-    <CompareSliderAfter>
-      {/* After content */}
-    </CompareSliderAfter>
+    <CompareSliderBefore />
+    <CompareSliderAfter />
     <CompareSliderHandle />
   </CompareSlider>
 )
@@ -95,6 +91,15 @@ The root container for the compare slider component.
   name="RootProps"
 />
 
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-orientation]",
+      value: ["horizontal", "vertical"],
+    },
+  ]}
+/>
+
 ### Before
 
 The container for the "before" content that appears on the left (or top in vertical mode).
@@ -102,6 +107,15 @@ The container for the "before" content that appears on the left (or top in verti
 <AutoTypeTable
   path="./types/docs/compare-slider.ts"
   name="BeforeProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-orientation]",
+      value: ["horizontal", "vertical"],
+    },
+  ]}
 />
 
 ### After
@@ -113,6 +127,15 @@ The container for the "after" content that appears on the right (or bottom in ve
   name="AfterProps"
 />
 
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-orientation]",
+      value: ["horizontal", "vertical"],
+    },
+  ]}
+/>
+
 ### Handle
 
 The draggable handle that controls the comparison position.
@@ -120,6 +143,15 @@ The draggable handle that controls the comparison position.
 <AutoTypeTable
   path="./types/docs/compare-slider.ts"
   name="HandleProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-orientation]",
+      value: ["horizontal", "vertical"],
+    },
+  ]}
 />
 
 ### Label
@@ -269,7 +301,7 @@ Ensure your content is properly contained within the slider:
 ```tsx
 <CompareSlider className="h-[400px] overflow-hidden">
   <CompareSliderBefore>
-    <img className="h-full w-full object-cover" src="..." />
+    <img className="size-full object-cover" src="..." />
   </CompareSliderBefore>
   {/* ... */}
 </CompareSlider>
