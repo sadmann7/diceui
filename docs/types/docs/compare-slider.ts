@@ -37,6 +37,12 @@ export interface RootProps
    * @default "horizontal"
    */
   orientation?: Orientation;
+
+  /**
+   * The step size for keyboard navigation.
+   * @default 1
+   */
+  step?: number;
 }
 
 export interface BeforeProps

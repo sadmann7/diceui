@@ -9,6 +9,9 @@ import { cn } from "@/lib/utils";
 const ROOT_NAME = "CompareSlider";
 const HANDLE_NAME = "CompareSliderHandle";
 
+const PAGE_KEYS = ["PageUp", "PageDown"];
+const ARROW_KEYS = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
+
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
@@ -95,6 +98,7 @@ interface CompareSliderRootProps extends React.ComponentProps<"div"> {
   onValueChange?: (value: number) => void;
   interaction?: Interaction;
   orientation?: Orientation;
+  step?: number;
   asChild?: boolean;
 }
 
@@ -173,12 +177,14 @@ function CompareSliderRootImpl(
   const {
     interaction = "drag",
     orientation = "horizontal",
+    step = 1,
     className,
     children,
     ref,
     onPointerMove: onPointerMoveProp,
     onPointerUp: onPointerUpProp,
     onPointerDown: onPointerDownProp,
+    onKeyDown: onKeyDownProp,
     asChild,
     ...rootProps
   } = props;
@@ -194,8 +200,10 @@ function CompareSliderRootImpl(
     onPointerMove: onPointerMoveProp,
     onPointerUp: onPointerUpProp,
     onPointerDown: onPointerDownProp,
+    onKeyDown: onKeyDownProp,
     interaction,
     orientation,
+    step,
   });
 
   const onPointerMove = React.useCallback(
@@ -249,6 +257,45 @@ function CompareSliderRootImpl(
     [store, propsRef],
   );
 
+  const onKeyDown = React.useCallback(
+    (event: React.KeyboardEvent<RootImplElement>) => {
+      propsRef.current.onKeyDown?.(event);
+      if (event.defaultPrevented) return;
+
+      const currentValue = store.getState().value;
+      const isVertical = propsRef.current.orientation === "vertical";
+
+      if (event.key === "Home") {
+        event.preventDefault();
+        store.updateValue(0);
+      } else if (event.key === "End") {
+        event.preventDefault();
+        store.updateValue(100);
+      } else if (PAGE_KEYS.concat(ARROW_KEYS).includes(event.key)) {
+        event.preventDefault();
+
+        const isPageKey = PAGE_KEYS.includes(event.key);
+        const isSkipKey =
+          isPageKey || (event.shiftKey && ARROW_KEYS.includes(event.key));
+        const multiplier = isSkipKey ? 10 : 1;
+
+        let direction = 0;
+        if (isVertical) {
+          const isDecreaseKey = ["ArrowUp", "PageUp"].includes(event.key);
+          direction = isDecreaseKey ? -1 : 1;
+        } else {
+          const isDecreaseKey = ["ArrowLeft", "PageUp"].includes(event.key);
+          direction = isDecreaseKey ? -1 : 1;
+        }
+
+        const stepInDirection = propsRef.current.step * multiplier * direction;
+        const newValue = clamp(currentValue + stepInDirection, 0, 100);
+        store.updateValue(newValue);
+      }
+    },
+    [store, propsRef],
+  );
+
   const contextValue = React.useMemo<CompareSliderContextValue>(
     () => ({
       interaction,
@@ -271,7 +318,7 @@ function CompareSliderRootImpl(
         ref={composedRef}
         tabIndex={0}
         className={cn(
-          "relative isolate select-none overflow-hidden",
+          "relative isolate select-none overflow-hidden outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
           orientation === "horizontal" ? "w-full" : "h-full w-auto",
           className,
         )}
@@ -279,6 +326,7 @@ function CompareSliderRootImpl(
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
+        onKeyDown={onKeyDown}
       >
         {children}
       </RootPrimitive>
