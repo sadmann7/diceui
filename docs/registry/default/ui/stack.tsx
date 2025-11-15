@@ -5,26 +5,20 @@ import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-interface ItemDimension {
-  itemId: number;
-  size: number;
-}
-
 type Side = "top" | "bottom";
 
 interface StackContextValue {
+  side: Side;
   childrenCount: number;
   itemCount: number;
   expandedItemCount: number;
   gap: number;
   scale: number;
   offset: number;
-  dimensions: ItemDimension[];
-  setDimensions: React.Dispatch<React.SetStateAction<ItemDimension[]>>;
+  dimensionMapRef: React.RefObject<Map<number, number>>;
   expandOnHover: boolean;
   isExpanded: boolean;
   isInteracting: boolean;
-  side: Side;
 }
 
 const StackContext = React.createContext<StackContextValue | null>(null);
@@ -71,7 +65,7 @@ function StackRoot(props: StackRootProps) {
 
   const [isExpanded, setIsExpanded] = React.useState(false);
   const [isInteracting, setIsInteracting] = React.useState(false);
-  const [dimensions, setDimensions] = React.useState<ItemDimension[]>([]);
+  const dimensionMapRef = React.useRef(new Map<number, number>());
 
   const childrenArray = React.Children.toArray(children).filter(
     React.isValidElement,
@@ -83,11 +77,8 @@ function StackRoot(props: StackRootProps) {
   const onMouseEnter = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       onMouseEnterProp?.(event);
-      if (event.defaultPrevented) return;
-
-      if (expandOnHover) {
-        setIsExpanded(true);
-      }
+      if (event.defaultPrevented || !expandOnHover) return;
+      setIsExpanded(true);
     },
     [expandOnHover, onMouseEnterProp],
   );
@@ -95,11 +86,8 @@ function StackRoot(props: StackRootProps) {
   const onMouseMove = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       onMouseMoveProp?.(event);
-      if (event.defaultPrevented) return;
-
-      if (expandOnHover) {
-        setIsExpanded(true);
-      }
+      if (event.defaultPrevented || !expandOnHover) return;
+      setIsExpanded(true);
     },
     [expandOnHover, onMouseMoveProp],
   );
@@ -108,7 +96,6 @@ function StackRoot(props: StackRootProps) {
     (event: React.MouseEvent<HTMLDivElement>) => {
       onMouseLeaveProp?.(event);
       if (event.defaultPrevented) return;
-
       if (expandOnHover && !isInteracting) {
         setIsExpanded(false);
       }
@@ -120,7 +107,6 @@ function StackRoot(props: StackRootProps) {
     (event: React.PointerEvent<HTMLDivElement>) => {
       onPointerDownProp?.(event);
       if (event.defaultPrevented) return;
-
       setIsInteracting(true);
     },
     [onPointerDownProp],
@@ -130,7 +116,6 @@ function StackRoot(props: StackRootProps) {
     (event: React.PointerEvent<HTMLDivElement>) => {
       onPointerUpProp?.(event);
       if (event.defaultPrevented) return;
-
       setIsInteracting(false);
     },
     [onPointerUpProp],
@@ -138,20 +123,20 @@ function StackRoot(props: StackRootProps) {
 
   const contextValue = React.useMemo<StackContextValue>(
     () => ({
+      side,
       childrenCount,
       itemCount,
       expandedItemCount: effectiveExpandedItemCount,
       gap,
       scale,
       offset,
+      dimensionMapRef,
       expandOnHover,
       isExpanded,
       isInteracting,
-      dimensions,
-      setDimensions,
-      side,
     }),
     [
+      side,
       childrenCount,
       itemCount,
       effectiveExpandedItemCount,
@@ -161,8 +146,6 @@ function StackRoot(props: StackRootProps) {
       expandOnHover,
       isExpanded,
       isInteracting,
-      dimensions,
-      side,
     ],
   );
 
@@ -244,40 +227,42 @@ function StackItemWrapper(props: StackItemWrapperProps) {
     scale,
     offset,
     isExpanded,
-    dimensions,
-    setDimensions,
+    dimensionMapRef,
     side,
   } = useStackContext();
 
   const itemRef = React.useRef<StackItemWrapperElement>(null);
+  const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
 
   const isFront = index === 0;
   const isVisible = isExpanded ? index < expandedItemCount : index < itemCount;
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     const itemNode = itemRef.current;
-    if (itemNode) {
-      const rect = itemNode.getBoundingClientRect();
-      const measuredHeight = rect.height;
-      const currentScale = 1 - index * scale;
-      const naturalHeight = measuredHeight / currentScale;
+    if (!itemNode) return;
 
-      setDimensions((d) => {
-        const existing = d.find((item) => item.itemId === index);
-        if (!existing) {
-          return [...d, { itemId: index, size: naturalHeight }];
-        }
-        return d;
-      });
+    const rect = itemNode.getBoundingClientRect();
+    const measuredHeight = rect.height;
+    const currentScale = 1 - index * scale;
+    const naturalHeight = measuredHeight / currentScale;
+
+    const dimensions = dimensionMapRef.current;
+    const existingHeight = dimensions.get(index);
+
+    if (existingHeight !== naturalHeight) {
+      dimensions.set(index, naturalHeight);
+      forceUpdate();
     }
-  }, [index, scale, setDimensions]);
+  }, [index, scale, dimensionMapRef]);
 
   const itemsSizeBefore = React.useMemo(() => {
-    return dimensions.reduce((prev, curr) => {
-      if (curr.itemId >= index) return prev;
-      return prev + curr.size;
-    }, 0);
-  }, [dimensions, index]);
+    const dimensionMap = dimensionMapRef.current;
+    let total = 0;
+    for (let i = 0; i < index; i++) {
+      total += dimensionMap.get(i) ?? 0;
+    }
+    return total;
+  }, [index, dimensionMapRef]);
 
   const itemScale = isExpanded ? 1 : 1 - index * scale;
   const translateValue = isExpanded
