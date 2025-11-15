@@ -1,3 +1,4 @@
+import Image from "next/image";
 import {
   CompareSlider,
   CompareSliderAfter,
@@ -13,20 +14,26 @@ export default function CompareSliderVerticalDemo() {
       className="h-[400px] w-full overflow-hidden rounded-lg border"
     >
       <CompareSliderBefore label="Before">
-        {/** biome-ignore lint/performance/noImgElement: used for demo */}
-        <img
-          src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop&auto=format&fm=webp&q=80"
-          alt="Before"
-          className="size-full object-cover"
-        />
+        <div className="relative size-full">
+          <Image
+            src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop&auto=format&fm=webp&q=80"
+            alt="Before"
+            fill
+            sizes="100vw"
+            className="object-cover"
+          />
+        </div>
       </CompareSliderBefore>
       <CompareSliderAfter label="After">
-        {/** biome-ignore lint/performance/noImgElement: used for demo */}
-        <img
-          src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop&auto=format&fm=webp&q=80&sat=-100"
-          alt="After"
-          className="size-full object-cover grayscale"
-        />
+        <div className="relative size-full">
+          <Image
+            src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop&auto=format&fm=webp&q=80&sat=-100"
+            alt="After"
+            fill
+            sizes="100vw"
+            className="object-cover grayscale"
+          />
+        </div>
       </CompareSliderAfter>
       <CompareSliderHandle />
     </CompareSlider>

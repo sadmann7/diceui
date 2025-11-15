@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import * as React from "react";
 import {
   CompareSlider,
@@ -18,20 +19,26 @@ export default function CompareSliderControlledDemo() {
       className="h-[400px] overflow-hidden rounded-lg border"
     >
       <CompareSliderBefore label="Original">
-        {/** biome-ignore lint/performance/noImgElement: used for demo */}
-        <img
-          src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop&auto=format&fm=webp&q=80"
-          alt="Original"
-          className="size-full object-cover"
-        />
+        <div className="relative size-full">
+          <Image
+            src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop&auto=format&fm=webp&q=80"
+            alt="Original"
+            fill
+            sizes="100vw"
+            className="object-cover"
+          />
+        </div>
       </CompareSliderBefore>
       <CompareSliderAfter label="Enhanced">
-        {/** biome-ignore lint/performance/noImgElement: used for demo */}
-        <img
-          src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop&auto=format&fm=webp&q=80&sat=50"
-          alt="Enhanced"
-          className="size-full object-cover"
-        />
+        <div className="relative size-full">
+          <Image
+            src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop&auto=format&fm=webp&q=80&sat=50"
+            alt="Enhanced"
+            fill
+            sizes="100vw"
+            className="object-cover"
+          />
+        </div>
       </CompareSliderAfter>
       <CompareSliderHandle />
     </CompareSlider>
