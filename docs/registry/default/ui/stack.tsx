@@ -7,6 +7,10 @@ import { cn } from "@/lib/utils";
 
 type Side = "top" | "bottom";
 
+function getDataState(isExpanded: boolean) {
+  return isExpanded ? "expanded" : "collapsed";
+}
+
 interface StackContextValue {
   side: Side;
   childrenCount: number;
@@ -155,7 +159,7 @@ function StackRoot(props: StackRootProps) {
     <StackContext.Provider value={contextValue}>
       <RootPrimitive
         data-slot="stack"
-        data-expanded={isExpanded}
+        data-state={getDataState(isExpanded)}
         onMouseEnter={onMouseEnter}
         onMouseMove={onMouseMove}
         onMouseLeave={onMouseLeave}
@@ -276,10 +280,6 @@ function StackItemWrapper(props: StackItemWrapperProps) {
     <div
       ref={itemRef}
       data-slot="stack-item-wrapper"
-      data-index={index}
-      data-front={isFront}
-      data-visible={isVisible}
-      data-expanded={isExpanded}
       className={cn(stackItemWrapperVariants({ side, isExpanded, isVisible }))}
       style={
         {
@@ -292,7 +292,13 @@ function StackItemWrapper(props: StackItemWrapperProps) {
       }
       {...itemProps}
     >
-      {children}
+      <Slot
+        data-index={index}
+        data-position={isFront ? "front" : "back"}
+        data-state={getDataState(isExpanded)}
+      >
+        {children}
+      </Slot>
     </div>
   );
 }

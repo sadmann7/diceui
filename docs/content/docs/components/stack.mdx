@@ -40,15 +40,7 @@ npx shadcn@latest add "https://diceui.com/r/stack"
 import * as Stack from "@/components/ui/stack";
 
 <Stack.Root>
-  <Stack.Item>
-    <div>Item 1</div>
-  </Stack.Item>
-  <Stack.Item>
-    <div>Item 2</div>
-  </Stack.Item>
-  <Stack.Item>
-    <div>Item 3</div>
-  </Stack.Item>
+  <Stack.Item />
 </Stack.Root>
 ```
 
@@ -80,8 +72,8 @@ The main container for the stack component that handles layout and hover interac
 <DataAttributesTable
   data={[
     {
-      title: "[data-expanded]",
-      value: ["true", "false"],
+      title: "[data-state]",
+      value: ["expanded", "collapsed"],
     },
   ]}
 />
@@ -102,12 +94,12 @@ Individual items within the stack. These are automatically positioned and animat
       value: ["number"],
     },
     {
-      title: "[data-front]",
-      value: ["true", "false"],
+      title: "[data-position]",
+      value: ["front", "back"],
     },
     {
-      title: "[data-visible]",
-      value: ["true", "false"],
+      title: "[data-state]",
+      value: ["expanded", "collapsed"],
     },
   ]}
 />
