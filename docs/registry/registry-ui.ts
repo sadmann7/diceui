@@ -94,6 +94,21 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "compare-slider",
+    type: "registry:ui",
+    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    files: [
+      {
+        path: "ui/compare-slider.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
+      },
+    ],
+  },
+  {
     name: "cropper",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
