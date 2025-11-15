@@ -72,15 +72,6 @@ function StackRoot(props: StackRootProps) {
   );
   const childrenCount = childrenArray.length;
 
-  React.useEffect(() => {
-    console.log({
-      action: "heights-state-updated",
-      heights,
-      childrenCount,
-      isExpanded,
-    });
-  }, [heights, childrenCount, isExpanded]);
-
   const RootPrimitive = asChild ? Slot : "div";
 
   const effectiveExpandedItemCount = expandedItemCount ?? childrenCount;
@@ -91,7 +82,6 @@ function StackRoot(props: StackRootProps) {
       if (event.defaultPrevented) return;
 
       if (expandOnHover) {
-        console.log({ action: "expanding-on-mouse-enter", expandOnHover });
         setIsExpanded(true);
       }
     },
@@ -116,11 +106,6 @@ function StackRoot(props: StackRootProps) {
       if (event.defaultPrevented) return;
 
       if (expandOnHover && !isInteracting) {
-        console.log({
-          action: "collapsing-on-mouse-leave",
-          expandOnHover,
-          isInteracting,
-        });
         setIsExpanded(false);
       }
     },
@@ -240,25 +225,10 @@ function StackItemWrapper(props: StackItemWrapperProps) {
       const currentScale = 1 - itemsBefore * scale;
       const naturalHeight = measuredHeight / currentScale;
 
-      console.log({
-        action: "measuring-height-initial",
-        index,
-        measuredHeight,
-        currentScale,
-        naturalHeight,
-        timestamp: Date.now(),
-      });
-
       setHeights((h) => {
         const existing = h.find((item) => item.itemId === index);
         // Only add if we don't have a height for this item yet
         if (!existing) {
-          console.log({
-            action: "adding-new-height",
-            index,
-            height: naturalHeight,
-            previousHeights: h,
-          });
           return [...h, { itemId: index, height: naturalHeight }];
         }
         return h;
@@ -267,19 +237,11 @@ function StackItemWrapper(props: StackItemWrapperProps) {
   }, [index, itemsBefore, scale, setHeights]);
 
   const itemsHeightBefore = React.useMemo(() => {
-    const total = heights.reduce((prev, curr) => {
+    return heights.reduce((prev, curr) => {
       if (curr.itemId >= index) return prev;
       return prev + curr.height;
     }, 0);
-    console.log({
-      action: "calculating-height-before",
-      index,
-      heights,
-      itemsHeightBefore: total,
-      itemsBefore,
-    });
-    return total;
-  }, [heights, index, itemsBefore]);
+  }, [heights, index]);
 
   const itemScale = isExpanded ? 1 : 1 - itemsBefore * scale;
   const translateY = isExpanded
@@ -288,21 +250,6 @@ function StackItemWrapper(props: StackItemWrapperProps) {
   const zIndex = childrenCount - index;
 
   const opacity = !isVisible ? 0 : isExpanded ? 1 : 1 - itemsBefore * 0.15;
-
-  console.log({
-    action: "render-item",
-    index,
-    isExpanded,
-    itemsBefore,
-    gap,
-    itemsHeightBefore,
-    translateY,
-    itemScale,
-    opacity,
-    isVisible,
-    expandedItemCount,
-    childrenCount,
-  });
 
   return (
     <div
