@@ -20,6 +20,12 @@ const ARROW_KEYS = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
 type Interaction = "hover" | "drag";
 type Orientation = "horizontal" | "vertical";
 
+interface DivProps extends React.ComponentProps<"div"> {
+  asChild?: boolean;
+}
+
+type RootImplElement = React.ComponentRef<typeof CompareSliderRootImpl>;
+
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
@@ -97,14 +103,13 @@ function useCompareSliderContext(consumerName: string) {
   return context;
 }
 
-interface CompareSliderRootProps extends React.ComponentProps<"div"> {
+interface CompareSliderRootProps extends DivProps {
   value?: number;
   defaultValue?: number;
   onValueChange?: (value: number) => void;
+  step?: number;
   interaction?: Interaction;
   orientation?: Orientation;
-  step?: number;
-  asChild?: boolean;
 }
 
 function CompareSliderRoot(props: CompareSliderRootProps) {
@@ -167,8 +172,6 @@ function CompareSliderRoot(props: CompareSliderRootProps) {
   );
 }
 
-type RootImplElement = React.ComponentRef<typeof CompareSliderRootImpl>;
-
 function CompareSliderRootImpl(
   props: Omit<
     CompareSliderRootProps,
@@ -176,9 +179,9 @@ function CompareSliderRootImpl(
   >,
 ) {
   const {
+    step = 1,
     interaction = "drag",
     orientation = "horizontal",
-    step = 1,
     className,
     children,
     ref,
@@ -322,7 +325,7 @@ function CompareSliderRootImpl(
         tabIndex={0}
         className={cn(
           "relative isolate select-none overflow-hidden outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
-          orientation === "horizontal" ? "w-full" : "h-full w-auto",
+          orientation === "horizontal" ? "w-full" : "h-full",
           className,
         )}
         onPointerDown={onPointerDown}
@@ -337,9 +340,8 @@ function CompareSliderRootImpl(
   );
 }
 
-interface CompareSliderBeforeProps extends React.ComponentProps<"div"> {
+interface CompareSliderBeforeProps extends DivProps {
   label?: string;
-  asChild?: boolean;
 }
 
 function CompareSliderBefore(props: CompareSliderBeforeProps) {
@@ -376,9 +378,8 @@ function CompareSliderBefore(props: CompareSliderBeforeProps) {
   );
 }
 
-interface CompareSliderAfterProps extends React.ComponentProps<"div"> {
+interface CompareSliderAfterProps extends DivProps {
   label?: string;
-  asChild?: boolean;
 }
 
 function CompareSliderAfter(props: CompareSliderAfterProps) {
@@ -415,11 +416,7 @@ function CompareSliderAfter(props: CompareSliderAfterProps) {
   );
 }
 
-interface CompareSliderHandleProps extends React.ComponentProps<"div"> {
-  asChild?: boolean;
-}
-
-function CompareSliderHandle(props: CompareSliderHandleProps) {
+function CompareSliderHandle(props: DivProps) {
   const { className, children, style, asChild, ref, ...handleProps } = props;
 
   const value = useStore((state) => state.value);
@@ -515,6 +512,7 @@ function CompareSliderLabel(props: CompareSliderLabelProps) {
     </LabelPrimitive>
   );
 }
+
 export {
   CompareSliderRoot as Root,
   CompareSliderAfter as After,
