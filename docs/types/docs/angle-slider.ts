@@ -1,10 +1,4 @@
-import type * as React from "react";
-import type {
-  CompositionProps,
-  Direction,
-  EmptyProps,
-  Orientation,
-} from "@/types";
+import type { CompositionProps, Direction, EmptyProps } from "@/types";
 
 export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
@@ -87,12 +81,6 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * @default "ltr"
    */
   dir?: Direction;
-
-  /**
-   * The orientation of the slider.
-   * @default "horizontal"
-   */
-  orientation?: Orientation;
 
   /**
    * The form id to associate the slider with.
