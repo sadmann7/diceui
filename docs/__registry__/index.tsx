@@ -1719,6 +1719,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "qr-code-overlay-demo": {
+      name: "qr-code-overlay-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["qr-code"],
+      files: [{
+        path: "registry/default/examples/qr-code-overlay-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/qr-code-overlay-demo.tsx")),
+      source: "",
+      chunks: []
+    },
     "rating-demo": {
       name: "rating-demo",
       description: "",

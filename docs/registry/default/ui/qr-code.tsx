@@ -302,7 +302,7 @@ function QRCodeRoot(props: QRCodeRootProps) {
         <RootPrimitive
           data-slot="qr-code"
           {...rootProps}
-          className={cn(className, "flex flex-col items-center gap-2")}
+          className={cn(className, "relative flex flex-col items-center gap-2")}
           style={
             {
               "--qr-code-size": `${size}px`,
@@ -337,7 +337,10 @@ function QRCodeImage(props: QRCodeImageProps) {
       alt={alt}
       width={context.size}
       height={context.size}
-      className={cn("max-h-(--qr-code-size) max-w-(--qr-code-size)", className)}
+      className={cn(
+        "relative max-h-(--qr-code-size) max-w-(--qr-code-size)",
+        className,
+      )}
     />
   );
 }
@@ -362,7 +365,10 @@ function QRCodeCanvas(props: QRCodeCanvasProps) {
       ref={composedRef}
       width={context.size}
       height={context.size}
-      className={cn("max-h-(--qr-code-size) max-w-(--qr-code-size)", className)}
+      className={cn(
+        "relative max-h-(--qr-code-size) max-w-(--qr-code-size)",
+        className,
+      )}
     />
   );
 }
@@ -385,7 +391,10 @@ function QRCodeSvg(props: QRCodeSvgProps) {
     <SvgPrimitive
       data-slot="qr-code-svg"
       {...svgProps}
-      className={cn("max-h-(--qr-code-size) max-w-(--qr-code-size)", className)}
+      className={cn(
+        "relative max-h-(--qr-code-size) max-w-(--qr-code-size)",
+        className,
+      )}
       style={{ width: context.size, height: context.size, ...svgProps.style }}
       dangerouslySetInnerHTML={{ __html: svgString }}
     />
@@ -455,20 +464,44 @@ function QRCodeDownload(props: QRCodeDownloadProps) {
   );
 }
 
+interface QRCodeOverlayProps extends React.ComponentProps<"div"> {
+  asChild?: boolean;
+}
+
+function QRCodeOverlay(props: QRCodeOverlayProps) {
+  const { asChild, className, ...overlayProps } = props;
+
+  const OverlayPrimitive = asChild ? Slot : "div";
+
+  return (
+    <OverlayPrimitive
+      data-slot="qr-code-overlay"
+      {...overlayProps}
+      className={cn(
+        "-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2 flex items-center justify-center rounded-sm bg-background",
+        className,
+      )}
+    />
+  );
+}
+
 export {
   QRCodeRoot as Root,
   QRCodeImage as Image,
   QRCodeCanvas as Canvas,
   QRCodeSvg as Svg,
+  QRCodeOverlay as Overlay,
   QRCodeDownload as Download,
   //
   QRCodeRoot as QRCode,
   QRCodeImage,
   QRCodeCanvas,
   QRCodeSvg,
+  QRCodeOverlay,
   QRCodeDownload,
   //
   useStore as useQRCode,
   //
   type QRCodeRootProps as QRCodeProps,
+  type QRCodeOverlayProps,
 };

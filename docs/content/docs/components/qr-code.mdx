@@ -68,6 +68,12 @@ Customize colors, size, and error correction levels.
 
 <ComponentTabs name="qr-code-customization-demo" />
 
+### Overlay
+
+Add logos, icons, or custom elements to the center of QR codes.
+
+<ComponentTabs name="qr-code-overlay-demo" />
+
 ## API Reference
 
 ### Root
@@ -116,6 +122,15 @@ Renders the QR code as an SVG element.
   name="SvgProps"
 />
 
+### Overlay
+
+Overlays content (like logos or icons) in the center of the QR code.
+
+<AutoTypeTable
+  path="./types/docs/qr-code.ts"
+  name="OverlayProps"
+/>
+
 ### Download
 
 A button component for downloading the QR code.
@@ -161,3 +176,4 @@ Higher error correction levels result in denser QR codes but provide better resi
 - The download functionality works in all modern browsers
 - QR codes are generated client-side for privacy and performance
 - Child elements are automatically constrained by the `--qr-code-size` CSS variable to prevent layout issues
+- When using the Overlay component, set `level="H"` (High error correction) to ensure the QR code remains scannable with up to 30% coverage

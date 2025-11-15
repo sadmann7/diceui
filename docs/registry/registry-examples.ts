@@ -1049,6 +1049,18 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "qr-code-overlay-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["qr-code"],
+    files: [
+      {
+        path: "examples/qr-code-overlay-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "rating-demo",
     type: "registry:example",
     registryDependencies: ["rating"],
