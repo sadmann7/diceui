@@ -9,42 +9,57 @@ import {
 
 export default function QRCodeOverlayDemo() {
   return (
-    <div className="flex flex-wrap items-start justify-center gap-8">
-      <QRCode value="https://diceui.com" size={120} level="H" className="gap-4">
-        <div className="relative">
-          <QRCodeImage />
-          <QRCodeOverlay className="rounded-md border-2 border-white p-1.5">
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+      <div className="flex flex-col items-center gap-2">
+        <QRCode
+          value="https://diceui.com"
+          size={120}
+          level="H"
+          className="gap-4"
+        >
+          <QRCodeCanvas />
+          <QRCodeOverlay className="rounded-full border-2 border-white p-2">
             <Dice4 className="size-6" />
           </QRCodeOverlay>
-        </div>
+        </QRCode>
+        <p className="text-center text-muted-foreground text-sm">
+          Canvas with Logo
+        </p>
+      </div>
+
+      <div className="flex flex-col items-center gap-2">
+        <QRCode
+          value="https://diceui.com"
+          size={120}
+          level="H"
+          className="gap-4"
+        >
+          <QRCodeSvg />
+          <QRCodeOverlay className="rounded-full border-2 border-white bg-linear-to-br from-accent to-muted p-2">
+            <Dice4 className="size-6" />
+          </QRCodeOverlay>
+        </QRCode>
+        <p className="text-center text-muted-foreground text-sm">
+          SVG with Logo
+        </p>
+      </div>
+
+      <div className="flex flex-col items-center gap-2">
+        <QRCode
+          value="https://diceui.com"
+          size={120}
+          level="H"
+          className="gap-4"
+        >
+          <QRCodeImage />
+          <QRCodeOverlay className="rounded-full border-2 border-white p-1.5">
+            <Dice4 className="size-6" />
+          </QRCodeOverlay>
+        </QRCode>
         <p className="text-center text-muted-foreground text-sm">
           Image with Logo
         </p>
-      </QRCode>
-
-      <QRCode value="https://diceui.com" size={120} level="H" className="gap-4">
-        <div className="relative">
-          <QRCodeCanvas />
-          <QRCodeOverlay className="rounded-full border-2 border-white bg-primary p-2">
-            <Dice4 className="size-5 text-primary-foreground" />
-          </QRCodeOverlay>
-        </div>
-        <p className="text-center text-muted-foreground text-sm">
-          Canvas with Icon
-        </p>
-      </QRCode>
-
-      <QRCode value="https://diceui.com" size={120} level="H" className="gap-4">
-        <div className="relative">
-          <QRCodeSvg />
-          <QRCodeOverlay className="rounded-lg border-2 border-white bg-linear-to-br from-purple-500 to-pink-500 p-2">
-            <Dice4 className="size-5 text-white" />
-          </QRCodeOverlay>
-        </div>
-        <p className="text-center text-muted-foreground text-sm">
-          SVG with Gradient
-        </p>
-      </QRCode>
+      </div>
     </div>
   );
 }
