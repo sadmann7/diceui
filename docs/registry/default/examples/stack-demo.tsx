@@ -1,66 +1,32 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Stack } from "@/registry/default/ui/stack";
-
-const avatars = [
-  {
-    name: "shadcn",
-    src: "https://github.com/shadcn.png",
-    fallback: "CN",
-  },
-  {
-    name: "Ethan Niser",
-    src: "https://github.com/ethanniser.png",
-    fallback: "EN",
-  },
-  {
-    name: "Guillermo Rauch",
-    src: "https://github.com/rauchg.png",
-    fallback: "GR",
-  },
-  {
-    name: "Lee Robinson",
-    src: "https://github.com/leerob.png",
-    fallback: "LR",
-  },
-  {
-    name: "Evil Rabbit",
-    src: "https://github.com/evilrabbit.png",
-    fallback: "ER",
-  },
-  {
-    name: "Tim Neutkens",
-    src: "https://github.com/timneutkens.png",
-    fallback: "TN",
-  },
-];
+import { Stack, StackItem } from "@/registry/default/ui/stack";
 
 export default function StackDemo() {
   return (
-    <div className="flex flex-col gap-8">
-      <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Avatar Stack</h3>
-        <Stack>
-          {avatars.slice(0, 4).map((avatar, index) => (
-            <Avatar key={index}>
-              <AvatarImage src={avatar.src} />
-              <AvatarFallback>{avatar.fallback}</AvatarFallback>
-            </Avatar>
-          ))}
-        </Stack>
-      </div>
-      <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">
-          Avatar Stack with overflow (max 4)
-        </h3>
-        <Stack max={4}>
-          {avatars.map((avatar, index) => (
-            <Avatar key={index}>
-              <AvatarImage src={avatar.src} />
-              <AvatarFallback>{avatar.fallback}</AvatarFallback>
-            </Avatar>
-          ))}
-        </Stack>
-      </div>
-    </div>
+    <Stack className="w-[360px]" expandOnHover>
+      <StackItem className="flex flex-col gap-2">
+        <h3 className="font-semibold">Notification 1</h3>
+        <p className="text-muted-foreground text-sm">
+          Your deployment was successful
+        </p>
+      </StackItem>
+      <StackItem className="flex flex-col gap-2">
+        <h3 className="font-semibold">Notification 2</h3>
+        <p className="text-muted-foreground text-sm">
+          New message from John Doe
+        </p>
+      </StackItem>
+      <StackItem className="flex flex-col gap-2">
+        <h3 className="font-semibold">Notification 3</h3>
+        <p className="text-muted-foreground text-sm">
+          Update available for your app
+        </p>
+      </StackItem>
+      <StackItem className="flex flex-col gap-2">
+        <h3 className="font-semibold">Notification 4</h3>
+        <p className="text-muted-foreground text-sm">
+          Your profile was viewed 5 times
+        </p>
+      </StackItem>
+    </Stack>
   );
 }

@@ -1,38 +1,57 @@
-import type * as React from "react";
-import type {
-  CompositionProps,
-  Direction,
-  EmptyProps,
-  Orientation,
-} from "@/types";
+import type { CompositionProps, EmptyProps } from "@/types";
 
-export interface StackProps extends EmptyProps<"div">, CompositionProps {
+/**
+ * Props for the Stack root component.
+ */
+export interface StackRootProps extends EmptyProps<"div">, CompositionProps {
   /**
-   * The orientation of the stack.
-   * @default "horizontal"
+   * Direction from which items stack.
+   * - "top": Items stack upward from the top
+   * - "bottom": Items stack downward from the bottom
+   * @default "bottom"
    */
-  orientation?: Orientation;
+  side?: "top" | "bottom";
 
   /**
-   * The reading direction of the stack.
-   * @default "ltr"
+   * Number of items visible in the collapsed state.
+   * @default 3
    */
-  dir?: Direction;
+  itemCount?: number;
 
   /**
-   * The size of each stack item in pixels.
-   * @default 40
+   * Number of items visible in the expanded state.
+   * When undefined, all items will be shown when expanded.
+   * @default undefined (all items)
    */
-  size?: number;
+  expandedItemCount?: number;
 
   /**
-   * Maximum number of items to display. When exceeded, shows overflow indicator.
+   * Gap between items when expanded (in pixels).
+   * @default 8
    */
-  max?: number;
+  gap?: number;
 
   /**
-   * Reverse the stacking order.
+   * Scale factor for each subsequent item in collapsed state.
+   * Each item is scaled down by this factor.
+   * @default 0.05 (5% smaller per item)
+   */
+  scale?: number;
+
+  /**
+   * Vertical offset between items in collapsed state (in pixels).
+   * @default 10
+   */
+  offset?: number;
+
+  /**
+   * Whether to expand the stack on hover.
    * @default false
    */
-  reverse?: boolean;
+  expandOnHover?: boolean;
 }
+
+/**
+ * Props for individual Stack items.
+ */
+export interface StackItemProps extends EmptyProps<"div">, CompositionProps {}

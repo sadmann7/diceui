@@ -1,6 +1,6 @@
 ---
 title: Stack
-description: A component that arranges elements with overlapping visual effects for avatar groups and more.
+description: A component that displays items in a stacked layout with hover expansion effects, similar to Sonner toast stacking.
 preview: true
 links:
  api: /docs/components/stack#api-reference
@@ -37,57 +37,85 @@ npx shadcn@latest add "https://diceui.com/r/stack"
 ## Layout
 
 ```tsx
-import { Stack } from "@/components/ui/stack";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import * as Stack from "@/components/ui/stack";
 
-<Stack>
-  <Avatar>
-    <AvatarImage src="/tony-hawk.png" />
-    <AvatarFallback>TH</AvatarFallback>
-  </Avatar>
-  <Avatar>
-    <AvatarImage src="/rodney-mullen.png" />
-    <AvatarFallback>RM</AvatarFallback>
-  </Avatar>
-</Stack>
+<Stack.Root>
+  <Stack.Item />
+</Stack.Root>
 ```
 
 ## Examples
 
-### With Truncation
+### Without Expansion
 
-Automatically truncate long lists and show overflow indicators with the `max` prop.
+Disable the hover expansion effect for a static stack.
 
-<ComponentTabs name="stack-truncation-demo" />
+<ComponentTabs name="stack-no-expand-demo" />
 
-### With RTL
+### Different Sides
 
-Support for right-to-left layouts and vertical RTL stacking.
+Stack items from different sides using the `side` prop.
 
-<ComponentTabs name="stack-rtl-demo" />
-
-### With Icons
-
-Use the Stack component with icons or other elements beyond avatars.
-
-<ComponentTabs name="stack-icons-demo" />
+<ComponentTabs name="stack-side-demo" />
 
 ## API Reference
 
-### Stack
+### Stack.Root
 
-The main stack container that handles layout and masking of child elements.
+The main container for the stack component that handles layout and hover interactions.
 
 <AutoTypeTable
   path="./types/docs/stack.ts"
-  name="StackProps"
+  name="StackRootProps"
 />
 
 <DataAttributesTable
   data={[
     {
-      title: "[data-orientation]",
-      value: ["horizontal", "vertical"],
+      title: "[data-expanded]",
+      value: ["true", "false"],
     },
   ]}
 />
+
+### Stack.Item
+
+Individual items within the stack. These are automatically positioned and animated.
+
+<AutoTypeTable
+  path="./types/docs/stack.ts"
+  name="StackItemProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-index]",
+      value: ["number"],
+    },
+    {
+      title: "[data-front]",
+      value: ["true", "false"],
+    },
+    {
+      title: "[data-visible]",
+      value: ["true", "false"],
+    },
+  ]}
+/>
+
+## Features
+
+- **Hover Expansion**: Items expand on hover to reveal all stacked items
+- **Customizable**: Control visible items, gap, offset, and scale factor
+- **Smooth Animations**: Elegant CSS transitions for all interactions
+- **Flexible Styling**: Works with any content and styling approach
+- **Accessibility**: Proper data attributes and semantic HTML
+
+## Usage Notes
+
+- The stack uses absolute positioning for items, ensure the parent container has enough space
+- Use the `visibleItems` prop to control how many items are visible in the collapsed state
+- The `scaleFactor` prop determines how much each subsequent item shrinks (0.05 = 5% smaller)
+- Set `expandOnHover={false}` to disable the expansion effect
+- All items beyond `visibleItems` will have reduced opacity and be non-interactive when collapsed

@@ -1,4 +1,8 @@
-import { QRCode, QRCodeCanvas } from "@/registry/default/ui/qr-code";
+import {
+  QRCode,
+  QRCodeCanvas,
+  QRCodeSkeleton,
+} from "@/registry/default/ui/qr-code";
 
 export default function QRCodeCustomizationDemo() {
   return (
@@ -11,6 +15,7 @@ export default function QRCodeCustomizationDemo() {
           backgroundColor="#f1f5f9"
         >
           <QRCodeCanvas />
+          <QRCodeSkeleton />
         </QRCode>
         <p className="text-muted-foreground text-sm">Custom Colors</p>
       </div>
@@ -23,6 +28,7 @@ export default function QRCodeCustomizationDemo() {
           foregroundColor="#dc2626"
         >
           <QRCodeCanvas />
+          <QRCodeSkeleton />
         </QRCode>
         <p className="text-muted-foreground text-sm">High Error Correction</p>
       </div>

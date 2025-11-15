@@ -1049,6 +1049,18 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "qr-code-overlay-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["qr-code"],
+    files: [
+      {
+        path: "examples/qr-code-overlay-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "rating-demo",
     type: "registry:example",
     registryDependencies: ["rating"],
@@ -1282,6 +1294,39 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "stack-demo",
+    type: "registry:example",
+    registryDependencies: ["stack"],
+    files: [
+      {
+        path: "examples/stack-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "stack-no-expand-demo",
+    type: "registry:example",
+    registryDependencies: ["stack"],
+    files: [
+      {
+        path: "examples/stack-no-expand-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "stack-side-demo",
+    type: "registry:example",
+    registryDependencies: ["stack"],
+    files: [
+      {
+        path: "examples/stack-side-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "stepper-demo",
     type: "registry:example",
     registryDependencies: ["stepper"],
@@ -1328,46 +1373,46 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "stack-demo",
+    name: "avatar-group-demo",
     type: "registry:example",
-    registryDependencies: ["avatar", "stack"],
+    registryDependencies: ["avatar", "avatar-group"],
     files: [
       {
-        path: "examples/stack-demo.tsx",
+        path: "examples/avatar-group-demo.tsx",
         type: "registry:example",
       },
     ],
   },
   {
-    name: "stack-truncation-demo",
+    name: "avatar-group-truncation-demo",
     type: "registry:example",
-    registryDependencies: ["avatar", "stack"],
+    registryDependencies: ["avatar", "avatar-group"],
     files: [
       {
-        path: "examples/stack-truncation-demo.tsx",
+        path: "examples/avatar-group-truncation-demo.tsx",
         type: "registry:example",
       },
     ],
   },
   {
-    name: "stack-rtl-demo",
+    name: "avatar-group-rtl-demo",
     type: "registry:example",
-    registryDependencies: ["avatar", "stack"],
+    registryDependencies: ["avatar", "avatar-group"],
     files: [
       {
-        path: "examples/stack-rtl-demo.tsx",
+        path: "examples/avatar-group-rtl-demo.tsx",
         type: "registry:example",
       },
     ],
   },
   {
-    name: "stack-icons-demo",
+    name: "avatar-group-icons-demo",
     type: "registry:example",
     dependencies: ["lucide-react"],
-    registryDependencies: ["stack"],
+    registryDependencies: ["avatar-group"],
     files: [
       {
-        path: "examples/stack-icons-demo.tsx",
+        path: "examples/avatar-group-icons-demo.tsx",
         type: "registry:example",
       },
     ],

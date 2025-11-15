@@ -1,0 +1,18 @@
+{
+  "name": "qr-code-overlay-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "qr-code"
+  ],
+  "files": [
+    {
+      "path": "examples/qr-code-overlay-demo.tsx",
+      "content": "import { Dice4 } from \"lucide-react\";\r\nimport {\r\n  QRCode,\r\n  QRCodeCanvas,\r\n  QRCodeImage,\r\n  QRCodeOverlay,\r\n  QRCodeSkeleton,\r\n  QRCodeSvg,\r\n} from \"@/registry/default/ui/qr-code\";\r\n\r\nexport default function QRCodeOverlayDemo() {\r\n  return (\r\n    <div className=\"grid grid-cols-2 gap-4 sm:grid-cols-3\">\r\n      <div className=\"flex flex-col items-center gap-2\">\r\n        <QRCode\r\n          value=\"https://diceui.com\"\r\n          size={120}\r\n          level=\"H\"\r\n          className=\"gap-4\"\r\n        >\r\n          <QRCodeSkeleton />\r\n          <QRCodeCanvas />\r\n          <QRCodeOverlay className=\"rounded-full border-2 border-white p-2\">\r\n            <Dice4 className=\"size-6\" />\r\n          </QRCodeOverlay>\r\n        </QRCode>\r\n        <p className=\"text-center text-muted-foreground text-sm\">\r\n          Canvas with Logo\r\n        </p>\r\n      </div>\r\n\r\n      <div className=\"flex flex-col items-center gap-2\">\r\n        <QRCode\r\n          value=\"https://diceui.com\"\r\n          size={120}\r\n          level=\"H\"\r\n          className=\"gap-4\"\r\n        >\r\n          <QRCodeSkeleton />\r\n          <QRCodeSvg />\r\n          <QRCodeOverlay className=\"rounded-full border-2 border-white bg-linear-to-br from-accent to-muted p-2\">\r\n            <Dice4 className=\"size-6\" />\r\n          </QRCodeOverlay>\r\n        </QRCode>\r\n        <p className=\"text-center text-muted-foreground text-sm\">\r\n          SVG with Logo\r\n        </p>\r\n      </div>\r\n\r\n      <div className=\"flex flex-col items-center gap-2\">\r\n        <QRCode\r\n          value=\"https://diceui.com\"\r\n          size={120}\r\n          level=\"H\"\r\n          className=\"gap-4\"\r\n        >\r\n          <QRCodeSkeleton />\r\n          <QRCodeImage />\r\n          <QRCodeOverlay className=\"rounded-full border-2 border-white p-1.5\">\r\n            <Dice4 className=\"size-6\" />\r\n          </QRCodeOverlay>\r\n        </QRCode>\r\n        <p className=\"text-center text-muted-foreground text-sm\">\r\n          Image with Logo\r\n        </p>\r\n      </div>\r\n    </div>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

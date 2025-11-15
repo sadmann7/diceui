@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Stack } from "@/registry/default/ui/stack";
+import { AvatarGroup } from "@/registry/default/ui/avatar-group";
 
 const avatars = [
   {
@@ -44,30 +44,30 @@ const avatars = [
   },
 ];
 
-export default function StackTruncationDemo() {
+export default function AvatarGroupTruncationDemo() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3">
         <h3 className="font-medium text-sm">Max 3 items</h3>
-        <Stack max={3}>
+        <AvatarGroup max={3}>
           {avatars.map((avatar, index) => (
             <Avatar key={index}>
               <AvatarImage src={avatar.src} />
               <AvatarFallback>{avatar.fallback}</AvatarFallback>
             </Avatar>
           ))}
-        </Stack>
+        </AvatarGroup>
       </div>
       <div className="flex flex-col gap-3">
         <h3 className="font-medium text-sm">Max 5 items</h3>
-        <Stack max={5}>
+        <AvatarGroup max={5}>
           {avatars.map((avatar, index) => (
             <Avatar key={index}>
               <AvatarImage src={avatar.src} />
               <AvatarFallback>{avatar.fallback}</AvatarFallback>
             </Avatar>
           ))}
-        </Stack>
+        </AvatarGroup>
       </div>
     </div>
   );
