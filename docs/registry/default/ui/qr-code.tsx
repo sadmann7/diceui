@@ -369,9 +369,9 @@ function QRCodeImage(props: QRCodeImageProps) {
   const context = useQRCodeContext(IMAGE_NAME);
   const dataUrl = useStore((state) => state.dataUrl);
 
-  const ImagePrimitive = asChild ? Slot : "img";
-
   if (!dataUrl) return null;
+
+  const ImagePrimitive = asChild ? Slot : "img";
 
   return (
     <ImagePrimitive

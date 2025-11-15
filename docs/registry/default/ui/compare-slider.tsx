@@ -1,7 +1,7 @@
 "use client";
 
 import { Slot } from "@radix-ui/react-slot";
-import { GripHorizontalIcon, GripVerticalIcon } from "lucide-react";
+import { ArrowDownUpIcon, ArrowRightLeftIcon } from "lucide-react";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
@@ -11,6 +11,9 @@ const HANDLE_NAME = "CompareSliderHandle";
 
 const PAGE_KEYS = ["PageUp", "PageDown"];
 const ARROW_KEYS = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
+
+type Interaction = "hover" | "drag";
+type Orientation = "horizontal" | "vertical";
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
@@ -38,9 +41,6 @@ function useLazyRef<T>(fn: () => T) {
 function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
 }
-
-type Interaction = "hover" | "drag";
-type Orientation = "horizontal" | "vertical";
 
 interface StoreState {
   value: number;
@@ -153,7 +153,7 @@ function CompareSliderRoot(props: CompareSliderRootProps) {
     if (valueProp !== undefined) {
       store.updateValue(valueProp);
     }
-  }, [valueProp, store]);
+  }, [valueProp]);
 
   return (
     <StoreContext.Provider value={store}>
@@ -456,12 +456,8 @@ function CompareSliderHandle(props: CompareSliderHandleProps) {
             )}
           />
           {interaction === "drag" && (
-            <div className="z-50 flex items-center justify-center rounded-sm bg-background px-0.5 py-1">
-              {isVertical ? (
-                <GripHorizontalIcon className="size-4 select-none text-muted-foreground" />
-              ) : (
-                <GripVerticalIcon className="size-4 select-none text-muted-foreground" />
-              )}
+            <div className="z-50 flex shrink-0 items-center justify-center rounded-full bg-background p-2.5 [&>svg]:size-4 [&>svg]:select-none [&>svg]:text-muted-foreground">
+              {isVertical ? <ArrowDownUpIcon /> : <ArrowRightLeftIcon />}
             </div>
           )}
         </>
