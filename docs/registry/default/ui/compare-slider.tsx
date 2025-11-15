@@ -1,18 +1,13 @@
 "use client";
 
+import { Slot } from "@radix-ui/react-slot";
 import { GripVerticalIcon } from "lucide-react";
-import {
-  type MotionValue,
-  motion,
-  useMotionValue,
-  useSpring,
-  useTransform,
-} from "motion/react";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 
 const ROOT_NAME = "CompareSlider";
+const HANDLE_NAME = "CompareSliderHandle";
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
@@ -41,10 +36,11 @@ function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
 }
 
+type Interaction = "hover" | "drag";
+
 interface StoreState {
   value: number;
   isDragging: boolean;
-  mode: "hover" | "drag";
 }
 
 interface Store {
@@ -77,8 +73,7 @@ function useStore<T>(selector: (state: StoreState) => T): T {
 }
 
 interface CompareSliderContextValue {
-  motionSliderPosition: MotionValue<number>;
-  mode: "hover" | "drag";
+  interaction: Interaction;
 }
 
 const CompareSliderContext =
@@ -96,9 +91,10 @@ interface CompareSliderRootProps extends React.ComponentProps<"div"> {
   value?: number;
   defaultValue?: number;
   onValueChange?: (value: number) => void;
-  mode?: "hover" | "drag";
   onDragStart?: () => void;
   onDragEnd?: () => void;
+  interaction?: Interaction;
+  asChild?: boolean;
 }
 
 function CompareSliderRoot(props: CompareSliderRootProps) {
@@ -112,7 +108,6 @@ function CompareSliderRoot(props: CompareSliderRootProps) {
   const stateRef = useLazyRef<StoreState>(() => ({
     value: clamp(valueProp ?? defaultValue, 0, 100),
     isDragging: false,
-    mode: props.mode ?? "drag",
   }));
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const onValueChangeRef = useAsRef(onValueChange);
@@ -159,18 +154,14 @@ function CompareSliderRoot(props: CompareSliderRootProps) {
     }
   }, [valueProp, store]);
 
-  useIsomorphicLayoutEffect(() => {
-    if (props.mode !== undefined) {
-      stateRef.current.mode = props.mode;
-    }
-  }, [props.mode]);
-
   return (
     <StoreContext.Provider value={store}>
-      <CompareSliderRootImpl {...rootProps} mode={props.mode ?? "drag"} />
+      <CompareSliderRootImpl {...rootProps} />
     </StoreContext.Provider>
   );
 }
+
+type RootImplElement = React.ComponentRef<typeof CompareSliderRootImpl>;
 
 function CompareSliderRootImpl(
   props: Omit<
@@ -179,271 +170,237 @@ function CompareSliderRootImpl(
   >,
 ) {
   const {
-    mode = "drag",
-    onDragStart,
-    onDragEnd,
+    interaction = "drag",
+    onDragStart: onDragStartProp,
+    onDragEnd: onDragEndProp,
     className,
     children,
     ref,
+    asChild,
     ...rootProps
   } = props;
 
   const store = useStoreContext(ROOT_NAME);
   const value = useStore((state) => state.value);
-  const motionValue = useMotionValue(value);
-  const motionSliderPosition = useSpring(motionValue, {
-    bounce: 0,
-    duration: 0,
+
+  const containerRef = React.useRef<RootImplElement>(null);
+  const composedRef = useComposedRefs(ref, containerRef);
+  const isDraggingRef = React.useRef(false);
+
+  const propsRef = useAsRef({
+    onDragStart: onDragStartProp,
+    onDragEnd: onDragEndProp,
+    interaction,
   });
 
-  const containerRef = React.useRef<HTMLDivElement>(null);
-  const isDraggingRef = React.useRef(false);
-  const onDragStartRef = useAsRef(onDragStart);
-  const onDragEndRef = useAsRef(onDragEnd);
-
-  // Subscribe to store changes to update motion value
-  React.useEffect(() => {
-    const unsubscribe = store.subscribe(() => {
-      const currentValue = store.getState().value;
-      if (currentValue !== motionValue.get()) {
-        motionValue.set(currentValue);
-      }
-    });
-    return unsubscribe;
-  }, [store, motionValue]);
-
-  const handleDrag = React.useCallback(
+  const onDrag = React.useCallback(
     (domRect: DOMRect, clientX: number) => {
-      if (!isDraggingRef.current && mode === "drag") {
+      if (!isDraggingRef.current && propsRef.current.interaction === "drag") {
         return;
       }
 
       const x = clientX - domRect.left;
       const percentage = clamp((x / domRect.width) * 100, 0, 100);
 
-      motionValue.set(percentage);
       store.updateValue(percentage);
     },
-    [mode, motionValue, store],
+    [propsRef, store],
   );
 
-  const handleMouseDrag = React.useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
+  const onMouseDrag = React.useCallback(
+    (event: React.MouseEvent<RootImplElement>) => {
       if (!containerRef.current) return;
       const containerRect = containerRef.current.getBoundingClientRect();
-      handleDrag(containerRect, event.clientX);
+      onDrag(containerRect, event.clientX);
     },
-    [handleDrag],
+    [onDrag],
   );
 
-  const handleTouchDrag = React.useCallback(
-    (event: React.TouchEvent<HTMLDivElement>) => {
+  const onTouchDrag = React.useCallback(
+    (event: React.TouchEvent<RootImplElement>) => {
       if (!containerRef.current) return;
       const containerRect = containerRef.current.getBoundingClientRect();
       const touches = Array.from(event.touches);
-      handleDrag(containerRect, touches.at(0)?.clientX ?? 0);
+      onDrag(containerRect, touches.at(0)?.clientX ?? 0);
     },
-    [handleDrag],
+    [onDrag],
   );
 
-  const handleDragStart = React.useCallback(() => {
-    if (mode === "drag") {
+  const onDragStart = React.useCallback(() => {
+    if (propsRef.current.interaction === "drag") {
       isDraggingRef.current = true;
       store.setState("isDragging", true);
-      onDragStartRef.current?.();
+      propsRef.current.onDragStart?.();
     }
-  }, [mode, store, onDragStartRef]);
+  }, [store, propsRef]);
 
-  const handleDragEnd = React.useCallback(() => {
-    if (mode === "drag") {
+  const onDragEnd = React.useCallback(() => {
+    if (propsRef.current.interaction === "drag") {
       isDraggingRef.current = false;
       store.setState("isDragging", false);
-      onDragEndRef.current?.();
+      propsRef.current.onDragEnd?.();
     }
-  }, [mode, store, onDragEndRef]);
+  }, [store, propsRef]);
 
   const contextValue = React.useMemo<CompareSliderContextValue>(
     () => ({
-      motionSliderPosition,
-      mode,
+      interaction,
     }),
-    [motionSliderPosition, mode],
+    [interaction],
   );
+
+  const RootPrimitive = asChild ? Slot : "div";
 
   return (
     <CompareSliderContext.Provider value={contextValue}>
-      <div
-        ref={useComposedRefs(containerRef, ref)}
-        aria-label="Comparison slider"
+      <RootPrimitive
+        role="slider"
         aria-valuemax={100}
         aria-valuemin={0}
         aria-valuenow={value}
+        data-slot="compare-slider"
+        {...rootProps}
+        ref={composedRef}
+        tabIndex={0}
         className={cn(
           "relative isolate w-full select-none overflow-hidden",
           className,
         )}
-        onMouseDown={handleDragStart}
-        onMouseLeave={handleDragEnd}
-        onMouseMove={handleMouseDrag}
-        onMouseUp={handleDragEnd}
-        onTouchEnd={handleDragEnd}
-        onTouchMove={handleTouchDrag}
-        onTouchStart={handleDragStart}
-        role="slider"
-        tabIndex={0}
-        {...rootProps}
+        onMouseDown={onDragStart}
+        onMouseLeave={onDragEnd}
+        onMouseMove={onMouseDrag}
+        onMouseUp={onDragEnd}
+        onTouchEnd={onDragEnd}
+        onTouchMove={onTouchDrag}
+        onTouchStart={onDragStart}
       >
         {children}
-      </div>
+      </RootPrimitive>
     </CompareSliderContext.Provider>
   );
 }
 
 interface CompareSliderBeforeProps extends React.ComponentProps<"div"> {
   label?: string;
+  asChild?: boolean;
 }
 
 function CompareSliderBefore(props: CompareSliderBeforeProps) {
-  const { className, children, label, ref, ...beforeProps } = props;
-  const { motionSliderPosition } = useCompareSliderContext(
-    "CompareSliderBefore",
-  );
+  const { className, children, style, label, asChild, ref, ...beforeProps } =
+    props;
 
-  const leftClipPath = useTransform(
-    motionSliderPosition,
-    (value) => `inset(0 0 0 ${value}%)`,
-  );
+  const value = useStore((state) => state.value);
 
-  const {
-    onDrag: _onDrag,
-    onDragStart: _onDragStart,
-    onDragEnd: _onDragEnd,
-    ...restProps
-  } = beforeProps as React.ComponentProps<typeof motion.div> & {
-    onDrag?: unknown;
-    onDragStart?: unknown;
-    onDragEnd?: unknown;
-  };
+  const BeforePrimitive = asChild ? Slot : "div";
 
   return (
-    <motion.div
-      ref={ref}
-      aria-hidden="true"
-      className={cn("absolute inset-0 h-full w-full object-cover", className)}
+    <BeforePrimitive
       role="img"
+      aria-hidden="true"
+      data-slot="compare-slider-before"
+      {...beforeProps}
+      ref={ref}
+      className={cn("absolute inset-0 h-full w-full object-cover", className)}
       style={{
-        clipPath: leftClipPath,
+        clipPath: `inset(0 0 0 ${value}%)`,
+        ...style,
       }}
-      {...restProps}
     >
       {children}
       {label && <CompareSliderLabel side="before">{label}</CompareSliderLabel>}
-    </motion.div>
+    </BeforePrimitive>
   );
 }
 
 interface CompareSliderAfterProps extends React.ComponentProps<"div"> {
   label?: string;
+  asChild?: boolean;
 }
 
 function CompareSliderAfter(props: CompareSliderAfterProps) {
-  const { className, children, label, ref, ...afterProps } = props;
-  const { motionSliderPosition } =
-    useCompareSliderContext("CompareSliderAfter");
+  const { className, children, style, label, asChild, ref, ...afterProps } =
+    props;
 
-  const rightClipPath = useTransform(
-    motionSliderPosition,
-    (value) => `inset(0 ${100 - value}% 0 0)`,
-  );
+  const value = useStore((state) => state.value);
 
-  const {
-    onDrag: _onDrag,
-    onDragStart: _onDragStart,
-    onDragEnd: _onDragEnd,
-    ...restProps
-  } = afterProps as React.ComponentProps<typeof motion.div> & {
-    onDrag?: unknown;
-    onDragStart?: unknown;
-    onDragEnd?: unknown;
-  };
+  const AfterPrimitive = asChild ? Slot : "div";
 
   return (
-    <motion.div
-      ref={ref}
-      aria-hidden="true"
-      className={cn("absolute inset-0 h-full w-full object-cover", className)}
+    <AfterPrimitive
       role="img"
+      aria-hidden="true"
+      data-slot="compare-slider-after"
+      {...afterProps}
+      ref={ref}
+      className={cn("absolute inset-0 h-full w-full object-cover", className)}
       style={{
-        clipPath: rightClipPath,
+        clipPath: `inset(0 ${100 - value}% 0 0)`,
+        ...style,
       }}
-      {...restProps}
     >
       {children}
       {label && <CompareSliderLabel side="after">{label}</CompareSliderLabel>}
-    </motion.div>
+    </AfterPrimitive>
   );
 }
 
 interface CompareSliderHandleProps extends React.ComponentProps<"div"> {
-  children?: React.ReactNode;
+  asChild?: boolean;
 }
 
 function CompareSliderHandle(props: CompareSliderHandleProps) {
-  const { className, children, ref, ...handleProps } = props;
-  const { motionSliderPosition, mode } = useCompareSliderContext(
-    "CompareSliderHandle",
-  );
+  const { className, children, style, asChild, ref, ...handleProps } = props;
 
-  const left = useTransform(motionSliderPosition, (value) => `${value}%`);
+  const value = useStore((state) => state.value);
+  const { interaction } = useCompareSliderContext(HANDLE_NAME);
 
-  const {
-    onDrag: _onDrag,
-    onDragStart: _onDragStart,
-    onDragEnd: _onDragEnd,
-    ...restProps
-  } = handleProps as React.ComponentProps<typeof motion.div> & {
-    onDrag?: unknown;
-    onDragStart?: unknown;
-    onDragEnd?: unknown;
-  };
+  const HandlePrimitive = asChild ? Slot : "div";
 
   return (
-    <motion.div
-      ref={ref}
+    <HandlePrimitive
+      role="presentation"
       aria-hidden="true"
+      data-slot="compare-slider-handle"
+      {...handleProps}
+      ref={ref}
       className={cn(
         "-translate-x-1/2 absolute top-0 z-50 flex h-full w-10 items-center justify-center",
-        mode === "drag" && "cursor-grab active:cursor-grabbing",
+        interaction === "drag" && "cursor-grab active:cursor-grabbing",
         className,
       )}
-      role="presentation"
-      style={{ left }}
-      {...restProps}
+      style={{
+        left: `${value}%`,
+        ...style,
+      }}
     >
       {children ?? (
         <>
           <div className="-translate-x-1/2 absolute left-1/2 h-full w-1 bg-background" />
-          {mode === "drag" && (
+          {interaction === "drag" && (
             <div className="z-50 flex items-center justify-center rounded-sm bg-background px-0.5 py-1">
-              <GripVerticalIcon className="h-4 w-4 select-none text-muted-foreground" />
+              <GripVerticalIcon className="size-4 select-none text-muted-foreground" />
             </div>
           )}
         </>
       )}
-    </motion.div>
+    </HandlePrimitive>
   );
 }
 
 interface CompareSliderLabelProps extends React.ComponentProps<"div"> {
   side?: "before" | "after";
+  asChild?: boolean;
 }
 
 function CompareSliderLabel(props: CompareSliderLabelProps) {
-  const { className, children, side, ref, ...labelProps } = props;
+  const { className, children, side, asChild, ref, ...labelProps } = props;
+
+  const LabelPrimitive = asChild ? Slot : "div";
 
   return (
-    <div
+    <LabelPrimitive
       ref={ref}
+      data-slot="compare-slider-label"
       className={cn(
         "absolute z-20 rounded-md border border-border bg-background/80 px-3 py-1.5 font-medium text-sm backdrop-blur-sm",
         side === "before" ? "top-2 left-2" : "top-2 right-2",
@@ -452,7 +409,7 @@ function CompareSliderLabel(props: CompareSliderLabelProps) {
       {...labelProps}
     >
       {children}
-    </div>
+    </LabelPrimitive>
   );
 }
 
