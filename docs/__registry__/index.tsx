@@ -1985,20 +1985,6 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "stack-custom-demo": {
-      name: "stack-custom-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["stack"],
-      files: [{
-        path: "registry/default/examples/stack-custom-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/stack-custom-demo.tsx")),
-      source: "",
-      chunks: []
-    },
     "stack-no-expand-demo": {
       name: "stack-no-expand-demo",
       description: "",
@@ -2010,6 +1996,20 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/stack-no-expand-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "stack-side-demo": {
+      name: "stack-side-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["stack"],
+      files: [{
+        path: "registry/default/examples/stack-side-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/stack-side-demo.tsx")),
       source: "",
       chunks: []
     },

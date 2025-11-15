@@ -24,7 +24,7 @@ npx shadcn@latest add "https://diceui.com/r/stack"
      Install the following dependencies:
 
      ```package-install
-     @radix-ui/react-slot
+     @radix-ui/react-slot class-variance-authority
      ```
   </Step>
   <Step>
@@ -54,17 +54,17 @@ import * as Stack from "@/components/ui/stack";
 
 ## Examples
 
-### Custom Configuration
-
-Customize the stack behavior with various props like `visibleItems`, `gap`, `offset`, and `scaleFactor`.
-
-<ComponentTabs name="stack-custom-demo" />
-
 ### Without Expansion
 
 Disable the hover expansion effect for a static stack.
 
 <ComponentTabs name="stack-no-expand-demo" />
+
+### Different Sides
+
+Stack items from different sides using the `side` prop.
+
+<ComponentTabs name="stack-side-demo" />
 
 ## API Reference
 

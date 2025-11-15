@@ -1,13 +1,16 @@
 "use client";
 
 import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-interface ItemHeight {
+interface ItemDimension {
   itemId: number;
-  height: number;
+  size: number;
 }
+
+type Side = "top" | "bottom";
 
 interface StackContextValue {
   childrenCount: number;
@@ -16,11 +19,12 @@ interface StackContextValue {
   gap: number;
   scale: number;
   offset: number;
-  heights: ItemHeight[];
-  setHeights: React.Dispatch<React.SetStateAction<ItemHeight[]>>;
+  dimensions: ItemDimension[];
+  setDimensions: React.Dispatch<React.SetStateAction<ItemDimension[]>>;
   expandOnHover: boolean;
   isExpanded: boolean;
   isInteracting: boolean;
+  side: Side;
 }
 
 const StackContext = React.createContext<StackContextValue | null>(null);
@@ -34,6 +38,7 @@ function useStackContext() {
 }
 
 interface StackRootProps extends React.ComponentProps<"div"> {
+  side?: Side;
   itemCount?: number;
   expandedItemCount?: number;
   gap?: number;
@@ -45,6 +50,7 @@ interface StackRootProps extends React.ComponentProps<"div"> {
 
 function StackRoot(props: StackRootProps) {
   const {
+    side = "bottom",
     itemCount = 3,
     expandedItemCount,
     gap = 8,
@@ -65,14 +71,12 @@ function StackRoot(props: StackRootProps) {
 
   const [isExpanded, setIsExpanded] = React.useState(false);
   const [isInteracting, setIsInteracting] = React.useState(false);
-  const [heights, setHeights] = React.useState<ItemHeight[]>([]);
+  const [dimensions, setDimensions] = React.useState<ItemDimension[]>([]);
 
   const childrenArray = React.Children.toArray(children).filter(
     React.isValidElement,
   );
   const childrenCount = childrenArray.length;
-
-  const RootPrimitive = asChild ? Slot : "div";
 
   const effectiveExpandedItemCount = expandedItemCount ?? childrenCount;
 
@@ -143,8 +147,9 @@ function StackRoot(props: StackRootProps) {
       expandOnHover,
       isExpanded,
       isInteracting,
-      heights,
-      setHeights,
+      dimensions,
+      setDimensions,
+      side,
     }),
     [
       childrenCount,
@@ -156,9 +161,12 @@ function StackRoot(props: StackRootProps) {
       expandOnHover,
       isExpanded,
       isInteracting,
-      heights,
+      dimensions,
+      side,
     ],
   );
+
+  const RootPrimitive = asChild ? Slot : "div";
 
   return (
     <StackContext.Provider value={contextValue}>
@@ -174,9 +182,9 @@ function StackRoot(props: StackRootProps) {
         className={cn("relative w-full", className)}
         style={
           {
-            "--stack-gap": `${gap}px`,
-            "--stack-offset": `${offset}px`,
-            "--stack-scale": scale,
+            "--gap": `${gap}px`,
+            "--offset": `${offset}px`,
+            "--scale": scale,
             ...style,
           } as React.CSSProperties
         }
@@ -190,6 +198,36 @@ function StackRoot(props: StackRootProps) {
     </StackContext.Provider>
   );
 }
+
+const stackItemWrapperVariants = cva(
+  "absolute w-full transition-all duration-300 ease-out",
+  {
+    variants: {
+      side: {
+        top: [
+          "top-0 left-0 origin-top",
+          "translate-y-[calc(var(--translate)*-1)] scale-[var(--item-scale)]",
+          "after:absolute after:top-full after:left-0 after:w-full after:content-['']",
+        ],
+        bottom: [
+          "bottom-0 left-0 origin-bottom",
+          "translate-y-[var(--translate)] scale-[var(--item-scale)]",
+          "after:absolute after:bottom-full after:left-0 after:w-full after:content-['']",
+        ],
+      },
+      isExpanded: {
+        true: "after:h-[calc(var(--gap)+1px)]",
+        false: "",
+      },
+      isVisible: {
+        true: "",
+        false: "pointer-events-none",
+      },
+    },
+  },
+);
+
+type StackItemWrapperElement = React.ComponentRef<typeof StackItemWrapper>;
 
 interface StackItemWrapperProps extends React.ComponentProps<"div"> {
   index: number;
@@ -206,50 +244,48 @@ function StackItemWrapper(props: StackItemWrapperProps) {
     scale,
     offset,
     isExpanded,
-    heights,
-    setHeights,
+    dimensions,
+    setDimensions,
+    side,
   } = useStackContext();
 
-  const itemRef = React.useRef<HTMLDivElement>(null);
+  const itemRef = React.useRef<StackItemWrapperElement>(null);
 
   const isFront = index === 0;
   const isVisible = isExpanded ? index < expandedItemCount : index < itemCount;
-  const itemsBefore = index;
 
-  // Measure height only once on mount
   React.useEffect(() => {
     const itemNode = itemRef.current;
     if (itemNode) {
-      const measuredHeight = itemNode.getBoundingClientRect().height;
-      // Divide by current scale to get the natural height
-      const currentScale = 1 - itemsBefore * scale;
+      const rect = itemNode.getBoundingClientRect();
+      const measuredHeight = rect.height;
+      const currentScale = 1 - index * scale;
       const naturalHeight = measuredHeight / currentScale;
 
-      setHeights((h) => {
-        const existing = h.find((item) => item.itemId === index);
-        // Only add if we don't have a height for this item yet
+      setDimensions((d) => {
+        const existing = d.find((item) => item.itemId === index);
         if (!existing) {
-          return [...h, { itemId: index, height: naturalHeight }];
+          return [...d, { itemId: index, size: naturalHeight }];
         }
-        return h;
+        return d;
       });
     }
-  }, [index, itemsBefore, scale, setHeights]);
+  }, [index, scale, setDimensions]);
 
-  const itemsHeightBefore = React.useMemo(() => {
-    return heights.reduce((prev, curr) => {
+  const itemsSizeBefore = React.useMemo(() => {
+    return dimensions.reduce((prev, curr) => {
       if (curr.itemId >= index) return prev;
-      return prev + curr.height;
+      return prev + curr.size;
     }, 0);
-  }, [heights, index]);
+  }, [dimensions, index]);
 
-  const itemScale = isExpanded ? 1 : 1 - itemsBefore * scale;
-  const translateY = isExpanded
-    ? itemsBefore * gap + itemsHeightBefore
-    : itemsBefore * offset;
+  const itemScale = isExpanded ? 1 : 1 - index * scale;
+  const translateValue = isExpanded
+    ? index * gap + itemsSizeBefore
+    : index * offset;
   const zIndex = childrenCount - index;
 
-  const opacity = !isVisible ? 0 : isExpanded ? 1 : 1 - itemsBefore * 0.15;
+  const opacity = !isVisible ? 0 : isExpanded ? 1 : 1 - index * 0.15;
 
   return (
     <div
@@ -259,19 +295,16 @@ function StackItemWrapper(props: StackItemWrapperProps) {
       data-front={isFront}
       data-visible={isVisible}
       data-expanded={isExpanded}
-      className={cn(
-        "absolute top-0 left-0 w-full transition-all duration-300 ease-out",
-        "after:absolute after:bottom-full after:left-0 after:w-full after:content-['']",
-        !isVisible && "pointer-events-none",
-        isExpanded && "after:h-[calc(var(--stack-gap)+1px)]",
-      )}
-      style={{
-        transform: `translateY(${translateY}px) scale(${itemScale})`,
-        transformOrigin: "top center",
-        zIndex,
-        opacity,
-        ...style,
-      }}
+      className={cn(stackItemWrapperVariants({ side, isExpanded, isVisible }))}
+      style={
+        {
+          "--translate": `${translateValue}px`,
+          "--item-scale": itemScale,
+          zIndex,
+          opacity,
+          ...style,
+        } as React.CSSProperties
+      }
       {...itemProps}
     >
       {children}
@@ -293,9 +326,7 @@ function StackItem(props: StackItemProps) {
       data-slot="stack-item"
       {...itemProps}
       className={cn(
-        "rounded-lg border bg-card p-4 shadow-md",
-        "transition-shadow duration-200",
-        "hover:shadow-lg",
+        "rounded-lg border bg-card p-4 shadow-sm transition-shadow duration-200 hover:shadow-md",
         className,
       )}
     />

@@ -1,10 +1,17 @@
-import type * as React from "react";
 import type { CompositionProps, EmptyProps } from "@/types";
 
 /**
  * Props for the Stack root component.
  */
 export interface StackRootProps extends EmptyProps<"div">, CompositionProps {
+  /**
+   * Direction from which items stack.
+   * - "top": Items stack upward from the top
+   * - "bottom": Items stack downward from the bottom
+   * @default "bottom"
+   */
+  side?: "top" | "bottom";
+
   /**
    * Number of items visible in the collapsed state.
    * @default 3
@@ -47,9 +54,4 @@ export interface StackRootProps extends EmptyProps<"div">, CompositionProps {
 /**
  * Props for individual Stack items.
  */
-export interface StackItemProps extends EmptyProps<"div">, CompositionProps {
-  /**
-   * Unique identifier for the stack item.
-   */
-  id?: string | number;
-}
+export interface StackItemProps extends EmptyProps<"div">, CompositionProps {}
