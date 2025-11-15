@@ -315,6 +315,40 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "compare-slider-demo",
+    type: "registry:example",
+    registryDependencies: ["compare-slider"],
+    files: [
+      {
+        path: "examples/compare-slider-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "compare-slider-controlled-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["compare-slider", "button", "label", "slider"],
+    files: [
+      {
+        path: "examples/compare-slider-controlled-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "compare-slider-custom-demo",
+    type: "registry:example",
+    registryDependencies: ["compare-slider"],
+    files: [
+      {
+        path: "examples/compare-slider-custom-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "cropper-demo",
     type: "registry:example",
     dependencies: ["class-variance-authority"],
