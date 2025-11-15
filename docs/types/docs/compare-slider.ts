@@ -1,5 +1,5 @@
 import type * as React from "react";
-import type { CompositionProps, EmptyProps } from "@/types";
+import type { CompositionProps, EmptyProps, Orientation } from "@/types";
 
 export interface RootProps
   extends Omit<
@@ -25,34 +25,18 @@ export interface RootProps
   onValueChange?: (value: number) => void;
 
   /**
+   * The interaction mode for the slider.
+   * - "drag": Requires clicking and dragging to change the value
+   * - "hover": Updates the value as the pointer moves over the slider
+   * @default "drag"
+   */
+  interaction?: "hover" | "drag";
+
+  /**
    * The orientation of the slider.
    * @default "horizontal"
    */
-  orientation?: "horizontal" | "vertical";
-
-  /**
-   * Whether the slider is disabled.
-   * @default false
-   */
-  disabled?: boolean;
-
-  /**
-   * The minimum position value.
-   * @default 0
-   */
-  min?: number;
-
-  /**
-   * The maximum position value.
-   * @default 100
-   */
-  max?: number;
-
-  /**
-   * The step size for keyboard navigation.
-   * @default 1
-   */
-  step?: number;
+  orientation?: Orientation;
 }
 
 export interface BeforeProps
@@ -60,6 +44,10 @@ export interface BeforeProps
     CompositionProps {
   /**
    * Label for the "before" side.
+   *
+   * ```ts
+   * label="Before"
+   * ```
    */
   label?: string;
 }
@@ -69,24 +57,31 @@ export interface AfterProps
     CompositionProps {
   /**
    * Label for the "after" side.
+   *
+   * ```ts
+   * label="After"
+   * ```
    */
   label?: string;
 }
 
 export interface HandleProps
   extends React.ComponentProps<"div">,
-    CompositionProps {
-  /**
-   * Custom icon or element to display in the handle.
-   */
-  children?: React.ReactNode;
-}
+    CompositionProps {}
 
 export interface LabelProps
   extends React.ComponentProps<"div">,
     CompositionProps {
   /**
    * The side this label is for.
+   *
+   * ```ts
+   * // For the "before" side
+   * <CompareSliderLabel side="before" />
+   *
+   * // For the "after" side
+   * <CompareSliderLabel side="after" />
+   * ```
    */
   side?: "before" | "after";
 }

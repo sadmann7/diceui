@@ -1,7 +1,7 @@
 "use client";
 
 import { Slot } from "@radix-ui/react-slot";
-import { GripVerticalIcon } from "lucide-react";
+import { GripHorizontalIcon, GripVerticalIcon } from "lucide-react";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
@@ -37,6 +37,7 @@ function clamp(value: number, min: number, max: number): number {
 }
 
 type Interaction = "hover" | "drag";
+type Orientation = "horizontal" | "vertical";
 
 interface StoreState {
   value: number;
@@ -74,6 +75,7 @@ function useStore<T>(selector: (state: StoreState) => T): T {
 
 interface CompareSliderContextValue {
   interaction: Interaction;
+  orientation: Orientation;
 }
 
 const CompareSliderContext =
@@ -91,9 +93,8 @@ interface CompareSliderRootProps extends React.ComponentProps<"div"> {
   value?: number;
   defaultValue?: number;
   onValueChange?: (value: number) => void;
-  onDragStart?: () => void;
-  onDragEnd?: () => void;
   interaction?: Interaction;
+  orientation?: Orientation;
   asChild?: boolean;
 }
 
@@ -171,11 +172,13 @@ function CompareSliderRootImpl(
 ) {
   const {
     interaction = "drag",
-    onDragStart: onDragStartProp,
-    onDragEnd: onDragEndProp,
+    orientation = "horizontal",
     className,
     children,
     ref,
+    onPointerMove: onPointerMoveProp,
+    onPointerUp: onPointerUpProp,
+    onPointerDown: onPointerDownProp,
     asChild,
     ...rootProps
   } = props;
@@ -188,65 +191,70 @@ function CompareSliderRootImpl(
   const isDraggingRef = React.useRef(false);
 
   const propsRef = useAsRef({
-    onDragStart: onDragStartProp,
-    onDragEnd: onDragEndProp,
+    onPointerMove: onPointerMoveProp,
+    onPointerUp: onPointerUpProp,
+    onPointerDown: onPointerDownProp,
     interaction,
+    orientation,
   });
 
-  const onDrag = React.useCallback(
-    (domRect: DOMRect, clientX: number) => {
+  const onPointerMove = React.useCallback(
+    (event: React.PointerEvent<RootImplElement>) => {
       if (!isDraggingRef.current && propsRef.current.interaction === "drag") {
         return;
       }
+      if (!containerRef.current) return;
 
-      const x = clientX - domRect.left;
-      const percentage = clamp((x / domRect.width) * 100, 0, 100);
+      propsRef.current.onPointerMove?.(event);
+      if (event.defaultPrevented) return;
+
+      const containerRect = containerRef.current.getBoundingClientRect();
+      const isVertical = propsRef.current.orientation === "vertical";
+      const position = isVertical
+        ? event.clientY - containerRect.top
+        : event.clientX - containerRect.left;
+      const size = isVertical ? containerRect.height : containerRect.width;
+      const percentage = clamp((position / size) * 100, 0, 100);
 
       store.updateValue(percentage);
     },
     [propsRef, store],
   );
 
-  const onMouseDrag = React.useCallback(
-    (event: React.MouseEvent<RootImplElement>) => {
-      if (!containerRef.current) return;
-      const containerRect = containerRef.current.getBoundingClientRect();
-      onDrag(containerRect, event.clientX);
-    },
-    [onDrag],
-  );
+  const onPointerDown = React.useCallback(
+    (event: React.PointerEvent<RootImplElement>) => {
+      if (propsRef.current.interaction !== "drag") return;
 
-  const onTouchDrag = React.useCallback(
-    (event: React.TouchEvent<RootImplElement>) => {
-      if (!containerRef.current) return;
-      const containerRect = containerRef.current.getBoundingClientRect();
-      const touches = Array.from(event.touches);
-      onDrag(containerRect, touches.at(0)?.clientX ?? 0);
-    },
-    [onDrag],
-  );
+      propsRef.current.onPointerDown?.(event);
+      if (event.defaultPrevented) return;
 
-  const onDragStart = React.useCallback(() => {
-    if (propsRef.current.interaction === "drag") {
+      event.currentTarget.setPointerCapture(event.pointerId);
       isDraggingRef.current = true;
       store.setState("isDragging", true);
-      propsRef.current.onDragStart?.();
-    }
-  }, [store, propsRef]);
+    },
+    [store, propsRef],
+  );
 
-  const onDragEnd = React.useCallback(() => {
-    if (propsRef.current.interaction === "drag") {
+  const onPointerUp = React.useCallback(
+    (event: React.PointerEvent<RootImplElement>) => {
+      if (propsRef.current.interaction !== "drag") return;
+
+      propsRef.current.onPointerUp?.(event);
+      if (event.defaultPrevented) return;
+
+      event.currentTarget.releasePointerCapture(event.pointerId);
       isDraggingRef.current = false;
       store.setState("isDragging", false);
-      propsRef.current.onDragEnd?.();
-    }
-  }, [store, propsRef]);
+    },
+    [store, propsRef],
+  );
 
   const contextValue = React.useMemo<CompareSliderContextValue>(
     () => ({
       interaction,
+      orientation,
     }),
-    [interaction],
+    [interaction, orientation],
   );
 
   const RootPrimitive = asChild ? Slot : "div";
@@ -263,16 +271,14 @@ function CompareSliderRootImpl(
         ref={composedRef}
         tabIndex={0}
         className={cn(
-          "relative isolate w-full select-none overflow-hidden",
+          "relative isolate select-none overflow-hidden",
+          orientation === "horizontal" ? "w-full" : "h-full w-auto",
           className,
         )}
-        onMouseDown={onDragStart}
-        onMouseLeave={onDragEnd}
-        onMouseMove={onMouseDrag}
-        onMouseUp={onDragEnd}
-        onTouchEnd={onDragEnd}
-        onTouchMove={onTouchDrag}
-        onTouchStart={onDragStart}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
       >
         {children}
       </RootPrimitive>
@@ -290,6 +296,12 @@ function CompareSliderBefore(props: CompareSliderBeforeProps) {
     props;
 
   const value = useStore((state) => state.value);
+  const { orientation } = useCompareSliderContext("CompareSliderBefore");
+
+  const isVertical = orientation === "vertical";
+  const clipPath = isVertical
+    ? `inset(${value}% 0 0 0)`
+    : `inset(0 0 0 ${value}%)`;
 
   const BeforePrimitive = asChild ? Slot : "div";
 
@@ -302,7 +314,7 @@ function CompareSliderBefore(props: CompareSliderBeforeProps) {
       ref={ref}
       className={cn("absolute inset-0 h-full w-full object-cover", className)}
       style={{
-        clipPath: `inset(0 0 0 ${value}%)`,
+        clipPath,
         ...style,
       }}
     >
@@ -322,6 +334,12 @@ function CompareSliderAfter(props: CompareSliderAfterProps) {
     props;
 
   const value = useStore((state) => state.value);
+  const { orientation } = useCompareSliderContext("CompareSliderAfter");
+
+  const isVertical = orientation === "vertical";
+  const clipPath = isVertical
+    ? `inset(0 0 ${100 - value}% 0)`
+    : `inset(0 ${100 - value}% 0 0)`;
 
   const AfterPrimitive = asChild ? Slot : "div";
 
@@ -334,7 +352,7 @@ function CompareSliderAfter(props: CompareSliderAfterProps) {
       ref={ref}
       className={cn("absolute inset-0 h-full w-full object-cover", className)}
       style={{
-        clipPath: `inset(0 ${100 - value}% 0 0)`,
+        clipPath,
         ...style,
       }}
     >
@@ -352,7 +370,9 @@ function CompareSliderHandle(props: CompareSliderHandleProps) {
   const { className, children, style, asChild, ref, ...handleProps } = props;
 
   const value = useStore((state) => state.value);
-  const { interaction } = useCompareSliderContext(HANDLE_NAME);
+  const { interaction, orientation } = useCompareSliderContext(HANDLE_NAME);
+
+  const isVertical = orientation === "vertical";
 
   const HandlePrimitive = asChild ? Slot : "div";
 
@@ -364,21 +384,35 @@ function CompareSliderHandle(props: CompareSliderHandleProps) {
       {...handleProps}
       ref={ref}
       className={cn(
-        "-translate-x-1/2 absolute top-0 z-50 flex h-full w-10 items-center justify-center",
+        "absolute z-50 flex items-center justify-center",
+        isVertical
+          ? "-translate-y-1/2 left-0 h-10 w-full"
+          : "-translate-x-1/2 top-0 h-full w-10",
         interaction === "drag" && "cursor-grab active:cursor-grabbing",
         className,
       )}
       style={{
-        left: `${value}%`,
+        [isVertical ? "top" : "left"]: `${value}%`,
         ...style,
       }}
     >
       {children ?? (
         <>
-          <div className="-translate-x-1/2 absolute left-1/2 h-full w-1 bg-background" />
+          <div
+            className={cn(
+              "absolute bg-background",
+              isVertical
+                ? "-translate-y-1/2 top-1/2 h-1 w-full"
+                : "-translate-x-1/2 left-1/2 h-full w-1",
+            )}
+          />
           {interaction === "drag" && (
             <div className="z-50 flex items-center justify-center rounded-sm bg-background px-0.5 py-1">
-              <GripVerticalIcon className="size-4 select-none text-muted-foreground" />
+              {isVertical ? (
+                <GripHorizontalIcon className="size-4 select-none text-muted-foreground" />
+              ) : (
+                <GripVerticalIcon className="size-4 select-none text-muted-foreground" />
+              )}
             </div>
           )}
         </>
@@ -395,6 +429,9 @@ interface CompareSliderLabelProps extends React.ComponentProps<"div"> {
 function CompareSliderLabel(props: CompareSliderLabelProps) {
   const { className, children, side, asChild, ref, ...labelProps } = props;
 
+  const { orientation } = useCompareSliderContext("CompareSliderLabel");
+  const isVertical = orientation === "vertical";
+
   const LabelPrimitive = asChild ? Slot : "div";
 
   return (
@@ -403,7 +440,13 @@ function CompareSliderLabel(props: CompareSliderLabelProps) {
       data-slot="compare-slider-label"
       className={cn(
         "absolute z-20 rounded-md border border-border bg-background/80 px-3 py-1.5 font-medium text-sm backdrop-blur-sm",
-        side === "before" ? "top-2 left-2" : "top-2 right-2",
+        isVertical
+          ? side === "before"
+            ? "top-2 left-2"
+            : "bottom-2 left-2"
+          : side === "before"
+            ? "top-2 left-2"
+            : "top-2 right-2",
         className,
       )}
       {...labelProps}

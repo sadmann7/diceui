@@ -72,7 +72,13 @@ A compare slider with external controls for the slider position.
 
 <ComponentTabs name="compare-slider-controlled-demo" />
 
-### Custom Styling
+### Vertical Orientation
+
+A compare slider with vertical orientation, perfect for comparing tall images or content.
+
+<ComponentTabs name="compare-slider-vertical-demo" />
+
+### Customization
 
 Compare slider with custom handle, labels, and vertical orientation.
 
@@ -184,7 +190,7 @@ The compare slider works with any React content, not just images:
 
 ### Vertical Orientation
 
-Use vertical orientation for comparing content that works better in a vertical layout:
+Use vertical orientation for comparing content that works better in a vertical layout. The slider handle moves vertically, and the "before" content appears on top while "after" content appears on bottom.
 
 ```tsx
 <CompareSlider orientation="vertical" className="h-[600px]">
@@ -197,6 +203,8 @@ Use vertical orientation for comparing content that works better in a vertical l
   <CompareSliderHandle />
 </CompareSlider>
 ```
+
+See the [Vertical Orientation example](#vertical-orientation) for a complete demo.
 
 ### Custom Labels
 
@@ -284,4 +292,3 @@ On mobile devices:
 - Test on various screen sizes
 - Consider using vertical orientation for better mobile UX
 - Ensure content is responsive and scales appropriately
-

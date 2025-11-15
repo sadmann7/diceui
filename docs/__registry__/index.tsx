@@ -939,17 +939,31 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "compare-slider-custom-demo": {
-      name: "compare-slider-custom-demo",
+    "compare-slider-customization-demo": {
+      name: "compare-slider-customization-demo",
       description: "",
       type: "registry:example",
       registryDependencies: ["compare-slider"],
       files: [{
-        path: "registry/default/examples/compare-slider-custom-demo.tsx",
+        path: "registry/default/examples/compare-slider-customization-demo.tsx",
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/examples/compare-slider-custom-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/compare-slider-customization-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "compare-slider-vertical-demo": {
+      name: "compare-slider-vertical-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["compare-slider"],
+      files: [{
+        path: "registry/default/examples/compare-slider-vertical-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/compare-slider-vertical-demo.tsx")),
       source: "",
       chunks: []
     },

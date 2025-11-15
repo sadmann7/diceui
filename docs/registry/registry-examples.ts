@@ -338,12 +338,23 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "compare-slider-custom-demo",
+    name: "compare-slider-customization-demo",
     type: "registry:example",
     registryDependencies: ["compare-slider"],
     files: [
       {
-        path: "examples/compare-slider-custom-demo.tsx",
+        path: "examples/compare-slider-customization-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "compare-slider-vertical-demo",
+    type: "registry:example",
+    registryDependencies: ["compare-slider"],
+    files: [
+      {
+        path: "examples/compare-slider-vertical-demo.tsx",
         type: "registry:example",
       },
     ],
