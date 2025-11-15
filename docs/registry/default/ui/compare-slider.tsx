@@ -1,7 +1,12 @@
 "use client";
 
 import { Slot } from "@radix-ui/react-slot";
-import { ArrowDownUpIcon, ArrowRightLeftIcon } from "lucide-react";
+import {
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+} from "lucide-react";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
@@ -456,8 +461,18 @@ function CompareSliderHandle(props: CompareSliderHandleProps) {
             )}
           />
           {interaction === "drag" && (
-            <div className="z-50 flex shrink-0 items-center justify-center rounded-full bg-background p-2.5 [&>svg]:size-4 [&>svg]:select-none [&>svg]:text-muted-foreground">
-              {isVertical ? <ArrowDownUpIcon /> : <ArrowRightLeftIcon />}
+            <div className="z-50 flex aspect-square size-11 shrink-0 items-center justify-center rounded-full bg-background p-2 [&_svg]:size-4 [&_svg]:select-none [&_svg]:stroke-3 [&_svg]:text-muted-foreground">
+              {isVertical ? (
+                <div className="flex flex-col items-center">
+                  <ChevronUpIcon />
+                  <ChevronDownIcon />
+                </div>
+              ) : (
+                <div className="flex items-center">
+                  <ChevronLeftIcon />
+                  <ChevronRightIcon />
+                </div>
+              )}
             </div>
           )}
         </>
@@ -500,7 +515,6 @@ function CompareSliderLabel(props: CompareSliderLabelProps) {
     </LabelPrimitive>
   );
 }
-
 export {
   CompareSliderRoot as Root,
   CompareSliderAfter as After,
