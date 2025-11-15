@@ -24,7 +24,7 @@ export default function CompareSliderControlledDemo() {
       <CompareSlider
         value={value}
         onValueChange={setValue}
-        className="h-[400px] rounded-lg overflow-hidden border"
+        className="h-[400px] overflow-hidden rounded-lg border"
       >
         <CompareSliderBefore label="Original">
           <img
@@ -61,4 +61,3 @@ export default function CompareSliderControlledDemo() {
     </div>
   );
 }
-

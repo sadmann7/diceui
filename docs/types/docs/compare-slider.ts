@@ -2,7 +2,10 @@ import type * as React from "react";
 import type { CompositionProps, EmptyProps } from "@/types";
 
 export interface RootProps
-  extends Omit<React.ComponentProps<"div">, "defaultValue" | "value" | "onValueChange">,
+  extends Omit<
+      React.ComponentProps<"div">,
+      "defaultValue" | "value" | "onValueChange"
+    >,
     CompositionProps {
   /**
    * The position of the slider as a percentage (0-100).
@@ -87,4 +90,3 @@ export interface LabelProps
    */
   side?: "before" | "after";
 }
-

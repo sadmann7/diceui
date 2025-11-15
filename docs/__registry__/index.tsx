@@ -109,6 +109,24 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "compare-slider": {
+      name: "compare-slider",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/ui/compare-slider.tsx",
+        type: "registry:ui",
+        target: ""
+      },{
+        path: "registry/default/lib/compose-refs.ts",
+        type: "registry:lib",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/compare-slider.tsx")),
+      source: "",
+      chunks: []
+    },
     "cropper": {
       name: "cropper",
       description: "",
@@ -890,6 +908,48 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/combobox-virtualized-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "compare-slider-demo": {
+      name: "compare-slider-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["compare-slider"],
+      files: [{
+        path: "registry/default/examples/compare-slider-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/compare-slider-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "compare-slider-controlled-demo": {
+      name: "compare-slider-controlled-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["compare-slider","button","label","slider"],
+      files: [{
+        path: "registry/default/examples/compare-slider-controlled-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/compare-slider-controlled-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "compare-slider-custom-demo": {
+      name: "compare-slider-custom-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["compare-slider"],
+      files: [{
+        path: "registry/default/examples/compare-slider-custom-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/compare-slider-custom-demo.tsx")),
       source: "",
       chunks: []
     },
