@@ -34,8 +34,8 @@ export default function PlaygroundPage() {
     <Shell>
       <Demo>
         <Dialog modal={false}>
-          <DialogTrigger>
-            <Button>Open Tour</Button>
+          <DialogTrigger asChild>
+            <Button>Open dialog</Button>
           </DialogTrigger>
           <DialogContent
             onInteractOutside={(event) => {
@@ -63,8 +63,8 @@ export default function PlaygroundPage() {
           </DialogContent>
         </Dialog>
         <AlertDialog>
-          <AlertDialogTrigger>
-            <Button>Open Alert Dialog</Button>
+          <AlertDialogTrigger asChild>
+            <Button>Open alert dialog</Button>
           </AlertDialogTrigger>
           <AlertDialogContent
             onOpenAutoFocus={(event) => {
