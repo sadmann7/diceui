@@ -101,6 +101,68 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
 
   /**
+   * Event handler called when a pointer down event occurs outside the tour step.
+   * You can prevent the dismissing behavior by calling event.preventDefault().
+   *
+   * The event is a CustomEvent containing the original PointerEvent in event.detail.originalEvent.
+   *
+   * ```ts
+   * onPointerDownOutside={(event) => {
+   *   console.log("Pointer down outside:", event)
+   *   console.log("Original event:", event.detail.originalEvent)
+   *   // To prevent dismissing: event.preventDefault();
+   * }}
+   * ```
+   */
+  onPointerDownOutside?: (
+    event: CustomEvent<{ originalEvent: PointerEvent }>,
+  ) => void;
+
+  /**
+   * Event handler called when an interaction (pointer or focus) occurs outside the tour step.
+   * You can prevent the dismissing behavior by calling event.preventDefault().
+   *
+   * The event is a CustomEvent containing the original event in event.detail.originalEvent.
+   *
+   * ```ts
+   * onInteractOutside={(event) => {
+   *   console.log("Interact outside:", event)
+   *   console.log("Original event:", event.detail.originalEvent)
+   *   // To prevent dismissing: event.preventDefault();
+   * }}
+   * ```
+   */
+  onInteractOutside?: (
+    event: CustomEvent<{ originalEvent: PointerEvent | FocusEvent }>,
+  ) => void;
+
+  /**
+   * Event handler called when auto-focusing on opening the tour.
+   * You can prevent the default auto-focus behavior by calling event.preventDefault().
+   *
+   * ```ts
+   * onOpenAutoFocus={(event) => {
+   *   console.log("Auto-focusing on open")
+   *   // To prevent auto-focus: event.preventDefault();
+   * }}
+   * ```
+   */
+  onOpenAutoFocus?: (event: CustomEvent) => void;
+
+  /**
+   * Event handler called when auto-focusing on closing the tour.
+   * You can prevent the default focus restoration by calling event.preventDefault().
+   *
+   * ```ts
+   * onCloseAutoFocus={(event) => {
+   *   console.log("Restoring focus on close")
+   *   // To prevent focus restoration: event.preventDefault();
+   * }}
+   * ```
+   */
+  onCloseAutoFocus?: (event: CustomEvent) => void;
+
+  /**
    * The text direction of the tour component.
    *
    * @default "ltr"

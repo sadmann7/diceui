@@ -22,7 +22,6 @@ import { cn } from "@/lib/utils";
 
 const ROOT_NAME = "Tour";
 const PORTAL_NAME = "TourPortal";
-const SPOTLIGHT_NAME = "TourSpotlight";
 const STEP_NAME = "TourStep";
 const CLOSE_NAME = "TourClose";
 const PREV_NAME = "TourPrev";
@@ -33,6 +32,12 @@ const TITLE_NAME = "TourTitle";
 const DESCRIPTION_NAME = "TourDescription";
 const FOOTER_NAME = "TourFooter";
 const ARROW_NAME = "TourArrow";
+
+const POINTER_DOWN_OUTSIDE = "tour.pointerDownOutside";
+const INTERACT_OUTSIDE = "tour.interactOutside";
+const OPEN_AUTO_FOCUS = "tour.openAutoFocus";
+const CLOSE_AUTO_FOCUS = "tour.closeAutoFocus";
+const EVENT_OPTIONS = { bubbles: false, cancelable: true };
 
 const SIDE_OPTIONS = ["top", "right", "bottom", "left"] as const;
 const ALIGN_OPTIONS = ["start", "center", "end"] as const;
@@ -45,7 +50,15 @@ type Side = (typeof SIDE_OPTIONS)[number];
 type Align = (typeof ALIGN_OPTIONS)[number];
 type Direction = "ltr" | "rtl";
 
-type SpotlightElement = React.ComponentRef<typeof TourSpotlight>;
+interface ScrollOffset {
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+}
+
+type Boundary = Element | null;
+
 type CloseElement = React.ComponentRef<typeof TourClose>;
 type PrevElement = React.ComponentRef<typeof TourPrev>;
 type NextElement = React.ComponentRef<typeof TourNext>;
@@ -77,6 +90,44 @@ function useAsRef<T>(props: T) {
   return ref;
 }
 
+let focusGuardCount = 0;
+
+function createFocusGuard() {
+  const element = document.createElement("span");
+  element.setAttribute("data-tour-focus-guard", "");
+  element.tabIndex = 0;
+  element.style.outline = "none";
+  element.style.opacity = "0";
+  element.style.position = "fixed";
+  element.style.pointerEvents = "none";
+  return element;
+}
+
+function useFocusGuards() {
+  React.useEffect(() => {
+    const edgeGuards = document.querySelectorAll("[data-tour-focus-guard]");
+    document.body.insertAdjacentElement(
+      "afterbegin",
+      edgeGuards[0] ?? createFocusGuard(),
+    );
+    document.body.insertAdjacentElement(
+      "beforeend",
+      edgeGuards[1] ?? createFocusGuard(),
+    );
+    focusGuardCount++;
+
+    return () => {
+      if (focusGuardCount === 1) {
+        const guards = document.querySelectorAll("[data-tour-focus-guard]");
+        for (const node of guards) {
+          node.remove();
+        }
+      }
+      focusGuardCount--;
+    };
+  }, []);
+}
+
 function useLazyRef<T>(fn: () => T) {
   const ref = React.useRef<T | null>(null);
 
@@ -93,15 +144,6 @@ function useDirection(dirProp?: Direction): Direction {
   const contextDir = React.useContext(DirectionContext);
   return dirProp ?? contextDir ?? "ltr";
 }
-
-interface ScrollOffset {
-  top?: number;
-  bottom?: number;
-  left?: number;
-  right?: number;
-}
-
-type Boundary = Element | null;
 
 interface StepData {
   target: string | React.RefObject<HTMLElement> | HTMLElement;
@@ -249,6 +291,10 @@ interface TourContextValue {
   dismissible: boolean;
   modal: boolean;
   stepFooter?: React.ReactElement;
+  onPointerDownOutside?: (event: PointerDownOutsideEvent) => void;
+  onInteractOutside?: (event: InteractOutsideEvent) => void;
+  onOpenAutoFocus?: (event: OpenAutoFocusEvent) => void;
+  onCloseAutoFocus?: (event: CloseAutoFocusEvent) => void;
 }
 
 const TourContext = React.createContext<TourContextValue | null>(null);
@@ -318,6 +364,13 @@ function useScrollLock(enabled: boolean) {
   }, [enabled]);
 }
 
+type PointerDownOutsideEvent = CustomEvent<{ originalEvent: PointerEvent }>;
+type InteractOutsideEvent = CustomEvent<{
+  originalEvent: PointerEvent | FocusEvent;
+}>;
+type OpenAutoFocusEvent = CustomEvent<Record<string, never>>;
+type CloseAutoFocusEvent = CustomEvent<Record<string, never>>;
+
 interface TourRootProps extends DivProps {
   open?: boolean;
   defaultOpen?: boolean;
@@ -328,6 +381,10 @@ interface TourRootProps extends DivProps {
   onComplete?: () => void;
   onSkip?: () => void;
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
+  onPointerDownOutside?: (event: PointerDownOutsideEvent) => void;
+  onInteractOutside?: (event: InteractOutsideEvent) => void;
+  onOpenAutoFocus?: (event: OpenAutoFocusEvent) => void;
+  onCloseAutoFocus?: (event: CloseAutoFocusEvent) => void;
   dir?: Direction;
   alignOffset?: number;
   sideOffset?: number;
@@ -514,6 +571,10 @@ interface TourRootImplProps
 function TourRootImpl(props: TourRootImplProps) {
   const {
     onEscapeKeyDown,
+    onPointerDownOutside,
+    onInteractOutside,
+    onOpenAutoFocus,
+    onCloseAutoFocus,
     dir: dirProp,
     alignOffset = DEFAULT_ALIGN_OFFSET,
     sideOffset = DEFAULT_SIDE_OFFSET,
@@ -556,6 +617,10 @@ function TourRootImpl(props: TourRootImplProps) {
       dismissible,
       modal,
       stepFooter,
+      onPointerDownOutside,
+      onInteractOutside,
+      onOpenAutoFocus,
+      onCloseAutoFocus,
     }),
     [
       dir,
@@ -565,6 +630,10 @@ function TourRootImpl(props: TourRootImplProps) {
       dismissible,
       modal,
       stepFooter,
+      onPointerDownOutside,
+      onInteractOutside,
+      onOpenAutoFocus,
+      onCloseAutoFocus,
     ],
   );
 
@@ -625,6 +694,9 @@ function TourStep(props: TourStepProps) {
     forceMount = false,
     onStepEnter,
     onStepLeave,
+    onPointerDownCapture: onPointerDownCaptureProp,
+    onFocusCapture: onFocusCaptureProp,
+    onBlurCapture: onBlurCaptureProp,
     children,
     className,
     style,
@@ -801,7 +873,170 @@ function TourStep(props: TourStepProps) {
     }
   }, [open, targetElement, isCurrentStep, store, context.spotlightPadding]);
 
-  useFocusTrap(stepRef, open && isCurrentStep);
+  // Track if pointer/focus is inside step or target using Radix pattern
+  const isPointerInsideStepRef = React.useRef(false);
+  const isPointerInsideTargetRef = React.useRef(false);
+  const isFocusInsideStepRef = React.useRef(false);
+  const isFocusInsideTargetRef = React.useRef(false);
+
+  // Handle pointer down outside (Radix pattern)
+  React.useEffect(() => {
+    if (!open || !isCurrentStep) return;
+
+    const stepElement = stepRef.current;
+    if (!stepElement) return;
+
+    const ownerDocument = stepElement.ownerDocument;
+
+    function onPointerDown(event: PointerEvent) {
+      if (
+        event.target &&
+        !isPointerInsideStepRef.current &&
+        !isPointerInsideTargetRef.current
+      ) {
+        const pointerDownOutsideEvent = new CustomEvent(POINTER_DOWN_OUTSIDE, {
+          ...EVENT_OPTIONS,
+          detail: { originalEvent: event },
+        });
+
+        // Call user callback
+        context.onPointerDownOutside?.(pointerDownOutsideEvent);
+
+        // Also dispatch interact outside
+        const interactOutsideEvent = new CustomEvent(INTERACT_OUTSIDE, {
+          ...EVENT_OPTIONS,
+          detail: { originalEvent: event },
+        });
+        context.onInteractOutside?.(interactOutsideEvent);
+
+        // Dismiss if not prevented
+        if (
+          !pointerDownOutsideEvent.defaultPrevented &&
+          !interactOutsideEvent.defaultPrevented &&
+          context.dismissible
+        ) {
+          store.setState("open", false);
+        }
+      }
+
+      isPointerInsideStepRef.current = false;
+      isPointerInsideTargetRef.current = false;
+    }
+
+    const timerId = window.setTimeout(() => {
+      ownerDocument.addEventListener("pointerdown", onPointerDown);
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timerId);
+      ownerDocument.removeEventListener("pointerdown", onPointerDown);
+    };
+  }, [open, isCurrentStep, store, context]);
+
+  // Handle focus outside (Radix pattern)
+  React.useEffect(() => {
+    if (!open || !isCurrentStep) return;
+
+    const stepElement = stepRef.current;
+    if (!stepElement) return;
+
+    const ownerDocument = stepElement.ownerDocument;
+
+    function onFocusIn(event: FocusEvent) {
+      if (
+        event.target &&
+        !isFocusInsideStepRef.current &&
+        !isFocusInsideTargetRef.current
+      ) {
+        const interactOutsideEvent = new CustomEvent(INTERACT_OUTSIDE, {
+          ...EVENT_OPTIONS,
+          detail: { originalEvent: event },
+        });
+
+        context.onInteractOutside?.(interactOutsideEvent);
+
+        if (!interactOutsideEvent.defaultPrevented && context.dismissible) {
+          store.setState("open", false);
+        }
+      }
+    }
+
+    ownerDocument.addEventListener("focusin", onFocusIn);
+
+    return () => {
+      ownerDocument.removeEventListener("focusin", onFocusIn);
+    };
+  }, [open, isCurrentStep, store, context]);
+
+  // Capture phase handlers for step element
+  const onPointerDownCapture = React.useCallback(
+    (event: React.PointerEvent<StepElement>) => {
+      onPointerDownCaptureProp?.(event);
+      if (event.defaultPrevented) return;
+
+      isPointerInsideStepRef.current = true;
+    },
+    [onPointerDownCaptureProp],
+  );
+
+  const onFocusCapture = React.useCallback(
+    (event: React.FocusEvent<StepElement>) => {
+      onFocusCaptureProp?.(event);
+      if (event.defaultPrevented) return;
+
+      isFocusInsideStepRef.current = true;
+    },
+    [onFocusCaptureProp],
+  );
+
+  const onBlurCapture = React.useCallback(
+    (event: React.FocusEvent<StepElement>) => {
+      onBlurCaptureProp?.(event);
+      if (event.defaultPrevented) return;
+
+      isFocusInsideStepRef.current = false;
+    },
+    [onBlurCaptureProp],
+  );
+
+  // Capture handlers for target element
+  React.useEffect(() => {
+    if (!open || !isCurrentStep || !targetElement) return;
+
+    function onPointerDownCapture() {
+      isPointerInsideTargetRef.current = true;
+    }
+
+    function onFocusCapture() {
+      isFocusInsideTargetRef.current = true;
+    }
+
+    function onBlurCapture() {
+      isFocusInsideTargetRef.current = false;
+    }
+
+    targetElement.addEventListener("pointerdown", onPointerDownCapture, true);
+    targetElement.addEventListener("focus", onFocusCapture, true);
+    targetElement.addEventListener("blur", onBlurCapture, true);
+
+    return () => {
+      targetElement.removeEventListener(
+        "pointerdown",
+        onPointerDownCapture,
+        true,
+      );
+      targetElement.removeEventListener("focus", onFocusCapture, true);
+      targetElement.removeEventListener("blur", onBlurCapture, true);
+    };
+  }, [open, isCurrentStep, targetElement]);
+
+  useFocusGuards();
+  useFocusTrap(
+    stepRef,
+    open && isCurrentStep,
+    context.onOpenAutoFocus,
+    context.onCloseAutoFocus,
+  );
 
   if (!open || !stepData || (!targetElement && !forceMount) || !isCurrentStep) {
     return null;
@@ -821,6 +1056,9 @@ function TourStep(props: TourStepProps) {
         dir={context.dir}
         tabIndex={-1}
         {...stepProps}
+        onPointerDownCapture={onPointerDownCapture}
+        onFocusCapture={onFocusCapture}
+        onBlurCapture={onBlurCapture}
         className={cn(
           "fixed z-50 flex w-80 flex-col gap-4 rounded-lg border bg-popover p-4 text-popover-foreground shadow-md outline-none",
           className,
@@ -853,37 +1091,11 @@ function TourSpotlight(props: TourSpotlightProps) {
     className,
     style,
     forceMount = false,
-    onClick: onClickProp,
-    onPointerDown: onPointerDownProp,
     ...backdropProps
   } = props;
 
-  const { dismissible } = useTourContext(SPOTLIGHT_NAME);
-  const store = useStoreContext(SPOTLIGHT_NAME);
   const open = useStore((state) => state.open);
   const maskPath = useStore((state) => state.maskPath);
-
-  const onClick = React.useCallback(
-    (event: React.MouseEvent<SpotlightElement>) => {
-      onClickProp?.(event);
-      if (event.defaultPrevented || !dismissible) return;
-
-      store.setState("open", false);
-    },
-    [store, onClickProp, dismissible],
-  );
-
-  const onPointerDown = React.useCallback(
-    (event: React.PointerEvent<SpotlightElement>) => {
-      onPointerDownProp?.(event);
-      if (event.defaultPrevented) return;
-
-      if (!dismissible) {
-        event.preventDefault();
-      }
-    },
-    [onPointerDownProp, dismissible],
-  );
 
   if (!open && !forceMount) return null;
 
@@ -902,8 +1114,6 @@ function TourSpotlight(props: TourSpotlightProps) {
         clipPath: maskPath,
         ...style,
       }}
-      onPointerDown={onPointerDown}
-      onClick={onClick}
     />
   );
 }
@@ -976,71 +1186,151 @@ function TourPortal(props: TourPortalProps) {
 function useFocusTrap(
   containerRef: React.RefObject<HTMLElement | null>,
   enabled: boolean,
+  onOpenAutoFocus?: (event: OpenAutoFocusEvent) => void,
+  onCloseAutoFocus?: (event: CloseAutoFocusEvent) => void,
 ) {
+  const lastFocusedElementRef = React.useRef<HTMLElement | null>(null);
+  const onOpenAutoFocusRef = useAsRef(onOpenAutoFocus);
+  const onCloseAutoFocusRef = useAsRef(onCloseAutoFocus);
+
   React.useEffect(() => {
-    if (!enabled || !containerRef.current) return;
+    if (!enabled) return;
 
     const container = containerRef.current;
-    const previousActiveElement = document.activeElement as HTMLElement;
+    if (!container) return;
 
-    function getFocusableElements() {
-      const selector =
-        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
-      return Array.from(
-        container.querySelectorAll<HTMLElement>(selector),
-      ).filter((element) => {
-        return (
-          element.offsetParent !== null &&
-          !element.hasAttribute("disabled") &&
-          element.getAttribute("aria-hidden") !== "true"
-        );
-      });
+    const previouslyFocusedElement =
+      document.activeElement as HTMLElement | null;
+
+    function getTabbableCandidates() {
+      if (!container) return [];
+
+      const nodes: HTMLElement[] = [];
+      const walker = document.createTreeWalker(
+        container,
+        NodeFilter.SHOW_ELEMENT,
+        {
+          acceptNode: (node: Element) => {
+            const element = node as HTMLElement;
+            const isHiddenInput =
+              element.tagName === "INPUT" &&
+              (element as HTMLInputElement).type === "hidden";
+            if (element.hidden || isHiddenInput) return NodeFilter.FILTER_SKIP;
+            return element.tabIndex >= 0
+              ? NodeFilter.FILTER_ACCEPT
+              : NodeFilter.FILTER_SKIP;
+          },
+        },
+      );
+      while (walker.nextNode()) {
+        nodes.push(walker.currentNode as HTMLElement);
+      }
+      return nodes;
     }
 
-    function onTabKeyDown(event: KeyboardEvent) {
-      if (event.key !== "Tab") return;
+    function getTabbableEdges() {
+      const candidates = getTabbableCandidates();
+      const first = candidates[0];
+      const last = candidates[candidates.length - 1];
+      return [first, last] as const;
+    }
 
-      const focusableElements = getFocusableElements();
-      if (focusableElements.length === 0) {
-        event.preventDefault();
+    function onFocusIn(event: FocusEvent) {
+      if (!container) return;
+
+      const target = event.target as HTMLElement | null;
+      if (container.contains(target)) {
+        lastFocusedElementRef.current = target;
+      } else {
+        // Focus escaped, bring it back
+        const elementToFocus =
+          lastFocusedElementRef.current ?? getTabbableCandidates()[0];
+        elementToFocus?.focus({ preventScroll: true });
+      }
+    }
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key !== "Tab" || event.altKey || event.ctrlKey || event.metaKey)
+        return;
+
+      const [first, last] = getTabbableEdges();
+      const hasTabbableElements = first && last;
+
+      if (!hasTabbableElements) {
+        if (document.activeElement === container) event.preventDefault();
         return;
       }
 
-      const firstElement = focusableElements[0];
-      const lastElement = focusableElements[focusableElements.length - 1];
-
-      if (event.shiftKey) {
-        if (document.activeElement === firstElement) {
-          event.preventDefault();
-          lastElement?.focus();
-        }
-      } else {
-        if (document.activeElement === lastElement) {
-          event.preventDefault();
-          firstElement?.focus();
-        }
+      if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first?.focus({ preventScroll: true });
+      } else if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last?.focus({ preventScroll: true });
       }
     }
 
-    const focusableElements = getFocusableElements();
-    if (focusableElements.length > 0) {
-      focusableElements[0]?.focus();
-    } else {
-      container.focus();
+    // Auto-focus on mount
+    const openAutoFocusEvent = new CustomEvent(OPEN_AUTO_FOCUS, EVENT_OPTIONS);
+    if (onOpenAutoFocusRef.current) {
+      container.addEventListener(
+        OPEN_AUTO_FOCUS,
+        onOpenAutoFocusRef.current as EventListener,
+        { once: true },
+      );
+    }
+    container.dispatchEvent(openAutoFocusEvent);
+
+    if (!openAutoFocusEvent.defaultPrevented) {
+      const tabbableCandidates = getTabbableCandidates();
+      if (tabbableCandidates.length > 0) {
+        tabbableCandidates[0]?.focus({ preventScroll: true });
+      } else {
+        container.focus({ preventScroll: true });
+      }
     }
 
-    container.addEventListener("keydown", onTabKeyDown);
+    document.addEventListener("focusin", onFocusIn);
+    container.addEventListener("keydown", onKeyDown);
 
     return () => {
-      container.removeEventListener("keydown", onTabKeyDown);
-      if (
-        previousActiveElement &&
-        document.body.contains(previousActiveElement)
-      ) {
-        previousActiveElement.focus();
-      }
+      document.removeEventListener("focusin", onFocusIn);
+      container.removeEventListener("keydown", onKeyDown);
+
+      // Restore focus on unmount with delay (Radix pattern for React bug)
+      setTimeout(() => {
+        const closeAutoFocusEvent = new CustomEvent(
+          CLOSE_AUTO_FOCUS,
+          EVENT_OPTIONS,
+        );
+        if (onCloseAutoFocusRef.current) {
+          container.addEventListener(
+            CLOSE_AUTO_FOCUS,
+            onCloseAutoFocusRef.current as EventListener,
+            { once: true },
+          );
+        }
+        container.dispatchEvent(closeAutoFocusEvent);
+
+        if (!closeAutoFocusEvent.defaultPrevented) {
+          if (
+            previouslyFocusedElement &&
+            document.body.contains(previouslyFocusedElement)
+          ) {
+            previouslyFocusedElement.focus({ preventScroll: true });
+          }
+        }
+
+        // Remove listener after dispatch
+        if (onCloseAutoFocusRef.current) {
+          container.removeEventListener(
+            CLOSE_AUTO_FOCUS,
+            onCloseAutoFocusRef.current as EventListener,
+          );
+        }
+      }, 0);
     };
-  }, [containerRef, enabled]);
+  }, [containerRef, enabled, onOpenAutoFocusRef, onCloseAutoFocusRef]);
 }
 
 function TourHeader(props: DivProps) {
