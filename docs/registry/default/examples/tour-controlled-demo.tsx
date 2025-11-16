@@ -10,9 +10,9 @@ import {
   TourFooter,
   TourHeader,
   TourNext,
-  TourOverlay,
   TourPrev,
   TourSkip,
+  TourSpotlight,
   TourStep,
   TourStepCounter,
   TourTitle,
@@ -107,7 +107,7 @@ export default function TourControlledDemo() {
         onComplete={onComplete}
         onSkip={onSkip}
       >
-        <TourOverlay />
+        <TourSpotlight />
         <TourStep target="#controlled-title" side="bottom" align="center">
           <TourArrow />
           <TourHeader>

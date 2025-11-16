@@ -161,11 +161,18 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * ```
    */
   stepFooter?: React.ReactElement;
+
+  /**
+   * The padding around the highlighted element in the spotlight effect.
+   *
+   * @default 6
+   */
+  spotlightPadding?: number;
 }
 
-export interface OverlayProps extends EmptyProps<"div">, CompositionProps {
+export interface SpotlightProps extends EmptyProps<"div">, CompositionProps {
   /**
-   * Whether to force mount the overlay even when closed.
+   * Whether to force mount the spotlight even when closed.
    *
    * @default false
    */

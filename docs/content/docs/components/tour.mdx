@@ -43,7 +43,7 @@ import * as Tour from "@/components/ui/tour";
 
 <Tour.Root>
   <Tour.Portal>
-    <Tour.Overlay />
+    <Tour.Spotlight />
     <Tour.Step target="#element">
       <Tour.Arrow />
       <Tour.Close />
@@ -82,13 +82,13 @@ The main container component for the tour that manages state and provides contex
 />
 
 
-### Overlay
+### Spotlight
 
-The overlay backdrop that dims the page and highlights the target element.
+The spotlight backdrop that dims the page and highlights the target element with a cutout effect.
 
 <AutoTypeTable
   path="./types/docs/tour.ts"
-  name="OverlayProps"
+  name="SpotlightProps"
 />
 
 <DataAttributesTable

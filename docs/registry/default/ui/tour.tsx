@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 
 const ROOT_NAME = "Tour";
 const PORTAL_NAME = "TourPortal";
-const OVERLAY_NAME = "TourOverlay";
+const SPOTLIGHT_NAME = "TourSpotlight";
 const STEP_NAME = "TourStep";
 const CLOSE_NAME = "TourClose";
 const PREV_NAME = "TourPrev";
@@ -233,6 +233,7 @@ interface TourContextValue {
   dismissible: boolean;
   modal: boolean;
   stepFooter?: React.ReactElement;
+  spotlightPadding: number;
 }
 
 const TourContext = React.createContext<TourContextValue | null>(null);
@@ -313,12 +314,13 @@ interface TourRootProps extends DivProps {
   onSkip?: () => void;
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
   dir?: Direction;
+  stepFooter?: React.ReactElement;
+  spotlightPadding?: number;
   scrollToElement?: boolean;
   scrollBehavior?: ScrollBehavior;
   scrollOffset?: ScrollOffset;
   dismissible?: boolean;
   modal?: boolean;
-  stepFooter?: React.ReactElement;
 }
 
 function TourRoot(props: TourRootProps) {
@@ -334,6 +336,7 @@ function TourRoot(props: TourRootProps) {
     scrollToElement = false,
     scrollBehavior = "smooth",
     scrollOffset,
+    spotlightPadding = 6,
     ...rootProps
   } = props;
 
@@ -355,6 +358,7 @@ function TourRoot(props: TourRootProps) {
     scrollToElement,
     scrollBehavior,
     scrollOffset,
+    spotlightPadding,
   });
 
   const store: Store = React.useMemo(
@@ -486,6 +490,9 @@ interface TourRootImplProps
     | "onValueChange"
     | "onComplete"
     | "onSkip"
+    | "scrollToElement"
+    | "scrollBehavior"
+    | "scrollOffset"
   > {}
 
 function TourRootImpl(props: TourRootImplProps) {
@@ -495,6 +502,7 @@ function TourRootImpl(props: TourRootImplProps) {
     stepFooter,
     dismissible = true,
     modal = true,
+    spotlightPadding = 8,
     asChild,
     ...rootImplProps
   } = props;
@@ -504,8 +512,7 @@ function TourRootImpl(props: TourRootImplProps) {
 
   const [portal, setPortal] = React.useState<HTMLElement | null>(null);
 
-  const onEscapeKeyDownRef = React.useRef(onEscapeKeyDown);
-  onEscapeKeyDownRef.current = onEscapeKeyDown;
+  const onEscapeKeyDownRef = useAsRef(onEscapeKeyDown);
 
   React.useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -520,7 +527,7 @@ function TourRootImpl(props: TourRootImplProps) {
 
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [store]);
+  }, [store, onEscapeKeyDownRef]);
 
   const contextValue = React.useMemo<TourContextValue>(
     () => ({
@@ -528,8 +535,9 @@ function TourRootImpl(props: TourRootImplProps) {
       dismissible,
       modal,
       stepFooter,
+      spotlightPadding,
     }),
-    [dir, dismissible, modal, stepFooter],
+    [dir, dismissible, modal, stepFooter, spotlightPadding],
   );
 
   const portalContextValue = React.useMemo(
@@ -752,18 +760,18 @@ function TourStep(props: TourStepProps) {
 
   React.useEffect(() => {
     if (open && targetElement && isCurrentStep) {
-      updateMask(store, targetElement, 4);
+      updateMask(store, targetElement, context.spotlightPadding);
 
       function onResize() {
         if (targetElement) {
-          updateMask(store, targetElement, 4);
+          updateMask(store, targetElement, context.spotlightPadding);
         }
       }
 
       window.addEventListener("resize", onResize);
       return () => window.removeEventListener("resize", onResize);
     }
-  }, [open, targetElement, isCurrentStep, store]);
+  }, [open, targetElement, isCurrentStep, store, context.spotlightPadding]);
 
   useFocusTrap(stepRef, open && isCurrentStep);
 
@@ -807,11 +815,11 @@ function TourStep(props: TourStepProps) {
   );
 }
 
-interface TourOverlayProps extends DivProps {
+interface TourSpotlightProps extends DivProps {
   forceMount?: boolean;
 }
 
-function TourOverlay(props: TourOverlayProps) {
+function TourSpotlight(props: TourSpotlightProps) {
   const {
     asChild,
     className,
@@ -820,8 +828,8 @@ function TourOverlay(props: TourOverlayProps) {
     ...backdropProps
   } = props;
 
-  const context = useTourContext(OVERLAY_NAME);
-  const store = useStoreContext(OVERLAY_NAME);
+  const context = useTourContext(SPOTLIGHT_NAME);
+  const store = useStoreContext(SPOTLIGHT_NAME);
   const open = useStore((state) => state.open);
   const maskPath = useStore((state) => state.maskPath);
 
@@ -837,12 +845,12 @@ function TourOverlay(props: TourOverlayProps) {
 
   if (!open && !forceMount) return null;
 
-  const OverlayPrimitive = asChild ? Slot : "div";
+  const SpotlightPrimitive = asChild ? Slot : "div";
 
   return (
-    <OverlayPrimitive
+    <SpotlightPrimitive
       data-state={open ? "open" : "closed"}
-      data-slot="tour-overlay"
+      data-slot="tour-spotlight"
       {...backdropProps}
       className={cn(
         "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/80 data-[state=closed]:animate-out data-[state=open]:animate-in",
@@ -1130,8 +1138,6 @@ function TourPrev(props: ButtonProps) {
     [value, store, prevButtonProps.onClick],
   );
 
-  const isDisabled = value === 0;
-
   return (
     <Button
       type="button"
@@ -1140,7 +1146,7 @@ function TourPrev(props: ButtonProps) {
       variant="outline"
       {...prevButtonProps}
       onClick={onClick}
-      disabled={isDisabled}
+      disabled={value === 0}
     >
       {children ?? (
         <>
@@ -1158,6 +1164,8 @@ function TourNext(props: ButtonProps) {
   const value = useStore((state) => state.value);
   const steps = useStore((state) => state.steps);
 
+  const isLastStep = value === steps.length - 1;
+
   const onClick = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       nextButtonProps.onClick?.(event);
@@ -1167,8 +1175,6 @@ function TourNext(props: ButtonProps) {
     },
     [value, store, nextButtonProps.onClick],
   );
-
-  const isLastStep = value === steps.length - 1;
 
   return (
     <Button
@@ -1278,7 +1284,7 @@ function TourArrow(props: TourArrowProps) {
 export {
   TourRoot as Root,
   TourPortal as Portal,
-  TourOverlay as Overlay,
+  TourSpotlight as Spotlight,
   TourStep as Step,
   TourHeader as Header,
   TourTitle as Title,
@@ -1293,7 +1299,7 @@ export {
   //
   TourRoot as Tour,
   TourPortal,
-  TourOverlay,
+  TourSpotlight,
   TourStep,
   TourHeader,
   TourTitle,
