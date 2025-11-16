@@ -854,6 +854,7 @@ function TourSpotlight(props: TourSpotlightProps) {
     style,
     forceMount = false,
     onClick: onClickProp,
+    onPointerDown: onPointerDownProp,
     ...backdropProps
   } = props;
 
@@ -870,6 +871,18 @@ function TourSpotlight(props: TourSpotlightProps) {
       store.setState("open", false);
     },
     [store, onClickProp, dismissible],
+  );
+
+  const onPointerDown = React.useCallback(
+    (event: React.PointerEvent<SpotlightElement>) => {
+      onPointerDownProp?.(event);
+      if (event.defaultPrevented) return;
+
+      if (!dismissible) {
+        event.preventDefault();
+      }
+    },
+    [onPointerDownProp, dismissible],
   );
 
   if (!open && !forceMount) return null;
@@ -889,6 +902,7 @@ function TourSpotlight(props: TourSpotlightProps) {
         clipPath: maskPath,
         ...style,
       }}
+      onPointerDown={onPointerDown}
       onClick={onClick}
     />
   );

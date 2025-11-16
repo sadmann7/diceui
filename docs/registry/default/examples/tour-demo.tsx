@@ -56,6 +56,7 @@ export default function TourDemo() {
       <Tour
         open={open}
         onOpenChange={setOpen}
+        dismissible={false}
         stepFooter={
           <TourFooter>
             <div className="flex w-full items-center justify-between">
