@@ -336,7 +336,6 @@ function TourRoot(props: TourRootProps) {
     scrollToElement = false,
     scrollBehavior = "smooth",
     scrollOffset,
-    spotlightPadding = 6,
     ...rootProps
   } = props;
 
@@ -358,7 +357,6 @@ function TourRoot(props: TourRootProps) {
     scrollToElement,
     scrollBehavior,
     scrollOffset,
-    spotlightPadding,
   });
 
   const store: Store = React.useMemo(
