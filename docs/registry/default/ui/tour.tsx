@@ -849,6 +849,7 @@ function TourStep(props: TourStepProps) {
   const arrowX = middlewareData.arrow?.x;
   const arrowY = middlewareData.arrow?.y;
   const cannotCenterArrow = middlewareData.arrow?.centerOffset !== 0;
+  const isHidden = hideWhenDetached && middlewareData.hide?.referenceHidden;
 
   const onPointerDownCapture = React.useCallback(
     (event: React.PointerEvent<StepElement>) => {
@@ -1045,8 +1046,6 @@ function TourStep(props: TourStepProps) {
   if (!open || !stepData || (!targetElement && !forceMount) || !isCurrentStep) {
     return null;
   }
-
-  const isHidden = hideWhenDetached && middlewareData.hide?.referenceHidden;
 
   const StepPrimitive = asChild ? Slot : "div";
 
