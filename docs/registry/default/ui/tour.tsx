@@ -502,7 +502,7 @@ function TourRootImpl(props: TourRootImplProps) {
     stepFooter,
     dismissible = true,
     modal = true,
-    spotlightPadding = 8,
+    spotlightPadding = 6,
     asChild,
     ...rootImplProps
   } = props;
