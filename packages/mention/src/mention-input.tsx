@@ -219,7 +219,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           textAfterCursor.length > 0 &&
           !isTextAfterCursorSeparated &&
           !isTextAfterCursorPartOfMention;
-        
+
         if (hasInterferingText) {
           if (context.open) {
             context.onOpenChange(false);
