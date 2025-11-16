@@ -11,6 +11,7 @@ env:
 permissions:
   contents: write
   pull-requests: write
+  id-token: write
 
 jobs:
   release:
@@ -24,6 +25,15 @@ jobs:
       - name: Build
         run: pnpm build
 
+      - name: Setup Node.js and npm for Trusted Publishing
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Update npm to latest (required for Trusted Publishing)
+        run: npm install -g npm@latest
+
       - name: Create Release
         id: changesets
         uses: changesets/action@v1.4.1
@@ -33,5 +43,7 @@ jobs:
           publish: pnpm changeset publish
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+          # NPM_TOKEN can be removed after Trusted Publishing is configured in npm
+          # For now, keeping it as fallback during migration
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
          
