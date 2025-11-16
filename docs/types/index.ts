@@ -5,7 +5,7 @@ export type ControlledProps<T extends React.ElementType> = Omit<
 
 export type EmptyProps<
   T extends React.ElementType,
-  K extends PropertyKey = keyof React.ComponentProps<T>
+  K extends PropertyKey = keyof React.ComponentProps<T>,
 > = Omit<React.ComponentProps<T>, K>;
 
 export interface CompositionProps {

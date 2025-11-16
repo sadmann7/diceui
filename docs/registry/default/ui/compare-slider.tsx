@@ -12,6 +12,9 @@ import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 
 const ROOT_NAME = "CompareSlider";
+const BEFORE_NAME = "CompareSliderBefore";
+const AFTER_NAME = "CompareSliderAfter";
+const LABEL_NAME = "CompareSliderLabel";
 const HANDLE_NAME = "CompareSliderHandle";
 
 const PAGE_KEYS = ["PageUp", "PageDown"];
@@ -336,7 +339,9 @@ function CompareSliderBefore(props: CompareSliderBeforeProps) {
     props;
 
   const value = useStore((state) => state.value);
-  const { orientation } = useCompareSliderContext("CompareSliderBefore");
+  const { orientation } = useCompareSliderContext(BEFORE_NAME);
+
+  const labelId = React.useId();
 
   const isVertical = orientation === "vertical";
   const clipPath = isVertical
@@ -348,7 +353,8 @@ function CompareSliderBefore(props: CompareSliderBeforeProps) {
   return (
     <BeforePrimitive
       role="img"
-      aria-hidden="true"
+      aria-labelledby={label ? labelId : undefined}
+      aria-hidden={label ? undefined : "true"}
       data-slot="compare-slider-before"
       data-orientation={orientation}
       {...beforeProps}
@@ -360,7 +366,11 @@ function CompareSliderBefore(props: CompareSliderBeforeProps) {
       }}
     >
       {children}
-      {label && <CompareSliderLabel side="before">{label}</CompareSliderLabel>}
+      {label && (
+        <CompareSliderLabel id={labelId} side="before">
+          {label}
+        </CompareSliderLabel>
+      )}
     </BeforePrimitive>
   );
 }
@@ -374,7 +384,9 @@ function CompareSliderAfter(props: CompareSliderAfterProps) {
     props;
 
   const value = useStore((state) => state.value);
-  const { orientation } = useCompareSliderContext("CompareSliderAfter");
+  const { orientation } = useCompareSliderContext(AFTER_NAME);
+
+  const labelId = React.useId();
 
   const isVertical = orientation === "vertical";
   const clipPath = isVertical
@@ -386,7 +398,8 @@ function CompareSliderAfter(props: CompareSliderAfterProps) {
   return (
     <AfterPrimitive
       role="img"
-      aria-hidden="true"
+      aria-labelledby={label ? labelId : undefined}
+      aria-hidden={label ? undefined : "true"}
       data-slot="compare-slider-after"
       data-orientation={orientation}
       {...afterProps}
@@ -398,7 +411,11 @@ function CompareSliderAfter(props: CompareSliderAfterProps) {
       }}
     >
       {children}
-      {label && <CompareSliderLabel side="after">{label}</CompareSliderLabel>}
+      {label && (
+        <CompareSliderLabel id={labelId} side="after">
+          {label}
+        </CompareSliderLabel>
+      )}
     </AfterPrimitive>
   );
 }
@@ -472,7 +489,7 @@ interface CompareSliderLabelProps extends DivProps {
 function CompareSliderLabel(props: CompareSliderLabelProps) {
   const { className, children, side, asChild, ref, ...labelProps } = props;
 
-  const { orientation } = useCompareSliderContext("CompareSliderLabel");
+  const { orientation } = useCompareSliderContext(LABEL_NAME);
   const isVertical = orientation === "vertical";
 
   const LabelPrimitive = asChild ? Slot : "div";
