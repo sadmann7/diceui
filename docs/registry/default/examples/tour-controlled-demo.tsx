@@ -13,6 +13,7 @@ import {
   TourPrev,
   TourSkip,
   TourSpotlight,
+  TourSpotlightRing,
   TourStep,
   TourStepCounter,
   TourTitle,
@@ -108,6 +109,7 @@ export default function TourControlledDemo() {
         onSkip={onSkip}
       >
         <TourSpotlight />
+        <TourSpotlightRing />
         <TourStep target="#controlled-title" side="bottom" align="center">
           <TourArrow />
           <TourHeader>

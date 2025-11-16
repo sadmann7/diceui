@@ -165,14 +165,41 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The padding around the highlighted element in the spotlight effect.
    *
-   * @default 6
+   * @default 4
    */
   spotlightPadding?: number;
+
+  /**
+   * The default distance in pixels from the target element for all steps.
+   * Can be overridden per step using the step's sideOffset prop.
+   *
+   * @default 8
+   */
+  sideOffset?: number;
+
+  /**
+   * The default offset in pixels along the alignment axis for all steps.
+   * Can be overridden per step using the step's alignOffset prop.
+   *
+   * @default 0
+   */
+  alignOffset?: number;
 }
 
 export interface SpotlightProps extends EmptyProps<"div">, CompositionProps {
   /**
    * Whether to force mount the spotlight even when closed.
+   *
+   * @default false
+   */
+  forceMount?: boolean;
+}
+
+export interface SpotlightRingProps
+  extends EmptyProps<"div">,
+    CompositionProps {
+  /**
+   * Whether to force mount the spotlight ring even when closed.
    *
    * @default false
    */
@@ -343,3 +370,19 @@ export interface NextProps
 export interface SkipProps
   extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
     CompositionProps {}
+
+export interface ArrowProps extends EmptyProps<"svg">, CompositionProps {
+  /**
+   * The width of the arrow.
+   *
+   * @default 10
+   */
+  width?: number;
+
+  /**
+   * The height of the arrow.
+   *
+   * @default 10
+   */
+  height?: number;
+}

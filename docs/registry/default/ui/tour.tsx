@@ -3,11 +3,11 @@
 import {
   autoUpdate,
   flip,
-  arrow as floatingUIarrow,
   hide,
   limitShift,
   type Middleware,
   offset,
+  arrow as onArrow,
   type Placement,
   shift,
   useFloating,
@@ -37,14 +37,25 @@ const ARROW_NAME = "TourArrow";
 const SIDE_OPTIONS = ["top", "right", "bottom", "left"] as const;
 const ALIGN_OPTIONS = ["start", "center", "end"] as const;
 
+const DEFAULT_ALIGN_OFFSET = 0;
+const DEFAULT_SIDE_OFFSET = 12;
+const DEFAULT_SPOTLIGHT_PADDING = 4;
+
 type Side = (typeof SIDE_OPTIONS)[number];
 type Align = (typeof ALIGN_OPTIONS)[number];
 type Direction = "ltr" | "rtl";
 
+type SpotlightElement = React.ComponentRef<typeof TourSpotlight>;
+type CloseElement = React.ComponentRef<typeof TourClose>;
+type PrevElement = React.ComponentRef<typeof TourPrev>;
+type NextElement = React.ComponentRef<typeof TourNext>;
+type SkipElement = React.ComponentRef<typeof TourSkip>;
+type FooterElement = React.ComponentRef<typeof TourFooter>;
+type StepElement = React.ComponentRef<typeof TourStep>;
+
 interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
-interface ButtonProps extends React.ComponentProps<typeof Button> {}
 
 const OPPOSITE_SIDE: Record<Side, Side> = {
   top: "bottom",
@@ -94,10 +105,10 @@ type Boundary = Element | null;
 
 interface StepData {
   target: string | React.RefObject<HTMLElement> | HTMLElement;
-  side?: Side;
-  sideOffset?: number;
   align?: Align;
   alignOffset?: number;
+  side?: Side;
+  sideOffset?: number;
   collisionBoundary?: Boundary | Boundary[];
   collisionPadding?: number | Partial<Record<Side, number>>;
   arrowPadding?: number;
@@ -114,6 +125,7 @@ interface StoreState {
   value: number;
   steps: StepData[];
   maskPath: string;
+  spotlightRect: { x: number; y: number; width: number; height: number } | null;
 }
 
 interface Store {
@@ -203,7 +215,7 @@ function getPlacement(side: Side, align: Align): Placement {
 function updateMask(
   store: Store,
   targetElement: HTMLElement,
-  padding: number = 4,
+  padding: number = DEFAULT_SPOTLIGHT_PADDING,
 ) {
   const clientRect = targetElement.getBoundingClientRect();
   const viewportWidth = window.innerWidth;
@@ -216,6 +228,7 @@ function updateMask(
 
   const path = `polygon(0% 0%, 0% 100%, ${x}px 100%, ${x}px ${y}px, ${x + width}px ${y}px, ${x + width}px ${y + height}px, ${x}px ${y + height}px, ${x}px 100%, 100% 100%, 100% 0%)`;
   store.setState("maskPath", path);
+  store.setState("spotlightRect", { x, y, width, height });
 }
 
 const StoreContext = React.createContext<Store | null>(null);
@@ -230,10 +243,12 @@ function useStoreContext(consumerName: string) {
 
 interface TourContextValue {
   dir: Direction;
+  alignOffset: number;
+  sideOffset: number;
+  spotlightPadding: number;
   dismissible: boolean;
   modal: boolean;
   stepFooter?: React.ReactElement;
-  spotlightPadding: number;
 }
 
 const TourContext = React.createContext<TourContextValue | null>(null);
@@ -249,11 +264,11 @@ function useTourContext(consumerName: string) {
 interface StepContextValue {
   arrowX?: number;
   arrowY?: number;
-  placedSide: Side;
   placedAlign: Align;
+  placedSide: Side;
   shouldHideArrow: boolean;
-  onArrowChange: (arrow: HTMLElement | null) => void;
-  onFooterChange: (footer: HTMLElement | null) => void;
+  onArrowChange: (arrow: HTMLSpanElement | null) => void;
+  onFooterChange: (footer: FooterElement | null) => void;
 }
 
 const StepContext = React.createContext<StepContextValue | null>(null);
@@ -314,13 +329,15 @@ interface TourRootProps extends DivProps {
   onSkip?: () => void;
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
   dir?: Direction;
-  stepFooter?: React.ReactElement;
+  alignOffset?: number;
+  sideOffset?: number;
   spotlightPadding?: number;
   scrollToElement?: boolean;
   scrollBehavior?: ScrollBehavior;
   scrollOffset?: ScrollOffset;
   dismissible?: boolean;
   modal?: boolean;
+  stepFooter?: React.ReactElement;
 }
 
 function TourRoot(props: TourRootProps) {
@@ -344,6 +361,7 @@ function TourRoot(props: TourRootProps) {
     value: valueProp ?? defaultValue,
     steps: [],
     maskPath: "",
+    spotlightRect: null,
   }));
   const listenersRef = useLazyRef<Set<() => void>>(() => new Set());
   const stepIdsMapRef = useLazyRef<Map<string, number>>(() => new Map());
@@ -497,10 +515,12 @@ function TourRootImpl(props: TourRootImplProps) {
   const {
     onEscapeKeyDown,
     dir: dirProp,
-    stepFooter,
+    alignOffset = DEFAULT_ALIGN_OFFSET,
+    sideOffset = DEFAULT_SIDE_OFFSET,
+    spotlightPadding = DEFAULT_SPOTLIGHT_PADDING,
     dismissible = true,
     modal = true,
-    spotlightPadding = 6,
+    stepFooter,
     asChild,
     ...rootImplProps
   } = props;
@@ -530,15 +550,25 @@ function TourRootImpl(props: TourRootImplProps) {
   const contextValue = React.useMemo<TourContextValue>(
     () => ({
       dir,
+      alignOffset,
+      sideOffset,
+      spotlightPadding,
       dismissible,
       modal,
       stepFooter,
-      spotlightPadding,
     }),
-    [dir, dismissible, modal, stepFooter, spotlightPadding],
+    [
+      dir,
+      alignOffset,
+      sideOffset,
+      spotlightPadding,
+      dismissible,
+      modal,
+      stepFooter,
+    ],
   );
 
-  const portalContextValue = React.useMemo(
+  const portalContextValue = React.useMemo<PortalContextValue>(
     () => ({
       portal,
       onPortalChange: setPortal,
@@ -583,9 +613,9 @@ function TourStep(props: TourStepProps) {
   const {
     target,
     side = "bottom",
-    sideOffset = 8,
+    sideOffset,
     align = "center",
-    alignOffset = 0,
+    alignOffset,
     collisionBoundary = [],
     collisionPadding = 0,
     arrowPadding = 0,
@@ -603,9 +633,9 @@ function TourStep(props: TourStepProps) {
     ...stepProps
   } = props;
 
-  const [arrow, setArrow] = React.useState<HTMLElement | null>(null);
-  const [footer, setFooter] = React.useState<HTMLElement | null>(null);
-  const stepRef = React.useRef<HTMLDivElement | null>(null);
+  const [arrow, setArrow] = React.useState<HTMLSpanElement | null>(null);
+  const [footer, setFooter] = React.useState<FooterElement | null>(null);
+  const stepRef = React.useRef<StepElement | null>(null);
 
   const store = useStoreContext(STEP_NAME);
   const stepIdRef = React.useRef<string>("");
@@ -616,13 +646,16 @@ function TourStep(props: TourStepProps) {
   const steps = useStore((state) => state.steps);
   const context = useTourContext(STEP_NAME);
 
+  const resolvedSideOffset = sideOffset ?? context.sideOffset;
+  const resolvedAlignOffset = alignOffset ?? context.alignOffset;
+
   useIsomorphicLayoutEffect(() => {
-    const stepData: StepData = {
+    const { id, index } = store.addStep({
       target,
-      side,
-      sideOffset,
       align,
-      alignOffset,
+      alignOffset: resolvedAlignOffset,
+      side,
+      sideOffset: resolvedSideOffset,
       collisionBoundary,
       collisionPadding,
       arrowPadding,
@@ -632,9 +665,7 @@ function TourStep(props: TourStepProps) {
       onStepEnter,
       onStepLeave,
       required,
-    };
-
-    const { id, index } = store.addStep(stepData);
+    });
     stepIdRef.current = id;
     stepOrderRef.current = index;
 
@@ -644,9 +675,9 @@ function TourStep(props: TourStepProps) {
   }, [
     target,
     side,
-    sideOffset,
+    resolvedSideOffset,
     align,
-    alignOffset,
+    resolvedAlignOffset,
     collisionPadding,
     arrowPadding,
     sticky,
@@ -655,6 +686,7 @@ function TourStep(props: TourStepProps) {
     required,
     onStepEnter,
     onStepLeave,
+    store,
   ]);
 
   const stepData = steps[value];
@@ -665,8 +697,8 @@ function TourStep(props: TourStepProps) {
   const middleware = React.useMemo(() => {
     if (!stepData) return [];
 
-    const mainAxisOffset = stepData.sideOffset ?? sideOffset;
-    const crossAxisOffset = stepData.alignOffset ?? alignOffset;
+    const mainAxisOffset = stepData.sideOffset ?? resolvedSideOffset;
+    const crossAxisOffset = stepData.alignOffset ?? resolvedAlignOffset;
 
     const padding =
       typeof stepData.collisionPadding === "number"
@@ -704,15 +736,14 @@ function TourStep(props: TourStepProps) {
           ...detectOverflowOptions,
         }),
       stepData.avoidCollisions && flip({ ...detectOverflowOptions }),
-      arrow &&
-        floatingUIarrow({ element: arrow, padding: stepData.arrowPadding }),
+      arrow && onArrow({ element: arrow, padding: stepData.arrowPadding }),
       stepData.hideWhenDetached &&
         hide({
           strategy: "referenceHidden",
           ...detectOverflowOptions,
         }),
     ].filter(Boolean) as Middleware[];
-  }, [stepData, sideOffset, alignOffset, arrow]);
+  }, [stepData, resolvedSideOffset, resolvedAlignOffset, arrow]);
 
   const placement = getPlacement(
     stepData?.side ?? side,
@@ -747,8 +778,8 @@ function TourStep(props: TourStepProps) {
     () => ({
       arrowX,
       arrowY,
-      placedSide,
       placedAlign,
+      placedSide,
       shouldHideArrow: cannotCenterArrow,
       onArrowChange: setArrow,
       onFooterChange: setFooter,
@@ -832,7 +863,7 @@ function TourSpotlight(props: TourSpotlightProps) {
   const maskPath = useStore((state) => state.maskPath);
 
   const onClick = React.useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
+    (event: React.MouseEvent<SpotlightElement>) => {
       backdropProps.onClick?.(event);
       if (event.defaultPrevented || !context.dismissible) return;
 
@@ -855,10 +886,45 @@ function TourSpotlight(props: TourSpotlightProps) {
         className,
       )}
       style={{
-        ...style,
         clipPath: maskPath,
+        ...style,
       }}
       onClick={onClick}
+    />
+  );
+}
+
+interface TourSpotlightRingProps extends DivProps {
+  forceMount?: boolean;
+}
+
+function TourSpotlightRing(props: TourSpotlightRingProps) {
+  const { asChild, className, style, forceMount = false, ...ringProps } = props;
+
+  const open = useStore((state) => state.open);
+  const spotlightRect = useStore((state) => state.spotlightRect);
+
+  if (!open && !forceMount) return null;
+  if (!spotlightRect) return null;
+
+  const RingPrimitive = asChild ? Slot : "div";
+
+  return (
+    <RingPrimitive
+      data-state={open ? "open" : "closed"}
+      data-slot="tour-spotlight-ring"
+      {...ringProps}
+      className={cn(
+        "pointer-events-none fixed z-50 border-ring ring-[3px] ring-ring/50 transition-all duration-200",
+        className,
+      )}
+      style={{
+        left: spotlightRect.x,
+        top: spotlightRect.y,
+        width: spotlightRect.width,
+        height: spotlightRect.height,
+        ...style,
+      }}
     />
   );
 }
@@ -908,35 +974,35 @@ function useFocusTrap(
         'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
       return Array.from(
         container.querySelectorAll<HTMLElement>(selector),
-      ).filter((el) => {
+      ).filter((element) => {
         return (
-          el.offsetParent !== null &&
-          !el.hasAttribute("disabled") &&
-          el.getAttribute("aria-hidden") !== "true"
+          element.offsetParent !== null &&
+          !element.hasAttribute("disabled") &&
+          element.getAttribute("aria-hidden") !== "true"
         );
       });
     }
 
-    function onTabKeyDown(e: KeyboardEvent) {
-      if (e.key !== "Tab") return;
+    function onTabKeyDown(event: KeyboardEvent) {
+      if (event.key !== "Tab") return;
 
       const focusableElements = getFocusableElements();
       if (focusableElements.length === 0) {
-        e.preventDefault();
+        event.preventDefault();
         return;
       }
 
       const firstElement = focusableElements[0];
       const lastElement = focusableElements[focusableElements.length - 1];
 
-      if (e.shiftKey) {
+      if (event.shiftKey) {
         if (document.activeElement === firstElement) {
-          e.preventDefault();
+          event.preventDefault();
           lastElement?.focus();
         }
       } else {
         if (document.activeElement === lastElement) {
-          e.preventDefault();
+          event.preventDefault();
           firstElement?.focus();
         }
       }
@@ -983,16 +1049,12 @@ function TourHeader(props: DivProps) {
   );
 }
 
-interface TourTitleProps extends React.ComponentProps<"h2"> {
-  asChild?: boolean;
-}
-
-function TourTitle(props: TourTitleProps) {
+function TourTitle(props: DivProps) {
   const { asChild, className, ...titleProps } = props;
 
   const context = useTourContext(TITLE_NAME);
 
-  const TitlePrimitive = asChild ? Slot : "h2";
+  const TitlePrimitive = asChild ? Slot : "div";
 
   return (
     <TitlePrimitive
@@ -1007,16 +1069,12 @@ function TourTitle(props: TourTitleProps) {
   );
 }
 
-interface TourDescriptionProps extends React.ComponentProps<"p"> {
-  asChild?: boolean;
-}
-
-function TourDescription(props: TourDescriptionProps) {
+function TourDescription(props: DivProps) {
   const { asChild, className, ...descriptionProps } = props;
 
   const context = useTourContext(DESCRIPTION_NAME);
 
-  const DescriptionPrimitive = asChild ? Slot : "p";
+  const DescriptionPrimitive = asChild ? Slot : "div";
 
   return (
     <DescriptionPrimitive
@@ -1056,13 +1114,17 @@ function TourFooter(props: DivProps) {
   );
 }
 
-function TourClose(props: ButtonProps) {
+interface TourCloseProps extends React.ComponentProps<"button"> {
+  asChild?: boolean;
+}
+
+function TourClose(props: TourCloseProps) {
   const { asChild, className, ...closeButtonProps } = props;
 
   const store = useStoreContext(CLOSE_NAME);
 
   const onClick = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
+    (event: React.MouseEvent<CloseElement>) => {
       closeButtonProps.onClick?.(event);
       if (event.defaultPrevented) return;
 
@@ -1078,7 +1140,7 @@ function TourClose(props: ButtonProps) {
       type="button"
       aria-label="Close tour"
       className={cn(
-        "absolute top-4 right-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none",
+        "absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
         className,
       )}
       onClick={onClick}
@@ -1118,14 +1180,14 @@ function TourStepCounter(props: TourStepCounterProps) {
   );
 }
 
-function TourPrev(props: ButtonProps) {
+function TourPrev(props: React.ComponentProps<typeof Button>) {
   const { children, ...prevButtonProps } = props;
 
   const store = useStoreContext(PREV_NAME);
   const value = useStore((state) => state.value);
 
   const onClick = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
+    (event: React.MouseEvent<PrevElement>) => {
       prevButtonProps.onClick?.(event);
       if (event.defaultPrevented) return;
 
@@ -1156,7 +1218,7 @@ function TourPrev(props: ButtonProps) {
   );
 }
 
-function TourNext(props: ButtonProps) {
+function TourNext(props: React.ComponentProps<typeof Button>) {
   const { children, ...nextButtonProps } = props;
   const store = useStoreContext(NEXT_NAME);
   const value = useStore((state) => state.value);
@@ -1165,7 +1227,7 @@ function TourNext(props: ButtonProps) {
   const isLastStep = value === steps.length - 1;
 
   const onClick = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
+    (event: React.MouseEvent<NextElement>) => {
       nextButtonProps.onClick?.(event);
       if (event.defaultPrevented) return;
 
@@ -1192,13 +1254,13 @@ function TourNext(props: ButtonProps) {
   );
 }
 
-function TourSkip(props: ButtonProps) {
+function TourSkip(props: React.ComponentProps<typeof Button>) {
   const { children, ...skipButtonProps } = props;
 
   const store = useStoreContext(SKIP_NAME);
 
   const onClick = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
+    (event: React.MouseEvent<SkipElement>) => {
       skipButtonProps.onClick?.(event);
       if (event.defaultPrevented) return;
 
@@ -1283,6 +1345,7 @@ export {
   TourRoot as Root,
   TourPortal as Portal,
   TourSpotlight as Spotlight,
+  TourSpotlightRing as SpotlightRing,
   TourStep as Step,
   TourHeader as Header,
   TourTitle as Title,
@@ -1298,6 +1361,7 @@ export {
   TourRoot as Tour,
   TourPortal,
   TourSpotlight,
+  TourSpotlightRing,
   TourStep,
   TourHeader,
   TourTitle,

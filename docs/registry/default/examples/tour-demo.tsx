@@ -13,6 +13,7 @@ import {
   TourPortal,
   TourPrev,
   TourSpotlight,
+  TourSpotlightRing,
   TourStep,
   TourStepCounter,
   TourTitle,
@@ -69,6 +70,7 @@ export default function TourDemo() {
       >
         <TourPortal>
           <TourSpotlight />
+          <TourSpotlightRing />
           <TourStep target="#welcome-title" side="bottom" align="center">
             <TourHeader>
               <TourTitle>Welcome</TourTitle>

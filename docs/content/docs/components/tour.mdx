@@ -44,7 +44,8 @@ import * as Tour from "@/components/ui/tour";
 <Tour.Root>
   <Tour.Portal>
     <Tour.Spotlight />
-    <Tour.Step target="#element">
+    <Tour.SpotlightRing />
+    <Tour.Step>
       <Tour.Arrow />
       <Tour.Close />
       <Tour.Header>
@@ -70,6 +71,59 @@ A tour with controlled state management, allowing external control of the curren
 
 <ComponentTabs name="tour-controlled-demo" scalePreview />
 
+### Custom Spotlight Styling
+
+You can customize the appearance of the spotlighted element using the `SpotlightRing` component:
+
+```tsx
+<Tour.Root open={open} onOpenChange={setOpen}>
+  <Tour.Portal>
+    <Tour.Spotlight />
+    {/* Border style */}
+    <Tour.SpotlightRing className="rounded-lg border-2 border-primary" />
+    {/* Ring with offset */}
+    <Tour.SpotlightRing className="rounded-xl ring-2 ring-blue-500 ring-offset-2" />
+    {/* Glowing effect */}
+    <Tour.SpotlightRing className="rounded-lg shadow-lg shadow-primary/50" />
+    {/* Animated pulse */}
+    <Tour.SpotlightRing className="rounded-lg border-2 border-primary animate-pulse" />
+    <Tour.Step target="#element">{/* ... */}</Tour.Step>
+  </Tour.Portal>
+</Tour.Root>
+```
+
+### Global Offset Control
+
+Set default spacing for all steps and override per step:
+
+```tsx
+<Tour.Root
+  open={open}
+  onOpenChange={setOpen}
+  sideOffset={16}      // Global default: 16px gap
+  alignOffset={0}      // Global alignment offset
+>
+  <Tour.Portal>
+    <Tour.Spotlight />
+    <Tour.SpotlightRing />
+    
+    {/* Uses global sideOffset={16} */}
+    <Tour.Step target="#step-1" side="bottom">
+      <Tour.Header>
+        <Tour.Title>Step 1</Tour.Title>
+      </Tour.Header>
+    </Tour.Step>
+    
+    {/* Overrides with custom sideOffset={32} */}
+    <Tour.Step target="#step-2" side="top" sideOffset={32}>
+      <Tour.Header>
+        <Tour.Title>Step 2 - Larger Gap</Tour.Title>
+      </Tour.Header>
+    </Tour.Step>
+  </Tour.Portal>
+</Tour.Root>
+```
+
 ## API Reference
 
 ### Root
@@ -89,6 +143,24 @@ The spotlight backdrop that dims the page and highlights the target element with
 <AutoTypeTable
   path="./types/docs/tour.ts"
   name="SpotlightProps"
+/>
+
+<DataAttributesTable
+  attributes={[
+    {
+      title: "[data-state]",
+      value: ["open", "closed"],
+    },
+  ]}
+/>
+
+### SpotlightRing
+
+A visual ring/border element that wraps around the spotlighted target element. Use this to add custom styling like borders, shadows, or animations to the highlighted area.
+
+<AutoTypeTable
+  path="./types/docs/tour.ts"
+  name="SpotlightRingProps"
 />
 
 <DataAttributesTable
@@ -207,16 +279,10 @@ Button to skip the entire tour.
 
 An optional arrow element that points to the target element.
 
-```tsx
-<Tour.Step target="#element">
-  <Tour.Arrow />
-  {/* With custom size */}
-  <Tour.Arrow width={15} height={8} />
-  {/* ... */}
-</Tour.Step>
-```
-
-The arrow automatically positions itself based on the step's placement. It uses an SVG polygon for perfect alignment and can be customized with `width`, `height`, and `className` props.
+<AutoTypeTable
+  path="./types/docs/tour.ts"
+  name="ArrowProps"
+/>
 
 ## Accessibility
 
