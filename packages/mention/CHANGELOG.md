@@ -1,5 +1,11 @@
 # @diceui/mention
 
+## 0.8.0
+
+### Minor Changes
+
+- abe3df2: Allow mention trigger in middle of text
+
 ## 0.7.3
 
 ### Patch Changes
