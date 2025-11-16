@@ -896,7 +896,7 @@ function TourStep(props: TourStepProps) {
   }, [open, targetElement, isCurrentStep, store, context.spotlightPadding]);
 
   React.useEffect(() => {
-    if (!open || !isCurrentStep) return;
+    if (!open || !isCurrentStep || !context.dismissible) return;
 
     const stepElement = stepRef.current;
     if (!stepElement) return;
@@ -946,7 +946,7 @@ function TourStep(props: TourStepProps) {
   }, [open, isCurrentStep, store, context]);
 
   React.useEffect(() => {
-    if (!open || !isCurrentStep) return;
+    if (!open || !isCurrentStep || !context.dismissible) return;
 
     const stepElement = stepRef.current;
     if (!stepElement) return;
@@ -990,7 +990,8 @@ function TourStep(props: TourStepProps) {
   }, [open, isCurrentStep, targetElement, store, context]);
 
   React.useEffect(() => {
-    if (!open || !isCurrentStep || !targetElement) return;
+    if (!open || !isCurrentStep || !targetElement || !context.dismissible)
+      return;
 
     function onPointerDownCapture() {
       isPointerInsideTargetRef.current = true;
@@ -1017,7 +1018,7 @@ function TourStep(props: TourStepProps) {
       targetElement.removeEventListener("focus", onFocusCapture, true);
       targetElement.removeEventListener("blur", onBlurCapture, true);
     };
-  }, [open, isCurrentStep, targetElement]);
+  }, [open, isCurrentStep, targetElement, context]);
 
   useFocusGuards();
   useFocusTrap(
