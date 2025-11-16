@@ -43,7 +43,5 @@ jobs:
           publish: pnpm changeset publish
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-          # NPM_TOKEN can be removed after Trusted Publishing is configured in npm
-          # For now, keeping it as fallback during migration
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-         
+          # Trusted Publishing (OIDC) is configured - no NPM_TOKEN needed
+       
