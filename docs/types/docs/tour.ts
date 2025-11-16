@@ -1,6 +1,12 @@
 import type * as React from "react";
 import type { Button } from "@/components/ui/button";
-import type { CompositionProps, Direction, EmptyProps } from "@/types";
+import type {
+  Align,
+  CompositionProps,
+  Direction,
+  EmptyProps,
+  Side,
+} from "@/types";
 
 interface ButtonProps extends React.ComponentProps<typeof Button> {}
 
@@ -82,13 +88,6 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   onSkip?: () => void;
 
   /**
-   * The text direction of the tour component.
-   *
-   * @default "ltr"
-   */
-  dir?: Direction;
-
-  /**
    * Event handler called when the Escape key is pressed.
    * You can prevent the default behavior by calling event.preventDefault().
    *
@@ -100,6 +99,36 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * ```
    */
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
+
+  /**
+   * The text direction of the tour component.
+   *
+   * @default "ltr"
+   */
+  dir?: Direction;
+
+  /**
+   * The default offset in pixels along the alignment axis for all steps.
+   * Can be overridden per step using the step's alignOffset prop.
+   *
+   * @default 0
+   */
+  alignOffset?: number;
+
+  /**
+   * The default distance in pixels from the target element for all steps.
+   * Can be overridden per step using the step's sideOffset prop.
+   *
+   * @default 8
+   */
+  sideOffset?: number;
+
+  /**
+   * The padding around the highlighted element in the spotlight effect.
+   *
+   * @default 4
+   */
+  spotlightPadding?: number;
 
   /**
    * Whether to scroll to the highlighted element.
@@ -161,29 +190,6 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * ```
    */
   stepFooter?: React.ReactElement;
-
-  /**
-   * The padding around the highlighted element in the spotlight effect.
-   *
-   * @default 4
-   */
-  spotlightPadding?: number;
-
-  /**
-   * The default distance in pixels from the target element for all steps.
-   * Can be overridden per step using the step's sideOffset prop.
-   *
-   * @default 8
-   */
-  sideOffset?: number;
-
-  /**
-   * The default offset in pixels along the alignment axis for all steps.
-   * Can be overridden per step using the step's alignOffset prop.
-   *
-   * @default 0
-   */
-  alignOffset?: number;
 }
 
 export interface SpotlightProps extends EmptyProps<"div">, CompositionProps {
@@ -223,7 +229,7 @@ export interface StepProps extends EmptyProps<"div">, CompositionProps {
    *
    * @default "bottom"
    */
-  side?: "top" | "right" | "bottom" | "left";
+  side?: Side;
 
   /**
    * The distance in pixels from the target element.
@@ -237,7 +243,7 @@ export interface StepProps extends EmptyProps<"div">, CompositionProps {
    *
    * @default "center"
    */
-  align?: "start" | "center" | "end";
+  align?: Align;
 
   /**
    * The offset in pixels along the alignment axis.

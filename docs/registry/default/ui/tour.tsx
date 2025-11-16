@@ -602,11 +602,10 @@ interface TourStepProps extends DivProps {
   sticky?: "partial" | "always";
   hideWhenDetached?: boolean;
   avoidCollisions?: boolean;
-  onStepEnter?: () => void;
-  onStepLeave?: () => void;
-  onArrowChange?: (arrow: HTMLElement | null) => void;
   required?: boolean;
   forceMount?: boolean;
+  onStepEnter?: () => void;
+  onStepLeave?: () => void;
 }
 
 function TourStep(props: TourStepProps) {
