@@ -25,15 +25,6 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Setup Node.js and npm for Trusted Publishing
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
-
-      - name: Update npm to latest (required for Trusted Publishing)
-        run: npm install -g npm@latest
-
       - name: Create Release
         id: changesets
         uses: changesets/action@v1.4.1
