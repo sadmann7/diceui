@@ -21,12 +21,6 @@ export default function StackDemo() {
           Update available for your app
         </p>
       </StackItem>
-      <StackItem className="flex flex-col gap-2">
-        <h3 className="font-semibold">Notification 4</h3>
-        <p className="text-muted-foreground text-sm">
-          Your profile was viewed 5 times
-        </p>
-      </StackItem>
     </Stack>
   );
 }

@@ -1,11 +1,7 @@
-import type * as React from "react";
 import type { CompositionProps, EmptyProps, Orientation } from "@/types";
 
 export interface RootProps
-  extends Omit<
-      React.ComponentProps<"div">,
-      "defaultValue" | "value" | "onValueChange"
-    >,
+  extends EmptyProps<"div", "defaultValue" | "value" | "onValueChange">,
     CompositionProps {
   /**
    * The position of the slider as a percentage (0-100).
@@ -45,9 +41,7 @@ export interface RootProps
   step?: number;
 }
 
-export interface BeforeProps
-  extends React.ComponentProps<"div">,
-    CompositionProps {
+export interface BeforeProps extends EmptyProps<"div">, CompositionProps {
   /**
    * Label for the "before" side.
    *
@@ -58,9 +52,7 @@ export interface BeforeProps
   label?: string;
 }
 
-export interface AfterProps
-  extends React.ComponentProps<"div">,
-    CompositionProps {
+export interface AfterProps extends EmptyProps<"div">, CompositionProps {
   /**
    * Label for the "after" side.
    *
@@ -71,13 +63,9 @@ export interface AfterProps
   label?: string;
 }
 
-export interface HandleProps
-  extends React.ComponentProps<"div">,
-    CompositionProps {}
+export interface HandleProps extends EmptyProps<"div">, CompositionProps {}
 
-export interface LabelProps
-  extends React.ComponentProps<"div">,
-    CompositionProps {
+export interface LabelProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The side this label is for.
    *
