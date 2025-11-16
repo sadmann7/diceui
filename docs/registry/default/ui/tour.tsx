@@ -700,17 +700,22 @@ function TourStep(props: TourStepProps) {
     children,
     className,
     style,
+    ref,
     asChild,
     ...stepProps
   } = props;
 
+  const store = useStoreContext(STEP_NAME);
+
   const [arrow, setArrow] = React.useState<HTMLSpanElement | null>(null);
   const [footer, setFooter] = React.useState<FooterElement | null>(null);
   const stepRef = React.useRef<StepElement | null>(null);
-
-  const store = useStoreContext(STEP_NAME);
   const stepIdRef = React.useRef<string>("");
   const stepOrderRef = React.useRef<number>(-1);
+  const isPointerInsideStepRef = React.useRef(false);
+  const isPointerInsideTargetRef = React.useRef(false);
+  const isFocusInsideStepRef = React.useRef(false);
+  const isFocusInsideTargetRef = React.useRef(false);
 
   const open = useStore((state) => state.open);
   const value = useStore((state) => state.value);
@@ -836,7 +841,7 @@ function TourStep(props: TourStepProps) {
     },
   });
 
-  const composedRef = useComposedRefs(refs.setFloating, stepRef);
+  const composedRef = useComposedRefs(ref, stepRef, refs.setFloating);
 
   const [placedSide, placedAlign] =
     getSideAndAlignFromPlacement(finalPlacement);
@@ -845,153 +850,6 @@ function TourStep(props: TourStepProps) {
   const arrowY = middlewareData.arrow?.y;
   const cannotCenterArrow = middlewareData.arrow?.centerOffset !== 0;
 
-  const stepContextValue = React.useMemo<StepContextValue>(
-    () => ({
-      arrowX,
-      arrowY,
-      placedAlign,
-      placedSide,
-      shouldHideArrow: cannotCenterArrow,
-      onArrowChange: setArrow,
-      onFooterChange: setFooter,
-    }),
-    [arrowX, arrowY, placedSide, placedAlign, cannotCenterArrow],
-  );
-
-  React.useEffect(() => {
-    if (open && targetElement && isCurrentStep) {
-      updateMask(store, targetElement, context.spotlightPadding);
-
-      function onResize() {
-        if (targetElement) {
-          updateMask(store, targetElement, context.spotlightPadding);
-        }
-      }
-
-      window.addEventListener("resize", onResize);
-      return () => window.removeEventListener("resize", onResize);
-    }
-  }, [open, targetElement, isCurrentStep, store, context.spotlightPadding]);
-
-  // Track if pointer/focus is inside step or target using Radix pattern
-  const isPointerInsideStepRef = React.useRef(false);
-  const isPointerInsideTargetRef = React.useRef(false);
-  const isFocusInsideStepRef = React.useRef(false);
-  const isFocusInsideTargetRef = React.useRef(false);
-
-  // Reset refs when step changes or when opening
-  React.useEffect(() => {
-    if (open && isCurrentStep) {
-      isPointerInsideStepRef.current = false;
-      isPointerInsideTargetRef.current = false;
-      isFocusInsideStepRef.current = false;
-      isFocusInsideTargetRef.current = false;
-    }
-  }, [open, isCurrentStep]);
-
-  // Handle pointer down outside (Radix pattern)
-  React.useEffect(() => {
-    if (!open || !isCurrentStep) return;
-
-    const stepElement = stepRef.current;
-    if (!stepElement) return;
-
-    const ownerDocument = stepElement.ownerDocument;
-
-    function onPointerDown(event: PointerEvent) {
-      if (
-        event.target &&
-        !isPointerInsideStepRef.current &&
-        !isPointerInsideTargetRef.current
-      ) {
-        const pointerDownOutsideEvent = new CustomEvent(POINTER_DOWN_OUTSIDE, {
-          ...EVENT_OPTIONS,
-          detail: { originalEvent: event },
-        });
-
-        // Call user callback
-        context.onPointerDownOutside?.(pointerDownOutsideEvent);
-
-        // Also dispatch interact outside
-        const interactOutsideEvent = new CustomEvent(INTERACT_OUTSIDE, {
-          ...EVENT_OPTIONS,
-          detail: { originalEvent: event },
-        });
-        context.onInteractOutside?.(interactOutsideEvent);
-
-        // Dismiss if not prevented
-        if (
-          !pointerDownOutsideEvent.defaultPrevented &&
-          !interactOutsideEvent.defaultPrevented &&
-          context.dismissible
-        ) {
-          store.setState("open", false);
-        }
-      }
-
-      isPointerInsideStepRef.current = false;
-      isPointerInsideTargetRef.current = false;
-    }
-
-    const timerId = window.setTimeout(() => {
-      ownerDocument.addEventListener("pointerdown", onPointerDown);
-    }, 0);
-
-    return () => {
-      window.clearTimeout(timerId);
-      ownerDocument.removeEventListener("pointerdown", onPointerDown);
-    };
-  }, [open, isCurrentStep, store, context]);
-
-  // Handle focus outside (Radix pattern)
-  React.useEffect(() => {
-    if (!open || !isCurrentStep) return;
-
-    const stepElement = stepRef.current;
-    if (!stepElement) return;
-
-    const ownerDocument = stepElement.ownerDocument;
-
-    function onFocusIn(event: FocusEvent) {
-      if (
-        event.target &&
-        !isFocusInsideStepRef.current &&
-        !isFocusInsideTargetRef.current
-      ) {
-        const interactOutsideEvent = new CustomEvent(INTERACT_OUTSIDE, {
-          ...EVENT_OPTIONS,
-          detail: { originalEvent: event },
-        });
-
-        context.onInteractOutside?.(interactOutsideEvent);
-
-        if (!interactOutsideEvent.defaultPrevented && context.dismissible) {
-          // Use a microtask to delay the dismiss check
-          // This prevents dismissing during internal focus changes (like step navigation)
-          // If focus returns to the step quickly (internal nav), we won't dismiss
-          queueMicrotask(() => {
-            const currentFocus = ownerDocument.activeElement as Node | null;
-            const isStillOutside =
-              stepElement &&
-              !stepElement.contains(currentFocus) &&
-              (!targetElement || !targetElement.contains(currentFocus));
-
-            if (isStillOutside) {
-              store.setState("open", false);
-            }
-          });
-        }
-      }
-    }
-
-    ownerDocument.addEventListener("focusin", onFocusIn);
-
-    return () => {
-      ownerDocument.removeEventListener("focusin", onFocusIn);
-    };
-  }, [open, isCurrentStep, targetElement, store, context]);
-
-  // Capture phase handlers for step element
   const onPointerDownCapture = React.useCallback(
     (event: React.PointerEvent<StepElement>) => {
       onPointerDownCaptureProp?.(event);
@@ -1022,7 +880,115 @@ function TourStep(props: TourStepProps) {
     [onBlurCaptureProp],
   );
 
-  // Capture handlers for target element
+  React.useEffect(() => {
+    if (open && targetElement && isCurrentStep) {
+      updateMask(store, targetElement, context.spotlightPadding);
+
+      function onResize() {
+        if (targetElement) {
+          updateMask(store, targetElement, context.spotlightPadding);
+        }
+      }
+
+      window.addEventListener("resize", onResize);
+      return () => window.removeEventListener("resize", onResize);
+    }
+  }, [open, targetElement, isCurrentStep, store, context.spotlightPadding]);
+
+  React.useEffect(() => {
+    if (!open || !isCurrentStep) return;
+
+    const stepElement = stepRef.current;
+    if (!stepElement) return;
+
+    const ownerDocument = stepElement.ownerDocument;
+
+    function onPointerDown(event: PointerEvent) {
+      if (
+        event.target &&
+        !isPointerInsideStepRef.current &&
+        !isPointerInsideTargetRef.current
+      ) {
+        const pointerDownOutsideEvent = new CustomEvent(POINTER_DOWN_OUTSIDE, {
+          ...EVENT_OPTIONS,
+          detail: { originalEvent: event },
+        });
+
+        context.onPointerDownOutside?.(pointerDownOutsideEvent);
+
+        const interactOutsideEvent = new CustomEvent(INTERACT_OUTSIDE, {
+          ...EVENT_OPTIONS,
+          detail: { originalEvent: event },
+        });
+        context.onInteractOutside?.(interactOutsideEvent);
+
+        if (
+          !pointerDownOutsideEvent.defaultPrevented &&
+          !interactOutsideEvent.defaultPrevented &&
+          context.dismissible
+        ) {
+          store.setState("open", false);
+        }
+      }
+
+      isPointerInsideStepRef.current = false;
+      isPointerInsideTargetRef.current = false;
+    }
+
+    const timerId = window.setTimeout(() => {
+      ownerDocument.addEventListener("pointerdown", onPointerDown);
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timerId);
+      ownerDocument.removeEventListener("pointerdown", onPointerDown);
+    };
+  }, [open, isCurrentStep, store, context]);
+
+  React.useEffect(() => {
+    if (!open || !isCurrentStep) return;
+
+    const stepElement = stepRef.current;
+    if (!stepElement) return;
+
+    const ownerDocument = stepElement.ownerDocument;
+
+    function onFocusIn(event: FocusEvent) {
+      if (
+        event.target &&
+        !isFocusInsideStepRef.current &&
+        !isFocusInsideTargetRef.current
+      ) {
+        const interactOutsideEvent = new CustomEvent(INTERACT_OUTSIDE, {
+          ...EVENT_OPTIONS,
+          detail: { originalEvent: event },
+        });
+
+        context.onInteractOutside?.(interactOutsideEvent);
+
+        if (!interactOutsideEvent.defaultPrevented && context.dismissible) {
+          queueMicrotask(() => {
+            const currentFocus = ownerDocument.activeElement as Node | null;
+            const isStillOutside =
+              stepElement &&
+              !stepElement.contains(currentFocus) &&
+              (!targetElement || !targetElement.contains(currentFocus));
+
+            if (isStillOutside) {
+              store.setState("open", false);
+            }
+          });
+        }
+      }
+    }
+
+    ownerDocument.addEventListener("focusin", onFocusIn);
+
+    return () => {
+      ownerDocument.removeEventListener("focusin", onFocusIn);
+    };
+  }, [open, isCurrentStep, targetElement, store, context]);
+
   React.useEffect(() => {
     if (!open || !isCurrentStep || !targetElement) return;
 
@@ -1060,6 +1026,19 @@ function TourStep(props: TourStepProps) {
     context.onOpenAutoFocus,
     context.onCloseAutoFocus,
     open,
+  );
+
+  const stepContextValue = React.useMemo<StepContextValue>(
+    () => ({
+      arrowX,
+      arrowY,
+      placedAlign,
+      placedSide,
+      shouldHideArrow: cannotCenterArrow,
+      onArrowChange: setArrow,
+      onFooterChange: setFooter,
+    }),
+    [arrowX, arrowY, placedSide, placedAlign, cannotCenterArrow],
   );
 
   if (!open || !stepData || (!targetElement && !forceMount) || !isCurrentStep) {
