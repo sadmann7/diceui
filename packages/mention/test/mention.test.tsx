@@ -400,18 +400,17 @@ describe("Mention", () => {
       fireEvent.click(kickflipOption);
     });
 
-    // Add some text after the mention
+    // Add some text after the first mention
     await userEvent.type(input, " and then ");
 
-    // Add another mention in the middle (after existing text and mention)
+    // Add another mention after the text
     await userEvent.type(input, "@heelflip");
     const heelflipOption = screen.getByRole("option", { name: "Heelflip" });
     await waitFor(() => {
       fireEvent.click(heelflipOption);
     });
 
-    // Verify both mentions are present and text is preserved
-    // The second mention should be inserted correctly and existing text after should remain
+    // Verify both mentions are present and the text between them is preserved
     expect(input.value).toBe("@kickflip  and then @heelflip ");
     expect(onValueChange).toHaveBeenLastCalledWith(["kickflip", "heelflip"]);
   });
