@@ -853,22 +853,23 @@ function TourSpotlight(props: TourSpotlightProps) {
     className,
     style,
     forceMount = false,
+    onClick: onClickProp,
     ...backdropProps
   } = props;
 
-  const context = useTourContext(SPOTLIGHT_NAME);
+  const { dismissible } = useTourContext(SPOTLIGHT_NAME);
   const store = useStoreContext(SPOTLIGHT_NAME);
   const open = useStore((state) => state.open);
   const maskPath = useStore((state) => state.maskPath);
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<SpotlightElement>) => {
-      backdropProps.onClick?.(event);
-      if (event.defaultPrevented || !context.dismissible) return;
+      onClickProp?.(event);
+      if (event.defaultPrevented || !dismissible) return;
 
       store.setState("open", false);
     },
-    [store, backdropProps.onClick, context.dismissible],
+    [store, onClickProp, dismissible],
   );
 
   if (!open && !forceMount) return null;
@@ -914,7 +915,7 @@ function TourSpotlightRing(props: TourSpotlightRingProps) {
       data-slot="tour-spotlight-ring"
       {...ringProps}
       className={cn(
-        "pointer-events-none fixed z-50 border-ring ring-[3px] ring-ring/50 transition-all duration-200",
+        "pointer-events-none fixed z-50 border-ring ring-[3px] ring-ring/50 transition-all duration-250",
         className,
       )}
       style={{
@@ -1118,18 +1119,23 @@ interface TourCloseProps extends React.ComponentProps<"button"> {
 }
 
 function TourClose(props: TourCloseProps) {
-  const { asChild, className, ...closeButtonProps } = props;
+  const {
+    asChild,
+    className,
+    onClick: onClickProp,
+    ...closeButtonProps
+  } = props;
 
   const store = useStoreContext(CLOSE_NAME);
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<CloseElement>) => {
-      closeButtonProps.onClick?.(event);
+      onClickProp?.(event);
       if (event.defaultPrevented) return;
 
       store.setState("open", false);
     },
-    [store, closeButtonProps.onClick],
+    [store, onClickProp],
   );
 
   const ClosePrimitive = asChild ? Slot : "button";
@@ -1180,21 +1186,21 @@ function TourStepCounter(props: TourStepCounterProps) {
 }
 
 function TourPrev(props: React.ComponentProps<typeof Button>) {
-  const { children, ...prevButtonProps } = props;
+  const { children, onClick: onClickProp, ...prevButtonProps } = props;
 
   const store = useStoreContext(PREV_NAME);
   const value = useStore((state) => state.value);
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<PrevElement>) => {
-      prevButtonProps.onClick?.(event);
+      onClickProp?.(event);
       if (event.defaultPrevented) return;
 
       if (value > 0) {
         store.setState("value", value - 1);
       }
     },
-    [value, store, prevButtonProps.onClick],
+    [value, store, onClickProp],
   );
 
   return (
@@ -1218,7 +1224,7 @@ function TourPrev(props: React.ComponentProps<typeof Button>) {
 }
 
 function TourNext(props: React.ComponentProps<typeof Button>) {
-  const { children, ...nextButtonProps } = props;
+  const { children, onClick: onClickProp, ...nextButtonProps } = props;
   const store = useStoreContext(NEXT_NAME);
   const value = useStore((state) => state.value);
   const steps = useStore((state) => state.steps);
@@ -1227,12 +1233,12 @@ function TourNext(props: React.ComponentProps<typeof Button>) {
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<NextElement>) => {
-      nextButtonProps.onClick?.(event);
+      onClickProp?.(event);
       if (event.defaultPrevented) return;
 
       store.setState("value", value + 1);
     },
-    [value, store, nextButtonProps.onClick],
+    [value, store, onClickProp],
   );
 
   return (
@@ -1254,18 +1260,18 @@ function TourNext(props: React.ComponentProps<typeof Button>) {
 }
 
 function TourSkip(props: React.ComponentProps<typeof Button>) {
-  const { children, ...skipButtonProps } = props;
+  const { children, onClick: onClickProp, ...skipButtonProps } = props;
 
   const store = useStoreContext(SKIP_NAME);
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<SkipElement>) => {
-      skipButtonProps.onClick?.(event);
+      onClickProp?.(event);
       if (event.defaultPrevented) return;
 
       store.setState("open", false);
     },
-    [store, skipButtonProps.onClick],
+    [store, onClickProp],
   );
 
   return (
