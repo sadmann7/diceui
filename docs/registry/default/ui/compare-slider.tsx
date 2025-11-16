@@ -62,7 +62,6 @@ interface Store {
   subscribe: (callback: () => void) => () => void;
   getState: () => StoreState;
   setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
-  updateValue: (value: number) => void;
   notify: () => void;
 }
 
@@ -139,13 +138,6 @@ function CompareSliderRoot(props: CompareSliderRootProps) {
 
         store.notify();
       },
-      updateValue: (newValue: number) => {
-        const clampedValue = clamp(newValue, 0, 100);
-        if (Object.is(stateRef.current.value, clampedValue)) return;
-        stateRef.current.value = clampedValue;
-        onValueChangeRef.current?.(clampedValue);
-        store.notify();
-      },
       notify: () => {
         for (const cb of listenersRef.current) {
           cb();
@@ -156,9 +148,9 @@ function CompareSliderRoot(props: CompareSliderRootProps) {
 
   useIsomorphicLayoutEffect(() => {
     if (value !== undefined) {
-      store.updateValue(value);
+      store.setState("value", clamp(value, 0, 100));
     }
-  }, [value]);
+  }, [value, store]);
 
   return (
     <StoreContext.Provider value={store}>
@@ -223,7 +215,7 @@ function CompareSliderRootImpl(
       const size = isVertical ? containerRect.height : containerRect.width;
       const percentage = clamp((position / size) * 100, 0, 100);
 
-      store.updateValue(percentage);
+      store.setState("value", percentage);
     },
     [propsRef, store],
   );
@@ -266,10 +258,10 @@ function CompareSliderRootImpl(
 
       if (event.key === "Home") {
         event.preventDefault();
-        store.updateValue(0);
+        store.setState("value", 0);
       } else if (event.key === "End") {
         event.preventDefault();
-        store.updateValue(100);
+        store.setState("value", 100);
       } else if (PAGE_KEYS.concat(ARROW_KEYS).includes(event.key)) {
         event.preventDefault();
 
@@ -289,7 +281,7 @@ function CompareSliderRootImpl(
 
         const stepInDirection = propsRef.current.step * multiplier * direction;
         const newValue = clamp(currentValue + stepInDirection, 0, 100);
-        store.updateValue(newValue);
+        store.setState("value", newValue);
       }
     },
     [store, propsRef],
@@ -473,9 +465,8 @@ function CompareSliderHandle(props: DivProps) {
   );
 }
 
-interface CompareSliderLabelProps extends React.ComponentProps<"div"> {
+interface CompareSliderLabelProps extends DivProps {
   side?: "before" | "after";
-  asChild?: boolean;
 }
 
 function CompareSliderLabel(props: CompareSliderLabelProps) {
