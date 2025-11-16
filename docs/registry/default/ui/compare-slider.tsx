@@ -113,15 +113,10 @@ interface CompareSliderRootProps extends DivProps {
 }
 
 function CompareSliderRoot(props: CompareSliderRootProps) {
-  const {
-    value: valueProp,
-    defaultValue = 50,
-    onValueChange,
-    ...rootProps
-  } = props;
+  const { value, defaultValue = 50, onValueChange, ...rootProps } = props;
 
   const stateRef = useLazyRef<StoreState>(() => ({
-    value: clamp(valueProp ?? defaultValue, 0, 100),
+    value: clamp(value ?? defaultValue, 0, 100),
     isDragging: false,
   }));
   const listenersRef = useLazyRef(() => new Set<() => void>());
@@ -160,10 +155,10 @@ function CompareSliderRoot(props: CompareSliderRootProps) {
   }, [listenersRef, stateRef, onValueChangeRef]);
 
   useIsomorphicLayoutEffect(() => {
-    if (valueProp !== undefined) {
-      store.updateValue(valueProp);
+    if (value !== undefined) {
+      store.updateValue(value);
     }
-  }, [valueProp]);
+  }, [value]);
 
   return (
     <StoreContext.Provider value={store}>
