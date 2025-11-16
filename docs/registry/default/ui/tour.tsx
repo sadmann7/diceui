@@ -879,6 +879,16 @@ function TourStep(props: TourStepProps) {
   const isFocusInsideStepRef = React.useRef(false);
   const isFocusInsideTargetRef = React.useRef(false);
 
+  // Reset refs when step changes or when opening
+  React.useEffect(() => {
+    if (open && isCurrentStep) {
+      isPointerInsideStepRef.current = false;
+      isPointerInsideTargetRef.current = false;
+      isFocusInsideStepRef.current = false;
+      isFocusInsideTargetRef.current = false;
+    }
+  }, [open, isCurrentStep]);
+
   // Handle pointer down outside (Radix pattern)
   React.useEffect(() => {
     if (!open || !isCurrentStep) return;
@@ -956,7 +966,20 @@ function TourStep(props: TourStepProps) {
         context.onInteractOutside?.(interactOutsideEvent);
 
         if (!interactOutsideEvent.defaultPrevented && context.dismissible) {
-          store.setState("open", false);
+          // Use a microtask to delay the dismiss check
+          // This prevents dismissing during internal focus changes (like step navigation)
+          // If focus returns to the step quickly (internal nav), we won't dismiss
+          queueMicrotask(() => {
+            const currentFocus = ownerDocument.activeElement as Node | null;
+            const isStillOutside =
+              stepElement &&
+              !stepElement.contains(currentFocus) &&
+              (!targetElement || !targetElement.contains(currentFocus));
+
+            if (isStillOutside) {
+              store.setState("open", false);
+            }
+          });
         }
       }
     }
@@ -966,7 +989,7 @@ function TourStep(props: TourStepProps) {
     return () => {
       ownerDocument.removeEventListener("focusin", onFocusIn);
     };
-  }, [open, isCurrentStep, store, context]);
+  }, [open, isCurrentStep, targetElement, store, context]);
 
   // Capture phase handlers for step element
   const onPointerDownCapture = React.useCallback(
@@ -1036,6 +1059,7 @@ function TourStep(props: TourStepProps) {
     open && isCurrentStep,
     context.onOpenAutoFocus,
     context.onCloseAutoFocus,
+    open,
   );
 
   if (!open || !stepData || (!targetElement && !forceMount) || !isCurrentStep) {
@@ -1188,10 +1212,13 @@ function useFocusTrap(
   enabled: boolean,
   onOpenAutoFocus?: (event: OpenAutoFocusEvent) => void,
   onCloseAutoFocus?: (event: CloseAutoFocusEvent) => void,
+  open?: boolean,
 ) {
   const lastFocusedElementRef = React.useRef<HTMLElement | null>(null);
   const onOpenAutoFocusRef = useAsRef(onOpenAutoFocus);
   const onCloseAutoFocusRef = useAsRef(onCloseAutoFocus);
+
+  const restoreTimeoutRef = React.useRef<number | null>(null);
 
   React.useEffect(() => {
     if (!enabled) return;
@@ -1297,12 +1324,25 @@ function useFocusTrap(
       document.removeEventListener("focusin", onFocusIn);
       container.removeEventListener("keydown", onKeyDown);
 
+      // Clear any pending restore timeout from previous cleanup
+      if (restoreTimeoutRef.current !== null) {
+        clearTimeout(restoreTimeoutRef.current);
+      }
+
       // Restore focus on unmount with delay (Radix pattern for React bug)
-      setTimeout(() => {
+      restoreTimeoutRef.current = window.setTimeout(() => {
+        // Only restore focus if the tour is closed
+        // Skip if tour is still open (step navigation) or container still exists (quick reopen)
+        if (open || document.body.contains(container)) {
+          restoreTimeoutRef.current = null;
+          return;
+        }
+
         const closeAutoFocusEvent = new CustomEvent(
           CLOSE_AUTO_FOCUS,
           EVENT_OPTIONS,
         );
+
         if (onCloseAutoFocusRef.current) {
           container.addEventListener(
             CLOSE_AUTO_FOCUS,
@@ -1310,27 +1350,28 @@ function useFocusTrap(
             { once: true },
           );
         }
+
         container.dispatchEvent(closeAutoFocusEvent);
 
-        if (!closeAutoFocusEvent.defaultPrevented) {
-          if (
-            previouslyFocusedElement &&
-            document.body.contains(previouslyFocusedElement)
-          ) {
-            previouslyFocusedElement.focus({ preventScroll: true });
-          }
+        if (
+          !closeAutoFocusEvent.defaultPrevented &&
+          previouslyFocusedElement &&
+          document.body.contains(previouslyFocusedElement)
+        ) {
+          previouslyFocusedElement.focus({ preventScroll: true });
         }
 
-        // Remove listener after dispatch
         if (onCloseAutoFocusRef.current) {
           container.removeEventListener(
             CLOSE_AUTO_FOCUS,
             onCloseAutoFocusRef.current as EventListener,
           );
         }
+
+        restoreTimeoutRef.current = null;
       }, 0);
     };
-  }, [containerRef, enabled, onOpenAutoFocusRef, onCloseAutoFocusRef]);
+  }, [containerRef, enabled, onOpenAutoFocusRef, onCloseAutoFocusRef, open]);
 }
 
 function TourHeader(props: DivProps) {
