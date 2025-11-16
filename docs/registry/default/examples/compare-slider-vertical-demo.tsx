@@ -12,7 +12,7 @@ export default function CompareSliderVerticalDemo() {
       orientation="vertical"
       className="h-[400px] w-full overflow-hidden rounded-lg border"
     >
-      <CompareSliderBefore label="Before">
+      <CompareSliderBefore>
         {/* biome-ignore lint/performance/noImgElement: Demo image for comparison slider */}
         <img
           src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop&auto=format&fm=webp&q=80"
@@ -20,7 +20,7 @@ export default function CompareSliderVerticalDemo() {
           className="size-full object-cover"
         />
       </CompareSliderBefore>
-      <CompareSliderAfter label="After">
+      <CompareSliderAfter>
         {/* biome-ignore lint/performance/noImgElement: Demo image for comparison slider */}
         <img
           src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop&auto=format&fm=webp&q=80&sat=-100"
