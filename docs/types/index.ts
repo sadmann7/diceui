@@ -3,10 +3,10 @@ export type ControlledProps<T extends React.ElementType> = Omit<
   "defaultValue" | "value" | "onValueChange"
 >;
 
-export type EmptyProps<T extends React.ElementType> = Omit<
-  React.ComponentProps<T>,
-  keyof React.ComponentProps<T>
->;
+export type EmptyProps<
+  T extends React.ElementType,
+  K extends PropertyKey = keyof React.ComponentProps<T>,
+> = Omit<React.ComponentProps<T>, K>;
 
 export interface CompositionProps {
   /**

@@ -294,10 +294,11 @@ const MentionRoot = React.forwardRef<RootElement, MentionRootProps>(
             ?.label ?? payloadValue;
         const mentionText = `${trigger}${mentionLabel}`;
         const beforeTrigger = input.value.slice(0, triggerIndex);
-        const afterSearchText = input.value.slice(
-          input.selectionStart ?? triggerIndex,
-        );
+        const insertionPoint = input.selectionStart ?? triggerIndex;
+        const afterSearchText = input.value.slice(insertionPoint);
         const newValue = `${beforeTrigger}${mentionText} ${afterSearchText}`;
+
+        const insertionLength = mentionText.length + 1;
 
         const newMention: Mention = {
           value: payloadValue,
@@ -305,7 +306,19 @@ const MentionRoot = React.forwardRef<RootElement, MentionRootProps>(
           end: triggerIndex + mentionText.length,
         };
 
-        setMentions((prev) => [...prev, newMention]);
+        setMentions((prev) => {
+          const updatedMentions = prev.map((mention) => {
+            if (mention.start >= insertionPoint) {
+              return {
+                ...mention,
+                start: mention.start + insertionLength,
+                end: mention.end + insertionLength,
+              };
+            }
+            return mention;
+          });
+          return [...updatedMentions, newMention];
+        });
 
         input.value = newValue;
         setInputValue(newValue);

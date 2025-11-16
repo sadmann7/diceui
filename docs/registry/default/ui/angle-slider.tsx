@@ -12,6 +12,15 @@ const THUMB_NAME = "AngleSliderThumb";
 const PAGE_KEYS = ["PageUp", "PageDown"];
 const ARROW_KEYS = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
 
+type Direction = "ltr" | "rtl";
+
+interface DivProps extends React.ComponentProps<"div"> {
+  asChild?: boolean;
+}
+
+type RootElement = React.ComponentRef<typeof AngleSliderRoot>;
+type ThumbElement = React.ComponentRef<typeof AngleSliderThumb>;
+
 function clamp(value: number, [min, max]: [number, number]) {
   return Math.min(max, Math.max(min, value));
 }
@@ -74,15 +83,6 @@ function useLazyRef<T>(fn: () => T) {
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
-
-type Direction = "ltr" | "rtl";
-
-interface DivProps extends React.ComponentProps<"div"> {
-  asChild?: boolean;
-}
-
-type RootElement = React.ComponentRef<typeof AngleSliderRoot>;
-type ThumbElement = React.ComponentRef<typeof AngleSliderThumb>;
 
 interface ThumbData {
   id: string;

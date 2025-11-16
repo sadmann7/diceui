@@ -1,0 +1,21 @@
+{
+  "name": "compare-slider-controlled-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "compare-slider",
+    "button",
+    "label",
+    "slider"
+  ],
+  "files": [
+    {
+      "path": "examples/compare-slider-controlled-demo.tsx",
+      "content": "\"use client\";\r\n\r\nimport * as React from \"react\";\r\nimport {\r\n  CompareSlider,\r\n  CompareSliderAfter,\r\n  CompareSliderBefore,\r\n  CompareSliderHandle,\r\n} from \"@/registry/default/ui/compare-slider\";\r\n\r\nexport default function CompareSliderControlledDemo() {\r\n  const [value, setValue] = React.useState(30);\r\n\r\n  return (\r\n    <CompareSlider\r\n      value={value}\r\n      onValueChange={setValue}\r\n      className=\"h-[400px] overflow-hidden rounded-lg border\"\r\n    >\r\n      <CompareSliderBefore label=\"Original\">\r\n        {/* biome-ignore lint/performance/noImgElement: Demo image for comparison slider */}\r\n        <img\r\n          src=\"https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop&auto=format&fm=webp&q=80\"\r\n          alt=\"Original\"\r\n          className=\"size-full object-cover\"\r\n        />\r\n      </CompareSliderBefore>\r\n      <CompareSliderAfter label=\"Enhanced\">\r\n        {/* biome-ignore lint/performance/noImgElement: Demo image for comparison slider */}\r\n        <img\r\n          src=\"https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop&auto=format&fm=webp&q=80&sat=50\"\r\n          alt=\"Enhanced\"\r\n          className=\"size-full object-cover\"\r\n        />\r\n      </CompareSliderAfter>\r\n      <CompareSliderHandle />\r\n    </CompareSlider>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

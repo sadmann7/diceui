@@ -204,11 +204,23 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         const isImmediatelyAfterTrigger =
           currentPosition === lastTriggerIndex + 1;
 
-        // Check if there's any text after the cursor position
-        const textAfterCursor = value.slice(currentPosition).trim();
-        const hasCompletedText =
-          textAfterCursor.length > 0 && !textAfterCursor.startsWith(" ");
-        if (hasCompletedText) {
+        const textAfterCursor = value.slice(currentPosition);
+        const firstCharAfterCursor = textAfterCursor[0];
+        const isTextAfterCursorSeparated =
+          !firstCharAfterCursor ||
+          firstCharAfterCursor === " " ||
+          firstCharAfterCursor === "\n" ||
+          firstCharAfterCursor === context.trigger;
+        const isTextAfterCursorPartOfMention = context.mentions.some(
+          (mention) =>
+            currentPosition >= mention.start && currentPosition < mention.end,
+        );
+        const hasInterferingText =
+          textAfterCursor.length > 0 &&
+          !isTextAfterCursorSeparated &&
+          !isTextAfterCursorPartOfMention;
+
+        if (hasInterferingText) {
           if (context.open) {
             context.onOpenChange(false);
             context.onHighlightedItemChange(null);

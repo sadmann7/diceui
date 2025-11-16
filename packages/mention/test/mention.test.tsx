@@ -381,4 +381,37 @@ describe("Mention", () => {
     // Ensure the input now shows only the second mention
     expect(input.value).toBe("and @heelflip ");
   });
+
+  test("allows mention trigger in middle of text and preserves text after", async () => {
+    const onValueChange = vi.fn();
+    const onInputValueChange = vi.fn();
+    renderMention({ onValueChange, onInputValueChange });
+
+    const input = screen.getByPlaceholderText(placeholder);
+
+    if (!(input instanceof HTMLInputElement)) {
+      throw new Error("Input element not found");
+    }
+
+    // Add first mention
+    await userEvent.type(input, "@kickflip");
+    const kickflipOption = screen.getByRole("option", { name: "Kickflip" });
+    await waitFor(() => {
+      fireEvent.click(kickflipOption);
+    });
+
+    // Add some text after the first mention
+    await userEvent.type(input, " and then ");
+
+    // Add another mention after the text
+    await userEvent.type(input, "@heelflip");
+    const heelflipOption = screen.getByRole("option", { name: "Heelflip" });
+    await waitFor(() => {
+      fireEvent.click(heelflipOption);
+    });
+
+    // Verify both mentions are present and the text between them is preserved
+    expect(input.value).toBe("@kickflip  and then @heelflip ");
+    expect(onValueChange).toHaveBeenLastCalledWith(["kickflip", "heelflip"]);
+  });
 });
