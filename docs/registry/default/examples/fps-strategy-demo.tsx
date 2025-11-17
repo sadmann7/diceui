@@ -8,7 +8,7 @@ export default function FpsStrategyDemo() {
         <div className="flex size-full flex-col items-center justify-center gap-1">
           <div>Absolute positioning</div>
           <div className="text-muted-foreground text-sm">
-            Relative to this container, no portal
+            Relative to this container without a portal
           </div>
         </div>
       </div>
@@ -17,7 +17,7 @@ export default function FpsStrategyDemo() {
         <div className="flex size-full flex-col items-center justify-center gap-1">
           <div>Fixed positioning</div>
           <div className="text-muted-foreground text-sm">
-            Relative to viewport, uses portal
+            Relative to viewport with a portal
           </div>
         </div>
       </div>

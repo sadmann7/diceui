@@ -7,7 +7,7 @@
   "files": [
     {
       "path": "examples/fps-demo.tsx",
-      "content": "import { Fps } from \"@/registry/default/ui/fps\";\n\nexport default function FpsDemo() {\n  return (\n    <div className=\"relative h-[380px] w-full rounded-lg border bg-muted/50\">\n      <Fps strategy=\"absolute\" position=\"top-right\" />\n      <div className=\"flex h-full items-center justify-center\">\n        <p className=\"text-muted-foreground\">\n          FPS counter is displayed in the top-right corner using absolute\n          positioning\n        </p>\n      </div>\n    </div>\n  );\n}\n",
+      "content": "import { Fps } from \"@/registry/default/ui/fps\";\n\nexport default function FpsDemo() {\n  return (\n    <div className=\"relative h-80 w-full rounded-lg border bg-muted/50\">\n      <Fps strategy=\"absolute\" position=\"top-right\" label=\"Absolute\" />\n      <div className=\"flex size-full flex-col items-center justify-center gap-1\">\n        <div>Absolute positioning</div>\n        <div className=\"text-muted-foreground text-sm\">\n          Relative to this container without a portal\n        </div>\n      </div>\n    </div>\n  );\n}\n",
       "type": "registry:example",
       "target": ""
     }
