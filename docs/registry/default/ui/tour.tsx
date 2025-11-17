@@ -911,14 +911,33 @@ function TourStep(props: TourStepProps) {
     if (open && targetElement && isCurrentStep) {
       updateMask(store, targetElement, context.spotlightPadding);
 
+      let rafId: number | null = null;
+
       function onResize() {
         if (targetElement) {
           updateMask(store, targetElement, context.spotlightPadding);
         }
       }
 
+      function onScroll() {
+        if (rafId !== null) return;
+        rafId = requestAnimationFrame(() => {
+          if (targetElement) {
+            updateMask(store, targetElement, context.spotlightPadding);
+          }
+          rafId = null;
+        });
+      }
+
       window.addEventListener("resize", onResize);
-      return () => window.removeEventListener("resize", onResize);
+      window.addEventListener("scroll", onScroll, { passive: true });
+      return () => {
+        window.removeEventListener("resize", onResize);
+        window.removeEventListener("scroll", onScroll);
+        if (rafId !== null) {
+          cancelAnimationFrame(rafId);
+        }
+      };
     }
   }, [open, targetElement, isCurrentStep, store, context.spotlightPadding]);
 

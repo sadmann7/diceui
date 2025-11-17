@@ -115,7 +115,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * ```
    */
   onPointerDownOutside?: (
-    event: CustomEvent<{ originalEvent: PointerEvent }>
+    event: CustomEvent<{ originalEvent: PointerEvent }>,
   ) => void;
 
   /**
@@ -133,7 +133,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * ```
    */
   onInteractOutside?: (
-    event: CustomEvent<{ originalEvent: PointerEvent | FocusEvent }>
+    event: CustomEvent<{ originalEvent: PointerEvent | FocusEvent }>,
   ) => void;
 
   /**
