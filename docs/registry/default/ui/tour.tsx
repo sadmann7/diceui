@@ -100,6 +100,9 @@ function useLazyRef<T>(fn: () => T) {
   return ref as React.RefObject<T>;
 }
 
+/**
+ * @see https://github.com/radix-ui/primitives/blob/main/packages/react/focus-guards/src/focus-guards.tsx
+ */
 let focusGuardCount = 0;
 
 function createFocusGuard() {
