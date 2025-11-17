@@ -1463,6 +1463,30 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "tour-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    registryDependencies: ["button", "tour"],
+    files: [
+      {
+        path: "examples/tour-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "tour-controlled-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    registryDependencies: ["button", "tour"],
+    files: [
+      {
+        path: "examples/tour-controlled-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "tags-input-demo",
     type: "registry:example",
     dependencies: ["@diceui/tags-input", "lucide-react"],

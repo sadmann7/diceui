@@ -507,4 +507,23 @@ export const ui: Registry["items"] = [
       },
     ],
   },
+  {
+    name: "tour",
+    type: "registry:ui",
+    dependencies: [
+      "@floating-ui/react-dom",
+      "@radix-ui/react-slot",
+      "lucide-react",
+    ],
+    files: [
+      {
+        path: "ui/tour.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
+      },
+    ],
+  },
 ];

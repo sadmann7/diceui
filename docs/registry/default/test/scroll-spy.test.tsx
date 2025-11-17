@@ -11,20 +11,9 @@ import {
 
 // Mock IntersectionObserver
 class MockIntersectionObserver {
-  private observedElements = new Set<Element>();
-
-  observe = vi.fn((target: Element) => {
-    this.observedElements.add(target);
-  });
-
-  disconnect = vi.fn(() => {
-    this.observedElements.clear();
-  });
-
-  unobserve = vi.fn((target: Element) => {
-    this.observedElements.delete(target);
-  });
-
+  observe = vi.fn();
+  disconnect = vi.fn();
+  unobserve = vi.fn();
   takeRecords = vi.fn(() => []);
   root = null;
   rootMargin = "";

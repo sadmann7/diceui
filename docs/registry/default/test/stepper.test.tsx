@@ -8,8 +8,8 @@ import {
   StepperIndicator,
   StepperItem,
   StepperList,
-  StepperNextTrigger,
-  StepperPrevTrigger,
+  StepperNext,
+  StepperPrev,
   StepperSeparator,
   StepperTitle,
   StepperTrigger,
@@ -64,8 +64,8 @@ describe("Stepper", () => {
         <StepperContent value="step2">Content for Step 2</StepperContent>
         <StepperContent value="step3">Content for Step 3</StepperContent>
         <div>
-          <StepperPrevTrigger>Previous</StepperPrevTrigger>
-          <StepperNextTrigger>Next</StepperNextTrigger>
+          <StepperPrev>Previous</StepperPrev>
+          <StepperNext>Next</StepperNext>
         </div>
       </Stepper>
     );

@@ -491,6 +491,24 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "tour": {
+      name: "tour",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/ui/tour.tsx",
+        type: "registry:ui",
+        target: ""
+      },{
+        path: "registry/default/lib/compose-refs.ts",
+        type: "registry:lib",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/tour.tsx")),
+      source: "",
+      chunks: []
+    },
     "utils": {
       name: "utils",
       description: "",
@@ -2210,6 +2228,34 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/avatar-group-icons-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "tour-demo": {
+      name: "tour-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","tour"],
+      files: [{
+        path: "registry/default/examples/tour-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/tour-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "tour-controlled-demo": {
+      name: "tour-controlled-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","tour"],
+      files: [{
+        path: "registry/default/examples/tour-controlled-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/tour-controlled-demo.tsx")),
       source: "",
       chunks: []
     },

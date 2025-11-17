@@ -23,6 +23,10 @@ export type Direction = "ltr" | "rtl";
 
 export type Orientation = "horizontal" | "vertical";
 
+export type Align = "start" | "center" | "end";
+
+export type Side = "top" | "right" | "bottom" | "left";
+
 import type { ClientUploadedFileData } from "uploadthing/types";
 
 export interface UploadedFile<T = unknown> extends ClientUploadedFileData<T> {}

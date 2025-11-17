@@ -14,6 +14,9 @@ const SECTION_NAME = "ScrollSpySection";
 type Direction = "ltr" | "rtl";
 type Orientation = "horizontal" | "vertical";
 
+type LinkElement = React.ComponentRef<typeof ScrollSpyLink>;
+type SectionElement = React.ComponentRef<typeof ScrollSpySection>;
+
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
@@ -75,9 +78,6 @@ function useDirection(dir?: Direction): Direction {
   const contextDir = React.useContext(DirectionContext);
   return dir ?? contextDir ?? "ltr";
 }
-
-type LinkElement = React.ComponentRef<typeof ScrollSpyLink>;
-type SectionElement = React.ComponentRef<typeof ScrollSpySection>;
 
 interface ScrollSpyContextValue {
   offset: number;

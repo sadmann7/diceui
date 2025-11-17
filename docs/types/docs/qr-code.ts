@@ -69,6 +69,12 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
 export interface ImageProps extends EmptyProps<"img">, CompositionProps {
   /**
    * Alternative text for the QR code image.
+   *
+   * ```ts
+   * alt="New QR Code"
+   * ```
+   *
+   * @default "QR Code"
    */
   alt?: string;
 }
@@ -84,6 +90,7 @@ export interface SkeletonProps extends EmptyProps<"div">, CompositionProps {}
 export interface DownloadProps extends EmptyProps<"button">, CompositionProps {
   /**
    * The filename for the downloaded QR code.
+   *
    * @default "qrcode"
    */
   filename?: string;
