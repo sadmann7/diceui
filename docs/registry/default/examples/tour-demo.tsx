@@ -80,7 +80,7 @@ export default function TourDemo() {
             </TourHeader>
             <TourClose />
           </TourStep>
-          <TourStep target="#kickflip" side="top" align="center">
+          <TourStep target="#feature-1" side="top" align="center">
             <TourArrow />
             <TourHeader>
               <TourTitle>Ollie</TourTitle>
