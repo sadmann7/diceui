@@ -173,13 +173,12 @@ export const ui: Registry["items"] = [
   },
   {
     name: "fps",
-    type: "registry:component",
+    type: "registry:ui",
     dependencies: ["class-variance-authority"],
-    registryDependencies: ["utils"],
     files: [
       {
-        path: "components/fps.tsx",
-        type: "registry:component",
+        path: "ui/fps.tsx",
+        type: "registry:ui",
       },
     ],
   },

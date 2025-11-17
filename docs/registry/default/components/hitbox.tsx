@@ -85,8 +85,8 @@ function Hitbox(props: HitboxProps) {
         className,
       )}
       style={{
-        ...style,
         ...(isDynamicSize && { "--size": size }),
+        ...style,
       }}
     />
   );

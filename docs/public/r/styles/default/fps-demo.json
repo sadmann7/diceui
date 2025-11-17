@@ -7,7 +7,7 @@
   "files": [
     {
       "path": "examples/fps-demo.tsx",
-      "content": "import { Fps } from \"@/registry/default/components/fps\";\n\nexport default function FpsDemo() {\n  return (\n    <div className=\"relative h-[400px] w-full rounded-lg border bg-muted/50\">\n      <Fps />\n      <div className=\"flex h-full items-center justify-center\">\n        <p className=\"text-muted-foreground\">\n          FPS counter is displayed in the top-right corner\n        </p>\n      </div>\n    </div>\n  );\n}\n",
+      "content": "import { Fps } from \"@/registry/default/ui/fps\";\n\nexport default function FpsDemo() {\n  return (\n    <div className=\"relative h-[400px] w-full rounded-lg border bg-muted/50\">\n      <Fps />\n      <div className=\"flex h-full items-center justify-center\">\n        <p className=\"text-muted-foreground\">\n          FPS counter is displayed in the top-right corner\n        </p>\n      </div>\n    </div>\n  );\n}\n",
       "type": "registry:example",
       "target": ""
     }

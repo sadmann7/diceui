@@ -1,4 +1,4 @@
-import { Fps } from "@/registry/default/components/fps";
+import { Fps } from "@/registry/default/ui/fps";
 
 export default function FpsDemo() {
   return (

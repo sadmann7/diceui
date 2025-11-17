@@ -198,14 +198,14 @@ export const Index: Record<string, any> = {
     "fps": {
       name: "fps",
       description: "",
-      type: "registry:component",
-      registryDependencies: ["utils"],
+      type: "registry:ui",
+      registryDependencies: undefined,
       files: [{
-        path: "registry/default/components/fps.tsx",
-        type: "registry:component",
+        path: "registry/default/ui/fps.tsx",
+        type: "registry:ui",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/components/fps.tsx")),
+      component: React.lazy(() => import("@/registry/default/ui/fps.tsx")),
       source: "",
       chunks: []
     },

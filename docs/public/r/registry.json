@@ -433,19 +433,6 @@
       ]
     },
     {
-      "name": "fps",
-      "type": "registry:component",
-      "title": "FPS",
-      "description": "A real-time frames per second (FPS) counter component for monitoring performance.",
-      "registryDependencies": ["utils"],
-      "files": [
-        {
-          "path": "registry/default/components/fps.tsx",
-          "type": "registry:component"
-        }
-      ]
-    },
-    {
       "name": "hitbox",
       "type": "registry:component",
       "title": "Hitbox",
