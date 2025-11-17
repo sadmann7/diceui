@@ -213,9 +213,16 @@ function getTargetElement(
   return null;
 }
 
+function getDefaultScrollBehavior(): ScrollBehavior {
+  if (typeof window === "undefined") return "smooth";
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ? "auto"
+    : "smooth";
+}
+
 function onScrollToElement(
   element: HTMLElement,
-  scrollBehavior: ScrollBehavior = "smooth",
+  scrollBehavior: ScrollBehavior = getDefaultScrollBehavior(),
   scrollOffset?: ScrollOffset,
 ) {
   const offset = {
@@ -412,7 +419,7 @@ function TourRoot(props: TourRootProps) {
     onComplete,
     onSkip,
     autoScroll = true,
-    scrollBehavior = "smooth",
+    scrollBehavior = getDefaultScrollBehavior(),
     scrollOffset,
     ...rootProps
   } = props;
