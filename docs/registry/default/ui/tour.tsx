@@ -23,15 +23,15 @@ import { cn } from "@/lib/utils";
 const ROOT_NAME = "Tour";
 const PORTAL_NAME = "TourPortal";
 const STEP_NAME = "TourStep";
+const ARROW_NAME = "TourArrow";
+const HEADER_NAME = "TourHeader";
+const TITLE_NAME = "TourTitle";
+const DESCRIPTION_NAME = "TourDescription";
 const CLOSE_NAME = "TourClose";
 const PREV_NAME = "TourPrev";
 const NEXT_NAME = "TourNext";
 const SKIP_NAME = "TourSkip";
-const HEADER_NAME = "TourHeader";
-const TITLE_NAME = "TourTitle";
-const DESCRIPTION_NAME = "TourDescription";
 const FOOTER_NAME = "TourFooter";
-const ARROW_NAME = "TourArrow";
 
 const POINTER_DOWN_OUTSIDE = "tour.pointerDownOutside";
 const INTERACT_OUTSIDE = "tour.interactOutside";
@@ -90,6 +90,16 @@ function useAsRef<T>(props: T) {
   return ref;
 }
 
+function useLazyRef<T>(fn: () => T) {
+  const ref = React.useRef<T | null>(null);
+
+  if (ref.current === null) {
+    ref.current = fn();
+  }
+
+  return ref as React.RefObject<T>;
+}
+
 let focusGuardCount = 0;
 
 function createFocusGuard() {
@@ -128,14 +138,160 @@ function useFocusGuards() {
   }, []);
 }
 
-function useLazyRef<T>(fn: () => T) {
-  const ref = React.useRef<T | null>(null);
+function useFocusTrap(
+  containerRef: React.RefObject<HTMLElement | null>,
+  enabled: boolean,
+  tourOpen: boolean,
+  onOpenAutoFocus?: (event: OpenAutoFocusEvent) => void,
+  onCloseAutoFocus?: (event: CloseAutoFocusEvent) => void,
+) {
+  const lastFocusedElementRef = React.useRef<HTMLElement | null>(null);
+  const onOpenAutoFocusRef = useAsRef(onOpenAutoFocus);
+  const onCloseAutoFocusRef = useAsRef(onCloseAutoFocus);
+  const tourOpenRef = useAsRef(tourOpen);
 
-  if (ref.current === null) {
-    ref.current = fn();
-  }
+  React.useEffect(() => {
+    if (!enabled) return;
 
-  return ref as React.RefObject<T>;
+    const container = containerRef.current;
+    if (!container) return;
+
+    const previouslyFocusedElement =
+      document.activeElement as HTMLElement | null;
+
+    function getTabbableCandidates() {
+      if (!container) return [];
+
+      const nodes: HTMLElement[] = [];
+      const walker = document.createTreeWalker(
+        container,
+        NodeFilter.SHOW_ELEMENT,
+        {
+          acceptNode: (node: Element) => {
+            const element = node as HTMLElement;
+            const isHiddenInput =
+              element.tagName === "INPUT" &&
+              (element as HTMLInputElement).type === "hidden";
+            if (element.hidden || isHiddenInput) return NodeFilter.FILTER_SKIP;
+            return element.tabIndex >= 0
+              ? NodeFilter.FILTER_ACCEPT
+              : NodeFilter.FILTER_SKIP;
+          },
+        },
+      );
+      while (walker.nextNode()) {
+        nodes.push(walker.currentNode as HTMLElement);
+      }
+      return nodes;
+    }
+
+    function getTabbableEdges() {
+      const candidates = getTabbableCandidates();
+      const first = candidates[0];
+      const last = candidates[candidates.length - 1];
+      return [first, last] as const;
+    }
+
+    function onFocusIn(event: FocusEvent) {
+      if (!container) return;
+
+      const target = event.target as HTMLElement | null;
+      if (container.contains(target)) {
+        lastFocusedElementRef.current = target;
+      } else {
+        const elementToFocus =
+          lastFocusedElementRef.current ?? getTabbableCandidates()[0];
+        elementToFocus?.focus({ preventScroll: true });
+      }
+    }
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key !== "Tab" || event.altKey || event.ctrlKey || event.metaKey)
+        return;
+
+      const [first, last] = getTabbableEdges();
+      const hasTabbableElements = first && last;
+
+      if (!hasTabbableElements) {
+        if (document.activeElement === container) event.preventDefault();
+        return;
+      }
+
+      if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first?.focus({ preventScroll: true });
+      } else if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last?.focus({ preventScroll: true });
+      }
+    }
+
+    const openAutoFocusEvent = new CustomEvent(OPEN_AUTO_FOCUS, EVENT_OPTIONS);
+    if (onOpenAutoFocusRef.current) {
+      container.addEventListener(
+        OPEN_AUTO_FOCUS,
+        onOpenAutoFocusRef.current as EventListener,
+        { once: true },
+      );
+    }
+    container.dispatchEvent(openAutoFocusEvent);
+
+    if (!openAutoFocusEvent.defaultPrevented) {
+      const tabbableCandidates = getTabbableCandidates();
+      if (tabbableCandidates.length > 0) {
+        tabbableCandidates[0]?.focus({ preventScroll: true });
+      } else {
+        container.focus({ preventScroll: true });
+      }
+    }
+
+    document.addEventListener("focusin", onFocusIn);
+    container.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.removeEventListener("focusin", onFocusIn);
+      container.removeEventListener("keydown", onKeyDown);
+
+      if (!tourOpenRef.current) {
+        setTimeout(() => {
+          const closeAutoFocusEvent = new CustomEvent(
+            CLOSE_AUTO_FOCUS,
+            EVENT_OPTIONS,
+          );
+          if (onCloseAutoFocusRef.current) {
+            container.addEventListener(
+              CLOSE_AUTO_FOCUS,
+              onCloseAutoFocusRef.current as EventListener,
+              { once: true },
+            );
+          }
+          container.dispatchEvent(closeAutoFocusEvent);
+
+          if (!closeAutoFocusEvent.defaultPrevented) {
+            if (
+              previouslyFocusedElement &&
+              document.body.contains(previouslyFocusedElement)
+            ) {
+              previouslyFocusedElement.focus({ preventScroll: true });
+            }
+          }
+
+          if (onCloseAutoFocusRef.current) {
+            container.removeEventListener(
+              CLOSE_AUTO_FOCUS,
+              onCloseAutoFocusRef.current as EventListener,
+            );
+          }
+        }, 0);
+      }
+    };
+  }, [
+    containerRef,
+    enabled,
+    onOpenAutoFocusRef,
+    onCloseAutoFocusRef,
+    tourOpenRef,
+  ]);
 }
 
 const DirectionContext = React.createContext<Direction | undefined>(undefined);
@@ -225,7 +381,7 @@ function onScrollToElement(
   scrollBehavior: ScrollBehavior = getDefaultScrollBehavior(),
   scrollOffset?: ScrollOffset,
 ) {
-  const offset = {
+  const offset: Required<ScrollOffset> = {
     top: 100,
     bottom: 100,
     left: 0,
@@ -1243,160 +1399,62 @@ function TourPortal(props: TourPortalProps) {
   return ReactDOM.createPortal(children, portalContainer);
 }
 
-function useFocusTrap(
-  containerRef: React.RefObject<HTMLElement | null>,
-  enabled: boolean,
-  tourOpen: boolean,
-  onOpenAutoFocus?: (event: OpenAutoFocusEvent) => void,
-  onCloseAutoFocus?: (event: CloseAutoFocusEvent) => void,
-) {
-  const lastFocusedElementRef = React.useRef<HTMLElement | null>(null);
-  const onOpenAutoFocusRef = useAsRef(onOpenAutoFocus);
-  const onCloseAutoFocusRef = useAsRef(onCloseAutoFocus);
-  const tourOpenRef = useAsRef(tourOpen);
+interface TourArrowProps extends React.ComponentProps<"svg"> {
+  width?: number;
+  height?: number;
+  asChild?: boolean;
+}
 
-  React.useEffect(() => {
-    if (!enabled) return;
+function TourArrow(props: TourArrowProps) {
+  const {
+    width = 10,
+    height = 5,
+    className,
+    children,
+    asChild,
+    ...arrowProps
+  } = props;
 
-    const container = containerRef.current;
-    if (!container) return;
+  const stepContext = useStepContext(ARROW_NAME);
+  const baseSide = OPPOSITE_SIDE[stepContext.placedSide];
 
-    const previouslyFocusedElement =
-      document.activeElement as HTMLElement | null;
-
-    function getTabbableCandidates() {
-      if (!container) return [];
-
-      const nodes: HTMLElement[] = [];
-      const walker = document.createTreeWalker(
-        container,
-        NodeFilter.SHOW_ELEMENT,
-        {
-          acceptNode: (node: Element) => {
-            const element = node as HTMLElement;
-            const isHiddenInput =
-              element.tagName === "INPUT" &&
-              (element as HTMLInputElement).type === "hidden";
-            if (element.hidden || isHiddenInput) return NodeFilter.FILTER_SKIP;
-            return element.tabIndex >= 0
-              ? NodeFilter.FILTER_ACCEPT
-              : NodeFilter.FILTER_SKIP;
-          },
-        },
-      );
-      while (walker.nextNode()) {
-        nodes.push(walker.currentNode as HTMLElement);
-      }
-      return nodes;
-    }
-
-    function getTabbableEdges() {
-      const candidates = getTabbableCandidates();
-      const first = candidates[0];
-      const last = candidates[candidates.length - 1];
-      return [first, last] as const;
-    }
-
-    function onFocusIn(event: FocusEvent) {
-      if (!container) return;
-
-      const target = event.target as HTMLElement | null;
-      if (container.contains(target)) {
-        lastFocusedElementRef.current = target;
-      } else {
-        const elementToFocus =
-          lastFocusedElementRef.current ?? getTabbableCandidates()[0];
-        elementToFocus?.focus({ preventScroll: true });
-      }
-    }
-
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key !== "Tab" || event.altKey || event.ctrlKey || event.metaKey)
-        return;
-
-      const [first, last] = getTabbableEdges();
-      const hasTabbableElements = first && last;
-
-      if (!hasTabbableElements) {
-        if (document.activeElement === container) event.preventDefault();
-        return;
-      }
-
-      if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first?.focus({ preventScroll: true });
-      } else if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last?.focus({ preventScroll: true });
-      }
-    }
-
-    const openAutoFocusEvent = new CustomEvent(OPEN_AUTO_FOCUS, EVENT_OPTIONS);
-    if (onOpenAutoFocusRef.current) {
-      container.addEventListener(
-        OPEN_AUTO_FOCUS,
-        onOpenAutoFocusRef.current as EventListener,
-        { once: true },
-      );
-    }
-    container.dispatchEvent(openAutoFocusEvent);
-
-    if (!openAutoFocusEvent.defaultPrevented) {
-      const tabbableCandidates = getTabbableCandidates();
-      if (tabbableCandidates.length > 0) {
-        tabbableCandidates[0]?.focus({ preventScroll: true });
-      } else {
-        container.focus({ preventScroll: true });
-      }
-    }
-
-    document.addEventListener("focusin", onFocusIn);
-    container.addEventListener("keydown", onKeyDown);
-
-    return () => {
-      document.removeEventListener("focusin", onFocusIn);
-      container.removeEventListener("keydown", onKeyDown);
-
-      if (!tourOpenRef.current) {
-        setTimeout(() => {
-          const closeAutoFocusEvent = new CustomEvent(
-            CLOSE_AUTO_FOCUS,
-            EVENT_OPTIONS,
-          );
-          if (onCloseAutoFocusRef.current) {
-            container.addEventListener(
-              CLOSE_AUTO_FOCUS,
-              onCloseAutoFocusRef.current as EventListener,
-              { once: true },
-            );
-          }
-          container.dispatchEvent(closeAutoFocusEvent);
-
-          if (!closeAutoFocusEvent.defaultPrevented) {
-            if (
-              previouslyFocusedElement &&
-              document.body.contains(previouslyFocusedElement)
-            ) {
-              previouslyFocusedElement.focus({ preventScroll: true });
-            }
-          }
-
-          if (onCloseAutoFocusRef.current) {
-            container.removeEventListener(
-              CLOSE_AUTO_FOCUS,
-              onCloseAutoFocusRef.current as EventListener,
-            );
-          }
-        }, 0);
-      }
-    };
-  }, [
-    containerRef,
-    enabled,
-    onOpenAutoFocusRef,
-    onCloseAutoFocusRef,
-    tourOpenRef,
-  ]);
+  return (
+    <span
+      ref={stepContext.onArrowChange}
+      data-slot="tour-arrow"
+      style={{
+        position: "absolute",
+        left:
+          stepContext.arrowX != null ? `${stepContext.arrowX}px` : undefined,
+        top: stepContext.arrowY != null ? `${stepContext.arrowY}px` : undefined,
+        [baseSide]: 0,
+        transformOrigin: {
+          top: "",
+          right: "0 0",
+          bottom: "center 0",
+          left: "100% 0",
+        }[stepContext.placedSide],
+        transform: {
+          top: "translateY(100%)",
+          right: "translateY(50%) rotate(90deg) translateX(-50%)",
+          bottom: "rotate(180deg)",
+          left: "translateY(50%) rotate(-90deg) translateX(50%)",
+        }[stepContext.placedSide],
+        visibility: stepContext.shouldHideArrow ? "hidden" : undefined,
+      }}
+    >
+      <svg
+        viewBox="0 0 30 10"
+        preserveAspectRatio="none"
+        width={width}
+        height={height}
+        {...arrowProps}
+        className={cn("block fill-popover stroke-border", className)}
+      >
+        {asChild ? children : <polygon points="0,0 30,0 15,10" />}
+      </svg>
+    </span>
+  );
 }
 
 function TourHeader(props: DivProps) {
@@ -1456,34 +1514,6 @@ function TourDescription(props: DivProps) {
   );
 }
 
-function TourFooter(props: DivProps) {
-  const { asChild, className, ref, ...footerProps } = props;
-
-  const stepContext = useStepContext(FOOTER_NAME);
-  const hasDefaultFooter = React.useContext(DefaultFooterContext);
-  const context = useTourContext(FOOTER_NAME);
-
-  const composedRef = useComposedRefs(
-    ref,
-    hasDefaultFooter ? undefined : stepContext.onFooterChange,
-  );
-
-  const FooterPrimitive = asChild ? Slot : "div";
-
-  return (
-    <FooterPrimitive
-      data-slot="tour-footer"
-      dir={context.dir}
-      {...footerProps}
-      ref={composedRef}
-      className={cn(
-        "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
-        className,
-      )}
-    />
-  );
-}
-
 interface TourCloseProps extends React.ComponentProps<"button"> {
   asChild?: boolean;
 }
@@ -1523,35 +1553,6 @@ function TourClose(props: TourCloseProps) {
     >
       <X className="size-4" />
     </ClosePrimitive>
-  );
-}
-
-interface TourStepCounterProps extends DivProps {
-  format?: (current: number, total: number) => string;
-}
-
-function TourStepCounter(props: TourStepCounterProps) {
-  const {
-    format = (current, total) => `${current} / ${total}`,
-    asChild,
-    className,
-    children,
-    ...stepCounterProps
-  } = props;
-
-  const value = useStore((state) => state.value);
-  const steps = useStore((state) => state.steps);
-
-  const StepCounterPrimitive = asChild ? Slot : "div";
-
-  return (
-    <StepCounterPrimitive
-      data-slot="tour-step-counter"
-      {...stepCounterProps}
-      className={cn("text-muted-foreground text-sm", className)}
-    >
-      {children ?? format(value + 1, steps.length)}
-    </StepCounterPrimitive>
   );
 }
 
@@ -1658,61 +1659,60 @@ function TourSkip(props: React.ComponentProps<typeof Button>) {
   );
 }
 
-interface TourArrowProps extends React.ComponentProps<"svg"> {
-  width?: number;
-  height?: number;
-  asChild?: boolean;
+interface TourStepCounterProps extends DivProps {
+  format?: (current: number, total: number) => string;
 }
 
-function TourArrow(props: TourArrowProps) {
+function TourStepCounter(props: TourStepCounterProps) {
   const {
-    width = 10,
-    height = 5,
+    format = (current, total) => `${current} / ${total}`,
+    asChild,
     className,
     children,
-    asChild,
-    ...arrowProps
+    ...stepCounterProps
   } = props;
 
-  const stepContext = useStepContext(ARROW_NAME);
-  const baseSide = OPPOSITE_SIDE[stepContext.placedSide];
+  const value = useStore((state) => state.value);
+  const steps = useStore((state) => state.steps);
+
+  const StepCounterPrimitive = asChild ? Slot : "div";
 
   return (
-    <span
-      ref={stepContext.onArrowChange}
-      data-slot="tour-arrow"
-      style={{
-        position: "absolute",
-        left:
-          stepContext.arrowX != null ? `${stepContext.arrowX}px` : undefined,
-        top: stepContext.arrowY != null ? `${stepContext.arrowY}px` : undefined,
-        [baseSide]: 0,
-        transformOrigin: {
-          top: "",
-          right: "0 0",
-          bottom: "center 0",
-          left: "100% 0",
-        }[stepContext.placedSide],
-        transform: {
-          top: "translateY(100%)",
-          right: "translateY(50%) rotate(90deg) translateX(-50%)",
-          bottom: "rotate(180deg)",
-          left: "translateY(50%) rotate(-90deg) translateX(50%)",
-        }[stepContext.placedSide],
-        visibility: stepContext.shouldHideArrow ? "hidden" : undefined,
-      }}
+    <StepCounterPrimitive
+      data-slot="tour-step-counter"
+      {...stepCounterProps}
+      className={cn("text-muted-foreground text-sm", className)}
     >
-      <svg
-        viewBox="0 0 30 10"
-        preserveAspectRatio="none"
-        width={width}
-        height={height}
-        {...arrowProps}
-        className={cn("block fill-popover stroke-border", className)}
-      >
-        {asChild ? children : <polygon points="0,0 30,0 15,10" />}
-      </svg>
-    </span>
+      {children ?? format(value + 1, steps.length)}
+    </StepCounterPrimitive>
+  );
+}
+
+function TourFooter(props: DivProps) {
+  const { asChild, className, ref, ...footerProps } = props;
+
+  const stepContext = useStepContext(FOOTER_NAME);
+  const hasDefaultFooter = React.useContext(DefaultFooterContext);
+  const context = useTourContext(FOOTER_NAME);
+
+  const composedRef = useComposedRefs(
+    ref,
+    hasDefaultFooter ? undefined : stepContext.onFooterChange,
+  );
+
+  const FooterPrimitive = asChild ? Slot : "div";
+
+  return (
+    <FooterPrimitive
+      data-slot="tour-footer"
+      dir={context.dir}
+      {...footerProps}
+      ref={composedRef}
+      className={cn(
+        "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
+        className,
+      )}
+    />
   );
 }
 
@@ -1722,32 +1722,32 @@ export {
   TourSpotlight as Spotlight,
   TourSpotlightRing as SpotlightRing,
   TourStep as Step,
+  TourArrow as Arrow,
   TourHeader as Header,
   TourTitle as Title,
   TourDescription as Description,
-  TourFooter as Footer,
   TourClose as Close,
-  TourStepCounter as StepCounter,
   TourPrev as Prev,
   TourNext as Next,
   TourSkip as Skip,
-  TourArrow as Arrow,
+  TourStepCounter as StepCounter,
+  TourFooter as Footer,
   //
   TourRoot as Tour,
   TourPortal,
   TourSpotlight,
   TourSpotlightRing,
   TourStep,
+  TourArrow,
   TourHeader,
   TourTitle,
   TourDescription,
-  TourFooter,
   TourClose,
-  TourStepCounter,
   TourPrev,
   TourNext,
   TourSkip,
-  TourArrow,
+  TourStepCounter,
+  TourFooter,
   //
   type TourRootProps as TourProps,
 };
