@@ -1173,7 +1173,7 @@ function TourSpotlightRing(props: TourSpotlightRingProps) {
       data-state={getDataState(open)}
       {...ringProps}
       className={cn(
-        "pointer-events-none fixed z-50 border-ring ring-[3px] ring-ring/50 transition-all duration-250",
+        "pointer-events-none fixed z-50 border-ring ring-[3px] ring-ring/50",
         className,
       )}
       style={{
