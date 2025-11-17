@@ -56,6 +56,23 @@ export default function TourDemo() {
       <Tour
         open={open}
         onOpenChange={setOpen}
+        // onInteractOutside={(event) => {
+        //   event.preventDefault();
+        //   console.log("interact outside", event);
+        // }}
+        // onPointerDownOutside={(event) => {
+        //   event.preventDefault();
+        //   console.log("pointer down outside", event);
+        // }}
+        // onOpenAutoFocus={(event) => {
+        //   console.log("open auto focus", event);
+        // }}
+        // onCloseAutoFocus={(event) => {
+        //   console.log("close auto focus", event);
+        // }}
+        // onEscapeKeyDown={(event) => {
+        //   console.log("escape key down", event);
+        // }}
         stepFooter={
           <TourFooter>
             <div className="flex w-full items-center justify-between">
@@ -63,6 +80,7 @@ export default function TourDemo() {
               <div className="flex gap-2">
                 <TourPrev />
                 <TourNext />
+                <Button>Test</Button>
               </div>
             </div>
           </TourFooter>
