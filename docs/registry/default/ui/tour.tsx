@@ -59,16 +59,16 @@ interface ScrollOffset {
 
 type Boundary = Element | null;
 
+interface DivProps extends React.ComponentProps<"div"> {
+  asChild?: boolean;
+}
+
+type StepElement = React.ComponentRef<typeof TourStep>;
 type CloseElement = React.ComponentRef<typeof TourClose>;
 type PrevElement = React.ComponentRef<typeof TourPrev>;
 type NextElement = React.ComponentRef<typeof TourNext>;
 type SkipElement = React.ComponentRef<typeof TourSkip>;
 type FooterElement = React.ComponentRef<typeof TourFooter>;
-type StepElement = React.ComponentRef<typeof TourStep>;
-
-interface DivProps extends React.ComponentProps<"div"> {
-  asChild?: boolean;
-}
 
 const OPPOSITE_SIDE: Record<Side, Side> = {
   top: "bottom",
