@@ -109,7 +109,6 @@ function Fps(props: FpsProps) {
   return ReactDOM.createPortal(
     <div
       role="status"
-      aria-live="polite"
       aria-labelledby={label ? labelId : undefined}
       {...fpsProps}
       className={cn(fpsVariants({ position, status }), className)}
