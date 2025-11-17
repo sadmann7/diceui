@@ -62,7 +62,6 @@ export default function PlaygroundPage() {
             </DialogHeader>
           </DialogContent>
         </Dialog>
-        <div id="kickflip">Kickflip</div>
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button>Open alert dialog</Button>

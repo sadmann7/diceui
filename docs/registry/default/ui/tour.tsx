@@ -43,7 +43,7 @@ const SIDE_OPTIONS = ["top", "right", "bottom", "left"] as const;
 const ALIGN_OPTIONS = ["start", "center", "end"] as const;
 
 const DEFAULT_ALIGN_OFFSET = 0;
-const DEFAULT_SIDE_OFFSET = 12;
+const DEFAULT_SIDE_OFFSET = 16;
 const DEFAULT_SPOTLIGHT_PADDING = 4;
 
 type Side = (typeof SIDE_OPTIONS)[number];

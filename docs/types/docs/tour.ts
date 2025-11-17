@@ -181,7 +181,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * The default distance in pixels from the target element for all steps.
    * Can be overridden per step using the step's sideOffset prop.
    *
-   * @default 8
+   * @default 16
    */
   sideOffset?: number;
 
