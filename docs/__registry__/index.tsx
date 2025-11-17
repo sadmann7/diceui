@@ -1293,6 +1293,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "fps-strategy-demo": {
+      name: "fps-strategy-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["fps"],
+      files: [{
+        path: "registry/default/examples/fps-strategy-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/fps-strategy-demo.tsx")),
+      source: "",
+      chunks: []
+    },
     "hitbox-demo": {
       name: "hitbox-demo",
       description: "",

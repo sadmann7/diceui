@@ -1058,6 +1058,7 @@ function KanbanOverlay(props: KanbanOverlayProps) {
   const context = useKanbanContext(OVERLAY_NAME);
 
   const [mounted, setMounted] = React.useState(false);
+
   React.useLayoutEffect(() => setMounted(true), []);
 
   const container =

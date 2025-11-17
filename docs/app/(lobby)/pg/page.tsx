@@ -1,15 +1,15 @@
 import { Demo } from "@/components/demo";
 import { Shell } from "@/components/shell";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
-import TourDemo from "@/registry/default/examples/tour-demo";
-import { Fps } from "@/registry/default/ui/fps";
+import FpsDemo from "@/registry/default/examples/fps-demo";
+import FpsStrategyDemo from "@/registry/default/examples/fps-strategy-demo";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
       <Demo>
-        <Fps position="bottom-right" />
-        <TourDemo />
+        <FpsDemo />
+        <FpsStrategyDemo />
         <ColorPickerDemo />
       </Demo>
     </Shell>

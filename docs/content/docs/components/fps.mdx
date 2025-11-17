@@ -1,9 +1,12 @@
 ---
 title: FPS
 description: A real-time frames per second (FPS) counter component for monitoring performance.
+preview: true
 links:
-  api: /docs/utilities/fps#api-reference
+  api: /docs/components/fps#api-reference
 ---
+
+<ComponentTabs name="fps-demo" />
 
 ## Installation
 
@@ -19,28 +22,21 @@ npx shadcn@latest add "https://diceui.com/r/fps"
   <Step>
     Copy and paste the following code into your project.
 
-    <ComponentSource src="./registry/default/ui/fps.tsx" />
+    <ComponentSource name="fps" />
   </Step>
 </Steps>
 
-## Usage
+## Examples
 
-### Basic
+### Positioning Strategy
 
-```tsx
-import { Fps } from "@/components/fps"
+Control whether the FPS counter uses `fixed` or `absolute` positioning.
 
-export default function App() {
-  return (
-    <div>
-      <Fps />
-      {/* Your app content */}
-    </div>
-  )
-}
-```
+<ComponentTabs name="fps-strategy-demo" />
 
 ### Custom Position
+
+Choose from four corner positions for the FPS counter.
 
 ```tsx
 import { Fps } from "@/components/fps"
@@ -56,6 +52,8 @@ export default function App() {
 ```
 
 ### Custom Thresholds
+
+Configure warning and error thresholds for color-coded performance indicators.
 
 ```tsx
 import { Fps } from "@/components/fps"
@@ -74,6 +72,8 @@ export default function App() {
 ```
 
 ### Conditional Rendering
+
+Enable the FPS counter only in development environments.
 
 ```tsx
 import { Fps } from "@/components/fps"
@@ -108,9 +108,32 @@ A component that displays a real-time FPS counter overlay.
   - Green: Good performance (above warning threshold)
   - Yellow: Warning (below warning threshold)
   - Red: Poor performance (below error threshold)
+- **Flexible positioning**: Choose between `fixed` and `absolute` positioning strategies
 - **Customizable position**: Choose from four corner positions
 - **Configurable update interval**: Control how often the FPS value updates
 - **Performance optimized**: Minimal overhead with efficient frame counting
+
+## Positioning Strategies
+
+### Fixed Positioning
+
+When using `strategy="fixed"`, the FPS counter is positioned relative to the viewport and rendered via a portal into the document body. This is useful when you want the counter to remain visible while scrolling.
+
+```tsx
+<Fps strategy="fixed" position="top-right" />
+```
+
+### Absolute Positioning
+
+When using `strategy="absolute"`, the FPS counter is rendered directly in place (without a portal) and positioned relative to its nearest positioned ancestor. This is useful when you want the counter to be contained within a specific element with a `relative` wrapper.
+
+```tsx
+<div className="relative">
+  <Fps strategy="absolute" position="bottom-left" />
+</div>
+```
+
+**Note:** Unlike `fixed` positioning, `absolute` positioning does not use a portal, so the component will respect relative positioning contexts and be contained within its parent element.
 
 ## Performance Considerations
 

@@ -6,9 +6,13 @@ import * as ReactDOM from "react-dom";
 import { cn } from "@/lib/utils";
 
 const fpsVariants = cva(
-  "fixed z-50 flex items-center gap-2 rounded-md bg-black/80 px-3 py-1.5 font-mono text-sm text-white backdrop-blur-sm",
+  "z-50 flex shrink-0 items-center gap-2 rounded-sm border bg-background/80 px-3 py-1.5 font-mono text-foreground text-sm backdrop-blur-sm",
   {
     variants: {
+      strategy: {
+        fixed: "fixed",
+        absolute: "absolute",
+      },
       position: {
         "top-left": "top-4 left-4",
         "top-right": "top-4 right-4",
@@ -22,6 +26,7 @@ const fpsVariants = cva(
       },
     },
     defaultVariants: {
+      strategy: "fixed",
       position: "top-right",
       status: "good",
     },
@@ -32,27 +37,28 @@ interface FpsProps
   extends React.ComponentProps<"div">,
     Omit<VariantProps<typeof fpsVariants>, "status"> {
   label?: string;
-  enabled?: boolean;
   updateInterval?: number;
   warningThreshold?: number;
   errorThreshold?: number;
   portalContainer?: Element | DocumentFragment | null;
+  enabled?: boolean;
 }
 
 function Fps(props: FpsProps) {
   const {
-    enabled = true,
-    updateInterval = 500,
+    strategy = "fixed",
     position = "top-right",
     label,
+    updateInterval = 500,
     warningThreshold = 30,
     errorThreshold = 20,
     portalContainer: portalContainerProp,
+    enabled = true,
     className,
     ...fpsProps
   } = props;
 
-  const labelId = React.useId();
+  const [mounted, setMounted] = React.useState(false);
   const [fps, setFps] = React.useState(0);
   const frameCountRef = React.useRef(0);
   const lastTimeRef = React.useRef(performance.now());
@@ -60,7 +66,7 @@ function Fps(props: FpsProps) {
   const updateTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
-  const [mounted, setMounted] = React.useState(false);
+
   React.useLayoutEffect(() => setMounted(true), []);
 
   const status = React.useMemo(() => {
@@ -102,26 +108,22 @@ function Fps(props: FpsProps) {
   if (!enabled) return null;
 
   const portalContainer =
-    portalContainerProp ?? (mounted ? globalThis.document?.body : null);
+    strategy === "absolute"
+      ? null
+      : (portalContainerProp ?? (mounted ? globalThis.document?.body : null));
 
-  if (!portalContainer) return null;
-
-  return ReactDOM.createPortal(
+  const Comp = (
     <div
-      role="status"
-      aria-labelledby={label ? labelId : undefined}
+      aria-hidden="true"
       {...fpsProps}
-      className={cn(fpsVariants({ position, status }), className)}
+      className={cn(fpsVariants({ strategy, position, status }), className)}
     >
-      {label && (
-        <span id={labelId} className="text-muted-foreground">
-          {label}:
-        </span>
-      )}
+      {label && <span className="text-muted-foreground">{label}:</span>}
       <span>{fps}</span>
-    </div>,
-    portalContainer,
+    </div>
   );
+
+  return portalContainer ? ReactDOM.createPortal(Comp, portalContainer) : Comp;
 }
 
 export { Fps };

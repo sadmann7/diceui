@@ -13,9 +13,7 @@ function Portal(props: PortalProps) {
 
   const [mounted, setMounted] = React.useState(false);
 
-  React.useLayoutEffect(() => {
-    setMounted(true);
-  }, []);
+  React.useLayoutEffect(() => setMounted(true), []);
 
   const container =
     containerProp ?? (mounted ? globalThis.document?.body : null);

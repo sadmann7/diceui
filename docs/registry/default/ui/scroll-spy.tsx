@@ -40,6 +40,13 @@ function useLazyRef<T>(fn: () => T) {
   return ref as React.RefObject<T>;
 }
 
+function getDefaultScrollBehavior(): ScrollBehavior {
+  if (typeof window === "undefined") return "smooth";
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ? "auto"
+    : "smooth";
+}
+
 interface StoreState {
   value: string;
 }
@@ -172,7 +179,7 @@ function ScrollSpyRootImpl(props: Omit<ScrollSpyRootProps, "onValueChange">) {
     rootMargin,
     threshold = 0.1,
     offset = 0,
-    scrollBehavior = "smooth",
+    scrollBehavior = getDefaultScrollBehavior(),
     scrollContainer = null,
     dir: dirProp,
     orientation = "horizontal",
