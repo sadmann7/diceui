@@ -115,11 +115,16 @@ function Fps(props: FpsProps) {
   const Comp = (
     <div
       aria-hidden="true"
+      data-slot="fps"
       {...fpsProps}
       className={cn(fpsVariants({ strategy, position, status }), className)}
     >
-      {label && <span className="text-muted-foreground">{label}:</span>}
-      <span>{fps}</span>
+      {label && (
+        <span data-slot="fps-label" className="text-muted-foreground">
+          {label}:
+        </span>
+      )}
+      <span data-slot="fps-value">{fps}</span>
     </div>
   );
 
