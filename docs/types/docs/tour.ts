@@ -115,7 +115,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * ```
    */
   onPointerDownOutside?: (
-    event: CustomEvent<{ originalEvent: PointerEvent }>,
+    event: CustomEvent<{ originalEvent: PointerEvent }>
   ) => void;
 
   /**
@@ -133,7 +133,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * ```
    */
   onInteractOutside?: (
-    event: CustomEvent<{ originalEvent: PointerEvent | FocusEvent }>,
+    event: CustomEvent<{ originalEvent: PointerEvent | FocusEvent }>
   ) => void;
 
   /**
@@ -193,11 +193,11 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   spotlightPadding?: number;
 
   /**
-   * Whether to scroll to the highlighted element.
+   * Whether to automatically scroll to the highlighted element when navigating between steps.
    *
-   * @default false
+   * @default true
    */
-  scrollToElement?: boolean;
+  autoScroll?: boolean;
 
   /**
    * The scroll behavior when navigating to elements.

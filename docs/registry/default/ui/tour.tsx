@@ -393,7 +393,7 @@ interface TourRootProps extends DivProps {
   alignOffset?: number;
   sideOffset?: number;
   spotlightPadding?: number;
-  scrollToElement?: boolean;
+  autoScroll?: boolean;
   scrollBehavior?: ScrollBehavior;
   scrollOffset?: ScrollOffset;
   dismissible?: boolean;
@@ -411,7 +411,7 @@ function TourRoot(props: TourRootProps) {
     onValueChange,
     onComplete,
     onSkip,
-    scrollToElement = false,
+    autoScroll = true,
     scrollBehavior = "smooth",
     scrollOffset,
     ...rootProps
@@ -433,7 +433,7 @@ function TourRoot(props: TourRootProps) {
     onValueChange,
     onComplete,
     onSkip,
-    scrollToElement,
+    autoScroll,
     scrollBehavior,
     scrollOffset,
   });
@@ -488,7 +488,7 @@ function TourRoot(props: TourRootProps) {
             return;
           }
 
-          if (nextStep && propsRef.current.scrollToElement) {
+          if (nextStep && propsRef.current.autoScroll) {
             const targetElement = getTargetElement(nextStep.target);
             if (targetElement) {
               onScrollToElement(
@@ -567,7 +567,7 @@ interface TourRootImplProps
     | "onValueChange"
     | "onComplete"
     | "onSkip"
-    | "scrollToElement"
+    | "autoScroll"
     | "scrollBehavior"
     | "scrollOffset"
   > {}
