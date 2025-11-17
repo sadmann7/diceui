@@ -2,6 +2,7 @@
   "name": "tour",
   "type": "registry:ui",
   "dependencies": [
+    "@floating-ui/react-dom",
     "@radix-ui/react-slot",
     "lucide-react"
   ],

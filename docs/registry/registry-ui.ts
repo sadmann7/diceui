@@ -497,9 +497,24 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "tags-input",
+    type: "registry:ui",
+    dependencies: ["@diceui/tags-input", "lucide-react"],
+    files: [
+      {
+        path: "ui/tags-input.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "tour",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    dependencies: [
+      "@floating-ui/react-dom",
+      "@radix-ui/react-slot",
+      "lucide-react",
+    ],
     files: [
       {
         path: "ui/tour.tsx",
@@ -508,17 +523,6 @@ export const ui: Registry["items"] = [
       {
         path: "lib/compose-refs.ts",
         type: "registry:lib",
-      },
-    ],
-  },
-  {
-    name: "tags-input",
-    type: "registry:ui",
-    dependencies: ["@diceui/tags-input", "lucide-react"],
-    files: [
-      {
-        path: "ui/tags-input.tsx",
-        type: "registry:ui",
       },
     ],
   },

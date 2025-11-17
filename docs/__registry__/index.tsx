@@ -477,6 +477,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "tags-input": {
+      name: "tags-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/ui/tags-input.tsx",
+        type: "registry:ui",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/tags-input.tsx")),
+      source: "",
+      chunks: []
+    },
     "tour": {
       name: "tour",
       description: "",
@@ -492,20 +506,6 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/ui/tour.tsx")),
-      source: "",
-      chunks: []
-    },
-    "tags-input": {
-      name: "tags-input",
-      description: "",
-      type: "registry:ui",
-      registryDependencies: undefined,
-      files: [{
-        path: "registry/default/ui/tags-input.tsx",
-        type: "registry:ui",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/ui/tags-input.tsx")),
       source: "",
       chunks: []
     },

@@ -376,22 +376,6 @@
       ]
     },
     {
-      "name": "tour",
-      "type": "registry:component",
-      "title": "Tour",
-      "description": "A guided tour component that highlights elements and provides step-by-step instructions to help users learn about your application.",
-      "files": [
-        {
-          "path": "registry/default/ui/tour.tsx",
-          "type": "registry:ui"
-        },
-        {
-          "path": "registry/default/lib/compose-refs.ts",
-          "type": "registry:lib"
-        }
-      ]
-    },
-    {
       "name": "tags-input",
       "type": "registry:component",
       "title": "Tags Input",
@@ -400,6 +384,27 @@
         {
           "path": "registry/default/ui/tags-input.tsx",
           "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "tour",
+      "type": "registry:component",
+      "title": "Tour",
+      "description": "A guided tour component that highlights elements and provides step-by-step instructions to help users learn about your application.",
+      "dependencies": [
+        "@floating-ui/react-dom",
+        "@radix-ui/react-slot",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "registry/default/ui/tour.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/default/lib/compose-refs.ts",
+          "type": "registry:lib"
         }
       ]
     },

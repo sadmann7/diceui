@@ -561,9 +561,24 @@
     ]
   },
   {
+    "name": "tags-input",
+    "type": "registry:ui",
+    "dependencies": [
+      "@diceui/tags-input",
+      "lucide-react"
+    ],
+    "files": [
+      {
+        "path": "ui/tags-input.tsx",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
     "name": "tour",
     "type": "registry:ui",
     "dependencies": [
+      "@floating-ui/react-dom",
       "@radix-ui/react-slot",
       "lucide-react"
     ],
@@ -575,20 +590,6 @@
       {
         "path": "lib/compose-refs.ts",
         "type": "registry:lib"
-      }
-    ]
-  },
-  {
-    "name": "tags-input",
-    "type": "registry:ui",
-    "dependencies": [
-      "@diceui/tags-input",
-      "lucide-react"
-    ],
-    "files": [
-      {
-        "path": "ui/tags-input.tsx",
-        "type": "registry:ui"
       }
     ]
   }
