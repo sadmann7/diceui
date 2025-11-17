@@ -1,0 +1,128 @@
+---
+title: FPS
+description: A real-time frames per second (FPS) counter component for monitoring performance.
+links:
+  api: /docs/utilities/fps#api-reference
+---
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/fps"
+```
+
+### Manual
+
+<Steps>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource src="./registry/default/components/fps.tsx" />
+  </Step>
+</Steps>
+
+## Usage
+
+### Basic
+
+```tsx
+import { Fps } from "@/components/fps"
+
+export default function App() {
+  return (
+    <div>
+      <Fps />
+      {/* Your app content */}
+    </div>
+  )
+}
+```
+
+### Custom Position
+
+```tsx
+import { Fps } from "@/components/fps"
+
+export default function App() {
+  return (
+    <div>
+      <Fps position="bottom-left" />
+      {/* Your app content */}
+    </div>
+  )
+}
+```
+
+### Custom Thresholds
+
+```tsx
+import { Fps } from "@/components/fps"
+
+export default function App() {
+  return (
+    <div>
+      <Fps 
+        warningThreshold={45}
+        errorThreshold={30}
+      />
+      {/* Your app content */}
+    </div>
+  )
+}
+```
+
+### Conditional Rendering
+
+```tsx
+import { Fps } from "@/components/fps"
+
+export default function App() {
+  const isDevelopment = process.env.NODE_ENV === "development"
+  
+  return (
+    <div>
+      <Fps enabled={isDevelopment} />
+      {/* Your app content */}
+    </div>
+  )
+}
+```
+
+## API Reference
+
+### Fps
+
+A component that displays a real-time FPS counter overlay.
+
+<AutoTypeTable
+  path="./types/docs/fps.ts"
+  name="FpsProps"
+/>
+
+## Features
+
+- **Real-time monitoring**: Uses `requestAnimationFrame` for accurate FPS measurement
+- **Color-coded display**: Automatically changes color based on performance thresholds
+  - Green: Good performance (above warning threshold)
+  - Yellow: Warning (below warning threshold)
+  - Red: Poor performance (below error threshold)
+- **Customizable position**: Choose from four corner positions
+- **Configurable update interval**: Control how often the FPS value updates
+- **Performance optimized**: Minimal overhead with efficient frame counting
+
+## Performance Considerations
+
+The FPS counter uses `requestAnimationFrame` to measure frame rate, which has minimal performance impact. The component:
+
+- Only updates the display at the specified interval (default: 500ms)
+- Uses refs to avoid unnecessary re-renders
+- Automatically cleans up animation frames on unmount
+
+For production builds, consider disabling the FPS counter:
+
+```tsx
+<Fps enabled={process.env.NODE_ENV === "development"} />
+```
+
