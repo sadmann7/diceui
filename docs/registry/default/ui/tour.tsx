@@ -590,8 +590,10 @@ function TourRootImpl(props: TourRootImplProps) {
   const dir = useDirection(dirProp);
 
   const [portal, setPortal] = React.useState<HTMLElement | null>(null);
+  const previouslyFocusedElementRef = React.useRef<HTMLElement | null>(null);
 
   const onEscapeKeyDownRef = useAsRef(onEscapeKeyDown);
+  const onCloseAutoFocusRef = useAsRef(onCloseAutoFocus);
 
   React.useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -607,6 +609,50 @@ function TourRootImpl(props: TourRootImplProps) {
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [store, onEscapeKeyDownRef]);
+
+  const open = useStore((state) => state.open);
+  const prevOpenRef = React.useRef<boolean | undefined>(undefined);
+
+  // Store previously focused element when tour opens, restore when it closes
+  // Use useLayoutEffect to capture BEFORE the step mounts and steals focus
+  useIsomorphicLayoutEffect(() => {
+    const wasOpen = prevOpenRef.current;
+
+    if (open && !wasOpen) {
+      // Tour is opening - store the currently focused element BEFORE step mounts
+      previouslyFocusedElementRef.current =
+        document.activeElement as HTMLElement | null;
+    } else if (!open && wasOpen) {
+      // Tour is closing - restore focus after a delay
+      setTimeout(() => {
+        const container = portal ?? document.body;
+        const closeAutoFocusEvent = new CustomEvent(
+          CLOSE_AUTO_FOCUS,
+          EVENT_OPTIONS,
+        );
+
+        if (onCloseAutoFocusRef.current) {
+          container.addEventListener(
+            CLOSE_AUTO_FOCUS,
+            onCloseAutoFocusRef.current as EventListener,
+            { once: true },
+          );
+        }
+        container.dispatchEvent(closeAutoFocusEvent);
+
+        if (!closeAutoFocusEvent.defaultPrevented) {
+          const elementToFocus = previouslyFocusedElementRef.current;
+          if (elementToFocus && document.body.contains(elementToFocus)) {
+            elementToFocus.focus({ preventScroll: true });
+          }
+        }
+
+        previouslyFocusedElementRef.current = null;
+      }, 0);
+    }
+
+    prevOpenRef.current = open;
+  }, [open, portal, onCloseAutoFocusRef]);
 
   const contextValue = React.useMemo<TourContextValue>(
     () => ({
@@ -645,7 +691,6 @@ function TourRootImpl(props: TourRootImplProps) {
     [portal],
   );
 
-  const open = useStore((state) => state.open);
   useScrollLock(open && modal);
 
   const RootPrimitive = asChild ? Slot : "div";
@@ -887,17 +932,7 @@ function TourStep(props: TourStepProps) {
     const ownerDocument = stepElement.ownerDocument;
 
     function onPointerDown(event: PointerEvent) {
-      console.log("[Tour] Document pointerdown:", {
-        target: event.target,
-        isPointerInsideReactTreeRef: isPointerInsideReactTreeRef.current,
-        stepElement,
-        targetElement,
-        eventPhase: event.eventPhase,
-      });
-
       if (event.target && !isPointerInsideReactTreeRef.current) {
-        console.log("[Tour] Pointer is outside, dispatching events");
-
         const pointerDownOutsideEvent = new CustomEvent(POINTER_DOWN_OUTSIDE, {
           ...EVENT_OPTIONS,
           detail: { originalEvent: event },
@@ -916,19 +951,10 @@ function TourStep(props: TourStepProps) {
           !interactOutsideEvent.defaultPrevented &&
           context.dismissible
         ) {
-          console.log("[Tour] Dismissing tour");
           store.setState("open", false);
-        } else {
-          console.log("[Tour] Dismissal prevented:", {
-            pointerDownPrevented: pointerDownOutsideEvent.defaultPrevented,
-            interactPrevented: interactOutsideEvent.defaultPrevented,
-            dismissible: context.dismissible,
-          });
         }
       }
 
-      // Reset after each pointer down
-      console.log("[Tour] Resetting isPointerInsideReactTreeRef");
       isPointerInsideReactTreeRef.current = false;
     }
 
@@ -941,7 +967,7 @@ function TourStep(props: TourStepProps) {
       window.clearTimeout(timerId);
       ownerDocument.removeEventListener("pointerdown", onPointerDown);
     };
-  }, [open, isCurrentStep, store, context, targetElement]);
+  }, [open, isCurrentStep, store, context]);
 
   // Handle focus outside
   React.useEffect(() => {
@@ -959,15 +985,6 @@ function TourStep(props: TourStepProps) {
       const isFocusInStep = stepElement?.contains(target);
       const isFocusInTarget = targetElement?.contains(target);
 
-      console.log("[Tour] Document focusin:", {
-        target,
-        isFocusInsideReactTreeRef: isFocusInsideReactTreeRef.current,
-        isFocusInStep,
-        isFocusInTarget,
-        stepElement,
-        targetElement,
-      });
-
       // Only dismiss if BOTH the ref says false AND the element is actually outside
       if (
         event.target &&
@@ -975,10 +992,6 @@ function TourStep(props: TourStepProps) {
         !isFocusInStep &&
         !isFocusInTarget
       ) {
-        console.log(
-          "[Tour] Focus is outside, dispatching interact outside event",
-        );
-
         const interactOutsideEvent = new CustomEvent(INTERACT_OUTSIDE, {
           ...EVENT_OPTIONS,
           detail: { originalEvent: event },
@@ -987,16 +1000,8 @@ function TourStep(props: TourStepProps) {
         context.onInteractOutside?.(interactOutsideEvent);
 
         if (!interactOutsideEvent.defaultPrevented && context.dismissible) {
-          console.log("[Tour] Dismissing tour due to focus outside");
           store.setState("open", false);
-        } else {
-          console.log("[Tour] Focus dismissal prevented:", {
-            interactPrevented: interactOutsideEvent.defaultPrevented,
-            dismissible: context.dismissible,
-          });
         }
-      } else {
-        console.log("[Tour] Focus is inside React tree, not dismissing");
       }
     }
 
@@ -1010,11 +1015,6 @@ function TourStep(props: TourStepProps) {
   // Capture phase handlers for step element
   const onPointerDownCapture = React.useCallback(
     (event: React.PointerEvent<StepElement>) => {
-      console.log("[Tour] Step onPointerDownCapture:", {
-        target: event.target,
-        currentTarget: event.currentTarget,
-        settingRefTo: true,
-      });
       onPointerDownCaptureProp?.(event);
       isPointerInsideReactTreeRef.current = true;
     },
@@ -1023,11 +1023,6 @@ function TourStep(props: TourStepProps) {
 
   const onFocusCapture = React.useCallback(
     (event: React.FocusEvent<StepElement>) => {
-      console.log("[Tour] Step onFocusCapture:", {
-        target: event.target,
-        currentTarget: event.currentTarget,
-        settingRefTo: true,
-      });
       onFocusCaptureProp?.(event);
       isFocusInsideReactTreeRef.current = true;
     },
@@ -1036,12 +1031,6 @@ function TourStep(props: TourStepProps) {
 
   const onBlurCapture = React.useCallback(
     (event: React.FocusEvent<StepElement>) => {
-      console.log("[Tour] Step onBlurCapture:", {
-        target: event.target,
-        currentTarget: event.currentTarget,
-        relatedTarget: event.relatedTarget,
-        settingRefTo: false,
-      });
       onBlurCaptureProp?.(event);
       isFocusInsideReactTreeRef.current = false;
     },
@@ -1052,26 +1041,15 @@ function TourStep(props: TourStepProps) {
   React.useEffect(() => {
     if (!open || !isCurrentStep || !targetElement) return;
 
-    function onTargetPointerDownCapture(event: Event) {
-      console.log("[Tour] Target onPointerDownCapture:", {
-        target: event.target,
-        currentTarget: event.currentTarget,
-        settingRefTo: true,
-      });
+    function onTargetPointerDownCapture() {
       isPointerInsideReactTreeRef.current = true;
     }
 
     function onTargetFocusCapture() {
-      console.log("[Tour] Target onFocusCapture");
       isFocusInsideReactTreeRef.current = true;
     }
 
-    function onTargetBlurCapture(event: Event) {
-      console.log("[Tour] Target onBlurCapture:", {
-        target: event.target,
-        currentTarget: event.currentTarget,
-        settingRefTo: false,
-      });
+    function onTargetBlurCapture() {
       isFocusInsideReactTreeRef.current = false;
     }
 
@@ -1364,15 +1342,8 @@ function useFocusTrap(
       document.removeEventListener("focusin", onFocusIn);
       container.removeEventListener("keydown", onKeyDown);
 
-      console.log(
-        "[Tour] Focus trap cleanup - tour still open?",
-        tourOpenRef.current,
-      );
-
       // Only restore focus if tour is actually closing, not during step transitions
       if (!tourOpenRef.current) {
-        console.log("[Tour] Restoring focus to previously focused element");
-        // Restore focus on unmount with delay (Radix pattern for React bug)
         setTimeout(() => {
           const closeAutoFocusEvent = new CustomEvent(
             CLOSE_AUTO_FOCUS,
@@ -1396,7 +1367,6 @@ function useFocusTrap(
             }
           }
 
-          // Remove listener after dispatch
           if (onCloseAutoFocusRef.current) {
             container.removeEventListener(
               CLOSE_AUTO_FOCUS,
@@ -1404,10 +1374,6 @@ function useFocusTrap(
             );
           }
         }, 0);
-      } else {
-        console.log(
-          "[Tour] Skipping focus restoration - tour is still open (step transition)",
-        );
       }
     };
   }, [

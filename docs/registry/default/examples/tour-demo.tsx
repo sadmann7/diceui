@@ -80,7 +80,6 @@ export default function TourDemo() {
               <div className="flex gap-2">
                 <TourPrev />
                 <TourNext />
-                <Button>Test</Button>
               </div>
             </div>
           </TourFooter>
