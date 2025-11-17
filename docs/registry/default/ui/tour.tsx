@@ -145,6 +145,10 @@ function useDirection(dirProp?: Direction): Direction {
   return dirProp ?? contextDir ?? "ltr";
 }
 
+function getDataState(open: boolean): string {
+  return open ? "open" : "closed";
+}
+
 interface StepData {
   target: string | React.RefObject<HTMLElement> | HTMLElement;
   align?: Align;
@@ -1146,8 +1150,8 @@ function TourSpotlight(props: TourSpotlightProps) {
 
   return (
     <SpotlightPrimitive
-      data-state={open ? "open" : "closed"}
       data-slot="tour-spotlight"
+      data-state={getDataState(open)}
       {...backdropProps}
       className={cn(
         "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/80 data-[state=closed]:animate-out data-[state=open]:animate-in",
@@ -1178,8 +1182,8 @@ function TourSpotlightRing(props: TourSpotlightRingProps) {
 
   return (
     <RingPrimitive
-      data-state={open ? "open" : "closed"}
       data-slot="tour-spotlight-ring"
+      data-state={getDataState(open)}
       {...ringProps}
       className={cn(
         "pointer-events-none fixed z-50 border-ring ring-[3px] ring-ring/50 transition-all duration-250",
