@@ -13,7 +13,7 @@ export default function FpsStrategyDemo() {
         </div>
       </div>
       <div className="relative h-48 w-full rounded-lg border bg-muted/50 p-4">
-        <Fps strategy="fixed" position="top-right" label="Fixed" />
+        <Fps strategy="fixed" position="bottom-right" label="Fixed" />
         <div className="flex size-full flex-col items-center justify-center gap-1">
           <div>Fixed positioning</div>
           <div className="text-muted-foreground text-sm">
