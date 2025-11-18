@@ -26,10 +26,9 @@ export default function BadgeOverflowMultilineDemo() {
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-3">
         <h3 className="font-medium text-sm">Single Line (default)</h3>
-        <div className="w-64 rounded-lg border p-4">
+        <div className="w-64 rounded-md border p-3">
           <BadgeOverflow
             items={technologies}
-            getLabel={(tech) => tech}
             renderBadge={(_, label) => (
               <Badge variant="secondary">{label}</Badge>
             )}
@@ -38,10 +37,9 @@ export default function BadgeOverflowMultilineDemo() {
       </div>
       <div className="flex flex-col gap-3">
         <h3 className="font-medium text-sm">Two Lines</h3>
-        <div className="w-64 rounded-lg border p-4">
+        <div className="w-64 rounded-md border p-3">
           <BadgeOverflow
             items={technologies}
-            getLabel={(tech) => tech}
             lineCount={2}
             renderBadge={(_, label) => <Badge variant="outline">{label}</Badge>}
           />
@@ -49,10 +47,9 @@ export default function BadgeOverflowMultilineDemo() {
       </div>
       <div className="flex flex-col gap-3">
         <h3 className="font-medium text-sm">Three Lines</h3>
-        <div className="w-64 rounded-lg border p-4">
+        <div className="w-64 rounded-md border p-3">
           <BadgeOverflow
             items={technologies}
-            getLabel={(tech) => tech}
             lineCount={3}
             renderBadge={(_, label) => <Badge variant="default">{label}</Badge>}
           />

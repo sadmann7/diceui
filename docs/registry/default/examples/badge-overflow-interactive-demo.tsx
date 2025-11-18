@@ -28,7 +28,7 @@ export default function BadgeOverflowInteractiveDemo() {
     [],
   );
 
-  const onAddTag = React.useCallback(() => {
+  const onTagAdd = React.useCallback(() => {
     if (input.trim()) {
       setTags([
         ...tags,
@@ -41,7 +41,7 @@ export default function BadgeOverflowInteractiveDemo() {
     }
   }, [input, tags]);
 
-  const onRemoveTag = React.useCallback(
+  const onTagRemove = React.useCallback(
     (value: string) => {
       setTags(tags.filter((tag) => tag.value !== value));
     },
@@ -52,25 +52,25 @@ export default function BadgeOverflowInteractiveDemo() {
     (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (event.key === "Enter") {
         event.preventDefault();
-        onAddTag();
+        onTagAdd();
       }
     },
-    [onAddTag],
+    [onTagAdd],
   );
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3">
         <h3 className="font-medium text-sm">Tags with Overflow</h3>
-        <div className="w-80 rounded-lg border p-4">
+        <div className="w-full max-w-80 rounded-md border p-3">
           <BadgeOverflow
             items={tags}
-            getLabel={(tag) => tag.label}
+            getBadgeLabel={(tag) => tag.label}
             renderBadge={(tag, label) => (
               <Badge
                 variant="secondary"
                 className="cursor-pointer"
-                onClick={() => onRemoveTag(tag.value)}
+                onClick={() => onTagRemove(tag.value)}
               >
                 <span>{label}</span>
                 <X className="size-3" />
@@ -84,22 +84,22 @@ export default function BadgeOverflowInteractiveDemo() {
           />
         </div>
       </div>
-      <div className="flex gap-2">
+      <div className="flex items-center gap-2">
         <Input
           placeholder="Add a tag..."
-          className="w-64"
+          className="max-w-64 flex-1"
           value={input}
           onChange={onInputChange}
           onKeyDown={onKeyDown}
         />
-        <Button onClick={onAddTag} type="button">
+        <Button type="button" onClick={onTagAdd}>
           Add
         </Button>
       </div>
-      <p className="text-muted-foreground text-sm">
-        Click on a badge to remove it. Resize the container to see overflow
-        behavior.
-      </p>
+      <div className="flex flex-col gap-px text-balance text-muted-foreground text-sm">
+        <p>Click on a badge to remove it.</p>
+        <p>Resize the container to see overflow behavior.</p>
+      </div>
     </div>
   );
 }

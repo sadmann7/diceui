@@ -18,13 +18,12 @@ const tags = [
 
 export default function BadgeOverflowDemo() {
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex w-64 flex-col gap-8">
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Basic Badge Overflow</h3>
-        <div className="w-64 rounded-lg border p-4">
+        <h3 className="font-medium text-sm">Badge Overflow</h3>
+        <div className="w-64 rounded-md border p-3">
           <BadgeOverflow
             items={tags}
-            getLabel={(tag) => tag}
             renderBadge={(_, label) => (
               <Badge variant="secondary">{label}</Badge>
             )}
@@ -32,21 +31,12 @@ export default function BadgeOverflowDemo() {
         </div>
       </div>
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Wider Container</h3>
-        <div className="w-96 rounded-lg border p-4">
+        <h3 className="font-medium text-sm">
+          Badge Overflow with Custom Overflow
+        </h3>
+        <div className="w-64 rounded-md border p-3">
           <BadgeOverflow
             items={tags}
-            getLabel={(tag) => tag}
-            renderBadge={(_, label) => <Badge variant="outline">{label}</Badge>}
-          />
-        </div>
-      </div>
-      <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Custom Overflow Badge</h3>
-        <div className="w-64 rounded-lg border p-4">
-          <BadgeOverflow
-            items={tags}
-            getLabel={(tag) => tag}
             renderBadge={(_, label) => <Badge variant="default">{label}</Badge>}
             renderOverflow={(count) => (
               <Badge variant="secondary" className="bg-muted">

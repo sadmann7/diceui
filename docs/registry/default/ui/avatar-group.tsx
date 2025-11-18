@@ -105,7 +105,7 @@ function AvatarGroup(props: AvatarGroupProps) {
             renderOverflow ? (
               renderOverflow(overflowCount)
             ) : (
-              <div className="flex size-full items-center justify-center rounded-full bg-muted font-medium text-muted-foreground text-xs">
+              <div className="inline-flex size-full items-center justify-center rounded-full bg-muted font-medium text-muted-foreground text-xs">
                 +{overflowCount}
               </div>
             )

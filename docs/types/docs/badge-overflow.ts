@@ -12,12 +12,22 @@ export interface BadgeOverflowProps<T = string>
   items: T[];
 
   /**
-   * Function to extract the label from each item.
+   * Function to extract the label string from each badge item.
    *
-   * @example
-   * getLabel={(item) => item.name}
+   * Optional for primitive arrays (strings, numbers).
+   * Required for object arrays.
+   *
+   * ```tsx
+   * // For primitive arrays, getBadgeLabel is optional
+   * <BadgeOverflow items={["React", "TypeScript"]} />
+   * ```
+   *
+   * ```tsx
+   * // For object arrays, getBadgeLabel is required
+   * <BadgeOverflow items={[{ id: 1, name: "React" }]} getBadgeLabel={(item) => item.name} />
+   * ```
    */
-  getLabel: (item: T) => string;
+  getBadgeLabel?: (item: T) => string;
 
   /**
    * Maximum number of lines to display badges across.

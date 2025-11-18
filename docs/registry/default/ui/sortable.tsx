@@ -141,7 +141,9 @@ function SortableRoot<T>(props: SortableRootProps<T>) {
   const getItemValue = React.useCallback(
     (item: T): UniqueIdentifier => {
       if (typeof item === "object" && !getItemValueProp) {
-        throw new Error("getItemValue is required when using array of objects");
+        throw new Error(
+          "`getItemValue` is required when using array of objects",
+        );
       }
       return getItemValueProp
         ? getItemValueProp(item)

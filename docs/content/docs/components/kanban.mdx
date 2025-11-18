@@ -62,6 +62,68 @@ return (
 )
 ```
 
+## Usage
+
+### With Primitive Values
+
+When using primitive arrays (strings, numbers), the `getColumnValue` and `getItemValue` props are optional. The component will automatically use the items themselves as unique identifiers.
+
+```tsx
+const [columns, setColumns] = React.useState([
+  { id: "todo", items: ["Task 1", "Task 2"] },
+  { id: "done", items: ["Task 3"] },
+]);
+
+<Kanban.Root columns={columns} onColumnsChange={setColumns}>
+  <Kanban.Board>
+    {columns.map((column) => (
+      <Kanban.Column key={column.id} value={column.id}>
+        {column.items.map((item) => (
+          <Kanban.Item key={item} value={item}>
+            {item}
+          </Kanban.Item>
+        ))}
+      </Kanban.Column>
+    ))}
+  </Kanban.Board>
+</Kanban.Root>
+```
+
+### With Object Arrays
+
+When using object arrays, the `getColumnValue` and `getItemValue` props are required to extract unique identifiers from each column and item.
+
+```tsx
+const [columns, setColumns] = React.useState([
+  { id: "todo", name: "To Do", items: [
+    { id: 1, title: "Task 1" },
+    { id: 2, title: "Task 2" },
+  ]},
+  { id: "done", name: "Done", items: [
+    { id: 3, title: "Task 3" },
+  ]},
+]);
+
+<Kanban.Root
+  columns={columns}
+  onColumnsChange={setColumns}
+  getColumnValue={(column) => column.id}
+  getItemValue={(item) => item.id}
+>
+  <Kanban.Board>
+    {columns.map((column) => (
+      <Kanban.Column key={column.id} value={column.id}>
+        {column.items.map((item) => (
+          <Kanban.Item key={item.id} value={item.id}>
+            {item.title}
+          </Kanban.Item>
+        ))}
+      </Kanban.Column>
+    ))}
+  </Kanban.Board>
+</Kanban.Root>
+```
+
 ## Examples
 
 ### With Dynamic Overlay

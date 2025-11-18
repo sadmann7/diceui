@@ -66,25 +66,34 @@ function clearBadgeWidthCache(): void {
   badgeWidthCache.clear();
 }
 
-interface BadgeOverflowProps<T = string> extends React.ComponentProps<"div"> {
-  items: T[];
-  lineCount?: number;
-  cacheKeyPrefix?: string;
-  iconSize?: number;
-  maxWidth?: number;
-  containerPadding?: number;
-  badgeGap?: number;
-  overflowBadgeWidth?: number;
-  getLabel: (item: T) => string;
-  renderBadge: (item: T, label: string) => React.ReactNode;
-  renderOverflow?: (count: number) => React.ReactNode;
-  asChild?: boolean;
+interface GetBadgeLabel<T> {
+  /**
+   * Callback that returns a label string for each badge item.
+   * Optional for primitive arrays (strings, numbers), required for object arrays.
+   * @example getBadgeLabel={(item) => item.name}
+   */
+  getBadgeLabel: (item: T) => string;
 }
+
+type BadgeOverflowProps<T = string> = React.ComponentProps<"div"> &
+  (T extends object ? GetBadgeLabel<T> : Partial<GetBadgeLabel<T>>) & {
+    items: T[];
+    lineCount?: number;
+    cacheKeyPrefix?: string;
+    iconSize?: number;
+    maxWidth?: number;
+    containerPadding?: number;
+    badgeGap?: number;
+    overflowBadgeWidth?: number;
+    renderBadge: (item: T, label: string) => React.ReactNode;
+    renderOverflow?: (count: number) => React.ReactNode;
+    asChild?: boolean;
+  };
 
 function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
   const {
     items,
-    getLabel,
+    getBadgeLabel: getBadgeLabelProp,
     lineCount = 1,
     cacheKeyPrefix = "",
     containerPadding = DEFAULT_CONTAINER_PADDING,
@@ -92,22 +101,35 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
     overflowBadgeWidth = DEFAULT_OVERFLOW_BADGE_WIDTH,
     iconSize,
     maxWidth,
-    className,
     renderBadge,
     renderOverflow,
-    asChild = false,
+    asChild,
+    className,
+    style,
     ...rootProps
   } = props;
 
-  const containerRef = React.useRef<HTMLDivElement | null>(null);
+  const getBadgeLabel = React.useCallback(
+    (item: T): string => {
+      if (typeof item === "object" && !getBadgeLabelProp) {
+        throw new Error(
+          "`getBadgeLabel` is required when using array of objects",
+        );
+      }
+      return getBadgeLabelProp ? getBadgeLabelProp(item) : (item as string);
+    },
+    [getBadgeLabelProp],
+  );
+
+  const rootRef = React.useRef<HTMLDivElement | null>(null);
   const [containerWidth, setContainerWidth] = React.useState(0);
 
   React.useEffect(() => {
-    if (!containerRef.current) return;
+    if (!rootRef.current) return;
 
     function measureWidth() {
-      if (containerRef.current) {
-        const width = containerRef.current.clientWidth - containerPadding;
+      if (rootRef.current) {
+        const width = rootRef.current.clientWidth - containerPadding;
         setContainerWidth(width);
       }
     }
@@ -115,7 +137,7 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
     measureWidth();
 
     const resizeObserver = new ResizeObserver(measureWidth);
-    resizeObserver.observe(containerRef.current);
+    resizeObserver.observe(rootRef.current);
 
     return () => {
       resizeObserver.disconnect();
@@ -132,7 +154,7 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
     const visible: T[] = [];
 
     for (const item of items) {
-      const label = getLabel(item);
+      const label = getBadgeLabel(item);
       const cacheKey = cacheKeyPrefix ? `${cacheKeyPrefix}:${label}` : label;
 
       const badgeWidth = measureBadgeWidth({
@@ -169,7 +191,7 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
     };
   }, [
     items,
-    getLabel,
+    getBadgeLabel,
     containerWidth,
     lineCount,
     cacheKeyPrefix,
@@ -184,14 +206,18 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
 
   return (
     <Comp
-      ref={containerRef}
       data-slot="badge-overflow"
-      className={cn("flex flex-wrap gap-1", className)}
       {...rootProps}
+      ref={rootRef}
+      className={cn("flex flex-wrap", className)}
+      style={{
+        gap: badgeGap,
+        ...style,
+      }}
     >
       {result.visibleItems.map((item, index) => (
         <React.Fragment key={index}>
-          {renderBadge(item, getLabel(item))}
+          {renderBadge(item, getBadgeLabel(item))}
         </React.Fragment>
       ))}
       {result.hiddenCount > 0 &&

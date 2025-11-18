@@ -48,7 +48,7 @@ export interface AvatarGroupProps extends EmptyProps<"div">, CompositionProps {
    * Render function for the overflow indicator.
    *
    * ```ts
-   * renderOverflow={(count) => <div className="flex size-full items-center justify-center rounded-full bg-muted font-medium text-muted-foreground text-xs">+{count}</div>}
+   * renderOverflow={(count) => <div>+{count}</div>}
    * ```
    */
   renderOverflow?: (count: number) => React.ReactNode;

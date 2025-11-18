@@ -40,10 +40,34 @@ npx shadcn@latest add "https://diceui.com/r/badge-overflow"
 import { Badge } from "@/components/ui/badge";
 import { BadgeOverflow } from "@/components/ui/badge-overflow";
 
+<BadgeOverflow renderBadge={(_, label) => <Badge>{label}</Badge>} />
+```
+
+## Usage
+
+### With Primitive Arrays
+
+When using primitive arrays (strings, numbers), the `getBadgeLabel` prop is optional. The component will automatically use the item itself as the label.
+
+```tsx
 <BadgeOverflow
-  items={tags}
-  getLabel={(tag) => tag}
-  renderBadge={(tag, label) => <Badge>{label}</Badge>}
+  items={["React", "TypeScript", "Next.js"]}
+  renderBadge={(item, label) => <Badge>{label}</Badge>}
+/>
+```
+
+### With Object Arrays
+
+When using object arrays, the `getBadgeLabel` prop is required to extract the label from each item.
+
+```tsx
+<BadgeOverflow
+  items={[
+    { id: 1, name: "React" },
+    { id: 2, name: "TypeScript" },
+  ]}
+  getBadgeLabel={(item) => item.name}
+  renderBadge={(item, label) => <Badge>{label}</Badge>}
 />
 ```
 
