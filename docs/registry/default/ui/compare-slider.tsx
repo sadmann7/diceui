@@ -314,7 +314,7 @@ function CompareSliderRootImpl(
         ref={composedRef}
         tabIndex={0}
         className={cn(
-          "relative isolate select-none overflow-hidden outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
+          "relative isolate select-none overflow-hidden outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 touch-none",
           orientation === "horizontal" ? "w-full" : "h-full",
           className,
         )}
