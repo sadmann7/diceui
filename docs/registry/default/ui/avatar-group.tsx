@@ -103,7 +103,7 @@ function AvatarGroup(props: AvatarGroupProps) {
           key="overflow"
           child={
             renderOverflow ? (
-              renderOverflow(overflowCount)
+              <>{renderOverflow(overflowCount)}</>
             ) : (
               <div className="flex size-full items-center justify-center rounded-full bg-muted font-medium text-muted-foreground text-xs">
                 +{overflowCount}

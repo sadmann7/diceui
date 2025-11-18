@@ -2287,20 +2287,6 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "avatar-group-custom-overflow-demo": {
-      name: "avatar-group-custom-overflow-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["avatar","avatar-group"],
-      files: [{
-        path: "registry/default/examples/avatar-group-custom-overflow-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/avatar-group-custom-overflow-demo.tsx")),
-      source: "",
-      chunks: []
-    },
     "badge-overflow-demo": {
       name: "badge-overflow-demo",
       description: "",
