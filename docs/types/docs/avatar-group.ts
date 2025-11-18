@@ -35,4 +35,11 @@ export interface AvatarGroupProps extends EmptyProps<"div">, CompositionProps {
    * @default false
    */
   reverse?: boolean;
+
+  /**
+   * Render function for the overflow indicator.
+   * @example
+   * renderOverflow={(count) => <div>+{count}</div>}
+   */
+  renderOverflow?: (count: number) => React.ReactNode;
 }
