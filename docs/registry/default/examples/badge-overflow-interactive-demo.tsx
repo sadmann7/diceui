@@ -1,5 +1,6 @@
 "use client";
 
+import { X } from "lucide-react";
 import * as React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -7,36 +8,42 @@ import { Input } from "@/components/ui/input";
 import { BadgeOverflow } from "@/registry/default/ui/badge-overflow";
 
 interface Tag {
-  id: string;
-  name: string;
+  label: string;
+  value: string;
 }
 
 export default function BadgeOverflowInteractiveDemo() {
   const [tags, setTags] = React.useState<Tag[]>([
-    { id: "1", name: "React" },
-    { id: "2", name: "TypeScript" },
-    { id: "3", name: "Next.js" },
-    { id: "4", name: "Tailwind CSS" },
-    { id: "5", name: "Shadcn UI" },
+    { label: "React", value: "react" },
+    { label: "TypeScript", value: "typescript" },
+    { label: "Next.js", value: "nextjs" },
+    { label: "Tailwind CSS", value: "tailwindcss" },
   ]);
-  const [inputValue, setInputValue] = React.useState("");
+  const [input, setInput] = React.useState("");
+
+  const onInputChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setInput(event.target.value);
+    },
+    [],
+  );
 
   const onAddTag = React.useCallback(() => {
-    if (inputValue.trim()) {
+    if (input.trim()) {
       setTags([
         ...tags,
         {
-          id: Date.now().toString(),
-          name: inputValue.trim(),
+          label: input.trim(),
+          value: input.trim(),
         },
       ]);
-      setInputValue("");
+      setInput("");
     }
-  }, [inputValue, tags]);
+  }, [input, tags]);
 
   const onRemoveTag = React.useCallback(
-    (id: string) => {
-      setTags(tags.filter((tag) => tag.id !== id));
+    (value: string) => {
+      setTags(tags.filter((tag) => tag.value !== value));
     },
     [tags],
   );
@@ -58,14 +65,15 @@ export default function BadgeOverflowInteractiveDemo() {
         <div className="w-80 rounded-lg border p-4">
           <BadgeOverflow
             items={tags}
-            getLabel={(tag) => tag.name}
+            getLabel={(tag) => tag.label}
             renderBadge={(tag, label) => (
               <Badge
                 variant="secondary"
                 className="cursor-pointer"
-                onClick={() => onRemoveTag(tag.id)}
+                onClick={() => onRemoveTag(tag.value)}
               >
-                {label} ×
+                <span>{label}</span>
+                <X className="size-3" />
               </Badge>
             )}
             renderOverflow={(count) => (
@@ -79,10 +87,10 @@ export default function BadgeOverflowInteractiveDemo() {
       <div className="flex gap-2">
         <Input
           placeholder="Add a tag..."
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={onKeyDown}
           className="w-64"
+          value={input}
+          onChange={onInputChange}
+          onKeyDown={onKeyDown}
         />
         <Button onClick={onAddTag} type="button">
           Add

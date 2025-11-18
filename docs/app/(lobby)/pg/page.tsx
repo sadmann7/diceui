@@ -1,7 +1,7 @@
 import { Demo } from "@/components/demo";
 import { Shell } from "@/components/shell";
 import BadgeOverflowDemo from "@/registry/default/examples/badge-overflow-demo";
-import BadgeOverflowFormDemo from "@/registry/default/examples/badge-overflow-form-demo";
+import BadgeOverflowInteractiveDemo from "@/registry/default/examples/badge-overflow-interactive-demo";
 import BadgeOverflowMultilineDemo from "@/registry/default/examples/badge-overflow-multiline-demo";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
 
@@ -11,7 +11,7 @@ export default function PlaygroundPage() {
       <Demo>
         <BadgeOverflowDemo />
         <BadgeOverflowMultilineDemo />
-        <BadgeOverflowFormDemo />
+        <BadgeOverflowInteractiveDemo />
         <ColorPickerDemo />
       </Demo>
     </Shell>

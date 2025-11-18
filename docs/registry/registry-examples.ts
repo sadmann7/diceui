@@ -1509,6 +1509,7 @@ export const examples: Registry["items"] = [
   {
     name: "badge-overflow-interactive-demo",
     type: "registry:example",
+    dependencies: ["lucide-react"],
     registryDependencies: ["badge", "badge-overflow", "button", "input"],
     files: [
       {
