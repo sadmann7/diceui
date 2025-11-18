@@ -508,6 +508,17 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "badge-overflow",
+    type: "registry:ui",
+    dependencies: ["@radix-ui/react-slot"],
+    files: [
+      {
+        path: "ui/badge-overflow.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "tags-input",
     type: "registry:ui",
     dependencies: ["@diceui/tags-input", "lucide-react"],

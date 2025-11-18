@@ -1,0 +1,108 @@
+---
+title: Badge Overflow
+description: A component that intelligently manages badge overflow by measuring available space and displaying only what fits with an overflow indicator.
+preview: true
+links:
+ api: /docs/components/badge-overflow#api-reference
+---
+
+<ComponentTabs name="badge-overflow-demo" />
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/badge-overflow"
+
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @radix-ui/react-slot
+     ```
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource name="badge-overflow" />
+  </Step>
+</Steps>
+
+## Layout
+
+```tsx
+import { Badge } from "@/components/ui/badge";
+import { BadgeOverflow } from "@/components/ui/badge-overflow";
+
+<BadgeOverflow
+  items={tags}
+  getLabel={(tag) => tag}
+  renderBadge={(tag, label) => <Badge>{label}</Badge>}
+/>
+```
+
+## Examples
+
+### Multi-line Overflow
+
+Display badges across multiple lines using the `lineCount` prop.
+
+<ComponentTabs name="badge-overflow-multiline-demo" />
+
+### Form Integration
+
+Use Badge Overflow in forms for managing tag lists with overflow handling.
+
+<ComponentTabs name="badge-overflow-form-demo" />
+
+## API Reference
+
+### BadgeOverflow
+
+The main component that measures available space and intelligently displays badges with overflow indicators.
+
+<AutoTypeTable
+  path="./types/docs/badge-overflow.ts"
+  name="BadgeOverflowProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-slot]",
+      value: ["badge-overflow"],
+    },
+  ]}
+/>
+
+## Features
+
+### Automatic Width Measurement
+
+The component automatically measures badge widths using DOM measurement and caches results for performance. This ensures accurate overflow calculations without manual configuration.
+
+### Multi-line Support
+
+Control how many lines of badges to display using the `lineCount` prop. The component will intelligently wrap badges across lines while respecting the overflow constraints.
+
+### Custom Rendering
+
+Use `renderBadge` and `renderOverflow` props to fully customize how badges and overflow indicators are rendered, allowing complete control over styling and behavior.
+
+### Performance Optimization
+
+Badge widths are cached after first measurement, and the component uses ResizeObserver to efficiently respond to container size changes.
+
+## Notes
+
+- The component uses DOM measurement to calculate badge widths accurately
+- Badge width cache persists across component instances for better performance
+- Use `clearBadgeWidthCache()` export to clear the cache if needed
+- Container must have a defined width for overflow calculations to work
+

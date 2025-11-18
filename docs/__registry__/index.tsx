@@ -491,6 +491,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "badge-overflow": {
+      name: "badge-overflow",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/ui/badge-overflow.tsx",
+        type: "registry:ui",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/badge-overflow.tsx")),
+      source: "",
+      chunks: []
+    },
     "tags-input": {
       name: "tags-input",
       description: "",
@@ -2270,6 +2284,48 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/avatar-group-icons-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "badge-overflow-demo": {
+      name: "badge-overflow-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["badge","badge-overflow"],
+      files: [{
+        path: "registry/default/examples/badge-overflow-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/badge-overflow-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "badge-overflow-multiline-demo": {
+      name: "badge-overflow-multiline-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["badge","badge-overflow"],
+      files: [{
+        path: "registry/default/examples/badge-overflow-multiline-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/badge-overflow-multiline-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "badge-overflow-form-demo": {
+      name: "badge-overflow-form-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["badge","badge-overflow","button","input"],
+      files: [{
+        path: "registry/default/examples/badge-overflow-form-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/badge-overflow-form-demo.tsx")),
       source: "",
       chunks: []
     },

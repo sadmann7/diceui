@@ -1485,6 +1485,39 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "badge-overflow-demo",
+    type: "registry:example",
+    registryDependencies: ["badge", "badge-overflow"],
+    files: [
+      {
+        path: "examples/badge-overflow-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "badge-overflow-multiline-demo",
+    type: "registry:example",
+    registryDependencies: ["badge", "badge-overflow"],
+    files: [
+      {
+        path: "examples/badge-overflow-multiline-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "badge-overflow-form-demo",
+    type: "registry:example",
+    registryDependencies: ["badge", "badge-overflow", "button", "input"],
+    files: [
+      {
+        path: "examples/badge-overflow-form-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "tour-demo",
     type: "registry:example",
     dependencies: ["@radix-ui/react-slot", "lucide-react"],
