@@ -1507,12 +1507,12 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "badge-overflow-form-demo",
+    name: "badge-overflow-interactive-demo",
     type: "registry:example",
     registryDependencies: ["badge", "badge-overflow", "button", "input"],
     files: [
       {
-        path: "examples/badge-overflow-form-demo.tsx",
+        path: "examples/badge-overflow-interactive-demo.tsx",
         type: "registry:example",
       },
     ],

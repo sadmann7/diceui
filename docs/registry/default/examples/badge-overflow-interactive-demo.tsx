@@ -11,7 +11,7 @@ interface Tag {
   name: string;
 }
 
-export default function BadgeOverflowFormDemo() {
+export default function BadgeOverflowInteractiveDemo() {
   const [tags, setTags] = React.useState<Tag[]>([
     { id: "1", name: "React" },
     { id: "2", name: "TypeScript" },

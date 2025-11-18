@@ -2315,17 +2315,17 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "badge-overflow-form-demo": {
-      name: "badge-overflow-form-demo",
+    "badge-overflow-interactive-demo": {
+      name: "badge-overflow-interactive-demo",
       description: "",
       type: "registry:example",
       registryDependencies: ["badge","badge-overflow","button","input"],
       files: [{
-        path: "registry/default/examples/badge-overflow-form-demo.tsx",
+        path: "registry/default/examples/badge-overflow-interactive-demo.tsx",
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/examples/badge-overflow-form-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/badge-overflow-interactive-demo.tsx")),
       source: "",
       chunks: []
     },
