@@ -1155,6 +1155,18 @@
       ]
     },
     {
+      "name": "fps-demo",
+      "type": "registry:component",
+      "title": "FPS Demo",
+      "description": "Example showing how to use the FPS counter component.",
+      "files": [
+        {
+          "path": "registry/default/examples/fps-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
       "name": "hitbox-demo",
       "type": "registry:component",
       "title": "Hitbox Demo",

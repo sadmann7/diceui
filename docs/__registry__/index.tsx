@@ -195,6 +195,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "fps": {
+      name: "fps",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/ui/fps.tsx",
+        type: "registry:ui",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/fps.tsx")),
+      source: "",
+      chunks: []
+    },
     "segmented-input": {
       name: "segmented-input",
       description: "",
@@ -1262,6 +1276,34 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/file-upload-validation-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "fps-demo": {
+      name: "fps-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["fps"],
+      files: [{
+        path: "registry/default/examples/fps-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/fps-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "fps-strategy-demo": {
+      name: "fps-strategy-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["fps"],
+      files: [{
+        path: "registry/default/examples/fps-strategy-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/fps-strategy-demo.tsx")),
       source: "",
       chunks: []
     },

@@ -172,6 +172,17 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "fps",
+    type: "registry:ui",
+    dependencies: ["class-variance-authority"],
+    files: [
+      {
+        path: "ui/fps.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "segmented-input",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "class-variance-authority"],

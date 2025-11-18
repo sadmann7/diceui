@@ -201,8 +201,9 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
 
   /**
    * The scroll behavior when navigating to elements.
+   * Respects user preferences by default - uses `"auto"` if `prefers-reduced-motion` is set to `reduce`, otherwise `"smooth"`.
    *
-   * @default "smooth"
+   * @default "auto" if reduced motion, "smooth" otherwise
    */
   scrollBehavior?: ScrollBehavior;
 

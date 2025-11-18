@@ -612,6 +612,28 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "fps-demo",
+    type: "registry:example",
+    registryDependencies: ["fps"],
+    files: [
+      {
+        path: "examples/fps-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "fps-strategy-demo",
+    type: "registry:example",
+    registryDependencies: ["fps"],
+    files: [
+      {
+        path: "examples/fps-strategy-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "hitbox-demo",
     type: "registry:example",
     dependencies: ["lucide-react"],
