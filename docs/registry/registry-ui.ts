@@ -516,6 +516,10 @@ export const ui: Registry["items"] = [
         path: "ui/badge-overflow.tsx",
         type: "registry:ui",
       },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
+      },
     ],
   },
   {

@@ -500,6 +500,10 @@ export const Index: Record<string, any> = {
         path: "registry/default/ui/badge-overflow.tsx",
         type: "registry:ui",
         target: ""
+      },{
+        path: "registry/default/lib/compose-refs.ts",
+        type: "registry:lib",
+        target: ""
       }],
       component: React.lazy(() => import("@/registry/default/ui/badge-overflow.tsx")),
       source: "",

@@ -57,11 +57,6 @@ export interface BadgeOverflowProps<T = string>
   maxWidth?: number;
 
   /**
-   * Additional CSS classes to apply to badges for width measurement.
-   */
-  className?: string;
-
-  /**
    * Container padding in pixels.
    *
    * @default 16

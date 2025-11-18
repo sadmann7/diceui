@@ -2,6 +2,7 @@
 
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
+import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 
 const badgeWidthCache = new Map<string, number>();
@@ -15,7 +16,6 @@ interface MeasureBadgeWidthProps {
   cacheKey: string;
   iconSize?: number;
   maxWidth?: number;
-  className?: string;
 }
 
 function measureBadgeWidth({
@@ -23,7 +23,6 @@ function measureBadgeWidth({
   cacheKey,
   iconSize,
   maxWidth,
-  className,
 }: MeasureBadgeWidthProps): number {
   const cached = badgeWidthCache.get(cacheKey);
   if (cached !== undefined) {
@@ -31,9 +30,8 @@ function measureBadgeWidth({
   }
 
   const measureEl = document.createElement("div");
-  measureEl.className = `inline-flex items-center rounded-md border px-1.5 text-xs font-semibold h-5 gap-1 shrink-0 absolute invisible pointer-events-none ${
-    className ?? ""
-  }`;
+  measureEl.className =
+    "inline-flex items-center rounded-md border px-1.5 text-xs font-semibold h-5 gap-1 shrink-0 absolute invisible pointer-events-none";
   measureEl.style.whiteSpace = "nowrap";
 
   if (iconSize) {
@@ -75,6 +73,8 @@ interface GetBadgeLabel<T> {
   getBadgeLabel: (item: T) => string;
 }
 
+type BadgeOverflowElement = React.ComponentRef<typeof BadgeOverflow>;
+
 type BadgeOverflowProps<T = string> = React.ComponentProps<"div"> &
   (T extends object ? GetBadgeLabel<T> : Partial<GetBadgeLabel<T>>) & {
     items: T[];
@@ -106,6 +106,7 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
     asChild,
     className,
     style,
+    ref,
     ...rootProps
   } = props;
 
@@ -121,10 +122,11 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
     [getBadgeLabelProp],
   );
 
-  const rootRef = React.useRef<HTMLDivElement | null>(null);
+  const rootRef = React.useRef<BadgeOverflowElement | null>(null);
+  const composedRef = useComposedRefs(ref, rootRef);
   const [containerWidth, setContainerWidth] = React.useState(0);
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     if (!rootRef.current) return;
 
     function measureWidth() {
@@ -144,7 +146,7 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
     };
   }, [containerPadding]);
 
-  const result = React.useMemo(() => {
+  const { visibleItems, hiddenCount } = React.useMemo(() => {
     if (!containerWidth || items.length === 0) {
       return { visibleItems: items, hiddenCount: 0 };
     }
@@ -162,7 +164,6 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
         cacheKey,
         iconSize,
         maxWidth,
-        className,
       });
 
       const widthWithGap = badgeWidth + badgeGap;
@@ -197,7 +198,6 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
     cacheKeyPrefix,
     iconSize,
     maxWidth,
-    className,
     badgeGap,
     overflowBadgeWidth,
   ]);
@@ -208,24 +208,24 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
     <Comp
       data-slot="badge-overflow"
       {...rootProps}
-      ref={rootRef}
+      ref={composedRef}
       className={cn("flex flex-wrap", className)}
       style={{
         gap: badgeGap,
         ...style,
       }}
     >
-      {result.visibleItems.map((item, index) => (
+      {visibleItems.map((item, index) => (
         <React.Fragment key={index}>
           {renderBadge(item, getBadgeLabel(item))}
         </React.Fragment>
       ))}
-      {result.hiddenCount > 0 &&
+      {hiddenCount > 0 &&
         (renderOverflow ? (
-          renderOverflow(result.hiddenCount)
+          renderOverflow(hiddenCount)
         ) : (
           <div className="inline-flex h-5 shrink-0 items-center rounded-md border px-1.5 font-semibold text-xs">
-            +{result.hiddenCount}
+            +{hiddenCount}
           </div>
         ))}
     </Comp>
