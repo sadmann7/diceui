@@ -25,17 +25,14 @@ export default function TourControlledDemo() {
 
   const onStepChange = React.useCallback((step: number) => {
     setValue(step);
-    console.log(`Step changed to: ${step + 1}`);
   }, []);
 
   const onComplete = React.useCallback(() => {
-    console.log("Tour completed!");
     setOpen(false);
     setValue(0);
   }, []);
 
   const onSkip = React.useCallback(() => {
-    console.log("Tour skipped!");
     setOpen(false);
     setValue(0);
   }, []);
@@ -49,56 +46,60 @@ export default function TourControlledDemo() {
     <div className="flex min-h-[400px] flex-col items-center justify-center gap-8 p-8">
       <div className="flex flex-col items-center gap-4">
         <h1 id="controlled-title" className="font-bold text-2xl">
-          Controlled Tour Example
+          Controlled Tour
         </h1>
-        <p className="text-center text-muted-foreground">
-          This tour demonstrates controlled state management with external step
-          tracking.
-        </p>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
           <Button id="controlled-start-btn" onClick={onTourStart}>
-            Start Controlled Tour
+            Start
           </Button>
           <Button
             variant="outline"
             onClick={() => setValue(Math.max(0, value - 1))}
             disabled={!open || value === 0}
           >
-            External Prev
+            Prev
           </Button>
           <Button
             variant="outline"
-            onClick={() => setValue(Math.min(2, value + 1))}
-            disabled={!open || value === 2}
+            onClick={() => setValue(Math.min(3, value + 1))}
+            disabled={!open || value === 3}
           >
-            External Next
+            Next
           </Button>
         </div>
-        {open && (
-          <p className="text-muted-foreground text-sm">
-            Current step: {value + 1} / 3
-          </p>
-        )}
       </div>
-      <div className="grid grid-cols-2 gap-6">
-        <div
-          id="controlled-step-1"
-          className="rounded-lg border p-6 text-center"
-        >
-          <h3 className="font-semibold">Step 1</h3>
-          <p className="text-muted-foreground text-sm">
-            First step in our controlled tour
-          </p>
+      <div className="flex w-full flex-col gap-6">
+        <div className="grid grid-cols-2 gap-6">
+          <div
+            id="controlled-step-1"
+            className="rounded-lg border p-6 text-center"
+          >
+            <h3 className="font-semibold">Step 1</h3>
+            <p className="text-muted-foreground text-sm">
+              First step in our controlled tour
+            </p>
+          </div>
+          <div
+            id="controlled-step-2"
+            className="rounded-lg border p-6 text-center"
+          >
+            <h3 className="font-semibold">Step 2</h3>
+            <p className="text-muted-foreground text-sm">
+              Second step with external controls
+            </p>
+          </div>
         </div>
-        <div
-          id="controlled-step-2"
-          className="rounded-lg border p-6 text-center"
-        >
-          <h3 className="font-semibold">Step 2</h3>
-          <p className="text-muted-foreground text-sm">
-            Second step with external controls
-          </p>
-        </div>
+        {open && value >= 2 && (
+          <div
+            id="controlled-step-3"
+            className="fade-in slide-in-from-bottom-4 animate-in rounded-lg border border-primary/50 bg-primary/5 p-6 text-center duration-300"
+          >
+            <h3 className="font-semibold">Step 3</h3>
+            <p className="text-muted-foreground text-sm">
+              Dynamic step that appears after step 2
+            </p>
+          </div>
+        )}
       </div>
       <Tour
         open={open}
@@ -107,6 +108,17 @@ export default function TourControlledDemo() {
         onValueChange={onStepChange}
         onComplete={onComplete}
         onSkip={onSkip}
+        stepFooter={
+          <TourFooter>
+            <div className="flex w-full items-center justify-between">
+              <TourStepCounter />
+              <div className="flex gap-2">
+                <TourPrev />
+                <TourNext />
+              </div>
+            </div>
+          </TourFooter>
+        }
       >
         <TourSpotlight />
         <TourSpotlightRing />
@@ -119,15 +131,6 @@ export default function TourControlledDemo() {
               counter updates.
             </TourDescription>
           </TourHeader>
-          <TourFooter>
-            <div className="flex w-full items-center justify-between">
-              <TourStepCounter />
-              <div className="flex gap-2">
-                <TourSkip />
-                <TourNext />
-              </div>
-            </div>
-          </TourFooter>
           <TourClose />
         </TourStep>
         <TourStep target="#controlled-step-1" side="top" align="center">
@@ -139,35 +142,28 @@ export default function TourControlledDemo() {
               the built-in navigation.
             </TourDescription>
           </TourHeader>
-          <TourFooter>
-            <div className="flex w-full items-center justify-between">
-              <TourStepCounter />
-              <div className="flex gap-2">
-                <TourPrev />
-                <TourNext />
-              </div>
-            </div>
-          </TourFooter>
           <TourClose />
         </TourStep>
         <TourStep target="#controlled-step-2" side="top" align="center">
           <TourArrow />
           <TourHeader>
-            <TourTitle>Final Step</TourTitle>
+            <TourTitle>Second Feature</TourTitle>
             <TourDescription>
-              This is the last step. The tour state is fully controlled by the
-              parent component.
+              The tour state is fully controlled by the parent component. Watch
+              what happens next!
             </TourDescription>
           </TourHeader>
-          <TourFooter>
-            <div className="flex w-full items-center justify-between">
-              <TourStepCounter />
-              <div className="flex gap-2">
-                <TourPrev />
-                <TourNext />
-              </div>
-            </div>
-          </TourFooter>
+          <TourClose />
+        </TourStep>
+        <TourStep target="#controlled-step-3" side="top" align="center">
+          <TourArrow />
+          <TourHeader>
+            <TourTitle>Dynamic Layout</TourTitle>
+            <TourDescription>
+              This element appeared when you reached this step, demonstrating
+              how the tour handles dynamic content and layout shifts.
+            </TourDescription>
+          </TourHeader>
           <TourClose />
         </TourStep>
       </Tour>

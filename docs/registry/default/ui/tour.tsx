@@ -641,18 +641,23 @@ function TourRoot(props: TourRootProps) {
           prevStep?.onStepLeave?.();
           nextStep?.onStepEnter?.();
 
+          if (value >= stateRef.current.steps.length) {
+            propsRef.current.onComplete?.();
+
+            if (propsRef.current.valueProp !== undefined) {
+              propsRef.current.onValueChange?.(value);
+            }
+
+            store.setState("open", false);
+            return;
+          }
+
           if (propsRef.current.valueProp !== undefined) {
             propsRef.current.onValueChange?.(value);
             return;
           }
 
           propsRef.current.onValueChange?.(value);
-
-          if (value >= stateRef.current.steps.length) {
-            propsRef.current.onComplete?.();
-            store.setState("open", false);
-            return;
-          }
 
           if (nextStep && propsRef.current.autoScroll) {
             const targetElement = getTargetElement(nextStep.target);

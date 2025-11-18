@@ -27,10 +27,10 @@ export default function TourDemo() {
       <div className="flex flex-col items-center gap-4">
         <div className="flex flex-col items-center gap-1">
           <h1 id="welcome-title" className="font-bold text-2xl">
-            Learn to Skate
+            Welcome to Your Dashboard
           </h1>
           <p className="text-center text-muted-foreground">
-            Start the tour to learn essential tricks.
+            Take a quick tour to explore key features
           </p>
         </div>
         <Button id="start-tour-btn" onClick={() => setOpen(true)}>
@@ -39,18 +39,22 @@ export default function TourDemo() {
       </div>
       <div className="grid grid-cols-3 gap-4">
         <div id="feature-1" className="rounded-lg border p-4 text-center">
-          <h3 className="font-semibold">Ollie</h3>
+          <h3 className="font-semibold">Analytics</h3>
           <p className="text-muted-foreground text-sm">
-            Foundation of all tricks
+            Track your performance metrics
           </p>
         </div>
         <div id="feature-2" className="rounded-lg border p-4 text-center">
-          <h3 className="font-semibold">Kickflip</h3>
-          <p className="text-muted-foreground text-sm">Your first flip trick</p>
+          <h3 className="font-semibold">Projects</h3>
+          <p className="text-muted-foreground text-sm">
+            Manage your active projects
+          </p>
         </div>
         <div id="feature-3" className="rounded-lg border p-4 text-center">
-          <h3 className="font-semibold">900</h3>
-          <p className="text-muted-foreground text-sm">Two and a half spins</p>
+          <h3 className="font-semibold">Team</h3>
+          <p className="text-muted-foreground text-sm">
+            Collaborate with teammates
+          </p>
         </div>
       </div>
       <Tour
@@ -73,9 +77,10 @@ export default function TourDemo() {
           <TourSpotlightRing />
           <TourStep target="#welcome-title" side="bottom" align="center">
             <TourHeader>
-              <TourTitle>Welcome</TourTitle>
+              <TourTitle>Welcome!</TourTitle>
               <TourDescription>
-                Learn the essential tricks every skater needs to know.
+                Let's walk through the main features of your dashboard in just a
+                few steps.
               </TourDescription>
             </TourHeader>
             <TourClose />
@@ -83,10 +88,10 @@ export default function TourDemo() {
           <TourStep target="#feature-1" side="top" align="center">
             <TourArrow />
             <TourHeader>
-              <TourTitle>Ollie</TourTitle>
+              <TourTitle>Analytics Dashboard</TourTitle>
               <TourDescription>
-                Pop the tail, slide your front foot up, and level out in the
-                air.
+                View real-time insights, track KPIs, and monitor your team's
+                progress with interactive charts.
               </TourDescription>
             </TourHeader>
             <TourClose />
@@ -94,10 +99,10 @@ export default function TourDemo() {
           <TourStep target="#feature-2" side="top" align="center">
             <TourArrow />
             <TourHeader>
-              <TourTitle>Kickflip</TourTitle>
+              <TourTitle>Project Management</TourTitle>
               <TourDescription>
-                Flick your front foot off the edge to spin the board 360
-                degrees.
+                Create, organize, and track projects with powerful tools for
+                task management and deadlines.
               </TourDescription>
             </TourHeader>
             <TourClose />
@@ -105,9 +110,10 @@ export default function TourDemo() {
           <TourStep target="#feature-3" side="top" align="center" required>
             <TourArrow />
             <TourHeader>
-              <TourTitle>900</TourTitle>
+              <TourTitle>Team Collaboration</TourTitle>
               <TourDescription>
-                Two and a half aerial spins. This step is required.
+                Invite members, assign roles, and collaborate seamlessly. This
+                step is required to continue.
               </TourDescription>
             </TourHeader>
             <TourClose />
