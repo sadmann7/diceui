@@ -65,20 +65,11 @@ Use Badge Overflow in forms for managing tag lists with overflow handling.
 
 ### BadgeOverflow
 
-The main component that measures available space and intelligently displays badges with overflow indicators.
+The component that measures available space and displays badges with overflow indicators.
 
 <AutoTypeTable
   path="./types/docs/badge-overflow.ts"
   name="BadgeOverflowProps"
-/>
-
-<DataAttributesTable
-  data={[
-    {
-      title: "[data-slot]",
-      value: ["badge-overflow"],
-    },
-  ]}
 />
 
 ## Features
@@ -105,4 +96,3 @@ Badge widths are cached after first measurement, and the component uses ResizeOb
 - Badge width cache persists across component instances for better performance
 - Use `clearBadgeWidthCache()` export to clear the cache if needed
 - Container must have a defined width for overflow calculations to work
-

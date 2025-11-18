@@ -4,7 +4,7 @@
   "files": [
     {
       "path": "components/portal.tsx",
-      "content": "\"use client\";\r\n\r\nimport { Slot, type SlotProps } from \"@radix-ui/react-slot\";\r\nimport * as React from \"react\";\r\nimport * as ReactDOM from \"react-dom\";\r\n\r\ninterface PortalProps extends SlotProps {\r\n  container?: Element | DocumentFragment | null;\r\n}\r\n\r\nfunction Portal(props: PortalProps) {\r\n  const { container: containerProp, ...portalProps } = props;\r\n\r\n  const [mounted, setMounted] = React.useState(false);\r\n\r\n  React.useLayoutEffect(() => setMounted(true), []);\r\n\r\n  const container =\r\n    containerProp ?? (mounted ? globalThis.document?.body : null);\r\n\r\n  if (!container) return null;\r\n\r\n  return ReactDOM.createPortal(<Slot {...portalProps} />, container);\r\n}\r\n\r\nexport { Portal };\r\n\r\nexport type { PortalProps };\r\n",
+      "content": "\"use client\";\n\nimport { Slot, type SlotProps } from \"@radix-ui/react-slot\";\nimport * as React from \"react\";\nimport * as ReactDOM from \"react-dom\";\n\ninterface PortalProps extends SlotProps {\n  container?: Element | DocumentFragment | null;\n}\n\nfunction Portal(props: PortalProps) {\n  const { container: containerProp, ...portalProps } = props;\n\n  const [mounted, setMounted] = React.useState(false);\n\n  React.useLayoutEffect(() => setMounted(true), []);\n\n  const container =\n    containerProp ?? (mounted ? globalThis.document?.body : null);\n\n  if (!container) return null;\n\n  return ReactDOM.createPortal(<Slot {...portalProps} />, container);\n}\n\nexport { Portal };\n\nexport type { PortalProps };\n",
       "type": "registry:component",
       "target": ""
     }
