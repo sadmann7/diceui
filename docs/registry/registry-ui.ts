@@ -534,6 +534,17 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "timeline",
+    type: "registry:ui",
+    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    files: [
+      {
+        path: "ui/timeline.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "tour",
     type: "registry:ui",
     dependencies: [

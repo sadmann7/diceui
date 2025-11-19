@@ -1,0 +1,15 @@
+{
+  "name": "timeline-right-demo",
+  "type": "registry:example",
+  "registryDependencies": [
+    "timeline"
+  ],
+  "files": [
+    {
+      "path": "examples/timeline-right-demo.tsx",
+      "content": "import * as Timeline from \"@/registry/default/ui/timeline\";\r\n\r\nexport default function TimelineRightDemo() {\r\n  return (\r\n    <Timeline.Root position=\"right\">\r\n      <Timeline.Item>\r\n        <Timeline.Dot />\r\n        <Timeline.Connector />\r\n        <Timeline.Content>\r\n          <Timeline.Header>\r\n            <Timeline.Title>Registration Opened</Timeline.Title>\r\n            <Timeline.Time dateTime=\"2024-01-01\">January 1, 2024</Timeline.Time>\r\n          </Timeline.Header>\r\n          <Timeline.Description>\r\n            Online registration portal is now open for all participants.\r\n          </Timeline.Description>\r\n        </Timeline.Content>\r\n      </Timeline.Item>\r\n      <Timeline.Item>\r\n        <Timeline.Dot />\r\n        <Timeline.Connector />\r\n        <Timeline.Content>\r\n          <Timeline.Header>\r\n            <Timeline.Title>Early Bird Deadline</Timeline.Title>\r\n            <Timeline.Time dateTime=\"2024-02-15\">\r\n              February 15, 2024\r\n            </Timeline.Time>\r\n          </Timeline.Header>\r\n          <Timeline.Description>\r\n            Last day to register and receive early bird discount.\r\n          </Timeline.Description>\r\n        </Timeline.Content>\r\n      </Timeline.Item>\r\n      <Timeline.Item active>\r\n        <Timeline.Dot />\r\n        <Timeline.Connector />\r\n        <Timeline.Content>\r\n          <Timeline.Header>\r\n            <Timeline.Title>Regular Registration</Timeline.Title>\r\n            <Timeline.Time dateTime=\"2024-03-01\">March 1, 2024</Timeline.Time>\r\n          </Timeline.Header>\r\n          <Timeline.Description>\r\n            Regular registration period with standard pricing.\r\n          </Timeline.Description>\r\n        </Timeline.Content>\r\n      </Timeline.Item>\r\n      <Timeline.Item>\r\n        <Timeline.Dot />\r\n        <Timeline.Content>\r\n          <Timeline.Header>\r\n            <Timeline.Title>Event Day</Timeline.Title>\r\n            <Timeline.Time dateTime=\"2024-04-01\">April 1, 2024</Timeline.Time>\r\n          </Timeline.Header>\r\n          <Timeline.Description>\r\n            The main event begins at 9:00 AM. Check-in starts at 8:00 AM.\r\n          </Timeline.Description>\r\n        </Timeline.Content>\r\n      </Timeline.Item>\r\n    </Timeline.Root>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

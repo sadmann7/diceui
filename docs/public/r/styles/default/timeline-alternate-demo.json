@@ -1,0 +1,15 @@
+{
+  "name": "timeline-alternate-demo",
+  "type": "registry:example",
+  "registryDependencies": [
+    "timeline"
+  ],
+  "files": [
+    {
+      "path": "examples/timeline-alternate-demo.tsx",
+      "content": "import * as Timeline from \"@/registry/default/ui/timeline\";\r\n\r\nexport default function TimelineAlternateDemo() {\r\n  return (\r\n    <Timeline.Root position=\"alternate\">\r\n      <Timeline.Item>\r\n        <Timeline.Dot />\r\n        <Timeline.Connector />\r\n        <Timeline.Content>\r\n          <Timeline.Header>\r\n            <Timeline.Title>Founded</Timeline.Title>\r\n            <Timeline.Time dateTime=\"2020-01\">January 2020</Timeline.Time>\r\n          </Timeline.Header>\r\n          <Timeline.Description>\r\n            Company established with a vision to revolutionize the industry.\r\n          </Timeline.Description>\r\n        </Timeline.Content>\r\n      </Timeline.Item>\r\n      <Timeline.Item>\r\n        <Timeline.Dot />\r\n        <Timeline.Connector />\r\n        <Timeline.Content>\r\n          <Timeline.Header>\r\n            <Timeline.Title>First Product Launch</Timeline.Title>\r\n            <Timeline.Time dateTime=\"2020-06\">June 2020</Timeline.Time>\r\n          </Timeline.Header>\r\n          <Timeline.Description>\r\n            Released our flagship product to the market.\r\n          </Timeline.Description>\r\n        </Timeline.Content>\r\n      </Timeline.Item>\r\n      <Timeline.Item>\r\n        <Timeline.Dot />\r\n        <Timeline.Connector />\r\n        <Timeline.Content>\r\n          <Timeline.Header>\r\n            <Timeline.Title>Series A Funding</Timeline.Title>\r\n            <Timeline.Time dateTime=\"2021-03\">March 2021</Timeline.Time>\r\n          </Timeline.Header>\r\n          <Timeline.Description>\r\n            Secured $10M in Series A funding to expand operations.\r\n          </Timeline.Description>\r\n        </Timeline.Content>\r\n      </Timeline.Item>\r\n      <Timeline.Item>\r\n        <Timeline.Dot />\r\n        <Timeline.Connector />\r\n        <Timeline.Content>\r\n          <Timeline.Header>\r\n            <Timeline.Title>International Expansion</Timeline.Title>\r\n            <Timeline.Time dateTime=\"2022-01\">January 2022</Timeline.Time>\r\n          </Timeline.Header>\r\n          <Timeline.Description>\r\n            Opened offices in Europe and Asia Pacific.\r\n          </Timeline.Description>\r\n        </Timeline.Content>\r\n      </Timeline.Item>\r\n      <Timeline.Item active>\r\n        <Timeline.Dot />\r\n        <Timeline.Content>\r\n          <Timeline.Header>\r\n            <Timeline.Title>1 Million Users</Timeline.Title>\r\n            <Timeline.Time dateTime=\"2024-03\">March 2024</Timeline.Time>\r\n          </Timeline.Header>\r\n          <Timeline.Description>\r\n            Reached the milestone of 1 million active users worldwide.\r\n          </Timeline.Description>\r\n        </Timeline.Content>\r\n      </Timeline.Item>\r\n    </Timeline.Root>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

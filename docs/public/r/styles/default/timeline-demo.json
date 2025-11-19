@@ -1,0 +1,15 @@
+{
+  "name": "timeline-demo",
+  "type": "registry:example",
+  "registryDependencies": [
+    "timeline"
+  ],
+  "files": [
+    {
+      "path": "examples/timeline-demo.tsx",
+      "content": "import * as Timeline from \"@/registry/default/ui/timeline\";\r\n\r\nexport default function TimelineDemo() {\r\n  return (\r\n    <Timeline.Root>\r\n      <Timeline.Item>\r\n        <Timeline.Dot />\r\n        <Timeline.Connector />\r\n        <Timeline.Content>\r\n          <Timeline.Header>\r\n            <Timeline.Title>Project Kickoff</Timeline.Title>\r\n            <Timeline.Time dateTime=\"2024-01-15\">\r\n              January 15, 2024\r\n            </Timeline.Time>\r\n          </Timeline.Header>\r\n          <Timeline.Description>\r\n            Initial meeting with stakeholders to define project scope and\r\n            requirements.\r\n          </Timeline.Description>\r\n        </Timeline.Content>\r\n      </Timeline.Item>\r\n      <Timeline.Item>\r\n        <Timeline.Dot />\r\n        <Timeline.Connector />\r\n        <Timeline.Content>\r\n          <Timeline.Header>\r\n            <Timeline.Title>Design Phase</Timeline.Title>\r\n            <Timeline.Time dateTime=\"2024-02-01\">\r\n              February 1, 2024\r\n            </Timeline.Time>\r\n          </Timeline.Header>\r\n          <Timeline.Description>\r\n            Created wireframes and mockups for the user interface.\r\n          </Timeline.Description>\r\n        </Timeline.Content>\r\n      </Timeline.Item>\r\n      <Timeline.Item active>\r\n        <Timeline.Dot />\r\n        <Timeline.Connector />\r\n        <Timeline.Content>\r\n          <Timeline.Header>\r\n            <Timeline.Title>Development</Timeline.Title>\r\n            <Timeline.Time dateTime=\"2024-03-01\">March 1, 2024</Timeline.Time>\r\n          </Timeline.Header>\r\n          <Timeline.Description>\r\n            Building the application with React and TypeScript.\r\n          </Timeline.Description>\r\n        </Timeline.Content>\r\n      </Timeline.Item>\r\n      <Timeline.Item>\r\n        <Timeline.Dot />\r\n        <Timeline.Content>\r\n          <Timeline.Header>\r\n            <Timeline.Title>Launch</Timeline.Title>\r\n            <Timeline.Time dateTime=\"2024-04-01\">April 1, 2024</Timeline.Time>\r\n          </Timeline.Header>\r\n          <Timeline.Description>\r\n            Deploy to production and announce to users.\r\n          </Timeline.Description>\r\n        </Timeline.Content>\r\n      </Timeline.Item>\r\n    </Timeline.Root>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

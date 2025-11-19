@@ -1,0 +1,250 @@
+---
+title: Timeline
+description: A flexible timeline component for displaying chronological events with support for different orientations, positions, and visual states.
+preview: true
+links:
+ api: /docs/components/timeline#api-reference
+---
+
+<ComponentTabs name="timeline-demo" />
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/timeline"
+
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @radix-ui/react-slot class-variance-authority
+     ```
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource name="timeline" />
+  </Step>
+</Steps>
+
+## Layout
+
+```tsx
+import * as Timeline from "@/components/ui/timeline";
+
+<Timeline.Root>
+  <Timeline.Item>
+    <Timeline.Dot />
+    <Timeline.Connector />
+    <Timeline.Content>
+      <Timeline.Header>
+        <Timeline.Title>Event Title</Timeline.Title>
+        <Timeline.Time>Date</Timeline.Time>
+      </Timeline.Header>
+      <Timeline.Description>Event description</Timeline.Description>
+    </Timeline.Content>
+  </Timeline.Item>
+</Timeline.Root>
+```
+
+## Usage
+
+### Basic Timeline
+
+A simple vertical timeline showing chronological events.
+
+```tsx
+<Timeline.Root>
+  <Timeline.Item>
+    <Timeline.Dot />
+    <Timeline.Connector />
+    <Timeline.Content>
+      <Timeline.Header>
+        <Timeline.Title>Project Kickoff</Timeline.Title>
+        <Timeline.Time dateTime="2024-01-15">January 15, 2024</Timeline.Time>
+      </Timeline.Header>
+      <Timeline.Description>
+        Initial meeting with stakeholders to define project scope.
+      </Timeline.Description>
+    </Timeline.Content>
+  </Timeline.Item>
+  <Timeline.Item active>
+    <Timeline.Dot />
+    <Timeline.Content>
+      <Timeline.Header>
+        <Timeline.Title>Development</Timeline.Title>
+        <Timeline.Time dateTime="2024-03-01">March 1, 2024</Timeline.Time>
+      </Timeline.Header>
+      <Timeline.Description>
+        Building the application with React and TypeScript.
+      </Timeline.Description>
+    </Timeline.Content>
+  </Timeline.Item>
+</Timeline.Root>
+```
+
+## Examples
+
+### Horizontal Timeline
+
+Display timeline events horizontally across the screen.
+
+<ComponentTabs name="timeline-horizontal-demo" />
+
+### Timeline with Status
+
+Use different status variants to visualize event states.
+
+<ComponentTabs name="timeline-status-demo" />
+
+### Alternate Position
+
+Alternate timeline items between left and right positions.
+
+<ComponentTabs name="timeline-alternate-demo" />
+
+### Right-Aligned Timeline
+
+Position all timeline items to the right of the connector line.
+
+<ComponentTabs name="timeline-right-demo" />
+
+## API Reference
+
+### Root
+
+The root container for timeline items.
+
+<AutoTypeTable
+  path="./types/docs/timeline.ts"
+  name="RootProps"
+/>
+
+### Item
+
+A single timeline item containing content, marker, and connector.
+
+<AutoTypeTable
+  path="./types/docs/timeline.ts"
+  name="ItemProps"
+/>
+
+### Dot
+
+The visual marker/dot for a timeline item.
+
+<AutoTypeTable
+  path="./types/docs/timeline.ts"
+  name="DotProps"
+/>
+
+### Connector
+
+The line connecting timeline items.
+
+<AutoTypeTable
+  path="./types/docs/timeline.ts"
+  name="ConnectorProps"
+/>
+
+### Header
+
+Container for the title and time of a timeline item.
+
+<AutoTypeTable
+  path="./types/docs/timeline.ts"
+  name="HeaderProps"
+/>
+
+### Title
+
+The title/heading of a timeline item.
+
+<AutoTypeTable
+  path="./types/docs/timeline.ts"
+  name="TitleProps"
+/>
+
+### Description
+
+The description/body text of a timeline item.
+
+<AutoTypeTable
+  path="./types/docs/timeline.ts"
+  name="DescriptionProps"
+/>
+
+### Content
+
+Container for the timeline item's content (header, description, etc.).
+
+<AutoTypeTable
+  path="./types/docs/timeline.ts"
+  name="ContentProps"
+/>
+
+### Time
+
+A semantic time element for displaying dates/times.
+
+<AutoTypeTable
+  path="./types/docs/timeline.ts"
+  name="TimeProps"
+/>
+
+## Features
+
+### Flexible Orientations
+
+The timeline supports both vertical and horizontal orientations. Use the `orientation` prop on `Timeline.Root` to switch between layouts.
+
+### Multiple Position Modes
+
+Choose from three position modes for vertical timelines:
+- **left**: All items positioned to the left of the connector
+- **right**: All items positioned to the right of the connector  
+- **alternate**: Items alternate between left and right positions
+
+### Visual Status States
+
+Timeline items support multiple status variants (`default`, `primary`, `success`, `warning`, `destructive`) that affect the color of the dot and connector, making it easy to visualize different event states.
+
+### Active State
+
+Mark a timeline item as `active` to highlight it with a ring effect, drawing attention to the current or most important event.
+
+### Custom Icons
+
+Replace the default dot marker with custom icons or React components using the `icon` prop on `Timeline.Item`, giving you full control over the visual appearance.
+
+### Composition Pattern
+
+Built with a composable API that gives you complete control over the structure and styling of your timeline. Mix and match components as needed.
+
+## Accessibility
+
+### Keyboard Support
+
+The timeline is built with semantic HTML (`<ol>`, `<li>`, `<time>`) and supports standard keyboard navigation patterns.
+
+### Semantic HTML
+
+- Uses `<ol>` for the timeline root to represent ordered list of events
+- Uses `<li>` for each timeline item
+- Uses `<time>` with `dateTime` attribute for proper date representation
+- Connectors are marked with `aria-hidden="true"` as they're purely decorative
+
+## Notes
+
+- The `Connector` component automatically hides on the last timeline item using CSS
+- When using `position="alternate"`, items automatically alternate based on their index
+- All components support the `asChild` prop for composition with other components
+- The timeline adapts to your theme colors automatically through CSS variables
+
