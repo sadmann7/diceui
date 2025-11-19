@@ -260,6 +260,13 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
   const Comp = asChild ? Slot : "div";
 
   if (!isMeasured) {
+    const baseCount = lineCount * 3;
+    const skeletonCount = Math.min(
+      items.length,
+      lineCount > 1 ? baseCount - 1 : baseCount,
+    );
+    const skeletonItems = items.slice(0, skeletonCount);
+
     return (
       <Comp
         data-slot="badge-overflow"
@@ -272,7 +279,7 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
           ...style,
         }}
       >
-        {items.map((item, index) => (
+        {skeletonItems.map((item, index) => (
           <React.Fragment key={index}>
             {renderBadge(item, getBadgeLabel(item))}
           </React.Fragment>
