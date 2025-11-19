@@ -6,8 +6,9 @@ export interface BadgeOverflowProps<T = string>
   /**
    * Array of items to display as badges.
    *
-   * @example
-   * items={["React", "TypeScript", "Next.js"]}
+   * ```ts
+   * items={["Kickflip", "Heelflip", "Ollie", "Pop Shove It" ]}
+   * ```
    */
   items: T[];
 
@@ -37,38 +38,20 @@ export interface BadgeOverflowProps<T = string>
   lineCount?: number;
 
   /**
-   * Prefix for cache keys when measuring badge widths.
-   * Useful when you have multiple BadgeOverflow instances with similar items.
-   *
-   * @example
-   * cacheKeyPrefix="tags"
-   */
-  cacheKeyPrefix?: string;
-
-  /**
-   * Size of icon in pixels if badges contain icons.
-   */
-  badgeIconSize?: number;
-
-  /**
-   * Maximum width for badge text in pixels.
-   * Text will be truncated if it exceeds this width.
-   */
-  badgeMaxWidth?: number;
-
-  /**
    * Render function for each badge item.
    *
-   * @example
+   * ```ts
    * renderBadge={(item, label) => <Badge>{label}</Badge>}
+   * ```
    */
   renderBadge: (item: T, label: string) => React.ReactNode;
 
   /**
    * Render function for the overflow indicator badge.
    *
-   * @example
+   * ```ts
    * renderOverflow={(count) => <Badge>+{count}</Badge>}
+   * ```
    */
   renderOverflow?: (count: number) => React.ReactNode;
 }

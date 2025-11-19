@@ -18,6 +18,14 @@ export default function BadgeOverflowInteractiveDemo() {
     { label: "TypeScript", value: "typescript" },
     { label: "Next.js", value: "nextjs" },
     { label: "Tailwind CSS", value: "tailwindcss" },
+    { label: "Shadcn UI", value: "shadcn-ui" },
+    { label: "Radix UI", value: "radix-ui" },
+    { label: "Zustand", value: "zustand" },
+    { label: "React Query", value: "react-query" },
+    { label: "Prisma", value: "prisma" },
+    { label: "PostgreSQL", value: "postgresql" },
+    { label: "MySQL", value: "mysql" },
+    { label: "MongoDB", value: "mongodb" },
   ]);
   const [input, setInput] = React.useState("");
 
@@ -66,6 +74,7 @@ export default function BadgeOverflowInteractiveDemo() {
           <BadgeOverflow
             items={tags}
             getBadgeLabel={(tag) => tag.label}
+            lineCount={2}
             renderBadge={(tag, label) => (
               <Badge
                 variant="secondary"
