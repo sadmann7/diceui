@@ -66,6 +66,7 @@ export default function BadgeOverflowInteractiveDemo() {
           <BadgeOverflow
             items={tags}
             getBadgeLabel={(tag) => tag.label}
+            lineCount={2}
             renderBadge={(tag, label) => (
               <Badge
                 variant="secondary"

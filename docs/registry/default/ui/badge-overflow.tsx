@@ -201,7 +201,6 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
       const isLastLine = currentLine === lineCount;
       const hasMoreItems = i < items.length - 1;
 
-      // Reserve space for overflow badge on last line if there are more items
       const availableWidth =
         isLastLine && hasMoreItems
           ? containerWidth - overflowBadgeWidth - badgeGap
