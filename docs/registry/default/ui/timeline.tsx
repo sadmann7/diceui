@@ -150,9 +150,9 @@ function TimelineItem(props: TimelineItemProps) {
         dir={dir}
         {...itemProps}
         className={cn(
-          "relative",
-          orientation === "vertical" && "flex gap-3 pb-6 last:pb-0",
-          orientation === "horizontal" && "flex flex-col gap-3",
+          "relative flex",
+          orientation === "vertical" && "gap-3 pb-8 last:pb-0",
+          orientation === "horizontal" && "flex-col gap-3",
           className,
         )}
       />
@@ -173,7 +173,7 @@ function TimelineDot(props: TimelineDotProps) {
   const DotPrimitive = asChild ? Slot : "div";
 
   return (
-    <div className="relative flex shrink-0 items-center justify-center">
+    <div className="relative flex size-4 shrink-0 items-center justify-center">
       <DotPrimitive
         data-slot="timeline-dot"
         data-completed={isCompleted}
@@ -181,7 +181,7 @@ function TimelineDot(props: TimelineDotProps) {
         data-orientation={orientation}
         {...dotProps}
         className={cn(
-          "absolute z-10 flex size-3 items-center justify-center rounded-full border-2 bg-background",
+          "z-10 flex size-3 items-center justify-center rounded-full border-2 bg-background",
           isCompleted && "border-primary bg-primary/10",
           isActive && "ring-2 ring-ring ring-offset-2 ring-offset-background",
           !isCompleted && "border-border",
@@ -213,12 +213,12 @@ function TimelineConnector(props: TimelineConnectorProps) {
       data-orientation={orientation}
       {...connectorProps}
       className={cn(
-        "absolute last:hidden",
+        "absolute",
         isCompleted ? "bg-primary/30" : "bg-border",
         orientation === "vertical" &&
-          "start-[5px] top-3 h-[calc(100%+1.5rem)] w-[2px]",
+          "start-[7px] top-4 h-[calc(100%+0.5rem)] w-[2px]",
         orientation === "horizontal" &&
-          "start-3 top-[5px] h-[2px] w-[calc(100%+2rem)]",
+          "start-4 top-[7px] h-[2px] w-[calc(100%+0.5rem)]",
         className,
       )}
     />
