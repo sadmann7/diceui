@@ -79,7 +79,6 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
       const paddingRight = parseFloat(computedStyle.paddingRight) || 0;
       const totalPadding = paddingLeft + paddingRight;
 
-      // Measure actual rendered badges
       const widthMap = new Map<string, number>();
       const measureChildren = measureRef.current.children;
 
@@ -92,16 +91,15 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
       }
       setBadgeWidths(widthMap);
 
-      // Measure badge height from first badge
       const firstBadge = measureChildren[0] as HTMLElement | undefined;
       if (firstBadge) {
         setBadgeHeight(firstBadge.offsetHeight || 20);
       }
 
-      // Measure overflow badge
       const overflowChild = measureChildren[items.length] as
         | HTMLElement
         | undefined;
+
       if (overflowChild) {
         setOverflowBadgeWidth(overflowChild.offsetWidth || 40);
       }
