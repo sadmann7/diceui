@@ -128,17 +128,14 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
 
       const computedStyle = getComputedStyle(rootRef.current);
 
-      // Measure gap from computed styles
       const gapValue = computedStyle.gap;
       const gap = gapValue ? parseFloat(gapValue) : 4;
       setBadgeGap(gap);
 
-      // Measure padding from computed styles
       const paddingLeft = parseFloat(computedStyle.paddingLeft) || 0;
       const paddingRight = parseFloat(computedStyle.paddingRight) || 0;
       const totalPadding = paddingLeft + paddingRight;
 
-      // Measure badge height by rendering a temporary badge
       const tempBadge = document.createElement("div");
       tempBadge.className =
         "inline-flex items-center rounded-md border px-1.5 text-xs font-semibold h-5 gap-1 shrink-0 absolute invisible pointer-events-none";
@@ -148,7 +145,6 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
       document.body.removeChild(tempBadge);
       setBadgeHeight(measuredBadgeHeight || 20);
 
-      // Measure overflow badge width
       const tempOverflow = document.createElement("div");
       tempOverflow.className =
         "inline-flex h-5 shrink-0 items-center rounded-md border px-1.5 font-semibold text-xs absolute invisible pointer-events-none";
@@ -158,7 +154,6 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
       document.body.removeChild(tempOverflow);
       setOverflowBadgeWidth(measuredOverflowWidth || 40);
 
-      // Measure container width
       const width = rootRef.current.clientWidth - totalPadding;
       setContainerWidth(width);
       setIsMeasured(true);
