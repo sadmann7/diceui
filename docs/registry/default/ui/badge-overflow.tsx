@@ -7,10 +7,6 @@ import { cn } from "@/lib/utils";
 
 const badgeWidthCache = new Map<string, number>();
 
-const DEFAULT_CONTAINER_PADDING = 16; // px-2 = 8px * 2
-const DEFAULT_BADGE_GAP = 4; // gap-1 = 4px
-const DEFAULT_OVERFLOW_BADGE_WIDTH = 40; // Approximate width of "+N" badge
-
 interface MeasureBadgeWidthProps {
   label: string;
   cacheKey: string;
@@ -80,9 +76,10 @@ type BadgeOverflowProps<T = string> = React.ComponentProps<"div"> &
     items: T[];
     lineCount?: number;
     cacheKeyPrefix?: string;
-    iconSize?: number;
-    maxWidth?: number;
     containerPadding?: number;
+    badgeIconSize?: number;
+    badgeMaxWidth?: number;
+    badgeHeight?: number;
     badgeGap?: number;
     overflowBadgeWidth?: number;
     renderBadge: (item: T, label: string) => React.ReactNode;
@@ -96,11 +93,12 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
     getBadgeLabel: getBadgeLabelProp,
     lineCount = 1,
     cacheKeyPrefix = "",
-    containerPadding = DEFAULT_CONTAINER_PADDING,
-    badgeGap = DEFAULT_BADGE_GAP,
-    overflowBadgeWidth = DEFAULT_OVERFLOW_BADGE_WIDTH,
-    iconSize,
-    maxWidth,
+    containerPadding = 16,
+    badgeMaxWidth,
+    badgeHeight = 20,
+    badgeIconSize,
+    badgeGap = 4,
+    overflowBadgeWidth = 40,
     renderBadge,
     renderOverflow,
     asChild,
@@ -109,6 +107,9 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
     ref,
     ...rootProps
   } = props;
+
+  const placeholderHeight =
+    badgeHeight * lineCount + badgeGap * (lineCount - 1);
 
   const getBadgeLabel = React.useCallback(
     (item: T): string => {
@@ -125,6 +126,7 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
   const rootRef = React.useRef<BadgeOverflowElement | null>(null);
   const composedRef = useComposedRefs(ref, rootRef);
   const [containerWidth, setContainerWidth] = React.useState(0);
+  const [isMeasured, setIsMeasured] = React.useState(false);
 
   React.useLayoutEffect(() => {
     if (!rootRef.current) return;
@@ -133,6 +135,7 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
       if (rootRef.current) {
         const width = rootRef.current.clientWidth - containerPadding;
         setContainerWidth(width);
+        setIsMeasured(true);
       }
     }
 
@@ -162,8 +165,8 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
       const badgeWidth = measureBadgeWidth({
         label,
         cacheKey,
-        iconSize,
-        maxWidth,
+        iconSize: badgeIconSize,
+        maxWidth: badgeMaxWidth,
       });
 
       const widthWithGap = badgeWidth + badgeGap;
@@ -196,13 +199,29 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
     containerWidth,
     lineCount,
     cacheKeyPrefix,
-    iconSize,
-    maxWidth,
+    badgeIconSize,
+    badgeMaxWidth,
     badgeGap,
     overflowBadgeWidth,
   ]);
 
   const Comp = asChild ? Slot : "div";
+
+  if (!isMeasured) {
+    return (
+      <Comp
+        data-slot="badge-overflow"
+        {...rootProps}
+        ref={composedRef}
+        className={cn("flex flex-wrap", className)}
+        style={{
+          gap: badgeGap,
+          minHeight: placeholderHeight,
+          ...style,
+        }}
+      />
+    );
+  }
 
   return (
     <Comp
