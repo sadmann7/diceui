@@ -187,7 +187,6 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
 
   return (
     <>
-      {/* Invisible measurement container */}
       <div
         ref={measureRef}
         className="pointer-events-none invisible absolute flex flex-wrap"
@@ -206,29 +205,7 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
           </div>
         )}
       </div>
-
-      {/* Actual visible container */}
-      {!isMeasured ? (
-        <Comp
-          data-slot="badge-overflow"
-          {...rootProps}
-          ref={composedRef}
-          className={cn("flex flex-wrap", className)}
-          style={{
-            gap: badgeGap,
-            minHeight: placeholderHeight,
-            ...style,
-          }}
-        >
-          {items
-            .slice(0, Math.min(items.length, lineCount * 3))
-            .map((item, index) => (
-              <React.Fragment key={index}>
-                {renderBadge(item, getBadgeLabel(item))}
-              </React.Fragment>
-            ))}
-        </Comp>
-      ) : (
+      {isMeasured ? (
         <Comp
           data-slot="badge-overflow"
           {...rootProps}
@@ -251,6 +228,26 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
               <div className="inline-flex h-5 shrink-0 items-center rounded-md border px-1.5 font-semibold text-xs">
                 +{hiddenCount}
               </div>
+            ))}
+        </Comp>
+      ) : (
+        <Comp
+          data-slot="badge-overflow"
+          {...rootProps}
+          ref={composedRef}
+          className={cn("flex flex-wrap", className)}
+          style={{
+            gap: badgeGap,
+            minHeight: placeholderHeight,
+            ...style,
+          }}
+        >
+          {items
+            .slice(0, Math.min(items.length, lineCount * 3))
+            .map((item, index) => (
+              <React.Fragment key={index}>
+                {renderBadge(item, getBadgeLabel(item))}
+              </React.Fragment>
             ))}
         </Comp>
       )}
