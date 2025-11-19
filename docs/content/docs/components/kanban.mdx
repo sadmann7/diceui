@@ -66,19 +66,19 @@ return (
 
 ### With Primitive Values
 
-When using primitive arrays (strings, numbers), the `getColumnValue` and `getItemValue` props are optional. The component will automatically use the items themselves as unique identifiers.
+When using primitive arrays (strings, numbers), the `getItemValue` prop is optional. The component will automatically use the items themselves as unique identifiers.
 
 ```tsx
-const [columns, setColumns] = React.useState([
-  { id: "todo", items: ["Task 1", "Task 2"] },
-  { id: "done", items: ["Task 3"] },
-]);
+const [columns, setColumns] = React.useState({
+  todo: ["Task 1", "Task 2"],
+  done: ["Task 3"],
+});
 
-<Kanban.Root columns={columns} onColumnsChange={setColumns}>
+<Kanban.Root value={columns} onValueChange={setColumns}>
   <Kanban.Board>
-    {columns.map((column) => (
-      <Kanban.Column key={column.id} value={column.id}>
-        {column.items.map((item) => (
+    {Object.entries(columns).map(([columnId, items]) => (
+      <Kanban.Column key={columnId} value={columnId}>
+        {items.map((item) => (
           <Kanban.Item key={item} value={item}>
             {item}
           </Kanban.Item>
@@ -91,29 +91,28 @@ const [columns, setColumns] = React.useState([
 
 ### With Object Arrays
 
-When using object arrays, the `getColumnValue` and `getItemValue` props are required to extract unique identifiers from each column and item.
+When using object arrays, the `getItemValue` prop is required to extract unique identifiers from each item.
 
 ```tsx
-const [columns, setColumns] = React.useState([
-  { id: "todo", name: "To Do", items: [
+const [columns, setColumns] = React.useState({
+  todo: [
     { id: 1, title: "Task 1" },
     { id: 2, title: "Task 2" },
-  ]},
-  { id: "done", name: "Done", items: [
+  ],
+  done: [
     { id: 3, title: "Task 3" },
-  ]},
-]);
+  ],
+});
 
 <Kanban.Root
-  columns={columns}
-  onColumnsChange={setColumns}
-  getColumnValue={(column) => column.id}
+  value={columns}
+  onValueChange={setColumns}
   getItemValue={(item) => item.id}
 >
   <Kanban.Board>
-    {columns.map((column) => (
-      <Kanban.Column key={column.id} value={column.id}>
-        {column.items.map((item) => (
+    {Object.entries(columns).map(([columnId, items]) => (
+      <Kanban.Column key={columnId} value={columnId}>
+        {items.map((item) => (
           <Kanban.Item key={item.id} value={item.id}>
             {item.title}
           </Kanban.Item>
