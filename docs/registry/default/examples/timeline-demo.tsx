@@ -12,8 +12,8 @@ import {
 
 export default function TimelineDemo() {
   return (
-    <Timeline value={2}>
-      <TimelineItem>
+    <Timeline defaultValue="development">
+      <TimelineItem value="kickoff">
         <TimelineDot />
         <TimelineConnector />
         <TimelineContent>
@@ -27,7 +27,7 @@ export default function TimelineDemo() {
           </TimelineDescription>
         </TimelineContent>
       </TimelineItem>
-      <TimelineItem>
+      <TimelineItem value="design">
         <TimelineDot />
         <TimelineConnector />
         <TimelineContent>
@@ -40,7 +40,7 @@ export default function TimelineDemo() {
           </TimelineDescription>
         </TimelineContent>
       </TimelineItem>
-      <TimelineItem>
+      <TimelineItem value="development">
         <TimelineDot />
         <TimelineConnector />
         <TimelineContent>
@@ -53,7 +53,7 @@ export default function TimelineDemo() {
           </TimelineDescription>
         </TimelineContent>
       </TimelineItem>
-      <TimelineItem>
+      <TimelineItem value="launch">
         <TimelineDot />
         <TimelineContent>
           <TimelineHeader>

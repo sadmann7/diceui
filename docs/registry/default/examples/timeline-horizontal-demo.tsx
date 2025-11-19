@@ -12,8 +12,8 @@ import {
 
 export default function TimelineHorizontalDemo() {
   return (
-    <Timeline orientation="horizontal" value={2}>
-      <TimelineItem>
+    <Timeline orientation="horizontal" defaultValue="q3">
+      <TimelineItem value="q1">
         <TimelineDot />
         <TimelineConnector />
         <TimelineContent>
@@ -24,7 +24,7 @@ export default function TimelineHorizontalDemo() {
           <TimelineDescription>Research and planning phase</TimelineDescription>
         </TimelineContent>
       </TimelineItem>
-      <TimelineItem>
+      <TimelineItem value="q2">
         <TimelineDot />
         <TimelineConnector />
         <TimelineContent>
@@ -35,7 +35,7 @@ export default function TimelineHorizontalDemo() {
           <TimelineDescription>Development and testing</TimelineDescription>
         </TimelineContent>
       </TimelineItem>
-      <TimelineItem>
+      <TimelineItem value="q3">
         <TimelineDot />
         <TimelineConnector />
         <TimelineContent>
@@ -46,7 +46,7 @@ export default function TimelineHorizontalDemo() {
           <TimelineDescription>Beta release</TimelineDescription>
         </TimelineContent>
       </TimelineItem>
-      <TimelineItem>
+      <TimelineItem value="q4">
         <TimelineDot />
         <TimelineContent>
           <TimelineHeader>

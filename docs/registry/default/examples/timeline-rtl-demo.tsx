@@ -12,8 +12,8 @@ import {
 
 export default function TimelineRtlDemo() {
   return (
-    <Timeline dir="rtl" value={2}>
-      <TimelineItem>
+    <Timeline dir="rtl" defaultValue="regular">
+      <TimelineItem value="opened">
         <TimelineDot />
         <TimelineConnector />
         <TimelineContent>
@@ -26,7 +26,7 @@ export default function TimelineRtlDemo() {
           </TimelineDescription>
         </TimelineContent>
       </TimelineItem>
-      <TimelineItem>
+      <TimelineItem value="earlybird">
         <TimelineDot />
         <TimelineConnector />
         <TimelineContent>
@@ -39,7 +39,7 @@ export default function TimelineRtlDemo() {
           </TimelineDescription>
         </TimelineContent>
       </TimelineItem>
-      <TimelineItem>
+      <TimelineItem value="regular">
         <TimelineDot />
         <TimelineConnector />
         <TimelineContent>
@@ -52,7 +52,7 @@ export default function TimelineRtlDemo() {
           </TimelineDescription>
         </TimelineContent>
       </TimelineItem>
-      <TimelineItem>
+      <TimelineItem value="event">
         <TimelineDot />
         <TimelineContent>
           <TimelineHeader>
