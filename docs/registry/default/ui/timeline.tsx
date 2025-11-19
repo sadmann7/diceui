@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 
 type Direction = "ltr" | "rtl";
 type Orientation = "vertical" | "horizontal";
-type Variant = "default" | "primary" | "success" | "warning" | "destructive";
 
 interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
@@ -28,7 +27,8 @@ function useDirection(dirProp?: Direction): Direction {
 interface TimelineContextValue {
   dir: Direction;
   orientation: Orientation;
-  variant: Variant;
+  value: number;
+  getNextIndex: () => number;
 }
 
 const TimelineContext = React.createContext<TimelineContextValue | null>(null);
@@ -41,17 +41,29 @@ function useTimelineContext(consumerName: string) {
   return context;
 }
 
+const timelineVariants = cva("relative flex list-none", {
+  variants: {
+    orientation: {
+      vertical: "flex-col gap-6",
+      horizontal: "flex-row items-start gap-8",
+    },
+  },
+  defaultVariants: {
+    orientation: "vertical",
+  },
+});
+
 interface TimelineRootProps extends React.ComponentProps<"ol"> {
   dir?: Direction;
   orientation?: Orientation;
-  variant?: Variant;
+  value?: number;
   asChild?: boolean;
 }
 
 function TimelineRoot(props: TimelineRootProps) {
   const {
     orientation = "vertical",
-    variant = "default",
+    value = -1,
     dir: dirProp,
     asChild,
     className,
@@ -59,10 +71,16 @@ function TimelineRoot(props: TimelineRootProps) {
   } = props;
 
   const dir = useDirection(dirProp);
+  const indexRef = React.useRef(-1);
+
+  const getNextIndex = React.useCallback(() => {
+    indexRef.current += 1;
+    return indexRef.current;
+  }, []);
 
   const contextValue = React.useMemo<TimelineContextValue>(
-    () => ({ dir, orientation, variant }),
-    [dir, orientation, variant],
+    () => ({ dir, orientation, value, getNextIndex }),
+    [dir, orientation, value, getNextIndex],
   );
 
   const RootPrimitive = asChild ? Slot : "ol";
@@ -72,23 +90,18 @@ function TimelineRoot(props: TimelineRootProps) {
       <RootPrimitive
         aria-orientation={orientation}
         data-orientation={orientation}
-        data-variant={variant}
         data-slot="timeline"
         {...rootProps}
         dir={dir}
-        className={cn(
-          "relative flex list-none",
-          orientation === "vertical" && "flex-col gap-6",
-          orientation === "horizontal" && "flex-row items-start gap-8",
-          className,
-        )}
+        className={cn(timelineVariants({ orientation }), className)}
       />
     </TimelineContext.Provider>
   );
 }
 
 interface TimelineItemContextValue {
-  active: boolean;
+  isCompleted: boolean;
+  isActive: boolean;
 }
 
 const TimelineItemContext =
@@ -103,18 +116,26 @@ function useTimelineItemContext(consumerName: string) {
 }
 
 interface TimelineItemProps extends React.ComponentProps<"li"> {
-  active?: boolean;
   asChild?: boolean;
 }
 
 function TimelineItem(props: TimelineItemProps) {
-  const { active = false, asChild, className, ...itemProps } = props;
+  const { asChild, className, ...itemProps } = props;
 
-  const { dir, orientation, variant } = useTimelineContext(ITEM_NAME);
+  const { dir, orientation, value, getNextIndex } =
+    useTimelineContext(ITEM_NAME);
+
+  const indexRef = React.useRef<number | undefined>(undefined);
+  if (indexRef.current === undefined) {
+    indexRef.current = getNextIndex();
+  }
+
+  const isCompleted = indexRef.current <= value;
+  const isActive = indexRef.current === value;
 
   const itemContextValue = React.useMemo<TimelineItemContextValue>(
-    () => ({ active }),
-    [active],
+    () => ({ isCompleted, isActive }),
+    [isCompleted, isActive],
   );
 
   const ItemPrimitive = asChild ? Slot : "li";
@@ -123,9 +144,9 @@ function TimelineItem(props: TimelineItemProps) {
     <TimelineItemContext.Provider value={itemContextValue}>
       <ItemPrimitive
         data-slot="timeline-item"
-        data-active={active}
+        data-completed={isCompleted}
+        data-active={isActive}
         data-orientation={orientation}
-        data-variant={variant}
         dir={dir}
         {...itemProps}
         className={cn(
@@ -139,29 +160,6 @@ function TimelineItem(props: TimelineItemProps) {
   );
 }
 
-const dotVariants = cva(
-  "absolute z-10 flex size-3 items-center justify-center rounded-full border-2 bg-background",
-  {
-    variants: {
-      variant: {
-        default: "border-border",
-        primary: "border-primary bg-primary/10",
-        success: "border-green-500 bg-green-500/10",
-        warning: "border-yellow-500 bg-yellow-500/10",
-        destructive: "border-destructive bg-destructive/10",
-      },
-      active: {
-        true: "ring-2 ring-ring ring-offset-2 ring-offset-background",
-        false: "",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-      active: false,
-    },
-  },
-);
-
 interface TimelineDotProps extends DivProps {
   asChild?: boolean;
 }
@@ -169,8 +167,8 @@ interface TimelineDotProps extends DivProps {
 function TimelineDot(props: TimelineDotProps) {
   const { asChild, className, ...dotProps } = props;
 
-  const { orientation, variant } = useTimelineContext(DOT_NAME);
-  const { active } = useTimelineItemContext(DOT_NAME);
+  const { orientation } = useTimelineContext(DOT_NAME);
+  const { isCompleted, isActive } = useTimelineItemContext(DOT_NAME);
 
   const DotPrimitive = asChild ? Slot : "div";
 
@@ -178,11 +176,17 @@ function TimelineDot(props: TimelineDotProps) {
     <div className="relative flex shrink-0 items-center justify-center">
       <DotPrimitive
         data-slot="timeline-dot"
-        data-active={active}
+        data-completed={isCompleted}
+        data-active={isActive}
         data-orientation={orientation}
-        data-variant={variant}
         {...dotProps}
-        className={cn(dotVariants({ variant, active, className }))}
+        className={cn(
+          "absolute z-10 flex size-3 items-center justify-center rounded-full border-2 bg-background",
+          isCompleted && "border-primary bg-primary/10",
+          isActive && "ring-2 ring-ring ring-offset-2 ring-offset-background",
+          !isCompleted && "border-border",
+          className,
+        )}
       />
     </div>
   );
@@ -192,31 +196,11 @@ interface TimelineConnectorProps extends DivProps {
   asChild?: boolean;
 }
 
-const connectorVariants = cva("absolute bg-border", {
-  variants: {
-    orientation: {
-      vertical: "start-[5px] top-3 h-[calc(100%+1.5rem)] w-[2px]",
-      horizontal: "start-3 top-[5px] h-[2px] w-[calc(100%+2rem)]",
-    },
-    variant: {
-      default: "bg-border",
-      primary: "bg-primary/30",
-      success: "bg-green-500/30",
-      warning: "bg-yellow-500/30",
-      destructive: "bg-destructive/30",
-    },
-  },
-  defaultVariants: {
-    orientation: "vertical",
-    variant: "default",
-  },
-});
-
 function TimelineConnector(props: TimelineConnectorProps) {
   const { asChild, className, ...connectorProps } = props;
 
-  const { orientation, variant } = useTimelineContext(CONNECTOR_NAME);
-  const { active } = useTimelineItemContext(CONNECTOR_NAME);
+  const { orientation } = useTimelineContext(CONNECTOR_NAME);
+  const { isCompleted, isActive } = useTimelineItemContext(CONNECTOR_NAME);
 
   const ConnectorPrimitive = asChild ? Slot : "div";
 
@@ -224,13 +208,18 @@ function TimelineConnector(props: TimelineConnectorProps) {
     <ConnectorPrimitive
       aria-hidden="true"
       data-slot="timeline-connector"
-      data-active={active}
+      data-completed={isCompleted}
+      data-active={isActive}
       data-orientation={orientation}
-      data-variant={variant}
       {...connectorProps}
       className={cn(
-        connectorVariants({ orientation, variant, className }),
-        "last:hidden",
+        "absolute last:hidden",
+        isCompleted ? "bg-primary/30" : "bg-border",
+        orientation === "vertical" &&
+          "start-[5px] top-3 h-[calc(100%+1.5rem)] w-[2px]",
+        orientation === "horizontal" &&
+          "start-3 top-[5px] h-[2px] w-[calc(100%+2rem)]",
+        className,
       )}
     />
   );

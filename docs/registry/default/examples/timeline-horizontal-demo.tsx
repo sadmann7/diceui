@@ -12,7 +12,7 @@ import {
 
 export default function TimelineHorizontalDemo() {
   return (
-    <Timeline orientation="horizontal">
+    <Timeline orientation="horizontal" value={2}>
       <TimelineItem>
         <TimelineDot />
         <TimelineConnector />
@@ -35,7 +35,7 @@ export default function TimelineHorizontalDemo() {
           <TimelineDescription>Development and testing</TimelineDescription>
         </TimelineContent>
       </TimelineItem>
-      <TimelineItem active>
+      <TimelineItem>
         <TimelineDot />
         <TimelineConnector />
         <TimelineContent>

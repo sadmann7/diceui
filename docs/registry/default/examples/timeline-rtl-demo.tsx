@@ -12,7 +12,7 @@ import {
 
 export default function TimelineRtlDemo() {
   return (
-    <Timeline dir="rtl">
+    <Timeline dir="rtl" value={2}>
       <TimelineItem>
         <TimelineDot />
         <TimelineConnector />
@@ -39,7 +39,7 @@ export default function TimelineRtlDemo() {
           </TimelineDescription>
         </TimelineContent>
       </TimelineItem>
-      <TimelineItem active>
+      <TimelineItem>
         <TimelineDot />
         <TimelineConnector />
         <TimelineContent>

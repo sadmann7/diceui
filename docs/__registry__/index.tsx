@@ -2473,20 +2473,6 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "timeline-status-demo": {
-      name: "timeline-status-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["timeline"],
-      files: [{
-        path: "registry/default/examples/timeline-status-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/timeline-status-demo.tsx")),
-      source: "",
-      chunks: []
-    },
     "timeline-rtl-demo": {
       name: "timeline-rtl-demo",
       description: "",

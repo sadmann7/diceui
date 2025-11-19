@@ -1631,18 +1631,6 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "timeline-status-demo",
-    type: "registry:example",
-    dependencies: ["lucide-react"],
-    registryDependencies: ["timeline"],
-    files: [
-      {
-        path: "examples/timeline-status-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
     name: "timeline-rtl-demo",
     type: "registry:example",
     registryDependencies: ["timeline"],

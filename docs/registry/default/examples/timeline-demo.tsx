@@ -12,7 +12,7 @@ import {
 
 export default function TimelineDemo() {
   return (
-    <Timeline>
+    <Timeline value={2}>
       <TimelineItem>
         <TimelineDot />
         <TimelineConnector />
@@ -40,7 +40,7 @@ export default function TimelineDemo() {
           </TimelineDescription>
         </TimelineContent>
       </TimelineItem>
-      <TimelineItem active>
+      <TimelineItem>
         <TimelineDot />
         <TimelineConnector />
         <TimelineContent>

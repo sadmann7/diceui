@@ -98,12 +98,6 @@ Display timeline events horizontally across the screen.
 
 <ComponentTabs name="timeline-horizontal-demo" />
 
-### Timeline with Variants
-
-Use different visual variants to visualize event states across the entire timeline.
-
-<ComponentTabs name="timeline-status-demo" />
-
 ### RTL Timeline
 
 Display timeline with right-to-left layout for RTL languages.
@@ -203,13 +197,18 @@ The timeline supports both vertical and horizontal orientations. Use the `orient
 
 The timeline fully supports right-to-left (RTL) layouts through the `dir` prop. When set to `"rtl"`, the timeline automatically flips its layout direction, making it ideal for RTL languages like Arabic, Hebrew, and Persian.
 
-### Visual Variants
+### Progress Tracking
 
-The timeline supports multiple visual variants (`default`, `primary`, `success`, `warning`, `destructive`) applied at the root level. The variant affects the color scheme of all dots and connectors in the timeline, making it easy to visualize different states or categories.
+Use the `value` prop on the root to track progress through the timeline. Set it to the index (0-based) of the current step, and all items up to and including that index will be styled with primary color to show completion. The current item (at the exact index) gets an additional ring effect for emphasis.
 
-### Active State
-
-Mark a timeline item as `active` to highlight it with a ring effect, drawing attention to the current or most important event.
+```tsx
+<Timeline.Root value={2}>
+  <Timeline.Item>Step 1 - Completed</Timeline.Item>
+  <Timeline.Item>Step 2 - Completed</Timeline.Item>
+  <Timeline.Item>Step 3 - Current (with ring)</Timeline.Item>
+  <Timeline.Item>Step 4 - Not started</Timeline.Item>
+</Timeline.Root>
+```
 
 ### Custom Icons
 
