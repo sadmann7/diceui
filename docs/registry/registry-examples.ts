@@ -1643,23 +1643,12 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "timeline-alternate-demo",
+    name: "timeline-rtl-demo",
     type: "registry:example",
     registryDependencies: ["timeline"],
     files: [
       {
-        path: "examples/timeline-alternate-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "timeline-right-demo",
-    type: "registry:example",
-    registryDependencies: ["timeline"],
-    files: [
-      {
-        path: "examples/timeline-right-demo.tsx",
+        path: "examples/timeline-rtl-demo.tsx",
         type: "registry:example",
       },
     ],

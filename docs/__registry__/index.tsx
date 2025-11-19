@@ -2487,31 +2487,17 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "timeline-alternate-demo": {
-      name: "timeline-alternate-demo",
+    "timeline-rtl-demo": {
+      name: "timeline-rtl-demo",
       description: "",
       type: "registry:example",
       registryDependencies: ["timeline"],
       files: [{
-        path: "registry/default/examples/timeline-alternate-demo.tsx",
+        path: "registry/default/examples/timeline-rtl-demo.tsx",
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/examples/timeline-alternate-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "timeline-right-demo": {
-      name: "timeline-right-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["timeline"],
-      files: [{
-        path: "registry/default/examples/timeline-right-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/timeline-right-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/timeline-rtl-demo.tsx")),
       source: "",
       chunks: []
     },

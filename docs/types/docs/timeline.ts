@@ -8,11 +8,11 @@ export interface RootProps extends EmptyProps<"ol">, CompositionProps {
   orientation?: "vertical" | "horizontal";
 
   /**
-   * The position of the timeline items relative to the line.
-   * Only applies to vertical orientation.
-   * @default "left"
+   * The reading direction of the timeline.
+   * This affects the layout direction and works with RTL languages.
+   * @default "ltr"
    */
-  position?: "left" | "right" | "alternate";
+  dir?: "ltr" | "rtl";
 }
 
 export interface ItemProps extends EmptyProps<"li">, CompositionProps {

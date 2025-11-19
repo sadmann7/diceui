@@ -1,53 +1,61 @@
-import * as Timeline from "@/registry/default/ui/timeline";
+import {
+  Timeline,
+  TimelineConnector,
+  TimelineContent,
+  TimelineDescription,
+  TimelineDot,
+  TimelineHeader,
+  TimelineItem,
+  TimelineTime,
+  TimelineTitle,
+} from "@/registry/default/ui/timeline";
 
 export default function TimelineHorizontalDemo() {
   return (
-    <Timeline.Root orientation="horizontal">
-      <Timeline.Item>
-        <Timeline.Dot />
-        <Timeline.Connector />
-        <Timeline.Content>
-          <Timeline.Header>
-            <Timeline.Title>Q1</Timeline.Title>
-            <Timeline.Time dateTime="2024-01">Jan - Mar</Timeline.Time>
-          </Timeline.Header>
-          <Timeline.Description>
-            Research and planning phase
-          </Timeline.Description>
-        </Timeline.Content>
-      </Timeline.Item>
-      <Timeline.Item>
-        <Timeline.Dot />
-        <Timeline.Connector />
-        <Timeline.Content>
-          <Timeline.Header>
-            <Timeline.Title>Q2</Timeline.Title>
-            <Timeline.Time dateTime="2024-04">Apr - Jun</Timeline.Time>
-          </Timeline.Header>
-          <Timeline.Description>Development and testing</Timeline.Description>
-        </Timeline.Content>
-      </Timeline.Item>
-      <Timeline.Item active>
-        <Timeline.Dot />
-        <Timeline.Connector />
-        <Timeline.Content>
-          <Timeline.Header>
-            <Timeline.Title>Q3</Timeline.Title>
-            <Timeline.Time dateTime="2024-07">Jul - Sep</Timeline.Time>
-          </Timeline.Header>
-          <Timeline.Description>Beta release</Timeline.Description>
-        </Timeline.Content>
-      </Timeline.Item>
-      <Timeline.Item>
-        <Timeline.Dot />
-        <Timeline.Content>
-          <Timeline.Header>
-            <Timeline.Title>Q4</Timeline.Title>
-            <Timeline.Time dateTime="2024-10">Oct - Dec</Timeline.Time>
-          </Timeline.Header>
-          <Timeline.Description>Public launch</Timeline.Description>
-        </Timeline.Content>
-      </Timeline.Item>
-    </Timeline.Root>
+    <Timeline orientation="horizontal">
+      <TimelineItem>
+        <TimelineDot />
+        <TimelineConnector />
+        <TimelineContent>
+          <TimelineHeader>
+            <TimelineTitle>Q1</TimelineTitle>
+            <TimelineTime dateTime="2024-01">Jan - Mar</TimelineTime>
+          </TimelineHeader>
+          <TimelineDescription>Research and planning phase</TimelineDescription>
+        </TimelineContent>
+      </TimelineItem>
+      <TimelineItem>
+        <TimelineDot />
+        <TimelineConnector />
+        <TimelineContent>
+          <TimelineHeader>
+            <TimelineTitle>Q2</TimelineTitle>
+            <TimelineTime dateTime="2024-04">Apr - Jun</TimelineTime>
+          </TimelineHeader>
+          <TimelineDescription>Development and testing</TimelineDescription>
+        </TimelineContent>
+      </TimelineItem>
+      <TimelineItem active>
+        <TimelineDot />
+        <TimelineConnector />
+        <TimelineContent>
+          <TimelineHeader>
+            <TimelineTitle>Q3</TimelineTitle>
+            <TimelineTime dateTime="2024-07">Jul - Sep</TimelineTime>
+          </TimelineHeader>
+          <TimelineDescription>Beta release</TimelineDescription>
+        </TimelineContent>
+      </TimelineItem>
+      <TimelineItem>
+        <TimelineDot />
+        <TimelineContent>
+          <TimelineHeader>
+            <TimelineTitle>Q4</TimelineTitle>
+            <TimelineTime dateTime="2024-10">Oct - Dec</TimelineTime>
+          </TimelineHeader>
+          <TimelineDescription>Public launch</TimelineDescription>
+        </TimelineContent>
+      </TimelineItem>
+    </Timeline>
   );
 }

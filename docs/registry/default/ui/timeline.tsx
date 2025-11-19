@@ -5,8 +5,8 @@ import { cva } from "class-variance-authority";
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
+type Direction = "ltr" | "rtl";
 type Orientation = "vertical" | "horizontal";
-type Position = "left" | "right" | "alternate";
 type Status = "default" | "primary" | "success" | "warning" | "destructive";
 
 interface DivProps extends React.ComponentProps<"div"> {
@@ -18,9 +18,16 @@ const ITEM_NAME = "TimelineItem";
 const DOT_NAME = "TimelineDot";
 const CONNECTOR_NAME = "TimelineConnector";
 
+const DirectionContext = React.createContext<Direction | undefined>(undefined);
+
+function useDirection(dirProp?: Direction): Direction {
+  const contextDir = React.useContext(DirectionContext);
+  return dirProp ?? contextDir ?? "ltr";
+}
+
 interface TimelineContextValue {
   orientation: Orientation;
-  position: Position;
+  dir: Direction;
 }
 
 const TimelineContext = React.createContext<TimelineContextValue | null>(null);
@@ -35,33 +42,42 @@ function useTimelineContext(consumerName: string) {
 
 interface TimelineRootProps extends React.ComponentProps<"ol"> {
   orientation?: Orientation;
-  position?: Position;
+  dir?: Direction;
   asChild?: boolean;
 }
 
 function TimelineRoot(props: TimelineRootProps) {
   const {
     orientation = "vertical",
-    position = "left",
+    dir: dirProp,
     asChild,
     className,
     ...rootProps
   } = props;
 
+  const dir = useDirection(dirProp);
+
+  const contextValue = React.useMemo<TimelineContextValue>(
+    () => ({ orientation, dir }),
+    [orientation, dir],
+  );
+
   const RootPrimitive = asChild ? Slot : "ol";
 
   return (
-    <TimelineContext.Provider value={{ orientation, position }}>
+    <TimelineContext.Provider value={contextValue}>
       <RootPrimitive
+        aria-orientation={orientation}
         data-orientation={orientation}
-        data-position={position}
+        data-slot="timeline"
+        {...rootProps}
+        dir={dir}
         className={cn(
           "relative flex list-none",
           orientation === "vertical" && "flex-col gap-6",
           orientation === "horizontal" && "flex-row items-start gap-8",
           className,
         )}
-        {...rootProps}
       />
     </TimelineContext.Provider>
   );
@@ -98,25 +114,29 @@ function TimelineItem(props: TimelineItemProps) {
     ...itemProps
   } = props;
 
-  const { orientation, position } = useTimelineContext(ITEM_NAME);
+  const { orientation, dir } = useTimelineContext(ITEM_NAME);
+
+  const itemContextValue = React.useMemo<TimelineItemContextValue>(
+    () => ({ status, active }),
+    [status, active],
+  );
 
   const ItemPrimitive = asChild ? Slot : "li";
 
   return (
-    <TimelineItemContext.Provider value={{ status, active }}>
+    <TimelineItemContext.Provider value={itemContextValue}>
       <ItemPrimitive
+        data-slot="timeline-item"
         data-status={status}
         data-active={active}
+        {...itemProps}
+        dir={dir}
         className={cn(
           "relative",
           orientation === "vertical" && "flex gap-3 pb-6 last:pb-0",
           orientation === "horizontal" && "flex flex-col gap-3",
-          orientation === "vertical" &&
-            position === "right" &&
-            "flex-row-reverse",
           className,
         )}
-        {...itemProps}
       />
     </TimelineItemContext.Provider>
   );
@@ -159,8 +179,11 @@ function TimelineDot(props: TimelineDotProps) {
   return (
     <div className="relative flex shrink-0 items-center justify-center">
       <DotPrimitive
-        className={cn(dotVariants({ status, active, className }))}
+        data-slot="timeline-dot"
+        data-status={status}
+        data-active={active}
         {...dotProps}
+        className={cn(dotVariants({ status, active, className }))}
       />
     </div>
   );
@@ -173,8 +196,8 @@ interface TimelineConnectorProps extends DivProps {
 const connectorVariants = cva("absolute bg-border", {
   variants: {
     orientation: {
-      vertical: "top-3 left-[5px] h-[calc(100%+1.5rem)] w-[2px]",
-      horizontal: "top-[5px] left-3 h-[2px] w-[calc(100%+2rem)]",
+      vertical: "start-[5px] top-3 h-[calc(100%+1.5rem)] w-[2px]",
+      horizontal: "start-3 top-[5px] h-[2px] w-[calc(100%+2rem)]",
     },
     status: {
       default: "bg-border",
@@ -192,6 +215,7 @@ const connectorVariants = cva("absolute bg-border", {
 
 function TimelineConnector(props: TimelineConnectorProps) {
   const { asChild, className, ...connectorProps } = props;
+
   const { status } = useTimelineItemContext(CONNECTOR_NAME);
   const { orientation } = useTimelineContext(CONNECTOR_NAME);
 
@@ -200,11 +224,14 @@ function TimelineConnector(props: TimelineConnectorProps) {
   return (
     <ConnectorPrimitive
       aria-hidden="true"
+      data-slot="timeline-connector"
+      data-status={status}
+      data-orientation={orientation}
+      {...connectorProps}
       className={cn(
         connectorVariants({ orientation, status, className }),
         "last:hidden",
       )}
-      {...connectorProps}
     />
   );
 }
@@ -220,8 +247,9 @@ function TimelineHeader(props: TimelineHeaderProps) {
 
   return (
     <HeaderPrimitive
-      className={cn("flex flex-col gap-1", className)}
+      data-slot="timeline-header"
       {...headerProps}
+      className={cn("flex flex-col gap-1", className)}
     />
   );
 }
@@ -237,8 +265,9 @@ function TimelineTitle(props: TimelineTitleProps) {
 
   return (
     <TitlePrimitive
-      className={cn("font-semibold leading-none", className)}
+      data-slot="timeline-title"
       {...titleProps}
+      className={cn("font-semibold leading-none", className)}
     />
   );
 }
@@ -254,8 +283,9 @@ function TimelineDescription(props: TimelineDescriptionProps) {
 
   return (
     <DescriptionPrimitive
-      className={cn("text-muted-foreground text-sm", className)}
+      data-slot="timeline-description"
       {...descriptionProps}
+      className={cn("text-muted-foreground text-sm", className)}
     />
   );
 }
@@ -271,8 +301,9 @@ function TimelineContent(props: TimelineContentProps) {
 
   return (
     <ContentPrimitive
-      className={cn("flex-1 pt-0.5", className)}
+      data-slot="timeline-content"
       {...contentProps}
+      className={cn("flex-1 pt-0.5", className)}
     />
   );
 }
@@ -283,12 +314,14 @@ interface TimelineTimeProps extends React.ComponentProps<"time"> {
 
 function TimelineTime(props: TimelineTimeProps) {
   const { asChild, className, ...timeProps } = props;
+
   const TimePrimitive = asChild ? Slot : "time";
 
   return (
     <TimePrimitive
-      className={cn("text-muted-foreground text-xs", className)}
+      data-slot="timeline-time"
       {...timeProps}
+      className={cn("text-muted-foreground text-xs", className)}
     />
   );
 }

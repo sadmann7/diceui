@@ -10,20 +10,19 @@ import {
   TimelineTitle,
 } from "@/registry/default/ui/timeline";
 
-export default function TimelineDemo() {
+export default function TimelineRtlDemo() {
   return (
-    <Timeline>
+    <Timeline dir="rtl">
       <TimelineItem>
         <TimelineDot />
         <TimelineConnector />
         <TimelineContent>
           <TimelineHeader>
-            <TimelineTitle>Project Kickoff</TimelineTitle>
-            <TimelineTime dateTime="2024-01-15">January 15, 2024</TimelineTime>
+            <TimelineTitle>Registration Opened</TimelineTitle>
+            <TimelineTime dateTime="2024-01-01">January 1, 2024</TimelineTime>
           </TimelineHeader>
           <TimelineDescription>
-            Initial meeting with stakeholders to define project scope and
-            requirements.
+            Online registration portal is now open for all participants.
           </TimelineDescription>
         </TimelineContent>
       </TimelineItem>
@@ -32,11 +31,11 @@ export default function TimelineDemo() {
         <TimelineConnector />
         <TimelineContent>
           <TimelineHeader>
-            <TimelineTitle>Design Phase</TimelineTitle>
-            <TimelineTime dateTime="2024-02-01">February 1, 2024</TimelineTime>
+            <TimelineTitle>Early Bird Deadline</TimelineTitle>
+            <TimelineTime dateTime="2024-02-15">February 15, 2024</TimelineTime>
           </TimelineHeader>
           <TimelineDescription>
-            Created wireframes and mockups for the user interface.
+            Last day to register and receive early bird discount.
           </TimelineDescription>
         </TimelineContent>
       </TimelineItem>
@@ -45,11 +44,11 @@ export default function TimelineDemo() {
         <TimelineConnector />
         <TimelineContent>
           <TimelineHeader>
-            <TimelineTitle>Development</TimelineTitle>
+            <TimelineTitle>Regular Registration</TimelineTitle>
             <TimelineTime dateTime="2024-03-01">March 1, 2024</TimelineTime>
           </TimelineHeader>
           <TimelineDescription>
-            Building the application with React and TypeScript.
+            Regular registration period with standard pricing.
           </TimelineDescription>
         </TimelineContent>
       </TimelineItem>
@@ -57,11 +56,11 @@ export default function TimelineDemo() {
         <TimelineDot />
         <TimelineContent>
           <TimelineHeader>
-            <TimelineTitle>Launch</TimelineTitle>
+            <TimelineTitle>Event Day</TimelineTitle>
             <TimelineTime dateTime="2024-04-01">April 1, 2024</TimelineTime>
           </TimelineHeader>
           <TimelineDescription>
-            Deploy to production and announce to users.
+            The main event begins at 9:00 AM. Check-in starts at 8:00 AM.
           </TimelineDescription>
         </TimelineContent>
       </TimelineItem>

@@ -1,6 +1,6 @@
 ---
 title: Timeline
-description: A flexible timeline component for displaying chronological events with support for different orientations, positions, and visual states.
+description: A flexible timeline component for displaying chronological events with support for different orientations, RTL layouts, and visual states.
 preview: true
 links:
  api: /docs/components/timeline#api-reference
@@ -104,17 +104,11 @@ Use different status variants to visualize event states.
 
 <ComponentTabs name="timeline-status-demo" />
 
-### Alternate Position
+### RTL Timeline
 
-Alternate timeline items between left and right positions.
+Display timeline with right-to-left layout for RTL languages.
 
-<ComponentTabs name="timeline-alternate-demo" />
-
-### Right-Aligned Timeline
-
-Position all timeline items to the right of the connector line.
-
-<ComponentTabs name="timeline-right-demo" />
+<ComponentTabs name="timeline-rtl-demo" />
 
 ## API Reference
 
@@ -205,12 +199,9 @@ A semantic time element for displaying dates/times.
 
 The timeline supports both vertical and horizontal orientations. Use the `orientation` prop on `Timeline.Root` to switch between layouts.
 
-### Multiple Position Modes
+### RTL Support
 
-Choose from three position modes for vertical timelines:
-- **left**: All items positioned to the left of the connector
-- **right**: All items positioned to the right of the connector  
-- **alternate**: Items alternate between left and right positions
+The timeline fully supports right-to-left (RTL) layouts through the `dir` prop. When set to `"rtl"`, the timeline automatically flips its layout direction, making it ideal for RTL languages like Arabic, Hebrew, and Persian.
 
 ### Visual Status States
 
@@ -244,7 +235,7 @@ The timeline is built with semantic HTML (`<ol>`, `<li>`, `<time>`) and supports
 ## Notes
 
 - The `Connector` component automatically hides on the last timeline item using CSS
-- When using `position="alternate"`, items automatically alternate based on their index
 - All components support the `asChild` prop for composition with other components
 - The timeline adapts to your theme colors automatically through CSS variables
+- The `dir` prop supports both `"ltr"` (default) and `"rtl"` for proper directional layout
 
