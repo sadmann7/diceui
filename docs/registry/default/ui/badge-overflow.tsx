@@ -243,7 +243,10 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
           }}
         >
           {items
-            .slice(0, Math.min(items.length, lineCount * 3))
+            .slice(
+              0,
+              Math.min(items.length, lineCount * 3 - (lineCount > 1 ? 1 : 0)),
+            )
             .map((item, index) => (
               <React.Fragment key={index}>
                 {renderBadge(item, getBadgeLabel(item))}
