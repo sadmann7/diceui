@@ -98,9 +98,9 @@ Display timeline events horizontally across the screen.
 
 <ComponentTabs name="timeline-horizontal-demo" />
 
-### Timeline with Status
+### Timeline with Variants
 
-Use different status variants to visualize event states.
+Use different visual variants to visualize event states across the entire timeline.
 
 <ComponentTabs name="timeline-status-demo" />
 
@@ -203,9 +203,9 @@ The timeline supports both vertical and horizontal orientations. Use the `orient
 
 The timeline fully supports right-to-left (RTL) layouts through the `dir` prop. When set to `"rtl"`, the timeline automatically flips its layout direction, making it ideal for RTL languages like Arabic, Hebrew, and Persian.
 
-### Visual Status States
+### Visual Variants
 
-Timeline items support multiple status variants (`default`, `primary`, `success`, `warning`, `destructive`) that affect the color of the dot and connector, making it easy to visualize different event states.
+The timeline supports multiple visual variants (`default`, `primary`, `success`, `warning`, `destructive`) applied at the root level. The variant affects the color scheme of all dots and connectors in the timeline, making it easy to visualize different states or categories.
 
 ### Active State
 
@@ -213,7 +213,7 @@ Mark a timeline item as `active` to highlight it with a ring effect, drawing att
 
 ### Custom Icons
 
-Replace the default dot marker with custom icons or React components using the `icon` prop on `Timeline.Item`, giving you full control over the visual appearance.
+Replace the default dot marker with custom icons or React components by passing children to `Timeline.Dot`, giving you full control over the visual appearance.
 
 ### Composition Pattern
 

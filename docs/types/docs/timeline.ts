@@ -1,18 +1,30 @@
-import type { CompositionProps, EmptyProps } from "@/types";
+import type {
+  CompositionProps,
+  Direction,
+  EmptyProps,
+  Orientation,
+} from "@/types";
 
 export interface RootProps extends EmptyProps<"ol">, CompositionProps {
   /**
    * The orientation of the timeline.
    * @default "vertical"
    */
-  orientation?: "vertical" | "horizontal";
+  orientation?: Orientation;
 
   /**
    * The reading direction of the timeline.
    * This affects the layout direction and works with RTL languages.
    * @default "ltr"
    */
-  dir?: "ltr" | "rtl";
+  dir?: Direction;
+
+  /**
+   * The visual variant of the timeline.
+   * Affects the color scheme of all markers and connectors in the timeline.
+   * @default "default"
+   */
+  variant?: "default" | "primary" | "success" | "warning" | "destructive";
 }
 
 export interface ItemProps extends EmptyProps<"li">, CompositionProps {
@@ -22,13 +34,6 @@ export interface ItemProps extends EmptyProps<"li">, CompositionProps {
    * @default false
    */
   active?: boolean;
-
-  /**
-   * The status/variant of the timeline item.
-   * Affects the color scheme of the marker and connector.
-   * @default "default"
-   */
-  status?: "default" | "primary" | "success" | "warning" | "destructive";
 }
 
 export interface HeaderProps extends EmptyProps<"div">, CompositionProps {}

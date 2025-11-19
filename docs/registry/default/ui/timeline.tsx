@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 type Direction = "ltr" | "rtl";
 type Orientation = "vertical" | "horizontal";
-type Status = "default" | "primary" | "success" | "warning" | "destructive";
+type Variant = "default" | "primary" | "success" | "warning" | "destructive";
 
 interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
@@ -26,8 +26,9 @@ function useDirection(dirProp?: Direction): Direction {
 }
 
 interface TimelineContextValue {
-  orientation: Orientation;
   dir: Direction;
+  orientation: Orientation;
+  variant: Variant;
 }
 
 const TimelineContext = React.createContext<TimelineContextValue | null>(null);
@@ -41,14 +42,16 @@ function useTimelineContext(consumerName: string) {
 }
 
 interface TimelineRootProps extends React.ComponentProps<"ol"> {
-  orientation?: Orientation;
   dir?: Direction;
+  orientation?: Orientation;
+  variant?: Variant;
   asChild?: boolean;
 }
 
 function TimelineRoot(props: TimelineRootProps) {
   const {
     orientation = "vertical",
+    variant = "default",
     dir: dirProp,
     asChild,
     className,
@@ -58,8 +61,8 @@ function TimelineRoot(props: TimelineRootProps) {
   const dir = useDirection(dirProp);
 
   const contextValue = React.useMemo<TimelineContextValue>(
-    () => ({ orientation, dir }),
-    [orientation, dir],
+    () => ({ dir, orientation, variant }),
+    [dir, orientation, variant],
   );
 
   const RootPrimitive = asChild ? Slot : "ol";
@@ -69,6 +72,7 @@ function TimelineRoot(props: TimelineRootProps) {
       <RootPrimitive
         aria-orientation={orientation}
         data-orientation={orientation}
+        data-variant={variant}
         data-slot="timeline"
         {...rootProps}
         dir={dir}
@@ -84,7 +88,6 @@ function TimelineRoot(props: TimelineRootProps) {
 }
 
 interface TimelineItemContextValue {
-  status: Status;
   active: boolean;
 }
 
@@ -101,24 +104,17 @@ function useTimelineItemContext(consumerName: string) {
 
 interface TimelineItemProps extends React.ComponentProps<"li"> {
   active?: boolean;
-  status?: Status;
   asChild?: boolean;
 }
 
 function TimelineItem(props: TimelineItemProps) {
-  const {
-    active = false,
-    status = "default",
-    asChild,
-    className,
-    ...itemProps
-  } = props;
+  const { active = false, asChild, className, ...itemProps } = props;
 
-  const { orientation, dir } = useTimelineContext(ITEM_NAME);
+  const { dir, orientation, variant } = useTimelineContext(ITEM_NAME);
 
   const itemContextValue = React.useMemo<TimelineItemContextValue>(
-    () => ({ status, active }),
-    [status, active],
+    () => ({ active }),
+    [active],
   );
 
   const ItemPrimitive = asChild ? Slot : "li";
@@ -127,10 +123,11 @@ function TimelineItem(props: TimelineItemProps) {
     <TimelineItemContext.Provider value={itemContextValue}>
       <ItemPrimitive
         data-slot="timeline-item"
-        data-status={status}
         data-active={active}
-        {...itemProps}
+        data-orientation={orientation}
+        data-variant={variant}
         dir={dir}
+        {...itemProps}
         className={cn(
           "relative",
           orientation === "vertical" && "flex gap-3 pb-6 last:pb-0",
@@ -146,7 +143,7 @@ const dotVariants = cva(
   "absolute z-10 flex size-3 items-center justify-center rounded-full border-2 bg-background",
   {
     variants: {
-      status: {
+      variant: {
         default: "border-border",
         primary: "border-primary bg-primary/10",
         success: "border-green-500 bg-green-500/10",
@@ -159,7 +156,7 @@ const dotVariants = cva(
       },
     },
     defaultVariants: {
-      status: "default",
+      variant: "default",
       active: false,
     },
   },
@@ -172,7 +169,8 @@ interface TimelineDotProps extends DivProps {
 function TimelineDot(props: TimelineDotProps) {
   const { asChild, className, ...dotProps } = props;
 
-  const { status, active } = useTimelineItemContext(DOT_NAME);
+  const { orientation, variant } = useTimelineContext(DOT_NAME);
+  const { active } = useTimelineItemContext(DOT_NAME);
 
   const DotPrimitive = asChild ? Slot : "div";
 
@@ -180,10 +178,11 @@ function TimelineDot(props: TimelineDotProps) {
     <div className="relative flex shrink-0 items-center justify-center">
       <DotPrimitive
         data-slot="timeline-dot"
-        data-status={status}
         data-active={active}
+        data-orientation={orientation}
+        data-variant={variant}
         {...dotProps}
-        className={cn(dotVariants({ status, active, className }))}
+        className={cn(dotVariants({ variant, active, className }))}
       />
     </div>
   );
@@ -199,7 +198,7 @@ const connectorVariants = cva("absolute bg-border", {
       vertical: "start-[5px] top-3 h-[calc(100%+1.5rem)] w-[2px]",
       horizontal: "start-3 top-[5px] h-[2px] w-[calc(100%+2rem)]",
     },
-    status: {
+    variant: {
       default: "bg-border",
       primary: "bg-primary/30",
       success: "bg-green-500/30",
@@ -209,15 +208,15 @@ const connectorVariants = cva("absolute bg-border", {
   },
   defaultVariants: {
     orientation: "vertical",
-    status: "default",
+    variant: "default",
   },
 });
 
 function TimelineConnector(props: TimelineConnectorProps) {
   const { asChild, className, ...connectorProps } = props;
 
-  const { status } = useTimelineItemContext(CONNECTOR_NAME);
-  const { orientation } = useTimelineContext(CONNECTOR_NAME);
+  const { orientation, variant } = useTimelineContext(CONNECTOR_NAME);
+  const { active } = useTimelineItemContext(CONNECTOR_NAME);
 
   const ConnectorPrimitive = asChild ? Slot : "div";
 
@@ -225,11 +224,12 @@ function TimelineConnector(props: TimelineConnectorProps) {
     <ConnectorPrimitive
       aria-hidden="true"
       data-slot="timeline-connector"
-      data-status={status}
+      data-active={active}
       data-orientation={orientation}
+      data-variant={variant}
       {...connectorProps}
       className={cn(
-        connectorVariants({ orientation, status, className }),
+        connectorVariants({ orientation, variant, className }),
         "last:hidden",
       )}
     />
