@@ -271,7 +271,13 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
           minHeight: placeholderHeight,
           ...style,
         }}
-      />
+      >
+        {items.map((item, index) => (
+          <React.Fragment key={index}>
+            {renderBadge(item, getBadgeLabel(item))}
+          </React.Fragment>
+        ))}
+      </Comp>
     );
   }
 
