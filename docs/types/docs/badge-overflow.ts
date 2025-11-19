@@ -6,8 +6,9 @@ export interface BadgeOverflowProps<T = string>
   /**
    * Array of items to display as badges.
    *
-   * @example
-   * items={["React", "TypeScript", "Next.js"]}
+   * ```ts
+   * items={["Kickflip", "Heelflip", "Ollie", "Pop Shove It" ]}
+   * ```
    */
   items: T[];
 
@@ -39,16 +40,18 @@ export interface BadgeOverflowProps<T = string>
   /**
    * Render function for each badge item.
    *
-   * @example
+   * ```ts
    * renderBadge={(item, label) => <Badge>{label}</Badge>}
+   * ```
    */
   renderBadge: (item: T, label: string) => React.ReactNode;
 
   /**
    * Render function for the overflow indicator badge.
    *
-   * @example
+   * ```ts
    * renderOverflow={(count) => <Badge>+{count}</Badge>}
+   * ```
    */
   renderOverflow?: (count: number) => React.ReactNode;
 }
