@@ -188,7 +188,10 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
     let currentLine = 1;
     const visible: T[] = [];
 
-    for (const item of items) {
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (!item) continue;
+
       const label = getBadgeLabel(item);
       const cacheKey = cacheKeyPrefix ? `${cacheKeyPrefix}:${label}` : label;
 
@@ -200,6 +203,8 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
       });
 
       const widthWithGap = badgeWidth + badgeGap;
+      const isLastLine = currentLine === lineCount;
+      const hasMoreItems = i < items.length - 1;
 
       if (currentLineWidth + widthWithGap <= containerWidth) {
         currentLineWidth += widthWithGap;
@@ -209,13 +214,35 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
         currentLineWidth = widthWithGap;
         visible.push(item);
       } else {
-        if (
-          currentLineWidth + overflowBadgeWidth > containerWidth &&
-          visible.length > 0
-        ) {
-          visible.pop();
-        }
+        // We're on the last line and this badge doesn't fit
+        // Need to ensure overflow badge fits on this line
         break;
+      }
+
+      // If we're on the last line and there are more items,
+      // check if overflow badge will fit. If not, remove badges until it fits.
+      if (isLastLine && hasMoreItems) {
+        const overflowWidthWithGap = overflowBadgeWidth + badgeGap;
+        while (
+          visible.length > 0 &&
+          currentLineWidth + overflowWidthWithGap > containerWidth
+        ) {
+          const removed = visible.pop();
+          if (removed) {
+            const removedLabel = getBadgeLabel(removed);
+            const removedCacheKey = cacheKeyPrefix
+              ? `${cacheKeyPrefix}:${removedLabel}`
+              : removedLabel;
+            const removedWidth = measureBadgeWidth({
+              label: removedLabel,
+              cacheKey: removedCacheKey,
+              iconSize: badgeIconSize,
+              maxWidth: badgeMaxWidth,
+            });
+            currentLineWidth -= removedWidth + badgeGap;
+          }
+        }
+        if (visible.length === 0) break;
       }
     }
 
