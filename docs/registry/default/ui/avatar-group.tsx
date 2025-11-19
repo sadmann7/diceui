@@ -49,6 +49,7 @@ interface AvatarGroupProps
   max?: number;
   asChild?: boolean;
   reverse?: boolean;
+  renderOverflow?: (count: number) => React.ReactNode;
 }
 
 function AvatarGroup(props: AvatarGroupProps) {
@@ -59,6 +60,7 @@ function AvatarGroup(props: AvatarGroupProps) {
     max,
     asChild,
     reverse = false,
+    renderOverflow,
     className,
     children,
     ...rootProps
@@ -100,9 +102,13 @@ function AvatarGroup(props: AvatarGroupProps) {
         <AvatarGroupItem
           key="overflow"
           child={
-            <div className="flex size-full items-center justify-center rounded-full bg-muted font-medium text-muted-foreground text-xs">
-              +{overflowCount}
-            </div>
+            renderOverflow ? (
+              renderOverflow(overflowCount)
+            ) : (
+              <div className="inline-flex size-full items-center justify-center rounded-full bg-muted font-medium text-muted-foreground text-xs">
+                +{overflowCount}
+              </div>
+            )
           }
           index={visibleItems.length}
           itemCount={totalRenderedItems}
@@ -119,7 +125,7 @@ function AvatarGroup(props: AvatarGroupProps) {
 interface AvatarGroupItemProps
   extends Omit<React.ComponentProps<typeof Slot>, "dir">,
     VariantProps<typeof avatarGroupVariants> {
-  child: React.ReactElement;
+  child: React.ReactNode;
   index: number;
   itemCount: number;
   size: number;

@@ -491,6 +491,24 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "badge-overflow": {
+      name: "badge-overflow",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/ui/badge-overflow.tsx",
+        type: "registry:ui",
+        target: ""
+      },{
+        path: "registry/default/lib/compose-refs.ts",
+        type: "registry:lib",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/badge-overflow.tsx")),
+      source: "",
+      chunks: []
+    },
     "tags-input": {
       name: "tags-input",
       description: "",
@@ -2270,6 +2288,62 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/avatar-group-icons-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "avatar-group-custom-overflow-demo": {
+      name: "avatar-group-custom-overflow-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["avatar","avatar-group"],
+      files: [{
+        path: "registry/default/examples/avatar-group-custom-overflow-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/avatar-group-custom-overflow-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "badge-overflow-demo": {
+      name: "badge-overflow-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["badge","badge-overflow"],
+      files: [{
+        path: "registry/default/examples/badge-overflow-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/badge-overflow-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "badge-overflow-multiline-demo": {
+      name: "badge-overflow-multiline-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["badge","badge-overflow"],
+      files: [{
+        path: "registry/default/examples/badge-overflow-multiline-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/badge-overflow-multiline-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "badge-overflow-interactive-demo": {
+      name: "badge-overflow-interactive-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["badge","badge-overflow","button","input"],
+      files: [{
+        path: "registry/default/examples/badge-overflow-interactive-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/badge-overflow-interactive-demo.tsx")),
       source: "",
       chunks: []
     },

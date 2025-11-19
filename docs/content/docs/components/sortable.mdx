@@ -61,6 +61,51 @@ return (
 )
 ```
 
+## Usage
+
+### With Primitive Values
+
+When using primitive arrays (strings, numbers), the `getItemValue` prop is optional. The component will automatically use the item itself as the unique identifier.
+
+```tsx
+const [items, setItems] = React.useState(["Item 1", "Item 2", "Item 3"]);
+
+<Sortable.Root value={items} onValueChange={setItems}>
+  <Sortable.Content>
+    {items.map((item) => (
+      <Sortable.Item key={item} value={item}>
+        {item}
+      </Sortable.Item>
+    ))}
+  </Sortable.Content>
+</Sortable.Root>
+```
+
+### With Object Arrays
+
+When using object arrays, the `getItemValue` prop is required to extract a unique identifier from each item.
+
+```tsx
+const [items, setItems] = React.useState([
+  { id: 1, name: "Item 1" },
+  { id: 2, name: "Item 2" },
+]);
+
+<Sortable.Root
+  value={items}
+  onValueChange={setItems}
+  getItemValue={(item) => item.id}
+>
+  <Sortable.Content>
+    {items.map((item) => (
+      <Sortable.Item key={item.id} value={item.id}>
+        {item.name}
+      </Sortable.Item>
+    ))}
+  </Sortable.Content>
+</Sortable.Root>
+```
+
 ## Examples
 
 ### With Dynamic Overlay
