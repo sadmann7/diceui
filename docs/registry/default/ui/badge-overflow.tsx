@@ -5,277 +5,254 @@ import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 
-interface BadgeOverflowContextValue {
-  visibleIndices: Set<number>;
-  onItemRegister: (index: number, width: number) => () => void;
-  overflowCount: number;
+const badgeWidthCache = new Map<string, number>();
+
+interface MeasureBadgeWidthProps {
+  label: string;
+  cacheKey: string;
+  iconSize?: number;
+  maxWidth?: number;
 }
 
-const BadgeOverflowContext =
-  React.createContext<BadgeOverflowContextValue | null>(null);
-
-function useBadgeOverflowContext(consumerName: string) {
-  const context = React.useContext(BadgeOverflowContext);
-  if (!context) {
-    throw new Error(
-      `\`${consumerName}\` must be used within \`BadgeOverflow\``,
-    );
+function measureBadgeWidth({
+  label,
+  cacheKey,
+  iconSize,
+  maxWidth,
+}: MeasureBadgeWidthProps): number {
+  const cached = badgeWidthCache.get(cacheKey);
+  if (cached !== undefined) {
+    return cached;
   }
-  return context;
+
+  const measureEl = document.createElement("div");
+  measureEl.className =
+    "inline-flex items-center rounded-md border px-1.5 text-xs font-semibold h-5 gap-1 shrink-0 absolute invisible pointer-events-none";
+  measureEl.style.whiteSpace = "nowrap";
+
+  if (iconSize) {
+    const icon = document.createElement("span");
+    icon.className = "shrink-0";
+    icon.style.width = `${iconSize}px`;
+    icon.style.height = `${iconSize}px`;
+    measureEl.appendChild(icon);
+  }
+
+  if (maxWidth) {
+    const text = document.createElement("span");
+    text.className = "truncate";
+    text.style.maxWidth = `${maxWidth}px`;
+    text.textContent = label;
+    measureEl.appendChild(text);
+  } else {
+    measureEl.textContent = label;
+  }
+
+  document.body.appendChild(measureEl);
+  const width = measureEl.offsetWidth;
+  document.body.removeChild(measureEl);
+
+  badgeWidthCache.set(cacheKey, width);
+  return width;
 }
 
-interface BadgeOverflowProps extends React.ComponentProps<"div"> {
-  lineCount?: number;
-  asChild?: boolean;
+function clearBadgeWidthCache(): void {
+  badgeWidthCache.clear();
 }
 
-function BadgeOverflow({
-  lineCount = 1,
-  asChild,
-  className,
-  ref,
-  ...props
-}: BadgeOverflowProps) {
-  const rootRef = React.useRef<HTMLDivElement>(null);
+interface GetBadgeLabel<T> {
+  /**
+   * Callback that returns a label string for each badge item.
+   * Optional for primitive arrays (strings, numbers), required for object arrays.
+   * @example getBadgeLabel={(item) => item.name}
+   */
+  getBadgeLabel: (item: T) => string;
+}
+
+type BadgeOverflowElement = React.ComponentRef<typeof BadgeOverflow>;
+
+type BadgeOverflowProps<T = string> = React.ComponentProps<"div"> &
+  (T extends object ? GetBadgeLabel<T> : Partial<GetBadgeLabel<T>>) & {
+    items: T[];
+    lineCount?: number;
+    cacheKeyPrefix?: string;
+    containerPadding?: number;
+    badgeIconSize?: number;
+    badgeMaxWidth?: number;
+    badgeHeight?: number;
+    badgeGap?: number;
+    overflowBadgeWidth?: number;
+    renderBadge: (item: T, label: string) => React.ReactNode;
+    renderOverflow?: (count: number) => React.ReactNode;
+    asChild?: boolean;
+  };
+
+function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
+  const {
+    items,
+    getBadgeLabel: getBadgeLabelProp,
+    lineCount = 1,
+    cacheKeyPrefix = "",
+    containerPadding = 16,
+    badgeMaxWidth,
+    badgeHeight = 20,
+    badgeIconSize,
+    badgeGap = 4,
+    overflowBadgeWidth = 40,
+    renderBadge,
+    renderOverflow,
+    asChild,
+    className,
+    style,
+    ref,
+    ...rootProps
+  } = props;
+
+  const placeholderHeight =
+    badgeHeight * lineCount + badgeGap * (lineCount - 1);
+
+  const getBadgeLabel = React.useCallback(
+    (item: T): string => {
+      if (typeof item === "object" && !getBadgeLabelProp) {
+        throw new Error(
+          "`getBadgeLabel` is required when using array of objects",
+        );
+      }
+      return getBadgeLabelProp ? getBadgeLabelProp(item) : (item as string);
+    },
+    [getBadgeLabelProp],
+  );
+
+  const rootRef = React.useRef<BadgeOverflowElement | null>(null);
   const composedRef = useComposedRefs(ref, rootRef);
   const [containerWidth, setContainerWidth] = React.useState(0);
-  const [gap, setGap] = React.useState(0);
   const [isMeasured, setIsMeasured] = React.useState(false);
-
-  const itemWidthsRef = React.useRef<Map<number, number>>(new Map());
-  const [visibleIndices, setVisibleIndices] = React.useState<Set<number>>(
-    new Set(),
-  );
-  const [overflowCount, setOverflowCount] = React.useState(0);
-  const overflowWidthRef = React.useRef(0);
 
   React.useLayoutEffect(() => {
     if (!rootRef.current) return;
 
-    function measureContainer() {
-      if (!rootRef.current) return;
-
-      const computed = getComputedStyle(rootRef.current);
-      const gapValue = Number.parseFloat(computed.gap) || 0;
-      const paddingLeft = Number.parseFloat(computed.paddingLeft) || 0;
-      const paddingRight = Number.parseFloat(computed.paddingRight) || 0;
-      const totalPadding = paddingLeft + paddingRight;
-
-      setGap(gapValue);
-      setContainerWidth(rootRef.current.clientWidth - totalPadding);
-      setIsMeasured(true);
+    function measureWidth() {
+      if (rootRef.current) {
+        const width = rootRef.current.clientWidth - containerPadding;
+        setContainerWidth(width);
+        setIsMeasured(true);
+      }
     }
 
-    measureContainer();
+    measureWidth();
 
-    const resizeObserver = new ResizeObserver(measureContainer);
+    const resizeObserver = new ResizeObserver(measureWidth);
     resizeObserver.observe(rootRef.current);
 
     return () => {
       resizeObserver.disconnect();
     };
-  }, []);
+  }, [containerPadding]);
 
-  const onItemRegister = React.useCallback((index: number, width: number) => {
-    itemWidthsRef.current.set(index, width);
-    return () => {
-      itemWidthsRef.current.delete(index);
-    };
-  }, []);
-
-  const registerOverflow = React.useCallback((width: number) => {
-    overflowWidthRef.current = width;
-  }, []);
-
-  React.useLayoutEffect(() => {
-    if (!isMeasured || containerWidth === 0) return;
-
-    const itemWidths = itemWidthsRef.current;
-    const sortedIndices = Array.from(itemWidths.keys()).sort((a, b) => a - b);
+  const { visibleItems, hiddenCount } = React.useMemo(() => {
+    if (!containerWidth || items.length === 0) {
+      return { visibleItems: items, hiddenCount: 0 };
+    }
 
     let currentLineWidth = 0;
     let currentLine = 1;
-    const visible = new Set<number>();
+    const visible: T[] = [];
 
-    for (const index of sortedIndices) {
-      const itemWidth = itemWidths.get(index) ?? 0;
-      const widthWithGap = currentLineWidth === 0 ? itemWidth : itemWidth + gap;
+    for (const item of items) {
+      const label = getBadgeLabel(item);
+      const cacheKey = cacheKeyPrefix ? `${cacheKeyPrefix}:${label}` : label;
+
+      const badgeWidth = measureBadgeWidth({
+        label,
+        cacheKey,
+        iconSize: badgeIconSize,
+        maxWidth: badgeMaxWidth,
+      });
+
+      const widthWithGap = badgeWidth + badgeGap;
 
       if (currentLineWidth + widthWithGap <= containerWidth) {
         currentLineWidth += widthWithGap;
-        visible.add(index);
+        visible.push(item);
       } else if (currentLine < lineCount) {
         currentLine++;
-        currentLineWidth = itemWidth;
-        visible.add(index);
+        currentLineWidth = widthWithGap;
+        visible.push(item);
       } else {
-        // Check if we need to pop the last item to make room for overflow badge
-        const lastVisibleIndex = Array.from(visible).pop();
         if (
-          lastVisibleIndex !== undefined &&
-          currentLineWidth + overflowWidthRef.current > containerWidth
+          currentLineWidth + overflowBadgeWidth > containerWidth &&
+          visible.length > 0
         ) {
-          visible.delete(lastVisibleIndex);
+          visible.pop();
         }
         break;
       }
     }
 
-    setVisibleIndices(visible);
-    setOverflowCount(sortedIndices.length - visible.size);
-  }, [isMeasured, containerWidth, gap, lineCount]);
-
-  const contextValue = React.useMemo<BadgeOverflowContextValue>(
-    () => ({
-      visibleIndices,
-      onItemRegister,
-      overflowCount,
-    }),
-    [visibleIndices, onItemRegister, overflowCount],
-  );
+    return {
+      visibleItems: visible,
+      hiddenCount: Math.max(0, items.length - visible.length),
+    };
+  }, [
+    items,
+    getBadgeLabel,
+    containerWidth,
+    lineCount,
+    cacheKeyPrefix,
+    badgeIconSize,
+    badgeMaxWidth,
+    badgeGap,
+    overflowBadgeWidth,
+  ]);
 
   const Comp = asChild ? Slot : "div";
 
-  return (
-    <BadgeOverflowContext.Provider value={contextValue}>
-      <Comp
-        data-slot="badge-overflow"
-        {...props}
-        ref={composedRef}
-        className={cn("flex flex-wrap", className)}
-      />
-      {!isMeasured && (
-        <OverflowWidthMeasurer onWidthMeasured={registerOverflow} />
-      )}
-    </BadgeOverflowContext.Provider>
-  );
-}
-
-type BadgeOverflowItemProps = React.ComponentPropsWithRef<"div"> & {
-  index: number;
-  asChild?: boolean;
-};
-
-function BadgeOverflowItem({
-  index,
-  asChild,
-  children,
-  className,
-  style,
-  ref,
-  ...props
-}: BadgeOverflowItemProps) {
-  const { visibleIndices, onItemRegister } =
-    useBadgeOverflowContext("BadgeOverflowItem");
-
-  const itemRef = React.useRef<HTMLDivElement>(null);
-  const composedRef = useComposedRefs(ref, itemRef);
-  const [hasMeasured, setHasMeasured] = React.useState(false);
-
-  React.useLayoutEffect(() => {
-    if (!itemRef.current) return;
-
-    const width = itemRef.current.offsetWidth;
-    const unregister = onItemRegister(index, width);
-    setHasMeasured(true);
-
-    return unregister;
-  }, [index, onItemRegister]);
-
-  const isVisible = visibleIndices.has(index);
-  const Comp = asChild ? Slot : "div";
-
-  // Render but hide during measurement phase
-  if (!hasMeasured || visibleIndices.size === 0) {
+  if (!isMeasured) {
     return (
       <Comp
-        data-slot="badge-overflow-item"
-        data-index={index}
-        {...props}
+        data-slot="badge-overflow"
+        {...rootProps}
         ref={composedRef}
-        className={className}
+        className={cn("flex flex-wrap", className)}
         style={{
+          gap: badgeGap,
+          minHeight: placeholderHeight,
           ...style,
-          visibility: "hidden",
-          position: "absolute",
         }}
-      >
-        {children}
-      </Comp>
+      />
     );
   }
 
-  if (!isVisible) return null;
-
   return (
     <Comp
-      data-slot="badge-overflow-item"
-      data-index={index}
-      {...props}
+      data-slot="badge-overflow"
+      {...rootProps}
       ref={composedRef}
-      className={className}
-      style={style}
+      className={cn("flex flex-wrap", className)}
+      style={{
+        gap: badgeGap,
+        ...style,
+      }}
     >
-      {children}
+      {visibleItems.map((item, index) => (
+        <React.Fragment key={index}>
+          {renderBadge(item, getBadgeLabel(item))}
+        </React.Fragment>
+      ))}
+      {hiddenCount > 0 &&
+        (renderOverflow ? (
+          renderOverflow(hiddenCount)
+        ) : (
+          <div className="inline-flex h-5 shrink-0 items-center rounded-md border px-1.5 font-semibold text-xs">
+            +{hiddenCount}
+          </div>
+        ))}
     </Comp>
   );
 }
 
-type BadgeOverflowOverflowProps = React.ComponentPropsWithRef<"div"> & {
-  asChild?: boolean;
+export {
+  BadgeOverflow,
+  //
+  clearBadgeWidthCache,
 };
-
-function BadgeOverflowOverflow({
-  asChild,
-  className,
-  children,
-  ref,
-  ...props
-}: BadgeOverflowOverflowProps) {
-  const { overflowCount } = useBadgeOverflowContext("BadgeOverflowOverflow");
-
-  if (overflowCount === 0) return null;
-
-  const Comp = asChild ? Slot : "div";
-
-  return (
-    <Comp
-      data-slot="badge-overflow-overflow"
-      {...props}
-      ref={ref}
-      className={cn(
-        "inline-flex h-5 shrink-0 items-center rounded-md border px-1.5 font-semibold text-xs",
-        className,
-      )}
-    >
-      {children ?? `+${overflowCount}`}
-    </Comp>
-  );
-}
-
-interface OverflowWidthMeasurerProps {
-  onWidthMeasured: (width: number) => void;
-}
-
-function OverflowWidthMeasurer({
-  onWidthMeasured,
-}: OverflowWidthMeasurerProps) {
-  const ref = React.useRef<HTMLDivElement>(null);
-
-  React.useLayoutEffect(() => {
-    if (ref.current) {
-      onWidthMeasured(ref.current.offsetWidth);
-    }
-  }, [onWidthMeasured]);
-
-  return (
-    <div
-      ref={ref}
-      className="pointer-events-none invisible absolute inline-flex h-5 shrink-0 items-center rounded-md border px-1.5 font-semibold text-xs"
-    >
-      +99
-    </div>
-  );
-}
-
-export { BadgeOverflow, BadgeOverflowItem, BadgeOverflowOverflow };
