@@ -46,13 +46,6 @@ export interface BadgeOverflowProps<T = string>
   cacheKeyPrefix?: string;
 
   /**
-   * Container padding in pixels.
-   *
-   * @default 16
-   */
-  containerPadding?: number;
-
-  /**
    * Size of icon in pixels if badges contain icons.
    */
   badgeIconSize?: number;
@@ -62,28 +55,6 @@ export interface BadgeOverflowProps<T = string>
    * Text will be truncated if it exceeds this width.
    */
   badgeMaxWidth?: number;
-
-  /**
-   * Height of a single badge in pixels.
-   * Used to calculate placeholder height based on lineCount.
-   *
-   * @default 20
-   */
-  badgeHeight?: number;
-
-  /**
-   * Gap between badges in pixels.
-   *
-   * @default 4
-   */
-  badgeGap?: number;
-
-  /**
-   * Approximate width of the overflow badge ("+N") in pixels.
-   *
-   * @default 40
-   */
-  overflowBadgeWidth?: number;
 
   /**
    * Render function for each badge item.

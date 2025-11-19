@@ -76,12 +76,8 @@ type BadgeOverflowProps<T = string> = React.ComponentProps<"div"> &
     items: T[];
     lineCount?: number;
     cacheKeyPrefix?: string;
-    containerPadding?: number;
     badgeIconSize?: number;
     badgeMaxWidth?: number;
-    badgeHeight?: number;
-    badgeGap?: number;
-    overflowBadgeWidth?: number;
     renderBadge: (item: T, label: string) => React.ReactNode;
     renderOverflow?: (count: number) => React.ReactNode;
     asChild?: boolean;
@@ -93,12 +89,8 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
     getBadgeLabel: getBadgeLabelProp,
     lineCount = 1,
     cacheKeyPrefix = "",
-    containerPadding = 16,
     badgeMaxWidth,
-    badgeHeight = 20,
     badgeIconSize,
-    badgeGap = 4,
-    overflowBadgeWidth = 40,
     renderBadge,
     renderOverflow,
     asChild,
@@ -107,9 +99,6 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
     ref,
     ...rootProps
   } = props;
-
-  const placeholderHeight =
-    badgeHeight * lineCount + badgeGap * (lineCount - 1);
 
   const getBadgeLabel = React.useCallback(
     (item: T): string => {
@@ -126,28 +115,69 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
   const rootRef = React.useRef<BadgeOverflowElement | null>(null);
   const composedRef = useComposedRefs(ref, rootRef);
   const [containerWidth, setContainerWidth] = React.useState(0);
+  const [badgeGap, setBadgeGap] = React.useState(4);
+  const [badgeHeight, setBadgeHeight] = React.useState(20);
+  const [overflowBadgeWidth, setOverflowBadgeWidth] = React.useState(40);
   const [isMeasured, setIsMeasured] = React.useState(false);
 
   React.useLayoutEffect(() => {
     if (!rootRef.current) return;
 
-    function measureWidth() {
-      if (rootRef.current) {
-        const width = rootRef.current.clientWidth - containerPadding;
-        setContainerWidth(width);
-        setIsMeasured(true);
-      }
+    function measureContainer() {
+      if (!rootRef.current) return;
+
+      const computedStyle = getComputedStyle(rootRef.current);
+
+      // Measure gap from computed styles
+      const gapValue = computedStyle.gap;
+      const gap = gapValue ? parseFloat(gapValue) : 4;
+      setBadgeGap(gap);
+
+      // Measure padding from computed styles
+      const paddingLeft = parseFloat(computedStyle.paddingLeft) || 0;
+      const paddingRight = parseFloat(computedStyle.paddingRight) || 0;
+      const totalPadding = paddingLeft + paddingRight;
+
+      // Measure badge height by rendering a temporary badge
+      const tempBadge = document.createElement("div");
+      tempBadge.className =
+        "inline-flex items-center rounded-md border px-1.5 text-xs font-semibold h-5 gap-1 shrink-0 absolute invisible pointer-events-none";
+      tempBadge.textContent = "Measure";
+      document.body.appendChild(tempBadge);
+      const measuredBadgeHeight = tempBadge.offsetHeight;
+      document.body.removeChild(tempBadge);
+      setBadgeHeight(measuredBadgeHeight || 20);
+
+      // Measure overflow badge width
+      const tempOverflow = document.createElement("div");
+      tempOverflow.className =
+        "inline-flex h-5 shrink-0 items-center rounded-md border px-1.5 font-semibold text-xs absolute invisible pointer-events-none";
+      tempOverflow.textContent = "+99";
+      document.body.appendChild(tempOverflow);
+      const measuredOverflowWidth = tempOverflow.offsetWidth;
+      document.body.removeChild(tempOverflow);
+      setOverflowBadgeWidth(measuredOverflowWidth || 40);
+
+      // Measure container width
+      const width = rootRef.current.clientWidth - totalPadding;
+      setContainerWidth(width);
+      setIsMeasured(true);
     }
 
-    measureWidth();
+    measureContainer();
 
-    const resizeObserver = new ResizeObserver(measureWidth);
+    const resizeObserver = new ResizeObserver(measureContainer);
     resizeObserver.observe(rootRef.current);
 
     return () => {
       resizeObserver.disconnect();
     };
-  }, [containerPadding]);
+  }, []);
+
+  const placeholderHeight = React.useMemo(
+    () => badgeHeight * lineCount + badgeGap * (lineCount - 1),
+    [badgeHeight, badgeGap, lineCount],
+  );
 
   const { visibleItems, hiddenCount } = React.useMemo(() => {
     if (!containerWidth || items.length === 0) {

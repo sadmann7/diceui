@@ -108,6 +108,10 @@ The component that measures available space and displays badges with overflow in
 
 The component automatically measures badge widths using DOM measurement and caches results for performance. This ensures accurate overflow calculations without manual configuration.
 
+### Computed Container Styles
+
+The component automatically extracts container padding, gap, badge height, and overflow badge width from computed styles. This means it adapts seamlessly to your CSS without requiring manual prop configuration.
+
 ### Multi-line Support
 
 Control how many lines of badges to display using the `lineCount` prop. The component will intelligently wrap badges across lines while respecting the overflow constraints.
@@ -123,6 +127,7 @@ Badge widths are cached after first measurement, and the component uses ResizeOb
 ## Notes
 
 - The component uses DOM measurement to calculate badge widths accurately
+- Container styles (padding, gap, badge height, overflow width) are automatically computed from CSS
 - Badge width cache persists across component instances for better performance
 - Use `clearBadgeWidthCache()` export to clear the cache if needed
 - Container must have a defined width for overflow calculations to work
