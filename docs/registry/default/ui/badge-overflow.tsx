@@ -201,7 +201,13 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
       const isLastLine = currentLine === lineCount;
       const hasMoreItems = i < items.length - 1;
 
-      if (currentLineWidth + widthWithGap <= containerWidth) {
+      // Reserve space for overflow badge on last line if there are more items
+      const availableWidth =
+        isLastLine && hasMoreItems
+          ? containerWidth - overflowBadgeWidth - badgeGap
+          : containerWidth;
+
+      if (currentLineWidth + widthWithGap <= availableWidth) {
         currentLineWidth += widthWithGap;
         visible.push(item);
       } else if (currentLine < lineCount) {
@@ -210,34 +216,7 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
         visible.push(item);
       } else {
         // We're on the last line and this badge doesn't fit
-        // Need to ensure overflow badge fits on this line
         break;
-      }
-
-      // If we're on the last line and there are more items,
-      // check if overflow badge will fit. If not, remove badges until it fits.
-      if (isLastLine && hasMoreItems) {
-        const overflowWidthWithGap = overflowBadgeWidth + badgeGap;
-        while (
-          visible.length > 0 &&
-          currentLineWidth + overflowWidthWithGap > containerWidth
-        ) {
-          const removed = visible.pop();
-          if (removed) {
-            const removedLabel = getBadgeLabel(removed);
-            const removedCacheKey = cacheKeyPrefix
-              ? `${cacheKeyPrefix}:${removedLabel}`
-              : removedLabel;
-            const removedWidth = measureBadgeWidth({
-              label: removedLabel,
-              cacheKey: removedCacheKey,
-              iconSize: badgeIconSize,
-              maxWidth: badgeMaxWidth,
-            });
-            currentLineWidth -= removedWidth + badgeGap;
-          }
-        }
-        if (visible.length === 0) break;
       }
     }
 
