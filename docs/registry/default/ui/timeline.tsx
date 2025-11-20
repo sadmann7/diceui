@@ -37,15 +37,24 @@ function useLazyRef<T>(fn: () => T) {
   return ref as React.RefObject<T>;
 }
 
+interface ItemState {
+  completed: boolean;
+  ref: React.RefObject<HTMLLIElement | null>;
+}
+
 interface StoreState {
-  items: Map<string, boolean>;
+  items: Map<string, ItemState>;
 }
 
 interface Store {
   subscribe: (callback: () => void) => () => void;
   getState: () => StoreState;
   notify: () => void;
-  onItemRegister: (id: string, completed: boolean) => void;
+  onItemRegister: (
+    id: string,
+    completed: boolean,
+    ref: React.RefObject<HTMLLIElement | null>,
+  ) => void;
   onItemUnregister: (id: string) => void;
   getNextItemCompleted: (id: string) => boolean | undefined;
 }
@@ -121,8 +130,12 @@ function TimelineRoot(props: TimelineRootProps) {
           cb();
         }
       },
-      onItemRegister: (id: string, completed: boolean) => {
-        stateRef.current.items.set(id, completed);
+      onItemRegister: (
+        id: string,
+        completed: boolean,
+        ref: React.RefObject<HTMLLIElement | null>,
+      ) => {
+        stateRef.current.items.set(id, { completed, ref });
         store.notify();
       },
       onItemUnregister: (id: string) => {
@@ -130,13 +143,29 @@ function TimelineRoot(props: TimelineRootProps) {
         store.notify();
       },
       getNextItemCompleted: (id: string) => {
-        const keys = Array.from(stateRef.current.items.keys());
-        const currentIndex = keys.indexOf(id);
-        if (currentIndex === -1 || currentIndex === keys.length - 1) {
+        const entries = Array.from(stateRef.current.items.entries());
+
+        // Sort by DOM position
+        const sortedEntries = entries.sort((a, b) => {
+          const elementA = a[1].ref.current;
+          const elementB = b[1].ref.current;
+          if (!elementA || !elementB) return 0;
+          const position = elementA.compareDocumentPosition(elementB);
+          if (position & Node.DOCUMENT_POSITION_FOLLOWING) {
+            return -1;
+          }
+          if (position & Node.DOCUMENT_POSITION_PRECEDING) {
+            return 1;
+          }
+          return 0;
+        });
+
+        const currentIndex = sortedEntries.findIndex(([key]) => key === id);
+        if (currentIndex === -1 || currentIndex === sortedEntries.length - 1) {
           return undefined;
         }
-        const nextKey = keys[currentIndex + 1];
-        return nextKey ? stateRef.current.items.get(nextKey) : undefined;
+        const nextEntry = sortedEntries[currentIndex + 1];
+        return nextEntry ? nextEntry[1].completed : undefined;
       },
     };
   }, [listenersRef, stateRef]);
@@ -194,9 +223,10 @@ function TimelineItem(props: TimelineItemProps) {
   const { dir, orientation } = useTimelineContext(ITEM_NAME);
   const store = useStoreContext(ITEM_NAME);
   const id = React.useId();
+  const itemRef = React.useRef<HTMLLIElement>(null);
 
   useIsomorphicLayoutEffect(() => {
-    store.onItemRegister(id, completed);
+    store.onItemRegister(id, completed, itemRef);
     return () => {
       store.onItemUnregister(id);
     };
@@ -212,6 +242,7 @@ function TimelineItem(props: TimelineItemProps) {
   return (
     <TimelineItemContext.Provider value={itemContextValue}>
       <ItemPrimitive
+        ref={itemRef}
         data-slot="timeline-item"
         data-completed={completed ? "" : undefined}
         data-orientation={orientation}
