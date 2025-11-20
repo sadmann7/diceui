@@ -10,52 +10,57 @@ import {
   TimelineTitle,
 } from "@/registry/default/ui/timeline";
 
+const timelineItems = [
+  {
+    id: 1,
+    completed: true,
+    dateTime: "2024-01",
+    date: "Jan - Mar",
+    title: "Q1",
+    description: "Research and planning phase",
+  },
+  {
+    id: 2,
+    completed: true,
+    dateTime: "2024-04",
+    date: "Apr - Jun",
+    title: "Q2",
+    description: "Development and testing",
+  },
+  {
+    id: 3,
+    completed: true,
+    dateTime: "2024-07",
+    date: "Jul - Sep",
+    title: "Q3",
+    description: "Beta release",
+  },
+  {
+    id: 4,
+    completed: false,
+    dateTime: "2024-10",
+    date: "Oct - Dec",
+    title: "Q4",
+    description: "Public launch",
+  },
+];
+
 export default function TimelineHorizontalDemo() {
   return (
     <Timeline orientation="horizontal">
-      <TimelineItem completed>
-        <TimelineDot />
-        <TimelineConnector />
-        <TimelineContent>
-          <TimelineHeader>
-            <TimelineTitle>Q1</TimelineTitle>
-            <TimelineTime dateTime="2024-01">Jan - Mar</TimelineTime>
-          </TimelineHeader>
-          <TimelineDescription>Research and planning phase</TimelineDescription>
-        </TimelineContent>
-      </TimelineItem>
-      <TimelineItem completed>
-        <TimelineDot />
-        <TimelineConnector />
-        <TimelineContent>
-          <TimelineHeader>
-            <TimelineTitle>Q2</TimelineTitle>
-            <TimelineTime dateTime="2024-04">Apr - Jun</TimelineTime>
-          </TimelineHeader>
-          <TimelineDescription>Development and testing</TimelineDescription>
-        </TimelineContent>
-      </TimelineItem>
-      <TimelineItem completed>
-        <TimelineDot />
-        <TimelineConnector />
-        <TimelineContent>
-          <TimelineHeader>
-            <TimelineTitle>Q3</TimelineTitle>
-            <TimelineTime dateTime="2024-07">Jul - Sep</TimelineTime>
-          </TimelineHeader>
-          <TimelineDescription>Beta release</TimelineDescription>
-        </TimelineContent>
-      </TimelineItem>
-      <TimelineItem>
-        <TimelineDot />
-        <TimelineContent>
-          <TimelineHeader>
-            <TimelineTitle>Q4</TimelineTitle>
-            <TimelineTime dateTime="2024-10">Oct - Dec</TimelineTime>
-          </TimelineHeader>
-          <TimelineDescription>Public launch</TimelineDescription>
-        </TimelineContent>
-      </TimelineItem>
+      {timelineItems.map((item) => (
+        <TimelineItem key={item.id} completed={item.completed}>
+          <TimelineDot />
+          <TimelineConnector />
+          <TimelineContent>
+            <TimelineHeader>
+              <TimelineTitle>{item.title}</TimelineTitle>
+              <TimelineTime dateTime={item.dateTime}>{item.date}</TimelineTime>
+            </TimelineHeader>
+            <TimelineDescription>{item.description}</TimelineDescription>
+          </TimelineContent>
+        </TimelineItem>
+      ))}
     </Timeline>
   );
 }

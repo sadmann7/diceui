@@ -260,10 +260,11 @@ function TimelineDot(props: TimelineDotProps) {
 
 interface TimelineConnectorProps extends DivProps {
   asChild?: boolean;
+  forceMount?: boolean;
 }
 
 function TimelineConnector(props: TimelineConnectorProps) {
-  const { asChild, className, ...connectorProps } = props;
+  const { asChild, forceMount, className, ...connectorProps } = props;
 
   const { orientation } = useTimelineContext(CONNECTOR_NAME);
   const store = useStoreContext(CONNECTOR_NAME);
@@ -278,6 +279,10 @@ function TimelineConnector(props: TimelineConnectorProps) {
     getSnapshot,
     getSnapshot,
   );
+
+  const isLastItem = nextCompleted === undefined;
+
+  if (!forceMount && isLastItem) return null;
 
   const isConnectorCompleted = completed && nextCompleted;
 

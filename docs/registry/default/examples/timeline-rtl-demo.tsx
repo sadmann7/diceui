@@ -10,60 +10,57 @@ import {
   TimelineTitle,
 } from "@/registry/default/ui/timeline";
 
+const timelineItems = [
+  {
+    id: 1,
+    completed: true,
+    dateTime: "2024-01-01",
+    date: "January 1, 2024",
+    title: "Registration Opened",
+    description: "Online registration portal is now open for all participants.",
+  },
+  {
+    id: 2,
+    completed: true,
+    dateTime: "2024-02-15",
+    date: "February 15, 2024",
+    title: "Early Bird Deadline",
+    description: "Last day to register and receive early bird discount.",
+  },
+  {
+    id: 3,
+    completed: true,
+    dateTime: "2024-03-01",
+    date: "March 1, 2024",
+    title: "Regular Registration",
+    description: "Regular registration period with standard pricing.",
+  },
+  {
+    id: 4,
+    completed: false,
+    dateTime: "2024-04-01",
+    date: "April 1, 2024",
+    title: "Event Day",
+    description: "The main event begins at 9:00 AM. Check-in starts at 8:00 AM.",
+  },
+];
+
 export default function TimelineRtlDemo() {
   return (
     <Timeline dir="rtl">
-      <TimelineItem completed>
-        <TimelineDot />
-        <TimelineConnector />
-        <TimelineContent>
-          <TimelineHeader>
-            <TimelineTitle>Registration Opened</TimelineTitle>
-            <TimelineTime dateTime="2024-01-01">January 1, 2024</TimelineTime>
-          </TimelineHeader>
-          <TimelineDescription>
-            Online registration portal is now open for all participants.
-          </TimelineDescription>
-        </TimelineContent>
-      </TimelineItem>
-      <TimelineItem completed>
-        <TimelineDot />
-        <TimelineConnector />
-        <TimelineContent>
-          <TimelineHeader>
-            <TimelineTitle>Early Bird Deadline</TimelineTitle>
-            <TimelineTime dateTime="2024-02-15">February 15, 2024</TimelineTime>
-          </TimelineHeader>
-          <TimelineDescription>
-            Last day to register and receive early bird discount.
-          </TimelineDescription>
-        </TimelineContent>
-      </TimelineItem>
-      <TimelineItem completed>
-        <TimelineDot />
-        <TimelineConnector />
-        <TimelineContent>
-          <TimelineHeader>
-            <TimelineTitle>Regular Registration</TimelineTitle>
-            <TimelineTime dateTime="2024-03-01">March 1, 2024</TimelineTime>
-          </TimelineHeader>
-          <TimelineDescription>
-            Regular registration period with standard pricing.
-          </TimelineDescription>
-        </TimelineContent>
-      </TimelineItem>
-      <TimelineItem>
-        <TimelineDot />
-        <TimelineContent>
-          <TimelineHeader>
-            <TimelineTitle>Event Day</TimelineTitle>
-            <TimelineTime dateTime="2024-04-01">April 1, 2024</TimelineTime>
-          </TimelineHeader>
-          <TimelineDescription>
-            The main event begins at 9:00 AM. Check-in starts at 8:00 AM.
-          </TimelineDescription>
-        </TimelineContent>
-      </TimelineItem>
+      {timelineItems.map((item) => (
+        <TimelineItem key={item.id} completed={item.completed}>
+          <TimelineDot />
+          <TimelineConnector />
+          <TimelineContent>
+            <TimelineHeader>
+              <TimelineTitle>{item.title}</TimelineTitle>
+              <TimelineTime dateTime={item.dateTime}>{item.date}</TimelineTime>
+            </TimelineHeader>
+            <TimelineDescription>{item.description}</TimelineDescription>
+          </TimelineContent>
+        </TimelineItem>
+      ))}
     </Timeline>
   );
 }
