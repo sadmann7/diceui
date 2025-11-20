@@ -17,6 +17,9 @@ const ITEM_NAME = "TimelineItem";
 const DOT_NAME = "TimelineDot";
 const CONNECTOR_NAME = "TimelineConnector";
 
+const useIsomorphicLayoutEffect =
+  typeof window === "undefined" ? React.useEffect : React.useLayoutEffect;
+
 const DirectionContext = React.createContext<Direction | undefined>(undefined);
 
 function useDirection(dirProp?: Direction): Direction {
@@ -24,9 +27,57 @@ function useDirection(dirProp?: Direction): Direction {
   return dirProp ?? contextDir ?? "ltr";
 }
 
+interface ItemsStore {
+  items: Map<string, boolean>;
+  register: (id: string, completed: boolean) => void;
+  unregister: (id: string) => void;
+  getNextCompleted: (id: string) => boolean | undefined;
+  subscribe: (callback: () => void) => () => void;
+}
+
+function useItemsStore(): ItemsStore {
+  const itemsRef = React.useRef(new Map<string, boolean>());
+  const listenersRef = React.useRef(new Set<() => void>());
+
+  return React.useMemo(
+    () => ({
+      items: itemsRef.current,
+      register: (id: string, completed: boolean) => {
+        itemsRef.current.set(id, completed);
+        for (const listener of listenersRef.current) {
+          listener();
+        }
+      },
+      unregister: (id: string) => {
+        itemsRef.current.delete(id);
+        for (const listener of listenersRef.current) {
+          listener();
+        }
+      },
+      getNextCompleted: (id: string) => {
+        const keys = Array.from(itemsRef.current.keys());
+        const currentIndex = keys.indexOf(id);
+        if (currentIndex === -1 || currentIndex === keys.length - 1) {
+          return undefined;
+        }
+        const nextKey = keys[currentIndex + 1];
+        return nextKey ? itemsRef.current.get(nextKey) : undefined;
+      },
+      subscribe: (callback: () => void) => {
+        listenersRef.current.add(callback);
+        return () => {
+          listenersRef.current.delete(callback);
+        };
+      },
+    }),
+    [],
+  );
+}
+
 interface TimelineContextValue {
   dir: Direction;
   orientation: Orientation;
+  itemsStore: ItemsStore;
 }
 
 const TimelineContext = React.createContext<TimelineContextValue | null>(null);
@@ -67,13 +118,15 @@ function TimelineRoot(props: TimelineRootProps) {
   } = props;
 
   const dir = useDirection(dirProp);
+  const itemsStore = useItemsStore();
 
   const contextValue = React.useMemo<TimelineContextValue>(
     () => ({
       dir,
       orientation,
+      itemsStore,
     }),
-    [dir, orientation],
+    [dir, orientation, itemsStore],
   );
 
   const RootPrimitive = asChild ? Slot : "ol";
@@ -93,6 +146,7 @@ function TimelineRoot(props: TimelineRootProps) {
 }
 
 interface TimelineItemContextValue {
+  id: string;
   completed: boolean;
 }
 
@@ -115,11 +169,19 @@ interface TimelineItemProps extends React.ComponentProps<"li"> {
 function TimelineItem(props: TimelineItemProps) {
   const { completed = false, asChild, className, ...itemProps } = props;
 
-  const { dir, orientation } = useTimelineContext(ITEM_NAME);
+  const { dir, orientation, itemsStore } = useTimelineContext(ITEM_NAME);
+  const id = React.useId();
+
+  useIsomorphicLayoutEffect(() => {
+    itemsStore.register(id, completed);
+    return () => {
+      itemsStore.unregister(id);
+    };
+  }, [id, completed, itemsStore]);
 
   const itemContextValue = React.useMemo<TimelineItemContextValue>(
-    () => ({ completed }),
-    [completed],
+    () => ({ id, completed }),
+    [id, completed],
   );
 
   const ItemPrimitive = asChild ? Slot : "li";
@@ -180,8 +242,16 @@ interface TimelineConnectorProps extends DivProps {
 function TimelineConnector(props: TimelineConnectorProps) {
   const { asChild, className, ...connectorProps } = props;
 
-  const { orientation } = useTimelineContext(CONNECTOR_NAME);
-  const { completed } = useTimelineItemContext(CONNECTOR_NAME);
+  const { orientation, itemsStore } = useTimelineContext(CONNECTOR_NAME);
+  const { id, completed } = useTimelineItemContext(CONNECTOR_NAME);
+
+  const nextCompleted = React.useSyncExternalStore(
+    itemsStore.subscribe,
+    () => itemsStore.getNextCompleted(id),
+    () => itemsStore.getNextCompleted(id),
+  );
+
+  const isConnectorCompleted = completed && nextCompleted;
 
   const ConnectorPrimitive = asChild ? Slot : "div";
 
@@ -189,12 +259,12 @@ function TimelineConnector(props: TimelineConnectorProps) {
     <ConnectorPrimitive
       aria-hidden="true"
       data-slot="timeline-connector"
-      data-completed={completed ? "" : undefined}
+      data-completed={isConnectorCompleted ? "" : undefined}
       data-orientation={orientation}
       {...connectorProps}
       className={cn(
         "absolute",
-        completed ? "bg-primary/30" : "bg-border",
+        isConnectorCompleted ? "bg-primary/30" : "bg-border",
         orientation === "vertical" &&
           "start-[7px] top-4 h-[calc(100%+0.5rem)] w-[2px]",
         orientation === "horizontal" &&
