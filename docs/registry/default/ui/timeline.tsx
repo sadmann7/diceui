@@ -27,57 +27,42 @@ function useDirection(dirProp?: Direction): Direction {
   return dirProp ?? contextDir ?? "ltr";
 }
 
-interface ItemsStore {
-  items: Map<string, boolean>;
-  register: (id: string, completed: boolean) => void;
-  unregister: (id: string) => void;
-  getNextCompleted: (id: string) => boolean | undefined;
-  subscribe: (callback: () => void) => () => void;
+function useLazyRef<T>(fn: () => T) {
+  const ref = React.useRef<T | null>(null);
+
+  if (ref.current === null) {
+    ref.current = fn();
+  }
+
+  return ref as React.RefObject<T>;
 }
 
-function useItemsStore(): ItemsStore {
-  const itemsRef = React.useRef(new Map<string, boolean>());
-  const listenersRef = React.useRef(new Set<() => void>());
+interface StoreState {
+  items: Map<string, boolean>;
+}
 
-  return React.useMemo(
-    () => ({
-      items: itemsRef.current,
-      register: (id: string, completed: boolean) => {
-        itemsRef.current.set(id, completed);
-        for (const listener of listenersRef.current) {
-          listener();
-        }
-      },
-      unregister: (id: string) => {
-        itemsRef.current.delete(id);
-        for (const listener of listenersRef.current) {
-          listener();
-        }
-      },
-      getNextCompleted: (id: string) => {
-        const keys = Array.from(itemsRef.current.keys());
-        const currentIndex = keys.indexOf(id);
-        if (currentIndex === -1 || currentIndex === keys.length - 1) {
-          return undefined;
-        }
-        const nextKey = keys[currentIndex + 1];
-        return nextKey ? itemsRef.current.get(nextKey) : undefined;
-      },
-      subscribe: (callback: () => void) => {
-        listenersRef.current.add(callback);
-        return () => {
-          listenersRef.current.delete(callback);
-        };
-      },
-    }),
-    [],
-  );
+interface Store {
+  subscribe: (callback: () => void) => () => void;
+  getState: () => StoreState;
+  notify: () => void;
+  onItemRegister: (id: string, completed: boolean) => void;
+  onItemUnregister: (id: string) => void;
+  getNextItemCompleted: (id: string) => boolean | undefined;
+}
+
+const StoreContext = React.createContext<Store | null>(null);
+
+function useStoreContext(consumerName: string) {
+  const context = React.useContext(StoreContext);
+  if (!context) {
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
+  }
+  return context;
 }
 
 interface TimelineContextValue {
   dir: Direction;
   orientation: Orientation;
-  itemsStore: ItemsStore;
 }
 
 const TimelineContext = React.createContext<TimelineContextValue | null>(null);
@@ -118,30 +103,67 @@ function TimelineRoot(props: TimelineRootProps) {
   } = props;
 
   const dir = useDirection(dirProp);
-  const itemsStore = useItemsStore();
+
+  const listenersRef = useLazyRef(() => new Set<() => void>());
+  const stateRef = useLazyRef<StoreState>(() => ({
+    items: new Map(),
+  }));
+
+  const store = React.useMemo<Store>(() => {
+    return {
+      subscribe: (cb) => {
+        listenersRef.current.add(cb);
+        return () => listenersRef.current.delete(cb);
+      },
+      getState: () => stateRef.current,
+      notify: () => {
+        for (const cb of listenersRef.current) {
+          cb();
+        }
+      },
+      onItemRegister: (id: string, completed: boolean) => {
+        stateRef.current.items.set(id, completed);
+        store.notify();
+      },
+      onItemUnregister: (id: string) => {
+        stateRef.current.items.delete(id);
+        store.notify();
+      },
+      getNextItemCompleted: (id: string) => {
+        const keys = Array.from(stateRef.current.items.keys());
+        const currentIndex = keys.indexOf(id);
+        if (currentIndex === -1 || currentIndex === keys.length - 1) {
+          return undefined;
+        }
+        const nextKey = keys[currentIndex + 1];
+        return nextKey ? stateRef.current.items.get(nextKey) : undefined;
+      },
+    };
+  }, [listenersRef, stateRef]);
 
   const contextValue = React.useMemo<TimelineContextValue>(
     () => ({
       dir,
       orientation,
-      itemsStore,
     }),
-    [dir, orientation, itemsStore],
+    [dir, orientation],
   );
 
   const RootPrimitive = asChild ? Slot : "ol";
 
   return (
-    <TimelineContext.Provider value={contextValue}>
-      <RootPrimitive
-        aria-orientation={orientation}
-        data-orientation={orientation}
-        data-slot="timeline"
-        {...rootProps}
-        dir={dir}
-        className={cn(timelineVariants({ orientation }), className)}
-      />
-    </TimelineContext.Provider>
+    <StoreContext.Provider value={store}>
+      <TimelineContext.Provider value={contextValue}>
+        <RootPrimitive
+          aria-orientation={orientation}
+          data-orientation={orientation}
+          data-slot="timeline"
+          dir={dir}
+          {...rootProps}
+          className={cn(timelineVariants({ orientation }), className)}
+        />
+      </TimelineContext.Provider>
+    </StoreContext.Provider>
   );
 }
 
@@ -169,15 +191,16 @@ interface TimelineItemProps extends React.ComponentProps<"li"> {
 function TimelineItem(props: TimelineItemProps) {
   const { completed = false, asChild, className, ...itemProps } = props;
 
-  const { dir, orientation, itemsStore } = useTimelineContext(ITEM_NAME);
+  const { dir, orientation } = useTimelineContext(ITEM_NAME);
+  const store = useStoreContext(ITEM_NAME);
   const id = React.useId();
 
   useIsomorphicLayoutEffect(() => {
-    itemsStore.register(id, completed);
+    store.onItemRegister(id, completed);
     return () => {
-      itemsStore.unregister(id);
+      store.onItemUnregister(id);
     };
-  }, [id, completed, itemsStore]);
+  }, [id, completed, store]);
 
   const itemContextValue = React.useMemo<TimelineItemContextValue>(
     () => ({ id, completed }),
@@ -242,13 +265,18 @@ interface TimelineConnectorProps extends DivProps {
 function TimelineConnector(props: TimelineConnectorProps) {
   const { asChild, className, ...connectorProps } = props;
 
-  const { orientation, itemsStore } = useTimelineContext(CONNECTOR_NAME);
+  const { orientation } = useTimelineContext(CONNECTOR_NAME);
+  const store = useStoreContext(CONNECTOR_NAME);
   const { id, completed } = useTimelineItemContext(CONNECTOR_NAME);
 
+  const getSnapshot = React.useCallback(() => {
+    return store.getNextItemCompleted(id);
+  }, [id, store]);
+
   const nextCompleted = React.useSyncExternalStore(
-    itemsStore.subscribe,
-    () => itemsStore.getNextCompleted(id),
-    () => itemsStore.getNextCompleted(id),
+    store.subscribe,
+    getSnapshot,
+    getSnapshot,
   );
 
   const isConnectorCompleted = completed && nextCompleted;
