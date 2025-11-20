@@ -161,8 +161,8 @@ const itemVariants = cva("relative flex", {
   },
 });
 
-const dotWrapperVariants = cva(
-  "relative flex size-4 shrink-0 items-center justify-center",
+const dotVariants = cva(
+  "z-10 flex size-3 items-center justify-center rounded-full border-2 bg-background",
   {
     variants: {
       orientation: {
@@ -177,25 +177,32 @@ const dotWrapperVariants = cva(
         true: "",
         false: "",
       },
+      completed: {
+        true: "border-primary bg-primary/10",
+        false: "border-border",
+      },
     },
     compoundVariants: [
       {
         orientation: "vertical",
         variant: "alternate",
         isAlternateRight: false,
-        className: "-right-2 absolute z-10 rounded-full bg-background",
+        className:
+          "-right-2 before:-inset-0.5 absolute before:absolute before:z-[-1] before:rounded-full before:bg-background before:content-['']",
       },
       {
         orientation: "vertical",
         variant: "alternate",
         isAlternateRight: true,
-        className: "-left-2 absolute z-10 rounded-full bg-background",
+        className:
+          "-left-2 before:-inset-0.5 absolute before:absolute before:z-[-1] before:rounded-full before:bg-background before:content-['']",
       },
     ],
     defaultVariants: {
       orientation: "vertical",
       variant: "default",
       isAlternateRight: false,
+      completed: false,
     },
   },
 );
@@ -491,26 +498,21 @@ function TimelineDot(props: TimelineDotProps) {
   const DotPrimitive = asChild ? Slot : "div";
 
   return (
-    <div
-      className={dotWrapperVariants({
-        orientation,
-        variant,
-        isAlternateRight,
-      })}
-    >
-      <DotPrimitive
-        data-slot="timeline-dot"
-        data-completed={completed ? "" : undefined}
-        data-orientation={orientation}
-        {...dotProps}
-        className={cn(
-          "z-10 flex size-3 items-center justify-center rounded-full border-2 bg-background",
-          completed && "border-primary bg-primary/10",
-          !completed && "border-border",
-          className,
-        )}
-      />
-    </div>
+    <DotPrimitive
+      data-slot="timeline-dot"
+      data-completed={completed ? "" : undefined}
+      data-orientation={orientation}
+      {...dotProps}
+      className={cn(
+        dotVariants({
+          orientation,
+          variant,
+          isAlternateRight,
+          completed,
+        }),
+        className,
+      )}
+    />
   );
 }
 
