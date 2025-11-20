@@ -217,7 +217,7 @@ function TimelineRoot(props: TimelineRootProps) {
             timelineVariants({ orientation }),
             variant === "alternate" &&
               orientation === "vertical" &&
-              "before:-translate-x-1/2 relative w-full gap-0 before:absolute before:start-1/2 before:top-0 before:h-full before:w-[2px] before:bg-border before:content-['']",
+              "relative w-full gap-0",
             className,
           )}
         />
@@ -337,11 +337,11 @@ function TimelineDot(props: TimelineDotProps) {
         variant === "alternate" &&
           orientation === "vertical" &&
           !isAlternateRight &&
-          "-right-2 absolute",
+          "-right-2 absolute z-10 rounded-full bg-background",
         variant === "alternate" &&
           orientation === "vertical" &&
           isAlternateRight &&
-          "-left-2 absolute",
+          "-left-2 absolute z-10 rounded-full bg-background",
       )}
     >
       <DotPrimitive
@@ -370,7 +370,8 @@ function TimelineConnector(props: TimelineConnectorProps) {
 
   const { orientation, variant } = useTimelineContext(CONNECTOR_NAME);
   const store = useStoreContext(CONNECTOR_NAME);
-  const { id, completed } = useTimelineItemContext(CONNECTOR_NAME);
+  const { id, completed, isAlternateRight } =
+    useTimelineItemContext(CONNECTOR_NAME);
 
   const getSnapshot = React.useCallback(() => {
     return store.getNextItemCompleted(id);
@@ -385,9 +386,6 @@ function TimelineConnector(props: TimelineConnectorProps) {
   const isLastItem = nextCompleted === undefined;
 
   if (!forceMount && isLastItem) return null;
-
-  // Hide connector in alternate variant as center line handles connections
-  if (variant === "alternate" && !forceMount) return null;
 
   const isConnectorCompleted = completed && nextCompleted;
 
@@ -404,9 +402,19 @@ function TimelineConnector(props: TimelineConnectorProps) {
         "absolute",
         isConnectorCompleted ? "bg-primary/30" : "bg-border",
         orientation === "vertical" &&
+          variant === "default" &&
           "start-[7px] top-4 h-[calc(100%+0.5rem)] w-[2px]",
         orientation === "horizontal" &&
+          variant === "default" &&
           "start-4 top-[7px] h-[2px] w-[calc(100%+0.5rem)]",
+        orientation === "vertical" &&
+          variant === "alternate" &&
+          !isAlternateRight &&
+          "-right-px top-2 h-full w-[2px]",
+        orientation === "vertical" &&
+          variant === "alternate" &&
+          isAlternateRight &&
+          "-left-px top-2 h-full w-[2px]",
         className,
       )}
     />
