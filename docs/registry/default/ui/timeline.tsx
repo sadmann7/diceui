@@ -57,6 +57,7 @@ interface Store {
   ) => void;
   onItemUnregister: (id: string) => void;
   getNextItemCompleted: (id: string) => boolean | undefined;
+  getItemIndex: (id: string) => number;
 }
 
 const StoreContext = React.createContext<Store | null>(null);
@@ -72,6 +73,7 @@ function useStoreContext(consumerName: string) {
 interface TimelineContextValue {
   dir: Direction;
   orientation: Orientation;
+  variant: "default" | "alternate";
 }
 
 const TimelineContext = React.createContext<TimelineContextValue | null>(null);
@@ -99,12 +101,14 @@ const timelineVariants = cva("relative flex list-none", {
 interface TimelineRootProps extends React.ComponentProps<"ol"> {
   dir?: Direction;
   orientation?: Orientation;
+  variant?: "default" | "alternate";
   asChild?: boolean;
 }
 
 function TimelineRoot(props: TimelineRootProps) {
   const {
     orientation = "vertical",
+    variant = "default",
     dir: dirProp,
     asChild,
     className,
@@ -145,7 +149,6 @@ function TimelineRoot(props: TimelineRootProps) {
       getNextItemCompleted: (id: string) => {
         const entries = Array.from(stateRef.current.items.entries());
 
-        // Sort by DOM position
         const sortedEntries = entries.sort((a, b) => {
           const elementA = a[1].ref.current;
           const elementB = b[1].ref.current;
@@ -167,6 +170,25 @@ function TimelineRoot(props: TimelineRootProps) {
         const nextEntry = sortedEntries[currentIndex + 1];
         return nextEntry ? nextEntry[1].completed : undefined;
       },
+      getItemIndex: (id: string) => {
+        const entries = Array.from(stateRef.current.items.entries());
+
+        const sortedEntries = entries.sort((a, b) => {
+          const elementA = a[1].ref.current;
+          const elementB = b[1].ref.current;
+          if (!elementA || !elementB) return 0;
+          const position = elementA.compareDocumentPosition(elementB);
+          if (position & Node.DOCUMENT_POSITION_FOLLOWING) {
+            return -1;
+          }
+          if (position & Node.DOCUMENT_POSITION_PRECEDING) {
+            return 1;
+          }
+          return 0;
+        });
+
+        return sortedEntries.findIndex(([key]) => key === id);
+      },
     };
   }, [listenersRef, stateRef]);
 
@@ -174,8 +196,9 @@ function TimelineRoot(props: TimelineRootProps) {
     () => ({
       dir,
       orientation,
+      variant,
     }),
-    [dir, orientation],
+    [dir, orientation, variant],
   );
 
   const RootPrimitive = asChild ? Slot : "ol";
@@ -186,10 +209,17 @@ function TimelineRoot(props: TimelineRootProps) {
         <RootPrimitive
           aria-orientation={orientation}
           data-orientation={orientation}
+          data-variant={variant}
           data-slot="timeline"
           dir={dir}
           {...rootProps}
-          className={cn(timelineVariants({ orientation }), className)}
+          className={cn(
+            timelineVariants({ orientation }),
+            variant === "alternate" &&
+              orientation === "vertical" &&
+              "before:-translate-x-1/2 relative w-full gap-0 before:absolute before:start-1/2 before:top-0 before:h-full before:w-[2px] before:bg-border before:content-['']",
+            className,
+          )}
         />
       </TimelineContext.Provider>
     </StoreContext.Provider>
@@ -199,6 +229,7 @@ function TimelineRoot(props: TimelineRootProps) {
 interface TimelineItemContextValue {
   id: string;
   completed: boolean;
+  isAlternateRight: boolean;
 }
 
 const TimelineItemContext =
@@ -220,7 +251,7 @@ interface TimelineItemProps extends React.ComponentProps<"li"> {
 function TimelineItem(props: TimelineItemProps) {
   const { completed = false, asChild, className, ...itemProps } = props;
 
-  const { dir, orientation } = useTimelineContext(ITEM_NAME);
+  const { dir, orientation, variant } = useTimelineContext(ITEM_NAME);
   const store = useStoreContext(ITEM_NAME);
   const id = React.useId();
   const itemRef = React.useRef<HTMLLIElement>(null);
@@ -232,9 +263,21 @@ function TimelineItem(props: TimelineItemProps) {
     };
   }, [id, completed, store]);
 
+  const getSnapshot = React.useCallback(() => {
+    return store.getItemIndex(id);
+  }, [id, store]);
+
+  const itemIndex = React.useSyncExternalStore(
+    store.subscribe,
+    getSnapshot,
+    getSnapshot,
+  );
+
+  const isAlternateRight = variant === "alternate" && itemIndex % 2 === 1;
+
   const itemContextValue = React.useMemo<TimelineItemContextValue>(
-    () => ({ id, completed }),
-    [id, completed],
+    () => ({ id, completed, isAlternateRight }),
+    [id, completed, isAlternateRight],
   );
 
   const ItemPrimitive = asChild ? Slot : "li";
@@ -246,12 +289,28 @@ function TimelineItem(props: TimelineItemProps) {
         data-slot="timeline-item"
         data-completed={completed ? "" : undefined}
         data-orientation={orientation}
+        data-alternate-right={isAlternateRight ? "" : undefined}
         dir={dir}
         {...itemProps}
         className={cn(
           "relative flex",
-          orientation === "vertical" && "gap-3 pb-8 last:pb-0",
-          orientation === "horizontal" && "flex-col gap-3",
+          orientation === "vertical" &&
+            variant === "default" &&
+            "gap-3 pb-8 last:pb-0",
+          orientation === "horizontal" &&
+            variant === "default" &&
+            "flex-col gap-3",
+          orientation === "vertical" &&
+            variant === "alternate" &&
+            !isAlternateRight &&
+            "w-1/2 gap-3 pr-8 pb-12 last:pb-0",
+          orientation === "vertical" &&
+            variant === "alternate" &&
+            isAlternateRight &&
+            "ml-auto w-1/2 flex-row-reverse gap-3 pb-12 pl-8 last:pb-0",
+          orientation === "horizontal" &&
+            variant === "alternate" &&
+            "flex-col gap-3",
           className,
         )}
       />
@@ -266,13 +325,25 @@ interface TimelineDotProps extends DivProps {
 function TimelineDot(props: TimelineDotProps) {
   const { asChild, className, ...dotProps } = props;
 
-  const { orientation } = useTimelineContext(DOT_NAME);
-  const { completed } = useTimelineItemContext(DOT_NAME);
+  const { orientation, variant } = useTimelineContext(DOT_NAME);
+  const { completed, isAlternateRight } = useTimelineItemContext(DOT_NAME);
 
   const DotPrimitive = asChild ? Slot : "div";
 
   return (
-    <div className="relative flex size-4 shrink-0 items-center justify-center">
+    <div
+      className={cn(
+        "relative flex size-4 shrink-0 items-center justify-center",
+        variant === "alternate" &&
+          orientation === "vertical" &&
+          !isAlternateRight &&
+          "-right-2 absolute",
+        variant === "alternate" &&
+          orientation === "vertical" &&
+          isAlternateRight &&
+          "-left-2 absolute",
+      )}
+    >
       <DotPrimitive
         data-slot="timeline-dot"
         data-completed={completed ? "" : undefined}
@@ -297,7 +368,7 @@ interface TimelineConnectorProps extends DivProps {
 function TimelineConnector(props: TimelineConnectorProps) {
   const { asChild, forceMount, className, ...connectorProps } = props;
 
-  const { orientation } = useTimelineContext(CONNECTOR_NAME);
+  const { orientation, variant } = useTimelineContext(CONNECTOR_NAME);
   const store = useStoreContext(CONNECTOR_NAME);
   const { id, completed } = useTimelineItemContext(CONNECTOR_NAME);
 
@@ -314,6 +385,9 @@ function TimelineConnector(props: TimelineConnectorProps) {
   const isLastItem = nextCompleted === undefined;
 
   if (!forceMount && isLastItem) return null;
+
+  // Hide connector in alternate variant as center line handles connections
+  if (variant === "alternate" && !forceMount) return null;
 
   const isConnectorCompleted = completed && nextCompleted;
 
@@ -400,13 +474,23 @@ interface TimelineContentProps extends DivProps {
 function TimelineContent(props: TimelineContentProps) {
   const { asChild, className, ...contentProps } = props;
 
+  const { variant, orientation } = useTimelineContext("TimelineContent");
+  const { isAlternateRight } = useTimelineItemContext("TimelineContent");
+
   const ContentPrimitive = asChild ? Slot : "div";
 
   return (
     <ContentPrimitive
       data-slot="timeline-content"
       {...contentProps}
-      className={cn("flex-1 pt-0.5", className)}
+      className={cn(
+        "flex-1 pt-0.5",
+        variant === "alternate" &&
+          orientation === "vertical" &&
+          !isAlternateRight &&
+          "text-right",
+        className,
+      )}
     />
   );
 }
