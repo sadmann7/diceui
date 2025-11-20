@@ -41,7 +41,8 @@ const timelineItems = [
     dateTime: "2024-04-01",
     date: "April 1, 2024",
     title: "Event Day",
-    description: "The main event begins at 9:00 AM. Check-in starts at 8:00 AM.",
+    description:
+      "The main event begins at 9:00 AM. Check-in starts at 8:00 AM.",
   },
 ];
 
