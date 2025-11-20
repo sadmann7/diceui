@@ -17,69 +17,11 @@ const ITEM_NAME = "TimelineItem";
 const DOT_NAME = "TimelineDot";
 const CONNECTOR_NAME = "TimelineConnector";
 
-const useIsomorphicLayoutEffect =
-  typeof window === "undefined" ? React.useEffect : React.useLayoutEffect;
-
-function useAsRef<T>(props: T) {
-  const ref = React.useRef<T>(props);
-
-  useIsomorphicLayoutEffect(() => {
-    ref.current = props;
-  });
-
-  return ref;
-}
-
-function useLazyRef<T>(fn: () => T) {
-  const ref = React.useRef<T | null>(null);
-
-  if (ref.current === null) {
-    ref.current = fn();
-  }
-
-  return ref as React.RefObject<T>;
-}
-
 const DirectionContext = React.createContext<Direction | undefined>(undefined);
 
 function useDirection(dirProp?: Direction): Direction {
   const contextDir = React.useContext(DirectionContext);
   return dirProp ?? contextDir ?? "ltr";
-}
-
-interface StoreState {
-  items: Map<string, number>;
-  value: string;
-}
-
-interface Store {
-  subscribe: (callback: () => void) => () => void;
-  getState: () => StoreState;
-  setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
-  notify: () => void;
-  addItem: (value: string) => void;
-  removeItem: (value: string) => void;
-}
-
-const StoreContext = React.createContext<Store | null>(null);
-
-function useStoreContext(consumerName: string) {
-  const context = React.useContext(StoreContext);
-  if (!context) {
-    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
-  }
-  return context;
-}
-
-function useStore<T>(selector: (state: StoreState) => T): T {
-  const store = useStoreContext("useStore");
-
-  const getSnapshot = React.useCallback(
-    () => selector(store.getState()),
-    [store, selector],
-  );
-
-  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
 
 interface TimelineContextValue {
@@ -112,18 +54,12 @@ const timelineVariants = cva("relative flex list-none", {
 interface TimelineRootProps extends React.ComponentProps<"ol"> {
   dir?: Direction;
   orientation?: Orientation;
-  value?: string;
-  defaultValue?: string;
-  onValueChange?: (value: string) => void;
   asChild?: boolean;
 }
 
 function TimelineRoot(props: TimelineRootProps) {
   const {
     orientation = "vertical",
-    value,
-    defaultValue,
-    onValueChange,
     dir: dirProp,
     asChild,
     className,
@@ -131,55 +67,6 @@ function TimelineRoot(props: TimelineRootProps) {
   } = props;
 
   const dir = useDirection(dirProp);
-
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => ({
-    items: new Map(),
-    value: value ?? defaultValue ?? "",
-  }));
-  const propsRef = useAsRef({ onValueChange });
-
-  const store: Store = React.useMemo(() => {
-    return {
-      subscribe: (cb) => {
-        listenersRef.current.add(cb);
-        return () => listenersRef.current.delete(cb);
-      },
-      getState: () => stateRef.current,
-      setState: (key, val) => {
-        if (Object.is(stateRef.current[key], val)) return;
-
-        if (key === "value" && typeof val === "string") {
-          stateRef.current.value = val;
-          propsRef.current.onValueChange?.(val);
-        } else {
-          stateRef.current[key] = val;
-        }
-
-        store.notify();
-      },
-      addItem: (itemValue) => {
-        const index = stateRef.current.items.size;
-        stateRef.current.items.set(itemValue, index);
-        store.notify();
-      },
-      removeItem: (itemValue) => {
-        stateRef.current.items.delete(itemValue);
-        store.notify();
-      },
-      notify: () => {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      },
-    };
-  }, [listenersRef, stateRef, propsRef]);
-
-  useIsomorphicLayoutEffect(() => {
-    if (value !== undefined) {
-      store.setState("value", value);
-    }
-  }, [value, store]);
 
   const contextValue = React.useMemo<TimelineContextValue>(
     () => ({
@@ -192,24 +79,21 @@ function TimelineRoot(props: TimelineRootProps) {
   const RootPrimitive = asChild ? Slot : "ol";
 
   return (
-    <StoreContext.Provider value={store}>
-      <TimelineContext.Provider value={contextValue}>
-        <RootPrimitive
-          aria-orientation={orientation}
-          data-orientation={orientation}
-          data-slot="timeline"
-          {...rootProps}
-          dir={dir}
-          className={cn(timelineVariants({ orientation }), className)}
-        />
-      </TimelineContext.Provider>
-    </StoreContext.Provider>
+    <TimelineContext.Provider value={contextValue}>
+      <RootPrimitive
+        aria-orientation={orientation}
+        data-orientation={orientation}
+        data-slot="timeline"
+        {...rootProps}
+        dir={dir}
+        className={cn(timelineVariants({ orientation }), className)}
+      />
+    </TimelineContext.Provider>
   );
 }
 
 interface TimelineItemContextValue {
-  value: string;
-  isCompleted: boolean;
+  completed: boolean;
 }
 
 const TimelineItemContext =
@@ -224,36 +108,18 @@ function useTimelineItemContext(consumerName: string) {
 }
 
 interface TimelineItemProps extends React.ComponentProps<"li"> {
-  value: string;
+  completed?: boolean;
   asChild?: boolean;
 }
 
 function TimelineItem(props: TimelineItemProps) {
-  const { value: itemValue, asChild, className, ...itemProps } = props;
+  const { completed = false, asChild, className, ...itemProps } = props;
 
   const { dir, orientation } = useTimelineContext(ITEM_NAME);
-  const store = useStoreContext(ITEM_NAME);
-
-  useIsomorphicLayoutEffect(() => {
-    store.addItem(itemValue);
-
-    return () => {
-      store.removeItem(itemValue);
-    };
-  }, [itemValue, store]);
-
-  const currentValue = useStore((state) => state.value);
-  const items = useStore((state) => state.items);
-
-  const itemKeys = Array.from(items.keys());
-  const currentIndex = itemKeys.indexOf(currentValue);
-  const itemIndex = itemKeys.indexOf(itemValue);
-
-  const isCompleted = itemIndex <= currentIndex && currentIndex !== -1;
 
   const itemContextValue = React.useMemo<TimelineItemContextValue>(
-    () => ({ value: itemValue, isCompleted }),
-    [itemValue, isCompleted],
+    () => ({ completed }),
+    [completed],
   );
 
   const ItemPrimitive = asChild ? Slot : "li";
@@ -262,7 +128,7 @@ function TimelineItem(props: TimelineItemProps) {
     <TimelineItemContext.Provider value={itemContextValue}>
       <ItemPrimitive
         data-slot="timeline-item"
-        data-completed={isCompleted}
+        data-completed={completed ? "" : undefined}
         data-orientation={orientation}
         dir={dir}
         {...itemProps}
@@ -285,7 +151,7 @@ function TimelineDot(props: TimelineDotProps) {
   const { asChild, className, ...dotProps } = props;
 
   const { orientation } = useTimelineContext(DOT_NAME);
-  const { isCompleted } = useTimelineItemContext(DOT_NAME);
+  const { completed } = useTimelineItemContext(DOT_NAME);
 
   const DotPrimitive = asChild ? Slot : "div";
 
@@ -293,13 +159,13 @@ function TimelineDot(props: TimelineDotProps) {
     <div className="relative flex size-4 shrink-0 items-center justify-center">
       <DotPrimitive
         data-slot="timeline-dot"
-        data-completed={isCompleted}
+        data-completed={completed ? "" : undefined}
         data-orientation={orientation}
         {...dotProps}
         className={cn(
           "z-10 flex size-3 items-center justify-center rounded-full border-2 bg-background",
-          isCompleted && "border-primary bg-primary/10",
-          !isCompleted && "border-border",
+          completed && "border-primary bg-primary/10",
+          !completed && "border-border",
           className,
         )}
       />
@@ -315,7 +181,7 @@ function TimelineConnector(props: TimelineConnectorProps) {
   const { asChild, className, ...connectorProps } = props;
 
   const { orientation } = useTimelineContext(CONNECTOR_NAME);
-  const { isCompleted } = useTimelineItemContext(CONNECTOR_NAME);
+  const { completed } = useTimelineItemContext(CONNECTOR_NAME);
 
   const ConnectorPrimitive = asChild ? Slot : "div";
 
@@ -323,12 +189,12 @@ function TimelineConnector(props: TimelineConnectorProps) {
     <ConnectorPrimitive
       aria-hidden="true"
       data-slot="timeline-connector"
-      data-completed={isCompleted}
+      data-completed={completed ? "" : undefined}
       data-orientation={orientation}
       {...connectorProps}
       className={cn(
         "absolute",
-        isCompleted ? "bg-primary/30" : "bg-border",
+        completed ? "bg-primary/30" : "bg-border",
         orientation === "vertical" &&
           "start-[7px] top-4 h-[calc(100%+0.5rem)] w-[2px]",
         orientation === "horizontal" &&
