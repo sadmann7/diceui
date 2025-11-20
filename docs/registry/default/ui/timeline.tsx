@@ -92,9 +92,192 @@ const timelineVariants = cva("relative flex list-none", {
       vertical: "flex-col gap-6",
       horizontal: "flex-row items-start gap-8",
     },
+    variant: {
+      default: "",
+      alternate: "",
+    },
   },
+  compoundVariants: [
+    {
+      orientation: "vertical",
+      variant: "alternate",
+      className: "w-full gap-0",
+    },
+  ],
   defaultVariants: {
     orientation: "vertical",
+    variant: "default",
+  },
+});
+
+const itemVariants = cva("relative flex", {
+  variants: {
+    orientation: {
+      vertical: "",
+      horizontal: "",
+    },
+    variant: {
+      default: "",
+      alternate: "",
+    },
+    isAlternateRight: {
+      true: "",
+      false: "",
+    },
+  },
+  compoundVariants: [
+    {
+      orientation: "vertical",
+      variant: "default",
+      className: "gap-3 pb-8 last:pb-0",
+    },
+    {
+      orientation: "horizontal",
+      variant: "default",
+      className: "flex-col gap-3",
+    },
+    {
+      orientation: "vertical",
+      variant: "alternate",
+      isAlternateRight: false,
+      className: "w-1/2 gap-3 pr-8 pb-12 last:pb-0",
+    },
+    {
+      orientation: "vertical",
+      variant: "alternate",
+      isAlternateRight: true,
+      className: "ml-auto w-1/2 flex-row-reverse gap-3 pb-12 pl-8 last:pb-0",
+    },
+    {
+      orientation: "horizontal",
+      variant: "alternate",
+      className: "flex-col gap-3",
+    },
+  ],
+  defaultVariants: {
+    orientation: "vertical",
+    variant: "default",
+    isAlternateRight: false,
+  },
+});
+
+const dotWrapperVariants = cva(
+  "relative flex size-4 shrink-0 items-center justify-center",
+  {
+    variants: {
+      orientation: {
+        vertical: "",
+        horizontal: "",
+      },
+      variant: {
+        default: "",
+        alternate: "",
+      },
+      isAlternateRight: {
+        true: "",
+        false: "",
+      },
+    },
+    compoundVariants: [
+      {
+        orientation: "vertical",
+        variant: "alternate",
+        isAlternateRight: false,
+        className: "-right-2 absolute z-10 rounded-full bg-background",
+      },
+      {
+        orientation: "vertical",
+        variant: "alternate",
+        isAlternateRight: true,
+        className: "-left-2 absolute z-10 rounded-full bg-background",
+      },
+    ],
+    defaultVariants: {
+      orientation: "vertical",
+      variant: "default",
+      isAlternateRight: false,
+    },
+  },
+);
+
+const connectorVariants = cva("absolute", {
+  variants: {
+    orientation: {
+      vertical: "",
+      horizontal: "",
+    },
+    variant: {
+      default: "",
+      alternate: "",
+    },
+    isAlternateRight: {
+      true: "",
+      false: "",
+    },
+    isCompleted: {
+      true: "bg-primary/30",
+      false: "bg-border",
+    },
+  },
+  compoundVariants: [
+    {
+      orientation: "vertical",
+      variant: "default",
+      className: "start-[7px] top-4 h-[calc(100%+0.5rem)] w-[2px]",
+    },
+    {
+      orientation: "horizontal",
+      variant: "default",
+      className: "start-4 top-[7px] h-[2px] w-[calc(100%+0.5rem)]",
+    },
+    {
+      orientation: "vertical",
+      variant: "alternate",
+      isAlternateRight: false,
+      className: "-right-px top-2 h-full w-[2px]",
+    },
+    {
+      orientation: "vertical",
+      variant: "alternate",
+      isAlternateRight: true,
+      className: "-left-px top-2 h-full w-[2px]",
+    },
+  ],
+  defaultVariants: {
+    orientation: "vertical",
+    variant: "default",
+    isAlternateRight: false,
+    isCompleted: false,
+  },
+});
+
+const contentVariants = cva("flex-1 pt-0.5", {
+  variants: {
+    orientation: {
+      vertical: "",
+      horizontal: "",
+    },
+    variant: {
+      default: "",
+      alternate: "",
+    },
+    isAlternateRight: {
+      true: "",
+      false: "",
+    },
+  },
+  compoundVariants: [
+    {
+      orientation: "vertical",
+      variant: "alternate",
+      isAlternateRight: false,
+      className: "text-right",
+    },
+  ],
+  defaultVariants: {
+    orientation: "vertical",
+    variant: "default",
+    isAlternateRight: false,
   },
 });
 
@@ -213,13 +396,7 @@ function TimelineRoot(props: TimelineRootProps) {
           data-slot="timeline"
           dir={dir}
           {...rootProps}
-          className={cn(
-            timelineVariants({ orientation }),
-            variant === "alternate" &&
-              orientation === "vertical" &&
-              "relative w-full gap-0",
-            className,
-          )}
+          className={cn(timelineVariants({ orientation, variant }), className)}
         />
       </TimelineContext.Provider>
     </StoreContext.Provider>
@@ -293,24 +470,7 @@ function TimelineItem(props: TimelineItemProps) {
         dir={dir}
         {...itemProps}
         className={cn(
-          "relative flex",
-          orientation === "vertical" &&
-            variant === "default" &&
-            "gap-3 pb-8 last:pb-0",
-          orientation === "horizontal" &&
-            variant === "default" &&
-            "flex-col gap-3",
-          orientation === "vertical" &&
-            variant === "alternate" &&
-            !isAlternateRight &&
-            "w-1/2 gap-3 pr-8 pb-12 last:pb-0",
-          orientation === "vertical" &&
-            variant === "alternate" &&
-            isAlternateRight &&
-            "ml-auto w-1/2 flex-row-reverse gap-3 pb-12 pl-8 last:pb-0",
-          orientation === "horizontal" &&
-            variant === "alternate" &&
-            "flex-col gap-3",
+          itemVariants({ orientation, variant, isAlternateRight }),
           className,
         )}
       />
@@ -332,17 +492,11 @@ function TimelineDot(props: TimelineDotProps) {
 
   return (
     <div
-      className={cn(
-        "relative flex size-4 shrink-0 items-center justify-center",
-        variant === "alternate" &&
-          orientation === "vertical" &&
-          !isAlternateRight &&
-          "-right-2 absolute z-10 rounded-full bg-background",
-        variant === "alternate" &&
-          orientation === "vertical" &&
-          isAlternateRight &&
-          "-left-2 absolute z-10 rounded-full bg-background",
-      )}
+      className={dotWrapperVariants({
+        orientation,
+        variant,
+        isAlternateRight,
+      })}
     >
       <DotPrimitive
         data-slot="timeline-dot"
@@ -399,22 +553,12 @@ function TimelineConnector(props: TimelineConnectorProps) {
       data-orientation={orientation}
       {...connectorProps}
       className={cn(
-        "absolute",
-        isConnectorCompleted ? "bg-primary/30" : "bg-border",
-        orientation === "vertical" &&
-          variant === "default" &&
-          "start-[7px] top-4 h-[calc(100%+0.5rem)] w-[2px]",
-        orientation === "horizontal" &&
-          variant === "default" &&
-          "start-4 top-[7px] h-[2px] w-[calc(100%+0.5rem)]",
-        orientation === "vertical" &&
-          variant === "alternate" &&
-          !isAlternateRight &&
-          "-right-px top-2 h-full w-[2px]",
-        orientation === "vertical" &&
-          variant === "alternate" &&
-          isAlternateRight &&
-          "-left-px top-2 h-full w-[2px]",
+        connectorVariants({
+          orientation,
+          variant,
+          isAlternateRight,
+          isCompleted: isConnectorCompleted,
+        }),
         className,
       )}
     />
@@ -492,11 +636,7 @@ function TimelineContent(props: TimelineContentProps) {
       data-slot="timeline-content"
       {...contentProps}
       className={cn(
-        "flex-1 pt-0.5",
-        variant === "alternate" &&
-          orientation === "vertical" &&
-          !isAlternateRight &&
-          "text-right",
+        contentVariants({ orientation, variant, isAlternateRight }),
         className,
       )}
     />
