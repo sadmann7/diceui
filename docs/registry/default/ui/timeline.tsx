@@ -331,32 +331,31 @@ function TimelineDot(props: TimelineDotProps) {
   const DotPrimitive = asChild ? Slot : "div";
 
   return (
-    <div
+    <DotPrimitive
+      data-slot="timeline-dot"
+      data-completed={completed ? "" : undefined}
+      data-orientation={orientation}
+      {...dotProps}
       className={cn(
-        "relative flex size-4 shrink-0 items-center justify-center",
+        "relative z-10 flex size-3 shrink-0 items-center justify-center rounded-full border-2",
+        completed
+          ? "border-primary bg-primary/10"
+          : "border-border bg-background",
         variant === "alternate" &&
           orientation === "vertical" &&
           !isAlternateRight &&
-          "-right-2 absolute z-10 rounded-full bg-background",
+          "-right-[6px] absolute bg-background",
         variant === "alternate" &&
           orientation === "vertical" &&
           isAlternateRight &&
-          "-left-2 absolute z-10 rounded-full bg-background",
+          "-left-[6px] absolute bg-background",
+        variant === "alternate" &&
+          orientation === "vertical" &&
+          completed &&
+          "bg-background",
+        className,
       )}
-    >
-      <DotPrimitive
-        data-slot="timeline-dot"
-        data-completed={completed ? "" : undefined}
-        data-orientation={orientation}
-        {...dotProps}
-        className={cn(
-          "z-10 flex size-3 items-center justify-center rounded-full border-2 bg-background",
-          completed && "border-primary bg-primary/10",
-          !completed && "border-border",
-          className,
-        )}
-      />
-    </div>
+    />
   );
 }
 
@@ -399,14 +398,14 @@ function TimelineConnector(props: TimelineConnectorProps) {
       data-orientation={orientation}
       {...connectorProps}
       className={cn(
-        "absolute",
+        "absolute z-0",
         isConnectorCompleted ? "bg-primary/30" : "bg-border",
         orientation === "vertical" &&
           variant === "default" &&
-          "start-[7px] top-4 h-[calc(100%+0.5rem)] w-[2px]",
+          "start-[5px] top-3 h-[calc(100%+0.5rem)] w-[2px]",
         orientation === "horizontal" &&
           variant === "default" &&
-          "start-4 top-[7px] h-[2px] w-[calc(100%+0.5rem)]",
+          "start-3 top-[5px] h-[2px] w-[calc(100%+0.5rem)]",
         orientation === "vertical" &&
           variant === "alternate" &&
           !isAlternateRight &&
