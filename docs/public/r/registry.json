@@ -388,6 +388,22 @@
       ]
     },
     {
+      "name": "timeline",
+      "type": "registry:component",
+      "title": "Timeline",
+      "description": "A flexible timeline component for displaying chronological events with support for different orientations, RTL layouts, and visual states.",
+      "files": [
+        {
+          "path": "registry/default/ui/timeline.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/default/lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
       "name": "tour",
       "type": "registry:component",
       "title": "Tour",
@@ -1150,6 +1166,66 @@
       "files": [
         {
           "path": "registry/default/examples/tags-input-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "timeline-demo",
+      "type": "registry:component",
+      "title": "Timeline Demo",
+      "description": "Example showing how to use the timeline component.",
+      "files": [
+        {
+          "path": "registry/default/examples/timeline-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "timeline-horizontal-demo",
+      "type": "registry:component",
+      "title": "Timeline Horizontal Demo",
+      "description": "Example showing timeline with horizontal orientation.",
+      "files": [
+        {
+          "path": "registry/default/examples/timeline-horizontal-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "timeline-rtl-demo",
+      "type": "registry:component",
+      "title": "Timeline RTL Demo",
+      "description": "Example showing timeline with right-to-left layout support.",
+      "files": [
+        {
+          "path": "registry/default/examples/timeline-rtl-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "timeline-alternate-demo",
+      "type": "registry:component",
+      "title": "Timeline Alternate Demo",
+      "description": "Example showing timeline with alternating content pattern.",
+      "files": [
+        {
+          "path": "registry/default/examples/timeline-alternate-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "timeline-horizontal-alternate-demo",
+      "type": "registry:component",
+      "title": "Timeline Horizontal Alternate Demo",
+      "description": "Example showing horizontal timeline with alternating content above and below.",
+      "files": [
+        {
+          "path": "registry/default/examples/timeline-horizontal-alternate-demo.tsx",
           "type": "registry:example"
         }
       ]
