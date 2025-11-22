@@ -13,7 +13,6 @@ import {
 const timelineItems = [
   {
     id: 1,
-    completed: true,
     dateTime: "2024-01-15",
     date: "January 15, 2024",
     title: "Project Kickoff",
@@ -22,7 +21,6 @@ const timelineItems = [
   },
   {
     id: 2,
-    completed: true,
     dateTime: "2024-02-01",
     date: "February 1, 2024",
     title: "Design Phase",
@@ -30,7 +28,6 @@ const timelineItems = [
   },
   {
     id: 3,
-    completed: true,
     dateTime: "2024-03-01",
     date: "March 1, 2024",
     title: "Development",
@@ -38,7 +35,6 @@ const timelineItems = [
   },
   {
     id: 4,
-    completed: false,
     dateTime: "2024-04-01",
     date: "April 1, 2024",
     title: "Launch",
@@ -48,9 +44,9 @@ const timelineItems = [
 
 export default function TimelineDemo() {
   return (
-    <Timeline>
+    <Timeline activeStep={2}>
       {timelineItems.map((item) => (
-        <TimelineItem key={item.id} completed={item.completed}>
+        <TimelineItem key={item.id}>
           <TimelineDot />
           <TimelineConnector />
           <TimelineContent>

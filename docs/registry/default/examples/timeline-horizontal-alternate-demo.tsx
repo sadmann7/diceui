@@ -13,7 +13,6 @@ import {
 const timelineItems = [
   {
     id: 1,
-    completed: true,
     dateTime: "2020-06",
     date: "June 2020",
     title: "Company Founded",
@@ -22,7 +21,6 @@ const timelineItems = [
   },
   {
     id: 2,
-    completed: true,
     dateTime: "2021-03",
     date: "March 2021",
     title: "Series A Funding",
@@ -31,7 +29,6 @@ const timelineItems = [
   },
   {
     id: 3,
-    completed: true,
     dateTime: "2022-01",
     date: "January 2022",
     title: "Product Launch",
@@ -40,7 +37,6 @@ const timelineItems = [
   },
   {
     id: 4,
-    completed: true,
     dateTime: "2023-08",
     date: "August 2023",
     title: "100K Users",
@@ -49,7 +45,6 @@ const timelineItems = [
   },
   {
     id: 5,
-    completed: false,
     dateTime: "2024-12",
     date: "December 2024",
     title: "Global Expansion",
@@ -60,9 +55,9 @@ const timelineItems = [
 
 export default function TimelineHorizontalAlternateDemo() {
   return (
-    <Timeline variant="alternate" orientation="horizontal">
+    <Timeline variant="alternate" orientation="horizontal" activeStep={4}>
       {timelineItems.map((item) => (
-        <TimelineItem key={item.id} completed={item.completed}>
+        <TimelineItem key={item.id}>
           <TimelineDot />
           <TimelineConnector />
           <TimelineContent>

@@ -13,7 +13,6 @@ import {
 const timelineItems = [
   {
     id: 1,
-    completed: true,
     dateTime: "2024-01",
     date: "Jan - Mar",
     title: "Q1",
@@ -21,7 +20,6 @@ const timelineItems = [
   },
   {
     id: 2,
-    completed: true,
     dateTime: "2024-04",
     date: "Apr - Jun",
     title: "Q2",
@@ -29,7 +27,6 @@ const timelineItems = [
   },
   {
     id: 3,
-    completed: true,
     dateTime: "2024-07",
     date: "Jul - Sep",
     title: "Q3",
@@ -37,7 +34,6 @@ const timelineItems = [
   },
   {
     id: 4,
-    completed: false,
     dateTime: "2024-10",
     date: "Oct - Dec",
     title: "Q4",
@@ -47,9 +43,9 @@ const timelineItems = [
 
 export default function TimelineHorizontalDemo() {
   return (
-    <Timeline orientation="horizontal">
+    <Timeline orientation="horizontal" activeStep={2}>
       {timelineItems.map((item) => (
-        <TimelineItem key={item.id} completed={item.completed}>
+        <TimelineItem key={item.id}>
           <TimelineDot />
           <TimelineConnector />
           <TimelineContent>

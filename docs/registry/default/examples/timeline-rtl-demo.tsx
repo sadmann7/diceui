@@ -13,7 +13,6 @@ import {
 const timelineItems = [
   {
     id: 1,
-    completed: true,
     dateTime: "2024-01-01",
     date: "January 1, 2024",
     title: "Registration Opened",
@@ -21,7 +20,6 @@ const timelineItems = [
   },
   {
     id: 2,
-    completed: true,
     dateTime: "2024-02-15",
     date: "February 15, 2024",
     title: "Early Bird Deadline",
@@ -29,7 +27,6 @@ const timelineItems = [
   },
   {
     id: 3,
-    completed: true,
     dateTime: "2024-03-01",
     date: "March 1, 2024",
     title: "Regular Registration",
@@ -37,7 +34,6 @@ const timelineItems = [
   },
   {
     id: 4,
-    completed: false,
     dateTime: "2024-04-01",
     date: "April 1, 2024",
     title: "Event Day",
@@ -48,9 +44,9 @@ const timelineItems = [
 
 export default function TimelineRtlDemo() {
   return (
-    <Timeline dir="rtl">
+    <Timeline dir="rtl" activeStep={3}>
       {timelineItems.map((item) => (
-        <TimelineItem key={item.id} completed={item.completed}>
+        <TimelineItem key={item.id}>
           <TimelineDot />
           <TimelineConnector />
           <TimelineContent>
