@@ -542,6 +542,10 @@ export const ui: Registry["items"] = [
         path: "ui/timeline.tsx",
         type: "registry:ui",
       },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
+      },
     ],
   },
   {

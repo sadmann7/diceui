@@ -532,6 +532,10 @@ export const Index: Record<string, any> = {
         path: "registry/default/ui/timeline.tsx",
         type: "registry:ui",
         target: ""
+      },{
+        path: "registry/default/lib/compose-refs.ts",
+        type: "registry:lib",
+        target: ""
       }],
       component: React.lazy(() => import("@/registry/default/ui/timeline.tsx")),
       source: "",
