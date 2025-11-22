@@ -1,17 +1,19 @@
 import { Demo } from "@/components/demo";
 import { Shell } from "@/components/shell";
-import BadgeOverflowDemo from "@/registry/default/examples/badge-overflow-demo";
-import BadgeOverflowInteractiveDemo from "@/registry/default/examples/badge-overflow-interactive-demo";
-import BadgeOverflowMultilineDemo from "@/registry/default/examples/badge-overflow-multiline-demo";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
+import TimelineAlternateDemo from "@/registry/default/examples/timeline-alternate-demo";
+import TimelineDemo from "@/registry/default/examples/timeline-demo";
+import TimelineHorizontalAlternateDemo from "@/registry/default/examples/timeline-horizontal-alternate-demo";
+import TimelineHorizontalDemo from "@/registry/default/examples/timeline-horizontal-demo";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
       <Demo>
-        <BadgeOverflowDemo />
-        <BadgeOverflowMultilineDemo />
-        <BadgeOverflowInteractiveDemo />
+        <TimelineDemo />
+        <TimelineHorizontalDemo />
+        <TimelineAlternateDemo />
+        <TimelineHorizontalAlternateDemo />
         <ColorPickerDemo />
       </Demo>
     </Shell>
