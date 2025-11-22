@@ -12,50 +12,31 @@ import {
 
 const timelineItems = [
   {
-    id: 1,
+    id: "company-founded",
     dateTime: "2020-06",
     date: "June 2020",
     title: "Company Founded",
-    description:
-      "Started with a small team of five passionate engineers in a garage.",
+    description: "Started with a team of five.",
   },
   {
-    id: 2,
+    id: "series-a-funding",
     dateTime: "2021-03",
     date: "March 2021",
     title: "Series A Funding",
-    description:
-      "Raised $10M to expand the team and accelerate product development.",
+    description: "Raised $10M seed funding.",
   },
   {
-    id: 3,
+    id: "product-launch",
     dateTime: "2022-01",
     date: "January 2022",
     title: "Product Launch",
-    description:
-      "Released our MVP to 1,000 beta testers with overwhelmingly positive feedback.",
-  },
-  {
-    id: 4,
-    dateTime: "2023-08",
-    date: "August 2023",
-    title: "100K Users",
-    description:
-      "Reached major milestone of 100,000 active users across 50 countries.",
-  },
-  {
-    id: 5,
-    dateTime: "2024-12",
-    date: "December 2024",
-    title: "Global Expansion",
-    description:
-      "Planning to expand operations to Asia-Pacific and European markets.",
+    description: "Released MVP to beta testers.",
   },
 ];
 
 export default function TimelineHorizontalAlternateDemo() {
   return (
-    <Timeline variant="alternate" orientation="horizontal" activeIndex={4}>
+    <Timeline variant="alternate" orientation="horizontal" activeIndex={1}>
       {timelineItems.map((item) => (
         <TimelineItem key={item.id}>
           <TimelineDot />

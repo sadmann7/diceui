@@ -25,13 +25,6 @@ const CONTENT_NAME = "TimelineContent";
 const useIsomorphicLayoutEffect =
   typeof window === "undefined" ? React.useEffect : React.useLayoutEffect;
 
-const DirectionContext = React.createContext<Direction | undefined>(undefined);
-
-function useDirection(dirProp?: Direction): Direction {
-  const contextDir = React.useContext(DirectionContext);
-  return dirProp ?? contextDir ?? "ltr";
-}
-
 function useLazyRef<T>(fn: () => T) {
   const ref = React.useRef<T | null>(null);
 
@@ -42,13 +35,22 @@ function useLazyRef<T>(fn: () => T) {
   return ref as React.RefObject<T>;
 }
 
-interface ItemState {
-  status: Status;
-  ref: React.RefObject<HTMLDivElement | null>;
+function getItemStatus(itemIndex: number, activeIndex?: number): Status {
+  if (activeIndex === undefined) return "pending";
+  if (itemIndex < activeIndex) return "completed";
+  if (itemIndex === activeIndex) return "active";
+  return "pending";
+}
+
+const DirectionContext = React.createContext<Direction | undefined>(undefined);
+
+function useDirection(dirProp?: Direction): Direction {
+  const contextDir = React.useContext(DirectionContext);
+  return dirProp ?? contextDir ?? "ltr";
 }
 
 interface StoreState {
-  items: Map<string, ItemState>;
+  items: Map<string, React.RefObject<ItemElement | null>>;
 }
 
 interface Store {
@@ -57,11 +59,10 @@ interface Store {
   notify: () => void;
   onItemRegister: (
     id: string,
-    status: Status,
     ref: React.RefObject<ItemElement | null>,
   ) => void;
   onItemUnregister: (id: string) => void;
-  getNextItemCompleted: (id: string) => boolean | undefined;
+  getNextItemStatus: (id: string, activeIndex?: number) => Status | undefined;
   getItemIndex: (id: string) => number;
 }
 
@@ -171,22 +172,21 @@ function TimelineRoot(props: TimelineRootProps) {
       },
       onItemRegister: (
         id: string,
-        status: Status,
         ref: React.RefObject<ItemElement | null>,
       ) => {
-        stateRef.current.items.set(id, { status, ref });
+        stateRef.current.items.set(id, ref);
         store.notify();
       },
       onItemUnregister: (id: string) => {
         stateRef.current.items.delete(id);
         store.notify();
       },
-      getNextItemCompleted: (id: string) => {
+      getNextItemStatus: (id: string, activeIndex?: number) => {
         const entries = Array.from(stateRef.current.items.entries());
 
         const sortedEntries = entries.sort((a, b) => {
-          const elementA = a[1].ref.current;
-          const elementB = b[1].ref.current;
+          const elementA = a[1].current;
+          const elementB = b[1].current;
           if (!elementA || !elementB) return 0;
           const position = elementA.compareDocumentPosition(elementB);
           if (position & Node.DOCUMENT_POSITION_FOLLOWING) {
@@ -202,15 +202,16 @@ function TimelineRoot(props: TimelineRootProps) {
         if (currentIndex === -1 || currentIndex === sortedEntries.length - 1) {
           return undefined;
         }
-        const nextEntry = sortedEntries[currentIndex + 1];
-        return nextEntry ? nextEntry[1].status === "completed" : undefined;
+
+        const nextItemIndex = currentIndex + 1;
+        return getItemStatus(nextItemIndex, activeIndex);
       },
       getItemIndex: (id: string) => {
         const entries = Array.from(stateRef.current.items.entries());
 
         const sortedEntries = entries.sort((a, b) => {
-          const elementA = a[1].ref.current;
-          const elementB = b[1].ref.current;
+          const elementA = a[1].current;
+          const elementB = b[1].current;
           if (!elementA || !elementB) return 0;
           const position = elementA.compareDocumentPosition(elementB);
           if (position & Node.DOCUMENT_POSITION_FOLLOWING) {
@@ -346,19 +347,15 @@ function TimelineItem(props: DivProps) {
   );
 
   const status = React.useMemo<Status>(() => {
-    if (activeIndex === undefined) return "pending";
-
-    if (itemIndex < activeIndex) return "completed";
-    if (itemIndex === activeIndex) return "active";
-    return "pending";
+    return getItemStatus(itemIndex, activeIndex);
   }, [activeIndex, itemIndex]);
 
   useIsomorphicLayoutEffect(() => {
-    store.onItemRegister(id, status, itemRef);
+    store.onItemRegister(id, itemRef);
     return () => {
       store.onItemUnregister(id);
     };
-  }, [id, status, store]);
+  }, [id, store]);
 
   const isAlternateRight = variant === "alternate" && itemIndex % 2 === 1;
 
@@ -544,26 +541,28 @@ interface TimelineConnectorProps extends DivProps {
 function TimelineConnector(props: TimelineConnectorProps) {
   const { asChild, forceMount, className, ...connectorProps } = props;
 
-  const { orientation, variant } = useTimelineContext(CONNECTOR_NAME);
+  const { orientation, variant, activeIndex } =
+    useTimelineContext(CONNECTOR_NAME);
   const store = useStoreContext(CONNECTOR_NAME);
   const { id, status, isAlternateRight } =
     useTimelineItemContext(CONNECTOR_NAME);
 
   const getSnapshot = React.useCallback(() => {
-    return store.getNextItemCompleted(id);
-  }, [id, store]);
+    return store.getNextItemStatus(id, activeIndex);
+  }, [id, activeIndex, store]);
 
-  const nextCompleted = React.useSyncExternalStore(
+  const nextItemStatus = React.useSyncExternalStore(
     store.subscribe,
     getSnapshot,
     getSnapshot,
   );
 
-  const isLastItem = nextCompleted === undefined;
+  const isLastItem = nextItemStatus === undefined;
 
   if (!forceMount && isLastItem) return null;
 
-  const isConnectorCompleted = status === "completed" && nextCompleted;
+  const isConnectorCompleted =
+    nextItemStatus === "completed" || nextItemStatus === "active";
 
   const ConnectorPrimitive = asChild ? Slot : "div";
 

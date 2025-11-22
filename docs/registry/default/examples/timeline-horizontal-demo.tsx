@@ -12,38 +12,31 @@ import {
 
 const timelineItems = [
   {
-    id: 1,
+    id: "research-and-planning",
     dateTime: "2024-01",
     date: "Jan - Mar",
     title: "Q1",
-    description: "Research and planning phase",
+    description: "Research and planning",
   },
   {
-    id: 2,
+    id: "development-sprint",
     dateTime: "2024-04",
     date: "Apr - Jun",
     title: "Q2",
-    description: "Development and testing",
+    description: "Development sprint",
   },
   {
-    id: 3,
+    id: "beta-launch",
     dateTime: "2024-07",
     date: "Jul - Sep",
     title: "Q3",
-    description: "Beta release",
-  },
-  {
-    id: 4,
-    dateTime: "2024-10",
-    date: "Oct - Dec",
-    title: "Q4",
-    description: "Public launch",
+    description: "Beta launch",
   },
 ];
 
 export default function TimelineHorizontalDemo() {
   return (
-    <Timeline orientation="horizontal" activeIndex={2}>
+    <Timeline orientation="horizontal" activeIndex={1}>
       {timelineItems.map((item) => (
         <TimelineItem key={item.id}>
           <TimelineDot />

@@ -12,39 +12,31 @@ import {
 
 const timelineItems = [
   {
-    id: 1,
+    id: "registration-opened",
     dateTime: "2024-01-01",
     date: "January 1, 2024",
     title: "Registration Opened",
-    description: "Online registration portal is now open for all participants.",
+    description: "Online registration portal opens.",
   },
   {
-    id: 2,
+    id: "early-bird-deadline",
     dateTime: "2024-02-15",
     date: "February 15, 2024",
     title: "Early Bird Deadline",
-    description: "Last day to register and receive early bird discount.",
+    description: "Last day for early bird pricing.",
   },
   {
-    id: 3,
+    id: "event-day",
     dateTime: "2024-03-01",
     date: "March 1, 2024",
-    title: "Regular Registration",
-    description: "Regular registration period with standard pricing.",
-  },
-  {
-    id: 4,
-    dateTime: "2024-04-01",
-    date: "April 1, 2024",
     title: "Event Day",
-    description:
-      "The main event begins at 9:00 AM. Check-in starts at 8:00 AM.",
+    description: "Main event begins at 9:00 AM.",
   },
 ];
 
 export default function TimelineRtlDemo() {
   return (
-    <Timeline dir="rtl" activeIndex={3}>
+    <Timeline dir="rtl" activeIndex={1}>
       {timelineItems.map((item) => (
         <TimelineItem key={item.id}>
           <TimelineDot />

@@ -12,39 +12,31 @@ import {
 
 const timelineItems = [
   {
-    id: 1,
+    id: "project-kickoff",
     dateTime: "2024-01-15",
     date: "January 15, 2024",
     title: "Project Kickoff",
-    description:
-      "Initial meeting with stakeholders to define project scope and requirements.",
+    description: "Initial meeting to define scope.",
   },
   {
-    id: 2,
+    id: "design-phase",
     dateTime: "2024-02-01",
     date: "February 1, 2024",
     title: "Design Phase",
-    description: "Created wireframes and mockups for the user interface.",
+    description: "Created wireframes and mockups.",
   },
   {
-    id: 3,
+    id: "development",
     dateTime: "2024-03-01",
     date: "March 1, 2024",
     title: "Development",
-    description: "Building the application with React and TypeScript.",
-  },
-  {
-    id: 4,
-    dateTime: "2024-04-01",
-    date: "April 1, 2024",
-    title: "Launch",
-    description: "Deploy to production and announce to users.",
+    description: "Building core features.",
   },
 ];
 
 export default function TimelineDemo() {
   return (
-    <Timeline activeIndex={2}>
+    <Timeline activeIndex={1}>
       {timelineItems.map((item) => (
         <TimelineItem key={item.id}>
           <TimelineDot />
