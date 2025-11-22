@@ -152,7 +152,7 @@ const timelineVariants = cva("relative flex list-none", {
     {
       orientation: "horizontal",
       variant: "alternate",
-      class: "items-center gap-6",
+      class: "items-center gap-4",
     },
   ],
   defaultVariants: {
@@ -306,13 +306,13 @@ const timelineItemVariants = cva("relative flex", {
       orientation: "vertical",
       variant: "alternate",
       isAlternateRight: false,
-      class: "w-1/2 gap-3 pr-8 pb-12 last:pb-0",
+      class: "w-1/2 gap-3 pr-6 pb-12 last:pb-0",
     },
     {
       orientation: "vertical",
       variant: "alternate",
       isAlternateRight: true,
-      class: "ml-auto w-1/2 flex-row-reverse gap-3 pb-12 pl-8 last:pb-0",
+      class: "ml-auto w-1/2 flex-row-reverse gap-3 pb-12 pl-6 last:pb-0",
     },
     {
       orientation: "horizontal",
@@ -413,13 +413,13 @@ const timelineContentVariants = cva("flex-1 pt-0.5", {
       variant: "alternate",
       orientation: "horizontal",
       isAlternateRight: false,
-      class: "row-start-3 pt-3",
+      class: "row-start-3 pt-2",
     },
     {
       variant: "alternate",
       orientation: "horizontal",
       isAlternateRight: true,
-      class: "row-start-1 pb-3",
+      class: "row-start-1 pb-2",
     },
   ],
   defaultVariants: {
@@ -455,7 +455,7 @@ function TimelineContent(props: DivProps) {
 }
 
 const timelineDotVariants = cva(
-  "relative z-10 flex size-3 shrink-0 items-center justify-center rounded-full border-2",
+  "relative z-10 flex size-3.5 shrink-0 items-center justify-center rounded-full border-2",
   {
     variants: {
       status: {
@@ -481,13 +481,13 @@ const timelineDotVariants = cva(
         variant: "alternate",
         orientation: "vertical",
         isAlternateRight: false,
-        class: "-right-[6px] absolute bg-background",
+        class: "absolute right-0 translate-x-1/2 bg-background",
       },
       {
         variant: "alternate",
         orientation: "vertical",
         isAlternateRight: true,
-        class: "-left-[6px] absolute bg-background",
+        class: "-translate-x-1/2 absolute left-0 bg-background",
       },
       {
         variant: "alternate",
