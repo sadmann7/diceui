@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 
 type Direction = "ltr" | "rtl";
 type Orientation = "vertical" | "horizontal";
+type Variant = "default" | "alternate";
 
 interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
@@ -75,7 +76,7 @@ function useStoreContext(consumerName: string) {
 interface TimelineContextValue {
   dir: Direction;
   orientation: Orientation;
-  variant: "default" | "alternate";
+  variant: Variant;
 }
 
 const TimelineContext = React.createContext<TimelineContextValue | null>(null);
@@ -130,7 +131,7 @@ const timelineVariants = cva("relative flex list-none", {
 interface TimelineRootProps extends React.ComponentProps<"ol"> {
   dir?: Direction;
   orientation?: Orientation;
-  variant?: "default" | "alternate";
+  variant?: Variant;
   asChild?: boolean;
 }
 
