@@ -43,7 +43,7 @@ const timelineItems = [
 
 export default function TimelineHorizontalDemo() {
   return (
-    <Timeline orientation="horizontal" activeStep={2}>
+    <Timeline orientation="horizontal" activeIndex={2}>
       {timelineItems.map((item) => (
         <TimelineItem key={item.id}>
           <TimelineDot />

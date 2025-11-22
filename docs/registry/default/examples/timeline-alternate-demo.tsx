@@ -51,7 +51,7 @@ const timelineItems = [
 
 export default function TimelineAlternateDemo() {
   return (
-    <Timeline variant="alternate" activeStep={3}>
+    <Timeline variant="alternate" activeIndex={3}>
       {timelineItems.map((item) => (
         <TimelineItem key={item.id}>
           <TimelineDot />

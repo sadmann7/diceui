@@ -44,7 +44,7 @@ const timelineItems = [
 
 export default function TimelineRtlDemo() {
   return (
-    <Timeline dir="rtl" activeStep={3}>
+    <Timeline dir="rtl" activeIndex={3}>
       {timelineItems.map((item) => (
         <TimelineItem key={item.id}>
           <TimelineDot />

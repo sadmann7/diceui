@@ -44,7 +44,7 @@ const timelineItems = [
 
 export default function TimelineDemo() {
   return (
-    <Timeline activeStep={2}>
+    <Timeline activeIndex={2}>
       {timelineItems.map((item) => (
         <TimelineItem key={item.id}>
           <TimelineDot />

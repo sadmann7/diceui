@@ -79,7 +79,7 @@ interface TimelineContextValue {
   dir: Direction;
   orientation: Orientation;
   variant: Variant;
-  activeStep?: number;
+  activeIndex?: number;
 }
 
 const TimelineContext = React.createContext<TimelineContextValue | null>(null);
@@ -135,7 +135,7 @@ interface TimelineRootProps extends React.ComponentProps<"div"> {
   dir?: Direction;
   orientation?: Orientation;
   variant?: Variant;
-  activeStep?: number;
+  activeIndex?: number;
   asChild?: boolean;
 }
 
@@ -144,7 +144,7 @@ function TimelineRoot(props: TimelineRootProps) {
     orientation = "vertical",
     variant = "default",
     dir: dirProp,
-    activeStep,
+    activeIndex,
     asChild,
     className,
     ...rootProps
@@ -232,9 +232,9 @@ function TimelineRoot(props: TimelineRootProps) {
       dir,
       orientation,
       variant,
-      activeStep,
+      activeIndex,
     }),
-    [dir, orientation, variant, activeStep],
+    [dir, orientation, variant, activeIndex],
   );
 
   const RootPrimitive = asChild ? Slot : "div";
@@ -328,7 +328,7 @@ const timelineItemVariants = cva("relative flex", {
 function TimelineItem(props: DivProps) {
   const { asChild, className, ...itemProps } = props;
 
-  const { dir, orientation, variant, activeStep } =
+  const { dir, orientation, variant, activeIndex } =
     useTimelineContext(ITEM_NAME);
   const store = useStoreContext(ITEM_NAME);
 
@@ -346,12 +346,12 @@ function TimelineItem(props: DivProps) {
   );
 
   const status = React.useMemo<Status>(() => {
-    if (activeStep === undefined) return "pending";
+    if (activeIndex === undefined) return "pending";
 
-    if (itemIndex < activeStep) return "completed";
-    if (itemIndex === activeStep) return "active";
+    if (itemIndex < activeIndex) return "completed";
+    if (itemIndex === activeIndex) return "active";
     return "pending";
-  }, [activeStep, itemIndex]);
+  }, [activeIndex, itemIndex]);
 
   useIsomorphicLayoutEffect(() => {
     store.onItemRegister(id, status, itemRef);
@@ -572,6 +572,7 @@ function TimelineConnector(props: TimelineConnectorProps) {
       aria-hidden="true"
       data-slot="timeline-connector"
       data-completed={isConnectorCompleted ? "" : undefined}
+      data-status={status}
       data-orientation={orientation}
       {...connectorProps}
       className={cn(

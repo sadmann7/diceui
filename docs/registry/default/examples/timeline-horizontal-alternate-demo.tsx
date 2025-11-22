@@ -55,7 +55,7 @@ const timelineItems = [
 
 export default function TimelineHorizontalAlternateDemo() {
   return (
-    <Timeline variant="alternate" orientation="horizontal" activeStep={4}>
+    <Timeline variant="alternate" orientation="horizontal" activeIndex={4}>
       {timelineItems.map((item) => (
         <TimelineItem key={item.id}>
           <TimelineDot />

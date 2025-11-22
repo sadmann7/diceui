@@ -45,46 +45,10 @@ import * as Timeline from "@/components/ui/timeline";
     <Timeline.Connector />
     <Timeline.Content>
       <Timeline.Header>
-        <Timeline.Title>Event Title</Timeline.Title>
-        <Timeline.Time>Date</Timeline.Time>
+        <Timeline.Title />
+        <Timeline.Time />
       </Timeline.Header>
-      <Timeline.Description>Event description</Timeline.Description>
-    </Timeline.Content>
-  </Timeline.Item>
-</Timeline.Root>
-```
-
-## Usage
-
-### Basic Timeline
-
-A simple vertical timeline showing chronological events.
-
-```tsx
-<Timeline.Root>
-  <Timeline.Item completed>
-    <Timeline.Dot />
-    <Timeline.Connector />
-    <Timeline.Content>
-      <Timeline.Header>
-        <Timeline.Title>Project Kickoff</Timeline.Title>
-        <Timeline.Time dateTime="2024-01-15">January 15, 2024</Timeline.Time>
-      </Timeline.Header>
-      <Timeline.Description>
-        Initial meeting with stakeholders to define project scope.
-      </Timeline.Description>
-    </Timeline.Content>
-  </Timeline.Item>
-  <Timeline.Item>
-    <Timeline.Dot />
-    <Timeline.Content>
-      <Timeline.Header>
-        <Timeline.Title>Development</Timeline.Title>
-        <Timeline.Time dateTime="2024-03-01">March 1, 2024</Timeline.Time>
-      </Timeline.Header>
-      <Timeline.Description>
-        Building the application with React and TypeScript.
-      </Timeline.Description>
+      <Timeline.Description />
     </Timeline.Content>
   </Timeline.Item>
 </Timeline.Root>
@@ -127,6 +91,19 @@ The root container for timeline items.
   name="RootProps"
 />
 
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-orientation]",
+      value: ["vertical", "horizontal"],
+    },
+    {
+      title: "[data-variant]",
+      value: ["default", "alternate"],
+    },
+  ]}
+/>
+
 ### Item
 
 A single timeline item containing content, marker, and connector.
@@ -134,6 +111,23 @@ A single timeline item containing content, marker, and connector.
 <AutoTypeTable
   path="./types/docs/timeline.ts"
   name="ItemProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-status]",
+      value: ["completed", "active", "pending"],
+    },
+    {
+      title: "[data-orientation]",
+      value: ["vertical", "horizontal"],
+    },
+    {
+      title: "[data-alternate-right]",
+      value: ["Present when item is on the right/bottom in alternate variant"],
+    },
+  ]}
 />
 
 ### Dot
@@ -145,6 +139,19 @@ The visual marker/dot for a timeline item.
   name="DotProps"
 />
 
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-status]",
+      value: ["completed", "active", "pending"],
+    },
+    {
+      title: "[data-orientation]",
+      value: ["vertical", "horizontal"],
+    },
+  ]}
+/>
+
 ### Connector
 
 The line connecting timeline items.
@@ -152,6 +159,23 @@ The line connecting timeline items.
 <AutoTypeTable
   path="./types/docs/timeline.ts"
   name="ConnectorProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-completed]",
+      value: ["Present when connector represents a completed transition"],
+    },
+    {
+      title: "[data-status]",
+      value: ["completed", "active", "pending"],
+    },
+    {
+      title: "[data-orientation]",
+      value: ["vertical", "horizontal"],
+    },
+  ]}
 />
 
 ### Header
@@ -190,6 +214,15 @@ Container for the timeline item's content (header, description, etc.).
   name="ContentProps"
 />
 
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-status]",
+      value: ["completed", "active", "pending"],
+    },
+  ]}
+/>
+
 ### Time
 
 A semantic time element for displaying dates/times.
@@ -222,18 +255,20 @@ The timeline supports an alternate variant where content alternates on both side
 
 The timeline fully supports right-to-left (RTL) layouts through the `dir` prop. When set to `"rtl"`, the timeline automatically flips its layout direction, making it ideal for RTL languages like Arabic, Hebrew, and Persian.
 
-### Completed States
+### Active Index
 
-Control the visual state of individual timeline items using the `completed` prop. Completed items will be styled with the primary color to show progress.
+Control the visual state of timeline items using the `activeIndex` prop on the root component. Items before the active index will be marked as "completed", the item at the active index will be "active", and items after will be "pending".
 
 ```tsx
-<Timeline.Root>
-  <Timeline.Item completed>Step 1 - Completed</Timeline.Item>
-  <Timeline.Item completed>Step 2 - Completed</Timeline.Item>
-  <Timeline.Item>Step 3 - Current/Pending</Timeline.Item>
-  <Timeline.Item>Step 4 - Not started</Timeline.Item>
+<Timeline.Root activeIndex={2}>
+  <Timeline.Item>Step 1 - Completed</Timeline.Item>
+  <Timeline.Item>Step 2 - Completed</Timeline.Item>
+  <Timeline.Item>Step 3 - Active (index 2)</Timeline.Item>
+  <Timeline.Item>Step 4 - Pending</Timeline.Item>
 </Timeline.Root>
 ```
+
+The `activeIndex` is zero-based, so `activeIndex={2}` makes the third item active.
 
 ### Custom Icons
 
@@ -245,21 +280,12 @@ Built with a composable API that gives you complete control over the structure a
 
 ## Accessibility
 
-### Keyboard Support
+### ARIA Roles
 
-The timeline is built with semantic HTML (`<ol>`, `<li>`, `<time>`) and supports standard keyboard navigation patterns.
+The timeline uses ARIA roles and attributes for proper accessibility:
 
-### Semantic HTML
-
-- Uses `<ol>` for the timeline root to represent ordered list of events
-- Uses `<li>` for each timeline item
-- Uses `<time>` with `dateTime` attribute for proper date representation
+- Root uses `role="list"` and `aria-orientation` to represent an ordered list of events
+- Each item uses `role="listitem"` for proper list semantics
+- Active items use `aria-current="step"` to indicate current position in the timeline
+- Semantic `<time>` elements with `dateTime` attribute for proper date representation
 - Connectors are marked with `aria-hidden="true"` as they're purely decorative
-
-## Notes
-
-- The `Connector` component automatically hides on the last timeline item using CSS
-- All components support the `asChild` prop for composition with other components
-- The timeline adapts to your theme colors automatically through CSS variables
-- The `dir` prop supports both `"ltr"` (default) and `"rtl"` for proper directional layout
-
