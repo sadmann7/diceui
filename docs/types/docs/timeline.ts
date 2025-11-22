@@ -8,12 +8,17 @@ import type {
 export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The orientation of the timeline.
+   *
    * @default "vertical"
    */
   orientation?: Orientation;
 
   /**
    * The visual variant of the timeline.
+   *
+   * - "default": The timeline items are displayed in a vertical stack.
+   * - "alternate": The timeline items are displayed in a horizontal stack with alternating content on both sides.
+   *
    * @default "default"
    */
   variant?: "default" | "alternate";
@@ -21,6 +26,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The reading direction of the timeline.
    * This affects the layout direction and works with RTL languages.
+   *
    * @default "ltr"
    */
   dir?: Direction;
@@ -29,6 +35,12 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * The zero-based index of the active item in the timeline.
    * When set, items before this index will be marked as "completed",
    * the item at this index will be "active", and items after will be "pending".
+   *
+   * ```ts
+   * // Mark up to 2 items as "completed", and the item at index 2 as "active".
+   * activeIndex={2}
+   * ```
+   *
    */
   activeIndex?: number;
 }
@@ -46,6 +58,10 @@ export interface ContentProps extends EmptyProps<"div">, CompositionProps {}
 export interface TimeProps extends EmptyProps<"time">, CompositionProps {
   /**
    * The datetime attribute for the time element.
+   *
+   * ```ts
+   * dateTime="2025-11-22"
+   * ```
    */
   dateTime?: string;
 }
@@ -54,7 +70,9 @@ export interface DotProps extends EmptyProps<"div">, CompositionProps {}
 
 export interface ConnectorProps extends EmptyProps<"div">, CompositionProps {
   /**
-   * Force the connector to be rendered even if it's the last item.
+   * When `true`, forces the connector to be rendered even if it's the last item.
+   * Useful for controlling animations with external animation libraries.
+   *
    * @default false
    */
   forceMount?: boolean;

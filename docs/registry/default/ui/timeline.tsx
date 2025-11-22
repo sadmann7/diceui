@@ -132,12 +132,11 @@ const timelineVariants = cva("relative flex list-none", {
   },
 });
 
-interface TimelineRootProps extends React.ComponentProps<"div"> {
+interface TimelineRootProps extends DivProps {
   dir?: Direction;
   orientation?: Orientation;
   variant?: Variant;
   activeIndex?: number;
-  asChild?: boolean;
 }
 
 function TimelineRoot(props: TimelineRootProps) {
@@ -391,6 +390,73 @@ function TimelineItem(props: DivProps) {
   );
 }
 
+const timelineContentVariants = cva("flex-1 pt-0.5", {
+  variants: {
+    orientation: {
+      vertical: "",
+      horizontal: "",
+    },
+    variant: {
+      default: "",
+      alternate: "",
+    },
+    isAlternateRight: {
+      true: "",
+      false: "",
+    },
+  },
+  compoundVariants: [
+    {
+      variant: "alternate",
+      orientation: "vertical",
+      isAlternateRight: false,
+      class: "text-right",
+    },
+    {
+      variant: "alternate",
+      orientation: "horizontal",
+      isAlternateRight: false,
+      class: "row-start-3 pt-3",
+    },
+    {
+      variant: "alternate",
+      orientation: "horizontal",
+      isAlternateRight: true,
+      class: "row-start-1 pb-3",
+    },
+  ],
+  defaultVariants: {
+    orientation: "vertical",
+    variant: "default",
+    isAlternateRight: false,
+  },
+});
+
+function TimelineContent(props: DivProps) {
+  const { asChild, className, ...contentProps } = props;
+
+  const { variant, orientation } = useTimelineContext(CONTENT_NAME);
+  const { status, isAlternateRight } = useTimelineItemContext(CONTENT_NAME);
+
+  const ContentPrimitive = asChild ? Slot : "div";
+
+  return (
+    <ContentPrimitive
+      data-slot="timeline-content"
+      data-status={status}
+      {...contentProps}
+      className={cn(
+        timelineContentVariants({
+          orientation,
+          variant,
+          isAlternateRight,
+          className,
+        }),
+      )}
+    />
+  );
+}
+
 const timelineDotVariants = cva(
   "relative z-10 flex size-3 shrink-0 items-center justify-center rounded-full border-2",
   {
@@ -629,73 +695,6 @@ function TimelineDescription(props: DivProps) {
   );
 }
 
-const timelineContentVariants = cva("flex-1 pt-0.5", {
-  variants: {
-    orientation: {
-      vertical: "",
-      horizontal: "",
-    },
-    variant: {
-      default: "",
-      alternate: "",
-    },
-    isAlternateRight: {
-      true: "",
-      false: "",
-    },
-  },
-  compoundVariants: [
-    {
-      variant: "alternate",
-      orientation: "vertical",
-      isAlternateRight: false,
-      class: "text-right",
-    },
-    {
-      variant: "alternate",
-      orientation: "horizontal",
-      isAlternateRight: false,
-      class: "row-start-3 pt-3",
-    },
-    {
-      variant: "alternate",
-      orientation: "horizontal",
-      isAlternateRight: true,
-      class: "row-start-1 pb-3",
-    },
-  ],
-  defaultVariants: {
-    orientation: "vertical",
-    variant: "default",
-    isAlternateRight: false,
-  },
-});
-
-function TimelineContent(props: DivProps) {
-  const { asChild, className, ...contentProps } = props;
-
-  const { variant, orientation } = useTimelineContext(CONTENT_NAME);
-  const { status, isAlternateRight } = useTimelineItemContext(CONTENT_NAME);
-
-  const ContentPrimitive = asChild ? Slot : "div";
-
-  return (
-    <ContentPrimitive
-      data-slot="timeline-content"
-      data-status={status}
-      {...contentProps}
-      className={cn(
-        timelineContentVariants({
-          orientation,
-          variant,
-          isAlternateRight,
-          className,
-        }),
-      )}
-    />
-  );
-}
-
 interface TimelineTimeProps extends React.ComponentProps<"time"> {
   asChild?: boolean;
 }
@@ -719,19 +718,19 @@ export {
   TimelineItem as Item,
   TimelineDot as Dot,
   TimelineConnector as Connector,
+  TimelineContent as Content,
   TimelineHeader as Header,
   TimelineTitle as Title,
   TimelineDescription as Description,
-  TimelineContent as Content,
   TimelineTime as Time,
   //
   TimelineRoot as Timeline,
   TimelineItem,
   TimelineDot,
   TimelineConnector,
+  TimelineContent,
   TimelineHeader,
   TimelineTitle,
   TimelineDescription,
-  TimelineContent,
   TimelineTime,
 };

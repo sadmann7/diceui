@@ -203,7 +203,7 @@ export interface ContentProps extends EmptyProps<"div">, CompositionProps {
   value: string;
 
   /**
-   * Used to force mounting of content when not active.
+   * When `true`, forces the content to be rendered even if it's not active.
    * Useful for controlling animations with external animation libraries.
    *
    * @default false
