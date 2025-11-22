@@ -104,6 +104,18 @@ Display timeline with right-to-left layout for RTL languages.
 
 <ComponentTabs name="timeline-rtl-demo" />
 
+### Alternate Timeline
+
+Display timeline events in an alternating pattern with content on both sides.
+
+<ComponentTabs name="timeline-alternate-demo" />
+
+### Horizontal Alternate Timeline
+
+Display timeline events horizontally with content alternating above and below.
+
+<ComponentTabs name="timeline-horizontal-alternate-demo" />
+
 ## API Reference
 
 ### Root
@@ -192,6 +204,19 @@ A semantic time element for displaying dates/times.
 ### Flexible Orientations
 
 The timeline supports both vertical and horizontal orientations. Use the `orientation` prop on `Timeline.Root` to switch between layouts.
+
+### Alternate Variant
+
+The timeline supports an alternate variant where content alternates on both sides of the timeline. Use the `variant="alternate"` prop on `Timeline.Root` to enable this layout. This works with both vertical and horizontal orientations:
+
+- **Vertical alternate**: Content alternates left and right of the center line
+- **Horizontal alternate**: Content alternates above and below the center line
+
+```tsx
+<Timeline.Root variant="alternate" orientation="horizontal">
+  {/* Content alternates above and below */}
+</Timeline.Root>
+```
 
 ### RTL Support
 

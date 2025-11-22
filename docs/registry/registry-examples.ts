@@ -1641,4 +1641,26 @@ export const examples: Registry["items"] = [
       },
     ],
   },
+  {
+    name: "timeline-alternate-demo",
+    type: "registry:example",
+    registryDependencies: ["timeline"],
+    files: [
+      {
+        path: "examples/timeline-alternate-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "timeline-horizontal-alternate-demo",
+    type: "registry:example",
+    registryDependencies: ["timeline"],
+    files: [
+      {
+        path: "examples/timeline-horizontal-alternate-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
 ];

@@ -2487,6 +2487,34 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "timeline-alternate-demo": {
+      name: "timeline-alternate-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["timeline"],
+      files: [{
+        path: "registry/default/examples/timeline-alternate-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/timeline-alternate-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "timeline-horizontal-alternate-demo": {
+      name: "timeline-horizontal-alternate-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["timeline"],
+      files: [{
+        path: "registry/default/examples/timeline-horizontal-alternate-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/timeline-horizontal-alternate-demo.tsx")),
+      source: "",
+      chunks: []
+    },
     "client-only": {
       name: "client-only",
       description: "",

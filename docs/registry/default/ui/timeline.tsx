@@ -218,6 +218,9 @@ function TimelineRoot(props: TimelineRootProps) {
             variant === "alternate" &&
               orientation === "vertical" &&
               "relative w-full gap-0",
+            variant === "alternate" &&
+              orientation === "horizontal" &&
+              "items-center gap-x-8 gap-y-0",
             className,
           )}
         />
@@ -310,7 +313,7 @@ function TimelineItem(props: TimelineItemProps) {
             "ml-auto w-1/2 flex-row-reverse gap-3 pb-12 pl-8 last:pb-0",
           orientation === "horizontal" &&
             variant === "alternate" &&
-            "flex-col gap-3",
+            "grid min-w-0 grid-rows-[1fr_auto_1fr] gap-3",
           className,
         )}
       />
@@ -350,9 +353,9 @@ function TimelineDot(props: TimelineDotProps) {
           isAlternateRight &&
           "-left-[6px] absolute bg-background",
         variant === "alternate" &&
-          orientation === "vertical" &&
-          completed &&
-          "bg-background",
+          orientation === "horizontal" &&
+          "row-start-2 bg-background",
+        variant === "alternate" && completed && "bg-background",
         className,
       )}
     />
@@ -414,6 +417,9 @@ function TimelineConnector(props: TimelineConnectorProps) {
           variant === "alternate" &&
           isAlternateRight &&
           "-left-px top-2 h-full w-[2px]",
+        orientation === "horizontal" &&
+          variant === "alternate" &&
+          "top-[5px] left-3 row-start-2 h-[2px] w-[calc(100%+0.5rem)]",
         className,
       )}
     />
@@ -496,6 +502,14 @@ function TimelineContent(props: TimelineContentProps) {
           orientation === "vertical" &&
           !isAlternateRight &&
           "text-right",
+        variant === "alternate" &&
+          orientation === "horizontal" &&
+          !isAlternateRight &&
+          "row-start-3 pt-3",
+        variant === "alternate" &&
+          orientation === "horizontal" &&
+          isAlternateRight &&
+          "row-start-1 pb-3",
         className,
       )}
     />
