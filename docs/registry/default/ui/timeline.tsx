@@ -3,6 +3,7 @@
 import { Slot } from "@radix-ui/react-slot";
 import { cva } from "class-variance-authority";
 import * as React from "react";
+import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 
 type Direction = "ltr" | "rtl";
@@ -40,6 +41,34 @@ function getItemStatus(itemIndex: number, activeIndex?: number): Status {
   if (itemIndex < activeIndex) return "completed";
   if (itemIndex === activeIndex) return "active";
   return "pending";
+}
+
+function getSortedEntries(
+  entries: [string, React.RefObject<ItemElement | null>][],
+) {
+  return entries.sort((a, b) => {
+    const elementA = a[1].current;
+    const elementB = b[1].current;
+    if (!elementA || !elementB) return 0;
+    const position = elementA.compareDocumentPosition(elementB);
+    if (position & Node.DOCUMENT_POSITION_FOLLOWING) return -1;
+    if (position & Node.DOCUMENT_POSITION_PRECEDING) return 1;
+    return 0;
+  });
+}
+
+function useStore<T>(selector: (store: Store) => T): T {
+  const store = React.useContext(StoreContext);
+  if (!store) {
+    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
+  }
+
+  const getSnapshot = React.useCallback(
+    () => selector(store),
+    [store, selector],
+  );
+
+  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
 
 const DirectionContext = React.createContext<Direction | undefined>(undefined);
@@ -182,20 +211,7 @@ function TimelineRoot(props: TimelineRootProps) {
       },
       getNextItemStatus: (id: string, activeIndex?: number) => {
         const entries = Array.from(stateRef.current.items.entries());
-
-        const sortedEntries = entries.sort((a, b) => {
-          const elementA = a[1].current;
-          const elementB = b[1].current;
-          if (!elementA || !elementB) return 0;
-          const position = elementA.compareDocumentPosition(elementB);
-          if (position & Node.DOCUMENT_POSITION_FOLLOWING) {
-            return -1;
-          }
-          if (position & Node.DOCUMENT_POSITION_PRECEDING) {
-            return 1;
-          }
-          return 0;
-        });
+        const sortedEntries = getSortedEntries(entries);
 
         const currentIndex = sortedEntries.findIndex(([key]) => key === id);
         if (currentIndex === -1 || currentIndex === sortedEntries.length - 1) {
@@ -207,21 +223,7 @@ function TimelineRoot(props: TimelineRootProps) {
       },
       getItemIndex: (id: string) => {
         const entries = Array.from(stateRef.current.items.entries());
-
-        const sortedEntries = entries.sort((a, b) => {
-          const elementA = a[1].current;
-          const elementB = b[1].current;
-          if (!elementA || !elementB) return 0;
-          const position = elementA.compareDocumentPosition(elementB);
-          if (position & Node.DOCUMENT_POSITION_FOLLOWING) {
-            return -1;
-          }
-          if (position & Node.DOCUMENT_POSITION_PRECEDING) {
-            return 1;
-          }
-          return 0;
-        });
-
+        const sortedEntries = getSortedEntries(entries);
         return sortedEntries.findIndex(([key]) => key === id);
       },
     };
@@ -326,41 +328,35 @@ const timelineItemVariants = cva("relative flex", {
 });
 
 function TimelineItem(props: DivProps) {
-  const { asChild, className, ...itemProps } = props;
+  const { asChild, className, id, ref, ...itemProps } = props;
 
   const { dir, orientation, variant, activeIndex } =
     useTimelineContext(ITEM_NAME);
   const store = useStoreContext(ITEM_NAME);
 
-  const id = React.useId();
+  const instanceId = React.useId();
+  const itemId = id ?? instanceId;
   const itemRef = React.useRef<ItemElement | null>(null);
+  const composedRef = useComposedRefs(ref, itemRef);
 
-  const getSnapshot = React.useCallback(() => {
-    return store.getItemIndex(id);
-  }, [id, store]);
-
-  const itemIndex = React.useSyncExternalStore(
-    store.subscribe,
-    getSnapshot,
-    getSnapshot,
-  );
+  const itemIndex = useStore((state) => state.getItemIndex(itemId));
 
   const status = React.useMemo<Status>(() => {
     return getItemStatus(itemIndex, activeIndex);
   }, [activeIndex, itemIndex]);
 
   useIsomorphicLayoutEffect(() => {
-    store.onItemRegister(id, itemRef);
+    store.onItemRegister(itemId, itemRef);
     return () => {
-      store.onItemUnregister(id);
+      store.onItemUnregister(itemId);
     };
   }, [id, store]);
 
   const isAlternateRight = variant === "alternate" && itemIndex % 2 === 1;
 
   const itemContextValue = React.useMemo<TimelineItemContextValue>(
-    () => ({ id, status, isAlternateRight }),
-    [id, status, isAlternateRight],
+    () => ({ id: itemId, status, isAlternateRight }),
+    [itemId, status, isAlternateRight],
   );
 
   const ItemPrimitive = asChild ? Slot : "div";
@@ -374,9 +370,10 @@ function TimelineItem(props: DivProps) {
         data-status={status}
         data-orientation={orientation}
         data-alternate-right={isAlternateRight ? "" : undefined}
+        id={itemId}
         dir={dir}
         {...itemProps}
-        ref={itemRef}
+        ref={composedRef}
         className={cn(
           timelineItemVariants({
             orientation,
@@ -609,18 +606,11 @@ function TimelineConnector(props: TimelineConnectorProps) {
 
   const { orientation, variant, activeIndex } =
     useTimelineContext(CONNECTOR_NAME);
-  const store = useStoreContext(CONNECTOR_NAME);
   const { id, status, isAlternateRight } =
     useTimelineItemContext(CONNECTOR_NAME);
 
-  const getSnapshot = React.useCallback(() => {
-    return store.getNextItemStatus(id, activeIndex);
-  }, [id, activeIndex, store]);
-
-  const nextItemStatus = React.useSyncExternalStore(
-    store.subscribe,
-    getSnapshot,
-    getSnapshot,
+  const nextItemStatus = useStore((state) =>
+    state.getNextItemStatus(id, activeIndex),
   );
 
   const isLastItem = nextItemStatus === undefined;

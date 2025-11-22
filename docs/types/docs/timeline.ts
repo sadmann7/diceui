@@ -16,8 +16,8 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The visual variant of the timeline.
    *
-   * - "default": The timeline items are displayed in a vertical stack.
-   * - "alternate": The timeline items are displayed in a horizontal stack with alternating content on both sides.
+   * - "default": The timeline items are displayed in a single line/stack.
+   * - "alternate": The timeline items alternate on both sides of the timeline (left/right for vertical, above/below for horizontal).
    *
    * @default "default"
    */
@@ -49,9 +49,9 @@ export interface ItemProps extends EmptyProps<"div">, CompositionProps {}
 
 export interface HeaderProps extends EmptyProps<"div">, CompositionProps {}
 
-export interface TitleProps extends EmptyProps<"h3">, CompositionProps {}
+export interface TitleProps extends EmptyProps<"div">, CompositionProps {}
 
-export interface DescriptionProps extends EmptyProps<"p">, CompositionProps {}
+export interface DescriptionProps extends EmptyProps<"div">, CompositionProps {}
 
 export interface ContentProps extends EmptyProps<"div">, CompositionProps {}
 
