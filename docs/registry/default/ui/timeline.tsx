@@ -122,44 +122,47 @@ function useTimelineContext(consumerName: string) {
   return context;
 }
 
-const timelineVariants = cva("relative flex list-none", {
-  variants: {
-    orientation: {
-      vertical: "flex-col",
-      horizontal: "flex-row items-start",
+const timelineVariants = cva(
+  "relative flex [--timeline-connector-thickness:0.125rem] [--timeline-dot-size:0.875rem]",
+  {
+    variants: {
+      orientation: {
+        vertical: "flex-col",
+        horizontal: "flex-row items-start",
+      },
+      variant: {
+        default: "",
+        alternate: "",
+      },
     },
-    variant: {
-      default: "",
-      alternate: "",
-    },
-  },
-  compoundVariants: [
-    {
+    compoundVariants: [
+      {
+        orientation: "vertical",
+        variant: "default",
+        class: "gap-6",
+      },
+      {
+        orientation: "horizontal",
+        variant: "default",
+        class: "gap-8",
+      },
+      {
+        orientation: "vertical",
+        variant: "alternate",
+        class: "relative w-full gap-3",
+      },
+      {
+        orientation: "horizontal",
+        variant: "alternate",
+        class: "items-center gap-4",
+      },
+    ],
+    defaultVariants: {
       orientation: "vertical",
       variant: "default",
-      class: "gap-6",
     },
-    {
-      orientation: "horizontal",
-      variant: "default",
-      class: "gap-8",
-    },
-    {
-      orientation: "vertical",
-      variant: "alternate",
-      class: "relative w-full gap-3",
-    },
-    {
-      orientation: "horizontal",
-      variant: "alternate",
-      class: "items-center gap-6",
-    },
-  ],
-  defaultVariants: {
-    orientation: "vertical",
-    variant: "default",
   },
-});
+);
 
 interface TimelineRootProps extends DivProps {
   dir?: Direction;
@@ -306,13 +309,13 @@ const timelineItemVariants = cva("relative flex", {
       orientation: "vertical",
       variant: "alternate",
       isAlternateRight: false,
-      class: "w-1/2 gap-3 pr-8 pb-12 last:pb-0",
+      class: "w-1/2 gap-3 pr-6 pb-12 last:pb-0",
     },
     {
       orientation: "vertical",
       variant: "alternate",
       isAlternateRight: true,
-      class: "ml-auto w-1/2 flex-row-reverse gap-3 pb-12 pl-8 last:pb-0",
+      class: "ml-auto w-1/2 flex-row-reverse gap-3 pb-12 pl-6 last:pb-0",
     },
     {
       orientation: "horizontal",
@@ -387,7 +390,7 @@ function TimelineItem(props: DivProps) {
   );
 }
 
-const timelineContentVariants = cva("flex-1 pt-0.5", {
+const timelineContentVariants = cva("flex-1", {
   variants: {
     orientation: {
       vertical: "",
@@ -413,13 +416,13 @@ const timelineContentVariants = cva("flex-1 pt-0.5", {
       variant: "alternate",
       orientation: "horizontal",
       isAlternateRight: false,
-      class: "row-start-3 pt-3",
+      class: "row-start-3 pt-2",
     },
     {
       variant: "alternate",
       orientation: "horizontal",
       isAlternateRight: true,
-      class: "row-start-1 pb-3",
+      class: "row-start-1 pb-2",
     },
   ],
   defaultVariants: {
@@ -455,13 +458,13 @@ function TimelineContent(props: DivProps) {
 }
 
 const timelineDotVariants = cva(
-  "relative z-10 flex size-3 shrink-0 items-center justify-center rounded-full border-2",
+  "relative z-10 flex size-[var(--timeline-dot-size)] shrink-0 items-center justify-center rounded-full border-2 bg-background",
   {
     variants: {
       status: {
-        completed: "border-primary bg-primary/10",
-        active: "border-primary bg-primary/10",
-        pending: "border-border bg-background",
+        completed: "border-primary",
+        active: "border-primary",
+        pending: "border-border",
       },
       orientation: {
         vertical: "",
@@ -481,13 +484,15 @@ const timelineDotVariants = cva(
         variant: "alternate",
         orientation: "vertical",
         isAlternateRight: false,
-        class: "-right-[6px] absolute bg-background",
+        class:
+          "-right-[calc(var(--timeline-dot-size)/2-var(--timeline-connector-thickness)/2)] absolute bg-background",
       },
       {
         variant: "alternate",
         orientation: "vertical",
         isAlternateRight: true,
-        class: "-left-[6px] absolute bg-background",
+        class:
+          "-left-[calc(var(--timeline-dot-size)/2-var(--timeline-connector-thickness)/2)] absolute bg-background",
       },
       {
         variant: "alternate",
@@ -544,7 +549,7 @@ function TimelineDot(props: DivProps) {
 const timelineConnectorVariants = cva("absolute z-0", {
   variants: {
     isCompleted: {
-      true: "bg-primary/30",
+      true: "bg-primary",
       false: "bg-border",
     },
     orientation: {
@@ -564,29 +569,34 @@ const timelineConnectorVariants = cva("absolute z-0", {
     {
       orientation: "vertical",
       variant: "default",
-      class: "start-[5px] top-3 h-[calc(100%+0.5rem)] w-[2px]",
+      class:
+        "start-[calc(var(--timeline-dot-size)/2-var(--timeline-connector-thickness)/2)] top-3 h-[calc(100%+0.5rem)] w-[var(--timeline-connector-thickness)]",
     },
     {
       orientation: "horizontal",
       variant: "default",
-      class: "start-3 top-[5px] h-[2px] w-[calc(100%+0.5rem)]",
+      class:
+        "start-3 top-[calc(var(--timeline-dot-size)/2-var(--timeline-connector-thickness)/2)] h-[var(--timeline-connector-thickness)] w-[calc(100%+0.5rem)]",
     },
     {
       orientation: "vertical",
       variant: "alternate",
       isAlternateRight: false,
-      class: "-right-px top-2 h-full w-[2px]",
+      class:
+        "-right-[calc(var(--timeline-connector-thickness)/2)] top-2 h-full w-[var(--timeline-connector-thickness)]",
     },
     {
       orientation: "vertical",
       variant: "alternate",
       isAlternateRight: true,
-      class: "-left-px top-2 h-full w-[2px]",
+      class:
+        "-left-[calc(var(--timeline-connector-thickness)/2)] top-2 h-full w-[var(--timeline-connector-thickness)]",
     },
     {
       orientation: "horizontal",
       variant: "alternate",
-      class: "top-[5px] left-3 row-start-2 h-[2px] w-[calc(100%+0.5rem)]",
+      class:
+        "top-[calc(var(--timeline-dot-size)/2-var(--timeline-connector-thickness)/2)] left-3 row-start-2 h-[var(--timeline-connector-thickness)] w-[calc(100%+0.5rem)]",
     },
   ],
   defaultVariants: {

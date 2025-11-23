@@ -1,3 +1,4 @@
+import { Code, Layers, Rocket } from "lucide-react";
 import {
   Timeline,
   TimelineConnector,
@@ -17,6 +18,7 @@ const timelineItems = [
     date: "January 15, 2025",
     title: "Project Kickoff",
     description: "Initial meeting to define scope.",
+    icon: Rocket,
   },
   {
     id: "design-phase",
@@ -24,6 +26,7 @@ const timelineItems = [
     date: "February 1, 2025",
     title: "Design Phase",
     description: "Created wireframes and mockups.",
+    icon: Layers,
   },
   {
     id: "development",
@@ -31,15 +34,18 @@ const timelineItems = [
     date: "March 1, 2025",
     title: "Development",
     description: "Building core features.",
+    icon: Code,
   },
 ];
 
-export default function TimelineDemo() {
+export default function TimelineCustomDotDemo() {
   return (
-    <Timeline activeIndex={1}>
+    <Timeline activeIndex={1} className="[--timeline-dot-size:2rem]">
       {timelineItems.map((item) => (
         <TimelineItem key={item.id}>
-          <TimelineDot />
+          <TimelineDot>
+            <item.icon className="size-3.5" />
+          </TimelineDot>
           <TimelineConnector />
           <TimelineContent>
             <TimelineHeader>

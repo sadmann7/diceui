@@ -85,6 +85,12 @@ Display timeline events horizontally with content alternating above and below.
 
 <ComponentTabs name="timeline-horizontal-alternate-demo" />
 
+### With Custom Dots
+
+Add custom icons or content to the timeline dots using CSS variables.
+
+<ComponentTabs name="timeline-custom-dot-demo" />
+
 ## API Reference
 
 ### Root
@@ -105,6 +111,21 @@ The root container for timeline items.
     {
       title: "[data-variant]",
       value: ["default", "alternate"],
+    },
+  ]}
+/>
+
+<CSSVariablesTable
+  data={[
+    {
+      title: "--timeline-dot-size",
+      description: "The size (width and height) of the timeline dot marker.",
+      defaultValue: "0.875rem (14px)",
+    },
+    {
+      title: "--timeline-connector-thickness",
+      description: "The thickness of the timeline connector line.",
+      defaultValue: "0.125rem (2px)",
     },
   ]}
 />
@@ -157,6 +178,16 @@ The visual marker/dot for a timeline item.
   ]}
 />
 
+<CSSVariablesTable
+  data={[
+    {
+      title: "--timeline-dot-size",
+      description: "The size (width and height) of the timeline dot marker.",
+      defaultValue: "0.875rem (14px)",
+    },
+  ]}
+/>
+
 ### Connector
 
 The line connecting timeline items.
@@ -179,6 +210,16 @@ The line connecting timeline items.
     {
       title: "[data-orientation]",
       value: ["vertical", "horizontal"],
+    },
+  ]}
+/>
+
+<CSSVariablesTable
+  data={[
+    {
+      title: "--timeline-connector-thickness",
+      description: "The thickness of the timeline connector line.",
+      defaultValue: "0.125rem (2px)",
     },
   ]}
 />
