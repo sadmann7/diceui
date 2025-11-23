@@ -2519,6 +2519,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "timeline-custom-dot-demo": {
+      name: "timeline-custom-dot-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["timeline"],
+      files: [{
+        path: "registry/default/examples/timeline-custom-dot-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/timeline-custom-dot-demo.tsx")),
+      source: "",
+      chunks: []
+    },
     "client-only": {
       name: "client-only",
       description: "",

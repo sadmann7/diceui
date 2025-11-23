@@ -1231,6 +1231,18 @@
       ]
     },
     {
+      "name": "timeline-custom-dot-demo",
+      "type": "registry:component",
+      "title": "Timeline Custom Dot Demo",
+      "description": "Example showing timeline with custom dot sizes and icons.",
+      "files": [
+        {
+          "path": "registry/default/examples/timeline-custom-dot-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
       "name": "fps-demo",
       "type": "registry:component",
       "title": "FPS Demo",

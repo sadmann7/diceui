@@ -85,6 +85,12 @@ Display timeline events horizontally with content alternating above and below.
 
 <ComponentTabs name="timeline-horizontal-alternate-demo" />
 
+### Custom Dot Size
+
+Customize the size of timeline dots using CSS variables. This is useful when you want to add icons or custom content inside the dots.
+
+<ComponentTabs name="timeline-custom-dot-demo" />
+
 ## API Reference
 
 ### Root
@@ -236,6 +242,41 @@ A semantic time element for displaying dates/times.
   path="./types/docs/timeline.ts"
   name="TimeProps"
 />
+
+## CSS Variables
+
+Customize the timeline appearance using CSS variables.
+
+<CSSVariablesTable
+  data={[
+    {
+      title: "--timeline-dot-size",
+      description: "The size (width and height) of the timeline dot marker.",
+      defaultValue: "0.875rem (14px)",
+    },
+    {
+      title: "--timeline-line-width",
+      description: "The width/thickness of the timeline connector line.",
+      defaultValue: "0.125rem (2px)",
+    },
+  ]}
+/>
+
+You can customize these variables at different levels:
+
+```tsx
+// Customize for all timeline items
+<Timeline className="[--timeline-dot-size:2rem]">
+  {/* All dots will be 2rem */}
+</Timeline>
+
+// Customize for a specific item
+<TimelineItem className="[--timeline-dot-size:2rem]">
+  <TimelineDot>
+    <CustomIcon />
+  </TimelineDot>
+</TimelineItem>
+```
 
 ## Features
 

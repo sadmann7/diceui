@@ -1663,4 +1663,16 @@ export const examples: Registry["items"] = [
       },
     ],
   },
+  {
+    name: "timeline-custom-dot-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["timeline"],
+    files: [
+      {
+        path: "examples/timeline-custom-dot-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
 ];
