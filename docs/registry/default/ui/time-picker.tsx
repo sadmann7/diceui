@@ -582,8 +582,24 @@ function TimePickerContent(props: TimePickerContentProps) {
       // Prevent default auto-focus behavior and focus the first selected item
       event.preventDefault();
       const columns = getColumns();
+      console.log(
+        "[TimePickerContent] onOpenAutoFocus - columns:",
+        columns.length,
+      );
+      columns.forEach((col, idx) => {
+        const selectedRef = col.getSelectedItemRef();
+        console.log(`[TimePickerContent] Column ${idx}:`, {
+          id: col.id,
+          hasRef: !!col.ref.current,
+          selectedItem: selectedRef?.current,
+        });
+      });
       const firstColumn = columns[0];
       const selectedItemRef = firstColumn?.getSelectedItemRef();
+      console.log(
+        "[TimePickerContent] Focusing first column selected item:",
+        selectedItemRef?.current,
+      );
       selectedItemRef?.current?.focus();
     },
     [onOpenAutoFocus, getColumns],
@@ -664,9 +680,15 @@ function TimePickerColumn(props: TimePickerColumnProps) {
       ref: React.RefObject<HTMLButtonElement | null>,
       selected: boolean,
     ) => {
+      console.log("[TimePickerColumn] Item registered:", {
+        columnId,
+        value,
+        selected,
+        hasRef: !!ref.current,
+      });
       itemsRef.current.set(value, { ref, selected });
     },
-    [],
+    [columnId],
   );
 
   const onItemUnregister = React.useCallback((value: number | string) => {
@@ -698,13 +720,27 @@ function TimePickerColumn(props: TimePickerColumnProps) {
 
   const getSelectedItemRef = React.useCallback(() => {
     const items = getItems();
-    return items.find((item) => item.selected)?.ref ?? null;
-  }, [getItems]);
+    const selected = items.find((item) => item.selected);
+    console.log("[TimePickerColumn] getSelectedItemRef:", {
+      columnId,
+      items: items.map((i) => ({
+        value: i.value,
+        selected: i.selected,
+        hasRef: !!i.ref.current,
+      })),
+      selectedItem: selected?.ref.current,
+    });
+    return selected?.ref ?? null;
+  }, [getItems, columnId]);
 
   useIsomorphicLayoutEffect(() => {
     if (groupContext) {
+      console.log("[TimePickerColumn] Registering column:", columnId);
       groupContext.onColumnRegister(columnId, columnRef, getSelectedItemRef);
-      return () => groupContext.onColumnUnregister(columnId);
+      return () => {
+        console.log("[TimePickerColumn] Unregistering column:", columnId);
+        groupContext.onColumnUnregister(columnId);
+      };
     }
   }, [groupContext, columnId, getSelectedItemRef]);
 
@@ -803,8 +839,17 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
       } else if (event.key === "Tab" && groupContext) {
         event.preventDefault();
         const columns = groupContext.getColumns();
+        console.log("[TimePickerColumnItem] Tab pressed:", {
+          value,
+          totalColumns: columns.length,
+          shiftKey: event.shiftKey,
+        });
         const currentColumnIndex = columns.findIndex(
           (col) => col.ref.current?.contains(itemRef.current) ?? false,
+        );
+        console.log(
+          "[TimePickerColumnItem] Current column index:",
+          currentColumnIndex,
         );
 
         if (currentColumnIndex === -1) return;
@@ -817,8 +862,16 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
             ? currentColumnIndex + 1
             : 0;
 
+        console.log(
+          "[TimePickerColumnItem] Next column index:",
+          nextColumnIndex,
+        );
         const nextColumn = columns[nextColumnIndex];
         const nextSelectedItemRef = nextColumn?.getSelectedItemRef();
+        console.log(
+          "[TimePickerColumnItem] Next selected item:",
+          nextSelectedItemRef?.current,
+        );
         nextSelectedItemRef?.current?.focus();
       }
     },
