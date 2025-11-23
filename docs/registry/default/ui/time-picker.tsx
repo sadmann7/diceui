@@ -1027,14 +1027,97 @@ function TimePickerSecond(props: TimePickerSecondProps) {
   );
 }
 
+interface TimePickerPeriodItemProps extends ButtonProps {
+  period: Period;
+  selected?: boolean;
+}
+
+function TimePickerPeriodItem(props: TimePickerPeriodItemProps) {
+  const { period, selected = false, className, ref, ...itemProps } = props;
+
+  const itemRef = React.useRef<HTMLButtonElement | null>(null);
+  const composedRef = useComposedRefs(ref, itemRef);
+  const groupContext = React.useContext(TimePickerGroupContext);
+
+  useIsomorphicLayoutEffect(() => {
+    if (selected && itemRef.current) {
+      itemRef.current.scrollIntoView({ block: "nearest" });
+    }
+  }, [selected]);
+
+  const onKeyDown = React.useCallback(
+    (event: React.KeyboardEvent<HTMLButtonElement>) => {
+      itemProps.onKeyDown?.(event);
+      if (event.defaultPrevented) return;
+
+      if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+        event.preventDefault();
+        // Toggle between AM and PM
+        const otherButton = itemRef.current?.parentElement?.querySelector(
+          `button:not([data-period="${period}"])`,
+        ) as HTMLButtonElement;
+        otherButton?.focus();
+        otherButton?.click();
+      } else if (event.key === "Tab" && groupContext) {
+        event.preventDefault();
+        const columns = groupContext.getColumns();
+        const currentColumnIndex = columns.findIndex(
+          (col) => col.ref.current?.contains(itemRef.current) ?? false,
+        );
+
+        if (currentColumnIndex === -1) return;
+
+        const nextColumnIndex = event.shiftKey
+          ? currentColumnIndex > 0
+            ? currentColumnIndex - 1
+            : columns.length - 1
+          : currentColumnIndex < columns.length - 1
+            ? currentColumnIndex + 1
+            : 0;
+
+        const nextColumn = columns[nextColumnIndex];
+        const nextSelectedItemRef = nextColumn?.getSelectedItemRef();
+        nextSelectedItemRef?.current?.focus();
+      }
+    },
+    [itemProps.onKeyDown, period, groupContext],
+  );
+
+  return (
+    <button
+      type="button"
+      {...itemProps}
+      ref={composedRef}
+      data-period={period}
+      data-selected={selected ? "" : undefined}
+      onKeyDown={onKeyDown}
+      className={cn(
+        "w-full rounded px-3 py-1.5 text-left text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:border-ring focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
+        selected &&
+          "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
+        className,
+      )}
+    >
+      {period}
+    </button>
+  );
+}
+
 function TimePickerPeriod(props: DivProps) {
-  const { asChild, className, ...periodProps } = props;
+  const { asChild, className, ref, ...periodProps } = props;
 
   const { use12Hours, showSeconds } = useTimePickerContext(PERIOD_NAME);
   const store = useStoreContext(PERIOD_NAME);
 
   const value = useStore((state) => state.value);
   const timeValue = parseTimeString(value, use12Hours);
+
+  const columnId = React.useId();
+  const columnRef = React.useRef<HTMLDivElement | null>(null);
+  const composedRef = useComposedRefs(ref, columnRef);
+  const groupContext = React.useContext(TimePickerGroupContext);
+
+  const selectedPeriodRef = React.useRef<HTMLButtonElement | null>(null);
 
   const onPeriodToggle = React.useCallback(
     (period: Period) => {
@@ -1051,31 +1134,45 @@ function TimePickerPeriod(props: DivProps) {
     [timeValue, showSeconds, use12Hours, store],
   );
 
+  const getSelectedItemRef = React.useCallback(() => {
+    if (!columnRef.current) return null;
+    const selectedButton = columnRef.current.querySelector(
+      'button[data-selected]',
+    ) as HTMLButtonElement;
+    if (selectedButton) {
+      selectedPeriodRef.current = selectedButton;
+      return selectedPeriodRef as React.RefObject<HTMLButtonElement>;
+    }
+    return null;
+  }, []);
+
+  useIsomorphicLayoutEffect(() => {
+    if (groupContext) {
+      groupContext.onColumnRegister(columnId, columnRef, getSelectedItemRef);
+      return () => groupContext.onColumnUnregister(columnId);
+    }
+  }, [groupContext, columnId, getSelectedItemRef]);
+
   if (!use12Hours) return null;
 
   const PeriodPrimitive = asChild ? Slot : "div";
 
   return (
     <PeriodPrimitive
+      ref={composedRef}
       data-slot="time-picker-period"
       {...periodProps}
-      className={cn("flex flex-col gap-1", className)}
+      className={cn("flex flex-col gap-1 p-1", className)}
     >
       {PERIODS.map((period) => {
         const isSelected = timeValue?.period === period;
         return (
-          <button
+          <TimePickerPeriodItem
             key={period}
-            type="button"
+            period={period}
+            selected={isSelected}
             onClick={() => onPeriodToggle(period)}
-            className={cn(
-              "w-full rounded px-3 py-1.5 text-left text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-              isSelected &&
-                "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
-            )}
-          >
-            {period}
-          </button>
+          />
         );
       })}
     </PeriodPrimitive>
