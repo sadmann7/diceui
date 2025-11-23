@@ -853,10 +853,16 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
         const nextItem = items[nextIndex];
         nextItem?.ref.current?.focus();
         nextItem?.ref.current?.click();
-      } else if (event.key === "Tab" && groupContext) {
+      } else if (
+        (event.key === "Tab" ||
+          event.key === "ArrowLeft" ||
+          event.key === "ArrowRight") &&
+        groupContext
+      ) {
         event.preventDefault();
         const columns = groupContext.getColumns();
-        console.log("[TimePickerColumnItem] Tab pressed:", {
+        console.log("[TimePickerColumnItem] Column navigation:", {
+          key: event.key,
           value,
           totalColumns: columns.length,
           shiftKey: event.shiftKey,
@@ -871,7 +877,11 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
 
         if (currentColumnIndex === -1) return;
 
-        const nextColumnIndex = event.shiftKey
+        // Determine direction: left/shift+tab = previous, right/tab = next
+        const goToPrevious =
+          event.key === "ArrowLeft" || (event.key === "Tab" && event.shiftKey);
+
+        const nextColumnIndex = goToPrevious
           ? currentColumnIndex > 0
             ? currentColumnIndex - 1
             : columns.length - 1
