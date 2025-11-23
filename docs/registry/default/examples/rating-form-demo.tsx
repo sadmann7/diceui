@@ -18,21 +18,23 @@ import {
 } from "@/components/ui/form";
 import { Rating, RatingItem } from "@/registry/default/ui/rating";
 
-const FormSchema = z.object({
+const formSchema = z.object({
   rating: z.number().min(1, {
     message: "Please provide a rating.",
   }),
 });
 
+type FormSchema = z.infer<typeof formSchema>;
+
 export default function RatingFormDemo() {
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const form = useForm<FormSchema>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       rating: 0,
     },
   });
 
-  const onSubmit = React.useCallback((data: z.infer<typeof FormSchema>) => {
+  const onSubmit = React.useCallback((data: FormSchema) => {
     toast.success(`You rated: ${data.rating} stars`);
   }, []);
 
@@ -49,7 +51,6 @@ export default function RatingFormDemo() {
                 <Rating
                   value={field.value}
                   onValueChange={field.onChange}
-                  name={field.name}
                   step={0.5}
                 >
                   {Array.from({ length: 5 }, (_, i) => (

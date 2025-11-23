@@ -1,34 +1,35 @@
 "use client";
 
-import * as React from "react";
-import * as TimePicker from "@/registry/default/ui/time-picker";
+import {
+  TimePicker,
+  TimePickerContent,
+  TimePickerHour,
+  TimePickerInput,
+  TimePickerInputGroup,
+  TimePickerLabel,
+  TimePickerMinute,
+  TimePickerSecond,
+  TimePickerSeparator,
+  TimePickerTrigger,
+} from "@/registry/default/ui/time-picker";
 
 export default function TimePickerSecondsDemo() {
-  const [value, setValue] = React.useState("14:30:45");
-
   return (
-    <TimePicker.Root
-      className="w-[280px] space-y-2"
-      showSeconds
-      value={value}
-      onValueChange={setValue}
-    >
-      <TimePicker.Label>Select Time with Seconds</TimePicker.Label>
-      <TimePicker.InputGroup>
-        <TimePicker.Input segment="hour" />
-        <TimePicker.Separator />
-        <TimePicker.Input segment="minute" />
-        <TimePicker.Separator />
-        <TimePicker.Input segment="second" />
-        <TimePicker.Trigger />
-      </TimePicker.InputGroup>
-      <TimePicker.Content>
-        <div className="flex gap-2">
-          <TimePicker.Hour />
-          <TimePicker.Minute />
-          <TimePicker.Second />
-        </div>
-      </TimePicker.Content>
-    </TimePicker.Root>
+    <TimePicker defaultValue="14:30:45" className="w-[280px]" showSeconds>
+      <TimePickerLabel>Select Time with Seconds</TimePickerLabel>
+      <TimePickerInputGroup>
+        <TimePickerInput segment="hour" />
+        <TimePickerSeparator />
+        <TimePickerInput segment="minute" />
+        <TimePickerSeparator />
+        <TimePickerInput segment="second" />
+        <TimePickerTrigger />
+      </TimePickerInputGroup>
+      <TimePickerContent>
+        <TimePickerHour />
+        <TimePickerMinute />
+        <TimePickerSecond />
+      </TimePickerContent>
+    </TimePicker>
   );
 }

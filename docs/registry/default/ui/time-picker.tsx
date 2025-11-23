@@ -581,7 +581,6 @@ function TimePickerContent(props: TimePickerContentProps) {
       onOpenAutoFocusProp?.(event);
       if (event.defaultPrevented) return;
 
-      // Prevent default auto-focus behavior and focus the first selected item
       event.preventDefault();
       const columns = getColumns();
       const firstColumn = columns[0];
@@ -601,7 +600,7 @@ function TimePickerContent(props: TimePickerContentProps) {
         onOpenAutoFocus={onOpenAutoFocus}
         {...contentProps}
         className={cn(
-          "w-auto max-w-(--radix-popover-trigger-width) p-0",
+          "flex w-auto max-w-(--radix-popover-trigger-width) p-0",
           className,
         )}
       >
@@ -707,7 +706,7 @@ function TimePickerColumn(props: TimePickerColumnProps) {
         selected,
       }))
       .filter((item) => item.ref.current);
-    
+
     const selected = items.find((item) => item.selected);
     return selected?.ref ?? null;
   }, []);
