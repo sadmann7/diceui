@@ -136,45 +136,6 @@ interface Store {
   notify: () => void;
 }
 
-function createStore(
-  listenersRef: React.RefObject<Set<() => void>>,
-  stateRef: React.RefObject<StoreState>,
-  propsRef: React.RefObject<{
-    onValueChange?: (value: string) => void;
-    onOpenChange?: (open: boolean) => void;
-  }>,
-): Store {
-  const store: Store = {
-    subscribe: (cb) => {
-      listenersRef.current?.add(cb);
-      return () => listenersRef.current?.delete(cb);
-    },
-    getState: () => stateRef.current,
-    setState: (key, value) => {
-      if (!stateRef.current || Object.is(stateRef.current[key], value)) return;
-
-      if (key === "value" && typeof value === "string") {
-        stateRef.current.value = value;
-        propsRef.current.onValueChange?.(value);
-      } else if (key === "open" && typeof value === "boolean") {
-        stateRef.current.open = value;
-        propsRef.current.onOpenChange?.(value);
-      } else {
-        stateRef.current[key] = value;
-      }
-
-      store.notify();
-    },
-    notify: () => {
-      for (const cb of listenersRef.current ?? []) {
-        cb();
-      }
-    },
-  };
-
-  return store;
-}
-
 const StoreContext = React.createContext<Store | null>(null);
 
 function useStoreContext(consumerName: string) {
@@ -227,10 +188,12 @@ function useTimePickerContext(consumerName: string) {
   return context;
 }
 
-export interface TimePickerRootProps extends DivProps {
+interface TimePickerRootProps extends DivProps {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
+  open?: boolean;
+  defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   name?: string;
   disabled?: boolean;
@@ -250,27 +213,54 @@ export interface TimePickerRootProps extends DivProps {
 function TimePickerRoot(props: TimePickerRootProps) {
   const {
     value,
-    defaultValue = "",
+    defaultValue,
     onValueChange,
+    open,
+    defaultOpen,
     onOpenChange,
     ...rootProps
   } = props;
 
-  const stateRef = useLazyRef<StoreState>(() => ({
-    value: value ?? defaultValue,
-    open: false,
-  }));
   const listenersRef = useLazyRef(() => new Set<() => void>());
+  const stateRef = useLazyRef<StoreState>(() => ({
+    value: value ?? defaultValue ?? "",
+    open: open ?? defaultOpen ?? false,
+  }));
   const propsRef = useAsRef({ onValueChange, onOpenChange });
 
-  const store = React.useMemo(
-    () => createStore(listenersRef, stateRef, propsRef),
-    [listenersRef, stateRef, propsRef],
-  );
+  const store: Store = React.useMemo(() => {
+    return {
+      subscribe: (cb) => {
+        listenersRef.current.add(cb);
+        return () => listenersRef.current.delete(cb);
+      },
+      getState: () => stateRef.current,
+      setState: (key, value) => {
+        if (Object.is(stateRef.current[key], value)) return;
+
+        if (key === "value" && typeof value === "string") {
+          stateRef.current.value = value;
+          propsRef.current.onValueChange?.(value);
+        } else if (key === "open" && typeof value === "boolean") {
+          stateRef.current.open = value;
+          propsRef.current.onOpenChange?.(value);
+        } else {
+          stateRef.current[key] = value;
+        }
+
+        store.notify();
+      },
+      notify: () => {
+        for (const cb of listenersRef.current) {
+          cb();
+        }
+      },
+    };
+  }, [listenersRef, stateRef, propsRef]);
 
   return (
     <StoreContext.Provider value={store}>
-      <TimePickerRootImpl {...rootProps} value={value} />
+      <TimePickerRootImpl {...rootProps} value={value} open={open} />
     </StoreContext.Provider>
   );
 }
@@ -278,13 +268,14 @@ function TimePickerRoot(props: TimePickerRootProps) {
 interface TimePickerRootImplProps
   extends Omit<
     TimePickerRootProps,
-    "defaultValue" | "onValueChange" | "onOpenChange"
+    "defaultValue" | "defaultOpen" | "onValueChange" | "onOpenChange"
   > {}
 
 function TimePickerRootImpl(props: TimePickerRootImplProps) {
   const {
-    id: idProp,
     value,
+    open: openProp,
+    id: idProp,
     name,
     disabled = false,
     readOnly = false,
@@ -313,6 +304,12 @@ function TimePickerRootImpl(props: TimePickerRootImplProps) {
     }
   }, [value]);
 
+  useIsomorphicLayoutEffect(() => {
+    if (openProp !== undefined) {
+      store.setState("open", openProp);
+    }
+  }, [openProp]);
+
   const instanceId = React.useId();
   const rootId = idProp ?? instanceId;
   const inputGroupId = React.useId();
@@ -326,7 +323,14 @@ function TimePickerRootImpl(props: TimePickerRootImplProps) {
 
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
-  const rootContext: TimePickerContextValue = React.useMemo(
+  const open = useStore((state) => state.open);
+
+  const onPopoverOpenChange = React.useCallback(
+    (newOpen: boolean) => store.setState("open", newOpen),
+    [store],
+  );
+
+  const rootContext = React.useMemo<TimePickerContextValue>(
     () => ({
       id: rootId,
       inputGroupId,
@@ -365,17 +369,12 @@ function TimePickerRootImpl(props: TimePickerRootImplProps) {
     ],
   );
 
-  const open = useStore((state) => state.open);
-
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
     <>
       <TimePickerContext.Provider value={rootContext}>
-        <Popover
-          open={open}
-          onOpenChange={(newOpen: boolean) => store.setState("open", newOpen)}
-        >
+        <Popover open={open} onOpenChange={onPopoverOpenChange}>
           <RootPrimitive
             data-slot="time-picker"
             data-disabled={disabled ? "" : undefined}
@@ -427,9 +426,7 @@ function TimePickerLabel(props: TimePickerLabelProps) {
   );
 }
 
-interface TimePickerInputGroupProps extends DivProps {}
-
-function TimePickerInputGroup(props: TimePickerInputGroupProps) {
+function TimePickerInputGroup(props: DivProps) {
   const { asChild, className, ...groupProps } = props;
 
   const { inputGroupId, labelId, disabled, invalid } =
@@ -459,9 +456,7 @@ function TimePickerInputGroup(props: TimePickerInputGroupProps) {
   );
 }
 
-interface TimePickerTriggerProps extends ButtonProps {}
-
-function TimePickerTrigger(props: TimePickerTriggerProps) {
+function TimePickerTrigger(props: ButtonProps) {
   const {
     className,
     children,
@@ -510,7 +505,10 @@ function TimePickerContent(props: TimePickerContentProps) {
       align={align}
       sideOffset={sideOffset}
       {...contentProps}
-      className={cn("w-auto max-w-(--radix-popover-trigger-width)", className)}
+      className={cn(
+        "w-auto max-w-(--radix-popover-trigger-width) p-0",
+        className,
+      )}
     />
   );
 }
@@ -518,7 +516,7 @@ function TimePickerContent(props: TimePickerContentProps) {
 interface TimePickerColumnContextValue {
   activeIndex: number | null;
   setActiveIndex: (index: number | null) => void;
-  items: Array<{
+  getItems: () => Array<{
     value: number;
     ref: React.RefObject<ColumnItemElement | null>;
   }>;
@@ -561,26 +559,45 @@ function TimePickerColumn(props: TimePickerColumnProps) {
     itemsRef.current.delete(value);
   }, []);
 
-  const contextValue = React.useMemo<TimePickerColumnContextValue>(
+  const getItems = React.useCallback(() => {
+    return Array.from(itemsRef.current.entries())
+      .map(([value, ref]) => ({
+        value,
+        ref,
+      }))
+      .filter((item) => item.ref.current)
+      .sort((a, b) => {
+        const elementA = a.ref.current;
+        const elementB = b.ref.current;
+        if (!elementA || !elementB) return 0;
+        const position = elementA.compareDocumentPosition(elementB);
+        if (position & Node.DOCUMENT_POSITION_FOLLOWING) {
+          return -1;
+        }
+        if (position & Node.DOCUMENT_POSITION_PRECEDING) {
+          return 1;
+        }
+        return 0;
+      });
+  }, []);
+
+  const columnContextValue = React.useMemo<TimePickerColumnContextValue>(
     () => ({
       activeIndex,
       setActiveIndex,
-      items: Array.from(itemsRef.current.entries()).map(([value, ref]) => ({
-        value,
-        ref,
-      })),
+      getItems,
       onItemRegister,
       onItemUnregister,
     }),
-    [activeIndex, onItemRegister, onItemUnregister],
+    [activeIndex, getItems, onItemRegister, onItemUnregister],
   );
 
   return (
-    <TimePickerColumnContext.Provider value={contextValue}>
+    <TimePickerColumnContext.Provider value={columnContextValue}>
       <div
         data-slot="time-picker-column"
-        className={cn("flex flex-col gap-1", className)}
         {...columnProps}
+        className={cn("flex flex-col gap-1 not-last:border-r p-1", className)}
       >
         {children}
       </div>
@@ -636,9 +653,9 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
 
       if (event.key === "ArrowUp" || event.key === "ArrowDown") {
         event.preventDefault();
-        const items = Array.from(columnContext.items).sort(
-          (a, b) => a.value - b.value,
-        );
+        const items = columnContext
+          .getItems()
+          .sort((a, b) => a.value - b.value);
         const currentIndex = items.findIndex((item) => item.value === value);
 
         let nextIndex: number;
@@ -653,7 +670,7 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
         nextItem?.ref.current?.click();
       }
     },
-    [itemProps.onKeyDown, columnContext.items, value],
+    [itemProps.onKeyDown, columnContext.getItems, value],
   );
 
   const formattedValue =
@@ -691,12 +708,18 @@ function TimePickerHour(props: TimePickerHourProps) {
   const value = useStore((state) => state.value);
   const timeValue = parseTimeString(value, use12Hours);
 
-  const maxHour = use12Hours ? 12 : 23;
   const hours = Array.from(
-    { length: Math.ceil((maxHour + 1) / hourStep) },
+    {
+      length: use12Hours ? Math.ceil(12 / hourStep) : Math.ceil(24 / hourStep),
+    },
     (_, i) => {
-      const hour = i * hourStep;
-      return use12Hours ? (hour === 0 ? 12 : hour) : hour;
+      if (use12Hours) {
+        // Generate hours 1-12 for 12-hour format
+        const hour = (i * hourStep) % 12;
+        return hour === 0 ? 12 : hour;
+      }
+      // Generate hours 0-23 for 24-hour format
+      return i * hourStep;
     },
   );
 
@@ -845,10 +868,9 @@ function TimePickerSecond(props: TimePickerSecondProps) {
   );
 }
 
-interface TimePickerPeriodProps extends DivProps {}
-
-function TimePickerPeriod(props: TimePickerPeriodProps) {
+function TimePickerPeriod(props: DivProps) {
   const { asChild, className, ...periodProps } = props;
+
   const { use12Hours, showSeconds } = useTimePickerContext(PERIOD_NAME);
   const store = useStoreContext(PERIOD_NAME);
 
@@ -878,7 +900,7 @@ function TimePickerPeriod(props: TimePickerPeriodProps) {
     <PeriodPrimitive
       data-slot="time-picker-period"
       {...periodProps}
-      className={cn("flex flex-col gap-1", className)}
+      className={cn("flex flex-col gap-1 p-1", className)}
     >
       <div className="mb-1 font-medium text-muted-foreground text-xs">
         Period

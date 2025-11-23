@@ -11,6 +11,7 @@ export default function TimePickerDemo() {
       className="w-[280px] space-y-2"
       value={value}
       onValueChange={setValue}
+      use12Hours={true}
     >
       <TimePicker.Label>Select Time</TimePicker.Label>
       <TimePicker.InputGroup>
@@ -22,9 +23,11 @@ export default function TimePickerDemo() {
         <TimePicker.Trigger />
       </TimePicker.InputGroup>
       <TimePicker.Content>
-        <div className="flex gap-2">
+        <div className="flex">
           <TimePicker.Hour />
           <TimePicker.Minute />
+          <TimePicker.Second />
+          <TimePicker.Period />
         </div>
       </TimePicker.Content>
     </TimePicker.Root>
