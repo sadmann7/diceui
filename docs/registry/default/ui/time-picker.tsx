@@ -495,8 +495,25 @@ function TimePickerContent(props: TimePickerContentProps) {
     align = "start",
     sideOffset = 4,
     className,
+    onOpenAutoFocus,
     ...contentProps
   } = props;
+
+  const handleOpenAutoFocus = React.useCallback(
+    (event: Event) => {
+      onOpenAutoFocus?.(event);
+      if (event.defaultPrevented) return;
+
+      // Prevent default auto-focus behavior and focus the first selected item
+      event.preventDefault();
+      const content = event.currentTarget as HTMLElement;
+      const selectedItem = content.querySelector(
+        '[data-slot="time-picker-column"] button[data-selected]',
+      ) as HTMLElement;
+      selectedItem?.focus();
+    },
+    [onOpenAutoFocus],
+  );
 
   return (
     <PopoverContent
@@ -504,6 +521,7 @@ function TimePickerContent(props: TimePickerContentProps) {
       side={side}
       align={align}
       sideOffset={sideOffset}
+      onOpenAutoFocus={handleOpenAutoFocus}
       {...contentProps}
       className={cn(
         "w-auto max-w-(--radix-popover-trigger-width) p-0",
@@ -624,8 +642,6 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
   const itemRef = React.useRef<ColumnItemElement | null>(null);
   const composedRef = useComposedRefs(ref, itemRef);
   const columnContext = useTimePickerColumnContext(COLUMN_ITEM_NAME);
-  const open = useStore((state) => state.open);
-  const prevOpenRef = React.useRef(open);
 
   useIsomorphicLayoutEffect(() => {
     columnContext.onItemRegister(value, itemRef);
@@ -635,13 +651,8 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
   useIsomorphicLayoutEffect(() => {
     if (selected && itemRef.current) {
       itemRef.current.scrollIntoView({ block: "nearest" });
-      // Auto-focus the selected item when the popover opens
-      if (open && !prevOpenRef.current) {
-        queueMicrotask(() => itemRef.current?.focus());
-      }
     }
-    prevOpenRef.current = open;
-  }, [selected, open]);
+  }, [selected]);
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<ColumnItemElement>) => {
@@ -688,6 +699,7 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
       type="button"
       {...itemProps}
       ref={composedRef}
+      data-selected={selected ? "" : undefined}
       className={cn(
         "w-full rounded px-3 py-1.5 text-left text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:border-ring focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
         selected &&
