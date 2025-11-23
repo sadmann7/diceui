@@ -1,6 +1,6 @@
 ---
 title: Time Picker
-description: An accessible time picker component for selecting hours, minutes, and seconds with support for 12-hour and 24-hour formats.
+description: An accessible time picker component with inline editing and dropdown selection, supporting 12-hour and 24-hour formats. Works like the native HTML time input.
 preview: true
 links:
   api: /docs/components/time-picker#api-reference
@@ -45,22 +45,31 @@ npx shadcn@latest add "https://diceui.com/r/time-picker"
 
 ## Layout
 
-Import the parts, and compose them together.
+Import the parts, and compose them together. Like the native HTML time picker, the inputs are always visible and the trigger opens a dropdown for easier selection.
 
 ```tsx
+import { Clock } from "lucide-react";
 import * as TimePicker from "@/components/ui/time-picker";
 
 return (
   <TimePicker.Root>
     <TimePicker.Label />
-    <TimePicker.Trigger />
+    {/* Inline inputs - always visible, like native time picker */}
+    <div className="relative flex items-center">
+      <div className="flex h-10 w-full items-center gap-1 rounded-md border border-input bg-background px-3 py-2 pr-10">
+        <TimePicker.Input segment="hour" />
+        <TimePicker.Separator />
+        <TimePicker.Input segment="minute" />
+      </div>
+      {/* Trigger opens the dropdown */}
+      <TimePicker.Trigger className="absolute right-0 flex h-full items-center px-3 hover:bg-accent">
+        <Clock className="size-4" />
+      </TimePicker.Trigger>
+    </div>
+    {/* Dropdown content */}
     <TimePicker.Content>
       <TimePicker.Hour />
-      <TimePicker.Separator />
       <TimePicker.Minute />
-      <TimePicker.Separator />
-      <TimePicker.Second />
-      <TimePicker.Period />
       <TimePicker.Clear />
     </TimePicker.Content>
   </TimePicker.Root>
@@ -98,6 +107,7 @@ Use the time picker in a form with validation.
 Set custom intervals for minute selection.
 
 <ComponentTabs name="time-picker-step-demo" className="items-start justify-start [&>div]:pt-20" />
+
 
 ## API Reference
 
@@ -246,6 +256,15 @@ Button to clear the selected time.
   name="ClearProps"
 />
 
+### Input
+
+Inline editable input field for time segments (hour, minute, second, period).
+
+<AutoTypeTable
+  path="./types/docs/time-picker.ts"
+  name="InputProps"
+/>
+
 ## Accessibility
 
 ### Keyboard Interactions
@@ -258,11 +277,11 @@ Button to clear the selected time.
     },
     {
       keys: ["Enter"],
-      description: "Opens/closes the time picker when trigger is focused",
+      description: "Opens/closes the time picker when trigger is focused. Confirms input editing.",
     },
     {
       keys: ["Escape"],
-      description: "Closes the time picker",
+      description: "Closes the time picker or cancels input editing",
     },
     {
       keys: ["Tab"],
@@ -272,14 +291,30 @@ Button to clear the selected time.
       keys: ["Shift", "Tab"],
       description: "Moves focus to the previous focusable element",
     },
+    {
+      keys: ["ArrowUp"],
+      description: "When in dropdown: Navigate to previous option. When in input: Increment value.",
+    },
+    {
+      keys: ["ArrowDown"],
+      description: "When in dropdown: Navigate to next option. When in input: Decrement value.",
+    },
+    {
+      keys: ["A/P"],
+      description: "When focused on period input: Toggle between AM/PM",
+    },
   ]}
 />
 
 ## Notes
 
+- **Native-like behavior**: Works like the HTML time input - click segments to select and edit, use arrow keys to adjust
+- **Inline editing**: All time segments are always visible and editable, no need to open the dropdown
+- **Dropdown for convenience**: The clock icon trigger opens a dropdown for easier selection
 - The time value is formatted as "HH:mm" or "HH:mm:ss" in 24-hour format internally
 - When using `use12Hours`, the value is still stored in 24-hour format for consistency
 - The `minuteStep`, `hourStep`, and `secondStep` props allow customization of selection intervals
 - Use the `min` and `max` props to restrict the selectable time range
 - The component automatically handles conversion between 12-hour and 24-hour formats
+- **Period editing**: When focused on the period (AM/PM), just press 'a' or 'p' to change it
 

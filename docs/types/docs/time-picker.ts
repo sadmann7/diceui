@@ -28,6 +28,11 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   onValueChange?: (value: string) => void;
 
   /**
+   * Callback fired when the open state changes.
+   */
+  onOpenChange?: (open: boolean) => void;
+
+  /**
    * The name of the time picker for form submission.
    */
   name?: string;
@@ -161,3 +166,11 @@ export interface PeriodProps extends EmptyProps<"div">, CompositionProps {}
 export interface SeparatorProps extends EmptyProps<"span">, CompositionProps {}
 
 export interface ClearProps extends EmptyProps<"button">, CompositionProps {}
+
+export interface InputProps extends EmptyProps<"input">, CompositionProps {
+  /**
+   * The time segment to edit.
+   * @required
+   */
+  segment?: "hour" | "minute" | "second" | "period";
+}

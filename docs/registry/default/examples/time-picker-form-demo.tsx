@@ -25,7 +25,12 @@ export default function TimePickerFormDemo() {
         defaultValue="09:00"
       >
         <TimePicker.Label>Appointment Time</TimePicker.Label>
-        <TimePicker.Trigger />
+        <TimePicker.InputGroup>
+          <TimePicker.Input segment="hour" />
+          <TimePicker.Separator />
+          <TimePicker.Input segment="minute" />
+          <TimePicker.Trigger />
+        </TimePicker.InputGroup>
         <TimePicker.Content>
           <div className="flex flex-col gap-3">
             <div className="flex gap-2">
