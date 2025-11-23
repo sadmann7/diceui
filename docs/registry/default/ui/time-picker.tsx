@@ -682,7 +682,7 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
       {...itemProps}
       ref={composedRef}
       className={cn(
-        "w-full rounded px-3 py-1.5 text-left text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+        "w-full rounded px-3 py-1.5 text-left text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:border-ring focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
         selected &&
           "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
         className,
@@ -700,7 +700,7 @@ interface TimePickerHourProps extends DivProps {
 }
 
 function TimePickerHour(props: TimePickerHourProps) {
-  const { asChild, format = "numeric", ...hourProps } = props;
+  const { asChild, format = "numeric", className, ...hourProps } = props;
 
   const { use12Hours, hourStep, showSeconds } = useTimePickerContext(HOUR_NAME);
   const store = useStoreContext(HOUR_NAME);
@@ -741,19 +741,23 @@ function TimePickerHour(props: TimePickerHourProps) {
   const HourPrimitive = asChild ? Slot : TimePickerColumn;
 
   return (
-    <HourPrimitive data-slot="time-picker-hour" {...hourProps}>
-      <div className="mb-1 font-medium text-muted-foreground text-xs">Hour</div>
-      <div className="flex max-h-[200px] flex-col gap-1 overflow-y-auto">
-        {hours.map((hour) => (
-          <TimePickerColumnItem
-            key={hour}
-            value={hour}
-            selected={timeValue?.hour === hour}
-            format={format}
-            onClick={() => onHourSelect(hour)}
-          />
-        ))}
-      </div>
+    <HourPrimitive
+      data-slot="time-picker-hour"
+      {...hourProps}
+      className={cn(
+        "scrollbar-none flex max-h-[200px] flex-col gap-1 overflow-y-auto p-1",
+        className,
+      )}
+    >
+      {hours.map((hour) => (
+        <TimePickerColumnItem
+          key={hour}
+          value={hour}
+          selected={timeValue?.hour === hour}
+          format={format}
+          onClick={() => onHourSelect(hour)}
+        />
+      ))}
     </HourPrimitive>
   );
 }
@@ -763,7 +767,7 @@ interface TimePickerMinuteProps extends DivProps {
 }
 
 function TimePickerMinute(props: TimePickerMinuteProps) {
-  const { asChild, format = "2-digit", ...minuteProps } = props;
+  const { asChild, format = "2-digit", className, ...minuteProps } = props;
 
   const { use12Hours, minuteStep, showSeconds } =
     useTimePickerContext(MINUTE_NAME);
@@ -795,21 +799,23 @@ function TimePickerMinute(props: TimePickerMinuteProps) {
   const MinutePrimitive = asChild ? Slot : TimePickerColumn;
 
   return (
-    <MinutePrimitive data-slot="time-picker-minute" {...minuteProps}>
-      <div className="mb-1 font-medium text-muted-foreground text-xs">
-        Minute
-      </div>
-      <div className="flex max-h-[200px] flex-col gap-1 overflow-y-auto">
-        {minutes.map((minute) => (
-          <TimePickerColumnItem
-            key={minute}
-            value={minute}
-            selected={timeValue?.minute === minute}
-            format={format}
-            onClick={() => onMinuteSelect(minute)}
-          />
-        ))}
-      </div>
+    <MinutePrimitive
+      data-slot="time-picker-minute"
+      {...minuteProps}
+      className={cn(
+        "scrollbar-none flex max-h-[200px] flex-col gap-1 overflow-y-auto p-1",
+        className,
+      )}
+    >
+      {minutes.map((minute) => (
+        <TimePickerColumnItem
+          key={minute}
+          value={minute}
+          selected={timeValue?.minute === minute}
+          format={format}
+          onClick={() => onMinuteSelect(minute)}
+        />
+      ))}
     </MinutePrimitive>
   );
 }
@@ -819,7 +825,8 @@ interface TimePickerSecondProps extends DivProps {
 }
 
 function TimePickerSecond(props: TimePickerSecondProps) {
-  const { asChild, format = "2-digit", ...secondProps } = props;
+  const { asChild, format = "2-digit", className, ...secondProps } = props;
+
   const { use12Hours, secondStep } = useTimePickerContext(SECOND_NAME);
   const store = useStoreContext(SECOND_NAME);
 
@@ -849,21 +856,23 @@ function TimePickerSecond(props: TimePickerSecondProps) {
   const SecondPrimitive = asChild ? Slot : TimePickerColumn;
 
   return (
-    <SecondPrimitive data-slot="time-picker-second" {...secondProps}>
-      <div className="mb-1 font-medium text-muted-foreground text-xs">
-        Second
-      </div>
-      <div className="flex max-h-[200px] flex-col gap-1 overflow-y-auto">
-        {seconds.map((second) => (
-          <TimePickerColumnItem
-            key={second}
-            value={second}
-            selected={timeValue?.second === second}
-            format={format}
-            onClick={() => onSecondSelect(second)}
-          />
-        ))}
-      </div>
+    <SecondPrimitive
+      data-slot="time-picker-second"
+      {...secondProps}
+      className={cn(
+        "scrollbar-none flex max-h-[200px] flex-col gap-1 overflow-y-auto p-1",
+        className,
+      )}
+    >
+      {seconds.map((second) => (
+        <TimePickerColumnItem
+          key={second}
+          value={second}
+          selected={timeValue?.second === second}
+          format={format}
+          onClick={() => onSecondSelect(second)}
+        />
+      ))}
     </SecondPrimitive>
   );
 }
@@ -900,30 +909,25 @@ function TimePickerPeriod(props: DivProps) {
     <PeriodPrimitive
       data-slot="time-picker-period"
       {...periodProps}
-      className={cn("flex flex-col gap-1 p-1", className)}
+      className={cn("flex flex-col gap-1", className)}
     >
-      <div className="mb-1 font-medium text-muted-foreground text-xs">
-        Period
-      </div>
-      <div className="flex flex-col gap-1">
-        {PERIODS.map((period) => {
-          const isSelected = timeValue?.period === period;
-          return (
-            <button
-              key={period}
-              type="button"
-              onClick={() => onPeriodToggle(period)}
-              className={cn(
-                "w-full rounded px-3 py-1.5 text-left text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                isSelected &&
-                  "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
-              )}
-            >
-              {period}
-            </button>
-          );
-        })}
-      </div>
+      {PERIODS.map((period) => {
+        const isSelected = timeValue?.period === period;
+        return (
+          <button
+            key={period}
+            type="button"
+            onClick={() => onPeriodToggle(period)}
+            className={cn(
+              "w-full rounded px-3 py-1.5 text-left text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+              isSelected &&
+                "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
+            )}
+          >
+            {period}
+          </button>
+        );
+      })}
     </PeriodPrimitive>
   );
 }

@@ -21,6 +21,32 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "avatar-group",
+    type: "registry:ui",
+    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    files: [
+      {
+        path: "ui/avatar-group.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
+    name: "badge-overflow",
+    type: "registry:ui",
+    dependencies: ["@radix-ui/react-slot"],
+    files: [
+      {
+        path: "ui/badge-overflow.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
+      },
+    ],
+  },
+  {
     name: "checkbox-group",
     type: "registry:ui",
     dependencies: ["@diceui/checkbox-group"],
@@ -497,32 +523,6 @@ export const ui: Registry["items"] = [
     ],
   },
   {
-    name: "avatar-group",
-    type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
-    files: [
-      {
-        path: "ui/avatar-group.tsx",
-        type: "registry:ui",
-      },
-    ],
-  },
-  {
-    name: "badge-overflow",
-    type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot"],
-    files: [
-      {
-        path: "ui/badge-overflow.tsx",
-        type: "registry:ui",
-      },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
-    ],
-  },
-  {
     name: "tags-input",
     type: "registry:ui",
     dependencies: ["@diceui/tags-input", "lucide-react"],
@@ -553,6 +553,14 @@ export const ui: Registry["items"] = [
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot"],
     registryDependencies: ["popover"],
+    css: {
+      "@utility scrollbar-none": {
+        "scrollbar-width": "none",
+        "&::-webkit-scrollbar": {
+          display: "none",
+        },
+      },
+    },
     files: [
       {
         path: "ui/time-picker.tsx",
