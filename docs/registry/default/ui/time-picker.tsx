@@ -512,7 +512,7 @@ function TimePickerContent(props: TimePickerContentProps) {
     align = "start",
     sideOffset = 4,
     className,
-    onOpenAutoFocus,
+    onOpenAutoFocus: onOpenAutoFocusProp,
     children,
     ...contentProps
   } = props;
@@ -574,35 +574,21 @@ function TimePickerContent(props: TimePickerContentProps) {
     [getColumns, onColumnRegister, onColumnUnregister],
   );
 
-  const handleOpenAutoFocus = React.useCallback(
-    (event: Event) => {
-      onOpenAutoFocus?.(event);
+  const onOpenAutoFocus: NonNullable<
+    React.ComponentProps<typeof PopoverContent>["onOpenAutoFocus"]
+  > = React.useCallback(
+    (event) => {
+      onOpenAutoFocusProp?.(event);
       if (event.defaultPrevented) return;
 
       // Prevent default auto-focus behavior and focus the first selected item
       event.preventDefault();
       const columns = getColumns();
-      console.log(
-        "[TimePickerContent] onOpenAutoFocus - columns:",
-        columns.length,
-      );
-      columns.forEach((col, idx) => {
-        const selectedRef = col.getSelectedItemRef();
-        console.log(`[TimePickerContent] Column ${idx}:`, {
-          id: col.id,
-          hasRef: !!col.ref.current,
-          selectedItem: selectedRef?.current,
-        });
-      });
       const firstColumn = columns[0];
       const selectedItemRef = firstColumn?.getSelectedItemRef();
-      console.log(
-        "[TimePickerContent] Focusing first column selected item:",
-        selectedItemRef?.current,
-      );
       selectedItemRef?.current?.focus();
     },
-    [onOpenAutoFocus, getColumns],
+    [onOpenAutoFocusProp, getColumns],
   );
 
   return (
@@ -612,7 +598,7 @@ function TimePickerContent(props: TimePickerContentProps) {
         side={side}
         align={align}
         sideOffset={sideOffset}
-        onOpenAutoFocus={handleOpenAutoFocus}
+        onOpenAutoFocus={onOpenAutoFocus}
         {...contentProps}
         className={cn(
           "w-auto max-w-(--radix-popover-trigger-width) p-0",
@@ -680,15 +666,9 @@ function TimePickerColumn(props: TimePickerColumnProps) {
       ref: React.RefObject<HTMLButtonElement | null>,
       selected: boolean,
     ) => {
-      console.log("[TimePickerColumn] Item registered:", {
-        columnId,
-        value,
-        selected,
-        hasRef: !!ref.current,
-      });
       itemsRef.current.set(value, { ref, selected });
     },
-    [columnId],
+    [],
   );
 
   const onItemUnregister = React.useCallback((value: number | string) => {
@@ -727,28 +707,15 @@ function TimePickerColumn(props: TimePickerColumnProps) {
         selected,
       }))
       .filter((item) => item.ref.current);
-
+    
     const selected = items.find((item) => item.selected);
-    console.log("[TimePickerColumn] getSelectedItemRef:", {
-      columnId,
-      items: items.map((i) => ({
-        value: i.value,
-        selected: i.selected,
-        hasRef: !!i.ref.current,
-      })),
-      selectedItem: selected?.ref.current,
-    });
     return selected?.ref ?? null;
-  }, [columnId]);
+  }, []);
 
   useIsomorphicLayoutEffect(() => {
     if (groupContext) {
-      console.log("[TimePickerColumn] Registering column:", columnId);
       groupContext.onColumnRegister(columnId, columnRef, getSelectedItemRef);
-      return () => {
-        console.log("[TimePickerColumn] Unregistering column:", columnId);
-        groupContext.onColumnUnregister(columnId);
-      };
+      return () => groupContext.onColumnUnregister(columnId);
     }
   }, [groupContext, columnId, getSelectedItemRef]);
 
@@ -814,18 +781,9 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
       itemProps.onClick?.(event);
       if (event.defaultPrevented) return;
 
-      console.log("[TimePickerColumnItem] onClick:", value);
       itemRef.current?.focus();
     },
-    [itemProps.onClick, value],
-  );
-
-  const onFocus = React.useCallback(
-    (event: React.FocusEvent<ColumnItemElement>) => {
-      itemProps.onFocus?.(event);
-      console.log("[TimePickerColumnItem] onFocus received:", value);
-    },
-    [itemProps.onFocus, value],
+    [itemProps.onClick],
   );
 
   const onKeyDown = React.useCallback(
@@ -861,18 +819,8 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
       ) {
         event.preventDefault();
         const columns = groupContext.getColumns();
-        console.log("[TimePickerColumnItem] Column navigation:", {
-          key: event.key,
-          value,
-          totalColumns: columns.length,
-          shiftKey: event.shiftKey,
-        });
         const currentColumnIndex = columns.findIndex(
           (col) => col.ref.current?.contains(itemRef.current) ?? false,
-        );
-        console.log(
-          "[TimePickerColumnItem] Current column index:",
-          currentColumnIndex,
         );
 
         if (currentColumnIndex === -1) return;
@@ -889,16 +837,8 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
             ? currentColumnIndex + 1
             : 0;
 
-        console.log(
-          "[TimePickerColumnItem] Next column index:",
-          nextColumnIndex,
-        );
         const nextColumn = columns[nextColumnIndex];
         const nextSelectedItemRef = nextColumn?.getSelectedItemRef();
-        console.log(
-          "[TimePickerColumnItem] Next selected item:",
-          nextSelectedItemRef?.current,
-        );
         nextSelectedItemRef?.current?.focus();
       }
     },
@@ -923,7 +863,6 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
         className,
       )}
       onClick={onClick}
-      onFocus={onFocus}
       onKeyDown={onKeyDown}
     >
       {formattedValue}
@@ -1390,12 +1329,11 @@ function TimePickerInput(props: TimePickerInputProps) {
       onFocusProp?.(event);
       if (event.defaultPrevented) return;
 
-      console.log("[TimePickerInput] onFocus:", segment, event.target.value);
       setIsEditing(true);
       // Always select the entire content like native time picker
       queueMicrotask(() => event.target.select());
     },
-    [onFocusProp, segment],
+    [onFocusProp],
   );
 
   const onKeyDown = React.useCallback(

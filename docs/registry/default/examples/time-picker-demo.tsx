@@ -26,7 +26,6 @@ export default function TimePickerDemo() {
         <div className="flex">
           <TimePicker.Hour />
           <TimePicker.Minute />
-          <TimePicker.Second />
           <TimePicker.Period />
         </div>
       </TimePicker.Content>
