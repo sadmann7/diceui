@@ -123,7 +123,7 @@ function useTimelineContext(consumerName: string) {
 }
 
 const timelineVariants = cva(
-  "relative flex [--timeline-dot-size:0.875rem] [--timeline-line-width:0.125rem]",
+  "relative flex [--timeline-connector-thickness:0.125rem] [--timeline-dot-size:0.875rem]",
   {
     variants: {
       orientation: {
@@ -485,14 +485,14 @@ const timelineDotVariants = cva(
         orientation: "vertical",
         isAlternateRight: false,
         class:
-          "-right-[calc(var(--timeline-dot-size)/2-var(--timeline-line-width)/2)] absolute bg-background",
+          "-right-[calc(var(--timeline-dot-size)/2-var(--timeline-connector-thickness)/2)] absolute bg-background",
       },
       {
         variant: "alternate",
         orientation: "vertical",
         isAlternateRight: true,
         class:
-          "-left-[calc(var(--timeline-dot-size)/2-var(--timeline-line-width)/2)] absolute bg-background",
+          "-left-[calc(var(--timeline-dot-size)/2-var(--timeline-connector-thickness)/2)] absolute bg-background",
       },
       {
         variant: "alternate",
@@ -570,33 +570,33 @@ const timelineConnectorVariants = cva("absolute z-0", {
       orientation: "vertical",
       variant: "default",
       class:
-        "start-[calc(var(--timeline-dot-size)/2-var(--timeline-line-width)/2)] top-3 h-[calc(100%+0.5rem)] w-[var(--timeline-line-width)]",
+        "start-[calc(var(--timeline-dot-size)/2-var(--timeline-connector-thickness)/2)] top-3 h-[calc(100%+0.5rem)] w-[var(--timeline-connector-thickness)]",
     },
     {
       orientation: "horizontal",
       variant: "default",
       class:
-        "start-3 top-[calc(var(--timeline-dot-size)/2-var(--timeline-line-width)/2)] h-[var(--timeline-line-width)] w-[calc(100%+0.5rem)]",
+        "start-3 top-[calc(var(--timeline-dot-size)/2-var(--timeline-connector-thickness)/2)] h-[var(--timeline-connector-thickness)] w-[calc(100%+0.5rem)]",
     },
     {
       orientation: "vertical",
       variant: "alternate",
       isAlternateRight: false,
       class:
-        "-right-[calc(var(--timeline-line-width)/2)] top-2 h-full w-[var(--timeline-line-width)]",
+        "-right-[calc(var(--timeline-connector-thickness)/2)] top-2 h-full w-[var(--timeline-connector-thickness)]",
     },
     {
       orientation: "vertical",
       variant: "alternate",
       isAlternateRight: true,
       class:
-        "-left-[calc(var(--timeline-line-width)/2)] top-2 h-full w-[var(--timeline-line-width)]",
+        "-left-[calc(var(--timeline-connector-thickness)/2)] top-2 h-full w-[var(--timeline-connector-thickness)]",
     },
     {
       orientation: "horizontal",
       variant: "alternate",
       class:
-        "top-[calc(var(--timeline-dot-size)/2-var(--timeline-line-width)/2)] left-3 row-start-2 h-[var(--timeline-line-width)] w-[calc(100%+0.5rem)]",
+        "top-[calc(var(--timeline-dot-size)/2-var(--timeline-connector-thickness)/2)] left-3 row-start-2 h-[var(--timeline-connector-thickness)] w-[calc(100%+0.5rem)]",
     },
   ],
   defaultVariants: {

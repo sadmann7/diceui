@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import {
   Timeline,
   TimelineConnector,
