@@ -1027,6 +1027,28 @@ function TimePickerSecond(props: TimePickerSecondProps) {
   );
 }
 
+interface TimePickerPeriodContextValue {
+  onItemRegister: (
+    period: Period,
+    ref: React.RefObject<HTMLButtonElement | null>,
+    selected: boolean,
+  ) => void;
+  onItemUnregister: (period: Period) => void;
+}
+
+const TimePickerPeriodContext =
+  React.createContext<TimePickerPeriodContextValue | null>(null);
+
+function useTimePickerPeriodContext(consumerName: string) {
+  const context = React.useContext(TimePickerPeriodContext);
+  if (!context) {
+    throw new Error(
+      `\`${consumerName}\` must be used within \`TimePickerPeriod\``,
+    );
+  }
+  return context;
+}
+
 interface TimePickerPeriodItemProps extends ButtonProps {
   period: Period;
   selected?: boolean;
@@ -1038,6 +1060,12 @@ function TimePickerPeriodItem(props: TimePickerPeriodItemProps) {
   const itemRef = React.useRef<HTMLButtonElement | null>(null);
   const composedRef = useComposedRefs(ref, itemRef);
   const groupContext = React.useContext(TimePickerGroupContext);
+  const periodContext = useTimePickerPeriodContext("TimePickerPeriodItem");
+
+  useIsomorphicLayoutEffect(() => {
+    periodContext.onItemRegister(period, itemRef, selected);
+    return () => periodContext.onItemUnregister(period);
+  }, [period, selected, periodContext]);
 
   useIsomorphicLayoutEffect(() => {
     if (selected && itemRef.current) {
@@ -1117,7 +1145,47 @@ function TimePickerPeriod(props: DivProps) {
   const composedRef = useComposedRefs(ref, columnRef);
   const groupContext = React.useContext(TimePickerGroupContext);
 
-  const selectedPeriodRef = React.useRef<HTMLButtonElement | null>(null);
+  const itemsRef = React.useRef<
+    Map<
+      Period,
+      {
+        ref: React.RefObject<HTMLButtonElement | null>;
+        selected: boolean;
+      }
+    >
+  >(new Map());
+
+  const onItemRegister = React.useCallback(
+    (
+      period: Period,
+      ref: React.RefObject<HTMLButtonElement | null>,
+      selected: boolean,
+    ) => {
+      itemsRef.current.set(period, { ref, selected });
+    },
+    [],
+  );
+
+  const onItemUnregister = React.useCallback((period: Period) => {
+    itemsRef.current.delete(period);
+  }, []);
+
+  const getSelectedItemRef = React.useCallback(() => {
+    for (const [, { ref, selected }] of itemsRef.current.entries()) {
+      if (selected && ref.current) {
+        return ref;
+      }
+    }
+    return null;
+  }, []);
+
+  const periodContextValue = React.useMemo<TimePickerPeriodContextValue>(
+    () => ({
+      onItemRegister,
+      onItemUnregister,
+    }),
+    [onItemRegister, onItemUnregister],
+  );
 
   const onPeriodToggle = React.useCallback(
     (period: Period) => {
@@ -1134,18 +1202,6 @@ function TimePickerPeriod(props: DivProps) {
     [timeValue, showSeconds, use12Hours, store],
   );
 
-  const getSelectedItemRef = React.useCallback(() => {
-    if (!columnRef.current) return null;
-    const selectedButton = columnRef.current.querySelector(
-      'button[data-selected]',
-    ) as HTMLButtonElement;
-    if (selectedButton) {
-      selectedPeriodRef.current = selectedButton;
-      return selectedPeriodRef as React.RefObject<HTMLButtonElement>;
-    }
-    return null;
-  }, []);
-
   useIsomorphicLayoutEffect(() => {
     if (groupContext) {
       groupContext.onColumnRegister(columnId, columnRef, getSelectedItemRef);
@@ -1158,24 +1214,26 @@ function TimePickerPeriod(props: DivProps) {
   const PeriodPrimitive = asChild ? Slot : "div";
 
   return (
-    <PeriodPrimitive
-      ref={composedRef}
-      data-slot="time-picker-period"
-      {...periodProps}
-      className={cn("flex flex-col gap-1 p-1", className)}
-    >
-      {PERIODS.map((period) => {
-        const isSelected = timeValue?.period === period;
-        return (
-          <TimePickerPeriodItem
-            key={period}
-            period={period}
-            selected={isSelected}
-            onClick={() => onPeriodToggle(period)}
-          />
-        );
-      })}
-    </PeriodPrimitive>
+    <TimePickerPeriodContext.Provider value={periodContextValue}>
+      <PeriodPrimitive
+        ref={composedRef}
+        data-slot="time-picker-period"
+        {...periodProps}
+        className={cn("flex flex-col gap-1 p-1", className)}
+      >
+        {PERIODS.map((period) => {
+          const isSelected = timeValue?.period === period;
+          return (
+            <TimePickerPeriodItem
+              key={period}
+              period={period}
+              selected={isSelected}
+              onClick={() => onPeriodToggle(period)}
+            />
+          );
+        })}
+      </PeriodPrimitive>
+    </TimePickerPeriodContext.Provider>
   );
 }
 
