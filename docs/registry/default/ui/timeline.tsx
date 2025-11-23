@@ -390,7 +390,7 @@ function TimelineItem(props: DivProps) {
   );
 }
 
-const timelineContentVariants = cva("flex-1 pt-0.5", {
+const timelineContentVariants = cva("flex-1", {
   variants: {
     orientation: {
       vertical: "",
