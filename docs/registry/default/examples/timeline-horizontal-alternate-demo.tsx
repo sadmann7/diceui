@@ -13,22 +13,22 @@ import {
 const timelineItems = [
   {
     id: "company-founded",
-    dateTime: "2020-06",
-    date: "June 2020",
+    dateTime: "2023-06",
+    date: "June 2023",
     title: "Company Founded",
     description: "Started with a team of five.",
   },
   {
     id: "series-a-funding",
-    dateTime: "2021-03",
-    date: "March 2021",
+    dateTime: "2024-03",
+    date: "March 2024",
     title: "Series A Funding",
     description: "Raised $10M seed funding.",
   },
   {
     id: "product-launch",
-    dateTime: "2022-01",
-    date: "January 2022",
+    dateTime: "2025-01",
+    date: "January 2025",
     title: "Product Launch",
     description: "Released MVP to beta testers.",
   },
