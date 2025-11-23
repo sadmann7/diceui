@@ -624,6 +624,8 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
   const itemRef = React.useRef<ColumnItemElement | null>(null);
   const composedRef = useComposedRefs(ref, itemRef);
   const columnContext = useTimePickerColumnContext(COLUMN_ITEM_NAME);
+  const open = useStore((state) => state.open);
+  const prevOpenRef = React.useRef(open);
 
   useIsomorphicLayoutEffect(() => {
     columnContext.onItemRegister(value, itemRef);
@@ -633,8 +635,13 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
   useIsomorphicLayoutEffect(() => {
     if (selected && itemRef.current) {
       itemRef.current.scrollIntoView({ block: "nearest" });
+      // Auto-focus the selected item when the popover opens
+      if (open && !prevOpenRef.current) {
+        queueMicrotask(() => itemRef.current?.focus());
+      }
     }
-  }, [selected]);
+    prevOpenRef.current = open;
+  }, [selected, open]);
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<ColumnItemElement>) => {
