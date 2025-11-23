@@ -1,0 +1,12 @@
+{
+  "name": "time-picker-controlled-demo",
+  "type": "registry:example",
+  "files": [
+    {
+      "path": "examples/time-picker-controlled-demo.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport * as TimePicker from \"@/registry/default/ui/time-picker\";\n\nexport default function TimePickerControlledDemo() {\n  const [value, setValue] = React.useState(\"14:30\");\n\n  return (\n    <div className=\"space-y-4\">\n      <TimePicker.Root\n        className=\"w-[280px] space-y-2\"\n        value={value}\n        onValueChange={setValue}\n      >\n        <TimePicker.Label>Controlled Time Picker</TimePicker.Label>\n        <TimePicker.Trigger />\n        <TimePicker.Content>\n          <div className=\"flex gap-2\">\n            <TimePicker.Hour />\n            <TimePicker.Minute />\n          </div>\n        </TimePicker.Content>\n      </TimePicker.Root>\n      <div className=\"text-muted-foreground text-sm\">\n        Selected time:{\" \"}\n        <span className=\"font-mono font-semibold\">{value || \"None\"}</span>\n      </div>\n    </div>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

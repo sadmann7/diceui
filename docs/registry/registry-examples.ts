@@ -1611,7 +1611,6 @@ export const examples: Registry["items"] = [
   {
     name: "timeline-demo",
     type: "registry:example",
-    registryDependencies: ["timeline"],
     files: [
       {
         path: "examples/timeline-demo.tsx",
@@ -1633,7 +1632,6 @@ export const examples: Registry["items"] = [
   {
     name: "timeline-rtl-demo",
     type: "registry:example",
-    registryDependencies: ["timeline"],
     files: [
       {
         path: "examples/timeline-rtl-demo.tsx",
@@ -1644,7 +1642,6 @@ export const examples: Registry["items"] = [
   {
     name: "timeline-alternate-demo",
     type: "registry:example",
-    registryDependencies: ["timeline"],
     files: [
       {
         path: "examples/timeline-alternate-demo.tsx",
@@ -1655,7 +1652,6 @@ export const examples: Registry["items"] = [
   {
     name: "timeline-horizontal-alternate-demo",
     type: "registry:example",
-    registryDependencies: ["timeline"],
     files: [
       {
         path: "examples/timeline-horizontal-alternate-demo.tsx",
@@ -1667,10 +1663,70 @@ export const examples: Registry["items"] = [
     name: "timeline-custom-dot-demo",
     type: "registry:example",
     dependencies: ["lucide-react"],
-    registryDependencies: ["timeline"],
     files: [
       {
         path: "examples/timeline-custom-dot-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "time-picker-demo",
+    type: "registry:example",
+    files: [
+      {
+        path: "examples/time-picker-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "time-picker-12hour-demo",
+    type: "registry:example",
+    files: [
+      {
+        path: "examples/time-picker-12hour-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "time-picker-seconds-demo",
+    type: "registry:example",
+    files: [
+      {
+        path: "examples/time-picker-seconds-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "time-picker-controlled-demo",
+    type: "registry:example",
+    files: [
+      {
+        path: "examples/time-picker-controlled-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "time-picker-form-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "form", "sonner"],
+    files: [
+      {
+        path: "examples/time-picker-form-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "time-picker-step-demo",
+    type: "registry:example",
+    files: [
+      {
+        path: "examples/time-picker-step-demo.tsx",
         type: "registry:example",
       },
     ],

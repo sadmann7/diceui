@@ -1,0 +1,12 @@
+{
+  "name": "time-picker-demo",
+  "type": "registry:example",
+  "files": [
+    {
+      "path": "examples/time-picker-demo.tsx",
+      "content": "import * as TimePicker from \"@/registry/default/ui/time-picker\";\n\nexport default function TimePickerDemo() {\n  return (\n    <TimePicker.Root className=\"w-[280px] space-y-2\">\n      <TimePicker.Label>Select Time</TimePicker.Label>\n      <TimePicker.Trigger />\n      <TimePicker.Content>\n        <div className=\"flex gap-2\">\n          <TimePicker.Hour />\n          <TimePicker.Minute />\n        </div>\n      </TimePicker.Content>\n    </TimePicker.Root>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

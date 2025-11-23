@@ -4,9 +4,6 @@
   "dependencies": [
     "lucide-react"
   ],
-  "registryDependencies": [
-    "timeline"
-  ],
   "files": [
     {
       "path": "examples/timeline-custom-dot-demo.tsx",

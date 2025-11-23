@@ -623,6 +623,27 @@
     ]
   },
   {
+    "name": "time-picker",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-slot"
+    ],
+    "files": [
+      {
+        "path": "ui/time-picker.tsx",
+        "type": "registry:ui"
+      },
+      {
+        "path": "components/visually-hidden-input.tsx",
+        "type": "registry:component"
+      },
+      {
+        "path": "lib/compose-refs.ts",
+        "type": "registry:lib"
+      }
+    ]
+  },
+  {
     "name": "tour",
     "type": "registry:ui",
     "dependencies": [

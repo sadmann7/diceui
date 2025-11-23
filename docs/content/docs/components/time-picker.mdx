@@ -1,0 +1,285 @@
+---
+title: Time Picker
+description: An accessible time picker component for selecting hours, minutes, and seconds with support for 12-hour and 24-hour formats.
+preview: true
+links:
+  api: /docs/components/time-picker#api-reference
+---
+
+<ComponentTabs name="time-picker-demo" className="items-start justify-start [&>div]:pt-20"  />
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/time-picker"
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @radix-ui/react-slot
+     ```
+  </Step>
+  <Step>
+    Copy the refs composition utilities into your `lib/compose-refs.ts` file.
+
+    <ComponentSource name="compose-refs" />
+  </Step>
+  <Step>
+    Copy the visually hidden input component into your `components/visually-hidden-input.tsx` file.
+
+    <ComponentSource name="visually-hidden-input" />
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource name="time-picker" />
+  </Step>
+</Steps>
+
+## Layout
+
+Import the parts, and compose them together.
+
+```tsx
+import * as TimePicker from "@/components/ui/time-picker";
+
+return (
+  <TimePicker.Root>
+    <TimePicker.Label />
+    <TimePicker.Trigger />
+    <TimePicker.Content>
+      <TimePicker.Hour />
+      <TimePicker.Separator />
+      <TimePicker.Minute />
+      <TimePicker.Separator />
+      <TimePicker.Second />
+      <TimePicker.Period />
+      <TimePicker.Clear />
+    </TimePicker.Content>
+  </TimePicker.Root>
+)
+```
+
+## Examples
+
+### 12-Hour Format
+
+Display time in 12-hour format with AM/PM selection.
+
+<ComponentTabs name="time-picker-12hour-demo" className="items-start justify-start [&>div]:pt-20"/>
+
+### With Seconds
+
+Include seconds in time selection.
+
+<ComponentTabs name="time-picker-seconds-demo" className="items-start justify-start [&>div]:pt-20" />
+
+### Controlled
+
+Control the time picker value programmatically.
+
+<ComponentTabs name="time-picker-controlled-demo" className="items-start justify-start [&>div]:pt-20" />
+
+### With Form
+
+Use the time picker in a form with validation.
+
+<ComponentTabs name="time-picker-form-demo" className="items-start justify-start [&>div]:pt-20" />
+
+### With Steps
+
+Set custom intervals for minute selection.
+
+<ComponentTabs name="time-picker-step-demo" className="items-start justify-start [&>div]:pt-20" />
+
+## API Reference
+
+### Root
+
+The main container component for time picker functionality.
+
+<AutoTypeTable
+  path="./types/docs/time-picker.ts"
+  name="RootProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the time picker is disabled",
+    },
+    {
+      title: "[data-invalid]",
+      value: "Present when the time picker is invalid",
+    },
+    {
+      title: "[data-readonly]",
+      value: "Present when the time picker is read-only",
+    },
+  ]}
+/>
+
+### Label
+
+The label component for the time picker field.
+
+<AutoTypeTable
+  path="./types/docs/time-picker.ts"
+  name="LabelProps"
+/>
+
+### Trigger
+
+Button to open the time picker dropdown.
+
+<AutoTypeTable
+  path="./types/docs/time-picker.ts"
+  name="TriggerProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-state]",
+      value: "'open' | 'closed'",
+    },
+    {
+      title: "[data-disabled]",
+      value: "Present when the time picker is disabled",
+    },
+    {
+      title: "[data-readonly]",
+      value: "Present when the time picker is read-only",
+    },
+    {
+      title: "[data-invalid]",
+      value: "Present when the time picker is invalid",
+    },
+  ]}
+/>
+
+### Content
+
+Container for the time selection interface.
+
+<AutoTypeTable
+  path="./types/docs/time-picker.ts"
+  name="ContentProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-state]",
+      value: "'open' | 'closed'",
+    },
+    {
+      title: "[data-side]",
+      value: "The side where the content is positioned",
+    },
+    {
+      title: "[data-align]",
+      value: "The alignment of the content",
+    },
+  ]}
+/>
+
+### Hour
+
+Component for selecting hours.
+
+<AutoTypeTable
+  path="./types/docs/time-picker.ts"
+  name="HourProps"
+/>
+
+### Minute
+
+Component for selecting minutes.
+
+<AutoTypeTable
+  path="./types/docs/time-picker.ts"
+  name="MinuteProps"
+/>
+
+### Second
+
+Component for selecting seconds.
+
+<AutoTypeTable
+  path="./types/docs/time-picker.ts"
+  name="SecondProps"
+/>
+
+### Period
+
+Component for selecting AM/PM in 12-hour format.
+
+<AutoTypeTable
+  path="./types/docs/time-picker.ts"
+  name="PeriodProps"
+/>
+
+### Separator
+
+Visual separator between time units.
+
+<AutoTypeTable
+  path="./types/docs/time-picker.ts"
+  name="SeparatorProps"
+/>
+
+### Clear
+
+Button to clear the selected time.
+
+<AutoTypeTable
+  path="./types/docs/time-picker.ts"
+  name="ClearProps"
+/>
+
+## Accessibility
+
+### Keyboard Interactions
+
+<KeyboardShortcutsTable
+  data={[
+    {
+      keys: ["Space"],
+      description: "Opens/closes the time picker when trigger is focused",
+    },
+    {
+      keys: ["Enter"],
+      description: "Opens/closes the time picker when trigger is focused",
+    },
+    {
+      keys: ["Escape"],
+      description: "Closes the time picker",
+    },
+    {
+      keys: ["Tab"],
+      description: "Moves focus to the next focusable element",
+    },
+    {
+      keys: ["Shift", "Tab"],
+      description: "Moves focus to the previous focusable element",
+    },
+  ]}
+/>
+
+## Notes
+
+- The time value is formatted as "HH:mm" or "HH:mm:ss" in 24-hour format internally
+- When using `use12Hours`, the value is still stored in 24-hour format for consistency
+- The `minuteStep`, `hourStep`, and `secondStep` props allow customization of selection intervals
+- Use the `min` and `max` props to restrict the selectable time range
+- The component automatically handles conversion between 12-hour and 24-hour formats
+
