@@ -178,7 +178,7 @@ function useStore<T>(selector: (state: StoreState) => T): T {
   return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
 
-interface RootContextValue {
+interface TimePickerContextValue {
   id: string;
   name?: string;
   disabled: boolean;
@@ -197,10 +197,12 @@ interface RootContextValue {
   contentRef: React.RefObject<HTMLDivElement | null>;
 }
 
-const RootContext = React.createContext<RootContextValue | null>(null);
+const TimePickerContext = React.createContext<TimePickerContextValue | null>(
+  null,
+);
 
-function useRootContext(consumerName: string) {
-  const context = React.useContext(RootContext);
+function useTimePickerContext(consumerName: string) {
+  const context = React.useContext(TimePickerContext);
   if (!context) {
     throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
   }
@@ -227,7 +229,7 @@ interface InputProps extends React.ComponentProps<"input"> {
   asChild?: boolean;
 }
 
-export interface RootProps extends DivProps {
+export interface TimePickerRootProps extends DivProps {
   id?: string;
   defaultValue?: string;
   value?: string;
@@ -248,7 +250,7 @@ export interface RootProps extends DivProps {
   placeholder?: string;
 }
 
-function Root(props: RootProps) {
+function TimePickerRoot(props: TimePickerRootProps) {
   const {
     value,
     defaultValue = "",
@@ -271,15 +273,18 @@ function Root(props: RootProps) {
 
   return (
     <StoreContext.Provider value={store}>
-      <RootImpl {...rootProps} value={value} />
+      <TimePickerRootImpl {...rootProps} value={value} />
     </StoreContext.Provider>
   );
 }
 
-interface RootImplProps
-  extends Omit<RootProps, "defaultValue" | "onValueChange" | "onOpenChange"> {}
+interface TimePickerRootImplProps
+  extends Omit<
+    TimePickerRootProps,
+    "defaultValue" | "onValueChange" | "onOpenChange"
+  > {}
 
-function RootImpl(props: RootImplProps) {
+function TimePickerRootImpl(props: TimePickerRootImplProps) {
   const {
     id: idProp,
     value,
@@ -317,7 +322,7 @@ function RootImpl(props: RootImplProps) {
   const triggerRef = React.useRef<HTMLButtonElement>(null);
   const contentRef = React.useRef<HTMLDivElement>(null);
 
-  const rootContext: RootContextValue = React.useMemo(
+  const rootContext: TimePickerContextValue = React.useMemo(
     () => ({
       id: generatedId,
       name,
@@ -356,30 +361,36 @@ function RootImpl(props: RootImplProps) {
 
   const open = useStore((state) => state.open);
 
-  const Comp = asChild ? Slot : "div";
+  const RootPrimitive = asChild ? Slot : "div";
 
   return (
-    <RootContext.Provider value={rootContext}>
+    <TimePickerContext.Provider value={rootContext}>
       <Popover
         open={open}
         onOpenChange={(newOpen: boolean) => store.setState("open", newOpen)}
       >
-        <Comp ref={ref} className={cn("relative", className)} {...rootProps}>
+        <RootPrimitive
+          ref={ref}
+          className={cn("relative", className)}
+          {...rootProps}
+        >
           {children}
-        </Comp>
+        </RootPrimitive>
       </Popover>
-    </RootContext.Provider>
+    </TimePickerContext.Provider>
   );
 }
 
-function Label(props: LabelProps) {
-  const { asChild, className, ref, ...labelProps } = props;
-  const { id } = useRootContext(LABEL_NAME);
+interface TimePickerLabelProps extends LabelProps {}
 
-  const Comp = asChild ? Slot : "label";
+function TimePickerLabel(props: TimePickerLabelProps) {
+  const { asChild, className, ref, ...labelProps } = props;
+  const { id } = useTimePickerContext(LABEL_NAME);
+
+  const LabelPrimitive = asChild ? Slot : "label";
 
   return (
-    <Comp
+    <LabelPrimitive
       ref={ref}
       htmlFor={`${id}-input-group`}
       className={cn(
@@ -391,15 +402,17 @@ function Label(props: LabelProps) {
   );
 }
 
-function InputGroup(props: DivProps) {
-  const { asChild, className, ref, children, ...groupProps } = props;
-  const { id, disabled, invalid } = useRootContext(INPUT_GROUP_NAME);
+interface TimePickerInputGroupProps extends DivProps {}
 
-  const Comp = asChild ? Slot : "div";
+function TimePickerInputGroup(props: TimePickerInputGroupProps) {
+  const { asChild, className, ref, children, ...groupProps } = props;
+  const { id, disabled, invalid } = useTimePickerContext(INPUT_GROUP_NAME);
+
+  const InputGroupPrimitive = asChild ? Slot : "div";
 
   return (
     <PopoverAnchor asChild>
-      <Comp
+      <InputGroupPrimitive
         ref={ref}
         id={`${id}-input-group`}
         data-slot="input-group"
@@ -416,12 +429,14 @@ function InputGroup(props: DivProps) {
         {...groupProps}
       >
         {children}
-      </Comp>
+      </InputGroupPrimitive>
     </PopoverAnchor>
   );
 }
 
-function Trigger(props: ButtonProps) {
+interface TimePickerTriggerProps extends ButtonProps {}
+
+function TimePickerTrigger(props: TimePickerTriggerProps) {
   const { asChild, className, children, ref, ...triggerProps } = props;
   const {
     id,
@@ -430,18 +445,18 @@ function Trigger(props: ButtonProps) {
     triggerRef: contextTriggerRef,
     name,
     required,
-  } = useRootContext(TRIGGER_NAME);
+  } = useTimePickerContext(TRIGGER_NAME);
 
   const value = useStore((state) => state.value);
 
   const composedRef = useComposedRefs(ref, contextTriggerRef);
 
-  const Comp = asChild ? Slot : "button";
+  const TriggerPrimitive = asChild ? Slot : "button";
 
   return (
     <>
       <PopoverTrigger asChild disabled={disabled || readOnly}>
-        <Comp
+        <TriggerPrimitive
           ref={composedRef}
           id={`${id}-trigger`}
           type="button"
@@ -467,7 +482,7 @@ function Trigger(props: ButtonProps) {
               <polyline points="12 6 12 12 16 14" />
             </svg>
           )}
-        </Comp>
+        </TriggerPrimitive>
       </PopoverTrigger>
       {name && (
         <VisuallyHiddenInput
@@ -483,13 +498,13 @@ function Trigger(props: ButtonProps) {
   );
 }
 
-function Content(
-  props: DivProps & {
-    side?: "top" | "right" | "bottom" | "left";
-    align?: "start" | "center" | "end";
-    sideOffset?: number;
-  },
-) {
+interface TimePickerContentProps extends DivProps {
+  side?: "top" | "right" | "bottom" | "left";
+  align?: "start" | "center" | "end";
+  sideOffset?: number;
+}
+
+function TimePickerContent(props: TimePickerContentProps) {
   const {
     side = "bottom",
     align = "start",
@@ -498,7 +513,7 @@ function Content(
     ref,
     ...contentProps
   } = props;
-  const { contentRef: contextContentRef } = useRootContext(CONTENT_NAME);
+  const { contentRef: contextContentRef } = useTimePickerContext(CONTENT_NAME);
 
   const composedRef = useComposedRefs(ref, contextContentRef);
 
@@ -514,7 +529,7 @@ function Content(
   );
 }
 
-interface ColumnContextValue {
+interface TimePickerColumnContextValue {
   activeIndex: number | null;
   setActiveIndex: (index: number | null) => void;
   items: Array<{
@@ -528,19 +543,20 @@ interface ColumnContextValue {
   unregisterItem: (value: number) => void;
 }
 
-const ColumnContext = React.createContext<ColumnContextValue | null>(null);
+const TimePickerColumnContext =
+  React.createContext<TimePickerColumnContextValue | null>(null);
 
-function useColumnContext(consumerName: string) {
-  const context = React.useContext(ColumnContext);
+function useTimePickerColumnContext(consumerName: string) {
+  const context = React.useContext(TimePickerColumnContext);
   if (!context) {
     throw new Error(`\`${consumerName}\` must be used within a column`);
   }
   return context;
 }
 
-interface ColumnProps extends DivProps {}
+interface TimePickerColumnProps extends DivProps {}
 
-function Column(props: ColumnProps) {
+function TimePickerColumn(props: TimePickerColumnProps) {
   const { children, className, ref, ...columnProps } = props;
 
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
@@ -559,7 +575,7 @@ function Column(props: ColumnProps) {
     itemsRef.current.delete(value);
   }, []);
 
-  const contextValue = React.useMemo<ColumnContextValue>(
+  const contextValue = React.useMemo<TimePickerColumnContextValue>(
     () => ({
       activeIndex,
       setActiveIndex,
@@ -574,7 +590,7 @@ function Column(props: ColumnProps) {
   );
 
   return (
-    <ColumnContext.Provider value={contextValue}>
+    <TimePickerColumnContext.Provider value={contextValue}>
       <div
         ref={ref}
         className={cn("flex flex-col gap-1", className)}
@@ -582,17 +598,17 @@ function Column(props: ColumnProps) {
       >
         {children}
       </div>
-    </ColumnContext.Provider>
+    </TimePickerColumnContext.Provider>
   );
 }
 
-interface ColumnItemProps extends ButtonProps {
+interface TimePickerColumnItemProps extends ButtonProps {
   value: number;
   selected?: boolean;
   format?: "numeric" | "2-digit";
 }
 
-function ColumnItem(props: ColumnItemProps) {
+function TimePickerColumnItem(props: TimePickerColumnItemProps) {
   const {
     value,
     selected = false,
@@ -604,7 +620,7 @@ function ColumnItem(props: ColumnItemProps) {
 
   const itemRef = React.useRef<HTMLButtonElement>(null);
   const composedRef = useComposedRefs(ref, itemRef);
-  const columnContext = useColumnContext("ColumnItem");
+  const columnContext = useTimePickerColumnContext("TimePickerColumnItem");
 
   React.useEffect(() => {
     columnContext.registerItem(value, itemRef);
@@ -676,13 +692,13 @@ function ColumnItem(props: ColumnItemProps) {
   );
 }
 
-interface HourProps extends DivProps {
+interface TimePickerHourProps extends DivProps {
   format?: "numeric" | "2-digit";
 }
 
-function Hour(props: HourProps) {
+function TimePickerHour(props: TimePickerHourProps) {
   const { asChild, format = "numeric", className, ref, ...hourProps } = props;
-  const { use12Hours, hourStep, showSeconds } = useRootContext(HOUR_NAME);
+  const { use12Hours, hourStep, showSeconds } = useTimePickerContext(HOUR_NAME);
   const store = useStoreContext(HOUR_NAME);
 
   const value = useStore((state) => state.value);
@@ -712,14 +728,14 @@ function Hour(props: HourProps) {
     [timeValue, showSeconds, use12Hours, store],
   );
 
-  const Comp = asChild ? Slot : Column;
+  const HourPrimitive = asChild ? Slot : TimePickerColumn;
 
   return (
-    <Comp ref={ref} className={cn(className)} {...hourProps}>
+    <HourPrimitive ref={ref} className={cn(className)} {...hourProps}>
       <div className="mb-1 font-medium text-muted-foreground text-xs">Hour</div>
       <div className="max-h-[200px] space-y-1 overflow-y-auto">
         {hours.map((hour) => (
-          <ColumnItem
+          <TimePickerColumnItem
             key={hour}
             value={hour}
             selected={timeValue?.hour === hour}
@@ -728,17 +744,18 @@ function Hour(props: HourProps) {
           />
         ))}
       </div>
-    </Comp>
+    </HourPrimitive>
   );
 }
 
-interface MinuteProps extends DivProps {
+interface TimePickerMinuteProps extends DivProps {
   format?: "numeric" | "2-digit";
 }
 
-function Minute(props: MinuteProps) {
+function TimePickerMinute(props: TimePickerMinuteProps) {
   const { asChild, format = "2-digit", className, ref, ...minuteProps } = props;
-  const { use12Hours, minuteStep, showSeconds } = useRootContext(MINUTE_NAME);
+  const { use12Hours, minuteStep, showSeconds } =
+    useTimePickerContext(MINUTE_NAME);
   const store = useStoreContext(MINUTE_NAME);
 
   const value = useStore((state) => state.value);
@@ -764,16 +781,16 @@ function Minute(props: MinuteProps) {
     [timeValue, showSeconds, use12Hours, store],
   );
 
-  const Comp = asChild ? Slot : Column;
+  const MinutePrimitive = asChild ? Slot : TimePickerColumn;
 
   return (
-    <Comp ref={ref} className={cn(className)} {...minuteProps}>
+    <MinutePrimitive ref={ref} className={cn(className)} {...minuteProps}>
       <div className="mb-1 font-medium text-muted-foreground text-xs">
         Minute
       </div>
       <div className="max-h-[200px] space-y-1 overflow-y-auto">
         {minutes.map((minute) => (
-          <ColumnItem
+          <TimePickerColumnItem
             key={minute}
             value={minute}
             selected={timeValue?.minute === minute}
@@ -782,17 +799,17 @@ function Minute(props: MinuteProps) {
           />
         ))}
       </div>
-    </Comp>
+    </MinutePrimitive>
   );
 }
 
-interface SecondProps extends DivProps {
+interface TimePickerSecondProps extends DivProps {
   format?: "numeric" | "2-digit";
 }
 
-function Second(props: SecondProps) {
+function TimePickerSecond(props: TimePickerSecondProps) {
   const { asChild, format = "2-digit", className, ref, ...secondProps } = props;
-  const { use12Hours, secondStep } = useRootContext(SECOND_NAME);
+  const { use12Hours, secondStep } = useTimePickerContext(SECOND_NAME);
   const store = useStoreContext(SECOND_NAME);
 
   const value = useStore((state) => state.value);
@@ -818,16 +835,16 @@ function Second(props: SecondProps) {
     [timeValue, use12Hours, store],
   );
 
-  const Comp = asChild ? Slot : Column;
+  const SecondPrimitive = asChild ? Slot : TimePickerColumn;
 
   return (
-    <Comp ref={ref} className={cn(className)} {...secondProps}>
+    <SecondPrimitive ref={ref} className={cn(className)} {...secondProps}>
       <div className="mb-1 font-medium text-muted-foreground text-xs">
         Second
       </div>
       <div className="max-h-[200px] space-y-1 overflow-y-auto">
         {seconds.map((second) => (
-          <ColumnItem
+          <TimePickerColumnItem
             key={second}
             value={second}
             selected={timeValue?.second === second}
@@ -836,13 +853,15 @@ function Second(props: SecondProps) {
           />
         ))}
       </div>
-    </Comp>
+    </SecondPrimitive>
   );
 }
 
-function Period(props: DivProps) {
+interface TimePickerPeriodProps extends DivProps {}
+
+function TimePickerPeriod(props: TimePickerPeriodProps) {
   const { asChild, className, ref, ...periodProps } = props;
-  const { use12Hours, showSeconds } = useRootContext(PERIOD_NAME);
+  const { use12Hours, showSeconds } = useTimePickerContext(PERIOD_NAME);
   const store = useStoreContext(PERIOD_NAME);
 
   const value = useStore((state) => state.value);
@@ -865,10 +884,10 @@ function Period(props: DivProps) {
 
   if (!use12Hours) return null;
 
-  const Comp = asChild ? Slot : "div";
+  const PeriodPrimitive = asChild ? Slot : "div";
 
   return (
-    <Comp
+    <PeriodPrimitive
       ref={ref}
       className={cn("flex flex-col gap-1", className)}
       {...periodProps}
@@ -895,30 +914,34 @@ function Period(props: DivProps) {
           );
         })}
       </div>
-    </Comp>
+    </PeriodPrimitive>
   );
 }
 
-function Separator(props: SpanProps) {
+interface TimePickerSeparatorProps extends SpanProps {}
+
+function TimePickerSeparator(props: TimePickerSeparatorProps) {
   const { asChild, className, children, ref, ...separatorProps } = props;
 
-  const Comp = asChild ? Slot : "span";
+  const SeparatorPrimitive = asChild ? Slot : "span";
 
   return (
-    <Comp
+    <SeparatorPrimitive
       ref={ref}
       aria-hidden="true"
       className={cn("text-muted-foreground", className)}
       {...separatorProps}
     >
       {children ?? ":"}
-    </Comp>
+    </SeparatorPrimitive>
   );
 }
 
-function Clear(props: ButtonProps) {
+interface TimePickerClearProps extends ButtonProps {}
+
+function TimePickerClear(props: TimePickerClearProps) {
   const { asChild, className, children, ref, ...clearProps } = props;
-  const { disabled, readOnly } = useRootContext(CLEAR_NAME);
+  const { disabled, readOnly } = useTimePickerContext(CLEAR_NAME);
   const store = useStoreContext(CLEAR_NAME);
 
   const onClick = React.useCallback(
@@ -933,10 +956,10 @@ function Clear(props: ButtonProps) {
     [clearProps.onClick, disabled, readOnly, store],
   );
 
-  const Comp = asChild ? Slot : "button";
+  const ClearPrimitive = asChild ? Slot : "button";
 
   return (
-    <Comp
+    <ClearPrimitive
       ref={ref}
       type="button"
       onClick={onClick}
@@ -948,17 +971,17 @@ function Clear(props: ButtonProps) {
       {...clearProps}
     >
       {children ?? "Clear"}
-    </Comp>
+    </ClearPrimitive>
   );
 }
 
 type SegmentType = "hour" | "minute" | "second" | "period";
 
-interface InputProps2 extends Omit<InputProps, "type" | "value"> {
+interface TimePickerInputProps extends Omit<InputProps, "type" | "value"> {
   segment?: SegmentType;
 }
 
-function Input(props: InputProps2) {
+function TimePickerInput(props: TimePickerInputProps) {
   const {
     segment,
     className,
@@ -969,7 +992,7 @@ function Input(props: InputProps2) {
     ...inputProps
   } = props;
   const { use12Hours, showSeconds, disabled, readOnly } =
-    useRootContext(INPUT_NAME);
+    useTimePickerContext(INPUT_NAME);
   const store = useStoreContext(INPUT_NAME);
 
   const value = useStore((state) => state.value);
@@ -1224,20 +1247,32 @@ function Input(props: InputProps2) {
 }
 
 export {
-  Root,
-  Label,
-  InputGroup,
-  Trigger,
-  Content,
-  Hour,
-  Minute,
-  Second,
-  Period,
-  Separator,
-  Clear,
-  Input,
+  TimePickerRoot as Root,
+  TimePickerLabel as Label,
+  TimePickerInputGroup as InputGroup,
+  TimePickerTrigger as Trigger,
+  TimePickerContent as Content,
+  TimePickerHour as Hour,
+  TimePickerMinute as Minute,
+  TimePickerSecond as Second,
+  TimePickerPeriod as Period,
+  TimePickerSeparator as Separator,
+  TimePickerClear as Clear,
+  TimePickerInput as Input,
   //
-  Root as TimePicker,
+  TimePickerRoot as TimePicker,
+  TimePickerRoot,
+  TimePickerLabel,
+  TimePickerInputGroup,
+  TimePickerTrigger,
+  TimePickerContent,
+  TimePickerHour,
+  TimePickerMinute,
+  TimePickerSecond,
+  TimePickerPeriod,
+  TimePickerSeparator,
+  TimePickerClear,
+  TimePickerInput,
   //
-  type RootProps as TimePickerProps,
+  type TimePickerRootProps as TimePickerProps,
 };
