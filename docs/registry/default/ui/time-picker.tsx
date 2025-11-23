@@ -1,6 +1,7 @@
 "use client";
 
 import { Slot } from "@radix-ui/react-slot";
+import { Clock } from "lucide-react";
 import * as React from "react";
 import {
   Popover,
@@ -16,13 +17,30 @@ const ROOT_NAME = "TimePicker";
 const LABEL_NAME = "TimePickerLabel";
 const INPUT_GROUP_NAME = "TimePickerInputGroup";
 const TRIGGER_NAME = "TimePickerTrigger";
-const CONTENT_NAME = "TimePickerContent";
+const COLUMN_ITEM_NAME = "TimePickerColumnItem";
 const HOUR_NAME = "TimePickerHour";
 const MINUTE_NAME = "TimePickerMinute";
 const SECOND_NAME = "TimePickerSecond";
 const PERIOD_NAME = "TimePickerPeriod";
 const CLEAR_NAME = "TimePickerClear";
 const INPUT_NAME = "TimePickerInput";
+
+type Segment = "hour" | "minute" | "second" | "period";
+
+interface DivProps extends React.ComponentProps<"div"> {
+  asChild?: boolean;
+}
+
+interface ButtonProps extends React.ComponentProps<"button"> {
+  asChild?: boolean;
+}
+
+type RootElement = React.ComponentRef<typeof TimePickerRoot>;
+type ColumnItemElement = React.ComponentRef<typeof TimePickerColumnItem>;
+type InputElement = React.ComponentRef<typeof TimePickerInput>;
+
+const PERIODS = ["AM", "PM"] as const;
+type Period = (typeof PERIODS)[number];
 
 const useIsomorphicLayoutEffect =
   typeof window === "undefined" ? React.useEffect : React.useLayoutEffect;
@@ -51,7 +69,7 @@ interface TimeValue {
   hour: number;
   minute: number;
   second: number;
-  period?: "AM" | "PM";
+  period?: Period;
 }
 
 function parseTimeString(
@@ -71,7 +89,7 @@ function parseTimeString(
     return null;
   }
 
-  let period: "AM" | "PM" | undefined;
+  let period: Period | undefined;
   if (use12Hours) {
     period = hour >= 12 ? "PM" : "AM";
     hour = hour % 12 || 12;
@@ -180,7 +198,9 @@ function useStore<T>(selector: (state: StoreState) => T): T {
 
 interface TimePickerContextValue {
   id: string;
-  name?: string;
+  inputGroupId: string;
+  labelId: string;
+  triggerId: string;
   disabled: boolean;
   readOnly: boolean;
   required: boolean;
@@ -193,8 +213,6 @@ interface TimePickerContextValue {
   placeholder: string;
   min?: string;
   max?: string;
-  triggerRef: React.RefObject<HTMLButtonElement | null>;
-  contentRef: React.RefObject<HTMLDivElement | null>;
 }
 
 const TimePickerContext = React.createContext<TimePickerContextValue | null>(
@@ -209,30 +227,9 @@ function useTimePickerContext(consumerName: string) {
   return context;
 }
 
-interface DivProps extends React.ComponentProps<"div"> {
-  asChild?: boolean;
-}
-
-interface ButtonProps extends React.ComponentProps<"button"> {
-  asChild?: boolean;
-}
-
-interface SpanProps extends React.ComponentProps<"span"> {
-  asChild?: boolean;
-}
-
-interface LabelProps extends React.ComponentProps<"label"> {
-  asChild?: boolean;
-}
-
-interface InputProps extends React.ComponentProps<"input"> {
-  asChild?: boolean;
-}
-
 export interface TimePickerRootProps extends DivProps {
-  id?: string;
-  defaultValue?: string;
   value?: string;
+  defaultValue?: string;
   onValueChange?: (value: string) => void;
   onOpenChange?: (open: boolean) => void;
   name?: string;
@@ -308,24 +305,33 @@ function TimePickerRootImpl(props: TimePickerRootImplProps) {
     ...rootProps
   } = props;
 
-  const store = useStoreContext("RootImpl");
+  const store = useStoreContext("TimePickerRootImpl");
 
   useIsomorphicLayoutEffect(() => {
     if (value !== undefined) {
       store.setState("value", value);
     }
-  }, [value, store]);
+  }, [value]);
 
-  const id = React.useId();
-  const generatedId = idProp ?? id;
+  const instanceId = React.useId();
+  const rootId = idProp ?? instanceId;
+  const inputGroupId = React.useId();
+  const labelId = React.useId();
+  const triggerId = React.useId();
 
-  const triggerRef = React.useRef<HTMLButtonElement>(null);
-  const contentRef = React.useRef<HTMLDivElement>(null);
+  const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
+    null,
+  );
+  const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
+
+  const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
   const rootContext: TimePickerContextValue = React.useMemo(
     () => ({
-      id: generatedId,
-      name,
+      id: rootId,
+      inputGroupId,
+      labelId,
+      triggerId,
       disabled,
       readOnly,
       required,
@@ -338,12 +344,12 @@ function TimePickerRootImpl(props: TimePickerRootImplProps) {
       placeholder,
       min,
       max,
-      triggerRef,
-      contentRef,
     }),
     [
-      generatedId,
-      name,
+      rootId,
+      inputGroupId,
+      labelId,
+      triggerId,
       disabled,
       readOnly,
       required,
@@ -364,40 +370,59 @@ function TimePickerRootImpl(props: TimePickerRootImplProps) {
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
-    <TimePickerContext.Provider value={rootContext}>
-      <Popover
-        open={open}
-        onOpenChange={(newOpen: boolean) => store.setState("open", newOpen)}
-      >
-        <RootPrimitive
-          ref={ref}
-          className={cn("relative", className)}
-          {...rootProps}
+    <>
+      <TimePickerContext.Provider value={rootContext}>
+        <Popover
+          open={open}
+          onOpenChange={(newOpen: boolean) => store.setState("open", newOpen)}
         >
-          {children}
-        </RootPrimitive>
-      </Popover>
-    </TimePickerContext.Provider>
+          <RootPrimitive
+            data-slot="time-picker"
+            data-disabled={disabled ? "" : undefined}
+            data-invalid={invalid ? "" : undefined}
+            ref={composedRef}
+            {...rootProps}
+            className={cn("relative", className)}
+          >
+            {children}
+          </RootPrimitive>
+        </Popover>
+      </TimePickerContext.Provider>
+      {isFormControl && (
+        <VisuallyHiddenInput
+          type="hidden"
+          control={formTrigger}
+          name={name}
+          value={value}
+          disabled={disabled}
+          readOnly={readOnly}
+          required={required}
+        />
+      )}
+    </>
   );
 }
 
-interface TimePickerLabelProps extends LabelProps {}
+interface TimePickerLabelProps extends React.ComponentProps<"label"> {
+  asChild?: boolean;
+}
 
 function TimePickerLabel(props: TimePickerLabelProps) {
-  const { asChild, className, ref, ...labelProps } = props;
-  const { id } = useTimePickerContext(LABEL_NAME);
+  const { asChild, className, ...labelProps } = props;
+
+  const { labelId } = useTimePickerContext(LABEL_NAME);
 
   const LabelPrimitive = asChild ? Slot : "label";
 
   return (
     <LabelPrimitive
-      ref={ref}
-      htmlFor={`${id}-input-group`}
+      data-slot="time-picker-label"
+      {...labelProps}
+      htmlFor={labelId}
       className={cn(
         "font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
         className,
       )}
-      {...labelProps}
     />
   );
 }
@@ -405,20 +430,23 @@ function TimePickerLabel(props: TimePickerLabelProps) {
 interface TimePickerInputGroupProps extends DivProps {}
 
 function TimePickerInputGroup(props: TimePickerInputGroupProps) {
-  const { asChild, className, ref, children, ...groupProps } = props;
-  const { id, disabled, invalid } = useTimePickerContext(INPUT_GROUP_NAME);
+  const { asChild, className, ...groupProps } = props;
+
+  const { inputGroupId, labelId, disabled, invalid } =
+    useTimePickerContext(INPUT_GROUP_NAME);
 
   const InputGroupPrimitive = asChild ? Slot : "div";
 
   return (
     <PopoverAnchor asChild>
       <InputGroupPrimitive
-        ref={ref}
-        id={`${id}-input-group`}
-        data-slot="input-group"
         role="group"
+        id={inputGroupId}
+        aria-labelledby={labelId}
+        data-slot="time-picker-input-group"
         data-disabled={disabled ? "" : undefined}
         data-invalid={invalid ? "" : undefined}
+        {...groupProps}
         className={cn(
           "flex h-10 w-full items-center gap-1 rounded-md border border-input bg-background px-3 py-2 shadow-xs outline-none transition-shadow",
           "has-[input:focus-visible]:border-ring has-[input:focus-visible]:ring-[3px] has-[input:focus-visible]:ring-ring/50",
@@ -426,10 +454,7 @@ function TimePickerInputGroup(props: TimePickerInputGroupProps) {
           disabled && "cursor-not-allowed opacity-50",
           className,
         )}
-        {...groupProps}
-      >
-        {children}
-      </InputGroupPrimitive>
+      />
     </PopoverAnchor>
   );
 }
@@ -437,72 +462,37 @@ function TimePickerInputGroup(props: TimePickerInputGroupProps) {
 interface TimePickerTriggerProps extends ButtonProps {}
 
 function TimePickerTrigger(props: TimePickerTriggerProps) {
-  const { asChild, className, children, ref, ...triggerProps } = props;
   const {
-    id,
-    disabled,
-    readOnly,
-    triggerRef: contextTriggerRef,
-    name,
-    required,
-  } = useTimePickerContext(TRIGGER_NAME);
+    className,
+    children,
+    disabled: disabledProp,
+    ...triggerProps
+  } = props;
 
-  const value = useStore((state) => state.value);
+  const { triggerId, disabled } = useTimePickerContext(TRIGGER_NAME);
 
-  const composedRef = useComposedRefs(ref, contextTriggerRef);
-
-  const TriggerPrimitive = asChild ? Slot : "button";
+  const isDisabled = disabledProp || disabled;
 
   return (
-    <>
-      <PopoverTrigger asChild disabled={disabled || readOnly}>
-        <TriggerPrimitive
-          ref={composedRef}
-          id={`${id}-trigger`}
-          type="button"
-          className={cn(
-            "ml-auto flex items-center text-muted-foreground transition-colors hover:text-foreground disabled:pointer-events-none [&>svg:not([class*='size-'])]:size-4",
-            className,
-          )}
-          {...triggerProps}
-        >
-          {children ?? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <polyline points="12 6 12 12 16 14" />
-            </svg>
-          )}
-        </TriggerPrimitive>
-      </PopoverTrigger>
-      {name && (
-        <VisuallyHiddenInput
-          name={name}
-          value={value}
-          required={required}
-          disabled={disabled}
-          readOnly={readOnly}
-          control={null}
-        />
+    <PopoverTrigger
+      type="button"
+      id={triggerId}
+      data-slot="time-picker-trigger"
+      disabled={isDisabled}
+      {...triggerProps}
+      className={cn(
+        "ml-auto flex items-center text-muted-foreground transition-colors hover:text-foreground disabled:pointer-events-none [&>svg:not([class*='size-'])]:size-4",
+        className,
       )}
-    </>
+    >
+      {children ?? <Clock />}
+    </PopoverTrigger>
   );
 }
 
-interface TimePickerContentProps extends DivProps {
-  side?: "top" | "right" | "bottom" | "left";
-  align?: "start" | "center" | "end";
-  sideOffset?: number;
-}
+interface TimePickerContentProps
+  extends DivProps,
+    React.ComponentProps<typeof PopoverContent> {}
 
 function TimePickerContent(props: TimePickerContentProps) {
   const {
@@ -510,21 +500,17 @@ function TimePickerContent(props: TimePickerContentProps) {
     align = "start",
     sideOffset = 4,
     className,
-    ref,
     ...contentProps
   } = props;
-  const { contentRef: contextContentRef } = useTimePickerContext(CONTENT_NAME);
-
-  const composedRef = useComposedRefs(ref, contextContentRef);
 
   return (
     <PopoverContent
-      ref={composedRef}
+      data-slot="time-picker-content"
       side={side}
       align={align}
       sideOffset={sideOffset}
-      className={cn("w-auto max-w-(--radix-popover-trigger-width)", className)}
       {...contentProps}
+      className={cn("w-auto max-w-(--radix-popover-trigger-width)", className)}
     />
   );
 }
@@ -534,13 +520,13 @@ interface TimePickerColumnContextValue {
   setActiveIndex: (index: number | null) => void;
   items: Array<{
     value: number;
-    ref: React.RefObject<HTMLButtonElement | null>;
+    ref: React.RefObject<ColumnItemElement | null>;
   }>;
-  registerItem: (
+  onItemRegister: (
     value: number,
-    ref: React.RefObject<HTMLButtonElement | null>,
+    ref: React.RefObject<ColumnItemElement | null>,
   ) => void;
-  unregisterItem: (value: number) => void;
+  onItemUnregister: (value: number) => void;
 }
 
 const TimePickerColumnContext =
@@ -557,21 +543,21 @@ function useTimePickerColumnContext(consumerName: string) {
 interface TimePickerColumnProps extends DivProps {}
 
 function TimePickerColumn(props: TimePickerColumnProps) {
-  const { children, className, ref, ...columnProps } = props;
+  const { children, className, ...columnProps } = props;
 
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
   const itemsRef = React.useRef<
     Map<number, React.RefObject<HTMLButtonElement | null>>
   >(new Map());
 
-  const registerItem = React.useCallback(
+  const onItemRegister = React.useCallback(
     (value: number, ref: React.RefObject<HTMLButtonElement | null>) => {
       itemsRef.current.set(value, ref);
     },
     [],
   );
 
-  const unregisterItem = React.useCallback((value: number) => {
+  const onItemUnregister = React.useCallback((value: number) => {
     itemsRef.current.delete(value);
   }, []);
 
@@ -583,16 +569,16 @@ function TimePickerColumn(props: TimePickerColumnProps) {
         value,
         ref,
       })),
-      registerItem,
-      unregisterItem,
+      onItemRegister,
+      onItemUnregister,
     }),
-    [activeIndex, registerItem, unregisterItem],
+    [activeIndex, onItemRegister, onItemUnregister],
   );
 
   return (
     <TimePickerColumnContext.Provider value={contextValue}>
       <div
-        ref={ref}
+        data-slot="time-picker-column"
         className={cn("flex flex-col gap-1", className)}
         {...columnProps}
       >
@@ -618,23 +604,23 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
     ...itemProps
   } = props;
 
-  const itemRef = React.useRef<HTMLButtonElement>(null);
+  const itemRef = React.useRef<ColumnItemElement | null>(null);
   const composedRef = useComposedRefs(ref, itemRef);
-  const columnContext = useTimePickerColumnContext("TimePickerColumnItem");
+  const columnContext = useTimePickerColumnContext(COLUMN_ITEM_NAME);
 
-  React.useEffect(() => {
-    columnContext.registerItem(value, itemRef);
-    return () => columnContext.unregisterItem(value);
+  useIsomorphicLayoutEffect(() => {
+    columnContext.onItemRegister(value, itemRef);
+    return () => columnContext.onItemUnregister(value);
   }, [value, columnContext]);
 
-  React.useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (selected && itemRef.current) {
       itemRef.current.scrollIntoView({ block: "nearest" });
     }
   }, [selected]);
 
   const onClick = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
+    (event: React.MouseEvent<ColumnItemElement>) => {
       itemProps.onClick?.(event);
       if (event.defaultPrevented) return;
 
@@ -644,7 +630,7 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
   );
 
   const onKeyDown = React.useCallback(
-    (event: React.KeyboardEvent<HTMLButtonElement>) => {
+    (event: React.KeyboardEvent<ColumnItemElement>) => {
       itemProps.onKeyDown?.(event);
       if (event.defaultPrevented) return;
 
@@ -675,17 +661,17 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
 
   return (
     <button
-      ref={composedRef}
       type="button"
-      onClick={onClick}
-      onKeyDown={onKeyDown}
+      {...itemProps}
+      ref={composedRef}
       className={cn(
         "w-full rounded px-3 py-1.5 text-left text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
         selected &&
           "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
         className,
       )}
-      {...itemProps}
+      onClick={onClick}
+      onKeyDown={onKeyDown}
     >
       {formattedValue}
     </button>
@@ -697,7 +683,8 @@ interface TimePickerHourProps extends DivProps {
 }
 
 function TimePickerHour(props: TimePickerHourProps) {
-  const { asChild, format = "numeric", className, ref, ...hourProps } = props;
+  const { asChild, format = "numeric", ...hourProps } = props;
+
   const { use12Hours, hourStep, showSeconds } = useTimePickerContext(HOUR_NAME);
   const store = useStoreContext(HOUR_NAME);
 
@@ -719,7 +706,7 @@ function TimePickerHour(props: TimePickerHourProps) {
         hour: 0,
         minute: 0,
         second: 0,
-        period: "AM" as const,
+        period: "AM",
       };
       const newTime = { ...currentTime, hour };
       const newValue = formatTimeValue(newTime, showSeconds, use12Hours);
@@ -731,9 +718,9 @@ function TimePickerHour(props: TimePickerHourProps) {
   const HourPrimitive = asChild ? Slot : TimePickerColumn;
 
   return (
-    <HourPrimitive ref={ref} className={cn(className)} {...hourProps}>
+    <HourPrimitive data-slot="time-picker-hour" {...hourProps}>
       <div className="mb-1 font-medium text-muted-foreground text-xs">Hour</div>
-      <div className="max-h-[200px] space-y-1 overflow-y-auto">
+      <div className="flex max-h-[200px] flex-col gap-1 overflow-y-auto">
         {hours.map((hour) => (
           <TimePickerColumnItem
             key={hour}
@@ -753,7 +740,8 @@ interface TimePickerMinuteProps extends DivProps {
 }
 
 function TimePickerMinute(props: TimePickerMinuteProps) {
-  const { asChild, format = "2-digit", className, ref, ...minuteProps } = props;
+  const { asChild, format = "2-digit", ...minuteProps } = props;
+
   const { use12Hours, minuteStep, showSeconds } =
     useTimePickerContext(MINUTE_NAME);
   const store = useStoreContext(MINUTE_NAME);
@@ -772,7 +760,7 @@ function TimePickerMinute(props: TimePickerMinuteProps) {
         hour: 0,
         minute: 0,
         second: 0,
-        period: "AM" as const,
+        period: "AM",
       };
       const newTime = { ...currentTime, minute };
       const newValue = formatTimeValue(newTime, showSeconds, use12Hours);
@@ -784,11 +772,11 @@ function TimePickerMinute(props: TimePickerMinuteProps) {
   const MinutePrimitive = asChild ? Slot : TimePickerColumn;
 
   return (
-    <MinutePrimitive ref={ref} className={cn(className)} {...minuteProps}>
+    <MinutePrimitive data-slot="time-picker-minute" {...minuteProps}>
       <div className="mb-1 font-medium text-muted-foreground text-xs">
         Minute
       </div>
-      <div className="max-h-[200px] space-y-1 overflow-y-auto">
+      <div className="flex max-h-[200px] flex-col gap-1 overflow-y-auto">
         {minutes.map((minute) => (
           <TimePickerColumnItem
             key={minute}
@@ -808,7 +796,7 @@ interface TimePickerSecondProps extends DivProps {
 }
 
 function TimePickerSecond(props: TimePickerSecondProps) {
-  const { asChild, format = "2-digit", className, ref, ...secondProps } = props;
+  const { asChild, format = "2-digit", ...secondProps } = props;
   const { use12Hours, secondStep } = useTimePickerContext(SECOND_NAME);
   const store = useStoreContext(SECOND_NAME);
 
@@ -826,7 +814,7 @@ function TimePickerSecond(props: TimePickerSecondProps) {
         hour: 0,
         minute: 0,
         second: 0,
-        period: "AM" as const,
+        period: "AM",
       };
       const newTime = { ...currentTime, second };
       const newValue = formatTimeValue(newTime, true, use12Hours);
@@ -838,11 +826,11 @@ function TimePickerSecond(props: TimePickerSecondProps) {
   const SecondPrimitive = asChild ? Slot : TimePickerColumn;
 
   return (
-    <SecondPrimitive ref={ref} className={cn(className)} {...secondProps}>
+    <SecondPrimitive data-slot="time-picker-second" {...secondProps}>
       <div className="mb-1 font-medium text-muted-foreground text-xs">
         Second
       </div>
-      <div className="max-h-[200px] space-y-1 overflow-y-auto">
+      <div className="flex max-h-[200px] flex-col gap-1 overflow-y-auto">
         {seconds.map((second) => (
           <TimePickerColumnItem
             key={second}
@@ -860,7 +848,7 @@ function TimePickerSecond(props: TimePickerSecondProps) {
 interface TimePickerPeriodProps extends DivProps {}
 
 function TimePickerPeriod(props: TimePickerPeriodProps) {
-  const { asChild, className, ref, ...periodProps } = props;
+  const { asChild, className, ...periodProps } = props;
   const { use12Hours, showSeconds } = useTimePickerContext(PERIOD_NAME);
   const store = useStoreContext(PERIOD_NAME);
 
@@ -868,12 +856,12 @@ function TimePickerPeriod(props: TimePickerPeriodProps) {
   const timeValue = parseTimeString(value, use12Hours);
 
   const onPeriodToggle = React.useCallback(
-    (period: "AM" | "PM") => {
+    (period: Period) => {
       const currentTime = timeValue ?? {
         hour: 12,
         minute: 0,
         second: 0,
-        period: "AM" as const,
+        period: "AM",
       };
       const newTime = { ...currentTime, period };
       const newValue = formatTimeValue(newTime, showSeconds, use12Hours);
@@ -888,15 +876,15 @@ function TimePickerPeriod(props: TimePickerPeriodProps) {
 
   return (
     <PeriodPrimitive
-      ref={ref}
-      className={cn("flex flex-col gap-1", className)}
+      data-slot="time-picker-period"
       {...periodProps}
+      className={cn("flex flex-col gap-1", className)}
     >
       <div className="mb-1 font-medium text-muted-foreground text-xs">
         Period
       </div>
-      <div className="space-y-1">
-        {(["AM", "PM"] as const).map((period) => {
+      <div className="flex flex-col gap-1">
+        {PERIODS.map((period) => {
           const isSelected = timeValue?.period === period;
           return (
             <button
@@ -918,19 +906,21 @@ function TimePickerPeriod(props: TimePickerPeriodProps) {
   );
 }
 
-interface TimePickerSeparatorProps extends SpanProps {}
+interface TimePickerSeparatorProps extends React.ComponentProps<"span"> {
+  asChild?: boolean;
+}
 
 function TimePickerSeparator(props: TimePickerSeparatorProps) {
-  const { asChild, className, children, ref, ...separatorProps } = props;
+  const { asChild, className, children, ...separatorProps } = props;
 
   const SeparatorPrimitive = asChild ? Slot : "span";
 
   return (
     <SeparatorPrimitive
-      ref={ref}
       aria-hidden="true"
-      className={cn("text-muted-foreground", className)}
+      data-slot="time-picker-separator"
       {...separatorProps}
+      className={cn("text-muted-foreground", className)}
     >
       {children ?? ":"}
     </SeparatorPrimitive>
@@ -940,9 +930,18 @@ function TimePickerSeparator(props: TimePickerSeparatorProps) {
 interface TimePickerClearProps extends ButtonProps {}
 
 function TimePickerClear(props: TimePickerClearProps) {
-  const { asChild, className, children, ref, ...clearProps } = props;
+  const {
+    asChild,
+    className,
+    children,
+    disabled: disabledProp,
+    ...clearProps
+  } = props;
+
   const { disabled, readOnly } = useTimePickerContext(CLEAR_NAME);
   const store = useStoreContext(CLEAR_NAME);
+
+  const isDisabled = disabledProp || disabled;
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -960,40 +959,47 @@ function TimePickerClear(props: TimePickerClearProps) {
 
   return (
     <ClearPrimitive
-      ref={ref}
       type="button"
-      onClick={onClick}
-      disabled={disabled || readOnly}
+      data-slot="time-picker-clear"
+      disabled={isDisabled}
+      {...clearProps}
       className={cn(
         "inline-flex items-center justify-center rounded-sm font-medium text-sm transition-colors hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50",
         className,
       )}
-      {...clearProps}
+      onClick={onClick}
     >
       {children ?? "Clear"}
     </ClearPrimitive>
   );
 }
 
-type SegmentType = "hour" | "minute" | "second" | "period";
-
-interface TimePickerInputProps extends Omit<InputProps, "type" | "value"> {
-  segment?: SegmentType;
+interface TimePickerInputProps
+  extends Omit<React.ComponentProps<"input">, "type" | "value"> {
+  segment?: Segment;
 }
 
 function TimePickerInput(props: TimePickerInputProps) {
   const {
     segment,
+    disabled: disabledProp,
+    readOnly: readOnlyProp,
     className,
     ref,
-    onFocus: onFocusProp,
     onBlur: onBlurProp,
+    onChange: onChangeProp,
+    onClick: onClickProp,
+    onFocus: onFocusProp,
     onKeyDown: onKeyDownProp,
     ...inputProps
   } = props;
+
   const { use12Hours, showSeconds, disabled, readOnly } =
     useTimePickerContext(INPUT_NAME);
   const store = useStoreContext(INPUT_NAME);
+
+  const isDisabled = disabledProp || disabled;
+  const isReadOnly = readOnlyProp || readOnly;
 
   const value = useStore((state) => state.value);
   const timeValue = parseTimeString(value, use12Hours);
@@ -1076,20 +1082,8 @@ function TimePickerInput(props: TimePickerInputProps) {
     [timeValue, segment, use12Hours, showSeconds, store],
   );
 
-  const onFocus = React.useCallback(
-    (event: React.FocusEvent<HTMLInputElement>) => {
-      onFocusProp?.(event);
-      if (event.defaultPrevented) return;
-
-      setIsEditing(true);
-      // Always select the entire content like native time picker
-      queueMicrotask(() => event.target.select());
-    },
-    [onFocusProp],
-  );
-
   const onBlur = React.useCallback(
-    (event: React.FocusEvent<HTMLInputElement>) => {
+    (event: React.FocusEvent<InputElement>) => {
       onBlurProp?.(event);
       if (event.defaultPrevented) return;
 
@@ -1102,8 +1096,56 @@ function TimePickerInput(props: TimePickerInputProps) {
     [onBlurProp, editValue, updateTimeValue, getSegmentValue],
   );
 
+  const onChange = React.useCallback(
+    (event: React.ChangeEvent<InputElement>) => {
+      onChangeProp?.(event);
+      if (event.defaultPrevented) return;
+
+      const newValue = event.target.value;
+
+      // For period, just accept 'a', 'A', 'p', 'P' and convert immediately
+      if (segment === "period") {
+        const firstChar = newValue.charAt(0).toUpperCase();
+        if (firstChar === "A") {
+          setEditValue("AM");
+          updateTimeValue("AM");
+        } else if (firstChar === "P") {
+          setEditValue("PM");
+          updateTimeValue("PM");
+        }
+        return;
+      }
+
+      setEditValue(newValue);
+    },
+    [segment, updateTimeValue, onChangeProp],
+  );
+
+  const onClick = React.useCallback(
+    (event: React.MouseEvent<InputElement>) => {
+      onClickProp?.(event);
+      if (event.defaultPrevented) return;
+
+      // Select all on click, like native time picker
+      event.currentTarget.select();
+    },
+    [onClickProp],
+  );
+
+  const onFocus = React.useCallback(
+    (event: React.FocusEvent<InputElement>) => {
+      onFocusProp?.(event);
+      if (event.defaultPrevented) return;
+
+      setIsEditing(true);
+      // Always select the entire content like native time picker
+      queueMicrotask(() => event.target.select());
+    },
+    [onFocusProp],
+  );
+
   const onKeyDown = React.useCallback(
-    (event: React.KeyboardEvent<HTMLInputElement>) => {
+    (event: React.KeyboardEvent<InputElement>) => {
       onKeyDownProp?.(event);
       if (event.defaultPrevented) return;
 
@@ -1192,56 +1234,26 @@ function TimePickerInput(props: TimePickerInputProps) {
     ],
   );
 
-  const onChange = React.useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const newValue = event.target.value;
-
-      // For period, just accept 'a', 'A', 'p', 'P' and convert immediately
-      if (segment === "period") {
-        const firstChar = newValue.charAt(0).toUpperCase();
-        if (firstChar === "A") {
-          setEditValue("AM");
-          updateTimeValue("AM");
-        } else if (firstChar === "P") {
-          setEditValue("PM");
-          updateTimeValue("PM");
-        }
-        return;
-      }
-
-      setEditValue(newValue);
-    },
-    [segment, updateTimeValue],
-  );
-
-  const onClick = React.useCallback(
-    (event: React.MouseEvent<HTMLInputElement>) => {
-      // Select all on click, like native time picker
-      event.currentTarget.select();
-    },
-    [],
-  );
-
   const displayValue = isEditing ? editValue : getSegmentValue();
 
   return (
     <input
-      ref={composedRef}
       type="text"
-      value={displayValue}
-      onChange={onChange}
-      onFocus={onFocus}
-      onBlur={onBlur}
-      onKeyDown={onKeyDown}
-      onClick={onClick}
-      disabled={disabled}
-      readOnly={readOnly}
+      {...inputProps}
+      disabled={isDisabled}
+      readOnly={isReadOnly}
       className={cn(
         "inline-flex h-full min-w-[2.5ch] items-center justify-center rounded border-0 bg-transparent px-0.5 text-center text-sm tabular-nums focus:bg-accent focus:outline-none disabled:cursor-not-allowed disabled:opacity-50",
         segment === "period" && "min-w-[3ch]",
         className,
       )}
-      {...inputProps}
+      ref={composedRef}
+      value={displayValue}
+      onBlur={onBlur}
+      onChange={onChange}
+      onClick={onClick}
+      onFocus={onFocus}
+      onKeyDown={onKeyDown}
     />
   );
 }
