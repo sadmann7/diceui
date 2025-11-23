@@ -727,7 +727,7 @@ function TimePickerColumn(props: TimePickerColumnProps) {
         selected,
       }))
       .filter((item) => item.ref.current);
-    
+
     const selected = items.find((item) => item.selected);
     console.log("[TimePickerColumn] getSelectedItemRef:", {
       columnId,
@@ -814,9 +814,18 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
       itemProps.onClick?.(event);
       if (event.defaultPrevented) return;
 
+      console.log("[TimePickerColumnItem] onClick:", value);
       itemRef.current?.focus();
     },
-    [itemProps.onClick],
+    [itemProps.onClick, value],
+  );
+
+  const onFocus = React.useCallback(
+    (event: React.FocusEvent<ColumnItemElement>) => {
+      itemProps.onFocus?.(event);
+      console.log("[TimePickerColumnItem] onFocus received:", value);
+    },
+    [itemProps.onFocus, value],
   );
 
   const onKeyDown = React.useCallback(
@@ -904,6 +913,7 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
         className,
       )}
       onClick={onClick}
+      onFocus={onFocus}
       onKeyDown={onKeyDown}
     >
       {formattedValue}
@@ -1370,11 +1380,12 @@ function TimePickerInput(props: TimePickerInputProps) {
       onFocusProp?.(event);
       if (event.defaultPrevented) return;
 
+      console.log("[TimePickerInput] onFocus:", segment, event.target.value);
       setIsEditing(true);
       // Always select the entire content like native time picker
       queueMicrotask(() => event.target.select());
     },
-    [onFocusProp],
+    [onFocusProp, segment],
   );
 
   const onKeyDown = React.useCallback(
