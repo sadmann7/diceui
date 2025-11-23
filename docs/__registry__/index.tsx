@@ -545,7 +545,7 @@ export const Index: Record<string, any> = {
       name: "time-picker",
       description: "",
       type: "registry:ui",
-      registryDependencies: undefined,
+      registryDependencies: ["popover"],
       files: [{
         path: "registry/default/ui/time-picker.tsx",
         type: "registry:ui",

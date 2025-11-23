@@ -552,6 +552,7 @@ export const ui: Registry["items"] = [
     name: "time-picker",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot"],
+    registryDependencies: ["popover"],
     files: [
       {
         path: "ui/time-picker.tsx",

@@ -2,6 +2,12 @@
 
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
+import {
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidden-input";
@@ -244,11 +250,39 @@ export interface RootProps extends DivProps {
 
 function Root(props: RootProps) {
   const {
-    id: idProp,
+    value,
     defaultValue = "",
-    value: valueProp,
     onValueChange,
     onOpenChange,
+    ...rootProps
+  } = props;
+
+  const stateRef = useLazyRef<StoreState>(() => ({
+    value: value ?? defaultValue,
+    open: false,
+  }));
+  const listenersRef = useLazyRef(() => new Set<() => void>());
+  const propsRef = useAsRef({ onValueChange, onOpenChange });
+
+  const store = React.useMemo(
+    () => createStore(listenersRef, stateRef, propsRef),
+    [listenersRef, stateRef, propsRef],
+  );
+
+  return (
+    <StoreContext.Provider value={store}>
+      <RootImpl {...rootProps} value={value} />
+    </StoreContext.Provider>
+  );
+}
+
+interface RootImplProps
+  extends Omit<RootProps, "defaultValue" | "onValueChange" | "onOpenChange"> {}
+
+function RootImpl(props: RootImplProps) {
+  const {
+    id: idProp,
+    value,
     name,
     disabled = false,
     readOnly = false,
@@ -265,29 +299,20 @@ function Root(props: RootProps) {
     asChild,
     className,
     ref,
+    children,
     ...rootProps
   } = props;
 
-  const id = React.useId();
-  const generatedId = idProp ?? id;
-
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => ({
-    value: valueProp ?? defaultValue,
-    open: false,
-  }));
-  const propsRef = useAsRef({ onValueChange, onOpenChange });
-
-  const store = React.useMemo(
-    () => createStore(listenersRef, stateRef, propsRef),
-    [listenersRef, stateRef, propsRef],
-  );
+  const store = useStoreContext("RootImpl");
 
   useIsomorphicLayoutEffect(() => {
-    if (valueProp !== undefined) {
-      store.setState("value", valueProp);
+    if (value !== undefined) {
+      store.setState("value", value);
     }
-  }, [valueProp, store]);
+  }, [value, store]);
+
+  const id = React.useId();
+  const generatedId = idProp ?? id;
 
   const triggerRef = React.useRef<HTMLButtonElement>(null);
   const contentRef = React.useRef<HTMLDivElement>(null);
@@ -329,14 +354,21 @@ function Root(props: RootProps) {
     ],
   );
 
+  const open = useStore((state) => state.open);
+
   const Comp = asChild ? Slot : "div";
 
   return (
-    <StoreContext.Provider value={store}>
-      <RootContext.Provider value={rootContext}>
-        <Comp ref={ref} className={cn("relative", className)} {...rootProps} />
-      </RootContext.Provider>
-    </StoreContext.Provider>
+    <RootContext.Provider value={rootContext}>
+      <Popover
+        open={open}
+        onOpenChange={(newOpen: boolean) => store.setState("open", newOpen)}
+      >
+        <Comp ref={ref} className={cn("relative", className)} {...rootProps}>
+          {children}
+        </Comp>
+      </Popover>
+    </RootContext.Provider>
   );
 }
 
@@ -366,24 +398,26 @@ function InputGroup(props: DivProps) {
   const Comp = asChild ? Slot : "div";
 
   return (
-    <Comp
-      ref={ref}
-      id={`${id}-input-group`}
-      data-slot="input-group"
-      role="group"
-      data-disabled={disabled ? "" : undefined}
-      data-invalid={invalid ? "" : undefined}
-      className={cn(
-        "flex h-10 w-full items-center gap-1 rounded-md border border-input bg-background px-3 py-2 shadow-xs outline-none transition-shadow",
-        "has-[input:focus-visible]:border-ring has-[input:focus-visible]:ring-[3px] has-[input:focus-visible]:ring-ring/50",
-        invalid && "border-destructive ring-destructive/20",
-        disabled && "cursor-not-allowed opacity-50",
-        className,
-      )}
-      {...groupProps}
-    >
-      {children}
-    </Comp>
+    <PopoverAnchor asChild>
+      <Comp
+        ref={ref}
+        id={`${id}-input-group`}
+        data-slot="input-group"
+        role="group"
+        data-disabled={disabled ? "" : undefined}
+        data-invalid={invalid ? "" : undefined}
+        className={cn(
+          "flex h-10 w-full items-center gap-1 rounded-md border border-input bg-background px-3 py-2 shadow-xs outline-none transition-shadow",
+          "has-[input:focus-visible]:border-ring has-[input:focus-visible]:ring-[3px] has-[input:focus-visible]:ring-ring/50",
+          invalid && "border-destructive ring-destructive/20",
+          disabled && "cursor-not-allowed opacity-50",
+          className,
+        )}
+        {...groupProps}
+      >
+        {children}
+      </Comp>
+    </PopoverAnchor>
   );
 }
 
@@ -397,82 +431,44 @@ function Trigger(props: ButtonProps) {
     name,
     required,
   } = useRootContext(TRIGGER_NAME);
-  const store = useStoreContext(TRIGGER_NAME);
 
   const value = useStore((state) => state.value);
-  const open = useStore((state) => state.open);
 
   const composedRef = useComposedRefs(ref, contextTriggerRef);
-
-  const onClick = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
-      triggerProps.onClick?.(event);
-      if (event.defaultPrevented) return;
-
-      if (disabled || readOnly) return;
-      event.preventDefault();
-      store.setState("open", !open);
-    },
-    [triggerProps.onClick, disabled, readOnly, store, open],
-  );
-
-  const onKeyDown = React.useCallback(
-    (event: React.KeyboardEvent<HTMLButtonElement>) => {
-      triggerProps.onKeyDown?.(event);
-      if (event.defaultPrevented) return;
-
-      if (disabled || readOnly) return;
-
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        store.setState("open", !open);
-      } else if (event.key === "Escape" && open) {
-        event.preventDefault();
-        store.setState("open", false);
-      }
-    },
-    [triggerProps.onKeyDown, disabled, readOnly, store, open],
-  );
 
   const Comp = asChild ? Slot : "button";
 
   return (
     <>
-      <Comp
-        ref={composedRef}
-        id={`${id}-trigger`}
-        type="button"
-        role="combobox"
-        aria-expanded={open}
-        aria-haspopup="dialog"
-        disabled={disabled}
-        data-state={open ? "open" : "closed"}
-        data-disabled={disabled ? "" : undefined}
-        onClick={onClick}
-        onKeyDown={onKeyDown}
-        className={cn(
-          "ml-auto flex items-center text-muted-foreground transition-colors hover:text-foreground disabled:pointer-events-none [&>svg:not([class*='size-'])]:size-4",
-          className,
-        )}
-        {...triggerProps}
-      >
-        {children ?? (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <polyline points="12 6 12 12 16 14" />
-          </svg>
-        )}
-      </Comp>
+      <PopoverTrigger asChild disabled={disabled || readOnly}>
+        <Comp
+          ref={composedRef}
+          id={`${id}-trigger`}
+          type="button"
+          className={cn(
+            "ml-auto flex items-center text-muted-foreground transition-colors hover:text-foreground disabled:pointer-events-none [&>svg:not([class*='size-'])]:size-4",
+            className,
+          )}
+          {...triggerProps}
+        >
+          {children ?? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+          )}
+        </Comp>
+      </PopoverTrigger>
       {name && (
         <VisuallyHiddenInput
           name={name}
@@ -487,69 +483,32 @@ function Trigger(props: ButtonProps) {
   );
 }
 
-function Content(props: DivProps) {
+function Content(
+  props: DivProps & {
+    side?: "top" | "right" | "bottom" | "left";
+    align?: "start" | "center" | "end";
+    sideOffset?: number;
+  },
+) {
   const {
-    asChild,
     side = "bottom",
     align = "start",
+    sideOffset = 4,
     className,
     ref,
     ...contentProps
-  } = props as DivProps & { side?: string; align?: string };
-  const {
-    contentRef: contextContentRef,
-    triggerRef,
-    disabled,
-  } = useRootContext(CONTENT_NAME);
-  const store = useStoreContext(CONTENT_NAME);
-
-  const open = useStore((state) => state.open);
+  } = props;
+  const { contentRef: contextContentRef } = useRootContext(CONTENT_NAME);
 
   const composedRef = useComposedRefs(ref, contextContentRef);
 
-  React.useEffect(() => {
-    if (!open) return;
-
-    function onPointerDown(event: PointerEvent) {
-      const target = event.target as Node;
-      if (
-        contextContentRef.current?.contains(target) ||
-        triggerRef.current?.contains(target)
-      ) {
-        return;
-      }
-      store.setState("open", false);
-    }
-
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        store.setState("open", false);
-      }
-    }
-
-    document.addEventListener("pointerdown", onPointerDown);
-    document.addEventListener("keydown", onKeyDown);
-
-    return () => {
-      document.removeEventListener("pointerdown", onPointerDown);
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [open, store, contextContentRef, triggerRef]);
-
-  if (!open || disabled) return null;
-
-  const Comp = asChild ? Slot : "div";
-
   return (
-    <Comp
+    <PopoverContent
       ref={composedRef}
-      data-state={open ? "open" : "closed"}
-      data-side={side}
-      data-align={align}
-      className={cn(
-        "absolute z-50 mt-1 min-w-[200px] rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none",
-        className,
-      )}
+      side={side}
+      align={align}
+      sideOffset={sideOffset}
+      className={cn("w-auto max-w-(--radix-popover-trigger-width)", className)}
       {...contentProps}
     />
   );

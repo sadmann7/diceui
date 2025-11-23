@@ -628,6 +628,9 @@
     "dependencies": [
       "@radix-ui/react-slot"
     ],
+    "registryDependencies": [
+      "popover"
+    ],
     "files": [
       {
         "path": "ui/time-picker.tsx",
