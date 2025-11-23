@@ -485,6 +485,23 @@ function TimePickerTrigger(props: ButtonProps) {
   );
 }
 
+interface TimePickerGroupContextValue {
+  getColumns: () => Array<{
+    id: string;
+    ref: React.RefObject<HTMLDivElement | null>;
+    getSelectedItemRef: () => React.RefObject<HTMLButtonElement | null> | null;
+  }>;
+  onColumnRegister: (
+    id: string,
+    ref: React.RefObject<HTMLDivElement | null>,
+    getSelectedItemRef: () => React.RefObject<HTMLButtonElement | null> | null,
+  ) => void;
+  onColumnUnregister: (id: string) => void;
+}
+
+const TimePickerGroupContext =
+  React.createContext<TimePickerGroupContextValue | null>(null);
+
 interface TimePickerContentProps
   extends DivProps,
     React.ComponentProps<typeof PopoverContent> {}
@@ -496,8 +513,66 @@ function TimePickerContent(props: TimePickerContentProps) {
     sideOffset = 4,
     className,
     onOpenAutoFocus,
+    children,
     ...contentProps
   } = props;
+
+  const columnsRef = React.useRef<
+    Map<
+      string,
+      {
+        ref: React.RefObject<HTMLDivElement | null>;
+        getSelectedItemRef: () => React.RefObject<HTMLButtonElement | null> | null;
+      }
+    >
+  >(new Map());
+
+  const onColumnRegister = React.useCallback(
+    (
+      id: string,
+      ref: React.RefObject<HTMLDivElement | null>,
+      getSelectedItemRef: () => React.RefObject<HTMLButtonElement | null> | null,
+    ) => {
+      columnsRef.current.set(id, { ref, getSelectedItemRef });
+    },
+    [],
+  );
+
+  const onColumnUnregister = React.useCallback((id: string) => {
+    columnsRef.current.delete(id);
+  }, []);
+
+  const getColumns = React.useCallback(() => {
+    return Array.from(columnsRef.current.entries())
+      .map(([id, { ref, getSelectedItemRef }]) => ({
+        id,
+        ref,
+        getSelectedItemRef,
+      }))
+      .filter((col) => col.ref.current)
+      .sort((a, b) => {
+        const elementA = a.ref.current;
+        const elementB = b.ref.current;
+        if (!elementA || !elementB) return 0;
+        const position = elementA.compareDocumentPosition(elementB);
+        if (position & Node.DOCUMENT_POSITION_FOLLOWING) {
+          return -1;
+        }
+        if (position & Node.DOCUMENT_POSITION_PRECEDING) {
+          return 1;
+        }
+        return 0;
+      });
+  }, []);
+
+  const groupContextValue = React.useMemo<TimePickerGroupContextValue>(
+    () => ({
+      getColumns,
+      onColumnRegister,
+      onColumnUnregister,
+    }),
+    [getColumns, onColumnRegister, onColumnUnregister],
+  );
 
   const handleOpenAutoFocus = React.useCallback(
     (event: Event) => {
@@ -506,28 +581,31 @@ function TimePickerContent(props: TimePickerContentProps) {
 
       // Prevent default auto-focus behavior and focus the first selected item
       event.preventDefault();
-      const content = event.currentTarget as HTMLElement;
-      const selectedItem = content.querySelector(
-        '[data-slot="time-picker-column"] button[data-selected]',
-      ) as HTMLElement;
-      selectedItem?.focus();
+      const columns = getColumns();
+      const firstColumn = columns[0];
+      const selectedItemRef = firstColumn?.getSelectedItemRef();
+      selectedItemRef?.current?.focus();
     },
-    [onOpenAutoFocus],
+    [onOpenAutoFocus, getColumns],
   );
 
   return (
-    <PopoverContent
-      data-slot="time-picker-content"
-      side={side}
-      align={align}
-      sideOffset={sideOffset}
-      onOpenAutoFocus={handleOpenAutoFocus}
-      {...contentProps}
-      className={cn(
-        "w-auto max-w-(--radix-popover-trigger-width) p-0",
-        className,
-      )}
-    />
+    <TimePickerGroupContext.Provider value={groupContextValue}>
+      <PopoverContent
+        data-slot="time-picker-content"
+        side={side}
+        align={align}
+        sideOffset={sideOffset}
+        onOpenAutoFocus={handleOpenAutoFocus}
+        {...contentProps}
+        className={cn(
+          "w-auto max-w-(--radix-popover-trigger-width) p-0",
+          className,
+        )}
+      >
+        {children}
+      </PopoverContent>
+    </TimePickerGroupContext.Provider>
   );
 }
 
@@ -537,10 +615,12 @@ interface TimePickerColumnContextValue {
   getItems: () => Array<{
     value: number;
     ref: React.RefObject<ColumnItemElement | null>;
+    selected: boolean;
   }>;
   onItemRegister: (
     value: number,
     ref: React.RefObject<ColumnItemElement | null>,
+    selected: boolean,
   ) => void;
   onItemUnregister: (value: number) => void;
 }
@@ -559,16 +639,32 @@ function useTimePickerColumnContext(consumerName: string) {
 interface TimePickerColumnProps extends DivProps {}
 
 function TimePickerColumn(props: TimePickerColumnProps) {
-  const { children, className, ...columnProps } = props;
+  const { children, className, ref, ...columnProps } = props;
+
+  const columnId = React.useId();
+  const columnRef = React.useRef<HTMLDivElement | null>(null);
+  const composedRef = useComposedRefs(ref, columnRef);
 
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
   const itemsRef = React.useRef<
-    Map<number, React.RefObject<HTMLButtonElement | null>>
+    Map<
+      number,
+      {
+        ref: React.RefObject<HTMLButtonElement | null>;
+        selected: boolean;
+      }
+    >
   >(new Map());
 
+  const groupContext = React.useContext(TimePickerGroupContext);
+
   const onItemRegister = React.useCallback(
-    (value: number, ref: React.RefObject<HTMLButtonElement | null>) => {
-      itemsRef.current.set(value, ref);
+    (
+      value: number,
+      ref: React.RefObject<HTMLButtonElement | null>,
+      selected: boolean,
+    ) => {
+      itemsRef.current.set(value, { ref, selected });
     },
     [],
   );
@@ -579,9 +675,10 @@ function TimePickerColumn(props: TimePickerColumnProps) {
 
   const getItems = React.useCallback(() => {
     return Array.from(itemsRef.current.entries())
-      .map(([value, ref]) => ({
+      .map(([value, { ref, selected }]) => ({
         value,
         ref,
+        selected,
       }))
       .filter((item) => item.ref.current)
       .sort((a, b) => {
@@ -599,6 +696,18 @@ function TimePickerColumn(props: TimePickerColumnProps) {
       });
   }, []);
 
+  const getSelectedItemRef = React.useCallback(() => {
+    const items = getItems();
+    return items.find((item) => item.selected)?.ref ?? null;
+  }, [getItems]);
+
+  useIsomorphicLayoutEffect(() => {
+    if (groupContext) {
+      groupContext.onColumnRegister(columnId, columnRef, getSelectedItemRef);
+      return () => groupContext.onColumnUnregister(columnId);
+    }
+  }, [groupContext, columnId, getSelectedItemRef]);
+
   const columnContextValue = React.useMemo<TimePickerColumnContextValue>(
     () => ({
       activeIndex,
@@ -613,6 +722,7 @@ function TimePickerColumn(props: TimePickerColumnProps) {
   return (
     <TimePickerColumnContext.Provider value={columnContextValue}>
       <div
+        ref={composedRef}
         data-slot="time-picker-column"
         {...columnProps}
         className={cn("flex flex-col gap-1 not-last:border-r p-1", className)}
@@ -642,11 +752,12 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
   const itemRef = React.useRef<ColumnItemElement | null>(null);
   const composedRef = useComposedRefs(ref, itemRef);
   const columnContext = useTimePickerColumnContext(COLUMN_ITEM_NAME);
+  const groupContext = React.useContext(TimePickerGroupContext);
 
   useIsomorphicLayoutEffect(() => {
-    columnContext.onItemRegister(value, itemRef);
+    columnContext.onItemRegister(value, itemRef, selected);
     return () => columnContext.onItemUnregister(value);
-  }, [value, columnContext]);
+  }, [value, selected, columnContext]);
 
   useIsomorphicLayoutEffect(() => {
     if (selected && itemRef.current) {
@@ -686,9 +797,29 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
         const nextItem = items[nextIndex];
         nextItem?.ref.current?.focus();
         nextItem?.ref.current?.click();
+      } else if (event.key === "Tab" && groupContext) {
+        event.preventDefault();
+        const columns = groupContext.getColumns();
+        const currentColumnIndex = columns.findIndex(
+          (col) => col.ref.current?.contains(itemRef.current) ?? false,
+        );
+
+        if (currentColumnIndex === -1) return;
+
+        const nextColumnIndex = event.shiftKey
+          ? currentColumnIndex > 0
+            ? currentColumnIndex - 1
+            : columns.length - 1
+          : currentColumnIndex < columns.length - 1
+            ? currentColumnIndex + 1
+            : 0;
+
+        const nextColumn = columns[nextColumnIndex];
+        const nextSelectedItemRef = nextColumn?.getSelectedItemRef();
+        nextSelectedItemRef?.current?.focus();
       }
     },
-    [itemProps.onKeyDown, columnContext.getItems, value],
+    [itemProps.onKeyDown, columnContext, groupContext, value],
   );
 
   const formattedValue =
