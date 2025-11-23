@@ -719,7 +719,15 @@ function TimePickerColumn(props: TimePickerColumnProps) {
   }, []);
 
   const getSelectedItemRef = React.useCallback(() => {
-    const items = getItems();
+    // Read directly from itemsRef to avoid stale closures
+    const items = Array.from(itemsRef.current.entries())
+      .map(([value, { ref, selected }]) => ({
+        value,
+        ref,
+        selected,
+      }))
+      .filter((item) => item.ref.current);
+    
     const selected = items.find((item) => item.selected);
     console.log("[TimePickerColumn] getSelectedItemRef:", {
       columnId,
@@ -731,7 +739,7 @@ function TimePickerColumn(props: TimePickerColumnProps) {
       selectedItem: selected?.ref.current,
     });
     return selected?.ref ?? null;
-  }, [getItems, columnId]);
+  }, [columnId]);
 
   useIsomorphicLayoutEffect(() => {
     if (groupContext) {
