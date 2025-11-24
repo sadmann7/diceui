@@ -65,23 +65,28 @@ function useLazyRef<T>(fn: () => T) {
   return ref as React.RefObject<T>;
 }
 
+function getIs12Hour(locale?: string): boolean {
+  const testDate = new Date(2000, 0, 1, 13, 0, 0);
+  const formatted = new Intl.DateTimeFormat(locale, {
+    hour: "numeric",
+  }).format(testDate);
+
+  return /am|pm/i.test(formatted) || !formatted.includes("13");
+}
+
 interface TimeValue {
   hour: number;
   minute: number;
   second: number;
-  period?: Period;
 }
 
-function parseTimeString(
-  timeString: string | undefined,
-  use12Hours: boolean,
-): TimeValue | null {
+function parseTimeString(timeString: string | undefined): TimeValue | null {
   if (!timeString) return null;
 
   const parts = timeString.split(":");
   if (parts.length < 2) return null;
 
-  let hour = Number.parseInt(parts[0] ?? "0", 10);
+  const hour = Number.parseInt(parts[0] ?? "0", 10);
   const minute = Number.parseInt(parts[1] ?? "0", 10);
   const second = parts[2] ? Number.parseInt(parts[2], 10) : 0;
 
@@ -89,28 +94,22 @@ function parseTimeString(
     return null;
   }
 
-  let period: Period | undefined;
-  if (use12Hours) {
-    period = hour >= 12 ? "PM" : "AM";
-    hour = hour % 12 || 12;
+  if (
+    hour < 0 ||
+    hour > 23 ||
+    minute < 0 ||
+    minute > 59 ||
+    second < 0 ||
+    second > 59
+  ) {
+    return null;
   }
 
-  return { hour, minute, second, period };
+  return { hour, minute, second };
 }
 
-function formatTimeValue(
-  value: TimeValue,
-  showSeconds: boolean,
-  use12Hours: boolean,
-): string {
-  let hour = value.hour;
-
-  if (use12Hours) {
-    const isPM = value.period === "PM";
-    hour = hour === 12 ? (isPM ? 12 : 0) : isPM ? hour + 12 : hour;
-  }
-
-  const hourStr = hour.toString().padStart(2, "0");
+function formatTimeValue(value: TimeValue, showSeconds: boolean): string {
+  const hourStr = value.hour.toString().padStart(2, "0");
   const minuteStr = value.minute.toString().padStart(2, "0");
   const secondStr = value.second.toString().padStart(2, "0");
 
@@ -118,6 +117,19 @@ function formatTimeValue(
     return `${hourStr}:${minuteStr}:${secondStr}`;
   }
   return `${hourStr}:${minuteStr}`;
+}
+
+function to12Hour(hour24: number): { hour: number; period: Period } {
+  const period: Period = hour24 >= 12 ? "PM" : "AM";
+  const hour = hour24 % 12 || 12;
+  return { hour, period };
+}
+
+function to24Hour(hour12: number, period: Period): number {
+  if (hour12 === 12) {
+    return period === "PM" ? 12 : 0;
+  }
+  return period === "PM" ? hour12 + 12 : hour12;
 }
 
 function clamp(value: number, min: number, max: number) {
@@ -167,7 +179,7 @@ interface TimePickerContextValue {
   required: boolean;
   invalid: boolean;
   showSeconds: boolean;
-  use12Hours: boolean;
+  is12Hour: boolean;
   minuteStep: number;
   secondStep: number;
   hourStep: number;
@@ -203,7 +215,7 @@ interface TimePickerRootProps extends DivProps {
   min?: string;
   max?: string;
   showSeconds?: boolean;
-  use12Hours?: boolean;
+  locale?: string;
   minuteStep?: number;
   secondStep?: number;
   hourStep?: number;
@@ -284,7 +296,7 @@ function TimePickerRootImpl(props: TimePickerRootImplProps) {
     min,
     max,
     showSeconds = false,
-    use12Hours = false,
+    locale,
     minuteStep = 1,
     secondStep = 1,
     hourStep = 1,
@@ -330,6 +342,8 @@ function TimePickerRootImpl(props: TimePickerRootImplProps) {
     [store],
   );
 
+  const is12Hour = React.useMemo(() => getIs12Hour(locale), [locale]);
+
   const rootContext = React.useMemo<TimePickerContextValue>(
     () => ({
       id: rootId,
@@ -341,7 +355,7 @@ function TimePickerRootImpl(props: TimePickerRootImplProps) {
       required,
       invalid,
       showSeconds,
-      use12Hours,
+      is12Hour,
       minuteStep,
       secondStep,
       hourStep,
@@ -359,7 +373,7 @@ function TimePickerRootImpl(props: TimePickerRootImplProps) {
       required,
       invalid,
       showSeconds,
-      use12Hours,
+      is12Hour,
       minuteStep,
       secondStep,
       hourStep,
@@ -876,41 +890,53 @@ interface TimePickerHourProps extends DivProps {
 function TimePickerHour(props: TimePickerHourProps) {
   const { asChild, format = "numeric", className, ...hourProps } = props;
 
-  const { use12Hours, hourStep, showSeconds } = useTimePickerContext(HOUR_NAME);
+  const { is12Hour, hourStep, showSeconds } = useTimePickerContext(HOUR_NAME);
   const store = useStoreContext(HOUR_NAME);
 
   const value = useStore((state) => state.value);
-  const timeValue = parseTimeString(value, use12Hours);
+  const timeValue = parseTimeString(value);
 
+  // Generate hours based on locale format
   const hours = Array.from(
     {
-      length: use12Hours ? Math.ceil(12 / hourStep) : Math.ceil(24 / hourStep),
+      length: is12Hour ? Math.ceil(12 / hourStep) : Math.ceil(24 / hourStep),
     },
     (_, i) => {
-      if (use12Hours) {
-        // Generate hours 1-12 for 12-hour format
+      if (is12Hour) {
+        // Generate hours 1-12 for 12-hour display
         const hour = (i * hourStep) % 12;
         return hour === 0 ? 12 : hour;
       }
-      // Generate hours 0-23 for 24-hour format
+      // Generate hours 0-23 for 24-hour display
       return i * hourStep;
     },
   );
 
   const onHourSelect = React.useCallback(
-    (hour: number) => {
+    (displayHour: number) => {
       const currentTime = timeValue ?? {
         hour: 0,
         minute: 0,
         second: 0,
-        period: "AM",
       };
-      const newTime = { ...currentTime, hour };
-      const newValue = formatTimeValue(newTime, showSeconds, use12Hours);
+
+      // Convert display hour to 24-hour format if needed
+      let hour24 = displayHour;
+      if (is12Hour && timeValue) {
+        const currentPeriod = to12Hour(timeValue.hour).period;
+        hour24 = to24Hour(displayHour, currentPeriod);
+      }
+
+      const newTime = { ...currentTime, hour: hour24 };
+      const newValue = formatTimeValue(newTime, showSeconds);
       store.setState("value", newValue);
     },
-    [timeValue, showSeconds, use12Hours, store],
+    [timeValue, showSeconds, is12Hour, store],
   );
+
+  // Get display hour for selection
+  const displayHour =
+    timeValue && is12Hour ? to12Hour(timeValue.hour).hour : timeValue?.hour;
 
   const HourPrimitive = asChild ? Slot : TimePickerColumn;
 
@@ -927,7 +953,7 @@ function TimePickerHour(props: TimePickerHourProps) {
         <TimePickerColumnItem
           key={hour}
           value={hour}
-          selected={timeValue?.hour === hour}
+          selected={displayHour === hour}
           format={format}
           onClick={() => onHourSelect(hour)}
         />
@@ -943,12 +969,11 @@ interface TimePickerMinuteProps extends DivProps {
 function TimePickerMinute(props: TimePickerMinuteProps) {
   const { asChild, format = "2-digit", className, ...minuteProps } = props;
 
-  const { use12Hours, minuteStep, showSeconds } =
-    useTimePickerContext(MINUTE_NAME);
+  const { minuteStep, showSeconds } = useTimePickerContext(MINUTE_NAME);
   const store = useStoreContext(MINUTE_NAME);
 
   const value = useStore((state) => state.value);
-  const timeValue = parseTimeString(value, use12Hours);
+  const timeValue = parseTimeString(value);
 
   const minutes = Array.from(
     { length: Math.ceil(60 / minuteStep) },
@@ -961,13 +986,12 @@ function TimePickerMinute(props: TimePickerMinuteProps) {
         hour: 0,
         minute: 0,
         second: 0,
-        period: "AM",
       };
       const newTime = { ...currentTime, minute };
-      const newValue = formatTimeValue(newTime, showSeconds, use12Hours);
+      const newValue = formatTimeValue(newTime, showSeconds);
       store.setState("value", newValue);
     },
-    [timeValue, showSeconds, use12Hours, store],
+    [timeValue, showSeconds, store],
   );
 
   const MinutePrimitive = asChild ? Slot : TimePickerColumn;
@@ -1001,11 +1025,11 @@ interface TimePickerSecondProps extends DivProps {
 function TimePickerSecond(props: TimePickerSecondProps) {
   const { asChild, format = "2-digit", className, ...secondProps } = props;
 
-  const { use12Hours, secondStep } = useTimePickerContext(SECOND_NAME);
+  const { secondStep } = useTimePickerContext(SECOND_NAME);
   const store = useStoreContext(SECOND_NAME);
 
   const value = useStore((state) => state.value);
-  const timeValue = parseTimeString(value, use12Hours);
+  const timeValue = parseTimeString(value);
 
   const seconds = Array.from(
     { length: Math.ceil(60 / secondStep) },
@@ -1018,13 +1042,12 @@ function TimePickerSecond(props: TimePickerSecondProps) {
         hour: 0,
         minute: 0,
         second: 0,
-        period: "AM",
       };
       const newTime = { ...currentTime, second };
-      const newValue = formatTimeValue(newTime, true, use12Hours);
+      const newValue = formatTimeValue(newTime, true);
       store.setState("value", newValue);
     },
-    [timeValue, use12Hours, store],
+    [timeValue, store],
   );
 
   const SecondPrimitive = asChild ? Slot : TimePickerColumn;
@@ -1054,28 +1077,30 @@ function TimePickerSecond(props: TimePickerSecondProps) {
 function TimePickerPeriod(props: DivProps) {
   const { asChild, className, ...periodProps } = props;
 
-  const { use12Hours, showSeconds } = useTimePickerContext(PERIOD_NAME);
+  const { is12Hour, showSeconds } = useTimePickerContext(PERIOD_NAME);
   const store = useStoreContext(PERIOD_NAME);
 
   const value = useStore((state) => state.value);
-  const timeValue = parseTimeString(value, use12Hours);
+  const timeValue = parseTimeString(value);
 
   const onPeriodToggle = React.useCallback(
     (period: Period) => {
-      const currentTime = timeValue ?? {
-        hour: 12,
-        minute: 0,
-        second: 0,
-        period: "AM",
-      };
-      const newTime = { ...currentTime, period };
-      const newValue = formatTimeValue(newTime, showSeconds, use12Hours);
+      if (!timeValue) return;
+
+      const currentDisplay = to12Hour(timeValue.hour);
+      const new24Hour = to24Hour(currentDisplay.hour, period);
+
+      const newTime = { ...timeValue, hour: new24Hour };
+      const newValue = formatTimeValue(newTime, showSeconds);
       store.setState("value", newValue);
     },
-    [timeValue, showSeconds, use12Hours, store],
+    [timeValue, showSeconds, store],
   );
 
-  if (!use12Hours) return null;
+  // Only show period column for 12-hour format
+  if (!is12Hour) return null;
+
+  const currentPeriod = timeValue ? to12Hour(timeValue.hour).period : "AM";
 
   const PeriodPrimitive = asChild ? Slot : TimePickerColumn;
 
@@ -1089,7 +1114,7 @@ function TimePickerPeriod(props: DivProps) {
         <TimePickerColumnItem
           key={period}
           value={period}
-          selected={timeValue?.period === period}
+          selected={currentPeriod === period}
           onClick={() => onPeriodToggle(period)}
         />
       ))}
@@ -1185,7 +1210,7 @@ function TimePickerInput(props: TimePickerInputProps) {
     ...inputProps
   } = props;
 
-  const { use12Hours, showSeconds, disabled, readOnly } =
+  const { is12Hour, showSeconds, disabled, readOnly } =
     useTimePickerContext(INPUT_NAME);
   const store = useStoreContext(INPUT_NAME);
 
@@ -1193,7 +1218,7 @@ function TimePickerInput(props: TimePickerInputProps) {
   const isReadOnly = readOnlyProp || readOnly;
 
   const value = useStore((state) => state.value);
-  const timeValue = parseTimeString(value, use12Hours);
+  const timeValue = parseTimeString(value);
 
   const inputRef = React.useRef<HTMLInputElement>(null);
   const composedRef = useComposedRefs(ref, inputRef);
@@ -1201,18 +1226,22 @@ function TimePickerInput(props: TimePickerInputProps) {
   const getSegmentValue = React.useCallback(() => {
     if (!timeValue) return "";
     switch (segment) {
-      case "hour":
+      case "hour": {
+        if (is12Hour) {
+          return to12Hour(timeValue.hour).hour.toString().padStart(2, "0");
+        }
         return timeValue.hour.toString().padStart(2, "0");
+      }
       case "minute":
         return timeValue.minute.toString().padStart(2, "0");
       case "second":
         return timeValue.second.toString().padStart(2, "0");
       case "period":
-        return timeValue.period ?? "AM";
+        return timeValue ? to12Hour(timeValue.hour).period : "AM";
       default:
         return "";
     }
-  }, [timeValue, segment]);
+  }, [timeValue, segment, is12Hour]);
 
   const [editValue, setEditValue] = React.useState(getSegmentValue());
   const [isEditing, setIsEditing] = React.useState(false);
@@ -1226,22 +1255,30 @@ function TimePickerInput(props: TimePickerInputProps) {
   const updateTimeValue = React.useCallback(
     (newSegmentValue: string) => {
       const currentTime = timeValue ?? {
-        hour: use12Hours ? 12 : 0,
+        hour: 0,
         minute: 0,
         second: 0,
-        period: "AM" as const,
       };
 
       const newTime = { ...currentTime };
 
       switch (segment) {
         case "hour": {
-          const hour = Number.parseInt(newSegmentValue, 10);
-          if (!Number.isNaN(hour)) {
-            const maxHour = use12Hours ? 12 : 23;
-            const minHour = use12Hours ? 1 : 0;
-            const clampedHour = clamp(hour, minHour, maxHour);
-            newTime.hour = clampedHour;
+          const displayHour = Number.parseInt(newSegmentValue, 10);
+          if (!Number.isNaN(displayHour)) {
+            if (is12Hour) {
+              // Convert 12-hour input to 24-hour
+              const maxHour = 12;
+              const minHour = 1;
+              const clampedHour = clamp(displayHour, minHour, maxHour);
+              const currentPeriod = timeValue
+                ? to12Hour(timeValue.hour).period
+                : "AM";
+              newTime.hour = to24Hour(clampedHour, currentPeriod);
+            } else {
+              // Use 24-hour directly
+              newTime.hour = clamp(displayHour, 0, 23);
+            }
           }
           break;
         }
@@ -1260,17 +1297,21 @@ function TimePickerInput(props: TimePickerInputProps) {
           break;
         }
         case "period": {
-          if (newSegmentValue === "AM" || newSegmentValue === "PM") {
-            newTime.period = newSegmentValue;
+          if (
+            (newSegmentValue === "AM" || newSegmentValue === "PM") &&
+            timeValue
+          ) {
+            const currentDisplay = to12Hour(timeValue.hour);
+            newTime.hour = to24Hour(currentDisplay.hour, newSegmentValue);
           }
           break;
         }
       }
 
-      const newValue = formatTimeValue(newTime, showSeconds, use12Hours);
+      const newValue = formatTimeValue(newTime, showSeconds);
       store.setState("value", newValue);
     },
-    [timeValue, segment, use12Hours, showSeconds, store],
+    [timeValue, segment, is12Hour, showSeconds, store],
   );
 
   const onBlur = React.useCallback(
@@ -1354,13 +1395,11 @@ function TimePickerInput(props: TimePickerInputProps) {
           let newValue: number;
           switch (segment) {
             case "hour":
-              newValue = use12Hours
-                ? currentValue === 12
-                  ? 1
-                  : currentValue + 1
-                : currentValue === 23
-                  ? 0
-                  : currentValue + 1;
+              if (is12Hour) {
+                newValue = currentValue === 12 ? 1 : currentValue + 1;
+              } else {
+                newValue = currentValue === 23 ? 0 : currentValue + 1;
+              }
               break;
             case "minute":
             case "second":
@@ -1380,13 +1419,11 @@ function TimePickerInput(props: TimePickerInputProps) {
           let newValue: number;
           switch (segment) {
             case "hour":
-              newValue = use12Hours
-                ? currentValue === 1
-                  ? 12
-                  : currentValue - 1
-                : currentValue === 0
-                  ? 23
-                  : currentValue - 1;
+              if (is12Hour) {
+                newValue = currentValue === 1 ? 12 : currentValue - 1;
+              } else {
+                newValue = currentValue === 0 ? 23 : currentValue - 1;
+              }
               break;
             case "minute":
             case "second":
@@ -1419,7 +1456,7 @@ function TimePickerInput(props: TimePickerInputProps) {
       onKeyDownProp,
       editValue,
       segment,
-      use12Hours,
+      is12Hour,
       getSegmentValue,
       updateTimeValue,
     ],

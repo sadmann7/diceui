@@ -1595,11 +1595,11 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "time-picker-12hour-demo",
+    name: "time-picker-minute-step-demo",
     type: "registry:example",
     files: [
       {
-        path: "examples/time-picker-12hour-demo.tsx",
+        path: "examples/time-picker-minute-step-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -1631,16 +1631,6 @@ export const examples: Registry["items"] = [
     files: [
       {
         path: "examples/time-picker-form-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "time-picker-step-demo",
-    type: "registry:example",
-    files: [
-      {
-        path: "examples/time-picker-step-demo.tsx",
         type: "registry:example",
       },
     ],

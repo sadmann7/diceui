@@ -13,7 +13,7 @@ import {
 
 export default function TimePickerDemo() {
   return (
-    <TimePicker defaultValue="14:30" className="w-[280px]" use12Hours>
+    <TimePicker defaultValue="14:30" className="w-[280px]">
       <TimePickerLabel>Select Time</TimePickerLabel>
       <TimePickerInputGroup>
         <TimePickerInput segment="hour" />

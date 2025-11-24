@@ -82,10 +82,15 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   showSeconds?: boolean;
 
   /**
-   * Whether to use 12-hour format with AM/PM.
-   * @default false
+   * Optional locale to determine time format display (12-hour vs 24-hour).
+   * If not provided, uses the browser's default locale.
+   * The value is always stored in 24-hour format (HH:mm or HH:mm:ss).
+   * Display format is auto-detected from locale settings.
+   * @example "en-US" // 12-hour format with AM/PM
+   * @example "en-GB" // 24-hour format
+   * @example "de-DE" // 24-hour format
    */
-  use12Hours?: boolean;
+  locale?: string;
 
   /**
    * The interval for minute selection (in minutes).

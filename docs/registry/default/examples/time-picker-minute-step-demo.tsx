@@ -13,12 +13,12 @@ import {
   TimePickerTrigger,
 } from "@/registry/default/ui/time-picker";
 
-export default function TimePickerStepDemo() {
+export default function TimePickerMinuteStepDemo() {
   const [value, setValue] = React.useState("10:00");
 
   return (
     <TimePicker
-      className="w-[280px] space-y-2"
+      className="w-[280px]"
       minuteStep={15}
       value={value}
       onValueChange={setValue}

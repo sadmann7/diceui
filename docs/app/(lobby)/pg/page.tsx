@@ -1,3 +1,5 @@
+"use client";
+
 import { Demo } from "@/components/demo";
 import { Shell } from "@/components/shell";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
@@ -8,7 +10,7 @@ export default function PlaygroundPage() {
     <Shell>
       <Demo>
         <div className="flex flex-col gap-4">
-          <input type="time" />
+          <input type="time" defaultValue="14:30" />
           <TimePickerDemo />
         </div>
         <ColorPickerDemo />

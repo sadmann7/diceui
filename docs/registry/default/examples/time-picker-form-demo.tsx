@@ -65,7 +65,6 @@ export default function TimePickerFormDemo() {
                   value={field.value}
                   onValueChange={field.onChange}
                   className="w-[280px]"
-                  use12Hours
                 >
                   <TimePickerInputGroup>
                     <TimePickerInput segment="hour" />

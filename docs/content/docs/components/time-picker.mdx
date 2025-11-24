@@ -1,12 +1,12 @@
 ---
 title: Time Picker
-description: An accessible time picker component with inline editing and dropdown selection, supporting 12-hour and 24-hour formats. Works like the native HTML time input.
+description: An accessible time picker component with inline editing and dropdown selection. Automatically adapts to 12-hour or 24-hour format based on user locale.
 preview: true
 links:
   api: /docs/components/time-picker#api-reference
 ---
 
-<ComponentTabs name="time-picker-demo" className="items-start justify-start [&>div]:pt-20"  />
+<ComponentTabs name="time-picker-demo" />
 
 ## Installation
 
@@ -78,35 +78,29 @@ return (
 
 ## Examples
 
-### 12-Hour Format
+### With Minute Step
 
-Display time in 12-hour format with AM/PM selection.
+Set custom intervals for minute selection.
 
-<ComponentTabs name="time-picker-12hour-demo" className="items-start justify-start [&>div]:pt-20"/>
+<ComponentTabs name="time-picker-step-demo" />
 
 ### With Seconds
 
 Include seconds in time selection.
 
-<ComponentTabs name="time-picker-seconds-demo" className="items-start justify-start [&>div]:pt-20" />
+<ComponentTabs name="time-picker-seconds-demo" />
 
-### Controlled
+### Controlled State
 
 Control the time picker value programmatically.
 
-<ComponentTabs name="time-picker-controlled-demo" className="items-start justify-start [&>div]:pt-20" />
+<ComponentTabs name="time-picker-controlled-demo" />
 
 ### With Form
 
 Use the time picker in a form with validation.
 
-<ComponentTabs name="time-picker-form-demo" className="items-start justify-start [&>div]:pt-20" />
-
-### With Steps
-
-Set custom intervals for minute selection.
-
-<ComponentTabs name="time-picker-step-demo" className="items-start justify-start [&>div]:pt-20" />
+<ComponentTabs name="time-picker-form-demo" />
 
 ## API Reference
 
@@ -310,9 +304,9 @@ Inline editable input field for time segments (hour, minute, second, period).
 - **Native-like behavior**: Works like the HTML time input - click segments to select and edit, use arrow keys to adjust
 - **Inline editing**: All time segments are always visible and editable, no need to open the dropdown
 - **Dropdown for convenience**: The clock icon trigger opens a dropdown for easier selection
-- The time value is formatted as "HH:mm" or "HH:mm:ss" in 24-hour format internally
-- When using `use12Hours`, the value is still stored in 24-hour format for consistency
+- **Automatic format detection**: Display format (12-hour vs 24-hour) is automatically detected from user's locale settings
+- **Consistent value format**: The time value is always stored in 24-hour format ("HH:mm" or "HH:mm:ss"), regardless of display format
+- **Locale override**: Use the `locale` prop to explicitly set a locale (e.g., "en-US" for 12-hour, "en-GB" for 24-hour)
 - The `minuteStep`, `hourStep`, and `secondStep` props allow customization of selection intervals
 - Use the `min` and `max` props to restrict the selectable time range
-- The component automatically handles conversion between 12-hour and 24-hour formats
-- **Period editing**: When focused on the period (AM/PM), just press 'a' or 'p' to change it
+- **Period editing**: When using 12-hour format, focus on the period (AM/PM) and press 'a' or 'p' to change it
