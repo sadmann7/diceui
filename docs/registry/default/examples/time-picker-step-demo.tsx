@@ -1,6 +1,3 @@
-"use client";
-
-import * as React from "react";
 import {
   TimePicker,
   TimePickerContent,
@@ -9,19 +6,18 @@ import {
   TimePickerInputGroup,
   TimePickerLabel,
   TimePickerMinute,
+  TimePickerSecond,
   TimePickerSeparator,
   TimePickerTrigger,
 } from "@/registry/default/ui/time-picker";
 
-export default function TimePickerMinuteStepDemo() {
-  const [value, setValue] = React.useState("10:00");
-
+export default function TimePickerStepDemo() {
   return (
     <TimePicker
       className="w-[280px]"
+      defaultValue="10:00"
       minuteStep={15}
-      value={value}
-      onValueChange={setValue}
+      secondStep={10}
     >
       <TimePickerLabel>Meeting Time (15 min intervals)</TimePickerLabel>
       <TimePickerInputGroup>
@@ -33,6 +29,7 @@ export default function TimePickerMinuteStepDemo() {
       <TimePickerContent>
         <TimePickerHour />
         <TimePickerMinute />
+        <TimePickerSecond />
       </TimePickerContent>
     </TimePicker>
   );

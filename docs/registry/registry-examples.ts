@@ -1595,11 +1595,11 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "time-picker-minute-step-demo",
+    name: "time-picker-step-demo",
     type: "registry:example",
     files: [
       {
-        path: "examples/time-picker-minute-step-demo.tsx",
+        path: "examples/time-picker-step-demo.tsx",
         type: "registry:example",
       },
     ],

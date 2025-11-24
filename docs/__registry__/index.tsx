@@ -2457,17 +2457,17 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "time-picker-minute-step-demo": {
-      name: "time-picker-minute-step-demo",
+    "time-picker-step-demo": {
+      name: "time-picker-step-demo",
       description: "",
       type: "registry:example",
       registryDependencies: undefined,
       files: [{
-        path: "registry/default/examples/time-picker-minute-step-demo.tsx",
+        path: "registry/default/examples/time-picker-step-demo.tsx",
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/examples/time-picker-minute-step-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/time-picker-step-demo.tsx")),
       source: "",
       chunks: []
     },
