@@ -441,11 +441,10 @@ function TimePickerLabel(props: TimePickerLabelProps) {
 }
 
 function TimePickerInputGroup(props: DivProps) {
-  const { asChild, className, children, ...groupProps } = props;
+  const { asChild, className, ...groupProps } = props;
 
-  const { inputGroupId, labelId, disabled, invalid, placeholder } =
+  const { inputGroupId, labelId, disabled, invalid } =
     useTimePickerContext(INPUT_GROUP_NAME);
-  const value = useStore((state) => state.value);
 
   const InputGroupPrimitive = asChild ? Slot : "div";
 
@@ -460,22 +459,13 @@ function TimePickerInputGroup(props: DivProps) {
         data-invalid={invalid ? "" : undefined}
         {...groupProps}
         className={cn(
-          "relative flex h-10 w-full items-center rounded-md border border-input bg-background px-3 py-2 shadow-xs outline-none transition-shadow",
+          "flex h-10 w-full items-center gap-0.5 rounded-md border border-input bg-background px-3 py-2 shadow-xs outline-none transition-shadow",
           "has-[input:focus-visible]:border-ring has-[input:focus-visible]:ring-[3px] has-[input:focus-visible]:ring-ring/50",
           invalid && "border-destructive ring-destructive/20",
           disabled && "cursor-not-allowed opacity-50",
           className,
         )}
-      >
-        {!value && (
-          <span className="pointer-events-none absolute inset-x-3 text-muted-foreground text-sm">
-            {placeholder}
-          </span>
-        )}
-        <div className={cn("flex items-center gap-0.5", !value && "opacity-0")}>
-          {children}
-        </div>
-      </InputGroupPrimitive>
+      />
     </PopoverAnchor>
   );
 }
@@ -1329,8 +1319,7 @@ function TimePickerInput(props: TimePickerInputProps) {
       if (event.defaultPrevented) return;
 
       setIsEditing(false);
-      // Only update if there's an actual value entered
-      if (editValue && editValue.trim()) {
+      if (editValue) {
         updateTimeValue(editValue);
       }
       setEditValue(getSegmentValue());
