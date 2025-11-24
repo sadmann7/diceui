@@ -1223,7 +1223,18 @@ function TimePickerInput(props: TimePickerInputProps) {
   const composedRef = useComposedRefs(ref, inputRef);
 
   const getSegmentValue = React.useCallback(() => {
-    if (!timeValue) return "";
+    if (!timeValue) {
+      switch (segment) {
+        case "hour":
+        case "minute":
+        case "second":
+          return "--";
+        case "period":
+          return "AM";
+        default:
+          return "";
+      }
+    }
     switch (segment) {
       case "hour": {
         if (is12Hour) {
@@ -1462,6 +1473,7 @@ function TimePickerInput(props: TimePickerInputProps) {
   );
 
   const displayValue = isEditing ? editValue : getSegmentValue();
+  const isEmpty = !timeValue;
 
   return (
     <input
@@ -1472,6 +1484,7 @@ function TimePickerInput(props: TimePickerInputProps) {
       className={cn(
         "inline-flex h-full w-[2ch] items-center justify-center border-0 bg-transparent text-center text-sm tabular-nums outline-none transition-colors focus:bg-transparent disabled:cursor-not-allowed disabled:opacity-50",
         segment === "period" && "w-[2.5ch]",
+        isEmpty && "text-muted-foreground",
         className,
       )}
       ref={composedRef}
