@@ -17,6 +17,7 @@ const ROOT_NAME = "TimePicker";
 const LABEL_NAME = "TimePickerLabel";
 const INPUT_GROUP_NAME = "TimePickerInputGroup";
 const TRIGGER_NAME = "TimePickerTrigger";
+const COLUMN_NAME = "TimePickerColumn";
 const COLUMN_ITEM_NAME = "TimePickerColumnItem";
 const HOUR_NAME = "TimePickerHour";
 const MINUTE_NAME = "TimePickerMinute";
@@ -25,7 +26,11 @@ const PERIOD_NAME = "TimePickerPeriod";
 const CLEAR_NAME = "TimePickerClear";
 const INPUT_NAME = "TimePickerInput";
 
+const PERIODS = ["AM", "PM"] as const;
+
 type Segment = "hour" | "minute" | "second" | "period";
+type SegmentFormat = "numeric" | "2-digit";
+type Period = (typeof PERIODS)[number];
 
 interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
@@ -35,12 +40,29 @@ interface ButtonProps extends React.ComponentProps<"button"> {
   asChild?: boolean;
 }
 
+interface TimeValue {
+  hour: number;
+  minute: number;
+  second: number;
+}
+
+interface ItemData {
+  value: number | string;
+  ref: React.RefObject<ColumnItemElement | null>;
+  selected: boolean;
+}
+
+interface ColumnData {
+  id: string;
+  ref: React.RefObject<ColumnElement | null>;
+  getSelectedItemRef: () => React.RefObject<ColumnItemElement | null> | null;
+  getItems: () => ItemData[];
+}
+
 type RootElement = React.ComponentRef<typeof TimePickerRoot>;
+type ColumnElement = React.ComponentRef<typeof TimePickerColumn>;
 type ColumnItemElement = React.ComponentRef<typeof TimePickerColumnItem>;
 type InputElement = React.ComponentRef<typeof TimePickerInput>;
-
-const PERIODS = ["AM", "PM"] as const;
-type Period = (typeof PERIODS)[number];
 
 const useIsomorphicLayoutEffect =
   typeof window === "undefined" ? React.useEffect : React.useLayoutEffect;
@@ -65,6 +87,38 @@ function useLazyRef<T>(fn: () => T) {
   return ref as React.RefObject<T>;
 }
 
+function focusFirst(
+  candidates: React.RefObject<ColumnItemElement | null>[],
+  preventScroll = false,
+) {
+  const PREVIOUSLY_FOCUSED_ELEMENT = document.activeElement;
+  for (const candidateRef of candidates) {
+    const candidate = candidateRef.current;
+    if (!candidate) continue;
+    if (candidate === PREVIOUSLY_FOCUSED_ELEMENT) return;
+    candidate.focus({ preventScroll });
+    if (document.activeElement !== PREVIOUSLY_FOCUSED_ELEMENT) return;
+  }
+}
+
+function sortNodes<T extends { ref: React.RefObject<Element | null> }>(
+  items: T[],
+): T[] {
+  return items.sort((a, b) => {
+    const elementA = a.ref.current;
+    const elementB = b.ref.current;
+    if (!elementA || !elementB) return 0;
+    const position = elementA.compareDocumentPosition(elementB);
+    if (position & Node.DOCUMENT_POSITION_FOLLOWING) {
+      return -1;
+    }
+    if (position & Node.DOCUMENT_POSITION_PRECEDING) {
+      return 1;
+    }
+    return 0;
+  });
+}
+
 function getIs12Hour(locale?: string): boolean {
   const testDate = new Date(2000, 0, 1, 13, 0, 0);
   const formatted = new Intl.DateTimeFormat(locale, {
@@ -72,12 +126,6 @@ function getIs12Hour(locale?: string): boolean {
   }).format(testDate);
 
   return /am|pm/i.test(formatted) || !formatted.includes("13");
-}
-
-interface TimeValue {
-  hour: number;
-  minute: number;
-  second: number;
 }
 
 function parseTimeString(timeString: string | undefined): TimeValue | null {
@@ -500,21 +548,21 @@ function TimePickerTrigger(props: ButtonProps) {
 }
 
 interface TimePickerGroupContextValue {
-  getColumns: () => Array<{
-    id: string;
-    ref: React.RefObject<HTMLDivElement | null>;
-    getSelectedItemRef: () => React.RefObject<HTMLButtonElement | null> | null;
-  }>;
-  onColumnRegister: (
-    id: string,
-    ref: React.RefObject<HTMLDivElement | null>,
-    getSelectedItemRef: () => React.RefObject<HTMLButtonElement | null> | null,
-  ) => void;
+  getColumns: () => ColumnData[];
+  onColumnRegister: (column: ColumnData) => void;
   onColumnUnregister: (id: string) => void;
 }
 
 const TimePickerGroupContext =
   React.createContext<TimePickerGroupContextValue | null>(null);
+
+function useTimePickerGroupContext(consumerName: string) {
+  const context = React.useContext(TimePickerGroupContext);
+  if (!context) {
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
+  }
+  return context;
+}
 
 interface TimePickerContentProps
   extends DivProps,
@@ -531,52 +579,28 @@ function TimePickerContent(props: TimePickerContentProps) {
     ...contentProps
   } = props;
 
-  const columnsRef = React.useRef<
-    Map<
-      string,
-      {
-        ref: React.RefObject<HTMLDivElement | null>;
-        getSelectedItemRef: () => React.RefObject<HTMLButtonElement | null> | null;
-      }
-    >
-  >(new Map());
-
-  const onColumnRegister = React.useCallback(
-    (
-      id: string,
-      ref: React.RefObject<HTMLDivElement | null>,
-      getSelectedItemRef: () => React.RefObject<HTMLButtonElement | null> | null,
-    ) => {
-      columnsRef.current.set(id, { ref, getSelectedItemRef });
-    },
-    [],
+  const columnsRef = React.useRef<Map<string, Omit<ColumnData, "id">>>(
+    new Map(),
   );
+
+  const onColumnRegister = React.useCallback((column: ColumnData) => {
+    columnsRef.current.set(column.id, column);
+  }, []);
 
   const onColumnUnregister = React.useCallback((id: string) => {
     columnsRef.current.delete(id);
   }, []);
 
   const getColumns = React.useCallback(() => {
-    return Array.from(columnsRef.current.entries())
-      .map(([id, { ref, getSelectedItemRef }]) => ({
+    const columns = Array.from(columnsRef.current.entries())
+      .map(([id, { ref, getSelectedItemRef, getItems }]) => ({
         id,
         ref,
         getSelectedItemRef,
+        getItems,
       }))
-      .filter((col) => col.ref.current)
-      .sort((a, b) => {
-        const elementA = a.ref.current;
-        const elementB = b.ref.current;
-        if (!elementA || !elementB) return 0;
-        const position = elementA.compareDocumentPosition(elementB);
-        if (position & Node.DOCUMENT_POSITION_FOLLOWING) {
-          return -1;
-        }
-        if (position & Node.DOCUMENT_POSITION_PRECEDING) {
-          return 1;
-        }
-        return 0;
-      });
+      .filter((col) => col.ref.current);
+    return sortNodes(columns);
   }, []);
 
   const groupContextValue = React.useMemo<TimePickerGroupContextValue>(
@@ -598,8 +622,17 @@ function TimePickerContent(props: TimePickerContentProps) {
       event.preventDefault();
       const columns = getColumns();
       const firstColumn = columns[0];
-      const selectedItemRef = firstColumn?.getSelectedItemRef();
-      selectedItemRef?.current?.focus();
+
+      if (!firstColumn) return;
+
+      const items = firstColumn.getItems();
+      const selectedItem = items.find((item) => item.selected);
+
+      const candidateRefs = selectedItem
+        ? [selectedItem.ref, ...items.map((item) => item.ref)]
+        : items.map((item) => item.ref);
+
+      focusFirst(candidateRefs, false);
     },
     [onOpenAutoFocusProp, getColumns],
   );
@@ -625,13 +658,7 @@ function TimePickerContent(props: TimePickerContentProps) {
 }
 
 interface TimePickerColumnContextValue {
-  activeIndex: number | null;
-  setActiveIndex: (index: number | null) => void;
-  getItems: () => Array<{
-    value: number | string;
-    ref: React.RefObject<ColumnItemElement | null>;
-    selected: boolean;
-  }>;
+  getItems: () => ItemData[];
   onItemRegister: (
     value: number | string,
     ref: React.RefObject<ColumnItemElement | null>,
@@ -657,21 +684,20 @@ function TimePickerColumn(props: TimePickerColumnProps) {
   const { children, className, ref, ...columnProps } = props;
 
   const columnId = React.useId();
-  const columnRef = React.useRef<HTMLDivElement | null>(null);
+  const columnRef = React.useRef<ColumnElement | null>(null);
   const composedRef = useComposedRefs(ref, columnRef);
 
-  const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
   const itemsRef = React.useRef<
     Map<
       number | string,
       {
-        ref: React.RefObject<HTMLButtonElement | null>;
+        ref: React.RefObject<ColumnItemElement | null>;
         selected: boolean;
       }
     >
   >(new Map());
 
-  const groupContext = React.useContext(TimePickerGroupContext);
+  const groupContext = useTimePickerGroupContext(COLUMN_NAME);
 
   const onItemRegister = React.useCallback(
     (
@@ -689,30 +715,6 @@ function TimePickerColumn(props: TimePickerColumnProps) {
   }, []);
 
   const getItems = React.useCallback(() => {
-    return Array.from(itemsRef.current.entries())
-      .map(([value, { ref, selected }]) => ({
-        value,
-        ref,
-        selected,
-      }))
-      .filter((item) => item.ref.current)
-      .sort((a, b) => {
-        const elementA = a.ref.current;
-        const elementB = b.ref.current;
-        if (!elementA || !elementB) return 0;
-        const position = elementA.compareDocumentPosition(elementB);
-        if (position & Node.DOCUMENT_POSITION_FOLLOWING) {
-          return -1;
-        }
-        if (position & Node.DOCUMENT_POSITION_PRECEDING) {
-          return 1;
-        }
-        return 0;
-      });
-  }, []);
-
-  const getSelectedItemRef = React.useCallback(() => {
-    // Read directly from itemsRef to avoid stale closures
     const items = Array.from(itemsRef.current.entries())
       .map(([value, { ref, selected }]) => ({
         value,
@@ -720,27 +722,31 @@ function TimePickerColumn(props: TimePickerColumnProps) {
         selected,
       }))
       .filter((item) => item.ref.current);
-
-    const selected = items.find((item) => item.selected);
-    return selected?.ref ?? null;
+    return sortNodes(items);
   }, []);
 
+  const getSelectedItemRef = React.useCallback(() => {
+    const items = getItems();
+    return items.find((item) => item.selected)?.ref ?? null;
+  }, [getItems]);
+
   useIsomorphicLayoutEffect(() => {
-    if (groupContext) {
-      groupContext.onColumnRegister(columnId, columnRef, getSelectedItemRef);
-      return () => groupContext.onColumnUnregister(columnId);
-    }
-  }, [groupContext, columnId, getSelectedItemRef]);
+    groupContext.onColumnRegister({
+      id: columnId,
+      ref: columnRef,
+      getSelectedItemRef,
+      getItems,
+    });
+    return () => groupContext.onColumnUnregister(columnId);
+  }, [groupContext, columnId, getSelectedItemRef, getItems]);
 
   const columnContextValue = React.useMemo<TimePickerColumnContextValue>(
     () => ({
-      activeIndex,
-      setActiveIndex,
       getItems,
       onItemRegister,
       onItemUnregister,
     }),
-    [activeIndex, getItems, onItemRegister, onItemUnregister],
+    [getItems, onItemRegister, onItemUnregister],
   );
 
   return (
@@ -760,7 +766,7 @@ function TimePickerColumn(props: TimePickerColumnProps) {
 interface TimePickerColumnItemProps extends ButtonProps {
   value: number | string;
   selected?: boolean;
-  format?: "numeric" | "2-digit";
+  format?: SegmentFormat;
 }
 
 function TimePickerColumnItem(props: TimePickerColumnItemProps) {
@@ -776,12 +782,12 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
   const itemRef = React.useRef<ColumnItemElement | null>(null);
   const composedRef = useComposedRefs(ref, itemRef);
   const columnContext = useTimePickerColumnContext(COLUMN_ITEM_NAME);
-  const groupContext = React.useContext(TimePickerGroupContext);
+  const groupContext = useTimePickerGroupContext(COLUMN_ITEM_NAME);
 
   useIsomorphicLayoutEffect(() => {
     columnContext.onItemRegister(value, itemRef, selected);
     return () => columnContext.onItemUnregister(value);
-  }, [value, selected, columnContext]);
+  }, [columnContext, value, selected]);
 
   useIsomorphicLayoutEffect(() => {
     if (selected && itemRef.current) {
@@ -810,7 +816,7 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
           if (typeof a.value === "number" && typeof b.value === "number") {
             return a.value - b.value;
           }
-          return 0; // Keep order for strings
+          return 0;
         });
         const currentIndex = items.findIndex((item) => item.value === value);
 
@@ -838,7 +844,6 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
 
         if (currentColumnIndex === -1) return;
 
-        // Determine direction: left/shift+tab = previous, right/tab = next
         const goToPrevious =
           event.key === "ArrowLeft" || (event.key === "Tab" && event.shiftKey);
 
@@ -851,8 +856,16 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
             : 0;
 
         const nextColumn = columns[nextColumnIndex];
-        const nextSelectedItemRef = nextColumn?.getSelectedItemRef();
-        nextSelectedItemRef?.current?.focus();
+        if (nextColumn) {
+          const items = nextColumn.getItems();
+          const selectedItem = items.find((item) => item.selected);
+
+          const candidateRefs = selectedItem
+            ? [selectedItem.ref, ...items.map((item) => item.ref)]
+            : items.map((item) => item.ref);
+
+          focusFirst(candidateRefs, false);
+        }
       }
     },
     [itemProps.onKeyDown, columnContext, groupContext, value],
@@ -884,7 +897,7 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
 }
 
 interface TimePickerHourProps extends DivProps {
-  format?: "numeric" | "2-digit";
+  format?: SegmentFormat;
 }
 
 function TimePickerHour(props: TimePickerHourProps) {
@@ -896,18 +909,15 @@ function TimePickerHour(props: TimePickerHourProps) {
   const value = useStore((state) => state.value);
   const timeValue = parseTimeString(value);
 
-  // Generate hours based on locale format
   const hours = Array.from(
     {
       length: is12Hour ? Math.ceil(12 / hourStep) : Math.ceil(24 / hourStep),
     },
     (_, i) => {
       if (is12Hour) {
-        // Generate hours 1-12 for 12-hour display
         const hour = (i * hourStep) % 12;
         return hour === 0 ? 12 : hour;
       }
-      // Generate hours 0-23 for 24-hour display
       return i * hourStep;
     },
   );
@@ -920,7 +930,6 @@ function TimePickerHour(props: TimePickerHourProps) {
         second: 0,
       };
 
-      // Convert display hour to 24-hour format if needed
       let hour24 = displayHour;
       if (is12Hour && timeValue) {
         const currentPeriod = to12Hour(timeValue.hour).period;
@@ -934,7 +943,6 @@ function TimePickerHour(props: TimePickerHourProps) {
     [timeValue, showSeconds, is12Hour, store],
   );
 
-  // Get display hour for selection
   const displayHour =
     timeValue && is12Hour ? to12Hour(timeValue.hour).hour : timeValue?.hour;
 
@@ -963,7 +971,7 @@ function TimePickerHour(props: TimePickerHourProps) {
 }
 
 interface TimePickerMinuteProps extends DivProps {
-  format?: "numeric" | "2-digit";
+  format?: SegmentFormat;
 }
 
 function TimePickerMinute(props: TimePickerMinuteProps) {
@@ -1019,7 +1027,7 @@ function TimePickerMinute(props: TimePickerMinuteProps) {
 }
 
 interface TimePickerSecondProps extends DivProps {
-  format?: "numeric" | "2-digit";
+  format?: SegmentFormat;
 }
 
 function TimePickerSecond(props: TimePickerSecondProps) {
@@ -1097,7 +1105,6 @@ function TimePickerPeriod(props: DivProps) {
     [timeValue, showSeconds, store],
   );
 
-  // Only show period column for 12-hour format
   if (!is12Hour) return null;
 
   const currentPeriod = timeValue ? to12Hour(timeValue.hour).period : "AM";
@@ -1266,7 +1273,6 @@ function TimePickerInput(props: TimePickerInputProps) {
           const displayHour = Number.parseInt(newSegmentValue, 10);
           if (!Number.isNaN(displayHour)) {
             if (is12Hour) {
-              // Convert 12-hour input to 24-hour
               const maxHour = 12;
               const minHour = 1;
               const clampedHour = clamp(displayHour, minHour, maxHour);
@@ -1275,7 +1281,6 @@ function TimePickerInput(props: TimePickerInputProps) {
                 : "AM";
               newTime.hour = to24Hour(clampedHour, currentPeriod);
             } else {
-              // Use 24-hour directly
               newTime.hour = clamp(displayHour, 0, 23);
             }
           }
@@ -1334,7 +1339,6 @@ function TimePickerInput(props: TimePickerInputProps) {
 
       const newValue = event.target.value;
 
-      // For period, just accept 'a', 'A', 'p', 'P' and convert immediately
       if (segment === "period") {
         const firstChar = newValue.charAt(0).toUpperCase();
         if (firstChar === "A") {
@@ -1357,7 +1361,6 @@ function TimePickerInput(props: TimePickerInputProps) {
       onClickProp?.(event);
       if (event.defaultPrevented) return;
 
-      // Select all on click, like native time picker
       event.currentTarget.select();
     },
     [onClickProp],
@@ -1369,7 +1372,6 @@ function TimePickerInput(props: TimePickerInputProps) {
       if (event.defaultPrevented) return;
 
       setIsEditing(true);
-      // Always select the entire content like native time picker
       queueMicrotask(() => event.target.select());
     },
     [onFocusProp],
