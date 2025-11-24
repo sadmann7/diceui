@@ -445,9 +445,7 @@ function TimePickerInputGroup(props: DivProps) {
 
   const { inputGroupId, labelId, disabled, invalid, placeholder } =
     useTimePickerContext(INPUT_GROUP_NAME);
-  const store = useStoreContext(INPUT_GROUP_NAME);
   const value = useStore((state) => state.value);
-  const hasValue = !!value;
 
   const InputGroupPrimitive = asChild ? Slot : "div";
 
@@ -462,19 +460,21 @@ function TimePickerInputGroup(props: DivProps) {
         data-invalid={invalid ? "" : undefined}
         {...groupProps}
         className={cn(
-          "relative flex h-10 w-full items-center gap-0.5 rounded-md border border-input bg-background px-3 py-2 shadow-xs outline-none transition-shadow",
+          "relative flex h-10 w-full items-center rounded-md border border-input bg-background px-3 py-2 shadow-xs outline-none transition-shadow",
           "has-[input:focus-visible]:border-ring has-[input:focus-visible]:ring-[3px] has-[input:focus-visible]:ring-ring/50",
           invalid && "border-destructive ring-destructive/20",
           disabled && "cursor-not-allowed opacity-50",
           className,
         )}
       >
-        {!hasValue && (
+        {!value && (
           <span className="pointer-events-none absolute inset-x-3 text-muted-foreground text-sm">
             {placeholder}
           </span>
         )}
-        {children}
+        <div className={cn("flex items-center gap-0.5", !value && "opacity-0")}>
+          {children}
+        </div>
       </InputGroupPrimitive>
     </PopoverAnchor>
   );
@@ -1233,18 +1233,7 @@ function TimePickerInput(props: TimePickerInputProps) {
   const composedRef = useComposedRefs(ref, inputRef);
 
   const getSegmentValue = React.useCallback(() => {
-    if (!timeValue) {
-      switch (segment) {
-        case "hour":
-        case "minute":
-        case "second":
-          return "--";
-        case "period":
-          return "AM";
-        default:
-          return "";
-      }
-    }
+    if (!timeValue) return "";
     switch (segment) {
       case "hour": {
         if (is12Hour) {
@@ -1340,7 +1329,8 @@ function TimePickerInput(props: TimePickerInputProps) {
       if (event.defaultPrevented) return;
 
       setIsEditing(false);
-      if (editValue) {
+      // Only update if there's an actual value entered
+      if (editValue && editValue.trim()) {
         updateTimeValue(editValue);
       }
       setEditValue(getSegmentValue());
@@ -1483,7 +1473,6 @@ function TimePickerInput(props: TimePickerInputProps) {
   );
 
   const displayValue = isEditing ? editValue : getSegmentValue();
-  const isEmpty = !timeValue;
 
   return (
     <input
@@ -1494,7 +1483,6 @@ function TimePickerInput(props: TimePickerInputProps) {
       className={cn(
         "inline-flex h-full w-[2ch] items-center justify-center border-0 bg-transparent text-center text-sm tabular-nums outline-none transition-colors focus:bg-transparent disabled:cursor-not-allowed disabled:opacity-50",
         segment === "period" && "w-[2.5ch]",
-        isEmpty && "text-muted-foreground",
         className,
       )}
       ref={composedRef}
