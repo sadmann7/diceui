@@ -459,7 +459,7 @@ function TimePickerInputGroup(props: DivProps) {
         data-invalid={invalid ? "" : undefined}
         {...groupProps}
         className={cn(
-          "flex h-10 w-full items-center gap-1 rounded-md border border-input bg-background px-3 py-2 shadow-xs outline-none transition-shadow",
+          "flex h-10 w-full items-center gap-0.5 rounded-md border border-input bg-background px-3 py-2 shadow-xs outline-none transition-shadow",
           "has-[input:focus-visible]:border-ring has-[input:focus-visible]:ring-[3px] has-[input:focus-visible]:ring-ring/50",
           invalid && "border-destructive ring-destructive/20",
           disabled && "cursor-not-allowed opacity-50",
@@ -1127,7 +1127,7 @@ interface TimePickerSeparatorProps extends React.ComponentProps<"span"> {
 }
 
 function TimePickerSeparator(props: TimePickerSeparatorProps) {
-  const { asChild, className, children, ...separatorProps } = props;
+  const { asChild, children, ...separatorProps } = props;
 
   const SeparatorPrimitive = asChild ? Slot : "span";
 
@@ -1136,7 +1136,6 @@ function TimePickerSeparator(props: TimePickerSeparatorProps) {
       aria-hidden="true"
       data-slot="time-picker-separator"
       {...separatorProps}
-      className={cn("text-muted-foreground", className)}
     >
       {children ?? ":"}
     </SeparatorPrimitive>
@@ -1471,8 +1470,8 @@ function TimePickerInput(props: TimePickerInputProps) {
       disabled={isDisabled}
       readOnly={isReadOnly}
       className={cn(
-        "inline-flex h-full min-w-[2.5ch] items-center justify-center rounded border-0 bg-transparent px-0.5 text-center text-sm tabular-nums focus:bg-accent focus:outline-none disabled:cursor-not-allowed disabled:opacity-50",
-        segment === "period" && "min-w-[3ch]",
+        "inline-flex h-full w-[2ch] items-center justify-center border-0 bg-transparent text-center text-sm tabular-nums outline-none transition-colors focus:bg-transparent disabled:cursor-not-allowed disabled:opacity-50",
+        segment === "period" && "w-[2.5ch]",
         className,
       )}
       ref={composedRef}
