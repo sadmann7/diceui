@@ -441,10 +441,13 @@ function TimePickerLabel(props: TimePickerLabelProps) {
 }
 
 function TimePickerInputGroup(props: DivProps) {
-  const { asChild, className, ...groupProps } = props;
+  const { asChild, className, children, ...groupProps } = props;
 
-  const { inputGroupId, labelId, disabled, invalid } =
+  const { inputGroupId, labelId, disabled, invalid, placeholder } =
     useTimePickerContext(INPUT_GROUP_NAME);
+  const store = useStoreContext(INPUT_GROUP_NAME);
+  const value = useStore((state) => state.value);
+  const hasValue = !!value;
 
   const InputGroupPrimitive = asChild ? Slot : "div";
 
@@ -459,13 +462,20 @@ function TimePickerInputGroup(props: DivProps) {
         data-invalid={invalid ? "" : undefined}
         {...groupProps}
         className={cn(
-          "flex h-10 w-full items-center gap-0.5 rounded-md border border-input bg-background px-3 py-2 shadow-xs outline-none transition-shadow",
+          "relative flex h-10 w-full items-center gap-0.5 rounded-md border border-input bg-background px-3 py-2 shadow-xs outline-none transition-shadow",
           "has-[input:focus-visible]:border-ring has-[input:focus-visible]:ring-[3px] has-[input:focus-visible]:ring-ring/50",
           invalid && "border-destructive ring-destructive/20",
           disabled && "cursor-not-allowed opacity-50",
           className,
         )}
-      />
+      >
+        {!hasValue && (
+          <span className="pointer-events-none absolute inset-x-3 text-muted-foreground text-sm">
+            {placeholder}
+          </span>
+        )}
+        {children}
+      </InputGroupPrimitive>
     </PopoverAnchor>
   );
 }
