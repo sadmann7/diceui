@@ -489,7 +489,7 @@ function TimePickerLabel(props: TimePickerLabelProps) {
 }
 
 function TimePickerInputGroup(props: DivProps) {
-  const { asChild, className, ...groupProps } = props;
+  const { asChild, className, ...inputGroupProps } = props;
 
   const { inputGroupId, labelId, disabled, invalid } =
     useTimePickerContext(INPUT_GROUP_NAME);
@@ -505,7 +505,7 @@ function TimePickerInputGroup(props: DivProps) {
         data-slot="time-picker-input-group"
         data-disabled={disabled ? "" : undefined}
         data-invalid={invalid ? "" : undefined}
-        {...groupProps}
+        {...inputGroupProps}
         className={cn(
           "flex h-10 w-full items-center gap-0.5 rounded-md border border-input bg-background px-3 py-2 shadow-xs outline-none transition-shadow",
           "has-[input:focus-visible]:border-ring has-[input:focus-visible]:ring-[3px] has-[input:focus-visible]:ring-ring/50",
@@ -924,15 +924,19 @@ function TimePickerHour(props: TimePickerHourProps) {
 
   const onHourSelect = React.useCallback(
     (displayHour: number) => {
+      // If no value, use current time as the base (like HTML time input)
+      const now = new Date();
       const currentTime = timeValue ?? {
-        hour: 0,
-        minute: 0,
-        second: 0,
+        hour: now.getHours(),
+        minute: now.getMinutes(),
+        second: now.getSeconds(),
       };
 
       let hour24 = displayHour;
-      if (is12Hour && timeValue) {
-        const currentPeriod = to12Hour(timeValue.hour).period;
+      if (is12Hour) {
+        const currentPeriod = timeValue
+          ? to12Hour(timeValue.hour).period
+          : to12Hour(now.getHours()).period;
         hour24 = to24Hour(displayHour, currentPeriod);
       }
 
@@ -943,8 +947,10 @@ function TimePickerHour(props: TimePickerHourProps) {
     [timeValue, showSeconds, is12Hour, store],
   );
 
-  const displayHour =
-    timeValue && is12Hour ? to12Hour(timeValue.hour).hour : timeValue?.hour;
+  // For display purposes, show current time's hour when no value is set
+  const now = new Date();
+  const referenceHour = timeValue?.hour ?? now.getHours();
+  const displayHour = is12Hour ? to12Hour(referenceHour).hour : referenceHour;
 
   const HourPrimitive = asChild ? Slot : TimePickerColumn;
 
@@ -990,10 +996,12 @@ function TimePickerMinute(props: TimePickerMinuteProps) {
 
   const onMinuteSelect = React.useCallback(
     (minute: number) => {
+      // If no value, use current time as the base (like HTML time input)
+      const now = new Date();
       const currentTime = timeValue ?? {
-        hour: 0,
-        minute: 0,
-        second: 0,
+        hour: now.getHours(),
+        minute: now.getMinutes(),
+        second: now.getSeconds(),
       };
       const newTime = { ...currentTime, minute };
       const newValue = formatTimeValue(newTime, showSeconds);
@@ -1003,6 +1011,10 @@ function TimePickerMinute(props: TimePickerMinuteProps) {
   );
 
   const MinutePrimitive = asChild ? Slot : TimePickerColumn;
+
+  // For display purposes, show current time's minute when no value is set
+  const now = new Date();
+  const referenceMinute = timeValue?.minute ?? now.getMinutes();
 
   return (
     <MinutePrimitive
@@ -1017,7 +1029,7 @@ function TimePickerMinute(props: TimePickerMinuteProps) {
         <TimePickerColumnItem
           key={minute}
           value={minute}
-          selected={timeValue?.minute === minute}
+          selected={referenceMinute === minute}
           format={format}
           onClick={() => onMinuteSelect(minute)}
         />
@@ -1046,10 +1058,12 @@ function TimePickerSecond(props: TimePickerSecondProps) {
 
   const onSecondSelect = React.useCallback(
     (second: number) => {
+      // If no value, use current time as the base (like HTML time input)
+      const now = new Date();
       const currentTime = timeValue ?? {
-        hour: 0,
-        minute: 0,
-        second: 0,
+        hour: now.getHours(),
+        minute: now.getMinutes(),
+        second: now.getSeconds(),
       };
       const newTime = { ...currentTime, second };
       const newValue = formatTimeValue(newTime, true);
@@ -1059,6 +1073,10 @@ function TimePickerSecond(props: TimePickerSecondProps) {
   );
 
   const SecondPrimitive = asChild ? Slot : TimePickerColumn;
+
+  // For display purposes, show current time's second when no value is set
+  const now = new Date();
+  const referenceSecond = timeValue?.second ?? now.getSeconds();
 
   return (
     <SecondPrimitive
@@ -1073,7 +1091,7 @@ function TimePickerSecond(props: TimePickerSecondProps) {
         <TimePickerColumnItem
           key={second}
           value={second}
-          selected={timeValue?.second === second}
+          selected={referenceSecond === second}
           format={format}
           onClick={() => onSecondSelect(second)}
         />
@@ -1093,12 +1111,18 @@ function TimePickerPeriod(props: DivProps) {
 
   const onPeriodToggle = React.useCallback(
     (period: Period) => {
-      if (!timeValue) return;
+      // If no value, use current time as the base (like HTML time input)
+      const now = new Date();
+      const currentTime = timeValue ?? {
+        hour: now.getHours(),
+        minute: now.getMinutes(),
+        second: now.getSeconds(),
+      };
 
-      const currentDisplay = to12Hour(timeValue.hour);
+      const currentDisplay = to12Hour(currentTime.hour);
       const new24Hour = to24Hour(currentDisplay.hour, period);
 
-      const newTime = { ...timeValue, hour: new24Hour };
+      const newTime = { ...currentTime, hour: new24Hour };
       const newValue = formatTimeValue(newTime, showSeconds);
       store.setState("value", newValue);
     },
@@ -1107,7 +1131,10 @@ function TimePickerPeriod(props: DivProps) {
 
   if (!is12Hour) return null;
 
-  const currentPeriod = timeValue ? to12Hour(timeValue.hour).period : "AM";
+  // For display purposes, show current time's period when no value is set
+  const now = new Date();
+  const referenceHour = timeValue?.hour ?? now.getHours();
+  const currentPeriod = to12Hour(referenceHour).period;
 
   const PeriodPrimitive = asChild ? Slot : TimePickerColumn;
 
