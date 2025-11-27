@@ -579,6 +579,9 @@ function TimePickerContent(props: TimePickerContentProps) {
     ...contentProps
   } = props;
 
+  const store = useStoreContext("TimePickerContent");
+  const { showSeconds } = useTimePickerContext("TimePickerContent");
+
   const columnsRef = React.useRef<Map<string, Omit<ColumnData, "id">>>(
     new Map(),
   );
@@ -611,6 +614,24 @@ function TimePickerContent(props: TimePickerContentProps) {
     }),
     [getColumns, onColumnRegister, onColumnUnregister],
   );
+
+  // Initialize with current time when popover opens and there's no value
+  const open = useStore((state) => state.open);
+  const value = useStore((state) => state.value);
+
+  React.useEffect(() => {
+    if (open && !value) {
+      // Initialize with current time (like native HTML time input)
+      const now = new Date();
+      const currentTime: TimeValue = {
+        hour: now.getHours(),
+        minute: now.getMinutes(),
+        second: now.getSeconds(),
+      };
+      const initialValue = formatTimeValue(currentTime, showSeconds);
+      store.setState("value", initialValue);
+    }
+  }, [open, value, showSeconds, store]);
 
   const onOpenAutoFocus: NonNullable<
     React.ComponentProps<typeof PopoverContent>["onOpenAutoFocus"]
