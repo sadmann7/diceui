@@ -791,7 +791,7 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
 
   useIsomorphicLayoutEffect(() => {
     if (selected && itemRef.current) {
-      itemRef.current.scrollIntoView({ block: "center" });
+      itemRef.current.scrollIntoView({ block: "nearest" });
     }
   }, [selected]);
 
