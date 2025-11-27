@@ -1,5 +1,6 @@
 "use client";
 
+import { useDirection } from "@radix-ui/react-direction";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
@@ -17,13 +18,6 @@ const CANCEL_NAME = "EditableCancel";
 const SUBMIT_NAME = "EditableSubmit";
 
 type Direction = "ltr" | "rtl";
-
-const DirectionContext = React.createContext<Direction | undefined>(undefined);
-
-function useDirection(dirProp?: Direction): Direction {
-  const contextDir = React.useContext(DirectionContext);
-  return dirProp ?? contextDir ?? "ltr";
-}
 
 function useLazyRef<T>(fn: () => T) {
   const ref = React.useRef<T | null>(null);

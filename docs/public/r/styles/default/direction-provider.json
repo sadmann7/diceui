@@ -4,7 +4,7 @@
   "files": [
     {
       "path": "components/direction-provider.tsx",
-      "content": "\"use client\";\n\nimport * as React from \"react\";\n\ntype Direction = \"ltr\" | \"rtl\";\n\nconst DirectionContext = React.createContext<Direction | undefined>(undefined);\n\nfunction useDirection(dir?: Direction): Direction {\n  const contextDir = React.useContext(DirectionContext);\n  if (!contextDir) {\n    throw new Error(\"useDirection must be used within a DirectionProvider\");\n  }\n  return dir ?? contextDir ?? \"ltr\";\n}\n\ninterface DirectionProviderProps {\n  children: React.ReactNode;\n  dir: Direction;\n}\n\nfunction DirectionProvider({ children, dir }: DirectionProviderProps) {\n  return (\n    <DirectionContext.Provider value={dir}>\n      {children}\n    </DirectionContext.Provider>\n  );\n}\n\nexport { DirectionProvider, useDirection };\n",
+      "content": "\"use client\";\n\nimport {\n  DirectionProvider as GlobalDirectionProvider,\n  useDirection,\n} from \"@radix-ui/react-direction\";\nimport type * as React from \"react\";\n\nfunction DirectionProvider(\n  props: React.ComponentProps<typeof GlobalDirectionProvider>,\n) {\n  return <GlobalDirectionProvider {...props} />;\n}\n\nexport {\n  DirectionProvider,\n  //\n  useDirection,\n};\n",
       "type": "registry:component",
       "target": ""
     }

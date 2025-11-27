@@ -1,5 +1,6 @@
 "use client";
 
+import { useDirection } from "@radix-ui/react-direction";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
@@ -13,13 +14,6 @@ type Direction = "ltr" | "rtl";
 type Orientation = "horizontal" | "vertical";
 type Size = "default" | "sm" | "lg";
 type Position = "isolated" | "first" | "middle" | "last";
-
-const DirectionContext = React.createContext<Direction | undefined>(undefined);
-
-function useDirection(dirProp?: Direction): Direction {
-  const contextDir = React.useContext(DirectionContext);
-  return dirProp ?? contextDir ?? "ltr";
-}
 
 interface SegmentedInputContextValue {
   dir?: Direction;

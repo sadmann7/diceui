@@ -4,7 +4,7 @@ export const ui: Registry["items"] = [
   {
     name: "angle-slider",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot"],
+    dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
     files: [
       {
         path: "ui/angle-slider.tsx",
@@ -89,6 +89,7 @@ export const ui: Registry["items"] = [
     dependencies: [
       "@radix-ui/react-slider",
       "@radix-ui/react-slot",
+      "@radix-ui/react-direction",
       "class-variance-authority",
       "lucide-react",
     ],
@@ -170,7 +171,7 @@ export const ui: Registry["items"] = [
   {
     name: "editable",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot"],
+    dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
     files: [
       {
         path: "ui/editable.tsx",
@@ -189,7 +190,11 @@ export const ui: Registry["items"] = [
   {
     name: "file-upload",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    dependencies: [
+      "@radix-ui/react-slot",
+      "@radix-ui/react-direction",
+      "lucide-react",
+    ],
     files: [
       {
         path: "ui/file-upload.tsx",
@@ -211,7 +216,11 @@ export const ui: Registry["items"] = [
   {
     name: "segmented-input",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    dependencies: [
+      "@radix-ui/react-slot",
+      "@radix-ui/react-direction",
+      "class-variance-authority",
+    ],
     registryDependencies: ["input"],
     files: [
       {
@@ -255,7 +264,11 @@ export const ui: Registry["items"] = [
   {
     name: "marquee",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    dependencies: [
+      "@radix-ui/react-slot",
+      "@radix-ui/react-direction",
+      "class-variance-authority",
+    ],
     cssVars: {
       theme: {
         "--animate-marquee-left":
@@ -366,7 +379,12 @@ export const ui: Registry["items"] = [
   {
     name: "media-player",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "lucide-react", "media-chrome"],
+    dependencies: [
+      "@radix-ui/react-slot",
+      "@radix-ui/react-direction",
+      "lucide-react",
+      "media-chrome",
+    ],
     registryDependencies: [
       "badge",
       "button",
@@ -427,7 +445,7 @@ export const ui: Registry["items"] = [
   {
     name: "scroll-spy",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot"],
+    dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
     files: [
       {
         path: "ui/scroll-spy.tsx",
@@ -476,6 +494,7 @@ export const ui: Registry["items"] = [
     type: "registry:ui",
     dependencies: [
       "@radix-ui/react-slot",
+      "@radix-ui/react-direction",
       "class-variance-authority",
       "lucide-react",
     ],
@@ -506,7 +525,11 @@ export const ui: Registry["items"] = [
   {
     name: "rating",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    dependencies: [
+      "@radix-ui/react-slot",
+      "@radix-ui/react-direction",
+      "lucide-react",
+    ],
     files: [
       {
         path: "ui/rating.tsx",
@@ -536,7 +559,11 @@ export const ui: Registry["items"] = [
   {
     name: "timeline",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    dependencies: [
+      "@radix-ui/react-slot",
+      "@radix-ui/react-direction",
+      "class-variance-authority",
+    ],
     files: [
       {
         path: "ui/timeline.tsx",
@@ -582,6 +609,7 @@ export const ui: Registry["items"] = [
     dependencies: [
       "@floating-ui/react-dom",
       "@radix-ui/react-slot",
+      "@radix-ui/react-direction",
       "lucide-react",
     ],
     files: [
