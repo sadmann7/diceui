@@ -278,7 +278,7 @@ function StepperRoot(props: StepperRootProps) {
     onValidate,
   });
 
-  const store: Store = React.useMemo(() => {
+  const store = React.useMemo<Store>(() => {
     return {
       subscribe: (cb) => {
         listenersRef.current.add(cb);
