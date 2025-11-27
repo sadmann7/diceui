@@ -1230,7 +1230,19 @@ function TimePickerInput(props: TimePickerInputProps) {
   const composedRef = useComposedRefs(ref, inputRef);
 
   const getSegmentValue = React.useCallback(() => {
-    if (!timeValue) return "";
+    if (!timeValue) {
+      // Show "--" placeholder for empty segments (matches native HTML time input behavior)
+      switch (segment) {
+        case "hour":
+        case "minute":
+        case "second":
+          return "--";
+        case "period":
+          return "--";
+        default:
+          return "";
+      }
+    }
     switch (segment) {
       case "hour": {
         if (is12Hour) {
@@ -1324,9 +1336,11 @@ function TimePickerInput(props: TimePickerInputProps) {
       if (event.defaultPrevented) return;
 
       setIsEditing(false);
-      if (editValue) {
+      // Only update time value if user entered something (not empty or "--")
+      if (editValue && editValue !== "--") {
         updateTimeValue(editValue);
       }
+      // Reset to placeholder if no value, otherwise show formatted value
       setEditValue(getSegmentValue());
     },
     [onBlurProp, editValue, updateTimeValue, getSegmentValue],
@@ -1337,7 +1351,13 @@ function TimePickerInput(props: TimePickerInputProps) {
       onChangeProp?.(event);
       if (event.defaultPrevented) return;
 
-      const newValue = event.target.value;
+      let newValue = event.target.value;
+
+      // If user is typing and current value is "--", replace it
+      if (editValue === "--" && newValue.length > 0 && newValue !== "--") {
+        // Remove "--" prefix if user typed over it
+        newValue = newValue.replace(/^--/, "").replace(/-/g, "");
+      }
 
       if (segment === "period") {
         const firstChar = newValue.charAt(0).toUpperCase();
@@ -1353,7 +1373,7 @@ function TimePickerInput(props: TimePickerInputProps) {
 
       setEditValue(newValue);
     },
-    [segment, updateTimeValue, onChangeProp],
+    [segment, updateTimeValue, onChangeProp, editValue],
   );
 
   const onClick = React.useCallback(
@@ -1372,6 +1392,7 @@ function TimePickerInput(props: TimePickerInputProps) {
       if (event.defaultPrevented) return;
 
       setIsEditing(true);
+      // Keep "--" visible and select it so user can immediately type to replace it
       queueMicrotask(() => event.target.select());
     },
     [onFocusProp],
@@ -1391,6 +1412,14 @@ function TimePickerInput(props: TimePickerInputProps) {
         inputRef.current?.blur();
       } else if (event.key === "ArrowUp") {
         event.preventDefault();
+        // Handle "--" placeholder in arrow navigation
+        if (editValue === "--" || editValue === "") {
+          const defaultValue = segment === "hour" ? (is12Hour ? 12 : 0) : 0;
+          const formattedValue = defaultValue.toString().padStart(2, "0");
+          setEditValue(formattedValue);
+          updateTimeValue(formattedValue);
+          return;
+        }
         const currentValue = Number.parseInt(editValue, 10);
         if (!Number.isNaN(currentValue)) {
           let newValue: number;
@@ -1415,6 +1444,14 @@ function TimePickerInput(props: TimePickerInputProps) {
         }
       } else if (event.key === "ArrowDown") {
         event.preventDefault();
+        // Handle "--" placeholder in arrow navigation
+        if (editValue === "--" || editValue === "") {
+          const defaultValue = segment === "hour" ? (is12Hour ? 12 : 23) : 59;
+          const formattedValue = defaultValue.toString().padStart(2, "0");
+          setEditValue(formattedValue);
+          updateTimeValue(formattedValue);
+          return;
+        }
         const currentValue = Number.parseInt(editValue, 10);
         if (!Number.isNaN(currentValue)) {
           let newValue: number;
@@ -1446,10 +1483,14 @@ function TimePickerInput(props: TimePickerInputProps) {
           updateTimeValue(newPeriod);
         } else if (event.key === "ArrowUp" || event.key === "ArrowDown") {
           event.preventDefault();
-          const currentPeriod = editValue || "AM";
+          // Handle "--" placeholder for period
+          const currentPeriod = editValue === "--" ? "AM" : editValue || "AM";
           const newPeriod = currentPeriod === "AM" ? "PM" : "AM";
           setEditValue(newPeriod);
-          updateTimeValue(newPeriod);
+          // Only update if we have a time value
+          if (timeValue) {
+            updateTimeValue(newPeriod);
+          }
         }
       }
     },
@@ -1460,9 +1501,12 @@ function TimePickerInput(props: TimePickerInputProps) {
       is12Hour,
       getSegmentValue,
       updateTimeValue,
+      timeValue,
     ],
   );
 
+  // When editing, show editValue (keep "--" visible so it can be selected)
+  // When not editing, show the segment value (which includes "--" placeholder when empty)
   const displayValue = isEditing ? editValue : getSegmentValue();
 
   return (
