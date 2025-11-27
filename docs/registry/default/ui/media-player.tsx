@@ -1,5 +1,6 @@
 "use client";
 
+import { useDirection } from "@radix-ui/react-direction";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import { Slot } from "@radix-ui/react-slot";
 import {
@@ -78,13 +79,6 @@ const SPRITE_CONTAINER_WIDTH = 224;
 const SPRITE_CONTAINER_HEIGHT = 128;
 
 type Direction = "ltr" | "rtl";
-
-const DirectionContext = React.createContext<Direction | undefined>(undefined);
-
-function useDirection(dirProp?: Direction): Direction {
-  const contextDir = React.useContext(DirectionContext);
-  return dirProp ?? contextDir ?? "ltr";
-}
 
 function useLazyRef<T>(fn: () => T) {
   const ref = React.useRef<T | null>(null);

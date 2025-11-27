@@ -12,6 +12,7 @@ import {
   shift,
   useFloating,
 } from "@floating-ui/react-dom";
+import { useDirection } from "@radix-ui/react-direction";
 import { Slot } from "@radix-ui/react-slot";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import * as React from "react";
@@ -295,13 +296,6 @@ function useFocusTrap(
     onCloseAutoFocusRef,
     tourOpenRef,
   ]);
-}
-
-const DirectionContext = React.createContext<Direction | undefined>(undefined);
-
-function useDirection(dirProp?: Direction): Direction {
-  const contextDir = React.useContext(DirectionContext);
-  return dirProp ?? contextDir ?? "ltr";
 }
 
 function getDataState(open: boolean): string {

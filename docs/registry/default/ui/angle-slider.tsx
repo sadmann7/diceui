@@ -1,5 +1,6 @@
 "use client";
 
+import { useDirection } from "@radix-ui/react-direction";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
@@ -272,13 +273,6 @@ function createStore(
   };
 
   return store;
-}
-
-const DirectionContext = React.createContext<Direction | undefined>(undefined);
-
-function useDirection(dirProp?: Direction): Direction {
-  const contextDir = React.useContext(DirectionContext);
-  return dirProp ?? contextDir ?? "ltr";
 }
 
 const StoreContext = React.createContext<Store | null>(null);

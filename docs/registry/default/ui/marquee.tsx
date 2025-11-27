@@ -1,5 +1,6 @@
 "use client";
 
+import { useDirection } from "@radix-ui/react-direction";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
@@ -231,13 +232,6 @@ function useResizeObserverStore(
   );
 
   return React.useSyncExternalStore(onSubscribe, getSnapshot, getSnapshot);
-}
-
-const DirectionContext = React.createContext<Direction | undefined>(undefined);
-
-function useDirection(dir?: Direction): Direction {
-  const contextDir = React.useContext(DirectionContext);
-  return dir ?? contextDir ?? "ltr";
 }
 
 interface DivProps extends React.ComponentProps<"div"> {

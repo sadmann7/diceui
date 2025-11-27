@@ -1,5 +1,6 @@
 "use client";
 
+import { useDirection } from "@radix-ui/react-direction";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
@@ -77,13 +78,6 @@ function useStore<T>(selector: (state: StoreState) => T): T {
   );
 
   return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
-}
-
-const DirectionContext = React.createContext<Direction | undefined>(undefined);
-
-function useDirection(dir?: Direction): Direction {
-  const contextDir = React.useContext(DirectionContext);
-  return dir ?? contextDir ?? "ltr";
 }
 
 interface ScrollSpyContextValue {

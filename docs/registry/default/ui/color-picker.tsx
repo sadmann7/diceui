@@ -1,5 +1,6 @@
 "use client";
 
+import { useDirection } from "@radix-ui/react-direction";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -383,13 +384,6 @@ function parseColorString(value: string): ColorValue | null {
 }
 
 type Direction = "ltr" | "rtl";
-
-const DirectionContext = React.createContext<Direction | undefined>(undefined);
-
-function useDirection(dirProp?: Direction): Direction {
-  const contextDir = React.useContext(DirectionContext);
-  return dirProp ?? contextDir ?? "ltr";
-}
 
 function useLazyRef<T>(fn: () => T) {
   const ref = React.useRef<T | null>(null);
@@ -1265,7 +1259,7 @@ function ColorPickerInput(props: ColorPickerInputProps) {
 }
 
 const inputGroupItemVariants = cva(
-  "h-8 [-moz-appearance:_textfield] focus-visible:z-10 focus-visible:ring-1 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none",
+  "h-8 [-moz-appearance:textfield] focus-visible:z-10 focus-visible:ring-1 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none",
   {
     variants: {
       position: {
