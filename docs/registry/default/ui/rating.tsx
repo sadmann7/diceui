@@ -8,6 +8,16 @@ import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidden-input";
 
+type Direction = "ltr" | "rtl";
+type Orientation = "horizontal" | "vertical";
+type ActivationMode = "automatic" | "manual";
+type Size = "default" | "sm" | "lg";
+type Step = 0.5 | 1;
+type DataState = "full" | "partial" | "empty";
+type FocusIntent = "first" | "last" | "prev" | "next";
+
+type ItemElement = React.ComponentRef<typeof RatingItem>;
+
 const ROOT_NAME = "Rating";
 const ITEM_NAME = "RatingItem";
 
@@ -21,8 +31,6 @@ function getItemId(id: string, value: number) {
 function getPartialFillGradientId(id: string, step: Step) {
   return `partial-fill-gradient-${id}-${step}`;
 }
-
-type FocusIntent = "first" | "last" | "prev" | "next";
 
 const MAP_KEY_TO_FOCUS_INTENT: Record<string, FocusIntent> = {
   ArrowLeft: "prev",
@@ -41,8 +49,6 @@ function getDirectionAwareKey(key: string, dir?: Direction) {
       ? "ArrowLeft"
       : key;
 }
-
-type ItemElement = React.ComponentRef<typeof RatingItem>;
 
 function getFocusIntent(
   event: React.KeyboardEvent<ItemElement>,
@@ -71,6 +77,19 @@ function focusFirst(
   }
 }
 
+const useIsomorphicLayoutEffect =
+  typeof window === "undefined" ? React.useEffect : React.useLayoutEffect;
+
+function useAsRef<T>(props: T) {
+  const ref = React.useRef<T>(props);
+
+  useIsomorphicLayoutEffect(() => {
+    ref.current = props;
+  });
+
+  return ref;
+}
+
 function useLazyRef<T>(fn: () => T) {
   const ref = React.useRef<T | null>(null);
 
@@ -80,16 +99,6 @@ function useLazyRef<T>(fn: () => T) {
 
   return ref as React.RefObject<T>;
 }
-
-const useIsomorphicLayoutEffect =
-  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
-
-type Direction = "ltr" | "rtl";
-type Orientation = "horizontal" | "vertical";
-type ActivationMode = "automatic" | "manual";
-type Size = "default" | "sm" | "lg";
-type Step = 0.5 | 1;
-type DataState = "full" | "partial" | "empty";
 
 interface StoreState {
   value: number;
@@ -101,53 +110,6 @@ interface Store {
   getState: () => StoreState;
   setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
   notify: () => void;
-}
-
-function createStore(
-  listenersRef: React.RefObject<Set<() => void>>,
-  stateRef: React.RefObject<StoreState>,
-  onValueChange?: (value: number) => void,
-  onHover?: (value: number | null) => void,
-): Store {
-  const store: Store = {
-    subscribe: (cb) => {
-      if (listenersRef.current) {
-        listenersRef.current.add(cb);
-        return () => listenersRef.current?.delete(cb);
-      }
-      return () => {};
-    },
-    getState: () =>
-      stateRef.current ?? {
-        value: 0,
-        hoveredValue: null,
-      },
-    setState: (key, value) => {
-      const state = stateRef.current;
-      if (!state || Object.is(state[key], value)) return;
-
-      if (key === "value" && typeof value === "number") {
-        state.value = value;
-        onValueChange?.(value);
-      } else if (key === "hoveredValue") {
-        state.hoveredValue = value as number | null;
-        onHover?.(value as number | null);
-      } else {
-        state[key] = value;
-      }
-
-      store.notify();
-    },
-    notify: () => {
-      if (listenersRef.current) {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      }
-    },
-  };
-
-  return store;
 }
 
 const StoreContext = React.createContext<Store | null>(null);
@@ -253,16 +215,45 @@ function RatingRoot(props: RatingRootProps) {
     ...rootProps
   } = props;
 
-  const stateRef = useLazyRef(() => ({
+  const listenersRef = useLazyRef(() => new Set<() => void>());
+  const stateRef = useLazyRef<StoreState>(() => ({
     value: value ?? defaultValue,
     hoveredValue: null,
   }));
-  const listenersRef = useLazyRef(() => new Set<() => void>());
+  const propsRef = useAsRef({
+    onValueChange,
+    onHover,
+  });
 
-  const store = React.useMemo(
-    () => createStore(listenersRef, stateRef, onValueChange, onHover),
-    [listenersRef, stateRef, onValueChange, onHover],
-  );
+  const store = React.useMemo<Store>(() => {
+    return {
+      subscribe: (cb) => {
+        listenersRef.current.add(cb);
+        return () => listenersRef.current.delete(cb);
+      },
+      getState: () => stateRef.current,
+      setState: (key, value) => {
+        if (Object.is(stateRef.current[key], value)) return;
+
+        if (key === "value" && typeof value === "number") {
+          stateRef.current.value = value;
+          propsRef.current.onValueChange?.(value);
+        } else if (key === "hoveredValue") {
+          stateRef.current.hoveredValue = value as number | null;
+          propsRef.current.onHover?.(value as number | null);
+        } else {
+          stateRef.current[key] = value;
+        }
+
+        store.notify();
+      },
+      notify: () => {
+        for (const cb of listenersRef.current) {
+          cb();
+        }
+      },
+    };
+  }, [listenersRef, stateRef, propsRef]);
 
   return (
     <StoreContext.Provider value={store}>
@@ -301,12 +292,23 @@ function RatingRootImpl(props: RatingRootImplProps) {
     if (value !== undefined) {
       store.setState("value", value);
     }
-  }, [value]);
+  }, [value, store]);
 
   const dir = useDirection(dirProp);
   const id = React.useId();
   const rootId = idProp ?? id;
   const currentValue = useStore((state) => state.value);
+
+  const propsRef = useAsRef({
+    orientation,
+    activationMode,
+    size,
+    max,
+    step,
+    clearable,
+    disabled,
+    readOnly,
+  });
 
   const [formTrigger, setFormTrigger] = React.useState<HTMLDivElement | null>(
     null,
@@ -408,7 +410,7 @@ function RatingRootImpl(props: RatingRootImplProps) {
           // For half-step ratings, find the item that represents the selected value
           // by looking for the ceiling value (e.g., 3.5 → find item with value 4)
           const selectedItem =
-            step < 1
+            propsRef.current.step < 1
               ? items.find((item) => item.value === Math.ceil(currentValue))
               : items.find((item) => item.value === currentValue);
           const currentItem = items.find((item) => item.id === tabStopId);
@@ -422,7 +424,7 @@ function RatingRootImpl(props: RatingRootImplProps) {
       }
       isClickFocusRef.current = false;
     },
-    [rootProps.onFocus, isTabbingBackOut, currentValue, tabStopId, step],
+    [rootProps.onFocus, isTabbingBackOut, currentValue, tabStopId, propsRef],
   );
 
   const onMouseDown = React.useCallback(
@@ -440,29 +442,17 @@ function RatingRootImpl(props: RatingRootImplProps) {
     () => ({
       id: rootId,
       dir,
-      orientation,
-      activationMode,
-      disabled,
-      readOnly,
-      size,
+      orientation: propsRef.current.orientation,
+      activationMode: propsRef.current.activationMode,
+      disabled: propsRef.current.disabled,
+      readOnly: propsRef.current.readOnly,
+      size: propsRef.current.size,
+      max: propsRef.current.max,
+      step: propsRef.current.step,
+      clearable: propsRef.current.clearable,
       getAutoIndex,
-      max,
-      step,
-      clearable,
     }),
-    [
-      rootId,
-      dir,
-      orientation,
-      activationMode,
-      disabled,
-      readOnly,
-      size,
-      getAutoIndex,
-      max,
-      step,
-      clearable,
-    ],
+    [rootId, dir, propsRef, getAutoIndex],
   );
 
   const focusContextValue = React.useMemo<FocusContextValue>(
@@ -903,9 +893,9 @@ function RatingItem(props: RatingItemProps) {
 
   return (
     <ItemPrimitive
-      id={itemId}
       role="radio"
       type="button"
+      id={itemId}
       aria-checked={isFilled}
       aria-posinset={itemValue}
       aria-setsize={context.max}
@@ -925,7 +915,7 @@ function RatingItem(props: RatingItemProps) {
         }),
       }}
       className={cn(
-        "inline-flex items-center justify-center rounded-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+        "inline-flex items-center justify-center rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
         "[&_svg:not([class*='size-'])]:size-full [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:transition-colors [&_svg]:duration-200 data-[state=empty]:[&_svg]:fill-transparent data-[state=full]:[&_svg]:fill-current data-[state=partial]:[&_svg]:fill-(--partial-fill)",
         context.size === "sm"
           ? "size-4"
