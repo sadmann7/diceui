@@ -860,10 +860,11 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
           const items = nextColumn.getItems();
           const selectedItem = items.find((item) => item.selected);
 
-          // Directly focus the selected item or first item in the column
-          // This avoids timing issues with focusFirst's activeElement checks
-          const targetItem = selectedItem ?? items[0];
-          targetItem?.ref.current?.focus({ preventScroll: false });
+          const candidateRefs = selectedItem
+            ? [selectedItem.ref, ...items.map((item) => item.ref)]
+            : items.map((item) => item.ref);
+
+          focusFirst(candidateRefs, false);
         }
       }
     },
