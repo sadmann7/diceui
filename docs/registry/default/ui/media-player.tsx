@@ -772,10 +772,10 @@ function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
         onKeyDown={onKeyDown}
         onKeyUp={onKeyUp}
         className={cn(
-          "dark relative isolate flex flex-col overflow-hidden rounded-lg bg-background outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_video]:relative [&_video]:object-contain",
+          "dark relative isolate flex flex-col overflow-hidden rounded-lg bg-background outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 data-disabled:pointer-events-none data-disabled:opacity-50 [&_video]:relative [&_video]:object-contain",
           "data-[state=fullscreen]:[&_video]:size-full [:fullscreen_&]:flex [:fullscreen_&]:h-full [:fullscreen_&]:max-h-screen [:fullscreen_&]:flex-col [:fullscreen_&]:justify-between",
           "[&_[data-slider]::before]:-top-4 [&_[data-slider]::before]:-bottom-2 [&_[data-slider]::before]:absolute [&_[data-slider]::before]:inset-x-0 [&_[data-slider]::before]:z-10 [&_[data-slider]::before]:h-8 [&_[data-slider]::before]:cursor-pointer [&_[data-slider]::before]:content-[''] [&_[data-slider]]:relative [&_[data-slot='media-player-seek']:not([data-hovering])::before]:cursor-default",
-          "[&_video::-webkit-media-text-track-display]:top-auto! [&_video::-webkit-media-text-track-display]:bottom-[4%]! [&_video::-webkit-media-text-track-display]:mb-0! data-[state=fullscreen]:data-[controls-visible]:[&_video::-webkit-media-text-track-display]:bottom-[9%]! data-[controls-visible]:[&_video::-webkit-media-text-track-display]:bottom-[13%]! data-[state=fullscreen]:[&_video::-webkit-media-text-track-display]:bottom-[7%]!",
+          "[&_video::-webkit-media-text-track-display]:top-auto! [&_video::-webkit-media-text-track-display]:bottom-[4%]! [&_video::-webkit-media-text-track-display]:mb-0! data-[state=fullscreen]:data-controls-visible:[&_video::-webkit-media-text-track-display]:bottom-[9%]! data-[state=fullscreen]:[&_video::-webkit-media-text-track-display]:bottom-[7%]! data-controls-visible:[&_video::-webkit-media-text-track-display]:bottom-[13%]!",
           className,
         )}
       >
@@ -887,7 +887,7 @@ function MediaPlayerControls(props: MediaPlayerControlsProps) {
       data-visible={controlsVisible ? "" : undefined}
       dir={context.dir}
       className={cn(
-        "dark pointer-events-none absolute right-0 bottom-0 left-0 z-50 flex items-center gap-2 px-4 py-3 opacity-0 transition-opacity duration-200 data-[visible]:pointer-events-auto data-[visible]:opacity-100 [:fullscreen_&]:px-6 [:fullscreen_&]:py-4",
+        "dark pointer-events-none absolute right-0 bottom-0 left-0 z-50 flex items-center gap-2 px-4 py-3 opacity-0 transition-opacity duration-200 data-visible:pointer-events-auto data-visible:opacity-100 [:fullscreen_&]:px-6 [:fullscreen_&]:py-4",
         className,
       )}
       {...controlsProps}
@@ -1234,7 +1234,7 @@ function MediaPlayerControlsOverlay(props: MediaPlayerControlsOverlayProps) {
       data-visible={controlsVisible ? "" : undefined}
       {...overlayProps}
       className={cn(
-        "-z-10 pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 transition-opacity duration-200 data-[visible]:opacity-100",
+        "-z-10 pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 transition-opacity duration-200 data-visible:opacity-100",
         className,
       )}
     />
@@ -2077,7 +2077,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         max={seekableEnd}
         step={0.01}
         className={cn(
-          "relative flex w-full touch-none select-none items-center data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+          "relative flex w-full touch-none select-none items-center data-disabled:pointer-events-none data-disabled:opacity-50",
           className,
         )}
         value={[displayValue]}
@@ -2117,7 +2117,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
           <MediaPlayerPortal>
             <div
               ref={tooltipRef}
-              className="pointer-events-none z-50 [backface-visibility:hidden] [contain:layout_style] [transition:opacity_150ms_ease-in-out]"
+              className="backface-hidden contain-[layout_style] pointer-events-none z-50 [transition:opacity_150ms_ease-in-out]"
               style={{
                 position: "fixed" as const,
                 left: `var(${SEEK_TOOLTIP_X}, 0rem)`,
@@ -2465,10 +2465,7 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
             {...playbackSpeedProps}
             variant="ghost"
             size="icon"
-            className={cn(
-              "h-8 w-16 aria-[expanded=true]:bg-accent/50",
-              className,
-            )}
+            className={cn("h-8 w-16 aria-expanded:bg-accent/50", className)}
           >
             {mediaPlaybackRate}x
           </Button>
@@ -2478,7 +2475,7 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
         container={context.portalContainer}
         sideOffset={sideOffset}
         align="center"
-        className="min-w-[var(--radix-dropdown-menu-trigger-width)] data-[side=top]:mb-3.5"
+        className="min-w-(--radix-dropdown-menu-trigger-width) data-[side=top]:mb-3.5"
       >
         {speeds.map((speed) => (
           <DropdownMenuItem
@@ -2925,10 +2922,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
             {...settingsProps}
             variant="ghost"
             size="icon"
-            className={cn(
-              "size-8 aria-[expanded=true]:bg-accent/50",
-              className,
-            )}
+            className={cn("size-8 aria-expanded:bg-accent/50", className)}
           >
             <SettingsIcon />
           </Button>
