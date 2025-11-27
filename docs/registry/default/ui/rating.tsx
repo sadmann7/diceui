@@ -405,9 +405,12 @@ function RatingRootImpl(props: RatingRootImplProps) {
           const items = Array.from(itemsRef.current.values()).filter(
             (item) => !item.disabled,
           );
-          const selectedItem = items.find(
-            (item) => item.value === currentValue,
-          );
+          // For half-step ratings, find the item that represents the selected value
+          // by looking for the ceiling value (e.g., 3.5 → find item with value 4)
+          const selectedItem =
+            step < 1
+              ? items.find((item) => item.value === Math.ceil(currentValue))
+              : items.find((item) => item.value === currentValue);
           const currentItem = items.find((item) => item.id === tabStopId);
 
           const candidateItems = [selectedItem, currentItem, ...items].filter(
@@ -419,7 +422,7 @@ function RatingRootImpl(props: RatingRootImplProps) {
       }
       isClickFocusRef.current = false;
     },
-    [rootProps.onFocus, isTabbingBackOut, currentValue, tabStopId],
+    [rootProps.onFocus, isTabbingBackOut, currentValue, tabStopId, step],
   );
 
   const onMouseDown = React.useCallback(
@@ -754,8 +757,14 @@ function RatingItem(props: RatingItemProps) {
         activationMode !== "manual" &&
         isKeyboardFocus
       ) {
-        const newValue = clearable && value === itemValue ? 0 : itemValue;
-        store.setState("value", newValue);
+        // For half-step mode, check if the current value is a half-step that belongs to this item
+        // e.g., if value is 3.5 and itemValue is 4, don't change it
+        const isHalfStepValue = step < 1 && value === itemValue - step;
+
+        if (!isHalfStepValue) {
+          const newValue = clearable && value === itemValue ? 0 : itemValue;
+          store.setState("value", newValue);
+        }
       }
 
       isMouseClickRef.current = false;
@@ -769,6 +778,7 @@ function RatingItem(props: RatingItemProps) {
       clearable,
       value,
       itemValue,
+      step,
       store,
       itemProps.onFocus,
     ],
@@ -808,6 +818,34 @@ function RatingItem(props: RatingItemProps) {
           return;
         event.preventDefault();
 
+        // For half-step mode, increment/decrement by step value instead of jumping to next item
+        if (step < 1 && (focusIntent === "prev" || focusIntent === "next")) {
+          if (!isDisabled && !isReadOnly) {
+            let newValue = value;
+
+            if (focusIntent === "next") {
+              newValue = Math.min(value + step, context.max);
+            } else {
+              newValue = Math.max(value - step, 0);
+            }
+
+            store.setState("value", newValue);
+
+            // Find and focus the item that represents this value
+            const items = focusContext
+              .getItems()
+              .filter((item) => !item.disabled);
+            const targetItem = items.find(
+              (item) => item.value === Math.ceil(newValue),
+            );
+            if (targetItem?.ref.current) {
+              queueMicrotask(() => targetItem.ref.current?.focus());
+            }
+          }
+          return;
+        }
+
+        // For full-step mode or Home/End keys, use the original navigation
         const items = focusContext.getItems().filter((item) => !item.disabled);
         let candidateRefs = items.map((item) => item.ref);
 
@@ -831,6 +869,10 @@ function RatingItem(props: RatingItemProps) {
       activationMode,
       isDisabled,
       isReadOnly,
+      step,
+      value,
+      context.max,
+      store,
       itemProps.onKeyDown,
     ],
   );
