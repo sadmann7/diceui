@@ -1,5 +1,6 @@
 "use client";
 
+import { useDirection } from "@radix-ui/react-direction";
 import { Slot } from "@radix-ui/react-slot";
 import { Star } from "lucide-react";
 import * as React from "react";
@@ -89,13 +90,6 @@ type ActivationMode = "automatic" | "manual";
 type Size = "default" | "sm" | "lg";
 type Step = 0.5 | 1;
 type DataState = "full" | "partial" | "empty";
-
-const DirectionContext = React.createContext<Direction | undefined>(undefined);
-
-function useDirection(dirProp?: Direction): Direction {
-  const contextDir = React.useContext(DirectionContext);
-  return dirProp ?? contextDir ?? "ltr";
-}
 
 interface StoreState {
   value: number;
@@ -890,7 +884,7 @@ function RatingItem(props: RatingItemProps) {
       }}
       className={cn(
         "inline-flex items-center justify-center rounded-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
-        "[&_svg:not([class*='size-'])]:size-full [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:transition-colors [&_svg]:duration-200 data-[state=empty]:[&_svg]:fill-transparent data-[state=full]:[&_svg]:fill-current data-[state=partial]:[&_svg]:fill-[var(--partial-fill)]",
+        "[&_svg:not([class*='size-'])]:size-full [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:transition-colors [&_svg]:duration-200 data-[state=empty]:[&_svg]:fill-transparent data-[state=full]:[&_svg]:fill-current data-[state=partial]:[&_svg]:fill-(--partial-fill)",
         context.size === "sm"
           ? "size-4"
           : context.size === "lg"

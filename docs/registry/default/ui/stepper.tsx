@@ -1,5 +1,6 @@
 "use client";
 
+import { useDirection } from "@radix-ui/react-direction";
 import { Slot } from "@radix-ui/react-slot";
 import { Check } from "lucide-react";
 import * as React from "react";
@@ -147,13 +148,6 @@ function getDataState(
   }
 
   return "inactive";
-}
-
-const DirectionContext = React.createContext<Direction | undefined>(undefined);
-
-function useDirection(dirProp?: Direction): Direction {
-  const contextDir = React.useContext(DirectionContext);
-  return dirProp ?? contextDir ?? "ltr";
 }
 
 interface StepState {

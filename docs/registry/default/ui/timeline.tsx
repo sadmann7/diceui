@@ -1,5 +1,6 @@
 "use client";
 
+import { useDirection } from "@radix-ui/react-direction";
 import { Slot } from "@radix-ui/react-slot";
 import { cva } from "class-variance-authority";
 import * as React from "react";
@@ -69,13 +70,6 @@ function useStore<T>(selector: (store: Store) => T): T {
   );
 
   return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
-}
-
-const DirectionContext = React.createContext<Direction | undefined>(undefined);
-
-function useDirection(dirProp?: Direction): Direction {
-  const contextDir = React.useContext(DirectionContext);
-  return dirProp ?? contextDir ?? "ltr";
 }
 
 interface StoreState {

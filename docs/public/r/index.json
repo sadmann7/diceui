@@ -3,7 +3,8 @@
     "name": "angle-slider",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot"
+      "@radix-ui/react-slot",
+      "@radix-ui/react-direction"
     ],
     "files": [
       {
@@ -67,6 +68,7 @@
     "dependencies": [
       "@radix-ui/react-slider",
       "@radix-ui/react-slot",
+      "@radix-ui/react-direction",
       "class-variance-authority",
       "lucide-react"
     ],
@@ -163,7 +165,8 @@
     "name": "editable",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot"
+      "@radix-ui/react-slot",
+      "@radix-ui/react-direction"
     ],
     "files": [
       {
@@ -185,6 +188,7 @@
     "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot",
+      "@radix-ui/react-direction",
       "lucide-react"
     ],
     "files": [
@@ -212,6 +216,7 @@
     "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot",
+      "@radix-ui/react-direction",
       "class-variance-authority"
     ],
     "registryDependencies": [
@@ -264,6 +269,7 @@
     "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot",
+      "@radix-ui/react-direction",
       "class-variance-authority"
     ],
     "files": [
@@ -377,6 +383,7 @@
     "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot",
+      "@radix-ui/react-direction",
       "lucide-react",
       "media-chrome"
     ],
@@ -450,7 +457,8 @@
     "name": "scroll-spy",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot"
+      "@radix-ui/react-slot",
+      "@radix-ui/react-direction"
     ],
     "files": [
       {
@@ -503,6 +511,7 @@
     "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot",
+      "@radix-ui/react-direction",
       "class-variance-authority",
       "lucide-react"
     ],
@@ -542,6 +551,7 @@
     "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot",
+      "@radix-ui/react-direction",
       "lucide-react"
     ],
     "files": [
@@ -609,6 +619,7 @@
     "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot",
+      "@radix-ui/react-direction",
       "class-variance-authority"
     ],
     "files": [
@@ -628,6 +639,7 @@
     "dependencies": [
       "@floating-ui/react-dom",
       "@radix-ui/react-slot",
+      "@radix-ui/react-direction",
       "lucide-react"
     ],
     "files": [
