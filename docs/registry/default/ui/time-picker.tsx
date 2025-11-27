@@ -599,7 +599,7 @@ function TimePickerContent(props: TimePickerContentProps) {
         getSelectedItemRef,
         getItems,
       }))
-      .filter((col) => col.ref.current);
+      .filter((col) => col.ref.current !== null);
     return sortNodes(columns);
   }, []);
 
@@ -837,35 +837,43 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
         groupContext
       ) {
         event.preventDefault();
-        const columns = groupContext.getColumns();
-        const currentColumnIndex = columns.findIndex(
-          (col) => col.ref.current?.contains(itemRef.current) ?? false,
-        );
 
-        if (currentColumnIndex === -1) return;
+        // Use queueMicrotask to ensure DOM is stable and all columns are registered
+        queueMicrotask(() => {
+          const columns = groupContext.getColumns();
 
-        const goToPrevious =
-          event.key === "ArrowLeft" || (event.key === "Tab" && event.shiftKey);
+          if (columns.length === 0) return;
 
-        const nextColumnIndex = goToPrevious
-          ? currentColumnIndex > 0
-            ? currentColumnIndex - 1
-            : columns.length - 1
-          : currentColumnIndex < columns.length - 1
-            ? currentColumnIndex + 1
-            : 0;
+          const currentColumnIndex = columns.findIndex(
+            (col) => col.ref.current?.contains(itemRef.current) ?? false,
+          );
 
-        const nextColumn = columns[nextColumnIndex];
-        if (nextColumn) {
-          const items = nextColumn.getItems();
-          const selectedItem = items.find((item) => item.selected);
+          if (currentColumnIndex === -1) return;
 
-          const candidateRefs = selectedItem
-            ? [selectedItem.ref, ...items.map((item) => item.ref)]
-            : items.map((item) => item.ref);
+          const goToPrevious =
+            event.key === "ArrowLeft" ||
+            (event.key === "Tab" && event.shiftKey);
 
-          focusFirst(candidateRefs, false);
-        }
+          const nextColumnIndex = goToPrevious
+            ? currentColumnIndex > 0
+              ? currentColumnIndex - 1
+              : columns.length - 1
+            : currentColumnIndex < columns.length - 1
+              ? currentColumnIndex + 1
+              : 0;
+
+          const nextColumn = columns[nextColumnIndex];
+          if (nextColumn?.ref.current) {
+            const items = nextColumn.getItems();
+            const selectedItem = items.find((item) => item.selected);
+
+            const candidateRefs = selectedItem
+              ? [selectedItem.ref, ...items.map((item) => item.ref)]
+              : items.map((item) => item.ref);
+
+            focusFirst(candidateRefs, false);
+          }
+        });
       }
     },
     [itemProps.onKeyDown, columnContext, groupContext, value],
