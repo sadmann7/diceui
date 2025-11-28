@@ -40,6 +40,11 @@ interface ButtonProps extends React.ComponentProps<"button"> {
   asChild?: boolean;
 }
 
+type RootElement = React.ComponentRef<typeof TimePickerRoot>;
+type InputElement = React.ComponentRef<typeof TimePickerInput>;
+type ColumnElement = React.ComponentRef<typeof TimePickerColumn>;
+type ColumnItemElement = React.ComponentRef<typeof TimePickerColumnItem>;
+
 interface TimeValue {
   hour?: number;
   minute?: number;
@@ -59,11 +64,6 @@ interface ColumnData {
   getSelectedItemRef: () => React.RefObject<ColumnItemElement | null> | null;
   getItems: () => ItemData[];
 }
-
-type RootElement = React.ComponentRef<typeof TimePickerRoot>;
-type ColumnElement = React.ComponentRef<typeof TimePickerColumn>;
-type ColumnItemElement = React.ComponentRef<typeof TimePickerColumnItem>;
-type InputElement = React.ComponentRef<typeof TimePickerInput>;
 
 const useIsomorphicLayoutEffect =
   typeof window === "undefined" ? React.useEffect : React.useLayoutEffect;
@@ -512,35 +512,112 @@ function TimePickerLabel(props: TimePickerLabelProps) {
   );
 }
 
+interface TimePickerInputGroupContextValue {
+  onInputRegister: (
+    segment: Segment,
+    ref: React.RefObject<InputElement | null>,
+  ) => void;
+  onInputUnregister: (segment: Segment) => void;
+  getNextInput: (
+    currentSegment: Segment,
+  ) => React.RefObject<InputElement | null> | null;
+}
+
+const TimePickerInputGroupContext =
+  React.createContext<TimePickerInputGroupContextValue | null>(null);
+
+function useTimePickerInputGroupContext(consumerName: string) {
+  const context = React.useContext(TimePickerInputGroupContext);
+  if (!context) {
+    throw new Error(
+      `\`${consumerName}\` must be used within \`${INPUT_GROUP_NAME}\``,
+    );
+  }
+  return context;
+}
+
 function TimePickerInputGroup(props: DivProps) {
   const { asChild, className, children, ...inputGroupProps } = props;
 
   const { inputGroupId, labelId, disabled, invalid } =
     useTimePickerContext(INPUT_GROUP_NAME);
 
+  const inputRefsMap = React.useRef<
+    Map<Segment, React.RefObject<InputElement | null>>
+  >(new Map());
+
+  const onInputRegister = React.useCallback(
+    (segment: Segment, ref: React.RefObject<InputElement | null>) => {
+      inputRefsMap.current.set(segment, ref);
+    },
+    [],
+  );
+
+  const onInputUnregister = React.useCallback((segment: Segment) => {
+    inputRefsMap.current.delete(segment);
+  }, []);
+
+  const getNextInput = React.useCallback(
+    (currentSegment: Segment): React.RefObject<InputElement | null> | null => {
+      // Define the order of segments
+      const segmentOrder: Segment[] = ["hour", "minute", "second", "period"];
+      const currentIndex = segmentOrder.indexOf(currentSegment);
+
+      if (currentIndex === -1 || currentIndex === segmentOrder.length - 1) {
+        return null;
+      }
+
+      // Find the next registered input
+      for (let i = currentIndex + 1; i < segmentOrder.length; i++) {
+        const nextSegment = segmentOrder[i];
+        if (nextSegment) {
+          const nextRef = inputRefsMap.current.get(nextSegment);
+          if (nextRef?.current) {
+            return nextRef;
+          }
+        }
+      }
+
+      return null;
+    },
+    [],
+  );
+
+  const inputGroupContextValue =
+    React.useMemo<TimePickerInputGroupContextValue>(
+      () => ({
+        onInputRegister,
+        onInputUnregister,
+        getNextInput,
+      }),
+      [onInputRegister, onInputUnregister, getNextInput],
+    );
+
   const InputGroupPrimitive = asChild ? Slot : "div";
 
   return (
-    <PopoverAnchor asChild>
-      <InputGroupPrimitive
-        role="group"
-        id={inputGroupId}
-        aria-labelledby={labelId}
-        data-slot="time-picker-input-group"
-        data-disabled={disabled ? "" : undefined}
-        data-invalid={invalid ? "" : undefined}
-        {...inputGroupProps}
-        className={cn(
-          "flex h-10 w-full items-center gap-0.5 rounded-md border border-input bg-background px-3 py-2 shadow-xs outline-none transition-shadow",
-          "has-[input:focus]:border-ring has-[input:focus]:ring-[3px] has-[input:focus]:ring-ring/50",
-          invalid && "border-destructive ring-destructive/20",
-          disabled && "cursor-not-allowed opacity-50",
-          className,
-        )}
-      >
-        <InputRegistryProvider>{children}</InputRegistryProvider>
-      </InputGroupPrimitive>
-    </PopoverAnchor>
+    <TimePickerInputGroupContext.Provider value={inputGroupContextValue}>
+      <PopoverAnchor asChild>
+        <InputGroupPrimitive
+          role="group"
+          id={inputGroupId}
+          aria-labelledby={labelId}
+          data-slot="time-picker-input-group"
+          data-disabled={disabled ? "" : undefined}
+          data-invalid={invalid ? "" : undefined}
+          {...inputGroupProps}
+          className={cn(
+            "flex h-10 w-full items-center gap-0.5 rounded-md border border-input bg-background px-3 py-2 shadow-xs outline-none transition-shadow",
+            "has-[input:focus]:border-ring has-[input:focus]:ring-[3px] has-[input:focus]:ring-ring/50",
+            invalid && "border-destructive ring-destructive/20",
+            disabled && "cursor-not-allowed opacity-50",
+            className,
+          )}
+        >
+          {children}
+        </InputGroupPrimitive>
+      </PopoverAnchor>
+    </TimePickerInputGroupContext.Provider>
   );
 }
 
@@ -1242,91 +1319,6 @@ function TimePickerClear(props: TimePickerClearProps) {
   );
 }
 
-interface InputRegistryContextValue {
-  registerInput: (
-    segment: Segment,
-    ref: React.RefObject<HTMLInputElement | null>,
-  ) => void;
-  unregisterInput: (segment: Segment) => void;
-  getNextInput: (
-    currentSegment: Segment,
-  ) => React.RefObject<HTMLInputElement | null> | null;
-}
-
-const InputRegistryContext =
-  React.createContext<InputRegistryContextValue | null>(null);
-
-function useInputRegistry() {
-  return React.useContext(InputRegistryContext);
-}
-
-interface TimePickerInputGroupContextProviderProps {
-  children: React.ReactNode;
-}
-
-function InputRegistryProvider(
-  props: TimePickerInputGroupContextProviderProps,
-) {
-  const { children } = props;
-  const inputRefsMap = React.useRef<
-    Map<Segment, React.RefObject<HTMLInputElement | null>>
-  >(new Map());
-
-  const registerInput = React.useCallback(
-    (segment: Segment, ref: React.RefObject<HTMLInputElement | null>) => {
-      inputRefsMap.current.set(segment, ref);
-    },
-    [],
-  );
-
-  const unregisterInput = React.useCallback((segment: Segment) => {
-    inputRefsMap.current.delete(segment);
-  }, []);
-
-  const getNextInput = React.useCallback(
-    (
-      currentSegment: Segment,
-    ): React.RefObject<HTMLInputElement | null> | null => {
-      // Define the order of segments
-      const segmentOrder: Segment[] = ["hour", "minute", "second", "period"];
-      const currentIndex = segmentOrder.indexOf(currentSegment);
-
-      if (currentIndex === -1 || currentIndex === segmentOrder.length - 1) {
-        return null;
-      }
-
-      // Find the next registered input
-      for (let i = currentIndex + 1; i < segmentOrder.length; i++) {
-        const nextSegment = segmentOrder[i];
-        if (nextSegment) {
-          const nextRef = inputRefsMap.current.get(nextSegment);
-          if (nextRef?.current) {
-            return nextRef;
-          }
-        }
-      }
-
-      return null;
-    },
-    [],
-  );
-
-  const value = React.useMemo<InputRegistryContextValue>(
-    () => ({
-      registerInput,
-      unregisterInput,
-      getNextInput,
-    }),
-    [registerInput, unregisterInput, getNextInput],
-  );
-
-  return (
-    <InputRegistryContext.Provider value={value}>
-      {children}
-    </InputRegistryContext.Provider>
-  );
-}
-
 interface TimePickerInputProps
   extends Omit<React.ComponentProps<"input">, "type" | "value"> {
   segment?: Segment;
@@ -1350,7 +1342,7 @@ function TimePickerInput(props: TimePickerInputProps) {
   const { is12Hour, showSeconds, disabled, readOnly } =
     useTimePickerContext(INPUT_NAME);
   const store = useStoreContext(INPUT_NAME);
-  const inputRegistry = useInputRegistry();
+  const inputGroupContext = useTimePickerInputGroupContext(INPUT_NAME);
 
   const isDisabled = disabledProp || disabled;
   const isReadOnly = readOnlyProp || readOnly;
@@ -1361,13 +1353,12 @@ function TimePickerInput(props: TimePickerInputProps) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const composedRef = useComposedRefs(ref, inputRef);
 
-  // Register this input with the registry
-  React.useEffect(() => {
-    if (segment && inputRegistry) {
-      inputRegistry.registerInput(segment as Segment, inputRef);
-      return () => inputRegistry.unregisterInput(segment as Segment);
+  useIsomorphicLayoutEffect(() => {
+    if (segment) {
+      inputGroupContext.onInputRegister(segment as Segment, inputRef);
+      return () => inputGroupContext.onInputUnregister(segment as Segment);
     }
-  }, [segment, inputRegistry]);
+  }, [inputGroupContext, segment]);
 
   const getSegmentValue = React.useCallback(() => {
     if (!timeValue) {
@@ -1575,8 +1566,8 @@ function TimePickerInput(props: TimePickerInputProps) {
 
               // Move to next input segment
               queueMicrotask(() => {
-                if (segment && inputRegistry) {
-                  const nextInputRef = inputRegistry.getNextInput(segment);
+                if (segment) {
+                  const nextInputRef = inputGroupContext.getNextInput(segment);
                   if (nextInputRef?.current) {
                     nextInputRef.current.focus();
                     nextInputRef.current.select();
@@ -1608,8 +1599,8 @@ function TimePickerInput(props: TimePickerInputProps) {
 
               // Move to next input segment
               queueMicrotask(() => {
-                if (segment && inputRegistry) {
-                  const nextInputRef = inputRegistry.getNextInput(segment);
+                if (segment) {
+                  const nextInputRef = inputGroupContext.getNextInput(segment);
                   if (nextInputRef?.current) {
                     nextInputRef.current.focus();
                     nextInputRef.current.select();
@@ -1636,8 +1627,8 @@ function TimePickerInput(props: TimePickerInputProps) {
 
             // Move to next input segment
             queueMicrotask(() => {
-              if (segment && inputRegistry) {
-                const nextInputRef = inputRegistry.getNextInput(segment);
+              if (segment) {
+                const nextInputRef = inputGroupContext.getNextInput(segment);
                 if (nextInputRef?.current) {
                   nextInputRef.current.focus();
                   nextInputRef.current.select();
@@ -1658,7 +1649,7 @@ function TimePickerInput(props: TimePickerInputProps) {
       onChangeProp,
       editValue,
       is12Hour,
-      inputRegistry,
+      inputGroupContext,
       pendingDigit,
     ],
   );
