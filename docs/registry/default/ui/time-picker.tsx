@@ -639,10 +639,10 @@ function TimePickerInputGroup(props: DivProps) {
           )}
           style={
             {
-              "--time-picker-hour-width": `${segmentPlaceholder.hour.length}ch`,
-              "--time-picker-minute-width": `${segmentPlaceholder.minute.length}ch`,
-              "--time-picker-second-width": `${segmentPlaceholder.second.length}ch`,
-              "--time-picker-period-width": `${segmentPlaceholder.period.length}ch`,
+              "--time-picker-hour-input-width": `${segmentPlaceholder.hour.length}ch`,
+              "--time-picker-minute-input-width": `${segmentPlaceholder.minute.length}ch`,
+              "--time-picker-second-input-width": `${segmentPlaceholder.second.length}ch`,
+              "--time-picker-period-input-width": `${segmentPlaceholder.period.length}ch`,
               ...style,
             } as React.CSSProperties
           }
@@ -1206,7 +1206,9 @@ function TimePickerInput(props: TimePickerInputProps) {
 
   const displayValue = isEditing ? editValue : getSegmentValue();
 
-  const segmentWidth = segment ? `var(--time-picker-${segment}-width)` : "2ch";
+  const segmentWidth = segment
+    ? `var(--time-picker-${segment}-input-width)`
+    : "2ch";
 
   return (
     <input

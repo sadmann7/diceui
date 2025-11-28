@@ -170,22 +170,22 @@ The container for input segments that sets up CSS variables for dynamic segment 
 <CSSVariablesTable
   data={[
     {
-      title: "--time-picker-hour-width",
+      title: "--time-picker-hour-input-width",
       description: "The width of the hour input segment, dynamically calculated based on the hour placeholder length.",
       defaultValue: "2ch (for '--' placeholder)",
     },
     {
-      title: "--time-picker-minute-width",
+      title: "--time-picker-minute-input-width",
       description: "The width of the minute input segment, dynamically calculated based on the minute placeholder length.",
       defaultValue: "2ch (for '--' placeholder)",
     },
     {
-      title: "--time-picker-second-width",
+      title: "--time-picker-second-input-width",
       description: "The width of the second input segment, dynamically calculated based on the second placeholder length.",
       defaultValue: "2ch (for '--' placeholder)",
     },
     {
-      title: "--time-picker-period-width",
+      title: "--time-picker-period-input-width",
       description: "The width of the period (AM/PM) input segment, dynamically calculated based on the period placeholder length.",
       defaultValue: "2ch (for '--' placeholder)",
     },
@@ -445,4 +445,4 @@ Inline editable input field for time segments (hour, minute, second, period).
   - String format: `segmentPlaceholder="--"` applies the same placeholder to all segments
   - Object format: `segmentPlaceholder={{ hour: "hh", minute: "mm", second: "ss", period: "aa" }}` for per-segment control
 - CSS variables are automatically set based on placeholder length for proper input sizing
-- Override CSS variables directly for custom widths: `className="[--time-picker-hour-width:4ch]"`
+- Override CSS variables directly for custom widths: `className="[--time-picker-hour-input-width:4ch]"`
