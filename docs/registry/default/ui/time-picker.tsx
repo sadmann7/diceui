@@ -800,15 +800,53 @@ function TimePickerInput(props: TimePickerInputProps) {
 
       const placeholder = segment ? segmentPlaceholder[segment] : "--";
       if (editValue && editValue !== placeholder && editValue.length > 0) {
-        if (editValue.length === 2) {
-          updateTimeValue(editValue, true);
-        } else if (editValue.length === 1) {
-          const numValue = Number.parseInt(editValue, 10);
-          if (!Number.isNaN(numValue)) {
-            const paddedValue = numValue.toString().padStart(2, "0");
-            updateTimeValue(paddedValue, true);
+        let valueToUpdate = editValue;
+
+        if (segment !== "period") {
+          if (editValue.length === 2) {
+            valueToUpdate = editValue;
+          } else if (editValue.length === 1) {
+            const numValue = Number.parseInt(editValue, 10);
+            if (!Number.isNaN(numValue)) {
+              valueToUpdate = numValue.toString().padStart(2, "0");
+            }
           }
         }
+
+        updateTimeValue(valueToUpdate, true);
+
+        // Auto-fill missing segments with current time
+        queueMicrotask(() => {
+          const currentTimeValue = parseTimeString(store.getState().value);
+          if (currentTimeValue) {
+            const now = new Date();
+            const newTime = { ...currentTimeValue };
+            let needsUpdate = false;
+
+            // Fill in missing hour with current hour
+            if (newTime.hour === undefined) {
+              newTime.hour = now.getHours();
+              needsUpdate = true;
+            }
+
+            // Fill in missing minute with current minute
+            if (newTime.minute === undefined) {
+              newTime.minute = now.getMinutes();
+              needsUpdate = true;
+            }
+
+            // Fill in missing second with current second (if seconds are shown)
+            if (showSeconds && newTime.second === undefined) {
+              newTime.second = now.getSeconds();
+              needsUpdate = true;
+            }
+
+            if (needsUpdate) {
+              const newValue = formatTimeValue(newTime, showSeconds);
+              store.setState("value", newValue);
+            }
+          }
+        });
       }
 
       setEditValue(getSegmentValue());
@@ -821,6 +859,8 @@ function TimePickerInput(props: TimePickerInputProps) {
       getSegmentValue,
       segment,
       segmentPlaceholder,
+      showSeconds,
+      store,
     ],
   );
 
@@ -1652,6 +1692,7 @@ function TimePickerHour(props: TimePickerHourProps) {
 
   const onHourSelect = React.useCallback(
     (displayHour: number) => {
+      const now = new Date();
       const currentTime = timeValue ?? {};
 
       let hour24 = displayHour;
@@ -1664,6 +1705,17 @@ function TimePickerHour(props: TimePickerHourProps) {
       if (timeValue && timeValue.period !== undefined) {
         newTime.period = timeValue.period;
       }
+
+      // Auto-fill missing minute with current time
+      if (newTime.minute === undefined) {
+        newTime.minute = now.getMinutes();
+      }
+
+      // Auto-fill missing second with current time (if seconds are shown)
+      if (showSeconds && newTime.second === undefined) {
+        newTime.second = now.getSeconds();
+      }
+
       const newValue = formatTimeValue(newTime, showSeconds);
       store.setState("value", newValue);
     },
@@ -1718,8 +1770,20 @@ function TimePickerMinute(props: TimePickerMinuteProps) {
 
   const onMinuteSelect = React.useCallback(
     (minute: number) => {
+      const now = new Date();
       const currentTime = timeValue ?? {};
       const newTime = { ...currentTime, minute };
+
+      // Auto-fill missing hour with current time
+      if (newTime.hour === undefined) {
+        newTime.hour = now.getHours();
+      }
+
+      // Auto-fill missing second with current time (if seconds are shown)
+      if (showSeconds && newTime.second === undefined) {
+        newTime.second = now.getSeconds();
+      }
+
       const newValue = formatTimeValue(newTime, showSeconds);
       store.setState("value", newValue);
     },
@@ -1773,8 +1837,20 @@ function TimePickerSecond(props: TimePickerSecondProps) {
 
   const onSecondSelect = React.useCallback(
     (second: number) => {
+      const now = new Date();
       const currentTime = timeValue ?? {};
       const newTime = { ...currentTime, second };
+
+      // Auto-fill missing hour with current time
+      if (newTime.hour === undefined) {
+        newTime.hour = now.getHours();
+      }
+
+      // Auto-fill missing minute with current time
+      if (newTime.minute === undefined) {
+        newTime.minute = now.getMinutes();
+      }
+
       const newValue = formatTimeValue(newTime, true);
       store.setState("value", newValue);
     },
@@ -1828,6 +1904,17 @@ function TimePickerPeriod(props: DivProps) {
       const new24Hour = to24Hour(currentDisplay.hour, period);
 
       const newTime = { ...currentTime, hour: new24Hour };
+
+      // Auto-fill missing minute with current time
+      if (newTime.minute === undefined) {
+        newTime.minute = now.getMinutes();
+      }
+
+      // Auto-fill missing second with current time (if seconds are shown)
+      if (showSeconds && newTime.second === undefined) {
+        newTime.second = now.getSeconds();
+      }
+
       const newValue = formatTimeValue(newTime, showSeconds);
       store.setState("value", newValue);
     },
