@@ -489,7 +489,7 @@ function TimePickerLabel(props: TimePickerLabelProps) {
 }
 
 function TimePickerInputGroup(props: DivProps) {
-  const { asChild, className, ...inputGroupProps } = props;
+  const { asChild, className, children, ...inputGroupProps } = props;
 
   const { inputGroupId, labelId, disabled, invalid } =
     useTimePickerContext(INPUT_GROUP_NAME);
@@ -513,7 +513,9 @@ function TimePickerInputGroup(props: DivProps) {
           disabled && "cursor-not-allowed opacity-50",
           className,
         )}
-      />
+      >
+        <InputRegistryProvider>{children}</InputRegistryProvider>
+      </InputGroupPrimitive>
     </PopoverAnchor>
   );
 }
@@ -1231,6 +1233,91 @@ function TimePickerClear(props: TimePickerClearProps) {
   );
 }
 
+interface InputRegistryContextValue {
+  registerInput: (
+    segment: Segment,
+    ref: React.RefObject<HTMLInputElement | null>,
+  ) => void;
+  unregisterInput: (segment: Segment) => void;
+  getNextInput: (
+    currentSegment: Segment,
+  ) => React.RefObject<HTMLInputElement | null> | null;
+}
+
+const InputRegistryContext =
+  React.createContext<InputRegistryContextValue | null>(null);
+
+function useInputRegistry() {
+  return React.useContext(InputRegistryContext);
+}
+
+interface TimePickerInputGroupContextProviderProps {
+  children: React.ReactNode;
+}
+
+function InputRegistryProvider(
+  props: TimePickerInputGroupContextProviderProps,
+) {
+  const { children } = props;
+  const inputRefsMap = React.useRef<
+    Map<Segment, React.RefObject<HTMLInputElement | null>>
+  >(new Map());
+
+  const registerInput = React.useCallback(
+    (segment: Segment, ref: React.RefObject<HTMLInputElement | null>) => {
+      inputRefsMap.current.set(segment, ref);
+    },
+    [],
+  );
+
+  const unregisterInput = React.useCallback((segment: Segment) => {
+    inputRefsMap.current.delete(segment);
+  }, []);
+
+  const getNextInput = React.useCallback(
+    (
+      currentSegment: Segment,
+    ): React.RefObject<HTMLInputElement | null> | null => {
+      // Define the order of segments
+      const segmentOrder: Segment[] = ["hour", "minute", "second", "period"];
+      const currentIndex = segmentOrder.indexOf(currentSegment);
+
+      if (currentIndex === -1 || currentIndex === segmentOrder.length - 1) {
+        return null;
+      }
+
+      // Find the next registered input
+      for (let i = currentIndex + 1; i < segmentOrder.length; i++) {
+        const nextSegment = segmentOrder[i];
+        if (nextSegment) {
+          const nextRef = inputRefsMap.current.get(nextSegment);
+          if (nextRef?.current) {
+            return nextRef;
+          }
+        }
+      }
+
+      return null;
+    },
+    [],
+  );
+
+  const value = React.useMemo<InputRegistryContextValue>(
+    () => ({
+      registerInput,
+      unregisterInput,
+      getNextInput,
+    }),
+    [registerInput, unregisterInput, getNextInput],
+  );
+
+  return (
+    <InputRegistryContext.Provider value={value}>
+      {children}
+    </InputRegistryContext.Provider>
+  );
+}
+
 interface TimePickerInputProps
   extends Omit<React.ComponentProps<"input">, "type" | "value"> {
   segment?: Segment;
@@ -1254,6 +1341,7 @@ function TimePickerInput(props: TimePickerInputProps) {
   const { is12Hour, showSeconds, disabled, readOnly } =
     useTimePickerContext(INPUT_NAME);
   const store = useStoreContext(INPUT_NAME);
+  const inputRegistry = useInputRegistry();
 
   const isDisabled = disabledProp || disabled;
   const isReadOnly = readOnlyProp || readOnly;
@@ -1263,6 +1351,14 @@ function TimePickerInput(props: TimePickerInputProps) {
 
   const inputRef = React.useRef<HTMLInputElement>(null);
   const composedRef = useComposedRefs(ref, inputRef);
+
+  // Register this input with the registry
+  React.useEffect(() => {
+    if (segment && inputRegistry) {
+      inputRegistry.registerInput(segment as Segment, inputRef);
+      return () => inputRegistry.unregisterInput(segment as Segment);
+    }
+  }, [segment, inputRegistry]);
 
   const getSegmentValue = React.useCallback(() => {
     if (!timeValue) {
@@ -1298,15 +1394,24 @@ function TimePickerInput(props: TimePickerInputProps) {
 
   const [editValue, setEditValue] = React.useState(getSegmentValue());
   const [isEditing, setIsEditing] = React.useState(false);
+  const [pendingDigit, setPendingDigit] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     if (!isEditing) {
       setEditValue(getSegmentValue());
+      setPendingDigit(null);
     }
   }, [getSegmentValue, isEditing]);
 
   const updateTimeValue = React.useCallback(
-    (newSegmentValue: string) => {
+    (newSegmentValue: string | undefined, shouldCreateIfEmpty = false) => {
+      // Don't update if value is empty or placeholder
+      if (!newSegmentValue || newSegmentValue === "--") return;
+
+      // If we don't have a time value yet and shouldn't create one, just return
+      if (!timeValue && !shouldCreateIfEmpty) return;
+
+      // Start with existing time or empty time (all zeros)
       const currentTime = timeValue ?? {
         hour: 0,
         minute: 0,
@@ -1371,12 +1476,25 @@ function TimePickerInput(props: TimePickerInputProps) {
       if (event.defaultPrevented) return;
 
       setIsEditing(false);
+
       // Only update time value if user entered something (not empty or "--")
-      if (editValue && editValue !== "--") {
-        updateTimeValue(editValue);
+      if (editValue && editValue !== "--" && editValue.length > 0) {
+        // The value is already padded from onChange, just save it
+        if (editValue.length === 2) {
+          updateTimeValue(editValue, true);
+        } else if (editValue.length === 1) {
+          // Pad and save if user left with only 1 digit
+          const numValue = Number.parseInt(editValue, 10);
+          if (!Number.isNaN(numValue)) {
+            const paddedValue = numValue.toString().padStart(2, "0");
+            updateTimeValue(paddedValue, true);
+          }
+        }
       }
+
       // Reset to placeholder if no value, otherwise show formatted value
       setEditValue(getSegmentValue());
+      setPendingDigit(null);
     },
     [onBlurProp, editValue, updateTimeValue, getSegmentValue],
   );
@@ -1398,17 +1516,129 @@ function TimePickerInput(props: TimePickerInputProps) {
         const firstChar = newValue.charAt(0).toUpperCase();
         if (firstChar === "A") {
           setEditValue("AM");
-          updateTimeValue("AM");
+          updateTimeValue("AM", true);
         } else if (firstChar === "P") {
           setEditValue("PM");
-          updateTimeValue("PM");
+          updateTimeValue("PM", true);
         }
         return;
       }
 
-      setEditValue(newValue);
+      // Only allow numeric input for hour/minute/second segments
+      if (segment === "hour" || segment === "minute" || segment === "second") {
+        newValue = newValue.replace(/\D/g, "");
+      }
+
+      // Limit to 2 digits
+      if (newValue.length > 2) {
+        newValue = newValue.slice(0, 2);
+      }
+
+      // Auto-pad and auto-advance behavior (like native HTML time input)
+      if (segment === "hour" || segment === "minute" || segment === "second") {
+        const numValue = Number.parseInt(newValue, 10);
+
+        if (!Number.isNaN(numValue) && newValue.length > 0) {
+          // Check if we have a pending digit and user is typing the second digit
+          if (pendingDigit !== null && newValue.length === 1) {
+            // Combine pending digit with new digit
+            const twoDigitValue = pendingDigit + newValue;
+            const combinedNum = Number.parseInt(twoDigitValue, 10);
+
+            if (!Number.isNaN(combinedNum)) {
+              const paddedValue = combinedNum.toString().padStart(2, "0");
+              setEditValue(paddedValue);
+              updateTimeValue(paddedValue, true);
+              setPendingDigit(null);
+
+              // Move to next input segment
+              queueMicrotask(() => {
+                if (segment && inputRegistry) {
+                  const nextInputRef = inputRegistry.getNextInput(segment);
+                  if (nextInputRef?.current) {
+                    nextInputRef.current.focus();
+                    nextInputRef.current.select();
+                  }
+                }
+              });
+              return;
+            }
+          }
+
+          // Determine if we should auto-advance based on the first digit
+          const maxFirstDigit =
+            segment === "hour"
+              ? is12Hour
+                ? 1 // 12-hour: 01-12 (first digit: 0-1)
+                : 2 // 24-hour: 00-23 (first digit: 0-2)
+              : 5; // minute/second: 00-59 (first digit: 0-5)
+
+          const firstDigit = Number.parseInt(newValue[0] ?? "0", 10);
+          const shouldAutoAdvance = firstDigit > maxFirstDigit;
+
+          if (newValue.length === 1) {
+            if (shouldAutoAdvance) {
+              // Auto-pad and advance (e.g., typing "6" in minutes -> "06" and advance)
+              const paddedValue = numValue.toString().padStart(2, "0");
+              setEditValue(paddedValue);
+              updateTimeValue(paddedValue, true);
+              setPendingDigit(null);
+
+              // Move to next input segment
+              queueMicrotask(() => {
+                if (segment && inputRegistry) {
+                  const nextInputRef = inputRegistry.getNextInput(segment);
+                  if (nextInputRef?.current) {
+                    nextInputRef.current.focus();
+                    nextInputRef.current.select();
+                  }
+                }
+              });
+            } else {
+              // Just show the padded value immediately (e.g., typing "1" -> "01")
+              const paddedValue = numValue.toString().padStart(2, "0");
+              setEditValue(paddedValue);
+              setPendingDigit(newValue); // Store the digit we're waiting to combine
+              // Don't update the time value yet, wait for second digit or blur
+              // Keep the input selected so next digit replaces the entire value
+              queueMicrotask(() => {
+                inputRef.current?.select();
+              });
+            }
+          } else if (newValue.length === 2) {
+            // User typed second digit, update and advance
+            const paddedValue = numValue.toString().padStart(2, "0");
+            setEditValue(paddedValue);
+            updateTimeValue(paddedValue, true);
+            setPendingDigit(null);
+
+            // Move to next input segment
+            queueMicrotask(() => {
+              if (segment && inputRegistry) {
+                const nextInputRef = inputRegistry.getNextInput(segment);
+                if (nextInputRef?.current) {
+                  nextInputRef.current.focus();
+                  nextInputRef.current.select();
+                }
+              }
+            });
+          }
+        } else if (newValue.length === 0) {
+          // User cleared the input
+          setEditValue("");
+          setPendingDigit(null);
+        }
+      }
     },
-    [segment, updateTimeValue, onChangeProp, editValue],
+    [
+      segment,
+      updateTimeValue,
+      onChangeProp,
+      editValue,
+      is12Hour,
+      inputRegistry,
+      pendingDigit,
+    ],
   );
 
   const onClick = React.useCallback(
@@ -1427,6 +1657,7 @@ function TimePickerInput(props: TimePickerInputProps) {
       if (event.defaultPrevented) return;
 
       setIsEditing(true);
+      setPendingDigit(null);
       // Keep "--" visible and select it so user can immediately type to replace it
       queueMicrotask(() => event.target.select());
     },
@@ -1438,7 +1669,22 @@ function TimePickerInput(props: TimePickerInputProps) {
       onKeyDownProp?.(event);
       if (event.defaultPrevented) return;
 
-      if (event.key === "Enter") {
+      if (event.key === "Tab") {
+        // When Tab is pressed, if we have a value, save it before moving
+        if (editValue && editValue.length > 0 && editValue !== "--") {
+          if (editValue.length === 2) {
+            updateTimeValue(editValue, true);
+          } else if (editValue.length === 1) {
+            const numValue = Number.parseInt(editValue, 10);
+            if (!Number.isNaN(numValue)) {
+              const paddedValue = numValue.toString().padStart(2, "0");
+              updateTimeValue(paddedValue, true);
+            }
+          }
+        }
+        // Don't prevent default - let Tab work naturally
+        return;
+      } else if (event.key === "Enter") {
         event.preventDefault();
         inputRef.current?.blur();
       } else if (event.key === "Escape") {
@@ -1452,7 +1698,7 @@ function TimePickerInput(props: TimePickerInputProps) {
           const defaultValue = segment === "hour" ? (is12Hour ? 12 : 0) : 0;
           const formattedValue = defaultValue.toString().padStart(2, "0");
           setEditValue(formattedValue);
-          updateTimeValue(formattedValue);
+          updateTimeValue(formattedValue, true);
           return;
         }
         const currentValue = Number.parseInt(editValue, 10);
@@ -1475,7 +1721,7 @@ function TimePickerInput(props: TimePickerInputProps) {
           }
           const formattedValue = newValue.toString().padStart(2, "0");
           setEditValue(formattedValue);
-          updateTimeValue(formattedValue);
+          updateTimeValue(formattedValue, true);
         }
       } else if (event.key === "ArrowDown") {
         event.preventDefault();
@@ -1484,7 +1730,7 @@ function TimePickerInput(props: TimePickerInputProps) {
           const defaultValue = segment === "hour" ? (is12Hour ? 12 : 23) : 59;
           const formattedValue = defaultValue.toString().padStart(2, "0");
           setEditValue(formattedValue);
-          updateTimeValue(formattedValue);
+          updateTimeValue(formattedValue, true);
           return;
         }
         const currentValue = Number.parseInt(editValue, 10);
@@ -1507,7 +1753,7 @@ function TimePickerInput(props: TimePickerInputProps) {
           }
           const formattedValue = newValue.toString().padStart(2, "0");
           setEditValue(formattedValue);
-          updateTimeValue(formattedValue);
+          updateTimeValue(formattedValue, true);
         }
       } else if (segment === "period") {
         const key = event.key.toLowerCase();
@@ -1515,7 +1761,7 @@ function TimePickerInput(props: TimePickerInputProps) {
           event.preventDefault();
           const newPeriod = key === "a" ? "AM" : "PM";
           setEditValue(newPeriod);
-          updateTimeValue(newPeriod);
+          updateTimeValue(newPeriod, true);
         } else if (event.key === "ArrowUp" || event.key === "ArrowDown") {
           event.preventDefault();
           // Handle "--" placeholder for period
@@ -1524,7 +1770,7 @@ function TimePickerInput(props: TimePickerInputProps) {
           setEditValue(newPeriod);
           // Only update if we have a time value
           if (timeValue) {
-            updateTimeValue(newPeriod);
+            updateTimeValue(newPeriod, true);
           }
         }
       }
