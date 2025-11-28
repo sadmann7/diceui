@@ -1691,6 +1691,91 @@ function TimePickerInput(props: TimePickerInputProps) {
       onKeyDownProp?.(event);
       if (event.defaultPrevented) return;
 
+      // Handle left/right arrow navigation between segments
+      if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+        event.preventDefault();
+
+        const goToPrevious = event.key === "ArrowLeft";
+        const inputGroup = inputRef.current?.closest(
+          '[data-slot="time-picker-input-group"]',
+        );
+
+        if (inputGroup && inputRef.current) {
+          const allInputs = Array.from(
+            inputGroup.querySelectorAll('input[type="text"]'),
+          ) as HTMLInputElement[];
+          const currentIdx = allInputs.indexOf(inputRef.current);
+
+          if (currentIdx !== -1) {
+            const targetIdx = goToPrevious
+              ? Math.max(0, currentIdx - 1)
+              : Math.min(allInputs.length - 1, currentIdx + 1);
+
+            const targetInput = allInputs[targetIdx];
+            if (targetInput && targetInput !== inputRef.current) {
+              targetInput.focus();
+              targetInput.select();
+            }
+          }
+        }
+        return;
+      }
+
+      // Handle backspace/delete to clear segment
+      if (event.key === "Backspace" || event.key === "Delete") {
+        // If the input is selected or empty, clear the segment
+        const input = inputRef.current;
+        if (
+          input &&
+          input.selectionStart === 0 &&
+          input.selectionEnd === input.value.length
+        ) {
+          event.preventDefault();
+          setEditValue("");
+          setPendingDigit(null);
+
+          // Clear the time value for this segment
+          if (timeValue) {
+            const newTime = { ...timeValue };
+            switch (segment) {
+              case "hour":
+                delete newTime.hour;
+                break;
+              case "minute":
+                delete newTime.minute;
+                break;
+              case "second":
+                delete newTime.second;
+                break;
+              case "period":
+                delete newTime.period;
+                break;
+            }
+
+            // Check if any segments remain
+            if (
+              newTime.hour !== undefined ||
+              newTime.minute !== undefined ||
+              newTime.second !== undefined ||
+              newTime.period !== undefined
+            ) {
+              const newValue = formatTimeValue(newTime, showSeconds);
+              store.setState("value", newValue);
+            } else {
+              // All segments cleared
+              store.setState("value", "");
+            }
+          }
+
+          // Show placeholder
+          queueMicrotask(() => {
+            setEditValue("--");
+            inputRef.current?.select();
+          });
+          return;
+        }
+      }
+
       // Handle period segment separately first
       if (segment === "period") {
         const key = event.key.toLowerCase();
@@ -1821,6 +1906,9 @@ function TimePickerInput(props: TimePickerInputProps) {
       is12Hour,
       getSegmentValue,
       updateTimeValue,
+      showSeconds,
+      timeValue,
+      store,
     ],
   );
 
