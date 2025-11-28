@@ -2513,6 +2513,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "time-picker-placeholder-demo": {
+      name: "time-picker-placeholder-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["time-picker"],
+      files: [{
+        path: "registry/default/examples/time-picker-placeholder-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/time-picker-placeholder-demo.tsx")),
+      source: "",
+      chunks: []
+    },
     "timeline-demo": {
       name: "timeline-demo",
       description: "",

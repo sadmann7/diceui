@@ -112,13 +112,25 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   hourStep?: number;
 
   /**
-   * Placeholder text shown when value is empty.
-   * @default "Select time"
+   * Placeholder text for empty time segments.
+   * Can be a string to apply to all segments, or an object to set per-segment placeholders.
+   * @default "--"
+   * @example "--"
+   * @example { hour: "hh", minute: "mm", second: "ss", period: "aa" }
    */
-  placeholder?: string;
+  segmentPlaceholder?:
+    | string
+    | {
+        hour?: string;
+        minute?: string;
+        second?: string;
+        period?: string;
+      };
 }
 
 export interface LabelProps extends EmptyProps<"label">, CompositionProps {}
+
+export interface InputGroupProps extends EmptyProps<"div">, CompositionProps {}
 
 export interface TriggerProps extends EmptyProps<"button">, CompositionProps {}
 

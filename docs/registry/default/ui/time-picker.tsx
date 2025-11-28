@@ -16,6 +16,7 @@ import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidd
 const ROOT_NAME = "TimePicker";
 const LABEL_NAME = "TimePickerLabel";
 const INPUT_GROUP_NAME = "TimePickerInputGroup";
+const INPUT_NAME = "TimePickerInput";
 const TRIGGER_NAME = "TimePickerTrigger";
 const COLUMN_NAME = "TimePickerColumn";
 const COLUMN_ITEM_NAME = "TimePickerColumnItem";
@@ -24,7 +25,6 @@ const MINUTE_NAME = "TimePickerMinute";
 const SECOND_NAME = "TimePickerSecond";
 const PERIOD_NAME = "TimePickerPeriod";
 const CLEAR_NAME = "TimePickerClear";
-const INPUT_NAME = "TimePickerInput";
 
 const PERIODS = ["AM", "PM"] as const;
 
@@ -563,9 +563,9 @@ function useTimePickerInputGroupContext(consumerName: string) {
 }
 
 function TimePickerInputGroup(props: DivProps) {
-  const { asChild, className, children, ...inputGroupProps } = props;
+  const { asChild, className, style, ...inputGroupProps } = props;
 
-  const { inputGroupId, labelId, disabled, invalid } =
+  const { inputGroupId, labelId, disabled, invalid, segmentPlaceholder } =
     useTimePickerContext(INPUT_GROUP_NAME);
 
   const inputRefsMap = React.useRef<
@@ -637,11 +637,602 @@ function TimePickerInputGroup(props: DivProps) {
             disabled && "cursor-not-allowed opacity-50",
             className,
           )}
-        >
-          {children}
-        </InputGroupPrimitive>
+          style={
+            {
+              "--time-picker-hour-width": `${segmentPlaceholder.hour.length}ch`,
+              "--time-picker-minute-width": `${segmentPlaceholder.minute.length}ch`,
+              "--time-picker-second-width": `${segmentPlaceholder.second.length}ch`,
+              "--time-picker-period-width": `${segmentPlaceholder.period.length}ch`,
+              ...style,
+            } as React.CSSProperties
+          }
+        />
       </PopoverAnchor>
     </TimePickerInputGroupContext.Provider>
+  );
+}
+
+interface TimePickerInputProps
+  extends Omit<React.ComponentProps<"input">, "type" | "value"> {
+  segment?: Segment;
+}
+
+function TimePickerInput(props: TimePickerInputProps) {
+  const {
+    segment,
+    disabled: disabledProp,
+    readOnly: readOnlyProp,
+    className,
+    style,
+    ref,
+    onBlur: onBlurProp,
+    onChange: onChangeProp,
+    onClick: onClickProp,
+    onFocus: onFocusProp,
+    onKeyDown: onKeyDownProp,
+    ...inputProps
+  } = props;
+
+  const { is12Hour, showSeconds, disabled, readOnly, segmentPlaceholder } =
+    useTimePickerContext(INPUT_NAME);
+  const store = useStoreContext(INPUT_NAME);
+  const inputGroupContext = useTimePickerInputGroupContext(INPUT_NAME);
+
+  const isDisabled = disabledProp || disabled;
+  const isReadOnly = readOnlyProp || readOnly;
+
+  const value = useStore((state) => state.value);
+  const timeValue = parseTimeString(value);
+
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  const composedRef = useComposedRefs(ref, inputRef);
+
+  useIsomorphicLayoutEffect(() => {
+    if (segment) {
+      inputGroupContext.onInputRegister(segment as Segment, inputRef);
+      return () => inputGroupContext.onInputUnregister(segment as Segment);
+    }
+  }, [inputGroupContext, segment]);
+
+  const getSegmentValue = React.useCallback(() => {
+    if (!timeValue) {
+      if (!segment) return "";
+      return segmentPlaceholder[segment];
+    }
+    switch (segment) {
+      case "hour": {
+        if (timeValue.hour === undefined) return segmentPlaceholder.hour;
+        if (is12Hour) {
+          return to12Hour(timeValue.hour).hour.toString().padStart(2, "0");
+        }
+        return timeValue.hour.toString().padStart(2, "0");
+      }
+      case "minute":
+        if (timeValue.minute === undefined) return segmentPlaceholder.minute;
+        return timeValue.minute.toString().padStart(2, "0");
+      case "second":
+        if (timeValue.second === undefined) return segmentPlaceholder.second;
+        return timeValue.second.toString().padStart(2, "0");
+      case "period":
+        if (!timeValue || timeValue.period === undefined)
+          return segmentPlaceholder.period;
+        return timeValue.period;
+      default:
+        return "";
+    }
+  }, [timeValue, segment, is12Hour, segmentPlaceholder]);
+
+  const [editValue, setEditValue] = React.useState(getSegmentValue());
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [pendingDigit, setPendingDigit] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (!isEditing) {
+      setEditValue(getSegmentValue());
+      setPendingDigit(null);
+    }
+  }, [getSegmentValue, isEditing]);
+
+  const updateTimeValue = React.useCallback(
+    (newSegmentValue: string | undefined, shouldCreateIfEmpty = false) => {
+      const placeholder = segment ? segmentPlaceholder[segment] : "--";
+      if (!newSegmentValue || newSegmentValue === placeholder) return;
+      if (!timeValue && !shouldCreateIfEmpty) return;
+
+      const currentTime = timeValue ?? {};
+      const newTime = { ...currentTime };
+
+      switch (segment) {
+        case "hour": {
+          const displayHour = Number.parseInt(newSegmentValue, 10);
+          if (!Number.isNaN(displayHour)) {
+            if (is12Hour) {
+              const clampedHour = clamp(displayHour, 1, 12);
+              const currentPeriod = timeValue?.period || "AM";
+              newTime.hour = to24Hour(clampedHour, currentPeriod);
+              if (timeValue?.period !== undefined) {
+                newTime.period = timeValue.period;
+              }
+            } else {
+              newTime.hour = clamp(displayHour, 0, 23);
+            }
+          }
+          break;
+        }
+        case "minute": {
+          const minute = Number.parseInt(newSegmentValue, 10);
+          if (!Number.isNaN(minute)) {
+            newTime.minute = clamp(minute, 0, 59);
+          }
+          break;
+        }
+        case "second": {
+          const second = Number.parseInt(newSegmentValue, 10);
+          if (!Number.isNaN(second)) {
+            newTime.second = clamp(second, 0, 59);
+          }
+          break;
+        }
+        case "period": {
+          if (newSegmentValue === "AM" || newSegmentValue === "PM") {
+            newTime.period = newSegmentValue;
+            if (timeValue && timeValue.hour !== undefined) {
+              const currentDisplay = to12Hour(timeValue.hour);
+              newTime.hour = to24Hour(currentDisplay.hour, newSegmentValue);
+            }
+          }
+          break;
+        }
+      }
+
+      const newValue = formatTimeValue(newTime, showSeconds);
+      store.setState("value", newValue);
+    },
+    [timeValue, segment, is12Hour, showSeconds, store, segmentPlaceholder],
+  );
+
+  const onBlur = React.useCallback(
+    (event: React.FocusEvent<InputElement>) => {
+      onBlurProp?.(event);
+      if (event.defaultPrevented) return;
+
+      setIsEditing(false);
+
+      const placeholder = segment ? segmentPlaceholder[segment] : "--";
+      if (editValue && editValue !== placeholder && editValue.length > 0) {
+        if (editValue.length === 2) {
+          updateTimeValue(editValue, true);
+        } else if (editValue.length === 1) {
+          const numValue = Number.parseInt(editValue, 10);
+          if (!Number.isNaN(numValue)) {
+            const paddedValue = numValue.toString().padStart(2, "0");
+            updateTimeValue(paddedValue, true);
+          }
+        }
+      }
+
+      setEditValue(getSegmentValue());
+      setPendingDigit(null);
+    },
+    [
+      onBlurProp,
+      editValue,
+      updateTimeValue,
+      getSegmentValue,
+      segment,
+      segmentPlaceholder,
+    ],
+  );
+
+  const onChange = React.useCallback(
+    (event: React.ChangeEvent<InputElement>) => {
+      onChangeProp?.(event);
+      if (event.defaultPrevented) return;
+
+      let newValue = event.target.value;
+
+      const placeholder = segment ? segmentPlaceholder[segment] : "--";
+      if (
+        editValue === placeholder &&
+        newValue.length > 0 &&
+        newValue !== placeholder
+      ) {
+        newValue = newValue.replace(new RegExp(`^${placeholder}`), "");
+      }
+
+      if (segment === "period") {
+        const firstChar = newValue.charAt(0).toUpperCase();
+        let newPeriod: Period | null = null;
+
+        if (firstChar === "A" || firstChar === "1") {
+          newPeriod = "AM";
+        } else if (firstChar === "P" || firstChar === "2") {
+          newPeriod = "PM";
+        }
+
+        if (newPeriod) {
+          setEditValue(newPeriod);
+          updateTimeValue(newPeriod, true);
+          queueMicrotask(() => {
+            inputRef.current?.select();
+          });
+        }
+        return;
+      }
+
+      if (segment === "hour" || segment === "minute" || segment === "second") {
+        newValue = newValue.replace(/\D/g, "");
+      }
+
+      if (newValue.length > 2) {
+        newValue = newValue.slice(0, 2);
+      }
+      if (segment === "hour" || segment === "minute" || segment === "second") {
+        const numValue = Number.parseInt(newValue, 10);
+
+        if (!Number.isNaN(numValue) && newValue.length > 0) {
+          if (pendingDigit !== null && newValue.length === 1) {
+            const twoDigitValue = pendingDigit + newValue;
+            const combinedNum = Number.parseInt(twoDigitValue, 10);
+
+            if (!Number.isNaN(combinedNum)) {
+              const paddedValue = combinedNum.toString().padStart(2, "0");
+              setEditValue(paddedValue);
+              updateTimeValue(paddedValue, true);
+              setPendingDigit(null);
+
+              queueMicrotask(() => {
+                if (segment) {
+                  const nextInputRef = inputGroupContext.getNextInput(segment);
+                  if (nextInputRef?.current) {
+                    nextInputRef.current.focus();
+                    nextInputRef.current.select();
+                  }
+                }
+              });
+              return;
+            }
+          }
+
+          const maxFirstDigit = segment === "hour" ? (is12Hour ? 1 : 2) : 5;
+
+          const firstDigit = Number.parseInt(newValue[0] ?? "0", 10);
+          const shouldAutoAdvance = firstDigit > maxFirstDigit;
+
+          if (newValue.length === 1) {
+            if (shouldAutoAdvance) {
+              const paddedValue = numValue.toString().padStart(2, "0");
+              setEditValue(paddedValue);
+              updateTimeValue(paddedValue, true);
+              setPendingDigit(null);
+
+              queueMicrotask(() => {
+                if (segment) {
+                  const nextInputRef = inputGroupContext.getNextInput(segment);
+                  if (nextInputRef?.current) {
+                    nextInputRef.current.focus();
+                    nextInputRef.current.select();
+                  }
+                }
+              });
+            } else {
+              const paddedValue = numValue.toString().padStart(2, "0");
+              setEditValue(paddedValue);
+              setPendingDigit(newValue);
+              queueMicrotask(() => {
+                inputRef.current?.select();
+              });
+            }
+          } else if (newValue.length === 2) {
+            const paddedValue = numValue.toString().padStart(2, "0");
+            setEditValue(paddedValue);
+            updateTimeValue(paddedValue, true);
+            setPendingDigit(null);
+
+            queueMicrotask(() => {
+              if (segment) {
+                const nextInputRef = inputGroupContext.getNextInput(segment);
+                if (nextInputRef?.current) {
+                  nextInputRef.current.focus();
+                  nextInputRef.current.select();
+                }
+              }
+            });
+          }
+        } else if (newValue.length === 0) {
+          setEditValue("");
+          setPendingDigit(null);
+        }
+      }
+    },
+    [
+      segment,
+      updateTimeValue,
+      onChangeProp,
+      editValue,
+      is12Hour,
+      inputGroupContext,
+      pendingDigit,
+      segmentPlaceholder,
+    ],
+  );
+
+  const onClick = React.useCallback(
+    (event: React.MouseEvent<InputElement>) => {
+      onClickProp?.(event);
+      if (event.defaultPrevented) return;
+
+      event.currentTarget.select();
+    },
+    [onClickProp],
+  );
+
+  const onFocus = React.useCallback(
+    (event: React.FocusEvent<InputElement>) => {
+      onFocusProp?.(event);
+      if (event.defaultPrevented) return;
+
+      setIsEditing(true);
+      setPendingDigit(null);
+      queueMicrotask(() => event.target.select());
+    },
+    [onFocusProp],
+  );
+
+  const onKeyDown = React.useCallback(
+    (event: React.KeyboardEvent<InputElement>) => {
+      onKeyDownProp?.(event);
+      if (event.defaultPrevented) return;
+
+      if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+        event.preventDefault();
+
+        const goToPrevious = event.key === "ArrowLeft";
+        const inputGroup = inputRef.current?.closest(
+          '[data-slot="time-picker-input-group"]',
+        );
+
+        if (inputGroup && inputRef.current) {
+          const allInputs = Array.from(
+            inputGroup.querySelectorAll('input[type="text"]'),
+          ) as HTMLInputElement[];
+          const currentIdx = allInputs.indexOf(inputRef.current);
+
+          if (currentIdx !== -1) {
+            const targetIdx = goToPrevious
+              ? Math.max(0, currentIdx - 1)
+              : Math.min(allInputs.length - 1, currentIdx + 1);
+
+            const targetInput = allInputs[targetIdx];
+            if (targetInput && targetInput !== inputRef.current) {
+              targetInput.focus();
+              targetInput.select();
+            }
+          }
+        }
+        return;
+      }
+
+      if (event.key === "Backspace" || event.key === "Delete") {
+        const input = inputRef.current;
+        if (
+          input &&
+          input.selectionStart === 0 &&
+          input.selectionEnd === input.value.length
+        ) {
+          event.preventDefault();
+          const placeholder = segment ? segmentPlaceholder[segment] : "--";
+          setEditValue(placeholder);
+          setPendingDigit(null);
+
+          if (timeValue) {
+            const newTime = { ...timeValue };
+            switch (segment) {
+              case "hour":
+                delete newTime.hour;
+                break;
+              case "minute":
+                delete newTime.minute;
+                break;
+              case "second":
+                delete newTime.second;
+                break;
+              case "period":
+                delete newTime.period;
+                break;
+            }
+
+            if (
+              newTime.hour !== undefined ||
+              newTime.minute !== undefined ||
+              newTime.second !== undefined ||
+              newTime.period !== undefined
+            ) {
+              const newValue = formatTimeValue(newTime, showSeconds);
+              store.setState("value", newValue);
+            } else {
+              store.setState("value", "");
+            }
+          } else {
+            store.setState("value", "");
+          }
+
+          queueMicrotask(() => {
+            inputRef.current?.select();
+          });
+          return;
+        }
+      }
+
+      if (segment === "period") {
+        const key = event.key.toLowerCase();
+        if (key === "a" || key === "p" || key === "1" || key === "2") {
+          event.preventDefault();
+          let newPeriod: Period;
+          if (key === "a" || key === "1") {
+            newPeriod = "AM";
+          } else {
+            newPeriod = "PM";
+          }
+          setEditValue(newPeriod);
+          updateTimeValue(newPeriod, true);
+          queueMicrotask(() => {
+            inputRef.current?.select();
+          });
+        } else if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+          event.preventDefault();
+          const placeholder = segmentPlaceholder.period;
+          const currentPeriod =
+            editValue === placeholder || editValue === "" ? "AM" : editValue;
+          const newPeriod =
+            currentPeriod === "AM" || currentPeriod === "A" ? "PM" : "AM";
+          setEditValue(newPeriod);
+          updateTimeValue(newPeriod, true);
+          queueMicrotask(() => {
+            inputRef.current?.select();
+          });
+        }
+        return;
+      }
+
+      if (event.key === "Tab") {
+        const placeholder = segment ? segmentPlaceholder[segment] : "--";
+        if (editValue && editValue.length > 0 && editValue !== placeholder) {
+          if (editValue.length === 2) {
+            updateTimeValue(editValue, true);
+          } else if (editValue.length === 1) {
+            const numValue = Number.parseInt(editValue, 10);
+            if (!Number.isNaN(numValue)) {
+              const paddedValue = numValue.toString().padStart(2, "0");
+              updateTimeValue(paddedValue, true);
+            }
+          }
+        }
+        return;
+      }
+
+      if (event.key === "Enter") {
+        event.preventDefault();
+        inputRef.current?.blur();
+      }
+
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setEditValue(getSegmentValue());
+        inputRef.current?.blur();
+      }
+
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+        const placeholder = segment ? segmentPlaceholder[segment] : "--";
+        if (editValue === placeholder || editValue === "") {
+          const defaultValue = segment === "hour" ? (is12Hour ? 12 : 0) : 0;
+          const formattedValue = defaultValue.toString().padStart(2, "0");
+          setEditValue(formattedValue);
+          updateTimeValue(formattedValue, true);
+          return;
+        }
+        const currentValue = Number.parseInt(editValue, 10);
+        if (!Number.isNaN(currentValue)) {
+          let newValue: number;
+          switch (segment) {
+            case "hour":
+              if (is12Hour) {
+                newValue = currentValue === 12 ? 1 : currentValue + 1;
+              } else {
+                newValue = currentValue === 23 ? 0 : currentValue + 1;
+              }
+              break;
+            case "minute":
+            case "second":
+              newValue = currentValue === 59 ? 0 : currentValue + 1;
+              break;
+            default:
+              return;
+          }
+          const formattedValue = newValue.toString().padStart(2, "0");
+          setEditValue(formattedValue);
+          updateTimeValue(formattedValue, true);
+        }
+      }
+
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        const placeholder = segment ? segmentPlaceholder[segment] : "--";
+        if (editValue === placeholder || editValue === "") {
+          const defaultValue = segment === "hour" ? (is12Hour ? 12 : 23) : 59;
+          const formattedValue = defaultValue.toString().padStart(2, "0");
+          setEditValue(formattedValue);
+          updateTimeValue(formattedValue, true);
+          return;
+        }
+        const currentValue = Number.parseInt(editValue, 10);
+        if (!Number.isNaN(currentValue)) {
+          let newValue: number;
+          switch (segment) {
+            case "hour":
+              if (is12Hour) {
+                newValue = currentValue === 1 ? 12 : currentValue - 1;
+              } else {
+                newValue = currentValue === 0 ? 23 : currentValue - 1;
+              }
+              break;
+            case "minute":
+            case "second":
+              newValue = currentValue === 0 ? 59 : currentValue - 1;
+              break;
+            default:
+              return;
+          }
+          const formattedValue = newValue.toString().padStart(2, "0");
+          setEditValue(formattedValue);
+          updateTimeValue(formattedValue, true);
+        }
+      }
+    },
+    [
+      onKeyDownProp,
+      editValue,
+      segment,
+      is12Hour,
+      getSegmentValue,
+      updateTimeValue,
+      showSeconds,
+      timeValue,
+      store,
+      segmentPlaceholder,
+    ],
+  );
+
+  const displayValue = isEditing ? editValue : getSegmentValue();
+
+  const segmentWidth = segment ? `var(--time-picker-${segment}-width)` : "2ch";
+
+  return (
+    <input
+      type="text"
+      inputMode={segment === "period" ? "text" : "numeric"}
+      autoComplete="off"
+      autoCorrect="off"
+      autoCapitalize="off"
+      spellCheck={false}
+      translate="no"
+      {...inputProps}
+      disabled={isDisabled}
+      readOnly={isReadOnly}
+      className={cn(
+        "inline-flex h-full items-center justify-center border-0 bg-transparent text-center text-sm tabular-nums outline-none transition-colors focus:bg-transparent disabled:cursor-not-allowed disabled:opacity-50",
+        className,
+      )}
+      style={{ width: segmentWidth, ...style }}
+      ref={composedRef}
+      value={displayValue}
+      onBlur={onBlur}
+      onChange={onChange}
+      onClick={onClick}
+      onFocus={onFocus}
+      onKeyDown={onKeyDown}
+    />
   );
 }
 
@@ -1332,590 +1923,11 @@ function TimePickerClear(props: TimePickerClearProps) {
   );
 }
 
-interface TimePickerInputProps
-  extends Omit<React.ComponentProps<"input">, "type" | "value"> {
-  segment?: Segment;
-}
-
-function TimePickerInput(props: TimePickerInputProps) {
-  const {
-    segment,
-    disabled: disabledProp,
-    readOnly: readOnlyProp,
-    className,
-    ref,
-    onBlur: onBlurProp,
-    onChange: onChangeProp,
-    onClick: onClickProp,
-    onFocus: onFocusProp,
-    onKeyDown: onKeyDownProp,
-    ...inputProps
-  } = props;
-
-  const { is12Hour, showSeconds, disabled, readOnly, segmentPlaceholder } =
-    useTimePickerContext(INPUT_NAME);
-  const store = useStoreContext(INPUT_NAME);
-  const inputGroupContext = useTimePickerInputGroupContext(INPUT_NAME);
-
-  const isDisabled = disabledProp || disabled;
-  const isReadOnly = readOnlyProp || readOnly;
-
-  const value = useStore((state) => state.value);
-  const timeValue = parseTimeString(value);
-
-  const inputRef = React.useRef<HTMLInputElement>(null);
-  const composedRef = useComposedRefs(ref, inputRef);
-
-  useIsomorphicLayoutEffect(() => {
-    if (segment) {
-      inputGroupContext.onInputRegister(segment as Segment, inputRef);
-      return () => inputGroupContext.onInputUnregister(segment as Segment);
-    }
-  }, [inputGroupContext, segment]);
-
-  const getSegmentValue = React.useCallback(() => {
-    if (!timeValue) {
-      if (!segment) return "";
-      return segmentPlaceholder[segment];
-    }
-    switch (segment) {
-      case "hour": {
-        if (timeValue.hour === undefined) return segmentPlaceholder.hour;
-        if (is12Hour) {
-          return to12Hour(timeValue.hour).hour.toString().padStart(2, "0");
-        }
-        return timeValue.hour.toString().padStart(2, "0");
-      }
-      case "minute":
-        if (timeValue.minute === undefined) return segmentPlaceholder.minute;
-        return timeValue.minute.toString().padStart(2, "0");
-      case "second":
-        if (timeValue.second === undefined) return segmentPlaceholder.second;
-        return timeValue.second.toString().padStart(2, "0");
-      case "period":
-        if (!timeValue || timeValue.period === undefined)
-          return segmentPlaceholder.period;
-        return timeValue.period;
-      default:
-        return "";
-    }
-  }, [timeValue, segment, is12Hour, segmentPlaceholder]);
-
-  const [editValue, setEditValue] = React.useState(getSegmentValue());
-  const [isEditing, setIsEditing] = React.useState(false);
-  const [pendingDigit, setPendingDigit] = React.useState<string | null>(null);
-
-  React.useEffect(() => {
-    if (!isEditing) {
-      setEditValue(getSegmentValue());
-      setPendingDigit(null);
-    }
-  }, [getSegmentValue, isEditing]);
-
-  const updateTimeValue = React.useCallback(
-    (newSegmentValue: string | undefined, shouldCreateIfEmpty = false) => {
-      const placeholder = segment ? segmentPlaceholder[segment] : "--";
-      if (!newSegmentValue || newSegmentValue === placeholder) return;
-      if (!timeValue && !shouldCreateIfEmpty) return;
-
-      const currentTime = timeValue ?? {};
-      const newTime = { ...currentTime };
-
-      switch (segment) {
-        case "hour": {
-          const displayHour = Number.parseInt(newSegmentValue, 10);
-          if (!Number.isNaN(displayHour)) {
-            if (is12Hour) {
-              const clampedHour = clamp(displayHour, 1, 12);
-              const currentPeriod = timeValue?.period || "AM";
-              newTime.hour = to24Hour(clampedHour, currentPeriod);
-              if (timeValue?.period !== undefined) {
-                newTime.period = timeValue.period;
-              }
-            } else {
-              newTime.hour = clamp(displayHour, 0, 23);
-            }
-          }
-          break;
-        }
-        case "minute": {
-          const minute = Number.parseInt(newSegmentValue, 10);
-          if (!Number.isNaN(minute)) {
-            newTime.minute = clamp(minute, 0, 59);
-          }
-          break;
-        }
-        case "second": {
-          const second = Number.parseInt(newSegmentValue, 10);
-          if (!Number.isNaN(second)) {
-            newTime.second = clamp(second, 0, 59);
-          }
-          break;
-        }
-        case "period": {
-          if (newSegmentValue === "AM" || newSegmentValue === "PM") {
-            newTime.period = newSegmentValue;
-            if (timeValue && timeValue.hour !== undefined) {
-              const currentDisplay = to12Hour(timeValue.hour);
-              newTime.hour = to24Hour(currentDisplay.hour, newSegmentValue);
-            }
-          }
-          break;
-        }
-      }
-
-      const newValue = formatTimeValue(newTime, showSeconds);
-      store.setState("value", newValue);
-    },
-    [timeValue, segment, is12Hour, showSeconds, store, segmentPlaceholder],
-  );
-
-  const onBlur = React.useCallback(
-    (event: React.FocusEvent<InputElement>) => {
-      onBlurProp?.(event);
-      if (event.defaultPrevented) return;
-
-      setIsEditing(false);
-
-      const placeholder = segment ? segmentPlaceholder[segment] : "--";
-      if (editValue && editValue !== placeholder && editValue.length > 0) {
-        if (editValue.length === 2) {
-          updateTimeValue(editValue, true);
-        } else if (editValue.length === 1) {
-          const numValue = Number.parseInt(editValue, 10);
-          if (!Number.isNaN(numValue)) {
-            const paddedValue = numValue.toString().padStart(2, "0");
-            updateTimeValue(paddedValue, true);
-          }
-        }
-      }
-
-      setEditValue(getSegmentValue());
-      setPendingDigit(null);
-    },
-    [
-      onBlurProp,
-      editValue,
-      updateTimeValue,
-      getSegmentValue,
-      segment,
-      segmentPlaceholder,
-    ],
-  );
-
-  const onChange = React.useCallback(
-    (event: React.ChangeEvent<InputElement>) => {
-      onChangeProp?.(event);
-      if (event.defaultPrevented) return;
-
-      let newValue = event.target.value;
-
-      const placeholder = segment ? segmentPlaceholder[segment] : "--";
-      if (
-        editValue === placeholder &&
-        newValue.length > 0 &&
-        newValue !== placeholder
-      ) {
-        newValue = newValue.replace(new RegExp(`^${placeholder}`), "");
-      }
-
-      if (segment === "period") {
-        const firstChar = newValue.charAt(0).toUpperCase();
-        let newPeriod: Period | null = null;
-
-        if (firstChar === "A" || firstChar === "1") {
-          newPeriod = "AM";
-        } else if (firstChar === "P" || firstChar === "2") {
-          newPeriod = "PM";
-        }
-
-        if (newPeriod) {
-          setEditValue(newPeriod);
-          updateTimeValue(newPeriod, true);
-          queueMicrotask(() => {
-            inputRef.current?.select();
-          });
-        }
-        return;
-      }
-
-      if (segment === "hour" || segment === "minute" || segment === "second") {
-        newValue = newValue.replace(/\D/g, "");
-      }
-
-      if (newValue.length > 2) {
-        newValue = newValue.slice(0, 2);
-      }
-      if (segment === "hour" || segment === "minute" || segment === "second") {
-        const numValue = Number.parseInt(newValue, 10);
-
-        if (!Number.isNaN(numValue) && newValue.length > 0) {
-          if (pendingDigit !== null && newValue.length === 1) {
-            const twoDigitValue = pendingDigit + newValue;
-            const combinedNum = Number.parseInt(twoDigitValue, 10);
-
-            if (!Number.isNaN(combinedNum)) {
-              const paddedValue = combinedNum.toString().padStart(2, "0");
-              setEditValue(paddedValue);
-              updateTimeValue(paddedValue, true);
-              setPendingDigit(null);
-
-              queueMicrotask(() => {
-                if (segment) {
-                  const nextInputRef = inputGroupContext.getNextInput(segment);
-                  if (nextInputRef?.current) {
-                    nextInputRef.current.focus();
-                    nextInputRef.current.select();
-                  }
-                }
-              });
-              return;
-            }
-          }
-
-          const maxFirstDigit = segment === "hour" ? (is12Hour ? 1 : 2) : 5;
-
-          const firstDigit = Number.parseInt(newValue[0] ?? "0", 10);
-          const shouldAutoAdvance = firstDigit > maxFirstDigit;
-
-          if (newValue.length === 1) {
-            if (shouldAutoAdvance) {
-              const paddedValue = numValue.toString().padStart(2, "0");
-              setEditValue(paddedValue);
-              updateTimeValue(paddedValue, true);
-              setPendingDigit(null);
-
-              queueMicrotask(() => {
-                if (segment) {
-                  const nextInputRef = inputGroupContext.getNextInput(segment);
-                  if (nextInputRef?.current) {
-                    nextInputRef.current.focus();
-                    nextInputRef.current.select();
-                  }
-                }
-              });
-            } else {
-              const paddedValue = numValue.toString().padStart(2, "0");
-              setEditValue(paddedValue);
-              setPendingDigit(newValue);
-              queueMicrotask(() => {
-                inputRef.current?.select();
-              });
-            }
-          } else if (newValue.length === 2) {
-            const paddedValue = numValue.toString().padStart(2, "0");
-            setEditValue(paddedValue);
-            updateTimeValue(paddedValue, true);
-            setPendingDigit(null);
-
-            queueMicrotask(() => {
-              if (segment) {
-                const nextInputRef = inputGroupContext.getNextInput(segment);
-                if (nextInputRef?.current) {
-                  nextInputRef.current.focus();
-                  nextInputRef.current.select();
-                }
-              }
-            });
-          }
-        } else if (newValue.length === 0) {
-          setEditValue("");
-          setPendingDigit(null);
-        }
-      }
-    },
-    [
-      segment,
-      updateTimeValue,
-      onChangeProp,
-      editValue,
-      is12Hour,
-      inputGroupContext,
-      pendingDigit,
-      segmentPlaceholder,
-    ],
-  );
-
-  const onClick = React.useCallback(
-    (event: React.MouseEvent<InputElement>) => {
-      onClickProp?.(event);
-      if (event.defaultPrevented) return;
-
-      event.currentTarget.select();
-    },
-    [onClickProp],
-  );
-
-  const onFocus = React.useCallback(
-    (event: React.FocusEvent<InputElement>) => {
-      onFocusProp?.(event);
-      if (event.defaultPrevented) return;
-
-      setIsEditing(true);
-      setPendingDigit(null);
-      queueMicrotask(() => event.target.select());
-    },
-    [onFocusProp],
-  );
-
-  const onKeyDown = React.useCallback(
-    (event: React.KeyboardEvent<InputElement>) => {
-      onKeyDownProp?.(event);
-      if (event.defaultPrevented) return;
-
-      if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
-        event.preventDefault();
-
-        const goToPrevious = event.key === "ArrowLeft";
-        const inputGroup = inputRef.current?.closest(
-          '[data-slot="time-picker-input-group"]',
-        );
-
-        if (inputGroup && inputRef.current) {
-          const allInputs = Array.from(
-            inputGroup.querySelectorAll('input[type="text"]'),
-          ) as HTMLInputElement[];
-          const currentIdx = allInputs.indexOf(inputRef.current);
-
-          if (currentIdx !== -1) {
-            const targetIdx = goToPrevious
-              ? Math.max(0, currentIdx - 1)
-              : Math.min(allInputs.length - 1, currentIdx + 1);
-
-            const targetInput = allInputs[targetIdx];
-            if (targetInput && targetInput !== inputRef.current) {
-              targetInput.focus();
-              targetInput.select();
-            }
-          }
-        }
-        return;
-      }
-
-      if (event.key === "Backspace" || event.key === "Delete") {
-        const input = inputRef.current;
-        if (
-          input &&
-          input.selectionStart === 0 &&
-          input.selectionEnd === input.value.length
-        ) {
-          event.preventDefault();
-          const placeholder = segment ? segmentPlaceholder[segment] : "--";
-          setEditValue(placeholder);
-          setPendingDigit(null);
-
-          if (timeValue) {
-            const newTime = { ...timeValue };
-            switch (segment) {
-              case "hour":
-                delete newTime.hour;
-                break;
-              case "minute":
-                delete newTime.minute;
-                break;
-              case "second":
-                delete newTime.second;
-                break;
-              case "period":
-                delete newTime.period;
-                break;
-            }
-
-            if (
-              newTime.hour !== undefined ||
-              newTime.minute !== undefined ||
-              newTime.second !== undefined ||
-              newTime.period !== undefined
-            ) {
-              const newValue = formatTimeValue(newTime, showSeconds);
-              store.setState("value", newValue);
-            } else {
-              store.setState("value", "");
-            }
-          } else {
-            store.setState("value", "");
-          }
-
-          queueMicrotask(() => {
-            inputRef.current?.select();
-          });
-          return;
-        }
-      }
-
-      if (segment === "period") {
-        const key = event.key.toLowerCase();
-        if (key === "a" || key === "p" || key === "1" || key === "2") {
-          event.preventDefault();
-          let newPeriod: Period;
-          if (key === "a" || key === "1") {
-            newPeriod = "AM";
-          } else {
-            newPeriod = "PM";
-          }
-          setEditValue(newPeriod);
-          updateTimeValue(newPeriod, true);
-          queueMicrotask(() => {
-            inputRef.current?.select();
-          });
-        } else if (event.key === "ArrowUp" || event.key === "ArrowDown") {
-          event.preventDefault();
-          const placeholder = segmentPlaceholder.period;
-          const currentPeriod =
-            editValue === placeholder || editValue === "" ? "AM" : editValue;
-          const newPeriod =
-            currentPeriod === "AM" || currentPeriod === "A" ? "PM" : "AM";
-          setEditValue(newPeriod);
-          updateTimeValue(newPeriod, true);
-          queueMicrotask(() => {
-            inputRef.current?.select();
-          });
-        }
-        return;
-      }
-
-      if (event.key === "Tab") {
-        const placeholder = segment ? segmentPlaceholder[segment] : "--";
-        if (editValue && editValue.length > 0 && editValue !== placeholder) {
-          if (editValue.length === 2) {
-            updateTimeValue(editValue, true);
-          } else if (editValue.length === 1) {
-            const numValue = Number.parseInt(editValue, 10);
-            if (!Number.isNaN(numValue)) {
-              const paddedValue = numValue.toString().padStart(2, "0");
-              updateTimeValue(paddedValue, true);
-            }
-          }
-        }
-        return;
-      }
-
-      if (event.key === "Enter") {
-        event.preventDefault();
-        inputRef.current?.blur();
-      }
-
-      if (event.key === "Escape") {
-        event.preventDefault();
-        setEditValue(getSegmentValue());
-        inputRef.current?.blur();
-      }
-
-      if (event.key === "ArrowUp") {
-        event.preventDefault();
-        const placeholder = segment ? segmentPlaceholder[segment] : "--";
-        if (editValue === placeholder || editValue === "") {
-          const defaultValue = segment === "hour" ? (is12Hour ? 12 : 0) : 0;
-          const formattedValue = defaultValue.toString().padStart(2, "0");
-          setEditValue(formattedValue);
-          updateTimeValue(formattedValue, true);
-          return;
-        }
-        const currentValue = Number.parseInt(editValue, 10);
-        if (!Number.isNaN(currentValue)) {
-          let newValue: number;
-          switch (segment) {
-            case "hour":
-              if (is12Hour) {
-                newValue = currentValue === 12 ? 1 : currentValue + 1;
-              } else {
-                newValue = currentValue === 23 ? 0 : currentValue + 1;
-              }
-              break;
-            case "minute":
-            case "second":
-              newValue = currentValue === 59 ? 0 : currentValue + 1;
-              break;
-            default:
-              return;
-          }
-          const formattedValue = newValue.toString().padStart(2, "0");
-          setEditValue(formattedValue);
-          updateTimeValue(formattedValue, true);
-        }
-      }
-
-      if (event.key === "ArrowDown") {
-        event.preventDefault();
-        const placeholder = segment ? segmentPlaceholder[segment] : "--";
-        if (editValue === placeholder || editValue === "") {
-          const defaultValue = segment === "hour" ? (is12Hour ? 12 : 23) : 59;
-          const formattedValue = defaultValue.toString().padStart(2, "0");
-          setEditValue(formattedValue);
-          updateTimeValue(formattedValue, true);
-          return;
-        }
-        const currentValue = Number.parseInt(editValue, 10);
-        if (!Number.isNaN(currentValue)) {
-          let newValue: number;
-          switch (segment) {
-            case "hour":
-              if (is12Hour) {
-                newValue = currentValue === 1 ? 12 : currentValue - 1;
-              } else {
-                newValue = currentValue === 0 ? 23 : currentValue - 1;
-              }
-              break;
-            case "minute":
-            case "second":
-              newValue = currentValue === 0 ? 59 : currentValue - 1;
-              break;
-            default:
-              return;
-          }
-          const formattedValue = newValue.toString().padStart(2, "0");
-          setEditValue(formattedValue);
-          updateTimeValue(formattedValue, true);
-        }
-      }
-    },
-    [
-      onKeyDownProp,
-      editValue,
-      segment,
-      is12Hour,
-      getSegmentValue,
-      updateTimeValue,
-      showSeconds,
-      timeValue,
-      store,
-      segmentPlaceholder,
-    ],
-  );
-
-  const displayValue = isEditing ? editValue : getSegmentValue();
-
-  return (
-    <input
-      type="text"
-      inputMode={segment === "period" ? "text" : "numeric"}
-      autoComplete="off"
-      aria-invalid={false}
-      {...inputProps}
-      disabled={isDisabled}
-      readOnly={isReadOnly}
-      style={{
-        width: segment ? `${segmentPlaceholder[segment].length}ch` : "2ch",
-      }}
-      className={cn(
-        "inline-flex h-full items-center justify-center border-0 bg-transparent text-center text-sm tabular-nums outline-none transition-colors focus:bg-transparent disabled:cursor-not-allowed disabled:opacity-50",
-        className,
-      )}
-      ref={composedRef}
-      value={displayValue}
-      onBlur={onBlur}
-      onChange={onChange}
-      onClick={onClick}
-      onFocus={onFocus}
-      onKeyDown={onKeyDown}
-    />
-  );
-}
-
 export {
   TimePickerRoot as Root,
   TimePickerLabel as Label,
   TimePickerInputGroup as InputGroup,
+  TimePickerInput as Input,
   TimePickerTrigger as Trigger,
   TimePickerContent as Content,
   TimePickerHour as Hour,
@@ -1924,12 +1936,12 @@ export {
   TimePickerPeriod as Period,
   TimePickerSeparator as Separator,
   TimePickerClear as Clear,
-  TimePickerInput as Input,
   //
   TimePickerRoot as TimePicker,
   TimePickerRoot,
   TimePickerLabel,
   TimePickerInputGroup,
+  TimePickerInput,
   TimePickerTrigger,
   TimePickerContent,
   TimePickerHour,
@@ -1938,7 +1950,6 @@ export {
   TimePickerPeriod,
   TimePickerSeparator,
   TimePickerClear,
-  TimePickerInput,
   //
   type TimePickerRootProps as TimePickerProps,
 };

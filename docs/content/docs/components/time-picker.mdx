@@ -90,6 +90,12 @@ Include seconds in time selection.
 
 <ComponentTabs name="time-picker-seconds-demo" />
 
+### Custom Placeholders
+
+Customize empty segment placeholders for different display formats.
+
+<ComponentTabs name="time-picker-placeholder-demo" />
+
 ### Controlled State
 
 Control the time picker value programmatically.
@@ -137,6 +143,53 @@ The label component for the time picker field.
 <AutoTypeTable
   path="./types/docs/time-picker.ts"
   name="LabelProps"
+/>
+
+### InputGroup
+
+The container for input segments that sets up CSS variables for dynamic segment widths.
+
+<AutoTypeTable
+  path="./types/docs/time-picker.ts"
+  name="InputGroupProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the time picker is disabled",
+    },
+    {
+      title: "[data-invalid]",
+      value: "Present when the time picker is invalid",
+    },
+  ]}
+/>
+
+<CSSVariablesTable
+  data={[
+    {
+      title: "--time-picker-hour-width",
+      description: "The width of the hour input segment, dynamically calculated based on the hour placeholder length.",
+      defaultValue: "2ch (for '--' placeholder)",
+    },
+    {
+      title: "--time-picker-minute-width",
+      description: "The width of the minute input segment, dynamically calculated based on the minute placeholder length.",
+      defaultValue: "2ch (for '--' placeholder)",
+    },
+    {
+      title: "--time-picker-second-width",
+      description: "The width of the second input segment, dynamically calculated based on the second placeholder length.",
+      defaultValue: "2ch (for '--' placeholder)",
+    },
+    {
+      title: "--time-picker-period-width",
+      description: "The width of the period (AM/PM) input segment, dynamically calculated based on the period placeholder length.",
+      defaultValue: "2ch (for '--' placeholder)",
+    },
+  ]}
 />
 
 ### Trigger
@@ -388,3 +441,8 @@ Inline editable input field for time segments (hour, minute, second, period).
 - The `minuteStep`, `hourStep`, and `secondStep` props allow customization of selection intervals
 - Use the `min` and `max` props to restrict the selectable time range
 - The `showSeconds` prop enables/disables second selection
+- Use the `segmentPlaceholder` prop to customize empty segment display:
+  - String format: `segmentPlaceholder="--"` applies the same placeholder to all segments
+  - Object format: `segmentPlaceholder={{ hour: "hh", minute: "mm", second: "ss", period: "aa" }}` for per-segment control
+- CSS variables are automatically set based on placeholder length for proper input sizing
+- Override CSS variables directly for custom widths: `className="[--time-picker-hour-width:4ch]"`

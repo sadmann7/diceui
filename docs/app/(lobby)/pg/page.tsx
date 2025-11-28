@@ -4,6 +4,7 @@ import { Demo } from "@/components/demo";
 import { Shell } from "@/components/shell";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
 import TimePickerDemo from "@/registry/default/examples/time-picker-demo";
+import TimePickerPlaceholderDemo from "@/registry/default/examples/time-picker-placeholder-demo";
 import TimePickerSecondsDemo from "@/registry/default/examples/time-picker-seconds-demo";
 
 export default function PlaygroundPage() {
@@ -14,6 +15,7 @@ export default function PlaygroundPage() {
           <input type="time" />
           <TimePickerDemo />
           <TimePickerSecondsDemo />
+          <TimePickerPlaceholderDemo />
         </div>
         <ColorPickerDemo />
       </Demo>

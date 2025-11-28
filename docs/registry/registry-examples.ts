@@ -1636,6 +1636,17 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "time-picker-placeholder-demo",
+    type: "registry:example",
+    registryDependencies: ["time-picker"],
+    files: [
+      {
+        path: "examples/time-picker-placeholder-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "timeline-demo",
     type: "registry:example",
     files: [
