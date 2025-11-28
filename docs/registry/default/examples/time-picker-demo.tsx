@@ -13,7 +13,10 @@ import {
 
 export default function TimePickerDemo() {
   return (
-    <TimePicker className="w-[280px]">
+    <TimePicker
+      className="w-[280px]"
+      segmentPlaceholder={{ hour: "hh", minute: "mm", period: "aa" }}
+    >
       <TimePickerLabel>Select Time</TimePickerLabel>
       <TimePickerInputGroup>
         <TimePickerInput segment="hour" />
