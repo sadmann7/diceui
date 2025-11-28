@@ -41,9 +41,10 @@ interface ButtonProps extends React.ComponentProps<"button"> {
 }
 
 interface TimeValue {
-  hour: number;
-  minute: number;
-  second: number;
+  hour?: number;
+  minute?: number;
+  second?: number;
+  period?: Period;
 }
 
 interface ItemData {
@@ -134,32 +135,55 @@ function parseTimeString(timeString: string | undefined): TimeValue | null {
   const parts = timeString.split(":");
   if (parts.length < 2) return null;
 
-  const hour = Number.parseInt(parts[0] ?? "0", 10);
-  const minute = Number.parseInt(parts[1] ?? "0", 10);
-  const second = parts[2] ? Number.parseInt(parts[2], 10) : 0;
+  const result: TimeValue = {};
 
-  if (Number.isNaN(hour) || Number.isNaN(minute) || Number.isNaN(second)) {
-    return null;
+  // Parse hour (can be empty/placeholder)
+  if (parts[0] && parts[0] !== "--") {
+    const hour = Number.parseInt(parts[0], 10);
+    if (!Number.isNaN(hour) && hour >= 0 && hour <= 23) {
+      result.hour = hour;
+    }
   }
 
+  // Parse minute (can be empty/placeholder)
+  if (parts[1] && parts[1] !== "--") {
+    const minute = Number.parseInt(parts[1], 10);
+    if (!Number.isNaN(minute) && minute >= 0 && minute <= 59) {
+      result.minute = minute;
+    }
+  }
+
+  // Parse second (can be empty/placeholder)
+  if (parts[2] && parts[2] !== "--") {
+    const second = Number.parseInt(parts[2], 10);
+    if (!Number.isNaN(second) && second >= 0 && second <= 59) {
+      result.second = second;
+    }
+  }
+
+  // Return null if no valid segments parsed
   if (
-    hour < 0 ||
-    hour > 23 ||
-    minute < 0 ||
-    minute > 59 ||
-    second < 0 ||
-    second > 59
+    result.hour === undefined &&
+    result.minute === undefined &&
+    result.second === undefined
   ) {
     return null;
   }
 
-  return { hour, minute, second };
+  return result;
 }
 
 function formatTimeValue(value: TimeValue, showSeconds: boolean): string {
-  const hourStr = value.hour.toString().padStart(2, "0");
-  const minuteStr = value.minute.toString().padStart(2, "0");
-  const secondStr = value.second.toString().padStart(2, "0");
+  const hourStr =
+    value.hour !== undefined ? value.hour.toString().padStart(2, "0") : "--";
+  const minuteStr =
+    value.minute !== undefined
+      ? value.minute.toString().padStart(2, "0")
+      : "--";
+  const secondStr =
+    value.second !== undefined
+      ? value.second.toString().padStart(2, "0")
+      : "--";
 
   if (showSeconds) {
     return `${hourStr}:${minuteStr}:${secondStr}`;
@@ -934,23 +958,21 @@ function TimePickerHour(props: TimePickerHourProps) {
 
   const onHourSelect = React.useCallback(
     (displayHour: number) => {
-      // If no value, use current time as the base (like HTML time input)
-      const now = new Date();
-      const currentTime = timeValue ?? {
-        hour: now.getHours(),
-        minute: now.getMinutes(),
-        second: now.getSeconds(),
-      };
+      // Preserve existing time segments, only update hour
+      const currentTime = timeValue ?? {};
 
       let hour24 = displayHour;
       if (is12Hour) {
-        const currentPeriod = timeValue
-          ? to12Hour(timeValue.hour).period
-          : to12Hour(now.getHours()).period;
+        // Use stored period if available, otherwise default to AM
+        const currentPeriod = timeValue?.period || "AM";
         hour24 = to24Hour(displayHour, currentPeriod);
       }
 
       const newTime = { ...currentTime, hour: hour24 };
+      // Only preserve period if it was already set
+      if (timeValue && timeValue.period !== undefined) {
+        newTime.period = timeValue.period;
+      }
       const newValue = formatTimeValue(newTime, showSeconds);
       store.setState("value", newValue);
     },
@@ -1006,13 +1028,8 @@ function TimePickerMinute(props: TimePickerMinuteProps) {
 
   const onMinuteSelect = React.useCallback(
     (minute: number) => {
-      // If no value, use current time as the base (like HTML time input)
-      const now = new Date();
-      const currentTime = timeValue ?? {
-        hour: now.getHours(),
-        minute: now.getMinutes(),
-        second: now.getSeconds(),
-      };
+      // Preserve existing time segments, only update minute
+      const currentTime = timeValue ?? {};
       const newTime = { ...currentTime, minute };
       const newValue = formatTimeValue(newTime, showSeconds);
       store.setState("value", newValue);
@@ -1068,13 +1085,8 @@ function TimePickerSecond(props: TimePickerSecondProps) {
 
   const onSecondSelect = React.useCallback(
     (second: number) => {
-      // If no value, use current time as the base (like HTML time input)
-      const now = new Date();
-      const currentTime = timeValue ?? {
-        hour: now.getHours(),
-        minute: now.getMinutes(),
-        second: now.getSeconds(),
-      };
+      // Preserve existing time segments, only update second
+      const currentTime = timeValue ?? {};
       const newTime = { ...currentTime, second };
       const newValue = formatTimeValue(newTime, true);
       store.setState("value", newValue);
@@ -1123,13 +1135,12 @@ function TimePickerPeriod(props: DivProps) {
     (period: Period) => {
       // If no value, use current time as the base (like HTML time input)
       const now = new Date();
-      const currentTime = timeValue ?? {
-        hour: now.getHours(),
-        minute: now.getMinutes(),
-        second: now.getSeconds(),
-      };
+      const currentTime = timeValue ?? {};
 
-      const currentDisplay = to12Hour(currentTime.hour);
+      // Use current hour if available, otherwise default to now
+      const currentHour =
+        currentTime.hour !== undefined ? currentTime.hour : now.getHours();
+      const currentDisplay = to12Hour(currentHour);
       const new24Hour = to24Hour(currentDisplay.hour, period);
 
       const newTime = { ...currentTime, hour: new24Hour };
@@ -1141,10 +1152,8 @@ function TimePickerPeriod(props: DivProps) {
 
   if (!is12Hour) return null;
 
-  // For display purposes, show current time's period when no value is set
-  const now = new Date();
-  const referenceHour = timeValue?.hour ?? now.getHours();
-  const currentPeriod = to12Hour(referenceHour).period;
+  // Use stored period, don't derive from hour
+  const currentPeriod = timeValue?.period;
 
   const PeriodPrimitive = asChild ? Slot : TimePickerColumn;
 
@@ -1376,17 +1385,21 @@ function TimePickerInput(props: TimePickerInputProps) {
     }
     switch (segment) {
       case "hour": {
+        if (timeValue.hour === undefined) return "--";
         if (is12Hour) {
           return to12Hour(timeValue.hour).hour.toString().padStart(2, "0");
         }
         return timeValue.hour.toString().padStart(2, "0");
       }
       case "minute":
+        if (timeValue.minute === undefined) return "--";
         return timeValue.minute.toString().padStart(2, "0");
       case "second":
+        if (timeValue.second === undefined) return "--";
         return timeValue.second.toString().padStart(2, "0");
       case "period":
-        return timeValue ? to12Hour(timeValue.hour).period : "AM";
+        if (!timeValue || timeValue.period === undefined) return "--";
+        return timeValue.period;
       default:
         return "";
     }
@@ -1411,12 +1424,8 @@ function TimePickerInput(props: TimePickerInputProps) {
       // If we don't have a time value yet and shouldn't create one, just return
       if (!timeValue && !shouldCreateIfEmpty) return;
 
-      // Start with existing time or empty time (all zeros)
-      const currentTime = timeValue ?? {
-        hour: 0,
-        minute: 0,
-        second: 0,
-      };
+      // Start with existing time or empty time (partial values allowed)
+      const currentTime = timeValue ?? {};
 
       const newTime = { ...currentTime };
 
@@ -1428,10 +1437,13 @@ function TimePickerInput(props: TimePickerInputProps) {
               const maxHour = 12;
               const minHour = 1;
               const clampedHour = clamp(displayHour, minHour, maxHour);
-              const currentPeriod = timeValue
-                ? to12Hour(timeValue.hour).period
-                : "AM";
+              // Use stored period if available, otherwise default to AM
+              const currentPeriod = timeValue?.period || "AM";
               newTime.hour = to24Hour(clampedHour, currentPeriod);
+              // Only preserve period if it was already set, don't create a new one
+              if (timeValue?.period !== undefined) {
+                newTime.period = timeValue.period;
+              }
             } else {
               newTime.hour = clamp(displayHour, 0, 23);
             }
@@ -1453,12 +1465,13 @@ function TimePickerInput(props: TimePickerInputProps) {
           break;
         }
         case "period": {
-          if (
-            (newSegmentValue === "AM" || newSegmentValue === "PM") &&
-            timeValue
-          ) {
-            const currentDisplay = to12Hour(timeValue.hour);
-            newTime.hour = to24Hour(currentDisplay.hour, newSegmentValue);
+          if (newSegmentValue === "AM" || newSegmentValue === "PM") {
+            newTime.period = newSegmentValue;
+            // If hour is already set, update it to reflect the new period
+            if (timeValue && timeValue.hour !== undefined) {
+              const currentDisplay = to12Hour(timeValue.hour);
+              newTime.hour = to24Hour(currentDisplay.hour, newSegmentValue);
+            }
           }
           break;
         }
@@ -1514,12 +1527,21 @@ function TimePickerInput(props: TimePickerInputProps) {
 
       if (segment === "period") {
         const firstChar = newValue.charAt(0).toUpperCase();
-        if (firstChar === "A") {
-          setEditValue("AM");
-          updateTimeValue("AM", true);
-        } else if (firstChar === "P") {
-          setEditValue("PM");
-          updateTimeValue("PM", true);
+        let newPeriod: Period | null = null;
+
+        if (firstChar === "A" || firstChar === "1") {
+          newPeriod = "AM";
+        } else if (firstChar === "P" || firstChar === "2") {
+          newPeriod = "PM";
+        }
+
+        if (newPeriod) {
+          setEditValue(newPeriod);
+          updateTimeValue(newPeriod, true);
+          // Preserve selection
+          queueMicrotask(() => {
+            inputRef.current?.select();
+          });
         }
         return;
       }
@@ -1669,6 +1691,41 @@ function TimePickerInput(props: TimePickerInputProps) {
       onKeyDownProp?.(event);
       if (event.defaultPrevented) return;
 
+      // Handle period segment separately first
+      if (segment === "period") {
+        const key = event.key.toLowerCase();
+        if (key === "a" || key === "p" || key === "1" || key === "2") {
+          event.preventDefault();
+          let newPeriod: Period;
+          if (key === "a" || key === "1") {
+            newPeriod = "AM";
+          } else {
+            newPeriod = "PM";
+          }
+          setEditValue(newPeriod);
+          updateTimeValue(newPeriod, true);
+          // Preserve selection
+          queueMicrotask(() => {
+            inputRef.current?.select();
+          });
+        } else if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+          event.preventDefault();
+          // Toggle between AM and PM
+          const currentPeriod =
+            editValue === "--" || editValue === "" ? "AM" : editValue;
+          const newPeriod =
+            currentPeriod === "AM" || currentPeriod === "A" ? "PM" : "AM";
+          setEditValue(newPeriod);
+          updateTimeValue(newPeriod, true);
+          // Preserve selection
+          queueMicrotask(() => {
+            inputRef.current?.select();
+          });
+        }
+        // Block any other keys for period segment
+        return;
+      }
+
       if (event.key === "Tab") {
         // When Tab is pressed, if we have a value, save it before moving
         if (editValue && editValue.length > 0 && editValue !== "--") {
@@ -1755,24 +1812,6 @@ function TimePickerInput(props: TimePickerInputProps) {
           setEditValue(formattedValue);
           updateTimeValue(formattedValue, true);
         }
-      } else if (segment === "period") {
-        const key = event.key.toLowerCase();
-        if (key === "a" || key === "p") {
-          event.preventDefault();
-          const newPeriod = key === "a" ? "AM" : "PM";
-          setEditValue(newPeriod);
-          updateTimeValue(newPeriod, true);
-        } else if (event.key === "ArrowUp" || event.key === "ArrowDown") {
-          event.preventDefault();
-          // Handle "--" placeholder for period
-          const currentPeriod = editValue === "--" ? "AM" : editValue || "AM";
-          const newPeriod = currentPeriod === "AM" ? "PM" : "AM";
-          setEditValue(newPeriod);
-          // Only update if we have a time value
-          if (timeValue) {
-            updateTimeValue(newPeriod, true);
-          }
-        }
       }
     },
     [
@@ -1782,7 +1821,6 @@ function TimePickerInput(props: TimePickerInputProps) {
       is12Hour,
       getSegmentValue,
       updateTimeValue,
-      timeValue,
     ],
   );
 
