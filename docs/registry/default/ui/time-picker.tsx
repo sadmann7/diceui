@@ -642,7 +642,7 @@ function TimePickerInputGroup(props: DivProps) {
               "--time-picker-hour-input-width": `${segmentPlaceholder.hour.length}ch`,
               "--time-picker-minute-input-width": `${segmentPlaceholder.minute.length}ch`,
               "--time-picker-second-input-width": `${segmentPlaceholder.second.length}ch`,
-              "--time-picker-period-input-width": `${segmentPlaceholder.period.length}ch`,
+              "--time-picker-period-input-width": `${Math.max(segmentPlaceholder.period.length, 2) + 0.5}ch`,
               ...style,
             } as React.CSSProperties
           }
@@ -714,9 +714,9 @@ function TimePickerInput(props: TimePickerInputProps) {
         if (timeValue.second === undefined) return segmentPlaceholder.second;
         return timeValue.second.toString().padStart(2, "0");
       case "period":
-        if (!timeValue || timeValue.period === undefined)
+        if (!timeValue || timeValue.hour === undefined)
           return segmentPlaceholder.period;
-        return timeValue.period;
+        return to12Hour(timeValue.hour).period;
       default:
         return "";
     }
@@ -1836,7 +1836,9 @@ function TimePickerPeriod(props: DivProps) {
 
   if (!is12Hour) return null;
 
-  const currentPeriod = timeValue?.period;
+  const now = new Date();
+  const referenceHour = timeValue?.hour ?? now.getHours();
+  const currentPeriod = to12Hour(referenceHour).period;
 
   const PeriodPrimitive = asChild ? Slot : TimePickerColumn;
 
