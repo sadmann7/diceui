@@ -1731,7 +1731,7 @@ function TimePickerInput(props: TimePickerInputProps) {
           input.selectionEnd === input.value.length
         ) {
           event.preventDefault();
-          setEditValue("");
+          setEditValue("--");
           setPendingDigit(null);
 
           // Clear the time value for this segment
@@ -1765,11 +1765,13 @@ function TimePickerInput(props: TimePickerInputProps) {
               // All segments cleared
               store.setState("value", "");
             }
+          } else {
+            // No time value exists yet, just clear the store
+            store.setState("value", "");
           }
 
-          // Show placeholder
+          // Preserve selection on the cleared segment
           queueMicrotask(() => {
-            setEditValue("--");
             inputRef.current?.select();
           });
           return;
