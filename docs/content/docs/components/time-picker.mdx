@@ -192,6 +192,8 @@ The container for input segments that sets up CSS variables for dynamic segment 
   ]}
 />
 
+Must use style prop to override the css variables of the input segment, because the width is dynamically calculated based on the placeholder length.
+
 ### Trigger
 
 Button to open the time picker dropdown.
@@ -309,6 +311,27 @@ Inline editable input field for time segments (hour, minute, second, period).
 <AutoTypeTable
   path="./types/docs/time-picker.ts"
   name="InputProps"
+/>
+
+<CSSVariablesTable
+  data={[
+    {
+      title: "--time-picker-hour-input-width",
+      description: "Can be set directly on the hour segment input to override the width for that specific input.",
+    },
+    {
+      title: "--time-picker-minute-input-width",
+      description: "Can be set directly on the minute segment input to override the width for that specific input.",
+    },
+    {
+      title: "--time-picker-second-input-width",
+      description: "Can be set directly on the second segment input to override the width for that specific input.",
+    },
+    {
+      title: "--time-picker-period-input-width",
+      description: "Can be set directly on the period segment input to override the width for that specific input.",
+    },
+  ]}
 />
 
 ## Accessibility
@@ -444,5 +467,7 @@ Inline editable input field for time segments (hour, minute, second, period).
 - Use the `segmentPlaceholder` prop to customize empty segment display:
   - String format: `segmentPlaceholder="--"` applies the same placeholder to all segments
   - Object format: `segmentPlaceholder={{ hour: "hh", minute: "mm", second: "ss", period: "aa" }}` for per-segment control
-- CSS variables are automatically set based on placeholder length for proper input sizing
-- Override CSS variables directly for custom widths: `className="[--time-picker-hour-input-width:4ch]"`
+- CSS variables are automatically set on `InputGroup` based on placeholder length for proper input sizing
+- Override CSS variables for custom widths:
+  - On `InputGroup`: `<TimePickerInputGroup className="[--time-picker-hour-input-width:4ch]">`
+  - On individual `Input`: `<TimePickerInput segment="hour" className="[--time-picker-hour-input-width:4ch]" />`
