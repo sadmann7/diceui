@@ -140,21 +140,21 @@ function parseTimeString(timeString: string | undefined): TimeValue | null {
 
   const result: TimeValue = {};
 
-  if (parts[0] && parts[0] !== "--") {
+  if (parts[0] && parts[0] !== DEFAULT_SEGMENT_PLACEHOLDER) {
     const hour = Number.parseInt(parts[0], 10);
     if (!Number.isNaN(hour) && hour >= 0 && hour <= 23) {
       result.hour = hour;
     }
   }
 
-  if (parts[1] && parts[1] !== "--") {
+  if (parts[1] && parts[1] !== DEFAULT_SEGMENT_PLACEHOLDER) {
     const minute = Number.parseInt(parts[1], 10);
     if (!Number.isNaN(minute) && minute >= 0 && minute <= 59) {
       result.minute = minute;
     }
   }
 
-  if (parts[2] && parts[2] !== "--") {
+  if (parts[2] && parts[2] !== DEFAULT_SEGMENT_PLACEHOLDER) {
     const second = Number.parseInt(parts[2], 10);
     if (!Number.isNaN(second) && second >= 0 && second <= 59) {
       result.second = second;
@@ -173,15 +173,17 @@ function parseTimeString(timeString: string | undefined): TimeValue | null {
 
 function formatTimeValue(value: TimeValue, showSeconds: boolean): string {
   const hourStr =
-    value.hour !== undefined ? value.hour.toString().padStart(2, "0") : "--";
+    value.hour !== undefined
+      ? value.hour.toString().padStart(2, "0")
+      : DEFAULT_SEGMENT_PLACEHOLDER;
   const minuteStr =
     value.minute !== undefined
       ? value.minute.toString().padStart(2, "0")
-      : "--";
+      : DEFAULT_SEGMENT_PLACEHOLDER;
   const secondStr =
     value.second !== undefined
       ? value.second.toString().padStart(2, "0")
-      : "--";
+      : DEFAULT_SEGMENT_PLACEHOLDER;
 
   if (showSeconds) {
     return `${hourStr}:${minuteStr}:${secondStr}`;
@@ -738,7 +740,9 @@ function TimePickerInput(props: TimePickerInputProps) {
 
   const updateTimeValue = React.useCallback(
     (newSegmentValue: string | undefined, shouldCreateIfEmpty = false) => {
-      const placeholder = segment ? segmentPlaceholder[segment] : "--";
+      const placeholder = segment
+        ? segmentPlaceholder[segment]
+        : DEFAULT_SEGMENT_PLACEHOLDER;
       if (!newSegmentValue || newSegmentValue === placeholder) return;
       if (!timeValue && !shouldCreateIfEmpty) return;
 
@@ -801,7 +805,9 @@ function TimePickerInput(props: TimePickerInputProps) {
 
       setIsEditing(false);
 
-      const placeholder = segment ? segmentPlaceholder[segment] : "--";
+      const placeholder = segment
+        ? segmentPlaceholder[segment]
+        : DEFAULT_SEGMENT_PLACEHOLDER;
       if (editValue && editValue !== placeholder && editValue.length > 0) {
         let valueToUpdate = editValue;
 
@@ -870,7 +876,9 @@ function TimePickerInput(props: TimePickerInputProps) {
 
       let newValue = event.target.value;
 
-      const placeholder = segment ? segmentPlaceholder[segment] : "--";
+      const placeholder = segment
+        ? segmentPlaceholder[segment]
+        : DEFAULT_SEGMENT_PLACEHOLDER;
       if (
         editValue === placeholder &&
         newValue.length > 0 &&
@@ -1060,7 +1068,9 @@ function TimePickerInput(props: TimePickerInputProps) {
           input.selectionEnd === input.value.length
         ) {
           event.preventDefault();
-          const placeholder = segment ? segmentPlaceholder[segment] : "--";
+          const placeholder = segment
+            ? segmentPlaceholder[segment]
+            : DEFAULT_SEGMENT_PLACEHOLDER;
           setEditValue(placeholder);
           setPendingDigit(null);
 
@@ -1135,7 +1145,9 @@ function TimePickerInput(props: TimePickerInputProps) {
       }
 
       if (event.key === "Tab") {
-        const placeholder = segment ? segmentPlaceholder[segment] : "--";
+        const placeholder = segment
+          ? segmentPlaceholder[segment]
+          : DEFAULT_SEGMENT_PLACEHOLDER;
         if (editValue && editValue.length > 0 && editValue !== placeholder) {
           if (editValue.length === 2) {
             updateTimeValue(editValue, true);
@@ -1163,7 +1175,9 @@ function TimePickerInput(props: TimePickerInputProps) {
 
       if (event.key === "ArrowUp") {
         event.preventDefault();
-        const placeholder = segment ? segmentPlaceholder[segment] : "--";
+        const placeholder = segment
+          ? segmentPlaceholder[segment]
+          : DEFAULT_SEGMENT_PLACEHOLDER;
         if (editValue === placeholder || editValue === "") {
           const defaultValue = segment === "hour" ? (is12Hour ? 12 : 0) : 0;
           const formattedValue = defaultValue.toString().padStart(2, "0");
@@ -1197,7 +1211,9 @@ function TimePickerInput(props: TimePickerInputProps) {
 
       if (event.key === "ArrowDown") {
         event.preventDefault();
-        const placeholder = segment ? segmentPlaceholder[segment] : "--";
+        const placeholder = segment
+          ? segmentPlaceholder[segment]
+          : DEFAULT_SEGMENT_PLACEHOLDER;
         if (editValue === placeholder || editValue === "") {
           const defaultValue = segment === "hour" ? (is12Hour ? 12 : 23) : 59;
           const formattedValue = defaultValue.toString().padStart(2, "0");
