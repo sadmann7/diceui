@@ -26,6 +26,9 @@ const SECOND_NAME = "TimePickerSecond";
 const PERIOD_NAME = "TimePickerPeriod";
 const CLEAR_NAME = "TimePickerClear";
 
+const DEFAULT_STEP = 1;
+const DEFAULT_SEGMENT_PLACEHOLDER = "--";
+const DEFAULT_LOCALE = undefined;
 const PERIODS = ["AM", "PM"] as const;
 
 type Segment = "hour" | "minute" | "second" | "period";
@@ -288,19 +291,19 @@ interface TimePickerRootProps extends DivProps {
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
-  name?: string;
-  disabled?: boolean;
-  readOnly?: boolean;
-  required?: boolean;
-  invalid?: boolean;
   min?: string;
   max?: string;
-  showSeconds?: boolean;
-  locale?: string;
+  hourStep?: number;
   minuteStep?: number;
   secondStep?: number;
-  hourStep?: number;
   segmentPlaceholder?: SegmentPlaceholder;
+  locale?: string;
+  name?: string;
+  disabled?: boolean;
+  invalid?: boolean;
+  readOnly?: boolean;
+  required?: boolean;
+  showSeconds?: boolean;
 }
 
 function TimePickerRoot(props: TimePickerRootProps) {
@@ -368,24 +371,24 @@ function TimePickerRootImpl(props: TimePickerRootImplProps) {
   const {
     value,
     open: openProp,
-    id: idProp,
-    name,
-    disabled = false,
-    readOnly = false,
-    required = false,
-    invalid = false,
     min,
     max,
-    showSeconds = false,
-    locale,
-    minuteStep = 1,
-    secondStep = 1,
-    hourStep = 1,
-    segmentPlaceholder = "--",
+    hourStep = DEFAULT_STEP,
+    minuteStep = DEFAULT_STEP,
+    secondStep = DEFAULT_STEP,
+    segmentPlaceholder = DEFAULT_SEGMENT_PLACEHOLDER,
+    locale = DEFAULT_LOCALE,
+    name,
     asChild,
+    disabled = false,
+    invalid = false,
+    readOnly = false,
+    required = false,
+    showSeconds = false,
     className,
-    ref,
     children,
+    id,
+    ref,
     ...rootProps
   } = props;
 
@@ -404,7 +407,7 @@ function TimePickerRootImpl(props: TimePickerRootImplProps) {
   }, [openProp]);
 
   const instanceId = React.useId();
-  const rootId = idProp ?? instanceId;
+  const rootId = id ?? instanceId;
   const inputGroupId = React.useId();
   const labelId = React.useId();
   const triggerId = React.useId();
@@ -435,10 +438,10 @@ function TimePickerRootImpl(props: TimePickerRootImplProps) {
       };
     }
     return {
-      hour: segmentPlaceholder.hour ?? "--",
-      minute: segmentPlaceholder.minute ?? "--",
-      second: segmentPlaceholder.second ?? "--",
-      period: segmentPlaceholder.period ?? "--",
+      hour: segmentPlaceholder.hour ?? DEFAULT_SEGMENT_PLACEHOLDER,
+      minute: segmentPlaceholder.minute ?? DEFAULT_SEGMENT_PLACEHOLDER,
+      second: segmentPlaceholder.second ?? DEFAULT_SEGMENT_PLACEHOLDER,
+      period: segmentPlaceholder.period ?? DEFAULT_SEGMENT_PLACEHOLDER,
     };
   }, [segmentPlaceholder]);
 
@@ -815,7 +818,6 @@ function TimePickerInput(props: TimePickerInputProps) {
 
         updateTimeValue(valueToUpdate, true);
 
-        // Auto-fill missing segments with current time
         queueMicrotask(() => {
           const currentTimeValue = parseTimeString(store.getState().value);
           if (currentTimeValue) {
@@ -823,19 +825,16 @@ function TimePickerInput(props: TimePickerInputProps) {
             const newTime = { ...currentTimeValue };
             let needsUpdate = false;
 
-            // Fill in missing hour with current hour
             if (newTime.hour === undefined) {
               newTime.hour = now.getHours();
               needsUpdate = true;
             }
 
-            // Fill in missing minute with current minute
             if (newTime.minute === undefined) {
               newTime.minute = now.getMinutes();
               needsUpdate = true;
             }
 
-            // Fill in missing second with current second (if seconds are shown)
             if (showSeconds && newTime.second === undefined) {
               newTime.second = now.getSeconds();
               needsUpdate = true;
@@ -1359,7 +1358,7 @@ function TimePickerContent(props: TimePickerContentProps) {
         getSelectedItemRef,
         getItems,
       }))
-      .filter((col) => col.ref.current !== null);
+      .filter((c) => c.ref.current !== null);
     return sortNodes(columns);
   }, []);
 
@@ -1598,14 +1597,13 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
       ) {
         event.preventDefault();
 
-        // Use queueMicrotask to ensure DOM is stable and all columns are registered
         queueMicrotask(() => {
           const columns = groupContext.getColumns();
 
           if (columns.length === 0) return;
 
           const currentColumnIndex = columns.findIndex(
-            (col) => col.ref.current?.contains(itemRef.current) ?? false,
+            (c) => c.ref.current?.contains(itemRef.current) ?? false,
           );
 
           if (currentColumnIndex === -1) return;
@@ -1706,12 +1704,10 @@ function TimePickerHour(props: TimePickerHourProps) {
         newTime.period = timeValue.period;
       }
 
-      // Auto-fill missing minute with current time
       if (newTime.minute === undefined) {
         newTime.minute = now.getMinutes();
       }
 
-      // Auto-fill missing second with current time (if seconds are shown)
       if (showSeconds && newTime.second === undefined) {
         newTime.second = now.getSeconds();
       }
@@ -1774,12 +1770,10 @@ function TimePickerMinute(props: TimePickerMinuteProps) {
       const currentTime = timeValue ?? {};
       const newTime = { ...currentTime, minute };
 
-      // Auto-fill missing hour with current time
       if (newTime.hour === undefined) {
         newTime.hour = now.getHours();
       }
 
-      // Auto-fill missing second with current time (if seconds are shown)
       if (showSeconds && newTime.second === undefined) {
         newTime.second = now.getSeconds();
       }
@@ -1841,12 +1835,10 @@ function TimePickerSecond(props: TimePickerSecondProps) {
       const currentTime = timeValue ?? {};
       const newTime = { ...currentTime, second };
 
-      // Auto-fill missing hour with current time
       if (newTime.hour === undefined) {
         newTime.hour = now.getHours();
       }
 
-      // Auto-fill missing minute with current time
       if (newTime.minute === undefined) {
         newTime.minute = now.getMinutes();
       }
@@ -1905,12 +1897,10 @@ function TimePickerPeriod(props: DivProps) {
 
       const newTime = { ...currentTime, hour: new24Hour };
 
-      // Auto-fill missing minute with current time
       if (newTime.minute === undefined) {
         newTime.minute = now.getMinutes();
       }
 
-      // Auto-fill missing second with current time (if seconds are shown)
       if (showSeconds && newTime.second === undefined) {
         newTime.second = now.getSeconds();
       }
