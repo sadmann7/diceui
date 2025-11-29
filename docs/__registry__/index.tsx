@@ -45,6 +45,38 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "avatar-group": {
+      name: "avatar-group",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/ui/avatar-group.tsx",
+        type: "registry:ui",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/avatar-group.tsx")),
+      source: "",
+      chunks: []
+    },
+    "badge-overflow": {
+      name: "badge-overflow",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/ui/badge-overflow.tsx",
+        type: "registry:ui",
+        target: ""
+      },{
+        path: "registry/default/lib/compose-refs.ts",
+        type: "registry:lib",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/badge-overflow.tsx")),
+      source: "",
+      chunks: []
+    },
     "checkbox-group": {
       name: "checkbox-group",
       description: "",
@@ -477,38 +509,6 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "avatar-group": {
-      name: "avatar-group",
-      description: "",
-      type: "registry:ui",
-      registryDependencies: undefined,
-      files: [{
-        path: "registry/default/ui/avatar-group.tsx",
-        type: "registry:ui",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/ui/avatar-group.tsx")),
-      source: "",
-      chunks: []
-    },
-    "badge-overflow": {
-      name: "badge-overflow",
-      description: "",
-      type: "registry:ui",
-      registryDependencies: undefined,
-      files: [{
-        path: "registry/default/ui/badge-overflow.tsx",
-        type: "registry:ui",
-        target: ""
-      },{
-        path: "registry/default/lib/compose-refs.ts",
-        type: "registry:lib",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/ui/badge-overflow.tsx")),
-      source: "",
-      chunks: []
-    },
     "tags-input": {
       name: "tags-input",
       description: "",
@@ -538,6 +538,28 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/ui/timeline.tsx")),
+      source: "",
+      chunks: []
+    },
+    "time-picker": {
+      name: "time-picker",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["popover"],
+      files: [{
+        path: "registry/default/ui/time-picker.tsx",
+        type: "registry:ui",
+        target: ""
+      },{
+        path: "registry/default/components/visually-hidden-input.tsx",
+        type: "registry:component",
+        target: ""
+      },{
+        path: "registry/default/lib/compose-refs.ts",
+        type: "registry:lib",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/time-picker.tsx")),
       source: "",
       chunks: []
     },
@@ -668,6 +690,118 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/angle-slider-form-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "avatar-group-demo": {
+      name: "avatar-group-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["avatar","avatar-group"],
+      files: [{
+        path: "registry/default/examples/avatar-group-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/avatar-group-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "avatar-group-truncation-demo": {
+      name: "avatar-group-truncation-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["avatar","avatar-group"],
+      files: [{
+        path: "registry/default/examples/avatar-group-truncation-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/avatar-group-truncation-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "avatar-group-rtl-demo": {
+      name: "avatar-group-rtl-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["avatar","avatar-group"],
+      files: [{
+        path: "registry/default/examples/avatar-group-rtl-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/avatar-group-rtl-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "avatar-group-icons-demo": {
+      name: "avatar-group-icons-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["avatar-group"],
+      files: [{
+        path: "registry/default/examples/avatar-group-icons-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/avatar-group-icons-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "avatar-group-custom-overflow-demo": {
+      name: "avatar-group-custom-overflow-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["avatar","avatar-group"],
+      files: [{
+        path: "registry/default/examples/avatar-group-custom-overflow-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/avatar-group-custom-overflow-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "badge-overflow-demo": {
+      name: "badge-overflow-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["badge","badge-overflow"],
+      files: [{
+        path: "registry/default/examples/badge-overflow-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/badge-overflow-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "badge-overflow-multiline-demo": {
+      name: "badge-overflow-multiline-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["badge","badge-overflow"],
+      files: [{
+        path: "registry/default/examples/badge-overflow-multiline-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/badge-overflow-multiline-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "badge-overflow-interactive-demo": {
+      name: "badge-overflow-interactive-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["badge","badge-overflow","button","input"],
+      files: [{
+        path: "registry/default/examples/badge-overflow-interactive-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/badge-overflow-interactive-demo.tsx")),
       source: "",
       chunks: []
     },
@@ -2253,146 +2387,6 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "avatar-group-demo": {
-      name: "avatar-group-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["avatar","avatar-group"],
-      files: [{
-        path: "registry/default/examples/avatar-group-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/avatar-group-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "avatar-group-truncation-demo": {
-      name: "avatar-group-truncation-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["avatar","avatar-group"],
-      files: [{
-        path: "registry/default/examples/avatar-group-truncation-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/avatar-group-truncation-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "avatar-group-rtl-demo": {
-      name: "avatar-group-rtl-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["avatar","avatar-group"],
-      files: [{
-        path: "registry/default/examples/avatar-group-rtl-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/avatar-group-rtl-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "avatar-group-icons-demo": {
-      name: "avatar-group-icons-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["avatar-group"],
-      files: [{
-        path: "registry/default/examples/avatar-group-icons-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/avatar-group-icons-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "avatar-group-custom-overflow-demo": {
-      name: "avatar-group-custom-overflow-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["avatar","avatar-group"],
-      files: [{
-        path: "registry/default/examples/avatar-group-custom-overflow-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/avatar-group-custom-overflow-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "badge-overflow-demo": {
-      name: "badge-overflow-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["badge","badge-overflow"],
-      files: [{
-        path: "registry/default/examples/badge-overflow-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/badge-overflow-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "badge-overflow-multiline-demo": {
-      name: "badge-overflow-multiline-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["badge","badge-overflow"],
-      files: [{
-        path: "registry/default/examples/badge-overflow-multiline-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/badge-overflow-multiline-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "badge-overflow-interactive-demo": {
-      name: "badge-overflow-interactive-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["badge","badge-overflow","button","input"],
-      files: [{
-        path: "registry/default/examples/badge-overflow-interactive-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/badge-overflow-interactive-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "tour-demo": {
-      name: "tour-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["button","tour"],
-      files: [{
-        path: "registry/default/examples/tour-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/tour-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "tour-controlled-demo": {
-      name: "tour-controlled-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["button","tour"],
-      files: [{
-        path: "registry/default/examples/tour-controlled-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/tour-controlled-demo.tsx")),
-      source: "",
-      chunks: []
-    },
     "tags-input-demo": {
       name: "tags-input-demo",
       description: "",
@@ -2449,11 +2443,95 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "time-picker-demo": {
+      name: "time-picker-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/examples/time-picker-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/time-picker-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "time-picker-step-demo": {
+      name: "time-picker-step-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/examples/time-picker-step-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/time-picker-step-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "time-picker-seconds-demo": {
+      name: "time-picker-seconds-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/examples/time-picker-seconds-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/time-picker-seconds-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "time-picker-controlled-demo": {
+      name: "time-picker-controlled-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/examples/time-picker-controlled-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/time-picker-controlled-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "time-picker-form-demo": {
+      name: "time-picker-form-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","form","sonner"],
+      files: [{
+        path: "registry/default/examples/time-picker-form-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/time-picker-form-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "time-picker-placeholder-demo": {
+      name: "time-picker-placeholder-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["time-picker"],
+      files: [{
+        path: "registry/default/examples/time-picker-placeholder-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/time-picker-placeholder-demo.tsx")),
+      source: "",
+      chunks: []
+    },
     "timeline-demo": {
       name: "timeline-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["timeline"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/examples/timeline-demo.tsx",
         type: "registry:example",
@@ -2481,7 +2559,7 @@ export const Index: Record<string, any> = {
       name: "timeline-rtl-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["timeline"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/examples/timeline-rtl-demo.tsx",
         type: "registry:example",
@@ -2495,7 +2573,7 @@ export const Index: Record<string, any> = {
       name: "timeline-alternate-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["timeline"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/examples/timeline-alternate-demo.tsx",
         type: "registry:example",
@@ -2509,7 +2587,7 @@ export const Index: Record<string, any> = {
       name: "timeline-horizontal-alternate-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["timeline"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/examples/timeline-horizontal-alternate-demo.tsx",
         type: "registry:example",
@@ -2523,13 +2601,41 @@ export const Index: Record<string, any> = {
       name: "timeline-custom-dot-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["timeline"],
+      registryDependencies: undefined,
       files: [{
         path: "registry/default/examples/timeline-custom-dot-demo.tsx",
         type: "registry:example",
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/timeline-custom-dot-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "tour-demo": {
+      name: "tour-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","tour"],
+      files: [{
+        path: "registry/default/examples/tour-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/tour-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "tour-controlled-demo": {
+      name: "tour-controlled-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","tour"],
+      files: [{
+        path: "registry/default/examples/tour-controlled-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/tour-controlled-demo.tsx")),
       source: "",
       chunks: []
     },

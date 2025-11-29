@@ -1,0 +1,473 @@
+---
+title: Time Picker
+description: An accessible time picker component with inline editing and dropdown selection. Automatically adapts to 12-hour or 24-hour format based on user locale.
+preview: true
+links:
+  api: /docs/components/time-picker#api-reference
+---
+
+<ComponentTabs name="time-picker-demo" />
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/time-picker"
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @radix-ui/react-slot
+     ```
+  </Step>
+  <Step>
+    Copy the refs composition utilities into your `lib/compose-refs.ts` file.
+
+    <ComponentSource name="compose-refs" />
+  </Step>
+  <Step>
+    Copy the visually hidden input component into your `components/visually-hidden-input.tsx` file.
+
+    <ComponentSource name="visually-hidden-input" />
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource name="time-picker" />
+  </Step>
+</Steps>
+
+## Layout
+
+Import the parts, and compose them together. Like the native HTML time picker, the inputs are always visible and the trigger opens a dropdown for easier selection.
+
+```tsx
+import { Clock } from "lucide-react";
+import * as TimePicker from "@/components/ui/time-picker";
+
+return (
+  <TimePicker.Root>
+    <TimePicker.Label />
+    {/* Inline inputs - always visible, like native time picker */}
+    <div className="relative flex items-center">
+      <div className="flex h-10 w-full items-center gap-1 rounded-md border border-input bg-background px-3 py-2 pr-10">
+        <TimePicker.Input segment="hour" />
+        <TimePicker.Separator />
+        <TimePicker.Input segment="minute" />
+      </div>
+      {/* Trigger opens the dropdown */}
+      <TimePicker.Trigger className="absolute right-0 flex h-full items-center px-3 hover:bg-accent">
+        <Clock className="size-4" />
+      </TimePicker.Trigger>
+    </div>
+    {/* Dropdown content */}
+    <TimePicker.Content>
+      <TimePicker.Hour />
+      <TimePicker.Minute />
+      <TimePicker.Clear />
+    </TimePicker.Content>
+  </TimePicker.Root>
+)
+```
+
+## Examples
+
+### With Step
+
+Use the `hourStep`, `minuteStep`, and `secondStep` props to set custom intervals for hour, minute, and second selection respectively.
+
+<ComponentTabs name="time-picker-step-demo" />
+
+### With Seconds
+
+Include seconds in time selection.
+
+<ComponentTabs name="time-picker-seconds-demo" />
+
+### Custom Placeholders
+
+Customize empty segment placeholders for different display formats.
+
+<ComponentTabs name="time-picker-placeholder-demo" />
+
+### Controlled State
+
+Control the time picker value programmatically.
+
+<ComponentTabs name="time-picker-controlled-demo" />
+
+### With Form
+
+Use the time picker in a form with validation.
+
+<ComponentTabs name="time-picker-form-demo" />
+
+## API Reference
+
+### Root
+
+The main container component for time picker functionality.
+
+<AutoTypeTable
+  path="./types/docs/time-picker.ts"
+  name="RootProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the time picker is disabled",
+    },
+    {
+      title: "[data-invalid]",
+      value: "Present when the time picker is invalid",
+    },
+    {
+      title: "[data-readonly]",
+      value: "Present when the time picker is read-only",
+    },
+  ]}
+/>
+
+### Label
+
+The label component for the time picker field.
+
+<AutoTypeTable
+  path="./types/docs/time-picker.ts"
+  name="LabelProps"
+/>
+
+### InputGroup
+
+The container for input segments that sets up CSS variables for dynamic segment widths.
+
+<AutoTypeTable
+  path="./types/docs/time-picker.ts"
+  name="InputGroupProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the time picker is disabled",
+    },
+    {
+      title: "[data-invalid]",
+      value: "Present when the time picker is invalid",
+    },
+  ]}
+/>
+
+<CSSVariablesTable
+  data={[
+    {
+      title: "--time-picker-hour-input-width",
+      description: "The width of the hour input segment, dynamically calculated based on the hour placeholder length.",
+      defaultValue: "2ch (for '--' placeholder)",
+    },
+    {
+      title: "--time-picker-minute-input-width",
+      description: "The width of the minute input segment, dynamically calculated based on the minute placeholder length.",
+      defaultValue: "2ch (for '--' placeholder)",
+    },
+    {
+      title: "--time-picker-second-input-width",
+      description: "The width of the second input segment, dynamically calculated based on the second placeholder length.",
+      defaultValue: "2ch (for '--' placeholder)",
+    },
+    {
+      title: "--time-picker-period-input-width",
+      description: "The width of the period (AM/PM) input segment, dynamically calculated based on the period placeholder length.",
+      defaultValue: "2ch (for '--' placeholder)",
+    },
+  ]}
+/>
+
+Must use style prop to override the css variables of the input segment, because the width is dynamically calculated based on the placeholder length.
+
+### Trigger
+
+Button to open the time picker dropdown.
+
+<AutoTypeTable
+  path="./types/docs/time-picker.ts"
+  name="TriggerProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-state]",
+      value: "'open' | 'closed'",
+    },
+    {
+      title: "[data-disabled]",
+      value: "Present when the time picker is disabled",
+    },
+    {
+      title: "[data-readonly]",
+      value: "Present when the time picker is read-only",
+    },
+    {
+      title: "[data-invalid]",
+      value: "Present when the time picker is invalid",
+    },
+  ]}
+/>
+
+### Content
+
+Container for the time selection interface.
+
+<AutoTypeTable
+  path="./types/docs/time-picker.ts"
+  name="ContentProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-state]",
+      value: "'open' | 'closed'",
+    },
+    {
+      title: "[data-side]",
+      value: "The side where the content is positioned",
+    },
+    {
+      title: "[data-align]",
+      value: "The alignment of the content",
+    },
+  ]}
+/>
+
+### Hour
+
+Component for selecting hours.
+
+<AutoTypeTable
+  path="./types/docs/time-picker.ts"
+  name="HourProps"
+/>
+
+### Minute
+
+Component for selecting minutes.
+
+<AutoTypeTable
+  path="./types/docs/time-picker.ts"
+  name="MinuteProps"
+/>
+
+### Second
+
+Component for selecting seconds.
+
+<AutoTypeTable
+  path="./types/docs/time-picker.ts"
+  name="SecondProps"
+/>
+
+### Period
+
+Component for selecting AM/PM in 12-hour format.
+
+<AutoTypeTable
+  path="./types/docs/time-picker.ts"
+  name="PeriodProps"
+/>
+
+### Separator
+
+Visual separator between time units.
+
+<AutoTypeTable
+  path="./types/docs/time-picker.ts"
+  name="SeparatorProps"
+/>
+
+### Clear
+
+Button to clear the selected time.
+
+<AutoTypeTable
+  path="./types/docs/time-picker.ts"
+  name="ClearProps"
+/>
+
+### Input
+
+Inline editable input field for time segments (hour, minute, second, period).
+
+<AutoTypeTable
+  path="./types/docs/time-picker.ts"
+  name="InputProps"
+/>
+
+<CSSVariablesTable
+  data={[
+    {
+      title: "--time-picker-hour-input-width",
+      description: "Can be set directly on the hour segment input to override the width for that specific input.",
+    },
+    {
+      title: "--time-picker-minute-input-width",
+      description: "Can be set directly on the minute segment input to override the width for that specific input.",
+    },
+    {
+      title: "--time-picker-second-input-width",
+      description: "Can be set directly on the second segment input to override the width for that specific input.",
+    },
+    {
+      title: "--time-picker-period-input-width",
+      description: "Can be set directly on the period segment input to override the width for that specific input.",
+    },
+  ]}
+/>
+
+## Accessibility
+
+### Keyboard Interactions
+
+#### Input Navigation
+
+<KeyboardShortcutsTable
+  data={[
+    {
+      keys: ["Tab"],
+      description: "Moves focus to the next segment (hour → minute → second → period)",
+    },
+    {
+      keys: ["Shift", "Tab"],
+      description: "Moves focus to the previous segment",
+    },
+    {
+      keys: ["ArrowLeft"],
+      description: "Moves focus to the previous segment",
+    },
+    {
+      keys: ["ArrowRight"],
+      description: "Moves focus to the next segment",
+    },
+  ]}
+/>
+
+#### Value Editing
+
+<KeyboardShortcutsTable
+  data={[
+    {
+      keys: ["0-9"],
+      description: "Type digits to enter time values. Auto-pads single digits (1 → 01) and auto-advances after two digits",
+    },
+    {
+      keys: ["ArrowUp"],
+      description: "Increments the focused segment value (wraps around at max)",
+    },
+    {
+      keys: ["ArrowDown"],
+      description: "Decrements the focused segment value (wraps around at min)",
+    },
+    {
+      keys: ["Backspace", "Delete"],
+      description: "Clears the focused segment back to placeholder (--)",
+    },
+    {
+      keys: ["Enter"],
+      description: "Confirms input and removes focus",
+    },
+    {
+      keys: ["Escape"],
+      description: "Cancels editing and restores previous value",
+    },
+  ]}
+/>
+
+#### Period (AM/PM) Shortcuts
+
+<KeyboardShortcutsTable
+  data={[
+    {
+      keys: ["A", "1"],
+      description: "Sets period to AM",
+    },
+    {
+      keys: ["P", "2"],
+      description: "Sets period to PM",
+    },
+    {
+      keys: ["ArrowUp", "ArrowDown"],
+      description: "Toggles between AM and PM",
+    },
+  ]}
+/>
+
+#### Dropdown Interactions
+
+<KeyboardShortcutsTable
+  data={[
+    {
+      keys: ["Space"],
+      description: "Opens/closes the dropdown when trigger is focused",
+    },
+    {
+      keys: ["Enter"],
+      description: "Selects highlighted option in dropdown",
+    },
+    {
+      keys: ["Escape"],
+      description: "Closes the dropdown",
+    },
+    {
+      keys: ["ArrowUp"],
+      description: "Navigates to previous option in dropdown list",
+    },
+    {
+      keys: ["ArrowDown"],
+      description: "Navigates to next option in dropdown list",
+    },
+  ]}
+/>
+
+## Notes
+
+### Behavior
+
+- **Native HTML time input behavior**: Replicates the exact behavior of `<input type="time">` for maximum familiarity
+  - Auto-pads single digits instantly (typing "1" shows "01")
+  - Smart auto-advance after two digits or when digit exceeds maximum first digit
+  - Partial time values supported (e.g., "10:--" instead of "10:00")
+  - Selection preserved after actions for seamless typing
+- **Inline editing**: All time segments are always visible and editable, no need to open the dropdown
+- **Dropdown for convenience**: The clock icon trigger opens a dropdown for easier selection with mouse/touch
+- **Keyboard-first design**: Full keyboard navigation between segments using arrow keys or tab
+- **Clear segments**: Press Backspace or Delete on a selected segment to clear it back to "--"
+
+### Format & Locale
+
+- **Automatic format detection**: Display format (12-hour vs 24-hour) is automatically detected from user's locale settings
+- **Consistent value format**: The time value is always stored in 24-hour format ("HH:mm" or "HH:mm:ss"), regardless of display format
+- **Locale override**: Use the `locale` prop to explicitly set a locale (e.g., "en-US" for 12-hour, "en-GB" for 24-hour)
+- **Period shortcuts**: In 12-hour format, use A/P or 1/2 keys to quickly set AM/PM
+
+### Customization
+
+- The `minuteStep`, `hourStep`, and `secondStep` props allow customization of selection intervals
+- Use the `min` and `max` props to restrict the selectable time range
+- The `showSeconds` prop enables/disables second selection
+- Use the `segmentPlaceholder` prop to customize empty segment display:
+  - String format: `segmentPlaceholder="--"` applies the same placeholder to all segments
+  - Object format: `segmentPlaceholder={{ hour: "hh", minute: "mm", second: "ss", period: "aa" }}` for per-segment control
+- CSS variables are automatically set on `InputGroup` based on placeholder length for proper input sizing
+- Override CSS variables for custom widths:
+  - On `InputGroup`: `<TimePickerInputGroup className="[--time-picker-hour-input-width:4ch]">`
+  - On individual `Input`: `<TimePickerInput segment="hour" className="[--time-picker-hour-input-width:4ch]" />`

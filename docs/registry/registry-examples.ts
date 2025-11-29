@@ -59,6 +59,96 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "avatar-group-demo",
+    type: "registry:example",
+    registryDependencies: ["avatar", "avatar-group"],
+    files: [
+      {
+        path: "examples/avatar-group-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "avatar-group-truncation-demo",
+    type: "registry:example",
+    registryDependencies: ["avatar", "avatar-group"],
+    files: [
+      {
+        path: "examples/avatar-group-truncation-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "avatar-group-rtl-demo",
+    type: "registry:example",
+    registryDependencies: ["avatar", "avatar-group"],
+    files: [
+      {
+        path: "examples/avatar-group-rtl-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "avatar-group-icons-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["avatar-group"],
+    files: [
+      {
+        path: "examples/avatar-group-icons-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "avatar-group-custom-overflow-demo",
+    type: "registry:example",
+    registryDependencies: ["avatar", "avatar-group"],
+    files: [
+      {
+        path: "examples/avatar-group-custom-overflow-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "badge-overflow-demo",
+    type: "registry:example",
+    registryDependencies: ["badge", "badge-overflow"],
+    files: [
+      {
+        path: "examples/badge-overflow-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "badge-overflow-multiline-demo",
+    type: "registry:example",
+    registryDependencies: ["badge", "badge-overflow"],
+    files: [
+      {
+        path: "examples/badge-overflow-multiline-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "badge-overflow-interactive-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["badge", "badge-overflow", "button", "input"],
+    files: [
+      {
+        path: "examples/badge-overflow-interactive-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "checkbox-group-demo",
     type: "registry:example",
     dependencies: ["@diceui/checkbox-group", "lucide-react"],
@@ -1440,120 +1530,6 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "avatar-group-demo",
-    type: "registry:example",
-    registryDependencies: ["avatar", "avatar-group"],
-    files: [
-      {
-        path: "examples/avatar-group-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "avatar-group-truncation-demo",
-    type: "registry:example",
-    registryDependencies: ["avatar", "avatar-group"],
-    files: [
-      {
-        path: "examples/avatar-group-truncation-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "avatar-group-rtl-demo",
-    type: "registry:example",
-    registryDependencies: ["avatar", "avatar-group"],
-    files: [
-      {
-        path: "examples/avatar-group-rtl-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "avatar-group-icons-demo",
-    type: "registry:example",
-    dependencies: ["lucide-react"],
-    registryDependencies: ["avatar-group"],
-    files: [
-      {
-        path: "examples/avatar-group-icons-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "avatar-group-custom-overflow-demo",
-    type: "registry:example",
-    registryDependencies: ["avatar", "avatar-group"],
-    files: [
-      {
-        path: "examples/avatar-group-custom-overflow-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "badge-overflow-demo",
-    type: "registry:example",
-    registryDependencies: ["badge", "badge-overflow"],
-    files: [
-      {
-        path: "examples/badge-overflow-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "badge-overflow-multiline-demo",
-    type: "registry:example",
-    registryDependencies: ["badge", "badge-overflow"],
-    files: [
-      {
-        path: "examples/badge-overflow-multiline-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "badge-overflow-interactive-demo",
-    type: "registry:example",
-    dependencies: ["lucide-react"],
-    registryDependencies: ["badge", "badge-overflow", "button", "input"],
-    files: [
-      {
-        path: "examples/badge-overflow-interactive-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "tour-demo",
-    type: "registry:example",
-    dependencies: ["@radix-ui/react-slot", "lucide-react"],
-    registryDependencies: ["button", "tour"],
-    files: [
-      {
-        path: "examples/tour-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "tour-controlled-demo",
-    type: "registry:example",
-    dependencies: ["@radix-ui/react-slot", "lucide-react"],
-    registryDependencies: ["button", "tour"],
-    files: [
-      {
-        path: "examples/tour-controlled-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
     name: "tags-input-demo",
     type: "registry:example",
     dependencies: ["@diceui/tags-input", "lucide-react"],
@@ -1609,9 +1585,70 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "time-picker-demo",
+    type: "registry:example",
+    files: [
+      {
+        path: "examples/time-picker-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "time-picker-step-demo",
+    type: "registry:example",
+    files: [
+      {
+        path: "examples/time-picker-step-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "time-picker-seconds-demo",
+    type: "registry:example",
+    files: [
+      {
+        path: "examples/time-picker-seconds-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "time-picker-controlled-demo",
+    type: "registry:example",
+    files: [
+      {
+        path: "examples/time-picker-controlled-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "time-picker-form-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "form", "sonner"],
+    files: [
+      {
+        path: "examples/time-picker-form-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "time-picker-placeholder-demo",
+    type: "registry:example",
+    registryDependencies: ["time-picker"],
+    files: [
+      {
+        path: "examples/time-picker-placeholder-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "timeline-demo",
     type: "registry:example",
-    registryDependencies: ["timeline"],
     files: [
       {
         path: "examples/timeline-demo.tsx",
@@ -1633,7 +1670,6 @@ export const examples: Registry["items"] = [
   {
     name: "timeline-rtl-demo",
     type: "registry:example",
-    registryDependencies: ["timeline"],
     files: [
       {
         path: "examples/timeline-rtl-demo.tsx",
@@ -1644,7 +1680,6 @@ export const examples: Registry["items"] = [
   {
     name: "timeline-alternate-demo",
     type: "registry:example",
-    registryDependencies: ["timeline"],
     files: [
       {
         path: "examples/timeline-alternate-demo.tsx",
@@ -1655,7 +1690,6 @@ export const examples: Registry["items"] = [
   {
     name: "timeline-horizontal-alternate-demo",
     type: "registry:example",
-    registryDependencies: ["timeline"],
     files: [
       {
         path: "examples/timeline-horizontal-alternate-demo.tsx",
@@ -1667,10 +1701,33 @@ export const examples: Registry["items"] = [
     name: "timeline-custom-dot-demo",
     type: "registry:example",
     dependencies: ["lucide-react"],
-    registryDependencies: ["timeline"],
     files: [
       {
         path: "examples/timeline-custom-dot-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "tour-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    registryDependencies: ["button", "tour"],
+    files: [
+      {
+        path: "examples/tour-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "tour-controlled-demo",
+    type: "registry:example",
+    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    registryDependencies: ["button", "tour"],
+    files: [
+      {
+        path: "examples/tour-controlled-demo.tsx",
         type: "registry:example",
       },
     ],

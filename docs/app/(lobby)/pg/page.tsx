@@ -1,21 +1,22 @@
+"use client";
+
 import { Demo } from "@/components/demo";
 import { Shell } from "@/components/shell";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
-import TimelineAlternateDemo from "@/registry/default/examples/timeline-alternate-demo";
-import TimelineCustomDotDemo from "@/registry/default/examples/timeline-custom-dot-demo";
-import TimelineDemo from "@/registry/default/examples/timeline-demo";
-import TimelineHorizontalAlternateDemo from "@/registry/default/examples/timeline-horizontal-alternate-demo";
-import TimelineHorizontalDemo from "@/registry/default/examples/timeline-horizontal-demo";
+import TimePickerDemo from "@/registry/default/examples/time-picker-demo";
+import TimePickerPlaceholderDemo from "@/registry/default/examples/time-picker-placeholder-demo";
+import TimePickerSecondsDemo from "@/registry/default/examples/time-picker-seconds-demo";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
       <Demo>
-        <TimelineDemo />
-        <TimelineCustomDotDemo />
-        <TimelineHorizontalDemo />
-        <TimelineAlternateDemo />
-        <TimelineHorizontalAlternateDemo />
+        <div className="flex flex-col gap-6">
+          <input type="time" />
+          <TimePickerDemo />
+          <TimePickerSecondsDemo />
+          <TimePickerPlaceholderDemo />
+        </div>
         <ColorPickerDemo />
       </Demo>
     </Shell>

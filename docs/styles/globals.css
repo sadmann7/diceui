@@ -334,6 +334,13 @@
   }
 }
 
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @layer components {
   [data-rehype-pretty-code-figure] figure {
     @apply border-none bg-secondary/50!;
