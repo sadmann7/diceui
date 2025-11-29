@@ -756,15 +756,12 @@ function TimePickerInput(props: TimePickerInputProps) {
           if (!Number.isNaN(displayHour)) {
             if (is12Hour) {
               const clampedHour = clamp(displayHour, 1, 12);
-              // If period exists in timeValue, use it. Otherwise, derive from current hour24
-              // If no hour exists, use current time's period
               let currentPeriod: Period;
               if (timeValue?.period !== undefined) {
                 currentPeriod = timeValue.period;
               } else if (timeValue?.hour !== undefined) {
                 currentPeriod = to12Hour(timeValue.hour).period;
               } else {
-                // Default to current time's period instead of always "AM"
                 const now = new Date();
                 currentPeriod = to12Hour(now.getHours()).period;
               }
@@ -1724,15 +1721,12 @@ function TimePickerHour(props: TimePickerHourProps) {
 
       let hour24 = displayHour;
       if (is12Hour) {
-        // If period exists in timeValue, use it. Otherwise, derive from current hour24
-        // If no hour exists, use current time's period
         let currentPeriod: Period;
         if (timeValue?.period !== undefined) {
           currentPeriod = timeValue.period;
         } else if (timeValue?.hour !== undefined) {
           currentPeriod = to12Hour(timeValue.hour).period;
         } else {
-          // Default to current time's period instead of always "AM"
           currentPeriod = to12Hour(now.getHours()).period;
         }
         hour24 = to24Hour(displayHour, currentPeriod);
