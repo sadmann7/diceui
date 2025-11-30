@@ -1,10 +1,10 @@
 import {
   KeyValue,
-  KeyValueAddButton,
+  KeyValueAdd,
   KeyValueItem,
   KeyValueKeyInput,
   KeyValueList,
-  KeyValueRemoveButton,
+  KeyValueRemove,
   KeyValueValueInput,
 } from "@/registry/default/ui/key-value";
 
@@ -15,10 +15,10 @@ export default function KeyValueDemo() {
         <KeyValueItem>
           <KeyValueKeyInput className="flex-1" />
           <KeyValueValueInput className="flex-1" />
-          <KeyValueRemoveButton />
+          <KeyValueRemove />
         </KeyValueItem>
       </KeyValueList>
-      <KeyValueAddButton />
+      <KeyValueAdd />
     </KeyValue>
   );
 }

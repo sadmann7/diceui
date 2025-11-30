@@ -976,17 +976,6 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "key-value-controlled-demo",
-    type: "registry:example",
-    registryDependencies: ["key-value"],
-    files: [
-      {
-        path: "examples/key-value-controlled-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
     name: "key-value-form-demo",
     type: "registry:example",
     dependencies: ["@hookform/resolvers", "react-hook-form", "zod", "sonner"],
@@ -1005,18 +994,6 @@ export const examples: Registry["items"] = [
     files: [
       {
         path: "examples/key-value-validation-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "key-value-custom-demo",
-    type: "registry:example",
-    dependencies: ["lucide-react", "sonner"],
-    registryDependencies: ["key-value", "button"],
-    files: [
-      {
-        path: "examples/key-value-custom-demo.tsx",
         type: "registry:example",
       },
     ],

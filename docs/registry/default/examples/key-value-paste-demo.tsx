@@ -1,13 +1,11 @@
-"use client";
-
 import { ClipboardIcon } from "lucide-react";
 import {
   KeyValue,
-  KeyValueAddButton,
+  KeyValueAdd,
   KeyValueItem,
   KeyValueKeyInput,
   KeyValueList,
-  KeyValueRemoveButton,
+  KeyValueRemove,
   KeyValueValueInput,
 } from "@/registry/default/ui/key-value";
 
@@ -40,10 +38,10 @@ export default function KeyValuePasteDemo() {
           <KeyValueItem>
             <KeyValueKeyInput className="flex-1 font-mono" />
             <KeyValueValueInput className="flex-1 font-mono" />
-            <KeyValueRemoveButton />
+            <KeyValueRemove />
           </KeyValueItem>
         </KeyValueList>
-        <KeyValueAddButton />
+        <KeyValueAdd />
       </KeyValue>
     </div>
   );

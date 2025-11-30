@@ -509,7 +509,7 @@ function TimePickerRootImpl(props: TimePickerRootImplProps) {
           type="hidden"
           control={formTrigger}
           name={name}
-          value={value}
+          value={store.getState().value}
           disabled={disabled}
           readOnly={readOnly}
           required={required}

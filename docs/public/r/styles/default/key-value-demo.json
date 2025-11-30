@@ -7,7 +7,7 @@
   "files": [
     {
       "path": "examples/key-value-demo.tsx",
-      "content": "import {\r\n  KeyValue,\r\n  KeyValueAddButton,\r\n  KeyValueItem,\r\n  KeyValueKeyInput,\r\n  KeyValueList,\r\n  KeyValueRemoveButton,\r\n  KeyValueValueInput,\r\n} from \"@/registry/default/ui/key-value\";\r\n\r\nexport default function KeyValueDemo() {\r\n  return (\r\n    <KeyValue className=\"w-full max-w-2xl\">\r\n      <KeyValueList>\r\n        <KeyValueItem>\r\n          <KeyValueKeyInput className=\"flex-1\" />\r\n          <KeyValueValueInput className=\"flex-1\" />\r\n          <KeyValueRemoveButton />\r\n        </KeyValueItem>\r\n      </KeyValueList>\r\n      <KeyValueAddButton />\r\n    </KeyValue>\r\n  );\r\n}\r\n",
+      "content": "import {\n  KeyValue,\n  KeyValueAdd,\n  KeyValueItem,\n  KeyValueKeyInput,\n  KeyValueList,\n  KeyValueRemove,\n  KeyValueValueInput,\n} from \"@/registry/default/ui/key-value\";\n\nexport default function KeyValueDemo() {\n  return (\n    <KeyValue className=\"w-full max-w-2xl\">\n      <KeyValueList>\n        <KeyValueItem>\n          <KeyValueKeyInput className=\"flex-1\" />\n          <KeyValueValueInput className=\"flex-1\" />\n          <KeyValueRemove />\n        </KeyValueItem>\n      </KeyValueList>\n      <KeyValueAdd />\n    </KeyValue>\n  );\n}\n",
       "type": "registry:example",
       "target": ""
     }

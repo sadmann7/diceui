@@ -1785,20 +1785,6 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "key-value-controlled-demo": {
-      name: "key-value-controlled-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["key-value"],
-      files: [{
-        path: "registry/default/examples/key-value-controlled-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/key-value-controlled-demo.tsx")),
-      source: "",
-      chunks: []
-    },
     "key-value-form-demo": {
       name: "key-value-form-demo",
       description: "",
@@ -1824,20 +1810,6 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/key-value-validation-demo.tsx")),
-      source: "",
-      chunks: []
-    },
-    "key-value-custom-demo": {
-      name: "key-value-custom-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["key-value","button"],
-      files: [{
-        path: "registry/default/examples/key-value-custom-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/key-value-custom-demo.tsx")),
       source: "",
       chunks: []
     },

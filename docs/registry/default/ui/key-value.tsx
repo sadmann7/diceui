@@ -3,21 +3,24 @@
 import { Slot } from "@radix-ui/react-slot";
 import { PlusIcon, XIcon } from "lucide-react";
 import * as React from "react";
+import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
+import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidden-input";
 
 const ROOT_NAME = "KeyValue";
 const LIST_NAME = "KeyValueList";
 const ITEM_NAME = "KeyValueItem";
 const KEY_INPUT_NAME = "KeyValueKeyInput";
 const VALUE_INPUT_NAME = "KeyValueValueInput";
-const REMOVE_BUTTON_NAME = "KeyValueRemoveButton";
-const ADD_BUTTON_NAME = "KeyValueAddButton";
+const REMOVE_NAME = "KeyValueRemove";
+const ADD_NAME = "KeyValueAdd";
 const ERROR_NAME = "KeyValueError";
 
-type KeyInputElement = React.ComponentRef<"input">;
-type ValueInputElement = React.ComponentRef<"input">;
-type RemoveButtonElement = React.ComponentRef<"button">;
-type AddButtonElement = React.ComponentRef<"button">;
+type RootElement = React.ComponentRef<typeof KeyValueRoot>;
+type KeyInputElement = React.ComponentRef<typeof KeyValueKeyInput>;
+type ValueInputElement = React.ComponentRef<typeof KeyValueValueInput>;
+type RemoveElement = React.ComponentRef<typeof KeyValueRemove>;
+type AddElement = React.ComponentRef<typeof KeyValueAdd>;
 
 const useIsomorphicLayoutEffect =
   typeof window === "undefined" ? React.useEffect : React.useLayoutEffect;
@@ -92,9 +95,6 @@ interface KeyValueContextValue {
   minEntries: number;
   keyPlaceholder: string;
   valuePlaceholder: string;
-  addButtonText: string;
-  showAddButton: boolean;
-  showRemoveButton: boolean;
   allowDuplicateKeys: boolean;
   enablePaste: boolean;
   trim: boolean;
@@ -132,8 +132,8 @@ interface KeyValueRootProps
   onPaste?: (event: ClipboardEvent, entries: KeyValueEntry[]) => void;
   onAdd?: (entry: KeyValueEntry) => void;
   onRemove?: (entry: KeyValueEntry) => void;
-  validateKey?: (key: string, value: KeyValueEntry[]) => string | undefined;
-  validateValue?: (
+  onKeyValidate?: (key: string, value: KeyValueEntry[]) => string | undefined;
+  onValueValidate?: (
     value: string,
     key: string,
     entries: KeyValueEntry[],
@@ -156,19 +156,17 @@ function KeyValueRoot(props: KeyValueRootProps) {
     minEntries = 0,
     keyPlaceholder = "Key",
     valuePlaceholder = "Value",
-    addButtonText = "Add",
-    showAddButton = true,
-    showRemoveButton = true,
     allowDuplicateKeys = true,
     enablePaste = true,
     onPaste,
     onAdd,
     onRemove,
-    validateKey,
-    validateValue,
+    onKeyValidate,
+    onValueValidate,
     trim = true,
     asChild,
     className,
+    ref,
     ...rootProps
   } = props;
 
@@ -188,13 +186,19 @@ function KeyValueRoot(props: KeyValueRootProps) {
     onPaste,
     onAdd,
     onRemove,
-    validateKey,
-    validateValue,
+    onKeyValidate,
+    onValueValidate,
     allowDuplicateKeys,
     trim,
     maxEntries,
     minEntries,
   });
+
+  const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
+    null,
+  );
+  const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
+  const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
   const store = React.useMemo<Store<KeyValueState>>(() => {
     return {
@@ -239,9 +243,6 @@ function KeyValueRoot(props: KeyValueRootProps) {
       minEntries,
       keyPlaceholder,
       valuePlaceholder,
-      addButtonText,
-      showAddButton,
-      showRemoveButton,
       allowDuplicateKeys,
       enablePaste,
       trim,
@@ -256,9 +257,6 @@ function KeyValueRoot(props: KeyValueRootProps) {
       minEntries,
       keyPlaceholder,
       valuePlaceholder,
-      addButtonText,
-      showAddButton,
-      showRemoveButton,
       allowDuplicateKeys,
       enablePaste,
       trim,
@@ -273,17 +271,22 @@ function KeyValueRoot(props: KeyValueRootProps) {
         <RootPrimitive
           id={id}
           {...rootProps}
+          ref={composedRef}
           className={cn("flex flex-col gap-2", className)}
           data-disabled={disabled ? "" : undefined}
           data-readonly={readOnly ? "" : undefined}
         >
           {rootProps.children}
         </RootPrimitive>
-        {name && (
-          <input
+        {isFormControl && name && (
+          <VisuallyHiddenInput
             type="hidden"
+            control={formTrigger}
             name={name}
-            value={JSON.stringify(stateRef.current.value)}
+            value={store.getState().value}
+            disabled={disabled}
+            readOnly={readOnly}
+            required={required}
           />
         )}
       </KeyValueContext.Provider>
@@ -368,7 +371,7 @@ function KeyValueItem(props: KeyValueItemProps) {
 
 interface KeyValueKeyInputProps
   extends Omit<React.ComponentProps<"input">, "onPaste">,
-    Pick<KeyValueRootProps, "validateKey" | "validateValue" | "onPaste"> {
+    Pick<KeyValueRootProps, "onKeyValidate" | "onValueValidate" | "onPaste"> {
   asChild?: boolean;
 }
 
@@ -376,8 +379,8 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
   const {
     asChild,
     className,
-    validateKey,
-    validateValue,
+    onKeyValidate,
+    onValueValidate,
     onChange: onChangeProp,
     onPaste: onPasteProp,
     ...inputProps
@@ -391,8 +394,8 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
   const hasError = errors[entry.id]?.key !== undefined;
 
   const propsRef = useAsRef({
-    validateKey,
-    validateValue,
+    onKeyValidate,
+    onValueValidate,
     onChange: onChangeProp,
     onPaste: onPasteProp,
   });
@@ -413,8 +416,8 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
       if (updatedEntry) {
         const errors: { key?: string; value?: string } = {};
 
-        if (propsRef.current.validateKey) {
-          const keyError = propsRef.current.validateKey(
+        if (propsRef.current.onKeyValidate) {
+          const keyError = propsRef.current.onKeyValidate(
             updatedEntry.key,
             newValue,
           );
@@ -433,8 +436,8 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
           }
         }
 
-        if (propsRef.current.validateValue) {
-          const valueError = propsRef.current.validateValue(
+        if (propsRef.current.onValueValidate) {
+          const valueError = propsRef.current.onValueValidate(
             updatedEntry.value,
             updatedEntry.key,
             newValue,
@@ -576,7 +579,7 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
 
 interface KeyValueValueInputProps
   extends React.ComponentProps<"input">,
-    Pick<KeyValueRootProps, "validateKey" | "validateValue"> {
+    Pick<KeyValueRootProps, "onKeyValidate" | "onValueValidate"> {
   asChild?: boolean;
 }
 
@@ -584,8 +587,8 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
   const {
     asChild,
     className,
-    validateKey,
-    validateValue,
+    onKeyValidate,
+    onValueValidate,
     onChange: onChangeProp,
     ...inputProps
   } = props;
@@ -595,8 +598,8 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
   const store = useStoreContext(VALUE_INPUT_NAME);
 
   const propsRef = useAsRef({
-    validateKey,
-    validateValue,
+    onKeyValidate,
+    onValueValidate,
     onChange: onChangeProp,
   });
   const errors = useStore((state) => state.errors);
@@ -622,8 +625,8 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
       if (updatedEntry) {
         const errors: { key?: string; value?: string } = {};
 
-        if (propsRef.current.validateKey) {
-          const keyError = propsRef.current.validateKey(
+        if (propsRef.current.onKeyValidate) {
+          const keyError = propsRef.current.onKeyValidate(
             updatedEntry.key,
             newValue,
           );
@@ -642,8 +645,8 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
           }
         }
 
-        if (propsRef.current.validateValue) {
-          const valueError = propsRef.current.validateValue(
+        if (propsRef.current.onValueValidate) {
+          const valueError = propsRef.current.onValueValidate(
             updatedEntry.value,
             updatedEntry.key,
             newValue,
@@ -688,13 +691,13 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
   );
 }
 
-interface KeyValueRemoveButtonProps
+interface KeyValueRemoveProps
   extends React.ComponentProps<"button">,
     Pick<KeyValueRootProps, "onRemove"> {
   asChild?: boolean;
 }
 
-function KeyValueRemoveButton(props: KeyValueRemoveButtonProps) {
+function KeyValueRemove(props: KeyValueRemoveProps) {
   const {
     asChild,
     className,
@@ -704,16 +707,16 @@ function KeyValueRemoveButton(props: KeyValueRemoveButtonProps) {
     ...buttonProps
   } = props;
 
-  const { entry } = useKeyValueItemContext(REMOVE_BUTTON_NAME);
-  const context = useKeyValueContext(REMOVE_BUTTON_NAME);
-  const store = useStoreContext(REMOVE_BUTTON_NAME);
+  const { entry } = useKeyValueItemContext(REMOVE_NAME);
+  const context = useKeyValueContext(REMOVE_NAME);
+  const store = useStoreContext(REMOVE_NAME);
 
   const propsRef = useAsRef({ onClick: onClickProp, onRemove });
   const value = useStore((state) => state.value);
   const isDisabled = context.disabled || value.length <= context.minEntries;
 
   const onClick = React.useCallback(
-    (event: React.MouseEvent<RemoveButtonElement>) => {
+    (event: React.MouseEvent<RemoveElement>) => {
       propsRef.current.onClick?.(event);
 
       const state = store.getState();
@@ -758,13 +761,13 @@ function KeyValueRemoveButton(props: KeyValueRemoveButtonProps) {
   );
 }
 
-interface KeyValueAddButtonProps
+interface KeyValueAddProps
   extends React.ComponentProps<"button">,
     Pick<KeyValueRootProps, "onAdd"> {
   asChild?: boolean;
 }
 
-function KeyValueAddButton(props: KeyValueAddButtonProps) {
+function KeyValueAdd(props: KeyValueAddProps) {
   const {
     asChild,
     className,
@@ -774,8 +777,8 @@ function KeyValueAddButton(props: KeyValueAddButtonProps) {
     ...buttonProps
   } = props;
 
-  const context = useKeyValueContext(ADD_BUTTON_NAME);
-  const store = useStoreContext(ADD_BUTTON_NAME);
+  const context = useKeyValueContext(ADD_NAME);
+  const store = useStoreContext(ADD_NAME);
 
   const propsRef = useAsRef({ onClick: onClickProp, onAdd });
   const value = useStore((state) => state.value);
@@ -784,7 +787,7 @@ function KeyValueAddButton(props: KeyValueAddButtonProps) {
     (context.maxEntries !== undefined && value.length >= context.maxEntries);
 
   const onClick = React.useCallback(
-    (event: React.MouseEvent<AddButtonElement>) => {
+    (event: React.MouseEvent<AddElement>) => {
       propsRef.current.onClick?.(event);
 
       const state = store.getState();
@@ -828,7 +831,7 @@ function KeyValueAddButton(props: KeyValueAddButtonProps) {
       {children ?? (
         <>
           <PlusIcon />
-          {context.addButtonText}
+          Add
         </>
       )}
     </AddButtonPrimitive>
@@ -842,6 +845,7 @@ interface KeyValueErrorProps extends React.ComponentProps<"span"> {
 
 function KeyValueError(props: KeyValueErrorProps) {
   const { field, asChild, className, ...errorProps } = props;
+
   const { entry } = useKeyValueItemContext(ERROR_NAME);
   const context = useKeyValueContext(ERROR_NAME);
 
@@ -870,8 +874,8 @@ export {
   KeyValueItem as Item,
   KeyValueKeyInput as KeyInput,
   KeyValueValueInput as ValueInput,
-  KeyValueRemoveButton as RemoveButton,
-  KeyValueAddButton as AddButton,
+  KeyValueRemove as Remove,
+  KeyValueAdd as Add,
   KeyValueError as Error,
   //
   KeyValueRoot as KeyValue,
@@ -879,8 +883,8 @@ export {
   KeyValueItem,
   KeyValueKeyInput,
   KeyValueValueInput,
-  KeyValueRemoveButton,
-  KeyValueAddButton,
+  KeyValueRemove,
+  KeyValueAdd,
   KeyValueError,
   //
   type KeyValueEntry,

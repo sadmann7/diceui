@@ -46,23 +46,17 @@ return (
       <KeyValue.Item>
         <KeyValue.KeyInput />
         <KeyValue.ValueInput />
-        <KeyValue.RemoveButton />
+        <KeyValue.Remove />
         <KeyValue.Error field="key" />
         <KeyValue.Error field="value" />
       </KeyValue.Item>
     </KeyValue.List>
-    <KeyValue.AddButton />
+    <KeyValue.Add />
   </KeyValue.Root>
 )
 ```
 
 ## Examples
-
-### Controlled
-
-Control the key-value entries with React state.
-
-<ComponentTabs name="key-value-controlled-demo" />
 
 ### With Paste Support
 
@@ -75,12 +69,6 @@ Paste multiple key-value pairs at once. Supports formats like `KEY=VALUE`, `KEY:
 Add validation rules for keys and values with error messages.
 
 <ComponentTabs name="key-value-validation-demo" />
-
-### Custom Styling
-
-Customize the appearance and behavior of the component.
-
-<ComponentTabs name="key-value-custom-demo" />
 
 ### With Form
 
@@ -135,22 +123,22 @@ Input field for the value part of the entry.
   name="ValueInputProps"
 />
 
-### RemoveButton
+### Remove
 
 Button to remove a key-value entry.
 
 <AutoTypeTable
   path="types/docs/key-value.ts"
-  name="RemoveButtonProps"
+  name="RemoveProps"
 />
 
-### AddButton
+### Add
 
 Button to add a new key-value entry.
 
 <AutoTypeTable
   path="types/docs/key-value.ts"
-  name="AddButtonProps"
+  name="AddProps"
 />
 
 ### Error
@@ -232,4 +220,3 @@ API_KEY	sk-1234567890
 ```
 
 When pasting multiple lines, the component will automatically parse and create separate entries for each line.
-

@@ -2,12 +2,12 @@
 
 import {
   KeyValue,
-  KeyValueAddButton,
+  KeyValueAdd,
   KeyValueError,
   KeyValueItem,
   KeyValueKeyInput,
   KeyValueList,
-  KeyValueRemoveButton,
+  KeyValueRemove,
   KeyValueValueInput,
 } from "@/registry/default/ui/key-value";
 
@@ -22,14 +22,14 @@ export default function KeyValueValidationDemo() {
       ]}
       keyPlaceholder="KEY"
       valuePlaceholder="value"
-      validateKey={(key) => {
+      onKeyValidate={(key) => {
         if (!key) return "Key is required";
         if (!/^[A-Z_][A-Z0-9_]*$/.test(key)) {
           return "Must be uppercase with underscores";
         }
         return undefined;
       }}
-      validateValue={(value, key) => {
+      onValueValidate={(value, key) => {
         if (key.includes("KEY") && value.length < 10) {
           return "API keys must be at least 10 characters";
         }
@@ -48,11 +48,11 @@ export default function KeyValueValidationDemo() {
               <KeyValueValueInput />
               <KeyValueError field="value" />
             </div>
-            <KeyValueRemoveButton />
+            <KeyValueRemove />
           </div>
         </KeyValueItem>
       </KeyValueList>
-      <KeyValueAddButton />
+      <KeyValueAdd />
     </KeyValue>
   );
 }

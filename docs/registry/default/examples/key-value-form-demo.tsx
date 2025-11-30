@@ -17,12 +17,11 @@ import {
 import { Input } from "@/components/ui/input";
 import {
   KeyValue,
-  KeyValueAddButton,
-  type KeyValueEntry,
+  KeyValueAdd,
   KeyValueItem,
   KeyValueKeyInput,
   KeyValueList,
-  KeyValueRemoveButton,
+  KeyValueRemove,
   KeyValueValueInput,
 } from "@/registry/default/ui/key-value";
 
@@ -93,7 +92,7 @@ export default function KeyValueFormDemo() {
                   onValueChange={field.onChange}
                   keyPlaceholder="KEY"
                   valuePlaceholder="value"
-                  validateKey={(key, entries) => {
+                  onKeyValidate={(key) => {
                     if (!key) return "Key is required";
                     if (!/^[A-Z_][A-Z0-9_]*$/.test(key)) {
                       return "Key must be uppercase with underscores";
@@ -106,10 +105,10 @@ export default function KeyValueFormDemo() {
                     <KeyValueItem>
                       <KeyValueKeyInput className="flex-1" />
                       <KeyValueValueInput className="flex-1" />
-                      <KeyValueRemoveButton />
+                      <KeyValueRemove />
                     </KeyValueItem>
                   </KeyValueList>
-                  <KeyValueAddButton />
+                  <KeyValueAdd />
                 </KeyValue>
               </FormControl>
               <FormDescription>
