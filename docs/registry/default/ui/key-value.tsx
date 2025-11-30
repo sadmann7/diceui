@@ -58,6 +58,19 @@ function getErrorId(rootId: string, itemId: string, field: Field) {
   return `${rootId}-${itemId}-${field}-error`;
 }
 
+function removeQuotes(string: string, shouldStrip: boolean): string {
+  if (!shouldStrip) return string;
+
+  const trimmed = string.trim();
+  if (
+    (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+  ) {
+    return trimmed.slice(1, -1);
+  }
+  return trimmed;
+}
+
 interface Store {
   subscribe: (callback: () => void) => () => void;
   getState: () => KeyValueState;
@@ -110,6 +123,7 @@ interface KeyValueContextValue {
   allowDuplicateKeys: boolean;
   enablePaste: boolean;
   trim: boolean;
+  stripQuotes: boolean;
   disabled: boolean;
   readOnly: boolean;
   required: boolean;
@@ -138,6 +152,7 @@ interface KeyValueRootProps extends Omit<DivProps, "onPaste" | "defaultValue"> {
   allowDuplicateKeys?: boolean;
   enablePaste?: boolean;
   trim?: boolean;
+  stripQuotes?: boolean;
   disabled?: boolean;
   readOnly?: boolean;
   required?: boolean;
@@ -225,6 +240,7 @@ function KeyValueRootImpl(props: KeyValueRootImplProps) {
     allowDuplicateKeys = false,
     enablePaste = true,
     trim = true,
+    stripQuotes = true,
     disabled = false,
     readOnly = false,
     required = false,
@@ -265,6 +281,7 @@ function KeyValueRootImpl(props: KeyValueRootImplProps) {
       allowDuplicateKeys,
       enablePaste,
       trim,
+      stripQuotes,
       disabled,
       readOnly,
       required,
@@ -281,6 +298,7 @@ function KeyValueRootImpl(props: KeyValueRootImplProps) {
       allowDuplicateKeys,
       enablePaste,
       trim,
+      stripQuotes,
     ],
   );
 
@@ -499,15 +517,24 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
           if (line.includes("=")) {
             const parts = line.split("=");
             key = parts[0]?.trim() ?? "";
-            value = parts.slice(1).join("=").trim();
+            value = removeQuotes(
+              parts.slice(1).join("=").trim(),
+              context.stripQuotes,
+            );
           } else if (line.includes(":")) {
             const parts = line.split(":");
             key = parts[0]?.trim() ?? "";
-            value = parts.slice(1).join(":").trim();
+            value = removeQuotes(
+              parts.slice(1).join(":").trim(),
+              context.stripQuotes,
+            );
           } else if (/\s{2,}|\t/.test(line)) {
             const parts = line.split(/\s{2,}|\t/);
             key = parts[0]?.trim() ?? "";
-            value = parts.slice(1).join(" ").trim();
+            value = removeQuotes(
+              parts.slice(1).join(" ").trim(),
+              context.stripQuotes,
+            );
           }
 
           if (key) {
@@ -551,7 +578,14 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
         }
       }
     },
-    [context.enablePaste, context.maxItems, store, itemData, propsRef],
+    [
+      context.enablePaste,
+      context.maxItems,
+      context.stripQuotes,
+      store,
+      itemData,
+      propsRef,
+    ],
   );
 
   const KeyInputPrimitive = asChild ? Slot : Input;

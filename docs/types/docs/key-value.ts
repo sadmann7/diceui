@@ -32,7 +32,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   value?: KeyValueItemData[];
 
   /**
-   * Callback fired when the value changes.
+   * Event handler called when the value changes.
    *
    * ```ts
    * onValueChange={(value) => {
@@ -116,7 +116,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   enablePaste?: boolean;
 
   /**
-   * Callback fired when paste is detected.
+   * Event handler called when paste is detected.
    * Can be used to customize paste parsing.
    *
    * ```ts
@@ -128,7 +128,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   onPaste?: (event: ClipboardEvent, items: KeyValueItemData[]) => void;
 
   /**
-   * Callback fired when an item is added.
+   * Event handler called when an item is added.
    *
    * ```ts
    * onAdd={(item) => {
@@ -139,7 +139,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   onAdd?: (item: KeyValueItemData) => void;
 
   /**
-   * Callback fired when an item is removed.
+   * Event handler called when an item is removed.
    *
    * ```ts
    * onRemove={(item) => {
@@ -188,6 +188,14 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * @default true
    */
   trim?: boolean;
+
+  /**
+   * Whether to automatically strip surrounding quotes from pasted values.
+   * When enabled, pasted values like `"kickflip"` or `'kickflip'` become `kickflip`.
+   *
+   * @default true
+   */
+  stripQuotes?: boolean;
 }
 
 export interface ListProps extends EmptyProps<"div">, CompositionProps {
@@ -232,7 +240,7 @@ export interface RemoveProps
   extends EmptyProps<"button", keyof React.ComponentProps<typeof Button>>,
     CompositionProps {
   /**
-   * Callback fired when an item is removed.
+   * Event handler called when an item is removed.
    *
    * ```ts
    * onRemove={(value) => {
@@ -247,7 +255,7 @@ export interface AddProps
   extends EmptyProps<"button", keyof React.ComponentProps<typeof Button>>,
     CompositionProps {
   /**
-   * Callback fired when an item is added.
+   * Event handler called when an item is added.
    *
    * ```ts
    * onAdd={(value) => {
@@ -259,6 +267,12 @@ export interface AddProps
 }
 
 export interface ErrorProps extends EmptyProps<"div">, CompositionProps {
-  /** The field that has the error. */
+  /**
+   * The field that has the error.
+   *
+   * ```ts
+   * field="key"
+   * ```
+   */
   field: "key" | "value";
 }
