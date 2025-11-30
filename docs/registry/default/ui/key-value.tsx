@@ -908,6 +908,8 @@ export {
   KeyValueAdd,
   KeyValueError,
   //
+  useStore as useKeyValueStore,
+  //
   type KeyValueItemData,
   type KeyValueRootProps as KeyValueProps,
 };
