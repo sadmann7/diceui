@@ -965,6 +965,75 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "key-value-demo",
+    type: "registry:example",
+    registryDependencies: ["key-value"],
+    files: [
+      {
+        path: "examples/key-value-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "key-value-controlled-demo",
+    type: "registry:example",
+    registryDependencies: ["key-value"],
+    files: [
+      {
+        path: "examples/key-value-controlled-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "key-value-form-demo",
+    type: "registry:example",
+    dependencies: ["@hookform/resolvers", "react-hook-form", "zod", "sonner"],
+    registryDependencies: ["key-value", "button", "form", "input"],
+    files: [
+      {
+        path: "examples/key-value-form-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "key-value-validation-demo",
+    type: "registry:example",
+    registryDependencies: ["key-value"],
+    files: [
+      {
+        path: "examples/key-value-validation-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "key-value-custom-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react", "sonner"],
+    registryDependencies: ["key-value", "button"],
+    files: [
+      {
+        path: "examples/key-value-custom-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "key-value-paste-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["key-value"],
+    files: [
+      {
+        path: "examples/key-value-paste-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "listbox-demo",
     type: "registry:example",
     registryDependencies: ["listbox"],

@@ -1,0 +1,24 @@
+{
+  "name": "key-value-form-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@hookform/resolvers",
+    "react-hook-form",
+    "zod",
+    "sonner"
+  ],
+  "registryDependencies": [
+    "key-value",
+    "button",
+    "form",
+    "input"
+  ],
+  "files": [
+    {
+      "path": "examples/key-value-form-demo.tsx",
+      "content": "\"use client\";\r\n\r\nimport { zodResolver } from \"@hookform/resolvers/zod\";\r\nimport { useForm } from \"react-hook-form\";\r\nimport { toast } from \"sonner\";\r\nimport { z } from \"zod\";\r\nimport { Button } from \"@/components/ui/button\";\r\nimport {\r\n  Form,\r\n  FormControl,\r\n  FormDescription,\r\n  FormField,\r\n  FormItem,\r\n  FormLabel,\r\n  FormMessage,\r\n} from \"@/components/ui/form\";\r\nimport { Input } from \"@/components/ui/input\";\r\nimport {\r\n  KeyValue,\r\n  KeyValueAddButton,\r\n  type KeyValueEntry,\r\n  KeyValueItem,\r\n  KeyValueKeyInput,\r\n  KeyValueList,\r\n  KeyValueRemoveButton,\r\n  KeyValueValueInput,\r\n} from \"@/registry/default/ui/key-value\";\r\n\r\nconst formSchema = z.object({\r\n  projectName: z.string().min(1, \"Project name is required\"),\r\n  envVariables: z\r\n    .array(\r\n      z.object({\r\n        id: z.string(),\r\n        key: z.string().min(1, \"Key is required\"),\r\n        value: z.string(),\r\n      })\r\n    )\r\n    .min(1, \"At least one environment variable is required\"),\r\n});\r\n\r\ntype FormValues = z.infer<typeof formSchema>;\r\n\r\nexport default function KeyValueFormDemo() {\r\n  const form = useForm<FormValues>({\r\n    resolver: zodResolver(formSchema),\r\n    defaultValues: {\r\n      projectName: \"\",\r\n      envVariables: [\r\n        { id: \"1\", key: \"\", value: \"\" },\r\n      ],\r\n    },\r\n  });\r\n\r\n  function onSubmit(data: FormValues) {\r\n    toast.success(\"Form submitted successfully!\", {\r\n      description: (\r\n        <pre className=\"mt-2 w-full rounded-md bg-slate-950 p-4\">\r\n          <code className=\"text-white\">{JSON.stringify(data, null, 2)}</code>\r\n        </pre>\r\n      ),\r\n    });\r\n  }\r\n\r\n  return (\r\n    <Form {...form}>\r\n      <form\r\n        onSubmit={form.handleSubmit(onSubmit)}\r\n        className=\"w-full max-w-2xl space-y-6\"\r\n      >\r\n        <FormField\r\n          control={form.control}\r\n          name=\"projectName\"\r\n          render={({ field }) => (\r\n            <FormItem>\r\n              <FormLabel>Project Name</FormLabel>\r\n              <FormControl>\r\n                <Input placeholder=\"my-awesome-project\" {...field} />\r\n              </FormControl>\r\n              <FormDescription>\r\n                The name of your project\r\n              </FormDescription>\r\n              <FormMessage />\r\n            </FormItem>\r\n          )}\r\n        />\r\n\r\n        <FormField\r\n          control={form.control}\r\n          name=\"envVariables\"\r\n          render={({ field }) => (\r\n            <FormItem>\r\n              <FormLabel>Environment Variables</FormLabel>\r\n              <FormControl>\r\n                <KeyValue\r\n                  entries={field.value}\r\n                  onEntriesChange={field.onChange}\r\n                  keyPlaceholder=\"KEY\"\r\n                  valuePlaceholder=\"value\"\r\n                  validateKey={(key, entries) => {\r\n                    if (!key) return \"Key is required\";\r\n                    if (!/^[A-Z_][A-Z0-9_]*$/.test(key)) {\r\n                      return \"Key must be uppercase with underscores\";\r\n                    }\r\n                    return undefined;\r\n                  }}\r\n                  allowDuplicateKeys={false}\r\n                >\r\n                  <KeyValueList>\r\n                    <KeyValueItem>\r\n                      <KeyValueKeyInput className=\"flex-1\" />\r\n                      <KeyValueValueInput className=\"flex-1\" />\r\n                      <KeyValueRemoveButton />\r\n                    </KeyValueItem>\r\n                  </KeyValueList>\r\n                  <KeyValueAddButton />\r\n                </KeyValue>\r\n              </FormControl>\r\n              <FormDescription>\r\n                Add environment variables for your project. Supports pasting\r\n                multiple lines in KEY=VALUE format.\r\n              </FormDescription>\r\n              <FormMessage />\r\n            </FormItem>\r\n          )}\r\n        />\r\n\r\n        <Button type=\"submit\">Submit</Button>\r\n      </form>\r\n    </Form>\r\n  );\r\n}\r\n\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

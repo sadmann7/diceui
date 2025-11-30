@@ -282,6 +282,20 @@
     ]
   },
   {
+    "name": "key-value",
+    "type": "registry:ui",
+    "dependencies": [
+      "@radix-ui/react-slot",
+      "lucide-react"
+    ],
+    "files": [
+      {
+        "path": "ui/key-value.tsx",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
     "name": "listbox",
     "type": "registry:ui",
     "dependencies": [
