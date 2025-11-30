@@ -28,20 +28,20 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   id?: string;
 
   /**
-   * The default entries for uncontrolled usage.
-   * @default [{ id: nanoid(), key: "", value: "" }]
+   * The default value for uncontrolled usage.
+   * @default [{ id: crypto.randomUUID(), key: "", value: "" }]
    */
-  defaultEntries?: KeyValueEntry[];
+  defaultValue?: KeyValueEntry[];
 
   /**
-   * The controlled entries of the key-value component.
+   * The controlled value of the key-value component.
    */
-  entries?: KeyValueEntry[];
+  value?: KeyValueEntry[];
 
   /**
-   * Callback fired when the entries change.
+   * Callback fired when the value changes.
    */
-  onEntriesChange?: (entries: KeyValueEntry[]) => void;
+  onValueChange?: (value: KeyValueEntry[]) => void;
 
   /**
    * Whether the key-value component is disabled.
@@ -145,7 +145,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * Validator function for keys.
    * Return error message string if invalid, or undefined if valid.
    */
-  validateKey?: (key: string, entries: KeyValueEntry[]) => string | undefined;
+  validateKey?: (key: string, value: KeyValueEntry[]) => string | undefined;
 
   /**
    * Validator function for values.
@@ -154,7 +154,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   validateValue?: (
     value: string,
     key: string,
-    entries: KeyValueEntry[]
+    entries: KeyValueEntry[],
   ) => string | undefined;
 
   /**

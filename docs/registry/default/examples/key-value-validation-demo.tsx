@@ -15,7 +15,7 @@ export default function KeyValueValidationDemo() {
   return (
     <KeyValue
       className="w-full max-w-2xl"
-      defaultEntries={[
+      defaultValue={[
         { id: "1", key: "API_KEY", value: "sk-1234567890" },
         { id: "2", key: "invalid key", value: "" },
         { id: "3", key: "DATABASE_URL", value: "short" },

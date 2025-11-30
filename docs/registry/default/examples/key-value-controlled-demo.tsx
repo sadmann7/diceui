@@ -13,7 +13,7 @@ import {
 } from "@/registry/default/ui/key-value";
 
 export default function KeyValueControlledDemo() {
-  const [entries, setEntries] = useState<KeyValueEntry[]>([
+  const [value, setValue] = useState<KeyValueEntry[]>([
     { id: "1", key: "NODE_ENV", value: "production" },
     { id: "2", key: "API_URL", value: "https://api.example.com" },
     { id: "3", key: "PORT", value: "3000" },
@@ -21,7 +21,7 @@ export default function KeyValueControlledDemo() {
 
   return (
     <div className="w-full max-w-2xl space-y-4">
-      <KeyValue entries={entries} onEntriesChange={setEntries}>
+      <KeyValue value={value} onValueChange={setValue}>
         <KeyValueList>
           <KeyValueItem>
             <KeyValueKeyInput className="flex-1" />
@@ -36,7 +36,7 @@ export default function KeyValueControlledDemo() {
         <p className="mb-2 font-medium text-sm">Current Entries:</p>
         <pre className="text-xs">
           {JSON.stringify(
-            entries.map((e) => ({ [e.key]: e.value })),
+            value.map((e) => ({ [e.key]: e.value })),
             null,
             2,
           )}

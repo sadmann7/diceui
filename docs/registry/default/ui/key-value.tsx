@@ -67,7 +67,7 @@ interface KeyValueEntry {
 }
 
 interface KeyValueState {
-  entries: KeyValueEntry[];
+  value: KeyValueEntry[];
   focusedId: string | null;
   errors: Record<string, { key?: string; value?: string }>;
 }
@@ -111,11 +111,11 @@ function useKeyValueContext(consumerName: string) {
 }
 
 interface KeyValueRootProps
-  extends Omit<React.ComponentProps<"div">, "onPaste"> {
+  extends Omit<React.ComponentProps<"div">, "onPaste" | "defaultValue"> {
   id?: string;
-  defaultEntries?: KeyValueEntry[];
-  entries?: KeyValueEntry[];
-  onEntriesChange?: (entries: KeyValueEntry[]) => void;
+  defaultValue?: KeyValueEntry[];
+  value?: KeyValueEntry[];
+  onValueChange?: (value: KeyValueEntry[]) => void;
   disabled?: boolean;
   readOnly?: boolean;
   required?: boolean;
@@ -132,7 +132,7 @@ interface KeyValueRootProps
   onPaste?: (event: ClipboardEvent, entries: KeyValueEntry[]) => void;
   onAdd?: (entry: KeyValueEntry) => void;
   onRemove?: (entry: KeyValueEntry) => void;
-  validateKey?: (key: string, entries: KeyValueEntry[]) => string | undefined;
+  validateKey?: (key: string, value: KeyValueEntry[]) => string | undefined;
   validateValue?: (
     value: string,
     key: string,
@@ -145,9 +145,9 @@ interface KeyValueRootProps
 function KeyValueRoot(props: KeyValueRootProps) {
   const {
     id: idProp,
-    defaultEntries,
-    entries: entriesProp,
-    onEntriesChange,
+    defaultValue,
+    value: valueProp,
+    onValueChange,
     disabled = false,
     readOnly = false,
     required = false,
@@ -177,14 +177,14 @@ function KeyValueRoot(props: KeyValueRootProps) {
 
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<KeyValueState>(() => ({
-    entries: entriesProp ??
-      defaultEntries ?? [{ id: crypto.randomUUID(), key: "", value: "" }],
+    value: valueProp ??
+      defaultValue ?? [{ id: crypto.randomUUID(), key: "", value: "" }],
     focusedId: null,
     errors: {},
   }));
 
   const propsRef = useAsRef({
-    onEntriesChange,
+    onValueChange,
     onPaste,
     onAdd,
     onRemove,
@@ -203,13 +203,13 @@ function KeyValueRoot(props: KeyValueRootProps) {
         return () => listenersRef.current.delete(cb);
       },
       getState: () => stateRef.current,
-      setState: (key, value) => {
-        if (Object.is(stateRef.current[key], value)) return;
+      setState: (key, val) => {
+        if (Object.is(stateRef.current[key], val)) return;
 
-        stateRef.current[key] = value;
+        stateRef.current[key] = val;
 
-        if (key === "entries") {
-          propsRef.current.onEntriesChange?.(value as KeyValueEntry[]);
+        if (key === "value") {
+          propsRef.current.onValueChange?.(val as KeyValueEntry[]);
         }
 
         store.notify();
@@ -223,10 +223,10 @@ function KeyValueRoot(props: KeyValueRootProps) {
   }, [listenersRef, stateRef, propsRef]);
 
   useIsomorphicLayoutEffect(() => {
-    if (entriesProp !== undefined) {
-      store.setState("entries", entriesProp);
+    if (valueProp !== undefined) {
+      store.setState("value", valueProp);
     }
-  }, [entriesProp]);
+  }, [valueProp]);
 
   const contextValue = React.useMemo<KeyValueContextValue>(
     () => ({
@@ -276,21 +276,19 @@ function KeyValueRoot(props: KeyValueRootProps) {
           data-disabled={disabled ? "" : undefined}
           data-readonly={readOnly ? "" : undefined}
         >
-          {props.children}
+          {rootProps.children}
         </RootPrimitive>
         {name && (
           <input
             type="hidden"
             name={name}
-            value={JSON.stringify(stateRef.current.entries)}
+            value={JSON.stringify(stateRef.current.value)}
           />
         )}
       </KeyValueContext.Provider>
     </StoreContext.Provider>
   );
 }
-
-KeyValueRoot.displayName = ROOT_NAME;
 
 interface KeyValueListProps extends React.ComponentProps<"div"> {
   orientation?: "vertical" | "horizontal";
@@ -300,7 +298,7 @@ interface KeyValueListProps extends React.ComponentProps<"div"> {
 function KeyValueList(props: KeyValueListProps) {
   const { orientation = "vertical", asChild, className, ...listProps } = props;
 
-  const entries = useStore((state) => state.entries);
+  const value = useStore((state) => state.value);
 
   const ListPrimitive = asChild ? Slot : "div";
 
@@ -316,7 +314,7 @@ function KeyValueList(props: KeyValueListProps) {
       )}
       data-orientation={orientation}
     >
-      {entries.map((entry) => {
+      {value.map((entry) => {
         const children = React.Children.toArray(props.children);
         return (
           <KeyValueItemContext.Provider key={entry.id} value={{ entry }}>
@@ -327,8 +325,6 @@ function KeyValueList(props: KeyValueListProps) {
     </ListPrimitive>
   );
 }
-
-KeyValueList.displayName = LIST_NAME;
 
 interface KeyValueItemContextValue {
   entry: KeyValueEntry;
@@ -369,8 +365,6 @@ function KeyValueItem(props: KeyValueItemProps) {
   );
 }
 
-KeyValueItem.displayName = ITEM_NAME;
-
 interface KeyValueKeyInputProps extends React.ComponentProps<"input"> {
   asChild?: boolean;
 }
@@ -381,6 +375,7 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
     className,
     validateKey,
     validateValue,
+    onChange: onChangeProp,
     onPaste: onPasteProp,
     ...inputProps
   } = props as KeyValueKeyInputProps &
@@ -392,147 +387,162 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
   const errors = useStore((state) => state.errors);
   const hasError = errors[entry.id]?.key !== undefined;
 
-  const rootPropsRef = useAsRef({
+  const propsRef = useAsRef({
     validateKey,
     validateValue,
+    onChange: onChangeProp,
     onPaste: onPasteProp,
   });
 
-  const onChange = (event: React.ChangeEvent<KeyInputElement>) => {
-    const state = store.getState();
-    const newEntries = state.entries.map((item) => {
-      if (item.id !== entry.id) return item;
-      const updated = { ...item, key: event.target.value };
-      if (context.trim) updated.key = updated.key.trim();
-      return updated;
-    });
+  const onChange = React.useCallback(
+    (event: React.ChangeEvent<KeyInputElement>) => {
+      const state = store.getState();
+      const newValue = state.value.map((item) => {
+        if (item.id !== entry.id) return item;
+        const updated = { ...item, key: event.target.value };
+        if (context.trim) updated.key = updated.key.trim();
+        return updated;
+      });
 
-    store.setState("entries", newEntries);
+      store.setState("value", newValue);
 
-    const updatedEntry = newEntries.find((item) => item.id === entry.id);
-    if (updatedEntry) {
-      const errors: { key?: string; value?: string } = {};
+      const updatedEntry = newValue.find((item) => item.id === entry.id);
+      if (updatedEntry) {
+        const errors: { key?: string; value?: string } = {};
 
-      if (rootPropsRef.current.validateKey) {
-        const keyError = rootPropsRef.current.validateKey(
-          updatedEntry.key,
-          newEntries,
-        );
-        if (keyError) errors.key = keyError;
-      }
-
-      if (!context.allowDuplicateKeys) {
-        const duplicateKey = newEntries.find(
-          (item) =>
-            item.id !== updatedEntry.id &&
-            item.key === updatedEntry.key &&
-            updatedEntry.key !== "",
-        );
-        if (duplicateKey) {
-          errors.key = "Duplicate key";
-        }
-      }
-
-      if (rootPropsRef.current.validateValue) {
-        const valueError = rootPropsRef.current.validateValue(
-          updatedEntry.value,
-          updatedEntry.key,
-          newEntries,
-        );
-        if (valueError) errors.value = valueError;
-      }
-
-      const newErrorsState = { ...state.errors };
-      if (Object.keys(errors).length > 0) {
-        newErrorsState[entry.id] = errors;
-      } else {
-        delete newErrorsState[entry.id];
-      }
-      store.setState("errors", newErrorsState);
-    }
-
-    inputProps.onChange?.(event);
-  };
-
-  const onPaste = (event: React.ClipboardEvent<KeyInputElement>) => {
-    if (!context.enablePaste) return;
-
-    const content = event.clipboardData.getData("text");
-    const lines = content.split(/\r?\n/).filter((line) => line.trim());
-
-    // Only handle paste if multiple lines
-    if (lines.length > 1) {
-      event.preventDefault();
-
-      const parsed: KeyValueEntry[] = [];
-
-      for (const line of lines) {
-        let key = "";
-        let value = "";
-
-        // Try KEY=VALUE format
-        if (line.includes("=")) {
-          const parts = line.split("=");
-          key = parts[0]?.trim() ?? "";
-          value = parts.slice(1).join("=").trim();
-        }
-        // Try KEY: VALUE format
-        else if (line.includes(":")) {
-          const parts = line.split(":");
-          key = parts[0]?.trim() ?? "";
-          value = parts.slice(1).join(":").trim();
-        }
-        // Try KEY VALUE (tab or multiple spaces)
-        else if (/\s{2,}|\t/.test(line)) {
-          const parts = line.split(/\s{2,}|\t/);
-          key = parts[0]?.trim() ?? "";
-          value = parts.slice(1).join(" ").trim();
-        }
-
-        if (key) {
-          parsed.push({ id: crypto.randomUUID(), key, value });
-        }
-      }
-
-      if (parsed.length > 0) {
-        const state = store.getState();
-        const currentIndex = state.entries.findIndex(
-          (item) => item.id === entry.id,
-        );
-
-        // Replace current empty entry or add after current entry
-        let newEntries: KeyValueEntry[];
-        if (entry.key === "" && entry.value === "") {
-          newEntries = [
-            ...state.entries.slice(0, currentIndex),
-            ...parsed,
-            ...state.entries.slice(currentIndex + 1),
-          ];
-        } else {
-          newEntries = [
-            ...state.entries.slice(0, currentIndex + 1),
-            ...parsed,
-            ...state.entries.slice(currentIndex + 1),
-          ];
-        }
-
-        // Respect maxEntries
-        if (context.maxEntries !== undefined) {
-          newEntries = newEntries.slice(0, context.maxEntries);
-        }
-
-        store.setState("entries", newEntries);
-
-        // Notify paste callback
-        if (rootPropsRef.current.onPaste) {
-          rootPropsRef.current.onPaste(
-            event.nativeEvent as unknown as ClipboardEvent,
-            parsed,
+        if (propsRef.current.validateKey) {
+          const keyError = propsRef.current.validateKey(
+            updatedEntry.key,
+            newValue,
           );
+          if (keyError) errors.key = keyError;
+        }
+
+        if (!context.allowDuplicateKeys) {
+          const duplicateKey = newValue.find(
+            (item) =>
+              item.id !== updatedEntry.id &&
+              item.key === updatedEntry.key &&
+              updatedEntry.key !== "",
+          );
+          if (duplicateKey) {
+            errors.key = "Duplicate key";
+          }
+        }
+
+        if (propsRef.current.validateValue) {
+          const valueError = propsRef.current.validateValue(
+            updatedEntry.value,
+            updatedEntry.key,
+            newValue,
+          );
+          if (valueError) errors.value = valueError;
+        }
+
+        const newErrorsState = { ...state.errors };
+        if (Object.keys(errors).length > 0) {
+          newErrorsState[entry.id] = errors;
+        } else {
+          delete newErrorsState[entry.id];
+        }
+        store.setState("errors", newErrorsState);
+      }
+
+      propsRef.current.onChange?.(event);
+    },
+    [store, entry.id, context.trim, context.allowDuplicateKeys, propsRef],
+  );
+
+  const onPaste = React.useCallback(
+    (event: React.ClipboardEvent<KeyInputElement>) => {
+      if (!context.enablePaste) return;
+
+      const content = event.clipboardData.getData("text");
+      const lines = content.split(/\r?\n/).filter((line) => line.trim());
+
+      // Only handle paste if multiple lines
+      if (lines.length > 1) {
+        event.preventDefault();
+
+        const parsed: KeyValueEntry[] = [];
+
+        for (const line of lines) {
+          let key = "";
+          let value = "";
+
+          // Try KEY=VALUE format
+          if (line.includes("=")) {
+            const parts = line.split("=");
+            key = parts[0]?.trim() ?? "";
+            value = parts.slice(1).join("=").trim();
+          }
+          // Try KEY: VALUE format
+          else if (line.includes(":")) {
+            const parts = line.split(":");
+            key = parts[0]?.trim() ?? "";
+            value = parts.slice(1).join(":").trim();
+          }
+          // Try KEY VALUE (tab or multiple spaces)
+          else if (/\s{2,}|\t/.test(line)) {
+            const parts = line.split(/\s{2,}|\t/);
+            key = parts[0]?.trim() ?? "";
+            value = parts.slice(1).join(" ").trim();
+          }
+
+          if (key) {
+            parsed.push({ id: crypto.randomUUID(), key, value });
+          }
+        }
+
+        if (parsed.length > 0) {
+          const state = store.getState();
+          const currentIndex = state.value.findIndex(
+            (item) => item.id === entry.id,
+          );
+
+          // Replace current empty entry or add after current entry
+          let newValue: KeyValueEntry[];
+          if (entry.key === "" && entry.value === "") {
+            newValue = [
+              ...state.value.slice(0, currentIndex),
+              ...parsed,
+              ...state.value.slice(currentIndex + 1),
+            ];
+          } else {
+            newValue = [
+              ...state.value.slice(0, currentIndex + 1),
+              ...parsed,
+              ...state.value.slice(currentIndex + 1),
+            ];
+          }
+
+          // Respect maxEntries
+          if (context.maxEntries !== undefined) {
+            newValue = newValue.slice(0, context.maxEntries);
+          }
+
+          store.setState("value", newValue);
+
+          // Notify paste callback
+          if (propsRef.current.onPaste) {
+            propsRef.current.onPaste(
+              event.nativeEvent as unknown as ClipboardEvent,
+              parsed,
+            );
+          }
         }
       }
-    }
-  };
+    },
+    [
+      context.enablePaste,
+      context.maxEntries,
+      store,
+      entry.id,
+      entry.key,
+      entry.value,
+      propsRef,
+    ],
+  );
 
   const KeyInputPrimitive = asChild ? Slot : "input";
 
@@ -561,80 +571,94 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
   );
 }
 
-KeyValueKeyInput.displayName = KEY_INPUT_NAME;
-
-interface KeyValueValueInputProps extends React.ComponentProps<"input"> {
+interface KeyValueValueInputProps
+  extends React.ComponentProps<"input">,
+    Pick<KeyValueRootProps, "validateKey" | "validateValue"> {
   asChild?: boolean;
 }
 
 function KeyValueValueInput(props: KeyValueValueInputProps) {
-  const { asChild, className, validateKey, validateValue, ...inputProps } =
-    props as KeyValueValueInputProps &
-      Pick<KeyValueRootProps, "validateKey" | "validateValue">;
+  const {
+    asChild,
+    className,
+    validateKey,
+    validateValue,
+    onChange: onChangeProp,
+    ...inputProps
+  } = props;
+
   const { entry } = useKeyValueItemContext(VALUE_INPUT_NAME);
   const context = useKeyValueContext(VALUE_INPUT_NAME);
   const store = useStoreContext(VALUE_INPUT_NAME);
 
-  const rootPropsRef = useAsRef({ validateKey, validateValue });
+  const propsRef = useAsRef({
+    validateKey,
+    validateValue,
+    onChange: onChangeProp,
+  });
   const errors = useStore((state) => state.errors);
   const hasError = errors[entry.id]?.value !== undefined;
 
-  const onChange = (event: React.ChangeEvent<ValueInputElement>) => {
-    const state = store.getState();
-    const newEntries = state.entries.map((item) => {
-      if (item.id !== entry.id) return item;
-      const updated = { ...item, value: event.target.value };
-      if (context.trim) updated.value = updated.value.trim();
-      return updated;
-    });
+  const onChange = React.useCallback(
+    (event: React.ChangeEvent<ValueInputElement>) => {
+      propsRef.current.onChange?.(event);
 
-    store.setState("entries", newEntries);
+      const state = store.getState();
+      const newValue = state.value.map((item: KeyValueEntry) => {
+        if (item.id !== entry.id) return item;
+        const updated = { ...item, value: event.target.value };
+        if (context.trim) updated.value = updated.value.trim();
+        return updated;
+      });
 
-    // Validate
-    const updatedEntry = newEntries.find((item) => item.id === entry.id);
-    if (updatedEntry) {
-      const errors: { key?: string; value?: string } = {};
+      store.setState("value", newValue);
 
-      if (rootPropsRef.current.validateKey) {
-        const keyError = rootPropsRef.current.validateKey(
-          updatedEntry.key,
-          newEntries,
-        );
-        if (keyError) errors.key = keyError;
-      }
+      const updatedEntry = newValue.find(
+        (item: KeyValueEntry) => item.id === entry.id,
+      );
+      if (updatedEntry) {
+        const errors: { key?: string; value?: string } = {};
 
-      if (!context.allowDuplicateKeys) {
-        const duplicateKey = newEntries.find(
-          (item) =>
-            item.id !== updatedEntry.id &&
-            item.key === updatedEntry.key &&
-            updatedEntry.key !== "",
-        );
-        if (duplicateKey) {
-          errors.key = "Duplicate key";
+        if (propsRef.current.validateKey) {
+          const keyError = propsRef.current.validateKey(
+            updatedEntry.key,
+            newValue,
+          );
+          if (keyError) errors.key = keyError;
         }
-      }
 
-      if (rootPropsRef.current.validateValue) {
-        const valueError = rootPropsRef.current.validateValue(
-          updatedEntry.value,
-          updatedEntry.key,
-          newEntries,
-        );
-        if (valueError) errors.value = valueError;
-      }
+        if (!context.allowDuplicateKeys) {
+          const duplicateKey = newValue.find(
+            (item: KeyValueEntry) =>
+              item.id !== updatedEntry.id &&
+              item.key === updatedEntry.key &&
+              updatedEntry.key !== "",
+          );
+          if (duplicateKey) {
+            errors.key = "Duplicate key";
+          }
+        }
 
-      const newErrorsState = { ...state.errors };
-      if (Object.keys(errors).length > 0) {
-        newErrorsState[entry.id] = errors;
-      } else {
-        delete newErrorsState[entry.id];
-      }
-      store.setState("errors", newErrorsState);
-    }
+        if (propsRef.current.validateValue) {
+          const valueError = propsRef.current.validateValue(
+            updatedEntry.value,
+            updatedEntry.key,
+            newValue,
+          );
+          if (valueError) errors.value = valueError;
+        }
 
-    inputProps.onChange?.(event);
-  };
+        const newErrorsState = { ...state.errors };
+        if (Object.keys(errors).length > 0) {
+          newErrorsState[entry.id] = errors;
+        } else {
+          delete newErrorsState[entry.id];
+        }
+        store.setState("errors", newErrorsState);
+      }
+    },
+    [store, entry.id, context.trim, context.allowDuplicateKeys, propsRef],
+  );
 
   const ValueInputPrimitive = asChild ? Slot : "input";
 
@@ -661,41 +685,52 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
   );
 }
 
-KeyValueValueInput.displayName = VALUE_INPUT_NAME;
-
 interface KeyValueRemoveButtonProps extends React.ComponentProps<"button"> {
   asChild?: boolean;
 }
 
 function KeyValueRemoveButton(props: KeyValueRemoveButtonProps) {
-  const { asChild, className, children, onRemove, ...buttonProps } =
-    props as KeyValueRemoveButtonProps & Pick<KeyValueRootProps, "onRemove">;
+  const {
+    asChild,
+    className,
+    children,
+    onClick: onClickProp,
+    onRemove,
+    ...buttonProps
+  } = props as KeyValueRemoveButtonProps & Pick<KeyValueRootProps, "onRemove">;
   const { entry } = useKeyValueItemContext(REMOVE_BUTTON_NAME);
   const context = useKeyValueContext(REMOVE_BUTTON_NAME);
   const store = useStoreContext(REMOVE_BUTTON_NAME);
 
-  const rootPropsRef = useAsRef({ onRemove });
-  const entries = useStore((state) => state.entries);
-  const isDisabled = context.disabled || entries.length <= context.minEntries;
+  const propsRef = useAsRef({ onClick: onClickProp, onRemove });
+  const value = useStore((state) => state.value);
+  const isDisabled = context.disabled || value.length <= context.minEntries;
 
-  const onClick = (event: React.MouseEvent<RemoveButtonElement>) => {
-    buttonProps.onClick?.(event);
+  const onClick = React.useCallback(
+    (event: React.MouseEvent<RemoveButtonElement>) => {
+      propsRef.current.onClick?.(event);
 
-    const state = store.getState();
-    if (state.entries.length <= context.minEntries) return;
+      const state = store.getState();
+      if (state.value.length <= context.minEntries) return;
 
-    const entryToRemove = state.entries.find((item) => item.id === entry.id);
-    if (!entryToRemove) return;
+      const entryToRemove = state.value.find(
+        (item: KeyValueEntry) => item.id === entry.id,
+      );
+      if (!entryToRemove) return;
 
-    const newEntries = state.entries.filter((item) => item.id !== entry.id);
-    const newErrors = { ...state.errors };
-    delete newErrors[entry.id];
+      const newValue = state.value.filter(
+        (item: KeyValueEntry) => item.id !== entry.id,
+      );
+      const newErrors = { ...state.errors };
+      delete newErrors[entry.id];
 
-    store.setState("entries", newEntries);
-    store.setState("errors", newErrors);
+      store.setState("value", newValue);
+      store.setState("errors", newErrors);
 
-    rootPropsRef.current.onRemove?.(entryToRemove);
-  };
+      propsRef.current.onRemove?.(entryToRemove);
+    },
+    [store, context.minEntries, entry.id, propsRef],
+  );
 
   const RemoveButtonPrimitive = asChild ? Slot : "button";
 
@@ -717,47 +752,57 @@ function KeyValueRemoveButton(props: KeyValueRemoveButtonProps) {
   );
 }
 
-KeyValueRemoveButton.displayName = REMOVE_BUTTON_NAME;
-
-interface KeyValueAddButtonProps extends React.ComponentProps<"button"> {
+interface KeyValueAddButtonProps
+  extends React.ComponentProps<"button">,
+    Pick<KeyValueRootProps, "onAdd"> {
   asChild?: boolean;
 }
 
 function KeyValueAddButton(props: KeyValueAddButtonProps) {
-  const { asChild, className, children, onAdd, ...buttonProps } =
-    props as KeyValueAddButtonProps & Pick<KeyValueRootProps, "onAdd">;
+  const {
+    asChild,
+    className,
+    children,
+    onClick: onClickProp,
+    onAdd,
+    ...buttonProps
+  } = props;
+
   const context = useKeyValueContext(ADD_BUTTON_NAME);
   const store = useStoreContext(ADD_BUTTON_NAME);
 
-  const rootPropsRef = useAsRef({ onAdd });
-  const entries = useStore((state) => state.entries);
+  const propsRef = useAsRef({ onClick: onClickProp, onAdd });
+  const value = useStore((state) => state.value);
   const isDisabled =
     context.disabled ||
-    (context.maxEntries !== undefined && entries.length >= context.maxEntries);
+    (context.maxEntries !== undefined && value.length >= context.maxEntries);
 
-  const onClick = (event: React.MouseEvent<AddButtonElement>) => {
-    buttonProps.onClick?.(event);
+  const onClick = React.useCallback(
+    (event: React.MouseEvent<AddButtonElement>) => {
+      propsRef.current.onClick?.(event);
 
-    const state = store.getState();
-    if (
-      context.maxEntries !== undefined &&
-      state.entries.length >= context.maxEntries
-    ) {
-      return;
-    }
+      const state = store.getState();
+      if (
+        context.maxEntries !== undefined &&
+        state.value.length >= context.maxEntries
+      ) {
+        return;
+      }
 
-    const newEntry: KeyValueEntry = {
-      id: crypto.randomUUID(),
-      key: "",
-      value: "",
-    };
+      const newEntry: KeyValueEntry = {
+        id: crypto.randomUUID(),
+        key: "",
+        value: "",
+      };
 
-    const newEntries = [...state.entries, newEntry];
-    store.setState("entries", newEntries);
-    store.setState("focusedId", newEntry.id);
+      const newValue = [...state.value, newEntry];
+      store.setState("value", newValue);
+      store.setState("focusedId", newEntry.id);
 
-    rootPropsRef.current.onAdd?.(newEntry);
-  };
+      propsRef.current.onAdd?.(newEntry);
+    },
+    [store, context.maxEntries, propsRef],
+  );
 
   const AddButtonPrimitive = asChild ? Slot : "button";
 
@@ -783,8 +828,6 @@ function KeyValueAddButton(props: KeyValueAddButtonProps) {
     </AddButtonPrimitive>
   );
 }
-
-KeyValueAddButton.displayName = ADD_BUTTON_NAME;
 
 interface KeyValueErrorProps extends React.ComponentProps<"span"> {
   field: "key" | "value";
@@ -815,9 +858,16 @@ function KeyValueError(props: KeyValueErrorProps) {
   );
 }
 
-KeyValueError.displayName = ERROR_NAME;
-
 export {
+  KeyValueRoot as Root,
+  KeyValueList as List,
+  KeyValueItem as Item,
+  KeyValueKeyInput as KeyInput,
+  KeyValueValueInput as ValueInput,
+  KeyValueRemoveButton as RemoveButton,
+  KeyValueAddButton as AddButton,
+  KeyValueError as Error,
+  //
   KeyValueRoot as KeyValue,
   KeyValueList,
   KeyValueItem,
@@ -827,24 +877,6 @@ export {
   KeyValueAddButton,
   KeyValueError,
   //
-  KeyValueRoot as Root,
-  KeyValueList as List,
-  KeyValueItem as Item,
-  KeyValueKeyInput as KeyInput,
-  KeyValueValueInput as ValueInput,
-  KeyValueRemoveButton as RemoveButton,
-  KeyValueAddButton as AddButton,
-  KeyValueError as Error,
-};
-
-export type {
-  KeyValueEntry,
-  KeyValueRootProps as KeyValueProps,
-  KeyValueListProps,
-  KeyValueItemProps,
-  KeyValueKeyInputProps,
-  KeyValueValueInputProps,
-  KeyValueRemoveButtonProps,
-  KeyValueAddButtonProps,
-  KeyValueErrorProps,
+  type KeyValueEntry,
+  type KeyValueRootProps as KeyValueProps,
 };

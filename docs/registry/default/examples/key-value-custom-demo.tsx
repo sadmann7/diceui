@@ -17,7 +17,7 @@ export default function KeyValueCustomDemo() {
   return (
     <KeyValue
       className="w-full max-w-2xl"
-      defaultEntries={[
+      defaultValue={[
         { id: "1", key: "DATABASE_URL", value: "postgresql://localhost:5432" },
         { id: "2", key: "REDIS_URL", value: "redis://localhost:6379" },
       ]}

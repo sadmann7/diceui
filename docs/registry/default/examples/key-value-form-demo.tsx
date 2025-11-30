@@ -89,8 +89,8 @@ export default function KeyValueFormDemo() {
               <FormLabel>Environment Variables</FormLabel>
               <FormControl>
                 <KeyValue
-                  entries={field.value}
-                  onEntriesChange={field.onChange}
+                  value={field.value}
+                  onValueChange={field.onChange}
                   keyPlaceholder="KEY"
                   valuePlaceholder="value"
                   validateKey={(key, entries) => {
