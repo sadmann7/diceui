@@ -65,19 +65,19 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
 
   /**
    * The name of the key-value for form submission.
-   * Submits as JSON string of entries array.
+   * Submits as JSON string of items array.
    */
   name?: string;
 
   /**
-   * Maximum number of entries allowed.
+   * Maximum number of items allowed.
    *
    * @default undefined (unlimited)
    */
   maxItems?: number;
 
   /**
-   * Minimum number of entries required.
+   * Minimum number of items required.
    *
    * @default 0
    */
@@ -121,7 +121,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    *
    * ```ts
    * onPaste={(event, items) => {
-   *   console.log(event, entries);
+   *   console.log(event, items);
    * }}
    * ```
    */
