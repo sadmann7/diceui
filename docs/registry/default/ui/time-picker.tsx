@@ -371,7 +371,7 @@ interface TimePickerRootImplProps
 
 function TimePickerRootImpl(props: TimePickerRootImplProps) {
   const {
-    value,
+    value: valueProp,
     open: openProp,
     min,
     max,
@@ -396,11 +396,13 @@ function TimePickerRootImpl(props: TimePickerRootImplProps) {
 
   const store = useStoreContext("TimePickerRootImpl");
 
+  const value = useStore((state) => state.value);
+
   useIsomorphicLayoutEffect(() => {
-    if (value !== undefined) {
-      store.setState("value", value);
+    if (valueProp !== undefined) {
+      store.setState("value", valueProp);
     }
-  }, [value]);
+  }, [valueProp]);
 
   useIsomorphicLayoutEffect(() => {
     if (openProp !== undefined) {
@@ -2064,6 +2066,8 @@ export {
   TimePickerPeriod,
   TimePickerSeparator,
   TimePickerClear,
+  //
+  useStore as useTimePicker,
   //
   type TimePickerRootProps as TimePickerProps,
 };

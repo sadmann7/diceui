@@ -273,6 +273,28 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "key-value": {
+      name: "key-value",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["button","input"],
+      files: [{
+        path: "registry/default/ui/key-value.tsx",
+        type: "registry:ui",
+        target: ""
+      },{
+        path: "registry/default/components/visually-hidden-input.tsx",
+        type: "registry:component",
+        target: ""
+      },{
+        path: "registry/default/lib/compose-refs.ts",
+        type: "registry:lib",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/key-value.tsx")),
+      source: "",
+      chunks: []
+    },
     "listbox": {
       name: "listbox",
       description: "",
@@ -1754,6 +1776,62 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/kanban-dynamic-overlay-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "key-value-demo": {
+      name: "key-value-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["key-value"],
+      files: [{
+        path: "registry/default/examples/key-value-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/key-value-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "key-value-form-demo": {
+      name: "key-value-form-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["key-value","button","form","input"],
+      files: [{
+        path: "registry/default/examples/key-value-form-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/key-value-form-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "key-value-validation-demo": {
+      name: "key-value-validation-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["key-value"],
+      files: [{
+        path: "registry/default/examples/key-value-validation-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/key-value-validation-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "key-value-paste-demo": {
+      name: "key-value-paste-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["key-value"],
+      files: [{
+        path: "registry/default/examples/key-value-paste-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/key-value-paste-demo.tsx")),
       source: "",
       chunks: []
     },
