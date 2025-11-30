@@ -16,6 +16,8 @@ const REMOVE_NAME = "KeyValueRemove";
 const ADD_NAME = "KeyValueAdd";
 const ERROR_NAME = "KeyValueError";
 
+type Field = "key" | "value";
+
 type RootElement = React.ComponentRef<typeof KeyValueRoot>;
 type KeyInputElement = React.ComponentRef<typeof KeyValueKeyInput>;
 type ValueInputElement = React.ComponentRef<typeof KeyValueValueInput>;
@@ -43,6 +45,10 @@ function useLazyRef<T>(fn: () => T) {
   }
 
   return ref as React.RefObject<T>;
+}
+
+function getErrorId(rootId: string, entryId: string, field: Field) {
+  return `${rootId}-${entryId}-${field}-error`;
 }
 
 interface Store<T> {
@@ -270,15 +276,15 @@ function KeyValueRoot(props: KeyValueRootProps) {
       <KeyValueContext.Provider value={contextValue}>
         <RootPrimitive
           id={id}
+          data-disabled={disabled ? "" : undefined}
+          data-readonly={readOnly ? "" : undefined}
           {...rootProps}
           ref={composedRef}
           className={cn("flex flex-col gap-2", className)}
-          data-disabled={disabled ? "" : undefined}
-          data-readonly={readOnly ? "" : undefined}
         >
           {rootProps.children}
         </RootPrimitive>
-        {isFormControl && name && (
+        {isFormControl && (
           <VisuallyHiddenInput
             type="hidden"
             control={formTrigger}
@@ -566,7 +572,7 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
       aria-label={`Key for entry ${entry.id}`}
       aria-invalid={hasError}
       aria-describedby={
-        hasError ? `${context.id}-${entry.id}-key-error` : undefined
+        hasError ? getErrorId(context.id, entry.id, "key") : undefined
       }
       className={cn(
         "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
@@ -680,7 +686,7 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
       aria-label={`Value for ${entry.key || `entry ${entry.id}`}`}
       aria-invalid={hasError}
       aria-describedby={
-        hasError ? `${context.id}-${entry.id}-value-error` : undefined
+        hasError ? getErrorId(context.id, entry.id, "value") : undefined
       }
       className={cn(
         "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
@@ -839,7 +845,7 @@ function KeyValueAdd(props: KeyValueAddProps) {
 }
 
 interface KeyValueErrorProps extends React.ComponentProps<"span"> {
-  field: "key" | "value";
+  field: Field;
   asChild?: boolean;
 }
 
@@ -858,9 +864,9 @@ function KeyValueError(props: KeyValueErrorProps) {
 
   return (
     <ErrorPrimitive
-      {...errorProps}
-      id={`${context.id}-${entry.id}-${field}-error`}
+      id={getErrorId(context.id, entry.id, field)}
       role="alert"
+      {...errorProps}
       className={cn("font-medium text-destructive text-sm", className)}
     >
       {error}
