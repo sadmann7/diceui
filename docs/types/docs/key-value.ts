@@ -1,13 +1,9 @@
+import type { Button } from "@/components/ui/button";
 import type { CompositionProps, EmptyProps } from "@/types";
 
-export interface KeyValueEntry {
-  /** Unique identifier for the entry. */
+interface KeyValueItemData {
   id: string;
-
-  /** The key of the entry. */
   key: string;
-
-  /** The value of the entry. */
   value: string;
 }
 
@@ -24,7 +20,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    *
    * @default [{ id: crypto.randomUUID(), key: "", value: "" }]
    */
-  defaultValue?: KeyValueEntry[];
+  defaultValue?: KeyValueItemData[];
 
   /**
    * The controlled value of the key-value component.
@@ -33,7 +29,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * value={[{ id: "1", key: "key1", value: "value1" }]}
    * ```
    */
-  value?: KeyValueEntry[];
+  value?: KeyValueItemData[];
 
   /**
    * Callback fired when the value changes.
@@ -44,7 +40,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * }}
    * ```
    */
-  onValueChange?: (value: KeyValueEntry[]) => void;
+  onValueChange?: (value: KeyValueItemData[]) => void;
 
   /**
    * Whether the key-value component is disabled.
@@ -78,14 +74,14 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    *
    * @default undefined (unlimited)
    */
-  maxEntries?: number;
+  maxItems?: number;
 
   /**
    * Minimum number of entries required.
    *
    * @default 0
    */
-  minEntries?: number;
+  minItems?: number;
 
   /**
    * Placeholder text for the key input.
@@ -104,7 +100,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
    * Whether to allow duplicate keys.
    *
-   * @default true
+   * @default false
    */
   allowDuplicateKeys?: boolean;
 
@@ -124,34 +120,34 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * Can be used to customize paste parsing.
    *
    * ```ts
-   * onPaste={(event, entries) => {
+   * onPaste={(event, items) => {
    *   console.log(event, entries);
    * }}
    * ```
    */
-  onPaste?: (event: ClipboardEvent, entries: KeyValueEntry[]) => void;
+  onPaste?: (event: ClipboardEvent, items: KeyValueItemData[]) => void;
 
   /**
-   * Callback fired when an entry is added.
+   * Callback fired when an item is added.
    *
    * ```ts
-   * onAdd={(entry) => {
-   *   console.log(entry);
+   * onAdd={(item) => {
+   *   console.log(item);
    * }}
    * ```
    */
-  onAdd?: (entry: KeyValueEntry) => void;
+  onAdd?: (item: KeyValueItemData) => void;
 
   /**
-   * Callback fired when an entry is removed.
+   * Callback fired when an item is removed.
    *
    * ```ts
-   * onRemove={(entry) => {
-   *   console.log(entry);
+   * onRemove={(item) => {
+   *   console.log(item);
    * }}
    * ```
    */
-  onRemove?: (entry: KeyValueEntry) => void;
+  onRemove?: (item: KeyValueItemData) => void;
 
   /**
    * Validator function for keys.
@@ -164,14 +160,17 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * }}
    * ```
    */
-  onKeyValidate?: (key: string, value: KeyValueEntry[]) => string | undefined;
+  onKeyValidate?: (
+    key: string,
+    value: KeyValueItemData[],
+  ) => string | undefined;
 
   /**
    * Validator function for values.
    * Return error message string if invalid, or undefined if valid.
    *
    * ```ts
-   * onValueValidate={(value, key, entries) => {
+   * onValueValidate={(value, key, items) => {
    *   if (value.length < 3) return "Value must be at least 3 characters";
    *   return undefined;
    * }}
@@ -180,7 +179,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   onValueValidate?: (
     value: string,
     key: string,
-    entries: KeyValueEntry[],
+    items: KeyValueItemData[],
   ) => string | undefined;
 
   /**
@@ -200,86 +199,66 @@ export interface ListProps extends EmptyProps<"div">, CompositionProps {
   orientation?: "vertical" | "horizontal";
 }
 
-export interface ItemProps extends EmptyProps<"div">, CompositionProps {
-  /**
-   * The entry data for this item.
-   *
-   * ```ts
-   * entry={{
-   *   id: "1",
-   *   key: "key1",
-   *   value: "value1",
-   * }}
-   * ```
-   */
-  entry: KeyValueEntry;
-}
+export interface ItemProps extends EmptyProps<"div">, CompositionProps {}
 
 export interface KeyInputProps extends EmptyProps<"input">, CompositionProps {
   /**
-   * The entry data for this input.
+   * The item data for this input.
    *
    * ```ts
-   * entry={{
+   * item={{
    *   id: "1",
    *   key: "key1",
    *   value: "value1",
    * }}
    * ```
    */
-  entry: KeyValueEntry;
+  item: KeyValueItemData;
 }
 
-export interface ValueInputProps extends EmptyProps<"input">, CompositionProps {
+export interface ValueInputProps
+  extends EmptyProps<"textarea">,
+    CompositionProps {
   /**
-   * The entry data for this input.
+   * Maximum number of rows before the textarea starts scrolling.
+   * Without it, the textarea expands infinitely with content.
    *
-   * ```ts
-   * entry={{
-   *   id: "1",
-   *   key: "key1",
-   *   value: "value1",
-   * }}
-   * ```
+   * @default undefined
    */
-  entry: KeyValueEntry;
+  maxRows?: number;
 }
 
-export interface RemoveProps extends EmptyProps<"button">, CompositionProps {
+export interface RemoveProps
+  extends EmptyProps<"button", keyof React.ComponentProps<typeof Button>>,
+    CompositionProps {
   /**
-   * The entry data for this button.
+   * Callback fired when an item is removed.
    *
    * ```ts
-   * entry={{
-   *   id: "1",
-   *   key: "key1",
-   *   value: "value1",
+   * onRemove={(value) => {
+   *   console.log(value);
    * }}
    * ```
    */
-  entry: KeyValueEntry;
+  onRemove?: (value: KeyValueItemData) => void;
 }
 
-export interface AddProps extends EmptyProps<"button">, CompositionProps {}
-
-export interface ErrorProps extends EmptyProps<"span">, CompositionProps {
+export interface AddProps
+  extends EmptyProps<"button", keyof React.ComponentProps<typeof Button>>,
+    CompositionProps {
   /**
-   * The entry data for this error message.
+   * Callback fired when an item is added.
    *
    * ```ts
-   * entry={{
-   *   id: "1",
-   *   key: "key1",
-   *   value: "value1",
+   * onAdd={(value) => {
+   *   console.log(value);
    * }}
    * ```
    */
-  entry: KeyValueEntry;
+  onAdd?: (value: KeyValueItemData) => void;
+}
 
-  /**
-   * The field type that has the error.
-   *
-   * @default "key"
-   */
+export interface ErrorProps extends EmptyProps<"div">, CompositionProps {
+  /** The field that has the error. */
   field: "key" | "value";
 }

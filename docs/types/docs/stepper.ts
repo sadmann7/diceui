@@ -137,9 +137,9 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   nonInteractive?: boolean;
 }
 
-export interface ListProps extends EmptyProps<"ol">, CompositionProps {}
+export interface ListProps extends EmptyProps<"div">, CompositionProps {}
 
-export interface ItemProps extends EmptyProps<"li">, CompositionProps {
+export interface ItemProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The unique value that links the item with the content.
    *

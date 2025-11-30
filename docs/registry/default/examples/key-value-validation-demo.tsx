@@ -14,7 +14,6 @@ import {
 export default function KeyValueValidationDemo() {
   return (
     <KeyValue
-      className="w-full max-w-2xl"
       defaultValue={[
         { id: "1", key: "API_KEY", value: "sk-1234567890" },
         { id: "2", key: "invalid key", value: "" },
@@ -41,11 +40,11 @@ export default function KeyValueValidationDemo() {
         <KeyValueItem className="flex-col items-start">
           <div className="flex w-full gap-2">
             <div className="flex flex-1 flex-col gap-1">
-              <KeyValueKeyInput />
+              <KeyValueKeyInput className="font-mono" />
               <KeyValueError field="key" />
             </div>
             <div className="flex flex-1 flex-col gap-1">
-              <KeyValueValueInput />
+              <KeyValueValueInput className="font-mono" />
               <KeyValueError field="value" />
             </div>
             <KeyValueRemove />

@@ -10,7 +10,7 @@ import {
 
 export default function KeyValueDemo() {
   return (
-    <KeyValue className="w-full max-w-2xl">
+    <KeyValue>
       <KeyValueList>
         <KeyValueItem>
           <KeyValueKeyInput />

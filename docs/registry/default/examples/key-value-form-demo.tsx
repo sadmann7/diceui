@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import * as React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -49,21 +50,21 @@ export default function KeyValueFormDemo() {
     },
   });
 
-  function onSubmit(data: FormValues) {
-    toast.success("Form submitted successfully!", {
+  const onSubmit = React.useCallback((data: FormValues) => {
+    toast.success("Submitted values:", {
       description: (
         <pre className="mt-2 w-full rounded-md bg-slate-950 p-4">
           <code className="text-white">{JSON.stringify(data, null, 2)}</code>
         </pre>
       ),
     });
-  }
+  }, []);
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full max-w-2xl space-y-6"
+        className="flex flex-col gap-6"
       >
         <FormField
           control={form.control}
