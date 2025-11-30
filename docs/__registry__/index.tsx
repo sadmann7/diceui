@@ -277,7 +277,7 @@ export const Index: Record<string, any> = {
       name: "key-value",
       description: "",
       type: "registry:ui",
-      registryDependencies: ["button","input"],
+      registryDependencies: ["button","input","textarea"],
       files: [{
         path: "registry/default/ui/key-value.tsx",
         type: "registry:ui",

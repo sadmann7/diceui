@@ -254,7 +254,7 @@ export const ui: Registry["items"] = [
     name: "key-value",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "lucide-react"],
-    registryDependencies: ["button", "input"],
+    registryDependencies: ["button", "input", "textarea"],
     files: [
       {
         path: "ui/key-value.tsx",
