@@ -87,6 +87,23 @@ The main container component that manages the key-value entries state.
   name="RootProps"
 />
 
+<DataAttributesTable
+  data={[
+    {
+      attribute: "[data-disabled]",
+      values: "Present when disabled",
+    },
+    {
+      attribute: "[data-invalid]",
+      values: "Present when any entry has validation errors",
+    },
+    {
+      attribute: "[data-readonly]",
+      values: "Present when read-only",
+    },
+  ]}
+/>
+
 ### List
 
 Container for rendering the list of key-value items.
@@ -96,6 +113,15 @@ Container for rendering the list of key-value items.
   name="ListProps"
 />
 
+<DataAttributesTable
+  data={[
+    {
+      attribute: "[data-orientation]",
+      values: "vertical | horizontal",
+    },
+  ]}
+/>
+
 ### Item
 
 Individual key-value pair item container.
@@ -103,6 +129,15 @@ Individual key-value pair item container.
 <AutoTypeTable
   path="types/docs/key-value.ts"
   name="ItemProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      attribute: "[data-highlighted]",
+      values: "Present when item is highlighted/focused",
+    },
+  ]}
 />
 
 ### KeyInput
@@ -174,20 +209,6 @@ Error message display for validation errors.
     },
   ]}
 />
-
-### ARIA Attributes
-
-- Each input has `aria-label` describing its purpose
-- Error messages use `aria-invalid` and `aria-describedby`
-- The list uses `role="list"` and items use `role="listitem"`
-- Buttons have descriptive `aria-label` attributes
-
-### Screen Reader Support
-
-- Key and value inputs announce their current values
-- Add and remove buttons announce their actions
-- Error messages are announced immediately via `role="alert"`
-- Entry counts and limits are communicated to screen readers
 
 ## Features
 
