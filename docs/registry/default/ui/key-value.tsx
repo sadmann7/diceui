@@ -16,7 +16,12 @@ const REMOVE_NAME = "KeyValueRemove";
 const ADD_NAME = "KeyValueAdd";
 const ERROR_NAME = "KeyValueError";
 
+type Orientation = "vertical" | "horizontal";
 type Field = "key" | "value";
+
+interface DivProps extends React.ComponentProps<"div"> {
+  asChild?: boolean;
+}
 
 type RootElement = React.ComponentRef<typeof KeyValueRoot>;
 type KeyInputElement = React.ComponentRef<typeof KeyValueKeyInput>;
@@ -51,10 +56,13 @@ function getErrorId(rootId: string, entryId: string, field: Field) {
   return `${rootId}-${entryId}-${field}-error`;
 }
 
-interface Store<T> {
+interface Store {
   subscribe: (callback: () => void) => () => void;
-  getState: () => T;
-  setState: <K extends keyof T>(key: K, value: T[K]) => void;
+  getState: () => KeyValueState;
+  setState: <K extends keyof KeyValueState>(
+    key: K,
+    value: KeyValueState[K],
+  ) => void;
   notify: () => void;
 }
 
@@ -81,7 +89,7 @@ interface KeyValueState {
   errors: Record<string, { key?: string; value?: string }>;
 }
 
-const StoreContext = React.createContext<Store<KeyValueState> | null>(null);
+const StoreContext = React.createContext<Store | null>(null);
 
 function useStoreContext(consumerName: string) {
   const context = React.useContext(StoreContext);
@@ -92,11 +100,7 @@ function useStoreContext(consumerName: string) {
 }
 
 interface KeyValueContextValue {
-  id: string;
-  disabled: boolean;
-  readOnly: boolean;
-  required: boolean;
-  name?: string;
+  rootId: string;
   maxEntries?: number;
   minEntries: number;
   keyPlaceholder: string;
@@ -104,6 +108,9 @@ interface KeyValueContextValue {
   allowDuplicateKeys: boolean;
   enablePaste: boolean;
   trim: boolean;
+  disabled: boolean;
+  readOnly: boolean;
+  required: boolean;
 }
 
 const KeyValueContext = React.createContext<KeyValueContextValue | null>(null);
@@ -116,25 +123,22 @@ function useKeyValueContext(consumerName: string) {
   return context;
 }
 
-interface KeyValueRootProps
-  extends Omit<React.ComponentProps<"div">, "onPaste" | "defaultValue"> {
+interface KeyValueRootProps extends Omit<DivProps, "onPaste" | "defaultValue"> {
   id?: string;
   defaultValue?: KeyValueEntry[];
   value?: KeyValueEntry[];
   onValueChange?: (value: KeyValueEntry[]) => void;
-  disabled?: boolean;
-  readOnly?: boolean;
-  required?: boolean;
-  name?: string;
   maxEntries?: number;
   minEntries?: number;
   keyPlaceholder?: string;
   valuePlaceholder?: string;
-  addButtonText?: string;
-  showAddButton?: boolean;
-  showRemoveButton?: boolean;
+  name?: string;
   allowDuplicateKeys?: boolean;
   enablePaste?: boolean;
+  trim?: boolean;
+  disabled?: boolean;
+  readOnly?: boolean;
+  required?: boolean;
   onPaste?: (event: ClipboardEvent, entries: KeyValueEntry[]) => void;
   onAdd?: (entry: KeyValueEntry) => void;
   onRemove?: (entry: KeyValueEntry) => void;
@@ -144,69 +148,21 @@ interface KeyValueRootProps
     key: string,
     entries: KeyValueEntry[],
   ) => string | undefined;
-  trim?: boolean;
-  asChild?: boolean;
 }
 
 function KeyValueRoot(props: KeyValueRootProps) {
-  const {
-    id: idProp,
-    defaultValue,
-    value: valueProp,
-    onValueChange,
-    disabled = false,
-    readOnly = false,
-    required = false,
-    name,
-    maxEntries,
-    minEntries = 0,
-    keyPlaceholder = "Key",
-    valuePlaceholder = "Value",
-    allowDuplicateKeys = true,
-    enablePaste = true,
-    onPaste,
-    onAdd,
-    onRemove,
-    onKeyValidate,
-    onValueValidate,
-    trim = true,
-    asChild,
-    className,
-    ref,
-    ...rootProps
-  } = props;
-
-  const instanceId = React.useId();
-  const id = idProp ?? instanceId;
+  const { value, defaultValue, onValueChange, ...rootProps } = props;
 
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<KeyValueState>(() => ({
-    value: valueProp ??
+    value: value ??
       defaultValue ?? [{ id: crypto.randomUUID(), key: "", value: "" }],
     focusedId: null,
     errors: {},
   }));
+  const propsRef = useAsRef({ onValueChange });
 
-  const propsRef = useAsRef({
-    onValueChange,
-    onPaste,
-    onAdd,
-    onRemove,
-    onKeyValidate,
-    onValueValidate,
-    allowDuplicateKeys,
-    trim,
-    maxEntries,
-    minEntries,
-  });
-
-  const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
-    null,
-  );
-  const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
-  const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
-
-  const store = React.useMemo<Store<KeyValueState>>(() => {
+  const store = React.useMemo<Store>(() => {
     return {
       subscribe: (cb) => {
         listenersRef.current.add(cb);
@@ -216,10 +172,11 @@ function KeyValueRoot(props: KeyValueRootProps) {
       setState: (key, val) => {
         if (Object.is(stateRef.current[key], val)) return;
 
-        stateRef.current[key] = val;
-
-        if (key === "value") {
+        if (key === "value" && Array.isArray(val)) {
+          stateRef.current.value = val as KeyValueEntry[];
           propsRef.current.onValueChange?.(val as KeyValueEntry[]);
+        } else {
+          stateRef.current[key] = val;
         }
 
         store.notify();
@@ -232,19 +189,70 @@ function KeyValueRoot(props: KeyValueRootProps) {
     };
   }, [listenersRef, stateRef, propsRef]);
 
+  return (
+    <StoreContext.Provider value={store}>
+      <KeyValueRootImpl {...rootProps} value={value} />
+    </StoreContext.Provider>
+  );
+}
+
+interface KeyValueRootImplProps
+  extends Omit<
+    KeyValueRootProps,
+    | "defaultValue"
+    | "onValueChange"
+    | "onPaste"
+    | "onAdd"
+    | "onRemove"
+    | "onKeyValidate"
+    | "onValueValidate"
+  > {}
+
+function KeyValueRootImpl(props: KeyValueRootImplProps) {
+  const {
+    id,
+    value: valueProp,
+    maxEntries,
+    minEntries = 0,
+    keyPlaceholder = "Key",
+    valuePlaceholder = "Value",
+    name,
+    allowDuplicateKeys = true,
+    enablePaste = true,
+    trim = true,
+    disabled = false,
+    readOnly = false,
+    required = false,
+    asChild,
+    className,
+    ref,
+    ...rootProps
+  } = props;
+
+  const store = useStoreContext("KeyValueRootImpl");
+
+  const value = useStore((state) => state.value);
+  const errors = useStore((state) => state.errors);
+  const isInvalid = Object.keys(errors).length > 0;
+
   useIsomorphicLayoutEffect(() => {
     if (valueProp !== undefined) {
       store.setState("value", valueProp);
     }
-  }, [valueProp]);
+  }, [valueProp, store]);
+
+  const instanceId = React.useId();
+  const rootId = id ?? instanceId;
+
+  const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
+    null,
+  );
+  const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
+  const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
   const contextValue = React.useMemo<KeyValueContextValue>(
     () => ({
-      id,
-      disabled,
-      readOnly,
-      required,
-      name,
+      rootId,
       maxEntries,
       minEntries,
       keyPlaceholder,
@@ -252,13 +260,15 @@ function KeyValueRoot(props: KeyValueRootProps) {
       allowDuplicateKeys,
       enablePaste,
       trim,
-    }),
-    [
-      id,
       disabled,
       readOnly,
       required,
-      name,
+    }),
+    [
+      rootId,
+      disabled,
+      readOnly,
+      required,
       maxEntries,
       minEntries,
       keyPlaceholder,
@@ -272,37 +282,36 @@ function KeyValueRoot(props: KeyValueRootProps) {
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
-    <StoreContext.Provider value={store}>
+    <>
       <KeyValueContext.Provider value={contextValue}>
         <RootPrimitive
           id={id}
+          data-slot="key-value"
           data-disabled={disabled ? "" : undefined}
+          data-invalid={isInvalid ? "" : undefined}
           data-readonly={readOnly ? "" : undefined}
           {...rootProps}
           ref={composedRef}
           className={cn("flex flex-col gap-2", className)}
-        >
-          {rootProps.children}
-        </RootPrimitive>
-        {isFormControl && (
-          <VisuallyHiddenInput
-            type="hidden"
-            control={formTrigger}
-            name={name}
-            value={store.getState().value}
-            disabled={disabled}
-            readOnly={readOnly}
-            required={required}
-          />
-        )}
+        />
       </KeyValueContext.Provider>
-    </StoreContext.Provider>
+      {isFormControl && (
+        <VisuallyHiddenInput
+          type="hidden"
+          control={formTrigger}
+          name={name}
+          value={value}
+          disabled={disabled}
+          readOnly={readOnly}
+          required={required}
+        />
+      )}
+    </>
   );
 }
 
-interface KeyValueListProps extends React.ComponentProps<"div"> {
-  orientation?: "vertical" | "horizontal";
-  asChild?: boolean;
+interface KeyValueListProps extends DivProps {
+  orientation?: Orientation;
 }
 
 function KeyValueList(props: KeyValueListProps) {
@@ -314,15 +323,16 @@ function KeyValueList(props: KeyValueListProps) {
 
   return (
     <ListPrimitive
-      {...listProps}
       role="list"
-      aria-label="Key-value pairs"
+      aria-orientation={orientation}
+      data-slot="key-value-list"
+      data-orientation={orientation}
+      {...listProps}
       className={cn(
         "flex",
         orientation === "vertical" ? "flex-col gap-2" : "flex-row gap-2",
         className,
       )}
-      data-orientation={orientation}
     >
       {value.map((entry) => {
         const children = React.Children.toArray(props.children);
@@ -365,13 +375,12 @@ function KeyValueItem(props: KeyValueItemProps) {
 
   return (
     <ItemPrimitive
-      {...itemProps}
       role="listitem"
+      data-slot="key-value-item"
+      data-highlighted={focusedId === entry.id ? "" : undefined}
+      {...itemProps}
       className={cn("flex items-start gap-2", className)}
-      data-focused={focusedId === entry.id ? "" : undefined}
-    >
-      {props.children}
-    </ItemPrimitive>
+    />
   );
 }
 
@@ -383,12 +392,15 @@ interface KeyValueKeyInputProps
 
 function KeyValueKeyInput(props: KeyValueKeyInputProps) {
   const {
-    asChild,
-    className,
     onKeyValidate,
     onValueValidate,
-    onChange: onChangeProp,
-    onPaste: onPasteProp,
+    onChange,
+    onPaste,
+    asChild,
+    disabled,
+    readOnly,
+    required,
+    className,
     ...inputProps
   } = props;
 
@@ -397,16 +409,20 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
   const store = useStoreContext(KEY_INPUT_NAME);
 
   const errors = useStore((state) => state.errors);
-  const hasError = errors[entry.id]?.key !== undefined;
+
+  const isDisabled = disabled || context.disabled;
+  const isReadOnly = readOnly || context.readOnly;
+  const isRequired = required || context.required;
+  const isInvalid = errors[entry.id]?.key !== undefined;
 
   const propsRef = useAsRef({
     onKeyValidate,
     onValueValidate,
-    onChange: onChangeProp,
-    onPaste: onPasteProp,
+    onChange,
+    onPaste,
   });
 
-  const onChange = React.useCallback(
+  const onKeyInputChange = React.useCallback(
     (event: React.ChangeEvent<KeyInputElement>) => {
       const state = store.getState();
       const newValue = state.value.map((item) => {
@@ -465,7 +481,7 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
     [store, entry.id, context.trim, context.allowDuplicateKeys, propsRef],
   );
 
-  const onPaste = React.useCallback(
+  const onKeyInputPaste = React.useCallback(
     (event: React.ClipboardEvent<KeyInputElement>) => {
       if (!context.enablePaste) return;
 
@@ -561,24 +577,24 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
   return (
     <KeyInputPrimitive
       type="text"
-      {...inputProps}
-      value={entry.key}
-      onChange={onChange}
-      onPaste={onPaste}
-      placeholder={context.keyPlaceholder}
-      disabled={context.disabled}
-      readOnly={context.readOnly}
-      required={context.required}
-      aria-label={`Key for entry ${entry.id}`}
-      aria-invalid={hasError}
+      aria-invalid={isInvalid}
       aria-describedby={
-        hasError ? getErrorId(context.id, entry.id, "key") : undefined
+        isInvalid ? getErrorId(context.rootId, entry.id, "key") : undefined
       }
+      data-slot="key-value-key-input"
+      disabled={isDisabled}
+      readOnly={isReadOnly}
+      required={isRequired}
+      {...inputProps}
+      placeholder={context.keyPlaceholder}
       className={cn(
         "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-        hasError && "border-destructive focus-visible:ring-destructive",
+        isInvalid && "border-destructive focus-visible:ring-destructive",
         className,
       )}
+      value={entry.key}
+      onChange={onKeyInputChange}
+      onPaste={onKeyInputPaste}
     />
   );
 }
@@ -591,11 +607,14 @@ interface KeyValueValueInputProps
 
 function KeyValueValueInput(props: KeyValueValueInputProps) {
   const {
-    asChild,
-    className,
     onKeyValidate,
     onValueValidate,
-    onChange: onChangeProp,
+    onChange,
+    asChild,
+    disabled,
+    readOnly,
+    required,
+    className,
     ...inputProps
   } = props;
 
@@ -606,12 +625,16 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
   const propsRef = useAsRef({
     onKeyValidate,
     onValueValidate,
-    onChange: onChangeProp,
+    onChange,
   });
   const errors = useStore((state) => state.errors);
-  const hasError = errors[entry.id]?.value !== undefined;
 
-  const onChange = React.useCallback(
+  const isDisabled = disabled || context.disabled;
+  const isReadOnly = readOnly || context.readOnly;
+  const isRequired = required || context.required;
+  const isInvalid = errors[entry.id]?.value !== undefined;
+
+  const onValueInputChange = React.useCallback(
     (event: React.ChangeEvent<ValueInputElement>) => {
       propsRef.current.onChange?.(event);
 
@@ -677,22 +700,23 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
   return (
     <ValueInputPrimitive
       type="text"
-      {...inputProps}
-      value={entry.value}
-      onChange={onChange}
-      placeholder={context.valuePlaceholder}
-      disabled={context.disabled}
-      readOnly={context.readOnly}
-      aria-label={`Value for ${entry.key || `entry ${entry.id}`}`}
-      aria-invalid={hasError}
+      aria-invalid={isInvalid}
       aria-describedby={
-        hasError ? getErrorId(context.id, entry.id, "value") : undefined
+        isInvalid ? getErrorId(context.rootId, entry.id, "value") : undefined
       }
+      data-slot="key-value-value-input"
+      disabled={isDisabled}
+      readOnly={isReadOnly}
+      required={isRequired}
+      {...inputProps}
+      placeholder={context.valuePlaceholder}
       className={cn(
         "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-        hasError && "border-destructive focus-visible:ring-destructive",
+        isInvalid && "border-destructive focus-visible:ring-destructive",
         className,
       )}
+      value={entry.value}
+      onChange={onValueInputChange}
     />
   );
 }
@@ -704,24 +728,18 @@ interface KeyValueRemoveProps
 }
 
 function KeyValueRemove(props: KeyValueRemoveProps) {
-  const {
-    asChild,
-    className,
-    children,
-    onClick: onClickProp,
-    onRemove,
-    ...buttonProps
-  } = props;
+  const { onClick, onRemove, asChild, className, children, ...buttonProps } =
+    props;
 
   const { entry } = useKeyValueItemContext(REMOVE_NAME);
   const context = useKeyValueContext(REMOVE_NAME);
   const store = useStoreContext(REMOVE_NAME);
 
-  const propsRef = useAsRef({ onClick: onClickProp, onRemove });
+  const propsRef = useAsRef({ onClick, onRemove });
   const value = useStore((state) => state.value);
   const isDisabled = context.disabled || value.length <= context.minEntries;
 
-  const onClick = React.useCallback(
+  const onRemoveClick = React.useCallback(
     (event: React.MouseEvent<RemoveElement>) => {
       propsRef.current.onClick?.(event);
 
@@ -747,23 +765,23 @@ function KeyValueRemove(props: KeyValueRemoveProps) {
     [store, context.minEntries, entry.id, propsRef],
   );
 
-  const RemoveButtonPrimitive = asChild ? Slot : "button";
+  const RemovePrimitive = asChild ? Slot : "button";
 
   return (
-    <RemoveButtonPrimitive
+    <RemovePrimitive
       type="button"
-      {...buttonProps}
-      onClick={onClick}
+      data-slot="key-value-remove"
       disabled={isDisabled}
-      aria-label={`Remove ${entry.key || "entry"}`}
+      {...buttonProps}
       className={cn(
         "inline-flex h-9 w-9 items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
         "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
         className,
       )}
+      onClick={onRemoveClick}
     >
       {children ?? <XIcon />}
-    </RemoveButtonPrimitive>
+    </RemovePrimitive>
   );
 }
 
@@ -774,25 +792,19 @@ interface KeyValueAddProps
 }
 
 function KeyValueAdd(props: KeyValueAddProps) {
-  const {
-    asChild,
-    className,
-    children,
-    onClick: onClickProp,
-    onAdd,
-    ...buttonProps
-  } = props;
+  const { onClick, onAdd, asChild, className, children, ...buttonProps } =
+    props;
 
   const context = useKeyValueContext(ADD_NAME);
   const store = useStoreContext(ADD_NAME);
 
-  const propsRef = useAsRef({ onClick: onClickProp, onAdd });
+  const propsRef = useAsRef({ onClick, onAdd });
   const value = useStore((state) => state.value);
   const isDisabled =
     context.disabled ||
     (context.maxEntries !== undefined && value.length >= context.maxEntries);
 
-  const onClick = React.useCallback(
+  const onAddClick = React.useCallback(
     (event: React.MouseEvent<AddElement>) => {
       propsRef.current.onClick?.(event);
 
@@ -819,20 +831,20 @@ function KeyValueAdd(props: KeyValueAddProps) {
     [store, context.maxEntries, propsRef],
   );
 
-  const AddButtonPrimitive = asChild ? Slot : "button";
+  const AddPrimitive = asChild ? Slot : "button";
 
   return (
-    <AddButtonPrimitive
+    <AddPrimitive
       type="button"
-      {...buttonProps}
-      onClick={onClick}
+      data-slot="key-value-add"
       disabled={isDisabled}
-      aria-label="Add new entry"
+      {...buttonProps}
       className={cn(
         "inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-md px-4 font-medium text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
         "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
         className,
       )}
+      onClick={onAddClick}
     >
       {children ?? (
         <>
@@ -840,7 +852,7 @@ function KeyValueAdd(props: KeyValueAddProps) {
           Add
         </>
       )}
-    </AddButtonPrimitive>
+    </AddPrimitive>
   );
 }
 
@@ -864,7 +876,7 @@ function KeyValueError(props: KeyValueErrorProps) {
 
   return (
     <ErrorPrimitive
-      id={getErrorId(context.id, entry.id, field)}
+      id={getErrorId(context.rootId, entry.id, field)}
       role="alert"
       {...errorProps}
       className={cn("font-medium text-destructive text-sm", className)}
