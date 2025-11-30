@@ -337,7 +337,7 @@ function KeyValueList(props: KeyValueListProps) {
       {value.map((entry) => {
         const children = React.Children.toArray(props.children);
         return (
-          <KeyValueItemContext.Provider key={entry.id} value={{ entry }}>
+          <KeyValueItemContext.Provider key={entry.id} value={entry}>
             {children}
           </KeyValueItemContext.Provider>
         );
@@ -346,12 +346,7 @@ function KeyValueList(props: KeyValueListProps) {
   );
 }
 
-interface KeyValueItemContextValue {
-  entry: KeyValueEntry;
-}
-
-const KeyValueItemContext =
-  React.createContext<KeyValueItemContextValue | null>(null);
+const KeyValueItemContext = React.createContext<KeyValueEntry | null>(null);
 
 function useKeyValueItemContext(consumerName: string) {
   const context = React.useContext(KeyValueItemContext);
@@ -367,7 +362,7 @@ interface KeyValueItemProps extends React.ComponentProps<"div"> {
 
 function KeyValueItem(props: KeyValueItemProps) {
   const { asChild, className, ...itemProps } = props;
-  const { entry } = useKeyValueItemContext(ITEM_NAME);
+  const entry = useKeyValueItemContext(ITEM_NAME);
 
   const focusedId = useStore((state) => state.focusedId);
 
@@ -404,8 +399,8 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
     ...inputProps
   } = props;
 
-  const { entry } = useKeyValueItemContext(KEY_INPUT_NAME);
   const context = useKeyValueContext(KEY_INPUT_NAME);
+  const entry = useKeyValueItemContext(KEY_INPUT_NAME);
   const store = useStoreContext(KEY_INPUT_NAME);
 
   const errors = useStore((state) => state.errors);
@@ -618,8 +613,8 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
     ...inputProps
   } = props;
 
-  const { entry } = useKeyValueItemContext(VALUE_INPUT_NAME);
   const context = useKeyValueContext(VALUE_INPUT_NAME);
+  const entry = useKeyValueItemContext(VALUE_INPUT_NAME);
   const store = useStoreContext(VALUE_INPUT_NAME);
 
   const propsRef = useAsRef({
@@ -731,8 +726,8 @@ function KeyValueRemove(props: KeyValueRemoveProps) {
   const { onClick, onRemove, asChild, className, children, ...buttonProps } =
     props;
 
-  const { entry } = useKeyValueItemContext(REMOVE_NAME);
   const context = useKeyValueContext(REMOVE_NAME);
+  const entry = useKeyValueItemContext(REMOVE_NAME);
   const store = useStoreContext(REMOVE_NAME);
 
   const propsRef = useAsRef({ onClick, onRemove });
@@ -864,8 +859,8 @@ interface KeyValueErrorProps extends React.ComponentProps<"span"> {
 function KeyValueError(props: KeyValueErrorProps) {
   const { field, asChild, className, ...errorProps } = props;
 
-  const { entry } = useKeyValueItemContext(ERROR_NAME);
   const context = useKeyValueContext(ERROR_NAME);
+  const entry = useKeyValueItemContext(ERROR_NAME);
 
   const errors = useStore((state) => state.errors);
   const error = errors[entry.id]?.[field];
