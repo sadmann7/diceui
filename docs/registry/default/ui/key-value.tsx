@@ -397,7 +397,7 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
     disabled,
     readOnly,
     required,
-    ...inputProps
+    ...keyInputProps
   } = props;
 
   const context = useKeyValueContext(KEY_INPUT_NAME);
@@ -577,10 +577,14 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
         isInvalid ? getErrorId(context.rootId, entry.id, "key") : undefined
       }
       data-slot="key-value-key-input"
+      autoCapitalize="off"
+      autoComplete="off"
+      autoCorrect="off"
+      spellCheck="false"
       disabled={isDisabled}
       readOnly={isReadOnly}
       required={isRequired}
-      {...inputProps}
+      {...keyInputProps}
       placeholder={context.keyPlaceholder}
       value={entry.key}
       onChange={onKeyInputChange}
@@ -604,7 +608,7 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
     disabled,
     readOnly,
     required,
-    ...inputProps
+    ...valueInputProps
   } = props;
 
   const context = useKeyValueContext(VALUE_INPUT_NAME);
@@ -693,10 +697,14 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
         isInvalid ? getErrorId(context.rootId, entry.id, "value") : undefined
       }
       data-slot="key-value-value-input"
+      autoCapitalize="off"
+      autoComplete="off"
+      autoCorrect="off"
+      spellCheck="false"
       disabled={isDisabled}
       readOnly={isReadOnly}
       required={isRequired}
-      {...inputProps}
+      {...valueInputProps}
       placeholder={context.valuePlaceholder}
       value={entry.value}
       onChange={onValueInputChange}
