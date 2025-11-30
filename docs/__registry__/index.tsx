@@ -277,10 +277,18 @@ export const Index: Record<string, any> = {
       name: "key-value",
       description: "",
       type: "registry:ui",
-      registryDependencies: undefined,
+      registryDependencies: ["button","input"],
       files: [{
         path: "registry/default/ui/key-value.tsx",
         type: "registry:ui",
+        target: ""
+      },{
+        path: "registry/default/components/visually-hidden-input.tsx",
+        type: "registry:component",
+        target: ""
+      },{
+        path: "registry/default/lib/compose-refs.ts",
+        type: "registry:lib",
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/ui/key-value.tsx")),

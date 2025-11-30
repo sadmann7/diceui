@@ -3,6 +3,8 @@
 import { Slot } from "@radix-ui/react-slot";
 import { PlusIcon, XIcon } from "lucide-react";
 import * as React from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidden-input";
@@ -395,7 +397,6 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
     disabled,
     readOnly,
     required,
-    className,
     ...inputProps
   } = props;
 
@@ -567,11 +568,10 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
     ],
   );
 
-  const KeyInputPrimitive = asChild ? Slot : "input";
+  const KeyInputPrimitive = asChild ? Slot : Input;
 
   return (
     <KeyInputPrimitive
-      type="text"
       aria-invalid={isInvalid}
       aria-describedby={
         isInvalid ? getErrorId(context.rootId, entry.id, "key") : undefined
@@ -582,11 +582,6 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
       required={isRequired}
       {...inputProps}
       placeholder={context.keyPlaceholder}
-      className={cn(
-        "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-        isInvalid && "border-destructive focus-visible:ring-destructive",
-        className,
-      )}
       value={entry.key}
       onChange={onKeyInputChange}
       onPaste={onKeyInputPaste}
@@ -609,7 +604,6 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
     disabled,
     readOnly,
     required,
-    className,
     ...inputProps
   } = props;
 
@@ -690,11 +684,10 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
     [store, entry.id, context.trim, context.allowDuplicateKeys, propsRef],
   );
 
-  const ValueInputPrimitive = asChild ? Slot : "input";
+  const ValueInputPrimitive = asChild ? Slot : Input;
 
   return (
     <ValueInputPrimitive
-      type="text"
       aria-invalid={isInvalid}
       aria-describedby={
         isInvalid ? getErrorId(context.rootId, entry.id, "value") : undefined
@@ -705,11 +698,6 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
       required={isRequired}
       {...inputProps}
       placeholder={context.valuePlaceholder}
-      className={cn(
-        "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-        isInvalid && "border-destructive focus-visible:ring-destructive",
-        className,
-      )}
       value={entry.value}
       onChange={onValueInputChange}
     />
@@ -717,14 +705,11 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
 }
 
 interface KeyValueRemoveProps
-  extends React.ComponentProps<"button">,
-    Pick<KeyValueRootProps, "onRemove"> {
-  asChild?: boolean;
-}
+  extends React.ComponentProps<typeof Button>,
+    Pick<KeyValueRootProps, "onRemove"> {}
 
 function KeyValueRemove(props: KeyValueRemoveProps) {
-  const { onClick, onRemove, asChild, className, children, ...buttonProps } =
-    props;
+  const { onClick, onRemove, children, ...buttonProps } = props;
 
   const context = useKeyValueContext(REMOVE_NAME);
   const entry = useKeyValueItemContext(REMOVE_NAME);
@@ -760,35 +745,27 @@ function KeyValueRemove(props: KeyValueRemoveProps) {
     [store, context.minEntries, entry.id, propsRef],
   );
 
-  const RemovePrimitive = asChild ? Slot : "button";
-
   return (
-    <RemovePrimitive
+    <Button
       type="button"
+      variant="outline"
+      size="icon"
       data-slot="key-value-remove"
       disabled={isDisabled}
       {...buttonProps}
-      className={cn(
-        "inline-flex h-9 w-9 items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
-        "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
-        className,
-      )}
       onClick={onRemoveClick}
     >
       {children ?? <XIcon />}
-    </RemovePrimitive>
+    </Button>
   );
 }
 
 interface KeyValueAddProps
-  extends React.ComponentProps<"button">,
-    Pick<KeyValueRootProps, "onAdd"> {
-  asChild?: boolean;
-}
+  extends React.ComponentProps<typeof Button>,
+    Pick<KeyValueRootProps, "onAdd"> {}
 
 function KeyValueAdd(props: KeyValueAddProps) {
-  const { onClick, onAdd, asChild, className, children, ...buttonProps } =
-    props;
+  const { onClick, onAdd, children, ...buttonProps } = props;
 
   const context = useKeyValueContext(ADD_NAME);
   const store = useStoreContext(ADD_NAME);
@@ -826,19 +803,13 @@ function KeyValueAdd(props: KeyValueAddProps) {
     [store, context.maxEntries, propsRef],
   );
 
-  const AddPrimitive = asChild ? Slot : "button";
-
   return (
-    <AddPrimitive
+    <Button
       type="button"
+      variant="outline"
       data-slot="key-value-add"
       disabled={isDisabled}
       {...buttonProps}
-      className={cn(
-        "inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-md px-4 font-medium text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
-        "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
-        className,
-      )}
       onClick={onAddClick}
     >
       {children ?? (
@@ -847,7 +818,7 @@ function KeyValueAdd(props: KeyValueAddProps) {
           Add
         </>
       )}
-    </AddPrimitive>
+    </Button>
   );
 }
 

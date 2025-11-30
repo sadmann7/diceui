@@ -13,8 +13,8 @@ export default function KeyValueDemo() {
     <KeyValue className="w-full max-w-2xl">
       <KeyValueList>
         <KeyValueItem>
-          <KeyValueKeyInput className="flex-1" />
-          <KeyValueValueInput className="flex-1" />
+          <KeyValueKeyInput />
+          <KeyValueValueInput />
           <KeyValueRemove />
         </KeyValueItem>
       </KeyValueList>

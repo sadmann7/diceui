@@ -254,10 +254,19 @@ export const ui: Registry["items"] = [
     name: "key-value",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    registryDependencies: ["button", "input"],
     files: [
       {
         path: "ui/key-value.tsx",
         type: "registry:ui",
+      },
+      {
+        path: "components/visually-hidden-input.tsx",
+        type: "registry:component",
+      },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
       },
     ],
   },
