@@ -172,8 +172,8 @@ function KeyValueRoot(props: KeyValueRootProps) {
     ...rootProps
   } = props;
 
-  const generatedId = React.useId();
-  const id = idProp ?? generatedId;
+  const instanceId = React.useId();
+  const id = idProp ?? instanceId;
 
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<KeyValueState>(() => ({
@@ -271,6 +271,7 @@ function KeyValueRoot(props: KeyValueRootProps) {
     <StoreContext.Provider value={store}>
       <KeyValueContext.Provider value={contextValue}>
         <RootPrimitive
+          id={id}
           {...rootProps}
           className={cn("flex flex-col gap-2", className)}
           data-disabled={disabled ? "" : undefined}
@@ -365,7 +366,9 @@ function KeyValueItem(props: KeyValueItemProps) {
   );
 }
 
-interface KeyValueKeyInputProps extends React.ComponentProps<"input"> {
+interface KeyValueKeyInputProps
+  extends Omit<React.ComponentProps<"input">, "onPaste">,
+    Pick<KeyValueRootProps, "validateKey" | "validateValue" | "onPaste"> {
   asChild?: boolean;
 }
 
@@ -378,8 +381,8 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
     onChange: onChangeProp,
     onPaste: onPasteProp,
     ...inputProps
-  } = props as KeyValueKeyInputProps &
-    Pick<KeyValueRootProps, "validateKey" | "validateValue" | "onPaste">;
+  } = props;
+
   const { entry } = useKeyValueItemContext(KEY_INPUT_NAME);
   const context = useKeyValueContext(KEY_INPUT_NAME);
   const store = useStoreContext(KEY_INPUT_NAME);
@@ -685,7 +688,9 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
   );
 }
 
-interface KeyValueRemoveButtonProps extends React.ComponentProps<"button"> {
+interface KeyValueRemoveButtonProps
+  extends React.ComponentProps<"button">,
+    Pick<KeyValueRootProps, "onRemove"> {
   asChild?: boolean;
 }
 
@@ -697,7 +702,8 @@ function KeyValueRemoveButton(props: KeyValueRemoveButtonProps) {
     onClick: onClickProp,
     onRemove,
     ...buttonProps
-  } = props as KeyValueRemoveButtonProps & Pick<KeyValueRootProps, "onRemove">;
+  } = props;
+
   const { entry } = useKeyValueItemContext(REMOVE_BUTTON_NAME);
   const context = useKeyValueContext(REMOVE_BUTTON_NAME);
   const store = useStoreContext(REMOVE_BUTTON_NAME);
