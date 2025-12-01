@@ -7,6 +7,8 @@ interface KeyValueItemData {
   value: string;
 }
 
+type ButtonProps = React.ComponentProps<typeof Button>;
+
 export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The unique identifier for the key-value component.
@@ -237,7 +239,7 @@ export interface ValueInputProps
 }
 
 export interface RemoveProps
-  extends EmptyProps<"button", keyof React.ComponentProps<typeof Button>>,
+  extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
     CompositionProps {
   /**
    * Event handler called when an item is removed.
@@ -252,7 +254,7 @@ export interface RemoveProps
 }
 
 export interface AddProps
-  extends EmptyProps<"button", keyof React.ComponentProps<typeof Button>>,
+  extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
     CompositionProps {
   /**
    * Event handler called when an item is added.
