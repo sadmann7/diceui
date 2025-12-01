@@ -477,6 +477,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "stat": {
+      name: "stat",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["separator"],
+      files: [{
+        path: "registry/default/ui/stat.tsx",
+        type: "registry:ui",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/stat.tsx")),
+      source: "",
+      chunks: []
+    },
     "stepper": {
       name: "stepper",
       description: "",
@@ -2406,6 +2420,20 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/stack-side-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "stat-demo": {
+      name: "stat-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["stat","dropdown-menu"],
+      files: [{
+        path: "registry/default/examples/stat-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/stat-demo.tsx")),
       source: "",
       chunks: []
     },

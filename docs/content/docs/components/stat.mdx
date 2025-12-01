@@ -1,0 +1,154 @@
+---
+title: Stat
+description: A flexible component for displaying key metrics and statistics with support for trends, indicators, and descriptions.
+preview: true
+links:
+  api: /docs/components/stat#api-reference
+---
+
+<ComponentTabs name="stat-demo" />
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/stat"
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @radix-ui/react-slot class-variance-authority
+     ```
+  </Step>
+  <Step>
+    Add the Separator component if you don't already have it:
+
+    ```package-install
+    npx shadcn@latest add "https://diceui.com/r/separator"
+    ```
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource name="stat" />
+  </Step>
+</Steps>
+
+## Layout
+
+```tsx
+import {
+  Stat,
+  StatLabel,
+  StatValue,
+  StatIndicator,
+  StatTrend,
+  StatDescription,
+  StatSeparator,
+} from "@/components/ui/stat";
+
+<Stat>
+  <StatLabel>Total Revenue</StatLabel>
+  <StatValue>$45,231</StatValue>
+  <StatIndicator variant="icon" color="success">
+    <DollarSign />
+  </StatIndicator>
+  <StatTrend trend="up">
+    <ArrowUp />
+    +20.1% from last month
+  </StatTrend>
+</Stat>
+```
+
+## API Reference
+
+### Stat
+
+The main container component that provides a card-style layout for displaying statistics.
+
+<AutoTypeTable
+  path="./types/docs/stat.ts"
+  name="StatProps"
+/>
+
+### StatLabel
+
+A label component for the statistic title or category.
+
+<AutoTypeTable
+  path="./types/docs/stat.ts"
+  name="StatLabelProps"
+/>
+
+### StatIndicator
+
+A visual indicator component that can display icons, badges, or action buttons with various color themes.
+
+<AutoTypeTable
+  path="./types/docs/stat.ts"
+  name="StatIndicatorProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-variant]",
+      value: ["default", "icon", "badge", "action"],
+    },
+    {
+      title: "[data-color]",
+      value: ["default", "success", "info", "warning", "error"],
+    },
+  ]}
+/>
+
+### StatValue
+
+Displays the primary statistic value with emphasized typography.
+
+<AutoTypeTable
+  path="./types/docs/stat.ts"
+  name="StatValueProps"
+/>
+
+### StatTrend
+
+Displays trend information with directional styling (up, down, or neutral).
+
+<AutoTypeTable
+  path="./types/docs/stat.ts"
+  name="StatTrendProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-trend]",
+      value: ["up", "down", "neutral"],
+    },
+  ]}
+/>
+
+### StatSeparator
+
+A horizontal separator for dividing content within the stat card.
+
+<AutoTypeTable
+  path="./types/docs/stat.ts"
+  name="StatSeparatorProps"
+/>
+
+### StatDescription
+
+Additional descriptive text for providing context about the statistic.
+
+<AutoTypeTable
+  path="./types/docs/stat.ts"
+  name="StatDescriptionProps"
+/>
