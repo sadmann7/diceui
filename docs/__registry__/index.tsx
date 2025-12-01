@@ -2437,6 +2437,34 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "stat-variants-demo": {
+      name: "stat-variants-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["stat"],
+      files: [{
+        path: "registry/default/examples/stat-variants-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/stat-variants-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "stat-layout-demo": {
+      name: "stat-layout-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["stat"],
+      files: [{
+        path: "registry/default/examples/stat-layout-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/stat-layout-demo.tsx")),
+      source: "",
+      chunks: []
+    },
     "stepper-demo": {
       name: "stepper-demo",
       description: "",

@@ -1542,6 +1542,30 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "stat-variants-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["stat"],
+    files: [
+      {
+        path: "examples/stat-variants-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "stat-layout-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["stat"],
+    files: [
+      {
+        path: "examples/stat-layout-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "stepper-demo",
     type: "registry:example",
     registryDependencies: ["stepper"],
