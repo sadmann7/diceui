@@ -1,5 +1,5 @@
 import { createGenerator } from "fumadocs-typescript";
-import { AutoTypeTable as FumadocsAutoTypeTable } from "fumadocs-typescript/ui";
+import { AutoTypeTable as AutoTypeTableImpl } from "fumadocs-typescript/ui";
 
 let cachedGenerator: ReturnType<typeof createGenerator> | null = null;
 
@@ -13,7 +13,7 @@ function getGenerator() {
 export function AutoTypeTable(props: Record<string, unknown>) {
   return (
     <div className="auto-type-table">
-      <FumadocsAutoTypeTable {...props} generator={getGenerator()} />
+      <AutoTypeTableImpl {...props} generator={getGenerator()} />
     </div>
   );
 }
