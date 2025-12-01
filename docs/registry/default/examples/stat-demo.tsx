@@ -13,58 +13,58 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   Stat,
-  StatAccessory,
-  StatChange,
+  StatIndicator,
   StatLabel,
+  StatTrend,
   StatValue,
 } from "@/registry/default/ui/stat";
 
 export default function StatDemo() {
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-4 md:grid-cols-2">
       <Stat>
         <StatLabel>Total Revenue</StatLabel>
-        <StatValue>$45,231</StatValue>
-        <StatAccessory variant="icon" color="success">
+        <StatIndicator variant="icon" color="success">
           <DollarSign />
-        </StatAccessory>
-        <StatChange trend="up">
+        </StatIndicator>
+        <StatValue>$45,231</StatValue>
+        <StatTrend trend="up">
           <ArrowUp />
           +20.1% from last month
-        </StatChange>
+        </StatTrend>
       </Stat>
 
       <Stat>
         <StatLabel>Active Users</StatLabel>
-        <StatValue>2,350</StatValue>
-        <StatAccessory variant="badge" color="info">
+        <StatIndicator variant="badge" color="info">
           +24
-        </StatAccessory>
-        <StatChange trend="up">
+        </StatIndicator>
+        <StatValue>2,350</StatValue>
+        <StatTrend trend="up">
           <ArrowUp />
           +180 from last week
-        </StatChange>
+        </StatTrend>
       </Stat>
 
       <Stat>
         <StatLabel>Total Orders</StatLabel>
-        <StatValue>1,234</StatValue>
-        <StatAccessory variant="icon" color="warning">
+        <StatIndicator variant="icon" color="warning">
           <ShoppingCart />
-        </StatAccessory>
-        <StatChange trend="down">
+        </StatIndicator>
+        <StatValue>1,234</StatValue>
+        <StatTrend trend="down">
           <ArrowDown />
           -4.3% from last month
-        </StatChange>
+        </StatTrend>
       </Stat>
 
       <Stat>
         <StatLabel>Conversion Rate</StatLabel>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <StatAccessory variant="action">
+            <StatIndicator variant="action">
               <MoreHorizontal />
-            </StatAccessory>
+            </StatIndicator>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem>View details</DropdownMenuItem>
@@ -73,7 +73,7 @@ export default function StatDemo() {
           </DropdownMenuContent>
         </DropdownMenu>
         <StatValue>3.2%</StatValue>
-        <StatChange trend="neutral">No change from last week</StatChange>
+        <StatTrend trend="neutral">No change from last week</StatTrend>
       </Stat>
     </div>
   );

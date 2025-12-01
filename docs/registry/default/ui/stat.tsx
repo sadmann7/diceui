@@ -1,7 +1,7 @@
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import type * as React from "react";
-
+import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
 function Stat({ className, ...props }: React.ComponentProps<"div">) {
@@ -10,11 +10,9 @@ function Stat({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="stat"
       className={cn(
         "grid grid-cols-[1fr_auto] gap-x-4 gap-y-1 rounded-lg border bg-card p-4 text-card-foreground shadow-sm",
-        "**:data-[slot=stat-label]:col-span-1",
-        "**:data-[slot=stat-value]:col-span-1",
-        "**:data-[slot=stat-icon]:col-start-2 **:data-[slot=stat-icon]:row-span-2 **:data-[slot=stat-icon]:row-start-1 **:data-[slot=stat-icon]:self-start",
-        "**:data-[slot=stat-change]:col-span-2",
-        "**:data-[slot=stat-description]:col-span-2",
+        "**:data-[slot=stat-label]:col-span-1 **:data-[slot=stat-value]:col-span-1",
+        "**:data-[slot=stat-indicator]:col-start-2 **:data-[slot=stat-indicator]:row-span-2 **:data-[slot=stat-indicator]:row-start-1 **:data-[slot=stat-indicator]:self-start",
+        "**:data-[slot=stat-description]:col-span-2 **:data-[slot=stat-separator]:col-span-2 **:data-[slot=stat-trend]:col-span-2",
         className,
       )}
       {...props}
@@ -32,50 +30,7 @@ function StatLabel({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-function StatValue({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="stat-value"
-      className={cn("font-semibold text-2xl tracking-tight", className)}
-      {...props}
-    />
-  );
-}
-
-function StatDescription({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="stat-description"
-      className={cn("text-muted-foreground text-xs", className)}
-      {...props}
-    />
-  );
-}
-
-function StatChange({
-  className,
-  trend,
-  ...props
-}: React.ComponentProps<"div"> & { trend?: "up" | "down" | "neutral" }) {
-  return (
-    <div
-      data-slot="stat-change"
-      data-trend={trend}
-      className={cn(
-        "inline-flex items-center gap-1 font-medium text-xs [&_svg:not([class*='size-'])]:size-3 [&_svg]:pointer-events-none [&_svg]:shrink-0",
-        {
-          "text-green-600 dark:text-green-400": trend === "up",
-          "text-red-600 dark:text-red-400": trend === "down",
-          "text-muted-foreground": trend === "neutral" || !trend,
-        },
-        className,
-      )}
-      {...props}
-    />
-  );
-}
-
-const statAccessoryVariants = cva(
+const statIndicatorVariants = cva(
   "flex shrink-0 items-center justify-center [&_svg]:pointer-events-none",
   {
     variants: {
@@ -104,27 +59,73 @@ const statAccessoryVariants = cva(
   },
 );
 
-interface StatAccessoryProps
+interface StatIndicatorProps
   extends Omit<React.ComponentProps<"div">, "color">,
-    VariantProps<typeof statAccessoryVariants> {
+    VariantProps<typeof statIndicatorVariants> {
   asChild?: boolean;
 }
 
-function StatAccessory({
+function StatIndicator({
   className,
   variant = "default",
   color = "default",
   asChild = false,
   ...props
-}: StatAccessoryProps) {
+}: StatIndicatorProps) {
   const Comp = asChild ? Slot : "div";
 
   return (
     <Comp
-      data-slot="stat-icon"
+      data-slot="stat-indicator"
       data-variant={variant}
       data-color={color}
-      className={cn(statAccessoryVariants({ variant, color, className }))}
+      className={cn(statIndicatorVariants({ variant, color, className }))}
+      {...props}
+    />
+  );
+}
+
+function StatValue({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="stat-value"
+      className={cn("font-semibold text-2xl tracking-tight", className)}
+      {...props}
+    />
+  );
+}
+
+function StatTrend({
+  className,
+  trend,
+  ...props
+}: React.ComponentProps<"div"> & { trend?: "up" | "down" | "neutral" }) {
+  return (
+    <div
+      data-slot="stat-trend"
+      data-trend={trend}
+      className={cn(
+        "inline-flex items-center gap-1 font-medium text-xs [&_svg:not([class*='size-'])]:size-3 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        {
+          "text-green-600 dark:text-green-400": trend === "up",
+          "text-red-600 dark:text-red-400": trend === "down",
+          "text-muted-foreground": trend === "neutral" || !trend,
+        },
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+function StatSeparator({ ...props }: React.ComponentProps<typeof Separator>) {
+  return <Separator data-slot="stat-separator" className="my-2" {...props} />;
+}
+function StatDescription({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="stat-description"
+      className={cn("text-muted-foreground text-xs", className)}
       {...props}
     />
   );
@@ -132,9 +133,10 @@ function StatAccessory({
 
 export {
   Stat,
-  StatAccessory,
-  StatChange,
-  StatDescription,
   StatLabel,
+  StatIndicator,
   StatValue,
+  StatTrend,
+  StatSeparator,
+  StatDescription,
 };
