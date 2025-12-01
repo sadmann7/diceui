@@ -5,9 +5,7 @@ export interface StatProps extends EmptyProps<"div">, CompositionProps {}
 
 export interface StatLabelProps extends EmptyProps<"div">, CompositionProps {}
 
-export interface StatIndicatorProps
-  extends Omit<EmptyProps<"div">, "color">,
-    CompositionProps {
+export interface StatIndicatorProps extends Omit<EmptyProps<"div">, "color"> {
   /**
    * The visual style of the indicator.
    *
@@ -46,9 +44,9 @@ export interface StatIndicatorProps
   color?: "default" | "success" | "info" | "warning" | "error";
 }
 
-export interface StatValueProps extends EmptyProps<"div">, CompositionProps {}
+export interface StatValueProps extends EmptyProps<"div"> {}
 
-export interface StatTrendProps extends EmptyProps<"div">, CompositionProps {
+export interface StatTrendProps extends EmptyProps<"div"> {
   /**
    * The trend direction to display with appropriate styling.
    *
@@ -66,10 +64,6 @@ export interface StatTrendProps extends EmptyProps<"div">, CompositionProps {
   trend?: "up" | "down" | "neutral";
 }
 
-export interface StatSeparatorProps
-  extends EmptyProps<typeof Separator>,
-    CompositionProps {}
+export interface StatSeparatorProps extends EmptyProps<typeof Separator> {}
 
-export interface StatDescriptionProps
-  extends EmptyProps<"div">,
-    CompositionProps {}
+export interface StatDescriptionProps extends EmptyProps<"div"> {}

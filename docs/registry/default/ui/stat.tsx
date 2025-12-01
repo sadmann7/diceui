@@ -1,4 +1,3 @@
-import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import type * as React from "react";
 import { Separator } from "@/components/ui/separator";
@@ -61,21 +60,16 @@ const statIndicatorVariants = cva(
 
 interface StatIndicatorProps
   extends Omit<React.ComponentProps<"div">, "color">,
-    VariantProps<typeof statIndicatorVariants> {
-  asChild?: boolean;
-}
+    VariantProps<typeof statIndicatorVariants> {}
 
 function StatIndicator({
   className,
   variant = "default",
   color = "default",
-  asChild = false,
   ...props
 }: StatIndicatorProps) {
-  const Comp = asChild ? Slot : "div";
-
   return (
-    <Comp
+    <div
       data-slot="stat-indicator"
       data-variant={variant}
       data-color={color}
@@ -121,6 +115,7 @@ function StatTrend({
 function StatSeparator({ ...props }: React.ComponentProps<typeof Separator>) {
   return <Separator data-slot="stat-separator" className="my-2" {...props} />;
 }
+
 function StatDescription({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
