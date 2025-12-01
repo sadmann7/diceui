@@ -568,7 +568,6 @@
     "name": "stat",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot",
       "class-variance-authority"
     ],
     "registryDependencies": [

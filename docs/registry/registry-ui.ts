@@ -512,7 +512,7 @@ export const ui: Registry["items"] = [
   {
     name: "stat",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    dependencies: ["class-variance-authority"],
     registryDependencies: ["separator"],
     files: [
       {
