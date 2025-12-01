@@ -290,7 +290,8 @@
     ],
     "registryDependencies": [
       "button",
-      "input"
+      "input",
+      "textarea"
     ],
     "files": [
       {
@@ -559,6 +560,22 @@
     "files": [
       {
         "path": "ui/stack.tsx",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "stat",
+    "type": "registry:ui",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [
+      "separator"
+    ],
+    "files": [
+      {
+        "path": "ui/stat.tsx",
         "type": "registry:ui"
       }
     ]

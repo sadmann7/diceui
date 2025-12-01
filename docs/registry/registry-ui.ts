@@ -254,7 +254,7 @@ export const ui: Registry["items"] = [
     name: "key-value",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "lucide-react"],
-    registryDependencies: ["button", "input"],
+    registryDependencies: ["button", "input", "textarea"],
     files: [
       {
         path: "ui/key-value.tsx",
@@ -505,6 +505,18 @@ export const ui: Registry["items"] = [
     files: [
       {
         path: "ui/stack.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
+    name: "stat",
+    type: "registry:ui",
+    dependencies: ["class-variance-authority"],
+    registryDependencies: ["separator"],
+    files: [
+      {
+        path: "ui/stat.tsx",
         type: "registry:ui",
       },
     ],

@@ -2,63 +2,78 @@ import {
   ArrowDown,
   ArrowUp,
   DollarSign,
+  MoreHorizontal,
   ShoppingCart,
-  Users,
 } from "lucide-react";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   Stat,
-  StatChange,
-  StatIcon,
+  StatIndicator,
   StatLabel,
+  StatTrend,
   StatValue,
 } from "@/registry/default/ui/stat";
 
 export default function StatDemo() {
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-4 sm:grid-cols-2">
       <Stat>
         <StatLabel>Total Revenue</StatLabel>
-        <StatValue>$45,231</StatValue>
-        <StatIcon variant="box" color="primary">
+        <StatIndicator variant="icon" color="success">
           <DollarSign />
-        </StatIcon>
-        <StatChange trend="up">
+        </StatIndicator>
+        <StatValue>$45,231</StatValue>
+        <StatTrend trend="up">
           <ArrowUp />
           +20.1% from last month
-        </StatChange>
+        </StatTrend>
       </Stat>
 
       <Stat>
         <StatLabel>Active Users</StatLabel>
+        <StatIndicator variant="badge" color="info">
+          +24
+        </StatIndicator>
         <StatValue>2,350</StatValue>
-        <StatIcon variant="box" color="blue">
-          <Users />
-        </StatIcon>
-        <StatChange trend="up">
+        <StatTrend trend="up">
           <ArrowUp />
           +180 from last week
-        </StatChange>
+        </StatTrend>
       </Stat>
 
       <Stat>
         <StatLabel>Total Orders</StatLabel>
-        <StatValue>1,234</StatValue>
-        <StatIcon variant="box" color="orange">
+        <StatIndicator variant="icon" color="warning">
           <ShoppingCart />
-        </StatIcon>
-        <StatChange trend="down">
+        </StatIndicator>
+        <StatValue>1,234</StatValue>
+        <StatTrend trend="down">
           <ArrowDown />
           -4.3% from last month
-        </StatChange>
+        </StatTrend>
       </Stat>
 
       <Stat>
         <StatLabel>Conversion Rate</StatLabel>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <StatIndicator variant="action">
+              <MoreHorizontal />
+            </StatIndicator>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem>View details</DropdownMenuItem>
+            <DropdownMenuItem>Export data</DropdownMenuItem>
+            <DropdownMenuItem>Share</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         <StatValue>3.2%</StatValue>
-        <StatIcon variant="box" color="green">
-          <ArrowUp />
-        </StatIcon>
-        <StatChange trend="neutral">No change from last week</StatChange>
+        <StatTrend trend="neutral">No change from last week</StatTrend>
       </Stat>
     </div>
   );

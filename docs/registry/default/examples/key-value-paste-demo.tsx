@@ -23,16 +23,10 @@ export default function KeyValuePasteDemo() {
         <pre className="rounded bg-background p-2 text-xs">
           {`API_KEY=sk-1234567890
             DATABASE_URL=postgresql://localhost
-            PORT=3000
-
-            or
-
-            API_KEY: sk-1234567890
-            DATABASE_URL: postgresql://localhost
-            PORT: 3000`}
+            PORT=3000`}
         </pre>
       </div>
-      <KeyValue enablePaste keyPlaceholder="KEY" valuePlaceholder="value">
+      <KeyValue keyPlaceholder="KEY" valuePlaceholder="value">
         <KeyValueList>
           <KeyValueItem>
             <KeyValueKeyInput className="font-mono" />

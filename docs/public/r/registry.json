@@ -1313,6 +1313,214 @@
           "type": "registry:example"
         }
       ]
+    },
+    {
+      "name": "time-picker",
+      "type": "registry:component",
+      "title": "Time Picker",
+      "description": "A time picker component with input fields and column selectors for hours, minutes, seconds, and AM/PM.",
+      "files": [
+        {
+          "path": "registry/default/ui/time-picker.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/default/components/visually-hidden-input.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/default/lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "time-picker-demo",
+      "type": "registry:component",
+      "title": "Time Picker Demo",
+      "description": "Example showing how to use the time picker component.",
+      "files": [
+        {
+          "path": "registry/default/examples/time-picker-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "time-picker-controlled-demo",
+      "type": "registry:component",
+      "title": "Time Picker Controlled Demo",
+      "description": "Example showing controlled time picker with state management.",
+      "files": [
+        {
+          "path": "registry/default/examples/time-picker-controlled-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "time-picker-seconds-demo",
+      "type": "registry:component",
+      "title": "Time Picker Seconds Demo",
+      "description": "Example showing time picker with seconds support.",
+      "files": [
+        {
+          "path": "registry/default/examples/time-picker-seconds-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "time-picker-step-demo",
+      "type": "registry:component",
+      "title": "Time Picker Step Demo",
+      "description": "Example showing time picker with custom step increments.",
+      "files": [
+        {
+          "path": "registry/default/examples/time-picker-step-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "time-picker-placeholder-demo",
+      "type": "registry:component",
+      "title": "Time Picker Placeholder Demo",
+      "description": "Example showing time picker with custom segment placeholders.",
+      "files": [
+        {
+          "path": "registry/default/examples/time-picker-placeholder-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "time-picker-form-demo",
+      "type": "registry:component",
+      "title": "Time Picker Form Demo",
+      "description": "Example showing time picker integration with React Hook Form.",
+      "files": [
+        {
+          "path": "registry/default/examples/time-picker-form-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "key-value",
+      "type": "registry:component",
+      "title": "Key Value",
+      "description": "A key-value pair input component with support for adding, removing, and validating entries.",
+      "files": [
+        {
+          "path": "registry/default/ui/key-value.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/default/components/visually-hidden-input.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/default/lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "key-value-demo",
+      "type": "registry:component",
+      "title": "Key Value Demo",
+      "description": "Example showing how to use the key-value component.",
+      "files": [
+        {
+          "path": "registry/default/examples/key-value-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "key-value-validation-demo",
+      "type": "registry:component",
+      "title": "Key Value Validation Demo",
+      "description": "Example showing key-value component with custom validation.",
+      "files": [
+        {
+          "path": "registry/default/examples/key-value-validation-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "key-value-paste-demo",
+      "type": "registry:component",
+      "title": "Key Value Paste Demo",
+      "description": "Example showing key-value component with paste support for bulk entry.",
+      "files": [
+        {
+          "path": "registry/default/examples/key-value-paste-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "key-value-form-demo",
+      "type": "registry:component",
+      "title": "Key Value Form Demo",
+      "description": "Example showing key-value component integration with React Hook Form.",
+      "files": [
+        {
+          "path": "registry/default/examples/key-value-form-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "stat",
+      "type": "registry:component",
+      "title": "Stat",
+      "description": "A flexible component for displaying key metrics and statistics with support for trends, indicators, and descriptions.",
+      "files": [
+        {
+          "path": "registry/default/ui/stat.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "stat-demo",
+      "type": "registry:component",
+      "title": "Stat Demo",
+      "description": "Example showing how to use the stat component with various indicators and trends.",
+      "files": [
+        {
+          "path": "registry/default/examples/stat-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "stat-variants-demo",
+      "type": "registry:component",
+      "title": "Stat Variants Demo",
+      "description": "Example showing different indicator variants and color themes for the stat component.",
+      "files": [
+        {
+          "path": "registry/default/examples/stat-variants-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "stat-layout-demo",
+      "type": "registry:component",
+      "title": "Stat Layout Demo",
+      "description": "Example showing layout options with separators and descriptions for the stat component.",
+      "files": [
+        {
+          "path": "registry/default/examples/stat-layout-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
     }
   ]
 }

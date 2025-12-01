@@ -277,7 +277,7 @@ export const Index: Record<string, any> = {
       name: "key-value",
       description: "",
       type: "registry:ui",
-      registryDependencies: ["button","input"],
+      registryDependencies: ["button","input","textarea"],
       files: [{
         path: "registry/default/ui/key-value.tsx",
         type: "registry:ui",
@@ -474,6 +474,20 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/ui/stack.tsx")),
+      source: "",
+      chunks: []
+    },
+    "stat": {
+      name: "stat",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["separator"],
+      files: [{
+        path: "registry/default/ui/stat.tsx",
+        type: "registry:ui",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/stat.tsx")),
       source: "",
       chunks: []
     },
@@ -2406,6 +2420,48 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/stack-side-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "stat-demo": {
+      name: "stat-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["stat","dropdown-menu"],
+      files: [{
+        path: "registry/default/examples/stat-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/stat-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "stat-variants-demo": {
+      name: "stat-variants-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["stat"],
+      files: [{
+        path: "registry/default/examples/stat-variants-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/stat-variants-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "stat-layout-demo": {
+      name: "stat-layout-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["stat"],
+      files: [{
+        path: "registry/default/examples/stat-layout-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/stat-layout-demo.tsx")),
       source: "",
       chunks: []
     },
