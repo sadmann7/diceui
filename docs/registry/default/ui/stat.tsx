@@ -1,3 +1,4 @@
+import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import type * as React from "react";
 
@@ -74,27 +75,26 @@ function StatChange({
   );
 }
 
-const statIconVariants = cva(
+const statAccessoryVariants = cva(
   "flex shrink-0 items-center justify-center [&_svg]:pointer-events-none",
   {
     variants: {
       variant: {
-        default: "text-muted-foreground",
-        box: "size-9 rounded-md border [&_svg:not([class*='size-'])]:size-4",
+        default: "text-muted-foreground [&_svg:not([class*='size-'])]:size-5",
+        icon: "size-8 rounded-md border [&_svg:not([class*='size-'])]:size-3.5",
+        badge:
+          "h-6 min-w-6 rounded-sm border px-1.5 font-medium text-xs [&_svg:not([class*='size-'])]:size-3",
+        action:
+          "size-8 cursor-pointer rounded-md transition-colors hover:bg-muted/50 [&_svg:not([class*='size-'])]:size-4",
       },
       color: {
         default: "bg-muted text-muted-foreground",
-        primary: "border-primary/20 bg-primary/10 text-primary",
-        blue: "border-blue-500/20 bg-blue-500/10 text-blue-600 dark:text-blue-400",
-        green:
+        success:
           "border-green-500/20 bg-green-500/10 text-green-600 dark:text-green-400",
-        orange:
+        info: "border-blue-500/20 bg-blue-500/10 text-blue-600 dark:text-blue-400",
+        warning:
           "border-orange-500/20 bg-orange-500/10 text-orange-600 dark:text-orange-400",
-        red: "border-red-500/20 bg-red-500/10 text-red-600 dark:text-red-400",
-        purple:
-          "border-purple-500/20 bg-purple-500/10 text-purple-600 dark:text-purple-400",
-        yellow:
-          "border-yellow-500/20 bg-yellow-500/10 text-yellow-600 dark:text-yellow-400",
+        error: "border-destructive/20 bg-destructive/10 text-destructive",
       },
     },
     defaultVariants: {
@@ -104,21 +104,37 @@ const statIconVariants = cva(
   },
 );
 
-function StatIcon({
+interface StatAccessoryProps
+  extends Omit<React.ComponentProps<"div">, "color">,
+    VariantProps<typeof statAccessoryVariants> {
+  asChild?: boolean;
+}
+
+function StatAccessory({
   className,
   variant = "default",
   color = "default",
+  asChild = false,
   ...props
-}: React.ComponentProps<"div"> & VariantProps<typeof statIconVariants>) {
+}: StatAccessoryProps) {
+  const Comp = asChild ? Slot : "div";
+
   return (
-    <div
+    <Comp
       data-slot="stat-icon"
       data-variant={variant}
       data-color={color}
-      className={cn(statIconVariants({ variant, color, className }))}
+      className={cn(statAccessoryVariants({ variant, color, className }))}
       {...props}
     />
   );
 }
 
-export { Stat, StatLabel, StatValue, StatDescription, StatChange, StatIcon };
+export {
+  Stat,
+  StatAccessory,
+  StatChange,
+  StatDescription,
+  StatLabel,
+  StatValue,
+};
