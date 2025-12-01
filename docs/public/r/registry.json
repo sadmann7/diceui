@@ -1313,6 +1313,94 @@
           "type": "registry:example"
         }
       ]
+    },
+    {
+      "name": "time-picker",
+      "type": "registry:component",
+      "title": "Time Picker",
+      "description": "A time picker component with input fields and column selectors for hours, minutes, seconds, and AM/PM.",
+      "files": [
+        {
+          "path": "registry/default/ui/time-picker.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/default/components/visually-hidden-input.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/default/lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "key-value",
+      "type": "registry:component",
+      "title": "Key Value",
+      "description": "A key-value pair input component with support for adding, removing, and validating entries.",
+      "files": [
+        {
+          "path": "registry/default/ui/key-value.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/default/components/visually-hidden-input.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/default/lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "stat",
+      "type": "registry:component",
+      "title": "Stat",
+      "description": "A flexible component for displaying key metrics and statistics with support for trends, indicators, and descriptions.",
+      "files": [
+        {
+          "path": "registry/default/ui/stat.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "stat-demo",
+      "type": "registry:component",
+      "title": "Stat Demo",
+      "description": "Example showing how to use the stat component with various indicators and trends.",
+      "files": [
+        {
+          "path": "registry/default/examples/stat-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "stat-variants-demo",
+      "type": "registry:component",
+      "title": "Stat Variants Demo",
+      "description": "Example showing different indicator variants and color themes for the stat component.",
+      "files": [
+        {
+          "path": "registry/default/examples/stat-variants-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "stat-layout-demo",
+      "type": "registry:component",
+      "title": "Stat Layout Demo",
+      "description": "Example showing layout options with separators and descriptions for the stat component.",
+      "files": [
+        {
+          "path": "registry/default/examples/stat-layout-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
     }
   ]
 }
