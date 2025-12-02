@@ -12,6 +12,10 @@ const ITEM_NAME = "ActionBarItem";
 const CLOSE_NAME = "ActionBarClose";
 const ITEM_SELECT = "actionbar.itemSelect";
 
+interface DivProps extends React.ComponentProps<"div"> {
+  asChild?: boolean;
+}
+
 type RootElement = React.ComponentRef<typeof ActionBarRoot>;
 type ItemElement = React.ComponentRef<typeof ActionBarItem>;
 type CloseElement = React.ComponentRef<typeof ActionBarClose>;
@@ -45,7 +49,7 @@ function useActionBarContext(consumerName: string) {
   return context;
 }
 
-interface ActionBarRootProps extends React.ComponentProps<"div"> {
+interface ActionBarRootProps extends DivProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
@@ -54,7 +58,6 @@ interface ActionBarRootProps extends React.ComponentProps<"div"> {
   side?: "top" | "bottom";
   sideOffset?: number;
   portalContainer?: Element | DocumentFragment | null;
-  asChild?: boolean;
 }
 
 function ActionBarRoot(props: ActionBarRootProps) {
@@ -156,12 +159,8 @@ function ActionBarRoot(props: ActionBarRootProps) {
   );
 }
 
-interface ActionBarSelectionProps extends React.ComponentProps<"div"> {
-  asChild?: boolean;
-}
-
-function ActionBarSelection(props: ActionBarSelectionProps) {
-  const { asChild, className, ...selectionProps } = props;
+function ActionBarSelection(props: DivProps) {
+  const { className, asChild, ...selectionProps } = props;
 
   const SelectionPrimitive = asChild ? Slot : "div";
 
@@ -270,11 +269,7 @@ function ActionBarClose(props: ActionBarCloseProps) {
   );
 }
 
-interface ActionBarSeparatorProps extends React.ComponentProps<"div"> {
-  asChild?: boolean;
-}
-
-function ActionBarSeparator(props: ActionBarSeparatorProps) {
+function ActionBarSeparator(props: DivProps) {
   const { asChild, className, ...separatorProps } = props;
 
   const SeparatorPrimitive = asChild ? Slot : "div";
